@@ -1,56 +1,53 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure
-Date: Mon, 12 May 2008 00:54:54 -0700 (PDT)
-Message-ID: <20080512.005454.31875425.davem@davemloft.net>
-References: <20080512154717.2d0947f0.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: s390 build failure
+Date: Mon, 12 May 2008 18:03:35 +1000
+Message-ID: <20080512180335.6a2e8474.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__12_May_2008_18_03_35_+1000_g0xuPTLmA361.2UA"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:35353
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1760448AbYELHzA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 12 May 2008 03:55:00 -0400
-In-Reply-To: <20080512154717.2d0947f0.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43417 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751266AbYELIDq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 12 May 2008 04:03:46 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: greg@kroah.com, linux-next@vger.kernel.org, kay.sievers@vrfy.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 12 May 2008 15:47:17 +1000
+--Signature=_Mon__12_May_2008_18_03_35_+1000_g0xuPTLmA361.2UA
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Today's linux-next build (sparc64 defconfig) fails like this:
-> 
-> arch/sparc64/kernel/pci.c: In function `of_create_pci_dev':
-> arch/sparc64/kernel/pci.c:412: warning: passing arg 1 of `sprintf' discards qualifiers from pointer target type
-> make[2]: *** [arch/sparc64/kernel/pci.o] Error 1
-> 
-> (I assume sparc64 builds with -Werr)
+Hi Greg,
 
-Yes, it builds everything except the FPU emulator under arch/sparc64
-with -Werror
+Today's linux-next build (s390 defconfig) fails like this:
 
-> This started on May 8 with the introduction of "driver-core: prepare for
-> removal of 20 char limit from struct device".
-> 
-> The sparc64 pci code above looks like this:
-> 
-> 	sprintf(pci_name(dev), "%04x:%02x:%02x.%d", pci_domain_nr(bus),
-> 		dev->bus->number, PCI_SLOT(devfn), PCI_FUNC(devfn));
-> 
+drivers/s390/cio/device_fsm.c:53: error: syntax error before ';' token
+drivers/s390/cio/device_fsm.c:54: error: syntax error before ';' token
 
-There is identical code in arch/powerpc/kernel/pci_64.c, it doesn't
-break the build there becuase powerpc doesn't use -Werror (yet) :-)
+Caused by commit 67da378c80848bb778ee8caecadcdf17e1e310e0 ("driver-core:
+prepare for removal of 20 char limit from struct device") from the
+driver-core tree. Missing close parentheses on added dev_name() calls.
 
-I'm getting a little tired of all of these breakages that occur when
-the core PCI probing under drivers/pci or related datastructures are
-modified but nobody even tests the build of powerpc or sparc's OF
-based PCI bus probing code.
+A touch more care, please.
 
-There have also been functional breakages due to core PCI changes
-because of this, an update goes into the drivers/pci/*.c code but
-doesn't get noticed for arch/{sparc64,powerpc}/'s PCI probing code
-until some poor arch maintainer or user tries to bootup on those
-platforms.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__12_May_2008_18_03_35_+1000_g0xuPTLmA361.2UA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+iD8DBQFIJ/nfTgG2atn1QN8RAq6XAJ9RAY2XAz2gSyMWAgCFXkm2EZQBfgCbBTEX
+T0ScWi87SzQTuzY0HiMP17w=
+=LAHN
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__12_May_2008_18_03_35_+1000_g0xuPTLmA361.2UA--
