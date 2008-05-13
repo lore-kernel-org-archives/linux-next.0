@@ -1,160 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for May 13
-Date: Tue, 13 May 2008 15:52:10 +1000
-Message-ID: <20080513155210.d6ec7963.sfr@canb.auug.org.au>
+From: Pierre Ossman <drzeus-list@drzeus.cx>
+Subject: Re: git trees which are not yet in linux-next
+Date: Tue, 13 May 2008 08:36:15 +0200
+Message-ID: <20080513083615.4e463f87@mjolnir.drzeus.cx>
+References: <20080502151206.b40f77ea.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__13_May_2008_15_52_10_+1000_u_KdgX/r3XiTmEGL"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35669 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756381AbYEMFwU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 13 May 2008 01:52:20 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-
---Signature=_Tue__13_May_2008_15_52_10_+1000_u_KdgX/r3XiTmEGL
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1758864AbYEMGgr@vger.kernel.org>
+In-Reply-To: <20080502151206.b40f77ea.akpm@linux-foundation.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, Steven French <sfrench@us.ibm.com>, Steven Whitehouse <swhiteho@redhat.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Jeff Garzik <jeff@garzik.org>, Ralf Baechle <ralf@linux-mips.org>, Jan Kara <jack@ucw.cz>, Anton Vorontsov <cbou@mail.ru>, Jens Axboe <jens.axboe@oracle.com>, Eric Van Hensbergen <ericvh@gmail.com>, Wim Van Sebroeck <wim@iguana.be>, Christian Zankel <chris@zankel.net>, Nicolas Pitre <nico@cam.org>, Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <clameter@sgi.com>, Erez Zadok <ezk@cs.sunysb.edu>, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+On Fri, 2 May 2008 15:12:06 -0700
+Andrew Morton <akpm@linux-foundation.org> wrote:
 
-Changes since next-20080512:
+> 
+> git-mmc: git+ssh://master.kernel.org/pub/scm/linux/kernel/git/drzeus/mmc.git#for-andrew
+> 
 
-The arm tree conflict has gone.
+The stuff I've pushed to Andrew has always been what I've been hoping
+to merge in the next window, so it should just be a matter of renaming
+the branch. There is a #next at the above URI now.
 
-----------------------------------------------------------------------------
+Rgds
+-- 
+     -- Pierre Ossman
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(tar balls and patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups, it is also built with powerpc allnoconfig,
-44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
-
-Below is a summary of the state of the merge.
-
-We are up to 71 trees (counting Linus' and 13 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git reset --hard stable
-Merging origin/master
-Merging x86-fixes/for-linus
-Merging sched-fixes/for-linus
-Merging powerpc-merge/merge
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sparc-current/master
-Merging sound-current/for-linus
-Merging arm-current/master
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging quilt/driver-core
-Merging quilt/usb
-Merging x86/for-akpm
-Merging sched/for-akpm
-Merging pci/linux-next
-Merging quilt/device-mapper
-Merging hid/mm
-Merging quilt/i2c
-Merging quilt/kernel-doc
-Merging avr32/avr32-arch
-Merging v4l-dvb/stable
-Merging s390/features
-Merging sh/master
-Merging jfs/next
-Merging kbuild/master
-Merging quilt/ide
-Merging libata/NEXT
-Merging nfs/linux-next
-Merging xfs/master
-Merging infiniband/for-next
-Merging acpi/test
-Merging blackfin/for-linus
-Merging nfsd/nfsd-next
-Merging ieee1394/for-next
-Merging hwmon/testing
-Merging ubi/master
-Merging kvm/master
-Merging dlm/next
-Merging scsi/master
-Merging ia64/test
-Merging tests/master
-CONFLICT (content): Merge conflict in lib/Kconfig.debug
-Merging ocfs2/linux-next
-Merging selinux/for-akpm
-Merging quilt/m68k
-Merging powerpc/powerpc-next
-Merging hrt/mm
-Merging lblnet/master
-Merging ext4/next
-Merging 4xx/next
-Merging async_tx/next
-Merging udf/for_next
-Merging security-testing/next
-Merging net/master
-Merging sparc/master
-Merging galak/powerpc-next
-Merging mtd/master
-Merging wireless/master
-Merging crypto/master
-Merging vfs/vfs-2.6.25
-Merging sound/master
-Merging arm/devel
-Merging cpufreq/master
-Merging v9fs/for-next
-Merging quilt/rr
-CONFLICT (content): Merge conflict in kernel/sysctl.c
-Merging semaphore/semaphore
-Merging semaphore-removal/semaphore-removal
-CONFLICT (content): Merge conflict in drivers/atm/ambassador.c
-CONFLICT (content): Merge conflict in drivers/net/bonding/bond_main.c
-CONFLICT (content): Merge conflict in drivers/net/bonding/bond_sysfs.c
-Applying idr.h needs spinlock.h
-Merging quilt/ldp.next
-
---Signature=_Tue__13_May_2008_15_52_10_+1000_u_KdgX/r3XiTmEGL
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
-
-iD8DBQFIKSySTgG2atn1QN8RAsfFAKCCHV1D0UXrgdQIiweBd5Y34iKwtQCglZTi
-g7eh2TlqAdd9BrQEwI6NIQI=
-=ehvg
------END PGP SIGNATURE-----
-
---Signature=_Tue__13_May_2008_15_52_10_+1000_u_KdgX/r3XiTmEGL--
+  Linux kernel, MMC maintainer        http://www.kernel.org
+  rdesktop, core developer          http://www.rdesktop.org
