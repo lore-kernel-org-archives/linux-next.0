@@ -1,51 +1,160 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for May 12
-Date: Mon, 12 May 2008 18:30:18 -0700
-Message-ID: <4828EF2A.1090302@oracle.com>
-References: <20080512150418.603e29cf.sfr@canb.auug.org.au>	<20080512082205.8678bbaf.randy.dunlap@oracle.com> <20080513103055.d133f60a.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Tree for May 13
+Date: Tue, 13 May 2008 15:52:10 +1000
+Message-ID: <20080513155210.d6ec7963.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__13_May_2008_15_52_10_+1000_u_KdgX/r3XiTmEGL"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rgminet01.oracle.com ([148.87.113.118]:36941 "EHLO
-	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756439AbYEMBbI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 May 2008 21:31:08 -0400
-In-Reply-To: <20080513103055.d133f60a.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35669 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756381AbYEMFwU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 13 May 2008 01:52:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-Stephen Rothwell wrote:
-> Hi Randy,
-> 
-> On Mon, 12 May 2008 08:22:05 -0700 Randy Dunlap <randy.dunlap@oracle.com> wrote:
->> On Mon, 12 May 2008 15:04:18 +1000 Stephen Rothwell wrote:
->>
->>> News:  I am now providing patches relative to the latest tag in Linus'
->>> tree.  I propose to stop providing complete tar balls as they are so
->>> large and people will have recent versions of Linus's tree anyway (I
->>> assume).  The patches will be named "patch-<upstream tag>-<next tag>".
->> Oh well.  For the record, I don't mind using patches instead of
->> complete tarballs, but I would prefer that the patches be relative
->> to something like a daily -git snapshot so that using git is not
->> required at all.
-> 
-> They will be relative to a tag that Linus adds to his tree and those
-> tagged trees are always available as tar balls.  i.e. yesterdays patches
-> were relative to 2.6.26-rc1, today's (and until rc3 comes out) will be
-> relative to 2.6.26-rc2. Or I could do them against the daily -git
-> snapshots (or both).  Either way it would cut down on the amount of stuff
-> I am distributing. Currently there is already about 6G of linux-next
-> tarballs.
+--Signature=_Tue__13_May_2008_15_52_10_+1000_u_KdgX/r3XiTmEGL
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That sounds fine.  Relative to -rc's is good IMO (and for my scripts).
+Hi all,
 
-> I certainly don't want to make it harder for those who are doing such
-> good job of testing. Does that make it clearer?
+Changes since next-20080512:
 
-Yes.  Thanks.
+The arm tree conflict has gone.
 
--- 
-~Randy
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+(tar balls and patches at
+http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups, it is also built with powerpc allnoconfig,
+44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
+
+Below is a summary of the state of the merge.
+
+We are up to 71 trees (counting Linus' and 13 trees of patches pending for
+Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+$ git reset --hard stable
+Merging origin/master
+Merging x86-fixes/for-linus
+Merging sched-fixes/for-linus
+Merging powerpc-merge/merge
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sparc-current/master
+Merging sound-current/for-linus
+Merging arm-current/master
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/master
+Merging quilt/driver-core.current
+Merging quilt/usb.current
+Merging quilt/driver-core
+Merging quilt/usb
+Merging x86/for-akpm
+Merging sched/for-akpm
+Merging pci/linux-next
+Merging quilt/device-mapper
+Merging hid/mm
+Merging quilt/i2c
+Merging quilt/kernel-doc
+Merging avr32/avr32-arch
+Merging v4l-dvb/stable
+Merging s390/features
+Merging sh/master
+Merging jfs/next
+Merging kbuild/master
+Merging quilt/ide
+Merging libata/NEXT
+Merging nfs/linux-next
+Merging xfs/master
+Merging infiniband/for-next
+Merging acpi/test
+Merging blackfin/for-linus
+Merging nfsd/nfsd-next
+Merging ieee1394/for-next
+Merging hwmon/testing
+Merging ubi/master
+Merging kvm/master
+Merging dlm/next
+Merging scsi/master
+Merging ia64/test
+Merging tests/master
+CONFLICT (content): Merge conflict in lib/Kconfig.debug
+Merging ocfs2/linux-next
+Merging selinux/for-akpm
+Merging quilt/m68k
+Merging powerpc/powerpc-next
+Merging hrt/mm
+Merging lblnet/master
+Merging ext4/next
+Merging 4xx/next
+Merging async_tx/next
+Merging udf/for_next
+Merging security-testing/next
+Merging net/master
+Merging sparc/master
+Merging galak/powerpc-next
+Merging mtd/master
+Merging wireless/master
+Merging crypto/master
+Merging vfs/vfs-2.6.25
+Merging sound/master
+Merging arm/devel
+Merging cpufreq/master
+Merging v9fs/for-next
+Merging quilt/rr
+CONFLICT (content): Merge conflict in kernel/sysctl.c
+Merging semaphore/semaphore
+Merging semaphore-removal/semaphore-removal
+CONFLICT (content): Merge conflict in drivers/atm/ambassador.c
+CONFLICT (content): Merge conflict in drivers/net/bonding/bond_main.c
+CONFLICT (content): Merge conflict in drivers/net/bonding/bond_sysfs.c
+Applying idr.h needs spinlock.h
+Merging quilt/ldp.next
+
+--Signature=_Tue__13_May_2008_15_52_10_+1000_u_KdgX/r3XiTmEGL
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+iD8DBQFIKSySTgG2atn1QN8RAsfFAKCCHV1D0UXrgdQIiweBd5Y34iKwtQCglZTi
+g7eh2TlqAdd9BrQEwI6NIQI=
+=ehvg
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__13_May_2008_15_52_10_+1000_u_KdgX/r3XiTmEGL--
