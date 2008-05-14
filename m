@@ -1,37 +1,28 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
+From: tony@bakeyournoodle.com (Tony Breeds)
 Subject: Re: linux-next: Tree for May 14
-Date: Wed, 14 May 2008 13:50:08 -0700
-Message-ID: <20080514135008.60e5df96.randy.dunlap@oracle.com>
-References: <20080514170106.3cbcb201.sfr@canb.auug.org.au>
-	<Pine.LNX.4.64.0805142237240.11631@anakin>
+Date: Thu, 15 May 2008 07:04:47 +1000
+Message-ID: <20080514210447.GK20457@bakeyournoodle.com>
+References: <20080514170106.3cbcb201.sfr@canb.auug.org.au> <Pine.LNX.4.64.0805142237240.11631@anakin> <20080514135008.60e5df96.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rgminet01.oracle.com ([148.87.113.118]:58353 "EHLO
-	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755185AbYENUy5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 May 2008 16:54:57 -0400
-In-Reply-To: <Pine.LNX.4.64.0805142237240.11631@anakin>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753772AbYENVFE@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20080514135008.60e5df96.randy.dunlap@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 14 May 2008 22:38:15 +0200 (CEST) Geert Uytterhoeven wrote:
-
-> On Wed, 14 May 2008, Stephen Rothwell wrote:
-> > Status of my local build tests will be at
-> > http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+On Wed, May 14, 2008 at 01:50:08PM -0700, Randy Dunlap wrote:
+ 
+> Ugh.  Can you please make the log file more readable?
 > 
-> Do you have any idea why there's no real error message for the failure
-> of m68k defconfig?
-> 
-> http://kisskb.ellerman.id.au/kisskb/buildresult/27635/
+> Or is a problem with my browser (firefox)?
 
-Ugh.  Can you please make the log file more readable?
+It's a raw download, save it as a file and then view it (or look at the
+source).
 
-Or is a problem with my browser (firefox)?
+Yours Tony
 
----
-~Randy
+  linux.conf.au    http://www.marchsouth.org/
+  Jan 19 - 24 2009 The Australian Linux Technical Conference!
