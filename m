@@ -1,44 +1,33 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: uwb build errors: CONFIG_PCI=n, CONFIG_USB=y
-Date: Wed, 14 May 2008 13:17:49 -0700
-Message-ID: <20080514131749.17675ba0.randy.dunlap@oracle.com>
-References: <Pine.LNX.4.64.0805061356150.17702@shark.he.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: Tree for May 14
+Date: Wed, 14 May 2008 22:38:15 +0200 (CEST)
+Message-ID: <Pine.LNX.4.64.0805142237240.11631@anakin>
+References: <20080514170106.3cbcb201.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from agminet01.oracle.com ([141.146.126.228]:30939 "EHLO
-	agminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750810AbYENUXJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 May 2008 16:23:09 -0400
-In-Reply-To: <Pine.LNX.4.64.0805061356150.17702@shark.he.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: akpm <akpm@linux-foundation.org>, lkml <linux-kernel@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, david.vrabel@csr.com, greg@kroah.com
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753430AbYENUic@vger.kernel.org>
+In-Reply-To: <20080514170106.3cbcb201.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-[dropped closed list: linux-uwb@bughost.org]
+On Wed, 14 May 2008, Stephen Rothwell wrote:
+> Status of my local build tests will be at
+> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
 
-This build error has now moved into 2.6.26-rc2-mm1 also.
+Do you have any idea why there's no real error message for the failure
+of m68k defconfig?
 
+http://kisskb.ellerman.id.au/kisskb/buildresult/27635/
 
-On Tue, 6 May 2008 13:58:22 -0700 (PDT) Randy.Dunlap wrote:
+Gr{oetje,eeting}s,
 
-> 
-> On x86_64 or i386, maybe others:
-> 
-> In file included from /home/rdunlap/linsrc/next-20080506/drivers/uwb/umc-bus.c:12:
-> /home/rdunlap/linsrc/next-20080506/include/linux/uwb/umc.h: In function 'umc_parent_pci_dev':
-> /home/rdunlap/linsrc/next-20080506/include/linux/uwb/umc.h:145: error: 'pci_bus_type' undeclared (first use in this function)
-> /home/rdunlap/linsrc/next-20080506/include/linux/uwb/umc.h:145: error: (Each undeclared identifier is reported only once
-> /home/rdunlap/linsrc/next-20080506/include/linux/uwb/umc.h:145: error: for each function it appears in.)
-> /home/rdunlap/linsrc/next-20080506/drivers/uwb/umc-bus.c: In function 'umc_match_pci_id':
-> /home/rdunlap/linsrc/next-20080506/drivers/uwb/umc-bus.c:29: error: 'pci_bus_type' undeclared (first use in this function)
-> /home/rdunlap/linsrc/next-20080506/drivers/uwb/umc-bus.c:33: error: implicit declaration of function 'pci_match_id'
-> make[3]: *** [drivers/uwb/umc-bus.o] Error 1
-> make[2]: *** [drivers/uwb] Error 2
+						Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
----
-~Randy
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
