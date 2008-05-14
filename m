@@ -1,61 +1,168 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: jfs tree unfetchable
-Date: Wed, 14 May 2008 15:09:05 +1000
-Message-ID: <20080514150905.992f0936.sfr@canb.auug.org.au>
-References: <20080514105826.11e87263.sfr@canb.auug.org.au>
-	<1210732266.6212.11.camel@norville.austin.ibm.com>
+Subject: linux-next: Tree for May 14
+Date: Wed, 14 May 2008 17:01:06 +1000
+Message-ID: <20080514170106.3cbcb201.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__14_May_2008_15_09_05_+1000_YmDv3xmOiM8htQrl"
+ boundary="Signature=_Wed__14_May_2008_17_01_06_+1000_r/p_Sx_b60wAISfP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57515 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:46047 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751658AbYENFJQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 14 May 2008 01:09:16 -0400
-In-Reply-To: <1210732266.6212.11.camel@norville.austin.ibm.com>
+	id S1752167AbYENHBS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 14 May 2008 03:01:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Kleikamp <shaggy@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Wed__14_May_2008_15_09_05_+1000_YmDv3xmOiM8htQrl
+--Signature=_Wed__14_May_2008_17_01_06_+1000_r/p_Sx_b60wAISfP
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi all,
 
-On Wed, 14 May 2008 02:31:06 +0000 Dave Kleikamp <shaggy@linux.vnet.ibm.com=
-> wrote:
->
-> On Wed, 2008-05-14 at 10:58 +1000, Stephen Rothwell wrote:
-> > Hi Dave,
-> >=20
-> > Trying to fetch the jfs tree today gets this error:
-> >=20
-> > fatal: git-upload-pack: cannot find object b2e03ca7485cac033a0667d9e45e=
-28d32fdee9a5:
-> > fatal: The remote end hung up unexpectedly
->=20
-> Yep.  I screwed up my tree.  It's fixed now.
+Changes since next-20080513:
 
-Thanks.
+New trees: cifs, mmc and gfs2.
+
+There are a couple of conflicts between wireless-current and net (notified).
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+(tar balls and patches at
+http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups, it is also built with powerpc allnoconfig,
+44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
+
+Below is a summary of the state of the merge.
+
+We are up to 71 trees (counting Linus' and 13 trees of patches pending for
+Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__14_May_2008_15_09_05_+1000_YmDv3xmOiM8htQrl
+$ git reset --hard stable
+Merging origin/master
+Merging x86-fixes/for-linus
+Merging sched-fixes/for-linus
+Merging powerpc-merge/merge
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sparc-current/master
+Merging sound-current/for-linus
+Merging arm-current/master
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/master
+Merging quilt/driver-core.current
+Merging quilt/usb.current
+Merging quilt/driver-core
+Merging quilt/usb
+Merging x86/for-akpm
+Merging sched/for-akpm
+Merging pci/linux-next
+Merging quilt/device-mapper
+Merging hid/mm
+Merging quilt/i2c
+Merging quilt/kernel-doc
+Merging avr32/avr32-arch
+Merging v4l-dvb/stable
+Merging s390/features
+Merging sh/master
+Merging jfs/next
+Merging kbuild/master
+Merging quilt/ide
+Merging libata/NEXT
+Merging nfs/linux-next
+Merging xfs/master
+Merging infiniband/for-next
+Merging acpi/test
+Merging blackfin/for-linus
+Merging nfsd/nfsd-next
+Merging ieee1394/for-next
+Merging hwmon/testing
+Merging ubi/master
+Merging kvm/master
+Merging dlm/next
+Merging scsi/master
+Merging ia64/test
+Merging tests/master
+CONFLICT (content): Merge conflict in lib/Kconfig.debug
+Merging ocfs2/linux-next
+Merging selinux/for-akpm
+Merging quilt/m68k
+Merging powerpc/powerpc-next
+Merging hrt/mm
+Merging lblnet/master
+Merging ext4/next
+Merging 4xx/next
+Merging async_tx/next
+Merging udf/for_next
+Merging security-testing/next
+Merging net/master
+CONFLICT (content): Merge conflict in drivers/net/wireless/iwlwifi/iwl-4965=
+-rs.c
+CONFLICT (content): Merge conflict in drivers/net/wireless/rt2x00/rt61pci.c
+Merging sparc/master
+Merging galak/powerpc-next
+Merging mtd/master
+Merging wireless/master
+Merging crypto/master
+Merging vfs/vfs-2.6.25
+Merging sound/master
+Merging arm/devel
+Merging cpufreq/master
+Merging v9fs/for-next
+Merging quilt/rr
+CONFLICT (content): Merge conflict in kernel/sysctl.c
+Merging cifs/master
+Merging mmc/next
+Merging gfs2/master
+Merging semaphore/semaphore
+Merging semaphore-removal/semaphore-removal
+CONFLICT (content): Merge conflict in drivers/atm/ambassador.c
+CONFLICT (content): Merge conflict in drivers/net/bonding/bond_main.c
+CONFLICT (content): Merge conflict in drivers/net/bonding/bond_sysfs.c
+Applying idr.h needs spinlock.h
+Merging quilt/ldp.next
+
+--Signature=_Wed__14_May_2008_17_01_06_+1000_r/p_Sx_b60wAISfP
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.6 (GNU/Linux)
 
-iD8DBQFIKnP1TgG2atn1QN8RAn7vAJ4zuQAB2mQtMul2meL69o6EpjxEEQCfUe+3
-yN43fy1KiUclgqruGSnOZAk=
-=N0Yr
+iD8DBQFIKo46TgG2atn1QN8RAlqMAJ9UbJkiH8xIBRT6KXRDl0X93lrFxwCbBale
+oAsOqtDxBC8AqeMMJk2JezE=
+=f/zY
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__14_May_2008_15_09_05_+1000_YmDv3xmOiM8htQrl--
+--Signature=_Wed__14_May_2008_17_01_06_+1000_r/p_Sx_b60wAISfP--
