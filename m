@@ -1,28 +1,30 @@
-From: tony@bakeyournoodle.com (Tony Breeds)
-Subject: Re: linux-next: Tree for May 14
-Date: Thu, 15 May 2008 07:04:47 +1000
-Message-ID: <20080514210447.GK20457@bakeyournoodle.com>
-References: <20080514170106.3cbcb201.sfr@canb.auug.org.au> <Pine.LNX.4.64.0805142237240.11631@anakin> <20080514135008.60e5df96.randy.dunlap@oracle.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: uwb build errors: CONFIG_PCI=n, CONFIG_USB=y
+Date: Wed, 14 May 2008 14:33:47 -0700
+Message-ID: <20080514213347.GA23377@kroah.com>
+References: <Pine.LNX.4.64.0805061356150.17702@shark.he.net> <20080514131749.17675ba0.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753772AbYENVFE@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from pentafluge.infradead.org ([213.146.154.40]:46617 "EHLO
+	pentafluge.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754173AbYENVea (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 May 2008 17:34:30 -0400
 Content-Disposition: inline
-In-Reply-To: <20080514135008.60e5df96.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20080514131749.17675ba0.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: akpm <akpm@linux-foundation.org>, lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, david.vrabel@csr.com
 
-On Wed, May 14, 2008 at 01:50:08PM -0700, Randy Dunlap wrote:
- 
-> Ugh.  Can you please make the log file more readable?
+On Wed, May 14, 2008 at 01:17:49PM -0700, Randy Dunlap wrote:
+> [dropped closed list: linux-uwb@bughost.org]
 > 
-> Or is a problem with my browser (firefox)?
+> This build error has now moved into 2.6.26-rc2-mm1 also.
 
-It's a raw download, save it as a file and then view it (or look at the
-source).
+I'm trying to get a new set of UWB patches from David that should
+hopefully fix this issue.
 
-Yours Tony
+thanks,
 
-  linux.conf.au    http://www.marchsouth.org/
-  Jan 19 - 24 2009 The Australian Linux Technical Conference!
+greg k-h
