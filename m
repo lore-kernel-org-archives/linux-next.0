@@ -1,168 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for May 14
-Date: Wed, 14 May 2008 17:01:06 +1000
-Message-ID: <20080514170106.3cbcb201.sfr@canb.auug.org.au>
+Subject: Re: linux-next: semaphore-removal build breakage
+Date: Thu, 15 May 2008 03:05:10 +1000
+Message-ID: <20080515030510.1874c7b3.sfr@canb.auug.org.au>
+References: <20080428134609.9617eb8e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__14_May_2008_17_01_06_+1000_r/p_Sx_b60wAISfP"
+ boundary="Signature=_Thu__15_May_2008_03_05_10_+1000_R_KAy5Zf93NQXyh+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46047 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33053 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752167AbYENHBS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 14 May 2008 03:01:18 -0400
+	id S1752216AbYENRFV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 14 May 2008 13:05:21 -0400
+In-Reply-To: <20080428134609.9617eb8e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Matthew Wilcox <matthew@wil.cx>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Wed__14_May_2008_17_01_06_+1000_r/p_Sx_b60wAISfP
+--Signature=_Thu__15_May_2008_03_05_10_+1000_R_KAy5Zf93NQXyh+
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Willy,
 
-Changes since next-20080513:
+On Mon, 28 Apr 2008 13:46:09 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next build (x86_64 allmodconfig) broke like this:
+>=20
+> In file included from net/9p/trans_virtio.c:34:
+> include/linux/idr.h:60: error: syntax error before 'spinlock_t'
+> include/linux/idr.h:60: warning: no semicolon at end of struct or union
+> include/linux/idr.h:104: error: field 'idr' has incomplete type
+>=20
+> Caused by commit 2c77d192c68a95a188dd326db1315b3492487c41 ("9p: Convert
+> from semaphore to spinlock") in the semaphore-removal tree.  The
+> following patch fixes it but may well not be correct.
 
-New trees: cifs, mmc and gfs2.
+In fact, it would be also fixed (or hidden) if you put the includes back
+in the order they were before that patch ....
 
-There are a couple of conflicts between wireless-current and net (notified).
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(tar balls and patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups, it is also built with powerpc allnoconfig,
-44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
-
-Below is a summary of the state of the merge.
-
-We are up to 71 trees (counting Linus' and 13 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
+It would be good for this to be fixed - its been there too long now.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-$ git reset --hard stable
-Merging origin/master
-Merging x86-fixes/for-linus
-Merging sched-fixes/for-linus
-Merging powerpc-merge/merge
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sparc-current/master
-Merging sound-current/for-linus
-Merging arm-current/master
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging quilt/driver-core
-Merging quilt/usb
-Merging x86/for-akpm
-Merging sched/for-akpm
-Merging pci/linux-next
-Merging quilt/device-mapper
-Merging hid/mm
-Merging quilt/i2c
-Merging quilt/kernel-doc
-Merging avr32/avr32-arch
-Merging v4l-dvb/stable
-Merging s390/features
-Merging sh/master
-Merging jfs/next
-Merging kbuild/master
-Merging quilt/ide
-Merging libata/NEXT
-Merging nfs/linux-next
-Merging xfs/master
-Merging infiniband/for-next
-Merging acpi/test
-Merging blackfin/for-linus
-Merging nfsd/nfsd-next
-Merging ieee1394/for-next
-Merging hwmon/testing
-Merging ubi/master
-Merging kvm/master
-Merging dlm/next
-Merging scsi/master
-Merging ia64/test
-Merging tests/master
-CONFLICT (content): Merge conflict in lib/Kconfig.debug
-Merging ocfs2/linux-next
-Merging selinux/for-akpm
-Merging quilt/m68k
-Merging powerpc/powerpc-next
-Merging hrt/mm
-Merging lblnet/master
-Merging ext4/next
-Merging 4xx/next
-Merging async_tx/next
-Merging udf/for_next
-Merging security-testing/next
-Merging net/master
-CONFLICT (content): Merge conflict in drivers/net/wireless/iwlwifi/iwl-4965=
--rs.c
-CONFLICT (content): Merge conflict in drivers/net/wireless/rt2x00/rt61pci.c
-Merging sparc/master
-Merging galak/powerpc-next
-Merging mtd/master
-Merging wireless/master
-Merging crypto/master
-Merging vfs/vfs-2.6.25
-Merging sound/master
-Merging arm/devel
-Merging cpufreq/master
-Merging v9fs/for-next
-Merging quilt/rr
-CONFLICT (content): Merge conflict in kernel/sysctl.c
-Merging cifs/master
-Merging mmc/next
-Merging gfs2/master
-Merging semaphore/semaphore
-Merging semaphore-removal/semaphore-removal
-CONFLICT (content): Merge conflict in drivers/atm/ambassador.c
-CONFLICT (content): Merge conflict in drivers/net/bonding/bond_main.c
-CONFLICT (content): Merge conflict in drivers/net/bonding/bond_sysfs.c
-Applying idr.h needs spinlock.h
-Merging quilt/ldp.next
-
---Signature=_Wed__14_May_2008_17_01_06_+1000_r/p_Sx_b60wAISfP
+--Signature=_Thu__15_May_2008_03_05_10_+1000_R_KAy5Zf93NQXyh+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.6 (GNU/Linux)
 
-iD8DBQFIKo46TgG2atn1QN8RAlqMAJ9UbJkiH8xIBRT6KXRDl0X93lrFxwCbBale
-oAsOqtDxBC8AqeMMJk2JezE=
-=f/zY
+iD8DBQFIKxvLTgG2atn1QN8RAteNAJ9eJWYeyNjczBE5iZsbVYYen2MUfQCcDHyc
+cjW/azQGfG3TqNwJRYeKrqc=
+=N2QX
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__14_May_2008_17_01_06_+1000_r/p_Sx_b60wAISfP--
+--Signature=_Thu__15_May_2008_03_05_10_+1000_R_KAy5Zf93NQXyh+--
