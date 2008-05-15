@@ -1,52 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
 Subject: Re: linux-next: upstream build failure
-Date: Thu, 15 May 2008 15:03:15 +1000
-Message-ID: <20080515150315.8a6f96d6.sfr@canb.auug.org.au>
+Date: Wed, 14 May 2008 22:30:06 -0700 (PDT)
+Message-ID: <20080514.223006.118380177.davem@davemloft.net>
 References: <20080515103925.3e282f11.sfr@canb.auug.org.au>
 	<20080514.174520.250034635.davem@davemloft.net>
+	<20080515150315.8a6f96d6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__15_May_2008_15_03_15_+1000_8Vn2M5uzMGX7Vg6Z"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35209 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750751AbYEOFDW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 15 May 2008 01:03:22 -0400
-In-Reply-To: <20080514.174520.250034635.davem@davemloft.net>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:42417
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1751614AbYEOFaL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 May 2008 01:30:11 -0400
+In-Reply-To: <20080515150315.8a6f96d6.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
+To: sfr@canb.auug.org.au
 Cc: bunk@kernel.org, graf.yang@analog.com, cooloney@kernel.org, linux-next@vger.kernel.org
 
---Signature=_Thu__15_May_2008_15_03_15_+1000_8Vn2M5uzMGX7Vg6Z
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 15 May 2008 15:03:15 +1000
 
-Hi Dave,
+> On Wed, 14 May 2008 17:45:20 -0700 (PDT) David Miller <davem@davemloft.net> wrote:
+> >
+> > Andrew sent a copy to Linus, should show up in his tree soon.
+> 
+> OK, thanks.
 
-On Wed, 14 May 2008 17:45:20 -0700 (PDT) David Miller <davem@davemloft.net>=
- wrote:
->
-> Andrew sent a copy to Linus, should show up in his tree soon.
-
-OK, thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__15_May_2008_15_03_15_+1000_8Vn2M5uzMGX7Vg6Z
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
-
-iD8DBQFIK8QXTgG2atn1QN8RAgEbAJ9YTZvt2RJCREXM33BBgokvcZEYpwCfR1Ht
-sKhKEAi8psHtJw8MzUAk9H4=
-=7wxz
------END PGP SIGNATURE-----
-
---Signature=_Thu__15_May_2008_15_03_15_+1000_8Vn2M5uzMGX7Vg6Z--
+In fact it just hit Linus's tree and hour or so ago.
