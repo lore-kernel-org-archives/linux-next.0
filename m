@@ -1,44 +1,34 @@
-From: Sebastian Siewior <linux-crypto@ml.breakpoint.cc>
-Subject: [PATCH] crypto: fix cryptd build fix due to missing ahash
-Date: Thu, 15 May 2008 23:28:56 +0200
-Message-ID: <20080515212856.GB3081@Chamillionaire.breakpoint.cc>
-References: <4694288.1210878773358.JavaMail.oracle@acsmt302.oracle.com>
+From: "Randy.Dunlap" <rdunlap@xenotime.net>
+Subject: LATEST-IS naming
+Date: Thu, 15 May 2008 15:03:54 -0700 (PDT)
+Message-ID: <Pine.LNX.4.64.0805151457570.16405@shark.he.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from Chamillionaire.breakpoint.cc ([85.10.199.196]:51669 "EHLO
-	Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751380AbYEOV3D (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 15 May 2008 17:29:03 -0400
-Content-Disposition: inline
-In-Reply-To: <4694288.1210878773358.JavaMail.oracle@acsmt302.oracle.com>
+Received: from xenotime.net ([66.160.160.81]:52708 "HELO xenotime.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+	id S1751350AbYEOWED (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 May 2008 18:04:03 -0400
+Received: from shark.he.net ([66.160.160.2]) by xenotime.net for <linux-next@vger.kernel.org>; Thu, 15 May 2008 15:03:54 -0700
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <RANDY.DUNLAP@ORACLE.COM>
-Cc: herbert@gondor.apana.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Loc Ho <lho@amcc.com>
+To: linux-next@vger.kernel.org
 
-This was reported by Randy Dunlap:
-|crypto/built-in.o: In function `cryptd_alloc':
-|cryptd.c:(.text+0x9b5a): undefined reference to `crypto_ahash_type'
+Hi Stephen,
 
-Signed-off-by: Sebastian Siewior <sebastian@breakpoint.cc>
----
- crypto/Kconfig |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+With the patch-vXYZ-next-datestamp.{gz,bz2} naming, having a file
+named LATEST-IS-next-datestamp doesn't help scripts fill in the
+vXYZ part of the patch filename.  Would it be possible/feasible
+for the LATEST-IS file to have content to tell what the patch
+file applies to, like:
+v2.6.26-rc2
 
-diff --git a/crypto/Kconfig b/crypto/Kconfig
-index 5963a95..ffcd467 100644
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@ -66,6 +66,7 @@ config CRYPTO_CRYPTD
- 	tristate "Software async crypto daemon"
- 	select CRYPTO_BLKCIPHER
- 	select CRYPTO_MANAGER
-+	select CRYPTO_HASH
- 	help
- 	  This is a generic software asynchronous crypto daemon that
- 	  converts an arbitrary synchronous software crypto algorithm
+or just the full vXYZ[-rc] info in the LATEST-IS filename.
+
+If not, do you have other suggestions/preferences?
+
+Obviously I can get around this problem, but some direct version-datestamp
+info would be helpful.
+
 -- 
-1.5.4.3
-
+~Randy
