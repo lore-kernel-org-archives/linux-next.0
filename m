@@ -1,30 +1,52 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: uwb build errors: CONFIG_PCI=n, CONFIG_USB=y
-Date: Wed, 14 May 2008 14:33:47 -0700
-Message-ID: <20080514213347.GA23377@kroah.com>
-References: <Pine.LNX.4.64.0805061356150.17702@shark.he.net> <20080514131749.17675ba0.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: upstream build failure
+Date: Thu, 15 May 2008 10:39:25 +1000
+Message-ID: <20080515103925.3e282f11.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__15_May_2008_10_39_25_+1000_AU=2MoHppf6GZg1T"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pentafluge.infradead.org ([213.146.154.40]:46617 "EHLO
-	pentafluge.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754173AbYENVea (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 May 2008 17:34:30 -0400
-Content-Disposition: inline
-In-Reply-To: <20080514131749.17675ba0.randy.dunlap@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:32801 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753195AbYEOAjh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 14 May 2008 20:39:37 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: akpm <akpm@linux-foundation.org>, lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, david.vrabel@csr.com
+To: David Miller <davem@davemloft.net>
+Cc: Adrian Bunk <bunk@kernel.org>, Graf Yang <graf.yang@analog.com>, Bryan Wu <cooloney@kernel.org>, linux-next@vger.kernel.org
 
-On Wed, May 14, 2008 at 01:17:49PM -0700, Randy Dunlap wrote:
-> [dropped closed list: linux-uwb@bughost.org]
-> 
-> This build error has now moved into 2.6.26-rc2-mm1 also.
+--Signature=_Thu__15_May_2008_10_39_25_+1000_AU=2MoHppf6GZg1T
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm trying to get a new set of UWB patches from David that should
-hopefully fix this issue.
+Hi Dave,
 
-thanks,
+Today's linux-next build of Linus' tree (x86_64 allmodconfig) failed like
+this:
 
-greg k-h
+net/irda/irnet/irnet_irda.c: In function 'irnet_discovery_indication':
+net/irda/irnet/irnet_irda.c:1676: error: implicit declaration of function '=
+get_unaligned'
+
+I have applied Adrian's patch ("irnet_irda.c must #include
+<asm/unaligned.h>") which you have queued but not pushed out, yet.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__15_May_2008_10_39_25_+1000_AU=2MoHppf6GZg1T
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+iD8DBQFIK4ZBTgG2atn1QN8RAqRIAJ4s33oPEYUlr9QV3mCcmdd9w2cBJgCZAZZg
+YhdQb151/rbHz539dJOnzKk=
+=6W8R
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__15_May_2008_10_39_25_+1000_AU=2MoHppf6GZg1T--
