@@ -1,33 +1,34 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: usb.current merge conflict
-Date: Wed, 14 May 2008 19:39:11 -0700
-Message-ID: <20080515023911.GA21941@kroah.com>
-References: <20080515111244.25b945ea.sfr@canb.auug.org.au>
+Subject: Re: linux-next: i2c/driver-core merge conflict
+Date: Wed, 14 May 2008 20:09:42 -0700
+Message-ID: <20080515030942.GA1638@kroah.com>
+References: <20080515120006.b336a720.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pentafluge.infradead.org ([213.146.154.40]:35407 "EHLO
+Received: from pentafluge.infradead.org ([213.146.154.40]:55656 "EHLO
 	pentafluge.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750999AbYEOCmH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 May 2008 22:42:07 -0400
+	with ESMTP id S1750999AbYEODMR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 May 2008 23:12:17 -0400
 Content-Disposition: inline
-In-Reply-To: <20080515111244.25b945ea.sfr@canb.auug.org.au>
+In-Reply-To: <20080515120006.b336a720.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+Cc: Jean Delvare <khali@linux-fr.org>, linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>
 
-On Thu, May 15, 2008 at 11:12:44AM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On Thu, May 15, 2008 at 12:00:06PM +1000, Stephen Rothwell wrote:
+> Hi Jean, Greg,
 > 
-> Today's linux-next merge of the usb.current tree got a trivial conflict
-> in drivers/usb/gadget/serial.c.  It looks like someone fixed up the
-> spacing around some ','s before the "USB: serial gadget: cleanup/reorg"
-> patch went into Linus' tree.
+> Today's linux-next merge of the i2c tree got a conflict in
+> include/linux/i2c.h between commit
+> e38c93bf253cb3176478a1943cd2306e8413d2bb ("driver core: remove
+> KOBJ_NAME_LEN define") from the driver-core tree and commit
+> f625810ef235a8b238427df3129792f89187c085 ("i2c: Kill the old driver
+> matching scheme") from the i2c tree.  The former changes the definition
+> of driver_name in two places, the letter removes the definitions.  I went
+> with the latter.
 
-Yes, I did some checkpatch.pl cleanups before sending them to Linus,
-they will merge away with the next -git release that comes out tomorrow.
-
-thanks,
+Thanks, that should be the correct one.
 
 greg k-h
