@@ -1,47 +1,44 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: i2c/driver-core merge conflict
-Date: Thu, 15 May 2008 11:47:15 -0700
-Message-ID: <20080515184715.GA15572@kroah.com>
-References: <20080515120006.b336a720.sfr@canb.auug.org.au> <20080515030942.GA1638@kroah.com> <20080515095814.49e03731@hyperion.delvare>
+From: Sebastian Siewior <linux-crypto@ml.breakpoint.cc>
+Subject: [PATCH] crypto: fix cryptd build fix due to missing ahash
+Date: Thu, 15 May 2008 23:28:56 +0200
+Message-ID: <20080515212856.GB3081@Chamillionaire.breakpoint.cc>
+References: <4694288.1210878773358.JavaMail.oracle@acsmt302.oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pentafluge.infradead.org ([213.146.154.40]:50664 "EHLO
-	pentafluge.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755017AbYEOTuO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 May 2008 15:50:14 -0400
+Received: from Chamillionaire.breakpoint.cc ([85.10.199.196]:51669 "EHLO
+	Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751380AbYEOV3D (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 May 2008 17:29:03 -0400
 Content-Disposition: inline
-In-Reply-To: <20080515095814.49e03731@hyperion.delvare>
+In-Reply-To: <4694288.1210878773358.JavaMail.oracle@acsmt302.oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>
+To: Randy Dunlap <RANDY.DUNLAP@ORACLE.COM>
+Cc: herbert@gondor.apana.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Loc Ho <lho@amcc.com>
 
-On Thu, May 15, 2008 at 09:58:14AM +0200, Jean Delvare wrote:
-> On Wed, 14 May 2008 20:09:42 -0700, Greg KH wrote:
-> > On Thu, May 15, 2008 at 12:00:06PM +1000, Stephen Rothwell wrote:
-> > > Hi Jean, Greg,
-> > > 
-> > > Today's linux-next merge of the i2c tree got a conflict in
-> > > include/linux/i2c.h between commit
-> > > e38c93bf253cb3176478a1943cd2306e8413d2bb ("driver core: remove
-> > > KOBJ_NAME_LEN define") from the driver-core tree and commit
-> > > f625810ef235a8b238427df3129792f89187c085 ("i2c: Kill the old driver
-> > > matching scheme") from the i2c tree.  The former changes the definition
-> > > of driver_name in two places, the letter removes the definitions.  I went
-> > > with the latter.
-> > 
-> > Thanks, that should be the correct one.
-> 
-> Correct, thanks.
-> 
-> Greg, note that I plan to send this patch to Linus quickly, so you will
-> have to adjust your patch (i.e. simply remove the linux/i2c.h chunks
-> that no longer apply) for 2.6.26-rc3.
+This was reported by Randy Dunlap:
+|crypto/built-in.o: In function `cryptd_alloc':
+|cryptd.c:(.text+0x9b5a): undefined reference to `crypto_ahash_type'
 
-No problem, I will adjust them after your patches go to Linus, mine are
-queued up for 2.6.27, not .26.
+Signed-off-by: Sebastian Siewior <sebastian@breakpoint.cc>
+---
+ crypto/Kconfig |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-thanks,
+diff --git a/crypto/Kconfig b/crypto/Kconfig
+index 5963a95..ffcd467 100644
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -66,6 +66,7 @@ config CRYPTO_CRYPTD
+ 	tristate "Software async crypto daemon"
+ 	select CRYPTO_BLKCIPHER
+ 	select CRYPTO_MANAGER
++	select CRYPTO_HASH
+ 	help
+ 	  This is a generic software asynchronous crypto daemon that
+ 	  converts an arbitrary synchronous software crypto algorithm
+-- 
+1.5.4.3
 
-greg k-h
