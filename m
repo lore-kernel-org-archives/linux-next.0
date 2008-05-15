@@ -1,113 +1,42 @@
-From: Randy Dunlap <RANDY.DUNLAP@ORACLE.COM>
-Subject: next-20080515 crypto build failure
-Date: Thu, 15 May 2008 14:12:53 -0500 (CDT)
-Message-ID: <4694288.1210878773358.JavaMail.oracle@acsmt302.oracle.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: linux-next: i2c build failure
+Date: Thu, 15 May 2008 14:47:58 -0500
+Message-ID: <20080515194758.GA12267@lixom.net>
+References: <20080515121241.1ede11be.sfr@canb.auug.org.au> <20080515102215.62378c4f@hyperion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from agminet01.oracle.com ([141.146.126.228]:30766 "EHLO
-	agminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753498AbYEOTOE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 May 2008 15:14:04 -0400
-Content-Language: en-US
+Received: from lixom.net ([66.141.50.11]:58102 "EHLO mail.lixom.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751300AbYEOTb7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 May 2008 15:31:59 -0400
+Content-Disposition: inline
+In-Reply-To: <20080515102215.62378c4f@hyperion.delvare>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: herbert@gondor.apana.org.au, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: Jean Delvare <khali@linux-fr.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-on x86_64:
+Hi,
 
-crypto/built-in.o: In function `cryptd_alloc':
-cryptd.c:(.text+0x9b5a): undefined reference to `crypto_ahash_type'
-make[1]: *** [.tmp_vmlinux1] Error 1
+On Thu, May 15, 2008 at 10:22:15AM +0200, Jean Delvare wrote:
 
+> Thanks for the notification and sorry for the trouble. I thought that I
+> knew about all users of struct i2c_board_info and that they were all
+> converted by now but obviously not. I didn't know that fsl_soc.c had
+> been partly forked for the pasemi platform.
 
-CONFIG_CRYPTO=y
+Yeah, I did that because the "real" solution wasn't going to be ready
+for .25 and I needed my boards to work. I saw no need in abstracting
+it out and sharing code when it was something so simple that was just
+going to go away soon anyway...
 
-#
-# Crypto core or helper
-#
-CONFIG_CRYPTO_ALGAPI=y
-CONFIG_CRYPTO_BLKCIPHER=y
-CONFIG_CRYPTO_MANAGER=y
-# CONFIG_CRYPTO_GF128MUL is not set
-CONFIG_CRYPTO_NULL=y
-CONFIG_CRYPTO_CRYPTD=y
-# CONFIG_CRYPTO_AUTHENC is not set
+> Olof, please test it if you can. I will push this patch to Linux
+> quickly.
 
-#
-# Authenticated Encryption with Associated Data
-#
-# CONFIG_CRYPTO_CCM is not set
-# CONFIG_CRYPTO_GCM is not set
-# CONFIG_CRYPTO_SEQIV is not set
+Seems to work ok here.
 
-#
-# Block modes
-#
-CONFIG_CRYPTO_CBC=y
-# CONFIG_CRYPTO_CTR is not set
-CONFIG_CRYPTO_CTS=y
-CONFIG_CRYPTO_ECB=y
-# CONFIG_CRYPTO_LRW is not set
-# CONFIG_CRYPTO_PCBC is not set
-# CONFIG_CRYPTO_XTS is not set
-
-#
-# Hash modes
-#
-# CONFIG_CRYPTO_HMAC is not set
-# CONFIG_CRYPTO_XCBC is not set
-
-#
-# Digest
-#
-# CONFIG_CRYPTO_CRC32C is not set
-CONFIG_CRYPTO_MD4=y
-# CONFIG_CRYPTO_MD5 is not set
-CONFIG_CRYPTO_MICHAEL_MIC=y
-# CONFIG_CRYPTO_RMD128 is not set
-# CONFIG_CRYPTO_RMD160 is not set
-# CONFIG_CRYPTO_RMD256 is not set
-CONFIG_CRYPTO_RMD320=y
-# CONFIG_CRYPTO_SHA1 is not set
-# CONFIG_CRYPTO_SHA256 is not set
-CONFIG_CRYPTO_SHA512=y
-# CONFIG_CRYPTO_TGR192 is not set
-CONFIG_CRYPTO_WP512=y
-
-#
-# Ciphers
-#
-CONFIG_CRYPTO_AES=y
-CONFIG_CRYPTO_AES_X86_64=y
-# CONFIG_CRYPTO_ANUBIS is not set
-CONFIG_CRYPTO_ARC4=y
-# CONFIG_CRYPTO_BLOWFISH is not set
-# CONFIG_CRYPTO_CAMELLIA is not set
-CONFIG_CRYPTO_CAST5=y
-# CONFIG_CRYPTO_CAST6 is not set
-CONFIG_CRYPTO_DES=y
-# CONFIG_CRYPTO_FCRYPT is not set
-# CONFIG_CRYPTO_KHAZAD is not set
-# CONFIG_CRYPTO_SALSA20 is not set
-# CONFIG_CRYPTO_SALSA20_X86_64 is not set
-CONFIG_CRYPTO_SEED=y
-# CONFIG_CRYPTO_SERPENT is not set
-CONFIG_CRYPTO_TEA=y
-CONFIG_CRYPTO_TWOFISH=y
-CONFIG_CRYPTO_TWOFISH_COMMON=y
-CONFIG_CRYPTO_TWOFISH_X86_64=y
-
-#
-# Compression
-#
-CONFIG_CRYPTO_DEFLATE=y
-# CONFIG_CRYPTO_LZO is not set
-# CONFIG_CRYPTO_HW is not set
+Acked-by: Olof Johansson <olof@lixom.net>
 
 
----
-~Randy
-
+-Olof
