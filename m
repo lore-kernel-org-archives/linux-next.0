@@ -1,34 +1,46 @@
-From: "Randy.Dunlap" <rdunlap@xenotime.net>
-Subject: LATEST-IS naming
-Date: Thu, 15 May 2008 15:03:54 -0700 (PDT)
-Message-ID: <Pine.LNX.4.64.0805151457570.16405@shark.he.net>
+From: Randy Dunlap <RANDY.DUNLAP@ORACLE.COM>
+Subject: Re: [PATCH] crypto: fix cryptd build fix due to missing ahash
+Date: Thu, 15 May 2008 17:33:54 -0500 (CDT)
+Message-ID: <31763212.1210890834426.JavaMail.oracle@acsmt305.oracle.com>
+References: <4694288.1210878773358.JavaMail.oracle@acsmt302.oracle.com> <20080515212856.GB3081@Chamillionaire.breakpoint.cc>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xenotime.net ([66.160.160.81]:52708 "HELO xenotime.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-	id S1751350AbYEOWED (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 15 May 2008 18:04:03 -0400
-Received: from shark.he.net ([66.160.160.2]) by xenotime.net for <linux-next@vger.kernel.org>; Thu, 15 May 2008 15:03:54 -0700
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1761161AbYEOWfs@vger.kernel.org>
+In-Reply-To: <20080515212856.GB3081@Chamillionaire.breakpoint.cc>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sebastian Siewior <linux-crypto@ml.breakpoint.cc>
+Cc: linux-kernel@vger.kernel.org, Loc Ho <lho@amcc.com>, herbert@gondor.apana.org.au, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
 
-With the patch-vXYZ-next-datestamp.{gz,bz2} naming, having a file
-named LATEST-IS-next-datestamp doesn't help scripts fill in the
-vXYZ part of the patch filename.  Would it be possible/feasible
-for the LATEST-IS file to have content to tell what the patch
-file applies to, like:
-v2.6.26-rc2
+> This was reported by Randy Dunlap:
+> |crypto/built-in.o: In function `cryptd_alloc':
+> |cryptd.c:(.text+0x9b5a): undefined reference to `crypto_ahash_type'
+> 
+> Signed-off-by: Sebastian Siewior <sebastian@breakpoint.cc>
 
-or just the full vXYZ[-rc] info in the LATEST-IS filename.
+Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-If not, do you have other suggestions/preferences?
+Thanks.
 
-Obviously I can get around this problem, but some direct version-datestamp
-info would be helpful.
-
--- 
-~Randy
+> ---
+>  crypto/Kconfig |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/crypto/Kconfig b/crypto/Kconfig
+> index 5963a95..ffcd467 100644
+> --- a/crypto/Kconfig
+> +++ b/crypto/Kconfig
+> @@ -66,6 +66,7 @@ config CRYPTO_CRYPTD
+>  	tristate "Software async crypto daemon"
+>  	select CRYPTO_BLKCIPHER
+>  	select CRYPTO_MANAGER
+> +	select CRYPTO_HASH
+>  	help
+>  	  This is a generic software asynchronous crypto daemon that
+>  	  converts an arbitrary synchronous software crypto algorithm
+> -- 
+> 1.5.4.3
+> 
