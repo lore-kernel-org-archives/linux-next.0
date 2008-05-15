@@ -1,55 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: i2c build failure
-Date: Thu, 15 May 2008 12:12:41 +1000
-Message-ID: <20080515121241.1ede11be.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: usb.current merge conflict
+Date: Wed, 14 May 2008 19:39:11 -0700
+Message-ID: <20080515023911.GA21941@kroah.com>
+References: <20080515111244.25b945ea.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__15_May_2008_12_12_41_+1000_s+WY.xqAM0zzbPeZ"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47486 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751991AbYEOCMx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 14 May 2008 22:12:53 -0400
+Received: from pentafluge.infradead.org ([213.146.154.40]:35407 "EHLO
+	pentafluge.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750999AbYEOCmH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 May 2008 22:42:07 -0400
+Content-Disposition: inline
+In-Reply-To: <20080515111244.25b945ea.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: linux-next@vger.kernel.org, Olof Johansson <olof@lixom.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Thu__15_May_2008_12_12_41_+1000_s+WY.xqAM0zzbPeZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, May 15, 2008 at 11:12:44AM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the usb.current tree got a trivial conflict
+> in drivers/usb/gadget/serial.c.  It looks like someone fixed up the
+> spacing around some ','s before the "USB: serial gadget: cleanup/reorg"
+> patch went into Linus' tree.
 
-Hi Jean,
+Yes, I did some checkpatch.pl cleanups before sending them to Linus,
+they will merge away with the next -git release that comes out tomorrow.
 
-Today's linux-next build (powerpc ppc64_defconfig) fails like this:
+thanks,
 
-arch/powerpc/platforms/pasemi/misc.c: In function 'find_i2c_driver':
-arch/powerpc/platforms/pasemi/misc.c:43: error: 'struct i2c_board_info' has=
- no member named 'driver_name'
-arch/powerpc/platforms/pasemi/misc.c:44: error: 'struct i2c_board_info' has=
- no member named 'driver_name'
-arch/powerpc/platforms/pasemi/misc.c:44: error: 'struct i2c_board_info' has=
- no member named 'driver_name'
-
-So I reverted commit f625810ef235a8b238427df3129792f89187c085 ("i2c: Kill
-the old driver matching scheme").  Obviously not the correct fix, but it
-makes the build work.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__15_May_2008_12_12_41_+1000_s+WY.xqAM0zzbPeZ
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
-
-iD8DBQFIK5wiTgG2atn1QN8RAsOHAJ42eajYlEk+L0oBS5nEnF4DPK9MfACfbwnQ
-QFyuH8cH1ZP5+xYBMOcScS4=
-=4z3A
------END PGP SIGNATURE-----
-
---Signature=_Thu__15_May_2008_12_12_41_+1000_s+WY.xqAM0zzbPeZ--
+greg k-h
