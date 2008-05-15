@@ -1,42 +1,47 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: linux-next: i2c build failure
-Date: Thu, 15 May 2008 14:47:58 -0500
-Message-ID: <20080515194758.GA12267@lixom.net>
-References: <20080515121241.1ede11be.sfr@canb.auug.org.au> <20080515102215.62378c4f@hyperion.delvare>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: i2c/driver-core merge conflict
+Date: Thu, 15 May 2008 11:47:15 -0700
+Message-ID: <20080515184715.GA15572@kroah.com>
+References: <20080515120006.b336a720.sfr@canb.auug.org.au> <20080515030942.GA1638@kroah.com> <20080515095814.49e03731@hyperion.delvare>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from lixom.net ([66.141.50.11]:58102 "EHLO mail.lixom.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751300AbYEOTb7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 15 May 2008 15:31:59 -0400
+Received: from pentafluge.infradead.org ([213.146.154.40]:50664 "EHLO
+	pentafluge.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755017AbYEOTuO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 May 2008 15:50:14 -0400
 Content-Disposition: inline
-In-Reply-To: <20080515102215.62378c4f@hyperion.delvare>
+In-Reply-To: <20080515095814.49e03731@hyperion.delvare>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Jean Delvare <khali@linux-fr.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>
 
-Hi,
+On Thu, May 15, 2008 at 09:58:14AM +0200, Jean Delvare wrote:
+> On Wed, 14 May 2008 20:09:42 -0700, Greg KH wrote:
+> > On Thu, May 15, 2008 at 12:00:06PM +1000, Stephen Rothwell wrote:
+> > > Hi Jean, Greg,
+> > > 
+> > > Today's linux-next merge of the i2c tree got a conflict in
+> > > include/linux/i2c.h between commit
+> > > e38c93bf253cb3176478a1943cd2306e8413d2bb ("driver core: remove
+> > > KOBJ_NAME_LEN define") from the driver-core tree and commit
+> > > f625810ef235a8b238427df3129792f89187c085 ("i2c: Kill the old driver
+> > > matching scheme") from the i2c tree.  The former changes the definition
+> > > of driver_name in two places, the letter removes the definitions.  I went
+> > > with the latter.
+> > 
+> > Thanks, that should be the correct one.
+> 
+> Correct, thanks.
+> 
+> Greg, note that I plan to send this patch to Linus quickly, so you will
+> have to adjust your patch (i.e. simply remove the linux/i2c.h chunks
+> that no longer apply) for 2.6.26-rc3.
 
-On Thu, May 15, 2008 at 10:22:15AM +0200, Jean Delvare wrote:
+No problem, I will adjust them after your patches go to Linus, mine are
+queued up for 2.6.27, not .26.
 
-> Thanks for the notification and sorry for the trouble. I thought that I
-> knew about all users of struct i2c_board_info and that they were all
-> converted by now but obviously not. I didn't know that fsl_soc.c had
-> been partly forked for the pasemi platform.
+thanks,
 
-Yeah, I did that because the "real" solution wasn't going to be ready
-for .25 and I needed my boards to work. I saw no need in abstracting
-it out and sharing code when it was something so simple that was just
-going to go away soon anyway...
-
-> Olof, please test it if you can. I will push this patch to Linux
-> quickly.
-
-Seems to work ok here.
-
-Acked-by: Olof Johansson <olof@lixom.net>
-
-
--Olof
+greg k-h
