@@ -1,32 +1,33 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: upstream build failure
-Date: Wed, 14 May 2008 22:30:06 -0700 (PDT)
-Message-ID: <20080514.223006.118380177.davem@davemloft.net>
-References: <20080515103925.3e282f11.sfr@canb.auug.org.au>
-	<20080514.174520.250034635.davem@davemloft.net>
-	<20080515150315.8a6f96d6.sfr@canb.auug.org.au>
+From: Olaf Hering <olaf@aepfle.de>
+Subject: Re: linux-next: powercp-next build failure
+Date: Thu, 15 May 2008 09:06:51 +0200
+Message-ID: <20080515070651.GA22079@aepfle.de>
+References: <20080515145913.5436adb9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:42417
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1751614AbYEOFaL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 15 May 2008 01:30:11 -0400
-In-Reply-To: <20080515150315.8a6f96d6.sfr@canb.auug.org.au>
+Received: from mail-out.m-online.net ([212.18.0.9]:37043 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752633AbYEOHGz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 May 2008 03:06:55 -0400
+Content-Disposition: inline
+In-Reply-To: <20080515145913.5436adb9.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: bunk@kernel.org, graf.yang@analog.com, cooloney@kernel.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Paul Mackerras <paulus@samba.org>, linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org, David Miller <davem@davemloft.net>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 15 May 2008 15:03:15 +1000
+On Thu, May 15, Stephen Rothwell wrote:
 
-> On Wed, 14 May 2008 17:45:20 -0700 (PDT) David Miller <davem@davemloft.net> wrote:
-> >
-> > Andrew sent a copy to Linus, should show up in his tree soon.
+> Today's linux-next build (sparc64 defconfig) fails like this:
 > 
-> OK, thanks.
+> drivers/of/device.c: In function `modalias_show':
+> drivers/of/device.c:66: error: implicit declaration of function `of_device_get_modalias'
+> 
+> Caused by commit 140b932f8cb6cced10b96860651a198b1b89cbb9 ("[POWERPC]
+> Create modalias file in sysfs for of_platform bus") from the powerpc-next
+> tree as there is a definition and declaration of of_device_get_modalias
+> only for powerpc.  I reverted that commit for today.
 
-In fact it just hit Linus's tree and hour or so ago.
+Better fix it up because my patch was for 2.6.25, and I cant follow
+mainline due to time constraints.
