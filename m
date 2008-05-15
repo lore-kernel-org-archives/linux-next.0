@@ -1,34 +1,57 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: i2c/driver-core merge conflict
-Date: Wed, 14 May 2008 20:09:42 -0700
-Message-ID: <20080515030942.GA1638@kroah.com>
-References: <20080515120006.b336a720.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: semaphore-removal build breakage
+Date: Thu, 15 May 2008 14:23:42 +1000
+Message-ID: <20080515142342.46426d33.sfr@canb.auug.org.au>
+References: <20080428134609.9617eb8e.sfr@canb.auug.org.au>
+	<20080515030510.1874c7b3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__15_May_2008_14_23_42_+1000_jj8s_tUk2Lwie+Kc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pentafluge.infradead.org ([213.146.154.40]:55656 "EHLO
-	pentafluge.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750999AbYEODMR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 May 2008 23:12:17 -0400
-Content-Disposition: inline
-In-Reply-To: <20080515120006.b336a720.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60996 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750987AbYEOEXy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 May 2008 00:23:54 -0400
+In-Reply-To: <20080515030510.1874c7b3.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jean Delvare <khali@linux-fr.org>, linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>
+To: Matthew Wilcox <matthew@wil.cx>
+Cc: linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-On Thu, May 15, 2008 at 12:00:06PM +1000, Stephen Rothwell wrote:
-> Hi Jean, Greg,
-> 
-> Today's linux-next merge of the i2c tree got a conflict in
-> include/linux/i2c.h between commit
-> e38c93bf253cb3176478a1943cd2306e8413d2bb ("driver core: remove
-> KOBJ_NAME_LEN define") from the driver-core tree and commit
-> f625810ef235a8b238427df3129792f89187c085 ("i2c: Kill the old driver
-> matching scheme") from the i2c tree.  The former changes the definition
-> of driver_name in two places, the letter removes the definitions.  I went
-> with the latter.
+--Signature=_Thu__15_May_2008_14_23_42_+1000_jj8s_tUk2Lwie+Kc
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, that should be the correct one.
+Hi Willy,
 
-greg k-h
+On Thu, 15 May 2008 03:05:10 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> In fact, it would be also fixed (or hidden) if you put the includes back
+> in the order they were before that patch ....
+>=20
+> It would be good for this to be fixed - its been there too long now.
+
+So, for now, I have reverted commit
+2c77d192c68a95a188dd326db1315b3492487c41 ("9p: Convert from semaphore to
+spinlock") instead of applying the patch that added apinlock.h to idr.h.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__15_May_2008_14_23_42_+1000_jj8s_tUk2Lwie+Kc
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+iD8DBQFIK7rTTgG2atn1QN8RAnN9AKCBwJ3XcOhLgi8vmOldaJbYgoJSCACfS8ez
+Q/d0kNbnHUkX+PS/Xnm+zOU=
+=YxRC
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__15_May_2008_14_23_42_+1000_jj8s_tUk2Lwie+Kc--
