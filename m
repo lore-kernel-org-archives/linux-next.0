@@ -1,207 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for May 16
-Date: Fri, 16 May 2008 18:15:29 +1000
-Message-ID: <20080516181529.c1109de1.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] 3c515: fix using pnp_get_resource when
+ CONFIG_ISAPNP=n
+Date: Fri, 16 May 2008 10:35:24 -0700
+Message-ID: <20080516103524.0b00ffb6.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__16_May_2008_18_15_29_+1000_USv.Ld/uVd+iDGVV"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47622 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751458AbYEPIPi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 16 May 2008 04:15:38 -0400
+Received: from agminet01.oracle.com ([141.146.126.228]:15495 "EHLO
+	agminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751640AbYEPRgF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 16 May 2008 13:36:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: netdev <netdev@vger.kernel.org>, jgarzik <jgarzik@pobox.com>
+Cc: linux-next@vger.kernel.org, bjorn.helgaas@hp.com, akpm <akpm@linux-foundation.org>
 
---Signature=_Fri__16_May_2008_18_15_29_+1000_USv.Ld/uVd+iDGVV
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Hi all,
+3c515.c uses pnp_irq(), which calls pnp_get_resource(),
+which is not defined when CONFIG_PNP=n, so in that case,
+get the IRQ from a hardware register.
 
-Changes since next-20080515:
+3c515.c:(.text+0x3adc0): undefined reference to `pnp_get_resource'
 
-The build bug in upstream is gone.
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/net/3c515.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-The i2c revert is no longer needed.  But it gained a trivial conflict due
-to the fix.
-
-The net tree lost a couple of conflicts.
-
-The semaphore-removal tree needed three patches reverted because similar
-patches were merged into upstream and the scsi-rc-fixes trees.
-
-I have applied the following temporary patches for known build problems:
-
-	"move of_device_get_modalias fo drivers/of" - the powerpc-next
-tree broke sparc - this should be in the powerpc-next tree shortly
-
-	"initcalls: Fix m68k build and possible buffer overflow" - the
-compiler was generating calls to strlen on m68k (this required me to also
-apply two other patches that Linus applied to his tree).  These three are
-already in Linus' tree.
-
-	"Fix various 8390 builds" - the net tree broke builds on various
-architectures - hopefully this patch will go into the net tree shortly.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(tar balls and patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups, it is also built with powerpc allnoconfig,
-44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
-
-Below is a summary of the state of the merge.
-
-We are up to 74 trees (counting Linus' and 13 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging x86-fixes/for-linus
-Merging sched-fixes/for-linus
-Merging powerpc-merge/merge
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sparc-current/master
-Merging sound-current/for-linus
-Merging arm-current/master
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging quilt/driver-core
-Merging quilt/usb
-Merging x86/for-akpm
-Merging sched/for-akpm
-Merging pci/linux-next
-Merging quilt/device-mapper
-Merging hid/mm
-Merging quilt/i2c
-CONFLICT (content): Merge conflict in arch/powerpc/platforms/pasemi/misc.c
-CONFLICT (content): Merge conflict in include/linux/i2c.h
-Merging quilt/kernel-doc
-Merging avr32/avr32-arch
-Merging v4l-dvb/stable
-Merging s390/features
-Merging sh/master
-Merging jfs/next
-Merging kbuild/master
-Merging quilt/ide
-Merging libata/NEXT
-Merging nfs/linux-next
-Merging xfs/master
-Merging infiniband/for-next
-Merging acpi/test
-Merging blackfin/for-linus
-Merging nfsd/nfsd-next
-Merging ieee1394/for-next
-Merging hwmon/testing
-Merging ubi/master
-Merging kvm/master
-Merging dlm/next
-Merging scsi/master
-Merging ia64/test
-Merging tests/master
-CONFLICT (content): Merge conflict in lib/Kconfig.debug
-Merging ocfs2/linux-next
-Merging selinux/for-akpm
-Merging quilt/m68k
-Merging powerpc/powerpc-next
-Merging hrt/mm
-Merging lblnet/master
-Merging ext4/next
-Merging 4xx/next
-Merging async_tx/next
-Merging udf/for_next
-Merging security-testing/next
-Merging net/master
-Merging sparc/master
-Merging galak/powerpc-next
-Merging mtd/master
-Merging wireless/master
-Merging crypto/master
-Merging vfs/vfs-2.6.25
-Merging sound/master
-Merging arm/devel
-Merging cpufreq/master
-Merging v9fs/for-next
-Merging quilt/rr
-Merging cifs/master
-Merging mmc/next
-Merging gfs2/master
-Merging semaphore/semaphore
-Merging semaphore-removal/semaphore-removal
-CONFLICT (content): Merge conflict in drivers/atm/ambassador.c
-CONFLICT (content): Merge conflict in drivers/net/bonding/bond_main.c
-CONFLICT (content): Merge conflict in drivers/net/bonding/bond_sysfs.c
-CONFLICT (content): Merge conflict in drivers/scsi/qla2xxx/qla_attr.c
-CONFLICT (content): Merge conflict in drivers/scsi/qla2xxx/qla_def.h
-CONFLICT (content): Merge conflict in drivers/scsi/qla2xxx/qla_mbx.c
-CONFLICT (content): Merge conflict in drivers/scsi/qla2xxx/qla_mid.c
-CONFLICT (content): Merge conflict in drivers/scsi/qla2xxx/qla_os.c
-CONFLICT (content): Merge conflict in net/9p/trans_virtio.c
-$ git reset --hard
-$ git checkout -b tmp semaphore-removal/semaphore-removal
-Created commit 9732cab: Revert "Convert qla_os to use mutex instead of sema=
-phore"
-Created commit ca74900: Revert "9p: Convert from semaphore to spinlock"
-Created commit 2d4be98: Revert "qla2xxx: Turn vport_sem into vport_mutex"
-$ git checkout master
-CONFLICT (content): Merge conflict in drivers/atm/ambassador.c
-CONFLICT (content): Merge conflict in drivers/net/bonding/bond_main.c
-CONFLICT (content): Merge conflict in drivers/net/bonding/bond_sysfs.c
-$ git merge tmp
-Merging quilt/ldp.next
-Applying move of_device_get_modalias fo drivers/of
-Applying     Clean up 'print_fn_descriptor_symbol()' types
-Applying     Split up 'do_initcalls()' into two simpler functions
-Applying initcalls: Fix m68k build and possible buffer overflow
-Applying Fix various 8390 builds
-
---Signature=_Fri__16_May_2008_18_15_29_+1000_USv.Ld/uVd+iDGVV
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
-
-iD8DBQFILUKlTgG2atn1QN8RAqgPAJ49qSTyT7Uaz0QIF2ZftySF9i/XeACeNKr8
-0o5WpaOq5g//+cXtokoG500=
-=z6k1
------END PGP SIGNATURE-----
-
---Signature=_Fri__16_May_2008_18_15_29_+1000_USv.Ld/uVd+iDGVV--
+--- next-20080516.orig/drivers/net/3c515.c
++++ next-20080516/drivers/net/3c515.c
+@@ -572,12 +572,16 @@ static int corkscrew_setup(struct net_de
+ 	int irq;
+ 	DECLARE_MAC_BUF(mac);
+ 
++#ifdef __ISAPNP__
+ 	if (idev) {
+ 		irq = pnp_irq(idev, 0);
+ 		vp->dev = &idev->dev;
+ 	} else {
+ 		irq = inw(ioaddr + 0x2002) & 15;
+ 	}
++#else
++	irq = inw(ioaddr + 0x2002) & 15;
++#endif
+ 
+ 	dev->base_addr = ioaddr;
+ 	dev->irq = irq;
