@@ -1,104 +1,68 @@
-From: tony@bakeyournoodle.com (Tony Breeds)
-Subject: Re: linux-next: Tree for May 14
-Date: Fri, 16 May 2008 12:10:09 +1000
-Message-ID: <20080516021009.GS20457@bakeyournoodle.com>
-References: <20080514170106.3cbcb201.sfr@canb.auug.org.au> <Pine.LNX.4.64.0805142237240.11631@anakin> <20080514135008.60e5df96.randy.dunlap@oracle.com> <20080514210447.GK20457@bakeyournoodle.com> <20080515010550.GL20457@bakeyournoodle.com> <Pine.LNX.4.64.0805150914220.11631@anakin>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: semaphot-removal merge conflicts
+Date: Fri, 16 May 2008 13:19:28 +1000
+Message-ID: <20080516131928.b72ade85.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__16_May_2008_13_19_28_+1000_xI=kpQ5UPJT+8H3M"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pythia.bakeyournoodle.com ([203.82.209.197]:38588 "EHLO
-	pythia.bakeyournoodle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751569AbYEPCKL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 May 2008 22:10:11 -0400
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.64.0805150914220.11631@anakin>
+Received: from chilli.pcug.org.au ([203.10.76.44]:38935 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753003AbYEPDTr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 May 2008 23:19:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jeff Garzik <jgarzik@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Linux/m68k <linux-m68k@vger.kernel.org>
+To: Matthew Wilcox <matthew@wil.cx>
+Cc: linux-next@vger.kernel.org, Josef 'Jeff' Sipek <jeffpc@josefsipek.net>, Matthias Kaehlcke <matthias@kaehlcke.net>, Andrew Vasquez <andrew.vasquez@qlogic.com>, James Bottomley <James.Bottomley@HansenPartnership.com>, Daniel Walker <dwalker@mvista.com>
 
-On Thu, May 15, 2008 at 09:17:15AM +0200, Geert Uytterhoeven wrote:
- 
-> Wow, did you really get all of this from that webpage??
+--Signature=_Fri__16_May_2008_13_19_28_+1000_xI=kpQ5UPJT+8H3M
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry no.  I ran the build again ... mmm cross compilers :)
+Hi Willy,
 
-> Thanks for chasing this down!
+Today's linux-next merge of the semaphore-removal tree git conflicts in
+several files because it appears that the semaphore removals have been
+done in upstream and scsi-rc-fixes (which should go to upstream soon)
+trees.
 
-np.
- 
-> Technically, it could also happen on PPC (APUS), but all APUS support got
-> removed a few months ago.
-> So maybe CONFIG_ZORRO is more appropriate?
+So I reverted the following commits from the semaphore-removal tree
+*before* remerging it:
 
-Well as it turns out it can happen in a few other plcaes (the same error
-is visible on sh aswell:
-	http://kisskb.ellerman.id.au/kisskb/buildresult/27769/ )
+3029b0c2f226a05f6866bf27cf7e90fbabe348e9 "Convert qla_os to use mutex inste=
+ad of semaphore"
+2c77d192c68a95a188dd326db1315b3492487c41 "9p: Convert from semaphore to spi=
+nlock"
+de99e091066295ab4abc5a1faec823b040db0ac4 "qla2xxx: Turn vport_sem into vpor=
+t_mutex"
 
-Below is a new fix. Thoughts?.
+The conflicting commits (just for completeness):
 
-From: Tony Breeds <tony@bakeyournoodle.com>
-Subject: [PATCH] Fix various 8390 builds
+c1549497e903a1ffa1c5808337a987180e480e7a "9p: use struct mutex instead of s=
+truct semaphore"
+	(in Linus' tree)
+6c2f527cb84cbd7d2d8a668c979e70bf78980ccc "[SCSI] qla2xxx: Convert vport_sem=
+ to a mutex"
+e1e82b6f0df0c5175ddd3d4f8862507aa71da8e9 "[SCSI] qla2xxx: firmware semaphor=
+e to mutex"
+	(in the scsi-rc-fixes tree)
 
-The commit 3f8cb098859bbea29d7b3765a3102e4a6bf81b85
-(drivers/net/lib8390: fix warning, trim trailing whitespace) removed
-ei_local from ei_tx_err() and ei_rx_overrun() resulting in the following
-build errors on m68k and sh:
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-  Using /scratch1/tony/next as source for kernel
-  GEN     /scratch1/tony/next_out/Makefile
-  CHK     include/linux/version.h
-  CHK     include/linux/utsrelease.h
-  CALL    /scratch1/tony/next/scripts/checksyscalls.sh
-  CHK     include/linux/compile.h
-  CC [M]  drivers/net/zorro8390.o
-In file included from /scratch1/tony/next/drivers/net/zorro8390.c:47:
-drivers/net/lib8390.c: In function 'ei_tx_err':
-drivers/net/lib8390.c:556: error: 'ei_local' undeclared (first use in this function)
-drivers/net/lib8390.c:556: error: (Each undeclared identifier is reported only once
-drivers/net/lib8390.c:556: error: for each function it appears in.)
-drivers/net/lib8390.c: In function 'ei_rx_overrun':
-drivers/net/lib8390.c:823: error: 'ei_local' undeclared (first use in this function)
-make[3]: *** [drivers/net/zorro8390.o] Error 1
-make[2]: *** [drivers/net] Error 2
-make[1]: *** [drivers] Error 2
-make: *** [sub-make] Error 2
+--Signature=_Fri__16_May_2008_13_19_28_+1000_xI=kpQ5UPJT+8H3M
+Content-Type: application/pgp-signature
 
-The problem is that ei_inb_p() is using various #defines (from
-drivers/net/8390.h) that use EI_SHIFT, which in some drivers on some
-architectures use ei_local.  Tag ei_local as "__maybe_unused" to keep it
-around and keep the warnings the original commit is trying to silence
-... silenced.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
 
-Signed-off-by: Tony Breeds <tony@bakeyournoodle.com>
----
- drivers/net/lib8390.c |    6 ++++++
- 1 files changed, 6 insertions(+), 0 deletions(-)
+iD8DBQFILP1ETgG2atn1QN8RArM9AJ9wH/GFmJU65cmh2Bh/N2wVkKTFHgCaAliK
+EQEi1p4/dyFBJ4GprE6VOsQ=
+=sjXf
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/net/lib8390.c b/drivers/net/lib8390.c
-index ed49527..fb00268 100644
---- a/drivers/net/lib8390.c
-+++ b/drivers/net/lib8390.c
-@@ -553,6 +553,9 @@ static void __ei_poll(struct net_device *dev)
- static void ei_tx_err(struct net_device *dev)
- {
- 	unsigned long e8390_base = dev->base_addr;
-+	/* ei_local is used on some platforms via the EI_SHIFT macro */
-+	struct ei_device *ei_local __maybe_unused =
-+		(struct ei_device *) netdev_priv(dev);
- 	unsigned char txsr = ei_inb_p(e8390_base+EN0_TSR);
- 	unsigned char tx_was_aborted = txsr & (ENTSR_ABT+ENTSR_FU);
- 
-@@ -815,6 +818,9 @@ static void ei_rx_overrun(struct net_device *dev)
- {
- 	unsigned long e8390_base = dev->base_addr;
- 	unsigned char was_txing, must_resend = 0;
-+	/* ei_local is used on some platforms via the EI_SHIFT macro */
-+	struct ei_device *ei_local __maybe_unused =
-+		(struct ei_device *) netdev_priv(dev);
- 
- 	/*
- 	 * Record whether a Tx was in progress and then issue the
--- 
-1.5.5.1
-
+--Signature=_Fri__16_May_2008_13_19_28_+1000_xI=kpQ5UPJT+8H3M--
