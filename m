@@ -1,68 +1,64 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: semaphot-removal merge conflicts
-Date: Fri, 16 May 2008 13:19:28 +1000
-Message-ID: <20080516131928.b72ade85.sfr@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: Tree for May 14
+Date: Fri, 16 May 2008 09:12:51 +0200 (CEST)
+Message-ID: <Pine.LNX.4.64.0805160911400.22059@anakin>
+References: <20080514170106.3cbcb201.sfr@canb.auug.org.au>
+ <Pine.LNX.4.64.0805142237240.11631@anakin> <20080514135008.60e5df96.randy.dunlap@oracle.com>
+ <20080514210447.GK20457@bakeyournoodle.com> <20080515010550.GL20457@bakeyournoodle.com>
+ <Pine.LNX.4.64.0805150914220.11631@anakin> <20080516021009.GS20457@bakeyournoodle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__16_May_2008_13_19_28_+1000_xI=kpQ5UPJT+8H3M"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38935 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753003AbYEPDTr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 15 May 2008 23:19:47 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Matthew Wilcox <matthew@wil.cx>
-Cc: linux-next@vger.kernel.org, Josef 'Jeff' Sipek <jeffpc@josefsipek.net>, Matthias Kaehlcke <matthias@kaehlcke.net>, Andrew Vasquez <andrew.vasquez@qlogic.com>, James Bottomley <James.Bottomley@HansenPartnership.com>, Daniel Walker <dwalker@mvista.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20080516021009.GS20457@bakeyournoodle.com>
+Sender: netdev-owner@vger.kernel.org
+To: Tony Breeds <tony@bakeyournoodle.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jeff Garzik <jgarzik@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Linux/m68k <linux-m68k@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__16_May_2008_13_19_28_+1000_xI=kpQ5UPJT+8H3M
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 16 May 2008, Tony Breeds wrote:
+> On Thu, May 15, 2008 at 09:17:15AM +0200, Geert Uytterhoeven wrote:
+> > Technically, it could also happen on PPC (APUS), but all APUS support got
+> > removed a few months ago.
+> > So maybe CONFIG_ZORRO is more appropriate?
+> 
+> Well as it turns out it can happen in a few other plcaes (the same error
+> is visible on sh aswell:
+> 	http://kisskb.ellerman.id.au/kisskb/buildresult/27769/ )
+> 
+> Below is a new fix. Thoughts?.
 
-Hi Willy,
+Looks OK to me!
 
-Today's linux-next merge of the semaphore-removal tree git conflicts in
-several files because it appears that the semaphore removals have been
-done in upstream and scsi-rc-fixes (which should go to upstream soon)
-trees.
+> --- a/drivers/net/lib8390.c
+> +++ b/drivers/net/lib8390.c
+> @@ -553,6 +553,9 @@ static void __ei_poll(struct net_device *dev)
+>  static void ei_tx_err(struct net_device *dev)
+>  {
+>  	unsigned long e8390_base = dev->base_addr;
+> +	/* ei_local is used on some platforms via the EI_SHIFT macro */
+> +	struct ei_device *ei_local __maybe_unused =
+> +		(struct ei_device *) netdev_priv(dev);
+                ^^^^^^^^^^^^^^^^^^^^
+But please don't reintroduce the casts. netdev_priv() returns a void *.
 
-So I reverted the following commits from the semaphore-removal tree
-*before* remerging it:
+>  	unsigned char txsr = ei_inb_p(e8390_base+EN0_TSR);
+>  	unsigned char tx_was_aborted = txsr & (ENTSR_ABT+ENTSR_FU);
+>  
+> @@ -815,6 +818,9 @@ static void ei_rx_overrun(struct net_device *dev)
+>  {
+>  	unsigned long e8390_base = dev->base_addr;
+>  	unsigned char was_txing, must_resend = 0;
+> +	/* ei_local is used on some platforms via the EI_SHIFT macro */
+> +	struct ei_device *ei_local __maybe_unused =
+> +		(struct ei_device *) netdev_priv(dev);
+                ^^^^^^^^^^^^^^^^^^^^
+Gr{oetje,eeting}s,
 
-3029b0c2f226a05f6866bf27cf7e90fbabe348e9 "Convert qla_os to use mutex inste=
-ad of semaphore"
-2c77d192c68a95a188dd326db1315b3492487c41 "9p: Convert from semaphore to spi=
-nlock"
-de99e091066295ab4abc5a1faec823b040db0ac4 "qla2xxx: Turn vport_sem into vpor=
-t_mutex"
+						Geert
 
-The conflicting commits (just for completeness):
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-c1549497e903a1ffa1c5808337a987180e480e7a "9p: use struct mutex instead of s=
-truct semaphore"
-	(in Linus' tree)
-6c2f527cb84cbd7d2d8a668c979e70bf78980ccc "[SCSI] qla2xxx: Convert vport_sem=
- to a mutex"
-e1e82b6f0df0c5175ddd3d4f8862507aa71da8e9 "[SCSI] qla2xxx: firmware semaphor=
-e to mutex"
-	(in the scsi-rc-fixes tree)
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__16_May_2008_13_19_28_+1000_xI=kpQ5UPJT+8H3M
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
-
-iD8DBQFILP1ETgG2atn1QN8RArM9AJ9wH/GFmJU65cmh2Bh/N2wVkKTFHgCaAliK
-EQEi1p4/dyFBJ4GprE6VOsQ=
-=sjXf
------END PGP SIGNATURE-----
-
---Signature=_Fri__16_May_2008_13_19_28_+1000_xI=kpQ5UPJT+8H3M--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
