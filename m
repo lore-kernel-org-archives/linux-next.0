@@ -1,103 +1,35 @@
-From: =?iso-8859-1?Q?J=F6rg?= Sommer <joerg@alea.gnuu.de>
-Subject: linux-next: iBook G4, keyboard is locked after wakeup
-Date: Fri, 16 May 2008 00:05:14 +0200
-Message-ID: <20080515220514.GA2475@alea.gnuu.de>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH] crypto: fix cryptd build fix due to missing ahash
+Date: Fri, 16 May 2008 09:39:28 +0800
+Message-ID: <20080516013928.GA5555@gondor.apana.org.au>
+References: <4694288.1210878773358.JavaMail.oracle@acsmt302.oracle.com> <20080515212856.GB3081@Chamillionaire.breakpoint.cc> <31763212.1210890834426.JavaMail.oracle@acsmt305.oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="n8g4imXOkfNTN/H1"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from banki.eumelnet.de ([83.246.114.63]:4668 "EHLO uucp.gnuu.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1761355AbYEOWnJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 15 May 2008 18:43:09 -0400
+Received: from rhun.apana.org.au ([64.62.148.172]:56923 "EHLO
+	arnor.apana.org.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751800AbYEPBjn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 May 2008 21:39:43 -0400
 Content-Disposition: inline
+In-Reply-To: <31763212.1210890834426.JavaMail.oracle@acsmt305.oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+To: Randy Dunlap <RANDY.DUNLAP@oracle.com>
+Cc: Sebastian Siewior <linux-crypto@ml.breakpoint.cc>, linux-kernel@vger.kernel.org, Loc Ho <lho@amcc.com>, linux-next@vger.kernel.org
 
+On Thu, May 15, 2008 at 05:33:54PM -0500, Randy Dunlap wrote:
+> 
+> > This was reported by Randy Dunlap:
+> > |crypto/built-in.o: In function `cryptd_alloc':
+> > |cryptd.c:(.text+0x9b5a): undefined reference to `crypto_ahash_type'
+> > 
+> > Signed-off-by: Sebastian Siewior <sebastian@breakpoint.cc>
+> 
+> Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
 
---n8g4imXOkfNTN/H1
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-I've an iBook G4 and tried the linux-next tree 20080515. When the
-computer awakes I see a black screen with the cursor blinking in the left
-upper corner. I can change the console with Alt+F1 =E2=80=A6, but I can inp=
-ut
-anything else. The system is locked. I've ran git bisect and it reported
-acff8d4223ddfb35f3950dce3709b1c515e96c08 as the first bad commit.
-
-commit acff8d4223ddfb35f3950dce3709b1c515e96c08
-Author: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Date:   Tue May 13 11:09:44 2008 +1000
-
-    ide: use __generic_unplug_device() in ide_do_drive_cmd()
-   =20
-    Call __elv_add_request() with 'plug' =3D=3D 1 (so the device will be
-    plugged) and then use __generic_unplug_device() instead of calling
-    ide_do_request() directly.
-   =20
-    This is a preparation for converting IDE to use blk_execute_rq().
-   =20
-    Cc: FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
-    Cc: Borislav Petkov <petkovbb@gmail.com>
-    Cc: Jens Axboe <jens.axboe@oracle.com>
-    Signed-off-by: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-
-diff --git a/drivers/ide/ide-io.c b/drivers/ide/ide-io.c
-index 5aed79e..a4083e4 100644
---- a/drivers/ide/ide-io.c
-+++ b/drivers/ide/ide-io.c
-@@ -1606,8 +1606,8 @@ int ide_do_drive_cmd (ide_drive_t *drive, struct requ=
-est *rq, ide_action_t actio
-        spin_lock_irqsave(&ide_lock, flags);
-        if (action =3D=3D ide_preempt)
-                hwgroup->rq =3D NULL;
--       __elv_add_request(drive->queue, rq, where, 0);
--       ide_do_request(hwgroup, IDE_NO_IRQ);
-+       __elv_add_request(drive->queue, rq, where, 1);
-+       __generic_unplug_device(drive->queue);
-        spin_unlock_irqrestore(&ide_lock, flags);
-=20
-        err =3D 0;
-
-% cat /proc/cpuinfo
-processor	: 0
-cpu		: 7455, altivec supported
-clock		: 606.000000MHz
-revision	: 0.3 (pvr 8001 0303)
-bogomips	: 36.73
-timebase	: 18432000
-platform	: PowerMac
-model		: PowerBook6,3
-machine		: PowerBook6,3
-motherboard	: PowerBook6,3 MacRISC3 Power Macintosh
-detected as	: 287 (iBook G4)
-pmac flags	: 0000001b
-L2 cache	: 256K unified
-pmac-generation	: NewWorld
-
-What else information do you need?
-
-Bye, J=C3=B6rg.
---=20
-Real programmers don't comment their code.  It was hard to write,
-it should be hard to understand.
-
---n8g4imXOkfNTN/H1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature http://en.wikipedia.org/wiki/OpenPGP
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
-
-iD8DBQFILLOawe0mZwH1VIARAkGrAJ4hxLe8+MwFoY+U1seTKErOmXyyawCZAXmx
-sL62gtQh9Lfi5QSniTAMAJo=
-=SGER
------END PGP SIGNATURE-----
-
---n8g4imXOkfNTN/H1--
+Thanks, I've merged this into the original change.
+-- 
+Visit Openswan at http://www.openswan.org/
+Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
