@@ -1,35 +1,104 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH] crypto: fix cryptd build fix due to missing ahash
-Date: Fri, 16 May 2008 09:39:28 +0800
-Message-ID: <20080516013928.GA5555@gondor.apana.org.au>
-References: <4694288.1210878773358.JavaMail.oracle@acsmt302.oracle.com> <20080515212856.GB3081@Chamillionaire.breakpoint.cc> <31763212.1210890834426.JavaMail.oracle@acsmt305.oracle.com>
+From: tony@bakeyournoodle.com (Tony Breeds)
+Subject: Re: linux-next: Tree for May 14
+Date: Fri, 16 May 2008 12:10:09 +1000
+Message-ID: <20080516021009.GS20457@bakeyournoodle.com>
+References: <20080514170106.3cbcb201.sfr@canb.auug.org.au> <Pine.LNX.4.64.0805142237240.11631@anakin> <20080514135008.60e5df96.randy.dunlap@oracle.com> <20080514210447.GK20457@bakeyournoodle.com> <20080515010550.GL20457@bakeyournoodle.com> <Pine.LNX.4.64.0805150914220.11631@anakin>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rhun.apana.org.au ([64.62.148.172]:56923 "EHLO
-	arnor.apana.org.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751800AbYEPBjn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 May 2008 21:39:43 -0400
+Received: from pythia.bakeyournoodle.com ([203.82.209.197]:38588 "EHLO
+	pythia.bakeyournoodle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751569AbYEPCKL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 May 2008 22:10:11 -0400
 Content-Disposition: inline
-In-Reply-To: <31763212.1210890834426.JavaMail.oracle@acsmt305.oracle.com>
+In-Reply-To: <Pine.LNX.4.64.0805150914220.11631@anakin>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <RANDY.DUNLAP@oracle.com>
-Cc: Sebastian Siewior <linux-crypto@ml.breakpoint.cc>, linux-kernel@vger.kernel.org, Loc Ho <lho@amcc.com>, linux-next@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jeff Garzik <jgarzik@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Linux/m68k <linux-m68k@vger.kernel.org>
 
-On Thu, May 15, 2008 at 05:33:54PM -0500, Randy Dunlap wrote:
-> 
-> > This was reported by Randy Dunlap:
-> > |crypto/built-in.o: In function `cryptd_alloc':
-> > |cryptd.c:(.text+0x9b5a): undefined reference to `crypto_ahash_type'
-> > 
-> > Signed-off-by: Sebastian Siewior <sebastian@breakpoint.cc>
-> 
-> Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+On Thu, May 15, 2008 at 09:17:15AM +0200, Geert Uytterhoeven wrote:
+ 
+> Wow, did you really get all of this from that webpage??
 
-Thanks, I've merged this into the original change.
+Sorry no.  I ran the build again ... mmm cross compilers :)
+
+> Thanks for chasing this down!
+
+np.
+ 
+> Technically, it could also happen on PPC (APUS), but all APUS support got
+> removed a few months ago.
+> So maybe CONFIG_ZORRO is more appropriate?
+
+Well as it turns out it can happen in a few other plcaes (the same error
+is visible on sh aswell:
+	http://kisskb.ellerman.id.au/kisskb/buildresult/27769/ )
+
+Below is a new fix. Thoughts?.
+
+From: Tony Breeds <tony@bakeyournoodle.com>
+Subject: [PATCH] Fix various 8390 builds
+
+The commit 3f8cb098859bbea29d7b3765a3102e4a6bf81b85
+(drivers/net/lib8390: fix warning, trim trailing whitespace) removed
+ei_local from ei_tx_err() and ei_rx_overrun() resulting in the following
+build errors on m68k and sh:
+
+  Using /scratch1/tony/next as source for kernel
+  GEN     /scratch1/tony/next_out/Makefile
+  CHK     include/linux/version.h
+  CHK     include/linux/utsrelease.h
+  CALL    /scratch1/tony/next/scripts/checksyscalls.sh
+  CHK     include/linux/compile.h
+  CC [M]  drivers/net/zorro8390.o
+In file included from /scratch1/tony/next/drivers/net/zorro8390.c:47:
+drivers/net/lib8390.c: In function 'ei_tx_err':
+drivers/net/lib8390.c:556: error: 'ei_local' undeclared (first use in this function)
+drivers/net/lib8390.c:556: error: (Each undeclared identifier is reported only once
+drivers/net/lib8390.c:556: error: for each function it appears in.)
+drivers/net/lib8390.c: In function 'ei_rx_overrun':
+drivers/net/lib8390.c:823: error: 'ei_local' undeclared (first use in this function)
+make[3]: *** [drivers/net/zorro8390.o] Error 1
+make[2]: *** [drivers/net] Error 2
+make[1]: *** [drivers] Error 2
+make: *** [sub-make] Error 2
+
+The problem is that ei_inb_p() is using various #defines (from
+drivers/net/8390.h) that use EI_SHIFT, which in some drivers on some
+architectures use ei_local.  Tag ei_local as "__maybe_unused" to keep it
+around and keep the warnings the original commit is trying to silence
+... silenced.
+
+Signed-off-by: Tony Breeds <tony@bakeyournoodle.com>
+---
+ drivers/net/lib8390.c |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/net/lib8390.c b/drivers/net/lib8390.c
+index ed49527..fb00268 100644
+--- a/drivers/net/lib8390.c
++++ b/drivers/net/lib8390.c
+@@ -553,6 +553,9 @@ static void __ei_poll(struct net_device *dev)
+ static void ei_tx_err(struct net_device *dev)
+ {
+ 	unsigned long e8390_base = dev->base_addr;
++	/* ei_local is used on some platforms via the EI_SHIFT macro */
++	struct ei_device *ei_local __maybe_unused =
++		(struct ei_device *) netdev_priv(dev);
+ 	unsigned char txsr = ei_inb_p(e8390_base+EN0_TSR);
+ 	unsigned char tx_was_aborted = txsr & (ENTSR_ABT+ENTSR_FU);
+ 
+@@ -815,6 +818,9 @@ static void ei_rx_overrun(struct net_device *dev)
+ {
+ 	unsigned long e8390_base = dev->base_addr;
+ 	unsigned char was_txing, must_resend = 0;
++	/* ei_local is used on some platforms via the EI_SHIFT macro */
++	struct ei_device *ei_local __maybe_unused =
++		(struct ei_device *) netdev_priv(dev);
+ 
+ 	/*
+ 	 * Record whether a Tx was in progress and then issue the
 -- 
-Visit Openswan at http://www.openswan.org/
-Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+1.5.5.1
+
