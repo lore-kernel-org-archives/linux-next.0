@@ -1,29 +1,37 @@
-From: corbet@lwn.net (Jonathan Corbet)
-Subject: Re: linux-next: bkl-removal build failure
-Date: Mon, 19 May 2008 11:12:45 -0600
-Message-ID: <4642.1211217165@vena.lwn.net>
-References: <20080519163203.89a54b82.sfr@canb.auug.org.au>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from vena.lwn.net ([206.168.112.25]:37807 "EHLO vena.lwn.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756050AbYESRTs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 19 May 2008 13:19:48 -0400
-In-reply-to: Your message of "Mon, 19 May 2008 16:32:03 +1000."
-             <20080519163203.89a54b82.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [BUILD_FAILURE] linux-next: Tree for May 19 - build fails on
+ cryptd_alloc_hash ()
+Date: Mon, 19 May 2008 10:26:27 -0700
+Message-ID: <20080519102627.997d61ef.randy.dunlap@oracle.com>
+References: <20080519174120.2083ea57.sfr@canb.auug.org.au>
+	<4831B3F6.5080101@linux.vnet.ibm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <4831B3F6.5080101@linux.vnet.ibm.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org, Andy Whitcroft <apw@shadowen.org>
+List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Mon, 19 May 2008 22:38:06 +0530 Kamalesh Babulal wrote:
 
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> Hi,
 > 
-> drivers/char/viotape.c: In function 'viotap_open':
-> /scratch/sfr/next/drivers/char/viotape.c:692: error: expected ';' before 'get_dev_info'
+> The next-20080519 kernel build fails on the x86_64 machine, when compiled 
+> with the randconfig.
+> 
+>   LD      .tmp_vmlinux1
+> crypto/built-in.o: In function `cryptd_alloc_hash':
+> /root/kernels/linux-2.6.26-rc3/crypto/cryptd.c:485: undefined reference to `crypto_ahash_type'
+> make: *** [.tmp_vmlinux1] Error 1
 
-Well, that's embarrassing.  There are limits to what can be done with
-"make allyesconfig" when you only have one architecture at hand...:)
-I've put your fix into my tree, thanks and sorry for the trouble.
+Fixed on Thu May 15:  http://lkml.org/lkml/2008/5/15/433
+and Herbert says that he merged it on Fri May 16,
+so why did it miss being in linux-next on Mon May 19?
 
-jon
+Wrong tree/branch/whatever?
+
+---
+~Randy
