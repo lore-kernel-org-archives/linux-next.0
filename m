@@ -1,82 +1,78 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
 Subject: Re: Tests tree not submitted?
-Date: Mon, 19 May 2008 15:37:04 +1000
-Message-ID: <20080519153704.b0c9cb2d.sfr@canb.auug.org.au>
-References: <20080519135436.34d6d593.sfr@canb.auug.org.au>
-	<20080519043822.GA3473@in.ibm.com>
-	<20080518220003.5169892a.akpm@linux-foundation.org>
+Date: Mon, 19 May 2008 11:19:40 +0530
+Message-ID: <20080519054940.GB3473@in.ibm.com>
+References: <20080519135436.34d6d593.sfr@canb.auug.org.au> <20080519043822.GA3473@in.ibm.com> <20080518220003.5169892a.akpm@linux-foundation.org>
+Reply-To: ananth@in.ibm.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__19_May_2008_15_37_04_+1000_5gXkZcedKJEVfN_/"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33413 "EHLO smtps.tip.net.au"
+Received: from e6.ny.us.ibm.com ([32.97.182.146]:33285 "EHLO e6.ny.us.ibm.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752590AbYESFhQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 19 May 2008 01:37:16 -0400
+	id S1752699AbYESFsu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 19 May 2008 01:48:50 -0400
+Received: from d01relay04.pok.ibm.com (d01relay04.pok.ibm.com [9.56.227.236])
+	by e6.ny.us.ibm.com (8.13.8/8.13.8) with ESMTP id m4J5om5h017026
+	for <linux-next@vger.kernel.org>; Mon, 19 May 2008 01:50:48 -0400
+Received: from d01av02.pok.ibm.com (d01av02.pok.ibm.com [9.56.224.216])
+	by d01relay04.pok.ibm.com (8.13.8/8.13.8/NCO v8.7) with ESMTP id m4J5mRJU152002
+	for <linux-next@vger.kernel.org>; Mon, 19 May 2008 01:48:27 -0400
+Received: from d01av02.pok.ibm.com (loopback [127.0.0.1])
+	by d01av02.pok.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id m4J5mQW3014290
+	for <linux-next@vger.kernel.org>; Mon, 19 May 2008 01:48:27 -0400
+Content-Disposition: inline
 In-Reply-To: <20080518220003.5169892a.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: ananth@in.ibm.com, Sam Ravnborg <sam@ravnborg.org>, linux-next@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Sam Ravnborg <sam@ravnborg.org>, linux-next@vger.kernel.org
 
---Signature=_Mon__19_May_2008_15_37_04_+1000_5gXkZcedKJEVfN_/
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Andrew,
-
-On Sun, 18 May 2008 22:00:03 -0700 Andrew Morton <akpm@linux-foundation.org=
-> wrote:
->
+On Sun, May 18, 2008 at 10:00:03PM -0700, Andrew Morton wrote:
+> On Mon, 19 May 2008 10:08:22 +0530 Ananth N Mavinakayanahalli <ananth@in.ibm.com> wrote:
+> 
+> > On Mon, May 19, 2008 at 01:54:36PM +1000, Stephen Rothwell wrote:
+> > > Hi Ananth, Sam,
+> > 
+> > Hi Stephen,
+> > 
+> > > Is there some reason that the tests tree changes have not bee submitted
+> > > to Linus yet?  They have been in linux-next for quite some time now
+> > > (since February 24) without any changes.
+> > 
+> > When this was submitted last, the opinion was that since it was post
+> > 2.6.25-rc2 and since it had Kconfig changes, this should be deferred to
+> > the next release. However I got busy during the merge time and couldn't
+> > resumbit this.
+> > 
+> > I believe this being a code movement, its mostly benign. But if it needs
+> > to wait for 2.6.27, thats fine too; also given that the -mm is now based
+> > on -next, it'll get a lot more tested.
+> > 
+> > Andrew,
+> > 
+> > What is the best way forward here? Given the code has been in -next for
+> > a few months, and given -mm is now based on -next, will you be pushing
+> > these changes to Linus during the next merge window? Or, do you want me
+> > to resubmit the patchset again later in the 2.6.26-rc cycle?
+> 
 > <brief panic>
->=20
+
+Oops! Sorry Andrew :-)
+
 > I don't even know what the "tests" tree _is_.
->=20
+> 
 > Searching the past seven weeks lmkl archives for From:.*ananth.* turns
 > up zero hits.
->=20
+
+http://marc.info/?l=linux-kernel&m=120285599718700&w=2 is Sam's mail to
+lkml about it.
+
 > So whatever this thing is, it's waaaaaaaaaaaaaaaaaaaaay too low-profile.
->=20
+
+Yes, its nothing earth shattering :-) Just code consolidation.
+
 > Did you even send Linus a pull request?  I have no record of one.
->=20
-> Secret tree :(
 
-I don;t have the original pull request in my archive, but I do have an emai=
-l from Sam Ravnborg dated Feb 19 saying (in part):
+Sam did http://marc.info/?l=linux-kernel&m=120285599718700&w=2 again.
 
-"Hi Anath.
-
-Linus did not pull this in the -rc1 to -rc2 timeframe
-so please resubmit the patch serie one week into the
-next merge window (when most of the trees has hit linus' tree
-and Andrew has made his first merge).
-
-IF you need an extra eye balling then you can submit
-a few weeks before the merge window opens.
-Thats typical after an -rc with only a few patches."
-
-After which Ananth asked me to add it to linux-next and I did on Feb 24.
-
-So, not a complete secret :-) and a pull request was sent on Feb 12
-(actually by Sam who put this stuff into a git tree for Ananth).  This
-tree (patch set) has not changed since Feb 24 and only has the one simple
-conflict I noted.=20
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__19_May_2008_15_37_04_+1000_5gXkZcedKJEVfN_/
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
-
-iD8DBQFIMRIJTgG2atn1QN8RAm5SAJ9mnSNWPuLxBVjHJ8WZlAbWexJhhQCeOvre
-S2yduvcGs6hO1ZC45KKgcc0=
-=8d+d
------END PGP SIGNATURE-----
-
---Signature=_Mon__19_May_2008_15_37_04_+1000_5gXkZcedKJEVfN_/--
+Ananth
