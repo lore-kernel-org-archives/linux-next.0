@@ -1,52 +1,82 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: rr/x86 merge conflict
-Date: Mon, 19 May 2008 15:03:28 +1000
-Message-ID: <20080519150328.5913fd84.sfr@canb.auug.org.au>
+From: tony@bakeyournoodle.com (Tony Breeds)
+Subject: [PATCH v3] Fix various 8390 builds
+Date: Mon, 19 May 2008 15:03:52 +1000
+Message-ID: <20080519050352.GV20457@bakeyournoodle.com>
+References: <20080514170106.3cbcb201.sfr@canb.auug.org.au> <Pine.LNX.4.64.0805142237240.11631@anakin> <20080514135008.60e5df96.randy.dunlap@oracle.com> <20080514210447.GK20457@bakeyournoodle.com> <20080515010550.GL20457@bakeyournoodle.com> <Pine.LNX.4.64.0805150914220.11631@anakin> <20080516021009.GS20457@bakeyournoodle.com> <Pine.LNX.4.64.0805160911400.22059@anakin>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__19_May_2008_15_03_28_+1000_JWqNRXH4xRsrJ7CD"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49257 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750831AbYESFDu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 19 May 2008 01:03:50 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>, Ingo Molnar <mingo@elte.hu>
-Cc: linux-next@vger.kernel.org, Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>, Jason Baron <jbaron@redhat.com>
-
---Signature=_Mon__19_May_2008_15_03_28_+1000_JWqNRXH4xRsrJ7CD
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Return-path: <netdev-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Pine.LNX.4.64.0805160911400.22059@anakin>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Jeff Garzik <jgarzik@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Randy Dunlap <randy.dunlap@oracle.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, Linux/m68k <linux-m68k@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Rusty, Ingo,
+The commit 3f8cb098859bbea29d7b3765a3102e4a6bf81b85
+(drivers/net/lib8390: fix warning, trim trailing whitespace) removed
+ei_local from ei_tx_err() and ei_rx_overrun() resulting in the following
+build errors on m68k and sh:
 
-Today's linux-next merge of the rr tree got conflicts in
-kernel/stop_machine.c and include/linux/stop_machine.h because commit
-069d5b32bfe605bd78c2f8b2ee6c63a776592867 from the rr tree and commit
-931aa4ee2f3b833e7a0a149126cc92596f7907c6 from the x86 tree ("Add all cpus
-option to stop machine run") are essentially the same (though they are
-attributed to different authors).  The problem lies in that the rr tree
-then has a few more commits that change those files.
+Using /scratch1/tony/next as source for kernel
+GEN     /scratch1/tony/next_out/Makefile
+CHK     include/linux/version.h
+CHK     include/linux/utsrelease.h
+CALL    /scratch1/tony/next/scripts/checksyscalls.sh
+CHK     include/linux/compile.h
+CC [M]  drivers/net/zorro8390.o
+In file included from /scratch1/tony/next/drivers/net/zorro8390.c:47:
+drivers/net/lib8390.c: In function 'ei_tx_err':
+drivers/net/lib8390.c:556: error: 'ei_local' undeclared (first use in this function)
+drivers/net/lib8390.c:556: error: (Each undeclared identifier is reported only once
+drivers/net/lib8390.c:556: error: for each function it appears in.)
+drivers/net/lib8390.c: In function 'ei_rx_overrun':
+drivers/net/lib8390.c:823: error: 'ei_local' undeclared (first use in this function)
+make[3]: *** [drivers/net/zorro8390.o] Error 1
+make[2]: *** [drivers/net] Error 2
+make[1]: *** [drivers] Error 2
+make: *** [sub-make] Error 2
 
-I took the versions from the rr tree.
+The problem is that ei_inb_p() is using various #defines (from
+drivers/net/8390.h) that use EI_SHIFT, which in some drivers on some
+architectures use ei_local.  Tag ei_local as "__maybe_unused" to keep it
+around and keep the warnings the original commit is trying to silence
+... silenced.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Signed-off-by: Tony Breeds <tony@bakeyournoodle.com>
+---
+Updated to remove pointless casts
 
---Signature=_Mon__19_May_2008_15_03_28_+1000_JWqNRXH4xRsrJ7CD
-Content-Type: application/pgp-signature
+ drivers/net/lib8390.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
+ Dave, Jeff can one of you take this?
 
-iD8DBQFIMQosTgG2atn1QN8RAnuqAJ9+iLn33v4Y7+bA3HY7HgLUWW/5dgCeIiIY
-P3bldFonOK0WEgrzEtC4pTU=
-=VuvR
------END PGP SIGNATURE-----
 
---Signature=_Mon__19_May_2008_15_03_28_+1000_JWqNRXH4xRsrJ7CD--
+diff --git a/drivers/net/lib8390.c b/drivers/net/lib8390.c
+index ed49527..00d59ab 100644
+--- a/drivers/net/lib8390.c
++++ b/drivers/net/lib8390.c
+@@ -553,6 +553,8 @@ static void __ei_poll(struct net_device *dev)
+ static void ei_tx_err(struct net_device *dev)
+ {
+ 	unsigned long e8390_base = dev->base_addr;
++	/* ei_local is used on some platforms via the EI_SHIFT macro */
++	struct ei_device *ei_local __maybe_unused = netdev_priv(dev);
+ 	unsigned char txsr = ei_inb_p(e8390_base+EN0_TSR);
+ 	unsigned char tx_was_aborted = txsr & (ENTSR_ABT+ENTSR_FU);
+ 
+@@ -815,6 +817,8 @@ static void ei_rx_overrun(struct net_device *dev)
+ {
+ 	unsigned long e8390_base = dev->base_addr;
+ 	unsigned char was_txing, must_resend = 0;
++	/* ei_local is used on some platforms via the EI_SHIFT macro */
++	struct ei_device *ei_local __maybe_unused = netdev_priv(dev);
+ 
+ 	/*
+ 	 * Record whether a Tx was in progress and then issue the
+Yours Tony
+
+  linux.conf.au    http://www.marchsouth.org/
+  Jan 19 - 24 2009 The Australian Linux Technical Conference!
+
