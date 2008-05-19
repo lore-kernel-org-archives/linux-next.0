@@ -1,38 +1,43 @@
 From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: x86/driver-core merge failure
-Date: Mon, 19 May 2008 16:23:07 +0200
-Message-ID: <200805191623.07902.rjw@sisk.pl>
-References: <20080519113328.c98700c4.sfr@canb.auug.org.au>
+Subject: Re: linux-next: driver-core/pci merge failure
+Date: Mon, 19 May 2008 16:25:02 +0200
+Message-ID: <200805191625.02966.rjw@sisk.pl>
+References: <20080519120328.40aa6d5d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain;
   charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:37263 "EHLO ogre.sisk.pl"
+Received: from ogre.sisk.pl ([217.79.144.158]:37269 "EHLO ogre.sisk.pl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756587AbYESOXS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 19 May 2008 10:23:18 -0400
-In-Reply-To: <20080519113328.c98700c4.sfr@canb.auug.org.au>
+	id S1752350AbYESOY1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 19 May 2008 10:24:27 -0400
+In-Reply-To: <20080519120328.40aa6d5d.sfr@canb.auug.org.au>
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org
+Cc: Greg KH <greg@kroah.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, Shaohua Li <shaohua.li@intel.com>
 
 On Monday, 19 of May 2008, Stephen Rothwell wrote:
-> Hi Greg, Ingo,
+> Hi Greg, Jesse,
 > 
-> Today's linux-next merge of the x86 tree got a conflict in
-> kernel/power/main.c between commit
-> 7c6e17af5dfa9e70e1eb32981f3f608ef1d0eca5 ("PM: Introduce new top level
-> suspend and hibernation callbacks") from the driver-core tree and commit
-> 338e075309d960eb91cc8540f69b9cb5b2967d3e ("sleepy linux self-test") from
-> the x86 tree.  The former added a parameter to device_resume() while the
-> latter put a suspend_test_start()/suspend_test_finish() pair around the
-> device_resume() call in the error path of suspend_devices_and_enter().
-> It is a trivial fixup.
+> Today's linux-next merge of the pci tree got a conflict in
+> drivers/pci/pci-driver.c between commit
+> 681e027ef934e9892b199180129be772208f735b ("PM: New suspend and
+> hibernation callbacks for PCI bus type") from the driver-core tree and
+> commit 176bc7cff4442d3795c0599b70ecbe9b11ccd775 ("Suspend/Resume bug in
+> PCI layer wrt quirks") from the pci tree.  The former changed
+> pci_default_resume() to pci_default_pm_resume() while the latter added a
+> call to pci_fixup_device() immediately after the call to
+> pci_default_resume() in pci_device_resume() (which became
+> pci_legacy_resume() in the former patch).  I assume the obvious fixup is
+> correct, but may be worth a check.
 
-Okay, but I think the "sleepy linux self-test" patch should be updated.
+Well, it's not really obvious. :-)
+
+Please revert "PM: New suspend and hibernation callbacks for PCI bus type"
+until we fix that up.
 
 Thanks,
 Rafael
