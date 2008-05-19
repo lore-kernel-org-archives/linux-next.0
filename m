@@ -1,54 +1,47 @@
-From: Thomas Meyer <thomas@m3y3r.de>
-Subject: Re: linux-next: Tree for May 19
-Date: Mon, 19 May 2008 20:42:00 +0200
-Message-ID: <1211222520.30161.3.camel@dhcppc1>
-References: <20080519174120.2083ea57.sfr@canb.auug.org.au>
+From: Dave Jones <davej@redhat.com>
+Subject: Re: linux-next: x86/cpufreq merge conflict
+Date: Mon, 19 May 2008 18:26:04 -0400
+Message-ID: <20080519222604.GC20207@redhat.com>
+References: <20080519143927.e8b43d39.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from www17.your-server.de ([213.133.104.17]:51439 "EHLO
-	www17.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758093AbYESSmO convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 19 May 2008 14:42:14 -0400
-In-Reply-To: <20080519174120.2083ea57.sfr@canb.auug.org.au>
+Received: from mx1.redhat.com ([66.187.233.31]:59694 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755727AbYESW0U (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 19 May 2008 18:26:20 -0400
+Content-Disposition: inline
+In-Reply-To: <20080519143927.e8b43d39.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>
 
-Am Montag, den 19.05.2008, 17:41 +1000 schrieb Stephen Rothwell:
-> News:
-> 	I will stop making full tar balls tomorrow unless someone screams.
-> 	The LATEST file now contains the name of the version that the
-> patches are based on i.e. today, LATEST-IS-next-20080519 contains "v2=
-=2E6.26-rc3".
->=20
-> Changes since next-20080516:
->=20
-> New tree: bkl-removal  (this is Jonathan Corbet's tree)
->=20
-> Removed trees: x86-fixes, sched-fixes (I don't know where they are
-> currently).
->=20
-> Changed trees: x86 and sched are now the new auto merged trees.
->=20
+On Mon, May 19, 2008 at 02:39:27PM +1000, Stephen Rothwell wrote:
+ > Hi Dave, Ingo,
+ > 
+ > Today's linux-next cpufreq merge got a conflict in
+ > drivers/cpufreq/cpufreq.c between commit
+ > fdbf6c63c1bd250d45a59a6392fa18ccb360837b ("x86: Use performance variant
+ > for_each_cpu_mask_nr") from the x86 tree and commit
+ > ae47c109341198f814767d2f06a1c1e4c7910fb9 ("[CPUFREQ] change cpu freq
+ > arrays to per_cpu variables") from the cpufreq tree.  The conflict is
+ > just contextual with the former changing for_each_cpu_mask to
+ > for_each_cpu_mask_nr in a couple of places right next to the latter
+ > changing "cpufreq_cpu_data[j]" to "per_cpu(cpufreq_cpu_data, j)".
 
-Is it intentional that kernel.release is:
+ok, so how do we deal with this? Either Ingo or myself will have
+to fix it up depending on whoever merges into .27 first I guess,
+but in the interim, you'll have to carry that diff ?
+Or should one of us drop a diff, and merge both through the other tree?
 
-$ cat include/config/kernel.release=20
-2.6.26-rc3-next-20080519-sched-devel.git
+ > I did the obvious fixups but maybe worth a look.
 
-all predecessors have had names like:
-=EF=BB=BF2.6.26-rc2-next-20080516
+btw, I've just slightly changed my workflow for the cpufreq.git tree.
+>From now on, pull from the 'next' branch.   master will be untouched,
+and 'fixes' will be stuff that will go to linus v. soon in the current cycle.
 
-greetz
+	Dave
 
-
-
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-next" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+http://www.codemonkey.org.uk
