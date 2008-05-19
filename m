@@ -1,60 +1,52 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: Tests tree not submitted?
-Date: Sun, 18 May 2008 22:00:03 -0700
-Message-ID: <20080518220003.5169892a.akpm@linux-foundation.org>
-References: <20080519135436.34d6d593.sfr@canb.auug.org.au>
-	<20080519043822.GA3473@in.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: rr/x86 merge conflict
+Date: Mon, 19 May 2008 15:03:28 +1000
+Message-ID: <20080519150328.5913fd84.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__19_May_2008_15_03_28_+1000_JWqNRXH4xRsrJ7CD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:45759 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751417AbYESFBF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 19 May 2008 01:01:05 -0400
-In-Reply-To: <20080519043822.GA3473@in.ibm.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49257 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750831AbYESFDu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 19 May 2008 01:03:50 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: ananth@in.ibm.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Sam Ravnborg <sam@ravnborg.org>, linux-next@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>, Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>, Jason Baron <jbaron@redhat.com>
 
-On Mon, 19 May 2008 10:08:22 +0530 Ananth N Mavinakayanahalli <ananth@in.ibm.com> wrote:
+--Signature=_Mon__19_May_2008_15_03_28_+1000_JWqNRXH4xRsrJ7CD
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Mon, May 19, 2008 at 01:54:36PM +1000, Stephen Rothwell wrote:
-> > Hi Ananth, Sam,
-> 
-> Hi Stephen,
-> 
-> > Is there some reason that the tests tree changes have not bee submitted
-> > to Linus yet?  They have been in linux-next for quite some time now
-> > (since February 24) without any changes.
-> 
-> When this was submitted last, the opinion was that since it was post
-> 2.6.25-rc2 and since it had Kconfig changes, this should be deferred to
-> the next release. However I got busy during the merge time and couldn't
-> resumbit this.
-> 
-> I believe this being a code movement, its mostly benign. But if it needs
-> to wait for 2.6.27, thats fine too; also given that the -mm is now based
-> on -next, it'll get a lot more tested.
-> 
-> Andrew,
-> 
-> What is the best way forward here? Given the code has been in -next for
-> a few months, and given -mm is now based on -next, will you be pushing
-> these changes to Linus during the next merge window? Or, do you want me
-> to resubmit the patchset again later in the 2.6.26-rc cycle?
+Hi Rusty, Ingo,
 
-<brief panic>
+Today's linux-next merge of the rr tree got conflicts in
+kernel/stop_machine.c and include/linux/stop_machine.h because commit
+069d5b32bfe605bd78c2f8b2ee6c63a776592867 from the rr tree and commit
+931aa4ee2f3b833e7a0a149126cc92596f7907c6 from the x86 tree ("Add all cpus
+option to stop machine run") are essentially the same (though they are
+attributed to different authors).  The problem lies in that the rr tree
+then has a few more commits that change those files.
 
-I don't even know what the "tests" tree _is_.
+I took the versions from the rr tree.
 
-Searching the past seven weeks lmkl archives for From:.*ananth.* turns
-up zero hits.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-So whatever this thing is, it's waaaaaaaaaaaaaaaaaaaaay too low-profile.
+--Signature=_Mon__19_May_2008_15_03_28_+1000_JWqNRXH4xRsrJ7CD
+Content-Type: application/pgp-signature
 
-Did you even send Linus a pull request?  I have no record of one.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
 
-Secret tree :(
+iD8DBQFIMQosTgG2atn1QN8RAnuqAJ9+iLn33v4Y7+bA3HY7HgLUWW/5dgCeIiIY
+P3bldFonOK0WEgrzEtC4pTU=
+=VuvR
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__19_May_2008_15_03_28_+1000_JWqNRXH4xRsrJ7CD--
