@@ -1,37 +1,54 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [BUILD_FAILURE] linux-next: Tree for May 19 - build fails on
- cryptd_alloc_hash ()
-Date: Mon, 19 May 2008 10:26:27 -0700
-Message-ID: <20080519102627.997d61ef.randy.dunlap@oracle.com>
+From: Thomas Meyer <thomas@m3y3r.de>
+Subject: Re: linux-next: Tree for May 19
+Date: Mon, 19 May 2008 20:42:00 +0200
+Message-ID: <1211222520.30161.3.camel@dhcppc1>
 References: <20080519174120.2083ea57.sfr@canb.auug.org.au>
-	<4831B3F6.5080101@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <4831B3F6.5080101@linux.vnet.ibm.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org, Andy Whitcroft <apw@shadowen.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=utf8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from www17.your-server.de ([213.133.104.17]:51439 "EHLO
+	www17.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758093AbYESSmO convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 May 2008 14:42:14 -0400
+In-Reply-To: <20080519174120.2083ea57.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, 19 May 2008 22:38:06 +0530 Kamalesh Babulal wrote:
+Am Montag, den 19.05.2008, 17:41 +1000 schrieb Stephen Rothwell:
+> News:
+> 	I will stop making full tar balls tomorrow unless someone screams.
+> 	The LATEST file now contains the name of the version that the
+> patches are based on i.e. today, LATEST-IS-next-20080519 contains "v2=
+=2E6.26-rc3".
+>=20
+> Changes since next-20080516:
+>=20
+> New tree: bkl-removal  (this is Jonathan Corbet's tree)
+>=20
+> Removed trees: x86-fixes, sched-fixes (I don't know where they are
+> currently).
+>=20
+> Changed trees: x86 and sched are now the new auto merged trees.
+>=20
 
-> Hi,
-> 
-> The next-20080519 kernel build fails on the x86_64 machine, when compiled 
-> with the randconfig.
-> 
->   LD      .tmp_vmlinux1
-> crypto/built-in.o: In function `cryptd_alloc_hash':
-> /root/kernels/linux-2.6.26-rc3/crypto/cryptd.c:485: undefined reference to `crypto_ahash_type'
-> make: *** [.tmp_vmlinux1] Error 1
+Is it intentional that kernel.release is:
 
-Fixed on Thu May 15:  http://lkml.org/lkml/2008/5/15/433
-and Herbert says that he merged it on Fri May 16,
-so why did it miss being in linux-next on Mon May 19?
+$ cat include/config/kernel.release=20
+2.6.26-rc3-next-20080519-sched-devel.git
 
-Wrong tree/branch/whatever?
+all predecessors have had names like:
+=EF=BB=BF2.6.26-rc2-next-20080516
 
----
-~Randy
+greetz
+
+
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-next" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
