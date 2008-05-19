@@ -1,53 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: x86/cpufreq merge conflict
-Date: Mon, 19 May 2008 14:39:27 +1000
-Message-ID: <20080519143927.e8b43d39.sfr@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: Tests tree not submitted?
+Date: Sun, 18 May 2008 22:00:03 -0700
+Message-ID: <20080518220003.5169892a.akpm@linux-foundation.org>
+References: <20080519135436.34d6d593.sfr@canb.auug.org.au>
+	<20080519043822.GA3473@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__19_May_2008_14_39_27_+1000_JnGSBmCsDNgJFMK4"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51684 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750785AbYESEjh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 19 May 2008 00:39:37 -0400
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:45759 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751417AbYESFBF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 19 May 2008 01:01:05 -0400
+In-Reply-To: <20080519043822.GA3473@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Jones <davej@redhat.com>, Ingo Molnar <mingo@elte.hu>
-Cc: linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>
+To: ananth@in.ibm.com
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Sam Ravnborg <sam@ravnborg.org>, linux-next@vger.kernel.org
 
---Signature=_Mon__19_May_2008_14_39_27_+1000_JnGSBmCsDNgJFMK4
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 19 May 2008 10:08:22 +0530 Ananth N Mavinakayanahalli <ananth@in.ibm.com> wrote:
 
-Hi Dave, Ingo,
+> On Mon, May 19, 2008 at 01:54:36PM +1000, Stephen Rothwell wrote:
+> > Hi Ananth, Sam,
+> 
+> Hi Stephen,
+> 
+> > Is there some reason that the tests tree changes have not bee submitted
+> > to Linus yet?  They have been in linux-next for quite some time now
+> > (since February 24) without any changes.
+> 
+> When this was submitted last, the opinion was that since it was post
+> 2.6.25-rc2 and since it had Kconfig changes, this should be deferred to
+> the next release. However I got busy during the merge time and couldn't
+> resumbit this.
+> 
+> I believe this being a code movement, its mostly benign. But if it needs
+> to wait for 2.6.27, thats fine too; also given that the -mm is now based
+> on -next, it'll get a lot more tested.
+> 
+> Andrew,
+> 
+> What is the best way forward here? Given the code has been in -next for
+> a few months, and given -mm is now based on -next, will you be pushing
+> these changes to Linus during the next merge window? Or, do you want me
+> to resubmit the patchset again later in the 2.6.26-rc cycle?
 
-Today's linux-next cpufreq merge got a conflict in
-drivers/cpufreq/cpufreq.c between commit
-fdbf6c63c1bd250d45a59a6392fa18ccb360837b ("x86: Use performance variant
-for_each_cpu_mask_nr") from the x86 tree and commit
-ae47c109341198f814767d2f06a1c1e4c7910fb9 ("[CPUFREQ] change cpu freq
-arrays to per_cpu variables") from the cpufreq tree.  The conflict is
-just contextual with the former changing for_each_cpu_mask to
-for_each_cpu_mask_nr in a couple of places right next to the latter
-changing "cpufreq_cpu_data[j]" to "per_cpu(cpufreq_cpu_data, j)".
+<brief panic>
 
-I did the obvious fixups but maybe worth a look.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+I don't even know what the "tests" tree _is_.
 
---Signature=_Mon__19_May_2008_14_39_27_+1000_JnGSBmCsDNgJFMK4
-Content-Type: application/pgp-signature
+Searching the past seven weeks lmkl archives for From:.*ananth.* turns
+up zero hits.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
+So whatever this thing is, it's waaaaaaaaaaaaaaaaaaaaay too low-profile.
 
-iD8DBQFIMQSETgG2atn1QN8RAiW9AJ4nL36gq+ZIFUy7ISfWv4bGv1UUmQCdFBqJ
-IFO2L5ZC46KG2X46y+uQ5LE=
-=WQX4
------END PGP SIGNATURE-----
+Did you even send Linus a pull request?  I have no record of one.
 
---Signature=_Mon__19_May_2008_14_39_27_+1000_JnGSBmCsDNgJFMK4--
+Secret tree :(
