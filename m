@@ -1,50 +1,63 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: driver-core/pci merge failure
-Date: Tue, 20 May 2008 00:39:59 +0200
-Message-ID: <200805200039.59938.rjw@sisk.pl>
-References: <20080519120328.40aa6d5d.sfr@canb.auug.org.au> <200805191625.02966.rjw@sisk.pl> <20080519152243.GB7620@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: bkl-removal build failure
+Date: Tue, 20 May 2008 13:26:20 +1000
+Message-ID: <20080520132620.558e54c8.sfr@canb.auug.org.au>
+References: <20080519163203.89a54b82.sfr@canb.auug.org.au>
+	<4642.1211217165@vena.lwn.net>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__20_May_2008_13_26_20_+1000_C0XVaETIz.tKpqVO"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:39820 "EHLO ogre.sisk.pl"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36683 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760819AbYESWjV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 19 May 2008 18:39:21 -0400
-In-Reply-To: <20080519152243.GB7620@kroah.com>
-Content-Disposition: inline
+	id S1756870AbYETD02 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 19 May 2008 23:26:28 -0400
+In-Reply-To: <4642.1211217165@vena.lwn.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, Shaohua Li <shaohua.li@intel.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-next@vger.kernel.org
 
-On Monday, 19 of May 2008, Greg KH wrote:
-> On Mon, May 19, 2008 at 04:25:02PM +0200, Rafael J. Wysocki wrote:
-> > On Monday, 19 of May 2008, Stephen Rothwell wrote:
-> > > Hi Greg, Jesse,
-> > > 
-> > > Today's linux-next merge of the pci tree got a conflict in
-> > > drivers/pci/pci-driver.c between commit
-> > > 681e027ef934e9892b199180129be772208f735b ("PM: New suspend and
-> > > hibernation callbacks for PCI bus type") from the driver-core tree and
-> > > commit 176bc7cff4442d3795c0599b70ecbe9b11ccd775 ("Suspend/Resume bug in
-> > > PCI layer wrt quirks") from the pci tree.  The former changed
-> > > pci_default_resume() to pci_default_pm_resume() while the latter added a
-> > > call to pci_fixup_device() immediately after the call to
-> > > pci_default_resume() in pci_device_resume() (which became
-> > > pci_legacy_resume() in the former patch).  I assume the obvious fixup is
-> > > correct, but may be worth a check.
-> > 
-> > Well, it's not really obvious. :-)
-> > 
-> > Please revert "PM: New suspend and hibernation callbacks for PCI bus type"
-> > until we fix that up.
-> 
-> Do you want me to drop this from my tree?
+--Signature=_Tue__20_May_2008_13_26_20_+1000_C0XVaETIz.tKpqVO
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, please.  I'll send the updated patch to Jesse, if he doesn't object, as I
-said in the other thread.
+Hi Jon,
 
-Thanks,
-Rafael
+On Mon, 19 May 2008 11:12:45 -0600 corbet@lwn.net (Jonathan Corbet) wrote:
+>
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>=20
+> > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> >=20
+> > drivers/char/viotape.c: In function 'viotap_open':
+> > /scratch/sfr/next/drivers/char/viotape.c:692: error: expected ';' befor=
+e 'get_dev_info'
+>=20
+> Well, that's embarrassing.  There are limits to what can be done with
+> "make allyesconfig" when you only have one architecture at hand...:)
+
+Welcome to life with the big boys :-)
+
+> I've put your fix into my tree, thanks and sorry for the trouble.
+
+OK, thanks.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__20_May_2008_13_26_20_+1000_C0XVaETIz.tKpqVO
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+iD8DBQFIMkTgTgG2atn1QN8RAh6mAKCP6fhiTQQUZOOmksB2A95/bPSFlgCfcBuM
+1iJ6h8VjQuk1l9tYs2EV0RI=
+=6Viu
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__20_May_2008_13_26_20_+1000_C0XVaETIz.tKpqVO--
