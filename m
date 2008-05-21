@@ -1,57 +1,48 @@
-From: Gabriel C <nix.or.die@googlemail.com>
-Subject: Re: linux-next: UML build error
-Date: Wed, 21 May 2008 22:20:39 +0200
-Message-ID: <48348417.9090103@googlemail.com>
-References: <48345B31.50904@googlemail.com> <20080521200515.GB12373@c2.user-mode-linux.org>
+From: Hans-Joachim Picht <hans@linux.vnet.ibm.com>
+Subject: Re: [PATCH] fix I/O memory related compile caused by wrong Kconfig
+	dependencies
+Date: Wed, 21 May 2008 23:30:56 +0200
+Message-ID: <20080521213056.GA22707@blc4eb509856389.ibm.com>
+References: <20080521160523.GA1351@blc4eb509856389.ibm.com> <s5hve17vd9y.wl%tiwai@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gv-out-0910.google.com ([216.239.58.188]:18710 "EHLO
-	gv-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758518AbYEUUU5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 May 2008 16:20:57 -0400
-Received: by gv-out-0910.google.com with SMTP id e6so913380gvc.37
-        for <linux-next@vger.kernel.org>; Wed, 21 May 2008 13:20:55 -0700 (PDT)
-In-Reply-To: <20080521200515.GB12373@c2.user-mode-linux.org>
+Received: from mtagate2.de.ibm.com ([195.212.29.151]:46196 "EHLO
+	mtagate2.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755364AbYEUVb0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 May 2008 17:31:26 -0400
+Received: from d12nrmr1607.megacenter.de.ibm.com (d12nrmr1607.megacenter.de.ibm.com [9.149.167.49])
+	by mtagate2.de.ibm.com (8.13.8/8.13.8) with ESMTP id m4LLVP5D124986
+	for <linux-next@vger.kernel.org>; Wed, 21 May 2008 21:31:25 GMT
+Received: from d12av02.megacenter.de.ibm.com (d12av02.megacenter.de.ibm.com [9.149.165.228])
+	by d12nrmr1607.megacenter.de.ibm.com (8.13.8/8.13.8/NCO v8.7) with ESMTP id m4LLVPm32117846
+	for <linux-next@vger.kernel.org>; Wed, 21 May 2008 23:31:25 +0200
+Received: from d12av02.megacenter.de.ibm.com (loopback [127.0.0.1])
+	by d12av02.megacenter.de.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id m4LLVOBA025654
+	for <linux-next@vger.kernel.org>; Wed, 21 May 2008 23:31:25 +0200
+Content-Disposition: inline
+In-Reply-To: <s5hve17vd9y.wl%tiwai@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeff Dike <jdike@addtoit.com>
-Cc: Linux Kernel list <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, user-mode-linux-devel@lists.sourceforge.net
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org
 
-Jeff Dike wrote:
+On Wed, May 21, 2008 at 06:21:29PM +0200, Takashi Iwai wrote:
+> At Wed, 21 May 2008 18:05:23 +0200, Hans-Joachim Picht wrote:
+> > 
+> > On s390 linux-next fails with the following build error:
+> > 
+> > sound/core/memory.c: In function 'copy_to_user_fromio':
+> > sound/core/memory.c:47: error: implicit declaration of function 'memcpy_fromio'
+> > sound/core/memory.c: In function 'copy_from_user_toio':
+> > sound/core/memory.c:82: error: implicit declaration of function 'memcpy_toio'
 
-> On Wed, May 21, 2008 at 07:26:09PM +0200, Gabriel C wrote:
->>   CC      arch/um/sys-x86_64/ksyms.o
->> arch/um/sys-x86_64/ksyms.c:5: error: '__memcpy' undeclared here (not in a function)
->> arch/um/sys-x86_64/ksyms.c:5: warning: type defaults to 'int' in declaration of '__memcpy'
-> 
-> Does the patch below help?  There's gcc-version-dependent logic in
-> include/asm-x86/string_64.h which decides whether to declare memcpy or
-> __memcpy and it looks like you're hitting that.
+[...]
 
+> Thanks.  I prefer "depends on" in menuconfig SOUND so that we need no
+> extra if-endif block.  I added the patch below to sound-2.6 tree.
+> Does it work for you?
 
-Yes is fixes this error , however I get now another one but this one seems to be an compiler bug.
+Yes, it work for me.
 
-...
- CC      arch/um/sys-x86_64/um_module.o
-  LD      arch/um/sys-x86_64/subarch.o
-  LD      arch/um/sys-x86_64/built-in.o
-  LD      arch/x86/crypto/built-in.o
-  CC      kernel/sched.o
-In file included from kernel/sched.c:1842:
-kernel/sched_idletask.c: In function 'check_preempt_curr_idle':
-kernel/sched_idletask.c:20: internal compiler error: in cgraph_estimate_size_after_inlining, at ipa-inline.c:188
-
-...
-
-This is gcc 4.3.0 ( with backports of some known fixed bugs ).
-I try to build latest snapshot of gcc 4.3* later on today and try with this one. 
-
-> 
-> 	     	      Jeff
-> 
-
-
-
-Gabriel
+        --Hans
