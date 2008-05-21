@@ -1,27 +1,27 @@
-From: Gabriel C <nix.or.die@googlemail.com>
-Subject: linux-next: sound/pcmcia/vx build error
-Date: Wed, 21 May 2008 19:47:04 +0200
-Message-ID: <48346018.5040800@googlemail.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] sound/pcmcia/vx build error
+Date: Wed, 21 May 2008 11:37:21 -0700
+Message-ID: <20080521113721.a9de4700.randy.dunlap@oracle.com>
+References: <48346018.5040800@googlemail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fk-out-0910.google.com ([209.85.128.189]:14960 "EHLO
-	fk-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752989AbYEURrX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 May 2008 13:47:23 -0400
-Received: by fk-out-0910.google.com with SMTP id 18so2870799fkq.5
-        for <linux-next@vger.kernel.org>; Wed, 21 May 2008 10:47:21 -0700 (PDT)
+Received: from rgminet01.oracle.com ([148.87.113.118]:40618 "EHLO
+	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754874AbYEUSj5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 May 2008 14:39:57 -0400
+In-Reply-To: <48346018.5040800@googlemail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Linux Kernel list <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Gabriel C <nix.or.die@googlemail.com>
+Cc: Takashi Iwai <tiwai@suse.de>, Linux Kernel list <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, akpm <akpm@linux-foundation.org>
 
-Hi,
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-I got the following error with a randconfig on linux-next-20080521
-
-...
+menuconfig in Sound PCMCIA drivers needs to be tristate so that SND_PCMCIA
+can have a value of m so that following drivers can be restricted to m
+when needed.
 
 sound/built-in.o: In function `vxpocket_detach':
 vxpocket.c:(.text+0x20cfa): undefined reference to `pcmcia_disable_device'
@@ -37,12 +37,19 @@ sound/built-in.o: In function `exit_vxpocket':
 vxpocket.c:(.exit.text+0x28c): undefined reference to `pcmcia_unregister_driver'
 make: *** [.tmp_vmlinux1] Error 1
 
-...
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ sound/pcmcia/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-config -> http://frugalware.org/~crazy/linux-next/randconfig/bad33_config
-
-
-Regards,
-
-Gabriel
+--- linux-next-20080521.orig/sound/pcmcia/Kconfig
++++ linux-next-20080521/sound/pcmcia/Kconfig
+@@ -1,7 +1,7 @@
+ # ALSA PCMCIA drivers
+ 
+ menuconfig SND_PCMCIA
+-	bool "PCMCIA sound devices"
++	tristate "PCMCIA sound devices"
+ 	depends on PCMCIA
+ 	default y
+ 	help
