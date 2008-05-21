@@ -1,76 +1,85 @@
-From: Takashi Iwai <tiwai@suse.de>
-Subject: Re: linux-next: sound build failure
-Date: Wed, 21 May 2008 08:26:50 +0200
-Message-ID: <20080521062650.GB9699@wotan.suse.de>
-References: <20080521153212.f36796e2.sfr@canb.auug.org.au>
+From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Subject: [PATCH] linux-next: Tree for May 21 - build failure with netfilter on __nf_ct_helper_find()
+Date: Wed, 21 May 2008 17:02:30 +0530
+Message-ID: <20080521113230.GA10830@linux.vnet.ibm.com>
+References: <20080521155936.466bbe86.sfr@canb.auug.org.au>
+Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:60875 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759513AbYEUG0w (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 May 2008 02:26:52 -0400
+Received: from E23SMTP03.au.ibm.com ([202.81.18.172]:46745 "EHLO
+	e23smtp03.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759660AbYEULcg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 May 2008 07:32:36 -0400
 Content-Disposition: inline
-In-Reply-To: <20080521153212.f36796e2.sfr@canb.auug.org.au>
+In-Reply-To: <20080521155936.466bbe86.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netfilter-devel@vger.kernel.org, apw@shadowen.org
 
-On Wed, May 21, 2008 at 03:32:12PM +1000, Stephen Rothwell wrote:
-> Hi Takashi,
-> 
-> Today's linux-next build (sparc64 defconfig) failed like this:
-> 
-> ERROR: "snd_ctl_make_virtual_master" [sound/pci/ac97/snd-ac97-codec.ko] undefined!
-> ERROR: "snd_ctl_add_slave" [sound/pci/ac97/snd-ac97-codec.ko] undefined!
-> 
-> A "select SND_VMASTER" appears to have been lost from "config
-> SND_AC97_CODEC" in commit 6a5751b42420dce9267d7d915eed8f8673d16fdd
-> ("sound: Convert to menuconfig").
-> 
-> I applied the patch below.
+Hi Stephen,
 
-Thanks, applied and pushed again.
+The next-20080521 kernel build fails, on x86_64 machine=20
 
-Takashi
+CC net/netfilter/nf_conntrack_helper.o
+net/netfilter/nf_conntrack_helper.c: In function =E2=80=98__nf_ct_helpe=
+r_find=E2=80=99:
+net/netfilter/nf_conntrack_helper.c:58: error: implicit declaration of =
+function =E2=80=98hlist_for_each_entry_rcu=E2=80=99
+net/netfilter/nf_conntrack_helper.c:58: error: =E2=80=98hnode=E2=80=99 =
+undeclared (first use in this function)
+net/netfilter/nf_conntrack_helper.c:58: error: (Each undeclared identif=
+ier is reported only once
+net/netfilter/nf_conntrack_helper.c:58: error: for each function it app=
+ears in.)
+net/netfilter/nf_conntrack_helper.c:58: error: expected =E2=80=98;=E2=80=
+=99 before =E2=80=98{=E2=80=99 token
+net/netfilter/nf_conntrack_helper.c:50: warning: unused variable =E2=80=
+=98mask=E2=80=99
+net/netfilter/nf_conntrack_helper.c: In function =E2=80=98__nf_conntrac=
+k_helper_find_byname=E2=80=99:
+net/netfilter/nf_conntrack_helper.c:74: error: =E2=80=98hnode=E2=80=99 =
+undeclared (first use in this function)
+net/netfilter/nf_conntrack_helper.c:74: error: expected =E2=80=98;=E2=80=
+=99 before =E2=80=98{=E2=80=99 token
+net/netfilter/nf_conntrack_helper.c: In function =E2=80=98nf_conntrack_=
+helper_register=E2=80=99:
+net/netfilter/nf_conntrack_helper.c:117: error: implicit declaration of=
+ function =E2=80=98hlist_add_head_rcu=E2=80=99
+net/netfilter/nf_conntrack_helper.c: In function =E2=80=98nf_conntrack_=
+helper_unregister=E2=80=99:
+net/netfilter/nf_conntrack_helper.c:133: error: implicit declaration of=
+ function =E2=80=98hlist_del_rcu=E2=80=99
+make[2]: *** [net/netfilter/nf_conntrack_helper.o] Error 1
+make[1]: *** [net/netfilter] Error 2
+make: *** [net] Error 2
 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
-> 
-> >From b88eff22395ffdf10f37cd1c6f1b6adcd37417f6 Mon Sep 17 00:00:00 2001
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 21 May 2008 15:28:59 +1000
-> Subject: [PATCH] sound: restore SND_VMASTER select to SND_AC97_CODEC
-> 
-> Otherwise the following error occurs:
-> 
-> ERROR: "snd_ctl_make_virtual_master" [sound/pci/ac97/snd-ac97-codec.ko] undefined!
-> ERROR: "snd_ctl_add_slave" [sound/pci/ac97/snd-ac97-codec.ko] undefined!
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  sound/drivers/Kconfig |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/sound/drivers/Kconfig b/sound/drivers/Kconfig
-> index 4bf44fb..255fd18 100644
-> --- a/sound/drivers/Kconfig
-> +++ b/sound/drivers/Kconfig
-> @@ -21,6 +21,7 @@ config SND_AC97_CODEC
->  	tristate
->  	select SND_PCM
->  	select AC97_BUS
-> +	select SND_VMASTER
->  
->  menuconfig SND_DRIVERS
->  	bool "Generic sound devices"
-> -- 
-> 1.5.5.1
+This build error is because of the missing include file.I have tested
+the patch for the build failure only.
 
--- 
+Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 --
-Takashi Iwai <tiwai@suse.de>		ALSA Developer - www.alsa-project.org
-
+--- linux-2.6.26-rc3/net/netfilter/nf_conntrack_helper.c	2008-05-20 20:=
+24:14.000000000 +0530
++++ linux-2.6.26-rc3/net/netfilter/~nf_conntrack_helper.c	2008-05-22 00=
+:17:32.000000000 +0530
+@@ -20,6 +20,7 @@
+ #include <linux/err.h>
+ #include <linux/kernel.h>
+ #include <linux/netdevice.h>
++#include <linux/rculist.h>
+=20
+ #include <net/netfilter/nf_conntrack.h>
+ #include <net/netfilter/nf_conntrack_l3proto.h>
+--=20
+Thanks & Regards,
+Kamalesh Babulal,
+Linux Technology Center,
+IBM, ISTL.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-next" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
