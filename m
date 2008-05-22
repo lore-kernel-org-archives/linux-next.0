@@ -1,82 +1,76 @@
 From: "Gabriel C" <nix.or.die@googlemail.com>
-Subject: [ofa-general] Re: linux-next: [PATCH]
-	infiniband/hw/ipath/ipath_sdma.c , fix compiler warnings
-Date: Thu, 22 May 2008 03:45:32 +0200
-Message-ID: <1820d69d0805211845i54908fc5s486d8b9c1d818481@mail.gmail.com>
+Subject: Re: linux-next: [PATCH] infiniband/hw/ipath/ipath_sdma.c , fix compiler warnings
+Date: Thu, 22 May 2008 04:39:16 +0200
+Message-ID: <1820d69d0805211939u7476ead9pe17946f5d4ee7248@mail.gmail.com>
 References: <48342C6C.2010502@googlemail.com>
-	<20080522101714.3f2c5a82.sfr@canb.auug.org.au>
+	 <20080522002335.GG20457@bakeyournoodle.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1707856702=="
-Return-path: <general-bounces@lists.openfabrics.org>
-In-Reply-To: <20080522101714.3f2c5a82.sfr@canb.auug.org.au>
-List-Unsubscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
-	<mailto:general-request@lists.openfabrics.org?subject=unsubscribe>
-List-Archive: <http://lists.openfabrics.org/pipermail/general>
-List-Post: <mailto:general@lists.openfabrics.org>
-List-Help: <mailto:general-request@lists.openfabrics.org?subject=help>
-List-Subscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
-	<mailto:general-request@lists.openfabrics.org?subject=subscribe>
-Mime-version: 1.0
-Sender: general-bounces@lists.openfabrics.org
-Errors-To: general-bounces@lists.openfabrics.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Linux Kernel list <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, general@lists.openfabrics.org
-List-Id: linux-next.vger.kernel.org
-
---===============1707856702==
-Content-Type: multipart/alternative;
-	boundary="----=_Part_7624_28726786.1211420732408"
-
-------=_Part_7624_28726786.1211420732408
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rv-out-0506.google.com ([209.85.198.224]:30371 "EHLO
+	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755581AbYEVCjR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 May 2008 22:39:17 -0400
+Received: by rv-out-0506.google.com with SMTP id l9so2988157rvb.1
+        for <linux-next@vger.kernel.org>; Wed, 21 May 2008 19:39:16 -0700 (PDT)
+In-Reply-To: <20080522002335.GG20457@bakeyournoodle.com>
 Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tony Breeds <tony@bakeyournoodle.com>
+Cc: rolandd@cisco.com, Linux Kernel list <linux-kernel@vger.kernel.org>, general@lists.openfabrics.org, sean.hefty@intel.com, hal.rosenstock@gmail.com, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-2008/5/22 Stephen Rothwell <sfr@canb.auug.org.au>:
-
-> Hi Gabriel,
+2008/5/22 Tony Breeds <tony@bakeyournoodle.com>:
 >
-> We appreciate the reports, thanks.
+> On Wed, May 21, 2008 at 04:06:36PM +0200, Gabriel C wrote:
+> > On linux-next from today , allmodconfig, I see the following warnings on 64bit:
 >
-> On Wed, 21 May 2008 16:06:36 +0200 Gabriel C <nix.or.die@googlemail.com>
-> wrote:
+> x86_64 right?
+>
+> <snip>
+>
+> > diff --git a/drivers/infiniband/hw/ipath/ipath_sdma.c b/drivers/infiniband/hw/ipath/ipath_sdma.c
+> > index 3697449..5f80151 100644
+> > --- a/drivers/infiniband/hw/ipath/ipath_sdma.c
+> > +++ b/drivers/infiniband/hw/ipath/ipath_sdma.c
+> > @@ -257,7 +257,7 @@ static void sdma_abort_task(unsigned long opaque)
+> >       /* everything is stopped, time to clean up and restart */
+> >       if (status == IPATH_SDMA_ABORT_ABORTED) {
+> >               struct ipath_sdma_txreq *txp, *txpnext;
+> > -             u64 hwstatus;
+> > +             unsigned long hwstatus;
+> >               int notify = 0;
 > >
-> > On linux-next from today, allmodconfig, I see the following warnings on
-> 64bit:
+> >               hwstatus = ipath_read_kreg64(dd,
 >
-> What architecture are you building on?
+> This can't be right.  hwstatus needs to be u64, as that's what ipath_read_kreg64() retuns.
+> and a little bit further down we see:
+>
+> ---
+> if (/* ScoreBoardDrainInProg */
+>    test_bit(63, &hwstatus) ||
+>    /* AbortInProg */
+>    test_bit(62, &hwstatus) ||
+>    /* InternalSDmaEnable */
+>    test_bit(61, &hwstatus) ||
+> ---
+>
+> so hwstatus, clearly needs to be 64-bits.
 
+Hmm , right it need be 64-bits.
 
-It is x86_64
+I should drink my coffee first and read code more carefully
+before sending out wrong patches , sorry.
+
+> This brings up an interesting point.  test_bit() and co are
+> essntally expecting to be passed the address
+> of an unsigned long[], so is it correct to pass &u64?
+
+I'm not sure about this one.
+
+>
+> Yours Tony
+>
 
 Gabriel
-
-> <http://www.canb.auug.org.au/%7Esfr/>
-
-------=_Part_7624_28726786.1211420732408
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-<br><br><div class="gmail_quote">2008/5/22 Stephen Rothwell &lt;<a href="mailto:sfr@canb.auug.org.au">sfr@canb.auug.org.au</a>&gt;:<br><blockquote class="gmail_quote" style="border-left: 1px solid rgb(204, 204, 204); margin: 0pt 0pt 0pt 0.8ex; padding-left: 1ex;">
-Hi Gabriel,<br>
-<br>
-We appreciate the reports, thanks.<br>
-<div class="Ih2E3d"><br>
-On Wed, 21 May 2008 16:06:36 +0200 Gabriel C &lt;<a href="mailto:nix.or.die@googlemail.com">nix.or.die@googlemail.com</a>&gt; wrote:<br>
-&gt;<br>
-&gt; On linux-next from today, allmodconfig, I see the following warnings on 64bit:<br>
-<br>
-</div>What architecture are you building on?</blockquote><div><br>It is x86_64<br><br>Gabriel<br></div><blockquote class="gmail_quote" style="border-left: 1px solid rgb(204, 204, 204); margin: 0pt 0pt 0pt 0.8ex; padding-left: 1ex;">
-<font color="#888888"><a href="http://www.canb.auug.org.au/%7Esfr/" target="_blank"></a></font></blockquote></div>
-
-------=_Part_7624_28726786.1211420732408--
-
---===============1707856702==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============1707856702==--
