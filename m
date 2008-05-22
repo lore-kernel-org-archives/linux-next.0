@@ -1,48 +1,111 @@
-From: Hans-Joachim Picht <hans@linux.vnet.ibm.com>
-Subject: Re: [PATCH] fix I/O memory related compile caused by wrong Kconfig
-	dependencies
-Date: Wed, 21 May 2008 23:30:56 +0200
-Message-ID: <20080521213056.GA22707@blc4eb509856389.ibm.com>
-References: <20080521160523.GA1351@blc4eb509856389.ibm.com> <s5hve17vd9y.wl%tiwai@suse.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] linux-next: Tree for May 21 - build failure with
+ netfilter on __nf_ct_helper_find()
+Date: Thu, 22 May 2008 10:11:48 +1000
+Message-ID: <20080522101148.fbabee96.sfr@canb.auug.org.au>
+References: <20080521155936.466bbe86.sfr@canb.auug.org.au>
+	<20080521113230.GA10830@linux.vnet.ibm.com>
+	<20080521225214.507eb400.sfr@canb.auug.org.au>
+	<4834239D.90500@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate2.de.ibm.com ([195.212.29.151]:46196 "EHLO
-	mtagate2.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755364AbYEUVb0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 May 2008 17:31:26 -0400
-Received: from d12nrmr1607.megacenter.de.ibm.com (d12nrmr1607.megacenter.de.ibm.com [9.149.167.49])
-	by mtagate2.de.ibm.com (8.13.8/8.13.8) with ESMTP id m4LLVP5D124986
-	for <linux-next@vger.kernel.org>; Wed, 21 May 2008 21:31:25 GMT
-Received: from d12av02.megacenter.de.ibm.com (d12av02.megacenter.de.ibm.com [9.149.165.228])
-	by d12nrmr1607.megacenter.de.ibm.com (8.13.8/8.13.8/NCO v8.7) with ESMTP id m4LLVPm32117846
-	for <linux-next@vger.kernel.org>; Wed, 21 May 2008 23:31:25 +0200
-Received: from d12av02.megacenter.de.ibm.com (loopback [127.0.0.1])
-	by d12av02.megacenter.de.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id m4LLVOBA025654
-	for <linux-next@vger.kernel.org>; Wed, 21 May 2008 23:31:25 +0200
-Content-Disposition: inline
-In-Reply-To: <s5hve17vd9y.wl%tiwai@suse.de>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44487 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757717AbYEVALy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 21 May 2008 20:11:54 -0400
+In-Reply-To: <4834239D.90500@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-next@vger.kernel.org
+To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netfilter-devel@vger.kernel.org, apw@shadowen.org, Franck Bui-Huu <fbuihuu@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
 
-On Wed, May 21, 2008 at 06:21:29PM +0200, Takashi Iwai wrote:
-> At Wed, 21 May 2008 18:05:23 +0200, Hans-Joachim Picht wrote:
-> > 
-> > On s390 linux-next fails with the following build error:
-> > 
-> > sound/core/memory.c: In function 'copy_to_user_fromio':
-> > sound/core/memory.c:47: error: implicit declaration of function 'memcpy_fromio'
-> > sound/core/memory.c: In function 'copy_from_user_toio':
-> > sound/core/memory.c:82: error: implicit declaration of function 'memcpy_toio'
+Hi all,
 
-[...]
+On Wed, 21 May 2008 18:59:01 +0530 Kamalesh Babulal <kamalesh@linux.vne=
+t.ibm.com> wrote:
+>
+> Stephen Rothwell wrote:
+> >=20
+> > Thanks for the report and patch.  This looks like it is probably br=
+oken in
+> > Linus' kernel.  What config did you use to get the error?
+>=20
+> Please find the .config file used to reproduce this build failure att=
+ached.
 
-> Thanks.  I prefer "depends on" in menuconfig SOUND so that we need no
-> extra if-endif block.  I added the patch below to sound-2.6 tree.
-> Does it work for you?
+Actually this is caused by the splitting out of the rcu stuff from list=
+=2Eh
+that is in linux-next, sorry.
 
-Yes, it work for me.
+Your patch looks good to me (reproduced below for new cc's).
 
-        --Hans
+Ingo, this should probably go into the rcu tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+Date: Wed, 21 May 2008 17:02:30 +0530
+=46rom: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Subject: [PATCH] linux-next: Tree for May 21 - build failure with netfi=
+lter on __nf_ct_helper_find()
+
+The next-20080521 kernel build fails, on x86_64 machine=20
+
+CC net/netfilter/nf_conntrack_helper.o
+net/netfilter/nf_conntrack_helper.c: In function =E2=80=98__nf_ct_helpe=
+r_find=E2=80=99:
+net/netfilter/nf_conntrack_helper.c:58: error: implicit declaration of =
+function =E2=80=98hlist_for_each_entry_rcu=E2=80=99
+net/netfilter/nf_conntrack_helper.c:58: error: =E2=80=98hnode=E2=80=99 =
+undeclared (first use in this function)
+net/netfilter/nf_conntrack_helper.c:58: error: (Each undeclared identif=
+ier is reported only once
+net/netfilter/nf_conntrack_helper.c:58: error: for each function it app=
+ears in.)
+net/netfilter/nf_conntrack_helper.c:58: error: expected =E2=80=98;=E2=80=
+=99 before =E2=80=98{=E2=80=99 token
+net/netfilter/nf_conntrack_helper.c:50: warning: unused variable =E2=80=
+=98mask=E2=80=99
+net/netfilter/nf_conntrack_helper.c: In function =E2=80=98__nf_conntrac=
+k_helper_find_byname=E2=80=99:
+net/netfilter/nf_conntrack_helper.c:74: error: =E2=80=98hnode=E2=80=99 =
+undeclared (first use in this function)
+net/netfilter/nf_conntrack_helper.c:74: error: expected =E2=80=98;=E2=80=
+=99 before =E2=80=98{=E2=80=99 token
+net/netfilter/nf_conntrack_helper.c: In function =E2=80=98nf_conntrack_=
+helper_register=E2=80=99:
+net/netfilter/nf_conntrack_helper.c:117: error: implicit declaration of=
+ function =E2=80=98hlist_add_head_rcu=E2=80=99
+net/netfilter/nf_conntrack_helper.c: In function =E2=80=98nf_conntrack_=
+helper_unregister=E2=80=99:
+net/netfilter/nf_conntrack_helper.c:133: error: implicit declaration of=
+ function =E2=80=98hlist_del_rcu=E2=80=99
+make[2]: *** [net/netfilter/nf_conntrack_helper.o] Error 1
+make[1]: *** [net/netfilter] Error 2
+make: *** [net] Error 2
+
+This build error is because of the missing include file.I have tested
+the patch for the build failure only.
+
+Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+--
+--- linux-2.6.26-rc3/net/netfilter/nf_conntrack_helper.c	2008-05-20 20:=
+24:14.000000000 +0530
++++ linux-2.6.26-rc3/net/netfilter/~nf_conntrack_helper.c	2008-05-22 00=
+:17:32.000000000 +0530
+@@ -20,6 +20,7 @@
+ #include <linux/err.h>
+ #include <linux/kernel.h>
+ #include <linux/netdevice.h>
++#include <linux/rculist.h>
+=20
+ #include <net/netfilter/nf_conntrack.h>
+ #include <net/netfilter/nf_conntrack_l3proto.h>
+--
+To unsubscribe from this list: send the line "unsubscribe linux-next" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
