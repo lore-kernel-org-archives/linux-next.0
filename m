@@ -1,46 +1,29 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: linux-next: wireless/wireless-current merge conflict
-Date: Thu, 22 May 2008 09:41:05 -0400
-Message-ID: <20080522134105.GB3996@tuxdriver.com>
-References: <20080522132031.3c05b6f7.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: corbet@lwn.net (Jonathan Corbet)
+Subject: Re: linux-next: bkl-removal/arm merge conflict
+Date: Thu, 22 May 2008 08:16:25 -0600
+Message-ID: <10532.1211465785@vena.lwn.net>
+References: <20080522152157.57dac9f7.sfr@canb.auug.org.au>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ra.tuxdriver.com ([70.61.120.52]:3917 "EHLO ra.tuxdriver.com"
+Received: from vena.lwn.net ([206.168.112.25]:48910 "EHLO vena.lwn.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755215AbYEVN6Z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 22 May 2008 09:58:25 -0400
-Content-Disposition: inline
-In-Reply-To: <20080522132031.3c05b6f7.sfr@canb.auug.org.au>
+	id S1750991AbYEVOQ0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 May 2008 10:16:26 -0400
+In-reply-to: Your message of "Thu, 22 May 2008 15:21:57 +1000."
+             <20080522152157.57dac9f7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, Johannes Berg <johannes@sipsolutions.net>, linux-next@vger.kernel.org, Helmut Schaa <hschaa@suse.de>
+Cc: linux-next@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Russell King <rmk@arm.linux.org.uk>
 
-On Thu, May 22, 2008 at 01:20:31PM +1000, Stephen Rothwell wrote:
-> Hi John, Dave,
-> 
-> Today's linux-next merge of the net tree got a (trivial) conflict in
-> net/mac80211/mlme.c between commit
-> 0d580a774b3682b8b2b5c89ab9b813d149ef28e7 ("mac80211: fix NULL pointer
-> dereference in ieee80211_compatible_rates") from the wireless-current
-> tree and commit 988c0f723d0b1abb399e6e71d8bf3f8bf1949a70 ("mac80211: a
-> few code cleanups") from the wireless tree.
-> 
-> The conflict is just contextual with the latter patch removing braces
-> around some code very near the insertion in the former patch.  I did the
-> obvious fixup.  You may want to check (around line 724).
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-It sounds like you did the right fix.  Did you hit one under
-drivers/net/wireless/libertas as well?
+> Today's linux-next merge of the bkl-removal tree got a conflict in
+> arch/arm/common/rtctime.c between commit
+> b204d462d7eae31413c5ac80ec3a32a89765fd46 ("[RTC] remove old ARM rtc
+> library code") from the arm tree and commit
+> f6f28a87d5f4ae2b101e64ab494267f6858631c4 ("arm-common-rtctime: BKL
+> pushdown") from the bkl-removal tree.
 
-I have just pushed a 'merge-test' branch here:
+OK, that commit has been removed.  Thanks, Stephen.
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-next-2.6 merge-test
-
-You may wish to refer to it for the libertas conflict tomorrow.
-
-John
--- 
-John W. Linville
-linville@tuxdriver.com
+jon
