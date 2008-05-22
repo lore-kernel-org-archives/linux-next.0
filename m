@@ -1,111 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] linux-next: Tree for May 21 - build failure with
- netfilter on __nf_ct_helper_find()
-Date: Thu, 22 May 2008 10:11:48 +1000
-Message-ID: <20080522101148.fbabee96.sfr@canb.auug.org.au>
-References: <20080521155936.466bbe86.sfr@canb.auug.org.au>
-	<20080521113230.GA10830@linux.vnet.ibm.com>
-	<20080521225214.507eb400.sfr@canb.auug.org.au>
-	<4834239D.90500@linux.vnet.ibm.com>
+Subject: Re: [BUG] linux-next: Tree for May 19/20/21 - BUG at
+ arch/x86/kernel/io_apic_64.c:353!
+Date: Thu, 22 May 2008 10:15:36 +1000
+Message-ID: <20080522101536.c449e082.sfr@canb.auug.org.au>
+References: <20080519174120.2083ea57.sfr@canb.auug.org.au>
+	<48315607.4080207@linux.vnet.ibm.com>
+	<48345B5E.1090506@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__22_May_2008_10_15_36_+1000_KaYAXz.59QTIAcww"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44487 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38600 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757717AbYEVALy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 May 2008 20:11:54 -0400
-In-Reply-To: <4834239D.90500@linux.vnet.ibm.com>
+	id S1757955AbYEVAPt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 21 May 2008 20:15:49 -0400
+In-Reply-To: <48345B5E.1090506@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netfilter-devel@vger.kernel.org, apw@shadowen.org, Franck Bui-Huu <fbuihuu@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Andy Whitcroft <apw@shadowen.org>
 
-Hi all,
+--Signature=_Thu__22_May_2008_10_15_36_+1000_KaYAXz.59QTIAcww
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 21 May 2008 18:59:01 +0530 Kamalesh Babulal <kamalesh@linux.vne=
-t.ibm.com> wrote:
->
-> Stephen Rothwell wrote:
-> >=20
-> > Thanks for the report and patch.  This looks like it is probably br=
-oken in
-> > Linus' kernel.  What config did you use to get the error?
+Hi Kamalesh,
+
+On Wed, 21 May 2008 22:56:54 +0530 Kamalesh Babulal <kamalesh@linux.vnet.ib=
+m.com> wrote:
 >=20
-> Please find the .config file used to reproduce this build failure att=
-ached.
+> This kernel panic while booting up is reproducible with the next-20080519=
+,=20
+> next-20080520 and next-20080521 kernels.
 
-Actually this is caused by the splitting out of the rcu stuff from list=
-=2Eh
-that is in linux-next, sorry.
+Thanks for the reports.
 
-Your patch looks good to me (reproduced below for new cc's).
+Can you include the config when you send these, please.  If it a standard
+config then just say "defconfig" (or whatever) otherwise please attach
+the config you used.
 
-Ingo, this should probably go into the rcu tree.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-Date: Wed, 21 May 2008 17:02:30 +0530
-=46rom: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Subject: [PATCH] linux-next: Tree for May 21 - build failure with netfi=
-lter on __nf_ct_helper_find()
+--Signature=_Thu__22_May_2008_10_15_36_+1000_KaYAXz.59QTIAcww
+Content-Type: application/pgp-signature
 
-The next-20080521 kernel build fails, on x86_64 machine=20
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
 
-CC net/netfilter/nf_conntrack_helper.o
-net/netfilter/nf_conntrack_helper.c: In function =E2=80=98__nf_ct_helpe=
-r_find=E2=80=99:
-net/netfilter/nf_conntrack_helper.c:58: error: implicit declaration of =
-function =E2=80=98hlist_for_each_entry_rcu=E2=80=99
-net/netfilter/nf_conntrack_helper.c:58: error: =E2=80=98hnode=E2=80=99 =
-undeclared (first use in this function)
-net/netfilter/nf_conntrack_helper.c:58: error: (Each undeclared identif=
-ier is reported only once
-net/netfilter/nf_conntrack_helper.c:58: error: for each function it app=
-ears in.)
-net/netfilter/nf_conntrack_helper.c:58: error: expected =E2=80=98;=E2=80=
-=99 before =E2=80=98{=E2=80=99 token
-net/netfilter/nf_conntrack_helper.c:50: warning: unused variable =E2=80=
-=98mask=E2=80=99
-net/netfilter/nf_conntrack_helper.c: In function =E2=80=98__nf_conntrac=
-k_helper_find_byname=E2=80=99:
-net/netfilter/nf_conntrack_helper.c:74: error: =E2=80=98hnode=E2=80=99 =
-undeclared (first use in this function)
-net/netfilter/nf_conntrack_helper.c:74: error: expected =E2=80=98;=E2=80=
-=99 before =E2=80=98{=E2=80=99 token
-net/netfilter/nf_conntrack_helper.c: In function =E2=80=98nf_conntrack_=
-helper_register=E2=80=99:
-net/netfilter/nf_conntrack_helper.c:117: error: implicit declaration of=
- function =E2=80=98hlist_add_head_rcu=E2=80=99
-net/netfilter/nf_conntrack_helper.c: In function =E2=80=98nf_conntrack_=
-helper_unregister=E2=80=99:
-net/netfilter/nf_conntrack_helper.c:133: error: implicit declaration of=
- function =E2=80=98hlist_del_rcu=E2=80=99
-make[2]: *** [net/netfilter/nf_conntrack_helper.o] Error 1
-make[1]: *** [net/netfilter] Error 2
-make: *** [net] Error 2
+iD8DBQFINLswTgG2atn1QN8RAnnLAJ4klNfKT9UXyGDzTHNIZiflmT46HQCgkUBu
+dZihCo7cfYZAqXixoB3EkRM=
+=N7MC
+-----END PGP SIGNATURE-----
 
-This build error is because of the missing include file.I have tested
-the patch for the build failure only.
-
-Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
---
---- linux-2.6.26-rc3/net/netfilter/nf_conntrack_helper.c	2008-05-20 20:=
-24:14.000000000 +0530
-+++ linux-2.6.26-rc3/net/netfilter/~nf_conntrack_helper.c	2008-05-22 00=
-:17:32.000000000 +0530
-@@ -20,6 +20,7 @@
- #include <linux/err.h>
- #include <linux/kernel.h>
- #include <linux/netdevice.h>
-+#include <linux/rculist.h>
-=20
- #include <net/netfilter/nf_conntrack.h>
- #include <net/netfilter/nf_conntrack_l3proto.h>
---
-To unsubscribe from this list: send the line "unsubscribe linux-next" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--Signature=_Thu__22_May_2008_10_15_36_+1000_KaYAXz.59QTIAcww--
