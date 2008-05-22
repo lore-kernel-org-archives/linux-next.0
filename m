@@ -1,53 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: wireless/wireless-current merge conflict
-Date: Thu, 22 May 2008 13:20:31 +1000
-Message-ID: <20080522132031.3c05b6f7.sfr@canb.auug.org.au>
+Subject: linux-next: bkl-removal/arm merge conflict
+Date: Thu, 22 May 2008 15:21:57 +1000
+Message-ID: <20080522152157.57dac9f7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__22_May_2008_13_20_31_+1000_e=/EvjVfWdbTS7yc"
+ boundary="Signature=_Thu__22_May_2008_15_21_57_+1000_3DRz3Q+HMieukII5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59021 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40749 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759439AbYEVDUk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 May 2008 23:20:40 -0400
+	id S1753218AbYEVFWI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 May 2008 01:22:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>, David Miller <davem@davemloft.net>
-Cc: Johannes Berg <johannes@sipsolutions.net>, linux-next@vger.kernel.org, Helmut Schaa <hschaa@suse.de>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-next@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Russell King <rmk@arm.linux.org.uk>
 
---Signature=_Thu__22_May_2008_13_20_31_+1000_e=/EvjVfWdbTS7yc
+--Signature=_Thu__22_May_2008_15_21_57_+1000_3DRz3Q+HMieukII5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi John, Dave,
+Hi Jon,
 
-Today's linux-next merge of the net tree got a (trivial) conflict in
-net/mac80211/mlme.c between commit
-0d580a774b3682b8b2b5c89ab9b813d149ef28e7 ("mac80211: fix NULL pointer
-dereference in ieee80211_compatible_rates") from the wireless-current
-tree and commit 988c0f723d0b1abb399e6e71d8bf3f8bf1949a70 ("mac80211: a
-few code cleanups") from the wireless tree.
+Today's linux-next merge of the bkl-removal tree got a conflict in
+arch/arm/common/rtctime.c between commit
+b204d462d7eae31413c5ac80ec3a32a89765fd46 ("[RTC] remove old ARM rtc
+library code") from the arm tree and commit
+f6f28a87d5f4ae2b101e64ab494267f6858631c4 ("arm-common-rtctime: BKL
+pushdown") from the bkl-removal tree.
 
-The conflict is just contextual with the latter patch removing braces
-around some code very near the insertion in the former patch.  I did the
-obvious fixup.  You may want to check (around line 724).
+The former removed the file which is what I did in linux-next.
 
+Jon, you may want to remove or revert that commit from your tree.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__22_May_2008_13_20_31_+1000_e=/EvjVfWdbTS7yc
+--Signature=_Thu__22_May_2008_15_21_57_+1000_3DRz3Q+HMieukII5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.6 (GNU/Linux)
 
-iD8DBQFINOaETgG2atn1QN8RAmBFAJ9GuJpxCjsM38r1Q6+hSbfYxys4WQCfR//p
-ezCKLMtHfBcm0HVCDXtGABE=
-=nx8N
+iD8DBQFINQL6TgG2atn1QN8RAjF7AJ9Zly89gClY6yK97ASpU1ErUiqwTACfdSya
+xuq/OozfnujLwtM+2YAdhuM=
+=nUXH
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__22_May_2008_13_20_31_+1000_e=/EvjVfWdbTS7yc--
+--Signature=_Thu__22_May_2008_15_21_57_+1000_3DRz3Q+HMieukII5--
