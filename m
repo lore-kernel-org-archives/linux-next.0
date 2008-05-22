@@ -1,61 +1,82 @@
-From: tony@bakeyournoodle.com (Tony Breeds)
-Subject: Re: linux-next: [PATCH] infiniband/hw/ipath/ipath_sdma.c , fix compiler warnings
-Date: Thu, 22 May 2008 10:23:35 +1000
-Message-ID: <20080522002335.GG20457@bakeyournoodle.com>
+From: "Gabriel C" <nix.or.die@googlemail.com>
+Subject: [ofa-general] Re: linux-next: [PATCH]
+	infiniband/hw/ipath/ipath_sdma.c , fix compiler warnings
+Date: Thu, 22 May 2008 03:45:32 +0200
+Message-ID: <1820d69d0805211845i54908fc5s486d8b9c1d818481@mail.gmail.com>
 References: <48342C6C.2010502@googlemail.com>
+	<20080522101714.3f2c5a82.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pythia.bakeyournoodle.com ([203.82.209.197]:35829 "EHLO
-	pythia.bakeyournoodle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757219AbYEVAXh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 May 2008 20:23:37 -0400
+Content-Type: multipart/mixed; boundary="===============1707856702=="
+Return-path: <general-bounces@lists.openfabrics.org>
+In-Reply-To: <20080522101714.3f2c5a82.sfr@canb.auug.org.au>
+List-Unsubscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
+	<mailto:general-request@lists.openfabrics.org?subject=unsubscribe>
+List-Archive: <http://lists.openfabrics.org/pipermail/general>
+List-Post: <mailto:general@lists.openfabrics.org>
+List-Help: <mailto:general-request@lists.openfabrics.org?subject=help>
+List-Subscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
+	<mailto:general-request@lists.openfabrics.org?subject=subscribe>
+Mime-version: 1.0
+Sender: general-bounces@lists.openfabrics.org
+Errors-To: general-bounces@lists.openfabrics.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Linux Kernel list <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, general@lists.openfabrics.org
+List-Id: linux-next.vger.kernel.org
+
+--===============1707856702==
+Content-Type: multipart/alternative;
+	boundary="----=_Part_7624_28726786.1211420732408"
+
+------=_Part_7624_28726786.1211420732408
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
-In-Reply-To: <48342C6C.2010502@googlemail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Gabriel C <nix.or.die@googlemail.com>
-Cc: rolandd@cisco.com, Linux Kernel list <linux-kernel@vger.kernel.org>, general@lists.openfabrics.org, sean.hefty@intel.com, hal.rosenstock@gmail.com, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-On Wed, May 21, 2008 at 04:06:36PM +0200, Gabriel C wrote:
-> On linux-next from today , allmodconfig, I see the following warnings on 64bit:
+2008/5/22 Stephen Rothwell <sfr@canb.auug.org.au>:
 
-x86_64 right?
+> Hi Gabriel,
+>
+> We appreciate the reports, thanks.
+>
+> On Wed, 21 May 2008 16:06:36 +0200 Gabriel C <nix.or.die@googlemail.com>
+> wrote:
+> >
+> > On linux-next from today, allmodconfig, I see the following warnings on
+> 64bit:
+>
+> What architecture are you building on?
 
-<snip>
 
-> diff --git a/drivers/infiniband/hw/ipath/ipath_sdma.c b/drivers/infiniband/hw/ipath/ipath_sdma.c
-> index 3697449..5f80151 100644
-> --- a/drivers/infiniband/hw/ipath/ipath_sdma.c
-> +++ b/drivers/infiniband/hw/ipath/ipath_sdma.c
-> @@ -257,7 +257,7 @@ static void sdma_abort_task(unsigned long opaque)
->  	/* everything is stopped, time to clean up and restart */
->  	if (status == IPATH_SDMA_ABORT_ABORTED) {
->  		struct ipath_sdma_txreq *txp, *txpnext;
-> -		u64 hwstatus;
-> +		unsigned long hwstatus;
->  		int notify = 0;
->  
->  		hwstatus = ipath_read_kreg64(dd,
+It is x86_64
 
-This can't be right.  hwstatus needs to be u64, as that's what ipath_read_kreg64() retuns.
-and a little bit further down we see:
+Gabriel
 
----
-if (/* ScoreBoardDrainInProg */
-    test_bit(63, &hwstatus) ||
-    /* AbortInProg */
-    test_bit(62, &hwstatus) ||
-    /* InternalSDmaEnable */
-    test_bit(61, &hwstatus) ||
----
+> <http://www.canb.auug.org.au/%7Esfr/>
 
-so hwstatus, clearly needs to be 64-bits.  This brings up an interesting
-point.  test_bit() and co are essntally expecting to be passed the address
-of an unsigned long[], so is it correct to pass &u64?
+------=_Part_7624_28726786.1211420732408
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Yours Tony
+<br><br><div class="gmail_quote">2008/5/22 Stephen Rothwell &lt;<a href="mailto:sfr@canb.auug.org.au">sfr@canb.auug.org.au</a>&gt;:<br><blockquote class="gmail_quote" style="border-left: 1px solid rgb(204, 204, 204); margin: 0pt 0pt 0pt 0.8ex; padding-left: 1ex;">
+Hi Gabriel,<br>
+<br>
+We appreciate the reports, thanks.<br>
+<div class="Ih2E3d"><br>
+On Wed, 21 May 2008 16:06:36 +0200 Gabriel C &lt;<a href="mailto:nix.or.die@googlemail.com">nix.or.die@googlemail.com</a>&gt; wrote:<br>
+&gt;<br>
+&gt; On linux-next from today, allmodconfig, I see the following warnings on 64bit:<br>
+<br>
+</div>What architecture are you building on?</blockquote><div><br>It is x86_64<br><br>Gabriel<br></div><blockquote class="gmail_quote" style="border-left: 1px solid rgb(204, 204, 204); margin: 0pt 0pt 0pt 0.8ex; padding-left: 1ex;">
+<font color="#888888"><a href="http://www.canb.auug.org.au/%7Esfr/" target="_blank"></a></font></blockquote></div>
 
-  linux.conf.au    http://www.marchsouth.org/
-  Jan 19 - 24 2009 The Australian Linux Technical Conference!
+------=_Part_7624_28726786.1211420732408--
 
+--===============1707856702==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============1707856702==--
