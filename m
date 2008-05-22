@@ -1,29 +1,67 @@
-From: corbet@lwn.net (Jonathan Corbet)
-Subject: Re: linux-next: bkl-removal/arm merge conflict
-Date: Thu, 22 May 2008 08:16:25 -0600
-Message-ID: <10532.1211465785@vena.lwn.net>
-References: <20080522152157.57dac9f7.sfr@canb.auug.org.au>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from vena.lwn.net ([206.168.112.25]:48910 "EHLO vena.lwn.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750991AbYEVOQ0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 22 May 2008 10:16:26 -0400
-In-reply-to: Your message of "Thu, 22 May 2008 15:21:57 +1000."
-             <20080522152157.57dac9f7.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Russell King <rmk@arm.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] linux-next: Tree for May 21 - build failure with
+ netfilter on __nf_ct_helper_find()
+Date: Fri, 23 May 2008 09:29:21 +1000
+Message-ID: <20080523092921.9b9cb49b.sfr@canb.auug.org.au>
+References: <20080521155936.466bbe86.sfr@canb.auug.org.au>
+	<20080521113230.GA10830@linux.vnet.ibm.com>
+	<20080521225214.507eb400.sfr@canb.auug.org.au>
+	<4834239D.90500@linux.vnet.ibm.com>
+	<20080522101148.fbabee96.sfr@canb.auug.org.au>
+	<20080522081546.GB7222@elte.hu>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__23_May_2008_09_29_21_+1000_MFj7k2MbHqRMI6vQ"
+Return-path: <netfilter-devel-owner@vger.kernel.org>
+In-Reply-To: <20080522081546.GB7222@elte.hu>
+Sender: netfilter-devel-owner@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netfilter-devel@vger.kernel.org, apw@shadowen.org, Franck Bui-Huu <fbuihuu@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Signature=_Fri__23_May_2008_09_29_21_+1000_MFj7k2MbHqRMI6vQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Today's linux-next merge of the bkl-removal tree got a conflict in
-> arch/arm/common/rtctime.c between commit
-> b204d462d7eae31413c5ac80ec3a32a89765fd46 ("[RTC] remove old ARM rtc
-> library code") from the arm tree and commit
-> f6f28a87d5f4ae2b101e64ab494267f6858631c4 ("arm-common-rtctime: BKL
-> pushdown") from the bkl-removal tree.
+Hi Ingo,
 
-OK, that commit has been removed.  Thanks, Stephen.
+On Thu, 22 May 2008 10:15:46 +0200 Ingo Molnar <mingo@elte.hu> wrote:
+>
+> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>=20
+> > Actually this is caused by the splitting out of the rcu stuff from=20
+> > list.h that is in linux-next, sorry.
+>=20
+> this bug has been fixed in the -tip tree 9 days ago:
+>=20
+> |  commit db3c7a9f07a212d1774e6b432a08b231340e984d
+> |  Author: Ingo Molnar <mingo@elte.hu>
+> |  Date:   Tue May 13 15:37:05 2008 +0200
+>=20
+> that commit was in intermediate testing phase in the 'scratch' branch,=20
+> and a few days ago linux-next stopped picking up the scratch branch.
+>=20
+> I've now cherry-picked this fix over into the rcu branch and everything=20
+> should be fine again in the next linux-next iteration.
 
-jon
+OK, thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__23_May_2008_09_29_21_+1000_MFj7k2MbHqRMI6vQ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+iD8DBQFINgHaTgG2atn1QN8RAirPAJ9OdGFLSxM+fsq6tbrf06qPRHezawCgiRGJ
+VPhN/+MTSkl7oWkgg5sGQM0=
+=vm8l
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__23_May_2008_09_29_21_+1000_MFj7k2MbHqRMI6vQ--
