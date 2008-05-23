@@ -1,53 +1,63 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: i2c build failure
-Date: Thu, 22 May 2008 18:58:09 -0700
-Message-ID: <20080523015809.GA16743@kroah.com>
-References: <20080523113255.258e38bd.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: wireless/wireless-current merge conflict
+Date: Fri, 23 May 2008 13:37:15 +1000
+Message-ID: <20080523133715.b42cb8e7.sfr@canb.auug.org.au>
+References: <20080522132031.3c05b6f7.sfr@canb.auug.org.au>
+	<20080522134105.GB3996@tuxdriver.com>
+	<20080523093418.8c524267.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__23_May_2008_13_37_15_+1000_Oa2yKKiboBgo=_sP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pentafluge.infradead.org ([213.146.154.40]:56959 "EHLO
-	pentafluge.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758109AbYEWB7S (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 22 May 2008 21:59:18 -0400
-Content-Disposition: inline
-In-Reply-To: <20080523113255.258e38bd.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:45246 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1762433AbYEWDh2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 May 2008 23:37:28 -0400
+In-Reply-To: <20080523093418.8c524267.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jean Delvare <khali@linux-fr.org>, linux-next@vger.kernel.org, Dave Young <hidave.darkstar@gmail.com>, Kay Sievers <kay.sievers@vrfy.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: David Miller <davem@davemloft.net>, Johannes Berg <johannes@sipsolutions.net>, linux-next@vger.kernel.org, Helmut Schaa <hschaa@suse.de>
 
-On Fri, May 23, 2008 at 11:32:55AM +1000, Stephen Rothwell wrote:
-> Hi Jean,
-> 
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> 
-> drivers/i2c/i2c-core.c: In function 'i2c_register_driver':
-> drivers/i2c/i2c-core.c:697: warning: passing argument 2 of 'class_for_each_device' from incompatible pointer type
-> drivers/i2c/i2c-core.c:697: error: too few arguments to function 'class_for_each_device'
-> drivers/i2c/i2c-core.c: In function 'i2c_del_driver':
-> drivers/i2c/i2c-core.c:749: warning: passing argument 2 of 'class_for_each_device' from incompatible pointer type
-> drivers/i2c/i2c-core.c:749: error: too few arguments to function 'class_for_each_device'
-> 
-> This is caused by commit f79228aaa062668bcbabf9762e819a1d7ee7c5c4 ("i2c:
-> Use class_for_each_device") from the i2c tree interacting with commit
-> a3ec024649e0095368d38a2e434ad092b79aa7af ("Driver Core: add ability for
-> class_for_each_device to start in middle of list") from the driver-core
-> tree.  The latter added a parameter to class_for_each_device while the
-> former added a new usage.
-> 
-> I applied the patch below.
+--Signature=_Fri__23_May_2008_13_37_15_+1000_Oa2yKKiboBgo=_sP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The patch looks correct, thanks.
+Hi John,
 
-> Greg, is there some better way to handle this interface change?  (e.g. new
-> function name?)
+On Fri, 23 May 2008 09:34:18 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Thu, 22 May 2008 09:41:05 -0400 "John W. Linville" <linville@tuxdriver=
+.com> wrote:
+> >
+> > I have just pushed a 'merge-test' branch here:
+> >=20
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-next-2=
+.6 merge-test
+> >=20
+> > You may wish to refer to it for the libertas conflict tomorrow.
+>=20
+> Thanks, I will have a look.
 
-There's only what, 5 users in the kernel for it today in 3 different
-files?  I'd rather not go through that kind of sequence, can you just
-keep this patch and we'll handle it when we merge together once .27
-opens.  Sound reasonable?
+I got the conflict and fixed it up to match your test merge.  Thanks.
 
-thanks,
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-greg k-h
+--Signature=_Fri__23_May_2008_13_37_15_+1000_Oa2yKKiboBgo=_sP
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+iD4DBQFINjvvTgG2atn1QN8RAn0FAJ9E8rolpTSjkF+yltMfduiSXqCfQwCWNROO
+zSWKaVJN8fc5pa0zjRFtkQ==
+=DHCP
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__23_May_2008_13_37_15_+1000_Oa2yKKiboBgo=_sP--
