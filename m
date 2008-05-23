@@ -1,69 +1,79 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: Tree for May 22
-Date: Fri, 23 May 2008 03:27:49 +0200
-Message-ID: <200805230327.51067.rjw@sisk.pl>
-References: <20080522165209.ef2cb160.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: i2c build failure
+Date: Fri, 23 May 2008 11:32:55 +1000
+Message-ID: <20080523113255.258e38bd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-15"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:60057 "EHLO ogre.sisk.pl"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57829 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750696AbYEWB1T (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 22 May 2008 21:27:19 -0400
-In-Reply-To: <20080522165209.ef2cb160.sfr@canb.auug.org.au>
-Content-Disposition: inline
+	id S1751535AbYEWBdC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 May 2008 21:33:02 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Jens Axboe <jens.axboe@oracle.com>, Borislav Petkov <petkovbb@gmail.com>, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>, Andrew Morton <akpm@linux-foundation.org>
+To: Jean Delvare <khali@linux-fr.org>, Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, Dave Young <hidave.darkstar@gmail.com>, Kay Sievers <kay.sievers@vrfy.org>
 
-On Thursday, 22 of May 2008, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since next-20080522:
-> 
-> The three patches reverted from the driver-core tree yesterday have been
-> removed from there.
-> 
-> The net tree (actually the wireless tree) had a trivial conflict with the
-> wireless-current tree.
-> 
-> One of the sound tree build patches has been merged.
-> 
-> The semaphore-removal tree still needed three patches reverted because similar
-> patches were merged into upstream and the scsi-rc-fixes trees.
-> 
-> The bkl-removal tree had a conflict with the arm tree because the arm
-> tree removed a file that was changed.
-> 
-> I have applied the following temporary patch for known build problems:
-> 
-> 	"Fix various 8390 builds" - the net tree broke builds on various
-> architectures - hopefully this patch will go into the net tree shortly.
-> 	"build failure with netfilter on __nf_ct_helper_find()" - breakage
-> due to the moving of stuff from list.h to rculist.h
+Hi Jean,
 
-This one and the previous linux-next can't resume from suspend to RAM on my
-HP nx6325.  The problem is reliably reproducible 100% of the time.
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-The patch that causes it to happen, as identified by bisection, is:
+drivers/i2c/i2c-core.c: In function 'i2c_register_driver':
+drivers/i2c/i2c-core.c:697: warning: passing argument 2 of 'class_for_each_device' from incompatible pointer type
+drivers/i2c/i2c-core.c:697: error: too few arguments to function 'class_for_each_device'
+drivers/i2c/i2c-core.c: In function 'i2c_del_driver':
+drivers/i2c/i2c-core.c:749: warning: passing argument 2 of 'class_for_each_device' from incompatible pointer type
+drivers/i2c/i2c-core.c:749: error: too few arguments to function 'class_for_each_device'
 
-commit 3dcefa9419f3b8a49921d2218c93a3ddba8e0855
-Author: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Date:   Thu May 22 10:40:19 2008 +1000
+This is caused by commit f79228aaa062668bcbabf9762e819a1d7ee7c5c4 ("i2c:
+Use class_for_each_device") from the i2c tree interacting with commit
+a3ec024649e0095368d38a2e434ad092b79aa7af ("Driver Core: add ability for
+class_for_each_device to start in middle of list") from the driver-core
+tree.  The latter added a parameter to class_for_each_device while the
+former added a new usage.
 
-    ide: use __generic_unplug_device() in ide_do_drive_cmd()
+I applied the patch below.
 
-    Cc: FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
-    Cc: Borislav Petkov <petkovbb@gmail.com>
-    Cc: Jens Axboe <jens.axboe@oracle.com>
-    Signed-off-by: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Greg, is there some better way to handle this interface change?  (e.g. new
+function name?)
 
-Reverting it along with the next IDE patches (up to and including
-commit fd42e6df0fd163411f5c655b4bde4fb6a8910edc
-"ide: remove action argument in ide_do_drive_cmd") makes the problem go away.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks,
-Rafael
+>From 4dde1df49f5c1301b5eea93a3776624de6e4f0c5 Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 23 May 2008 11:27:59 +1000
+Subject: [PATCH] i2c: fix fallout from class_for_each_device change.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/i2c/i2c-core.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+index e06067e..a1021d5 100644
+--- a/drivers/i2c/i2c-core.c
++++ b/drivers/i2c/i2c-core.c
+@@ -693,7 +693,7 @@ int i2c_register_driver(struct module *owner, struct i2c_driver *driver)
+ 
+ 	/* legacy drivers scan i2c busses directly */
+ 	if (driver->attach_adapter)
+-		class_for_each_device(&i2c_adapter_class, driver,
++		class_for_each_device(&i2c_adapter_class, NULL, driver,
+ 				      __attach_adapter);
+ 
+ 	mutex_unlock(&core_lock);
+@@ -745,7 +745,7 @@ void i2c_del_driver(struct i2c_driver *driver)
+ 
+ 	/* legacy driver? */
+ 	if (!is_newstyle_driver(driver))
+-		class_for_each_device(&i2c_adapter_class, driver,
++		class_for_each_device(&i2c_adapter_class, NULL, driver,
+ 				      __detach_adapter);
+ 
+ 	driver_unregister(&driver->driver);
+-- 
+1.5.5.1
+
