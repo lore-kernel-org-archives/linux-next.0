@@ -1,60 +1,69 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: bkl-removal/arm merge conflict
-Date: Fri, 23 May 2008 09:35:59 +1000
-Message-ID: <20080523093559.9f6cfa0e.sfr@canb.auug.org.au>
-References: <20080522152157.57dac9f7.sfr@canb.auug.org.au>
-	<10532.1211465785@vena.lwn.net>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for May 22
+Date: Fri, 23 May 2008 03:27:49 +0200
+Message-ID: <200805230327.51067.rjw@sisk.pl>
+References: <20080522165209.ef2cb160.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__23_May_2008_09_35_59_+1000_b2FoIJzf4qQf8UTH"
+Content-Type: text/plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46968 "EHLO smtps.tip.net.au"
+Received: from ogre.sisk.pl ([217.79.144.158]:60057 "EHLO ogre.sisk.pl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755027AbYEVXgM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 22 May 2008 19:36:12 -0400
-In-Reply-To: <10532.1211465785@vena.lwn.net>
+	id S1750696AbYEWB1T (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 May 2008 21:27:19 -0400
+In-Reply-To: <20080522165209.ef2cb160.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-next@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Russell King <rmk@arm.linux.org.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Jens Axboe <jens.axboe@oracle.com>, Borislav Petkov <petkovbb@gmail.com>, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Fri__23_May_2008_09_35_59_+1000_b2FoIJzf4qQf8UTH
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thursday, 22 of May 2008, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since next-20080522:
+> 
+> The three patches reverted from the driver-core tree yesterday have been
+> removed from there.
+> 
+> The net tree (actually the wireless tree) had a trivial conflict with the
+> wireless-current tree.
+> 
+> One of the sound tree build patches has been merged.
+> 
+> The semaphore-removal tree still needed three patches reverted because similar
+> patches were merged into upstream and the scsi-rc-fixes trees.
+> 
+> The bkl-removal tree had a conflict with the arm tree because the arm
+> tree removed a file that was changed.
+> 
+> I have applied the following temporary patch for known build problems:
+> 
+> 	"Fix various 8390 builds" - the net tree broke builds on various
+> architectures - hopefully this patch will go into the net tree shortly.
+> 	"build failure with netfilter on __nf_ct_helper_find()" - breakage
+> due to the moving of stuff from list.h to rculist.h
 
-Hi Jon,
+This one and the previous linux-next can't resume from suspend to RAM on my
+HP nx6325.  The problem is reliably reproducible 100% of the time.
 
-On Thu, 22 May 2008 08:16:25 -0600 corbet@lwn.net (Jonathan Corbet) wrote:
->
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->=20
-> > Today's linux-next merge of the bkl-removal tree got a conflict in
-> > arch/arm/common/rtctime.c between commit
-> > b204d462d7eae31413c5ac80ec3a32a89765fd46 ("[RTC] remove old ARM rtc
-> > library code") from the arm tree and commit
-> > f6f28a87d5f4ae2b101e64ab494267f6858631c4 ("arm-common-rtctime: BKL
-> > pushdown") from the bkl-removal tree.
->=20
-> OK, that commit has been removed.  Thanks, Stephen.
+The patch that causes it to happen, as identified by bisection, is:
 
-Thanks.
+commit 3dcefa9419f3b8a49921d2218c93a3ddba8e0855
+Author: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Date:   Thu May 22 10:40:19 2008 +1000
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+    ide: use __generic_unplug_device() in ide_do_drive_cmd()
 
---Signature=_Fri__23_May_2008_09_35_59_+1000_b2FoIJzf4qQf8UTH
-Content-Type: application/pgp-signature
+    Cc: FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
+    Cc: Borislav Petkov <petkovbb@gmail.com>
+    Cc: Jens Axboe <jens.axboe@oracle.com>
+    Signed-off-by: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
+Reverting it along with the next IDE patches (up to and including
+commit fd42e6df0fd163411f5c655b4bde4fb6a8910edc
+"ide: remove action argument in ide_do_drive_cmd") makes the problem go away.
 
-iD8DBQFINgNpTgG2atn1QN8RAn34AJsGQAswuD1UgE1RessnHTZtGvgr+QCfXx/j
-2/ikMOmQMYkRvC2AhgZZw0Y=
-=JrGE
------END PGP SIGNATURE-----
-
---Signature=_Fri__23_May_2008_09_35_59_+1000_b2FoIJzf4qQf8UTH--
+Thanks,
+Rafael
