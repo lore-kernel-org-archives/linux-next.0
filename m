@@ -1,63 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: wireless/wireless-current merge conflict
-Date: Fri, 23 May 2008 13:37:15 +1000
-Message-ID: <20080523133715.b42cb8e7.sfr@canb.auug.org.au>
-References: <20080522132031.3c05b6f7.sfr@canb.auug.org.au>
-	<20080522134105.GB3996@tuxdriver.com>
-	<20080523093418.8c524267.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] block: genhd errors when CONFIG_PROC_FS=n
+Date: Fri, 23 May 2008 09:44:11 -0700
+Message-ID: <20080523094411.06f173e0.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__23_May_2008_13_37_15_+1000_Oa2yKKiboBgo=_sP"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45246 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1762433AbYEWDh2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 22 May 2008 23:37:28 -0400
-In-Reply-To: <20080523093418.8c524267.sfr@canb.auug.org.au>
+Received: from rgminet01.oracle.com ([148.87.113.118]:44040 "EHLO
+	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751014AbYEWQpC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 23 May 2008 12:45:02 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: David Miller <davem@davemloft.net>, Johannes Berg <johannes@sipsolutions.net>, linux-next@vger.kernel.org, Helmut Schaa <hschaa@suse.de>
+To: linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+Cc: jens.axboe@oracle.com, akpm <akpm@linux-foundation.org>
 
---Signature=_Fri__23_May_2008_13_37_15_+1000_Oa2yKKiboBgo=_sP
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Hi John,
+block/genhd.c has build errors when CONFIG_PROC_FS=n, so omit some of
+its functions in that case.
 
-On Fri, 23 May 2008 09:34:18 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Thu, 22 May 2008 09:41:05 -0400 "John W. Linville" <linville@tuxdriver=
-.com> wrote:
-> >
-> > I have just pushed a 'merge-test' branch here:
-> >=20
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-next-2=
-.6 merge-test
-> >=20
-> > You may wish to refer to it for the libertas conflict tomorrow.
->=20
-> Thanks, I will have a look.
+/local/linsrc/linux-next-20080523/block/genhd.c: In function 'diskstats_start':
+/local/linsrc/linux-next-20080523/block/genhd.c:555: error: 'find_start' undeclared (first use in this function)
+/local/linsrc/linux-next-20080523/block/genhd.c:555: error: (Each undeclared identifier is reported only once
+/local/linsrc/linux-next-20080523/block/genhd.c:555: error: for each function it appears in.)
+make[2]: *** [block/genhd.o] Error 1
 
-I got the conflict and fixed it up to match your test merge.  Thanks.
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ block/genhd.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__23_May_2008_13_37_15_+1000_Oa2yKKiboBgo=_sP
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
-
-iD4DBQFINjvvTgG2atn1QN8RAn0FAJ9E8rolpTSjkF+yltMfduiSXqCfQwCWNROO
-zSWKaVJN8fc5pa0zjRFtkQ==
-=DHCP
------END PGP SIGNATURE-----
-
---Signature=_Fri__23_May_2008_13_37_15_+1000_Oa2yKKiboBgo=_sP--
+--- linux-next-20080523.orig/block/genhd.c
++++ linux-next-20080523/block/genhd.c
+@@ -539,6 +539,7 @@ static struct device_type disk_type = {
+ 	.release	= disk_release,
+ };
+ 
++#ifdef CONFIG_PROC_FS
+ /*
+  * aggregate disk stat collector.  Uses the same stats that the sysfs
+  * entries do, above, but makes them available through one seq_file.
+@@ -644,6 +645,7 @@ const struct seq_operations diskstats_op
+ 	.stop	= diskstats_stop,
+ 	.show	= diskstats_show
+ };
++#endif /* CONFIG_PROC_FS */
+ 
+ static void media_change_notify_thread(struct work_struct *work)
+ {
