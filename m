@@ -1,63 +1,49 @@
-From: Ralph Campbell <ralph.campbell@qlogic.com>
-Subject: Re: [ofa-general] Re: linux-next: [PATCH]
-	infiniband/hw/ipath/ipath_sdma.c , fix compiler warnings
-Date: Fri, 23 May 2008 14:45:01 -0700
-Message-ID: <1211579101.3949.326.camel@brick.pathscale.com>
-References: <48342C6C.2010502@googlemail.com>  <adave14apdr.fsf@cisco.com>
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Subject: Re: spontaneous reboots and hangs on x86_64
+Date: Sat, 24 May 2008 18:11:06 +0200
+Message-ID: <200805241811.06230.m.kozlowski@tuxland.pl>
+References: <200805152201.49154.m.kozlowski@tuxland.pl> <200805162053.36390.m.kozlowski@tuxland.pl> <20080517132317.3265d52c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain;
+  charset="iso-8859-2"
 Content-Transfer-Encoding: 7bit
-Return-path: <general-bounces@lists.openfabrics.org>
-In-Reply-To: <adave14apdr.fsf@cisco.com>
-List-Unsubscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
-	<mailto:general-request@lists.openfabrics.org?subject=unsubscribe>
-List-Archive: <http://lists.openfabrics.org/pipermail/general>
-List-Post: <mailto:general@lists.openfabrics.org>
-List-Help: <mailto:general-request@lists.openfabrics.org?subject=help>
-List-Subscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
-	<mailto:general-request@lists.openfabrics.org?subject=subscribe>
-Sender: general-bounces@lists.openfabrics.org
-Errors-To: general-bounces@lists.openfabrics.org
-To: Roland Dreier <rdreier@cisco.com>
-Cc: Gabriel C <nix.or.die@googlemail.com>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, general@lists.openfabrics.org, Linux Kernel list <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from orion.ambsoft.pl ([212.109.144.130]:56932 "EHLO
+	orion.ambsoft.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755789AbYEXQLL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 24 May 2008 12:11:11 -0400
+In-Reply-To: <20080517132317.3265d52c.sfr@canb.auug.org.au>
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Ingo Molnar <mingo@elte.hu>, Adrian Bunk <bunk@kernel.org>, kernel-testers@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, Gregory Haskins <ghaskins@novell.com>
 
-This looks good to me.
+Hi,
 
-On Fri, 2008-05-23 at 10:42 -0700, Roland Dreier wrote:
->  > drivers/infiniband/hw/ipath/ipath_sdma.c: In function 'sdma_abort_task':
->  > drivers/infiniband/hw/ipath/ipath_sdma.c:267: warning: passing argument 2 of 'constant_test_bit' from incompatible pointer type
+> Hi Ingo,
 > 
-> Perhaps the best way to fix these is to change code like
+> On Fri, 16 May 2008 20:53:36 +0200 Mariusz Kozlowski <m.kozlowski@tuxland.pl> wrote:
+> >
+> > Ok I got bisection working finally, now I'm at d5be23e2 I have something like 80 revisions left and
+> > I'm stuck with this:
+> > 
+> > In file included from kernel/sched.c:1861:
+> > kernel/sched_rt.c: In function 'check_preempt_curr_rt':
+> > kernel/sched_rt.c:653: error: implicit declaration of function 'cpupri_find'
+> > kernel/sched_rt.c:653: error: 'struct root_domain' has no member named 'cpupri'
+> > make[1]: *** [kernel/sched.o] Error 1
+> > make: *** [kernel] Error 2
 > 
-> 		if (/* ScoreBoardDrainInProg */
-> 		    test_bit(63, &hwstatus) ||
-> 		    /* AbortInProg */
-> 		    test_bit(62, &hwstatus) ||
-> 		    /* InternalSDmaEnable */
-> 		    test_bit(61, &hwstatus) ||
-> 		    /* ScbEmpty */
-> 		    !test_bit(30, &hwstatus)) {
-> 
-> to something like
-> 
-> 		if ((hwstatus & (IPATH_SDMA_STATUS_SCORE_BOARD_DRAIN_IN_PROG |
-> 				 IPATH_SDMA_STATUS_ABORT_IN_PROG	     |
-> 				 IPATH_SDMA_STATUS_INTERNAL_SDMA_ENABLE)) ||
-> 		    !(hwstatus & IPATH_SDMA_STATUS_SCB_EMPTY)) {
-> 
-> with appropriate defines for the constants 1ull << 63 etc.
-> 
-> (I think I got the logic correct but someone should check)
-> 
->  > drivers/infiniband/hw/ipath/ipath_sdma.c:348: warning: format '%016llx' expects type 'long long unsigned int', but argument 3 has type 'long unsigned int'
->  > drivers/infiniband/hw/ipath/ipath_sdma.c: In function 'ipath_restart_sdma':
->  > drivers/infiniband/hw/ipath/ipath_sdma.c:618: warning: format '%016llx' expects type 'long long unsigned int', but argument 3 has type 'long unsigned int'
-> 
-> I have a fix for this pending; will ask Linus to pull today.
-> _______________________________________________
-> general mailing list
-> general@lists.openfabrics.org
-> http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general
-> 
-> To unsubscribe, please visit http://openib.org/mailman/listinfo/openib-general
+> This error is caused by commit 677ceea32cf1d8ba9a4870bc58079cd7e7f77558
+> ("sched: prioritize non-migratable tasks over migratable ones") in the
+> sched tree (sched/for-akpm).  This commit is either just wrong, is was
+> misrebased, or is just badly out of order.  It introduces a use of
+> cpupri_find, but the function is not defined until commit
+> ea9b3c95b7c666d4658a139b88587269e5baa647 ("sched: use a 2-d bitmap for
+> searching lowest-pri CPU") about 146 commits later ...
+
+Whatever it was its gone in recent linux-next releases, box boots without
+problems.
+
+	Mariusz
