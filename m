@@ -1,37 +1,34 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: Tree for May 26
-Date: Mon, 26 May 2008 16:20:43 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.0805261430020.4417@anakin>
+Subject: drivers/char/dsp56k.c breakage [was: Re: linux-next: Tree for May
+ 26]
+Date: Mon, 26 May 2008 16:46:45 +0200 (CEST)
+Message-ID: <Pine.LNX.4.64.0805261644230.4417@anakin>
 References: <20080526172222.b6979523.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from harold.telenet-ops.be ([195.130.133.65]:34365 "EHLO
-	harold.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752677AbYEZOUq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 May 2008 10:20:46 -0400
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757157AbYEZOrH@vger.kernel.org>
 In-Reply-To: <20080526172222.b6979523.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Linux/m68k <linux-m68k@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-
-	Hi Stephen,
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Linux/m68k <linux-m68k@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
 On Mon, 26 May 2008, Stephen Rothwell wrote:
-> We are up to 81 trees (counting Linus' and 13 trees of patches pending for
-> Linus' tree), more are welcome (even if they are currently empty).
-> Thanks to those who have contributed, and to those who haven't, please do.
-> 
 > Status of my local build tests will be at
 > http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
 > advice about cross compilers/configs that work, we are always open to add
 > more builds.
 
-Now multi_defconfig is in Linus' tree, do you mind enabling builds for
-m68k multi_defconfig and sun3_defconfig using Linus' tree, too?
+commit	6fe28df6c14e7e02bfea6b2bebf42716176e6dff
 
-Thx!
+    dsp56k: BKL pushdown
+
+    Put explicit lock_kernel calls into dsp56k_open().
+
+Broke the build of drivers/char/dsp56k.c by introducing a jump to a
+non-existent label
+
+http://kisskb.ellerman.id.au/kisskb/buildresult/29211/
 
 Gr{oetje,eeting}s,
 
