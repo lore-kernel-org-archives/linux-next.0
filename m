@@ -1,42 +1,34 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: drivers/char/dsp56k.c breakage [was: Re: linux-next: Tree for May
- 26]
-Date: Mon, 26 May 2008 16:46:45 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.0805261644230.4417@anakin>
-References: <20080526172222.b6979523.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757157AbYEZOrH@vger.kernel.org>
-In-Reply-To: <20080526172222.b6979523.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jonathan Corbet <corbet@lwn.net>
+From: corbet@lwn.net (Jonathan Corbet)
+Subject: Re: drivers/char/dsp56k.c breakage [was: Re: linux-next: Tree for May 26]
+Date: Mon, 26 May 2008 08:56:55 -0600
+Message-ID: <29942.1211813815@vena.lwn.net>
+References: <Pine.LNX.4.64.0805261644230.4417@anakin>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from vena.lwn.net ([206.168.112.25]:45362 "EHLO vena.lwn.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754126AbYEZO44 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 May 2008 10:56:56 -0400
+In-reply-to: Your message of "Mon, 26 May 2008 16:46:45 +0200."
+             <Pine.LNX.4.64.0805261644230.4417@anakin>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Linux/m68k <linux-m68k@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
 
-On Mon, 26 May 2008, Stephen Rothwell wrote:
-> Status of my local build tests will be at
-> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-> advice about cross compilers/configs that work, we are always open to add
-> more builds.
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-commit	6fe28df6c14e7e02bfea6b2bebf42716176e6dff
+> commit	6fe28df6c14e7e02bfea6b2bebf42716176e6dff
+> 
+>     dsp56k: BKL pushdown
+> 
+>     Put explicit lock_kernel calls into dsp56k_open().
+> 
+> Broke the build of drivers/char/dsp56k.c by introducing a jump to a
+> non-existent label
 
-    dsp56k: BKL pushdown
+Sigh.  Sorry about that.  I've recreated the tree without that dumb
+mistake.
 
-    Put explicit lock_kernel calls into dsp56k_open().
+jon
 
-Broke the build of drivers/char/dsp56k.c by introducing a jump to a
-non-existent label
-
-http://kisskb.ellerman.id.au/kisskb/buildresult/29211/
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Jonathan Corbet / LWN.net / corbet@lwn.net
