@@ -1,62 +1,68 @@
-From: Greg KH <greg@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: usb/sparc build failure
-Date: Tue, 27 May 2008 11:02:36 -0700
-Message-ID: <20080527180236.GA23505@kroah.com>
-References: <20080527202630.6352736d.sfr@canb.auug.org.au> <483C47D3.2090705@csr.com>
+Date: Wed, 28 May 2008 09:19:59 +1000
+Message-ID: <20080528091959.1d527095.sfr@canb.auug.org.au>
+References: <20080527202630.6352736d.sfr@canb.auug.org.au>
+	<20080527165019.GB3699@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__28_May_2008_09_19_59_+1000_M_BhlPPEv0b5jHla"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pentafluge.infradead.org ([213.146.154.40]:49492 "EHLO
-	pentafluge.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756044AbYE0SFd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 May 2008 14:05:33 -0400
-Content-Disposition: inline
-In-Reply-To: <483C47D3.2090705@csr.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49102 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751253AbYE0XUY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 May 2008 19:20:24 -0400
+In-Reply-To: <20080527165019.GB3699@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Vrabel <david.vrabel@csr.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, David Vrabel <david.vrabel@csr.com>, "David S. Miller" <davem@davemloft.net>
 
-On Tue, May 27, 2008 at 06:41:39PM +0100, David Vrabel wrote:
-> Stephen Rothwell wrote:
-> > Hi Greg,
-> > 
-> > Today's (though it is not new) linux-next build (spac allmodconfig) fails
-> > like this:
-> > 
-> > drivers/uwb/whci.c:166: error: `DMA_64BIT_MASK' undeclared (first use in this function)
-> > drivers/uwb/whci.c:166: error: (Each undeclared identifier is reported only once
+--Signature=_Wed__28_May_2008_09_19_59_+1000_M_BhlPPEv0b5jHla
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Greg,
+
+On Tue, 27 May 2008 09:50:19 -0700 Greg KH <greg@kroah.com> wrote:
+>
+> On Tue, May 27, 2008 at 08:26:30PM +1000, Stephen Rothwell wrote:
+> >=20
+> > drivers/uwb/whci.c:166: error: `DMA_64BIT_MASK' undeclared (first use i=
+n this function)
+> > drivers/uwb/whci.c:166: error: (Each undeclared identifier is reported =
+only once
 > > drivers/uwb/whci.c:166: error: for each function it appears in.)
-> > drivers/uwb/whci.c:168: error: `DMA_32BIT_MASK' undeclared (first use in this function)
-> > drivers/uwb/whc-rc.c:268: error: implicit declaration of function `dma_alloc_coherent'
-> > drivers/uwb/whc-rc.c:286: error: implicit declaration of function `dma_free_coherent'
-> > drivers/usb/host/whci/pzl.c:372: error: implicit declaration of function `dma_alloc_coherent'
-> > drivers/usb/host/whci/pzl.c:395: error: implicit declaration of function `dma_free_coherent'
-> > drivers/usb/host/whci/init.c:132: error: implicit declaration of function `dma_alloc_coherent'
-> > drivers/usb/host/whci/init.c:162: error: implicit declaration of function `dma_free_coherent'
-> > drivers/usb/host/whci/hw.c:48: error: implicit declaration of function `dma_map_single'
-> > drivers/usb/host/whci/hw.c:48: error: `DMA_TO_DEVICE' undeclared (first use in this function)
-> > drivers/usb/host/whci/hw.c:48: error: (Each undeclared identifier is reported only once
-> > drivers/usb/host/whci/hw.c:48: error: for each function it appears in.)
-> > drivers/usb/host/whci/hw.c:78: error: implicit declaration of function `dma_unmap_single'
-> > drivers/usb/host/whci/qset.c:274: error: implicit declaration of function `dma_unmap_single'
-> > drivers/usb/host/whci/qset.c:276: error: `DMA_TO_DEVICE' undeclared (first use in this function)
-> > drivers/usb/host/whci/qset.c:276: error: (Each undeclared identifier is reported only once
-> > drivers/usb/host/whci/qset.c:276: error: for each function it appears in.)
-> > drivers/usb/host/whci/qset.c:326: error: implicit declaration of function `dma_map_single'
-> > drivers/usb/host/whci/qset.c:326: error: `DMA_TO_DEVICE' undeclared (first use in this function)
-> > 
-> > I suspect that these files should include linux/dma-mapping.h directly
-> > since it uses things from there.
-> 
-> How odd.  Looking at my local patch set this has been fixed but looking
-> at the patches Greg has and I see it's not.  Try this.
-> 
-> I also note that some architectures (sparc amongst them) will BUG with
-> these drivers as the DMA API is only available to PCI devices. The
-> whc-rc and whci-hcd drivers use umc devices which are children of a PCI
-> device.
+> > drivers/uwb/whci.c:168: error: `DMA_32BIT_MASK' undeclared (first use i=
+n this function)
+>=20
+> Is this sparc64 or sparc32?  I don't seem to get these errors using the
+> sparc64 cross compiler tool chain.
 
-Thanks, I've now merged this in with my patch series.
+http://kisskb.ellerman.id.au/kisskb/buildresult/29187/ (that's from the
+day before yesterday, but it happened again yesterday). sparc32 build
+using a biarch sparc64 cross compiler.
 
-greg k-h
+But it shouldn't matter.  If you use something from a header file,
+include it (or something that is guaranteed to include it on all
+architecture using all configs).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__28_May_2008_09_19_59_+1000_M_BhlPPEv0b5jHla
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+iD8DBQFIPJcjTgG2atn1QN8RAnH8AJ4kDypeYrugOJ71P8Og4tUOsW7gpgCfbjZu
+s01alEkdMREeF8UkQyegKGk=
+=4yFR
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__28_May_2008_09_19_59_+1000_M_BhlPPEv0b5jHla--
