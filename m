@@ -1,44 +1,42 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: ftrace build failure
-Date: Tue, 27 May 2008 09:43:10 +0200
-Message-ID: <20080527074310.GA21997@elte.hu>
-References: <20080527125637.439933a4.sfr@canb.auug.org.au>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: hid build failure
+Date: Tue, 27 May 2008 11:14:01 +0200 (CEST)
+Message-ID: <Pine.LNX.4.64.0805271111560.18218@twin.jikos.cz>
+References: <20080527131441.06f3a67f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:51236 "EHLO mx3.mail.elte.hu"
+Received: from twin.jikos.cz ([213.151.79.26]:54287 "EHLO twin.jikos.cz"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753645AbYE0Hn3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 May 2008 03:43:29 -0400
-Content-Disposition: inline
-In-Reply-To: <20080527125637.439933a4.sfr@canb.auug.org.au>
+	id S1754549AbYE0JOW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 May 2008 05:14:22 -0400
+In-Reply-To: <20080527131441.06f3a67f.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Pekka Paalanen <pq@iki.fi>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-next@vger.kernel.org, Alan Cox <alan@lxorguk.ukuu.org.uk>
 
+On Tue, 27 May 2008, Stephen Rothwell wrote:
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> 
+> drivers/hid/usbhid/hiddev.c: In function 'hiddev_compat_ioctl':
+> drivers/hid/usbhid/hiddev.c:767: warning: passing argument 1 of 'hiddev_ioctl' from incompatible pointer type
+> drivers/hid/usbhid/hiddev.c:767: warning: passing argument 2 of 'hiddev_ioctl' makes integer from pointer without a cast
+> drivers/hid/usbhid/hiddev.c:767: error: too many arguments to function 'hiddev_ioctl'
+> Caused by commit f888433ea1f5dd6dc8487463c61c9e6d08e7ef62 ("HID: Switch
+> hiddev to unlocked_ioctl") which I have reverted.
 
-> --- a/arch/x86/mm/kmmio.c
-> +++ b/arch/x86/mm/kmmio.c
-> @@ -23,6 +23,7 @@
->  #include <linux/errno.h>
->  #include <asm/debugreg.h>
->  #include <linux/mmiotrace.h>
-> +#include <linux/rculist.h>
+Hi Stephen,
 
-this is not an 'ftrace build bug', this is an integration artifact of 
--next. It is fixed in -tip too (which too integrates these topics) in a 
-different branch.
+thanks a lot for reporting, Alan's patch missed to change the prototype in 
+the compat handler, and I missed this too. 
 
-it's in a different branch because this is a change only makes sense if 
-the 'tip/core/rcu' and 'tip/auto-ftrace-next' topics are combined - 
-hence it lives in the "tip/auto-test-fixes" (commit 48bd24be18) - and 
-this change was always there as the combined result wouldnt even build 
-without this fix.
+Should be now fixed in my tree.
 
-So this is a true "merge only commit" that cannot live standalone in any 
-of the topic branches it is related to.
+Thanks,
 
-	Ingo
+-- 
+Jiri Kosina
+SUSE Labs
+
