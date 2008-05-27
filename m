@@ -1,52 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: net-current/net merge conflict
-Date: Tue, 27 May 2008 11:06:06 +1000
-Message-ID: <20080527110606.b37d8ca3.sfr@canb.auug.org.au>
-References: <20080526133234.d6ae478e.sfr@canb.auug.org.au>
-	<20080526202736.GA12992@devserv.devel.redhat.com>
+Subject: linux-next: ftrace build failure
+Date: Tue, 27 May 2008 12:56:37 +1000
+Message-ID: <20080527125637.439933a4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__27_May_2008_11_06_06_+1000_32FJ05KgAeKafscy"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59929 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45476 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754370AbYE0BG2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 May 2008 21:06:28 -0400
-In-Reply-To: <20080526202736.GA12992@devserv.devel.redhat.com>
+	id S1753304AbYE0C4z (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 May 2008 22:56:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeff Garzik <jgarzik@redhat.com>
-Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Jeff Garzik <jeff@garzik.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, Pekka Paalanen <pq@iki.fi>, Thomas Gleixner <tglx@linutronix.de>
 
---Signature=_Tue__27_May_2008_11_06_06_+1000_32FJ05KgAeKafscy
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Ingo,
 
-Hi Jeff,
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-On Mon, 26 May 2008 16:27:36 -0400 Jeff Garzik <jgarzik@redhat.com> wrote:
->
-> Please make sure to CC my author email address.  jgarzik@redhat.com is
-> only for legal sign-offs.
+arch/x86/mm/kmmio.c: In function 'get_kmmio_probe':
+arch/x86/mm/kmmio.c:85: error: implicit declaration of function 'list_for_each_entry_rcu'
+arch/x86/mm/kmmio.c:85: error: 'list' undeclared (first use in this function)
+arch/x86/mm/kmmio.c:85: error: (Each undeclared identifier is reported only once
+arch/x86/mm/kmmio.c:85: error: for each function it appears in.)
+arch/x86/mm/kmmio.c:85: error: syntax error before '{' token
+arch/x86/mm/kmmio.c:88: warning: no return statement in function returning non-void
+arch/x86/mm/kmmio.c: In function 'get_kmmio_fault_page':
+arch/x86/mm/kmmio.c:100: error: 'list' undeclared (first use in this function)
+arch/x86/mm/kmmio.c:100: error: syntax error before '{' token
+arch/x86/mm/kmmio.c:103: warning: no return statement in function returning non-void
+arch/x86/mm/kmmio.c: In function 'add_kmmio_fault_page':
+arch/x86/mm/kmmio.c:328: error: implicit declaration of function 'list_add_rcu'
+arch/x86/mm/kmmio.c: In function 'remove_kmmio_fault_pages':
+arch/x86/mm/kmmio.c:420: error: implicit declaration of function 'list_del_rcu'
 
-Sorry about that.
+This is caused by the merge with the sched tree which contains the
+ruclist split.
 
---=20
+I applied the patch below.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__27_May_2008_11_06_06_+1000_32FJ05KgAeKafscy
-Content-Type: application/pgp-signature
+>From ee19aa543ada9ce11a0b3b8480f3a268ff86cb02 Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 27 May 2008 12:53:04 +1000
+Subject: [PATCH] ftrace: fix rculist split fallout
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/x86/mm/kmmio.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-iD8DBQFIO16CTgG2atn1QN8RAqdcAKCOOK+f+vt+d/hAcV/UT9kSO8E8cACfcdxF
-3eboBDHpF3LDrr5Mm0rC77c=
-=0pCt
------END PGP SIGNATURE-----
+diff --git a/arch/x86/mm/kmmio.c b/arch/x86/mm/kmmio.c
+index b65871e..7bfdad7 100644
+--- a/arch/x86/mm/kmmio.c
++++ b/arch/x86/mm/kmmio.c
+@@ -23,6 +23,7 @@
+ #include <linux/errno.h>
+ #include <asm/debugreg.h>
+ #include <linux/mmiotrace.h>
++#include <linux/rculist.h>
+ 
+ #define KMMIO_PAGE_HASH_BITS 4
+ #define KMMIO_PAGE_TABLE_SIZE (1 << KMMIO_PAGE_HASH_BITS)
+-- 
+1.5.5.1
 
---Signature=_Tue__27_May_2008_11_06_06_+1000_32FJ05KgAeKafscy--
