@@ -1,56 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: m68k/semaphore build failure
-Date: Tue, 27 May 2008 20:10:38 +1000
-Message-ID: <20080527201038.d70e23d6.sfr@canb.auug.org.au>
+Subject: linux-next: usb/sparc build failure
+Date: Tue, 27 May 2008 20:26:30 +1000
+Message-ID: <20080527202630.6352736d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__27_May_2008_20_10_38_+1000_r3oQpRlglD1DCGxi"
+ boundary="Signature=_Tue__27_May_2008_20_26_30_+1000_ENgYTQzHdiNWQEl9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45665 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57956 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756118AbYE0KLE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 May 2008 06:11:04 -0400
+	id S1756095AbYE0K0z (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 May 2008 06:26:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matthew Wilcox <matthew@wil.cx>
-Cc: linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, David Vrabel <david.vrabel@csr.com>, "David S. Miller" <davem@davemloft.net>
 
---Signature=_Tue__27_May_2008_20_10_38_+1000_r3oQpRlglD1DCGxi
+--Signature=_Tue__27_May_2008_20_26_30_+1000_ENgYTQzHdiNWQEl9
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Willy,
+Hi Greg,
 
-Today's linux-next build (m68k multi_defconfig) failed like this:
+Today's (though it is not new) linux-next build (spac allmodconfig) fails
+like this:
 
-drivers/input/keyboard/hil_kbd.c:336: error: 'PCI_VENDOR_ID_HP' undeclared =
-(first use in this function)
-drivers/input/keyboard/hil_kbd.c:336: error: (Each undeclared identifier is=
- reported only once
-drivers/input/keyboard/hil_kbd.c:336: error: for each function it appears i=
-n.)
+drivers/uwb/whci.c:166: error: `DMA_64BIT_MASK' undeclared (first use in th=
+is function)
+drivers/uwb/whci.c:166: error: (Each undeclared identifier is reported only=
+ once
+drivers/uwb/whci.c:166: error: for each function it appears in.)
+drivers/uwb/whci.c:168: error: `DMA_32BIT_MASK' undeclared (first use in th=
+is function)
+drivers/uwb/whc-rc.c:268: error: implicit declaration of function `dma_allo=
+c_coherent'
+drivers/uwb/whc-rc.c:286: error: implicit declaration of function `dma_free=
+_coherent'
+drivers/usb/host/whci/pzl.c:372: error: implicit declaration of function `d=
+ma_alloc_coherent'
+drivers/usb/host/whci/pzl.c:395: error: implicit declaration of function `d=
+ma_free_coherent'
+drivers/usb/host/whci/init.c:132: error: implicit declaration of function `=
+dma_alloc_coherent'
+drivers/usb/host/whci/init.c:162: error: implicit declaration of function `=
+dma_free_coherent'
+drivers/usb/host/whci/hw.c:48: error: implicit declaration of function `dma=
+_map_single'
+drivers/usb/host/whci/hw.c:48: error: `DMA_TO_DEVICE' undeclared (first use=
+ in this function)
+drivers/usb/host/whci/hw.c:48: error: (Each undeclared identifier is report=
+ed only once
+drivers/usb/host/whci/hw.c:48: error: for each function it appears in.)
+drivers/usb/host/whci/hw.c:78: error: implicit declaration of function `dma=
+_unmap_single'
+drivers/usb/host/whci/qset.c:274: error: implicit declaration of function `=
+dma_unmap_single'
+drivers/usb/host/whci/qset.c:276: error: `DMA_TO_DEVICE' undeclared (first =
+use in this function)
+drivers/usb/host/whci/qset.c:276: error: (Each undeclared identifier is rep=
+orted only once
+drivers/usb/host/whci/qset.c:276: error: for each function it appears in.)
+drivers/usb/host/whci/qset.c:326: error: implicit declaration of function `=
+dma_map_single'
+drivers/usb/host/whci/qset.c:326: error: `DMA_TO_DEVICE' undeclared (first =
+use in this function)
 
-This is caused by commit fd7c1a9773fd107674216b63a752f21ba6495045 ("Add
-missing semaphore.h includes") from the semaphore tree.  That commit adds
-a linux/semaphore.h include but removes the linux/pci_ids.h include.
+I suspect that these files should include linux/dma-mapping.h directly
+since it uses things from there.
 
-Also this commit has no Signed-off-by.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__27_May_2008_20_10_38_+1000_r3oQpRlglD1DCGxi
+--Signature=_Tue__27_May_2008_20_26_30_+1000_ENgYTQzHdiNWQEl9
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.6 (GNU/Linux)
 
-iD8DBQFIO94jTgG2atn1QN8RArgZAJ9GWH08rFQJ+9bciZHj0Ehw4c35hQCfRDtA
-Vbt0O4BMDihQgqNvTYaNegs=
-=hDTx
+iD8DBQFIO+HbTgG2atn1QN8RAoheAJ9vcm5oR1SxTi9MQlw99b3NMBO5uQCdG7MD
+UKPfxVazjAgP0KZmHgpnarE=
+=JGlU
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__27_May_2008_20_10_38_+1000_r3oQpRlglD1DCGxi--
+--Signature=_Tue__27_May_2008_20_26_30_+1000_ENgYTQzHdiNWQEl9--
