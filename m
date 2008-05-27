@@ -1,42 +1,56 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: hid build failure
-Date: Tue, 27 May 2008 11:14:01 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.0805271111560.18218@twin.jikos.cz>
-References: <20080527131441.06f3a67f.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: m68k/semaphore build failure
+Date: Tue, 27 May 2008 20:10:38 +1000
+Message-ID: <20080527201038.d70e23d6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__27_May_2008_20_10_38_+1000_r3oQpRlglD1DCGxi"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from twin.jikos.cz ([213.151.79.26]:54287 "EHLO twin.jikos.cz"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45665 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754549AbYE0JOW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 May 2008 05:14:22 -0400
-In-Reply-To: <20080527131441.06f3a67f.sfr@canb.auug.org.au>
+	id S1756118AbYE0KLE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 May 2008 06:11:04 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Alan Cox <alan@lxorguk.ukuu.org.uk>
+To: Matthew Wilcox <matthew@wil.cx>
+Cc: linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
-On Tue, 27 May 2008, Stephen Rothwell wrote:
+--Signature=_Tue__27_May_2008_20_10_38_+1000_r3oQpRlglD1DCGxi
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> 
-> drivers/hid/usbhid/hiddev.c: In function 'hiddev_compat_ioctl':
-> drivers/hid/usbhid/hiddev.c:767: warning: passing argument 1 of 'hiddev_ioctl' from incompatible pointer type
-> drivers/hid/usbhid/hiddev.c:767: warning: passing argument 2 of 'hiddev_ioctl' makes integer from pointer without a cast
-> drivers/hid/usbhid/hiddev.c:767: error: too many arguments to function 'hiddev_ioctl'
-> Caused by commit f888433ea1f5dd6dc8487463c61c9e6d08e7ef62 ("HID: Switch
-> hiddev to unlocked_ioctl") which I have reverted.
+Hi Willy,
 
-Hi Stephen,
+Today's linux-next build (m68k multi_defconfig) failed like this:
 
-thanks a lot for reporting, Alan's patch missed to change the prototype in 
-the compat handler, and I missed this too. 
+drivers/input/keyboard/hil_kbd.c:336: error: 'PCI_VENDOR_ID_HP' undeclared =
+(first use in this function)
+drivers/input/keyboard/hil_kbd.c:336: error: (Each undeclared identifier is=
+ reported only once
+drivers/input/keyboard/hil_kbd.c:336: error: for each function it appears i=
+n.)
 
-Should be now fixed in my tree.
+This is caused by commit fd7c1a9773fd107674216b63a752f21ba6495045 ("Add
+missing semaphore.h includes") from the semaphore tree.  That commit adds
+a linux/semaphore.h include but removes the linux/pci_ids.h include.
 
-Thanks,
+Also this commit has no Signed-off-by.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
--- 
-Jiri Kosina
-SUSE Labs
+--Signature=_Tue__27_May_2008_20_10_38_+1000_r3oQpRlglD1DCGxi
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+iD8DBQFIO94jTgG2atn1QN8RArgZAJ9GWH08rFQJ+9bciZHj0Ehw4c35hQCfRDtA
+Vbt0O4BMDihQgqNvTYaNegs=
+=hDTx
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__27_May_2008_20_10_38_+1000_r3oQpRlglD1DCGxi--
