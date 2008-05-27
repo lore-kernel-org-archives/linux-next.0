@@ -1,59 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for May 26
-Date: Tue, 27 May 2008 13:00:45 +1000
-Message-ID: <20080527130045.d2b09cf4.sfr@canb.auug.org.au>
-References: <20080526172222.b6979523.sfr@canb.auug.org.au>
-	<Pine.LNX.4.64.0805261430020.4417@anakin>
-	<20080527105144.82b975d7.sfr@canb.auug.org.au>
+Subject: linux-next: hid build failure
+Date: Tue, 27 May 2008 13:14:41 +1000
+Message-ID: <20080527131441.06f3a67f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__27_May_2008_13_00_45_+1000_Q2B0SF7p0M7Xmb9P"
+ boundary="Signature=_Tue__27_May_2008_13_14_41_+1000_cM+TwCTfLVSuuKsG"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45796 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40899 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753304AbYE0DBG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 May 2008 23:01:06 -0400
-In-Reply-To: <20080527105144.82b975d7.sfr@canb.auug.org.au>
+	id S1753830AbYE0DPF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 May 2008 23:15:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-next@vger.kernel.org, Linux/m68k <linux-m68k@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Jiri Kosina <jikos@jikos.cz>
+Cc: linux-next@vger.kernel.org, Alan Cox <alan@lxorguk.ukuu.org.uk>
 
---Signature=_Tue__27_May_2008_13_00_45_+1000_Q2B0SF7p0M7Xmb9P
+--Signature=_Tue__27_May_2008_13_14_41_+1000_cM+TwCTfLVSuuKsG
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
+Hi Jiri,
 
-On Tue, 27 May 2008 10:51:44 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Mon, 26 May 2008 16:20:43 +0200 (CEST) Geert Uytterhoeven <geert@linux=
--m68k.org> wrote:
-> >
-> > Now multi_defconfig is in Linus' tree, do you mind enabling builds for
-> > m68k multi_defconfig and sun3_defconfig using Linus' tree, too?
->=20
-> OK, will do.
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-Done.  You should see results for this later today.
+drivers/hid/usbhid/hiddev.c: In function 'hiddev_compat_ioctl':
+drivers/hid/usbhid/hiddev.c:767: warning: passing argument 1 of 'hiddev_ioc=
+tl' from incompatible pointer type
+drivers/hid/usbhid/hiddev.c:767: warning: passing argument 2 of 'hiddev_ioc=
+tl' makes integer from pointer without a cast
+drivers/hid/usbhid/hiddev.c:767: error: too many arguments to function 'hid=
+dev_ioctl'
+
+Caused by commit f888433ea1f5dd6dc8487463c61c9e6d08e7ef62 ("HID: Switch
+hiddev to unlocked_ioctl") which I have reverted.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__27_May_2008_13_00_45_+1000_Q2B0SF7p0M7Xmb9P
+--Signature=_Tue__27_May_2008_13_14_41_+1000_cM+TwCTfLVSuuKsG
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.6 (GNU/Linux)
 
-iD8DBQFIO3liTgG2atn1QN8RAnimAJ0XhWEo4zLnSmLMAmyu5anOV00pMwCePrKL
-aEI9cHVVF6S20OlVA0UwBI8=
-=M0EX
+iD8DBQFIO3ynTgG2atn1QN8RAgiFAJ9Wq1Hev2LKiimCt/u9gxb3T5ubLQCgl1Nx
++Y4t9KrNTSVbh7LVlrKgaEw=
+=T681
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__27_May_2008_13_00_45_+1000_Q2B0SF7p0M7Xmb9P--
+--Signature=_Tue__27_May_2008_13_14_41_+1000_cM+TwCTfLVSuuKsG--
