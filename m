@@ -1,71 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: ftrace build failure
-Date: Tue, 27 May 2008 12:56:37 +1000
-Message-ID: <20080527125637.439933a4.sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for May 26
+Date: Tue, 27 May 2008 13:00:45 +1000
+Message-ID: <20080527130045.d2b09cf4.sfr@canb.auug.org.au>
+References: <20080526172222.b6979523.sfr@canb.auug.org.au>
+	<Pine.LNX.4.64.0805261430020.4417@anakin>
+	<20080527105144.82b975d7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__27_May_2008_13_00_45_+1000_Q2B0SF7p0M7Xmb9P"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45476 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45796 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753304AbYE0C4z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 May 2008 22:56:55 -0400
+	id S1753304AbYE0DBG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 May 2008 23:01:06 -0400
+In-Reply-To: <20080527105144.82b975d7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: linux-next@vger.kernel.org, Pekka Paalanen <pq@iki.fi>, Thomas Gleixner <tglx@linutronix.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-next@vger.kernel.org, Linux/m68k <linux-m68k@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-Hi Ingo,
+--Signature=_Tue__27_May_2008_13_00_45_+1000_Q2B0SF7p0M7Xmb9P
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+Hi Geert,
 
-arch/x86/mm/kmmio.c: In function 'get_kmmio_probe':
-arch/x86/mm/kmmio.c:85: error: implicit declaration of function 'list_for_each_entry_rcu'
-arch/x86/mm/kmmio.c:85: error: 'list' undeclared (first use in this function)
-arch/x86/mm/kmmio.c:85: error: (Each undeclared identifier is reported only once
-arch/x86/mm/kmmio.c:85: error: for each function it appears in.)
-arch/x86/mm/kmmio.c:85: error: syntax error before '{' token
-arch/x86/mm/kmmio.c:88: warning: no return statement in function returning non-void
-arch/x86/mm/kmmio.c: In function 'get_kmmio_fault_page':
-arch/x86/mm/kmmio.c:100: error: 'list' undeclared (first use in this function)
-arch/x86/mm/kmmio.c:100: error: syntax error before '{' token
-arch/x86/mm/kmmio.c:103: warning: no return statement in function returning non-void
-arch/x86/mm/kmmio.c: In function 'add_kmmio_fault_page':
-arch/x86/mm/kmmio.c:328: error: implicit declaration of function 'list_add_rcu'
-arch/x86/mm/kmmio.c: In function 'remove_kmmio_fault_pages':
-arch/x86/mm/kmmio.c:420: error: implicit declaration of function 'list_del_rcu'
+On Tue, 27 May 2008 10:51:44 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Mon, 26 May 2008 16:20:43 +0200 (CEST) Geert Uytterhoeven <geert@linux=
+-m68k.org> wrote:
+> >
+> > Now multi_defconfig is in Linus' tree, do you mind enabling builds for
+> > m68k multi_defconfig and sun3_defconfig using Linus' tree, too?
+>=20
+> OK, will do.
 
-This is caused by the merge with the sched tree which contains the
-ruclist split.
+Done.  You should see results for this later today.
 
-I applied the patch below.
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
->From ee19aa543ada9ce11a0b3b8480f3a268ff86cb02 Mon Sep 17 00:00:00 2001
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 27 May 2008 12:53:04 +1000
-Subject: [PATCH] ftrace: fix rculist split fallout
+--Signature=_Tue__27_May_2008_13_00_45_+1000_Q2B0SF7p0M7Xmb9P
+Content-Type: application/pgp-signature
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/x86/mm/kmmio.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
 
-diff --git a/arch/x86/mm/kmmio.c b/arch/x86/mm/kmmio.c
-index b65871e..7bfdad7 100644
---- a/arch/x86/mm/kmmio.c
-+++ b/arch/x86/mm/kmmio.c
-@@ -23,6 +23,7 @@
- #include <linux/errno.h>
- #include <asm/debugreg.h>
- #include <linux/mmiotrace.h>
-+#include <linux/rculist.h>
- 
- #define KMMIO_PAGE_HASH_BITS 4
- #define KMMIO_PAGE_TABLE_SIZE (1 << KMMIO_PAGE_HASH_BITS)
--- 
-1.5.5.1
+iD8DBQFIO3liTgG2atn1QN8RAnimAJ0XhWEo4zLnSmLMAmyu5anOV00pMwCePrKL
+aEI9cHVVF6S20OlVA0UwBI8=
+=M0EX
+-----END PGP SIGNATURE-----
 
+--Signature=_Tue__27_May_2008_13_00_45_+1000_Q2B0SF7p0M7Xmb9P--
