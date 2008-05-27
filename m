@@ -1,44 +1,36 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: m68k/semaphore build failure
-Date: Tue, 27 May 2008 18:10:51 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.0805271809520.4081@anakin>
-References: <20080527201038.d70e23d6.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: usb/sparc build failure
+Date: Tue, 27 May 2008 09:50:19 -0700
+Message-ID: <20080527165019.GB3699@kroah.com>
+References: <20080527202630.6352736d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from monty.telenet-ops.be ([195.130.132.56]:58192 "EHLO
-	monty.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757271AbYE0QKy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 May 2008 12:10:54 -0400
-In-Reply-To: <20080527201038.d70e23d6.sfr@canb.auug.org.au>
+Received: from pentafluge.infradead.org ([213.146.154.40]:38498 "EHLO
+	pentafluge.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757505AbYE0QwL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 May 2008 12:52:11 -0400
+Content-Disposition: inline
+In-Reply-To: <20080527202630.6352736d.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Matthew Wilcox <matthew@wil.cx>, linux-next@vger.kernel.org
+Cc: linux-next@vger.kernel.org, David Vrabel <david.vrabel@csr.com>, "David S. Miller" <davem@davemloft.net>
 
-On Tue, 27 May 2008, Stephen Rothwell wrote:
-> Today's linux-next build (m68k multi_defconfig) failed like this:
+On Tue, May 27, 2008 at 08:26:30PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> drivers/input/keyboard/hil_kbd.c:336: error: 'PCI_VENDOR_ID_HP' undeclared (first use in this function)
-> drivers/input/keyboard/hil_kbd.c:336: error: (Each undeclared identifier is reported only once
-> drivers/input/keyboard/hil_kbd.c:336: error: for each function it appears in.)
+> Today's (though it is not new) linux-next build (spac allmodconfig) fails
+> like this:
 > 
-> This is caused by commit fd7c1a9773fd107674216b63a752f21ba6495045 ("Add
-> missing semaphore.h includes") from the semaphore tree.  That commit adds
-> a linux/semaphore.h include but removes the linux/pci_ids.h include.
+> drivers/uwb/whci.c:166: error: `DMA_64BIT_MASK' undeclared (first use in this function)
+> drivers/uwb/whci.c:166: error: (Each undeclared identifier is reported only once
+> drivers/uwb/whci.c:166: error: for each function it appears in.)
+> drivers/uwb/whci.c:168: error: `DMA_32BIT_MASK' undeclared (first use in this function)
 
-Thx!
+Is this sparc64 or sparc32?  I don't seem to get these errors using the
+sparc64 cross compiler tool chain.
 
-I'd swear I reported this to Willy the first time it appeared, but according
-to my mail logs, I never did...
+thanks,
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+greg k-h
