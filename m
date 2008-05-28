@@ -1,71 +1,77 @@
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Greg KH <greg@kroah.com>
 Subject: Re: [PATCH -next] block: genhd errors when CONFIG_PROC_FS=n
-Date: Tue, 27 May 2008 22:20:36 -0700
-Message-ID: <20080527222036.1141e43a.akpm@linux-foundation.org>
-References: <20080523094411.06f173e0.randy.dunlap@oracle.com>
+Date: Tue, 27 May 2008 22:26:03 -0700
+Message-ID: <20080528052603.GB8736@kroah.com>
+References: <20080523094411.06f173e0.randy.dunlap@oracle.com> <20080527222036.1141e43a.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:40891 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752499AbYE1FUy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 May 2008 01:20:54 -0400
-In-Reply-To: <20080523094411.06f173e0.randy.dunlap@oracle.com>
+Received: from pentafluge.infradead.org ([213.146.154.40]:59128 "EHLO
+	pentafluge.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753012AbYE1F2z (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 May 2008 01:28:55 -0400
+Content-Disposition: inline
+In-Reply-To: <20080527222036.1141e43a.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, jens.axboe@oracle.com, Greg KH <greg@kroah.com>, Kay Sievers <kay.sievers@vrfy.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, jens.axboe@oracle.com, Kay Sievers <kay.sievers@vrfy.org>
 
-On Fri, 23 May 2008 09:44:11 -0700 Randy Dunlap <randy.dunlap@oracle.com> wrote:
-
-> From: Randy Dunlap <randy.dunlap@oracle.com>
+On Tue, May 27, 2008 at 10:20:36PM -0700, Andrew Morton wrote:
+> On Fri, 23 May 2008 09:44:11 -0700 Randy Dunlap <randy.dunlap@oracle.com> wrote:
 > 
-> block/genhd.c has build errors when CONFIG_PROC_FS=n, so omit some of
-> its functions in that case.
+> > From: Randy Dunlap <randy.dunlap@oracle.com>
+> > 
+> > block/genhd.c has build errors when CONFIG_PROC_FS=n, so omit some of
+> > its functions in that case.
+> > 
+> > /local/linsrc/linux-next-20080523/block/genhd.c: In function 'diskstats_start':
+> > /local/linsrc/linux-next-20080523/block/genhd.c:555: error: 'find_start' undeclared (first use in this function)
+> > /local/linsrc/linux-next-20080523/block/genhd.c:555: error: (Each undeclared identifier is reported only once
+> > /local/linsrc/linux-next-20080523/block/genhd.c:555: error: for each function it appears in.)
+> > make[2]: *** [block/genhd.o] Error 1
+> > 
+> > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> > ---
+> >  block/genhd.c |    2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > --- linux-next-20080523.orig/block/genhd.c
+> > +++ linux-next-20080523/block/genhd.c
+> > @@ -539,6 +539,7 @@ static struct device_type disk_type = {
+> >  	.release	= disk_release,
+> >  };
+> >  
+> > +#ifdef CONFIG_PROC_FS
+> >  /*
+> >   * aggregate disk stat collector.  Uses the same stats that the sysfs
+> >   * entries do, above, but makes them available through one seq_file.
+> > @@ -644,6 +645,7 @@ const struct seq_operations diskstats_op
+> >  	.stop	= diskstats_stop,
+> >  	.show	= diskstats_show
+> >  };
+> > +#endif /* CONFIG_PROC_FS */
+> >  
+> >  static void media_change_notify_thread(struct work_struct *work)
+> >  {
 > 
-> /local/linsrc/linux-next-20080523/block/genhd.c: In function 'diskstats_start':
-> /local/linsrc/linux-next-20080523/block/genhd.c:555: error: 'find_start' undeclared (first use in this function)
-> /local/linsrc/linux-next-20080523/block/genhd.c:555: error: (Each undeclared identifier is reported only once
-> /local/linsrc/linux-next-20080523/block/genhd.c:555: error: for each function it appears in.)
-> make[2]: *** [block/genhd.o] Error 1
+> This is a fix against
 > 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> ---
->  block/genhd.c |    2 ++
->  1 file changed, 2 insertions(+)
+> commit ce8568d9535b4756ea304a97ea803314ce895d3c
+> Author: Greg Kroah-Hartman <gregkh@suse.de>
+> Date:   Thu May 22 17:21:08 2008 -0400
 > 
-> --- linux-next-20080523.orig/block/genhd.c
-> +++ linux-next-20080523/block/genhd.c
-> @@ -539,6 +539,7 @@ static struct device_type disk_type = {
->  	.release	= disk_release,
->  };
->  
-> +#ifdef CONFIG_PROC_FS
->  /*
->   * aggregate disk stat collector.  Uses the same stats that the sysfs
->   * entries do, above, but makes them available through one seq_file.
-> @@ -644,6 +645,7 @@ const struct seq_operations diskstats_op
->  	.stop	= diskstats_stop,
->  	.show	= diskstats_show
->  };
-> +#endif /* CONFIG_PROC_FS */
->  
->  static void media_change_notify_thread(struct work_struct *work)
->  {
+>     block: make proc files seq_start use the class_find_device()
+>     
+>     Use the proper class iterator function instead of mucking around in the
+>     internals of the class structures.
+>     
+> Cc: Kay Sievers <kay.sievers@vrfy.org>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
 
-This is a fix against
+Yeah, sorry, missed that first time around, just added it to my tree
+about an hour ago and sent out a response to Randy about it :)
 
-commit ce8568d9535b4756ea304a97ea803314ce895d3c
-Author: Greg Kroah-Hartman <gregkh@suse.de>
-Date:   Thu May 22 17:21:08 2008 -0400
+thanks,
 
-    block: make proc files seq_start use the class_find_device()
-    
-    Use the proper class iterator function instead of mucking around in the
-    internals of the class structures.
-    
-Cc: Kay Sievers <kay.sievers@vrfy.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
-
+greg k-h
