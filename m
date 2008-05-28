@@ -1,31 +1,44 @@
-From: Jeremy Fitzhardinge <jeremy@goop.org>
-Subject: Re: linux-next 20080528: XEN build error when no Power Mgt enabled
-Date: Wed, 28 May 2008 22:33:00 +0100
-Message-ID: <483DCF8C.80700@goop.org>
-References: <20080528143817.d639123b.randy.dunlap@oracle.com>
+From: Mark Fasheh <mfasheh@suse.com>
+Subject: Re: [PATCH -next] ocfs2: fix printk format warnings
+	with OCFS2_FS_STATS=n
+Date: Wed, 28 May 2008 14:48:57 -0700
+Message-ID: <20080528214857.GG8325@wotan.suse.de>
+References: <20080528144100.13ec8c6a.randy.dunlap@oracle.com>
+Reply-To: Mark Fasheh <mfasheh@suse.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gw.goop.org ([64.81.55.164]:43011 "EHLO mail.goop.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752196AbYE1Vdf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 May 2008 17:33:35 -0400
-In-Reply-To: <20080528143817.d639123b.randy.dunlap@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Return-path: <ocfs2-devel-bounces@oss.oracle.com>
+Content-Disposition: inline
+In-Reply-To: <20080528144100.13ec8c6a.randy.dunlap@oracle.com>
+List-Unsubscribe: <http://oss.oracle.com/mailman/listinfo/ocfs2-devel>,
+	<mailto:ocfs2-devel-request@oss.oracle.com?subject=unsubscribe>
+List-Archive: <http://oss.oracle.com/pipermail/ocfs2-devel>
+List-Post: <mailto:ocfs2-devel@oss.oracle.com>
+List-Help: <mailto:ocfs2-devel-request@oss.oracle.com?subject=help>
+List-Subscribe: <http://oss.oracle.com/mailman/listinfo/ocfs2-devel>,
+	<mailto:ocfs2-devel-request@oss.oracle.com?subject=subscribe>
+Sender: ocfs2-devel-bounces@oss.oracle.com
+Errors-To: ocfs2-devel-bounces@oss.oracle.com
 To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: linux-next@vger.kernel.org, chrisw@sous-sol.org, virtualization@lists.osdl.org, lkml <linux-kernel@vger.kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, akpm <akpm@linux-foundation.org>, linux-next@vger.kernel.org, ocfs2-devel@oss.oracle.com
+List-Id: linux-next.vger.kernel.org
 
-Randy Dunlap wrote:
-> linux-next-20080528/drivers/xen/manage.c: In function 'xen_suspend':
-> linux-next-20080528/drivers/xen/manage.c:43: error: implicit declaration of function 'device_power_down'
-> linux-next-20080528/drivers/xen/manage.c:65: error: implicit declaration of function 'device_power_up'
-> linux-next-20080528/drivers/xen/manage.c: In function 'do_suspend':
-> linux-next-20080528/drivers/xen/manage.c:114: error: implicit declaration of function 'device_resume'
-> make[3]: *** [drivers/xen/manage.o] Error 1
->   
+On Wed, May 28, 2008 at 02:41:00PM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> Fix printk format warnings when OCFS2_FS_STATS=n:
+> 
+> linux-next-20080528/fs/ocfs2/dlmglue.c: In function 'ocfs2_dlm_seq_show':
+> linux-next-20080528/fs/ocfs2/dlmglue.c:2623: warning: format '%llu' expects type 'long long unsigned int', but argument 3 has type 'int'
+> linux-next-20080528/fs/ocfs2/dlmglue.c:2623: warning: format '%llu' expects type 'long long unsigned int', but argument 4 has type 'int'
+> linux-next-20080528/fs/ocfs2/dlmglue.c:2623: warning: format '%llu' expects type 'long long unsigned int', but argument 7 has type 'int'
+> linux-next-20080528/fs/ocfs2/dlmglue.c:2623: warning: format '%llu' expects type 'long long unsigned int', but argument 8 has type 'int'
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-Thanks for the reminder.  That was on my TODO list.
+Thanks Randy...
+	--Mark
 
-    J
+--
+Mark Fasheh
