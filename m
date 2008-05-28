@@ -1,54 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: pci merge conflict
-Date: Wed, 28 May 2008 13:19:00 +1000
-Message-ID: <20080528131900.816b9fbf.sfr@canb.auug.org.au>
-References: <20080528122758.70c4bec9.sfr@canb.auug.org.au>
-	<483CC873.5000300@jp.fujitsu.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next 20080526 build failure with CONFIG_BLOCK=y and
+	CONFIG_PROC_FS is not set
+Date: Tue, 27 May 2008 20:57:40 -0700
+Message-ID: <20080528035740.GA7845@kroah.com>
+References: <1211794094.4408.3.camel@localhost> <20080526092224.83555d09.randy.dunlap@oracle.com> <20080528123416.c0bf2a0a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__28_May_2008_13_19_00_+1000_UD8_inNuen5OCvrl"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37467 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750722AbYE1DTK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 May 2008 23:19:10 -0400
-In-Reply-To: <483CC873.5000300@jp.fujitsu.com>
+Received: from pentafluge.infradead.org ([213.146.154.40]:42715 "EHLO
+	pentafluge.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750768AbYE1EAh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 May 2008 00:00:37 -0400
+Content-Disposition: inline
+In-Reply-To: <20080528123416.c0bf2a0a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kenji Kaneshige <kaneshige.kenji@jp.fujitsu.com>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Philippe Roussel <p.o.roussel@free.fr>, linux-next@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>
 
---Signature=_Wed__28_May_2008_13_19_00_+1000_UD8_inNuen5OCvrl
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, May 28, 2008 at 12:34:16PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> On Mon, 26 May 2008 09:22:24 -0700 Randy Dunlap <randy.dunlap@oracle.com> wrote:
+> >
+> > On Mon, 26 May 2008 11:28:14 +0200 Philippe Roussel wrote:
+> > 
+> > > I got this
+> > > 
+> > >   CC      block/genhd.o
+> > > block/genhd.c: In function 'diskstats_start':
+> > > block/genhd.c:555: error: 'find_start' undeclared (first use in this
+> > > function)
+> > > block/genhd.c:555: error: (Each undeclared identifier is reported only
+> > > once
+> > > block/genhd.c:555: error: for each function it appears in.)
+> > > 
+> > > while building the following config
+> > 
+> > I sent a patch for this last Friday:
+> >   http://lkml.org/lkml/2008/5/23/255
+> 
+> Did you see this?
 
-Hi Kenji,
+Ah, no, sorry, I totally missed it.
 
-On Wed, 28 May 2008 11:50:27 +0900 Kenji Kaneshige <kaneshige.kenji@jp.fuji=
-tsu.com> wrote:
->
-> I have already have updated patches. I'll send them if necessary.
+Randy, I've put your patch in my queue, in a place that keeps the build
+error from ever happening.  Thanks for pointing it out.
 
-That would be good for tomorrow as the pci-current tree has now gone into
-Linus' tree.
-
-Thanks
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__28_May_2008_13_19_00_+1000_UD8_inNuen5OCvrl
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
-
-iD8DBQFIPM8sTgG2atn1QN8RAgP1AJ91jPGWL/ctTo6Sk5G8KxhoE+zGmwCfVDuU
-Dl96SewiCezbsQzItjE1PhM=
-=iXaS
------END PGP SIGNATURE-----
-
---Signature=_Wed__28_May_2008_13_19_00_+1000_UD8_inNuen5OCvrl--
+greg k-h
