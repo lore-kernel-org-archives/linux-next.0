@@ -1,50 +1,42 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next 20080526 build failure with CONFIG_BLOCK=y and
-	CONFIG_PROC_FS is not set
-Date: Tue, 27 May 2008 20:57:40 -0700
-Message-ID: <20080528035740.GA7845@kroah.com>
-References: <1211794094.4408.3.camel@localhost> <20080526092224.83555d09.randy.dunlap@oracle.com> <20080528123416.c0bf2a0a.sfr@canb.auug.org.au>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: linux-next: pci merge conflict
+Date: Tue, 27 May 2008 21:04:28 -0700
+Message-ID: <200805272104.28178.jbarnes@virtuousgeek.org>
+References: <20080528122758.70c4bec9.sfr@canb.auug.org.au> <483CC873.5000300@jp.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain;
+  charset="iso-2022-jp"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pentafluge.infradead.org ([213.146.154.40]:42715 "EHLO
-	pentafluge.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750768AbYE1EAh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 May 2008 00:00:37 -0400
+Received: from outbound-mail-22.bluehost.com ([69.89.21.17]:57727 "HELO
+	outbound-mail-22.bluehost.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1751021AbYE1ELQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 May 2008 00:11:16 -0400
+In-Reply-To: <483CC873.5000300@jp.fujitsu.com>
 Content-Disposition: inline
-In-Reply-To: <20080528123416.c0bf2a0a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Philippe Roussel <p.o.roussel@free.fr>, linux-next@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>
+To: Kenji Kaneshige <kaneshige.kenji@jp.fujitsu.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-On Wed, May 28, 2008 at 12:34:16PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> On Mon, 26 May 2008 09:22:24 -0700 Randy Dunlap <randy.dunlap@oracle.com> wrote:
+On Tuesday, May 27, 2008 7:50 pm Kenji Kaneshige wrote:
+> Hi Stephen-san, Jesse-san,
+>
+> I have already have updated patches. I'll send them if necessary.
+>
+> Thanks,
+> Kenji Kaneshige
+>
+> Stephen Rothwell wrote:
+> > Hi Jesse,
 > >
-> > On Mon, 26 May 2008 11:28:14 +0200 Philippe Roussel wrote:
-> > 
-> > > I got this
-> > > 
-> > >   CC      block/genhd.o
-> > > block/genhd.c: In function 'diskstats_start':
-> > > block/genhd.c:555: error: 'find_start' undeclared (first use in this
-> > > function)
-> > > block/genhd.c:555: error: (Each undeclared identifier is reported only
-> > > once
-> > > block/genhd.c:555: error: for each function it appears in.)
-> > > 
-> > > while building the following config
-> > 
-> > I sent a patch for this last Friday:
-> >   http://lkml.org/lkml/2008/5/23/255
-> 
-> Did you see this?
+> > Today's linux-next mege of the pci tree got conflicts in
+> > drivers/pci/hotplug/pciehp_hpc.c between commits
+> > 5808639bfa98d69f77a481d759570d85f164fea0 ("pciehp: fix slow probing") and
+> > 6592e02ae4bd7b277230aa0c5821588a13b9d8e3 ("pciehp: poll cmd completion if
+> > hotplug interrupt is disabled") from the pci-current tree and commit
+> > 2b26196717939221ccc06073780b73d0f4ee3203 ("pciehp: fix waiting
+> > command").  I fixed it up as best I can, but please have a look.
 
-Ah, no, sorry, I totally missed it.
 
-Randy, I've put your patch in my queue, in a place that keeps the build
-error from ever happening.  Thanks for pointing it out.
-
-greg k-h
