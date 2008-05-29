@@ -1,123 +1,138 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
 Subject: Re: [PATCH linux-next] serio: add ifdef for i8042 build fix
-Date: Thu, 29 May 2008 14:46:06 -0400
-Message-ID: <20080529184606.GA17728@anvil.corenet.prv>
-References: <20080529182556.2994310a.sfr@canb.auug.org.au> <20080529094454.3605aa5c.randy.dunlap@oracle.com> <20080529095633.8893b4ec.randy.dunlap@oracle.com>
+Date: Thu, 29 May 2008 14:17:37 -0500 (CDT)
+Message-ID: <11839164.1212088657472.JavaMail.oracle@acsmt302.oracle.com>
+References: <20080529182556.2994310a.sfr@canb.auug.org.au> <20080529094454.3605aa5c.randy.dunlap@oracle.com> <20080529095633.8893b4ec.randy.dunlap@oracle.com> <20080529184606.GA17728@anvil.corenet.prv>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ti-out-0910.google.com ([209.85.142.184]:46409 "EHLO
-	ti-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752861AbYE2SqL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 May 2008 14:46:11 -0400
-Received: by ti-out-0910.google.com with SMTP id b6so2345237tic.23
-        for <linux-next@vger.kernel.org>; Thu, 29 May 2008 11:46:09 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20080529095633.8893b4ec.randy.dunlap@oracle.com>
+Received: from rgminet01.oracle.com ([148.87.113.118]:11189 "EHLO
+	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751600AbYE2TS1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 May 2008 15:18:27 -0400
+In-Reply-To: <20080529184606.GA17728@anvil.corenet.prv>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>, jkosina@suse.cz
-Cc: lkml <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, akpm <akpm@linux-foundation.org>
+To: jkosina@suse.cz, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, akpm <akpm@linux-foundation.org>
 
-Hi Randy,
-
-On Thu, May 29, 2008 at 09:56:33AM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
+--- Original Message ---
+> Hi Randy,
 > 
-> Restrict variable usage by bounding it with ifdef/endif CONFIG_PNP.
+> On Thu, May 29, 2008 at 09:56:33AM -0700, Randy Dunlap wrote:
+> > From: Randy Dunlap <randy.dunlap@oracle.com>
+> > 
+> > Restrict variable usage by bounding it with ifdef/endif CONFIG_PNP.
+> > 
+> > linux-next-20080529/drivers/input/serio/i8042-x86ia64io.h:590: error: 'i8042_nopnp' undeclared (first use in this function)
+> > 
 > 
-> linux-next-20080529/drivers/input/serio/i8042-x86ia64io.h:590: error: 'i8042_nopnp' undeclared (first use in this function)
+> Thank you for the report. I'd rahther changed it as in the
+> patch below.
+> What do you think?
+
+It builds.  Other than that, it doesn't matter much to me.
+
+> If everyone agrees then I will fold it in Jiri's original patch
+> to keep the trees bisectable.
+
+Yes, very desirable.
+
 > 
+> -- 
+> Dmitry
+> 
+> diff --git a/drivers/input/serio/i8042-x86ia64io.h
+> b/drivers/input/serio/i8042-x86ia64io.h
+> index 709c9d9..2289e3a 100644
+> --- a/drivers/input/serio/i8042-x86ia64io.h
+> +++ b/drivers/input/serio/i8042-x86ia64io.h
+> @@ -63,7 +63,7 @@ static inline void i8042_write_command(int
+> val)
+>  	outb(val, I8042_COMMAND_REG);
+>  }
+>  
+> -#if defined(__i386__) || defined(__x86_64__)
+> +#ifdef CONFIG_X86
+>  
+>  #include <linux/dmi.h>
+>  
+> @@ -287,6 +287,7 @@ static struct dmi_system_id __initdata
+> i8042_dmi_nomux_table[] = {
+>  	{ }
+>  };
+>  
+> +#ifdef CONFIG_PNP
+>  static struct dmi_system_id __initdata i8042_dmi_nopnp_table[]
+> = {
+>  	{
+>  		.ident = "Intel MBO Desktop D845PESV",
+> @@ -297,13 +298,8 @@ static struct dmi_system_id __initdata
+> i8042_dmi_nopnp_table[] = {
+>  	},
+>  	{ }
+>  };
+> -
+>  #endif
+>  
+> -#ifdef CONFIG_X86
+> -
+> -#include <linux/dmi.h>
+> -
+>  /*
+>   * Some Wistron based laptops need us to explicitly enable
+> the 'Dritek
+>   * keyboard extension' to make their extra keys start generating
+> scancodes.
+> @@ -351,7 +347,6 @@ static struct dmi_system_id __initdata
+> i8042_dmi_dritek_table[] = {
+>  
+>  #endif /* CONFIG_X86 */
+>  
+> -
+>  #ifdef CONFIG_PNP
+>  #include <linux/pnp.h>
+>  
+> @@ -461,6 +456,11 @@ static int __init i8042_pnp_init(void)
+>  	int pnp_data_busted = 0;
+>  	int err;
+>  
+> +#ifdef CONFIG_X86
+> +	if (dmi_check_system(i8042_dmi_nopnp_table))
+> +		i8042_nopnp = 1;
+> +#endif
+> +
+>  	if (i8042_nopnp) {
+>  		printk(KERN_INFO "i8042: PNP detection disabled\n");
+>  		return 0;
+> @@ -578,10 +578,6 @@ static int __init i8042_platform_init(void)
+>  	i8042_kbd_irq = I8042_MAP_IRQ(1);
+>  	i8042_aux_irq = I8042_MAP_IRQ(12);
+>  
+> -#if defined(__i386__) || defined(__x86_64__)
+> -	if (dmi_check_system(i8042_dmi_nopnp_table))
+> -		i8042_nopnp = 1;
+> -#endif
+>  	retval = i8042_pnp_init();
+>  	if (retval)
+>  		return retval;
+> @@ -590,15 +586,13 @@ static int __init i8042_platform_init(void)
+>          i8042_reset = 1;
+>  #endif
+>  
+> -#if defined(__i386__) || defined(__x86_64__)
+> +#ifdef CONFIG_X86
+>  	if (dmi_check_system(i8042_dmi_noloop_table))
+>  		i8042_noloop = 1;
+>  
+>  	if (dmi_check_system(i8042_dmi_nomux_table))
+>  		i8042_nomux = 1;
+> -#endif
+>  
+> -#ifdef CONFIG_X86
+>  	if (dmi_check_system(i8042_dmi_dritek_table))
+>  		i8042_dritek = 1;
+>  #endif /* CONFIG_X86 */
 
-Thank you for the report. I'd rahther changed it as in the patch below.
-What do you think?
-
-If everyone agrees then I will fold it in Jiri's original patch to keep
-the trees bisectable.
-
--- 
-Dmitry
-
-diff --git a/drivers/input/serio/i8042-x86ia64io.h b/drivers/input/serio/i8042-x86ia64io.h
-index 709c9d9..2289e3a 100644
---- a/drivers/input/serio/i8042-x86ia64io.h
-+++ b/drivers/input/serio/i8042-x86ia64io.h
-@@ -63,7 +63,7 @@ static inline void i8042_write_command(int val)
- 	outb(val, I8042_COMMAND_REG);
- }
- 
--#if defined(__i386__) || defined(__x86_64__)
-+#ifdef CONFIG_X86
- 
- #include <linux/dmi.h>
- 
-@@ -287,6 +287,7 @@ static struct dmi_system_id __initdata i8042_dmi_nomux_table[] = {
- 	{ }
- };
- 
-+#ifdef CONFIG_PNP
- static struct dmi_system_id __initdata i8042_dmi_nopnp_table[] = {
- 	{
- 		.ident = "Intel MBO Desktop D845PESV",
-@@ -297,13 +298,8 @@ static struct dmi_system_id __initdata i8042_dmi_nopnp_table[] = {
- 	},
- 	{ }
- };
--
- #endif
- 
--#ifdef CONFIG_X86
--
--#include <linux/dmi.h>
--
- /*
-  * Some Wistron based laptops need us to explicitly enable the 'Dritek
-  * keyboard extension' to make their extra keys start generating scancodes.
-@@ -351,7 +347,6 @@ static struct dmi_system_id __initdata i8042_dmi_dritek_table[] = {
- 
- #endif /* CONFIG_X86 */
- 
--
- #ifdef CONFIG_PNP
- #include <linux/pnp.h>
- 
-@@ -461,6 +456,11 @@ static int __init i8042_pnp_init(void)
- 	int pnp_data_busted = 0;
- 	int err;
- 
-+#ifdef CONFIG_X86
-+	if (dmi_check_system(i8042_dmi_nopnp_table))
-+		i8042_nopnp = 1;
-+#endif
-+
- 	if (i8042_nopnp) {
- 		printk(KERN_INFO "i8042: PNP detection disabled\n");
- 		return 0;
-@@ -578,10 +578,6 @@ static int __init i8042_platform_init(void)
- 	i8042_kbd_irq = I8042_MAP_IRQ(1);
- 	i8042_aux_irq = I8042_MAP_IRQ(12);
- 
--#if defined(__i386__) || defined(__x86_64__)
--	if (dmi_check_system(i8042_dmi_nopnp_table))
--		i8042_nopnp = 1;
--#endif
- 	retval = i8042_pnp_init();
- 	if (retval)
- 		return retval;
-@@ -590,15 +586,13 @@ static int __init i8042_platform_init(void)
-         i8042_reset = 1;
- #endif
- 
--#if defined(__i386__) || defined(__x86_64__)
-+#ifdef CONFIG_X86
- 	if (dmi_check_system(i8042_dmi_noloop_table))
- 		i8042_noloop = 1;
- 
- 	if (dmi_check_system(i8042_dmi_nomux_table))
- 		i8042_nomux = 1;
--#endif
- 
--#ifdef CONFIG_X86
- 	if (dmi_check_system(i8042_dmi_dritek_table))
- 		i8042_dritek = 1;
- #endif /* CONFIG_X86 */
