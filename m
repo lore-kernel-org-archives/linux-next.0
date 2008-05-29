@@ -1,44 +1,34 @@
-From: Mark Fasheh <mfasheh@suse.com>
-Subject: Re: [PATCH -next] ocfs2: fix printk format warnings
-	with OCFS2_FS_STATS=n
-Date: Wed, 28 May 2008 14:48:57 -0700
-Message-ID: <20080528214857.GG8325@wotan.suse.de>
-References: <20080528144100.13ec8c6a.randy.dunlap@oracle.com>
-Reply-To: Mark Fasheh <mfasheh@suse.com>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: linux-next: pending wireless/wireless-current merge conflict
+Date: Wed, 28 May 2008 20:42:51 -0400
+Message-ID: <20080529004251.GD22536@tuxdriver.com>
+References: <20080522132031.3c05b6f7.sfr@canb.auug.org.au> <20080522134105.GB3996@tuxdriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <ocfs2-devel-bounces@oss.oracle.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ra.tuxdriver.com ([70.61.120.52]:2306 "EHLO ra.tuxdriver.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751379AbYE2A6V (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 May 2008 20:58:21 -0400
 Content-Disposition: inline
-In-Reply-To: <20080528144100.13ec8c6a.randy.dunlap@oracle.com>
-List-Unsubscribe: <http://oss.oracle.com/mailman/listinfo/ocfs2-devel>,
-	<mailto:ocfs2-devel-request@oss.oracle.com?subject=unsubscribe>
-List-Archive: <http://oss.oracle.com/pipermail/ocfs2-devel>
-List-Post: <mailto:ocfs2-devel@oss.oracle.com>
-List-Help: <mailto:ocfs2-devel-request@oss.oracle.com?subject=help>
-List-Subscribe: <http://oss.oracle.com/mailman/listinfo/ocfs2-devel>,
-	<mailto:ocfs2-devel-request@oss.oracle.com?subject=subscribe>
-Sender: ocfs2-devel-bounces@oss.oracle.com
-Errors-To: ocfs2-devel-bounces@oss.oracle.com
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: linux-fsdevel@vger.kernel.org, akpm <akpm@linux-foundation.org>, linux-next@vger.kernel.org, ocfs2-devel@oss.oracle.com
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20080522134105.GB3996@tuxdriver.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org
 
-On Wed, May 28, 2008 at 02:41:00PM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Fix printk format warnings when OCFS2_FS_STATS=n:
-> 
-> linux-next-20080528/fs/ocfs2/dlmglue.c: In function 'ocfs2_dlm_seq_show':
-> linux-next-20080528/fs/ocfs2/dlmglue.c:2623: warning: format '%llu' expects type 'long long unsigned int', but argument 3 has type 'int'
-> linux-next-20080528/fs/ocfs2/dlmglue.c:2623: warning: format '%llu' expects type 'long long unsigned int', but argument 4 has type 'int'
-> linux-next-20080528/fs/ocfs2/dlmglue.c:2623: warning: format '%llu' expects type 'long long unsigned int', but argument 7 has type 'int'
-> linux-next-20080528/fs/ocfs2/dlmglue.c:2623: warning: format '%llu' expects type 'long long unsigned int', but argument 8 has type 'int'
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+I just sent a pull request for Dave that will result in a conflict
+in the rt2x00 driver.  I have a sample merge available here:
 
-Thanks Randy...
-	--Mark
+	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-next-2.6 merge-test-2
 
---
-Mark Fasheh
+Please note the 'merge-test-2' -- I still have the old merge-test
+there since Dave hadn't (at my last check anyway) yet pulled the
+previous wireless-next-2.6 request into net-next-2.6.
+
+Just a heads-up... :-)
+
+John
+-- 
+John W. Linville
+linville@tuxdriver.com
