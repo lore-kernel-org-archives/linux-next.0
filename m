@@ -1,44 +1,175 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: sparc64 build failure
-Date: Fri, 30 May 2008 07:10:05 -0700
-Message-ID: <20080530141005.GB26342@kroah.com>
-References: <20080529175332.a12ad65d.sfr@canb.auug.org.au> <20080529220158.GA3867@kroah.com> <20080530153847.a5f3fd35.sfr@canb.auug.org.au>
+From: Gabriel C <nix.or.die@googlemail.com>
+Subject: linux-next: strange CPU calibration
+Date: Fri, 30 May 2008 17:42:28 +0200
+Message-ID: <48402064.6030400@googlemail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pentafluge.infradead.org ([213.146.154.40]:59388 "EHLO
-	pentafluge.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752465AbYE3ONM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 30 May 2008 10:13:12 -0400
-Content-Disposition: inline
-In-Reply-To: <20080530153847.a5f3fd35.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756124AbYE3PnP@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: Linux Kernel list <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, May 30, 2008 at 03:38:47PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> On Thu, 29 May 2008 15:01:58 -0700 Greg KH <greg@kroah.com> wrote:
-> >
-> > > -	sprintf(pci_name(dev), "%04x:%02x:%02x.%d", pci_domain_nr(bus),
-> > > +	dev_set_name(&dev->dev, "%04x:%02x:%02x.%d", pci_domain_nr(bus),
-> > >  		dev->bus->number, PCI_SLOT(devfn), PCI_FUNC(devfn));
-> > 
-> > It's wierd that we broke the build like this, I'll work to merge this in
-> > so that it isn't broken.
-> 
-> It broke the build because arch/sparc64 is (mostly) built with -Werror.
+Hi Ingo , Thomas ,
 
-Sorry, no, I realized that, I was confused as to why a warning was
-created here.  Turns out that pci_name() was being changed to a const
-string, and the compiler was rightfully saying that we can't be using
-that for an assignment.
+on 2.6.26-rc4-next-20080530 ( probably in earlier -next releases I didn't checked yet ) the CPU calibration is random 
+wrong on my box with an Core2Quad CPU. The box is running x86_64 kernel.
 
-I've fixed it up correctly in my latest tree, which you should have
-already.
+After rebooting the box ( using 'reboot command' ) from 2.6.25 to 2.6.26-rc4-next-20080530 I get :
 
-thanks,
+...
 
-greg k-h
+[4294014.566475] Calibrating delay using timer specific routine.. 5002.58 BogoMIPS (lpj=2501294)
+[4294014.586558] Calibrating delay using timer specific routine.. 2822.66 BogoMIPS (lpj=1411331)
+[4294014.668546] Calibrating delay using timer specific routine.. 2822.69 BogoMIPS (lpj=1411348)
+[4294014.751533] Calibrating delay using timer specific routine.. 2822.68 BogoMIPS (lpj=1411343)
+
+...
+
+CPU0 is fine the other 3 cores wrong.
+
+( full dmesg : http://frugalware.org/~crazy/next-calibration/2.6.26-rc4-next-20080530-dmesg_wrong_calibration_1 )
+
+
+Now rebooting 2.6.26-rc4-next-20080530 -> 2.6.26-rc4-next-20080530 ( using shutdown -r now this time ) I get :
+
+...
+
+[4294014.566476] Calibrating delay using timer specific routine.. 5002.57 BogoMIPS (lpj=2501288)
+[4294014.587558] Calibrating delay using timer specific routine.. 4999.71 BogoMIPS (lpj=2499858)
+[4294014.660547] Calibrating delay using timer specific routine.. 6899.61 BogoMIPS (lpj=3449809)
+[4294014.733536] Calibrating delay using timer specific routine.. 4999.73 BogoMIPS (lpj=2499865)
+
+...
+
+CPU0 , CPU1 , CPU3 fine and CPU2 only wrong.
+
+( full dmesg: http://frugalware.org/~crazy/next-calibration/2.6.26-rc4-next-20080530-dmesg_wrong_calibration_2 )
+
+Finally when I halt the box wait a bit and power up again I get all right :
+
+...
+
+[4294014.566475] Calibrating delay using timer specific routine.. 5002.60 BogoMIPS (lpj=2501300)
+[4294014.586558] Calibrating delay using timer specific routine.. 4999.71 BogoMIPS (lpj=2499855)
+[4294014.659547] Calibrating delay using timer specific routine.. 4999.73 BogoMIPS (lpj=2499865)
+[4294014.732536] Calibrating delay using timer specific routine.. 4999.73 BogoMIPS (lpj=2499867)
+
+...
+
+( full dmesg : http://frugalware.org/~crazy/next-calibration/2.6.26-rc4-next-20080530-dmesg_OK_after_halt )
+
+config used for this kernel : http://frugalware.org/~crazy/next-calibration/next-config
+
+cpuinfo :
+
+
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 23
+model name	: Intel(R) Core(TM)2 Quad  CPU   Q9300  @ 2.50GHz
+stepping	: 7
+cpu MHz		: 2497.000
+cache size	: 3072 KB
+physical id	: 0
+siblings	: 4
+core id		: 0
+cpu cores	: 4
+apicid		: 0
+initial apicid	: 0
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 10
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx lm constant_tsc arch_perfmon pebs bts rep_good pni monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr sse4_1 lahf_lm
+bogomips	: 5002.60
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 36 bits physical, 48 bits virtual
+power management:
+
+processor	: 1
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 23
+model name	: Intel(R) Core(TM)2 Quad  CPU   Q9300  @ 2.50GHz
+stepping	: 7
+cpu MHz		: 2497.000
+cache size	: 3072 KB
+physical id	: 0
+siblings	: 4
+core id		: 1
+cpu cores	: 4
+apicid		: 1
+initial apicid	: 1
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 10
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx lm constant_tsc arch_perfmon pebs bts rep_good pni monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr sse4_1 lahf_lm
+bogomips	: 4999.71
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 36 bits physical, 48 bits virtual
+power management:
+
+processor	: 2
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 23
+model name	: Intel(R) Core(TM)2 Quad  CPU   Q9300  @ 2.50GHz
+stepping	: 7
+cpu MHz		: 2497.000
+cache size	: 3072 KB
+physical id	: 0
+siblings	: 4
+core id		: 2
+cpu cores	: 4
+apicid		: 2
+initial apicid	: 2
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 10
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx lm constant_tsc arch_perfmon pebs bts rep_good pni monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr sse4_1 lahf_lm
+bogomips	: 4999.73
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 36 bits physical, 48 bits virtual
+power management:
+
+processor	: 3
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 23
+model name	: Intel(R) Core(TM)2 Quad  CPU   Q9300  @ 2.50GHz
+stepping	: 7
+cpu MHz		: 2497.000
+cache size	: 3072 KB
+physical id	: 0
+siblings	: 4
+core id		: 3
+cpu cores	: 4
+apicid		: 3
+initial apicid	: 3
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 10
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx lm constant_tsc arch_perfmon pebs bts rep_good pni monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr sse4_1 lahf_lm
+bogomips	: 4999.73
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 36 bits physical, 48 bits virtual
+power management:
+
+
+I cannot reproduce this on linus tree ( I will do some more reboot and tests tomorrow against mainline tree just to be sure ).
+
+Please let me know if you need more informations.
+
+Best Regards,
+
+Gabriel
