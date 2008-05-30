@@ -1,224 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for May 30
-Date: Fri, 30 May 2008 18:19:01 +1000
-Message-ID: <20080530181901.8268f317.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: sparc64 build failure
+Date: Fri, 30 May 2008 07:10:05 -0700
+Message-ID: <20080530141005.GB26342@kroah.com>
+References: <20080529175332.a12ad65d.sfr@canb.auug.org.au> <20080529220158.GA3867@kroah.com> <20080530153847.a5f3fd35.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__30_May_2008_18_19_01_+1000_y7=4XFKlFNsoAv=U"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39985 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751592AbYE3ITJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 30 May 2008 04:19:09 -0400
+Received: from pentafluge.infradead.org ([213.146.154.40]:59388 "EHLO
+	pentafluge.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752465AbYE3ONM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 30 May 2008 10:13:12 -0400
+Content-Disposition: inline
+In-Reply-To: <20080530153847.a5f3fd35.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>
 
---Signature=_Fri__30_May_2008_18_19_01_+1000_y7=4XFKlFNsoAv=U
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, May 30, 2008 at 03:38:47PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> On Thu, 29 May 2008 15:01:58 -0700 Greg KH <greg@kroah.com> wrote:
+> >
+> > > -	sprintf(pci_name(dev), "%04x:%02x:%02x.%d", pci_domain_nr(bus),
+> > > +	dev_set_name(&dev->dev, "%04x:%02x:%02x.%d", pci_domain_nr(bus),
+> > >  		dev->bus->number, PCI_SLOT(devfn), PCI_FUNC(devfn));
+> > 
+> > It's wierd that we broke the build like this, I'll work to merge this in
+> > so that it isn't broken.
+> 
+> It broke the build because arch/sparc64 is (mostly) built with -Werror.
 
-Hi all,
+Sorry, no, I realized that, I was confused as to why a warning was
+created here.  Turns out that pci_name() was being changed to a const
+string, and the compiler was rightfully saying that we can't be using
+that for an assignment.
 
-Changes since next-20080529:
+I've fixed it up correctly in my latest tree, which you should have
+already.
 
-The ide tree got a build failure that required several newly out of lined
-routines to be exported.
+thanks,
 
-The rr tree picked up another conflict with the driver-core tree.
-
-The semaphore-removal tree still needed three patches reverted because simi=
-lar
-patches were merged into upstream and the scsi-rc-fixes trees.
-
-I have applied the following temporary patch for known build problems:
-
-	"Fix various 8390 builds" - the net tree broke builds on various
-architectures - hopefully this patch will go into the net tree shortly.
-	"hil_kbd: restore pci_ids.h" - this is to fix a patch in the
-semaphore tree and hopefully will be fixed there shortly.
-
-The "sparc: fallout from pci_name() constifying" patch is no longer needed.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups, it is also built with powerpc allnoconfig,
-44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
-
-Below is a summary of the state of the merge.
-
-We are up to 81 trees (counting Linus' and 13 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging powerpc-merge/merge
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sparc-current/master
-Merging sound-current/for-linus
-Merging arm-current/master
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging quilt/driver-core
-Merging quilt/usb
-Merging x86/auto-x86-next
-Merging sched/auto-sched-next
-Merging ftrace/auto-ftrace-next
-Applying ftrace: fix rculist split fallout
-Merging pci/linux-next
-CONFLICT (content): Merge conflict in drivers/base/power/main.c
-CONFLICT (content): Merge conflict in include/linux/device.h
-Merging quilt/device-mapper
-Merging hid/mm
-Merging quilt/i2c
-CONFLICT (content): Merge conflict in drivers/i2c/i2c-core.c
-Merging quilt/kernel-doc
-Merging avr32/avr32-arch
-Merging v4l-dvb/stable
-Merging s390/features
-CONFLICT (content): Merge conflict in drivers/s390/block/dasd.c
-CONFLICT (content): Merge conflict in drivers/s390/block/dasd_eckd.c
-CONFLICT (content): Merge conflict in drivers/s390/block/dasd_fba.c
-CONFLICT (content): Merge conflict in drivers/s390/char/tape_core.c
-CONFLICT (content): Merge conflict in drivers/s390/cio/device_fsm.c
-CONFLICT (content): Merge conflict in drivers/s390/net/claw.c
-CONFLICT (content): Merge conflict in drivers/s390/net/ctcm_main.c
-CONFLICT (content): Merge conflict in drivers/s390/net/lcs.c
-Merging sh/master
-Merging jfs/next
-Merging kbuild/master
-Merging quilt/ide
-Applying ide: ide-timing.h fallout
-Merging libata/NEXT
-Merging nfs/linux-next
-Merging xfs/master
-Merging infiniband/for-next
-Merging acpi/test
-Merging blackfin/for-linus
-Merging nfsd/nfsd-next
-Merging ieee1394/for-next
-Merging hwmon/testing
-Merging ubi/master
-Merging kvm/master
-Merging dlm/next
-Merging scsi/master
-Merging ia64/test
-Merging tests/master
-CONFLICT (content): Merge conflict in lib/Kconfig.debug
-Merging ocfs2/linux-next
-Merging selinux/for-akpm
-Merging quilt/m68k
-Merging powerpc/powerpc-next
-Merging hrt/mm
-Merging lblnet/master
-Merging ext4/next
-Merging 4xx/next
-Merging async_tx/next
-Merging udf/for_next
-Merging security-testing/next
-Merging net/master
-Merging sparc/master
-Merging galak/powerpc-next
-Merging mtd/master
-Merging wireless/master
-CONFLICT (content): Merge conflict in drivers/net/wireless/libertas/main.c
-CONFLICT (content): Merge conflict in drivers/net/wireless/rt2x00/rt2x00dev=
-.c
-Merging crypto/master
-Merging vfs/vfs-2.6.25
-Merging sound/master
-Merging arm/devel
-Merging cpufreq/next
-Merging v9fs/for-next
-Merging quilt/rr
-CONFLICT (content): Merge conflict in drivers/s390/kvm/kvm_virtio.c
-CONFLICT (content): Merge conflict in drivers/virtio/virtio.c
-CONFLICT (content): Merge conflict in drivers/virtio/virtio_pci.c
-Merging cifs/master
-Merging mmc/next
-Merging gfs2/master
-Merging rcu/core/rcu
-Merging locking/core/locking
-Merging safe-poison-pointers/safe-poison-pointers
-Merging stackprotector/stackprotector
-Merging input/next
-Merging semaphore/semaphore
-Merging semaphore-removal/semaphore-removal
-CONFLICT (content): Merge conflict in drivers/atm/ambassador.c
-CONFLICT (content): Merge conflict in drivers/net/bonding/bond_main.c
-CONFLICT (content): Merge conflict in drivers/net/bonding/bond_sysfs.c
-CONFLICT (content): Merge conflict in drivers/scsi/qla2xxx/qla_attr.c
-CONFLICT (content): Merge conflict in drivers/scsi/qla2xxx/qla_def.h
-CONFLICT (content): Merge conflict in drivers/scsi/qla2xxx/qla_mbx.c
-CONFLICT (content): Merge conflict in drivers/scsi/qla2xxx/qla_mid.c
-CONFLICT (content): Merge conflict in drivers/scsi/qla2xxx/qla_os.c
-CONFLICT (content): Merge conflict in net/9p/trans_virtio.c
-$ git reset --hard
-$ git checkout -b tmp semaphore-removal/semaphore-removal
-Created commit 50e0404: Revert "Convert qla_os to use mutex instead of sema=
-phore"
-Created commit cde17a2: Revert "9p: Convert from semaphore to spinlock"
-Created commit 18b7168: Revert "qla2xxx: Turn vport_sem into vport_mutex"
-$ git checkout master
-CONFLICT (content): Merge conflict in drivers/atm/ambassador.c
-CONFLICT (content): Merge conflict in drivers/net/bonding/bond_main.c
-CONFLICT (content): Merge conflict in drivers/net/bonding/bond_sysfs.c
-Merging quilt/ldp.next
-Merging bkl-removal/bkl-removal
-Merging trivial/next
-Merging ubifs/for_andrew
-Applying Fix various 8390 builds
-Applying hil_kbd: restore pci_ids.h
-
---Signature=_Fri__30_May_2008_18_19_01_+1000_y7=4XFKlFNsoAv=U
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
-
-iD8DBQFIP7h5TgG2atn1QN8RAocbAKCBhomxF8/n3Qne6WcfTd8/B4ijSwCfTsxl
-MSvXAXmLbsAAlSicgJEcbWE=
-=CJIo
------END PGP SIGNATURE-----
-
---Signature=_Fri__30_May_2008_18_19_01_+1000_y7=4XFKlFNsoAv=U--
+greg k-h
