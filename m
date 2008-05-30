@@ -1,175 +1,39 @@
-From: Gabriel C <nix.or.die@googlemail.com>
-Subject: linux-next: strange CPU calibration
-Date: Fri, 30 May 2008 17:42:28 +0200
-Message-ID: <48402064.6030400@googlemail.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: next 20080530: ubifs build errors
+Date: Fri, 30 May 2008 09:31:47 -0700
+Message-ID: <20080530093147.cc1d389f.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756124AbYE3PnP@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org
-Cc: Linux Kernel list <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from agminet01.oracle.com ([141.146.126.228]:37858 "EHLO
+	agminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752219AbYE3QSv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 30 May 2008 12:18:51 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org, dedekind@infradead.org
+Cc: linux-mtd@lists.infradead.org, akpm <akpm@linux-foundation.org>
 
-Hi Ingo , Thomas ,
+with:
+CONFIG_UBIFS_FS=y
+# CONFIG_UBIFS_FS_XATTR is not set
+CONFIG_UBIFS_FS_ADVANCED_COMPR=y
+# CONFIG_UBIFS_FS_LZO is not set
+# CONFIG_UBIFS_FS_ZLIB is not set
+# CONFIG_UBIFS_FS_DEBUG is not set
 
-on 2.6.26-rc4-next-20080530 ( probably in earlier -next releases I didn't checked yet ) the CPU calibration is random 
-wrong on my box with an Core2Quad CPU. The box is running x86_64 kernel.
-
-After rebooting the box ( using 'reboot command' ) from 2.6.25 to 2.6.26-rc4-next-20080530 I get :
-
-...
-
-[4294014.566475] Calibrating delay using timer specific routine.. 5002.58 BogoMIPS (lpj=2501294)
-[4294014.586558] Calibrating delay using timer specific routine.. 2822.66 BogoMIPS (lpj=1411331)
-[4294014.668546] Calibrating delay using timer specific routine.. 2822.69 BogoMIPS (lpj=1411348)
-[4294014.751533] Calibrating delay using timer specific routine.. 2822.68 BogoMIPS (lpj=1411343)
-
-...
-
-CPU0 is fine the other 3 cores wrong.
-
-( full dmesg : http://frugalware.org/~crazy/next-calibration/2.6.26-rc4-next-20080530-dmesg_wrong_calibration_1 )
-
-
-Now rebooting 2.6.26-rc4-next-20080530 -> 2.6.26-rc4-next-20080530 ( using shutdown -r now this time ) I get :
-
-...
-
-[4294014.566476] Calibrating delay using timer specific routine.. 5002.57 BogoMIPS (lpj=2501288)
-[4294014.587558] Calibrating delay using timer specific routine.. 4999.71 BogoMIPS (lpj=2499858)
-[4294014.660547] Calibrating delay using timer specific routine.. 6899.61 BogoMIPS (lpj=3449809)
-[4294014.733536] Calibrating delay using timer specific routine.. 4999.73 BogoMIPS (lpj=2499865)
-
-...
-
-CPU0 , CPU1 , CPU3 fine and CPU2 only wrong.
-
-( full dmesg: http://frugalware.org/~crazy/next-calibration/2.6.26-rc4-next-20080530-dmesg_wrong_calibration_2 )
-
-Finally when I halt the box wait a bit and power up again I get all right :
-
-...
-
-[4294014.566475] Calibrating delay using timer specific routine.. 5002.60 BogoMIPS (lpj=2501300)
-[4294014.586558] Calibrating delay using timer specific routine.. 4999.71 BogoMIPS (lpj=2499855)
-[4294014.659547] Calibrating delay using timer specific routine.. 4999.73 BogoMIPS (lpj=2499865)
-[4294014.732536] Calibrating delay using timer specific routine.. 4999.73 BogoMIPS (lpj=2499867)
-
-...
-
-( full dmesg : http://frugalware.org/~crazy/next-calibration/2.6.26-rc4-next-20080530-dmesg_OK_after_halt )
-
-config used for this kernel : http://frugalware.org/~crazy/next-calibration/next-config
-
-cpuinfo :
+build gets:
+fs/built-in.o: In function `compr_exit':
+compress.c:(.text+0x4a3fc): undefined reference to `crypto_free_tfm'
+fs/built-in.o: In function `compr_init':
+compress.c:(.init.text+0x11d4): undefined reference to `crypto_alloc_base'
+make[1]: *** [.tmp_vmlinux1] Error 1
 
 
-processor	: 0
-vendor_id	: GenuineIntel
-cpu family	: 6
-model		: 23
-model name	: Intel(R) Core(TM)2 Quad  CPU   Q9300  @ 2.50GHz
-stepping	: 7
-cpu MHz		: 2497.000
-cache size	: 3072 KB
-physical id	: 0
-siblings	: 4
-core id		: 0
-cpu cores	: 4
-apicid		: 0
-initial apicid	: 0
-fpu		: yes
-fpu_exception	: yes
-cpuid level	: 10
-wp		: yes
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx lm constant_tsc arch_perfmon pebs bts rep_good pni monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr sse4_1 lahf_lm
-bogomips	: 5002.60
-clflush size	: 64
-cache_alignment	: 64
-address sizes	: 36 bits physical, 48 bits virtual
-power management:
+because CRYPTO is not enabled.
 
-processor	: 1
-vendor_id	: GenuineIntel
-cpu family	: 6
-model		: 23
-model name	: Intel(R) Core(TM)2 Quad  CPU   Q9300  @ 2.50GHz
-stepping	: 7
-cpu MHz		: 2497.000
-cache size	: 3072 KB
-physical id	: 0
-siblings	: 4
-core id		: 1
-cpu cores	: 4
-apicid		: 1
-initial apicid	: 1
-fpu		: yes
-fpu_exception	: yes
-cpuid level	: 10
-wp		: yes
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx lm constant_tsc arch_perfmon pebs bts rep_good pni monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr sse4_1 lahf_lm
-bogomips	: 4999.71
-clflush size	: 64
-cache_alignment	: 64
-address sizes	: 36 bits physical, 48 bits virtual
-power management:
-
-processor	: 2
-vendor_id	: GenuineIntel
-cpu family	: 6
-model		: 23
-model name	: Intel(R) Core(TM)2 Quad  CPU   Q9300  @ 2.50GHz
-stepping	: 7
-cpu MHz		: 2497.000
-cache size	: 3072 KB
-physical id	: 0
-siblings	: 4
-core id		: 2
-cpu cores	: 4
-apicid		: 2
-initial apicid	: 2
-fpu		: yes
-fpu_exception	: yes
-cpuid level	: 10
-wp		: yes
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx lm constant_tsc arch_perfmon pebs bts rep_good pni monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr sse4_1 lahf_lm
-bogomips	: 4999.73
-clflush size	: 64
-cache_alignment	: 64
-address sizes	: 36 bits physical, 48 bits virtual
-power management:
-
-processor	: 3
-vendor_id	: GenuineIntel
-cpu family	: 6
-model		: 23
-model name	: Intel(R) Core(TM)2 Quad  CPU   Q9300  @ 2.50GHz
-stepping	: 7
-cpu MHz		: 2497.000
-cache size	: 3072 KB
-physical id	: 0
-siblings	: 4
-core id		: 3
-cpu cores	: 4
-apicid		: 3
-initial apicid	: 3
-fpu		: yes
-fpu_exception	: yes
-cpuid level	: 10
-wp		: yes
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx lm constant_tsc arch_perfmon pebs bts rep_good pni monitor ds_cpl vmx smx est tm2 ssse3 cx16 xtpr sse4_1 lahf_lm
-bogomips	: 4999.73
-clflush size	: 64
-cache_alignment	: 64
-address sizes	: 36 bits physical, 48 bits virtual
-power management:
-
-
-I cannot reproduce this on linus tree ( I will do some more reboot and tests tomorrow against mainline tree just to be sure ).
-
-Please let me know if you need more informations.
-
-Best Regards,
-
-Gabriel
+---
+~Randy
+"He closes his eyes and drops the goggles.  You can't get hurt
+by looking at a bitmap.  Or can you?"
