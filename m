@@ -1,59 +1,87 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: pci/driver-core merge conflicts
-Date: Fri, 30 May 2008 10:55:09 +1000
-Message-ID: <20080530105509.34faa639.sfr@canb.auug.org.au>
-References: <20080529121847.fcc81e2f.sfr@canb.auug.org.au>
-	<20080529025957.GA13909@kroah.com>
-	<200805290857.16581.jbarnes@virtuousgeek.org>
-	<20080529160221.GA9876@kroah.com>
+Subject: linux-next: ide build failure
+Date: Fri, 30 May 2008 11:54:22 +1000
+Message-ID: <20080530115422.989d9ab6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__30_May_2008_10_55_09_+1000_FgsqEVd.xwr9j+0B"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36287 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35568 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752468AbYE3Az1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 29 May 2008 20:55:27 -0400
-In-Reply-To: <20080529160221.GA9876@kroah.com>
+	id S1753398AbYE3Byi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 29 May 2008 21:54:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, "Rafael J. Wysocki" <rjw@sisk.pl>
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Fri__30_May_2008_10_55_09_+1000_FgsqEVd.xwr9j+0B
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Bart,
 
-On Thu, 29 May 2008 09:02:21 -0700 Greg KH <greg@kroah.com> wrote:
->
-> On Thu, May 29, 2008 at 08:57:16AM -0700, Jesse Barnes wrote:
-> >=20
-> > Hm, I knew this would cause problems eventually. :)  Should I put these=
- fixups=20
-> > in my tree?  Or can you track them somehow, Stephen?
->=20
-> Yes, I'll be breaking them up and sending them to you in a few days so
-> Stephen doesn't have to handle all of this.  Right now it's in a single
-> patch file that touches about 400+ files :)
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Of course, it is even better when I don't have to track them at all :-)
+ERROR: "ide_timing_merge" [drivers/ide/pci/via82cxxx.ko] undefined!
+ERROR: "ide_timing_compute" [drivers/ide/pci/via82cxxx.ko] undefined!
+ERROR: "ide_timing_find_mode" [drivers/ide/pci/opti621.ko] undefined!
+ERROR: "ide_timing_find_mode" [drivers/ide/pci/cy82c693.ko] undefined!
+ERROR: "ide_timing_find_mode" [drivers/ide/pci/cmd64x.ko] undefined!
+ERROR: "ide_timing_find_mode" [drivers/ide/pci/cmd640.ko] undefined!
+ERROR: "ide_timing_merge" [drivers/ide/pci/amd74xx.ko] undefined!
+ERROR: "ide_timing_compute" [drivers/ide/pci/amd74xx.ko] undefined!
+ERROR: "ide_timing_find_mode" [drivers/ide/pci/alim15x3.ko] undefined!
 
---=20
+Caused by commit 3a3147040f2bb250ca09cd5ce5b0526969d50ba6 ("ide: convert
+ide-timing.h to ide-timings.c library").
+
+I applied the following patch.
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__30_May_2008_10_55_09_+1000_FgsqEVd.xwr9j+0B
-Content-Type: application/pgp-signature
+>From 0a1194cf0893e6e9ad0ecd9ade50f710c0540552 Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 30 May 2008 11:52:22 +1000
+Subject: [PATCH] ide: ide-timing.h fallout
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/ide/ide-timings.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
 
-iD8DBQFIP1BxTgG2atn1QN8RAkU8AKCJao7XRONCcfmKdFyIavWoyhbDPACfcRE/
-fp/1xz8xdgRgXkfrLIQB1fI=
-=DVha
------END PGP SIGNATURE-----
+diff --git a/drivers/ide/ide-timings.c b/drivers/ide/ide-timings.c
+index dca53b0..8a43bd9 100644
+--- a/drivers/ide/ide-timings.c
++++ b/drivers/ide/ide-timings.c
+@@ -24,6 +24,7 @@
+ #include <linux/kernel.h>
+ #include <linux/hdreg.h>
+ #include <linux/ide.h>
++#include <linux/module.h>
+ 
+ /*
+  * PIO 0-5, MWDMA 0-2 and UDMA 0-6 timings (in nanoseconds).
+@@ -73,6 +74,7 @@ struct ide_timing *ide_timing_find_mode(u8 speed)
+ 			return NULL;
+ 	return t;
+ }
++EXPORT_SYMBOL(ide_timing_find_mode);
+ 
+ u16 ide_pio_cycle_time(ide_drive_t *drive, u8 pio)
+ {
+@@ -131,6 +133,7 @@ void ide_timing_merge(struct ide_timing *a, struct ide_timing *b,
+ 	if (what & IDE_TIMING_UDMA)
+ 		m->udma    = max(a->udma,    b->udma);
+ }
++EXPORT_SYMBOL(ide_timing_merge);
+ 
+ int ide_timing_compute(ide_drive_t *drive, u8 speed,
+ 		       struct ide_timing *t, int T, int UT)
+@@ -199,3 +202,4 @@ int ide_timing_compute(ide_drive_t *drive, u8 speed,
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL(ide_timing_compute);
+-- 
+1.5.5.2
 
---Signature=_Fri__30_May_2008_10_55_09_+1000_FgsqEVd.xwr9j+0B--
