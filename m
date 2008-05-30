@@ -1,39 +1,44 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: next 20080530: ubifs build errors
-Date: Fri, 30 May 2008 09:31:47 -0700
-Message-ID: <20080530093147.cc1d389f.randy.dunlap@oracle.com>
+Subject: [PATCH -next] cxgb3: fix build error when INET=n
+Date: Fri, 30 May 2008 10:29:19 -0700
+Message-ID: <20080530102919.ecd1fb27.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from agminet01.oracle.com ([141.146.126.228]:37858 "EHLO
-	agminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752219AbYE3QSv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 30 May 2008 12:18:51 -0400
+Received: from rgminet01.oracle.com ([148.87.113.118]:21852 "EHLO
+	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750909AbYE3RQ3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 30 May 2008 13:16:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, dedekind@infradead.org
-Cc: linux-mtd@lists.infradead.org, akpm <akpm@linux-foundation.org>
+To: netdev <netdev@vger.kernel.org>, divy@chelsio.com
+Cc: jgarzik <jgarzik@pobox.com>, linux-next@vger.kernel.org, akpm <akpm@linux-foundation.org>
 
-with:
-CONFIG_UBIFS_FS=y
-# CONFIG_UBIFS_FS_XATTR is not set
-CONFIG_UBIFS_FS_ADVANCED_COMPR=y
-# CONFIG_UBIFS_FS_LZO is not set
-# CONFIG_UBIFS_FS_ZLIB is not set
-# CONFIG_UBIFS_FS_DEBUG is not set
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-build gets:
-fs/built-in.o: In function `compr_exit':
-compress.c:(.text+0x4a3fc): undefined reference to `crypto_free_tfm'
-fs/built-in.o: In function `compr_init':
-compress.c:(.init.text+0x11d4): undefined reference to `crypto_alloc_base'
-make[1]: *** [.tmp_vmlinux1] Error 1
+cxgb3 uses lro_* functions and selects INET_LRO, but this doesn't help unless
+INET is already enabled, so make the driver depend on INET also.
 
+sge.c:(.text+0x9f09a): undefined reference to `lro_flush_all'
+sge.c:(.text+0x9f62f): undefined reference to `lro_receive_skb'
+sge.c:(.text+0x9f8a3): undefined reference to `lro_receive_frags'
+sge.c:(.text+0x9fbe0): undefined reference to `lro_vlan_hwaccel_receive_skb'
+sge.c:(.text+0x9ffcd): undefined reference to `lro_vlan_hwaccel_receive_frags'
 
-because CRYPTO is not enabled.
-
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 ---
-~Randy
-"He closes his eyes and drops the goggles.  You can't get hurt
-by looking at a bitmap.  Or can you?"
+ drivers/net/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20080530.orig/drivers/net/Kconfig
++++ linux-next-20080530/drivers/net/Kconfig
+@@ -2407,7 +2407,7 @@ config CHELSIO_T1_NAPI
+ 
+ config CHELSIO_T3
+ 	tristate "Chelsio Communications T3 10Gb Ethernet support"
+-	depends on PCI
++	depends on PCI && INET
+ 	select FW_LOADER
+ 	select INET_LRO
+ 	help
