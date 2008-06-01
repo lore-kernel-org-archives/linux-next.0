@@ -1,61 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Diagnosing linux-next (Was: Re: m68k libc5 regression)
-Date: Sun, 1 Jun 2008 23:26:38 +1000
-Message-ID: <20080601232638.fda1f3ab.sfr@canb.auug.org.au>
-References: <Pine.LNX.4.64.0805262226280.11902@anakin>
-	<Pine.LNX.4.64.0805270014110.6718@jikos.suse.cz>
-	<20080601005338.3affe880.akpm@linux-foundation.org>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: Tree for May 30
+Date: Sun, 1 Jun 2008 17:07:10 +0200
+Message-ID: <20080601150710.GB27843@elte.hu>
+References: <20080530181901.8268f317.sfr@canb.auug.org.au> <1212316424.3253.8.camel@dhcppc1>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sun__1_Jun_2008_23_26_38_+1000_oDyS78.d0Qkr+iv7"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37763 "EHLO smtps.tip.net.au"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:35795 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751161AbYFAN0r (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 Jun 2008 09:26:47 -0400
-In-Reply-To: <20080601005338.3affe880.akpm@linux-foundation.org>
+	id S1751548AbYFAPHa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 Jun 2008 11:07:30 -0400
+Content-Disposition: inline
+In-Reply-To: <1212316424.3253.8.camel@dhcppc1>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Kernel Development <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Thomas Meyer <thomas@m3y3r.de>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Yinghai Lu <yhlu.kernel@gmail.com>
 
---Signature=_Sun__1_Jun_2008_23_26_38_+1000_oDyS78.d0Qkr+iv7
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+* Thomas Meyer <thomas@m3y3r.de> wrote:
 
-On Sun, 1 Jun 2008 00:53:38 -0700 Andrew Morton <akpm@linux-foundation.org>=
- wrote:
->
-> I do not know how to work out how this patch got into linux-next.
+> Am Freitag, den 30.05.2008, 18:19 +1000 schrieb Stephen Rothwell:
+> > Hi all,
+> > 
+> > Changes since next-20080529:
+> 
+> Last next kernel booting for me is next-20080527. I didn't try 
+> next-20080528, but next-20080529 and next-20080530 fail to boot.
+> 
+> Git told me to revert a63ef28f149c113740c7e429072351078a8821c6 (x86: 
+> fix bootmem crash).
+> 
+> After reverting above commit, next-20080530 boots again.
+> 
+> Basicly I'm running Fedora 9 with the linux-next kernel.
+> 
+> See attached screenshot of boot error.
 
-I have been wondering for a while what I can do to make figuring this out
-(in general) easier.  Would adding the SHA1 of the head of each tree to
-the Trees file help?  I could publish all the branches in my linux-next
-repo - but they change daily.  I guess only the git users benefit from
-those suggestions.
+hm, that commit is gone in latest tip - does tip/master boot fine for 
+you? It's:
 
-gitk can tell you pretty easily (just find the offending commit and work
-your way upward until you find a merge by me).
+   http://people.redhat.com/mingo/tip.git/README
 
-Other suggestions?
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+that commit was an interim fix that got removed meanwhile and replaced 
+with the real fixes.
 
---Signature=_Sun__1_Jun_2008_23_26_38_+1000_oDyS78.d0Qkr+iv7
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
-
-iD8DBQFIQqOUTgG2atn1QN8RAstzAJ94xCYW+0coY4qtwb8UyMTcTcqzxwCgg+vE
-TWS4rv1Ti9+JxNK3+cyp524=
-=Mf7Y
------END PGP SIGNATURE-----
-
---Signature=_Sun__1_Jun_2008_23_26_38_+1000_oDyS78.d0Qkr+iv7--
+	Ingo
