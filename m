@@ -1,35 +1,59 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Subject: Re: linux-next: m68k/semaphore build failure
-Date: Sat, 31 May 2008 11:20:59 -0600
-Message-ID: <20080531172059.GF28074@parisc-linux.org>
-References: <20080527201038.d70e23d6.sfr@canb.auug.org.au> <Pine.LNX.4.64.0805271809520.4081@anakin> <20080528160406.4fceb036.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: ide build failure
+Date: Sun, 1 Jun 2008 12:05:10 +1000
+Message-ID: <20080601120510.f74f03fe.sfr@canb.auug.org.au>
+References: <20080530115422.989d9ab6.sfr@canb.auug.org.au>
+	<200805311538.37732.bzolnier@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sun__1_Jun_2008_12_05_10_+1000_fcaM/3LRTbrg3Xc4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from palinux.external.hp.com ([192.25.206.14]:40017 "EHLO
-	mail.parisc-linux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752586AbYEaRVA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 31 May 2008 13:21:00 -0400
-Content-Disposition: inline
-In-Reply-To: <20080528160406.4fceb036.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39338 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755273AbYFACFW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 31 May 2008 22:05:22 -0400
+In-Reply-To: <200805311538.37732.bzolnier@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-next@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: linux-next@vger.kernel.org
 
-On Wed, May 28, 2008 at 04:04:06PM +1000, Stephen Rothwell wrote:
-> > I'd swear I reported this to Willy the first time it appeared, but according
-> > to my mail logs, I never did...
+--Signature=_Sun__1_Jun_2008_12_05_10_+1000_fcaM/3LRTbrg3Xc4
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You did ... I was just slack.
+Hi Bart,
 
-> I have added the following patch to linux-next for today, but I am
-> assuming the Willy will fix his semaphore tree shortly.
+On Sat, 31 May 2008 15:38:37 +0200 Bartlomiej Zolnierkiewicz <bzolnier@gmai=
+l.com> wrote:
+>
+> On Friday 30 May 2008, Stephen Rothwell wrote:
+> >=20
+> > Today's linux-next build (x86_64 allmodconfig) failed like this:
+> >=20
+> > I applied the following patch.
+>=20
+> [...]
+>=20
+> Thanks, I integrated it with the guilty commit.
 
-Fixed now.  Thanks!
+Good, thanks.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
--- 
-Intel are signing my paycheques ... these opinions are still mine
-"Bill, look, we understand that you're interested in selling us this
-operating system, but compare it to ours.  We can't possibly take such
-a retrograde step."
+--Signature=_Sun__1_Jun_2008_12_05_10_+1000_fcaM/3LRTbrg3Xc4
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+iD8DBQFIQgPfTgG2atn1QN8RAmwxAJ9Dqfey3OqnnJjAdum1AyBN8rSOTwCgg2ht
+qnW3PX8tHRlN3ISAao5Sw1U=
+=TFEj
+-----END PGP SIGNATURE-----
+
+--Signature=_Sun__1_Jun_2008_12_05_10_+1000_fcaM/3LRTbrg3Xc4--
