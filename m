@@ -1,51 +1,52 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: Diagnosing linux-next (Was: Re: m68k libc5 regression)
-Date: Sun, 1 Jun 2008 22:37:58 -0700
-Message-ID: <20080601223758.627e96e8.akpm@linux-foundation.org>
-References: <Pine.LNX.4.64.0805262226280.11902@anakin>
-	<Pine.LNX.4.64.0805270014110.6718@jikos.suse.cz>
-	<20080601005338.3affe880.akpm@linux-foundation.org>
-	<20080601232638.fda1f3ab.sfr@canb.auug.org.au>
-	<20080601140415.a2f25b9d.akpm@linux-foundation.org>
-	<18499.16693.526974.912404@cargo.ozlabs.ibm.com>
-	<20080601180616.75d1886e.akpm@linux-foundation.org>
-	<18499.22285.159342.856006@cargo.ozlabs.ibm.com>
+From: Artem Bityutskiy <dedekind@infradead.org>
+Subject: Re: next 20080530: ubifs build errors
+Date: Mon, 02 Jun 2008 08:42:49 +0300
+Message-ID: <1212385369.31023.147.camel@sauron>
+References: <20080530093147.cc1d389f.randy.dunlap@oracle.com>
+Reply-To: dedekind@infradead.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:42618 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751549AbYFBFiH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jun 2008 01:38:07 -0400
-In-Reply-To: <18499.22285.159342.856006@cargo.ozlabs.ibm.com>
+Received: from smtp.nokia.com ([192.100.122.230]:47120 "EHLO
+	mgw-mx03.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751110AbYFBFmn convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jun 2008 01:42:43 -0400
+In-Reply-To: <20080530093147.cc1d389f.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Mackerras <paulus@samba.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Development <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-mtd@lists.infradead.org, akpm <akpm@linux-foundation.org>
 
-On Mon, 2 Jun 2008 12:12:29 +1000 Paul Mackerras <paulus@samba.org> wrote:
+On Fri, 2008-05-30 at 09:31 -0700, Randy Dunlap wrote:
+> with:
+> CONFIG_UBIFS_FS=3Dy
+> # CONFIG_UBIFS_FS_XATTR is not set
+> CONFIG_UBIFS_FS_ADVANCED_COMPR=3Dy
+> # CONFIG_UBIFS_FS_LZO is not set
+> # CONFIG_UBIFS_FS_ZLIB is not set
+> # CONFIG_UBIFS_FS_DEBUG is not set
+>=20
+> build gets:
+> fs/built-in.o: In function `compr_exit':
+> compress.c:(.text+0x4a3fc): undefined reference to `crypto_free_tfm'
+> fs/built-in.o: In function `compr_init':
+> compress.c:(.init.text+0x11d4): undefined reference to `crypto_alloc_=
+base'
+> make[1]: *** [.tmp_vmlinux1] Error 1
+>=20
+>=20
+> because CRYPTO is not enabled.
 
-> Andrew Morton writes:
-> 
-> > tkdiff-style diff viewer!
-> > 
-> > I mentioned that to you a year or two back, and you've probabably
-> > already done it but nobody told me about it :)
-> 
-> There's now a facility for viewing diffs in an external viewer.  If
-> you do Edit->Preferences and set the "External diff tool" thing to
-> tkdiff, then you can right-click on a file name in the file list
-> (bottom right-hand pane) and select "External diff" and it will launch
-> tkdiff to show you the diffs for that file.
+=46ixed, pushed to the git tree, thank you!
 
-<upgrades>
+--=20
+Best regards,
+Artem Bityutskiy (=D0=91=D0=B8=D1=82=D1=8E=D1=86=D0=BA=D0=B8=D0=B9 =D0=90=
+=D1=80=D1=82=D1=91=D0=BC)
 
-OK, that works, thanks.  Right-clicking on each file is the sole way to
-bring it up?
-
-> What is it you like about tkdiff?  Is it the side-by-side display, or
-> the highlighting of differences within a line, or the merge facility?
-
-I like the side-by-side display.  I hardly look at the left (previous) side
-at all - it's a good way of seeing the change in a larger context.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-next" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
