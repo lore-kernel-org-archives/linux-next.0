@@ -1,73 +1,73 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: Diagnosing linux-next (Was: Re: m68k libc5 regression)
-Date: Sun, 1 Jun 2008 23:22:15 -0700
-Message-ID: <20080601232215.e87aafd0.akpm@linux-foundation.org>
-References: <Pine.LNX.4.64.0805262226280.11902@anakin>
-	<Pine.LNX.4.64.0805270014110.6718@jikos.suse.cz>
-	<20080601005338.3affe880.akpm@linux-foundation.org>
-	<20080601232638.fda1f3ab.sfr@canb.auug.org.au>
-	<20080601140415.a2f25b9d.akpm@linux-foundation.org>
-	<18499.16693.526974.912404@cargo.ozlabs.ibm.com>
-	<20080601180616.75d1886e.akpm@linux-foundation.org>
-	<18499.22285.159342.856006@cargo.ozlabs.ibm.com>
-	<20080601223758.627e96e8.akpm@linux-foundation.org>
-	<18499.35335.408967.918602@cargo.ozlabs.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: semaphore-removal/scsi-rc-fixes merge conflicts
+Date: Mon, 2 Jun 2008 17:12:13 +1000
+Message-ID: <20080602171213.59aaba42.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__2_Jun_2008_17_12_13_+1000_GG9rtprlWLEnO8m="
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:42012 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751110AbYFBGWy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jun 2008 02:22:54 -0400
-In-Reply-To: <18499.35335.408967.918602@cargo.ozlabs.ibm.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55175 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752973AbYFBHMY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Jun 2008 03:12:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Mackerras <paulus@samba.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Development <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Matthew Wilcox <matthew@wil.cx>
+Cc: linux-next@vger.kernel.org, James Bottomley <James.Bottomley@HansenPartnership.com>, Matthias Kaehlcke <matthias@kaehlcke.net>, Andrew Vasquez <andrew.vasquez@qlogic.com>, Daniel Walker <dwalker@mvista.com>
 
-On Mon, 2 Jun 2008 15:49:59 +1000 Paul Mackerras <paulus@samba.org> wrote:
+--Signature=_Mon__2_Jun_2008_17_12_13_+1000_GG9rtprlWLEnO8m=
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Andrew Morton writes:
-> 
-> > On Mon, 2 Jun 2008 12:12:29 +1000 Paul Mackerras <paulus@samba.org> wrote:
-> > > There's now a facility for viewing diffs in an external viewer.  If
-> > > you do Edit->Preferences and set the "External diff tool" thing to
-> > > tkdiff, then you can right-click on a file name in the file list
-> > > (bottom right-hand pane) and select "External diff" and it will launch
-> > > tkdiff to show you the diffs for that file.
-> > 
-> > <upgrades>
-> > 
-> > OK, that works, thanks.  Right-clicking on each file is the sole way to
-> > bring it up?
-> 
-> At the moment, yes.  Do you want something different?
+Hi Willy,
 
-No, that's OK.
+Today's linux-next merge of the semaphore-removal tree got conflicts in
+drivers/scsi/qla2xxx/{qla_attr.c,qla_def.h,qla_mbx.c,qla_mid.c,qla_os.c}
+between commits e1e82b6f0df0c5175ddd3d4f8862507aa71da8e9 ("[SCSI]
+qla2xxx: firmware semaphore to mutex") and
+6c2f527cb84cbd7d2d8a668c979e70bf78980ccc ("[SCSI] qla2xxx: Convert
+vport_sem to a mutex") from the scsi-rc-fixes tree and commits
+5469811b8b0085c0f19fd3aaad29cde59761e243 ("qla2xxx: Turn vport_sem into
+vport_mutex") and e2c6f1aa2f67c585ffcb879d32ff3e74b53faf25 ("Convert
+qla_os to use mutex instead of semaphore") from the semaphore-removal
+tree.
 
-> > > What is it you like about tkdiff?  Is it the side-by-side display, or
-> > > the highlighting of differences within a line, or the merge facility?
-> > 
-> > I like the side-by-side display.  I hardly look at the left (previous) side
-> > at all - it's a good way of seeing the change in a larger context.
-> 
-> I see.  There are a couple of features in gitk you might find useful,
-> then: you can get the gitk diff window to display just the new
-> version (or just the old version) using the radio buttons just above
-> the diff pane.  You can also get it to show more context with the
-> spinbox to the right of the radio buttons.
-> 
-> Something that dirdiff can do is to let you pick up the separator line
-> and drag it upwards or downwards to see more context.  Maybe I should
-> add that to gitk too.
+These pairs of commits did the same thing except for
+	a change of name (vport_lock v. vport_mutex).
+	a use of mutex_lock() instead of mutex_lock_killable()
 
-I like to see the new code with lines-which-changed highlighted (the
-tkdiff RHS).  But the LHS is useful sometimes too.
+I took the versions from scsi-rc_fixes (since they will probably be
+submitted to Linus for 2.6.26 - Is that correct James?) except the use of
+mutex_lock_killable() from the semaphore-removal tree in
+drivers/scsi/qla2xxx/qla_os.c.
 
-tkdiff works fine for me - I guess it's what you're used to.
+Please check what I did.
 
-eg: when I apply a patch with -F1 and it fails, then I apply it without
--F1 and it applies, I have to go in and check that the hunks which
-didn't apply with -F1 actually landed in the right place.  So to find
-hunk 14 of 24 I click tkdiff's 'Next' button 13 times.
+If its OK, then Willy should remove "qla2xxx: Turn vport_sem into
+vport_mutex" from the semaphore-removal tree.  And someone should decide
+about the use of mutex_lock_killable().
+
+Also, Willy, I think "9p: Convert from mutex to spinlock" can be removed
+as well as a very similar change has been merged upstream (commit
+c1549497e903a1ffa1c5808337a987180e480e7a "9p: use struct mutex instead of
+struct semaphore").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__2_Jun_2008_17_12_13_+1000_GG9rtprlWLEnO8m=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+iD8DBQFIQ51RTgG2atn1QN8RArVnAJ9VAcwvZbaqSJZr/UhwylC31odelgCffZNA
+5UEVvDUUPsNC3atbCtJT/cE=
+=FoeC
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__2_Jun_2008_17_12_13_+1000_GG9rtprlWLEnO8m=--
