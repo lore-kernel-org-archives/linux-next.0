@@ -1,79 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: scsi build failure
-Date: Mon, 2 Jun 2008 15:07:42 +1000
-Message-ID: <20080602150742.14f9b0b8.sfr@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: Diagnosing linux-next (Was: Re: m68k libc5 regression)
+Date: Sun, 1 Jun 2008 22:37:58 -0700
+Message-ID: <20080601223758.627e96e8.akpm@linux-foundation.org>
+References: <Pine.LNX.4.64.0805262226280.11902@anakin>
+	<Pine.LNX.4.64.0805270014110.6718@jikos.suse.cz>
+	<20080601005338.3affe880.akpm@linux-foundation.org>
+	<20080601232638.fda1f3ab.sfr@canb.auug.org.au>
+	<20080601140415.a2f25b9d.akpm@linux-foundation.org>
+	<18499.16693.526974.912404@cargo.ozlabs.ibm.com>
+	<20080601180616.75d1886e.akpm@linux-foundation.org>
+	<18499.22285.159342.856006@cargo.ozlabs.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57123 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751464AbYFBFHv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Jun 2008 01:07:51 -0400
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:42618 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751549AbYFBFiH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jun 2008 01:38:07 -0400
+In-Reply-To: <18499.22285.159342.856006@cargo.ozlabs.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-next@vger.kernel.org, Sathya Prakash <sathya.prakash@lsi.com>, Kay Sievers <kay.sievers@vrfy.org>, Greg KH <greg@kroah.com>
+To: Paul Mackerras <paulus@samba.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Development <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-Hi James,
+On Mon, 2 Jun 2008 12:12:29 +1000 Paul Mackerras <paulus@samba.org> wrote:
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+> Andrew Morton writes:
+> 
+> > tkdiff-style diff viewer!
+> > 
+> > I mentioned that to you a year or two back, and you've probabably
+> > already done it but nobody told me about it :)
+> 
+> There's now a facility for viewing diffs in an external viewer.  If
+> you do Edit->Preferences and set the "External diff tool" thing to
+> tkdiff, then you can right-click on a file name in the file list
+> (bottom right-hand pane) and select "External diff" and it will launch
+> tkdiff to show you the diffs for that file.
 
-In file included from drivers/message/fusion/mptscsih.c:66:
-drivers/message/fusion/mptbase.h:715: error: 'KOBJ_NAME_LEN' undeclared here (not in a function)
-In file included from drivers/message/fusion/mptbase.c:67:
-drivers/message/fusion/mptbase.h:715: error: 'KOBJ_NAME_LEN' undeclared here (not in a function)
+<upgrades>
 
-This is caused by commit 6146eaf4fb31588ecc72ab3c52c6b1f3e7602a7c
-("[SCSI] mpt fusion : Adding FAULT Reset polling work") adding a usage of
-KOBJ_NAME_LEN while commit 242d02fdc8d1764117a2e5fefd9e57b84d21bf40
-("driver core: remove KOBJ_NAME_LEN define") from the driver-core tree
-has removed it.  The change in that latter commit is to replace all
-usages with 20, so I applied the following patch.  Something like this
-could be integrated into the former commit.
+OK, that works, thanks.  Right-clicking on each file is the sole way to
+bring it up?
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+> What is it you like about tkdiff?  Is it the side-by-side display, or
+> the highlighting of differences within a line, or the merge facility?
 
->From 0975add46554364e3943e56b8e6a4800e38bb9e9 Mon Sep 17 00:00:00 2001
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 2 Jun 2008 15:06:02 +1000
-Subject: [PATCH] scsi: fix fallout from KOBJ_NAME_LEN removal
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/message/fusion/mptbase.c |    2 +-
- drivers/message/fusion/mptbase.h |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
-index d18a707..a758110 100644
---- a/drivers/message/fusion/mptbase.c
-+++ b/drivers/message/fusion/mptbase.c
-@@ -1670,7 +1670,7 @@ mpt_attach(struct pci_dev *pdev, const struct pci_device_id *id)
- 	INIT_DELAYED_WORK(&ioc->fault_reset_work, mpt_fault_reset_work);
- 	spin_lock_init(&ioc->fault_reset_work_lock);
- 
--	snprintf(ioc->reset_work_q_name, KOBJ_NAME_LEN, "mpt_poll_%d", ioc->id);
-+	snprintf(ioc->reset_work_q_name, sizeof(ioc->reset_work_q_name), "mpt_poll_%d", ioc->id);
- 	ioc->reset_work_q =
- 		create_singlethread_workqueue(ioc->reset_work_q_name);
- 	if (!ioc->reset_work_q) {
-diff --git a/drivers/message/fusion/mptbase.h b/drivers/message/fusion/mptbase.h
-index 94ab8f1..dff048c 100644
---- a/drivers/message/fusion/mptbase.h
-+++ b/drivers/message/fusion/mptbase.h
-@@ -712,7 +712,7 @@ typedef struct _MPT_ADAPTER
- 	struct scsi_cmnd	**ScsiLookup;
- 	spinlock_t		  scsi_lookup_lock;
- 
--	char			 reset_work_q_name[KOBJ_NAME_LEN];
-+	char			 reset_work_q_name[20];
- 	struct workqueue_struct *reset_work_q;
- 	struct delayed_work	 fault_reset_work;
- 	spinlock_t		 fault_reset_work_lock;
--- 
-1.5.5.3
-
+I like the side-by-side display.  I hardly look at the left (previous) side
+at all - it's a good way of seeing the change in a larger context.
