@@ -1,52 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: next 20080530: ubifs build errors
-Date: Mon, 2 Jun 2008 15:46:27 +1000
-Message-ID: <20080602154627.18af863b.sfr@canb.auug.org.au>
-References: <20080530093147.cc1d389f.randy.dunlap@oracle.com>
-	<1212385369.31023.147.camel@sauron>
+From: Paul Mackerras <paulus@samba.org>
+Subject: Re: Diagnosing linux-next (Was: Re: m68k libc5 regression)
+Date: Mon, 2 Jun 2008 15:49:59 +1000
+Message-ID: <18499.35335.408967.918602@cargo.ozlabs.ibm.com>
+References: <Pine.LNX.4.64.0805262226280.11902@anakin>
+	<Pine.LNX.4.64.0805270014110.6718@jikos.suse.cz>
+	<20080601005338.3affe880.akpm@linux-foundation.org>
+	<20080601232638.fda1f3ab.sfr@canb.auug.org.au>
+	<20080601140415.a2f25b9d.akpm@linux-foundation.org>
+	<18499.16693.526974.912404@cargo.ozlabs.ibm.com>
+	<20080601180616.75d1886e.akpm@linux-foundation.org>
+	<18499.22285.159342.856006@cargo.ozlabs.ibm.com>
+	<20080601223758.627e96e8.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__2_Jun_2008_15_46_27_+1000_nJyKHgEZUA+8VSWc"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56401 "EHLO smtps.tip.net.au"
+Received: from ozlabs.org ([203.10.76.45]:43920 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751495AbYFBFqh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Jun 2008 01:46:37 -0400
-In-Reply-To: <1212385369.31023.147.camel@sauron>
+	id S1751577AbYFBFuJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Jun 2008 01:50:09 -0400
+In-Reply-To: <20080601223758.627e96e8.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: dedekind@infradead.org
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, linux-next@vger.kernel.org, linux-mtd@lists.infradead.org, akpm <akpm@linux-foundation.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Development <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
---Signature=_Mon__2_Jun_2008_15_46_27_+1000_nJyKHgEZUA+8VSWc
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Andrew Morton writes:
 
-On Mon, 02 Jun 2008 08:42:49 +0300 Artem Bityutskiy <dedekind@infradead.org=
-> wrote:
->
-> Fixed, pushed to the git tree, thank you!
+> On Mon, 2 Jun 2008 12:12:29 +1000 Paul Mackerras <paulus@samba.org> wrote:
+> > There's now a facility for viewing diffs in an external viewer.  If
+> > you do Edit->Preferences and set the "External diff tool" thing to
+> > tkdiff, then you can right-click on a file name in the file list
+> > (bottom right-hand pane) and select "External diff" and it will launch
+> > tkdiff to show you the diffs for that file.
+> 
+> <upgrades>
+> 
+> OK, that works, thanks.  Right-clicking on each file is the sole way to
+> bring it up?
 
-And that will be in today's linux-next build.
+At the moment, yes.  Do you want something different?
 
-Thanks.
+> > What is it you like about tkdiff?  Is it the side-by-side display, or
+> > the highlighting of differences within a line, or the merge facility?
+> 
+> I like the side-by-side display.  I hardly look at the left (previous) side
+> at all - it's a good way of seeing the change in a larger context.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+I see.  There are a couple of features in gitk you might find useful,
+then: you can get the gitk diff window to display just the new
+version (or just the old version) using the radio buttons just above
+the diff pane.  You can also get it to show more context with the
+spinbox to the right of the radio buttons.
 
---Signature=_Mon__2_Jun_2008_15_46_27_+1000_nJyKHgEZUA+8VSWc
-Content-Type: application/pgp-signature
+Something that dirdiff can do is to let you pick up the separator line
+and drag it upwards or downwards to see more context.  Maybe I should
+add that to gitk too.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
-
-iD8DBQFIQ4k4TgG2atn1QN8RAjAJAJ9+sDUESM/YlzFJi04dQshiWv/+OwCgmyL9
-ywL3Kj2TYuxI/Txscw25Oac=
-=uAzW
------END PGP SIGNATURE-----
-
---Signature=_Mon__2_Jun_2008_15_46_27_+1000_nJyKHgEZUA+8VSWc--
+Paul.
