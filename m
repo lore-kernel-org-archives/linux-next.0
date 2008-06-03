@@ -1,43 +1,50 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: Tree for May 30
-Date: Mon, 2 Jun 2008 20:57:40 +0200
-Message-ID: <20080602185740.GA18550@elte.hu>
-References: <20080530181901.8268f317.sfr@canb.auug.org.au> <1212316424.3253.8.camel@dhcppc1> <20080601150710.GB27843@elte.hu> <1212428404.484430742e07d@213.133.104.17>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: arm/mer-current merge conflict
+Date: Tue, 3 Jun 2008 14:04:21 +1000
+Message-ID: <20080603140421.183cefe5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__3_Jun_2008_14_04_21_+1000_zblgljhNfabS0BBs"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:55067 "EHLO mx3.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36783 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751362AbYFBS7x (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Jun 2008 14:59:53 -0400
-Content-Disposition: inline
-In-Reply-To: <1212428404.484430742e07d@213.133.104.17>
+	id S1750695AbYFCEEd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 3 Jun 2008 00:04:33 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Meyer <thomas@m3y3r.de>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Yinghai Lu <yhlu.kernel@gmail.com>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, Dmitry Baryshkov <dbaryshkov@gmail.com>
 
+--Signature=_Tue__3_Jun_2008_14_04_21_+1000_zblgljhNfabS0BBs
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Thomas Meyer <thomas@m3y3r.de> wrote:
+Hi Russell,
 
-> Zitat von Ingo Molnar <mingo@elte.hu>:
-> 
-> > hm, that commit is gone in latest tip - does tip/master boot fine for 
-> > you? It's:
-> > 
-> >    http://people.redhat.com/mingo/tip.git/README
-> > 
-> > that commit was an interim fix that got removed meanwhile and replaced 
-> > with the real fixes.
-> 
-> I just booted next-20080602 successfully, and the latest commit on 
-> file arch/x86/kernel/setup_32.c is:
-> 
-> 4efc5450e19128e0c77fbfdf4a14804f5a4a1d95 (Merge branch 'x86/numa' into 
-> auto-x86-next).
-> 
-> So yes, the original commit causing the error for me is gone.
+Today's linux-next merge of the arm tree got a conflict in
+arch/arm/mach-pxa/tosa.c between commit
+0ef2cfc0ca4625424e5b8ead6c47359c35a7a841 ("[ARM] pxa: fix tosa.c build
+error") from the arm-current tree and commit
+a37cba9e5315bb57e8eb135e401ba35e4b2338ac ("[ARM] 5048/2: Clean up tosa
+and spitz resetting") from the arm tree.  I used the latter since the
+former's commit message implied that this was the right fix.
 
-thanks for testing it and it's great that the crash is gone!
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-	Ingo
+--Signature=_Tue__3_Jun_2008_14_04_21_+1000_zblgljhNfabS0BBs
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+iD8DBQFIRMLNTgG2atn1QN8RAih6AJ9zYi4h/a0H8JquuFLRMbPHcJXu9ACffvTa
+M2NWK8hCSJqqMTz+wUmKrz0=
+=z7G6
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__3_Jun_2008_14_04_21_+1000_zblgljhNfabS0BBs--
