@@ -1,54 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: hid/upstream merge conflicts
-Date: Wed, 4 Jun 2008 12:08:31 +1000
-Message-ID: <20080604120831.80410876.sfr@canb.auug.org.au>
+Subject: linux-next: v4l-dvb build failure
+Date: Wed, 4 Jun 2008 12:28:30 +1000
+Message-ID: <20080604122830.e8331d4a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__4_Jun_2008_12_08_32_+1000_vBhNVBWLVpjCe5yc"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53097 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44702 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751263AbYFDCIk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 3 Jun 2008 22:08:40 -0400
+	id S1750695AbYFDC2d (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 3 Jun 2008 22:28:33 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jikos@jikos.cz>
-Cc: linux-next@vger.kernel.org, Alexandre Karpenko <alexander@comm.utoronto.ca>, Andrew Morton <akpm@linux-foundation.org>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-next@vger.kernel.org
 
---Signature=_Wed__4_Jun_2008_12_08_32_+1000_vBhNVBWLVpjCe5yc
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Mauro,
 
-Hi Jiri,
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Today's linux-next merge of the hid tree got a conflict in
-drivers/hid/usbhid/hid-quirks.c between commit
-6e7045990f35ef9250804b3fd85e855b8c2aaeb6 ("HID: split Numlock emulation
-quirk from HID_QUIRK_APPLE_HAS_FN.") from Linus' tree and commit
-6560721d37b404f3c16ce3dfe7517386198fa13a ("HID: add fn key support on
-Macbook Pro 4,1 and Macbook Air") from the hid tree.
+drivers/media/video/soc_camera.c: In function 'soc_camera_video_start':
+drivers/media/video/soc_camera.c:937: error: 'struct video_device' has no member named 'vidioc_g_fmt_cap'
+drivers/media/video/soc_camera.c:938: error: 'struct video_device' has no member named 'vidioc_enum_fmt_cap'
+drivers/media/video/soc_camera.c:939: error: 'struct video_device' has no member named 'vidioc_s_fmt_cap'
+drivers/media/video/soc_camera.c:945: error: 'struct video_device' has no member named 'vidioc_try_fmt_cap'
 
-It wasn't obvious how to best fixup the conflict, so I just took the
-version from Linus' tree for today.  You might want to either rebase the
-hid tree on top of Linus' latest or just merge in Linus' latest and fix
-the conflict yourself.
 
---=20
+Caused by commit 7ddf62fca6b9be8867204dfcd062bca43a75bae6 ("V4L/DVB
+(7949): videodev: renamed the vidioc_*_fmt_* callbacks").
+
+I applied the following patch.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__4_Jun_2008_12_08_32_+1000_vBhNVBWLVpjCe5yc
-Content-Type: application/pgp-signature
+>From a8d310313869b6ca7f0fd32362f7d4912c48e0e2 Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 4 Jun 2008 12:24:59 +1000
+Subject: [PATCH] v4l-dvb: fix fallout from struct member renames
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/media/video/soc_camera.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-iD8DBQFIRfklTgG2atn1QN8RAg7tAJ9QSPEV7wj0XYzA/PlOwpX0NsZO8QCfbgx5
-BK4kUtC7blGEet874/l3Ct0=
-=8SeA
------END PGP SIGNATURE-----
+diff --git a/drivers/media/video/soc_camera.c b/drivers/media/video/soc_camera.c
+index cc7f7c4..38ce780 100644
+--- a/drivers/media/video/soc_camera.c
++++ b/drivers/media/video/soc_camera.c
+@@ -934,15 +934,15 @@ int soc_camera_video_start(struct soc_camera_device *icd)
+ 	vdev->minor		= -1;
+ 	vdev->tvnorms		= V4L2_STD_UNKNOWN,
+ 	vdev->vidioc_querycap	= soc_camera_querycap;
+-	vdev->vidioc_g_fmt_cap	= soc_camera_g_fmt_cap;
+-	vdev->vidioc_enum_fmt_cap = soc_camera_enum_fmt_cap;
+-	vdev->vidioc_s_fmt_cap	= soc_camera_s_fmt_cap;
++	vdev->vidioc_g_fmt_vid_cap	= soc_camera_g_fmt_cap;
++	vdev->vidioc_enum_fmt_vid_cap = soc_camera_enum_fmt_cap;
++	vdev->vidioc_s_fmt_vid_cap	= soc_camera_s_fmt_cap;
+ 	vdev->vidioc_enum_input	= soc_camera_enum_input;
+ 	vdev->vidioc_g_input	= soc_camera_g_input;
+ 	vdev->vidioc_s_input	= soc_camera_s_input;
+ 	vdev->vidioc_s_std	= soc_camera_s_std;
+ 	vdev->vidioc_reqbufs	= soc_camera_reqbufs;
+-	vdev->vidioc_try_fmt_cap = soc_camera_try_fmt_cap;
++	vdev->vidioc_try_fmt_vid_cap = soc_camera_try_fmt_cap;
+ 	vdev->vidioc_querybuf	= soc_camera_querybuf;
+ 	vdev->vidioc_qbuf	= soc_camera_qbuf;
+ 	vdev->vidioc_dqbuf	= soc_camera_dqbuf;
+-- 
+1.5.5.3
 
---Signature=_Wed__4_Jun_2008_12_08_32_+1000_vBhNVBWLVpjCe5yc--
