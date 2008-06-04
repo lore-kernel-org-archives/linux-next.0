@@ -1,73 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: v4l-dvb build failure
-Date: Wed, 4 Jun 2008 12:28:30 +1000
-Message-ID: <20080604122830.e8331d4a.sfr@canb.auug.org.au>
+Subject: linux-next: ldp build failure
+Date: Wed, 4 Jun 2008 15:08:19 +1000
+Message-ID: <20080604150819.ec26f31f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44702 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58511 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750695AbYFDC2d (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 3 Jun 2008 22:28:33 -0400
+	id S1750765AbYFDFIX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 4 Jun 2008 01:08:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@infradead.org>, Dean Anderson <dean@sensoray.com>
 
-Hi Mauro,
+Hi Greg,
 
 Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-drivers/media/video/soc_camera.c: In function 'soc_camera_video_start':
-drivers/media/video/soc_camera.c:937: error: 'struct video_device' has no member named 'vidioc_g_fmt_cap'
-drivers/media/video/soc_camera.c:938: error: 'struct video_device' has no member named 'vidioc_enum_fmt_cap'
-drivers/media/video/soc_camera.c:939: error: 'struct video_device' has no member named 'vidioc_s_fmt_cap'
-drivers/media/video/soc_camera.c:945: error: 'struct video_device' has no member named 'vidioc_try_fmt_cap'
-
+drivers/media/video/s2255drv.c:1659: error: unknown field 'vidioc_enum_fmt_cap' specified in initializer
+drivers/media/video/s2255drv.c:1659: warning: initialization from incompatible pointer type
+drivers/media/video/s2255drv.c:1660: error: unknown field 'vidioc_g_fmt_cap' specified in initializer
+drivers/media/video/s2255drv.c:1660: warning: initialization from incompatible pointer type
+drivers/media/video/s2255drv.c:1661: error: unknown field 'vidioc_try_fmt_cap' specified in initializer
+drivers/media/video/s2255drv.c:1661: warning: initialization from incompatible pointer type
+drivers/media/video/s2255drv.c:1662: error: unknown field 'vidioc_s_fmt_cap' specified in initializer
+drivers/media/video/s2255drv.c:1662: warning: initialization from incompatible pointer type
 
 Caused by commit 7ddf62fca6b9be8867204dfcd062bca43a75bae6 ("V4L/DVB
-(7949): videodev: renamed the vidioc_*_fmt_* callbacks").
+(7949): videodev: renamed the vidioc_*_fmt_* callbacks") from the v4l-dvb
+tree.  I applied the patch below.
 
-I applied the following patch.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
->From a8d310313869b6ca7f0fd32362f7d4912c48e0e2 Mon Sep 17 00:00:00 2001
+>From 7072d424c2a66ad1df68b4dc6266fcbbd721532b Mon Sep 17 00:00:00 2001
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 4 Jun 2008 12:24:59 +1000
-Subject: [PATCH] v4l-dvb: fix fallout from struct member renames
+Date: Wed, 4 Jun 2008 15:06:07 +1000
+Subject: [PATCH] ldp: fix fallout from v4l struct element renaming
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/media/video/soc_camera.c |    8 ++++----
+ drivers/media/video/s2255drv.c |    8 ++++----
  1 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/video/soc_camera.c b/drivers/media/video/soc_camera.c
-index cc7f7c4..38ce780 100644
---- a/drivers/media/video/soc_camera.c
-+++ b/drivers/media/video/soc_camera.c
-@@ -934,15 +934,15 @@ int soc_camera_video_start(struct soc_camera_device *icd)
- 	vdev->minor		= -1;
- 	vdev->tvnorms		= V4L2_STD_UNKNOWN,
- 	vdev->vidioc_querycap	= soc_camera_querycap;
--	vdev->vidioc_g_fmt_cap	= soc_camera_g_fmt_cap;
--	vdev->vidioc_enum_fmt_cap = soc_camera_enum_fmt_cap;
--	vdev->vidioc_s_fmt_cap	= soc_camera_s_fmt_cap;
-+	vdev->vidioc_g_fmt_vid_cap	= soc_camera_g_fmt_cap;
-+	vdev->vidioc_enum_fmt_vid_cap = soc_camera_enum_fmt_cap;
-+	vdev->vidioc_s_fmt_vid_cap	= soc_camera_s_fmt_cap;
- 	vdev->vidioc_enum_input	= soc_camera_enum_input;
- 	vdev->vidioc_g_input	= soc_camera_g_input;
- 	vdev->vidioc_s_input	= soc_camera_s_input;
- 	vdev->vidioc_s_std	= soc_camera_s_std;
- 	vdev->vidioc_reqbufs	= soc_camera_reqbufs;
--	vdev->vidioc_try_fmt_cap = soc_camera_try_fmt_cap;
-+	vdev->vidioc_try_fmt_vid_cap = soc_camera_try_fmt_cap;
- 	vdev->vidioc_querybuf	= soc_camera_querybuf;
- 	vdev->vidioc_qbuf	= soc_camera_qbuf;
- 	vdev->vidioc_dqbuf	= soc_camera_dqbuf;
+diff --git a/drivers/media/video/s2255drv.c b/drivers/media/video/s2255drv.c
+index d9abde2..181cb78 100644
+--- a/drivers/media/video/s2255drv.c
++++ b/drivers/media/video/s2255drv.c
+@@ -1656,10 +1656,10 @@ static struct video_device template = {
+ 	.minor = -1,
+ 	.release = video_device_release,
+ 	.vidioc_querycap = vidioc_querycap,
+-	.vidioc_enum_fmt_cap = vidioc_enum_fmt_cap,
+-	.vidioc_g_fmt_cap = vidioc_g_fmt_cap,
+-	.vidioc_try_fmt_cap = vidioc_try_fmt_cap,
+-	.vidioc_s_fmt_cap = vidioc_s_fmt_cap,
++	.vidioc_enum_fmt_vid_cap = vidioc_enum_fmt_cap,
++	.vidioc_g_fmt_vid_cap = vidioc_g_fmt_cap,
++	.vidioc_try_fmt_vid_cap = vidioc_try_fmt_cap,
++	.vidioc_s_fmt_vid_cap = vidioc_s_fmt_cap,
+ 	.vidioc_reqbufs = vidioc_reqbufs,
+ 	.vidioc_querybuf = vidioc_querybuf,
+ 	.vidioc_qbuf = vidioc_qbuf,
 -- 
 1.5.5.3
 
