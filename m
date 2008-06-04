@@ -1,74 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: firmware build failure
-Date: Wed, 4 Jun 2008 20:40:50 +1000
-Message-ID: <20080604204050.6b60dc2a.sfr@canb.auug.org.au>
-References: <20080604164623.3d5f38d2.sfr@canb.auug.org.au>
-	<1212571377.4042.70.camel@shinybook.infradead.org>
+Subject: Re: linux-next: firmware merge conflicts
+Date: Wed, 4 Jun 2008 20:44:34 +1000
+Message-ID: <20080604204434.5ec125ea.sfr@canb.auug.org.au>
+References: <20080604160742.e4c66cd4.sfr@canb.auug.org.au>
+	<s5hprqx5z3b.wl%tiwai@suse.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__4_Jun_2008_20_40_50_+1000_m83=qnc4MoWPU7Sy"
+ boundary="Signature=_Wed__4_Jun_2008_20_44_34_+1000_8Dg60hmJXxZ3qb/_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40854 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41087 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754049AbYFDKlE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 4 Jun 2008 06:41:04 -0400
-In-Reply-To: <1212571377.4042.70.camel@shinybook.infradead.org>
+	id S1754570AbYFDKom (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 4 Jun 2008 06:44:42 -0400
+In-Reply-To: <s5hprqx5z3b.wl%tiwai@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: linux-next@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: David Woodhouse <dwmw2@infradead.org>, linux-next@vger.kernel.org, Alan Cox <alan@redhat.com>, Greg Kroah-Hartman <gregkh@suse.de>
 
---Signature=_Wed__4_Jun_2008_20_40_50_+1000_m83=qnc4MoWPU7Sy
+--Signature=_Wed__4_Jun_2008_20_44_34_+1000_8Dg60hmJXxZ3qb/_
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi David,
+Hi Takashi,
 
-On Wed, 04 Jun 2008 10:22:57 +0100 David Woodhouse <dwmw2@infradead.org> wr=
-ote:
+On Wed, 04 Jun 2008 11:27:52 +0200 Takashi Iwai <tiwai@suse.de> wrote:
 >
-> On Wed, 2008-06-04 at 16:46 +1000, Stephen Rothwell wrote:
-> > -                 echo "    .align $(ASM_ALIGN)"                       =
- >>$@;\
-> > +                 echo "    .p2align $${ASM_ALIGN}"                    =
- >>$@;\
+> At Wed, 4 Jun 2008 16:07:42 +1000,
+> Stephen Rothwell wrote:
+> >=20
+> > Simple conflicts in sound/pci/maestro3.c and
+> > sound/pci/ymfpci/ymfpci_main.c because "maestro3: treat firmware data as
+> > const" and "ymfpci: treat firmware data as const" appear in both the
+> > driver-core tree and the firmware tree.  The conflicts are because the
+> > firmware tree further modifies these files.
+> >=20
+> > So, you and Alan need to come to an agreement about ti_usb (and inform
+> > Greg :-)).  And you should probably ask Greg to drop the to "const"
+> > patches (or maybe the other way around).
 >=20
-> Ah, thanks. I did originally start doing it with big C files with char
-> arrays, which made this part easier -- but I really wanted to
-> use .incbin so I didn't have to copy the whole of the object into
-> 'source' code. Just checking that that actually does the right thing on
-> ppc and ppc64 too, and I'll refactor it to include that. And the kaweth
-> fix.
+> Or just let me know if you guys want to put the changes into sound
+> tree.  I'm willing to apply them...
 
-Great, thanks.
+That would also work.
 
-> Then I'll go seeking the usb tree of which you speak, with the ti patch
-> that conflicts. This not the tree at
-> kernel.org:/pub/scm/linux/kernel/git/gregkh/usb-2.6.git labelled 'junk
-> tree; please ignore', I assume?
+> >  And I can carry the
+> > sound/Kconfig fixup.
+>=20
+> ... together with this :)
 
-It is a quilt series here:
-http://kernel.org/pub/linux/kernel/people/gregkh/gregkh-2.6/gregkh-04-usb/
-
-All the trees and their sources are listed in the file Next/Trees in the
-linux-next tree.
+I guess that conflict would go away if they did the above.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__4_Jun_2008_20_40_50_+1000_m83=qnc4MoWPU7Sy
+--Signature=_Wed__4_Jun_2008_20_44_34_+1000_8Dg60hmJXxZ3qb/_
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.6 (GNU/Linux)
 
-iD8DBQFIRnE5TgG2atn1QN8RAn44AJ9Fg3r/dbq4nWt3NEAnpYoNLlZF1wCfep+1
-8jCBjd70ybYRwwNS3UbY0EM=
-=O0HB
+iD8DBQFIRnIXTgG2atn1QN8RAq2BAJ9xWY7J5KzatatJxEfvmrMoHSF5vgCeOwaV
++4PxlSDIidUZdUWQg6zfiqI=
+=/aDX
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__4_Jun_2008_20_40_50_+1000_m83=qnc4MoWPU7Sy--
+--Signature=_Wed__4_Jun_2008_20_44_34_+1000_8Dg60hmJXxZ3qb/_--
