@@ -1,60 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: frimware build failure
-Date: Thu, 5 Jun 2008 18:06:51 +1000
-Message-ID: <20080605180651.014cef95.sfr@canb.auug.org.au>
-References: <20080605172512.e000ddc5.sfr@canb.auug.org.au>
-	<1212652090.32207.159.camel@pmac.infradead.org>
-	<20080605175941.5520add5.sfr@canb.auug.org.au>
-	<1212653023.32207.169.camel@pmac.infradead.org>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: [BUILD-FAILURE] linux-next: Tree for June 4 - firmware/keyspan/mpr.fw.gen.S
+Date: Thu, 5 Jun 2008 11:13:19 +0200
+Message-ID: <20080605091319.GA17469@uranus.ravnborg.org>
+References: <20080604180025.3ecd03ff.sfr@canb.auug.org.au> <48468091.5000102@linux.vnet.ibm.com> <1212586717.32207.71.camel@pmac.infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__5_Jun_2008_18_06_51_+1000_5rIoC3VamqKoCAwD"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56886 "EHLO smtps.tip.net.au"
+Received: from pasmtpa.tele.dk ([80.160.77.114]:50807 "EHLO pasmtpA.tele.dk"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752371AbYFEIG5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 5 Jun 2008 04:06:57 -0400
-In-Reply-To: <1212653023.32207.169.camel@pmac.infradead.org>
+	id S1751255AbYFEJMi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Jun 2008 05:12:38 -0400
+Content-Disposition: inline
+In-Reply-To: <1212586717.32207.71.camel@pmac.infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: David Woodhouse <dwmw2@infradead.org>
-Cc: Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org
+Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andy Whitcroft <apw@shadowen.org>
 
---Signature=_Thu__5_Jun_2008_18_06_51_+1000_5rIoC3VamqKoCAwD
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jun 04, 2008 at 02:38:37PM +0100, David Woodhouse wrote:
+> On Wed, 2008-06-04 at 17:16 +0530, Kamalesh Babulal wrote:
+> > Hi Stephen,
+> > 
+> > The next-20080604 kernel build fails on the x86_64 machine
+> > 
+> > make[1]: *** No rule to make target `/usr/local/autobench/autotest/tmp/build/linux/$(dir)', needed by `firmware/keyspan/mpr.fw.gen.S'.  Stop.
+> > make: *** [firmware] Error 2
+> 
+> Does this 'fix' it?
 
-Hi David,
+The correct fix is to get rid of make 3.81 features.
+We do want the kernel buildable with make 3.79 and we have today only two
+places where we do need a newer version of make:
 
-On Thu, 05 Jun 2008 09:03:42 +0100 David Woodhouse <dwmw2@infradead.org> wr=
-ote:
->
-> I did ponder using 'gcc -S' on a simple template file and then
-> post-processing the output, but I figured there was just as much that
-> could go wrong with that one too. At least when we emit our own asm,
-> once we've finished the coverage testing on all architectures and fixed
-> it all, we can have a reasonable expectation that it'll stay working.
-> Post-processing the assembly output of GCC just scares me :)
+	scripts/Makefile.headerinst
+and now
+	firmware/Makefile
 
-Yeah, we used to do that for an initialised structure in PowerPC
-iSeries - never again.  :-)
+Both places should be reworked to avoid this dependency.
+I plan to take care of Makfile.headerinst soonish in an attempt
+to speed up the checking process (has been on my TODO list for a long time),
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+And we should not introuduce the below make 3.81 specific feature.
+I have not looked into alternative - sorry.
 
---Signature=_Thu__5_Jun_2008_18_06_51_+1000_5rIoC3VamqKoCAwD
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhHnpsACgkQTgG2atn1QN/GpACgiETKjrg1spUOAceU8RRvu/76
-o0MAnAuhkvQHyPWVAqplStZz1u3T2PQC
-=zV+g
------END PGP SIGNATURE-----
-
---Signature=_Thu__5_Jun_2008_18_06_51_+1000_5rIoC3VamqKoCAwD--
+	Sam
