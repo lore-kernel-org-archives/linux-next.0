@@ -1,56 +1,134 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [BUILD-FAILURE] linux-next: Tree for June 4 -
-	firmware/keyspan/mpr.fw.gen.S
-Date: Thu, 05 Jun 2008 10:15:33 +0100
-Message-ID: <1212657333.32207.178.camel@pmac.infradead.org>
-References: <20080604180025.3ecd03ff.sfr@canb.auug.org.au>
-	 <48468091.5000102@linux.vnet.ibm.com>
-	 <1212586717.32207.71.camel@pmac.infradead.org>
-	 <20080605091319.GA17469@uranus.ravnborg.org>
+From: Daniel Exner <dex@dragonslave.de>
+Subject: linux-next Regression: Unable to locate IOAPIC
+Date: Thu, 5 Jun 2008 11:00:12 +0200
+Message-ID: <200806051100.12885.dex@dragonslave.de>
+Reply-To: webmaster@dragonslave.de
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:33475 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753354AbYFEJPn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jun 2008 05:15:43 -0400
-In-Reply-To: <20080605091319.GA17469@uranus.ravnborg.org>
+Received: from server009.webpack.hosteurope.de ([80.237.130.17]:39609 "EHLO
+	server009.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753179AbYFEJYH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jun 2008 05:24:07 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andy Whitcroft <apw@shadowen.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, dex@dragonslave.de
 
-On Thu, 2008-06-05 at 11:13 +0200, Sam Ravnborg wrote:
-> On Wed, Jun 04, 2008 at 02:38:37PM +0100, David Woodhouse wrote:
-> > On Wed, 2008-06-04 at 17:16 +0530, Kamalesh Babulal wrote:
-> > > Hi Stephen,
-> > > 
-> > > The next-20080604 kernel build fails on the x86_64 machine
-> > > 
-> > > make[1]: *** No rule to make target `/usr/local/autobench/autotest/tmp/build/linux/$(dir)', needed by `firmware/keyspan/mpr.fw.gen.S'.  Stop.
-> > > make: *** [firmware] Error 2
-> > 
-> > Does this 'fix' it?
-> 
-> The correct fix is to get rid of make 3.81 features.
-> We do want the kernel buildable with make 3.79 and we have today only two
-> places where we do need a newer version of make:
-> 
-> 	scripts/Makefile.headerinst
-> and now
-> 	firmware/Makefile
-> 
-> Both places should be reworked to avoid this dependency.
-> I plan to take care of Makfile.headerinst soonish in an attempt
-> to speed up the checking process (has been on my TODO list for a long time),
-> 
-> And we should not introuduce the below make 3.81 specific feature.
-> I have not looked into alternative - sorry.
+Hi!
 
-I've committed an alternative for firmware/Makefile.
-What's the problem in Makefile.headersinst?
+(Added myself to CC, because I'm not subscribed)
 
--- 
-dwmw2
+with linux-next snapshot 20080604 my Laptop morphes into sitting duck and I 
+think this is due to this:
 
+dmesg | grep "GSI 11"
+ACPI: PCI Interrupt 0000:00:11.0[A] -> Link [LNKA] -> GSI 11 (level, low) -> 
+IRQ 11
+ERROR: Unable to locate IOAPIC for GSI 11
+ACPI: PCI Interrupt 0000:00:11.1[B] -> Link [LNKB] -> GSI 11 (level, low) -> 
+IRQ 11
+ERROR: Unable to locate IOAPIC for GSI 11
+ACPI: PCI Interrupt 0000:00:02.0[A] -> Link [LNKG] -> GSI 11 (level, low) -> 
+IRQ 11
+ERROR: Unable to locate IOAPIC for GSI 11
+ACPI: PCI Interrupt 0000:00:06.0[A] -> Link [LNKH] -> GSI 11 (level, low) -> 
+IRQ 11
+ERROR: Unable to locate IOAPIC for GSI 11
+ACPI: PCI Interrupt 0000:00:0a.0[A] -> Link [LNKD] -> GSI 11 (level, low) -> 
+IRQ 11
+ERROR: Unable to locate IOAPIC for GSI 11
+ACPI: PCI Interrupt 0000:02:00.0[A] -> Link [LNKA] -> GSI 11 (level, low) -> 
+IRQ 11
+ERROR: Unable to locate IOAPIC for GSI 11
+
+dmesg | grep APIC
+Local APIC disabled by BIOS -- you can enable it with "lapic"
+mapped APIC to ffffb000 (011ed000)
+Local APIC not detected. Using dummy APIC emulation
+
+lspci
+00:00.0 Host bridge: ALi Corporation M1644/M1644T Northbridge+Trident (rev 01)
+00:01.0 PCI bridge: ALi Corporation PCI to AGP Controller
+00:02.0 USB Controller: ALi Corporation USB 1.1 Controller (rev 03)
+00:04.0 IDE interface: ALi Corporation M5229 IDE (rev c3)
+00:06.0 Multimedia audio controller: ALi Corporation M5451 PCI AC-Link 
+Controller Audio Device (rev 01)
+00:07.0 ISA bridge: ALi Corporation M1533/M1535 PCI to ISA Bridge [Aladdin 
+IV/V/V+]
+00:08.0 Bridge: ALi Corporation M7101 Power Management Controller [PMU]
+00:0a.0 Ethernet controller: Intel Corporation 82557/8/9 [Ethernet Pro 100] 
+(rev 0d)
+00:11.0 CardBus bridge: Toshiba America Info Systems ToPIC100 PCI to Cardbus 
+Bridge with ZV Support (rev 32)
+00:11.1 CardBus bridge: Toshiba America Info Systems ToPIC100 PCI to Cardbus 
+Bridge with ZV Support (rev 32)
+01:00.0 VGA compatible controller: Trident Microsystems CyberBlade XPAi1 (rev 
+82)
+02:00.0 Ethernet controller: Atheros Communications, Inc. AR5212 802.11abg NIC 
+(rev 01)
+
+cat /proc/interrupts
+           CPU0
+  0:     412517    XT-PIC-XT        timer
+  1:       1990    XT-PIC-XT        i8042
+  2:          0    XT-PIC-XT        cascade
+  3:          2    XT-PIC-XT
+  4:          4    XT-PIC-XT
+  5:          3    XT-PIC-XT
+  6:          5    XT-PIC-XT        floppy
+  7:          2    XT-PIC-XT
+  8:          0    XT-PIC-XT        rtc0
+  9:        242    XT-PIC-XT        acpi
+ 10:          2    XT-PIC-XT
+ 11:       8465    XT-PIC-XT        ohci_hcd:usb1, ALI 5451, yenta, yenta, 
+ath, eth0
+ 12:        245    XT-PIC-XT        i8042
+ 14:       6054    XT-PIC-XT        ide0
+ 15:      28729    XT-PIC-XT        ide1
+NMI:          0   Non-maskable interrupts
+LOC:          0   Local timer interrupts
+RES:          0   Rescheduling interrupts
+CAL:          0   function call interrupts
+TLB:          0   TLB shootdowns
+TRM:          0   Thermal event interrupts
+SPU:          0   Spurious interrupts
+ERR:          0
+MIS:          0
+
+cat /proc/cpuinfo
+processor       : 0
+vendor_id       : GenuineIntel
+cpu family      : 6
+model           : 8
+model name      : Pentium III (Coppermine)
+stepping        : 10
+cpu MHz         : 1095.477
+cache size      : 256 KB
+fdiv_bug        : no
+hlt_bug         : no
+f00f_bug        : no
+coma_bug        : no
+fpu             : yes
+fpu_exception   : yes
+cpuid level     : 2
+wp              : yes
+flags           : fpu vme de pse tsc msr pae mce cx8 sep mtrr pge mca cmov pat 
+pse36 mmx fxsr sse up
+bogomips        : 2193.07
+clflush size    : 32
+power management:
+
+
+AFAIK this chipset doesnt provide a usable IO-APIC, but older Kernels upto 
+2.6.25.4 didn't have a problem with this.
+Will try 2.6.26-rc5 today..
+
+If you want some other infos (config etc.) just let me know.
+
+--
+Greetings
+Daniel Exner
