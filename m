@@ -1,134 +1,133 @@
-From: Daniel Exner <dex@dragonslave.de>
-Subject: linux-next Regression: Unable to locate IOAPIC
-Date: Thu, 5 Jun 2008 11:00:12 +0200
-Message-ID: <200806051100.12885.dex@dragonslave.de>
-Reply-To: webmaster@dragonslave.de
+From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Subject: [BUILD-FAILURE] linux-next: Tree for June 4 - firmware/keyspan/mpr.fw.gen.S
+Date: Thu, 05 Jun 2008 15:13:22 +0530
+Message-ID: <4847B53A.7030006@linux.vnet.ibm.com>
+References: <20080604180025.3ecd03ff.sfr@canb.auug.org.au> <48468091.5000102@linux.vnet.ibm.com> <1212580245.32207.51.camel@pmac.infradead.org> <54a3f4cc48b03f9fe63be0bcd7c2ab20@kernel.crashing.org> <1212601930.32207.134.camel@pmac.infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="utf-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from server009.webpack.hosteurope.de ([80.237.130.17]:39609 "EHLO
-	server009.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753179AbYFEJYH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jun 2008 05:24:07 -0400
-Content-Disposition: inline
+Received: from E23SMTP03.au.ibm.com ([202.81.18.172]:42279 "EHLO
+	e23smtp03.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754141AbYFEJrR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jun 2008 05:47:17 -0400
+In-Reply-To: <1212601930.32207.134.camel@pmac.infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-next@vger.kernel.org, dex@dragonslave.de
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Segher Boessenkool <segher@kernel.crashing.org>, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Andy Whitcroft <apw@shadowen.org>, Sam Ravnborg <sam@ravnborg.org>, Adrian Bunk <bunk@kernel.org>
 
-Hi!
+David Woodhouse wrote:
+> On Wed, 2008-06-04 at 19:19 +0200, Segher Boessenkool wrote:
+>> It is a new feature in GNU make 3.81, which was released slightly
+>> over two years ago.
+> 
+> Hm, Ok. I'll stick in a workaround. Thanks.
+> 
+> diff --git a/firmware/Makefile b/firmware/Makefile
+> index b4f758a..166a9b0 100644
+> --- a/firmware/Makefile
+> +++ b/firmware/Makefile
+> @@ -83,6 +83,13 @@ wordsize_deps := $(wildcard include/config/64bit.h include/config/32bit.h \
+>  		include/config/superh32.h include/config/superh64.h \
+>  		include/config/x86_32.h include/config/x86_64.h)
+> 
+> +# Workaround for ancient versions of make, where .SECONDEXPANSION doesn't work.
+> +# It'll end up depending on these targets, so make them a PHONY rule which
+> +# depends on _all_ the directories in $(firmware-dirs), and it'll work out OK.
+> +PHONY += $(objtree)/$$(%) $(objtree)/$(obj)/$$(%)
+> +$(objtree)/$$(%) $(objtree)/$(obj)/$$(%): $(firmware-dirs)
+> +	@true
+> +
+>  # For the $$(dir %) trick, where we need % to be expanded first.
+>  .SECONDEXPANSION:
+The make version used is 
+# make -v
+GNU Make 3.80
 
-(Added myself to CC, because I'm not subscribed)
+Thanks the patch, the build failure is fixed but the kernel panics while
+booting the machine
 
-with linux-next snapshot 20080604 my Laptop morphes into sitting duck and I 
-think this is due to this:
+BUG: unable to handle kernel paging request at 0000000000003708
+IP: [<ffffffff8026cd89>] __alloc_pages_internal+0xc0/0x3d3
+PGD 0 
+Oops: 0000 [1] SMP 
+last sysfs file: 
+CPU 0 
+Modules linked in:
+Pid: 1, comm: swapper Not tainted 2.6.26-rc4-next-20080604-autotest #1
+RIP: 0010:[<ffffffff8026cd89>]  [<ffffffff8026cd89>] __alloc_pages_internal+0xc0/0x3d3
+RSP: 0000:ffff81003f9e1c00  EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 00000000000012d0 RCX: 0000000000000000
+RDX: 0000000000003700 RSI: 00000000000005c4 RDI: ffffffff805cfb76
+RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000018
+R10: 0000000000000003 R11: ffffffff8035677d R12: 0000000000003700
+R13: 0000000000000000 R14: ffff81003f9d8000 R15: 0000000000000001
+FS:  0000000000000000(0000) GS:ffffffff806afe80(0000) knlGS:0000000000000000
+CS:  0010 DS: 0018 ES: 0018 CR0: 000000008005003b
+CR2: 0000000000003708 CR3: 0000000000201000 CR4: 00000000000006e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+Process swapper (pid: 1, threadinfo ffff81003f9e0000, task ffff81003f9d8000)
+Stack:  0000000000000000 0000000000000000 ffff81000103b000 0000000200000010
+ 0000000000000000 0000000000000000 00000000ffffffff ffffffff80399b6b
+ ffff81000103b000 ffff8100010118e0 0000000000000001 00000000000000d0
+Call Trace:
+ [<ffffffff80399b6b>] notify_update+0x2b/0x30
+ [<ffffffff8028bb77>] new_slab+0x91/0x268
+ [<ffffffff8028bf64>] __slab_alloc+0x1d5/0x3c1
+ [<ffffffff8022ce21>] __build_sched_domains+0x688/0x9eb
+ [<ffffffff8022c629>] sched_domain_node_span+0xc9/0xf3
+ [<ffffffff8028c457>] kmem_cache_alloc_node+0x3e/0x73
 
-dmesg | grep "GSI 11"
-ACPI: PCI Interrupt 0000:00:11.0[A] -> Link [LNKA] -> GSI 11 (level, low) -> 
-IRQ 11
-ERROR: Unable to locate IOAPIC for GSI 11
-ACPI: PCI Interrupt 0000:00:11.1[B] -> Link [LNKB] -> GSI 11 (level, low) -> 
-IRQ 11
-ERROR: Unable to locate IOAPIC for GSI 11
-ACPI: PCI Interrupt 0000:00:02.0[A] -> Link [LNKG] -> GSI 11 (level, low) -> 
-IRQ 11
-ERROR: Unable to locate IOAPIC for GSI 11
-ACPI: PCI Interrupt 0000:00:06.0[A] -> Link [LNKH] -> GSI 11 (level, low) -> 
-IRQ 11
-ERROR: Unable to locate IOAPIC for GSI 11
-ACPI: PCI Interrupt 0000:00:0a.0[A] -> Link [LNKD] -> GSI 11 (level, low) -> 
-IRQ 11
-ERROR: Unable to locate IOAPIC for GSI 11
-ACPI: PCI Interrupt 0000:02:00.0[A] -> Link [LNKA] -> GSI 11 (level, low) -> 
-IRQ 11
-ERROR: Unable to locate IOAPIC for GSI 11
-
-dmesg | grep APIC
-Local APIC disabled by BIOS -- you can enable it with "lapic"
-mapped APIC to ffffb000 (011ed000)
-Local APIC not detected. Using dummy APIC emulation
-
-lspci
-00:00.0 Host bridge: ALi Corporation M1644/M1644T Northbridge+Trident (rev 01)
-00:01.0 PCI bridge: ALi Corporation PCI to AGP Controller
-00:02.0 USB Controller: ALi Corporation USB 1.1 Controller (rev 03)
-00:04.0 IDE interface: ALi Corporation M5229 IDE (rev c3)
-00:06.0 Multimedia audio controller: ALi Corporation M5451 PCI AC-Link 
-Controller Audio Device (rev 01)
-00:07.0 ISA bridge: ALi Corporation M1533/M1535 PCI to ISA Bridge [Aladdin 
-IV/V/V+]
-00:08.0 Bridge: ALi Corporation M7101 Power Management Controller [PMU]
-00:0a.0 Ethernet controller: Intel Corporation 82557/8/9 [Ethernet Pro 100] 
-(rev 0d)
-00:11.0 CardBus bridge: Toshiba America Info Systems ToPIC100 PCI to Cardbus 
-Bridge with ZV Support (rev 32)
-00:11.1 CardBus bridge: Toshiba America Info Systems ToPIC100 PCI to Cardbus 
-Bridge with ZV Support (rev 32)
-01:00.0 VGA compatible controller: Trident Microsystems CyberBlade XPAi1 (rev 
-82)
-02:00.0 Ethernet controller: Atheros Communications, Inc. AR5212 802.11abg NIC 
-(rev 01)
-
-cat /proc/interrupts
-           CPU0
-  0:     412517    XT-PIC-XT        timer
-  1:       1990    XT-PIC-XT        i8042
-  2:          0    XT-PIC-XT        cascade
-  3:          2    XT-PIC-XT
-  4:          4    XT-PIC-XT
-  5:          3    XT-PIC-XT
-  6:          5    XT-PIC-XT        floppy
-  7:          2    XT-PIC-XT
-  8:          0    XT-PIC-XT        rtc0
-  9:        242    XT-PIC-XT        acpi
- 10:          2    XT-PIC-XT
- 11:       8465    XT-PIC-XT        ohci_hcd:usb1, ALI 5451, yenta, yenta, 
-ath, eth0
- 12:        245    XT-PIC-XT        i8042
- 14:       6054    XT-PIC-XT        ide0
- 15:      28729    XT-PIC-XT        ide1
-NMI:          0   Non-maskable interrupts
-LOC:          0   Local timer interrupts
-RES:          0   Rescheduling interrupts
-CAL:          0   function call interrupts
-TLB:          0   TLB shootdowns
-TRM:          0   Thermal event interrupts
-SPU:          0   Spurious interrupts
-ERR:          0
-MIS:          0
-
-cat /proc/cpuinfo
-processor       : 0
-vendor_id       : GenuineIntel
-cpu family      : 6
-model           : 8
-model name      : Pentium III (Coppermine)
-stepping        : 10
-cpu MHz         : 1095.477
-cache size      : 256 KB
-fdiv_bug        : no
-hlt_bug         : no
-f00f_bug        : no
-coma_bug        : no
-fpu             : yes
-fpu_exception   : yes
-cpuid level     : 2
-wp              : yes
-flags           : fpu vme de pse tsc msr pae mce cx8 sep mtrr pge mca cmov pat 
-pse36 mmx fxsr sse up
-bogomips        : 2193.07
-clflush size    : 32
-power management:
+ [<ffffffff8022ce21>] __build_sched_domains+0x688/0x9eb
+ [<ffffffff806d0f72>] setup_ioapic_dest+0x30/0xd7
+ [<ffffffff8022d5dc>] arch_init_sched_domains+0x69/0x76
+ [<ffffffff806d51d5>] sched_init_smp+0x4f/0x123
+ [<ffffffff806c28cc>] kernel_init+0xf6/0x28f
+ [<ffffffff804fb831>] _spin_unlock_irq+0x9/0xc
+ [<ffffffff8022e595>] finish_task_switch+0x38/0x9e
+ [<ffffffff8020cb18>] child_rip+0xa/0x12
+ [<ffffffff806c27d6>] kernel_init+0x0/0x28f
+ [<ffffffff8020cb0e>] child_rip+0x0/0x12
 
 
-AFAIK this chipset doesnt provide a usable IO-APIC, but older Kernels upto 
-2.6.25.4 didn't have a problem with this.
-Will try 2.6.26-rc5 today..
+Code: 25 00 00 00 00 83 7c 24 18 00 74 16 be c4 05 00 00 48 c7 c7 76 fb 5c 80 e8 98 c8 fb ff e8 29 d4 28 00 48 c7 44 24 28 00 00 00 00 <49> 83 7c 24 08 00 74 90 89 d9 44 8b 44 24 1c 48 8b 74 24 08 81 
+RIP  [<ffffffff8026cd89>] __alloc_pages_internal+0xc0/0x3d3
+ RSP <ffff81003f9e1c00>
+CR2: 0000000000003708
+---[ end trace 4eaa2a86a8e2da22 ]---
+Kernel panic - not syncing: Attempted to kill init!
+Pid: 1, comm: swapper Tainted: G      D   2.6.26-rc4-next-20080604-autotest #1
 
-If you want some other infos (config etc.) just let me know.
-
+Call Trace:
+ [<ffffffff802327c3>] panic+0x86/0x144
+ [<ffffffff80233373>] printk+0x4e/0x56
+ [<ffffffff802356dc>] do_exit+0x71/0x67c
+ [<ffffffff804fbd41>] oops_begin+0x0/0x8c
+ [<ffffffff804fdc54>] do_page_fault+0x77b/0x834
+ [<ffffffff8039dcc6>] vt_console_print+0x26f/0x293
+ [<ffffffff804fb989>] error_exit+0x0/0x51
+ [<ffffffff8035677d>] vgacon_cursor+0x0/0x1a4
+ [<ffffffff8026cd89>] __alloc_pages_internal+0xc0/0x3d3
+ [<ffffffff80399b6b>] notify_update+0x2b/0x30
+ [<ffffffff8028bb77>] new_slab+0x91/0x268
+ [<ffffffff8028bf64>] __slab_alloc+0x1d5/0x3c1
+ [<ffffffff8022ce21>] __build_sched_domains+0x688/0x9eb
+ [<ffffffff8022c629>] sched_domain_node_span+0xc9/0xf3
+ [<ffffffff8028c457>] kmem_cache_alloc_node+0x3e/0x73
+ [<ffffffff8022ce21>] __build_sched_domains+0x688/0x9eb
+ [<ffffffff806d0f72>] setup_ioapic_dest+0x30/0xd7
+ [<ffffffff8022d5dc>] arch_init_sched_domains+0x69/0x76
+ [<ffffffff806d51d5>] sched_init_smp+0x4f/0x123
+ [<ffffffff806c28cc>] kernel_init+0xf6/0x28f
+ [<ffffffff804fb831>] _spin_unlock_irq+0x9/0xc
+ [<ffffffff8022e595>] finish_task_switch+0x38/0x9e
+ [<ffffffff8020cb18>] child_rip+0xa/0x12
+ [<ffffffff806c27d6>] kernel_init+0x0/0x28f
+ [<ffffffff8020cb0e>] child_rip+0x0/0x12
 --
-Greetings
-Daniel Exner
+Thanks & Regards,
+Kamalesh Babulal,
+Linux Technology Center,
+IBM, ISTL.
