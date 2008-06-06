@@ -1,37 +1,92 @@
-From: Ingo Molnar <mingo@elte.hu>
+From: Mike Travis <travis@sgi.com>
 Subject: Re: linux-next: Tree for June 5
-Date: Fri, 6 Jun 2008 17:33:46 +0200
-Message-ID: <20080606153346.GB18359@elte.hu>
-References: <20080606115759.GA29321@elte.hu> <19f34abd0806060533x6d3ff66tc29306143103fc40@mail.gmail.com> <48493CBD.1000202@sgi.com> <19f34abd0806060650q203bef48rd3b20c0cabec4774@mail.gmail.com> <19f34abd0806060707x7570c835u4b1837b54dfa36ba@mail.gmail.com> <484947A9.5050804@sgi.com> <19f34abd0806060736m10424455kfbc3e6272d18646e@mail.gmail.com> <20080606145717.GA5300@elte.hu> <484951E6.1030207@sgi.com> <484955B9.5070704@sgi.com>
+Date: Fri, 06 Jun 2008 08:52:46 -0700
+Message-ID: <48495D4E.2070203@sgi.com>
+References: <20080606115759.GA29321@elte.hu> <19f34abd0806060533x6d3ff66tc29306143103fc40@mail.gmail.com> <48493CBD.1000202@sgi.com> <19f34abd0806060650q203bef48rd3b20c0cabec4774@mail.gmail.com> <19f34abd0806060707x7570c835u4b1837b54dfa36ba@mail.gmail.com> <484947A9.5050804@sgi.com> <19f34abd0806060736m10424455kfbc3e6272d18646e@mail.gmail.com> <20080606145717.GA5300@elte.hu> <20080606150102.GA14141@elte.hu> <19f34abd0806060813t10d422fel10dcb25c71f3b032@mail.gmail.com> <20080606152326.GA18359@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:42721 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755824AbYFFPeF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 6 Jun 2008 11:34:05 -0400
-Content-Disposition: inline
-In-Reply-To: <484955B9.5070704@sgi.com>
+Received: from relay1.sgi.com ([192.48.171.29]:48358 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1755379AbYFFPwu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 6 Jun 2008 11:52:50 -0400
+In-Reply-To: <20080606152326.GA18359@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Travis <travis@sgi.com>
-Cc: Vegard Nossum <vegard.nossum@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Vegard Nossum <vegard.nossum@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>
 
+Ingo Molnar wrote:
+> * Vegard Nossum <vegard.nossum@gmail.com> wrote:
+> 
+>>>> AFAICS this is not yet required for v2.6.26, as the requirement to 
+>>>> never iterate to MAX_NUMNODES and call nr_cpus_node() with the 
+>>>> index only got introduced by Mike's patch.
+>>> the one below is needed as well i think.
+>> Yeah. I think you had better take Mike's patches, I don't trust even 
+>> that my patch and your fixlet does everything correctly.
+> 
+> yep, just discovered that we had them already ;-)
+> 
+> Thomas has just scripted up a new "detect if a commit is not in 
+> linux-next yet" script that should avoid such problems in the future.
+> 
+> your second patch is still wanted, it would have detected the problem 
+> earlier.
+> 
+> 	Ingo
 
-* Mike Travis <travis@sgi.com> wrote:
+Thanks, yes, I agree.  However I would like to modify it slightly:
+---
+Subject: [PATCH 1/1] x86: Add check for node passed to node_to_cpumask
 
-> The patch ordering was incorrect as I removed the node_to_cpumask_map 
-> before I replaced the MAX_NUMNODES, should have been the opposite.
+  * When CONFIG_DEBUG_PER_CPU_MAPS is set, the node passed to
+    node_to_cpumask and node_to_cpumask_ptr should be validated.
 
-It needed the combination 4 failures along the line: the debug check was 
-not complete, the ordering was bad and thus the splitup was bad as well 
-- and then one component went missing in linux-next and the combined 
-effect created this bug that needed a bisection by Andrew and Vegard to 
-figure out.
+Signed-off-by: Mike Travis <travis@sgi.com>
+---
+ arch/x86/kernel/setup.c |   18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-the moral: we now tightened the debug check, fixed the integration bug 
-and tightened the checks we have for patch propagation. (Thomas just 
-added the new tip-check-integration script to tip/tip that implements 
-this)
-
-	Ingo
+--- linux-2.6.tip.orig/arch/x86/kernel/setup.c
++++ linux-2.6.tip/arch/x86/kernel/setup.c
+@@ -399,6 +399,10 @@ int early_cpu_to_node(int cpu)
+ 	return per_cpu(x86_cpu_to_node_map, cpu);
+ }
+ 
++
++/* empty cpumask */
++static cpumask_t cpu_mask_none;
++
+ /*
+  * Returns a pointer to the bitmask of CPUs on Node 'node'.
+  */
+@@ -411,6 +415,13 @@ cpumask_t *_node_to_cpumask_ptr(int node
+ 		dump_stack();
+ 		return &cpu_online_map;
+ 	}
++	if (node >= nr_node_ids) {
++		printk(KERN_WARNING
++			"_node_to_cpumask_ptr(%d): node > nr_node_ids(%d)\n",
++			node, nr_node_ids);
++		dump_stack();
++		return &cpu_mask_none;
++	}
+ 	return &node_to_cpumask_map[node];
+ }
+ EXPORT_SYMBOL(_node_to_cpumask_ptr);
+@@ -426,6 +437,13 @@ cpumask_t node_to_cpumask(int node)
+ 		dump_stack();
+ 		return cpu_online_map;
+ 	}
++	if (node >= nr_node_ids) {
++		printk(KERN_WARNING
++			"node_to_cpumask(%d): node > nr_node_ids(%d)\n",
++			node, nr_node_ids);
++		dump_stack();
++		return cpu_mask_none;
++	}
+ 	return node_to_cpumask_map[node];
+ }
+ EXPORT_SYMBOL(node_to_cpumask);
