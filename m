@@ -1,64 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for June 6
-Date: Fri, 6 Jun 2008 21:11:51 +1000
-Message-ID: <20080606211151.b36ed703.sfr@canb.auug.org.au>
-References: <20080606183527.d3b39ecd.sfr@canb.auug.org.au>
-	<4848F9E5.20005@movial.fi>
+Subject: Re: linux-next: arm/mer-current merge conflict
+Date: Fri, 6 Jun 2008 21:19:32 +1000
+Message-ID: <20080606211932.9d0319e9.sfr@canb.auug.org.au>
+References: <20080603140421.183cefe5.sfr@canb.auug.org.au>
+	<20080606101012.GA18231@flint.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__6_Jun_2008_21_11_51_+1000_l41DKGgG_x2ackU+"
+ boundary="Signature=_Fri__6_Jun_2008_21_19_32_+1000_DDASHbZnAlJeC3hQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43703 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37430 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752034AbYFFLL7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 6 Jun 2008 07:11:59 -0400
-In-Reply-To: <4848F9E5.20005@movial.fi>
+	id S1752639AbYFFLTj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 6 Jun 2008 07:19:39 -0400
+In-Reply-To: <20080606101012.GA18231@flint.arm.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dmitri Vorobiev <dmitri.vorobiev@movial.fi>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, Dmitry Baryshkov <dbaryshkov@gmail.com>
 
---Signature=_Fri__6_Jun_2008_21_11_51_+1000_l41DKGgG_x2ackU+
+--Signature=_Fri__6_Jun_2008_21_19_32_+1000_DDASHbZnAlJeC3hQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dmitri,
+Hi Russell,
 
-On Fri, 06 Jun 2008 11:48:37 +0300 Dmitri Vorobiev <dmitri.vorobiev@movial.=
-fi> wrote:
+On Fri, 6 Jun 2008 11:10:12 +0100 Russell King <rmk@arm.linux.org.uk> wrote:
 >
-> Please see http://lkml.org/lkml/2008/6/4/152 where you'll find the
-> description of how I built a MIPS cross-toolchain and a working MIPS conf=
-ig.
+> Yes, I'm aware of there being two fixes in my tree for that.  One is
+> the fix suitable for -rc kernels, the other is the proper fix, which
+> has a higher impact.
 
-Thanks for that.  Sorry I didn't respond sooner.
+Which is fair enough.
 
-We have managed to make a working tool chain and I will
-add some MIPS builds soon.  Was the attached config just the
-malta_defconfig in the kernel tree, or there something special about it.
-I noticed that a straight defconfig build works for mips and mipsel.
-Would you expect all{no,mod}config to work?  What would be a good 64 bit
-test config?
+> The merge conflict will be resolved probably around merge window time -
+> I hope this doesn't cause you too much of a problem?
 
-It is easier for us if we just use the configs out of the kernel tree,
-but others are possible (its just harder to keep them up to date).
+Once I have the correct resolution, "git rerere" remembers and reapplies
+it for me automatically, so its not much of a problem.
+
+Now that the -rc fix has gone into Linus' tree, I assume you will
+rebase/merge with his tree at some point at which time the conflict will
+vanish for me.  No hurry.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__6_Jun_2008_21_11_51_+1000_l41DKGgG_x2ackU+
+--Signature=_Fri__6_Jun_2008_21_19_32_+1000_DDASHbZnAlJeC3hQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkhJG3cACgkQTgG2atn1QN/4rwCeIK21eMXoV6K+IrVs0RZFFHl2
-qsUAn3dvozdP4Ji6PkyrojYK9Hs+QzkE
-=+F3E
+iEYEARECAAYFAkhJHUQACgkQTgG2atn1QN/hnACfWi5xd+/zQTQ/z34WLWAbFWku
+fzsAn2X2CWijuS+iNOYNBjeCOBdUad++
+=xugT
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__6_Jun_2008_21_11_51_+1000_l41DKGgG_x2ackU+--
+--Signature=_Fri__6_Jun_2008_21_19_32_+1000_DDASHbZnAlJeC3hQ--
