@@ -1,70 +1,41 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: Tree for June 5
-Date: Fri, 6 Jun 2008 02:54:13 -0700
-Message-ID: <20080606025413.3772f21e.akpm@linux-foundation.org>
-References: <20080605175217.cee497f3.sfr@canb.auug.org.au>
-	<20080605195604.41623687.akpm@linux-foundation.org>
-	<20080606071707.GB9708@elte.hu>
-	<20080606002957.6329a0ec.akpm@linux-foundation.org>
-	<20080606024811.70db9ab2.akpm@linux-foundation.org>
+From: Russell King <rmk@arm.linux.org.uk>
+Subject: Re: linux-next: arm/mer-current merge conflict
+Date: Fri, 6 Jun 2008 11:10:12 +0100
+Message-ID: <20080606101012.GA18231@flint.arm.linux.org.uk>
+References: <20080603140421.183cefe5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:47680 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752589AbYFFJyb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Jun 2008 05:54:31 -0400
-In-Reply-To: <20080606024811.70db9ab2.akpm@linux-foundation.org>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:60693 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753511AbYFFKKd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Jun 2008 06:10:33 -0400
+Content-Disposition: inline
+In-Reply-To: <20080603140421.183cefe5.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Dmitry Baryshkov <dbaryshkov@gmail.com>
 
-On Fri, 6 Jun 2008 02:48:11 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
-
-> On Fri, 6 Jun 2008 00:29:57 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+On Tue, Jun 03, 2008 at 02:04:21PM +1000, Stephen Rothwell wrote:
+> Hi Russell,
 > 
-> > It crashes on two quite different machines with both slab and slub.
-> 
-> OK, I seem to be screwed here.
-> 
-> Five commits to go and my bisection point is at
+> Today's linux-next merge of the arm tree got a conflict in
+> arch/arm/mach-pxa/tosa.c between commit
+> 0ef2cfc0ca4625424e5b8ead6c47359c35a7a841 ("[ARM] pxa: fix tosa.c build
+> error") from the arm-current tree and commit
+> a37cba9e5315bb57e8eb135e401ba35e4b2338ac ("[ARM] 5048/2: Clean up tosa
+> and spitz resetting") from the arm tree.  I used the latter since the
+> former's commit message implied that this was the right fix.
 
-argh, that was copy-n-pasted from gitk which doesn't give the commit IDs.
+Yes, I'm aware of there being two fixes in my tree for that.  One is
+the fix suitable for -rc kernels, the other is the proper fix, which
+has a higher impact.
 
-> Author: Mike Travis <travis@sgi.com>  2008-05-12 12:21:13
-> Committer: Thomas Gleixner <tglx@linutronix.de>  2008-05-23 09:08:00
-> Parent: a9ad585c8a18f7ba754b85f5786976609b9d7d29 (x86: remove the static 256k node_to_cpumask_map)
-> Branch: 
-> Follows: v2.6.26-rc2
-> Precedes: next-20080526
+The merge conflict will be resolved probably around merge window time -
+I hope this doesn't cause you too much of a problem?
 
-29657a44f8660acd8751d7e9f5aac06ec8633481
-   x86: cleanup early per cpu variables/accesses v4
- 
-> But here I'm getting a totally different crash - an early exception.
-> 
-> I'll try a linear search starting at
-> 
-> Author: Mike Travis <travis@sgi.com>  2008-05-12 12:21:12
-> Committer: Thomas Gleixner <tglx@linutronix.de>  2008-05-23 09:05:25
-> Parent: b65e04b53ffcb4002737a5346c9ff8865c37be58 (x86: don't call pxm_to_node again)
-> Child:  dfdf1d75efee39e9396f8384c6f3bf555349ed60 (x86: modify Kconfig to allow up to 4096 cpus)
-> Branch: 
-
-ff0e010ef613b0e7136f2f40ec4b51273676b085
-   x86: fix remove cpu_pda table patch
- 
-> and ending at
-> 
-> Author: Mike Travis <travis@sgi.com>  2008-05-12 12:21:13
-> Committer: Thomas Gleixner <tglx@linutronix.de>  2008-05-23 09:08:00
-> Parent: a9ad585c8a18f7ba754b85f5786976609b9d7d29 (x86: remove the static 256k node_to_cpumask_map)
-> Branch: 
-> Follows: v2.6.26-rc2
-> Precedes: next-20080526
-
-
-78d49c6d890aee9cf8aea371011c9d7b0121b822
-    x86: remove static boot_cpu_pda array v2
- 
+-- 
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
