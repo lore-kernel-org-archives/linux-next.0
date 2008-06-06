@@ -1,94 +1,413 @@
-From: Ingo Molnar <mingo@elte.hu>
+From: Andrew Morton <akpm@linux-foundation.org>
 Subject: Re: linux-next: Tree for June 5
-Date: Fri, 6 Jun 2008 12:47:01 +0200
-Message-ID: <20080606104701.GA9639@elte.hu>
-References: <20080605195604.41623687.akpm@linux-foundation.org> <20080606071707.GB9708@elte.hu> <20080606072536.GA19334@elte.hu> <20080606003327.9ac0e91b.akpm@linux-foundation.org> <20080606074137.GA28962@elte.hu> <20080606004743.a78180c3.akpm@linux-foundation.org> <20080606082325.GA10826@elte.hu> <20080606013835.8dfd838b.akpm@linux-foundation.org> <20080606084949.GA28190@elte.hu> <20080606020109.c0db7a0c.akpm@linux-foundation.org>
+Date: Fri, 6 Jun 2008 03:54:13 -0700
+Message-ID: <20080606035413.37f340ef.akpm@linux-foundation.org>
+References: <20080605175217.cee497f3.sfr@canb.auug.org.au>
+	<20080605195604.41623687.akpm@linux-foundation.org>
+	<20080606071707.GB9708@elte.hu>
+	<20080606002957.6329a0ec.akpm@linux-foundation.org>
+	<20080606024811.70db9ab2.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756090AbYFFKri@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20080606020109.c0db7a0c.akpm@linux-foundation.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, the arch/x86 maintainers <x86@kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:54587 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751433AbYFFKyj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Jun 2008 06:54:39 -0400
+In-Reply-To: <20080606024811.70db9ab2.akpm@linux-foundation.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mike Travis <travis@sgi.com>
+
+On Fri, 6 Jun 2008 02:48:11 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+
+> I'll try a linear search starting at
+
+	ff0e010ef613b0e7136f2f40ec4b51273676b085
+	Author: Mike Travis <travis@sgi.com>  2008-05-12 12:21:12
+	Committer: Thomas Gleixner <tglx@linutronix.de>  2008-05-23 09:05:25
+	Parent: b65e04b53ffcb4002737a5346c9ff8865c37be58 (x86: don't call pxm_to_node again)
+	Child:  dfdf1d75efee39e9396f8384c6f3bf555349ed60 (x86: modify Kconfig to allow up to 4096 cpus)
+	Branch: 
+	Follows: v2.6.26-rc2
+	Precedes: next-20080526
+
+	    x86: fix remove cpu_pda table patch
 
 
-* Andrew Morton <akpm@linux-foundation.org> wrote:
+Good
 
-> > what do you mean? We are testing commits that everybody will run and 
-> > are pre-filtering them for sanity and stability before they hit 
-> > linux-next.
-> 
-> One doesn't test commits - one tests a tree.  And the -tip tree is 
-> 2.6.26-rc5 plus a bunch of x86 changes. [...]
+	dfdf1d75efee39e9396f8384c6f3bf555349ed60
+	Author: Mike Travis <travis@sgi.com>  2008-05-12 12:21:12
+	Committer: Thomas Gleixner <tglx@linutronix.de>  2008-05-23 09:05:39
+	Parent: ff0e010ef613b0e7136f2f40ec4b51273676b085 (x86: fix remove cpu_pda table patch)
+	Child:  29657a44f8660acd8751d7e9f5aac06ec8633481 (x86: cleanup early per cpu variables/accesses v4)
+	Branch: 
+	Follows: v2.6.26-rc2
+	Precedes: next-20080526
 
-no, 90%+ of all bugs are not due to tree interaction effects but are 
-caused by individual commits, triggerable on a particular 
-system/workload. (Our historic regression list is the proof for that, 
-can give you itemized statistics if you want.)
+	    x86: modify Kconfig to allow up to 4096 cpus
 
-also, the -tip tree is not "2.6.26-rc5 plus a bunch of x86 changes" but 
-v2.6.26-rc5-84-g39b945a plus 75 topic trees we maintain:
+Good
 
-build, core/futex-64bit, core/kill-the-BKL, core/locking, core/percpu, 
-core/printk, core/rcu, core/rodata, core/softirq, core/softlockup, 
-core/stacktrace, core/urgent, cpus4096, genirq, hrtimers, kmemcheck, 
-out-of-tree, pci-for-jesse, safe-poison-pointers, sched, sched-devel, 
-scratch, stackprotector, timers/clockevents, timers/hpet, 
-timers/hrtimers, timers/nohz, timers/posixtimers, tip, tracing/ftrace, 
-tracing/ftrace-mergefixups, tracing/immediates, tracing/markers, 
-tracing/mmiotrace, tracing/mmiotrace-mergefixups, tracing/nmisafe, 
-tracing/sched_markers, tracing/stopmachine-allcpus, tracing/sysprof, 
-tracing/textedit, x86/apic, x86/apm, x86/bitops, x86/build, x86/checkme, 
-x86/cleanups, x86/cpa, x86/cpu, x86/defconfig, x86/gart, x86/i8259, 
-x86/intel, x86/irq, x86/irqstats, x86/kconfig, x86/ldt, x86/mce, 
-x86/memtest, x86/mmio, x86/mpparse, x86/nmi, x86/numa, x86/numa-fixes, 
-x86/pat, x86/pebs, x86/ptemask, x86/resumetrace, x86/scratch, x86/setup, 
-x86/threadinfo, x86/timers, x86/urgent, x86/uv, x86/vdso, x86/xen, 
-x86/xsave.
+	29657a44f8660acd8751d7e9f5aac06ec8633481
+	Author: Mike Travis <travis@sgi.com>  2008-05-12 12:21:12
+	Committer: Thomas Gleixner <tglx@linutronix.de>  2008-05-23 09:07:23
+	Parent: dfdf1d75efee39e9396f8384c6f3bf555349ed60 (x86: modify Kconfig to allow up to 4096 cpus)
+	Child:  543e21916497be5a4005fd5820264ce1de9bd56d (x86: restore pda nodenumber field)
+	Branch: 
+	Follows: v2.6.26-rc2
+	Precedes: next-20080526
 
-most of which are in linux-next (around 70%), or will be shortly in 
-linux-next (more than 90%).
+	    x86: cleanup early per cpu variables/accesses v4
 
-> [...]  That tree will never be run by anyone.  Testing -tip fails to 
-> pick up problems which are caused by integration of the x86 changes 
-> with everyone else's work and it fails to pick up problems which lie 
-> wholly outside the x86 changes.
+Good
 
-that's wrong, and here's a very clear counter-example: 95% of the trees 
-we all test during a bisection session is executed for the first time 
-ever and wont ever be run by anyone else. If the integration aspects 
-mattered as much as you claim then bisection would almost never work in 
-practice.
 
-Dont get me wrong, integration _does_ matter (and hence we do it 
-ourselves, instead of dumping 70+ trees on you!), but the reality is 
-that 90% of the bugs are introduced by a single commit and go away if 
-the change done by that commit is removed.
+	543e21916497be5a4005fd5820264ce1de9bd56d
+	Author: Mike Travis <travis@sgi.com>  2008-05-12 12:21:12
+	Committer: Thomas Gleixner <tglx@linutronix.de>  2008-05-23 09:07:37
+	Parent: 29657a44f8660acd8751d7e9f5aac06ec8633481 (x86: cleanup early per cpu variables/accesses v4)
+	Child:  a9ad585c8a18f7ba754b85f5786976609b9d7d29 (x86: remove the static 256k node_to_cpumask_map)
+	Branch: 
+	Follows: v2.6.26-rc2
+	Precedes: next-20080526
 
-The real benefit of integration is not the technical effects of 
-integration but the testing effects: people are enabled to test more 
-commits at once.
+	    x86: restore pda nodenumber field
 
-> For both these reasons it would be more valuable were that testing 
-> effort to be expended on our 2.6.27 candidate tree.
+Good
 
-but that's blatantly wrong: my testing would only be wasted if my test 
-capacity was unused. In reality it's fully utilized: half of it is spent 
-on general upstream problems we trigger [9381 commits since v2.6.25 and 
-counting], the other half of it is spent on our incoming -tip flow of 
-patches for v2.6.27 [750 commits and counting].
+	a9ad585c8a18f7ba754b85f5786976609b9d7d29
+	Author: Mike Travis <travis@sgi.com>  2008-05-12 12:21:12
+	Committer: Thomas Gleixner <tglx@linutronix.de>  2008-05-23 09:07:47
+	Parent: 543e21916497be5a4005fd5820264ce1de9bd56d (x86: restore pda nodenumber field)
+	Child:  78d49c6d890aee9cf8aea371011c9d7b0121b822 (x86: remove static boot_cpu_pda array v2)
+	Branch: 
+	Follows: v2.6.26-rc2
+	Precedes: next-20080526
 
-If there's spare capacity we do volunteer to debug whatever problem that 
-comes up. In fact i'd say i still test way more than i should ;-)
+	    x86: remove the static 256k node_to_cpumask_map
 
-> Plus, of course, there's the risk that linux-next contains x86-only 
-> regressions which were fixed or avoided in -tip.
+crash, as described earlier.
 
-there's risk from every single line of source code difference. There's 
-risk from having just a single binary bit of difference between two 
-user-space installations. The question is always the amount of risk and 
-how to manage that risk.
+I don't know what happened to that early exception - it didn't come back.
 
-	Ingo
+The below revert gets linux-next working for me.
+
+
+
+From: Andrew Morton <akpm@linux-foundation.org>
+
+Revert
+
+commit a9ad585c8a18f7ba754b85f5786976609b9d7d29
+Author: Mike Travis <travis@sgi.com>
+Date:   Mon May 12 21:21:12 2008 +0200
+
+    x86: remove the static 256k node_to_cpumask_map
+    
+      * Consolidate node_to_cpumask operations and remove the 256k
+        byte node_to_cpumask_map.  This is done by allocating the
+        node_to_cpumask_map array after the number of possible nodes
+        (nr_node_ids) is known.
+    
+      * Debug printouts when CONFIG_DEBUG_PER_CPU_MAPS is active have
+        been increased.  It now shows faults when calling node_to_cpumask()
+        and node_to_cpumask_ptr().
+    
+    For inclusion into sched-devel/latest tree.
+    
+    Based on:
+    	git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git
+        +   sched-devel/latest  .../mingo/linux-2.6-sched-devel.git
+    
+    Signed-off-by: Mike Travis <travis@sgi.com>
+    Signed-off-by: Ingo Molnar <mingo@elte.hu>
+    Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+
+Cc: Mike Travis <travis@sgi.com>
+Cc: Ingo Molnar <mingo@elte.hu>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ arch/x86/kernel/setup.c    |  132 +----------------------------------
+ arch/x86/mm/numa_64.c      |    6 +
+ include/asm-x86/topology.h |   25 ++----
+ 3 files changed, 19 insertions(+), 144 deletions(-)
+
+diff -puN arch/x86/kernel/setup.c~revert-x86-remove-the-static-256k-node_to_cpumask_map arch/x86/kernel/setup.c
+--- a/arch/x86/kernel/setup.c~revert-x86-remove-the-static-256k-node_to_cpumask_map
++++ a/arch/x86/kernel/setup.c
+@@ -35,16 +35,6 @@ EXPORT_EARLY_PER_CPU_SYMBOL(x86_bios_cpu
+ /* map cpu index to node index */
+ DEFINE_EARLY_PER_CPU(int, x86_cpu_to_node_map, NUMA_NO_NODE);
+ EXPORT_EARLY_PER_CPU_SYMBOL(x86_cpu_to_node_map);
+-
+-/* which logical CPUs are on which nodes */
+-cpumask_t *node_to_cpumask_map;
+-EXPORT_SYMBOL(node_to_cpumask_map);
+-
+-/* setup node_to_cpumask_map */
+-static void __init setup_node_to_cpumask_map(void);
+-
+-#else
+-static inline void setup_node_to_cpumask_map(void) { }
+ #endif
+ 
+ #if defined(CONFIG_HAVE_SETUP_PER_CPU_AREA) && defined(CONFIG_SMP)
+@@ -191,15 +181,11 @@ void __init setup_per_cpu_areas(void)
+ 
+ 	}
+ 
+-	printk(KERN_DEBUG "NR_CPUS: %d, nr_cpu_ids: %d, nr_node_ids %d\n",
+-		NR_CPUS, nr_cpu_ids, nr_node_ids);
++	printk(KERN_DEBUG "NR_CPUS: %d, nr_cpu_ids: %d\n", NR_CPUS, nr_cpu_ids);
+ 
+ 	/* Setup percpu data maps */
+ 	setup_per_cpu_maps();
+ 
+-	/* Setup node to cpumask map */
+-	setup_node_to_cpumask_map();
+-
+ 	/* Setup cpumask_of_cpu map */
+ 	setup_cpumask_of_cpu();
+ }
+@@ -220,35 +206,6 @@ void __cpuinit amd_enable_pci_ext_cfg(st
+ #endif
+ 
+ #ifdef X86_64_NUMA
+-
+-/*
+- * Allocate node_to_cpumask_map based on number of available nodes
+- * Requires node_possible_map to be valid.
+- *
+- * Note: node_to_cpumask() is not valid until after this is done.
+- */
+-static void __init setup_node_to_cpumask_map(void)
+-{
+-	unsigned int node, num = 0;
+-	cpumask_t *map;
+-
+-	/* setup nr_node_ids if not done yet */
+-	if (nr_node_ids == MAX_NUMNODES) {
+-		for_each_node_mask(node, node_possible_map)
+-			num = node;
+-		nr_node_ids = num + 1;
+-	}
+-
+-	/* allocate the map */
+-	map = alloc_bootmem_low(nr_node_ids * sizeof(cpumask_t));
+-
+-	Dprintk(KERN_DEBUG "Node to cpumask map at %p for %d nodes\n",
+-		map, nr_node_ids);
+-
+-	/* node_to_cpumask() will now work */
+-	node_to_cpumask_map = map;
+-}
+-
+ void __cpuinit numa_set_node(int cpu, int node)
+ {
+ 	int *cpu_to_node_map = early_per_cpu_ptr(x86_cpu_to_node_map);
+@@ -271,8 +228,6 @@ void __cpuinit numa_clear_node(int cpu)
+ 	numa_set_node(cpu, NUMA_NO_NODE);
+ }
+ 
+-#ifndef CONFIG_DEBUG_PER_CPU_MAPS
+-
+ void __cpuinit numa_add_cpu(int cpu)
+ {
+ 	cpu_set(cpu, node_to_cpumask_map[early_cpu_to_node(cpu)]);
+@@ -282,44 +237,9 @@ void __cpuinit numa_remove_cpu(int cpu)
+ {
+ 	cpu_clear(cpu, node_to_cpumask_map[cpu_to_node(cpu)]);
+ }
++#endif /* CONFIG_NUMA */
+ 
+-#else /* CONFIG_DEBUG_PER_CPU_MAPS */
+-
+-/*
+- * --------- debug versions of the numa functions ---------
+- */
+-static void __cpuinit numa_set_cpumask(int cpu, int enable)
+-{
+-	int node = cpu_to_node(cpu);
+-	cpumask_t *mask;
+-	char buf[64];
+-
+-	if (node_to_cpumask_map == NULL) {
+-		printk(KERN_ERR "node_to_cpumask_map NULL\n");
+-		dump_stack();
+-		return;
+-	}
+-
+-	mask = &node_to_cpumask_map[node];
+-	if (enable)
+-		cpu_set(cpu, *mask);
+-	else
+-		cpu_clear(cpu, *mask);
+-
+-	cpulist_scnprintf(buf, sizeof(buf), *mask);
+-	printk(KERN_DEBUG "%s cpu %d node %d: mask now %s\n",
+-		enable? "numa_add_cpu":"numa_remove_cpu", cpu, node, buf);
+- }
+-
+-void __cpuinit numa_add_cpu(int cpu)
+-{
+-	numa_set_cpumask(cpu, 1);
+-}
+-
+-void __cpuinit numa_remove_cpu(int cpu)
+-{
+-	numa_set_cpumask(cpu, 0);
+-}
++#if defined(CONFIG_DEBUG_PER_CPU_MAPS) && defined(CONFIG_X86_64)
+ 
+ int cpu_to_node(int cpu)
+ {
+@@ -333,10 +253,6 @@ int cpu_to_node(int cpu)
+ }
+ EXPORT_SYMBOL(cpu_to_node);
+ 
+-/*
+- * Same function as cpu_to_node() but used if called before the
+- * per_cpu areas are setup.
+- */
+ int early_cpu_to_node(int cpu)
+ {
+ 	if (early_per_cpu_ptr(x86_cpu_to_node_map))
+@@ -345,47 +261,9 @@ int early_cpu_to_node(int cpu)
+ 	if (!per_cpu_offset(cpu)) {
+ 		printk(KERN_WARNING
+ 			"early_cpu_to_node(%d): no per_cpu area!\n", cpu);
+-		dump_stack();
++			dump_stack();
+ 		return NUMA_NO_NODE;
+ 	}
+ 	return per_cpu(x86_cpu_to_node_map, cpu);
+ }
+-
+-/*
+- * Returns a pointer to the bitmask of CPUs on Node 'node'.
+- */
+-cpumask_t *_node_to_cpumask_ptr(int node)
+-{
+-	if (node_to_cpumask_map == NULL) {
+-		printk(KERN_WARNING
+-			"_node_to_cpumask_ptr(%d): no node_to_cpumask_map!\n",
+-			node);
+-		dump_stack();
+-		return &cpu_online_map;
+-	}
+-	return &node_to_cpumask_map[node];
+-}
+-EXPORT_SYMBOL(_node_to_cpumask_ptr);
+-
+-/*
+- * Returns a bitmask of CPUs on Node 'node'.
+- */
+-cpumask_t node_to_cpumask(int node)
+-{
+-	if (node_to_cpumask_map == NULL) {
+-		printk(KERN_WARNING
+-			"node_to_cpumask(%d): no node_to_cpumask_map!\n", node);
+-		dump_stack();
+-		return cpu_online_map;
+-	}
+-	return node_to_cpumask_map[node];
+-}
+-EXPORT_SYMBOL(node_to_cpumask);
+-
+-/*
+- * --------- end of debug versions of the numa functions ---------
+- */
+-
+-#endif /* CONFIG_DEBUG_PER_CPU_MAPS */
+-
+-#endif /* X86_64_NUMA */
++#endif
+diff -puN arch/x86/mm/numa_64.c~revert-x86-remove-the-static-256k-node_to_cpumask_map arch/x86/mm/numa_64.c
+--- a/arch/x86/mm/numa_64.c~revert-x86-remove-the-static-256k-node_to_cpumask_map
++++ a/arch/x86/mm/numa_64.c
+@@ -35,6 +35,9 @@ s16 apicid_to_node[MAX_LOCAL_APIC] __cpu
+ 	[0 ... MAX_LOCAL_APIC-1] = NUMA_NO_NODE
+ };
+ 
++cpumask_t node_to_cpumask_map[MAX_NUMNODES] __read_mostly;
++EXPORT_SYMBOL(node_to_cpumask_map);
++
+ int numa_off __initdata;
+ static unsigned long __initdata nodemap_addr;
+ static unsigned long __initdata nodemap_size;
+@@ -557,6 +560,9 @@ void __init numa_initmem_init(unsigned l
+ 	node_set(0, node_possible_map);
+ 	for (i = 0; i < NR_CPUS; i++)
+ 		numa_set_node(i, 0);
++	/* cpumask_of_cpu() may not be available during early startup */
++	memset(&node_to_cpumask_map[0], 0, sizeof(node_to_cpumask_map[0]));
++	cpu_set(0, node_to_cpumask_map[0]);
+ 	e820_register_active_regions(0, start_pfn, last_pfn);
+ 	setup_node_bootmem(0, start_pfn << PAGE_SHIFT, last_pfn << PAGE_SHIFT);
+ }
+diff -puN include/asm-x86/topology.h~revert-x86-remove-the-static-256k-node_to_cpumask_map include/asm-x86/topology.h
+--- a/include/asm-x86/topology.h~revert-x86-remove-the-static-256k-node_to_cpumask_map
++++ a/include/asm-x86/topology.h
+@@ -57,16 +57,10 @@ static inline int cpu_to_node(int cpu)
+ }
+ #define early_cpu_to_node(cpu)	cpu_to_node(cpu)
+ 
+-/* Returns a bitmask of CPUs on Node 'node'. */
+-static inline cpumask_t node_to_cpumask(int node)
+-{
+-	return node_to_cpumask_map[node];
+-}
+-
+ #else /* CONFIG_X86_64 */
+ 
+ /* Mappings between node number and cpus on that node. */
+-extern cpumask_t *node_to_cpumask_map;
++extern cpumask_t node_to_cpumask_map[];
+ 
+ /* Mappings between logical cpu number and node number */
+ DECLARE_EARLY_PER_CPU(int, x86_cpu_to_node_map);
+@@ -110,6 +104,7 @@ static inline cpumask_t node_to_cpumask(
+ }
+ 
+ #endif /* !CONFIG_DEBUG_PER_CPU_MAPS */
++#endif /* CONFIG_X86_64 */
+ 
+ /* Replace default node_to_cpumask_ptr with optimized version */
+ #define node_to_cpumask_ptr(v, node)		\
+@@ -118,7 +113,12 @@ static inline cpumask_t node_to_cpumask(
+ #define node_to_cpumask_ptr_next(v, node)	\
+ 			   v = _node_to_cpumask_ptr(node)
+ 
+-#endif /* CONFIG_X86_64 */
++/* Returns the number of the first CPU on Node 'node'. */
++static inline int node_to_first_cpu(int node)
++{
++	node_to_cpumask_ptr(mask, node);
++	return first_cpu(*mask);
++}
+ 
+ /*
+  * Returns the number of the node containing Node 'node'. This
+@@ -204,15 +204,6 @@ static inline int node_to_first_cpu(int 
+ 
+ #include <asm-generic/topology.h>
+ 
+-#ifdef CONFIG_NUMA
+-/* Returns the number of the first CPU on Node 'node'. */
+-static inline int node_to_first_cpu(int node)
+-{
+-	node_to_cpumask_ptr(mask, node);
+-	return first_cpu(*mask);
+-}
+-#endif
+-
+ extern cpumask_t cpu_coregroup_map(int cpu);
+ 
+ #ifdef ENABLE_TOPO_DEFINES
+_
+
