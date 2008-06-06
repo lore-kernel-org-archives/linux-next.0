@@ -1,63 +1,61 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: arm/mer-current merge conflict
-Date: Fri, 6 Jun 2008 21:19:32 +1000
-Message-ID: <20080606211932.9d0319e9.sfr@canb.auug.org.au>
-References: <20080603140421.183cefe5.sfr@canb.auug.org.au>
-	<20080606101012.GA18231@flint.arm.linux.org.uk>
+From: "Vegard Nossum" <vegard.nossum@gmail.com>
+Subject: Re: linux-next: Tree for June 5
+Date: Fri, 6 Jun 2008 13:21:07 +0200
+Message-ID: <19f34abd0806060421y5ec0a4f7je592f6ba5b575ee4@mail.gmail.com>
+References: <20080605175217.cee497f3.sfr@canb.auug.org.au>
+	 <20080605195604.41623687.akpm@linux-foundation.org>
+	 <20080606071707.GB9708@elte.hu>
+	 <20080606002957.6329a0ec.akpm@linux-foundation.org>
+	 <20080606024811.70db9ab2.akpm@linux-foundation.org>
+	 <20080606035413.37f340ef.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__6_Jun_2008_21_19_32_+1000_DDASHbZnAlJeC3hQ"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37430 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752639AbYFFLTj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 6 Jun 2008 07:19:39 -0400
-In-Reply-To: <20080606101012.GA18231@flint.arm.linux.org.uk>
+Received: from rv-out-0506.google.com ([209.85.198.235]:19391 "EHLO
+	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752740AbYFFLVI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Jun 2008 07:21:08 -0400
+Received: by rv-out-0506.google.com with SMTP id l9so1432917rvb.1
+        for <linux-next@vger.kernel.org>; Fri, 06 Jun 2008 04:21:07 -0700 (PDT)
+In-Reply-To: <20080606035413.37f340ef.akpm@linux-foundation.org>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, Dmitry Baryshkov <dbaryshkov@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mike Travis <travis@sgi.com>
 
---Signature=_Fri__6_Jun_2008_21_19_32_+1000_DDASHbZnAlJeC3hQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jun 6, 2008 at 12:54 PM, Andrew Morton
+<akpm@linux-foundation.org> wrote:
+> On Fri, 6 Jun 2008 02:48:11 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
 
-Hi Russell,
+...
 
-On Fri, 6 Jun 2008 11:10:12 +0100 Russell King <rmk@arm.linux.org.uk> wrote:
+> commit a9ad585c8a18f7ba754b85f5786976609b9d7d29
+> Author: Mike Travis <travis@sgi.com>
+> Date:   Mon May 12 21:21:12 2008 +0200
 >
-> Yes, I'm aware of there being two fixes in my tree for that.  One is
-> the fix suitable for -rc kernels, the other is the proper fix, which
-> has a higher impact.
+>    x86: remove the static 256k node_to_cpumask_map
+>
+>      * Consolidate node_to_cpumask operations and remove the 256k
+>        byte node_to_cpumask_map.  This is done by allocating the
+>        node_to_cpumask_map array after the number of possible nodes
+>        (nr_node_ids) is known.
+>
+>      * Debug printouts when CONFIG_DEBUG_PER_CPU_MAPS is active have
+>        been increased.  It now shows faults when calling node_to_cpumask()
+>        and node_to_cpumask_ptr().
 
-Which is fair enough.
+This might be obvious, but maybe enabling CONFIG_DEBUG_PER_CPU_MAPS
+will give you some more (valuable) info? It looks to me like maybe
+nr_node_ids is returning inconsistent numbers or used somewhere before
+it's properly initialized.
 
-> The merge conflict will be resolved probably around merge window time -
-> I hope this doesn't cause you too much of a problem?
 
-Once I have the correct resolution, "git rerere" remembers and reapplies
-it for me automatically, so its not much of a problem.
+Vegard
 
-Now that the -rc fix has gone into Linus' tree, I assume you will
-rebase/merge with his tree at some point at which time the conflict will
-vanish for me.  No hurry.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__6_Jun_2008_21_19_32_+1000_DDASHbZnAlJeC3hQ
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhJHUQACgkQTgG2atn1QN/hnACfWi5xd+/zQTQ/z34WLWAbFWku
-fzsAn2X2CWijuS+iNOYNBjeCOBdUad++
-=xugT
------END PGP SIGNATURE-----
-
---Signature=_Fri__6_Jun_2008_21_19_32_+1000_DDASHbZnAlJeC3hQ--
+-- 
+"The animistic metaphor of the bug that maliciously sneaked in while
+the programmer was not looking is intellectually dishonest as it
+disguises that the error is the programmer's own creation."
+	-- E. W. Dijkstra, EWD1036
