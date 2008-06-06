@@ -1,61 +1,57 @@
-From: "Vegard Nossum" <vegard.nossum@gmail.com>
+From: Paul Mackerras <paulus@samba.org>
 Subject: Re: linux-next: Tree for June 5
-Date: Fri, 6 Jun 2008 13:21:07 +0200
-Message-ID: <19f34abd0806060421y5ec0a4f7je592f6ba5b575ee4@mail.gmail.com>
+Date: Fri, 6 Jun 2008 21:50:01 +1000
+Message-ID: <18505.9321.453540.780399@cargo.ozlabs.ibm.com>
 References: <20080605175217.cee497f3.sfr@canb.auug.org.au>
-	 <20080605195604.41623687.akpm@linux-foundation.org>
-	 <20080606071707.GB9708@elte.hu>
-	 <20080606002957.6329a0ec.akpm@linux-foundation.org>
-	 <20080606024811.70db9ab2.akpm@linux-foundation.org>
-	 <20080606035413.37f340ef.akpm@linux-foundation.org>
+	<20080605195604.41623687.akpm@linux-foundation.org>
+	<20080606071707.GB9708@elte.hu>
+	<20080606072536.GA19334@elte.hu>
+	<20080606003327.9ac0e91b.akpm@linux-foundation.org>
+	<20080606074137.GA28962@elte.hu>
+	<20080606004743.a78180c3.akpm@linux-foundation.org>
+	<20080606175358.a439d1bb.sfr@canb.auug.org.au>
+	<20080606010149.4d757b92.akpm@linux-foundation.org>
+	<20080606182206.8bc36f71.sfr@canb.auug.org.au>
+	<20080606013058.e5d52c97.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rv-out-0506.google.com ([209.85.198.235]:19391 "EHLO
-	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752740AbYFFLVI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Jun 2008 07:21:08 -0400
-Received: by rv-out-0506.google.com with SMTP id l9so1432917rvb.1
-        for <linux-next@vger.kernel.org>; Fri, 06 Jun 2008 04:21:07 -0700 (PDT)
-In-Reply-To: <20080606035413.37f340ef.akpm@linux-foundation.org>
-Content-Disposition: inline
+Received: from ozlabs.org ([203.10.76.45]:54049 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753387AbYFFLuM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 6 Jun 2008 07:50:12 -0400
+In-Reply-To: <20080606013058.e5d52c97.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mike Travis <travis@sgi.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, the arch/x86 maintainers <x86@kernel.org>
 
-On Fri, Jun 6, 2008 at 12:54 PM, Andrew Morton
-<akpm@linux-foundation.org> wrote:
-> On Fri, 6 Jun 2008 02:48:11 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+Andrew Morton writes:
 
-...
+> Well OK.  But patches in fact _do_ go into Linux as a single linear
+> stream of commits.
 
-> commit a9ad585c8a18f7ba754b85f5786976609b9d7d29
-> Author: Mike Travis <travis@sgi.com>
-> Date:   Mon May 12 21:21:12 2008 +0200
->
->    x86: remove the static 256k node_to_cpumask_map
->
->      * Consolidate node_to_cpumask operations and remove the 256k
->        byte node_to_cpumask_map.  This is done by allocating the
->        node_to_cpumask_map array after the number of possible nodes
->        (nr_node_ids) is known.
->
->      * Debug printouts when CONFIG_DEBUG_PER_CPU_MAPS is active have
->        been increased.  It now shows faults when calling node_to_cpumask()
->        and node_to_cpumask_ptr().
+Well no, they don't.  Multiple people work on things independently and
+then put their stuff together.  Sometimes there are then conflicts
+that have to be sorted out.  That's what merging is all about.
 
-This might be obvious, but maybe enabling CONFIG_DEBUG_PER_CPU_MAPS
-will give you some more (valuable) info? It looks to me like maybe
-nr_node_ids is returning inconsistent numbers or used somewhere before
-it's properly initialized.
+>  But the whole git model ignores that reality and
+> here we see the result.
 
+No, the git model (and the BK model before it) expresses the reality
+that there is lots of development going on in parallel in many
+different places.
 
-Vegard
+> And saying "git doesn't work like that - you don't understand" just
+> doesn't cut it.  It is a tool's job to permit humans to implement the
+> workflow which they wish to follow.  Not to go and force them into
+> doing something inferior.
 
--- 
-"The animistic metaphor of the bug that maliciously sneaked in while
-the programmer was not looking is intellectually dishonest as it
-disguises that the error is the programmer's own creation."
-	-- E. W. Dijkstra, EWD1036
+You'd prefer to be the bunny that keeps every single subsystem's
+string of patches all bundled together in a single humungous quilt
+series?  With all due respect (and with a sense of admiration at how
+much patch-wrangling you already do), I don't think you'd scale that
+far. :)
+
+Paul.
