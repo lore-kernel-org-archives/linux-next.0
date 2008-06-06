@@ -1,67 +1,63 @@
-From: Ingo Molnar <mingo@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Tree for June 5
-Date: Fri, 6 Jun 2008 10:27:10 +0200
-Message-ID: <20080606082710.GB10826@elte.hu>
-References: <20080605175217.cee497f3.sfr@canb.auug.org.au> <20080605195604.41623687.akpm@linux-foundation.org> <20080606071707.GB9708@elte.hu> <20080606072536.GA19334@elte.hu> <20080606003327.9ac0e91b.akpm@linux-foundation.org> <20080606074137.GA28962@elte.hu> <20080606004743.a78180c3.akpm@linux-foundation.org> <20080606175358.a439d1bb.sfr@canb.auug.org.au>
+Date: Fri, 6 Jun 2008 18:28:58 +1000
+Message-ID: <20080606182858.60490e47.sfr@canb.auug.org.au>
+References: <20080605175217.cee497f3.sfr@canb.auug.org.au>
+	<20080605195604.41623687.akpm@linux-foundation.org>
+	<20080606071707.GB9708@elte.hu>
+	<20080606072536.GA19334@elte.hu>
+	<20080606003327.9ac0e91b.akpm@linux-foundation.org>
+	<20080606074137.GA28962@elte.hu>
+	<20080606004743.a78180c3.akpm@linux-foundation.org>
+	<20080606082325.GA10826@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__6_Jun_2008_18_28_58_+1000_dDSE69frW00/Ecm8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:58906 "EHLO mx2.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48156 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753586AbYFFI1l (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 6 Jun 2008 04:27:41 -0400
-Content-Disposition: inline
-In-Reply-To: <20080606175358.a439d1bb.sfr@canb.auug.org.au>
+	id S1756568AbYFFI3F (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 6 Jun 2008 04:29:05 -0400
+In-Reply-To: <20080606082325.GA10826@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Ingo Molnar <mingo@elte.hu>
 Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, the arch/x86 maintainers <x86@kernel.org>
 
+--Signature=_Fri__6_Jun_2008_18_28_58_+1000_dDSE69frW00/Ecm8
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Fri, 6 Jun 2008 10:23:25 +0200 Ingo Molnar <mingo@elte.hu> wrote:
+>
+> hm, which commit is this exactly? I've never hit it myself in bisection=20
+> (and there are days when i bisect -tip several times). We'll respin=20
+> tip/tracing/mmiotrace if it's bisection-hostile. You can probably nudge=20
+> it into building via "git-bisect next".
 
-> > arch/x86/mm/kmmio.c: In function 'get_kmmio_probe':
-> > arch/x86/mm/kmmio.c:85: error: implicit declaration of function 'list_for_each_entry_rcu'
-> 
-> You need the following patch from linux-next.  Which should be the commit
-> immediately after the merge of the ftrace tree.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
-> 
-> >From ee19aa543ada9ce11a0b3b8480f3a268ff86cb02 Mon Sep 17 00:00:00 2001
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 27 May 2008 12:53:04 +1000
-> Subject: [PATCH] ftrace: fix rculist split fallout
+See my other email.  This is because the ftrace tree does not merge well
+with the rcu tree.
 
-ah, that one - that's in the tip/tracing/mmiotrace-mergefixups branch. 
-ideally this should be embedded in the merge commit of 
-tip/core/rcu+tip/auto-ftrace-next [so that no bisection can ever hit the 
-combined trees without also getting the merge fixup], but havent found a 
-good Git way of doing that yet.
+I may start merging such build breakage fixes into the actual merge
+commits that cause them.  That will make linux-next more bisectable, but
+means I have to remember that I did it for Linus' sake.
 
-	Ingo
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
------------>
-commit 668a6c3654560aef8741642478973e205a4f02bf
-Author: Ingo Molnar <mingo@elte.hu>
-Date:   Mon May 19 13:35:24 2008 +0200
+--Signature=_Fri__6_Jun_2008_18_28_58_+1000_dDSE69frW00/Ecm8
+Content-Type: application/pgp-signature
 
-    - fix mmioftrace + rcu merge interaction
-    
-    Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-diff --git a/arch/x86/mm/kmmio.c b/arch/x86/mm/kmmio.c
-index b65871e..93d8203 100644
---- a/arch/x86/mm/kmmio.c
-+++ b/arch/x86/mm/kmmio.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/list.h>
-+#include <linux/rculist.h>
- #include <linux/spinlock.h>
- #include <linux/hash.h>
- #include <linux/init.h>
+iEYEARECAAYFAkhI9UoACgkQTgG2atn1QN8TsgCdHa5kJFDPfB+pID6L+a0TWSjX
+PUQAnjvR/aa/6RqBPLRWJWVb7HMNNuxN
+=pDow
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__6_Jun_2008_18_28_58_+1000_dDSE69frW00/Ecm8--
