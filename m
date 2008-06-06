@@ -1,42 +1,47 @@
-From: "Randy.Dunlap" <rdunlap@xenotime.net>
-Subject: [PATCH -next] x86: fix longstanding setup.c printk format warning
-Date: Thu, 5 Jun 2008 11:10:59 -0700 (PDT)
-Message-ID: <Pine.LNX.4.64.0806051107200.702@shark.he.net>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: rr merge conflict
+Date: Fri, 6 Jun 2008 10:02:27 +1000
+Message-ID: <200806061002.27870.rusty@rustcorp.com.au>
+References: <20080605143859.53705782.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xenotime.net ([66.160.160.81]:46527 "HELO xenotime.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-	id S1753231AbYFESLL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 5 Jun 2008 14:11:11 -0400
-Received: from shark.he.net ([66.160.160.2]) by xenotime.net for <linux-next@vger.kernel.org>; Thu, 5 Jun 2008 11:10:59 -0700
+Received: from ozlabs.org ([203.10.76.45]:58134 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753138AbYFFACa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Jun 2008 20:02:30 -0400
+In-Reply-To: <20080605143859.53705782.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Mark McLoughlin <markmc@redhat.com>, Jeff Garzik <jeff@garzik.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Thursday 05 June 2008 14:38:59 Stephen Rothwell wrote:
+> Hi Rusty,
+>
+> Today's merge of the rr tree got a conflict in drivers/net/virtio_net.c
+> between commits 11a3a1546d0adc36485c2ad4af7ab950712df6ff ("virtio: fix
+> delayed xmit of packet and freeing of old packets.") and
+> 7eb2e25112bf920bb0a4d1cca445f3d96874c25f ("virtio: fix virtio_net xmit of
+> freed skb bug") from the net-current tree and commits
+> c95d10b237db3449ccb7c8ba1675f0bd83722d19
+> ("virtio:net-force-callback-on-empty"),
+> 5a37649cd6d69a0ded7cf32c89107f542ea4c69b ("virtio:net-fix-last-xmit") and
+> a13dd9f483bd628423b2351ca757f641370c1227
+> ("virtio:net-fix-dangling-packets") from the rr tree. (I think :-))
+>
+> Some of these commits do basically the same things, but are also mixed up
+> with other changes to this file in the rr tree.  I used the rr tree version
+> but you should check that it makes sense.  This should go away once
+> net-current gets merged into Linus' tree and you merge (or rebase) against
+> that.
 
-Note: for -next only, not mainline.
+Ack.  Jeff has taken the patches I sent, but I have a few more which require 
+minor virtio changes first.  So resorting to the -rr ones is the correct 
+workaround for the moment.
 
-Fix setup.c printk format warning:
-
-linux-next-20080605/arch/x86/kernel/setup.c: In function 'setup_per_cpu_areas':
-linux-next-20080605/arch/x86/kernel/setup.c:173: warning: format '%lu' expects type 'long unsigned int', but argument 2 has type 'ssize_t'
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- arch/x86/kernel/setup.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20080605.orig/arch/x86/kernel/setup.c
-+++ linux-next-20080605/arch/x86/kernel/setup.c
-@@ -169,7 +169,7 @@ void __init setup_per_cpu_areas(void)
- 
- 	/* Copy section for each CPU (we discard the original) */
- 	size = PERCPU_ENOUGH_ROOM;
--	printk(KERN_INFO "PERCPU: Allocating %lu bytes of per cpu data\n",
-+	printk(KERN_INFO "PERCPU: Allocating %zd bytes of per cpu data\n",
- 			  size);
- 
- 	for_each_possible_cpu(cpu) {
+Thanks,
+Rusty.
