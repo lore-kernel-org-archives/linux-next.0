@@ -1,58 +1,67 @@
 From: Ingo Molnar <mingo@elte.hu>
 Subject: Re: linux-next: Tree for June 5
-Date: Fri, 6 Jun 2008 10:23:25 +0200
-Message-ID: <20080606082325.GA10826@elte.hu>
-References: <20080605175217.cee497f3.sfr@canb.auug.org.au> <20080605195604.41623687.akpm@linux-foundation.org> <20080606071707.GB9708@elte.hu> <20080606072536.GA19334@elte.hu> <20080606003327.9ac0e91b.akpm@linux-foundation.org> <20080606074137.GA28962@elte.hu> <20080606004743.a78180c3.akpm@linux-foundation.org>
+Date: Fri, 6 Jun 2008 10:27:10 +0200
+Message-ID: <20080606082710.GB10826@elte.hu>
+References: <20080605175217.cee497f3.sfr@canb.auug.org.au> <20080605195604.41623687.akpm@linux-foundation.org> <20080606071707.GB9708@elte.hu> <20080606072536.GA19334@elte.hu> <20080606003327.9ac0e91b.akpm@linux-foundation.org> <20080606074137.GA28962@elte.hu> <20080606004743.a78180c3.akpm@linux-foundation.org> <20080606175358.a439d1bb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:47476 "EHLO mx3.mail.elte.hu"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:58906 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758583AbYFFIXo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 6 Jun 2008 04:23:44 -0400
+	id S1753586AbYFFI1l (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 6 Jun 2008 04:27:41 -0400
 Content-Disposition: inline
-In-Reply-To: <20080606004743.a78180c3.akpm@linux-foundation.org>
+In-Reply-To: <20080606175358.a439d1bb.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, the arch/x86 maintainers <x86@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, the arch/x86 maintainers <x86@kernel.org>
 
 
-* Andrew Morton <akpm@linux-foundation.org> wrote:
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> > > > i just successfully booted your config on 4 separate 64-bit 
-> > > > test-systems with latest -tip. (two dual-core boxes, a quad and a 
-> > > > 16way box) Latest -tip includes sched-next and x86-next as well.
-> > > 
-> > > What's the point in testing a radically differenet kernel from the one 
-> > > which is known to be crashing?
-> > 
-> > well, you Cc:-ed me, so i wanted to exclude -tip's 750+ commits in this 
-> > area (scheduling, 64-bit x86) in the first step.
+> > arch/x86/mm/kmmio.c: In function 'get_kmmio_probe':
+> > arch/x86/mm/kmmio.c:85: error: implicit declaration of function 'list_for_each_entry_rcu'
 > 
-> What's the relationship between -tip and linux-next?
-
-most of the -tip topics (there are 75 of them currently) are present in 
-linux-next - about ~70% of all -tip commits are in linux-next already. 
-The stuff that is not in linux-next yet is either because it's: 
-miscellany fixes (i.e. intentionally grabbed out-of-tree to make our 
-tests work better), not cooked enough yet, or because we are still 
-working it out - tip is less than a month old still.
-
-in general the rule is that if there's anything we want to push 
-upstream, it will show up in linux-next.
-
-> The crash seems to be due to sched_domains startup ordering, at a guess.
+> You need the following patch from linux-next.  Which should be the commit
+> immediately after the merge of the ftrace tree.
 > 
-> My third bisect iteration has hit this:
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
 > 
-> arch/x86/mm/kmmio.c: In function 'get_kmmio_probe':
-> arch/x86/mm/kmmio.c:85: error: implicit declaration of function 'list_for_each_entry_rcu'
-> arch/x86/mm/kmmio.c:85: error: 'list' undeclared (first use in this function)
+> >From ee19aa543ada9ce11a0b3b8480f3a268ff86cb02 Mon Sep 17 00:00:00 2001
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 27 May 2008 12:53:04 +1000
+> Subject: [PATCH] ftrace: fix rculist split fallout
 
-hm, which commit is this exactly? I've never hit it myself in bisection 
-(and there are days when i bisect -tip several times). We'll respin 
-tip/tracing/mmiotrace if it's bisection-hostile. You can probably nudge 
-it into building via "git-bisect next".
+ah, that one - that's in the tip/tracing/mmiotrace-mergefixups branch. 
+ideally this should be embedded in the merge commit of 
+tip/core/rcu+tip/auto-ftrace-next [so that no bisection can ever hit the 
+combined trees without also getting the merge fixup], but havent found a 
+good Git way of doing that yet.
 
 	Ingo
+
+----------->
+commit 668a6c3654560aef8741642478973e205a4f02bf
+Author: Ingo Molnar <mingo@elte.hu>
+Date:   Mon May 19 13:35:24 2008 +0200
+
+    - fix mmioftrace + rcu merge interaction
+    
+    Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+
+diff --git a/arch/x86/mm/kmmio.c b/arch/x86/mm/kmmio.c
+index b65871e..93d8203 100644
+--- a/arch/x86/mm/kmmio.c
++++ b/arch/x86/mm/kmmio.c
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include <linux/list.h>
++#include <linux/rculist.h>
+ #include <linux/spinlock.h>
+ #include <linux/hash.h>
+ #include <linux/init.h>
