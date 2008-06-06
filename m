@@ -1,58 +1,57 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Subject: Re: linux-next: firmware build failure
-Date: Fri, 06 Jun 2008 10:31:05 +0100
-Message-ID: <1212744665.32207.304.camel@pmac.infradead.org>
-References: <20080606174723.05ae4f28.sfr@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: Tree for June 5
+Date: Fri, 6 Jun 2008 02:48:11 -0700
+Message-ID: <20080606024811.70db9ab2.akpm@linux-foundation.org>
+References: <20080605175217.cee497f3.sfr@canb.auug.org.au>
+	<20080605195604.41623687.akpm@linux-foundation.org>
+	<20080606071707.GB9708@elte.hu>
+	<20080606002957.6329a0ec.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:52435 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750944AbYFFJbI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Jun 2008 05:31:08 -0400
-In-Reply-To: <20080606174723.05ae4f28.sfr@canb.auug.org.au>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:48394 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752592AbYFFJsc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Jun 2008 05:48:32 -0400
+In-Reply-To: <20080606002957.6329a0ec.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, 2008-06-06 at 17:47 +1000, Stephen Rothwell wrote:
-> Hi David,
-> 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
-> 
->   IHEX2FW firmware/atmsar11.fw
-> Bad EOF record (type 01) format
-> make[2]: *** [firmware/atmsar11.fw] Error 1
+On Fri, 6 Jun 2008 00:29:57 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
 
-Bah. The actual fix is something like this, which I forgot to commit.
-Sorry again -- it's there now (with some more minor cleanups).
+> It crashes on two quite different machines with both slab and slub.
 
---- a/firmware/ihex2fw.c
-+++ b/firmware/ihex2fw.c
-@@ -146,7 +146,6 @@ next_record:
- 
-        record->addr  = hex(data + i, &crc) << 8; i += 2;
-        record->addr |= hex(data + i, &crc); i += 2;
--       record->addr += offset;
-        type = hex(data + i, &crc); i += 2;
- 
-        for (j = 0; j < record->len; j++, i += 2)
-@@ -166,12 +165,13 @@ next_record:
-                if (!record->len)
-                        break;
- 
-+               record->addr += offset;
-                file_record(record);
-                goto next_record;
- 
-        case 1: /* End-Of-File Record */
-                if (record->addr || record->len) {
-                        fprintf(stderr, "Bad EOF record (type 01) format\n");
+OK, I seem to be screwed here.
+
+Five commits to go and my bisection point is at
+
+Author: Mike Travis <travis@sgi.com>  2008-05-12 12:21:13
+Committer: Thomas Gleixner <tglx@linutronix.de>  2008-05-23 09:08:00
+Parent: a9ad585c8a18f7ba754b85f5786976609b9d7d29 (x86: remove the static 256k node_to_cpumask_map)
+Branch: 
+Follows: v2.6.26-rc2
+Precedes: next-20080526
+
+But here I'm getting a totally different crash - an early exception.
+
+I'll try a linear search starting at
+
+Author: Mike Travis <travis@sgi.com>  2008-05-12 12:21:12
+Committer: Thomas Gleixner <tglx@linutronix.de>  2008-05-23 09:05:25
+Parent: b65e04b53ffcb4002737a5346c9ff8865c37be58 (x86: don't call pxm_to_node again)
+Child:  dfdf1d75efee39e9396f8384c6f3bf555349ed60 (x86: modify Kconfig to allow up to 4096 cpus)
+Branch: 
+
+and ending at
+
+Author: Mike Travis <travis@sgi.com>  2008-05-12 12:21:13
+Committer: Thomas Gleixner <tglx@linutronix.de>  2008-05-23 09:08:00
+Parent: a9ad585c8a18f7ba754b85f5786976609b9d7d29 (x86: remove the static 256k node_to_cpumask_map)
+Branch: 
+Follows: v2.6.26-rc2
+Precedes: next-20080526
 
 
-> 
--- 
-dwmw2
 
