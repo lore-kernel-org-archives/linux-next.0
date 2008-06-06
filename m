@@ -1,64 +1,67 @@
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Tree for June 5
-Date: Fri, 6 Jun 2008 00:47:43 -0700
-Message-ID: <20080606004743.a78180c3.akpm@linux-foundation.org>
+Date: Fri, 6 Jun 2008 17:53:58 +1000
+Message-ID: <20080606175358.a439d1bb.sfr@canb.auug.org.au>
 References: <20080605175217.cee497f3.sfr@canb.auug.org.au>
 	<20080605195604.41623687.akpm@linux-foundation.org>
 	<20080606071707.GB9708@elte.hu>
 	<20080606072536.GA19334@elte.hu>
 	<20080606003327.9ac0e91b.akpm@linux-foundation.org>
 	<20080606074137.GA28962@elte.hu>
+	<20080606004743.a78180c3.akpm@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:46180 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753842AbYFFHsd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Jun 2008 03:48:33 -0400
-In-Reply-To: <20080606074137.GA28962@elte.hu>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34157 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1763044AbYFFHyA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 6 Jun 2008 03:54:00 -0400
+In-Reply-To: <20080606004743.a78180c3.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, the arch/x86 maintainers <x86@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, the arch/x86 maintainers <x86@kernel.org>
 
-On Fri, 6 Jun 2008 09:41:37 +0200 Ingo Molnar <mingo@elte.hu> wrote:
+Hi Andrew,
 
+On Fri, 6 Jun 2008 00:47:43 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> My third bisect iteration has hit this:
 > 
-> * Andrew Morton <akpm@linux-foundation.org> wrote:
-> 
-> > > > did SLUB change in linux-next? There is no such problem in -tip.
-> > > 
-> > > i just successfully booted your config on 4 separate 64-bit 
-> > > test-systems with latest -tip. (two dual-core boxes, a quad and a 
-> > > 16way box) Latest -tip includes sched-next and x86-next as well.
-> > 
-> > What's the point in testing a radically differenet kernel from the one 
-> > which is known to be crashing?
-> 
-> well, you Cc:-ed me, so i wanted to exclude -tip's 750+ commits in this 
-> area (scheduling, 64-bit x86) in the first step.
-> 
+> arch/x86/mm/kmmio.c: In function 'get_kmmio_probe':
+> arch/x86/mm/kmmio.c:85: error: implicit declaration of function 'list_for_each_entry_rcu'
 
-What's the relationship between -tip and linux-next?
+You need the following patch from linux-next.  Which should be the commit
+immediately after the merge of the ftrace tree.
 
-The crash seems to be due to sched_domains startup ordering, at a guess.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-My third bisect iteration has hit this:
+>From ee19aa543ada9ce11a0b3b8480f3a268ff86cb02 Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 27 May 2008 12:53:04 +1000
+Subject: [PATCH] ftrace: fix rculist split fallout
 
-arch/x86/mm/kmmio.c: In function 'get_kmmio_probe':
-arch/x86/mm/kmmio.c:85: error: implicit declaration of function 'list_for_each_entry_rcu'
-arch/x86/mm/kmmio.c:85: error: 'list' undeclared (first use in this function)
-arch/x86/mm/kmmio.c:85: error: (Each undeclared identifier is reported only once
-arch/x86/mm/kmmio.c:85: error: for each function it appears in.)
-arch/x86/mm/kmmio.c:85: error: syntax error before '{' token
-arch/x86/mm/kmmio.c:88: warning: no return statement in function returning non-void
-arch/x86/mm/kmmio.c: In function 'get_kmmio_fault_page':
-arch/x86/mm/kmmio.c:100: error: 'list' undeclared (first use in this function)
-arch/x86/mm/kmmio.c:100: error: syntax error before '{' token
-arch/x86/mm/kmmio.c:103: warning: no return statement in function returning non-void
-arch/x86/mm/kmmio.c: In function 'add_kmmio_fault_page':
-arch/x86/mm/kmmio.c:328: error: implicit declaration of function 'list_add_rcu'
-arch/x86/mm/kmmio.c: In function 'remove_kmmio_fault_pages':
-arch/x86/mm/kmmio.c:420: error: implicit declaration of function 'list_del_rcu'
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/x86/mm/kmmio.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/arch/x86/mm/kmmio.c b/arch/x86/mm/kmmio.c
+index b65871e..7bfdad7 100644
+--- a/arch/x86/mm/kmmio.c
++++ b/arch/x86/mm/kmmio.c
+@@ -23,6 +23,7 @@
+ #include <linux/errno.h>
+ #include <asm/debugreg.h>
+ #include <linux/mmiotrace.h>
++#include <linux/rculist.h>
+ 
+ #define KMMIO_PAGE_HASH_BITS 4
+ #define KMMIO_PAGE_TABLE_SIZE (1 << KMMIO_PAGE_HASH_BITS)
+-- 
+1.5.5.1
 
