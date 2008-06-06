@@ -1,53 +1,59 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: mmc/driver-core merge conflict
-Date: Fri, 6 Jun 2008 15:56:55 +1000
-Message-ID: <20080606155655.b72cff0d.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: Tree for June 5
+Date: Fri, 6 Jun 2008 09:17:07 +0200
+Message-ID: <20080606071707.GB9708@elte.hu>
+References: <20080605175217.cee497f3.sfr@canb.auug.org.au> <20080605195604.41623687.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__6_Jun_2008_15_56_55_+1000_5QLBw.yI.E7HHt=f"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41959 "EHLO smtps.tip.net.au"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:54379 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753450AbYFFF5E (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 6 Jun 2008 01:57:04 -0400
+	id S1754403AbYFFHR2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 6 Jun 2008 03:17:28 -0400
+Content-Disposition: inline
+In-Reply-To: <20080605195604.41623687.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pierre Ossman <drzeus-list@drzeus.cx>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, Anton Vorontsov <avorontsov@ru.mvista.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Fri__6_Jun_2008_15_56_55_+1000_5QLBw.yI.E7HHt=f
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Pierre, Greg,
+* Andrew Morton <akpm@linux-foundation.org> wrote:
 
-Today's linux-next merge of the mmc tree got a conflict in
-drivers/mmc/host/mmc_spi.c between commit
-b16fa5e051064488f241647a080271f1cd41d077 ("driver-core: prepare for
-removal of 20 char limit from struct device") from the driver-core tree
-and commit cd3c93fe826def37abc474e7a91bbf56444d7cd0 ("mmc_spi: add
-support for card-detection polling") from the mmc tree.
+> On Thu, 5 Jun 2008 17:52:17 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> > I have created today's linux-next tree at
+> > git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+> 
+> Instantly oopses on two x86_64 boxes with this config:
+> http://userweb.kernel.org/~akpm/config-akpm2.txt
+> 
+> oops: http://userweb.kernel.org/~akpm/p6056454.jpg
+>
+> At a guess I'd say the sched_domains code is calling into slab before 
+> slab is initalised.  Something like that.
 
-I fixed it up in the obvious manner.  Could be fixed by moving the
-drivers/mmc/host/mmc_spi.c part of the driver-core change to the mmc
-tree ...
+did SLUB change in linux-next? There no such problem in -tip.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+> I had to do this:
+> 
+> --- a/arch/x86/kernel/traps_64.c~a
+> +++ a/arch/x86/kernel/traps_64.c
+> @@ -504,6 +504,7 @@ void show_registers(struct pt_regs *regs
+>  		}
+>  	}
+>  	printk("\n");
+> +	for (  ;; );
+>  }	
+>  
+>  int is_valid_bugaddr(unsigned long ip)
+> _
+> 
+> to collect that oops.  Otherwise it scrolled away due to "trying to 
+> kill init" doing a dump_stack.  pause_on_oops seems to not be working 
+> properly any more.  It used to.
 
---Signature=_Fri__6_Jun_2008_15_56_55_+1000_5QLBw.yI.E7HHt=f
-Content-Type: application/pgp-signature
+hm, perhaps mdelay(1) does not loop for 1 msec anymore? You'll probably 
+be able to work it around via pause_on_oops=5000000 or so.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhI0acACgkQTgG2atn1QN/JKwCfYA6vmtQhbaEJh+IxOnVyf3Lx
-4dIAniQz+/32+HXJPqBOHfVf01Rl447Z
-=Xpy9
------END PGP SIGNATURE-----
-
---Signature=_Fri__6_Jun_2008_15_56_55_+1000_5QLBw.yI.E7HHt=f--
+	Ingo
