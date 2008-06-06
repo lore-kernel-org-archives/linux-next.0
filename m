@@ -1,37 +1,43 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: Tree for June 5
-Date: Fri, 6 Jun 2008 19:15:11 +0200
-Message-ID: <20080606171511.GC18524@elte.hu>
-References: <20080605175217.cee497f3.sfr@canb.auug.org.au> <20080605195604.41623687.akpm@linux-foundation.org> <20080606071707.GB9708@elte.hu> <20080606002957.6329a0ec.akpm@linux-foundation.org> <20080606024811.70db9ab2.akpm@linux-foundation.org> <20080606035413.37f340ef.akpm@linux-foundation.org>
+From: Daniel Exner <dex@dragonslave.de>
+Subject: Re: linux-next Regression: Unable to locate IOAPIC
+Date: Fri, 6 Jun 2008 19:30:28 +0200
+Message-ID: <200806061930.29046.dex@dragonslave.de>
+References: <200806051100.12885.dex@dragonslave.de> <20080606031718.36cbbdc9.akpm@linux-foundation.org>
+Reply-To: webmaster@dragonslave.de
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:55344 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753956AbYFFRP1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 6 Jun 2008 13:15:27 -0400
+Received: from server009.webpack.hosteurope.de ([80.237.130.17]:48077 "EHLO
+	server009.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752042AbYFFRa6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Jun 2008 13:30:58 -0400
+In-Reply-To: <20080606031718.36cbbdc9.akpm@linux-foundation.org>
 Content-Disposition: inline
-In-Reply-To: <20080606035413.37f340ef.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mike Travis <travis@sgi.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org
 
+Andrew Morton wrote:
+> (cc linux-acpi)
+>
+> On Thu, 5 Jun 2008 11:00:12 +0200 Daniel Exner <dex@dragonslave.de> wrote:
+> > Hi!
+> >
+> > (Added myself to CC, because I'm not subscribed)
+> >
+> > with linux-next snapshot 20080604 my Laptop morphes into sitting duck and
+> > I think this is due to this:
+>
+> I assume 2.6.26-rc5 is OK?
+Indeed.. just tried it with (nearly) the same config: no unable to locate 
+IOAPIC
 
-* Andrew Morton <akpm@linux-foundation.org> wrote:
+Will try todays next snapshot above -rc5 now.
 
-> 	    x86: remove the static 256k node_to_cpumask_map
-> 
-> crash, as described earlier.
-> 
-> I don't know what happened to that early exception - it didn't come back.
+BTW: Any chance to get this damn thing to not route everything by IRQ 11 !?
 
-hm, early exception, there's one commit i can think of right now:
-
- # tip/x86/xen: b20aecc: xen: fix early bootup crash on native hardware
-
-but that got propagated to linux-next:
-
- # linux-next: b20aecc: xen: fix early bootup crash on native hardware
-
-	Ingo
+Greetings
+Daniel Exner
