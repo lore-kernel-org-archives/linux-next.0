@@ -1,73 +1,32 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: Tree for June 5
-Date: Fri, 6 Jun 2008 02:01:09 -0700
-Message-ID: <20080606020109.c0db7a0c.akpm@linux-foundation.org>
-References: <20080605175217.cee497f3.sfr@canb.auug.org.au>
-	<20080605195604.41623687.akpm@linux-foundation.org>
-	<20080606071707.GB9708@elte.hu>
-	<20080606072536.GA19334@elte.hu>
-	<20080606003327.9ac0e91b.akpm@linux-foundation.org>
-	<20080606074137.GA28962@elte.hu>
-	<20080606004743.a78180c3.akpm@linux-foundation.org>
-	<20080606082325.GA10826@elte.hu>
-	<20080606013835.8dfd838b.akpm@linux-foundation.org>
-	<20080606084949.GA28190@elte.hu>
+From: David Woodhouse <dwmw2@infradead.org>
+Subject: Re: linux-next: firmware build failure
+Date: Fri, 06 Jun 2008 10:09:55 +0100
+Message-ID: <1212743395.32207.297.camel@pmac.infradead.org>
+References: <20080606174723.05ae4f28.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:35373 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750695AbYFFJBn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Jun 2008 05:01:43 -0400
-In-Reply-To: <20080606084949.GA28190@elte.hu>
+Received: from bombadil.infradead.org ([18.85.46.34]:45066 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751767AbYFFJJ7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Jun 2008 05:09:59 -0400
+In-Reply-To: <20080606174723.05ae4f28.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, the arch/x86 maintainers <x86@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-On Fri, 6 Jun 2008 10:49:49 +0200 Ingo Molnar <mingo@elte.hu> wrote:
-
+On Fri, 2008-06-06 at 17:47 +1000, Stephen Rothwell wrote:
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
 > 
-> * Andrew Morton <akpm@linux-foundation.org> wrote:
-> 
-> > > most of the -tip topics (there are 75 of them currently) are present 
-> > > in linux-next - about ~70% of all -tip commits are in linux-next 
-> > > already. The stuff that is not in linux-next yet is either because 
-> > > it's: miscellany fixes (i.e. intentionally grabbed out-of-tree to 
-> > > make our tests work better), not cooked enough yet, or because we 
-> > > are still working it out - tip is less than a month old still.
-> > > 
-> > > in general the rule is that if there's anything we want to push 
-> > > upstream, it will show up in linux-next.
-> > 
-> > I don't think it's a good idea for you guys to be off working on 
-> > 2.6.28 material when we're trying to stabilise 2.6.25, 2.6.26 and 
-> > preparing for 2.6.27.
-> > 
-> > What's especially regrettable is that, afaik, you are expending 
-> > testing resources on a tree which nobody will ever run rather than 
-> > upon the tree which everyone _will_ run :( [...]
-> 
-> what do you mean? We are testing commits that everybody will run and are 
-> pre-filtering them for sanity and stability before they hit linux-next.
-> 
+>   IHEX2FW firmware/atmsar11.fw
+> Bad EOF record (type 01) format
+> make[2]: *** [firmware/atmsar11.fw] Error 1
 
-One doesn't test commits - one tests a tree.  And the -tip tree is
-2.6.26-rc5 plus a bunch of x86 changes.  That tree will never be run by
-anyone.  Testing -tip fails to pick up problems which are caused by
-integration of the x86 changes with everyone else's work and it fails
-to pick up problems which lie wholly outside the x86 changes.
+Dammit, and I thought I was going to manage a whole day without breaking
+the build. Sorry; will attend to it now...
 
-For both these reasons it would be more valuable were that testing
-effort to be expended on our 2.6.27 candidate tree.
-
-Plus, of course, there's the risk that linux-next contains x86-only
-regressions which were fixed or avoided in -tip.
-
-
-
-
-Bisecting: 5 revisions left to test after this
-[29657a44f8660acd8751d7e9f5aac06ec8633481] x86: cleanup early per cpu variables/accesses v4
+-- 
+dwmw2
 
