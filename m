@@ -1,45 +1,39 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next Regression: Unable to locate IOAPIC
-Date: Fri, 6 Jun 2008 11:50:24 -0700
-Message-ID: <20080606115024.387b5f80.akpm@linux-foundation.org>
-References: <200806051100.12885.dex@dragonslave.de>
-	<20080606031718.36cbbdc9.akpm@linux-foundation.org>
-	<200806061930.29046.dex@dragonslave.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+From: Segher Boessenkool <segher@kernel.crashing.org>
+Subject: Re: linux-next: frimware build failure
+Date: Sat, 7 Jun 2008 02:42:07 +0200
+Message-ID: <319e1e066fdd3a977c0f23be13a38346@kernel.crashing.org>
+References: <20080605172512.e000ddc5.sfr@canb.auug.org.au> <1212652090.32207.159.camel@pmac.infradead.org> <20080605175941.5520add5.sfr@canb.auug.org.au>
+Mime-Version: 1.0 (Apple Message framework v623)
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <200806061930.29046.dex@dragonslave.de>
-Sender: linux-acpi-owner@vger.kernel.org
-To: webmaster@dragonslave.de
-Cc: Daniel Exner <dex@dragonslave.de>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from gate.crashing.org ([63.228.1.57]:53338 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752121AbYFGAml (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 6 Jun 2008 20:42:41 -0400
+In-Reply-To: <20080605175941.5520add5.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Woodhouse <dwmw2@infradead.org>, linux-next@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
-On Fri, 6 Jun 2008 19:30:28 +0200 Daniel Exner <dex@dragonslave.de> wrote:
+> I am a little worried that this may be broken the same way on other
+> platforms ...  The gas manual said something like "On platforms where @
+> is the comment character (like ARM) another character is used instead.
+> For example, the ARM port uses the % character."
+>
+> A grep through the kernel sources shows only @ except on arm, so it
+> should be ok.
 
-> Andrew Morton wrote:
-> > (cc linux-acpi)
-> >
-> > On Thu, 5 Jun 2008 11:00:12 +0200 Daniel Exner <dex@dragonslave.de> wrote:
-> > > Hi!
-> > >
-> > > (Added myself to CC, because I'm not subscribed)
-> > >
-> > > with linux-next snapshot 20080604 my Laptop morphes into sitting duck and
-> > > I think this is due to this:
-> >
-> > I assume 2.6.26-rc5 is OK?
-> Indeed.. just tried it with (nearly) the same config: no unable to locate 
-> IOAPIC
-> 
-> Will try todays next snapshot above -rc5 now.
+The GAS code shows the same: only ARM is affected currently.
 
-OK, thanks.
+Incidentally, all GAS targets accept both "@" and "%" as the
+character before progbits etc. -- but please don't use "%"
+universally, since it could be a comment character on some archs
+as well [1] (or break in some other way).
 
-It would be great if you could test 2.6.26-rc5 plus
-http://userweb.kernel.org/~akpm/git-acpi.patch.  That'll allow us to
-confirm that the regression is due to changes in the acpi tree.
 
-> BTW: Any chance to get this damn thing to not route everything by IRQ 11 !?
+Segher
 
-ooh, wrong guy to ask, sorry.
+[1] The mmix gas port uses % as comment char already, for example.
+
