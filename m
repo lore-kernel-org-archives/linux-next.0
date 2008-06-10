@@ -1,40 +1,51 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: powerpc build failure
-Date: Tue, 10 Jun 2008 17:20:09 +1000
-Message-ID: <1213082409.25745.28.camel@pasglop>
-References: <20080610165441.a7c5ddd0.sfr@canb.auug.org.au>
-Reply-To: benh@kernel.crashing.org
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: net/net-current merge conflict
+Date: Tue, 10 Jun 2008 17:28:23 +1000
+Message-ID: <20080610172823.12e0fb8f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__10_Jun_2008_17_28_23_+1000_7GPr6RYVfo6ws2k1"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:35136 "EHLO gate.crashing.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59134 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751708AbYFJHU3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Jun 2008 03:20:29 -0400
-In-Reply-To: <20080610165441.a7c5ddd0.sfr@canb.auug.org.au>
+	id S1751833AbYFJH2d (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Jun 2008 03:28:33 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, Matt Carlson <mcarlson@broadcom.com>
 
-On Tue, 2008-06-10 at 16:54 +1000, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> Today's linux-next tree build (powerpc ppc64_defconfig) failed like this:
-> 
->   UPD     include/linux/compile.h
-> arch/powerpc/mm/built-in.o: In function `ht64_insert_pte':
-> hash_native_64.c:(.text+0x4756): undefined reference to `_PAGE_HPTE_SUB0'
-> 
-> I have reverted commit 2d9a973b0fee245af43b73412a08e88bc955644d
-> ("powerpc: Free a PTE bit on ppc64 with 64K pages") for now.
+--Signature=_Tue__10_Jun_2008_17_28_23_+1000_7GPr6RYVfo6ws2k1
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yup, that's the way to go. It's broken, I'll have to do things a bit
-differently, I "forgot" our 64K SPU hack when using 4K pages assumes
-we have the same PTE format :-( I'll have to implement a separate low
-level asm function for hashing 64K pages on a 4K kernel.
+Hi Dave,
 
-Ben.
+Today's linux-next merge of the net tree got a trivial conflict in
+drivers/net/tg3.c between commit 1b84d9462a93ccfa99f725aad744ab4d1af8402b
+("tg3: Update version to 3.92.1") from the net-current tree and commit
+bb9122b829e960f4e242c04c2b38c12efb37757b ("tg3: Update version to 3.93")
+from the net tree.
 
+They both update the version and release dates.  I took the net tree
+version.
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__10_Jun_2008_17_28_23_+1000_7GPr6RYVfo6ws2k1
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhOLRcACgkQTgG2atn1QN9LaACcDrouCfsEN0flYReNXiPoeYa8
+dfUAmQGoEb0irBbvuwmIPIFG6ecwS3KT
+=oBTl
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__10_Jun_2008_17_28_23_+1000_7GPr6RYVfo6ws2k1--
