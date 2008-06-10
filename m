@@ -1,62 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: kbuild-current build failure
-Date: Tue, 10 Jun 2008 14:42:39 +1000
-Message-ID: <20080610144239.dab6187e.sfr@canb.auug.org.au>
-References: <20080610110842.30c90c61.sfr@canb.auug.org.au>
-	<20080610043348.GB31765@uranus.ravnborg.org>
+Subject: Re: linux-next: tip-core merge conflict
+Date: Tue, 10 Jun 2008 14:51:16 +1000
+Message-ID: <20080610145116.6bc5b0ad.sfr@canb.auug.org.au>
+References: <20080610120857.042ea0f1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__10_Jun_2008_14_42_39_+1000_wy3r8ELovxaNbby+"
+ boundary="Signature=_Tue__10_Jun_2008_14_51_16_+1000_xcwGuy528CfoT9Fc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37433 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35372 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751234AbYFJEmq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Jun 2008 00:42:46 -0400
-In-Reply-To: <20080610043348.GB31765@uranus.ravnborg.org>
+	id S1751234AbYFJEvY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Jun 2008 00:51:24 -0400
+In-Reply-To: <20080610120857.042ea0f1.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
 
---Signature=_Tue__10_Jun_2008_14_42_39_+1000_wy3r8ELovxaNbby+
+--Signature=_Tue__10_Jun_2008_14_51_16_+1000_xcwGuy528CfoT9Fc
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sam,
-
-On Tue, 10 Jun 2008 06:33:48 +0200 Sam Ravnborg <sam@ravnborg.org> wrote:
+On Tue, 10 Jun 2008 12:08:57 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> > This is Linus' tree with just the net-current, arm-current and
-> > kbuild-current trees merged i.e. just bug fixes queued for Linus' curre=
-nt
-> > tree.  The build was done with "O=3D../powerpc_ppc64_defconfig -j24 -s"
-> > i.e. separate object tree and parallel.
-> >=20
-> > Reverting commit 68e9b79c8dad5245f28ab4f3527481b730dbdb61 ("kbuild:
-> > simplify vmlinux link stage") makes the build work again.
->=20
-> This commit is in kbuild-next.git (for the merge window)
-> My kbuild-fixes.git is empty at the moment.
-
-Oops, sorry my mistake - I have the same tree listed for kbuild-current
-and kbuild (next). :-(  I will fix it up for tomorrow.
+> Today's merge of the tip-core tree got a trivial conflict in
+> include/asm-generic/vmlinux.lds.h between commit
+> f1cb2ba8ca4a8b4b76bbf0b795375af52442501b ("generic: add
+> OUTPUT_DATA_SECTION to vmlinux.lds.h") from the kbuild-current tree and
+                                                  ^^^^^^^^^^^^^^
+That should say "the kbuild tree".
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__10_Jun_2008_14_42_39_+1000_wy3r8ELovxaNbby+
+--Signature=_Tue__10_Jun_2008_14_51_16_+1000_xcwGuy528CfoT9Fc
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkhOBj8ACgkQTgG2atn1QN+TYQCfVNQWgtpHKalOVb4nQTD7kVQd
-AvYAn15cNO0e7uUcFo9Msg8f0jAOSaiW
-=B27O
+iEYEARECAAYFAkhOCEQACgkQTgG2atn1QN8FeACeNyPRS2QGh9GzU1NqVTvFOg9Q
+ZBkAn1M9oCmuMrPlbr91KcU5kH/c5psF
+=ZMDE
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__10_Jun_2008_14_42_39_+1000_wy3r8ELovxaNbby+--
+--Signature=_Tue__10_Jun_2008_14_51_16_+1000_xcwGuy528CfoT9Fc--
