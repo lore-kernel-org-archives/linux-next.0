@@ -1,60 +1,46 @@
-From: Daniel Exner <dex@dragonslave.de>
-Subject: Re: linux-next Regression: Unable to locate IOAPIC
-Date: Tue, 10 Jun 2008 22:29:10 +0200
-Message-ID: <200806102229.10512.dex@dragonslave.de>
-References: <200806051100.12885.dex@dragonslave.de> <200806061930.29046.dex@dragonslave.de> <20080606115024.387b5f80.akpm@linux-foundation.org>
-Reply-To: webmaster@dragonslave.de
+From: Theodore Tso <tytso@mit.edu>
+Subject: Re: [ANNOUNCE] linux-staging tree created
+Date: Tue, 10 Jun 2008 18:52:22 -0400
+Message-ID: <20080610225222.GG8397@mit.edu>
+References: <20080610190540.GA25066@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from server009.webpack.hosteurope.de ([80.237.130.17]:49690 "EHLO
-	server009.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752078AbYFJU3v (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Jun 2008 16:29:51 -0400
-In-Reply-To: <20080606115024.387b5f80.akpm@linux-foundation.org>
+Received: from www.church-of-our-saviour.org ([69.25.196.31]:50147 "EHLO
+	thunker.thunk.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752444AbYFJWwc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jun 2008 18:52:32 -0400
 Content-Disposition: inline
+In-Reply-To: <20080610190540.GA25066@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
+On Tue, Jun 10, 2008 at 12:05:40PM -0700, Greg KH wrote:
+> PURPOSE
+> 
+> The linux-staging tree was created to hold drivers and filesystems and
+> other semi-major additions to the Linux kernel that are not ready to be
+> merged at this point in time.  It is here for companies and authors to
+> get a wider range of testing, and to allow for other members of the
+> community to help with the development of these features for the
+> eventual inclusion into the main kernel tree.
+> 
+> This tree will be included in the daily linux-next builds, and will get
+> testing by all users of that tree.
 
-Andrew Morton wrote:
-> On Fri, 6 Jun 2008 19:30:28 +0200 Daniel Exner <dex@dragonslave.de> wrote:
-> > Andrew Morton wrote:
-> > > (cc linux-acpi)
-> > >
-> > > On Thu, 5 Jun 2008 11:00:12 +0200 Daniel Exner <dex@dragonslave.de> 
-wrote:
-> > > > Hi!
-> > > >
-> > > > (Added myself to CC, because I'm not subscribed)
-> > > >
-> > > > with linux-next snapshot 20080604 my Laptop morphes into sitting duck
-> > > > and I think this is due to this:
-> > >
-> > > I assume 2.6.26-rc5 is OK?
-> >
-> > Indeed.. just tried it with (nearly) the same config: no unable to locate
-> > IOAPIC
-> >
-> > Will try todays next snapshot above -rc5 now.
->
-> OK, thanks.
->
-> It would be great if you could test 2.6.26-rc5 plus
-> http://userweb.kernel.org/~akpm/git-acpi.patch.  That'll allow us to
-> confirm that the regression is due to changes in the acpi tree.
-Sorry for the delay.. real-life you know ;)
+Does this mean that the nature of linux-next is changing?  I thought
+the whole point of linux-next was only to have what would be pushed to
+Linus in the near future, so we could check for patch compatibility
+issues.  For that reason, for example, I don't push the unstable set
+of patches in the ext4 tree to linux-next, since they aren't ready for
+merging yet in their current form.  
 
-I guess you'd expect me to confirm the behavior on rc5 with this patch aplied, 
-but .. well this Kernel works!
+But if linux-staging is going to be pushed to linux-next, doesn't that
+violate the ground rules of Linux-next?  Or are we allowing in this
+case because these are filesystems and/or device drivers that don't
+exist at all in the mainline tree yet?
 
-So I think the regression is NOT in the acpi tree. Perhaps pci subsystem?
-If I find time I'll try bisecting it..
+						- Ted
 
-Greetings
-Daniel Exner
