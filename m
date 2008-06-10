@@ -1,46 +1,47 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: linux-next: pci/kbuild-current merge conflict
-Date: Tue, 10 Jun 2008 21:06:17 +0200
-Message-ID: <20080610190617.GD15983@uranus.ravnborg.org>
-References: <20080610143434.9cec3775.sfr@canb.auug.org.au> <200806092253.54654.jbarnes@virtuousgeek.org>
+From: "Matt Carlson" <mcarlson@broadcom.com>
+Subject: Re: linux-next: net/net-current merge conflict
+Date: Tue, 10 Jun 2008 12:38:26 -0700
+Message-ID: <20080610193826.GD5841@localdomain>
+References: <20080610172823.12e0fb8f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain;
+ charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pasmtpa.tele.dk ([80.160.77.114]:45727 "EHLO pasmtpA.tele.dk"
+Received: from mms1.broadcom.com ([216.31.210.17]:3358 "EHLO mms1.broadcom.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753254AbYFJTFf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Jun 2008 15:05:35 -0400
+	id S1754031AbYFJTe1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Jun 2008 15:34:27 -0400
+In-Reply-To: <20080610172823.12e0fb8f.sfr@canb.auug.org.au>
 Content-Disposition: inline
-In-Reply-To: <200806092253.54654.jbarnes@virtuousgeek.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Shaohua Li <shaohua.li@intel.com>, Sebastian Siewior <bigeasy@linutronix.de>, linux-next@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Matt Carlson <mcarlson@broadcom.com>, mchan@broadcom.com
 
-On Mon, Jun 09, 2008 at 10:53:54PM -0700, Jesse Barnes wrote:
-> On Monday, June 09, 2008 9:34 pm Stephen Rothwell wrote:
-> > Hi Jesse,
-> >
-> > Today's linux-next merge of the pci tree got a trivial merge conflict in
-> > include/asm-generic/vmlinux.lds.h between commit
-> > f1cb2ba8ca4a8b4b76bbf0b795375af52442501b ("generic: add
-> > OUTPUT_DATA_SECTION to vmlinux.lds.h") from the kbuild-current tree and
-> > commit 638d515d37e4cfc9af9d8672f9668324b7b6600d ("Suspend/Resume bug in
-> > PCI layer wrt quirks") from the pci tree.
-> >
-> > I did the obvious fixup.
-> >
-> > This can be fixed by you merging Linus' tree into the pci tree sometime
-> > after he takes the kbuild patch.  No real urgency, though.
-> >
-> > It is interesting that the pci patch is authored by Rafael, but has no
-> > Signed-off-by from him.
+The correct thing to do would be to increment the net-next version every
+time these conflicts appear.  Right now and to the best of my knowledge,
+this policy would only apply to the tg3 driver.  Do you feel this is an
+acceptable / sustainable way to deal with versioning between net and
+net-next?
+
+On Tue, Jun 10, 2008 at 05:28:23PM +1000, Stephen Rothwell wrote:
+> Hi Dave,
 > 
-> Ok, I'll try to fix that up tomorrow.  I've been meaning to pull in Linus' 
-> latest bits for awhile anyway...  Thanks for the heads up.
-I have dropped the offending commit from kbuild.git for now.
-So no need for you to do anything.
-It was to benefit m68knommu only and I can apply it late in the
-merge window.
+> Today's linux-next merge of the net tree got a trivial conflict in
+> drivers/net/tg3.c between commit 1b84d9462a93ccfa99f725aad744ab4d1af8402b
+> ("tg3: Update version to 3.92.1") from the net-current tree and commit
+> bb9122b829e960f4e242c04c2b38c12efb37757b ("tg3: Update version to 3.93")
+> from the net tree.
+> 
+> They both update the version and release dates.  I took the net tree
+> version.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
 
-	Sam
+
+
+
