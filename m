@@ -1,43 +1,61 @@
-From: Pierre Ossman <drzeus-list@drzeus.cx>
-Subject: Re: linux-next: mmc/driver-core merge conflict
-Date: Mon, 9 Jun 2008 09:14:52 +0200
-Message-ID: <20080609091452.5240892b@mjolnir.drzeus.cx>
-References: <20080606155655.b72cff0d.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: kbuild-current build failure
+Date: Tue, 10 Jun 2008 11:08:42 +1000
+Message-ID: <20080610110842.30c90c61.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__10_Jun_2008_11_08_42_+1000_TMSC/sktkEUTUSra"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from server.drzeus.cx ([85.8.24.28]:33739 "EHLO smtp.drzeus.cx"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1754860AbYFIHPT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 Jun 2008 03:15:19 -0400
-In-Reply-To: <20080606155655.b72cff0d.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:45500 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753169AbYFJBIv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 Jun 2008 21:08:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, Anton Vorontsov <avorontsov@ru.mvista.com>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
 
-On Fri, 6 Jun 2008 15:56:55 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Signature=_Tue__10_Jun_2008_11_08_42_+1000_TMSC/sktkEUTUSra
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Pierre, Greg,
-> 
-> Today's linux-next merge of the mmc tree got a conflict in
-> drivers/mmc/host/mmc_spi.c between commit
-> b16fa5e051064488f241647a080271f1cd41d077 ("driver-core: prepare for
-> removal of 20 char limit from struct device") from the driver-core tree
-> and commit cd3c93fe826def37abc474e7a91bbf56444d7cd0 ("mmc_spi: add
-> support for card-detection polling") from the mmc tree.
-> 
-> I fixed it up in the obvious manner.  Could be fixed by moving the
-> drivers/mmc/host/mmc_spi.c part of the driver-core change to the mmc
-> tree ...
-> 
+Hi Sam,
 
-Sounds good to me. Greg, can you separate out that portion?
+Today's linux-next build (powerpc ppc64_deconfig) failed like this:
 
--- 
-     -- Pierre Ossman
+  LD      vmlinux.o
+/scratch/sfr/next/scripts/Makefile.modpost:44: scripts/Kbuild.include: No s=
+uch file or directory
+/scratch/sfr/next/scripts/Makefile.modpost:58: scripts/Makefile.lib: No suc=
+h file or directory
+make[2]: *** No rule to make target `scripts/Makefile.lib'.  Stop.
+make[1]: *** [vmlinux] Error 2
+make: *** [sub-make] Error 2
 
-  Linux kernel, MMC maintainer        http://www.kernel.org
-  rdesktop, core developer          http://www.rdesktop.org
+This is Linus' tree with just the net-current, arm-current and
+kbuild-current trees merged i.e. just bug fixes queued for Linus' current
+tree.  The build was done with "O=3D../powerpc_ppc64_defconfig -j24 -s"
+i.e. separate object tree and parallel.
+
+Reverting commit 68e9b79c8dad5245f28ab4f3527481b730dbdb61 ("kbuild:
+simplify vmlinux link stage") makes the build work again.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__10_Jun_2008_11_08_42_+1000_TMSC/sktkEUTUSra
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhN1BoACgkQTgG2atn1QN/cjACghkfPGli08Rlha57BOzGTxt9f
+ZVYAn3nSetNS1NuZP3MUaUrlTJM1hJGR
+=Nzv1
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__10_Jun_2008_11_08_42_+1000_TMSC/sktkEUTUSra--
