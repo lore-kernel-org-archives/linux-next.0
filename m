@@ -1,61 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: kbuild-current build failure
-Date: Tue, 10 Jun 2008 11:08:42 +1000
-Message-ID: <20080610110842.30c90c61.sfr@canb.auug.org.au>
+Subject: linux-next: usb build failure
+Date: Tue, 10 Jun 2008 11:56:03 +1000
+Message-ID: <20080610115603.db3c1847.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__10_Jun_2008_11_08_42_+1000_TMSC/sktkEUTUSra"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45500 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44433 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753169AbYFJBIv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 Jun 2008 21:08:51 -0400
+	id S1753602AbYFJB4O (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 Jun 2008 21:56:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jiri Kosina <jikos@jikos.cz>
 
---Signature=_Tue__10_Jun_2008_11_08_42_+1000_TMSC/sktkEUTUSra
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Greg,
 
-Hi Sam,
+Today's linux-next build (powerpc ppc64_defconfig) with the usb tree
+applied failed like this:
 
-Today's linux-next build (powerpc ppc64_deconfig) failed like this:
+drivers/hid/usbhid/hiddev.c: In function 'hiddev_compat_ioctl':
+drivers/hid/usbhid/hiddev.c:767: warning: passing argument 1 of 'hiddev_ioctl' from incompatible pointer type
+drivers/hid/usbhid/hiddev.c:767: warning: passing argument 2 of 'hiddev_ioctl' makes integer from pointer without a cast
+drivers/hid/usbhid/hiddev.c:767: error: too many arguments to function 'hiddev_ioctl'
 
-  LD      vmlinux.o
-/scratch/sfr/next/scripts/Makefile.modpost:44: scripts/Kbuild.include: No s=
-uch file or directory
-/scratch/sfr/next/scripts/Makefile.modpost:58: scripts/Makefile.lib: No suc=
-h file or directory
-make[2]: *** No rule to make target `scripts/Makefile.lib'.  Stop.
-make[1]: *** [vmlinux] Error 2
-make: *** [sub-make] Error 2
+This was fixed in Jiri's hid tree on May 27 using a patch like that below
+(though this patch is more complete in that it removes the now unused
+inode variable).
 
-This is Linus' tree with just the net-current, arm-current and
-kbuild-current trees merged i.e. just bug fixes queued for Linus' current
-tree.  The build was done with "O=3D../powerpc_ppc64_defconfig -j24 -s"
-i.e. separate object tree and parallel.
+You and Jiri should decide who is carrying the patch "USB: hiddev: Switch
+to unlocked_ioctl".  Currently it is in both the usb and the hid trees.
 
-Reverting commit 68e9b79c8dad5245f28ab4f3527481b730dbdb61 ("kbuild:
-simplify vmlinux link stage") makes the build work again.
-
---=20
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__10_Jun_2008_11_08_42_+1000_TMSC/sktkEUTUSra
-Content-Type: application/pgp-signature
+>From c273b2d199770abf6176c9413faefc733a3fd572 Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 10 Jun 2008 11:53:41 +1000
+Subject: [PATCH] usb: fix hiddev BLK pushdown fallout
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/hid/usbhid/hiddev.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
 
-iEYEARECAAYFAkhN1BoACgkQTgG2atn1QN/cjACghkfPGli08Rlha57BOzGTxt9f
-ZVYAn3nSetNS1NuZP3MUaUrlTJM1hJGR
-=Nzv1
------END PGP SIGNATURE-----
+diff --git a/drivers/hid/usbhid/hiddev.c b/drivers/hid/usbhid/hiddev.c
+index 527b7ef..6eb41a9 100644
+--- a/drivers/hid/usbhid/hiddev.c
++++ b/drivers/hid/usbhid/hiddev.c
+@@ -763,8 +763,7 @@ static long hiddev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ #ifdef CONFIG_COMPAT
+ static long hiddev_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ {
+-	struct inode *inode = file->f_path.dentry->d_inode;
+-	return hiddev_ioctl(inode, file, cmd, (unsigned long)compat_ptr(arg));
++	return hiddev_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
+ }
+ #endif
+ 
+-- 
+1.5.5.4
 
---Signature=_Tue__10_Jun_2008_11_08_42_+1000_TMSC/sktkEUTUSra--
