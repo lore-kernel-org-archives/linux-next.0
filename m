@@ -1,35 +1,43 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH -next] x86: fix longstanding setup.c printk format
-	warning
-Date: Tue, 10 Jun 2008 12:24:52 +0200
-Message-ID: <20080610102452.GD19136@elte.hu>
-References: <Pine.LNX.4.64.0806051107200.702@shark.he.net>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: linux-next: kbuild-current build failure
+Date: Tue, 10 Jun 2008 21:03:51 +0200
+Message-ID: <20080610190351.GB15983@uranus.ravnborg.org>
+References: <20080610110842.30c90c61.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:46378 "EHLO mx3.mail.elte.hu"
+Received: from pasmtpa.tele.dk ([80.160.77.114]:42270 "EHLO pasmtpA.tele.dk"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753344AbYFJKZO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Jun 2008 06:25:14 -0400
+	id S1756267AbYFJTDJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Jun 2008 15:03:09 -0400
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.64.0806051107200.702@shark.he.net>
+In-Reply-To: <20080610110842.30c90c61.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Randy.Dunlap" <rdunlap@xenotime.net>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, the arch/x86 maintainers <x86@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
 
-
-* Randy.Dunlap <rdunlap@xenotime.net> wrote:
-
-> From: Randy Dunlap <randy.dunlap@oracle.com>
+On Tue, Jun 10, 2008 at 11:08:42AM +1000, Stephen Rothwell wrote:
+> Hi Sam,
 > 
-> Note: for -next only, not mainline.
+> Today's linux-next build (powerpc ppc64_deconfig) failed like this:
 > 
-> Fix setup.c printk format warning:
+>   LD      vmlinux.o
+> /scratch/sfr/next/scripts/Makefile.modpost:44: scripts/Kbuild.include: No such file or directory
+> /scratch/sfr/next/scripts/Makefile.modpost:58: scripts/Makefile.lib: No such file or directory
+> make[2]: *** No rule to make target `scripts/Makefile.lib'.  Stop.
+> make[1]: *** [vmlinux] Error 2
+> make: *** [sub-make] Error 2
 > 
-> linux-next-20080605/arch/x86/kernel/setup.c: In function 'setup_per_cpu_areas':
-> linux-next-20080605/arch/x86/kernel/setup.c:173: warning: format '%lu' expects type 'long unsigned int', but argument 2 has type 'ssize_t'
+> This is Linus' tree with just the net-current, arm-current and
+> kbuild-current trees merged i.e. just bug fixes queued for Linus' current
+> tree.  The build was done with "O=../powerpc_ppc64_defconfig -j24 -s"
+> i.e. separate object tree and parallel.
+> 
+> Reverting commit 68e9b79c8dad5245f28ab4f3527481b730dbdb61 ("kbuild:
+> simplify vmlinux link stage") makes the build work again.
 
-applied to tip/x86/numa - thanks Randy.
+Updated kbuild-next.git pushed out with this bug fixed.
+Thanks for reporting/testing it.
 
-	Ingo
+	Sam
