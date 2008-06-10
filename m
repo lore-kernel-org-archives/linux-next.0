@@ -1,50 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: tip-core merge conflict
-Date: Tue, 10 Jun 2008 12:08:57 +1000
-Message-ID: <20080610120857.042ea0f1.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: usb build failure
+Date: Mon, 9 Jun 2008 19:13:47 -0700
+Message-ID: <20080610021347.GA11173@kroah.com>
+References: <20080610115603.db3c1847.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__10_Jun_2008_12_08_57_+1000_dNxRMU/OOXtU6=iD"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36735 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752366AbYFJCJJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 Jun 2008 22:09:09 -0400
+Received: from bombadil.infradead.org ([18.85.46.34]:54371 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752158AbYFJCPi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Jun 2008 22:15:38 -0400
+Content-Disposition: inline
+In-Reply-To: <20080610115603.db3c1847.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jiri Kosina <jikos@jikos.cz>
 
---Signature=_Tue__10_Jun_2008_12_08_57_+1000_dNxRMU/OOXtU6=iD
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jun 10, 2008 at 11:56:03AM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next build (powerpc ppc64_defconfig) with the usb tree
+> applied failed like this:
+> 
+> drivers/hid/usbhid/hiddev.c: In function 'hiddev_compat_ioctl':
+> drivers/hid/usbhid/hiddev.c:767: warning: passing argument 1 of 'hiddev_ioctl' from incompatible pointer type
+> drivers/hid/usbhid/hiddev.c:767: warning: passing argument 2 of 'hiddev_ioctl' makes integer from pointer without a cast
+> drivers/hid/usbhid/hiddev.c:767: error: too many arguments to function 'hiddev_ioctl'
+> 
+> This was fixed in Jiri's hid tree on May 27 using a patch like that below
+> (though this patch is more complete in that it removes the now unused
+> inode variable).
+> 
+> You and Jiri should decide who is carrying the patch "USB: hiddev: Switch
+> to unlocked_ioctl".  Currently it is in both the usb and the hid trees.
 
-Hi all,
+I'll drop it from mine, sorry, I was going to wait until I saw Jiri
+apply it.
 
-Today's merge of the tip-core tree got a trivial conflict in
-include/asm-generic/vmlinux.lds.h between commit
-f1cb2ba8ca4a8b4b76bbf0b795375af52442501b ("generic: add
-OUTPUT_DATA_SECTION to vmlinux.lds.h") from the kbuild-current tree and
-commit 6360b1fbb4a939efd34fc770c2ebd927c55506e0 ("move BUG_TABLE into
-RODATA") from the tip-core tree.
+thanks,
 
-I did the obvious fixup.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__10_Jun_2008_12_08_57_+1000_dNxRMU/OOXtU6=iD
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhN4jkACgkQTgG2atn1QN+LCQCfa8UIugl2ZiDfartFsLueLBuD
-zGgAn0NPapxu7WGv2tjltE97BSxMON5q
-=4yH8
------END PGP SIGNATURE-----
-
---Signature=_Tue__10_Jun_2008_12_08_57_+1000_dNxRMU/OOXtU6=iD--
+greg k-h
