@@ -1,51 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: net/net-current merge conflict
-Date: Tue, 10 Jun 2008 17:28:23 +1000
-Message-ID: <20080610172823.12e0fb8f.sfr@canb.auug.org.au>
+Subject: linux-next: wireless/wireless-current
+Date: Tue, 10 Jun 2008 17:46:06 +1000
+Message-ID: <20080610174606.a0b74e51.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__10_Jun_2008_17_28_23_+1000_7GPr6RYVfo6ws2k1"
+ boundary="Signature=_Tue__10_Jun_2008_17_46_06_+1000_bEozOL=8rXvq+qmI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59134 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50466 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751833AbYFJH2d (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Jun 2008 03:28:33 -0400
+	id S1751014AbYFJHqR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Jun 2008 03:46:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Matt Carlson <mcarlson@broadcom.com>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: Assaf Krauss <assaf.krauss@intel.com>, Johannes Berg <johannes@sipsolutions.net>, linux-next@vger.kernel.org
 
---Signature=_Tue__10_Jun_2008_17_28_23_+1000_7GPr6RYVfo6ws2k1
+--Signature=_Tue__10_Jun_2008_17_46_06_+1000_bEozOL=8rXvq+qmI
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi
 
-Today's linux-next merge of the net tree got a trivial conflict in
-drivers/net/tg3.c between commit 1b84d9462a93ccfa99f725aad744ab4d1af8402b
-("tg3: Update version to 3.92.1") from the net-current tree and commit
-bb9122b829e960f4e242c04c2b38c12efb37757b ("tg3: Update version to 3.93")
-from the net tree.
+Today's linux-next merge of the wireless tree got a conflict in
+net/mac80211/ieee80211_i.h between commit
+be038b376465953c358d675cb38a611898a49dc2 ("mac80211: Checking IBSS
+support while changing channel in ad-hoc mode") from the
+nwireless-current tree and commit
+9e72ebd686a7f39facdfff639386055f1ad7dc88 ("mac80211: remove channel use
+statistics") from the wireless tree.
 
-They both update the version and release dates.  I took the net tree
-version.
+It was just a context overlap and I did the obvious fixup.  You might
+want to check the result.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__10_Jun_2008_17_28_23_+1000_7GPr6RYVfo6ws2k1
+--Signature=_Tue__10_Jun_2008_17_46_06_+1000_bEozOL=8rXvq+qmI
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkhOLRcACgkQTgG2atn1QN9LaACcDrouCfsEN0flYReNXiPoeYa8
-dfUAmQGoEb0irBbvuwmIPIFG6ecwS3KT
-=oBTl
+iEYEARECAAYFAkhOMT4ACgkQTgG2atn1QN9/LACeKA7VSZ68X8UkvL1l40lzWn0b
+yukAnjEtD6Uxf4N+CIJXymXHdmjHa04Q
+=4+SH
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__10_Jun_2008_17_28_23_+1000_7GPr6RYVfo6ws2k1--
+--Signature=_Tue__10_Jun_2008_17_46_06_+1000_bEozOL=8rXvq+qmI--
