@@ -1,53 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: x86 merge conflicts
-Date: Wed, 11 Jun 2008 12:59:25 +1000
-Message-ID: <20080611125925.a27948c9.sfr@canb.auug.org.au>
+Subject: linux-next: pci/x86 merge conflicts
+Date: Wed, 11 Jun 2008 13:10:51 +1000
+Message-ID: <20080611131051.2180c664.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__11_Jun_2008_12_59_25_+1000_a7OeLXjRvxhiCvyD"
+ boundary="Signature=_Wed__11_Jun_2008_13_10_51_+1000_W+.aJyThawW4_iDT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52826 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37374 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752572AbYFKC7p (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Jun 2008 22:59:45 -0400
+	id S1754688AbYFKDLA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Jun 2008 23:11:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, Miklos Vajna <vmiklos@frugalware.org>, Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
 
---Signature=_Wed__11_Jun_2008_12_59_25_+1000_a7OeLXjRvxhiCvyD
+--Signature=_Wed__11_Jun_2008_13_10_51_+1000_W+.aJyThawW4_iDT
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Jesse,
 
-Today;s linux-next merge of the x86 tree got conflicts in
-arch/x86/kernel/process_32.c and arch/x86/kernel/process_64.c between
-commits 6cd8a4bb2f97527a9ceb30bc77ea4e959c6a95e3 ("ftrace: trace preempt
-off critical timings") and 81d68a96a39844853b37f20cc8282d9b65b78ef3
-("ftrace: trace irq disabled critical timings") from the ftrace tree and
-commit 6ddd2a27948f0bd02a2ad001e8a6816898eba0dc ("x86: simplify idle
-selection") from the x86 tree.
+Today's linux-next merge of the pci tree got trivial conflicts in
+arch/x86/pci/irq.c between commit
+7058b06188232381c13ff05a3caf458bb892b834 ("x86: coding style fixes to
+arch/x86/pci/irq") from the x86 tree and commit
+273c11270d3715c4c06d4df1607a1a60034d887b ("x86/PCI: janitor work in
+irq.c") from the pci tree.
 
-I did the obvious (to me) fixup of replacing "idle()" with "pm_idle()" in
-the ftrace versions.
-
+They were just formatting differences so I chose the pci versions.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__11_Jun_2008_12_59_25_+1000_a7OeLXjRvxhiCvyD
+--Signature=_Wed__11_Jun_2008_13_10_51_+1000_W+.aJyThawW4_iDT
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkhPP40ACgkQTgG2atn1QN8tQwCfcWNR6TAcmjAYLSL4uFcjMGkf
-lIoAn2yLWeXrrJ5QKNiEd9/tmF+GURXA
-=H7gY
+iEYEARECAAYFAkhPQjsACgkQTgG2atn1QN9ikQCfdGFSxe0/sQ/3elbmT9+m6Bwa
+KVMAn3XnqKVseJ1SCM7nN1/UAn7tCOT/
+=k8iA
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__11_Jun_2008_12_59_25_+1000_a7OeLXjRvxhiCvyD--
+--Signature=_Wed__11_Jun_2008_13_10_51_+1000_W+.aJyThawW4_iDT--
