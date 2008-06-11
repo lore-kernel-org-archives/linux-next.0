@@ -1,50 +1,55 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: linux-next: sparc32 build failure
-Date: Wed, 11 Jun 2008 12:23:34 +0200
-Message-ID: <20080611102334.GA32748@uranus.ravnborg.org>
-References: <20080611193209.163fa2be.sfr@canb.auug.org.au> <20080611.023630.176176702.davem@davemloft.net>
+From: "Will Newton" <will.newton@gmail.com>
+Subject: Re: [ANNOUNCE] linux-staging tree created
+Date: Wed, 11 Jun 2008 11:45:55 +0100
+Message-ID: <87a5b0800806110345v77529fc8r591f2fb4c95b5bdf@mail.gmail.com>
+References: <20080610190540.GA25066@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pasmtpa.tele.dk ([80.160.77.114]:57095 "EHLO pasmtpA.tele.dk"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751302AbYFKKWw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Jun 2008 06:22:52 -0400
+Received: from yw-out-2324.google.com ([74.125.46.30]:31225 "EHLO
+	yw-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753896AbYFKKqA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jun 2008 06:46:00 -0400
+Received: by yw-out-2324.google.com with SMTP id 9so1883347ywe.1
+        for <linux-next@vger.kernel.org>; Wed, 11 Jun 2008 03:45:55 -0700 (PDT)
+In-Reply-To: <20080610190540.GA25066@kroah.com>
 Content-Disposition: inline
-In-Reply-To: <20080611.023630.176176702.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-kernel@vger.kernel.org, devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Wed, Jun 11, 2008 at 02:36:30AM -0700, David Miller wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 11 Jun 2008 19:32:09 +1000
-> 
-> > Hi Dave, Sam,
-> > 
-> > Today's linux-next build (sparc32 defconfig) failed like this:
-> > 
-> >   Building modules, stage 2.
-> > /opt/crosstool/gcc-3.4.5-glibc-2.3.6/sparc64-unknown-linux-gnu/bin/sparc64-unknown-linux-gnu-ld: .tmp_kallsyms2.o: No such file: No such file or directory
-> > make[2]: *** [arch/sparc/boot/image] Error 1
-> > 
-> > I am guessing some kbuild change that sparc32 doesn't like.
-> 
-> Yes, it seems arch/sparc/Makefile needs some updates to match those
-> recent Kbuild changes which eliminate the second kallsyms pass.
+On Tue, Jun 10, 2008 at 8:05 PM, Greg KH <greg@kroah.com> wrote:
 
-Killing the following lines should do the trick:
-ifdef CONFIG_KALLSYMS
-kallsyms.o := .tmp_kallsyms2.o
-endif
+> This tree will be included in the daily linux-next builds, and will get
+> testing by all users of that tree.
+>
+> The rules of what can be included here is as follows:
+>        - the code must be released under a Linux kernel-compatible
+>          license
+>        - the goal of the developers must be to merge this code into the
+>          main kernel tree in the near future, but not for the next
+>          kernel release.
+>        - the code must build properly on the x86 platform
+>        - this is not a tree for bugfixes or rewrites of existing kernel
+>          code, this should be for new features, drivers, and
+>          filesystems.
+>        - the patches included must detail exactly what is needed to be
+>          completed in order for them to be included into the main
+>          kernel tree.
+>        - there must be some email address associated with the patch
+>          that can be used for bug reporting and questions about
+>          cleanups and testing the code.
+>
+> What this tree is not:
+>        - it is not a place to dump features that are being actively
+>          developed by a community of people (reiserfs4 for example.)
+>        - it is not a place to dump code and then run away, hoping that
+>          someone else will do the cleanup work for you.  While there
+>          are developers available to do this kind of work, you need to
+>          get someone to agree to "babysit" the code.
 
-They were added in 2003. See:
-http://git.kernel.org/?p=linux/kernel/git/torvalds/old-2.6-bkcvs.git;a=commit;h=aa13a1c61f9a5edca32b06dba4da4ebe9fb5f766
-
-I am not sure why and the changelog is of no help.
-To me it looks like a trick to force the second pass when ever KALLSYMS is enabled.
-And I do not think this is needed anymore.
-
-	Sam
-
+Would the linux-staging tree be an appropriate place to merge a new
+architecture? Or would that be too large a change and should go via
+its own tree?
