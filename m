@@ -1,34 +1,47 @@
 From: Greg KH <greg@kroah.com>
 Subject: Re: [ANNOUNCE] linux-staging tree created
-Date: Wed, 11 Jun 2008 09:26:39 -0700
-Message-ID: <20080611162639.GE22134@kroah.com>
-References: <20080610190540.GA25066@kroah.com> <87a5b0800806110345v77529fc8r591f2fb4c95b5bdf@mail.gmail.com>
+Date: Wed, 11 Jun 2008 09:25:34 -0700
+Message-ID: <20080611162534.GD22134@kroah.com>
+References: <20080610190540.GA25066@kroah.com> <484F9A7B.4080004@panasas.com> <484F9FEA.7000407@panasas.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:57475 "EHLO
+Received: from bombadil.infradead.org ([18.85.46.34]:57468 "EHLO
 	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760983AbYFKQ1v (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jun 2008 12:27:51 -0400
+	with ESMTP id S1753625AbYFKQ1t (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jun 2008 12:27:49 -0400
 Content-Disposition: inline
-In-Reply-To: <87a5b0800806110345v77529fc8r591f2fb4c95b5bdf@mail.gmail.com>
+In-Reply-To: <484F9FEA.7000407@panasas.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Will Newton <will.newton@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Boaz Harrosh <bharrosh@panasas.com>
+Cc: Benny Halevy <bhalevy@panasas.com>, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Wed, Jun 11, 2008 at 11:45:55AM +0100, Will Newton wrote:
+On Wed, Jun 11, 2008 at 12:50:34PM +0300, Boaz Harrosh wrote:
+> Benny Halevy wrote:
+> > Greg,
+> > 
+> > The OSD initiator (see
+> > http://git.open-osd.org/gitweb.cgi?p=open-osd.git;a=summary)
+> > looks in principle like a great fit for linux-staging.
+> > 
 > 
-> Would the linux-staging tree be an appropriate place to merge a new
-> architecture? Or would that be too large a change and should go via
-> its own tree?
+> The patches are not yet there, Benny. They are currently 
+> out-of-tree here:
+> http://git.open-osd.org/gitweb.cgi?p=osd-lib.git;a=summary
+> 
+> It will take me until end of next week to separate them into
+> a consumable patchset. Which will also move them in-tree.
+>  
+> > What would be the mechanics of including it?
+> > 
+> 
+> I want to send them to linux-scsi-ml and also To: Greg KH
+> Requesting to be included in "linux-staging tree". Is that
+> sufficient?
 
-That is probably too big to go into -staging and should deserve its own
-tree based on the size of patches that have gone into creating a new
-architecture in the past.
-
-Do you have an example of one that is currently not included in the main
-kernel tree right now?
+If they are to go into linux-scsi, why would you need/want them in the
+-staging tree as well?
 
 thanks,
 
