@@ -1,35 +1,43 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [ANNOUNCE] linux-staging tree created
-Date: Tue, 10 Jun 2008 20:29:48 -0700
-Message-ID: <20080611032948.GB4483@kroah.com>
-References: <20080610190540.GA25066@kroah.com> <1213146346.16146.17.camel@nigel-laptop>
+From: Alex Chiang <achiang@hp.com>
+Subject: Re: linux-next: pci merge conflict
+Date: Tue, 10 Jun 2008 21:38:29 -0600
+Message-ID: <20080611033829.GC12778@ldl.fc.hp.com>
+References: <20080611132338.f68e6cb1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:57640 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755525AbYFKDdR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jun 2008 23:33:17 -0400
+Received: from g1t0026.austin.hp.com ([15.216.28.33]:18791 "EHLO
+	g1t0026.austin.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755121AbYFKDib (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jun 2008 23:38:31 -0400
 Content-Disposition: inline
-In-Reply-To: <1213146346.16146.17.camel@nigel-laptop>
+In-Reply-To: <20080611132338.f68e6cb1.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nigel Cunningham <nigel@tuxonice.net>
-Cc: linux-kernel@vger.kernel.org, devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, Greg KH <greg@kroah.com>, Kay Sievers <kay.sievers@vrfy.org>
 
-On Wed, Jun 11, 2008 at 11:05:46AM +1000, Nigel Cunningham wrote:
-> Hi.
+* Stephen Rothwell <sfr@canb.auug.org.au>:
+> Hi Jesse,
 > 
-> Would you consider including TuxOnIce in it?
+> Today's linux-next merge of the pci tree got a conflict in
+> drivers/pci/hotplug/fakephp.c between commit
+> b9a4a152420e0158822ffb0cf0e57d36019604c7 ("driver-core: prepare for
+> removal of 20 char limit from struct device") from the driver-core tree
+> and commit fe99740cac117f208707488c03f3789cf4904957 ("PCI: construct one
+> fakephp slot per PCI slot") from the pci tree.
 > 
-> I do still want to get it merged and would appreciate feedback.
+> I did what seemed to be the right thing - it seems that the driver-core
+> patch to this file is no longer needed.  It is worth a check.
 
-Is the patch "stand-alone", only adding new code in discrete chunks like
-a new driver or filesystem would?
+Yes, I mentioned the possibility of this conflict here:
 
-If not, I don't think it is relevant.  Odds are you want to be your own
-series of patches, like we discussed years ago, right?
+	http://lkml.org/lkml/2008/6/10/382
 
-thanks,
+And yes, dropping the driver-core hunk is the correct thing to
+do.
 
-greg k-h
+Thanks Stephen!
+
+/ac
+
