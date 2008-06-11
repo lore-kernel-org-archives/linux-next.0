@@ -1,63 +1,49 @@
-From: Ivo van Doorn <ivdoorn-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [Rt2400-devel] next-20080611 rt2x00: build failure
-Date: Wed, 11 Jun 2008 20:21:42 +0200
-Message-ID: <200806112021.43707.IvDoorn@gmail.com>
-References: <20080611100748.d35829f4.randy.dunlap@oracle.com> <200806111948.49976.IvDoorn@gmail.com> <32664704.1213206386295.JavaMail.oracle@acsmt301.oracle.com>
+From: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
+Subject: Re: next-20080611 rt2x00: build failure
+Date: Wed, 11 Jun 2008 14:10:00 -0400
+Message-ID: <20080611181000.GA32331@tuxdriver.com>
+References: <20080611100748.d35829f4.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <32664704.1213206386295.JavaMail.oracle-s5rVz5nKm9nKpDp+h9PlwkEOCMrvLtNR@public.gmane.org>
 Content-Disposition: inline
+In-Reply-To: <20080611100748.d35829f4.randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: rt2400-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rt2400-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
 List-Id: linux-next.vger.kernel.org
 
-On Wednesday 11 June 2008, Randy Dunlap wrote:
-> --- Original Message ---
-> > > when CONFIG_INPUT=n and
-> > > # CONFIG_NEW_LEDS is not set
-> > > CONFIG_LEDS_CLASS=y
-> > 
-> > Does below patch help?
+On Wed, Jun 11, 2008 at 10:07:48AM -0700, Randy Dunlap wrote:
+> when CONFIG_INPUT=n and
+> # CONFIG_NEW_LEDS is not set
+> CONFIG_LEDS_CLASS=y
 > 
-> Nope, sorry, same build errors.
+> (full config attached)
+> 
+> vmlinux.o: In function `iwl_rfkill_unregister':
+> (.text+0x174cdc): undefined reference to `input_unregister_device'
+> vmlinux.o: In function `iwl_rfkill_init':
+> (.text+0x174d9f): undefined reference to `input_allocate_device'
+> vmlinux.o: In function `iwl_rfkill_init':
+> (.text+0x174e2d): undefined reference to `input_register_device'
+> vmlinux.o: In function `iwl_rfkill_init':
+> (.text+0x174e53): undefined reference to `input_free_device'
+> vmlinux.o: In function `rt2x00rfkill_allocate_polldev':
+> rt2x00rfkill.c:(.text+0x176dc4): undefined reference to `input_allocate_polled_device'
+> vmlinux.o: In function `rt2x00rfkill_poll':
+> rt2x00rfkill.c:(.text+0x176e8b): undefined reference to `input_event'
+> rt2x00rfkill.c:(.text+0x176e9f): undefined reference to `input_event'
 
-Ok this is odd, there is something very strange happening,
-the relevant options in your config are:
+<snip>
 
-CONFIG_RFKILL=y
-CONFIG_RFKILL_INPUT=y
-# CONFIG_INPUT is not set
-CONFIG_INPUT_POLLDEV=y
-CONFIG_RT2X00_LIB_RFKILL=y
+Ick, what a mess...
 
->From net/rfkill/Kconfig:
+So what combination of depends and select of INPUT, INPUT_POLLDEV,
+and RFKILL_INPUT do we need to resolve this?
 
-config RFKILL_INPUT
-	tristate "Input layer to RF switch connector"
-	depends on RFKILL && INPUT
-
-So RFKILL_INPUT shouldn't not be enabled because it has
-a clear dependency on the CONFIG_INPUT option.
-
->From drivers/net/wireless/rt2x00/Kconfig
-config RT2X00_LIB_RFKILL
-	boolean
-	depends on RT2X00_LIB
-	select RFKILL
-	select INPUT_POLLDEV
-
-This doesn't mean that the rt2x00 behavior of selecting
-CONFIG_INPUT_POLLDEV without dependencies on
-CONFIG_INPUT was correct. But more that there is
-a secondary bug elsewhere as well, and that is the one
-which is causing the build failure now.. :S
-
-Anybody with additional ideas? :)
-
-Ivo
+-- 
+John W. Linville
+linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org
 --
 To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
