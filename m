@@ -1,46 +1,68 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Subject: Re: linux-next: nfsd/cpus4096 merge conflict
-Date: Wed, 11 Jun 2008 18:22:56 -0400
-Message-ID: <20080611222256.GB25194@fieldses.org>
-References: <20080611144037.3382eaf7.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [BUILD-FAILURE] linux-next: Tree for June 11 - on ia64
+Date: Thu, 12 Jun 2008 09:10:03 +1000
+Message-ID: <20080612091003.775bc671.sfr@canb.auug.org.au>
+References: <20080611193840.08a35b14.sfr@canb.auug.org.au>
+	<484FE1EE.9020201@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.fieldses.org ([66.93.2.214]:57215 "EHLO fieldses.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751309AbYFKWXE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Jun 2008 18:23:04 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__12_Jun_2008_09_10_03_+1000_qTA4nMRA2oeAkxDd"
+Return-path: <linux-ia64-owner@vger.kernel.org>
+In-Reply-To: <484FE1EE.9020201@linux.vnet.ibm.com>
+Sender: linux-ia64-owner@vger.kernel.org
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ia64@vger.kernel.org, Andy Whitcroft <apw@shadowen.org>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Thu__12_Jun_2008_09_10_03_+1000_qTA4nMRA2oeAkxDd
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20080611144037.3382eaf7.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>, Jeff Layton <jlayton@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 11, 2008 at 02:40:37PM +1000, Stephen Rothwell wrote:
-> Hi Bruce,
-> 
-> Today's linux-next merge of the nfsd tree got a conflict in
-> net/sunrpc/svc.c between commit 3f9b48a7584851997702cdc3f58e7811b5546397
-> ("net: Pass reference to cpumask variable in net/sunrpc/svc.c") from the
-> cpus4096 tree and commit 89a8922f36389cd4a284e5d7727cd792ef4544e0
-> ("knfsd: convert knfsd to kthread API") from the nfsd tree.
-> 
-> It appears that the cpus4096 patch may no longer be needed as it was just
-> changing "set_cpus_allowed(current, oldmask)" to "set_cpus_allowed_ptr
-> (current, &oldmask)" in __svc_create_thread() which has been removed and
-> there doesn't appear to be any new calls to set_cpus_allowed added.
+Hi Sam,
 
-Yep, dropping 3f9b48a7584851997702cdc3f58e7811b5546397 looks like the
-right thing to do.  Thanks!
+One for you?
 
---b.
+On Wed, 11 Jun 2008 20:02:14 +0530 Kamalesh Babulal <kamalesh@linux.vnet.ib=
+m.com> wrote:
+>
+> The next-20080611 kernel build fails on ia64 machine
+>=20
+>   AR      arch/ia64/lib/lib.a
+>   LD      vmlinux.o
+>   MODPOST vmlinux.o
+>   GEN     .version
+>   CHK     include/linux/compile.h
+>   UPD     include/linux/compile.h
+>   CC      init/version.o
+>   LD      init/built-in.o
+>   LD      .tmp_vmlinux
+>   LD      vmlinux
+> ld: .tmp_kallsyms.o: linking constant-gp files with non-constant-gp files
+> ld: failed to merge target specific data of file .tmp_kallsyms.o
+> make: *** [vmlinux] Error 1
+>=20
+> --=20
+> Thanks & Regards,
+> Kamalesh Babulal,
+> Linux Technology Center,
+> IBM, ISTL.
 
-> 
-> I could be wrong, so it is probably worth checking.
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+--Signature=_Thu__12_Jun_2008_09_10_03_+1000_qTA4nMRA2oeAkxDd
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhQW0sACgkQTgG2atn1QN8gsQCfWLhWhcbULR7y7qW850v7dMzZ
+jeYAnA00FEZEMT0vMX5xFXUVrgXZwYnJ
+=Tttp
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__12_Jun_2008_09_10_03_+1000_qTA4nMRA2oeAkxDd--
