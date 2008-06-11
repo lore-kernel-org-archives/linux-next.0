@@ -1,69 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: tip-core merge conflict
-Date: Wed, 11 Jun 2008 09:52:26 +1000
-Message-ID: <20080611095226.f798bb6a.sfr@canb.auug.org.au>
-References: <20080610120857.042ea0f1.sfr@canb.auug.org.au>
-	<20080610190434.GC15983@uranus.ravnborg.org>
+From: "Felipe Balbi" <felipebalbi@users.sourceforge.net>
+Subject: Re: [ANNOUNCE] linux-staging tree created
+Date: Wed, 11 Jun 2008 03:07:30 +0300
+Message-ID: <31e679430806101707s357e4b0dm79c3f9a95c784320@mail.gmail.com>
+References: <20080610190540.GA25066@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__11_Jun_2008_09_52_26_+1000_7.fb6sjNxXLXLjqM"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37633 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753856AbYFJXwe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Jun 2008 19:52:34 -0400
-In-Reply-To: <20080610190434.GC15983@uranus.ravnborg.org>
+Received: from fk-out-0910.google.com ([209.85.128.189]:20158 "EHLO
+	fk-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754488AbYFKAHc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jun 2008 20:07:32 -0400
+Received: by fk-out-0910.google.com with SMTP id 18so1658221fkq.5
+        for <linux-next@vger.kernel.org>; Tue, 10 Jun 2008 17:07:31 -0700 (PDT)
+In-Reply-To: <20080610190540.GA25066@kroah.com>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-kernel@vger.kernel.org, devel@linuxdriverproject.org, linux-next@vger.kernel.org, kernel-janitors@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
---Signature=_Wed__11_Jun_2008_09_52_26_+1000_7.fb6sjNxXLXLjqM
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+hi,
 
-Hi Sam,
-
-On Tue, 10 Jun 2008 21:04:34 +0200 Sam Ravnborg <sam@ravnborg.org> wrote:
+On Tue, Jun 10, 2008 at 10:05 PM, Greg KH <greg@kroah.com> wrote:
+> Oh great, not yet-another-kernel-tree, just what the world needs...
 >
-> On Tue, Jun 10, 2008 at 12:08:57PM +1000, Stephen Rothwell wrote:
-> > Hi all,
-> >=20
-> > Today's merge of the tip-core tree got a trivial conflict in
-> > include/asm-generic/vmlinux.lds.h between commit
-> > f1cb2ba8ca4a8b4b76bbf0b795375af52442501b ("generic: add
-> > OUTPUT_DATA_SECTION to vmlinux.lds.h") from the kbuild-current tree and
-> > commit 6360b1fbb4a939efd34fc770c2ebd927c55506e0 ("move BUG_TABLE into
-> > RODATA") from the tip-core tree.
->=20
-> I have dropped the offending commit from kbuild.git for now.
-> It will be applied late in the merge window.
+> Yes, this is an announcement of a new kernel tree, linux-staging.  It is
+> a quilt series of patches that can be found at:
+>        git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+>
+>
+> In a long and meandering thread with some of the other kernel developers
+> a week or so ago, it came up that there is no single place for companies
+> and developers to put their code for testing while it gets cleaned up
+> for submission into the kernel tree.  All of the different subsystems
+> have trees, but they generally only want code that is about to go into
+> this release, or the next one.  For stuff that is farther off, there is
+> no place to go.
 
-OK, thanks.  However, I am more than happy to carry these trivial merge
-fixes (and Linus does these fixes all the time) so if you want to keep
-this sort of thing in your tree, that's OK.  The reason I report them is
-that I try to report everything.
+That's great. I started working on the test and measurement class
+driver. Do you want me to send preliminary patches or just the final
+one ?
 
-The other thing we are considering is having a "late merge" set of trees
-that I merge at the end of linux-next.  The mechanics of that are still
-being thought about.
+-- 
+Best Regards,
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__11_Jun_2008_09_52_26_+1000_7.fb6sjNxXLXLjqM
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhPE7oACgkQTgG2atn1QN+EYgCbBct4Qvw+iNlJfDcUgnmNJDBQ
-U4oAoIJnR4TkwzUIuPu89qdqUeivJpPm
-=lVNa
------END PGP SIGNATURE-----
-
---Signature=_Wed__11_Jun_2008_09_52_26_+1000_7.fb6sjNxXLXLjqM--
+Felipe Balbi
+felipebalbi@users.sourceforge.net
