@@ -1,56 +1,36 @@
-From: Boaz Harrosh <bharrosh@panasas.com>
+From: "Felipe Balbi" <felipebalbi@users.sourceforge.net>
 Subject: Re: [ANNOUNCE] linux-staging tree created
-Date: Wed, 11 Jun 2008 12:50:34 +0300
-Message-ID: <484F9FEA.7000407@panasas.com>
+Date: Wed, 11 Jun 2008 12:58:10 +0300
+Message-ID: <31e679430806110258q359637e1y9ca0252d73ab4c6b@mail.gmail.com>
 References: <20080610190540.GA25066@kroah.com> <484F9A7B.4080004@panasas.com>
+	 <484F9FEA.7000407@panasas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gw-colo-pa.panasas.com ([66.238.117.130]:29733 "EHLO
-	cassoulet.panasas.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752330AbYFKJvX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jun 2008 05:51:23 -0400
-In-Reply-To: <484F9A7B.4080004@panasas.com>
+Received: from fg-out-1718.google.com ([72.14.220.154]:45611 "EHLO
+	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751011AbYFKJ6N (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jun 2008 05:58:13 -0400
+Received: by fg-out-1718.google.com with SMTP id 19so2072982fgg.17
+        for <linux-next@vger.kernel.org>; Wed, 11 Jun 2008 02:58:10 -0700 (PDT)
+In-Reply-To: <484F9FEA.7000407@panasas.com>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benny Halevy <bhalevy@panasas.com>
-Cc: Greg KH <greg@kroah.com>, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Boaz Harrosh <bharrosh@panasas.com>
+Cc: Benny Halevy <bhalevy@panasas.com>, Greg KH <greg@kroah.com>, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
-Benny Halevy wrote:
-> Greg,
-> 
-> The OSD initiator (see
-> http://git.open-osd.org/gitweb.cgi?p=open-osd.git;a=summary)
-> looks in principle like a great fit for linux-staging.
-> 
+Hi,
 
-The patches are not yet there, Benny. They are currently 
-out-of-tree here:
-http://git.open-osd.org/gitweb.cgi?p=osd-lib.git;a=summary
+On Wed, Jun 11, 2008 at 12:50 PM, Boaz Harrosh <bharrosh@panasas.com> wrote:
 
-It will take me until end of next week to separate them into
-a consumable patchset. Which will also move them in-tree.
- 
-> What would be the mechanics of including it?
-> 
+> I want to send them to linux-scsi-ml and also To: Greg KH
+> Requesting to be included in "linux-staging tree". Is that
+> sufficient?
 
-I want to send them to linux-scsi-ml and also To: Greg KH
-Requesting to be included in "linux-staging tree". Is that
-sufficient?
+just don't forget to add copyright notes in all files :-)--
+Best Regards,
 
-> Benny
-> 
-
-Boaz
-
-> On Jun. 10, 2008, 22:05 +0300, Greg KH <greg@kroah.com> wrote:
->> Oh great, not yet-another-kernel-tree, just what the world needs...
->>
->> Yes, this is an announcement of a new kernel tree, linux-staging.  It is
->> a quilt series of patches that can be found at:
->> 	git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
->>
->>
-<snip>
-
+Felipe Balbi
+felipebalbi@users.sourceforge.net
