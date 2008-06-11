@@ -1,48 +1,72 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [ANNOUNCE] linux-staging tree created
-Date: Wed, 11 Jun 2008 09:25:34 -0700
-Message-ID: <20080611162534.GD22134@kroah.com>
-References: <20080610190540.GA25066@kroah.com> <484F9A7B.4080004@panasas.com> <484F9FEA.7000407@panasas.com>
+From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Subject: Re: [BUILD-FAILURE] linux-next: Tree for June 11 - on ia64
+Date: Wed, 11 Jun 2008 22:16:26 +0530
+Message-ID: <48500162.3060604@linux.vnet.ibm.com>
+References: <20080611193840.08a35b14.sfr@canb.auug.org.au> <484FE1EE.9020201@linux.vnet.ibm.com> <20080611145057.GA10487@uranus.ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:57468 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753625AbYFKQ1t (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jun 2008 12:27:49 -0400
-Content-Disposition: inline
-In-Reply-To: <484F9FEA.7000407@panasas.com>
+Received: from E23SMTP01.au.ibm.com ([202.81.18.162]:43634 "EHLO
+	e23smtp01.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1764163AbYFKQqe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jun 2008 12:46:34 -0400
+In-Reply-To: <20080611145057.GA10487@uranus.ravnborg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Boaz Harrosh <bharrosh@panasas.com>
-Cc: Benny Halevy <bhalevy@panasas.com>, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ia64@vger.kernel.org, Andy Whitcroft <apw@shadowen.org>
 
-On Wed, Jun 11, 2008 at 12:50:34PM +0300, Boaz Harrosh wrote:
-> Benny Halevy wrote:
-> > Greg,
-> > 
-> > The OSD initiator (see
-> > http://git.open-osd.org/gitweb.cgi?p=open-osd.git;a=summary)
-> > looks in principle like a great fit for linux-staging.
-> > 
+Sam Ravnborg wrote:
+> On Wed, Jun 11, 2008 at 08:02:14PM +0530, Kamalesh Babulal wrote:
+>> Hi Stephen,
+>>
+>> The next-20080611 kernel build fails on ia64 machine
+>>
+>>   AR      arch/ia64/lib/lib.a
+>>   LD      vmlinux.o
+>>   MODPOST vmlinux.o
+>>   GEN     .version
+>>   CHK     include/linux/compile.h
+>>   UPD     include/linux/compile.h
+>>   CC      init/version.o
+>>   LD      init/built-in.o
+>>   LD      .tmp_vmlinux
+>>   LD      vmlinux
+>> ld: .tmp_kallsyms.o: linking constant-gp files with non-constant-gp files
+>> ld: failed to merge target specific data of file .tmp_kallsyms.o
+>> make: *** [vmlinux] Error 1
 > 
-> The patches are not yet there, Benny. They are currently 
-> out-of-tree here:
-> http://git.open-osd.org/gitweb.cgi?p=osd-lib.git;a=summary
+> A kbuild bug..
+> We do a local build of .tmp_kallsyms.o and we do not pass -mconstant-gp
 > 
-> It will take me until end of next week to separate them into
-> a consumable patchset. Which will also move them in-tree.
->  
-> > What would be the mechanics of including it?
-> > 
+> Can you please try if the following patch fixes it.
 > 
-> I want to send them to linux-scsi-ml and also To: Greg KH
-> Requesting to be included in "linux-staging tree". Is that
-> sufficient?
+> 	Sam
 
-If they are to go into linux-scsi, why would you need/want them in the
--staging tree as well?
+Hi Sam,
 
-thanks,
+Thanks, the patch fixes the build failure.
 
-greg k-h
+Tested-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+> 
+> diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
+> index b9ecff5..b335700 100644
+> --- a/scripts/link-vmlinux.sh
+> +++ b/scripts/link-vmlinux.sh
+> @@ -128,7 +128,7 @@ if [ "${CONFIG_KALLSYMS}" = "y" ]; then
+> 
+>  	# Do an extra pass to link in kallsyms data
+>  	${NM} -n .tmp_vmlinux | scripts/kallsyms > .tmp_kallsyms.S
+> -        ${CC} ${KBUILD_AFLAGS} ${KBUILD_CPPFLAGS} -c -o .tmp_kallsyms.o \
+> +        ${CC} ${KBUILD_AFLAGS} ${AFLAGS_KERNEL} ${KBUILD_CPPFLAGS} -c -o .tmp_kallsyms.o \
+>  	      .tmp_kallsyms.S
+>          # link in kalll symbols
+>  	tell LD vmlinux
+> --
+
+-- 
+Thanks & Regards,
+Kamalesh Babulal,
+Linux Technology Center,
+IBM, ISTL.
