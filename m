@@ -1,50 +1,68 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: galak merge conflict
-Date: Wed, 11 Jun 2008 15:46:00 +1000
-Message-ID: <20080611154600.91b35be7.sfr@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next Regression: Unable to locate IOAPIC
+Date: Tue, 10 Jun 2008 22:47:53 -0700
+Message-ID: <20080610224753.10ab33c5.akpm@linux-foundation.org>
+References: <200806051100.12885.dex@dragonslave.de>
+	<200806061930.29046.dex@dragonslave.de>
+	<20080606115024.387b5f80.akpm@linux-foundation.org>
+	<200806102229.10512.dex@dragonslave.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__11_Jun_2008_15_46_00_+1000_T7Mg_8A_xTwtc=9U"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49999 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751849AbYFKFqK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Jun 2008 01:46:10 -0400
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:55169 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752518AbYFKFsE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Jun 2008 01:48:04 -0400
+In-Reply-To: <200806102229.10512.dex@dragonslave.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kumar Gala <galak@kernel.crashing.org>
-Cc: linux-next@vger.kernel.org, Laurent Pinchart <laurentp@cse-semaphore.com>, Paul Mackerras <paulus@samba.org>
+To: webmaster@dragonslave.de
+Cc: Daniel Exner <dex@dragonslave.de>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org
 
---Signature=_Wed__11_Jun_2008_15_46_00_+1000_T7Mg_8A_xTwtc=9U
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 10 Jun 2008 22:29:10 +0200 Daniel Exner <dex@dragonslave.de> wrote:
 
-Hi Kumar,
+> 
+> Andrew Morton wrote:
+> > On Fri, 6 Jun 2008 19:30:28 +0200 Daniel Exner <dex@dragonslave.de> wrote:
+> > > Andrew Morton wrote:
+> > > > (cc linux-acpi)
+> > > >
+> > > > On Thu, 5 Jun 2008 11:00:12 +0200 Daniel Exner <dex@dragonslave.de> 
+> wrote:
+> > > > > Hi!
+> > > > >
+> > > > > (Added myself to CC, because I'm not subscribed)
+> > > > >
+> > > > > with linux-next snapshot 20080604 my Laptop morphes into sitting duck
+> > > > > and I think this is due to this:
+> > > >
+> > > > I assume 2.6.26-rc5 is OK?
+> > >
+> > > Indeed.. just tried it with (nearly) the same config: no unable to locate
+> > > IOAPIC
+> > >
+> > > Will try todays next snapshot above -rc5 now.
+> >
+> > OK, thanks.
+> >
+> > It would be great if you could test 2.6.26-rc5 plus
+> > http://userweb.kernel.org/~akpm/git-acpi.patch.  That'll allow us to
+> > confirm that the regression is due to changes in the acpi tree.
+> Sorry for the delay.. real-life you know ;)
+> 
+> I guess you'd expect me to confirm the behavior on rc5 with this patch aplied, 
+> but .. well this Kernel works!
+> 
+> So I think the regression is NOT in the acpi tree. Perhaps pci subsystem?
 
-Today's linux-next merge of the galak tree got a conflict in
-Documentation/powerpc/booting-without-of.txt between commit
-a5edeccb1a8432ae5d9fb9bccea5a4b64c565017 ("net: OpenFirmware GPIO based
-MDIO bitbang driver") from the net/wireless tree and commit
-83ff9dcf375c418ca3b98eb950711525ca1269e2 ("powerpc/sysdev: implement FSL
-GTM support") from the galak tree.
+There is behind-the-scenes finger-pointing going on ;)
 
-I have relabeled the "MDIO on GPIOs" section to 'v'.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+I don't think we know what caused this regression, sorry.
 
---Signature=_Wed__11_Jun_2008_15_46_00_+1000_T7Mg_8A_xTwtc=9U
-Content-Type: application/pgp-signature
+> If I find time I'll try bisecting it..
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+That would be fantastic, thanks.  Please don't let us merge this
+regression into 2.6.27.  We have a few weeks.
 
-iEYEARECAAYFAkhPZpgACgkQTgG2atn1QN/8kQCfbKwQJe0sNWbi54+55k121hpO
-p30An3PfWplfczpu9GTDvdgwNd4Htz8H
-=KG6i
------END PGP SIGNATURE-----
-
---Signature=_Wed__11_Jun_2008_15_46_00_+1000_T7Mg_8A_xTwtc=9U--
