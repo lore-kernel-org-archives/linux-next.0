@@ -1,119 +1,46 @@
-From: Ivo van Doorn <ivdoorn@gmail.com>
-Subject: Re: [PATCH] next-20080611 rt2x00: LEDS build failure
-Date: Thu, 12 Jun 2008 00:15:15 +0200
-Message-ID: <200806120015.15384.IvDoorn@gmail.com>
-References: <20080611100748.d35829f4.randy.dunlap@oracle.com> <200806112159.00779.IvDoorn@gmail.com> <20080611133222.77c4a3f4.randy.dunlap@oracle.com>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: linux-next: nfsd/cpus4096 merge conflict
+Date: Wed, 11 Jun 2008 18:22:56 -0400
+Message-ID: <20080611222256.GB25194@fieldses.org>
+References: <20080611144037.3382eaf7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fg-out-1718.google.com ([72.14.220.154]:51416 "EHLO
-	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753145AbYFKWDC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jun 2008 18:03:02 -0400
-Received: by fg-out-1718.google.com with SMTP id 19so2259739fgg.17
-        for <linux-next@vger.kernel.org>; Wed, 11 Jun 2008 15:03:00 -0700 (PDT)
-In-Reply-To: <20080611133222.77c4a3f4.randy.dunlap@oracle.com>
+Received: from mail.fieldses.org ([66.93.2.214]:57215 "EHLO fieldses.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751309AbYFKWXE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Jun 2008 18:23:04 -0400
 Content-Disposition: inline
+In-Reply-To: <20080611144037.3382eaf7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: rt2400-devel@lists.sourceforge.net, "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-wireless@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>, Jeff Layton <jlayton@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
 
-On Wednesday 11 June 2008, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
+On Wed, Jun 11, 2008 at 02:40:37PM +1000, Stephen Rothwell wrote:
+> Hi Bruce,
 > 
-> Config symbols that select LEDS_CLASS need to depend on NEW_LEDS so that
-> undefined symbols are not used in the build.
+> Today's linux-next merge of the nfsd tree got a conflict in
+> net/sunrpc/svc.c between commit 3f9b48a7584851997702cdc3f58e7811b5546397
+> ("net: Pass reference to cpumask variable in net/sunrpc/svc.c") from the
+> cpus4096 tree and commit 89a8922f36389cd4a284e5d7727cd792ef4544e0
+> ("knfsd: convert knfsd to kthread API") from the nfsd tree.
 > 
-> The alternative is to select NEW_LEDS, which some drivers do.
->
-> This patch fixes the led_* symbols build errors.
-> 
-> (.text+0x174cdc): undefined reference to `input_unregister_device'
-> (.text+0x174d9f): undefined reference to `input_allocate_device'
-> (.text+0x174e2d): undefined reference to `input_register_device'
-> (.text+0x174e53): undefined reference to `input_free_device'
-> rt2x00rfkill.c:(.text+0x176dc4): undefined reference to `input_allocate_polled_device'
-> rt2x00rfkill.c:(.text+0x176e8b): undefined reference to `input_event'
-> rt2x00rfkill.c:(.text+0x176e9f): undefined reference to `input_event'
-> (.text+0x176eca): undefined reference to `input_unregister_polled_device'
-> (.text+0x176efc): undefined reference to `input_free_polled_device'
-> (.text+0x176f37): undefined reference to `input_free_polled_device'
-> (.text+0x176fd8): undefined reference to `input_register_polled_device'
-> (.text+0x1772c0): undefined reference to `led_classdev_resume'
-> (.text+0x1772d4): undefined reference to `led_classdev_resume'
-> (.text+0x1772e8): undefined reference to `led_classdev_resume'
-> (.text+0x17730a): undefined reference to `led_classdev_suspend'
-> (.text+0x17731e): undefined reference to `led_classdev_suspend'
-> (.text+0x17732f): undefined reference to `led_classdev_suspend'
-> rt2x00leds.c:(.text+0x177348): undefined reference to `led_classdev_unregister'
-> rt2x00leds.c:(.text+0x1773c0): undefined reference to `led_classdev_register'
-> rfkill-input.c:(.text+0x209e4c): undefined reference to `input_close_device'
-> rfkill-input.c:(.text+0x209e53): undefined reference to `input_unregister_handle'
-> rfkill-input.c:(.text+0x209ea1): undefined reference to `input_register_handle'
-> rfkill-input.c:(.text+0x209eae): undefined reference to `input_open_device'
-> rfkill-input.c:(.text+0x209ebb): undefined reference to `input_unregister_handle'
-> rfkill-input.c:(.init.text+0x17405): undefined reference to `input_register_handler'
-> rfkill-input.c:(.exit.text+0x194f): undefined reference to `input_unregister_handler'
-> make[1]: *** [vmlinux] Error 1
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> It appears that the cpus4096 patch may no longer be needed as it was just
+> changing "set_cpus_allowed(current, oldmask)" to "set_cpus_allowed_ptr
+> (current, &oldmask)" in __svc_create_thread() which has been removed and
+> there doesn't appear to be any new calls to set_cpus_allowed added.
 
-Acked-by: Ivo van Doorn <IvDoorn@gmail.com>
+Yep, dropping 3f9b48a7584851997702cdc3f58e7811b5546397 looks like the
+right thing to do.  Thanks!
 
-> ---
->  drivers/net/wireless/rt2x00/Kconfig |   10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+--b.
+
 > 
-> --- linux-next-20080611.orig/drivers/net/wireless/rt2x00/Kconfig
-> +++ linux-next-20080611/drivers/net/wireless/rt2x00/Kconfig
-> @@ -42,7 +42,7 @@ config RT2X00_LIB_RFKILL
->  
->  config RT2X00_LIB_LEDS
->  	boolean
-> -	depends on RT2X00_LIB
-> +	depends on RT2X00_LIB && NEW_LEDS
->  
->  config RT2400PCI
->  	tristate "Ralink rt2400 (PCI/PCMCIA) support"
-> @@ -66,7 +66,7 @@ config RT2400PCI_RFKILL
->  
->  config RT2400PCI_LEDS
->  	bool "Ralink rt2400 leds support"
-> -	depends on RT2400PCI
-> +	depends on RT2400PCI && NEW_LEDS
->  	select LEDS_CLASS
->  	select RT2X00_LIB_LEDS
->  	---help---
-> @@ -94,7 +94,7 @@ config RT2500PCI_RFKILL
->  
->  config RT2500PCI_LEDS
->  	bool "Ralink rt2500 leds support"
-> -	depends on RT2500PCI
-> +	depends on RT2500PCI && NEW_LEDS
->  	select LEDS_CLASS
->  	select RT2X00_LIB_LEDS
->  	---help---
-> @@ -124,7 +124,7 @@ config RT61PCI_RFKILL
->  
->  config RT61PCI_LEDS
->  	bool "Ralink rt2501/rt61 leds support"
-> -	depends on RT61PCI
-> +	depends on RT61PCI && NEW_LEDS
->  	select LEDS_CLASS
->  	select RT2X00_LIB_LEDS
->  	---help---
-> @@ -162,7 +162,7 @@ config RT73USB
->  
->  config RT73USB_LEDS
->  	bool "Ralink rt2501/rt73 leds support"
-> -	depends on RT73USB
-> +	depends on RT73USB && NEW_LEDS
->  	select LEDS_CLASS
->  	select RT2X00_LIB_LEDS
->  	---help---
-> 
+> I could be wrong, so it is probably worth checking.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
 
 
