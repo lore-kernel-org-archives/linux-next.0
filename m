@@ -1,80 +1,44 @@
-From: Boaz Harrosh <bharrosh@panasas.com>
-Subject: Re: [ANNOUNCE] linux-staging tree created
-Date: Wed, 11 Jun 2008 20:43:48 +0300
-Message-ID: <48500ED4.3010808@panasas.com>
-References: <20080610190540.GA25066@kroah.com> <484F9A7B.4080004@panasas.com> <484F9FEA.7000407@panasas.com> <20080611162534.GD22134@kroah.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [Rt2400-devel] next-20080611 rt2x00: build failure
+Date: Wed, 11 Jun 2008 12:46:26 -0500 (CDT)
+Message-ID: <32664704.1213206386295.JavaMail.oracle@acsmt301.oracle.com>
+References: <20080611100748.d35829f4.randy.dunlap@oracle.com> <200806111948.49976.IvDoorn@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gw-colo-pa.panasas.com ([66.238.117.130]:31363 "EHLO
-	cassoulet.panasas.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751994AbYFKRoa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jun 2008 13:44:30 -0400
-In-Reply-To: <20080611162534.GD22134@kroah.com>
+Received: from agminet01.oracle.com ([141.146.126.228]:47651 "EHLO
+	agminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755303AbYFKRqm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jun 2008 13:46:42 -0400
+In-Reply-To: <200806111948.49976.IvDoorn@gmail.com>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Benny Halevy <bhalevy@panasas.com>, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: rt2400-devel@lists.sourceforge.net, Ivo van Doorn <ivdoorn@gmail.com>
+Cc: linux-wireless@vger.kernel.org, linux-next@vger.kernel.org
 
-Greg KH wrote:
-> On Wed, Jun 11, 2008 at 12:50:34PM +0300, Boaz Harrosh wrote:
->> Benny Halevy wrote:
->>> Greg,
->>>
->>> The OSD initiator (see
->>> http://git.open-osd.org/gitweb.cgi?p=open-osd.git;a=summary)
->>> looks in principle like a great fit for linux-staging.
->>>
->> The patches are not yet there, Benny. They are currently 
->> out-of-tree here:
->> http://git.open-osd.org/gitweb.cgi?p=osd-lib.git;a=summary
->>
->> It will take me until end of next week to separate them into
->> a consumable patchset. Which will also move them in-tree.
->>  
->>> What would be the mechanics of including it?
->>>
->> I want to send them to linux-scsi-ml and also To: Greg KH
->> Requesting to be included in "linux-staging tree". Is that
->> sufficient?
+--- Original Message ---
+> > when CONFIG_INPUT=n and
+> > # CONFIG_NEW_LEDS is not set
+> > CONFIG_LEDS_CLASS=y
 > 
-> If they are to go into linux-scsi, why would you need/want them in the
-> -staging tree as well?
-> 
+> Does below patch help?
 
-We're jumping the guns here a bit, but ...
+Nope, sorry, same build errors.
 
-The code is pretty stable and robust as far as the protocol and performance
-is concerned, surly once I in-tree them, divide them into patches, prettify
-comments, add file-headers, and checkpatch them.
+> ---
+> diff --git a/drivers/net/wireless/rt2x00/Kconfig
+> b/drivers/net/wireless/rt2x00/Kconfig
+> index 0ace761..c4d1f67 100644
+> --- a/drivers/net/wireless/rt2x00/Kconfig
+> +++ b/drivers/net/wireless/rt2x00/Kconfig
+> @@ -36,6 +36,7 @@ config RT2X00_LIB_FIRMWARE
+>  config RT2X00_LIB_RFKILL
+>  	boolean
+>  	depends on RT2X00_LIB
+> +	depends on INPUT
+>  	select RFKILL
+>  	select INPUT_POLLDEV
+>  
 
-But the bigger implications are not yet clear, and will need advise from
-the list, which could take time. Mainly in regard to upper ULD and tests.
-Currently there are 4 users for this code:
-- pNFS-over-objects layout driver
-- pNFS-over-objects Simple Server implementation (spNFS)
-- OSDVFS - Virtual psuedo file system to access and debug OSD luns from user mode.
-          (This is not the OSDFS from IBM which is a general FS over objects,
-           but a direct representation of the OSD Lun to user mode)
-- Testing
-
-The first 3 are their own ULD and do not need a proper SCSI-ULD. With some
-changes to sg.c they can manage with what we have now. The later is just
-for debugging.
-
-On the other hand a true OSD-ULD that exports /dev/osdx char and/or block
-devices, has merits and future directions of it's own. And will eliminate
-the need for changes in sg.c
-
-So the mechanics are pretty much there but the direction is not clear, which
-will govern the folders/exports/dependencies. But I'm not sure -staging tree
-will help in any of that. I do have my git.open-osd.org exports and can manage
-all that there. It could help in exposure and testing of the code.
-
-> thanks,
-> 
-> greg k-h
-
-Thanks
-Boaz
