@@ -1,68 +1,50 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next Regression: Unable to locate IOAPIC
-Date: Tue, 10 Jun 2008 22:47:53 -0700
-Message-ID: <20080610224753.10ab33c5.akpm@linux-foundation.org>
-References: <200806051100.12885.dex@dragonslave.de>
-	<200806061930.29046.dex@dragonslave.de>
-	<20080606115024.387b5f80.akpm@linux-foundation.org>
-	<200806102229.10512.dex@dragonslave.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: rr merge conflicts
+Date: Wed, 11 Jun 2008 16:13:45 +1000
+Message-ID: <20080611161345.e73c3889.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__11_Jun_2008_16_13_45_+1000_jwYX+op_W_+hHRMD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:55169 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752518AbYFKFsE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Jun 2008 01:48:04 -0400
-In-Reply-To: <200806102229.10512.dex@dragonslave.de>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60975 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751912AbYFKGNw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Jun 2008 02:13:52 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: webmaster@dragonslave.de
-Cc: Daniel Exner <dex@dragonslave.de>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org
 
-On Tue, 10 Jun 2008 22:29:10 +0200 Daniel Exner <dex@dragonslave.de> wrote:
+--Signature=_Wed__11_Jun_2008_16_13_45_+1000_jwYX+op_W_+hHRMD
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Andrew Morton wrote:
-> > On Fri, 6 Jun 2008 19:30:28 +0200 Daniel Exner <dex@dragonslave.de> wrote:
-> > > Andrew Morton wrote:
-> > > > (cc linux-acpi)
-> > > >
-> > > > On Thu, 5 Jun 2008 11:00:12 +0200 Daniel Exner <dex@dragonslave.de> 
-> wrote:
-> > > > > Hi!
-> > > > >
-> > > > > (Added myself to CC, because I'm not subscribed)
-> > > > >
-> > > > > with linux-next snapshot 20080604 my Laptop morphes into sitting duck
-> > > > > and I think this is due to this:
-> > > >
-> > > > I assume 2.6.26-rc5 is OK?
-> > >
-> > > Indeed.. just tried it with (nearly) the same config: no unable to locate
-> > > IOAPIC
-> > >
-> > > Will try todays next snapshot above -rc5 now.
-> >
-> > OK, thanks.
-> >
-> > It would be great if you could test 2.6.26-rc5 plus
-> > http://userweb.kernel.org/~akpm/git-acpi.patch.  That'll allow us to
-> > confirm that the regression is due to changes in the acpi tree.
-> Sorry for the delay.. real-life you know ;)
-> 
-> I guess you'd expect me to confirm the behavior on rc5 with this patch aplied, 
-> but .. well this Kernel works!
-> 
-> So I think the regression is NOT in the acpi tree. Perhaps pci subsystem?
+Hi Rusty,
 
-There is behind-the-scenes finger-pointing going on ;)
+Today's linux-next merge of the rr tree got conflicts in
+drivers/net/virtio_net.c caused by some of the patches in the rr also
+series being in the net-current tree.  I just used the rr tree version of
+the file.
 
-I don't think we know what caused this regression, sorry.
+These conflicts will be fixed when the net-current tree is merged by
+Linus and you resync your patch series.  Until then I can carry them.
 
-> If I find time I'll try bisecting it..
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-That would be fantastic, thanks.  Please don't let us merge this
-regression into 2.6.27.  We have a few weeks.
+--Signature=_Wed__11_Jun_2008_16_13_45_+1000_jwYX+op_W_+hHRMD
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhPbRkACgkQTgG2atn1QN9uTwCgh5e2OfpOQrmcmRI0U7Axrdil
+FtoAnRkLQWLMqfFS1IcClm+AjCVZqYsG
+=Kof8
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__11_Jun_2008_16_13_45_+1000_jwYX+op_W_+hHRMD--
