@@ -1,7 +1,7 @@
 From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] [Rt2400-devel] next-20080611 rt2x00: build failure
-Date: Wed, 11 Jun 2008 12:57:58 -0700
-Message-ID: <20080611125758.613692ab.randy.dunlap@oracle.com>
+Subject: [PATCH] next-20080611 rt2x00: LEDS build failure
+Date: Wed, 11 Jun 2008 13:32:22 -0700
+Message-ID: <20080611133222.77c4a3f4.randy.dunlap@oracle.com>
 References: <20080611100748.d35829f4.randy.dunlap@oracle.com>
 	<200806112103.58517.IvDoorn@gmail.com>
 	<20080611123245.4089f47b.randy.dunlap@oracle.com>
@@ -16,24 +16,14 @@ To: Ivo van Doorn <ivdoorn-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: rt2400-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-next.vger.kernel.org
 
-> Could you include the RT61PCI_RFKILL change as well?
-
-<quilt refresh needed :( >
-
-> After that you can add:
-> 
-> Acked-by: Ivo van Doorn <IvDoorn-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-
-
-Updated patch.  Thanks.
-
----
 From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 
-Config symbols that select RFKILL need to depend on INPUT so that
+Config symbols that select LEDS_CLASS need to depend on NEW_LEDS so that
 undefined symbols are not used in the build.
 
-This patch fixes the input_* symbols build errors.
+The alternative is to select NEW_LEDS, which some drivers do.
+
+This patch fixes the led_* symbols build errors.
 
 (.text+0x174cdc): undefined reference to `input_unregister_device'
 (.text+0x174d9f): undefined reference to `input_allocate_device'
@@ -64,48 +54,57 @@ rfkill-input.c:(.exit.text+0x194f): undefined reference to `input_unregister_han
 make[1]: *** [vmlinux] Error 1
 
 Signed-off-by: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Acked-by: Ivo van Doorn <IvDoorn-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/net/wireless/rt2x00/Kconfig |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/net/wireless/rt2x00/Kconfig |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 --- linux-next-20080611.orig/drivers/net/wireless/rt2x00/Kconfig
 +++ linux-next-20080611/drivers/net/wireless/rt2x00/Kconfig
-@@ -36,6 +36,7 @@ config RT2X00_LIB_FIRMWARE
- config RT2X00_LIB_RFKILL
+@@ -42,7 +42,7 @@ config RT2X00_LIB_RFKILL
+ 
+ config RT2X00_LIB_LEDS
  	boolean
- 	depends on RT2X00_LIB
-+	depends on INPUT
- 	select RFKILL
- 	select INPUT_POLLDEV
+-	depends on RT2X00_LIB
++	depends on RT2X00_LIB && NEW_LEDS
  
-@@ -56,7 +57,7 @@ config RT2400PCI
+ config RT2400PCI
+ 	tristate "Ralink rt2400 (PCI/PCMCIA) support"
+@@ -66,7 +66,7 @@ config RT2400PCI_RFKILL
  
- config RT2400PCI_RFKILL
- 	bool "Ralink rt2400 rfkill support"
+ config RT2400PCI_LEDS
+ 	bool "Ralink rt2400 leds support"
 -	depends on RT2400PCI
-+	depends on RT2400PCI && INPUT
- 	select RT2X00_LIB_RFKILL
++	depends on RT2400PCI && NEW_LEDS
+ 	select LEDS_CLASS
+ 	select RT2X00_LIB_LEDS
  	---help---
- 	  This adds support for integrated rt2400 hardware that features a
-@@ -84,7 +85,7 @@ config RT2500PCI
+@@ -94,7 +94,7 @@ config RT2500PCI_RFKILL
  
- config RT2500PCI_RFKILL
- 	bool "Ralink rt2500 rfkill support"
+ config RT2500PCI_LEDS
+ 	bool "Ralink rt2500 leds support"
 -	depends on RT2500PCI
-+	depends on RT2500PCI && INPUT
- 	select RT2X00_LIB_RFKILL
++	depends on RT2500PCI && NEW_LEDS
+ 	select LEDS_CLASS
+ 	select RT2X00_LIB_LEDS
  	---help---
- 	  This adds support for integrated rt2500 hardware that features a
-@@ -114,7 +115,7 @@ config RT61PCI
+@@ -124,7 +124,7 @@ config RT61PCI_RFKILL
  
- config RT61PCI_RFKILL
- 	bool "Ralink rt2501/rt61 rfkill support"
+ config RT61PCI_LEDS
+ 	bool "Ralink rt2501/rt61 leds support"
 -	depends on RT61PCI
-+	depends on RT61PCI && INPUT
- 	select RT2X00_LIB_RFKILL
++	depends on RT61PCI && NEW_LEDS
+ 	select LEDS_CLASS
+ 	select RT2X00_LIB_LEDS
  	---help---
- 	  This adds support for integrated rt61 hardware that features a
+@@ -162,7 +162,7 @@ config RT73USB
+ 
+ config RT73USB_LEDS
+ 	bool "Ralink rt2501/rt73 leds support"
+-	depends on RT73USB
++	depends on RT73USB && NEW_LEDS
+ 	select LEDS_CLASS
+ 	select RT2X00_LIB_LEDS
+ 	---help---
 --
 To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
