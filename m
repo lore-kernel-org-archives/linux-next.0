@@ -1,67 +1,56 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: ldp/staging/driver-core (Was: Re: linux-next: Tree for June 11)
-Date: Wed, 11 Jun 2008 17:17:24 -0700
-Message-ID: <20080612001724.GA8359@kroah.com>
-References: <20080611193840.08a35b14.sfr@canb.auug.org.au> <20080611185527.GB5516@kroah.com> <20080612100520.43c39e3d.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: block merge conflicts
+Date: Thu, 12 Jun 2008 11:08:08 +1000
+Message-ID: <20080612110808.d0815065.sfr@canb.auug.org.au>
+References: <20080611184729.978d62d2.sfr@canb.auug.org.au>
+	<20080611195604.GE20851@kernel.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__12_Jun_2008_11_08_08_+1000_rXTdBIJiKm=iwJk/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:37684 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755215AbYFLAVU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jun 2008 20:21:20 -0400
-Content-Disposition: inline
-In-Reply-To: <20080612100520.43c39e3d.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:58989 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754419AbYFLBIO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Jun 2008 21:08:14 -0400
+In-Reply-To: <20080611195604.GE20851@kernel.dk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: linux-next@vger.kernel.org
 
-On Thu, Jun 12, 2008 at 10:05:20AM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> On Wed, 11 Jun 2008 11:55:27 -0700 Greg KH <greg@kroah.com> wrote:
-> >
-> > On Wed, Jun 11, 2008 at 07:38:40PM +1000, Stephen Rothwell wrote:
-> > > Hi all,
-> > > 
-> > > Changes since next-20080610:
-> > > 
-> > > Dropped trees (temporary): ldp (it is unfetchable - probably something to
-> > > do with the new Staging tree), block (it just has too many conflicts and
-> > > breaks the powerpc build).
-> > 
-> > Yes, I've dropped "ldp" from my 'gregkh' set of patches/trees, they
-> > should be pulled in from the -staging tree, which would be great if you
-> > could add to the end of the -next tree.
-> 
-> I was under the impression that the stuff in the ldp tree was for
-> inclusion in 2.6.27.  If so, then that tree should still exist (for
-> inclusion in linux-next) or the drivers that were in the ldp tree should
-> be included in some other tree(s) that is (are) included in linux-next
-> (Staging is for stuff that isn't ready yet, right?).
+--Signature=_Thu__12_Jun_2008_11_08_08_+1000_rXTdBIJiKm=iwJk/
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, but if there are only 1 or 2 patches that are ready to go upstream
-in -next, and you are pulling the whole -staging tree in, it doesn't
-make much sense to keep the two separate, so I just put them at the top
-of the staging tree.
+Hi Jens,
 
-> I will try to figure out what I think about Staging today.
+On Wed, 11 Jun 2008 21:56:06 +0200 Jens Axboe <jens.axboe@oracle.com> wrote:
+>
+> No worries, I'll make sure to compile test everything again and send you
+> a note. I had half-expected the move of the arch defines from
+> linux/smp.h to asm/smp.h to cause a problem or two, I'll double check
+> everything.
+>=20
+> I'll send you a note tomorrow when things are going.
 
-Thanks.
+OK, thanks.
 
-> > I've also removed some of the larger patches in the driver-core tree
-> > that were causing you merge/build errors, they should be all resolved
-> > now.
-> 
-> Thanks, but a better plan (which I hope you and Kay have considered) is
-> to break up the ones that only depeneded on dev_name and dev_set_name and
-> send the parts to the appropriate subsystems (since dev_name and
-> dev_set_name) are both in upstream now).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-That's exactly what we are going to do.  I removed them from my tree for
-now to prevent these kinds of merge errors.
+--Signature=_Thu__12_Jun_2008_11_08_08_+1000_rXTdBIJiKm=iwJk/
+Content-Type: application/pgp-signature
 
-thanks,
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-greg k-h
+iEYEARECAAYFAkhQdvgACgkQTgG2atn1QN9mVACfYM+JlJrQ5PnRBEGV1atDX0ZA
+5gIAn39OZ7pBxWqaX1eCjPj/UqN9UmXn
+=oU3G
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__12_Jun_2008_11_08_08_+1000_rXTdBIJiKm=iwJk/--
