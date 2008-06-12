@@ -1,58 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: firmware build failure
-Date: Thu, 12 Jun 2008 16:28:17 +1000
-Message-ID: <20080612162817.c0a4e115.sfr@canb.auug.org.au>
+Subject: Re: linux-next: powerpc build failure
+Date: Thu, 12 Jun 2008 17:05:05 +1000
+Message-ID: <20080612170505.6049fa75.sfr@canb.auug.org.au>
+References: <20080611192748.686236fd.sfr@canb.auug.org.au>
+	<20080611095951.GB14033@elte.hu>
+	<18512.32267.636550.47385@cargo.ozlabs.ibm.com>
+	<20080612053335.GA22035@bubble.grove.modra.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__12_Jun_2008_17_05_05_+1000_vzfSIjzIrtG6spjm"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48964 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47433 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754854AbYFLG2V (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Jun 2008 02:28:21 -0400
+	id S1755604AbYFLHFR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Jun 2008 03:05:17 -0400
+In-Reply-To: <20080612053335.GA22035@bubble.grove.modra.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: linux-next@vger.kernel.org
+To: Alan Modra <amodra@bigpond.net.au>
+Cc: Paul Mackerras <paulus@samba.org>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org
 
-Hi David,
+--Signature=_Thu__12_Jun_2008_17_05_05_+1000_vzfSIjzIrtG6spjm
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+On Thu, 12 Jun 2008 15:03:35 +0930 Alan Modra <amodra@bigpond.net.au> wrote:
+>
+> On Thu, Jun 12, 2008 at 11:38:19AM +1000, Paul Mackerras wrote:
+> > Direct unconditional branches, including procedure calls, can only
+> > reach +/- 32MB from the address of the branch on powerpc.  So if the
+> > image grows to more than 32MB of text there is a problem unless the
+> > linker is smart enough to insert trampolines.  I don't know whether
+> > GNU ld is that smart.
+>=20
+> It is, but you need to pass --relax to enable generation of the
+> trampolines.
 
-drivers/char/ip2/ip2main.c: In function 'ip2_request_firmware':
-drivers/char/ip2/ip2main.c:483: error: implicit declaration of function 'platform_device_register_simple'
-drivers/char/ip2/ip2main.c:483: warning: assignment makes pointer from integer without a cast
-drivers/char/ip2/ip2main.c:486: error: dereferencing pointer to incomplete type
-drivers/char/ip2/ip2main.c:490: error: implicit declaration of function 'platform_device_unregister'
+So I tried this (added --relax to LDFLAGS_vmlinux if CONFIG FTRACE was
+set) and got this;
 
-I applied the patch below.
--- 
+/usr/bin/ld: --relax and -r may not be used together
+
+So, I will disable FTRACE on powerpc for now by removing HAVE_FTRACE from
+being selected in arch/powerpc/Kconfig.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
->From 8cf424dac01282d3e8a4041f27c6de6a15a47823 Mon Sep 17 00:00:00 2001
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 12 Jun 2008 16:25:34 +1000
-Subject: [PATCH] firmware: fix ip2 conversion fallout
+--Signature=_Thu__12_Jun_2008_17_05_05_+1000_vzfSIjzIrtG6spjm
+Content-Type: application/pgp-signature
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/char/ip2/ip2main.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-diff --git a/drivers/char/ip2/ip2main.c b/drivers/char/ip2/ip2main.c
-index 1199a2b..e8a4d16 100644
---- a/drivers/char/ip2/ip2main.c
-+++ b/drivers/char/ip2/ip2main.c
-@@ -100,6 +100,7 @@
- #include <linux/device.h>
- #include <linux/smp_lock.h>
- #include <linux/firmware.h>
-+#include <linux/platform_device.h>
- 
- #include <linux/tty.h>
- #include <linux/tty_flip.h>
--- 
-1.5.5.4
+iEYEARECAAYFAkhQyqEACgkQTgG2atn1QN+8VgCeKNq4rWhMN7Uu5asxOt2++UZB
+kzAAnAzNX0rPO27Bn4RbwoRBdyImeKdT
+=QlV6
+-----END PGP SIGNATURE-----
 
+--Signature=_Thu__12_Jun_2008_17_05_05_+1000_vzfSIjzIrtG6spjm--
