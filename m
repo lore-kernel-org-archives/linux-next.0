@@ -1,39 +1,51 @@
-From: Alan Modra <amodra@bigpond.net.au>
-Subject: Re: linux-next: powerpc build failure
-Date: Thu, 12 Jun 2008 15:03:35 +0930
-Message-ID: <20080612053335.GA22035@bubble.grove.modra.org>
-References: <20080611192748.686236fd.sfr@canb.auug.org.au>
-	<20080611095951.GB14033@elte.hu>
-	<18512.32267.636550.47385@cargo.ozlabs.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: firmware/bkl-removal merge conflict
+Date: Thu, 12 Jun 2008 16:18:03 +1000
+Message-ID: <20080612161803.de11eace.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__12_Jun_2008_16_18_03_+1000_WKOhwR4Tnw.0Sxp8"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51363 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751323AbYFLGSO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Jun 2008 02:18:14 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+
+--Signature=_Thu__12_Jun_2008_16_18_03_+1000_WKOhwR4Tnw.0Sxp8
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <18512.32267.636550.47385@cargo.ozlabs.ibm.com>
-List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
-List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
-List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org
-To: Paul Mackerras <paulus@samba.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 12, 2008 at 11:38:19AM +1000, Paul Mackerras wrote:
-> Direct unconditional branches, including procedure calls, can only
-> reach +/- 32MB from the address of the branch on powerpc.  So if the
-> image grows to more than 32MB of text there is a problem unless the
-> linker is smart enough to insert trampolines.  I don't know whether
-> GNU ld is that smart.
+Hi David,
 
-It is, but you need to pass --relax to enable generation of the
-trampolines.
+Today's linux-next merge of the firmware tree got a trivial conflict in
+drivers/char/ip2/ip2main.c between commit
+023c37d20b8a85438869f22e962bbf905644883f ("Add a bunch of
+cycle_kernel_lock() calls") form the bkl-removal tree and commit
+6d28e8abf294260b52efd1ba1d59ced169ba4a7a ("ip2: use request_firmware()")
+from the firmware tree.
 
--- 
-Alan Modra
-Australia Development Lab, IBM
+It was just a case of overlapping additions of includes.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__12_Jun_2008_16_18_03_+1000_WKOhwR4Tnw.0Sxp8
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhQv5sACgkQTgG2atn1QN8yugCfe+H5K5zI98xERVKxXH207qAz
+RAYAnjUgA+f+iqiHgveaptATk4uXOI/g
+=H/L+
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__12_Jun_2008_16_18_03_+1000_WKOhwR4Tnw.0Sxp8--
