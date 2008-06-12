@@ -1,53 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: block merge conflicts
-Date: Thu, 12 Jun 2008 23:32:10 +1000
-Message-ID: <20080612233210.b862ebe6.sfr@canb.auug.org.au>
-References: <20080611184729.978d62d2.sfr@canb.auug.org.au>
-	<20080611195604.GE20851@kernel.dk>
-	<20080612110808.d0815065.sfr@canb.auug.org.au>
-	<20080612132606.GM20851@kernel.dk>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: tip-core merge conflict
+Date: Thu, 12 Jun 2008 16:10:22 +0200
+Message-ID: <20080612141022.GA28001@elte.hu>
+References: <20080610120857.042ea0f1.sfr@canb.auug.org.au> <20080610190434.GC15983@uranus.ravnborg.org> <20080611095226.f798bb6a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__12_Jun_2008_23_32_10_+1000_In3YXLTupgmzM1uU"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59660 "EHLO smtps.tip.net.au"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:40063 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760113AbYFLNcT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Jun 2008 09:32:19 -0400
-In-Reply-To: <20080612132606.GM20851@kernel.dk>
+	id S1754981AbYFLOKl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Jun 2008 10:10:41 -0400
+Content-Disposition: inline
+In-Reply-To: <20080611095226.f798bb6a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Sam Ravnborg <sam@ravnborg.org>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
 
---Signature=_Thu__12_Jun_2008_23_32_10_+1000_In3YXLTupgmzM1uU
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-On Thu, 12 Jun 2008 15:26:07 +0200 Jens Axboe <jens.axboe@oracle.com> wrote:
->
-> Should be better now, I didn't find anything besides the ppc screwup.
+> > I have dropped the offending commit from kbuild.git for now. It will 
+> > be applied late in the merge window.
+> 
+> OK, thanks.  However, I am more than happy to carry these trivial 
+> merge fixes (and Linus does these fixes all the time) so if you want 
+> to keep this sort of thing in your tree, that's OK.  The reason I 
+> report them is that I try to report everything.
 
-OK, I will try again tomorrow.
+i think it might be a communications issue - as conflicts are not a 
+problem per se, they are just a complication that you resolve.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+So it might make sense to change the subject line of your merge 
+resolution mails from:
 
---Signature=_Thu__12_Jun_2008_23_32_10_+1000_In3YXLTupgmzM1uU
-Content-Type: application/pgp-signature
+  linux-next: tip-core merge conflict
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+to:
 
-iEYEARECAAYFAkhRJVoACgkQTgG2atn1QN/xzQCfY+20FXK0JrBj5JsFFS69jUja
-EvsAoJsYNhYCYdLnsK0rt4TkzoxuUZRQ
-=XXxi
------END PGP SIGNATURE-----
+  linux-next: manual merge of tip-core
 
---Signature=_Thu__12_Jun_2008_23_32_10_+1000_In3YXLTupgmzM1uU--
+that way people still stay informed about interactions between trees 
+(and can reduce them when they are avoidable, and can check the result 
+as well since it was done manually), but dont see it as some sort of 
+failure that needs to be 'resolved' via dropping patches.
+
+	Ingo
