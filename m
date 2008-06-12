@@ -1,56 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: block merge conflicts
-Date: Thu, 12 Jun 2008 11:08:08 +1000
-Message-ID: <20080612110808.d0815065.sfr@canb.auug.org.au>
-References: <20080611184729.978d62d2.sfr@canb.auug.org.au>
-	<20080611195604.GE20851@kernel.dk>
+From: Paul Mackerras <paulus@samba.org>
+Subject: Re: linux-next: powerpc build failure
+Date: Thu, 12 Jun 2008 11:38:19 +1000
+Message-ID: <18512.32267.636550.47385@cargo.ozlabs.ibm.com>
+References: <20080611192748.686236fd.sfr@canb.auug.org.au>
+	<20080611095951.GB14033@elte.hu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__12_Jun_2008_11_08_08_+1000_rXTdBIJiKm=iwJk/"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58989 "EHLO smtps.tip.net.au"
+Received: from ozlabs.org ([203.10.76.45]:52400 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754419AbYFLBIO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Jun 2008 21:08:14 -0400
-In-Reply-To: <20080611195604.GE20851@kernel.dk>
+	id S1751393AbYFLBi2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Jun 2008 21:38:28 -0400
+In-Reply-To: <20080611095951.GB14033@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: linux-next@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org, amodra@bigpond.net.au
 
---Signature=_Thu__12_Jun_2008_11_08_08_+1000_rXTdBIJiKm=iwJk/
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ingo Molnar writes:
 
-Hi Jens,
+> could this be a tool chain limitation perhaps, or a gcc bug? Or does the 
+> allyesconfig size go beyond some fundamental hardware limitation. (i 
+> doubt it's the latter)
 
-On Wed, 11 Jun 2008 21:56:06 +0200 Jens Axboe <jens.axboe@oracle.com> wrote:
->
-> No worries, I'll make sure to compile test everything again and send you
-> a note. I had half-expected the move of the arch defines from
-> linux/smp.h to asm/smp.h to cause a problem or two, I'll double check
-> everything.
->=20
-> I'll send you a note tomorrow when things are going.
+Direct unconditional branches, including procedure calls, can only
+reach +/- 32MB from the address of the branch on powerpc.  So if the
+image grows to more than 32MB of text there is a problem unless the
+linker is smart enough to insert trampolines.  I don't know whether
+GNU ld is that smart.  I'm cc'ing Alan Modra who would know the answer
+to that.
 
-OK, thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__12_Jun_2008_11_08_08_+1000_rXTdBIJiKm=iwJk/
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhQdvgACgkQTgG2atn1QN9mVACfYM+JlJrQ5PnRBEGV1atDX0ZA
-5gIAn39OZ7pBxWqaX1eCjPj/UqN9UmXn
-=oU3G
------END PGP SIGNATURE-----
-
---Signature=_Thu__12_Jun_2008_11_08_08_+1000_rXTdBIJiKm=iwJk/--
+Paul.
