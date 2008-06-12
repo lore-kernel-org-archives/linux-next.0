@@ -1,34 +1,51 @@
-From: Paul Mackerras <paulus@samba.org>
-Subject: Re: linux-next: powerpc build failure
-Date: Thu, 12 Jun 2008 11:38:19 +1000
-Message-ID: <18512.32267.636550.47385@cargo.ozlabs.ibm.com>
-References: <20080611192748.686236fd.sfr@canb.auug.org.au>
-	<20080611095951.GB14033@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: acpi/cpus4096 merge conflict
+Date: Thu, 12 Jun 2008 13:50:32 +1000
+Message-ID: <20080612135032.b5d0c684.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__12_Jun_2008_13_50_32_+1000_5MDyE15wVpdkYePy"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:52400 "EHLO ozlabs.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:54111 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751393AbYFLBi2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Jun 2008 21:38:28 -0400
-In-Reply-To: <20080611095951.GB14033@elte.hu>
+	id S1750699AbYFLDul (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Jun 2008 23:50:41 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org, amodra@bigpond.net.au
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Mike Travis <travis@sgi.com>
 
-Ingo Molnar writes:
+--Signature=_Thu__12_Jun_2008_13_50_32_+1000_5MDyE15wVpdkYePy
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> could this be a tool chain limitation perhaps, or a gcc bug? Or does the 
-> allyesconfig size go beyond some fundamental hardware limitation. (i 
-> doubt it's the latter)
+Hi Len,
 
-Direct unconditional branches, including procedure calls, can only
-reach +/- 32MB from the address of the branch on powerpc.  So if the
-image grows to more than 32MB of text there is a problem unless the
-linker is smart enough to insert trampolines.  I don't know whether
-GNU ld is that smart.  I'm cc'ing Alan Modra who would know the answer
-to that.
+Today's linux-next merge of the acpi tree got a trivial conflict in
+drivers/acpi/processor_throttling.c between commit
+141ad0688adb53094d6f75b39b4b3b0625de0e07 ("acpi: use performance variant
+for_each_cpu_mask_nr") from the cpus4096 tree and commit
+08a4ab4a5fd58438840524ce22199c6bbd05816f ("ACPI: change processors from
+array to per_cpu variable") from the acpi tree.
 
-Paul.
+It is just a context conflict and I did the obvious fixup.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__12_Jun_2008_13_50_32_+1000_5MDyE15wVpdkYePy
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhQnQgACgkQTgG2atn1QN9Z8QCfSZ2vj2DkX5Xw5BbM86TJh6za
+aUIAn3o1HKbLd/g/qh4rpviRUm2puQ6V
+=+Iz5
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__12_Jun_2008_13_50_32_+1000_5MDyE15wVpdkYePy--
