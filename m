@@ -1,71 +1,68 @@
-From: Alexey Starikovskiy <aystarik@gmail.com>
-Subject: Re: linux-next Regression: Unable to locate IOAPIC
-Date: Fri, 13 Jun 2008 02:58:44 +0400
-Message-ID: <4851AA24.7060906@gmail.com>
-References: <200806051100.12885.dex@dragonslave.de> <200806061930.29046.dex@dragonslave.de> <20080606115024.387b5f80.akpm@linux-foundation.org> <200806102229.10512.dex@dragonslave.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: mtd/avr32 merge conflict
+Date: Fri, 13 Jun 2008 09:46:21 +1000
+Message-ID: <20080613094621.d302febc.sfr@canb.auug.org.au>
+References: <20080612145538.0835c0b8.sfr@canb.auug.org.au>
+	<20080612222403.18755932@siona.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <200806102229.10512.dex@dragonslave.de>
-Sender: linux-acpi-owner@vger.kernel.org
-To: webmaster@dragonslave.de
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__13_Jun_2008_09_46_21_+1000_/+8=Bd=h71z_wACh"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:58754 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757028AbYFLXqa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Jun 2008 19:46:30 -0400
+In-Reply-To: <20080612222403.18755932@siona.local>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Haavard Skinnemoen <haavard.skinnemoen@atmel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>, linux-next@vger.kernel.org, Hans-Christian Egtvedt <hcegtvedt@atmel.com>
 
-Hi Daniel,
+--Signature=_Fri__13_Jun_2008_09_46_21_+1000_/+8=Bd=h71z_wACh
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Could you please provide full dmesg and acpidump outputs?
+Hi Haavard,
 
-Thanks,
-Alex.
-
-Daniel Exner wrote:
-> Andrew Morton wrote:
->   
->> On Fri, 6 Jun 2008 19:30:28 +0200 Daniel Exner <dex@dragonslave.de> wrote:
->>     
->>> Andrew Morton wrote:
->>>       
->>>> (cc linux-acpi)
->>>>
->>>> On Thu, 5 Jun 2008 11:00:12 +0200 Daniel Exner <dex@dragonslave.de> 
->>>>         
-> wrote:
->   
->>>>> Hi!
->>>>>
->>>>> (Added myself to CC, because I'm not subscribed)
->>>>>
->>>>> with linux-next snapshot 20080604 my Laptop morphes into sitting duck
->>>>> and I think this is due to this:
->>>>>           
->>>> I assume 2.6.26-rc5 is OK?
->>>>         
->>> Indeed.. just tried it with (nearly) the same config: no unable to locate
->>> IOAPIC
->>>
->>> Will try todays next snapshot above -rc5 now.
->>>       
->> OK, thanks.
->>
->> It would be great if you could test 2.6.26-rc5 plus
->> http://userweb.kernel.org/~akpm/git-acpi.patch.  That'll allow us to
->> confirm that the regression is due to changes in the acpi tree.
->>     
-> Sorry for the delay.. real-life you know ;)
+On Thu, 12 Jun 2008 22:24:03 +0200 Haavard Skinnemoen <haavard.skinnemoen@a=
+tmel.com> wrote:
 >
-> I guess you'd expect me to confirm the behavior on rc5 with this patch aplied, 
-> but .. well this Kernel works!
->
-> So I think the regression is NOT in the acpi tree. Perhaps pci subsystem?
-> If I find time I'll try bisecting it..
->
-> Greetings
-> Daniel Exner
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-acpi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->   
+> On Thu, 12 Jun 2008 14:55:38 +1000
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>=20
+> > Hi David,
+> >=20
+> > Today's linux-next merge of the mtd tree got a trivial conflict in
+> > include/asm-avr32/arch-at32ap/board.h between commit
+> > f01fb51fc0e2b77c8bbf4d41adfd74c367173b02 ("avr32: Add PSIF platform
+> > devices") from the avr32 tree and commit
+> > 62090a08aba579e6c69319fac4d4a1f806f26400 ("[MTD] [NAND] avr32: atmel_na=
+nd
+> > platform code for AT32AP700x") from the mtd tree.
+> >=20
+> > It was just a case of overlapping additions.
+>=20
+> I moved the at32_add_device_psif() prototype a bit up. I think that
+> took care of the conflict.
 
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__13_Jun_2008_09_46_21_+1000_/+8=Bd=h71z_wACh
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhRtU0ACgkQTgG2atn1QN/OAwCgkozpgTGnBw5aq+04hOWQOF+w
+gyMAoJJdVFmXFbvQrtXV6/n+yGiWQYmf
+=TqKs
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__13_Jun_2008_09_46_21_+1000_/+8=Bd=h71z_wACh--
