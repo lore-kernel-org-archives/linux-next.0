@@ -1,40 +1,38 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: acpi/cpus4096 merge conflict
-Date: Thu, 12 Jun 2008 14:18:24 +0200
-Message-ID: <20080612121824.GA26504@elte.hu>
-References: <20080612135032.b5d0c684.sfr@canb.auug.org.au> <alpine.LFD.1.10.0806120045320.12191@localhost.localdomain>
+From: Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: linux-next: block merge conflicts
+Date: Thu, 12 Jun 2008 15:26:07 +0200
+Message-ID: <20080612132606.GM20851@kernel.dk>
+References: <20080611184729.978d62d2.sfr@canb.auug.org.au> <20080611195604.GE20851@kernel.dk> <20080612110808.d0815065.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:58449 "EHLO mx2.mail.elte.hu"
+Received: from brick.kernel.dk ([87.55.233.238]:5476 "EHLO kernel.dk"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756079AbYFLMSw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Jun 2008 08:18:52 -0400
+	id S1758172AbYFLN0J (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Jun 2008 09:26:09 -0400
 Content-Disposition: inline
-In-Reply-To: <alpine.LFD.1.10.0806120045320.12191@localhost.localdomain>
+In-Reply-To: <20080612110808.d0815065.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Mike Travis <travis@sgi.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-
-* Len Brown <lenb@kernel.org> wrote:
-
-> > Today's linux-next merge of the acpi tree got a trivial conflict in
-> > drivers/acpi/processor_throttling.c between commit
-> > 141ad0688adb53094d6f75b39b4b3b0625de0e07 ("acpi: use performance variant
-> > for_each_cpu_mask_nr") from the cpus4096 tree and commit
-> > 08a4ab4a5fd58438840524ce22199c6bbd05816f ("ACPI: change processors from
-> > array to per_cpu variable") from the acpi tree.
+On Thu, Jun 12 2008, Stephen Rothwell wrote:
+> Hi Jens,
+> 
+> On Wed, 11 Jun 2008 21:56:06 +0200 Jens Axboe <jens.axboe@oracle.com> wrote:
+> >
+> > No worries, I'll make sure to compile test everything again and send you
+> > a note. I had half-expected the move of the arch defines from
+> > linux/smp.h to asm/smp.h to cause a problem or two, I'll double check
+> > everything.
 > > 
-> > It is just a context conflict and I did the obvious fixup.
+> > I'll send you a note tomorrow when things are going.
 > 
-> thanks.
-> 
-> it would be ideal if the cpus4096 tree didn't scribble on drivers/acpi 
-> -- though I don't know if partitioning those patches is practical.
+> OK, thanks.
 
-well, it's a tree-wide API change and thus maintained in a separate 
-tree.
+Should be better now, I didn't find anything besides the ppc screwup.
 
-	Ingo
+-- 
+Jens Axboe
+
