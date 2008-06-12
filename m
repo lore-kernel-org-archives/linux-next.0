@@ -1,48 +1,40 @@
-From: "Will Newton" <will.newton@gmail.com>
-Subject: Re: [ANNOUNCE] linux-staging tree created
-Date: Thu, 12 Jun 2008 12:37:56 +0100
-Message-ID: <87a5b0800806120437n23602ba5raae500f5bd3d179f@mail.gmail.com>
-References: <20080610190540.GA25066@kroah.com>
-	 <87a5b0800806110345v77529fc8r591f2fb4c95b5bdf@mail.gmail.com>
-	 <20080611162639.GE22134@kroah.com>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: acpi/cpus4096 merge conflict
+Date: Thu, 12 Jun 2008 14:18:24 +0200
+Message-ID: <20080612121824.GA26504@elte.hu>
+References: <20080612135032.b5d0c684.sfr@canb.auug.org.au> <alpine.LFD.1.10.0806120045320.12191@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from yw-out-2324.google.com ([74.125.46.30]:56454 "EHLO
-	yw-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751757AbYFLLh5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Jun 2008 07:37:57 -0400
-Received: by yw-out-2324.google.com with SMTP id 9so2181908ywe.1
-        for <linux-next@vger.kernel.org>; Thu, 12 Jun 2008 04:37:57 -0700 (PDT)
-In-Reply-To: <20080611162639.GE22134@kroah.com>
+Received: from mx2.mail.elte.hu ([157.181.151.9]:58449 "EHLO mx2.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756079AbYFLMSw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Jun 2008 08:18:52 -0400
 Content-Disposition: inline
+In-Reply-To: <alpine.LFD.1.10.0806120045320.12191@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-kernel@vger.kernel.org, devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Len Brown <lenb@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Mike Travis <travis@sgi.com>
 
-On Wed, Jun 11, 2008 at 5:26 PM, Greg KH <greg@kroah.com> wrote:
-> On Wed, Jun 11, 2008 at 11:45:55AM +0100, Will Newton wrote:
->>
->> Would the linux-staging tree be an appropriate place to merge a new
->> architecture? Or would that be too large a change and should go via
->> its own tree?
->
-> That is probably too big to go into -staging and should deserve its own
-> tree based on the size of patches that have gone into creating a new
-> architecture in the past.
 
-Our tree is about 26000 lines of diff, including a few drivers.
+* Len Brown <lenb@kernel.org> wrote:
 
-> Do you have an example of one that is currently not included in the main
-> kernel tree right now?
+> > Today's linux-next merge of the acpi tree got a trivial conflict in
+> > drivers/acpi/processor_throttling.c between commit
+> > 141ad0688adb53094d6f75b39b4b3b0625de0e07 ("acpi: use performance variant
+> > for_each_cpu_mask_nr") from the cpus4096 tree and commit
+> > 08a4ab4a5fd58438840524ce22199c6bbd05816f ("ACPI: change processors from
+> > array to per_cpu variable") from the acpi tree.
+> > 
+> > It is just a context conflict and I did the obvious fixup.
+> 
+> thanks.
+> 
+> it would be ideal if the cpus4096 tree didn't scribble on drivers/acpi 
+> -- though I don't know if partitioning those patches is practical.
 
-I have a tree that is currently about half way to public consumption,
-although I don't think there's any point pushing it until we have a
-publically available toolchain.
+well, it's a tree-wide API change and thus maintained in a separate 
+tree.
 
-> thanks,
->
-> greg k-h
->
+	Ingo
