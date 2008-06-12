@@ -1,51 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: mtd/avr32 merge conflict
-Date: Thu, 12 Jun 2008 14:55:38 +1000
-Message-ID: <20080612145538.0835c0b8.sfr@canb.auug.org.au>
+From: Alan Modra <amodra@bigpond.net.au>
+Subject: Re: linux-next: powerpc build failure
+Date: Thu, 12 Jun 2008 15:03:35 +0930
+Message-ID: <20080612053335.GA22035@bubble.grove.modra.org>
+References: <20080611192748.686236fd.sfr@canb.auug.org.au>
+	<20080611095951.GB14033@elte.hu>
+	<18512.32267.636550.47385@cargo.ozlabs.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__12_Jun_2008_14_55_38_+1000_aXB6GMXs3oBlCIUf"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52646 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751404AbYFLEzr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Jun 2008 00:55:47 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: linux-next@vger.kernel.org, =?UTF-8?B?IkjDpXZhcmQgU2tpbm5lbW9lbiI=?= <haavard.skinnemoen@atmel.com>, Hans-Christian Egtvedt <hcegtvedt@atmel.com>
-
---Signature=_Thu__12_Jun_2008_14_55_38_+1000_aXB6GMXs3oBlCIUf
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <18512.32267.636550.47385@cargo.ozlabs.ibm.com>
+List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
+List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
+List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org
+To: Paul Mackerras <paulus@samba.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>
+List-Id: linux-next.vger.kernel.org
 
-Hi David,
+On Thu, Jun 12, 2008 at 11:38:19AM +1000, Paul Mackerras wrote:
+> Direct unconditional branches, including procedure calls, can only
+> reach +/- 32MB from the address of the branch on powerpc.  So if the
+> image grows to more than 32MB of text there is a problem unless the
+> linker is smart enough to insert trampolines.  I don't know whether
+> GNU ld is that smart.
 
-Today's linux-next merge of the mtd tree got a trivial conflict in
-include/asm-avr32/arch-at32ap/board.h between commit
-f01fb51fc0e2b77c8bbf4d41adfd74c367173b02 ("avr32: Add PSIF platform
-devices") from the avr32 tree and commit
-62090a08aba579e6c69319fac4d4a1f806f26400 ("[MTD] [NAND] avr32: atmel_nand
-platform code for AT32AP700x") from the mtd tree.
+It is, but you need to pass --relax to enable generation of the
+trampolines.
 
-It was just a case of overlapping additions.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__12_Jun_2008_14_55_38_+1000_aXB6GMXs3oBlCIUf
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhQrEoACgkQTgG2atn1QN+LvwCcDeOiiIpol7S6+THz/2WhDau5
-7CAAoJPaSgQ9JP+eh0fde6FBCP2j8sU5
-=1Xa3
------END PGP SIGNATURE-----
-
---Signature=_Thu__12_Jun_2008_14_55_38_+1000_aXB6GMXs3oBlCIUf--
+-- 
+Alan Modra
+Australia Development Lab, IBM
