@@ -1,47 +1,55 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [ANNOUNCE] linux-staging tree created
-Date: Thu, 12 Jun 2008 16:54:41 -0700
-Message-ID: <20080612235441.GC4792@kroah.com>
-References: <20080610190540.GA25066@kroah.com> <87a5b0800806110345v77529fc8r591f2fb4c95b5bdf@mail.gmail.com> <20080611162639.GE22134@kroah.com> <87a5b0800806120437n23602ba5raae500f5bd3d179f@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merg of x86 tree
+Date: Fri, 13 Jun 2008 13:32:40 +1000
+Message-ID: <20080613133240.b8e527b7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__13_Jun_2008_13_32_40_+1000_khhU9kIHC4CtJE9G"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:49278 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754800AbYFMACG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Jun 2008 20:02:06 -0400
-Content-Disposition: inline
-In-Reply-To: <87a5b0800806120437n23602ba5raae500f5bd3d179f@mail.gmail.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56676 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757486AbYFMDcs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Jun 2008 23:32:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Will Newton <will.newton@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org
 
-On Thu, Jun 12, 2008 at 12:37:56PM +0100, Will Newton wrote:
-> On Wed, Jun 11, 2008 at 5:26 PM, Greg KH <greg@kroah.com> wrote:
-> > On Wed, Jun 11, 2008 at 11:45:55AM +0100, Will Newton wrote:
-> >>
-> >> Would the linux-staging tree be an appropriate place to merge a new
-> >> architecture? Or would that be too large a change and should go via
-> >> its own tree?
-> >
-> > That is probably too big to go into -staging and should deserve its own
-> > tree based on the size of patches that have gone into creating a new
-> > architecture in the past.
-> 
-> Our tree is about 26000 lines of diff, including a few drivers.
+--Signature=_Fri__13_Jun_2008_13_32_40_+1000_khhU9kIHC4CtJE9G
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That's pretty sizable, I think it deserves its own tree.
+Hi all,
 
-> > Do you have an example of one that is currently not included in the main
-> > kernel tree right now?
-> 
-> I have a tree that is currently about half way to public consumption,
-> although I don't think there's any point pushing it until we have a
-> publically available toolchain.
+Today's linux-next merge of the x86 tree got a conflict involving these
+commits:
 
-Yeah, that would help as well :)
+0b6a39f7ebcb1c82587ce35b401c513eed41ac5c ("Revert "x86: fix ioapic bug agai=
+n"") from Linus' tree
+b61d37f073055f838b03c4ad5683a4d05bb95fbf ("Revert "x86: fix ioapic bug agai=
+n"") from the x86 tree
+b697c77b2ce6f526abbe749afec51666b6a69f45 ("Revert "Revert "x86: fix ioapic =
+bug again""") from the x86 tree
+4b151813a40a968fce405ee561a321bea23f459c ("x86: I/O APIC: remove parameters=
+ to fiddle with the 8259A") from the x86 tree
 
-thanks,
+I simply used the version of the file in the x86 tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-greg k-h
+--Signature=_Fri__13_Jun_2008_13_32_40_+1000_khhU9kIHC4CtJE9G
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhR6lgACgkQTgG2atn1QN9EbwCfZ4yC1h3NmsnCAPiNW0pQzAT3
+dLkAnieEr9BXFI2C0PygG9xhcaldKm1k
+=PpPo
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__13_Jun_2008_13_32_40_+1000_khhU9kIHC4CtJE9G--
