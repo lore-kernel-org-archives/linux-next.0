@@ -1,43 +1,28 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: [ANNOUNCE] linux-staging tree created
-Date: Fri, 13 Jun 2008 10:33:29 -0400
-Message-ID: <20080613143328.GA16506@tuxdriver.com>
-References: <20080610190540.GA25066@kroah.com> <43e72e890806130714k535b041evaf750209ea492c47@mail.gmail.com>
+From: "Maciej W. Rozycki" <macro@linux-mips.org>
+Subject: Re: linux-next Regression: Unable to locate IOAPIC
+Date: Fri, 13 Jun 2008 16:42:23 +0100 (BST)
+Message-ID: <Pine.LNX.4.55.0806131638320.29380@cliff.in.clinika.pl>
+References: <200806051100.12885.dex@dragonslave.de> <200806102229.10512.dex@dragonslave.de>
+ <4851AA24.7060906@gmail.com> <200806131307.39807.dex@dragonslave.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ra.tuxdriver.com ([70.61.120.52]:2733 "EHLO ra.tuxdriver.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755533AbYFMPDg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 13 Jun 2008 11:03:36 -0400
-Content-Disposition: inline
-In-Reply-To: <43e72e890806130714k535b041evaf750209ea492c47@mail.gmail.com>
+Received: from kirk.serum.com.pl ([213.77.9.205]:62334 "EHLO serum.com.pl"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1756486AbYFMPnW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 13 Jun 2008 11:43:22 -0400
+In-Reply-To: <200806131307.39807.dex@dragonslave.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Luis R. Rodriguez" <mcgrof@gmail.com>
-Cc: Greg KH <greg@kroah.com>, linux-kernel@vger.kernel.org, devel@linuxdriverproject.org, linux-next@vger.kernel.org, kernel-janitors@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-wireless <linux-wireless@vger.kernel.org>
+To: webmaster@dragonslave.de
+Cc: Alexey Starikovskiy <aystarik@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org
 
-On Fri, Jun 13, 2008 at 07:14:32AM -0700, Luis R. Rodriguez wrote:
+On Fri, 13 Jun 2008, Daniel Exner wrote:
 
-> This is great. To let this be useful for wireless we'll need
-> wireless-testing.git merged as we rely on it for the latest and
-> greatest. Is this a possibility?
+> I attached dmesg and config , both from working 2.6.26-rc5 with git-acpi patch 
+> below and from linux-next snapshot 20080604.
 
-> We have a few drivers which are not yet ready for
-> wireless-testing.git. Airgo is one.
-> 
-> Anyway, good stuff. Let me know what you think about letting this work
-> for wireless too.
+ Unfortunately dmesg.rc5.acpi is missing important information at the
+beginning -- please retry with a larger buffer (LOG_BUF_SHIFT).
 
-I don't think directly pulling wireless-testing is a good idea of
--staging for process-related reasons.  However I think we can arrange
-to send something for the new tree.  at76, airgo, and mrv8k are all
-decent candidates.
-
-Greg, how does the -staging tree get managed?  Is it periodically
-rebuilt (like -next)?  Or would I need to send you pull requests?
-
-John
--- 
-John W. Linville
-linville@tuxdriver.com
+  Maciej
