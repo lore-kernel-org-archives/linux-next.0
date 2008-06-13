@@ -1,28 +1,33 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: linux-next: pending wireless/wireless-current merge conflict
-Date: Fri, 13 Jun 2008 17:56:01 -0400
-Message-ID: <20080613215601.GA8345@tuxdriver.com>
+From: Jeremy Fitzhardinge <jeremy@goop.org>
+Subject: Re: linux-next: Tree for June 13 (XEN)
+Date: Fri, 13 Jun 2008 23:16:40 +0100
+Message-ID: <4852F1C8.7060904@goop.org>
+References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <20080613101316.1c228fe7.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ra.tuxdriver.com ([70.61.120.52]:2856 "EHLO ra.tuxdriver.com"
+Received: from gw.goop.org ([64.81.55.164]:51161 "EHLO mail.goop.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754329AbYFMWCh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 13 Jun 2008 18:02:37 -0400
-Content-Disposition: inline
+	id S1754515AbYFMWR0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 13 Jun 2008 18:17:26 -0400
+In-Reply-To: <20080613101316.1c228fe7.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, chrisw@sous-sol.org, virtualization@lists.osdl.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>
 
-I just sent a pull request for Dave that will result in some conflict
-around the rt2x00 driver.  I have a sample merge available here:
+Randy Dunlap wrote:
+> next-20080613 on x86_32 has lots of xen build errors like this:
+>
+> linux-next-20080613/arch/x86/xen/mmu.c: In function 'drop_mm_ref':
+> linux-next-20080613/arch/x86/xen/mmu.c:759: error: implicit declaration of function 'xen_smp_call_function_mask'
+> make[2]: *** [arch/x86/xen/mmu.o] Error 1
+>
+>   
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-next-2.6 merge-test
+Ooh, first time I've seen that.  Sounds like Jens' patches are missing 
+the appropriate update there (though it's certainly had it in the past).
 
-Just a heads-up... :-)
+    J
 
-John
--- 
-John W. Linville
-linville@tuxdriver.com
