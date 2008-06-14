@@ -1,47 +1,56 @@
-From: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [ANNOUNCE] linux-staging tree created
-Date: Fri, 13 Jun 2008 17:28:02 -0700
-Message-ID: <20080614002802.GD25585@kroah.com>
-References: <20080610190540.GA25066@kroah.com> <43e72e890806130714k535b041evaf750209ea492c47@mail.gmail.com> <20080613143328.GA16506@tuxdriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: pending wireless/wireless-current merge conflict
+Date: Sat, 14 Jun 2008 11:31:07 +1000
+Message-ID: <20080614113107.e9be69f7.sfr@canb.auug.org.au>
+References: <20080613215601.GA8345@tuxdriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__14_Jun_2008_11_31_07_+1000_pcuN06CBOLO_XEsZ"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:40785 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754021AbYFNBbN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 13 Jun 2008 21:31:13 -0400
+In-Reply-To: <20080613215601.GA8345@tuxdriver.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org
+
+--Signature=_Sat__14_Jun_2008_11_31_07_+1000_pcuN06CBOLO_XEsZ
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20080613143328.GA16506-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
-Cc: "Luis R. Rodriguez" <mcgrof-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-tBiZLqfeLfOHmIFyCCdPziST3g8Odh+X@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 13, 2008 at 10:33:29AM -0400, John W. Linville wrote:
-> On Fri, Jun 13, 2008 at 07:14:32AM -0700, Luis R. Rodriguez wrote:
-> 
-> > This is great. To let this be useful for wireless we'll need
-> > wireless-testing.git merged as we rely on it for the latest and
-> > greatest. Is this a possibility?
-> 
-> > We have a few drivers which are not yet ready for
-> > wireless-testing.git. Airgo is one.
-> > 
-> > Anyway, good stuff. Let me know what you think about letting this work
-> > for wireless too.
-> 
-> I don't think directly pulling wireless-testing is a good idea of
-> -staging for process-related reasons.  However I think we can arrange
-> to send something for the new tree.  at76, airgo, and mrv8k are all
-> decent candidates.
+Hi John,
 
-Sounds good to me.
+On Fri, 13 Jun 2008 17:56:01 -0400 "John W. Linville" <linville@tuxdriver.c=
+om> wrote:
+>
+> I just sent a pull request for Dave that will result in some conflict
+> around the rt2x00 driver.  I have a sample merge available here:
+>=20
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-next-2.6=
+ merge-test
+>=20
+> Just a heads-up... :-)
 
-> Greg, how does the -staging tree get managed?  Is it periodically
-> rebuilt (like -next)?  Or would I need to send you pull requests?
+OK, Thanks.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Just send me patches, it's a quilt tree.
+--Signature=_Sat__14_Jun_2008_11_31_07_+1000_pcuN06CBOLO_XEsZ
+Content-Type: application/pgp-signature
 
-thanks,
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-greg k-h
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+iEYEARECAAYFAkhTH1sACgkQTgG2atn1QN+rggCdH/6pMFVDO1CG3zgAv5ZW8xNG
+/0sAnjTgF3EkNS8FE1iTM0oFupXq/UeY
+=3tqU
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__14_Jun_2008_11_31_07_+1000_pcuN06CBOLO_XEsZ--
