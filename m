@@ -1,65 +1,48 @@
-From: Jeremy Fitzhardinge <jeremy@goop.org>
-Subject: Re: linux-next: Tree for June 13 (XEN)
-Date: Sun, 15 Jun 2008 07:11:16 +0100
-Message-ID: <4854B284.7030709@goop.org>
-References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <20080613101316.1c228fe7.randy.dunlap@oracle.com> <4852F1C8.7060904@goop.org> <20080614203109.GH20851@kernel.dk>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [m68k] drivers/ide/ide-taskfile.c:235: error: implicit declaration
+ of function 'sg_page'
+Date: Sun, 15 Jun 2008 15:43:14 +0200 (CEST)
+Message-ID: <Pine.LNX.4.64.0806151538160.5736@anakin>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gw.goop.org ([64.81.55.164]:46580 "EHLO mail.goop.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751278AbYFOGMG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 15 Jun 2008 02:12:06 -0400
-In-Reply-To: <20080614203109.GH20851@kernel.dk>
+Received: from monty.telenet-ops.be ([195.130.132.56]:51908 "EHLO
+	monty.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757499AbYFONnQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 15 Jun 2008 09:43:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, chrisw@sous-sol.org, virtualization@lists.osdl.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: linux-ide@vger.kernel.org, linux-next@vger.kernel.org, Linux/m68k <linux-m68k@vger.kernel.org>
 
-Jens Axboe wrote:
-> On Fri, Jun 13 2008, Jeremy Fitzhardinge wrote:
->   
->> Randy Dunlap wrote:
->>     
->>> next-20080613 on x86_32 has lots of xen build errors like this:
->>>
->>> linux-next-20080613/arch/x86/xen/mmu.c: In function 'drop_mm_ref':
->>> linux-next-20080613/arch/x86/xen/mmu.c:759: error: implicit declaration of 
->>> function 'xen_smp_call_function_mask'
->>> make[2]: *** [arch/x86/xen/mmu.o] Error 1
->>>
->>>  
->>>       
->> Ooh, first time I've seen that.  Sounds like Jens' patches are missing 
->> the appropriate update there (though it's certainly had it in the past).
->>     
->
-> Hmm, will this work or do we need to force xen smp_ops for this one? I
-> wonder if this is new code and was missed, or what happened in this
-> case.
->   
+	Hi Bart,
 
-Yes, using smp_call_function_mask is perfectly OK.  The old code was 
-just a micro-optimisation.  I'm pretty sure this chunk was in one of 
-your patchsets (or perhaps I sent it to you at some point).
+As of June 12, drivers/ide/ide-taskfile.c fails to compile on m68k in
+linux-next:
 
-> diff --git a/arch/x86/xen/mmu.c b/arch/x86/xen/mmu.c
-> index 3525ef5..8baef77 100644
-> --- a/arch/x86/xen/mmu.c
-> +++ b/arch/x86/xen/mmu.c
-> @@ -569,7 +569,7 @@ static void drop_mm_ref(struct mm_struct *mm)
->  	}
->  
->  	if (!cpus_empty(mask))
-> -		xen_smp_call_function_mask(mask, drop_other_mm_ref, mm, 1);
-> +		smp_call_function_mask(mask, drop_other_mm_ref, mm, 1);
->  }
->  #else
->  static void drop_mm_ref(struct mm_struct *mm)
->
->   
+| drivers/ide/ide-taskfile.c:235: error: implicit declaration of function 'sg_page'
+| drivers/ide/ide-taskfile.c:251: error: implicit declaration of function 'sg_next'
+| distcc[17810] ERROR: compile drivers/ide/ide-taskfile.c on localhost failed
+| make[3]: *** [drivers/ide/ide-taskfile.o] Error 1
 
-Acked-by: Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>
+http://kisskb.ellerman.id.au/kisskb/buildresult/31729/
 
-    J
+I suspect http://git.kernel.org/?p=linux/kernel/git/sfr/linux-next.git;a=commitdiff;h=52cc802c0f45d8c15b20025e0fecf84174797307 is too blame:
+
+| ide: remove needless includes from ide-taskfile.c
+
+| -#include <linux/scatterlist.h>
+  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+As ide-taskfile.c uses scatterlists, it should include <linux/scatterlist.h>.
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
