@@ -1,50 +1,49 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: Tree for June 13
-Date: Sun, 15 Jun 2008 20:31:01 +0200
-Message-ID: <200806152031.01959.rjw@sisk.pl>
-References: <20080613232214.394fd6fd.sfr@canb.auug.org.au>
+From: Daniel Exner <dex@dragonslave.de>
+Subject: Re: linux-next Regression: Unable to locate IOAPIC
+Date: Sun, 15 Jun 2008 21:14:32 +0200
+Message-ID: <200806152114.33007.dex@dragonslave.de>
+References: <200806051100.12885.dex@dragonslave.de> <48536E3B.4000703@gmail.com> <86802c440806140126l7a949783of0fb08d11ae07bef@mail.gmail.com>
+Reply-To: webmaster@dragonslave.de
 Mime-Version: 1.0
 Content-Type: text/plain;
   charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:53799 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758847AbYFOS3p (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 15 Jun 2008 14:29:45 -0400
-In-Reply-To: <20080613232214.394fd6fd.sfr@canb.auug.org.au>
+Received: from server009.webpack.hosteurope.de ([80.237.130.17]:54830 "EHLO
+	server009.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750915AbYFOTOn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Sun, 15 Jun 2008 15:14:43 -0400
+In-Reply-To: <86802c440806140126l7a949783of0fb08d11ae07bef@mail.gmail.com>
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Yinghai Lu <yhlu.kernel@gmail.com>
+Cc: Alexey Starikovskiy <aystarik@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
 
-On Friday, 13 of June 2008, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since next-20080612:
-> 
-> New tree: kgdb
-> Dropped trees (temporary): ldp (it is unfetchable - probably something to
-> do with the new Staging tree)
-> Restored trees: block
-> 
-> The x86 tree gained a conflict with Linus' tree.
-> 
-> The acpi tree gained a conflict with the pci tree.
-> 
-> The mtd tree gained a trivial conflict with the avr32 tree.
-> 
-> The rr tree lost its conflict with the net-current tree.
-> 
-> The block tree gained several conflict with various other trees.  It also
-> required a build fix patch.
-> 
-> The firmware tree lost its build fix patch.
-> 
-> The patches for known build problems are no longer needed.
+Hi all,
 
-20080613 doesn't boot on my HP nx6325.  Bisecting ...
+Yinghai Lu wrote:
+> >> To clarify myself:
+> >> 2.6.25.5:  --> relatively fast no IOAPIC Errors in dmesg
+> >> 2.6.26-rc5:   --> relatively  no IOAPIC Errors in dmesg
+> >> 2.6.26-rc5 + git-acpi Patch:   --> relatively  no IOAPIC Errors in dmesg
+> >> 2.6.26-rc5 +  linux-next snapshot 20080604 --> even slower than before
+> >> my ide Patch many "unable to locate IOAPIC" Errors
+> >>
+> >>
+> >> So I think the problem lies not in the acpi tree but somewhre else.
+> >>
+> >> Is it possible to tell git to explicitly _exclude_ a specific tree while
+> >> bisecting?
+>
+> can you check if the attached patch fix the problem?
+> it will not check entries before MP_intsrc_info...
+This fixed it, thanks :)
 
-Thanks,
-Rafael
+Also maschine feels not as fast as with 2.6.25.x but noticeable faster :)
+
+I guss you no longer need the complete dmesg output?
+
+Greetings
+Daniel Exner
