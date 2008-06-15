@@ -1,61 +1,50 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for June 13 (soft lockup)
-Date: Sun, 15 Jun 2008 09:33:35 -0700
-Message-ID: <20080615093335.fa57f6cb.randy.dunlap@oracle.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for June 13
+Date: Sun, 15 Jun 2008 20:31:01 +0200
+Message-ID: <200806152031.01959.rjw@sisk.pl>
 References: <20080613232214.394fd6fd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from agminet01.oracle.com ([141.146.126.228]:29803 "EHLO
-	agminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758449AbYFOQic (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 15 Jun 2008 12:38:32 -0400
+Received: from ogre.sisk.pl ([217.79.144.158]:53799 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758847AbYFOS3p (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 15 Jun 2008 14:29:45 -0400
 In-Reply-To: <20080613232214.394fd6fd.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, shaggy@austin.ibm.com
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-BUG: soft lockup - CPU#2 stuck for 61s! [udevd:30563]
-CPU 2:
-Modules linked in: jfs(-) parport_pc lp parport tg3 cciss ehci_hcd ohci_hcd uhci_hcd [last unloaded: jfs]
-Pid: 30563, comm: udevd Not tainted 2.6.26-rc6-next-20080613 #1
-RIP: 0010:[<ffffffff8021d43a>]  [<ffffffff8021d43a>] native_flush_tlb_others+0x6c/0x92
-RSP: 0018:ffff810170127c38  EFLAGS: 00000202
-RAX: 00000000000008f2 RBX: ffff810170127c68 RCX: 00007fff0fffffff
-RDX: 00000000000008f2 RSI: 00000000000000f2 RDI: 0000000000000001
-RBP: 00007fff10000000 R08: ffff81017fc02eac R09: ffff810170127c48
-R10: 00000000636148a1 R11: 00000000af8ad1dc R12: ffffffff80224b1c
-R13: ffff810170127bb8 R14: ffff8100010338c0 R15: 0000000000000282
-FS:  00007fd407f48710(0000) GS:ffff81017fc02c80(0000) knlGS:00000000f7fb76c0
-CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
-CR2: 00007fd40765e090 CR3: 0000000172983000 CR4: 00000000000006e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+On Friday, 13 of June 2008, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since next-20080612:
+> 
+> New tree: kgdb
+> Dropped trees (temporary): ldp (it is unfetchable - probably something to
+> do with the new Staging tree)
+> Restored trees: block
+> 
+> The x86 tree gained a conflict with Linus' tree.
+> 
+> The acpi tree gained a conflict with the pci tree.
+> 
+> The mtd tree gained a trivial conflict with the avr32 tree.
+> 
+> The rr tree lost its conflict with the net-current tree.
+> 
+> The block tree gained several conflict with various other trees.  It also
+> required a build fix patch.
+> 
+> The firmware tree lost its build fix patch.
+> 
+> The patches for known build problems are no longer needed.
 
-Call Trace:
- [<ffffffff8021d436>] ? native_flush_tlb_others+0x68/0x92
- [<ffffffff8021d67f>] ? flush_tlb_mm+0x63/0x6c
- [<ffffffff80281e19>] ? exit_mmap+0xac/0xef
- [<ffffffff80231961>] ? mmput+0x42/0x98
- [<ffffffff8029f6d2>] ? flush_old_exec+0x4b2/0x7d0
- [<ffffffff802cd20d>] ? load_elf_binary+0x36c/0x1736
- [<ffffffff8029e4f3>] ? put_arg_page+0x9/0xb
- [<ffffffff8029e84b>] ? copy_strings+0x1cc/0x1dd
- [<ffffffff8029e94d>] ? search_binary_handler+0xa9/0x1fe
- [<ffffffff8029fcd9>] ? do_execve+0x14d/0x1da
- [<ffffffff8020a474>] ? sys_execve+0x3e/0x58
- [<ffffffff8020c24a>] ? stub_execve+0x6a/0xc0
+20080613 doesn't boot on my HP nx6325.  Bisecting ...
 
-
-
-This is on x86_64, 4 procs, 8 GB RAM.
-Test running was fsx_linux on JFS.  fsx_linux terminated.
-Looks like jfs module was being unloaded.
-
----
-~Randy
-'"Daemon' is an old piece of jargon from the UNIX operating system,
-where it referred to a piece of low-level utility software, a
-fundamental part of the operating system."
+Thanks,
+Rafael
