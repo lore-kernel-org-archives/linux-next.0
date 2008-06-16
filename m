@@ -1,52 +1,65 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of driver-core tree
-Date: Mon, 16 Jun 2008 10:39:06 +1000
-Message-ID: <20080616103906.35926c45.sfr@canb.auug.org.au>
+From: "Maciej W. Rozycki" <macro@linux-mips.org>
+Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
+Date: Mon, 16 Jun 2008 03:45:05 +0100 (BST)
+Message-ID: <Pine.LNX.4.55.0806160343220.11995@cliff.in.clinika.pl>
+References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806152031.01959.rjw@sisk.pl>
+ <200806160314.49489.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__16_Jun_2008_10_39_06_+1000_Tv.xeWX7vwixBO5a"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56074 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750851AbYFPAjT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 15 Jun 2008 20:39:19 -0400
+Received: from kirk.serum.com.pl ([213.77.9.205]:64008 "EHLO serum.com.pl"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751471AbYFPCp5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 15 Jun 2008 22:45:57 -0400
+In-Reply-To: <200806160314.49489.rjw@sisk.pl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, James Bottomley <James.Bottomley@HansenPartnership.com>, Mike Christie <michaelc@cs.wisc.edu>, Kay Sievers <kay.sievers@vrfy.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>
 
---Signature=_Mon__16_Jun_2008_10_39_06_+1000_Tv.xeWX7vwixBO5a
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 16 Jun 2008, Rafael J. Wysocki wrote:
 
-Hi Greg,
+> On Sunday, 15 of June 2008, Rafael J. Wysocki wrote:
+> > On Friday, 13 of June 2008, Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > Changes since next-20080612:
+> > > 
+> > > New tree: kgdb
+> > > Dropped trees (temporary): ldp (it is unfetchable - probably something to
+> > > do with the new Staging tree)
+> > > Restored trees: block
+> > > 
+> > > The x86 tree gained a conflict with Linus' tree.
+> > > 
+> > > The acpi tree gained a conflict with the pci tree.
+> > > 
+> > > The mtd tree gained a trivial conflict with the avr32 tree.
+> > > 
+> > > The rr tree lost its conflict with the net-current tree.
+> > > 
+> > > The block tree gained several conflict with various other trees.  It also
+> > > required a build fix patch.
+> > > 
+> > > The firmware tree lost its build fix patch.
+> > > 
+> > > The patches for known build problems are no longer needed.
+> > 
+> > 20080613 doesn't boot on my HP nx6325.  Bisecting ...
+> 
+> Okay, with the following commit reverted, the kernel boots normally on this
+> box:
+> 
+> commit 7e3530cd98a0c6ab38f5898e855a5beffab26561
+> Author: Maciej W. Rozycki <macro@linux-mips.org>
+> Date:   Tue May 27 21:19:51 2008 +0100
+> 
+>     x86: I/O APIC: timer through 8259A second-chance
+> 
+>     Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
+>     Signed-off-by: Ingo Molnar <mingo@elte.hu>
 
-Today's linux-next merge of the driver-core tree got a context conflict
-in drivers/scsi/hosts.c between commit
-3ed7897242b7efe977f3a8d06d4e5a4ebe28b10e ("[SCSI] scsi_host regression:
-fix scsi host leak") from the scsi-rc-fixes (presumably soon to be
-Linus') tree and commit d2523cff4094586032a5b0820ca86fbae6424dc0 ("Driver
-Core: add ability for class_find_device to start in middle of list") from
-the driver-core tree.
+ Can I have .config used and a full bootstrap log from that system with
+the patch still applied?
 
-It is trivial and I fixed it up.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__16_Jun_2008_10_39_06_+1000_Tv.xeWX7vwixBO5a
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhVtioACgkQTgG2atn1QN+BRQCcCE6ht01i1mvYr7j9netj9+k8
-SNgAnAjTvRbKusQJVPYhNIsLW9eDG3hI
-=gVKc
------END PGP SIGNATURE-----
-
---Signature=_Mon__16_Jun_2008_10_39_06_+1000_Tv.xeWX7vwixBO5a--
+  Maciej
