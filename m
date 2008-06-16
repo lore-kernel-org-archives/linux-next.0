@@ -1,47 +1,42 @@
-From: "Maciej W. Rozycki" <macro@linux-mips.org>
-Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
-Date: Mon, 16 Jun 2008 16:39:38 +0100 (BST)
-Message-ID: <Pine.LNX.4.55.0806161636510.20218@cliff.in.clinika.pl>
-References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806160314.49489.rjw@sisk.pl>
- <Pine.LNX.4.55.0806160343220.11995@cliff.in.clinika.pl> <200806161539.05524.rjw@sisk.pl>
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Subject: Re: linux-next: ide build failure
+Date: Mon, 16 Jun 2008 21:24:39 +0200
+Message-ID: <200806162124.39806.bzolnier@gmail.com>
+References: <20080616133817.83c9f304.sfr@canb.auug.org.au> <1213588543.8129.122.camel@pasglop> <200806161154.43011.bzolnier@gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kirk.serum.com.pl ([213.77.9.205]:62571 "EHLO serum.com.pl"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751826AbYFPPk1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Jun 2008 11:40:27 -0400
-In-Reply-To: <200806161539.05524.rjw@sisk.pl>
+Received: from an-out-0708.google.com ([209.85.132.247]:62095 "EHLO
+	an-out-0708.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753589AbYFPTXt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Jun 2008 15:23:49 -0400
+Received: by an-out-0708.google.com with SMTP id d40so1228969and.103
+        for <linux-next@vger.kernel.org>; Mon, 16 Jun 2008 12:23:47 -0700 (PDT)
+In-Reply-To: <200806161154.43011.bzolnier@gmail.com>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>
+To: benh@kernel.crashing.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-On Mon, 16 Jun 2008, Rafael J. Wysocki wrote:
+On Monday 16 June 2008, Bartlomiej Zolnierkiewicz wrote:
 
-> > > commit 7e3530cd98a0c6ab38f5898e855a5beffab26561
-> > > Author: Maciej W. Rozycki <macro@linux-mips.org>
-> > > Date:   Tue May 27 21:19:51 2008 +0100
-> > > 
-> > >     x86: I/O APIC: timer through 8259A second-chance
-> > > 
-> > >     Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
-> > >     Signed-off-by: Ingo Molnar <mingo@elte.hu>
-> > 
-> >  Can I have .config used and a full bootstrap log from that system with
-> > the patch still applied?
+[...]
+
+> [ I could be of course wrong and there may be real problems with other
+>   patches as well so please do review / test.  Thanks! ]
 > 
-> That may be difficult, because with the patch applied the box either doesn't
-> boot at all, or works unreliably when booted (depending on the set of patches
-> applied on top of it).
+> PS Stephen, thanks for fixing the build problems.
 
- Serial console?  I'm most interested in one from a configuration that
-does not boot at all as that's easier to reproduce, determine the cause
-and verify whether a change fixes the problem or not.  Other
-configurations may then be tested with the fix in place.
+Upon closer look these build problems were present in 3 patches (fixed
+patches posted in separate mails) so indeed it wasn't up to the usual
+standard (lets call it a warning sign that I need to slow down a bit).
 
-> I'll try to get one later today.
+I dropped these ide-pmac patches for now from IDE tree (just to be on
+a safe side and also to give Ben sensible amount of time to review+test
+the changes).
 
- Thanks.
-
-  Maciej
+Thanks,
+Bart
