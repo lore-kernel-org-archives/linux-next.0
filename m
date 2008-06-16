@@ -1,65 +1,112 @@
-From: "Maciej W. Rozycki" <macro@linux-mips.org>
-Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
-Date: Mon, 16 Jun 2008 03:45:05 +0100 (BST)
-Message-ID: <Pine.LNX.4.55.0806160343220.11995@cliff.in.clinika.pl>
-References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806152031.01959.rjw@sisk.pl>
- <200806160314.49489.rjw@sisk.pl>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: ide build failure
+Date: Mon, 16 Jun 2008 13:38:17 +1000
+Message-ID: <20080616133817.83c9f304.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kirk.serum.com.pl ([213.77.9.205]:64008 "EHLO serum.com.pl"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751471AbYFPCp5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 15 Jun 2008 22:45:57 -0400
-In-Reply-To: <200806160314.49489.rjw@sisk.pl>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43718 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752077AbYFPDiX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 15 Jun 2008 23:38:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: linux-next@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-On Mon, 16 Jun 2008, Rafael J. Wysocki wrote:
+Hi Bart,
 
-> On Sunday, 15 of June 2008, Rafael J. Wysocki wrote:
-> > On Friday, 13 of June 2008, Stephen Rothwell wrote:
-> > > Hi all,
-> > > 
-> > > Changes since next-20080612:
-> > > 
-> > > New tree: kgdb
-> > > Dropped trees (temporary): ldp (it is unfetchable - probably something to
-> > > do with the new Staging tree)
-> > > Restored trees: block
-> > > 
-> > > The x86 tree gained a conflict with Linus' tree.
-> > > 
-> > > The acpi tree gained a conflict with the pci tree.
-> > > 
-> > > The mtd tree gained a trivial conflict with the avr32 tree.
-> > > 
-> > > The rr tree lost its conflict with the net-current tree.
-> > > 
-> > > The block tree gained several conflict with various other trees.  It also
-> > > required a build fix patch.
-> > > 
-> > > The firmware tree lost its build fix patch.
-> > > 
-> > > The patches for known build problems are no longer needed.
-> > 
-> > 20080613 doesn't boot on my HP nx6325.  Bisecting ...
-> 
-> Okay, with the following commit reverted, the kernel boots normally on this
-> box:
-> 
-> commit 7e3530cd98a0c6ab38f5898e855a5beffab26561
-> Author: Maciej W. Rozycki <macro@linux-mips.org>
-> Date:   Tue May 27 21:19:51 2008 +0100
-> 
->     x86: I/O APIC: timer through 8259A second-chance
-> 
->     Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
->     Signed-off-by: Ingo Molnar <mingo@elte.hu>
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
- Can I have .config used and a full bootstrap log from that system with
-the patch still applied?
+drivers/ide/ppc/pmac.c: In function 'pmac_ide_cable_detect':
+drivers/ide/ppc/pmac.c:926: error: implicit declaration of function 'drv_get_drvdata'
+drivers/ide/ppc/pmac.c:926: warning: cast to pointer from integer of different size
+drivers/ide/ppc/pmac.c: In function 'pmac_ide_init_dev':
+drivers/ide/ppc/pmac.c:950: warning: cast to pointer from integer of different size
+drivers/ide/ppc/pmac.c: In function 'pmac_ide_setup_device':
+drivers/ide/ppc/pmac.c:1082: error: request for member 'irq' in something not a structure or union
+drivers/ide/ppc/pmac.c: In function 'pmac_ide_pci_suspend':
+drivers/ide/ppc/pmac.c:1321: error: 'hwif' undeclared (first use in this function)
+drivers/ide/ppc/pmac.c:1321: error: (Each undeclared identifier is reported only once
+drivers/ide/ppc/pmac.c:1321: error: for each function it appears in.)
+drivers/ide/ppc/pmac.c:1316: warning: unused variable 'pmif'
+drivers/ide/ppc/pmac.c: In function 'pmac_ide_pci_resume':
+drivers/ide/ppc/pmac.c:1336: error: 'hwif' undeclared (first use in this function)
+drivers/ide/ppc/pmac.c:1332: warning: unused variable 'pmif'
 
-  Maciej
+I applied the patch below ... (which clearly needs work)
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+>From e23339391c5e18a12f2c5d51ca5032df92d9d978 Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 16 Jun 2008 13:35:36 +1000
+Subject: [PATCH] ide pmac fixes 1
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/ide/ppc/pmac.c |   16 ++++++++--------
+ 1 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/ide/ppc/pmac.c b/drivers/ide/ppc/pmac.c
+index 0671fb8..363bc4e 100644
+--- a/drivers/ide/ppc/pmac.c
++++ b/drivers/ide/ppc/pmac.c
+@@ -923,7 +923,7 @@ static int pmac_ide_do_resume(pmac_ide_hwif_t *pmif)
+ static u8 pmac_ide_cable_detect(ide_hwif_t *hwif)
+ {
+ 	pmac_ide_hwif_t *pmif =
+-		(pmac_ide_hwif_t *)drv_get_drvdata(hwif->gendev.parent);
++		(pmac_ide_hwif_t *)dev_get_drvdata(hwif->gendev.parent);
+ 	struct device_node *np = pmif->node;
+ 	const char *cable = of_get_property(np, "cable-type", NULL);
+ 
+@@ -947,7 +947,7 @@ static void pmac_ide_init_dev(ide_drive_t *drive)
+ {
+ 	ide_hwif_t *hwif = drive->hwif;
+ 	pmac_ide_hwif_t *pmif =
+-		(pmac_ide_hwif_t *)drv_get_drvdata(hwif->gendev.parent);
++		(pmac_ide_hwif_t *)dev_get_drvdata(hwif->gendev.parent);
+ 
+ 	if (pmif->mediabay) {
+ #ifdef CONFIG_PMAC_MEDIABAY
+@@ -1076,10 +1076,10 @@ static int __devinit pmac_ide_setup_device(pmac_ide_hwif_t *pmif, hw_regs_t *hw)
+ 		msleep(jiffies_to_msecs(IDE_WAKEUP_DELAY));
+ 	}
+ 
+-	printk(KERN_INFO DRV_NAME ": Found Apple %s controller (%s), "
+-			 "bus ID %d%s, irq %d\n", model_name[pmif->kind],
+-			 pmif->mdev ? "MacIO" : "PCI", pmif->aapl_bus_id,
+-			 pmif->mediabay ? " (mediabay)" : "", hw.irq);
++//	printk(KERN_INFO DRV_NAME ": Found Apple %s controller (%s), "
++//			 "bus ID %d%s, irq %d\n", model_name[pmif->kind],
++//			 pmif->mdev ? "MacIO" : "PCI", pmif->aapl_bus_id,
++//			 pmif->mediabay ? " (mediabay)" : "", hw.irq);
+ 
+ 	hwif = ide_find_port_slot(&d);
+ 	if (hwif == NULL)
+@@ -1318,7 +1318,7 @@ pmac_ide_pci_suspend(struct pci_dev *pdev, pm_message_t mesg)
+ 
+ 	if (mesg.event != pdev->dev.power.power_state.event
+ 			&& (mesg.event & PM_EVENT_SLEEP)) {
+-		rc = pmac_ide_do_suspend(hwif);
++		rc = pmac_ide_do_suspend(pmif);
+ 		if (rc == 0)
+ 			pdev->dev.power.power_state = mesg;
+ 	}
+@@ -1333,7 +1333,7 @@ pmac_ide_pci_resume(struct pci_dev *pdev)
+ 	int rc = 0;
+ 
+ 	if (pdev->dev.power.power_state.event != PM_EVENT_ON) {
+-		rc = pmac_ide_do_resume(hwif);
++		rc = pmac_ide_do_resume(pmif);
+ 		if (rc == 0)
+ 			pdev->dev.power.power_state = PMSG_ON;
+ 	}
+-- 
+1.5.5.4
+
