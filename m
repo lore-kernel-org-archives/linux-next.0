@@ -1,54 +1,52 @@
-From: "Yinghai Lu" <yhlu.kernel@gmail.com>
-Subject: Re: linux-next Regression: Unable to locate IOAPIC
-Date: Sun, 15 Jun 2008 12:20:27 -0700
-Message-ID: <86802c440806151220l358ca541s9d87fe2acc360e8@mail.gmail.com>
-References: <200806051100.12885.dex@dragonslave.de>
-	 <48536E3B.4000703@gmail.com>
-	 <86802c440806140126l7a949783of0fb08d11ae07bef@mail.gmail.com>
-	 <200806152114.33007.dex@dragonslave.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of driver-core tree
+Date: Mon, 16 Jun 2008 10:39:06 +1000
+Message-ID: <20080616103906.35926c45.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__16_Jun_2008_10_39_06_+1000_Tv.xeWX7vwixBO5a"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rv-out-0506.google.com ([209.85.198.235]:44529 "EHLO
-	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751056AbYFOTU1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 15 Jun 2008 15:20:27 -0400
-Received: by rv-out-0506.google.com with SMTP id k40so3265060rvb.1
-        for <linux-next@vger.kernel.org>; Sun, 15 Jun 2008 12:20:27 -0700 (PDT)
-In-Reply-To: <200806152114.33007.dex@dragonslave.de>
-Content-Disposition: inline
+Received: from chilli.pcug.org.au ([203.10.76.44]:56074 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750851AbYFPAjT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 15 Jun 2008 20:39:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: webmaster@dragonslave.de
-Cc: Alexey Starikovskiy <aystarik@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, James Bottomley <James.Bottomley@HansenPartnership.com>, Mike Christie <michaelc@cs.wisc.edu>, Kay Sievers <kay.sievers@vrfy.org>
 
-On Sun, Jun 15, 2008 at 12:14 PM, Daniel Exner <dex@dragonslave.de> wrote:
-> Hi all,
->
-> Yinghai Lu wrote:
->> >> To clarify myself:
->> >> 2.6.25.5:  --> relatively fast no IOAPIC Errors in dmesg
->> >> 2.6.26-rc5:   --> relatively  no IOAPIC Errors in dmesg
->> >> 2.6.26-rc5 + git-acpi Patch:   --> relatively  no IOAPIC Errors in dmesg
->> >> 2.6.26-rc5 +  linux-next snapshot 20080604 --> even slower than before
->> >> my ide Patch many "unable to locate IOAPIC" Errors
->> >>
->> >>
->> >> So I think the problem lies not in the acpi tree but somewhre else.
->> >>
->> >> Is it possible to tell git to explicitly _exclude_ a specific tree while
->> >> bisecting?
->>
->> can you check if the attached patch fix the problem?
->> it will not check entries before MP_intsrc_info...
-> This fixed it, thanks :)
->
-> Also maschine feels not as fast as with 2.6.25.x but noticeable faster :)
->
-> I guss you no longer need the complete dmesg output?
+--Signature=_Mon__16_Jun_2008_10_39_06_+1000_Tv.xeWX7vwixBO5a
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-still need that... wonder why your irq routing have same entris from
-your BIOS/ACPI?
+Hi Greg,
 
-YH
+Today's linux-next merge of the driver-core tree got a context conflict
+in drivers/scsi/hosts.c between commit
+3ed7897242b7efe977f3a8d06d4e5a4ebe28b10e ("[SCSI] scsi_host regression:
+fix scsi host leak") from the scsi-rc-fixes (presumably soon to be
+Linus') tree and commit d2523cff4094586032a5b0820ca86fbae6424dc0 ("Driver
+Core: add ability for class_find_device to start in middle of list") from
+the driver-core tree.
+
+It is trivial and I fixed it up.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__16_Jun_2008_10_39_06_+1000_Tv.xeWX7vwixBO5a
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhVtioACgkQTgG2atn1QN+BRQCcCE6ht01i1mvYr7j9netj9+k8
+SNgAnAjTvRbKusQJVPYhNIsLW9eDG3hI
+=gVKc
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__16_Jun_2008_10_39_06_+1000_Tv.xeWX7vwixBO5a--
