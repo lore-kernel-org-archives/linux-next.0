@@ -1,95 +1,94 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: wireless build failure
-Date: Mon, 16 Jun 2008 15:38:28 +1000
-Message-ID: <20080616153828.9a07e7ba.sfr@canb.auug.org.au>
+Subject: linux-next: arm build failure
+Date: Mon, 16 Jun 2008 16:07:47 +1000
+Message-ID: <20080616160747.27909f11.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__16_Jun_2008_15_38_28_+1000_tgy27cic05vcW6JV"
+ boundary="Signature=_Mon__16_Jun_2008_16_07_47_+1000_=TSdDfgfGPf7ZMKA"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43895 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:39102 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751213AbYFPFig (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Jun 2008 01:38:36 -0400
+	id S1751012AbYFPGIB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Jun 2008 02:08:01 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, David Miller <davem@davemloft.net>, Jouni Malinen <j@w1.fi>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, Dmitry Baryshkov <dbaryshkov@gmail.com>
 
---Signature=_Mon__16_Jun_2008_15_38_28_+1000_tgy27cic05vcW6JV
+--Signature=_Mon__16_Jun_2008_16_07_47_+1000_=TSdDfgfGPf7ZMKA
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+Hi Russell,
 
-Today's linux-next build of the net (really wireless) tree failed like this:
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-drivers/net/wireless/mac80211_hwsim.c: In function 'init_mac80211_hwsim':
-drivers/net/wireless/mac80211_hwsim.c:433: error: implicit declaration of
-function 'device_create'
+drivers/mfd/tc6393xb.c:91: error: field 'gpio' has incomplete type
+drivers/mfd/tc6393xb.c: In function 'tc6393xb_gpio_get':
+drivers/mfd/tc6393xb.c:116: warning: type defaults to 'int' in declaration =
+of '__mptr'
+drivers/mfd/tc6393xb.c:116: warning: initialization from incompatible point=
+er type
+drivers/mfd/tc6393xb.c: In function '__tc6393xb_gpio_set':
+drivers/mfd/tc6393xb.c:126: warning: type defaults to 'int' in declaration =
+of '__mptr'
+drivers/mfd/tc6393xb.c:126: warning: initialization from incompatible point=
+er type
+drivers/mfd/tc6393xb.c: In function 'tc6393xb_gpio_set':
+drivers/mfd/tc6393xb.c:141: warning: type defaults to 'int' in declaration =
+of '__mptr'
+drivers/mfd/tc6393xb.c:141: warning: initialization from incompatible point=
+er type
+drivers/mfd/tc6393xb.c: In function 'tc6393xb_gpio_direction_input':
+drivers/mfd/tc6393xb.c:154: warning: type defaults to 'int' in declaration =
+of '__mptr'
+drivers/mfd/tc6393xb.c:154: warning: initialization from incompatible point=
+er type
+drivers/mfd/tc6393xb.c: In function 'tc6393xb_gpio_direction_output':
+drivers/mfd/tc6393xb.c:172: warning: type defaults to 'int' in declaration =
+of '__mptr'
+drivers/mfd/tc6393xb.c:172: warning: initialization from incompatible point=
+er type
+drivers/mfd/tc6393xb.c: In function 'tc6393xb_register_gpio':
+drivers/mfd/tc6393xb.c:199: error: implicit declaration of function 'gpioch=
+ip_add'
+drivers/mfd/tc6393xb.c: In function 'tc6393xb_attach_irq':
+drivers/mfd/tc6393xb.c:272: error: implicit declaration of function 'set_ir=
+q_flags'
+drivers/mfd/tc6393xb.c:272: error: 'IRQF_VALID' undeclared (first use in th=
+is function)
+drivers/mfd/tc6393xb.c:272: error: (Each undeclared identifier is reported =
+only once
+drivers/mfd/tc6393xb.c:272: error: for each function it appears in.)
+drivers/mfd/tc6393xb.c:272: error: 'IRQF_PROBE' undeclared (first use in th=
+is function)
+drivers/mfd/tc6393xb.c:275: error: 'IRQT_FALLING' undeclared (first use in =
+this function)
+drivers/mfd/tc6393xb.c: In function 'tc6393xb_probe':
+drivers/mfd/tc6393xb.c:423: error: implicit declaration of function 'gpioch=
+ip_remove'
 
-device_create has been removed (by commit
-be27077d3768f713fb3d27aef5ad5d046b8b1201 ("driver core: remove
-device_create()") from the driver-core tree).  It has been replaced by
-device_create_drvdata to fix a race.  The replacement routine has alreday
-been added to Linus' tree, so this patch should be able to update the
-original.
+I have reverted the commit that added this driver
+(ed1f4e8e88fcf43dd1679968477a6139d53bc852 "[ARM] 5096/1: Support Toshiba
+TC6393XB Mobile I/O Controller" from the arm tree) for now.  I suspect
+that it needs some dependencies in it Kconfig.
 
-I applied the patch below.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
->From 0d69621eed6c615a517cccc27db3e065e83782bd Mon Sep 17 00:00:00 2001
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 16 Jun 2008 15:35:10 +1000
-Subject: [PATCH] wireless: fix fallout from device_create removal
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/wireless/mac80211_hwsim.c |    7 ++++---
- 1 files changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/m=
-ac80211_hwsim.c
-index 8da352a..5d30c57 100644
---- a/drivers/net/wireless/mac80211_hwsim.c
-+++ b/drivers/net/wireless/mac80211_hwsim.c
-@@ -430,15 +430,16 @@ static int __init init_mac80211_hwsim(void)
- 		hwsim_radios[i] =3D hw;
-=20
- 		data =3D hw->priv;
--		data->dev =3D device_create(hwsim_class, NULL, 0, "hwsim%d", i);
-+		data->dev =3D device_create_drvdata(hwsim_class, NULL, 0, hw,
-+						"hwsim%d", i);
- 		if (IS_ERR(data->dev)) {
--			printk(KERN_DEBUG "mac80211_hwsim: device_create "
-+			printk(KERN_DEBUG
-+			       "mac80211_hwsim: device_create_drvdata "
- 			       "failed (%ld)\n", PTR_ERR(data->dev));
- 			err =3D -ENOMEM;
- 			goto failed;
- 		}
- 		data->dev->driver =3D &mac80211_hwsim_driver;
--		dev_set_drvdata(data->dev, hw);
-=20
- 		SET_IEEE80211_DEV(hw, data->dev);
- 		addr[3] =3D i >> 8;
---=20
-1.5.5.4
-
-
---Signature=_Mon__16_Jun_2008_15_38_28_+1000_tgy27cic05vcW6JV
+--Signature=_Mon__16_Jun_2008_16_07_47_+1000_=TSdDfgfGPf7ZMKA
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkhV/FQACgkQTgG2atn1QN8voQCggNg2lr2onVpi6K2v8L0axMkt
-TqsAn1cZnlOO4h3VTlMSawPbu6k2DdlC
-=KmR1
+iEUEARECAAYFAkhWAzMACgkQTgG2atn1QN9I/wCYw+wlC8WhxEIvcMkNlPmMdl+l
+0ACgkA9LjbJsMMyKiW8sCwa3JAijtyY=
+=Tyri
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__16_Jun_2008_15_38_28_+1000_tgy27cic05vcW6JV--
+--Signature=_Mon__16_Jun_2008_16_07_47_+1000_=TSdDfgfGPf7ZMKA--
