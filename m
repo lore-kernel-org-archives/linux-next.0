@@ -1,98 +1,73 @@
-From: Dmitry Baryshkov <dbaryshkov@gmail.com>
-Subject: Re: linux-next: arm build failure
-Date: Tue, 17 Jun 2008 01:52:37 +0400
-Message-ID: <20080616215237.GA9755@doriath.ww600.siemens.net>
-References: <20080616160747.27909f11.sfr@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
+Date: Tue, 17 Jun 2008 00:38:36 +0200
+Message-ID: <200806170038.37224.rjw@sisk.pl>
+References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806161539.05524.rjw@sisk.pl> <Pine.LNX.4.55.0806161636510.20218@cliff.in.clinika.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fg-out-1718.google.com ([72.14.220.159]:4255 "EHLO
-	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755830AbYFPVw6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Jun 2008 17:52:58 -0400
-Received: by fg-out-1718.google.com with SMTP id 19so3387104fgg.17
-        for <linux-next@vger.kernel.org>; Mon, 16 Jun 2008 14:52:57 -0700 (PDT)
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.55.0806161636510.20218@cliff.in.clinika.pl>
 Content-Disposition: inline
-In-Reply-To: <20080616160747.27909f11.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Maciej W. Rozycki" <macro@linux-mips.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi,
-
-On Mon, Jun 16, 2008 at 04:07:47PM +1000, Stephen Rothwell wrote:
-> Hi Russell,
+On Monday, 16 of June 2008, Maciej W. Rozycki wrote:
+> On Mon, 16 Jun 2008, Rafael J. Wysocki wrote:
 > 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> > > > commit 7e3530cd98a0c6ab38f5898e855a5beffab26561
+> > > > Author: Maciej W. Rozycki <macro@linux-mips.org>
+> > > > Date:   Tue May 27 21:19:51 2008 +0100
+> > > > 
+> > > >     x86: I/O APIC: timer through 8259A second-chance
+> > > > 
+> > > >     Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
+> > > >     Signed-off-by: Ingo Molnar <mingo@elte.hu>
+> > > 
+> > >  Can I have .config used and a full bootstrap log from that system with
+> > > the patch still applied?
+> > 
+> > That may be difficult, because with the patch applied the box either doesn't
+> > boot at all, or works unreliably when booted (depending on the set of patches
+> > applied on top of it).
 > 
-> drivers/mfd/tc6393xb.c:91: error: field 'gpio' has incomplete type
-> drivers/mfd/tc6393xb.c: In function 'tc6393xb_gpio_get':
-> drivers/mfd/tc6393xb.c:116: warning: type defaults to 'int' in declaration of '__mptr'
-> drivers/mfd/tc6393xb.c:116: warning: initialization from incompatible pointer type
-> drivers/mfd/tc6393xb.c: In function '__tc6393xb_gpio_set':
-> drivers/mfd/tc6393xb.c:126: warning: type defaults to 'int' in declaration of '__mptr'
-> drivers/mfd/tc6393xb.c:126: warning: initialization from incompatible pointer type
-> drivers/mfd/tc6393xb.c: In function 'tc6393xb_gpio_set':
-> drivers/mfd/tc6393xb.c:141: warning: type defaults to 'int' in declaration of '__mptr'
-> drivers/mfd/tc6393xb.c:141: warning: initialization from incompatible pointer type
-> drivers/mfd/tc6393xb.c: In function 'tc6393xb_gpio_direction_input':
-> drivers/mfd/tc6393xb.c:154: warning: type defaults to 'int' in declaration of '__mptr'
-> drivers/mfd/tc6393xb.c:154: warning: initialization from incompatible pointer type
-> drivers/mfd/tc6393xb.c: In function 'tc6393xb_gpio_direction_output':
-> drivers/mfd/tc6393xb.c:172: warning: type defaults to 'int' in declaration of '__mptr'
-> drivers/mfd/tc6393xb.c:172: warning: initialization from incompatible pointer type
-> drivers/mfd/tc6393xb.c: In function 'tc6393xb_register_gpio':
-> drivers/mfd/tc6393xb.c:199: error: implicit declaration of function 'gpiochip_add'
-> drivers/mfd/tc6393xb.c: In function 'tc6393xb_attach_irq':
-> drivers/mfd/tc6393xb.c:272: error: implicit declaration of function 'set_irq_flags'
-> drivers/mfd/tc6393xb.c:272: error: 'IRQF_VALID' undeclared (first use in this function)
-> drivers/mfd/tc6393xb.c:272: error: (Each undeclared identifier is reported only once
-> drivers/mfd/tc6393xb.c:272: error: for each function it appears in.)
-> drivers/mfd/tc6393xb.c:272: error: 'IRQF_PROBE' undeclared (first use in this function)
-> drivers/mfd/tc6393xb.c:275: error: 'IRQT_FALLING' undeclared (first use in this function)
-> drivers/mfd/tc6393xb.c: In function 'tc6393xb_probe':
-> drivers/mfd/tc6393xb.c:423: error: implicit declaration of function 'gpiochip_remove'
-> 
-> I have reverted the commit that added this driver
-> (ed1f4e8e88fcf43dd1679968477a6139d53bc852 "[ARM] 5096/1: Support Toshiba
-> TC6393XB Mobile I/O Controller" from the arm tree) for now.  I suspect
-> that it needs some dependencies in it Kconfig.
+>  Serial console?
 
-Yup. I forgot that not all platforms do have gpiolib. Please use the
-following patch.
+No, this box doesn't have any serial ports.  It has a FireWire one, but I don't
+have a matching cable ...
 
+>  I'm most interested in one from a configuration that 
+> does not boot at all as that's easier to reproduce, determine the cause
+> and verify whether a change fixes the problem or not.  Other
+> configurations may then be tested with the fix in place.
 
->From 2707a8c78089894e3db6363c7921c89fd69c6ad4 Mon Sep 17 00:00:00 2001
-From: Dmitry Baryshkov <dbaryshkov@gmail.com>
-Date: Tue, 17 Jun 2008 01:44:35 +0400
-Subject: [PATCH] Fix Kconfig entry for TC6393XB
+With the -next from today (20080616) I get a different picture.
 
-The tc6393xb driver breaks if no gpiolib is present. Depend on
-HAVE_GPIO_LIB.
+Without any patches on top it boots, but the fan is turned 100% on as soon as
+the ACPI modules get loaded, regardless of the temperature (normally it does
+that above 75^o C, which is impossible to get normally, because there are 3
+temperature trip points below that level; generally the hardware only does that
+when overheating).  After that, things start to go _very_ slow, like 10x slower
+than usually in X and somewhat slower in the fb console, but I was able to get
+a dmesg output.  This is reproducible 100% of the time.
 
-Signed-off-by: Dmitry Baryshkov <dbaryshkov@gmail.com>
----
- drivers/mfd/Kconfig |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+With commit 7e3530cd98a0c6ab38f5898e855a5beffab26561 reverted the box seems to
+work normally.  However, while I was writing this message, ACPI decided it was
+overheating and emergency shut down the box, although that was completely
+wrong.  Next time I'll try with the C1E patches reverted.
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 66c3e53..2619f9e 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -40,6 +40,7 @@ config HTC_PASIC3
- 
- config MFD_TC6393XB
- 	bool "Support Toshiba TC6393XB"
-+	depends on HAVE_GPIO_LIB
- 	help
- 	  Support for Toshiba Mobile IO Controller TC6393XB
- 
--- 
-1.5.5.3
+The .config is at: http://www.sisk.pl/kernel/debug/20080616/next-config
 
+dmesg output without any patches is at
+http://www.sisk.pl/kernel/debug/20080616/dmesg-1.log
 
--- 
-With best wishes
-Dmitry
+dmesg output with commit 7e3530cd98a0c6ab38f5898e855a5beffab26561 reverted is
+at: http://www.sisk.pl/kernel/debug/20080616/dmesg-2.log
 
+(they look pretty similar to my untrained eye, but well).
+
+Thanks,
+Rafael
