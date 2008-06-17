@@ -1,74 +1,39 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] bridge: fix IPV6=n build
-Date: Tue, 17 Jun 2008 09:42:14 -0700
-Message-ID: <20080617094214.c8cc2ce2.randy.dunlap@oracle.com>
+From: Randy Dunlap <randy.dunlap@ORACLE.COM>
+Subject: [PATCH -next] acpi: fix printk format warning
+Date: Tue, 17 Jun 2008 09:43:41 -0700
+Message-ID: <20080617094341.d144a5f8.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from agminet01.oracle.com ([141.146.126.228]:12563 "EHLO
+Received: from agminet01.oracle.com ([141.146.126.228]:13449 "EHLO
 	agminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752128AbYFQQm0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Jun 2008 12:42:26 -0400
+	with ESMTP id S1753218AbYFQQnh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Jun 2008 12:43:37 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: netdev <netdev@vger.kernel.org>, shemminger@linux-foundation.org
-Cc: linux-next@vger.kernel.org, davem@davemloft.net
+To: linux-acpi@vger.kernel.org
+Cc: len.brown@intel.com, linux-next@vger.kernel.org
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Fix bridge netfilter code so that it uses CONFIG_IPV6 as needed:
+Fix printk format warning:
 
-net/built-in.o: In function `ebt_filter_ip6':
-ebt_ip6.c:(.text+0x87c37): undefined reference to `ipv6_skip_exthdr'
-net/built-in.o: In function `ebt_log_packet':
-ebt_log.c:(.text+0x88dee): undefined reference to `ipv6_skip_exthdr'
-make[1]: *** [.tmp_vmlinux1] Error 1
+linux-next-20080617/drivers/acpi/processor_throttling.c:1258: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 ---
- net/bridge/netfilter/Kconfig   |    2 +-
- net/bridge/netfilter/Makefile  |    2 +-
- net/bridge/netfilter/ebt_log.c |    2 ++
- 3 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/acpi/processor_throttling.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- linux-next-20080617.orig/net/bridge/netfilter/Kconfig
-+++ linux-next-20080617/net/bridge/netfilter/Kconfig
-@@ -85,7 +85,7 @@ config BRIDGE_EBT_IP
+--- linux-next-20080617.orig/drivers/acpi/processor_throttling.c
++++ linux-next-20080617/drivers/acpi/processor_throttling.c
+@@ -1255,7 +1255,7 @@ static ssize_t acpi_processor_write_thro
+ 	if (state_val >= pr->throttling.state_count)
+ 		return -EINVAL;
  
- config BRIDGE_EBT_IP6
- 	tristate "ebt: IP6 filter support"
--	depends on BRIDGE_NF_EBTABLES
-+	depends on BRIDGE_NF_EBTABLES && IPV6
- 	help
- 	  This option adds the IP6 match, which allows basic IPV6 header field
- 	  filtering.
---- linux-next-20080617.orig/net/bridge/netfilter/Makefile
-+++ linux-next-20080617/net/bridge/netfilter/Makefile
-@@ -14,7 +14,7 @@ obj-$(CONFIG_BRIDGE_EBT_802_3) += ebt_80
- obj-$(CONFIG_BRIDGE_EBT_AMONG) += ebt_among.o
- obj-$(CONFIG_BRIDGE_EBT_ARP) += ebt_arp.o
- obj-$(CONFIG_BRIDGE_EBT_IP) += ebt_ip.o
--obj-$(CONFIG_BRIDGE_EBT_IP) += ebt_ip6.o
-+obj-$(CONFIG_BRIDGE_EBT_IP6) += ebt_ip6.o
- obj-$(CONFIG_BRIDGE_EBT_LIMIT) += ebt_limit.o
- obj-$(CONFIG_BRIDGE_EBT_MARK) += ebt_mark_m.o
- obj-$(CONFIG_BRIDGE_EBT_PKTTYPE) += ebt_pkttype.o
---- linux-next-20080617.orig/net/bridge/netfilter/ebt_log.c
-+++ linux-next-20080617/net/bridge/netfilter/ebt_log.c
-@@ -123,6 +123,7 @@ ebt_log_packet(unsigned int pf, unsigned
- 		goto out;
- 	}
+-	snprintf(tmpbuf, 5, "%d", state_val);
++	snprintf(tmpbuf, 5, "%zu", state_val);
  
-+#if defined(CONFIG_BRIDGE_EBT_IP6) || defined(CONFIG_BRIDGE_EBT_IP6_MODULE)
- 	if ((bitmask & EBT_LOG_IP6) && eth_hdr(skb)->h_proto ==
- 	   htons(ETH_P_IPV6)) {
- 		const struct ipv6hdr *ih;
-@@ -146,6 +147,7 @@ ebt_log_packet(unsigned int pf, unsigned
- 		print_ports(skb, nexthdr, offset_ph);
- 		goto out;
- 	}
-+#endif
- 
- 	if ((bitmask & EBT_LOG_ARP) &&
- 	    ((eth_hdr(skb)->h_proto == htons(ETH_P_ARP)) ||
+ 	if (strcmp(tmpbuf, charp) != 0)
+ 		return -EINVAL;
