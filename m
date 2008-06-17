@@ -1,40 +1,74 @@
-From: Pavel Machek <pavel@suse.cz>
-Subject: Re: [ANNOUNCE] linux-staging tree created
-Date: Tue, 17 Jun 2008 14:51:04 +0200
-Message-ID: <20080617125103.GA4211@ucw.cz>
-References: <20080610190540.GA25066@kroah.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] bridge: fix IPV6=n build
+Date: Tue, 17 Jun 2008 09:42:14 -0700
+Message-ID: <20080617094214.c8cc2ce2.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gprs189-60.eurotel.cz ([160.218.189.60]:2371 "EHLO spitz.ucw.cz"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1755376AbYFQMvR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Jun 2008 08:51:17 -0400
-Content-Disposition: inline
-In-Reply-To: <20080610190540.GA25066@kroah.com>
+Received: from agminet01.oracle.com ([141.146.126.228]:12563 "EHLO
+	agminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752128AbYFQQm0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Jun 2008 12:42:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-kernel@vger.kernel.org, devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: netdev <netdev@vger.kernel.org>, shemminger@linux-foundation.org
+Cc: linux-next@vger.kernel.org, davem@davemloft.net
 
-Hi!
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-> What this tree is not:
-> 	- it is not a place to dump code and then run away, hoping that
-> 	  someone else will do the cleanup work for you.  While there
-> 	  are developers available to do this kind of work, you need to
-> 	  get someone to agree to "babysit" the code.
+Fix bridge netfilter code so that it uses CONFIG_IPV6 as needed:
 
-Hmm, how do I tap into that developer pool? :-)
+net/built-in.o: In function `ebt_filter_ip6':
+ebt_ip6.c:(.text+0x87c37): undefined reference to `ipv6_skip_exthdr'
+net/built-in.o: In function `ebt_log_packet':
+ebt_log.c:(.text+0x88dee): undefined reference to `ipv6_skip_exthdr'
+make[1]: *** [.tmp_vmlinux1] Error 1
 
-Kohjinsha wifi driver is in state where it was ported to mac80211, and
-it still works with minimum features, but it needs dead code removal
-and rewriting the rest. That code is really very ugly.
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ net/bridge/netfilter/Kconfig   |    2 +-
+ net/bridge/netfilter/Makefile  |    2 +-
+ net/bridge/netfilter/ebt_log.c |    2 ++
+ 3 files changed, 4 insertions(+), 2 deletions(-)
 
-I can do the handholding; I can probably do the rewrite, too (its
-10000LoC), but it will take time...
-
-							Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+--- linux-next-20080617.orig/net/bridge/netfilter/Kconfig
++++ linux-next-20080617/net/bridge/netfilter/Kconfig
+@@ -85,7 +85,7 @@ config BRIDGE_EBT_IP
+ 
+ config BRIDGE_EBT_IP6
+ 	tristate "ebt: IP6 filter support"
+-	depends on BRIDGE_NF_EBTABLES
++	depends on BRIDGE_NF_EBTABLES && IPV6
+ 	help
+ 	  This option adds the IP6 match, which allows basic IPV6 header field
+ 	  filtering.
+--- linux-next-20080617.orig/net/bridge/netfilter/Makefile
++++ linux-next-20080617/net/bridge/netfilter/Makefile
+@@ -14,7 +14,7 @@ obj-$(CONFIG_BRIDGE_EBT_802_3) += ebt_80
+ obj-$(CONFIG_BRIDGE_EBT_AMONG) += ebt_among.o
+ obj-$(CONFIG_BRIDGE_EBT_ARP) += ebt_arp.o
+ obj-$(CONFIG_BRIDGE_EBT_IP) += ebt_ip.o
+-obj-$(CONFIG_BRIDGE_EBT_IP) += ebt_ip6.o
++obj-$(CONFIG_BRIDGE_EBT_IP6) += ebt_ip6.o
+ obj-$(CONFIG_BRIDGE_EBT_LIMIT) += ebt_limit.o
+ obj-$(CONFIG_BRIDGE_EBT_MARK) += ebt_mark_m.o
+ obj-$(CONFIG_BRIDGE_EBT_PKTTYPE) += ebt_pkttype.o
+--- linux-next-20080617.orig/net/bridge/netfilter/ebt_log.c
++++ linux-next-20080617/net/bridge/netfilter/ebt_log.c
+@@ -123,6 +123,7 @@ ebt_log_packet(unsigned int pf, unsigned
+ 		goto out;
+ 	}
+ 
++#if defined(CONFIG_BRIDGE_EBT_IP6) || defined(CONFIG_BRIDGE_EBT_IP6_MODULE)
+ 	if ((bitmask & EBT_LOG_IP6) && eth_hdr(skb)->h_proto ==
+ 	   htons(ETH_P_IPV6)) {
+ 		const struct ipv6hdr *ih;
+@@ -146,6 +147,7 @@ ebt_log_packet(unsigned int pf, unsigned
+ 		print_ports(skb, nexthdr, offset_ph);
+ 		goto out;
+ 	}
++#endif
+ 
+ 	if ((bitmask & EBT_LOG_ARP) &&
+ 	    ((eth_hdr(skb)->h_proto == htons(ETH_P_ARP)) ||
