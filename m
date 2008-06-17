@@ -1,42 +1,38 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
-Date: Tue, 17 Jun 2008 22:44:23 +0200
-Message-ID: <200806172244.24026.rjw@sisk.pl>
-References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806170105.45647.rjw@sisk.pl> <alpine.LFD.1.10.0806170905221.3395@apollo.tec.linutronix.de>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: linux-next: manual merge of nfsd tree
+Date: Tue, 17 Jun 2008 16:44:21 -0400
+Message-ID: <20080617204421.GA4076@fieldses.org>
+References: <20080617153914.5068b609.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:37841 "EHLO ogre.sisk.pl"
+Received: from mail.fieldses.org ([66.93.2.214]:43438 "EHLO fieldses.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755127AbYFQUnX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Jun 2008 16:43:23 -0400
-In-Reply-To: <alpine.LFD.1.10.0806170905221.3395@apollo.tec.linutronix.de>
+	id S1754343AbYFQUoZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Jun 2008 16:44:25 -0400
 Content-Disposition: inline
+In-Reply-To: <20080617153914.5068b609.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Maciej W. Rozycki" <macro@linux-mips.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Trond Myklebust <trond.myklebust@fys.uio.no>, Kevin Coffman <kwc@citi.umich.edu>
 
-On Tuesday, 17 of June 2008, Thomas Gleixner wrote:
-> On Tue, 17 Jun 2008, Rafael J. Wysocki wrote:
-> > 
-> > BTW, with the C1E patches reverted I don't get the
-> > WARNING: at /home/rafael/src/linux-next/kernel/smp.c:215 smp_call_function_single+0x3d/0xa2
-> > in the log.  Thomas?
+On Tue, Jun 17, 2008 at 03:39:14PM +1000, Stephen Rothwell wrote:
+> Hi Bruce,
 > 
-> Yeah, my bad. Fix below.
+> Today's linux-next merge of the nfsd tree got a conflict in
+> net/sunrpc/auth_gss/auth_gss.c between commit
+> 733e73be1865a3f5bc97b5533145064136636b27 ("rpc: remove some unused
+> macros") from the nfs tree and commit
+> 767b4b6b4f2a6a282deb18c2c80f070e32b70f52 ("rpcauth: update and document
+> available space in xdr_buf when doing privacy") from the nfsd tree.
+> 
+> I did the obvious fixup, but it may be worth a look.
 
-Thanks, it eliminates the WARNING, but still the box doesn't work with
-the "x86: add C1E aware idle function" patch applied, even with 'highres=off'.
+Hm.  Stupid on my part: I took some gss (mostly krb5-specific patches
+from Kevin) into my tree, then sent another one to Trond.
 
-The main symptom is that CPU loads are computed incorrectly (I got X using 126%
-of CPU time from 'top', for example).  Apart from this, some processes (like
-gkrellm) seem to be 'frozen' and only change their state in 'jumps', as though
-they only got CPU from time to time at random.
+Trond, should I forward Kevin's patches to you, or should we do it the
+other way around?
 
-Reverting the above-mentioned patch fixes those problems.
-
-Thanks,
-Rafael
+--b.
