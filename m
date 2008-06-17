@@ -1,51 +1,50 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: x86 tree build failure
-Date: Tue, 17 Jun 2008 08:08:35 +0200
-Message-ID: <20080617060835.GA16162@elte.hu>
-References: <20080617134615.d70be9f6.sfr@canb.auug.org.au> <20080617055816.GA13556@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tests tree
+Date: Tue, 17 Jun 2008 16:22:56 +1000
+Message-ID: <20080617162256.4a17529b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__17_Jun_2008_16_22_56_+1000_A/9ueS=KnGP631Hg"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:39608 "EHLO mx3.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53417 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751789AbYFQGIv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Jun 2008 02:08:51 -0400
-Content-Disposition: inline
-In-Reply-To: <20080617055816.GA13556@elte.hu>
+	id S1751987AbYFQGXJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Jun 2008 02:23:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
+To: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+Cc: linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
 
+--Signature=_Tue__17_Jun_2008_16_22_56_+1000_A/9ueS=KnGP631Hg
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Ingo Molnar <mingo@elte.hu> wrote:
+Hi Ananth,
 
-> > NR_NODE_MEMBLKS is defined in linux/acpi.h if 
-> > CONFIG_HAVE_ARCH_PARSE_SRAT is defined and in asm-x86/acpi.h if 
-> > CONFIG_ACPI_NUMA and CONFIG_X86_64 are defined ...
-> 
-> that's not really the x86 tree's fault, i've been carrying the fix for 
-> that problem in tip/out-of-tree for 1.5 months:
-> 
-> | commit d94325315f241f86bd07a2ce113cbf28dc98de72
-> | Author: Ingo Molnar <mingo@elte.hu>
-> | Date:   Thu May 1 09:51:47 2008 +0000
-> |
-> |     acpi-acpi_numa_init-build-fix
-> |
-> |     x86.git testing found the following build error on latest -git:
-> |
-> |     drivers/acpi/numa.c: In function 'acpi_numa_init':
-> |     drivers/acpi/numa.c:226: error: 'NR_NODE_MEMBLKS' undeclared (first use in
-> |     drivers/acpi/numa.c:226: error: (Each undeclared identifier is reported onl
-> |     drivers/acpi/numa.c:226: error: for each function it appears in.)
+Today's linux-next merge of the tests tree got a new conflict in
+lib/Kconfig.debug between commit 1462a200057df08be12f3719e1f37adbd2c6e4d0
+("Revert "prohibit rcutorture from being compiled into the kernel"") from
+the sched tree and commit db00d6090740863199393461c8332812986ce4ad ("Move
+rcutorture to tests/").
 
-note, if you cherry-pick that, you'll also need:
+It is trivial and I did the obvious fixup and will carry that.
 
-| commit aca9de453911d095a9701ee6ebbae7fd3d6c7c1e
-| Author: Russ Anderson <rja@sgi.com>
-| Date:   Fri May 16 10:02:06 2008 -0500
-|
-|     acpi: fix boot breakage on Altix
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-	Ingo
+--Signature=_Tue__17_Jun_2008_16_22_56_+1000_A/9ueS=KnGP631Hg
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhXWEAACgkQTgG2atn1QN+I+wCfeRA+ue48s2GTJPLN/4kA/ONa
+r64AnjSblAhgrMjWm4Wue3lssnlmGmS+
+=RDYU
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__17_Jun_2008_16_22_56_+1000_A/9ueS=KnGP631Hg--
