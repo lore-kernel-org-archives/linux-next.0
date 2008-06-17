@@ -1,77 +1,42 @@
-From: Trond Myklebust <trond.myklebust@fys.uio.no>
-Subject: Re: linux-next: nfs build failure
-Date: Tue, 17 Jun 2008 16:19:15 -0400
-Message-ID: <1213733955.7288.24.camel@localhost>
-References: <20080617192622.e448a37e.sfr@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
+Date: Tue, 17 Jun 2008 22:44:23 +0200
+Message-ID: <200806172244.24026.rjw@sisk.pl>
+References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806170105.45647.rjw@sisk.pl> <alpine.LFD.1.10.0806170905221.3395@apollo.tec.linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-out2.uio.no ([129.240.10.58]:42935 "EHLO mail-out2.uio.no"
+Received: from ogre.sisk.pl ([217.79.144.158]:37841 "EHLO ogre.sisk.pl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754030AbYFQUiK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Jun 2008 16:38:10 -0400
-In-Reply-To: <20080617192622.e448a37e.sfr@canb.auug.org.au>
+	id S1755127AbYFQUnX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Jun 2008 16:43:23 -0400
+In-Reply-To: <alpine.LFD.1.10.0806170905221.3395@apollo.tec.linutronix.de>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Jeff Layton <jlayton@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Maciej W. Rozycki" <macro@linux-mips.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
 
-On Tue, 2008-06-17 at 19:26 +1000, Stephen Rothwell wrote:
-> Hi Trond,
+On Tuesday, 17 of June 2008, Thomas Gleixner wrote:
+> On Tue, 17 Jun 2008, Rafael J. Wysocki wrote:
+> > 
+> > BTW, with the C1E patches reverted I don't get the
+> > WARNING: at /home/rafael/src/linux-next/kernel/smp.c:215 smp_call_function_single+0x3d/0xa2
+> > in the log.  Thomas?
 > 
-> Today's linux-next build (powerpc ppc44x_defconfig) failed like this:
-> 
-> fs/nfs/super.c: In function 'nfs_remount':
-> fs/nfs/super.c:1440: error: 'nfs4_fs_type' undeclared (first use in this function)
-> 
-> Caused by commit 68a2efd9008ee81e72a4d1dcdf228414f5dfa6ff ("NFS:
-> implement option checking when remounting NFS filesystems (resend)").
-> 
-> I applied the following patch (which may not be correct).
+> Yeah, my bad. Fix below.
 
-Thanks Stephen! The patch looks correct, but I think I'd still prefer
-the following to avoid the #ifdef.
+Thanks, it eliminates the WARNING, but still the box doesn't work with
+the "x86: add C1E aware idle function" patch applied, even with 'highres=off'.
 
-Cheers
-  Trond
-----------------------------------------------------------------
-From: Trond Myklebust <Trond.Myklebust@netapp.com>
-Date: Tue, 17 Jun 2008 16:12:00 -0400
-NFS: Fix a dependency on CONFIG_NFS_V4 in nfs_remount
+The main symptom is that CPU loads are computed incorrectly (I got X using 126%
+of CPU time from 'top', for example).  Apart from this, some processes (like
+gkrellm) seem to be 'frozen' and only change their state in 'jumps', as though
+they only got CPU from time to time at random.
 
-Fix the 'nfs4_fs_type' undeclared error in nfs_remount when compiling sans
-NFSv4...
+Reverting the above-mentioned patch fixes those problems.
 
-Signed-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>
-Cc: Jeff Layton <jlayton@redhat.com>
----
-
- fs/nfs/super.c |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index 39c028e..c8f29ac 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -1426,6 +1426,7 @@ nfs_remount(struct super_block *sb, int *flags, char *raw_data)
- 	struct nfs_parsed_mount_data *data;
- 	struct nfs_mount_data *options = (struct nfs_mount_data *)raw_data;
- 	struct nfs4_mount_data *options4 = (struct nfs4_mount_data *)raw_data;
-+	u32 nfsvers = nfss->nfs_client->rpc_ops->version;
- 
- 	/*
- 	 * Userspace mount programs that send binary options generally send
-@@ -1433,8 +1434,8 @@ nfs_remount(struct super_block *sb, int *flags, char *raw_data)
- 	 * ones were explicitly specified. Fall back to legacy behavior and
- 	 * just return success.
- 	 */
--	if ((sb->s_type == &nfs4_fs_type && options4->version == 1) ||
--	    (sb->s_type == &nfs_fs_type && options->version >= 1 &&
-+	if ((nfsvers == 4 && options4->version == 1) ||
-+	    (nfsvers <= 3 && options->version >= 1 &&
- 	     options->version <= 6))
- 		return 0;
- 
-
-
+Thanks,
+Rafael
