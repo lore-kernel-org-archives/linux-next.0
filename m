@@ -1,42 +1,49 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] SOC audio: fix PM=n build
-Date: Tue, 17 Jun 2008 09:46:29 -0700
-Message-ID: <20080617094629.4859e2c2.randy.dunlap@oracle.com>
+From: Len Brown <lenb@kernel.org>
+Subject: Re: [PATCH -next] acpi: fix printk format warning
+Date: Tue, 17 Jun 2008 12:59:13 -0400 (EDT)
+Message-ID: <alpine.LFD.1.10.0806171258410.7277@localhost.localdomain>
+References: <20080617094341.d144a5f8.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rgminet01.oracle.com ([148.87.113.118]:27635 "EHLO
-	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754064AbYFQQrY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Jun 2008 12:47:24 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: liam.girdwood@wolfsonmicro.com, broonie@opensource.wolfsonmicro.com, akpm <akpm@linux-foundation.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-reply-to: <20080617094341.d144a5f8.randy.dunlap@oracle.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@ORACLE.COM>
+Cc: linux-acpi@vger.kernel.org, Yi Yang <yi.y.yang@intel.com>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Fix sound/soc build failure when CONFIG_PM=n:
+applied,
+thanks,
+-Len
 
-linux-next-20080617/sound/soc/soc-core.c:829: error: 'soc_resume_deferred' undeclared (first use in this function)
-soc3.out:make[3]: *** [sound/soc/soc-core.o] Error 1
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- sound/soc/soc-core.c |    2 ++
- 1 file changed, 2 insertions(+)
+On Tue, 17 Jun 2008, Randy Dunlap wrote:
 
---- linux-next-20080617.orig/sound/soc/soc-core.c
-+++ linux-next-20080617/sound/soc/soc-core.c
-@@ -825,8 +825,10 @@ static int soc_probe(struct platform_dev
- 
- 	/* DAPM stream work */
- 	INIT_DELAYED_WORK(&socdev->delayed_work, close_delayed_work);
-+#ifdef CONFIG_PM
- 	/* deferred resume work */
- 	INIT_WORK(&socdev->deferred_resume_work, soc_resume_deferred);
-+#endif
- 
- 	return 0;
- 
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> Fix printk format warning:
+> 
+> linux-next-20080617/drivers/acpi/processor_throttling.c:1258: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> ---
+>  drivers/acpi/processor_throttling.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> --- linux-next-20080617.orig/drivers/acpi/processor_throttling.c
+> +++ linux-next-20080617/drivers/acpi/processor_throttling.c
+> @@ -1255,7 +1255,7 @@ static ssize_t acpi_processor_write_thro
+>  	if (state_val >= pr->throttling.state_count)
+>  		return -EINVAL;
+>  
+> -	snprintf(tmpbuf, 5, "%d", state_val);
+> +	snprintf(tmpbuf, 5, "%zu", state_val);
+>  
+>  	if (strcmp(tmpbuf, charp) != 0)
+>  		return -EINVAL;
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-acpi" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
