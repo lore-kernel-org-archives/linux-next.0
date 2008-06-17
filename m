@@ -1,49 +1,31 @@
-From: Len Brown <lenb@kernel.org>
-Subject: Re: [PATCH -next] acpi: fix printk format warning
-Date: Tue, 17 Jun 2008 12:59:13 -0400 (EDT)
-Message-ID: <alpine.LFD.1.10.0806171258410.7277@localhost.localdomain>
-References: <20080617094341.d144a5f8.randy.dunlap@oracle.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH -next] SOC audio: fix PM=n build
+Date: Tue, 17 Jun 2008 19:09:04 +0100
+Message-ID: <20080617180904.GA14443@opensource.wolfsonmicro.com>
+References: <20080617094629.4859e2c2.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-reply-to: <20080617094341.d144a5f8.randy.dunlap@oracle.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@ORACLE.COM>
-Cc: linux-acpi@vger.kernel.org, Yi Yang <yi.y.yang@intel.com>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:42879 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1755913AbYFQSJG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Jun 2008 14:09:06 -0400
+Content-Disposition: inline
+In-Reply-To: <20080617094629.4859e2c2.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: linux-next@vger.kernel.org, liam.girdwood@wolfsonmicro.com, akpm <akpm@linux-foundation.org>
 
-
-applied,
-thanks,
--Len
-
-
-On Tue, 17 Jun 2008, Randy Dunlap wrote:
-
+On Tue, Jun 17, 2008 at 09:46:29AM -0700, Randy Dunlap wrote:
 > From: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> Fix printk format warning:
+> Fix sound/soc build failure when CONFIG_PM=n:
 > 
-> linux-next-20080617/drivers/acpi/processor_throttling.c:1258: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
+> linux-next-20080617/sound/soc/soc-core.c:829: error: 'soc_resume_deferred' undeclared (first use in this function)
+> soc3.out:make[3]: *** [sound/soc/soc-core.o] Error 1
 > 
 > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> ---
->  drivers/acpi/processor_throttling.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --- linux-next-20080617.orig/drivers/acpi/processor_throttling.c
-> +++ linux-next-20080617/drivers/acpi/processor_throttling.c
-> @@ -1255,7 +1255,7 @@ static ssize_t acpi_processor_write_thro
->  	if (state_val >= pr->throttling.state_count)
->  		return -EINVAL;
->  
-> -	snprintf(tmpbuf, 5, "%d", state_val);
-> +	snprintf(tmpbuf, 5, "%zu", state_val);
->  
->  	if (strcmp(tmpbuf, charp) != 0)
->  		return -EINVAL;
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-acpi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+
+Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
