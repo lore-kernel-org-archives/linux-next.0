@@ -1,153 +1,54 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: x86 tree build failure
-Date: Tue, 17 Jun 2008 08:45:59 +0200
-Message-ID: <20080617064559.GA23580@elte.hu>
-References: <20080617134615.d70be9f6.sfr@canb.auug.org.au> <20080617055816.GA13556@elte.hu> <20080617060835.GA16162@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of net tree
+Date: Tue, 17 Jun 2008 16:53:10 +1000
+Message-ID: <20080617165310.90439415.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__17_Jun_2008_16_53_10_+1000_2pc6cz/AWEy/+ppT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:55386 "EHLO mx3.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36677 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750793AbYFQGqN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Jun 2008 02:46:13 -0400
-Content-Disposition: inline
-In-Reply-To: <20080617060835.GA16162@elte.hu>
+	id S1751527AbYFQGxR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Jun 2008 02:53:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org
 
+--Signature=_Tue__17_Jun_2008_16_53_10_+1000_2pc6cz/AWEy/+ppT
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Ingo Molnar <mingo@elte.hu> wrote:
+Hi Dave,
 
-> > | commit d94325315f241f86bd07a2ce113cbf28dc98de72
-> > | Author: Ingo Molnar <mingo@elte.hu>
-> > | Date:   Thu May 1 09:51:47 2008 +0000
-> > |
-> > |     acpi-acpi_numa_init-build-fix
-> > |
-> > |     x86.git testing found the following build error on latest -git:
-> > |
-> > |     drivers/acpi/numa.c: In function 'acpi_numa_init':
-> > |     drivers/acpi/numa.c:226: error: 'NR_NODE_MEMBLKS' undeclared (first use in
-> > |     drivers/acpi/numa.c:226: error: (Each undeclared identifier is reported onl
-> > |     drivers/acpi/numa.c:226: error: for each function it appears in.)
+Today's linux-next got a conflict in net/sctp/protocol.c between commit
+80896a3584bbff9ff9ad4dde735517c4de68d736 ("sctp: Correctly cleanup procfs
+entries upon failure") from the net-current tree and commit
+20c2c1fd6c842caf70dcb1d94b9d58861949fd3d ("sctp: add sctp/remaddr table
+to complete RFC remote address table OID") from the net tree.
 
-btw., googling for "error: 'NR_NODE_MEMBLKS' undeclared" jumps straight 
-to the patch i posted to lkml long ago.
+(I guess from your other email that you already know this and it will be
+gone tomorrow.)
 
-> note, if you cherry-pick that, you'll also need:
-> 
-> | commit aca9de453911d095a9701ee6ebbae7fd3d6c7c1e
-> | Author: Russ Anderson <rja@sgi.com>
-> | Date:   Fri May 16 10:02:06 2008 -0500
-> |
-> |     acpi: fix boot breakage on Altix
+I did the fixup from your current net tree (which I had not fetched for
+today's linux-next).
 
-i double-checked that cherry-picking these two out-of-x86-scope fixes 
-from a month ago (which we found during -tip build testing) into 
-auto-x86-next gets allmodconfig going.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-I'm reluctant to permanently put them into the x86 branches though, as 
-they are 'out of scope' of arch/x86 and would make the branch eligible 
-to be 'pruned' out of linux-next.
+--Signature=_Tue__17_Jun_2008_16_53_10_+1000_2pc6cz/AWEy/+ppT
+Content-Type: application/pgp-signature
 
-the two fixes are attached below.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-	Ingo
+iEYEARECAAYFAkhXX1YACgkQTgG2atn1QN/GUQCfR+AOsFYuyJvRlAcJDlzm3jL2
+7TcAmQHWUQN7OCiPrwZyjSe7G+WOZrlQ
+=9nPn
+-----END PGP SIGNATURE-----
 
----------------------->
-commit d94325315f241f86bd07a2ce113cbf28dc98de72
-Author: Ingo Molnar <mingo@elte.hu>
-Date:   Thu May 1 09:51:47 2008 +0000
-
-    acpi-acpi_numa_init-build-fix
-    
-    x86.git testing found the following build error on latest -git:
-    
-     drivers/acpi/numa.c: In function 'acpi_numa_init':
-     drivers/acpi/numa.c:226: error: 'NR_NODE_MEMBLKS' undeclared (first use in this function)
-     drivers/acpi/numa.c:226: error: (Each undeclared identifier is reported only once
-     drivers/acpi/numa.c:226: error: for each function it appears in.)
-    
-    with this config:
-    
-     http://redhat.com/~mingo/misc/config-Wed_Apr_30_22_42_42_CEST_2008.bad
-    
-    i suspect we dont want SRAT parsing when CONFIG_HAVE_ARCH_PARSE_SRAT
-    is unset - but the fix looks a bit ugly. Perhaps we should define
-    NR_NODE_MEMBLKS even in this case and just let the code fall back
-    to some sane behavior?
-    
-    Signed-off-by: Ingo Molnar <mingo@elte.hu>
-    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-
-diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
-index 5d59cb3..8cab8c5 100644
---- a/drivers/acpi/numa.c
-+++ b/drivers/acpi/numa.c
-@@ -176,6 +176,7 @@ acpi_parse_processor_affinity(struct acpi_subtable_header * header,
- 	return 0;
- }
- 
-+#ifdef CONFIG_HAVE_ARCH_PARSE_SRAT
- static int __init
- acpi_parse_memory_affinity(struct acpi_subtable_header * header,
- 			   const unsigned long end)
-@@ -193,6 +194,7 @@ acpi_parse_memory_affinity(struct acpi_subtable_header * header,
- 
- 	return 0;
- }
-+#endif
- 
- static int __init acpi_parse_srat(struct acpi_table_header *table)
- {
-@@ -221,9 +223,11 @@ int __init acpi_numa_init(void)
- 	if (!acpi_table_parse(ACPI_SIG_SRAT, acpi_parse_srat)) {
- 		acpi_table_parse_srat(ACPI_SRAT_TYPE_CPU_AFFINITY,
- 				      acpi_parse_processor_affinity, NR_CPUS);
-+#ifdef CONFIG_HAVE_ARCH_PARSE_SRAT
- 		acpi_table_parse_srat(ACPI_SRAT_TYPE_MEMORY_AFFINITY,
- 				      acpi_parse_memory_affinity,
- 				      NR_NODE_MEMBLKS);
-+#endif
- 	}
- 
- 	/* SLIT: System Locality Information Table */
-
-commit aca9de453911d095a9701ee6ebbae7fd3d6c7c1e
-Author: Russ Anderson <rja@sgi.com>
-Date:   Fri May 16 10:02:06 2008 -0500
-
-    acpi: fix boot breakage on Altix
-    
-    Signed-off-by: Ingo Molnar <mingo@elte.hu>
-
-diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
-index 16be414..1be94eb 100644
---- a/arch/ia64/Kconfig
-+++ b/arch/ia64/Kconfig
-@@ -60,6 +60,10 @@ config RWSEM_XCHGADD_ALGORITHM
- 	bool
- 	default y
- 
-+config HAVE_ARCH_PARSE_SRAT
-+	bool
-+	default y
-+
- config ARCH_HAS_ILOG2_U32
- 	bool
- 	default n
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 41f7ce7..b426ac5 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -93,7 +93,7 @@ int acpi_parse_mcfg (struct acpi_table_header *header);
- void acpi_table_print_madt_entry (struct acpi_subtable_header *madt);
- 
- /* the following four functions are architecture-dependent */
--#ifdef CONFIG_HAVE_ARCH_PARSE_SRAT
-+#if defined(CONFIG_HAVE_ARCH_PARSE_SRAT) && !defined(NR_NODE_MEMBLKS)
- #define NR_NODE_MEMBLKS MAX_NUMNODES
- #define acpi_numa_slit_init(slit) do {} while (0)
- #define acpi_numa_processor_affinity_init(pa) do {} while (0)
+--Signature=_Tue__17_Jun_2008_16_53_10_+1000_2pc6cz/AWEy/+ppT--
