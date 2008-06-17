@@ -1,59 +1,46 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: manual merge of sparc tree
-Date: Tue, 17 Jun 2008 23:16:53 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.0806172316140.8377@anakin>
-References: <20080617172150.9ef1ea69.sfr@canb.auug.org.au>
- <20080617.003534.193689527.davem@davemloft.net> <Pine.LNX.4.64.0806172231100.8377@anakin>
- <20080617210342.GA25911@cs181133002.pp.htv.fi>
+From: "Maciej W. Rozycki" <macro@linux-mips.org>
+Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
+Date: Tue, 17 Jun 2008 22:19:14 +0100 (BST)
+Message-ID: <Pine.LNX.4.55.0806172206580.28110@cliff.in.clinika.pl>
+References: <20080613232214.394fd6fd.sfr@canb.auug.org.au>
+ <Pine.LNX.4.55.0806161636510.20218@cliff.in.clinika.pl> <200806170038.37224.rjw@sisk.pl>
+ <200806172259.47861.rjw@sisk.pl>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wilson.telenet-ops.be ([195.130.132.42]:58649 "EHLO
-	wilson.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753340AbYFQVQz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Jun 2008 17:16:55 -0400
-In-Reply-To: <20080617210342.GA25911@cs181133002.pp.htv.fi>
+Received: from kirk.serum.com.pl ([213.77.9.205]:63357 "EHLO serum.com.pl"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1755910AbYFQV1w (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Jun 2008 17:27:52 -0400
+In-Reply-To: <200806172259.47861.rjw@sisk.pl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Adrian Bunk <bunk@stusta.de>
-Cc: David Miller <davem@davemloft.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
 
-On Wed, 18 Jun 2008, Adrian Bunk wrote:
-> On Tue, Jun 17, 2008 at 10:32:01PM +0200, Geert Uytterhoeven wrote:
-> > On Tue, 17 Jun 2008, David Miller wrote:
-> > > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > Date: Tue, 17 Jun 2008 17:21:50 +1000
-> > > 
-> > > > Today's linux-next merge of the sparc tree got a trivial contextual
-> > > > conflict in include/asm-m68k/sbus.h between commit
-> > > > 69edc57f65f2d0bf63485cba4567876a1cfa3dae ("m68k/sun3/: possible
-> > > > cleanups") from the m68k tree and commit
-> > > > 878e7a6e498bec55f10a163197c41554fb078416 ("sparc: remove CONFIG_SUN4")
-> > > > from the sparc tree.
-> > > > 
-> > > > It was just close changes to the same file.  I fixed it up.
-> > 
-> > If you want your change to include/asm-m68k/sbus.h to go in through the
-> > m68k tree, please send me the patch.
-> 
-> Sorry for this mess, I'm in the unlucky position of having made both 
-> conflicting commits.  :-(
->
-> Below is the part of the commit that caused this conflict.
+On Tue, 17 Jun 2008, Rafael J. Wysocki wrote:
 
-IC...
+> May I gently ask that the patch ("x86: I/O APIC: timer through 8259A second-chance")
+> be reverted?
 
-> m68k: remove stale ARCH_SUN4 #define
+ We're trying to find a solution for a long-standing problem and this
+patch is a step in that direction.  We need to find out exactly what is
+going wrong with the HP nx6325 system and removing the patch would make us
+lose the opportunity to get things right in this area.  At the time I
+submitted that patch I warned a lot of testing would be required before it
+goes upstream and hopefully my request will get honored.  If you do not
+want to participate in testing for whatever reason, you have the right to
+do so, but I insist on the patch to stay at least until we know the source
+of the problem and conclude there is no other way to get it fixed.  Len
+reported he's got the same system and it behaves the same, so I hope he'll
+be able to do the testing if you decide to opt out.
 
-Thx, queued for 2.6.27.
+ Unfortunately the 64-bit variation has a lot of necessary logging
+disabled by default (as you have now discovered with the need to rename
+apic_printk() to printk()), so my plan is to cook up a patch to enable all
+the available logging facilities around that code first.  I was very tired
+yesterday and could not afford having a look at the logs -- sorry about
+that.  I'll try to do it tonight and see if there is anything else I can
+do.
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+  Maciej
