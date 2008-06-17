@@ -1,45 +1,86 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: manual merge of sparc tree
-Date: Tue, 17 Jun 2008 22:32:01 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.0806172231100.8377@anakin>
-References: <20080617172150.9ef1ea69.sfr@canb.auug.org.au>
- <20080617.003534.193689527.davem@davemloft.net>
+From: Jeff Layton <jlayton@redhat.com>
+Subject: Re: linux-next: nfs build failure
+Date: Tue, 17 Jun 2008 16:37:38 -0400
+Message-ID: <20080617163738.0f7fd47e@barsoom.rdu.redhat.com>
+References: <20080617192622.e448a37e.sfr@canb.auug.org.au>
+	<1213733955.7288.24.camel@localhost>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from edna.telenet-ops.be ([195.130.132.58]:46329 "EHLO
-	edna.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752926AbYFQUcG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Jun 2008 16:32:06 -0400
-In-Reply-To: <20080617.003534.193689527.davem@davemloft.net>
+Received: from mx1.redhat.com ([66.187.233.31]:42196 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753132AbYFQUh7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Jun 2008 16:37:59 -0400
+In-Reply-To: <1213733955.7288.24.camel@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, bunk@kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-On Tue, 17 Jun 2008, David Miller wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 17 Jun 2008 17:21:50 +1000
-> 
-> > Today's linux-next merge of the sparc tree got a trivial contextual
-> > conflict in include/asm-m68k/sbus.h between commit
-> > 69edc57f65f2d0bf63485cba4567876a1cfa3dae ("m68k/sun3/: possible
-> > cleanups") from the m68k tree and commit
-> > 878e7a6e498bec55f10a163197c41554fb078416 ("sparc: remove CONFIG_SUN4")
-> > from the sparc tree.
+On Tue, 17 Jun 2008 16:19:15 -0400
+Trond Myklebust <trond.myklebust@fys.uio.no> wrote:
+
+> On Tue, 2008-06-17 at 19:26 +1000, Stephen Rothwell wrote:
+> > Hi Trond,
 > > 
-> > It was just close changes to the same file.  I fixed it up.
+> > Today's linux-next build (powerpc ppc44x_defconfig) failed like this:
+> > 
+> > fs/nfs/super.c: In function 'nfs_remount':
+> > fs/nfs/super.c:1440: error: 'nfs4_fs_type' undeclared (first use in this function)
+> > 
+> > Caused by commit 68a2efd9008ee81e72a4d1dcdf228414f5dfa6ff ("NFS:
+> > implement option checking when remounting NFS filesystems (resend)").
+> > 
+> > I applied the following patch (which may not be correct).
+> 
+> Thanks Stephen! The patch looks correct, but I think I'd still prefer
+> the following to avoid the #ifdef.
+> 
+> Cheers
+>   Trond
+> ----------------------------------------------------------------
+> From: Trond Myklebust <Trond.Myklebust@netapp.com>
+> Date: Tue, 17 Jun 2008 16:12:00 -0400
+> NFS: Fix a dependency on CONFIG_NFS_V4 in nfs_remount
+> 
+> Fix the 'nfs4_fs_type' undeclared error in nfs_remount when compiling sans
+> NFSv4...
+> 
+> Signed-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>
+> Cc: Jeff Layton <jlayton@redhat.com>
+> ---
+> 
+>  fs/nfs/super.c |    5 +++--
+>  1 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+> index 39c028e..c8f29ac 100644
+> --- a/fs/nfs/super.c
+> +++ b/fs/nfs/super.c
+> @@ -1426,6 +1426,7 @@ nfs_remount(struct super_block *sb, int *flags, char *raw_data)
+>  	struct nfs_parsed_mount_data *data;
+>  	struct nfs_mount_data *options = (struct nfs_mount_data *)raw_data;
+>  	struct nfs4_mount_data *options4 = (struct nfs4_mount_data *)raw_data;
+> +	u32 nfsvers = nfss->nfs_client->rpc_ops->version;
+>  
+>  	/*
+>  	 * Userspace mount programs that send binary options generally send
+> @@ -1433,8 +1434,8 @@ nfs_remount(struct super_block *sb, int *flags, char *raw_data)
+>  	 * ones were explicitly specified. Fall back to legacy behavior and
+>  	 * just return success.
+>  	 */
+> -	if ((sb->s_type == &nfs4_fs_type && options4->version == 1) ||
+> -	    (sb->s_type == &nfs_fs_type && options->version >= 1 &&
+> +	if ((nfsvers == 4 && options4->version == 1) ||
+> +	    (nfsvers <= 3 && options->version >= 1 &&
+>  	     options->version <= 6))
+>  		return 0;
+>  
+> 
+> 
 
-If you want your change to include/asm-m68k/sbus.h to go in through the
-m68k tree, please send me the patch.
+ACK...that looks better to me too.
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+-- 
+Jeff Layton <jlayton@redhat.com>
