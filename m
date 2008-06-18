@@ -1,68 +1,61 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: Tree for June 5
-Date: Wed, 18 Jun 2008 10:26:51 +0200
-Message-ID: <20080618082651.GF4135@elte.hu>
-References: <48493CBD.1000202@sgi.com> <19f34abd0806060650q203bef48rd3b20c0cabec4774@mail.gmail.com> <19f34abd0806060707x7570c835u4b1837b54dfa36ba@mail.gmail.com> <484947A9.5050804@sgi.com> <19f34abd0806060736m10424455kfbc3e6272d18646e@mail.gmail.com> <20080606145717.GA5300@elte.hu> <20080606150102.GA14141@elte.hu> <19f34abd0806060813t10d422fel10dcb25c71f3b032@mail.gmail.com> <20080606152326.GA18359@elte.hu> <48495D4E.2070203@sgi.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
+Date: Wed, 18 Jun 2008 14:41:35 +0200 (CEST)
+Message-ID: <alpine.LFD.1.10.0806181421320.3395@apollo.tec.linutronix.de>
+References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806172244.24026.rjw@sisk.pl> <200806180019.49628.rjw@sisk.pl> <200806180025.20504.rjw@sisk.pl> <alpine.LFD.1.10.0806181000440.3395@apollo.tec.linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:37730 "EHLO mx2.mail.elte.hu"
+Received: from www.tglx.de ([62.245.132.106]:49677 "EHLO www.tglx.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751247AbYFRI1P (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 Jun 2008 04:27:15 -0400
-Content-Disposition: inline
-In-Reply-To: <48495D4E.2070203@sgi.com>
+	id S1751908AbYFRMmO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 Jun 2008 08:42:14 -0400
+In-Reply-To: <alpine.LFD.1.10.0806181000440.3395@apollo.tec.linutronix.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Travis <travis@sgi.com>
-Cc: Vegard Nossum <vegard.nossum@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: "Maciej W. Rozycki" <macro@linux-mips.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
 
-
-* Mike Travis <travis@sgi.com> wrote:
-
-> Ingo Molnar wrote:
-> > * Vegard Nossum <vegard.nossum@gmail.com> wrote:
+On Wed, 18 Jun 2008, Thomas Gleixner wrote:
+> On Wed, 18 Jun 2008, Rafael J. Wysocki wrote:
+> > On Wednesday, 18 of June 2008, Rafael J. Wysocki wrote:
+> > > On Tuesday, 17 of June 2008, Rafael J. Wysocki wrote:
+> > > > On Tuesday, 17 of June 2008, Thomas Gleixner wrote:
+> > > > > On Tue, 17 Jun 2008, Rafael J. Wysocki wrote:
+> > > > > > 
+> > > > > > BTW, with the C1E patches reverted I don't get the
+> > > > > > WARNING: at /home/rafael/src/linux-next/kernel/smp.c:215 smp_call_function_single+0x3d/0xa2
+> > > > > > in the log.  Thomas?
+> > > > > 
+> > > > > Yeah, my bad. Fix below.
+> > > > 
+> > > > Thanks, it eliminates the WARNING, but still the box doesn't work with
+> > > > the "x86: add C1E aware idle function" patch applied, even with 'highres=off'.
+> > > > 
+> > > > The main symptom is that CPU loads are computed incorrectly (I got X using 126%
+> > > > of CPU time from 'top', for example).  Apart from this, some processes (like
+> > > > gkrellm) seem to be 'frozen' and only change their state in 'jumps', as though
+> > > > they only got CPU from time to time at random.
+> > > > 
+> > > > Reverting the above-mentioned patch fixes those problems.
+> > > 
+> > > Ah.  If your fix is replaced with the appended one, the system happily works
+> > > with C1E and highres.
 > > 
-> >>>> AFAICS this is not yet required for v2.6.26, as the requirement to 
-> >>>> never iterate to MAX_NUMNODES and call nr_cpus_node() with the 
-> >>>> index only got introduced by Mike's patch.
-> >>> the one below is needed as well i think.
-> >> Yeah. I think you had better take Mike's patches, I don't trust even 
-> >> that my patch and your fixlet does everything correctly.
-> > 
-> > yep, just discovered that we had them already ;-)
-> > 
-> > Thomas has just scripted up a new "detect if a commit is not in 
-> > linux-next yet" script that should avoid such problems in the future.
-> > 
-> > your second patch is still wanted, it would have detected the problem 
-> > earlier.
-> > 
-> > 	Ingo
+> > Scratch that.  The symptoms appeared later this time, that's all.  I've just got
+> > b43 consuming 90+ % of the CPU time. :-(
 > 
-> Thanks, yes, I agree.  However I would like to modify it slightly:
-> ---
-> Subject: [PATCH 1/1] x86: Add check for node passed to node_to_cpumask
+> I would have been pretty surprised if it had helped :)
 > 
->   * When CONFIG_DEBUG_PER_CPU_MAPS is set, the node passed to
->     node_to_cpumask and node_to_cpumask_ptr should be validated.
+> Does the box boot when you disable the local apic timer on the kernel
+> command line with the patch applied ?
 > 
-> Signed-off-by: Mike Travis <travis@sgi.com>
-> ---
->  arch/x86/kernel/setup.c |   18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> --- linux-2.6.tip.orig/arch/x86/kernel/setup.c
-> +++ linux-2.6.tip/arch/x86/kernel/setup.c
-> @@ -399,6 +399,10 @@ int early_cpu_to_node(int cpu)
->  	return per_cpu(x86_cpu_to_node_map, cpu);
->  }
->  
-> +
-> +/* empty cpumask */
-> +static cpumask_t cpu_mask_none;
+> Also does forcing hpet change anything ?
 
-hm, this should be __read_mostly, maybe even const so that it becomes 
-readonly?
+I just checked that the original c1e series and the affected code in
+tip are not different. IIRC you confirmed that the C1E patches would
+work on your box. So I wonder what else got changed which causes these
+problems.
 
-	Ingo
+Thanks,
+	tglx
