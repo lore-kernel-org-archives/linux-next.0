@@ -1,156 +1,72 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: nfs build failure
-Date: Wed, 18 Jun 2008 14:19:25 -0700
-Message-ID: <20080618141925.e1e7a90a.randy.dunlap@oracle.com>
-References: <20080618125213.30382b62.sfr@canb.auug.org.au>
-	<1213820042.8233.21.camel@localhost>
-	<485971F2.8000005@oracle.com>
-	<1213823713.25182.35.camel@localhost>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
+Date: Thu, 19 Jun 2008 00:11:37 +0200
+Message-ID: <200806190011.38548.rjw@sisk.pl>
+References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806180053.40044.rjw@sisk.pl> <Pine.LNX.4.55.0806180400070.28110@cliff.in.clinika.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rgminet01.oracle.com ([148.87.113.118]:60043 "EHLO
-	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753357AbYFRVTu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Jun 2008 17:19:50 -0400
-In-Reply-To: <1213823713.25182.35.camel@localhost>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: chuck.lever@oracle.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.55.0806180400070.28110@cliff.in.clinika.pl>
+Content-Disposition: inline
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Maciej W. Rozycki" <macro@linux-mips.org>
+Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 18 Jun 2008 17:15:13 -0400 Trond Myklebust wrote:
+On Wednesday, 18 of June 2008, Maciej W. Rozycki wrote:
+> On Wed, 18 Jun 2008, Rafael J. Wysocki wrote:
+> 
+> > Here you go.  Below is the relevant snippet from the yesterday's linux-next
+> > dmesg with the patches:
+> > "x86: I/O APIC: timer through 8259A second-chance"
+> > "x86: add C1E aware idle function"
+> > reverted and the appended debug patch applied.
+> > 
+> > [    0.108006] TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+> > [    0.108006] ..MP-BIOS bug: 8254 timer not connected to IO-APIC
+> > [    0.108006] ...trying to set up timer (IRQ0) through the 8259A ... <2> failed
+> > [    0.108006] ...trying to set up timer as Virtual Wire IRQ...<2> works.
+> > 
+> > The entire dmesg is at: http://www.sisk.pl/kernel/debug/20080616/dmesg-4.log
+> 
+>  Thanks -- this is very important and useful information as it shows the
+> exact alternative used.
+> 
+>  With such a configuration the "x86: I/O APIC: timer through 8259A
+> second-chance" patch should not matter, because the only change it
+> introduces is an attempt to try the same I/O APIC pin again, but with the
+> IRQ0 line of the master 8259A enabled.  That's not a terribly unusual 
+> configuration and nothing should get confused in the system.
 
-> On Wed, 2008-06-18 at 16:37 -0400, Chuck Lever wrote:
-> > Trond Myklebust wrote:
-> > > On Wed, 2008-06-18 at 12:52 +1000, Stephen Rothwell wrote:
-> > >> Hi Trond,
-> > >>
-> > >> Today's linux-next build (powerpc ppc64_defconfig) failed like t=
-his:
-> > >>
-> > >> fs/built-in.o: In function `.nfs_parse_ip_address':
-> > >> super.c:(.text+0xe2f08): undefined reference to `.__ipv6_addr_ty=
-pe'
-> > >>
-> > >> Some CONFIG_IPV6 protections are needed ...
-> > >>
-> > >> I reverted commit 09491a874d4f9a8676567bc58bce9dec9539740d ("NFS=
-: handle
-> > >> interface identifiers in incoming IPv6 addresses").
-> > >=20
-> > > I suggest something like the attached patch. Comments Chuck?
-> > >=20
-> > > Trond
-> > >=20
-> > >=20
-> > >=20
-> > >=20
-> > > -----------------------------------------------------------------=
--------
-> > >=20
-> > > Subject:
-> > > NFS: Don't allow IPv6 addresses if CONFIG_IPv6 isn't set
-> > > From:
-> > > Trond Myklebust <Trond.Myklebust@netapp.com>
-> > > Date:
-> > > Wed, 18 Jun 2008 16:04:22 -0400
-> > >=20
-> > >=20
-> > > Fixes a compile failure in fs/nfs/super.c
-> > >=20
-> > > Also fix the compiler warnings:
-> > >   fs/nfs/super.c:721: warning: field width should have type =C3=A2=
-=E2=82=AC=CB=9Cint=C3=A2=E2=82=AC=E2=84=A2, but
-> > >   		      argument 2 has type =C3=A2=E2=82=AC=CB=9Csize_t=C3=A2=E2=
-=82=AC=E2=84=A2
-> >=20
-> > I just saw this warning yesterday, and was about to send a fix for =
-it.=20
-> > Sorry for the delay, but I had a power supply go south on me today.
-> >=20
-> > >   fs/nfs/super.c:809:3: warning: returning void-valued expression
-> > >   fs/nfs/super.c:811:3: warning: returning void-valued expression
-> >=20
-> > But I've never seen that one.  Very strange how the warnings vary=20
-> > depending on what platform you compile to.
-> >=20
-> > > Signed-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>
-> > > ---
-> > >=20
-> > >  fs/nfs/super.c |   19 ++++++++++++++-----
-> > >  1 files changed, 14 insertions(+), 5 deletions(-)
-> > >=20
-> > > diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-> > > index e62820c..6a47bc3 100644
-> > > --- a/fs/nfs/super.c
-> > > +++ b/fs/nfs/super.c
-> > > @@ -718,10 +718,10 @@ static void nfs_parse_ipv4_address(char *st=
-ring, size_t str_len,
-> > >  	struct sockaddr_in *sin =3D (struct sockaddr_in *)sap;
-> > >  	u8 *addr =3D (u8 *)&sin->sin_addr.s_addr;
-> > > =20
-> > > -	dfprintk(MOUNT, "NFS: parsing IPv4 address %*s\n",
-> > > -			str_len, string);
-> > > -
-> > >  	if (str_len <=3D INET_ADDRSTRLEN) {
-> > > +		dfprintk(MOUNT, "NFS: parsing IPv4 address %*s\n",
-> > > +				(int)str_len, string);
-> > > +
-> >=20
-> > You need the same fix in nfs_parse_ipv6_address().
->=20
-> There is no such printk in nfs_parse_ipv6_address().
+But it _does_ get confused, really.
 
-There is such a 'dfprintk()' in that function in today's linux-next tre=
-e,
-with the same warning.
+>  Barring the unlikely possibility of the 8259A actually being wired to 
+> INTIN2 of the I/O APIC I can see two possible explanations:
+> 
+> 1. The 8259A interrupt actually escapes to the CPU somehow and is handled
+>    as an ExtINTA interrupt.  This would make the code in check_timer()  
+>    decide it has found a working configuration, while actually it has been
+>    fooled.
+> 
+> 2. There is a bug in this patch or an assumption it makes which results 
+>    in the state of some component not to be restored correctly.  
+>    Unfortunately I have no resources to test the 64-bit variation of the 
+>    code, so something may have escaped my attention.
+> 
+>  I'd like to find out which one is the case -- can you please reapply the
+> patch and send me the corresponding section of the bootstrap log?  If the
+> system hangs before you can retrieve the log, please just place:
 
+Here you go:
 
-> > >  		sin->sin_family =3D AF_INET;
-> > >  		*addr_len =3D sizeof(*sin);
-> > >  		if (in4_pton(string, str_len, addr, '\0', NULL))
-> > > @@ -732,6 +732,7 @@ static void nfs_parse_ipv4_address(char *stri=
-ng, size_t str_len,
-> > >  	*addr_len =3D 0;
-> > >  }
-> > > =20
-> > > +#ifdef CONFIG_IPV6
-> > >  static void nfs_parse_ipv6_scope_id(const char *string, const si=
-ze_t str_len,
-> > >  				    const char *delim,
-> > >  				    struct sockaddr_in6 *sin6)
-> > > @@ -787,6 +788,14 @@ static void nfs_parse_ipv6_address(char *str=
-ing, size_t str_len,
-> > >  	sap->sa_family =3D AF_UNSPEC;
-> > >  	*addr_len =3D 0;
-> > >  }
-> > > +#else
-> > > +static void nfs_parse_ipv6_address(char *string, size_t str_len,
-> > > +				   struct sockaddr *sap, size_t *addr_len)
-> > > +{
-> > > +	sap->sa_family =3D AF_UNSPEC;
-> > > +	*addr_len =3D 0;
-> > > +}
-> > > +#endif
-> >=20
-> > Instead of creating a separate function, you could just wrap everyt=
-hing=20
-> > in nfs_parse_ipv6_address() but these two lines with #ifdef CONFIG_=
-IPV6=20
-> > / #endif.
->=20
-> Getting rid of those #ifdef eyesores inside function definitions is
-> worth the extra few lines.
+[    0.108006] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+[    0.108006] ..MP-BIOS bug: 8254 timer not connected to IO-APIC
+[    0.108006] ...trying to set up timer (IRQ0) through the 8259A ... <3>
+[    0.108006] ..... (found apic 0 pin 2) ...<3> works.
 
+The full dmesg is at: http://www.sisk.pl/kernel/debug/20080618/dmesg-1.log
 
----
-~Randy
-Linux Plumbers Conference, 17-19 September 2008, Portland, Oregon USA
-http://linuxplumbersconf.org/
---
-To unsubscribe from this list: send the line "unsubscribe linux-next" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Rafael
