@@ -1,56 +1,163 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of sparc tree
-Date: Wed, 18 Jun 2008 16:23:16 +1000
-Message-ID: <20080618162316.efcba6be.sfr@canb.auug.org.au>
-References: <20080617172150.9ef1ea69.sfr@canb.auug.org.au>
-	<20080617.003534.193689527.davem@davemloft.net>
-	<Pine.LNX.4.64.0806172231100.8377@anakin>
-	<20080617.223707.49467656.davem@davemloft.net>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: x86 tree build failure
+Date: Wed, 18 Jun 2008 08:39:27 +0200
+Message-ID: <20080618063927.GB32439@elte.hu>
+References: <20080617134615.d70be9f6.sfr@canb.auug.org.au> <20080617055816.GA13556@elte.hu> <20080618150452.43ea6993.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__18_Jun_2008_16_23_16_+1000_FX6d1dbnuT=fl9EX"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34646 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760708AbYFRGXY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 Jun 2008 02:23:24 -0400
-In-Reply-To: <20080617.223707.49467656.davem@davemloft.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: geert@linux-m68k.org, linux-next@vger.kernel.org, bunk@kernel.org
-
---Signature=_Wed__18_Jun_2008_16_23_16_+1000_FX6d1dbnuT=fl9EX
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-acpi-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20080618150452.43ea6993.sfr@canb.auug.org.au>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Len Brown <lenb@kernel.org>, Alexey Starikovskiy <astarikovskiy@suse.de>, linux-acpi@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 17 Jun 2008 22:37:07 -0700 (PDT) David Miller <davem@davemloft.net>=
- wrote:
->
-> It's part of a tree-wide removal of CONFIG_SUN4.  If Stephen doesn't
-> mind making this minor merge fixup all the time, it's probably
-> best to keep it in the sparc tree.
->=20
-> Let me know if you disagree :-)
 
-I don't mind.  git rerere is my friend :-)
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+> Hi Ingo,
+> 
+> On Tue, 17 Jun 2008 07:58:16 +0200 Ingo Molnar <mingo@elte.hu> wrote:
+> >
+> > hm, i guess you mean you went back to the previous version?
+> 
+> No, I dropped it completely, but I will try to remember that idea for 
+> next time. It is back today and seems ok again.  Thanks for applying 
+> those patches.
 
---Signature=_Wed__18_Jun_2008_16_23_16_+1000_FX6d1dbnuT=fl9EX
-Content-Type: application/pgp-signature
+well, note that those patches will go away on the next auto-x86-next 
+iteration, as they touch pure acpi code with no direct x86 component. 
+Please keep track of them separately.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Note that there's about half a dozen other potential bugs i've already 
+fixed in -tip and which are in various stages of getting propagated to 
+other trees. You might want to start tracking tip/out-of-tree, that's a 
+laundry list of (sometimes questionable) convenience fixes and hacks.
 
-iEYEARECAAYFAkhYqdQACgkQTgG2atn1QN/A1wCgmqDs3TFBJSDNZaSWEv+0dnOm
-RTYAnR6xm9JuTQTt88HjN75yeD+TLYFT
-=u3Hi
------END PGP SIGNATURE-----
+( If you start tracking tip/out-of-tree: i'm willing to drop any patch
+  in there in favor of an existing better fix [even if that fix is not 
+  well-tested], but i'm not willing to drop anything in there on the 
+  pure grounds of it crossing maintenance boundaries. I need those fixes 
+  for -tip testing - and they cross maintenance boundaries, that's why 
+  it's called tip/out-of-tree - it's fixes not covered by the topics in 
+  -tip itself. )
 
---Signature=_Wed__18_Jun_2008_16_23_16_+1000_FX6d1dbnuT=fl9EX--
+> > which makes that acpi build bug not trigger in allmodconfig. But 
+> > this just obscures the bug.
+> 
+> So do the acpi guys need a push?  Can I help in that?
+
+I've Cc:-ed Len. The recap, there was a pre-existing ACPI build problem, 
+which was made more prominent via this change:
+
+| commit 6ca7b49a8d6ca765426540c8902d89f1345b14af
+| Author: Yinghai Lu <yhlu.kernel@gmail.com>
+| Date:   Fri Jun 6 19:54:25 2008 -0700
+|
+|    x86: add SRAT parsing to 64-bit
+|
+|    parse the SRAT on 64-bit unconditionally.
+
+as that ACPI build problem now triggers an an allmodconfig x86 64-bit 
+build. Would be nice if Len could have a look and pick up (or NAK/fix) 
+the two patches below from Russ Anderson and me. The ia64 fix is there 
+because ia64 really wants to do SRAT parsing to be bootable.
+
+	Ingo
+
+---------------------->
+commit d94325315f241f86bd07a2ce113cbf28dc98de72
+Author: Ingo Molnar <mingo@elte.hu>
+Date:   Thu May 1 09:51:47 2008 +0000
+
+    acpi: acpi numa init build fix
+    
+    x86.git testing found the following build error on latest -git:
+    
+     drivers/acpi/numa.c: In function 'acpi_numa_init':
+     drivers/acpi/numa.c:226: error: 'NR_NODE_MEMBLKS' undeclared (first use in this function)
+     drivers/acpi/numa.c:226: error: (Each undeclared identifier is reported only once
+     drivers/acpi/numa.c:226: error: for each function it appears in.)
+    
+    with this config:
+    
+     http://redhat.com/~mingo/misc/config-Wed_Apr_30_22_42_42_CEST_2008.bad
+    
+    i suspect we dont want SRAT parsing when CONFIG_HAVE_ARCH_PARSE_SRAT
+    is unset - but the fix looks a bit ugly. Perhaps we should define
+    NR_NODE_MEMBLKS even in this case and just let the code fall back
+    to some sane behavior?
+    
+    Signed-off-by: Ingo Molnar <mingo@elte.hu>
+    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+
+diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
+index 5d59cb3..8cab8c5 100644
+--- a/drivers/acpi/numa.c
++++ b/drivers/acpi/numa.c
+@@ -176,6 +176,7 @@ acpi_parse_processor_affinity(struct acpi_subtable_header * header,
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_HAVE_ARCH_PARSE_SRAT
+ static int __init
+ acpi_parse_memory_affinity(struct acpi_subtable_header * header,
+ 			   const unsigned long end)
+@@ -193,6 +194,7 @@ acpi_parse_memory_affinity(struct acpi_subtable_header * header,
+ 
+ 	return 0;
+ }
++#endif
+ 
+ static int __init acpi_parse_srat(struct acpi_table_header *table)
+ {
+@@ -221,9 +223,11 @@ int __init acpi_numa_init(void)
+ 	if (!acpi_table_parse(ACPI_SIG_SRAT, acpi_parse_srat)) {
+ 		acpi_table_parse_srat(ACPI_SRAT_TYPE_CPU_AFFINITY,
+ 				      acpi_parse_processor_affinity, NR_CPUS);
++#ifdef CONFIG_HAVE_ARCH_PARSE_SRAT
+ 		acpi_table_parse_srat(ACPI_SRAT_TYPE_MEMORY_AFFINITY,
+ 				      acpi_parse_memory_affinity,
+ 				      NR_NODE_MEMBLKS);
++#endif
+ 	}
+ 
+ 	/* SLIT: System Locality Information Table */
+
+commit aca9de453911d095a9701ee6ebbae7fd3d6c7c1e
+Author: Russ Anderson <rja@sgi.com>
+Date:   Fri May 16 10:02:06 2008 -0500
+
+    acpi: fix boot breakage on Altix
+    
+    Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
+index 16be414..1be94eb 100644
+--- a/arch/ia64/Kconfig
++++ b/arch/ia64/Kconfig
+@@ -60,6 +60,10 @@ config RWSEM_XCHGADD_ALGORITHM
+ 	bool
+ 	default y
+ 
++config HAVE_ARCH_PARSE_SRAT
++	bool
++	default y
++
+ config ARCH_HAS_ILOG2_U32
+ 	bool
+ 	default n
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index 41f7ce7..b426ac5 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -93,7 +93,7 @@ int acpi_parse_mcfg (struct acpi_table_header *header);
+ void acpi_table_print_madt_entry (struct acpi_subtable_header *madt);
+ 
+ /* the following four functions are architecture-dependent */
+-#ifdef CONFIG_HAVE_ARCH_PARSE_SRAT
++#if defined(CONFIG_HAVE_ARCH_PARSE_SRAT) && !defined(NR_NODE_MEMBLKS)
+ #define NR_NODE_MEMBLKS MAX_NUMNODES
+ #define acpi_numa_slit_init(slit) do {} while (0)
+ #define acpi_numa_processor_affinity_init(pa) do {} while (0)
