@@ -1,72 +1,109 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
-Date: Thu, 19 Jun 2008 00:11:37 +0200
-Message-ID: <200806190011.38548.rjw@sisk.pl>
-References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806180053.40044.rjw@sisk.pl> <Pine.LNX.4.55.0806180400070.28110@cliff.in.clinika.pl>
+From: Trond Myklebust <trond.myklebust@fys.uio.no>
+Subject: Re: linux-next: nfs build failure
+Date: Wed, 18 Jun 2008 18:18:44 -0400
+Message-ID: <1213827524.25182.63.camel@localhost>
+References: <20080618125213.30382b62.sfr@canb.auug.org.au>
+	 <1213820042.8233.21.camel@localhost> <485971F2.8000005@oracle.com>
+	 <1213823713.25182.35.camel@localhost>
+	 <20080618141925.e1e7a90a.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
+Content-Type: multipart/mixed; boundary="=-+BBAvsNYO27yuI6EYiPF"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-out1.uio.no ([129.240.10.57]:44180 "EHLO mail-out1.uio.no"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751564AbYFRWSz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 Jun 2008 18:18:55 -0400
+In-Reply-To: <20080618141925.e1e7a90a.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: chuck.lever@oracle.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+
+
+--=-+BBAvsNYO27yuI6EYiPF
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.55.0806180400070.28110@cliff.in.clinika.pl>
-Content-Disposition: inline
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Maciej W. Rozycki" <macro@linux-mips.org>
-Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
-List-Id: linux-next.vger.kernel.org
 
-On Wednesday, 18 of June 2008, Maciej W. Rozycki wrote:
-> On Wed, 18 Jun 2008, Rafael J. Wysocki wrote:
-> 
-> > Here you go.  Below is the relevant snippet from the yesterday's linux-next
-> > dmesg with the patches:
-> > "x86: I/O APIC: timer through 8259A second-chance"
-> > "x86: add C1E aware idle function"
-> > reverted and the appended debug patch applied.
+On Wed, 2008-06-18 at 14:19 -0700, Randy Dunlap wrote:
+
+> > > 
+> > > You need the same fix in nfs_parse_ipv6_address().
 > > 
-> > [    0.108006] TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
-> > [    0.108006] ..MP-BIOS bug: 8254 timer not connected to IO-APIC
-> > [    0.108006] ...trying to set up timer (IRQ0) through the 8259A ... <2> failed
-> > [    0.108006] ...trying to set up timer as Virtual Wire IRQ...<2> works.
-> > 
-> > The entire dmesg is at: http://www.sisk.pl/kernel/debug/20080616/dmesg-4.log
+> > There is no such printk in nfs_parse_ipv6_address().
 > 
->  Thanks -- this is very important and useful information as it shows the
-> exact alternative used.
-> 
->  With such a configuration the "x86: I/O APIC: timer through 8259A
-> second-chance" patch should not matter, because the only change it
-> introduces is an attempt to try the same I/O APIC pin again, but with the
-> IRQ0 line of the master 8259A enabled.  That's not a terribly unusual 
-> configuration and nothing should get confused in the system.
+> There is such a 'dfprintk()' in that function in today's linux-next tree,
+> with the same warning.
 
-But it _does_ get confused, really.
+Gack, you're right. In fact that shows up another bug: #ifdef
+CONFIG_IPV6 isn't sufficient. The reason the above dfprintk wasn't
+triggering for me was that you also need to check for
+CONFIG_IPV6_MODULE.
 
->  Barring the unlikely possibility of the 8259A actually being wired to 
-> INTIN2 of the I/O APIC I can see two possible explanations:
-> 
-> 1. The 8259A interrupt actually escapes to the CPU somehow and is handled
->    as an ExtINTA interrupt.  This would make the code in check_timer()  
->    decide it has found a working configuration, while actually it has been
->    fooled.
-> 
-> 2. There is a bug in this patch or an assumption it makes which results 
->    in the state of some component not to be restored correctly.  
->    Unfortunately I have no resources to test the 64-bit variation of the 
->    code, so something may have escaped my attention.
-> 
->  I'd like to find out which one is the case -- can you please reapply the
-> patch and send me the corresponding section of the bootstrap log?  If the
-> system hangs before you can retrieve the log, please just place:
+Sigh. Revised patch is attached...
 
-Here you go:
+  Trond
 
-[    0.108006] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
-[    0.108006] ..MP-BIOS bug: 8254 timer not connected to IO-APIC
-[    0.108006] ...trying to set up timer (IRQ0) through the 8259A ... <3>
-[    0.108006] ..... (found apic 0 pin 2) ...<3> works.
+--=-+BBAvsNYO27yuI6EYiPF
+Content-Disposition: inline; filename=linux-2.6.26-023-dont_parse_ipv6_if_no_config_ipv6.dif
+Content-Type: message/rfc822; name=linux-2.6.26-023-dont_parse_ipv6_if_no_config_ipv6.dif
 
-The full dmesg is at: http://www.sisk.pl/kernel/debug/20080618/dmesg-1.log
+From: Trond Myklebust <Trond.Myklebust@netapp.com>
+Date: Wed, 18 Jun 2008 16:04:22 -0400
+Subject: NFS: Don't allow IPv6 addresses if CONFIG_IPv6 isn't set
+Message-Id: <1213827426.25182.61.camel@localhost>
+Mime-Version: 1.0
+Content-Transfer-Encoding: base64
 
-Thanks,
-Rafael
+Rml4ZXMgYSBjb21waWxlIGZhaWx1cmUgaW4gZnMvbmZzL3N1cGVyLmMKCkFsc28gZml4IHRoZSBj
+b21waWxlciB3YXJuaW5nczoKICBmcy9uZnMvc3VwZXIuYzo3MjE6IHdhcm5pbmc6IGZpZWxkIHdp
+ZHRoIHNob3VsZCBoYXZlIHR5cGUg4oCYaW504oCZLCBidXQKICAJCSAgICAgIGFyZ3VtZW50IDIg
+aGFzIHR5cGUg4oCYc2l6ZV904oCZCiAgZnMvbmZzL3N1cGVyLmM6Nzc2OiB3YXJuaW5nOiBmaWVs
+ZCB3aWR0aCBzaG91bGQgaGF2ZSB0eXBlIOKAmGludOKAmSwgYnV0CiAgCQkgICAgICBhcmd1bWVu
+dCAyIGhhcyB0eXBlIOKAmHNpemVfdOKAmQogIGZzL25mcy9zdXBlci5jOjgwOTozOiB3YXJuaW5n
+OiByZXR1cm5pbmcgdm9pZC12YWx1ZWQgZXhwcmVzc2lvbgogIGZzL25mcy9zdXBlci5jOjgxMToz
+OiB3YXJuaW5nOiByZXR1cm5pbmcgdm9pZC12YWx1ZWQgZXhwcmVzc2lvbgoKU2lnbmVkLW9mZi1i
+eTogVHJvbmQgTXlrbGVidXN0IDxUcm9uZC5NeWtsZWJ1c3RAbmV0YXBwLmNvbT4KLS0tCgogZnMv
+bmZzL3N1cGVyLmMgfCAgIDI1ICsrKysrKysrKysrKysrKysrLS0tLS0tLS0KIDEgZmlsZXMgY2hh
+bmdlZCwgMTcgaW5zZXJ0aW9ucygrKSwgOCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9mcy9u
+ZnMvc3VwZXIuYyBiL2ZzL25mcy9zdXBlci5jCmluZGV4IGU2MjgyMGMuLjFkOThlOTUgMTAwNjQ0
+Ci0tLSBhL2ZzL25mcy9zdXBlci5jCisrKyBiL2ZzL25mcy9zdXBlci5jCkBAIC03MTgsMTAgKzcx
+OCwxMCBAQCBzdGF0aWMgdm9pZCBuZnNfcGFyc2VfaXB2NF9hZGRyZXNzKGNoYXIgKnN0cmluZywg
+c2l6ZV90IHN0cl9sZW4sCiAJc3RydWN0IHNvY2thZGRyX2luICpzaW4gPSAoc3RydWN0IHNvY2th
+ZGRyX2luICopc2FwOwogCXU4ICphZGRyID0gKHU4ICopJnNpbi0+c2luX2FkZHIuc19hZGRyOwog
+Ci0JZGZwcmludGsoTU9VTlQsICJORlM6IHBhcnNpbmcgSVB2NCBhZGRyZXNzICUqc1xuIiwKLQkJ
+CXN0cl9sZW4sIHN0cmluZyk7Ci0KIAlpZiAoc3RyX2xlbiA8PSBJTkVUX0FERFJTVFJMRU4pIHsK
+KwkJZGZwcmludGsoTU9VTlQsICJORlM6IHBhcnNpbmcgSVB2NCBhZGRyZXNzICUqc1xuIiwKKwkJ
+CQkoaW50KXN0cl9sZW4sIHN0cmluZyk7CisKIAkJc2luLT5zaW5fZmFtaWx5ID0gQUZfSU5FVDsK
+IAkJKmFkZHJfbGVuID0gc2l6ZW9mKCpzaW4pOwogCQlpZiAoaW40X3B0b24oc3RyaW5nLCBzdHJf
+bGVuLCBhZGRyLCAnXDAnLCBOVUxMKSkKQEAgLTczMiw2ICs3MzIsNyBAQCBzdGF0aWMgdm9pZCBu
+ZnNfcGFyc2VfaXB2NF9hZGRyZXNzKGNoYXIgKnN0cmluZywgc2l6ZV90IHN0cl9sZW4sCiAJKmFk
+ZHJfbGVuID0gMDsKIH0KIAorI2lmIGRlZmluZWQoQ09ORklHX0lQVjYpIHx8IGRlZmluZWQoQ09O
+RklHX0lQVjZfTU9EVUxFKQogc3RhdGljIHZvaWQgbmZzX3BhcnNlX2lwdjZfc2NvcGVfaWQoY29u
+c3QgY2hhciAqc3RyaW5nLCBjb25zdCBzaXplX3Qgc3RyX2xlbiwKIAkJCQkgICAgY29uc3QgY2hh
+ciAqZGVsaW0sCiAJCQkJICAgIHN0cnVjdCBzb2NrYWRkcl9pbjYgKnNpbjYpCkBAIC03NzIsMTAg
+Kzc3MywxMCBAQCBzdGF0aWMgdm9pZCBuZnNfcGFyc2VfaXB2Nl9hZGRyZXNzKGNoYXIgKnN0cmlu
+Zywgc2l6ZV90IHN0cl9sZW4sCiAJdTggKmFkZHIgPSAodTggKikmc2luNi0+c2luNl9hZGRyLmlu
+Nl91OwogCWNvbnN0IGNoYXIgKmRlbGltOwogCi0JZGZwcmludGsoTU9VTlQsICJORlM6IHBhcnNp
+bmcgSVB2NiBhZGRyZXNzICUqc1xuIiwKLQkJCXN0cl9sZW4sIHN0cmluZyk7Ci0KIAlpZiAoc3Ry
+X2xlbiA8PSBJTkVUNl9BRERSU1RSTEVOKSB7CisJCWRmcHJpbnRrKE1PVU5ULCAiTkZTOiBwYXJz
+aW5nIElQdjYgYWRkcmVzcyAlKnNcbiIsCisJCQkJKGludClzdHJfbGVuLCBzdHJpbmcpOworCiAJ
+CXNpbjYtPnNpbjZfZmFtaWx5ID0gQUZfSU5FVDY7CiAJCSphZGRyX2xlbiA9IHNpemVvZigqc2lu
+Nik7CiAJCWlmIChpbjZfcHRvbihzdHJpbmcsIHN0cl9sZW4sIGFkZHIsIFNDT1BFX0RFTElNSVRF
+UiwgJmRlbGltKSkgewpAQCAtNzg3LDYgKzc4OCwxNCBAQCBzdGF0aWMgdm9pZCBuZnNfcGFyc2Vf
+aXB2Nl9hZGRyZXNzKGNoYXIgKnN0cmluZywgc2l6ZV90IHN0cl9sZW4sCiAJc2FwLT5zYV9mYW1p
+bHkgPSBBRl9VTlNQRUM7CiAJKmFkZHJfbGVuID0gMDsKIH0KKyNlbHNlCitzdGF0aWMgdm9pZCBu
+ZnNfcGFyc2VfaXB2Nl9hZGRyZXNzKGNoYXIgKnN0cmluZywgc2l6ZV90IHN0cl9sZW4sCisJCQkJ
+ICAgc3RydWN0IHNvY2thZGRyICpzYXAsIHNpemVfdCAqYWRkcl9sZW4pCit7CisJc2FwLT5zYV9m
+YW1pbHkgPSBBRl9VTlNQRUM7CisJKmFkZHJfbGVuID0gMDsKK30KKyNlbmRpZgogCiAvKgogICog
+Q29uc3RydWN0IGEgc29ja2FkZHIgYmFzZWQgb24gdGhlIGNvbnRlbnRzIG9mIGEgc3RyaW5nIHRo
+YXQgY29udGFpbnMKQEAgLTgwNiw5ICs4MTUsOSBAQCBzdGF0aWMgdm9pZCBuZnNfcGFyc2VfaXBf
+YWRkcmVzcyhjaGFyICpzdHJpbmcsIHNpemVfdCBzdHJfbGVuLAogCQkJY29sb25zKys7CiAKIAlp
+ZiAoY29sb25zID49IDIpCi0JCXJldHVybiBuZnNfcGFyc2VfaXB2Nl9hZGRyZXNzKHN0cmluZywg
+c3RyX2xlbiwgc2FwLCBhZGRyX2xlbik7CisJCW5mc19wYXJzZV9pcHY2X2FkZHJlc3Moc3RyaW5n
+LCBzdHJfbGVuLCBzYXAsIGFkZHJfbGVuKTsKIAllbHNlCi0JCXJldHVybiBuZnNfcGFyc2VfaXB2
+NF9hZGRyZXNzKHN0cmluZywgc3RyX2xlbiwgc2FwLCBhZGRyX2xlbik7CisJCW5mc19wYXJzZV9p
+cHY0X2FkZHJlc3Moc3RyaW5nLCBzdHJfbGVuLCBzYXAsIGFkZHJfbGVuKTsKIH0KIAogLyoK
+
+
+--=-+BBAvsNYO27yuI6EYiPF--
+
