@@ -1,58 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: x86 tree build failure
-Date: Wed, 18 Jun 2008 15:04:52 +1000
-Message-ID: <20080618150452.43ea6993.sfr@canb.auug.org.au>
-References: <20080617134615.d70be9f6.sfr@canb.auug.org.au>
-	<20080617055816.GA13556@elte.hu>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of sparc tree
+Date: Tue, 17 Jun 2008 22:37:07 -0700 (PDT)
+Message-ID: <20080617.223707.49467656.davem@davemloft.net>
+References: <20080617172150.9ef1ea69.sfr@canb.auug.org.au>
+	<20080617.003534.193689527.davem@davemloft.net>
+	<Pine.LNX.4.64.0806172231100.8377@anakin>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__18_Jun_2008_15_04_52_+1000_aufnVh299T0C7KP4"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:32789 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752368AbYFRFFA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 Jun 2008 01:05:00 -0400
-In-Reply-To: <20080617055816.GA13556@elte.hu>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:43892
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1754672AbYFRFhH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 Jun 2008 01:37:07 -0400
+In-Reply-To: <Pine.LNX.4.64.0806172231100.8377@anakin>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
+To: geert@linux-m68k.org
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, bunk@kernel.org
 
---Signature=_Wed__18_Jun_2008_15_04_52_+1000_aufnVh299T0C7KP4
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 17 Jun 2008 22:32:01 +0200 (CEST)
 
-Hi Ingo,
+> On Tue, 17 Jun 2008, David Miller wrote:
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Tue, 17 Jun 2008 17:21:50 +1000
+> > 
+> > > Today's linux-next merge of the sparc tree got a trivial contextual
+> > > conflict in include/asm-m68k/sbus.h between commit
+> > > 69edc57f65f2d0bf63485cba4567876a1cfa3dae ("m68k/sun3/: possible
+> > > cleanups") from the m68k tree and commit
+> > > 878e7a6e498bec55f10a163197c41554fb078416 ("sparc: remove CONFIG_SUN4")
+> > > from the sparc tree.
+> > > 
+> > > It was just close changes to the same file.  I fixed it up.
+> 
+> If you want your change to include/asm-m68k/sbus.h to go in through the
+> m68k tree, please send me the patch.
 
-On Tue, 17 Jun 2008 07:58:16 +0200 Ingo Molnar <mingo@elte.hu> wrote:
->
-> hm, i guess you mean you went back to the previous version?
+It's part of a tree-wide removal of CONFIG_SUN4.  If Stephen doesn't
+mind making this minor merge fixup all the time, it's probably
+best to keep it in the sparc tree.
 
-No, I dropped it completely, but I will try to remember that idea for
-next time.  It is back today and seems ok again.  Thanks for applying
-those patches.
-
-> which makes that acpi build bug not trigger in allmodconfig. But this=20
-> just obscures the bug.
-
-So do the acpi guys need a push?  Can I help in that?
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__18_Jun_2008_15_04_52_+1000_aufnVh299T0C7KP4
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhYl3QACgkQTgG2atn1QN8O9wCggZMzxCRX5Ng/WI6qvAuI9nHd
-QbAAn3u2W5vLfcB/+ZlCorkRZweF717q
-=pN65
------END PGP SIGNATURE-----
-
---Signature=_Wed__18_Jun_2008_15_04_52_+1000_aufnVh299T0C7KP4--
+Let me know if you disagree :-)
