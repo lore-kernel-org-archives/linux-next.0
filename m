@@ -1,92 +1,52 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
-Date: Thu, 19 Jun 2008 02:25:50 +0200
-Message-ID: <200806190225.51088.rjw@sisk.pl>
-References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806190011.38548.rjw@sisk.pl> <Pine.LNX.4.55.0806182345380.7802@cliff.in.clinika.pl>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree
+Date: Thu, 19 Jun 2008 13:04:56 +1000
+Message-ID: <20080619130456.e9e22b32.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__19_Jun_2008_13_04_56_+1000_12XBrU1n7tg8l7oP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:46171 "EHLO ogre.sisk.pl"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45986 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754573AbYFSAZA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 Jun 2008 20:25:00 -0400
-In-Reply-To: <Pine.LNX.4.55.0806182345380.7802@cliff.in.clinika.pl>
-Content-Disposition: inline
+	id S1751582AbYFSDFE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 Jun 2008 23:05:04 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Maciej W. Rozycki" <macro@linux-mips.org>
-Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 
-On Thursday, 19 of June 2008, Maciej W. Rozycki wrote:
-> On Thu, 19 Jun 2008, Rafael J. Wysocki wrote:
-> 
-> > >  With such a configuration the "x86: I/O APIC: timer through 8259A
-> > > second-chance" patch should not matter, because the only change it
-> > > introduces is an attempt to try the same I/O APIC pin again, but with the
-> > > IRQ0 line of the master 8259A enabled.  That's not a terribly unusual 
-> > > configuration and nothing should get confused in the system.
-> > 
-> > But it _does_ get confused, really.
-> 
->  Something certainly gets confused, but so far I am not sure which bit 
-> exactly it is, are you?
+--Signature=_Thu__19_Jun_2008_13_04_56_+1000_12XBrU1n7tg8l7oP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-No, I'm not.
+Hi Dave,
 
-> > >  Barring the unlikely possibility of the 8259A actually being wired to 
-> > > INTIN2 of the I/O APIC I can see two possible explanations:
-> > > 
-> > > 1. The 8259A interrupt actually escapes to the CPU somehow and is handled
-> > >    as an ExtINTA interrupt.  This would make the code in check_timer()  
-> > >    decide it has found a working configuration, while actually it has been
-> > >    fooled.
-> [...]
-> > Here you go:
-> > 
-> > [    0.108006] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
-> > [    0.108006] ..MP-BIOS bug: 8254 timer not connected to IO-APIC
-> > [    0.108006] ...trying to set up timer (IRQ0) through the 8259A ... <3>
-> > [    0.108006] ..... (found apic 0 pin 2) ...<3> works.
-> > 
-> > The full dmesg is at: http://www.sisk.pl/kernel/debug/20080618/dmesg-1.log
-> 
->  Thanks.  In this case I suspect the case #1 quoted above happens, that is
-> the 8259A manages to deliver its interrupt somehow.  Note at this stage it
-> is meant to be in the AEOI mode, so it can happily resubmit the interrupt
-> indefinitely with no additional handling as long as it receives INTA
-> cycles.
-> 
->  Can you please try the patch below on top of "x86: I/O APIC: timer
-> through 8259A second-chance" to see whether my hypothesis is true?  It
-> modifies the through-8259A setup path so that the APIC input gets masked,
-> but the 8259A has the timer interrupt still enabled.  Let me know how the
-> timer interrupt is routed in this case.
+Today's linux-next merge of the net tree got a conflict in
+net/mac80211/tx.c between commit 3a5be7d4b079f3a9ce1e8ce4a93ba15ae6d00111
+("Revert "mac80211: Use skb_header_cloned() on TX path."") from the
+Linus' tree and commit 23c0752a25d73ccc4547700e8a57d5ae2f2edf56
+("mac80211: clean up skb reallocation code") from the net (wireless) tree.
 
-That helped a lot, the system seems to work normally now.
+I couldn't readily see what to do with it, so I took the version in the
+net tree.  I assume that this will be sorted out next time that the
+wireless (or net) tree pulls in Linus' tree.
 
-Here's the relevant snippet from dmesg:
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-[    0.108006] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
-[    0.108006] ..MP-BIOS bug: 8254 timer not connected to IO-APIC
-[    0.108006] ...trying to set up timer (IRQ0) through the 8259A ... <3>
-[    0.108006] ..... (found apic 0 pin 2) ...<3> failed.
-[    0.108006] ...trying to set up timer as Virtual Wire IRQ...<3> works.
+--Signature=_Thu__19_Jun_2008_13_04_56_+1000_12XBrU1n7tg8l7oP
+Content-Type: application/pgp-signature
 
-and the whole thing is at: http://www.sisk.pl/kernel/debug/20080618/dmesg-2.log
- 
->  BTW, do we have any piece of technical information about the chipset
-> used?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-I, personally, don't have any and AMD only has SB600 documentation on its
-web page (it's still marked as "AMD confidential" ;-)).
+iEYEARECAAYFAkhZzNgACgkQTgG2atn1QN8IjgCfedm4/O1loiKU+9MmChNSWEqa
+wKEAnRTdkgo+0l557XXzNPxrPOWTawKi
+=tyPL
+-----END PGP SIGNATURE-----
 
-> The southbridge used is an ATI SB400, which is where I would 
-> normally expect two 8259A and an I/O APIC core to be placed.
-
-There is an interrupt controller in there, but I'm not sure if there's any
-8259A.  The northbridge is on the CPU, actually.
-
-Thanks,
-Rafael
+--Signature=_Thu__19_Jun_2008_13_04_56_+1000_12XBrU1n7tg8l7oP--
