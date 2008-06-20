@@ -1,40 +1,27 @@
-From: Jonathan Corbet <corbet@lwn.net>
-Subject: Re: linux-next: manual merge of pcmcia tree
-Date: Fri, 20 Jun 2008 13:53:27 -0600
-Message-ID: <20080620135327.2c4e5ce5@bike.lwn.net>
-References: <20080616175126.e461b22b.sfr@canb.auug.org.au>
-	<20080616081258.GA18142@isilmar.linta.de>
-	<20080619143441.3ab03fcf@bike.lwn.net>
-	<20080620174321.GA22861@comet.dominikbrodowski.net>
+From: "Maciej W. Rozycki" <macro@linux-mips.org>
+Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
+Date: Fri, 20 Jun 2008 21:44:31 +0100 (BST)
+Message-ID: <Pine.LNX.4.55.0806202143230.19614@cliff.in.clinika.pl>
+References: <20080613232214.394fd6fd.sfr@canb.auug.org.au>
+ <Pine.LNX.4.55.0806172206580.28110@cliff.in.clinika.pl> <200806172338.38318.rjw@sisk.pl>
+ <200806180053.40044.rjw@sisk.pl> <Pine.LNX.4.55.0806180400070.28110@cliff.in.clinika.pl>
+ <20080618190603.GB10431@cvg> <Pine.LNX.4.55.0806182308190.7802@cliff.in.clinika.pl>
+ <20080620185927.GA11597@cvg>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from vena.lwn.net ([206.168.112.25]:56669 "EHLO vena.lwn.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752294AbYFTTx3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 20 Jun 2008 15:53:29 -0400
-In-Reply-To: <20080620174321.GA22861@comet.dominikbrodowski.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20080620185927.GA11597@cvg>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Cyrill Gorcunov <gorcunov@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 20 Jun 2008 19:43:21 +0200
-Dominik Brodowski <linux@dominikbrodowski.net> wrote:
+On Fri, 20 Jun 2008, Cyrill Gorcunov wrote:
 
-> Well, when do you intend to push that patch? I hope Linus will apply
-> the pcmcia tree soon after 2.6.26 is released.
+> i would really like to help... but I can't even hit this
+> bug on my laptop :(
 
-Similar for bkl-removal - it's targeted at 2.6.27.
+ Hmm, most people would be rather happy not to have a given bug on their 
+piece of hardware... ;)
 
-> > Here's the patch; if you take it let me know and I'll remove it from
-> > the bkl-removal tree.
-> 
-> I've applied it to pcmcia-2.6.git and just pushed that to kernel.org.
-
-OK, I'll pull it from bkl-removal.
-
-Thanks,
-
-jon
+  Maciej
