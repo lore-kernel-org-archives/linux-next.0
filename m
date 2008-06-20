@@ -1,78 +1,130 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: linux-next: s390 build failure
-Date: Fri, 20 Jun 2008 13:51:47 +0200
-Message-ID: <1213962707.32462.9.camel@localhost>
-References: <20080620124235.24fbe33e.sfr@canb.auug.org.au>
-Reply-To: schwidefsky@de.ibm.com
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
+Date: Fri, 20 Jun 2008 13:53:58 +0200
+Message-ID: <200806201353.59083.rjw@sisk.pl>
+References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806190225.51088.rjw@sisk.pl> <Pine.LNX.4.55.0806200024170.12929@cliff.in.clinika.pl>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate8.de.ibm.com ([195.212.29.157]:43011 "EHLO
-	mtagate8.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752748AbYFTLwc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Jun 2008 07:52:32 -0400
-Received: from d12nrmr1607.megacenter.de.ibm.com (d12nrmr1607.megacenter.de.ibm.com [9.149.167.49])
-	by mtagate8.de.ibm.com (8.13.8/8.13.8) with ESMTP id m5KBpm18146496
-	for <linux-next@vger.kernel.org>; Fri, 20 Jun 2008 11:51:48 GMT
-Received: from d12av02.megacenter.de.ibm.com (d12av02.megacenter.de.ibm.com [9.149.165.228])
-	by d12nrmr1607.megacenter.de.ibm.com (8.13.8/8.13.8/NCO v9.0) with ESMTP id m5KBpmxj3494124
-	for <linux-next@vger.kernel.org>; Fri, 20 Jun 2008 13:51:48 +0200
-Received: from d12av02.megacenter.de.ibm.com (loopback [127.0.0.1])
-	by d12av02.megacenter.de.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id m5KBpmGK019796
-	for <linux-next@vger.kernel.org>; Fri, 20 Jun 2008 13:51:48 +0200
-In-Reply-To: <20080620124235.24fbe33e.sfr@canb.auug.org.au>
+Received: from ogre.sisk.pl ([217.79.144.158]:54961 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752010AbYFTLw3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 Jun 2008 07:52:29 -0400
+In-Reply-To: <Pine.LNX.4.55.0806200024170.12929@cliff.in.clinika.pl>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Jens Axboe <jens.axboe@oracle.com>
+To: "Maciej W. Rozycki" <macro@linux-mips.org>
+Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
 
-On Fri, 2008-06-20 at 12:42 +1000, Stephen Rothwell wrote:
-> In file included from /scratch/michael/kisskb-build/src/include/linux/spinlock.h:87,
->                  from /scratch/michael/kisskb-build/src/include/linux/smp.h:11,
->                  from /scratch/michael/kisskb-build/src/include/linux/kernel_stat.h:4,
->                  from /scratch/michael/kisskb-build/src/mm/memory.c:41:
-> include2/asm/spinlock.h: In function '__raw_spin_lock':
-> include2/asm/spinlock.h:69: error: implicit declaration of function 'smp_processor_id'
+On Friday, 20 of June 2008, Maciej W. Rozycki wrote:
+> On Thu, 19 Jun 2008, Rafael J. Wysocki wrote:
 > 
-> There are others as well, but I was concentrating on this.  Bisecting
-> leads to commit 2448ad3d8e64a9b58acca34a3d010cfa0be88cc1 which is the
-> merge of the block tree.  The block tree contains a commit
-> (37e81b98dba08cce1d8eedb2bdaa58022bf31ee0 "Add generic helpers for arch
-> IPI function calls") that adds an include of linux/spinlock.h to
-> linux/smp.h. (asm-s390/spinlock.h includes linux/smp.h ...)
+> > That helped a lot, the system seems to work normally now.
+> > 
+> > Here's the relevant snippet from dmesg:
+> > 
+> > [    0.108006] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+> > [    0.108006] ..MP-BIOS bug: 8254 timer not connected to IO-APIC
+> > [    0.108006] ...trying to set up timer (IRQ0) through the 8259A ... <3>
+> > [    0.108006] ..... (found apic 0 pin 2) ...<3> failed.
+> > [    0.108006] ...trying to set up timer as Virtual Wire IRQ...<3> works.
+> > 
+> > and the whole thing is at: http://www.sisk.pl/kernel/debug/20080618/dmesg-2.log
 > 
-> But the block tree itself is OK.  So something in the s390 tree is
-> interacting with the above commit to cause the failure.  It is not
-> immediately obvious to me what that is. (Or I may have screwed up the
-> bisect :-))
+>  Hmm, that only proved the 8259A is indeed wired to the pin #2 of the I/O 
+> APIC.
+> 
+> > I, personally, don't have any and AMD only has SB600 documentation on its
+> > web page (it's still marked as "AMD confidential" ;-)).
+> 
+>  Well, the IC block is most likely the same as that's not rocket science
+> and once done there is no need to fiddle with that.  That written, I am
+> afraid there is nothing useful about the IC in the document, except that
+> it's there and consists of an I/O APIC providing 24 inputs and the usual
+> pair of 8259A cores.  Thanks for the reference anyway.
+> 
+> > There is an interrupt controller in there, but I'm not sure if there's any
+> > 8259A.  The northbridge is on the CPU, actually.
+> 
+>  I will praise the day someone ships an x86 machine without an 8259A core!
+> 
+>  As expressed in another mail I suspect there may actually be a direct
+> route from the 8254 to INTIN0 in the southbridge -- this is what other
+> bootstrap logs seen in the Internet suggest.  This would mean this
+> particular BIOS is buggy (is it the latest version?) and provides an
+> incorrect IRQ override in its ACPI tables, for example because the
+> responsible block has been blindly copied from a machine using a commoner
+> wiring.  This could be moderately easily fixed up with a quirk based on
+> the PCI ID (after checking it again, we actually used to have a quirk for
+> ATI in this area, but the way it was done suggests the issue was not
+> understood well enough).
+> 
+>  Could you please remove the hack sent yesterday and test the patch
+> provided below?  I do hope it builds, but I have no immediate means to
+> check it.  Please report the output.  The intent is to test INTIN0
+> directly before testing INTIN2 through the 8259A.  Thanks.
 
-Hmm, the minimal test case for this is:
+Tested, doesn't work.  The symptoms are exactly the same as with the unpatched
+kernel.
 
-#include <linux/smp.h>
+This is the relevant snippet from dmesg:
 
-* linux/smp.h defines __LINUX_SMP_H then includes linux/spinlock.h
-* linux/spinlock.h includes some more headers, then asm/spinlock.h
-* asm/spinlock.h includes linux/smp.h with no effect because linux/smp.h
-has already defined __LINUX_SMP_H, then uses smp_processor_id() which is
-not defined yet
-* on return from the linux/spinlock.h include linux/smp.h defines
-smp_processor_id()
+[    0.108006] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+[    0.108006] ..MP-BIOS bug: 8254 timer not connected to IO-APIC
+[    0.108006] ...trying to set up timer (IRQ0) through the 8259A ... <3>
+[    0.108006] ..... (found apic 0 pin 2) ...<3> works.
 
-Relavant commits that cause this problem:
+and the whole thing is at: http://www.sisk.pl/kernel/debug/20080620/dmesg-1.log
 
-1)
-commit 3888f22c9cc8b4eca034f11b13d7f7957627fcfb
-Author: Jens Axboe <jens.axboe@oracle.com>
-Date:   Fri Jun 6 10:58:32 2008 +0200
-Add generic helpers for arch IPI function calls
+>  Aside of that, what I have gathered from your reports (please correct me
+> if I have got it wrong) is that when the through-8259A mode is used, then
+> after a while 8254 timer interrupts stop arriving.
 
-This commit introduces the #include <linux/spinlock.h> to linux/smp.h
+What exactly I observe is that in this case:
+1) The cooling fan is 100% on, as though the box were overheating, which seems
+   to indicate some serious confusion of the platform (the mechanism turning
+   the fan 100% on is supposed to be transparent to software).
+2) Everything seems to slow down substantially, at least as soon as X is
+   started.
+3) The box cannot reboot, ie. it turns everything off as expected, but when the
+   BIOS is supposed to restart the box, it just hangs solid.
 
--- 
-blue skies,
-  Martin.
+> What's interesting, the "Virtual Wire IRQ" seems to work for you correctly
+> (that's quite an odd setup where a local APIC input is used in the native
+> mode -- please post /proc/interrupts for confirmation),
 
-"Reality continues to ruin my life." - Calvin.
+           CPU0       CPU1       
+  0:        885      37234   IO-APIC-edge      timer
+  1:          1        250   IO-APIC-edge      i8042
+  8:          0          0   IO-APIC-edge      rtc0
+ 12:          4        148   IO-APIC-edge      i8042
+ 14:        568         52   IO-APIC-edge      ide0
+ 15:          0          0   IO-APIC-edge      ide1
+ 16:       5048       4555   IO-APIC-fasteoi   sata_sil, HDA Intel
+ 18:         45        110   IO-APIC-fasteoi   b43
+ 19:      11811      11973   IO-APIC-fasteoi   ohci_hcd:usb1, ohci_hcd:usb2, ehci_hcd:usb3
+ 20:          0          4   IO-APIC-fasteoi   yenta, tifm_7xx1, ohci1394
+ 21:      11695       1987   IO-APIC-fasteoi   acpi
+ 23:        883        115   IO-APIC-fasteoi   eth0
+NMI:          0          0   Non-maskable interrupts
+LOC:      36636        585   Local timer interrupts
+RES:       7982       4590   Rescheduling interrupts
+CAL:        260         75   function call interrupts
+TLB:        207        146   TLB shootdowns
+TRM:          0          0   Thermal event interrupts
+THR:          0          0   Threshold APIC interrupts
+SPU:          0          0   Spurious interrupts
+ERR:          1
 
+(also available at: http://www.sisk.pl/kernel/debug/20080620/interrupts-1.txt).
 
+> which in turn implies the master 8259A drives its INT output as we expect.
+> Why would the I/O APIC input have problems then?  Hmm...
+
+Because it's wired to something we're not aware of?
+
+Thanks,
+Rafael
