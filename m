@@ -1,64 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: sparc64 build failure
-Date: Fri, 20 Jun 2008 17:53:11 +1000
-Message-ID: <20080620175311.3ef1ea8b.sfr@canb.auug.org.au>
-References: <20080620104352.1358ff2a.sfr@canb.auug.org.au>
-	<20080619.175520.231354507.davem@davemloft.net>
-	<20080620073444.GA23126@uranus.ravnborg.org>
+From: Cornelia Huck <cornelia.huck@de.ibm.com>
+Subject: Re: linux-next: s390 build failure
+Date: Fri, 20 Jun 2008 09:58:43 +0200
+Message-ID: <20080620095843.271c20e8@gondolin.boeblingen.de.ibm.com>
+References: <20080620135257.102f024c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__20_Jun_2008_17_53_11_+1000_Wu1BTeIbzwUMhcYN"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50240 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751240AbYFTHxS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 20 Jun 2008 03:53:18 -0400
-In-Reply-To: <20080620073444.GA23126@uranus.ravnborg.org>
+Received: from mtagate4.de.ibm.com ([195.212.29.153]:20282 "EHLO
+	mtagate4.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751251AbYFTH7I (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Jun 2008 03:59:08 -0400
+Received: from d12nrmr1607.megacenter.de.ibm.com (d12nrmr1607.megacenter.de.ibm.com [9.149.167.49])
+	by mtagate4.de.ibm.com (8.13.8/8.13.8) with ESMTP id m5K7wj7S075542
+	for <linux-next@vger.kernel.org>; Fri, 20 Jun 2008 07:58:45 GMT
+Received: from d12av04.megacenter.de.ibm.com (d12av04.megacenter.de.ibm.com [9.149.165.229])
+	by d12nrmr1607.megacenter.de.ibm.com (8.13.8/8.13.8/NCO v9.0) with ESMTP id m5K7wjd83748020
+	for <linux-next@vger.kernel.org>; Fri, 20 Jun 2008 09:58:45 +0200
+Received: from d12av04.megacenter.de.ibm.com (loopback [127.0.0.1])
+	by d12av04.megacenter.de.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id m5K7wisx013822
+	for <linux-next@vger.kernel.org>; Fri, 20 Jun 2008 09:58:45 +0200
+In-Reply-To: <20080620135257.102f024c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>
 
---Signature=_Fri__20_Jun_2008_17_53_11_+1000_Wu1BTeIbzwUMhcYN
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 20 Jun 2008 13:52:57 +1000,
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi Sam,
+> Bisecting lead to the commit "s390: bus_id -> dev_set_name() changes" in
+> the driver-core tree.  I suspect this was caused by the removal of
+> "driver core: add init_name to struct device" from the driver-core tree
+> on June 11 (even though the former patch was earlier in the series then
+> the latter).
 
-On Fri, 20 Jun 2008 09:34:44 +0200 Sam Ravnborg <sam@ravnborg.org> wrote:
->
-> On Thu, Jun 19, 2008 at 05:55:20PM -0700, David Miller wrote:
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Fri, 20 Jun 2008 10:43:52 +1000
-> >=20
-> > > Yesterday's linux-next build (sparc64 allmodconfig) failed like this:
-> >=20
-> > Sam knowingly added this problem :-)
-> Yes - this is all my fault.
-> It must hurt a little before it becomes good!
-
-Yep, OK.
-
-Seriously, though the sparc64 allmodconfig has been broken by this for
-two days and we really don't want any deliberate bisection breakage if we
-can avoid it.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__20_Jun_2008_17_53_11_+1000_Wu1BTeIbzwUMhcYN
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhbYecACgkQTgG2atn1QN/pAQCeKlGYUnsraqTWP8XhhlfN938M
-DrgAnjxs4M+eEVYAfpVkNuC0qsV5hHNC
-=GvQ3
------END PGP SIGNATURE-----
-
---Signature=_Fri__20_Jun_2008_17_53_11_+1000_Wu1BTeIbzwUMhcYN--
+Yes, this patch should go after the introduction of init_name (and be
+commented out in Greg's series file). I could also try to split out
+dev_set_name() conversion from the init_name stuff, but I fear that
+doesn't make much sense...
