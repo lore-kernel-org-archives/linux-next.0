@@ -1,65 +1,50 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
-Date: Fri, 20 Jun 2008 12:44:52 +0200
-Message-ID: <20080620104452.GA7439@elte.hu>
-References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806180053.40044.rjw@sisk.pl> <Pine.LNX.4.55.0806180400070.28110@cliff.in.clinika.pl> <200806190011.38548.rjw@sisk.pl> <Pine.LNX.4.55.0806182345380.7802@cliff.in.clinika.pl> <20080619093541.GC15228@elte.hu> <Pine.LNX.4.55.0806191619560.12929@cliff.in.clinika.pl>
+From: Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: linux-next: s390 build failure
+Date: Fri, 20 Jun 2008 13:42:48 +0200
+Message-ID: <20080620114247.GY20851@kernel.dk>
+References: <20080620124235.24fbe33e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-acpi-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from brick.kernel.dk ([87.55.233.238]:13386 "EHLO kernel.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751491AbYFTLmu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 Jun 2008 07:42:50 -0400
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.55.0806191619560.12929@cliff.in.clinika.pl>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Maciej W. Rozycki" <macro@linux-mips.org>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20080620124235.24fbe33e.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-next@vger.kernel.org, heiko.carstens@de.ibm.com
 
-
-* Maciej W. Rozycki <macro@linux-mips.org> wrote:
-
->  As expressed before, unfortunately a lot of diagnostic APIC messages 
-> have been disabled in the 64-bit variation.  The result is I was 
-> unable to get good results from my Internet search for bootstrap logs 
-> from other systems using this southbridge.  Fortunately at least ACPI 
-> messages are present and what I noticed is some of the systems do not 
-> provide an IRQ0 override and still work correctly. [...]
-
-okay, so when those files are unified, the diagnostics should remain and 
-be prominent. (or even be put back into the 64-bit version right now.)
-
-> > does PIT programming matter? One detail which might matter and which 
-> > touches IRQ0 generation is the clockevent driver on nohz/highres. See 
-> > arch/x86/kernel/i8253.c:init_pit_timer():
-> > 
-> >         case CLOCK_EVT_MODE_SHUTDOWN:
-> >         case CLOCK_EVT_MODE_UNUSED:
-> >                 if (evt->mode == CLOCK_EVT_MODE_PERIODIC ||
-> >                     evt->mode == CLOCK_EVT_MODE_ONESHOT) {
-> >                         outb_pit(0x30, PIT_MODE);
-> >                         outb_pit(0, PIT_CH0);
-> >                         outb_pit(0, PIT_CH0);
-> >                 }
-> >                 pit_disable_clocksource();
-> >                 break;
-> > 
-> >         case CLOCK_EVT_MODE_ONESHOT:
-> >                 /* One shot setup */
-> >                 pit_disable_clocksource();
-> >                 outb_pit(0x38, PIT_MODE);
-> >                 break;
+On Fri, Jun 20 2008, Stephen Rothwell wrote:
+> Hi Martin,
 > 
->  It does, though not necessarily in this case.  In principle all this 
-> 8254-through-APIC timer validation code assumes the source retriggers 
-> automatically and if an edge is lost because the APIC input targeted 
-> is masked or not configured yet, another one will follow shortly by 
-> itself.  It used to be the case when this code was implemented as we 
-> never used any of the single-shot modes of the 8254 back then.
+> Starting with next-20080613, the linux-next build (s390 defconfig s390x
+> compiler) has failed with these errors:
 > 
->  Is it now possible at the time check_timer() is called the 8254 has 
-> been put in one of the single-shot modes?  If so, then additional code 
-> has to be put in place either to switch the timer into the periodic 
-> mode for the duration of check_timer() or to rearm the timer if in a 
-> single-shot mode each time timer_irq_works() is called.
+> In file included from /scratch/michael/kisskb-build/src/include/linux/spinlock.h:87,
+>                  from /scratch/michael/kisskb-build/src/include/linux/smp.h:11,
+>                  from /scratch/michael/kisskb-build/src/include/linux/kernel_stat.h:4,
+>                  from /scratch/michael/kisskb-build/src/mm/memory.c:41:
+> include2/asm/spinlock.h: In function '__raw_spin_lock':
+> include2/asm/spinlock.h:69: error: implicit declaration of function 'smp_processor_id'
+> 
+> There are others as well, but I was concentrating on this.  Bisecting
+> leads to commit 2448ad3d8e64a9b58acca34a3d010cfa0be88cc1 which is the
+> merge of the block tree.  The block tree contains a commit
+> (37e81b98dba08cce1d8eedb2bdaa58022bf31ee0 "Add generic helpers for arch
+> IPI function calls") that adds an include of linux/spinlock.h to
+> linux/smp.h. (asm-s390/spinlock.h includes linux/smp.h ...)
+> 
+> But the block tree itself is OK.  So something in the s390 tree is
+> interacting with the above commit to cause the failure.  It is not
+> immediately obvious to me what that is. (Or I may have screwed up the
+> bisect :-))
 
-that's a question for Thomas i guess, he wrote the PIT single-shot code.
+Heiko was looking into this, I had forgotten about it. Heiko, did you
+find an adequate solution to this?
 
-	Ingo
+-- 
+Jens Axboe
+
