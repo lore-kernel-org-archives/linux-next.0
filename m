@@ -1,49 +1,74 @@
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-Subject: Re: linux-next: manual merge of pcmcia tree
-Date: Fri, 20 Jun 2008 19:43:21 +0200
-Message-ID: <20080620174321.GA22861@comet.dominikbrodowski.net>
-References: <20080616175126.e461b22b.sfr@canb.auug.org.au> <20080616081258.GA18142@isilmar.linta.de> <20080619143441.3ab03fcf@bike.lwn.net>
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
+Date: Fri, 20 Jun 2008 22:59:27 +0400
+Message-ID: <20080620185927.GA11597@cvg>
+References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <Pine.LNX.4.55.0806172206580.28110@cliff.in.clinika.pl> <200806172338.38318.rjw@sisk.pl> <200806180053.40044.rjw@sisk.pl> <Pine.LNX.4.55.0806180400070.28110@cliff.in.clinika.pl> <20080618190603.GB10431@cvg> <Pine.LNX.4.55.0806182308190.7802@cliff.in.clinika.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from isilmar.linta.de ([213.133.102.198]:43072 "EHLO linta.de"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752705AbYFTRng (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 20 Jun 2008 13:43:36 -0400
+Return-path: <linux-acpi-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20080619143441.3ab03fcf@bike.lwn.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+In-Reply-To: <Pine.LNX.4.55.0806182308190.7802@cliff.in.clinika.pl>
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Maciej W. Rozycki" <macro@linux-mips.org>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi,
+[Maciej W. Rozycki - Wed, Jun 18, 2008 at 11:36:16PM +0100]
+| On Wed, 18 Jun 2008, Cyrill Gorcunov wrote:
+| 
+| > | 1. The 8259A interrupt actually escapes to the CPU somehow and is handled
+| > |    as an ExtINTA interrupt.  This would make the code in check_timer()  
+| > |    decide it has found a working configuration, while actually it has been
+| > |    fooled.
+| > 
+| > Maciej, that is why we get 'received illegal vector'?
+| > 
+| > 	[  129.092151] APIC error on CPU1: 00(40)
+| 
+|  No, but that's an interesting observation, thank you -- well spotted!  
+| 
+|  ExtINTA stands for an "External INTA cycle" which is passed through from
+| the CPU down to the system bus instead of being intercepted by the local
+| APIC unit as usually.  In response to the INTA cycle one of the 8259A
+| chips (either the master or the slave, depending on the source of the
+| interrupt selected for handling) supplies the vector directly to the CPU
+| through PCI (or whatever kind of bus links the legacy bridge with the host
+| bridge) and then the FSB.  Therefore the vector bypasses all the APIC
+| circuitry and cannot result in an APIC error interrupt.
+| 
+|  Instead the message quoted means an APIC input is misprogrammed
+| somewhere.  This error happens if an interrupt is signalled to an unmasked
+| APIC input which uses the Fixed or Lowest-Priority delivery mode and its
+| vector implies priority below the minimum permitted, that is in the range
+| from 0 to 15.
+| 
+|  We have code already in place in io_apic_{32,64}.c that can be used to
+| find out the offender with a piece of code like this (#if 0 has to be
+| deactivated for this to work and they may be bit rot bugs to be fixed):
+| 
+| int __init all_pic_dump(void)
+| {
+| 	int v = apic_verbosity;
+| 
+| 	apic_verbosity = APIC_DEBUG;
+| 	print_IO_APIC();
+| 	print_all_local_APICs();
+| 	print_PIC();
+| 	apic_verbosity = v;
+| 
+| 	return 0;
+| }
+| 
+| late_initcall(all_pic_dump);
+| 
+| if somebody is willing to aid with debugging this problem.
+| 
+|   Maciej
+| 
 
-On Thu, Jun 19, 2008 at 02:34:41PM -0600, Jonathan Corbet wrote:
-> [Finally beginning to catch up with life...]
+Thanks, Maciej,
 
-... somehow I know too well how that is ;)
+i would really like to help... but I can't even hit this
+bug on my laptop :(
 
-> On Mon, 16 Jun 2008 10:12:58 +0200
-> Dominik Brodowski <linux@dominikbrodowski.net> wrote:
-> 
-> > @Alan,@Jonathan: since this is the same patch, just a different title
-> > -- shall it be removed from one of our trees?
-> 
-> If you want to have it
-> in your tree, that's fine with me; the only dependency is that it needs
-> to be applied *before* the removal of BKL protection to cdev open()
-> functions or there will be a range of commits over which things are
-> potentially unsafe - not that I think it would burn even a single
-> tester.
-
-Well, when do you intend to push that patch? I hope Linus will apply the
-pcmcia tree soon after 2.6.26 is released.
-
-> Here's the patch; if you take it let me know and I'll remove it from
-> the bkl-removal tree.
-
-I've applied it to pcmcia-2.6.git and just pushed that to kernel.org.
-
-Thanks,
-	Dominik
+		- Cyrill -
