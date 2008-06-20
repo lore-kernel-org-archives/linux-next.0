@@ -1,36 +1,72 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
+From: Thomas Gleixner <tglx@linutronix.de>
 Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
-Date: Fri, 20 Jun 2008 13:27:14 +0100
-Message-ID: <20080620122714.GA9332@srcf.ucam.org>
-References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806201353.59083.rjw@sisk.pl> <20080620115714.GC8637@srcf.ucam.org> <200806201422.12659.rjw@sisk.pl>
+Date: Fri, 20 Jun 2008 15:11:23 +0200 (CEST)
+Message-ID: <alpine.LFD.1.10.0806201507190.3395@apollo.tec.linutronix.de>
+References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806180053.40044.rjw@sisk.pl> <Pine.LNX.4.55.0806180400070.28110@cliff.in.clinika.pl> <200806190011.38548.rjw@sisk.pl> <Pine.LNX.4.55.0806182345380.7802@cliff.in.clinika.pl> <20080619093541.GC15228@elte.hu>
+ <Pine.LNX.4.55.0806191619560.12929@cliff.in.clinika.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <200806201422.12659.rjw@sisk.pl>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: "Maciej W. Rozycki" <macro@linux-mips.org>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from www.tglx.de ([62.245.132.106]:46176 "EHLO www.tglx.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752795AbYFTNMZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 Jun 2008 09:12:25 -0400
+In-Reply-To: <Pine.LNX.4.55.0806191619560.12929@cliff.in.clinika.pl>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Maciej W. Rozycki" <macro@linux-mips.org>
+Cc: Ingo Molnar <mingo@elte.hu>, "Rafael J. Wysocki" <rjw@sisk.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
 
-On Fri, Jun 20, 2008 at 02:22:11PM +0200, Rafael J. Wysocki wrote:
+On Thu, 19 Jun 2008, Maciej W. Rozycki wrote:
+> On Thu, 19 Jun 2008, Ingo Molnar wrote:
+> > * Maciej W. Rozycki <macro@linux-mips.org> wrote:
+> > does PIT programming matter? One detail which might matter and which 
+> > touches IRQ0 generation is the clockevent driver on nohz/highres. See 
+> > arch/x86/kernel/i8253.c:init_pit_timer():
+> > 
+> >         case CLOCK_EVT_MODE_SHUTDOWN:
+> >         case CLOCK_EVT_MODE_UNUSED:
+> >                 if (evt->mode == CLOCK_EVT_MODE_PERIODIC ||
+> >                     evt->mode == CLOCK_EVT_MODE_ONESHOT) {
+> >                         outb_pit(0x30, PIT_MODE);
+> >                         outb_pit(0, PIT_CH0);
+> >                         outb_pit(0, PIT_CH0);
+> >                 }
+> >                 pit_disable_clocksource();
+> >                 break;
+> > 
+> >         case CLOCK_EVT_MODE_ONESHOT:
+> >                 /* One shot setup */
+> >                 pit_disable_clocksource();
+> >                 outb_pit(0x38, PIT_MODE);
+> >                 break;
+> 
+>  It does, though not necessarily in this case.  In principle all this
+> 8254-through-APIC timer validation code assumes the source retriggers
+> automatically and if an edge is lost because the APIC input targeted is
+> masked or not configured yet, another one will follow shortly by itself.  
+> It used to be the case when this code was implemented as we never used any
+> of the single-shot modes of the 8254 back then.
+> 
+>  Is it now possible at the time check_timer() is called the 8254 has been
+> put in one of the single-shot modes?  If so, then additional code has to
+> be put in place either to switch the timer into the periodic mode for the
+> duration of check_timer() or to rearm the timer if in a single-shot mode
+> each time timer_irq_works() is called.
 
-> Ah, indeed, thanks for the hint.  This is the output of
+At this point the PIT is in periodic mode.
 
-Right. My recollection of this is somewhat hazy, so here's something I 
-wrote a couple of years ago:
+Let me explain how the timer startup works:
 
-"If you dig through the DSDT code for the 6125, you'll find a bit where 
-it writes 0x14 to 0xfec00000 and then checks whether offset 0x12 from 
-there is 1. In other words, it's checking if pin 2 of the io-apic is 
-masked. If it's not masked (that is, offset 0x12 is 0 and irq 2 is 
-enabled) it sets another bit in a register. This is then checked by the 
-thermal zone code which as a result sets the thermal trip temperatures 
-to 16 degrees Celsius. This bites when the acpi_skip_timer_override 
-option is used in Linux."
+PIT is started in periodic mode
+... basic CPU bring up
+APIC timer initialization (switches PIT off)
+...
+Highres/Dyntick mode switches local apic timers to one shot mode
 
-I have no idea what this code is for, but it's pretty clear that Windows 
-sets it up in such a way that this isn't true.
+When the system has C2/C3 or C1E states, then we restart the PIT in
+one shot mode and reprogram it every time when the system goes into
+idle to replace the local apic timer, which stops in those states.
 
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
+Thanks,
+	tglx
