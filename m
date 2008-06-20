@@ -1,51 +1,65 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: linux-next: sparc64 build failure
-Date: Fri, 20 Jun 2008 10:34:43 +0200
-Message-ID: <20080620083443.GA23523@uranus.ravnborg.org>
-References: <20080620104352.1358ff2a.sfr@canb.auug.org.au> <20080619.175520.231354507.davem@davemloft.net> <20080620073444.GA23126@uranus.ravnborg.org> <20080620175311.3ef1ea8b.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
+Date: Fri, 20 Jun 2008 12:44:52 +0200
+Message-ID: <20080620104452.GA7439@elte.hu>
+References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806180053.40044.rjw@sisk.pl> <Pine.LNX.4.55.0806180400070.28110@cliff.in.clinika.pl> <200806190011.38548.rjw@sisk.pl> <Pine.LNX.4.55.0806182345380.7802@cliff.in.clinika.pl> <20080619093541.GC15228@elte.hu> <Pine.LNX.4.55.0806191619560.12929@cliff.in.clinika.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pasmtpa.tele.dk ([80.160.77.114]:57995 "EHLO pasmtpA.tele.dk"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751866AbYFTId7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 20 Jun 2008 04:33:59 -0400
+Return-path: <linux-acpi-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20080620175311.3ef1ea8b.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org
+In-Reply-To: <Pine.LNX.4.55.0806191619560.12929@cliff.in.clinika.pl>
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Maciej W. Rozycki" <macro@linux-mips.org>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Jun 20, 2008 at 05:53:11PM +1000, Stephen Rothwell wrote:
-> Hi Sam,
+
+* Maciej W. Rozycki <macro@linux-mips.org> wrote:
+
+>  As expressed before, unfortunately a lot of diagnostic APIC messages 
+> have been disabled in the 64-bit variation.  The result is I was 
+> unable to get good results from my Internet search for bootstrap logs 
+> from other systems using this southbridge.  Fortunately at least ACPI 
+> messages are present and what I noticed is some of the systems do not 
+> provide an IRQ0 override and still work correctly. [...]
+
+okay, so when those files are unified, the diagnostics should remain and 
+be prominent. (or even be put back into the 64-bit version right now.)
+
+> > does PIT programming matter? One detail which might matter and which 
+> > touches IRQ0 generation is the clockevent driver on nohz/highres. See 
+> > arch/x86/kernel/i8253.c:init_pit_timer():
+> > 
+> >         case CLOCK_EVT_MODE_SHUTDOWN:
+> >         case CLOCK_EVT_MODE_UNUSED:
+> >                 if (evt->mode == CLOCK_EVT_MODE_PERIODIC ||
+> >                     evt->mode == CLOCK_EVT_MODE_ONESHOT) {
+> >                         outb_pit(0x30, PIT_MODE);
+> >                         outb_pit(0, PIT_CH0);
+> >                         outb_pit(0, PIT_CH0);
+> >                 }
+> >                 pit_disable_clocksource();
+> >                 break;
+> > 
+> >         case CLOCK_EVT_MODE_ONESHOT:
+> >                 /* One shot setup */
+> >                 pit_disable_clocksource();
+> >                 outb_pit(0x38, PIT_MODE);
+> >                 break;
 > 
-> On Fri, 20 Jun 2008 09:34:44 +0200 Sam Ravnborg <sam@ravnborg.org> wrote:
-> >
-> > On Thu, Jun 19, 2008 at 05:55:20PM -0700, David Miller wrote:
-> > > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > Date: Fri, 20 Jun 2008 10:43:52 +1000
-> > > 
-> > > > Yesterday's linux-next build (sparc64 allmodconfig) failed like this:
-> > > 
-> > > Sam knowingly added this problem :-)
-> > Yes - this is all my fault.
-> > It must hurt a little before it becomes good!
+>  It does, though not necessarily in this case.  In principle all this 
+> 8254-through-APIC timer validation code assumes the source retriggers 
+> automatically and if an edge is lost because the APIC input targeted 
+> is masked or not configured yet, another one will follow shortly by 
+> itself.  It used to be the case when this code was implemented as we 
+> never used any of the single-shot modes of the 8254 back then.
 > 
-> Yep, OK.
-> 
-> Seriously, though the sparc64 allmodconfig has been broken by this for
-> two days and we really don't want any deliberate bisection breakage if we
-> can avoid it.
+>  Is it now possible at the time check_timer() is called the 8254 has 
+> been put in one of the single-shot modes?  If so, then additional code 
+> has to be put in place either to switch the timer into the periodic 
+> mode for the duration of check_timer() or to rearm the timer if in a 
+> single-shot mode each time timer_irq_works() is called.
 
-I have not looked into it yet. But I assume this is a merge issue.
-sparc-next.git is OK
-kbuild-next.git is OK
+that's a question for Thomas i guess, he wrote the PIT single-shot code.
 
-But when merged we break sparc64.
-So I need to feed David a patch so I do not break it with kbuild-next.git,
-or I need to do something in kbuil-next.git to avoid the breakage.
-
-I will sort it out in the weekend.
-
-	Sam
+	Ingo
