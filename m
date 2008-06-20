@@ -1,28 +1,33 @@
-From: Jens Axboe <jens.axboe@oracle.com>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Subject: Re: linux-next: s390 build failure
-Date: Fri, 20 Jun 2008 13:42:48 +0200
-Message-ID: <20080620114247.GY20851@kernel.dk>
+Date: Fri, 20 Jun 2008 13:51:47 +0200
+Message-ID: <1213962707.32462.9.camel@localhost>
 References: <20080620124235.24fbe33e.sfr@canb.auug.org.au>
+Reply-To: schwidefsky@de.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from brick.kernel.dk ([87.55.233.238]:13386 "EHLO kernel.dk"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751491AbYFTLmu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 20 Jun 2008 07:42:50 -0400
-Content-Disposition: inline
+Received: from mtagate8.de.ibm.com ([195.212.29.157]:43011 "EHLO
+	mtagate8.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752748AbYFTLwc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Jun 2008 07:52:32 -0400
+Received: from d12nrmr1607.megacenter.de.ibm.com (d12nrmr1607.megacenter.de.ibm.com [9.149.167.49])
+	by mtagate8.de.ibm.com (8.13.8/8.13.8) with ESMTP id m5KBpm18146496
+	for <linux-next@vger.kernel.org>; Fri, 20 Jun 2008 11:51:48 GMT
+Received: from d12av02.megacenter.de.ibm.com (d12av02.megacenter.de.ibm.com [9.149.165.228])
+	by d12nrmr1607.megacenter.de.ibm.com (8.13.8/8.13.8/NCO v9.0) with ESMTP id m5KBpmxj3494124
+	for <linux-next@vger.kernel.org>; Fri, 20 Jun 2008 13:51:48 +0200
+Received: from d12av02.megacenter.de.ibm.com (loopback [127.0.0.1])
+	by d12av02.megacenter.de.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id m5KBpmGK019796
+	for <linux-next@vger.kernel.org>; Fri, 20 Jun 2008 13:51:48 +0200
 In-Reply-To: <20080620124235.24fbe33e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-next@vger.kernel.org, heiko.carstens@de.ibm.com
+Cc: linux-next@vger.kernel.org, Jens Axboe <jens.axboe@oracle.com>
 
-On Fri, Jun 20 2008, Stephen Rothwell wrote:
-> Hi Martin,
-> 
-> Starting with next-20080613, the linux-next build (s390 defconfig s390x
-> compiler) has failed with these errors:
-> 
+On Fri, 2008-06-20 at 12:42 +1000, Stephen Rothwell wrote:
 > In file included from /scratch/michael/kisskb-build/src/include/linux/spinlock.h:87,
 >                  from /scratch/michael/kisskb-build/src/include/linux/smp.h:11,
 >                  from /scratch/michael/kisskb-build/src/include/linux/kernel_stat.h:4,
@@ -42,9 +47,32 @@ On Fri, Jun 20 2008, Stephen Rothwell wrote:
 > immediately obvious to me what that is. (Or I may have screwed up the
 > bisect :-))
 
-Heiko was looking into this, I had forgotten about it. Heiko, did you
-find an adequate solution to this?
+Hmm, the minimal test case for this is:
+
+#include <linux/smp.h>
+
+* linux/smp.h defines __LINUX_SMP_H then includes linux/spinlock.h
+* linux/spinlock.h includes some more headers, then asm/spinlock.h
+* asm/spinlock.h includes linux/smp.h with no effect because linux/smp.h
+has already defined __LINUX_SMP_H, then uses smp_processor_id() which is
+not defined yet
+* on return from the linux/spinlock.h include linux/smp.h defines
+smp_processor_id()
+
+Relavant commits that cause this problem:
+
+1)
+commit 3888f22c9cc8b4eca034f11b13d7f7957627fcfb
+Author: Jens Axboe <jens.axboe@oracle.com>
+Date:   Fri Jun 6 10:58:32 2008 +0200
+Add generic helpers for arch IPI function calls
+
+This commit introduces the #include <linux/spinlock.h> to linux/smp.h
 
 -- 
-Jens Axboe
+blue skies,
+  Martin.
+
+"Reality continues to ruin my life." - Calvin.
+
 
