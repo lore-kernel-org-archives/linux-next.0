@@ -1,44 +1,125 @@
-From: Jonathan Corbet <corbet@lwn.net>
-Subject: Re: linux-next: manual merge of the bkl-removal tree
-Date: Thu, 19 Jun 2008 14:51:19 -0600
-Message-ID: <20080619145119.505c14f0@bike.lwn.net>
-References: <20080616165051.7dcada58.sfr@canb.auug.org.au>
+From: "Maciej W. Rozycki" <macro@linux-mips.org>
+Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
+Date: Fri, 20 Jun 2008 01:35:07 +0100 (BST)
+Message-ID: <Pine.LNX.4.55.0806200024170.12929@cliff.in.clinika.pl>
+References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806190011.38548.rjw@sisk.pl>
+ <Pine.LNX.4.55.0806182345380.7802@cliff.in.clinika.pl> <200806190225.51088.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from vena.lwn.net ([206.168.112.25]:54066 "EHLO vena.lwn.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751325AbYFSUvV convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Jun 2008 16:51:21 -0400
-In-Reply-To: <20080616165051.7dcada58.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, "Rafael J. Wysocki" <rjw@sisk.pl>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <200806190225.51088.rjw@sisk.pl>
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 16 Jun 2008 16:50:51 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Thu, 19 Jun 2008, Rafael J. Wysocki wrote:
 
-> Hi Jon,
+> That helped a lot, the system seems to work normally now.
 > 
-> Today's linux-next merge of the bkl-removal tree got conflicts in
-> kernel/power/user.c between commit
-> 56ca8b0af290931c647e23876b75f9fd78cbaa82 ("snapshot: Use pm_mutex for
-> mutual exclusion") from the acpi tree and commit
-> 478dfeabc7e4499fa1c5b009537433f75ef939d8 ("power-user: BKL pushdown")
-> from the blk-removal tree.
+> Here's the relevant snippet from dmesg:
 > 
-> I used the version from the acpi tree.  So it looks like the latter
-> is no longer needed.
+> [    0.108006] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+> [    0.108006] ..MP-BIOS bug: 8254 timer not connected to IO-APIC
+> [    0.108006] ...trying to set up timer (IRQ0) through the 8259A ... <3>
+> [    0.108006] ..... (found apic 0 pin 2) ...<3> failed.
+> [    0.108006] ...trying to set up timer as Virtual Wire IRQ...<3> works.
 > 
+> and the whole thing is at: http://www.sisk.pl/kernel/debug/20080618/dmesg-2.log
 
->From my reading of the pm_mutex patch, it does seem to eliminate the
-need to hold the BKL in the open() path.  Unless somebody objects, I'll
-be removing the pushdown patch from the bkl-removal tree.
+ Hmm, that only proved the 8259A is indeed wired to the pin #2 of the I/O 
+APIC.
 
-Thanks,
+> I, personally, don't have any and AMD only has SB600 documentation on its
+> web page (it's still marked as "AMD confidential" ;-)).
 
-jon
+ Well, the IC block is most likely the same as that's not rocket science
+and once done there is no need to fiddle with that.  That written, I am
+afraid there is nothing useful about the IC in the document, except that
+it's there and consists of an I/O APIC providing 24 inputs and the usual
+pair of 8259A cores.  Thanks for the reference anyway.
 
-Jonathan Corbet / LWN.net / corbet@lwn.net
+> There is an interrupt controller in there, but I'm not sure if there's any
+> 8259A.  The northbridge is on the CPU, actually.
+
+ I will praise the day someone ships an x86 machine without an 8259A core!
+
+ As expressed in another mail I suspect there may actually be a direct
+route from the 8254 to INTIN0 in the southbridge -- this is what other
+bootstrap logs seen in the Internet suggest.  This would mean this
+particular BIOS is buggy (is it the latest version?) and provides an
+incorrect IRQ override in its ACPI tables, for example because the
+responsible block has been blindly copied from a machine using a commoner
+wiring.  This could be moderately easily fixed up with a quirk based on
+the PCI ID (after checking it again, we actually used to have a quirk for
+ATI in this area, but the way it was done suggests the issue was not
+understood well enough).
+
+ Could you please remove the hack sent yesterday and test the patch
+provided below?  I do hope it builds, but I have no immediate means to
+check it.  Please report the output.  The intent is to test INTIN0
+directly before testing INTIN2 through the 8259A.  Thanks.
+
+ Aside of that, what I have gathered from your reports (please correct me
+if I have got it wrong) is that when the through-8259A mode is used, then
+after a while 8254 timer interrupts stop arriving.  What's interesting,
+the "Virtual Wire IRQ" seems to work for you correctly (that's quite an
+odd setup where a local APIC input is used in the native mode -- please
+post /proc/interrupts for confirmation), which in turn implies the master
+8259A drives its INT output as we expect.  Why would the I/O APIC input
+have problems then?  Hmm...
+
+  Maciej
+
+patch-2.6.26-rc1-20080505-ioapic-replace-debug-1
+diff -up --recursive --new-file linux-2.6.26-rc1-20080505.macro/arch/x86/kernel/io_apic_64.c linux-2.6.26-rc1-20080505/arch/x86/kernel/io_apic_64.c
+--- linux-2.6.26-rc1-20080505.macro/arch/x86/kernel/io_apic_64.c	2008-06-18 03:24:54.000000000 +0000
++++ linux-2.6.26-rc1-20080505/arch/x86/kernel/io_apic_64.c	2008-06-20 00:12:39.000000000 +0000
+@@ -360,6 +360,26 @@ static void add_pin_to_irq(unsigned int 
+ 	entry->pin = pin;
+ }
+ 
++/*
++ * Reroute an IRQ to a different pin.
++ */
++static void __init replace_pin_at_irq(unsigned int irq,
++				      int oldapic, int oldpin,
++				      int newapic, int newpin)
++{
++	struct irq_pin_list *entry = irq_2_pin + irq;
++
++	while (1) {
++		if (entry->apic == oldapic && entry->pin == oldpin) {
++			entry->apic = newapic;
++			entry->pin = newpin;
++		}
++		if (!entry->next)
++			break;
++		entry = irq_2_pin + entry->next;
++	}
++}
++
+ 
+ #define DO_ACTION(name,R,ACTION, FINAL)					\
+ 									\
+@@ -1679,6 +1699,11 @@ static inline void __init check_timer(vo
+ 		apic2 = apic1;
+ 	}
+ 
++	replace_pin_at_irq(0, 0, 0, apic1, pin1);
++	apic1 = 0;
++	pin1 = 0;
++	setup_timer_IRQ0_pin(apic1, pin1, cfg->vector);
++
+ 	if (pin1 != -1) {
+ 		/*
+ 		 * Ok, does IRQ0 through the IOAPIC work?
+@@ -1711,7 +1736,7 @@ static inline void __init check_timer(vo
+ 		/*
+ 		 * legacy devices should be connected to IO APIC #0
+ 		 */
+-		/* replace_pin_at_irq(0, apic1, pin1, apic2, pin2); */
++		replace_pin_at_irq(0, apic1, pin1, apic2, pin2);
+ 		setup_timer_IRQ0_pin(apic2, pin2, cfg->vector);
+ 		unmask_IO_APIC_irq(0);
+ 		enable_8259A_irq(0);
