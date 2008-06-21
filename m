@@ -1,37 +1,62 @@
-From: "Maciej W. Rozycki" <macro@linux-mips.org>
-Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
-Date: Fri, 20 Jun 2008 21:56:18 +0100 (BST)
-Message-ID: <Pine.LNX.4.55.0806202154380.19614@cliff.in.clinika.pl>
-References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806180053.40044.rjw@sisk.pl>
- <Pine.LNX.4.55.0806180400070.28110@cliff.in.clinika.pl> <200806190011.38548.rjw@sisk.pl>
- <Pine.LNX.4.55.0806182345380.7802@cliff.in.clinika.pl> <20080619093541.GC15228@elte.hu>
- <Pine.LNX.4.55.0806191619560.12929@cliff.in.clinika.pl>
- <alpine.LFD.1.10.0806201507190.3395@apollo.tec.linutronix.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: sparc64 build failure
+Date: Sat, 21 Jun 2008 10:02:06 +1000
+Message-ID: <20080621100206.2249be7f.sfr@canb.auug.org.au>
+References: <20080620104352.1358ff2a.sfr@canb.auug.org.au>
+	<20080619.175520.231354507.davem@davemloft.net>
+	<20080620073444.GA23126@uranus.ravnborg.org>
+	<20080620175311.3ef1ea8b.sfr@canb.auug.org.au>
+	<20080620083443.GA23523@uranus.ravnborg.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__21_Jun_2008_10_02_06_+1000_uNTYlS5MLNGfKD3P"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kirk.serum.com.pl ([213.77.9.205]:64000 "EHLO serum.com.pl"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1753059AbYFTU5G (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 20 Jun 2008 16:57:06 -0400
-In-Reply-To: <alpine.LFD.1.10.0806201507190.3395@apollo.tec.linutronix.de>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36514 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751229AbYFUACN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 Jun 2008 20:02:13 -0400
+In-Reply-To: <20080620083443.GA23523@uranus.ravnborg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@elte.hu>, "Rafael J. Wysocki" <rjw@sisk.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org
 
-On Fri, 20 Jun 2008, Thomas Gleixner wrote:
+--Signature=_Sat__21_Jun_2008_10_02_06_+1000_uNTYlS5MLNGfKD3P
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> >  Is it now possible at the time check_timer() is called the 8254 has been
-> > put in one of the single-shot modes?  If so, then additional code has to
-> > be put in place either to switch the timer into the periodic mode for the
-> > duration of check_timer() or to rearm the timer if in a single-shot mode
-> > each time timer_irq_works() is called.
-> 
-> At this point the PIT is in periodic mode.
+Hi Sam,
 
- I had a feeling this was the case -- thanks for your clarification.  
-Nothing to change in check_timer() as far as this property is concerned
-then.
+On Fri, 20 Jun 2008 10:34:43 +0200 Sam Ravnborg <sam@ravnborg.org> wrote:
+>
+> I have not looked into it yet. But I assume this is a merge issue.
+> sparc-next.git is OK
+> kbuild-next.git is OK
+>=20
+> But when merged we break sparc64.
+> So I need to feed David a patch so I do not break it with kbuild-next.git,
+> or I need to do something in kbuil-next.git to avoid the breakage.
+>=20
+> I will sort it out in the weekend.
 
-  Maciej
+OK, thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Sat__21_Jun_2008_10_02_06_+1000_uNTYlS5MLNGfKD3P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhcRP4ACgkQTgG2atn1QN/2xgCfYOwwJz0F46vOVPjTEcMSUpmF
+mDQAnjUZbGI02SilGdprLuisP7jB78dl
+=s7nB
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__21_Jun_2008_10_02_06_+1000_uNTYlS5MLNGfKD3P--
