@@ -1,43 +1,56 @@
-From: Greg KH <greg@kroah.com>
+From: Peter Zijlstra <a.p.zijlstra@chello.nl>
 Subject: Re: How linux-staging is released (was Re:
 	linux-staging/linux-next merge/build errors)
-Date: Sat, 21 Jun 2008 10:50:03 -0700
-Message-ID: <20080621175003.GC14786@kroah.com>
-References: <20080621124017.ec3b0a51.sfr@canb.auug.org.au> <20080621071956.GB2765@kroah.com> <1214053209.3223.220.camel@lappy.programming.kicks-ass.net>
+Date: Sat, 21 Jun 2008 20:02:22 +0200
+Message-ID: <1214071343.3223.249.camel@lappy.programming.kicks-ass.net>
+References: <20080621124017.ec3b0a51.sfr@canb.auug.org.au>
+	 <20080621071956.GB2765@kroah.com>
+	 <1214053209.3223.220.camel@lappy.programming.kicks-ass.net>
+	 <20080621175003.GC14786@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:39672 "EHLO
+Received: from bombadil.infradead.org ([18.85.46.34]:51467 "EHLO
 	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751365AbYFURxa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 21 Jun 2008 13:53:30 -0400
-Content-Disposition: inline
-In-Reply-To: <1214053209.3223.220.camel@lappy.programming.kicks-ass.net>
+	with ESMTP id S1751365AbYFUSCt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 21 Jun 2008 14:02:49 -0400
+In-Reply-To: <20080621175003.GC14786@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <a.p.zijlstra@chello.nl>
+To: Greg KH <greg@kroah.com>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Sat, Jun 21, 2008 at 03:00:08PM +0200, Peter Zijlstra wrote:
+On Sat, 2008-06-21 at 10:50 -0700, Greg KH wrote:
+> On Sat, Jun 21, 2008 at 03:00:08PM +0200, Peter Zijlstra wrote:
+> > 
+> > So what motivates people to keep working on items in your tree if
+> > distros are already shipping their stuff?
 > 
-> So what motivates people to keep working on items in your tree if
-> distros are already shipping their stuff?
+> The fact that the code still isn't upstream?
+> 
+> And I'm not betting on distros picking this tree up, but it is in an
+> easy form if they wish to do so :)
 
-The fact that the code still isn't upstream?
+The point was that for some people being carried by distos is upstream
+enough.
 
-And I'm not betting on distros picking this tree up, but it is in an
-easy form if they wish to do so :)
+So I would discourage distros form picking up this tree.
 
-> Will you drop drivers that stagnate?
+The scenario I was thinking about is some HW vendor writing a shitty
+driver, dumping it in your tree - getting picked up by $DISTRO and
+saying, job done, people can use it. Leaving you to pick up the pieces -
+which, with you not having hw-docs, is a hard job.
 
-Heh, most of the drivers are in my tree because they were stagnating
-somewhere else :)
+> > Will you drop drivers that stagnate?
+> 
+> Heh, most of the drivers are in my tree because they were stagnating
+> somewhere else :)
+> 
+> Hopefully no, it's trivial to drag them along forever, but I'll be
+> working to get them upstream as fast as I can, and it also provides a
+> very nice project for someone to pick up and work on, as a number of
+> developers already have.
 
-Hopefully no, it's trivial to drag them along forever, but I'll be
-working to get them upstream as fast as I can, and it also provides a
-very nice project for someone to pick up and work on, as a number of
-developers already have.
+Good stuff ;-)
 
-thanks,
-
-greg k-h
