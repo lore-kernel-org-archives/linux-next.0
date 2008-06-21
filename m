@@ -1,40 +1,47 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: How linux-staging is released (was Re:
-	linux-staging/linux-next merge/build errors)
-Date: Sat, 21 Jun 2008 14:50:59 -0700
-Message-ID: <20080621215059.GD15341@kroah.com>
-References: <20080621124017.ec3b0a51.sfr@canb.auug.org.au> <20080621071956.GB2765@kroah.com> <1214053209.3223.220.camel@lappy.programming.kicks-ass.net> <20080621175003.GC14786@kroah.com> <1214071343.3223.249.camel@lappy.programming.kicks-ass.net>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
+Date: Sun, 22 Jun 2008 00:47:00 +0200
+Message-ID: <200806220047.01497.rjw@sisk.pl>
+References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806181640.45595.rjw@sisk.pl> <alpine.LFD.1.10.0806181726400.3395@apollo.tec.linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:42393 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752240AbYFUVxL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 21 Jun 2008 17:53:11 -0400
+Received: from ogre.sisk.pl ([217.79.144.158]:33008 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751218AbYFUWpt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 21 Jun 2008 18:45:49 -0400
+In-Reply-To: <alpine.LFD.1.10.0806181726400.3395@apollo.tec.linutronix.de>
 Content-Disposition: inline
-In-Reply-To: <1214071343.3223.249.camel@lappy.programming.kicks-ass.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Maciej W. Rozycki" <macro@linux-mips.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
 
-On Sat, Jun 21, 2008 at 08:02:22PM +0200, Peter Zijlstra wrote:
-> The point was that for some people being carried by distos is upstream
-> enough.
+On Wednesday, 18 of June 2008, Thomas Gleixner wrote:
+> On Wed, 18 Jun 2008, Rafael J. Wysocki wrote:
+> > > I just checked that the original c1e series and the affected code in
+> > > tip are not different. IIRC you confirmed that the C1E patches would
+> > > work on your box. So I wonder what else got changed which causes these
+> > > problems.
+> > 
+> > Well, to eliminate any possible correlations, do you have a version of the
+> > series or a single patch against the current mainline?
 > 
-> So I would discourage distros form picking up this tree.
+> http://userweb.kernel.org/~tglx/952f4a-c1e-apic.patch
+> http://userweb.kernel.org/~tglx/952f4a-c1e.patch
+> 
+> c1e-apic is the forward port of the apic changes and c1e is the pure
+> c1e stuff. On my box it does not work w/o the c1e-apic one, but ....
 
-I wouldn't, as some of the drivers work just fine on some arches, but
-not all, that is why they are not in mainline yet (the network drivers
-in there right now are an example of this.)
+Unfortunately, with the c1e.patch on top of the apic.patch on top of the
+current mainline I get the same symptoms as with -next:
+- processes freeze
+- CPU loads are unreasonably high
+- things generally get stucked if I don't move the mouse or press keys
 
-> The scenario I was thinking about is some HW vendor writing a shitty
-> driver, dumping it in your tree - getting picked up by $DISTRO and
-> saying, job done, people can use it. Leaving you to pick up the pieces -
-> which, with you not having hw-docs, is a hard job.
+Removing the the c1e.patch makes things work again.
 
-If this happens, I'll deal with it then :)
-
-thanks,
-
-greg k-h
+Thanks,
+Rafael
