@@ -1,85 +1,70 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-staging/linux-next merge/build errors
-Date: Sat, 21 Jun 2008 00:10:23 -0700
-Message-ID: <20080621071023.GA2765@kroah.com>
+Subject: How linux-staging is released (was Re: linux-staging/linux-next
+	merge/build errors)
+Date: Sat, 21 Jun 2008 00:19:56 -0700
+Message-ID: <20080621071956.GB2765@kroah.com>
 References: <20080621124017.ec3b0a51.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:36000 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750791AbYFUHVO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 21 Jun 2008 03:21:14 -0400
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751325AbYFUHWY@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <20080621124017.ec3b0a51.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>
 Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
 On Sat, Jun 21, 2008 at 12:40:17PM +1000, Stephen Rothwell wrote:
 > Hi Greg,
->=20
-> Today I have done a test merge of linux-staging into linux-next.  I g=
-ot
-> merge conflicts in drivers/char/agp/via-agp.c and drivers/misc/Makefi=
-le -
-> neither of which is really surprising and both tivial to fix up.
->=20
-> I then did an x86 allmodconfig build with these errors:
->=20
-> In file included from /home/sfr/kernels/next/src/drivers/char/drm/via=
-_chrome9_drm.c:32:
-> /home/sfr/kernels/next/src/drivers/char/drm/via_chrome9_3d_reg.h: In =
-function =E2=80=98IS_AGPHEADER_INV=E2=80=99:
-> /home/sfr/kernels/next/src/drivers/char/drm/via_chrome9_3d_reg.h:230:=
- error: =E2=80=98TRUE=E2=80=99 undeclared (first use in this function)
-> /home/sfr/kernels/next/src/drivers/char/drm/via_chrome9_3d_reg.h:230:=
- error: (Each undeclared identifier is reported only once
-> /home/sfr/kernels/next/src/drivers/char/drm/via_chrome9_3d_reg.h:230:=
- error: for each function it appears in.)
-> /home/sfr/kernels/next/src/drivers/char/drm/via_chrome9_3d_reg.h:232:=
- error: =E2=80=98FALSE=E2=80=99 undeclared (first use in this function)
+> 
+> Today I have done a test merge of linux-staging into linux-next.
 
-Wierd, this passes allmodconfig on i386, something else must be
-declaring TRUE and FALSE :)
+Thanks for doing this.
 
-I'll just go remove them entirely.
+I've been thinking this past week about how to properly handle the
+linux-staging tree.
 
-> And several new warnings (these may not be all):
->=20
-> /home/sfr/kernels/next/src/fs/novfs/inode.c:265: warning: initializat=
-ion from incompatible pointer type
-> /home/sfr/kernels/next/src/fs/novfs/inode.c:267: warning: initializat=
-ion from incompatible pointer type
-> /home/sfr/kernels/next/src/fs/novfs/inode.c:273: warning: initializat=
-ion from incompatible pointer type
-> /home/sfr/kernels/next/src/fs/novfs/inode.c:275: warning: initializat=
-ion from incompatible pointer type
-> In file included from /home/sfr/kernels/next/src/fs/novfs/daemon.c:24=
-:
-> include2/asm/semaphore.h:1:2: warning: #warning Use linux/semaphore.h=
-, not asm/semaphore.h
-> In file included from /home/sfr/kernels/next/src/fs/novfs/scope.c:26:
-> include2/asm/semaphore.h:1:2: warning: #warning Use linux/semaphore.h=
-, not asm/semaphore.h
-> In file included from /home/sfr/kernels/next/src/fs/novfs/nwcapi.c:22=
-:
-> include2/asm/semaphore.h:1:2: warning: #warning Use linux/semaphore.h=
-, not asm/semaphore.h
+For some background, it came about because Ingo pointed out that it
+seems hard to get new drivers merged into the main tree quickly, and
+that perhaps we should have a drivers/staging/ directory in Linus's tree
+where we can dump things in quickly and then clean them up later.
 
-Yeah, we took a major update of novfs and some of my previous fixes lik=
-e
-this got lost.
+That got quickly vetoed by a number of other maintainers, and I brought
+up the point of me just doing a separate -staging tree that would be
+something like this, but not go into Linus's tree directly.
 
-I'll go resolve them now.
+I originally sprung the idea on you of having you merge it into -next to
+get testing and build coverage, but I've been thinking a lot more about
+this, and I don't want to burden you with this, you have enough work to
+do with trying to get the normal -next tree out :)
+
+So, if you don't mind, and no one else objects, here's how I would like
+to run the -staging tree:
+
+  - It's a set of patches, in quilt form, that can be applied on top of
+    a released kernel from Linus.
+  - It will be rebased at the least with every -rc and -final release,
+    and probably a lot more frequently with a few -git releases
+    inbetween.
+  - I will do a "roll-up" patch release for ever -final release and -rc
+    release to make it easy for users to grab it and apply it to a
+    release so that they can use the drivers/filesystems contained in
+    it.
+  - Once the patches in the -staging tree are nearing "cleaned up" stage
+    (i.e. their TODO list is finished off), I will submit them to the
+    proper subsystem maintainer for inclusion into their tree, on the
+    way to Linus's tree eventually.
+
+This process should allow for a much easier barrier to development and
+using the drivers by everyone, instead of having to rebase on top of
+-next, which can be hairy at times.  It also allows distros and anyone
+else to grab the full patchset in a much easier manner for their users,
+if they so desire.
+
+Does that sound reasonable to everyone?
+
+I'll go do a release for 2.6.26-rc7 to start it all off.
 
 thanks,
 
 greg k-h
---
-To unsubscribe from this list: send the line "unsubscribe linux-next" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
