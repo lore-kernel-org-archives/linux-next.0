@@ -1,54 +1,65 @@
-From: "Maciej W. Rozycki" <macro@linux-mips.org>
-Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
-Date: Sat, 21 Jun 2008 03:41:37 +0100 (BST)
-Message-ID: <Pine.LNX.4.55.0806210321470.19614@cliff.in.clinika.pl>
-References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806201353.59083.rjw@sisk.pl>
- <20080620115714.GC8637@srcf.ucam.org> <200806201422.12659.rjw@sisk.pl>
- <20080620122714.GA9332@srcf.ucam.org> <Pine.LNX.4.55.0806202241120.19614@cliff.in.clinika.pl>
- <20080621014047.GA20908@srcf.ucam.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of pcmcia tree
+Date: Sat, 21 Jun 2008 13:37:32 +1000
+Message-ID: <20080621133732.df617d2a.sfr@canb.auug.org.au>
+References: <20080616175126.e461b22b.sfr@canb.auug.org.au>
+	<20080616081258.GA18142@isilmar.linta.de>
+	<20080619143441.3ab03fcf@bike.lwn.net>
+	<20080620174321.GA22861@comet.dominikbrodowski.net>
+	<20080620135327.2c4e5ce5@bike.lwn.net>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20080621014047.GA20908@srcf.ucam.org>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__21_Jun_2008_13_37_32_+1000_jygFAwF.n8=CCa6_"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36485 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753987AbYFUDhi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 Jun 2008 23:37:38 -0400
+In-Reply-To: <20080620135327.2c4e5ce5@bike.lwn.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>, Alan Cox <alan@lxorguk.ukuu.org.uk>, linux-next@vger.kernel.org
 
-On Sat, 21 Jun 2008, Matthew Garrett wrote:
+--Signature=_Sat__21_Jun_2008_13_37_32_+1000_jygFAwF.n8=CCa6_
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> >  Meanwhile we may consider implementing a workaround.  I think one that 
-> > does not hurt competent vendors would be preferable.  The DSDT containing 
-> > the rubbish described here is marked with an OEM ID: "HP    " and OEM 
-> > Table ID: "SB400".  These keys could be used to remove IRQ0 information
-> > from the IRQ tables.  Our code is prepared to handle such a case.  
-> > Something easy to do for a seasoned ACPI fiddler, I suppose. ;)
-> 
-> Something roughly like the following? Entirely untested, my 6125 is in a 
+On Fri, 20 Jun 2008 13:53:27 -0600 Jonathan Corbet <corbet@lwn.net> wrote:
+>
+> On Fri, 20 Jun 2008 19:43:21 +0200
+> Dominik Brodowski <linux@dominikbrodowski.net> wrote:
+>=20
+> > Well, when do you intend to push that patch? I hope Linus will apply
+> > the pcmcia tree soon after 2.6.26 is released.
+>=20
+> Similar for bkl-removal - it's targeted at 2.6.27.
+>=20
+> > > Here's the patch; if you take it let me know and I'll remove it from
+> > > the bkl-removal tree.
+> >=20
+> > I've applied it to pcmcia-2.6.git and just pushed that to kernel.org.
+>=20
+> OK, I'll pull it from bkl-removal.
 
- Maybe, though your code seems to match product IDs rather than the broken
-DSDT itself.  I think the latter would be preferable as it would cover all
-the pieces of equipment using the broken piece of firmware rather than
-ones we have already tracked down.  Perhaps the version could be included
-too, but that would only make sense if the breakage ever gets fixed -- the
-use of the through-8259A mode for the 8254 timer would allow this piece of
-equipment to benefit from the I/O APIC driven NMI watchdog.
+Thanks, guys - one conflict down (hopefully) :-)
 
-> box somewhere. My recollection is that skip_timer_override will disable 
-> the IRQ 0->2 mapping, which I believe is what's broken here?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
- Not exactly.  The IRQ0->2 mapping is certainly wrong here, but so is the
-identity IRQ0->0 one.  Which means it should not be recorded in
-mp_config_acpi_legacy_irqs() at all.  I can cook this part if you'd rather
-not to, if you do the ACPI part.  If you think there is no easy way to
-match the DSDT rather than the product ID -- we are trying to cope with
-outright breakage here after all, so any amount of effort is too much ;)  
--- I can update your proposal with what I have in mind.
+--Signature=_Sat__21_Jun_2008_13_37_32_+1000_jygFAwF.n8=CCa6_
+Content-Type: application/pgp-signature
 
- One point to note -- perhaps it would be better to avoid these #ifdef
-clauses -- even though it's a workaround, I think the amount of resources
-consumed does not justify the clutter introduced.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
- Thanks for your submission.
+iEYEARECAAYFAkhcd3wACgkQTgG2atn1QN/f1wCggyM3bcphugEv/JIlYoY/GZ/t
+udAAn3NN5Krcftr9/gc8RXEQcETxM63j
+=W8yd
+-----END PGP SIGNATURE-----
 
-  Maciej
+--Signature=_Sat__21_Jun_2008_13_37_32_+1000_jygFAwF.n8=CCa6_--
