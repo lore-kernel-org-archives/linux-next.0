@@ -1,65 +1,85 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of pcmcia tree
-Date: Sat, 21 Jun 2008 13:37:32 +1000
-Message-ID: <20080621133732.df617d2a.sfr@canb.auug.org.au>
-References: <20080616175126.e461b22b.sfr@canb.auug.org.au>
-	<20080616081258.GA18142@isilmar.linta.de>
-	<20080619143441.3ab03fcf@bike.lwn.net>
-	<20080620174321.GA22861@comet.dominikbrodowski.net>
-	<20080620135327.2c4e5ce5@bike.lwn.net>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-staging/linux-next merge/build errors
+Date: Sat, 21 Jun 2008 00:10:23 -0700
+Message-ID: <20080621071023.GA2765@kroah.com>
+References: <20080621124017.ec3b0a51.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__21_Jun_2008_13_37_32_+1000_jygFAwF.n8=CCa6_"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36485 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753987AbYFUDhi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 20 Jun 2008 23:37:38 -0400
-In-Reply-To: <20080620135327.2c4e5ce5@bike.lwn.net>
+Received: from bombadil.infradead.org ([18.85.46.34]:36000 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750791AbYFUHVO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 21 Jun 2008 03:21:14 -0400
+Content-Disposition: inline
+In-Reply-To: <20080621124017.ec3b0a51.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>, Alan Cox <alan@lxorguk.ukuu.org.uk>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Sat__21_Jun_2008_13_37_32_+1000_jygFAwF.n8=CCa6_
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, 20 Jun 2008 13:53:27 -0600 Jonathan Corbet <corbet@lwn.net> wrote:
->
-> On Fri, 20 Jun 2008 19:43:21 +0200
-> Dominik Brodowski <linux@dominikbrodowski.net> wrote:
+On Sat, Jun 21, 2008 at 12:40:17PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 >=20
-> > Well, when do you intend to push that patch? I hope Linus will apply
-> > the pcmcia tree soon after 2.6.26 is released.
+> Today I have done a test merge of linux-staging into linux-next.  I g=
+ot
+> merge conflicts in drivers/char/agp/via-agp.c and drivers/misc/Makefi=
+le -
+> neither of which is really surprising and both tivial to fix up.
 >=20
-> Similar for bkl-removal - it's targeted at 2.6.27.
+> I then did an x86 allmodconfig build with these errors:
 >=20
-> > > Here's the patch; if you take it let me know and I'll remove it from
-> > > the bkl-removal tree.
-> >=20
-> > I've applied it to pcmcia-2.6.git and just pushed that to kernel.org.
+> In file included from /home/sfr/kernels/next/src/drivers/char/drm/via=
+_chrome9_drm.c:32:
+> /home/sfr/kernels/next/src/drivers/char/drm/via_chrome9_3d_reg.h: In =
+function =E2=80=98IS_AGPHEADER_INV=E2=80=99:
+> /home/sfr/kernels/next/src/drivers/char/drm/via_chrome9_3d_reg.h:230:=
+ error: =E2=80=98TRUE=E2=80=99 undeclared (first use in this function)
+> /home/sfr/kernels/next/src/drivers/char/drm/via_chrome9_3d_reg.h:230:=
+ error: (Each undeclared identifier is reported only once
+> /home/sfr/kernels/next/src/drivers/char/drm/via_chrome9_3d_reg.h:230:=
+ error: for each function it appears in.)
+> /home/sfr/kernels/next/src/drivers/char/drm/via_chrome9_3d_reg.h:232:=
+ error: =E2=80=98FALSE=E2=80=99 undeclared (first use in this function)
+
+Wierd, this passes allmodconfig on i386, something else must be
+declaring TRUE and FALSE :)
+
+I'll just go remove them entirely.
+
+> And several new warnings (these may not be all):
 >=20
-> OK, I'll pull it from bkl-removal.
+> /home/sfr/kernels/next/src/fs/novfs/inode.c:265: warning: initializat=
+ion from incompatible pointer type
+> /home/sfr/kernels/next/src/fs/novfs/inode.c:267: warning: initializat=
+ion from incompatible pointer type
+> /home/sfr/kernels/next/src/fs/novfs/inode.c:273: warning: initializat=
+ion from incompatible pointer type
+> /home/sfr/kernels/next/src/fs/novfs/inode.c:275: warning: initializat=
+ion from incompatible pointer type
+> In file included from /home/sfr/kernels/next/src/fs/novfs/daemon.c:24=
+:
+> include2/asm/semaphore.h:1:2: warning: #warning Use linux/semaphore.h=
+, not asm/semaphore.h
+> In file included from /home/sfr/kernels/next/src/fs/novfs/scope.c:26:
+> include2/asm/semaphore.h:1:2: warning: #warning Use linux/semaphore.h=
+, not asm/semaphore.h
+> In file included from /home/sfr/kernels/next/src/fs/novfs/nwcapi.c:22=
+:
+> include2/asm/semaphore.h:1:2: warning: #warning Use linux/semaphore.h=
+, not asm/semaphore.h
 
-Thanks, guys - one conflict down (hopefully) :-)
+Yeah, we took a major update of novfs and some of my previous fixes lik=
+e
+this got lost.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+I'll go resolve them now.
 
---Signature=_Sat__21_Jun_2008_13_37_32_+1000_jygFAwF.n8=CCa6_
-Content-Type: application/pgp-signature
+thanks,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhcd3wACgkQTgG2atn1QN/f1wCggyM3bcphugEv/JIlYoY/GZ/t
-udAAn3NN5Krcftr9/gc8RXEQcETxM63j
-=W8yd
------END PGP SIGNATURE-----
-
---Signature=_Sat__21_Jun_2008_13_37_32_+1000_jygFAwF.n8=CCa6_--
+greg k-h
+--
+To unsubscribe from this list: send the line "unsubscribe linux-next" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
