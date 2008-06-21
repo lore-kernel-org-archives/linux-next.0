@@ -1,45 +1,76 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
-Date: Sat, 21 Jun 2008 13:38:22 +0100
-Message-ID: <20080621123822.GA27686@srcf.ucam.org>
-References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806201353.59083.rjw@sisk.pl> <20080620115714.GC8637@srcf.ucam.org> <200806201422.12659.rjw@sisk.pl> <20080620122714.GA9332@srcf.ucam.org> <Pine.LNX.4.55.0806202241120.19614@cliff.in.clinika.pl> <20080621014047.GA20908@srcf.ucam.org> <Pine.LNX.4.55.0806210321470.19614@cliff.in.clinika.pl>
+From: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: How linux-staging is released (was Re:
+	linux-staging/linux-next merge/build errors)
+Date: Sat, 21 Jun 2008 15:00:08 +0200
+Message-ID: <1214053209.3223.220.camel@lappy.programming.kicks-ass.net>
+References: <20080621124017.ec3b0a51.sfr@canb.auug.org.au>
+	 <20080621071956.GB2765@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cavan.codon.org.uk ([93.93.128.6]:58351 "EHLO
-	vavatch.codon.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752649AbYFUMil (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 21 Jun 2008 08:38:41 -0400
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.55.0806210321470.19614@cliff.in.clinika.pl>
+Received: from casper.infradead.org ([85.118.1.10]:57842 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751087AbYFUNA3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 21 Jun 2008 09:00:29 -0400
+In-Reply-To: <20080621071956.GB2765@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Maciej W. Rozycki" <macro@linux-mips.org>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Sat, Jun 21, 2008 at 03:41:37AM +0100, Maciej W. Rozycki wrote:
+On Sat, 2008-06-21 at 00:19 -0700, Greg KH wrote:
+> On Sat, Jun 21, 2008 at 12:40:17PM +1000, Stephen Rothwell wrote:
+> > Hi Greg,
+> > 
+> > Today I have done a test merge of linux-staging into linux-next.
+> 
+> Thanks for doing this.
+> 
+> I've been thinking this past week about how to properly handle the
+> linux-staging tree.
+> 
+> For some background, it came about because Ingo pointed out that it
+> seems hard to get new drivers merged into the main tree quickly, and
+> that perhaps we should have a drivers/staging/ directory in Linus's tree
+> where we can dump things in quickly and then clean them up later.
+> 
+> That got quickly vetoed by a number of other maintainers, and I brought
+> up the point of me just doing a separate -staging tree that would be
+> something like this, but not go into Linus's tree directly.
+> 
+> I originally sprung the idea on you of having you merge it into -next to
+> get testing and build coverage, but I've been thinking a lot more about
+> this, and I don't want to burden you with this, you have enough work to
+> do with trying to get the normal -next tree out :)
+> 
+> So, if you don't mind, and no one else objects, here's how I would like
+> to run the -staging tree:
+> 
+>   - It's a set of patches, in quilt form, that can be applied on top of
+>     a released kernel from Linus.
+>   - It will be rebased at the least with every -rc and -final release,
+>     and probably a lot more frequently with a few -git releases
+>     inbetween.
+>   - I will do a "roll-up" patch release for ever -final release and -rc
+>     release to make it easy for users to grab it and apply it to a
+>     release so that they can use the drivers/filesystems contained in
+>     it.
+>   - Once the patches in the -staging tree are nearing "cleaned up" stage
+>     (i.e. their TODO list is finished off), I will submit them to the
+>     proper subsystem maintainer for inclusion into their tree, on the
+>     way to Linus's tree eventually.
+> 
+> This process should allow for a much easier barrier to development and
+> using the drivers by everyone, instead of having to rebase on top of
+> -next, which can be hairy at times.  It also allows distros and anyone
+> else to grab the full patchset in a much easier manner for their users,
+> if they so desire.
+> 
+> Does that sound reasonable to everyone?
 
->  Maybe, though your code seems to match product IDs rather than the broken
-> DSDT itself.  I think the latter would be preferable as it would cover all
-> the pieces of equipment using the broken piece of firmware rather than
-> ones we have already tracked down.  Perhaps the version could be included
-> too, but that would only make sense if the breakage ever gets fixed -- the
-> use of the through-8259A mode for the 8254 timer would allow this piece of
-> equipment to benefit from the I/O APIC driven NMI watchdog.
+So what motivates people to keep working on items in your tree if
+distros are already shipping their stuff?
 
-I haven't seen any other machines with this issue, so I suspect that 
-this is HP-specific code. I'll look into what would need doing to quirk 
-it off the DSDT strings, though.
+Will you drop drivers that stagnate?
 
->  Not exactly.  The IRQ0->2 mapping is certainly wrong here, but so is the
-> identity IRQ0->0 one.  Which means it should not be recorded in
-> mp_config_acpi_legacy_irqs() at all.  I can cook this part if you'd rather
-> not to, if you do the ACPI part.  If you think there is no easy way to
-> match the DSDT rather than the product ID -- we are trying to cope with
-> outright breakage here after all, so any amount of effort is too much ;)  
-> -- I can update your proposal with what I have in mind.
-
-Ok, that works for me.
-
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
