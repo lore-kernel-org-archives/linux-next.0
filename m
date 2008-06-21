@@ -1,56 +1,71 @@
-From: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: How linux-staging is released (was Re:
-	linux-staging/linux-next merge/build errors)
-Date: Sat, 21 Jun 2008 20:02:22 +0200
-Message-ID: <1214071343.3223.249.camel@lappy.programming.kicks-ass.net>
-References: <20080621124017.ec3b0a51.sfr@canb.auug.org.au>
-	 <20080621071956.GB2765@kroah.com>
-	 <1214053209.3223.220.camel@lappy.programming.kicks-ass.net>
-	 <20080621175003.GC14786@kroah.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for June 20: [regression] No sound on SB600
+Date: Sat, 21 Jun 2008 21:25:41 +0200
+Message-ID: <200806212125.42472.rjw@sisk.pl>
+References: <20080620172507.b7301bd1.sfr@canb.auug.org.au> <200806211728.10445.rjw@sisk.pl> <s5hbq1u3hch.wl%tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:51467 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751365AbYFUSCt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 21 Jun 2008 14:02:49 -0400
-In-Reply-To: <20080621175003.GC14786@kroah.com>
+Received: from ogre.sisk.pl ([217.79.144.158]:60767 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752426AbYFUTYU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 21 Jun 2008 15:24:20 -0400
+In-Reply-To: <s5hbq1u3hch.wl%tiwai@suse.de>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Sat, 2008-06-21 at 10:50 -0700, Greg KH wrote:
-> On Sat, Jun 21, 2008 at 03:00:08PM +0200, Peter Zijlstra wrote:
+On Saturday, 21 of June 2008, Takashi Iwai wrote:
+> At Sat, 21 Jun 2008 17:28:09 +0200,
+> Rafael J. Wysocki wrote:
 > > 
-> > So what motivates people to keep working on items in your tree if
-> > distros are already shipping their stuff?
+> > On Friday, 20 of June 2008, Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > Changes since next-20080619:
+> > > 
+> > > The net tree lost its conflict against Linus' tree.
+> > > 
+> > > The bkl-removal tree lost a conflict.
+> > 
+> > On one of my test boxes with the ATI chipset (SB600 south bridge) there's no
+> > sound output.  Bisection shows that the following commit causes this to happen
+> > and reverting the commit fixes the problem for me:
+> > 
+> > commit cf97e6678f1e1e7bbdb566c36771540123832a31
+> > Author: Takashi Iwai <tiwai@suse.de>
+> > Date:   Mon Jun 16 15:47:26 2008 +0200
+> > 
+> >     ALSA: hda - Fix wrong volumes in AD1988 auto-probe mode
+> >     
+> >     Don't create mixer volume elements for Headphone and Speaker if they
+> >     use the same DAC as normal line-outs on AD1988.  Otherwise the amp
+> >     value gets screwed up, e.g.
+> >     	https://bugzilla.novell.com/show_bug.cgi?id=398255
+> >     
+> >     Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> > 
+> > Please let me know if you need any additional information.
 > 
-> The fact that the code still isn't upstream?
-> 
-> And I'm not betting on distros picking this tree up, but it is in an
-> easy form if they wish to do so :)
+> Could you run alsa-info.sh with --no-upload option and attach the
+> output for both states with and without that commit?  The script is
+> found at
+> 	http://www.alsa-project.org/alsa-info.sh
+> Also, show the relevant kernel message from snd-hda-intel (informing
+> the auto-parsing of pins, etc), too.
 
-The point was that for some people being carried by distos is upstream
-enough.
+dmesg outputs and the outputs of 'alsa-info.sh --no-upload' for the kernel with
+the patch applied (1) and with the reverted (2) are at:
 
-So I would discourage distros form picking up this tree.
+http://www.sisk.pl/kernel/debug/20080620/box2/dmesg-1.log
+http://www.sisk.pl/kernel/debug/20080620/box2/alsa-info-1.txt
 
-The scenario I was thinking about is some HW vendor writing a shitty
-driver, dumping it in your tree - getting picked up by $DISTRO and
-saying, job done, people can use it. Leaving you to pick up the pieces -
-which, with you not having hw-docs, is a hard job.
+http://www.sisk.pl/kernel/debug/20080620/box2/dmesg-2.log
+http://www.sisk.pl/kernel/debug/20080620/box2/alsa-info-2.txt
 
-> > Will you drop drivers that stagnate?
-> 
-> Heh, most of the drivers are in my tree because they were stagnating
-> somewhere else :)
-> 
-> Hopefully no, it's trivial to drag them along forever, but I'll be
-> working to get them upstream as fast as I can, and it also provides a
-> very nice project for someone to pick up and work on, as a number of
-> developers already have.
-
-Good stuff ;-)
-
+Thanks,
+Rafael
