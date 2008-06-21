@@ -1,70 +1,59 @@
-From: Greg KH <greg@kroah.com>
-Subject: How linux-staging is released (was Re: linux-staging/linux-next
-	merge/build errors)
-Date: Sat, 21 Jun 2008 00:19:56 -0700
-Message-ID: <20080621071956.GB2765@kroah.com>
-References: <20080621124017.ec3b0a51.sfr@canb.auug.org.au>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: linux-next: s390 build failure
+Date: Sat, 21 Jun 2008 10:07:02 +0200
+Message-ID: <20080621080702.GA4841@osiris.ibm.com>
+References: <20080620124235.24fbe33e.sfr@canb.auug.org.au> <20080620114247.GY20851@kernel.dk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751325AbYFUHWY@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mtagate2.de.ibm.com ([195.212.29.151]:53814 "EHLO
+	mtagate2.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751375AbYFUIHU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 21 Jun 2008 04:07:20 -0400
+Received: from d12nrmr1607.megacenter.de.ibm.com (d12nrmr1607.megacenter.de.ibm.com [9.149.167.49])
+	by mtagate2.de.ibm.com (8.13.8/8.13.8) with ESMTP id m5L873E5113562
+	for <linux-next@vger.kernel.org>; Sat, 21 Jun 2008 08:07:03 GMT
+Received: from d12av01.megacenter.de.ibm.com (d12av01.megacenter.de.ibm.com [9.149.165.212])
+	by d12nrmr1607.megacenter.de.ibm.com (8.13.8/8.13.8/NCO v9.0) with ESMTP id m5L873lL2859050
+	for <linux-next@vger.kernel.org>; Sat, 21 Jun 2008 10:07:03 +0200
+Received: from d12av01.megacenter.de.ibm.com (loopback [127.0.0.1])
+	by d12av01.megacenter.de.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id m5L872jh003415
+	for <linux-next@vger.kernel.org>; Sat, 21 Jun 2008 10:07:03 +0200
 Content-Disposition: inline
-In-Reply-To: <20080621124017.ec3b0a51.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20080620114247.GY20851@kernel.dk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-next@vger.kernel.org
 
-On Sat, Jun 21, 2008 at 12:40:17PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On Fri, Jun 20, 2008 at 01:42:48PM +0200, Jens Axboe wrote:
+> On Fri, Jun 20 2008, Stephen Rothwell wrote:
+> > Hi Martin,
+> > 
+> > Starting with next-20080613, the linux-next build (s390 defconfig s390x
+> > compiler) has failed with these errors:
+> > 
+> > In file included from /scratch/michael/kisskb-build/src/include/linux/spinlock.h:87,
+> >                  from /scratch/michael/kisskb-build/src/include/linux/smp.h:11,
+> >                  from /scratch/michael/kisskb-build/src/include/linux/kernel_stat.h:4,
+> >                  from /scratch/michael/kisskb-build/src/mm/memory.c:41:
+> > include2/asm/spinlock.h: In function '__raw_spin_lock':
+> > include2/asm/spinlock.h:69: error: implicit declaration of function 'smp_processor_id'
+> > 
+> > There are others as well, but I was concentrating on this.  Bisecting
+> > leads to commit 2448ad3d8e64a9b58acca34a3d010cfa0be88cc1 which is the
+> > merge of the block tree.  The block tree contains a commit
+> > (37e81b98dba08cce1d8eedb2bdaa58022bf31ee0 "Add generic helpers for arch
+> > IPI function calls") that adds an include of linux/spinlock.h to
+> > linux/smp.h. (asm-s390/spinlock.h includes linux/smp.h ...)
+> > 
+> > But the block tree itself is OK.  So something in the s390 tree is
+> > interacting with the above commit to cause the failure.  It is not
+> > immediately obvious to me what that is. (Or I may have screwed up the
+> > bisect :-))
 > 
-> Today I have done a test merge of linux-staging into linux-next.
+> Heiko was looking into this, I had forgotten about it. Heiko, did you
+> find an adequate solution to this?
 
-Thanks for doing this.
-
-I've been thinking this past week about how to properly handle the
-linux-staging tree.
-
-For some background, it came about because Ingo pointed out that it
-seems hard to get new drivers merged into the main tree quickly, and
-that perhaps we should have a drivers/staging/ directory in Linus's tree
-where we can dump things in quickly and then clean them up later.
-
-That got quickly vetoed by a number of other maintainers, and I brought
-up the point of me just doing a separate -staging tree that would be
-something like this, but not go into Linus's tree directly.
-
-I originally sprung the idea on you of having you merge it into -next to
-get testing and build coverage, but I've been thinking a lot more about
-this, and I don't want to burden you with this, you have enough work to
-do with trying to get the normal -next tree out :)
-
-So, if you don't mind, and no one else objects, here's how I would like
-to run the -staging tree:
-
-  - It's a set of patches, in quilt form, that can be applied on top of
-    a released kernel from Linus.
-  - It will be rebased at the least with every -rc and -final release,
-    and probably a lot more frequently with a few -git releases
-    inbetween.
-  - I will do a "roll-up" patch release for ever -final release and -rc
-    release to make it easy for users to grab it and apply it to a
-    release so that they can use the drivers/filesystems contained in
-    it.
-  - Once the patches in the -staging tree are nearing "cleaned up" stage
-    (i.e. their TODO list is finished off), I will submit them to the
-    proper subsystem maintainer for inclusion into their tree, on the
-    way to Linus's tree eventually.
-
-This process should allow for a much easier barrier to development and
-using the drivers by everyone, instead of having to rebase on top of
--next, which can be hairy at times.  It also allows distros and anyone
-else to grab the full patchset in a much easier manner for their users,
-if they so desire.
-
-Does that sound reasonable to everyone?
-
-I'll go do a release for 2.6.26-rc7 to start it all off.
-
-thanks,
-
-greg k-h
+My only conclusion back then was that you shouldn't add the new
+#include <linux/spinlock.h> to include <linux/smp.h> (see also Martin's mail).
