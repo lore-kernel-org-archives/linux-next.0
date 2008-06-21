@@ -1,93 +1,81 @@
-From: "Maciej W. Rozycki" <macro@linux-mips.org>
-Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
-Date: Sat, 21 Jun 2008 02:49:08 +0100 (BST)
-Message-ID: <Pine.LNX.4.55.0806210210060.19614@cliff.in.clinika.pl>
-References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806190225.51088.rjw@sisk.pl>
- <Pine.LNX.4.55.0806200024170.12929@cliff.in.clinika.pl> <200806201353.59083.rjw@sisk.pl>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-staging/linux-next merge/build errors
+Date: Sat, 21 Jun 2008 12:40:17 +1000
+Message-ID: <20080621124017.ec3b0a51.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__21_Jun_2008_12_40_17_+1000_XsH=e2o6HXxQxLqi"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kirk.serum.com.pl ([213.77.9.205]:64206 "EHLO serum.com.pl"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751113AbYFUBuo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 20 Jun 2008 21:50:44 -0400
-In-Reply-To: <200806201353.59083.rjw@sisk.pl>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44507 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751726AbYFUCkZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 Jun 2008 22:40:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, 20 Jun 2008, Rafael J. Wysocki wrote:
+--Signature=_Sat__21_Jun_2008_12_40_17_+1000_XsH=e2o6HXxQxLqi
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Tested, doesn't work.  The symptoms are exactly the same as with the unpatched
-> kernel.
+Hi Greg,
 
- Thanks.
+Today I have done a test merge of linux-staging into linux-next.  I got
+merge conflicts in drivers/char/agp/via-agp.c and drivers/misc/Makefile -
+neither of which is really surprising and both tivial to fix up.
 
-> This is the relevant snippet from dmesg:
-> 
-> [    0.108006] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
-> [    0.108006] ..MP-BIOS bug: 8254 timer not connected to IO-APIC
-> [    0.108006] ...trying to set up timer (IRQ0) through the 8259A ... <3>
-> [    0.108006] ..... (found apic 0 pin 2) ...<3> works.
-> 
-> and the whole thing is at: http://www.sisk.pl/kernel/debug/20080620/dmesg-1.log
+I then did an x86 allmodconfig build with these errors:
 
- Hmm, it means INTIN0 is not connected to the output of the 8254.  Which
-in turn means the input is either externally rewirable or internally
-reconfigurable for the use with the 8254, or something else, or nothing at
-all (although it seems a dumb idea not to wire the 8254 to the I/O APIC).  
-It might be interesting to know whether the HPET #0 can be routed to
-INTIN0 on this platform.
+In file included from /home/sfr/kernels/next/src/drivers/char/drm/via_chrom=
+e9_drm.c:32:
+/home/sfr/kernels/next/src/drivers/char/drm/via_chrome9_3d_reg.h: In functi=
+on =E2=80=98IS_AGPHEADER_INV=E2=80=99:
+/home/sfr/kernels/next/src/drivers/char/drm/via_chrome9_3d_reg.h:230: error=
+: =E2=80=98TRUE=E2=80=99 undeclared (first use in this function)
+/home/sfr/kernels/next/src/drivers/char/drm/via_chrome9_3d_reg.h:230: error=
+: (Each undeclared identifier is reported only once
+/home/sfr/kernels/next/src/drivers/char/drm/via_chrome9_3d_reg.h:230: error=
+: for each function it appears in.)
+/home/sfr/kernels/next/src/drivers/char/drm/via_chrome9_3d_reg.h:232: error=
+: =E2=80=98FALSE=E2=80=99 undeclared (first use in this function)
 
-> What exactly I observe is that in this case:
-> 1) The cooling fan is 100% on, as though the box were overheating, which seems
->    to indicate some serious confusion of the platform (the mechanism turning
->    the fan 100% on is supposed to be transparent to software).
-> 2) Everything seems to slow down substantially, at least as soon as X is
->    started.
-> 3) The box cannot reboot, ie. it turns everything off as expected, but when the
->    BIOS is supposed to restart the box, it just hangs solid.
+And several new warnings (these may not be all):
 
- OK, as explained by Matthew and investigated by myself, it is not exactly 
-a problem with the timer itself, but broken power-management 
-configuration.
+/home/sfr/kernels/next/src/fs/novfs/inode.c:265: warning: initialization fr=
+om incompatible pointer type
+/home/sfr/kernels/next/src/fs/novfs/inode.c:267: warning: initialization fr=
+om incompatible pointer type
+/home/sfr/kernels/next/src/fs/novfs/inode.c:273: warning: initialization fr=
+om incompatible pointer type
+/home/sfr/kernels/next/src/fs/novfs/inode.c:275: warning: initialization fr=
+om incompatible pointer type
+In file included from /home/sfr/kernels/next/src/fs/novfs/daemon.c:24:
+include2/asm/semaphore.h:1:2: warning: #warning Use linux/semaphore.h, not =
+asm/semaphore.h
+In file included from /home/sfr/kernels/next/src/fs/novfs/scope.c:26:
+include2/asm/semaphore.h:1:2: warning: #warning Use linux/semaphore.h, not =
+asm/semaphore.h
+In file included from /home/sfr/kernels/next/src/fs/novfs/nwcapi.c:22:
+include2/asm/semaphore.h:1:2: warning: #warning Use linux/semaphore.h, not =
+asm/semaphore.h
 
- This could explain the reboot thing too -- our shutdown code is meant to
-revert all the APIC configuration back to the bootstrap default as yours
-would not be the first BIOS that has problems with its reboot vector being
-entered with the APIC infrastructure active.  But the bit that's written 
-to the NVRAM may interact with the BIOS for example.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
- OTOH, perhaps something has got broken on the way with the APIC code too
--- I have had a look and now we have two local APIC shutdown functions:
-disable_local_APIC() and lapic_shutdown() with overlapping functionality,
-plus the I/O APIC is cleared after the local APIC in at least one place,
-so I would not feel terribly confident about this code.
+--Signature=_Sat__21_Jun_2008_12_40_17_+1000_XsH=e2o6HXxQxLqi
+Content-Type: application/pgp-signature
 
-> > What's interesting, the "Virtual Wire IRQ" seems to work for you correctly
-> > (that's quite an odd setup where a local APIC input is used in the native
-> > mode -- please post /proc/interrupts for confirmation),
-> 
->            CPU0       CPU1       
->   0:        885      37234   IO-APIC-edge      timer
-[...]
-> (also available at: http://www.sisk.pl/kernel/debug/20080620/interrupts-1.txt).
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
- One for the other configuration, which reports "Virtual Wire IRQ", i.e.  
-without my "x86: I/O APIC: timer through 8259A second-chance" patch, would
-be more interesting, though perhaps less so now that the reason of the
-misbehaviour is known.
+iEYEARECAAYFAkhcahEACgkQTgG2atn1QN9/AgCgmLNW2f9da/od/AGA1ddFRUsW
+TpAAmwTRC7F0k2awqF7P+6xiCL+ygEmn
+=ABTV
+-----END PGP SIGNATURE-----
 
-> > which in turn implies the master 8259A drives its INT output as we expect.
-> > Why would the I/O APIC input have problems then?  Hmm...
-> 
-> Because it's wired to something we're not aware of?
-
- Well, sure, but the question in such a case would be: "What for?"  The
-output of the 8259A has had quite a standard meaning for some 30 years
-now, so I would expect one would not wire it to anything else but the
-interrupt input of a CPU or an APIC input without a purpose.  Or at least
-a reason.
-
-  Maciej
+--Signature=_Sat__21_Jun_2008_12_40_17_+1000_XsH=e2o6HXxQxLqi--
