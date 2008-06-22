@@ -1,47 +1,42 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
-Date: Sun, 22 Jun 2008 00:47:00 +0200
-Message-ID: <200806220047.01497.rjw@sisk.pl>
-References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806181640.45595.rjw@sisk.pl> <alpine.LFD.1.10.0806181726400.3395@apollo.tec.linutronix.de>
+From: Russell King <rmk@arm.linux.org.uk>
+Subject: Re: linux-next: arm build failure
+Date: Sun, 22 Jun 2008 20:00:41 +0100
+Message-ID: <20080622190041.GB21340@flint.arm.linux.org.uk>
+References: <20080616160747.27909f11.sfr@canb.auug.org.au> <20080616072915.GA17191@flint.arm.linux.org.uk> <20080616173757.4d8ba97a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:33008 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751218AbYFUWpt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 21 Jun 2008 18:45:49 -0400
-In-Reply-To: <alpine.LFD.1.10.0806181726400.3395@apollo.tec.linutronix.de>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:56625 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753695AbYFVTBF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 22 Jun 2008 15:01:05 -0400
 Content-Disposition: inline
+In-Reply-To: <20080616173757.4d8ba97a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Maciej W. Rozycki" <macro@linux-mips.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Dmitry Baryshkov <dbaryshkov@gmail.com>
 
-On Wednesday, 18 of June 2008, Thomas Gleixner wrote:
-> On Wed, 18 Jun 2008, Rafael J. Wysocki wrote:
-> > > I just checked that the original c1e series and the affected code in
-> > > tip are not different. IIRC you confirmed that the C1E patches would
-> > > work on your box. So I wonder what else got changed which causes these
-> > > problems.
+On Mon, Jun 16, 2008 at 05:37:57PM +1000, Stephen Rothwell wrote:
+> On Mon, 16 Jun 2008 08:29:16 +0100 Russell King <rmk@arm.linux.org.uk> wrote:
+> >
+> > On Mon, Jun 16, 2008 at 04:07:47PM +1000, Stephen Rothwell wrote:
+> > > Hi Russell,
+> > > 
+> > > Today's linux-next build (x86_64 allmodconfig) failed like this:
 > > 
-> > Well, to eliminate any possible correlations, do you have a version of the
-> > series or a single patch against the current mainline?
+> > Well, it's going to stay broken for the coming week.  I'm away from
+> > today.
 > 
-> http://userweb.kernel.org/~tglx/952f4a-c1e-apic.patch
-> http://userweb.kernel.org/~tglx/952f4a-c1e.patch
+> That's OK, I can keep reverting it (or I may try to figure out what
+> dependencies it needs).
 > 
-> c1e-apic is the forward port of the apic changes and c1e is the pure
-> c1e stuff. On my box it does not work w/o the c1e-apic one, but ....
+> Thanks for letting me know.
 
-Unfortunately, with the c1e.patch on top of the apic.patch on top of the
-current mainline I get the same symptoms as with -next:
-- processes freeze
-- CPU loads are unreasonably high
-- things generally get stucked if I don't move the mouse or press keys
+Okay, this should now be fixed.  Please confirm when you run your next
+linux-next build.
 
-Removing the the c1e.patch makes things work again.
-
-Thanks,
-Rafael
+-- 
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
