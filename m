@@ -1,75 +1,89 @@
-From: Greg Ungerer <gerg@snapgear.com>
-Subject: Re: [PATCH] m68knommu: ColdFire add support for kernel preemption
-Date: Mon, 23 Jun 2008 23:23:08 +1000
-Message-ID: <485FA3BC.5080807@snapgear.com>
-References: <200805010216.m412GT6t004096@goober>	<20080501143336.552e39e1.akpm@linux-foundation.org>	<481AC07A.6080707@snapgear.com>	<20080502083755.GA13973@Chamillionaire.breakpoint.cc>	<20080502052235.eb9c336a.akpm@linux-foundation.org>	<485F3585.2080606@snapgear.com>	<20080622225102.5117f22b.akpm@linux-foundation.org> <20080623175326.ddf5d2d4.sfr@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for June 20: [regression] No sound on SB600
+Date: Mon, 23 Jun 2008 16:32:08 +0200
+Message-ID: <200806231632.08639.rjw@sisk.pl>
+References: <20080620172507.b7301bd1.sfr@canb.auug.org.au> <200806212125.42472.rjw@sisk.pl> <s5hlk0w4g1x.wl%tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755799AbYFWNXW@vger.kernel.org>
-In-Reply-To: <20080623175326.ddf5d2d4.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ogre.sisk.pl ([217.79.144.158]:41099 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754637AbYFWOau (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Jun 2008 10:30:50 -0400
+In-Reply-To: <s5hlk0w4g1x.wl%tiwai@suse.de>
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi Stephen,
-
-Stephen Rothwell wrote:
-> Hi Greg,
+On Monday, 23 of June 2008, Takashi Iwai wrote:
+> At Sat, 21 Jun 2008 21:25:41 +0200,
+> Rafael J. Wysocki wrote:
+> > 
+> > On Saturday, 21 of June 2008, Takashi Iwai wrote:
+> > > At Sat, 21 Jun 2008 17:28:09 +0200,
+> > > Rafael J. Wysocki wrote:
+> > > > 
+> > > > On Friday, 20 of June 2008, Stephen Rothwell wrote:
+> > > > > Hi all,
+> > > > > 
+> > > > > Changes since next-20080619:
+> > > > > 
+> > > > > The net tree lost its conflict against Linus' tree.
+> > > > > 
+> > > > > The bkl-removal tree lost a conflict.
+> > > > 
+> > > > On one of my test boxes with the ATI chipset (SB600 south bridge) there's no
+> > > > sound output.  Bisection shows that the following commit causes this to happen
+> > > > and reverting the commit fixes the problem for me:
+> > > > 
+> > > > commit cf97e6678f1e1e7bbdb566c36771540123832a31
+> > > > Author: Takashi Iwai <tiwai@suse.de>
+> > > > Date:   Mon Jun 16 15:47:26 2008 +0200
+> > > > 
+> > > >     ALSA: hda - Fix wrong volumes in AD1988 auto-probe mode
+> > > >     
+> > > >     Don't create mixer volume elements for Headphone and Speaker if they
+> > > >     use the same DAC as normal line-outs on AD1988.  Otherwise the amp
+> > > >     value gets screwed up, e.g.
+> > > >     	https://bugzilla.novell.com/show_bug.cgi?id=398255
+> > > >     
+> > > >     Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> > > > 
+> > > > Please let me know if you need any additional information.
+> > > 
+> > > Could you run alsa-info.sh with --no-upload option and attach the
+> > > output for both states with and without that commit?  The script is
+> > > found at
+> > > 	http://www.alsa-project.org/alsa-info.sh
+> > > Also, show the relevant kernel message from snd-hda-intel (informing
+> > > the auto-parsing of pins, etc), too.
+> > 
+> > dmesg outputs and the outputs of 'alsa-info.sh --no-upload' for the kernel with
+> > the patch applied (1) and with the reverted (2) are at:
+> > 
+> > http://www.sisk.pl/kernel/debug/20080620/box2/dmesg-1.log
+> > http://www.sisk.pl/kernel/debug/20080620/box2/alsa-info-1.txt
+> > 
+> > http://www.sisk.pl/kernel/debug/20080620/box2/dmesg-2.log
+> > http://www.sisk.pl/kernel/debug/20080620/box2/alsa-info-2.txt
 > 
-> On Sun, 22 Jun 2008 22:51:02 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
->> On Mon, 23 Jun 2008 15:32:53 +1000 Greg Ungerer <gerg@snapgear.com> wrote:
->>
->>> Here is a git tree for the collection of patches for the m68knommu
->>> architecture that I intend for the 2.6.27 merge window.
->>>
->>> git://git.kernel.org/pub/scm/linux/kernel/git/gerg/m68knommu.git for-linus
+> Well, this is actually no regression but an unlucky side-effect of the
+> fix.
 > 
-> Added today (slipped it in at the end).
-
-Great, thanks.
-
-
->>> I have created a general uclinux changes git tree as well,
->>>
->>> git://git.kernel.org/pub/scm/linux/kernel/git/gerg/uclinux.git for-linus
+> In the old version, "Front" volume didn't work properly because of
+> confliction with a bogus "Headphone" volume.  Now, a wrong volume
+> element is removed but only "Front" remains while "Front" wasn't set
+> up properly.
 > 
-> This tree currently has no for-linus branch.  You should create one (even
-> if it just a subset of Linus' tree).  I've added it using its master
-> branch for now, please let me know when it is fixed.
-
-Ok, fixed now. There is an empty for-linus branch there.
-
-
-> Also, these branches would normally be called for-next.  Most people keep
-> for-linus for bug fixes for the current release.  If you decide to change
-> the branch name, just let me know.
-
-Ok, done too. Branches named for-next exist in both. The patches
-on the for-linus branch in the m68knommu.git are now on the
-for-next branch.
-
-Do I need to send a request to Linus to pull this into his
-tree during the next merge window?  Or will it migrate up
-from linux-next?
-
-
-> Repeat of the rules for linux-next: anything included must have been
-> posted somewhere appropriate, reviewed and unit tested (i.e. your tree
-> should build for you).
+> In short, the below should fix the problem:
 > 
->> Great, thanks.  But can we get them into linux-next please?  I'll pick
->> them up via that route.
-> 
-> Done.
+> 	% amixer set Front 90%
 
-Thanks
-Greg
+Well, okay, but where should I add that to make KDE mixers work, for example?
 
-
-------------------------------------------------------------------------
-Greg Ungerer  --  Chief Software Dude       EMAIL:     gerg@snapgear.com
-SnapGear -- a Secure Computing Company      PHONE:       +61 7 3435 2888
-825 Stanley St,                             FAX:         +61 7 3891 3630
-Woolloongabba, QLD, 4102, Australia         WEB: http://www.SnapGear.com
+Thanks,
+Rafael
