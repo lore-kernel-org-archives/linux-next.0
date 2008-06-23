@@ -1,73 +1,75 @@
-From: "Vegard Nossum" <vegard.nossum@gmail.com>
-Subject: Re: linux-next: Tree for June 23
-Date: Mon, 23 Jun 2008 14:26:28 +0200
-Message-ID: <19f34abd0806230526j77fc20e7w3d92cbe67ad4c552@mail.gmail.com>
-References: <20080623182549.b0552851.sfr@canb.auug.org.au>
-	 <19f34abd0806230323o6373015fj93a85b929545a7a8@mail.gmail.com>
-	 <19f34abd0806230326i592ba39eu837d290e21431d14@mail.gmail.com>
-	 <19f34abd0806230402x502eca3cna927eb8742553570@mail.gmail.com>
+From: Greg Ungerer <gerg@snapgear.com>
+Subject: Re: [PATCH] m68knommu: ColdFire add support for kernel preemption
+Date: Mon, 23 Jun 2008 23:23:08 +1000
+Message-ID: <485FA3BC.5080807@snapgear.com>
+References: <200805010216.m412GT6t004096@goober>	<20080501143336.552e39e1.akpm@linux-foundation.org>	<481AC07A.6080707@snapgear.com>	<20080502083755.GA13973@Chamillionaire.breakpoint.cc>	<20080502052235.eb9c336a.akpm@linux-foundation.org>	<485F3585.2080606@snapgear.com>	<20080622225102.5117f22b.akpm@linux-foundation.org> <20080623175326.ddf5d2d4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rv-out-0506.google.com ([209.85.198.236]:43573 "EHLO
-	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753647AbYFWM03 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Jun 2008 08:26:29 -0400
-Received: by rv-out-0506.google.com with SMTP id k40so7039746rvb.1
-        for <linux-next@vger.kernel.org>; Mon, 23 Jun 2008 05:26:28 -0700 (PDT)
-In-Reply-To: <19f34abd0806230402x502eca3cna927eb8742553570@mail.gmail.com>
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Steven Rostedt <srostedt@redhat.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <clameter@sgi.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755799AbYFWNXW@vger.kernel.org>
+In-Reply-To: <20080623175326.ddf5d2d4.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Jun 23, 2008 at 1:02 PM, Vegard Nossum <vegard.nossum@gmail.com> wrote:
-> On Mon, Jun 23, 2008 at 12:26 PM, Vegard Nossum <vegard.nossum@gmail.com> wrote:
->> On Mon, Jun 23, 2008 at 12:23 PM, Vegard Nossum <vegard.nossum@gmail.com> wrote:
->>> Testing tracer sched_switch: PASSED
->>> Testing tracer sysprof: PASSED
->>> Testing tracer ftrace: PASSED
->>> Testing dynamic ftrace: PASSED
->>> Testing tracer irqsoff: PASSED
->>> Testing tracer preemptoff: PASSED
->>> Testing tracer preemptirqsoff: <4>------------[ cut here ]------------
->>> WARNING: at kernel/lockdep.c:2680 check_flags+0x142/0x160()
->>> Pid: 2, comm: kthreadd Not tainted 2.6.26-rc6-next-20080620 #34
+Hi Stephen,
+
+Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> On Sun, 22 Jun 2008 22:51:02 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+>> On Mon, 23 Jun 2008 15:32:53 +1000 Greg Ungerer <gerg@snapgear.com> wrote:
 >>
->> <-- Oops, wrong version :-(
->>
->> Will try the latest one as well.
->
-> Okay, I can confirm that this happens with today's tree too. I also
-> get this (new) warning:
->
-> mm/slub.c: In function 'kmem_cache_defrag':
-> mm/slub.c:3046: warning: 'reclaimed' may be used uninitialized in this function
->
-> Otherwise things seem to work good :-)
+>>> Here is a git tree for the collection of patches for the m68knommu
+>>> architecture that I intend for the 2.6.27 merge window.
+>>>
+>>> git://git.kernel.org/pub/scm/linux/kernel/git/gerg/m68knommu.git for-linus
+> 
+> Added today (slipped it in at the end).
 
-In fact, I got this stacktrace when I shut down (but I was in a hurry
-so I didn't have the time to really investigate it):
-
-http://www.kernel.org/pub/linux/kernel/people/vegard/kernels/20080623-next/DSCF3014.JPG
-
-$ addr2line -e vmlinux -i c01fd0c1
-fs/sysfs/dir.c:380
-
-And additionally, the next two boots hung here (but the third one was okay):
-
-http://www.kernel.org/pub/linux/kernel/people/vegard/kernels/20080623-next/DSCF3015.JPG
-
-I don't know what these issues are related too. I can try
-debug_initcall for the hang.
+Great, thanks.
 
 
-Vegard
+>>> I have created a general uclinux changes git tree as well,
+>>>
+>>> git://git.kernel.org/pub/scm/linux/kernel/git/gerg/uclinux.git for-linus
+> 
+> This tree currently has no for-linus branch.  You should create one (even
+> if it just a subset of Linus' tree).  I've added it using its master
+> branch for now, please let me know when it is fixed.
 
--- 
-"The animistic metaphor of the bug that maliciously sneaked in while
-the programmer was not looking is intellectually dishonest as it
-disguises that the error is the programmer's own creation."
-	-- E. W. Dijkstra, EWD1036
+Ok, fixed now. There is an empty for-linus branch there.
+
+
+> Also, these branches would normally be called for-next.  Most people keep
+> for-linus for bug fixes for the current release.  If you decide to change
+> the branch name, just let me know.
+
+Ok, done too. Branches named for-next exist in both. The patches
+on the for-linus branch in the m68knommu.git are now on the
+for-next branch.
+
+Do I need to send a request to Linus to pull this into his
+tree during the next merge window?  Or will it migrate up
+from linux-next?
+
+
+> Repeat of the rules for linux-next: anything included must have been
+> posted somewhere appropriate, reviewed and unit tested (i.e. your tree
+> should build for you).
+> 
+>> Great, thanks.  But can we get them into linux-next please?  I'll pick
+>> them up via that route.
+> 
+> Done.
+
+Thanks
+Greg
+
+
+------------------------------------------------------------------------
+Greg Ungerer  --  Chief Software Dude       EMAIL:     gerg@snapgear.com
+SnapGear -- a Secure Computing Company      PHONE:       +61 7 3435 2888
+825 Stanley St,                             FAX:         +61 7 3891 3630
+Woolloongabba, QLD, 4102, Australia         WEB: http://www.SnapGear.com
