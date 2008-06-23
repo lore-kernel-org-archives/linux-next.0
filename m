@@ -1,33 +1,53 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: kernel BUG at kernel/workqueue.c:169 (was: linux-next: Tree for June 16)
-Date: Mon, 23 Jun 2008 13:15:54 +1000
-Message-ID: <200806231315.54490.rusty@rustcorp.com.au>
-References: <20080616190103.c3271e3e.sfr@canb.auug.org.au> <1213651727.3275.3.camel@dhcppc4> <1213987718.3134.7.camel@dhcppc4>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the acpi tree
+Date: Mon, 23 Jun 2008 14:19:25 +1000
+Message-ID: <20080623141925.05a1d214.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__23_Jun_2008_14_19_25_+1000_xxdDfXs.PWv6AwSY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:40101 "EHLO ozlabs.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52851 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752291AbYFWDQD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 22 Jun 2008 23:16:03 -0400
-In-Reply-To: <1213987718.3134.7.camel@dhcppc4>
-Content-Disposition: inline
+	id S1750924AbYFWETe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Jun 2008 00:19:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Meyer <thomas@m3y3r.de>
-Cc: rpjday@crashcourse.ca, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, Zhao Yakui <yakui.zhao@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>
 
-On Saturday 21 June 2008 04:48:37 Thomas Meyer wrote:
-> I tried to bisect this one, but without a consistent result.
+--Signature=_Mon__23_Jun_2008_14_19_25_+1000_xxdDfXs.PWv6AwSY
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That's always suspicious...
+Hi Len,
 
-> Another thing i tried is to change <linux/kernel.h>:
+Today's linux-next merge of the acpi tree got a conflict in
+arch/x86/kernel/process.c between commit
+8750bf598db6a0ea3475d1cf8da922b325941e12 ("x86: add C1E aware idle
+function") from the x86 tree and commits
+bd08eac673842bab79ddaec048012b6e5d4074fd ("ACPI: Create "idle=3Dhalt" boot
+parameter") and 5ffc8862cc917ae5107049f3c5fd549fb6c19cac ("ACPI : Create
+"idle=3Dnomwait" bootparam") from the acpi tree.
 
-This will also cause almost everything to be rebuilt.  I find it hard to 
-believe this is the culprit; does a "make clean" also fix it?
+This is just an overlapping additions problem, so I took both in the
+obvious manner.
 
-Thanks,
-Rusty.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__23_Jun_2008_14_19_25_+1000_xxdDfXs.PWv6AwSY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhfJE0ACgkQTgG2atn1QN+w+wCgiK1fjeTIOZRj8SL5QderLE6x
+qdoAoJaySM19p3fYPgCPthj3cG9mXmVO
+=kJwU
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__23_Jun_2008_14_19_25_+1000_xxdDfXs.PWv6AwSY--
