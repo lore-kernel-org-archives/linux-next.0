@@ -1,63 +1,60 @@
-From: "Vegard Nossum" <vegard.nossum@gmail.com>
+From: Pekka J Enberg <penberg@cs.helsinki.fi>
 Subject: Re: linux-next: Tree for June 23
-Date: Mon, 23 Jun 2008 19:43:16 +0200
-Message-ID: <19f34abd0806231043x6f254ed1ye896b55eafec577f@mail.gmail.com>
+Date: Mon, 23 Jun 2008 21:56:15 +0300 (EEST)
+Message-ID: <Pine.LNX.4.64.0806232155060.4033@sbz-30.cs.Helsinki.FI>
 References: <20080623182549.b0552851.sfr@canb.auug.org.au>
-	 <19f34abd0806230323o6373015fj93a85b929545a7a8@mail.gmail.com>
-	 <19f34abd0806230326i592ba39eu837d290e21431d14@mail.gmail.com>
-	 <19f34abd0806230402x502eca3cna927eb8742553570@mail.gmail.com>
-	 <19f34abd0806230526j77fc20e7w3d92cbe67ad4c552@mail.gmail.com>
-	 <19f34abd0806231026t1c797c28td50a141b9715bf94@mail.gmail.com>
+ <19f34abd0806230323o6373015fj93a85b929545a7a8@mail.gmail.com>
+ <19f34abd0806230326i592ba39eu837d290e21431d14@mail.gmail.com>
+ <19f34abd0806230402x502eca3cna927eb8742553570@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rv-out-0506.google.com ([209.85.198.225]:3487 "EHLO
-	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752374AbYFWRnQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Jun 2008 13:43:16 -0400
-Received: by rv-out-0506.google.com with SMTP id k40so7175961rvb.1
-        for <linux-next@vger.kernel.org>; Mon, 23 Jun 2008 10:43:16 -0700 (PDT)
-In-Reply-To: <19f34abd0806231026t1c797c28td50a141b9715bf94@mail.gmail.com>
-Content-Disposition: inline
+Received: from courier.cs.helsinki.fi ([128.214.9.1]:47160 "EHLO
+	mail.cs.helsinki.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752211AbYFWS4S (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Jun 2008 14:56:18 -0400
+In-Reply-To: <19f34abd0806230402x502eca3cna927eb8742553570@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Steven Rostedt <srostedt@redhat.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <clameter@sgi.com>
+To: Vegard Nossum <vegard.nossum@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Steven Rostedt <srostedt@redhat.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Christoph Lameter <clameter@sgi.com>
 
-On Mon, Jun 23, 2008 at 7:26 PM, Vegard Nossum <vegard.nossum@gmail.com> wrote:
-> On Mon, Jun 23, 2008 at 2:26 PM, Vegard Nossum <vegard.nossum@gmail.com> wrote:
->> And additionally, the next two boots hung here (but the third one was okay):
->>
->> http://www.kernel.org/pub/linux/kernel/people/vegard/kernels/20080623-next/DSCF3015.JPG
->>
->> I don't know what these issues are related too. I can try
->> debug_initcall for the hang.
->
-> The last initcall to run is populate_rootfs(), however the last
-> message on the screen is "debug: unmapping init memory
-> f7cb0000..f7ff0000":
->
-> http://www.kernel.org/pub/linux/kernel/people/vegard/kernels/20080623-next/DSCF3016.JPG
->
-> In fact, it seems to me that init memory is being unmapped before all
-> initcalls have finished... that would seem disastrous.
+On Mon, 23 Jun 2008, Vegard Nossum wrote:
+> Okay, I can confirm that this happens with today's tree too. I also
+> get this (new) warning:
+> 
+> mm/slub.c: In function 'kmem_cache_defrag':
+> mm/slub.c:3046: warning: 'reclaimed' may be used uninitialized in this function
+> 
+> Otherwise things seem to work good :-)
 
-Ah, scratch that. Digging a bit deeper, it becomes obvious that the
-initramfs/initrd code is freeing its own memory using the same
-function in the end (free_init_pages()) as free_initmem(), so they'll
-in fact just print the same message. That doesn't change the fact of
-the hang, however...
+Christoph, while the warning itself seems harmless, I think we need to do 
+something like the following; otherwise the return value for 
+kmem_cache_defrag() will be incorrect on NUMA machines that have more than 
+one N_NORMAL_MEMORY nodes.
 
-My config can be found at:
+		Pekka
 
-    http://www.kernel.org/pub/linux/kernel/people/vegard/kernels/20080623-next/config
-
-
-Vegard
-
--- 
-"The animistic metaphor of the bug that maliciously sneaked in while
-the programmer was not looking is intellectually dishonest as it
-disguises that the error is the programmer's own creation."
-	-- E. W. Dijkstra, EWD1036
+diff --git a/mm/slub.c b/mm/slub.c
+index deb8153..7707550 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -3043,7 +3043,7 @@ int kmem_cache_defrag(int node)
+ 		return 0;
+ 
+ 	list_for_each_entry(s, &slab_caches, list) {
+-		unsigned long reclaimed;
++		unsigned long reclaimed = 0;
+ 
+ 		/*
+ 		 * Defragmentable caches come first. If the slab cache is not
+@@ -3056,7 +3056,7 @@ int kmem_cache_defrag(int node)
+ 			int nid;
+ 
+ 			for_each_node_state(nid, N_NORMAL_MEMORY)
+-				reclaimed = __kmem_cache_shrink(s, nid,
++				reclaimed += __kmem_cache_shrink(s, nid,
+ 								MAX_PARTIAL);
+ 		} else
+ 			reclaimed = __kmem_cache_shrink(s, node, MAX_PARTIAL);
