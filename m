@@ -1,65 +1,51 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] m68knommu: ColdFire add support for kernel preemption
-Date: Sun, 22 Jun 2008 22:51:02 -0700
-Message-ID: <20080622225102.5117f22b.akpm@linux-foundation.org>
-References: <200805010216.m412GT6t004096@goober>
-	<20080501143336.552e39e1.akpm@linux-foundation.org>
-	<481AC07A.6080707@snapgear.com>
-	<20080502083755.GA13973@Chamillionaire.breakpoint.cc>
-	<20080502052235.eb9c336a.akpm@linux-foundation.org>
-	<485F3585.2080606@snapgear.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of pcmcia tree
+Date: Mon, 23 Jun 2008 17:32:41 +1000
+Message-ID: <20080623173241.3ac77e63.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__23_Jun_2008_17_32_41_+1000_VAWDekPpRU7w.TUb"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:50932 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756162AbYFWFvS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 Jun 2008 01:51:18 -0400
-In-Reply-To: <485F3585.2080606@snapgear.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:59091 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750752AbYFWHc6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Jun 2008 03:32:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg Ungerer <gerg@snapgear.com>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: linux-next@vger.kernel.org, Kristoffer Ericson <kristoffer_e1@hotmail.com>
 
-On Mon, 23 Jun 2008 15:32:53 +1000 Greg Ungerer <gerg@snapgear.com> wrote:
+--Signature=_Mon__23_Jun_2008_17_32_41_+1000_VAWDekPpRU7w.TUb
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Andrew,
-> 
-> Andrew Morton wrote:
-> > On Fri, 2 May 2008 10:37:55 +0200 Sebastian Siewior <lkml@ml.breakpoint.cc> wrote:
-> > 
-> >>>>> Subject: [PATCH] m68knommu: ColdFire add support for kernel preemption
-> >>>> Please find a way to get your patch queue into linux-next so that others
-> >>>> get some visibility into what you're brewing earlier than
-> >>>> last-day-of-the-merge-window?
-> >>> Is a git tree the only way?
-> >> Others (Greg KH for instance, i2c) have quilt queues.
-> > 
-> > Yup.  Examples:
-> > 
-> > ftp://ftp.kernel.org/pub/linux/kernel/people/agk/patches/2.6/editing/
-> > http://ozlabs.org/~rusty/kernel/rr-latest
-> > http://www.kernel.org/pub/linux/kernel/people/gregkh/gregkh-2.6/gregkh-02-usb
-> > 
-> > Note how you can publish subsets of your patchset by bracketing them with
-> > "# MM_PATCHES_START" and "# MM_PATCHES_END" for -mm, and "#
-> > NEXT_PATCHES_START" and "# NEXT_PATCHES_END" for linux-next.
-> 
-> I decided to go the git route.
-> 
-> Here is a git tree for the collection of patches for the m68knommu
-> architecture that I intend for the 2.6.27 merge window.
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/gerg/m68knommu.git for-linus
-> 
-> I have created a general uclinux changes git tree as well,
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/gerg/uclinux.git for-linus
-> 
-> though currently I have nothing queued for that.
-> 
+Hi Dominik,
 
-Great, thanks.  But can we get them into linux-next please?  I'll pick
-them up via that route.
+Today's linux-next merge of the pcmcia tree got a conflict in
+drivers/ide/legacy/ide-cs.c between commit
+a17bf220231a5061a29a27a99a273246eb3b156e ("pcmcia: add another pata/ide
+ID") from Linus' tree and commit f3aa02c57dec52fbe519c51f741e3a94d19dcb4c
+("pcmcia: add another pata/ide ID") from the pcmcia tree.
+
+>From the discussion on LKML, I assume the upstream version is correct and
+took that.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__23_Jun_2008_17_32_41_+1000_VAWDekPpRU7w.TUb
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhfUZkACgkQTgG2atn1QN9+gQCggtLu3V8dPEWeDba1Uj0LlqRg
+sL0An3VCk0vFRSoY0Paasbhzhq6LeV9z
+=1aqs
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__23_Jun_2008_17_32_41_+1000_VAWDekPpRU7w.TUb--
