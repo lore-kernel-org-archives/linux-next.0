@@ -1,42 +1,114 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: s390 build failure
-Date: Mon, 23 Jun 2008 15:13:03 -0700
-Message-ID: <20080623221303.GA16460@kroah.com>
-References: <20080620135257.102f024c.sfr@canb.auug.org.au> <20080620095843.271c20e8@gondolin.boeblingen.de.ibm.com> <20080623172226.08baece9@gondolin.boeblingen.de.ibm.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for June 20: [regression] No sound on SB600
+Date: Tue, 24 Jun 2008 00:48:34 +0200
+Message-ID: <200806240048.35044.rjw@sisk.pl>
+References: <20080620172507.b7301bd1.sfr@canb.auug.org.au> <200806231705.02994.rjw@sisk.pl> <s5h7icg2nqo.wl%tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:50026 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751948AbYFWWPO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Jun 2008 18:15:14 -0400
+Received: from ogre.sisk.pl ([217.79.144.158]:43197 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751022AbYFWWr2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Jun 2008 18:47:28 -0400
+In-Reply-To: <s5h7icg2nqo.wl%tiwai@suse.de>
 Content-Disposition: inline
-In-Reply-To: <20080623172226.08baece9@gondolin.boeblingen.de.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Cornelia Huck <cornelia.huck@de.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Jun 23, 2008 at 05:22:26PM +0200, Cornelia Huck wrote:
-> On Fri, 20 Jun 2008 09:58:43 +0200,
-> Cornelia Huck <cornelia.huck@de.ibm.com> wrote:
-> 
-> > I could also try to split out
-> > dev_set_name() conversion from the init_name stuff, but I fear that
-> > doesn't make much sense...
-> 
-> Well, so I did just that... I'll reply to this mail with two patches:
-> 
-> - "s390: bus_id -> dev_set_name() changes" should replace the patch of
-> the same title. It removes the dependency on init_name.
-> 
-> - "s390: bus_id -> dev_set_name() for css and ccw busses" should go
-> after "driver core: add init_name to struct device". It depends on
-> init_name and consequently should be commented out until that patch is
-> re-activated.
-> 
-> Greg: Could you please add these to your tree?
+On Monday, 23 of June 2008, Takashi Iwai wrote:
+> At Mon, 23 Jun 2008 17:05:02 +0200,
+> Rafael J. Wysocki wrote:
+> > 
+> > On Monday, 23 of June 2008, Takashi Iwai wrote:
+> > > At Mon, 23 Jun 2008 16:32:08 +0200,
+> > > Rafael J. Wysocki wrote:
+> > > > 
+> > > > On Monday, 23 of June 2008, Takashi Iwai wrote:
+> > > > > At Sat, 21 Jun 2008 21:25:41 +0200,
+> > > > > Rafael J. Wysocki wrote:
+> > > > > > 
+> > > > > > On Saturday, 21 of June 2008, Takashi Iwai wrote:
+> > > > > > > At Sat, 21 Jun 2008 17:28:09 +0200,
+> > > > > > > Rafael J. Wysocki wrote:
+> > > > > > > > 
+> > > > > > > > On Friday, 20 of June 2008, Stephen Rothwell wrote:
+> > > > > > > > > Hi all,
+> > > > > > > > > 
+> > > > > > > > > Changes since next-20080619:
+> > > > > > > > > 
+> > > > > > > > > The net tree lost its conflict against Linus' tree.
+> > > > > > > > > 
+> > > > > > > > > The bkl-removal tree lost a conflict.
+> > > > > > > > 
+> > > > > > > > On one of my test boxes with the ATI chipset (SB600 south bridge) there's no
+> > > > > > > > sound output.  Bisection shows that the following commit causes this to happen
+> > > > > > > > and reverting the commit fixes the problem for me:
+> > > > > > > > 
+> > > > > > > > commit cf97e6678f1e1e7bbdb566c36771540123832a31
+> > > > > > > > Author: Takashi Iwai <tiwai@suse.de>
+> > > > > > > > Date:   Mon Jun 16 15:47:26 2008 +0200
+> > > > > > > > 
+> > > > > > > >     ALSA: hda - Fix wrong volumes in AD1988 auto-probe mode
+> > > > > > > >     
+> > > > > > > >     Don't create mixer volume elements for Headphone and Speaker if they
+> > > > > > > >     use the same DAC as normal line-outs on AD1988.  Otherwise the amp
+> > > > > > > >     value gets screwed up, e.g.
+> > > > > > > >     	https://bugzilla.novell.com/show_bug.cgi?id=398255
+> > > > > > > >     
+> > > > > > > >     Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> > > > > > > > 
+> > > > > > > > Please let me know if you need any additional information.
+> > > > > > > 
+> > > > > > > Could you run alsa-info.sh with --no-upload option and attach the
+> > > > > > > output for both states with and without that commit?  The script is
+> > > > > > > found at
+> > > > > > > 	http://www.alsa-project.org/alsa-info.sh
+> > > > > > > Also, show the relevant kernel message from snd-hda-intel (informing
+> > > > > > > the auto-parsing of pins, etc), too.
+> > > > > > 
+> > > > > > dmesg outputs and the outputs of 'alsa-info.sh --no-upload' for the kernel with
+> > > > > > the patch applied (1) and with the reverted (2) are at:
+> > > > > > 
+> > > > > > http://www.sisk.pl/kernel/debug/20080620/box2/dmesg-1.log
+> > > > > > http://www.sisk.pl/kernel/debug/20080620/box2/alsa-info-1.txt
+> > > > > > 
+> > > > > > http://www.sisk.pl/kernel/debug/20080620/box2/dmesg-2.log
+> > > > > > http://www.sisk.pl/kernel/debug/20080620/box2/alsa-info-2.txt
+> > > > > 
+> > > > > Well, this is actually no regression but an unlucky side-effect of the
+> > > > > fix.
+> > > > > 
+> > > > > In the old version, "Front" volume didn't work properly because of
+> > > > > confliction with a bogus "Headphone" volume.  Now, a wrong volume
+> > > > > element is removed but only "Front" remains while "Front" wasn't set
+> > > > > up properly.
+> > > > > 
+> > > > > In short, the below should fix the problem:
+> > > > > 
+> > > > > 	% amixer set Front 90%
+> > > > 
+> > > > Well, okay, but where should I add that to make KDE mixers work, for example?
 
-I've now done so, thanks for sending them to me.
+Ah, there is a "Front" volume control that works instead of the "Headphone" one.
+ 
+> > > 
+> > > You must have "Master" volume control now.  This also changes Front,
+> > > etc.  Try to reassign Master as the default volume in kmix.
+>>
+> > Yes, I have the "Master" control and I had it before the patch too, but it has
+> > no effect both after and before the patch AFAICS (will double check).
+> 
+> Oh, yes, let me know if "Master" still doesn't work.
 
-greg k-h
+No, it doesn't.
+
+> This should have been fixed with the last patch, too.
+
+Oh well ... ;-)
+
+Thanks,
+Rafael
