@@ -1,32 +1,70 @@
-From: Christoph Lameter <clameter@sgi.com>
-Subject: Re: linux-next: Tree for June 23
-Date: Mon, 23 Jun 2008 12:21:50 -0700 (PDT)
-Message-ID: <Pine.LNX.4.64.0806231220470.28070@schroedinger.engr.sgi.com>
-References: <20080623182549.b0552851.sfr@canb.auug.org.au>
- <19f34abd0806230323o6373015fj93a85b929545a7a8@mail.gmail.com>
- <19f34abd0806230326i592ba39eu837d290e21431d14@mail.gmail.com>
- <19f34abd0806230402x502eca3cna927eb8742553570@mail.gmail.com>
- <Pine.LNX.4.64.0806232155060.4033@sbz-30.cs.Helsinki.FI>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: linux-next build poblems
+Date: Mon, 23 Jun 2008 22:07:02 +0200
+Message-ID: <20080623200702.GC8573@uranus.ravnborg.org>
+References: <20080624022232.5c81519c.sfr@canb.auug.org.au> <20080623171023.GA16238@flint.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay2.sgi.com ([192.48.171.30]:49659 "EHLO relay.sgi.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1753992AbYFWTVv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 Jun 2008 15:21:51 -0400
-In-Reply-To: <Pine.LNX.4.64.0806232155060.4033@sbz-30.cs.Helsinki.FI>
+Received: from pasmtpb.tele.dk ([80.160.77.98]:48912 "EHLO pasmtpB.tele.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754194AbYFWUGR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Jun 2008 16:06:17 -0400
+Content-Disposition: inline
+In-Reply-To: <20080623171023.GA16238@flint.arm.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pekka J Enberg <penberg@cs.helsinki.fi>
-Cc: Vegard Nossum <vegard.nossum@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Steven Rostedt <srostedt@redhat.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Haavard Skinnemoen <hskinnemoen@atmel.com>, Paul Mundt <lethal@linux-sh.org>, linux-next@vger.kernel.org
 
-On Mon, 23 Jun 2008, Pekka J Enberg wrote:
+On Mon, Jun 23, 2008 at 06:10:23PM +0100, Russell King wrote:
+> On Tue, Jun 24, 2008 at 02:22:32AM +1000, Stephen Rothwell wrote:
+> > Hi Sam,
+> > 
+> > I haven't had a good look, but something has gone badly wrong with the
+> > arm, avr32 and sh builds of linux-next today.  Have a look at
+> > http://kisskb.ellerman.id.au/linux-next.
+> 
+> Looks like samr's to blame.
+Yes.
 
-> Christoph, while the warning itself seems harmless, I think we need to do 
-> something like the following; otherwise the return value for 
-> kmem_cache_defrag() will be incorrect on NUMA machines that have more than 
-> one N_NORMAL_MEMORY nodes.
+> 
+> Before:
+> /path/to/build/directory/include:
+> lrwxrwxrwx   1 rmk rmk    7 Nov 27  2007 asm -> asm-arm
+> drwxrwxr-x   2 rmk rmk 4096 Jun  2 19:40 asm-arm
+> drwxr-xr-x 194 rmk rmk 8192 Jun  2 19:43 config
+> drwxrwxr-x   2 rmk rmk 4096 Jun  2 19:43 linux
+> 
+> After:
+> /path/to/build/directory/include:
+> drwxrwxr-x   2 rmk rmk 4096 Jun 23 17:59 asm-arm
+> drwxrwxr-x 107 rmk rmk 4096 Jun 23 18:00 config
+> drwxrwxr-x   2 rmk rmk 4096 Jun 23 18:00 linux
+> 
+> and inside /path/to/build/directory/include/asm-arm:
+> lrwxrwxrwx 1 rmk rmk     59 Jun 23 17:59 arch -> /home/rmk/git/linux-2.6-test/include/asm-arm/arch-versatile
+> -rw-rw-r-- 1 rmk rmk 603835 Jun 23 17:59 mach-types.h
+> 
+> Note the symlink inside include/asm-arm, and the lack of asm -> asm-arm
+> symlink.  This means that <asm/arch/foo.h> won't be found.
 
-Patch looks to be the right fix. Thanks.
+arm/Makefile create the directory asm-arm and use it for the symlink.
+But now asm is no longer a symlink to asm-arm so we fail.
 
-Acked-by: Christoph Lameter <clameter@sgi.com>
+I need to work out something.
+But my first attemps failed miserably and I will stop for now
+as I have some day-time job stuff to be done.
+Travelling for a few days from now one so I cannot do anything
+until the weekend.
+
+Either we should pull the offending commit from -next or drop
+kbuild-next.git.
+
+As a sidenote I expect arm to benefit of the offending patch as we
+could kill the symlinks when the header files were rearranged.
+But that does not help us here.
+
+As for sh and avr they both play symlinks games too - so same story there.
+
+	Sam
