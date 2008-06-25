@@ -1,39 +1,46 @@
 From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the tip-core tree
-Date: Wed, 25 Jun 2008 11:17:45 +0200
-Message-ID: <20080625091745.GC11524@elte.hu>
-References: <20080625104928.d26f77fe.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the sched tree
+Date: Wed, 25 Jun 2008 11:36:26 +0200
+Message-ID: <20080625093626.GD11524@elte.hu>
+References: <20080625115553.adf91947.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:40960 "EHLO mx2.mail.elte.hu"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:49199 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753226AbYFYJSF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Jun 2008 05:18:05 -0400
+	id S1753904AbYFYJgo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Jun 2008 05:36:44 -0400
 Content-Disposition: inline
-In-Reply-To: <20080625104928.d26f77fe.sfr@canb.auug.org.au>
+In-Reply-To: <20080625115553.adf91947.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Jeremy Fitzhardinge <jeremy@goop.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
 
 
 * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
 > Hi all,
 > 
-> Today's linux-next merge of the tip-core tree got a trivial context 
-> conflicts in arch/x86/xen/enlighten.c, arch/x86/xen/mmu.c and 
-> arch/x86/xen/mmu.h between commit 
-> 28499143933f19b28008a556ed59255d6009391a ("xen: remove support for 
-> non-PAE 32-bit") from Linus' tree (and also exists in the tip-core 
-> tree) and commit e2426cf85f8db5891fb5831323d2d0c176c4dadc ("xen: avoid 
-> hypercalls when updating unpinned pud/pmd") from the tip-core tree.
+> Today's linux-next merge of the sched tree got a trivial conflict in 
+> kernel/sched_rt.c between commit 
+> 363ab6f1424cdea63e5d182312d60e19077b892a ("core: use performance 
+> variant for_each_cpu_mask_nr") from the cpus4096 tree and commit 
+> eff6549b957d15d1ad168d90b8c1eb643b9c163f ("sched: rt: move some code 
+> around") from the sched tree.
 > 
-> I fixed it up and will carry the fixup.
+> The latter just moved some code that the former modified.  I took the 
+> latter but added the former's modification (for_each_cpu_mask -> 
+> for_each_cpu_mask_nr).
 
-thanks Stephen. This conflict should go away on the next -tip 
-integration run. (I'm wondering why Git didnt manage to do a clean merge 
-here - this was a cleanly cherry-picked commit that went upstream.)
+thanks.
+
+You might want to double-check such resolutions by checking that the end 
+result of this file is the same as tip/auto-latest [or tip/master].
+
+Or if it's easier for you we could offer an integration branch of all 
+auto-branches in -tip that go towards linux-next. (as we do these same 
+tip-internal resolutions ourselves already prior pushing out any of the 
+updated -next branches)
 
 	Ingo
