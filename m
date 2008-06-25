@@ -1,53 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: rr tree build failure
-Date: Wed, 25 Jun 2008 16:58:25 +1000
-Message-ID: <20080625165825.60fdd9e9.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the acpi tree
+Date: Wed, 25 Jun 2008 09:15:08 +0200
+Message-ID: <20080625071508.GA20454@elte.hu>
+References: <20080625142034.59b343c7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__25_Jun_2008_16_58_25_+1000_Syby+HhYQSCffR3A"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44898 "EHLO smtps.tip.net.au"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:41373 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754532AbYFYG6h (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Jun 2008 02:58:37 -0400
+	id S1752115AbYFYHPb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Jun 2008 03:15:31 -0400
+Content-Disposition: inline
+In-Reply-To: <20080625142034.59b343c7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, Christian Borntraeger <borntraeger@de.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, Bob Moore <robert.moore@intel.com>, Yinghai Lu <yhlu.kernel@gmail.com>
 
---Signature=_Wed__25_Jun_2008_16_58_25_+1000_Syby+HhYQSCffR3A
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Today's linux-next build (x86_64 allmodconfig (CONFIG_VIRTIO_CONSOLE=3Dy,
-CONFIG_VIRTIO=3Dm)) failed like this:
+> Hi Len,
+> 
+> Today's linux-next merge of the acpi tree got a conflict in 
+> arch/x86/kernel/srat_32.c between commit 
+> 9920a004626a2dc2980693d634e4000f086cb283 ("x86: use acpi_numa_init to 
+> parse on 32-bit numa") from the tree and commit 
+> a27557c76c6e092ec886f0e3e443f3190f0b0fcc ("ACPICA: Eliminate 
+> acpi_native_uint type") from the acpi tree.
+> 
+> The code modified by the latter was removed by the former.  So I used 
+> the former.
 
-drivers/built-in.o: In function `init':
-drivers/char/virtio_console.c:245: undefined reference to `register_virtio_=
-driver'
+thanks Stephen.
 
-I assume it is caused by commit 6588784e224baacbc209ce32bd82d92ab05ae0e8
-("virtio_console: use virtqueue notification for hvc_console")  which I
-have reverted for today.
+I suspect we cannot really eliminate this particular conflict because 
+the latter change is a (much welcome!) infrastructure cleanup in all 
+things ACPI, the former is an early init refactoring/cleanup that 
+depends on a whole lot of other (non-ACPI) changes in tip/x86/*. It's
+too late in .26-rc cycle to push the infrastructure cleanup upstream, so
+i suspect we have to live with this conflict for a while.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__25_Jun_2008_16_58_25_+1000_Syby+HhYQSCffR3A
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhh7JEACgkQTgG2atn1QN8nsACfVTvNXQ4dgdfrjVFsWkZwkNZs
-mhQAn0dXiCiSxY/xuX1blvV8H7i5PcNa
-=ImIe
------END PGP SIGNATURE-----
-
---Signature=_Wed__25_Jun_2008_16_58_25_+1000_Syby+HhYQSCffR3A--
+	Ingo
