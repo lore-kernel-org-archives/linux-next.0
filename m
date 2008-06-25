@@ -1,37 +1,55 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: linux-next: pending wireless/wireless-current merge conflict
-Date: Wed, 25 Jun 2008 14:04:30 -0400
-Message-ID: <20080625180430.GA13730@tuxdriver.com>
-References: <20080613215601.GA8345@tuxdriver.com>
+From: Len Brown <lenb@kernel.org>
+Subject: Re: linux-next: manual merge of the acpi tree
+Date: Wed, 25 Jun 2008 15:18:40 -0400 (EDT)
+Message-ID: <alpine.LFD.1.10.0806251516460.3014@localhost.localdomain>
+References: <20080625142034.59b343c7.sfr@canb.auug.org.au>
+ <20080625071508.GA20454@elte.hu>
+ <20080626015918.71a6b4d7.sfr@canb.auug.org.au> <20080625162923.GB6040@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ra.tuxdriver.com ([70.61.120.52]:3146 "EHLO ra.tuxdriver.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751250AbYFYSQ6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Jun 2008 14:16:58 -0400
-Content-Disposition: inline
-In-Reply-To: <20080613215601.GA8345@tuxdriver.com>
+Received: from vms042pub.verizon.net ([206.46.252.42]:53470 "EHLO
+	vms042pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752034AbYFYTTZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Jun 2008 15:19:25 -0400
+Received: from localhost.localdomain ([72.93.254.151])
+ by vms042.mailsrvcs.net (Sun Java System Messaging Server 6.2-6.01 (built Apr
+ 3 2006)) with ESMTPA id <0K3100BSP9N7Q441@vms042.mailsrvcs.net> for
+ linux-next@vger.kernel.org; Wed, 25 Jun 2008 14:18:44 -0500 (CDT)
+In-reply-to: <20080625162923.GB6040@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, linux-wireless@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Bob Moore <robert.moore@intel.com>, Yinghai Lu <yhlu.kernel@gmail.com>
 
-I just sent a pull request for Dave that will result in nasty-looking
-conflict in iwl4965-base.c.  I have a sample merge available here:
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-next-2.6 merge-test
 
-The overview of the resolution is to ignore any changes in
-iwl4965-base.c and take drivers/net/wireless/iwlwifi/iwl-scan.c from
-the URL above.
+On Wed, 25 Jun 2008, Ingo Molnar wrote:
 
-Just a heads-up... :-)
+> 
+> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> > On Wed, 25 Jun 2008 09:15:08 +0200 Ingo Molnar <mingo@elte.hu> wrote:
+> > >
+> > > I suspect we cannot really eliminate this particular conflict 
+> > > because the latter change is a (much welcome!) infrastructure 
+> > > cleanup in all things ACPI, the former is an early init 
+> > > refactoring/cleanup that depends on a whole lot of other (non-ACPI) 
+> > > changes in tip/x86/*. It's too late in .26-rc cycle to push the 
+> > > infrastructure cleanup upstream, so i suspect we have to live with 
+> > > this conflict for a while.
+> > 
+> > No problem.  How long can it be until all this is merged in Linus' 
+> > tree anyway? :-)
+> 
+> if Len acks these patches i can do a by-line mini-topic with just these 
+> commits and put them into tip/auto-x86-next. It's Len's call though :-)
 
-John
+Ingo,
+can you point me tot he patches you'd like me to review/ack?
 
-P.S.  Hopefully the iwlwifi guys will double check the accuracy of
-my fix-up...
--- 
-John W. Linville
-linville@tuxdriver.com
+I don't understand how you propose to void a linux-next merge conflict --
+unless you're going to cherry-pick the ACPICA changes into your tree?
+
+thanks,
+-Len
