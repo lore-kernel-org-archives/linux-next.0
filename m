@@ -1,46 +1,52 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the sched tree
-Date: Wed, 25 Jun 2008 11:36:26 +0200
-Message-ID: <20080625093626.GD11524@elte.hu>
-References: <20080625115553.adf91947.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the acpi tree
+Date: Thu, 26 Jun 2008 00:24:55 +1000
+Message-ID: <20080626002455.410c18de.sfr@canb.auug.org.au>
+References: <20080625142034.59b343c7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__26_Jun_2008_00_24_55_+1000_6ZgD_lhW.1FNYP/p"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:49199 "EHLO mx3.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48299 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753904AbYFYJgo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Jun 2008 05:36:44 -0400
-Content-Disposition: inline
-In-Reply-To: <20080625115553.adf91947.sfr@canb.auug.org.au>
+	id S1758061AbYFYOZJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Jun 2008 10:25:09 -0400
+In-Reply-To: <20080625142034.59b343c7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, Bob Moore <robert.moore@intel.com>, Yinghai Lu <yhlu.kernel@gmail.com>, Ingo Molnar <mingo@elte.hu>
 
+--Signature=_Thu__26_Jun_2008_00_24_55_+1000_6ZgD_lhW.1FNYP/p
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Wed, 25 Jun 2008 14:20:34 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the acpi tree got a conflict in
+> arch/x86/kernel/srat_32.c between commit
+> 9920a004626a2dc2980693d634e4000f086cb283 ("x86: use acpi_numa_init to
+> parse on 32-bit numa") from the  tree and commit
+                                  ^
+x86
 
-> Hi all,
-> 
-> Today's linux-next merge of the sched tree got a trivial conflict in 
-> kernel/sched_rt.c between commit 
-> 363ab6f1424cdea63e5d182312d60e19077b892a ("core: use performance 
-> variant for_each_cpu_mask_nr") from the cpus4096 tree and commit 
-> eff6549b957d15d1ad168d90b8c1eb643b9c163f ("sched: rt: move some code 
-> around") from the sched tree.
-> 
-> The latter just moved some code that the former modified.  I took the 
-> latter but added the former's modification (for_each_cpu_mask -> 
-> for_each_cpu_mask_nr).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-thanks.
+--Signature=_Thu__26_Jun_2008_00_24_55_+1000_6ZgD_lhW.1FNYP/p
+Content-Type: application/pgp-signature
 
-You might want to double-check such resolutions by checking that the end 
-result of this file is the same as tip/auto-latest [or tip/master].
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-Or if it's easier for you we could offer an integration branch of all 
-auto-branches in -tip that go towards linux-next. (as we do these same 
-tip-internal resolutions ourselves already prior pushing out any of the 
-updated -next branches)
+iEYEARECAAYFAkhiVTcACgkQTgG2atn1QN9GzACglWqRYbM7+51APhx0fsjfHZ/Y
+eYsAoIy4yWsnHORnkmqbAzh3Hs2LH/jA
+=Pa08
+-----END PGP SIGNATURE-----
 
-	Ingo
+--Signature=_Thu__26_Jun_2008_00_24_55_+1000_6ZgD_lhW.1FNYP/p--
