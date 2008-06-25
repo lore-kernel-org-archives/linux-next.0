@@ -1,73 +1,52 @@
-From: Timothy Shimmin <tes@sgi.com>
-Subject: Re: [xfs-masters] Re: linux-next: Tree for June 24 (XFS x2)
-Date: Wed, 25 Jun 2008 11:52:40 +1000
-Message-ID: <4861A4E8.1060101@sgi.com>
-References: <20080624175612.cdf29651.sfr@canb.auug.org.au> <20080624171809.42bbdf68.randy.dunlap@oracle.com> <20080625003751.GP29319@disturbed> <4861A00E.6040801@sgi.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the sched tree
+Date: Wed, 25 Jun 2008 11:55:53 +1000
+Message-ID: <20080625115553.adf91947.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__25_Jun_2008_11_55_53_+1000_K/6otyGj87rfVL18"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay1.sgi.com ([192.48.171.29]:57197 "EHLO relay.sgi.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751473AbYFYBwv (ORCPT
-	<rfc822;@sgi.com:linux-next@vger.kernel.org>);
-	Tue, 24 Jun 2008 21:52:51 -0400
-In-Reply-To: <4861A00E.6040801@sgi.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41818 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750887AbYFYB4O (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Jun 2008 21:56:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: xfs-masters@oss.sgi.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org
 
-Timothy Shimmin wrote:
->>> 2. ACL's undefined
->>>
->>>   CC      fs/xfs/linux-2.6/xfs_xattr.o
->>> /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_xattr.c: In function 'xfs_decode_acl':
->>> /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_xattr.c:40: error: '_ACL_TYPE_ACCESS' undeclared (first use in this function)
->>> /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_xattr.c:40: error: (Each undeclared identifier is reported only once
->>> /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_xattr.c:40: error: for each function it appears in.)
->>> /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_xattr.c:42: error: '_ACL_TYPE_DEFAULT' undeclared (first use in this function)
->>> make[3]: *** [fs/xfs/linux-2.6/xfs_xattr.o] Error 1
->> And this will be a !CONFIG_XFS_POSIX_ACL build, I think.
->>
-> Yep. I didn't test the hch patch without CONFIG_XFS_POSIX_ACL. Oops.
-> 
-> xfs_acl.h:
-> 
-> #ifdef CONFIG_XFS_POSIX_ACL
-> ...
-> #define _ACL_TYPE_ACCESS        1
-> #define _ACL_TYPE_DEFAULT       2
-> ...
-> #endif
-> 
-> There is a bunch of ACL code in linux-2.6/xfs_xattr.c.
-> Possibly we could just modify xfs_acl.h as I think most other calls
-> have the non CONFIG'ed versions.
-> I'll have a look.
-> 
+--Signature=_Wed__25_Jun_2008_11_55_53_+1000_K/6otyGj87rfVL18
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-So we could move up the acl defines in xfs_acl.h.
-Unless Christoph wants some other rearrangement...
+Hi all,
 
-Index: 2.6.x-xfs-quilt/fs/xfs/xfs_acl.h
-===================================================================
---- 2.6.x-xfs-quilt.orig/fs/xfs/xfs_acl.h	2008-06-25 10:46:42.000000000 +1000
-+++ 2.6.x-xfs-quilt/fs/xfs/xfs_acl.h	2008-06-25 11:45:25.221045485 +1000
-@@ -46,6 +46,8 @@ typedef struct xfs_acl {
- #define SGI_ACL_FILE_SIZE	(sizeof(SGI_ACL_FILE)-1)
- #define SGI_ACL_DEFAULT_SIZE	(sizeof(SGI_ACL_DEFAULT)-1)
- 
-+#define _ACL_TYPE_ACCESS	1
-+#define _ACL_TYPE_DEFAULT	2
- 
- #ifdef CONFIG_XFS_POSIX_ACL
- 
-@@ -66,8 +68,6 @@ extern int xfs_acl_vset(bhv_vnode_t *, v
- extern int xfs_acl_vget(bhv_vnode_t *, void *, size_t, int);
- extern int xfs_acl_vremove(bhv_vnode_t *, int);
- 
--#define _ACL_TYPE_ACCESS	1
--#define _ACL_TYPE_DEFAULT	2
- #define _ACL_PERM_INVALID(perm)	((perm) & ~(ACL_READ|ACL_WRITE|ACL_EXECUTE))
- 
- #define _ACL_INHERIT(c,m,d)	(xfs_acl_inherit(c,m,d))
+Today's linux-next merge of the sched tree got a trivial conflict in
+kernel/sched_rt.c between commit 363ab6f1424cdea63e5d182312d60e19077b892a
+("core: use performance variant for_each_cpu_mask_nr") from the cpus4096
+tree and commit eff6549b957d15d1ad168d90b8c1eb643b9c163f ("sched: rt:
+move some code around") from the sched tree.
+
+The latter just moved some code that the former modified.  I took the
+latter but added the former's modification (for_each_cpu_mask ->
+for_each_cpu_mask_nr).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__25_Jun_2008_11_55_53_+1000_K/6otyGj87rfVL18
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhhpakACgkQTgG2atn1QN800QCgl0HbcqLro6ADeijyVzLpS1M5
+m00An2F90Ksh/CbHm/k8oI9HwgK8D2gm
+=6iLG
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__25_Jun_2008_11_55_53_+1000_K/6otyGj87rfVL18--
