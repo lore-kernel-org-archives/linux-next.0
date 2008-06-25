@@ -1,85 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the tip-core tree
-Date: Thu, 26 Jun 2008 02:13:15 +1000
-Message-ID: <20080626021315.dcd8662a.sfr@canb.auug.org.au>
-References: <20080625104928.d26f77fe.sfr@canb.auug.org.au>
-	<20080625091745.GC11524@elte.hu>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the acpi tree
+Date: Wed, 25 Jun 2008 18:29:23 +0200
+Message-ID: <20080625162923.GB6040@elte.hu>
+References: <20080625142034.59b343c7.sfr@canb.auug.org.au> <20080625071508.GA20454@elte.hu> <20080626015918.71a6b4d7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__26_Jun_2008_02_13_15_+1000_Z+tLuJHyuObfChCD"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35460 "EHLO smtps.tip.net.au"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:36951 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753357AbYFYQNd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Jun 2008 12:13:33 -0400
-In-Reply-To: <20080625091745.GC11524@elte.hu>
+	id S1760900AbYFYQ3n (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Jun 2008 12:29:43 -0400
+Content-Disposition: inline
+In-Reply-To: <20080626015918.71a6b4d7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Jeremy Fitzhardinge <jeremy@goop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, Bob Moore <robert.moore@intel.com>, Yinghai Lu <yhlu.kernel@gmail.com>
 
---Signature=_Thu__26_Jun_2008_02_13_15_+1000_Z+tLuJHyuObfChCD
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Ingo,
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-On Wed, 25 Jun 2008 11:17:45 +0200 Ingo Molnar <mingo@elte.hu> wrote:
->
-> (I'm wondering why Git didnt manage to do a clean merge=20
-> here - this was a cleanly cherry-picked commit that went upstream.)
+> On Wed, 25 Jun 2008 09:15:08 +0200 Ingo Molnar <mingo@elte.hu> wrote:
+> >
+> > I suspect we cannot really eliminate this particular conflict 
+> > because the latter change is a (much welcome!) infrastructure 
+> > cleanup in all things ACPI, the former is an early init 
+> > refactoring/cleanup that depends on a whole lot of other (non-ACPI) 
+> > changes in tip/x86/*. It's too late in .26-rc cycle to push the 
+> > infrastructure cleanup upstream, so i suspect we have to live with 
+> > this conflict for a while.
+> 
+> No problem.  How long can it be until all this is merged in Linus' 
+> tree anyway? :-)
 
-Here is what Linus had to say about this just a few days ago:
+if Len acks these patches i can do a by-line mini-topic with just these 
+commits and put them into tip/auto-x86-next. It's Len's call though :-)
 
-"However, since conflicts clearly happen, let's look at what *does* cause=20
-conflicts. It's not the existence of the same patch to the same area in a=20
-file. It's about *different* patches to the same area in a file.
-
-If you have two development trees that have the exact same changes to some=
-=20
-area in a file, then the merge algorithm with be very happy, and just=20
-merge those changes. It's the standard three-way merge.
-
-HOWEVER! If there are _other_ changes that overlap (and aren't identical),=
-=20
-then *that* is when conflicts happen. And that is true regardless of=20
-whether the history also contains some identical changes. IOW, if you have
-
- - patch A (in _both_ histories)
- - patch B (in just _one_ of the histories)
-
-and they overlap, then that will be a conflict. And now, since the=20
-original file will have *neither* A nor B, the conflict will basically be=20
-the union of A and B - the three-way merge does not care at all about the=20
-fact hat A existed twice, because qutie frankly, maybe B was a _fix_ to A,=
-=20
-and even though A exists in both branches, it may well be that A on it's=20
-own is pure and utter sh*t and shoult not be merged.
-
-See?
-
-So identical patches (with different commits) in two trees is not what=20
-causes problems. It's the *non-identical* ones that cause problms. And if=20
-they overlap with the identical ones, even partially, then yes, you'll=20
-have to resolve not just the non-identical ones, but the identical ones=20
-too."
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__26_Jun_2008_02_13_15_+1000_Z+tLuJHyuObfChCD
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhibpsACgkQTgG2atn1QN/YuQCeL7p30j3jPuPimzRiwD9vWDhA
-MLoAnjMRdWVrc4JNuvkOkWRSCyVqbn/h
-=cxvm
------END PGP SIGNATURE-----
-
---Signature=_Thu__26_Jun_2008_02_13_15_+1000_Z+tLuJHyuObfChCD--
+	Ingo
