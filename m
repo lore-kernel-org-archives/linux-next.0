@@ -1,47 +1,32 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for June 24 (XFS x2)
-Date: Tue, 24 Jun 2008 17:18:09 -0700
-Message-ID: <20080624171809.42bbdf68.randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for June 24 (ivtv)
+Date: Tue, 24 Jun 2008 17:24:14 -0700
+Message-ID: <20080624172414.22c91416.randy.dunlap@oracle.com>
 References: <20080624175612.cdf29651.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rgminet01.oracle.com ([148.87.113.118]:10634 "EHLO
+Received: from rgminet01.oracle.com ([148.87.113.118]:12967 "EHLO
 	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753360AbYFYASr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Jun 2008 20:18:47 -0400
+	with ESMTP id S1750770AbYFYA3X (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Jun 2008 20:29:23 -0400
 In-Reply-To: <20080624175612.cdf29651.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, xfs-masters@oss.sgi.com
-
-XFS shows 2 build problems today.
-
-1. xfs_stats.h problem
-
-  CC      fs/xfs/xfs_rtalloc.o
-In file included from /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_linux.h:91,
-                 from /local/linsrc/linux-next-20080624/fs/xfs/xfs.h:44,
-                 from /local/linsrc/linux-next-20080624/fs/xfs/xfs_rtalloc.c:18:
-/local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_stats.h: In function 'xfs_init_procfs':
-/local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_stats.h:150: error: expected ';' before '}' token
-make[3]: *** [fs/xfs/xfs_rtalloc.o] Error 1
-
-2. ACL's undefined
-
-  CC      fs/xfs/linux-2.6/xfs_xattr.o
-/local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_xattr.c: In function 'xfs_decode_acl':
-/local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_xattr.c:40: error: '_ACL_TYPE_ACCESS' undeclared (first use in this function)
-/local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_xattr.c:40: error: (Each undeclared identifier is reported only once
-/local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_xattr.c:40: error: for each function it appears in.)
-/local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_xattr.c:42: error: '_ACL_TYPE_DEFAULT' undeclared (first use in this function)
-make[3]: *** [fs/xfs/linux-2.6/xfs_xattr.o] Error 1
+To: Stephen Rothwell <sfr@canb.auug.org.au>, v4l-dvb-maintainer@linuxtv.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, hverkuil@xs4all.nl, ivtv-devel@ivtvdriver.org
 
 
+ivtv-ioctl.c uses struct fields that are protected by
+CONFIG_VIDEO_ADV_DEBUG even when that config option is not set, causing:
 
-These happened multiple times.  .configs are available if needed.
+build-r2146.out:/local/linsrc/linux-next-20080624/drivers/media/video/ivtv/ivtv-ioc
+tl.c:1899: error: 'struct video_device' has no member named 'vidioc_g_register'
+build-r2146.out:/local/linsrc/linux-next-20080624/drivers/media/video/ivtv/ivtv-ioc
+tl.c:1900: error: 'struct video_device' has no member named 'vidioc_s_register'
+build-r2146.out:make[5]: *** [drivers/media/video/ivtv/ivtv-ioctl.o] Error 1
+
 
 ---
 ~Randy
