@@ -1,127 +1,51 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] iwlwifi: fix build for CONFIG_INPUT=n
-Date: Tue, 24 Jun 2008 21:02:46 -0700
-Message-ID: <20080624210246.0fe18e2c.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the acpi tree
+Date: Wed, 25 Jun 2008 14:13:11 +1000
+Message-ID: <20080625141311.7132d5fe.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__25_Jun_2008_14_13_11_+1000_TMskS65eo093yLOQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rgminet01.oracle.com ([148.87.113.118]:50207 "EHLO
-	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752667AbYFYEEw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Jun 2008 00:04:52 -0400
+Received: from chilli.pcug.org.au ([203.10.76.44]:42351 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750930AbYFYENX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Jun 2008 00:13:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-wireless@vger.kernel.org, yi.zhu@intel.com
-Cc: linux-next@vger.kernel.org, akpm <akpm@linux-foundation.org>, linville@tuxdriver.com
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+--Signature=_Wed__25_Jun_2008_14_13_11_+1000_TMskS65eo093yLOQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix iwlwifi so that it builds cleanly with CONFIG_INPUT=n.
-Also free the input device on exit.
+Hi Len,
 
-drivers/built-in.o: In function `iwl_rfkill_unregister':
-(.text+0xbf430): undefined reference to `input_unregister_device'
-drivers/built-in.o: In function `iwl_rfkill_init':
-(.text+0xbf51c): undefined reference to `input_allocate_device'
-drivers/built-in.o: In function `iwl_rfkill_init':
-(.text+0xbf5bf): undefined reference to `input_register_device'
-drivers/built-in.o: In function `iwl_rfkill_init':
-(.text+0xbf5e9): undefined reference to `input_free_device'
-net/built-in.o: In function `rfkill_disconnect':
-rfkill-input.c:(.text+0xe71e1): undefined reference to `input_close_device'
-rfkill-input.c:(.text+0xe71e9): undefined reference to `input_unregister_handle'
-net/built-in.o: In function `rfkill_connect':
-rfkill-input.c:(.text+0xe723e): undefined reference to `input_register_handle'
-rfkill-input.c:(.text+0xe724d): undefined reference to `input_open_device'
-rfkill-input.c:(.text+0xe725c): undefined reference to `input_unregister_handle'
-net/built-in.o: In function `rfkill_handler_init':
-rfkill-input.c:(.init.text+0x36ec): undefined reference to `input_register_handler'
-net/built-in.o: In function `rfkill_handler_exit':
-rfkill-input.c:(.exit.text+0x112c): undefined reference to `input_unregister_handler'
-make[1]: *** [.tmp_vmlinux1] Error 1
+Today's linux-next merge of the acpi tree got a trivial conflict in
+arch/x86/kernel/process.c between commit
+8750bf598db6a0ea3475d1cf8da922b325941e12 ("x86: add C1E aware idle
+function") from the x86 tree and commit
+5ffc8862cc917ae5107049f3c5fd549fb6c19cac ("ACPI : Create "idle=3Dnomwait"
+bootparam") from the acpi tree.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/net/wireless/iwlwifi/Kconfig      |    2 +-
- drivers/net/wireless/iwlwifi/iwl-rfkill.c |   11 ++++++++++-
- 2 files changed, 11 insertions(+), 2 deletions(-)
+It was just a case of overlapping additions of includes.  So I took both.
 
---- linux-next-20080624.orig/drivers/net/wireless/iwlwifi/Kconfig
-+++ linux-next-20080624/drivers/net/wireless/iwlwifi/Kconfig
-@@ -8,7 +8,7 @@ config IWLCORE
- 	select MAC80211_LEDS if IWLWIFI_LEDS
- 	select LEDS_CLASS if IWLWIFI_LEDS
- 	select RFKILL if IWLWIFI_RFKILL
--	select RFKILL_INPUT if IWLWIFI_RFKILL
-+	select RFKILL_INPUT if (IWLWIFI_RFKILL && INPUT)
- 
- config IWLWIFI_LEDS
- 	bool
---- linux-next-20080624.orig/drivers/net/wireless/iwlwifi/iwl-rfkill.c
-+++ linux-next-20080624/drivers/net/wireless/iwlwifi/iwl-rfkill.c
-@@ -95,6 +95,7 @@ int iwl_rfkill_init(struct iwl_priv *pri
- 	priv->rfkill_mngr.rfkill->dev.class->suspend = NULL;
- 	priv->rfkill_mngr.rfkill->dev.class->resume = NULL;
- 
-+#if defined(CONFIG_RFKILL_INPUT) || defined(CONFIG_RFKILL_INPUT_MODULE)
- 	priv->rfkill_mngr.input_dev = input_allocate_device();
- 	if (!priv->rfkill_mngr.input_dev) {
- 		IWL_ERROR("Unable to allocate rfkill input device.\n");
-@@ -109,6 +110,7 @@ int iwl_rfkill_init(struct iwl_priv *pri
- 	priv->rfkill_mngr.input_dev->dev.parent = device;
- 	priv->rfkill_mngr.input_dev->evbit[0] = BIT(EV_KEY);
- 	set_bit(KEY_WLAN, priv->rfkill_mngr.input_dev->keybit);
-+#endif
- 
- 	ret = rfkill_register(priv->rfkill_mngr.rfkill);
- 	if (ret) {
-@@ -116,11 +118,13 @@ int iwl_rfkill_init(struct iwl_priv *pri
- 		goto free_input_dev;
- 	}
- 
-+#if defined(CONFIG_RFKILL_INPUT) || defined(CONFIG_RFKILL_INPUT_MODULE)
- 	ret = input_register_device(priv->rfkill_mngr.input_dev);
- 	if (ret) {
- 		IWL_ERROR("Unable to register rfkill input device: %d\n", ret);
- 		goto unregister_rfkill;
- 	}
-+#endif
- 
- 	IWL_DEBUG_RF_KILL("RFKILL initialization complete.\n");
- 	return ret;
-@@ -130,8 +134,10 @@ unregister_rfkill:
- 	priv->rfkill_mngr.rfkill = NULL;
- 
- free_input_dev:
-+#if defined(CONFIG_RFKILL_INPUT) || defined(CONFIG_RFKILL_INPUT_MODULE)
- 	input_free_device(priv->rfkill_mngr.input_dev);
- 	priv->rfkill_mngr.input_dev = NULL;
-+#endif
- 
- freed_rfkill:
- 	if (priv->rfkill_mngr.rfkill != NULL)
-@@ -147,13 +153,16 @@ EXPORT_SYMBOL(iwl_rfkill_init);
- void iwl_rfkill_unregister(struct iwl_priv *priv)
- {
- 
-+#if defined(CONFIG_RFKILL_INPUT) || defined(CONFIG_RFKILL_INPUT_MODULE)
- 	if (priv->rfkill_mngr.input_dev)
- 		input_unregister_device(priv->rfkill_mngr.input_dev);
-+	input_free_device(priv->rfkill_mngr.input_dev);
-+	priv->rfkill_mngr.input_dev = NULL;
-+#endif
- 
- 	if (priv->rfkill_mngr.rfkill)
- 		rfkill_unregister(priv->rfkill_mngr.rfkill);
- 
--	priv->rfkill_mngr.input_dev = NULL;
- 	priv->rfkill_mngr.rfkill = NULL;
- }
- EXPORT_SYMBOL(iwl_rfkill_unregister);
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+--Signature=_Wed__25_Jun_2008_14_13_11_+1000_TMskS65eo093yLOQ
+Content-Type: application/pgp-signature
 
----
-~Randy
-Linux Plumbers Conference, 17-19 September 2008, Portland, Oregon USA
-http://linuxplumbersconf.org/
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhhxdcACgkQTgG2atn1QN/F1gCfZkb61uWlZeBSsKIHez/ZPW6V
+MzMAn047YUxWjZRbByKLvZDaeZj8EUNm
+=ajsC
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__25_Jun_2008_14_13_11_+1000_TMskS65eo093yLOQ--
