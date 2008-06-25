@@ -1,77 +1,52 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: [xfs-masters] Re: linux-next: Tree for June 24 (XFS x2)
-Date: Wed, 25 Jun 2008 10:37:51 +1000
-Message-ID: <20080625003751.GP29319@disturbed>
-References: <20080624175612.cdf29651.sfr@canb.auug.org.au> <20080624171809.42bbdf68.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip-core tree
+Date: Wed, 25 Jun 2008 10:49:28 +1000
+Message-ID: <20080625104928.d26f77fe.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756008AbYFYAiK@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__25_Jun_2008_10_49_28_+1000_LxXG0EciE8oxb/hn"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37618 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751250AbYFYAtn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Jun 2008 20:49:43 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Jeremy Fitzhardinge <jeremy@goop.org>
+
+--Signature=_Wed__25_Jun_2008_10_49_28_+1000_LxXG0EciE8oxb/hn
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20080624171809.42bbdf68.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: xfs-masters@oss.sgi.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 24, 2008 at 05:18:09PM -0700, Randy Dunlap wrote:
-> XFS shows 2 build problems today.
-> 
-> 1. xfs_stats.h problem
-> 
->   CC      fs/xfs/xfs_rtalloc.o
-> In file included from /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_linux.h:91,
->                  from /local/linsrc/linux-next-20080624/fs/xfs/xfs.h:44,
->                  from /local/linsrc/linux-next-20080624/fs/xfs/xfs_rtalloc.c:18:
-> /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_stats.h: In function 'xfs_init_procfs':
-> /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_stats.h:150: error: expected ';' before '}' token
-> make[3]: *** [fs/xfs/xfs_rtalloc.o] Error 1
+Hi all,
 
-This will be a !CONFIG_PROC_FS change.
+Today's linux-next merge of the tip-core tree got a trivial context
+conflicts in arch/x86/xen/enlighten.c, arch/x86/xen/mmu.c and
+arch/x86/xen/mmu.h between commit
+28499143933f19b28008a556ed59255d6009391a ("xen: remove support for
+non-PAE 32-bit") from Linus' tree (and also exists in the tip-core tree)
+and commit e2426cf85f8db5891fb5831323d2d0c176c4dadc ("xen: avoid
+hypercalls when updating unpinned pud/pmd") from the tip-core tree.
 
-Lachlan/Niv - This is the guilty party:
+I fixed it up and will carry the fixup.
 
-http://oss.sgi.com/cgi-bin/gitweb.cgi?p=xfs/xfs-2.6.git;a=commit;h=e0fe783155e4f1c7106f3579c258b9f995330c19
-
-The commit log is:
-
-[XFS]
- 
- SGI-PV: 111111
- SGI-Modid: xfs-linux-melb:xfs-kern:31210a
- 
- Signed-off-by: Niv Sardi <xaiki@sgi.com>
- Signed-off-by: Lachlan McIlroy <lachlan@sgi.com>
----
-
-What the hell happened here? Where's the commit title, description
-so this can be tracked back to a real patch?  That PV# is also bogus....
-
-I suspect that it is this patch:
-
-http://oss.sgi.com/archives/xfs/2008-05/msg00322.html
-
-Which means that the Signed-Off-By list is incorrect as well as the original
-patch came from Christoph. This can't go to mainline like this - the commit log
-needs to be fixed up.
-
-> 2. ACL's undefined
-> 
->   CC      fs/xfs/linux-2.6/xfs_xattr.o
-> /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_xattr.c: In function 'xfs_decode_acl':
-> /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_xattr.c:40: error: '_ACL_TYPE_ACCESS' undeclared (first use in this function)
-> /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_xattr.c:40: error: (Each undeclared identifier is reported only once
-> /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_xattr.c:40: error: for each function it appears in.)
-> /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_xattr.c:42: error: '_ACL_TYPE_DEFAULT' undeclared (first use in this function)
-> make[3]: *** [fs/xfs/linux-2.6/xfs_xattr.o] Error 1
-
-And this will be a !CONFIG_XFS_POSIX_ACL build, I think.
-
-Christoph - this is part of your change to use the generic ACL stuff,
-can you have a look?
-
+--=20
 Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--Signature=_Wed__25_Jun_2008_10_49_28_+1000_LxXG0EciE8oxb/hn
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhhlhgACgkQTgG2atn1QN8qmQCgkosVa84px1WvB2kie4MN3oUX
+UmEAn3YFZtaj1uKQql4fb3LoDr4/RdTc
+=PbMO
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__25_Jun_2008_10_49_28_+1000_LxXG0EciE8oxb/hn--
