@@ -1,39 +1,37 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the acpi tree
-Date: Wed, 25 Jun 2008 18:29:23 +0200
-Message-ID: <20080625162923.GB6040@elte.hu>
-References: <20080625142034.59b343c7.sfr@canb.auug.org.au> <20080625071508.GA20454@elte.hu> <20080626015918.71a6b4d7.sfr@canb.auug.org.au>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: linux-next: pending wireless/wireless-current merge conflict
+Date: Wed, 25 Jun 2008 14:04:30 -0400
+Message-ID: <20080625180430.GA13730@tuxdriver.com>
+References: <20080613215601.GA8345@tuxdriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:36951 "EHLO mx3.mail.elte.hu"
+Received: from ra.tuxdriver.com ([70.61.120.52]:3146 "EHLO ra.tuxdriver.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760900AbYFYQ3n (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Jun 2008 12:29:43 -0400
+	id S1751250AbYFYSQ6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Jun 2008 14:16:58 -0400
 Content-Disposition: inline
-In-Reply-To: <20080626015918.71a6b4d7.sfr@canb.auug.org.au>
+In-Reply-To: <20080613215601.GA8345@tuxdriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, Bob Moore <robert.moore@intel.com>, Yinghai Lu <yhlu.kernel@gmail.com>
+Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, linux-wireless@vger.kernel.org
 
+I just sent a pull request for Dave that will result in nasty-looking
+conflict in iwl4965-base.c.  I have a sample merge available here:
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-next-2.6 merge-test
 
-> On Wed, 25 Jun 2008 09:15:08 +0200 Ingo Molnar <mingo@elte.hu> wrote:
-> >
-> > I suspect we cannot really eliminate this particular conflict 
-> > because the latter change is a (much welcome!) infrastructure 
-> > cleanup in all things ACPI, the former is an early init 
-> > refactoring/cleanup that depends on a whole lot of other (non-ACPI) 
-> > changes in tip/x86/*. It's too late in .26-rc cycle to push the 
-> > infrastructure cleanup upstream, so i suspect we have to live with 
-> > this conflict for a while.
-> 
-> No problem.  How long can it be until all this is merged in Linus' 
-> tree anyway? :-)
+The overview of the resolution is to ignore any changes in
+iwl4965-base.c and take drivers/net/wireless/iwlwifi/iwl-scan.c from
+the URL above.
 
-if Len acks these patches i can do a by-line mini-topic with just these 
-commits and put them into tip/auto-x86-next. It's Len's call though :-)
+Just a heads-up... :-)
 
-	Ingo
+John
+
+P.S.  Hopefully the iwlwifi guys will double check the accuracy of
+my fix-up...
+-- 
+John W. Linville
+linville@tuxdriver.com
