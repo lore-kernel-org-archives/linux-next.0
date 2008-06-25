@@ -1,86 +1,51 @@
-From: Lachlan McIlroy <lachlan@sgi.com>
-Subject: Re: [xfs-masters] Re: linux-next: Tree for June 24 (XFS x2)
-Date: Wed, 25 Jun 2008 12:01:15 +1000
-Message-ID: <4861A6EB.6050806@sgi.com>
-References: <20080624175612.cdf29651.sfr@canb.auug.org.au> <20080624171809.42bbdf68.randy.dunlap@oracle.com> <20080625003751.GP29319@disturbed>
-Reply-To: lachlan@sgi.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the x86 tree
+Date: Wed, 25 Jun 2008 12:28:29 +1000
+Message-ID: <20080625122829.88386973.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__25_Jun_2008_12_28_29_+1000_qLFxB=pS9iuYZ.B6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from netops-testserver-3-out.sgi.com ([192.48.171.28]:53374 "EHLO
-	relay.sgi.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751473AbYFYB52 (ORCPT
-	<rfc822;@sgi.com:linux-next@vger.kernel.org>);
-	Tue, 24 Jun 2008 21:57:28 -0400
-In-Reply-To: <20080625003751.GP29319@disturbed>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36797 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754515AbYFYC2v (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Jun 2008 22:28:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: xfs-masters@oss.sgi.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org
 
-Dave Chinner wrote:
-> On Tue, Jun 24, 2008 at 05:18:09PM -0700, Randy Dunlap wrote:
->> XFS shows 2 build problems today.
->>
->> 1. xfs_stats.h problem
->>
->>   CC      fs/xfs/xfs_rtalloc.o
->> In file included from /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_linux.h:91,
->>                  from /local/linsrc/linux-next-20080624/fs/xfs/xfs.h:44,
->>                  from /local/linsrc/linux-next-20080624/fs/xfs/xfs_rtalloc.c:18:
->> /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_stats.h: In function 'xfs_init_procfs':
->> /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_stats.h:150: error: expected ';' before '}' token
->> make[3]: *** [fs/xfs/xfs_rtalloc.o] Error 1
-> 
-> This will be a !CONFIG_PROC_FS change.
-> 
-> Lachlan/Niv - This is the guilty party:
-> 
-> http://oss.sgi.com/cgi-bin/gitweb.cgi?p=xfs/xfs-2.6.git;a=commit;h=e0fe783155e4f1c7106f3579c258b9f995330c19
-> 
-> The commit log is:
-> 
-> [XFS]
->  
->  SGI-PV: 111111
->  SGI-Modid: xfs-linux-melb:xfs-kern:31210a
->  
->  Signed-off-by: Niv Sardi <xaiki@sgi.com>
->  Signed-off-by: Lachlan McIlroy <lachlan@sgi.com>
-> ---
-> 
-> What the hell happened here? Where's the commit title, description
-> so this can be tracked back to a real patch?  That PV# is also bogus....
-> 
-> I suspect that it is this patch:
-> 
-> http://oss.sgi.com/archives/xfs/2008-05/msg00322.html
-> 
-> Which means that the Signed-Off-By list is incorrect as well as the original
-> patch came from Christoph. This can't go to mainline like this - the commit log
-> needs to be fixed up.
+--Signature=_Wed__25_Jun_2008_12_28_29_+1000_qLFxB=pS9iuYZ.B6
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-We knew this checkin was stuffed up and I was planning to fix it in the for-linus
-branch before pushing to mainline.  The merge tools had kittens when it came across
-it too.  I think we need to rip it out of ptools and re-checkin it in with the
-correct details.
+Hi all,
 
-> 
->> 2. ACL's undefined
->>
->>   CC      fs/xfs/linux-2.6/xfs_xattr.o
->> /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_xattr.c: In function 'xfs_decode_acl':
->> /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_xattr.c:40: error: '_ACL_TYPE_ACCESS' undeclared (first use in this function)
->> /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_xattr.c:40: error: (Each undeclared identifier is reported only once
->> /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_xattr.c:40: error: for each function it appears in.)
->> /local/linsrc/linux-next-20080624/fs/xfs/linux-2.6/xfs_xattr.c:42: error: '_ACL_TYPE_DEFAULT' undeclared (first use in this function)
->> make[3]: *** [fs/xfs/linux-2.6/xfs_xattr.o] Error 1
-> 
-> And this will be a !CONFIG_XFS_POSIX_ACL build, I think.
-> 
-> Christoph - this is part of your change to use the generic ACL stuff,
-> can you have a look?
-> 
-> Cheers,
-> 
-> Dave.
+Today's linux-next merge of the x86 tree got a trivial context conflict
+in arch/x86/kernel/entry_32.S between commit
+9b7dc567d03d74a1fbae84e88949b6a60d922d82 ("x86: unify interrupt vector
+defines") from the x86 tree and commit
+395a59d0f8e86bb39cd700c3d185d30c670bb958 ("ftrace: store mcount address
+in rec->ip") from the ftrace tree.
+
+I just took both changes to the includes.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__25_Jun_2008_12_28_29_+1000_qLFxB=pS9iuYZ.B6
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhhrU0ACgkQTgG2atn1QN8IeQCeJGsqJSrLsUeOiX74lbAPC43h
+0SgAnjfOols6byU5bMlzXVMlTPvWqtyZ
+=oFZm
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__25_Jun_2008_12_28_29_+1000_qLFxB=pS9iuYZ.B6--
