@@ -1,56 +1,58 @@
-From: Len Brown <lenb@kernel.org>
-Subject: Re: linux-next: manual merge of the acpi tree
-Date: Thu, 26 Jun 2008 18:42:19 -0400 (EDT)
-Message-ID: <alpine.LFD.1.10.0806261838560.2988@localhost.localdomain>
-References: <20080625142034.59b343c7.sfr@canb.auug.org.au>
- <20080625071508.GA20454@elte.hu>
- <20080626015918.71a6b4d7.sfr@canb.auug.org.au> <20080625162923.GB6040@elte.hu>
- <alpine.LFD.1.10.0806251516460.3014@localhost.localdomain>
- <20080625195754.GA21689@elte.hu>
+From: "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>
+Subject: Re: linux-next: Tree for June 26
+Date: Fri, 27 Jun 2008 01:38:52 +0200
+Message-ID: <200806270138.53895.rjw@sisk.pl>
+References: <20080627010842.e1a0c4b5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from vms173005pub.verizon.net ([206.46.173.5]:62057 "EHLO
-	vms173005pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751873AbYFZWm0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Jun 2008 18:42:26 -0400
-Received: from localhost.localdomain ([72.93.254.151])
- by vms173005.mailsrvcs.net
- (Sun Java System Messaging Server 6.2-6.01 (built Apr  3 2006))
- with ESMTPA id <0K330015WDFAALX8@vms173005.mailsrvcs.net> for
- linux-next@vger.kernel.org; Thu, 26 Jun 2008 17:35:35 -0500 (CDT)
-In-reply-to: <20080625195754.GA21689@elte.hu>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Bob Moore <robert.moore@intel.com>, Yinghai Lu <yhlu.kernel@gmail.com>
+Content-Type: text/plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
+Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20080627010842.e1a0c4b5.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Content-Disposition: inline
+Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>, Jaswinder Singh <jaswinder-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, David Woodhouse <David.Woodhouse-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "Maciej W. Rozycki" <macro-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-
-
-> I was thinking about these:
+On Thursday, 26 of June 2008, Stephen Rothwell wrote:
+> Hi all,
 > 
->  acpi-acpi_numa_init-build-fix
->  ia64, acpi: fix Altix boot breakage in ACPI
->  acpi: fix boot breakage on Altix
+> Changes since next-20080625:
 > 
-> note that this build failure does _not_ occur with current mainline, so 
-> it's a linux-next issue.
+> The tip-core tree lost its three conflicts against Linus' tree.
 > 
-> i've prepared a tip/acpi-for-len branch for you so that you can have a 
-> look at these, you can pull them from:
+> The pci tree gained two conflicts against the x86 tree.
 > 
->    git://git.kernel.org/pub/scm/linux/kernel/git/tip/linux-2.6-tip.git acpi-for-len
+> The v4l-dvb tree had the second revert undone.  We will see if this is
+> right.
+> 
+> The net tree gained a conflict against the wireless-current tree.
+> 
+> The vfs tree lost its conflict against the sched tree.
+> 
+> The arm tree lost its conflict against Linus' tree.
+> 
+> The rr tree gained a patch for a build problem instead the revert.
+> 
+> The firmware tree lost a conflict against the usb tree.
 
-I can see these on the web, but i've got no idea how to traverse
-your tip tree by actually pulling it.  It seems to be a maze of branches,
-and it isn't clear how to find the one i want. 
+commit 423c982fffb1cd95c8cdd654ce5ab59351ba41f5
+Author: Jaswinder Singh <jaswinder-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Date:   Wed Jun 18 19:58:33 2008 +0530
 
-are the 2nd and 3rd patches in response to the 1st patch?
-is the 1st patch fixing something that happens in real life,
-or a random build failuire that only a computer can find?
+    firmware: convert tg3 driver to request_firmware()
 
-without understanding those, my impression is that i'm not
-really excited about more config options and more ifdefs in C-code.
-I'd prefer less of both.
+breaks my nx6325.
 
--Len
+Apparently, with this patch applied the tg3 has a NULL pointer dereference
+somewhere, but I can only see the first line of the oops, afterwards the box
+hangs solid.
+
+Please drop it if possible.
+
+Also, arch/x86/kernel/io_apic_64.c seems wrong at the moment, as it checks
+for conditions that are never satisfied etc.
+
+Thanks,
+Rafael
