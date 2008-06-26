@@ -1,42 +1,59 @@
 From: Zhu Yi <yi.zhu@intel.com>
-Subject: Re: linux-next: pending wireless/wireless-current merge conflict
-Date: Thu, 26 Jun 2008 10:01:59 +0800
-Message-ID: <1214445720.14590.285.camel@debian.sh.intel.com>
-References: <20080613215601.GA8345@tuxdriver.com>
-	 <20080625180430.GA13730@tuxdriver.com>
+Subject: Re: [PATCH -next] iwlwifi: fix build for CONFIG_INPUT=n
+Date: Thu, 26 Jun 2008 10:13:30 +0800
+Message-ID: <1214446410.14590.287.camel@debian.sh.intel.com>
+References: <20080624210246.0fe18e2c.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:26194 "EHLO mga11.intel.com"
+Received: from mga14.intel.com ([143.182.124.37]:35711 "EHLO mga14.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752203AbYFZCDN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Jun 2008 22:03:13 -0400
-In-Reply-To: <20080625180430.GA13730@tuxdriver.com>
+	id S1753962AbYFZCOc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Jun 2008 22:14:32 -0400
+In-Reply-To: <20080624210246.0fe18e2c.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, linux-wireless@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, akpm <akpm@linux-foundation.org>, linville@tuxdriver.com
 
-On Wed, 2008-06-25 at 14:04 -0400, John W. Linville wrote:
-> I just sent a pull request for Dave that will result in nasty-looking
-> conflict in iwl4965-base.c.  I have a sample merge available here:
+On Tue, 2008-06-24 at 21:02 -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
 > 
->         git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-next-2.6 merge-test
+> Fix iwlwifi so that it builds cleanly with CONFIG_INPUT=n.
+> Also free the input device on exit.
 > 
-> The overview of the resolution is to ignore any changes in
-> iwl4965-base.c and take drivers/net/wireless/iwlwifi/iwl-scan.c from
-> the URL above.
+> drivers/built-in.o: In function `iwl_rfkill_unregister':
+> (.text+0xbf430): undefined reference to `input_unregister_device'
+> drivers/built-in.o: In function `iwl_rfkill_init':
+> (.text+0xbf51c): undefined reference to `input_allocate_device'
+> drivers/built-in.o: In function `iwl_rfkill_init':
+> (.text+0xbf5bf): undefined reference to `input_register_device'
+> drivers/built-in.o: In function `iwl_rfkill_init':
+> (.text+0xbf5e9): undefined reference to `input_free_device'
+> net/built-in.o: In function `rfkill_disconnect':
+> rfkill-input.c:(.text+0xe71e1): undefined reference to
+> `input_close_device'
+> rfkill-input.c:(.text+0xe71e9): undefined reference to
+> `input_unregister_handle'
+> net/built-in.o: In function `rfkill_connect':
+> rfkill-input.c:(.text+0xe723e): undefined reference to
+> `input_register_handle'
+> rfkill-input.c:(.text+0xe724d): undefined reference to
+> `input_open_device'
+> rfkill-input.c:(.text+0xe725c): undefined reference to
+> `input_unregister_handle'
+> net/built-in.o: In function `rfkill_handler_init':
+> rfkill-input.c:(.init.text+0x36ec): undefined reference to
+> `input_register_handler'
+> net/built-in.o: In function `rfkill_handler_exit':
+> rfkill-input.c:(.exit.text+0x112c): undefined reference to
+> `input_unregister_handler'
+> make[1]: *** [.tmp_vmlinux1] Error 1
 > 
-> Just a heads-up... :-)
-> 
-> John
-> 
-> P.S.  Hopefully the iwlwifi guys will double check the accuracy of
-> my fix-up...
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-I checked the patch on the tip of wireless-testing is good. I think
-wireless-next-2.6:merge-test should also be OK.
+ACK.
 
 Thanks,
 -yi
