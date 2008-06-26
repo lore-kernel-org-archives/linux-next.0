@@ -1,33 +1,33 @@
-From: "Alexander Beregalov" <a.beregalov@gmail.com>
-Subject: next-20080626: compiling error in XFS
-Date: Thu, 26 Jun 2008 22:12:34 +0400
-Message-ID: <a4423d670806261112n3a5073dcn476f0a3da963aa36@mail.gmail.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for June 25
+Date: Thu, 26 Jun 2008 20:23:10 +0200
+Message-ID: <200806262023.11338.rjw@sisk.pl>
+References: <20080626003554.b2623aba.sfr@canb.auug.org.au> <200806261249.24340.rjw@sisk.pl> <20080627002100.396d5cbb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from py-out-1112.google.com ([64.233.166.179]:64662 "EHLO
-	py-out-1112.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754466AbYFZSMi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Jun 2008 14:12:38 -0400
-Received: by py-out-1112.google.com with SMTP id p76so19202pyb.10
-        for <linux-next@vger.kernel.org>; Thu, 26 Jun 2008 11:12:35 -0700 (PDT)
+Received: from ogre.sisk.pl ([217.79.144.158]:60554 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753170AbYFZSVT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Jun 2008 14:21:19 -0400
+In-Reply-To: <20080627002100.396d5cbb.sfr@canb.auug.org.au>
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, xfs-masters@oss.sgi.com, xfs@oss.sgi.com, kernel list <linux-kernel@vger.kernel.org>, hch@infradead.org, tes@sgi.com, lachlan@sgi.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jiri Kosina <jkosina@suse.cz>, kernel-testers@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Rusty Russell <rusty@rustcorp.com.au>
 
-Hi
+On Thursday, 26 of June 2008, Stephen Rothwell wrote:
+> On Thu, 26 Jun 2008 12:49:23 +0200 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
+> >
+> > > I guess this got in through Rusty's tree, right?
+> > > 
+> > > Does the patch below fix it please?
+> > 
+> > Yes, it does.
+> 
+> I have applied this patch to today's linux-next tree.
 
-  CC      fs/xfs/linux-2.6/xfs_xattr.o
-fs/xfs/linux-2.6/xfs_xattr.c: In function 'xfs_decode_acl':
-fs/xfs/linux-2.6/xfs_xattr.c:40: error: '_ACL_TYPE_ACCESS' undeclared
-(first use in this function)
-fs/xfs/linux-2.6/xfs_xattr.c:40: error: (Each undeclared identifier is
-reported only once
-fs/xfs/linux-2.6/xfs_xattr.c:40: error: for each function it appears in.)
-fs/xfs/linux-2.6/xfs_xattr.c:42: error: '_ACL_TYPE_DEFAULT' undeclared
-(first use in this function)
-
-
-CONFIG_XFS_POSIX_ACL is disabled, so _ACL_TYPE_ACCESS was not defined.
+Thanks!
