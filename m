@@ -1,59 +1,52 @@
-From: Zhu Yi <yi.zhu@intel.com>
-Subject: Re: [PATCH -next] iwlwifi: fix build for CONFIG_INPUT=n
-Date: Thu, 26 Jun 2008 10:13:30 +0800
-Message-ID: <1214446410.14590.287.camel@debian.sh.intel.com>
-References: <20080624210246.0fe18e2c.randy.dunlap@oracle.com>
+From: gshan <gshan@alcatel-lucent.com>
+Subject: PCI device memory bars issue
+Date: Thu, 26 Jun 2008 10:19:44 +0800
+Message-ID: <4862FCC0.3050501@alcatel-lucent.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain;
+	charset=ISO-8859-1;
+	format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:35711 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753962AbYFZCOc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Jun 2008 22:14:32 -0400
-In-Reply-To: <20080624210246.0fe18e2c.randy.dunlap@oracle.com>
+Received: from cnrelay03.alcatel-sbell.com.cn ([211.144.215.19]:56857 "EHLO
+	mail.alcatel-sbell.com.cn" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752248AbYFZCTA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Jun 2008 22:19:00 -0400
+Received: from cnshgsbhs01.ad4.ad.alcatel.com (localhost [127.0.0.1])
+	by mail.alcatel-sbell.com.cn (8.13.8/8.13.8/Alcanet1.0) with ESMTP id m5Q2HiGk004465
+	for <linux-next@vger.kernel.org>; Thu, 26 Jun 2008 10:17:44 +0800
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, akpm <akpm@linux-foundation.org>, linville@tuxdriver.com
+To: linux-next@vger.kernel.org
 
-On Tue, 2008-06-24 at 21:02 -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Fix iwlwifi so that it builds cleanly with CONFIG_INPUT=n.
-> Also free the input device on exit.
-> 
-> drivers/built-in.o: In function `iwl_rfkill_unregister':
-> (.text+0xbf430): undefined reference to `input_unregister_device'
-> drivers/built-in.o: In function `iwl_rfkill_init':
-> (.text+0xbf51c): undefined reference to `input_allocate_device'
-> drivers/built-in.o: In function `iwl_rfkill_init':
-> (.text+0xbf5bf): undefined reference to `input_register_device'
-> drivers/built-in.o: In function `iwl_rfkill_init':
-> (.text+0xbf5e9): undefined reference to `input_free_device'
-> net/built-in.o: In function `rfkill_disconnect':
-> rfkill-input.c:(.text+0xe71e1): undefined reference to
-> `input_close_device'
-> rfkill-input.c:(.text+0xe71e9): undefined reference to
-> `input_unregister_handle'
-> net/built-in.o: In function `rfkill_connect':
-> rfkill-input.c:(.text+0xe723e): undefined reference to
-> `input_register_handle'
-> rfkill-input.c:(.text+0xe724d): undefined reference to
-> `input_open_device'
-> rfkill-input.c:(.text+0xe725c): undefined reference to
-> `input_unregister_handle'
-> net/built-in.o: In function `rfkill_handler_init':
-> rfkill-input.c:(.init.text+0x36ec): undefined reference to
-> `input_register_handler'
-> net/built-in.o: In function `rfkill_handler_exit':
-> rfkill-input.c:(.exit.text+0x112c): undefined reference to
-> `input_unregister_handler'
-> make[1]: *** [.tmp_vmlinux1] Error 1
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+There has one MV64460 on my board, which contains 2 PCI buses: PCI0 and 
+PCI1.
+PCI0 contains a transparent bridge. A PCI device locates behind the 
+transparent
+bridge. The PCI device has 2 memory bars. When I read on memory bar0, it 
+returns
+correct data. However, 0xffffffff returns from memory bar1.
 
-ACK.
+I dump config space of the PCI device and find everything seems ok.
 
-Thanks,
--yi
+PCI_VENDOR_ID:       0x000010ee
+PCI_DEVICE_ID:       0x00000300
+PCI_COMMAND:         0x00000086
+PCI_STATUS:          0x00000a00
+PCI_CLASS_REVISION:  0x0b400000
+PCI_CACHE_LINE_SIZE: 0x0000ff00
+PCI_BASE_ADDRESS_0:  0x80800008
+PCI_SPACE_SIZE_0:    0xfffff008
+PCI_BASE_ADDRESS_1:  0x80801008
+PCI_SPACE_SIZE_1:    0xfffff008
+PCI_BASE_ADDRESS_2:  0x00000000
+PCI_SPACE_SIZE_2:    0x00000000
+PCI_BASE_ADDRESS_3:  0x00000000
+PCI_SPACE_SIZE_3:    0x00000000
+PCI_BASE_ADDRESS_4:  0x00000000
+PCI_SPACE_SIZE_4:    0x00000000
+PCI_BASE_ADDRESS_5:  0x00000000
+PCI_SPACE_SIZE_5:    0x00000000
+
+Thanks in advance for any suggestions.
