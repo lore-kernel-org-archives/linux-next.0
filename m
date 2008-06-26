@@ -1,82 +1,56 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
-Date: Thu, 26 Jun 2008 21:52:00 +0200
-Message-ID: <200806262152.02099.rjw@sisk.pl>
-References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <Pine.LNX.4.55.0806202241120.19614@cliff.in.clinika.pl> <20080621014047.GA20908@srcf.ucam.org>
+From: Len Brown <lenb@kernel.org>
+Subject: Re: linux-next: manual merge of the acpi tree
+Date: Thu, 26 Jun 2008 18:42:19 -0400 (EDT)
+Message-ID: <alpine.LFD.1.10.0806261838560.2988@localhost.localdomain>
+References: <20080625142034.59b343c7.sfr@canb.auug.org.au>
+ <20080625071508.GA20454@elte.hu>
+ <20080626015918.71a6b4d7.sfr@canb.auug.org.au> <20080625162923.GB6040@elte.hu>
+ <alpine.LFD.1.10.0806251516460.3014@localhost.localdomain>
+ <20080625195754.GA21689@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20080621014047.GA20908@srcf.ucam.org>
-Content-Disposition: inline
-Sender: linux-acpi-owner@vger.kernel.org
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: "Maciej W. Rozycki" <macro@linux-mips.org>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from vms173005pub.verizon.net ([206.46.173.5]:62057 "EHLO
+	vms173005pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751873AbYFZWm0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Jun 2008 18:42:26 -0400
+Received: from localhost.localdomain ([72.93.254.151])
+ by vms173005.mailsrvcs.net
+ (Sun Java System Messaging Server 6.2-6.01 (built Apr  3 2006))
+ with ESMTPA id <0K330015WDFAALX8@vms173005.mailsrvcs.net> for
+ linux-next@vger.kernel.org; Thu, 26 Jun 2008 17:35:35 -0500 (CDT)
+In-reply-to: <20080625195754.GA21689@elte.hu>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Bob Moore <robert.moore@intel.com>, Yinghai Lu <yhlu.kernel@gmail.com>
 
-On Saturday, 21 of June 2008, Matthew Garrett wrote:
-> On Sat, Jun 21, 2008 at 02:09:00AM +0100, Maciej W. Rozycki wrote:
+
+
+> I was thinking about these:
 > 
-> >  Meanwhile we may consider implementing a workaround.  I think one that 
-> > does not hurt competent vendors would be preferable.  The DSDT containing 
-> > the rubbish described here is marked with an OEM ID: "HP    " and OEM 
-> > Table ID: "SB400".  These keys could be used to remove IRQ0 information
-> > from the IRQ tables.  Our code is prepared to handle such a case.  
-> > Something easy to do for a seasoned ACPI fiddler, I suppose. ;)
+>  acpi-acpi_numa_init-build-fix
+>  ia64, acpi: fix Altix boot breakage in ACPI
+>  acpi: fix boot breakage on Altix
 > 
-> Something roughly like the following? Entirely untested, my 6125 is in a 
-> box somewhere. My recollection is that skip_timer_override will disable 
-> the IRQ 0->2 mapping, which I believe is what's broken here?
-
-Well, actually, I'm not sure that will work.  I have only found
-acpi_skip_timer_override being set to 1 in two places, but it doesn't seem to
-be read anywhere.  What am I missing?
-
-
-> diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
-> index 33c5216..6ca5eff 100644
-> --- a/arch/x86/kernel/acpi/boot.c
-> +++ b/arch/x86/kernel/acpi/boot.c
-> @@ -1060,6 +1060,16 @@ static int __init force_acpi_ht(const struct dmi_system_id *d)
->  	return 0;
->  }
->  
-> +#ifdef CONFIG_X86_IO_APIC
-> +static int __init force_skip_timer_override(const struct dmi_system_id *d)
-> +{
-> +	printk(KERN_NOTICE "%s detected: disabling timer overrides",
-> +	       d->ident);
-> +	acpi_skip_timer_override = 1;
-> +	return 0;
-> +}
-> +#endif
-> +
->  /*
->   * If your system is blacklisted here, but you find that acpi=force
->   * works for you, please contact acpi-devel@sourceforge.net
-> @@ -1227,6 +1237,24 @@ static struct dmi_system_id __initdata acpi_dmi_table[] = {
->  		     DMI_MATCH(DMI_PRODUCT_NAME, "TravelMate 360"),
->  		     },
->  	 },
-> +#ifdef CONFIG_X86_IO_APIC
-> +	{
-> +	 .callback = force_skip_timer_override,
-> +	 .ident = "HP NX6125 laptop",
-> +	 .matches = {
-> +		     DMI_MATCH(DMI_SYS_VENDOR, "Hewlett-Packard"),
-> +		     DMI_MATCH(DMI_PRODUCT_NAME, "HP Compaq nx6125"),
-> +		     },
-> +	 },
-> +	{
-> +	 .callback = force_skip_timer_override,
-> +	 .ident = "HP NX6325 laptop",
-> +	 .matches = {
-> +		     DMI_MATCH(DMI_SYS_VENDOR, "Hewlett-Packard"),
-> +		     DMI_MATCH(DMI_PRODUCT_NAME, "HP Compaq nx6325"),
-> +		     },
-> +	 },
-> +#endif
->  	{}
->  };
+> note that this build failure does _not_ occur with current mainline, so 
+> it's a linux-next issue.
 > 
+> i've prepared a tip/acpi-for-len branch for you so that you can have a 
+> look at these, you can pull them from:
+> 
+>    git://git.kernel.org/pub/scm/linux/kernel/git/tip/linux-2.6-tip.git acpi-for-len
+
+I can see these on the web, but i've got no idea how to traverse
+your tip tree by actually pulling it.  It seems to be a maze of branches,
+and it isn't clear how to find the one i want. 
+
+are the 2nd and 3rd patches in response to the 1st patch?
+is the 1st patch fixing something that happens in real life,
+or a random build failuire that only a computer can find?
+
+without understanding those, my impression is that i'm not
+really excited about more config options and more ifdefs in C-code.
+I'd prefer less of both.
+
+-Len
