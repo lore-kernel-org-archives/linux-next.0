@@ -1,33 +1,82 @@
 From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: Tree for June 25
-Date: Thu, 26 Jun 2008 20:23:10 +0200
-Message-ID: <200806262023.11338.rjw@sisk.pl>
-References: <20080626003554.b2623aba.sfr@canb.auug.org.au> <200806261249.24340.rjw@sisk.pl> <20080627002100.396d5cbb.sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
+Date: Thu, 26 Jun 2008 21:52:00 +0200
+Message-ID: <200806262152.02099.rjw@sisk.pl>
+References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <Pine.LNX.4.55.0806202241120.19614@cliff.in.clinika.pl> <20080621014047.GA20908@srcf.ucam.org>
 Mime-Version: 1.0
 Content-Type: text/plain;
-  charset="iso-8859-15"
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:60554 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753170AbYFZSVT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Jun 2008 14:21:19 -0400
-In-Reply-To: <20080627002100.396d5cbb.sfr@canb.auug.org.au>
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20080621014047.GA20908@srcf.ucam.org>
 Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jiri Kosina <jkosina@suse.cz>, kernel-testers@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Rusty Russell <rusty@rustcorp.com.au>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: "Maciej W. Rozycki" <macro@linux-mips.org>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Thursday, 26 of June 2008, Stephen Rothwell wrote:
-> On Thu, 26 Jun 2008 12:49:23 +0200 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
-> >
-> > > I guess this got in through Rusty's tree, right?
-> > > 
-> > > Does the patch below fix it please?
-> > 
-> > Yes, it does.
+On Saturday, 21 of June 2008, Matthew Garrett wrote:
+> On Sat, Jun 21, 2008 at 02:09:00AM +0100, Maciej W. Rozycki wrote:
 > 
-> I have applied this patch to today's linux-next tree.
+> >  Meanwhile we may consider implementing a workaround.  I think one that 
+> > does not hurt competent vendors would be preferable.  The DSDT containing 
+> > the rubbish described here is marked with an OEM ID: "HP    " and OEM 
+> > Table ID: "SB400".  These keys could be used to remove IRQ0 information
+> > from the IRQ tables.  Our code is prepared to handle such a case.  
+> > Something easy to do for a seasoned ACPI fiddler, I suppose. ;)
+> 
+> Something roughly like the following? Entirely untested, my 6125 is in a 
+> box somewhere. My recollection is that skip_timer_override will disable 
+> the IRQ 0->2 mapping, which I believe is what's broken here?
 
-Thanks!
+Well, actually, I'm not sure that will work.  I have only found
+acpi_skip_timer_override being set to 1 in two places, but it doesn't seem to
+be read anywhere.  What am I missing?
+
+
+> diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+> index 33c5216..6ca5eff 100644
+> --- a/arch/x86/kernel/acpi/boot.c
+> +++ b/arch/x86/kernel/acpi/boot.c
+> @@ -1060,6 +1060,16 @@ static int __init force_acpi_ht(const struct dmi_system_id *d)
+>  	return 0;
+>  }
+>  
+> +#ifdef CONFIG_X86_IO_APIC
+> +static int __init force_skip_timer_override(const struct dmi_system_id *d)
+> +{
+> +	printk(KERN_NOTICE "%s detected: disabling timer overrides",
+> +	       d->ident);
+> +	acpi_skip_timer_override = 1;
+> +	return 0;
+> +}
+> +#endif
+> +
+>  /*
+>   * If your system is blacklisted here, but you find that acpi=force
+>   * works for you, please contact acpi-devel@sourceforge.net
+> @@ -1227,6 +1237,24 @@ static struct dmi_system_id __initdata acpi_dmi_table[] = {
+>  		     DMI_MATCH(DMI_PRODUCT_NAME, "TravelMate 360"),
+>  		     },
+>  	 },
+> +#ifdef CONFIG_X86_IO_APIC
+> +	{
+> +	 .callback = force_skip_timer_override,
+> +	 .ident = "HP NX6125 laptop",
+> +	 .matches = {
+> +		     DMI_MATCH(DMI_SYS_VENDOR, "Hewlett-Packard"),
+> +		     DMI_MATCH(DMI_PRODUCT_NAME, "HP Compaq nx6125"),
+> +		     },
+> +	 },
+> +	{
+> +	 .callback = force_skip_timer_override,
+> +	 .ident = "HP NX6325 laptop",
+> +	 .matches = {
+> +		     DMI_MATCH(DMI_SYS_VENDOR, "Hewlett-Packard"),
+> +		     DMI_MATCH(DMI_PRODUCT_NAME, "HP Compaq nx6325"),
+> +		     },
+> +	 },
+> +#endif
+>  	{}
+>  };
+> 
