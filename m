@@ -1,62 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: pending wireless/wireless-current merge conflict
-Date: Thu, 26 Jun 2008 13:15:36 +1000
-Message-ID: <20080626131536.9b26269a.sfr@canb.auug.org.au>
-References: <20080613215601.GA8345@tuxdriver.com>
-	<20080625180430.GA13730@tuxdriver.com>
+Subject: linux-next: manual merge of the acpi tree
+Date: Thu, 26 Jun 2008 14:21:47 +1000
+Message-ID: <20080626142147.ad0e34bb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__26_Jun_2008_13_15_36_+1000_fL_f_JmstJN0XN68"
+ boundary="Signature=_Thu__26_Jun_2008_14_21_47_+1000_.w.y44Z3d0e2nD6G"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58760 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40792 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753870AbYFZDPs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Jun 2008 23:15:48 -0400
-In-Reply-To: <20080625180430.GA13730@tuxdriver.com>
+	id S1751494AbYFZEV6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Jun 2008 00:21:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, linux-wireless@vger.kernel.org
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, Bob Moore <robert.moore@intel.com>, Yinghai Lu <yhlu.kernel@gmail.com>, Ingo Molnar <mingo@elte.hu>
 
---Signature=_Thu__26_Jun_2008_13_15_36_+1000_fL_f_JmstJN0XN68
+--Signature=_Thu__26_Jun_2008_14_21_47_+1000_.w.y44Z3d0e2nD6G
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+Hi Len,
 
-On Wed, 25 Jun 2008 14:04:30 -0400 "John W. Linville" <linville@tuxdriver.c=
-om> wrote:
->
-> I just sent a pull request for Dave that will result in nasty-looking
-> conflict in iwl4965-base.c.  I have a sample merge available here:
->=20
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-next-2.6=
- merge-test
->=20
-> The overview of the resolution is to ignore any changes in
-> iwl4965-base.c and take drivers/net/wireless/iwlwifi/iwl-scan.c from
-> the URL above.
->=20
-> Just a heads-up... :-)
+Today's linux-next merge of the acpi tree got a trivial conflict in
+arch/x86/kernel/srat_32.c between commit
+885aa5a57fe7c9d7f2c481e1107c3376384dc125 ("x86: numa32 pfn print out
+using hex instead") from the x86 tree and commit
+5e3d42c632c715fa3076175c39e834223b10c47a ("ACPICA: Update DMAR and SRAT
+table definitions") from the acpi tree.
 
-Thanks, I will check it out.
+They both changed what a printk was printing.  I fixed it up.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__26_Jun_2008_13_15_36_+1000_fL_f_JmstJN0XN68
+--Signature=_Thu__26_Jun_2008_14_21_47_+1000_.w.y44Z3d0e2nD6G
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkhjCdgACgkQTgG2atn1QN/XXQCfZEY93sdHTKdyF6xerc+cfNqz
-f/wAnRLHi3M8G4t/YmAQaJUebt9Itc5Z
-=Eq3k
+iEYEARECAAYFAkhjGVsACgkQTgG2atn1QN9lMACdEf5eJCkU00k/0F+G8civgDkG
+amkAn0AgRbSq9cGpD5rrC/+P+fxqHSdR
+=qKHj
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__26_Jun_2008_13_15_36_+1000_fL_f_JmstJN0XN68--
+--Signature=_Thu__26_Jun_2008_14_21_47_+1000_.w.y44Z3d0e2nD6G--
