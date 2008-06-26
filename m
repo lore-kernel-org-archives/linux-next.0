@@ -1,54 +1,58 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: How linux-staging is released (was Re:
-	linux-staging/linux-next merge/build errors)
-Date: Thu, 26 Jun 2008 14:30:09 +0200
-Message-ID: <20080626123009.GO29619@elte.hu>
-References: <20080621124017.ec3b0a51.sfr@canb.auug.org.au> <20080621071956.GB2765@kroah.com> <1214053209.3223.220.camel@lappy.programming.kicks-ass.net> <20080621175003.GC14786@kroah.com> <1214071343.3223.249.camel@lappy.programming.kicks-ass.net> <20080621215059.GD15341@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the firmware tree
+Date: Thu, 26 Jun 2008 23:38:33 +1000
+Message-ID: <20080626233833.f78fbd36.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__26_Jun_2008_23_38_33_+1000_bjq+fMblyyv0qMvp"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:57433 "EHLO mx3.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41823 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755169AbYFZMaZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Jun 2008 08:30:25 -0400
-Content-Disposition: inline
-In-Reply-To: <20080621215059.GD15341@kroah.com>
+	id S1752868AbYFZNi5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Jun 2008 09:38:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
 
+--Signature=_Thu__26_Jun_2008_23_38_33_+1000_bjq+fMblyyv0qMvp
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Greg KH <greg@kroah.com> wrote:
+Hi David,
 
-> On Sat, Jun 21, 2008 at 08:02:22PM +0200, Peter Zijlstra wrote:
-> > The point was that for some people being carried by distos is upstream
-> > enough.
-> > 
-> > So I would discourage distros form picking up this tree.
-> 
-> I wouldn't, as some of the drivers work just fine on some arches, but 
-> not all, that is why they are not in mainline yet (the network drivers 
-> in there right now are an example of this.)
+Today's linux-next merge of the firmware tree got conflicts in
+sound/pci/Kconfig between commits 829808ac06b33cdc678ad7dbd628d71d65f8a9c3
+("[ALSA] Fix AC97 kconfig items") and
+03cf8be8c43b8c7febc5aacc110fd6a0bff00aa7 ("sound: Convert to menuconfig")
+from the sound tree and commits aee133db3305c4eb85a2d024db613ff44e714f20 ("=
+firmware: convert korg1212 driver to use firmware loader exclusively"), 8fa=
+5ae5506e4a5f69a0c662bc499d8992a2e26c8 ("firmware: convert maestro3 driver t=
+o use firmware loader exclusively") and  62bd53e67f6516ce6ec6c3c40db5d8868c=
+7b2487
+("firmware: convert ymfpci driver to use firmware loader exclusively")
+from the firmware tree.
 
-.. and it's all source code, so it's not really different to distros 
-than a number of other patches they regularly pick up. If there's too 
-much mess there's always the option to look into the fine source code 
-and fix things up.
+I can carry the obvious fixups for these.
 
-If a driver ended up not mattering at all in the long run then nobody 
-will ever fix it up - and we dont even care that much - it's almost as 
-if it didnt even exist.
+I may have previously reported these (erroneously) against sound/Kconfig.
 
-The other alternative is much more harmful: vendors release binary-only 
-drivers. That only works on x86 and they are utterly unfixable as well 
-and have a lot of other disadvantages.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-So we really have to balance the natural desire for pure upstream 
-drivers against the real dangers of vendors doing bin-only modules just 
-for the convenience of distribution.
+--Signature=_Thu__26_Jun_2008_23_38_33_+1000_bjq+fMblyyv0qMvp
+Content-Type: application/pgp-signature
 
-... all in one: kudos Greg for doing the linux-staging tree! :-) It will 
-help a lot.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-	Ingo
+iEYEARECAAYFAkhjm9kACgkQTgG2atn1QN9OlACeNX1xShmGlDW+m+gjFz0QUlCj
+mvAAn3TkFf02haRO4OuHzNulynQ7rdHR
+=Fkfu
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__26_Jun_2008_23_38_33_+1000_bjq+fMblyyv0qMvp--
