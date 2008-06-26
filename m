@@ -1,59 +1,108 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: linux-next: s390 build failure
-Date: Thu, 26 Jun 2008 11:14:48 +0200
-Message-ID: <20080626091448.GM20851@kernel.dk>
-References: <20080620124235.24fbe33e.sfr@canb.auug.org.au> <20080620114247.GY20851@kernel.dk> <20080621080702.GA4841@osiris.ibm.com>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: Tree for June 25
+Date: Thu, 26 Jun 2008 12:03:08 +0200 (CEST)
+Message-ID: <alpine.LRH.1.10.0806261201420.10290@twin.jikos.cz>
+References: <20080626003554.b2623aba.sfr@canb.auug.org.au> <20080626120212.c8caa005.sfr@canb.auug.org.au> <200806260801.13131.rjw@sisk.pl> <200806260859.26270.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from brick.kernel.dk ([87.55.233.238]:16538 "EHLO kernel.dk"
+Received: from twin.jikos.cz ([213.151.79.26]:50578 "EHLO twin.jikos.cz"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754095AbYFZJOv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Jun 2008 05:14:51 -0400
-Content-Disposition: inline
-In-Reply-To: <20080621080702.GA4841@osiris.ibm.com>
+	id S1752277AbYFZKEX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Jun 2008 06:04:23 -0400
+In-Reply-To: <200806260859.26270.rjw@sisk.pl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-next@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, kernel-testers@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Rusty Russell <rusty@rustcorp.com.au>
 
-On Sat, Jun 21 2008, Heiko Carstens wrote:
-> On Fri, Jun 20, 2008 at 01:42:48PM +0200, Jens Axboe wrote:
-> > On Fri, Jun 20 2008, Stephen Rothwell wrote:
-> > > Hi Martin,
-> > > 
-> > > Starting with next-20080613, the linux-next build (s390 defconfig s390x
-> > > compiler) has failed with these errors:
-> > > 
-> > > In file included from /scratch/michael/kisskb-build/src/include/linux/spinlock.h:87,
-> > >                  from /scratch/michael/kisskb-build/src/include/linux/smp.h:11,
-> > >                  from /scratch/michael/kisskb-build/src/include/linux/kernel_stat.h:4,
-> > >                  from /scratch/michael/kisskb-build/src/mm/memory.c:41:
-> > > include2/asm/spinlock.h: In function '__raw_spin_lock':
-> > > include2/asm/spinlock.h:69: error: implicit declaration of function 'smp_processor_id'
-> > > 
-> > > There are others as well, but I was concentrating on this.  Bisecting
-> > > leads to commit 2448ad3d8e64a9b58acca34a3d010cfa0be88cc1 which is the
-> > > merge of the block tree.  The block tree contains a commit
-> > > (37e81b98dba08cce1d8eedb2bdaa58022bf31ee0 "Add generic helpers for arch
-> > > IPI function calls") that adds an include of linux/spinlock.h to
-> > > linux/smp.h. (asm-s390/spinlock.h includes linux/smp.h ...)
-> > > 
-> > > But the block tree itself is OK.  So something in the s390 tree is
-> > > interacting with the above commit to cause the failure.  It is not
-> > > immediately obvious to me what that is. (Or I may have screwed up the
-> > > bisect :-))
-> > 
-> > Heiko was looking into this, I had forgotten about it. Heiko, did you
-> > find an adequate solution to this?
-> 
-> My only conclusion back then was that you shouldn't add the new
-> #include <linux/spinlock.h> to include <linux/smp.h> (see also Martin's mail).
+On Thu, 26 Jun 2008, Rafael J. Wysocki wrote:
 
-OK, I changed it to not include spinlock.h and kill the
-call_function_lock decleration. If generic smp helpers are now used,
-smp.c will include functions for acquiring and releasing the ipi call
-lock instead.
+> BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+> IP: [<ffffffff80264230>] find_symbol+0x230/0x260
+> PGD 5c817067 PUD 5cccf067 PMD 0
+> Oops: 0002 [1] SMP DEBUG_PAGEALLOC
+> last sysfs file:
+> CPU 0
+> Modules linked in:
+> Pid: 912, comm: modprobe Not tainted 2.6.26-rc7-next #4
+> RIP: 0010:[<ffffffff80264230>]  [<ffffffff80264230>] find_symbol+0x230/0x260
+> RSP: 0018:ffff81005cbddc68  EFLAGS: 00010202
+> RAX: 0000000000000000 RBX: 000000000000003d RCX: ffffffff805b8568
+> RDX: 0000000000000000 RSI: ffffffff80573e0f RDI: ffffffff805c0bcc
+> RBP: ffff81005cbddda8 R08: ffff81005cbddd48 R09: 0000000000000001
+> R10: 0000000000000000 R11: 000000000000003c R12: fffffffffffffff2
+> R13: 00000000000b2507 R14: 00000000006181e0 R15: ffffc20000689240
+> FS:  00007f5820fed6f0(0000) GS:ffffffff80613f40(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
+> CR2: 0000000000000000 CR3: 000000005c87f000 CR4: 00000000000006e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+> Process modprobe (pid: 912, threadinfo ffff81005cbdc000, task ffff81005c9f6840)
+> Stack:  ffff81005c9f6840 0000000000000000 0000000000000000 00000000006180f8
+> ffff81005cbddf40 0000000000000000 ffff81005c9f6840 ffffffff8049728f
+> 00000000000b2507 00000000006181e0 ffff81005cbddcd8 ffffffff8025c70a
+> Call Trace:
+> [<ffffffff8049728f>] ? trace_hardirqs_on_thunk+0x3a/0x3f
+> [<ffffffff8025c70a>] ? trace_hardirqs_on_caller+0xca/0x160
+> [<ffffffff8049728f>] ? trace_hardirqs_on_thunk+0x3a/0x3f
+> [<ffffffff8020f167>] ? do_softirq+0x47/0xa0
+> [<ffffffff8020bc9f>] ? restore_args+0x0/0x30
+> [<ffffffff80263c80>] ? struct_module+0x0/0x10
+> [<ffffffff802648f3>] ? find_sec+0x53/0x70
+> [<ffffffff80265c04>] sys_init_module+0x6b4/0x1e00
+> [<ffffffff802afc11>] ? do_sync_read+0xf1/0x130
+> [<ffffffff802505e0>] ? autoremove_wake_function+0x0/0x40
+> [<ffffffff80323791>] ? security_file_permission+0x11/0x20
+> [<ffffffff8049728f>] ? trace_hardirqs_on_thunk+0x3a/0x3f
+> [<ffffffff8025c70a>] ? trace_hardirqs_on_caller+0xca/0x160
+> [<ffffffff8049728f>] ? trace_hardirqs_on_thunk+0x3a/0x3f
+> [<ffffffff8020b65b>] system_call_after_swapgs+0x7b/0x80
+>
+>
+> Code: 49 8b 43 08 0f 18 08 49 8d 43 08 48 3d c0 a5 5d 80 0f 85 47 fe ff ff 48 c7 c0 fe ff ff ff eb 20 48 8b 45 b0 48 8b 95 e8 fe ff ff <48> 89 02 48
+> RIP  [<ffffffff80264230>] find_symbol+0x230/0x260
+> RSP <ffff81005cbddc68>
+> CR2: 0000000000000000
+> ---[ end trace 81cec6311b0e1cee ]---
+
+I guess this got in through Rusty's tree, right?
+
+Does the patch below fix it please?
+
+
+
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH] module: fix NULL pointer dereference in find_symbol()
+
+The patch that introduces each_symbol() iterator forgets to
+test the NULL value of the output parameters (which the original
+code did).
+
+This patch restores the correct checks.
+
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+---
+  kernel/module.c |    6 ++++--
+  1 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/module.c b/kernel/module.c
+index 880409f..a3354ca 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -304,8 +304,10 @@ static unsigned long find_symbol(const char *name,
+  	fsa.warn = warn;
+
+  	if (each_symbol(find_symbol_in_section, &fsa)) {
+-		*owner = fsa.owner;
+-		*crc = fsa.crc;
++		if (owner)
++			*owner = fsa.owner;
++		if (crc)
++			*crc = fsa.crc;
+  		return fsa.value;
+  	}
 
 -- 
-Jens Axboe
+Jiri Kosina
+SUSE Labs
