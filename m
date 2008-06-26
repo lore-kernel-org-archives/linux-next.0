@@ -1,58 +1,62 @@
-From: "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Tree for June 25
-Date: Thu, 26 Jun 2008 02:28:38 +0200
-Message-ID: <200806260228.38674.rjw@sisk.pl>
+Date: Thu, 26 Jun 2008 12:02:12 +1000
+Message-ID: <20080626120212.c8caa005.sfr@canb.auug.org.au>
 References: <20080626003554.b2623aba.sfr@canb.auug.org.au>
+	<200806260228.38674.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
-Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20080626003554.b2623aba.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__26_Jun_2008_12_02_12_+1000_vtaUkFvpL134Dlba"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41460 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752227AbYFZCCh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Jun 2008 22:02:37 -0400
+In-Reply-To: <200806260228.38674.rjw@sisk.pl>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: kernel-testers@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+
+--Signature=_Thu__26_Jun_2008_12_02_12_+1000_vtaUkFvpL134Dlba
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Wednesday, 25 of June 2008, Stephen Rothwell wrote:
-> Hi all,
+Hi Rafael,
 
-Hi,
+On Thu, 26 Jun 2008 02:28:38 +0200 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
+>
+> This tree is completely broken on my test box (x86-64 HP nx6325) and I ca=
+n't
+> even bisect it. :-(
 
-> Changes since next-20080624:
-> 
-> The tip-core tree gained three conflicts against Linus' tree.
-> 
-> The sched tree gained a conflict against the cpus4096 tree.
-> 
-> The x86 tree gained a conflict against the ftrace tree.  It also required
-> three patches that Ingo supplied.
-> 
-> The pci tree gained two conflicts against the x86 tree.
-> 
-> The v4l-dvb tree has had another commit reverted for a build problem,
-> however that may have been due to a mismerge in yesterday's tree.
-> 
-> The acpi tree gained two conflicts against the x86 tree.
-> 
-> The tests tree gained a conflict against the sched tree.
-> 
-> The vfs tree gained a conflict against the sched tree.
-> 
-> The rr tree gained a conflict against each of the sched and powerpc
-> trees.  It also required a patch and a commit reverted for build problems.
-> 
-> The pcmcia tree lost its conflict against Linus' tree.
+Config?
 
-This tree is completely broken on my test box (x86-64 HP nx6325) and I can't
-even bisect it. :-(
+> It hits a NULL pointer dereference in find_symbol during boot, but when I=
+ tried
+> to bisect this issue, I hit another one that made the box hang solid duri=
+ng
+> boot (early, no messages available).
+>=20
+> If things continue going this way, 2.6.27 will be a disaster ...
 
-It hits a NULL pointer dereference in find_symbol during boot, but when I tried
-to bisect this issue, I hit another one that made the box hang solid during
-boot (early, no messages available).
+None of us want that.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-If things continue going this way, 2.6.27 will be a disaster ...
+--Signature=_Thu__26_Jun_2008_12_02_12_+1000_vtaUkFvpL134Dlba
+Content-Type: application/pgp-signature
 
-Thanks,
-Rafael
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhi+KUACgkQTgG2atn1QN94SgCfXJSPJ0Xx0vYGQOXgrLQYXBxg
+l30An0LROxAdBf+61O4kr4Sv31qPRR1b
+=TQcQ
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__26_Jun_2008_12_02_12_+1000_vtaUkFvpL134Dlba--
