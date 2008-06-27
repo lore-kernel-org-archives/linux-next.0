@@ -1,29 +1,43 @@
-From: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: linux-next: Tree for June 26
-Date: Fri, 27 Jun 2008 10:28:43 +0100
-Message-ID: <1214558923.10393.172.camel@pmac.infradead.org>
-References: <20080627010842.e1a0c4b5.sfr@canb.auug.org.au>
-	 <200806270138.53895.rjw@sisk.pl>
+From: Steven Whitehouse <swhiteho@redhat.com>
+Subject: Re: linux-next: gfs2 tree build failure
+Date: Fri, 27 Jun 2008 10:48:41 +0100
+Message-ID: <1214560121.3469.1.camel@localhost.localdomain>
+References: <20080627151225.1fe44918.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <200806270138.53895.rjw-KKrjLPT3xs0@public.gmane.org>
-Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>, Jaswinder Singh <jaswinder-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "Maciej W. Rozycki" <macro-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([66.187.233.31]:43410 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751573AbYF0Juj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 27 Jun 2008 05:50:39 -0400
+In-Reply-To: <20080627151225.1fe44918.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-On Fri, 2008-06-27 at 01:38 +0200, Rafael J. Wysocki wrote:
-> Apparently, with this patch applied the tg3 has a NULL pointer
-> dereference somewhere, but I can only see the first line of the oops,
-> afterwards the box hangs solid.
+Hi,
+
+On Fri, 2008-06-27 at 15:12 +1000, Stephen Rothwell wrote:
+> Hi Steven,
 > 
-> Please drop it if possible.
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> 
+> ERROR: "gdlm_release_all_locks" [fs/gfs2/locking/dlm/lock_dlm.ko] undefined!
+> 
+> Commit 98ea8e79ff4dfa804690831248881fa6b2145978 ("[GFS2] Remove all_list
+> from lock_dlm") missed one call site of the gdlm_release_all_locks
+> function which it removed.  It also neglected to remove the declaration
+> of that function from fs/gfs2/locking/dlm/lock_dlm.h. I have reverted
+> that commit.
+> 
+> Sorry, Steven, but I don't see how that could have been build tested ...
+> please take a little more care.
+> 
 
-I'll take a careful look over it for problems, and will drop it for now
-if I can't find the cause. I did post it for review, but just got
-mostly-unrelated noise rather than anyone looking at the code changes.
+Sorry. I've just pushed a fix to that. I'm not sure how that slipped
+through other than to say that it did build (I just tried it) so that is
+why it wasn't spotted,
 
--- 
-dwmw2
+Steve.
