@@ -1,45 +1,92 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the block tree
-Date: Fri, 27 Jun 2008 12:11:38 +0200
-Message-ID: <20080627101138.GA4570@elte.hu>
-References: <20080627161347.0af905fb.sfr@canb.auug.org.au> <20080627083053.GC6562@elte.hu> <20080627084758.GR20851@kernel.dk> <20080627092626.GA496@elte.hu> <20080627095737.GA22123@elte.hu>
+From: David Woodhouse <david.woodhouse@intel.com>
+Subject: Re: linux-next: Tree for June 26
+Date: Fri, 27 Jun 2008 11:51:53 +0100
+Message-ID: <1214563913.10393.180.camel@pmac.infradead.org>
+References: <20080627010842.e1a0c4b5.sfr@canb.auug.org.au>
+	 <200806270138.53895.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:32913 "EHLO mx3.mail.elte.hu"
+Received: from mga09.intel.com ([134.134.136.24]:62152 "EHLO mga09.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750708AbYF0KMF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 27 Jun 2008 06:12:05 -0400
-Content-Disposition: inline
-In-Reply-To: <20080627095737.GA22123@elte.hu>
+	id S1752586AbYF0Kv6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 27 Jun 2008 06:51:58 -0400
+In-Reply-To: <200806270138.53895.rjw@sisk.pl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, the arch/x86 maintainers <x86@kernel.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, kernel-testers@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Jaswinder Singh <jaswinder@infradead.org>, "Maciej W. Rozycki" <macro@linux-mips.org>
 
-
-> Jens, i've started testing this in -tip - there are three small build 
-> fixlets in the tip/generic-ipi branch so far.
+On Fri, 2008-06-27 at 01:38 +0200, Rafael J. Wysocki wrote:
+> commit 423c982fffb1cd95c8cdd654ce5ab59351ba41f5
+> Author: Jaswinder Singh <jaswinder@infradead.org>
+> Date:   Wed Jun 18 19:58:33 2008 +0530
 > 
-> If you dont have these fixes already then you can pull them from:
+>     firmware: convert tg3 driver to request_firmware()
 > 
->  git://git.kernel.org/pub/scm/linux/kernel/git/tip/linux-2.6-tip.git generic-ipi
+> breaks my nx6325.
+> 
+> Apparently, with this patch applied the tg3 has a NULL pointer dereference
+> somewhere, but I can only see the first line of the oops, afterwards the box
+> hangs solid.
 
-this config is causing trouble too:
+That's a 5705, isn't it? So using the 'tso5' firmware?
 
-  http://redhat.com/~mingo/misc/config-Fri_Jun_27_12_03_13_CEST_2008.bad
+Is that firmware available (did you either build it into your kernel, or
+run 'make INSTALL_FW_PATH=/lib/firmware firmware_install')? 
 
-it gives:
+Not that it matters; I suspect the driver isn't trying to load it at
+all. Can you test this patch, please?
 
-  include/asm-x86/mach-default/entry_arch.h: Assembler messages:
-  include/asm-x86/mach-default/entry_arch.h:16: Error: undefined symbol `CALL_FUNCTION_SINGLE_VECTOR' in operation
+(There are more cleanups I want to do to the error paths here, but those
+should be harmless and irrelevant: http://david.woodhou.se/tg3.patch )
 
-the irq vector definitions got moved around in include/asm-x86, it's 
-probably an integration effect of that. Stephen will likely see such 
-problems in linux-next too.
+diff --git a/drivers/net/tg3.c b/drivers/net/tg3.c
+index a70147d..bad784b 100644
+--- a/drivers/net/tg3.c
++++ b/drivers/net/tg3.c
+@@ -12234,11 +12234,6 @@ static int __devinit tg3_init_one(struct pci_dev *pdev,
+ 
+ 	if (tp->tg3_flags2 & TG3_FLG2_HW_TSO) {
+ 		tp->tg3_flags2 |= TG3_FLG2_TSO_CAPABLE;
+-
+-		if (GET_ASIC_REV(tp->pci_chip_rev_id) == ASIC_REV_5705)
+-			fw_name = "tigon/tg3_tso5.bin";
+-		else
+-			fw_name = "tigon/tg3_tso.bin";
+ 	}
+ 	else if (GET_ASIC_REV(tp->pci_chip_rev_id) == ASIC_REV_5700 ||
+ 	    GET_ASIC_REV(tp->pci_chip_rev_id) == ASIC_REV_5701 ||
+@@ -12248,6 +12243,13 @@ static int __devinit tg3_init_one(struct pci_dev *pdev,
+ 		tp->tg3_flags2 &= ~TG3_FLG2_TSO_CAPABLE;
+ 	} else {
+ 		tp->tg3_flags2 |= TG3_FLG2_TSO_CAPABLE | TG3_FLG2_TSO_BUG;
++		printk("this code path would have forgotten to load the firmware\n");
++	}
++	if (tp->tg3_flags2 & TG3_FLG2_TSO_CAPABLE) {
++		if (GET_ASIC_REV(tp->pci_chip_rev_id) == ASIC_REV_5705)
++			fw_name = "tigon/tg3_tso5.bin";
++		else
++			fw_name = "tigon/tg3_tso.bin";
+ 	}
+ 
+ 	if (fw_name) {
 
-My suggestion would be: lets work on finishing the integration in 
-tip/auto-generic-ipi-next and then offer it to Stephen once that looks 
-good in testing?
 
-	Ingo
+-- 
+David Woodhouse                            Open Source Technology Centre
+David.Woodhouse@intel.com                              Intel Corporation
+
+
+
+---------------------------------------------------------------------
+Intel Corporation (UK) Limited
+Registered No. 1134945 (England)
+Registered Office: Pipers Way, Swindon SN3 1RJ
+VAT No: 860 2173 47
+
+This e-mail and any attachments may contain confidential material for
+the sole use of the intended recipient(s). Any review or distribution
+by others is strictly prohibited. If you are not the intended
+recipient, please contact the sender and delete all copies.
