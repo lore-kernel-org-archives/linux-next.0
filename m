@@ -1,41 +1,25 @@
-From: "Maciej W. Rozycki" <macro@linux-mips.org>
-Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
-Date: Fri, 27 Jun 2008 02:53:09 +0100 (BST)
-Message-ID: <Pine.LNX.4.55.0806270249490.31618@cliff.in.clinika.pl>
-References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806201353.59083.rjw@sisk.pl>
- <20080620115714.GC8637@srcf.ucam.org> <200806201422.12659.rjw@sisk.pl>
- <20080624091516.GA5642@ucw.cz>
+From: Rusty Russell <rusty-8n+1lVoiYb80n/F98K4Iww@public.gmane.org>
+Subject: Re: linux-next: Tree for June 25
+Date: Fri, 27 Jun 2008 13:01:11 +1000
+Message-ID: <200806271301.12040.rusty@rustcorp.com.au>
+References: <20080626003554.b2623aba.sfr@canb.auug.org.au> <200806260859.26270.rjw@sisk.pl> <alpine.LRH.1.10.0806261201420.10290@twin.jikos.cz>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20080624091516.GA5642@ucw.cz>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Pavel Machek <pavel@suse.cz>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Matthew Garrett <mjg59@srcf.ucam.org>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <alpine.LRH.1.10.0806261201420.10290-1ReQVI26iDCaZKY3DrU6dA@public.gmane.org>
+Content-Disposition: inline
+Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jiri Kosina <jkosina-AlSwsSmVLrQ@public.gmane.org>
+Cc: "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, 24 Jun 2008, Pavel Machek wrote:
+On Thursday 26 June 2008 20:03:08 Jiri Kosina wrote:
+> From: Jiri Kosina <jkosina-AlSwsSmVLrQ@public.gmane.org>
+> Subject: [PATCH] module: fix NULL pointer dereference in find_symbol()
 
-> > $ cat /proc/acpi/thermal_zone/TZ*/trip_points
-> > 
-> > in the failing case:
-> > 
-> > critical (S5):           105 C
-> > passive:                 16 C: tc1=1 tc2=2 tsp=100 devices=C000 C001 
-> > active[0]:               16 C: devices=C34F 
-> > active[1]:               16 C: devices=C350 
-> > active[2]:               16 C: devices=C351 
-> > active[3]:               16 C: devices=C352 
-> > critical (S5):           100 C
-> > passive:                 16 C: tc1=1 tc2=2 tsp=300 devices=C000 C001 
-> > critical (S5):           100 C
-> > passive:                 16 C: tc1=1 tc2=2 tsp=300 devices=C000 C001 
-> 
-> Can we call the ACPI BIOS to be terminally broken at this point?
+Thanks, applied.
 
- Do we have any point of contact at HP and/or ATI/AMD?  I suppose getting 
-hands on a SB400 datasheet could be tricky, but someone may be able to 
-answer questions about the interrupt routing between the 8254, the 8259A 
-and the I/O APIC for this chip and/or fix the DSDT.
-
-  Maciej
+Cheers,
+Rusty.
