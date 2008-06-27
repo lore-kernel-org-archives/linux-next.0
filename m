@@ -1,302 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for June 27
-Date: Fri, 27 Jun 2008 18:24:06 +1000
-Message-ID: <20080627182406.a54b00c1.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the block tree
+Date: Fri, 27 Jun 2008 10:30:53 +0200
+Message-ID: <20080627083053.GC6562@elte.hu>
+References: <20080627161347.0af905fb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__27_Jun_2008_18_24_06_+1000_oHK4Y5ycFiM=hGRW"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47890 "EHLO smtps.tip.net.au"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:54590 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753096AbYF0IYN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 27 Jun 2008 04:24:13 -0400
+	id S1754863AbYF0IbS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 27 Jun 2008 04:31:18 -0400
+Content-Disposition: inline
+In-Reply-To: <20080627161347.0af905fb.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jens Axboe <jens.axboe@oracle.com>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, the arch/x86 maintainers <x86@kernel.org>
 
---Signature=_Fri__27_Jun_2008_18_24_06_+1000_oHK4Y5ycFiM=hGRW
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Stats:
+> Hi Jens,
+> 
+> Today's linux-next merge of the block tree got a trivial conflict in 
+> include/asm-x86/smp.h between commit 
+> a4c81cf684350797939416c99effb9d3ae46bca6 ("x86: extend e820 ealy_res 
+> support 32bit") from the x86 tree and commit 
+> 3b16cf874861436725c43ba0b68bdd799297be7c ("x86: convert to generic 
+> helpers for IPI function calls") from the block tree.
+> 
+> A case of contextually close deletions.
 
-$ git diff --shortstat -M stable..
- 4790 files changed, 336262 insertions(+), 325606 deletions(-)
-$ git rev-list stable.. | wc -l
-5835
+Jens, would it be possible for you to prepare a pullable branch for us 
+for the x86 and generic bits of the SMP generic helpers thing - 
+independent of any block tree bits? (it can touch generic code but it 
+should not break the build on other architectures)
 
-Changes since next-20080626:
+That way we could pull it into tip/x86 and give it some testing on the 
+x86 side, and resolve its integration effects. Would that be possible?
 
-The acpi tree gained a trivial conflict against the x86 tree.
-
-The gfs2 tree needed a commit reverted due to build problems.
-
-The block tree gained two conflicts against the x86 tree.  It also needed
-two commits reverted due to build problems (one error, one lots of
-warnings) which required three more dependent commits to be reverted.
-
-I have also applied the following patches for know problems:
-	fujitsu-laptop: depends on INPUT
-	iwlwifi: fix build for CONFIG_INPUT=3Dn
-	module: fix NULL pointer dereference in find_symbol()
-	xfs fix 1 (fixes some ACL defines)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups, it is also built with powerpc allnoconfig,
-44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
-
-Below is a summary of the state of the merge.
-
-We are up to 95 trees (counting Linus' and 13 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging powerpc-merge/merge
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sparc-current/master
-Merging sound-current/for-linus
-Merging arm-current/master
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging quilt/driver-core
-Merging quilt/usb
-Merging tip-core/auto-core-next
-Merging cpus4096/auto-cpus4096-next
-Merging ftrace/auto-ftrace-next
-Merging genirq/auto-genirq-next
-Merging safe-poison-pointers/auto-safe-poison-pointers-next
-Merging sched/auto-sched-next
-CONFLICT (content): Merge conflict in kernel/Makefile
-CONFLICT (content): Merge conflict in kernel/sched_rt.c
-Applying sched: fix rculist split fallout
-Merging stackprotector/auto-stackprotector-next
-Merging timers/auto-timers-next
-Merging x86/auto-x86-next
-CONFLICT (content): Merge conflict in arch/x86/kernel/entry_32.S
-CONFLICT (content): Merge conflict in arch/x86/kernel/process_32.c
-CONFLICT (content): Merge conflict in arch/x86/kernel/process_64.c
-Applying acpi-acpi_numa_init-build-fix
-Applying ia64, acpi: fix Altix boot breakage in ACPI
-Applying acpi: fix boot breakage on Altix
-Merging pci/linux-next
-CONFLICT (content): Merge conflict in arch/x86/kernel/setup_64.c
-CONFLICT (content): Merge conflict in arch/x86/pci/irq.c
-CONFLICT (content): Merge conflict in arch/x86/pci/pci.h
-CONFLICT (content): Merge conflict in include/linux/device.h
-Merging quilt/device-mapper
-Merging hid/mm
-Merging quilt/i2c
-CONFLICT (content): Merge conflict in drivers/i2c/i2c-core.c
-Merging quilt/kernel-doc
-Merging avr32/avr32-arch
-Merging v4l-dvb/stable
-Applying v4l-dvb: class_for_each_device API change fallout
-Created commit a1c5277: Revert "V4L/DVB (8049): budget-ci: Add support for =
-Technotrend budget C-1501 dvb-c card"
-Merging s390/features
-CONFLICT (content): Merge conflict in drivers/s390/block/dasd.c
-CONFLICT (content): Merge conflict in drivers/s390/block/dasd_eckd.c
-CONFLICT (content): Merge conflict in drivers/s390/block/dasd_fba.c
-CONFLICT (content): Merge conflict in drivers/s390/char/tape_core.c
-CONFLICT (content): Merge conflict in drivers/s390/cio/device_fsm.c
-CONFLICT (content): Merge conflict in drivers/s390/cio/qdio.c
-CONFLICT (content): Merge conflict in drivers/s390/net/claw.c
-CONFLICT (content): Merge conflict in drivers/s390/net/ctcm_main.c
-CONFLICT (content): Merge conflict in drivers/s390/net/lcs.c
-Merging sh/master
-Merging jfs/next
-Merging kbuild/master
-Merging quilt/ide
-Merging libata/NEXT
-Merging nfs/linux-next
-Merging xfs/master
-Merging infiniband/for-next
-Merging acpi/test
-CONFLICT (content): Merge conflict in Documentation/kernel-parameters.txt
-CONFLICT (content): Merge conflict in arch/x86/kernel/process.c
-CONFLICT (content): Merge conflict in arch/x86/kernel/srat_32.c
-CONFLICT (content): Merge conflict in drivers/acpi/processor_throttling.c
-CONFLICT (content): Merge conflict in drivers/acpi/sleep/main.c
-Merging blackfin/for-linus
-Merging nfsd/nfsd-next
-CONFLICT (content): Merge conflict in net/sunrpc/auth_gss/auth_gss.c
-CONFLICT (content): Merge conflict in net/sunrpc/svc.c
-Merging ieee1394/for-next
-Merging hwmon/testing
-Merging ubi/master
-Merging kvm/master
-Merging dlm/next
-Merging scsi/master
-Applying scsi: fix fallout from the class_find_device API change
-Applying scsi: fix fallout from KOBJ_NAME_LEN removal
-Merging ia64/test
-Merging tests/master
-CONFLICT (content): Merge conflict in lib/Kconfig.debug
-Merging ocfs2/linux-next
-Merging selinux/for-akpm
-Merging quilt/m68k
-Merging powerpc/powerpc-next
-Merging lblnet/master
-Merging ext4/next
-Merging 4xx/next
-Merging async_tx/next
-Merging udf/for_next
-Merging security-testing/next
-Merging net/master
-CONFLICT (content): Merge conflict in Documentation/powerpc/booting-without=
--of.txt
-CONFLICT (content): Merge conflict in drivers/net/wireless/iwlwifi/iwl4965-=
-base.c
-Applying wireless: fix fallout from device_create removal
-Merging sparc/master
-CONFLICT (content): Merge conflict in include/asm-m68k/sbus.h
-Merging galak/powerpc-next
-CONFLICT (content): Merge conflict in Documentation/powerpc/booting-without=
--of.txt
-Merging mtd/master
-Merging wireless/master
-Merging crypto/master
-Merging vfs/vfs-2.6.25
-Merging sound/master
-Merging arm/devel
-CONFLICT (content): Merge conflict in arch/arm/mach-at91/board-yl-9200.c
-Merging cpufreq/next
-CONFLICT (content): Merge conflict in drivers/cpufreq/cpufreq.c
-Merging v9fs/for-next
-Merging quilt/rr
-CONFLICT (content): Merge conflict in drivers/char/hvc_console.h
-CONFLICT (content): Merge conflict in kernel/stop_machine.c
-Applying rr fix patch 1
-Applying virtio: virtio console can be a module
-Merging cifs/master
-Merging mmc/next
-Merging gfs2/master
-Created commit d149a7c: Revert "[GFS2] Remove all_list from lock_dlm"
-Merging input/next
-Merging semaphore/semaphore
-Merging semaphore-removal/semaphore-removal
-CONFLICT (content): Merge conflict in drivers/net/ps3_gelic_wireless.c
-CONFLICT (content): Merge conflict in drivers/scsi/qla2xxx/qla_attr.c
-CONFLICT (content): Merge conflict in drivers/scsi/qla2xxx/qla_def.h
-CONFLICT (content): Merge conflict in drivers/scsi/qla2xxx/qla_mbx.c
-CONFLICT (content): Merge conflict in drivers/scsi/qla2xxx/qla_mid.c
-CONFLICT (content): Merge conflict in drivers/scsi/qla2xxx/qla_os.c
-Merging bkl-removal/bkl-removal
-Merging trivial/next
-Merging ubifs/for_andrew
-Merging lsm/for-next
-Merging block/for-next
-CONFLICT (content): Merge conflict in arch/powerpc/Kconfig
-CONFLICT (content): Merge conflict in arch/x86/kernel/apic_32.c
-CONFLICT (delete/modify): arch/x86/kernel/i8259_64.c deleted in HEAD and mo=
-dified in block/for-next. Version block/for-next of arch/x86/kernel/i8259_6=
-4.c left in tree.
-CONFLICT (content): Merge conflict in arch/x86/kernel/smpboot.c
-CONFLICT (content): Merge conflict in arch/x86/xen/smp.c
-CONFLICT (delete/modify): include/asm-x86/hw_irq_32.h deleted in HEAD and m=
-odified in block/for-next. Version block/for-next of include/asm-x86/hw_irq=
-_32.h left in tree.
-CONFLICT (delete/modify): include/asm-x86/hw_irq_64.h deleted in HEAD and m=
-odified in block/for-next. Version block/for-next of include/asm-x86/hw_irq=
-_64.h left in tree.
-CONFLICT (delete/modify): include/asm-x86/mach-default/irq_vectors.h delete=
-d in HEAD and modified in block/for-next. Version block/for-next of include=
-/asm-x86/mach-default/irq_vectors.h left in tree.
-CONFLICT (delete/modify): include/asm-x86/mach-voyager/irq_vectors.h delete=
-d in HEAD and modified in block/for-next. Version block/for-next of include=
-/asm-x86/mach-voyager/irq_vectors.h left in tree.
-CONFLICT (content): Merge conflict in include/asm-x86/smp.h
-CONFLICT (content): Merge conflict in kernel/Makefile
-Applying block: fix up rculist split fallout
-Created commit bd1e8ca: Revert "cmdfilter: extend default read filter"
-Created commit 3b113ba: Revert "block: integrity cleanups"
-Created commit 952c5e7: Revert "block: integrity checkpatch cleanups"
-Created commit 7df8b7f: Revert "block: Data integrity infrastructure docume=
-ntation"
-Created commit 15b8f5c: Revert "block: Block layer data integrity support"
-Merging embedded/master
-Merging firmware/master
-CONFLICT (content): Merge conflict in drivers/char/ip2/ip2main.c
-CONFLICT (content): Merge conflict in drivers/net/Kconfig
-CONFLICT (content): Merge conflict in drivers/usb/misc/isight_firmware.c
-CONFLICT (delete/modify): drivers/usb/serial/ti_fw_3410.h deleted in firmwa=
-re/master and modified in HEAD. Version HEAD of drivers/usb/serial/ti_fw_34=
-10.h left in tree.
-CONFLICT (delete/modify): drivers/usb/serial/ti_fw_5052.h deleted in firmwa=
-re/master and modified in HEAD. Version HEAD of drivers/usb/serial/ti_fw_50=
-52.h left in tree.
-CONFLICT (content): Merge conflict in drivers/usb/serial/ti_usb_3410_5052.c
-CONFLICT (content): Merge conflict in sound/pci/Kconfig
-CONFLICT (content): Merge conflict in sound/pci/maestro3.c
-CONFLICT (content): Merge conflict in sound/pci/ymfpci/ymfpci_main.c
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-CONFLICT (content): Merge conflict in drivers/video/backlight/Kconfig
-CONFLICT (content): Merge conflict in drivers/video/backlight/Makefile
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging m68knommu/for-next
-Merging uclinux/for-next
-Applying fujitsu-laptop: depends on INPUT
-Applying iwlwifi: fix build for CONFIG_INPUT=3Dn
-Applying module: fix NULL pointer dereference in find_symbol()
-Applying xfs fix 1
-
---Signature=_Fri__27_Jun_2008_18_24_06_+1000_oHK4Y5ycFiM=hGRW
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhko6YACgkQTgG2atn1QN+y2gCgmmbxYWA8akDe7InHzIl09gr0
-wiYAnjgc07lDPlAwGT/JHuitKeN0MLGE
-=HFGO
------END PGP SIGNATURE-----
-
---Signature=_Fri__27_Jun_2008_18_24_06_+1000_oHK4Y5ycFiM=hGRW--
+	Ingo
