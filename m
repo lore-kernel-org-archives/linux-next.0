@@ -1,92 +1,103 @@
-From: David Woodhouse <david.woodhouse@intel.com>
-Subject: Re: linux-next: Tree for June 26
-Date: Fri, 27 Jun 2008 11:51:53 +0100
-Message-ID: <1214563913.10393.180.camel@pmac.infradead.org>
-References: <20080627010842.e1a0c4b5.sfr@canb.auug.org.au>
-	 <200806270138.53895.rjw@sisk.pl>
+From: Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: linux-next: manual merge of the block tree
+Date: Fri, 27 Jun 2008 13:18:48 +0200
+Message-ID: <20080627111848.GZ20851@kernel.dk>
+References: <20080627161347.0af905fb.sfr@canb.auug.org.au> <20080627083053.GC6562@elte.hu> <20080627084758.GR20851@kernel.dk> <20080627092626.GA496@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:62152 "EHLO mga09.intel.com"
+Received: from brick.kernel.dk ([87.55.233.238]:1206 "EHLO kernel.dk"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752586AbYF0Kv6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 27 Jun 2008 06:51:58 -0400
-In-Reply-To: <200806270138.53895.rjw@sisk.pl>
+	id S1753333AbYF0LSv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 27 Jun 2008 07:18:51 -0400
+Content-Disposition: inline
+In-Reply-To: <20080627092626.GA496@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, kernel-testers@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Jaswinder Singh <jaswinder@infradead.org>, "Maciej W. Rozycki" <macro@linux-mips.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, the arch/x86 maintainers <x86@kernel.org>
 
-On Fri, 2008-06-27 at 01:38 +0200, Rafael J. Wysocki wrote:
-> commit 423c982fffb1cd95c8cdd654ce5ab59351ba41f5
-> Author: Jaswinder Singh <jaswinder@infradead.org>
-> Date:   Wed Jun 18 19:58:33 2008 +0530
+On Fri, Jun 27 2008, Ingo Molnar wrote:
 > 
->     firmware: convert tg3 driver to request_firmware()
+> * Jens Axboe <jens.axboe@oracle.com> wrote:
 > 
-> breaks my nx6325.
+> > > That way we could pull it into tip/x86 and give it some testing on 
+> > > the x86 side, and resolve its integration effects. Would that be 
+> > > possible?
+> > 
+> > Currently I have two branches for this - one is generic-ipi, which 
+> > contains the generic bits and all the arch conversions. The other is 
+> > smp_call_function, which kills the unused argument to 
+> > smp_call_function() (and friends) and on_each_cpu(). If I separate out 
+> > the non-x86 archs, I'll have trouble getting it all in for 2.6.27 as 
+> > I'll be on vacation as of july 5th.
+> > 
+> > So it's not tied in with any block bits, but it does have all archs. 
+> > Even if it's a bit of a weird thing to put the whole thing into the 
+> > x86 tree, I don't mind if we do that. Heck, it's in the block repo to 
+> > begin with :-)
 > 
-> Apparently, with this patch applied the tg3 has a NULL pointer dereference
-> somewhere, but I can only see the first line of the oops, afterwards the box
-> hangs solid.
+> i'll put this into tip/generic-ipi and wont put into the x86 topics 
+> towards linux-next - i just want to see the effects in practice.
+> 
+> This is the 102th -tip topic, there's space for all :-)
+> 
+> > So if you could pull:
+> > 
+> > git://git.kernel.dk/linux-2.6-block.git generic-ipi
+> > 
+> > and
+> > 
+> > git://git.kernel.dk/linux-2.6-block.git smp_call_function
+> > 
+> > and merge them with the x86 changes, that would be fine. It's also the 
+> > place where we currently have conflicts due to 32-bit and 64-bit stuff 
+> > being merged, so it would help Stephen as well.
+> 
+> i have an even better, brilliant plan :-)
+> 
+> what we could do is that we could offer an auto-generic-ipi-next 
+> integration branch that to Stephen that is tip/auto-x86-next plus 
+> tip/generic-ipi.
+> 
+> in fact i've just implemented this. You can pull the resulting 
+> tip/auto-generic-ipi-next tree from:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tip/linux-2.6-tip.git auto-generic-ipi-next
+> 
+> [ note: just first raw merge and conflict resolution, not tested yet. ]
+> 
+> note that it embedds your tree in a Git way and we can update the 
+> tip/generic-ipi branch in an append-only manner and it can go towards 
+> Linus in whatever way you prefer. (as long as you do not rebase the 
+> tree)
+> 
+> If you agree with this setup then this tree could be put after all these 
+> -next branches:
+> 
+>   auto-core-next
+>   auto-cpus4096-next
+>   auto-ftrace-next
+>   auto-genirq-next
+>   auto-safe-poison-pointers-next
+>   auto-sched-next
+>   auto-stackprotector-next
+>   auto-test
+>   auto-test-fixes
+>   auto-timers-next
+>   auto-x86-next
+> 
+> and then it will merge without conflicts. It's auto-updated to all these 
+> branches - i.e. when these branches are iterated then 
+> auto-generic-ipi-next will be iterated as well.
+> 
+> how does this sound to you? Nothing changes to your work flow (just keep 
+> those branches updated and let me know when i should pull from them), 
+> but conflicts are auto-eliminated from Stephen's flow and the conflict 
+> resolution workload and burden is put on those who generate them (the 
+> x86 folks and you).
 
-That's a 5705, isn't it? So using the 'tso5' firmware?
-
-Is that firmware available (did you either build it into your kernel, or
-run 'make INSTALL_FW_PATH=/lib/firmware firmware_install')? 
-
-Not that it matters; I suspect the driver isn't trying to load it at
-all. Can you test this patch, please?
-
-(There are more cleanups I want to do to the error paths here, but those
-should be harmless and irrelevant: http://david.woodhou.se/tg3.patch )
-
-diff --git a/drivers/net/tg3.c b/drivers/net/tg3.c
-index a70147d..bad784b 100644
---- a/drivers/net/tg3.c
-+++ b/drivers/net/tg3.c
-@@ -12234,11 +12234,6 @@ static int __devinit tg3_init_one(struct pci_dev *pdev,
- 
- 	if (tp->tg3_flags2 & TG3_FLG2_HW_TSO) {
- 		tp->tg3_flags2 |= TG3_FLG2_TSO_CAPABLE;
--
--		if (GET_ASIC_REV(tp->pci_chip_rev_id) == ASIC_REV_5705)
--			fw_name = "tigon/tg3_tso5.bin";
--		else
--			fw_name = "tigon/tg3_tso.bin";
- 	}
- 	else if (GET_ASIC_REV(tp->pci_chip_rev_id) == ASIC_REV_5700 ||
- 	    GET_ASIC_REV(tp->pci_chip_rev_id) == ASIC_REV_5701 ||
-@@ -12248,6 +12243,13 @@ static int __devinit tg3_init_one(struct pci_dev *pdev,
- 		tp->tg3_flags2 &= ~TG3_FLG2_TSO_CAPABLE;
- 	} else {
- 		tp->tg3_flags2 |= TG3_FLG2_TSO_CAPABLE | TG3_FLG2_TSO_BUG;
-+		printk("this code path would have forgotten to load the firmware\n");
-+	}
-+	if (tp->tg3_flags2 & TG3_FLG2_TSO_CAPABLE) {
-+		if (GET_ASIC_REV(tp->pci_chip_rev_id) == ASIC_REV_5705)
-+			fw_name = "tigon/tg3_tso5.bin";
-+		else
-+			fw_name = "tigon/tg3_tso.bin";
- 	}
- 
- 	if (fw_name) {
-
+Sounds good to me :-)
 
 -- 
-David Woodhouse                            Open Source Technology Centre
-David.Woodhouse@intel.com                              Intel Corporation
-
-
-
----------------------------------------------------------------------
-Intel Corporation (UK) Limited
-Registered No. 1134945 (England)
-Registered Office: Pipers Way, Swindon SN3 1RJ
-VAT No: 860 2173 47
-
-This e-mail and any attachments may contain confidential material for
-the sole use of the intended recipient(s). Any review or distribution
-by others is strictly prohibited. If you are not the intended
-recipient, please contact the sender and delete all copies.
+Jens Axboe
