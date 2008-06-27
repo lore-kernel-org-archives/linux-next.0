@@ -1,58 +1,29 @@
-From: "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>
-Subject: Re: linux-next: Tree for June 26
-Date: Fri, 27 Jun 2008 01:38:52 +0200
-Message-ID: <200806270138.53895.rjw@sisk.pl>
-References: <20080627010842.e1a0c4b5.sfr@canb.auug.org.au>
+From: "Maciej W. Rozycki" <macro@linux-mips.org>
+Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
+Date: Fri, 27 Jun 2008 01:06:51 +0100 (BST)
+Message-ID: <Pine.LNX.4.55.0806270102051.31618@cliff.in.clinika.pl>
+References: <20080613232214.394fd6fd.sfr@canb.auug.org.au>
+ <Pine.LNX.4.55.0806202241120.19614@cliff.in.clinika.pl>
+ <20080621014047.GA20908@srcf.ucam.org> <200806262152.02099.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
-Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20080627010842.e1a0c4b5.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Content-Disposition: inline
-Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>, Jaswinder Singh <jaswinder-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, David Woodhouse <David.Woodhouse-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "Maciej W. Rozycki" <macro-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <200806262152.02099.rjw@sisk.pl>
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Matthew Garrett <mjg59@srcf.ucam.org>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thursday, 26 of June 2008, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since next-20080625:
-> 
-> The tip-core tree lost its three conflicts against Linus' tree.
-> 
-> The pci tree gained two conflicts against the x86 tree.
-> 
-> The v4l-dvb tree had the second revert undone.  We will see if this is
-> right.
-> 
-> The net tree gained a conflict against the wireless-current tree.
-> 
-> The vfs tree lost its conflict against the sched tree.
-> 
-> The arm tree lost its conflict against Linus' tree.
-> 
-> The rr tree gained a patch for a build problem instead the revert.
-> 
-> The firmware tree lost a conflict against the usb tree.
+On Thu, 26 Jun 2008, Rafael J. Wysocki wrote:
 
-commit 423c982fffb1cd95c8cdd654ce5ab59351ba41f5
-Author: Jaswinder Singh <jaswinder-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Date:   Wed Jun 18 19:58:33 2008 +0530
+> Well, actually, I'm not sure that will work.  I have only found
+> acpi_skip_timer_override being set to 1 in two places, but it doesn't seem to
+> be read anywhere.  What am I missing?
 
-    firmware: convert tg3 driver to request_firmware()
+ I believe I removed all the occurences.  I am waiting for a proposal of a
+quirk based on the DSDT ID -- my time is a bit too limited to study the
+internals of our ACPI code at the moment; sorry about that.  I will
+complement it with a change to remove IRQ0 from I/O APIC tables as
+promised then; this piece of code I am quite familiar with.
 
-breaks my nx6325.
-
-Apparently, with this patch applied the tg3 has a NULL pointer dereference
-somewhere, but I can only see the first line of the oops, afterwards the box
-hangs solid.
-
-Please drop it if possible.
-
-Also, arch/x86/kernel/io_apic_64.c seems wrong at the moment, as it checks
-for conditions that are never satisfied etc.
-
-Thanks,
-Rafael
+  Maciej
