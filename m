@@ -1,179 +1,51 @@
 From: David Woodhouse <dwmw2@infradead.org>
 Subject: Re: linux-next: Tree for June 26
-Date: Sat, 28 Jun 2008 11:09:14 +0100
-Message-ID: <1214647754.10393.255.camel@pmac.infradead.org>
+Date: Sat, 28 Jun 2008 11:32:44 +0100
+Message-ID: <1214649164.10393.265.camel@pmac.infradead.org>
 References: <20080627010842.e1a0c4b5.sfr@canb.auug.org.au>
 	 <200806270138.53895.rjw@sisk.pl>
 	 <1214563913.10393.180.camel@pmac.infradead.org>
 	 <200806280104.17527.rjw@sisk.pl>
+	 <1214646863.2660.22.camel@jaswinder.satnam>
 Mime-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:36273 "EHLO
+Received: from bombadil.infradead.org ([18.85.46.34]:60748 "EHLO
 	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754706AbYF1KJU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 28 Jun 2008 06:09:20 -0400
-In-Reply-To: <200806280104.17527.rjw@sisk.pl>
+	with ESMTP id S1751618AbYF1Kct (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 28 Jun 2008 06:32:49 -0400
+In-Reply-To: <1214646863.2660.22.camel@jaswinder.satnam>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, kernel-testers@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Jaswinder Singh <jaswinder@infradead.org>, "Maciej W. Rozycki" <macro@linux-mips.org>
+To: Jaswinder Singh <jaswinder@infradead.org>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, kernel-testers@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, "Maciej W. Rozycki" <macro@linux-mips.org>
 
-On Sat, 2008-06-28 at 01:04 +0200, Rafael J. Wysocki wrote:
-> Unfortunately, it doesn't help.  The driver either oopses or just doesn't work
-> (I don't know what exactly causes it to oops, although that only happens during
-> boot).
-
-Hm, do you get any more useful output with this...?
-
-diff --git a/drivers/net/tg3.c b/drivers/net/tg3.c
-index 8c0631b..3bcf128 100644
---- a/drivers/net/tg3.c
-+++ b/drivers/net/tg3.c
-@@ -5670,6 +5670,11 @@ static int tg3_load_firmware_cpu(struct tg3 *tp, u32 cpu_base, u32 cpu_scratch_b
- 	int err, lock_err, i;
- 	void (*write_op)(struct tg3 *, u32, u32);
- 
-+	printk("%s, base %x scratch %x,%x info %x,%x,%p[%x,%x...]\n",
-+	       __func__, cpu_base, cpu_scratch_base, cpu_scratch_size,
-+	       info->fw_base, info->fw_len, info->fw_data, info->fw_data[0],
-+	       info->fw_data[1]);
-+
- 	if (cpu_base == TX_CPU_BASE &&
- 	    (tp->tg3_flags2 & TG3_FLG2_5705_PLUS)) {
- 		printk(KERN_ERR PFX "tg3_load_firmware_cpu: Trying to load "
-@@ -5697,12 +5702,18 @@ static int tg3_load_firmware_cpu(struct tg3 *tp, u32 cpu_base, u32 cpu_scratch_b
- 		write_op(tp, cpu_scratch_base + i, 0);
- 	tw32(cpu_base + CPU_STATE, 0xffffffff);
- 	tw32(cpu_base + CPU_MODE, tr32(cpu_base+CPU_MODE)|CPU_MODE_HALT);
--	for (i = 0; i < (info->fw_len / sizeof(u32)); i++)
-+	for (i = 0; i < (info->fw_len / sizeof(u32)); i++) {
-+		if ((i < 5) || i > ((info->fw_len / 4) - 5))
-+			printk("Write word at %x: %x\n", 
-+			       cpu_scratch_base +
-+			       (info->fw_base & 0xffff) +
-+			       (i * sizeof(u32)),
-+			       be32_to_cpu(info->fw_data[i]));
- 		write_op(tp, (cpu_scratch_base +
- 			      (info->fw_base & 0xffff) +
- 			      (i * sizeof(u32))),
- 			      be32_to_cpu(info->fw_data[i]));
--
-+	}
- 	err = 0;
- 
- out:
-@@ -5716,6 +5727,8 @@ static int tg3_load_5701_a0_firmware_fix(struct tg3 *tp)
- 	const __be32 *fw_data;
- 	int err, i;
- 
-+	printk("%s, fw %p\n", __func__, tp->fw);
-+
- 	fw_data = (void *)tp->fw->data;
- 
- 	/* Firmware blob starts with version numbers, followed by
-@@ -5778,6 +5791,8 @@ static int tg3_load_tso_firmware(struct tg3 *tp)
- 	if (tp->tg3_flags2 & TG3_FLG2_HW_TSO)
- 		return 0;
- 
-+	printk("%s, fw %p\n", __func__, tp->fw);
-+
- 	fw_data = (void *)tp->fw->data;
- 
- 	/* Firmware blob starts with version numbers, followed by
-@@ -12253,6 +12268,7 @@ static int __devinit tg3_init_one(struct pci_dev *pdev,
- 	if (fw_name) {
- 		const __be32 *fw_data;
- 
-+		printk("tg3 request firmware %s\n", fw_name);
- 		err = request_firmware(&tp->fw, fw_name, &tp->pdev->dev);
- 		if (err) {
- 			printk(KERN_ERR "tg3: Failed to load firmware \"%s\"\n",
-@@ -12273,7 +12289,9 @@ static int __devinit tg3_init_one(struct pci_dev *pdev,
- 			err = -EINVAL;
- 			goto err_out_fw;
- 		}
--	}
-+		printk("tg3 loaded fw %s, len %x\n", fw_name, tp->fw_len);
-+	} else
-+		printk("tg3 no firmware\n");
- 
- 	/* TSO is on by default on chips that support hardware TSO.
- 	 * Firmware TSO on older chips gives lower performance, so it
-
-> However, Ingo wrote that
+On Sat, 2008-06-28 at 15:24 +0530, Jaswinder Singh wrote:
+> Here is updated patch :-
 > 
-> " the firmware image, if i compare the before and after tg3FwText 
-> hex dump is blatantly different. Is this some different format, or did 
-> the "convert to request_firmware()" commit also embed an undocumented 
-> version jump in the binary blob that is loaded to your card? "
+> http://git.infradead.org/users/jaswinder/firm-jsr-2.6.git?a=commitdiff;h=aa8b184d8eb4f1d7b5e37d5ad449fb7c02ad79c2
 
-Where did Ingo write that? Google doesn't show any instance of those
-words other than your own quote, and I'm fairly sure he didn't Cc me
-when he said it.
+You can ignore that; it's just the same as today's linux-next (which in
+turn is just the same as yesterday's + the patch which fixes the problem
+for Kamalesh but not for you + the other minor error path cleanup.
 
-The firmware images are a straight binary dump of what was in the driver
-in hex form, stored big-endian, and with a header at the beginning thus:
-{
-  unsigned char major, minor, fix, pad;
-  __be32 load_address;
-  __be32 length; // including BSS to be zeroed
-  __be32 data[];
-}
+Please could you try the other debugging patch I just sent, on top of
+today's linux-next? It should confirm that you're using the 'Tso5'
+firmware, as I told Jaswinder yesterday, and give us a little more clue
+as to what's going on.
 
-The TEXT/RODATA/DATA regions were all fairly much contiguous anyway, so
-they just appear one after the other in the data[] blob. Let's run 'make
-firmware_install' and look at usr/lib/firmware/tigon/tg3.bin... (with
-'od -A x -t x4' on a big-endian box):
+This is your machine, right? ...
 
-	000000 00000000 08000000 00000a80 00000000
-	000010 10000003 00000000 0000000d 0000000d
-	000020 3c1d0800 37bd3ffc 03a0f021 3c100800
-	   ... text ...
-	0009b0 00851024 1443ffe8 00851824 27bd0008
-	0009c0 03e00008 00000000 00000000 35373031
-	0009d0 726c7341 00000000 00000000 53774576
-	   ... data ...
-	000a10 6c457272 00000000 00000000 4d61696e
-	000a20 43707542 00000000 00000000 00000000
-	000a30 00000000 00000000 00000000 00000000
-	*
-	000a60 00000000 00000000 00000000
+http://www.ussg.iu.edu/hypermail/linux/kernel/0709.3/1619.html
 
-That does look like Tg3FwText[] starts at 0xC after the header (with
-0x0, 0x10000003, 0x0, 0xd, 0xd, 0x3c1d0800...) as it should. It ends
-with 0x00851824, 0x27bd0008, 0x03e00008, 0x0, 0x0 as it should, at
-offset 0x9cc in the file (there's a superfluous 0 on the end of each
-word array in the driver). Then you see tg3FwRodata[] starting
-0x35373031, 0x726c7341, 0x0, 0x0, 0x53774576..., and tg3FwData[] is all
-zeroes at the end.
+tg3.c:v3.81 (September 5, 2007)
+ACPI: PCI Interrupt 0000:02:01.0[A] -> GSI 23 (level, low) -> IRQ 23
+eth1: Tigon3 [partno(BCM95788A50) rev 3003 PHY(5705)] (PCI:33MHz:32-bit) 10/100/1000Base-T Ethernet 00:17:08:2e:2e:f3
+eth1: RXcsums[1] LinkChgREG[0] MIirq[0] ASF[0] WireSpeed[0] TSOcap[1]
+eth1: dma_rwctrl[763f0000] dma_mask[32-bit]
 
-I don't think you're using that firmware though; I think you're using
-tg3_tso5.bin? That one looks fine to me too -- Tg3Tso5Fw[] starts with
-0x0c004003, 0x0, 0x10f04, 0x0, 0x10000003 at offset 0xC in the file, as
-it should, and ends at 0xe9C with 0x03e00008, 0xac4b001c, 0x0, 0x0. Then
-the 0x50 bytes of Tg3Tso5FwRodata[] appear from 0xe9c-0xeec as they
-should. And then there's a gap between the end of the rodata, and
-Tg3TsoData[] at 0xf0c.
-
-	000000 01020000 00010000 00000fd8 0c004003
-	000010 00000000 00010f04 00000000 10000003
-	   ... text ...
-	000e80 ac460010 ac470014 ac4a0018 03e00008
-	000e90 ac4b001c 00000000 00000000 4d61696e
-	000ea0 43707542 00000000 4d61696e 43707541
-	   ... rodata ...
-	000ee0 6c457272 00000000 00000000 00000000
-	000ef0 00000000 00000000 00000000 00000000
-	000f00 00000000 00000000 00000000 00000000
-	000f10 73746b6f 66666c64 5f76312e 322e3000
-	000f20 00000000 00000000 00000000
-
-I went over the binary files quite carefully, have just done so again,
-and I don't see a problem with them. If Ingo sees one, then he's
-cleverer than me. But quite naughty for not Ccing me when he pointed it
-out.
+ tp->pci_chip_rev_id is 0x3003, which is ASIC_REV_5705.
 
 -- 
 dwmw2
