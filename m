@@ -1,40 +1,46 @@
-From: "Maciej W. Rozycki" <macro@linux-mips.org>
-Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
-Date: Sun, 29 Jun 2008 21:16:38 +0100 (BST)
-Message-ID: <Pine.LNX.4.55.0806292115200.22548@cliff.in.clinika.pl>
-References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806262152.02099.rjw@sisk.pl>
- <Pine.LNX.4.55.0806270102051.31618@cliff.in.clinika.pl> <200806291600.29059.rjw@sisk.pl>
- <Pine.LNX.4.55.0806291952590.22548@cliff.in.clinika.pl>
- <20080629192353.GA9132@srcf.ucam.org> <Pine.LNX.4.55.0806292057270.22548@cliff.in.clinika.pl>
- <20080629200732.GA10295@srcf.ucam.org>
+From: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Subject: Re: linux-next: Tree for June 26
+Date: Sun, 29 Jun 2008 21:49:35 +0100
+Message-ID: <1214772575.10393.306.camel@pmac.infradead.org>
+References: <20080627010842.e1a0c4b5.sfr@canb.auug.org.au>
+	 <200806290215.03792.rjw@sisk.pl>
+	 <1214726476.10393.289.camel@pmac.infradead.org>
+	 <200806291336.44603.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20080629200732.GA10295@srcf.ucam.org>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <200806291336.44603.rjw-KKrjLPT3xs0@public.gmane.org>
+Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>
+Cc: Jaswinder Singh <jaswinder-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>, "Maciej W. Rozycki" <macro-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-On Sun, 29 Jun 2008, Matthew Garrett wrote:
+On Sun, 2008-06-29 at 13:36 +0200, Rafael J. Wysocki wrote:
+> # make INSTALL_FW_PATH=/lib/firmware firmware_install
+> make -C /home/rafael/src/linux-next
+> O=/home/rafael/src/build/next/albercik/. firmware_install
+> make[3]: *** No rule to make target `firmware/acenic/tg1.bin', needed
+> by `/lib/firmware/acenic/tg1.bin'.  Stop.
+> make[2]: *** [firmware_install] Error 2
+> make[1]: *** [sub-make] Error 2
+> make: *** [all] Error 2
 
-> >  Is the DMI ID *guaranteed* to be changed with an update to the DSDT?  
-> 
-> The BIOS version is, yes.
+Ah, sorry -- I haven't been testing firmware_install with O= builds very
+often, and I seem to have broken it. This should fix it:
 
- Good to know, thanks.
+--- a/firmware/Makefile
++++ b/firmware/Makefile
+@@ -69,7 +69,7 @@ fw-shipped-y :=
+ endif
+ 
+ firmware-y    := $(fw-external-y) $(fw-shipped-y)
+-firmware-dirs := $(sort $(patsubst %,$(objtree)/$(obj)/%/,$(dir $(firmware-y))))
++firmware-dirs := $(sort $(patsubst %,$(objtree)/$(obj)/%/,$(dir $(firmware-y) $(fw-shipped-))))
+ 
+ quiet_cmd_mkdir = MKDIR   $(patsubst $(objtree)/%,%,$@)
+       cmd_mkdir = mkdir -p $@
 
-> > Anyway, you cannot imply from a given DMI ID a broken DSDT is present, so
-> > you will have to repeat the experience of adding another DMI ID whenever a
-> > user hits this broken DSDT with another piece of hardware.  As long as you
-> > are able to pull this piece of information from that user, that is...
-> 
-> These are the only two pieces of hardware ever reported to have this 
-> problem. Nobody appears to have demonstrated it on any other HP systems, 
-> and any non-HP systems would have a different identifier string. With 
-> the SB400 being superceded, I don't expect us to see any more machines 
-> with the same ID.
 
- Fair enough.  As I wrote, I'll send an update shortly.
-
-  Maciej
+-- 
+dwmw2
