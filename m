@@ -1,55 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [BUILD-FAILURE] linux-next: Tree for June 24 - missing files in
- drivers/media/dvb/
-Date: Sun, 29 Jun 2008 22:35:20 +1000
-Message-ID: <20080629223520.1ac2297b.sfr@canb.auug.org.au>
-References: <20080624175612.cdf29651.sfr@canb.auug.org.au>
-	<486134B4.4050400@linux.vnet.ibm.com>
-	<20080625132810.6f31b571.sfr@canb.auug.org.au>
-	<20080625134859.6bc218c4.sfr@canb.auug.org.au>
-	<20080629084317.3392dac9@gaivota>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
+Date: Sun, 29 Jun 2008 16:00:27 +0200
+Message-ID: <200806291600.29059.rjw@sisk.pl>
+References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806262152.02099.rjw@sisk.pl> <Pine.LNX.4.55.0806270102051.31618@cliff.in.clinika.pl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sun__29_Jun_2008_22_35_20_+1000__DK_08u9Im=Rjzaj"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57698 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753465AbYF2Mfa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 29 Jun 2008 08:35:30 -0400
-In-Reply-To: <20080629084317.3392dac9@gaivota>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-testers@vger.kernel.org, v4l-dvb-maintainer@linuxtv.org, Andy Whitcroft <apw@shadowen.org>
-
---Signature=_Sun__29_Jun_2008_22_35_20_+1000__DK_08u9Im=Rjzaj
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.55.0806270102051.31618@cliff.in.clinika.pl>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Maciej W. Rozycki" <macro@linux-mips.org>
+Cc: Matthew Garrett <mjg59@srcf.ucam.org>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Sun, 29 Jun 2008 08:43:17 -0300 Mauro Carvalho Chehab <mchehab@infradead=
-.org> wrote:
->
-> Thanks for the report. I've fixed the two reported issues and now it shou=
-ld compile fine.
+On Friday, 27 of June 2008, Maciej W. Rozycki wrote:
+> On Thu, 26 Jun 2008, Rafael J. Wysocki wrote:
+> 
+> > Well, actually, I'm not sure that will work.  I have only found
+> > acpi_skip_timer_override being set to 1 in two places, but it doesn't seem to
+> > be read anywhere.  What am I missing?
+> 
+>  I believe I removed all the occurences.  I am waiting for a proposal of a
+> quirk based on the DSDT ID -- my time is a bit too limited to study the
+> internals of our ACPI code at the moment; sorry about that.  I will
+> complement it with a change to remove IRQ0 from I/O APIC tables as
+> promised then; this piece of code I am quite familiar with.
 
-Thanks, I look forward to tomorrow's build.
+Well, why don't we use the DMI identification as suggested by Matthew?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+I think we can safely assume that all of these boxes are broken for now and we
+can use a more fine grained identification in the future, if necessary.
 
---Signature=_Sun__29_Jun_2008_22_35_20_+1000__DK_08u9Im=Rjzaj
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhngYgACgkQjjKRsyhoI8yiHgCfRNocYwpz7l1uSu3Wdw6jS4Ye
-Z7sAoKrIhoA7rvikJ5vBOsOlXLVuff0h
-=bEg7
------END PGP SIGNATURE-----
-
---Signature=_Sun__29_Jun_2008_22_35_20_+1000__DK_08u9Im=Rjzaj--
+Thanks,
+Rafael
