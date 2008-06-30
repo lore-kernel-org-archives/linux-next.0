@@ -1,81 +1,61 @@
-From: "Maciej W. Rozycki" <macro@linux-mips.org>
-Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
-Date: Mon, 30 Jun 2008 02:39:47 +0100 (BST)
-Message-ID: <Pine.LNX.4.55.0806300205180.22548@cliff.in.clinika.pl>
-References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <20080629200210.GB31633@elte.hu>
- <Pine.LNX.4.55.0806292104560.22548@cliff.in.clinika.pl> <200806300106.38414.rjw@sisk.pl>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the v4l-dvb tree
+Date: Mon, 30 Jun 2008 14:44:10 +1000
+Message-ID: <20080630144410.45b89069.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <200806300106.38414.rjw@sisk.pl>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Ingo Molnar <mingo@elte.hu>, Matthew Garrett <mjg59@srcf.ucam.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>, Andi Kleen <andi-suse@firstfloor.org>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__30_Jun_2008_14_44_10_+1000_GpC//7I_tCn8tt1C"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:47307 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751299AbYF3EoO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Jun 2008 00:44:14 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org
 
-On Mon, 30 Jun 2008, Rafael J. Wysocki wrote:
+--Signature=_Mon__30_Jun_2008_14_44_10_+1000_GpC//7I_tCn8tt1C
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > > well as long as we eliminate the bad effects around via DMI exceptions 
-> > > nobody will feel the need to argue whether it's a regression ;-) [this 
-> > > problem could be argued to be a regression, even if it's caused by prior 
-> > > luck/stupidity of Linux. We have to live with the effects of our 
-> > > mistakes.]
-> > 
-> >  Of course -- this is the only reason I can be bothered with the issue in
-> > the first place.  Otherwise, I would have said: 'Get the manufacturer to
-> > fix it, use "noapic" or live with a local patch.'
-> 
-> In that case your patch would surely make it to the regression list.
+Hi Mauro,
 
- Please be careful -- you seem to contradict yourself.  I wrote to the
-effect of: "If this wasn't a regression, I would have said [...]" and your
-reply is: "In that case your [non-regressing] patch would surely make it
-to the regression list."
+Today's linux-next merge of the v4l-dvb tree got a trivial conflict in
+drivers/media/video/cx18/cx18-cards.h between commit
+1f09e8a25c9aaa4066b4593c1bf99a4cbcc38120 ("V4L/DVB (8068): cx18: Add I2C
+slave reset via GPIO upon initialization") from Linus' tree (which also
+appears in the  v4l-dvb tree and commit
+a03a7daf6fe02d87a1919e1dc6c156c8ea46134b ("V4L/DVB (8089): cx18: add
+support for Conexant Raptor PAL/SECAM card") from the v4l-dvb tree.
 
-> >  This is actually how I have kept one of my old MPS SMP systems up for
-> > years now -- it has a broken MP table which prevents interrupts from
-> > working when too many PCI option cards are present, so I have prepared a
-> > patch for patching the table manually.  I proposed it once, which you may
-> > recall, but it was rejected on the grounds of the syntax being too tough
-> > to comprehend to a poor average user being.  I am sure more systems would
-> > benefit as MP table breakages used to be quite common.
-> > 
-> >  Here the simple workaround was "noapic" too, so everyone else could be
-> > happy and I have been happy to keep the patch and use the capabilities of
-> > the piece of hardware properly despite its broken firmware.
-> 
-> Again.  If there's a configuration that didn't need any manual workarounds
-> before, it's expected to continue to work without any manual workarounds and
-> as a patch submitter, it's _your_ burden to make that happen.
+I just fixed it up and will carry it. If you rebase your tree on
+Linus' (or merge Linus' tree into yours) this should go away.
 
- That is certainly true for standard hardware.  We have to take
-responsibility for own bugs, sure.  I cannot readily understand why you
-apparently try to imply hardware vendors do not.
+You should consider running a separate branch for bug fixes that are fed
+to Linus during the -rc series as that would isolate these conflicts
+somewhat (and it would test those bug fixes in isolation).  You can then
+merge that branch into your "stable" branch (which is for the next merge
+window) whenever there may be conflicts and fix those conflicts
+yourself.  I would also carry this bug fix tree/branch and merge it
+earlier (it would mostly be empty as Linus would be merging it).
 
-> Otherwise you throw this burden onto users who
-> (1) don't expect things to stop working,
-> (2) may not be able to figure out themselves what the right workaround is,
-> (3) may not be able to make hardware manufacturers do anything.
-> 
-> If there's a configuration that worked before your patch and doesn't work
-> after it, you're hurting the users of that configuration.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
- Honestly?  These poor users who have no clue or time to follow the
-development lists and/or fix bugs themselves should report the problem to
-the supplier of their Linux distribution, who would sort it out by, first,
-providing a temporary workaround till the problem is sorted out correctly,
-second, contacting the hardware vendor through a recognised channel to
-request the problem to be investigated and fixed properly.  I am fairly
-sure all the reputable (responsible?) distribution vendors have service
-agreements already in place with all the major hardware vendors and all
-the minor hardware vendors will be happy to cooperate anyway so as not to
-be minor vendors anymore.  This is why I have asked for points of contact 
-repeatedly in this thread.
+--Signature=_Mon__30_Jun_2008_14_44_10_+1000_GpC//7I_tCn8tt1C
+Content-Type: application/pgp-signature
 
- Of course it leaves hobbyist distributions at a slight disadvantage, but
-their users are sort of expected to be "power users" (otherwise they
-wouldn't have been hobbyists, would they?) and adding an option or a patch
-even should not be a problem for them.  We may try to do our best to help
-them, but not at the price of penalising good hardware.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-  Maciej
+iEYEARECAAYFAkhoZJoACgkQjjKRsyhoI8xxdQCePoucuGw8l97q+zZNfG20HxEx
+0OQAn3Eu05EvFdCslgFPki8qfRFy206p
+=pJom
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__30_Jun_2008_14_44_10_+1000_GpC//7I_tCn8tt1C--
