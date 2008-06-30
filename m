@@ -1,68 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure
-Date: Mon, 30 Jun 2008 23:22:48 +1000
-Message-ID: <20080630232248.8d993f1d.sfr@canb.auug.org.au>
+From: Dmitry Baryshkov <dbaryshkov@gmail.com>
+Subject: Re: linux-next: Tree for June 27 - build fails at
+ tc6393xb_attach_irq() with randconfig build
+Date: Mon, 30 Jun 2008 13:44:41 +0000 (UTC)
+Message-ID: <g4ao09$be3$1@ger.gmane.org>
+References: <20080627182406.a54b00c1.sfr@canb.auug.org.au>
+	<48653871.9040106@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__30_Jun_2008_23_22_48_+1000_/MYxwF_j/r6rC.8U"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43584 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756174AbYF3NW6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Jun 2008 09:22:58 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1762557AbYF3NpS@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__30_Jun_2008_23_22_48_+1000_/MYxwF_j/r6rC.8U
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Kamalesh Babulal wrote:
 
-Hi Sam,
+> Hi Stephen,
+>=20
+> randconfig build fails on next-20080627 kernelk with CONFIG_MFD_TC639=
+3XB
+> enabled
+>=20
+>   CC      drivers/mfd/tc6393xb.o
+> drivers/mfd/tc6393xb.c: In function =E2=80=98tc6393xb_attach_irq=E2=80=
+=99:
+> drivers/mfd/tc6393xb.c:269: error: implicit declaration of function
+> =E2=80=98set_irq_flags=E2=80=99 drivers/mfd/tc6393xb.c:269: error: =E2=
+=80=98IRQF_VALID=E2=80=99
+> undeclared (first use in this function) drivers/mfd/tc6393xb.c:269:
+> error: (Each undeclared identifier is reported only once
+> drivers/mfd/tc6393xb.c:269: error: for each function it appears in.)
+> drivers/mfd/tc6393xb.c:269: error: =E2=80=98IRQF_PROBE=E2=80=99 undec=
+lared (first use in
+> this function) drivers/mfd/tc6393xb.c:272: error: =E2=80=98IRQT_FALLI=
+NG=E2=80=99
+> undeclared (first use in this function) make[2]: ***
+> [drivers/mfd/tc6393xb.o] Error 1 make[1]: *** [drivers/mfd] Error 2
+> make: *** [drivers] Error 2
 
-Today's linux-next build (i386 defconfig) failed like this:
 
-  GEN     /scratch/sfr/i386_defconfig/Makefile
-  GEN     /scratch/sfr/i386_defconfig/Makefile
-  SYMLINK include/asm -> include/asm-x86
-  Using /scratch/sfr/next as source for kernel
-/bin/sh: include/asm/asm-offsets.h: No such file or directory
+IRQT_FALLING will be replaced with IRQ_TYPE_FALLING_EDGE.
+However I've a question. set_irq_flags is arm-only thing to change the=20
+status IRQ_NOREQUEST, IRQ_NOPROBE etc. Most other arches (except ppc)=20
+don't even bother touching IRQ_NOREQUEST. Should I change tc6393xb to=20
+depend on ARM or make call to set_irq_flags ARM-dependant?
 
-I can only guess that this is a kbuild problem.  The object include directo=
-ry
-looked like this:
-
-/scratch/sfr/i386_defconfig/include$ ls -la
-total 24
-drwxr-xr-x   5 sfr users 4096 2008-06-30 23:06 .
-drwxr-xr-x   8 sfr users 4096 2008-06-30 23:06 ..
-lrwxrwxrwx   1 sfr users    7 2008-06-30 23:06 asm -> asm-x86
-drwxr-xr-x   2 sfr users 4096 2008-06-30 23:06 asm-i386
-drwxr-xr-x 184 sfr users 8192 2008-06-30 23:06 config
-drwxr-xr-x   2 sfr users 4096 2008-06-30 23:06 linux
-
-My powerpc (ppc64_defconfig, allnoconfig, allyesconfig and
-ppc44x_deconfig), x86_64 (allmodconfig), sparc (defconfig) and sparc64
-(defconfig) build all worked.  The kisskb overnight builds will show us
-what else is broken.
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__30_Jun_2008_23_22_48_+1000_/MYxwF_j/r6rC.8U
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkho3igACgkQjjKRsyhoI8xPxQCfdKuduLXPeFhq3O43rMZY7AoA
-OGIAn3ZRmTse7RD23mxZsKMCVq2+psFL
-=b3xV
------END PGP SIGNATURE-----
-
---Signature=_Mon__30_Jun_2008_23_22_48_+1000_/MYxwF_j/r6rC.8U--
+With best wishes
+Dmitry
