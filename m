@@ -1,51 +1,90 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the bkl-removal tree
-Date: Mon, 30 Jun 2008 18:21:22 +1000
-Message-ID: <20080630182122.99ea9f2e.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the acpi tree
+Date: Mon, 30 Jun 2008 11:03:56 +0200
+Message-ID: <20080630090356.GB1701@elte.hu>
+References: <20080630155912.ef5a1204.sfr@canb.auug.org.au> <20080630160958.ed96d469.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__30_Jun_2008_18_21_22_+1000_7Ut4J1=NQnH4Fwhf"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36074 "EHLO smtps.tip.net.au"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:35963 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752544AbYF3IVb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Jun 2008 04:21:31 -0400
+	id S1753035AbYF3JEU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Jun 2008 05:04:20 -0400
+Content-Disposition: inline
+In-Reply-To: <20080630160958.ed96d469.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-next@vger.kernel.org, Andi Kleen <andi@firstfloor.org>, Chuck Lever <chuck.lever@oracle.com>, Trond Myklebust <trond.myklebust@fys.uio.no>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Zhao Yakui <yakui.zhao@intel.com>, Li Shaohua <shaohua.li@intel.com>
 
---Signature=_Mon__30_Jun_2008_18_21_22_+1000_7Ut4J1=NQnH4Fwhf
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Jonathan,
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Today's linux-next merge of the bkl-removal tree got a trivial conflict
-in fs/nfs/file.c between commit 69cc426fc4b7664ec69642cd9b30eabe2ec8ad4a
-("NFS: Make nfs_llseek methods consistent") from the nfs tree and commit
-a9f88f0c4fed5d1ed6fb4a0389891d327a147130 ("Remove BKL from remote_llseek
-v2") from the bkl-removal tree.
+> On Mon, 30 Jun 2008 15:59:12 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Hi Len, Ingo,
+> > 
+> > Today's linux-next merge of the acpi tree got a conflict in 
+> > Documentation/kernel-parameters.txt between commits "ACPI : Create 
+> > "idle=nomwait" bootparam" and "ACPI: Create "idle=halt" bootparam" 
+> > different version of which appear in the x86 and acpi trees ("ACPI : 
+> > Create "idle=nomwait" bootparam" in the acpi tree is different from 
+> > the version that was in that tree on Friday (thus this conflict 
+> > comes up again)).
+> > 
+> > Please sort this out ...
+> 
+> This also caused conflicts in arch/ia64/kernel/process.c,
+> arch/x86/kernel/process.c, drivers/acpi/processor_core.c,
+> include/asm-ia64/processor.h and include/asm-x86/processor.h.
+> 
+> I fixed it up by using the acpi tree's versions.
 
-I fixed it up and can carry it.  Or maybe you should liaise with Trond to
-put ths nfs part of the BKL removal in his tree.
+hm, this was caused by the ACPI tree doing a non-append rebase instead 
+of the trivial delta fix like the one below. I've added the one below to 
+the x86 tree.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+	Ingo
 
---Signature=_Mon__30_Jun_2008_18_21_22_+1000_7Ut4J1=NQnH4Fwhf
-Content-Type: application/pgp-signature
+----------------->
+commit 4fb0b0af57439fa62cf24a39b65f6b6ba148fba6
+Author: Ingo Molnar <mingo@elte.hu>
+Date:   Mon Jun 30 11:00:59 2008 +0200
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+    doc: Documentation/kernel-parameters.txt, fix whitespace
+    
+    based on:
+    
+    | commit ce4bd94fad0fa934c0de1ba1932e7e61bc142176
+    | Author: Zhao Yakui <yakui.zhao@intel.com>
+    | Date:   Fri Jun 20 03:44:11 2008 -0400
+    |
+    |     ACPI : Create "idle=nomwait" bootparam
+    
+    Signed-off-by: Ingo Molnar <mingo@elte.hu>
 
-iEYEARECAAYFAkhol4IACgkQjjKRsyhoI8x/sACfaAwCoA6e12ZWer2wtpqO2+9y
-QaAAnAmE7KsbBr07YUL5znl83Q2/KD7d
-=PTNL
------END PGP SIGNATURE-----
-
---Signature=_Mon__30_Jun_2008_18_21_22_+1000_7Ut4J1=NQnH4Fwhf--
+diff --git a/Documentation/kernel-parameters.txt b/Documentation/kernel-parameters.txt
+index 39baaba..0f7268a 100644
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -785,7 +785,7 @@ and is between 256 and 4096 characters. It is defined in the file
+ 			See Documentation/ide/ide.txt.
+ 
+ 	idle=		[X86]
+-			Format: idle=poll or idle=mwait, idle = halt, idle=nomwait
++			Format: idle=poll or idle=mwait, idle=halt, idle=nomwait
+ 			Poll forces a polling idle loop that can slightly improves the performance
+ 			of waking up a idle CPU, but will use a lot of power and make the system
+ 			run hot. Not recommended.
+@@ -793,9 +793,9 @@ and is between 256 and 4096 characters. It is defined in the file
+ 			to not use it because it doesn't save as much power as a normal idle
+ 			loop use the MONITOR/MWAIT idle loop anyways. Performance should be the same
+ 			as idle=poll.
+-			idle = halt . Halt is forced to be used for CPU idle.
++			idle=halt . Halt is forced to be used for CPU idle.
+ 			In such case C2/C3 won't be used again.
+-			idle = nomwait. disable Mwait for CPU C-state.
++			idle=nomwait. disable Mwait for CPU C-state.
+ 			In such case C2C3_FFH access mode will be disabled.
+ 
+ 	ide-pci-generic.all-generic-ide [HW] (E)IDE subsystem
