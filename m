@@ -1,47 +1,68 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: manual merge of the v4l-dvb tree
-Date: Mon, 30 Jun 2008 08:14:25 -0300
-Message-ID: <20080630081425.125ca842@gaivota>
-References: <20080630145645.b671b13d.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure
+Date: Mon, 30 Jun 2008 23:22:48 +1000
+Message-ID: <20080630232248.8d993f1d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__30_Jun_2008_23_22_48_+1000_/MYxwF_j/r6rC.8U"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:47536 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755928AbYF3LOe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Jun 2008 07:14:34 -0400
-In-Reply-To: <20080630145645.b671b13d.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43584 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756174AbYF3NW6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Jun 2008 09:22:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
 
-On Mon, 30 Jun 2008 14:56:45 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Signature=_Mon__30_Jun_2008_23_22_48_+1000_/MYxwF_j/r6rC.8U
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Mauro,
-> 
-> Today's linux-next merge of the v4l-dvb tree got a trivial conflict in
-> drivers/media/video/videodev.c between commit
-> 7fa8e6fa1519194fc0c931f40d530fb55137bad9 ("V4L/DVB (8092): videodev:
-> simplify and fix standard enumeration") from Linus' tree (which is also
-> in the v4l-dvb tree) and commit 561216cf5e422669b4f9e54a6157d731245feecc
-> ("V4L/DVB (8103): videodev: fix/improve ioctl debugging") from the
-> v4l-dvb tree.
-> 
-> Again, I fixed it up and will carry it.
+Hi Sam,
 
-Thanks. I'll rebase my tree.
+Today's linux-next build (i386 defconfig) failed like this:
 
->  But also my comments about a bug
-> fix branch/tree apply here also.
-> 
-Hmm... I have here two branches, one with bug fixes only and another with bug fixes
-+ improvements. The last one is exported into my linux-next tree. Having just
-improvements on it seems a good idea, except that, sometimes, an improvement
-requires first that some bug fix patch to be applied first. Anyway, I'm seeking
-for some time to change my upstream procedures to get rid of those issues.
+  GEN     /scratch/sfr/i386_defconfig/Makefile
+  GEN     /scratch/sfr/i386_defconfig/Makefile
+  SYMLINK include/asm -> include/asm-x86
+  Using /scratch/sfr/next as source for kernel
+/bin/sh: include/asm/asm-offsets.h: No such file or directory
 
+I can only guess that this is a kbuild problem.  The object include directo=
+ry
+looked like this:
+
+/scratch/sfr/i386_defconfig/include$ ls -la
+total 24
+drwxr-xr-x   5 sfr users 4096 2008-06-30 23:06 .
+drwxr-xr-x   8 sfr users 4096 2008-06-30 23:06 ..
+lrwxrwxrwx   1 sfr users    7 2008-06-30 23:06 asm -> asm-x86
+drwxr-xr-x   2 sfr users 4096 2008-06-30 23:06 asm-i386
+drwxr-xr-x 184 sfr users 8192 2008-06-30 23:06 config
+drwxr-xr-x   2 sfr users 4096 2008-06-30 23:06 linux
+
+My powerpc (ppc64_defconfig, allnoconfig, allyesconfig and
+ppc44x_deconfig), x86_64 (allmodconfig), sparc (defconfig) and sparc64
+(defconfig) build all worked.  The kisskb overnight builds will show us
+what else is broken.
+
+--=20
 Cheers,
-Mauro
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__30_Jun_2008_23_22_48_+1000_/MYxwF_j/r6rC.8U
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkho3igACgkQjjKRsyhoI8xPxQCfdKuduLXPeFhq3O43rMZY7AoA
+OGIAn3ZRmTse7RD23mxZsKMCVq2+psFL
+=b3xV
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__30_Jun_2008_23_22_48_+1000_/MYxwF_j/r6rC.8U--
