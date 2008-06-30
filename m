@@ -1,34 +1,30 @@
-From: Andi Kleen <andi@firstfloor.org>
-Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
-Date: Mon, 30 Jun 2008 11:24:41 +0200
-Message-ID: <4868A659.2080308@firstfloor.org>
-References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <20080629200210.GB31633@elte.hu> <Pine.LNX.4.55.0806292104560.22548@cliff.in.clinika.pl> <200806300106.38414.rjw@sisk.pl> <Pine.LNX.4.55.0806300205180.22548@cliff.in.clinika.pl>
+From: David Woodhouse <dwmw2@infradead.org>
+Subject: Re: linux-next: manual merge of the firmware tree
+Date: Mon, 30 Jun 2008 10:27:57 +0100
+Message-ID: <1214818077.10393.333.camel@pmac.infradead.org>
+References: <20080626233833.f78fbd36.sfr@canb.auug.org.au>
+	 <20080630192339.b1032e1d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from one.firstfloor.org ([213.235.205.2]:55457 "EHLO
-	one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755095AbYF3JYp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Jun 2008 05:24:45 -0400
-In-Reply-To: <Pine.LNX.4.55.0806300205180.22548@cliff.in.clinika.pl>
+Received: from bombadil.infradead.org ([18.85.46.34]:37822 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759416AbYF3J2B (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Jun 2008 05:28:01 -0400
+In-Reply-To: <20080630192339.b1032e1d.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Maciej W. Rozycki" <macro@linux-mips.org>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Ingo Molnar <mingo@elte.hu>, Matthew Garrett <mjg59@srcf.ucam.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>, Andi Kleen <andi-suse@firstfloor.org>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
 
+On Mon, 2008-06-30 at 19:23 +1000, Stephen Rothwell wrote:
+> This has come up again today.  I assume there has been some
+> rebasing/modification of the commits involved.
 
->  That is certainly true for standard hardware.  We have to take
-> responsibility for own bugs, sure.  I cannot readily understand why you
-> apparently try to imply hardware vendors do not.
+Yeah, I went back and made some fixes in earlier commits. I was about to
+do so again, in fact, and rebase onto Linus' current tree while I'm at
+it. Is that OK?
 
-Sorry Maciej, you're totally off base on that. On consumer hardware
-vendors very rarely fix anything after release of the machine
-and in general users expect Linux to work around any BIOS or
-hardware bugs that happen (especially if it's a regression and worked
-before)
-
-So you either need to provide a workaround for the problem or your
-patches should be reverted.
-
--Andi
+-- 
+dwmw2
