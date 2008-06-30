@@ -1,52 +1,54 @@
-From: Dmitry Baryshkov <dbaryshkov@gmail.com>
-Subject: Re: linux-next: Tree for June 27 - build fails at
- tc6393xb_attach_irq() with randconfig build
-Date: Mon, 30 Jun 2008 13:44:41 +0000 (UTC)
-Message-ID: <g4ao09$be3$1@ger.gmane.org>
-References: <20080627182406.a54b00c1.sfr@canb.auug.org.au>
-	<48653871.9040106@linux.vnet.ibm.com>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: build failure
+Date: Mon, 30 Jun 2008 16:06:44 +0200
+Message-ID: <20080630140644.GA5167@elte.hu>
+References: <20080630232248.8d993f1d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1762557AbYF3NpS@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
-
-Kamalesh Babulal wrote:
-
-> Hi Stephen,
->=20
-> randconfig build fails on next-20080627 kernelk with CONFIG_MFD_TC639=
-3XB
-> enabled
->=20
->   CC      drivers/mfd/tc6393xb.o
-> drivers/mfd/tc6393xb.c: In function =E2=80=98tc6393xb_attach_irq=E2=80=
-=99:
-> drivers/mfd/tc6393xb.c:269: error: implicit declaration of function
-> =E2=80=98set_irq_flags=E2=80=99 drivers/mfd/tc6393xb.c:269: error: =E2=
-=80=98IRQF_VALID=E2=80=99
-> undeclared (first use in this function) drivers/mfd/tc6393xb.c:269:
-> error: (Each undeclared identifier is reported only once
-> drivers/mfd/tc6393xb.c:269: error: for each function it appears in.)
-> drivers/mfd/tc6393xb.c:269: error: =E2=80=98IRQF_PROBE=E2=80=99 undec=
-lared (first use in
-> this function) drivers/mfd/tc6393xb.c:272: error: =E2=80=98IRQT_FALLI=
-NG=E2=80=99
-> undeclared (first use in this function) make[2]: ***
-> [drivers/mfd/tc6393xb.o] Error 1 make[1]: *** [drivers/mfd] Error 2
-> make: *** [drivers] Error 2
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx3.mail.elte.hu ([157.181.1.138]:45083 "EHLO mx3.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750842AbYF3OHH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Jun 2008 10:07:07 -0400
+Content-Disposition: inline
+In-Reply-To: <20080630232248.8d993f1d.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Sam Ravnborg <sam@ravnborg.org>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
 
 
-IRQT_FALLING will be replaced with IRQ_TYPE_FALLING_EDGE.
-However I've a question. set_irq_flags is arm-only thing to change the=20
-status IRQ_NOREQUEST, IRQ_NOPROBE etc. Most other arches (except ppc)=20
-don't even bother touching IRQ_NOREQUEST. Should I change tc6393xb to=20
-depend on ARM or make call to set_irq_flags ARM-dependant?
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
+> Hi Sam,
+> 
+> Today's linux-next build (i386 defconfig) failed like this:
+> 
+>   GEN     /scratch/sfr/i386_defconfig/Makefile
+>   GEN     /scratch/sfr/i386_defconfig/Makefile
+>   SYMLINK include/asm -> include/asm-x86
+>   Using /scratch/sfr/next as source for kernel
+> /bin/sh: include/asm/asm-offsets.h: No such file or directory
+> 
+> I can only guess that this is a kbuild problem.  The object include 
+> directory looked like this:
+> 
+> /scratch/sfr/i386_defconfig/include$ ls -la
+> total 24
+> drwxr-xr-x   5 sfr users 4096 2008-06-30 23:06 .
+> drwxr-xr-x   8 sfr users 4096 2008-06-30 23:06 ..
+> lrwxrwxrwx   1 sfr users    7 2008-06-30 23:06 asm -> asm-x86
+> drwxr-xr-x   2 sfr users 4096 2008-06-30 23:06 asm-i386
+> drwxr-xr-x 184 sfr users 8192 2008-06-30 23:06 config
+> drwxr-xr-x   2 sfr users 4096 2008-06-30 23:06 linux
+> 
+> My powerpc (ppc64_defconfig, allnoconfig, allyesconfig and 
+> ppc44x_deconfig), x86_64 (allmodconfig), sparc (defconfig) and sparc64 
+> (defconfig) build all worked.  The kisskb overnight builds will show 
+> us what else is broken.
 
---=20
-With best wishes
-Dmitry
+hm, there's no known (or even any recently fixed) kbuild related problem 
+in the stuff that comes towards linux-next from -tip. I've done an 
+integration run earlier today - have you already picked that up?
+
+	Ingo
