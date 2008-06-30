@@ -1,62 +1,34 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: [BUILD-FAILURE] linux-next: Tree for June 30
-Date: Mon, 30 Jun 2008 19:59:25 +0200
-Message-ID: <20080630175925.GQ20826@kernel.dk>
-References: <20080701001656.e156585c.sfr@canb.auug.org.au> <48690385.7030500@linux.vnet.ibm.com>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH -next] fork and exit: need to include iocontext.h
+Date: Mon, 30 Jun 2008 20:05:06 +0200
+Message-ID: <20080630180506.GC23739@elte.hu>
+References: <20080630105458.7c95e195.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from brick.kernel.dk ([87.55.233.238]:11685 "EHLO kernel.dk"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:43559 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751308AbYF3R72 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Jun 2008 13:59:28 -0400
+	id S1763281AbYF3SFg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Jun 2008 14:05:36 -0400
 Content-Disposition: inline
-In-Reply-To: <48690385.7030500@linux.vnet.ibm.com>
+In-Reply-To: <20080630105458.7c95e195.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Discussions of testing linux <ltc-linux-test@lists.linux.ibm.com>, Andy Whitcroft <apw@shadowen.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, mingo <mingo@redhat.com>, tglx <tglx@linutronix.de>, hpa <hpa@zytor.com>, akpm <akpm@linux-foundation.org>
 
-On Mon, Jun 30 2008, Kamalesh Babulal wrote:
-> Hi Stephen,
+
+* Randy Dunlap <randy.dunlap@oracle.com> wrote:
+
+> From: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> next-20080630 kernel build fails x86 box 
+> Fix fork and exit build errors: they need to include iocontext.h:
 > 
-> fs/bio-integrity.c: In function `bio_integrity_add_page':
-> include/linux/bio.h:368: sorry, unimplemented: inlining failed in call to 'bvec_nr_vecs': function body not available
-> fs/bio-integrity.c:135: sorry, unimplemented: called from here
-> make[1]: *** [fs/bio-integrity.o] Error 1
-> make: *** [fs] Error 2
+> linux-next-20080630/kernel/fork.c: In function 'copy_process':
+> linux-next-20080630/kernel/fork.c:1237: error: implicit declaration of function 'put_io_context'
+> linux-next-20080630/kernel/exit.c: In function 'do_exit':
+> linux-next-20080630/kernel/exit.c:992: error: implicit declaration of function 'exit_io_context'
 
-Gah, I can't believe gcc errors on that. This should fix it, I'll
-integrate with the patchset.
+i havent seen this one - do you know by chance which commit triggers it?
 
-diff --git a/fs/bio.c b/fs/bio.c
-index bc865b1..7761c84 100644
---- a/fs/bio.c
-+++ b/fs/bio.c
-@@ -50,7 +50,7 @@ static struct biovec_slab bvec_slabs[BIOVEC_NR_POOLS] __read_mostly = {
-  */
- struct bio_set *fs_bio_set;
- 
--inline unsigned int bvec_nr_vecs(unsigned short idx)
-+unsigned int bvec_nr_vecs(unsigned short idx)
- {
- 	return bvec_slabs[idx].nr_vecs;
- }
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 62f0be9..0933a14 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -365,7 +365,7 @@ extern struct bio *bio_copy_user_iov(struct request_queue *, struct sg_iovec *,
- extern int bio_uncopy_user(struct bio *);
- void zero_fill_bio(struct bio *bio);
- extern struct bio_vec *bvec_alloc_bs(gfp_t, int, unsigned long *, struct bio_set *);
--extern inline unsigned int bvec_nr_vecs(unsigned short idx);
-+extern unsigned int bvec_nr_vecs(unsigned short idx);
- 
- /*
-  * bio_set is used to allow other portions of the IO system to
-
--- 
-Jens Axboe
+	Ingo
