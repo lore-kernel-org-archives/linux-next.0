@@ -1,56 +1,40 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: build failure
-Date: Mon, 30 Jun 2008 08:12:39 -0700
-Message-ID: <20080630081239.f62aec40.randy.dunlap@oracle.com>
-References: <20080630232248.8d993f1d.sfr@canb.auug.org.au>
+From: "Maciej W. Rozycki" <macro@linux-mips.org>
+Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
+Date: Mon, 30 Jun 2008 16:29:33 +0100 (BST)
+Message-ID: <Pine.LNX.4.55.0806301607290.30785@cliff.in.clinika.pl>
+References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806292123.16237.rjw@sisk.pl>
+ <Pine.LNX.4.55.0806292023320.22548@cliff.in.clinika.pl> <200806300056.16399.rjw@sisk.pl>
+ <Pine.LNX.4.55.0806300003080.22548@cliff.in.clinika.pl>
+ <20080630090607.GA18856@srcf.ucam.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rgminet01.oracle.com ([148.87.113.118]:31080 "EHLO
-	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752716AbYF3PO0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Jun 2008 11:14:26 -0400
-In-Reply-To: <20080630232248.8d993f1d.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Sam Ravnborg <sam@ravnborg.org>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20080630090607.GA18856@srcf.ucam.org>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>, Andi Kleen <andi-suse@firstfloor.org>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 30 Jun 2008 23:22:48 +1000 Stephen Rothwell wrote:
+On Mon, 30 Jun 2008, Matthew Garrett wrote:
 
-> Hi Sam,
+> >  Note that Matthew's made a point here, that apparently there are only two 
+> > models using this southbridge and new ones are unlikely to be released, so 
+> > my note is for a reference only.
 > 
-> Today's linux-next build (i386 defconfig) failed like this:
-> 
->   GEN     /scratch/sfr/i386_defconfig/Makefile
->   GEN     /scratch/sfr/i386_defconfig/Makefile
->   SYMLINK include/asm -> include/asm-x86
->   Using /scratch/sfr/next as source for kernel
-> /bin/sh: include/asm/asm-offsets.h: No such file or directory
+> No, there's many other systems using the same southbridge that don't 
+> have the bizarre DSDT code and so don't show this behaviour.
 
-All (ALL) of my randconfig builds on i386 and x86_64 are failing like this.
+ I meant "... two models [of HP laptops] using this southbridge..." of 
+course. :)
 
+ Now I did a search of the Internet and have become puzzled.  Apparently
+there *are* other devices using this DSDT.  See for example a thread at:  
+"http://bbs.archlinux.org/viewtopic.php?pid=359559" where an owner of an
+HP Compaq 6715s has some other problems with a DSDT which coincidentally
+is the very same HP/SB400/10000 (though built with a different ASL
+compiler, hmm...).
 
-> I can only guess that this is a kbuild problem.  The object include directory
-> looked like this:
-> 
-> /scratch/sfr/i386_defconfig/include$ ls -la
-> total 24
-> drwxr-xr-x   5 sfr users 4096 2008-06-30 23:06 .
-> drwxr-xr-x   8 sfr users 4096 2008-06-30 23:06 ..
-> lrwxrwxrwx   1 sfr users    7 2008-06-30 23:06 asm -> asm-x86
-> drwxr-xr-x   2 sfr users 4096 2008-06-30 23:06 asm-i386
-> drwxr-xr-x 184 sfr users 8192 2008-06-30 23:06 config
-> drwxr-xr-x   2 sfr users 4096 2008-06-30 23:06 linux
-> 
-> My powerpc (ppc64_defconfig, allnoconfig, allyesconfig and
-> ppc44x_deconfig), x86_64 (allmodconfig), sparc (defconfig) and sparc64
-> (defconfig) build all worked.  The kisskb overnight builds will show us
-> what else is broken.
+ Matthew, where did you get these DMI IDs from? -- I cannot see them being 
+reported in any bootstrap log.
 
-
----
-~Randy
-Linux Plumbers Conference, 17-19 September 2008, Portland, Oregon USA
-http://linuxplumbersconf.org/
+  Maciej
