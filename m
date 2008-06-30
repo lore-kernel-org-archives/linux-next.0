@@ -1,32 +1,50 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
-Date: Mon, 30 Jun 2008 10:06:07 +0100
-Message-ID: <20080630090607.GA18856@srcf.ucam.org>
-References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806292123.16237.rjw@sisk.pl> <Pine.LNX.4.55.0806292023320.22548@cliff.in.clinika.pl> <200806300056.16399.rjw@sisk.pl> <Pine.LNX.4.55.0806300003080.22548@cliff.in.clinika.pl>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the firmware tree
+Date: Mon, 30 Jun 2008 19:09:07 +1000
+Message-ID: <20080630190907.004cbb79.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__30_Jun_2008_19_09_07_+1000_N=M4w3qigirjLmVJ"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:40919 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753790AbYF3JJS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Jun 2008 05:09:18 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, Jaswinder Singh <jaswinder@infradead.org>, Chas Williams <chas@cmf.nrl.navy.mil>, David Miller <davem@davemloft.net>
+
+--Signature=_Mon__30_Jun_2008_19_09_07_+1000_N=M4w3qigirjLmVJ
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.55.0806300003080.22548@cliff.in.clinika.pl>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Maciej W. Rozycki" <macro@linux-mips.org>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>, Andi Kleen <andi-suse@firstfloor.org>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 30, 2008 at 02:00:04AM +0100, Maciej W. Rozycki wrote:
+Hi David,
 
->  The DSDT is clearly associated with the SB400 southbridge.  I would not
-> expect a given make and model to use different southbridges across the
-> series, so there will only be one DSDT per model, possibly in a number of
-> revisions.  On the other hand different models may use the same
-> southbridge and hence the same DSDT.
->
->  Note that Matthew's made a point here, that apparently there are only two 
-> models using this southbridge and new ones are unlikely to be released, so 
-> my note is for a reference only.
+Today's linux-next merge of the firmware tree got a major conflict
+between commit e92481f95375aa2702ea5018b0295792ae0fa9c1 ("atm: [fore200e]
+convert to use request_firmware()") from the net tree and commit
+ef15231d8a30e501b5471ad97a07359e39ceab00 ("fore200e: use request_firmware
+()") from the firmware tree.
 
-No, there's many other systems using the same southbridge that don't 
-have the bizarre DSDT code and so don't show this behaviour.
- 
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
+I reverted the latter from the firmware tree for now.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__30_Jun_2008_19_09_07_+1000_N=M4w3qigirjLmVJ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhoorMACgkQjjKRsyhoI8xOfgCeJtkO0G2ovtQGGVnTCF7609AL
+gFEAoJXydFqn+Waj4wRSvER7a+Qk8O/Y
+=UpGZ
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__30_Jun_2008_19_09_07_+1000_N=M4w3qigirjLmVJ--
