@@ -1,33 +1,48 @@
-From: Sam Ravnborg <sam@ravnborg.org>
+From: "H. Peter Anvin" <hpa@zytor.com>
 Subject: Re: [BUILD-FAILURE] linux-next: Tree for June 30
-Date: Mon, 30 Jun 2008 22:25:06 +0200
-Message-ID: <20080630202506.GA28050@uranus.ravnborg.org>
-References: <20080701001656.e156585c.sfr@canb.auug.org.au> <48690385.7030500@linux.vnet.ibm.com> <48690D3C.1060803@linux.vnet.ibm.com> <20080630185943.GA24692@uranus.ravnborg.org> <20080630192610.GA6584@elte.hu> <20080630194727.GA26682@uranus.ravnborg.org> <20080630200623.GE6584@elte.hu>
+Date: Mon, 30 Jun 2008 13:37:05 -0700
+Message-ID: <486943F1.80606@zytor.com>
+References: <20080701001656.e156585c.sfr@canb.auug.org.au> <48690385.7030500@linux.vnet.ibm.com> <48690D3C.1060803@linux.vnet.ibm.com> <20080630185943.GA24692@uranus.ravnborg.org> <20080630192610.GA6584@elte.hu> <20080630194727.GA26682@uranus.ravnborg.org> <20080630200623.GE6584@elte.hu> <20080630202506.GA28050@uranus.ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pasmtpa.tele.dk ([80.160.77.114]:57098 "EHLO pasmtpA.tele.dk"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755039AbYF3UYU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Jun 2008 16:24:20 -0400
-Content-Disposition: inline
-In-Reply-To: <20080630200623.GE6584@elte.hu>
+Received: from terminus.zytor.com ([198.137.202.10]:48816 "EHLO
+	terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753187AbYF3UkK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Jun 2008 16:40:10 -0400
+In-Reply-To: <20080630202506.GA28050@uranus.ravnborg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>, Andy Whitcroft <apw@shadowen.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Ingo Molnar <mingo@elte.hu>, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>, Andy Whitcroft <apw@shadowen.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Vivek Goyal <vgoyal@in.ibm.com>, "Eric W. Biederman" <ebiederm@xmission.com>
 
+Sam Ravnborg wrote:
+>> ah, ok. So the patch below should solve this for now?
+>>
+>> is there any particular reason why we are limited to 100 sections? (is 
+>> there some ELF limitation here perhaps?)
 > 
-> ah, ok. So the patch below should solve this for now?
+> I would still like to know if you see significant different numbers than Kamalesh.
+> If you see a number close to 100 then OK.
+> But if you see a number say in the range of below 80 then we should dive deeper into this.
 > 
-> is there any particular reason why we are limited to 100 sections? (is 
-> there some ELF limitation here perhaps?)
+> I do not even know what the program does - never looked at it befoe
+> so why the original limit was 100 I dunno.
+> 
 
-I would still like to know if you see significant different numbers than Kamalesh.
-If you see a number close to 100 then OK.
-But if you see a number say in the range of below 80 then we should dive deeper into this.
+It looks to me that the people who did the relocatable kernel code just 
+put in a magic number.  There is certainly no inherent reason for this 
+limit.
 
-I do not even know what the program does - never looked at it befoe
-so why the original limit was 100 I dunno.
+What's really ugly is that this is in a host-space program!  It would 
+have been one thing if it had been in a piece of code run in a 
+restricted environment, e.g. in the decompressor, but this one runs in 
+user space on the build environment.
 
-	Sam
+The quick solution is to change this number to something obscenely big 
+(say 10000, but even that could be an issue if we end up doing stuff 
+like section per function); the proper solution is to turn these arrays 
+into a structure and allocate the array dynamically.
+
+	-hpa
