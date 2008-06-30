@@ -1,59 +1,62 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] fork and exit: need to include iocontext.h
-Date: Mon, 30 Jun 2008 10:54:58 -0700
-Message-ID: <20080630105458.7c95e195.randy.dunlap@oracle.com>
+From: Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: [BUILD-FAILURE] linux-next: Tree for June 30
+Date: Mon, 30 Jun 2008 19:59:25 +0200
+Message-ID: <20080630175925.GQ20826@kernel.dk>
+References: <20080701001656.e156585c.sfr@canb.auug.org.au> <48690385.7030500@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from agminet01.oracle.com ([141.146.126.228]:16881 "EHLO
-	agminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751673AbYF3R5G (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Jun 2008 13:57:06 -0400
+Received: from brick.kernel.dk ([87.55.233.238]:11685 "EHLO kernel.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751308AbYF3R72 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Jun 2008 13:59:28 -0400
+Content-Disposition: inline
+In-Reply-To: <48690385.7030500@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: lkml <linux-kernel@vger.kernel.org>, mingo <mingo@redhat.com>, tglx <tglx@linutronix.de>, hpa <hpa@zytor.com>, akpm <akpm@linux-foundation.org>
+To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Discussions of testing linux <ltc-linux-test@lists.linux.ibm.com>, Andy Whitcroft <apw@shadowen.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Mon, Jun 30 2008, Kamalesh Babulal wrote:
+> Hi Stephen,
+> 
+> next-20080630 kernel build fails x86 box 
+> 
+> fs/bio-integrity.c: In function `bio_integrity_add_page':
+> include/linux/bio.h:368: sorry, unimplemented: inlining failed in call to 'bvec_nr_vecs': function body not available
+> fs/bio-integrity.c:135: sorry, unimplemented: called from here
+> make[1]: *** [fs/bio-integrity.o] Error 1
+> make: *** [fs] Error 2
 
-Fix fork and exit build errors: they need to include iocontext.h:
+Gah, I can't believe gcc errors on that. This should fix it, I'll
+integrate with the patchset.
 
-linux-next-20080630/kernel/fork.c: In function 'copy_process':
-linux-next-20080630/kernel/fork.c:1237: error: implicit declaration of function 'put_io_context'
-linux-next-20080630/kernel/exit.c: In function 'do_exit':
-linux-next-20080630/kernel/exit.c:992: error: implicit declaration of function 'exit_io_context'
+diff --git a/fs/bio.c b/fs/bio.c
+index bc865b1..7761c84 100644
+--- a/fs/bio.c
++++ b/fs/bio.c
+@@ -50,7 +50,7 @@ static struct biovec_slab bvec_slabs[BIOVEC_NR_POOLS] __read_mostly = {
+  */
+ struct bio_set *fs_bio_set;
+ 
+-inline unsigned int bvec_nr_vecs(unsigned short idx)
++unsigned int bvec_nr_vecs(unsigned short idx)
+ {
+ 	return bvec_slabs[idx].nr_vecs;
+ }
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 62f0be9..0933a14 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -365,7 +365,7 @@ extern struct bio *bio_copy_user_iov(struct request_queue *, struct sg_iovec *,
+ extern int bio_uncopy_user(struct bio *);
+ void zero_fill_bio(struct bio *bio);
+ extern struct bio_vec *bvec_alloc_bs(gfp_t, int, unsigned long *, struct bio_set *);
+-extern inline unsigned int bvec_nr_vecs(unsigned short idx);
++extern unsigned int bvec_nr_vecs(unsigned short idx);
+ 
+ /*
+  * bio_set is used to allow other portions of the IO system to
 
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- kernel/exit.c |    1 +
- kernel/fork.c |    1 +
- 2 files changed, 2 insertions(+)
-
---- linux-next-20080630.orig/kernel/fork.c
-+++ linux-next-20080630/kernel/fork.c
-@@ -23,6 +23,7 @@
- #include <linux/sem.h>
- #include <linux/file.h>
- #include <linux/fdtable.h>
-+#include <linux/iocontext.h>
- #include <linux/key.h>
- #include <linux/binfmts.h>
- #include <linux/mman.h>
---- linux-next-20080630.orig/kernel/exit.c
-+++ linux-next-20080630/kernel/exit.c
-@@ -13,6 +13,7 @@
- #include <linux/personality.h>
- #include <linux/tty.h>
- #include <linux/mnt_namespace.h>
-+#include <linux/iocontext.h>
- #include <linux/key.h>
- #include <linux/security.h>
- #include <linux/cpu.h>
-
-
----
-~Randy
-Linux Plumbers Conference, 17-19 September 2008, Portland, Oregon USA
-http://linuxplumbersconf.org/
+-- 
+Jens Axboe
