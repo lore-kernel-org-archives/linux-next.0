@@ -1,81 +1,35 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [BUILD-FAILURE] linux-next: Tree for June 30
-Date: Mon, 30 Jun 2008 21:26:10 +0200
-Message-ID: <20080630192610.GA6584@elte.hu>
-References: <20080701001656.e156585c.sfr@canb.auug.org.au> <48690385.7030500@linux.vnet.ibm.com> <48690D3C.1060803@linux.vnet.ibm.com> <20080630185943.GA24692@uranus.ravnborg.org>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: linux-next: Tree for June 30 (USB: cdc-acm)
+Date: Mon, 30 Jun 2008 15:32:44 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.0806301531310.2138-100000@iolanthe.rowland.org>
+References: <20080630190125.GA3553@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:40041 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1763796AbYF3T05 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Jun 2008 15:26:57 -0400
-Content-Disposition: inline
-In-Reply-To: <20080630185943.GA24692@uranus.ravnborg.org>
+Received: from iolanthe.rowland.org ([192.131.102.54]:49730 "HELO
+	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753878AbYF3Tcp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Jun 2008 15:32:45 -0400
+In-Reply-To: <20080630190125.GA3553@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>, Andy Whitcroft <apw@shadowen.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
+To: Greg KH <greg@kroah.com>, Oliver Neukum <oliver@neukum.org>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
+On Mon, 30 Jun 2008, Greg KH wrote:
 
-* Sam Ravnborg <sam@ravnborg.org> wrote:
-
-> On Mon, Jun 30, 2008 at 10:13:40PM +0530, Kamalesh Babulal wrote:
-> > Kamalesh Babulal wrote:
-> > > Hi Stephen,
-> > > 
-> > > next-20080630 kernel build fails x86 box 
-> > > 
-> > > fs/bio-integrity.c: In function `bio_integrity_add_page':
-> > > include/linux/bio.h:368: sorry, unimplemented: inlining failed in call to 'bvec_nr_vecs': function body not available
-> > > fs/bio-integrity.c:135: sorry, unimplemented: called from here
-> > > make[1]: *** [fs/bio-integrity.o] Error 1
-> > > make: *** [fs] Error 2
-> > > 
-> > > # gcc -v
-> > > Reading specs from /usr/lib/gcc/i386-redhat-linux/3.4.6/specs
-> > > Configured with: ../configure --prefix=/usr --mandir=/usr/share/man
-> > > --infodir=/usr/share/info --enable-shared --enable-threads=posix
-> > > --disable-checking --with-system-zlib --enable-__cxa_atexit
-> > > --disable-libunwind-exceptions --enable-java-awt=gtk
-> > > --host=i386-redhat-linux
-> > > Thread model: posix
-> > > gcc version 3.4.6 20060404 (Red Hat 3.4.6-10)
-> > > 
-> > > 
-> > Another build failure on the same box/config file
+> On Mon, Jun 30, 2008 at 11:43:32AM -0700, Randy Dunlap wrote:
+> > cdc-acm fails to build when CONFIG_PM=n:
 > > 
-> > make[2]: `scripts/unifdef' is up to date.
-> >   RELOCS  arch/x86/boot/compressed/vmlinux.relocs
-> > 101 section headers supported: 100
-> > make[2]: *** [arch/x86/boot/compressed/vmlinux.relocs] Error 1
-> > make[1]: *** [arch/x86/boot/compressed/vmlinux] Error 2
-> > make: *** [bzImage] Error 2
+> > linux-next-20080630/drivers/usb/class/cdc-acm.c: In function 'acm_suspend':
+> > linux-next-20080630/drivers/usb/class/cdc-acm.c:1263: error: 'struct usb_device' has no member named 'auto_pm'
+> > make[4]: *** [drivers/usb/class/cdc-acm.o] Error 1
 > 
-> In a i386 specific part of the kernel - so let's cc x86 maintainers.
+> Yeah, known issue due to the pm and usb trees conflicting here.  It will
+> be fixed up at the merge time with Linus.
+> 
+> Or so Alan promises :)
 
-that's an allyesconfig kernel and i cannot reproduce the failure with 
-linux-next v2.6.26-rc8-6206-gf1c7436:
+Not me this time -- cdc-acm is Oliver's doing.
 
-  [...]
-  RELOCS  arch/x86/boot/compressed/vmlinux.relocs
-  BUILD   arch/x86/boot/compressed/vmlinux.bin.all
-  GZIP    arch/x86/boot/compressed/vmlinux.bin.gz
-  LD      arch/x86/boot/compressed/piggy.o
-  LD      arch/x86/boot/compressed/vmlinux
-  OFFSETS arch/x86/boot/offsets.h
-  OBJCOPY arch/x86/boot/vmlinux.bin
-  AS      arch/x86/boot/header.o
-  LD      arch/x86/boot/setup.elf
-  OBJCOPY arch/x86/boot/setup.bin
-  BUILD   arch/x86/boot/bzImage
- Root device is (8, 17)
- Setup is 12524 bytes (padded to 12800 bytes).
- System is 17840 kB
- CRC bccb6201
- Kernel: arch/x86/boot/bzImage is ready  (#10848)
-
-(nor has anything substantial change in that area changed in the x86 
-tree recently that sticks out at first sight.)
-
-	Ingo
+Alan Stern
