@@ -1,53 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the ttydev tree
-Date: Tue, 1 Jul 2008 23:43:27 +1000
-Message-ID: <20080701234327.a0cb658d.sfr@canb.auug.org.au>
+Date: Tue, 1 Jul 2008 23:54:36 +1000
+Message-ID: <20080701235436.d97798ba.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__1_Jul_2008_23_43_27_+1000_a.FbgnJI9FvsvrG3"
+ boundary="Signature=_Tue__1_Jul_2008_23_54_36_+1000_I2UoRhytDXNDVhbj"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39126 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56004 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751727AbYGANng (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 1 Jul 2008 09:43:36 -0400
+	id S1753800AbYGANyj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Jul 2008 09:54:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Alan Cox <alan@lxorguk.ukuu.org.uk>
 Cc: linux-next@vger.kernel.org
 
---Signature=_Tue__1_Jul_2008_23_43_27_+1000_a.FbgnJI9FvsvrG3
+--Signature=_Tue__1_Jul_2008_23_54_36_+1000_I2UoRhytDXNDVhbj
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Alan,
+Hi ,
 
 Today's linux-next merge of the ttydev tree got a conflict in
-drivers/usb/serial/ti_usb_3410_5052.c between commit
-01f845d09b8fdcdd27ee592422567b8dfa5b14d5 ("ti_usb_3410_5052: use
-request_firmware()") from the firmware tree and commits
+drivers/usb/serial/usb-serial.c between commits
+0eb943841bdeb2210058e899cef11f6084bedf82 ("USB: usb dev_name() instead of
+dev->bus_id"), c19b07f9e5990423131d0435b303e572dc3132d0 ("USB: usb
+dev_set_name() instead of dev->bus_id") and
+26a8abb358ae6110b8c46afc40a85e6f47bc8eeb ("USB: fix usb serial pm counter
+decrement for disconnected interfaces") from the usb tree and commit
 ce8194a09dee5b7e101467aba6b7cd5617b1cd0f ("23-usb-serial-api-change") and
-b002e3f7c9249ddfd1d166cdb76cf7dde8dd93a2 ("62-tty-tidy-usb-ti-usb") from
+ca66d73b800beb3bd391d9109ee13612755305cf ("44-tty-tidy-usb-serial")from
 the ttydev tree.
 
-I fixed it up as best I could.  Definitely worth a look to see if I got
-it right.
-
+The fixups were fairy obvious.  I can carry them.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__1_Jul_2008_23_43_27_+1000_a.FbgnJI9FvsvrG3
+--Signature=_Tue__1_Jul_2008_23_54_36_+1000_I2UoRhytDXNDVhbj
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkhqNH8ACgkQjjKRsyhoI8w3ZgCdF6cygnzWjXSw6M/1vFnNlAIU
-+roAoItYRjS9v8HW5RfcCiPzM7AiG8ar
-=pqdz
+iEYEARECAAYFAkhqNxwACgkQjjKRsyhoI8x0pQCcCo0Lwpe2Y9krIQkJX7aLDWW5
+zqsAoIf12SGTXlmvuUkDhYf4L15yODdt
+=d3ds
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__1_Jul_2008_23_43_27_+1000_a.FbgnJI9FvsvrG3--
+--Signature=_Tue__1_Jul_2008_23_54_36_+1000_I2UoRhytDXNDVhbj--
