@@ -1,178 +1,54 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH 1/2] mpparse: Add a knob to disable IRQ 0 through I/O
-	APIC
-Date: Tue, 1 Jul 2008 10:27:42 +0200
-Message-ID: <20080701082742.GA31725@elte.hu>
-References: <Pine.LNX.4.55.0807010041030.30785@cliff.in.clinika.pl>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH 00/12] Thumb-2 kernel support
+Date: Tue, 01 Jul 2008 09:32:11 +0100
+Message-ID: <1214901131.29199.31.camel@pc1117.cambridge.arm.com>
+References: <20080606173300.7930.31525.stgit@pc1117.cambridge.arm.com>
+	 <20080630125110.1dc5689a.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.55.0807010041030.30785@cliff.in.clinika.pl>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Maciej W. Rozycki" <macro@linux-mips.org>
-Cc: Matthew Garrett <mjg59@srcf.ucam.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cam-admin0.cambridge.arm.com ([193.131.176.58]:56586 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754402AbYGAIch convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Jul 2008 04:32:37 -0400
+In-Reply-To: <20080630125110.1dc5689a.akpm@linux-foundation.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-arm-kernel@lists.arm.linux.org.uk, linux-next@vger.kernel.org
 
+On Mon, 2008-06-30 at 12:51 -0700, Andrew Morton wrote:
+> On Fri, 06 Jun 2008 18:33:00 +0100
+> Catalin Marinas <catalin.marinas@arm.com> wrote:
+>=20
+> > This series of patches allows the kernel to be compiled to Thumb-2 =
+mode
+> > (on ARMv7 CPUs). The patches have been posted a few times on the li=
+st
+> > and the comments were implemented (hopefully I haven't missed any).
+> >=20
+> > If/when there are no more comments, I'd like the series to be merge=
+d
+> > into the -mm tree if Andrew agrees. It was tested and generated aga=
+inst
+> > the 2.6.26-rc2-mm1 kernel.
+[...]
+> OK, I added this tree to -mm.  Nobody is likely to test or review it
+> there, but at least I might pick up on any merge or build issues.
 
-* Maciej W. Rozycki <macro@linux-mips.org> wrote:
+Thanks.
 
->  As discovered recently some systems exhibit problems when the 8254 
-> timer IRQ is routed through the I/O APIC.  These problems do not 
-> affect the timer IRQ itself and therefore cannot be detected when the 
-> correctness of operation of the interrupt is verified in 
-> check_timer().  Therefore the I/O APIC path of the timer IRQ has to be 
-> disabled entirely.
-> 
->  This is a change that lets platforms ask for the timer IRQ not to be 
-> registered in the I/O APIC interrupt tables.  The local APIC and 
-> ExtINTA paths are unaffected.  This request is only taken into account 
-> for ACPI platforms as MP table systems seem unaffected so far.
+> If you're hankering for a 2.6.27 merge of this material it might be
+> more appropriate to add it to linux-next.
 
-applied to tip/x86/mpparse - thanks Maciej.
+I aim for the =EF=BB=BFpost 2.6.27 merge window (i.e. patches available=
+ in
+2.6.28).
 
-Note, since mp_config_acpi_legacy_irqs moved to acpi/boot.c i 
-restructured and simplified it slightly - please double-check the form 
-below.
+But isn't linux-next targeted to subsystem maintainers only (i.e. get
+them merged via RMK's trees)? Or an "Acked-by: RMK" would be enough.
 
-	Ingo
-
---------------->
-commit e38502eb8aa82314d5ab0eba45f50e6790dadd88
-Author: Matthew Garrett <mjg59@srcf.ucam.org>
-Date:   Tue Jul 1 01:12:06 2008 +0100
-
-    x86, ioapic, acpi quirk: disable IRQ 0 through I/O APIC for some HP systems
-    
-    Some HP laptops have a problem with their DSDT reporting as
-    HP/SB400/10000, which includes some code which overrides all temperature
-    trip points to 16C if the INTIN2 input of the I/O APIC is enabled.  This
-    input is incorrectly designated the ISA IRQ 0 via an interrupt source
-    override even though it is wired to the output of the master 8259A and
-    INTIN0 is not connected at all.  So far two models have been identified,
-    namely nx6125 and nx6325.
-    
-    Use a knob provided by the I/O APIC interrupt registration code to
-    abandon any attempts to route IRQ 0 through the I/O APIC for these
-    systems.
-    
-    Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
-    Cc: Len Brown <lenb@kernel.org>
-    Cc: Matthew Garrett <mjg59@srcf.ucam.org>
-    Cc: "Rafael J. Wysocki" <rjw@sisk.pl>
-    Signed-off-by: Ingo Molnar <mingo@elte.hu>
-
-diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
-index 92a5426..9908ef4 100644
---- a/arch/x86/kernel/acpi/boot.c
-+++ b/arch/x86/kernel/acpi/boot.c
-@@ -1427,6 +1427,17 @@ static int __init force_acpi_ht(const struct dmi_system_id *d)
- }
- 
- /*
-+ * Don't register any I/O APIC entries for the 8254 timer IRQ.
-+ */
-+static int __init
-+dmi_disable_irq0_through_ioapic(const struct dmi_system_id *d)
-+{
-+	pr_notice("%s detected: disabling IRQ 0 through I/O APIC\n", d->ident);
-+	disable_irq0_through_ioapic = 1;
-+	return 0;
-+}
-+
-+/*
-  * If your system is blacklisted here, but you find that acpi=force
-  * works for you, please contact acpi-devel@sourceforge.net
-  */
-@@ -1593,6 +1604,32 @@ static struct dmi_system_id __initdata acpi_dmi_table[] = {
- 		     DMI_MATCH(DMI_PRODUCT_NAME, "TravelMate 360"),
- 		     },
- 	 },
-+	/*
-+	 * HP laptops which use a DSDT reporting as HP/SB400/10000,
-+	 * which includes some code which overrides all temperature
-+	 * trip points to 16C if the INTIN2 input of the I/O APIC
-+	 * is enabled.  This input is incorrectly designated the
-+	 * ISA IRQ 0 via an interrupt source override even though
-+	 * it is wired to the output of the master 8259A and INTIN0
-+	 * is not connected at all.  Abandon any attempts to route
-+	 * IRQ 0 through the I/O APIC therefore.
-+	 */
-+	{
-+	 .callback = dmi_disable_irq0_through_ioapic,
-+	 .ident = "HP NX6125 laptop",
-+	 .matches = {
-+		     DMI_MATCH(DMI_SYS_VENDOR, "Hewlett-Packard"),
-+		     DMI_MATCH(DMI_PRODUCT_NAME, "HP Compaq nx6125"),
-+		     },
-+	 },
-+	{
-+	 .callback = dmi_disable_irq0_through_ioapic,
-+	 .ident = "HP NX6325 laptop",
-+	 .matches = {
-+		     DMI_MATCH(DMI_SYS_VENDOR, "Hewlett-Packard"),
-+		     DMI_MATCH(DMI_PRODUCT_NAME, "HP Compaq nx6325"),
-+		     },
-+	 },
- 	{}
- };
- 
-
-commit 0b3d81ad4f765513347a04434efc15cbdc4e1c54
-Author: Maciej W. Rozycki <macro@linux-mips.org>
-Date:   Tue Jul 1 01:11:35 2008 +0100
-
-    x86, ioapic, acpi: add a knob to disable IRQ 0 through I/O APIC
-    
-    As discovered recently some systems exhibit problems when the 8254 timer
-    IRQ is routed through the I/O APIC.  These problems do not affect the
-    timer IRQ itself and therefore cannot be detected when the correctness of
-    operation of the interrupt is verified in check_timer().  Therefore the
-    I/O APIC path of the timer IRQ has to be disabled entirely.
-    
-    This is a change that lets platforms ask for the timer IRQ not to be
-    registered in the I/O APIC interrupt tables.  The local APIC and ExtINTA
-    paths are unaffected.  This request is only taken into account for ACPI
-    platforms as MP table systems seem unaffected so far.
-    
-    Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
-    Cc: Len Brown <lenb@kernel.org>
-    Cc: Matthew Garrett <mjg59@srcf.ucam.org>
-    Cc: "Rafael J. Wysocki" <rjw@sisk.pl>
-    Signed-off-by: Ingo Molnar <mingo@elte.hu>
-
-diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
-index 91bb9a9..92a5426 100644
---- a/arch/x86/kernel/acpi/boot.c
-+++ b/arch/x86/kernel/acpi/boot.c
-@@ -83,6 +83,8 @@ int acpi_lapic;
- int acpi_ioapic;
- int acpi_strict;
- 
-+static int disable_irq0_through_ioapic __initdata;
-+
- u8 acpi_sci_flags __initdata;
- int acpi_sci_override_gsi __initdata;
- int acpi_skip_timer_override __initdata;
-@@ -992,6 +994,10 @@ void __init mp_override_legacy_irq(u8 bus_irq, u8 polarity, u8 trigger, u32 gsi)
- 	int pin;
- 	struct mp_config_intsrc mp_irq;
- 
-+	/* Skip the 8254 timer interrupt (IRQ 0) if requested.  */
-+	if (bus_irq == 0 && disable_irq0_through_ioapic)
-+		return;
-+
- 	/*
- 	 * Convert 'gsi' to 'ioapic.pin'.
- 	 */
-@@ -1058,6 +1064,10 @@ void __init mp_config_acpi_legacy_irqs(void)
- 	for (i = 0; i < 16; i++) {
- 		int idx;
- 
-+		/* Skip the 8254 timer interrupt (IRQ 0) if requested.  */
-+		if (i == 0 && disable_irq0_through_ioapic)
-+			continue;
-+
- 		for (idx = 0; idx < mp_irq_entries; idx++) {
- 			struct mp_config_intsrc *irq = mp_irqs + idx;
- 
+--=20
+Catalin
