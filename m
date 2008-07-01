@@ -1,94 +1,56 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH 1/2] mpparse: Add a knob to disable IRQ 0 through I/O
- APIC
-Date: Mon, 30 Jun 2008 21:57:46 -0700
-Message-ID: <20080630215746.84ffb0f4.randy.dunlap@oracle.com>
-References: <Pine.LNX.4.55.0807010041030.30785@cliff.in.clinika.pl>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the sched tree
+Date: Tue, 1 Jul 2008 07:54:02 +0200
+Message-ID: <20080701055402.GA14658@elte.hu>
+References: <20080701124206.77ff77cd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.55.0807010041030.30785@cliff.in.clinika.pl>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Maciej W. Rozycki" <macro@linux-mips.org>
-Cc: Ingo Molnar <mingo@elte.hu>, Matthew Garrett <mjg59@srcf.ucam.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.mail.elte.hu ([157.181.151.9]:39381 "EHLO mx2.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752436AbYGAFyS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Jul 2008 01:54:18 -0400
+Content-Disposition: inline
+In-Reply-To: <20080701124206.77ff77cd.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
 
-On Tue, 1 Jul 2008 01:11:35 +0100 (BST) Maciej W. Rozycki wrote:
 
->  As discovered recently some systems exhibit problems when the 8254 timer 
-> IRQ is routed through the I/O APIC.  These problems do not affect the 
-> timer IRQ itself and therefore cannot be detected when the correctness of 
-> operation of the interrupt is verified in check_timer().  Therefore the 
-> I/O APIC path of the timer IRQ has to be disabled entirely.
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi all,
 > 
->  This is a change that lets platforms ask for the timer IRQ not to be 
-> registered in the I/O APIC interrupt tables.  The local APIC and ExtINTA 
-> paths are unaffected.  This request is only taken into account for ACPI 
-> platforms as MP table systems seem unaffected so far.
+> Today's linux-next merge of the sched tree got a conflict in 
+> kernel/sched.c between commit 040ec23d07f95285e9777a85cda29cb339a3065b 
+> ("sched: sched_clock() lockdep fix") from the tree and commit 
+> 76a2a6ee8a0660a29127f05989ac59ae1ce865fa ("sched: sched_clock_cpu() 
+> based cpu_clock()") from the sched tree.
 > 
-> Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
-> ---
-> patch-2.6.26-rc1-20080505-mpparse-acpi-noirq0-2
-> diff -up --recursive --new-file linux-2.6.26-rc1-20080505.macro/arch/x86/kernel/mpparse.c linux-2.6.26-rc1-20080505/arch/x86/kernel/mpparse.c
-> --- linux-2.6.26-rc1-20080505.macro/arch/x86/kernel/mpparse.c	2008-05-05 02:56:19.000000000 +0000
-> +++ linux-2.6.26-rc1-20080505/arch/x86/kernel/mpparse.c	2008-06-30 21:53:33.000000000 +0000
-> @@ -50,6 +50,8 @@ static int mp_current_pci_id;
->  
->  int pic_mode;
->  
-> +int disable_irq0_through_ioapic __initdata;
-> +
->  /*
->   * Intel MP BIOS table parsing routines:
->   */
-> @@ -887,6 +889,10 @@ void __init mp_override_legacy_irq(u8 bu
->  	int ioapic = -1;
->  	int pin = -1;
->  
-> +	/* Skip the 8254 timer interrupt (IRQ 0) if requested.  */
-> +	if (bus_irq == 0 && disable_irq0_through_ioapic)
-> +		return;
-> +
->  	/*
->  	 * Convert 'gsi' to 'ioapic.pin'.
->  	 */
-> @@ -955,6 +961,10 @@ void __init mp_config_acpi_legacy_irqs(v
->  	for (i = 0; i < 16; i++) {
->  		int idx;
->  
-> +		/* Skip the 8254 timer interrupt (IRQ 0) if requested.  */
-> +		if (i == 0 && disable_irq0_through_ioapic)
-> +			continue;
-> +
->  		for (idx = 0; idx < mp_irq_entries; idx++) {
->  			struct mpc_config_intsrc *irq = mp_irqs + idx;
->  
-> diff -up --recursive --new-file linux-2.6.26-rc1-20080505.macro/include/asm-x86/mpspec.h linux-2.6.26-rc1-20080505/include/asm-x86/mpspec.h
-> --- linux-2.6.26-rc1-20080505.macro/include/asm-x86/mpspec.h	2008-05-05 02:55:57.000000000 +0000
-> +++ linux-2.6.26-rc1-20080505/include/asm-x86/mpspec.h	2008-06-30 22:29:23.000000000 +0000
-> @@ -113,4 +113,15 @@ typedef struct physid_mask physid_mask_t
->  
->  extern physid_mask_t phys_cpu_present_map;
->  
-> +#ifdef CONFIG_X86_MPPARSE
-> +static inline void set_disable_irq0_through_ioapic(int v)
-> +{
-> +	extern int disable_irq0_through_ioapic;
-> +
-> +	disable_irq0_through_ioapic = v;
-> +}
-> +#else
-> +static inline void set_disable_irq0_through_ioapic(int v) { }
-> +#endif
-> +
->  #endif
+> The former updated some code that the latter removed.  I used the 
+> version from the sched tree.
+> 
+> There was also a conflict in kernel/sched_rt.c between commit 
+> 363ab6f1424cdea63e5d182312d60e19077b892a ("core: use performance 
+> variant for_each_cpu_mask_nr") from the cpus4096 tree and commit 
+> eff6549b957d15d1ad168d90b8c1eb643b9c163f ("sched: rt: move some code 
+> around") from the sched tree.
+> 
+> Again I took the version from the sched tree except for the 
+> for_each_cpu_mask -> for_each_cpu_mask_nr transformation.
 
+thanks. I did that manual merge a couple of days ago.
 
-What calls set_disable_irq0_through_ioapic() ?
+You should be able to check whether we both integrated the conflict the 
+same way via checking tip/auto-latest, which is the integration of all 
+the auto branches that come from -tip.
 
+All the integration branches of -tip are pushed out at once so 
+tip/auto-latest always gives a hint about how to integrate two -tip 
+derived topic branches, tip/auto-latest always gives an answer. [ which 
+might at times be wrong so it never hurts to double check :-) Note: 
+auto-latest also includes some non-linux-next topics - but they dont 
+affect the scheduler usually. ]
 
----
-~Randy
-Linux Plumbers Conference, 17-19 September 2008, Portland, Oregon USA
-http://linuxplumbersconf.org/
+	Ingo
