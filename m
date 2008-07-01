@@ -1,31 +1,28 @@
-From: "Maciej W. Rozycki" <macro@linux-mips.org>
-Subject: Re: [PATCH 1/2] mpparse: Add a knob to disable IRQ 0 through I/O
- APIC
-Date: Tue, 1 Jul 2008 17:31:11 +0100 (BST)
-Message-ID: <Pine.LNX.4.55.0807011727480.6284@cliff.in.clinika.pl>
-References: <Pine.LNX.4.55.0807010041030.30785@cliff.in.clinika.pl>
- <20080701082742.GA31725@elte.hu>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: manual merge of the ttydev tree
+Date: Tue, 1 Jul 2008 17:27:59 +0100
+Message-ID: <20080701172759.19ca15af@lxorguk.ukuu.org.uk>
+References: <20080701211003.8ecd7d3b.sfr@canb.auug.org.au>
+	<20080701125631.3deab583@lxorguk.ukuu.org.uk>
+	<200807010918.09669.david-b@pacbell.net>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kirk.serum.com.pl ([213.77.9.205]:61441 "EHLO serum.com.pl"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1750872AbYGAQcK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 1 Jul 2008 12:32:10 -0400
-In-Reply-To: <20080701082742.GA31725@elte.hu>
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:47587 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750874AbYGAQpg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Jul 2008 12:45:36 -0400
+In-Reply-To: <200807010918.09669.david-b@pacbell.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Matthew Garrett <mjg59@srcf.ucam.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Brownell <david-b@pacbell.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Greg KH <greg@kroah.com>
 
-On Tue, 1 Jul 2008, Ingo Molnar wrote:
 
-> Note, since mp_config_acpi_legacy_irqs moved to acpi/boot.c i 
-> restructured and simplified it slightly - please double-check the form 
-> below.
+> A quick search doesn't turn up a ttydev tree, or that patch.
+> 
+> Is that the right long-term fix, so I can consider this resolved?
 
- Thanks for sorting this out -- I guess it's time to get my local tree 
-updated.  Your version looks good and should work no worse than mine did 
-with my tree (which is an older version of upstream).
-
-  Maciej
+Consider it resolved - it changed the type of the unneccesary break_ctl
+method from void to int. You now don't have one - end of problem 8)
