@@ -1,44 +1,34 @@
-From: Tony Breeds <tony@bakeyournoodle.com>
-Subject: Re: [BUILD-FAILURE] linux-next: Tree for June 30 - powerpc - build failure at arch_add_memory()
-Date: Tue, 1 Jul 2008 11:34:38 +1000
-Message-ID: <20080701013438.GT20457@bakeyournoodle.com>
-References: <20080701001656.e156585c.sfr@canb.auug.org.au> <486924FE.4090801@linux.vnet.ibm.com>
+From: Vivek Goyal <vgoyal@redhat.com>
+Subject: Re: [BUILD-FAILURE] linux-next: Tree for June 30
+Date: Mon, 30 Jun 2008 22:10:46 -0400
+Message-ID: <20080701021046.GA30401@redhat.com>
+References: <20080701001656.e156585c.sfr@canb.auug.org.au> <48690385.7030500@linux.vnet.ibm.com> <48690D3C.1060803@linux.vnet.ibm.com> <20080630185943.GA24692@uranus.ravnborg.org> <20080630192610.GA6584@elte.hu> <20080630194727.GA26682@uranus.ravnborg.org> <20080630200623.GE6584@elte.hu> <20080630202506.GA28050@uranus.ravnborg.org> <486943F1.80606@zytor.com> <48695449.5010602@zytor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kbuild-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([66.187.233.31]:42369 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756429AbYGACX2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Jun 2008 22:23:28 -0400
 Content-Disposition: inline
-In-Reply-To: <486924FE.4090801@linux.vnet.ibm.com>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kbuild@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <48695449.5010602@zytor.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Sam Ravnborg <sam@ravnborg.org>, Ingo Molnar <mingo@elte.hu>, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>, Andy Whitcroft <apw@shadowen.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Vivek Goyal <vgoyal@in.ibm.com>, "Eric W. Biederman" <ebiederm@xmission.com>
 
-On Mon, Jun 30, 2008 at 11:55:02PM +0530, Kamalesh Babulal wrote:
-> Hi Stephen,
->=20
-> next-20080630 kernel build fails on powerpc, with randconfig
->=20
->   CC      arch/powerpc/mm/mem.o
-> arch/powerpc/mm/mem.c: In function =E2=80=98arch_add_memory=E2=80=99:
-> arch/powerpc/mm/mem.c:130: error: implicit declaration of function =E2=
-=80=98create_section_mapping=E2=80=99
-> make[1]: *** [arch/powerpc/mm/mem.o] Error 1
-> make: *** [arch/powerpc/mm] Error 2
+On Mon, Jun 30, 2008 at 02:46:49PM -0700, H. Peter Anvin wrote:
+> Here is a patch to replace the hard-coded limit with dynamic allocation.  
+>  I have only build-tested it, but it seems to work.
+>
+> Please try it out; barring any screams to the contrary I'll add it to -tip.
+>
+> 	-hpa
 
-This problem exists in in 2.6.26-rc8, so it's not specifially linux-nex=
-t
-realted.  The patch at:
-http://patchwork.ozlabs.org/linuxppc/patch?id=3D19347
-should fix it but is un-ACK'd ;P
+I think there was no specific reason for limit 100. Just that probably at
+that point Eric thought 100 is sufficient. Dynamic allocation is much
+better.
 
-Yours Tony
+This patch looks good. Thanks.
 
-  linux.conf.au    http://www.marchsouth.org/
-  Jan 19 - 24 2009 The Australian Linux Technical Conference!
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-kbuild"=
- in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Vivek
