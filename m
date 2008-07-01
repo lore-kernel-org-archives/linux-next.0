@@ -1,45 +1,66 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: next-0630: sparc64: build failed
-Date: Tue, 1 Jul 2008 22:03:44 +0200
-Message-ID: <20080701200344.GA4896@elte.hu>
-References: <a4423d670807010825t7ea2eb44oda3f08dc007c40a2@mail.gmail.com> <20080701154648.GA31057@elte.hu> <486A7C19.5080905@gmail.com>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: [PATCH] Introduce rculist.h
+Date: Tue, 1 Jul 2008 13:13:06 -0700
+Message-ID: <20080701201306.GF7488@linux.vnet.ibm.com>
+References: <20080701125607.c5295759.sfr@canb.auug.org.au>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:59258 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753802AbYGAUEF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 1 Jul 2008 16:04:05 -0400
+Received: from E23SMTP06.au.ibm.com ([202.81.18.175]:34744 "EHLO
+	e23smtp06.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755260AbYGAUNM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Jul 2008 16:13:12 -0400
 Content-Disposition: inline
-In-Reply-To: <486A7C19.5080905@gmail.com>
+In-Reply-To: <20080701125607.c5295759.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Abhishek Sagar <sagar.abhishek@gmail.com>
-Cc: David Miller <davem@davemloft.net>, Alexander Beregalov <a.beregalov@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, sparclinux@vger.kernel.org, rostedt@goodmis.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus <torvalds@linux-foundation.org>, Franck Bui-Huu <fbuihuu@gmail.com>, Josh Triplett <josh@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
+On Tue, Jul 01, 2008 at 12:56:07PM +1000, Stephen Rothwell wrote:
+> In linux-next there is a commit ("rcu: split list.h and move rcu-protected
+> lists into rculist.h") that moved the rcu related list iterators from
+> list.h to rculist.h.  Add a trivial version of the file now so that
+> various subsystem trees can start using it now for -next changes and so
+> reduce the build errors caused by adding uses of the moved functions.
 
-* Abhishek Sagar <sagar.abhishek@gmail.com> wrote:
+Works for me!
 
-> Hi Ingo/David,
+Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+
+> Cc: Franck Bui-Huu <fbuihuu@gmail.com>
+> Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> Cc: Josh Triplett <josh@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Ingo Molnar <mingo@elte.hu>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  include/linux/rculist.h |    6 ++++++
+>  1 files changed, 6 insertions(+), 0 deletions(-)
+>  create mode 100644 include/linux/rculist.h
 > 
-> CONFIG_MCOUNT currently controls the compilation with -pg flag and the 
-> export of _mcount. But with ftrace, the former is redundant and the 
-> latter should be made unconditional since _mcount is always defined. 
-> In which case, does the inlined patch (untested) make sense? It should 
-> solve the build failure as well.
-
-hm, mcount is the facility - so it makes sense to have that defined. 
-Here you basically hide CONFIG_MCOUNT:
-
-> -ifeq ($(CONFIG_MCOUNT),y)
-> -  KBUILD_CFLAGS += -pg
-> +ifneq ($(CONFIG_FTRACE),y)
-> +ifeq ($(CONFIG_STACK_DEBUG),y)
-> +KBUILD_CFLAGS += -pg
-> +endif
->  endif
-
-via two conditions. I'm not sure that's a win and i found CONFIG_MCOUNT 
-a logical switch - but it's David's call.
-
-	Ingo
+> Linus, would you consider patches like this for 2.6.26 that have no
+> effect on the current tree but help with conflicts in various subsystems
+> during the next merge window?  I already have three build fixups for this
+> one in particular.
+> 
+> diff --git a/include/linux/rculist.h b/include/linux/rculist.h
+> new file mode 100644
+> index 0000000..bde4586
+> --- /dev/null
+> +++ b/include/linux/rculist.h
+> @@ -0,0 +1,6 @@
+> +#ifndef _LINUX_RCULIST_H
+> +#define _LINUX_RCULIST_H
+> +
+> +#include <linux/list.h>
+> +
+> +#endif	/* _LINUX_RCULIST_H */
+> -- 
+> 1.5.6
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
