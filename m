@@ -1,60 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the sched tree
-Date: Tue, 1 Jul 2008 16:00:16 +1000
-Message-ID: <20080701160016.0fa899e4.sfr@canb.auug.org.au>
-References: <20080701124206.77ff77cd.sfr@canb.auug.org.au>
-	<20080701055402.GA14658@elte.hu>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH] Introduce rculist.h
+Date: Tue, 1 Jul 2008 07:59:03 +0200
+Message-ID: <20080701055903.GC14658@elte.hu>
+References: <20080701125607.c5295759.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__1_Jul_2008_16_00_16_+1000_0I/iA73cmfdr=j3F"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37639 "EHLO smtps.tip.net.au"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:37626 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751117AbYGAGAY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 1 Jul 2008 02:00:24 -0400
-In-Reply-To: <20080701055402.GA14658@elte.hu>
+	id S1751508AbYGAGFs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Jul 2008 02:05:48 -0400
+Content-Disposition: inline
+In-Reply-To: <20080701125607.c5295759.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus <torvalds@linux-foundation.org>, Franck Bui-Huu <fbuihuu@gmail.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Josh Triplett <josh@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
---Signature=_Tue__1_Jul_2008_16_00_16_+1000_0I/iA73cmfdr=j3F
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Ingo,
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-On Tue, 1 Jul 2008 07:54:02 +0200 Ingo Molnar <mingo@elte.hu> wrote:
->
-> You should be able to check whether we both integrated the conflict the=20
-> same way via checking tip/auto-latest, which is the integration of all=20
-> the auto branches that come from -tip.
->=20
-> All the integration branches of -tip are pushed out at once so=20
-> tip/auto-latest always gives a hint about how to integrate two -tip=20
-> derived topic branches, tip/auto-latest always gives an answer. [ which=20
-> might at times be wrong so it never hurts to double check :-) Note:=20
-> auto-latest also includes some non-linux-next topics - but they dont=20
-> affect the scheduler usually. ]
+> In linux-next there is a commit ("rcu: split list.h and move 
+> rcu-protected lists into rculist.h") that moved the rcu related list 
+> iterators from list.h to rculist.h.  Add a trivial version of the file 
+> now so that various subsystem trees can start using it now for -next 
+> changes and so reduce the build errors caused by adding uses of the 
+> moved functions.
+> 
+> Cc: Franck Bui-Huu <fbuihuu@gmail.com>
+> Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> Cc: Josh Triplett <josh@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Ingo Molnar <mingo@elte.hu>
 
-Good to know, I will fetch it when necessary to check my work.
+Acked-by: Ingo Molnar <mingo@elte.hu>
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__1_Jul_2008_16_00_16_+1000_0I/iA73cmfdr=j3F
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhpx/AACgkQjjKRsyhoI8x9ewCcDE7YKOMNGeHKBIy4WTGiIn56
-3A0AnRHF2oTPhNpi2UvHTyTIgir9Vrx2
-=VtAC
------END PGP SIGNATURE-----
-
---Signature=_Tue__1_Jul_2008_16_00_16_+1000_0I/iA73cmfdr=j3F--
+	Ingo
