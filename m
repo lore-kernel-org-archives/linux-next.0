@@ -1,40 +1,45 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH 2/2] acpi: Disable IRQ 0 through I/O APIC for some HP systems
-Date: Tue, 1 Jul 2008 21:58:33 +0200
-Message-ID: <200807012158.34356.rjw@sisk.pl>
-References: <Pine.LNX.4.55.0807010055070.30785@cliff.in.clinika.pl> <20080701001727.GA4174@srcf.ucam.org> <20080701084648.GA21727@elte.hu>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: next-0630: sparc64: build failed
+Date: Tue, 1 Jul 2008 22:03:44 +0200
+Message-ID: <20080701200344.GA4896@elte.hu>
+References: <a4423d670807010825t7ea2eb44oda3f08dc007c40a2@mail.gmail.com> <20080701154648.GA31057@elte.hu> <486A7C19.5080905@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20080701084648.GA21727@elte.hu>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.mail.elte.hu ([157.181.151.9]:59258 "EHLO mx2.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753802AbYGAUEF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Jul 2008 16:04:05 -0400
 Content-Disposition: inline
-Sender: linux-acpi-owner@vger.kernel.org
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Matthew Garrett <mjg59@srcf.ucam.org>, "Maciej W. Rozycki" <macro@linux-mips.org>, Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <486A7C19.5080905@gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Abhishek Sagar <sagar.abhishek@gmail.com>
+Cc: David Miller <davem@davemloft.net>, Alexander Beregalov <a.beregalov@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, sparclinux@vger.kernel.org, rostedt@goodmis.org
 
-On Tuesday, 1 of July 2008, Ingo Molnar wrote:
-> 
-> * Matthew Garrett <mjg59@srcf.ucam.org> wrote:
-> 
-> > Assuming it works for Rafael (still haven't had time to pull my nx6125 
-> > out of storage):
-> > 
-> > Signed-off-by: mjg@redhat.com
-> 
-> Rafael, could you please try the latest tip/master that i've just pushed 
-> out:
-> 
->   http://people.redhat.com/mingo/tip.git/README
-> 
-> it has the final form of these changes integrated - it should in theory 
-> work out of box on your system, with no boot parameters or other 
-> explicit quirks needed anywhere.
 
-I tested patches [1/2] (your version) and [2/2] on top of today's linux-next
-and they work just fine.
+* Abhishek Sagar <sagar.abhishek@gmail.com> wrote:
 
-Thanks,
-Rafael
+> Hi Ingo/David,
+> 
+> CONFIG_MCOUNT currently controls the compilation with -pg flag and the 
+> export of _mcount. But with ftrace, the former is redundant and the 
+> latter should be made unconditional since _mcount is always defined. 
+> In which case, does the inlined patch (untested) make sense? It should 
+> solve the build failure as well.
+
+hm, mcount is the facility - so it makes sense to have that defined. 
+Here you basically hide CONFIG_MCOUNT:
+
+> -ifeq ($(CONFIG_MCOUNT),y)
+> -  KBUILD_CFLAGS += -pg
+> +ifneq ($(CONFIG_FTRACE),y)
+> +ifeq ($(CONFIG_STACK_DEBUG),y)
+> +KBUILD_CFLAGS += -pg
+> +endif
+>  endif
+
+via two conditions. I'm not sure that's a win and i found CONFIG_MCOUNT 
+a logical switch - but it's David's call.
+
+	Ingo
