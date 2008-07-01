@@ -1,72 +1,44 @@
-From: "Alexander Beregalov" <a.beregalov@gmail.com>
-Subject: next-0630: sparc64: build failed
-Date: Tue, 1 Jul 2008 19:25:03 +0400
-Message-ID: <a4423d670807010825t7ea2eb44oda3f08dc007c40a2@mail.gmail.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the ttydev tree
+Date: Tue, 1 Jul 2008 08:25:56 -0700
+Message-ID: <20080701152556.GA3973@kroah.com>
+References: <20080701215713.8796c966.sfr@canb.auug.org.au> <d1df296985842ab0a986b05dd20ff3b7@felipebalbi.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <sparclinux-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bombadil.infradead.org ([18.85.46.34]:43715 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757507AbYGAPbG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Jul 2008 11:31:06 -0400
 Content-Disposition: inline
-Sender: sparclinux-owner@vger.kernel.org
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, sparclinux@vger.kernel.org, David Miller <davem@davemloft.net>, sagar.abhishek@gmail.com, ros
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <d1df296985842ab0a986b05dd20ff3b7@felipebalbi.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Felipe Balbi <me@felipebalbi.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Alan Cox <alan@lxorguk.ukuu.org.uk>, linux-next@vger.kernel.org
 
-Hi David, Abhishek
+On Tue, Jul 01, 2008 at 06:59:00AM -0500, Felipe Balbi wrote:
+> 
+> 
+> On Tue, 1 Jul 2008 21:57:13 +1000, Stephen Rothwell <sfr@canb.auug.org.au>
+> wrote:
+> > Hi Alan,
+> > 
+> > Today's linux-next merge of the ttydev tree got a conflict in
+> > drivers/usb/serial/ir-usb.c between commit
+> > 3128101cf92692e300fdb8bf66a9e8f286cbaa7f ("usb: irda: cleanup on ir-usb
+> > module") from the usb tree and commits
+> > ce8194a09dee5b7e101467aba6b7cd5617b1cd0f ("23-usb-serial-api-change") and
+> > ad58854921eeeab97a09600260ea03fa097394e4 ("48-tty-tidy-usb-ir-usb") from
+> > the ttydev tree.
+> > 
+> > I didn't even know where to start :-(, so I used the version from the
+> > ttydev tree (since the other is just a cleanup).
+> 
+> Greg, should i refresh the patch and resend ?
 
-$ make CROSS_COMPILE=sparc64-unknown-linux-gnu- image modules && sudo
-make modules_install
-  CHK     include/linux/version.h
-  CHK     include/linux/utsrelease.h
-  CALL    scripts/checksyscalls.sh
-  CHK     include/linux/compile.h
-dnsdomainname: Unknown host
-  CC      arch/sparc64/kernel/sparc64_ksyms.o
-arch/sparc64/kernel/sparc64_ksyms.c:116: error: '_mcount' undeclared
-here (not in a function)
-cc1: warnings being treated as errors
-arch/sparc64/kernel/sparc64_ksyms.c:116: error: type defaults to 'int'
-in declaration of '_mcount'
+No, your patch is fine, the tty tree should be able to handle this.
 
-This commit is cause.
+thanks,
 
-commit 395a59d0f8e86bb39cd700c3d185d30c670bb958
-Author: Abhishek Sagar <sagar.abhishek@gmail.com>
-Date:   Sat Jun 21 23:47:27 2008 +0530
-
-    ftrace: store mcount address in rec->ip
-
-    Record the address of the mcount call-site. Currently all archs
-except sparc64
-    record the address of the instruction following the mcount call-site. Some
-    general cleanups are entailed. Storing mcount addresses in rec->ip enables
-    looking them up in the kprobe hash table later on to check if
-they're kprobe'd.
-
-    Signed-off-by: Abhishek Sagar <sagar.abhishek@gmail.com>
-    Cc: davem@davemloft.net
-    Cc: Steven Rostedt <rostedt@goodmis.org>
-    Signed-off-by: Ingo Molnar <mingo@elte.hu>
-
-diff --git a/arch/sparc64/kernel/sparc64_ksyms.c
-b/arch/sparc64/kernel/sparc64_ksyms.c
-index 8ac0b99..b80d982 100644
---- a/arch/sparc64/kernel/sparc64_ksyms.c
-+++ b/arch/sparc64/kernel/sparc64_ksyms.c
-@@ -53,6 +53,7 @@
- #include <asm/ns87303.h>
- #include <asm/timer.h>
- #include <asm/cpudata.h>
-+#include <asm/ftrace.h>
-
- struct poll {
-        int fd;
-@@ -112,7 +113,6 @@ EXPORT_SYMBOL(smp_call_function);
- #endif /* CONFIG_SMP */
-
- #if defined(CONFIG_MCOUNT)
--extern void _mcount(void);
- EXPORT_SYMBOL(_mcount);
- #endif
-
-
-gcc version 4.3.1 (Gentoo 4.3.1 p1.0)
+greg k-h
