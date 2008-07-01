@@ -1,65 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH -next] fork and exit: need to include iocontext.h
-Date: Tue, 1 Jul 2008 10:34:17 +1000
-Message-ID: <20080701103417.c0c09538.sfr@canb.auug.org.au>
-References: <20080630105458.7c95e195.randy.dunlap@oracle.com>
-	<20080630180506.GC23739@elte.hu>
-	<20080630112222.f103e477.randy.dunlap@oracle.com>
-	<20080630183337.GD32211@elte.hu>
+From: Tony Breeds <tony@bakeyournoodle.com>
+Subject: Re: [BUILD-FAILURE] linux-next: Tree for June 30 - powerpc - build failure at arch_add_memory()
+Date: Tue, 1 Jul 2008 11:34:38 +1000
+Message-ID: <20080701013438.GT20457@bakeyournoodle.com>
+References: <20080701001656.e156585c.sfr@canb.auug.org.au> <486924FE.4090801@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__1_Jul_2008_10_34_17_+1000_BfUla51nsbwj7=OD"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36608 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754774AbYGAAe1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Jun 2008 20:34:27 -0400
-In-Reply-To: <20080630183337.GD32211@elte.hu>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, mingo <mingo@redhat.com>, tglx <tglx@linutronix.de>, hpa <hpa@zytor.com>, akpm <akpm@linux-foundation.org>, Jens Axboe <jens.axboe@oracle.com>
-
---Signature=_Tue__1_Jul_2008_10_34_17_+1000_BfUla51nsbwj7=OD
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kbuild-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <486924FE.4090801@linux.vnet.ibm.com>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kbuild@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 30 Jun 2008 20:33:37 +0200 Ingo Molnar <mingo@elte.hu> wrote:
->
-> normally there's an easy way to find out the source commit of build=20
-> failures. Try something like:
+On Mon, Jun 30, 2008 at 11:55:02PM +0530, Kamalesh Babulal wrote:
+> Hi Stephen,
 >=20
->  git-bisect reset
->  git-bisect start
->  git-bisect good v2.6.26-rc8
-
-More generally "git-bisect good linux-next/stable" - the stable branch is
-just where I started on Linus' tree and that is always good :-)
-
->  git-bisect bad linux-next/master
->  git-bisect run make kernel/fork.o
+> next-20080630 kernel build fails on powerpc, with randconfig
 >=20
-> ... this should lead you to the commit that broke the build=20
-> automatically. (as long as everyone keeps make oldconfig compatibility)
+>   CC      arch/powerpc/mm/mem.o
+> arch/powerpc/mm/mem.c: In function =E2=80=98arch_add_memory=E2=80=99:
+> arch/powerpc/mm/mem.c:130: error: implicit declaration of function =E2=
+=80=98create_section_mapping=E2=80=99
+> make[1]: *** [arch/powerpc/mm/mem.o] Error 1
+> make: *** [arch/powerpc/mm] Error 2
 
-Nice, I must try this.
+This problem exists in in 2.6.26-rc8, so it's not specifially linux-nex=
+t
+realted.  The patch at:
+http://patchwork.ozlabs.org/linuxppc/patch?id=3D19347
+should fix it but is un-ACK'd ;P
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Yours Tony
 
---Signature=_Tue__1_Jul_2008_10_34_17_+1000_BfUla51nsbwj7=OD
-Content-Type: application/pgp-signature
+  linux.conf.au    http://www.marchsouth.org/
+  Jan 19 - 24 2009 The Australian Linux Technical Conference!
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhpe4kACgkQjjKRsyhoI8x0UQCgh6yyFJrG3uD6w1Ec0cWpGhe9
-uloAnR3CkOaFWWLZWuqviP26qV0/4ASV
-=g2xi
------END PGP SIGNATURE-----
-
---Signature=_Tue__1_Jul_2008_10_34_17_+1000_BfUla51nsbwj7=OD--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-kbuild"=
+ in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
