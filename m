@@ -1,50 +1,113 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: ttydev tree build failure
-Date: Tue, 1 Jul 2008 08:27:04 -0700
-Message-ID: <20080701152704.GB3973@kroah.com>
-References: <20080702001740.9bbea0df.sfr@canb.auug.org.au> <20080701152302.07cdba1e@lxorguk.ukuu.org.uk> <20080702005134.d07261ad.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: next-0630: sparc64: build failed
+Date: Tue, 1 Jul 2008 17:46:48 +0200
+Message-ID: <20080701154648.GA31057@elte.hu>
+References: <a4423d670807010825t7ea2eb44oda3f08dc007c40a2@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:43717 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757768AbYGAPbH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Jul 2008 11:31:07 -0400
+Received: from mx3.mail.elte.hu ([157.181.1.138]:59349 "EHLO mx3.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754299AbYGAPrI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Jul 2008 11:47:08 -0400
 Content-Disposition: inline
-In-Reply-To: <20080702005134.d07261ad.sfr@canb.auug.org.au>
+In-Reply-To: <a4423d670807010825t7ea2eb44oda3f08dc007c40a2@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, linux-next@vger.kernel.org
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, sparclinux@vger.kernel.org, David Miller <davem@davemloft.net>, sagar.abhishek@gmail.com, rostedt@goodmis.org
 
-On Wed, Jul 02, 2008 at 12:51:34AM +1000, Stephen Rothwell wrote:
-> Hi Alan,
+
+* Alexander Beregalov <a.beregalov@gmail.com> wrote:
+
+> Hi David, Abhishek
 > 
-> On Tue, 1 Jul 2008 15:23:02 +0100 Alan Cox <alan@lxorguk.ukuu.org.uk> wrote:
-> >
-> > > It could easily (probably) have been the merge.
-> > > 
-> > > I have reverted the ttydev tree for now.  I am not sure quite where we go
-> > > from here.
-> > 
-> > Well I expected there would be a few explosions from merging a large new
-> > tree in. No problem. As soon as the new tree is done and out I will
-> > regenerate the patch set versus that which should iron out all the
-> > firmware clashes and the like.
+> $ make CROSS_COMPILE=sparc64-unknown-linux-gnu- image modules && sudo
+> make modules_install
+>   CHK     include/linux/version.h
+>   CHK     include/linux/utsrelease.h
+>   CALL    scripts/checksyscalls.sh
+>   CHK     include/linux/compile.h
+> dnsdomainname: Unknown host
+>   CC      arch/sparc64/kernel/sparc64_ksyms.o
+> arch/sparc64/kernel/sparc64_ksyms.c:116: error: '_mcount' undeclared
+> here (not in a function)
+> cc1: warnings being treated as errors
+> arch/sparc64/kernel/sparc64_ksyms.c:116: error: type defaults to 'int'
+> in declaration of '_mcount'
 > 
-> One downsides of the way linux-next works is that, because it is
-> recreated every day, you cannot really base anything on it that is to be
-> merged into it.
+> This commit is cause.
 > 
-> I really need to think about this when I am awake :-(
+> commit 395a59d0f8e86bb39cd700c3d185d30c670bb958
+> Author: Abhishek Sagar <sagar.abhishek@gmail.com>
+> Date:   Sat Jun 21 23:47:27 2008 +0530
+> 
+>     ftrace: store mcount address in rec->ip
 
-As there were a lot of merge issues with my tree, I don't mind putting
-this in my queue if needed.
+thanks Alexander - does the patch below fix it for you?
 
-I had started to merge it in, and handled lots of these merge issues in
-my tree pretty easily, so if needed, I can put it all back in there to
-help with this problem.
+	Ingo
 
-thanks,
+---------------->
+commit 760378e1497841246ea7e42abad617d8a8ac0bcc
+Author: Ingo Molnar <mingo@elte.hu>
+Date:   Tue Jul 1 17:35:06 2008 +0200
 
-greg k-h
+    fix "ftrace: store mcount address in rec->ip"
+    
+    Alexander Beregalov reported this build failure:
+    
+    $ make CROSS_COMPILE=sparc64-unknown-linux-gnu- image modules && sudo
+    make modules_install
+      CHK     include/linux/version.h
+      CHK     include/linux/utsrelease.h
+      CALL    scripts/checksyscalls.sh
+      CHK     include/linux/compile.h
+    dnsdomainname: Unknown host
+      CC      arch/sparc64/kernel/sparc64_ksyms.o
+    arch/sparc64/kernel/sparc64_ksyms.c:116: error: '_mcount' undeclared
+    here (not in a function)
+    cc1: warnings being treated as errors
+    arch/sparc64/kernel/sparc64_ksyms.c:116: error: type defaults to 'int'
+    in declaration of '_mcount'
+    
+    And bisected it back to:
+    
+    | commit 395a59d0f8e86bb39cd700c3d185d30c670bb958
+    | Author: Abhishek Sagar <sagar.abhishek@gmail.com>
+    | Date:   Sat Jun 21 23:47:27 2008 +0530
+    |
+    |     ftrace: store mcount address in rec->ip
+    
+    the mcount prototype is only available under CONFIG_FTRACE,
+    extend it to CONFIG_MCOUNT as well.
+    
+    Reported-and-bisected-by: Alexander Beregalov <a.beregalov@gmail.com>
+    Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+diff --git a/arch/sparc64/kernel/sparc64_ksyms.c b/arch/sparc64/kernel/sparc64_ksyms.c
+index b80d982..49d3ea5 100644
+--- a/arch/sparc64/kernel/sparc64_ksyms.c
++++ b/arch/sparc64/kernel/sparc64_ksyms.c
+@@ -112,7 +112,7 @@ EXPORT_SYMBOL(__write_trylock);
+ EXPORT_SYMBOL(smp_call_function);
+ #endif /* CONFIG_SMP */
+ 
+-#if defined(CONFIG_MCOUNT)
++#ifdef CONFIG_MCOUNT
+ EXPORT_SYMBOL(_mcount);
+ #endif
+ 
+diff --git a/include/asm-sparc64/ftrace.h b/include/asm-sparc64/ftrace.h
+index f76a40a..d27716c 100644
+--- a/include/asm-sparc64/ftrace.h
++++ b/include/asm-sparc64/ftrace.h
+@@ -1,7 +1,7 @@
+ #ifndef _ASM_SPARC64_FTRACE
+ #define _ASM_SPARC64_FTRACE
+ 
+-#ifdef CONFIG_FTRACE
++#ifdef CONFIG_MCOUNT
+ #define MCOUNT_ADDR		((long)(_mcount))
+ #define MCOUNT_INSN_SIZE	4 /* sizeof mcount call */
+ 
