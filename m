@@ -1,34 +1,60 @@
-From: Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [BUILD-FAILURE] linux-next: Tree for June 30
-Date: Mon, 30 Jun 2008 22:10:46 -0400
-Message-ID: <20080701021046.GA30401@redhat.com>
-References: <20080701001656.e156585c.sfr@canb.auug.org.au> <48690385.7030500@linux.vnet.ibm.com> <48690D3C.1060803@linux.vnet.ibm.com> <20080630185943.GA24692@uranus.ravnborg.org> <20080630192610.GA6584@elte.hu> <20080630194727.GA26682@uranus.ravnborg.org> <20080630200623.GE6584@elte.hu> <20080630202506.GA28050@uranus.ravnborg.org> <486943F1.80606@zytor.com> <48695449.5010602@zytor.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the sched tree
+Date: Tue, 1 Jul 2008 12:42:06 +1000
+Message-ID: <20080701124206.77ff77cd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__1_Jul_2008_12_42_06_+1000_Q9iygG8D6Gtn1c7o"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([66.187.233.31]:42369 "EHLO mx1.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45544 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756429AbYGACX2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Jun 2008 22:23:28 -0400
-Content-Disposition: inline
-In-Reply-To: <48695449.5010602@zytor.com>
+	id S1750765AbYGACmP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Jun 2008 22:42:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Sam Ravnborg <sam@ravnborg.org>, Ingo Molnar <mingo@elte.hu>, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>, Andy Whitcroft <apw@shadowen.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Vivek Goyal <vgoyal@in.ibm.com>, "Eric W. Biederman" <ebiederm@xmission.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org
 
-On Mon, Jun 30, 2008 at 02:46:49PM -0700, H. Peter Anvin wrote:
-> Here is a patch to replace the hard-coded limit with dynamic allocation.  
->  I have only build-tested it, but it seems to work.
->
-> Please try it out; barring any screams to the contrary I'll add it to -tip.
->
-> 	-hpa
+--Signature=_Tue__1_Jul_2008_12_42_06_+1000_Q9iygG8D6Gtn1c7o
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I think there was no specific reason for limit 100. Just that probably at
-that point Eric thought 100 is sufficient. Dynamic allocation is much
-better.
+Hi all,
 
-This patch looks good. Thanks.
+Today's linux-next merge of the sched tree got a conflict in
+kernel/sched.c between commit 040ec23d07f95285e9777a85cda29cb339a3065b
+("sched: sched_clock() lockdep fix") from the  tree and commit
+76a2a6ee8a0660a29127f05989ac59ae1ce865fa ("sched: sched_clock_cpu() based
+cpu_clock()") from the sched tree.
 
-Vivek
+The former updated some code that the latter removed.  I used the version
+from the sched tree.
+
+There was also a conflict in kernel/sched_rt.c between commit
+363ab6f1424cdea63e5d182312d60e19077b892a ("core: use performance variant
+for_each_cpu_mask_nr") from the cpus4096 tree and commit
+eff6549b957d15d1ad168d90b8c1eb643b9c163f ("sched: rt: move some code
+around") from the sched tree.
+
+Again I took the version from the sched tree except for the
+for_each_cpu_mask -> for_each_cpu_mask_nr transformation.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__1_Jul_2008_12_42_06_+1000_Q9iygG8D6Gtn1c7o
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhpmX4ACgkQjjKRsyhoI8ylUQCfQZlD6P3EOEZQQ326hNsfX9h6
+hIYAn3zMLbbdktKTv9w6/9OQz7bczzzm
+=GKQK
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__1_Jul_2008_12_42_06_+1000_Q9iygG8D6Gtn1c7o--
