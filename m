@@ -1,66 +1,43 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: [PATCH] Introduce rculist.h
-Date: Tue, 1 Jul 2008 13:13:06 -0700
-Message-ID: <20080701201306.GF7488@linux.vnet.ibm.com>
-References: <20080701125607.c5295759.sfr@canb.auug.org.au>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH 2/2] acpi: Disable IRQ 0 through I/O APIC for some HP
+	systems
+Date: Tue, 1 Jul 2008 22:24:53 +0200
+Message-ID: <20080701202453.GD4896@elte.hu>
+References: <Pine.LNX.4.55.0807010055070.30785@cliff.in.clinika.pl> <20080701001727.GA4174@srcf.ucam.org> <20080701084648.GA21727@elte.hu> <200807012158.34356.rjw@sisk.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from E23SMTP06.au.ibm.com ([202.81.18.175]:34744 "EHLO
-	e23smtp06.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755260AbYGAUNM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Jul 2008 16:13:12 -0400
+Return-path: <linux-acpi-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20080701125607.c5295759.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus <torvalds@linux-foundation.org>, Franck Bui-Huu <fbuihuu@gmail.com>, Josh Triplett <josh@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+In-Reply-To: <200807012158.34356.rjw@sisk.pl>
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Matthew Garrett <mjg59@srcf.ucam.org>, "Maciej W. Rozycki" <macro@linux-mips.org>, Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Jul 01, 2008 at 12:56:07PM +1000, Stephen Rothwell wrote:
-> In linux-next there is a commit ("rcu: split list.h and move rcu-protected
-> lists into rculist.h") that moved the rcu related list iterators from
-> list.h to rculist.h.  Add a trivial version of the file now so that
-> various subsystem trees can start using it now for -next changes and so
-> reduce the build errors caused by adding uses of the moved functions.
 
-Works for me!
+* Rafael J. Wysocki <rjw@sisk.pl> wrote:
 
-Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-
-> Cc: Franck Bui-Huu <fbuihuu@gmail.com>
-> Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> Cc: Josh Triplett <josh@kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Ingo Molnar <mingo@elte.hu>
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  include/linux/rculist.h |    6 ++++++
->  1 files changed, 6 insertions(+), 0 deletions(-)
->  create mode 100644 include/linux/rculist.h
+> On Tuesday, 1 of July 2008, Ingo Molnar wrote:
+> > 
+> > * Matthew Garrett <mjg59@srcf.ucam.org> wrote:
+> > 
+> > > Assuming it works for Rafael (still haven't had time to pull my nx6125 
+> > > out of storage):
+> > > 
+> > > Signed-off-by: mjg@redhat.com
+> > 
+> > Rafael, could you please try the latest tip/master that i've just pushed 
+> > out:
+> > 
+> >   http://people.redhat.com/mingo/tip.git/README
+> > 
+> > it has the final form of these changes integrated - it should in 
+> > theory work out of box on your system, with no boot parameters or 
+> > other explicit quirks needed anywhere.
 > 
-> Linus, would you consider patches like this for 2.6.26 that have no
-> effect on the current tree but help with conflicts in various subsystems
-> during the next merge window?  I already have three build fixups for this
-> one in particular.
-> 
-> diff --git a/include/linux/rculist.h b/include/linux/rculist.h
-> new file mode 100644
-> index 0000000..bde4586
-> --- /dev/null
-> +++ b/include/linux/rculist.h
-> @@ -0,0 +1,6 @@
-> +#ifndef _LINUX_RCULIST_H
-> +#define _LINUX_RCULIST_H
-> +
-> +#include <linux/list.h>
-> +
-> +#endif	/* _LINUX_RCULIST_H */
-> -- 
-> 1.5.6
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
+> I tested patches [1/2] (your version) and [2/2] on top of today's 
+> linux-next and they work just fine.
+
+thanks Rafael!
+
+	Ingo
