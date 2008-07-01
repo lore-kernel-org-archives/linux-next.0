@@ -1,36 +1,52 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [BUILD-FAILURE] linux-next: Tree for June 30
-Date: Tue, 1 Jul 2008 08:56:14 +0200
-Message-ID: <20080701065614.GA26601@elte.hu>
-References: <20080701001656.e156585c.sfr@canb.auug.org.au> <48690385.7030500@linux.vnet.ibm.com> <48690D3C.1060803@linux.vnet.ibm.com> <20080630185943.GA24692@uranus.ravnborg.org> <20080630192610.GA6584@elte.hu> <20080630194727.GA26682@uranus.ravnborg.org> <20080630200623.GE6584@elte.hu> <20080630202506.GA28050@uranus.ravnborg.org> <486943F1.80606@zytor.com> <48695449.5010602@zytor.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree
+Date: Tue, 1 Jul 2008 17:11:37 +1000
+Message-ID: <20080701171137.f71c70f9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__1_Jul_2008_17_11_37_+1000_AApJXU/i0rfTZM/v"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:52407 "EHLO mx2.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34072 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751948AbYGAG55 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 1 Jul 2008 02:57:57 -0400
-Content-Disposition: inline
-In-Reply-To: <48695449.5010602@zytor.com>
+	id S1752361AbYGAHLs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Jul 2008 03:11:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Sam Ravnborg <sam@ravnborg.org>, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>, Andy Whitcroft <apw@shadowen.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Vivek Goyal <vgoyal@in.ibm.com>, "Eric W. Biederman" <ebiederm@xmission.com>
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, Laurent Pinchart <laurentp@cse-semaphore.com>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org
 
+--Signature=_Tue__1_Jul_2008_17_11_37_+1000_AApJXU/i0rfTZM/v
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* H. Peter Anvin <hpa@zytor.com> wrote:
+Hi Dave,
 
-> Here is a patch to replace the hard-coded limit with dynamic 
-> allocation.
->  I have only build-tested it, but it seems to work.
->
-> Please try it out; barring any screams to the contrary I'll add it to 
-> -tip.
+Today's linux-next merge of the net tree got a trivial conflict in
+drivers/net/fs_enet/fs_enet-main.c between commit
+55b6c8e99d582cc66947b465d0ff3147a0219808 ("drivers/net: Use linux/of_
+{device,platform}.h instead of asm") from the powerpc tree and commit
+d8b35fac8c7e1b44d873c1afcc5f88bc5ef4b361 ("fs_enet: MDIO on GPIO
+support") from the net tree.
 
-it's looking good here too in my testing.
+I fixed it up and can carry the fixup.
+(The powerpc commit just changed asm/of_platform.h to linux/of_platform.h)
 
-I dont think there's a v2.6.26 urgency as the first time we've ever seen 
-this warning was in linux-next. If it passes testing i agree that it's 
-good for v2.6.27.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-	Ingo
+--Signature=_Tue__1_Jul_2008_17_11_37_+1000_AApJXU/i0rfTZM/v
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhp2KkACgkQjjKRsyhoI8xC7gCgpUgW6OV2lEj+4rPPGAjgUWiq
+c8AAoIYLmf9NCNXB1lK/0CLQJIvmB5Wl
+=kfzp
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__1_Jul_2008_17_11_37_+1000_AApJXU/i0rfTZM/v--
