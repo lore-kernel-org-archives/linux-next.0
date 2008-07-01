@@ -1,53 +1,94 @@
-From: Adrian Bunk <bunk@kernel.org>
-Subject: Re: linux-next: manual merge of the ttydev tree
-Date: Tue, 1 Jul 2008 19:45:45 +0300
-Message-ID: <20080701164545.GD32598@cs181140183.pp.htv.fi>
-References: <20080702000712.3698a7f9.sfr@canb.auug.org.au> <20080701151205.2b728f94@lxorguk.ukuu.org.uk> <20080701144330.GA32598@cs181140183.pp.htv.fi> <20080701164220.18bba393@lxorguk.ukuu.org.uk>
+From: Oliver Neukum <oliver@neukum.org>
+Subject: Re: linux-next: Tree for June 30 (USB: cdc-acm)
+Date: Tue, 1 Jul 2008 19:10:08 +0200
+Message-ID: <200807011910.09251.oliver@neukum.org>
+References: <20080701001656.e156585c.sfr@canb.auug.org.au> <20080630114332.b797e5e4.randy.dunlap@oracle.com> <20080630190125.GA3553@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp6.pp.htv.fi ([213.243.153.40]:49012 "EHLO smtp6.pp.htv.fi"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751062AbYGAQqF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 1 Jul 2008 12:46:05 -0400
+Received: from smtp-out002.kontent.com ([81.88.40.216]:42672 "EHLO
+	smtp-out002.kontent.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750826AbYGARJk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Jul 2008 13:09:40 -0400
+In-Reply-To: <20080630190125.GA3553@kroah.com>
 Content-Disposition: inline
-In-Reply-To: <20080701164220.18bba393@lxorguk.ukuu.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linville@tuxdriver.com, linux-wireless@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Alan Stern <stern@rowland.harvard.edu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, Jul 01, 2008 at 04:42:20PM +0100, Alan Cox wrote:
-> > When we discussed the removal of the driver we weren't able to find any 
-> > realistic chance that people both have this hardware and this kind of 
-> > wireless network.
+Am Montag 30 Juni 2008 21:01:25 schrieb Greg KH:
+> On Mon, Jun 30, 2008 at 11:43:32AM -0700, Randy Dunlap wrote:
+> > cdc-acm fails to build when CONFIG_PM=n:
 > > 
-> > What users do you know about?
+> > linux-next-20080630/drivers/usb/class/cdc-acm.c: In function 'acm_suspend':
+> > linux-next-20080630/drivers/usb/class/cdc-acm.c:1263: error: 'struct usb_device' has no member named 'auto_pm'
+> > make[4]: *** [drivers/usb/class/cdc-acm.o] Error 1
 > 
-> The modems worked both with base stations but they also support working
-> as an adhoc star mode network and yes - people still use them for that in
-> interesting places where 802.11 doesn't work nicely. And I got bug
-> reports.. You can still plug em into a PC today and build ad-hoc star
-> networks including funky stuff like dual modem full dupex.
-> 
-> Of course if you'd bothered to discuss it anywhere I can find or read you
-> might have found that out earlier.
+> Yeah, known issue due to the pm and usb trees conflicting here.  It will
+> be fixed up at the merge time with Linus.
 
-It was discussed on linux-wireless which seems to be the appropriate 
-place for a driver under drivers/net/wireless/
+Here's the fix. cdc-wdm has the same problem. The fix is the same.
 
-If you consider yourself the maintainer of this driver, can you dump 
-the non-working URL from the MAINTAINERS entry (whose removal was my 
-original patch) and add yourself instead?
+	Regards
+		Oliver
 
-> Alan
+Signed-off-by: Oliver Neukum <oneukum@suse.de>
 
-cu
-Adrian
+---
 
--- 
-
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
+--- linux-2.6.26-greg/drivers/usb/class/cdc-acm.alt.c	2008-07-01 11:22:06.000000000 +0200
++++ linux-2.6.26-greg/drivers/usb/class/cdc-acm.c	2008-07-01 11:24:24.000000000 +0200
+@@ -1258,6 +1258,7 @@ static void acm_disconnect(struct usb_in
+ 		tty_hangup(acm->tty);
+ }
+ 
++#ifdef CONFIG_PM
+ static int acm_suspend(struct usb_interface *intf, pm_message_t message)
+ {
+ 	struct acm *acm = usb_get_intfdata(intf);
+@@ -1323,6 +1324,8 @@ err_out:
+ 	mutex_unlock(&acm->mutex);
+ 	return rv;
+ }
++
++#endif /* CONFIG_PM */
+ /*
+  * USB driver structure.
+  */
+@@ -1378,10 +1381,14 @@ static struct usb_driver acm_driver = {
+ 	.name =		"cdc_acm",
+ 	.probe =	acm_probe,
+ 	.disconnect =	acm_disconnect,
++#ifdef CONFIG_PM
+ 	.suspend =	acm_suspend,
+ 	.resume =	acm_resume,
++#endif
+ 	.id_table =	acm_ids,
++#ifdef CONFIG_PM
+ 	.supports_autosuspend = 1,
++#endif
+ };
+ 
+ /*
+--- linux-2.6.26-greg/drivers/usb/class/cdc-wdm.alt.c	2008-07-01 11:36:03.000000000 +0200
++++ linux-2.6.26-greg/drivers/usb/class/cdc-wdm.c	2008-07-01 11:36:35.000000000 +0200
+@@ -750,12 +750,16 @@ static int wdm_suspend(struct usb_interf
+ 	dev_dbg(&desc->intf->dev, "wdm%d_suspend\n", intf->minor);
+ 
+ 	mutex_lock(&desc->plock);
++#ifdef CONFIG_PM
+ 	if (interface_to_usbdev(desc->intf)->auto_pm && test_bit(WDM_IN_USE, &desc->flags)) {
+ 		rv = -EBUSY;
+ 	} else {
++#endif
+ 		cancel_work_sync(&desc->rxwork);
+ 		kill_urbs(desc);
++#ifdef CONFIG_PM
+ 	}
++#endif
+ 	mutex_unlock(&desc->plock);
+ 
+ 	return rv;
