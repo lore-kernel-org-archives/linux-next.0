@@ -1,50 +1,94 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the s390 tree
-Date: Tue, 1 Jul 2008 14:43:04 +1000
-Message-ID: <20080701144304.c5e1c7b7.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH 1/2] mpparse: Add a knob to disable IRQ 0 through I/O
+ APIC
+Date: Mon, 30 Jun 2008 21:57:46 -0700
+Message-ID: <20080630215746.84ffb0f4.randy.dunlap@oracle.com>
+References: <Pine.LNX.4.55.0807010041030.30785@cliff.in.clinika.pl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__1_Jul_2008_14_43_04_+1000_bFRkh+ZB5etlZgmc"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36001 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750802AbYGAEnN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 1 Jul 2008 00:43:13 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, Ursula Braun <braunu@de.ibm.com>, Greg KH <greg@kroah.com>
-
---Signature=_Tue__1_Jul_2008_14_43_04_+1000_bFRkh+ZB5etlZgmc
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.55.0807010041030.30785@cliff.in.clinika.pl>
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Maciej W. Rozycki" <macro@linux-mips.org>
+Cc: Ingo Molnar <mingo@elte.hu>, Matthew Garrett <mjg59@srcf.ucam.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Martin,
+On Tue, 1 Jul 2008 01:11:35 +0100 (BST) Maciej W. Rozycki wrote:
 
-Today's linux-next merge of the s390 tree got a conflict in
-drivers/s390/net/netiucv.c between commit
-b11b60b796cc45f9f34c9149b1becde0db9bcdde ("s390: bus_id -> dev_name
-conversions") from the driver-core tree and commit
-9b6fd7ada6c3e068120fa230a760c6238c1ec427 ("[S390] Cleanup netiucv printk
-messages") from the s390 tree.
+>  As discovered recently some systems exhibit problems when the 8254 timer 
+> IRQ is routed through the I/O APIC.  These problems do not affect the 
+> timer IRQ itself and therefore cannot be detected when the correctness of 
+> operation of the interrupt is verified in check_timer().  Therefore the 
+> I/O APIC path of the timer IRQ has to be disabled entirely.
+> 
+>  This is a change that lets platforms ask for the timer IRQ not to be 
+> registered in the I/O APIC interrupt tables.  The local APIC and ExtINTA 
+> paths are unaffected.  This request is only taken into account for ACPI 
+> platforms as MP table systems seem unaffected so far.
+> 
+> Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
+> ---
+> patch-2.6.26-rc1-20080505-mpparse-acpi-noirq0-2
+> diff -up --recursive --new-file linux-2.6.26-rc1-20080505.macro/arch/x86/kernel/mpparse.c linux-2.6.26-rc1-20080505/arch/x86/kernel/mpparse.c
+> --- linux-2.6.26-rc1-20080505.macro/arch/x86/kernel/mpparse.c	2008-05-05 02:56:19.000000000 +0000
+> +++ linux-2.6.26-rc1-20080505/arch/x86/kernel/mpparse.c	2008-06-30 21:53:33.000000000 +0000
+> @@ -50,6 +50,8 @@ static int mp_current_pci_id;
+>  
+>  int pic_mode;
+>  
+> +int disable_irq0_through_ioapic __initdata;
+> +
+>  /*
+>   * Intel MP BIOS table parsing routines:
+>   */
+> @@ -887,6 +889,10 @@ void __init mp_override_legacy_irq(u8 bu
+>  	int ioapic = -1;
+>  	int pin = -1;
+>  
+> +	/* Skip the 8254 timer interrupt (IRQ 0) if requested.  */
+> +	if (bus_irq == 0 && disable_irq0_through_ioapic)
+> +		return;
+> +
+>  	/*
+>  	 * Convert 'gsi' to 'ioapic.pin'.
+>  	 */
+> @@ -955,6 +961,10 @@ void __init mp_config_acpi_legacy_irqs(v
+>  	for (i = 0; i < 16; i++) {
+>  		int idx;
+>  
+> +		/* Skip the 8254 timer interrupt (IRQ 0) if requested.  */
+> +		if (i == 0 && disable_irq0_through_ioapic)
+> +			continue;
+> +
+>  		for (idx = 0; idx < mp_irq_entries; idx++) {
+>  			struct mpc_config_intsrc *irq = mp_irqs + idx;
+>  
+> diff -up --recursive --new-file linux-2.6.26-rc1-20080505.macro/include/asm-x86/mpspec.h linux-2.6.26-rc1-20080505/include/asm-x86/mpspec.h
+> --- linux-2.6.26-rc1-20080505.macro/include/asm-x86/mpspec.h	2008-05-05 02:55:57.000000000 +0000
+> +++ linux-2.6.26-rc1-20080505/include/asm-x86/mpspec.h	2008-06-30 22:29:23.000000000 +0000
+> @@ -113,4 +113,15 @@ typedef struct physid_mask physid_mask_t
+>  
+>  extern physid_mask_t phys_cpu_present_map;
+>  
+> +#ifdef CONFIG_X86_MPPARSE
+> +static inline void set_disable_irq0_through_ioapic(int v)
+> +{
+> +	extern int disable_irq0_through_ioapic;
+> +
+> +	disable_irq0_through_ioapic = v;
+> +}
+> +#else
+> +static inline void set_disable_irq0_through_ioapic(int v) { }
+> +#endif
+> +
+>  #endif
 
-The latter removes some code that the former changes.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__1_Jul_2008_14_43_04_+1000_bFRkh+ZB5etlZgmc
-Content-Type: application/pgp-signature
+What calls set_disable_irq0_through_ioapic() ?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkhptdgACgkQjjKRsyhoI8ytwQCfTKNWvgdhwXwcZThm8sh4Yw4q
-2r0An24glyPGcw7jaa+yznpIi3Bm7iMp
-=k35x
------END PGP SIGNATURE-----
-
---Signature=_Tue__1_Jul_2008_14_43_04_+1000_bFRkh+ZB5etlZgmc--
+---
+~Randy
+Linux Plumbers Conference, 17-19 September 2008, Portland, Oregon USA
+http://linuxplumbersconf.org/
