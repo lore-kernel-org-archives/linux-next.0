@@ -1,34 +1,31 @@
 From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: linux-next: manual merge of the ttydev tree
-Date: Tue, 1 Jul 2008 15:16:30 +0100
-Message-ID: <20080701151630.467112ac@lxorguk.ukuu.org.uk>
-References: <20080702001234.6463753f.sfr@canb.auug.org.au>
+Subject: Re: linux-next: ttydev tree build failure
+Date: Tue, 1 Jul 2008 15:23:02 +0100
+Message-ID: <20080701152302.07cdba1e@lxorguk.ukuu.org.uk>
+References: <20080702001740.9bbea0df.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:34087 "EHLO
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:34796 "EHLO
 	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1754608AbYGAOeJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Jul 2008 10:34:09 -0400
-In-Reply-To: <20080702001234.6463753f.sfr@canb.auug.org.au>
+	with ESMTP id S1756117AbYGAOkg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Jul 2008 10:40:36 -0400
+In-Reply-To: <20080702001740.9bbea0df.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org
 
-On Wed, 2 Jul 2008 00:12:34 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi Alan,
+> It could easily (probably) have been the merge.
 > 
-> Today's linux-next merge of the ttydev tree got a conflict in
-> drivers/usb/serial/ti_fw_3410.h and drivers/usb/serial/ti_fw_5052.h
-> between commit 01f845d09b8fdcdd27ee592422567b8dfa5b14d5
-> ("ti_usb_3410_5052: use request_firmware()") from the firmware tree and
-> commit ce8194a09dee5b7e101467aba6b7cd5617b1cd0f
-> ("23-usb-serial-api-change") from the ttydev tree.
-> 
-> The former removed the files.
+> I have reverted the ttydev tree for now.  I am not sure quite where we go
+> from here.
 
-Relevant changes dropped from my tree
+Well I expected there would be a few explosions from merging a large new
+tree in. No problem. As soon as the new tree is done and out I will
+regenerate the patch set versus that which should iron out all the
+firmware clashes and the like.
+
+Thanks
+Alan
