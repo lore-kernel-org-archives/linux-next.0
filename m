@@ -1,60 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sched tree
-Date: Tue, 1 Jul 2008 12:42:06 +1000
-Message-ID: <20080701124206.77ff77cd.sfr@canb.auug.org.au>
+Subject: [PATCH] Introduce rculist.h
+Date: Tue, 1 Jul 2008 12:56:07 +1000
+Message-ID: <20080701125607.c5295759.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__1_Jul_2008_12_42_06_+1000_Q9iygG8D6Gtn1c7o"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45544 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53767 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750765AbYGACmP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Jun 2008 22:42:15 -0400
+	id S1750708AbYGAC4K (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Jun 2008 22:56:10 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org
+To: Linus <torvalds@linux-foundation.org>
+Cc: Franck Bui-Huu <fbuihuu@gmail.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Josh Triplett <josh@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
---Signature=_Tue__1_Jul_2008_12_42_06_+1000_Q9iygG8D6Gtn1c7o
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In linux-next there is a commit ("rcu: split list.h and move rcu-protected
+lists into rculist.h") that moved the rcu related list iterators from
+list.h to rculist.h.  Add a trivial version of the file now so that
+various subsystem trees can start using it now for -next changes and so
+reduce the build errors caused by adding uses of the moved functions.
 
-Hi all,
+Cc: Franck Bui-Huu <fbuihuu@gmail.com>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Josh Triplett <josh@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ingo Molnar <mingo@elte.hu>
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/rculist.h |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
+ create mode 100644 include/linux/rculist.h
 
-Today's linux-next merge of the sched tree got a conflict in
-kernel/sched.c between commit 040ec23d07f95285e9777a85cda29cb339a3065b
-("sched: sched_clock() lockdep fix") from the  tree and commit
-76a2a6ee8a0660a29127f05989ac59ae1ce865fa ("sched: sched_clock_cpu() based
-cpu_clock()") from the sched tree.
+Linus, would you consider patches like this for 2.6.26 that have no
+effect on the current tree but help with conflicts in various subsystems
+during the next merge window?  I already have three build fixups for this
+one in particular.
 
-The former updated some code that the latter removed.  I used the version
-from the sched tree.
+diff --git a/include/linux/rculist.h b/include/linux/rculist.h
+new file mode 100644
+index 0000000..bde4586
+--- /dev/null
++++ b/include/linux/rculist.h
+@@ -0,0 +1,6 @@
++#ifndef _LINUX_RCULIST_H
++#define _LINUX_RCULIST_H
++
++#include <linux/list.h>
++
++#endif	/* _LINUX_RCULIST_H */
+-- 
+1.5.6
 
-There was also a conflict in kernel/sched_rt.c between commit
-363ab6f1424cdea63e5d182312d60e19077b892a ("core: use performance variant
-for_each_cpu_mask_nr") from the cpus4096 tree and commit
-eff6549b957d15d1ad168d90b8c1eb643b9c163f ("sched: rt: move some code
-around") from the sched tree.
-
-Again I took the version from the sched tree except for the
-for_each_cpu_mask -> for_each_cpu_mask_nr transformation.
-
---=20
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__1_Jul_2008_12_42_06_+1000_Q9iygG8D6Gtn1c7o
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhpmX4ACgkQjjKRsyhoI8ylUQCfQZlD6P3EOEZQQ326hNsfX9h6
-hIYAn3zMLbbdktKTv9w6/9OQz7bczzzm
-=GKQK
------END PGP SIGNATURE-----
-
---Signature=_Tue__1_Jul_2008_12_42_06_+1000_Q9iygG8D6Gtn1c7o--
