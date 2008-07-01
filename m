@@ -1,37 +1,37 @@
 From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: linux-next: ttydev tree build failure
-Date: Tue, 1 Jul 2008 16:36:09 +0100
-Message-ID: <20080701163609.4cd791c6@lxorguk.ukuu.org.uk>
-References: <20080702001740.9bbea0df.sfr@canb.auug.org.au>
-	<20080701152302.07cdba1e@lxorguk.ukuu.org.uk>
-	<20080702005134.d07261ad.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the ttydev tree
+Date: Tue, 1 Jul 2008 16:42:20 +0100
+Message-ID: <20080701164220.18bba393@lxorguk.ukuu.org.uk>
+References: <20080702000712.3698a7f9.sfr@canb.auug.org.au>
+	<20080701151205.2b728f94@lxorguk.ukuu.org.uk>
+	<20080701144330.GA32598@cs181140183.pp.htv.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:44682 "EHLO
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:56618 "EHLO
 	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751784AbYGAPxo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Jul 2008 11:53:44 -0400
-In-Reply-To: <20080702005134.d07261ad.sfr@canb.auug.org.au>
+	with ESMTP id S1752612AbYGAQAC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Jul 2008 12:00:02 -0400
+In-Reply-To: <20080701144330.GA32598@cs181140183.pp.htv.fi>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Adrian Bunk <bunk@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-> One downsides of the way linux-next works is that, because it is
-> recreated every day, you cannot really base anything on it that is to be
-> merged into it.
+> When we discussed the removal of the driver we weren't able to find any 
+> realistic chance that people both have this hardware and this kind of 
+> wireless network.
 > 
-> I really need to think about this when I am awake :-(
+> What users do you know about?
 
-As its a patch series not  git tree I don't think this is actually the
-problem it would be with git.
+The modems worked both with base stations but they also support working
+as an adhoc star mode network and yes - people still use them for that in
+interesting places where 802.11 doesn't work nicely. And I got bug
+reports.. You can still plug em into a PC today and build ad-hoc star
+networks including funky stuff like dual modem full dupex.
 
-Producing a 'fits on top of firmware' merge doesn't mean losing anything
-as its just another patch set (and at the very least its a reference for
-you to do the exact same merge work yourself if you have both). It might
-for the moment anchor the tty dev work to follow the firmware work but I
-can live with that for now.
+Of course if you'd bothered to discuss it anywhere I can find or read you
+might have found that out earlier.
 
 Alan
