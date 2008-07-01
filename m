@@ -1,94 +1,137 @@
-From: Oliver Neukum <oliver@neukum.org>
-Subject: Re: linux-next: Tree for June 30 (USB: cdc-acm)
-Date: Tue, 1 Jul 2008 19:10:08 +0200
-Message-ID: <200807011910.09251.oliver@neukum.org>
-References: <20080701001656.e156585c.sfr@canb.auug.org.au> <20080630114332.b797e5e4.randy.dunlap@oracle.com> <20080630190125.GA3553@kroah.com>
+From: Abhishek Sagar <sagar.abhishek@gmail.com>
+Subject: Re: next-0630: sparc64: build failed
+Date: Wed, 02 Jul 2008 00:18:57 +0530
+Message-ID: <486A7C19.5080905@gmail.com>
+References: <a4423d670807010825t7ea2eb44oda3f08dc007c40a2@mail.gmail.com> <20080701154648.GA31057@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp-out002.kontent.com ([81.88.40.216]:42672 "EHLO
-	smtp-out002.kontent.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750826AbYGARJk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Jul 2008 13:09:40 -0400
-In-Reply-To: <20080630190125.GA3553@kroah.com>
-Content-Disposition: inline
+Received: from ug-out-1314.google.com ([66.249.92.172]:23385 "EHLO
+	ug-out-1314.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753322AbYGASuC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Jul 2008 14:50:02 -0400
+Received: by ug-out-1314.google.com with SMTP id h2so444269ugf.16
+        for <linux-next@vger.kernel.org>; Tue, 01 Jul 2008 11:49:59 -0700 (PDT)
+In-Reply-To: <20080701154648.GA31057@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Alan Stern <stern@rowland.harvard.edu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>, David Miller <davem@davemloft.net>
+Cc: Alexander Beregalov <a.beregalov@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, sparclinux@vger.kernel.org, rostedt@goodmis.org
 
-Am Montag 30 Juni 2008 21:01:25 schrieb Greg KH:
-> On Mon, Jun 30, 2008 at 11:43:32AM -0700, Randy Dunlap wrote:
-> > cdc-acm fails to build when CONFIG_PM=n:
-> > 
-> > linux-next-20080630/drivers/usb/class/cdc-acm.c: In function 'acm_suspend':
-> > linux-next-20080630/drivers/usb/class/cdc-acm.c:1263: error: 'struct usb_device' has no member named 'auto_pm'
-> > make[4]: *** [drivers/usb/class/cdc-acm.o] Error 1
-> 
-> Yeah, known issue due to the pm and usb trees conflicting here.  It will
-> be fixed up at the merge time with Linus.
+Ingo Molnar wrote:
+>     Alexander Beregalov reported this build failure:
+>     
+>     $ make CROSS_COMPILE=sparc64-unknown-linux-gnu- image modules && sudo
+>     make modules_install
+>       CHK     include/linux/version.h
+>       CHK     include/linux/utsrelease.h
+>       CALL    scripts/checksyscalls.sh
+>       CHK     include/linux/compile.h
+>     dnsdomainname: Unknown host
+>       CC      arch/sparc64/kernel/sparc64_ksyms.o
+>     arch/sparc64/kernel/sparc64_ksyms.c:116: error: '_mcount' undeclared
+>     here (not in a function)
+>     cc1: warnings being treated as errors
+>     arch/sparc64/kernel/sparc64_ksyms.c:116: error: type defaults to 'int'
+>     in declaration of '_mcount'
+>     
+>     And bisected it back to:
+>     
+>     | commit 395a59d0f8e86bb39cd700c3d185d30c670bb958
+>     | Author: Abhishek Sagar <sagar.abhishek@gmail.com>
+>     | Date:   Sat Jun 21 23:47:27 2008 +0530
+>     |
+>     |     ftrace: store mcount address in rec->ip
+>     
+>     the mcount prototype is only available under CONFIG_FTRACE,
+>     extend it to CONFIG_MCOUNT as well.
+>     
+>     Reported-and-bisected-by: Alexander Beregalov <a.beregalov@gmail.com>
+>     Signed-off-by: Ingo Molnar <mingo@elte.hu>
 
-Here's the fix. cdc-wdm has the same problem. The fix is the same.
+Hi Ingo/David,
 
-	Regards
-		Oliver
+CONFIG_MCOUNT currently controls the compilation with -pg flag and the export
+of _mcount. But with ftrace, the former is redundant and the latter should be
+made unconditional since _mcount is always defined. In which case, does the
+inlined patch (untested) make sense? It should solve the build failure as well.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.de>
+[for tip/master]
 
+Signed-off-by: Abhishek Sagar <sagar.abhishek@gmail.com>
 ---
+sparc64: get rid of CONFIG_MCOUNT
 
---- linux-2.6.26-greg/drivers/usb/class/cdc-acm.alt.c	2008-07-01 11:22:06.000000000 +0200
-+++ linux-2.6.26-greg/drivers/usb/class/cdc-acm.c	2008-07-01 11:24:24.000000000 +0200
-@@ -1258,6 +1258,7 @@ static void acm_disconnect(struct usb_in
- 		tty_hangup(acm->tty);
- }
+There are two possible (not necessarily exclusive) uses of the _mcount call:
+1. To do stack usage debugging.
+2. Function tracing.
+
+Both have separate CONFIG_* options and don't require an alias such as
+CONFIG_MCOUNT.
+
+diff --git a/arch/sparc64/Kconfig.debug b/arch/sparc64/Kconfig.debug
+index d6d32d1..6065be7 100644
+--- a/arch/sparc64/Kconfig.debug
++++ b/arch/sparc64/Kconfig.debug
+@@ -31,11 +31,6 @@ config DEBUG_PAGEALLOC
+ 	  This results in a large slowdown, but helps to find certain types
+ 	  of memory corruptions.
  
-+#ifdef CONFIG_PM
- static int acm_suspend(struct usb_interface *intf, pm_message_t message)
- {
- 	struct acm *acm = usb_get_intfdata(intf);
-@@ -1323,6 +1324,8 @@ err_out:
- 	mutex_unlock(&acm->mutex);
- 	return rv;
- }
-+
-+#endif /* CONFIG_PM */
- /*
-  * USB driver structure.
-  */
-@@ -1378,10 +1381,14 @@ static struct usb_driver acm_driver = {
- 	.name =		"cdc_acm",
- 	.probe =	acm_probe,
- 	.disconnect =	acm_disconnect,
-+#ifdef CONFIG_PM
- 	.suspend =	acm_suspend,
- 	.resume =	acm_resume,
-+#endif
- 	.id_table =	acm_ids,
-+#ifdef CONFIG_PM
- 	.supports_autosuspend = 1,
-+#endif
- };
+-config MCOUNT
+-	bool
+-	depends on STACK_DEBUG || FTRACE
+-	default y
+-
+ config FRAME_POINTER
+ 	bool
+ 	depends on MCOUNT
+diff --git a/arch/sparc64/Makefile b/arch/sparc64/Makefile
+index 4b8f2b0..c182e5c 100644
+--- a/arch/sparc64/Makefile
++++ b/arch/sparc64/Makefile
+@@ -19,8 +19,10 @@ KBUILD_CFLAGS += -m64 -pipe -mno-fpu -mcpu=ultrasparc -mcmodel=medlow \
+ KBUILD_CFLAGS += $(call cc-option,-mtune=ultrasparc3)
+ KBUILD_AFLAGS += -m64 -mcpu=ultrasparc -Wa,--undeclared-regs
  
- /*
---- linux-2.6.26-greg/drivers/usb/class/cdc-wdm.alt.c	2008-07-01 11:36:03.000000000 +0200
-+++ linux-2.6.26-greg/drivers/usb/class/cdc-wdm.c	2008-07-01 11:36:35.000000000 +0200
-@@ -750,12 +750,16 @@ static int wdm_suspend(struct usb_interf
- 	dev_dbg(&desc->intf->dev, "wdm%d_suspend\n", intf->minor);
+-ifeq ($(CONFIG_MCOUNT),y)
+-  KBUILD_CFLAGS += -pg
++ifneq ($(CONFIG_FTRACE),y)
++ifeq ($(CONFIG_STACK_DEBUG),y)
++KBUILD_CFLAGS += -pg
++endif
+ endif
  
- 	mutex_lock(&desc->plock);
-+#ifdef CONFIG_PM
- 	if (interface_to_usbdev(desc->intf)->auto_pm && test_bit(WDM_IN_USE, &desc->flags)) {
- 		rv = -EBUSY;
- 	} else {
-+#endif
- 		cancel_work_sync(&desc->rxwork);
- 		kill_urbs(desc);
-+#ifdef CONFIG_PM
- 	}
-+#endif
- 	mutex_unlock(&desc->plock);
+ head-y := arch/sparc64/kernel/head.o arch/sparc64/kernel/init_task.o
+diff --git a/arch/sparc64/kernel/sparc64_ksyms.c b/arch/sparc64/kernel/sparc64_ksyms.c
+index b80d982..13c243c 100644
+--- a/arch/sparc64/kernel/sparc64_ksyms.c
++++ b/arch/sparc64/kernel/sparc64_ksyms.c
+@@ -112,10 +112,7 @@ EXPORT_SYMBOL(__write_trylock);
+ EXPORT_SYMBOL(smp_call_function);
+ #endif /* CONFIG_SMP */
  
- 	return rv;
+-#if defined(CONFIG_MCOUNT)
+ EXPORT_SYMBOL(_mcount);
+-#endif
+-
+ EXPORT_SYMBOL(sparc64_get_clock_tick);
+ 
+ /* RW semaphores */
+diff --git a/include/asm-sparc64/ftrace.h b/include/asm-sparc64/ftrace.h
+index f76a40a..51036c3 100644
+--- a/include/asm-sparc64/ftrace.h
++++ b/include/asm-sparc64/ftrace.h
+@@ -4,11 +4,10 @@
+ #ifdef CONFIG_FTRACE
+ #define MCOUNT_ADDR		((long)(_mcount))
+ #define MCOUNT_INSN_SIZE	4 /* sizeof mcount call */
++#endif
+ 
+ #ifndef __ASSEMBLY__
+ extern void _mcount(void);
+ #endif
+ 
+-#endif
+-
+ #endif /* _ASM_SPARC64_FTRACE */
