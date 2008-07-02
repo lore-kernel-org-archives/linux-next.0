@@ -1,47 +1,34 @@
-From: Lennert Buytenhek <buytenh@wantstofly.org>
-Subject: Re: inux-next 0701 mv643xx_eth powerpc build failure
-Date: Wed, 2 Jul 2008 10:21:18 +0200
-Message-ID: <20080702082117.GA18989@xi.wantstofly.org>
-References: <20080702011434.6fb403d5.sfr@canb.auug.org.au> <20080702031111.GA26752@nineveh.local>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: ttydev tree build failure
+Date: Wed, 2 Jul 2008 09:05:13 +0100
+Message-ID: <20080702090513.0517ac58@lxorguk.ukuu.org.uk>
+References: <20080702150827.4dd6305b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756614AbYGBIVj@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20080702031111.GA26752@nineveh.local>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:42665 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751139AbYGBIWt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Jul 2008 04:22:49 -0400
+In-Reply-To: <20080702150827.4dd6305b.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-On Tue, Jul 01, 2008 at 11:11:12PM -0400, Joseph Fannin wrote:
+On Wed, 2 Jul 2008 15:08:27 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> I'm getting a build failure on 32bit powerpc in -next, but not in mainline:
+> Hi Alan,
 > 
-> drivers/net/mv643xx_eth.c: In function 'mv643xx_eth_netpoll':
-> drivers/net/mv643xx_eth.c:2115: error: 'INT_CAUSE_EXT' undeclared
-> (first use in this function)
-> drivers/net/mv643xx_eth.c:2115: error: (Each undeclared identifier is
-> reported only once
-> drivers/net/mv643xx_eth.c:2115: error: for each function it appears in.)
+> Today's linux-next build (powerpc allyesconfig) failed like this:
+> 
+> drivers/serial/pmac_zilog.c: In function 'pmz_receive_chars':
+> drivers/serial/pmac_zilog.c:245: error: 'struct uart_info' has no member named 'tty'
+> drivers/serial/pmac_zilog.c:250: error: 'struct uart_info' has no member named 'tty'
+> 
+> I applied the patch below (which builds but may, or may not, be correct).
 
-Does this fix it for you?
-
-
-Index: linux-2.6.26-rc8/drivers/net/mv643xx_eth.c
-===================================================================
---- linux-2.6.26-rc8.orig/drivers/net/mv643xx_eth.c
-+++ linux-2.6.26-rc8/drivers/net/mv643xx_eth.c
-@@ -2184,7 +2184,7 @@ static void mv643xx_eth_netpoll(struct n
- 
- 	mv643xx_eth_irq(dev->irq, dev);
- 
--	wrl(mp, INT_MASK(mp->port_num), INT_TX_END | INT_RX | INT_CAUSE_EXT);
-+	wrl(mp, INT_MASK(mp->port_num), INT_TX_END | INT_RX | INT_EXT);
- }
- #endif
- 
-
-
-> I haven't investigated any further than a quick check if this hardware
-> even makes sense on 32bit powerpc -- it seems it does.
-
-It does -- it is used on ARM, PPC and MIPS.
+Your patch is correct. Sorry about that. I need to set up a PPC cross
+build clearly.
