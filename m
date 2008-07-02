@@ -1,58 +1,29 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Subject: Re: linux-next: manual merge of the ttydev tree
-Date: Wed, 02 Jul 2008 10:01:34 +0100
-Message-ID: <1214989294.10393.450.camel@pmac.infradead.org>
-References: <20080701224300.cf259ebd.sfr@canb.auug.org.au>
-	 <20080701150953.7c349271@lxorguk.ukuu.org.uk>
-	 <1214924845.10393.399.camel@pmac.infradead.org>
-	 <20080701162942.286670c7@lxorguk.ukuu.org.uk>
+From: "Alexander Beregalov" <a.beregalov@gmail.com>
+Subject: Re: next-0630: sparc64: build failed
+Date: Wed, 2 Jul 2008 13:10:02 +0400
+Message-ID: <a4423d670807020210i706dcf7du5cfb1e35fadb7cd7@mail.gmail.com>
+References: <a4423d670807010825t7ea2eb44oda3f08dc007c40a2@mail.gmail.com>
+	 <20080701154648.GA31057@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:56080 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751718AbYGBJBm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Jul 2008 05:01:42 -0400
-In-Reply-To: <20080701162942.286670c7@lxorguk.ukuu.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Return-path: <sparclinux-owner@vger.kernel.org>
+In-Reply-To: <20080701154648.GA31057@elte.hu>
+Content-Disposition: inline
+Sender: sparclinux-owner@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, sparclinux@vger.kernel.org, David Miller <davem@davemloft.net>, sagar.abhishek@gmail.com, rostedt@goodmis.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 2008-07-01 at 16:29 +0100, Alan Cox wrote:
-> On Tue, 01 Jul 2008 16:07:25 +0100
-> David Woodhouse <dwmw2@infradead.org> wrote:
-> 
-> > On Tue, 2008-07-01 at 15:09 +0100, Alan Cox wrote:
-> > > David - I think this is what you need to make your firmware tree fit
-> > > on top of the ttydev tree
-> > 
-> > Hm. Is there anything I can usefully do with that, without just pulling
-> > the ttydev tree into mine? I think that's more useful for Stephen as a
-> > resolution to the conflict, isn't it?
-> 
-> Doesn't help. The ttydev tree needs to be in firmware, usb, trivial, net
-> and half a dozen other trees right now at once.
+2008/7/1 Ingo Molnar <mingo@elte.hu>:
+> thanks Alexander - does the patch below fix it for you?
+> commit 760378e1497841246ea7e42abad617d8a8ac0bcc
+> Author: Ingo Molnar <mingo@elte.hu>
+> Date:   Tue Jul 1 17:35:06 2008 +0200
+>
+>    fix "ftrace: store mcount address in rec->ip"
+>
 
-Yeah, pulling your tree into mine isn't really an option -- hence asking
-if there's anything useful I can do without it.
-
->  Unfortunately people have dumped tty and serial fixes all over other
-> trees (even randomly deleted drivers that are in use!) because there
-> wasn't a tty tree to handle it.
-
-Fun :)
-
-> Best bet for the moment I still think is to build ttydev on top of the
-> merge for the moment, and then it'll sort out. I see no other sane way to
-> do it unless Stephen has some good ideas ?
-
-One option is perhaps to split up my patches into two parts -- the part
-which modifies the driver to use request_firmware() (and removes the old
-version of the firmware), and the part which adds the firmware back in
-the firmware/ directory. You could carry the first patch, while I carry
-the second.
-
--- 
-dwmw2
+Yes, it fixes the issue. I have tried next-0702 which already includes
+your patch.
+But it has a name a1d5d08eb4f5c76acd5bb115e13791ce87ec356b.
