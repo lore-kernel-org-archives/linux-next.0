@@ -1,45 +1,69 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: ttydev tree build failure
-Date: Wed, 2 Jul 2008 11:10:06 -0700
-Message-ID: <20080702111006.5b820108.randy.dunlap@oracle.com>
-References: <20080702153011.c9cc0c4a.sfr@canb.auug.org.au>
+Subject: [PATCH -next] acpi utmisc: use WARN_ON() instead of
+ warn_on_slowpath()
+Date: Wed, 2 Jul 2008 11:28:52 -0700
+Message-ID: <20080702112852.05f30950.randy.dunlap@oracle.com>
+References: <20080701103339.b5acc1f3.randy.dunlap@oracle.com>
+	<20080701131714.5093fa49.akpm@linux-foundation.org>
+	<23433248.1214943818230.JavaMail.oracle@acsmt302.oracle.com>
+	<20080701133535.f92a673c.akpm@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from agminet01.oracle.com ([141.146.126.228]:53340 "EHLO
-	agminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751827AbYGBSKj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Jul 2008 14:10:39 -0400
-In-Reply-To: <20080702153011.c9cc0c4a.sfr@canb.auug.org.au>
+Received: from rgminet01.oracle.com ([148.87.113.118]:16958 "EHLO
+	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753571AbYGBSeV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Jul 2008 14:34:21 -0400
+In-Reply-To: <20080701133535.f92a673c.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, linux-next@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: andi@firstfloor.org, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org
 
-On Wed, 2 Jul 2008 15:30:11 +1000 Stephen Rothwell wrote:
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-> Hi Alan,
-> 
-> Today's linux-next build (sparc defconfig) failed like this:
+utmisc.c needs to include asm-generic/bug.h for warn()/WARN() functions,
+but it should use WARN_ON() instead of warn_on_slowpath() since
+arches can provide their own implementation of WARN_ON(), which does
+not have to use/provide/implement warn_on_slowpath() at all.
+Just use the front door (WARN_ON).
 
+linux-next-20080702/drivers/acpi/utilities/utmisc.c:1027: error: implicit declaration of function 'warn_on_slowpath'
 
-istallion (on x86_64 or i386) has several build errors:
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/acpi/utilities/utmisc.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-linux-next-20080702/drivers/char/istallion.c:829: error: 'struct stliport' has no member named 'refcount'
-linux-next-20080702/drivers/char/istallion.c:891: error: 'struct stliport' has no member named 'refcount'
-linux-next-20080702/drivers/char/istallion.c:892: error: 'struct stliport' has no member named 'refcount'
-linux-next-20080702/drivers/char/istallion.c:893: error: 'struct stliport' has no member named 'refcount'
-linux-next-20080702/drivers/char/istallion.c:928: error: 'struct tty_ldisc' has no member named 'flush_buffer'
-linux-next-20080702/drivers/char/istallion.c:929: error: 'struct tty_ldisc' has no member named 'flush_buffer'
-linux-next-20080702/drivers/char/istallion.c:1205: error: 'struct stliport' has no member named 'refcount'
-linux-next-20080702/drivers/char/istallion.c:1234: error: 'struct stliport' has no member named 'refcount'
-linux-next-20080702/drivers/char/istallion.c:1663: warning: unused variable 'ival'
-linux-next-20080702/drivers/char/istallion.c:1860: error: 'struct stliport' has no member named 'refcount'
-linux-next-20080702/drivers/char/istallion.c:4250: error: 'struct tty_port' has no member named 'flag'
-linux-next-20080702/drivers/char/istallion.c:4501: warning: initialization from incompatible pointer type
-make[3]: *** [drivers/char/istallion.o] Error 1
-
+--- linux-next-20080702.orig/drivers/acpi/utilities/utmisc.c
++++ linux-next-20080702/drivers/acpi/utilities/utmisc.c
+@@ -42,6 +42,7 @@
+  */
+ 
+ #include <linux/module.h>
++#include <asm-generic/bug.h>
+ 
+ #include <acpi/acpi.h>
+ #include <acpi/acnamesp.h>
+@@ -1024,7 +1025,7 @@ acpi_ut_error(const char *module_name, u
+ {
+ 	va_list args;
+ 
+-	warn_on_slowpath(module_name, line_number);
++	WARN_ON(1);
+ 	acpi_os_printf("ACPI Error (%s-%04d): ", module_name, line_number);
+ 
+ 	va_start(args, format);
+@@ -1039,7 +1040,7 @@ acpi_ut_exception(const char *module_nam
+ {
+ 	va_list args;
+ 
+-	warn_on_slowpath(module_name, line_number);
++	WARN_ON(1);
+ 	acpi_os_printf("ACPI Exception (%s-%04d): %s, ", module_name,
+ 		       line_number, acpi_format_exception(status));
+ 
 
 
 ---
