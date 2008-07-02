@@ -1,45 +1,36 @@
-From: Andi Kleen <andi@firstfloor.org>
-Subject: Re: [PATCH -next] acpi utmisc: use WARN_ON() instead of warn_on_slowpath()
-Date: Wed, 02 Jul 2008 23:07:25 +0200
-Message-ID: <486BEE0D.3030901@firstfloor.org>
-References: <20080701103339.b5acc1f3.randy.dunlap@oracle.com>	<20080701131714.5093fa49.akpm@linux-foundation.org>	<23433248.1214943818230.JavaMail.oracle@acsmt302.oracle.com>	<20080701133535.f92a673c.akpm@linux-foundation.org>	<20080702112852.05f30950.randy.dunlap@oracle.com>	<486BCDDC.1000709@firstfloor.org>	<20080702121424.a3451eae.akpm@linux-foundation.org>	<486BD785.5050207@firstfloor.org>	<20080702124316.61cc76e9.akpm@linux-foundation.org>	<486BE0DA.2090108@firstfloor.org>	<20080702133540.20d578cd.akpm@linux-foundation.org>	<486BEA68.7000801@firstfloor.org> <20080702140216.334011a4.akpm@linux-foundation.org>
+From: Jonathan Corbet <corbet@lwn.net>
+Subject: Re: linux-next: manual merge of the bkl-removal tree
+Date: Wed, 2 Jul 2008 15:10:21 -0600
+Message-ID: <20080702151021.56570002@bike.lwn.net>
+References: <20080701194544.f2109cdd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from one.firstfloor.org ([213.235.205.2]:60046 "EHLO
-	one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753999AbYGBVH3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Jul 2008 17:07:29 -0400
-In-Reply-To: <20080702140216.334011a4.akpm@linux-foundation.org>
+Received: from vena.lwn.net ([206.168.112.25]:60424 "EHLO vena.lwn.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753780AbYGBVKY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 2 Jul 2008 17:10:24 -0400
+In-Reply-To: <20080701194544.f2109cdd.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: randy.dunlap@oracle.com, lenb@kernel.org, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-Andrew Morton wrote:
-> On Wed, 02 Jul 2008 22:51:52 +0200
-> Andi Kleen <andi@firstfloor.org> wrote:
-> 
->>> If you really want to do it this way (and it sounds reasonable) then
->>> can we please do it in a less-than-totally-hacky-and-broken way?
->>>
->>>
->>>
->>> For example, define a new, always-available helper function in (say)
->>> kernel/panic.c along the lines of
->>>
->>> void emit_warning_message(?)(const char *msg, int line)
->>
->> Ok we can just rename warn_on_slow_path() which is already there to that new name.
-> 
-> Sure, that'd work.  But we should pull it outside any ifdefs so that it
-> is always available (IMO).
+On Tue, 1 Jul 2008 19:45:44 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-For !CONFIG_BUG it's reasonable to not have the calls. These people
-who define it must be fighting for every byte ... So i think
-the stub inline in my previous patch is fine.
+> Today's linux-next merge of the bkl-removal tree got a conflict in
+> drivers/s390/char/monreader.c between commit
+> 4b45ec0706ac12bf0c790747e55b4f3fec776c7a ("[S390] Cleanup monreader
+> printk messages.") from the s390 tree and commit
+> 167ae8a4822ed405037e72d660acf3294ab32807 ("monreader: BKL pushdown")
+> from the bkl-removal tree.
 
-What name do you want?
+That one's a simple matter of moving the include of
+<linux/smp_lock.h>.  I've done that, so this conflict should be gone
+now.
 
--Andi
+Thanks,
+
+jon
