@@ -1,63 +1,65 @@
-From: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: inux-next: Tree for July 1
-Date: Tue, 1 Jul 2008 20:32:11 -0700
-Message-ID: <20080701203211.95244ebd.rdunlap@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: inux-next 0701 mv643xx_eth powerpc build failure
+Date: Wed, 2 Jul 2008 14:10:43 +1000
+Message-ID: <20080702141043.93cb35cf.sfr@canb.auug.org.au>
 References: <20080702011434.6fb403d5.sfr@canb.auug.org.au>
-	<200807012236.19400.rjw@sisk.pl>
-	<1214959743.10317.3.camel@localhost>
+	<20080702031111.GA26752@nineveh.local>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__2_Jul_2008_14_10_43_+1000_Vl3/W8sujLEOsGie"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:57321 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751541AbYGBEKy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 2 Jul 2008 00:10:54 -0400
+In-Reply-To: <20080702031111.GA26752@nineveh.local>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Joseph Fannin <jfannin@gmail.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Lennert Buytenhek <buytenh@wantstofly.org>
+
+--Signature=_Wed__2_Jul_2008_14_10_43_+1000_Vl3/W8sujLEOsGie
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1214959743.10317.3.camel@localhost>
-Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Trond Myklebust <Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>
-Cc: "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, "Mr. Charles Edward Lever" <Chuck.Lever-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 01 Jul 2008 20:49:03 -0400 Trond Myklebust wrote:
+Hi Joseph,
 
-> On Tue, 2008-07-01 at 22:36 +0200, Rafael J. Wysocki wrote:
-> > I can't mount NFS shares with this kernel.  I get something of this sort in
-> > dmesg and it seems to be 100% reproducible:
-> > 
-> > [  314.058858] RPC: Registered udp transport module.
-> > [  314.058863] RPC: Registered tcp transport module.
-> > [  314.490970] RPC: transport (0) not supported
-> > [  319.246987] __ratelimit: 23 messages suppressed
-> 
-> Does this patch fix the problem for you?
+On Tue, 1 Jul 2008 23:11:12 -0400 Joseph Fannin <jfannin@gmail.com> wrote:
+>
+> On Wed, Jul 02, 2008 at 01:14:34AM +1000, Stephen Rothwell wrote:
+>=20
+> [next-20080701]
+>=20
+> I'm getting a build failure on 32bit powerpc in -next, but not in mainlin=
+e:
+>=20
+> drivers/net/mv643xx_eth.c: In function 'mv643xx_eth_netpoll':
+> drivers/net/mv643xx_eth.c:2115: error: 'INT_CAUSE_EXT' undeclared
+> (first use in this function)
+> drivers/net/mv643xx_eth.c:2115: error: (Each undeclared identifier is
+> reported only once
+> drivers/net/mv643xx_eth.c:2115: error: for each function it appears in.)
 
-Yes.  Thanks.
+Caused by commit 073a345c04b01da0cc5b79ac7be0c7c8b1691ef5 ("mv643xx_eth:
+clarify irq masking and unmasking") from the net or wireless tree.  It
+entered linux-next on June 19.
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-> -----------------------------------------------------------------------------------
-> From: Trond Myklebust <Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>
-> NFS: Fix the mount protocol defaults for binary mounts
-> 
-> Signed-off-by: Trond Myklebust <Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>
-> ---
-> 
->  fs/nfs/super.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-> index e09b1c2..85fbb98 100644
-> --- a/fs/nfs/super.c
-> +++ b/fs/nfs/super.c
-> @@ -1575,6 +1575,7 @@ static int nfs_validate_mount_data(void *options,
->  
->  		if (!(data->flags & NFS_MOUNT_TCP))
->  			args->nfs_server.protocol = XPRT_TRANSPORT_UDP;
-> +		nfs_set_transport_defaults(args);
->  		/* N.B. caller will free nfs_server.hostname in all cases */
->  		args->nfs_server.hostname = kstrdup(data->hostname, GFP_KERNEL);
->  		args->namlen		= data->namlen;
-> 
-> 
-> -- 
+--Signature=_Wed__2_Jul_2008_14_10_43_+1000_Vl3/W8sujLEOsGie
+Content-Type: application/pgp-signature
 
----
-~Randy
-Linux Plumbers Conference, 17-19 September 2008, Portland, Oregon USA
-http://linuxplumbersconf.org/
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhq/8MACgkQjjKRsyhoI8xklACfShlKUyYr6SiW5EMAjEyDPoik
+XqQAoJPU+C8XumFNmodKl7/pGuBS89VW
+=G5SK
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__2_Jul_2008_14_10_43_+1000_Vl3/W8sujLEOsGie--
