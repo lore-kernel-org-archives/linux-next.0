@@ -1,21 +1,48 @@
-From: "Stoyan Gaydarov" <stoyboyker@gmail.com>
-Subject: (unknown)
-Date: Wed, 2 Jul 2008 04:13:48 -0500
-Message-ID: <6d291e080807020213u18f881cdr1682767ea433a918@mail.gmail.com>
+From: Andi Kleen <andi@firstfloor.org>
+Subject: Re: linux-next: Tree for June 13: IO APIC breakage on HP nx6325
+Date: Wed, 02 Jul 2008 11:35:22 +0200
+Message-ID: <486B4BDA.4060203@firstfloor.org>
+References: <20080613232214.394fd6fd.sfr@canb.auug.org.au> <200806300106.38414.rjw@sisk.pl> <Pine.LNX.4.55.0806300205180.22548@cliff.in.clinika.pl> <200806301241.57781.rjw@sisk.pl> <Pine.LNX.4.55.0807020223140.6284@cliff.in.clinika.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nf-out-0910.google.com ([64.233.182.186]:25991 "EHLO
-	nf-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752933AbYGBJNu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Jul 2008 05:13:50 -0400
-Received: by nf-out-0910.google.com with SMTP id d3so85990nfc.21
-        for <linux-next@vger.kernel.org>; Wed, 02 Jul 2008 02:13:48 -0700 (PDT)
-Subject: 
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.55.0807020223140.6284@cliff.in.clinika.pl>
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Maciej W. Rozycki" <macro@linux-mips.org>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Ingo Molnar <mingo@elte.hu>, Matthew Garrett <mjg59@srcf.ucam.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Len Brown <lenb@kernel.org>, Andi Kleen <andi-suse@firstfloor.org>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-subscribe linux-next
+Maciej W. Rozycki wrote:
+> On Mon, 30 Jun 2008, Rafael J. Wysocki wrote:
+> 
+>> Well, there are lots of pieces of hardware that are not up to the
+>> specifications, more or less, and I don't think that's a good enough reason
+>> for us to refuse to support them.  The same applies to BIOSes IMO.
+> 
+>  Refusing to support broken hardware would provide some incentive to
+> manufacturers to improve it, because people would rather not buy
+> unsupported pieces of junk. 
+
+For most consumer level hardware the vendors generally don't
+really care if Linux runs on it or not.
+
+Also they very rarely fix anything after release anyways because
+they don't make enough money on it.
+
+For server hardware that is different (vendors care about Linux,
+but typically not about mainline, but about given RHEL/SLES  releases),
+but even there we generally try to work around BIOS bugs
+(at least as long as it is possible)
+because it tends to be quite difficult logistically to require
+a BIOS update. In the end it just hurts the user.
+
+> I realise that may be impractical though 
+
+It is.
+
+> we would get the blame anyway, because "it runs the other OS just fine."
+
+That is exactly what happens.
+
+-Andi
