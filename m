@@ -1,67 +1,29 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH -next] acpi utmisc: use WARN_ON() instead of
- warn_on_slowpath()
-Date: Wed, 2 Jul 2008 14:14:59 -0700
-Message-ID: <20080702141459.e6d6feaa.akpm@linux-foundation.org>
-References: <20080701103339.b5acc1f3.randy.dunlap@oracle.com>
-	<20080701131714.5093fa49.akpm@linux-foundation.org>
-	<23433248.1214943818230.JavaMail.oracle@acsmt302.oracle.com>
-	<20080701133535.f92a673c.akpm@linux-foundation.org>
-	<20080702112852.05f30950.randy.dunlap@oracle.com>
-	<486BCDDC.1000709@firstfloor.org>
-	<20080702121424.a3451eae.akpm@linux-foundation.org>
-	<486BD785.5050207@firstfloor.org>
-	<20080702124316.61cc76e9.akpm@linux-foundation.org>
-	<486BE0DA.2090108@firstfloor.org>
-	<20080702133540.20d578cd.akpm@linux-foundation.org>
-	<486BEA68.7000801@firstfloor.org>
-	<20080702140216.334011a4.akpm@linux-foundation.org>
-	<486BEE0D.3030901@firstfloor.org>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: linux-next: pending wireless/wireless-current merge conflict
+	2008-07-02
+Date: Wed, 2 Jul 2008 18:02:12 -0400
+Message-ID: <20080702220212.GA31582@tuxdriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:40979 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1759959AbYGBVTi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Jul 2008 17:19:38 -0400
-In-Reply-To: <486BEE0D.3030901@firstfloor.org>
+Received: from ra.tuxdriver.com ([70.61.120.52]:3042 "EHLO ra.tuxdriver.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753805AbYGBWRI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 2 Jul 2008 18:17:08 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andi Kleen <andi@firstfloor.org>
-Cc: randy.dunlap@oracle.com, lenb@kernel.org, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, linux-wireless@vger.kernel.org
 
-On Wed, 02 Jul 2008 23:07:25 +0200
-Andi Kleen <andi@firstfloor.org> wrote:
+I just sent a pull request for Dave that will result in a merge
+conflict with in linux-next.  I have a sample merge available here:
 
-> Andrew Morton wrote:
-> > On Wed, 02 Jul 2008 22:51:52 +0200
-> > Andi Kleen <andi@firstfloor.org> wrote:
-> > 
-> >>> If you really want to do it this way (and it sounds reasonable) then
-> >>> can we please do it in a less-than-totally-hacky-and-broken way?
-> >>>
-> >>>
-> >>>
-> >>> For example, define a new, always-available helper function in (say)
-> >>> kernel/panic.c along the lines of
-> >>>
-> >>> void emit_warning_message(?)(const char *msg, int line)
-> >>
-> >> Ok we can just rename warn_on_slow_path() which is already there to that new name.
-> > 
-> > Sure, that'd work.  But we should pull it outside any ifdefs so that it
-> > is always available (IMO).
-> 
-> For !CONFIG_BUG it's reasonable to not have the calls. These people
-> who define it must be fighting for every byte ... So i think
-> the stub inline in my previous patch is fine.
+	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-next-2.6 merge-test
 
-It should all be moved to include/linux/bug.h.  Or, perhaps,
-include/linux/kernel.h.
+Just a heads-up... :-)
 
-> What name do you want?
-
-umm, warn_with_context(), something like that?
-
-I suppose it really should take a printk control string too.  Later.
+John
+-- 
+John W. Linville
+linville@tuxdriver.com
