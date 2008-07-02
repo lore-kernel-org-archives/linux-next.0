@@ -1,29 +1,21 @@
-From: "Alexander Beregalov" <a.beregalov@gmail.com>
-Subject: Re: next-0630: sparc64: build failed
-Date: Wed, 2 Jul 2008 13:10:02 +0400
-Message-ID: <a4423d670807020210i706dcf7du5cfb1e35fadb7cd7@mail.gmail.com>
-References: <a4423d670807010825t7ea2eb44oda3f08dc007c40a2@mail.gmail.com>
-	 <20080701154648.GA31057@elte.hu>
+From: "Stoyan Gaydarov" <stoyboyker@gmail.com>
+Subject: (unknown)
+Date: Wed, 2 Jul 2008 04:13:48 -0500
+Message-ID: <6d291e080807020213u18f881cdr1682767ea433a918@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <sparclinux-owner@vger.kernel.org>
-In-Reply-To: <20080701154648.GA31057@elte.hu>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from nf-out-0910.google.com ([64.233.182.186]:25991 "EHLO
+	nf-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752933AbYGBJNu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Jul 2008 05:13:50 -0400
+Received: by nf-out-0910.google.com with SMTP id d3so85990nfc.21
+        for <linux-next@vger.kernel.org>; Wed, 02 Jul 2008 02:13:48 -0700 (PDT)
+Subject: 
 Content-Disposition: inline
-Sender: sparclinux-owner@vger.kernel.org
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, sparclinux@vger.kernel.org, David Miller <davem@davemloft.net>, sagar.abhishek@gmail.com, rostedt@goodmis.org
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
 
-2008/7/1 Ingo Molnar <mingo@elte.hu>:
-> thanks Alexander - does the patch below fix it for you?
-> commit 760378e1497841246ea7e42abad617d8a8ac0bcc
-> Author: Ingo Molnar <mingo@elte.hu>
-> Date:   Tue Jul 1 17:35:06 2008 +0200
->
->    fix "ftrace: store mcount address in rec->ip"
->
-
-Yes, it fixes the issue. I have tried next-0702 which already includes
-your patch.
-But it has a name a1d5d08eb4f5c76acd5bb115e13791ce87ec356b.
+subscribe linux-next
