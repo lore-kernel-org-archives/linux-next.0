@@ -1,211 +1,73 @@
-From: Thomas Renninger <trenn@suse.de>
-Subject: Re: [PATCH 55/84] ACPI: video: fix brightness allocation
-Date: Wed, 2 Jul 2008 18:57:44 +0200
-Message-ID: <200807021857.45814.trenn@suse.de>
-References: <1214631868-1715-1-git-send-email-lenb@kernel.org> <985af41a38b76827c1f0692cf18469ebf0c4475b.1214631214.git.len.brown@intel.com>
+From: Trond Myklebust <Trond.Myklebust@netapp.com>
+Subject: Re: inux-next: Tree for July 1
+Date: Wed, 02 Jul 2008 13:15:11 -0400
+Message-ID: <1215018911.9783.1.camel@localhost>
+References: <20080702011434.6fb403d5.sfr@canb.auug.org.au>
+	 <200807012236.19400.rjw@sisk.pl> <1214959743.10317.3.camel@localhost>
+	 <76bd70e30807020734g3db408dcqea2a61622c83004d@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="utf-8"
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.suse.de ([195.135.220.2]:38543 "EHLO mx1.suse.de"
+Received: from mx2.netapp.com ([216.240.18.37]:43187 "EHLO mx2.netapp.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750701AbYGBQ5r (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 2 Jul 2008 12:57:47 -0400
-In-Reply-To: <985af41a38b76827c1f0692cf18469ebf0c4475b.1214631214.git.len.brown@intel.com>
-Content-Disposition: inline
+	id S1751386AbYGBRPN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 2 Jul 2008 13:15:13 -0400
+In-Reply-To: <76bd70e30807020734g3db408dcqea2a61622c83004d@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: linux-acpi@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Julia Jomantaite <julia.jomantaite@gmail.com>, Len Brown <len.brown@intel.com>, ak@linux.intel.com, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>
+To: chucklever@gmail.com
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, "Randy.Dunlap" <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-testers@vger.kernel.org, linux-nfs@vger.kernel.org
 
-On Saturday 28 June 2008 07:43:59 Len Brown wrote:
-> From: Julia Jomantaite <julia.jomantaite@gmail.com>
->
-> Fix use of uninitialized device->brightness.
+On Wed, 2008-07-02 at 10:34 -0400, Chuck Lever wrote:
+> On Tue, Jul 1, 2008 at 8:49 PM, Trond Myklebust
+> <Trond.Myklebust@netapp.com> wrote:
+> > On Tue, 2008-07-01 at 22:36 +0200, Rafael J. Wysocki wrote:
+> >> I can't mount NFS shares with this kernel.  I get something of this sort in
+> >> dmesg and it seems to be 100% reproducible:
+> >>
+> >> [  314.058858] RPC: Registered udp transport module.
+> >> [  314.058863] RPC: Registered tcp transport module.
+> >> [  314.490970] RPC: transport (0) not supported
+> >> [  319.246987] __ratelimit: 23 messages suppressed
+> >
+> > Does this patch fix the problem for you?
+> > -----------------------------------------------------------------------------------
+> > From: Trond Myklebust <Trond.Myklebust@netapp.com>
+> > NFS: Fix the mount protocol defaults for binary mounts
+> >
+> > Signed-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>
+> > ---
+> >
+> >  fs/nfs/super.c |    1 +
+> >  1 files changed, 1 insertions(+), 0 deletions(-)
+> >
+> > diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+> > index e09b1c2..85fbb98 100644
+> > --- a/fs/nfs/super.c
+> > +++ b/fs/nfs/super.c
+> > @@ -1575,6 +1575,7 @@ static int nfs_validate_mount_data(void *options,
+> >
+> >                if (!(data->flags & NFS_MOUNT_TCP))
+> >                        args->nfs_server.protocol = XPRT_TRANSPORT_UDP;
+> > +               nfs_set_transport_defaults(args);
+> 
+> nfs_set_transport_defaults() is overkill for the legacy mount path.
+> The bug is that the logic here assumes that nfs_server.protocol
+> already has the default value of XPRT_TRANSPORT_TCP, but commit
+> 8b59ea3c removed that default.  The correct fix is to add
+> 
+>             args->nfs_server.protocol = XPRT_TRANSPORT_TCP;
+> 
+> just before the 'if' statement.  We should fold that into 8b59ea3c to
+> preserve bisectability.
 
-Can this one be left out.
-I did something similar and put the brightness (and display output) 
-initialization into separate functions for bug #9614:
-http://bugzilla.kernel.org/show_bug.cgi?id=9614
+NACK. You still need to set the appropriate retrans and timeo defaults.
 
-My patches go a step further and make sure that not several drivers try to do 
-the switching.
+-- 
+Trond Myklebust
+Linux NFS client maintainer
 
-They probably still need a bit testing and reviewing, but the first one:
-Cleanup: Initialize brightness and display switching in separate functions
-could replace this one (maybe a small one on top is still needed) already?
-This would make things easier for me.
-
-Could these three posted on the bug go into linux-next or into -mm?
-Or should I better set up separate [PATCH 0/3] mails?
-
-Thanks,
-
-    Thomas
-
->
-> Signed-off-by: Julia Jomantaite <julia.jomantaite@gmail.com>
-> Acked-by: Zhang Rui <rui.zhang@intel.com>
-> Signed-off-by: Len Brown <len.brown@intel.com>
-> ---
->  drivers/acpi/video.c |  123
-> +++++++++++++++++++++++++++++-------------------- 1 files changed, 73
-> insertions(+), 50 deletions(-)
->
-> diff --git a/drivers/acpi/video.c b/drivers/acpi/video.c
-> index d089c45..0da8f55 100644
-> --- a/drivers/acpi/video.c
-> +++ b/drivers/acpi/video.c
-> @@ -631,6 +631,76 @@ acpi_video_bus_DOS(struct acpi_video_bus *video, int
-> bios_flag, int lcd_flag) *  	device	: video output device (LCD, CRT, ..)
->   *
->   *  Return Value:
-> + *  	Maximum brightness level
-> + *
-> + *  Allocate and initialize device->brightness.
-> + */
-> +
-> +static int
-> +acpi_video_init_brightness(struct acpi_video_device *device)
-> +{
-> +	union acpi_object *obj = NULL;
-> +	int i, max_level = 0, count = 0;
-> +	union acpi_object *o;
-> +	struct acpi_video_device_brightness *br = NULL;
-> +
-> +	if (!ACPI_SUCCESS(acpi_video_device_lcd_query_levels(device, &obj))) {
-> +		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Could not query available "
-> +						"LCD brightness level\n"));
-> +		goto out;
-> +	}
-> +
-> +	if (obj->package.count < 2)
-> +		goto out;
-> +
-> +	br = kzalloc(sizeof(*br), GFP_KERNEL);
-> +	if (!br) {
-> +		printk(KERN_ERR "can't allocate memory\n");
-> +		goto out;
-> +	}
-> +
-> +	br->levels = kmalloc(obj->package.count * sizeof *(br->levels),
-> +				GFP_KERNEL);
-> +	if (!br->levels)
-> +		goto out_free;
-> +
-> +	for (i = 0; i < obj->package.count; i++) {
-> +		o = (union acpi_object *)&obj->package.elements[i];
-> +		if (o->type != ACPI_TYPE_INTEGER) {
-> +			printk(KERN_ERR PREFIX "Invalid data\n");
-> +			continue;
-> +		}
-> +		br->levels[count] = (u32) o->integer.value;
-> +
-> +		if (br->levels[count] > max_level)
-> +			max_level = br->levels[count];
-> +		count++;
-> +	}
-> +
-> +	if (count < 2)
-> +		goto out_free_levels;
-> +
-> +	br->count = count;
-> +	device->brightness = br;
-> +	ACPI_DEBUG_PRINT((ACPI_DB_INFO,	"found %d brightness levels\n",	count));
-> +	kfree(obj);
-> +	return max_level;
-> +
-> +out_free_levels:
-> +	kfree(br->levels);
-> +out_free:
-> +	kfree(br);
-> +out:
-> +	device->brightness = NULL;
-> +	kfree(obj);
-> +	return 0;
-> +}
-> +
-> +/*
-> + *  Arg:
-> + *  	device	: video output device (LCD, CRT, ..)
-> + *
-> + *  Return Value:
->   *  	None
->   *
->   *  Find out all required AML methods defined under the output
-> @@ -640,10 +710,7 @@ acpi_video_bus_DOS(struct acpi_video_bus *video, int
-> bios_flag, int lcd_flag) static void acpi_video_device_find_cap(struct
-> acpi_video_device *device) {
->  	acpi_handle h_dummy1;
-> -	int i;
->  	u32 max_level = 0;
-> -	union acpi_object *obj = NULL;
-> -	struct acpi_video_device_brightness *br = NULL;
->
->
->  	memset(&device->cap, 0, sizeof(device->cap));
-> @@ -672,53 +739,7 @@ static void acpi_video_device_find_cap(struct
-> acpi_video_device *device) device->cap._DSS = 1;
->  	}
->
-> -	if (ACPI_SUCCESS(acpi_video_device_lcd_query_levels(device, &obj))) {
-> -
-> -		if (obj->package.count >= 2) {
-> -			int count = 0;
-> -			union acpi_object *o;
-> -
-> -			br = kzalloc(sizeof(*br), GFP_KERNEL);
-> -			if (!br) {
-> -				printk(KERN_ERR "can't allocate memory\n");
-> -			} else {
-> -				br->levels = kmalloc(obj->package.count *
-> -						     sizeof *(br->levels), GFP_KERNEL);
-> -				if (!br->levels)
-> -					goto out;
-> -
-> -				for (i = 0; i < obj->package.count; i++) {
-> -					o = (union acpi_object *)&obj->package.
-> -					    elements[i];
-> -					if (o->type != ACPI_TYPE_INTEGER) {
-> -						printk(KERN_ERR PREFIX "Invalid data\n");
-> -						continue;
-> -					}
-> -					br->levels[count] = (u32) o->integer.value;
-> -
-> -					if (br->levels[count] > max_level)
-> -						max_level = br->levels[count];
-> -					count++;
-> -				}
-> -			      out:
-> -				if (count < 2) {
-> -					kfree(br->levels);
-> -					kfree(br);
-> -				} else {
-> -					br->count = count;
-> -					device->brightness = br;
-> -					ACPI_DEBUG_PRINT((ACPI_DB_INFO,
-> -							  "found %d brightness levels\n",
-> -							  count));
-> -				}
-> -			}
-> -		}
-> -
-> -	} else {
-> -		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Could not query available LCD
-> brightness level\n")); -	}
-> -
-> -	kfree(obj);
-> +	max_level = acpi_video_init_brightness(device);
->
->  	if (device->cap._BCL && device->cap._BCM && device->cap._BQC && max_level
-> > 0){ int result;
-> @@ -1695,6 +1716,8 @@ static void
->  acpi_video_switch_brightness(struct acpi_video_device *device, int event)
->  {
->  	unsigned long level_current, level_next;
-> +	if (!device->brightness)
-> +		return;
->  	acpi_video_device_lcd_get_level_current(device, &level_current);
->  	level_next = acpi_video_get_next_level(device, level_current, event);
->  	acpi_video_device_lcd_set_level(device, level_next);
+NetApp
+Trond.Myklebust@netapp.com
+www.netapp.com
