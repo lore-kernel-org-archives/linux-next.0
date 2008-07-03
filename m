@@ -1,35 +1,31 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: manual merge of the powerpc tree
-Date: Thu, 3 Jul 2008 09:24:53 -0600
-Message-ID: <20080703152453.GB2284@secretlab.ca>
-References: <20080703133905.7b6f058f.sfr@canb.auug.org.au> <20080703054739.GA643@secretlab.ca> <9e4733910807030522h1aa0bl1801ecc5fc877c25@mail.gmail.com>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: inux-next: Tree for July 1
+Date: Thu, 3 Jul 2008 17:36:54 +0200
+Message-ID: <20080703153654.GB2157@osiris.boeblingen.de.ibm.com>
+References: <20080702011434.6fb403d5.sfr@canb.auug.org.au> <20080702215306.61367733.akpm@linux-foundation.org> <20080702215846.f6b0491b.akpm@linux-foundation.org> <20080702221132.15a57a72.akpm@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from yx-out-2324.google.com ([74.125.44.28]:24871 "EHLO
-	yx-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754644AbYGCPZ3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jul 2008 11:25:29 -0400
-Received: by yx-out-2324.google.com with SMTP id 8so269341yxm.1
-        for <linux-next@vger.kernel.org>; Thu, 03 Jul 2008 08:25:28 -0700 (PDT)
+Received: from mtagate5.uk.ibm.com ([195.212.29.138]:8496 "EHLO
+	mtagate5.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754805AbYGCPhZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jul 2008 11:37:25 -0400
 Content-Disposition: inline
-In-Reply-To: <9e4733910807030522h1aa0bl1801ecc5fc877c25@mail.gmail.com>
+In-Reply-To: <20080702221132.15a57a72.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jon Smirl <jonsmirl@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, galak@kernel.crashing.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org, Jean Delvare <khali@linux-fr.org>, linux-next@vger.kernel.org, Timur Tabi <timur@freescale.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-On Thu, Jul 03, 2008 at 08:22:18AM -0400, Jon Smirl wrote:
-> Testing was good when the patch was initially posted in January. In
-> the last six months the initial patch set has been sliced and diced
-> into a bunch of different pieces but the contents of this patch are
-> essentially unchanged.
+On Wed, Jul 02, 2008 at 10:11:32PM -0700, Andrew Morton wrote:
 > 
-> I don't care which tree it uses to get to mainline, I'd just like to
-> see it get merged.
+> arch/s390/appldata/appldata_base.c: In function 'appldata_generic_handler':
+> arch/s390/appldata/appldata_base.c:393: error: implicit declaration of function 'P_ERROR'
+> 
+> I dunno what that's all about - P_ERROR got deleted but it still has
+> users.
+> 
+> That's enough s390ing for today...
 
-Me too, but it is used by some of the mpc8xxx platforms too, so I'd like
-to see an ack from one of those users also.
-
-Cheers,
-g.
+Yes... I fixed that and also yet another compile bug.
+We should pay more attention when pushing out new stuff. Sorry about that.
