@@ -1,50 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree
-Date: Thu, 3 Jul 2008 13:56:41 +1000
-Message-ID: <20080703135641.8cae3bc1.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the pci tree
+Date: Wed, 2 Jul 2008 20:28:42 -0700
+Message-ID: <20080703032842.GA26951@kroah.com>
+References: <20080703121055.d6f49ae5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__3_Jul_2008_13_56_41_+1000_x2OI+xeEO8=qL1HH"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58351 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754722AbYGCD4w (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 2 Jul 2008 23:56:52 -0400
+Received: from bombadil.infradead.org ([18.85.46.34]:58149 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754692AbYGCDfW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Jul 2008 23:35:22 -0400
+Content-Disposition: inline
+In-Reply-To: <20080703121055.d6f49ae5.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Vlad Yasevich <vladislav.yasevich@hp.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, David Howells <dhowells@redhat.com>
 
---Signature=_Thu__3_Jul_2008_13_56_41_+1000_x2OI+xeEO8=qL1HH
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jul 03, 2008 at 12:10:55PM +1000, Stephen Rothwell wrote:
+> Hi Jesse,
+> 
+> Today's linux-next merge of the pci tree got a conflict in  between
+> commit 4433d5ff973e2c1ea2f923eea8935588e7b96c06 ("PCI: handle pci_name()
+> being const") from the driver-core tree and commit
+> 8b285ce84bbc719e363a796f466404576b840d36 ("PCI: fix pci_setup_device()'s
+> sprinting into a const buffer") from the pci tree.
+> 
+> Jesse, since dev_set_name is now in mainline, you really should drop this
+> commit and replace it with the one from the driver-core tree (which Greg
+> has hopefully sent you by now).  Or add the equivalent on top of what you
+> have.
+> 
+> I have appended it below in case.
 
-Hi David,
-
-Today's linux-next merge of the net tree got a conflict in  between
-commit 16d752397301b95abaa95cbaf9e785d221872311 ("thermal: Create
-CONFIG_THERMAL_HWMON=3Dn") from Linus' tree and commit
-ecbed6a41900126e7b9509e12a8d0cc22176e3eb ("sctp: Mark GET_PEER|
-LOCAL_ADDR_OLD deprecated") from the net tree.
-
-I just took both new entries.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__3_Jul_2008_13_56_41_+1000_x2OI+xeEO8=qL1HH
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhsTfoACgkQjjKRsyhoI8zZdwCgt0ueP5X6lmF3kyKseRLNkRaS
-cJYAoICb4oPF6p8fXuGmhwkGd16G5EzO
-=4DyS
------END PGP SIGNATURE-----
-
---Signature=_Thu__3_Jul_2008_13_56_41_+1000_x2OI+xeEO8=qL1HH--
+Yes, Greg send him these patches earlier today :)
