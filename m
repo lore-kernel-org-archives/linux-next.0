@@ -1,49 +1,50 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: next-0703: build failure in x86/entry_64.S
-Date: Thu, 3 Jul 2008 15:43:00 +0200
-Message-ID: <20080703134300.GA499@elte.hu>
-References: <a4423d670807030600y3b1e651end20b9993ca5c8d94@mail.gmail.com> <20080703133132.GC12102@elte.hu>
+From: Andi Kleen <ak@linux.intel.com>
+Subject: Re: next-0702: ACPI Error (nseval-0159): Insufficient arguments
+Date: Thu, 03 Jul 2008 15:48:51 +0200
+Message-ID: <486CD8C3.7030007@linux.intel.com>
+References: <a4423d670807030607s28bc7205l3bf46b49cff4176d@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:33870 "EHLO mx3.mail.elte.hu"
+Received: from mga09.intel.com ([134.134.136.24]:12197 "EHLO mga09.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752859AbYGCNnc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 3 Jul 2008 09:43:32 -0400
-Content-Disposition: inline
-In-Reply-To: <20080703133132.GC12102@elte.hu>
+	id S1756699AbYGCNsy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 3 Jul 2008 09:48:54 -0400
+In-Reply-To: <a4423d670807030607s28bc7205l3bf46b49cff4176d@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, Jeremy Fitzhardinge <jeremy@goop.org>
+Cc: lenb@kernel.org, linux-acpi@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, akpm@osdl.org
 
-
-* Ingo Molnar <mingo@elte.hu> wrote:
-
-> hm, cannot reproduce it here with linux-next-0702.
+Alexander Beregalov wrote:
+> Hi
 > 
-> but ... this looks quite similar to an issue triggered by the 
-> tip/x86/xen-64bit topic (and fixed by the patch below) - but that's 
-> not in linux-next yet.
-
-ok, i can see the same problem in linux-next-0703 and git-cherry-picking 
-the commit below fixes it. I have also pushed out a new version of 
-auto-generic-ipi-next which caused this problem.
-
-> commit 6d2a6e57be1582b017a39f52385adf49d7cc4b0f
-> Author: Jeremy Fitzhardinge <jeremy@goop.org>
-> Date:   Fri Jun 27 12:04:03 2008 -0700
+> I have several these messages.
+> It is Dual-Core Opteron 1214.
 > 
->     x86_64: fix non-paravirt compilation
->     
->     Make sure SWAPGS and PARAVIRT_ADJUST_EXCEPTION_FRAME are properly
->     defined when CONFIG_PARAVIRT is off.
->     
->     Fixes Ingo's build failure:
->     arch/x86/kernel/entry_64.S: Assembler messages:
->     arch/x86/kernel/entry_64.S:1201: Error: invalid character '_' in mnemonic
->     arch/x86/kernel/entry_64.S:1205: Error: invalid character '_' in mnemonic
->     arch/x86/kernel/entry_64.S:1209: Error: invalid character '_' in mnemonic
->     arch/x86/kernel/entry_64.S:1213: Error: invalid character '_' in mnemonic
+> CONFIG_ACPI=y
+> CONFIG_ACPI_DOCK=y
+> CONFIG_ACPI_BLACKLIST_YEAR=0
+> CONFIG_ACPI_EC=y
+> CONFIG_ACPI_POWER=y
+> CONFIG_ACPI_SYSTEM=y
+> CONFIG_PNPACPI=y
+> 
+> Let me know if you need more info.
+> 
+> [    0.888708] WARNING: at nseval:159 acpi_ut_error+0x32/0xa2()
 
-	Ingo
+Andrew, that's the bad side effect I talked about earlier. Now the
+warning doesn't report the right place, but just the error function
+and it's unclear who causes it due to the unreliable backtrace.
+
+Alexander,
+
+Is this something that you didn't see in older kernels? If yes when did 
+it start?
+
+Can you please file a full report in http://bugzilla.kernel.org?
+
+Thanks,
+-Andi
