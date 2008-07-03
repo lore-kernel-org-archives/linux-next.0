@@ -1,85 +1,120 @@
-From: "Alexander Beregalov" <a.beregalov@gmail.com>
-Subject: next-0702: ACPI Error (nseval-0159): Insufficient arguments
-Date: Thu, 3 Jul 2008 17:07:42 +0400
-Message-ID: <a4423d670807030607s28bc7205l3bf46b49cff4176d@mail.gmail.com>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: next-0703: build failure in x86/entry_64.S
+Date: Thu, 3 Jul 2008 15:31:32 +0200
+Message-ID: <20080703133132.GC12102@elte.hu>
+References: <a4423d670807030600y3b1e651end20b9993ca5c8d94@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1762257AbYGCNI4@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx3.mail.elte.hu ([157.181.1.138]:50542 "EHLO mx3.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752169AbYGCNcV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 3 Jul 2008 09:32:21 -0400
 Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: ak@linux.intel.com, lenb@kernel.org, linux-acpi@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <a4423d670807030600y3b1e651end20b9993ca5c8d94@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, Jeremy Fitzhardinge <jeremy@goop.org>
 
-Hi
 
-I have several these messages.
-It is Dual-Core Opteron 1214.
+* Alexander Beregalov <a.beregalov@gmail.com> wrote:
 
-CONFIG_ACPI=y
-CONFIG_ACPI_DOCK=y
-CONFIG_ACPI_BLACKLIST_YEAR=0
-CONFIG_ACPI_EC=y
-CONFIG_ACPI_POWER=y
-CONFIG_ACPI_SYSTEM=y
-CONFIG_PNPACPI=y
+> Hi
+> 
+>   AS      arch/x86/kernel/entry_64.o
+> arch/x86/kernel/entry_64.S: Assembler messages:
+> arch/x86/kernel/entry_64.S:1200: Error: invalid character '_' in mnemonic
+> arch/x86/kernel/entry_64.S:1204: Error: invalid character '_' in mnemonic
+> arch/x86/kernel/entry_64.S:1208: Error: invalid character '_' in mnemonic
+> arch/x86/kernel/entry_64.S:1212: Error: invalid character '_' in mnemonic
 
-Let me know if you need more info.
+hm, cannot reproduce it here with linux-next-0702.
 
-[    0.888708] WARNING: at nseval:159 acpi_ut_error+0x32/0xa2()
-[    0.888708] Modules linked in:
-[    0.888708] Pid: 1, comm: swapper Not tainted 2.6.26-rc8-next-20080702 #1
-[    0.888708]
-[    0.888708] Call Trace:
-[    0.888708]  [<ffffffff8022f47b>] warn_on_slowpath+0x58/0x87
-[    0.888708]  [<ffffffff8024ea02>] ? __lock_acquire+0xd25/0xd71
-[    0.888708]  [<ffffffff8027f79e>] ? check_bytes_and_report+0x38/0xcb
-[    0.888708]  [<ffffffff803606c8>] ? acpi_ns_get_node+0x94/0xa4
-[    0.888708]  [<ffffffff8027fbf5>] ? check_object+0x15a/0x245
-[    0.888708]  [<ffffffff8027f483>] ? init_object+0x6e/0x77
-[    0.888708]  [<ffffffff8024d875>] ? trace_hardirqs_on+0xd/0xf
-[    0.888708]  [<ffffffff80366be9>] acpi_ut_error+0x32/0xa2
-[    0.888708]  [<ffffffff8024d875>] ? trace_hardirqs_on+0xd/0xf
-[    0.888708]  [<ffffffff803606c8>] ? acpi_ns_get_node+0x94/0xa4
-[    0.888708]  [<ffffffff803606c8>] ? acpi_ns_get_node+0x94/0xa4
-[    0.888708]  [<ffffffff8024d83d>] ? trace_hardirqs_on_caller+0xf9/0x124
-[    0.888708]  [<ffffffff8024d875>] ? trace_hardirqs_on+0xd/0xf
-[    0.888708]  [<ffffffff80367740>] ?
-acpi_ut_copy_eobject_to_iobject+0x18c/0x20a
-[    0.888708]  [<ffffffff803668f1>] ? acpi_ut_valid_acpi_name+0x1f/0x3c
-[    0.888708]  [<ffffffff8035fefe>] acpi_ns_evaluate+0x10e/0x1b4
-[    0.888708]  [<ffffffff8035fa4e>] acpi_evaluate_object+0x136/0x1f4
-[    0.888708]  [<ffffffff8027fbf5>] ? check_object+0x15a/0x245
-[    0.888708]  [<ffffffff8034d710>] acpi_run_osc+0xa5/0x16b
-[    0.888708]  [<ffffffff8034d866>] pci_osc_control_set+0x90/0xa7
-[    0.888708]  [<ffffffff80349446>] aer_osc_setup+0x66/0xbc
-[    0.888708]  [<ffffffff80348533>] aer_init+0x9/0x1f
-[    0.888708]  [<ffffffff80469042>] aer_probe+0x13/0x16d
-[    0.888708]  [<ffffffff80347d0a>] pcie_port_probe_service+0x3a/0x84
-[    0.888708]  [<ffffffff8038ed99>] driver_probe_device+0xd9/0x169
-[    0.888708]  [<ffffffff8038ee78>] __driver_attach+0x4f/0x79
-[    0.888708]  [<ffffffff8038ee29>] ? __driver_attach+0x0/0x79
-[    0.888708]  [<ffffffff8038e3e8>] bus_for_each_dev+0x4d/0x7e
-[    0.888708]  [<ffffffff8038ebc7>] driver_attach+0x1c/0x1e
-[    0.888708]  [<ffffffff8038e876>] bus_add_driver+0xba/0x210
-[    0.888708]  [<ffffffff805f2ec2>] ? aer_service_init+0x0/0x20
-[    0.888708]  [<ffffffff8038f056>] driver_register+0x93/0x10a
-[    0.888708]  [<ffffffff805f2ec2>] ? aer_service_init+0x0/0x20
-[    0.888708]  [<ffffffff803477eb>] pcie_port_service_register+0x47/0x49
-[    0.888708]  [<ffffffff805f2ee0>] aer_service_init+0x1e/0x20
-[    0.888708]  [<ffffffff805e0963>] kernel_init+0x142/0x29d
-[    0.888708]  [<ffffffff8024d83d>] ? trace_hardirqs_on_caller+0xf9/0x124
-[    0.888708]  [<ffffffff8024d875>] ? trace_hardirqs_on+0xd/0xf
-[    0.888708]  [<ffffffff8046f968>] ? _spin_unlock_irq+0x2b/0x31
-[    0.888708]  [<ffffffff8046f30e>] ? trace_hardirqs_on_thunk+0x3a/0x3f
-[    0.888708]  [<ffffffff8024d83d>] ? trace_hardirqs_on_caller+0xf9/0x124
-[    0.888708]  [<ffffffff8020c0a8>] child_rip+0xa/0x12
-[    0.888708]  [<ffffffff8020b7bf>] ? restore_args+0x0/0x30
-[    0.888708]  [<ffffffff805e0821>] ? kernel_init+0x0/0x29d
-[    0.888708]  [<ffffffff8020c09e>] ? child_rip+0x0/0x12
-[    0.888708]
-[    0.888708] ---[ end trace a7919e7f17c0a725 ]---
-[    0.888708] ACPI Error (nseval-0159): Insufficient arguments -
-method [_OSC] needs 5, found 4 [20080609]
-[    0.888708] aer 0000:00:0a.0:pcie01: AER service couldn't init
-device: _OSC failed
+but ... this looks quite similar to an issue triggered by the 
+tip/x86/xen-64bit topic (and fixed by the patch below) - but that's not 
+in linux-next yet.
+
+	Ingo
+
+------------->
+commit 6d2a6e57be1582b017a39f52385adf49d7cc4b0f
+Author: Jeremy Fitzhardinge <jeremy@goop.org>
+Date:   Fri Jun 27 12:04:03 2008 -0700
+
+    x86_64: fix non-paravirt compilation
+    
+    Make sure SWAPGS and PARAVIRT_ADJUST_EXCEPTION_FRAME are properly
+    defined when CONFIG_PARAVIRT is off.
+    
+    Fixes Ingo's build failure:
+    arch/x86/kernel/entry_64.S: Assembler messages:
+    arch/x86/kernel/entry_64.S:1201: Error: invalid character '_' in mnemonic
+    arch/x86/kernel/entry_64.S:1205: Error: invalid character '_' in mnemonic
+    arch/x86/kernel/entry_64.S:1209: Error: invalid character '_' in mnemonic
+    arch/x86/kernel/entry_64.S:1213: Error: invalid character '_' in mnemonic
+    
+    Signed-off-by: Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>
+    Cc: Nick Piggin <npiggin@suse.de>
+    Cc: Mark McLoughlin <markmc@redhat.com>
+    Cc: xen-devel <xen-devel@lists.xensource.com>
+    Cc: Eduardo Habkost <ehabkost@redhat.com>
+    Cc: Vegard Nossum <vegard.nossum@gmail.com>
+    Cc: Stephen Tweedie <sct@redhat.com>
+    Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+diff --git a/include/asm-x86/irqflags.h b/include/asm-x86/irqflags.h
+index 484c74f..754bb3a 100644
+--- a/include/asm-x86/irqflags.h
++++ b/include/asm-x86/irqflags.h
+@@ -167,7 +167,20 @@ static inline unsigned long __raw_local_irq_save(void)
+ #define INTERRUPT_RETURN_NMI_SAFE	NATIVE_INTERRUPT_RETURN_NMI_SAFE
+ 
+ #ifdef CONFIG_X86_64
++#define SWAPGS	swapgs
++/*
++ * Currently paravirt can't handle swapgs nicely when we
++ * don't have a stack we can rely on (such as a user space
++ * stack).  So we either find a way around these or just fault
++ * and emulate if a guest tries to call swapgs directly.
++ *
++ * Either way, this is a good way to document that we don't
++ * have a reliable stack. x86_64 only.
++ */
+ #define SWAPGS_UNSAFE_STACK	swapgs
++
++#define PARAVIRT_ADJUST_EXCEPTION_FRAME	/*  */
++
+ #define INTERRUPT_RETURN	iretq
+ #define USERGS_SYSRET64				\
+ 	swapgs;					\
+@@ -233,15 +246,6 @@ static inline void trace_hardirqs_fixup(void)
+ #else
+ 
+ #ifdef CONFIG_X86_64
+-/*
+- * Currently paravirt can't handle swapgs nicely when we
+- * don't have a stack we can rely on (such as a user space
+- * stack).  So we either find a way around these or just fault
+- * and emulate if a guest tries to call swapgs directly.
+- *
+- * Either way, this is a good way to document that we don't
+- * have a reliable stack. x86_64 only.
+- */
+ #define ARCH_TRACE_IRQS_ON		call trace_hardirqs_on_thunk
+ #define ARCH_TRACE_IRQS_OFF		call trace_hardirqs_off_thunk
+ #define ARCH_LOCKDEP_SYS_EXIT		call lockdep_sys_exit_thunk
+diff --git a/include/asm-x86/processor.h b/include/asm-x86/processor.h
+index a935c70..6f5e195 100644
+--- a/include/asm-x86/processor.h
++++ b/include/asm-x86/processor.h
+@@ -535,9 +535,6 @@ static inline void load_sp0(struct tss_struct *tss,
+ }
+ 
+ #define set_iopl_mask native_set_iopl_mask
+-#define SWAPGS	swapgs
+-
+-#define PARAVIRT_ADJUST_EXCEPTION_FRAME	/*  */
+ #endif /* CONFIG_PARAVIRT */
+ 
+ /*
