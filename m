@@ -1,50 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the generic-ipi tree
-Date: Thu, 3 Jul 2008 16:40:31 +1000
-Message-ID: <20080703164031.2d876e34.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the kmemcheck tree
+Date: Thu, 3 Jul 2008 08:26:57 +0200
+Message-ID: <20080703062657.GA26365@elte.hu>
+References: <20080703161236.368d7926.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__3_Jul_2008_16_40_31_+1000_at52arTsAO+D/P_e"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57924 "EHLO smtps.tip.net.au"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:39926 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755244AbYGCGki (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 3 Jul 2008 02:40:38 -0400
+	id S1755319AbYGCG1O (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 3 Jul 2008 02:27:14 -0400
+Content-Disposition: inline
+In-Reply-To: <20080703161236.368d7926.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>, Jens Axboe <jens.axboe@oracle.com>
-Cc: linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Vegard Nossum <vegard.nossum@gmail.com>, Pekka Enberg <penberg@cs.helsinki.fi>, Pekka Paalanen <pq@iki.fi>, Thomas Gleixner <tglx@linutronix.de>
 
---Signature=_Thu__3_Jul_2008_16_40_31_+1000_at52arTsAO+D/P_e
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Ingo, Jens,
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Today's linux-next merge of the generic-ipi tree got a conflict in
-arch/powerpc/mm/slice.c between commit
-3a8247cc2c856930f34eafce33f6a039227ee175 ("powerpc: Only demote
-individual slices rather than whole process") from the powerpc tree and
-commit 15c8b6c1aaaf1c4edd67e2f02e4d8e1bd1a51c0d ("on_each_cpu(): kill
-unused 'retry' parameter") from the generic-ipi tree.
+> Hi Ingo,
+> 
+> Today's linux-next merge of the kmemcheck tree got a conflict in 
+> arch/x86/mm/Makefile between commit 
+> ff3a3e9ba5e4273a8bc10570adab4a390fb90757 ("x86 mmiotrace: move files 
+> into arch/x86/mm/") from the ftrace tree and commit 
+> 385e31b9eae0528bada07d16a189f3f40df23961 ("kmemcheck: add the 
+> kmemcheck core") from the kmemcheck tree.
+> 
+> Just overlapping additions.
 
-The former removes the code that the latter modifies.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+thanks Stephen. These are the conflict resolutions i've been carrying 
+for a few months:
 
---Signature=_Thu__3_Jul_2008_16_40_31_+1000_at52arTsAO+D/P_e
-Content-Type: application/pgp-signature
+    Merge branch 'kmemcheck' into auto-latest
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+    Conflicts:
 
-iEYEARECAAYFAkhsdF8ACgkQjjKRsyhoI8wqRwCgs+9KUjlmW1qHRUqlyBO4ZA+S
-o+EAnR+s/hhxH8pmwLrC6tLDaWp5kBJW
-=0jq2
------END PGP SIGNATURE-----
+        arch/x86/mm/Makefile
+        include/asm-x86/pgtable.h
+        kernel/sysctl.c
 
---Signature=_Thu__3_Jul_2008_16_40_31_+1000_at52arTsAO+D/P_e--
+the arch/x86/mm/Makefile and kernel/sysctl.c ones are trivial - but the 
+pgtable.h is non-trivial: you might want to glean the resolution out of 
+tip/auto-latest.
+
+Shortly before the release of a stable kernel is the 'maximum dynamic 
+pressure' point of the launch of the next Linux version - this is when 
+the highest number of conflicts arise. [ And i hope these three are not 
+too bad to break the rocket apart ;-) ]
+
+	Ingo
