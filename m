@@ -1,36 +1,144 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-Subject: Re: [PATCH 2/2] ACPI Check for backlight support via ACPI video.ko otherwise use vendor ACPI drivers
-Date: Thu, 3 Jul 2008 23:29:27 +0100
-Message-ID: <20080703222927.GA2701@srcf.ucam.org>
-References: <200807031809.03172.trenn@suse.de> <20080703162152.GC29110@srcf.ucam.org>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for July 3
+Date: Fri, 4 Jul 2008 01:54:15 +0200
+Message-ID: <200807040154.16200.rjw@sisk.pl>
+References: <20080703190948.8e7bceca.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cavan.codon.org.uk ([93.93.128.6]:53579 "EHLO
-	vavatch.codon.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754216AbYGCW3f (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jul 2008 18:29:35 -0400
+Content-Type: text/plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1758135AbYGCXwt@vger.kernel.org>
+In-Reply-To: <20080703190948.8e7bceca.sfr@canb.auug.org.au>
 Content-Disposition: inline
-In-Reply-To: <20080703162152.GC29110@srcf.ucam.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thomas Renninger <trenn@suse.de>
-Cc: ak@linux.intel.com, linux-acpi@vger.kernel.org, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, Carlos Corbacho <carlos@strangeworlds.co.uk>, Jonathan Woithe <jwoithe@physics.adelaide.edu.au>, malattia@linux.it, stelian@popies.net, linux-next@vger.kernel.org, Corentin CHARY <corentincj@iksaif.net>, Lennart Poettering <mzxreary@0pointer.de>, Julia Jomantaite <julia.jomantaite@gmail.com>, corsac@debian.org, dannybaumann@web.de, marcus@better.se, Zhang Rui <rui.zhang@intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Jeremy Fitzhardinge <jeremy@goop.org>, kernel-testers@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Jul 03, 2008 at 05:21:52PM +0100, Matthew Garrett wrote:
-> On Thu, Jul 03, 2008 at 06:08:59PM +0200, Thomas Renninger wrote:
+On Thursday, 3 of July 2008, Stephen Rothwell wrote:
+> Hi all,
 > 
-> > +	if (ACPI_SUCCESS(acpi_get_handle(device->handle, "DRDY", &h_dummy))) {
-> > +		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Found IGD device\n"));
-> > +		video_caps |= ACPI_VIDEO_IGD;
-> > +	}
+> Changes since next-20080702:
 > 
-> In principle, it's possible for a vendor to implement opregion but not 
-> actually use it until the tche flags are set. If anyone's done that then 
-> you've just broken backlight control on their system.
+> New trees:  kmemcheck and generic-ipi.
+> 
+> The pci tree gained a conflict against the driver-core tree.
+> 
+> The powerpc tree gained a conflict against the i2c tree.
+> 
+> The net tree gained a couple of conflicts against Linus' tree and the
+> wireless-current tree.
+> 
+> The wireless tree gained a couple of conflicts against the
+> wireless-current tree.
+> 
+> The rr tree lost its two build fixup patches but gained another conflict
+> against the sched tree.
+> 
+> The blk-removal tree lost its conflict with the s390 tree.
+> 
+> The kmemcheck tree gained conflicts against the ftrace, sched, and x86
+> trees.
+> 
+> The generic-ipi tree gained conflicts against the powerpc, kmemcheck and
+> net trees.  And had two build failures requiring a patch and a revert.
+> 
+> I have also applied the following patches for known problems (I assume
+> that these will be merged into their appropriate trees shortly):
+> 
+> 	NFS: Fix the mount protocol defaults for binary mounts
+> 	fix "ftrace: store mcount address in rec->ip"
+> 
+> There are several outstanding build failures due to structural changes in
+> the ttydev tree (see http://kisskb.ellerman.id.au/linux-next).
 
-I've just had it confirmed that recent Panasonics behave this way. I 
-suspect the same's true of many 965 systems.
+This tree didn't compile for me on x86-64.
 
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
+After adding the appended patch it started to compile, but it doesn't boot
+(hangs very early, before any messages can get to the console).
+
+I'll bisect tomorrow if I have the time.
+
+Thanks,
+Rafael
+
+---
+Author: Jeremy Fitzhardinge <jeremy@goop.org>
+Date:   Fri Jun 27 12:04:03 2008 -0700
+
+    x86_64: fix non-paravirt compilation
+    
+    Make sure SWAPGS and PARAVIRT_ADJUST_EXCEPTION_FRAME are properly
+    defined when CONFIG_PARAVIRT is off.
+    
+    Fixes Ingo's build failure:
+    arch/x86/kernel/entry_64.S: Assembler messages:
+    arch/x86/kernel/entry_64.S:1201: Error: invalid character '_' in mnemonic
+    arch/x86/kernel/entry_64.S:1205: Error: invalid character '_' in mnemonic
+    arch/x86/kernel/entry_64.S:1209: Error: invalid character '_' in mnemonic
+    arch/x86/kernel/entry_64.S:1213: Error: invalid character '_' in mnemonic
+    
+    Signed-off-by: Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>
+    Cc: Nick Piggin <npiggin@suse.de>
+    Cc: Mark McLoughlin <markmc@redhat.com>
+    Cc: xen-devel <xen-devel@lists.xensource.com>
+    Cc: Eduardo Habkost <ehabkost@redhat.com>
+    Cc: Vegard Nossum <vegard.nossum@gmail.com>
+    Cc: Stephen Tweedie <sct@redhat.com>
+    Signed-off-by: Ingo Molnar <mingo@elte.hu>
+
+diff --git a/include/asm-x86/irqflags.h b/include/asm-x86/irqflags.h
+index 484c74f..754bb3a 100644
+--- a/include/asm-x86/irqflags.h
++++ b/include/asm-x86/irqflags.h
+@@ -167,7 +167,20 @@ static inline unsigned long __raw_local_irq_save(void)
+ #define INTERRUPT_RETURN_NMI_SAFE	NATIVE_INTERRUPT_RETURN_NMI_SAFE
+ 
+ #ifdef CONFIG_X86_64
++#define SWAPGS	swapgs
++/*
++ * Currently paravirt can't handle swapgs nicely when we
++ * don't have a stack we can rely on (such as a user space
++ * stack).  So we either find a way around these or just fault
++ * and emulate if a guest tries to call swapgs directly.
++ *
++ * Either way, this is a good way to document that we don't
++ * have a reliable stack. x86_64 only.
++ */
+ #define SWAPGS_UNSAFE_STACK	swapgs
++
++#define PARAVIRT_ADJUST_EXCEPTION_FRAME	/*  */
++
+ #define INTERRUPT_RETURN	iretq
+ #define USERGS_SYSRET64				\
+ 	swapgs;					\
+@@ -233,15 +246,6 @@ static inline void trace_hardirqs_fixup(void)
+ #else
+ 
+ #ifdef CONFIG_X86_64
+-/*
+- * Currently paravirt can't handle swapgs nicely when we
+- * don't have a stack we can rely on (such as a user space
+- * stack).  So we either find a way around these or just fault
+- * and emulate if a guest tries to call swapgs directly.
+- *
+- * Either way, this is a good way to document that we don't
+- * have a reliable stack. x86_64 only.
+- */
+ #define ARCH_TRACE_IRQS_ON		call trace_hardirqs_on_thunk
+ #define ARCH_TRACE_IRQS_OFF		call trace_hardirqs_off_thunk
+ #define ARCH_LOCKDEP_SYS_EXIT		call lockdep_sys_exit_thunk
+diff --git a/include/asm-x86/processor.h b/include/asm-x86/processor.h
+index a935c70..6f5e195 100644
+--- a/include/asm-x86/processor.h
++++ b/include/asm-x86/processor.h
+@@ -535,9 +535,6 @@ static inline void load_sp0(struct tss_struct *tss,
+ }
+ 
+ #define set_iopl_mask native_set_iopl_mask
+-#define SWAPGS	swapgs
+-
+-#define PARAVIRT_ADJUST_EXCEPTION_FRAME	/*  */
+ #endif /* CONFIG_PARAVIRT */
+ 
+ /*
