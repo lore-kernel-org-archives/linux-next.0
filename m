@@ -1,54 +1,45 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the kmemcheck tree
-Date: Thu, 3 Jul 2008 08:26:57 +0200
-Message-ID: <20080703062657.GA26365@elte.hu>
-References: <20080703161236.368d7926.sfr@canb.auug.org.au>
+From: Robert Hancock <hancockr@shaw.ca>
+Subject: Re: [PATCH 2/2] acpi: Disable IRQ 0 through I/O APIC for some HP
+ systems
+Date: Wed, 02 Jul 2008 23:44:09 -0600
+Message-ID: <486C6729.4020903@shaw.ca>
+References: <fa.OuKI5CNmq3HqeBQCfWOUtrq4+oA@ifi.uio.no>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:39926 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755319AbYGCG1O (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 3 Jul 2008 02:27:14 -0400
-Content-Disposition: inline
-In-Reply-To: <20080703161236.368d7926.sfr@canb.auug.org.au>
+Received: from idcmail-mo1so.shaw.ca ([24.71.223.10]:31648 "EHLO
+	pd2mo2so.prod.shaw.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754875AbYGCFoP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jul 2008 01:44:15 -0400
+In-reply-to: <fa.OuKI5CNmq3HqeBQCfWOUtrq4+oA@ifi.uio.no>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Vegard Nossum <vegard.nossum@gmail.com>, Pekka Enberg <penberg@cs.helsinki.fi>, Pekka Paalanen <pq@iki.fi>, Thomas Gleixner <tglx@linutronix.de>
+To: "Maciej W. Rozycki" <macro@linux-mips.org>
+Cc: Ingo Molnar <mingo@elte.hu>, Matthew Garrett <mjg59@srcf.ucam.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi Ingo,
+Maciej W. Rozycki wrote:
+> From: Matthew Garrett <mjg59@srcf.ucam.org>
 > 
-> Today's linux-next merge of the kmemcheck tree got a conflict in 
-> arch/x86/mm/Makefile between commit 
-> ff3a3e9ba5e4273a8bc10570adab4a390fb90757 ("x86 mmiotrace: move files 
-> into arch/x86/mm/") from the ftrace tree and commit 
-> 385e31b9eae0528bada07d16a189f3f40df23961 ("kmemcheck: add the 
-> kmemcheck core") from the kmemcheck tree.
+>  Some HP laptops have a problem with their DSDT reporting as
+> HP/SB400/10000, which includes some code which overrides all temperature
+> trip points to 16C if the INTIN2 input of the I/O APIC is enabled.  This
+> input is incorrectly designated the ISA IRQ 0 via an interrupt source
+> override even though it is wired to the output of the master 8259A and
+> INTIN0 is not connected at all.  So far two models have been identified, 
+> namely nx6125 and nx6325.
 > 
-> Just overlapping additions.
+>  Use a knob provided by the I/O APIC interrupt registration code to
+> abandon any attempts to route IRQ 0 through the I/O APIC for these
+> systems.
 
-thanks Stephen. These are the conflict resolutions i've been carrying 
-for a few months:
+Just a thought.. has anyone recently looked into using the RTC timer 
+instead of the PIT as the default clockevent source? There still seem to 
+be systems like these seeping through with broken PIT through IOAPIC 
+since Windows apparently doesn't use that config at all. If we could use 
+the RTC instead (which is apparently what Windows does) we could avoid 
+that problem.
 
-    Merge branch 'kmemcheck' into auto-latest
-
-    Conflicts:
-
-        arch/x86/mm/Makefile
-        include/asm-x86/pgtable.h
-        kernel/sysctl.c
-
-the arch/x86/mm/Makefile and kernel/sysctl.c ones are trivial - but the 
-pgtable.h is non-trivial: you might want to glean the resolution out of 
-tip/auto-latest.
-
-Shortly before the release of a stable kernel is the 'maximum dynamic 
-pressure' point of the launch of the next Linux version - this is when 
-the highest number of conflicts arise. [ And i hope these three are not 
-too bad to break the rocket apart ;-) ]
-
-	Ingo
+The last I read on the subject, the issue was that the RTC timer 
+frequencies didn't match the existing Linux HZ values, but I'm not sure 
+if that's still an issue with the current clockevents infrastructure..
