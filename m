@@ -1,43 +1,65 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: manual merge of the powerpc tree
-Date: Wed, 2 Jul 2008 23:47:39 -0600
-Message-ID: <20080703054739.GA643@secretlab.ca>
-References: <20080703133905.7b6f058f.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pci tree
+Date: Thu, 3 Jul 2008 12:10:55 +1000
+Message-ID: <20080703121055.d6f49ae5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org>
-Content-Disposition: inline
-In-Reply-To: <20080703133905.7b6f058f.sfr@canb.auug.org.au>
-List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
-List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
-List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, jonsmirl@gmail.com, galak@kernel.crashing.org
-Cc: Jean Delvare <khali@linux-fr.org>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Timur Tabi <timur@freescale.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41081 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752633AbYGCCLA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 2 Jul 2008 22:11:00 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, David Howells <dhowells@redhat.com>, Greg KH <greg@kroah.com>
 
-On Thu, Jul 03, 2008 at 01:39:05PM +1000, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> Today's linux-next merge of the powerpc tree got a conflict in
-> arch/powerpc/sysdev/fsl_soc.c between commit
-> 4eac6a8b17ce5ebe66eb94b6a0b43aa3a2bf7ea6 ("i2c-mpc: Convert to an
-> of_platform driver") from the i2c tree and commits
+Hi Jesse,
 
-It probably would have been better for this patch to go in via the
-PowerPC tree.  It only touches powerpc-specific i2c code, not any i2c
-core code.  There are quite a few MPCxxxx ports which use this driver,
-I'd be happier to see it dropped from the i2c tree and merged in via
-either Kumar or myself.
+Today's linux-next merge of the pci tree got a conflict in  between
+commit 4433d5ff973e2c1ea2f923eea8935588e7b96c06 ("PCI: handle pci_name()
+being const") from the driver-core tree and commit
+8b285ce84bbc719e363a796f466404576b840d36 ("PCI: fix pci_setup_device()'s
+sprinting into a const buffer") from the pci tree.
 
-I'd also like to see some acks from people who have tested this patch
-before it goes in.  (I'm just as guilty here; I'll apply it and test it
-to my tree tomorrow).
+Jesse, since dev_set_name is now in mainline, you really should drop this
+commit and replace it with the one from the driver-core tree (which Greg
+has hopefully sent you by now).  Or add the equivalent on top of what you
+have.
 
-g.
+I have appended it below in case.
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+commit 4433d5ff973e2c1ea2f923eea8935588e7b96c06
+Author: Greg Kroah-Hartman <gregkh@suse.de>
+Date:   Wed Jul 2 12:46:22 2008 -0700
+
+    PCI: handle pci_name() being const
+    
+    This changes pci_setup_device to handle pci_name() now returning a
+    constant string.
+    
+    Cc: Jesse Barns <jbarnes@virtuousgeek.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 3706ce7..0e0e030 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -711,8 +711,9 @@ static int pci_setup_device(struct pci_dev * dev)
+ {
+ 	u32 class;
+ 
+-	sprintf(pci_name(dev), "%04x:%02x:%02x.%d", pci_domain_nr(dev->bus),
+-		dev->bus->number, PCI_SLOT(dev->devfn), PCI_FUNC(dev->devfn));
++	dev_set_name(&dev->dev, "%04x:%02x:%02x.%d", pci_domain_nr(dev->bus),
++		     dev->bus->number, PCI_SLOT(dev->devfn),
++		     PCI_FUNC(dev->devfn));
+ 
+ 	pci_read_config_dword(dev, PCI_CLASS_REVISION, &class);
+ 	dev->revision = class & 0xff;
