@@ -1,53 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH] Introduce new cpu_mask APIs
-Date: Thu, 3 Jul 2008 14:15:50 +1000
-Message-ID: <20080703141550.de7f8f22.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the bkl-removal tree
+Date: Thu, 3 Jul 2008 15:39:35 +1000
+Message-ID: <20080703153935.0a23ddf8.sfr@canb.auug.org.au>
+References: <20080701194544.f2109cdd.sfr@canb.auug.org.au>
+	<20080702151021.56570002@bike.lwn.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__3_Jul_2008_15_39_35_+1000_+E+HASJ=V7aV+5Dl"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47146 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41706 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751112AbYGCEPz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 3 Jul 2008 00:15:55 -0400
+	id S1754846AbYGCFjq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 3 Jul 2008 01:39:46 -0400
+In-Reply-To: <20080702151021.56570002@bike.lwn.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mike Travis <travis@sgi.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-next@vger.kernel.org, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-In linux-next there is a commit ("x86: Add performance variants of cpumask
-operators") which, as part of the 4096 cpu support work adds some new
-APIs for dealing with cpu masks.  Add thrivial versions of these now
-so that subsystems can update in a timely manner and avoid conflicts in
-linux-next and the next merge window.
+--Signature=_Thu__3_Jul_2008_15_39_35_+1000_+E+HASJ=V7aV+5Dl
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Mike Travis <travis@sgi.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@elte.hu>
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/linux/cpumask.h |    4 ++++
- 1 files changed, 4 insertions(+), 0 deletions(-)
+Hi Jon,
 
-diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
-index 5df3db5..c24875b 100644
---- a/include/linux/cpumask.h
-+++ b/include/linux/cpumask.h
-@@ -353,6 +353,10 @@ static inline void __cpus_fold(cpumask_t *dstp, const cpumask_t *origp,
- 	for ((cpu) = 0; (cpu) < 1; (cpu)++, (void)mask)
- #endif /* NR_CPUS */
- 
-+#define next_cpu_nr(n, src)		next_cpu(n, src)
-+#define cpus_weight_nr(cpumask)		cpus_weight(cpumask)
-+#define for_each_cpu_mask_nr(cpu, mask)	for_each_cpu_mask(cpu, mask)
-+
- /*
-  * The following particular system cpumasks and operations manage
-  * possible, present and online cpus.  Each of them is a fixed size
--- 
-1.5.6
+On Wed, 2 Jul 2008 15:10:21 -0600 Jonathan Corbet <corbet@lwn.net> wrote:
+>
+> On Tue, 1 Jul 2008 19:45:44 +1000
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>=20
+> > Today's linux-next merge of the bkl-removal tree got a conflict in
+> > drivers/s390/char/monreader.c between commit
+> > 4b45ec0706ac12bf0c790747e55b4f3fec776c7a ("[S390] Cleanup monreader
+> > printk messages.") from the s390 tree and commit
+> > 167ae8a4822ed405037e72d660acf3294ab32807 ("monreader: BKL pushdown")
+> > from the bkl-removal tree.
+>=20
+> That one's a simple matter of moving the include of
+> <linux/smp_lock.h>.  I've done that, so this conflict should be gone
+> now.
 
--- 
+Thanks.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__3_Jul_2008_15_39_35_+1000_+E+HASJ=V7aV+5Dl
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhsZhcACgkQjjKRsyhoI8z2ygCfbNp1wWx8IhHXcSBEFE9wGG6Y
+k00AoI6Duz/kcrd8Tz8SgiNq/dO75S0U
+=ZXU/
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__3_Jul_2008_15_39_35_+1000_+E+HASJ=V7aV+5Dl--
