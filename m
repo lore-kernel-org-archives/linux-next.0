@@ -1,48 +1,50 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: linux-next: manual merge of the powerpc tree
-Date: Fri, 4 Jul 2008 09:35:16 +0200
-Message-ID: <20080704093516.6d9a8195@hyperion.delvare>
-References: <20080703133905.7b6f058f.sfr@canb.auug.org.au>
-	<20080703054739.GA643@secretlab.ca>
-	<9e4733910807030522h1aa0bl1801ecc5fc877c25@mail.gmail.com>
-	<20080703152453.GB2284@secretlab.ca>
-	<fa686aa40807032254j76dd1892y7af76c1a2d555809@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the hdlc tree
+Date: Fri, 4 Jul 2008 18:56:45 +1000
+Message-ID: <20080704185645.d96ef6dd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__4_Jul_2008_18_56_45_+1000_yirHjGO7totcyUo4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zone0.gcu-squad.org ([212.85.147.21]:2711 "EHLO
-	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754351AbYGDHgM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Jul 2008 03:36:12 -0400
-In-Reply-To: <fa686aa40807032254j76dd1892y7af76c1a2d555809@mail.gmail.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44246 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750874AbYGDI47 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 4 Jul 2008 04:56:59 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: Jon Smirl <jonsmirl@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, galak@kernel.crashing.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, Timur Tabi <timur@freescale.com>
+To: Krzysztof Halasa <khc@pm.waw.pl>
+Cc: linux-next@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
 
-On Thu, 3 Jul 2008 23:54:26 -0600, Grant Likely wrote:
-> On Thu, Jul 3, 2008 at 9:24 AM, Grant Likely <grant.likely@secretlab.ca> wrote:
-> > On Thu, Jul 03, 2008 at 08:22:18AM -0400, Jon Smirl wrote:
-> >> Testing was good when the patch was initially posted in January. In
-> >> the last six months the initial patch set has been sliced and diced
-> >> into a bunch of different pieces but the contents of this patch are
-> >> essentially unchanged.
-> >>
-> >> I don't care which tree it uses to get to mainline, I'd just like to
-> >> see it get merged.
-> >
-> > Me too, but it is used by some of the mpc8xxx platforms too, so I'd like
-> > to see an ack from one of those users also.
-> 
-> Okay, I've tested it on my board.  All looks good to me.  I'd prefer
-> to hear back from one of the Freescale folks, but on a second reading
-> I think it is pretty safe.  I'll make sure any merge conflicts are
-> resolved.
-> 
-> Jean, is it okay with you to drop it from your tree and merge it through mine?
+--Signature=_Fri__4_Jul_2008_18_56_45_+1000_yirHjGO7totcyUo4
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sure, no problem. It's done now, the patch is yours.
+Hi Krzysztof,
 
--- 
-Jean Delvare
+Today's linux-next merge of the hdlc tree got a conflict in
+drivers/net/wan/cosa.c between commit
+0911810755fc9f15659cc3cb43912633b90027a0 ("cosa: cdev lock_kernel()
+pushdown") from the blk-removal tree and commit
+d2e510df1fe342b6df51c1af036ca28a60f6fc55 ("WAN: Port COSA driver to
+generic HDLC") from the hdlc tree.
+
+Just a simple overlapping change. I can carry the fixup.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__4_Jul_2008_18_56_45_+1000_yirHjGO7totcyUo4
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkht5c0ACgkQjjKRsyhoI8xLvQCeOZs0Afa4IAqr8B3f1OXlEkyB
+d38An1YlniJ1RcFQGVmmrHKgw90Cgly9
+=cYoc
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__4_Jul_2008_18_56_45_+1000_yirHjGO7totcyUo4--
