@@ -1,70 +1,29 @@
-From: Dmitry Baryshkov <dbaryshkov@gmail.com>
-Subject: Re: [PATCH] fix build error of driver/mfd/tc6393xb.c
-Date: Fri, 4 Jul 2008 17:22:35 +0400
-Message-ID: <20080704132234.GA4576@doriath.ww600.siemens.net>
-References: <s5hiqvlc2ut.wl%tiwai@suse.de> <20080704114755.GA21747@doriath.ww600.siemens.net> <s5hej69c0tt.wl%tiwai@suse.de> <20080704124256.GB21747@doriath.ww600.siemens.net> <s5hk5g1ls9l.wl%tiwai@suse.de>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: Tree for July 4
+Date: Fri, 4 Jul 2008 14:23:02 +0100
+Message-ID: <20080704142302.0b536065@lxorguk.ukuu.org.uk>
+References: <20080704195529.7f56e768.sfr@canb.auug.org.au>
+	<20080704114648.13374869@lxorguk.ukuu.org.uk>
+	<20080704231610.98118766.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fk-out-0910.google.com ([209.85.128.191]:6884 "EHLO
-	fk-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752535AbYGDNWp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Jul 2008 09:22:45 -0400
-Received: by fk-out-0910.google.com with SMTP id 18so879120fkq.5
-        for <linux-next@vger.kernel.org>; Fri, 04 Jul 2008 06:22:44 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <s5hk5g1ls9l.wl%tiwai@suse.de>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Brownell <david-b@pacbell.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756020AbYGDNkz@vger.kernel.org>
+In-Reply-To: <20080704231610.98118766.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Jul 04, 2008 at 02:59:18PM +0200, Takashi Iwai wrote:
-> At Fri, 4 Jul 2008 16:42:56 +0400,
-> Dmitry Baryshkov wrote:
-> > 
-> > On Fri, Jul 04, 2008 at 02:04:30PM +0200, Takashi Iwai wrote:
-> > > At Fri, 4 Jul 2008 15:47:55 +0400,
-> > > Dmitry Baryshkov wrote:
-> > > > 
-> > > > On Fri, Jul 04, 2008 at 01:20:42PM +0200, Takashi Iwai wrote:
-> > > > > Fix the build of tc6393xb  due to missing definition of struct
-> > > > > gpio_chip.
-> > > > > 
-> > > > > Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> > > > > 
-> > > > > ---
-> > > > > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> > > > > index 9f93c29..2981da4 100644
-> > > > > --- a/drivers/mfd/Kconfig
-> > > > > +++ b/drivers/mfd/Kconfig
-> > > > > @@ -44,7 +44,7 @@ config HTC_PASIC3
-> > > > >  
-> > > > >  config MFD_TC6393XB
-> > > > >  	bool "Support Toshiba TC6393XB"
-> > > > > -	depends on HAVE_GPIO_LIB
-> > > > > +	depends on HAVE_GPIO_LIB && GENERIC_GPIO
-> > > > >  	select MFD_CORE
-> > > > >  	help
-> > > > >  	  Support for Toshiba Mobile IO Controller TC6393XB
-> > > > 
-> > > > Which configuration does provide HAVE_GPIO_LIB but not GENERIC_GPIO?
-> > > 
-> > > The below is the config with which I got the error.
-> > 
-> > The proper fix probably is to make PPC_MPC5200_GPIO also select
-> > GENERIC_GPIO. I don't think that building GPIO_LIB w/o GENERIC_GPIO
-> > should be supported.
-> 
-> [Added David to Cc]
-> 
-> Then HAVE_GPIO_LIB should depend on GENERIC_GPIO.
-> Or, linux/gpio.h should be fixed so that the code can be built
-> properly without GENERIC_GPIO.
+> Good.  There are more broken drivers - check out
+> http://kisskb.ellerman.id.au/linux-next
 
-IIRC selected symbols don't propagate their depends.
-Also linux/gpio.h don't have anything in common with HAVE_GPIO_LIB.
+Yep
+ 
+> Were you using
+> git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git or
+> http://www.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git ?  The
 
--- 
-With best wishes
-Dmitry
+git://
+
+Alan
