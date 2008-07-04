@@ -1,42 +1,34 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-Subject: Re: [PATCH 1/2] ACPI Video: Ignore devices that aren't present in hardware
-Date: Fri, 4 Jul 2008 11:18:06 +0100
-Message-ID: <20080704101806.GA9676@srcf.ucam.org>
-References: <200807031805.52883.trenn@suse.de> <200807031815.13291.trenn@suse.de> <20080703161643.GB29110@srcf.ucam.org> <200807041208.04466.trenn@suse.de>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: Tree for July 4
+Date: Fri, 4 Jul 2008 11:46:48 +0100
+Message-ID: <20080704114648.13374869@lxorguk.ukuu.org.uk>
+References: <20080704195529.7f56e768.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <200807041208.04466.trenn@suse.de>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Thomas Renninger <trenn@suse.de>
-Cc: ak@linux.intel.com, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Julia Jomantaite <julia.jomantaite@gmail.com>, marcus@better.se, dannybaumann@web.de, corsac@debian.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753857AbYGDLEh@vger.kernel.org>
+In-Reply-To: <20080704195529.7f56e768.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Jul 04, 2008 at 12:08:02PM +0200, Thomas Renninger wrote:
+> 	ttydev: fix pamc_zilog for tty pointer move
+> 	ttydev: sparc fix for tty move
+> 	ttydev: sparc32 fix for tty move
+> 	atmel_serial: Fix tty_port breakage
 
-> Hmm, there might be IGD devices that could just work with the default 
-> backlight functions...
-> Your hint in the other mail to check for tche flag is  a good one..
+Got these
 
-There are IGD devices that just work with the default functions. I'm 
-using one.
+> http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
+> are tracking the linux-next tree using git, you should not use "git pull"
+> to do so as that will try to merge the new linux-next release with the
+> old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+> (see below).
 
-> As soon as your parts are finished we can easily remove the
-> ACPI_VIDEO_IGD
-> and add these graphics devices to the one which should be served by your 
-> modifications.
+bash-3.2$ git fetch linux-next
+remote: error: refs/heads/history does not point to a valid object!
+remote: error: refs/heads/master does not point to a valid object!
+remote: error: refs/tags/next-20080704 does not point to a valid object!
 
-As I said, your patches (in their current form) *will* break systems 
-that currently work, and a quick check seems to indicate that that 
-includes my machine. 
-
-> Please explain me again why this should not go in before/with your patches.
-> If we agree that this one (or a similar solution) makes sense I am going to 
-> post a 2nd version soon and then I can help a bit with the 750 ms issue...
-
-The first patch should go in with the opregion code. The second patch 
-should go in without the IGD code. Can we please just fix this the right 
-way?
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
+(on top of a clean current Linus git pull)
