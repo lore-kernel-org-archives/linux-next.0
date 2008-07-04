@@ -1,50 +1,91 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-Subject: Re: [PATCH 1/2] ACPI Video: Ignore devices that aren't present in hardware
-Date: Fri, 4 Jul 2008 18:39:10 +0100
-Message-ID: <20080704173910.GA16595@srcf.ucam.org>
-References: <200807031805.52883.trenn@suse.de> <20080703160822.GA29110@srcf.ucam.org> <20080704030948.GB31908@khazad-dum.debian.net> <20080704091307.GB8905@srcf.ucam.org> <20080704115519.GA7435@khazad-dum.debian.net>
+From: Joseph Fannin <jfannin@gmail.com>
+Subject: Re: linux-next-0703 -- more ppc serial fixes
+Date: Fri, 4 Jul 2008 14:29:10 -0400
+Message-ID: <20080704182909.GB1631@nineveh.local>
+References: <20080703190948.8e7bceca.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cavan.codon.org.uk ([93.93.128.6]:50941 "EHLO
-	vavatch.codon.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751170AbYGDRjT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Jul 2008 13:39:19 -0400
+Received: from yw-out-2324.google.com ([74.125.46.28]:20643 "EHLO
+	yw-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750874AbYGDS3W (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Jul 2008 14:29:22 -0400
+Received: by yw-out-2324.google.com with SMTP id 9so573003ywe.1
+        for <linux-next@vger.kernel.org>; Fri, 04 Jul 2008 11:29:17 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <20080704115519.GA7435@khazad-dum.debian.net>
+In-Reply-To: <20080703190948.8e7bceca.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-Cc: Thomas Renninger <trenn@suse.de>, ak@linux.intel.com, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Julia Jomantaite <julia.jomantaite@gmail.com>, marcus@better.se, dannybaumann@web.de, corsac@debian.org, jesse.barnes@intel.com
+To: Alan Cox <alan@redhat.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-Got it. The reason for the delay is that BRTO sits in a loop for no 
-obvious reason unless BRTF is cleared. The only thing that clears BRTF 
-is the PWMS function, which isn't called anywhere in the ACPI tables. 
-The NetBSD driver has the following code:
+On Thu, Jul 03, 2008 at 07:09:48PM +1000, Stephen Rothwell wrote:
 
-	/* Claim ownership of brightness control */
-	param[0].Integer.Value = 0;
-	(void)AcpiEvaluateObject(sc->sc_node->ad_handle, "PWMS", &params, NULL);
+[next-0703]
 
-and doing this in thinkpad_acpi means my brightness control works in an 
-acceptably speedy manner with opregion. Henrique, any thoughts on this? 
-If you're happy with it, we can get opregion support into .27 and add 
-the patch to remove duplicate ACPI video devices and everything will 
-work in a beautiful and harmonious manner.
+> $ git quiltimport --author "Alan Cox <alan@lxorguk.ukuu.org.uk>" --patches "../quilt/ttydev"
 
-diff --git a/drivers/misc/thinkpad_acpi.c b/drivers/misc/thinkpad_acpi.c
-index b596929..bbc45c8 100644
---- a/drivers/misc/thinkpad_acpi.c
-+++ b/drivers/misc/thinkpad_acpi.c
-@@ -899,6 +899,9 @@ static int __init tpacpi_check_std_acpi_brightness_support(void)
+More fixes for ppc serial drivers seem to be needed since next-0701 (exclusive):
+
+drivers/serial/mpc52xx_uart.c: In function 'mpc52xx_uart_int_rx_chars':
+drivers/serial/mpc52xx_uart.c:735: error: 'struct uart_info' has no member named 'tty'
+drivers/serial/mpc52xx_uart.c: In function 'mpc52xx_uart_of_probe':
+drivers/serial/mpc52xx_uart.c:1277: warning: cast to pointer from integer of different size
+
+[...]
+
+drivers/serial/uartlite.c: In function 'ulite_receive':
+drivers/serial/uartlite.c:78: error: 'struct uart_info' has no member named 'tty'
+drivers/serial/uartlite.c: In function 'ulite_isr':
+drivers/serial/uartlite.c:165: error: 'struct uart_info' has no member named 'tty'
+
+The following patch just fixes the build errors gcc emitted; if more
+is needed to make the drivers actually work, it's wasn't blatently
+obvious.
+
+The patch is against next-0703, but I don't think it will matter.
+
+FWIW --
+Signed-Off-By: Joseph Fannin <jfannin@gmail.com>
+
+---
+
+diff --git a/drivers/serial/mpc52xx_uart.c b/drivers/serial/mpc52xx_uart.c
+index e673008..d456cda 100644
+--- a/drivers/serial/mpc52xx_uart.c
++++ b/drivers/serial/mpc52xx_uart.c
+@@ -732,7 +732,7 @@ static struct uart_ops mpc52xx_uart_ops = {
+ static inline int
+ mpc52xx_uart_int_rx_chars(struct uart_port *port)
+ {
+-	struct tty_struct *tty = port->info->tty;
++	struct tty_struct *tty = port->info->port.tty;
+ 	unsigned char ch, flag;
+ 	unsigned short status;
  
- 	if (ACPI_SUCCESS(status) && bcl_levels > 2) {
- 		tp_features.bright_acpimode = 1;
-+		/* Set ACPI mode */
-+		if (!acpi_evalf(hkey_handle, NULL, "PWMS", "vd", 0))
-+			printk(TPACPI_INFO "Failed to claim backlight\n");
- 		return (bcl_levels - 2);
- 	}
+diff --git a/drivers/serial/uartlite.c b/drivers/serial/uartlite.c
+index b51c242..6a3f8fb 100644
+--- a/drivers/serial/uartlite.c
++++ b/drivers/serial/uartlite.c
+@@ -75,7 +75,7 @@ static struct uart_port ulite_ports[ULITE_NR_UARTS];
+ 
+ static int ulite_receive(struct uart_port *port, int stat)
+ {
+-	struct tty_struct *tty = port->info->tty;
++	struct tty_struct *tty = port->info->port.tty;
+ 	unsigned char ch = 0;
+ 	char flag = TTY_NORMAL;
+ 
+@@ -162,7 +162,7 @@ static irqreturn_t ulite_isr(int irq, void *dev_id)
+ 		busy |= ulite_transmit(port, stat);
+ 	} while (busy);
+ 
+-	tty_flip_buffer_push(port->info->tty);
++	tty_flip_buffer_push(port->info->port.tty);
+ 
+ 	return IRQ_HANDLED;
+ }
 
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
+--
+Joseph Fannin
+jfannin@gmail.com
