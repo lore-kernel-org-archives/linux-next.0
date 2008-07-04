@@ -1,47 +1,43 @@
-From: Dmitry Baryshkov <dbaryshkov@gmail.com>
-Subject: Re: [PATCH] fix build error of driver/mfd/tc6393xb.c
-Date: Fri, 4 Jul 2008 15:47:55 +0400
-Message-ID: <20080704114755.GA21747@doriath.ww600.siemens.net>
-References: <s5hiqvlc2ut.wl%tiwai@suse.de>
+From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+Subject: Re: [PATCH 1/2] ACPI Video: Ignore devices that aren't present in
+	hardware
+Date: Fri, 4 Jul 2008 08:55:19 -0300
+Message-ID: <20080704115519.GA7435@khazad-dum.debian.net>
+References: <200807031805.52883.trenn@suse.de> <20080703160822.GA29110@srcf.ucam.org> <20080704030948.GB31908@khazad-dum.debian.net> <20080704091307.GB8905@srcf.ucam.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fk-out-0910.google.com ([209.85.128.191]:6133 "EHLO
-	fk-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752651AbYGDLsG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Jul 2008 07:48:06 -0400
-Received: by fk-out-0910.google.com with SMTP id 18so864336fkq.5
-        for <linux-next@vger.kernel.org>; Fri, 04 Jul 2008 04:48:05 -0700 (PDT)
+Received: from out3.smtp.messagingengine.com ([66.111.4.27]:38904 "EHLO
+	out3.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752464AbYGDLzZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Jul 2008 07:55:25 -0400
 Content-Disposition: inline
-In-Reply-To: <s5hiqvlc2ut.wl%tiwai@suse.de>
+In-Reply-To: <20080704091307.GB8905@srcf.ucam.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: Thomas Renninger <trenn@suse.de>, ak@linux.intel.com, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Julia Jomantaite <julia.jomantaite@gmail.com>, marcus@better.se, dannybaumann@web.de, corsac@debian.org
 
-On Fri, Jul 04, 2008 at 01:20:42PM +0200, Takashi Iwai wrote:
-> Fix the build of tc6393xb  due to missing definition of struct
-> gpio_chip.
+On Fri, 04 Jul 2008, Matthew Garrett wrote:
+> On Fri, Jul 04, 2008 at 12:09:49AM -0300, Henrique de Moraes Holschuh wrote:
+> > On Thu, 03 Jul 2008, Matthew Garrett wrote:
+> > > Not until the opregion code is merged, no. If you'd like that to happen 
+> > > faster, then figuring out why it triggers a 750ms delay on brightness 
+> > > changes on the T61 would be a great help, because I haven't a clue why 
+> > > it's broken...
+> > 
+> > I have never really tried finding out WTF in the firmware causes this, but:
+> > 
+> > 1. The backlight-change firmware runs in SMM.
+> > 2. The calls happen in ACPI DSDT
+> > 3. The SMM code DOES take care of the CMOS NVRAM
 > 
-> Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> 
-> ---
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 9f93c29..2981da4 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -44,7 +44,7 @@ config HTC_PASIC3
->  
->  config MFD_TC6393XB
->  	bool "Support Toshiba TC6393XB"
-> -	depends on HAVE_GPIO_LIB
-> +	depends on HAVE_GPIO_LIB && GENERIC_GPIO
->  	select MFD_CORE
->  	help
->  	  Support for Toshiba Mobile IO Controller TC6393XB
+> As far as I can tell, it's sleeping in the DSDT. But all the ready flags 
 
-Which configuration does provide HAVE_GPIO_LIB but not GENERIC_GPIO?
+Which probably means the SMI trap was botched :(
 
 -- 
-With best wishes
-Dmitry
+  "One disk to rule them all, One disk to find them. One disk to bring
+  them all and in the darkness grind them. In the Land of Redmond
+  where the shadows lie." -- The Silicon Valley Tarot
+  Henrique Holschuh
