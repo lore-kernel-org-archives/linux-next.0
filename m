@@ -1,47 +1,49 @@
-From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-Subject: Re: [PATCH 1/2] ACPI Video: Ignore devices that aren't present in
-	hardware
-Date: Fri, 4 Jul 2008 00:09:49 -0300
-Message-ID: <20080704030948.GB31908@khazad-dum.debian.net>
-References: <200807031805.52883.trenn@suse.de> <20080703160822.GA29110@srcf.ucam.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the x86 tree
+Date: Fri, 4 Jul 2008 13:41:11 +1000
+Message-ID: <20080704134111.4ad2d444.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__4_Jul_2008_13_41_11_+1000_s5MfHKg0jc.Xm9dP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3.smtp.messagingengine.com ([66.111.4.27]:56552 "EHLO
-	out3.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754338AbYGDDJy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jul 2008 23:09:54 -0400
-Content-Disposition: inline
-In-Reply-To: <20080703160822.GA29110@srcf.ucam.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:38754 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755050AbYGDDlT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 3 Jul 2008 23:41:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: Thomas Renninger <trenn@suse.de>, ak@linux.intel.com, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Julia Jomantaite <julia.jomantaite@gmail.com>, marcus@better.se, dannybaumann@web.de, corsac@debian.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org
 
-Hi Matthew!
+--Signature=_Fri__4_Jul_2008_13_41_11_+1000_s5MfHKg0jc.Xm9dP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 03 Jul 2008, Matthew Garrett wrote:
+Hi all,
 
-> On Thu, Jul 03, 2008 at 06:05:51PM +0200, Thomas Renninger wrote:
-> > Can these two go to linux-next or -mm, pls.
-> 
-> Not until the opregion code is merged, no. If you'd like that to happen 
-> faster, then figuring out why it triggers a 750ms delay on brightness 
-> changes on the T61 would be a great help, because I haven't a clue why 
-> it's broken...
+Today's linux-next merge of the x86 tree got a conflict in
+arch/x86/Kconfig between commit efac41894df57d32b483ac622d03541b5b2692c0
+("x86: fix NODES_SHIFT Kconfig range") from Linus' tree and commit
+dfdf1d75efee39e9396f8384c6f3bf555349ed60 ("x86: modify Kconfig to allow
+up to 4096 cpus") from the x86 tree.
 
-I have never really tried finding out WTF in the firmware causes this, but:
+I took the version from the x86 tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-1. The backlight-change firmware runs in SMM.
-2. The calls happen in ACPI DSDT
-3. The SMM code DOES take care of the CMOS NVRAM
+--Signature=_Fri__4_Jul_2008_13_41_11_+1000_s5MfHKg0jc.Xm9dP
+Content-Type: application/pgp-signature
 
-You could well find something interesting if you dissect what happens to the
-NVRAM.  Maybe changing it before/after/during the ACPI call has something to
-do with it, etc.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
--- 
-  "One disk to rule them all, One disk to find them. One disk to bring
-  them all and in the darkness grind them. In the Land of Redmond
-  where the shadows lie." -- The Silicon Valley Tarot
-  Henrique Holschuh
+iEYEARECAAYFAkhtm9cACgkQjjKRsyhoI8w85ACgvI6FNX5XtJAXb6vUj3dCKmPy
+FGIAnjV4qh4NUzlyEZHv+3Q/Ix0vCUBW
+=3srQ
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__4_Jul_2008_13_41_11_+1000_s5MfHKg0jc.Xm9dP--
