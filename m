@@ -1,42 +1,47 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: manual merge of the rr tree
-Date: Fri, 4 Jul 2008 10:45:54 +1000
-Message-ID: <200807041045.54623.rusty@rustcorp.com.au>
-References: <20080703150328.44061d16.sfr@canb.auug.org.au> <20080703180729.1f6b8620.sfr@canb.auug.org.au> <20080703081906.GB22246@elte.hu>
+From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+Subject: Re: [PATCH 1/2] ACPI Video: Ignore devices that aren't present in
+	hardware
+Date: Fri, 4 Jul 2008 00:09:49 -0300
+Message-ID: <20080704030948.GB31908@khazad-dum.debian.net>
+References: <200807031805.52883.trenn@suse.de> <20080703160822.GA29110@srcf.ucam.org>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:44072 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754070AbYGDAp7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 3 Jul 2008 20:45:59 -0400
-In-Reply-To: <20080703081906.GB22246@elte.hu>
+Received: from out3.smtp.messagingengine.com ([66.111.4.27]:56552 "EHLO
+	out3.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754338AbYGDDJy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jul 2008 23:09:54 -0400
 Content-Disposition: inline
+In-Reply-To: <20080703160822.GA29110@srcf.ucam.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: Thomas Renninger <trenn@suse.de>, ak@linux.intel.com, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Julia Jomantaite <julia.jomantaite@gmail.com>, marcus@better.se, dannybaumann@web.de, corsac@debian.org
 
-On Thursday 03 July 2008 18:19:06 Ingo Molnar wrote:
-> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > The "home tree" of the commit is
-> > > tip/sched/new-API-sched_setscheduler, and that's integrated to the
-> > > auto-sched-next branch. If there's any update to the patch we should
-> > > iterate it there.
-> >
-> > That would be a question for Rusty.  He may be able to split out the
-> > conflicting part of his simplification patch and send it to you.  But
-> > it may not be worth it.
->
-> should be all OK as long as Rusty sends his patches to Linus after the
-> -tip changes go upstream. (in that case the base patch will fall out of
-> Rusty's Quilt queue naturally, leaving the followup change.)
+Hi Matthew!
 
-That's the plan.  I'm still testing the stop_machine changes though: it's 
-simpler, but seems to have increased latency slightly.   If I was completely 
-sure I'd just shuffle it to Ingo.
+On Thu, 03 Jul 2008, Matthew Garrett wrote:
 
-Cheers,
-Rusty.
+> On Thu, Jul 03, 2008 at 06:05:51PM +0200, Thomas Renninger wrote:
+> > Can these two go to linux-next or -mm, pls.
+> 
+> Not until the opregion code is merged, no. If you'd like that to happen 
+> faster, then figuring out why it triggers a 750ms delay on brightness 
+> changes on the T61 would be a great help, because I haven't a clue why 
+> it's broken...
+
+I have never really tried finding out WTF in the firmware causes this, but:
+
+1. The backlight-change firmware runs in SMM.
+2. The calls happen in ACPI DSDT
+3. The SMM code DOES take care of the CMOS NVRAM
+
+You could well find something interesting if you dissect what happens to the
+NVRAM.  Maybe changing it before/after/during the ACPI call has something to
+do with it, etc.
+
+-- 
+  "One disk to rule them all, One disk to find them. One disk to bring
+  them all and in the darkness grind them. In the Land of Redmond
+  where the shadows lie." -- The Silicon Valley Tarot
+  Henrique Holschuh
