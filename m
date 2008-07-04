@@ -1,78 +1,58 @@
-From: Ingo Molnar <mingo@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: next-0704: x86_64 panics on booting
-Date: Fri, 4 Jul 2008 16:24:09 +0200
-Message-ID: <20080704142409.GA18824@elte.hu>
+Date: Sat, 5 Jul 2008 00:30:48 +1000
+Message-ID: <20080705003048.30dcb64a.sfr@canb.auug.org.au>
 References: <a4423d670807040720o3e8e350ds5c13dfca8e8adc58@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__5_Jul_2008_00_30_48_+1000_2G8V07Jy5Vertgew"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:35347 "EHLO mx3.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:54817 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754934AbYGDOY1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 4 Jul 2008 10:24:27 -0400
-Content-Disposition: inline
+	id S1754056AbYGDObD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 4 Jul 2008 10:31:03 -0400
 In-Reply-To: <a4423d670807040720o3e8e350ds5c13dfca8e8adc58@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Alexander Beregalov <a.beregalov@gmail.com>
 Cc: linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
 
+--Signature=_Sat__5_Jul_2008_00_30_48_+1000_2G8V07Jy5Vertgew
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Alexander Beregalov <a.beregalov@gmail.com> wrote:
+Hi Alexander,
 
-> Hi
-> 
-> 
+On Fri, 4 Jul 2008 18:20:47 +0400 "Alexander Beregalov" <a.beregalov@gmail.=
+com> wrote:
+>
 > Booting the kernel.
-> 
+>=20
 > Kernel alive
 > Kernel really alive
-> PANIC: early exception 0e rip 10:ffffffff80604f47 error 2 cr2 ffffffffff300000
-> 
+> PANIC: early exception 0e rip 10:ffffffff80604f47 error 2 cr2 ffffffffff3=
+00000
+>=20
 > It is x86_64 SMP (opteron).
 
-does the patch below fix it?
+Config?
 
-	Ingo
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
--------------->
-commit 181b3601a1a7d2ac3ace6b23cb3204450a4f9a27
-Author: Jeremy Fitzhardinge <jeremy@goop.org>
-Date:   Sun Jun 29 20:02:44 2008 -0700
+--Signature=_Sat__5_Jul_2008_00_30_48_+1000_2G8V07Jy5Vertgew
+Content-Type: application/pgp-signature
 
-    x86: setup_arch() && early_ioremap_init()
-    
-    Looks like the setup.c unification missed the early_ioremap init from
-    the early_ioremap unification.  Unconditionally call early_ioremap_init().
-    
-    needed for "x86/paravirt: groundwork for 64-bit Xen support".
-    
-    Signed-off-by: Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>
-    Cc: Nick Piggin <npiggin@suse.de>
-    Cc: Mark McLoughlin <markmc@redhat.com>
-    Cc: xen-devel <xen-devel@lists.xensource.com>
-    Cc: Eduardo Habkost <ehabkost@redhat.com>
-    Cc: Vegard Nossum <vegard.nossum@gmail.com>
-    Cc: Stephen Tweedie <sct@redhat.com>
-    Cc: Yinghai Lu <yhlu.kernel@gmail.com>
-    Signed-off-by: Ingo Molnar <mingo@elte.hu>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index fb318ed..caec79f 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -523,12 +523,13 @@ void __init setup_arch(char **cmdline_p)
- 	memcpy(&boot_cpu_data, &new_cpu_data, sizeof(new_cpu_data));
- 	pre_setup_arch_hook();
- 	early_cpu_init();
--	early_ioremap_init();
- 	reserve_setup_data();
- #else
- 	printk(KERN_INFO "Command line: %s\n", boot_command_line);
- #endif
- 
-+	early_ioremap_init();
-+
- 	ROOT_DEV = old_decode_dev(boot_params.hdr.root_dev);
- 	screen_info = boot_params.screen_info;
- 	edid_info = boot_params.edid_info;
+iEYEARECAAYFAkhuNBgACgkQjjKRsyhoI8zRtACghXdW3sn8BrCYg6Bg/wadXk55
+NYAAn1wsLceH20asMFM4pdADZDrMzpFb
+=3GxG
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__5_Jul_2008_00_30_48_+1000_2G8V07Jy5Vertgew--
