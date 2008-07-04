@@ -1,35 +1,52 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-Subject: Re: [PATCH 1/2] ACPI Video: Ignore devices that aren't present in hardware
-Date: Fri, 4 Jul 2008 10:13:07 +0100
-Message-ID: <20080704091307.GB8905@srcf.ucam.org>
-References: <200807031805.52883.trenn@suse.de> <20080703160822.GA29110@srcf.ucam.org> <20080704030948.GB31908@khazad-dum.debian.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the hdlc tree
+Date: Fri, 4 Jul 2008 19:39:43 +1000
+Message-ID: <20080704193943.125d526c.sfr@canb.auug.org.au>
+References: <20080704185645.d96ef6dd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__4_Jul_2008_19_39_43_+1000_iEKvMRF2sJfQ+DZa"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:54524 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751684AbYGDJju (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 4 Jul 2008 05:39:50 -0400
+In-Reply-To: <20080704185645.d96ef6dd.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Krzysztof Halasa <khc@pm.waw.pl>
+Cc: linux-next@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+
+--Signature=_Fri__4_Jul_2008_19_39_43_+1000_iEKvMRF2sJfQ+DZa
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20080704030948.GB31908@khazad-dum.debian.net>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-Cc: Thomas Renninger <trenn@suse.de>, ak@linux.intel.com, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Julia Jomantaite <julia.jomantaite@gmail.com>, marcus@better.se, dannybaumann@web.de, corsac@debian.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 04, 2008 at 12:09:49AM -0300, Henrique de Moraes Holschuh wrote:
-> On Thu, 03 Jul 2008, Matthew Garrett wrote:
-> > Not until the opregion code is merged, no. If you'd like that to happen 
-> > faster, then figuring out why it triggers a 750ms delay on brightness 
-> > changes on the T61 would be a great help, because I haven't a clue why 
-> > it's broken...
-> 
-> I have never really tried finding out WTF in the firmware causes this, but:
-> 
-> 1. The backlight-change firmware runs in SMM.
-> 2. The calls happen in ACPI DSDT
-> 3. The SMM code DOES take care of the CMOS NVRAM
+On Fri, 4 Jul 2008 18:56:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the hdlc tree got a conflict in
+> drivers/net/wan/cosa.c between commit
+> 0911810755fc9f15659cc3cb43912633b90027a0 ("cosa: cdev lock_kernel()
+> pushdown") from the blk-removal tree and commit
+                      ^^^
+bkl
 
-As far as I can tell, it's sleeping in the DSDT. But all the ready flags 
-are set appropriately according to the opregion spec, so I'm confused as 
-to why. Hardware failure has meant I've got to use the T61 this week, so 
-I'll try to fix it while I'm stuck in an airport tomorrow...
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
+--Signature=_Fri__4_Jul_2008_19_39_43_+1000_iEKvMRF2sJfQ+DZa
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkht798ACgkQjjKRsyhoI8zhXgCeOxe4eOb1iE8luFMf6sivhVMo
+EQYAmgOVaJSt0XIl8O4mVJsGNfiSLrb0
+=6yFu
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__4_Jul_2008_19_39_43_+1000_iEKvMRF2sJfQ+DZa--
