@@ -1,55 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the pci tree
-Date: Fri, 4 Jul 2008 10:14:55 +1000
-Message-ID: <20080704101455.abd38741.sfr@canb.auug.org.au>
-References: <20080703121055.d6f49ae5.sfr@canb.auug.org.au>
-	<20080703032842.GA26951@kroah.com>
-	<200807031223.10287.jbarnes@virtuousgeek.org>
-	<20080704100933.c39faef1.sfr@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: manual merge of the rr tree
+Date: Fri, 4 Jul 2008 10:29:36 +1000
+Message-ID: <200807041029.36246.rusty@rustcorp.com.au>
+References: <20080703150328.44061d16.sfr@canb.auug.org.au> <20080703055644.GB4863@elte.hu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__4_Jul_2008_10_14_55_+1000_9ftoO5i+wbvFvsa0"
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45324 "EHLO smtps.tip.net.au"
+Received: from ozlabs.org ([203.10.76.45]:50376 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753421AbYGDAPB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 3 Jul 2008 20:15:01 -0400
-In-Reply-To: <20080704100933.c39faef1.sfr@canb.auug.org.au>
+	id S1752576AbYGDA3o (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 3 Jul 2008 20:29:44 -0400
+In-Reply-To: <20080703055644.GB4863@elte.hu>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, David Howells <dhowells@redhat.com>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
---Signature=_Fri__4_Jul_2008_10_14_55_+1000_9ftoO5i+wbvFvsa0
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Jesse,
-
-On Fri, 4 Jul 2008 10:09:33 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
+On Thursday 03 July 2008 15:56:45 Ingo Molnar wrote:
+> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi Rusty,
+> >
+> > Today's linux-next merge of the rr tree got a conflict in
+> > kernel/stop_machine.c between commit
+> > 961ccddd59d627b89bd3dc284b6517833bbdf25d ("sched: add new API
+> > sched_setscheduler_nocheck: add a flag to control access checks") from
+> > the sched tree (which appears to also be in the rr tree) and commit
+> > e5e62fcd081b0837f6210eb4ed022e9d8920bc59 ("stop_machine:simplify")
+> > from the rr tree.
+> >
+> > I used the version in the rr tree.  Probably worth a look when I
+> > publish the tree.
 >
-> Unless, of course, there are other changes in upstream that affect all
-> this (like you don't yet have the part of Linus' tree that defines
-> dev_name and dev_set_name).
+> hm, is there any difference between the content of the two commits?
+>
+> The "home tree" of the commit is tip/sched/new-API-sched_setscheduler,
+> and that's integrated to the auto-sched-next branch. If there's any
+> update to the patch we should iterate it there.
 
-I just checked and you seem to have those commits as of yesterday.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+No they should be identical.  It's just that my stop_machine patch happens to 
+use it.
 
---Signature=_Fri__4_Jul_2008_10_14_55_+1000_9ftoO5i+wbvFvsa0
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhta38ACgkQjjKRsyhoI8x4kgCgvd8PyI+GbtQ2gcrEFBqytgw2
-mdwAnirbsLLBqFuKegQ6Wkc9BlmJazVa
-=CS95
------END PGP SIGNATURE-----
-
---Signature=_Fri__4_Jul_2008_10_14_55_+1000_9ftoO5i+wbvFvsa0--
+Rusty.
