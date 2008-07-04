@@ -1,50 +1,37 @@
-From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-Subject: Re: [PATCH 1/2] ACPI Video: Ignore devices that aren't present in
-	hardware
-Date: Fri, 4 Jul 2008 16:49:50 -0300
-Message-ID: <20080704194950.GA27898@khazad-dum.debian.net>
-References: <200807031805.52883.trenn@suse.de> <20080703160822.GA29110@srcf.ucam.org> <20080704030948.GB31908@khazad-dum.debian.net> <20080704091307.GB8905@srcf.ucam.org> <20080704115519.GA7435@khazad-dum.debian.net> <20080704173910.GA16595@srcf.ucam.org>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next-0703 -- more ppc serial fixes
+Date: Fri, 4 Jul 2008 20:51:20 +0100
+Message-ID: <20080704205120.27350175@lxorguk.ukuu.org.uk>
+References: <20080703190948.8e7bceca.sfr@canb.auug.org.au>
+	<20080704182909.GB1631@nineveh.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3.smtp.messagingengine.com ([66.111.4.27]:38818 "EHLO
-	out3.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751534AbYGDTt5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Jul 2008 15:49:57 -0400
-Content-Disposition: inline
-In-Reply-To: <20080704173910.GA16595@srcf.ucam.org>
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:33459 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751938AbYGDUJQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Jul 2008 16:09:16 -0400
+In-Reply-To: <20080704182909.GB1631@nineveh.local>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: Thomas Renninger <trenn@suse.de>, ak@linux.intel.com, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Julia Jomantaite <julia.jomantaite@gmail.com>, marcus@better.se, dannybaumann@web.de, corsac@debian.org, jesse.barnes@intel.com
+To: Joseph Fannin <jfannin@gmail.com>
+Cc: Alan Cox <alan@redhat.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Fri, 04 Jul 2008, Matthew Garrett wrote:
-> Got it. The reason for the delay is that BRTO sits in a loop for no 
-> obvious reason unless BRTF is cleared. The only thing that clears BRTF 
-> is the PWMS function, which isn't called anywhere in the ACPI tables. 
-> The NetBSD driver has the following code:
+On Fri, 4 Jul 2008 14:29:10 -0400
+Joseph Fannin <jfannin@gmail.com> wrote:
+
+> On Thu, Jul 03, 2008 at 07:09:48PM +1000, Stephen Rothwell wrote:
 > 
-> 	/* Claim ownership of brightness control */
-> 	param[0].Integer.Value = 0;
-> 	(void)AcpiEvaluateObject(sc->sc_node->ad_handle, "PWMS", &params, NULL);
+> [next-0703]
 > 
-> and doing this in thinkpad_acpi means my brightness control works in an 
-> acceptably speedy manner with opregion. Henrique, any thoughts on this? 
-> If you're happy with it, we can get opregion support into .27 and add 
-> the patch to remove duplicate ACPI video devices and everything will 
-> work in a beautiful and harmonious manner.
+> > $ git quiltimport --author "Alan Cox <alan@lxorguk.ukuu.org.uk>" --patches "../quilt/ttydev"
+> 
+> More fixes for ppc serial drivers seem to be needed since next-0701 (exclusive):
+> 
+> drivers/serial/mpc52xx_uart.c: In function 'mpc52xx_uart_int_rx_chars':
+> drivers/serial/mpc52xx_uart.c:735: error: 'struct uart_info' has no member named 'tty'
+> drivers/serial/mpc52xx_uart.c: In function 'mpc52xx_uart_of_probe':
+> drivers/serial/mpc52xx_uart.c:1277: warning: cast to pointer from integer of different size
 
-Well done!
-
-Please give me one or two days to check the data I have and look over the
-new DSDTs, and I will give you a better reply.
-
-I really should go over the FreeBSD and NetBSD thinkpad drivers with a fine
-comb looking over for stuff they figured out about the firmware that
-thinkpad-acpi doesn't know about yet.
-
--- 
-  "One disk to rule them all, One disk to find them. One disk to bring
-  them all and in the darkness grind them. In the Land of Redmond
-  where the shadows lie." -- The Silicon Valley Tarot
-  Henrique Holschuh
+Should already by in the ttydev tree at this point
