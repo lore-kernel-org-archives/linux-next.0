@@ -1,47 +1,53 @@
-From: Lennert Buytenhek <buytenh@wantstofly.org>
-Subject: Re: [PATCH next-20080704] Fix compile error in drivers/net/mv643xx_eth.c
-Date: Fri, 4 Jul 2008 18:49:55 +0200
-Message-ID: <20080704164954.GA12106@xi.wantstofly.org>
-References: <s5hr6a9k3uk.wl%tiwai@suse.de>
+From: David Brownell <david-b@pacbell.net>
+Subject: Re: [PATCH] fix build error of driver/mfd/tc6393xb.c
+Date: Fri, 4 Jul 2008 09:50:17 -0700
+Message-ID: <200807040950.17877.david-b@pacbell.net>
+References: <s5hiqvlc2ut.wl%tiwai@suse.de> <20080704124256.GB21747@doriath.ww600.siemens.net> <s5hk5g1ls9l.wl%tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xi.wantstofly.org ([83.160.184.112]:37453 "EHLO
-	xi.wantstofly.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754444AbYGDQt5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Jul 2008 12:49:57 -0400
+Received: from smtp124.sbc.mail.sp1.yahoo.com ([69.147.64.97]:32368 "HELO
+	smtp124.sbc.mail.sp1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1759417AbYGDQuU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Jul 2008 12:50:20 -0400
+In-Reply-To: <s5hk5g1ls9l.wl%tiwai@suse.de>
 Content-Disposition: inline
-In-Reply-To: <s5hr6a9k3uk.wl%tiwai@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Takashi Iwai <tiwai@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: Dmitry Baryshkov <dbaryshkov@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, Jul 04, 2008 at 06:32:03PM +0200, Takashi Iwai wrote:
-
-> drivers/net/mv643xx_eth.c: In function 'mv643xx_eth_netpoll':
-> drivers/net/mv643xx_eth.c:2115: error: 'INT_CAUSE_EXT' undeclared (first use in this function)
-> drivers/net/mv643xx_eth.c:2115: error: (Each undeclared identifier is reported only once
-> drivers/net/mv643xx_eth.c:2115: error: for each function it appears in.
+On Friday 04 July 2008, Takashi Iwai wrote:
 > 
-> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> > The proper fix probably is to make PPC_MPC5200_GPIO also select
+> > GENERIC_GPIO.
+
+I think it's higher in the dependency tree than that.
+
+
+> > I don't think that building GPIO_LIB w/o GENERIC_GPIO 
+> > should be supported.
 > 
-> ---
-> diff --git a/drivers/net/mv643xx_eth.c b/drivers/net/mv643xx_eth.c
-> index 83a877f..cb2c065 100644
-> --- a/drivers/net/mv643xx_eth.c
-> +++ b/drivers/net/mv643xx_eth.c
-> @@ -2112,7 +2112,8 @@ static void mv643xx_eth_netpoll(struct net_device *dev)
->  
->  	mv643xx_eth_irq(dev->irq, dev);
->  
-> -	wrl(mp, INT_MASK(mp->port_num), INT_TX_END | INT_RX | INT_CAUSE_EXT);
-> +	wrl(mp, INT_MASK(mp->port_num),
-> +	    INT_TX_END | INT_RX | INT_CAUSE_EXT(mp->port_num));
+> [Added David to Cc]
+> 
+> Then HAVE_GPIO_LIB should depend on GENERIC_GPIO.
 
-You are ORing the _address_ of the interrupt status register into
-the interupt mask register.  How do you expect that to work?
+They must go together ... right.  Anything using gpiolib
+without the interface it implements needs a head-exam. ;)
 
-This is the proper fix, which I will re-submit shortly:
+But since ISTR that Kconfig (still) doesn't get dependencies
+right when you "select" something that depends on something
+else, that particular solution won't fly.
 
-	http://marc.info/?l=linux-kernel&m=121498695309851&w=2
+
+> Or, linux/gpio.h should be fixed so that the code can be built
+> properly without GENERIC_GPIO.
+
+No; GENERIC_GPIO is the interface, HAVE_GPIO_LIB is one
+of the valid ways to implement it.
+
+It should work if HAVE_GPIO_LIB selected GENERIC_GPIO...
+
+- Dave
