@@ -1,76 +1,70 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for July 4
-Date: Fri, 4 Jul 2008 23:16:10 +1000
-Message-ID: <20080704231610.98118766.sfr@canb.auug.org.au>
-References: <20080704195529.7f56e768.sfr@canb.auug.org.au>
-	<20080704114648.13374869@lxorguk.ukuu.org.uk>
+From: Dmitry Baryshkov <dbaryshkov@gmail.com>
+Subject: Re: [PATCH] fix build error of driver/mfd/tc6393xb.c
+Date: Fri, 4 Jul 2008 17:22:35 +0400
+Message-ID: <20080704132234.GA4576@doriath.ww600.siemens.net>
+References: <s5hiqvlc2ut.wl%tiwai@suse.de> <20080704114755.GA21747@doriath.ww600.siemens.net> <s5hej69c0tt.wl%tiwai@suse.de> <20080704124256.GB21747@doriath.ww600.siemens.net> <s5hk5g1ls9l.wl%tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__4_Jul_2008_23_16_10_+1000_zmKBVlk2iI=6L89l"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44739 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753162AbYGDNQT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 4 Jul 2008 09:16:19 -0400
-In-Reply-To: <20080704114648.13374869@lxorguk.ukuu.org.uk>
+Received: from fk-out-0910.google.com ([209.85.128.191]:6884 "EHLO
+	fk-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752535AbYGDNWp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Jul 2008 09:22:45 -0400
+Received: by fk-out-0910.google.com with SMTP id 18so879120fkq.5
+        for <linux-next@vger.kernel.org>; Fri, 04 Jul 2008 06:22:44 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <s5hk5g1ls9l.wl%tiwai@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Brownell <david-b@pacbell.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Fri__4_Jul_2008_23_16_10_+1000_zmKBVlk2iI=6L89l
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jul 04, 2008 at 02:59:18PM +0200, Takashi Iwai wrote:
+> At Fri, 4 Jul 2008 16:42:56 +0400,
+> Dmitry Baryshkov wrote:
+> > 
+> > On Fri, Jul 04, 2008 at 02:04:30PM +0200, Takashi Iwai wrote:
+> > > At Fri, 4 Jul 2008 15:47:55 +0400,
+> > > Dmitry Baryshkov wrote:
+> > > > 
+> > > > On Fri, Jul 04, 2008 at 01:20:42PM +0200, Takashi Iwai wrote:
+> > > > > Fix the build of tc6393xb  due to missing definition of struct
+> > > > > gpio_chip.
+> > > > > 
+> > > > > Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> > > > > 
+> > > > > ---
+> > > > > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> > > > > index 9f93c29..2981da4 100644
+> > > > > --- a/drivers/mfd/Kconfig
+> > > > > +++ b/drivers/mfd/Kconfig
+> > > > > @@ -44,7 +44,7 @@ config HTC_PASIC3
+> > > > >  
+> > > > >  config MFD_TC6393XB
+> > > > >  	bool "Support Toshiba TC6393XB"
+> > > > > -	depends on HAVE_GPIO_LIB
+> > > > > +	depends on HAVE_GPIO_LIB && GENERIC_GPIO
+> > > > >  	select MFD_CORE
+> > > > >  	help
+> > > > >  	  Support for Toshiba Mobile IO Controller TC6393XB
+> > > > 
+> > > > Which configuration does provide HAVE_GPIO_LIB but not GENERIC_GPIO?
+> > > 
+> > > The below is the config with which I got the error.
+> > 
+> > The proper fix probably is to make PPC_MPC5200_GPIO also select
+> > GENERIC_GPIO. I don't think that building GPIO_LIB w/o GENERIC_GPIO
+> > should be supported.
+> 
+> [Added David to Cc]
+> 
+> Then HAVE_GPIO_LIB should depend on GENERIC_GPIO.
+> Or, linux/gpio.h should be fixed so that the code can be built
+> properly without GENERIC_GPIO.
 
-On Fri, 4 Jul 2008 11:46:48 +0100 Alan Cox <alan@lxorguk.ukuu.org.uk> wrote:
->
-> > 	ttydev: fix pamc_zilog for tty pointer move
-> > 	ttydev: sparc fix for tty move
-> > 	ttydev: sparc32 fix for tty move
-> > 	atmel_serial: Fix tty_port breakage
->=20
-> Got these
+IIRC selected symbols don't propagate their depends.
+Also linux/gpio.h don't have anything in common with HAVE_GPIO_LIB.
 
-Good.  There are more broken drivers - check out
-http://kisskb.ellerman.id.au/linux-next
-
-> > http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-> > are tracking the linux-next tree using git, you should not use "git pul=
-l"
-> > to do so as that will try to merge the new linux-next release with the
-> > old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-> > (see below).
->=20
-> bash-3.2$ git fetch linux-next
-> remote: error: refs/heads/history does not point to a valid object!
-> remote: error: refs/heads/master does not point to a valid object!
-> remote: error: refs/tags/next-20080704 does not point to a valid object!
->=20
-> (on top of a clean current Linus git pull)
-
-Were you using
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git or
-http://www.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git ?  The
-git one works for me and the http does as well now that I have updated
-the server info (though I neglected to try it before doing the update).
-
-Thanks for the heads up.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__4_Jul_2008_23_16_10_+1000_zmKBVlk2iI=6L89l
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhuIpoACgkQjjKRsyhoI8wEFwCfZ6XFUCILr1J3sh63g4Dh1ocA
-SOAAn2mXYfhECTnxvnDgjI4y2QMMCT34
-=FxeX
------END PGP SIGNATURE-----
-
---Signature=_Fri__4_Jul_2008_23_16_10_+1000_zmKBVlk2iI=6L89l--
+-- 
+With best wishes
+Dmitry
