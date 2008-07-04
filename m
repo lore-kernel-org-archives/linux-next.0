@@ -1,52 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the x86 tree
-Date: Fri, 4 Jul 2008 13:50:21 +1000
-Message-ID: <20080704135021.e771e091.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the v4l-dvb tree
+Date: Fri, 4 Jul 2008 14:45:04 +1000
+Message-ID: <20080704144504.cdbb1df3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__4_Jul_2008_13_50_21_+1000_Y3U2dA1_lGRUnb=P"
+ boundary="Signature=_Fri__4_Jul_2008_14_45_04_+1000_Q5U4pFueEpsg02Ge"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44516 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:42855 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752159AbYGDDu2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 3 Jul 2008 23:50:28 -0400
+	id S1751134AbYGDEpP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 4 Jul 2008 00:45:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>, Andi Kleen <andi@firstfloor.org>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, Jean-Francois Moine <moinejf@free.fr>, Laurent Pinchart <laurent.pinchart@skynet.be>
 
---Signature=_Fri__4_Jul_2008_13_50_21_+1000_Y3U2dA1_lGRUnb=P
+--Signature=_Fri__4_Jul_2008_14_45_04_+1000_Q5U4pFueEpsg02Ge
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Mauro,
 
-Today's linux-next merge of the x86 tree got a conflict in
-drivers/base/topology.c between commit
-5b01a6a61c48d8e6ab4679d6e6208f5962d07b85 ("sysdev: Pass the attribute to
-the low level sysdev show/store function") from the driver-core tree and
-commit 29657a44f8660acd8751d7e9f5aac06ec8633481 ("x86: cleanup early per
-cpu variables/accesses v4") from the x86 tree.
+Today's linux-next merge of the v4l-dvb tree got a conflict in
+drivers/media/video/Kconfig between commit
+c0efd232929c2cd87238de2cccdaf4e845be5b0c ("V4L/DVB (8145a): USB Video
+Class driver") from Linus' tree (which is also in the v4l-dvb tree) and
+commit 2f70db892654f1e3c65c527e00a8982166142020 ("V4L/DVB (8152): Initial
+release of gspca with only one driver") from the v4l-dvb tree.
 
-I took the driver-core versions but uninlined them (as was done in the
-x86 tree version).  Someone should probably check the result.
+Just a case of overlapping additions.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__4_Jul_2008_13_50_21_+1000_Y3U2dA1_lGRUnb=P
+--Signature=_Fri__4_Jul_2008_14_45_04_+1000_Q5U4pFueEpsg02Ge
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkhtnf0ACgkQjjKRsyhoI8wJnwCfctFfm/Sie6EZ9uuSvSR18BuW
-76kAnRHVWwrKspFvHzbO4bOC4annKqk/
-=NK8B
+iEYEARECAAYFAkhtqtAACgkQjjKRsyhoI8zBFgCgj8eul0plqmZ01V1/qf+otJdH
+nuQAn2x6K1O9HQgfrF7I1omTfN9hDhRa
+=/TU2
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__4_Jul_2008_13_50_21_+1000_Y3U2dA1_lGRUnb=P--
+--Signature=_Fri__4_Jul_2008_14_45_04_+1000_Q5U4pFueEpsg02Ge--
