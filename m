@@ -1,93 +1,35 @@
-From: Dmitry Baryshkov <dbaryshkov@gmail.com>
-Subject: Re: [PATCH] fix build error of driver/mfd/tc6393xb.c
-Date: Fri, 4 Jul 2008 19:27:08 +0400
-Message-ID: <20080704152708.GA12382@doriath.ww600.siemens.net>
-References: <s5hiqvlc2ut.wl%tiwai@suse.de> <20080704114755.GA21747@doriath.ww600.siemens.net> <s5hej69c0tt.wl%tiwai@suse.de> <20080704124256.GB21747@doriath.ww600.siemens.net> <s5hk5g1ls9l.wl%tiwai@suse.de> <20080704132234.GA4576@doriath.ww600.siemens.net> <s5hd4ltlpgl.wl%tiwai@suse.de> <20080704142208.GB4576@doriath.ww600.siemens.net> <s5hwsk1k6yj.wl%tiwai@suse.de>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: manual merge of the ttydev tree
+Date: Fri, 4 Jul 2008 16:41:43 +0100
+Message-ID: <20080704164143.358ce5b6@lxorguk.ukuu.org.uk>
+References: <20080704191134.cd8eb23d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ug-out-1314.google.com ([66.249.92.174]:62354 "EHLO
-	ug-out-1314.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752789AbYGDP1R (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Jul 2008 11:27:17 -0400
-Received: by ug-out-1314.google.com with SMTP id h2so809009ugf.16
-        for <linux-next@vger.kernel.org>; Fri, 04 Jul 2008 08:27:16 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <s5hwsk1k6yj.wl%tiwai@suse.de>
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:49142 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751665AbYGDP7V (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Jul 2008 11:59:21 -0400
+In-Reply-To: <20080704191134.cd8eb23d.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Brownell <david-b@pacbell.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-On Fri, Jul 04, 2008 at 05:24:52PM +0200, Takashi Iwai wrote:
-> At Fri, 4 Jul 2008 18:22:08 +0400,
-> Dmitry Baryshkov wrote:
-> > 
-> > On Fri, Jul 04, 2008 at 03:59:54PM +0200, Takashi Iwai wrote:
-> > > At Fri, 4 Jul 2008 17:22:35 +0400,
-> > > Dmitry Baryshkov wrote:
-> > > > 
-> > > > On Fri, Jul 04, 2008 at 02:59:18PM +0200, Takashi Iwai wrote:
-> > > > > At Fri, 4 Jul 2008 16:42:56 +0400,
-> > > > > Dmitry Baryshkov wrote:
-> > > > > > 
-> > > > > > On Fri, Jul 04, 2008 at 02:04:30PM +0200, Takashi Iwai wrote:
-> > > > > > > At Fri, 4 Jul 2008 15:47:55 +0400,
-> > > > > > > Dmitry Baryshkov wrote:
-> > > > > > > > 
-> > > > > > > > On Fri, Jul 04, 2008 at 01:20:42PM +0200, Takashi Iwai wrote:
-> > > > > > > > > Fix the build of tc6393xb  due to missing definition of struct
-> > > > > > > > > gpio_chip.
-> > > > > > > > > 
-> > > > > > > > > Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> > > > > > > > > 
-> > > > > > > > > ---
-> > > > > > > > > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> > > > > > > > > index 9f93c29..2981da4 100644
-> > > > > > > > > --- a/drivers/mfd/Kconfig
-> > > > > > > > > +++ b/drivers/mfd/Kconfig
-> > > > > > > > > @@ -44,7 +44,7 @@ config HTC_PASIC3
-> > > > > > > > >  
-> > > > > > > > >  config MFD_TC6393XB
-> > > > > > > > >  	bool "Support Toshiba TC6393XB"
-> > > > > > > > > -	depends on HAVE_GPIO_LIB
-> > > > > > > > > +	depends on HAVE_GPIO_LIB && GENERIC_GPIO
-> > > > > > > > >  	select MFD_CORE
-> > > > > > > > >  	help
-> > > > > > > > >  	  Support for Toshiba Mobile IO Controller TC6393XB
-> > > > > > > > 
-> > > > > > > > Which configuration does provide HAVE_GPIO_LIB but not GENERIC_GPIO?
-> > > > > > > 
-> > > > > > > The below is the config with which I got the error.
-> > > > > > 
-> > > > > > The proper fix probably is to make PPC_MPC5200_GPIO also select
-> > > > > > GENERIC_GPIO. I don't think that building GPIO_LIB w/o GENERIC_GPIO
-> > > > > > should be supported.
-> > > > > 
-> > > > > [Added David to Cc]
-> > > > > 
-> > > > > Then HAVE_GPIO_LIB should depend on GENERIC_GPIO.
-> > > > > Or, linux/gpio.h should be fixed so that the code can be built
-> > > > > properly without GENERIC_GPIO.
-> > > > 
-> > > > IIRC selected symbols don't propagate their depends.
-> > > 
-> > > Then HAVE_GPIO_LIB selects GENERIC_GPIO.  Right now, it's a missing
-> > > dependency.
-> > 
-> > Please submit a patch where HAVE_GPIO_LIB selects GENERIC_GPIO.
+On Fri, 4 Jul 2008 19:11:34 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi Alan,
 > 
-> Hmm... just checking again, I found GENERIC_GPIO isn't defined in
-> drivers/gpio/Kconfig but in each arch Kconfig.  So we can't select it
-> unconditionally.
+> Today's linux-next merge of the hdlc tree got a conflict in
+> drivers/char/tty_io.c between commit
+> 3e2a078ca6a0d3122bbf2b904cd7ccf21a5ca21d ("tty: Fix inverted logic in
+> send_break") from Linus' tree and "77-tty-break-errorhandler" from the
+> ttydev tree.
 > 
-> I'm not sure whether it's a better fix at this moment.
+> I made the obvious fixup.  Please redo the patch.
 
-Then we probably should move GENERIC_GPIO to drivers/gpio/Kconfig, allow
-it to be selected from arch code which doesn't know anything about
-gpiolib and allow it to be selected by HAVE_GPIO_LIB?
-
-
--- 
-With best wishes
-Dmitry
+Done but that meant shifting the base of the patch as it is now in
+linux-next so can't be relative to it. I've put it on top of the firmware
+tree as that should avoid the conflicts I'm aware of
