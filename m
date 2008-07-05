@@ -1,54 +1,43 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH 2/2] acpi: Disable IRQ 0 through I/O APIC for some HP systems
-Date: Fri, 4 Jul 2008 23:21:31 +0200
-Message-ID: <200807042321.32660.rjw@sisk.pl>
-References: <Pine.LNX.4.55.0807010055070.30785@cliff.in.clinika.pl> <200807012158.34356.rjw@sisk.pl> <20080701202453.GD4896@elte.hu>
+From: Dmitry Baryshkov <dbaryshkov@gmail.com>
+Subject: Re: [PATCH] fix build error of driver/mfd/tc6393xb.c
+Date: Sat, 5 Jul 2008 12:31:22 +0400
+Message-ID: <20080705083122.GA7026@doriath.ww600.siemens.net>
+References: <s5hiqvlc2ut.wl%tiwai@suse.de> <20080704142208.GB4576@doriath.ww600.siemens.net> <s5hwsk1k6yj.wl%tiwai@suse.de> <200807040954.34838.david-b@pacbell.net>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:49283 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752607AbYGDVTg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 4 Jul 2008 17:19:36 -0400
-In-Reply-To: <20080701202453.GD4896@elte.hu>
+Received: from fg-out-1718.google.com ([72.14.220.155]:47627 "EHLO
+	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754049AbYGEIbd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 5 Jul 2008 04:31:33 -0400
+Received: by fg-out-1718.google.com with SMTP id 19so560266fgg.17
+        for <linux-next@vger.kernel.org>; Sat, 05 Jul 2008 01:31:29 -0700 (PDT)
 Content-Disposition: inline
+In-Reply-To: <200807040954.34838.david-b@pacbell.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Matthew Garrett <mjg59@srcf.ucam.org>, "Maciej W. Rozycki" <macro@linux-mips.org>, Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Brownell <david-b@pacbell.net>
+Cc: Takashi Iwai <tiwai@suse.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tuesday, 1 of July 2008, Ingo Molnar wrote:
-> 
-> * Rafael J. Wysocki <rjw@sisk.pl> wrote:
-> 
-> > On Tuesday, 1 of July 2008, Ingo Molnar wrote:
-> > > 
-> > > * Matthew Garrett <mjg59@srcf.ucam.org> wrote:
-> > > 
-> > > > Assuming it works for Rafael (still haven't had time to pull my nx6125 
-> > > > out of storage):
-> > > > 
-> > > > Signed-off-by: mjg@redhat.com
-> > > 
-> > > Rafael, could you please try the latest tip/master that i've just pushed 
-> > > out:
-> > > 
-> > >   http://people.redhat.com/mingo/tip.git/README
-> > > 
-> > > it has the final form of these changes integrated - it should in 
-> > > theory work out of box on your system, with no boot parameters or 
-> > > other explicit quirks needed anywhere.
-> > 
-> > I tested patches [1/2] (your version) and [2/2] on top of today's 
-> > linux-next and they work just fine.
-> 
-> thanks Rafael!
+On Fri, Jul 04, 2008 at 09:54:34AM -0700, David Brownell wrote:
+> On Friday 04 July 2008, Takashi Iwai wrote:
+> >=20
+> > > Please submit a patch where HAVE_GPIO_LIB selects GENERIC_GPIO.
+> >=20
+> > Hmm... just checking again, I found GENERIC_GPIO isn't defined in
+> > drivers/gpio/Kconfig but in each arch Kconfig. =A0So we can't selec=
+t it
+> > unconditionally.
+> >=20
+> > I'm not sure whether it's a better fix at this moment.
+>=20
+> Which platform is it which is trying to declare that it has
+> an implementation (HAVE_GPIO_LIB) of an interface that it
+> doesn't support (GENERIC_GPIO unset) ??
 
-Can you please push them to linux-next, btw?
+the powerpc with PPC_MPC52xx=3Dy, PPC_MPC5200_GPIO=3Dy
 
-They still apply cleanly to linux-next for me.
-
-Thanks,
-Rafael
+--=20
+With best wishes
+Dmitry
