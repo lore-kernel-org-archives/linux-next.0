@@ -1,36 +1,55 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: Tree for July 4
-Date: Sun, 6 Jul 2008 22:38:51 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.0807062236460.5733@anakin>
-References: <20080704195529.7f56e768.sfr@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH 2/2] acpi: Disable IRQ 0 through I/O APIC for some HP systems
+Date: Mon, 7 Jul 2008 01:02:37 +0200
+Message-ID: <200807070102.38854.rjw@sisk.pl>
+References: <Pine.LNX.4.55.0807010055070.30785@cliff.in.clinika.pl> <200807012158.34356.rjw@sisk.pl> <20080701202453.GD4896@elte.hu>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nelson.telenet-ops.be ([195.130.133.66]:33023 "EHLO
-	nelson.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756385AbYGFUiz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 6 Jul 2008 16:38:55 -0400
-In-Reply-To: <20080704195529.7f56e768.sfr@canb.auug.org.au>
+Received: from ogre.sisk.pl ([217.79.144.158]:56638 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753569AbYGFXAa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 6 Jul 2008 19:00:30 -0400
+In-Reply-To: <20080701202453.GD4896@elte.hu>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Matthew Garrett <mjg59@srcf.ucam.org>, "Maciej W. Rozycki" <macro@linux-mips.org>, Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 4 Jul 2008, Stephen Rothwell wrote:
-> There are several outstanding build failures due to structural changes in
-> the ttydev tree (see http://kisskb.ellerman.id.au/linux-next).
+On Tuesday, 1 of July 2008, Ingo Molnar wrote:
+> 
+> * Rafael J. Wysocki <rjw@sisk.pl> wrote:
+> 
+> > On Tuesday, 1 of July 2008, Ingo Molnar wrote:
+> > > 
+> > > * Matthew Garrett <mjg59@srcf.ucam.org> wrote:
+> > > 
+> > > > Assuming it works for Rafael (still haven't had time to pull my nx6125 
+> > > > out of storage):
+> > > > 
+> > > > Signed-off-by: mjg@redhat.com
+> > > 
+> > > Rafael, could you please try the latest tip/master that i've just pushed 
+> > > out:
+> > > 
+> > >   http://people.redhat.com/mingo/tip.git/README
+> > > 
+> > > it has the final form of these changes integrated - it should in 
+> > > theory work out of box on your system, with no boot parameters or 
+> > > other explicit quirks needed anywhere.
+> > 
+> > I tested patches [1/2] (your version) and [2/2] on top of today's 
+> > linux-next and they work just fine.
+> 
+> thanks Rafael!
 
-Do we really want these (obviously unfinished) structural changes in the
-linux-next tree already? They keep on breaking several architectures since
-several days?
+Well, I'm afraid that my information wasn't correct.  The patches actually
+don't work, but I had my own additional patch that fixed the problem applied,
+which I've only just discovered.  Sorry for the confusion and the issue is
+still unfixed.
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Thanks,
+Rafael
