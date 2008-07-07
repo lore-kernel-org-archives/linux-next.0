@@ -1,51 +1,42 @@
-From: Arjan van de Ven <arjan@infradead.org>
-Subject: Re: [PATCH -next] acpi utmisc: use WARN_ON() instead of
- warn_on_slowpath()
-Date: Mon, 7 Jul 2008 00:03:20 -0700
-Message-ID: <20080707000320.25341603@infradead.org>
-References: <20080701103339.b5acc1f3.randy.dunlap@oracle.com>
-	<20080701131714.5093fa49.akpm@linux-foundation.org>
-	<23433248.1214943818230.JavaMail.oracle@acsmt302.oracle.com>
-	<20080701133535.f92a673c.akpm@linux-foundation.org>
-	<20080702112852.05f30950.randy.dunlap@oracle.com>
-	<486BCDDC.1000709@firstfloor.org>
-	<20080702121424.a3451eae.akpm@linux-foundation.org>
-	<486BD785.5050207@firstfloor.org>
-	<20080702124316.61cc76e9.akpm@linux-foundation.org>
-	<486BE0DA.2090108@firstfloor.org>
-	<20080702133540.20d578cd.akpm@linux-foundation.org>
-	<486BEA68.7000801@firstfloor.org>
-	<20080702140216.334011a4.akpm@linux-foundation.org>
-	<486BEE0D.3030901@firstfloor.org>
-	<20080702141459.e6d6feaa.akpm@linux-foundation.org>
-	<alpine.LFD.1.10.0807061307280.24417@localhost.localdomain>
-	<20080706115221.582e905a@infradead.org>
-	<4871B55C.7040009@firstfloor.org>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the sched tree
+Date: Mon, 7 Jul 2008 09:04:43 +0200
+Message-ID: <20080707070439.GB28708@elte.hu>
+References: <20080707142114.7985a9dd.sfr@canb.auug.org.au> <20080707060251.GA16144@elte.hu> <20080707061634.GA23191@elte.hu> <20080707164108.250e9888.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <4871B55C.7040009@firstfloor.org>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Andi Kleen <andi@firstfloor.org>
-Cc: Len Brown <lenb@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, randy.dunlap@oracle.com, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
-List-Id: linux-next.vger.kernel.org
-
-On Mon, 07 Jul 2008 08:19:08 +0200
-Andi Kleen <andi@firstfloor.org> wrote:
-
-> I'm dropping the ACPI part because we're getting too many
-> reports of scary looking backtraces and ACPI exceptions are actually
-> not that exceptional.
-
-when I talked to Len about it he implied/said that these would only
-happen for ACPI code bugs (and not bios bugs). Maybe he was
-overestimating what the code would actually do; if so it would imo be
-well worth splitting out ACPI code assertions versions things that are
-BIOS caused (if only to be able to inform the user more consistently)
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.mail.elte.hu ([157.181.151.9]:58529 "EHLO mx2.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751410AbYGGHFI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Jul 2008 03:05:08 -0400
+Content-Disposition: inline
+In-Reply-To: <20080707164108.250e9888.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Franck Bui-Huu <fbuihuu@gmail.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 
 
--- 
-If you want to reach me at my work email, use arjan@linux.intel.com
-For development, discussion and tips for power savings, 
-visit http://www.lesswatts.org
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi Ingo,
+> 
+> On Mon, 7 Jul 2008 08:16:34 +0200 Ingo Molnar <mingo@elte.hu> wrote:
+> >
+> > * Ingo Molnar <mingo@elte.hu> wrote:
+> > 
+> > i.e. next time we see this pattern we should just do the header stub 
+> > (or API stub) immediately, upstream.
+> 
+> Correct.  Though we should wait a little to make sure the API is 
+> correct but once it hits -next is probably a good time.
+
+i'd wait longer than "it hits -next": to see fallout, to give people 
+time to object or to suggest different approaches. (This happened in the 
+past, see the tip/sched/new-API-sched_setscheduler API change as an 
+example.)
+
+Two weeks after something hits linux-next should be a good rule i guess.
+
+	Ingo
