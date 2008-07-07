@@ -1,62 +1,38 @@
 From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the sched tree
-Date: Mon, 7 Jul 2008 08:10:57 +0200
-Message-ID: <20080707061057.GB16144@elte.hu>
-References: <20080707142114.7985a9dd.sfr@canb.auug.org.au> <20080707145027.0d83038e.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tip-core tree
+Date: Mon, 7 Jul 2008 08:12:32 +0200
+Message-ID: <20080707061232.GC16144@elte.hu>
+References: <20080707131538.25a05c1c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:42021 "EHLO mx3.mail.elte.hu"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:41925 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751305AbYGGGLT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Jul 2008 02:11:19 -0400
+	id S1751380AbYGGGMz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Jul 2008 02:12:55 -0400
 Content-Disposition: inline
-In-Reply-To: <20080707145027.0d83038e.sfr@canb.auug.org.au>
+In-Reply-To: <20080707131538.25a05c1c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Franck Bui-Huu <fbuihuu@gmail.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Vegard Nossum <vegard.nossum@gmail.com>, Arjan van de Ven <arjan@linux.intel.com>
 
 
 * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> diff --git a/arch/x86/mm/kmmio.c b/arch/x86/mm/kmmio.c
-> index b65871e..7bfdad7 100644
-> --- a/arch/x86/mm/kmmio.c
-> +++ b/arch/x86/mm/kmmio.c
-> @@ -23,6 +23,7 @@
->  #include <linux/errno.h>
->  #include <asm/debugreg.h>
->  #include <linux/mmiotrace.h>
-> +#include <linux/rculist.h>
+> Hi all,
+> 
+> Today's linux-next merge of the tip-core tree got a trivial conflict 
+> in kernel/softlockup.c between commit 
+> 3b7253238801a7b97b3929d8db2fa7a0721fb17b ("softlockup: print a module 
+> list on being stuck") from Linus' tree (which also exists in the 
+> tip-core tree) and commit 8d5be7f4e8515af461cbc8f07687ccc81507d508 
+> ("softlockup: show irqtrace") from the tip-core tree.
+> 
+> It is just tha the latter change modifies the section of code modified 
+> by the former.  I fixed it up and can carry the fix.
 
-the same commit existed already for about two months:
-
-------------------->
-commit 668a6c3654560aef8741642478973e205a4f02bf
-Author: Ingo Molnar <mingo@elte.hu>
-Date:   Mon May 19 13:35:24 2008 +0200
-
-    - fix mmioftrace + rcu merge interaction
-    
-    Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-
-diff --git a/arch/x86/mm/kmmio.c b/arch/x86/mm/kmmio.c
-index b65871e..93d8203 100644
---- a/arch/x86/mm/kmmio.c
-+++ b/arch/x86/mm/kmmio.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/list.h>
-+#include <linux/rculist.h>
- #include <linux/spinlock.h>
- #include <linux/hash.h>
- #include <linux/init.h>
-<----------------------
-
-so i've merged the tip/tracing/mmiotrace-mergefixups branch into 
-tip/tracing/mmiotrace. (after having merged tip/tracing/mmiotrace to 
--rc9 so that rculist.h was present already)
+Thanks Stephen - this should be resolved by today's auto-core-next 
+iteration as well. (which you'll pick up tomorrow-ish)
 
 	Ingo
