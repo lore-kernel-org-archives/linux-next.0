@@ -1,53 +1,66 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree
-Date: Tue, 8 Jul 2008 01:39:37 +1000
-Message-ID: <20080708013937.4533829b.sfr@canb.auug.org.au>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: [BUG]  linux-next: Tree for March 25 kernel oops, when loading
+	mpt fusion driver - regression
+Date: Mon, 07 Jul 2008 10:43:14 -0500
+Message-ID: <1215445394.3274.26.camel@localhost.localdomain>
+References: <20080325175224.3ee62b09.sfr@canb.auug.org.au>
+	 <47E9F0B0.4060006@linux.vnet.ibm.com> <20080626203857.GB3815@redhat.com>
+	 <1215372215.4197.28.camel@localhost.localdomain>
+	 <20080707152708.GA10404@redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__8_Jul_2008_01_39_37_+1000_G+agD/SO.gWcaygL"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49398 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752184AbYGGPkB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Jul 2008 11:40:01 -0400
+Received: from accolon.hansenpartnership.com ([76.243.235.52]:51020 "EHLO
+	accolon.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753595AbYGGPnT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jul 2008 11:43:19 -0400
+In-Reply-To: <20080707152708.GA10404@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesper Juhl <jesper.juhl@gmail.com>
-Cc: linux-next@vger.kernel.org, "Andrew G. Morgan" <morgan@kernel.org>, Nick Andrew <nick@nick-andrew.net>
+To: David Teigland <teigland@redhat.com>
+Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org, Eric.Moore@lsi.com, Andy Whitcroft <apw@shadowen.org>
 
---Signature=_Tue__8_Jul_2008_01_39_37_+1000_G+agD/SO.gWcaygL
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2008-07-07 at 10:27 -0500, David Teigland wrote:
+> On Sun, Jul 06, 2008 at 02:23:35PM -0500, James Bottomley wrote:
+> > On Thu, 2008-06-26 at 15:38 -0500, David Teigland wrote:
+> > > On Wed, Mar 26, 2008 at 12:14:00PM +0530, Kamalesh Babulal wrote:
+> > > > Hi Stephen,
+> > > > 
+> > > > Kernel bug is hit while booting up the next-20080325 kernel with MPT
+> > > > Fusion driver built in.This was reported previously for the
+> > > > next-20080320 kernel
+> > > > http://marc.info/?l=linux-next&m=120601013920868&w=2
+> > > 
+> > > Hi, did you ever get this fixed?  I've been having the same problem,
+> > > http://marc.info/?l=linux-scsi&m=121061780821823&w=4
+> > > still exists on 2.6.26-rc8 for me,
+> > > 
+> > > Loading scsi_transport_spi.ko module
+> > > Loading mptscsih.ko module
+> > > Loading mptspi.ko module
+> > > Fusion MPT SPI Host driver 3.04.06
+> > > ACPI: PCI Interrupt 0000:86:01.0[A] -> GSI 32 (level, low) -> IRQ 32
+> > > mptbase: ioc0: Initiating bringup
+> > > ioc0: LSI53C1030 B2: Capabilities={Initiator,Target}
+> > > mptbase: ioc0: PCI-MSI enabled
+> > 
+> > I speculate that this might be related to the problem.  The fusion
+> > driver was recently flipped to default to MSI enable (previously it had
+> > disabled them).  Could you boot it with the fusion module parameter
+> > 
+> > mpt_msi_enable=0
+> > 
+> > if it actually boots that will be a good confirmation that MSI is to
+> > blame.
+> 
+> It all works using that option.
 
-Hi Jesper,
+It sounds like your motherboard might need to be added to the
+drivers/pci/quirks.c with quirk_disable_all_msi ... can you try a
+different card with MSI just to see if it's something specific either to
+the fusion or the location in the system?
 
-Today's linux-next merge of the trivial tree got a tivial conflict in
-include/linux/securebits.h between commit
-086f7316f0d400806d76323beefae996bb3849b1 ("security: filesystem
-capabilities: fix fragile setuid fixup code") from Linus' tree and commit
-0bb08241ce68aaa70b7b804b4d6319d8bad3ae24 ("Tighten up the use of loose")
-from the trivial tree.
+Thanks,
 
-This was a trivial conflict (by definition of the tree :-)) the former
-commit changed a comment and fixed the instance of loose to lose, so I
-used that version.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__8_Jul_2008_01_39_37_+1000_G+agD/SO.gWcaygL
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhyOLkACgkQjjKRsyhoI8zAnwCgwJcCv5H57yEj3nWJ2D1gHMqx
-sQsAnjsyzLY30p6FfMPW3ZVU2DLOMMFA
-=uBOw
------END PGP SIGNATURE-----
-
---Signature=_Tue__8_Jul_2008_01_39_37_+1000_G+agD/SO.gWcaygL--
+James
