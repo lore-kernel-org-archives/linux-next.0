@@ -1,41 +1,75 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH 2/2] acpi: Disable IRQ 0 through I/O APIC for some HP systems
-Date: Mon, 7 Jul 2008 14:24:26 +0200
-Message-ID: <200807071424.27967.rjw@sisk.pl>
-References: <Pine.LNX.4.55.0807010055070.30785@cliff.in.clinika.pl> <20080707071706.GA3326@elte.hu> <20080707073635.GA22946@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: scsi tree build failure
+Date: Mon, 7 Jul 2008 22:25:28 +1000
+Message-ID: <20080707222528.280f0b9e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20080707073635.GA22946@elte.hu>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__7_Jul_2008_22_25_28_+1000_ExoozYY/ENnpcRiK"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:38904 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753427AbYGGMZg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Jul 2008 08:25:36 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, Robert Jennings <rcj@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org, benh@kernel.crashing.org
+
+--Signature=_Mon__7_Jul_2008_22_25_28_+1000_ExoozYY/ENnpcRiK
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-Sender: linux-acpi-owner@vger.kernel.org
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Matthew Garrett <mjg59@srcf.ucam.org>, "Maciej W. Rozycki" <macro@linux-mips.org>, Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <andi@firstfloor.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Monday, 7 of July 2008, Ingo Molnar wrote:
-> 
-> * Ingo Molnar <mingo@elte.hu> wrote:
-> 
-> > > Please note two things:
-> > > (1) The whole acpi_dmi_table[] thing originally depended on __i386__, so it
-> > >     wouldn't work on x86-64 no matter what.  I removed that dependecy, but
-> > >     I have no idea why it was there and so I'm not sure if that's correct. 
-> > 
-> > > (2) The clear_IO_APIC_pin(apic1, pin1) done if 
-> > >     disable_irq0_through_ioapic is true is absolutely essential.  The 
-> > >     symptoms are 100% reproducible without it.
-> > 
-> > thanks, applied to tip/x86, to give this some more testing.
-> 
-> i know you havent submitted this for inclusion yet, but FYI it wont 
-> build on 32-bit with a config like:
-> 
->  http://redhat.com/~mingo/misc/config-Mon_Jul__7_09_22_45_CEST_2008.bad
+Hi James,
 
-Well, I wrote it was missing the i386 part. ;-)
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-Thanks,
-Rafael
+drivers/scsi/ibmvscsi/ibmvscsi.c: In function 'map_sg_data':
+drivers/scsi/ibmvscsi/ibmvscsi.c:431: error: 'FW_FEATURE_CMO' undeclared (f=
+irst use in this function)
+drivers/scsi/ibmvscsi/ibmvscsi.c:431: error: (Each undeclared identifier is=
+ reported only once
+drivers/scsi/ibmvscsi/ibmvscsi.c:431: error: for each function it appears i=
+n.)
+drivers/scsi/ibmvscsi/ibmvscsi.c: In function 'ibmvscsi_queuecommand':
+drivers/scsi/ibmvscsi/ibmvscsi.c:750: error: 'FW_FEATURE_CMO' undeclared (f=
+irst use in this function)
+drivers/scsi/ibmvscsi/ibmvscsi.c: In function 'send_mad_adapter_info':
+drivers/scsi/ibmvscsi/ibmvscsi.c:864: error: 'FW_FEATURE_CMO' undeclared (f=
+irst use in this function)
+drivers/scsi/ibmvscsi/ibmvscsi.c: In function 'ibmvscsi_do_host_config':
+drivers/scsi/ibmvscsi/ibmvscsi.c:1412: error: 'FW_FEATURE_CMO' undeclared (=
+first use in this function)
+drivers/scsi/ibmvscsi/ibmvscsi.c: At top level:
+drivers/scsi/ibmvscsi/ibmvscsi.c:1769: error: unknown field 'get_io_entitle=
+ment' specified in initializer
+drivers/scsi/ibmvscsi/ibmvscsi.c:1769: warning: missing braces around initi=
+alizer
+drivers/scsi/ibmvscsi/ibmvscsi.c:1769: warning: (near initialization for 'i=
+bmvscsi_driver.driver')
+drivers/scsi/ibmvscsi/ibmvscsi.c:1769: warning: initialization from incompa=
+tible pointer type
+
+Caused because commit 341b56db6804040aa9559e913865108424e3b18b ("[SCSI]
+ibmvscsi: driver enablement for CMO"), which was 15/16 in a series, has
+been merged before any of the other patches in the series.  I have
+reverted that commit.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__7_Jul_2008_22_25_28_+1000_ExoozYY/ENnpcRiK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhyCzgACgkQjjKRsyhoI8yojACcDVtsntcsfDNO7xbqF+W2reIG
+yJ0An1et/D1PIvSpeisIrGdELm4zpv0/
+=S0yo
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__7_Jul_2008_22_25_28_+1000_ExoozYY/ENnpcRiK--
