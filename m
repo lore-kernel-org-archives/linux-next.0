@@ -1,66 +1,54 @@
-From: Mike Travis <travis@sgi.com>
-Subject: Re: linux-next: zero based percpu build error on s390
-Date: Mon, 07 Jul 2008 10:58:14 -0700
-Message-ID: <48725936.2050503@sgi.com>
-References: <20080703193009.GA8958@osiris.boeblingen.de.ibm.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH 2/2] acpi: Disable IRQ 0 through I/O APIC for some HP systems
+Date: Mon, 7 Jul 2008 20:03:47 +0200
+Message-ID: <200807072003.48228.rjw@sisk.pl>
+References: <Pine.LNX.4.55.0807010055070.30785@cliff.in.clinika.pl> <200807071423.48425.rjw@sisk.pl> <Pine.LNX.4.55.0807071435160.16767@cliff.in.clinika.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay2.sgi.com ([192.48.171.30]:45409 "EHLO relay.sgi.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1756093AbYGGR6P (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Jul 2008 13:58:15 -0400
-In-Reply-To: <20080703193009.GA8958@osiris.boeblingen.de.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754144AbYGGSB7@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.55.0807071435160.16767@cliff.in.clinika.pl>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Maciej W. Rozycki" <macro@linux-mips.org>
+Cc: Ingo Molnar <mingo@elte.hu>, Matthew Garrett <mjg59@srcf.ucam.org>, Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <andi@firstfloor.org>
+List-Id: linux-next.vger.kernel.org
 
-Heiko Carstens wrote:
-> The patch:
-> "Zero based percpu: infrastructure to rebase the per cpu area to zero"
+On Monday, 7 of July 2008, Maciej W. Rozycki wrote:
+> On Mon, 7 Jul 2008, Rafael J. Wysocki wrote:
 > 
-> causes this build error on !CONFIG_SMP on linux-next / s390:
+> > >  It makes absolutely no sense and should be harmful to call
+> > > clear_IO_APIC_pin(apic1, pin1) here, because both apic1 and pin1 should be
+> > > equal to -1 here.  If it has to be called, then I suppose the DMI matching 
+> > > did not work and the workaround has not been enabled.
+> > 
+> > Do you realize that the clear_IO_APIC_pin(apic1, pin1) thing is _only_ called
+> > _IF_ the DMI matching did work?
 > 
->   CC      arch/s390/kernel/asm-offsets.s
-> In file included from include/asm/percpu.h:35,
->                  from include/linux/percpu.h:9,
->                  from include/linux/rcupdate.h:39,
->                  from include/linux/pid.h:4,
->                  from include/linux/sched.h:74,
->                  from arch/s390/kernel/asm-offsets.c:7:
-> include/asm-generic/percpu.h:78:1: warning: "SHIFT_PERCPU_PTR" redefined
-> In file included from include/linux/percpu.h:9,
->                  from include/linux/rcupdate.h:39,
->                  from include/linux/pid.h:4,
->                  from include/linux/sched.h:74,
->                  from arch/s390/kernel/asm-offsets.c:7:
-> include/asm/percpu.h:25:1: warning: this is the location of the previous definition
-> 
-> Fix below. Please merge with original patch.
-> 
-> Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-> ---
->  include/asm-generic/percpu.h |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> Index: linux-next/include/asm-generic/percpu.h
-> ===================================================================
-> --- linux-next.orig/include/asm-generic/percpu.h
-> +++ linux-next/include/asm-generic/percpu.h
-> @@ -75,7 +75,9 @@ extern void setup_per_cpu_areas(void);
->  #define per_cpu(var, cpu)			(*((void)(cpu), &per_cpu_var(var)))
->  #define __get_cpu_var(var)			per_cpu_var(var)
->  #define __raw_get_cpu_var(var)			per_cpu_var(var)
-> -#define SHIFT_PERCPU_PTR(__p, __offset)		(__p)
-> +#ifndef SHIFT_PERCPU_PTR
-> +# define SHIFT_PERCPU_PTR(__p, __offset)		(__p)
-> +#endif
->  #define per_cpu_offset(x)			0L
->  
->  #endif	/* SMP */
+>  Well, it is the very intent of the DMI quirk to set apic1 and pin1 both
+> to -1, as a result of IRQ0 being absent from our I/O APIC interrupt
+> routing table.  Therefore if the quirk did indeed work, a call to
+> clear_IO_APIC_pin() is useless and likely harmful as its callees don't do
+> range checking (my understanding of code is it results in random poking at
+> the local APIC through the FIX_APIC_BASE fixmap).  There should be nothing
+> to clear too, as interrupt redirection entries for all the I/O APIC inputs
+> are cleared (the mask is set to 1 and the remaining fields zeroed) when
+> clear_IO_APIC() is called from enable_IO_APIC() upon initialization and
+> all the unused ones (not referred to from anywhere in the interrupt
+> routing table) are never touched afterwards.
 
-Looks good to me, thanks!  (Not sure why I missed this the first time.)
+Sorry, the patch I posted was _instead_ of your previous patch with the quirk,
+because that patch didn't work.  I don't know why it didn't work, however, I
+can only say it didn't work after removing the __i386__ dependency of
+acpi_dmi_table[].
 
-Acked-by: Mike Travis <travis@sgi.com>
+My patch is on top of the linux-next tree that didn't contain your patch.
+So, my patch adds a quirk that sets disable_irq0_through_ioapic to 1 (this
+variable is defined differently in my patch) and uses it to skip the part of
+check_timer() that breaks my box.
+
+I hope that makes things clear.
+
+Thanks,
+Rafael
