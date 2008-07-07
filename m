@@ -1,32 +1,66 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the sched tree
-Date: Mon, 7 Jul 2008 08:16:34 +0200
-Message-ID: <20080707061634.GA23191@elte.hu>
-References: <20080707142114.7985a9dd.sfr@canb.auug.org.au> <20080707060251.GA16144@elte.hu>
+From: Andi Kleen <andi@firstfloor.org>
+Subject: Re: ACPI git trees and vacation
+Date: Mon, 07 Jul 2008 08:17:31 +0200
+Message-ID: <4871B4FB.5020205@firstfloor.org>
+References: <48711391.6090608@firstfloor.org> <20080707095659.a1b486e1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:49199 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751380AbYGGGQy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Jul 2008 02:16:54 -0400
-Content-Disposition: inline
-In-Reply-To: <20080707060251.GA16144@elte.hu>
+Received: from one.firstfloor.org ([213.235.205.2]:55556 "EHLO
+	one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751421AbYGGGRg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jul 2008 02:17:36 -0400
+In-Reply-To: <20080707095659.a1b486e1.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Franck Bui-Huu <fbuihuu@gmail.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-acpi@vger.kernel.org, akpm@osdl.org, linux-next@vger.kernel.org
 
+Stephen Rothwell wrote:
+> Hi Andi,
+> 
+> On Sun, 06 Jul 2008 20:48:49 +0200 Andi Kleen <andi@firstfloor.org> wrote:
+>> The trees for the next ACPI merge are at git.kernel.org now
+>> These are based on Len's branches with some additional patches.
+>>
+>> (based on Linus' tree aka 2.6.26rc9)
+>> git://git.kernel.org/pub/scm/linux/kernel/git/ak/linux-acpi-2.6.git release
+>> Intended for the 2.6.27 merge
+> 
+> If that is true ..
+> 
+>> git://git.kernel.org/pub/scm/git/linux/kernel/ak/linux-acpi-2.6.git test
+> 
+> Then why is linux-next tracking that?
 
-* Ingo Molnar <mingo@elte.hu> wrote:
+It is tracking Len's tree not mine, right?
 
-> Well, it might have made sense a month or two ago, but now we are a 
-> week before the merge window so all this does is extra merge 
-> complications for me and others. So lets wait a week until 
-> tip/core/rcu hits upstream and then all these complications are 
-> resolved in one go, ok?
+Right now my only has a few patches difference, but it will be growing.
 
-i.e. next time we see this pattern we should just do the header stub (or 
-API stub) immediately, upstream.
+Or did you switch already to mine?
 
-	Ingo
+> 
+>> (based on Linux next for patches with dependencies)
+>> git://git.kernel.org/pub/scm/linux/kernel/git/ak/linux-next-acpi.git
+> 
+> Is there something we can do about those dependencies?
+
+It's some patches from Henrique that require rfkill changes
+in the net tree. I'm also not happy about that (it complicates
+everything here), but cannot do much about it.
+
+>> This is not quite yet the full state intended for the merge, a few
+>> patches are still missing.
+> 
+> So what is missing, and why should we merge stuff in 2.6.27 that we don't
+> see until the merge window?  (Not trying to be antagonistic, just asking
+> about procedure and wondering why stuff for 2.6.27 is still not in
+> linux-next.)
+
+Because they're small fixes and would go in later anyways.
+
+And because I haven't gone through all of them yet due to time
+reasons, but I cannot say categorically I'll delay them all.
+
+-Andi
