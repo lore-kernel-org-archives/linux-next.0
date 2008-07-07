@@ -1,38 +1,64 @@
-From: Andi Kleen <andi@firstfloor.org>
-Subject: Re: [PATCH -next] acpi utmisc: use WARN_ON() instead of warn_on_slowpath()
-Date: Mon, 07 Jul 2008 08:19:08 +0200
-Message-ID: <4871B55C.7040009@firstfloor.org>
-References: <20080701103339.b5acc1f3.randy.dunlap@oracle.com>	<20080701131714.5093fa49.akpm@linux-foundation.org>	<23433248.1214943818230.JavaMail.oracle@acsmt302.oracle.com>	<20080701133535.f92a673c.akpm@linux-foundation.org>	<20080702112852.05f30950.randy.dunlap@oracle.com>	<486BCDDC.1000709@firstfloor.org>	<20080702121424.a3451eae.akpm@linux-foundation.org>	<486BD785.5050207@firstfloor.org>	<20080702124316.61cc76e9.akpm@linux-foundation.org>	<486BE0DA.2090108@firstfloor.org>	<20080702133540.20d578cd.akpm@linux-foundation.org>	<486BEA68.7000801@firstfloor.org>	<20080702140216.334011a4.akpm@linux-foundation.org>	<486BEE0D.3030901@firstfloor.org>	<20080702141459.e6d6feaa.akpm@linux-foundation.org>	<alpine.LFD.1.10.0807061307280.24417@localhost.localdomain> <20080706115221.582e905a@infradea
- d.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the cpus4096 tree
+Date: Mon, 7 Jul 2008 16:20:10 +1000
+Message-ID: <20080707162010.58305a91.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20080706115221.582e905a@infradead.org>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Arjan van de Ven <arjan@infradead.org>
-Cc: Len Brown <lenb@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, randy.dunlap@oracle.com, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:52981 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751460AbYGGGUO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Jul 2008 02:20:14 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>
 
-Arjan van de Ven wrote:
-> On Sun, 06 Jul 2008 13:18:56 -0400 (EDT)
-> Len Brown <lenb@kernel.org> wrote:
->  
->> Arjan tells me that we'll have a real WARN()
->> with prink semantics in 2.6.27 and so we can
->> simplify/standardize this when that happens.
->>
->> Oh, and since I'm on sabbatical, I'm obviously
->> fine with whatever Andi Kleen does (or does not do here)
->> in my absence.
-> 
-> I'm finishing up the series to introduce (in -mm) and use it
-> (various extra patches).. Want me to just include the ACPI part of this
-> as well, or do you want to feed that separately?
+Hi all,
 
-I'm dropping the ACPI part because we're getting too many
-reports of scary looking backtraces and ACPI exceptions are actually
-not that exceptional.
+Today's linux-next merge of the cpus4096 tree needed the fixup below.  As
+you know, Linus' tree now has trivial definitions of next_cpu_nr,
+cpus_weight_nr and for_each_cpu_mask_nr.  The merge mechanics did not
+notice this automatically so I had to remove the old definitions from
+cpumask.h.
 
--Andi
+It would be nice if you could do the merge with Linus' tree
+yourself and fix this within the cpus4096 tree tree.
 
+Also, it would be nice if some of the other subsystems that need changing
+could be sent the patches to do that.  It would reduce the conflicts in
+linux-next and during the merge window for Linus.
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+>From 0b848f997ba0ef132356c829114d898e0a51c045 Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 7 Jul 2008 15:59:04 +1000
+Subject: [PATCH] cpumask: fixup API change merge
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/cpumask.h |    4 ----
+ 1 files changed, 0 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
+index 47418b1..80226e7 100644
+--- a/include/linux/cpumask.h
++++ b/include/linux/cpumask.h
+@@ -394,10 +394,6 @@ int __next_cpu_nr(int n, const cpumask_t *srcp);
+ 
+ #endif /* NR_CPUS > 64 */
+ 
+-#define next_cpu_nr(n, src)		next_cpu(n, src)
+-#define cpus_weight_nr(cpumask)		cpus_weight(cpumask)
+-#define for_each_cpu_mask_nr(cpu, mask)	for_each_cpu_mask(cpu, mask)
+-
+ /*
+  * The following particular system cpumasks and operations manage
+  * possible, present and online cpus.  Each of them is a fixed size
+-- 
+1.5.6
