@@ -1,36 +1,95 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH 2/2] acpi: Disable IRQ 0 through I/O APIC for some HP
-	systems
-Date: Mon, 7 Jul 2008 09:36:35 +0200
-Message-ID: <20080707073635.GA22946@elte.hu>
-References: <Pine.LNX.4.55.0807010055070.30785@cliff.in.clinika.pl> <20080701202453.GD4896@elte.hu> <200807070102.38854.rjw@sisk.pl> <200807070319.29470.rjw@sisk.pl> <20080707071706.GA3326@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: kbuild tree build failure
+Date: Mon, 7 Jul 2008 18:40:38 +1000
+Message-ID: <20080707184038.aaeb8d40.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754449AbYGGHhL@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__7_Jul_2008_18_40_38_+1000_O4.54/cNxjJYk_g5"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:52246 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752653AbYGGIkx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Jul 2008 04:40:53 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: linux-next@vger.kernel.org, Roman Zippel <zippel@linux-m68k.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org
+
+--Signature=_Mon__7_Jul_2008_18_40_38_+1000_O4.54/cNxjJYk_g5
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20080707071706.GA3326@elte.hu>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Matthew Garrett <mjg59@srcf.ucam.org>, "Maciej W. Rozycki" <macro@linux-mips.org>, Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <andi@firstfloor.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
+Hi Sam,
 
-* Ingo Molnar <mingo@elte.hu> wrote:
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-> > Please note two things:
-> > (1) The whole acpi_dmi_table[] thing originally depended on __i386__, so it
-> >     wouldn't work on x86-64 no matter what.  I removed that dependecy, but
-> >     I have no idea why it was there and so I'm not sure if that's correct. 
-> 
-> > (2) The clear_IO_APIC_pin(apic1, pin1) done if 
-> >     disable_irq0_through_ioapic is true is absolutely essential.  The 
-> >     symptoms are 100% reproducible without it.
-> 
-> thanks, applied to tip/x86, to give this some more testing.
+arch/powerpc/platforms/cell/spu_base.c: In function '__spu_trap_data_seg':
+arch/powerpc/platforms/cell/spu_base.c:194: error: duplicate case value
+arch/powerpc/platforms/cell/spu_base.c:177: error: previously used here
 
-i know you havent submitted this for inclusion yet, but FYI it wont 
-build on 32-bit with a config like:
+This means that USER_REGION_ID (line 177) is the same as KERNEL_REGION_ID
+(line 194).
 
- http://redhat.com/~mingo/misc/config-Mon_Jul__7_09_22_45_CEST_2008.bad
+>From include/asm-powerpc/pgtable-ppc64.h:
 
-	Ingo
+#define REGION_SHIFT            60UL
+#define REGION_MASK             (0xfUL << REGION_SHIFT)
+#define REGION_ID(ea)           (((unsigned long)(ea)) >> REGION_SHIFT)
+
+#define VMALLOC_REGION_ID       (REGION_ID(VMALLOC_START))
+#define KERNEL_REGION_ID        (REGION_ID(PAGE_OFFSET))
+#define VMEMMAP_REGION_ID       (0xfUL)
+#define USER_REGION_ID          (0UL)
+
+>From include/asm-powerpc/page.h:
+
+#define PAGE_OFFSET     ASM_CONST(CONFIG_PAGE_OFFSET)
+
+>From .config:
+
+CONFIG_PAGE_OFFSET=3D0xffffffff
+
+Not good.
+
+>From arch/powerpc/Kconfig (ADVANCED_OPTIONS is not set):
+
+config PAGE_OFFSET_BOOL
+        bool "Set custom page offset address"
+        depends on ADVANCED_OPTIONS
+
+config PAGE_OFFSET
+        hex "Virtual address of memory base" if PAGE_OFFSET_BOOL
+        default "0xc0000000"
+
+if PPC64
+config PAGE_OFFSET
+        hex
+        default "0xc000000000000000"
+endif
+
+Reverting commit 9ba4ff5059e1a26698786373c8c71321c37ef7f9 ("kconfig:
+normalize int/hex values") seems to have fixed it.
+
+>From .config:
+
+CONFIG_PAGE_OFFSET=3D0xc000000000000000
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__7_Jul_2008_18_40_38_+1000_O4.54/cNxjJYk_g5
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhx1ocACgkQjjKRsyhoI8ysuQCeK23Z5k0PdIVbykT+ah1fVEJk
+KusAoL9IYklG+H+0LgRSAT2Yx+B90ePB
+=iNYV
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__7_Jul_2008_18_40_38_+1000_O4.54/cNxjJYk_g5--
