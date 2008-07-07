@@ -1,51 +1,43 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the generic-ipi tree
-Date: Tue, 8 Jul 2008 02:46:52 +1000
-Message-ID: <20080708024652.3ede4029.sfr@canb.auug.org.au>
+Subject: linux-next: no next-20080707 tree
+Date: Tue, 8 Jul 2008 03:04:46 +1000
+Message-ID: <20080708030446.35face59.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__8_Jul_2008_02_46_52_+1000_OJkjPLrnmMNDuudQ"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54225 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753356AbYGGQq7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Jul 2008 12:46:59 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>, Jens Axboe <jens.axboe@oracle.com>
-Cc: linux-next@vger.kernel.org, Yinghai Lu <yhlu.kernel@gmail.com>
+ boundary="Signature=_Tue__8_Jul_2008_03_04_46_+1000_4QVVTa5nBrCMV590"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755901AbYGGRFJ@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__8_Jul_2008_02_46_52_+1000_OJkjPLrnmMNDuudQ
+--Signature=_Tue__8_Jul_2008_03_04_46_+1000_4QVVTa5nBrCMV590
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ingo,
+Hi all,
 
-Today's linux-next merge of the generic-ipi tree got a conflict in
-arch/x86/kernel/setup.c between commit
-f31174007a74d6866968a37520c40e7d0e11cb5a ("Merge commit
-'pci/linux-next'") from the merge of the pci tree and commit
-a37ec98ac0a44bd0314c20ce866a33091055a6b6 ("x86: move reserve_setup_data
-to setup.c") from the generic-ipi tree.
+It has just take too long.  I will try again for 20080708.
 
-Just a contextual conflict.  I fixed it up and will carry the fix.
+Hopefully some of things that held me up will be fixed (or at least I am
+prewarned :-)
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__8_Jul_2008_02_46_52_+1000_OJkjPLrnmMNDuudQ
+--Signature=_Tue__8_Jul_2008_03_04_46_+1000_4QVVTa5nBrCMV590
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkhySHwACgkQjjKRsyhoI8yw5ACdHB9m0e+0YZY6c2B6y0M8tqDC
-N5cAoJolbQDk2Yw/gwujZsCpwnfonm4W
-=Rz2z
+iEYEARECAAYFAkhyTK4ACgkQjjKRsyhoI8wNCQCfRjK+MDpdijiV0/3Ja2/LN/ad
+YdwAoI4j8R7h05+Fr9YX/cBeQuE07zu+
+=jyuB
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__8_Jul_2008_02_46_52_+1000_OJkjPLrnmMNDuudQ--
+--Signature=_Tue__8_Jul_2008_03_04_46_+1000_4QVVTa5nBrCMV590--
