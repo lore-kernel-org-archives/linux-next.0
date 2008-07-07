@@ -1,55 +1,54 @@
-From: "Maciej W. Rozycki" <macro@linux-mips.org>
-Subject: Re: [PATCH 2/2] acpi: Disable IRQ 0 through I/O APIC for some HP
- systems
-Date: Mon, 7 Jul 2008 12:41:53 +0100 (BST)
-Message-ID: <Pine.LNX.4.55.0807071224491.16767@cliff.in.clinika.pl>
-References: <Pine.LNX.4.55.0807010055070.30785@cliff.in.clinika.pl>
- <20080701202453.GD4896@elte.hu> <200807070102.38854.rjw@sisk.pl>
- <200807070319.29470.rjw@sisk.pl> <20080707071706.GA3326@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the scsi tree
+Date: Mon, 7 Jul 2008 22:18:26 +1000
+Message-ID: <20080707221826.5f0f6328.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__7_Jul_2008_22_18_26_+1000_XYrcaPRDnHPgbyEL"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kirk.serum.com.pl ([213.77.9.205]:64431 "EHLO serum.com.pl"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752945AbYGGLnr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Jul 2008 07:43:47 -0400
-In-Reply-To: <20080707071706.GA3326@elte.hu>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46723 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753133AbYGGMSg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Jul 2008 08:18:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Matthew Garrett <mjg59@srcf.ucam.org>, Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <andi@firstfloor.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, Cornelia Huck <cornelia.huck@de.ibm.com>, Greg KH <greg@kroah.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Swen Schillig <swen@vnet.ibm.com>
 
-On Mon, 7 Jul 2008, Ingo Molnar wrote:
+--Signature=_Mon__7_Jul_2008_22_18_26_+1000_XYrcaPRDnHPgbyEL
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > Please note two things:
-> > (1) The whole acpi_dmi_table[] thing originally depended on __i386__, so it
-> >     wouldn't work on x86-64 no matter what.  I removed that dependecy, but
-> >     I have no idea why it was there and so I'm not sure if that's correct. 
+Hi James,
 
- Well spottedd -- perhaps the x86-64 was though to be perfect. ;)
+Today's linux-next merge of the scsi tree got a conflict in
+drivers/s390/scsi/zfcp_aux.c and drivers/s390/scsi/zfcp_def.h between
+commits 714cd445eab1ba6ec24afaa51665b9c355077bd9 ("s390:
+bus_id -> dev_set_name() changes") and
+42706c68125c56182cef0ea67e4096bd965e3d42 ("s390: more bus_id -> dev_name
+conversions") from the driver-core tree and various commits from the scsi
+tree.
 
-> > (2) The clear_IO_APIC_pin(apic1, pin1) done if 
-> >     disable_irq0_through_ioapic is true is absolutely essential.  The 
-> >     symptoms are 100% reproducible without it.
-> 
-> thanks, applied to tip/x86, to give this some more testing.
-> 
-> the clear_IO_APIC_pin() is the most worrisome aspect of the change - but 
-> since we are already in limited quirk mode, does it hurt? Maciej, any 
-> preferences?
+I have fixed it up and can carry the fixups, though the dev_set_name and
+dev_name conversions could now be applied to the s390 drivers (as I am
+sure Greg has supplied patches to do).
 
- It makes absolutely no sense and should be harmful to call
-clear_IO_APIC_pin(apic1, pin1) here, because both apic1 and pin1 should be
-equal to -1 here.  If it has to be called, then I suppose the DMI matching 
-did not work and the workaround has not been enabled.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
- Rafael, can you please provide a full bootstrap log obtained with all the
-changes, but *without* this part?  Also, can you please verify DMI IDs of
-your system (dmidecode or /sys/class/dmi, I am told)?
+--Signature=_Mon__7_Jul_2008_22_18_26_+1000_XYrcaPRDnHPgbyEL
+Content-Type: application/pgp-signature
 
- I do think we should record DMI vendor and name information in the
-bootstrap log.  It won't take a lot of space and will be more useful than
-some other IDs we never use for anything else, which we obtain from some
-other tables.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-  Maciej
+iEYEARECAAYFAkhyCZIACgkQjjKRsyhoI8xGmgCfdiQYoRMpjR2i6ZIqLFW3B93/
+wcQAnAwO06uSGREOWPb6HbTbA4+Xarhj
+=2Smv
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__7_Jul_2008_22_18_26_+1000_XYrcaPRDnHPgbyEL--
