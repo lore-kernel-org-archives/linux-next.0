@@ -1,75 +1,74 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: scsi tree build failure
-Date: Mon, 7 Jul 2008 22:25:28 +1000
-Message-ID: <20080707222528.280f0b9e.sfr@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH 2/2] acpi: Disable IRQ 0 through I/O APIC for some HP systems
+Date: Mon, 7 Jul 2008 14:28:52 +0200
+Message-ID: <200807071428.53598.rjw@sisk.pl>
+References: <Pine.LNX.4.55.0807010055070.30785@cliff.in.clinika.pl> <20080707071706.GA3326@elte.hu> <Pine.LNX.4.55.0807071224491.16767@cliff.in.clinika.pl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__7_Jul_2008_22_25_28_+1000_ExoozYY/ENnpcRiK"
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38904 "EHLO smtps.tip.net.au"
+Received: from ogre.sisk.pl ([217.79.144.158]:60430 "EHLO ogre.sisk.pl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753427AbYGGMZg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Jul 2008 08:25:36 -0400
+	id S1753102AbYGGM0o (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Jul 2008 08:26:44 -0400
+In-Reply-To: <Pine.LNX.4.55.0807071224491.16767@cliff.in.clinika.pl>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-next@vger.kernel.org, Robert Jennings <rcj@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org, benh@kernel.crashing.org
+To: "Maciej W. Rozycki" <macro@linux-mips.org>
+Cc: Ingo Molnar <mingo@elte.hu>, Matthew Garrett <mjg59@srcf.ucam.org>, Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <andi@firstfloor.org>
 
---Signature=_Mon__7_Jul_2008_22_25_28_+1000_ExoozYY/ENnpcRiK
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Monday, 7 of July 2008, Maciej W. Rozycki wrote:
+> On Mon, 7 Jul 2008, Ingo Molnar wrote:
+> 
+> > > Please note two things:
+> > > (1) The whole acpi_dmi_table[] thing originally depended on __i386__, so it
+> > >     wouldn't work on x86-64 no matter what.  I removed that dependecy, but
+> > >     I have no idea why it was there and so I'm not sure if that's correct. 
+> 
+>  Well spottedd -- perhaps the x86-64 was though to be perfect. ;)
+> 
+> > > (2) The clear_IO_APIC_pin(apic1, pin1) done if 
+> > >     disable_irq0_through_ioapic is true is absolutely essential.  The 
+> > >     symptoms are 100% reproducible without it.
+> > 
+> > thanks, applied to tip/x86, to give this some more testing.
+> > 
+> > the clear_IO_APIC_pin() is the most worrisome aspect of the change - but 
+> > since we are already in limited quirk mode, does it hurt? Maciej, any 
+> > preferences?
+> 
+>  It makes absolutely no sense and should be harmful to call
+> clear_IO_APIC_pin(apic1, pin1) here, because both apic1 and pin1 should be
+> equal to -1 here.  If it has to be called, then I suppose the DMI matching 
+> did not work and the workaround has not been enabled.
 
-Hi James,
+BTW, did you even to look at the code _as_ _is_ in linux-next?
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+In fact, it is _impossible_ that either apic1 or pin1 are equal to -1 at this
+point, because of this part:
 
-drivers/scsi/ibmvscsi/ibmvscsi.c: In function 'map_sg_data':
-drivers/scsi/ibmvscsi/ibmvscsi.c:431: error: 'FW_FEATURE_CMO' undeclared (f=
-irst use in this function)
-drivers/scsi/ibmvscsi/ibmvscsi.c:431: error: (Each undeclared identifier is=
- reported only once
-drivers/scsi/ibmvscsi/ibmvscsi.c:431: error: for each function it appears i=
-n.)
-drivers/scsi/ibmvscsi/ibmvscsi.c: In function 'ibmvscsi_queuecommand':
-drivers/scsi/ibmvscsi/ibmvscsi.c:750: error: 'FW_FEATURE_CMO' undeclared (f=
-irst use in this function)
-drivers/scsi/ibmvscsi/ibmvscsi.c: In function 'send_mad_adapter_info':
-drivers/scsi/ibmvscsi/ibmvscsi.c:864: error: 'FW_FEATURE_CMO' undeclared (f=
-irst use in this function)
-drivers/scsi/ibmvscsi/ibmvscsi.c: In function 'ibmvscsi_do_host_config':
-drivers/scsi/ibmvscsi/ibmvscsi.c:1412: error: 'FW_FEATURE_CMO' undeclared (=
-first use in this function)
-drivers/scsi/ibmvscsi/ibmvscsi.c: At top level:
-drivers/scsi/ibmvscsi/ibmvscsi.c:1769: error: unknown field 'get_io_entitle=
-ment' specified in initializer
-drivers/scsi/ibmvscsi/ibmvscsi.c:1769: warning: missing braces around initi=
-alizer
-drivers/scsi/ibmvscsi/ibmvscsi.c:1769: warning: (near initialization for 'i=
-bmvscsi_driver.driver')
-drivers/scsi/ibmvscsi/ibmvscsi.c:1769: warning: initialization from incompa=
-tible pointer type
+	/*
+	 * Some BIOS writers are clueless and report the ExtINTA
+	 * I/O APIC input from the cascaded 8259A as the timer
+	 * interrupt input.  So just in case, if only one pin
+	 * was found above, try it both directly and through the
+	 * 8259A.
+	 */
+	if (pin1 == -1) {
+		pin1 = pin2;
+		apic1 = apic2;
+		no_pin1 = 1;
+	} else if (pin2 == -1) {
+		pin2 = pin1;
+		apic2 = apic1;
+	}
 
-Caused because commit 341b56db6804040aa9559e913865108424e3b18b ("[SCSI]
-ibmvscsi: driver enablement for CMO"), which was 15/16 in a series, has
-been merged before any of the other patches in the series.  I have
-reverted that commit.
+that originates from your patch.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+End even without this part apic1 and pin1 are _not_ equal to -1 on this box
+(apic2 and pin2 are, but that's a different matter).
 
---Signature=_Mon__7_Jul_2008_22_25_28_+1000_ExoozYY/ENnpcRiK
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhyCzgACgkQjjKRsyhoI8yojACcDVtsntcsfDNO7xbqF+W2reIG
-yJ0An1et/D1PIvSpeisIrGdELm4zpv0/
-=S0yo
------END PGP SIGNATURE-----
-
---Signature=_Mon__7_Jul_2008_22_25_28_+1000_ExoozYY/ENnpcRiK--
+Thanks,
+Rafael
