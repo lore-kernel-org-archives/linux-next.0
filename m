@@ -1,40 +1,80 @@
-From: "Maciej W. Rozycki" <macro@linux-mips.org>
-Subject: Re: [PATCH 2/2] acpi: Disable IRQ 0 through I/O APIC for some HP
- systems
-Date: Mon, 7 Jul 2008 21:30:48 +0100 (BST)
-Message-ID: <Pine.LNX.4.55.0807072125190.20615@cliff.in.clinika.pl>
-References: <Pine.LNX.4.55.0807010055070.30785@cliff.in.clinika.pl>
- <20080701202453.GD4896@elte.hu> <200807070102.38854.rjw@sisk.pl>
- <200807070319.29470.rjw@sisk.pl> <Pine.LNX.4.55.0807072054310.20615@cliff.in.clinika.pl>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: linux-next: kbuild tree build failure
+Date: Mon, 7 Jul 2008 23:01:04 +0200
+Message-ID: <20080707210104.GB23647@uranus.ravnborg.org>
+References: <20080707184038.aaeb8d40.sfr@canb.auug.org.au> <Pine.LNX.4.64.0807071424240.6791@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.55.0807072054310.20615@cliff.in.clinika.pl>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Ingo Molnar <mingo@elte.hu>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Matthew Garrett <mjg59@srcf.ucam.org>, Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <andi@firstfloor.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from pasmtpa.tele.dk ([80.160.77.114]:47891 "EHLO pasmtpA.tele.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754267AbYGGVAR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Jul 2008 17:00:17 -0400
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.64.0807071424240.6791@localhost.localdomain>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Roman Zippel <zippel@linux-m68k.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org
 
-On Mon, 7 Jul 2008, Maciej W. Rozycki wrote:
-
->  Ingo, from the sequence above, I gather this code is currently in the 
-> tree:
+On Mon, Jul 07, 2008 at 06:13:55PM +0200, Roman Zippel wrote:
+> Hi,
 > 
-> -	replace_pin_at_irq(0, 0, 0, apic1, pin1);
-> -	apic1 = 0;
-> -	pin1 = 0;
+> On Mon, 7 Jul 2008, Stephen Rothwell wrote:
 > 
-> Please revert the change which introduced it.  While I recall posting a
-> patch which added code like this, I clearly stated it was solely for
-> diagnostics of Rafael's system and not to apply to any tree.
+> > Hi Sam,
+> > 
+> > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> > 
+> > arch/powerpc/platforms/cell/spu_base.c: In function '__spu_trap_data_seg':
+> > arch/powerpc/platforms/cell/spu_base.c:194: error: duplicate case value
+> > arch/powerpc/platforms/cell/spu_base.c:177: error: previously used here
+> 
+> I guess there also has been a kconfig warning somewhere. :)
+> I should have gone through all archs to test this, sorry about that.
+> Luckily it's only powerpc that uses 64bit values. I would prefer to 
+> standardize on 32bit values, as it doesn't really make sense to expect 
+> from the user to input full 64bit values and it's easy to generate the 
+> full value in a header. This would also ease on any portability issues 
+> (kconfig is compiled with the host compiler not the target compiler).
+> 
+> Below is a patch that fixes this for all archs (generated against the git 
+> tree). The powerpc parts need a more careful review, the rest isn't really 
+> critical.
+> 
+> bye, Roman
 
- I have had a look at the tree and there are two commits containing
-diagnostic code that should have never been applied to the tree.  Their 
-IDs in the linux-next tree are as follows:
+Hi Roman.
 
-90221a61a71b7ad659d8741cf1e404506b174982
-a74a1cc3df0be89658bc735c8aed80c8392e2c15
+>From your patch:
 
-Please revert them both.  Thanks.
+>  config PINT3_ASSIGN
+>  	hex "PINT3_ASSIGN"
+>  	depends on PINTx_REASSIGN
+> -	default 0x02020303
+> +	default 0x2020303
 
-  Maciej
+
+But ths change actually decrease readability of the
+value. Before we had 4x2 hex characters. But now we have 3x2 + 1x1.
+Does this check really by us enough to warrant this?
+
+I am aware that the check is implmented by:
+
++                       str = strdup_type(def_sym->name, sym->type);
++                       if (strcmp(str, def_sym->name)) {
++                               prop_warn(prop,
++                                       "default for config symbol '%s'"
++                                       " should be %s", sym->name, str);
++                               prop->expr->left.sym = sym_lookup(str, SYMBOL_CO
++                       }
++                       free(str);
+                        break;
+
+Could we soften this check a little maybe?
+At least so we accept leading null's.
+
+As for the patch in general I will await an ack from powerpc
+before applying it.
+
+	Sam
