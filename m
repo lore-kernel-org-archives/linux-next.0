@@ -1,38 +1,62 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH 2/2] acpi: Disable IRQ 0 through I/O APIC for some HP
-	systems
-Date: Mon, 7 Jul 2008 09:17:06 +0200
-Message-ID: <20080707071706.GA3326@elte.hu>
-References: <Pine.LNX.4.55.0807010055070.30785@cliff.in.clinika.pl> <20080701202453.GD4896@elte.hu> <200807070102.38854.rjw@sisk.pl> <200807070319.29470.rjw@sisk.pl>
+From: "Vegard Nossum" <vegard.nossum@gmail.com>
+Subject: Re: next-0704: WARNING: at kernel/sched.c:4254 add_preempt_count; PANIC
+Date: Mon, 7 Jul 2008 09:32:41 +0200
+Message-ID: <19f34abd0807070032wb6a2d50s99de5950132016f5@mail.gmail.com>
+References: <487159DA.708@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754103AbYGGHcy@vger.kernel.org>
+In-Reply-To: <487159DA.708@gmail.com>
 Content-Disposition: inline
-In-Reply-To: <200807070319.29470.rjw@sisk.pl>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Matthew Garrett <mjg59@srcf.ucam.org>, "Maciej W. Rozycki" <macro@linux-mips.org>, Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <andi@firstfloor.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, mingo@elte.hu, linux-mm@kvack.org
 List-Id: linux-next.vger.kernel.org
 
+On Mon, Jul 7, 2008 at 1:48 AM, Alexander Beregalov
+<a.beregalov@gmail.com> wrote:
+> Hi
+>
+> WARNING: at kernel/sched.c:4254 add_preempt_count+0x61/0x63()
+> Modules linked in: i2c_nforce2
+> Pid: 3620, comm: rtorrent Not tainted 2.6.26-rc8-next-20080704 #5
+>  [<c038e436>] ? printk+0xf/0x11
+>  [<c011b681>] warn_on_slowpath+0x41/0x7b
+>  [<c0157a94>] ? mmap_region+0x1c5/0x414
+>  [<c0156499>] ? remove_vma+0x50/0x56
+>  [<c0159836>] ? anon_vma_prepare+0x52/0xc5
+...
 
-* Rafael J. Wysocki <rjw@sisk.pl> wrote:
+> BUG: unable to handle kernel paging request at fffef4f1
+> IP: [<c0103c53>] dump_trace+0xa5/0xe2
+> *pde = 00007067 *pte = 00000000
+> Oops: 0000 [#1] PREEMPT DEBUG_PAGEALLOC
+> last sysfs file: /sys/devices/pci0000:00/0000:00:1e.0/0000:02:00.1/class
+> Modules linked in: i2c_nforce2
+>
+> Pid: 3620, comm: rtorrent Not tainted (2.6.26-rc8-next-20080704 #5)
+> EIP: 0060:[<c0103c53>] EFLAGS: 00210097 CPU: 0
+> EIP is at dump_trace+0xa5/0xe2
+> EAX: fffefffc EBX: fffef4f1 ECX: c0396978 EDX: c0455a08
+> ESI: 5a5a5a5a EDI: f4d4c084 EBP: f4d4bf34 ESP: f4d4bf14
 
-> Appended is a patch that actually works for me (it's missing the i386 
-> part, but I can't test that anyway).
-> 
-> Please note two things:
-> (1) The whole acpi_dmi_table[] thing originally depended on __i386__, so it
->     wouldn't work on x86-64 no matter what.  I removed that dependecy, but
->     I have no idea why it was there and so I'm not sure if that's correct. 
+^--- POISON_INUSE
 
-> (2) The clear_IO_APIC_pin(apic1, pin1) done if 
->     disable_irq0_through_ioapic is true is absolutely essential.  The 
->     symptoms are 100% reproducible without it.
+But I don't know if this is really significant, given that it's not
+the first error you're getting. It may also be just a remnant of the
+memset() that marks the SLUB objects as such. (Or something like
+that.)
 
-thanks, applied to tip/x86, to give this some more testing.
+Too bad the recursive page fault stops us from getting the Code: line.
 
-the clear_IO_APIC_pin() is the most worrisome aspect of the change - but 
-since we are already in limited quirk mode, does it hurt? Maciej, any 
-preferences?
+Config would be nice :-)
 
-	Ingo
+
+Vegard
+
+-- 
+"The animistic metaphor of the bug that maliciously sneaked in while
+the programmer was not looking is intellectually dishonest as it
+disguises that the error is the programmer's own creation."
+	-- E. W. Dijkstra, EWD1036
