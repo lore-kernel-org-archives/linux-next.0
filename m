@@ -1,97 +1,60 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH 2/2] acpi: Disable IRQ 0 through I/O APIC for some HP systems
-Date: Mon, 7 Jul 2008 20:09:32 +0200
-Message-ID: <200807072009.33513.rjw@sisk.pl>
-References: <Pine.LNX.4.55.0807010055070.30785@cliff.in.clinika.pl> <200807071428.53598.rjw@sisk.pl> <Pine.LNX.4.55.0807071743280.20615@cliff.in.clinika.pl>
+From: "Maciej W. Rozycki" <macro@linux-mips.org>
+Subject: Re: [PATCH 2/2] acpi: Disable IRQ 0 through I/O APIC for some HP
+ systems
+Date: Mon, 7 Jul 2008 20:59:47 +0100 (BST)
+Message-ID: <Pine.LNX.4.55.0807072054310.20615@cliff.in.clinika.pl>
+References: <Pine.LNX.4.55.0807010055070.30785@cliff.in.clinika.pl>
+ <20080701202453.GD4896@elte.hu> <200807070102.38854.rjw@sisk.pl>
+ <200807070319.29470.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.55.0807071743280.20615@cliff.in.clinika.pl>
-Content-Disposition: inline
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Maciej W. Rozycki" <macro@linux-mips.org>
-Cc: Ingo Molnar <mingo@elte.hu>, Matthew Garrett <mjg59@srcf.ucam.org>, Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <andi@firstfloor.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from kirk.serum.com.pl ([213.77.9.205]:61913 "EHLO serum.com.pl"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1755441AbYGGUAt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Jul 2008 16:00:49 -0400
+In-Reply-To: <200807070319.29470.rjw@sisk.pl>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>, "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Matthew Garrett <mjg59@srcf.ucam.org>, Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <andi@firstfloor.org>
 
-On Monday, 7 of July 2008, Maciej W. Rozycki wrote:
-> On Mon, 7 Jul 2008, Rafael J. Wysocki wrote:
-> 
-> > BTW, did you even to look at the code _as_ _is_ in linux-next?
-> 
->  Well, I hope it has not changed too much since my recent work in this 
-> area...
+On Mon, 7 Jul 2008, Rafael J. Wysocki wrote:
 
-Please look at it.
+> @@ -1714,12 +1721,14 @@ static inline void __init check_timer(vo
+>  		apic2 = apic1;
+>  	}
+>  
+> -	replace_pin_at_irq(0, 0, 0, apic1, pin1);
+> -	apic1 = 0;
+> -	pin1 = 0;
+> -	setup_timer_IRQ0_pin(apic1, pin1, cfg->vector);
+> +	if (disable_irq0_through_ioapic) {
+> +		clear_IO_APIC_pin(apic1, pin1);
+> +	} else {
+> +		replace_pin_at_irq(0, 0, 0, apic1, pin1);
+> +		apic1 = 0;
+> +		pin1 = 0;
+> +		setup_timer_IRQ0_pin(apic1, pin1, cfg->vector);
+>  
+> -	if (pin1 != -1) {
+>  		/*
+>  		 * Ok, does IRQ0 through the IOAPIC work?
+>  		 */
 
-> > In fact, it is _impossible_ that either apic1 or pin1 are equal to -1 at this
-> > point, because of this part:
-> 
->  With the workaround activated it is virtually certain.
+ This is completely broken -- you cannot blindly assume IRQ0 is wired to
+the pin #0 of the I/O APIC #0.  You have to respect routing information
+provided by the system.
 
-Which workaround?
+ Ingo, from the sequence above, I gather this code is currently in the 
+tree:
 
-There are no any workarounds related to this problem in the 20080704 linux-next
-and that's what my patch was against.
+-	replace_pin_at_irq(0, 0, 0, apic1, pin1);
+-	apic1 = 0;
+-	pin1 = 0;
 
-> > 	/*
-> > 	 * Some BIOS writers are clueless and report the ExtINTA
-> > 	 * I/O APIC input from the cascaded 8259A as the timer
-> > 	 * interrupt input.  So just in case, if only one pin
-> > 	 * was found above, try it both directly and through the
-> > 	 * 8259A.
-> > 	 */
-> > 	if (pin1 == -1) {
-> > 		pin1 = pin2;
-> > 		apic1 = apic2;
-> > 		no_pin1 = 1;
-> > 	} else if (pin2 == -1) {
-> > 		pin2 = pin1;
-> > 		apic2 = apic1;
-> > 	}
-> > 
-> > that originates from your patch.
-> 
->  And the conclusion is?  If we leave MP-table setups aside as irrelevant
-> for this configuration, we can be almost certain apic2 and pin2 are both
-> equal to -1 at this point.  This is because (unlike the MP table) ACPI has
-> no provisions in its tables for ExtINTA APIC interrupt inputs.  Therefore
-> the only case apic2 and pin2 may not be equal -1 here is when the firmware
-> had set up one of the inputs as such in the hardware before initiating
-> bootstrap which has been subsequently noted by a piece of code in
-> enable_IO_APIC() which examines the I/O APIC for such a condition.
-> 
->  I have taken these circumstances very much into account when preparing
-> the workaround, based on the assumption that if the firmware has set up an
-> I/O APIC line as an ExtINTA interrupt, then it means it considers it
-> suitable to use in such a manner.  This furthermore implies the line
-> should be safe to be used in any valid 8259A mode of operation, such as
-> one we use to forward IRQ0 transparently through the 8259A (we
-> double-check it just in case though, as workarounds for hardware bugs in
-> the past made it not always true).  The workaround therefore applies to
-> genuine IRQ0 routing as reported by ACPI only and not any possible legacy
-> ExtINTA fallback that we may attempt to use.
-> 
->  Of course, as determined previously, the ExtINTA line is not safe to be
-> used on your box, but it has not been set up by the firmware as an ExtINTA
-> interrupt either, so the assumption mentioned above remains valid and has
-> no negative impact on your system.  At this point all of apic1, apic2,
-> pin1 and pin2 should be equal -1, which means the reassignments you quoted
-> make no changes to the variables.
-> 
-> > End even without this part apic1 and pin1 are _not_ equal to -1 on this box
-> > (apic2 and pin2 are, but that's a different matter).
-> 
->  Which means the workaround has not triggered and the rest of cosideration 
-> is therefore irrelevant.  Please get us these DMI IDs, so that we can see 
-> what's wrong with the quirk.
+Please revert the change which introduced it.  While I recall posting a
+patch which added code like this, I clearly stated it was solely for
+diagnostics of Rafael's system and not to apply to any tree.
 
-I used those DMI IDs and your quirk didn't work, even after removing the
-dependency of acpi_dmi_table[] from __i386__.  For this reason, I prepared an
-alternative patch that did work and posted it for your information.
-
-Now, you're saying that my patch couldn't work, while in fact it did.
-
-Thanks,
-Rafael
+  Maciej
