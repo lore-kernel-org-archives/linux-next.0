@@ -1,81 +1,53 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: linux-next: kbuild tree build failure
-Date: Mon, 7 Jul 2008 14:51:38 +0200
-Message-ID: <20080707125138.GA16569@uranus.ravnborg.org>
-References: <20080707184038.aaeb8d40.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the selinux tree
+Date: Mon, 7 Jul 2008 22:51:30 +1000
+Message-ID: <20080707225130.ca52d527.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__7_Jul_2008_22_51_30_+1000_gCyiGP+x6mDs0NL7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pasmtpb.tele.dk ([80.160.77.98]:39069 "EHLO pasmtpB.tele.dk"
+Received: from chilli.pcug.org.au ([203.10.76.44]:39404 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751857AbYGGMuv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Jul 2008 08:50:51 -0400
-Content-Disposition: inline
-In-Reply-To: <20080707184038.aaeb8d40.sfr@canb.auug.org.au>
+	id S1752592AbYGGMvm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Jul 2008 08:51:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Roman Zippel <zippel@linux-m68k.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org
+To: James Morris <jmorris@namei.org>, Eric Paris <eparis@redhat.com>, Stephen Smalley <sds@tycho.nsa.gov>, Paul Moore <paul.moore@hp.com>
+Cc: linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-On Mon, Jul 07, 2008 at 06:40:38PM +1000, Stephen Rothwell wrote:
-> Hi Sam,
-> 
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> 
-> arch/powerpc/platforms/cell/spu_base.c: In function '__spu_trap_data_seg':
-> arch/powerpc/platforms/cell/spu_base.c:194: error: duplicate case value
-> arch/powerpc/platforms/cell/spu_base.c:177: error: previously used here
-> 
-> This means that USER_REGION_ID (line 177) is the same as KERNEL_REGION_ID
-> (line 194).
-> 
-> From include/asm-powerpc/pgtable-ppc64.h:
-> 
-> #define REGION_SHIFT            60UL
-> #define REGION_MASK             (0xfUL << REGION_SHIFT)
-> #define REGION_ID(ea)           (((unsigned long)(ea)) >> REGION_SHIFT)
-> 
-> #define VMALLOC_REGION_ID       (REGION_ID(VMALLOC_START))
-> #define KERNEL_REGION_ID        (REGION_ID(PAGE_OFFSET))
-> #define VMEMMAP_REGION_ID       (0xfUL)
-> #define USER_REGION_ID          (0UL)
-> 
-> From include/asm-powerpc/page.h:
-> 
-> #define PAGE_OFFSET     ASM_CONST(CONFIG_PAGE_OFFSET)
-> 
-> From .config:
-> 
-> CONFIG_PAGE_OFFSET=0xffffffff
-> 
-> Not good.
-> 
-> From arch/powerpc/Kconfig (ADVANCED_OPTIONS is not set):
-> 
-> config PAGE_OFFSET_BOOL
->         bool "Set custom page offset address"
->         depends on ADVANCED_OPTIONS
-> 
-> config PAGE_OFFSET
->         hex "Virtual address of memory base" if PAGE_OFFSET_BOOL
->         default "0xc0000000"
-> 
-> if PPC64
-> config PAGE_OFFSET
->         hex
->         default "0xc000000000000000"
-> endif
-> 
-> Reverting commit 9ba4ff5059e1a26698786373c8c71321c37ef7f9 ("kconfig:
-> normalize int/hex values") seems to have fixed it.
-> 
-> From .config:
-> 
-> CONFIG_PAGE_OFFSET=0xc000000000000000
+--Signature=_Mon__7_Jul_2008_22_51_30_+1000_gCyiGP+x6mDs0NL7
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I see what is wrong - we use a int to hold the value above
-and it does not fit.
+Hi all,
 
-Will fix tonight or tomorrow.
+Today's linux-next merge of the selinux tree got a conflict in
+fs/proc/task_mmu.c between commit
+5d7e0d2bd98ef4f5a16ac9da1987ae655368dd6a ("Fix pagemap_read() use of
+struct mm_walk") from Linus' tree and commit
+ca9b1a1413bac6ea5e5c8cb81044a39bdb3b4bc8 ("Security: split proc ptrace
+checking into read vs. attach") from the selinux tree.
 
-	Sam
+The former removed some of the code that the latter changed.  It is
+probably worth a check on the code in pagemap_read to make sure I got it
+right.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__7_Jul_2008_22_51_30_+1000_gCyiGP+x6mDs0NL7
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkhyEVIACgkQjjKRsyhoI8xMSQCgo+oWAcgXJCgxDsE+mP8klGKZ
+TdMAniuWu/U6J/IazlJb4lYHPTVaGRvN
+=nj7J
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__7_Jul_2008_22_51_30_+1000_gCyiGP+x6mDs0NL7--
