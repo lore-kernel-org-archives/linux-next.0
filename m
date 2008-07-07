@@ -1,54 +1,66 @@
-From: "Ray Lee" <ray-lk@madrabbit.org>
-Subject: Re: [PATCH 2/2] acpi: Disable IRQ 0 through I/O APIC for some HP systems
-Date: Mon, 7 Jul 2008 10:51:37 -0700
-Message-ID: <2c0942db0807071051v68bd2a28kc6617de7d414f06d@mail.gmail.com>
-References: <Pine.LNX.4.55.0807010055070.30785@cliff.in.clinika.pl>
-	 <20080707071706.GA3326@elte.hu>
-	 <Pine.LNX.4.55.0807071224491.16767@cliff.in.clinika.pl>
-	 <200807071428.53598.rjw@sisk.pl>
-	 <Pine.LNX.4.55.0807071743280.20615@cliff.in.clinika.pl>
+From: Mike Travis <travis@sgi.com>
+Subject: Re: linux-next: zero based percpu build error on s390
+Date: Mon, 07 Jul 2008 10:58:14 -0700
+Message-ID: <48725936.2050503@sgi.com>
+References: <20080703193009.GA8958@osiris.boeblingen.de.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rv-out-0506.google.com ([209.85.198.239]:36427 "EHLO
-	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754161AbYGGRvi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jul 2008 13:51:38 -0400
-Received: by rv-out-0506.google.com with SMTP id k40so2790868rvb.1
-        for <linux-next@vger.kernel.org>; Mon, 07 Jul 2008 10:51:38 -0700 (PDT)
-In-Reply-To: <Pine.LNX.4.55.0807071743280.20615@cliff.in.clinika.pl>
-Content-Disposition: inline
+Received: from relay2.sgi.com ([192.48.171.30]:45409 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1756093AbYGGR6P (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Jul 2008 13:58:15 -0400
+In-Reply-To: <20080703193009.GA8958@osiris.boeblingen.de.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Maciej W. Rozycki" <macro@linux-mips.org>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Ingo Molnar <mingo@elte.hu>, Matthew Garrett <mjg59@srcf.ucam.org>, Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <andi@firstfloor.org>
+To: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org
 
-On Mon, Jul 7, 2008 at 10:10 AM, Maciej W. Rozycki <macro@linux-mips.org> wrote:
->  Which means the workaround has not triggered and the rest of cosideration
-> is therefore irrelevant.  Please get us these DMI IDs, so that we can see
-> what's wrong with the quirk.
+Heiko Carstens wrote:
+> The patch:
+> "Zero based percpu: infrastructure to rebase the per cpu area to zero"
+> 
+> causes this build error on !CONFIG_SMP on linux-next / s390:
+> 
+>   CC      arch/s390/kernel/asm-offsets.s
+> In file included from include/asm/percpu.h:35,
+>                  from include/linux/percpu.h:9,
+>                  from include/linux/rcupdate.h:39,
+>                  from include/linux/pid.h:4,
+>                  from include/linux/sched.h:74,
+>                  from arch/s390/kernel/asm-offsets.c:7:
+> include/asm-generic/percpu.h:78:1: warning: "SHIFT_PERCPU_PTR" redefined
+> In file included from include/linux/percpu.h:9,
+>                  from include/linux/rcupdate.h:39,
+>                  from include/linux/pid.h:4,
+>                  from include/linux/sched.h:74,
+>                  from arch/s390/kernel/asm-offsets.c:7:
+> include/asm/percpu.h:25:1: warning: this is the location of the previous definition
+> 
+> Fix below. Please merge with original patch.
+> 
+> Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+> ---
+>  include/asm-generic/percpu.h |    4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> Index: linux-next/include/asm-generic/percpu.h
+> ===================================================================
+> --- linux-next.orig/include/asm-generic/percpu.h
+> +++ linux-next/include/asm-generic/percpu.h
+> @@ -75,7 +75,9 @@ extern void setup_per_cpu_areas(void);
+>  #define per_cpu(var, cpu)			(*((void)(cpu), &per_cpu_var(var)))
+>  #define __get_cpu_var(var)			per_cpu_var(var)
+>  #define __raw_get_cpu_var(var)			per_cpu_var(var)
+> -#define SHIFT_PERCPU_PTR(__p, __offset)		(__p)
+> +#ifndef SHIFT_PERCPU_PTR
+> +# define SHIFT_PERCPU_PTR(__p, __offset)		(__p)
+> +#endif
+>  #define per_cpu_offset(x)			0L
+>  
+>  #endif	/* SMP */
 
-I have the nx6125 version of the laptop, though it's not long for this
-world. Regardless, dmi data below. Earlier, I looked at your DMI match
-strings up-thread and they seemed good, so you may be barking up the
-wrong tree here.
+Looks good to me, thanks!  (Not sure why I missed this the first time.)
 
-ray@phoenix:~$ sudo grep . /sys/class/dmi/id/*
-/sys/class/dmi/id/bios_date:03/10/2006
-/sys/class/dmi/id/bios_vendor:Hewlett-Packard
-/sys/class/dmi/id/bios_version:68DTT Ver. F.0E
-/sys/class/dmi/id/board_name:308B
-/sys/class/dmi/id/board_vendor:Hewlett-Packard
-/sys/class/dmi/id/board_version:KBC Version 45.26
-/sys/class/dmi/id/chassis_asset_tag:
-/sys/class/dmi/id/chassis_serial:CND5500R4K
-/sys/class/dmi/id/chassis_type:10
-/sys/class/dmi/id/chassis_vendor:Hewlett-Packard
-/sys/class/dmi/id/modalias:dmi:bvnHewlett-Packard:bvr68DTTVer.F.0E:bd03/10/2006:svnHewlett-Packard:pnHPCompaqnx6125(PZ880UA#ABA):pvrF.0E:rvnHewlett-Packard:rn308B:rvrKBCVersion45.26:cvnHewlett-Packard:ct10:cvr:
-/sys/class/dmi/id/product_name:HP Compaq nx6125 (PZ880UA#ABA)
-/sys/class/dmi/id/product_serial:CND5500R4K
-/sys/class/dmi/id/product_uuid:4D0AF52B-ED6E-DA11-1880-66990A524D29
-/sys/class/dmi/id/product_version:F.0E
-/sys/class/dmi/id/sys_vendor:Hewlett-Packard
-/sys/class/dmi/id/uevent:MODALIAS=dmi:bvnHewlett-Packard:bvr68DTTVer.F.0E:bd03/10/2006:svnHewlett-Packard:pnHPCompaqnx6125(PZ880UA#ABA):pvrF.0E:rvnHewlett-Packard:rn308B:rvrKBCVersion45.26:cvnHewlett-Packard:ct10:cvr:
+Acked-by: Mike Travis <travis@sgi.com>
