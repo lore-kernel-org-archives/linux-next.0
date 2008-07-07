@@ -1,50 +1,45 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: linux-next: scsi tree build failure
-Date: Mon, 07 Jul 2008 09:39:49 -0500
-Message-ID: <1215441589.3274.17.camel@localhost.localdomain>
-References: <20080707222528.280f0b9e.sfr@canb.auug.org.au>
+From: James Morris <jmorris@namei.org>
+Subject: Re: linux-next: manual merge of the selinux tree
+Date: Tue, 8 Jul 2008 00:43:56 +1000 (EST)
+Message-ID: <Xine.LNX.4.64.0807080042090.11950@us.intercode.com.au>
+References: <20080707225130.ca52d527.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <20080707222528.280f0b9e.sfr@canb.auug.org.au>
-Sender: linux-scsi-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from namei.org ([69.55.235.186]:60904 "EHLO us.intercode.com.au"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753426AbYGGOof (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Jul 2008 10:44:35 -0400
+In-Reply-To: <20080707225130.ca52d527.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Robert Jennings <rcj@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org, benh@kernel.crashing.org, linux-scsi <linux-scsi@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: Eric Paris <eparis@redhat.com>, Stephen Smalley <sds@tycho.nsa.gov>, Paul Moore <paul.moore@hp.com>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-Correct cc's added
+On Mon, 7 Jul 2008, Stephen Rothwell wrote:
 
-On Mon, 2008-07-07 at 22:25 +1000, Stephen Rothwell wrote:
-> Hi James,
+> Hi all,
 > 
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> Today's linux-next merge of the selinux tree got a conflict in
+> fs/proc/task_mmu.c between commit
+> 5d7e0d2bd98ef4f5a16ac9da1987ae655368dd6a ("Fix pagemap_read() use of
+> struct mm_walk") from Linus' tree and commit
+> ca9b1a1413bac6ea5e5c8cb81044a39bdb3b4bc8 ("Security: split proc ptrace
+> checking into read vs. attach") from the selinux tree.
 > 
-> drivers/scsi/ibmvscsi/ibmvscsi.c: In function 'map_sg_data':
-> drivers/scsi/ibmvscsi/ibmvscsi.c:431: error: 'FW_FEATURE_CMO' undeclared (first use in this function)
-> drivers/scsi/ibmvscsi/ibmvscsi.c:431: error: (Each undeclared identifier is reported only once
-> drivers/scsi/ibmvscsi/ibmvscsi.c:431: error: for each function it appears in.)
-> drivers/scsi/ibmvscsi/ibmvscsi.c: In function 'ibmvscsi_queuecommand':
-> drivers/scsi/ibmvscsi/ibmvscsi.c:750: error: 'FW_FEATURE_CMO' undeclared (first use in this function)
-> drivers/scsi/ibmvscsi/ibmvscsi.c: In function 'send_mad_adapter_info':
-> drivers/scsi/ibmvscsi/ibmvscsi.c:864: error: 'FW_FEATURE_CMO' undeclared (first use in this function)
-> drivers/scsi/ibmvscsi/ibmvscsi.c: In function 'ibmvscsi_do_host_config':
-> drivers/scsi/ibmvscsi/ibmvscsi.c:1412: error: 'FW_FEATURE_CMO' undeclared (first use in this function)
-> drivers/scsi/ibmvscsi/ibmvscsi.c: At top level:
-> drivers/scsi/ibmvscsi/ibmvscsi.c:1769: error: unknown field 'get_io_entitlement' specified in initializer
-> drivers/scsi/ibmvscsi/ibmvscsi.c:1769: warning: missing braces around initializer
-> drivers/scsi/ibmvscsi/ibmvscsi.c:1769: warning: (near initialization for 'ibmvscsi_driver.driver')
-> drivers/scsi/ibmvscsi/ibmvscsi.c:1769: warning: initialization from incompatible pointer type
-> 
-> Caused because commit 341b56db6804040aa9559e913865108424e3b18b ("[SCSI]
-> ibmvscsi: driver enablement for CMO"), which was 15/16 in a series, has
-> been merged before any of the other patches in the series.  I have
-> reverted that commit.
+> The former removed some of the code that the latter changed.  It is
+> probably worth a check on the code in pagemap_read to make sure I got it
+> right.
 
-Do I detect the fact that IBM sent a patch for a SCSI driver for which
-the core features weren't yet enabled (and which I couldn't check, not
-having a ppc build system)?
+I couldn't locate your updated version, but have resolved it in my own 
+tree (which is being rebased).  
 
-James
+One thing we need to understand is why there were two separate 
+ptrace_may_attach() calls in the earlier version of pagemap_read().
 
 
+
+- James
+-- 
+James Morris
+<jmorris@namei.org>
