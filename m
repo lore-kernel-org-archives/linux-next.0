@@ -1,30 +1,34 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH 2/2] acpi: Disable IRQ 0 through I/O APIC for some HP systems
-Date: Tue, 8 Jul 2008 00:10:41 +0200
-Message-ID: <200807080010.42603.rjw@sisk.pl>
-References: <Pine.LNX.4.55.0807010055070.30785@cliff.in.clinika.pl> <200807072231.57925.rjw@sisk.pl> <Pine.LNX.4.55.0807072239170.20615@cliff.in.clinika.pl>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: linux-next: scsi tree build failure
+Date: Tue, 08 Jul 2008 08:48:42 +1000
+Message-ID: <1215470922.8970.150.camel@pasglop>
+References: <20080707222528.280f0b9e.sfr@canb.auug.org.au>
+	 <1215441589.3274.17.camel@localhost.localdomain>
+	 <1215468350.8970.129.camel@pasglop>
+	 <1215468479.3274.42.camel@localhost.localdomain>
+Reply-To: benh@kernel.crashing.org
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.55.0807072239170.20615@cliff.in.clinika.pl>
-Content-Disposition: inline
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Maciej W. Rozycki" <macro@linux-mips.org>
-Cc: Ingo Molnar <mingo@elte.hu>, Matthew Garrett <mjg59@srcf.ucam.org>, Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <andi@firstfloor.org>, Andreas Herrmann <andreas.herrmann3@amd.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from gate.crashing.org ([63.228.1.57]:54593 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757998AbYGGWtA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Jul 2008 18:49:00 -0400
+In-Reply-To: <1215468479.3274.42.camel@localhost.localdomain>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Robert Jennings <rcj@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org, linux-scsi <linux-scsi@vger.kernel.org>
 
-On Monday, 7 of July 2008, Maciej W. Rozycki wrote:
-> On Mon, 7 Jul 2008, Rafael J. Wysocki wrote:
-> 
-> > So I'm going to apply the appended combined patch on top of linux-next and
-> > retest.
-> 
->  Wonderful!  Thanks for your patience and cooperation.
+On Mon, 2008-07-07 at 17:07 -0500, James Bottomley wrote:
 
-Unfortunately, it hangs solid very early on boot, before earlyprintk=vga
-kicks in.
+> I thought it was all done and dusted (which is why I put it in
+> scsi-misc).  However, now Brian King seems to have some late arriving
+> comments.
 
-Thanks,
-Rafael
+There are comments on the whole serie yup, I haven't put it in the
+tree yet. 
+
+Cheers,
+Ben.
