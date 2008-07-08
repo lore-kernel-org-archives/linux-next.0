@@ -1,94 +1,51 @@
-From: Roman Zippel <zippel@linux-m68k.org>
-Subject: Re: linux-next: kbuild tree build failure
-Date: Tue, 8 Jul 2008 04:55:49 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.0807080437550.6791@localhost.localdomain>
-References: <20080707184038.aaeb8d40.sfr@canb.auug.org.au>
- <Pine.LNX.4.64.0807071424240.6791@localhost.localdomain>
- <1215473798.8138.4.camel@localhost>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the acpi tree
+Date: Tue, 8 Jul 2008 12:59:26 +1000
+Message-ID: <20080708125926.5bf64056.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__8_Jul_2008_12_59_26_+1000_kz.H13DDxQhljju2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp-vbr13.xs4all.nl ([194.109.24.33]:4453 "EHLO
-	smtp-vbr13.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754920AbYGHC4N (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jul 2008 22:56:13 -0400
-In-Reply-To: <1215473798.8138.4.camel@localhost>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48896 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755984AbYGHC7c (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Jul 2008 22:59:32 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Ellerman <michael@ellerman.id.au>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Paul Mackerras <paulus@samba.org>, linux-next@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>, linuxppc-dev@ozlabs.org
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Jesse Barnes <jbarnes@virtuousgeek.org>
 
-Hi,
+--Signature=_Tue__8_Jul_2008_12_59_26_+1000_kz.H13DDxQhljju2
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 8 Jul 2008, Michael Ellerman wrote:
+Hi Len,
 
-> I don't really see why it "doesn't make sense" for users to input 64-bit
-> values, they're configuring addresses for a 64-bit kernel, so some of
-> the values are going to be 64 bit.
+Today's linux-next merge of the acpi tree got conflicts in
+drivers/pci/pci.c and drivers/pci/pci.h between commit
+961d9120fa6f078492a1c762dd91f2c097e56c83 ("PCI: Introduce
+platform_pci_power_manageable function") from the pci tree and commit
+d40f76ca5c165c9ff1490bbbdb34c520d7155c1f ("PCI ACPI: Drop the second
+argument of platform_pci_choose_state") from the acpi tree (which is also
+in the pci tree).
 
-Do you really expect users to insert random 64bit addresses without making 
-a mistake?
-Please make a realistic case, where the user input of a full 64bit value 
-is required (i.e. where it's not easier to just offer the user a few 
-choices).
-Currently there is simply no need for this, as even powerpc only used them 
-as constants here.
+The former removes the code that the latter modifies.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-> > Index: linux-2.6/arch/powerpc/Kconfig
-> > ===================================================================
-> > --- linux-2.6.orig/arch/powerpc/Kconfig
-> > +++ linux-2.6/arch/powerpc/Kconfig
-> > @@ -714,8 +714,8 @@ config PHYSICAL_START_BOOL
-> >  
-> >  config PHYSICAL_START
-> >  	hex "Physical address where the kernel is loaded" if PHYSICAL_START_BOOL
-> > -	default "0x02000000" if PPC_STD_MMU && CRASH_DUMP
-> > -	default "0x00000000"
-> > +	default "0x2000000" if PPC_STD_MMU && CRASH_DUMP
-> > +	default "0"
-> >  
-> >  config PHYSICAL_ALIGN
-> >  	hex
-> > @@ -763,7 +763,7 @@ config CONSISTENT_SIZE_BOOL
-> >  
-> >  config CONSISTENT_SIZE
-> >  	hex "Size of consistent memory pool" if CONSISTENT_SIZE_BOOL
-> > -	default "0x00200000" if NOT_COHERENT_CACHE
-> > +	default "0x200000" if NOT_COHERENT_CACHE
-> >  
-> >  config PIN_TLB
-> >  	bool "Pinned Kernel TLBs (860 ONLY)"
-> > @@ -773,15 +773,11 @@ endmenu
-> >  if PPC64
-> >  config PAGE_OFFSET
-> >  	hex
-> > -	default "0xc000000000000000"
-> > -config KERNEL_START
-> > -	hex
-> > -	default "0xc000000002000000" if CRASH_DUMP
-> > -	default "0xc000000000000000"
-> > +	default "0xc0000000"
-> 
-> I don't see where you cope with the "if CRASH_DUMP" case, and in fact my
-> config changes for the worse when I apply your patch and regenerate my
-> config:
-> 
-> --- .config.orig	2008-07-08 09:30:00.000000000 +1000
-> +++ .config	2008-07-08 09:30:43.000000000 +1000
-> @@ -370,9 +370,8 @@
->  CONFIG_HOTPLUG_PCI_RPA=m
->  CONFIG_HOTPLUG_PCI_RPA_DLPAR=m
->  # CONFIG_HAS_RAPIDIO is not set
-> -CONFIG_PAGE_OFFSET=0xc000000000000000
-> -CONFIG_KERNEL_START=0xc000000002000000
-> -CONFIG_PHYSICAL_START=0x02000000
-> +CONFIG_PAGE_OFFSET=0xc0000000
-> +CONFIG_PHYSICAL_START=0x2000000
+--Signature=_Tue__8_Jul_2008_12_59_26_+1000_kz.H13DDxQhljju2
+Content-Type: application/pgp-signature
 
-Why is this worse? These are constants, you're not supposed to change them 
-anyway.
-The remaining values are generated in page.h and should be the same as 
-before. If that isn't the case and this patch produces a nonworking 
-kernel, I'd like to hear about it.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-bye, Roman
+iEYEARECAAYFAkhy2A4ACgkQjjKRsyhoI8wbXwCfVD0v/53sHZ+1Z6wXc5iTUrEf
+7I4AoKuyNc4eLU4+R5GTPmgzhAhlUTzK
+=CsL9
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__8_Jul_2008_12_59_26_+1000_kz.H13DDxQhljju2--
