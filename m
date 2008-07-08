@@ -1,85 +1,126 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] compat_ioctl: handle BLOCK=n, SCSI=n
-Date: Tue, 8 Jul 2008 14:23:54 -0700
-Message-ID: <20080708142354.76106541.randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for July 8 (ns8390)
+Date: Tue, 8 Jul 2008 14:47:15 -0700
+Message-ID: <20080708144715.a904d426.randy.dunlap@oracle.com>
+References: <20080708192251.3275d283.sfr@canb.auug.org.au>
+	<20080708113529.9297e1ad.randy.dunlap@oracle.com>
+	<20080708193513.51000246@the-village.bc.nu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753930AbYGHV1e@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
-Cc: jens.axboe@oracle.com, jejb <James.Bottomley@HansenPartnership.com>, akpm <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rgminet01.oracle.com ([148.87.113.118]:14167 "EHLO
+	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751192AbYGHVsn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Jul 2008 17:48:43 -0400
+In-Reply-To: <20080708193513.51000246@the-village.bc.nu>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, jgarzik@pobox.com
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Tue, 8 Jul 2008 19:35:13 +0100 Alan Cox wrote:
 
-Fix fs/compat_ioctl.c to handle CONFIG_BLOCK=n, CONFIG_SCSI=n
-to avoid build errors:
+> Diff between my tree 8390 bits and linux-next ones
+> 
+> 8390: diff between next and my driver
+> 
+> From: Alan Cox <alan@redhat.com>
+> 
+> Please try this and if it sorts it fold it into the driver. This is a diff
+> between my tree and the linux-next tree
 
-In file included from linux-next-20080708/include/scsi/scsi.h:12,
-                 from linux-next-20080708/fs/compat_ioctl.c:71:
-linux-next-20080708/include/scsi/scsi_cmnd.h:27:25: warning: "BLK_MAX_CDB" is not defined
-linux-next-20080708/include/scsi/scsi_cmnd.h:28:3: error: #error MAX_COMMAND_SIZE can not be bigger than BLK_MAX_CDB
-In file included from linux-next-20080708/include/scsi/scsi.h:12,
-                 from linux-next-20080708/fs/compat_ioctl.c:71:
-linux-next-20080708/include/scsi/scsi_cmnd.h: In function 'scsi_bidi_cmnd':
-linux-next-20080708/include/scsi/scsi_cmnd.h:182: error: implicit declaration of function 'blk_bidi_rq'
-linux-next-20080708/include/scsi/scsi_cmnd.h:183: error: dereferencing pointer to incomplete type
-linux-next-20080708/include/scsi/scsi_cmnd.h: In function 'scsi_in':
-linux-next-20080708/include/scsi/scsi_cmnd.h:189: error: dereferencing pointer to incomplete type
+Yes, that's good.  Thanks/Ack.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- fs/compat_ioctl.c |    6 ++++++
- 1 file changed, 6 insertions(+)
-
---- linux-next-20080708.orig/fs/compat_ioctl.c
-+++ linux-next-20080708/fs/compat_ioctl.c
-@@ -68,9 +68,11 @@
- #include <linux/capi.h>
- #include <linux/gigaset_dev.h>
- 
-+#ifdef CONFIG_BLOCK
- #include <scsi/scsi.h>
- #include <scsi/scsi_ioctl.h>
- #include <scsi/sg.h>
-+#endif
- 
- #include <asm/uaccess.h>
- #include <linux/ethtool.h>
-@@ -1965,6 +1967,7 @@ COMPATIBLE_IOCTL(GIO_UNISCRNMAP)
- COMPATIBLE_IOCTL(PIO_UNISCRNMAP)
- COMPATIBLE_IOCTL(PIO_FONTRESET)
- COMPATIBLE_IOCTL(PIO_UNIMAPCLR)
-+#ifdef CONFIG_BLOCK
- /* Big S */
- COMPATIBLE_IOCTL(SCSI_IOCTL_GET_IDLUN)
- COMPATIBLE_IOCTL(SCSI_IOCTL_DOORLOCK)
-@@ -1974,6 +1977,7 @@ COMPATIBLE_IOCTL(SCSI_IOCTL_GET_BUS_NUMB
- COMPATIBLE_IOCTL(SCSI_IOCTL_SEND_COMMAND)
- COMPATIBLE_IOCTL(SCSI_IOCTL_PROBE_HOST)
- COMPATIBLE_IOCTL(SCSI_IOCTL_GET_PCI)
-+#endif
- /* Big T */
- COMPATIBLE_IOCTL(TUNSETNOCSUM)
- COMPATIBLE_IOCTL(TUNSETDEBUG)
-@@ -2044,6 +2048,7 @@ COMPATIBLE_IOCTL(SIOCGIFVLAN)
- COMPATIBLE_IOCTL(SIOCSIFVLAN)
- COMPATIBLE_IOCTL(SIOCBRADDBR)
- COMPATIBLE_IOCTL(SIOCBRDELBR)
-+#ifdef CONFIG_BLOCK
- /* SG stuff */
- COMPATIBLE_IOCTL(SG_SET_TIMEOUT)
- COMPATIBLE_IOCTL(SG_GET_TIMEOUT)
-@@ -2068,6 +2073,7 @@ COMPATIBLE_IOCTL(SG_SCSI_RESET)
- COMPATIBLE_IOCTL(SG_GET_REQUEST_TABLE)
- COMPATIBLE_IOCTL(SG_SET_KEEP_ORPHAN)
- COMPATIBLE_IOCTL(SG_GET_KEEP_ORPHAN)
-+#endif
- /* PPP stuff */
- COMPATIBLE_IOCTL(PPPIOCGFLAGS)
- COMPATIBLE_IOCTL(PPPIOCSFLAGS)
-
+> ---
+> 
+>  drivers/net/hp-plus.c |    2 +-
+>  drivers/net/hp.c      |    2 +-
+>  drivers/net/ne.c      |    8 ++++----
+>  drivers/net/wd.c      |    2 +-
+>  4 files changed, 7 insertions(+), 7 deletions(-)
+> 
+> 
+> diff --git a/drivers/net/hp-plus.c b/drivers/net/hp-plus.c
+> index c2c4f49..8239939 100644
+> --- a/drivers/net/hp-plus.c
+> +++ b/drivers/net/hp-plus.c
+> @@ -262,7 +262,7 @@ static int __init hpp_probe1(struct net_device *dev, int ioaddr)
+>  	}
+>  
+>  	outw(Perf_Page, ioaddr + HP_PAGING);
+> -	NS8390_init(dev, 0);
+> +	NS8390p_init(dev, 0);
+>  	/* Leave the 8390 and HP chip reset. */
+>  	outw(inw(ioaddr + HPP_OPTION) & ~EnableIRQ, ioaddr + HPP_OPTION);
+>  
+> diff --git a/drivers/net/hp.c b/drivers/net/hp.c
+> index 8281209..0a8c649 100644
+> --- a/drivers/net/hp.c
+> +++ b/drivers/net/hp.c
+> @@ -389,7 +389,7 @@ static void __init
+>  hp_init_card(struct net_device *dev)
+>  {
+>  	int irq = dev->irq;
+> -	NS8390_init(dev, 0);
+> +	NS8390p_init(dev, 0);
+>  	outb_p(irqmap[irq&0x0f] | HP_RUN,
+>  		   dev->base_addr - NIC_OFFSET + HP_CONFIGURE);
+>  	return;
+> diff --git a/drivers/net/ne.c b/drivers/net/ne.c
+> index 1412697..4a8a4b1 100644
+> --- a/drivers/net/ne.c
+> +++ b/drivers/net/ne.c
+> @@ -355,7 +355,7 @@ static int __init ne_probe1(struct net_device *dev, unsigned long ioaddr)
+>  	}
+>  
+>  	/* Read the 16 bytes of station address PROM.
+> -	   We must first initialize registers, similar to NS8390_init(eifdev, 0).
+> +	   We must first initialize registers, similar to NS8390p_init(eifdev, 0).
+>  	   We can't reliably read the SAPROM address without this.
+>  	   (I learned the hard way!). */
+>  	{
+> @@ -536,7 +536,7 @@ static int __init ne_probe1(struct net_device *dev, unsigned long ioaddr)
+>  #ifdef CONFIG_NET_POLL_CONTROLLER
+>  	dev->poll_controller = eip_poll;
+>  #endif
+> -	NS8390_init(dev, 0);
+> +	NS8390p_init(dev, 0);
+>  
+>  	ret = register_netdev(dev);
+>  	if (ret)
+> @@ -794,7 +794,7 @@ retry:
+>  		if (time_after(jiffies, dma_start + 2*HZ/100)) {		/* 20ms */
+>  			printk(KERN_WARNING "%s: timeout waiting for Tx RDC.\n", dev->name);
+>  			ne_reset_8390(dev);
+> -			NS8390_init(dev,1);
+> +			NS8390p_init(dev,1);
+>  			break;
+>  		}
+>  
+> @@ -855,7 +855,7 @@ static int ne_drv_resume(struct platform_device *pdev)
+>  
+>  	if (netif_running(dev)) {
+>  		ne_reset_8390(dev);
+> -		NS8390_init(dev, 1);
+> +		NS8390p_init(dev, 1);
+>  		netif_device_attach(dev);
+>  	}
+>  	return 0;
+> diff --git a/drivers/net/wd.c b/drivers/net/wd.c
+> index fa14255..6f9aa16 100644
+> --- a/drivers/net/wd.c
+> +++ b/drivers/net/wd.c
+> @@ -337,7 +337,7 @@ static int __init wd_probe1(struct net_device *dev, int ioaddr)
+>  #ifdef CONFIG_NET_POLL_CONTROLLER
+>  	dev->poll_controller = ei_poll;
+>  #endif
+> -	NS8390_init(dev, 0);
+> +	NS8390p_init(dev, 0);
+>  
+>  #if 1
+>  	/* Enable interrupt generation on softconfig cards -- M.U */
+> --
 
 ---
 ~Randy
