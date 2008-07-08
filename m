@@ -1,45 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next:  stacktace build failure
-Date: Tue, 8 Jul 2008 22:15:40 +1000
-Message-ID: <20080708221540.9e0c0d2e.sfr@canb.auug.org.au>
+From: "Alexander Beregalov" <a.beregalov@gmail.com>
+Subject: next-0708: build failure at drivers/pci/pci-acpi.c
+Date: Tue, 8 Jul 2008 16:18:02 +0400
+Message-ID: <a4423d670807080518g31402f60j2f624a2ac2db03aa@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48645 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759755AbYGHMPo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Jul 2008 08:15:44 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: linux-next@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>, jbarnes@virtuousgeek.org, ak@linux.intel.com, lenb@kernel.org, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Ingo,
+Hi Rafael
 
-Today's linux-next build (spac64 allmodconfig) failed like this:
+drivers/pci/pci-acpi.c: In function 'acpi_pci_sleep_wake':
+drivers/pci/pci-acpi.c:311: error: implicit declaration of function
+'acpi_pm_device_sleep_wake'
 
-arch/sparc64/kernel/stacktrace.c:50: warning: type defaults to `int' in declaration of `EXPORT_SYMBOL_GPL'
-arch/sparc64/kernel/stacktrace.c:50: warning: parameter names (without types) in function declaration
-arch/sparc64/kernel/stacktrace.c:50: warning: data definition has no type or storage class
+drivers/pci/pci-acpi.c:
+309-static int acpi_pci_sleep_wake(struct pci_dev *dev, bool enable)
+310-{
+311:    int error = acpi_pm_device_sleep_wake(&dev->dev, enable);
 
-Signed-off-by: Stephen Rothwell <sf@canb.auug.org.au>
 
-diff --git a/arch/sparc64/kernel/stacktrace.c b/arch/sparc64/kernel/stacktrace.c
-index 49656ed..b3e3737 100644
---- a/arch/sparc64/kernel/stacktrace.c
-+++ b/arch/sparc64/kernel/stacktrace.c
-@@ -1,6 +1,7 @@
- #include <linux/sched.h>
- #include <linux/stacktrace.h>
- #include <linux/thread_info.h>
-+#include <linux/module.h>
- #include <asm/ptrace.h>
- #include <asm/stacktrace.h>
- 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
-P.S. this is not actually tested, but seems obvious.
+include/acpi/acpi_bus.h:
+381-#ifdef CONFIG_PM_SLEEP
+382-int acpi_pm_device_sleep_state(struct device *, int *);
+383:int acpi_pm_device_sleep_wake(struct device *, bool);
+384-#else /* !CONFIG_PM_SLEEP */
+385-static inline int acpi_pm_device_sleep_state(struct device *d, int *p)
+386-{
+387-    if (p)
+388-            *p = ACPI_STATE_D0;
+389-    return ACPI_STATE_D3;
+390-}
+391-#endif /* !CONFIG_PM_SLEEP */
