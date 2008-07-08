@@ -1,102 +1,66 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: manual merge of the net tree
-Date: Tue, 8 Jul 2008 16:23:22 +0200
-Message-ID: <200807081623.23564.rjw@sisk.pl>
-References: <20080708142759.18b9314a.sfr@canb.auug.org.au> <20080708060358.GA6610@yamamaya.is-a-geek.org>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+Subject: [PATCH linux-next] fix s390 compile error due to smp_call_function
+Date: Tue, 8 Jul 2008 16:25:50 +0200
+Message-ID: <200807081625.50437.borntraeger@de.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain;
-  charset="iso-2022-jp"
+  charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:39706 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752378AbYGHOVh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Jul 2008 10:21:37 -0400
-In-Reply-To: <20080708060358.GA6610@yamamaya.is-a-geek.org>
+Received: from mtagate8.uk.ibm.com ([195.212.29.141]:36763 "EHLO
+	mtagate8.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751620AbYGHO0v (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Jul 2008 10:26:51 -0400
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Tobias Diedrich <ranma@tdiedrich.de>, David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Jesse Barnes <jbarnes@virtuousgeek.org>, Jeff Garzik <jgarzik@redhat.com>
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>
 
-On Tuesday, 8 of July 2008, Tobias Diedrich wrote:
-> Stephen Rothwell wrote:
-> > Today's linux-next merge of the net tree got a conflict in
-> > drivers/pci/pci-acpi.c between commit
-> > eb9d0fe40e313c0a74115ef456a2e43a6c8da72f ("PCI ACPI: Rework PCI handling
-> > of wake-up") from the pci tree and commit
-> > f5ccbcfacaae57e3312e623432a79d5f1f079cf5 ("Fix forcedeth
-> > hibernate/wake-on-lan problems") from the net tree.
-> > 
-> > The former removed the hook that the latter is trying to use.  I have
-> > used the pci version of this file for now.  There needs to be a better
-> > solution and since this net commit only updates pci code, maybe the
-> > solution lies there.
-> 
-> Assuming it's part of Rafaels "PCI wake-up" patchset, then using
-> that one should be right I think. :)
+Hello Jens,
 
-Yes, the net commit should be reverted.  Please find a revert patch below,
-details in the changelog.
+the following patch in linux-next (v2.6.26-rc9-7220-g5e36ed1)
 
-Thanks,
-Rafael
+commit 8691e5a8f691cc2a4fda0651e8d307aaba0e7d68
+Author: Jens Axboe <jens.axboe@oracle.com>
+Date:   Fri Jun 6 11:18:06 2008 +0200
+smp_call_function: get rid of the unused nonatomic/retry argument
+
+causes a build error on s390.
+  CC      arch/s390/kernel/time.o
+arch/s390/kernel/time.c: In function 'stp_work_fn':
+arch/s390/kernel/time.c:1448: error: too many arguments to 
+function 'smp_call_function'
+arch/s390/kernel/time.c:1481: error: too many arguments to 
+function 'smp_call_function'
+
+The fix is simple and obvious, remove the unneeded argument.
+
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 
 ---
-PCI ACPI: Remove acpi_platform_enable_wakeup
+ arch/s390/kernel/time.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-This patch removes "Fix forcedeth hibernate/wake-on-lan problems",
-commit f5ccbcfacaae57e3312e623432a79d5f1f079cf5 in linux-next,
-which is incorrect, because it directly manipulates the
-wakeup.state.enabled flags of ACPI devices while these flags are
-supposed to be used by the user space to control wake-up.  Moreover,
-it affects not only the device it is supposed to fix (forcedeth), but
-also every PCI device that happens to call
-device_init_wakeup(dev, 1).
-
-There are patches in the PCI tree that should fix the issue handled by this
-commit.
-
-Signed-off-by: Rafael J. Wysocki <rjw@sisk.pl>
----
- drivers/pci/pci-acpi.c |   20 --------------------
- 1 file changed, 20 deletions(-)
-
-Index: linux-next/drivers/pci/pci-acpi.c
+Index: linux-next/arch/s390/kernel/time.c
 ===================================================================
---- linux-next.orig/drivers/pci/pci-acpi.c
-+++ linux-next/drivers/pci/pci-acpi.c
-@@ -259,25 +259,6 @@ static pci_power_t acpi_pci_choose_state
- 	}
- 	return PCI_POWER_ERROR;
- }
--
--static int acpi_platform_enable_wakeup(struct device *dev, int is_on)
--{
--	struct acpi_device	*adev;
--	int			status;
--
--	if (!device_can_wakeup(dev))
--		return -EINVAL;
--
--	if (is_on && !device_may_wakeup(dev))
--		return -EINVAL;
--
--	status = acpi_bus_get_device(DEVICE_ACPI_HANDLE(dev), &adev);
--	if (status < 0)
--		return status;
--
--	adev->wakeup.state.enabled = !!is_on;
--	return 0;
--}
- #endif
+--- linux-next.orig/arch/s390/kernel/time.c
++++ linux-next/arch/s390/kernel/time.c
+@@ -1445,7 +1445,7 @@ static void stp_work_fn(struct work_stru
+ 	 */
+ 	memset(&stp_sync, 0, sizeof(stp_sync));
+ 	preempt_disable();
+-	smp_call_function(clock_sync_cpu_start, &stp_sync, 0, 0);
++	smp_call_function(clock_sync_cpu_start, &stp_sync, 0);
+ 	local_irq_disable();
+ 	enable_sync_clock();
  
- static int acpi_pci_set_power_state(struct pci_dev *dev, pci_power_t state)
-@@ -362,7 +343,6 @@ static int __init acpi_pci_init(void)
- 		return 0;
- #ifdef	CONFIG_ACPI_SLEEP
- 	platform_pci_choose_state = acpi_pci_choose_state;
--	platform_enable_wakeup = acpi_platform_enable_wakeup;
- #endif
- 	platform_pci_set_power_state = acpi_pci_set_power_state;
- 	return 0;
+@@ -1478,7 +1478,7 @@ static void stp_work_fn(struct work_stru
+ 		stp_sync.in_sync = 1;
+ 
+ 	local_irq_enable();
+-	smp_call_function(clock_sync_cpu_end, NULL, 0, 0);
++	smp_call_function(clock_sync_cpu_end, NULL, 0);
+ 	preempt_enable();
+ }
+ 
