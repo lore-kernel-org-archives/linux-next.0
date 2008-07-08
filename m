@@ -1,83 +1,64 @@
 From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: pci tree build failure
-Date: Tue, 8 Jul 2008 16:54:51 +0200
-Message-ID: <200807081654.51930.rjw@sisk.pl>
-References: <20080708114051.bc5f4ccc.sfr@canb.auug.org.au>
+Subject: Re: next-0708: build failure at drivers/pci/pci-acpi.c
+Date: Tue, 8 Jul 2008 17:12:22 +0200
+Message-ID: <200807081712.23937.rjw@sisk.pl>
+References: <a4423d670807080518g31402f60j2f624a2ac2db03aa@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain;
-  charset="iso-8859-1"
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:40041 "EHLO ogre.sisk.pl"
+Received: from ogre.sisk.pl ([217.79.144.158]:40181 "EHLO ogre.sisk.pl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753452AbYGHOxN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Jul 2008 10:53:13 -0400
-In-Reply-To: <20080708114051.bc5f4ccc.sfr@canb.auug.org.au>
+	id S1751580AbYGHPKd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Jul 2008 11:10:33 -0400
+In-Reply-To: <a4423d670807080518g31402f60j2f624a2ac2db03aa@mail.gmail.com>
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: jbarnes@virtuousgeek.org, ak@linux.intel.com, lenb@kernel.org, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, pm list <linux-pm@lists.linux-foundation.org>
 
-On Tuesday, 8 of July 2008, Stephen Rothwell wrote:
-> Hi Jesse,
+On Tuesday, 8 of July 2008, Alexander Beregalov wrote:
+> Hi Rafael
 > 
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> 
-> drivers/pci/pci.c: In function 'pci_pm_init':
-> drivers/pci/pci.c:1248: error: implicit declaration of function 'device_set_wakeup_capable'
-> 
-> Caused by commit eb9d0fe40e313c0a74115ef456a2e43a6c8da72f ("PCI ACPI:
-> Rework PCI handling of wake-up").  I applied the patch below - which may
-> not be correct, but makes the build work.
+> drivers/pci/pci-acpi.c: In function 'acpi_pci_sleep_wake':
+> drivers/pci/pci-acpi.c:311: error: implicit declaration of function
+> 'acpi_pm_device_sleep_wake'
 
-The patch is correct IMO.
+I guess this is a compilation with CONFIG_ACPI=y and CONFIG_PM_SLEEP unset.
 
-Sorry for the troubles cause by the PCI wake-up patchset, I hope we'll sort
-them out quickly.
+In that case the appended patch should help.  Please test and report back (I
+can't test linux-next compilation at the moment).
 
 Thanks,
 Rafael
 
+---
+From: Rafael J. Wysocki <rjw@sisk.pl>
 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
-> 
-> From 2b2c4f28d7900f5d043960b94aaae177bc1adcd9 Mon Sep 17 00:00:00 2001
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 8 Jul 2008 11:24:37 +1000
-> Subject: [PATCH] pci: include linux/pm_wakeup.h for device_set_wakeup_capable
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/pci/pci.c         |    1 +
->  include/linux/pm_wakeup.h |    2 ++
->  2 files changed, 3 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index e632a58..3d92b71 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -17,6 +17,7 @@
->  #include <linux/string.h>
->  #include <linux/log2.h>
->  #include <linux/pci-aspm.h>
-> +#include <linux/pm_wakeup.h>
->  #include <asm/dma.h>	/* isa_dma_bridge_buggy */
->  #include "pci.h"
->  
-> diff --git a/include/linux/pm_wakeup.h b/include/linux/pm_wakeup.h
-> index 3af0c8d..0aae777 100644
-> --- a/include/linux/pm_wakeup.h
-> +++ b/include/linux/pm_wakeup.h
-> @@ -63,6 +63,8 @@ static inline void device_init_wakeup(struct device *dev, int val)
->  	dev->power.can_wakeup = !!val;
->  }
->  
-> +static inline void device_set_wakeup_capable(struct device *dev, int val) { }
-> +
->  static inline int device_can_wakeup(struct device *dev)
->  {
->  	return dev->power.can_wakeup;
+PCI ACPI: Fix compilation of pci-acpi.c
+
+Fix compilation of pci-acpi.c with CONFIG_ACPI set and
+CONFIG_PM_SLEEP unset.
+
+Signed-off-by: Rafael J. Wysocki <rjw@sisk.pl>
+---
+ include/acpi/acpi_bus.h |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+Index: linux-next/include/acpi/acpi_bus.h
+===================================================================
+--- linux-next.orig/include/acpi/acpi_bus.h
++++ linux-next/include/acpi/acpi_bus.h
+@@ -388,6 +388,10 @@ static inline int acpi_pm_device_sleep_s
+ 		*p = ACPI_STATE_D0;
+ 	return ACPI_STATE_D3;
+ }
++static inline int acpi_pm_device_sleep_wake(struct device *d, bool b)
++{
++	return -ENOSYS;
++}
+ #endif /* !CONFIG_PM_SLEEP */
+ 
+ #endif				/* CONFIG_ACPI */
