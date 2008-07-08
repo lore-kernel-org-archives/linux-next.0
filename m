@@ -1,40 +1,49 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: linux-next: manual merge of the net tree
-Date: Tue, 8 Jul 2008 08:22:27 -0400
-Message-ID: <20080708122227.GA4239@tuxdriver.com>
-References: <20080708141607.404681a4.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next:  ide/sparc build failure
+Date: Tue, 8 Jul 2008 22:48:03 +1000
+Message-ID: <20080708224803.8ce5aa56.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ra.tuxdriver.com ([70.61.120.52]:4261 "EHLO ra.tuxdriver.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37001 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752350AbYGHMiS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Jul 2008 08:38:18 -0400
-Content-Disposition: inline
-In-Reply-To: <20080708141607.404681a4.sfr@canb.auug.org.au>
+	id S1759178AbYGHMsF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Jul 2008 08:48:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Darren Jenkins <darrenrjenkins@gmail.com>, Harvey Harrison <harvey.harrison@gmail.com>
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: linux-next@vger.kernel.org, David Miller <davem@davemloft.net>
 
-On Tue, Jul 08, 2008 at 02:16:07PM +1000, Stephen Rothwell wrote:
-> Hi David,
-> 
-> Today's linux-next merge of the net tree got a conflict in
-> drivers/net/wireless/iwlwifi/iwl-3945.c between commit
-> 0ff1cca0e272045b9c11a2ff94bd3e6893c9308c
-> ("drivers/net/wireless/iwlwifi/iwl-3945.c Fix type issue on 64bit") from
-> the wireless-current tree and commit
-> fd7c8a40b2a63863f749e4d17f0d94d2e5ab1331 ("mac80211: add helpers for
-> frame control testing") from the net tree.
-> 
-> I applied the former change to the latter's code and can carry the fixup
-> while necessary.
+Hi Bart,
 
-Yes, that sounds like the right fix.  I'm sorry I didn't get you a
-merge-test in advance this time!
+Today's linux-next build (sparc allmodconfig) failed like this:
 
-John
+drivers/ide/setup-pci.c:203: error: `DMA_32BIT_MASK' undeclared (first use in this function)
+drivers/ide/setup-pci.c:203: error: (Each undeclared identifier is reported only once
+drivers/ide/setup-pci.c:203: error: for each function it appears in.)
+
+Caused by commit 711304186fe494bee4b9c94b3c195b167b2d4b87 ("ide: remove
+needless includes from setup-pci.c").  Seems like it was overdone.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+
+diff --git a/drivers/ide/setup-pci.c b/drivers/ide/setup-pci.c
+index ec5cbbe..b15cad5 100644
+--- a/drivers/ide/setup-pci.c
++++ b/drivers/ide/setup-pci.c
+@@ -12,6 +12,7 @@
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/ide.h>
++#include <linux/dma-mapping.h>
+ 
+ #include <asm/io.h>
+ 
+
 -- 
-John W. Linville
-linville@tuxdriver.com
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+P.S. untested, but pretty obvious.
