@@ -1,55 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: hdlc tree build failure
-Date: Tue, 8 Jul 2008 18:37:00 +1000
-Message-ID: <20080708183700.44465c76.sfr@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the selinux tree
+Date: Tue, 8 Jul 2008 01:49:50 -0700
+Message-ID: <20080708014950.1caa8a64.akpm@linux-foundation.org>
+References: <20080707225130.ca52d527.sfr@canb.auug.org.au>
+	<Xine.LNX.4.64.0807080042090.11950@us.intercode.com.au>
+	<1215442054.27975.85.camel@moss-spartans.epoch.ncsc.mil>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__8_Jul_2008_18_37_00_+1000_=L6pkUFJjv0NG1eN"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44862 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750717AbYGHIhH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Jul 2008 04:37:07 -0400
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:33365 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751564AbYGHI4V (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Jul 2008 04:56:21 -0400
+In-Reply-To: <1215442054.27975.85.camel@moss-spartans.epoch.ncsc.mil>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pierre Ossman <drzeus@drzeus.cx>
-Cc: linux-next@vger.kernel.org
+To: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: James Morris <jmorris@namei.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Eric Paris <eparis@redhat.com>, Paul Moore <paul.moore@hp.com>, linux-next@vger.kernel.org
 
---Signature=_Tue__8_Jul_2008_18_37_00_+1000_=L6pkUFJjv0NG1eN
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 07 Jul 2008 10:47:34 -0400 Stephen Smalley <sds@tycho.nsa.gov> wrote:
 
-Hi Pierre,
+> 
+> On Tue, 2008-07-08 at 00:43 +1000, James Morris wrote:
+> > On Mon, 7 Jul 2008, Stephen Rothwell wrote:
+> > 
+> > > Hi all,
+> > > 
+> > > Today's linux-next merge of the selinux tree got a conflict in
+> > > fs/proc/task_mmu.c between commit
+> > > 5d7e0d2bd98ef4f5a16ac9da1987ae655368dd6a ("Fix pagemap_read() use of
+> > > struct mm_walk") from Linus' tree and commit
+> > > ca9b1a1413bac6ea5e5c8cb81044a39bdb3b4bc8 ("Security: split proc ptrace
+> > > checking into read vs. attach") from the selinux tree.
+> > > 
+> > > The former removed some of the code that the latter changed.  It is
+> > > probably worth a check on the code in pagemap_read to make sure I got it
+> > > right.
+> > 
+> > I couldn't locate your updated version, but have resolved it in my own 
+> > tree (which is being rebased).  
+> > 
+> > One thing we need to understand is why there were two separate 
+> > ptrace_may_attach() calls in the earlier version of pagemap_read().
+> 
+> It could sleep in between the two calls.
+> 
 
-Today's linux-next build (powerpc allyesconfig) failed like this:
+This is basically meaningless?  Other threads could be running, accessing
+this mm_struct.  Other processes can be doing stuff.  Preemption can
+happen.
 
-drivers/mmc/host/sdhci.c: In function 'sdhci_adma_table_pre':
-drivers/mmc/host/sdhci.c:363: error: 'bad_dma_address' undeclared (first us=
-e in this function)
-
-Caused by commit b13668f718fa98b07b4ea23417fa495ccd922eca ("sdhci:
-graceful handling of bad addresses") which added references to
-bad_dma_address which only exists in x86.
-
-I have reverted that commit and 02680df80583c1d266827fe0307292450cd49384
-("mmc: fix spares errors of sdhci.c") which depended on it.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__8_Jul_2008_18_37_00_+1000_=L6pkUFJjv0NG1eN
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhzJywACgkQjjKRsyhoI8yPewCbBf2aY4+GrKPQduaOTOGHUEuF
-1H4Anjs7NF5m5D4X0X2GRhtNodJpl2WB
-=fTB2
------END PGP SIGNATURE-----
-
---Signature=_Tue__8_Jul_2008_18_37_00_+1000_=L6pkUFJjv0NG1eN--
+Are we missing some locking here?
