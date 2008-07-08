@@ -1,118 +1,163 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH 2/2] acpi: Disable IRQ 0 through I/O APIC for some HP systems
-Date: Tue, 8 Jul 2008 17:27:39 +0200
-Message-ID: <200807081727.40605.rjw@sisk.pl>
-References: <Pine.LNX.4.55.0807010055070.30785@cliff.in.clinika.pl> <20080708112402.GA2301@alberich.amd.com>
+From: Thomas Renninger <trenn@suse.de>
+Subject: Re: [PATCH -next] acpi utmisc: use WARN_ON() instead of warn_on_slowpath()
+Date: Tue, 8 Jul 2008 17:44:51 +0200
+Message-ID: <200807081744.53992.trenn@suse.de>
+References: <20080701103339.b5acc1f3.randy.dunlap@oracle.com> <4871B55C.7040009@firstfloor.org> <20080707000320.25341603@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20080708112402.GA2301@alberich.amd.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:47016 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751412AbYGHPo7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Jul 2008 11:44:59 -0400
+In-Reply-To: <20080707000320.25341603@infradead.org>
 Content-Disposition: inline
-Sender: linux-acpi-owner@vger.kernel.org
-To: Andreas Herrmann <andreas.herrmann3@amd.com>
-Cc: "Maciej W. Rozycki" <macro@linux-mips.org>, Ingo Molnar <mingo@elte.hu>, Matthew Garrett <mjg59@srcf.ucam.org>, Len Brown <lenb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Arjan van de Ven <arjan@infradead.org>
+Cc: Andi Kleen <andi@firstfloor.org>, Len Brown <lenb@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, randy.dunlap@oracle.com, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Bob Moore <robert.moore@intel.com>
 
-On Tuesday, 8 of July 2008, Andreas Herrmann wrote:
-> On Tue, Jul 01, 2008 at 01:12:06AM +0100, Maciej W. Rozycki wrote:
-> > From: Matthew Garrett <mjg59@srcf.ucam.org>
-> > 
-> >  Some HP laptops have a problem with their DSDT reporting as
-> > HP/SB400/10000, which includes some code which overrides all temperature
-> > trip points to 16C if the INTIN2 input of the I/O APIC is enabled.  This
-> > input is incorrectly designated the ISA IRQ 0 via an interrupt source
-> > override even though it is wired to the output of the master 8259A and
-> > INTIN0 is not connected at all.  So far two models have been identified, 
-> > namely nx6125 and nx6325.
-> 
-> Out of sheer curiosity. What makes you think that IRQ0 is not
-> connected to INT0 of IO APIC? The IRQ0 pin2 override?
-> 
-> Why would we trust that BIOS information if the broken BIOS does
-> weird things if INT2 of IO APIC is _not_ masked?
-> 
-> IMHO on those HP systems we should skip the (bogus?) timer override,
-> leave IRQ0 -> IOAPIC/INT0 and mask IOAPIC/INT2. Or at least we should
-> test that configuration.
-> 
-> I admit that I have lost track of who has provided which patches,
-> which patch does exactly what ((IO|L)A)PIC configuration, and who has
-> tested what combinations, and what the results were.
-> 
-> So I've just done the following (based on x86/master as of yesterday):
-> 
-> Booting an HP nx6325
-> 
-> (1)  with "acpi_skip_timer_override" to avoid configuration
->      of IOAPIC/INT2 and to avoid masking of IOAPIC/INT0.
-> 
->   plus
-> 
-> (2) adding (hardcoded in check_timer()) some code to explicitly mask
->     IOAPIC/INT2 to quiesce the fan (work around the DSDT issue).
-> 
-> With that setup my test box boots w/o problems (no fan noise, no
-> throttling, no stablity problems so far). Here the relevant dmesg
-> parts:
-> 
-> Command line: root=/dev/sda2 video=radeonfb:noaccel debug apic=debug acpi_skip_timer_override
->   ...
-> IOAPIC[0]: apic_id 2, version 0, address 0xfec00000, GSI 
->   ...
-> ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
-> ACPI: BIOS IRQ0 pin2 override ignored.
->   ...
-> using C1E aware idle routine
->   ...
-> init IO_APIC IRQs
-> IOAPIC[0]: Set routing entry (2-0 -> 0x30 -> IRQ 0 Mode:0 Active:0)
-> IOAPIC[0]: Set routing entry (2-1 -> 0x31 -> IRQ 1 Mode:0 Active:0)
-> IOAPIC[0]: Set routing entry (2-2 -> 0x32 -> IRQ 2 Mode:0 Active:0)
->   ...
-> IO-APIC (apicid-pin) 2-16, 2-17, 2-18, 2-19, 2-20 not connected.
-> IOAPIC[0]: Set routing entry (2-21 -> 0x49 -> IRQ 21 Mode:1 Active:1)
-> IO-APIC (apicid-pin) 2-22, 2-23 not connected.
-> ..TIMER: vector=0x30 apic1=0 pin1=0 apic2=-1 pin2=-1
-> CPU0: AMD Turion(tm) 64 X2 Mobile Technology TL-60 stepping 02
-> Using local APIC timer interrupts.
->   ...
-> IO APIC #2......
->   ...
-> NR Dst Mask Trig IRR Pol Stat Dmod Deli Vect:   
-> 00 003 0    0    0   0   0    1    1    30
-> 01 003 0    0    0   0   0    1    1    31
-> 02 003 1    0    0   0   0    1    1    32
-> 
-> 
-> I think we have 3 alternatives to setup timer interrupt on those machines
-> 
-> (A) Setup timer as Virtual Wire IRQ.
->     (that's the way the old code used to configure it, e.g. in 2.6.25)
-> (B) The current approach to setup timer as ExtINT.
-> (C) Use IOAPIC/INT0.
-> 
-> Shouldn't be that hard to find the best solution here:
-> 
-> (A) proved to work (and even "accidentially" masked IOAPIC/INT2 which
->     avoided the DSDT problem)
-> 
-> (B) ??? who tested this, Rafael
+On Monday 07 July 2008 09:03:20 Arjan van de Ven wrote:
+> On Mon, 07 Jul 2008 08:19:08 +0200
+>
+> Andi Kleen <andi@firstfloor.org> wrote:
+> > I'm dropping the ACPI part because we're getting too many
+> > reports of scary looking backtraces and ACPI exceptions are actually
+> > not that exceptional.
+>
+> when I talked to Len about it he implied/said that these would only
+> happen for ACPI code bugs (and not bios bugs).
 
-Yes, I tested this.
+drivers/acpi/processor_core.c:852:              ACPI_EXCEPTION((AE_INFO, status,
+drivers/acpi/processor_core.c-853-                              "Processor Device is not present"));
 
-> -- The stability issues, did they happen with a kernel based on that solution?
+and
 
-Yes, they did.
+drivers/acpi/parser/psloop.c-895-                                       if (status == AE_AML_NO_RETURN_VALUE) {
+drivers/acpi/parser/psloop.c:896:                                               ACPI_EXCEPTION((AE_INFO, status,
+drivers/acpi/parser/psloop.c-897-                                                               "Invoked method did not return a value"));
 
-> (C) ... is my preferred solution. I tested it and I've not seen problems
->     with it (so far) -- maybe it's naive but I think it's the most
->     obvious solution (*)
+do very much look like BIOS bugs.
 
-FWIW, it's my preferred one too.  So far, I haven't seen any problems with this
-approach (ie. "acpi_skip_timer_override" plus masking IOAPIC/INT2 in
-check_timer()), even with the C1E aware idle routine.
+> Maybe he was 
+> overestimating what the code would actually do; if so it would imo be
+> well worth splitting out ACPI code assertions versions things that are
+> BIOS caused (if only to be able to inform the user more consistently)
+
+You want to split BIOS bug and kernel bug ACPI messages?
+This is a good idea.
+But this should be started in ACPICA code first.
+ACPI_EXCEPTION is an ACPICA interface having an
+ACPI_FIRMWARE_BUG for relevant messages would be nice.
+There are probably also a lot ACPI_DEBUG_PRINT((ACPI_DB_INFO,
+info messages suppressing bugs.
+Being able to mark them with a ACPI_FIRMWARE_BUG interface, 
+would be great.
+
+As suggested some days ago, I'd like to have an interface in the kernel
+to report firmware bugs via printk, netlink, both (or compiled out) to
+userspace.
+As soon as ACPICA can differ and invoke e.g.
+ACPI_FIRMWARE_BUG, it can easily be extended to use a kernel
+interface to send firmware bugs to userspace as such.
+
+If you are already working in this area or have suggestions, please let me
+know or keep me in CC.
+Otherwise I will try to come up with some patches sooner or later.
 
 Thanks,
-Rafael
+
+         Thomas
+
+BTW: I saw a lot people used:
+ACPI_DEBUG_PRINT((ACPI_DB_ERROR,
+again in linux (not ACPICA code!) which is wrong.
+
+These are suppressed if ACPI_DEBUG is not compiled in.
+It does not make sense to use a debug interface for errors.
+IMO ACPI_DB_ERROR and ACPI_DB_WARN
+should be reverted or somehow enforced that
+it cannot be used in kernel code anymore, maybe they should be renamed
+into DB_DEBUG and DB_WHATEVER?
+
+Here these are again used, some look like sever errors (on a first glance),
+some not:
+
+grep -n1 DB_ERROR drivers/acpi/*
+drivers/acpi/acpi_memhotplug.c-456-             if (result)
+drivers/acpi/acpi_memhotplug.c:457:                     ACPI_DEBUG_PRINT((ACPI_DB_ERROR,
+drivers/acpi/acpi_memhotplug.c-458-                             "Error in acpi_memory_enable_device\n"));
+--
+drivers/acpi/cm_sbs.c-54-       } else {
+drivers/acpi/cm_sbs.c:55:               ACPI_DEBUG_PRINT((ACPI_DB_ERROR,
+drivers/acpi/cm_sbs.c-56-                                 "Cannot create %s\n", ACPI_AC_CLASS));
+--
+drivers/acpi/cm_sbs.c-85-       } else {
+drivers/acpi/cm_sbs.c:86:               ACPI_DEBUG_PRINT((ACPI_DB_ERROR,
+drivers/acpi/cm_sbs.c-87-                                 "Cannot create %s\n", ACPI_BATTERY_CLASS));
+--
+drivers/acpi/fan.c-323- if (result) {
+drivers/acpi/fan.c:324:         ACPI_DEBUG_PRINT((ACPI_DB_ERROR,
+drivers/acpi/fan.c-325-                           "Error reading fan power state\n"));
+--
+drivers/acpi/osl.c-726- if (!queue_work(queue, &dpc->work)) {
+drivers/acpi/osl.c:727:         ACPI_DEBUG_PRINT((ACPI_DB_ERROR,
+drivers/acpi/osl.c-728-                   "Call to queue_work() failed.\n"));
+--
+drivers/acpi/processor_perflib.c-515-   if (!psd || (psd->type != ACPI_TYPE_PACKAGE)) {
+drivers/acpi/processor_perflib.c:516:           ACPI_DEBUG_PRINT((ACPI_DB_ERROR, "Invalid _PSD data\n"));
+drivers/acpi/processor_perflib.c-517-           result = -EFAULT;
+--
+drivers/acpi/processor_perflib.c-521-   if (psd->package.count != 1) {
+drivers/acpi/processor_perflib.c:522:           ACPI_DEBUG_PRINT((ACPI_DB_ERROR, "Invalid _PSD data\n"));
+drivers/acpi/processor_perflib.c-523-           result = -EFAULT;
+--
+drivers/acpi/processor_perflib.c-534-   if (ACPI_FAILURE(status)) {
+drivers/acpi/processor_perflib.c:535:           ACPI_DEBUG_PRINT((ACPI_DB_ERROR, "Invalid _PSD data\n"));
+drivers/acpi/processor_perflib.c-536-           result = -EFAULT;
+--
+drivers/acpi/processor_perflib.c-540-   if (pdomain->num_entries != ACPI_PSD_REV0_ENTRIES) {
+drivers/acpi/processor_perflib.c:541:           ACPI_DEBUG_PRINT((ACPI_DB_ERROR, "Unknown _PSD:num_entries\n"));
+drivers/acpi/processor_perflib.c-542-           result = -EFAULT;
+--
+drivers/acpi/processor_perflib.c-546-   if (pdomain->revision != ACPI_PSD_REV0_REVISION) {
+drivers/acpi/processor_perflib.c:547:           ACPI_DEBUG_PRINT((ACPI_DB_ERROR, "Unknown _PSD:revision\n"));
+drivers/acpi/processor_perflib.c-548-           result = -EFAULT;
+--
+drivers/acpi/processor_throttling.c-530-        if (!tsd || (tsd->type != ACPI_TYPE_PACKAGE)) {
+drivers/acpi/processor_throttling.c:531:                ACPI_DEBUG_PRINT((ACPI_DB_ERROR, "Invalid _TSD data\n"));
+drivers/acpi/processor_throttling.c-532-                result = -EFAULT;
+--
+drivers/acpi/processor_throttling.c-536-        if (tsd->package.count != 1) {
+drivers/acpi/processor_throttling.c:537:                ACPI_DEBUG_PRINT((ACPI_DB_ERROR, "Invalid _TSD data\n"));
+drivers/acpi/processor_throttling.c-538-                result = -EFAULT;
+--
+drivers/acpi/processor_throttling.c-549-        if (ACPI_FAILURE(status)) {
+drivers/acpi/processor_throttling.c:550:                ACPI_DEBUG_PRINT((ACPI_DB_ERROR, "Invalid _TSD data\n"));
+drivers/acpi/processor_throttling.c-551-                result = -EFAULT;
+--
+drivers/acpi/processor_throttling.c-555-        if (pdomain->num_entries != ACPI_TSD_REV0_ENTRIES) {
+drivers/acpi/processor_throttling.c:556:                ACPI_DEBUG_PRINT((ACPI_DB_ERROR, "Unknown _TSD:num_entries\n"));
+drivers/acpi/processor_throttling.c-557-                result = -EFAULT;
+--
+drivers/acpi/processor_throttling.c-561-        if (pdomain->revision != ACPI_TSD_REV0_REVISION) {
+drivers/acpi/processor_throttling.c:562:                ACPI_DEBUG_PRINT((ACPI_DB_ERROR, "Unknown _TSD:revision\n"));
+drivers/acpi/processor_throttling.c-563-                result = -EFAULT;
+--
+drivers/acpi/scan.c-467-        if(result)
+drivers/acpi/scan.c:468:                ACPI_DEBUG_PRINT((ACPI_DB_ERROR, "Error creating sysfs interface for device %s\n", device->dev.bus_id));
+drivers/acpi/scan.c-469-
+--
+drivers/acpi/thermal.c-1174-    if (ACPI_FAILURE(status)) {
+drivers/acpi/thermal.c:1175:            ACPI_DEBUG_PRINT((ACPI_DB_ERROR,
+drivers/acpi/thermal.c-1176-                            "Error attaching device data\n"));
+--
+drivers/acpi/video.c-1532-              if (ACPI_FAILURE(status)) {
+drivers/acpi/video.c:1533:                      ACPI_DEBUG_PRINT((ACPI_DB_ERROR,
+drivers/acpi/video.c-1534-                                        "Error installing notify handler\n"));
+--
+drivers/acpi/video.c-2005-      if (ACPI_FAILURE(status)) {
+drivers/acpi/video.c:2006:              ACPI_DEBUG_PRINT((ACPI_DB_ERROR,
+drivers/acpi/video.c-2007-                                "Error installing notify handler\n"));
