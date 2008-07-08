@@ -1,62 +1,95 @@
-From: Pierre Ossman <drzeus@drzeus.cx>
-Subject: Re: linux-next: hdlc tree build failure
-Date: Tue, 8 Jul 2008 11:30:47 +0200
-Message-ID: <20080708113047.2c37862d@mjolnir.drzeus.cx>
-References: <20080708183700.44465c76.sfr@canb.auug.org.au>
-	<20080708112800.61b083d7@mjolnir.drzeus.cx>
+From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Subject: Re: [BUG]  linux-next: Tree for March 25 kernel oops, when loading
+ mpt fusion driver - regression
+Date: Tue, 08 Jul 2008 16:18:09 +0530
+Message-ID: <487345E9.8090505@linux.vnet.ibm.com>
+References: <20080325175224.3ee62b09.sfr@canb.auug.org.au> <47E9F0B0.4060006@linux.vnet.ibm.com>  <20080626203857.GB3815@redhat.com> <1215372215.4197.28.camel@localhost.localdomain> <487279C9.2010802@linux.vnet.ibm.com> <1215462321.3274.34.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=PGP-SHA1; boundary="=_freyr.drzeus.cx-20839-1215509452-0001-2"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from server.drzeus.cx ([85.8.24.28]:56131 "EHLO smtp.drzeus.cx"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1753781AbYGHJay (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Jul 2008 05:30:54 -0400
-In-Reply-To: <20080708112800.61b083d7@mjolnir.drzeus.cx>
+Received: from ausmtp04.au.ibm.com ([202.81.18.152]:56581 "EHLO
+	ausmtp04.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754190AbYGHKzq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Jul 2008 06:55:46 -0400
+In-Reply-To: <1215462321.3274.34.camel@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pierre Ossman <drzeus@drzeus.cx>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: David Teigland <teigland@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org, Eric.Moore@lsi.com, Andy Whitcroft <apw@shadowen.org>
 
-This is a MIME-formatted message.  If you see this text it means that your
-E-mail software does not support MIME-formatted messages.
+James Bottomley wrote:
+> On Tue, 2008-07-08 at 01:47 +0530, Kamalesh Babulal wrote:
+>> James Bottomley wrote:
+>>> On Thu, 2008-06-26 at 15:38 -0500, David Teigland wrote:
+>>>> On Wed, Mar 26, 2008 at 12:14:00PM +0530, Kamalesh Babulal wrote:
+>>>>> Hi Stephen,
+>>>>>
+>>>>> Kernel bug is hit while booting up the next-20080325 kernel with MPT
+>>>>> Fusion driver built in.This was reported previously for the
+>>>>> next-20080320 kernel
+>>>>> http://marc.info/?l=linux-next&m=120601013920868&w=2
+>>>> Hi, did you ever get this fixed?  I've been having the same problem,
+>>>> http://marc.info/?l=linux-scsi&m=121061780821823&w=4
+>>>> still exists on 2.6.26-rc8 for me,
+>>>>
+>>>> Loading scsi_transport_spi.ko module
+>>>> Loading mptscsih.ko module
+>>>> Loading mptspi.ko module
+>>>> Fusion MPT SPI Host driver 3.04.06
+>>>> ACPI: PCI Interrupt 0000:86:01.0[A] -> GSI 32 (level, low) -> IRQ 32
+>>>> mptbase: ioc0: Initiating bringup
+>>>> ioc0: LSI53C1030 B2: Capabilities={Initiator,Target}
+>>>> mptbase: ioc0: PCI-MSI enabled
+>>> I speculate that this might be related to the problem.  The fusion
+>>> driver was recently flipped to default to MSI enable (previously it had
+>>> disabled them).  Could you boot it with the fusion module parameter
+>>>
+>>> mpt_msi_enable=0
+>>>
+>>> if it actually boots that will be a good confirmation that MSI is to
+>>> blame.
+>>>
+>>>> mptbase: ioc0: Initiating recovery
+>>> This I suspect is because of a lost interrupt.
+>>>
+>>>> BUG: unable to handle kernel NULL pointer dereference at 0000000000000948
+>>> And this one looks to be a second bug:  The MSI fault path is actually
+>>> causing this oops.
+>>>
+>>> James
+>>>
+>> Hi James,
+>>
+>> Kernel Bug is still reproducible with 2.6.26-rc9-git1 kernel, I tried booting with mpt_msi_enable=0
+>> as boot paramenter, but the call trace remains the same
+>>
+>> oading mptbase.ko module[    6.766853] Fusion MPT base driver 3.04.06
+>>
+>> [    6.783482] Copyright (c) 1999-2007 LSI Corporation
+>> Loading mptscsih.ko module
+>> Loading mptspi.ko module
+>> [    6.813157] Fusion MPT SPI Host driver 3.04.06
+>> [    6.827369] ACPI: PCI Interrupt 0000:01:01.0[A] -> GSI 22 (level, low) -> IRQ 22
+>> [    6.850624] mptbase: ioc0: Initiating bringup
+>> [    6.985601] ioc0: LSI53C1030 B2: Capabilities={Initiator}
+>> [    7.002711] mptbase: ioc0: PCI-MSI enabled
+>                                 ^^^^^^^^^^^^^^^
+> 
+> If you had successfully specified mpt_msi_enable=0 this line wouldn't
+> appear.
+> 
+> My best guess is that you incorrectly specified it as a kernel command
+> line parameter rather than a module parameter.
+> 
+> James
+> 
+Hi James,
 
---=_freyr.drzeus.cx-20839-1215509452-0001-2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Sorry my fault :(, the kernel bug is not reproducible after disabling it.
 
-On Tue, 8 Jul 2008 11:28:00 +0200
-Pierre Ossman <drzeus@drzeus.cx> wrote:
-
->=20
-> I'm not sure what to do here... ifdef the entire thing with ARCH_X86?
-> Or just remove the error checking and let things break creatively on
-> x86 as it would on other systems?
->=20
-
-Calling dma_mapping_error() seems to be the correct approach instead
-of directly checking the return value. That should at least compile for
-all systems. I'll update my tree.
-
-Rgds
---=20
-     -- Pierre Ossman
-
-  WARNING: This correspondence is being monitored by the
-  Swedish government. Make sure your server uses encryption
-  for SMTP traffic and consider using PGP for end-to-end
-  encryption.
-
---=_freyr.drzeus.cx-20839-1215509452-0001-2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.9 (GNU/Linux)
-
-iEYEARECAAYFAkhzM8sACgkQ7b8eESbyJLgBTgCg6tdasvoJPhJxy7OHFFFKM/69
-xwUAnAhR6npwU4zlS6wg/dQF6SpsiRZb
-=jyXi
------END PGP SIGNATURE-----
-
---=_freyr.drzeus.cx-20839-1215509452-0001-2--
+-- 
+Thanks & Regards,
+Kamalesh Babulal,
+Linux Technology Center,
+IBM, ISTL.
