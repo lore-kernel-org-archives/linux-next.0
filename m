@@ -1,54 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree
-Date: Tue, 8 Jul 2008 14:27:59 +1000
-Message-ID: <20080708142759.18b9314a.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the x86 tree
+Date: Tue, 8 Jul 2008 15:01:03 +1000
+Message-ID: <20080708150103.3d52c0d0.sfr@canb.auug.org.au>
+References: <20080708105658.1a9deedc.sfr@canb.auug.org.au>
+	<4872DD62.1060708@goop.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__8_Jul_2008_14_27_59_+1000_z1adxnaSf85B2FoO"
+ boundary="Signature=_Tue__8_Jul_2008_15_01_03_+1000_X9QAbRbnY.KU7q/0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43857 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33219 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751125AbYGHE2I (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Jul 2008 00:28:08 -0400
+	id S1750717AbYGHFBL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Jul 2008 01:01:11 -0400
+In-Reply-To: <4872DD62.1060708@goop.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Tobias Diedrich <ranma+kernel@tdiedrich.de>, "Rafael J. Wysocki" <rjw@sisk.pl>, Jesse Barnes <jbarnes@virtuousgeek.org>, Jeff Garzik <jgarzik@redhat.com>
+To: Jeremy Fitzhardinge <jeremy@goop.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Steven Rostedt <srostedt@redhat.com>
 
---Signature=_Tue__8_Jul_2008_14_27_59_+1000_z1adxnaSf85B2FoO
+--Signature=_Tue__8_Jul_2008_15_01_03_+1000_X9QAbRbnY.KU7q/0
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi David,
+Hi Jeremy,
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/pci/pci-acpi.c between commit
-eb9d0fe40e313c0a74115ef456a2e43a6c8da72f ("PCI ACPI: Rework PCI handling
-of wake-up") from the pci tree and commit
-f5ccbcfacaae57e3312e623432a79d5f1f079cf5 ("Fix forcedeth
-hibernate/wake-on-lan problems") from the net tree.
+On Mon, 07 Jul 2008 20:22:10 -0700 Jeremy Fitzhardinge <jeremy@goop.org> wr=
+ote:
+>
+> I must be missing something.  Don't all those already come from tip.git=20
+> pre-merged?  Or are you merging various tip.git topic branches=20
+> yourself?  Or are some of these coming from elsewhere?
 
-The former removed the hook that the latter is trying to use.  I have
-used the pci version of this file for now.  There needs to be a better
-solution and since this net commit only updates pci code, maybe the
-solution lies there.
+I merge a set of branches that are specially maintained for linux-next
+(see the Next/Trees file in the linux-next tree). I assume that Linus is
+probably not going to just merge in tip.get in one enormous merge ...
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__8_Jul_2008_14_27_59_+1000_z1adxnaSf85B2FoO
+--Signature=_Tue__8_Jul_2008_15_01_03_+1000_X9QAbRbnY.KU7q/0
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkhy7M8ACgkQjjKRsyhoI8wO4QCaA759UdPy34nWyk8Ym4G4TMhR
-49sAoKqjsSLUl8qE5LUZRw255iEa+7Bm
-=Onjd
+iEYEARECAAYFAkhy9I8ACgkQjjKRsyhoI8zJkwCfdnLMul67viRRLkZdhaZZUraG
+tgYAnR73tWyhhdXHGGgmkEOeuhcVjBos
+=6ULl
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__8_Jul_2008_14_27_59_+1000_z1adxnaSf85B2FoO--
+--Signature=_Tue__8_Jul_2008_15_01_03_+1000_X9QAbRbnY.KU7q/0--
