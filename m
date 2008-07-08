@@ -1,27 +1,38 @@
-From: David Miller <davem@davemloft.net>
+From: Tobias Diedrich <ranma@tdiedrich.de>
 Subject: Re: linux-next: manual merge of the net tree
-Date: Mon, 07 Jul 2008 22:44:24 -0700 (PDT)
-Message-ID: <20080707.224424.266564848.davem@davemloft.net>
-References: <20080708141004.4a0aef3c.sfr@canb.auug.org.au>
+Date: Tue, 8 Jul 2008 08:03:58 +0200
+Message-ID: <20080708060358.GA6610@yamamaya.is-a-geek.org>
+References: <20080708142759.18b9314a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-2022-jp
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:60286
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1751362AbYGHFoZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Jul 2008 01:44:25 -0400
-In-Reply-To: <20080708141004.4a0aef3c.sfr@canb.auug.org.au>
+Received: from yumi.tdiedrich.de ([85.10.210.183]:44005 "EHLO mx.tdiedrich.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751340AbYGHGEc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Jul 2008 02:04:32 -0400
+Content-Disposition: inline
+In-Reply-To: <20080708142759.18b9314a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, romieu@fr.zoreil.com, jgarzik@redhat.com, mingo@elte.hu, gorcunov@gmail.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Jesse Barnes <jbarnes@virtuousgeek.org>, Jeff Garzik <jgarzik@redhat.com>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 8 Jul 2008 14:10:04 +1000
+Stephen Rothwell wrote:
+> Today's linux-next merge of the net tree got a conflict in
+> drivers/pci/pci-acpi.c between commit
+> eb9d0fe40e313c0a74115ef456a2e43a6c8da72f ("PCI ACPI: Rework PCI handling
+> of wake-up") from the pci tree and commit
+> f5ccbcfacaae57e3312e623432a79d5f1f079cf5 ("Fix forcedeth
+> hibernate/wake-on-lan problems") from the net tree.
+> 
+> The former removed the hook that the latter is trying to use.  I have
+> used the pci version of this file for now.  There needs to be a better
+> solution and since this net commit only updates pci code, maybe the
+> solution lies there.
 
-> I thought we didn't do defconfig updates for things like this as just
-> running "make oldconfig" should have the same effect ...
+Assuming it's part of Rafaels "PCI wake-up" patchset, then using
+that one should be right I think. :)
 
-These defconfig changes have been removed from the net-next-2.6
-tree.
+-- 
+Tobias						PGP: http://9ac7e0bc.uguu.de
+このメールは十割再利用されたビットで作られています。
