@@ -1,56 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the x86 tree
-Date: Tue, 8 Jul 2008 15:01:03 +1000
-Message-ID: <20080708150103.3d52c0d0.sfr@canb.auug.org.au>
-References: <20080708105658.1a9deedc.sfr@canb.auug.org.au>
-	<4872DD62.1060708@goop.org>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net tree
+Date: Mon, 07 Jul 2008 22:14:43 -0700 (PDT)
+Message-ID: <20080707.221443.109466077.davem@davemloft.net>
+References: <20080708141004.4a0aef3c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__8_Jul_2008_15_01_03_+1000_X9QAbRbnY.KU7q/0"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33219 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750717AbYGHFBL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Jul 2008 01:01:11 -0400
-In-Reply-To: <4872DD62.1060708@goop.org>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:34730
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1750823AbYGHFOo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Jul 2008 01:14:44 -0400
+In-Reply-To: <20080708141004.4a0aef3c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeremy Fitzhardinge <jeremy@goop.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Steven Rostedt <srostedt@redhat.com>
+To: sfr@canb.auug.org.au
+Cc: linux-next@vger.kernel.org, romieu@fr.zoreil.com, jgarzik@redhat.com, mingo@elte.hu, gorcunov@gmail.com
 
---Signature=_Tue__8_Jul_2008_15_01_03_+1000_X9QAbRbnY.KU7q/0
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 8 Jul 2008 14:10:04 +1000
 
-Hi Jeremy,
+> Today's linux-next merge of the net tree got a conflict in
+> arch/x86/configs/x86_64_defconfig between commits
+> 5cb04df8d3f03e37a19f2502591a84156be71772 ("x86: defconfig updates") and
+> 622e3f28e50fe30cc199c735440cd7c75e0033b0 ("x86: 64-bit defconfig remake")
+> from the x86 tree and commit e84e1dcea0ead6cea0fc55b949a7f018727e93c3
+> ("netdev: remove unused S2IO_NAPI") and
+> 768cea593522d816b374149f3bf35e7c246fc8d0 ("amd8111e: delete non NAPI code
+> from the driver") from the net tree.
+> 
+> I thought we didn't do defconfig updates for things like this as just
+> running "make oldconfig" should have the same effect ... I used the
+> version from the x86 tree.
 
-On Mon, 07 Jul 2008 20:22:10 -0700 Jeremy Fitzhardinge <jeremy@goop.org> wr=
-ote:
->
-> I must be missing something.  Don't all those already come from tip.git=20
-> pre-merged?  Or are you merging various tip.git topic branches=20
-> yourself?  Or are some of these coming from elsewhere?
+That defconfig bit is a mistake, I'll try to undo that.
 
-I merge a set of branches that are specially maintained for linux-next
-(see the Next/Trees file in the linux-next tree). I assume that Linus is
-probably not going to just merge in tip.get in one enormous merge ...
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__8_Jul_2008_15_01_03_+1000_X9QAbRbnY.KU7q/0
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkhy9I8ACgkQjjKRsyhoI8zJkwCfdnLMul67viRRLkZdhaZZUraG
-tgYAnR73tWyhhdXHGGgmkEOeuhcVjBos
-=6ULl
------END PGP SIGNATURE-----
-
---Signature=_Tue__8_Jul_2008_15_01_03_+1000_X9QAbRbnY.KU7q/0--
+Thanks!
