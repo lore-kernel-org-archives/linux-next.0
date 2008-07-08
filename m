@@ -1,128 +1,147 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for July 8 (ns8390)
-Date: Tue, 8 Jul 2008 14:47:15 -0700
-Message-ID: <20080708144715.a904d426.randy.dunlap@oracle.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for July 8: nx6325-related commits
+Date: Wed, 9 Jul 2008 00:48:47 +0200
+Message-ID: <200807090048.48589.rjw@sisk.pl>
 References: <20080708192251.3275d283.sfr@canb.auug.org.au>
-	<20080708113529.9297e1ad.randy.dunlap@oracle.com>
-	<20080708193513.51000246@the-village.bc.nu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rgminet01.oracle.com ([148.87.113.118]:14167 "EHLO
-	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751192AbYGHVsn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Jul 2008 17:48:43 -0400
-In-Reply-To: <20080708193513.51000246@the-village.bc.nu>
+Received: from ogre.sisk.pl ([217.79.144.158]:41992 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752100AbYGHWr1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Jul 2008 18:47:27 -0400
+In-Reply-To: <20080708192251.3275d283.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, jgarzik@pobox.com
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Kernel Testers List <kernel-testers@vger.kernel.org>, "Maciej W. Rozycki" <macro@linux-mips.org>, Andreas Herrmann <andreas.herrmann3@amd.com>, Matthew Garrett <mjg59@srcf.ucam.org>
 
-On Tue, 8 Jul 2008 19:35:13 +0100 Alan Cox wrote:
+Hi Ingo,
 
-> Diff between my tree 8390 bits and linux-next ones
+On Tuesday, 8 of July 2008, Stephen Rothwell wrote:
+> Hi all,
 > 
-> 8390: diff between next and my driver
+> Changes since next-20080704:
 > 
-> From: Alan Cox <alan@redhat.com>
+> Temporarily dropped tree: ttydev (since it would not import on top of any
+> tree I have)
 > 
-> Please try this and if it sorts it fold it into the driver. This is a diff
-> between my tree and the linux-next tree
+> The usb.current gained a white space conflict against Linus' tree (which I
+> assume will be gone as soon as Greg rebases his tree).
+> 
+> The usb tree gained a conflict against Linus' tree.
+> 
+> The tip-core tree gained a conflict against Linus' tree.
+> 
+> The sched tree lost a build fix patch.
+> 
+> The x86 tree lost a conflict against Linus' tree but gained two against
+> the ftrace tree.
 
-Yes, that's good.  Thanks/Ack.
+Commits 0b3d81ad4f765513347a04434efc15cbdc4e1c54
+("x86, ioapic, acpi: add a knob to disable IRQ 0 through I/O APIC") and
+e38502eb8aa82314d5ab0eba45f50e6790dadd88
+("x86, ioapic, acpi quirk: disable IRQ 0 through I/O APIC for some HP systems")
+don't work on x86_64, because acpi_dmi_table[] depends on __i386__.
 
-> ---
-> 
->  drivers/net/hp-plus.c |    2 +-
->  drivers/net/hp.c      |    2 +-
->  drivers/net/ne.c      |    8 ++++----
->  drivers/net/wd.c      |    2 +-
->  4 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> 
-> diff --git a/drivers/net/hp-plus.c b/drivers/net/hp-plus.c
-> index c2c4f49..8239939 100644
-> --- a/drivers/net/hp-plus.c
-> +++ b/drivers/net/hp-plus.c
-> @@ -262,7 +262,7 @@ static int __init hpp_probe1(struct net_device *dev, int ioaddr)
->  	}
->  
->  	outw(Perf_Page, ioaddr + HP_PAGING);
-> -	NS8390_init(dev, 0);
-> +	NS8390p_init(dev, 0);
->  	/* Leave the 8390 and HP chip reset. */
->  	outw(inw(ioaddr + HPP_OPTION) & ~EnableIRQ, ioaddr + HPP_OPTION);
->  
-> diff --git a/drivers/net/hp.c b/drivers/net/hp.c
-> index 8281209..0a8c649 100644
-> --- a/drivers/net/hp.c
-> +++ b/drivers/net/hp.c
-> @@ -389,7 +389,7 @@ static void __init
->  hp_init_card(struct net_device *dev)
->  {
->  	int irq = dev->irq;
-> -	NS8390_init(dev, 0);
-> +	NS8390p_init(dev, 0);
->  	outb_p(irqmap[irq&0x0f] | HP_RUN,
->  		   dev->base_addr - NIC_OFFSET + HP_CONFIGURE);
->  	return;
-> diff --git a/drivers/net/ne.c b/drivers/net/ne.c
-> index 1412697..4a8a4b1 100644
-> --- a/drivers/net/ne.c
-> +++ b/drivers/net/ne.c
-> @@ -355,7 +355,7 @@ static int __init ne_probe1(struct net_device *dev, unsigned long ioaddr)
->  	}
->  
->  	/* Read the 16 bytes of station address PROM.
-> -	   We must first initialize registers, similar to NS8390_init(eifdev, 0).
-> +	   We must first initialize registers, similar to NS8390p_init(eifdev, 0).
->  	   We can't reliably read the SAPROM address without this.
->  	   (I learned the hard way!). */
->  	{
-> @@ -536,7 +536,7 @@ static int __init ne_probe1(struct net_device *dev, unsigned long ioaddr)
->  #ifdef CONFIG_NET_POLL_CONTROLLER
->  	dev->poll_controller = eip_poll;
->  #endif
-> -	NS8390_init(dev, 0);
-> +	NS8390p_init(dev, 0);
->  
->  	ret = register_netdev(dev);
->  	if (ret)
-> @@ -794,7 +794,7 @@ retry:
->  		if (time_after(jiffies, dma_start + 2*HZ/100)) {		/* 20ms */
->  			printk(KERN_WARNING "%s: timeout waiting for Tx RDC.\n", dev->name);
->  			ne_reset_8390(dev);
-> -			NS8390_init(dev,1);
-> +			NS8390p_init(dev,1);
->  			break;
->  		}
->  
-> @@ -855,7 +855,7 @@ static int ne_drv_resume(struct platform_device *pdev)
->  
->  	if (netif_running(dev)) {
->  		ne_reset_8390(dev);
-> -		NS8390_init(dev, 1);
-> +		NS8390p_init(dev, 1);
->  		netif_device_attach(dev);
->  	}
->  	return 0;
-> diff --git a/drivers/net/wd.c b/drivers/net/wd.c
-> index fa14255..6f9aa16 100644
-> --- a/drivers/net/wd.c
-> +++ b/drivers/net/wd.c
-> @@ -337,7 +337,7 @@ static int __init wd_probe1(struct net_device *dev, int ioaddr)
->  #ifdef CONFIG_NET_POLL_CONTROLLER
->  	dev->poll_controller = ei_poll;
->  #endif
-> -	NS8390_init(dev, 0);
-> +	NS8390p_init(dev, 0);
->  
->  #if 1
->  	/* Enable interrupt generation on softconfig cards -- M.U */
-> --
+Moreover, if you make them work (by removing that dependency), they hang my
+nx6325 solid early during boot.
+
+The revert patch is appended for your convenience. ;-)
+
+Thanks,
+Rafael
 
 ---
-~Randy
-Linux Plumbers Conference, 17-19 September 2008, Portland, Oregon USA
-http://linuxplumbersconf.org/
+ arch/x86/kernel/acpi/boot.c |   47 --------------------------------------------
+ 1 file changed, 47 deletions(-)
+
+Index: linux-next/arch/x86/kernel/acpi/boot.c
+===================================================================
+--- linux-next.orig/arch/x86/kernel/acpi/boot.c
++++ linux-next/arch/x86/kernel/acpi/boot.c
+@@ -83,8 +83,6 @@ int acpi_lapic;
+ int acpi_ioapic;
+ int acpi_strict;
+ 
+-static int disable_irq0_through_ioapic __initdata;
+-
+ u8 acpi_sci_flags __initdata;
+ int acpi_sci_override_gsi __initdata;
+ int acpi_skip_timer_override __initdata;
+@@ -996,10 +994,6 @@ mp_override_legacy_irq(u8 bus_irq, u8 po
+ 	int pin;
+ 	struct mp_config_intsrc mp_irq;
+ 
+-	/* Skip the 8254 timer interrupt (IRQ 0) if requested.  */
+-	if (bus_irq == 0 && disable_irq0_through_ioapic)
+-		return;
+-
+ 	/*
+ 	 * Convert 'gsi' to 'ioapic.pin'.
+ 	 */
+@@ -1066,10 +1060,6 @@ static void __init mp_config_acpi_legacy
+ 	for (i = 0; i < 16; i++) {
+ 		int idx;
+ 
+-		/* Skip the 8254 timer interrupt (IRQ 0) if requested.  */
+-		if (i == 0 && disable_irq0_through_ioapic)
+-			continue;
+-
+ 		for (idx = 0; idx < mp_irq_entries; idx++) {
+ 			struct mp_config_intsrc *irq = mp_irqs + idx;
+ 
+@@ -1429,17 +1419,6 @@ static int __init force_acpi_ht(const st
+ }
+ 
+ /*
+- * Don't register any I/O APIC entries for the 8254 timer IRQ.
+- */
+-static int __init
+-dmi_disable_irq0_through_ioapic(const struct dmi_system_id *d)
+-{
+-	pr_notice("%s detected: disabling IRQ 0 through I/O APIC\n", d->ident);
+-	disable_irq0_through_ioapic = 1;
+-	return 0;
+-}
+-
+-/*
+  * If your system is blacklisted here, but you find that acpi=force
+  * works for you, please contact acpi-devel@sourceforge.net
+  */
+@@ -1606,32 +1585,6 @@ static struct dmi_system_id __initdata a
+ 		     DMI_MATCH(DMI_PRODUCT_NAME, "TravelMate 360"),
+ 		     },
+ 	 },
+-	/*
+-	 * HP laptops which use a DSDT reporting as HP/SB400/10000,
+-	 * which includes some code which overrides all temperature
+-	 * trip points to 16C if the INTIN2 input of the I/O APIC
+-	 * is enabled.  This input is incorrectly designated the
+-	 * ISA IRQ 0 via an interrupt source override even though
+-	 * it is wired to the output of the master 8259A and INTIN0
+-	 * is not connected at all.  Abandon any attempts to route
+-	 * IRQ 0 through the I/O APIC therefore.
+-	 */
+-	{
+-	 .callback = dmi_disable_irq0_through_ioapic,
+-	 .ident = "HP NX6125 laptop",
+-	 .matches = {
+-		     DMI_MATCH(DMI_SYS_VENDOR, "Hewlett-Packard"),
+-		     DMI_MATCH(DMI_PRODUCT_NAME, "HP Compaq nx6125"),
+-		     },
+-	 },
+-	{
+-	 .callback = dmi_disable_irq0_through_ioapic,
+-	 .ident = "HP NX6325 laptop",
+-	 .matches = {
+-		     DMI_MATCH(DMI_SYS_VENDOR, "Hewlett-Packard"),
+-		     DMI_MATCH(DMI_PRODUCT_NAME, "HP Compaq nx6325"),
+-		     },
+-	 },
+ 	{}
+ };
+ 
