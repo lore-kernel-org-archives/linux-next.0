@@ -1,35 +1,48 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: linux-next: pending wireless/wireless-current merge conflict
-	2008-07-08
-Date: Tue, 8 Jul 2008 16:30:44 -0400
-Message-ID: <20080708203044.GA6381@tuxdriver.com>
-References: <20080702220212.GA31582@tuxdriver.com>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: linux-next: kbuild tree build failure
+Date: Tue, 8 Jul 2008 23:19:30 +0200
+Message-ID: <20080708211930.GA16897@uranus.ravnborg.org>
+References: <20080707184038.aaeb8d40.sfr@canb.auug.org.au> <Pine.LNX.4.64.0807071424240.6791@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ra.tuxdriver.com ([70.61.120.52]:4994 "EHLO ra.tuxdriver.com"
+Received: from pasmtpb.tele.dk ([80.160.77.98]:59525 "EHLO pasmtpB.tele.dk"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750843AbYGHVIF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Jul 2008 17:08:05 -0400
+	id S1750885AbYGHVSn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Jul 2008 17:18:43 -0400
 Content-Disposition: inline
-In-Reply-To: <20080702220212.GA31582@tuxdriver.com>
+In-Reply-To: <Pine.LNX.4.64.0807071424240.6791@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, linux-wireless@vger.kernel.org
+To: Roman Zippel <zippel@linux-m68k.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org
 
-I just sent a pull request for Dave that will result in a merge
-conflict in linux-next.  I have a sample merge available here:
+Hi Roman.
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-next-2.6 merge-test
+I thought a bit more about this.
 
-Just a heads-up... :-)
+> I should have gone through all archs to test this, sorry about that.
+> Luckily it's only powerpc that uses 64bit values. I would prefer to 
+> standardize on 32bit values, as it doesn't really make sense to expect 
+> from the user to input full 64bit values and it's easy to generate the 
+> full value in a header.
 
-John
+We use Kconfig for a mixture of user editable values and fixed
+configuration values.
+And I agree that asking the user to input a 64 bit number is not usefull.
 
-P.S.  These are one-liners (including the one from yesterday).
-Nevertheless, it can't hurt to provide a reference "just in
-case"... :-)
--- 
-John W. Linville
-linville@tuxdriver.com
+But keeping support for 64 bit values is what I would consider
+expected functionality.
+So removing support for 64 bit is not good IMO.
+
+> This would also ease on any portability issues 
+> (kconfig is compiled with the host compiler not the target compiler).
+
+We use strtol() in a few places in symbol.c already where we do an
+implicit conversion to int. Why did this not cause us problems before?
+
+Is it because these code paths are only triggered when we deal with ranges?
+If so we could 'fix' strdup_type() to not use strto{,u}l() so it
+is 64 bit clean and we are back to old behaviour.
+
+	Sam
