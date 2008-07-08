@@ -1,51 +1,42 @@
-From: Anton Vorontsov <avorontsov@ru.mvista.com>
-Subject: Re: linux-next: manual merge of the battery tree
-Date: Tue, 8 Jul 2008 22:57:21 +0400
-Message-ID: <20080708185721.GA11166@polina.dev.rtsoft.ru>
-References: <20080708161317.20591f4d.sfr@canb.auug.org.au>
-Reply-To: avorontsov@ru.mvista.com
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: Tree for July 8 (ns8390)
+Date: Tue, 8 Jul 2008 19:30:26 +0100
+Message-ID: <20080708193026.6c9c93ba@the-village.bc.nu>
+References: <20080708192251.3275d283.sfr@canb.auug.org.au>
+	<20080708113529.9297e1ad.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rtsoft3.corbina.net ([85.21.88.6]:1096 "EHLO
-	buildserver.ru.mvista.com" rhost-flags-OK-FAIL-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751337AbYGHS5X (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Jul 2008 14:57:23 -0400
-Content-Disposition: inline
-In-Reply-To: <20080708161317.20591f4d.sfr@canb.auug.org.au>
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:56466 "EHLO
+	the-village.bc.nu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753981AbYGHTDe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Jul 2008 15:03:34 -0400
+In-Reply-To: <20080708113529.9297e1ad.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, =?utf8?B?Ik1hcmVrIFZhxaF1dCI=?= <marek.vasut@gmail.com>, Russell King <rmk@arm.linux.org.uk>, Dmitry Baryshkov <dbaryshkov@gmail.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
 
-On Tue, Jul 08, 2008 at 04:13:17PM +1000, Stephen Rothwell wrote:
-> Hi Anton,
+On Tue, 8 Jul 2008 11:35:29 -0700
+Randy Dunlap <randy.dunlap@oracle.com> wrote:
+
+> (for Alan :)
 > 
-> Today's linux-next merge of the battery tree got trivial conflicts in
-> drivers/power/Makefile and drivers/power/Kconfig between commit
-> 7bd66c73ec75711cec7446c6f6822494c1afd951 ("[ARM] 5155/1: PalmTX battery
-> monitor") from the arm tree and commit
-> fece418418f51e92dd7e67e17c5e3fe5a28d3279 ("power_supply: Sharp SL-6000
-> (tosa) batteries support") from the battery tree.
+> drivers/built-in.o: In function `ne_drv_resume':
+> ne.c:(.text+0xc9902): undefined reference to `NS8390_init'
+> drivers/built-in.o: In function `ne_block_output':
+> ne.c:(.text+0xc9c31): undefined reference to `NS8390_init'
+> drivers/built-in.o: In function `ne_probe1':
+> ne.c:(.init.text+0xbbb3): undefined reference to `NS8390_init'
+> drivers/built-in.o: In function `hp_probe1':
+> hp.c:(.init.text+0xc15a): undefined reference to `NS8390_init'
 
-Stephen, much thanks for the notice.
+beats me... my ne.c doesn't reference NS8390_init at all. The patch has
+been going around for so long I've really lost track of what happened to
+it over the many months.
 
+My tree has NS8390p_init in both of those drivers and no reference to
+NS8390_init at all.
 
-Russell, what should we do? I can either:
-
-1. pick up the driver that ought to be applied through the battery-2.6.git,
-   thus you can drop it from the arm tree.
-
-2. or, we leave the conflict as is. Then, when the merge window opens,
-   you'll push the arm tree to Linus, then I'll pull from Linus' tree
-   [will fix the conflict meanwhile] and then I'll ask Linus to pull
-   the fixed battery-2.6.git.
-
-I don't have any preference, so I'll do whatever you prefer.
-
-Thanks,
-
--- 
-Anton Vorontsov
-email: cbouatmailru@gmail.com
-irc://irc.freenode.net/bd2
+Alan
