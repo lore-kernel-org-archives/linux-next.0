@@ -1,147 +1,65 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: Tree for July 8: nx6325-related commits
-Date: Wed, 9 Jul 2008 00:48:47 +0200
-Message-ID: <200807090048.48589.rjw@sisk.pl>
-References: <20080708192251.3275d283.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: pending wireless/wireless-current merge conflict
+ 2008-07-08
+Date: Wed, 9 Jul 2008 09:40:37 +1000
+Message-ID: <20080709094037.8e3050d9.sfr@canb.auug.org.au>
+References: <20080702220212.GA31582@tuxdriver.com>
+	<20080708203044.GA6381@tuxdriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__9_Jul_2008_09_40_37_+1000_oq/D9icto5zMvgcM"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:41992 "EHLO ogre.sisk.pl"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51737 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752100AbYGHWr1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Jul 2008 18:47:27 -0400
-In-Reply-To: <20080708192251.3275d283.sfr@canb.auug.org.au>
-Content-Disposition: inline
+	id S1755858AbYGHXkr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Jul 2008 19:40:47 -0400
+In-Reply-To: <20080708203044.GA6381@tuxdriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Kernel Testers List <kernel-testers@vger.kernel.org>, "Maciej W. Rozycki" <macro@linux-mips.org>, Andreas Herrmann <andreas.herrmann3@amd.com>, Matthew Garrett <mjg59@srcf.ucam.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, linux-wireless@vger.kernel.org
 
-Hi Ingo,
+--Signature=_Wed__9_Jul_2008_09_40_37_+1000_oq/D9icto5zMvgcM
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tuesday, 8 of July 2008, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since next-20080704:
-> 
-> Temporarily dropped tree: ttydev (since it would not import on top of any
-> tree I have)
-> 
-> The usb.current gained a white space conflict against Linus' tree (which I
-> assume will be gone as soon as Greg rebases his tree).
-> 
-> The usb tree gained a conflict against Linus' tree.
-> 
-> The tip-core tree gained a conflict against Linus' tree.
-> 
-> The sched tree lost a build fix patch.
-> 
-> The x86 tree lost a conflict against Linus' tree but gained two against
-> the ftrace tree.
+Hi John,
 
-Commits 0b3d81ad4f765513347a04434efc15cbdc4e1c54
-("x86, ioapic, acpi: add a knob to disable IRQ 0 through I/O APIC") and
-e38502eb8aa82314d5ab0eba45f50e6790dadd88
-("x86, ioapic, acpi quirk: disable IRQ 0 through I/O APIC for some HP systems")
-don't work on x86_64, because acpi_dmi_table[] depends on __i386__.
+On Tue, 8 Jul 2008 16:30:44 -0400 "John W. Linville" <linville@tuxdriver.co=
+m> wrote:
+>
+> I just sent a pull request for Dave that will result in a merge
+> conflict in linux-next.  I have a sample merge available here:
+>=20
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-next-2.6=
+ merge-test
+>=20
+> Just a heads-up... :-)
+>=20
+> John
+>=20
+> P.S.  These are one-liners (including the one from yesterday).
+> Nevertheless, it can't hurt to provide a reference "just in
+> case"... :-)
 
-Moreover, if you make them work (by removing that dependency), they hang my
-nx6325 solid early during boot.
+Appreciated, thanks.
 
-The revert patch is appended for your convenience. ;-)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Thanks,
-Rafael
+--Signature=_Wed__9_Jul_2008_09_40_37_+1000_oq/D9icto5zMvgcM
+Content-Type: application/pgp-signature
 
----
- arch/x86/kernel/acpi/boot.c |   47 --------------------------------------------
- 1 file changed, 47 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-Index: linux-next/arch/x86/kernel/acpi/boot.c
-===================================================================
---- linux-next.orig/arch/x86/kernel/acpi/boot.c
-+++ linux-next/arch/x86/kernel/acpi/boot.c
-@@ -83,8 +83,6 @@ int acpi_lapic;
- int acpi_ioapic;
- int acpi_strict;
- 
--static int disable_irq0_through_ioapic __initdata;
--
- u8 acpi_sci_flags __initdata;
- int acpi_sci_override_gsi __initdata;
- int acpi_skip_timer_override __initdata;
-@@ -996,10 +994,6 @@ mp_override_legacy_irq(u8 bus_irq, u8 po
- 	int pin;
- 	struct mp_config_intsrc mp_irq;
- 
--	/* Skip the 8254 timer interrupt (IRQ 0) if requested.  */
--	if (bus_irq == 0 && disable_irq0_through_ioapic)
--		return;
--
- 	/*
- 	 * Convert 'gsi' to 'ioapic.pin'.
- 	 */
-@@ -1066,10 +1060,6 @@ static void __init mp_config_acpi_legacy
- 	for (i = 0; i < 16; i++) {
- 		int idx;
- 
--		/* Skip the 8254 timer interrupt (IRQ 0) if requested.  */
--		if (i == 0 && disable_irq0_through_ioapic)
--			continue;
--
- 		for (idx = 0; idx < mp_irq_entries; idx++) {
- 			struct mp_config_intsrc *irq = mp_irqs + idx;
- 
-@@ -1429,17 +1419,6 @@ static int __init force_acpi_ht(const st
- }
- 
- /*
-- * Don't register any I/O APIC entries for the 8254 timer IRQ.
-- */
--static int __init
--dmi_disable_irq0_through_ioapic(const struct dmi_system_id *d)
--{
--	pr_notice("%s detected: disabling IRQ 0 through I/O APIC\n", d->ident);
--	disable_irq0_through_ioapic = 1;
--	return 0;
--}
--
--/*
-  * If your system is blacklisted here, but you find that acpi=force
-  * works for you, please contact acpi-devel@sourceforge.net
-  */
-@@ -1606,32 +1585,6 @@ static struct dmi_system_id __initdata a
- 		     DMI_MATCH(DMI_PRODUCT_NAME, "TravelMate 360"),
- 		     },
- 	 },
--	/*
--	 * HP laptops which use a DSDT reporting as HP/SB400/10000,
--	 * which includes some code which overrides all temperature
--	 * trip points to 16C if the INTIN2 input of the I/O APIC
--	 * is enabled.  This input is incorrectly designated the
--	 * ISA IRQ 0 via an interrupt source override even though
--	 * it is wired to the output of the master 8259A and INTIN0
--	 * is not connected at all.  Abandon any attempts to route
--	 * IRQ 0 through the I/O APIC therefore.
--	 */
--	{
--	 .callback = dmi_disable_irq0_through_ioapic,
--	 .ident = "HP NX6125 laptop",
--	 .matches = {
--		     DMI_MATCH(DMI_SYS_VENDOR, "Hewlett-Packard"),
--		     DMI_MATCH(DMI_PRODUCT_NAME, "HP Compaq nx6125"),
--		     },
--	 },
--	{
--	 .callback = dmi_disable_irq0_through_ioapic,
--	 .ident = "HP NX6325 laptop",
--	 .matches = {
--		     DMI_MATCH(DMI_SYS_VENDOR, "Hewlett-Packard"),
--		     DMI_MATCH(DMI_PRODUCT_NAME, "HP Compaq nx6325"),
--		     },
--	 },
- 	{}
- };
- 
+iEYEARECAAYFAkhz+vUACgkQjjKRsyhoI8xHFgCfYk0RfTiJsrGxMELnYoBEpbzB
+Jz8An38vzRi0mRqDJgRH4LmAvOhmhYHH
+=5DCY
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__9_Jul_2008_09_40_37_+1000_oq/D9icto5zMvgcM--
