@@ -1,47 +1,40 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next:  stacktace build failure
-Date: Tue, 8 Jul 2008 14:24:08 +0200
-Message-ID: <20080708122408.GA22788@elte.hu>
-References: <20080708221540.9e0c0d2e.sfr@canb.auug.org.au>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: linux-next: manual merge of the net tree
+Date: Tue, 8 Jul 2008 08:22:27 -0400
+Message-ID: <20080708122227.GA4239@tuxdriver.com>
+References: <20080708141607.404681a4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:52355 "EHLO mx3.mail.elte.hu"
+Received: from ra.tuxdriver.com ([70.61.120.52]:4261 "EHLO ra.tuxdriver.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753653AbYGHMYZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Jul 2008 08:24:25 -0400
+	id S1752350AbYGHMiS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Jul 2008 08:38:18 -0400
 Content-Disposition: inline
-In-Reply-To: <20080708221540.9e0c0d2e.sfr@canb.auug.org.au>
+In-Reply-To: <20080708141607.404681a4.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Darren Jenkins <darrenrjenkins@gmail.com>, Harvey Harrison <harvey.harrison@gmail.com>
 
-
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi Ingo,
+On Tue, Jul 08, 2008 at 02:16:07PM +1000, Stephen Rothwell wrote:
+> Hi David,
 > 
-> Today's linux-next build (spac64 allmodconfig) failed like this:
+> Today's linux-next merge of the net tree got a conflict in
+> drivers/net/wireless/iwlwifi/iwl-3945.c between commit
+> 0ff1cca0e272045b9c11a2ff94bd3e6893c9308c
+> ("drivers/net/wireless/iwlwifi/iwl-3945.c Fix type issue on 64bit") from
+> the wireless-current tree and commit
+> fd7c8a40b2a63863f749e4d17f0d94d2e5ab1331 ("mac80211: add helpers for
+> frame control testing") from the net tree.
 > 
-> arch/sparc64/kernel/stacktrace.c:50: warning: type defaults to `int' in declaration of `EXPORT_SYMBOL_GPL'
-> arch/sparc64/kernel/stacktrace.c:50: warning: parameter names (without types) in function declaration
-> arch/sparc64/kernel/stacktrace.c:50: warning: data definition has no type or storage class
-> 
-> Signed-off-by: Stephen Rothwell <sf@canb.auug.org.au>
-> 
-> diff --git a/arch/sparc64/kernel/stacktrace.c b/arch/sparc64/kernel/stacktrace.c
-> index 49656ed..b3e3737 100644
-> --- a/arch/sparc64/kernel/stacktrace.c
-> +++ b/arch/sparc64/kernel/stacktrace.c
-> @@ -1,6 +1,7 @@
->  #include <linux/sched.h>
->  #include <linux/stacktrace.h>
->  #include <linux/thread_info.h>
-> +#include <linux/module.h>
->  #include <asm/ptrace.h>
->  #include <asm/stacktrace.h>
+> I applied the former change to the latter's code and can carry the fixup
+> while necessary.
 
-applied, thanks Stephen.
+Yes, that sounds like the right fix.  I'm sorry I didn't get you a
+merge-test in advance this time!
 
-	Ingo
+John
+-- 
+John W. Linville
+linville@tuxdriver.com
