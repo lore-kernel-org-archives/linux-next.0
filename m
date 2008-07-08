@@ -1,54 +1,90 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: manual merge of the selinux tree
-Date: Tue, 8 Jul 2008 01:49:50 -0700
-Message-ID: <20080708014950.1caa8a64.akpm@linux-foundation.org>
-References: <20080707225130.ca52d527.sfr@canb.auug.org.au>
-	<Xine.LNX.4.64.0807080042090.11950@us.intercode.com.au>
-	<1215442054.27975.85.camel@moss-spartans.epoch.ncsc.mil>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: sparc64 build failure
+Date: Tue, 8 Jul 2008 19:08:37 +1000
+Message-ID: <20080708190837.bcdcbbd6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:33365 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751564AbYGHI4V (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Jul 2008 04:56:21 -0400
-In-Reply-To: <1215442054.27975.85.camel@moss-spartans.epoch.ncsc.mil>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56974 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750810AbYGHJIk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Jul 2008 05:08:40 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Smalley <sds@tycho.nsa.gov>
-Cc: James Morris <jmorris@namei.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Eric Paris <eparis@redhat.com>, Paul Moore <paul.moore@hp.com>, linux-next@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, Andi Kleen <andi@firstfloor.org>, Greg KH <greg@kroah.com>
 
-On Mon, 07 Jul 2008 10:47:34 -0400 Stephen Smalley <sds@tycho.nsa.gov> wrote:
+Hi David,
 
-> 
-> On Tue, 2008-07-08 at 00:43 +1000, James Morris wrote:
-> > On Mon, 7 Jul 2008, Stephen Rothwell wrote:
-> > 
-> > > Hi all,
-> > > 
-> > > Today's linux-next merge of the selinux tree got a conflict in
-> > > fs/proc/task_mmu.c between commit
-> > > 5d7e0d2bd98ef4f5a16ac9da1987ae655368dd6a ("Fix pagemap_read() use of
-> > > struct mm_walk") from Linus' tree and commit
-> > > ca9b1a1413bac6ea5e5c8cb81044a39bdb3b4bc8 ("Security: split proc ptrace
-> > > checking into read vs. attach") from the selinux tree.
-> > > 
-> > > The former removed some of the code that the latter changed.  It is
-> > > probably worth a check on the code in pagemap_read to make sure I got it
-> > > right.
-> > 
-> > I couldn't locate your updated version, but have resolved it in my own 
-> > tree (which is being rebased).  
-> > 
-> > One thing we need to understand is why there were two separate 
-> > ptrace_may_attach() calls in the earlier version of pagemap_read().
-> 
-> It could sleep in between the two calls.
-> 
+Today's linux-next build (sparc64 defconfig) failed like this:
 
-This is basically meaningless?  Other threads could be running, accessing
-this mm_struct.  Other processes can be doing stuff.  Preemption can
-happen.
+arch/sparc64/kernel/sysfs.c:160: warning: initialization from incompatible pointer type
+arch/sparc64/kernel/sysfs.c:160: warning: initialization from incompatible pointer type
+arch/sparc64/kernel/sysfs.c:205: warning: initialization from incompatible pointer type
+arch/sparc64/kernel/sysfs.c:206: warning: initialization from incompatible pointer type
+arch/sparc64/kernel/sysfs.c:207: warning: initialization from incompatible pointer type
+arch/sparc64/kernel/sysfs.c:208: warning: initialization from incompatible pointer type
+arch/sparc64/kernel/sysfs.c:209: warning: initialization from incompatible pointer type
+arch/sparc64/kernel/sysfs.c:210: warning: initialization from incompatible pointer type
+arch/sparc64/kernel/sysfs.c:211: warning: initialization from incompatible pointer type
+make[2]: *** [arch/sparc64/kernel/sysfs.o] Error 1
 
-Are we missing some locking here?
+Caused by commit 5b01a6a61c48d8e6ab4679d6e6208f5962d07b85 ("sysdev: Pass
+the attribute to the low level sysdev show/store function") from the
+driver-core tree.  I have applied the patch below.
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+>From 2b3ba8b78163527dade51c5c92ce52526abbb198 Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 8 Jul 2008 19:03:49 +1000
+Subject: [PATCH] sparc64: sysdev API change fallout
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/sparc64/kernel/sysfs.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/sparc64/kernel/sysfs.c b/arch/sparc64/kernel/sysfs.c
+index b057bc1..47478ce 100644
+--- a/arch/sparc64/kernel/sysfs.c
++++ b/arch/sparc64/kernel/sysfs.c
+@@ -136,13 +136,13 @@ static unsigned long write_mmustat_enable(unsigned long val)
+ 	return sun4v_mmustat_conf(ra, &orig_ra);
+ }
+ 
+-static ssize_t show_mmustat_enable(struct sys_device *s, char *buf)
++static ssize_t show_mmustat_enable(struct sys_device *s, struct sysdev_attribute *attr, char *buf)
+ {
+ 	unsigned long val = run_on_cpu(s->id, read_mmustat_enable, 0);
+ 	return sprintf(buf, "%lx\n", val);
+ }
+ 
+-static ssize_t store_mmustat_enable(struct sys_device *s, const char *buf, size_t count)
++static ssize_t store_mmustat_enable(struct sys_device *s, struct sysdev_attribute *attr, const char *buf, size_t count)
+ {
+ 	unsigned long val, err;
+ 	int ret = sscanf(buf, "%ld", &val);
+@@ -180,14 +180,14 @@ static void unregister_mmu_stats(struct sys_device *s)
+ #endif
+ 
+ #define SHOW_CPUDATA_ULONG_NAME(NAME, MEMBER) \
+-static ssize_t show_##NAME(struct sys_device *dev, char *buf) \
++static ssize_t show_##NAME(struct sys_device *dev, struct sysdev_attribute *attr, char *buf) \
+ { \
+ 	cpuinfo_sparc *c = &cpu_data(dev->id); \
+ 	return sprintf(buf, "%lu\n", c->MEMBER); \
+ }
+ 
+ #define SHOW_CPUDATA_UINT_NAME(NAME, MEMBER) \
+-static ssize_t show_##NAME(struct sys_device *dev, char *buf) \
++static ssize_t show_##NAME(struct sys_device *dev, struct sysdev_attribute *attr, char *buf) \
+ { \
+ 	cpuinfo_sparc *c = &cpu_data(dev->id); \
+ 	return sprintf(buf, "%u\n", c->MEMBER); \
+-- 
+1.5.6.2
