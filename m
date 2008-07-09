@@ -1,63 +1,32 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-Subject: Re: [PATCH 2/2] ACPI Check for backlight support via ACPI video.ko otherwise use vendor ACPI drivers
-Date: Wed, 9 Jul 2008 15:57:58 +0100
-Message-ID: <20080709145758.GA22147@srcf.ucam.org>
-References: <200807031809.03172.trenn@suse.de> <20080703162152.GC29110@srcf.ucam.org> <200807091649.52605.trenn@suse.de>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: Tree for July 9
+Date: Wed, 9 Jul 2008 15:59:57 +0100
+Message-ID: <20080709155957.6bca2744@the-village.bc.nu>
+References: <20080709183047.0eb1eb72.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <200807091649.52605.trenn@suse.de>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Thomas Renninger <trenn@suse.de>
-Cc: ak@linux.intel.com, linux-acpi@vger.kernel.org, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, Carlos Corbacho <carlos@strangeworlds.co.uk>, Jonathan Woithe <jwoithe@physics.adelaide.edu.au>, malattia@linux.it, stelian@popies.net, linux-next@vger.kernel.org, Corentin CHARY <corentincj@iksaif.net>, Lennart Poettering <mzxreary@0pointer.de>, Julia Jomantaite <julia.jomantaite@gmail.com>, corsac@debian.org, dannybaumann@web.de, marcus@better.se, Zhang Rui <rui.zhang@intel.com>, Hong Liu <hong.liu@intel.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:57634 "EHLO
+	the-village.bc.nu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753819AbYGIPck (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Jul 2008 11:32:40 -0400
+In-Reply-To: <20080709183047.0eb1eb72.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Jul 09, 2008 at 04:49:49PM +0200, Thomas Renninger wrote:
-> On Thursday 03 July 2008 18:21:52 Matthew Garrett wrote:
-> > On Thu, Jul 03, 2008 at 06:08:59PM +0200, Thomas Renninger wrote:
-> > > +	if (ACPI_SUCCESS(acpi_get_handle(device->handle, "DRDY", &h_dummy))) {
-> > > +		ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Found IGD device\n"));
-> > > +		video_caps |= ACPI_VIDEO_IGD;
-> > > +	}
-> >
-> > In principle, it's possible for a vendor to implement opregion but not
-> > actually use it until the tche flags are set. If anyone's done that then
-> > you've just broken backlight control on their system.
+On Wed, 9 Jul 2008 18:30:47 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi all,
 > 
-> Who should set that flags?
-> The dri driver is going to set that if he can serve IGD parts, right?
+> Changes since next-20080708:
+> 
+> Temporarily dropped tree: ttydev (since it would not import on top of any
+> tree I have)
 
-No. The opregion spec requires you to use video.ko. 
+I can make no sense of this as it applies cleanly on top of your tree.
 
-> Currently this patch makes the vendor specific e.g. thinkpad_acpi to serve 
-> backlight brightness switching if a IGD device is found. Because currently 
-> there is no IGD support in the kernel.
-
-Yes, but that's *wrong*. There are many machines that support opregion 
-but do not require its use - they'll behave using the old ACPI mechanism 
-until you switch them to the new mode. Except right now if you switch 
-them to the new mode then they'll stop working, because the DRI code 
-isn't merged yet.
-
-> You should export a function intel_opregion_init()? so that built in kernel 
-> parts can check for IGD backlight support, instead of the lines above (part 
-> of my patch). If this succeeds, my patch will tell vendor specfic drivers to 
-> keep fingers off backlight switching.
-
-No. Please read the opregion spec. The way it works is as follows:
-
-1) Firmware exports an ACPI video class
-2) OS checks whether the hardware supports the opregion ACPI video 
-handling (this is done by looking at tables in a region of memory 
-pointed at by a PCI configuration register)
-3) OS sets opregion flags
-4) OS calls the ACPI backlight set function
-5) Firmware writes desired brightness to an opregion mailbox and 
-triggers an interrupt
-6) OS sets the brightness
-
-For this to work, the ACPI video driver needs to work as it currently 
-does. It is not correct for it to disable itself on IGD systems.
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
+Alan
