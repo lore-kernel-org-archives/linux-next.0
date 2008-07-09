@@ -1,92 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for July 9
-Date: Thu, 10 Jul 2008 02:51:49 +1000
-Message-ID: <20080710025149.3e69fecd.sfr@canb.auug.org.au>
-References: <20080709183047.0eb1eb72.sfr@canb.auug.org.au>
-	<20080709155957.6bca2744@the-village.bc.nu>
+Subject: Re: linux-next: manual merge of the nfs tree
+Date: Thu, 10 Jul 2008 03:20:33 +1000
+Message-ID: <20080710032033.a239e265.sfr@canb.auug.org.au>
+References: <20080709125611.f25a9467.sfr@canb.auug.org.au>
+	<1215621873.7214.15.camel@localhost>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__10_Jul_2008_02_51_49_+1000_yOoLfKlXAuhS/WK/"
+ boundary="Signature=_Thu__10_Jul_2008_03_20_33_+1000_etG1tFc6PfTSnugi"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37654 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50764 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754157AbYGIQv6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 9 Jul 2008 12:51:58 -0400
-In-Reply-To: <20080709155957.6bca2744@the-village.bc.nu>
+	id S1750982AbYGIRUl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 9 Jul 2008 13:20:41 -0400
+In-Reply-To: <1215621873.7214.15.camel@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Thu__10_Jul_2008_02_51_49_+1000_yOoLfKlXAuhS/WK/
+--Signature=_Thu__10_Jul_2008_03_20_33_+1000_etG1tFc6PfTSnugi
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Alan,
+Hi Trond,
 
-On Wed, 9 Jul 2008 15:59:57 +0100 Alan Cox <alan@lxorguk.ukuu.org.uk> wrote:
+On Wed, 09 Jul 2008 12:44:33 -0400 Trond Myklebust <trond.myklebust@fys.uio=
+.no> wrote:
 >
-> On Wed, 9 Jul 2008 18:30:47 +1000
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->=20
-> > Temporarily dropped tree: ttydev (since it would not import on top of a=
-ny
-> > tree I have)
->=20
-> I can make no sense of this as it applies cleanly on top of your tree.
+> Sorry about that: I cherry-picked those patches from my 'devel' branch.
+> I should probably have used some other method.
 
-And so it does, sorry.  I noticed in previous emails that you said you
-had based the ttydev series on the firmware tree, so I tried to apply it
-there and it failed.  I am still tired after Monday's attempt to build
-the linux-next tree failed (not because of ttydev since I never got that
-far :-().
+Its not really a problem.  Since the patch is the same in both trees and
+only one tree further modifies the code, I just take that.  This will
+happen occasionally as fixes go into Linus' tree.
 
-I assume that you were never informed about how I work with quilt series
-and I am sorry for that.  Here it is:
+> Anyhow, the nfs tree has now been rebased onto today's mainline kernel,
+> and so the conflict should now be eliminated.
 
-I collect the series in the morning (my time) and then import it into a
-branch of its own based on the commit id in the BASE or NEXT-BASE comment
-at the top of the series file.  Because the developer has chosen whee the
-branch is based, the patches should always apply cleanly.  This branch
-then gets merged into that days linux-next at some point.
-
-So, I need a series based on something that is *not* linux-next itself
-(otherwise merging the branch will pull in all of the previous version of
-linux-next - bad :-)). It can be based on something that is merged into
-linux-next (either named in a NEXT-BASE comment or a SHA1 if the base
-tree is never rebased).  If this causes me to fix up merge conflicts,
-then that is fine (up to a point, of course) what I can't do easily is
-fix up when a patch will not apply in the middle of a series.
-
-Therefore, you should pick a nice stable place to base your tree on.
-This base can change from day to day and some do.=20
-
-Remember that you have to get your series of patches into Linus' tree
-eventually and when you do that, all the things in linux-next may not
-have been merged yet (or much more may have been).  Part of what
-linux-next is for is to take what you intend to send to Linus and try to
-merge it with all the other stuff that is headed his way to see how much
-of a mess we get into - and in some cases to change things so that we
-minimise that mess.
-
-Hope this is helpful.  If not, please note what time it is here :-)
+Thanks.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__10_Jul_2008_02_51_49_+1000_yOoLfKlXAuhS/WK/
+--Signature=_Thu__10_Jul_2008_03_20_33_+1000_etG1tFc6PfTSnugi
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkh07KUACgkQjjKRsyhoI8yM3ACcCFphcM+9wz+3xqciwiILqPw3
-yxgAnA9q+g65CJqIePW1R+Y2ZN1GeBRn
-=jW4K
+iEYEARECAAYFAkh082EACgkQjjKRsyhoI8xg2ACePVHWctMO01PKyrDhGvmtPZfO
+/GsAnAr6AC2kEd6DKSm6YizsWjeaHAcO
+=43YR
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__10_Jul_2008_02_51_49_+1000_yOoLfKlXAuhS/WK/--
+--Signature=_Thu__10_Jul_2008_03_20_33_+1000_etG1tFc6PfTSnugi--
