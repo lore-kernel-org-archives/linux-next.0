@@ -1,60 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: powerpc tree build failure
-Date: Wed, 9 Jul 2008 14:24:33 +1000
-Message-ID: <20080709142433.a7f75900.sfr@canb.auug.org.au>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: Tree for July 8 (HID)
+Date: Wed, 9 Jul 2008 09:59:24 +0200 (CEST)
+Message-ID: <alpine.LNX.1.10.0807090954480.25171@jikos.suse.cz>
+References: <20080708192251.3275d283.sfr@canb.auug.org.au> <20080708111649.e61b19bc.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__9_Jul_2008_14_24_33_+1000_c7w6xZMqpgVjXEMT"
+Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33554 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750824AbYGIEYp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 9 Jul 2008 00:24:45 -0400
+Received: from styx.suse.cz ([82.119.242.94]:46915 "EHLO mail.suse.cz"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751013AbYGIH70 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 9 Jul 2008 03:59:26 -0400
+In-Reply-To: <20080708111649.e61b19bc.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Mackerras <paulus@samba.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@ozlabs.org
-Cc: linux-next@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>, Jiri Slaby <jslaby@suse.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Pascal Terjan <pterjan@mandriva.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Wed__9_Jul_2008_14_24_33_+1000_c7w6xZMqpgVjXEMT
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 8 Jul 2008, Randy Dunlap wrote:
 
-Hi all,
+> drivers/built-in.o: In function `usb_kbd_probe':
+> usbkbd.c:(.text+0x1457c9): undefined reference to `usbhid_lookup_quirk'
+> drivers/built-in.o: In function `usb_mouse_probe':
+> usbmouse.c:(.text+0x14603c): undefined reference to `usbhid_lookup_quirk'
+> make[1]: *** [.tmp_vmlinux1] Error 1
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+This got introduced by Jiri's
 
-In file included from include2/asm/pgtable.h:13,
-                 from include/linux/mm.h:39,
-                 from include/linux/mman.h:14,
-                 from arch/powerpc/kernel/asm-offsets.c:22:
-include2/asm/pgtable-ppc64.h:325: error: redefinition of 'huge_ptep_set_wrp=
-rotect'
-include2/asm/pgtable-ppc64.h:317: error: previous definition of 'huge_ptep_=
-set_wrprotect' was here
+ 	HID: fix quirk handling in usbmouse/kbd
 
-Caused by the actual merge of the powerpc tree due to commit
-86df86424939d316b1f6cfac1b6204f0c7dee317 ("Correct hash flushing from
-huge_ptep_set_wrprotect()") from Linus' tree merging with commit
-016b33c4958681c24056abed8ec95844a0da80a3 ("powerpc: Add 64 bit version of
-huge_ptep_set_wrprotect") from the powerpc tree.
+Added to CC (and added also Pascal).
 
-I fixed it up in the actual merge commit.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+The dependency of usbkbd/usbmouse on usbhid is strange anyway. I'd 
+probably remove the whole quirk lookup thing from usbkbd/usbmouse drivers. 
+They introduce this ugly dependency, which is not worth it I guess. Also 
+usbkbd/usbmouse drivers are not needed in the vast majority of cases 
+anyway, and they shouldn't be loaded in standard configurations at all.
 
---Signature=_Wed__9_Jul_2008_14_24_33_+1000_c7w6xZMqpgVjXEMT
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkh0PYEACgkQjjKRsyhoI8yjSACZAXJ0c9hTDCDthapyodPBAFTp
-BGoAn2PgYMtXNGS3UgcBFGkq1yBiuL/w
-=zue2
------END PGP SIGNATURE-----
-
---Signature=_Wed__9_Jul_2008_14_24_33_+1000_c7w6xZMqpgVjXEMT--
+-- 
+Jiri Kosina
+SUSE Labs
