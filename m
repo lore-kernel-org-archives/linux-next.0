@@ -1,49 +1,72 @@
 From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: linux-next: Tree for July 9
-Date: Wed, 9 Jul 2008 16:30:28 +0200
-Message-ID: <20080709143028.GA24152@osiris.boeblingen.de.ibm.com>
-References: <20080709183047.0eb1eb72.sfr@canb.auug.org.au>
+Subject: Re: [PATCH linux-next] fix s390 compile error due to
+	smp_call_function
+Date: Wed, 9 Jul 2008 16:36:39 +0200
+Message-ID: <20080709143639.GB24152@osiris.boeblingen.de.ibm.com>
+References: <200807081625.50437.borntraeger@de.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate3.de.ibm.com ([195.212.29.152]:1542 "EHLO
-	mtagate3.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751648AbYGIObB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Jul 2008 10:31:01 -0400
+Received: from mtagate7.de.ibm.com ([195.212.29.156]:23849 "EHLO
+	mtagate7.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753230AbYGIOhd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Jul 2008 10:37:33 -0400
 Content-Disposition: inline
-In-Reply-To: <20080709183047.0eb1eb72.sfr@canb.auug.org.au>
+In-Reply-To: <200807081625.50437.borntraeger@de.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: Jens Axboe <jens.axboe@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-s390@vger.kernel.org
 
-On Wed, Jul 09, 2008 at 06:30:47PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Tue, Jul 08, 2008 at 04:25:50PM +0200, Christian Borntraeger wrote:
+> Hello Jens,
 > 
-> Changes since next-20080708:
+> the following patch in linux-next (v2.6.26-rc9-7220-g5e36ed1)
 > 
-> Temporarily dropped tree: ttydev (since it would not import on top of any
-> tree I have)
+> commit 8691e5a8f691cc2a4fda0651e8d307aaba0e7d68
+> Author: Jens Axboe <jens.axboe@oracle.com>
+> Date:   Fri Jun 6 11:18:06 2008 +0200
+> smp_call_function: get rid of the unused nonatomic/retry argument
 > 
-> The x86 tree lost a conflict against the ftrace tree.
+> causes a build error on s390.
+>   CC      arch/s390/kernel/time.o
+> arch/s390/kernel/time.c: In function 'stp_work_fn':
+> arch/s390/kernel/time.c:1448: error: too many arguments to 
+> function 'smp_call_function'
+> arch/s390/kernel/time.c:1481: error: too many arguments to 
+> function 'smp_call_function'
 > 
-> The ide tree gained 2 conflicts against Linus' tree.
+> The fix is simple and obvious, remove the unneeded argument.
 > 
-> The nfs tree gained a conflict against Linus' tree.
+> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 > 
-> The acpi tree lost 5 conflicts against various trees but gained another
-> against the x86 tree.
+> ---
+>  arch/s390/kernel/time.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> The net tree lost 2 conflicts against the x86 wireless-current trees.
+> Index: linux-next/arch/s390/kernel/time.c
+> ===================================================================
+> --- linux-next.orig/arch/s390/kernel/time.c
+> +++ linux-next/arch/s390/kernel/time.c
+> @@ -1445,7 +1445,7 @@ static void stp_work_fn(struct work_stru
+>  	 */
+>  	memset(&stp_sync, 0, sizeof(stp_sync));
+>  	preempt_disable();
+> -	smp_call_function(clock_sync_cpu_start, &stp_sync, 0, 0);
+> +	smp_call_function(clock_sync_cpu_start, &stp_sync, 0);
+>  	local_irq_disable();
+>  	enable_sync_clock();
 > 
-> I have also applied the following patches for known problems (I assume
-> that these will be merged into their appropriate trees shortly):
+> @@ -1478,7 +1478,7 @@ static void stp_work_fn(struct work_stru
+>  		stp_sync.in_sync = 1;
 > 
-> 	linux-next: zero based percpu build error on s390
+>  	local_irq_enable();
+> -	smp_call_function(clock_sync_cpu_end, NULL, 0, 0);
+> +	smp_call_function(clock_sync_cpu_end, NULL, 0);
+>  	preempt_enable();
+>  }
 
-Ingo, will you merge/pick this patch up? The original patch which causes
-the problems came in via one of your git trees. Patch in question is
-
-"Zero based percpu: infrastructure to rebase the per cpu area to zero"
-
-Thanks.
+Stephen, could you add this patch to your build fixes?
+Currently it won't fit into git-s390 or Jens' smp_call_function
+tree, since these two call sites are introduced with a new
+patch in git-s390 (stp support).
