@@ -1,51 +1,56 @@
-From: Thomas Renninger <trenn@suse.de>
-Subject: Re: [PATCH 2/2] ACPI Check for backlight support via ACPI video.ko otherwise use vendor ACPI drivers
-Date: Wed, 9 Jul 2008 18:00:23 +0200
-Message-ID: <200807091800.27608.trenn@suse.de>
-References: <200807031809.03172.trenn@suse.de> <200807091649.52605.trenn@suse.de> <20080709145758.GA22147@srcf.ucam.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH linux-next] fix s390 compile error due to
+ smp_call_function
+Date: Thu, 10 Jul 2008 02:21:40 +1000
+Message-ID: <20080710022140.0eaf9f8d.sfr@canb.auug.org.au>
+References: <200807081625.50437.borntraeger@de.ibm.com>
+	<20080709143639.GB24152@osiris.boeblingen.de.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20080709145758.GA22147@srcf.ucam.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__10_Jul_2008_02_21_40_+1000_/MVl4LXmSvP.+Eil"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:40854 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751180AbYGIQVs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 9 Jul 2008 12:21:48 -0400
+In-Reply-To: <20080709143639.GB24152@osiris.boeblingen.de.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Christian Borntraeger <borntraeger@de.ibm.com>, Jens Axboe <jens.axboe@oracle.com>, linux-next@vger.kernel.org, linux-s390@vger.kernel.org
+
+--Signature=_Thu__10_Jul_2008_02_21_40_+1000_/MVl4LXmSvP.+Eil
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-Sender: linux-acpi-owner@vger.kernel.org
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: ak@linux.intel.com, linux-acpi@vger.kernel.org, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, Carlos Corbacho <carlos@strangeworlds.co.uk>, Jonathan Woithe <jwoithe@physics.adelaide.edu.au>, malattia@linux.it, stelian@popies.net, linux-next@vger.kernel.org, Corentin CHARY <corentincj@iksaif.net>, Lennart Poettering <mzxreary@0pointer.de>, Julia Jomantaite <julia.jomantaite@gmail.com>, corsac@debian.org, dannybaumann@web.de, marcus@better.se, Zhang Rui <rui.zhang@intel.com>, Hong Liu <hong.liu@intel.com>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-...
-> For this to work, the ACPI video driver needs to work as it currently
-> does. It is not correct for it to disable itself on IGD systems.
-Right, now I got it. It is only the T61/Lenovo you must have the opregion 
-driver ready or you better fallback to thinkpad_acpi...
-Is that correct?
-I will add a dmi check for Lenovo in video_detect.c.
-That would be:
-  - If ACPI Appendix B video brightness functions are found
-  |     -> use video.ko
-  |     |
-  |     -> If it's a ThinkPad, check for Opregion BIOS support
-  |           -> Use video.ko if IGD parts are implemented (and the one
-  |           |   ThinkPad specific func you had the 750ms delay is available)
-  |           -> otherwise go back to thinkpad_acpi
-  |
-  ->  Use vendor specific driver
+Hi Heiko,
 
-FWIW, the IGD part to switch to vendor specific drivers can be deleted anyway 
-if you say the IGD parts are working with your upcoming patches.
+On Wed, 9 Jul 2008 16:36:39 +0200 Heiko Carstens <heiko.carstens@de.ibm.com=
+> wrote:
+>
+> Stephen, could you add this patch to your build fixes?
+> Currently it won't fit into git-s390 or Jens' smp_call_function
+> tree, since these two call sites are introduced with a new
+> patch in git-s390 (stp support).
 
-This would then be to use video.ko when detecting general brightness functions 
-and otherwise let vendor specific drivers do it. No IGD check is necessary at 
-all anymore.
-The check for IGD was because ThinkPads did not work with video.ko then and 
-this blocked the "check for physical graphics device" patch fixing a lot 
-others.
+Will do.
 
-Please also provide an OSI string with your video opregion code parts, so that 
-BIOS can check whether the kernel is capable of serving IGD devices. Just 
-choose a random string you like, e.g. let OSI("Opregion Video Support") 
-return true.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-    Thomas
+--Signature=_Thu__10_Jul_2008_02_21_40_+1000_/MVl4LXmSvP.+Eil
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkh05ZQACgkQjjKRsyhoI8zu1gCfStFgg1wc+BVbiyklOm1/c/uJ
+7nYAn1dgm8O/JhbRM3UCMLKq9sTRi9+H
+=pmN/
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__10_Jul_2008_02_21_40_+1000_/MVl4LXmSvP.+Eil--
