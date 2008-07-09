@@ -1,56 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH linux-next] fix s390 compile error due to
- smp_call_function
-Date: Thu, 10 Jul 2008 02:21:40 +1000
-Message-ID: <20080710022140.0eaf9f8d.sfr@canb.auug.org.au>
-References: <200807081625.50437.borntraeger@de.ibm.com>
-	<20080709143639.GB24152@osiris.boeblingen.de.ibm.com>
+From: Trond Myklebust <trond.myklebust@fys.uio.no>
+Subject: Re: linux-next: manual merge of the nfs tree
+Date: Wed, 09 Jul 2008 12:44:33 -0400
+Message-ID: <1215621873.7214.15.camel@localhost>
+References: <20080709125611.f25a9467.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__10_Jul_2008_02_21_40_+1000_/MVl4LXmSvP.+Eil"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40854 "EHLO smtps.tip.net.au"
+Received: from mail-out2.uio.no ([129.240.10.58]:53799 "EHLO mail-out2.uio.no"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751180AbYGIQVs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 9 Jul 2008 12:21:48 -0400
-In-Reply-To: <20080709143639.GB24152@osiris.boeblingen.de.ibm.com>
+	id S1750820AbYGIQoj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 9 Jul 2008 12:44:39 -0400
+In-Reply-To: <20080709125611.f25a9467.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Christian Borntraeger <borntraeger@de.ibm.com>, Jens Axboe <jens.axboe@oracle.com>, linux-next@vger.kernel.org, linux-s390@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Thu__10_Jul_2008_02_21_40_+1000_/MVl4LXmSvP.+Eil
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2008-07-09 at 12:56 +1000, Stephen Rothwell wrote:
+> Hi Trond,
+> 
+> Today's linux-next merge of the nfs tree got a conflict in
+> net/sunrpc/rpcb_clnt.c between commit
+> 0d3a34b48c87a374b37d7a21a60d257d076484f3 ("SUNRPC: Fix a double-free in
+> rpcbind") from Linus' tree (which is in nfs tree as well) and some commit
+> (s) from the nfs tree.
+> 
+> I just used the version from the nfs tree.
 
-Hi Heiko,
+Hi Stephen,
 
-On Wed, 9 Jul 2008 16:36:39 +0200 Heiko Carstens <heiko.carstens@de.ibm.com=
-> wrote:
->
-> Stephen, could you add this patch to your build fixes?
-> Currently it won't fit into git-s390 or Jens' smp_call_function
-> tree, since these two call sites are introduced with a new
-> patch in git-s390 (stp support).
+Sorry about that: I cherry-picked those patches from my 'devel' branch.
+I should probably have used some other method.
 
-Will do.
+Anyhow, the nfs tree has now been rebased onto today's mainline kernel,
+and so the conflict should now be eliminated.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__10_Jul_2008_02_21_40_+1000_/MVl4LXmSvP.+Eil
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkh05ZQACgkQjjKRsyhoI8zu1gCfStFgg1wc+BVbiyklOm1/c/uJ
-7nYAn1dgm8O/JhbRM3UCMLKq9sTRi9+H
-=pmN/
------END PGP SIGNATURE-----
-
---Signature=_Thu__10_Jul_2008_02_21_40_+1000_/MVl4LXmSvP.+Eil--
+Cheers
+  Trond
