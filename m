@@ -1,61 +1,58 @@
-From: Milton Miller <miltonm@bga.com>
-Subject: [PATCH -next-20080709] fixup stop_machine use cpu mask vs ftrace
-Date: Thu, 10 Jul 2008 16:07:57 -0500 (CDT)
-Message-ID: <for-27-patch0-1@bga.com>
-References: <200807081801.38026.rusty@rustcorp.com.au>,
-	<200807081750.55536.rusty@rustcorp.com.au>,
-	<200807081756.02838.rusty@rustcorp.com.au>,
-	<200807081756.47140.rusty@rustcorp.com.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Request for voltage regulator tree inclusion
+Date: Fri, 11 Jul 2008 09:56:14 +1000
+Message-ID: <20080711095614.f3f25ad2.sfr@canb.auug.org.au>
+References: <1215701967.13431.25.camel@odin>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__11_Jul_2008_09_56_14_+1000_Hb9IeX5iyb++Qd0."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sullivan.realtime.net ([205.238.132.226]:4760 "EHLO
-	sullivan.realtime.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753556AbYGJVkN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jul 2008 17:40:13 -0400
-In-Reply-To: <200807081801.38026.rusty@rustcorp.com.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:58567 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757923AbYGJX4a (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 10 Jul 2008 19:56:30 -0400
+In-Reply-To: <1215701967.13431.25.camel@odin>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
-Cc: linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: Liam Girdwood <lg@opensource.wolfsonmicro.com>
+Cc: Linux next <linux-next@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
+--Signature=_Fri__11_Jul_2008_09_56_14_+1000_Hb9IeX5iyb++Qd0.
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Liam,
 
-Hi Rusty, Ingo.
+On Thu, 10 Jul 2008 15:59:27 +0100 Liam Girdwood <lg@opensource.wolfsonmicr=
+o.com> wrote:
+>
+> This is a request to include the voltage & current regulator framework
+> tree into linux-next. =EF=BB=BF
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/lrg/voltage-2.6.git#reg-for=
+-linus
 
-Rusty's patch [PATCH 3/3] stop_machine: use cpu mask rather than magic numbers
-didn't find kernel/trace/ftrace.c in -next, causing an immediate almost NULL
-pointer dereference in ftrace_dynamic_init.
+Added from today.  Thanks for joining.
 
+Usual speech I give everybody: changes must be posted somewhere relevant,
+reviewed, unit tested and destined for 2.6.27.
 
-Signed-off-by: Milton Miller <miltonm@bga.com>
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 0f271c4..c29acb5 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -587,7 +587,7 @@ static int __ftrace_modify_code(void *data)
- 
- static void ftrace_run_update_code(int command)
- {
--	stop_machine_run(__ftrace_modify_code, &command, NR_CPUS);
-+	stop_machine_run(__ftrace_modify_code, &command, NULL);
- }
- 
- void ftrace_disable_daemon(void)
-@@ -787,7 +787,7 @@ static int ftrace_update_code(void)
- 	    !ftrace_enabled || !ftraced_trigger)
- 		return 0;
- 
--	stop_machine_run(__ftrace_update_code, NULL, NR_CPUS);
-+	stop_machine_run(__ftrace_update_code, NULL, NULL);
- 
- 	return 1;
- }
-@@ -1564,7 +1564,7 @@ static int __init ftrace_dynamic_init(void)
- 
- 	addr = (unsigned long)ftrace_record_ip;
- 
--	stop_machine_run(ftrace_dyn_arch_init, &addr, NR_CPUS);
-+	stop_machine_run(ftrace_dyn_arch_init, &addr, NULL);
- 
- 	/* ftrace_dyn_arch_init places the return code in addr */
- 	if (addr) {
+--Signature=_Fri__11_Jul_2008_09_56_14_+1000_Hb9IeX5iyb++Qd0.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkh2oZ8ACgkQjjKRsyhoI8xulgCfULJW+kDaaOP7i4G1vywvBxT4
+MAYAnjpZokr/vXK5ZE6CDeFJTFl83pq+
+=IA8l
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__11_Jul_2008_09_56_14_+1000_Hb9IeX5iyb++Qd0.--
