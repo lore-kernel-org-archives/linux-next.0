@@ -1,34 +1,65 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 0/13] Updated V4  - Regulator Framework
-Date: Thu, 10 Jul 2008 02:08:48 -0700
-Message-ID: <20080710020848.066cfc8c.akpm@linux-foundation.org>
-References: <1209742841.12502.40.camel@odin>
+From: vibi sreenivasan <vibi_sreenivasan@cms.com>
+Subject: FIX for "kernel/sched.c:7743: warning: initialization from
+	incompatible pointer type"
+Date: Thu, 10 Jul 2008 14:54:22 +0530
+Message-ID: <1215681862.2956.46.camel@localhost.localdomain>
+Reply-To: vibi_sreenivasan@cms.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:38981 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751340AbYGJJOw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 10 Jul 2008 05:14:52 -0400
-In-Reply-To: <1209742841.12502.40.camel@odin>
+Received: from mailgw3.cms.com ([202.75.200.223]:60936 "EHLO ms4l.cms.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752317AbYGJJSM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 10 Jul 2008 05:18:12 -0400
+Received: from localhost (mailgw3.cms.com [127.0.0.1])
+	by ms4l.cms.com (Postfix) with ESMTP id 34EA411C009
+	for <linux-next@vger.kernel.org>; Thu, 10 Jul 2008 14:54:54 +0530 (IST)
+Received: from [172.19.23.13] (unknown [172.19.23.13])
+	by ms4l.cms.com (Postfix) with ESMTP id 845B911C002
+	for <linux-next@vger.kernel.org>; Thu, 10 Jul 2008 14:54:52 +0530 (IST)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Liam Girdwood <lg@opensource.wolfsonmicro.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, arm kernel <linux-arm-kernel@lists.arm.linux.org.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: linux-next@vger.kernel.org
 
-On Fri, 02 May 2008 16:40:41 +0100 Liam Girdwood <lg@opensource.wolfsonmicro.com> wrote:
+hello,
+i have tried compiling linux-next tree by git clone 1 hour before (using
+git for first time). I tried compiling like this
+make mrproper
+make i386_defconfig
+make bzImage
 
-> This is an updated version of the kernel voltage & current regulator
-> framework based on comments received from version 3 of the patch series.
+& got kernel/sched.c:7743: warning: initialization from incompatible
+pointer type
 
-git-regulator.patch has been in -mm for two months without incident.  I'd
-forgotten about it.   This is bad - we should have put it into linux-next.
+i have seen that
 
-If you hope to get this into 2.6.27 then please send the git URL to Stephen
-and the linux-next list asap.  Please also resend the patches to this list
-for re-review.  Then, if it doesn't get shot down, send Linux a pull
-request during the 2.6.27 merge window.  ie: about one week from today.
+SYSDEV_ATTR macro expects function pointer with prototype 
+ssize_t (*show)(struct sys_device *, struct sysdev_attribute *, char *);
+ssize_t (*store)(struct sys_device *, struct sysdev_attribute *,
+			 const char *, size_t);
+but actual function omits 2nd argument.
+--- linux-next/kernel/sched.c	2008-07-10 12:08:18.000000000 +0530
++++ linux-next-fix/kernel/sched.c	2008-07-10 14:07:05.000000000 +0530
+@@ -7731,12 +7731,13 @@ static ssize_t sched_power_savings_store
+ }
+ 
+ #ifdef CONFIG_SCHED_MC
+-static ssize_t sched_mc_power_savings_show(struct sys_device *dev, char
+*page)
++static ssize_t sched_mc_power_savings_show(struct sys_device *dev,
++			struct sysdev_attribute *attribute, char *page)
+ {
+ 	return sprintf(page, "%u\n", sched_mc_power_savings);
+ }
+ static ssize_t sched_mc_power_savings_store(struct sys_device *dev,
+-					    const char *buf, size_t count)
++		struct sysdev_attribute *attribute,const char *buf, size_t count)
+ {
+ 	return sched_power_savings_store(buf, count, 0);
+ }
 
-Thanks.
+PLEASE REVIEW THIS & PARDON ME IF I HAVE WASTED UR TIME ,I AM NOT
+EXPERIENCED AS YOU ALL.
+Thanks & Regards
+vibi sreenivasan
