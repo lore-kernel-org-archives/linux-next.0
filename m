@@ -1,35 +1,37 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: next-0708: build failure at drivers/pci/pci-acpi.c
-Date: Wed, 9 Jul 2008 16:21:37 -0700
-Message-ID: <200807091621.37697.jbarnes@virtuousgeek.org>
-References: <a4423d670807080518g31402f60j2f624a2ac2db03aa@mail.gmail.com> <200807081040.38777.jbarnes@virtuousgeek.org> <200807082229.33016.rjw@sisk.pl>
+From: Samuel Ortiz <sameo@openedhand.com>
+Subject: Re: linux-next: manual merge of the mfd tree
+Date: Thu, 10 Jul 2008 02:11:00 +0200
+Message-ID: <20080710001059.GA2637@sortiz.org>
+References: <20080708171103.f9c9a3ce.sfr@canb.auug.org.au>
+Reply-To: Samuel Ortiz <sameo@openedhand.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from outbound-mail-129.bluehost.com ([67.222.38.29]:59433 "HELO
-	outbound-mail-129.bluehost.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1753618AbYGIXWP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Jul 2008 19:22:15 -0400
-In-Reply-To: <200807082229.33016.rjw@sisk.pl>
+Received: from 3a.49.1343.static.theplanet.com ([67.19.73.58]:48766 "EHLO
+	pug.o-hand.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753135AbYGJAJi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 9 Jul 2008 20:09:38 -0400
 Content-Disposition: inline
+In-Reply-To: <20080708171103.f9c9a3ce.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Alexander Beregalov <a.beregalov@gmail.com>, ak@linux.intel.com, lenb@kernel.org, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, pm list <linux-pm@lists.linux-foundation.org>, David Howells <dhowells@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-On Tuesday, July 8, 2008 1:29:31 pm Rafael J. Wysocki wrote:
-> On Tuesday, 8 of July 2008, Jesse Barnes wrote:
-> > David sent me one just like this at 7am this morning, just applied and
-> > pushed (along with Alexander's tested-by).
+Hi Stephen,
+
+On Tue, Jul 08, 2008 at 05:11:03PM +1000, Stephen Rothwell wrote:
+> Hi Samuel,
+> 
+> Today's linux-next merge of the mfd tree got a conflict in MAINTAINERS
+> between commit 4e0d13cbb71de2b1baf71ddd3c14f7ba8da810e5 ("MFD
+> maintainer") from Linus' tree and commit
+> 52554ec1473a5334ffe589053268d7dd89007afa ("MFD maintainer") from the mfd
+> tree.
 >
-> OK, thanks.
->
-> Would you like me to send the Stephen's fix for compilation on ppc64
-> (CONFIG_PM unset)?
+> Same commit - different white space. I used Linus' version.
+Yep, I removed this commit from my for-next branch. Your merge should go
+fine now.
 
-Sure, unless it's already in the ppc tree...
-
-Thanks,
-Jesse
+Cheers,
+Samuel.
