@@ -1,50 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the galak tree
-Date: Thu, 10 Jul 2008 14:15:36 +1000
-Message-ID: <20080710141536.368780e3.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm tree
+Date: Thu, 10 Jul 2008 14:33:54 +1000
+Message-ID: <20080710143354.729601d6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__10_Jul_2008_14_15_36_+1000_U9r17JGngGQmCUD7"
+ boundary="Signature=_Thu__10_Jul_2008_14_33_54_+1000_00EktTj8s7Ui/Sjm"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56295 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41683 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751671AbYGJEPw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 10 Jul 2008 00:15:52 -0400
+	id S1751828AbYGJEeL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 10 Jul 2008 00:34:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kumar Gala <galak@kernel.crashing.org>
-Cc: linux-next@vger.kernel.org, Laurent Pinchart <laurentp@cse-semaphore.com>, ppc-dev <linuxppc-dev@ozlabs.org>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, David Brownell <dbrownell@users.sourceforge.net>, Philipp Zabel <philipp.zabel@gmail.com>, Greg KH <greg@kroah.com>
 
---Signature=_Thu__10_Jul_2008_14_15_36_+1000_U9r17JGngGQmCUD7
+--Signature=_Thu__10_Jul_2008_14_33_54_+1000_00EktTj8s7Ui/Sjm
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kumar,
+Hi Russell,
 
-Today's linux-next merge of the galak tree got a conflict in
-Documentation/powerpc/booting-without-of.txt between commit
-a5edeccb1a8432ae5d9fb9bccea5a4b64c565017 ("net: OpenFirmware GPIO based
-MDIO bitbang driver") from the net tree and commit
-a5b420dc2ff8423b30506e805584f30875b5fb57 ("powerpc/fsl: Refactor device
-bindings") from the galak tree.
+Today's linux-next merge of the arm tree got a conflict in
+drivers/usb/gadget/ether.c between commit
+41df25fad30d0e88ddc042358556f19a72d70054 ("usb ethernet gadget: use
+composite gadget framework") from the usb tree and commit
+7a8576204333d133d58cbcc59dacf49a5546e3e4 ("[ARM] 5120/1: pxa: correct
+platform driver names for PXA25x and PXA27x UDC drivers") from the arm
+tree.
 
-I left the "MDIO on GPIOs" section there and relabeled it as 'g'.
+I am not actually sure what to do with this.  To make it build, I have
+just take the usb tree's version, but there is probably more to it than
+that.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__10_Jul_2008_14_15_36_+1000_U9r17JGngGQmCUD7
+--Signature=_Thu__10_Jul_2008_14_33_54_+1000_00EktTj8s7Ui/Sjm
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkh1jOgACgkQjjKRsyhoI8z+ygCcDhhwhaz0zYEn6GIZ6QO0dVXW
-iQMAn3ybS9i6ZBsy5vM34DpRo67u0vhK
-=D0rr
+iEYEARECAAYFAkh1kTIACgkQjjKRsyhoI8xpWQCghmpNFHmYWzrpOQf16h90Tosg
+HukAoIMJm1IwhpxbdWbhEWyarryIHTX+
+=3Xie
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__10_Jul_2008_14_15_36_+1000_U9r17JGngGQmCUD7--
+--Signature=_Thu__10_Jul_2008_14_33_54_+1000_00EktTj8s7Ui/Sjm--
