@@ -1,70 +1,27 @@
-From: Roman Zippel <zippel@linux-m68k.org>
-Subject: Re: linux-next: kbuild tree build failure
-Date: Thu, 10 Jul 2008 16:52:25 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.0807101623100.6791@localhost.localdomain>
-References: <20080707184038.aaeb8d40.sfr@canb.auug.org.au>
-	<Pine.LNX.4.64.0807071424240.6791@localhost.localdomain>
-	<20080708211930.GA16897@uranus.ravnborg.org>
+From: Liam Girdwood <lg@opensource.wolfsonmicro.com>
+Subject: Request for voltage regulator tree inclusion
+Date: Thu, 10 Jul 2008 15:59:27 +0100
+Message-ID: <1215701967.13431.25.camel@odin>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org>
-In-Reply-To: <20080708211930.GA16897@uranus.ravnborg.org>
-List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
-List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
-List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:41599 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1754455AbYGJO73 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 10 Jul 2008 10:59:29 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux next <linux-next@vger.kernel.org>
 
-Hi,
+This is a request to include the voltage & current regulator framework
+tree into linux-next. =EF=BB=BF
 
-On Tue, 8 Jul 2008, Sam Ravnborg wrote:
+git://git.kernel.org/pub/scm/linux/kernel/git/lrg/voltage-2.6.git#reg-f=
+or-linus
 
-> We use Kconfig for a mixture of user editable values and fixed
-> configuration values.
-> And I agree that asking the user to input a 64 bit number is not usefull.
-> 
-> But keeping support for 64 bit values is what I would consider
-> expected functionality.
+Thanks
 
-Isn't that a bit of a stretch? That's a rather generic argument, do we 
-really have to keep everything, because someone _might_ want to use it?
-I'd rather look at how useful it really is to keep that functionality and 
-so far we exactly one user, which doesn't strictly require it.
-So far it's more a convenience feature rather than a required feature. We 
-don't lose any functionality, it's just shifted from kconfig to the header 
-file.
-
-> > This would also ease on any portability issues 
-> > (kconfig is compiled with the host compiler not the target compiler).
-> 
-> We use strtol() in a few places in symbol.c already where we do an
-> implicit conversion to int. Why did this not cause us problems before?
-> 
-> Is it because these code paths are only triggered when we deal with ranges?
-> If so we could 'fix' strdup_type() to not use strto{,u}l() so it
-> is 64 bit clean and we are back to old behaviour.
-
-Ranges are the primary reason I made it consistent with this.
-If we really wanted to support 64bit numbers, it would create only more 
-problems. First you have to make sure that on every build host (i.e also 
-non-Linux) strtoll() is available. Then how it should these numbers be 
-represented? On 32bit these may need a 'll' postfix, but the powerpc 
-example already shows, that there are different requirements, so they use 
-ASM_CONST for that. How should this postprecessing be integrated into 
-kconfig?
-I would seriously prefer to keep things as simple as possible, unless 
-there is a real requirement for it, but so far there isn't any.
-If we really needed something like this, I'd rather introduce a new 
-expression type, which works more like an unquoted string (e.g. you 
-could define something like (1l<<$PAGE_SHIFT)), where things like ranges 
-wouldn't work, but it also wouldn't have any content restrictions.
-
-bye, Roman
+Liam
