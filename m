@@ -1,56 +1,70 @@
-From: Matthew Garrett <mjg@redhat.com>
-Subject: Re: [PATCH 2/2] ACPI Check for backlight support via ACPI video.ko otherwise use vendor ACPI drivers
-Date: Thu, 10 Jul 2008 13:58:44 +0100
-Message-ID: <20080710125844.GB8561@srcf.ucam.org>
-References: <200807031809.03172.trenn@suse.de> <200807101419.08524.trenn@suse.de> <20080710122454.GA7584@srcf.ucam.org> <200807101448.16662.trenn@suse.de>
+From: Roman Zippel <zippel@linux-m68k.org>
+Subject: Re: linux-next: kbuild tree build failure
+Date: Thu, 10 Jul 2008 16:52:25 +0200 (CEST)
+Message-ID: <Pine.LNX.4.64.0807101623100.6791@localhost.localdomain>
+References: <20080707184038.aaeb8d40.sfr@canb.auug.org.au>
+	<Pine.LNX.4.64.0807071424240.6791@localhost.localdomain>
+	<20080708211930.GA16897@uranus.ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <200807101448.16662.trenn@suse.de>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Thomas Renninger <trenn@suse.de>
-Cc: ak@linux.intel.com, linux-acpi@vger.kernel.org, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, Carlos Corbacho <carlos@strangeworlds.co.uk>, Jonathan Woithe <jwoithe@physics.adelaide.edu.au>, malattia@linux.it, stelian@popies.net, linux-next@vger.kernel.org, Corentin CHARY <corentincj@iksaif.net>, Lennart Poettering <mzxreary@0pointer.de>, Julia Jomantaite <julia.jomantaite@gmail.com>, corsac@debian.org, dannybaumann@web.de, marcus@better.se, Zhang Rui <rui.zhang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org>
+In-Reply-To: <20080708211930.GA16897@uranus.ravnborg.org>
+List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
+List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
+List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Jul 10, 2008 at 02:48:12PM +0200, Thomas Renninger wrote:
-> On Thursday 10 July 2008 14:24:54 Matthew Garrett wrote:
-> > On Thu, Jul 10, 2008 at 02:19:04PM +0200, Thomas Renninger wrote:
-> > > Yes, I agree.
-> > > Anyway, given the fact that video.ko was rather broken all the time, a
-> > > reasonable solution for now is to exclude Dells from using it.
-> >
-> > No, the problem was that the backlight was simultaneously being altered
-> > by two pieces of code. kpowersave is doing the backlight control via hal
-> > (I assume), and hal should simply not provide the Dell backlight control
-> > on systems that have ACPI video backlight control. There's no need to
-> > have this policy in the kernel.
-> Do you know Dells working with the video.ko driver?
+Hi,
 
-Presumably the Inspiron 640M, since otherwise there's no way that that 
-bug could trigger.
+On Tue, 8 Jul 2008, Sam Ravnborg wrote:
 
-> If you tell me video.ko, best with an IGD device and without one is working 
-> there, it can be removed. Even then talking with dcdbas developers how to 
-> inform their user space app first is a good idea.
+> We use Kconfig for a mixture of user editable values and fixed
+> configuration values.
+> And I agree that asking the user to input a 64 bit number is not usefull.
+> 
+> But keeping support for 64 bit values is what I would consider
+> expected functionality.
 
-The userspace app that needs fixing is hal. I'm already working on that.
+Isn't that a bit of a stretch? That's a rather generic argument, do we 
+really have to keep everything, because someone _might_ want to use it?
+I'd rather look at how useful it really is to keep that functionality and 
+so far we exactly one user, which doesn't strictly require it.
+So far it's more a convenience feature rather than a required feature. We 
+don't lose any functionality, it's just shifted from kconfig to the header 
+file.
 
-> As Dell is cooking their own soup here and the dcdbas driver was reported to 
-> work correctly with ACPI brightness functions in BIOS it is ok to blacklist 
-> Dells here until the first test reports are coming in telling us that 
-> video.ko is actually working correctly there.
-> Testing will be easy via boot param.
+> > This would also ease on any portability issues 
+> > (kconfig is compiled with the host compiler not the target compiler).
+> 
+> We use strtol() in a few places in symbol.c already where we do an
+> implicit conversion to int. Why did this not cause us problems before?
+> 
+> Is it because these code paths are only triggered when we deal with ranges?
+> If so we could 'fix' strdup_type() to not use strto{,u}l() so it
+> is 64 bit clean and we are back to old behaviour.
 
-No, really, let's just fix the problem properly.
+Ranges are the primary reason I made it consistent with this.
+If we really wanted to support 64bit numbers, it would create only more 
+problems. First you have to make sure that on every build host (i.e also 
+non-Linux) strtoll() is available. Then how it should these numbers be 
+represented? On 32bit these may need a 'll' postfix, but the powerpc 
+example already shows, that there are different requirements, so they use 
+ASM_CONST for that. How should this postprecessing be integrated into 
+kconfig?
+I would seriously prefer to keep things as simple as possible, unless 
+there is a real requirement for it, but so far there isn't any.
+If we really needed something like this, I'd rather introduce a new 
+expression type, which works more like an unquoted string (e.g. you 
+could define something like (1l<<$PAGE_SHIFT)), where things like ranges 
+wouldn't work, but it also wouldn't have any content restrictions.
 
-> I will not risk again that this whole bunch of our patches will be reverted 
-> on -rc6 again, because a Dell user is reporting a backlight regression.
-> We then have the same situation we had when the "check for physical device was 
-> removed": The implementation is wrong but worked. The implementation is 
-> right, but does not work on a specific machine -> regression -> revert.
-
-I've no idea at all why you think this is a kernel issue.
-
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
+bye, Roman
