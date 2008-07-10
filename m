@@ -1,82 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree
-Date: Thu, 10 Jul 2008 14:02:12 +1000
-Message-ID: <20080710140212.753c3bce.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the galak tree
+Date: Thu, 10 Jul 2008 14:15:36 +1000
+Message-ID: <20080710141536.368780e3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__10_Jul_2008_14_02_12_+1000_E/WJWZaKvXNH47xI"
+ boundary="Signature=_Thu__10_Jul_2008_14_15_36_+1000_U9r17JGngGQmCUD7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40012 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56295 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750795AbYGJEC0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 10 Jul 2008 00:02:26 -0400
+	id S1751671AbYGJEPw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 10 Jul 2008 00:15:52 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Patrick McHardy <kaber@trash.net>
+To: Kumar Gala <galak@kernel.crashing.org>
+Cc: linux-next@vger.kernel.org, Laurent Pinchart <laurentp@cse-semaphore.com>, ppc-dev <linuxppc-dev@ozlabs.org>
 
---Signature=_Thu__10_Jul_2008_14_02_12_+1000_E/WJWZaKvXNH47xI
+--Signature=_Thu__10_Jul_2008_14_15_36_+1000_U9r17JGngGQmCUD7
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Kumar,
 
-Today's linux-next merge of the net tree got a conflict in
-net/netfilter/nf_conntrack_proto_tcp.c between commit
-6b69fe0c73c0f5a8dacf8f889db3cc9adee53649 ("netfilter: nf_conntrack_tcp:
-fix endless loop") from the net-current tree and commit
-51091764f26ec36c02e35166f083193a30f426fc ("netfilter: nf_conntrack: add
-nf_ct_kill()") from the net tree.
+Today's linux-next merge of the galak tree got a conflict in
+Documentation/powerpc/booting-without-of.txt between commit
+a5edeccb1a8432ae5d9fb9bccea5a4b64c565017 ("net: OpenFirmware GPIO based
+MDIO bitbang driver") from the net tree and commit
+a5b420dc2ff8423b30506e805584f30875b5fb57 ("powerpc/fsl: Refactor device
+bindings") from the galak tree.
 
-Not a simple fixup.  I did what I thought was right, please check.
-
-The conflict was in tcp_packet() and looked like this:
-
-		if (((ct->proto.tcp.seen[dir].flags
-		      | ct->proto.tcp.seen[!dir].flags)
-		     & IP_CT_TCP_FLAG_CLOSE_INIT)
-		    || (ct->proto.tcp.last_dir =3D=3D dir
-		        && ct->proto.tcp.last_index =3D=3D TCP_RST_SET)) {
-			/* Attempt to reopen a closed/aborted connection.
-			 * Delete this connection and look up again. */
-			write_unlock_bh(&tcp_lock);
-<<<<<<< HEAD:net/netfilter/nf_conntrack_proto_tcp.c
-			/* Only repeat if we can actually remove the timer.
-			 * Destruction may already be in progress in process
-			 * context and we must give it a chance to terminate.
-			 */
-			if (del_timer(&ct->timeout)) {
-				ct->timeout.function((unsigned long)ct);
-				return -NF_REPEAT;
-			}
-			return -NF_DROP;
-=3D=3D=3D=3D=3D=3D=3D
-			nf_ct_kill(ct);
-			return -NF_REPEAT;
->>>>>>> net/master:net/netfilter/nf_conntrack_proto_tcp.c
-		}
-		/* Fall through */
-	case TCP_CONNTRACK_IGNORE:
-
-I used the HEAD version.  You may need to return a value from nf_ct_kill()
-indicating if the timer was deleted to fix this properly.
-
+I left the "MDIO on GPIOs" section there and relabeled it as 'g'.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__10_Jul_2008_14_02_12_+1000_E/WJWZaKvXNH47xI
+--Signature=_Thu__10_Jul_2008_14_15_36_+1000_U9r17JGngGQmCUD7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkh1icQACgkQjjKRsyhoI8xQLQCeK4DuyYsX6Fo8Q0jtiI4O7X7M
-vX8AnRLx5pDwVJ7D7XOR45lgh1Xt8zja
-=uHkK
+iEYEARECAAYFAkh1jOgACgkQjjKRsyhoI8z+ygCcDhhwhaz0zYEn6GIZ6QO0dVXW
+iQMAn3ybS9i6ZBsy5vM34DpRo67u0vhK
+=D0rr
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__10_Jul_2008_14_02_12_+1000_E/WJWZaKvXNH47xI--
+--Signature=_Thu__10_Jul_2008_14_15_36_+1000_U9r17JGngGQmCUD7--
