@@ -1,49 +1,61 @@
-From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Subject: Re: linux-next: manual merge of the powerpc tree
-Date: Fri, 11 Jul 2008 21:01:25 +0200
-Message-ID: <200807112101.25704.bzolnier@gmail.com>
-References: <20080707230717.10429faf.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+From: Milton Miller <miltonm@bga.com>
+Subject: [PATCH -next-20080709] fixup stop_machine use cpu mask vs ftrace
+Date: Thu, 10 Jul 2008 16:07:57 -0500 (CDT)
+Message-ID: <for-27-patch0-1@bga.com>
+References: <200807081801.38026.rusty@rustcorp.com.au>,
+	<200807081750.55536.rusty@rustcorp.com.au>,
+	<200807081756.02838.rusty@rustcorp.com.au>,
+	<200807081756.47140.rusty@rustcorp.com.au>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from yx-out-2324.google.com ([74.125.44.28]:56894 "EHLO
-	yx-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1761973AbYGJTFq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jul 2008 15:05:46 -0400
-Received: by yx-out-2324.google.com with SMTP id 8so1173439yxm.1
-        for <linux-next@vger.kernel.org>; Thu, 10 Jul 2008 12:05:43 -0700 (PDT)
-In-Reply-To: <20080707230717.10429faf.sfr@canb.auug.org.au>
-Content-Disposition: inline
+Received: from sullivan.realtime.net ([205.238.132.226]:4760 "EHLO
+	sullivan.realtime.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753556AbYGJVkN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jul 2008 17:40:13 -0400
+In-Reply-To: <200807081801.38026.rusty@rustcorp.com.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Mackerras <paulus@samba.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, Daniel Walker <dwalker@mvista.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Ingo Molnar <mingo@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
+Cc: linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
 
-Hi,
 
-On Monday 07 July 2008, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the powerpc tree got a conflict in
-> drivers/macintosh/mediabay.c between commit
-> 7ad963b103d3863b1161c59f3e65a435979804ed ("ide-pmac: media-bay support
-> fixes (take 4)") from the ide tree and commit
-> 9a24729d8aeef967eac7af71c6a69edc83d06558 ("macintosh/media bay: Convert
-> semaphore to mutex") from the powerpc tree.
+Hi Rusty, Ingo.
 
-Since I haven't heard back from Ben [1] on ide-pmac/media-bay IRQ issue
-I took another look at ide-pmac patches and I think that it should be
-possible to rework them in such way that consecutive ide patches (> 100)
-won't depend on "ide-pmac: media-bay support fixes (take 4)" patch.
+Rusty's patch [PATCH 3/3] stop_machine: use cpu mask rather than magic numbers
+didn't find kernel/trace/ftrace.c in -next, causing an immediate almost NULL
+pointer dereference in ftrace_dynamic_init.
 
-This would allow us to re-schedule it to 2.6.28 (which is probably what
-we want because 2.6.26 is probably just around the corner and we will be
-pretty busy with 2.6.27 merge window soon).  Ben, what's your opinion?
 
-[1] which doesn't surprise me given his new responsibilities ;)
+Signed-off-by: Milton Miller <miltonm@bga.com>
 
-Thanks,
-Bart
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 0f271c4..c29acb5 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -587,7 +587,7 @@ static int __ftrace_modify_code(void *data)
+ 
+ static void ftrace_run_update_code(int command)
+ {
+-	stop_machine_run(__ftrace_modify_code, &command, NR_CPUS);
++	stop_machine_run(__ftrace_modify_code, &command, NULL);
+ }
+ 
+ void ftrace_disable_daemon(void)
+@@ -787,7 +787,7 @@ static int ftrace_update_code(void)
+ 	    !ftrace_enabled || !ftraced_trigger)
+ 		return 0;
+ 
+-	stop_machine_run(__ftrace_update_code, NULL, NR_CPUS);
++	stop_machine_run(__ftrace_update_code, NULL, NULL);
+ 
+ 	return 1;
+ }
+@@ -1564,7 +1564,7 @@ static int __init ftrace_dynamic_init(void)
+ 
+ 	addr = (unsigned long)ftrace_record_ip;
+ 
+-	stop_machine_run(ftrace_dyn_arch_init, &addr, NR_CPUS);
++	stop_machine_run(ftrace_dyn_arch_init, &addr, NULL);
+ 
+ 	/* ftrace_dyn_arch_init places the return code in addr */
+ 	if (addr) {
