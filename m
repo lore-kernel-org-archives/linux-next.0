@@ -1,54 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm tree
-Date: Thu, 10 Jul 2008 14:33:54 +1000
-Message-ID: <20080710143354.729601d6.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree
+Date: Thu, 10 Jul 2008 16:10:56 +1000
+Message-ID: <20080710161056.6e65c8b9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__10_Jul_2008_14_33_54_+1000_00EktTj8s7Ui/Sjm"
+ boundary="Signature=_Thu__10_Jul_2008_16_10_56_+1000_Kz/YHqm08E2D01xS"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41683 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49021 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751828AbYGJEeL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 10 Jul 2008 00:34:11 -0400
+	id S1751171AbYGJGLO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 10 Jul 2008 02:11:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, David Brownell <dbrownell@users.sourceforge.net>, Philipp Zabel <philipp.zabel@gmail.com>, Greg KH <greg@kroah.com>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
 
---Signature=_Thu__10_Jul_2008_14_33_54_+1000_00EktTj8s7Ui/Sjm
+--Signature=_Thu__10_Jul_2008_16_10_56_+1000_Kz/YHqm08E2D01xS
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Russell,
+Hi Dave,
 
-Today's linux-next merge of the arm tree got a conflict in
-drivers/usb/gadget/ether.c between commit
-41df25fad30d0e88ddc042358556f19a72d70054 ("usb ethernet gadget: use
-composite gadget framework") from the usb tree and commit
-7a8576204333d133d58cbcc59dacf49a5546e3e4 ("[ARM] 5120/1: pxa: correct
-platform driver names for PXA25x and PXA27x UDC drivers") from the arm
-tree.
+Today's linux-next merge of the drm tree got a conflict in include/Kbuild
+between commit 4896a02e1e6d4f0ae5b23c24eff0ba10e26caab4 ("kbuild: only
+one call for include/ in make headers_*") from the kbuild tree and commit
+ae74c0f7f4abab0cf1e943c562b52df8868dc1ee ("drm: reorganise drm tree to be
+more future proof") from the drm tree.
 
-I am not actually sure what to do with this.  To make it build, I have
-just take the usb tree's version, but there is probably more to it than
-that.
+The former removes a line just where the latter is adding one. I fixed it
+up and can carry the fix.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__10_Jul_2008_14_33_54_+1000_00EktTj8s7Ui/Sjm
+--Signature=_Thu__10_Jul_2008_16_10_56_+1000_Kz/YHqm08E2D01xS
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkh1kTIACgkQjjKRsyhoI8xpWQCghmpNFHmYWzrpOQf16h90Tosg
-HukAoIMJm1IwhpxbdWbhEWyarryIHTX+
-=3Xie
+iEYEARECAAYFAkh1p/AACgkQjjKRsyhoI8xghgCfbFgaNIjaeJZCMilYnd45ceys
+UlcAnRjOOhUUT26204ky3pzTvdybNlz9
+=aRQD
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__10_Jul_2008_14_33_54_+1000_00EktTj8s7Ui/Sjm--
+--Signature=_Thu__10_Jul_2008_16_10_56_+1000_Kz/YHqm08E2D01xS--
