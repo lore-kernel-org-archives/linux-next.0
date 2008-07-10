@@ -1,65 +1,47 @@
-From: vibi sreenivasan <vibi_sreenivasan@cms.com>
-Subject: FIX for "kernel/sched.c:7743: warning: initialization from
-	incompatible pointer type"
-Date: Thu, 10 Jul 2008 14:54:22 +0530
-Message-ID: <1215681862.2956.46.camel@localhost.localdomain>
-Reply-To: vibi_sreenivasan@cms.com
+From: Matthew Garrett <mjg59@srcf.ucam.org>
+Subject: Re: [PATCH 2/2] ACPI Check for backlight support via ACPI video.ko otherwise use vendor ACPI drivers
+Date: Thu, 10 Jul 2008 11:07:09 +0100
+Message-ID: <20080710100709.GA5017@srcf.ucam.org>
+References: <200807031809.03172.trenn@suse.de> <200807091649.52605.trenn@suse.de> <20080709145758.GA22147@srcf.ucam.org> <200807091800.27608.trenn@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailgw3.cms.com ([202.75.200.223]:60936 "EHLO ms4l.cms.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752317AbYGJJSM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 10 Jul 2008 05:18:12 -0400
-Received: from localhost (mailgw3.cms.com [127.0.0.1])
-	by ms4l.cms.com (Postfix) with ESMTP id 34EA411C009
-	for <linux-next@vger.kernel.org>; Thu, 10 Jul 2008 14:54:54 +0530 (IST)
-Received: from [172.19.23.13] (unknown [172.19.23.13])
-	by ms4l.cms.com (Postfix) with ESMTP id 845B911C002
-	for <linux-next@vger.kernel.org>; Thu, 10 Jul 2008 14:54:52 +0530 (IST)
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <200807091800.27608.trenn@suse.de>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Thomas Renninger <trenn@suse.de>
+Cc: ak@linux.intel.com, linux-acpi@vger.kernel.org, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, Carlos Corbacho <carlos@strangeworlds.co.uk>, Jonathan Woithe <jwoithe@physics.adelaide.edu.au>, malattia@linux.it, stelian@popies.net, linux-next@vger.kernel.org, Corentin CHARY <corentincj@iksaif.net>, Lennart Poettering <mzxreary@0pointer.de>, Julia Jomantaite <julia.jomantaite@gmail.com>, corsac@debian.org, dannybaumann@web.de, marcus@better.se, Zhang Rui <rui.zhang@intel.com>, Hong Liu <hong.liu@intel.com>
+List-Id: linux-next.vger.kernel.org
 
-hello,
-i have tried compiling linux-next tree by git clone 1 hour before (using
-git for first time). I tried compiling like this
-make mrproper
-make i386_defconfig
-make bzImage
+On Wed, Jul 09, 2008 at 06:00:23PM +0200, Thomas Renninger wrote:
+> ...
+> > For this to work, the ACPI video driver needs to work as it currently
+> > does. It is not correct for it to disable itself on IGD systems.
+> Right, now I got it. It is only the T61/Lenovo you must have the opregion 
+> driver ready or you better fallback to thinkpad_acpi...
+> Is that correct?
+> I will add a dmi check for Lenovo in video_detect.c.
+> That would be:
+>   - If ACPI Appendix B video brightness functions are found
+>   |     -> use video.ko
+>   |     |
+>   |     -> If it's a ThinkPad, check for Opregion BIOS support
+>   |           -> Use video.ko if IGD parts are implemented (and the one
+>   |           |   ThinkPad specific func you had the 750ms delay is available)
+>   |           -> otherwise go back to thinkpad_acpi
 
-& got kernel/sched.c:7743: warning: initialization from incompatible
-pointer type
+This is unnecessary logic. Let's just follow the spec. There's no need 
+to use thinkpad_acpi here.
 
-i have seen that
+> Please also provide an OSI string with your video opregion code parts, so that 
+> BIOS can check whether the kernel is capable of serving IGD devices. Just 
+> choose a random string you like, e.g. let OSI("Opregion Video Support") 
+> return true.
 
-SYSDEV_ATTR macro expects function pointer with prototype 
-ssize_t (*show)(struct sys_device *, struct sysdev_attribute *, char *);
-ssize_t (*store)(struct sys_device *, struct sysdev_attribute *,
-			 const char *, size_t);
-but actual function omits 2nd argument.
---- linux-next/kernel/sched.c	2008-07-10 12:08:18.000000000 +0530
-+++ linux-next-fix/kernel/sched.c	2008-07-10 14:07:05.000000000 +0530
-@@ -7731,12 +7731,13 @@ static ssize_t sched_power_savings_store
- }
- 
- #ifdef CONFIG_SCHED_MC
--static ssize_t sched_mc_power_savings_show(struct sys_device *dev, char
-*page)
-+static ssize_t sched_mc_power_savings_show(struct sys_device *dev,
-+			struct sysdev_attribute *attribute, char *page)
- {
- 	return sprintf(page, "%u\n", sched_mc_power_savings);
- }
- static ssize_t sched_mc_power_savings_store(struct sys_device *dev,
--					    const char *buf, size_t count)
-+		struct sysdev_attribute *attribute,const char *buf, size_t count)
- {
- 	return sched_power_savings_store(buf, count, 0);
- }
+No. The DRM can be (and usually is) built as a module and OSI strings 
+are going to be checked at ACPI init time. This can't be made to work 
+correctly. Vendors can choose whether to use the opregion or old-style 
+support based on whether the driver has enabled the support.
 
-PLEASE REVIEW THIS & PARDON ME IF I HAVE WASTED UR TIME ,I AM NOT
-EXPERIENCED AS YOU ALL.
-Thanks & Regards
-vibi sreenivasan
+-- 
+Matthew Garrett | mjg59@srcf.ucam.org
