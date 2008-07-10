@@ -1,63 +1,108 @@
-From: David Teigland <teigland@redhat.com>
-Subject: Re: [BUG]  linux-next: Tree for March 25 kernel oops, when loading mpt fusion driver - regression
-Date: Thu, 10 Jul 2008 10:51:54 -0500
-Message-ID: <20080710155154.GB22862@redhat.com>
-References: <20080325175224.3ee62b09.sfr@canb.auug.org.au> <47E9F0B0.4060006@linux.vnet.ibm.com> <20080626203857.GB3815@redhat.com> <1215372215.4197.28.camel@localhost.localdomain> <20080707152708.GA10404@redhat.com> <1215445394.3274.26.camel@localhost.localdomain>
+From: Jarek Poplawski <jarkao2@gmail.com>
+Subject: [PATCH net-next] net: fix lockdep warning in qdisc_lock_tree()
+Date: Thu, 10 Jul 2008 20:14:16 +0200
+Message-ID: <20080710181416.GA8265@ami.dom.local>
+References: <a4423d670807100204kf269814ncd649bf02312311b@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-scsi-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from yx-out-2324.google.com ([74.125.44.30]:37216 "EHLO
+	yx-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752676AbYGJSOe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jul 2008 14:14:34 -0400
+Received: by yx-out-2324.google.com with SMTP id 8so1158821yxm.1
+        for <linux-next@vger.kernel.org>; Thu, 10 Jul 2008 11:14:31 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1215445394.3274.26.camel@localhost.localdomain>
-Sender: linux-scsi-owner@vger.kernel.org
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org, Eric.Moore@lsi.com, Andy Whitcroft <apw@shadowen.org>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <a4423d670807100204kf269814ncd649bf02312311b@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, netdev@vger.kernel.org, David Miller <davem@davemloft.net>
 
-On Mon, Jul 07, 2008 at 10:43:14AM -0500, James Bottomley wrote:
-> On Mon, 2008-07-07 at 10:27 -0500, David Teigland wrote:
-> > On Sun, Jul 06, 2008 at 02:23:35PM -0500, James Bottomley wrote:
-> > > On Thu, 2008-06-26 at 15:38 -0500, David Teigland wrote:
-> > > > On Wed, Mar 26, 2008 at 12:14:00PM +0530, Kamalesh Babulal wrote:
-> > > > > Hi Stephen,
-> > > > > 
-> > > > > Kernel bug is hit while booting up the next-20080325 kernel with MPT
-> > > > > Fusion driver built in.This was reported previously for the
-> > > > > next-20080320 kernel
-> > > > > http://marc.info/?l=linux-next&m=120601013920868&w=2
-> > > > 
-> > > > Hi, did you ever get this fixed?  I've been having the same problem,
-> > > > http://marc.info/?l=linux-scsi&m=121061780821823&w=4
-> > > > still exists on 2.6.26-rc8 for me,
-> > > > 
-> > > > Loading scsi_transport_spi.ko module
-> > > > Loading mptscsih.ko module
-> > > > Loading mptspi.ko module
-> > > > Fusion MPT SPI Host driver 3.04.06
-> > > > ACPI: PCI Interrupt 0000:86:01.0[A] -> GSI 32 (level, low) -> IRQ 32
-> > > > mptbase: ioc0: Initiating bringup
-> > > > ioc0: LSI53C1030 B2: Capabilities={Initiator,Target}
-> > > > mptbase: ioc0: PCI-MSI enabled
-> > > 
-> > > I speculate that this might be related to the problem.  The fusion
-> > > driver was recently flipped to default to MSI enable (previously it had
-> > > disabled them).  Could you boot it with the fusion module parameter
-> > > 
-> > > mpt_msi_enable=0
-> > > 
-> > > if it actually boots that will be a good confirmation that MSI is to
-> > > blame.
-> > 
-> > It all works using that option.
-> 
-> It sounds like your motherboard might need to be added to the
-> drivers/pci/quirks.c with quirk_disable_all_msi ... can you try a
-> different card with MSI just to see if it's something specific either to
-> the fusion or the location in the system?
+Alexander Beregalov wrote, On 07/10/2008 11:04 AM:
+...
+> [    0.426638] =============================================
+> [    0.426638] [ INFO: possible recursive locking detected ]
+> [    0.426638] 2.6.26-rc9-next-20080710 #5
+> [    0.426638] ---------------------------------------------
+> [    0.426638] swapper/1 is trying to acquire lock:
+> [    0.426638]  (&queue->lock){-...}, at: [<ffffffff8041c3d0>]
+> qdisc_lock_tree+0x27/0x2c
+> [    0.426638]
+> [    0.426638] but task is already holding lock:
+> [    0.426638]  (&queue->lock){-...}, at: [<ffffffff8041c3c8>]
+> qdisc_lock_tree+0x1f/0x2c
+> [    0.426638]
+> [    0.426638] other info that might help us debug this:
+> [    0.426638] 3 locks held by swapper/1:
+> [    0.426638]  #0:  (net_mutex){--..}, at: [<ffffffff8040b827>]
+> register_pernet_device+0x1a/0x5a
+> [    0.426638]  #1:  (rtnl_mutex){--..}, at: [<ffffffff80417179>]
+> rtnl_lock+0x12/0x14
+> [    0.426638]  #2:  (&queue->lock){-...}, at: [<ffffffff8041c3c8>]
+> qdisc_lock_tree+0x1f/0x2c
+> [    0.426638]
+> [    0.426638] stack backtrace:
+> [    0.426638] Pid: 1, comm: swapper Not tainted 2.6.26-rc9-next-20080710 #5
+> [    0.426638]
+> [    0.426638] Call Trace:
+> [    0.426638]  [<ffffffff8024f95a>] __lock_acquire+0xba9/0xf12
+> [    0.426638]  [<ffffffff8041c3d0>] ? qdisc_lock_tree+0x27/0x2c
+> [    0.426638]  [<ffffffff8024fd48>] lock_acquire+0x85/0xa9
+> [    0.426638]  [<ffffffff8041c3d0>] ? qdisc_lock_tree+0x27/0x2c
+> [    0.426638]  [<ffffffff80476794>] _spin_lock+0x25/0x31
+> [    0.426638]  [<ffffffff8041c3d0>] qdisc_lock_tree+0x27/0x2c
+> [    0.426638]  [<ffffffff8041c412>] dev_init_scheduler+0x11/0x94
+> [    0.426638]  [<ffffffff8040f3be>] register_netdevice+0x296/0x3f0
+> [    0.426638]  [<ffffffff8040f552>] register_netdev+0x3a/0x48
+> [    0.426638]  [<ffffffff805fc274>] loopback_net_init+0x40/0x7a
+> [    0.426638]  [<ffffffff805fc222>] ? loopback_init+0x0/0x12
+...
 
-I don't have easy access to the hardware, it's just some lab machine I was
-told I could use for unrelated testing.  Until this came up I'd never
-heard of "MSI", or "Fusion" before, and still don't have much idea about
-they are :-)
+lockdep needs separate lock init to distinguish rx and tx queue locks.
+(There is no real lockup danger.)
 
-Dave
+Reported-by: Alexander Beregalov <a.beregalov@gmail.com>
+Signed-off-by: Jarek Poplawski <jarkao2@gmail.com>
 
+---
+
+ net/core/dev.c |   20 ++++++++++++++------
+ 1 files changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/net/core/dev.c b/net/core/dev.c
+index a29a359..157b683 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -4090,17 +4090,25 @@ static struct net_device_stats *internal_stats(struct net_device *dev)
+ 	return &dev->stats;
+ }
+ 
+-static void netdev_init_one_queue(struct net_device *dev,
+-				  struct netdev_queue *queue)
++static void netdev_init_rx_queue(struct net_device *dev,
++				  struct netdev_queue *rx_queue)
+ {
+-	spin_lock_init(&queue->lock);
+-	queue->dev = dev;
++	spin_lock_init(&rx_queue->lock);
++	rx_queue->dev = dev;
++}
++
++/* lockdep needs separate init to distinguish these locks */
++static void netdev_init_tx_queue(struct net_device *dev,
++				  struct netdev_queue *tx_queue)
++{
++	spin_lock_init(&tx_queue->lock);
++	tx_queue->dev = dev;
+ }
+ 
+ static void netdev_init_queues(struct net_device *dev)
+ {
+-	netdev_init_one_queue(dev, &dev->rx_queue);
+-	netdev_init_one_queue(dev, &dev->tx_queue);
++	netdev_init_rx_queue(dev, &dev->rx_queue);
++	netdev_init_tx_queue(dev, &dev->tx_queue);
+ }
+ 
+ /**
