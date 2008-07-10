@@ -1,93 +1,82 @@
-From: Michael Ellerman <michael@ellerman.id.au>
-Subject: Re: linux-next: kbuild tree build failure
-Date: Thu, 10 Jul 2008 10:51:22 +1000
-Message-ID: <1215651082.13950.7.camel@localhost>
-References: <20080707184038.aaeb8d40.sfr@canb.auug.org.au>
-	 <Pine.LNX.4.64.0807071424240.6791@localhost.localdomain>
-	 <1215473798.8138.4.camel@localhost>
-	 <Pine.LNX.4.64.0807080437550.6791@localhost.localdomain>
-Reply-To: michael@ellerman.id.au
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree
+Date: Thu, 10 Jul 2008 14:02:12 +1000
+Message-ID: <20080710140212.753c3bce.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-f2U83HqNGoqntcbZYP1L"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__10_Jul_2008_14_02_12_+1000_E/WJWZaKvXNH47xI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:33592 "EHLO ozlabs.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40012 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752131AbYGJAvY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 9 Jul 2008 20:51:24 -0400
-In-Reply-To: <Pine.LNX.4.64.0807080437550.6791@localhost.localdomain>
+	id S1750795AbYGJEC0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 10 Jul 2008 00:02:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Roman Zippel <zippel@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Paul Mackerras <paulus@samba.org>, linux-next@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>, linuxppc-dev@ozlabs.org
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, Patrick McHardy <kaber@trash.net>
 
-
---=-f2U83HqNGoqntcbZYP1L
-Content-Type: text/plain
+--Signature=_Thu__10_Jul_2008_14_02_12_+1000_E/WJWZaKvXNH47xI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2008-07-08 at 04:55 +0200, Roman Zippel wrote:
-> Hi,
->=20
-> On Tue, 8 Jul 2008, Michael Ellerman wrote:
->=20
-> > I don't really see why it "doesn't make sense" for users to input 64-bi=
-t
-> > values, they're configuring addresses for a 64-bit kernel, so some of
-> > the values are going to be 64 bit.
->=20
-> Do you really expect users to insert random 64bit addresses without makin=
-g=20
-> a mistake?
+Hi Dave,
 
-Well yes :)  But I think that's because you're thinking of=20
-"end-users" and I'm thinking of "users" like myself - ie. _I_ use
-Kconfig and I do expect myself to be able to type a 64-bit address.
+Today's linux-next merge of the net tree got a conflict in
+net/netfilter/nf_conntrack_proto_tcp.c between commit
+6b69fe0c73c0f5a8dacf8f889db3cc9adee53649 ("netfilter: nf_conntrack_tcp:
+fix endless loop") from the net-current tree and commit
+51091764f26ec36c02e35166f083193a30f426fc ("netfilter: nf_conntrack: add
+nf_ct_kill()") from the net tree.
 
+Not a simple fixup.  I did what I thought was right, please check.
 
-> > --- .config.orig	2008-07-08 09:30:00.000000000 +1000
-> > +++ .config	2008-07-08 09:30:43.000000000 +1000
-> > @@ -370,9 +370,8 @@
-> >  CONFIG_HOTPLUG_PCI_RPA=3Dm
-> >  CONFIG_HOTPLUG_PCI_RPA_DLPAR=3Dm
-> >  # CONFIG_HAS_RAPIDIO is not set
-> > -CONFIG_PAGE_OFFSET=3D0xc000000000000000
-> > -CONFIG_KERNEL_START=3D0xc000000002000000
-> > -CONFIG_PHYSICAL_START=3D0x02000000
-> > +CONFIG_PAGE_OFFSET=3D0xc0000000
-> > +CONFIG_PHYSICAL_START=3D0x2000000
->=20
-> Why is this worse? These are constants, you're not supposed to change the=
-m=20
-> anyway.
-> The remaining values are generated in page.h and should be the same as=20
-> before. If that isn't the case and this patch produces a nonworking=20
-> kernel, I'd like to hear about it.
+The conflict was in tcp_packet() and looked like this:
 
-You're right the built kernel is fine. So it's not a bug, but I think it
-is nicer to have the real values in the .config.
+		if (((ct->proto.tcp.seen[dir].flags
+		      | ct->proto.tcp.seen[!dir].flags)
+		     & IP_CT_TCP_FLAG_CLOSE_INIT)
+		    || (ct->proto.tcp.last_dir =3D=3D dir
+		        && ct->proto.tcp.last_index =3D=3D TCP_RST_SET)) {
+			/* Attempt to reopen a closed/aborted connection.
+			 * Delete this connection and look up again. */
+			write_unlock_bh(&tcp_lock);
+<<<<<<< HEAD:net/netfilter/nf_conntrack_proto_tcp.c
+			/* Only repeat if we can actually remove the timer.
+			 * Destruction may already be in progress in process
+			 * context and we must give it a chance to terminate.
+			 */
+			if (del_timer(&ct->timeout)) {
+				ct->timeout.function((unsigned long)ct);
+				return -NF_REPEAT;
+			}
+			return -NF_DROP;
+=3D=3D=3D=3D=3D=3D=3D
+			nf_ct_kill(ct);
+			return -NF_REPEAT;
+>>>>>>> net/master:net/netfilter/nf_conntrack_proto_tcp.c
+		}
+		/* Fall through */
+	case TCP_CONNTRACK_IGNORE:
 
-cheers
+I used the HEAD version.  You may need to return a value from nf_ct_kill()
+indicating if the timer was deleted to fix this properly.
 
 --=20
-Michael Ellerman
-OzLabs, IBM Australia Development Lab
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-wwweb: http://michael.ellerman.id.au
-phone: +61 2 6212 1183 (tie line 70 21183)
-
-We do not inherit the earth from our ancestors,
-we borrow it from our children. - S.M.A.R.T Person
-
---=-f2U83HqNGoqntcbZYP1L
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
+--Signature=_Thu__10_Jul_2008_14_02_12_+1000_E/WJWZaKvXNH47xI
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-iD8DBQBIdV0KdSjSd0sB4dIRAvT8AKDKfgXQfS/8JEykZwu1ggYhGDRwbwCgiUuh
-YR3ZeOUxT2G+Gob3pyC+y1k=
-=Lz5i
+iEYEARECAAYFAkh1icQACgkQjjKRsyhoI8xQLQCeK4DuyYsX6Fo8Q0jtiI4O7X7M
+vX8AnRLx5pDwVJ7D7XOR45lgh1Xt8zja
+=uHkK
 -----END PGP SIGNATURE-----
 
---=-f2U83HqNGoqntcbZYP1L--
+--Signature=_Thu__10_Jul_2008_14_02_12_+1000_E/WJWZaKvXNH47xI--
