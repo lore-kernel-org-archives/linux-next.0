@@ -1,77 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: drm tree build failure
-Date: Thu, 10 Jul 2008 16:27:53 +1000
-Message-ID: <20080710162753.553743c9.sfr@canb.auug.org.au>
+From: "pHilipp Zabel" <philipp.zabel@gmail.com>
+Subject: Re: linux-next: manual merge of the arm tree
+Date: Thu, 10 Jul 2008 08:29:23 +0200
+Message-ID: <74d0deb30807092329x4d6bf2ceo1a3d256e49d11eb2@mail.gmail.com>
+References: <20080710143354.729601d6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49672 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753191AbYGJG16 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 10 Jul 2008 02:27:58 -0400
+Received: from nf-out-0910.google.com ([64.233.182.184]:16019 "EHLO
+	nf-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753320AbYGJG31 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jul 2008 02:29:27 -0400
+Received: by nf-out-0910.google.com with SMTP id d3so1005694nfc.21
+        for <linux-next@vger.kernel.org>; Wed, 09 Jul 2008 23:29:23 -0700 (PDT)
+In-Reply-To: <20080710143354.729601d6.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org, David Brownell <dbrownell@users.sourceforge.net>, Greg KH <greg@kroah.com>
 
-Hi Dave,
+On Thu, Jul 10, 2008 at 6:33 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Russell,
+>
+> Today's linux-next merge of the arm tree got a conflict in
+> drivers/usb/gadget/ether.c between commit
+> 41df25fad30d0e88ddc042358556f19a72d70054 ("usb ethernet gadget: use
+> composite gadget framework") from the usb tree and commit
+> 7a8576204333d133d58cbcc59dacf49a5546e3e4 ("[ARM] 5120/1: pxa: correct
+> platform driver names for PXA25x and PXA27x UDC drivers") from the arm
+> tree.
+>
+> I am not actually sure what to do with this.  To make it build, I have
+> just take the usb tree's version, but there is probably more to it than
+> that.
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+To make it build, I guess that's just fine. The arm patch changed some
+configuration variable names that the usb patch now doesn't depend upon
+anymore. To make USB CDC ethernet actually work on platforms that don't
+support CDC ECM, the can_support_ecm function in f_ecm.c,
+which was introduced in cf4cacff582185952e6977a0e79e833df9ba357b
+("usb ethernet gadget: split CDC Ethernet function") would have to be
+updated to return 0 for those.
+I don't know whether that is the case for pxa25x or not.
 
-  Using /scratch/sfr/next as source for kernel
-/opt/crosstool/gcc-4.0.2-glibc-2.3.6/x86_64-unknown-linux-gnu/bin/x86_64-unknown-linux-gnu-ld: drivers/gpu/built-in.o: No such file: No such file or directory
-
-We have:
-CONFIG_DRM=m
-
-drivers/gpu/Makefile says:
-
-obj-$(CONFIG_DRM)		+= drm/
-
-I changed it to "obj-y" and it seems to build further.  Sam, is that the
-right thing?
-
-It then fails like this:
-
-ERROR: "i830_irq_wait" [drivers/gpu/drm/i830/i830.ko] undefined!
-ERROR: "i830_irq_emit" [drivers/gpu/drm/i830/i830.ko] undefined!
-
-Overall, I applied the following patch and subsumed it into the merge.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
->From 0d267993201335a75b9a9ad7c485596b34ce6d28 Mon Sep 17 00:00:00 2001
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 10 Jul 2008 16:25:18 +1000
-Subject: [PATCH] drm: fix fallout from moving stuff around
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/gpu/Makefile          |    2 +-
- drivers/gpu/drm/i830/Makefile |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/Makefile b/drivers/gpu/Makefile
-index 83e2e7a..f2584b7 100644
---- a/drivers/gpu/Makefile
-+++ b/drivers/gpu/Makefile
-@@ -1 +1 @@
--obj-$(CONFIG_DRM)		+= drm/
-+obj-y		+= drm/
-diff --git a/drivers/gpu/drm/i830/Makefile b/drivers/gpu/drm/i830/Makefile
-index e194029..c642ee0 100644
---- a/drivers/gpu/drm/i830/Makefile
-+++ b/drivers/gpu/drm/i830/Makefile
-@@ -3,6 +3,6 @@
- # Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and higher.
- 
- ccflags-y := -Iinclude/drm
--i830-y := i830_drv.o i830_dma.o
-+i830-y := i830_drv.o i830_dma.o i830_irq.o
- 
- obj-$(CONFIG_DRM_I830) += i830.o
--- 
-1.5.6.2
+regards
+Philipp
