@@ -1,47 +1,52 @@
-From: Jeff Garzik <jeff@garzik.org>
-Subject: Re: [PATCH linux-next-20080704] Fix missing exports for net/phy/mdio-bitbang.c
-Date: Fri, 11 Jul 2008 01:22:31 -0400
-Message-ID: <4876EE17.5050800@garzik.org>
-References: <s5hlk0dwxvi.wl%tiwai@suse.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the firmware tree
+Date: Fri, 11 Jul 2008 16:02:45 +1000
+Message-ID: <20080711160245.3ea0c85e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__11_Jul_2008_16_02_45_+1000_1RIh8=IiqHJPSQ5o"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from srv5.dvmed.net ([207.36.208.214]:49699 "EHLO mail.dvmed.net"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55750 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752562AbYGKFWl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 11 Jul 2008 01:22:41 -0400
-In-Reply-To: <s5hlk0dwxvi.wl%tiwai@suse.de>
+	id S1751596AbYGKGCx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 11 Jul 2008 02:02:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Laurent Pinchart <laurentp@cse-semaphore.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, Alan Cox <alan@lxorguk.ukuu.org.uk>, Greg KH <greg@kroah.com>, Jaswinder Singh <jaswinder@infradead.org>
 
-Takashi Iwai wrote:
-> {alloc,free}_mdio_bitbang() are not exported while they are used in
-> mdio-ofgpio driver.
-> 
-> Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> 
-> ---
-> diff --git a/drivers/net/phy/mdio-bitbang.c b/drivers/net/phy/mdio-bitbang.c
-> index 2747b1f..c01b780 100644
-> --- a/drivers/net/phy/mdio-bitbang.c
-> +++ b/drivers/net/phy/mdio-bitbang.c
-> @@ -177,6 +177,7 @@ struct mii_bus *alloc_mdio_bitbang(struct mdiobb_ctrl *ctrl)
->  
->  	return bus;
->  }
-> +EXPORT_SYMBOL(alloc_mdio_bitbang);
->  
->  void free_mdio_bitbang(struct mii_bus *bus)
->  {
-> @@ -185,5 +186,6 @@ void free_mdio_bitbang(struct mii_bus *bus)
->  	module_put(ctrl->ops->owner);
->  	kfree(bus);
->  }
-> +EXPORT_SYMBOL(free_mdio_bitbang);
->  
->  MODULE_LICENSE("GPL");
+--Signature=_Fri__11_Jul_2008_16_02_45_+1000_1RIh8=IiqHJPSQ5o
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-applied
+Hi David,
+
+Today's linux-next merge of the firmware tree got conflicts in
+drivers/usb/serial/io_ti.c and drivers/usb/serial/io_fw_down3.h between
+commit 933485161580b837dd84d46fb1fca7ea775f30c1 ("USB: io_ti: FIrst cut
+at a big clean up") from the usb tree and commit
+19aeeb5b95d53d0865ae811fc4dcc66639d661cf ("edgeport-ti: use
+request_firmware()") from the firmware tree.
+
+I just reverted the firmware tree commit for now as the fixup is quite
+extensive.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__11_Jul_2008_16_02_45_+1000_1RIh8=IiqHJPSQ5o
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkh294UACgkQjjKRsyhoI8zPYQCeJYpDzL7q5rYK8wq8NkBdJ4f8
+NKYAn3fQ7ahiTFmP8EPxM4EvsOjIrqOI
+=Udb3
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__11_Jul_2008_16_02_45_+1000_1RIh8=IiqHJPSQ5o--
