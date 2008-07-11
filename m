@@ -1,79 +1,42 @@
-From: vibi sreenivasan <vibi_sreenivasan@cms.com>
-Subject: [PATCH linux-next] Changed arguments to show & store methods for
-	struct sysdev_attribute in  kernel/sched.c
-Date: Fri, 11 Jul 2008 16:52:25 +0530
-Message-ID: <1215775345.2995.42.camel@localhost.localdomain>
-Reply-To: vibi_sreenivasan@cms.com
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: [PATCH -next-20080709] fixup stop_machine use cpu mask vs ftrace
+Date: Fri, 11 Jul 2008 22:34:00 +1000
+Message-ID: <200807112234.00993.rusty@rustcorp.com.au>
+References: <200807081756.47140.rusty@rustcorp.com.au> <for-27-patch0-1@bga.com> <20080711074602.GB27849@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailgw3.cms.com ([202.75.200.223]:58959 "EHLO ms4l.cms.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1755494AbYGKLQV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 11 Jul 2008 07:16:21 -0400
+Received: from ozlabs.org ([203.10.76.45]:53897 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751671AbYGKMeP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 11 Jul 2008 08:34:15 -0400
+In-Reply-To: <20080711074602.GB27849@elte.hu>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Milton Miller <miltonm@bga.com>, Ingo Molnar <mingo@redhat.com>, linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
 
-Hello,
-From: Vibi sreenivasan <vibi_sreenivasan@cms.com>
+On Friday 11 July 2008 17:46:03 Ingo Molnar wrote:
+> * Milton Miller <miltonm@bga.com> wrote:
+> > Hi Rusty, Ingo.
+> >
+> > Rusty's patch [PATCH 3/3] stop_machine: use cpu mask rather than magic
+> > numbers didn't find kernel/trace/ftrace.c in -next, causing an
+> > immediate almost NULL pointer dereference in ftrace_dynamic_init.
+>
+> Rusty - what's going on here? Please do not change APIs like that, which
+> cause code to crash. Either do a compatible API change, or change it
+> over in a way that causes clear build failures, not crashes.
 
-FIXES THIS :
+To be fair, I did.  Unfortunately GCC only warns about passing an int to a 
+pointer arg, and boom.
 
-CC      kernel/sched.o
-kernel/sched.c:7743: warning: initialization from incompatible pointer
-type
-kernel/sched.c:7743: warning: initialization from incompatible pointer
-type
- 
-caused by mismatch of function prototype of show & store method in
-struct sysdev_attribute
+But compatible is even better.  Given the number of stop_machine_run users I 
+thought it unlikely that a new one would be introduced during the change.  I 
+was wrong, so I'll do it the Right Way.
 
-Signed-off-by: Vibi sreenivasan <vibi_sreenivasan@cms.com>
-
-
-diff --git a/kernel/sched.c b/kernel/sched.c
-index 96cee36..8e83460 100644
---- a/kernel/sched.c
-+++ b/kernel/sched.c
-@@ -7731,12 +7731,13 @@ static ssize_t sched_power_savings_store(const
-char *buf, size_t count, int smt)
- }
- 
- #ifdef CONFIG_SCHED_MC
--static ssize_t sched_mc_power_savings_show(struct sys_device *dev, char
-*page)
-+static ssize_t sched_mc_power_savings_show(struct sys_device *dev,
-+			struct sysdev_attribute *attribute, char *page)
- {
- 	return sprintf(page, "%u\n", sched_mc_power_savings);
- }
- static ssize_t sched_mc_power_savings_store(struct sys_device *dev,
--					    const char *buf, size_t count)
-+		struct sysdev_attribute *attribute,const char *buf, size_t count)
- {
- 	return sched_power_savings_store(buf, count, 0);
- }
-@@ -7745,12 +7746,13 @@ static SYSDEV_ATTR(sched_mc_power_savings, 0644,
-sched_mc_power_savings_show,
- #endif
- 
- #ifdef CONFIG_SCHED_SMT
--static ssize_t sched_smt_power_savings_show(struct sys_device *dev,
-char *page)
-+static ssize_t sched_smt_power_savings_show(struct sys_device *dev,
-+			struct sysdev_attribute *attribute, char *page)
- {
- 	return sprintf(page, "%u\n", sched_smt_power_savings);
- }
- static ssize_t sched_smt_power_savings_store(struct sys_device *dev,
--					     const char *buf, size_t count)
-+		struct sysdev_attribute *attribute, const char *buf, size_t count)
- {
- 	return sched_power_savings_store(buf, count, 1);
- }
-
-Thanks & Regards
-vibi sreenivasan
+Cheers,
+Rusty.
