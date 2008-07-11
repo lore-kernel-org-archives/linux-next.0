@@ -1,46 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of ttydev tree
-Date: Fri, 11 Jul 2008 17:28:04 +1000
-Message-ID: <20080711172804.a3ff6b3e.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH -next-20080709] fixup stop_machine use cpu mask vs
+	ftrace
+Date: Fri, 11 Jul 2008 09:46:03 +0200
+Message-ID: <20080711074602.GB27849@elte.hu>
+References: <200807081756.47140.rusty@rustcorp.com.au> <for-27-patch0-1@bga.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__11_Jul_2008_17_28_04_+1000_e7mu/thl3=kJwHX5"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52549 "EHLO smtps.tip.net.au"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:58867 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753426AbYGKH2M (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 11 Jul 2008 03:28:12 -0400
+	id S1750897AbYGKHqm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 11 Jul 2008 03:46:42 -0400
+Content-Disposition: inline
+In-Reply-To: <for-27-patch0-1@bga.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: linux-next@vger.kernel.org
+To: Milton Miller <miltonm@bga.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>, linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Fri__11_Jul_2008_17_28_04_+1000_e7mu/thl3=kJwHX5
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Alan,
+* Milton Miller <miltonm@bga.com> wrote:
 
-Today while importing the ttydev tree, patches
-"49-tty-tidy-usb-io-edgeport" and "88-tty-moxa-warning" failed to apply
-so I removed them from the series.
+> Hi Rusty, Ingo.
+> 
+> Rusty's patch [PATCH 3/3] stop_machine: use cpu mask rather than magic 
+> numbers didn't find kernel/trace/ftrace.c in -next, causing an 
+> immediate almost NULL pointer dereference in ftrace_dynamic_init.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Rusty - what's going on here? Please do not change APIs like that, which 
+cause code to crash. Either do a compatible API change, or change it 
+over in a way that causes clear build failures, not crashes.
 
---Signature=_Fri__11_Jul_2008_17_28_04_+1000_e7mu/thl3=kJwHX5
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkh3C4QACgkQjjKRsyhoI8xh6QCgiBcli7KcJI8mfhzsyK4BoQCb
-gLQAnR89BDkvXS7hCaanYOr7lyOpksks
-=qPtO
------END PGP SIGNATURE-----
-
---Signature=_Fri__11_Jul_2008_17_28_04_+1000_e7mu/thl3=kJwHX5--
+	Ingo
