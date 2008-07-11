@@ -1,35 +1,38 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: [PATCH -next-20080709] fixup stop_machine use cpu mask vs ftrace
-Date: Fri, 11 Jul 2008 16:43:29 +1000
-Message-ID: <200807111643.30233.rusty@rustcorp.com.au>
-References: <200807081801.38026.rusty@rustcorp.com.au> <200807081756.47140.rusty@rustcorp.com.au> <for-27-patch0-1@bga.com>
+From: vibi sreenivasan <vibi_sreenivasan@cms.com>
+Subject: Re: git tree location for linux-next
+Date: Fri, 11 Jul 2008 12:51:57 +0530
+Message-ID: <1215760917.2995.11.camel@localhost.localdomain>
+References: <1215609989.16660.19.camel@localhost.localdomain>
+	 <Pine.LNX.4.58.0807090606450.1840@vlab.hofr.at>
+Reply-To: vibi_sreenivasan@cms.com
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="utf-8"
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:60336 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752853AbYGKGnf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 11 Jul 2008 02:43:35 -0400
-In-Reply-To: <for-27-patch0-1@bga.com>
-Content-Disposition: inline
+Received: from mailgw3.cms.com ([202.75.200.223]:43997 "EHLO ms4l.cms.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753426AbYGKHQt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 11 Jul 2008 03:16:49 -0400
+In-Reply-To: <Pine.LNX.4.58.0807090606450.1840@vlab.hofr.at>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Milton Miller <miltonm@bga.com>
-Cc: Ingo Molnar <mingo@redhat.com>, linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: Nicholas Mc Guire <hofrat@hofr.at>
+Cc: linux-next@vger.kernel.org
 
-On Friday 11 July 2008 07:07:57 Milton Miller wrote:
-> Hi Rusty, Ingo.
->
-> Rusty's patch [PATCH 3/3] stop_machine: use cpu mask rather than magic
-> numbers didn't find kernel/trace/ftrace.c in -next, causing an immediate
-> almost NULL pointer dereference in ftrace_dynamic_init.
+hello,
+	Can i compile this git tree as such.Do i have to apply any patch?
+	I have cloned this git tree.
+	Thanks in advance.
 
-Yes, I'm switching the patches around, so it does the transition correctly. 
-Introduces a new stop_machine() fn with the new interface and deprecates the 
-old stop_machine_run().  We can remove stop_machine_run() after everyone is 
-switched.
+Thanks & Regards
+vibi sreenivasan
 
-Thanks,
-Rusty.
+On Wed, 2008-07-09 at 06:08 -0800, Nicholas Mc Guire wrote:
+> > hello,
+> > 	Can any one tell me where the git tree for linux-next is?
+> 
+> 
+>  git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+> 
+> hofrat
+> 
