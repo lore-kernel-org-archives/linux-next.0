@@ -1,105 +1,119 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: today's linux-next fails to boot
-Date: Fri, 11 Jul 2008 21:07:49 +0200
-Message-ID: <20080711190749.GB21758@elte.hu>
-References: <4877400B.1000400@gmail.com> <487772B6.4090100@gmail.com> <20080711145322.GA25698@elte.hu> <200807111710.42826.rjw@sisk.pl>
+From: "Maciej W. Rozycki" <macro-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>
+Subject: Re: linux-next: Tree for July 8: nx6325-related commits
+Date: Fri, 11 Jul 2008 20:50:59 +0100 (BST)
+Message-ID: <Pine.LNX.4.55.0807111949090.31940@cliff.in.clinika.pl>
+References: <20080708192251.3275d283.sfr@canb.auug.org.au> <200807090048.48589.rjw@sisk.pl>
+ <Pine.LNX.4.55.0807091429220.5665@cliff.in.clinika.pl>
+ <20080710115102.GB2301@alberich.amd.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:36981 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755093AbYGKTIL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 11 Jul 2008 15:08:11 -0400
-Content-Disposition: inline
-In-Reply-To: <200807111710.42826.rjw@sisk.pl>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, =?iso-8859-1?B?VPZy9ms=?= Edwin <edwintorok@gmail.com>, Takashi Iwai <tiwai@suse.de>, linux-next@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Vegard Nossum <vegard.nossum@gmail.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20080710115102.GB2301-rMjmLWMCR8hKF45tlneXZg@public.gmane.org>
+Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andreas Herrmann <andreas.herrmann3-5C7GfCeVMHo@public.gmane.org>
+Cc: "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kernel Testers List <kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Matthew Garrett <mjg59-1xO5oi07KQx4cg9Nei1l7Q@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
+On Thu, 10 Jul 2008, Andreas Herrmann wrote:
 
-* Rafael J. Wysocki <rjw@sisk.pl> wrote:
+> FYI, I looked further into the missing interrupt problem (testing on
+> 64-bit, with Rafael's patch version and "Virtual Wire Mode" for the
+> timer IRQ).
+> Just before the weird behaviour I have two log entries:
+> 
+>  APIC error on CPU1: 00(40)
+>  APIC error on CPU0: 00(40)
+> 
+> AFAIK 0x40 is "Illegal Register Address" error:
+> 
+> "Illegal Register Address (IRA)Bit 7.  The IRA bit when set to 1
+> indicates that an access to an unimplemented register location within
+> the local APIC register range (APIC Base Address + 4 Kbytes) was
+> attempted."
+> 
+> I've tried to track down who is responsible for that access. But I
+> didn't find the offender yet. Maybe it's Linux or some SMM stuff?
+> Don't know.
+> 
+> Right after those messages no interrupts from PIT/PIC (which should be
+> "virtual wired" to LVT0 of CPU0) are received anymore. I dumped PIC
+> and local APIC settings but I did not find any suspicious things here.
 
-> On Friday, 11 of July 2008, Ingo Molnar wrote:
-> >=20
-> > * T=F6r=F6k Edwin <edwintorok@gmail.com> wrote:
-> >=20
-> > > On 2008-07-11 16:59, Ingo Molnar wrote:
-> > > > * T=F6r=F6k Edwin <edwintorok@gmail.com> wrote:
-> > > >
-> > > >  =20
-> > > >>> [Added Ingo to Cc]
-> > > >>>
-> > > >>> I get the boot problem on i386 with 2008-07-11 linux-next tre=
-e, too.
-> > > >>> In my case, no error appears on the screen, just staying blan=
-k and
-> > > >>> dead.  It seems stopping at the very beginning, soon after GR=
-UB, so
-> > > >>> could be the same reason.
-> > > >>>  =20
-> > > >>>      =20
-> > > >> I don't see any boot messages on the screen, I get that BUG me=
-ssage as
-> > > >> soon as grub's menu dissapears.
-> > > >> I have bisected it to this range so far:
-> > > >> git-bisect good aa03060a78c1aec53075a0c8ca7be19cedfbea8f
-> > > >> git-bisect bad b1611c0058bc6635e7257e755c3f194933a7a6df
-> > > >>
-> > > >> Should I continue to bisect?
-> > > >>    =20
-> > > >
-> > > > could you check latest tip/master, does it boot fine with the s=
-ame=20
-> > > > config?
-> > >=20
-> > > tip/master boots fine.
-> >=20
-> > to update linux-next to the latest bits in -tip, you can perhaps do=
-=20
-> > something like this:
-> >=20
-> >  git-merge tip/auto-x86-next
-> >  git-merge tip/auto-core-next
-> >  git-merge tip/auto-cpus4096-next
-> >  git-merge tip/auto-ftrace-next
-> >  git-merge tip/auto-generic-ipi-next
-> >  git-merge tip/auto-genirq-next
-> >  git-merge tip/auto-latest
-> >  git-merge tip/auto-safe-poison-pointers-next
-> >  git-merge tip/auto-sched-next
-> >  git-merge tip/auto-stackprotector-next
-> >  git-merge tip/auto-timers-next
-> >=20
-> > but it's easily possible that the bug is in some other portion of=20
-> > linux-next.
->=20
-> Hm, I haven't tested the linux-next from today myself yet, but I have=
-=20
-> a related question.  Namely, is there a way to get a log of commits=20
-> that have been added since the previous linux-next?
->=20
-> That may help to find a guilty patch if the yesterday's linux-next=20
-> works.
+ The return address from the interrupt handler would be useful here as I 
+would expect it not to be far off from the offending access.  I haven't 
+seen such errors on my system, so I cannot track the cause down myself.
 
-at least in -tip it works like this:
+> Before I reread all the above -- here are just some early comments
+> regarding the IRQ0 override:
+> 
+> * HPET timer 0 in legacy mode should be connected to INTIN2.
 
-   git-shortlog tip-history-2008-07-10_09.58_Thu..
+ The HPET spec uses INTIN2 throughout, but I think unless a counterexample
+is seen, we should simply assume it uses the same lines the 8254 uses or
+would use, which is ISA IRQ0, and is subject to the same ACPI interrupt
+routing rules.  This is especially implied by how the LEG_RT_CNF bit has
+been specified and what common sense suggests.  Alternatively we could
+assume any system which maps ISA IRQ0 to INTIN0 is not compliant to the
+HPET spec.
 
-or, a more practical format with commit IDs on the same line:
+ I cannot tell more about the HPET in the native mode at the moment --
+certainly it is not safe to share an I/O APIC pin between an HPET
+interrupt and the ExtINTA line.  And ACPI has no way to report ExtINTA
+lines, so I suppose the best bet is either to reuse the line that is known
+to work for IRQ0, replacing the 8254 or to avoid the legacy range of up to
+IRQ15 in the APIC mode altogether.  All I can say is the three HPET timers
+on my system support the interrupts IRQ20-23 as well as, in the case of
+the timer #2, IRQ11.
 
-  git log --no-merges --pretty=3Dformat:"%h: %s" \
-      tip-history-2008-07-10_09.58_Thu..
+ Unfortunately the quality of the spec (at least version 1.0a I have here)  
+is rather substandard.
 
-you can restrict it to a given piece of code as well, say:
+> * To configure this at least some chipsets are able to "swap" INTIN0
+>   and INTIN2:
+> 
+>   Say default is IRQ0 -> INTIN0 and output of PIC -> INTIN2. Doing
+>   "some chipset magic" it is possible to swap it such that IRQ0 ->
+>   INTIN2 and output of PIC -> INTIN0.
+> 
+>   I might be wrong but maybe that "feature" was invented for HPET
+>   usage in legacy mode -- to deliver timer interrupts to INTIN2.
+>   IMHO for this scenario the IRQ0/INTIN2 override exists.
 
-  git log --no-merges --pretty=3Dformat:"%h: %s" \
-      tip-history-2008-07-10_09.58_Thu.. -- arch/x86/ include/asm-x86/
+ Well, it sounds like a "feature" to workaround the broken spec which
+refers explicitly to INTIN2 rather than ISA IRQ0.  Historically, IRQ0 was
+typically routed to INTIN2 rather than INTIN0 (and the ExtINTA line went
+to the latter) even on APIC implementations as discrete as the 82489DX,
+where the system implementer had full freedom to route lines however they
+liked as all were external and went through the PCB.
 
-this doesnt work in linux-next nearly as well, due to the Quilt importe=
-d=20
-trees. Every time a quilt queue is updated and reimported, there's a=20
-stream of repeat commits.
+ The only explanation I could imagine is such a setup was specified among
+the few "default configurations" Intel's Multiprocessor Specification
+provided.  Even in its first publicly available version 1.1 full routing
+tables could have been specified which could describe arbitrary
+configurations.  However it is possible earlier versions might have been
+limited in this regard and for example provide for these "default
+configurations" only.  I have a vague recollection from some discussion
+which makes me think this was really the case.  Then most of the
+implementers followed the early ones, including interrupt routing
+hardwired on-chip inside more integrated implementations, and therefore
+most of the systems at least up to the moment ACPI has started being
+deployed used the arrangement where IRQ0 is wired to INTIN2.
 
-	Ingo
+> To complete the confusion, the nx6325 box that I am testing on
+> advertises an IRQ0/INTIN2 override but INTIN0/INTIN2 are _not_
+> swapped ... That's the point where I think the BIOS of the box is
+> totally broken or I just missed some real important bit. ;-(
+
+ I have posted the patches now -- it has been longer than expected, but
+with the number of local patches in my tree reaching 90 I had to improve
+procedures for tree updates and it took me some extra time.  I think these
+patches will let us improve some other code that has been recently
+prepared to tackle this nx6325 breakage as soon as possible.  I'll have a
+look into it.
+
+ Now that you mentioned that the SB400 is capable of swapping INTIN0 and
+INTIN2, I think this is information we could make use of to patch
+interrupt routing tables correctly.  Is the state of the swapping circuit
+readable from the chip anywhere?
+
+  Maciej
