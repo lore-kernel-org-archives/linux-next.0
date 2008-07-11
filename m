@@ -1,113 +1,74 @@
 From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: [PATCH linux-next] Add module.h include to stacktrace.c.
-Date: Fri, 11 Jul 2008 12:39:25 +0200
-Message-ID: <20080711103925.GA20589@osiris.boeblingen.de.ibm.com>
+Subject: [PATCH linux-next] Let HP iLO driver depend on PCI.
+Date: Fri, 11 Jul 2008 12:52:34 +0200
+Message-ID: <20080711105234.GB20589@osiris.boeblingen.de.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate5.de.ibm.com ([195.212.29.154]:60355 "EHLO
-	mtagate5.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753118AbYGKKlD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Jul 2008 06:41:03 -0400
+Received: from mtagate8.de.ibm.com ([195.212.29.157]:44939 "EHLO
+	mtagate8.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752195AbYGKKxM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Jul 2008 06:53:12 -0400
 Received: from d12nrmr1607.megacenter.de.ibm.com (d12nrmr1607.megacenter.de.ibm.com [9.149.167.49])
-	by mtagate5.de.ibm.com (8.13.8/8.13.8) with ESMTP id m6BAdQj5062746
-	for <linux-next@vger.kernel.org>; Fri, 11 Jul 2008 10:39:26 GMT
-Received: from d12av02.megacenter.de.ibm.com (d12av02.megacenter.de.ibm.com [9.149.165.228])
-	by d12nrmr1607.megacenter.de.ibm.com (8.13.8/8.13.8/NCO v9.0) with ESMTP id m6BAdQEw3813460
-	for <linux-next@vger.kernel.org>; Fri, 11 Jul 2008 12:39:26 +0200
-Received: from d12av02.megacenter.de.ibm.com (loopback [127.0.0.1])
-	by d12av02.megacenter.de.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id m6BAdQgI002902
-	for <linux-next@vger.kernel.org>; Fri, 11 Jul 2008 12:39:26 +0200
+	by mtagate8.de.ibm.com (8.13.8/8.13.8) with ESMTP id m6BAqZaZ331658
+	for <linux-next@vger.kernel.org>; Fri, 11 Jul 2008 10:52:35 GMT
+Received: from d12av01.megacenter.de.ibm.com (d12av01.megacenter.de.ibm.com [9.149.165.212])
+	by d12nrmr1607.megacenter.de.ibm.com (8.13.8/8.13.8/NCO v9.0) with ESMTP id m6BAqZoo4104406
+	for <linux-next@vger.kernel.org>; Fri, 11 Jul 2008 12:52:35 +0200
+Received: from d12av01.megacenter.de.ibm.com (loopback [127.0.0.1])
+	by d12av01.megacenter.de.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id m6BAqYpG009324
+	for <linux-next@vger.kernel.org>; Fri, 11 Jul 2008 12:52:35 +0200
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: linux-next@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: David Altobelli <david.altobelli@hp.com>, linux-next@vger.kernel.org
+
+Subject: [PATCH] Let HP iLO driver depend on PCI
 
 From: Heiko Carstens <heiko.carstens@de.ibm.com>
 
-Fixes this:
+"HP iLO driver" causes this:
 
-  CC      arch/s390/kernel/stacktrace.o
-arch/s390/kernel/stacktrace.c:84: warning: data definition has no type or storage class
-arch/s390/kernel/stacktrace.c:84: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-arch/s390/kernel/stacktrace.c:84: warning: parameter names (without types) in function declaration
-arch/s390/kernel/stacktrace.c:97: warning: data definition has no type or storage class
-arch/s390/kernel/stacktrace.c:97: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-arch/s390/kernel/stacktrace.c:97: warning: parameter names (without types) in function declaration
+drivers/misc/hpilo.c: In function 'doorbell_set':
+drivers/misc/hpilo.c:147: error: implicit declaration of function 'iowrite8'
+drivers/misc/hpilo.c: In function 'ilo_ccb_close':
+drivers/misc/hpilo.c:204: error: implicit declaration of function 'iowrite32'
+drivers/misc/hpilo.c:204: error: implicit declaration of function 'ioread32'
+drivers/misc/hpilo.c:222: error: implicit declaration of function 'memset_io'
+drivers/misc/hpilo.c:225: error: implicit declaration of function 'pci_free_consistent'
+drivers/misc/hpilo.c: In function 'ilo_ccb_open':
+drivers/misc/hpilo.c:244: error: implicit declaration of function 'pci_alloc_consistent'
+drivers/misc/hpilo.c:245: warning: assignment makes pointer from integer without a cast
+drivers/misc/hpilo.c:296: error: implicit declaration of function 'memcpy_toio'
+drivers/misc/hpilo.c: In function 'ilo_unmap_device':
+drivers/misc/hpilo.c:575: error: implicit declaration of function 'pci_iounmap'
+drivers/misc/hpilo.c: In function 'ilo_map_device':
+drivers/misc/hpilo.c:585: error: implicit declaration of function 'pci_iomap'
+drivers/misc/hpilo.c:585: warning: assignment makes pointer from integer without a cast
+drivers/misc/hpilo.c:592: warning: assignment makes pointer from integer without a cast
+drivers/misc/hpilo.c:599: warning: assignment makes pointer from integer without a cast
+make[2]: *** [drivers/misc/hpilo.o] Error 1
 
-caused by "stacktrace: export save_stack_trace[_tsk]"
+Just let it depend on PCI.
 
 Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
 ---
 
-Ingo, the patch which causes this came in via one of your trees.
-Please merge/apply. Thanks.
+Greg, this came in via one of your git trees. Please merge/apply. Thanks.
 
- arch/avr32/kernel/stacktrace.c   |    1 +
- arch/mips/kernel/stacktrace.c    |    1 +
- arch/powerpc/kernel/stacktrace.c |    1 +
- arch/s390/kernel/stacktrace.c    |    1 +
- arch/sh/kernel/stacktrace.c      |    1 +
- 5 files changed, 5 insertions(+)
+ drivers/misc/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
-Index: linux-next/arch/s390/kernel/stacktrace.c
+Index: linux-next/drivers/misc/Kconfig
 ===================================================================
---- linux-next.orig/arch/s390/kernel/stacktrace.c
-+++ linux-next/arch/s390/kernel/stacktrace.c
-@@ -10,6 +10,7 @@
- #include <linux/sched.h>
- #include <linux/stacktrace.h>
- #include <linux/kallsyms.h>
-+#include <linux/module.h>
- 
- static unsigned long save_context_stack(struct stack_trace *trace,
- 					unsigned long sp,
-Index: linux-next/arch/avr32/kernel/stacktrace.c
-===================================================================
---- linux-next.orig/arch/avr32/kernel/stacktrace.c
-+++ linux-next/arch/avr32/kernel/stacktrace.c
-@@ -10,6 +10,7 @@
- #include <linux/sched.h>
- #include <linux/stacktrace.h>
- #include <linux/thread_info.h>
-+#include <linux/module.h>
- 
- register unsigned long current_frame_pointer asm("r7");
- 
-Index: linux-next/arch/mips/kernel/stacktrace.c
-===================================================================
---- linux-next.orig/arch/mips/kernel/stacktrace.c
-+++ linux-next/arch/mips/kernel/stacktrace.c
-@@ -7,6 +7,7 @@
-  */
- #include <linux/sched.h>
- #include <linux/stacktrace.h>
-+#include <linux/module.h
- #include <asm/stacktrace.h>
- 
- /*
-Index: linux-next/arch/powerpc/kernel/stacktrace.c
-===================================================================
---- linux-next.orig/arch/powerpc/kernel/stacktrace.c
-+++ linux-next/arch/powerpc/kernel/stacktrace.c
-@@ -12,6 +12,7 @@
- 
- #include <linux/sched.h>
- #include <linux/stacktrace.h>
-+#include <linux/module.h>
- #include <asm/ptrace.h>
- 
- /*
-Index: linux-next/arch/sh/kernel/stacktrace.c
-===================================================================
---- linux-next.orig/arch/sh/kernel/stacktrace.c
-+++ linux-next/arch/sh/kernel/stacktrace.c
-@@ -12,6 +12,7 @@
- #include <linux/sched.h>
- #include <linux/stacktrace.h>
- #include <linux/thread_info.h>
-+#include <linux/module.h>
- #include <asm/ptrace.h>
- 
- /*
+--- linux-next.orig/drivers/misc/Kconfig
++++ linux-next/drivers/misc/Kconfig
+@@ -423,6 +423,7 @@ config SGI_XP
+ config HP_ILO
+ 	tristate "Channel interface driver for HP iLO/iLO2 processor"
+ 	default n
++	depends on PCI
+ 	help
+ 	  The channel interface driver allows applications to communicate
+ 	  with iLO/iLO2 management processors present on HP ProLiant
