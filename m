@@ -1,108 +1,49 @@
-From: Jarek Poplawski <jarkao2@gmail.com>
-Subject: [PATCH net-next] net: fix lockdep warning in qdisc_lock_tree()
-Date: Thu, 10 Jul 2008 20:14:16 +0200
-Message-ID: <20080710181416.GA8265@ami.dom.local>
-References: <a4423d670807100204kf269814ncd649bf02312311b@mail.gmail.com>
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Subject: Re: linux-next: manual merge of the powerpc tree
+Date: Fri, 11 Jul 2008 21:01:25 +0200
+Message-ID: <200807112101.25704.bzolnier@gmail.com>
+References: <20080707230717.10429faf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from yx-out-2324.google.com ([74.125.44.30]:37216 "EHLO
+Received: from yx-out-2324.google.com ([74.125.44.28]:56894 "EHLO
 	yx-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752676AbYGJSOe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jul 2008 14:14:34 -0400
-Received: by yx-out-2324.google.com with SMTP id 8so1158821yxm.1
-        for <linux-next@vger.kernel.org>; Thu, 10 Jul 2008 11:14:31 -0700 (PDT)
+	with ESMTP id S1761973AbYGJTFq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jul 2008 15:05:46 -0400
+Received: by yx-out-2324.google.com with SMTP id 8so1173439yxm.1
+        for <linux-next@vger.kernel.org>; Thu, 10 Jul 2008 12:05:43 -0700 (PDT)
+In-Reply-To: <20080707230717.10429faf.sfr@canb.auug.org.au>
 Content-Disposition: inline
-In-Reply-To: <a4423d670807100204kf269814ncd649bf02312311b@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, netdev@vger.kernel.org, David Miller <davem@davemloft.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Paul Mackerras <paulus@samba.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, Daniel Walker <dwalker@mvista.com>, Andrew Morton <akpm@linux-foundation.org>
 
-Alexander Beregalov wrote, On 07/10/2008 11:04 AM:
-...
-> [    0.426638] =============================================
-> [    0.426638] [ INFO: possible recursive locking detected ]
-> [    0.426638] 2.6.26-rc9-next-20080710 #5
-> [    0.426638] ---------------------------------------------
-> [    0.426638] swapper/1 is trying to acquire lock:
-> [    0.426638]  (&queue->lock){-...}, at: [<ffffffff8041c3d0>]
-> qdisc_lock_tree+0x27/0x2c
-> [    0.426638]
-> [    0.426638] but task is already holding lock:
-> [    0.426638]  (&queue->lock){-...}, at: [<ffffffff8041c3c8>]
-> qdisc_lock_tree+0x1f/0x2c
-> [    0.426638]
-> [    0.426638] other info that might help us debug this:
-> [    0.426638] 3 locks held by swapper/1:
-> [    0.426638]  #0:  (net_mutex){--..}, at: [<ffffffff8040b827>]
-> register_pernet_device+0x1a/0x5a
-> [    0.426638]  #1:  (rtnl_mutex){--..}, at: [<ffffffff80417179>]
-> rtnl_lock+0x12/0x14
-> [    0.426638]  #2:  (&queue->lock){-...}, at: [<ffffffff8041c3c8>]
-> qdisc_lock_tree+0x1f/0x2c
-> [    0.426638]
-> [    0.426638] stack backtrace:
-> [    0.426638] Pid: 1, comm: swapper Not tainted 2.6.26-rc9-next-20080710 #5
-> [    0.426638]
-> [    0.426638] Call Trace:
-> [    0.426638]  [<ffffffff8024f95a>] __lock_acquire+0xba9/0xf12
-> [    0.426638]  [<ffffffff8041c3d0>] ? qdisc_lock_tree+0x27/0x2c
-> [    0.426638]  [<ffffffff8024fd48>] lock_acquire+0x85/0xa9
-> [    0.426638]  [<ffffffff8041c3d0>] ? qdisc_lock_tree+0x27/0x2c
-> [    0.426638]  [<ffffffff80476794>] _spin_lock+0x25/0x31
-> [    0.426638]  [<ffffffff8041c3d0>] qdisc_lock_tree+0x27/0x2c
-> [    0.426638]  [<ffffffff8041c412>] dev_init_scheduler+0x11/0x94
-> [    0.426638]  [<ffffffff8040f3be>] register_netdevice+0x296/0x3f0
-> [    0.426638]  [<ffffffff8040f552>] register_netdev+0x3a/0x48
-> [    0.426638]  [<ffffffff805fc274>] loopback_net_init+0x40/0x7a
-> [    0.426638]  [<ffffffff805fc222>] ? loopback_init+0x0/0x12
-...
 
-lockdep needs separate lock init to distinguish rx and tx queue locks.
-(There is no real lockup danger.)
+Hi,
 
-Reported-by: Alexander Beregalov <a.beregalov@gmail.com>
-Signed-off-by: Jarek Poplawski <jarkao2@gmail.com>
+On Monday 07 July 2008, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the powerpc tree got a conflict in
+> drivers/macintosh/mediabay.c between commit
+> 7ad963b103d3863b1161c59f3e65a435979804ed ("ide-pmac: media-bay support
+> fixes (take 4)") from the ide tree and commit
+> 9a24729d8aeef967eac7af71c6a69edc83d06558 ("macintosh/media bay: Convert
+> semaphore to mutex") from the powerpc tree.
 
----
+Since I haven't heard back from Ben [1] on ide-pmac/media-bay IRQ issue
+I took another look at ide-pmac patches and I think that it should be
+possible to rework them in such way that consecutive ide patches (> 100)
+won't depend on "ide-pmac: media-bay support fixes (take 4)" patch.
 
- net/core/dev.c |   20 ++++++++++++++------
- 1 files changed, 14 insertions(+), 6 deletions(-)
+This would allow us to re-schedule it to 2.6.28 (which is probably what
+we want because 2.6.26 is probably just around the corner and we will be
+pretty busy with 2.6.27 merge window soon).  Ben, what's your opinion?
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index a29a359..157b683 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -4090,17 +4090,25 @@ static struct net_device_stats *internal_stats(struct net_device *dev)
- 	return &dev->stats;
- }
- 
--static void netdev_init_one_queue(struct net_device *dev,
--				  struct netdev_queue *queue)
-+static void netdev_init_rx_queue(struct net_device *dev,
-+				  struct netdev_queue *rx_queue)
- {
--	spin_lock_init(&queue->lock);
--	queue->dev = dev;
-+	spin_lock_init(&rx_queue->lock);
-+	rx_queue->dev = dev;
-+}
-+
-+/* lockdep needs separate init to distinguish these locks */
-+static void netdev_init_tx_queue(struct net_device *dev,
-+				  struct netdev_queue *tx_queue)
-+{
-+	spin_lock_init(&tx_queue->lock);
-+	tx_queue->dev = dev;
- }
- 
- static void netdev_init_queues(struct net_device *dev)
- {
--	netdev_init_one_queue(dev, &dev->rx_queue);
--	netdev_init_one_queue(dev, &dev->tx_queue);
-+	netdev_init_rx_queue(dev, &dev->rx_queue);
-+	netdev_init_tx_queue(dev, &dev->tx_queue);
- }
- 
- /**
+[1] which doesn't surprise me given his new responsibilities ;)
+
+Thanks,
+Bart
