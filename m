@@ -1,100 +1,113 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Warnings while compiling for i386
-Date: Fri, 11 Jul 2008 20:21:33 +1000
-Message-ID: <20080711202133.57fa3727.sfr@canb.auug.org.au>
-References: <1215770936.2995.27.camel@localhost.localdomain>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: [PATCH linux-next] Add module.h include to stacktrace.c.
+Date: Fri, 11 Jul 2008 12:39:25 +0200
+Message-ID: <20080711103925.GA20589@osiris.boeblingen.de.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__11_Jul_2008_20_21_33_+1000_mbJbRjWHzJ=Ur7bL"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41810 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752855AbYGKKVv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 11 Jul 2008 06:21:51 -0400
-In-Reply-To: <1215770936.2995.27.camel@localhost.localdomain>
+Received: from mtagate5.de.ibm.com ([195.212.29.154]:60355 "EHLO
+	mtagate5.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753118AbYGKKlD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Jul 2008 06:41:03 -0400
+Received: from d12nrmr1607.megacenter.de.ibm.com (d12nrmr1607.megacenter.de.ibm.com [9.149.167.49])
+	by mtagate5.de.ibm.com (8.13.8/8.13.8) with ESMTP id m6BAdQj5062746
+	for <linux-next@vger.kernel.org>; Fri, 11 Jul 2008 10:39:26 GMT
+Received: from d12av02.megacenter.de.ibm.com (d12av02.megacenter.de.ibm.com [9.149.165.228])
+	by d12nrmr1607.megacenter.de.ibm.com (8.13.8/8.13.8/NCO v9.0) with ESMTP id m6BAdQEw3813460
+	for <linux-next@vger.kernel.org>; Fri, 11 Jul 2008 12:39:26 +0200
+Received: from d12av02.megacenter.de.ibm.com (loopback [127.0.0.1])
+	by d12av02.megacenter.de.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id m6BAdQgI002902
+	for <linux-next@vger.kernel.org>; Fri, 11 Jul 2008 12:39:26 +0200
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: vibi_sreenivasan@cms.com
-Cc: linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Fri__11_Jul_2008_20_21_33_+1000_mbJbRjWHzJ=Ur7bL
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
 
-(Add some CC's)
+Fixes this:
 
-On Fri, 11 Jul 2008 15:38:56 +0530 vibi sreenivasan <vibi_sreenivasan@cms.c=
-om> wrote:
->
-> hello ,
-> 	I am getting alot of warnings while compiling for i386 architecture.
-> 	i am using default configuration for i386 & my compiler version is
-> 4.1.1
-> =09
-> 	following are warnings
->=20
-> arch/x86/kernel/smpboot.c: In function =E2=80=98do_boot_cpu=E2=80=99:
-> arch/x86/kernel/smpboot.c:943: warning: label =E2=80=98restore_state=E2=
-=80=99 defined
-> but not used
-> *
-> *
-> arch/x86/mm/pgtable.c: In function =E2=80=98pgd_mop_up_pmds=E2=80=99:
-> arch/x86/mm/pgtable.c:194: warning: unused variable =E2=80=98pmd=E2=80=99
-> CC      arch/x86/mm/pgtable_32.o
-> arch/x86/mm/pgtable_32.c:144: warning: =E2=80=98fixmaps=E2=80=99 defined =
-but not used
-> *
-> *
-> kernel/sched.c:7743: warning: initialization from incompatible pointer
-> type
-> kernel/sched.c:7743: warning: initialization from incompatible pointer
-> type
-> *
-> *
-> sound/core/pcm_native.c: In function =E2=80=98snd_pcm_fasync=E2=80=99:
-> sound/core/pcm_native.c:3262: warning: label =E2=80=98out=E2=80=99 define=
-d but not used
-> *
-> *
-> WARNING: modpost: Found 6 section mismatch(es).
-> *
-> *
-> RELOCS  arch/x86/boot/compressed/vmlinux.relocs
-> WARNING: Absolute relocations present
-> Offset     Info     Type     Sym.Value Sym.Name
-> c103405d 00807601   R_386_32 c1357371  __start_notes
-> c13627a8 0098e101   R_386_32 c14a5efc  __start___kcrctab
-> c13627bc 00984101   R_386_32 c14a5efc  __start___kcrctab_gpl
-> c13627c8 00797001   R_386_32 c14a5efc  __start___ksymtab_gpl_future
-> c13627cc 0082ba01   R_386_32 c14a5efc  __stop___ksymtab_gpl_future
-> c13627d0 00802801   R_386_32 c14a5efc  __start___kcrctab_gpl_future
-> c153c1fe 008e7401   R_386_32 c1357371  __stop_notes
-> c153c204 00807601   R_386_32 c1357371  __start_notes
->=20
-> Thanks & Regards
-> vibi sreenivasan
->=20
->=20
->=20
+  CC      arch/s390/kernel/stacktrace.o
+arch/s390/kernel/stacktrace.c:84: warning: data definition has no type or storage class
+arch/s390/kernel/stacktrace.c:84: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
+arch/s390/kernel/stacktrace.c:84: warning: parameter names (without types) in function declaration
+arch/s390/kernel/stacktrace.c:97: warning: data definition has no type or storage class
+arch/s390/kernel/stacktrace.c:97: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
+arch/s390/kernel/stacktrace.c:97: warning: parameter names (without types) in function declaration
 
+caused by "stacktrace: export save_stack_trace[_tsk]"
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+---
 
---Signature=_Fri__11_Jul_2008_20_21_33_+1000_mbJbRjWHzJ=Ur7bL
-Content-Type: application/pgp-signature
+Ingo, the patch which causes this came in via one of your trees.
+Please merge/apply. Thanks.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+ arch/avr32/kernel/stacktrace.c   |    1 +
+ arch/mips/kernel/stacktrace.c    |    1 +
+ arch/powerpc/kernel/stacktrace.c |    1 +
+ arch/s390/kernel/stacktrace.c    |    1 +
+ arch/sh/kernel/stacktrace.c      |    1 +
+ 5 files changed, 5 insertions(+)
 
-iEYEARECAAYFAkh3NC0ACgkQjjKRsyhoI8zW6ACgg4ig8Cy1lZ3Bd/OhpDSq+sWp
-lNQAoLIK+fAadTTyXVdwrSzCaUu1X36h
-=6+WY
------END PGP SIGNATURE-----
-
---Signature=_Fri__11_Jul_2008_20_21_33_+1000_mbJbRjWHzJ=Ur7bL--
+Index: linux-next/arch/s390/kernel/stacktrace.c
+===================================================================
+--- linux-next.orig/arch/s390/kernel/stacktrace.c
++++ linux-next/arch/s390/kernel/stacktrace.c
+@@ -10,6 +10,7 @@
+ #include <linux/sched.h>
+ #include <linux/stacktrace.h>
+ #include <linux/kallsyms.h>
++#include <linux/module.h>
+ 
+ static unsigned long save_context_stack(struct stack_trace *trace,
+ 					unsigned long sp,
+Index: linux-next/arch/avr32/kernel/stacktrace.c
+===================================================================
+--- linux-next.orig/arch/avr32/kernel/stacktrace.c
++++ linux-next/arch/avr32/kernel/stacktrace.c
+@@ -10,6 +10,7 @@
+ #include <linux/sched.h>
+ #include <linux/stacktrace.h>
+ #include <linux/thread_info.h>
++#include <linux/module.h>
+ 
+ register unsigned long current_frame_pointer asm("r7");
+ 
+Index: linux-next/arch/mips/kernel/stacktrace.c
+===================================================================
+--- linux-next.orig/arch/mips/kernel/stacktrace.c
++++ linux-next/arch/mips/kernel/stacktrace.c
+@@ -7,6 +7,7 @@
+  */
+ #include <linux/sched.h>
+ #include <linux/stacktrace.h>
++#include <linux/module.h
+ #include <asm/stacktrace.h>
+ 
+ /*
+Index: linux-next/arch/powerpc/kernel/stacktrace.c
+===================================================================
+--- linux-next.orig/arch/powerpc/kernel/stacktrace.c
++++ linux-next/arch/powerpc/kernel/stacktrace.c
+@@ -12,6 +12,7 @@
+ 
+ #include <linux/sched.h>
+ #include <linux/stacktrace.h>
++#include <linux/module.h>
+ #include <asm/ptrace.h>
+ 
+ /*
+Index: linux-next/arch/sh/kernel/stacktrace.c
+===================================================================
+--- linux-next.orig/arch/sh/kernel/stacktrace.c
++++ linux-next/arch/sh/kernel/stacktrace.c
+@@ -12,6 +12,7 @@
+ #include <linux/sched.h>
+ #include <linux/stacktrace.h>
+ #include <linux/thread_info.h>
++#include <linux/module.h>
+ #include <asm/ptrace.h>
+ 
+ /*
