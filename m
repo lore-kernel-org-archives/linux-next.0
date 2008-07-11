@@ -1,42 +1,39 @@
-From: vibi sreenivasan <vibi_sreenivasan@cms.com>
-Subject: Re: git tree location for linux-next
-Date: Fri, 11 Jul 2008 14:07:27 +0530
-Message-ID: <1215765447.2995.14.camel@localhost.localdomain>
-References: <1215609989.16660.19.camel@localhost.localdomain>
-	 <Pine.LNX.4.58.0807090606450.1840@vlab.hofr.at>
-	 <1215760917.2995.11.camel@localhost.localdomain>
-	 <20080711175859.16e34c2a.sfr@canb.auug.org.au>
-Reply-To: vibi_sreenivasan@cms.com
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the sched tree
+Date: Fri, 11 Jul 2008 10:43:33 +0200
+Message-ID: <20080711084333.GA17217@elte.hu>
+References: <20080711112146.f7f98434.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailgw3.cms.com ([202.75.200.223]:48625 "EHLO ms4l.cms.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752317AbYGKIbZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 11 Jul 2008 04:31:25 -0400
-In-Reply-To: <20080711175859.16e34c2a.sfr@canb.auug.org.au>
+Received: from mx3.mail.elte.hu ([157.181.1.138]:44551 "EHLO mx3.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757946AbYGKInv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 11 Jul 2008 04:43:51 -0400
+Content-Disposition: inline
+In-Reply-To: <20080711112146.f7f98434.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Nicholas Mc Guire <hofrat@hofr.at>, linux-next@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Nick Piggin <nickpiggin@yahoo.com.au>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 
-hi Stephen,
-	thanks for your help.
-	I will compile & report.
 
-thanks & regards
-vibi sreenivasan
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-On Fri, 2008-07-11 at 17:58 +1000, Stephen Rothwell wrote:
-> Hi vibi,
+> Hi all,
 > 
-> On Fri, 11 Jul 2008 12:51:57 +0530 vibi sreenivasan <vibi_sreenivasan@cms.com> wrote:
-> >
-> > 	Can i compile this git tree as such.Do i have to apply any patch?
-> > 	I have cloned this git tree.
+> Today's linux-next merge of the sched tree got a conflict in 
+> kernel/rcupreempt.c between commit 
+> 70ff05554f91a1edda1f11684da1dbde09e2feea ("Fix PREEMPT_RCU without 
+> HOTPLUG_CPU") from Linus' tree and commit 
+> 4446a36ff8c74ac3b32feb009b651048e129c6af ("rcu: add call_rcu_sched()") 
+> from the sched tree.
 > 
-> It should compile.  If it doesn't, then you should report that to
-> linux-next@vger.kernel.org along with your architecture, compiler version
-> and config.
-> 
+> The former moved rcu_online_cpu() out of the CONFIG_HOTPLUG_CPU ifdef 
+> and mode it __cpuinit, while the latter updated it.  I applied the 
+> latter updates to the newly positioned function.  This may well not be 
+> correct but it does build.  Please check.
+
+yeah, that's how i resolved it too.
+
+	Ingo
