@@ -1,41 +1,52 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: manual merge of the powerpc tree
-Date: Sat, 12 Jul 2008 13:41:30 +1000
-Message-ID: <1215834090.7549.149.camel@pasglop>
-References: <20080707230717.10429faf.sfr@canb.auug.org.au>
-	 <200807112101.25704.bzolnier@gmail.com>
-Reply-To: benh@kernel.crashing.org
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: today's linux-next fails to boot
+Date: Sat, 12 Jul 2008 06:47:07 +0200
+Message-ID: <20080712044707.GA6675@elte.hu>
+References: <4877400B.1000400@gmail.com> <20080711190749.GB21758@elte.hu> <200807112306.39455.rjw@sisk.pl> <200807120250.16459.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:46630 "EHLO gate.crashing.org"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:43797 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756631AbYGLDro (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 11 Jul 2008 23:47:44 -0400
-In-Reply-To: <200807112101.25704.bzolnier@gmail.com>
+	id S1750844AbYGLEra (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 12 Jul 2008 00:47:30 -0400
+Content-Disposition: inline
+In-Reply-To: <200807120250.16459.rjw@sisk.pl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, Daniel Walker <dwalker@mvista.com>, Andrew Morton <akpm@linux-foundation.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, =?iso-8859-1?B?VPZy9ms=?= Edwin <edwintorok@gmail.com>, linux-next@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Vegard Nossum <vegard.nossum@gmail.com>, Andreas Herrmann <andreas.herrmann3@amd.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
 
-On Fri, 2008-07-11 at 21:01 +0200, Bartlomiej Zolnierkiewicz wrote:
+
+* Rafael J. Wysocki <rjw@sisk.pl> wrote:
+
+> Hi Ingo,
 > 
-> Since I haven't heard back from Ben [1] on ide-pmac/media-bay IRQ issue
-> I took another look at ide-pmac patches and I think that it should be
-> possible to rework them in such way that consecutive ide patches (> 100)
-> won't depend on "ide-pmac: media-bay support fixes (take 4)" patch.
+> On Friday, 11 of July 2008, Rafael J. Wysocki wrote:
+> > On Friday, 11 of July 2008, Ingo Molnar wrote:
+> > > 
+> > > * Rafael J. Wysocki <rjw@sisk.pl> wrote:
+> [--snip--]
+> > 
+> > Well, it turns out that linux-next from today doesn't boot on my box too
+> > (64-bit) and I don't see anything obviously suspicious.  Bisection time.
 > 
-> This would allow us to re-schedule it to 2.6.28 (which is probably what
-> we want because 2.6.26 is probably just around the corner and we will be
-> pretty busy with 2.6.27 merge window soon).  Ben, what's your opinion?
+> I have identified the source of the breakage on my box, but I don't 
+> really think it's the same problem that Edwin is observing.
 > 
-> [1] which doesn't surprise me given his new responsibilities ;)
+> Namely, it turns out that some code in arch/x86/kernel/acpi/boot.c, as 
+> in today's linux-next, doesn't really make sense, because we have two 
+> conflicting DMA-based quirks in there for the same set of boxes (HP 
+> nx6325 and nx6125) and one of them actually breaks my box.
+> 
+> I have reported that already, but it probably got lost somewhere.
+> 
+> Below is a patch that fixes things for me, on top of today's 
+> linux-next. Please apply.
 
-That and I just moved house... been hectic lately.
+thanks Rafael, i have applied your fix to tip/x86/core and to 
+auto-x86-next as well.
 
-I'll give another shot at the IRQ issues early next week, and if it
-still doesn't work, we'll postpone.
+what happened is a case of too many fixes for the same problem :-/
 
-Cheers,
-Ben.
+	Ingo
