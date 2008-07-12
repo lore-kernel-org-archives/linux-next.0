@@ -1,58 +1,138 @@
-From: Joel Becker <Joel.Becker@oracle.com>
-Subject: Re: [BUGFIX][PATCH v2 0/2] configfs: Fix cleanup
-	after mkdir()	failure
-Date: Fri, 11 Jul 2008 16:37:26 -0700
-Message-ID: <20080711233726.GD22577@mail.oracle.com>
-References: <1215183366-17479-1-git-send-email-louis.rilling@kerlabs.com>
-	<20080711220740.GC22577@mail.oracle.com>
-	<20080711155238.f3e257b0.akpm@linux-foundation.org>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: today's linux-next fails to boot
+Date: Sat, 12 Jul 2008 02:50:15 +0200
+Message-ID: <200807120250.16459.rjw@sisk.pl>
+References: <4877400B.1000400@gmail.com> <20080711190749.GB21758@elte.hu> <200807112306.39455.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <ocfs2-devel-bounces@oss.oracle.com>
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <200807112306.39455.rjw@sisk.pl>
 Content-Disposition: inline
-In-Reply-To: <20080711155238.f3e257b0.akpm@linux-foundation.org>
-List-Unsubscribe: <http://oss.oracle.com/mailman/listinfo/ocfs2-devel>,
-	<mailto:ocfs2-devel-request@oss.oracle.com?subject=unsubscribe>
-List-Archive: <http://oss.oracle.com/pipermail/ocfs2-devel>
-List-Post: <mailto:ocfs2-devel@oss.oracle.com>
-List-Help: <mailto:ocfs2-devel-request@oss.oracle.com?subject=help>
-List-Subscribe: <http://oss.oracle.com/mailman/listinfo/ocfs2-devel>,
-	<mailto:ocfs2-devel-request@oss.oracle.com?subject=subscribe>
-Sender: ocfs2-devel-bounces@oss.oracle.com
-Errors-To: ocfs2-devel-bounces@oss.oracle.com
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com
+Sender: linux-acpi-owner@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, =?iso-8859-1?q?T=F6r=F6k_Edwin?= <edwintorok@gmail.com>, linux-next@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Vegard Nossum <vegard.nossum@gmail.com>, Andreas Herrmann <andreas.herrmann3@amd.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Jul 11, 2008 at 03:52:38PM -0700, Andrew Morton wrote:
-> On Fri, 11 Jul 2008 15:07:40 -0700 Joel Becker <Joel.Becker@oracle.com> wrote:
-> 
-> > 	Ok, I've merged all this work.  Please check out my configfs-ALL
-> > branch and make sure I have everything we've worked on.
+Hi Ingo,
+
+On Friday, 11 of July 2008, Rafael J. Wysocki wrote:
+> On Friday, 11 of July 2008, Ingo Molnar wrote:
 > > 
-> > http://oss.oracle.com/git/?p=jlbec/linux-2.6.git;a=shortlog;h=configfs-ALL
-> > git://oss.oracle.com/git/jlbec/linux-2.6.git configfs-ALL
+> > * Rafael J. Wysocki <rjw@sisk.pl> wrote:
+[--snip--]
 > 
-> Can you please arrange to get this tree into linux-next?
+> Well, it turns out that linux-next from today doesn't boot on my box too
+> (64-bit) and I don't see anything obviously suspicious.  Bisection time.
 
-Hey Andrew,
-	I still send configfs stuff through ocfs2.git (it's just
-easier).  The first half of these changes have been in linux-next for
-about three weeks.  We'll be sending the rest there as soon as Louis
-verifies I didn't miss anything :-)
+I have identified the source of the breakage on my box, but I don't really
+think it's the same problem that Edwin is observing.
 
-Joel
+Namely, it turns out that some code in arch/x86/kernel/acpi/boot.c, as in
+today's linux-next, doesn't really make sense, because we have two conflicting
+DMA-based quirks in there for the same set of boxes (HP nx6325 and nx6125) and
+one of them actually breaks my box.
 
--- 
+I have reported that already, but it probably got lost somewhere.
 
-"We will have to repent in this generation not merely for the
- vitriolic words and actions of the bad people, but for the 
- appalling silence of the good people."
-	- Rev. Dr. Martin Luther King, Jr.
+Below is a patch that fixes things for me, on top of today's linux-next.
+Please apply.
 
-Joel Becker
-Principal Software Developer
-Oracle
-E-mail: joel.becker@oracle.com
-Phone: (650) 506-8127
+Thanks,
+Rafael
+
+---
+Remove some code that breaks my HP nx6325 from arch/x86/kernel/acpi/boot.c.
+
+Signed-off-by: Rafael J. Wysocki <rjw@sisk.pl>
+---
+ arch/x86/kernel/acpi/boot.c |   47 --------------------------------------------
+ 1 file changed, 47 deletions(-)
+
+Index: linux-next/arch/x86/kernel/acpi/boot.c
+===================================================================
+--- linux-next.orig/arch/x86/kernel/acpi/boot.c
++++ linux-next/arch/x86/kernel/acpi/boot.c
+@@ -84,8 +84,6 @@ int acpi_lapic;
+ int acpi_ioapic;
+ int acpi_strict;
+ 
+-static int disable_irq0_through_ioapic __initdata;
+-
+ u8 acpi_sci_flags __initdata;
+ int acpi_sci_override_gsi __initdata;
+ int acpi_skip_timer_override __initdata;
+@@ -982,10 +980,6 @@ void __init mp_override_legacy_irq(u8 bu
+ 	int pin;
+ 	struct mp_config_intsrc mp_irq;
+ 
+-	/* Skip the 8254 timer interrupt (IRQ 0) if requested.  */
+-	if (bus_irq == 0 && disable_irq0_through_ioapic)
+-		return;
+-
+ 	/*
+ 	 * Convert 'gsi' to 'ioapic.pin'.
+ 	 */
+@@ -1052,10 +1046,6 @@ void __init mp_config_acpi_legacy_irqs(v
+ 	for (i = 0; i < 16; i++) {
+ 		int idx;
+ 
+-		/* Skip the 8254 timer interrupt (IRQ 0) if requested.  */
+-		if (i == 0 && disable_irq0_through_ioapic)
+-			continue;
+-
+ 		for (idx = 0; idx < mp_irq_entries; idx++) {
+ 			struct mp_config_intsrc *irq = mp_irqs + idx;
+ 
+@@ -1413,17 +1403,6 @@ static int __init force_acpi_ht(const st
+ }
+ 
+ /*
+- * Don't register any I/O APIC entries for the 8254 timer IRQ.
+- */
+-static int __init
+-dmi_disable_irq0_through_ioapic(const struct dmi_system_id *d)
+-{
+-	pr_notice("%s detected: disabling IRQ 0 through I/O APIC\n", d->ident);
+-	disable_irq0_through_ioapic = 1;
+-	return 0;
+-}
+-
+-/*
+  * Force ignoring BIOS IRQ0 pin2 override
+  */
+ static int __init dmi_ignore_irq0_timer_override(const struct dmi_system_id *d)
+@@ -1608,32 +1587,6 @@ static struct dmi_system_id __initdata a
+ 	 * is enabled.  This input is incorrectly designated the
+ 	 * ISA IRQ 0 via an interrupt source override even though
+ 	 * it is wired to the output of the master 8259A and INTIN0
+-	 * is not connected at all.  Abandon any attempts to route
+-	 * IRQ 0 through the I/O APIC therefore.
+-	 */
+-	{
+-	 .callback = dmi_disable_irq0_through_ioapic,
+-	 .ident = "HP NX6125 laptop",
+-	 .matches = {
+-		     DMI_MATCH(DMI_SYS_VENDOR, "Hewlett-Packard"),
+-		     DMI_MATCH(DMI_PRODUCT_NAME, "HP Compaq nx6125"),
+-		     },
+-	 },
+-	{
+-	 .callback = dmi_disable_irq0_through_ioapic,
+-	 .ident = "HP NX6325 laptop",
+-	 .matches = {
+-		     DMI_MATCH(DMI_SYS_VENDOR, "Hewlett-Packard"),
+-		     DMI_MATCH(DMI_PRODUCT_NAME, "HP Compaq nx6325"),
+-		     },
+-	 },
+-	/*
+-	 * HP laptops which use a DSDT reporting as HP/SB400/10000,
+-	 * which includes some code which overrides all temperature
+-	 * trip points to 16C if the INTIN2 input of the I/O APIC
+-	 * is enabled.  This input is incorrectly designated the
+-	 * ISA IRQ 0 via an interrupt source override even though
+-	 * it is wired to the output of the master 8259A and INTIN0
+ 	 * is not connected at all.  Force ignoring BIOS IRQ0 pin2
+ 	 * override in that cases.
+ 	 */
