@@ -1,36 +1,53 @@
-From: "Jike Song" <albcamus@gmail.com>
-Subject: Re: [ANNOUNCE] linux-staging tree created
-Date: Mon, 14 Jul 2008 10:50:49 +0800
-Message-ID: <df9815e70807131950u64f75d67n28484ea8ddddb212@mail.gmail.com>
-References: <20080610190540.GA25066@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the powerpc tree
+Date: Mon, 14 Jul 2008 15:44:59 +1000
+Message-ID: <20080714154459.0ed9da62.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__14_Jul_2008_15_44_59_+1000_pSDqh29PAPt8IT/i"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ti-out-0910.google.com ([209.85.142.186]:7581 "EHLO
-	ti-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754299AbYGNCuv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 13 Jul 2008 22:50:51 -0400
-Received: by ti-out-0910.google.com with SMTP id b6so2158377tic.23
-        for <linux-next@vger.kernel.org>; Sun, 13 Jul 2008 19:50:50 -0700 (PDT)
-In-Reply-To: <20080610190540.GA25066@kroah.com>
-Content-Disposition: inline
+Received: from chilli.pcug.org.au ([203.10.76.44]:45551 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752166AbYGNFpK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Jul 2008 01:45:10 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-kernel@vger.kernel.org, devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Paul Mackerras <paulus@samba.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@ozlabs.org
+Cc: linux-next@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, Mark Nelson <markn@au1.ibm.com>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>
 
-Hi Greg,
+--Signature=_Mon__14_Jul_2008_15_44_59_+1000_pSDqh29PAPt8IT/i
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Is there a separate mailing-list for staging?
+Hi Paul, Ben,
 
--- 
-Thanks and Regards,
-Jike
+Today's linux-next merge of the powerpc tree got a conflict in
+arch/powerpc/Kconfig between commit
+4e491d14f2506b218d678935c25a7027b79178b1 ("ftrace: support for PowerPC")
+from the ftrace tree and commit 3affedc4e1ce837033b6c5e9289d2ce2f5a62d31
+("powerpc/dma: implement new dma_*map*_attrs() interfaces") from the
+powerpc tree.
 
-On Wed, Jun 11, 2008 at 3:05 AM, Greg KH <greg@kroah.com> wrote:
-> Oh great, not yet-another-kernel-tree, just what the world needs...
->
-> Yes, this is an announcement of a new kernel tree, linux-staging.  It is
-> a quilt series of patches that can be found at:
->        git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+The former commit moved the "select HAVE_OPROFILE" to the bottom of the
+"config PPC" list (for no reason that I can fathom) while the latter
+added another select.  Simple fixup.  I can carry it.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__14_Jul_2008_15_44_59_+1000_pSDqh29PAPt8IT/i
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkh659sACgkQjjKRsyhoI8x89ACgn1Jdi+9YtkDFihpj7rtiLlr6
+p7sAnA7TaoxHfjZ+XiY9s3k4piIpms6w
+=5R8K
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__14_Jul_2008_15_44_59_+1000_pSDqh29PAPt8IT/i--
