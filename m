@@ -1,35 +1,52 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: Tree for July 14
-Date: Mon, 14 Jul 2008 10:12:42 -0700
-Message-ID: <20080714101242.ace33488.akpm@linux-foundation.org>
-References: <20080714201249.947400d0.sfr@canb.auug.org.au>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: next-0708: build failure at drivers/pci/pci-acpi.c
+Date: Mon, 14 Jul 2008 14:30:36 -0700
+Message-ID: <200807141430.36926.jbarnes@virtuousgeek.org>
+References: <a4423d670807080518g31402f60j2f624a2ac2db03aa@mail.gmail.com> <200807091621.37697.jbarnes@virtuousgeek.org> <200807100216.45690.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754487AbYGNRM7@vger.kernel.org>
-In-Reply-To: <20080714201249.947400d0.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from outbound-mail-146.bluehost.com ([67.222.38.36]:41119 "HELO
+	outbound-mail-146.bluehost.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1756214AbYGNVbE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Jul 2008 17:31:04 -0400
+In-Reply-To: <200807100216.45690.rjw@sisk.pl>
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Alexander Beregalov <a.beregalov@gmail.com>, ak@linux.intel.com, lenb@kernel.org, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, pm list <linux-pm@lists.linux-foundation.org>, David Howells <dhowells@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Mon, 14 Jul 2008 20:12:49 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Wednesday, July 09, 2008 5:16 pm Rafael J. Wysocki wrote:
+> On Thursday, 10 of July 2008, Jesse Barnes wrote:
+> > On Tuesday, July 8, 2008 1:29:31 pm Rafael J. Wysocki wrote:
+> > > On Tuesday, 8 of July 2008, Jesse Barnes wrote:
+> > > > David sent me one just like this at 7am this morning, just applied
+> > > > and pushed (along with Alexander's tested-by).
+> > >
+> > > OK, thanks.
+> > >
+> > > Would you like me to send the Stephen's fix for compilation on ppc64
+> > > (CONFIG_PM unset)?
+> >
+> > Sure, unless it's already in the ppc tree...
+>
+> It looks like Stephen had to apply it today too, so I guess it isn't.
+>
+> Thanks,
+> Rafael
+>
+> ---
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Subject: [PATCH] pci: include linux/pm_wakeup.h for
+> device_set_wakeup_capable
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Rafael J. Wysocki <rjw@sisk.pl>
 
-> With the opening of the merge window, I am hoping my job becomes easier
-> again ... :-)
+Applied to my linux-next branch, thanks.
 
-If past experience is a guide, it's about to get harder because
-
-a) maintainers jam untested crap^W^Wrecently-received features into
-   their trees so they don't miss the merge window and
-
-b) a storm of git rejects turn up as Linus's tree starts to get changed.
-
-Hopefully b) will improve, as "all" the new code has already gone
-through linux-next merging.
-
-As for a), well, it would be nice if people were to be careful about
-that sort of thing.  In some ways it's justifiable - we _do_ have a
-couple months to fix remaining glitches.  But one would think that when
-fast-tracking new features, the code would at least get additional
-review and testing to make up for it.
+Jesse
