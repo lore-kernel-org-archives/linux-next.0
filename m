@@ -1,52 +1,58 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: next-0708: build failure at drivers/pci/pci-acpi.c
-Date: Mon, 14 Jul 2008 14:30:36 -0700
-Message-ID: <200807141430.36926.jbarnes@virtuousgeek.org>
-References: <a4423d670807080518g31402f60j2f624a2ac2db03aa@mail.gmail.com> <200807091621.37697.jbarnes@virtuousgeek.org> <200807100216.45690.rjw@sisk.pl>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for July 14
+Date: Tue, 15 Jul 2008 01:35:37 +0200
+Message-ID: <200807150135.38701.rjw@sisk.pl>
+References: <20080714201249.947400d0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain;
-  charset="utf-8"
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from outbound-mail-146.bluehost.com ([67.222.38.36]:41119 "HELO
-	outbound-mail-146.bluehost.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1756214AbYGNVbE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 Jul 2008 17:31:04 -0400
-In-Reply-To: <200807100216.45690.rjw@sisk.pl>
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20080714201249.947400d0.sfr@canb.auug.org.au>
 Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Alexander Beregalov <a.beregalov@gmail.com>, ak@linux.intel.com, lenb@kernel.org, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, pm list <linux-pm@lists.linux-foundation.org>, David Howells <dhowells@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, Kernel Testers List <kernel-testers@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wednesday, July 09, 2008 5:16 pm Rafael J. Wysocki wrote:
-> On Thursday, 10 of July 2008, Jesse Barnes wrote:
-> > On Tuesday, July 8, 2008 1:29:31 pm Rafael J. Wysocki wrote:
-> > > On Tuesday, 8 of July 2008, Jesse Barnes wrote:
-> > > > David sent me one just like this at 7am this morning, just applied
-> > > > and pushed (along with Alexander's tested-by).
-> > >
-> > > OK, thanks.
-> > >
-> > > Would you like me to send the Stephen's fix for compilation on ppc64
-> > > (CONFIG_PM unset)?
-> >
-> > Sure, unless it's already in the ppc tree...
->
-> It looks like Stephen had to apply it today too, so I guess it isn't.
->
-> Thanks,
-> Rafael
->
-> ---
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Subject: [PATCH] pci: include linux/pm_wakeup.h for
-> device_set_wakeup_capable
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Rafael J. Wysocki <rjw@sisk.pl>
+On Monday, 14 of July 2008, Stephen Rothwell wrote:
+> Hi all,
 
-Applied to my linux-next branch, thanks.
+Hi,
 
-Jesse
+> With the opening of the merge window, I am hoping my job becomes easier
+> again ... :-)
+
+I get something like this on one of my test boxes (full dmesg at
+http://www.sisk.pl/kernel/debug/20080714/dmesg-asus_L5D.log):
+
+------------[ cut here ]------------
+WARNING: at /home/rafael/src/linux-next/arch/x86/mm/pageattr.c:592 __change_page_attr_set_clr+0x8bf/0x9d0()
+Modules linked in: snd_pcm_oss snd_mixer_oss snd_seq snd_seq_device dm_crypt reiserfs dm_mod arc4 ecb crypto_blkcipher b43 rfkill pcmcia mac80211 cfg80211 input_polldev ppdev snd_intel8x0 snd_ac97_codec ac97_bus snd_pcm joydev yenta_socket rtc_cmos sr_mod ohci1394 snd_timer rsrc_nonstatic snd skge pcmcia_core ieee1394 ssb asus_laptop cdrom sg video i2c_nforce2 parport_pc soundcore output backlight parport ac battery button snd_page_alloc led_class i2c_core evdev usbhid ff_memless sd_mod ehci_hcd ohci_hcd amd74xx ext3 jbd fan pata_amd libata scsi_mod dock thermal processor
+Pid: 3873, comm: acpidump Not tainted 2.6.26-next #21
+
+Call Trace:
+ [<ffffffff8023ab6f>] warn_on_slowpath+0x5f/0x80
+ [<ffffffff8023bd67>] ? printk+0x67/0x70
+ [<ffffffff802c52dd>] ? __d_lookup+0xcd/0x190
+ [<ffffffff80225c9f>] __change_page_attr_set_clr+0x8bf/0x9d0
+ [<ffffffff802b9b34>] ? do_lookup+0x84/0x210
+ [<ffffffff802b9587>] ? permission+0xc7/0x130
+ [<ffffffff802c5d71>] ? dput+0x81/0x110
+ [<ffffffff802ab621>] ? check_poison_obj+0x31/0x1f0
+ [<ffffffff80226c28>] ? reserve_memtype+0xf8/0x310
+ [<ffffffff80225e4f>] change_page_attr_set_clr+0x9f/0x1d0
+ [<ffffffff8049dbb6>] ? _spin_unlock+0x26/0x30
+ [<ffffffff80226073>] _set_memory_uc+0x13/0x20
+ [<ffffffff80224b45>] ioremap_change_attr+0x25/0x40
+ [<ffffffff80226f49>] phys_mem_access_prot_allowed+0x109/0x170
+ [<ffffffff802abea9>] ? cache_alloc_debugcheck_after+0x99/0x230
+ [<ffffffff803915a5>] mmap_mem+0x35/0xb0
+ [<ffffffff8029c09a>] mmap_region+0x17a/0x4c0
+ [<ffffffff8049d6ba>] ? __down_write_nested+0x1a/0xc0
+ [<ffffffff8029cb6b>] do_mmap_pgoff+0x3ab/0x3d0
+ [<ffffffff80210e1c>] sys_mmap+0xfc/0x130
+ [<ffffffff8020b6ab>] system_call_after_swapgs+0x7b/0x80
+
+---[ end trace f1b1c6f21f48e09f ]---
+acpidump:3873 /dev/mem ioremap_change_attr failed uncached-minus for 5ff40000-5ff41000
