@@ -1,105 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for July 14
-Date: Mon, 14 Jul 2008 20:12:49 +1000
-Message-ID: <20080714201249.947400d0.sfr@canb.auug.org.au>
+From: "Gabriel C" <nix.or.die@googlemail.com>
+Subject: Re: linux-next: Tree for July 14
+Date: Mon, 14 Jul 2008 13:43:17 +0200
+Message-ID: <1820d69d0807140443x1c4ba0b3p46072164ea2fe48b@mail.gmail.com>
+References: <20080714201249.947400d0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__14_Jul_2008_20_12_49_+1000_S1ZLOHLNdXvcP3Jg"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47633 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756330AbYGNKM4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 Jul 2008 06:12:56 -0400
+Received: from ug-out-1314.google.com ([66.249.92.173]:18059 "EHLO
+	ug-out-1314.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757365AbYGNLnS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Jul 2008 07:43:18 -0400
+Received: by ug-out-1314.google.com with SMTP id h2so220869ugf.16
+        for <linux-next@vger.kernel.org>; Mon, 14 Jul 2008 04:43:17 -0700 (PDT)
+In-Reply-To: <20080714201249.947400d0.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Mon__14_Jul_2008_20_12_49_+1000_S1ZLOHLNdXvcP3Jg
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+2008/7/14 Stephen Rothwell <sfr@canb.auug.org.au>:
+> Hi all,
 
-Hi all,
+Hi ,
 
-With the opening of the merge window, I am hoping my job becomes easier
-again ... :-)
+>
+> With the opening of the merge window, I am hoping my job becomes easier
+> again ... :-)
+>
+> Changes since next-20080711:
+>
 
-Changes since next-20080711:
+make clean / mrproper is broken , I'm not sure when it broken , I'm
+updating from
+2.6.26-rc8-next-20080630.
 
-Changed tree: powerpc (I am now fetching Ben's version)
+...
 
-The sched tree lost a conflict.
+crazy@thor:/work/crazy/linux/linux-next/git/linux-2.6$ LC_ALL=C make clean
+scripts/Makefile.clean:17:
+/work/crazy/linux/linux-next/git/linux-2.6/drivers/media/mdtv/Makefile:
+No such file or directory
+make[3]: *** No rule to make target
+`/work/crazy/linux/linux-next/git/linux-2.6/drivers/media/mdtv/Makefile'.
+ Stop.
+make[2]: *** [drivers/media/mdtv] Error 2
+make[1]: *** [drivers/media] Error 2
+make: *** [_clean_drivers] Error 2
 
-The x86 tree gained a conflict against the stackprotector tree.
+...
 
-The v4l-dvb tree lost a conflict.
+drivers/media/Makefile has 'obj-$(CONFIG_MDTV_ADAPTERS)  += mdtv/' but
+I cannot see such a folder under drivers/media =). Removing mdtv from
+Makefile fixes the problem.
 
-The powerpc tree gained a conflict against the ftrace tree and required a
-couple of build fix patches (see below) but lost a previous build fix
-patch.
+Regards,
 
-The rr tree gained a conflict against the ftrace tree but lost a build
-fix patch.
-
-I have also applied the following patches for known problems:
-
-	sparc64: sysdev API change fallout
-	s390: fix compile error due to smp_call_function
-	powerpc: mman.h export fixups
-	powerpc/stacktrace: EXPORT SYMBOL_GPL needs module.h
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups, it is also built with powerpc allnoconfig,
-44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
-
-Below is a summary of the state of the merge.
-
-We are up to 106 trees (counting Linus' and 14 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__14_Jul_2008_20_12_49_+1000_S1ZLOHLNdXvcP3Jg
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkh7JqEACgkQjjKRsyhoI8wgCACdFXESstCaUozjhK8aEf7J5FtP
-cGAAnRAi0Ng0ashzv/4YZCFdrlTcl2Cu
-=S+40
------END PGP SIGNATURE-----
-
---Signature=_Mon__14_Jul_2008_20_12_49_+1000_S1ZLOHLNdXvcP3Jg--
+Gabriel
