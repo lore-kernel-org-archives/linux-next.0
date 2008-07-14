@@ -1,51 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the x86 tree
-Date: Mon, 14 Jul 2008 11:30:58 +1000
-Message-ID: <20080714113058.916987d3.sfr@canb.auug.org.au>
+From: "Jike Song" <albcamus@gmail.com>
+Subject: Re: [ANNOUNCE] linux-staging tree created
+Date: Mon, 14 Jul 2008 10:50:49 +0800
+Message-ID: <df9815e70807131950u64f75d67n28484ea8ddddb212@mail.gmail.com>
+References: <20080610190540.GA25066@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__14_Jul_2008_11_30_58_+1000_p9qKO3_GC1V+Vexc"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55319 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753118AbYGNBbM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 13 Jul 2008 21:31:12 -0400
+Received: from ti-out-0910.google.com ([209.85.142.186]:7581 "EHLO
+	ti-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754299AbYGNCuv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 13 Jul 2008 22:50:51 -0400
+Received: by ti-out-0910.google.com with SMTP id b6so2158377tic.23
+        for <linux-next@vger.kernel.org>; Sun, 13 Jul 2008 19:50:50 -0700 (PDT)
+In-Reply-To: <20080610190540.GA25066@kroah.com>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-kernel@vger.kernel.org, devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
---Signature=_Mon__14_Jul_2008_11_30_58_+1000_p9qKO3_GC1V+Vexc
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Greg,
 
-Hi all,
+Is there a separate mailing-list for staging?
 
-Today's linux-next merge of the x86 tree got a trivial conflict in
-arch/x86/kernel/Makefile between commit
-4c7f8900f1d8a0e464e7092f132a7e93f7c20f2f ("x86: stackprotector & PARAVIRT
-fix") from the stackprotector tree and commit
-3d0decc4f49e8645cd6369b02ed076bebd3d61ad ("x86: fix tsc unification
-buglet with ftrace and stackprotector") from the x86 tree.
+-- 
+Thanks and Regards,
+Jike
 
-Just a addition next to a modification.  I can carry the simple fixup.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__14_Jul_2008_11_30_58_+1000_p9qKO3_GC1V+Vexc
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkh6rFIACgkQjjKRsyhoI8w4BwCfQ50tu9p73+QrNLt9T3cATiC9
-oxwAmgJM6Z3p7XmPiT/pWCZmC599obFY
-=5k8V
------END PGP SIGNATURE-----
-
---Signature=_Mon__14_Jul_2008_11_30_58_+1000_p9qKO3_GC1V+Vexc--
+On Wed, Jun 11, 2008 at 3:05 AM, Greg KH <greg@kroah.com> wrote:
+> Oh great, not yet-another-kernel-tree, just what the world needs...
+>
+> Yes, this is an announcement of a new kernel tree, linux-staging.  It is
+> a quilt series of patches that can be found at:
+>        git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
