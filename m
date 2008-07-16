@@ -1,46 +1,36 @@
-From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Subject: Re: linux-next: manual merge of the ide tree
-Date: Thu, 17 Jul 2008 17:30:04 +0200
-Message-ID: <200807171730.04634.bzolnier@gmail.com>
-References: <20080716150528.a350b196.sfr@canb.auug.org.au> <20080717134055.1d087d83.sfr@canb.auug.org.au>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: manual merge of ttydev tree
+Date: Wed, 16 Jul 2008 18:56:39 +0100
+Message-ID: <20080716185639.0f59b8a6@the-village.bc.nu>
+References: <20080711172804.a3ff6b3e.sfr@canb.auug.org.au>
+	<20080716201532.157c1736.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mu-out-0910.google.com ([209.85.134.189]:42332 "EHLO
-	mu-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754353AbYGQPci (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Jul 2008 11:32:38 -0400
-Received: by mu-out-0910.google.com with SMTP id w8so226260mue.1
-        for <linux-next@vger.kernel.org>; Thu, 17 Jul 2008 08:32:37 -0700 (PDT)
-In-Reply-To: <20080717134055.1d087d83.sfr@canb.auug.org.au>
-Content-Disposition: inline
+Received: from 82-39-188-205.cable.ubr03.benw.blueyonder.co.uk ([82.39.188.205]:42002
+	"EHLO the-village.bc.nu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753329AbYGQSTL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Jul 2008 14:19:11 -0400
+In-Reply-To: <20080716201532.157c1736.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org
 
+On Wed, 16 Jul 2008 20:15:32 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi,
-
-On Thursday 17 July 2008, Stephen Rothwell wrote:
-> Hi Bart,
+> Hi Alan,
 > 
-> On Wed, 16 Jul 2008 15:05:28 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> On Fri, 11 Jul 2008 17:28:04 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > >
-> > Today's linux-next merge of the ide tree got a conflict in lots of files
-> > because all of the changes that have been merged into Linus' tree are
-> > common, but followed by further changes in the ide tree to the same
-> > regions of some files.
+> > Today while importing the ttydev tree, patches
+> > "49-tty-tidy-usb-io-edgeport" and "88-tty-moxa-warning" failed to apply
+> > so I removed them from the series.
 > 
-> Same thing today.  I used the ide tree's version of the files.
+> Today the list expanded to include:
+> 30-usb-serial-api-change
 
-No wonder about that since there were another push to Linus
-(you were on cc: as usual). ;-)
-
-IIRC previously this shouldn't have been a problem, did something
-change (i.e. BASE tag) in linux-next w.r.t. handling quilt trees?
-
-Thanks,
-Bart
+Thats ok. I'm currently preparing them all for Linus tree, after that
+hopefully the tty tree will start to fit in more sanely.
