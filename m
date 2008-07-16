@@ -1,36 +1,52 @@
-From: Harvey Harrison <harvey.harrison@gmail.com>
-Subject: Re: linux-next: manual merge of the acpi tree
-Date: Tue, 15 Jul 2008 22:35:13 -0700
-Message-ID: <1216186513.28841.0.camel@brick>
-References: <20080716153316.6a0cd6df.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree
+Date: Wed, 16 Jul 2008 16:56:45 +1000
+Message-ID: <20080716165645.32a9f05e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__16_Jul_2008_16_56_45_+1000_9jeIRu8SOzMkYdjR"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from yw-out-2324.google.com ([74.125.46.30]:56650 "EHLO
-	yw-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751753AbYGPFfT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Jul 2008 01:35:19 -0400
-Received: by yw-out-2324.google.com with SMTP id 9so2688227ywe.1
-        for <linux-next@vger.kernel.org>; Tue, 15 Jul 2008 22:35:19 -0700 (PDT)
-In-Reply-To: <20080716153316.6a0cd6df.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49054 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751197AbYGPG4y (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Jul 2008 02:56:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@suse.de>
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, Laurent Pinchart <laurentp@cse-semaphore.com>, Jeff Garzik <jgarzik@redhat.com>, Kumar Gala <galak@kernel.crashing.org>
 
-CC'ing Andi whom I believe is looking after ACPI while Len is away.
+--Signature=_Wed__16_Jul_2008_16_56_45_+1000_9jeIRu8SOzMkYdjR
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2008-07-16 at 15:33 +1000, Stephen Rothwell wrote:
-> Hi Len,
-> 
-> Today's linux-next merge of the acpi tree got conflicts in
-> arch/x86/kernel/acpi/sleep.c between commits
-> 3bf2e77453a87c22eb57ed4926760ac131c84459 ("x86, suspend, acpi: enter Big
-> Real Mode") and 065cb3dfe24978651caedfa54da585388ad15dde ("x86, suspend,
-> acpi: correct and add comments about Big Real Mode") from Linus' tree and
-> commit 60d40a50886415040888bde5133ccfeab40d945f ("x86 ACPI: normalize
-> segment descriptor register on resume") from the acpi tree (which also
-> appears to be in Linus' tree).
-> 
-> I used the version from Linus' tree.
+Hi Dave,
+
+Today's linux-next merge of the net tree got a conflict in
+Documentation/powerpc/booting-without-of.txt between commit
+d0fc2eaaf4c56a95f5ed29b6bfb609e19714fc16 ("powerpc/fsl: Refactor device
+bindings") from the powerpc tree and commit
+a5edeccb1a8432ae5d9fb9bccea5a4b64c565017 ("net: OpenFirmware GPIO based
+MDIO bitbang driver") from the net tree.
+
+I just added the new section from the latter commit in as section 'g'.
+It may not even belong in this file any more, but I don't know.  Kumar?
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__16_Jul_2008_16_56_45_+1000_9jeIRu8SOzMkYdjR
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkh9m60ACgkQjjKRsyhoI8wG+gCgkgAxA/AT9yl2ay0ltMGSyaMz
+J+0An06VzVqa6x6YJkLjIrZF7GER7pl8
+=uCaD
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__16_Jul_2008_16_56_45_+1000_9jeIRu8SOzMkYdjR--
