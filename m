@@ -1,41 +1,57 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the usb tree
-Date: Tue, 15 Jul 2008 19:30:13 -0700
-Message-ID: <20080716023013.GA7052@kroah.com>
-References: <20080716120219.a3de00bd.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ide tree
+Date: Wed, 16 Jul 2008 15:05:28 +1000
+Message-ID: <20080716150528.a350b196.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__16_Jul_2008_15_05_28_+1000_R/DE41o.RRJkJ2yc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:58381 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758692AbYGPDNs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Jul 2008 23:13:48 -0400
-Content-Disposition: inline
-In-Reply-To: <20080716120219.a3de00bd.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:53935 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751577AbYGPFFl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Jul 2008 01:05:41 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jaswinder Singh <jaswinder@infradead.org>
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: linux-next@vger.kernel.org, Greg KH <greg@kroah.com>, Jonathan Corbet <corbet@lwn.net>
 
-On Wed, Jul 16, 2008 at 12:02:19PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the usb tree got a conflict in
-> drivers/usb/serial/io_ti.c between commit
-> d12b219a228efe92f0778ed3af21305e65fbb052 ("edgeport-ti: use
-> request_firmware()") from Linus' tree and commit
-> 1f023570c8d00d3511799ccad21dc3525a6160e1 ("USB: io_ti: FIrst cut at a big
-> clean up") from the usb tree.
-> 
-> This conflict used to be in the firmware tree and my solution then was to
-> remove the commit now in Linus' tree because the fixup was going to take
-> to long.  Now my solution is to remove the commit from the usb tree.
+--Signature=_Wed__16_Jul_2008_15_05_28_+1000_R/DE41o.RRJkJ2yc
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'll fix this up by hand, I'm lagging right now due to work issues (am
-traveling right now), but hope to get this cleaned up by Friday so that
-I can push the USB and driver core trees to Linus by then.
+Hi Bart,
 
-thanks for the heads up and sorry to cause you problems here.  Keep up
-the great work.
+Today's linux-next merge of the ide tree got a conflict in lots of files
+because all of the changes that have been merged into Linus' tree are
+common, but followed by further changes in the ide tree to the same
+regions of some files.
 
-greg k-h
+I just took the ide tree versions of the files except for
+drivers/ide/ide-tape.c which had some further changes from commit
+04f4ac9d1bb8a9103609ce8e927f8e98826ce339 ("ide-tape: cdev lock_kernel()
+pushdown") from Linus' tree and commit
+463ddc2102da76e76bfd1efc721cc5ff9b81cc54 ("device create: ide: convert
+device_create to device_create_drvdata") from the driver-core tree.  You
+might consider adding those changes to your tree (or in the former case
+just rebasing on top of Linus' tree).  The rebase will, of course,
+eliminate the conflicts in all the other files as well.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__16_Jul_2008_15_05_28_+1000_R/DE41o.RRJkJ2yc
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkh9gZgACgkQjjKRsyhoI8ypSQCguiPjALgZmKKtzrPpUTk9F5EL
+FdcAn3Y+riLi+uahl7WNNDvqdkwEglU6
+=O0OK
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__16_Jul_2008_15_05_28_+1000_R/DE41o.RRJkJ2yc--
