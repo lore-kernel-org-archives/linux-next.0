@@ -1,40 +1,42 @@
-From: Harvey Harrison <harvey.harrison@gmail.com>
-Subject: [PATCH] net: make __skb_splice_bits static
-Date: Wed, 16 Jul 2008 12:51:20 -0700
-Message-ID: <1216237880.28841.20.camel@brick>
+From: Breno Leitao <leitao@linux.vnet.ibm.com>
+Subject: Re: Compilation error on drivers/md/raid6int8.c on net-next-2.6
+Date: Wed, 16 Jul 2008 17:06:01 -0300
+Message-ID: <487E54A9.6080606@linux.vnet.ibm.com>
+References: <487E364C.3050200@linux.vnet.ibm.com> <20080716183128.GG17329@cs181140183.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20080716183128.GG17329@cs181140183.pp.htv.fi>
 Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: linux-next <linux-next@vger.kernel.org>, linux-netdev <netdev@vger.kernel.org>
+To: Adrian Bunk <bunk@kernel.org>
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-net/core/skbuff.c:1335:5: warning: symbol '__skb_splice_bits' was not declared. Should it be static?
+Adrian Bunk wrote:
+> On Wed, Jul 16, 2008 at 02:56:28PM -0300, Breno Leitao wrote:
+>   
+>> drivers/md/raid6int8.c: In function `raid6_int8_gen_syndrome':
+>> drivers/md/raid6int8.c:185: error: unable to find a register to spill in  
+>> class `FLOAT_REGS'
+>> drivers/md/raid6int8.c:185: error: this is the insn:
+>> (insn:HI 619 799 638 4 drivers/md/raid6int8.c:168 (set (mem:DI (plus:DI  
+>> (reg/v/f:DI 122 [ p ])
+>>                (reg/v:DI 66 ctr [orig:124 d ] [124])) [0 S8 A64])
+>>        (reg/v:DI 129 [ wp0 ])) 320 {*movdi_internal64} (nil)
+>>    (expr_list:REG_DEAD (reg/v:DI 129 [ wp0 ])
+>>        (nil)))
+>> drivers/md/raid6int8.c:185: confused by earlier errors, bailing out
+>> make[2]: *** [drivers/md/raid6int8.o] Error 1
+>> make[1]: *** [drivers/md] Error 2
+>> make: *** [drivers] Error 2
+>>     
+>
+> That's a gcc bug.
+>
+> Which gcc version are you using?
+I was using a RHEL4 machine (gcc version  3.4.6).  I just upgraded  gcc 
+to 4.1.2, and the "problem"  just disappeared.  :-)
 
-Signed-off-by: Harvey Harrison <harvey.harrison@gmail.com>
----
-Appeared between next-20080715->next-20080716
-
- net/core/skbuff.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index 48a4372..e411567 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -1332,7 +1332,7 @@ static inline int __splice_segment(struct page *page, unsigned int poff,
-  * Map linear and fragment data from the skb to spd. It reports failure if the
-  * pipe is full or if we already spliced the requested length.
-  */
--int __skb_splice_bits(struct sk_buff *skb, unsigned int *offset,
-+static int __skb_splice_bits(struct sk_buff *skb, unsigned int *offset,
- 		      unsigned int *len,
- 		      struct splice_pipe_desc *spd)
- {
--- 
-1.5.6.3.499.geae9
-
-
-
+Thanks
+Breon
