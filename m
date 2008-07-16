@@ -1,54 +1,40 @@
-From: Adrian Bunk <bunk@kernel.org>
-Subject: Re: Compilation error on drivers/md/raid6int8.c on net-next-2.6
-Date: Wed, 16 Jul 2008 21:31:28 +0300
-Message-ID: <20080716183128.GG17329@cs181140183.pp.htv.fi>
-References: <487E364C.3050200@linux.vnet.ibm.com>
+From: Harvey Harrison <harvey.harrison@gmail.com>
+Subject: [PATCH 1/2] net: igb_main.c fix sparse integer as NULL pointer
+	warning
+Date: Wed, 16 Jul 2008 12:45:27 -0700
+Message-ID: <1216237527.28841.17.camel@brick>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp4.pp.htv.fi ([213.243.153.38]:49347 "EHLO smtp4.pp.htv.fi"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753700AbYGPSbj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Jul 2008 14:31:39 -0400
-Content-Disposition: inline
-In-Reply-To: <487E364C.3050200@linux.vnet.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Breno Leitao <leitao@linux.vnet.ibm.com>
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-net-owner@vger.kernel.org>
+Sender: linux-net-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: linux-next <linux-next@vger.kernel.org>, linux-net <linux-net@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Jul 16, 2008 at 02:56:28PM -0300, Breno Leitao wrote:
-> I just pulled net-next-2.6 and compiling it on a ppc machine I got the  
-> following error:
->
->
->  CC [M]  drivers/md/raid6tables.o
->  CC [M]  drivers/md/raid6int8.o
-> drivers/md/raid6int8.c: In function `raid6_int8_gen_syndrome':
-> drivers/md/raid6int8.c:185: error: unable to find a register to spill in  
-> class `FLOAT_REGS'
-> drivers/md/raid6int8.c:185: error: this is the insn:
-> (insn:HI 619 799 638 4 drivers/md/raid6int8.c:168 (set (mem:DI (plus:DI  
-> (reg/v/f:DI 122 [ p ])
->                (reg/v:DI 66 ctr [orig:124 d ] [124])) [0 S8 A64])
->        (reg/v:DI 129 [ wp0 ])) 320 {*movdi_internal64} (nil)
->    (expr_list:REG_DEAD (reg/v:DI 129 [ wp0 ])
->        (nil)))
-> drivers/md/raid6int8.c:185: confused by earlier errors, bailing out
-> make[2]: *** [drivers/md/raid6int8.o] Error 1
-> make[1]: *** [drivers/md] Error 2
-> make: *** [drivers] Error 2
+drivers/net/igb/igb_main.c:388:20: warning: Using plain integer as NULL pointer
 
-That's a gcc bug.
+Signed-off-by: Harvey Harrison <harvey.harrison@gmail.com>
+---
+Appeared between next-20080715->next-20080716
 
-Which gcc version are you using?
+ drivers/net/igb/igb_main.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-cu
-Adrian
-
+diff --git a/drivers/net/igb/igb_main.c b/drivers/net/igb/igb_main.c
+index 043b630..1769c5a 100644
+--- a/drivers/net/igb/igb_main.c
++++ b/drivers/net/igb/igb_main.c
+@@ -385,7 +385,7 @@ static void igb_configure_msix(struct igb_adapter *adapter)
+ 
+ 	for (i = 0; i < adapter->num_rx_queues; i++) {
+ 		struct igb_ring *rx_ring = &adapter->rx_ring[i];
+-		rx_ring->buddy = 0;
++		rx_ring->buddy = NULL;
+ 		igb_assign_vector(adapter, i, IGB_N0_QUEUE, vector++);
+ 		adapter->eims_enable_mask |= rx_ring->eims_value;
+ 		if (rx_ring->itr_val)
 -- 
+1.5.6.3.499.geae9
 
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
+
