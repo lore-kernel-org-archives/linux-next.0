@@ -1,46 +1,47 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the generic-ipi tree
-Date: Wed, 16 Jul 2008 13:14:42 +0200
-Message-ID: <20080716111441.GA15724@elte.hu>
-References: <20080716194517.fc260962.sfr@canb.auug.org.au> <20080716101921.GA16688@elte.hu> <20080716202521.ea91d90d.sfr@canb.auug.org.au> <20080716104012.GA2425@elte.hu>
+From: "Stoyan Gaydarov" <stoyboyker@gmail.com>
+Subject: Linux-next testing
+Date: Wed, 16 Jul 2008 06:27:27 -0500
+Message-ID: <6d291e080807160427o5a853ca8u96841a2717901a8d@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:48445 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753197AbYGPLPD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Jul 2008 07:15:03 -0400
+Received: from nf-out-0910.google.com ([64.233.182.189]:29531 "EHLO
+	nf-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753498AbYGPL13 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Jul 2008 07:27:29 -0400
+Received: by nf-out-0910.google.com with SMTP id d3so1804521nfc.21
+        for <linux-next@vger.kernel.org>; Wed, 16 Jul 2008 04:27:27 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <20080716104012.GA2425@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jens Axboe <jens.axboe@oracle.com>, linux-next@vger.kernel.org
+To: linux-next@vger.kernel.org
 
+I have a box that I would like to devote to test the linux-next
+kernels. I am however not very experienced with the whole process. I
+installed a clean Ubuntu server on it because thats what I had at
+home, I know how to compile the kernel, and install(make; make
+modules; make install) I also know how to log the build so that if
+theres any errors i can have a record of what went wrong. What I need
+help is knowing what to test and getting reports back to you. I know I
+can do a 'git clone "path to linux-next git tree" ' and go into that
+and use randconfig then install and reboot, but I was wondering if
+there was some other better way to do it because the clone command
+only works in an empty directory. I think fetch or something like that
+might work better. Anyway I also wanted to know which configuration
+needed the most testing or if I should just stick with the
+randconfig(btw this is an x86 box). The other question is about
+reporting failures, which i can almost guarantee will happen, one way
+is to keep a vanilla kernel installed so that i can aways go back to
+it and report the log files but if its a oops or a BUG() call i am not
+sure they get reported there... The last question I have is regarding
+the load on the box, this is not a very new box so I cant run too many
+things at once but I would like to know if there is anything I should
+be running on the box while it is running that way it can stress the
+system a little and try to break it in a way that can be useful.
+Looking back at what I wrote, those are not quite questions but I
+think you get the idea, I just need some information on what to do so
+that I can be of use to the people that are developing with
+linux-next.
 
-* Ingo Molnar <mingo@elte.hu> wrote:
-
-> > > i hope i'll be able to update the auto-*-next branches soon - a 
-> > > lot of them got very empty ;-)
-> > 
-> > As I am hoping ...
-> 
-> hm, so them being stale over the merge window is a problem for you, 
-> even thought the sha1's didnt change? Ok - i'll do a full integration 
-> run right away to update them all to linus-very-latest. There's been 
-> quite a number of nontrivial interactions.
-
-ok, i've done the integration run of all of tip's auto-*-next branches 
-and pushed out the result.
-
-note, you might run into a conflict in arch/x86/kernel/Makefile, the 
-correct final resolution is:
-
- ifdef CONFIG_FTRACE
- # Do not profile debug and lowlevel utilities
- CFLAGS_REMOVE_tsc.o = -pg
- CFLAGS_REMOVE_rtc.o = -pg
- CFLAGS_REMOVE_paravirt.o = -pg
- endif
-
-	Ingo
+-Stoyan G
