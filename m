@@ -1,49 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree
-Date: Wed, 16 Jul 2008 17:00:39 +1000
-Message-ID: <20080716170039.3cb2eab0.sfr@canb.auug.org.au>
+From: Jaswinder Singh <jaswinder@infradead.org>
+Subject: Re: linux-next: manual merge of the usb tree
+Date: Wed, 16 Jul 2008 12:36:17 +0530
+Message-ID: <1216191977.3394.5.camel@jaswinder.satnam>
+References: <20080716120219.a3de00bd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__16_Jul_2008_17_00_39_+1000_rC+5PEen9wUb/mvf"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49537 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753012AbYGPHAq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Jul 2008 03:00:46 -0400
+Received: from bombadil.infradead.org ([18.85.46.34]:47405 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751090AbYGPHHL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Jul 2008 03:07:11 -0400
+In-Reply-To: <20080716120219.a3de00bd.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Patrick McHardy <kaber@trash.net>, Franck Bui-Huu <fbuihuu@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Alan Cox <alan@lxorguk.ukuu.org.uk>, David Woodhouse <dwmw2@infradead.org>
 
---Signature=_Wed__16_Jul_2008_17_00_39_+1000_rC+5PEen9wUb/mvf
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Stephen,
 
-Hi Dave,
+On Wed, 2008-07-16 at 12:02 +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the usb tree got a conflict in
+> drivers/usb/serial/io_ti.c between commit
+> d12b219a228efe92f0778ed3af21305e65fbb052 ("edgeport-ti: use
+> request_firmware()") from Linus' tree and commit
+> 1f023570c8d00d3511799ccad21dc3525a6160e1 ("USB: io_ti: FIrst cut at a big
+> clean up") from the usb tree.
+> 
+> This conflict used to be in the firmware tree and my solution then was to
+> remove the commit now in Linus' tree because the fixup was going to take
+> to long.  Now my solution is to remove the commit from the usb tree.
+> 
 
-Today's linux-next merge of the net tree got a conflict in
-net/8021q/vlan.c between commit 82524746c27fa418c250a56dd7606b9d3fc79826
-("rcu: split list.h and move rcu-protected lists into rculist.h") from
-Linus' tree and commit 61362766d769c934a9d12d5516323c544c161908 ("vlan:
-remove unnecessary include statements") from the net tree.
+I am checking linux-next tree :
+git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
 
-I just added in the new rculist.h include to the net tree version.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+I think you already merged alan patch to it but firmware patch is not
+installed yet.
 
---Signature=_Wed__16_Jul_2008_17_00_39_+1000_rC+5PEen9wUb/mvf
-Content-Type: application/pgp-signature
+So I am going to check alan patch manually.
+And after confirmation that alan patch is fully installed then I will
+install firmware patch and send to all of you.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Thank you,
 
-iEYEARECAAYFAkh9nJcACgkQjjKRsyhoI8wDLACgu1XtDxzADB7tdScJrBWw/XnW
-85QAn3pQuHyyKw9iFh3EhzXDqMEDkt/B
-=JkX7
------END PGP SIGNATURE-----
-
---Signature=_Wed__16_Jul_2008_17_00_39_+1000_rC+5PEen9wUb/mvf--
+Jaswinder Singh.
