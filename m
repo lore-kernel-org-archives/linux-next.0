@@ -1,123 +1,41 @@
-From: Adrian Bunk <bunk@kernel.org>
-Subject: Re: [PATCH linux-next] Add module.h include to stacktrace.c.
-Date: Wed, 16 Jul 2008 17:30:33 +0300
-Message-ID: <20080716143033.GD25557@cs181140183.pp.htv.fi>
-References: <20080711103925.GA20589@osiris.boeblingen.de.ibm.com>
+From: Kyle Spaans <kspaans@student.math.uwaterloo.ca>
+Subject: Re: Linux-next testing
+Date: Wed, 16 Jul 2008 10:43:16 -0400
+Message-ID: <20080716144316.GA26366@student.math>
+References: <6d291e080807160427o5a853ca8u96841a2717901a8d@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp4.pp.htv.fi ([213.243.153.38]:39582 "EHLO smtp4.pp.htv.fi"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750971AbYGPOao (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Jul 2008 10:30:44 -0400
+Received: from services05.student.math.uwaterloo.ca ([129.97.204.15]:64017
+	"EHLO services05.student.math.uwaterloo.ca" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753778AbYGPPCe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Jul 2008 11:02:34 -0400
+Received: from student.math.uwaterloo.ca (daemon@student.math.uwaterloo.ca [129.97.204.16])
+	by services05.student.math.uwaterloo.ca (8.13.8/8.13.8) with ESMTP id m6GEhHmw004686
+	for <linux-next@vger.kernel.org>; Wed, 16 Jul 2008 10:43:18 -0400 (EDT)
+Received: (from kspaans@localhost)
+	by student.math.uwaterloo.ca (8.13.4/8.13.4) id m6GEhGaB027224
+	for linux-next@vger.kernel.org; Wed, 16 Jul 2008 10:43:16 -0400 (EDT)
 Content-Disposition: inline
-In-Reply-To: <20080711103925.GA20589@osiris.boeblingen.de.ibm.com>
+In-Reply-To: <6d291e080807160427o5a853ca8u96841a2717901a8d@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Heiko Carstens <heiko.carstens@de.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-next@vger.kernel.org
 
-Why was this patch ignored?
+On Wed, Jul 16, 2008 at 06:27:27AM -0500, Stoyan Gaydarov wrote:
+> I know I
+> can do a 'git clone "path to linux-next git tree" ' and go into that
+> and use randconfig then install and reboot, but I was wondering if
+> there was some other better way to do it because the clone command
+> only works in an empty directory. I think fetch or something like that
+> might work better.
+Have a look in the archives for this list. Every time Stephen announces a new linux-next release, he includes a blurb at the bottom of the email that will tell you how you can get the linux-next tree, besides just cloning it anew each day. (I found that blurb helpful even on top of the wiki at http://linux.f-seidel.de/linux-next/pmwiki/)
 
-The build failures now made it into Linus' tree.
+> The last question I have is ... stress the system a little and try to
+>  break it in a way that can be useful.
+Look around on the linux-next wiki, and you'll see that other people are running automated testing. Have a look at how they are doing it. Also look around on the kernelnewbies.org website, they have tips for how to stress-test your system. (bonnie++ as a filesystem benchmark springs immediately to mind, prime95 as a way to generate cpu load, etc...). I'm sure a quick internet search for "linux stress test" will also turn up useful results.
 
-Stephen already fixed the powerpc one.
-s390 is still broken.
-And I just ran into this compile error on sh...
+I'm largely doing the same thing as you, so I'll be interested to see the answers to your other questions.
 
-cu
-Adrian
-
-
-On Fri, Jul 11, 2008 at 12:39:25PM +0200, Heiko Carstens wrote:
-> From: Heiko Carstens <heiko.carstens@de.ibm.com>
-> 
-> Fixes this:
-> 
->   CC      arch/s390/kernel/stacktrace.o
-> arch/s390/kernel/stacktrace.c:84: warning: data definition has no type or storage class
-> arch/s390/kernel/stacktrace.c:84: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-> arch/s390/kernel/stacktrace.c:84: warning: parameter names (without types) in function declaration
-> arch/s390/kernel/stacktrace.c:97: warning: data definition has no type or storage class
-> arch/s390/kernel/stacktrace.c:97: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-> arch/s390/kernel/stacktrace.c:97: warning: parameter names (without types) in function declaration
-> 
-> caused by "stacktrace: export save_stack_trace[_tsk]"
-> 
-> Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-> ---
-> 
-> Ingo, the patch which causes this came in via one of your trees.
-> Please merge/apply. Thanks.
-> 
->  arch/avr32/kernel/stacktrace.c   |    1 +
->  arch/mips/kernel/stacktrace.c    |    1 +
->  arch/powerpc/kernel/stacktrace.c |    1 +
->  arch/s390/kernel/stacktrace.c    |    1 +
->  arch/sh/kernel/stacktrace.c      |    1 +
->  5 files changed, 5 insertions(+)
-> 
-> Index: linux-next/arch/s390/kernel/stacktrace.c
-> ===================================================================
-> --- linux-next.orig/arch/s390/kernel/stacktrace.c
-> +++ linux-next/arch/s390/kernel/stacktrace.c
-> @@ -10,6 +10,7 @@
->  #include <linux/sched.h>
->  #include <linux/stacktrace.h>
->  #include <linux/kallsyms.h>
-> +#include <linux/module.h>
->  
->  static unsigned long save_context_stack(struct stack_trace *trace,
->  					unsigned long sp,
-> Index: linux-next/arch/avr32/kernel/stacktrace.c
-> ===================================================================
-> --- linux-next.orig/arch/avr32/kernel/stacktrace.c
-> +++ linux-next/arch/avr32/kernel/stacktrace.c
-> @@ -10,6 +10,7 @@
->  #include <linux/sched.h>
->  #include <linux/stacktrace.h>
->  #include <linux/thread_info.h>
-> +#include <linux/module.h>
->  
->  register unsigned long current_frame_pointer asm("r7");
->  
-> Index: linux-next/arch/mips/kernel/stacktrace.c
-> ===================================================================
-> --- linux-next.orig/arch/mips/kernel/stacktrace.c
-> +++ linux-next/arch/mips/kernel/stacktrace.c
-> @@ -7,6 +7,7 @@
->   */
->  #include <linux/sched.h>
->  #include <linux/stacktrace.h>
-> +#include <linux/module.h
->  #include <asm/stacktrace.h>
->  
->  /*
-> Index: linux-next/arch/powerpc/kernel/stacktrace.c
-> ===================================================================
-> --- linux-next.orig/arch/powerpc/kernel/stacktrace.c
-> +++ linux-next/arch/powerpc/kernel/stacktrace.c
-> @@ -12,6 +12,7 @@
->  
->  #include <linux/sched.h>
->  #include <linux/stacktrace.h>
-> +#include <linux/module.h>
->  #include <asm/ptrace.h>
->  
->  /*
-> Index: linux-next/arch/sh/kernel/stacktrace.c
-> ===================================================================
-> --- linux-next.orig/arch/sh/kernel/stacktrace.c
-> +++ linux-next/arch/sh/kernel/stacktrace.c
-> @@ -12,6 +12,7 @@
->  #include <linux/sched.h>
->  #include <linux/stacktrace.h>
->  #include <linux/thread_info.h>
-> +#include <linux/module.h>
->  #include <asm/ptrace.h>
->  
->  /*
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+gl & hf
