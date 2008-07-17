@@ -1,49 +1,59 @@
-From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
-Subject: Re: linux-next: manual merge of the ubifs tree
-Date: Thu, 17 Jul 2008 10:23:21 +0300
-Message-ID: <487EF369.2080609@nokia.com>
-References: <20080717171059.1bf8b572.sfr@canb.auug.org.au>
-Reply-To: Artem.Bityutskiy@nokia.com
+From: "Stoyan Gaydarov" <stoyboyker@gmail.com>
+Subject: Re: Linux-next testing
+Date: Thu, 17 Jul 2008 02:48:23 -0500
+Message-ID: <6d291e080807170048v762ddd90mc89794cb9c42adb8@mail.gmail.com>
+References: <6d291e080807160427o5a853ca8u96841a2717901a8d@mail.gmail.com>
+	 <20080716144316.GA26366@student.math>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.105.134]:33284 "EHLO
-	mgw-mx09.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751555AbYGQH0E (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Jul 2008 03:26:04 -0400
-In-Reply-To: <20080717171059.1bf8b572.sfr@canb.auug.org.au>
+Received: from nf-out-0910.google.com ([64.233.182.191]:17941 "EHLO
+	nf-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758129AbYGQHs0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Jul 2008 03:48:26 -0400
+Received: by nf-out-0910.google.com with SMTP id d3so1937126nfc.21
+        for <linux-next@vger.kernel.org>; Thu, 17 Jul 2008 00:48:24 -0700 (PDT)
+In-Reply-To: <20080716144316.GA26366@student.math>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: kspaans@student.math.uwaterloo.ca
 Cc: linux-next@vger.kernel.org
 
-Hi Stephen
+On Wed, Jul 16, 2008 at 9:43 AM, Kyle Spaans
+<kspaans@student.math.uwaterloo.ca> wrote:
+> On Wed, Jul 16, 2008 at 06:27:27AM -0500, Stoyan Gaydarov wrote:
+>> I know I
+>> can do a 'git clone "path to linux-next git tree" ' and go into that
+>> and use randconfig then install and reboot, but I was wondering if
+>> there was some other better way to do it because the clone command
+>> only works in an empty directory. I think fetch or something like that
+>> might work better.
+> Have a look in the archives for this list. Every time Stephen announces a new linux-next release, he includes a blurb at the bottom of the email that will tell you how you can get the linux-next tree, besides just cloning it anew each day. (I found that blurb helpful even on top of the wiki at http://linux.f-seidel.de/linux-next/pmwiki/)
+>
+>> The last question I have is ... stress the system a little and try to
+>>  break it in a way that can be useful.
+> Look around on the linux-next wiki, and you'll see that other people are running automated testing. Have a look at how they are doing it. Also look around on the kernelnewbies.org website, they have tips for how to stress-test your system. (bonnie++ as a filesystem benchmark springs immediately to mind, prime95 as a way to generate cpu load, etc...). I'm sure a quick internet search for "linux stress test" will also turn up useful results.
+>
+> I'm largely doing the same thing as you, so I'll be interested to see the answers to your other questions.
 
-Stephen Rothwell wrote:
-> Today's linux-next merge of the ubifs tree got conflicts in
-> fs/ubifs/budget.c, fs/ubifs/debug.c, fs/ubifs/dir.c, fs/ubifs/file.c,
-> fs/ubifs/io.c, fs/ubifs/journal.c, fs/ubifs/shrinker.c, fs/ubifs/tnc.=
-c
-> and fs/ubifs/xattr.c between commit
-> 1e51764a3c2ac05a23a22b2a95ddee4d9bffb16d ("UBIFS: add new flash file
-> system") from Linus' tree and various commits from the ubifs tree.
+I was actually thinking about doing something with uml, where i could
+build several kernels with ARCH=um SUBARCH=** that way I could boot
+them without having to restart the computer and I could also log all
+of the output that was generated a lot easier, and the other thing is
+I can have multiple kernels booted at the same time. This would make
+the stress tests a lot more effective if theres even less resources
+per uml kernel running. Any suggestions on how to do this effectively
+and correctly(since i am not an expert in any of these topics) would
+be greatly appreciated.
 
-Yes, right. I guess I should have informed you about this, apologies.
+-Stoyan G
 
-UBIFS is rather non-typical things for -next I guess.
-
-No one is interested in UBIFS history _before_ it got into mainline,
-which is about several hundred commits. Thus, we folded these all
-into few huge large commits, in order not to garbage the mainline
-tree.
-
-I have amended the 'for_andrew' branch of ubifs-2.6.git, and now it
-has the same commits as in Linus's tree. But it is still based on
-2.6.26 release.
-
---=20
-Best Regards,
-Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
-=D1=86=D0=BA=D0=B8=D0=B9)
+>
+> gl & hf
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-next" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
