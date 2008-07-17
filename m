@@ -1,32 +1,41 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the usb tree
-Date: Thu, 17 Jul 2008 00:04:45 -0700
-Message-ID: <20080717070445.GC22090@kroah.com>
-References: <20080717105430.a81c9657.sfr@canb.auug.org.au>
+From: Adrian Bunk <bunk@kernel.org>
+Subject: Re: linux-next: manual merge of the acpi tree
+Date: Thu, 17 Jul 2008 10:24:49 +0300
+Message-ID: <20080717072449.GN17329@cs181140183.pp.htv.fi>
+References: <20080717142205.064285ad.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:49289 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754231AbYGQHS4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Jul 2008 03:18:56 -0400
+Received: from smtp6.pp.htv.fi ([213.243.153.40]:55381 "EHLO smtp6.pp.htv.fi"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751722AbYGQHZF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 17 Jul 2008 03:25:05 -0400
 Content-Disposition: inline
-In-Reply-To: <20080717105430.a81c9657.sfr@canb.auug.org.au>
+In-Reply-To: <20080717142205.064285ad.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, Andi Kleen <andi@firstfloor.org>
 
-On Thu, Jul 17, 2008 at 10:54:30AM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On Thu, Jul 17, 2008 at 02:22:05PM +1000, Stephen Rothwell wrote:
+> Hi Len,
 > 
-> Now that the firmware tree has been merged into Linus' tree, the files
-> drivers/usb/serial/ti_fw_3410.h and drivers/usb/serial/ti_fw_5052.h no
-> longer exist, so the patch "ti_usb: kick firmware into user space" no
-> longer needs to patch them.  I am not sure if that patch is needed at all
-> any more (probably not).
+> Today's linux-next merge of the acpi tree got a conflict in
+> arch/x86/mm/srat_32.c against Linus' tree.
+> 
+> I used the version in Linus' tree.  Could you do a merge with Linus' tree
+> for tomorrow?
 
-I'll work this out on Friday when I figure out the merge issues, thanks
-for pointing it out.
+You seem to still pull Len's tree?
 
-greg k-h
+> Cheers,
+
+cu
+Adrian
+
+-- 
+
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
