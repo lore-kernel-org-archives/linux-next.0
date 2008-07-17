@@ -1,81 +1,37 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: Tree for July 17: early crash on x86-64
-Date: Fri, 18 Jul 2008 01:06:07 +0200
-Message-ID: <200807180106.08328.rjw@sisk.pl>
-References: <20080718012842.690b8346.sfr@canb.auug.org.au>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: [PATCH 3/3] proc: make grab_header static
+Date: Fri, 18 Jul 2008 00:23:28 +0100
+Message-ID: <20080717232328.GO28946@ZenIV.linux.org.uk>
+References: <1216329755.6029.31.camel@brick> <20080717150950.5d721d90.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:37347 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757273AbYGQXDn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Jul 2008 19:03:43 -0400
-In-Reply-To: <20080718012842.690b8346.sfr@canb.auug.org.au>
+Received: from zeniv.linux.org.uk ([195.92.253.2]:43608 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933525AbYGQXXb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Jul 2008 19:23:31 -0400
 Content-Disposition: inline
+In-Reply-To: <20080717150950.5d721d90.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Kernel Testers List <kernel-testers@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Harvey Harrison <harvey.harrison@gmail.com>, linux-next@vger.kernel.org
 
-On Thursday, 17 of July 2008, Stephen Rothwell wrote:
-> Hi all,
+On Thu, Jul 17, 2008 at 03:09:50PM -0700, Andrew Morton wrote:
+> On Thu, 17 Jul 2008 14:22:35 -0700
+> Harvey Harrison <harvey.harrison@gmail.com> wrote:
 > 
-> Changes since next-20080716:
-> 
-> Temporarily dropped tree: ttydev (it gets too many patch failures).
-> 
-> Changed trees: the security-testing tree was moved later in the merge in
-> anticipation of majo merge problems that have been delayed.
-> 	The vfs tree changed branch names.
-> 
-> Most of the differences were conflicts moving from tree to tree as some
-> of the trees are now merged into Linus' tree.  Most have been inflicted
-> on the driver-core and usb trees.  I have not notified these separately.
-> 
-> Because of the moving of conflicts around it is difficult to tell when
-> they are going away (though I assume some are).
-> 
-> The driver-core tree gained two build fixes from the scsi tree (since
-> that went into Linus' tree).
-> 
-> The usb tree gained a conflict from the firmware tree (ditto).
-> 
-> The x86 tree gained an expected conflict against the stackprotector and a
-> build failure that required a revert of a commit.
-> 
-> The pci tree needed another build fix patch.
-> 
-> The ide tree had more conflicts with its parts that have been merged into
-> Linus' tree.
-> 
-> The acpi had various merge problems - maybe because I am pulling a
-> different tree than what was merged into Linus' tree.
-> 
-> The galak tree gained a conflict against the net tree.
-> 
-> The ubifs tree also had merge problems because a different version was
-> sent to Linus.
-> 
-> I have also applied the following patches for known problems:
-> 
-> 	sparc64: sysdev API change fallout
-> 
-> This tree fails to build for ARCH=sparc (i.e. 32bit) with a 64bit gcc
-> v3.4.5 - it tries to use the 64bit header files.  This may be an artifact
-> of one of my merge fixups, but I don't actually think so.
+> > fs/proc/proc_sysctl.c:69:25: warning: symbol 'grab_header' was not declared. Should it be static?
 
-This one crashes all of my x86-64 test boxes early during boot.
+> urgh.  We need to do something here.
+> 
+> People are dumping large hunks of 2.6.28 material into linux-next
+> during the merge window.  This screws me up because I haven't merged
+> into 2.6.27 yet, and my patch queue is based on linux-next.  And I
+> _have_ to do that, because lots of the git trees haven't merged into
+> mainline yet.
 
-The Linus' tree is not affected.
-
-Failing configs:
-http://www.sisk.pl/kernel/debug/next/20080717/HPC_nx6325-config
-http://www.sisk.pl/kernel/debug/next/20080717/M3A32-MVP-config
-
-It's not very likely that I'll be able to bisect this issue before OLS, so most
-probably I won't be testing linux-next in the next several days.
-
-Thanks,
-Rafael
+FWIW, you are slightly misreading the situation - it *is* my fault, but
+in a different way.  What's happening is not development going into that
+branch - it's untangling a huge pile of pending patches into sequence.
+And yes, it should've gone public as-is a couple of weeks ago ;-/
