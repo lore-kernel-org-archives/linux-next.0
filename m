@@ -1,30 +1,32 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: driver-core build failure
-Date: Thu, 17 Jul 2008 00:04:01 -0700
-Message-ID: <20080717070401.GA22090@kroah.com>
-References: <20080717103611.79b1cecd.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the usb tree
+Date: Thu, 17 Jul 2008 00:04:45 -0700
+Message-ID: <20080717070445.GC22090@kroah.com>
+References: <20080717105430.a81c9657.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:49283 "EHLO
+Received: from casper.infradead.org ([85.118.1.10]:49289 "EHLO
 	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751967AbYGQHSr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Jul 2008 03:18:47 -0400
+	with ESMTP id S1754231AbYGQHS4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Jul 2008 03:18:56 -0400
 Content-Disposition: inline
-In-Reply-To: <20080717103611.79b1cecd.sfr@canb.auug.org.au>
+In-Reply-To: <20080717105430.a81c9657.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>
 
-On Thu, Jul 17, 2008 at 10:36:11AM +1000, Stephen Rothwell wrote:
+On Thu, Jul 17, 2008 at 10:54:30AM +1000, Stephen Rothwell wrote:
 > Hi Greg,
 > 
-> I have been carrying the patch below and applying it after the scsi tree
-> merge for some time now.  Now that the scsi tree has been merged into
-> Linus' tree, can you add this to the driver-core tree, please?
-> Preferably merged with the patch that removes KOBJ_NAME_LEN.
+> Now that the firmware tree has been merged into Linus' tree, the files
+> drivers/usb/serial/ti_fw_3410.h and drivers/usb/serial/ti_fw_5052.h no
+> longer exist, so the patch "ti_usb: kick firmware into user space" no
+> longer needs to patch them.  I am not sure if that patch is needed at all
+> any more (probably not).
 
-Thanks, I will queue this up.
+I'll work this out on Friday when I figure out the merge issues, thanks
+for pointing it out.
 
 greg k-h
