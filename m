@@ -1,37 +1,51 @@
-From: Timothy Shimmin <tes@sgi.com>
-Subject: Re: [xfs-masters] Re: linux-next: Tree for June 24 (XFS x2)
-Date: Thu, 17 Jul 2008 15:26:10 +1000
-Message-ID: <487ED7F2.3040505@sgi.com>
-References: <20080624175612.cdf29651.sfr@canb.auug.org.au> <20080624171809.42bbdf68.randy.dunlap@oracle.com> <20080625003751.GP29319@disturbed> <20080627132317.GB23854@lst.de> <20080716071922.GA16777@lst.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the galak tree
+Date: Thu, 17 Jul 2008 15:30:50 +1000
+Message-ID: <20080717153050.2c2ceb47.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__17_Jul_2008_15_30_50_+1000_GVVE8/CxuwCo643x"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from netops-testserver-3-out.sgi.com ([192.48.171.28]:49819 "EHLO
-	relay.sgi.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750954AbYGQF0Z (ORCPT
-	<rfc822;@sgi.com:linux-next@vger.kernel.org>);
-	Thu, 17 Jul 2008 01:26:25 -0400
-In-Reply-To: <20080716071922.GA16777@lst.de>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56766 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750821AbYGQFa7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 17 Jul 2008 01:30:59 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: xfs-masters@oss.sgi.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Kumar Gala <galak@kernel.crashing.org>
+Cc: linux-next@vger.kernel.org, Laurent Pinchart <laurentp@cse-semaphore.com>, Jeff Garzik <jeff@garzik.org>
 
-Christoph Hellwig wrote:
-> On Fri, Jun 27, 2008 at 03:23:17PM +0200, Christoph Hellwig wrote:
->> The tree is still messed up.  This original [XFS] commit is still there,
->> but also a revert of it.  but no patch with the actual changes again (?)
->>
->> Also my patch to switch to the generic xattr code is attributed to
->> Lachlan and appears twice in the commit list.  I think this whole git
->> tree needs to be regenerated.
-> 
-> Could this please get fixed before the 2.6.27 pull?  The xfs.git tree
-> now has Linus' latest changes pulled but this still doesn't look
-> fixed up.
+--Signature=_Thu__17_Jul_2008_15_30_50_+1000_GVVE8/CxuwCo643x
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yep, I believe Lachlan is planning to regenerate the xfs git tree before
-the pull request.
+Hi Kumar,
 
---Tim
+Today's linux-next merge of the galak tree got a conflict in
+drivers/net/fs_enet/fs_enet-main.c between commit
+d8b35fac8c7e1b44d873c1afcc5f88bc5ef4b361 ("fs_enet: MDIO on GPIO
+support") from the net tree and commit
+b219108cbacee5f2eaeca63cba013688eeba3bd4 ("fs_enet: Remove !
+CONFIG_PPC_CPM_NEW_BINDING code") from the galak tree.
+
+Overlapping move/add.  I fixed it up and can carry the fix.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__17_Jul_2008_15_30_50_+1000_GVVE8/CxuwCo643x
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkh+2QoACgkQjjKRsyhoI8xBBwCePbIfRUBqKHOe0WGz6zccAz3K
+SZgAniECi9lGMkrJhD7Ha88WBXlZXU2V
+=cNRO
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__17_Jul_2008_15_30_50_+1000_GVVE8/CxuwCo643x--
