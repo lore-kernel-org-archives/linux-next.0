@@ -1,59 +1,28 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: x86 tree build failure
-Date: Thu, 17 Jul 2008 12:07:54 +1000
-Message-ID: <20080717120754.66b6c14c.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH] net: make __skb_splice_bits static
+Date: Wed, 16 Jul 2008 20:12:40 -0700 (PDT)
+Message-ID: <20080716.201240.150812340.davem@davemloft.net>
+References: <1216237880.28841.20.camel@brick>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__17_Jul_2008_12_07_54_+1000_2MLGRco8IGs2BK9s"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40861 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751290AbYGQCIH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Jul 2008 22:08:07 -0400
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:41703
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1752530AbYGQDMk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Jul 2008 23:12:40 -0400
+In-Reply-To: <1216237880.28841.20.camel@brick>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org, Vegard Nossum <vegard.nossum@gmail.com>
+To: harvey.harrison@gmail.com
+Cc: linux-next@vger.kernel.org, netdev@vger.kernel.org
 
---Signature=_Thu__17_Jul_2008_12_07_54_+1000_2MLGRco8IGs2BK9s
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Harvey Harrison <harvey.harrison@gmail.com>
+Date: Wed, 16 Jul 2008 12:51:20 -0700
 
-Hi all,
+> net/core/skbuff.c:1335:5: warning: symbol '__skb_splice_bits' was not declared. Should it be static?
+> 
+> Signed-off-by: Harvey Harrison <harvey.harrison@gmail.com>
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
-
-arch/x86/kernel/syscall_64.c:27: error: array index in initializer exceeds =
-array bounds
-arch/x86/kernel/syscall_64.c:27: error: (near initialization for 'sys_call_=
-table')
-arch/x86/kernel/syscall_64.c:27: warning: excess elements in array initiali=
-zer
-arch/x86/kernel/syscall_64.c:27: warning: (near initialization for 'sys_cal=
-l_table')
-
-Reverting commit aa27f95867447916d97c7aa6e5422ff6518630dd ("x86:
-consolidate header guards") makes it build ok.  I found that hard to
-believe, so I undid the revert and it fails again.
-
-gcc is x86_64-unknown-linux-gnu-gcc (GCC) 4.0.2 cross built on a powerpc ho=
-st.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__17_Jul_2008_12_07_54_+1000_2MLGRco8IGs2BK9s
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkh+qXoACgkQjjKRsyhoI8xJGwCgg47CtZixom5AvcIHAqK+GJ92
-kmsAoKFQSSUBDde3/i3PJQ5Z5s7IRrqD
-=FcJK
------END PGP SIGNATURE-----
-
---Signature=_Thu__17_Jul_2008_12_07_54_+1000_2MLGRco8IGs2BK9s--
+Applied, thanks Harvey.
