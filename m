@@ -1,36 +1,41 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for July 17 (sysctl/syscall)
-Date: Thu, 17 Jul 2008 15:21:31 -0700
-Message-ID: <20080717152131.13ada1fc.randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for July 17 (net_namespace)
+Date: Thu, 17 Jul 2008 15:34:00 -0700
+Message-ID: <20080717153400.e9ef066a.randy.dunlap@oracle.com>
 References: <20080718012842.690b8346.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rgminet01.oracle.com ([148.87.113.118]:20686 "EHLO
-	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756220AbYGQWXG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Jul 2008 18:23:06 -0400
+Received: from agminet01.oracle.com ([141.146.126.228]:18432 "EHLO
+	agminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753981AbYGQWe1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Jul 2008 18:34:27 -0400
 In-Reply-To: <20080718012842.690b8346.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
+With PROC_FS=n, PROC_SYSCTL=n, SYSCTL_SYSCALL=n, the <sysctls> field of
+struct net in include/net/net_namespace.h has problems:
 
-Who is making patches to kernel/sysctl.c ?
 
-With
-CONFIG_SYSCTL=y
-# CONFIG_SYSCTL_SYSCALL is not set
+In file included from /local/linsrc/linux-next-20080717/include/linux/init_task.h:12,
+                 from /local/linsrc/linux-next-20080717/kernel/pid.c:37:
+/local/linsrc/linux-next-20080717/include/net/net_namespace.h:40: error: field 'sysctls' has incomplete type
 
-linux-next-20080717 produces:
 
-linux-next-20080717/kernel/sysctl.c:2970: error: redefinition of 'setup_sysctl_set'
-linux-next-20080717/kernel/sysctl.c:1963: error: previous definition of 'setup_sysctl_set' was here
+In file included from /local/linsrc/linux-next-20080717/include/linux/netdevice.h:44,
+                 from /local/linsrc/linux-next-20080717/include/linux/if_bridge.h:105,
+                 from /local/linsrc/linux-next-20080717/fs/compat_ioctl.c:24:
+/local/linsrc/linux-next-20080717/include/net/net_namespace.h:40: error: field 'sysctls' has incomplete type
 
-because one definition of it is bounded by CONFIG_SYSCTL and another definition
-of it is bounded by CONFIG_SYSCTL_SYSCALL... :(
+
+In file included from /local/linsrc/linux-next-20080717/include/linux/init_task.h:12,
+                 from /local/linsrc/linux-next-20080717/arch/x86/kernel/init_task.c:5:
+/local/linsrc/linux-next-20080717/include/net/net_namespace.h:40: error: field 'sysctls' has incomplete type
+
 
 
 ---
