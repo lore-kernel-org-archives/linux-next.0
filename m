@@ -1,41 +1,49 @@
-From: Adrian Bunk <bunk@kernel.org>
-Subject: Re: linux-next: manual merge of the acpi tree
-Date: Thu, 17 Jul 2008 10:24:49 +0300
-Message-ID: <20080717072449.GN17329@cs181140183.pp.htv.fi>
-References: <20080717142205.064285ad.sfr@canb.auug.org.au>
+From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+Subject: Re: linux-next: manual merge of the ubifs tree
+Date: Thu, 17 Jul 2008 10:23:21 +0300
+Message-ID: <487EF369.2080609@nokia.com>
+References: <20080717171059.1bf8b572.sfr@canb.auug.org.au>
+Reply-To: Artem.Bityutskiy@nokia.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp6.pp.htv.fi ([213.243.153.40]:55381 "EHLO smtp6.pp.htv.fi"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751722AbYGQHZF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Jul 2008 03:25:05 -0400
-Content-Disposition: inline
-In-Reply-To: <20080717142205.064285ad.sfr@canb.auug.org.au>
+Received: from smtp.nokia.com ([192.100.105.134]:33284 "EHLO
+	mgw-mx09.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751555AbYGQH0E (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Jul 2008 03:26:04 -0400
+In-Reply-To: <20080717171059.1bf8b572.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, Andi Kleen <andi@firstfloor.org>
+Cc: linux-next@vger.kernel.org
 
-On Thu, Jul 17, 2008 at 02:22:05PM +1000, Stephen Rothwell wrote:
-> Hi Len,
-> 
-> Today's linux-next merge of the acpi tree got a conflict in
-> arch/x86/mm/srat_32.c against Linus' tree.
-> 
-> I used the version in Linus' tree.  Could you do a merge with Linus' tree
-> for tomorrow?
+Hi Stephen
 
-You seem to still pull Len's tree?
+Stephen Rothwell wrote:
+> Today's linux-next merge of the ubifs tree got conflicts in
+> fs/ubifs/budget.c, fs/ubifs/debug.c, fs/ubifs/dir.c, fs/ubifs/file.c,
+> fs/ubifs/io.c, fs/ubifs/journal.c, fs/ubifs/shrinker.c, fs/ubifs/tnc.=
+c
+> and fs/ubifs/xattr.c between commit
+> 1e51764a3c2ac05a23a22b2a95ddee4d9bffb16d ("UBIFS: add new flash file
+> system") from Linus' tree and various commits from the ubifs tree.
 
-> Cheers,
+Yes, right. I guess I should have informed you about this, apologies.
 
-cu
-Adrian
+UBIFS is rather non-typical things for -next I guess.
 
--- 
+No one is interested in UBIFS history _before_ it got into mainline,
+which is about several hundred commits. Thus, we folded these all
+into few huge large commits, in order not to garbage the mainline
+tree.
 
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
+I have amended the 'for_andrew' branch of ubifs-2.6.git, and now it
+has the same commits as in Linus's tree. But it is still based on
+2.6.26 release.
+
+--=20
+Best Regards,
+Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
+=D1=86=D0=BA=D0=B8=D0=B9)
