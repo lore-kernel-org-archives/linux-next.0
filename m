@@ -1,72 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [xfs-masters] Re: linux-next: Tree for June 24 (XFS x2)
-Date: Thu, 17 Jul 2008 18:28:35 +1000
-Message-ID: <20080717182835.55405e63.sfr@canb.auug.org.au>
-References: <20080624175612.cdf29651.sfr@canb.auug.org.au>
-	<20080624171809.42bbdf68.randy.dunlap@oracle.com>
-	<20080625003751.GP29319@disturbed>
-	<20080627132317.GB23854@lst.de>
-	<20080716071922.GA16777@lst.de>
-	<487ED7F2.3040505@sgi.com>
+From: "Vegard Nossum" <vegard.nossum@gmail.com>
+Subject: Re: linux-next: x86 tree build failure
+Date: Thu, 17 Jul 2008 11:23:36 +0200
+Message-ID: <19f34abd0807170223t7a81dbcfyb860b5e3fc32251c@mail.gmail.com>
+References: <20080717120754.66b6c14c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__17_Jul_2008_18_28_35_+1000_hPccPYELA=A9DKCS"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48609 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753112AbYGQI2o (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Jul 2008 04:28:44 -0400
-In-Reply-To: <487ED7F2.3040505@sgi.com>
+Received: from el-out-1112.google.com ([209.85.162.182]:19777 "EHLO
+	el-out-1112.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754385AbYGQJXi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Jul 2008 05:23:38 -0400
+Received: by el-out-1112.google.com with SMTP id z25so1185432ele.1
+        for <linux-next@vger.kernel.org>; Thu, 17 Jul 2008 02:23:37 -0700 (PDT)
+In-Reply-To: <20080717120754.66b6c14c.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Timothy Shimmin <tes@sgi.com>
-Cc: Christoph Hellwig <hch@lst.de>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
 
---Signature=_Thu__17_Jul_2008_18_28_35_+1000_hPccPYELA=A9DKCS
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, 17 Jul 2008 15:26:10 +1000 Timothy Shimmin <tes@sgi.com> wrote:
+On Thu, Jul 17, 2008 at 4:07 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
 >
-> Christoph Hellwig wrote:
-> > On Fri, Jun 27, 2008 at 03:23:17PM +0200, Christoph Hellwig wrote:
-> >> The tree is still messed up.  This original [XFS] commit is still ther=
-e,
-> >> but also a revert of it.  but no patch with the actual changes again (=
-?)
-> >>
-> >> Also my patch to switch to the generic xattr code is attributed to
-> >> Lachlan and appears twice in the commit list.  I think this whole git
-> >> tree needs to be regenerated.
-> >=20
-> > Could this please get fixed before the 2.6.27 pull?  The xfs.git tree
-> > now has Linus' latest changes pulled but this still doesn't look
-> > fixed up.
->=20
-> Yep, I believe Lachlan is planning to regenerate the xfs git tree before
-> the pull request.
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+>
+> arch/x86/kernel/syscall_64.c:27: error: array index in initializer exceeds array bounds
+> arch/x86/kernel/syscall_64.c:27: error: (near initialization for 'sys_call_table')
+> arch/x86/kernel/syscall_64.c:27: warning: excess elements in array initializer
+> arch/x86/kernel/syscall_64.c:27: warning: (near initialization for 'sys_call_table')
+>
+> Reverting commit aa27f95867447916d97c7aa6e5422ff6518630dd ("x86:
+> consolidate header guards") makes it build ok.  I found that hard to
+> believe, so I undid the revert and it fails again.
 
-When that happens, could you please make sure that the linux-next tree is
-updated as well ... I have had a couple of trees where what was merged to
-Linus did not match what is in linux-next - and that causes me no end of
-pain when I have to merge the two ...
+Oh, this is in next already?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+The basic problem is that I completely overlooked the fact that some
+headers use the guards of _other_ headers in #if-checks. I think we
+should drop the consolidations completely until I have fixed the
+script to replace the header guard names which are used in other files
+as well. I'm sorry :-/
 
---Signature=_Thu__17_Jul_2008_18_28_35_+1000_hPccPYELA=A9DKCS
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Vegard
 
-iEYEARECAAYFAkh/ArMACgkQjjKRsyhoI8xRWQCfcz+yY6tObbYzrknUZ2UapMzT
-DBgAn1rYAsAyCL2H5xRIrIXR/bHyVkNG
-=s9sP
------END PGP SIGNATURE-----
-
---Signature=_Thu__17_Jul_2008_18_28_35_+1000_hPccPYELA=A9DKCS--
+-- 
+"The animistic metaphor of the bug that maliciously sneaked in while
+the programmer was not looking is intellectually dishonest as it
+disguises that the error is the programmer's own creation."
+	-- E. W. Dijkstra, EWD1036
