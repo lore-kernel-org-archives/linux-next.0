@@ -1,82 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH 1/3] x86: suppress sparse returning void warnings
-Date: Fri, 18 Jul 2008 16:13:42 +1000
-Message-ID: <20080718161342.df47eafb.sfr@canb.auug.org.au>
-References: <1216329754.6029.29.camel@brick>
+Subject: linux-next: import of ttydev tree
+Date: Fri, 18 Jul 2008 16:30:04 +1000
+Message-ID: <20080718163004.98ddc67b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__18_Jul_2008_16_13_42_+1000_kK.T1hP7xkyftJD/"
+ boundary="Signature=_Fri__18_Jul_2008_16_30_04_+1000_l.GAdN8/TmRl=g32"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53720 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36281 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750763AbYGRGNv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 18 Jul 2008 02:13:51 -0400
-In-Reply-To: <1216329754.6029.29.camel@brick>
+	id S1752307AbYGRGaN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 18 Jul 2008 02:30:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Harvey Harrison <harvey.harrison@gmail.com>
-Cc: Ingo Molnar <mingo@elte.hu>, linux-next <linux-next@vger.kernel.org>, Jeremy Fitzhardinge <jeremy@goop.org>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Fri__18_Jul_2008_16_13_42_+1000_kK.T1hP7xkyftJD/
+--Signature=_Fri__18_Jul_2008_16_30_04_+1000_l.GAdN8/TmRl=g32
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-[ Added cc ]
+Hi Alan,
 
-On Thu, 17 Jul 2008 14:22:34 -0700 Harvey Harrison <harvey.harrison@gmail.c=
-om> wrote:
->
-> include/asm/paravirt.h:1404:2: warning: returning void-valued expression
-> include/asm/paravirt.h:1414:2: warning: returning void-valued expression
->=20
-> Signed-off-by: Harvey Harrison <harvey.harrison@gmail.com>
-> ---
-> Appeared between next-20080716 and next-20080717
->=20
->  include/asm-x86/paravirt.h |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/include/asm-x86/paravirt.h b/include/asm-x86/paravirt.h
-> index b2aba8f..27c9f22 100644
-> --- a/include/asm-x86/paravirt.h
-> +++ b/include/asm-x86/paravirt.h
-> @@ -1401,7 +1401,7 @@ static inline int __raw_spin_is_contended(struct ra=
-w_spinlock *lock)
-> =20
->  static __always_inline void __raw_spin_lock(struct raw_spinlock *lock)
->  {
-> -	return PVOP_VCALL1(pv_lock_ops.spin_lock, lock);
-> +	PVOP_VCALL1(pv_lock_ops.spin_lock, lock);
->  }
-> =20
->  static __always_inline int __raw_spin_trylock(struct raw_spinlock *lock)
-> @@ -1411,7 +1411,7 @@ static __always_inline int __raw_spin_trylock(struc=
-t raw_spinlock *lock)
-> =20
->  static __always_inline void __raw_spin_unlock(struct raw_spinlock *lock)
->  {
-> -	return PVOP_VCALL1(pv_lock_ops.spin_unlock, lock);
-> +	PVOP_VCALL1(pv_lock_ops.spin_unlock, lock);
->  }
-> =20
->  #endif
+Not sure what went wrong, but the second last of your patches
+"tty-synclink_gt-dma-fill" would not apply today, so I left the last two
+out.  I started with commit a3cf859321486f69506326146ab3e2fd15c05c3f and
+used "git quiltimport" to apply them.  The end of the log looks like this:
+
+tty-n_hdlc-nonblock
+Context reduced to (1/1) to apply fragment at 679
+tty-synclink_gt-bitorder
+tty-synclink_gt-dma-fill
+error: patch failed: drivers/char/synclink_gt.c:3457
+error: drivers/char/synclink_gt.c: patch does not apply
+
+Actually looking further, this is probably the problem:
+
+synclink-use-tty_port
+.dotest/patch:67: trailing whitespace.
+                if ( (info->port.flags & ASYNC_CHECK_CD) &&=20
+.dotest/patch:86: trailing whitespace.
+                if ( (info->port.flags & ASYNC_CTS_FLOW) &&=20
+.dotest/patch:125: space before tab in indent.
+        struct tty_struct *tty =3D info->port.tty;
+.dotest/patch:153: space before tab in indent.
+                if (capable(CAP_SYS_ADMIN) && info->port.tty)
+.dotest/patch:186: space before tab in indent.
+        if (!info->port.tty || info->port.tty->termios->c_cflag & HUPCL) {
+warning: squelched 19 whitespace errors
+warning: 24 lines add whitespace errors.
+
+So, I guess the white space didn't match in the later patches. I'll see
+if I can force it for now, but it would be nice if that trailing white
+space was not there.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__18_Jul_2008_16_13_42_+1000_kK.T1hP7xkyftJD/
+--Signature=_Fri__18_Jul_2008_16_30_04_+1000_l.GAdN8/TmRl=g32
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkiANJYACgkQjjKRsyhoI8zwtgCgiH4n8Z/LIvsFpwc9Lqw8NOCC
-Nz4AoJ1uRfmjrXE9VkKLh93P+KV6zlRr
-=rMPn
+iEYEARECAAYFAkiAOGwACgkQjjKRsyhoI8yI4wCeIPDTHHiF6OZEMoEkWFqT/R1Y
+a8wAn3IF79QH8TM9VxgXGJ207rV3zuGw
+=sXgG
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__18_Jul_2008_16_13_42_+1000_kK.T1hP7xkyftJD/--
+--Signature=_Fri__18_Jul_2008_16_30_04_+1000_l.GAdN8/TmRl=g32--
