@@ -1,39 +1,53 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: linux-next: manual merge of the ttydev tree
-Date: Fri, 18 Jul 2008 09:49:12 +0100
-Message-ID: <20080718094912.42d9c043@the-village.bc.nu>
-References: <20080718182015.bf3ef4e5.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the vfs tree
+Date: Fri, 18 Jul 2008 19:44:06 +1000
+Message-ID: <20080718194406.1484a22c.sfr@canb.auug.org.au>
+References: <20080718152758.2b6bc862.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__18_Jul_2008_19_44_06_+1000_9P28g9oPJBpi/MKp"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from lxorguk.ukuu.org.uk ([81.2.110.251]:52047 "EHLO
-	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753797AbYGRJn3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Jul 2008 05:43:29 -0400
-In-Reply-To: <20080718182015.bf3ef4e5.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46275 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753984AbYGRJoO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 18 Jul 2008 05:44:14 -0400
+In-Reply-To: <20080718152758.2b6bc862.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Adrian Bunk <bunk@kernel.org>, "John W. Linville" <linville@tuxdriver.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, Miklos Szeredi <mszeredi@suse.cz>
 
-On Fri, 18 Jul 2008 18:20:15 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Signature=_Fri__18_Jul_2008_19_44_06_+1000_9P28g9oPJBpi/MKp
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Alan,
-> 
-> Today's linux-next merge of the ttydev tree got a conflict in
-> drivers/net/wireless/strip.c between commit
-> 94d9842403f770239a656586442454b7a8f2df29 ("remove the strip driver") from
-> the wireless tree and commit 08bec19ee22b6d02bf354323e6b5a3e61070c04a
-> ("tty-fix-strip") from the ttydev tree.
-> 
-> I just removed the file for now.
-> 
-> I think I remember some discussion of this a while ago ...
+Hi Al,
 
+On Fri, 18 Jul 2008 15:27:58 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the vfs tree got a conflict in
+> security/dummy.c between commit 5915eb53861c5776cfec33ca4fcc1fd20d66dd27
+> ("security: remove dummy module") from the  tree and commit
+                                         ^^^^^^^^^
+Linus' tree
 
-Yes - the strip driver should not be getting dropped. I asked Adrian to
-stop this. I am suprised he hasn't done so.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Alan
+--Signature=_Fri__18_Jul_2008_19_44_06_+1000_9P28g9oPJBpi/MKp
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiAZeYACgkQjjKRsyhoI8woWgCgsa4SLAO28ekPehsl3flArKkG
+f9cAoL2Cs48N/t/qDjQwQ4VlLGh5Jvtq
+=4aNM
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__18_Jul_2008_19_44_06_+1000_9P28g9oPJBpi/MKp--
