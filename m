@@ -1,82 +1,51 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: pci tree build failure
-Date: Fri, 18 Jul 2008 09:53:22 +0200
-Message-ID: <20080718075322.GF6875@elte.hu>
-References: <20080717130924.edd5a501.sfr@canb.auug.org.au> <200807180057.07192.rjw@sisk.pl> <20080718160904.64541954.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ttydev tree
+Date: Fri, 18 Jul 2008 18:20:15 +1000
+Message-ID: <20080718182015.bf3ef4e5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__18_Jul_2008_18_20_15_+1000_W3ecypH3elOAid8c"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:53014 "EHLO mx3.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43156 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753211AbYGRHxs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 18 Jul 2008 03:53:48 -0400
-Content-Disposition: inline
-In-Reply-To: <20080718160904.64541954.sfr@canb.auug.org.au>
+	id S1751860AbYGRIUY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 18 Jul 2008 04:20:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, Jeremy Fitzhardinge <jeremy@goop.org>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: linux-next@vger.kernel.org, Adrian Bunk <bunk@kernel.org>, "John W. Linville" <linville@tuxdriver.com>
 
+--Signature=_Fri__18_Jul_2008_18_20_15_+1000_W3ecypH3elOAid8c
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Alan,
 
-> Hi Rafael,
-> 
-> On Fri, 18 Jul 2008 00:57:06 +0200 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
-> >
-> > The patch is correct.
-> 
-> Thanks.
+Today's linux-next merge of the ttydev tree got a conflict in
+drivers/net/wireless/strip.c between commit
+94d9842403f770239a656586442454b7a8f2df29 ("remove the strip driver") from
+the wireless tree and commit 08bec19ee22b6d02bf354323e6b5a3e61070c04a
+("tty-fix-strip") from the ttydev tree.
 
-heh, i've done the exactly same change yesterday night, independently, 
-in tip/xen-64bit - where this interaction originates from. (see below)
+I just removed the file for now.
 
-but i zapped it and took yours instead because yours came 19 hours 
-earlier - i should have checked my mbox sooner ;)
+I think I remember some discussion of this a while ago ...
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Jeremy, is this change fine with you too?
+--Signature=_Fri__18_Jul_2008_18_20_15_+1000_W3ecypH3elOAid8c
+Content-Type: application/pgp-signature
 
-( btw., could you please Cc: lkml to all patches? It's not like 
-  linux-next is irrelevant to lkml - it's highly on topic in fact - and 
-  what seems like future stuff today is an actuality tomorrow that 
-  people might want to grep for. )
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-	Ingo
+iEYEARECAAYFAkiAUj8ACgkQjjKRsyhoI8xmJQCgum5A7K1bpuQMaLhBILFKdFLO
+Bw0AoMAzooJiUdG+AqnlOFEpefq8Rz9N
+=oaUb
+-----END PGP SIGNATURE-----
 
----------------------------->
-commit dc860d89be3e640b98e9e202611466cc22575166
-Author: Ingo Molnar <mingo@elte.hu>
-Date:   Thu Jul 17 23:58:52 2008 +0200
-
-    x86, xen: adopt suspend/resume API use
-    
-    the device_power_up()/device_resume() APIs got changed by:
-    1eede070a5 "Introduce new top level suspend and hibernation callbacks".
-    
-    Signed-off-by: Ingo Molnar <mingo@elte.hu>
----
- drivers/xen/manage.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/xen/manage.c b/drivers/xen/manage.c
-index 2bb268e..a5bc91a 100644
---- a/drivers/xen/manage.c
-+++ b/drivers/xen/manage.c
-@@ -63,7 +63,7 @@ static int xen_suspend(void *data)
- 	gnttab_resume();
- 	xen_mm_unpin_all();
- 
--	device_power_up();
-+	device_power_up(PMSG_RESUME);
- 
- 	if (!*cancelled) {
- 		xen_irq_resume();
-@@ -114,7 +114,7 @@ static void do_suspend(void)
- 	} else
- 		xenbus_suspend_cancel();
- 
--	device_resume();
-+	device_resume(PMSG_RESUME);
- 
- 	/* Make sure timer events get retriggered on all CPUs */
- 	clock_was_set();
+--Signature=_Fri__18_Jul_2008_18_20_15_+1000_W3ecypH3elOAid8c--
