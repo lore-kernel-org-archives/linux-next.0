@@ -1,39 +1,28 @@
-From: Adrian Bunk <bunk@kernel.org>
-Subject: Re: linux-next: manual merge of the ttydev tree
-Date: Fri, 18 Jul 2008 14:00:59 +0300
-Message-ID: <20080718110059.GH18326@cs181140183.pp.htv.fi>
-References: <20080718182015.bf3ef4e5.sfr@canb.auug.org.au> <20080718094912.42d9c043@the-village.bc.nu> <20080718104954.GG18326@cs181140183.pp.htv.fi> <20080718.035520.220745840.davem@davemloft.net>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH 1/3] x86: suppress sparse returning void warnings
+Date: Fri, 18 Jul 2008 13:42:36 +0200
+Message-ID: <20080718114236.GE6875@elte.hu>
+References: <1216329754.6029.29.camel@brick>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp6.pp.htv.fi ([213.243.153.40]:35385 "EHLO smtp6.pp.htv.fi"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:43513 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751346AbYGRLBT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 18 Jul 2008 07:01:19 -0400
+	id S1751465AbYGRLmr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 18 Jul 2008 07:42:47 -0400
 Content-Disposition: inline
-In-Reply-To: <20080718.035520.220745840.davem@davemloft.net>
+In-Reply-To: <1216329754.6029.29.camel@brick>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: alan@lxorguk.ukuu.org.uk, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linville@tuxdriver.com
+To: Harvey Harrison <harvey.harrison@gmail.com>
+Cc: linux-next <linux-next@vger.kernel.org>, the arch/x86 maintainers <x86@kernel.org>, linux-kernel@vger.kernel.org
 
-On Fri, Jul 18, 2008 at 03:55:20AM -0700, David Miller wrote:
-> From: Adrian Bunk <bunk@kernel.org>
-> Date: Fri, 18 Jul 2008 13:49:54 +0300
-> 
-> > John, can you either drop my commit or add a revert commit for the 
-> > driver removal commit?
-> 
-> It's in my tree already, I'll revert.
 
-thanks
+* Harvey Harrison <harvey.harrison@gmail.com> wrote:
 
-cu
-Adrian
+> include/asm/paravirt.h:1404:2: warning: returning void-valued expression
+> include/asm/paravirt.h:1414:2: warning: returning void-valued expression
 
--- 
+applied to tip/x86/paravirt-spinlocks - thanks Harvey.
 
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
+	Ingo
