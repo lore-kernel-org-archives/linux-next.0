@@ -1,27 +1,58 @@
-From: "Alexander Beregalov" <a.beregalov@gmail.com>
-Subject: Re: linux-next: Tree for July 17: early crash on x86-64
-Date: Fri, 18 Jul 2008 17:52:23 +0400
-Message-ID: <a4423d670807180652y352e66lfe04d2b33d2ed176@mail.gmail.com>
-References: <20080718012842.690b8346.sfr@canb.auug.org.au>
-	 <200807180106.08328.rjw@sisk.pl>
+From: Harvey Harrison <harvey.harrison@gmail.com>
+Subject: [PATCH] gfs2: remove nameidata arg from gfs_iop_permission
+Date: Fri, 18 Jul 2008 09:26:42 -0700
+Message-ID: <1216398403.6029.145.camel@brick>
+References: <1216328912.6029.18.camel@brick>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from an-out-0708.google.com ([209.85.132.249]:62601 "EHLO
-	an-out-0708.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754790AbYGRNwY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Jul 2008 09:52:24 -0400
-Received: by an-out-0708.google.com with SMTP id d40so231235and.103
-        for <linux-next@vger.kernel.org>; Fri, 18 Jul 2008 06:52:24 -0700 (PDT)
-In-Reply-To: <200807180106.08328.rjw@sisk.pl>
-Content-Disposition: inline
+Received: from yx-out-2324.google.com ([74.125.44.28]:33107 "EHLO
+	yx-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757409AbYGRRN3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Jul 2008 13:13:29 -0400
+Received: by yx-out-2324.google.com with SMTP id 8so145435yxm.1
+        for <linux-next@vger.kernel.org>; Fri, 18 Jul 2008 10:13:28 -0700 (PDT)
+In-Reply-To: <1216328912.6029.18.camel@brick>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Kernel Testers List <kernel-testers@vger.kernel.org>
+To: Steven Whitehouse <swhiteho@redhat.com>
+Cc: linux-next <linux-next@vger.kernel.org>, Al Viro <viro@ZenIV.linux.org.uk>
 
-2008/7/18 Rafael J. Wysocki <rjw@sisk.pl>:
-> This one crashes all of my x86-64 test boxes early during boot.
-The same problem with next-20080718.
-Unfortunatelly I do not have serial console on that host.
+Noticed by sparse
+> fs/gfs2/ops_inode.c:1153:16: warning: incorrect type in initializer (different argument counts)
+> fs/gfs2/ops_inode.c:1153:16:    expected int ( *permission )( ... )
+> fs/gfs2/ops_inode.c:1153:16:    got int ( static [toplevel] *<noident> )( ... )
+> fs/gfs2/ops_inode.c:1172:16: warning: incorrect type in initializer (different argument counts)
+> fs/gfs2/ops_inode.c:1172:16:    expected int ( *permission )( ... )
+> fs/gfs2/ops_inode.c:1172:16:    got int ( static [toplevel] *<noident> )( ... )
+> fs/gfs2/ops_inode.c:1184:16: warning: incorrect type in initializer (different argument counts)
+> fs/gfs2/ops_inode.c:1184:16:    expected int ( *permission )( ... )
+> fs/gfs2/ops_inode.c:1184:16:    got int ( static [toplevel] *<noident> )( ... )
+> fs/gfs2/ops_inode.c:1153: warning: initialization from incompatible pointer type
+> fs/gfs2/ops_inode.c:1172: warning: initialization from incompatible pointer type
+> fs/gfs2/ops_inode.c:1184: warning: initialization from incompatible pointer type
+
+Signed-off-by: Harvey Harrison <harvey.harrison@gmail.com>
+---
+Appeared between next-20080716 and next-20080717
+
+ fs/gfs2/ops_inode.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
+
+diff --git a/fs/gfs2/ops_inode.c b/fs/gfs2/ops_inode.c
+index 1e252df..0456e2b 100644
+--- a/fs/gfs2/ops_inode.c
++++ b/fs/gfs2/ops_inode.c
+@@ -915,8 +915,7 @@ int gfs2_permission(struct inode *inode, int mask)
+ 	return error;
+ }
+ 
+-static int gfs2_iop_permission(struct inode *inode, int mask,
+-			       struct nameidata *nd)
++static int gfs2_iop_permission(struct inode *inode, int mask)
+ {
+ 	return gfs2_permission(inode, mask);
+ }
+-- 
+1.5.6.3.569.ga9185
