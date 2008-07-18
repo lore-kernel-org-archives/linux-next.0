@@ -1,63 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the vfs tree
-Date: Fri, 18 Jul 2008 19:06:25 +1000
-Message-ID: <20080718190625.ff774854.sfr@canb.auug.org.au>
-References: <20080718153629.93410869.sfr@canb.auug.org.au>
-	<20080718083341.GD21656@linux-mips.org>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: import of ttydev tree
+Date: Fri, 18 Jul 2008 09:58:02 +0100
+Message-ID: <20080718095802.65e0fbdd@the-village.bc.nu>
+References: <20080718163004.98ddc67b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__18_Jul_2008_19_06_25_+1000_b75czd174OtPF0bu"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34890 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755733AbYGRJGb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 18 Jul 2008 05:06:31 -0400
-In-Reply-To: <20080718083341.GD21656@linux-mips.org>
+Received: from lxorguk.ukuu.org.uk ([81.2.110.251]:36470 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753853AbYGRJiJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Jul 2008 05:38:09 -0400
+In-Reply-To: <20080718163004.98ddc67b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Fri__18_Jul_2008_19_06_25_+1000_b75czd174OtPF0bu
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 18 Jul 2008 16:30:04 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi Ralf,
+> Hi Alan,
+> 
+> Not sure what went wrong, but the second last of your patches
+> "tty-synclink_gt-dma-fill" would not apply today, so I left the last two
+> out.  I started with commit a3cf859321486f69506326146ab3e2fd15c05c3f and
+> used "git quiltimport" to apply them.  The end of the log looks like this:
 
-On Fri, 18 Jul 2008 09:33:41 +0100 Ralf Baechle <ralf@linux-mips.org> wrote:
->
-> On Fri, Jul 18, 2008 at 03:36:29PM +1000, Stephen Rothwell wrote:
->=20
-> > Today's linux-next merge of the vfs tree got conflicts in
-> > arch/mips/kernel/irixelf.c and include/asm-mips/namei.h between commit
-> > 2957c9e61ee9c37e7ebf2c8acab03e073fe942fd ("[MIPS] IRIX: Goodbye and
-> > thanks for all the fish") from the mips tree and commit
-> > 2d810d154f1ffc5c637acdb067693773efb09540 ("[PATCH] kill altroot") from
-> > the vfs tree.
-> >=20
-> > I removed both files.
->=20
-> Removing arch/mips/kernel/irixelf.c is fine but removing <asm/namei.h>
-> will break the build of fs/namei.c.
+Strange. I'll redo those. It was objecting to the import of Paul's
+patches for some reason so I fixed them up by hand before importing.
+Dunno why it didn't apply with git quiltimport as it does apply with
+stgit... fun fun
 
-The vfs tree patch killed all references to asm/namei.h
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__18_Jul_2008_19_06_25_+1000_b75czd174OtPF0bu
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkiAXREACgkQjjKRsyhoI8znowCggU52Z7Xsv2E57rIJIi3SEUpk
-cK4Anj1EHZpVBL++i8PiXoBi4IfTEXIa
-=/wkT
------END PGP SIGNATURE-----
-
---Signature=_Fri__18_Jul_2008_19_06_25_+1000_b75czd174OtPF0bu--
+Alan
