@@ -1,58 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: usb tree build failure
-Date: Fri, 18 Jul 2008 11:31:34 +1000
-Message-ID: <20080718113134.053ffd1a.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the x86 tree
+Date: Fri, 18 Jul 2008 12:29:16 +1000
+Message-ID: <20080718122916.605d0cd2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__18_Jul_2008_12_29_16_+1000_KWNptTOWIREMy42M"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50201 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:39335 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753517AbYGRBbh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Jul 2008 21:31:37 -0400
+	id S1752012AbYGRC3X (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 17 Jul 2008 22:29:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, Jesse Barnes <jbarnes@virtuousgeek.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org
 
-Hi Greg,
+--Signature=_Fri__18_Jul_2008_12_29_16_+1000_KWNptTOWIREMy42M
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+Hi all,
 
-drivers/usb/core/driver.c: In function 'do_unbind_rebind':
-drivers/usb/core/driver.c:865: error: 'struct dev_pm_info' has no member named 'sleeping'
+Today's linux-next merge of the x86 tree got a trivial conflict in
+include/asm-x86/pci-direct.h between commit
+e3f2baebf4209b5927e23fa65d5977d31db936b3 ("PCI/x86: early dump pci conf
+space v2") from Linus' tree and commit
+aa27f95867447916d97c7aa6e5422ff6518630dd ("x86: consolidate header
+guards") from the x86 tree.
 
-I have been carrying the patch below and applying it after the pci tree
-merge for some time now.  I am not sure if this is the correct fix but it
-now needs to be applied after the usb tree is merged.
-
--- 
+Just a simple add/modify overlap.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
->From 415f4b3e7d47ae060f365fe640d229f071b8d44e Mon Sep 17 00:00:00 2001
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 1 Jul 2008 14:10:53 +1000
-Subject: [PATCH] pci: usb fixup 1
+--Signature=_Fri__18_Jul_2008_12_29_16_+1000_KWNptTOWIREMy42M
+Content-Type: application/pgp-signature
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/usb/core/driver.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-index 21254cb..ddb54e1 100644
---- a/drivers/usb/core/driver.c
-+++ b/drivers/usb/core/driver.c
-@@ -862,7 +862,7 @@ static void do_unbind_rebind(struct usb_device *udev, int action)
- 	 * complete() callback.  Until that is implemented, we have to
- 	 * use this hack.
- 	 */
--					intf->dev.power.sleeping = 0;
-+//					intf->dev.power.sleeping = 0;
- 
- 					usb_rebind_intf(intf);
- 				}
--- 
-1.5.6
+iEYEARECAAYFAkh///wACgkQjjKRsyhoI8yZHQCgm+1WY/VWmlJL7YobzVIm+Mtc
+x3oAmwY3ss3EJRqywrkWQdsaB0sD0wNh
+=o7lp
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__18_Jul_2008_12_29_16_+1000_KWNptTOWIREMy42M--
