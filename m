@@ -1,67 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: ttydev tree build failure
-Date: Fri, 18 Jul 2008 18:59:45 +1000
-Message-ID: <20080718185945.858a18ee.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the vfs tree
+Date: Fri, 18 Jul 2008 19:06:25 +1000
+Message-ID: <20080718190625.ff774854.sfr@canb.auug.org.au>
+References: <20080718153629.93410869.sfr@canb.auug.org.au>
+	<20080718083341.GD21656@linux-mips.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__18_Jul_2008_19_06_25_+1000_b75czd174OtPF0bu"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33605 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34890 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751685AbYGRI7r (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 18 Jul 2008 04:59:47 -0400
+	id S1755733AbYGRJGb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 18 Jul 2008 05:06:31 -0400
+In-Reply-To: <20080718083341.GD21656@linux-mips.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: linux-next@vger.kernel.org, Greg KH <greg@kroah.com>, Aleksey Gorelov <dared1st@yahoo.com>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org
 
-Hi Alan,
+--Signature=_Fri__18_Jul_2008_19_06_25_+1000_b75czd174OtPF0bu
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+Hi Ralf,
 
-drivers/usb/serial/usb_debug.c: In function 'usb_debug_open':
-drivers/usb/serial/usb_debug.c:37: warning: passing argument 1 of 'usb_serial_generic_open' from incompatible pointer type
-drivers/usb/serial/usb_debug.c:37: warning: passing argument 2 of 'usb_serial_generic_open' from incompatible pointer type
-drivers/usb/serial/usb_debug.c:37: error: too few arguments to function 'usb_serial_generic_open'
-drivers/usb/serial/usb_debug.c: At top level:
-drivers/usb/serial/usb_debug.c:47: warning: initialization from incompatible pointer type
+On Fri, 18 Jul 2008 09:33:41 +0100 Ralf Baechle <ralf@linux-mips.org> wrote:
+>
+> On Fri, Jul 18, 2008 at 03:36:29PM +1000, Stephen Rothwell wrote:
+>=20
+> > Today's linux-next merge of the vfs tree got conflicts in
+> > arch/mips/kernel/irixelf.c and include/asm-mips/namei.h between commit
+> > 2957c9e61ee9c37e7ebf2c8acab03e073fe942fd ("[MIPS] IRIX: Goodbye and
+> > thanks for all the fish") from the mips tree and commit
+> > 2d810d154f1ffc5c637acdb067693773efb09540 ("[PATCH] kill altroot") from
+> > the vfs tree.
+> >=20
+> > I removed both files.
+>=20
+> Removing arch/mips/kernel/irixelf.c is fine but removing <asm/namei.h>
+> will break the build of fs/namei.c.
 
-usb_debug_open was added in commit
-1d051a41474c386498bc37e3ae89f7937222cfe7 ("USB: debug port converter does
-not accept more than 8 byte packets") from the usb tree.
+The vfs tree patch killed all references to asm/namei.h
 
-I applied the patch below and will do so until it can be resolved.
-
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
->From 36676f026d56652cf4d42c13651373dc6a232141 Mon Sep 17 00:00:00 2001
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 18 Jul 2008 18:54:09 +1000
-Subject: [PATCH] usb: tty API change fallout
+--Signature=_Fri__18_Jul_2008_19_06_25_+1000_b75czd174OtPF0bu
+Content-Type: application/pgp-signature
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/usb/serial/usb_debug.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-diff --git a/drivers/usb/serial/usb_debug.c b/drivers/usb/serial/usb_debug.c
-index 9ca4d4d..06a272b 100644
---- a/drivers/usb/serial/usb_debug.c
-+++ b/drivers/usb/serial/usb_debug.c
-@@ -31,10 +31,10 @@ static struct usb_driver debug_driver = {
- 	.no_dynamic_id = 	1,
- };
- 
--int usb_debug_open(struct usb_serial_port *port, struct file *filp)
-+int usb_debug_open(struct tty_struct *tty, struct usb_serial_port *port, struct file *filp)
- {
- 	port->bulk_out_size = USB_DEBUG_MAX_PACKET_SIZE;
--	return usb_serial_generic_open(port, filp);
-+	return usb_serial_generic_open(tty, port, filp);
- }
- 
- static struct usb_serial_driver debug_device = {
--- 
-1.5.6.2
+iEYEARECAAYFAkiAXREACgkQjjKRsyhoI8znowCggU52Z7Xsv2E57rIJIi3SEUpk
+cK4Anj1EHZpVBL++i8PiXoBi4IfTEXIa
+=/wkT
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__18_Jul_2008_19_06_25_+1000_b75czd174OtPF0bu--
