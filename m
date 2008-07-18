@@ -1,53 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the driver-core tree
-Date: Fri, 18 Jul 2008 11:02:59 +1000
-Message-ID: <20080718110259.271e5c2d.sfr@canb.auug.org.au>
+Subject: linux-next: usb tree build failure
+Date: Fri, 18 Jul 2008 11:31:34 +1000
+Message-ID: <20080718113134.053ffd1a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__18_Jul_2008_11_02_59_+1000_P.1MJt1K9lS7MO2."
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38772 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50201 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756322AbYGRBDJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Jul 2008 21:03:09 -0400
+	id S1753517AbYGRBbh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 17 Jul 2008 21:31:37 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, Jan Glauber <jang@linux.vnet.ibm.com>
-
---Signature=_Fri__18_Jul_2008_11_02_59_+1000_P.1MJt1K9lS7MO2.
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cc: linux-next@vger.kernel.org, Jesse Barnes <jbarnes@virtuousgeek.org>
 
 Hi Greg,
 
-Today's linux-next merge of the driver-core tree got a conflict in
-drivers/s390/cio/qdio.c between commit
-779e6e1c724d30e0fd1baca78b852e41e3a23c1d ("[S390] qdio: new qdio
-driver.") from Linus' tree and commit
-00bcc6c6a1b34a65803e997a142470531b0b4213 ("s390: bus_id -> dev_name
-conversions") from the driver-core tree.
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-The former commit split the file into a set of other files (and removed
-the original). I am guessing that there may be now some more dev_name
-updates to be done.
+drivers/usb/core/driver.c: In function 'do_unbind_rebind':
+drivers/usb/core/driver.c:865: error: 'struct dev_pm_info' has no member named 'sleeping'
 
---=20
+I have been carrying the patch below and applying it after the pci tree
+merge for some time now.  I am not sure if this is the correct fix but it
+now needs to be applied after the usb tree is merged.
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__18_Jul_2008_11_02_59_+1000_P.1MJt1K9lS7MO2.
-Content-Type: application/pgp-signature
+>From 415f4b3e7d47ae060f365fe640d229f071b8d44e Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 1 Jul 2008 14:10:53 +1000
+Subject: [PATCH] pci: usb fixup 1
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/usb/core/driver.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-iEYEARECAAYFAkh/68MACgkQjjKRsyhoI8yD1QCgvSkTO6oXaCwqnSybvF7o2pwj
-xmYAoLdd/tTje/2VnL9nrkUmQz3MNSV8
-=jyhz
------END PGP SIGNATURE-----
-
---Signature=_Fri__18_Jul_2008_11_02_59_+1000_P.1MJt1K9lS7MO2.--
+diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+index 21254cb..ddb54e1 100644
+--- a/drivers/usb/core/driver.c
++++ b/drivers/usb/core/driver.c
+@@ -862,7 +862,7 @@ static void do_unbind_rebind(struct usb_device *udev, int action)
+ 	 * complete() callback.  Until that is implemented, we have to
+ 	 * use this hack.
+ 	 */
+-					intf->dev.power.sleeping = 0;
++//					intf->dev.power.sleeping = 0;
+ 
+ 					usb_rebind_intf(intf);
+ 				}
+-- 
+1.5.6
