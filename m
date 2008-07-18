@@ -1,54 +1,82 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the semaphore-removal tree
-Date: Fri, 18 Jul 2008 16:44:43 +1000
-Message-ID: <20080718164443.dc7f6117.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: pci tree build failure
+Date: Fri, 18 Jul 2008 09:53:22 +0200
+Message-ID: <20080718075322.GF6875@elte.hu>
+References: <20080717130924.edd5a501.sfr@canb.auug.org.au> <200807180057.07192.rjw@sisk.pl> <20080718160904.64541954.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__18_Jul_2008_16_44_43_+1000_qgrzWfgOqx8+3cdk"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54949 "EHLO smtps.tip.net.au"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:53014 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752804AbYGRGo7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 18 Jul 2008 02:44:59 -0400
+	id S1753211AbYGRHxs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 18 Jul 2008 03:53:48 -0400
+Content-Disposition: inline
+In-Reply-To: <20080718160904.64541954.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matthew Wilcox <matthew@wil.cx>
-Cc: linux-next@vger.kernel.org, James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, Jeremy Fitzhardinge <jeremy@goop.org>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
 
---Signature=_Fri__18_Jul_2008_16_44_43_+1000_qgrzWfgOqx8+3cdk
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Willy,
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Today's linux-next merge of the semaphore-removal tree got conflicts in
-drivers/scsi/qla2xxx/qla_attr.c, drivers/scsi/qla2xxx/qla_mid.c and
-drivers/scsi/qla2xxx/qla_os.c between various commits from Linus' tree
-and the scsi tree and commits 5469811b8b0085c0f19fd3aaad29cde59761e243
-("qla2xxx: Turn vport_sem into vport_mutex") and
-e2c6f1aa2f67c585ffcb879d32ff3e74b53faf25 ("Convert qla_os to use mutex
-instead of semaphore") from the semaphore-removal tree.
+> Hi Rafael,
+> 
+> On Fri, 18 Jul 2008 00:57:06 +0200 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
+> >
+> > The patch is correct.
+> 
+> Thanks.
 
-The scsi tree did the conversion from semaphores in this code a long time
-ago (and that conversion is now done in Linus' tree), so I just reverted
-the latter two commits.
+heh, i've done the exactly same change yesterday night, independently, 
+in tip/xen-64bit - where this interaction originates from. (see below)
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+but i zapped it and took yours instead because yours came 19 hours 
+earlier - i should have checked my mbox sooner ;)
 
---Signature=_Fri__18_Jul_2008_16_44_43_+1000_qgrzWfgOqx8+3cdk
-Content-Type: application/pgp-signature
+Jeremy, is this change fine with you too?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+( btw., could you please Cc: lkml to all patches? It's not like 
+  linux-next is irrelevant to lkml - it's highly on topic in fact - and 
+  what seems like future stuff today is an actuality tomorrow that 
+  people might want to grep for. )
 
-iEYEARECAAYFAkiAO9sACgkQjjKRsyhoI8xLiQCfQb60yKAKDSZTa517CK9wV6DH
-pNQAoKjOwfGbLuJSFXGceIqalDLLDLa/
-=IYSF
------END PGP SIGNATURE-----
+	Ingo
 
---Signature=_Fri__18_Jul_2008_16_44_43_+1000_qgrzWfgOqx8+3cdk--
+---------------------------->
+commit dc860d89be3e640b98e9e202611466cc22575166
+Author: Ingo Molnar <mingo@elte.hu>
+Date:   Thu Jul 17 23:58:52 2008 +0200
+
+    x86, xen: adopt suspend/resume API use
+    
+    the device_power_up()/device_resume() APIs got changed by:
+    1eede070a5 "Introduce new top level suspend and hibernation callbacks".
+    
+    Signed-off-by: Ingo Molnar <mingo@elte.hu>
+---
+ drivers/xen/manage.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/xen/manage.c b/drivers/xen/manage.c
+index 2bb268e..a5bc91a 100644
+--- a/drivers/xen/manage.c
++++ b/drivers/xen/manage.c
+@@ -63,7 +63,7 @@ static int xen_suspend(void *data)
+ 	gnttab_resume();
+ 	xen_mm_unpin_all();
+ 
+-	device_power_up();
++	device_power_up(PMSG_RESUME);
+ 
+ 	if (!*cancelled) {
+ 		xen_irq_resume();
+@@ -114,7 +114,7 @@ static void do_suspend(void)
+ 	} else
+ 		xenbus_suspend_cancel();
+ 
+-	device_resume();
++	device_resume(PMSG_RESUME);
+ 
+ 	/* Make sure timer events get retriggered on all CPUs */
+ 	clock_was_set();
