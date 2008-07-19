@@ -1,64 +1,70 @@
-From: Pierre Ossman <drzeus@drzeus.cx>
-Subject: Re: linux-next: Tree for July 16 (crash on quad core AMD)
-Date: Sat, 19 Jul 2008 14:07:17 +0200
-Message-ID: <20080719140717.7b296eae@mjolnir.drzeus.cx>
-References: <20080716235011.ac9643aa.sfr@canb.auug.org.au>
-	<200807170053.36661.rjw@sisk.pl>
-	<1216249292.3358.66.camel@localhost.localdomain>
-	<200807170109.30655.rjw@sisk.pl>
-	<48808EE0.2060603@gmail.com>
-	<20080719004736.626ef169@mjolnir.drzeus.cx>
-	<48813C5F.70007@gmail.com>
-	<20080719033050.552f9b49@mjolnir.drzeus.cx>
-	<48814D81.8060001@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: x86 tree build failure
+Date: Sat, 19 Jul 2008 22:11:46 +1000
+Message-ID: <20080719221146.df78ddca.sfr@canb.auug.org.au>
+References: <20080717120754.66b6c14c.sfr@canb.auug.org.au>
+	<19f34abd0807170223t7a81dbcfyb860b5e3fc32251c@mail.gmail.com>
+	<20080718201040.GC27176@elte.hu>
+	<20080718201206.GA16377@elte.hu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=PGP-SHA1; boundary="=_freyr.drzeus.cx-30400-1216469241-0001-2"
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <48814D81.8060001@gmail.com>
-Sender: linux-ide-owner@vger.kernel.org
-To: Tejun Heo <htejun@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, James Bottomley <James.Bottomley@hansenpartnership.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Kernel Testers List <kernel-testers@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>, linux-ide <linux-ide@vger.kernel.org>, Jeff Garzik <jeff@garzik.org>, Takashi Iwai <tiwai@suse.de>, tino.keitel@gmx.de
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__19_Jul_2008_22_11_46_+1000_vD5Ln64XDyOIl_wy"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34806 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753113AbYGSML4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 19 Jul 2008 08:11:56 -0400
+In-Reply-To: <20080718201206.GA16377@elte.hu>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Vegard Nossum <vegard.nossum@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
 
-This is a MIME-formatted message.  If you see this text it means that your
-E-mail software does not support MIME-formatted messages.
-
---=_freyr.drzeus.cx-30400-1216469241-0001-2
+--Signature=_Sat__19_Jul_2008_22_11_46_+1000_vD5Ln64XDyOIl_wy
 Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, 19 Jul 2008 11:12:17 +0900
-Tejun Heo <htejun@gmail.com> wrote:
+Hi Ingo,
 
+On Fri, 18 Jul 2008 22:12:06 +0200 Ingo Molnar <mingo@elte.hu> wrote:
+>
+> * Ingo Molnar <mingo@elte.hu> wrote:
 >=20
-> Oh... I see.  How about adding sg_miter_consume(@miter, @bytes)?  If the
-> function is never called, the whole chunk is assumed to be consumed.  If
-> the function is called only @bytes are consumed.
+> > > The basic problem is that I completely overlooked the fact that some=
+=20
+> > > headers use the guards of _other_ headers in #if-checks. I think we=20
+> > > should drop the consolidations completely until I have fixed the=20
+> > > script to replace the header guard names which are used in other=20
+> > > files as well. I'm sorry :-/
+> >=20
+> > ok, dropped them from the -next integration rules. Stephen, can you=20
+> > use the previous version of the x86 branch, or should i reintegrate it=
+=20
+> > now?
 >=20
+> ok, i fixed it up in tip/auto-x86-next and pushed it out.
 
-Sounds reasonable. Care to make an independent patch so that I can
-continue my PIO hacking adventures? :)
+Just for future reference:  I rarely do linux-next builds on weekends (my
+time) ...
 
-Rgds
+Thanks for fixing this up.
+
 --=20
-     -- Pierre Ossman
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-  WARNING: This correspondence is being monitored by the
-  Swedish government. Make sure your server uses encryption
-  for SMTP traffic and consider using PGP for end-to-end
-  encryption.
-
---=_freyr.drzeus.cx-30400-1216469241-0001-2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename=signature.asc
+--Signature=_Sat__19_Jul_2008_22_11_46_+1000_vD5Ln64XDyOIl_wy
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.9 (GNU/Linux)
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkiB2PgACgkQ7b8eESbyJLjB2QCg1KCslUIDEmrKFM9JVmIIIShK
-jfIAoPg5hu1NeLw/v+DiodxZY/bqK3pd
-=N4n4
+iEYEARECAAYFAkiB2gIACgkQjjKRsyhoI8yBugCgnUUPG8lDWP9egwSIyRus+qvc
+xXMAnizBrHhPeL3BZTys34lpJ8cJF50H
+=Hv3f
 -----END PGP SIGNATURE-----
 
---=_freyr.drzeus.cx-30400-1216469241-0001-2--
+--Signature=_Sat__19_Jul_2008_22_11_46_+1000_vD5Ln64XDyOIl_wy--
