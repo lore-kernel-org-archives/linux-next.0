@@ -1,19 +1,19 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Subject: Re: linux-next: Tree for July 18: warning at kernel/lockdep.c:2068 trace_hardirqs_on_caller
-Date: Sat, 19 Jul 2008 09:28:33 +0200
-Message-ID: <200807190928.33978.m.kozlowski@tuxland.pl>
+From: Mariusz Kozlowski <m.kozlowski-NWF1p15JEu3VItvQsEIGlw@public.gmane.org>
+Subject: Re: linux-next: Tree for July 18: nfs problems
+Date: Sat, 19 Jul 2008 09:39:09 +0200
+Message-ID: <200807190939.09634.m.kozlowski@tuxland.pl>
 References: <20080718195352.e562a00f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: Multipart/Mixed;
-  boundary="Boundary-00=_heZgIBzOdTUf2x0"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753828AbYGSH3L@vger.kernel.org>
-In-Reply-To: <20080718195352.e562a00f.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, kernel-testers@vger.kernel.org
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+  boundary="Boundary-00=_doZgIHMUyC4aRdj"
+Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20080718195352.e562a00f.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
---Boundary-00=_heZgIBzOdTUf2x0
+--Boundary-00=_doZgIHMUyC4aRdj
 Content-Type: text/plain;
   charset="iso-8859-2"
 Content-Transfer-Encoding: 7bit
@@ -21,66 +21,28 @@ Content-Disposition: inline
 
 Hello,
 
-	I get this on my x86_32 laptop.
+$ grep nfs /etc/fstab
+flyhigh:/home/mako/linux/lkt    /home/mako/linux/lkt    nfs     noauto,rw,user  0 0
 
-------------[ cut here ]------------
-WARNING: at /home/mako/linux/lkt/sources/linux-next/kernel/lockdep.c:2068 trace_hardirqs_on_caller+0xdc/0x128()
-Modules linked in:
-Pid: 0, comm: swapper Not tainted 2.6.26-next-20080718 #1
- [<c011d5ca>] warn_on_slowpath+0x4e/0x68
- [<c0132600>] ? init_srcu_struct+0x17/0x3b
- [<c011de86>] ? release_console_sem+0x1c2/0x1e8
- [<c0139818>] ? trace_hardirqs_off+0xb/0xd
- [<c02b95cb>] ? _spin_unlock_irqrestore+0x39/0x60
- [<c011de9a>] ? release_console_sem+0x1d6/0x1e8
- [<c01326be>] ? up+0x23/0x30
- [<c011de86>] ? release_console_sem+0x1c2/0x1e8
- [<c01326be>] ? up+0x23/0x30
- [<c011de86>] ? release_console_sem+0x1c2/0x1e8
- [<c013b83b>] ? __lock_acquire+0x365/0x1151
- [<c013b048>] trace_hardirqs_on_caller+0xdc/0x128
- [<c013b09f>] trace_hardirqs_on+0xb/0xd
- [<c016a40b>] __slab_alloc+0x329/0x61e
- [<c011665f>] ? kmemcheck_memset+0x24/0xe5
- [<c016a7a0>] kmem_cache_alloc+0xa0/0xb6
- [<c01dedb4>] ? kobject_init+0x3b/0xdd
- [<c01dedb4>] ? kobject_init+0x3b/0xdd
- [<c01dedb4>] kobject_init+0x3b/0xdd
- [<c025997f>] firmware_map_add_entry+0x2a/0x4b
- [<c03b8e0c>] firmware_map_add_early+0x32/0x56
- [<c03a3faf>] e820_reserve_resources+0x10a/0x14e
- [<c03a1965>] setup_arch+0x375/0x540
- [<c0136e81>] ? clockevents_register_notifier+0x28/0x2d
- [<c011e477>] ? printk+0x1b/0x1d
- [<c03a09df>] start_kernel+0x67/0x278
- [<c03a0304>] i386_start_kernel+0x64/0x70
- =======================
----[ end trace 4eaa2a86a8e2da22 ]---
+$ mount lkt
+$ mount | grep lkt
+flyhigh:/home/mako/linux/lkt on /home/mako/linux/lkt type nfs (rw,user=mako,addr=192.168.1.3)
 
-and that's
+$ cd lkt/  
+-bash: cd: lkt/: Permission denied
 
-/*
- * Hardirqs will be enabled:
- */
-void trace_hardirqs_on_caller(unsigned long a0)
-{
-        struct task_struct *curr = current;
-        unsigned long ip;
+# cd lkt/
+bash: cd: lkt/: Permission denied
 
-        time_hardirqs_on(CALLER_ADDR0, a0);
+$ ls -al | grep lkt
+drwxr-xr-x  6 mako mako     4096 Jun 29 10:40 lkt
 
-        if (unlikely(!debug_locks || current->lockdep_recursion))
-                return;
+This nfs share works perfectly fine with earlier kernels.
+Do you want me to bisect or is this a known issue?
 
-------> if (DEBUG_LOCKS_WARN_ON(unlikely(!early_boot_irqs_enabled))) <------
-                return;
+	Mariusz
 
-        if (unlikely(curr->hardirqs_enabled)) {
-                debug_atomic_inc(&redundant_hardirqs_on);
-                return;
-
-
---Boundary-00=_heZgIBzOdTUf2x0
+--Boundary-00=_doZgIHMUyC4aRdj
 Content-Type: text/plain;
   charset="iso-8859-2";
   name=".config"
@@ -1765,413 +1727,4 @@ CONFIG_HAS_IOMEM=y
 CONFIG_HAS_IOPORT=y
 CONFIG_HAS_DMA=y
 
---Boundary-00=_heZgIBzOdTUf2x0
-Content-Type: text/plain;
-  charset="iso-8859-2";
-  name="full-dmesg"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="full-dmesg"
-
-Linux version 2.6.26-next-20080718 (mako@flyhigh) (gcc version 4.1.2 (Gentoo 4.1.2 p1.0.2)) #1 PREEMPT Sat Jul 19 08:14:13 CEST 2008
-BIOS-provided physical RAM map:
- BIOS-e820: 0000000000000000 - 000000000009f800 (usable)
- BIOS-e820: 000000000009f800 - 00000000000a0000 (reserved)
- BIOS-e820: 00000000000dc000 - 0000000000100000 (reserved)
- BIOS-e820: 0000000000100000 - 000000001df70000 (usable)
- BIOS-e820: 000000001df70000 - 000000001df7c000 (ACPI data)
- BIOS-e820: 000000001df7c000 - 000000001df80000 (ACPI NVS)
- BIOS-e820: 000000001df80000 - 000000001e000000 (reserved)
- BIOS-e820: 000000002df80000 - 000000002e000000 (reserved)
- BIOS-e820: 00000000fff80000 - 0000000100000000 (reserved)
-last_pfn = 0x1df70 max_arch_pfn = 0x100000
-x86 PAT enabled: cpu 0, old 0x7040600070406, new 0x7010600070106
-kernel direct mapping tables up to 1df70000 @ 7000-d000
-DMI present.
-ACPI: RSDP 000F6FE0, 0014 (r0 PTLTD )
-ACPI: RSDT 1DF774D1, 002C (r1 SONY   K7        6040000  LTP        0)
-ACPI: FACP 1DF7BF64, 0074 (r1 SONY   K7        6040000 PTL     F4240)
-ACPI: DSDT 1DF774FD, 4A67 (r1  SONY  K7        6040000 MSFT  100000E)
-ACPI: FACS 1DF7CFC0, 0040
-ACPI: BOOT 1DF7BFD8, 0028 (r1 PTLTD  $SBFTBL$  6040000  LTP        1)
-ACPI: DMI detected: Sony
-Entering add_active_range(0, 0x0, 0x9f) 0 entries of 256 used
-Entering add_active_range(0, 0x100, 0x1df70) 1 entries of 256 used
-479MB LOWMEM available.
-  mapped low ram: 0 - 1df70000
-  low ram: 00000000 - 1df70000
-  bootmap 00001000 - 00004bf0
-(6 early reservations) ==> bootmem
-  #0 [0000000000 - 0000001000]   BIOS data page ==> [0000000000 - 0000001000]
-  #1 [0000100000 - 00006c4430]    TEXT DATA BSS ==> [0000100000 - 00006c4430]
-  #2 [00006c5000 - 00006c8000]    INIT_PG_TABLE ==> [00006c5000 - 00006c8000]
-  #3 [000009f800 - 0000100000]    BIOS reserved ==> [000009f800 - 0000100000]
-  #4 [0000007000 - 0000009000]          PGTABLE ==> [0000007000 - 0000009000]
-  #5 [0000001000 - 0000005000]          BOOTMAP ==> [0000001000 - 0000005000]
-Scan SMP from c0000000 for 1024 bytes.
-Scan SMP from c009fc00 for 1024 bytes.
-Scan SMP from c00f0000 for 65536 bytes.
-Scan SMP from c009f800 for 1024 bytes.
-Zone PFN ranges:
-  DMA      0x00000000 -> 0x00001000
-  Normal   0x00001000 -> 0x0001df70
-Movable zone start PFN for each node
-early_node_map[2] active PFN ranges
-    0: 0x00000000 -> 0x0000009f
-    0: 0x00000100 -> 0x0001df70
-On node 0 totalpages: 122639
-free_area_init_node: node 0, pgdat c0384f80, node_mem_map c1000000
-  DMA zone: 36 pages used for memmap
-  DMA zone: 0 pages reserved
-  DMA zone: 3963 pages, LIFO batch:0
-  Normal zone: 1043 pages used for memmap
-  Normal zone: 117597 pages, LIFO batch:31
-  Movable zone: 0 pages used for memmap
-ACPI: PM-Timer IO Port: 0x8008
-Local APIC disabled by BIOS -- reenabling.
-Found and enabled local APIC!
-mapped APIC to ffffb000 (fee00000)
-------------[ cut here ]------------
-WARNING: at /home/mako/linux/lkt/sources/linux-next/kernel/lockdep.c:2068 trace_hardirqs_on_caller+0xdc/0x128()
-Modules linked in:
-Pid: 0, comm: swapper Not tainted 2.6.26-next-20080718 #1
- [<c011d5ca>] warn_on_slowpath+0x4e/0x68
- [<c0132600>] ? init_srcu_struct+0x17/0x3b
- [<c011de86>] ? release_console_sem+0x1c2/0x1e8
- [<c0139818>] ? trace_hardirqs_off+0xb/0xd
- [<c02b95cb>] ? _spin_unlock_irqrestore+0x39/0x60
- [<c011de9a>] ? release_console_sem+0x1d6/0x1e8
- [<c01326be>] ? up+0x23/0x30
- [<c011de86>] ? release_console_sem+0x1c2/0x1e8
- [<c01326be>] ? up+0x23/0x30
- [<c011de86>] ? release_console_sem+0x1c2/0x1e8
- [<c013b83b>] ? __lock_acquire+0x365/0x1151
- [<c013b048>] trace_hardirqs_on_caller+0xdc/0x128
- [<c013b09f>] trace_hardirqs_on+0xb/0xd
- [<c016a40b>] __slab_alloc+0x329/0x61e
- [<c011665f>] ? kmemcheck_memset+0x24/0xe5
- [<c016a7a0>] kmem_cache_alloc+0xa0/0xb6
- [<c01dedb4>] ? kobject_init+0x3b/0xdd
- [<c01dedb4>] ? kobject_init+0x3b/0xdd
- [<c01dedb4>] kobject_init+0x3b/0xdd
- [<c025997f>] firmware_map_add_entry+0x2a/0x4b
- [<c03b8e0c>] firmware_map_add_early+0x32/0x56
- [<c03a3faf>] e820_reserve_resources+0x10a/0x14e
- [<c03a1965>] setup_arch+0x375/0x540
- [<c0136e81>] ? clockevents_register_notifier+0x28/0x2d
- [<c011e477>] ? printk+0x1b/0x1d
- [<c03a09df>] start_kernel+0x67/0x278
- [<c03a0304>] i386_start_kernel+0x64/0x70
- =======================
----[ end trace 4eaa2a86a8e2da22 ]---
-PM: Registered nosave memory: 000000000009f000 - 00000000000a0000
-PM: Registered nosave memory: 00000000000a0000 - 00000000000dc000
-PM: Registered nosave memory: 00000000000dc000 - 0000000000100000
-Allocating PCI resources starting at 30000000 (gap: 2e000000:d1f80000)
-Built 1 zonelists in Zone order, mobility grouping on.  Total pages: 121560
-Kernel command line: root=/dev/hda3 vga=0 video=vesafb:mtrr lapic pci=routeirq rootflags=data=writeback
-Enabling fast FPU save and restore... done.
-Enabling unmasked SIMD FPU exception support... done.
-Initializing CPU#0
-Preemptible RCU implementation.
-PID hash table entries: 2048 (order: 11, 8192 bytes)
-TSC calibrated against PM_TIMER
-Detected 2392.442 MHz processor.
-Console: colour VGA+ 80x25
-console [tty0] enabled
-Lock dependency validator: Copyright (c) 2006 Red Hat, Inc., Ingo Molnar
-... MAX_LOCKDEP_SUBCLASSES:    8
-... MAX_LOCK_DEPTH:          48
-... MAX_LOCKDEP_KEYS:        2048
-... CLASSHASH_SIZE:           1024
-... MAX_LOCKDEP_ENTRIES:     8192
-... MAX_LOCKDEP_CHAINS:      16384
-... CHAINHASH_SIZE:          8192
- memory used by lock dependency info: 1056 kB
- per task-struct memory footprint: 1920 bytes
-Dentry cache hash table entries: 65536 (order: 6, 262144 bytes)
-Inode-cache hash table entries: 32768 (order: 5, 131072 bytes)
-Memory: 479676k/490944k available (1769k kernel code, 10752k reserved, 903k data, 288k init, 0k highmem)
-virtual kernel memory layout:
-    fixmap  : 0xfffb9000 - 0xfffff000   ( 280 kB)
-    vmalloc : 0xde800000 - 0xfffb7000   ( 535 MB)
-    lowmem  : 0xc0000000 - 0xddf70000   ( 479 MB)
-      .init : 0xc03a0000 - 0xc03e8000   ( 288 kB)
-      .data : 0xc02ba5ef - 0xc039c5b0   ( 903 kB)
-      .text : 0xc0100000 - 0xc02ba5ef   (1769 kB)
-Checking if this processor honours the WP bit even in supervisor mode...Ok.
-CPA: page pool initialized 1 of 1 pages preallocated
-SLUB: Genslabs=12, HWalign=128, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
-Calibrating delay loop (skipped), value calculated using timer frequency.. <6>4784.88 BogoMIPS (lpj=9569768)
-Mount-cache hash table entries: 512
-CPU: Trace cache: 12K uops, L1 D cache: 8K
-CPU: L2 cache: 512K
-Intel machine check architecture supported.
-Intel machine check reporting enabled on CPU#0.
-CPU0: Intel P4/Xeon Extended MCE MSRs (12) available
-CPU0: Thermal monitoring enabled
-CPU: Intel(R) Pentium(R) 4 CPU 2.40GHz stepping 09
-Checking 'hlt' instruction... OK.
-Freeing SMP alternatives: 0k freed
-ACPI: Core revision 20080609
-ACPI: setting ELCR to 0200 (from 0c00)
-kmemcheck: "Bugs, beware!"
-net_namespace: 296 bytes
-NET: Registered protocol family 16
-EISA bus registered
-ACPI: bus type pci registered
-PCI: PCI BIOS revision 2.10 entry at 0xfd8a0, last bus=1
-PCI: Using configuration type 1 for base access
-ACPI: EC: Look up EC in DSDT
-ACPI: Interpreter enabled
-ACPI: (supports S0 S3 S4 S5)
-ACPI: Using PIC for interrupt routing
-ACPI: EC: GPE = 0x18, I/O: command/status = 0x66, data = 0x62
-ACPI: EC: driver started in poll mode
-ACPI: PCI Root Bridge [PCI0] (0000:00)
-pci 0000:00:03.0: PME# supported from D3hot D3cold
-pci 0000:00:03.0: PME# disabled
-pci 0000:00:04.0: supports D1
-pci 0000:00:04.0: supports D2
-pci 0000:00:04.0: PME# supported from D2 D3hot D3cold
-pci 0000:00:04.0: PME# disabled
-pci 0000:00:06.0: quirk: region 8000-803f claimed by ali7101 ACPI
-pci 0000:00:06.0: quirk: region 8040-805f claimed by ali7101 SMB
-pci 0000:00:0a.0: supports D1
-pci 0000:00:0a.0: supports D2
-pci 0000:00:0a.0: PME# supported from D0 D1 D2 D3hot D3cold
-pci 0000:00:0a.0: PME# disabled
-pci 0000:00:0a.1: supports D1
-pci 0000:00:0a.1: supports D2
-pci 0000:00:0a.1: PME# supported from D0 D1 D2 D3hot D3cold
-pci 0000:00:0a.1: PME# disabled
-pci 0000:00:0a.2: PME# supported from D0 D3hot D3cold
-pci 0000:00:0a.2: PME# disabled
-pci 0000:00:0c.0: PME# supported from D0 D3hot D3cold
-pci 0000:00:0c.0: PME# disabled
-pci 0000:00:0c.1: PME# supported from D0 D3hot D3cold
-pci 0000:00:0c.1: PME# disabled
-pci 0000:00:0c.2: PME# supported from D0 D3hot D3cold
-pci 0000:00:0c.2: PME# disabled
-pci 0000:00:12.0: supports D1
-pci 0000:00:12.0: supports D2
-pci 0000:00:12.0: PME# supported from D1 D2 D3hot D3cold
-pci 0000:00:12.0: PME# disabled
-pci 0000:01:05.0: supports D1
-pci 0000:01:05.0: supports D2
-bus 00 -> node 0
-ACPI: PCI Interrupt Routing Table [\_SB_.PCI0._PRT]
-ACPI: PCI Interrupt Routing Table [\_SB_.PCI0.PPB_._PRT]
-ACPI: PCI Interrupt Link [LNK0] (IRQs 3 4 5 7 10 11) *0, disabled.
-ACPI: PCI Interrupt Link [LNK1] (IRQs 3 4 5 7 10 *11)
-ACPI: PCI Interrupt Link [LNK2] (IRQs 3 4 5 7 10 *11)
-ACPI: PCI Interrupt Link [LNK3] (IRQs 3 4 5 7 10 11) *0, disabled.
-ACPI: PCI Interrupt Link [LNK4] (IRQs 3 4 5 7 *10 11)
-ACPI: PCI Interrupt Link [LNK5] (IRQs 10) *11
-ACPI: PCI Interrupt Link [LNK6] (IRQs 3 4 5 7 10 *11)
-ACPI: PCI Interrupt Link [LNK7] (IRQs 3 4 5 7 10 *11)
-ACPI: PCI Interrupt Link [LNK8] (IRQs 3 4 5 7 10 11) *0, disabled.
-Linux Plug and Play Support v0.97 (c) Adam Belay
-pnp: PnP ACPI init
-ACPI: bus type pnp registered
-pnp: PnP ACPI: found 12 devices
-ACPI: ACPI bus type pnp unregistered
-PCI: Using ACPI for IRQ routing
-PCI: Routing PCI interrupts for all devices because "pci=routeirq" specified
-ACPI: PCI Interrupt Link [LNK6] enabled at IRQ 11
-PCI: setting IRQ 11 as level-triggered
-pci 0000:00:03.0: PCI INT A -> Link[LNK6] -> GSI 11 (level, low) -> IRQ 11
-ACPI: PCI Interrupt Link [LNK7] enabled at IRQ 11
-pci 0000:00:04.0: PCI INT A -> Link[LNK7] -> GSI 11 (level, low) -> IRQ 11
-ACPI: PCI Interrupt Link [LNK2] enabled at IRQ 11
-pci 0000:00:0a.0: PCI INT A -> Link[LNK2] -> GSI 11 (level, low) -> IRQ 11
-ACPI: PCI Interrupt Link [LNK4] enabled at IRQ 10
-PCI: setting IRQ 10 as level-triggered
-pci 0000:00:0a.1: PCI INT B -> Link[LNK4] -> GSI 10 (level, low) -> IRQ 10
-ACPI: PCI Interrupt Link [LNK5] enabled at IRQ 10
-pci 0000:00:0a.2: PCI INT C -> Link[LNK5] -> GSI 10 (level, low) -> IRQ 10
-pci 0000:00:0c.0: PCI INT A -> Link[LNK2] -> GSI 11 (level, low) -> IRQ 11
-pci 0000:00:0c.1: PCI INT B -> Link[LNK4] -> GSI 10 (level, low) -> IRQ 10
-pci 0000:00:0c.2: PCI INT C -> Link[LNK5] -> GSI 10 (level, low) -> IRQ 10
-pci 0000:00:0f.0: can't derive routing for PCI INT A
-ACPI: PCI Interrupt Link [LNK1] enabled at IRQ 11
-pci 0000:00:12.0: PCI INT A -> Link[LNK1] -> GSI 11 (level, low) -> IRQ 11
-ACPI: PCI Interrupt Link [LNK0] enabled at IRQ 10
-pci 0000:01:05.0: PCI INT A -> Link[LNK0] -> GSI 10 (level, low) -> IRQ 10
-system 00:05: ioport range 0x40b-0x40b has been reserved
-system 00:05: ioport range 0x480-0x48f has been reserved
-system 00:05: ioport range 0x4d0-0x4d1 has been reserved
-system 00:05: ioport range 0x4d6-0x4d6 has been reserved
-system 00:05: ioport range 0x8000-0x807f could not be reserved
-system 00:05: ioport range 0xfe00-0xfe01 has been reserved
-system 00:05: ioport range 0xfe10-0xfe11 has been reserved
-system 00:06: iomem range 0x0-0x9ffff could not be reserved
-system 00:06: iomem range 0xdc000-0xdffff could not be reserved
-system 00:06: iomem range 0xe0000-0xfffff could not be reserved
-system 00:06: iomem range 0x100000-0x1dffffff could not be reserved
-system 00:06: iomem range 0xfff80000-0xffffffff could not be reserved
-system 00:06: iomem range 0xf0800000-0xf0800fff has been reserved
-pci 0000:00:01.0: PCI bridge, secondary bus 0000:01
-pci 0000:00:01.0:   IO window: 0xa000-0xafff
-pci 0000:00:01.0:   MEM window: 0xf0500000-0xf05fffff
-pci 0000:00:01.0:   PREFETCH window: 0x000000f8000000-0x000000fbffffff
-pci 0000:00:0a.0: CardBus bridge, secondary bus 0000:02
-pci 0000:00:0a.0:   IO window: 0x001000-0x0010ff
-pci 0000:00:0a.0:   IO window: 0x001400-0x0014ff
-pci 0000:00:0a.0:   PREFETCH window: 0x30000000-0x33ffffff
-pci 0000:00:0a.0:   MEM window: 0x34000000-0x37ffffff
-pci 0000:00:0a.1: CardBus bridge, secondary bus 0000:06
-pci 0000:00:0a.1:   IO window: 0x001800-0x0018ff
-pci 0000:00:0a.1:   IO window: 0x001c00-0x001cff
-pci 0000:00:0a.1:   PREFETCH window: 0x38000000-0x3bffffff
-pci 0000:00:0a.1:   MEM window: 0x3c000000-0x3fffffff
-pci 0000:00:0a.0: PCI INT A -> Link[LNK2] -> GSI 11 (level, low) -> IRQ 11
-pci 0000:00:0a.1: PCI INT B -> Link[LNK4] -> GSI 10 (level, low) -> IRQ 10
-NET: Registered protocol family 2
-IP route cache hash table entries: 4096 (order: 2, 16384 bytes)
-TCP established hash table entries: 16384 (order: 5, 131072 bytes)
-TCP bind hash table entries: 16384 (order: 7, 524288 bytes)
-TCP: Hash tables configured (established 16384 bind 16384)
-TCP reno registered
-NET: Registered protocol family 1
-Simple Boot Flag at 0x35 set to 0x1
-Machine check exception polling timer started.
-msgmni has been set to 937
-io scheduler noop registered
-io scheduler cfq registered (default)
-pci 0000:00:07.0: Activating ISA DMA hang workarounds
-pci 0000:01:05.0: Boot video device
-ACPI: AC Adapter [ACAD] (on-line)
-ACPI: EC: GPE storm detected, disabling EC GPE
-Switched to high resolution mode on CPU 0
-ACPI: Battery Slot [BAT1] (battery present)
-input: Power Button (FF) as /class/input/input0
-ACPI: Power Button (FF) [PWRF]
-input: Power Button (CM) as /class/input/input1
-ACPI: Power Button (CM) [PBTN]
-input: Lid Switch as /class/input/input2
-ACPI: Lid Switch [LID]
-ACPI: CPU0 (power states: C1[C1] C2[C2])
-processor ACPI0007:00: registered as cooling_device0
-ACPI: Processor [CPU0] (supports 8 throttling states)
-thermal LNXTHERM:01: registered as thermal_zone0
-ACPI: Thermal Zone [TZ01] (49 C)
-console [netcon0] enabled
-netconsole: network logging started
-Uniform Multi-Platform E-IDE driver
-alim15x3 0000:00:0f.0: IDE controller (0x10b9:0x5229 rev 0xc4)
-ALI15x3_IDE 0000:00:0f.0: can't derive routing for PCI INT A
-alim15x3 0000:00:0f.0: not 100% native mode: will probe irqs later
-    ide0: BM-DMA at 0x80c0-0x80c7
-    ide1: BM-DMA at 0x80c8-0x80cf
-Probing IDE interface ide0...
-hda: HITACHI_DK23EA-30, ATA DISK drive
-hda: host max PIO5 wanted PIO255(auto-tune) selected PIO4
-hda: UDMA/100 mode selected
-Probing IDE interface ide1...
-hdc: QSI CD-RW/DVD-ROM SBW-241, ATAPI CD/DVD-ROM drive
-hdc: host max PIO5 wanted PIO255(auto-tune) selected PIO4
-hdc: UDMA/33 mode selected
-ide0 at 0x1f0-0x1f7,0x3f6 on irq 14
-ide1 at 0x170-0x177,0x376 on irq 15
-hda: max request size: 128KiB
-hda: 58605120 sectors (30005 MB) w/2048KiB Cache, CHS=58140/16/63
-hda: cache flushes supported
- hda: hda1 hda2 hda3 hda4
-PNP: PS/2 Controller [PNP0303:PS2K,PNP0f13:PS2M] at 0x60,0x64 irq 1,12
-serio: i8042 KBD port at 0x60,0x64 irq 1
-serio: i8042 AUX port at 0x60,0x64 irq 12
-mice: PS/2 mouse device common for all mice
-EISA: Probing bus 0 at eisa.0
-cpuidle: using governor ladder
-cpuidle: using governor menu
-TCP cubic registered
-NET: Registered protocol family 17
-Using IPI Shortcut mode
-Marking TSC unstable due to TSC halts in idle
-input: AT Translated Set 2 keyboard as /class/input/input3
-kjournald starting.  Commit interval 5 seconds
-EXT3-fs: mounted filesystem with writeback data mode.
-VFS: Mounted root (ext3 filesystem) readonly.
-Freeing unused kernel memory: 288k freed
-input: PC Speaker as /class/input/input4
-Floppy drive(s): fd0 is 1.44M
-FDC 0 is a post-1991 82077
-Real Time Clock Driver v1.12ac
-Linux agpgart interface v0.103
-agpgart: Detected Ati IGP345M chipset
-agpgart: AGP aperture is 64M @ 0xf4000000
-sony-laptop: Sony Notebook Control Driver v0.6.
-input: Sony Vaio Keys as /class/input/input5
-input: Sony Vaio Jogdial as /class/input/input6
-input: PS/2 Mouse as /class/input/input7
-input: AlpsPS/2 ALPS GlidePoint as /class/input/input8
-hdc: ATAPI 24X DVD-ROM CD-R/RW drive, 2048kB Cache
-Uniform CD-ROM driver Revision: 3.20
-8139too Fast Ethernet driver 0.9.28
-8139too 0000:00:12.0: PCI INT A -> Link[LNK1] -> GSI 11 (level, low) -> IRQ 11
-eth0: RealTek RTL8139 at 0xde862c00, 08:00:46:a8:48:d3, IRQ 11
-eth0:  Identified 8139 chip type 'RTL-8100B/8139D'
-Yenta: CardBus bridge found at 0000:00:0a.0 [104d:8158]
-Yenta: ISA IRQ mask 0x04a8, PCI irq 11
-Socket status: 30000006
-Yenta: CardBus bridge found at 0000:00:0a.1 [104d:8158]
-Yenta: ISA IRQ mask 0x00a8, PCI irq 10
-Socket status: 30000006
-ALI 5451 0000:00:04.0: power state changed by ACPI to D0
-ALI 5451 0000:00:04.0: PCI INT A -> Link[LNK7] -> GSI 11 (level, low) -> IRQ 11
-usbcore: registered new interface driver usbfs
-usbcore: registered new interface driver hub
-usbcore: registered new device driver usb
-USB Universal Host Controller Interface driver v3.0
-AC'97 1 does not respond - RESET
-AC'97 1 access is not valid [0xffffffff], removing mixer.
-ali mixer 1 creating error.
-uhci_hcd 0000:00:0c.0: PCI INT A -> Link[LNK2] -> GSI 11 (level, low) -> IRQ 11
-uhci_hcd 0000:00:0c.0: UHCI Host Controller
-uhci_hcd 0000:00:0c.0: new USB bus registered, assigned bus number 1
-uhci_hcd 0000:00:0c.0: irq 11, io base 0x00008080
-usb usb1: configuration #1 chosen from 1 choice
-hub 1-0:1.0: USB hub found
-hub 1-0:1.0: 2 ports detected
-ehci_hcd 0000:00:0c.2: PCI INT C -> Link[LNK5] -> GSI 10 (level, low) -> IRQ 10
-ehci_hcd 0000:00:0c.2: EHCI Host Controller
-ehci_hcd 0000:00:0c.2: new USB bus registered, assigned bus number 2
-ehci_hcd 0000:00:0c.2: irq 10, io mem 0xf0404800
-ehci_hcd 0000:00:0c.2: USB 2.0 started, EHCI 0.95, driver 10 Dec 2004
-usb usb2: configuration #1 chosen from 1 choice
-hub 2-0:1.0: USB hub found
-hub 2-0:1.0: 4 ports detected
-uhci_hcd 0000:00:0c.1: PCI INT B -> Link[LNK4] -> GSI 10 (level, low) -> IRQ 10
-uhci_hcd 0000:00:0c.1: UHCI Host Controller
-uhci_hcd 0000:00:0c.1: new USB bus registered, assigned bus number 3
-uhci_hcd 0000:00:0c.1: irq 10, io base 0x000080a0
-usb usb3: configuration #1 chosen from 1 choice
-hub 3-0:1.0: USB hub found
-hub 3-0:1.0: 2 ports detected
-EXT3 FS on hda3, internal journal
-eth0: link up, 100Mbps, full-duplex, lpa 0x41E1
-hda: UDMA/100 mode selected
-hdc: UDMA/33 mode selected
-RPC: Registered udp transport module.
-RPC: Registered tcp transport module.
-Installing knfsd (copyright (C) 1996 okir@monad.swb.de).
-[drm] Initialized drm 1.1.0 20060810
-pci 0000:01:05.0: PCI INT A -> Link[LNK0] -> GSI 10 (level, low) -> IRQ 10
-[drm] Initialized radeon 1.29.0 20080528 on minor 0
-agpgart: Found an AGP 2.0 compliant device at 0000:00:00.0.
-agpgart: Putting AGP V2 device at 0000:00:00.0 into 4x mode
-agpgart: Putting AGP V2 device at 0000:01:05.0 into 4x mode
-[drm] Setting GART location based on old memory map
-[drm] Loading R100 Microcode
-[drm] writeback test succeeded in 1 usecs
-agpgart: Found an AGP 2.0 compliant device at 0000:00:00.0.
-agpgart: Putting AGP V2 device at 0000:00:00.0 into 4x mode
-agpgart: Putting AGP V2 device at 0000:01:05.0 into 4x mode
-[drm] Loading R100 Microcode
-agpgart: Found an AGP 2.0 compliant device at 0000:00:00.0.
-agpgart: Putting AGP V2 device at 0000:00:00.0 into 4x mode
-agpgart: Putting AGP V2 device at 0000:01:05.0 into 4x mode
-[drm] Loading R100 Microcode
-
---Boundary-00=_heZgIBzOdTUf2x0--
+--Boundary-00=_doZgIHMUyC4aRdj--
