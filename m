@@ -1,56 +1,36 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: [PATCH] fixup for vfs-next vs. net-next
-Date: Sat, 19 Jul 2008 01:01:17 +0100
-Message-ID: <20080719000117.GS28946@ZenIV.linux.org.uk>
+From: Tejun Heo <htejun@gmail.com>
+Subject: Re: linux-next: Tree for July 16 (crash on quad core AMD)
+Date: Sat, 19 Jul 2008 09:59:11 +0900
+Message-ID: <48813C5F.70007@gmail.com>
+References: <20080716235011.ac9643aa.sfr@canb.auug.org.au>	<200807170053.36661.rjw@sisk.pl>	<1216249292.3358.66.camel@localhost.localdomain>	<200807170109.30655.rjw@sisk.pl>	<48808EE0.2060603@gmail.com> <20080719004736.626ef169@mjolnir.drzeus.cx>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:39894 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753493AbYGSABU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Jul 2008 20:01:20 -0400
-Content-Disposition: inline
+Received: from ti-out-0910.google.com ([209.85.142.185]:4574 "EHLO
+	ti-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754265AbYGSA7W (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Jul 2008 20:59:22 -0400
+Received: by ti-out-0910.google.com with SMTP id b6so401460tic.23
+        for <linux-next@vger.kernel.org>; Fri, 18 Jul 2008 17:59:20 -0700 (PDT)
+In-Reply-To: <20080719004736.626ef169@mjolnir.drzeus.cx>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>
+To: Pierre Ossman <drzeus@drzeus.cx>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, James Bottomley <James.Bottomley@hansenpartnership.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Kernel Testers List <kernel-testers@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>, linux-ide <linux-ide@vger.kernel.org>, Jeff Garzik <jeff@garzik.org>, Takashi Iwai <tiwai@suse.de>, tino.keitel@gmx.de
 
-	VServer folks had played with sysctls again; needs to be covered
-in sysctl fixes...
+Pierre Ossman wrote:
+> I just have one objection to your version, and that is that it cannot
+> be used to nibble away at the sg list. The _next() call jumps an entire
+> page, whereas you sometimes need to consume that page in two different
+> sweeps. This could be handled by some external buffer that keeps the
+> remainder of the page, but the point of these functions was to keep
+> things simple for the callers.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
-diff --git a/net/sysctl_net.c b/net/sysctl_net.c
-index b91a5de..2240a9e 100644
---- a/net/sysctl_net.c
-+++ b/net/sysctl_net.c
-@@ -44,13 +44,6 @@ static struct ctl_table_root net_sysctl_root = {
- 	.lookup = net_ctl_header_lookup,
- };
- 
--static LIST_HEAD(net_sysctl_ro_tables);
--static struct list_head *net_ctl_ro_header_lookup(struct ctl_table_root *root,
--		struct nsproxy *namespaces)
--{
--	return &net_sysctl_ro_tables;
--}
--
- static int net_ctl_ro_header_perms(struct ctl_table_root *root,
- 		struct nsproxy *namespaces, struct ctl_table *table)
- {
-@@ -61,7 +54,6 @@ static int net_ctl_ro_header_perms(struct ctl_table_root *root,
- }
- 
- static struct ctl_table_root net_sysctl_ro_root = {
--	.lookup = net_ctl_ro_header_lookup,
- 	.permissions = net_ctl_ro_header_perms,
- };
- 
-@@ -89,6 +81,7 @@ static __init int sysctl_init(void)
- 	if (ret)
- 		goto out;
- 	register_sysctl_root(&net_sysctl_root);
-+	setup_sysctl_set(&net_sysctl_ro_root.default_set, NULL, NULL);
- 	register_sysctl_root(&net_sysctl_ro_root);
- out:
- 	return ret;
+Well, I don't know how often such usages would be necessary.  If it's a
+very common ops, you can add a param to the next function but frankly I
+think it's better to build a inside control structure for that.  There's
+no need for external buffer, just an inner loop is sufficient.
+
+-- 
+tejun
