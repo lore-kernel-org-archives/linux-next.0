@@ -1,76 +1,59 @@
-From: Pekka Enberg <penberg-bbCR+/B0CizivPeTLB3BmA@public.gmane.org>
-Subject: Re: linux-next: Tree for July 18: warning at kernel/lockdep.c:2068
-	trace_hardirqs_on_caller
-Date: Sat, 19 Jul 2008 15:56:29 +0300
-Message-ID: <1216472189.6762.166.camel@penberg-laptop>
+From: "Vegard Nossum" <vegard.nossum@gmail.com>
+Subject: Re: linux-next: Tree for July 18: warning at kernel/lockdep.c:2068 trace_hardirqs_on_caller
+Date: Sat, 19 Jul 2008 14:59:12 +0200
+Message-ID: <19f34abd0807190559y2fe5ebf9h7095793e82de3122@mail.gmail.com>
 References: <20080718195352.e562a00f.sfr@canb.auug.org.au>
 	 <200807190928.33978.m.kozlowski@tuxland.pl>
 	 <19f34abd0807190255x304173d4wf2bfabb2d5bce511@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <19f34abd0807190255x304173d4wf2bfabb2d5bce511-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vegard Nossum <vegard.nossum-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mariusz Kozlowski <m.kozlowski-NWF1p15JEu3VItvQsEIGlw@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, cl-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rv-out-0506.google.com ([209.85.198.233]:6026 "EHLO
+	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754599AbYGSM7N (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 19 Jul 2008 08:59:13 -0400
+Received: by rv-out-0506.google.com with SMTP id k40so682365rvb.1
+        for <linux-next@vger.kernel.org>; Sat, 19 Jul 2008 05:59:13 -0700 (PDT)
+In-Reply-To: <19f34abd0807190255x304173d4wf2bfabb2d5bce511@mail.gmail.com>
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>, Dave Hansen <haveblue@us.ibm.com>, Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, kernel-testers@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Pekka Enberg <penberg@cs.helsinki.fi>
 
-On Sat, 2008-07-19 at 11:55 +0200, Vegard Nossum wrote:
-> On Sat, Jul 19, 2008 at 9:28 AM, Mariusz Kozlowski
-> <m.kozlowski-NWF1p15JEu3VItvQsEIGlw@public.gmane.org> wrote:
-> > Hello,
-> >
-> >        I get this on my x86_32 laptop.
-> >
-> > ------------[ cut here ]------------
-> > WARNING: at /home/mako/linux/lkt/sources/linux-next/kernel/lockdep.c:2068 trace_hardirqs_on_caller+0xdc/0x128()
-> > Modules linked in:
-> > Pid: 0, comm: swapper Not tainted 2.6.26-next-20080718 #1
-> >  [<c011d5ca>] warn_on_slowpath+0x4e/0x68
-> >  [<c0132600>] ? init_srcu_struct+0x17/0x3b
-> >  [<c011de86>] ? release_console_sem+0x1c2/0x1e8
-> >  [<c0139818>] ? trace_hardirqs_off+0xb/0xd
-> >  [<c02b95cb>] ? _spin_unlock_irqrestore+0x39/0x60
-> >  [<c011de9a>] ? release_console_sem+0x1d6/0x1e8
-> >  [<c01326be>] ? up+0x23/0x30
-> >  [<c011de86>] ? release_console_sem+0x1c2/0x1e8
-> >  [<c01326be>] ? up+0x23/0x30
-> >  [<c011de86>] ? release_console_sem+0x1c2/0x1e8
-> >  [<c013b83b>] ? __lock_acquire+0x365/0x1151
-> >  [<c013b048>] trace_hardirqs_on_caller+0xdc/0x128
-> >  [<c013b09f>] trace_hardirqs_on+0xb/0xd
-> >  [<c016a40b>] __slab_alloc+0x329/0x61e
-> >  [<c011665f>] ? kmemcheck_memset+0x24/0xe5
-> >  [<c016a7a0>] kmem_cache_alloc+0xa0/0xb6
-> >  [<c01dedb4>] ? kobject_init+0x3b/0xdd
-> >  [<c01dedb4>] ? kobject_init+0x3b/0xdd
-> >  [<c01dedb4>] kobject_init+0x3b/0xdd
-> >  [<c025997f>] firmware_map_add_entry+0x2a/0x4b
-> >  [<c03b8e0c>] firmware_map_add_early+0x32/0x56
-> >  [<c03a3faf>] e820_reserve_resources+0x10a/0x14e
-> >  [<c03a1965>] setup_arch+0x375/0x540
-> >  [<c0136e81>] ? clockevents_register_notifier+0x28/0x2d
-> >  [<c011e477>] ? printk+0x1b/0x1d
-> >  [<c03a09df>] start_kernel+0x67/0x278
-> >  [<c03a0304>] i386_start_kernel+0x64/0x70
-> >  =======================
-> > ---[ end trace 4eaa2a86a8e2da22 ]---
-> >
-> 
+On Sat, Jul 19, 2008 at 11:55 AM, Vegard Nossum <vegard.nossum@gmail.com> wrote:
 > What I don't get here is how SLUB can be used this early in the boot
 > process. Notice that this is still miles away from the
-> 
->     SLUB: Genslabs=12, HWalign=128, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
-> 
+>
+>    SLUB: Genslabs=12, HWalign=128, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+>
 > line, which comes much later. And that kobject_init() _is_ calling
 > kzalloc() via verify_dynamic_kobject_allocation(). Isn't this an
 > error?
-> 
+>
 > (Unfortunately, my "git log" doesn't turn up any recent changes for
 > any of the affected code paths here.)
 
-Indeed, looks like a bug in kobject_init(). You need to wait for
-kmem_cache_init() to be run before using kzalloc().
+Ehe... and this is the reason why: The code was added by this patch:
 
-		Pekka
+commit 0e3638d1e04040121af00195f7e4628078246489
+Author: Dave Hansen <haveblue@us.ibm.com>
+Date:   Thu Mar 16 17:30:16 2006 -0800
+
+    warn when statically-allocated kobjects are used
+
+..which only exists in -next. Is that just a truly ancient patch, or
+did somebody forget to adjust their clock?
+
+(Stephen: Maybe this has been answered before, but what's the best way
+to figure out where it came from?)
+
+
+Vegard
+
+-- 
+"The animistic metaphor of the bug that maliciously sneaked in while
+the programmer was not looking is intellectually dishonest as it
+disguises that the error is the programmer's own creation."
+	-- E. W. Dijkstra, EWD1036
