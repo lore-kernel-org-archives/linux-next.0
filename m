@@ -1,40 +1,61 @@
-From: Tejun Heo <htejun-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: linux-next: Tree for July 16 (crash on quad core AMD)
-Date: Sat, 19 Jul 2008 11:12:17 +0900
-Message-ID: <48814D81.8060001@gmail.com>
-References: <20080716235011.ac9643aa.sfr@canb.auug.org.au>	<200807170053.36661.rjw@sisk.pl>	<1216249292.3358.66.camel@localhost.localdomain>	<200807170109.30655.rjw@sisk.pl>	<48808EE0.2060603@gmail.com>	<20080719004736.626ef169@mjolnir.drzeus.cx>	<48813C5F.70007@gmail.com> <20080719033050.552f9b49@mjolnir.drzeus.cx>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: Tree for July 17: early crash on x86-64
+Date: Sat, 19 Jul 2008 04:52:31 +0100
+Message-ID: <20080719035231.GU28946@ZenIV.linux.org.uk>
+References: <20080718012842.690b8346.sfr@canb.auug.org.au> <200807180106.08328.rjw@sisk.pl> <a4423d670807180652y352e66lfe04d2b33d2ed176@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20080719033050.552f9b49-OhHrUh4vRMSnewYJFaQfwJ5kstrrjoWp@public.gmane.org>
-Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pierre Ossman <drzeus-p3sGCRWkH8CeZLLa646FqQ@public.gmane.org>
-Cc: "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, James Bottomley <James.Bottomley-JuX6DAaQMKPCXq6kfMZ53/egYHeGw8Jk@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Kernel Testers List <kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, scsi <linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jens Axboe <jens.axboe-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-ide <linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jeff Garzik <jeff-o2qLIJkoznsdnm+yROfE0A@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, tino.keitel-Mmb7MZpHnFY@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from zeniv.linux.org.uk ([195.92.253.2]:51573 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750704AbYGSDwj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Jul 2008 23:52:39 -0400
+Content-Disposition: inline
+In-Reply-To: <a4423d670807180652y352e66lfe04d2b33d2ed176@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Kernel Testers List <kernel-testers@vger.kernel.org>
 
-Pierre Ossman wrote:
->> Well, I don't know how often such usages would be necessary.  If it's a
->> very common ops, you can add a param to the next function but frankly I
->> think it's better to build a inside control structure for that.  There's
->> no need for external buffer, just an inner loop is sufficient.
->>
-> 
-> I'm not sure how this can be solved by an inner loop. My primary use
-> case is:
-> 
-> 1. Wait for interrupt
-> 2. Write n bytes
-> 3. goto 1
-> 
-> n has no guarantee of being aligned to any page boundaries, so state
-> needs to be kept between each invokation of writing a chunk of data. I
-> doubt I'm alone in this use pattern (in fact, most device drivers using
-> PIO should do something similar).
+On Fri, Jul 18, 2008 at 05:52:23PM +0400, Alexander Beregalov wrote:
+> 2008/7/18 Rafael J. Wysocki <rjw@sisk.pl>:
+> > This one crashes all of my x86-64 test boxes early during boot.
+> The same problem with next-20080718.
+> Unfortunatelly I do not have serial console on that host.
 
-Oh... I see.  How about adding sg_miter_consume(@miter, @bytes)?  If the
-function is never called, the whole chunk is assumed to be consumed.  If
-the function is called only @bytes are consumed.
+vfs-next/net-next conflict; apply the patch below on top of the merge.
 
--- 
-tejun
+diff --git a/net/sysctl_net.c b/net/sysctl_net.c
+index b91a5de..2240a9e 100644
+--- a/net/sysctl_net.c
++++ b/net/sysctl_net.c
+@@ -44,13 +44,6 @@ static struct ctl_table_root net_sysctl_root = {
+ 	.lookup = net_ctl_header_lookup,
+ };
+ 
+-static LIST_HEAD(net_sysctl_ro_tables);
+-static struct list_head *net_ctl_ro_header_lookup(struct ctl_table_root *root,
+-		struct nsproxy *namespaces)
+-{
+-	return &net_sysctl_ro_tables;
+-}
+-
+ static int net_ctl_ro_header_perms(struct ctl_table_root *root,
+ 		struct nsproxy *namespaces, struct ctl_table *table)
+ {
+@@ -61,7 +54,6 @@ static int net_ctl_ro_header_perms(struct ctl_table_root *root,
+ }
+ 
+ static struct ctl_table_root net_sysctl_ro_root = {
+-	.lookup = net_ctl_ro_header_lookup,
+ 	.permissions = net_ctl_ro_header_perms,
+ };
+ 
+@@ -89,6 +81,7 @@ static __init int sysctl_init(void)
+ 	if (ret)
+ 		goto out;
+ 	register_sysctl_root(&net_sysctl_root);
++	setup_sysctl_set(&net_sysctl_ro_root.default_set, NULL, NULL);
+ 	register_sysctl_root(&net_sysctl_ro_root);
+ out:
+ 	return ret;
