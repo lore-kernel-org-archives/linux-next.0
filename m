@@ -1,56 +1,77 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: BUG at security/selinux/avc.c:883 (was: Re: linux-next: Tree
-	for July 17: early crash on x86-64)
-Date: Sun, 20 Jul 2008 13:15:59 +0100
-Message-ID: <20080720121559.GV28946@ZenIV.linux.org.uk>
-References: <20080718012842.690b8346.sfr@canb.auug.org.au> <a4423d670807180652y352e66lfe04d2b33d2ed176@mail.gmail.com> <20080719035231.GU28946@ZenIV.linux.org.uk> <200807192042.06988.rjw@sisk.pl> <Xine.LNX.4.64.0807200553380.22632@us.intercode.com.au> <1216546973.3217.6.camel@dhcppc2>
+From: Bernhard Walle <bwalle-l3A5Bk7waGM@public.gmane.org>
+Subject: Re: linux-next: Tree for July 18: warning at kernel/lockdep.c:2068
+ trace_hardirqs_on_caller
+Date: Sun, 20 Jul 2008 14:48:43 +0200
+Message-ID: <20080720144843.76dcb951@kopernikus.site>
+References: <20080718195352.e562a00f.sfr@canb.auug.org.au>
+	<200807190928.33978.m.kozlowski@tuxland.pl>
+	<19f34abd0807190255x304173d4wf2bfabb2d5bce511@mail.gmail.com>
+	<19f34abd0807190559y2fe5ebf9h7095793e82de3122@mail.gmail.com>
+	<20080719221723.GB5578@suse.de>
+	<19f34abd0807191527u61c5ed61kffe2279c8d46915d@mail.gmail.com>
+	<19f34abd0807191544nfd73be5nf7dde4b61992a7e8@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:55667 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752801AbYGTMQV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 20 Jul 2008 08:16:21 -0400
-Content-Disposition: inline
-In-Reply-To: <1216546973.3217.6.camel@dhcppc2>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thomas Meyer <thomas@m3y3r.de>
-Cc: James Morris <jmorris@namei.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Alexander Beregalov <a.beregalov@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Kernel Testers List <kernel-testers@vger.kernel.org>, Stephen Smalley <sds@tycho.nsa.gov>, Eric Paris <eparis@parisplace.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <19f34abd0807191544nfd73be5nf7dde4b61992a7e8-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vegard Nossum <vegard.nossum-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Greg KH <gregkh-l3A5Bk7waGM@public.gmane.org>, Mariusz Kozlowski <m.kozlowski-NWF1p15JEu3VItvQsEIGlw@public.gmane.org>, Dave Hansen <haveblue-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pekka Enberg <penberg-bbCR+/B0CizivPeTLB3BmA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-On Sun, Jul 20, 2008 at 11:42:53AM +0200, Thomas Meyer wrote:
-> Am Sonntag, den 20.07.2008, 05:54 +1000 schrieb James Morris:
-> > On Sat, 19 Jul 2008, Rafael J. Wysocki wrote:
-> > 
-> > > > vfs-next/net-next conflict; apply the patch below on top of the
-> > merge.
-> > > 
-> > > That helped, thanks.
-> > > 
-> > > But next it ran into the BUG_ON() in line 883 of
-> > security/selinux/avc.c .
-> > > Disabling selinux made the kernel boot, finally.
-> > 
-> > Ugh, that's not supposed to happen.  Where was this in the boot?  Do
-> > you 
-> > have a console log?
+* "Vegard Nossum" <vegard.nossum-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> [2008-07-20 00:44]:
+>
+> On Sun, Jul 20, 2008 at 12:27 AM, Vegard Nossum <vegard.nossum-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> >>> commit 0e3638d1e04040121af00195f7e4628078246489
+> >>> Author: Dave Hansen <haveblue-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>
+> >>> Date:   Thu Mar 16 17:30:16 2006 -0800
+> >>>
+> >>>     warn when statically-allocated kobjects are used
+> >>>
+> >>> ..which only exists in -next. Is that just a truly ancient patch, or
+> >>> did somebody forget to adjust their clock?
+> >>
+> >> It is truely a very old patch, that only lives in my tree, and currently
+> >> isn't planned to go to Linus any year soon.
+> >>
+> >> But it has a very long history of living in the -mm tree, and finding
+> >> real bugs, it's just not "safe" enough to go to Linus's tree.  Unless
+> >> you think it is?
+> >
+> > Hm. In this case, the patch is not even reporting a problem, it is in
+> > fact in error itself.
+> >
+> > The problem is that it calls kzalloc() before the slab caches have
+> > been set up. (Yes, it's a wonder that nothing crashed.) I can only
+> > suggest the addendum
+> >
+> >    if (!slab_is_available())
+> >        return;
+> 
+> Well, of course, it's also possible that the e820 code shouldn't be
+> initializing kobjects this early in the first place.
+> 
+> firmware_map_add_early() is using bootmem for the allocation. So yes,
+> I guess it should possible to use kobjects here. That said, this code
+> is in fact fairly recent:
+> 
+> commit 69ac9cd629ca96e59f34eb4ccd12d00b2c8276a7
+> Author: Bernhard Walle <bwalle-l3A5Bk7waGM@public.gmane.org>
+> Date:   Fri Jun 27 13:12:54 2008 +0200
+> 
+>     sysfs: add /sys/firmware/memmap
+> 
+> I'll add the Cc. I still have a feeling that the kobject patch should
+> expect to run even when slab is not available.
 
-Argh...  Fallout from ->permission() patch series.  I've folded that into
-rebase (along with Randy's compile fixes and missing bit in capability.c
-in ->inode_permission() patch; AFAICS takes care of all mismerges as well).
-In the meanwhile, see the patch below on top of next-20080718:
+I already posted a fix for that problem, see
+http://article.gmane.org/gmane.linux.kernel.kexec/1882.
 
-diff --git a/fs/namei.c b/fs/namei.c
-index a15c155..c0a64e2 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -286,7 +286,8 @@ int permission(struct inode *inode, int mask, struct nameidata *nd)
- 	if (retval)
- 		return retval;
- 
--	return security_inode_permission(inode, mask);
-+	return security_inode_permission(inode,
-+					mask & (MAY_READ|MAY_WRITE|MAY_EXEC));
- }
- 
- /**
+Which people should I CC to get that fix into linux-next?
+
+
+
+Bernhard
+-- 
+Bernhard Walle, SUSE LINUX Products GmbH, Architecture Development
