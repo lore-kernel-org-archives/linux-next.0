@@ -1,94 +1,53 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: Tree for July 18: sky2 WOL broken
-Date: Sun, 20 Jul 2008 02:20:10 +0200
-Message-ID: <200807200220.11701.rjw@sisk.pl>
+From: Dave Hansen <dave-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
+Subject: Re: linux-next: Tree for July 18: warning at kernel/lockdep.c:2068
+	trace_hardirqs_on_caller
+Date: Sun, 20 Jul 2008 02:01:02 -0700
+Message-ID: <1216544462.9311.20.camel@nimitz>
 References: <20080718195352.e562a00f.sfr@canb.auug.org.au>
+	 <200807190928.33978.m.kozlowski@tuxland.pl>
+	 <19f34abd0807190255x304173d4wf2bfabb2d5bce511@mail.gmail.com>
+	 <19f34abd0807190559y2fe5ebf9h7095793e82de3122@mail.gmail.com>
+	 <20080719221723.GB5578@suse.de>
+	 <19f34abd0807191527u61c5ed61kffe2279c8d46915d@mail.gmail.com>
+	 <19f34abd0807191544nfd73be5nf7dde4b61992a7e8@mail.gmail.com>
+	 <20080719225817.GA6264@suse.de>
+	 <19f34abd0807191611y7cabf405iad307ba79591e04f@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-15"
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:46051 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754501AbYGTASS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 19 Jul 2008 20:18:18 -0400
-In-Reply-To: <20080718195352.e562a00f.sfr@canb.auug.org.au>
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Hemminger <shemminger@vyatta.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jeff Garzik <jeff@garzik.org>, netdev@vger.kernel.org
+Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <19f34abd0807191611y7cabf405iad307ba79591e04f-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vegard Nossum <vegard.nossum-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Greg KH <gregkh-l3A5Bk7waGM@public.gmane.org>, Mariusz Kozlowski <m.kozlowski-NWF1p15JEu3VItvQsEIGlw@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pekka Enberg <penberg-bbCR+/B0CizivPeTLB3BmA@public.gmane.org>, Bernhard Walle <bwalle-l3A5Bk7waGM@public.gmane.org>, Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>, Vivek Goyal <vgoyal-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, kexec <kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-On Friday, 18 of July 2008, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since next-20080717:
-> 
-> Restored tree: ttydev.
-> 
-> Temporarily dropped tree: acpi (confusion about its source).
-> 
-> Most of the differences were conflicts moving from tree to tree as some
-> of the trees are now merged into Linus' tree.  Most have been inflicted
-> on the driver-core and usb trees.  I have not notified these separately.
-> 
-> Because of the moving of conflicts around it is difficult to tell when
-> they are going away (though I assume some are).
-> 
-> The driver-core tree gained a conflict against Linus' tree.
-> 
-> The usb tree inherited a build fix patch from the pci tree.
-> 
-> The x86 tree gained a trivial conflict against Linus' tree but it was in
-> a commit that is still being reverted.
-> 
-> The ocsf2 tree gained several conflicts against Linus' tree because what
-> was sent to Linus was not the same as what is in linuxt-next.
-> 
-> The vfs tree gained conflicts against Linus' tree, the sparc tree and the
-> mips tree.
-> 
-> The semaphore-removal tree gained conflicts against Linus' tree that
-> required the reversion of two commits.
-> 
-> The ttydev tree had two patches that didn't apply and gained conflicts
-> against the wireless tree and the usb tree (4).  It also required a build
-> fix patch.
-> 
-> Lots of conflicts have gone from the x86 and ubifs trees.
-> 
-> I have also applied the following patches for known problems:
-> 
-> 	sparc64: sysdev API change fallout
-> 	sparc32: smp_call_function API change fallout (this has already
-> been fixed in the upstream sparc tree and comes from an incomplete merge
-> on my part).
-> 
-> This tree fails to build for ARCH=sparc (i.e. 32bit) with a 64bit gcc
-> v3.4.5 - it tries to use the 64bit header files.  This may be an artifact
-> of one of my merge fixups, but I don't actually think so.
-> 
-> ----------------------------------------------------------------------------
+On Sun, 2008-07-20 at 01:11 +0200, Vegard Nossum wrote:
+> Maybe the firmware memmap code can simply run a little later in the
+> boot sequence?
 
-commit db99b98885e717454feef1c6868b27d3f23c2e7c
-Author: Stephen Hemminger <shemminger@vyatta.com>
-Date:   Wed May 14 17:04:16 2008 -0700
+Heh, I'm catching up on this thread...
 
-    sky2: put PHY in sleep when down
+It is possible that it could run later.  But, I do know that there are
+at least a couple of these tables (on various arches) that we toss out
+of memory or become unavailable later in boot.  
 
-and
+I do this this:
 
-commit a068c0adf2fe28b324bca87f85d27af7f993cdaf
-Author: Stephen Hemminger <shemminger@vyatta.com>
-Date:   Wed May 14 17:04:17 2008 -0700
+    sysfs: add /sys/firmware/memmap
 
-    sky2: pci power savings
+is really being done at the wrong level.  I don't, for instance, see
+*any* reference to memory hotplug in these patches.  That's because
+they're done against firmware structures, and memory hotplug doesn't
+update firmware structures on the two architectures that I can remember
+(ppc64 and x86).
 
-break Wake-on-LAN on my test box using sky2.  More specifically, with these
-two commits applied the box hangs solid during hibernation/power off
-while executing the sky2 callbacks.
+In other words, kexec using this probably won't work on a memory hotplug
+machine.
 
-The adapter is reported as 88E8056 (Asus M3A32-MVP Deluxe mainboard).
+Secondly, why don't we just modify the
+existing /sys/devices/system/memory things to properly export what exec
+needs?  They're already cross-platform *and* they're updated with memory
+hotplug events.  
 
-Thanks,
-Rafael
+-- Dave
