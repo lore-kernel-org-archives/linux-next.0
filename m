@@ -1,50 +1,85 @@
-From: Bernhard Walle <bwalle-l3A5Bk7waGM@public.gmane.org>
-Subject: Re: linux-next: Tree for July 18: warning at kernel/lockdep.c:2068
- trace_hardirqs_on_caller
-Date: Sun, 20 Jul 2008 17:44:56 +0200
-Message-ID: <20080720174456.55e41e8b@kopernikus.site>
-References: <20080718195352.e562a00f.sfr@canb.auug.org.au>
-	<200807190928.33978.m.kozlowski@tuxland.pl>
-	<19f34abd0807190255x304173d4wf2bfabb2d5bce511@mail.gmail.com>
-	<19f34abd0807190559y2fe5ebf9h7095793e82de3122@mail.gmail.com>
-	<20080719221723.GB5578@suse.de>
-	<19f34abd0807191527u61c5ed61kffe2279c8d46915d@mail.gmail.com>
-	<19f34abd0807191544nfd73be5nf7dde4b61992a7e8@mail.gmail.com>
-	<20080719225817.GA6264@suse.de>
-	<19f34abd0807191611y7cabf405iad307ba79591e04f@mail.gmail.com>
-	<1216544462.9311.20.camel@nimitz>
-	<20080720150341.7cd381c2@kopernikus.site>
+From: Pierre Ossman <drzeus@drzeus.cx>
+Subject: Re: linux-next: Tree for July 16 (crash on quad core AMD)
+Date: Mon, 21 Jul 2008 00:40:33 +0200
+Message-ID: <20080721004033.1fc66aa3@mjolnir.drzeus.cx>
+References: <20080716235011.ac9643aa.sfr@canb.auug.org.au>
+	<200807170053.36661.rjw@sisk.pl>
+	<1216249292.3358.66.camel@localhost.localdomain>
+	<200807170109.30655.rjw@sisk.pl>
+	<48808EE0.2060603@gmail.com>
+	<20080719004736.626ef169@mjolnir.drzeus.cx>
+	<48813C5F.70007@gmail.com>
+	<20080719033050.552f9b49@mjolnir.drzeus.cx>
+	<48814D81.8060001@gmail.com>
+	<20080719140717.7b296eae@mjolnir.drzeus.cx>
+	<4881F437.7000503@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20080720150341.7cd381c2-Hxm9IJOWyO+kWa+peg0mPg@public.gmane.org>
-Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bernhard Walle <bwalle-l3A5Bk7waGM@public.gmane.org>
-Cc: Dave Hansen <dave-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>, Vegard Nossum <vegard.nossum-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg KH <gregkh-l3A5Bk7waGM@public.gmane.org>, Mariusz Kozlowski <m.kozlowski-NWF1p15JEu3VItvQsEIGlw@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pekka Enberg <penberg-bbCR+/B0CizivPeTLB3BmA@public.gmane.org>, Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>, Vivek Goyal <vgoyal-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, kexec <kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=PGP-SHA1; boundary="=_freyr.drzeus.cx-28653-1216593638-0001-2"
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <4881F437.7000503@gmail.com>
+Sender: linux-ide-owner@vger.kernel.org
+To: Tejun Heo <htejun@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, James Bottomley <James.Bottomley@hansenpartnership.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Kernel Testers List <kernel-testers@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>, linux-ide <linux-ide@vger.kernel.org>, Jeff Garzik <jeff@garzik.org>, Takashi Iwai <tiwai@suse.de>, tino.keitel@gmx.de
 List-Id: linux-next.vger.kernel.org
 
-* Bernhard Walle <bwalle-l3A5Bk7waGM@public.gmane.org> [2008-07-20 15:03]:
-> 
-> Because I didn't know that interface. And because I don't see that
-> interface on my two systems that I just checked. i386 and x86-64. What
-> do I have to do to enable that interface?
+This is a MIME-formatted message.  If you see this text it means that your
+E-mail software does not support MIME-formatted messages.
 
-That interface depends on CONFIG_MEMORY_HOTPLUG. But given to that
-dependency list,
+--=_freyr.drzeus.cx-28653-1216593638-0001-2
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-128 config MEMORY_HOTPLUG
-129         bool "Allow for memory hot-add"
-130         depends on SPARSEMEM || X86_64_ACPI_NUMA
-131         depends on HOTPLUG && !HIBERNATION && ARCH_ENABLE_MEMORY_HOTPLUG
-132         depends on (IA64 || X86 || PPC64 || SUPERH || S390)
+On Sat, 19 Jul 2008 23:03:35 +0900
+Tejun Heo <htejun@gmail.com> wrote:
 
-that interface is off on *many* systems (i386, x86_64), so we can't rely
-on that interface in kexec. I think on POWER it's much more common than
-on PC architectures.
+> Pierre Ossman wrote:
+> > On Sat, 19 Jul 2008 11:12:17 +0900
+> > Tejun Heo <htejun@gmail.com> wrote:
+> >=20
+> >> Oh... I see.  How about adding sg_miter_consume(@miter, @bytes)?  If t=
+he
+> >> function is never called, the whole chunk is assumed to be consumed.  =
+If
+> >> the function is called only @bytes are consumed.
+> >>
+> >=20
+> > Sounds reasonable. Care to make an independent patch so that I can
+> > continue my PIO hacking adventures? :)
+>=20
+> Sure thing.  Here you go.  :-)
+>=20
+> Subject: [PATCH 2.6.26] sg: reimplement sg mapping iterator
+>=20
 
+I've converted my code to use your implementation instead, and it seems
+to be working perfectly.
 
+How comfortable to you feel about your patch? :)
+This fixes a big problem in the sdhci driver where falling back on PIO
+(because of hw DMA bugs) would create lots of potential issues as the
+driver couldn't access highmem pages. I'd like to get this fix in for
+2.6.27, which means that your patch also needs to go in now.
 
-Bernhard
--- 
-Bernhard Walle, SUSE LINUX Products GmbH, Architecture Development
+Rgds
+--=20
+     -- Pierre Ossman
+
+  WARNING: This correspondence is being monitored by the
+  Swedish government. Make sure your server uses encryption
+  for SMTP traffic and consider using PGP for end-to-end
+  encryption.
+
+--=_freyr.drzeus.cx-28653-1216593638-0001-2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.9 (GNU/Linux)
+
+iEYEARECAAYFAkiDvuQACgkQ7b8eESbyJLjU/wCg8Fy/hfuE55g8HvUdDDtEKtui
+mWEAn1gDGsXeqGMD5chL1itu1ND1Rvrd
+=HwL4
+-----END PGP SIGNATURE-----
+
+--=_freyr.drzeus.cx-28653-1216593638-0001-2--
