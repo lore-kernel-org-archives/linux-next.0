@@ -1,37 +1,99 @@
-From: Tejun Heo <htejun-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: linux-next: Tree for July 16 (crash on quad core AMD)
-Date: Mon, 21 Jul 2008 09:38:36 +0900
-Message-ID: <4883DA8C.5030306@gmail.com>
-References: <20080716235011.ac9643aa.sfr@canb.auug.org.au>	<200807170053.36661.rjw@sisk.pl>	<1216249292.3358.66.camel@localhost.localdomain>	<200807170109.30655.rjw@sisk.pl>	<48808EE0.2060603@gmail.com>	<20080719004736.626ef169@mjolnir.drzeus.cx>	<48813C5F.70007@gmail.com>	<20080719033050.552f9b49@mjolnir.drzeus.cx>	<48814D81.8060001@gmail.com>	<20080719140717.7b296eae@mjolnir.drzeus.cx>	<4881F437.7000503@gmail.com> <20080721004033.1fc66aa3@mjolnir.drzeus.cx>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: net-current tree build failure
+Date: Mon, 21 Jul 2008 10:58:52 +1000
+Message-ID: <20080721105852.d49ec615.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20080721004033.1fc66aa3-OhHrUh4vRMSnewYJFaQfwJ5kstrrjoWp@public.gmane.org>
-Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Pierre Ossman <drzeus-p3sGCRWkH8CeZLLa646FqQ@public.gmane.org>
-Cc: "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, James Bottomley <James.Bottomley-JuX6DAaQMKPCXq6kfMZ53/egYHeGw8Jk@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Kernel Testers List <kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, scsi <linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jens Axboe <jens.axboe-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-ide <linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jeff Garzik <jeff-o2qLIJkoznsdnm+yROfE0A@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, tino.keitel-Mmb7MZpHnFY@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__21_Jul_2008_10_58_52_+1000_bq.aF8kISfoZ+Gp1"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:53384 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754344AbYGUA7D (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 20 Jul 2008 20:59:03 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org
 
-Hello, Pierre.
+--Signature=_Mon__21_Jul_2008_10_58_52_+1000_bq.aF8kISfoZ+Gp1
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Pierre Ossman wrote:
-> I've converted my code to use your implementation instead, and it seems
-> to be working perfectly.
+Hi Dave,
 
-Cool.
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-> How comfortable to you feel about your patch? :)
+net/built-in.o: In function `.dev_queue_xmit':
+(.text+0x125a4): undefined reference to `.qdisc_calculate_pkt_len'
+net/built-in.o: In function `.__qdisc_destroy':
+sch_generic.c:(.text+0x28710): undefined reference to `.qdisc_put_stab'
 
-I think it should be okay (well, of course :-) and tested a few corner
-cases by modifying the copy function.
+This config has CONFIG_NET_SCHED not set.
 
-> This fixes a big problem in the sdhci driver where falling back on PIO
-> (because of hw DMA bugs) would create lots of potential issues as the
-> driver couldn't access highmem pages. I'd like to get this fix in for
-> 2.6.27, which means that your patch also needs to go in now.
+I applied the patch below, but it is probably not the correct solution.
 
-I think it needs an ACK from Jens.  Jens?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
--- 
-tejun
+>From 4534fc79b6efe71fbd478271238ce3122e07e010 Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 21 Jul 2008 10:51:13 +1000
+Subject: [PATCH] net: fix schedule breakage
+
+The powerpc ppc64_defconfig build failed like this:
+
+net/built-in.o: In function `.dev_queue_xmit':
+(.text+0x125a4): undefined reference to `.qdisc_calculate_pkt_len'
+net/built-in.o: In function `.__qdisc_destroy':
+sch_generic.c:(.text+0x28710): undefined reference to `.qdisc_put_stab'
+
+These changes make the kernel build.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/sched/Makefile |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/net/sched/Makefile b/net/sched/Makefile
+index 1d2b0f7..1b133d2 100644
+--- a/net/sched/Makefile
++++ b/net/sched/Makefile
+@@ -4,7 +4,8 @@
+=20
+ obj-y	:=3D sch_generic.o
+=20
+-obj-$(CONFIG_NET_SCHED)		+=3D sch_api.o sch_blackhole.o
++obj-y				+=3D sch_api.o
++obj-$(CONFIG_NET_SCHED)		+=3D sch_blackhole.o
+ obj-$(CONFIG_NET_CLS)		+=3D cls_api.o
+ obj-$(CONFIG_NET_CLS_ACT)	+=3D act_api.o
+ obj-$(CONFIG_NET_ACT_POLICE)	+=3D act_police.o
+@@ -14,7 +15,7 @@ obj-$(CONFIG_NET_ACT_IPT)	+=3D act_ipt.o
+ obj-$(CONFIG_NET_ACT_NAT)	+=3D act_nat.o
+ obj-$(CONFIG_NET_ACT_PEDIT)	+=3D act_pedit.o
+ obj-$(CONFIG_NET_ACT_SIMP)	+=3D act_simple.o
+-obj-$(CONFIG_NET_SCH_FIFO)	+=3D sch_fifo.o
++obj-y				+=3D sch_fifo.o
+ obj-$(CONFIG_NET_SCH_CBQ)	+=3D sch_cbq.o
+ obj-$(CONFIG_NET_SCH_HTB)	+=3D sch_htb.o
+ obj-$(CONFIG_NET_SCH_HFSC)	+=3D sch_hfsc.o
+--=20
+1.5.6.2
+
+
+--Signature=_Mon__21_Jul_2008_10_58_52_+1000_bq.aF8kISfoZ+Gp1
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiD30wACgkQjjKRsyhoI8xQ4QCfWn8BLoEslkk39et1UGthe7dW
+yOcAnid6QTkl65g8D8XW2lMUjccgO+tv
+=X2K8
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__21_Jul_2008_10_58_52_+1000_bq.aF8kISfoZ+Gp1--
