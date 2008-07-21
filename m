@@ -1,67 +1,90 @@
-From: Pierre Ossman <drzeus-p3sGCRWkH8CeZLLa646FqQ@public.gmane.org>
-Subject: Re: linux-next: Tree for July 16 (crash on quad core AMD)
-Date: Mon, 21 Jul 2008 13:32:09 +0200
-Message-ID: <20080721133209.62e31bc8@mjolnir.drzeus.cx>
-References: <20080716235011.ac9643aa.sfr@canb.auug.org.au>
-	<200807170053.36661.rjw@sisk.pl>
-	<1216249292.3358.66.camel@localhost.localdomain>
-	<200807170109.30655.rjw@sisk.pl>
-	<48808EE0.2060603@gmail.com>
-	<20080719004736.626ef169@mjolnir.drzeus.cx>
-	<48813C5F.70007@gmail.com>
-	<20080719033050.552f9b49@mjolnir.drzeus.cx>
-	<48814D81.8060001@gmail.com>
-	<20080719140717.7b296eae@mjolnir.drzeus.cx>
-	<4881F437.7000503@gmail.com>
-	<20080721004033.1fc66aa3@mjolnir.drzeus.cx>
-	<4883DA8C.5030306@gmail.com>
+From: Vivek Goyal <vgoyal-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Subject: Re: linux-next: Tree for July 18: warning at kernel/lockdep.c:2068
+	trace_hardirqs_on_caller
+Date: Mon, 21 Jul 2008 09:17:21 -0400
+Message-ID: <20080721131721.GB4451@redhat.com>
+References: <20080718195352.e562a00f.sfr@canb.auug.org.au>
+	<200807190928.33978.m.kozlowski@tuxland.pl>
+	<19f34abd0807190255x304173d4wf2bfabb2d5bce511@mail.gmail.com>
+	<19f34abd0807190559y2fe5ebf9h7095793e82de3122@mail.gmail.com>
+	<20080719221723.GB5578@suse.de>
+	<19f34abd0807191527u61c5ed61kffe2279c8d46915d@mail.gmail.com>
+	<19f34abd0807191544nfd73be5nf7dde4b61992a7e8@mail.gmail.com>
+	<20080719225817.GA6264@suse.de>
+	<19f34abd0807191611y7cabf405iad307ba79591e04f@mail.gmail.com>
+	<1216544462.9311.20.camel@nimitz>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=PGP-SHA1; boundary="=_freyr.drzeus.cx-2472-1216639933-0001-2"
-Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4883DA8C.5030306-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tejun Heo <htejun-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, James Bottomley <James.Bottomley-JuX6DAaQMKPCXq6kfMZ53/egYHeGw8Jk@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Kernel Testers List <kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, scsi <linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jens Axboe <jens.axboe-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-ide <linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jeff Garzik <jeff-o2qLIJkoznsdnm+yROfE0A@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, tino.keitel-Mmb7MZpHnFY@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <kexec-bounces+glkk-kexec=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1216544462.9311.20.camel@nimitz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/listinfo/kexec>,
+	<mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/kexec>
+List-Post: <mailto:kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/kexec>,
+	<mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: kexec-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Errors-To: kexec-bounces+glkk-kexec=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Dave Hansen <dave-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Vegard Nossum <vegard.nossum-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pekka Enberg <penberg-bbCR+/B0CizivPeTLB3BmA@public.gmane.org>, Greg KH <gregkh-l3A5Bk7waGM@public.gmane.org>, kexec <kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mariusz Kozlowski <m.kozlowski-NWF1p15JEu3VItvQsEIGlw@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>, kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bernhard Walle <bwalle-l3A5Bk7waGM@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-This is a MIME-formatted message.  If you see this text it means that your
-E-mail software does not support MIME-formatted messages.
+On Sun, Jul 20, 2008 at 02:01:02AM -0700, Dave Hansen wrote:
+> On Sun, 2008-07-20 at 01:11 +0200, Vegard Nossum wrote:
+> > Maybe the firmware memmap code can simply run a little later in the
+> > boot sequence?
+> 
+> Heh, I'm catching up on this thread...
+> 
+> It is possible that it could run later.  But, I do know that there are
+> at least a couple of these tables (on various arches) that we toss out
+> of memory or become unavailable later in boot.  
+> 
+> I do this this:
+> 
+>     sysfs: add /sys/firmware/memmap
+> 
+> is really being done at the wrong level.  I don't, for instance, see
+> *any* reference to memory hotplug in these patches.  That's because
+> they're done against firmware structures, and memory hotplug doesn't
+> update firmware structures on the two architectures that I can remember
+> (ppc64 and x86).
+> 
+> In other words, kexec using this probably won't work on a memory hotplug
+> machine.
 
---=_freyr.drzeus.cx-2472-1216639933-0001-2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+If memory is just being added and not being removed then kexec will
+continue to work. Just that newly added memory will not be visible to
+second kernel. (Unless we start modifying /sys/firmware/memmap upon 
+memory hotplug event).
 
-On Mon, 21 Jul 2008 09:38:36 +0900
-Tejun Heo <htejun-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+Is /proc/iomem updated upon memory hotplug event. All these years, kexec
+has been using that interace.
 
->=20
-> I think it needs an ACK from Jens.  Jens?
->=20
+> 
+> Secondly, why don't we just modify the
+> existing /sys/devices/system/memory things to properly export what exec
+> needs?  They're already cross-platform *and* they're updated with memory
+> hotplug events.  
 
-He seems to be on vacation. I sent him a review request for my original
-code a couple of weeks ago, and I haven't heard anything. marc.info
-also doesn't show anything since the 3rd. Odds are he won't be back
-during the merge window. :/
+As bernhard mentioned that above interface has got long dependeny list
+and will not work for kexec until and unless we get rid of those 
+dependencies.
 
---=20
-     -- Pierre Ossman
+What does /sys/devices/system/memory represent? All the physical memory
+present in the system or all the physical memory being used by kernel
+(for example, memory limited by command line options mem=).
 
-  WARNING: This correspondence is being monitored by the
-  Swedish government. Make sure your server uses encryption
-  for SMTP traffic and consider using PGP for end-to-end
-  encryption.
+If it represents all the physical memory present in the system then it
+might make sense to not create another interface but to use this one for
+kexec. (But we shall have to get rid of long list of dependencies so that
+it can gel wil more universal appeal of kexec).
 
---=_freyr.drzeus.cx-2472-1216639933-0001-2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename=signature.asc
+Do you think that we can decouple /sys/devices/system/memory interface with
+CONFIG_MEMORY_HOTPLUG?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.9 (GNU/Linux)
-
-iEYEARECAAYFAkiEc7sACgkQ7b8eESbyJLiuuQCcD7NCbqFggYtniBwAHBa8rL98
-gdQAoJ3NzNvWyflLOF4NoK6OkVCsSsUG
-=t/bj
------END PGP SIGNATURE-----
-
---=_freyr.drzeus.cx-2472-1216639933-0001-2--
+Thanks
+Vivek
