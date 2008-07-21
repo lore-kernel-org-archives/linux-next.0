@@ -1,51 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: please hold off 2.6.28 stuff
-Date: Mon, 21 Jul 2008 13:51:08 +1000
-Message-ID: <20080721135108.d4ca4be5.sfr@canb.auug.org.au>
+From: Harvey Harrison <harvey.harrison@gmail.com>
+Subject: Re: linux-next: please hold off 2.6.28 stuff
+Date: Sun, 20 Jul 2008 23:13:41 -0700
+Message-ID: <1216620821.13328.14.camel@brick>
+References: <20080721135108.d4ca4be5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__21_Jul_2008_13_51_08_+1000_WY8xHI_DZj7tqGWk"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34005 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759046AbYGUDvU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 20 Jul 2008 23:51:20 -0400
+Received: from rv-out-0506.google.com ([209.85.198.232]:53180 "EHLO
+	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750803AbYGUGNl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Jul 2008 02:13:41 -0400
+Received: by rv-out-0506.google.com with SMTP id k40so1229670rvb.1
+        for <linux-next@vger.kernel.org>; Sun, 20 Jul 2008 23:13:41 -0700 (PDT)
+In-Reply-To: <20080721135108.d4ca4be5.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Mon__21_Jul_2008_13_51_08_+1000_WY8xHI_DZj7tqGWk
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2008-07-21 at 13:51 +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Andrew mentioned this and I just thought I would reinforce the message:
+> 
+> Please do not put 2.6.28 code into linux-next until at least after -rc1.
+> This will help Andrew's sanity :-)
 
-Hi all,
+I would say let -rc2 be the flag for putting things for the next (2.6.28) release
+into -next.  That would give akpm time to get his load in as well.
+Between -rc1 and -rc2, he could look at -next to see what patches were
+picked up by maintainers and what he'll still have to send in himself.
 
-Andrew mentioned this and I just thought I would reinforce the message:
+But it's not me doing the work :-)
 
-Please do not put 2.6.28 code into linux-next until at least after -rc1.
-This will help Andrew's sanity :-)
+Keep up the good work Stephen/AKPM.
 
-So the day that -RC1 is released, I would like for linux-next to be
-just about empty wrt Linus' tree.  (Apart from bug fixes and late merges,
-of course).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__21_Jul_2008_13_51_08_+1000_WY8xHI_DZj7tqGWk
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkiEB6wACgkQjjKRsyhoI8yB5ACeNw1F7Tsl8Cq5FBQmm95au37D
-PpgAnjJUTlCXa0od1SyUtIvQ3F783bql
-=O1Sn
------END PGP SIGNATURE-----
-
---Signature=_Mon__21_Jul_2008_13_51_08_+1000_WY8xHI_DZj7tqGWk--
+Harvey
