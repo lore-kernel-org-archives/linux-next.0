@@ -1,52 +1,67 @@
-From: Adrian Bunk <bunk@kernel.org>
-Subject: Re: linux-next: Tree for July 21
-Date: Mon, 21 Jul 2008 12:46:05 +0300
-Message-ID: <20080721094605.GA22914@cs181140183.pp.htv.fi>
-References: <20080721181725.9269fac4.sfr@canb.auug.org.au>
+From: Pierre Ossman <drzeus-p3sGCRWkH8CeZLLa646FqQ@public.gmane.org>
+Subject: Re: linux-next: Tree for July 16 (crash on quad core AMD)
+Date: Mon, 21 Jul 2008 13:32:09 +0200
+Message-ID: <20080721133209.62e31bc8@mjolnir.drzeus.cx>
+References: <20080716235011.ac9643aa.sfr@canb.auug.org.au>
+	<200807170053.36661.rjw@sisk.pl>
+	<1216249292.3358.66.camel@localhost.localdomain>
+	<200807170109.30655.rjw@sisk.pl>
+	<48808EE0.2060603@gmail.com>
+	<20080719004736.626ef169@mjolnir.drzeus.cx>
+	<48813C5F.70007@gmail.com>
+	<20080719033050.552f9b49@mjolnir.drzeus.cx>
+	<48814D81.8060001@gmail.com>
+	<20080719140717.7b296eae@mjolnir.drzeus.cx>
+	<4881F437.7000503@gmail.com>
+	<20080721004033.1fc66aa3@mjolnir.drzeus.cx>
+	<4883DA8C.5030306@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp5.pp.htv.fi ([213.243.153.39]:43894 "EHLO smtp5.pp.htv.fi"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755246AbYGUJqK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 21 Jul 2008 05:46:10 -0400
-Content-Disposition: inline
-In-Reply-To: <20080721181725.9269fac4.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Sam Ravnborg <sam@ravnborg.org>, David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=PGP-SHA1; boundary="=_freyr.drzeus.cx-2472-1216639933-0001-2"
+Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4883DA8C.5030306-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tejun Heo <htejun-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, James Bottomley <James.Bottomley-JuX6DAaQMKPCXq6kfMZ53/egYHeGw8Jk@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Kernel Testers List <kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, scsi <linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jens Axboe <jens.axboe-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-ide <linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jeff Garzik <jeff-o2qLIJkoznsdnm+yROfE0A@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, tino.keitel-Mmb7MZpHnFY@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Jul 21, 2008 at 06:17:25PM +1000, Stephen Rothwell wrote:
->...
-> This tree fails to build for ARCH=sparc (i.e. 32bit) with a 64bit gcc
-> v3.4.5 - it tries to use the 64bit header files.  This may be an artifact
-> of one of my merge fixups, but I don't actually think so.
->...
+This is a MIME-formatted message.  If you see this text it means that your
+E-mail software does not support MIME-formatted messages.
 
-I can reproduce it, and it's not related to anything you did.
+--=_freyr.drzeus.cx-2472-1216639933-0001-2
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The failing command is:
+On Mon, 21 Jul 2008 09:38:36 +0900
+Tejun Heo <htejun-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 
-<--  snip  -->
+>=20
+> I think it needs an ACK from Jens.  Jens?
+>=20
 
-...
-  sparc64-linux-gcc -E -Wp,-MD,arch/sparc/kernel/.vmlinux.lds.d  -nostdinc -isystem /usr/local/DIR/gcc-sparc64-4.3.1/lib/gcc/sparc64-linux/4.3.1/include -D__KERNEL__ -I/TMP/git/sparc-2.6/include -Iinclude -I/TMP/git/sparc-2.6/include2 -Iinclude2  -I/TMP/git/sparc-2.6/include -include include/linux/autoconf.h -P -C -Usparc -D__ASSEMBLY__ -o arch/sparc/kernel/vmlinux.lds /TMP/git/sparc-2.6/arch/sparc/kernel/vmlinux.lds.S
-In file included from include2/asm/page.h:4,
-                 from /TMP/git/sparc-2.6/arch/sparc/kernel/vmlinux.lds.S:4:
-/TMP/git/sparc-2.6/include/asm-sparc/page_64.h:11:2: error: #error No page size specified in kernel configuration
-make[2]: *** [arch/sparc/kernel/vmlinux.lds] Error 1
+He seems to be on vacation. I sent him a review request for my original
+code a couple of weeks ago, and I haven't heard anything. marc.info
+also doesn't show anything since the 3rd. Odds are he won't be back
+during the merge window. :/
 
-<--  snip  -->
+--=20
+     -- Pierre Ossman
 
-David, Sam, can you look at this?
+  WARNING: This correspondence is being monitored by the
+  Swedish government. Make sure your server uses encryption
+  for SMTP traffic and consider using PGP for end-to-end
+  encryption.
 
-cu
-Adrian
+--=_freyr.drzeus.cx-2472-1216639933-0001-2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename=signature.asc
 
--- 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.9 (GNU/Linux)
 
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
+iEYEARECAAYFAkiEc7sACgkQ7b8eESbyJLiuuQCcD7NCbqFggYtniBwAHBa8rL98
+gdQAoJ3NzNvWyflLOF4NoK6OkVCsSsUG
+=t/bj
+-----END PGP SIGNATURE-----
+
+--=_freyr.drzeus.cx-2472-1216639933-0001-2--
