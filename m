@@ -1,40 +1,51 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: net-current tree build failure
-Date: Sun, 20 Jul 2008 18:05:14 -0700 (PDT)
-Message-ID: <20080720.180514.214251688.davem@davemloft.net>
-References: <20080721105852.d49ec615.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: please hold off 2.6.28 stuff
+Date: Mon, 21 Jul 2008 13:51:08 +1000
+Message-ID: <20080721135108.d4ca4be5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__21_Jul_2008_13_51_08_+1000_WY8xHI_DZj7tqGWk"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:58497
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1755823AbYGUBFP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sun, 20 Jul 2008 21:05:15 -0400
-In-Reply-To: <20080721105852.d49ec615.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34005 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759046AbYGUDvU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 20 Jul 2008 23:51:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 21 Jul 2008 10:58:52 +1000
+--Signature=_Mon__21_Jul_2008_13_51_08_+1000_WY8xHI_DZj7tqGWk
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Dave,
-> 
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> 
-> net/built-in.o: In function `.dev_queue_xmit':
-> (.text+0x125a4): undefined reference to `.qdisc_calculate_pkt_len'
-> net/built-in.o: In function `.__qdisc_destroy':
-> sch_generic.c:(.text+0x28710): undefined reference to `.qdisc_put_stab'
-> 
-> This config has CONFIG_NET_SCHED not set.
-> 
-> I applied the patch below, but it is probably not the correct solution.
+Hi all,
 
-No, it isn't.  We should just comment out the stab code
-when NET_SCHED is not set.
+Andrew mentioned this and I just thought I would reinforce the message:
 
-Thanks for catching this.
+Please do not put 2.6.28 code into linux-next until at least after -rc1.
+This will help Andrew's sanity :-)
+
+So the day that -RC1 is released, I would like for linux-next to be
+just about empty wrt Linus' tree.  (Apart from bug fixes and late merges,
+of course).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__21_Jul_2008_13_51_08_+1000_WY8xHI_DZj7tqGWk
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiEB6wACgkQjjKRsyhoI8yB5ACeNw1F7Tsl8Cq5FBQmm95au37D
+PpgAnjJUTlCXa0od1SyUtIvQ3F783bql
+=O1Sn
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__21_Jul_2008_13_51_08_+1000_WY8xHI_DZj7tqGWk--
