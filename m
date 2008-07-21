@@ -1,70 +1,34 @@
-From: Bernhard Walle <bwalle-l3A5Bk7waGM@public.gmane.org>
-Subject: Re: linux-next: Tree for July 18: warning at kernel/lockdep.c:2068
-	trace_hardirqs_on_caller
-Date: Mon, 21 Jul 2008 17:00:37 +0200
-Message-ID: <20080721170037.1a0046b1@halley.suse.de>
-References: <19f34abd0807190255x304173d4wf2bfabb2d5bce511@mail.gmail.com>
-	<19f34abd0807190559y2fe5ebf9h7095793e82de3122@mail.gmail.com>
-	<20080719221723.GB5578@suse.de>
-	<19f34abd0807191527u61c5ed61kffe2279c8d46915d@mail.gmail.com>
-	<19f34abd0807191544nfd73be5nf7dde4b61992a7e8@mail.gmail.com>
-	<20080719225817.GA6264@suse.de>
-	<19f34abd0807191611y7cabf405iad307ba79591e04f@mail.gmail.com>
-	<1216544462.9311.20.camel@nimitz>
-	<20080721131721.GB4451@redhat.com>
-	<20080721152539.3d8684f9@halley.suse.de>
-	<20080721133937.GC4451@redhat.com>
+From: Tejun Heo <htejun@gmail.com>
+Subject: Re: linux-next: Tree for July 16 (crash on quad core AMD)
+Date: Tue, 22 Jul 2008 00:35:02 +0900
+Message-ID: <4884ACA6.9080509@gmail.com>
+References: <20080716235011.ac9643aa.sfr@canb.auug.org.au>	<200807170053.36661.rjw@sisk.pl>	<1216249292.3358.66.camel@localhost.localdomain>	<200807170109.30655.rjw@sisk.pl>	<48808EE0.2060603@gmail.com>	<20080719004736.626ef169@mjolnir.drzeus.cx>	<48813C5F.70007@gmail.com>	<20080719033050.552f9b49@mjolnir.drzeus.cx>	<48814D81.8060001@gmail.com>	<20080719140717.7b296eae@mjolnir.drzeus.cx>	<4881F437.7000503@gmail.com>	<20080721004033.1fc66aa3@mjolnir.drzeus.cx>	<4883DA8C.5030306@gmail.com> <20080721133209.62e31bc8@mjolnir.drzeus.cx>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <kexec-bounces+glkk-kexec=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20080721133937.GC4451-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/listinfo/kexec>,
-	<mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/kexec>
-List-Post: <mailto:kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/kexec>,
-	<mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: kexec-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Errors-To: kexec-bounces+glkk-kexec=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Vivek Goyal <vgoyal-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Vegard Nossum <vegard.nossum-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg KH <gregkh-l3A5Bk7waGM@public.gmane.org>, kexec <kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Dave Hansen <dave-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>, Mariusz Kozlowski <m.kozlowski-NWF1p15JEu3VItvQsEIGlw@public.gmane.org>, Pekka Enberg <penberg-bbCR+/B0CizivPeTLB3BmA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>, kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <20080721133209.62e31bc8@mjolnir.drzeus.cx>
+Sender: linux-scsi-owner@vger.kernel.org
+To: Pierre Ossman <drzeus@drzeus.cx>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, James Bottomley <James.Bottomley@hansenpartnership.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Kernel Testers List <kernel-testers@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>, linux-ide <linux-ide@vger.kernel.org>, Jeff Garzik <jeff@garzik.org>, Takashi Iwai <tiwai@suse.de>, tino.keitel@gmx.de
 List-Id: linux-next.vger.kernel.org
 
-* Vivek Goyal [2008-07-21 09:39]:
->
-> On Mon, Jul 21, 2008 at 03:25:39PM +0200, Bernhard Walle wrote:
-> > * Vivek Goyal [2008-07-21 09:17]:
-> > > 
-> > > Is /proc/iomem updated upon memory hotplug event.
-> > 
-> > Yes. I just checked that (yesterday).
-> > 
-> > I think it would make sense to extend /sys/firmware/memmap on
-> > hot-plugging. Just because on reboot, the firmware will see that
-> > memory, too, and report it. However, we need a way to discriminate the
-> > originally firmware-provided memory map with later added memory. I'm
-> > not sure how that can be done, I have to think about it.
+Pierre Ossman wrote:
+> On Mon, 21 Jul 2008 09:38:36 +0900
+> Tejun Heo <htejun@gmail.com> wrote:
 > 
-> Probably use another type of RAM identifier (System RAM (hotplug)).
+>> I think it needs an ACK from Jens.  Jens?
 > 
-> But the point is, if /sys/devices/system/memory also represents all
-> the physical memory present in the system then it might be not be
-> justified to create another similar interface. (Until and unless there
-> is something unique about /sys/firmware/memmap).
+> He seems to be on vacation. I sent him a review request for my original
+> code a couple of weeks ago, and I haven't heard anything. marc.info
+> also doesn't show anything since the 3rd. Odds are he won't be back
+> during the merge window. :/
 
-But I don't see anything like a physical address there:
+Right, I have a patchset waiting for his review too.  Anyone knows when
+he'll be back?
 
-  /sys/devices/system/memory/memory2:
-  -r--r--r-- 1 root root 4096 2008-07-21 15:45 phys_device
-  -r--r--r-- 1 root root 4096 2008-07-21 15:45 phys_index
-  -rw-r--r-- 1 root root 4096 2008-07-21 15:45 state
+We can always back it out later but I don't think pushing stuff in w/o
+maintainer's ack is a good idea.  :-(
 
-(on a PPC64 machine where SUSE kernel has that interface enabled by
-default).
-
-
-Bernhard
 -- 
-Bernhard Walle, SUSE LINUX Products GmbH, Architecture Development
+tejun
