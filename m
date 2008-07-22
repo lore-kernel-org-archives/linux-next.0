@@ -1,65 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] serial: fix struct uart_info change fallout
-Date: Wed, 23 Jul 2008 02:22:24 +1000
-Message-ID: <20080723022224.22eb4d26.sfr@canb.auug.org.au>
-References: <20080722102520.ca801ab5.sfr@canb.auug.org.au>
-	<20080722025850.0d073a5e@lxorguk.ukuu.org.uk>
-	<20080722130152.f115224d.sfr@canb.auug.org.au>
-	<20080722114436.2c13edea@lxorguk.ukuu.org.uk>
-	<20080723014910.7351c495.sfr@canb.auug.org.au>
-	<20080722165929.717e38d4@lxorguk.ukuu.org.uk>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: linux-next build error (PNP/IXJ)
+Date: Tue, 22 Jul 2008 10:27:39 -0700
+Message-ID: <20080722102739.61462b04.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__23_Jul_2008_02_22_24_+1000_qbHkhz.t3Qwcr/IY"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54043 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752183AbYGVQWc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Jul 2008 12:22:32 -0400
-In-Reply-To: <20080722165929.717e38d4@lxorguk.ukuu.org.uk>
+Received: from rgminet01.oracle.com ([148.87.113.118]:43327 "EHLO
+	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751554AbYGVRdt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Jul 2008 13:33:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, ppc-dev <linuxppc-dev@ozlabs.org>
+To: bjorn.helgaas@hp.com, linux-next@vger.kernel.org
+Cc: lkml <linux-kernel@vger.kernel.org>
 
---Signature=_Wed__23_Jul_2008_02_22_24_+1000_qbHkhz.t3Qwcr/IY
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi Alan,
+I'm seeing several build errors in linux-next-20080722 that I haven't
+seen previously, although I don't know what changed to cause this.
 
-On Tue, 22 Jul 2008 16:59:29 +0100 Alan Cox <alan@lxorguk.ukuu.org.uk> wrot=
-e:
->
-> I really expected to get the rest merged within an hour or two, but then
-> it broke, then I was travelling and each time I got wireless access to
-> resync the tree and work on it - it broke again and again and again.
->=20
-> Next time I will bump the patch up the pile and get it out earlier when
-> that occurs.
+They are all basically the same, in ixj (drivers/telephony/ixj*), when
+CONFIG_PNP=n, and CONFIG_PHONE_IXJ=y or =m (so the actual error message
+varies depending on IXJ=y or =m):
 
-Excellent.
+IXJ=y:
+ixj.c:(.text+0x329d98): undefined reference to `pnp_get_resource'
+or IXJ=m:
+ERROR: "pnp_get_resource" [drivers/telephony/ixj.ko] undefined!
 
-Just asking: do you have an aversion for merging fixes back into
-patches?  Not a problem, just so I know.  Different people work
-differently.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Suggestions?
 
---Signature=_Wed__23_Jul_2008_02_22_24_+1000_qbHkhz.t3Qwcr/IY
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkiGCUAACgkQjjKRsyhoI8yJjQCfQIgDLPPf4zIDg5t2Oy3ZZDC/
-/4sAnjv8NSB6qMhjhQN7dWrUXSbG5a9p
-=6thl
------END PGP SIGNATURE-----
-
---Signature=_Wed__23_Jul_2008_02_22_24_+1000_qbHkhz.t3Qwcr/IY--
+Thanks,
+---
+~Randy
+Linux Plumbers Conference, 17-19 September 2008, Portland, Oregon USA
+http://linuxplumbersconf.org/
