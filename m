@@ -1,53 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ttydev tree
-Date: Tue, 22 Jul 2008 16:37:54 +1000
-Message-ID: <20080722163754.715cf9cb.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the kmemcheck tree
+Date: Tue, 22 Jul 2008 08:52:11 +0200
+Message-ID: <20080722065211.GA9639@elte.hu>
+References: <20080722161619.5b8bd082.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__22_Jul_2008_16_37_54_+1000_t7G3cQAQLFCwHshz"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33785 "EHLO smtps.tip.net.au"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:48899 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750718AbYGVGiE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Jul 2008 02:38:04 -0400
+	id S1751061AbYGVGw1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Jul 2008 02:52:27 -0400
+Content-Disposition: inline
+In-Reply-To: <20080722161619.5b8bd082.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Vegard Nossum <vegard.nossum@gmail.com>, Pekka Enberg <penberg@cs.helsinki.fi>, linux-next@vger.kernel.org, Jaswinder Singh <jaswinder@infradead.org>
 
---Signature=_Tue__22_Jul_2008_16_37_54_+1000_t7G3cQAQLFCwHshz
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Alan,
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Today's linux-next merge of the ttydev tree got conflicts in
-drivers/char/istallion.c, drivers/char/mxser.c, drivers/char/specialix.c,
-drivers/char/synclink_gt.c, drivers/char/tty_io.c,
-drivers/usb/gadget/serial.c, drivers/usb/serial/cp2101.c,
-drivers/usb/serial/io_ti.c, drivers/usb/serial/ir-usb.c,
-drivers/usb/serial/usb-serial.c, include/linux/tty.h and
-net/bluetooth/rfcomm/tty.c mainly against Linus' tree.
+> Hi all,
+> 
+> Today's linux-next merge of the kmemcheck tree got a trivial conflict in
+> arch/x86/kernel/traps_32.c between commit
+> 6ac8d51f01d345af5ea4209004a9ea29b2f20891 ("x86: introducing
+> asm-x86/traps.h") from Linus' tree and commit
+> 787ecfaa503dc63ff1831ddc74b15dad49bace1d ("x86: add hooks for kmemcheck")
+> from the kmemcheck tree.
+> 
+> Just overlapping additions of includes.  I can carry it.
 
-This is not unexpected since some of the ttydev tree has been merged, so I
-will drop it for today in the hope that things are better tomorrow.
+thanks Stephen - i had this conflict fixup too in tip/master but not yet 
+in auto-kmemcheck-next. I've now propagated it so the conflict should go 
+away on your next integration run.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__22_Jul_2008_16_37_54_+1000_t7G3cQAQLFCwHshz
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkiFgEIACgkQjjKRsyhoI8w43gCfapktegaJ6Z5SgctSL8sflRYJ
-zOAAnRW+JElQWZ/OrHOGSA+Nitw4nCBl
-=Xzdu
------END PGP SIGNATURE-----
-
---Signature=_Tue__22_Jul_2008_16_37_54_+1000_t7G3cQAQLFCwHshz--
+	Ingo
