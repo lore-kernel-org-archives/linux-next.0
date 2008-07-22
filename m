@@ -1,38 +1,44 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the sched tree
-Date: Tue, 22 Jul 2008 11:13:26 +0200
-Message-ID: <20080722091326.GB18673@elte.hu>
-References: <20080722115457.46aa2c98.sfr@canb.auug.org.au> <20080722182834.73d5e293.sfr@canb.auug.org.au>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: manual merge of the ttydev tree
+Date: Tue, 22 Jul 2008 11:31:58 +0100
+Message-ID: <20080722113158.3ad57716@lxorguk.ukuu.org.uk>
+References: <20080722163754.715cf9cb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:48457 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752718AbYGVJNs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Jul 2008 05:13:48 -0400
-Content-Disposition: inline
-In-Reply-To: <20080722182834.73d5e293.sfr@canb.auug.org.au>
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:60495 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1754353AbYGVKtV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Jul 2008 06:49:21 -0400
+In-Reply-To: <20080722163754.715cf9cb.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Roland McGrath <roland@redhat.com>
+Cc: linux-next@vger.kernel.org
 
+On Tue, 22 Jul 2008 16:37:54 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi all,
+> Hi Alan,
 > 
-> On Tue, 22 Jul 2008 11:54:57 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Today's linux-next merge of the sched tree got a conflict in
-> > include/asm-x86/thread_info.h between commit
-> > 64f097331928b01d704047c1dbc738bb6d2a9bf9 ("x86 ptrace: unify
-> > TIF_SINGLESTEP") from the  tree and commit
->                         ^^^^
-> Linus'
+> Today's linux-next merge of the ttydev tree got conflicts in
+> drivers/char/istallion.c, drivers/char/mxser.c, drivers/char/specialix.c,
+> drivers/char/synclink_gt.c, drivers/char/tty_io.c,
+> drivers/usb/gadget/serial.c, drivers/usb/serial/cp2101.c,
+> drivers/usb/serial/io_ti.c, drivers/usb/serial/ir-usb.c,
+> drivers/usb/serial/usb-serial.c, include/linux/tty.h and
+> net/bluetooth/rfcomm/tty.c mainly against Linus' tree.
+> 
+> This is not unexpected since some of the ttydev tree has been merged, so I
+> will drop it for today in the hope that things are better tomorrow.
 
-thanks Stephen - i too had a resolution for this, pushed it out into 
-auto-sched-next so the linux-next conflict should go away on your next 
-iteration.
+I've fired the rest of the ttydev tree at Linus this morning now that
+clashing stuff seems to have stopped being merged for a few hours. At
+that point the ttydev tree should be empty. Andrew will push a few ip2
+patches directly. Hopefully now there is a real tty devel tree it'll have
+less clashes in future.
 
-	Ingo
+Thanks for the help in getting started with linux-next btw.
+
+Alan
