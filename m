@@ -1,48 +1,65 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: [PATCH] serial: fix struct uart_info change fallout
-Date: Tue, 22 Jul 2008 16:59:29 +0100
-Message-ID: <20080722165929.717e38d4@lxorguk.ukuu.org.uk>
+Date: Wed, 23 Jul 2008 02:22:24 +1000
+Message-ID: <20080723022224.22eb4d26.sfr@canb.auug.org.au>
 References: <20080722102520.ca801ab5.sfr@canb.auug.org.au>
 	<20080722025850.0d073a5e@lxorguk.ukuu.org.uk>
 	<20080722130152.f115224d.sfr@canb.auug.org.au>
 	<20080722114436.2c13edea@lxorguk.ukuu.org.uk>
 	<20080723014910.7351c495.sfr@canb.auug.org.au>
+	<20080722165929.717e38d4@lxorguk.ukuu.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__23_Jul_2008_02_22_24_+1000_qbHkhz.t3Qwcr/IY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:54358 "EHLO
-	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750852AbYGVQRj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Jul 2008 12:17:39 -0400
-In-Reply-To: <20080723014910.7351c495.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:54043 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752183AbYGVQWc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Jul 2008 12:22:32 -0400
+In-Reply-To: <20080722165929.717e38d4@lxorguk.ukuu.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, ppc-dev <linuxppc-dev@ozlabs.org>
 
-> I interpreted your "So much for the linux-next tree" as saying "well,
-> that has been no help".  I am sorry if I got that wrong.
+--Signature=_Wed__23_Jul_2008_02_22_24_+1000_qbHkhz.t3Qwcr/IY
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-True it didn't help in the merge that much this time. I don't think that
-is a problem with the linux-next tree but one of the lack of tty
-maintainer and tty tree letting the confusion occur in the first place -
-plus a large quantity of first time around ineptness on my part.
+Hi Alan,
 
-> But my point above is that you had a fix for the current breakage in
-> Linus' tree a couple of weeks before you sent the patches to Linus that
-> broke the powerpc build (i.e. linux-next did its job) and yet you didn't
-> combine the fix with the original patch or send the fix with the original
-> patch.  So we end up with a powerpc tree that won't build in the middle
-> of the merge window while more powerpc patches are trying to be
-> tested ... I understand that this could easily happen because of
-> forgetfulness, tiredness or accident.
+On Tue, 22 Jul 2008 16:59:29 +0100 Alan Cox <alan@lxorguk.ukuu.org.uk> wrot=
+e:
+>
+> I really expected to get the rest merged within an hour or two, but then
+> it broke, then I was travelling and each time I got wireless access to
+> resync the tree and work on it - it broke again and again and again.
+>=20
+> Next time I will bump the patch up the pile and get it out earlier when
+> that occurs.
 
-I really expected to get the rest merged within an hour or two, but then
-it broke, then I was travelling and each time I got wireless access to
-resync the tree and work on it - it broke again and again and again.
+Excellent.
 
-Next time I will bump the patch up the pile and get it out earlier when
-that occurs.
+Just asking: do you have an aversion for merging fixes back into
+patches?  Not a problem, just so I know.  Different people work
+differently.
 
-Alan
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__23_Jul_2008_02_22_24_+1000_qbHkhz.t3Qwcr/IY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiGCUAACgkQjjKRsyhoI8yJjQCfQIgDLPPf4zIDg5t2Oy3ZZDC/
+/4sAnjv8NSB6qMhjhQN7dWrUXSbG5a9p
+=6thl
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__23_Jul_2008_02_22_24_+1000_qbHkhz.t3Qwcr/IY--
