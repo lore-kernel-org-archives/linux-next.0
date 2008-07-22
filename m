@@ -1,51 +1,21 @@
-From: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
-Subject: Re: linux-next: manual merge of the tests tree
-Date: Tue, 22 Jul 2008 17:59:45 +0530
-Message-ID: <20080722122945.GC4379@in.ibm.com>
-References: <20080722135642.c54172c9.sfr@canb.auug.org.au>
-Reply-To: ananth@in.ibm.com
+From: "Matti Linnanvuori" <mattilinn@gmail.com>
+Subject: [regression] Tree for July 21 make rpm fails because of binaries
+Date: Tue, 22 Jul 2008 17:13:51 +0300
+Message-ID: <ca0148c30807220713q7934a42dw59e96a8aa5b947b9@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e32.co.us.ibm.com ([32.97.110.150]:40814 "EHLO
-	e32.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753410AbYGVMas (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Jul 2008 08:30:48 -0400
-Received: from d03relay04.boulder.ibm.com (d03relay04.boulder.ibm.com [9.17.195.106])
-	by e32.co.us.ibm.com (8.13.8/8.13.8) with ESMTP id m6MCP3SN022670
-	for <linux-next@vger.kernel.org>; Tue, 22 Jul 2008 08:25:03 -0400
-Received: from d03av04.boulder.ibm.com (d03av04.boulder.ibm.com [9.17.195.170])
-	by d03relay04.boulder.ibm.com (8.13.8/8.13.8/NCO v9.0) with ESMTP id m6MCUlPb176764
-	for <linux-next@vger.kernel.org>; Tue, 22 Jul 2008 06:30:47 -0600
-Received: from d03av04.boulder.ibm.com (loopback [127.0.0.1])
-	by d03av04.boulder.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id m6MCUlrU024180
-	for <linux-next@vger.kernel.org>; Tue, 22 Jul 2008 06:30:47 -0600
+Received: from wf-out-1314.google.com ([209.85.200.169]:62395 "EHLO
+	wf-out-1314.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753253AbYGVONx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Jul 2008 10:13:53 -0400
+Received: by wf-out-1314.google.com with SMTP id 27so2210207wfd.4
+        for <linux-next@vger.kernel.org>; Tue, 22 Jul 2008 07:13:51 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <20080722135642.c54172c9.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Sam Ravnborg <sam@ravnborg.org>
-Cc: linux-next@vger.kernel.org
+To: linux-next@vger.kernel.org
 
-On Tue, Jul 22, 2008 at 01:56:42PM +1000, Stephen Rothwell wrote:
-> Hi Ananth,
-> 
-> Today's linux-next merge of the tests tree got conflicts in
-> lib/Kconfig.debug against Linus' tree.
-> 
-> I have been carrying the fix to these conflicts for a while but no that
-> they are in Linus' tree, you should rebase/merge your tree against his
-> and carefully check/test the results.
-> 
-> My current fixup patch to your tests/Kconfig is below.  It may not be
-> complete.
-
-Thanks Stephen!
-
-Sam,
-
-Can you please request Linus to pull the tests tree now that 2.6.27
-window is open?
-
-Thanks,
-Ananth
+Tree for July 21 make rpm fails because of some drivers' like e100's
+binaries being installed but not declared.
