@@ -1,79 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: sparc tree build failure
-Date: Tue, 22 Jul 2008 17:41:51 +1000
-Message-ID: <20080722174151.8dc8f29e.sfr@canb.auug.org.au>
+Subject: linux-next: firmware tree build failure
+Date: Tue, 22 Jul 2008 17:47:32 +1000
+Message-ID: <20080722174732.bd05a41d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__22_Jul_2008_17_41_51_+1000_qwt++2tQ+QPZisFN"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40374 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52357 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751552AbYGVHmG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Jul 2008 03:42:06 -0400
+	id S1751243AbYGVHre (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Jul 2008 03:47:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
-
---Signature=_Tue__22_Jul_2008_17_41_51_+1000_qwt++2tQ+QPZisFN
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, Jaswinder Singh <jaswinder@infradead.org>
 
 Hi Dave,
 
-Today's (and for a few days) linux-next build (sparc32 defconfig) failed
-like this:
+Today's linux-next build (sparc32 defconfig) failed like this:
 
-In file included from include2/asm/page.h:4,
-                 from arch/sparc/kernel/vmlinux.lds.S:4:
-include/asm-sparc/page_64.h:11:2: #error No page size specified in kernel c=
-onfiguration
+drivers/scsi/qlogicpti.c:637: error: implicit declaration of function `release_firwmare'
 
-Due to the merge of page.h (I suspect).  The patch below fixes it.
---=20
+I applied the following patch.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
->From 2c8b8ccd3bb14cf6100ba86411d7ef676cf974df Mon Sep 17 00:00:00 2001
+>From da4d0d77ba523128e2996f96b5576fcb8d673b57 Mon Sep 17 00:00:00 2001
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 22 Jul 2008 17:34:27 +1000
-Subject: [PATCH] sparc32: pass -m32 when building vmlinux.lds
-
-Otherwise it breaks since we merged asm/page.h
+Date: Tue, 22 Jul 2008 17:45:13 +1000
+Subject: [PATCH] firmware: fix typo in qlogicpti.c
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- arch/sparc/Makefile |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+ drivers/scsi/qlogicpti.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/arch/sparc/Makefile b/arch/sparc/Makefile
-index fef28e2..6668e60 100644
---- a/arch/sparc/Makefile
-+++ b/arch/sparc/Makefile
-@@ -18,6 +18,7 @@ CHECKFLAGS	+=3D -D__sparc__
- #KBUILD_CFLAGS +=3D -g -pipe -fcall-used-g5 -fcall-used-g7
- KBUILD_CFLAGS +=3D -m32 -pipe -mno-fpu -fcall-used-g5 -fcall-used-g7
- KBUILD_AFLAGS +=3D -m32
-+CPPFLAGS_vmlinux.lds +=3D -m32
-=20
- #LDFLAGS_vmlinux =3D -N -Ttext 0xf0004000
- #  Since 2.5.40, the first stage is left not btfix-ed.
---=20
+diff --git a/drivers/scsi/qlogicpti.c b/drivers/scsi/qlogicpti.c
+index e829d43..3e71436 100644
+--- a/drivers/scsi/qlogicpti.c
++++ b/drivers/scsi/qlogicpti.c
+@@ -634,7 +634,7 @@ static int __devinit qlogicpti_load_firmware(struct qlogicpti *qpti)
+ out:
+ 	spin_unlock_irqrestore(host->host_lock, flags);
+ outfirm:
+-	release_firwmare(fw);
++	release_firmware(fw);
+ 	return err;
+ }
+ 
+-- 
 1.5.6.3
-
-
---Signature=_Tue__22_Jul_2008_17_41_51_+1000_qwt++2tQ+QPZisFN
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkiFjz8ACgkQjjKRsyhoI8zv2QCeIaHx0hxSNnD4hoEI9ikcdosN
-pHsAnREGJ/v9GPybHkMYAShlpU19uTpw
-=0lqY
------END PGP SIGNATURE-----
-
---Signature=_Tue__22_Jul_2008_17_41_51_+1000_qwt++2tQ+QPZisFN--
