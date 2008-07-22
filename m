@@ -1,50 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sched tree
-Date: Tue, 22 Jul 2008 11:58:23 +1000
-Message-ID: <20080722115823.782a4c49.sfr@canb.auug.org.au>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: [PATCH] serial: fix struct uart_info change fallout
+Date: Tue, 22 Jul 2008 02:58:50 +0100
+Message-ID: <20080722025850.0d073a5e@lxorguk.ukuu.org.uk>
+References: <20080722102520.ca801ab5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__22_Jul_2008_11_58_23_+1000_Zi7svDep1mM9rwY3"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54324 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750698AbYGVB6a (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 21 Jul 2008 21:58:30 -0400
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:46993 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1754169AbYGVCQq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Jul 2008 22:16:46 -0400
+In-Reply-To: <20080722102520.ca801ab5.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>, Max Krasnyansky <maxk@qualcomm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, ppc-dev <linuxppc-dev@ozlabs.org>
 
---Signature=_Tue__22_Jul_2008_11_58_23_+1000_Zi7svDep1mM9rwY3
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 22 Jul 2008 10:25:20 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi all,
+> Hi Linus, Alan,
+> 
+> Today's linux-next (actually just Linus' tree) build (powerpc
+> ppc64_defconfig) failed like this:
 
-Today's linux-next merge of the sched tree got a conflict in
-kernel/sched_fair.c between commit
-363ab6f1424cdea63e5d182312d60e19077b892a ("core: use performance variant
-for_each_cpu_mask_nr") from the cpus4096 tree and commit
-e761b7725234276a802322549cee5255305a0930 ("cpu hotplug, sched: Introduce
-cpu_active_map and redo sched domain managment") from the sched tree.
+Yes I know.
 
-Overlapping addition/modification in wake_idle.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+I've been trying to get the other patches merged but each of the five
+pulls of Linus tree I have done has broken the tty patch merges *AGAIN*
+so I still don't have them tested and ready to merge despite it being 3AM.
 
---Signature=_Tue__22_Jul_2008_11_58_23_+1000_Zi7svDep1mM9rwY3
-Content-Type: application/pgp-signature
+So much for the linux-next tree. Please give it until tomorrow or you are
+just going to break the tree again and mean I have to run another set of
+tests and regressions.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkiFPr8ACgkQjjKRsyhoI8wUqQCfezN4Rrth1Vh0ZXIq5H02e9iS
-15sAnijs5truEpxe5tHBdxiRCewRi2Lp
-=kZ3h
------END PGP SIGNATURE-----
-
---Signature=_Tue__22_Jul_2008_11_58_23_+1000_Zi7svDep1mM9rwY3--
+Alan
