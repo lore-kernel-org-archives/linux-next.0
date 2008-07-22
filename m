@@ -1,43 +1,51 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree
-Date: Mon, 21 Jul 2008 20:14:23 -0700
-Message-ID: <20080722031423.GA32013@kroah.com>
-References: <20080722105640.8cb5989b.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ubi tree
+Date: Tue, 22 Jul 2008 13:31:22 +1000
+Message-ID: <20080722133122.29f8e2cd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__22_Jul_2008_13_31_22_+1000_Qhd8E99PBnDMkDKr"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:57208 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753277AbYGVDSg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Jul 2008 23:18:36 -0400
-Content-Disposition: inline
-In-Reply-To: <20080722105640.8cb5989b.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51732 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753278AbYGVDba (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 21 Jul 2008 23:31:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>
+To: Artem Bityutskiy <dedekind@yandex.ru>
+Cc: linux-next@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
 
-On Tue, Jul 22, 2008 at 10:56:40AM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the driver-core tree got a conflict in
-> drivers/usb/core/devio.c between commit
-> e04199b2167e88f0e2d0410fafaa2c35ff7ba8c1 ("usbfs: don't store bad
-> pointers in registration") from Linus' tree and commits
-> 56d207f2504091e7a173640b91cb39072a2f4542 ("device create: usb: convert
-> device_create to device_create_drvdata")
-> 0de4509ad6495261fba5ebb539ac6fbb5cf66999 ("device create: usb: convert
-> device_create_drvdata to device_create") from the driver-core tree.
-> 
-> I did the (reasonably obvious) fixup in usb_classdev_add.  Probably worth
-> a check when I publish the tree.
+--Signature=_Tue__22_Jul_2008_13_31_22_+1000_Qhd8E99PBnDMkDKr
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-If the code builds properly, the merge succeeded :)
+Hi Artem,
 
-I'll look at this as I hit this myself when pushing the USB tree to
-Linus.  Now it's down to the driver-core tree having to handle these
-fixups...
+Today's linux-next merge of the ubi tree got a trivial conflict in
+drivers/mtd/ubi/cdev.c between commit
+72b67048f5dac18fd6494e3d3bff7e54840e8761 ("UBI: cdev lock_kernel()
+pushdown") from Linus' tree and commit
+9c0ec8fe1eed2106441e12ca2964f431df044f1d ("UBI: fix checkpatch.pl errors
+and warnings") from the ubi tree.
 
-thanks,
+Just overlapping additions of include files.
 
-greg k-h
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__22_Jul_2008_13_31_22_+1000_Qhd8E99PBnDMkDKr
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiFVIoACgkQjjKRsyhoI8xAJQCdFzTTav0d6uxP1v3UXH64qeAb
+VhsAoKpr8JvbJYuN0I1WtiSPdz48nT3p
+=t6r5
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__22_Jul_2008_13_31_22_+1000_Qhd8E99PBnDMkDKr--
