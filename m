@@ -1,52 +1,59 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the ubi tree
-Date: Tue, 22 Jul 2008 18:20:26 +1000
-Message-ID: <20080722182026.7391a86a.sfr@canb.auug.org.au>
-References: <20080722133122.29f8e2cd.sfr@canb.auug.org.au>
-	<48856F9C.5060607@yandex.ru>
+From: Jaswinder Singh <jaswinder@infradead.org>
+Subject: Re: linux-next: firmware tree build failure
+Date: Tue, 22 Jul 2008 13:55:57 +0530
+Message-ID: <1216715157.2595.12.camel@jaswinder.satnam>
+References: <20080722180416.67461eae.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__22_Jul_2008_18_20_26_+1000_kWSkXM4KzOysCaZ1"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51865 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753409AbYGVIUd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Jul 2008 04:20:33 -0400
-In-Reply-To: <48856F9C.5060607@yandex.ru>
+Received: from bombadil.infradead.org ([18.85.46.34]:37923 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751952AbYGVI1C (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Jul 2008 04:27:02 -0400
+In-Reply-To: <20080722180416.67461eae.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Artem Bityutskiy <dedekind@yandex.ru>
-Cc: linux-next@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Woodhouse <dwmw2@infradead.org>, linux-next@vger.kernel.org
 
---Signature=_Tue__22_Jul_2008_18_20_26_+1000_kWSkXM4KzOysCaZ1
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Stephen,
 
-Hi Artem,
+On Tue, 2008-07-22 at 18:04 +1000, Stephen Rothwell wrote:
+> Hi Dave,
+> 
+> Today's linux-next build (sparc32 defconfig) failed like this:
+> 
+> drivers/scsi/qlogicpti.c: In function `qlogicpti_load_firmware':
+> drivers/scsi/qlogicpti.c:476: error: structure has no member named `sbus'
+> 
+> I applied the following patch.
+> 
+> I think we can conclude that this was never build tested.  :-(
 
-On Tue, 22 Jul 2008 08:26:52 +0300 Artem Bityutskiy <dedekind@yandex.ru> wr=
-ote:
->
-> I'll amend UBI tree and fix this.
+I am sorry for this.
 
-OK, thanks.
+This patch will solve both issues :-
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__22_Jul_2008_18_20_26_+1000_kWSkXM4KzOysCaZ1
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkiFmEoACgkQjjKRsyhoI8wcPgCfXVZ/J6eTdwQdro7Aak5mfPAE
-IewAn10URlW53OJ7YCuMJZeZjnVP7Esn
-=M+P4
------END PGP SIGNATURE-----
-
---Signature=_Tue__22_Jul_2008_18_20_26_+1000_kWSkXM4KzOysCaZ1--
+diff --git a/drivers/scsi/qlogicpti.c b/drivers/scsi/qlogicpti.c
+index e829d43..010372f 100644
+--- a/drivers/scsi/qlogicpti.c
++++ b/drivers/scsi/qlogicpti.c
+@@ -475,7 +475,7 @@ static int __devinit qlogicpti_load_firmware(struct qlogicpti *qpti)
+ 	unsigned long flags;
+ 	int i, timeout;
+ 
+-	err = request_firmware(&fw, fwname, &qpti->sbus->ofdev.dev);
++	err = request_firmware(&fw, fwname, &qpti->sdev->ofdev.dev);
+ 	if (err) {
+ 		printk(KERN_ERR "Failed to load image \"%s\" err %d\n",
+ 		       fwname, err);
+@@ -634,7 +634,7 @@ static int __devinit qlogicpti_load_firmware(struct qlogicpti *qpti)
+ out:
+ 	spin_unlock_irqrestore(host->host_lock, flags);
+ outfirm:
+-	release_firwmare(fw);
++	release_firmware(fw);
+ 	return err;
+ }
+ 
