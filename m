@@ -1,56 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the ubi tree
-Date: Wed, 23 Jul 2008 02:09:45 +1000
-Message-ID: <20080723020945.d7602b34.sfr@canb.auug.org.au>
-References: <20080722133122.29f8e2cd.sfr@canb.auug.org.au>
-	<48857D41.9010305@yandex.ru>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: [PATCH] serial: fix struct uart_info change fallout
+Date: Tue, 22 Jul 2008 16:59:29 +0100
+Message-ID: <20080722165929.717e38d4@lxorguk.ukuu.org.uk>
+References: <20080722102520.ca801ab5.sfr@canb.auug.org.au>
+	<20080722025850.0d073a5e@lxorguk.ukuu.org.uk>
+	<20080722130152.f115224d.sfr@canb.auug.org.au>
+	<20080722114436.2c13edea@lxorguk.ukuu.org.uk>
+	<20080723014910.7351c495.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__23_Jul_2008_02_09_45_+1000__wH2TxC1_jxlqb2B"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38379 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750971AbYGVQJx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Jul 2008 12:09:53 -0400
-In-Reply-To: <48857D41.9010305@yandex.ru>
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:54358 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750852AbYGVQRj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Jul 2008 12:17:39 -0400
+In-Reply-To: <20080723014910.7351c495.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Artem Bityutskiy <dedekind@yandex.ru>
-Cc: linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, ppc-dev <linuxppc-dev@ozlabs.org>
 
---Signature=_Wed__23_Jul_2008_02_09_45_+1000__wH2TxC1_jxlqb2B
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> I interpreted your "So much for the linux-next tree" as saying "well,
+> that has been no help".  I am sorry if I got that wrong.
 
-Hi Artem,
+True it didn't help in the merge that much this time. I don't think that
+is a problem with the linux-next tree but one of the lack of tty
+maintainer and tty tree letting the confusion occur in the first place -
+plus a large quantity of first time around ineptness on my part.
 
-On Tue, 22 Jul 2008 09:25:05 +0300 Artem Bityutskiy <dedekind@yandex.ru> wr=
-ote:
->
-> Could you please amend your scripts and use "linux-next" branch for both
-> UBI and UBIFS:
->=20
-> UBI: git://git.infradead.org/~dedekind/ubi-2.6.git linux-next
-> UBIFS: git://git.infradead.org/~dedekind/ubifs-2.6.git linux-next
+> But my point above is that you had a fix for the current breakage in
+> Linus' tree a couple of weeks before you sent the patches to Linus that
+> broke the powerpc build (i.e. linux-next did its job) and yet you didn't
+> combine the fix with the original patch or send the fix with the original
+> patch.  So we end up with a powerpc tree that won't build in the middle
+> of the merge window while more powerpc patches are trying to be
+> tested ... I understand that this could easily happen because of
+> forgetfulness, tiredness or accident.
 
-Done.
+I really expected to get the rest merged within an hour or two, but then
+it broke, then I was travelling and each time I got wireless access to
+resync the tree and work on it - it broke again and again and again.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Next time I will bump the patch up the pile and get it out earlier when
+that occurs.
 
---Signature=_Wed__23_Jul_2008_02_09_45_+1000__wH2TxC1_jxlqb2B
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkiGBkkACgkQjjKRsyhoI8wpnQCgntQAQuLHCdFYFS4o5lj4Z4jS
-LucAoKMK5ZDYuIcMM2EudrgqxB9vmOE/
-=8tFM
------END PGP SIGNATURE-----
-
---Signature=_Wed__23_Jul_2008_02_09_45_+1000__wH2TxC1_jxlqb2B--
+Alan
