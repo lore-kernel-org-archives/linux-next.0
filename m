@@ -1,59 +1,54 @@
-From: Jaswinder Singh <jaswinder@infradead.org>
-Subject: Re: linux-next: firmware tree build failure
-Date: Tue, 22 Jul 2008 13:55:57 +0530
-Message-ID: <1216715157.2595.12.camel@jaswinder.satnam>
-References: <20080722180416.67461eae.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the sched tree
+Date: Tue, 22 Jul 2008 18:28:34 +1000
+Message-ID: <20080722182834.73d5e293.sfr@canb.auug.org.au>
+References: <20080722115457.46aa2c98.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__22_Jul_2008_18_28_34_+1000_G/a0mvzBEoq_IHEt"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:37923 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751952AbYGVI1C (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Jul 2008 04:27:02 -0400
-In-Reply-To: <20080722180416.67461eae.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37863 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752065AbYGVI2p (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Jul 2008 04:28:45 -0400
+In-Reply-To: <20080722115457.46aa2c98.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Woodhouse <dwmw2@infradead.org>, linux-next@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Roland McGrath <roland@redhat.com>
 
-Hello Stephen,
+--Signature=_Tue__22_Jul_2008_18_28_34_+1000_G/a0mvzBEoq_IHEt
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2008-07-22 at 18:04 +1000, Stephen Rothwell wrote:
-> Hi Dave,
-> 
-> Today's linux-next build (sparc32 defconfig) failed like this:
-> 
-> drivers/scsi/qlogicpti.c: In function `qlogicpti_load_firmware':
-> drivers/scsi/qlogicpti.c:476: error: structure has no member named `sbus'
-> 
-> I applied the following patch.
-> 
-> I think we can conclude that this was never build tested.  :-(
+Hi all,
 
-I am sorry for this.
+On Tue, 22 Jul 2008 11:54:57 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the sched tree got a conflict in
+> include/asm-x86/thread_info.h between commit
+> 64f097331928b01d704047c1dbc738bb6d2a9bf9 ("x86 ptrace: unify
+> TIF_SINGLESTEP") from the  tree and commit
+                        ^^^^
+Linus'
 
-This patch will solve both issues :-
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --git a/drivers/scsi/qlogicpti.c b/drivers/scsi/qlogicpti.c
-index e829d43..010372f 100644
---- a/drivers/scsi/qlogicpti.c
-+++ b/drivers/scsi/qlogicpti.c
-@@ -475,7 +475,7 @@ static int __devinit qlogicpti_load_firmware(struct qlogicpti *qpti)
- 	unsigned long flags;
- 	int i, timeout;
- 
--	err = request_firmware(&fw, fwname, &qpti->sbus->ofdev.dev);
-+	err = request_firmware(&fw, fwname, &qpti->sdev->ofdev.dev);
- 	if (err) {
- 		printk(KERN_ERR "Failed to load image \"%s\" err %d\n",
- 		       fwname, err);
-@@ -634,7 +634,7 @@ static int __devinit qlogicpti_load_firmware(struct qlogicpti *qpti)
- out:
- 	spin_unlock_irqrestore(host->host_lock, flags);
- outfirm:
--	release_firwmare(fw);
-+	release_firmware(fw);
- 	return err;
- }
- 
+--Signature=_Tue__22_Jul_2008_18_28_34_+1000_G/a0mvzBEoq_IHEt
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiFmjIACgkQjjKRsyhoI8xElgCghzSnSXb/pqP+riVSp7H9fd6g
+SwAAoKSW8cL0RbM55X5e7jCgYCx1E0hU
+=Er51
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__22_Jul_2008_18_28_34_+1000_G/a0mvzBEoq_IHEt--
