@@ -1,74 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] serial: fix struct uart_info change fallout
-Date: Wed, 23 Jul 2008 01:49:10 +1000
-Message-ID: <20080723014910.7351c495.sfr@canb.auug.org.au>
-References: <20080722102520.ca801ab5.sfr@canb.auug.org.au>
-	<20080722025850.0d073a5e@lxorguk.ukuu.org.uk>
-	<20080722130152.f115224d.sfr@canb.auug.org.au>
-	<20080722114436.2c13edea@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: manual merge of the ubi tree
+Date: Wed, 23 Jul 2008 02:09:45 +1000
+Message-ID: <20080723020945.d7602b34.sfr@canb.auug.org.au>
+References: <20080722133122.29f8e2cd.sfr@canb.auug.org.au>
+	<48857D41.9010305@yandex.ru>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__23_Jul_2008_01_49_10_+1000_54=MKzBin+g38X6A"
+ boundary="Signature=_Wed__23_Jul_2008_02_09_45_+1000__wH2TxC1_jxlqb2B"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47337 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38379 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750906AbYGVPtS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Jul 2008 11:49:18 -0400
-In-Reply-To: <20080722114436.2c13edea@lxorguk.ukuu.org.uk>
+	id S1750971AbYGVQJx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Jul 2008 12:09:53 -0400
+In-Reply-To: <48857D41.9010305@yandex.ru>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, ppc-dev <linuxppc-dev@ozlabs.org>
+To: Artem Bityutskiy <dedekind@yandex.ru>
+Cc: linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Wed__23_Jul_2008_01_49_10_+1000_54=MKzBin+g38X6A
+--Signature=_Wed__23_Jul_2008_02_09_45_+1000__wH2TxC1_jxlqb2B
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Alan,
+Hi Artem,
 
-On Tue, 22 Jul 2008 11:44:36 +0100 Alan Cox <alan@lxorguk.ukuu.org.uk> wrot=
-e:
+On Tue, 22 Jul 2008 09:25:05 +0300 Artem Bityutskiy <dedekind@yandex.ru> wr=
+ote:
 >
-> > What is your problem with the linux-next tree.  The problem was
-> > discovered and reported when I first merged the ttydev tree into
-> > linux-next on July 1.  The fixes were in linux-next on July 2.
+> Could you please amend your scripts and use "linux-next" branch for both
+> UBI and UBIFS:
 >=20
-> Yes .. and ? The clashes kept happening despite that when I was doing the
-> merges (and going on holiday for a week and trying to sort it out with
-> limited time and internet access)
->=20
-> Sorry I don't follow your line of discussion at all here ?
+> UBI: git://git.infradead.org/~dedekind/ubi-2.6.git linux-next
+> UBIFS: git://git.infradead.org/~dedekind/ubifs-2.6.git linux-next
 
-I interpreted your "So much for the linux-next tree" as saying "well,
-that has been no help".  I am sorry if I got that wrong.
-
-But my point above is that you had a fix for the current breakage in
-Linus' tree a couple of weeks before you sent the patches to Linus that
-broke the powerpc build (i.e. linux-next did its job) and yet you didn't
-combine the fix with the original patch or send the fix with the original
-patch.  So we end up with a powerpc tree that won't build in the middle
-of the merge window while more powerpc patches are trying to be
-tested ... I understand that this could easily happen because of
-forgetfulness, tiredness or accident.
-
-More care was needed.
+Done.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__23_Jul_2008_01_49_10_+1000_54=MKzBin+g38X6A
+--Signature=_Wed__23_Jul_2008_02_09_45_+1000__wH2TxC1_jxlqb2B
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkiGAXYACgkQjjKRsyhoI8wlkQCeJQjD+tiLvZtl3N47Jnq9NjuV
-XzYAn2QGiZJ4gKDb9TxyvdB8Ij7QtzfT
-=XP8y
+iEYEARECAAYFAkiGBkkACgkQjjKRsyhoI8wpnQCgntQAQuLHCdFYFS4o5lj4Z4jS
+LucAoKMK5ZDYuIcMM2EudrgqxB9vmOE/
+=8tFM
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__23_Jul_2008_01_49_10_+1000_54=MKzBin+g38X6A--
+--Signature=_Wed__23_Jul_2008_02_09_45_+1000__wH2TxC1_jxlqb2B--
