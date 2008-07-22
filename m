@@ -1,62 +1,33 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Requirements and process
-Date: Tue, 22 Jul 2008 15:31:14 -0700
-Message-ID: <20080722153114.e9d44210.randy.dunlap@oracle.com>
-References: <20080503154542.18807e59.sfr@canb.auug.org.au>
-	<20080503160724.6c3e0392.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: sparc tree build failure
+Date: Tue, 22 Jul 2008 15:47:30 -0700 (PDT)
+Message-ID: <20080722.154730.06541591.davem@davemloft.net>
+References: <20080722174151.8dc8f29e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rgminet01.oracle.com ([148.87.113.118]:14391 "EHLO
-	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753253AbYGVWcK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Jul 2008 18:32:10 -0400
-In-Reply-To: <20080503160724.6c3e0392.sfr@canb.auug.org.au>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:39070
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1750855AbYGVWra (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Jul 2008 18:47:30 -0400
+In-Reply-To: <20080722174151.8dc8f29e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
+To: sfr@canb.auug.org.au
+Cc: linux-next@vger.kernel.org, sam@ravnborg.org
 
-On Sat, 3 May 2008 16:07:24 +1000 Stephen Rothwell wrote:
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 22 Jul 2008 17:41:51 +1000
 
-> In case it isn't clear, I need to be told where I can get a particular
-> tree from and who should be contacted in case of problems (I do not troll
-> through the MAINTAINERS file).  I can currently handle git trees and
-> quilt series.  I am willing to consider other formats/scms.  I also do
-> not mind having multiple trees (or branches or series files) for a single
-> subsystem/maintainer.
+> Today's (and for a few days) linux-next build (sparc32 defconfig) failed
+> like this:
 > 
-> Series files must be annotated with an indication of the place in Linus'
-> tree that they are based on using the following format:
+> In file included from include2/asm/page.h:4,
+>                  from arch/sparc/kernel/vmlinux.lds.S:4:
+> include/asm-sparc/page_64.h:11:2: #error No page size specified in kernel configuration
 > 
-> # BASE <some identification of a place in Linus' tree>
-> 
-> This base can be a SHA1 or a release tag or one of the ...-git<n> or the
-> output from "git describe".  Alternatively, you can be based on another
-> tree in linux-next by using:
-> 
-> # NEXT_BASE <name of a tree in linux-next>
+> Due to the merge of page.h (I suspect).  The patch below fixes it.
 
-What do we use for BASE or NEXT_BASE if the base tree is linux-next?
-Just don't use these annotations?
-
-
-> The names are in the Next/Trees file in each release and normally do not
-> change.
-> 
-> Also you may (if you like) delimit the parts of the series you want in
-> linux-next by using:
-> 
-> # NEXT_PATCHES_START
-> .
-> .
-> # NEXT_PATCHES_END
-> 
-> There can be multiple such sections.
-
-
----
-~Randy
-Linux Plumbers Conference, 17-19 September 2008, Portland, Oregon USA
-http://linuxplumbersconf.org/
+Applied, thanks Stephen.
