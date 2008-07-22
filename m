@@ -1,39 +1,50 @@
-From: Artem Bityutskiy <dedekind@yandex.ru>
-Subject: Re: linux-next: manual merge of the ubi tree
-Date: Tue, 22 Jul 2008 08:26:52 +0300
-Message-ID: <48856F9C.5060607@yandex.ru>
-References: <20080722133122.29f8e2cd.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kmemcheck tree
+Date: Tue, 22 Jul 2008 16:16:19 +1000
+Message-ID: <20080722161619.5b8bd082.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__22_Jul_2008_16_16_19_+1000_7+My8gA7DjlLDoEI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.122.230]:33820 "EHLO
-	mgw-mx03.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757022AbYGVFaY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Jul 2008 01:30:24 -0400
-In-Reply-To: <20080722133122.29f8e2cd.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35291 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751329AbYGVGQ0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Jul 2008 02:16:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+To: Vegard Nossum <vegard.nossum@gmail.com>, Pekka Enberg <penberg@cs.helsinki.fi>, Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, Jaswinder Singh <jaswinder@infradead.org>
 
-Hi,
+--Signature=_Tue__22_Jul_2008_16_16_19_+1000_7+My8gA7DjlLDoEI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Stephen Rothwell wrote:
-> Today's linux-next merge of the ubi tree got a trivial conflict in
-> drivers/mtd/ubi/cdev.c between commit
-> 72b67048f5dac18fd6494e3d3bff7e54840e8761 ("UBI: cdev lock_kernel()
-> pushdown") from Linus' tree and commit
-> 9c0ec8fe1eed2106441e12ca2964f431df044f1d ("UBI: fix checkpatch.pl err=
-ors
-> and warnings") from the ubi tree.
->=20
-> Just overlapping additions of include files.
+Hi all,
 
-I'll amend UBI tree and fix this.
+Today's linux-next merge of the kmemcheck tree got a trivial conflict in
+arch/x86/kernel/traps_32.c between commit
+6ac8d51f01d345af5ea4209004a9ea29b2f20891 ("x86: introducing
+asm-x86/traps.h") from Linus' tree and commit
+787ecfaa503dc63ff1831ddc74b15dad49bace1d ("x86: add hooks for kmemcheck")
+from the kmemcheck tree.
 
+Just overlapping additions of includes.  I can carry it.
 --=20
-Best Regards,
-Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
-=D1=86=D0=BA=D0=B8=D0=B9)
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__22_Jul_2008_16_16_19_+1000_7+My8gA7DjlLDoEI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiFezMACgkQjjKRsyhoI8ywiwCePQXKERMKmsUbPsSUu5Yhhf1T
+KS4An3m5/lyPOI4WHurAyJTAWxwdRQ7h
+=6wLK
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__22_Jul_2008_16_16_19_+1000_7+My8gA7DjlLDoEI--
