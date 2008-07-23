@@ -1,75 +1,57 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH 00/12] Thumb-2 kernel support
-Date: Wed, 23 Jul 2008 17:05:55 +0100
-Message-ID: <1216829155.23395.19.camel@pc1117.cambridge.arm.com>
-References: <20080606173300.7930.31525.stgit@pc1117.cambridge.arm.com>
-	 <20080630125110.1dc5689a.akpm@linux-foundation.org>
-	 <1214901131.29199.31.camel@pc1117.cambridge.arm.com>
-	 <20080701014529.272706d8.akpm@linux-foundation.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: ttydev tree build failure
+Date: Wed, 23 Jul 2008 18:39:37 +0200 (CEST)
+Message-ID: <Pine.LNX.4.64.0807231838470.21737@anakin>
+References: <20080723171743.1436cf2a.sfr@canb.auug.org.au>
+ <Pine.LNX.4.64.0807231436310.1185@anakin> <20080723154610.348ffc07@lxorguk.ukuu.org.uk>
+ <Pine.LNX.4.64.0807231748250.20868@anakin> <20080723164731.00c163f1@lxorguk.ukuu.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([193.131.176.58]:39844 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751266AbYGWQGu convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 23 Jul 2008 12:06:50 -0400
-In-Reply-To: <20080701014529.272706d8.akpm@linux-foundation.org>
+Received: from nelson.telenet-ops.be ([195.130.133.66]:60591 "EHLO
+	nelson.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750799AbYGWQjk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Jul 2008 12:39:40 -0400
+In-Reply-To: <20080723164731.00c163f1@lxorguk.ukuu.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-arm-kernel@lists.arm.linux.org.uk, linux-next@vger.kernel.org
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux/m68k <linux-m68k@vger.kernel.org>
 
-Hi Andrew,
+	Hi Alan,
 
-On Tue, 2008-07-01 at 01:45 -0700, Andrew Morton wrote:
-> On Tue, 01 Jul 2008 09:32:11 +0100 Catalin Marinas <catalin.marinas@a=
-rm.com> wrote:
->=20
-> > On Mon, 2008-06-30 at 12:51 -0700, Andrew Morton wrote:
-> > > On Fri, 06 Jun 2008 18:33:00 +0100
-> > > Catalin Marinas <catalin.marinas@arm.com> wrote:
-> > >=20
-> > > > This series of patches allows the kernel to be compiled to Thum=
-b-2 mode
-> > > > (on ARMv7 CPUs). The patches have been posted a few times on th=
-e list
-> > > > and the comments were implemented (hopefully I haven't missed a=
-ny).
-> > > >=20
-> > > > If/when there are no more comments, I'd like the series to be m=
-erged
-> > > > into the -mm tree if Andrew agrees. It was tested and generated=
- against
-> > > > the 2.6.26-rc2-mm1 kernel.
-> > [...]
-> > > OK, I added this tree to -mm.  Nobody is likely to test or review=
- it
-> > > there, but at least I might pick up on any merge or build issues.
+On Wed, 23 Jul 2008, Alan Cox wrote:
+> On Wed, 23 Jul 2008 17:49:13 +0200 (CEST)
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Wed, 23 Jul 2008, Alan Cox wrote:
+> > > On Wed, 23 Jul 2008 14:39:08 +0200 (CEST)
+> > > Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > > On Wed, 23 Jul 2008, Stephen Rothwell wrote:
+> > > > > Today's linux-next build (m68k defconfig) failed like this:
+> > > > > 
+> > > > > drivers/char/vme_scc.c:186: error: 'struct gs_port' has no member named 'open_wait'
+> > > > 
+> > > > Not just in linux-next, also in mainline, while these problems have been
+> > > > reported before.
+> > > 
+> > > And at the time I asked if anyone was using this hardware and if so would
+> > > they send patches. Shall I send Linus patches to delete them or is anyone
+> > > actually using this stuff ?
+> > 
+> > Sorry, I did not see that question.
+> 
+> No problem - what do you want me to do however ?
 
-Were the Thumb-2 patches merged in any of the -mm tree releases? I now
-updated the series to the 2.6.26-rc8-mm1 kernel if you still consider
-merging them (=EF=BB=BFgit://linux-arm.org/linux-2.6 for-akpm).
+Update all drivers when making core tty infrastructure changes?
+Thanks!
 
-> > > If you're hankering for a 2.6.27 merge of this material it might =
-be
-> > > more appropriate to add it to linux-next.
-> >=20
-> > I aim for the ___post 2.6.27 merge window (i.e. patches available i=
-n
-> > 2.6.28).
->=20
-> OK, then in that case it shouldn't go into linux-next until around
-> 2.6.27-rc1 time.
+Gr{oetje,eeting}s,
 
-Russell (and others in the ARM community), are you OK with this set of
-patches being merged into 2.6.28 mainline (i.e. at the next merging
-window)? If yes, do you acknowledge the patches? In the meantime, I can
-rebase them on top of linux-next to check for possible merge conflicts
-(or even ask for them to be pulled into linux-next).
+						Geert
 
-Thanks.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---=20
-Catalin
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
