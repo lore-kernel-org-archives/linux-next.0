@@ -1,55 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the driver-core tree
-Date: Wed, 23 Jul 2008 11:31:35 +1000
-Message-ID: <20080723113135.5e22bf4d.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the x86 tree
+Date: Wed, 23 Jul 2008 12:51:53 +1000
+Message-ID: <20080723125153.aab7ac10.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__23_Jul_2008_11_31_35_+1000_2SQtQ221rxQt8WVJ"
+ boundary="Signature=_Wed__23_Jul_2008_12_51_53_+1000_Mx8mXCA3saJLh8II"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56401 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58296 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751431AbYGWBbq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Jul 2008 21:31:46 -0400
+	id S1752108AbYGWCwE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Jul 2008 22:52:04 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, Alan Cox <alan@lxorguk.ukuu.org.uk>, David Howells <dhowells@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Suresh Siddha <suresh.b.siddha@intel.com>, Yong Wang <yong.y.wang@linux.intel.com>, Jesse Barnes <jbarnes@virtuousgeek.org>
 
---Signature=_Wed__23_Jul_2008_11_31_35_+1000_2SQtQ221rxQt8WVJ
+--Signature=_Wed__23_Jul_2008_12_51_53_+1000_Mx8mXCA3saJLh8II
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-Today's linux-next merge of the driver-core tree got conflicts in 58
-files due to the partial merge into Linus' tree of the driver-core tree.
-The conflicts were all caused by the renamed of device_create_drvdata()
-to device_create() so I took the driver-core versions of almost all those
-files.  The exceptions were drivers/char/tty_io.c,
-drivers/char/istallion.c, drivers/char/stallion.c and
-drivers/isdn/capi/capi.c which required a manual merge (I applied the
-rename by hand on top of the upstream version of the file in each case).
-Someone might like to check that I have it all right when I publish the
-tree.
+Today's linux-next merge of the x86 tree got a conflict in
+drivers/pci/dmar.c between commit
+f42e86d95fa53d3a62b2795515da18b4f41b0480 ("PCI/DMAR: don't assume
+presence of RMRRs") from the pcu-current tree (the qeuivalent of which is
+in the x86 tree) and commit aaa9d1dd63bf89b62f4ea9f46de376ab1a3fbc6c
+("x64, x2apic/intr-remap: use CONFIG_DMAR for DMA-remapping specific
+code") from the x86 tree.
 
-Hopefully this will be fixed up soon.
-
+I did the obvious fixup (which is to take the x86 tree version).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__23_Jul_2008_11_31_35_+1000_2SQtQ221rxQt8WVJ
+--Signature=_Wed__23_Jul_2008_12_51_53_+1000_Mx8mXCA3saJLh8II
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkiGifcACgkQjjKRsyhoI8yw3gCeN5sFDhsWn5hSpF4AN5YM2UuO
-41sAoL5SXnDESahUAzdgK85SJslpU5qQ
-=yA9N
+iEYEARECAAYFAkiGnMkACgkQjjKRsyhoI8zXkQCfQG0KXMv1F6KIJwmEF0vWfVO9
+YAoAn34mNKKI12eFJUOu7/Rf8UWHlpyX
+=cdFt
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__23_Jul_2008_11_31_35_+1000_2SQtQ221rxQt8WVJ--
+--Signature=_Wed__23_Jul_2008_12_51_53_+1000_Mx8mXCA3saJLh8II--
