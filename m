@@ -1,42 +1,66 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: linux-next: s390 tree unfetchable
-Date: Wed, 23 Jul 2008 09:46:21 +0200
-Message-ID: <1216799181.5517.6.camel@localhost>
-References: <20080723094932.ca39fa07.sfr@canb.auug.org.au>
-Reply-To: schwidefsky@de.ibm.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the driver-core tree
+Date: Wed, 23 Jul 2008 18:09:26 +1000
+Message-ID: <20080723180926.51c1bd08.sfr@canb.auug.org.au>
+References: <20080723113135.5e22bf4d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__23_Jul_2008_18_09_26_+1000_Wfq60wPktM/VzzpC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate1.de.ibm.com ([195.212.29.150]:22951 "EHLO
-	mtagate1.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751404AbYGWHqZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Jul 2008 03:46:25 -0400
-Received: from d12nrmr1607.megacenter.de.ibm.com (d12nrmr1607.megacenter.de.ibm.com [9.149.167.49])
-	by mtagate1.de.ibm.com (8.13.8/8.13.8) with ESMTP id m6N7kM0S166200
-	for <linux-next@vger.kernel.org>; Wed, 23 Jul 2008 07:46:22 GMT
-Received: from d12av02.megacenter.de.ibm.com (d12av02.megacenter.de.ibm.com [9.149.165.228])
-	by d12nrmr1607.megacenter.de.ibm.com (8.13.8/8.13.8/NCO v9.0) with ESMTP id m6N7kM9U3748066
-	for <linux-next@vger.kernel.org>; Wed, 23 Jul 2008 09:46:22 +0200
-Received: from d12av02.megacenter.de.ibm.com (loopback [127.0.0.1])
-	by d12av02.megacenter.de.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id m6N7kLaI031466
-	for <linux-next@vger.kernel.org>; Wed, 23 Jul 2008 09:46:22 +0200
-In-Reply-To: <20080723094932.ca39fa07.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56271 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751390AbYGWIJe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Jul 2008 04:09:34 -0400
+In-Reply-To: <20080723113135.5e22bf4d.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, Alan Cox <alan@lxorguk.ukuu.org.uk>, David Howells <dhowells@redhat.com>
 
-On Wed, 2008-07-23 at 09:49 +1000, Stephen Rothwell wrote:
-> I have not been able to fetch the s390 tree for a few days now.  I get:
-> 
-> git390.osdl.marist.edu[0: 148.100.96.69]: errno=Connection refused
+--Signature=_Wed__23_Jul_2008_18_09_26_+1000_Wfq60wPktM/VzzpC
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Not good. The ssh access works, seems like the git daemon has problems.
-Stay tuned ..
+Hi Greg,
 
--- 
-blue skies,
-  Martin.
+On Wed, 23 Jul 2008 11:31:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the driver-core tree got conflicts in 58
+> files due to the partial merge into Linus' tree of the driver-core tree.
+> The conflicts were all caused by the renamed of device_create_drvdata()
+> to device_create() so I took the driver-core versions of almost all those
+> files.  The exceptions were drivers/char/tty_io.c,
+> drivers/char/istallion.c, drivers/char/stallion.c and
+> drivers/isdn/capi/capi.c which required a manual merge (I applied the
+> rename by hand on top of the upstream version of the file in each case).
+> Someone might like to check that I have it all right when I publish the
+> tree.
+>=20
+> Hopefully this will be fixed up soon.
 
-"Reality continues to ruin my life." - Calvin.
+I think one way to avoid this in the future would be to move all the
+patches that you have asked Linus to merge into the driver-core.current
+series immediately you make the request (or even before).  That would
+separate my merge of the patches that are identical on both sides from
+the patches that further change the same files.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__23_Jul_2008_18_09_26_+1000_Wfq60wPktM/VzzpC
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiG5zcACgkQjjKRsyhoI8wJ2gCffPc5TYu5kzD2URC1zaSprSqv
+b2oAn3sDxr8Mf+NlVUfEf2mSPDNUvbcL
+=zldc
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__23_Jul_2008_18_09_26_+1000_Wfq60wPktM/VzzpC--
