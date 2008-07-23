@@ -1,72 +1,41 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 00/12] Thumb-2 kernel support
-Date: Wed, 23 Jul 2008 13:01:40 -0700
-Message-ID: <20080723130140.ff016944.akpm@linux-foundation.org>
-References: <20080606173300.7930.31525.stgit@pc1117.cambridge.arm.com>
-	<20080630125110.1dc5689a.akpm@linux-foundation.org>
-	<1214901131.29199.31.camel@pc1117.cambridge.arm.com>
-	<20080701014529.272706d8.akpm@linux-foundation.org>
-	<1216829155.23395.19.camel@pc1117.cambridge.arm.com>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: Re: linux-next: s390 tree unfetchable
+Date: Wed, 23 Jul 2008 22:16:52 +0200
+Message-ID: <1216844212.19443.6.camel@localhost>
+References: <20080723094932.ca39fa07.sfr@canb.auug.org.au>
+Reply-To: schwidefsky@de.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:48808 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754209AbYGWUCQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 23 Jul 2008 16:02:16 -0400
-In-Reply-To: <1216829155.23395.19.camel@pc1117.cambridge.arm.com>
+Received: from mtagate8.de.ibm.com ([195.212.29.157]:40101 "EHLO
+	mtagate8.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754677AbYGWURR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Jul 2008 16:17:17 -0400
+Received: from d12nrmr1607.megacenter.de.ibm.com (d12nrmr1607.megacenter.de.ibm.com [9.149.167.49])
+	by mtagate8.de.ibm.com (8.13.8/8.13.8) with ESMTP id m6NKGstj224266
+	for <linux-next@vger.kernel.org>; Wed, 23 Jul 2008 20:16:54 GMT
+Received: from d12av02.megacenter.de.ibm.com (d12av02.megacenter.de.ibm.com [9.149.165.228])
+	by d12nrmr1607.megacenter.de.ibm.com (8.13.8/8.13.8/NCO v9.0) with ESMTP id m6NKGst63379276
+	for <linux-next@vger.kernel.org>; Wed, 23 Jul 2008 22:16:54 +0200
+Received: from d12av02.megacenter.de.ibm.com (loopback [127.0.0.1])
+	by d12av02.megacenter.de.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id m6NKGsPI018636
+	for <linux-next@vger.kernel.org>; Wed, 23 Jul 2008 22:16:54 +0200
+In-Reply-To: <20080723094932.ca39fa07.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-arm-kernel@lists.arm.linux.org.uk, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, linux-next@vger.kernel.org
 
-On Wed, 23 Jul 2008 17:05:55 +0100
-Catalin Marinas <catalin.marinas@arm.com> wrote:
-
-> Hi Andrew,
+On Wed, 2008-07-23 at 09:49 +1000, Stephen Rothwell wrote:
+> I have not been able to fetch the s390 tree for a few days now.  I get:
 > 
-> On Tue, 2008-07-01 at 01:45 -0700, Andrew Morton wrote:
-> > On Tue, 01 Jul 2008 09:32:11 +0100 Catalin Marinas <catalin.marinas@arm.com> wrote:
-> > 
-> > > On Mon, 2008-06-30 at 12:51 -0700, Andrew Morton wrote:
-> > > > On Fri, 06 Jun 2008 18:33:00 +0100
-> > > > Catalin Marinas <catalin.marinas@arm.com> wrote:
-> > > > 
-> > > > > This series of patches allows the kernel to be compiled to Thumb-2 mode
-> > > > > (on ARMv7 CPUs). The patches have been posted a few times on the list
-> > > > > and the comments were implemented (hopefully I haven't missed any).
-> > > > > 
-> > > > > If/when there are no more comments, I'd like the series to be merged
-> > > > > into the -mm tree if Andrew agrees. It was tested and generated against
-> > > > > the 2.6.26-rc2-mm1 kernel.
-> > > [...]
-> > > > OK, I added this tree to -mm.  Nobody is likely to test or review it
-> > > > there, but at least I might pick up on any merge or build issues.
-> 
-> Were the Thumb-2 patches merged in any of the -mm tree releases? I now
-> updated the series to the 2.6.26-rc8-mm1 kernel if you still consider
-> merging them (___git://linux-arm.org/linux-2.6 for-akpm).
+> git390.osdl.marist.edu[0: 148.100.96.69]: errno=Connection refused
 
-I pull it regularly but always get rejects and never got around to
-looking into fixing them.  Probably the git-thumb tree is based on an
-ARM git tree so I'd need to generate the diff reletive to that tree. 
-But I just haven't got onto it, sorry.
+Martha fixed it. You should be able to pull from git390 again.
 
-> > > > If you're hankering for a 2.6.27 merge of this material it might be
-> > > > more appropriate to add it to linux-next.
-> > > 
-> > > I aim for the ___post 2.6.27 merge window (i.e. patches available in
-> > > 2.6.28).
-> > 
-> > OK, then in that case it shouldn't go into linux-next until around
-> > 2.6.27-rc1 time.
-> 
-> Russell (and others in the ARM community), are you OK with this set of
-> patches being merged into 2.6.28 mainline (i.e. at the next merging
-> window)? If yes, do you acknowledge the patches? In the meantime, I can
-> rebase them on top of linux-next to check for possible merge conflicts
-> (or even ask for them to be pulled into linux-next).
+-- 
+blue skies,
+  Martin.
 
-yup, we should maintain the tree in linux-next if it's for 2.6.28.
+"Reality continues to ruin my life." - Calvin.
