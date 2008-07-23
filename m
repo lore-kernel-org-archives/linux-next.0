@@ -1,38 +1,49 @@
-From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
-Subject: Re: linux-next: attempted manual merge of the ubifs tree
-Date: Wed, 23 Jul 2008 09:33:41 +0300
-Message-ID: <4886D0C5.2090009@nokia.com>
-References: <20080723161109.a5e44c91.sfr@canb.auug.org.au>
-Reply-To: Artem.Bityutskiy@nokia.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ttydev tree
+Date: Wed, 23 Jul 2008 16:47:00 +1000
+Message-ID: <20080723164700.5ce62d4b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__23_Jul_2008_16_47_00_+1000_bk_oaG69I0mBYmji"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.105.134]:27484 "EHLO
-	mgw-mx09.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750893AbYGWGhd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Jul 2008 02:37:33 -0400
-In-Reply-To: <20080723161109.a5e44c91.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48004 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750762AbYGWGrG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Jul 2008 02:47:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
 Cc: linux-next@vger.kernel.org
 
-Hi Stephen,
+--Signature=_Wed__23_Jul_2008_16_47_00_+1000_bk_oaG69I0mBYmji
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Stephen Rothwell wrote:
-> Today's linux-next merge of the ubifs tree got a lot of conflicts aga=
-inst
-> the ubi tree.  I can only assume that the ubifs tree was based on a
-> different version of the ubi tree than what I have in linux-next toda=
-y.
->=20
-> I have dropped the ubifs tree for today.
+Hi Alan,
 
-Apologies, my fault. Fixed.
+Today's linux-next merge of the ttydev tree got several conflicts in 6
+files.  Since you said that it has all been merged into Linus' tree, I
+have dropped it for today.
+
+Could you please update the tree to reflect what has been merged upstream
+(i.e. just leave an empty series file if there is nothing new).  Thanks.
 
 --=20
-Best Regards,
-Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
-=D1=86=D0=BA=D0=B8=D0=B9)
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__23_Jul_2008_16_47_00_+1000_bk_oaG69I0mBYmji
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiG0+QACgkQjjKRsyhoI8xv4wCdFhErJWREh3syxQWBI4eGR3Sp
+jpEAnRlcbRhV5fO2pRM/SyRAO7JU8RMk
+=nw+i
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__23_Jul_2008_16_47_00_+1000_bk_oaG69I0mBYmji--
