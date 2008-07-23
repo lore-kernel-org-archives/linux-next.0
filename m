@@ -1,49 +1,86 @@
-From: Paul Moore <paul.moore@hp.com>
-Subject: Re: Labeled Networking tree for linux-next
-Date: Wed, 23 Jul 2008 16:19:39 -0400
-Message-ID: <200807231619.39629.paul.moore@hp.com>
-References: <200807231244.45084.paul.moore@hp.com> <Xine.LNX.4.64.0807240415200.14401@us.intercode.com.au>
+From: Adrian Bunk <bunk@kernel.org>
+Subject: Re: next-20080723: build fails for dm-snapshot.ko
+Date: Wed, 23 Jul 2008 23:51:02 +0300
+Message-ID: <20080723205102.GC5991@cs181140183.pp.htv.fi>
+References: <1216835917.19707.3.camel@dhcppc2>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from g1t0029.austin.hp.com ([15.216.28.36]:42512 "EHLO
-	g1t0029.austin.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754661AbYGWUTo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Jul 2008 16:19:44 -0400
-In-Reply-To: <Xine.LNX.4.64.0807240415200.14401@us.intercode.com.au>
+Received: from smtp6.pp.htv.fi ([213.243.153.40]:52180 "EHLO smtp6.pp.htv.fi"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752463AbYGWUvT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Jul 2008 16:51:19 -0400
 Content-Disposition: inline
+In-Reply-To: <1216835917.19707.3.camel@dhcppc2>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org
+To: Thomas Meyer <thomas@m3y3r.de>
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, mpatocka@redhat.com, Alasdair G Kergon <agk@redhat.com>
 
-On Wednesday 23 July 2008 2:16:27 pm James Morris wrote:
-> On Wed, 23 Jul 2008, Paul Moore wrote:
-> > Hello,
-> >
-> > I've created a new labeled networking tree to feed bits into
-> > linux-next which should replace the lblnet-2.6_testing tree which
-> > is currently used.  The new tree (currently empty) can be found
-> > here:
-> >
-> >  * git://git.infradead.org/users/pcmoore/lblnet-2.6_next
->
-> Is this stuff likely to affect more of net/ or security/ ?   I think
-> it should go in via either the networking or security-testing trees.
+On Wed, Jul 23, 2008 at 07:58:37PM +0200, Thomas Meyer wrote:
+> 
+>   Building modules, stage 2.
+> Kernel: arch/x86/boot/bzImage is ready  (#24)
+>   MODPOST 1518 modules
+> ERROR: "__umoddi3" [drivers/md/dm-snapshot.ko] undefined!
+> WARNING: modpost: Found 6 section mismatch(es).
+> To see full details build your kernel with:
+> 'make CONFIG_DEBUG_SECTION_MISMATCH=y'
+> make[1]: *** [__modpost] Error 1
+> make: *** [modules] Error 2
+> 
+> 
+> CONFIG_MD=y
+> CONFIG_BLK_DEV_MD=y
+> CONFIG_MD_LINEAR=m
+> CONFIG_MD_RAID0=m
+> CONFIG_MD_RAID1=m
+> CONFIG_MD_RAID10=m
+> CONFIG_MD_RAID456=m
+> CONFIG_MD_RAID5_RESHAPE=y
+> CONFIG_MD_MULTIPATH=m
+> CONFIG_MD_FAULTY=m
+> CONFIG_BLK_DEV_DM=m
+> CONFIG_DM_DEBUG=y
+> CONFIG_DM_CRYPT=m
+> CONFIG_DM_SNAPSHOT=m
+> CONFIG_DM_MIRROR=m
+> CONFIG_DM_ZERO=m
+> CONFIG_DM_MULTIPATH=m
+> # CONFIG_DM_DELAY is not set
+> CONFIG_DM_UEVENT=y
 
-Yes, the labeled networking stuff usually affects both net/ and 
-security/.  I really don't care how it gets into linux-next as long as 
-it gets in at some point.  I sent the mail because the 
-lblnet-2.6_testing tree (currently empty, but not for much longer) is 
-currently being pulled into linux-next (I think it started in the 
-initial push to move -mm into linux-next).
+and CONFIG_LBD=y
 
-If we don't decide to drop the labeled networking git tree from 
-linux-next can we at least shift from using the lblnet-2.6_testing to 
-the lblnet-2.6_next tree?
+
+In the following code in drivers/md/dm-exception-store.c:persistent_prepare():
+
+                            vvv
+        if ((++ps->next_free % stride) == 1)
+                ps->next_free++;
+
+
+Caused by:
+
+commit 7624decba23d3e7a8e7411214501cfaf19041c30
+Author: Mikulas Patocka <mpatocka@redhat.com>
+Date:   Wed Jul 23 10:05:33 2008 +1000
+
+    dm-exception-store-64-bit-values
+    
+    Change uint32_t into chunk_t to remove 32-bit limitation on the
+    number of chunks on systems with 64-bit sector numbers.
+    
+    Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+    Signed-off-by: Alasdair G Kergon <agk@redhat.com>
+
+
+cu
+Adrian
 
 -- 
-paul moore
-linux @ hp
+
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
