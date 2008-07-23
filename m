@@ -1,35 +1,47 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: linux-next: ttydev tree build failure
-Date: Wed, 23 Jul 2008 17:28:37 +0100
-Message-ID: <20080723172837.3d784d85@lxorguk.ukuu.org.uk>
-References: <20080723171743.1436cf2a.sfr@canb.auug.org.au>
-	<Pine.LNX.4.64.0807231436310.1185@anakin>
-	<20080723154610.348ffc07@lxorguk.ukuu.org.uk>
-	<Pine.LNX.4.64.0807231748250.20868@anakin>
-	<20080723164731.00c163f1@lxorguk.ukuu.org.uk>
-	<Pine.LNX.4.64.0807231838470.21737@anakin>
+From: Thomas Meyer <thomas@m3y3r.de>
+Subject: next-20080723: build fails for dm-snapshot.ko
+Date: Wed, 23 Jul 2008 19:58:37 +0200
+Message-ID: <1216835917.19707.3.camel@dhcppc2>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:53568 "EHLO
-	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752029AbYGWQp4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Jul 2008 12:45:56 -0400
-In-Reply-To: <Pine.LNX.4.64.0807231838470.21737@anakin>
+Received: from www17.your-server.de ([213.133.104.17]:57246 "EHLO
+	www17.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750799AbYGWR6j (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Jul 2008 13:58:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux/m68k <linux-m68k@vger.kernel.org>
+To: Linux Kernel <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, mpatocka@redhat.com
 
-> Update all drivers when making core tty infrastructure changes?
-> Thanks!
 
-I don't have an Amiga with that board, I don't have an obscure VME 68K
-board. The changes required at this point would be tricky to verify
-without hardware, and the upcoming changes will require significant
-changes to all the hardware drivers, which will need someone to actually
-maintain the drivers, or to drop them.
+  Building modules, stage 2.
+Kernel: arch/x86/boot/bzImage is ready  (#24)
+  MODPOST 1518 modules
+ERROR: "__umoddi3" [drivers/md/dm-snapshot.ko] undefined!
+WARNING: modpost: Found 6 section mismatch(es).
+To see full details build your kernel with:
+'make CONFIG_DEBUG_SECTION_MISMATCH=y'
+make[1]: *** [__modpost] Error 1
+make: *** [modules] Error 2
 
-I expect to drop several PC serial drivers at the same time as they also
-don't appear to have any users.
+
+CONFIG_MD=y
+CONFIG_BLK_DEV_MD=y
+CONFIG_MD_LINEAR=m
+CONFIG_MD_RAID0=m
+CONFIG_MD_RAID1=m
+CONFIG_MD_RAID10=m
+CONFIG_MD_RAID456=m
+CONFIG_MD_RAID5_RESHAPE=y
+CONFIG_MD_MULTIPATH=m
+CONFIG_MD_FAULTY=m
+CONFIG_BLK_DEV_DM=m
+CONFIG_DM_DEBUG=y
+CONFIG_DM_CRYPT=m
+CONFIG_DM_SNAPSHOT=m
+CONFIG_DM_MIRROR=m
+CONFIG_DM_ZERO=m
+CONFIG_DM_MULTIPATH=m
+# CONFIG_DM_DELAY is not set
+CONFIG_DM_UEVENT=y
