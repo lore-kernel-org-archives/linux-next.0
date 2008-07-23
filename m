@@ -1,77 +1,56 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH 72/79] sysdev: Pass the attribute to the low level
-	sysdev show/store function
-Date: Wed, 23 Jul 2008 07:03:12 -0700
-Message-ID: <20080723140312.GA15537@kroah.com>
-References: <20080722051805.GA17373@suse.de> <1216703983-21448-72-git-send-email-gregkh@suse.de> <20080722134045.7f09ff29.akpm@linux-foundation.org> <20080722204939.GA3028@suse.de> <20080722140301.2a334f8c.akpm@linux-foundation.org> <20080722211919.GA5669@suse.de> <20080723130435.7a79f7e4.sfr@canb.auug.org.au> <20080723042218.GA6784@suse.de> <20080723090310.GA13534@elte.hu>
+From: Nico Schottelius <nico-linux-next@schottelius.org>
+Subject: Success with v2.6.26-9117-g0cff5bc
+Date: Wed, 23 Jul 2008 16:32:30 +0200
+Message-ID: <20080723143230.GA9005@denkbrett.schottelius.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="5vNYLRcllDrimb99"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:34973 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752463AbYGWOHs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Jul 2008 10:07:48 -0400
+Received: from mx2.schottelius.org ([62.65.138.77]:46704 "EHLO
+	mx2.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751542AbYGWOnJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Jul 2008 10:43:09 -0400
+Received: from denkbrett.schottelius.org (natgw.netstream.ch [62.65.128.28])
+	(using TLSv1 with cipher ADH-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by mx2.schottelius.org (Postfix) with ESMTPSA id DFF1F3015B8
+	for <linux-next@vger.kernel.org>; Wed, 23 Jul 2008 16:32:26 +0200 (CEST)
 Content-Disposition: inline
-In-Reply-To: <20080723090310.GA13534@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Greg KH <gregkh@suse.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, andi@firstfloor.org, ak@linux.intel.com, tiwai@suse.de, Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org
+To: linux-next@vger.kernel.org
 
-On Wed, Jul 23, 2008 at 11:03:10AM +0200, Ingo Molnar wrote:
-> ok, lemme do a bit of merge window flaming here, in defense of Andrew.
-> 
-> This commit history:
-> 
->   commit 4a0b2b4dbe1335b8b9886ba3dc85a145d5d938ed
->   Author:     Andi Kleen <andi@firstfloor.org>
->   AuthorDate: Tue Jul 1 18:48:41 2008 +0200
->   Commit:     Greg Kroah-Hartman <gregkh@suse.de>
->   CommitDate: Mon Jul 21 21:55:02 2008 -0700
-> 
->     sysdev: Pass the attribute to the low level sysdev show/store function
-> 
->   [...]
-> 
->     I converted all users in tree to the new show/store prototype. It's 
->     a single huge patch to avoid unbisectable sections.
-> 
->     Runtime tested: x86-32, x86-64
->     Compiled only: ia64, powerpc
->     Not compile tested/only grep converted: sh, arm, avr32
-> 
-> covers a relatively trivial patch that we'd normally not notice, but it 
-> is ... a ... misrepresentation of the true situation on several levels:
-> 
-> 1) The changelog. The updated patch Andi sent did not declare the other
->    incremental changes (to sched.c) it also included freshly.
 
-Andi's original patch that he sent me _did_ declare that he had updated
-the patch, I didn't change the changelog as it didn't make sense to do
-so.
+--5vNYLRcllDrimb99
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 2) The date. This patch did not originate on Jul 1 - if Andi sent a 
->    material update yesterday it should say Jul 21, not Jul 1.
+Hello!
 
-Again, my fault, I kept the original email headers and just updated the
-patch portion.  It's easier for me to do that using quilt, hence the
-lack of the date change.
+Just wanted to report, that it works fine on my t60 here.
 
-> 3) The justification. Huge atomic patches are fine and can indeed be 
->    much simpler than a gradual switchover, _iff_ they are done 
->    perfectly. If there's any doubt then they are by far not the only 
->    option to pursue - we've done finegrained API changeovers for years.
+Sincerly,
 
-This kind of API change is atomic, sorry.  It was tiny enough that it
-didn't justify a big rework (like I did on the recent device_create()
-stuff for example) to get it modified.
+Nico
 
-> ... which all we still wouldnt worry much about (the whole change is 
-> relatively trivial), if it had been done more carefully without wrecking 
-> Andrew's workflow in the middle of the merge window.
+--=20
+Think about Free and Open Source Software (FOSS).
+http://nico.schottelius.org/documentations/foss/the-term-foss/
 
-I understand, and I apologize.
+PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
 
-thanks,
+--5vNYLRcllDrimb99
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
 
-greg k-h
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEUEARECAAYFAkiHQP0ACgkQuL75KpiFGIx8TgCXe3fZ2se9XrJSi5Igu36uQx8K
+IQCgwcIhW5Osul5ezwYoJGDAPu7Ja50=
+=2+DJ
+-----END PGP SIGNATURE-----
+
+--5vNYLRcllDrimb99--
