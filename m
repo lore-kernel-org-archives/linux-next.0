@@ -1,86 +1,59 @@
-From: Adrian Bunk <bunk@kernel.org>
-Subject: Re: next-20080723: build fails for dm-snapshot.ko
-Date: Wed, 23 Jul 2008 23:51:02 +0300
-Message-ID: <20080723205102.GC5991@cs181140183.pp.htv.fi>
-References: <1216835917.19707.3.camel@dhcppc2>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH 00/12] Thumb-2 kernel support
+Date: Wed, 23 Jul 2008 22:10:22 +0100
+Message-ID: <1216847422.6550.8.camel@localhost.localdomain>
+References: <20080606173300.7930.31525.stgit@pc1117.cambridge.arm.com>
+	 <20080630125110.1dc5689a.akpm@linux-foundation.org>
+	 <1214901131.29199.31.camel@pc1117.cambridge.arm.com>
+	 <20080701014529.272706d8.akpm@linux-foundation.org>
+	 <1216829155.23395.19.camel@pc1117.cambridge.arm.com>
+	 <20080723130140.ff016944.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp6.pp.htv.fi ([213.243.153.40]:52180 "EHLO smtp6.pp.htv.fi"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752463AbYGWUvT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 23 Jul 2008 16:51:19 -0400
-Content-Disposition: inline
-In-Reply-To: <1216835917.19707.3.camel@dhcppc2>
+Received: from cam-admin0.cambridge.arm.com ([193.131.176.58]:57344 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754392AbYGWVKq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Jul 2008 17:10:46 -0400
+In-Reply-To: <20080723130140.ff016944.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Meyer <thomas@m3y3r.de>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, mpatocka@redhat.com, Alasdair G Kergon <agk@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-arm-kernel@lists.arm.linux.org.uk, linux-next@vger.kernel.org
 
-On Wed, Jul 23, 2008 at 07:58:37PM +0200, Thomas Meyer wrote:
+On Wed, 2008-07-23 at 13:01 -0700, Andrew Morton wrote:
+> On Wed, 23 Jul 2008 17:05:55 +0100
+> Catalin Marinas <catalin.marinas@arm.com> wrote:
+> > Were the Thumb-2 patches merged in any of the -mm tree releases? I now
+> > updated the series to the 2.6.26-rc8-mm1 kernel if you still consider
+> > merging them (___git://linux-arm.org/linux-2.6 for-akpm).
 > 
->   Building modules, stage 2.
-> Kernel: arch/x86/boot/bzImage is ready  (#24)
->   MODPOST 1518 modules
-> ERROR: "__umoddi3" [drivers/md/dm-snapshot.ko] undefined!
-> WARNING: modpost: Found 6 section mismatch(es).
-> To see full details build your kernel with:
-> 'make CONFIG_DEBUG_SECTION_MISMATCH=y'
-> make[1]: *** [__modpost] Error 1
-> make: *** [modules] Error 2
+> I pull it regularly but always get rejects and never got around to
+> looking into fixing them.  Probably the git-thumb tree is based on an
+> ARM git tree so I'd need to generate the diff reletive to that tree. 
+> But I just haven't got onto it, sorry.
+
+I only based the for-akpm branch on your latest -mm tree release but
+since you are rebasing your tree with every release, the base of my tree
+(currently 2.6.26-rc8-mm1) is probably not an ancestor of your
+development branch, hence the merging errors.
+
+To minimise the conflicts, what commit or tag id do you base your
+current development branch on?
+
+> > Russell (and others in the ARM community), are you OK with this set of
+> > patches being merged into 2.6.28 mainline (i.e. at the next merging
+> > window)? If yes, do you acknowledge the patches? In the meantime, I can
+> > rebase them on top of linux-next to check for possible merge conflicts
+> > (or even ask for them to be pulled into linux-next).
 > 
-> 
-> CONFIG_MD=y
-> CONFIG_BLK_DEV_MD=y
-> CONFIG_MD_LINEAR=m
-> CONFIG_MD_RAID0=m
-> CONFIG_MD_RAID1=m
-> CONFIG_MD_RAID10=m
-> CONFIG_MD_RAID456=m
-> CONFIG_MD_RAID5_RESHAPE=y
-> CONFIG_MD_MULTIPATH=m
-> CONFIG_MD_FAULTY=m
-> CONFIG_BLK_DEV_DM=m
-> CONFIG_DM_DEBUG=y
-> CONFIG_DM_CRYPT=m
-> CONFIG_DM_SNAPSHOT=m
-> CONFIG_DM_MIRROR=m
-> CONFIG_DM_ZERO=m
-> CONFIG_DM_MULTIPATH=m
-> # CONFIG_DM_DELAY is not set
-> CONFIG_DM_UEVENT=y
+> yup, we should maintain the tree in linux-next if it's for 2.6.28.
 
-and CONFIG_LBD=y
+I'm waiting for Russell to ack the patches first.
 
-
-In the following code in drivers/md/dm-exception-store.c:persistent_prepare():
-
-                            vvv
-        if ((++ps->next_free % stride) == 1)
-                ps->next_free++;
-
-
-Caused by:
-
-commit 7624decba23d3e7a8e7411214501cfaf19041c30
-Author: Mikulas Patocka <mpatocka@redhat.com>
-Date:   Wed Jul 23 10:05:33 2008 +1000
-
-    dm-exception-store-64-bit-values
-    
-    Change uint32_t into chunk_t to remove 32-bit limitation on the
-    number of chunks on systems with 64-bit sector numbers.
-    
-    Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-    Signed-off-by: Alasdair G Kergon <agk@redhat.com>
-
-
-cu
-Adrian
+Thanks.
 
 -- 
-
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
+Catalin
