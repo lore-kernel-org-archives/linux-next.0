@@ -1,163 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: ttydev tree build failure
-Date: Wed, 23 Jul 2008 17:17:43 +1000
-Message-ID: <20080723171743.1436cf2a.sfr@canb.auug.org.au>
+Subject: Re: linux-next: attempted manual merge of the ubifs tree
+Date: Wed, 23 Jul 2008 17:27:41 +1000
+Message-ID: <20080723172741.2d1454ba.sfr@canb.auug.org.au>
+References: <20080723161109.a5e44c91.sfr@canb.auug.org.au>
+	<4886D0C5.2090009@nokia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__23_Jul_2008_17_17_43_+1000_yyXBe.4OkHaIj0ht"
+ boundary="Signature=_Wed__23_Jul_2008_17_27_41_+1000_Bpg3GjdTenibVKUP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57154 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35968 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750996AbYGWHRu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 23 Jul 2008 03:17:50 -0400
+	id S1751111AbYGWH1w (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Jul 2008 03:27:52 -0400
+In-Reply-To: <4886D0C5.2090009@nokia.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Artem.Bityutskiy@nokia.com
+Cc: linux-next@vger.kernel.org
 
---Signature=_Wed__23_Jul_2008_17_17_43_+1000_yyXBe.4OkHaIj0ht
+--Signature=_Wed__23_Jul_2008_17_27_41_+1000_Bpg3GjdTenibVKUP
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Alan,
+Hi Artem,
 
-Today's linux-next build (m68k defconfig) failed like this:
+On Wed, 23 Jul 2008 09:33:41 +0300 Artem Bityutskiy <Artem.Bityutskiy@nokia=
+.com> wrote:
+>
+> Stephen Rothwell wrote:
+> > Today's linux-next merge of the ubifs tree got a lot of conflicts again=
+st
+> > the ubi tree.  I can only assume that the ubifs tree was based on a
+> > different version of the ubi tree than what I have in linux-next today.
+> >=20
+> > I have dropped the ubifs tree for today.
+>=20
+> Apologies, my fault. Fixed.
 
-drivers/char/vme_scc.c:186: error: 'struct gs_port' has no member named 'op=
-en_wait'
-drivers/char/vme_scc.c:187: error: 'struct gs_port' has no member named 'cl=
-ose_wait'
-drivers/char/vme_scc.c:425: error: 'struct gs_port' has no member named 'tt=
-y'
-drivers/char/vme_scc.c:456: error: 'struct gs_port' has no member named 'tt=
-y'
-drivers/char/vme_scc.c:503: error: 'struct gs_port' has no member named 'tt=
-y'
-drivers/char/vme_scc.c:515: error: 'struct gs_port' has no member named 'tt=
-y'
-drivers/char/vme_scc.c:516: error: 'struct gs_port' has no member named 'tt=
-y'
-drivers/char/vme_scc.c:525: error: 'struct gs_port' has no member named 'tt=
-y'
-drivers/char/vme_scc.c:526: error: 'struct gs_port' has no member named 'tt=
-y'
-drivers/char/vme_scc.c:530: error: 'struct gs_port' has no member named 'fl=
-ags'
-drivers/char/vme_scc.c:532: error: 'struct gs_port' has no member named 'tt=
-y'
-drivers/char/vme_scc.c:533: error: 'struct gs_port' has no member named 'tt=
-y'
-drivers/char/vme_scc.c:553: error: 'struct gs_port' has no member named 'fl=
-ags'
-drivers/char/vme_scc.c:556: error: 'struct gs_port' has no member named 'op=
-en_wait'
-drivers/char/vme_scc.c:559: error: 'struct gs_port' has no member named 'tt=
-y'
-drivers/char/vme_scc.c:560: error: 'struct gs_port' has no member named 'tt=
-y'
-drivers/char/vme_scc.c:581: error: 'struct gs_port' has no member named 'fl=
-ags'
-drivers/char/vme_scc.c:639: error: 'struct gs_port' has no member named 'fl=
-ags'
-drivers/char/vme_scc.c:640: error: 'struct gs_port' has no member named 'tt=
-y'
-drivers/char/vme_scc.c:640: error: 'struct gs_port' has no member named 'tt=
-y'
-drivers/char/vme_scc.c:655: error: 'struct gs_port' has no member named 'tt=
-y'
-drivers/char/vme_scc.c:655: error: 'struct gs_port' has no member named 'tt=
-y'
-drivers/char/vme_scc.c:662: error: 'struct gs_port' has no member named 'tt=
-y'
-drivers/char/vme_scc.c:681: error: 'struct gs_port' has no member named 'fl=
-ags'
-drivers/char/vme_scc.c:683: error: 'struct gs_port' has no member named 'fl=
-ags'
-drivers/char/vme_scc.c:859: error: 'struct gs_port' has no member named 'fl=
-ags'
-drivers/char/vme_scc.c:883: error: 'struct gs_port' has no member named 'tt=
-y'
-drivers/char/vme_scc.c:884: error: 'struct gs_port' has no member named 'co=
-unt'
-drivers/char/vme_scc.c:887: error: 'struct gs_port' has no member named 'co=
-unt'
-drivers/char/vme_scc.c:890: error: 'struct gs_port' has no member named 'fl=
-ags'
-drivers/char/vme_scc.c:894: error: 'struct gs_port' has no member named 'co=
-unt'
-drivers/char/ser_a2232.c:195: error: 'struct gs_port' has no member named '=
-tty'
-drivers/char/ser_a2232.c:229: error: 'struct gs_port' has no member named '=
-flags'
-drivers/char/ser_a2232.c:245: error: 'struct gs_port' has no member named '=
-flags'
-drivers/char/ser_a2232.c:279: error: 'struct gs_port' has no member named '=
-flags'
-drivers/char/ser_a2232.c:281: error: 'struct gs_port' has no member named '=
-tty'
-drivers/char/ser_a2232.c:281: error: 'struct gs_port' has no member named '=
-tty'
-drivers/char/ser_a2232.c:312: error: 'struct gs_port' has no member named '=
-tty'
-drivers/char/ser_a2232.c:312: error: 'struct gs_port' has no member named '=
-tty'
-drivers/char/ser_a2232.c:348: error: 'struct gs_port' has no member named '=
-tty'
-drivers/char/ser_a2232.c:385: error: 'struct gs_port' has no member named '=
-tty'
-drivers/char/ser_a2232.c:403: error: 'struct gs_port' has no member named '=
-flags'
-drivers/char/ser_a2232.c:405: error: 'struct gs_port' has no member named '=
-flags'
-drivers/char/ser_a2232.c:485: error: 'struct gs_port' has no member named '=
-tty'
-drivers/char/ser_a2232.c:486: error: 'struct gs_port' has no member named '=
-count'
-drivers/char/ser_a2232.c:489: error: 'struct gs_port' has no member named '=
-count'
-drivers/char/ser_a2232.c:492: error: 'struct gs_port' has no member named '=
-flags'
-drivers/char/ser_a2232.c:496: error: 'struct gs_port' has no member named '=
-count'
-drivers/char/ser_a2232.c:525: error: 'struct gs_port' has no member named '=
-flags'
-drivers/char/ser_a2232.c:580: error: 'struct gs_port' has no member named '=
-tty'
-drivers/char/ser_a2232.c:581: error: 'struct gs_port' has no member named '=
-tty'
-drivers/char/ser_a2232.c:595: error: 'struct gs_port' has no member named '=
-tty'
-drivers/char/ser_a2232.c:596: error: 'struct gs_port' has no member named '=
-tty'
-drivers/char/ser_a2232.c:616: error: 'struct gs_port' has no member named '=
-flags'
-drivers/char/ser_a2232.c:621: error: 'struct gs_port' has no member named '=
-open_wait'
-drivers/char/ser_a2232.c:624: error: 'struct gs_port' has no member named '=
-tty'
-drivers/char/ser_a2232.c:625: error: 'struct gs_port' has no member named '=
-tty'
-drivers/char/ser_a2232.c:658: error: 'struct gs_port' has no member named '=
-open_wait'
-drivers/char/ser_a2232.c:659: error: 'struct gs_port' has no member named '=
-close_wait'
+Thanks.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__23_Jul_2008_17_17_43_+1000_yyXBe.4OkHaIj0ht
+--Signature=_Wed__23_Jul_2008_17_27_41_+1000_Bpg3GjdTenibVKUP
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkiG2xcACgkQjjKRsyhoI8z4KACfdl2/alRU/JpZDfczyBFCjosk
-rXsAn3faoEuvOz2b/adQMh9tRgqS5+Rv
-=p3Ib
+iEYEARECAAYFAkiG3W0ACgkQjjKRsyhoI8zewQCfRBkjhZwUh7eA1oP6Ro0bUTon
+7mMAoJd5NveyHby/yW4wsqesjL/qAZTV
+=oWwk
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__23_Jul_2008_17_17_43_+1000_yyXBe.4OkHaIj0ht--
+--Signature=_Wed__23_Jul_2008_17_27_41_+1000_Bpg3GjdTenibVKUP--
