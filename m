@@ -1,34 +1,45 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: Labeled Networking tree for linux-next
-Date: Thu, 24 Jul 2008 04:16:27 +1000 (EST)
-Message-ID: <Xine.LNX.4.64.0807240415200.14401@us.intercode.com.au>
-References: <200807231244.45084.paul.moore@hp.com>
+From: Adrian Bunk <bunk@kernel.org>
+Subject: Re: next-20080723: build fails for dm-snapshot.ko
+Date: Wed, 23 Jul 2008 21:28:39 +0300
+Message-ID: <20080723182839.GF14846@cs181140183.pp.htv.fi>
+References: <1216835917.19707.3.camel@dhcppc2>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from namei.org ([69.55.235.186]:54256 "EHLO us.intercode.com.au"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751914AbYGWSQv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 23 Jul 2008 14:16:51 -0400
-In-Reply-To: <200807231244.45084.paul.moore@hp.com>
+Received: from smtp5.pp.htv.fi ([213.243.153.39]:39760 "EHLO smtp5.pp.htv.fi"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751400AbYGWS24 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Jul 2008 14:28:56 -0400
+Content-Disposition: inline
+In-Reply-To: <1216835917.19707.3.camel@dhcppc2>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Moore <paul.moore@hp.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org
+To: Thomas Meyer <thomas@m3y3r.de>
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, mpatocka@redhat.com
 
-On Wed, 23 Jul 2008, Paul Moore wrote:
-
-> Hello,
+On Wed, Jul 23, 2008 at 07:58:37PM +0200, Thomas Meyer wrote:
 > 
-> I've created a new labeled networking tree to feed bits into linux-next 
-> which should replace the lblnet-2.6_testing tree which is currently 
-> used.  The new tree (currently empty) can be found here:
-> 
->  * git://git.infradead.org/users/pcmoore/lblnet-2.6_next
+>   Building modules, stage 2.
+> Kernel: arch/x86/boot/bzImage is ready  (#24)
+>   MODPOST 1518 modules
+> ERROR: "__umoddi3" [drivers/md/dm-snapshot.ko] undefined!
+> WARNING: modpost: Found 6 section mismatch(es).
+> To see full details build your kernel with:
+> 'make CONFIG_DEBUG_SECTION_MISMATCH=y'
+> make[1]: *** [__modpost] Error 1
+> make: *** [modules] Error 2
+>...
 
-Is this stuff likely to affect more of net/ or security/ ?   I think it 
-should go in via either the networking or security-testing trees.
+Which gcc version are you using?
+
+Please send the complete .config
+
+cu
+Adrian
 
 -- 
-James Morris
-<jmorris@namei.org>
+
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
