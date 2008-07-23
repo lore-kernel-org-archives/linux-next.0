@@ -1,66 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Requirements and process
-Date: Wed, 23 Jul 2008 14:41:04 +1000
-Message-ID: <20080723144104.ac3a74e4.sfr@canb.auug.org.au>
-References: <20080503154542.18807e59.sfr@canb.auug.org.au>
-	<20080502233519.a988b552.akpm@linux-foundation.org>
+Subject: linux-next: attempted manual merge of the ubifs tree
+Date: Wed, 23 Jul 2008 16:11:09 +1000
+Message-ID: <20080723161109.a5e44c91.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__23_Jul_2008_14_41_04_+1000_WinOkhk5k6GJ0abh"
+ boundary="Signature=_Wed__23_Jul_2008_16_11_09_+1000_U.hH+ayrr81LL0AA"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59255 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50083 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752365AbYGWElM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 23 Jul 2008 00:41:12 -0400
-In-Reply-To: <20080502233519.a988b552.akpm@linux-foundation.org>
+	id S1751263AbYGWGLT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Jul 2008 02:11:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Hirokazu Takata <takata@linux-m32r.org>, linux-m32r@ml.linux-m32r.org, Kyle McMartin <kyle@mcmartin.ca>, Matthew Wilcox <matthew@wil.cx>, Grant Grundler <grundler@parisc-linux.org>, linux-parisc@vger.kernel.org, Chris Zankel <chris@zankel.net>
+To: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Wed__23_Jul_2008_14_41_04_+1000_WinOkhk5k6GJ0abh
+--Signature=_Wed__23_Jul_2008_16_11_09_+1000_U.hH+ayrr81LL0AA
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2 May 2008 23:35:19 -0700 Andrew Morton <akpm@linux-foundation.org>=
- wrote:
->
-> On Sat, 3 May 2008 15:45:42 +1000 Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote:
->=20
-> > The following architectures are not in linux-next (and should be):
-> >=20
-> > alpha		cris		frv
-> > h8300		m32r		m68knommu
-> > mips		mn10300		parisc
-> > um		v850		xtensa
->=20
-> mips, m32r, parisc and xtensa do have git trees.  The rest are mastered as
-> discrete patches in -mm.
->=20
-> Except for m68knommu, which pops unexpectedly out of the woodwork during
-> the merge window.  I've asked that this be altered ;)
+Hi Artem,
 
-So (from the above list) cris, m68knommu and mips have joined the
-linux-next fray ...
+Today's linux-next merge of the ubifs tree got a lot of conflicts against
+the ubi tree.  I can only assume that the ubifs tree was based on a
+different version of the ubi tree than what I have in linux-next today.
 
-(cc's some maintainers)
+I have dropped the ubifs tree for today.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__23_Jul_2008_14_41_04_+1000_WinOkhk5k6GJ0abh
+--Signature=_Wed__23_Jul_2008_16_11_09_+1000_U.hH+ayrr81LL0AA
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkiGtmAACgkQjjKRsyhoI8wyOACbBTwN5V0gylPybMMxU5tHHps7
-3O4An0XbMoeQaeGJGIPgQjKZkqC5byEO
-=8ZSr
+iEYEARECAAYFAkiGy30ACgkQjjKRsyhoI8zcOwCfSpYwkTh6pts1G2AK3LIC+HFZ
+SEUAn0ocUnAVZAyOpk4ZpNaqHtpr/nUu
+=EaL3
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__23_Jul_2008_14_41_04_+1000_WinOkhk5k6GJ0abh--
+--Signature=_Wed__23_Jul_2008_16_11_09_+1000_U.hH+ayrr81LL0AA--
