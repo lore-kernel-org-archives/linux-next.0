@@ -1,49 +1,52 @@
-From: Harvey Harrison <harvey.harrison@gmail.com>
-Subject: Re: [PATCH-next] pcmcia: fix sparse integer as NULL pointer warning
-Date: Wed, 23 Jul 2008 22:00:05 -0700
-Message-ID: <1216875606.30386.74.camel@brick>
-References: <1216863248.30386.61.camel@brick>
-	 <20080724143634.74fe3b8d.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ubifs tree
+Date: Thu, 24 Jul 2008 15:22:05 +1000
+Message-ID: <20080724152205.1bb53acb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__24_Jul_2008_15_22_05_+1000_lIDIF6FvmfcT+qAX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wa-out-1112.google.com ([209.85.146.183]:34330 "EHLO
-	wa-out-1112.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750975AbYGXFAE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Jul 2008 01:00:04 -0400
-Received: by wa-out-1112.google.com with SMTP id j37so1581305waf.23
-        for <linux-next@vger.kernel.org>; Wed, 23 Jul 2008 22:00:04 -0700 (PDT)
-In-Reply-To: <20080724143634.74fe3b8d.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:42512 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752558AbYGXFWR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 24 Jul 2008 01:22:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dominik Brodowski <linux@brodo.de>, linux-next <linux-next@vger.kernel.org>
+To: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+Cc: linux-next@vger.kernel.org
 
-On Thu, 2008-07-24 at 14:36 +1000, Stephen Rothwell wrote:
-> On Wed, 23 Jul 2008 18:34:08 -0700 Harvey Harrison <harvey.harrison@gmail.com> wrote:
-> >
-> > +++ b/drivers/pcmcia/rsrc_nonstatic.c
-> > @@ -275,7 +275,7 @@ static int readable(struct pcmcia_socket *s, struct resource *res,
-> >  		destroy_cis_cache(s);
-> >  	}
-> >  	s->cis_mem.res = NULL;
-> > -	if ((ret != 0) || (count == 0))
-> > +	if ((ret != 0) || (count == NULL))
-> 
-> I was wondering if it should be
-> 			   (*count == 0)
-> 
+--Signature=_Thu__24_Jul_2008_15_22_05_+1000_lIDIF6FvmfcT+qAX
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Actually, it looks that way as in this case count can never be none.
+Hi Artem,
 
-readable() is only called in one place where it is passed the addresses
-of two local variables.  Looking at pccard_validate_cis(), the number
-of valid tuples found is returned through the info pointer, or zero
-if invalid cis is found.
+Today's linux-next merge of the ubifs tree got conflicts in
+Documentation/filesystems/ubifs.txt, fs/ubifs/budget.c,
+fs/ubifs/commit.c, fs/ubifs/debug.c, fs/ubifs/dir.c, fs/ubifs/file.c,
+fs/ubifs/io.c, fs/ubifs/journal.c, fs/ubifs/log.c, fs/ubifs/misc.h,
+fs/ubifs/orphan.c, fs/ubifs/super.c and fs/ubifs/ubifs.h against Linus'
+tree.
 
-So I'd say *count == 0 is probably right.
+This has happened because of a partial merge of this tree into Linus'
+tree.  I just took the ubifs tree's version of all those files.
 
-Dominik?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Harvey
+--Signature=_Thu__24_Jul_2008_15_22_05_+1000_lIDIF6FvmfcT+qAX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiIEX0ACgkQjjKRsyhoI8w5BQCglyOauw2TuwM8sLknQpuyJi8W
+w0UAni9O8u5WcjNXV+dY723bq2AOrbki
+=cAzR
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__24_Jul_2008_15_22_05_+1000_lIDIF6FvmfcT+qAX--
