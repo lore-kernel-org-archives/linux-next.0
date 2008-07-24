@@ -1,52 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ubifs tree
-Date: Thu, 24 Jul 2008 15:22:05 +1000
-Message-ID: <20080724152205.1bb53acb.sfr@canb.auug.org.au>
+From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+Subject: Re: linux-next: manual merge of the ubifs tree
+Date: Thu, 24 Jul 2008 10:42:20 +0300
+Message-ID: <4888325C.8020909@nokia.com>
+References: <20080724152205.1bb53acb.sfr@canb.auug.org.au>
+Reply-To: Artem.Bityutskiy@nokia.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__24_Jul_2008_15_22_05_+1000_lIDIF6FvmfcT+qAX"
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42512 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752558AbYGXFWR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 24 Jul 2008 01:22:17 -0400
+Received: from smtp.nokia.com ([192.100.122.230]:56675 "EHLO
+	mgw-mx03.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751178AbYGXHqV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Jul 2008 03:46:21 -0400
+In-Reply-To: <20080724152205.1bb53acb.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org
 
---Signature=_Thu__24_Jul_2008_15_22_05_+1000_lIDIF6FvmfcT+qAX
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Stephen Rothwell wrote:
+> Today's linux-next merge of the ubifs tree got conflicts in
+> Documentation/filesystems/ubifs.txt, fs/ubifs/budget.c,
+> fs/ubifs/commit.c, fs/ubifs/debug.c, fs/ubifs/dir.c, fs/ubifs/file.c,
+> fs/ubifs/io.c, fs/ubifs/journal.c, fs/ubifs/log.c, fs/ubifs/misc.h,
+> fs/ubifs/orphan.c, fs/ubifs/super.c and fs/ubifs/ubifs.h against Linu=
+s'
+> tree.
+>=20
+> This has happened because of a partial merge of this tree into Linus'
+> tree.  I just took the ubifs tree's version of all those files.
 
-Hi Artem,
+Oh. This is because I still have my tree based on 2.6.26, + the same
+patches which are in Linus's tree, + more. I thought you scrips would
+somehow magically deal with this.
 
-Today's linux-next merge of the ubifs tree got conflicts in
-Documentation/filesystems/ubifs.txt, fs/ubifs/budget.c,
-fs/ubifs/commit.c, fs/ubifs/debug.c, fs/ubifs/dir.c, fs/ubifs/file.c,
-fs/ubifs/io.c, fs/ubifs/journal.c, fs/ubifs/log.c, fs/ubifs/misc.h,
-fs/ubifs/orphan.c, fs/ubifs/super.c and fs/ubifs/ubifs.h against Linus'
-tree.
-
-This has happened because of a partial merge of this tree into Linus'
-tree.  I just took the ubifs tree's version of all those files.
+I was reluctant to switch to linus tree because the tg3 driver does
+not compile. I will try again, sorry for these troubles.
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__24_Jul_2008_15_22_05_+1000_lIDIF6FvmfcT+qAX
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkiIEX0ACgkQjjKRsyhoI8w5BQCglyOauw2TuwM8sLknQpuyJi8W
-w0UAni9O8u5WcjNXV+dY723bq2AOrbki
-=cAzR
------END PGP SIGNATURE-----
-
---Signature=_Thu__24_Jul_2008_15_22_05_+1000_lIDIF6FvmfcT+qAX--
+Best Regards,
+Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
+=D1=86=D0=BA=D0=B8=D0=B9)
