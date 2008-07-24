@@ -1,38 +1,54 @@
-From: Harvey Harrison <harvey.harrison@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: [PATCH] ide: ide-cd.c blocklen is a big-endian value
-Date: Thu, 24 Jul 2008 12:16:57 -0700
-Message-ID: <1216927017.30386.76.camel@brick>
+Date: Fri, 25 Jul 2008 09:52:24 +1000
+Message-ID: <20080725095224.f936718a.sfr@canb.auug.org.au>
 References: <1216852296.30386.21.camel@brick>
-	 <200807242048.20087.bzolnier@gmail.com>
+	<200807242048.20087.bzolnier@gmail.com>
+	<1216927017.30386.76.camel@brick>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__25_Jul_2008_09_52_24_+1000_KDF8VNT9QDM.H4hB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wf-out-1314.google.com ([209.85.200.171]:29573 "EHLO
-	wf-out-1314.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753212AbYGXTQ7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Jul 2008 15:16:59 -0400
-Received: by wf-out-1314.google.com with SMTP id 27so3609499wfd.4
-        for <linux-next@vger.kernel.org>; Thu, 24 Jul 2008 12:16:59 -0700 (PDT)
-In-Reply-To: <200807242048.20087.bzolnier@gmail.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44913 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752873AbYGXXwd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 24 Jul 2008 19:52:33 -0400
+In-Reply-To: <1216927017.30386.76.camel@brick>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Cc: linux-next <linux-next@vger.kernel.org>, linux-ide <linux-ide@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Michael Buesch <mb@bu3sch.de>, Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <petkovbb@googlemail.com>
+To: Harvey Harrison <harvey.harrison@gmail.com>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, linux-next <linux-next@vger.kernel.org>, linux-ide <linux-ide@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Michael Buesch <mb@bu3sch.de>, Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <petkovbb@googlemail.com>
 
-On Thu, 2008-07-24 at 20:48 +0200, Bartlomiej Zolnierkiewicz wrote:
-> On Thursday 24 July 2008, Harvey Harrison wrote:
-> > Noticed by sparse between next-20080722 and next-20080723
-> > 
-> > Signed-off-by: Harvey Harrison <harvey.harrison@gmail.com>
-> 
-> Thanks for noticing/fixing this.
-> 
-> I integrated it into the guilty patch
-> ("ide-cd: fix oops when using growisofs").
-> 
+--Signature=_Fri__25_Jul_2008_09_52_24_+1000_KDF8VNT9QDM.H4hB
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is precisely why I'm running sparse on each linux-next, so
-no worries.
+Hi Harvey,
 
-Harvey
+On Thu, 24 Jul 2008 12:16:57 -0700 Harvey Harrison <harvey.harrison@gmail.c=
+om> wrote:
+>
+> This is precisely why I'm running sparse on each linux-next, so
+> no worries.
+
+Thanks Harvey, that is a great addition to the testing.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__25_Jul_2008_09_52_24_+1000_KDF8VNT9QDM.H4hB
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiJFbgACgkQjjKRsyhoI8xTjACffbtUFrV++lZCZmJTa3wCevtm
+ABAAmQFDkflO6MEDLAYqtaAau1XhnP6w
+=3DPB
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__25_Jul_2008_09_52_24_+1000_KDF8VNT9QDM.H4hB--
