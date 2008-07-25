@@ -1,42 +1,54 @@
-From: Chris McDermott <lcm@linux.vnet.ibm.com>
-Subject: [PATCH] fix IBM Summit based systems' phys_cpu_present_map on
-	32-bit kernels
-Date: Thu, 24 Jul 2008 19:06:09 -0700
-Message-ID: <20080725020609.GB11800@us.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the infiniband tree
+Date: Fri, 25 Jul 2008 13:44:44 +1000
+Message-ID: <20080725134444.9e67772c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__25_Jul_2008_13_44_44_+1000_8t5s1Q/EqEhe2/v2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e1.ny.us.ibm.com ([32.97.182.141]:32845 "EHLO e1.ny.us.ibm.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52150 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751249AbYGYCGM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 24 Jul 2008 22:06:12 -0400
-Content-Disposition: inline
+	id S1752193AbYGYDo5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 24 Jul 2008 23:44:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Roland Dreier <rdreier@cisco.com>, general@lists.openfabrics.org
+Cc: linux-next@vger.kernel.org
 
+--Signature=_Fri__25_Jul_2008_13_44_44_+1000_8t5s1Q/EqEhe2/v2
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-x86 kernels on IBM Summit based systems will only online 1 CPU because the
-phys_cpu_present_map is not set up correctly. Patch below applied to 
-2.6.26-git10.
+Hi all,
 
-thanks,
+Today's linux-next merge of the infiniband tree got a conflict in
+include/linux/mlx4/qp.h between commit
+95d04f0735b4fc837bff9aedcc3f3efb20ddc3d1 ("IB/mlx4: Add support for
+memory management extensions and local DMA L_Key") from Linus' tree and
+commit 5fcbaab14db959eb6feecae57387cfff364f11b3 ("IB/mlx4: Add support
+for memory management extensions and local DMA L_Key") from the
+infiniband tree.
 
-Chris McDermott <lcm@linux.vnet.ibm.com>
+Please don't submit patches to Linus that are different to those you have
+in linux-next.
 
+I used the version in Linus' tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Signed-off-by: Chris McDermott <lcm@linux.vnet.ibm.com>
-Tested-by: Tim Pepper <lnxninga@linux.vnet.ibm.com>
+--Signature=_Fri__25_Jul_2008_13_44_44_+1000_8t5s1Q/EqEhe2/v2
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
---- a/include/asm-x86/mach-summit/mach_apic.h	2008-07-24 18:06:39.000000000 -0700
-+++ b/include/asm-x86/mach-summit/mach_apic.h	2008-07-24 18:09:29.000000000 -0700
-@@ -122,7 +122,7 @@ static inline physid_mask_t ioapic_phys_
- 
- static inline physid_mask_t apicid_to_cpu_present(int apicid)
- {
--	return physid_mask_of_physid(0);
-+	return physid_mask_of_physid(apicid);
- }
- 
- static inline void setup_portio_remap(void)
+iEYEARECAAYFAkiJTCwACgkQjjKRsyhoI8wA5gCgrQbTeQV4lRou+Ytyt8xWOxnm
+h1MAn2vd3ceD2v+H4S5qi46LR4OeRyME
+=uwW7
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__25_Jul_2008_13_44_44_+1000_8t5s1Q/EqEhe2/v2--
