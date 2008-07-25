@@ -1,52 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: origin tree build failure
-Date: Fri, 25 Jul 2008 10:30:21 +1000
-Message-ID: <20080725103021.b913c24c.sfr@canb.auug.org.au>
+From: Chris McDermott <lcm@linux.vnet.ibm.com>
+Subject: [PATCH] fix IBM Summit based systems' phys_cpu_present_map on
+	32-bit kernels
+Date: Thu, 24 Jul 2008 19:06:09 -0700
+Message-ID: <20080725020609.GB11800@us.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__25_Jul_2008_10_30_21_+1000_HmNCL7n6LctfkuOC"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46678 "EHLO smtps.tip.net.au"
+Received: from e1.ny.us.ibm.com ([32.97.182.141]:32845 "EHLO e1.ny.us.ibm.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753120AbYGYAa3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 24 Jul 2008 20:30:29 -0400
+	id S1751249AbYGYCGM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 24 Jul 2008 22:06:12 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, Trond Myklebust <trond.myklebust@fys.uio.no>, ppc-dev <linuxppc-dev@ozlabs.org>, LKML <linux-kernel@vger.kernel.org>, Steven Whitehouse <swhiteho@redhat.com>
+To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__25_Jul_2008_10_30_21_+1000_HmNCL7n6LctfkuOC
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+x86 kernels on IBM Summit based systems will only online 1 CPU because the
+phys_cpu_present_map is not set up correctly. Patch below applied to 
+2.6.26-git10.
 
-Today's linux-next (really just Linus' tree) build (powerpc
-ppc64_defconfig) failed like this:
+thanks,
 
-fs/nfs/nfsroot.c:130: error: tokens causes a section type conflict
+Chris McDermott <lcm@linux.vnet.ibm.com>
 
-"tokens" is a match_table_t which has const added to it in commit
-f9247273cb69ba101877e946d2d83044409cc8c5 "UFS: add const to parser token
-table".  But "tokens" is also marked __initdata.  I changed it to
-__initconst.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Signed-off-by: Chris McDermott <lcm@linux.vnet.ibm.com>
+Tested-by: Tim Pepper <lnxninga@linux.vnet.ibm.com>
 
---Signature=_Fri__25_Jul_2008_10_30_21_+1000_HmNCL7n6LctfkuOC
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkiJHp0ACgkQjjKRsyhoI8xG9wCeOutOS7BqKHvo2K8f1LaW1qlK
-zMsAn3XtT+yNaYCbr0xpkkKm+D4N8RPr
-=/L8s
------END PGP SIGNATURE-----
-
---Signature=_Fri__25_Jul_2008_10_30_21_+1000_HmNCL7n6LctfkuOC--
+--- a/include/asm-x86/mach-summit/mach_apic.h	2008-07-24 18:06:39.000000000 -0700
++++ b/include/asm-x86/mach-summit/mach_apic.h	2008-07-24 18:09:29.000000000 -0700
+@@ -122,7 +122,7 @@ static inline physid_mask_t ioapic_phys_
+ 
+ static inline physid_mask_t apicid_to_cpu_present(int apicid)
+ {
+-	return physid_mask_of_physid(0);
++	return physid_mask_of_physid(apicid);
+ }
+ 
+ static inline void setup_portio_remap(void)
