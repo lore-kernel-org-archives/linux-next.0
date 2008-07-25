@@ -1,69 +1,49 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: sparc tree build failure
-Date: Fri, 25 Jul 2008 17:05:27 +1000
-Message-ID: <20080725170527.00a7bf4a.sfr@canb.auug.org.au>
+Subject: Re: linux-next: sparc tree build failure
+Date: Fri, 25 Jul 2008 17:09:52 +1000
+Message-ID: <20080725170952.64659339.sfr@canb.auug.org.au>
+References: <20080725170527.00a7bf4a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__25_Jul_2008_17_05_27_+1000_s8GK+Gzr0zic/qAm"
+ boundary="Signature=_Fri__25_Jul_2008_17_09_52_+1000_uwn9=sTCy9apUYME"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43279 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43391 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751624AbYGYHFn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 25 Jul 2008 03:05:43 -0400
+	id S1751624AbYGYHKB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 25 Jul 2008 03:10:01 -0400
+In-Reply-To: <20080725170527.00a7bf4a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: "David S. Miller" <davem@davemloft.net>
 Cc: linux-next@vger.kernel.org
 
---Signature=_Fri__25_Jul_2008_17_05_27_+1000_s8GK+Gzr0zic/qAm
+--Signature=_Fri__25_Jul_2008_17_09_52_+1000_uwn9=sTCy9apUYME
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+On Fri, 25 Jul 2008 17:05:27 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next build (sparc defconfig) failed like this:
 
-Today's linux-next build (sparc defconfig) failed like this:
+This was after I had merged all the trees into linux-next.
 
-  Building modules, stage 2.
-.tmp_kallsyms2.o(.rodata+0x0): In function `kallsyms_addresses':
-: relocation truncated to fit: R_SPARC_32 _text
-.tmp_kallsyms2.o(.rodata+0x4): In function `kallsyms_addresses':
-: relocation truncated to fit: R_SPARC_32 _text
-.tmp_kallsyms2.o(.rodata+0x8): In function `kallsyms_addresses':
-: relocation truncated to fit: R_SPARC_32 _text
-.tmp_kallsyms2.o(.rodata+0xc): In function `kallsyms_addresses':
-: relocation truncated to fit: R_SPARC_32 _text
-.tmp_kallsyms2.o(.rodata+0x10): In function `kallsyms_addresses':
-: relocation truncated to fit: R_SPARC_32 _text
-.tmp_kallsyms2.o(.rodata+0x14): In function `kallsyms_addresses':
-: relocation truncated to fit: R_SPARC_32 _text
-.tmp_kallsyms2.o(.rodata+0x18): In function `kallsyms_addresses':
-: relocation truncated to fit: R_SPARC_32 _text
-.tmp_kallsyms2.o(.rodata+0x1c): In function `kallsyms_addresses':
-: relocation truncated to fit: R_SPARC_32 _text
-.tmp_kallsyms2.o(.rodata+0x20): In function `kallsyms_addresses':
-: relocation truncated to fit: R_SPARC_32 _text
-.tmp_kallsyms2.o(.rodata+0x24): In function `kallsyms_addresses':
-: relocation truncated to fit: R_SPARC_32 _text
-.tmp_kallsyms2.o(.rodata+0x28): In function `kallsyms_addresses':
-: additional relocation overflows omitted from the output
-
-Sorry, I have no idea how to fix this.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__25_Jul_2008_17_05_27_+1000_s8GK+Gzr0zic/qAm
+--Signature=_Fri__25_Jul_2008_17_09_52_+1000_uwn9=sTCy9apUYME
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEUEARECAAYFAkiJezcACgkQjjKRsyhoI8zz/QCXV1tYEqyx3t6fzHrkS1rW0thn
-3ACeJWy7bDU7F7VFICqclCdRgvMouY8=
-=vYb1
+iEYEARECAAYFAkiJfEAACgkQjjKRsyhoI8ycwgCff/PCTF4wL8cKZWroI98E4Y+b
+zvYAn0Nek2RrAnkh8Z0nCeC7bSbXk/eq
+=iFpP
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__25_Jul_2008_17_05_27_+1000_s8GK+Gzr0zic/qAm--
+--Signature=_Fri__25_Jul_2008_17_09_52_+1000_uwn9=sTCy9apUYME--
