@@ -1,40 +1,56 @@
-From: Roland Dreier <rdreier@cisco.com>
-Subject: [ofa-general] Re: linux-next: manual merge of the infiniband tree
-Date: Thu, 24 Jul 2008 20:50:05 -0700
-Message-ID: <adaabg6wrki.fsf@cisco.com>
-References: <20080725134444.9e67772c.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: kbuild tree build failure
+Date: Fri, 25 Jul 2008 14:13:30 +1000
+Message-ID: <20080725141330.c58e0a07.sfr@canb.auug.org.au>
+References: <20080707184038.aaeb8d40.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <general-bounces@lists.openfabrics.org>
-In-Reply-To: <20080725134444.9e67772c.sfr@canb.auug.org.au> (Stephen
-	Rothwell's message of "Fri, 25 Jul 2008 13:44:44 +1000")
-List-Unsubscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
-	<mailto:general-request@lists.openfabrics.org?subject=unsubscribe>
-List-Archive: <http://lists.openfabrics.org/pipermail/general>
-List-Post: <mailto:general@lists.openfabrics.org>
-List-Help: <mailto:general-request@lists.openfabrics.org?subject=help>
-List-Subscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
-	<mailto:general-request@lists.openfabrics.org?subject=subscribe>
-Sender: general-bounces@lists.openfabrics.org
-Errors-To: general-bounces@lists.openfabrics.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, general@lists.openfabrics.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__25_Jul_2008_14_13_30_+1000_0ZtDO6qI53KCAVxo"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39740 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750720AbYGYENm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 25 Jul 2008 00:13:42 -0400
+In-Reply-To: <20080707184038.aaeb8d40.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: linux-next@vger.kernel.org, Roman Zippel <zippel@linux-m68k.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Milton Miller <miltonm@bga.com>, Michael Ellerman <michael@ellerman.id.au>
 
- > Today's linux-next merge of the infiniband tree got a conflict in
- > include/linux/mlx4/qp.h between commit
- > 95d04f0735b4fc837bff9aedcc3f3efb20ddc3d1 ("IB/mlx4: Add support for
- > memory management extensions and local DMA L_Key") from Linus' tree and
- > commit 5fcbaab14db959eb6feecae57387cfff364f11b3 ("IB/mlx4: Add support
- > for memory management extensions and local DMA L_Key") from the
- > infiniband tree.
- > 
- > Please don't submit patches to Linus that are different to those you have
- > in linux-next.
+--Signature=_Fri__25_Jul_2008_14_13_30_+1000_0ZtDO6qI53KCAVxo
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry, someone pointed out a bug in the patch just before I sent it to
-Linus.  I've updated my tree to Linus's, so this conflict should be gone
-tomorrow.
+Hi Sam,
 
-Thanks,
-  Roland
+On Mon, 7 Jul 2008 18:40:38 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+>=20
+> arch/powerpc/platforms/cell/spu_base.c: In function '__spu_trap_data_seg':
+> arch/powerpc/platforms/cell/spu_base.c:194: error: duplicate case value
+> arch/powerpc/platforms/cell/spu_base.c:177: error: previously used here
+
+This still fails in linux-next today.  We need some solution before you
+send these commits to Linus.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__25_Jul_2008_14_13_30_+1000_0ZtDO6qI53KCAVxo
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiJUusACgkQjjKRsyhoI8xkYACgmhCRENes9NWIVzQUS1jyLt6X
+7LgAnRvpsvjOAMwlflGTEU1ryoEnT92W
+=+Bz7
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__25_Jul_2008_14_13_30_+1000_0ZtDO6qI53KCAVxo--
