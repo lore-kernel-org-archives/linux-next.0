@@ -1,54 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] ide: ide-cd.c blocklen is a big-endian value
-Date: Fri, 25 Jul 2008 09:52:24 +1000
-Message-ID: <20080725095224.f936718a.sfr@canb.auug.org.au>
-References: <1216852296.30386.21.camel@brick>
-	<200807242048.20087.bzolnier@gmail.com>
-	<1216927017.30386.76.camel@brick>
+Subject: linux-next: origin tree build failure
+Date: Fri, 25 Jul 2008 10:30:21 +1000
+Message-ID: <20080725103021.b913c24c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__25_Jul_2008_09_52_24_+1000_KDF8VNT9QDM.H4hB"
+ boundary="Signature=_Fri__25_Jul_2008_10_30_21_+1000_HmNCL7n6LctfkuOC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44913 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:46678 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752873AbYGXXwd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 24 Jul 2008 19:52:33 -0400
-In-Reply-To: <1216927017.30386.76.camel@brick>
+	id S1753120AbYGYAa3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 24 Jul 2008 20:30:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Harvey Harrison <harvey.harrison@gmail.com>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, linux-next <linux-next@vger.kernel.org>, linux-ide <linux-ide@vger.kernel.org>, Jens Axboe <jens.axboe@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Michael Buesch <mb@bu3sch.de>, Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <petkovbb@googlemail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, Trond Myklebust <trond.myklebust@fys.uio.no>, ppc-dev <linuxppc-dev@ozlabs.org>, LKML <linux-kernel@vger.kernel.org>, Steven Whitehouse <swhiteho@redhat.com>
 
---Signature=_Fri__25_Jul_2008_09_52_24_+1000_KDF8VNT9QDM.H4hB
+--Signature=_Fri__25_Jul_2008_10_30_21_+1000_HmNCL7n6LctfkuOC
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Harvey,
+Hi all,
 
-On Thu, 24 Jul 2008 12:16:57 -0700 Harvey Harrison <harvey.harrison@gmail.c=
-om> wrote:
->
-> This is precisely why I'm running sparse on each linux-next, so
-> no worries.
+Today's linux-next (really just Linus' tree) build (powerpc
+ppc64_defconfig) failed like this:
 
-Thanks Harvey, that is a great addition to the testing.
+fs/nfs/nfsroot.c:130: error: tokens causes a section type conflict
+
+"tokens" is a match_table_t which has const added to it in commit
+f9247273cb69ba101877e946d2d83044409cc8c5 "UFS: add const to parser token
+table".  But "tokens" is also marked __initdata.  I changed it to
+__initconst.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__25_Jul_2008_09_52_24_+1000_KDF8VNT9QDM.H4hB
+--Signature=_Fri__25_Jul_2008_10_30_21_+1000_HmNCL7n6LctfkuOC
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkiJFbgACgkQjjKRsyhoI8xTjACffbtUFrV++lZCZmJTa3wCevtm
-ABAAmQFDkflO6MEDLAYqtaAau1XhnP6w
-=3DPB
+iEYEARECAAYFAkiJHp0ACgkQjjKRsyhoI8xG9wCeOutOS7BqKHvo2K8f1LaW1qlK
+zMsAn3XtT+yNaYCbr0xpkkKm+D4N8RPr
+=/L8s
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__25_Jul_2008_09_52_24_+1000_KDF8VNT9QDM.H4hB--
+--Signature=_Fri__25_Jul_2008_10_30_21_+1000_HmNCL7n6LctfkuOC--
