@@ -1,35 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: sparc tree build failure
-Date: Sat, 26 Jul 2008 02:25:35 -0700 (PDT)
-Message-ID: <20080726.022535.136577188.davem@davemloft.net>
-References: <20080725170527.00a7bf4a.sfr@canb.auug.org.au>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: linux-next: kbuild tree build failure
+Date: Sat, 26 Jul 2008 12:06:32 +0200
+Message-ID: <20080726100631.GA3714@uranus.ravnborg.org>
+References: <20080707184038.aaeb8d40.sfr@canb.auug.org.au> <20080725141330.c58e0a07.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:44126
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1751702AbYGZJZf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sat, 26 Jul 2008 05:25:35 -0400
-In-Reply-To: <20080725170527.00a7bf4a.sfr@canb.auug.org.au>
+Received: from smtpout3.tre.se ([80.251.192.228]:56511 "EHLO smtpout3.tre.se"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750934AbYGZKHk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 26 Jul 2008 06:07:40 -0400
+Content-Disposition: inline
+In-Reply-To: <20080725141330.c58e0a07.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Roman Zippel <zippel@linux-m68k.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Milton Miller <miltonm@bga.com>, Michael Ellerman <michael@ellerman.id.au>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 25 Jul 2008 17:05:27 +1000
-
-> Today's linux-next build (sparc defconfig) failed like this:
+On Fri, Jul 25, 2008 at 02:13:30PM +1000, Stephen Rothwell wrote:
+> Hi Sam,
 > 
->   Building modules, stage 2.
-> .tmp_kallsyms2.o(.rodata+0x0): In function `kallsyms_addresses':
-> : relocation truncated to fit: R_SPARC_32 _text
+> On Mon, 7 Jul 2008 18:40:38 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> > 
+> > arch/powerpc/platforms/cell/spu_base.c: In function '__spu_trap_data_seg':
+> > arch/powerpc/platforms/cell/spu_base.c:194: error: duplicate case value
+> > arch/powerpc/platforms/cell/spu_base.c:177: error: previously used here
+> 
+> This still fails in linux-next today.  We need some solution before you
+> send these commits to Linus.
+I removed the offending commits from kbuild-next before I
+sent the pull request.
+I will though revisit the issue after -rc1.
 
-That's impressive, getting a relocation overflow for
-a 32-bit relocation on a 32-bit platforms, amazing!
-:-)
-
-I'll try to figure out whats wrong if someone else
-doesn't beat me to it.
+	Sam
