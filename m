@@ -1,29 +1,29 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH] fix IBM Summit based systems' phys_cpu_present_map on
-	32-bit kernels
-Date: Sat, 26 Jul 2008 15:00:12 +0200
-Message-ID: <20080726130012.GC5418@elte.hu>
-References: <20080725020609.GB11800@us.ibm.com>
+From: Thomas Meyer <thomas@m3y3r.de>
+Subject: next-20080725: System hangs while suspending to disk
+Date: Sun, 27 Jul 2008 10:02:11 +0200
+Message-ID: <1217145731.3053.6.camel@dhcppc2>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:52935 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751600AbYGZNAY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 26 Jul 2008 09:00:24 -0400
-Content-Disposition: inline
-In-Reply-To: <20080725020609.GB11800@us.ibm.com>
+Received: from www17.your-server.de ([213.133.104.17]:53228 "EHLO
+	www17.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750824AbYG0ICU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 27 Jul 2008 04:02:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linux Kernel <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
+I tried to get some console output, so i tried "test" instead of
+plattform and got an oops in native_cpu_up().
 
-* Chris McDermott <lcm@linux.vnet.ibm.com> wrote:
+When i do "echo 0 > /sys/devices/system/cpu/cpu1/online" and
+"echo 1 > /sys/devices/system/cpu/cpu1/online" again, i get the
+same Oops report (as compared to a "test run with state disk")
 
-> x86 kernels on IBM Summit based systems will only online 1 CPU because 
-> the phys_cpu_present_map is not set up correctly. Patch below applied 
-> to 2.6.26-git10.
+http://kerneloops.org/guilty.php?guilty=native_cpu_up&version=2.6.26-release&start=1736704&end=1769471&class=oops
 
-applied to tip/x86/urgent - thanks Chris!
+What is wrong here?
 
-	Ingo
+Greets
+thomas
