@@ -1,74 +1,39 @@
-From: Stephen Smalley <sds@tycho.nsa.gov>
+From: James Morris <jmorris-gx6/JNMH7DfYtjvyW6yDsg@public.gmane.org>
 Subject: Re: BUG at security/selinux/avc.c:883 (was: Re: linux-next: Tree
-	for July 17: early crash on x86-64)
-Date: Mon, 28 Jul 2008 13:32:38 -0400
-Message-ID: <1217266358.20373.54.camel@moss-spartans.epoch.ncsc.mil>
+ for July 17: early crash on x86-64)
+Date: Tue, 29 Jul 2008 07:38:17 +1000 (EST)
+Message-ID: <Xine.LNX.4.64.0807290736440.30242@us.intercode.com.au>
 References: <20080718012842.690b8346.sfr@canb.auug.org.au>
-	 <a4423d670807180652y352e66lfe04d2b33d2ed176@mail.gmail.com>
-	 <20080719035231.GU28946@ZenIV.linux.org.uk>
-	 <200807192042.06988.rjw@sisk.pl>
-	 <Xine.LNX.4.64.0807200553380.22632@us.intercode.com.au>
-	 <1216546973.3217.6.camel@dhcppc2>
-	 <20080720121559.GV28946@ZenIV.linux.org.uk>
+ <a4423d670807180652y352e66lfe04d2b33d2ed176@mail.gmail.com>
+ <20080719035231.GU28946@ZenIV.linux.org.uk>  <200807192042.06988.rjw@sisk.pl>
+  <Xine.LNX.4.64.0807200553380.22632@us.intercode.com.au>
+ <1216546973.3217.6.camel@dhcppc2>  <20080720121559.GV28946@ZenIV.linux.org.uk>
+ <1217266358.20373.54.camel@moss-spartans.epoch.ncsc.mil>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zombie.ncsc.mil ([144.51.88.131]:45735 "EHLO zombie.ncsc.mil"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750819AbYG1Re0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 28 Jul 2008 13:34:26 -0400
-In-Reply-To: <20080720121559.GV28946@ZenIV.linux.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Thomas Meyer <thomas@m3y3r.de>, James Morris <jmorris@namei.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Alexander Beregalov <a.beregalov@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Kernel Testers List <kernel-testers@vger.kernel.org>, Eric Paris <eparis@parisplace.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1217266358.20373.54.camel-/ugcdrsPCSfIm9DtXLC9OUVfdvkotuLY+aIohriVLy8@public.gmane.org>
+Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Smalley <sds-+05T5uksL2qpZYMLLGbcSA@public.gmane.org>
+Cc: Al Viro <viro-3bDd1+5oDREiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, Thomas Meyer <thomas-VsYtu1Qij5c@public.gmane.org>, "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, Alexander Beregalov <a.beregalov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>, Kernel Testers List <kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Eric Paris <eparis-FjpueFixGhCM4zKIHC2jIg@public.gmane.org>, linux-security-module-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-On Sun, 2008-07-20 at 13:15 +0100, Al Viro wrote:
-> On Sun, Jul 20, 2008 at 11:42:53AM +0200, Thomas Meyer wrote:
-> > Am Sonntag, den 20.07.2008, 05:54 +1000 schrieb James Morris:
-> > > On Sat, 19 Jul 2008, Rafael J. Wysocki wrote:
-> > > 
-> > > > > vfs-next/net-next conflict; apply the patch below on top of the
-> > > merge.
-> > > > 
-> > > > That helped, thanks.
-> > > > 
-> > > > But next it ran into the BUG_ON() in line 883 of
-> > > security/selinux/avc.c .
-> > > > Disabling selinux made the kernel boot, finally.
-> > > 
-> > > Ugh, that's not supposed to happen.  Where was this in the boot?  Do
-> > > you 
-> > > have a console log?
+On Mon, 28 Jul 2008, Stephen Smalley wrote:
+
+> SELinux needs MAY_APPEND to be passed down to the security hook.
+> Otherwise, we get permission denials when only append permission is
+> granted by policy even if the opening process specified O_APPEND.
+> Shows up as a regression in the ltp selinux testsuite, fixed by
+> this patch.
 > 
-> Argh...  Fallout from ->permission() patch series.  I've folded that into
-> rebase (along with Randy's compile fixes and missing bit in capability.c
-> in ->inode_permission() patch; AFAICS takes care of all mismerges as well).
-> In the meanwhile, see the patch below on top of next-20080718:
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index a15c155..c0a64e2 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -286,7 +286,8 @@ int permission(struct inode *inode, int mask, struct nameidata *nd)
->  	if (retval)
->  		return retval;
->  
-> -	return security_inode_permission(inode, mask);
-> +	return security_inode_permission(inode,
-> +					mask & (MAY_READ|MAY_WRITE|MAY_EXEC));
->  }
->  
->  /**
+> Signed-off-by:  Stephen Smalley <sds-+05T5uksL2qpZYMLLGbcSA@public.gmane.org>
 
-SELinux needs MAY_APPEND to be passed down to the security hook.
-Otherwise, we get permission denials when only append permission is
-granted by policy even if the opening process specified O_APPEND.
-Shows up as a regression in the ltp selinux testsuite, fixed by
-this patch.
+Applied to  
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/security-testing-2.6#hotfixes
 
-Signed-off-by:  Stephen Smalley <sds@tycho.nsa.gov>
+
+Al, holler if you want to push this through your tree.
+
 
 ---
 
@@ -80,16 +45,18 @@ index a7b0a0b..b91e973 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
 @@ -274,7 +274,7 @@ int inode_permission(struct inode *inode, int mask)
- 		return retval;
+                return retval;
  
- 	return security_inode_permission(inode,
--			mask & (MAY_READ|MAY_WRITE|MAY_EXEC));
-+			mask & (MAY_READ|MAY_WRITE|MAY_EXEC|MAY_APPEND));
+        return security_inode_permission(inode,
+-                       mask & (MAY_READ|MAY_WRITE|MAY_EXEC));
++                       mask & (MAY_READ|MAY_WRITE|MAY_EXEC|MAY_APPEND));
  }
  
  /**
 
 
+
+- James
 -- 
-Stephen Smalley
-National Security Agency
+James Morris
+<jmorris-gx6/JNMH7DfYtjvyW6yDsg@public.gmane.org>
