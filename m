@@ -1,54 +1,95 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the kmemcheck tree
-Date: Tue, 29 Jul 2008 03:19:58 +1000
-Message-ID: <20080729031958.fbd6d4fb.sfr@canb.auug.org.au>
-References: <20080728140917.fd7769c3.sfr@canb.auug.org.au>
-	<20080728090635.GB5732@elte.hu>
+From: Stephen Smalley <sds@tycho.nsa.gov>
+Subject: Re: BUG at security/selinux/avc.c:883 (was: Re: linux-next: Tree
+	for July 17: early crash on x86-64)
+Date: Mon, 28 Jul 2008 13:32:38 -0400
+Message-ID: <1217266358.20373.54.camel@moss-spartans.epoch.ncsc.mil>
+References: <20080718012842.690b8346.sfr@canb.auug.org.au>
+	 <a4423d670807180652y352e66lfe04d2b33d2ed176@mail.gmail.com>
+	 <20080719035231.GU28946@ZenIV.linux.org.uk>
+	 <200807192042.06988.rjw@sisk.pl>
+	 <Xine.LNX.4.64.0807200553380.22632@us.intercode.com.au>
+	 <1216546973.3217.6.camel@dhcppc2>
+	 <20080720121559.GV28946@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__29_Jul_2008_03_19_58_+1000_=PJkzY+oBbatTzYB"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39818 "EHLO smtps.tip.net.au"
+Received: from zombie.ncsc.mil ([144.51.88.131]:45735 "EHLO zombie.ncsc.mil"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758744AbYG1RUH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 28 Jul 2008 13:20:07 -0400
-In-Reply-To: <20080728090635.GB5732@elte.hu>
+	id S1750819AbYG1Re0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 28 Jul 2008 13:34:26 -0400
+In-Reply-To: <20080720121559.GV28946@ZenIV.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Vegard Nossum <vegard.nossum@gmail.com>, Pekka Enberg <penberg@cs.helsinki.fi>, linux-next@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Thomas Meyer <thomas@m3y3r.de>, James Morris <jmorris@namei.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Alexander Beregalov <a.beregalov@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Kernel Testers List <kernel-testers@vger.kernel.org>, Eric Paris <eparis@parisplace.org>
 
---Signature=_Tue__29_Jul_2008_03_19_58_+1000_=PJkzY+oBbatTzYB
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sun, 2008-07-20 at 13:15 +0100, Al Viro wrote:
+> On Sun, Jul 20, 2008 at 11:42:53AM +0200, Thomas Meyer wrote:
+> > Am Sonntag, den 20.07.2008, 05:54 +1000 schrieb James Morris:
+> > > On Sat, 19 Jul 2008, Rafael J. Wysocki wrote:
+> > > 
+> > > > > vfs-next/net-next conflict; apply the patch below on top of the
+> > > merge.
+> > > > 
+> > > > That helped, thanks.
+> > > > 
+> > > > But next it ran into the BUG_ON() in line 883 of
+> > > security/selinux/avc.c .
+> > > > Disabling selinux made the kernel boot, finally.
+> > > 
+> > > Ugh, that's not supposed to happen.  Where was this in the boot?  Do
+> > > you 
+> > > have a console log?
+> 
+> Argh...  Fallout from ->permission() patch series.  I've folded that into
+> rebase (along with Randy's compile fixes and missing bit in capability.c
+> in ->inode_permission() patch; AFAICS takes care of all mismerges as well).
+> In the meanwhile, see the patch below on top of next-20080718:
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index a15c155..c0a64e2 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -286,7 +286,8 @@ int permission(struct inode *inode, int mask, struct nameidata *nd)
+>  	if (retval)
+>  		return retval;
+>  
+> -	return security_inode_permission(inode, mask);
+> +	return security_inode_permission(inode,
+> +					mask & (MAY_READ|MAY_WRITE|MAY_EXEC));
+>  }
+>  
+>  /**
 
-Hi Ingo,
+SELinux needs MAY_APPEND to be passed down to the security hook.
+Otherwise, we get permission denials when only append permission is
+granted by policy even if the opening process specified O_APPEND.
+Shows up as a regression in the ltp selinux testsuite, fixed by
+this patch.
 
-On Mon, 28 Jul 2008 11:06:35 +0200 Ingo Molnar <mingo@elte.hu> wrote:
->
-> Thanks Stephen. I have done the same merge fixup yesterday in tip/master=
-=20
-> and pushed it out today into tip/auto-kmemcheck-next. The conflict=20
-> should disappear on your next integration run.
+Signed-off-by:  Stephen Smalley <sds@tycho.nsa.gov>
 
-Thanks.
+---
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+ fs/namei.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---Signature=_Tue__29_Jul_2008_03_19_58_+1000_=PJkzY+oBbatTzYB
-Content-Type: application/pgp-signature
+diff --git a/fs/namei.c b/fs/namei.c
+index a7b0a0b..b91e973 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -274,7 +274,7 @@ int inode_permission(struct inode *inode, int mask)
+ 		return retval;
+ 
+ 	return security_inode_permission(inode,
+-			mask & (MAY_READ|MAY_WRITE|MAY_EXEC));
++			mask & (MAY_READ|MAY_WRITE|MAY_EXEC|MAY_APPEND));
+ }
+ 
+ /**
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkiN/74ACgkQjjKRsyhoI8yaXACcDSI817tWeJ3yIY+lpbDEjFwH
-wZMAoLCrvhirwttjYMqLApnEYniWtPfp
-=rKjF
------END PGP SIGNATURE-----
-
---Signature=_Tue__29_Jul_2008_03_19_58_+1000_=PJkzY+oBbatTzYB--
+-- 
+Stephen Smalley
+National Security Agency
