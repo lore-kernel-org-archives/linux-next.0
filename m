@@ -1,37 +1,57 @@
-From: Nick Andrew <nick@nick-andrew.net>
-Subject: Re: linux-next: manual merge of the trivial tree
-Date: Mon, 28 Jul 2008 19:41:10 +1000
-Message-ID: <20080728094110.GA6278@mail.local.tull.net>
-References: <20080728133707.087f1d73.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: sparc tree build failure
+Date: Mon, 28 Jul 2008 20:12:14 +1000
+Message-ID: <20080728201214.c775f127.sfr@canb.auug.org.au>
+References: <20080728163808.55efadb1.sfr@canb.auug.org.au>
+	<20080728082114.GA11366@uranus.ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__28_Jul_2008_20_12_14_+1000_DQnJrJVENVsrMzu3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from vps1.tull.net ([66.180.172.116]:45611 "HELO vps1.tull.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-	id S1750728AbYG1JlP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 28 Jul 2008 05:41:15 -0400
-Content-Disposition: inline
-In-Reply-To: <20080728133707.087f1d73.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:59242 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750728AbYG1KMZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 28 Jul 2008 06:12:25 -0400
+In-Reply-To: <20080728082114.GA11366@uranus.ravnborg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jesper Juhl <jesper.juhl@gmail.com>, linux-next@vger.kernel.org, Arthur Jones <ajones@riverbed.com>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org
 
-Hi all,
+--Signature=_Mon__28_Jul_2008_20_12_14_+1000_DQnJrJVENVsrMzu3
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 28, 2008 at 01:37:07PM +1000, Stephen Rothwell wrote:
-> Today's linux-next merge of the trivial tree got a conflict in
-> Documentation/edac.txt between commit
-> 327dafb1c61c9da7b95ac6cc7634a2340cc9509c ("edac: core fix redundant sysfs
-> controls to parameters") from Linus' tree and commit
-> 0bb08241ce68aaa70b7b804b4d6319d8bad3ae24 ("Tighten up the use of loose")
-> from the trivial tree.
+Hi Sam,
 
-Should we drop the patch or alternately split it into one patch
-per affected file? This must be at least the 3rd time this patch
-has conflicted with other changes.
+On Mon, 28 Jul 2008 10:21:14 +0200 Sam Ravnborg <sam@ravnborg.org> wrote:
+>
+> I cannot reproduce it here...
+> Can you try to delete rm -rf usr/include/ and build again.
 
-Nick.
--- 
-PGP Key ID = 0x418487E7                      http://www.nick-andrew.net/
-PGP Key fingerprint = B3ED 6894 8E49 1770 C24A  67E3 6266 6EB9 4184 87E7
+These builds always start with a completely empty object directory.
+
+> If it continue to happen then try to send me a "make V=3D1" output.
+
+Its happened every build since 20080723 ... but I will try to get a V=3D1
+build.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__28_Jul_2008_20_12_14_+1000_DQnJrJVENVsrMzu3
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiNm34ACgkQjjKRsyhoI8wyCwCfTOf1CpcxikriR6QJlF5TxwCU
+M9cAn31Vzsdy7RBivbgJNcMlP1A6C2ab
+=vRWc
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__28_Jul_2008_20_12_14_+1000_DQnJrJVENVsrMzu3--
