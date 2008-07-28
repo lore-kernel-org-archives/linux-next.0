@@ -1,78 +1,68 @@
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-Subject: Re: [PATCH-next] pcmcia: fix sparse integer as NULL pointer warning
-Date: Mon, 28 Jul 2008 16:53:35 +0200
-Message-ID: <20080728145335.GA30258@comet.dominikbrodowski.net>
-References: <1216863248.30386.61.camel@brick> <20080724143634.74fe3b8d.sfr@canb.auug.org.au> <1216875606.30386.74.camel@brick>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: sparc tree build failure
+Date: Tue, 29 Jul 2008 01:12:33 +1000
+Message-ID: <20080729011233.b27e76e9.sfr@canb.auug.org.au>
+References: <20080728163808.55efadb1.sfr@canb.auug.org.au>
+	<20080728082114.GA11366@uranus.ravnborg.org>
+	<20080728093102.GA30612@cs181140183.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__29_Jul_2008_01_12_33_+1000_z1/8q9x2FF05NaSP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from isilmar.linta.de ([213.133.102.198]:37425 "EHLO linta.de"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1757801AbYG1O4A (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 28 Jul 2008 10:56:00 -0400
-Content-Disposition: inline
-In-Reply-To: <1216875606.30386.74.camel@brick>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49802 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752404AbYG1PMn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 28 Jul 2008 11:12:43 -0400
+In-Reply-To: <20080728093102.GA30612@cs181140183.pp.htv.fi>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Harvey Harrison <harvey.harrison@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>
+To: Adrian Bunk <bunk@kernel.org>
+Cc: Sam Ravnborg <sam@ravnborg.org>, David Miller <davem@davemloft.net>, linux-next@vger.kernel.org
 
-On Wed, Jul 23, 2008 at 10:00:05PM -0700, Harvey Harrison wrote:
-> On Thu, 2008-07-24 at 14:36 +1000, Stephen Rothwell wrote:
-> > On Wed, 23 Jul 2008 18:34:08 -0700 Harvey Harrison <harvey.harrison@gmail.com> wrote:
-> > >
-> > > +++ b/drivers/pcmcia/rsrc_nonstatic.c
-> > > @@ -275,7 +275,7 @@ static int readable(struct pcmcia_socket *s, struct resource *res,
-> > >  		destroy_cis_cache(s);
-> > >  	}
-> > >  	s->cis_mem.res = NULL;
-> > > -	if ((ret != 0) || (count == 0))
-> > > +	if ((ret != 0) || (count == NULL))
-> > 
-> > I was wondering if it should be
-> > 			   (*count == 0)
-> > 
-> 
-> Actually, it looks that way as in this case count can never be none.
-> 
-> readable() is only called in one place where it is passed the addresses
-> of two local variables.  Looking at pccard_validate_cis(), the number
-> of valid tuples found is returned through the info pointer, or zero
-> if invalid cis is found.
-> 
-> So I'd say *count == 0 is probably right.
-> 
-> Dominik?
+--Signature=_Tue__29_Jul_2008_01_12_33_+1000_z1/8q9x2FF05NaSP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, *count == 0 is what we'd need to check here.
+Hi Adrian,
 
-Thanks!
+On Mon, 28 Jul 2008 12:31:02 +0300 Adrian Bunk <bunk@kernel.org> wrote:
+>
+> I can also reproduce it (triggered by CONFIG_HEADERS_CHECK=3Dy):
+>=20
+> ...
+> make -rR -f /tmp/linux-next-20080728/scripts/Makefile.headersinst=20
+> obj=3Dinclude/drm dst=3Dinclude/drm
+>   perl scripts/headers_check.pl /tmp/linux-next-20080728/usr/include spar=
+c64 /tmp/linux-next-20080728/usr/include/drm/drm.h /tmp/linux-next-20080728=
+/usr/include/drm/drm_sarea.h /tmp/linux-next-20080728/usr/include/drm/i810_=
+drm.h /tmp/linux-next-20080728/usr/include/drm/i830_drm.h /tmp/linux-next-2=
+0080728/usr/include/drm/i915_drm.h /tmp/linux-next-20080728/usr/include/drm=
+/mga_drm.h /tmp/linux-next-20080728/usr/include/drm/r128_drm.h /tmp/linux-n=
+ext-20080728/usr/include/drm/radeon_drm.h /tmp/linux-next-20080728/usr/incl=
+ude/drm/savage_drm.h /tmp/linux-next-20080728/usr/include/drm/sis_drm.h /tm=
+p/linux-next-20080728/usr/include/drm/via_drm.h; touch /tmp/linux-next-2008=
+0728/usr/include/drm/.check
+> /tmp/linux-next-20080728/usr/include/drm/drm.h:40: included file 'asm-spa=
+rc64/ioctl.h' is not exported
+> make[3]: *** [/tmp/linux-next-20080728/usr/include/drm/.check] Error 1
 
-	Dominik
+Thanks.  My cross compiler completely failed me :-(
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-Date: Mon, 28 Jul 2008 16:37:10 +0200
-Subject: [PATCH 1/1] pcmcia: rsrc_nonstatic: check value, not pointer
+--Signature=_Tue__29_Jul_2008_01_12_33_+1000_z1/8q9x2FF05NaSP
+Content-Type: application/pgp-signature
 
-Bug found by Harvey Harrison and Stephen Rothwell.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
----
- drivers/pcmcia/rsrc_nonstatic.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+iEYEARECAAYFAkiN4eEACgkQjjKRsyhoI8ylfwCgnjR8AQ3otE0dEDX1TWhDx+9Q
+8hEAn2MMRUly7c+VFEHVMHcDZ7eNFInV
+=00mU
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/pcmcia/rsrc_nonstatic.c b/drivers/pcmcia/rsrc_nonstatic.c
-index d0c1d63..203e579 100644
---- a/drivers/pcmcia/rsrc_nonstatic.c
-+++ b/drivers/pcmcia/rsrc_nonstatic.c
-@@ -275,7 +275,7 @@ static int readable(struct pcmcia_socket *s, struct resource *res,
- 		destroy_cis_cache(s);
- 	}
- 	s->cis_mem.res = NULL;
--	if ((ret != 0) || (count == 0))
-+	if ((ret != 0) || (*count == 0))
- 		return 0;
- 	return 1;
- }
--- 
-1.5.4.3
+--Signature=_Tue__29_Jul_2008_01_12_33_+1000_z1/8q9x2FF05NaSP--
