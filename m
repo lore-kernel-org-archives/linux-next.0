@@ -1,39 +1,53 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 00/12] Thumb-2 kernel support
-Date: Sun, 27 Jul 2008 12:08:05 +0100
-Message-ID: <20080727110804.GE32366@flint.arm.linux.org.uk>
-References: <20080606173300.7930.31525.stgit@pc1117.cambridge.arm.com> <20080630125110.1dc5689a.akpm@linux-foundation.org> <1214901131.29199.31.camel@pc1117.cambridge.arm.com> <20080701014529.272706d8.akpm@linux-foundation.org> <1216829155.23395.19.camel@pc1117.cambridge.arm.com> <20080723130140.ff016944.akpm@linux-foundation.org> <1216847422.6550.8.camel@localhost.localdomain> <20080723151045.bcae107e.akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rr tree
+Date: Mon, 28 Jul 2008 13:09:34 +1000
+Message-ID: <20080728130934.e444229c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__28_Jul_2008_13_09_34_+1000_evFlUK=y3eFmt3d6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:40146 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751013AbYG0LI5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 27 Jul 2008 07:08:57 -0400
-Content-Disposition: inline
-In-Reply-To: <20080723151045.bcae107e.akpm@linux-foundation.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44528 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750728AbYG1DJn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 27 Jul 2008 23:09:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, linux-next@vger.kernel.org, linux-arm-kernel@lists.arm.linux.org.uk
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org
 
-On Wed, Jul 23, 2008 at 03:10:45PM -0700, Andrew Morton wrote:
-> Well.  Rather than doing things sequentially we could go parallel. 
-> Russell could say "I'll look at them before 2.6.28 but please put them
-> into linux-next meanwhile".
+--Signature=_Mon__28_Jul_2008_13_09_34_+1000_evFlUK=y3eFmt3d6
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-There have been some valid but (iirc) non-vocal objections to the
-Thumb-2 support from a few people.  The biggest one is all the
-mess associated with supporting this "unified" assembler stuff.
+Hi Rusty,
 
-My view is that I really don't like these patches; they make the
-code very unreadable and more prone to errors.  They're going to
-cause us lots of problems in the future.  Every git merge which
-touches any ARM file containing assembly is going to have to be
-_very_ carefully reviewed, and it's not always possible to catch
-all of those.
+Today's linux-next merge of the rr tree got a very trivial conflict in
+drivers/char/hvc_irq.c between commit
+611e097d7707741a336a0677d9d69bec40f29f3d ("hvc_console: rework setup to
+replace irq functions with callbacks") from Linus' tree and commit
+30b3dcfc04fd3948938e0c7c4a14ca8c50d16839
+("misc:hvc_console_rework_setup_to_replace_irq_functions_with_callbacks")
+from the rr tree (which is presumbaly the same patch, just whitespace
+modified in Linus' tree.
 
-The only suggestion I have to improving the situation is to recommend
-that someone rethinks their wizzy new assembly language format - which
-IMHO is currently only fit for "write once, read or modify never"
-assembly code.
+Someone removed the extra blank line at the end of the file ...
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__28_Jul_2008_13_09_34_+1000_evFlUK=y3eFmt3d6
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiNOG4ACgkQjjKRsyhoI8zugACfcf5Nd9YWN+q26m8Ihu9az0FS
+9CgAoJH7akwBpMaGIQ7nvVTRjJ0+GAOg
+=Z1zY
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__28_Jul_2008_13_09_34_+1000_evFlUK=y3eFmt3d6--
