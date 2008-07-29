@@ -1,60 +1,45 @@
-From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
-Subject: Script to automatically build and test linux-next locally
-Date: Tue, 29 Jul 2008 17:57:28 +0200
-Message-ID: <20080729155728.GA26129@denkbrett.schottelius.org>
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Subject: Re: linux-next: Tree for July 29
+Date: Tue, 29 Jul 2008 18:25:14 +0200
+Message-ID: <200807291825.14281.bzolnier@gmail.com>
+References: <20080729172337.b3d74100.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="IS0zKkzwUGydFO0o"
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.schottelius.org ([62.65.138.77]:52010 "EHLO
-	mx2.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751502AbYG2P5a (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Jul 2008 11:57:30 -0400
-Received: from denkbrett.schottelius.org (natgw.netstream.ch [62.65.128.28])
-	(using TLSv1 with cipher ADH-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by mx2.schottelius.org (Postfix) with ESMTPSA id B203E2F71B4
-	for <linux-next@vger.kernel.org>; Tue, 29 Jul 2008 17:57:24 +0200 (CEST)
+Received: from nf-out-0910.google.com ([64.233.182.187]:2652 "EHLO
+	nf-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752294AbYG2Q1l (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Jul 2008 12:27:41 -0400
+Received: by nf-out-0910.google.com with SMTP id d3so1716032nfc.21
+        for <linux-next@vger.kernel.org>; Tue, 29 Jul 2008 09:27:39 -0700 (PDT)
+In-Reply-To: <20080729172337.b3d74100.sfr@canb.auug.org.au>
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Dave Hansen <haveblue@us.ibm.com>, Greg KH <gregkh@suse.de>
 
 
---IS0zKkzwUGydFO0o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hello!
+On Tuesday 29 July 2008, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since next-20080728:
 
-Just wanted to share this [0] script for easy rebuild with others, who
-build their kernel quite regullary, like I do.
+I keep reverting commit 0e3638d1e04040121af00195f7e4628078246489 ("warn
+when statically-allocated kobjects are used") with each linux-next release
+to make it work on my x86_32 laptop (http://lkml.org/lkml/2008/7/19/114).
 
-Sincerly,
+Depending on the day I either forget to revert it on a first try or (lead by
+incurable optimism) I don't try to revert it in hope that it was fixed.
 
-Nico
+Unfortunately the result is always the same cursing-during-qemu-test-run
+-> git-revert -> recompile cycle and a needless time loss.
 
-[0]: http://unix.schottelius.org/cgi-bin/gitweb.cgi?p=3Dnsbin;a=3Dblob;f=3D=
-linux-next-build.sh;h=3Da53aac2e3d5df099fa5cf0f7e3c65f62bc02ccc0;hb=3DHEAD
+Could we have some action taken please?
 
---=20
-Think about Free and Open Source Software (FOSS).
-http://nico.schottelius.org/documentations/foss/the-term-foss/
-
-PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
-
---IS0zKkzwUGydFO0o
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkiPPegACgkQuL75KpiFGIxazACfcAYXz31wlccY2X+P9wUU5k/F
-aesAoNbkL+lLjrR7FZeb4If/tOVsPoty
-=Rpcz
------END PGP SIGNATURE-----
-
---IS0zKkzwUGydFO0o--
+Thanks,
+Bart
