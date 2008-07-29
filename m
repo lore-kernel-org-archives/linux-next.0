@@ -1,80 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] add iommu_num_pages helper function
-Date: Tue, 29 Jul 2008 13:56:52 +1000
-Message-ID: <20080729135652.f89042c1.sfr@canb.auug.org.au>
-References: <20080725233325W.fujita.tomonori@lab.ntt.co.jp>
-	<20080726134156.GC4401@elte.hu>
-	<20080729110749.728c54e6.sfr@canb.auug.org.au>
-	<20080729104722H.fujita.tomonori@lab.ntt.co.jp>
+Subject: linux-next: manual merge of the firmware tree
+Date: Tue, 29 Jul 2008 14:27:27 +1000
+Message-ID: <20080729142727.dd55e93c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__29_Jul_2008_13_56_52_+1000_X9X/exck9Sc6I/dy"
+ boundary="Signature=_Tue__29_Jul_2008_14_27_27_+1000_pYvbww_lAkpSLz5l"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34384 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58969 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752703AbYG2D5M (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 28 Jul 2008 23:57:12 -0400
-In-Reply-To: <20080729104722H.fujita.tomonori@lab.ntt.co.jp>
+	id S1752360AbYG2E1f (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 29 Jul 2008 00:27:35 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
-Cc: mingo@elte.hu, joerg.roedel@amd.com, mingo@redhat.com, tglx@linutronix.de, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, bhavna.sarathy@amd.com, robert.richter@amd.com, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, Jaswinder Singh <jaswinder@infradead.org>, Adrian Bunk <bunk@kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>
 
---Signature=_Tue__29_Jul_2008_13_56_52_+1000_X9X/exck9Sc6I/dy
+--Signature=_Tue__29_Jul_2008_14_27_27_+1000_pYvbww_lAkpSLz5l
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,=20
+Hi David,
 
-On Tue, 29 Jul 2008 10:46:31 +0900 FUJITA Tomonori <fujita.tomonori@lab.ntt=
-.co.jp> wrote:
->
-> > So, I assume a patch created on July 25 is not destined for 2.6.27,
->=20
-> Hmm, seems that they will go into 2.6.27:
->=20
-> http://marc.info/?l=3Dlinux-kernel&m=3D121729275722287&w=3D2
->=20
->=20
-> > right?  Especially since it breaks another architecture build and has
-> > only made it to linux-next on July 29 ... and needs more work given the
-> > comments already on this patch.
->=20
-> It doesn't break another architecture build since only x86 IOMMUs use
-> the helper function. But as I pointed out, it doesn't work for some
-> architectures.
+Today's linux-next merge of the firmware tree got a conflict in
+drivers/media/dvb/ttpci/Kconfig between commit
+445c2714cf72817ab1ad3ca894c6d9b2047b3a3e ("V4L/DVB (8534): remove
+select's of FW_LOADER") from Linus' tree and commit
+06c8b7a8fde544f1145365ab6df2d3254301923f ("firmware: convert av7110
+driver to request_firmware()") from the firmware tree.
 
-Um, did you see the linux-next build report I posted (possibly not):
-
-arch/powerpc/kernel/iommu.c:56: error: static declaration of 'iommu_num_pag=
-es' follows non-static declaration
-include/linux/iommu-helper.h:11: error: previous declaration of 'iommu_num_=
-pages' was here
-
-This is now a build of 2.6.27-rc1 for powerpc64 ppc64_defconfig ...
-
-So we have a patch first posted to lkml on July 25 first hits linux-next
-on July 29 and is no in Linus' tree on July 29.  A grep would have found
-the problem.
-
-More care required ...
-
+Just a context conflict.  I fixed it up.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__29_Jul_2008_13_56_52_+1000_X9X/exck9Sc6I/dy
+--Signature=_Tue__29_Jul_2008_14_27_27_+1000_pYvbww_lAkpSLz5l
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkiOlQQACgkQjjKRsyhoI8zysgCgmihpZhmUz7KiajEUPaF/JEm7
-JkYAnRiJj5vhpe8iqcXEO/TPTI+zaRwT
-=pcyZ
+iEYEARECAAYFAkiOnC8ACgkQjjKRsyhoI8z4LQCeNAXik0mrRzWVjdTtZjNyoy7x
+fcsAn0ksidbheVGVJflt/XrZqFS8KSow
+=4WZM
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__29_Jul_2008_13_56_52_+1000_X9X/exck9Sc6I/dy--
+--Signature=_Tue__29_Jul_2008_14_27_27_+1000_pYvbww_lAkpSLz5l--
