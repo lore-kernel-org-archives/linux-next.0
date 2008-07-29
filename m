@@ -1,42 +1,31 @@
-From: Joerg Roedel <joerg.roedel@amd.com>
+From: David Miller <davem@davemloft.net>
 Subject: Re: [PATCH] add iommu_num_pages helper function
-Date: Tue, 29 Jul 2008 12:02:33 +0200
-Message-ID: <20080729100233.GB4851@amd.com>
-References: <20080728.222439.176200666.davem@davemloft.net> <20080729164523.bfd2d539.sfr@canb.auug.org.au> <20080729095027.GA4851@amd.com> <20080729185838W.fujita.tomonori@lab.ntt.co.jp>
+Date: Tue, 29 Jul 2008 03:10:05 -0700 (PDT)
+Message-ID: <20080729.031005.203132019.davem@davemloft.net>
+References: <20080728.222439.176200666.davem@davemloft.net>
+	<20080729164523.bfd2d539.sfr@canb.auug.org.au>
+	<20080729095027.GA4851@amd.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from outbound-wa4.frontbridge.com ([216.32.181.16]:10358 "EHLO
-	WA4EHSOBE003.bigfish.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754393AbYG2KC7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Jul 2008 06:02:59 -0400
-Content-Disposition: inline
-In-Reply-To: <20080729185838W.fujita.tomonori@lab.ntt.co.jp>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:47928
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1754653AbYG2KKI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 29 Jul 2008 06:10:08 -0400
+In-Reply-To: <20080729095027.GA4851@amd.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
-Cc: sfr@canb.auug.org.au, davem@davemloft.net, mingo@elte.hu, mingo@redhat.com, tglx@linutronix.de, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, bhavna.sarathy@amd.com, robert.richter@amd.com, torvalds@linux-foundation.org, akpm@linux-foundation.org, jbarnes@virtuousgeek.org, linux-next@vger.kernel.org
+To: joerg.roedel@amd.com
+Cc: sfr@canb.auug.org.au, fujita.tomonori@lab.ntt.co.jp, mingo@elte.hu, mingo@redhat.com, tglx@linutronix.de, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, bhavna.sarathy@amd.com, robert.richter@amd.com, torvalds@linux-foundation.org, akpm@linux-foundation.org, jbarnes@virtuousgeek.org, linux-next@vger.kernel.org
 
-On Tue, Jul 29, 2008 at 06:58:08PM +0900, FUJITA Tomonori wrote:
-> On Tue, 29 Jul 2008 11:50:27 +0200
-> Joerg Roedel <joerg.roedel@amd.com> wrote:
-> > do you want to work on that or should I try to do this and send it to
-> > you for review?
-> 
-> I've already sent a patch that fixes the breakages in such way:
-> 
-> http://marc.info/?l=linux-kernel&m=121730644704448&w=2
+From: Joerg Roedel <joerg.roedel@amd.com>
+Date: Tue, 29 Jul 2008 11:50:27 +0200
 
-Yes I have seen this patch. I meant the patches that introduce something
-like IOMMU_PAGE_SIZE for all architectures so that we can make this
-function generic and move it back to lib/.
+> I think moving that function to x86-only code is the best solution for
+> now. Before moving it back to generic code we need an architecture
+> independent way to find out the IOMMU page size.
 
-Joerg
-
--- 
-           |           AMD Saxony Limited Liability Company & Co. KG
- Operating |         Wilschdorfer Landstr. 101, 01109 Dresden, Germany
- System    |                  Register Court Dresden: HRA 4896
- Research  |              General Partner authorized to represent:
- Center    |             AMD Saxony LLC (Wilmington, Delaware, US)
-           | General Manager of AMD Saxony LLC: Dr. Hans-R. Deppe, Thomas McCoy
+My suggestion (again) is to pass it in as a "const unsigned long
+io_page_size" argument and update the callers.
