@@ -1,33 +1,48 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: build failure
-Date: Tue, 29 Jul 2008 10:58:15 +0200
-Message-ID: <20080729085815.GA1301@elte.hu>
-References: <20080729162300.733b3e09.sfr@canb.auug.org.au> <20080729080055.GA28916@elte.hu> <20080729180317.94c64634.sfr@canb.auug.org.au>
+From: Joerg Roedel <joerg.roedel@amd.com>
+Subject: Re: [PATCH] add iommu_num_pages helper function
+Date: Tue, 29 Jul 2008 11:50:27 +0200
+Message-ID: <20080729095027.GA4851@amd.com>
+References: <20080729110749.728c54e6.sfr@canb.auug.org.au> <20080729104722H.fujita.tomonori@lab.ntt.co.jp> <20080729135652.f89042c1.sfr@canb.auug.org.au> <20080728.222439.176200666.davem@davemloft.net> <20080729164523.bfd2d539.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756364AbYG2I6w@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from outbound-sin.frontbridge.com ([207.46.51.80]:4444 "EHLO
+	SG2EHSOBE001.bigfish.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757500AbYG2Juu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Jul 2008 05:50:50 -0400
 Content-Disposition: inline
-In-Reply-To: <20080729180317.94c64634.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20080729164523.bfd2d539.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>, Mike Travis <travis@sgi.com>
-List-Id: linux-next.vger.kernel.org
+Cc: David Miller <davem@davemloft.net>, fujita.tomonori@lab.ntt.co.jp, mingo@elte.hu, mingo@redhat.com, tglx@linutronix.de, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, bhavna.sarathy@amd.com, robert.richter@amd.com, torvalds@linux-foundation.org, akpm@linux-foundation.org, jbarnes@virtuousgeek.org, linux-next@vger.kernel.org
 
-
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi Ingo,
+On Tue, Jul 29, 2008 at 04:45:23PM +1000, Stephen Rothwell wrote:
+> Hi Dave,
 > 
-> On Tue, 29 Jul 2008 10:00:55 +0200 Ingo Molnar <mingo@elte.hu> wrote:
+> On Mon, 28 Jul 2008 22:24:39 -0700 (PDT) David Miller <davem@davemloft.net> wrote:
 > >
-> > > -#define cpumask_of_cpu(cpu) ({ *get_cpu_mask(cpu); })
-> > > +#define cpumask_of_cpu(cpu) (*get_cpu_mask(cpu))
-> > 
-> > hm, i'm wondering - is this a compiler bug?
+> > sparc64: Fix build after addition of iommu_num_pages() helper.
 > 
-> Or maybe a deficiency in such an old compiler (v3.4.5) but the fix 
-> makes sense anyway, right?
+> I added this to the end of linux-next for today.  Hopefully we will have
+> a fix in Linus' tree tomorrow.
 
-yeah, i was just wondering.
+Yes, my fault, sorry for that breakage :-/
+I think moving that function to x86-only code is the best solution for
+now. Before moving it back to generic code we need an architecture
+independent way to find out the IOMMU page size.
 
-	Ingo
+FUJITA,
+
+do you want to work on that or should I try to do this and send it to
+you for review?
+
+Joerg
+
+-- 
+           |           AMD Saxony Limited Liability Company & Co. KG
+ Operating |         Wilschdorfer Landstr. 101, 01109 Dresden, Germany
+ System    |                  Register Court Dresden: HRA 4896
+ Research  |              General Partner authorized to represent:
+ Center    |             AMD Saxony LLC (Wilmington, Delaware, US)
+           | General Manager of AMD Saxony LLC: Dr. Hans-R. Deppe, Thomas McCoy
