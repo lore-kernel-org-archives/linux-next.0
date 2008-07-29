@@ -1,49 +1,49 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: linux-next: Tree for July 29
-Date: Tue, 29 Jul 2008 11:16:39 -0700
-Message-ID: <20080729181639.GA21311@suse.de>
-References: <20080729172337.b3d74100.sfr@canb.auug.org.au> <200807291825.14281.bzolnier@gmail.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 0/13] Updated V4  - Regulator Framework
+Date: Tue, 29 Jul 2008 13:40:43 -0700
+Message-ID: <20080729134043.d677323b.akpm@linux-foundation.org>
+References: <1209742841.12502.40.camel@odin>
+	<20080710020848.066cfc8c.akpm@linux-foundation.org>
+	<1217363626.7498.47.camel@odin>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:53778 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753192AbYG2Ueg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 29 Jul 2008 16:34:36 -0400
-Content-Disposition: inline
-In-Reply-To: <200807291825.14281.bzolnier@gmail.com>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:50001 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752383AbYG2UlT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 29 Jul 2008 16:41:19 -0400
+In-Reply-To: <1217363626.7498.47.camel@odin>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Dave Hansen <haveblue@us.ibm.com>
+To: Liam Girdwood <lg@opensource.wolfsonmicro.com>, Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.arm.linux.org.uk, broonie@opensource.wolfsonmicro.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org
 
-On Tue, Jul 29, 2008 at 06:25:14PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> 
-> Hi,
-> 
-> On Tuesday 29 July 2008, Stephen Rothwell wrote:
-> > Hi all,
+On Tue, 29 Jul 2008 21:33:46 +0100
+Liam Girdwood <lg@opensource.wolfsonmicro.com> wrote:
+
+> On Thu, 2008-07-10 at 02:08 -0700, Andrew Morton wrote:
+> > On Fri, 02 May 2008 16:40:41 +0100 Liam Girdwood <lg@opensource.wolfsonmicro.com> wrote:
 > > 
-> > Changes since next-20080728:
+> > > This is an updated version of the kernel voltage & current regulator
+> > > framework based on comments received from version 3 of the patch series.
+> > 
+> > git-regulator.patch has been in -mm for two months without incident.  I'd
+> > forgotten about it.   This is bad - we should have put it into linux-next.
+> > 
+> > If you hope to get this into 2.6.27 then please send the git URL to Stephen
+> > and the linux-next list asap.  Please also resend the patches to this list
+> > for re-review.  Then, if it doesn't get shot down, send Linux a pull
+> > request during the 2.6.27 merge window.  ie: about one week from today.
 > 
-> I keep reverting commit 0e3638d1e04040121af00195f7e4628078246489 ("warn
-> when statically-allocated kobjects are used") with each linux-next release
-> to make it work on my x86_32 laptop (http://lkml.org/lkml/2008/7/19/114).
+> Would there be any chance of this going in for rc2 ? (2 pull requests
+> sent recently prior to rc1) or would it be better now waiting for the
+> 2.6.28 merge window ?
 > 
-> Depending on the day I either forget to revert it on a first try or (lead by
-> incurable optimism) I don't try to revert it in hope that it was fixed.
-> 
-> Unfortunately the result is always the same cursing-during-qemu-test-run
-> -> git-revert -> recompile cycle and a needless time loss.
-> 
-> Could we have some action taken please?
 
-What is the problem with this patch that has caused it to suddenly
-keeping the boot from working?  Is the code in the patch warning you of
-objects that are not properly being initialized?
+Oh, I'd assumed that it had been merged already.
 
-I'll be glad to fix this if possible.
-
-thanks,
-
-greg k-h
+Linus was probably wondering "who is this Liam person and why is he
+sending me stuff".  It should be OK for 2.6.27-rc1 unless Linus had
+some specific reason for skipping it?  Please retry.
