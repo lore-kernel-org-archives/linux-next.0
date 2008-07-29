@@ -1,49 +1,42 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: build failure
-Date: Tue, 29 Jul 2008 09:44:17 -0700 (PDT)
-Message-ID: <alpine.LFD.1.10.0807290936090.3334@nehalem.linux-foundation.org>
-References: <20080729180317.94c64634.sfr@canb.auug.org.au> <20080729085815.GA1301@elte.hu> <20080729202731.F18F.KOSAKI.MOTOHIRO@jp.fujitsu.com> <20080729114029.GA3836@elte.hu> <alpine.LFD.1.10.0807290927240.3334@nehalem.linux-foundation.org>
+From: Liam Girdwood <lg@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 0/13] Updated V4  - Regulator Framework
+Date: Tue, 29 Jul 2008 21:33:46 +0100
+Message-ID: <1217363626.7498.47.camel@odin>
+References: <1209742841.12502.40.camel@odin>
+	 <20080710020848.066cfc8c.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:49058 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752044AbYG2Qrk (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:54549 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752296AbYG2Udt (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 29 Jul 2008 12:47:40 -0400
-In-Reply-To: <alpine.LFD.1.10.0807290927240.3334@nehalem.linux-foundation.org>
+	Tue, 29 Jul 2008 16:33:49 -0400
+In-Reply-To: <20080710020848.066cfc8c.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>, Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Mike Travis <travis@sgi.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, arm kernel <linux-arm-kernel@lists.arm.linux.org.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
+On Thu, 2008-07-10 at 02:08 -0700, Andrew Morton wrote:
+> On Fri, 02 May 2008 16:40:41 +0100 Liam Girdwood <lg@opensource.wolfsonmicro.com> wrote:
+> 
+> > This is an updated version of the kernel voltage & current regulator
+> > framework based on comments received from version 3 of the patch series.
+> 
+> git-regulator.patch has been in -mm for two months without incident.  I'd
+> forgotten about it.   This is bad - we should have put it into linux-next.
+> 
+> If you hope to get this into 2.6.27 then please send the git URL to Stephen
+> and the linux-next list asap.  Please also resend the patches to this list
+> for re-review.  Then, if it doesn't get shot down, send Linux a pull
+> request during the 2.6.27 merge window.  ie: about one week from today.
 
+Would there be any chance of this going in for rc2 ? (2 pull requests
+sent recently prior to rc1) or would it be better now waiting for the
+2.6.28 merge window ?
 
-On Tue, 29 Jul 2008, Linus Torvalds wrote:
->
->   [...]                           since statement expressions are gcc 
-> extensions, and as such the gcc people could make up any semantics they 
-> want to them, including just defining that a statement expression with 
-> an lvalue value is the same lvalue rather than any temporary). 
+Thanks
 
-In fact, that does seem what gcc-4.x does. The way to tell is to do
-
-	const int *x;
-
-	({ *x }) = 1;
-
-and it's (a) legal (assignments to non-lvalues wouldn't work) and (b) 
-gives a nice warning about assignment to read-only location, which in turn 
-implies that the compiler properly just peeled off the de-reference even 
-though it was inside the statement expression.
-
-IOW, at least in gcc-4.3 (and apparently in earlier gcc-4 versions, but 
-not in gcc-3.4.5), a statement expression with an lvalue return value _is_ 
-actually an lvalue.
-
-But that also means that there is no difference what-so-ever between (x) 
-and ({ x; }) in gcc-4. And in gcc-3 there is, because apparently in gcc-3 
-a statement expression is never an lvalue (which is actually the sane 
-thing, imho).
-
-			Linus
+Liam
