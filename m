@@ -1,50 +1,148 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the firmware tree
-Date: Tue, 29 Jul 2008 14:27:27 +1000
-Message-ID: <20080729142727.dd55e93c.sfr@canb.auug.org.au>
+From: FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
+Subject: Re: [PATCH] add iommu_num_pages helper function
+Date: Tue, 29 Jul 2008 13:38:53 +0900
+Message-ID: <20080729133909L.fujita.tomonori@lab.ntt.co.jp>
+References: <20080729110749.728c54e6.sfr@canb.auug.org.au>
+	<20080729104722H.fujita.tomonori@lab.ntt.co.jp>
+	<20080729135652.f89042c1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__29_Jul_2008_14_27_27_+1000_pYvbww_lAkpSLz5l"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58969 "EHLO smtps.tip.net.au"
+Received: from sh.osrg.net ([192.16.179.4]:40700 "EHLO sh.osrg.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752360AbYG2E1f (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 29 Jul 2008 00:27:35 -0400
+	id S1751435AbYG2Ej5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 29 Jul 2008 00:39:57 -0400
+In-Reply-To: <20080729135652.f89042c1.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: linux-next@vger.kernel.org, Jaswinder Singh <jaswinder@infradead.org>, Adrian Bunk <bunk@kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>
+To: sfr@canb.auug.org.au
+Cc: fujita.tomonori@lab.ntt.co.jp, mingo@elte.hu, joerg.roedel@amd.com, mingo@redhat.com, tglx@linutronix.de, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, bhavna.sarathy@amd.com, robert.richter@amd.com, torvalds@linux-foundation.org, akpm@linux-foundation.org, jbarnes@virtuousgeek.org, linux-next@vger.kernel.org
 
---Signature=_Tue__29_Jul_2008_14_27_27_+1000_pYvbww_lAkpSLz5l
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 29 Jul 2008 13:56:52 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi David,
+> Hi, 
+> 
+> On Tue, 29 Jul 2008 10:46:31 +0900 FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp> wrote:
+> >
+> > > So, I assume a patch created on July 25 is not destined for 2.6.27,
+> > 
+> > Hmm, seems that they will go into 2.6.27:
+> > 
+> > http://marc.info/?l=linux-kernel&m=121729275722287&w=2
+> > 
+> > 
+> > > right?  Especially since it breaks another architecture build and has
+> > > only made it to linux-next on July 29 ... and needs more work given the
+> > > comments already on this patch.
+> > 
+> > It doesn't break another architecture build since only x86 IOMMUs use
+> > the helper function. But as I pointed out, it doesn't work for some
+> > architectures.
+> 
+> Um, did you see the linux-next build report I posted (possibly not):
+> 
+> arch/powerpc/kernel/iommu.c:56: error: static declaration of 'iommu_num_pages' follows non-static declaration
+> include/linux/iommu-helper.h:11: error: previous declaration of 'iommu_num_pages' was here
+> 
+> This is now a build of 2.6.27-rc1 for powerpc64 ppc64_defconfig ...
 
-Today's linux-next merge of the firmware tree got a conflict in
-drivers/media/dvb/ttpci/Kconfig between commit
-445c2714cf72817ab1ad3ca894c6d9b2047b3a3e ("V4L/DVB (8534): remove
-select's of FW_LOADER") from Linus' tree and commit
-06c8b7a8fde544f1145365ab6df2d3254301923f ("firmware: convert av7110
-driver to request_firmware()") from the firmware tree.
+Ah, really sorry. Yeah, it breaks POWER and SPARC builds.
 
-Just a context conflict.  I fixed it up.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__29_Jul_2008_14_27_27_+1000_pYvbww_lAkpSLz5l
-Content-Type: application/pgp-signature
+> So we have a patch first posted to lkml on July 25 first hits linux-next
+> on July 29 and is no in Linus' tree on July 29.  A grep would have found
+> the problem.
+> 
+> More care required ...
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Agreed... As I said before, this is not urgent at all so we didn't
+need to rush.
 
-iEYEARECAAYFAkiOnC8ACgkQjjKRsyhoI8z4LQCeNAXik0mrRzWVjdTtZjNyoy7x
-fcsAn0ksidbheVGVJflt/XrZqFS8KSow
-=4WZM
------END PGP SIGNATURE-----
 
---Signature=_Tue__29_Jul_2008_14_27_27_+1000_pYvbww_lAkpSLz5l--
+A fix has already been posted?
+
+==
+From: FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
+Subject: [PATCH] move iommu_num_pages helper to x86
+
+This IOMMU helper function doesn't work for some architectures:
+
+http://marc.info/?l=linux-kernel&m=121699304403202&w=2
+
+It also breaks POWER and SPARC builds:
+
+http://marc.info/?l=linux-kernel&m=121730388001890&w=2
+
+Currently, only x86 IOMMUs use this so let's move it to x86 for
+now.
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
+---
+ arch/x86/kernel/pci-dma.c    |    8 ++++++++
+ include/asm-x86/iommu.h      |    2 ++
+ include/linux/iommu-helper.h |    1 -
+ lib/iommu-helper.c           |    8 --------
+ 4 files changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
+index 8dbffb8..87d4d69 100644
+--- a/arch/x86/kernel/pci-dma.c
++++ b/arch/x86/kernel/pci-dma.c
+@@ -123,6 +123,14 @@ void __init pci_iommu_alloc(void)
+ 
+ 	pci_swiotlb_init();
+ }
++
++unsigned long iommu_num_pages(unsigned long addr, unsigned long len)
++{
++	unsigned long size = roundup((addr & ~PAGE_MASK) + len, PAGE_SIZE);
++
++	return size >> PAGE_SHIFT;
++}
++EXPORT_SYMBOL(iommu_num_pages);
+ #endif
+ 
+ /*
+diff --git a/include/asm-x86/iommu.h b/include/asm-x86/iommu.h
+index ecc8061..5f888cc 100644
+--- a/include/asm-x86/iommu.h
++++ b/include/asm-x86/iommu.h
+@@ -7,6 +7,8 @@ extern struct dma_mapping_ops nommu_dma_ops;
+ extern int force_iommu, no_iommu;
+ extern int iommu_detected;
+ 
++extern unsigned long iommu_num_pages(unsigned long addr, unsigned long len);
++
+ #ifdef CONFIG_GART_IOMMU
+ extern int gart_iommu_aperture;
+ extern int gart_iommu_aperture_allowed;
+diff --git a/include/linux/iommu-helper.h b/include/linux/iommu-helper.h
+index f8598f5..c975caf 100644
+--- a/include/linux/iommu-helper.h
++++ b/include/linux/iommu-helper.h
+@@ -8,4 +8,3 @@ extern unsigned long iommu_area_alloc(unsigned long *map, unsigned long size,
+ 				      unsigned long align_mask);
+ extern void iommu_area_free(unsigned long *map, unsigned long start,
+ 			    unsigned int nr);
+-extern unsigned long iommu_num_pages(unsigned long addr, unsigned long len);
+diff --git a/lib/iommu-helper.c b/lib/iommu-helper.c
+index 889ddce..a3b8d4c 100644
+--- a/lib/iommu-helper.c
++++ b/lib/iommu-helper.c
+@@ -80,11 +80,3 @@ void iommu_area_free(unsigned long *map, unsigned long start, unsigned int nr)
+ 	}
+ }
+ EXPORT_SYMBOL(iommu_area_free);
+-
+-unsigned long iommu_num_pages(unsigned long addr, unsigned long len)
+-{
+-	unsigned long size = roundup((addr & ~PAGE_MASK) + len, PAGE_SIZE);
+-
+-	return size >> PAGE_SHIFT;
+-}
+-EXPORT_SYMBOL(iommu_num_pages);
+-- 
+1.5.5.GIT
