@@ -1,34 +1,109 @@
-From: Al Viro <viro-3bDd1+5oDREiFSDQTTA3OLVCufUGDwFn@public.gmane.org>
-Subject: Re: BUG at security/selinux/avc.c:883 (was: Re: linux-next: Tree
-	for July 17: early crash on x86-64)
-Date: Tue, 29 Jul 2008 01:33:18 +0100
-Message-ID: <20080729003318.GE28946@ZenIV.linux.org.uk>
-References: <20080718012842.690b8346.sfr@canb.auug.org.au> <a4423d670807180652y352e66lfe04d2b33d2ed176@mail.gmail.com> <20080719035231.GU28946@ZenIV.linux.org.uk> <200807192042.06988.rjw@sisk.pl> <Xine.LNX.4.64.0807200553380.22632@us.intercode.com.au> <1216546973.3217.6.camel@dhcppc2> <20080720121559.GV28946@ZenIV.linux.org.uk> <1217266358.20373.54.camel@moss-spartans.epoch.ncsc.mil> <Xine.LNX.4.64.0807290736440.30242@us.intercode.com.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: pci-current tree build failure
+Date: Tue, 29 Jul 2008 10:52:13 +1000
+Message-ID: <20080729105213.0ac2acbd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <Xine.LNX.4.64.0807290736440.30242-RC8Ws/H8zzudju81dFSl6rpzq4S04n8Q@public.gmane.org>
-Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: James Morris <jmorris-gx6/JNMH7DfYtjvyW6yDsg@public.gmane.org>
-Cc: Stephen Smalley <sds-+05T5uksL2qpZYMLLGbcSA@public.gmane.org>, Thomas Meyer <thomas-VsYtu1Qij5c@public.gmane.org>, "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, Alexander Beregalov <a.beregalov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>, Kernel Testers List <kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Eric Paris <eparis-FjpueFixGhCM4zKIHC2jIg@public.gmane.org>, linux-security-module-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37613 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751631AbYG2AwV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 28 Jul 2008 20:52:21 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, Joerg Roedel <joerg.roedel@amd.com>, Ingo Molnar <mingo@elte.hu>, Paul Mackerras <paulus@samba.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@ozlabs.org
 
-On Tue, Jul 29, 2008 at 07:38:17AM +1000, James Morris wrote:
-> On Mon, 28 Jul 2008, Stephen Smalley wrote:
-> 
-> > SELinux needs MAY_APPEND to be passed down to the security hook.
-> > Otherwise, we get permission denials when only append permission is
-> > granted by policy even if the opening process specified O_APPEND.
-> > Shows up as a regression in the ltp selinux testsuite, fixed by
-> > this patch.
-> > 
-> > Signed-off-by:  Stephen Smalley <sds-+05T5uksL2qpZYMLLGbcSA@public.gmane.org>
-> 
-> Applied to  
-> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/security-testing-2.6#hotfixes
-> 
-> 
-> Al, holler if you want to push this through your tree.
+Hi Jesse,
 
-Applied, will push along with other patches tonight...
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+
+arch/powerpc/kernel/iommu.c:54: error: static declaration of 'iommu_num_pages' follows non-static declaration
+include/linux/iommu-helper.h:11: error: previous declaration of 'iommu_num_pages' was here
+
+Caused by commit 3bc9f79ee1ddc913be0a6d3592036683ef8a3148 ("iommu: add
+iommu_num_pages helper function") which introduced a global version of a
+function that powerpc has a different version of.  I am not sure that the
+two do the same thing - in fact they don't since powerpc can have a 64k
+page size and still need to use a 4k iommu pages.  I applied the
+patch below (which I personally hate :-))
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+>From ade341416a628800ad2a27ecd576238087290125 Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 29 Jul 2008 10:47:59 +1000
+Subject: [PATCH] powerpc: generic iommu helper fallout
+
+Powerpc needs it own version of iommu_num_pages() since the iommu pages
+may be a different size to the system pages.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/kernel/iommu.c |   12 ++++++------
+ 1 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/arch/powerpc/kernel/iommu.c b/arch/powerpc/kernel/iommu.c
+index 550a193..b147055 100644
+--- a/arch/powerpc/kernel/iommu.c
++++ b/arch/powerpc/kernel/iommu.c
+@@ -51,7 +51,7 @@ static int protect4gb = 1;
+ 
+ static void __iommu_free(struct iommu_table *, dma_addr_t, unsigned int);
+ 
+-static inline unsigned long iommu_num_pages(unsigned long vaddr,
++static inline unsigned long ppc_iommu_num_pages(unsigned long vaddr,
+ 					    unsigned long slen)
+ {
+ 	unsigned long npages;
+@@ -325,7 +325,7 @@ int iommu_map_sg(struct device *dev, struct iommu_table *tbl,
+ 		}
+ 		/* Allocate iommu entries for that segment */
+ 		vaddr = (unsigned long) sg_virt(s);
+-		npages = iommu_num_pages(vaddr, slen);
++		npages = ppc_iommu_num_pages(vaddr, slen);
+ 		align = 0;
+ 		if (IOMMU_PAGE_SHIFT < PAGE_SHIFT && slen >= PAGE_SIZE &&
+ 		    (vaddr & ~PAGE_MASK) == 0)
+@@ -418,7 +418,7 @@ int iommu_map_sg(struct device *dev, struct iommu_table *tbl,
+ 			unsigned long vaddr, npages;
+ 
+ 			vaddr = s->dma_address & IOMMU_PAGE_MASK;
+-			npages = iommu_num_pages(s->dma_address, s->dma_length);
++			npages = ppc_iommu_num_pages(s->dma_address, s->dma_length);
+ 			__iommu_free(tbl, vaddr, npages);
+ 			s->dma_address = DMA_ERROR_CODE;
+ 			s->dma_length = 0;
+@@ -452,7 +452,7 @@ void iommu_unmap_sg(struct iommu_table *tbl, struct scatterlist *sglist,
+ 
+ 		if (sg->dma_length == 0)
+ 			break;
+-		npages = iommu_num_pages(dma_handle, sg->dma_length);
++		npages = ppc_iommu_num_pages(dma_handle, sg->dma_length);
+ 		__iommu_free(tbl, dma_handle, npages);
+ 		sg = sg_next(sg);
+ 	}
+@@ -584,7 +584,7 @@ dma_addr_t iommu_map_single(struct device *dev, struct iommu_table *tbl,
+ 	BUG_ON(direction == DMA_NONE);
+ 
+ 	uaddr = (unsigned long)vaddr;
+-	npages = iommu_num_pages(uaddr, size);
++	npages = ppc_iommu_num_pages(uaddr, size);
+ 
+ 	if (tbl) {
+ 		align = 0;
+@@ -617,7 +617,7 @@ void iommu_unmap_single(struct iommu_table *tbl, dma_addr_t dma_handle,
+ 	BUG_ON(direction == DMA_NONE);
+ 
+ 	if (tbl) {
+-		npages = iommu_num_pages(dma_handle, size);
++		npages = ppc_iommu_num_pages(dma_handle, size);
+ 		iommu_free(tbl, dma_handle, npages);
+ 	}
+ }
+-- 
+1.5.6.3
