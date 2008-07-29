@@ -1,55 +1,60 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: build failure
-Date: Tue, 29 Jul 2008 13:40:29 +0200
-Message-ID: <20080729114029.GA3836@elte.hu>
-References: <20080729180317.94c64634.sfr@canb.auug.org.au> <20080729085815.GA1301@elte.hu> <20080729202731.F18F.KOSAKI.MOTOHIRO@jp.fujitsu.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] add iommu_num_pages helper function
+Date: Tue, 29 Jul 2008 22:45:56 +1000
+Message-ID: <20080729224556.bcdf582a.sfr@canb.auug.org.au>
+References: <20080729.031005.203132019.davem@davemloft.net>
+	<20080729192834M.fujita.tomonori@lab.ntt.co.jp>
+	<20080729103146.GA32407@elte.hu>
+	<20080729.033342.21049184.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__29_Jul_2008_22_45_56_+1000_RZbBp/BXQfb/x1HK"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:48208 "EHLO mx2.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47411 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755385AbYG2Lky (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 29 Jul 2008 07:40:54 -0400
-Content-Disposition: inline
-In-Reply-To: <20080729202731.F18F.KOSAKI.MOTOHIRO@jp.fujitsu.com>
+	id S1751214AbYG2MqJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 29 Jul 2008 08:46:09 -0400
+In-Reply-To: <20080729.033342.21049184.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>, Mike Travis <travis@sgi.com>
+To: David Miller <davem@davemloft.net>
+Cc: mingo@elte.hu, fujita.tomonori@lab.ntt.co.jp, joerg.roedel@amd.com, mingo@redhat.com, tglx@linutronix.de, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, bhavna.sarathy@amd.com, robert.richter@amd.com, torvalds@linux-foundation.org, akpm@linux-foundation.org, jbarnes@virtuousgeek.org, linux-next@vger.kernel.org
 
+--Signature=_Tue__29_Jul_2008_22_45_56_+1000_RZbBp/BXQfb/x1HK
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com> wrote:
+On Tue, 29 Jul 2008 03:33:42 -0700 (PDT) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> From: Ingo Molnar <mingo@elte.hu>
+> Date: Tue, 29 Jul 2008 12:31:46 +0200
+>=20
+> > i've queued up your quick fix in tip/x86/urgent to resolve the immediat=
+e=20
+> > -git build breakage. The wider patch can then be done on top of that,=20
+> > without being rushed. Any objections to this approach?
+>=20
+> I do not object :-)
 
-> > 
-> > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > 
-> > > Hi Ingo,
-> > > 
-> > > On Tue, 29 Jul 2008 10:00:55 +0200 Ingo Molnar <mingo@elte.hu> wrote:
-> > > >
-> > > > > -#define cpumask_of_cpu(cpu) ({ *get_cpu_mask(cpu); })
-> > > > > +#define cpumask_of_cpu(cpu) (*get_cpu_mask(cpu))
-> > > > 
-> > > > hm, i'm wondering - is this a compiler bug?
-> > > 
-> > > Or maybe a deficiency in such an old compiler (v3.4.5) but the fix 
-> > > makes sense anyway, right?
-> > 
-> > yeah, i was just wondering.
-> 
-> in linux/README
-> 
-> COMPILING the kernel:
-> 
->  - Make sure you have at least gcc 3.2 available.
->    For more information, refer to Documentation/Changes.
-> 
-> So, if 3.4.5 is old, Should we change readme?
+Neither do I. :-)
 
-the fix is simple enough.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-but the question is, wont it generate huge artificial stackframes with 
-CONFIG_MAXSMP and NR_CPUS=4096? Maybe it is unable to figure out and 
-simplify the arithmetics there - or something like that.
+--Signature=_Tue__29_Jul_2008_22_45_56_+1000_RZbBp/BXQfb/x1HK
+Content-Type: application/pgp-signature
 
-	Ingo
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiPEQQACgkQjjKRsyhoI8xNZwCfY3P7QCLB6HRFLuc/V0PStl/u
+xNgAn0UdWxTaWsI8nU+hRiYwh+txTdTg
+=ftIL
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__29_Jul_2008_22_45_56_+1000_RZbBp/BXQfb/x1HK--
