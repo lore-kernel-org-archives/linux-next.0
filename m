@@ -1,52 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the v4l-dvb tree
-Date: Tue, 29 Jul 2008 13:03:24 +1000
-Message-ID: <20080729130324.f0c24ffa.sfr@canb.auug.org.au>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: linux-next: tests tree unfetchable
+Date: Tue, 29 Jul 2008 05:18:31 +0200
+Message-ID: <20080729031831.GA27371@uranus.ravnborg.org>
+References: <20080729100407.954c35f7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__29_Jul_2008_13_03_24_+1000_AE_ey17l79tMcHZ6"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39192 "EHLO smtps.tip.net.au"
+Received: from smtpout3.tre.se ([80.251.192.228]:57215 "EHLO smtpout3.tre.se"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755221AbYG2DDe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 28 Jul 2008 23:03:34 -0400
+	id S1752761AbYG2DR5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 28 Jul 2008 23:17:57 -0400
+Content-Disposition: inline
+In-Reply-To: <20080729100407.954c35f7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Ananth N Mavinakayanahalli <ananth@in.ibm.com>, linux-next@vger.kernel.org
 
---Signature=_Tue__29_Jul_2008_13_03_24_+1000_AE_ey17l79tMcHZ6
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jul 29, 2008 at 10:04:07AM +1000, Stephen Rothwell wrote:
+> Hi Sam, Ananth,
+> 
+> I am unable to fetch the tests tree this morning:
+> 
+> $ git fetch tests
+> fatal: '/pub/scm/linux/kernel/git/sam/tests.git': unable to chdir or not a git archive
+> fatal: The remote end hung up unexpectedly
+> 
+> Looking on master.kernel.org, I notice that there is
+> a /pub/scm/linux/kernel/git/sam/test.git (note "test", not "tests")
+> directory.  Would that be it?
 
-Hi Mauro,
+Yes. I rebased it yesterday and accidently renamed it it.
 
-Today's linux-next merge of the v4l-dvb tree got conflicts in 51 files
-against Linus' tree.  It looks like a slightly modified version of the
-tree was merged to Linus.  Please don't do that - or at least update what
-is in linux-next to match.  But preferably, ask Linus to take what has
-already been tested in linux-next.  You can add fixups after that if
-necessary.
-
-I just dropped the linux-next version of the tree for today. Please fix
-it all up.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__29_Jul_2008_13_03_24_+1000_AE_ey17l79tMcHZ6
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkiOiHwACgkQjjKRsyhoI8wCUgCgupz3NgnB5XyaIlXdSvD96nj0
-Oc4AoIFmjq2zVdZeQ402sFpHC5R05KiW
-=cpY0
------END PGP SIGNATURE-----
-
---Signature=_Tue__29_Jul_2008_13_03_24_+1000_AE_ey17l79tMcHZ6--
+	Sam
