@@ -1,52 +1,37 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: Tree for July 29
-Date: Wed, 30 Jul 2008 13:04:19 -0700
-Message-ID: <20080730130419.49986a25.akpm@linux-foundation.org>
-References: <20080729172337.b3d74100.sfr@canb.auug.org.au>
-	<20080730090650.79a5a749@kopernikus.site>
-	<20080730021947.def99edc.akpm@linux-foundation.org>
-	<200807302127.42148.bzolnier@gmail.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH] add iommu_num_pages helper function
+Date: Thu, 31 Jul 2008 08:44:32 +1000
+Message-ID: <1217457872.11188.350.camel@pasglop>
+References: <20080728.222439.176200666.davem@davemloft.net>
+	 <20080729164523.bfd2d539.sfr@canb.auug.org.au>
+	 <20080729095027.GA4851@amd.com>
+	 <20080729.031005.203132019.davem@davemloft.net>
+Reply-To: benh@kernel.crashing.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:56936 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752940AbYG3UFI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 30 Jul 2008 16:05:08 -0400
-In-Reply-To: <200807302127.42148.bzolnier@gmail.com>
+Received: from gate.crashing.org ([63.228.1.57]:53759 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752234AbYG3Wp2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 30 Jul 2008 18:45:28 -0400
+In-Reply-To: <20080729.031005.203132019.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Cc: bwalle@suse.de, greg@kroah.com, hugh@veritas.com, gregkh@suse.de, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, haveblue@us.ibm.com
+To: David Miller <davem@davemloft.net>
+Cc: joerg.roedel@amd.com, sfr@canb.auug.org.au, fujita.tomonori@lab.ntt.co.jp, mingo@elte.hu, mingo@redhat.com, tglx@linutronix.de, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, bhavna.sarathy@amd.com, robert.richter@amd.com, torvalds@linux-foundation.org, akpm@linux-foundation.org, jbarnes@virtuousgeek.org, linux-next@vger.kernel.org
 
-On Wed, 30 Jul 2008 21:27:41 +0200
-Bartlomiej Zolnierkiewicz <bzolnier@gmail.com> wrote:
-
-> On Wednesday 30 July 2008, Andrew Morton wrote:
-> > On Wed, 30 Jul 2008 09:06:50 +0200 Bernhard Walle <bwalle@suse.de> wrote:
-> > 
-> > > * Greg KH <greg@kroah.com> [2008-07-29 21:48]:
-> > > > > Isn't this the opposite end of the same problem for which Bernhard
-> > > > > has been repeatedly trying to find a taker for his patch:
-> > > > > 
-> > > > > http://article.gmane.org/gmane.linux.kernel.kexec/1882
-> > > > 
-> > > > Yes.  It's not the kobject patch at fault here, it's the use of kobjects
-> > > > so early in the boot process.  That needs to be fixed.
-> > 
-> > It was a bit optimistic to stick an unconditional GFP_KERNEL allocation
-> > into the previously-atomic kobject_init().
-> > 
-> > It's only 128 bytes, so why can't we fix both problems thusly?
+On Tue, 2008-07-29 at 03:10 -0700, David Miller wrote:
+> From: Joerg Roedel <joerg.roedel@amd.com>
+> Date: Tue, 29 Jul 2008 11:50:27 +0200
 > 
-> Fixes the bug for me (also true for previous patch from Bernhard).
+> > I think moving that function to x86-only code is the best solution for
+> > now. Before moving it back to generic code we need an architecture
+> > independent way to find out the IOMMU page size.
 > 
+> My suggestion (again) is to pass it in as a "const unsigned long
+> io_page_size" argument and update the callers.
 
-Cool.
+Yeah. That's better
 
-The offending patch has just got itself turfed from linux-next so my
-fix now has nothing to fix.
-
-We'll see what happens!
+Ben.
