@@ -1,55 +1,54 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: Tree for July 29
-Date: Tue, 29 Jul 2008 21:48:34 -0700
-Message-ID: <20080730044834.GB2954@kroah.com>
-References: <20080729172337.b3d74100.sfr@canb.auug.org.au> <200807291825.14281.bzolnier@gmail.com> <20080729181639.GA21311@suse.de> <Pine.LNX.4.64.0807292145220.28604@blonde.site>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure
+Date: Wed, 30 Jul 2008 15:30:28 +1000
+Message-ID: <20080730153028.95226354.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:57463 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753718AbYG3Ev3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Jul 2008 00:51:29 -0400
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.64.0807292145220.28604@blonde.site>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49090 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753270AbYG3Fac (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 30 Jul 2008 01:30:32 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Hugh Dickins <hugh@veritas.com>
-Cc: Greg KH <gregkh@suse.de>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Bernhard Walle <bwalle@suse.de>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Dave Hansen <haveblue@us.ibm.com>
+To: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+Cc: linux-next@vger.kernel.org, Ankita Garg <ankita@in.ibm.com>, Vivek Goyal <vgoyal@redhat.com>, Haren Myneni <hbabu@us.ibm.com>, kexec@lists.infradead.org
 
-On Tue, Jul 29, 2008 at 09:49:24PM +0100, Hugh Dickins wrote:
-> On Tue, 29 Jul 2008, Greg KH wrote:
-> > On Tue, Jul 29, 2008 at 06:25:14PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> > > On Tuesday 29 July 2008, Stephen Rothwell wrote:
-> > > > 
-> > > > Changes since next-20080728:
-> > > 
-> > > I keep reverting commit 0e3638d1e04040121af00195f7e4628078246489 ("warn
-> > > when statically-allocated kobjects are used") with each linux-next release
-> > > to make it work on my x86_32 laptop (http://lkml.org/lkml/2008/7/19/114).
-> > > 
-> > > Depending on the day I either forget to revert it on a first try or (lead by
-> > > incurable optimism) I don't try to revert it in hope that it was fixed.
-> > > 
-> > > Unfortunately the result is always the same cursing-during-qemu-test-run
-> > > -> git-revert -> recompile cycle and a needless time loss.
-> > > 
-> > > Could we have some action taken please?
-> > 
-> > What is the problem with this patch that has caused it to suddenly
-> > keeping the boot from working?  Is the code in the patch warning you of
-> > objects that are not properly being initialized?
-> > 
-> > I'll be glad to fix this if possible.
-> 
-> Isn't this the opposite end of the same problem for which Bernhard
-> has been repeatedly trying to find a taker for his patch:
-> 
-> http://article.gmane.org/gmane.linux.kernel.kexec/1882
+Hi Ananth,
 
-Yes.  It's not the kobject patch at fault here, it's the use of kobjects
-so early in the boot process.  That needs to be fixed.
+Today's linux-next build (powerpc allyesconfig) failed like this:
 
-thanks,
+tests/lkdtm.c:182: error: expected ')' before '*' token
 
-greg k-h
+I have no idea why this fails now when it did not before.
+
+I applied the following patch.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 30 Jul 2008 15:24:53 +1000
+Subject: [PATCH] tests: lkdtm needs ide.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ tests/lkdtm.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/tests/lkdtm.c b/tests/lkdtm.c
+index 2a40d18..856f060 100644
+--- a/tests/lkdtm.c
++++ b/tests/lkdtm.c
+@@ -52,6 +52,7 @@
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/hrtimer.h>
++#include <linux/ide.h>
+ #include <scsi/scsi_cmnd.h>
+ 
+ #define NUM_CPOINTS 8
+-- 
+1.5.6.3
