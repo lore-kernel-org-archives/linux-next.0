@@ -1,40 +1,75 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: linux-next: m68k build failure
-Date: Wed, 30 Jul 2008 10:49:35 +0200
-Message-ID: <20080730084935.GA18545@uranus.ravnborg.org>
-References: <20080730175233.02dbf021.sfr@canb.auug.org.au> <20080730.010234.193703201.davem@davemloft.net>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: Tree for July 29
+Date: Wed, 30 Jul 2008 02:19:47 -0700
+Message-ID: <20080730021947.def99edc.akpm@linux-foundation.org>
+References: <20080729172337.b3d74100.sfr@canb.auug.org.au>
+	<200807291825.14281.bzolnier@gmail.com>
+	<20080729181639.GA21311@suse.de>
+	<Pine.LNX.4.64.0807292145220.28604@blonde.site>
+	<20080730044834.GB2954@kroah.com>
+	<20080730090650.79a5a749@kopernikus.site>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1759208AbYG3ItZ@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20080730.010234.193703201.davem@davemloft.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, geert@linux-m68k.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:57725 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751502AbYG3JUL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 30 Jul 2008 05:20:11 -0400
+In-Reply-To: <20080730090650.79a5a749@kopernikus.site>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Bernhard Walle <bwalle@suse.de>
+Cc: Greg KH <greg@kroah.com>, Hugh Dickins <hugh@veritas.com>, Greg KH <gregkh@suse.de>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Dave Hansen <haveblue@us.ibm.com>
 
-On Wed, Jul 30, 2008 at 01:02:34AM -0700, David Miller wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 30 Jul 2008 17:52:33 +1000
-> 
-> > linux-next (version next-20080729) build (m68k defconfig) failed like this;
+On Wed, 30 Jul 2008 09:06:50 +0200 Bernhard Walle <bwalle@suse.de> wrote:
+
+> * Greg KH <greg@kroah.com> [2008-07-29 21:48]:
+> > > Isn't this the opposite end of the same problem for which Bernhard
+> > > has been repeatedly trying to find a taker for his patch:
+> > > 
+> > > http://article.gmane.org/gmane.linux.kernel.kexec/1882
 > > 
-> > In file included from arch/m68k/sun3/idprom.c:16:
-> > include2/asm/idprom.h:3:30: error: asm-sparc/idprom.h: No such file or directory
-> 
-> Yes, Sam told the m68k folks this would happen and that they
-> would need to resolve it somehow.
-> 
-> Perhaps as a quick fix we can just copy sparc's idprom.h into
-> asm-m68k/idprom.h
+> > Yes.  It's not the kobject patch at fault here, it's the use of kobjects
+> > so early in the boot process.  That needs to be fixed.
 
-Full list of relevant files:
-include/asm-m68k/contregs.h:#include <asm-sparc/contregs.h>
-include/asm-m68k/fbio.h:#include <asm-sparc/fbio.h>
-include/asm-m68k/idprom.h:#include <asm-sparc/idprom.h>
+It was a bit optimistic to stick an unconditional GFP_KERNEL allocation
+into the previously-atomic kobject_init().
 
-I will try to take a look at it tonight. m68knommu is
-also part of the game.
-Need to get x86 + um working with arch/x86/include first though.
+It's only 128 bytes, so why can't we fix both problems thusly?
 
-	Sam
+--- a/lib/kobject.c~a
++++ a/lib/kobject.c
+@@ -38,12 +38,10 @@ static int ptr_in_range(void *ptr, void 
+ 
+ static void verify_dynamic_kobject_allocation(struct kobject *kobj)
+ {
+-	char *namebuf;
++	char namebuf[KSYM_NAME_LEN];
+ 	const char *ret;
+ 
+-	namebuf = kzalloc(KSYM_NAME_LEN, GFP_KERNEL);
+-	ret = kallsyms_lookup((unsigned long)kobj, NULL, NULL, NULL,
+-			namebuf);
++	ret = kallsyms_lookup((unsigned long)kobj, NULL, NULL, NULL, namebuf);
+ 	/*
+ 	 * This is the X86_32-only part of this function.
+ 	 * This is here because it is valid to have a kobject
+@@ -63,7 +61,7 @@ static void verify_dynamic_kobject_alloc
+ 	/* dump_stack(); */
+ 	pr_debug("---- end silly warning ----\n");
+ out:
+-	kfree(namebuf);
++	return;
+ }
+ #else
+ static void verify_dynamic_kobject_allocation(struct kobject *kobj) { }
+_
+
+
+> Yes, but if somebody could tell me why nobody takes the patch, I would
+> be happy. Then I would be able to improve the patch. :)
+
+Copy me on the patch.  Then I merge it and people know there will be no
+hiding from it.
