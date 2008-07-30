@@ -1,31 +1,21 @@
-From: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+From: Adrian Bunk <bunk@kernel.org>
 Subject: Re: linux-next: build failure
-Date: Wed, 30 Jul 2008 11:24:04 +0530
-Message-ID: <20080730055404.GA6154@in.ibm.com>
+Date: Wed, 30 Jul 2008 09:41:46 +0300
+Message-ID: <20080730064146.GA1564@cs181140183.pp.htv.fi>
 References: <20080730153028.95226354.sfr@canb.auug.org.au>
-Reply-To: ananth@in.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e4.ny.us.ibm.com ([32.97.182.144]:41983 "EHLO e4.ny.us.ibm.com"
+Received: from smtp6.pp.htv.fi ([213.243.153.40]:54260 "EHLO smtp6.pp.htv.fi"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751779AbYG3FzN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 30 Jul 2008 01:55:13 -0400
-Received: from d01relay02.pok.ibm.com (d01relay02.pok.ibm.com [9.56.227.234])
-	by e4.ny.us.ibm.com (8.13.8/8.13.8) with ESMTP id m6U5tCd3002280
-	for <linux-next@vger.kernel.org>; Wed, 30 Jul 2008 01:55:12 -0400
-Received: from d01av01.pok.ibm.com (d01av01.pok.ibm.com [9.56.224.215])
-	by d01relay02.pok.ibm.com (8.13.8/8.13.8/NCO v9.0) with ESMTP id m6U5tCCk191236
-	for <linux-next@vger.kernel.org>; Wed, 30 Jul 2008 01:55:12 -0400
-Received: from d01av01.pok.ibm.com (loopback [127.0.0.1])
-	by d01av01.pok.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id m6U5tBTm013989
-	for <linux-next@vger.kernel.org>; Wed, 30 Jul 2008 01:55:12 -0400
+	id S1751428AbYG3Gmh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 30 Jul 2008 02:42:37 -0400
 Content-Disposition: inline
 In-Reply-To: <20080730153028.95226354.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Ankita Garg <ankita@in.ibm.com>, Vivek Goyal <vgoyal@redhat.com>, Haren Myneni <hbabu@us.ibm.com>, kexec@lists.infradead.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: Ananth N Mavinakayanahalli <ananth@in.ibm.com>, linux-next@vger.kernel.org, Ankita Garg <ankita@in.ibm.com>, Vivek Goyal <vgoyal@redhat.com>, Haren Myneni <hbabu@us.ibm.com>, kexec@lists.infradead.org
 
 On Wed, Jul 30, 2008 at 03:30:28PM +1000, Stephen Rothwell wrote:
 > Hi Ananth,
@@ -35,11 +25,48 @@ On Wed, Jul 30, 2008 at 03:30:28PM +1000, Stephen Rothwell wrote:
 > tests/lkdtm.c:182: error: expected ')' before '*' token
 > 
 > I have no idea why this fails now when it did not before.
-> 
+
+Sorry, that's my fault.
+(I didn't notice since my allyes builds have CONFIG_MODULES=n, and
+ no defconfig seems to have both LKDTM and IDE=y.)
+
+Bart, can you either apply Stephen's patch or drop the lkdtm.c chunk 
+from my patch?
+
 > I applied the following patch.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 30 Jul 2008 15:24:53 +1000
+> Subject: [PATCH] tests: lkdtm needs ide.h
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  tests/lkdtm.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/tests/lkdtm.c b/tests/lkdtm.c
+> index 2a40d18..856f060 100644
+> --- a/tests/lkdtm.c
+> +++ b/tests/lkdtm.c
+> @@ -52,6 +52,7 @@
+>  #include <linux/init.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/hrtimer.h>
+> +#include <linux/ide.h>
+>  #include <scsi/scsi_cmnd.h>
+>  
+>  #define NUM_CPOINTS 8
 
-Thanks Stephen!
+cu
+Adrian
 
-Ankita, any ideas?
+-- 
 
-Ananth
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
