@@ -1,31 +1,48 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: Tree for July 30
-Date: Wed, 30 Jul 2008 23:10:29 -0700
-Message-ID: <20080730231029.9818953c.akpm@linux-foundation.org>
-References: <20080730170635.f737ffe9.sfr@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: manual merge of the m68k tree
+Date: Thu, 31 Jul 2008 09:02:17 +0200 (CEST)
+Message-ID: <Pine.LNX.4.64.0807310900540.10810@anakin>
+References: <20080731140557.a9c66bb3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:44111 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750848AbYGaGKn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 31 Jul 2008 02:10:43 -0400
-In-Reply-To: <20080730170635.f737ffe9.sfr@canb.auug.org.au>
+Received: from edna.telenet-ops.be ([195.130.132.58]:38284 "EHLO
+	edna.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752958AbYGaHCU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 31 Jul 2008 03:02:20 -0400
+In-Reply-To: <20080731140557.a9c66bb3.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Dmitry Torokhov <dtor@mail.ru>, linux-input@vger.kernel.org
+Cc: linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
-On Wed, 30 Jul 2008 17:06:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+	Hi Stephen,
 
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+On Thu, 31 Jul 2008, Stephen Rothwell wrote:
+> Today's linux-next merge of the m68k tree got a conflict in init/main.c
 
-The X server broke on my FC8 t61p thinkpad.  Mainline is OK.
+Sorry, still haven't updated my queue after OLS...
 
-Various information is at http://userweb.kernel.org/~akpm/mo/
+> between commit bd673c7c3b1681dbfabab0062e67398dadf806af ("initrd: cast
+> `initrd_start' to `void *'") from Linus' tree and commit
+> d9c4ef589d1eda15333fb3d307bf4df85337820a ("initrd: Fix virtual/physical
+> mix-up in overwrite test") from the m68k tree (which is also in Linus'
+> tree).
 
-I'm suspecting the input layer - my synaptics device seems to have
-disappeared?  See http://userweb.kernel.org/~akpm/mo/Xorg-log-diff.txt
+Interesting, so git didn't notice that my version got merged, and an
+additional patch was applied on top?
+
+> I took the version from Linus' tree.
+
+Yep, that's the correct one. Thx!
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
