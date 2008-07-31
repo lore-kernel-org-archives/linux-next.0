@@ -1,50 +1,52 @@
-From: FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
-Subject: Re: [PATCH] add iommu_num_pages helper function
-Date: Thu, 31 Jul 2008 11:07:49 +0900
-Message-ID: <20080731110649G.fujita.tomonori@lab.ntt.co.jp>
-References: <20080729185838W.fujita.tomonori@lab.ntt.co.jp>
-	<20080729100233.GB4851@amd.com>
-	<1217457854.11188.348.camel@pasglop>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the x86 tree
+Date: Thu, 31 Jul 2008 12:59:56 +1000
+Message-ID: <20080731125956.ae7066f8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__31_Jul_2008_12_59_56_+1000_64LXpyaABnxjri3q"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sh.osrg.net ([192.16.179.4]:57241 "EHLO sh.osrg.net"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45507 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754123AbYGaCPb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 30 Jul 2008 22:15:31 -0400
-In-Reply-To: <1217457854.11188.348.camel@pasglop>
+	id S1760439AbYGaDAF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 30 Jul 2008 23:00:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: benh@kernel.crashing.org
-Cc: joerg.roedel@amd.com, fujita.tomonori@lab.ntt.co.jp, sfr@canb.auug.org.au, davem@davemloft.net, mingo@elte.hu, mingo@redhat.com, tglx@linutronix.de, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, bhavna.sarathy@amd.com, robert.richter@amd.com, torvalds@linux-foundation.org, akpm@linux-foundation.org, jbarnes@virtuousgeek.org, linux-next@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Jack Steiner <steiner@sgi.com>
 
-On Thu, 31 Jul 2008 08:44:14 +1000
-Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
+--Signature=_Thu__31_Jul_2008_12_59_56_+1000_64LXpyaABnxjri3q
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Tue, 2008-07-29 at 12:02 +0200, Joerg Roedel wrote:
-> > On Tue, Jul 29, 2008 at 06:58:08PM +0900, FUJITA Tomonori wrote:
-> > > On Tue, 29 Jul 2008 11:50:27 +0200
-> > > Joerg Roedel <joerg.roedel@amd.com> wrote:
-> > > > do you want to work on that or should I try to do this and send it to
-> > > > you for review?
-> > > 
-> > > I've already sent a patch that fixes the breakages in such way:
-> > > 
-> > > http://marc.info/?l=linux-kernel&m=121730644704448&w=2
-> > 
-> > Yes I have seen this patch. I meant the patches that introduce something
-> > like IOMMU_PAGE_SIZE for all architectures so that we can make this
-> > function generic and move it back to lib/.
-> 
-> That will not work in the light of some new stuff coming on powerpc in
-> the future. The iommu page size may/will be dynamic per instance of
-> iommu. IE, it will be mostly decided at runtime, I don't expect machines
-> to have multiple iommus of different page sizes off hand but it -can-
-> happen.
+Hi all,
 
-You could do something like this:
+Today's linux-next merge of the x86 tree got a conflict in
+arch/x86/kernel/genapic_64.c between commit
+0d39741a27d86d305cc75ba626392be410dcbab9 ("GRU Driver: export is_uv_system
+(), zap_page_range() & follow_page()") from Linus' tree and commit
+1b9b89e7f163336ad84200b66a17284dbf26aced ("x86: add apic probe for
+genapic 64bit, v2") from the x86 tree.
 
-#define IOMMU_PAGE_SIZE	power_iommu_page_size
+The former exported a function (is_uv_system) that the latter moved.  I
+did the export in the new file.
 
-But I prefer the current proposal to have the size as an argument.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__31_Jul_2008_12_59_56_+1000_64LXpyaABnxjri3q
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiRKqwACgkQjjKRsyhoI8x7mgCfemXOQFFzJ5zhbQcYl7G5I9li
+2doAn244rOoEvft1GOv9hmFXTrXF/EDv
+=GGgH
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__31_Jul_2008_12_59_56_+1000_64LXpyaABnxjri3q--
