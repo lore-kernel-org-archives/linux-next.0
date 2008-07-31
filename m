@@ -1,37 +1,50 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: linux-next: Tree for July 29
-Date: Wed, 30 Jul 2008 16:44:19 -0700
-Message-ID: <20080730234419.GA12070@suse.de>
-References: <20080729172337.b3d74100.sfr@canb.auug.org.au> <20080730090650.79a5a749@kopernikus.site> <20080730021947.def99edc.akpm@linux-foundation.org> <200807302127.42148.bzolnier@gmail.com> <20080730130419.49986a25.akpm@linux-foundation.org> <20080731094105.f6bec082.sfr@canb.auug.org.au>
+From: FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
+Subject: Re: [PATCH] add iommu_num_pages helper function
+Date: Thu, 31 Jul 2008 11:07:49 +0900
+Message-ID: <20080731110649G.fujita.tomonori@lab.ntt.co.jp>
+References: <20080729185838W.fujita.tomonori@lab.ntt.co.jp>
+	<20080729100233.GB4851@amd.com>
+	<1217457854.11188.348.camel@pasglop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ns.suse.de ([195.135.220.2]:36665 "EHLO mx1.suse.de"
+Received: from sh.osrg.net ([192.16.179.4]:57241 "EHLO sh.osrg.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751068AbYG3Xra (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 30 Jul 2008 19:47:30 -0400
-Content-Disposition: inline
-In-Reply-To: <20080731094105.f6bec082.sfr@canb.auug.org.au>
+	id S1754123AbYGaCPb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 30 Jul 2008 22:15:31 -0400
+In-Reply-To: <1217457854.11188.348.camel@pasglop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, bwalle@suse.de, greg@kroah.com, hugh@veritas.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, haveblue@us.ibm.com
+To: benh@kernel.crashing.org
+Cc: joerg.roedel@amd.com, fujita.tomonori@lab.ntt.co.jp, sfr@canb.auug.org.au, davem@davemloft.net, mingo@elte.hu, mingo@redhat.com, tglx@linutronix.de, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, bhavna.sarathy@amd.com, robert.richter@amd.com, torvalds@linux-foundation.org, akpm@linux-foundation.org, jbarnes@virtuousgeek.org, linux-next@vger.kernel.org
 
-On Thu, Jul 31, 2008 at 09:41:05AM +1000, Stephen Rothwell wrote:
-> Hi Andrew,
-> 
-> On Wed, 30 Jul 2008 13:04:19 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> > The offending patch has just got itself turfed from linux-next so my
-> > fix now has nothing to fix.
+On Thu, 31 Jul 2008 08:44:14 +1000
+Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
+
+> On Tue, 2008-07-29 at 12:02 +0200, Joerg Roedel wrote:
+> > On Tue, Jul 29, 2008 at 06:58:08PM +0900, FUJITA Tomonori wrote:
+> > > On Tue, 29 Jul 2008 11:50:27 +0200
+> > > Joerg Roedel <joerg.roedel@amd.com> wrote:
+> > > > do you want to work on that or should I try to do this and send it to
+> > > > you for review?
+> > > 
+> > > I've already sent a patch that fixes the breakages in such way:
+> > > 
+> > > http://marc.info/?l=linux-kernel&m=121730644704448&w=2
 > > 
-> > We'll see what happens!
+> > Yes I have seen this patch. I meant the patches that introduce something
+> > like IOMMU_PAGE_SIZE for all architectures so that we can make this
+> > function generic and move it back to lib/.
 > 
-> I will put Dave's patch back with yours on top of it (hoping that Greg
-> will take your patch).
+> That will not work in the light of some new stuff coming on powerpc in
+> the future. The iommu page size may/will be dynamic per instance of
+> iommu. IE, it will be mostly decided at runtime, I don't expect machines
+> to have multiple iommus of different page sizes off hand but it -can-
+> happen.
 
-Greg will, it's in my queue.
+You could do something like this:
 
-thanks,
+#define IOMMU_PAGE_SIZE	power_iommu_page_size
 
-greg k-h
+But I prefer the current proposal to have the size as an argument.
