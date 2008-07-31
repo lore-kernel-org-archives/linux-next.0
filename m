@@ -1,106 +1,83 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Andrew Morton <akpm@linux-foundation.org>
 Subject: Re: linux-next: Tree for July 30
-Date: Thu, 31 Jul 2008 15:03:32 -0400
-Message-ID: <20080731145724.ZZRA012@mailhub.coreip.homeip.net>
-References: <20080730170635.f737ffe9.sfr@canb.auug.org.au> <20080730231029.9818953c.akpm@linux-foundation.org> <20080731140708.GA11229@core.corenet.prv> <58cb370e0807310836x4a6e3c40rf5c3c8ec8b5caae0@mail.gmail.com> <20080731115301.ZZRA012@mailhub.coreip.homeip.net> <20080731104437.5e5669bc.akpm@linux-foundation.org> <20080731141302.ZZRA012@mailhub.coreip.homeip.net> <20080731112654.d9620b36.akpm@linux-foundation.org> <20080731143013.ZZRA012@mailhub.coreip.homeip.net> <20080731115538.238b5e75.akpm@linux-foundation.org>
+Date: Thu, 31 Jul 2008 12:13:08 -0700
+Message-ID: <20080731121308.bfbdcd0d.akpm@linux-foundation.org>
+References: <20080730170635.f737ffe9.sfr@canb.auug.org.au>
+	<20080731104437.5e5669bc.akpm@linux-foundation.org>
+	<20080731141302.ZZRA012@mailhub.coreip.homeip.net>
+	<200807312048.57575.rjw@sisk.pl>
+	<20080731145023.ZZRA012@mailhub.coreip.homeip.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20080731115538.238b5e75.akpm@linux-foundation.org>
+In-Reply-To: <20080731145023.ZZRA012@mailhub.coreip.homeip.net>
 Sender: linux-input-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: bzolnier@gmail.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: rjw@sisk.pl, bzolnier@gmail.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, torvalds@linux-foundation.org
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Jul 31, 2008 at 11:55:38AM -0700, Andrew Morton wrote:
-> On Thu, 31 Jul 2008 14:34:41 -0400
-> Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-> 
-> > > > > > No. The X driver is broken. It tells kernel to use buffer bugger than
-> > > > > > allocated and gets its stack smashed. Tslib has also soma funkiness
-> > > > > > in the ioctl handling as well... *shrug*
-> > > > > > 
-> > > > > > We have a couple months to get distros updated...
-> > > > > > 
-> > > > > 
-> > > > > aaarrrrgggggghhh.  I don't think this is practical.  This means that
-> > > > > (for example) FC5 machines (of which I happen to have one) are dead. 
-> > > > > And lots of other older-distro-based systems.
-> > > > > 
-> > > > > Is there some userspace workaround which doesn't require an X server
-> > > > > update?
-> > > > > 
-> > > > > Surely it must be possible to make the kernel contiue to support these
-> > > > > servers?
-> > > > > 
-> > > > 
-> > > > Andrew,
-> > > > 
-> > > > It is not like we broke ABI here. The progam (synaptics driver) had a
-> > > > grave bug. Older kernels happened to paper over the bug because they
-> > > > did not fill the whole buffer that was advertised as available. Now
-> > > > that we have more data to report the bug bit us. What do you want me
-> > > > to do?
-> > > 
-> > > Paper over the bug again.  When it happens, spit out a loud printk.
+On Thu, 31 Jul 2008 14:54:52 -0400
+Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+
+> > IOW, if the change responsible for this makes it to the mainline kernel, it
+> > will be considered as a regression.
 > > 
-> > For that we we need to be sure that the size of the buffer passed to
-> > us is incorrect. I.e. if we decide that 512 is a magic bad number and
-> > decide to limit the output then legit programs supplying 512 byte
-> > buffers they will not get the whole thing.
 > 
-> uh.  I'm still scrabbling to understand all this.  Where is the
-> information about this kept?  Which commit caused this problem to
-> occur?
-> 
+> Like I said, I don't agree.
 
-It is commit "Input: expand keycode space" (git log
-include/linux/input.h)
+It really really doesn't matter what the causes are or which piece of
+code is at fault or anything else like that.
 
-> It _sounds_ like userspace is passing in a buffer and is also passing
-> in an incorrect (too large) `size' parameter, yes?
-> 
+What _does_ matter is that people's stuff will break.  Apparently lots
+of people's.  That's a problem.  A _practical_ problem.  Can we
+pleeeeeeze be practical and find some way of preventing it?
 
-Yes.
+I assume this is the commit?
 
-> This is an ioctl interface?
 
-Yes.
+commit 03bac96fae0efdb25e2059e5accbe4f3ee6328dd
+Author: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Date:   Mon Jun 23 10:47:34 2008 -0400
 
->  Could we leave the old ioctl unchanged and
-> introduce the offending changes into a new ioctl number?
-> 
+    Input: expand keycode space
+    
+    Expand the number of potential key codes from 512 to 768 since people
+    are coming up with more and more keys.
+    
+    Signed-off-by: Dmitry Torokhov <dtor@mail.ru>
 
-Then you will punish other users of this ioctl (the ones that
-use it correctly). X proper, HAL, DirectFB, etc, etc. They will have
-to implement the new interface just because of other programs having
-an issue.
+diff --git a/include/linux/input.h b/include/linux/input.h
+index a5802c9..7fae1de 100644
+--- a/include/linux/input.h
++++ b/include/linux/input.h
+@@ -579,7 +579,7 @@ struct input_absinfo {
+ 
+ /* We avoid low common keys in module aliases so they don't get huge. */
+ #define KEY_MIN_INTERESTING	KEY_MUTE
+-#define KEY_MAX			0x1ff
++#define KEY_MAX			0x2ff
+ #define KEY_CNT			(KEY_MAX+1)
+ 
+ /*
+diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
+index c4db582..0dddfa4 100644
+--- a/include/linux/mod_devicetable.h
++++ b/include/linux/mod_devicetable.h
+@@ -274,7 +274,7 @@ struct pcmcia_device_id {
+ /* Input */
+ #define INPUT_DEVICE_ID_EV_MAX		0x1f
+ #define INPUT_DEVICE_ID_KEY_MIN_INTERESTING	0x71
+-#define INPUT_DEVICE_ID_KEY_MAX		0x1ff
++#define INPUT_DEVICE_ID_KEY_MAX		0x2ff
+ #define INPUT_DEVICE_ID_REL_MAX		0x0f
+ #define INPUT_DEVICE_ID_ABS_MAX		0x3f
+ #define INPUT_DEVICE_ID_MSC_MAX		0x07
 
-> > > 
-> > > > Synaptics driver is a small package and takes 2 minutes to recompile.
-> > > > You don't have to update entire X server with it (in fact I don't think
-> > > > it is even part of X distribution because it is GPL).
-> > > 
-> > > What proportion of the X servers out there did we just break?
-> > > 
-> > > Was the crash I saw due to this?
-> > > 
-> > > Where would I (Aunt Tillie running FC5) go to find out how to fix my
-> > > machine up again? 
-> > 
-> > What is Aunt Tillie doing compiling her own kernels on FC5? You
-> > OTOH managed to get an answer fairly quickly ;)
-> 
-> I'll ask again: where do our users go to find out how to make their X
-> server work again?  If the answer is "nowhere" then can we please at 
-> least write up a simple step-by-step repair procedure, as we'll surely
-> be needing it a lot.
-> 
 
-Changes? We could also get Peter to add some verbage onto his web-page
-that hosts the driver. We are looking at .28 release for this code so
-we have some time.
+I'm unable to work out how necessary this change is?
 
--- 
-Dmitry
+
+Please: what proportion of the existing X installations do you expect will
+be affected by this?
+
