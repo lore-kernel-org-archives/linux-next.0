@@ -1,230 +1,86 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for July 31
-Date: Thu, 31 Jul 2008 17:58:54 +1000
-Message-ID: <20080731175854.09ea35c8.sfr@canb.auug.org.au>
+From: Steven Whitehouse <swhiteho@redhat.com>
+Subject: Re: linux-next: sparc32/gcc-3.4.5/ld-2.15 build failure
+Date: Thu, 31 Jul 2008 13:02:07 +0100
+Message-ID: <1217505727.6317.3.camel@quoit>
+References: <20080731171603.799c2c85.sfr@canb.auug.org.au>
+	 <20080731003558.965581a6.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__31_Jul_2008_17_58_54_+1000_Pm2G/ysQJ1IoymS5"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35762 "EHLO smtps.tip.net.au"
+Received: from mx1.redhat.com ([66.187.233.31]:48914 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751455AbYGaH7D (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 31 Jul 2008 03:59:03 -0400
+	id S1751964AbYGaMHg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 31 Jul 2008 08:07:36 -0400
+In-Reply-To: <20080731003558.965581a6.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "David S. Miller" <davem@davemloft.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Thu__31_Jul_2008_17_58_54_+1000_Pm2G/ysQJ1IoymS5
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi all,
+On Thu, 2008-07-31 at 00:35 -0700, Andrew Morton wrote:
+> On Thu, 31 Jul 2008 17:16:03 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> > Hi Dave,
+> > 
+> > linux-next builds (sparc32 defconfig) have been failing for some time
+> > like this:
+> > 
+> > .tmp_kallsyms2.o(.rodata+0x0): In function `kallsyms_addresses':
+> > : relocation truncated to fit: R_SPARC_32 _text
+> > .tmp_kallsyms2.o(.rodata+0x4): In function `kallsyms_addresses':
+> > : relocation truncated to fit: R_SPARC_32 _text
+> > .tmp_kallsyms2.o(.rodata+0x8): In function `kallsyms_addresses':
+> > : relocation truncated to fit: R_SPARC_32 _text
+> > 
+> > (several more)
+> > 
+> > I finally bisected it down to this commit:
+> > 
+> > commit f9247273cb69ba101877e946d2d83044409cc8c5
+> > Author: Steven Whitehouse <swhiteho@redhat.com>
+> > Date:   Thu Jul 24 17:22:13 2008 +0100
+> > 
+> >     UFS: add const to parser token table
+> >     
+> > Reverting this commit and the followup commit:
+> > 
+> > commit fb2e405fc1fc8b20d9c78eaa1c7fd5a297efde43
+> > Author: Adrian Bunk <bunk@kernel.org>
+> > Date:   Fri Jul 25 02:55:49 2008 +0300
+> > 
+> >     fix fs/nfs/nfsroot.c compilation
+> > 
+> > allows the sparc32 build to succeed.  This is toolchain specific as a
+> > different cross toolchain I have does not get this error.
+> > 
+> > Failing toolchain:
+> > 
+> > $ gcc-3.4.5-glibc-2.3.6/sparc64-unknown-linux-gnu/bin/sparc64-unknown-linux-gnu-gcc --version
+> > sparc64-unknown-linux-gnu-gcc (GCC) 3.4.5
+> > $ gcc-3.4.5-glibc-2.3.6/sparc64-unknown-linux-gnu/bin/sparc64-unknown-linux-gnu-ld --version
+> > GNU ld version 2.15
+> > 
+> > An OK toolchain:
+> > $ cross/bin/sparc64-linux-gcc --version
+> > sparc64-linux-gcc (GCC) 4.2.4
+> > $ cross/bin/sparc64-linux-ld --version
+> > GNU ld (GNU Binutils) 2.18
+> > 
+> > Both these commits are actually in Linus' tree, now.
+> 
+> gee.  nfsroot.c is now effectively doing `const __initconst' which
+> might be upsetting the compiler.  And perhaps one of the forty-odd
+> other users of match_table_t needs __initconst or somesuch.
+> 
+According to my find & grep there is only the one place which has marked
+out the match_table_t for a different section.
 
-Changes since next-20080730:
+> Yes, I'd second a revert-and-try-again-later on that one.
+It looks like there is no simple solution, so I guess we'll have to do
+that :( The only other alternative would be to remove the __initconst
+which isn't ideal either,
 
-New tree: agp
-
-Temporarily dropped trees: acpi (it is being moved to a new tree and is
-just accumulating conflicts against Linus' tree).
-	v4l-dvb (got lots of conflicts against the version that was
-merged to Linus).
-
-The driver-core.current tree lost its conflict against Linus' tree.
-
-The driver-core tree gained a patch for a boot problem.
-
-The x86 tree gained a conflict against Linus' tree.
-
-The m68k tree gained a trivial conflict against Linus' tree.
-
-I have also applied the following patch for a known problem:
-
-	hfcmulti is not supported on big endian
-
-The sparc(32) defconfig build still fails - this is probably a toolchain
-problem.  I have fixed this by reverting the these commits from Linus'
-tree:
-
-	UFS: add const to parser token table (f9247273cb69ba101877e946d2d83044409c=
-c8c5)
-	fix fs/nfs/nfsroot.c compilation (fb2e405fc1fc8b20d9c78eaa1c7fd5a297efde43)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups, it is also built with powerpc allnoconfig,
-44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
-
-Below is a summary of the state of the merge.
-
-We are up to 105 trees (counting Linus' and 14 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Applying move iommu_num_pages helper to x86
-Merging powerpc-merge/merge
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sparc-current/master
-Merging sound-current/for-linus
-Merging arm-current/master
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-2.6.26
-Merging quilt/driver-core
-Applying driver-core: kobject verification fixup
-Merging quilt/usb
-Merging tip-core/auto-core-next
-Merging cpus4096/auto-cpus4096-next
-CONFLICT (content): Merge conflict in net/sunrpc/svc.c
-Merging ftrace/auto-ftrace-next
-Merging genirq/auto-genirq-next
-Merging safe-poison-pointers/auto-safe-poison-pointers-next
-Merging sched/auto-sched-next
-Merging stackprotector/auto-stackprotector-next
-Merging timers/auto-timers-next
-Merging x86/auto-x86-next
-CONFLICT (content): Merge conflict in arch/x86/kernel/genapic_64.c
-CONFLICT (content): Merge conflict in drivers/pci/dmar.c
-Merging pci/linux-next
-Merging quilt/device-mapper
-Merging hid/mm
-Merging quilt/i2c
-Merging quilt/kernel-doc
-Merging avr32/avr32-arch
-Merging s390/features
-Merging sh/master
-Merging jfs/next
-Merging kbuild/master
-Merging quilt/ide
-Merging libata/NEXT
-Merging nfs/linux-next
-Merging xfs/master
-Merging infiniband/for-next
-Merging blackfin/for-linus
-Merging nfsd/nfsd-next
-Merging ieee1394/for-next
-Merging hwmon/testing
-Merging ubi/linux-next
-Merging kvm/master
-Merging dlm/next
-Merging scsi/master
-Merging ia64/test
-Merging tests/master
-Merging ocfs2/linux-next
-Merging quilt/m68k
-CONFLICT (content): Merge conflict in init/main.c
-Merging powerpc/next
-Merging ext4/next
-Merging 4xx/next
-Merging async_tx/next
-Merging udf/for_next
-Merging net/master
-Merging sparc/master
-Merging galak/powerpc-next
-Merging mtd/master
-Merging wireless/master
-Merging crypto/master
-Merging vfs/for-next
-Merging sound/for-next
-Merging arm/devel
-Merging cpufreq/next
-Merging v9fs/for-next
-Merging quilt/rr
-Merging cifs/master
-Merging mmc/next
-Merging gfs2/master
-Merging input/next
-Merging semaphore/semaphore
-Merging semaphore-removal/semaphore-removal
-Merging bkl-removal/bkl-removal
-Merging trivial/next
-CONFLICT (content): Merge conflict in Documentation/edac.txt
-CONFLICT (content): Merge conflict in include/linux/securebits.h
-Merging ubifs/linux-next
-Merging lsm/for-next
-Merging block/for-next
-Merging embedded/master
-Merging firmware/master
-CONFLICT (content): Merge conflict in drivers/media/dvb/ttpci/Kconfig
-CONFLICT (content): Merge conflict in drivers/media/dvb/ttpci/Makefile
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging m68knommu/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging cris/for-next
-Merging kmemcheck/auto-kmemcheck-next
-Merging generic-ipi/auto-generic-ipi-next
-Merging mips/mips-for-linux-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-CONFLICT (add/add): Merge conflict in drivers/gpu/Makefile
-CONFLICT (add/add): Merge conflict in drivers/gpu/drm/i830/Makefile
-CONFLICT (content): Merge conflict in include/Kbuild
-CONFLICT (add/add): Merge conflict in include/drm/Kbuild
-Merging voltage/reg-for-linus
-Merging security-testing/next
-Merging lblnet/master
-Merging quilt/ttydev
-Merging agp/agp-next
-Applying hfcmulti is not supported on big endian
-Created commit 2982340: Revert "fix fs/nfs/nfsroot.c compilation"
-Created commit 283af7d: Revert "UFS: add const to parser token table"
-
---Signature=_Thu__31_Jul_2008_17_58_54_+1000_Pm2G/ysQJ1IoymS5
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkiRcL4ACgkQjjKRsyhoI8wn5QCfZAL1/ysX8nGUGWC7p+ZuqZBW
-Kh0An3nhi+/xpm7FzM3y6xUeXZsrFG9m
-=K5eo
------END PGP SIGNATURE-----
-
---Signature=_Thu__31_Jul_2008_17_58_54_+1000_Pm2G/ysQJ1IoymS5--
+Steve.
