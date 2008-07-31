@@ -1,50 +1,31 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the m68k tree
-Date: Thu, 31 Jul 2008 14:05:57 +1000
-Message-ID: <20080731140557.a9c66bb3.sfr@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: Tree for July 30
+Date: Wed, 30 Jul 2008 23:10:29 -0700
+Message-ID: <20080730231029.9818953c.akpm@linux-foundation.org>
+References: <20080730170635.f737ffe9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__31_Jul_2008_14_05_57_+1000_UVO6/zf_=wRCjNhg"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46637 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750741AbYGaEGF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 31 Jul 2008 00:06:05 -0400
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:44111 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750848AbYGaGKn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 31 Jul 2008 02:10:43 -0400
+In-Reply-To: <20080730170635.f737ffe9.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Dmitry Torokhov <dtor@mail.ru>, linux-input@vger.kernel.org
 
---Signature=_Thu__31_Jul_2008_14_05_57_+1000_UVO6/zf_=wRCjNhg
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 30 Jul 2008 17:06:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi Geert,
+> I have created today's linux-next tree at
+> git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
 
-Today's linux-next merge of the m68k tree got a conflict in init/main.c
-between commit bd673c7c3b1681dbfabab0062e67398dadf806af ("initrd: cast
-`initrd_start' to `void *'") from Linus' tree and commit
-d9c4ef589d1eda15333fb3d307bf4df85337820a ("initrd: Fix virtual/physical
-mix-up in overwrite test") from the m68k tree (which is also in Linus'
-tree).
+The X server broke on my FC8 t61p thinkpad.  Mainline is OK.
 
-I took the version from Linus' tree.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Various information is at http://userweb.kernel.org/~akpm/mo/
 
---Signature=_Thu__31_Jul_2008_14_05_57_+1000_UVO6/zf_=wRCjNhg
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkiROiUACgkQjjKRsyhoI8zSFACeJbNfBHmSREOELdTsT6bWH5t5
-bMAAn0PUUb1TC3cZ9ryXggO3GXFlNRiQ
-=JQb8
------END PGP SIGNATURE-----
-
---Signature=_Thu__31_Jul_2008_14_05_57_+1000_UVO6/zf_=wRCjNhg--
+I'm suspecting the input layer - my synaptics device seems to have
+disappeared?  See http://userweb.kernel.org/~akpm/mo/Xorg-log-diff.txt
