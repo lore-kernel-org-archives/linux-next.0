@@ -1,69 +1,75 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the m68k tree
-Date: Thu, 31 Jul 2008 17:21:11 +1000
-Message-ID: <20080731172111.9f7acf5d.sfr@canb.auug.org.au>
-References: <20080731140557.a9c66bb3.sfr@canb.auug.org.au>
-	<Pine.LNX.4.64.0807310900540.10810@anakin>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: sparc32/gcc-3.4.5/ld-2.15 build failure
+Date: Thu, 31 Jul 2008 00:35:58 -0700
+Message-ID: <20080731003558.965581a6.akpm@linux-foundation.org>
+References: <20080731171603.799c2c85.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__31_Jul_2008_17_21_11_+1000_lO7I.dcH2J+gLH0="
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53277 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752443AbYGaHVS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 31 Jul 2008 03:21:18 -0400
-In-Reply-To: <Pine.LNX.4.64.0807310900540.10810@anakin>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:52020 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752891AbYGaHgf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 31 Jul 2008 03:36:35 -0400
+In-Reply-To: <20080731171603.799c2c85.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Steven Whitehouse <swhiteho@redhat.com>
 
---Signature=_Thu__31_Jul_2008_17_21_11_+1000_lO7I.dcH2J+gLH0=
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 31 Jul 2008 17:16:03 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi Geert,
+> Hi Dave,
+> 
+> linux-next builds (sparc32 defconfig) have been failing for some time
+> like this:
+> 
+> .tmp_kallsyms2.o(.rodata+0x0): In function `kallsyms_addresses':
+> : relocation truncated to fit: R_SPARC_32 _text
+> .tmp_kallsyms2.o(.rodata+0x4): In function `kallsyms_addresses':
+> : relocation truncated to fit: R_SPARC_32 _text
+> .tmp_kallsyms2.o(.rodata+0x8): In function `kallsyms_addresses':
+> : relocation truncated to fit: R_SPARC_32 _text
+> 
+> (several more)
+> 
+> I finally bisected it down to this commit:
+> 
+> commit f9247273cb69ba101877e946d2d83044409cc8c5
+> Author: Steven Whitehouse <swhiteho@redhat.com>
+> Date:   Thu Jul 24 17:22:13 2008 +0100
+> 
+>     UFS: add const to parser token table
+>     
+> Reverting this commit and the followup commit:
+> 
+> commit fb2e405fc1fc8b20d9c78eaa1c7fd5a297efde43
+> Author: Adrian Bunk <bunk@kernel.org>
+> Date:   Fri Jul 25 02:55:49 2008 +0300
+> 
+>     fix fs/nfs/nfsroot.c compilation
+> 
+> allows the sparc32 build to succeed.  This is toolchain specific as a
+> different cross toolchain I have does not get this error.
+> 
+> Failing toolchain:
+> 
+> $ gcc-3.4.5-glibc-2.3.6/sparc64-unknown-linux-gnu/bin/sparc64-unknown-linux-gnu-gcc --version
+> sparc64-unknown-linux-gnu-gcc (GCC) 3.4.5
+> $ gcc-3.4.5-glibc-2.3.6/sparc64-unknown-linux-gnu/bin/sparc64-unknown-linux-gnu-ld --version
+> GNU ld version 2.15
+> 
+> An OK toolchain:
+> $ cross/bin/sparc64-linux-gcc --version
+> sparc64-linux-gcc (GCC) 4.2.4
+> $ cross/bin/sparc64-linux-ld --version
+> GNU ld (GNU Binutils) 2.18
+> 
+> Both these commits are actually in Linus' tree, now.
 
-On Thu, 31 Jul 2008 09:02:17 +0200 (CEST) Geert Uytterhoeven <geert@linux-m=
-68k.org> wrote:
->
-> On Thu, 31 Jul 2008, Stephen Rothwell wrote:
-> > Today's linux-next merge of the m68k tree got a conflict in init/main.c
->=20
-> Sorry, still haven't updated my queue after OLS...
+gee.  nfsroot.c is now effectively doing `const __initconst' which
+might be upsetting the compiler.  And perhaps one of the forty-odd
+other users of match_table_t needs __initconst or somesuch.
 
-S'ok.
-
-> > between commit bd673c7c3b1681dbfabab0062e67398dadf806af ("initrd: cast
-> > `initrd_start' to `void *'") from Linus' tree and commit
-> > d9c4ef589d1eda15333fb3d307bf4df85337820a ("initrd: Fix virtual/physical
-> > mix-up in overwrite test") from the m68k tree (which is also in Linus'
-> > tree).
->=20
-> Interesting, so git didn't notice that my version got merged, and an
-> additional patch was applied on top?
-
-No, it noticed that the particular lines in that file got changed
-differently by both sides of the merge.  It doesn't notice that Linus'
-tree and your tree changed it the same and then Linus' tree changed it
-again.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__31_Jul_2008_17_21_11_+1000_lO7I.dcH2J+gLH0=
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkiRZ+cACgkQjjKRsyhoI8wP4gCfYhGGRBtWFnyccrLUj6XkbGt4
-OqMAoJF5JMkvn2Ed0q358CMofaffksuj
-=RF5m
------END PGP SIGNATURE-----
-
---Signature=_Thu__31_Jul_2008_17_21_11_+1000_lO7I.dcH2J+gLH0=--
+Yes, I'd second a revert-and-try-again-later on that one.
