@@ -1,48 +1,89 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: manual merge of the m68k tree
-Date: Thu, 31 Jul 2008 09:02:17 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.0807310900540.10810@anakin>
-References: <20080731140557.a9c66bb3.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: sparc32/gcc-3.4.5/ld-2.15 build failure
+Date: Thu, 31 Jul 2008 17:16:03 +1000
+Message-ID: <20080731171603.799c2c85.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__31_Jul_2008_17_16_03_+1000_Sn2ALYol0puWoI6h"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from edna.telenet-ops.be ([195.130.132.58]:38284 "EHLO
-	edna.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752958AbYGaHCU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 31 Jul 2008 03:02:20 -0400
-In-Reply-To: <20080731140557.a9c66bb3.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35801 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752888AbYGaHQN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 31 Jul 2008 03:16:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Steven Whitehouse <swhiteho@redhat.com>
 
-	Hi Stephen,
+--Signature=_Thu__31_Jul_2008_17_16_03_+1000_Sn2ALYol0puWoI6h
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 31 Jul 2008, Stephen Rothwell wrote:
-> Today's linux-next merge of the m68k tree got a conflict in init/main.c
+Hi Dave,
 
-Sorry, still haven't updated my queue after OLS...
+linux-next builds (sparc32 defconfig) have been failing for some time
+like this:
 
-> between commit bd673c7c3b1681dbfabab0062e67398dadf806af ("initrd: cast
-> `initrd_start' to `void *'") from Linus' tree and commit
-> d9c4ef589d1eda15333fb3d307bf4df85337820a ("initrd: Fix virtual/physical
-> mix-up in overwrite test") from the m68k tree (which is also in Linus'
-> tree).
+.tmp_kallsyms2.o(.rodata+0x0): In function `kallsyms_addresses':
+: relocation truncated to fit: R_SPARC_32 _text
+.tmp_kallsyms2.o(.rodata+0x4): In function `kallsyms_addresses':
+: relocation truncated to fit: R_SPARC_32 _text
+.tmp_kallsyms2.o(.rodata+0x8): In function `kallsyms_addresses':
+: relocation truncated to fit: R_SPARC_32 _text
 
-Interesting, so git didn't notice that my version got merged, and an
-additional patch was applied on top?
+(several more)
 
-> I took the version from Linus' tree.
+I finally bisected it down to this commit:
 
-Yep, that's the correct one. Thx!
+commit f9247273cb69ba101877e946d2d83044409cc8c5
+Author: Steven Whitehouse <swhiteho@redhat.com>
+Date:   Thu Jul 24 17:22:13 2008 +0100
 
-Gr{oetje,eeting}s,
+    UFS: add const to parser token table
+   =20
+Reverting this commit and the followup commit:
 
-						Geert
+commit fb2e405fc1fc8b20d9c78eaa1c7fd5a297efde43
+Author: Adrian Bunk <bunk@kernel.org>
+Date:   Fri Jul 25 02:55:49 2008 +0300
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+    fix fs/nfs/nfsroot.c compilation
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+allows the sparc32 build to succeed.  This is toolchain specific as a
+different cross toolchain I have does not get this error.
+
+Failing toolchain:
+
+$ gcc-3.4.5-glibc-2.3.6/sparc64-unknown-linux-gnu/bin/sparc64-unknown-linux=
+-gnu-gcc --version
+sparc64-unknown-linux-gnu-gcc (GCC) 3.4.5
+$ gcc-3.4.5-glibc-2.3.6/sparc64-unknown-linux-gnu/bin/sparc64-unknown-linux=
+-gnu-ld --version
+GNU ld version 2.15
+
+An OK toolchain:
+$ cross/bin/sparc64-linux-gcc --version
+sparc64-linux-gcc (GCC) 4.2.4
+$ cross/bin/sparc64-linux-ld --version
+GNU ld (GNU Binutils) 2.18
+
+Both these commits are actually in Linus' tree, now.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__31_Jul_2008_17_16_03_+1000_Sn2ALYol0puWoI6h
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiRZrMACgkQjjKRsyhoI8wWXQCdFNkdC1zFlKUfmQGRM4NCXbPM
+wpEAn3lxnapdvMa70N4zJCtQ+9pib8KK
+=twny
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__31_Jul_2008_17_16_03_+1000_Sn2ALYol0puWoI6h--
