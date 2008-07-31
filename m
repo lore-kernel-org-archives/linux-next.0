@@ -1,85 +1,76 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: How to debug linux-next? (was: Re: xorg problems with
- v2.6.27-rc1-2457-gdcb80fd)
-Date: Thu, 31 Jul 2008 23:35:58 +1000
-Message-ID: <20080731233558.ba613f33.sfr@canb.auug.org.au>
-References: <20080731125630.GB4201@denkbrett.schottelius.org>
-	<20080731132344.GC4201@denkbrett.schottelius.org>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: linux-next: Tree for July 30
+Date: Thu, 31 Jul 2008 10:07:09 -0400
+Message-ID: <20080731140708.GA11229@core.corenet.prv>
+References: <20080730170635.f737ffe9.sfr@canb.auug.org.au> <20080730231029.9818953c.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__31_Jul_2008_23_35_58_+1000_pEzO4yK+MZSo4JF5"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40338 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751577AbYGaNgH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 31 Jul 2008 09:36:07 -0400
-In-Reply-To: <20080731132344.GC4201@denkbrett.schottelius.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
-Cc: linux-next@vger.kernel.org
-
---Signature=_Thu__31_Jul_2008_23_35_58_+1000_pEzO4yK+MZSo4JF5
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20080730231029.9818953c.akpm@linux-foundation.org>
+Sender: linux-input-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 31 Jul 2008 15:23:44 +0200 Nico -telmich- Schottelius <nico-linux-n=
-ext@schottelius.org> wrote:
->
-> Some questions about using and debugging linux-next:
->=20
-> - Where to report errors? to this ml? cc-ing the related subsystem
->   maintainer(s)?
+On Wed, Jul 30, 2008 at 11:10:29PM -0700, Andrew Morton wrote:
+> On Wed, 30 Jul 2008 17:06:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> > I have created today's linux-next tree at
+> > git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+> 
+> The X server broke on my FC8 t61p thinkpad.  Mainline is OK.
+> 
+> Various information is at http://userweb.kernel.org/~akpm/mo/
+> 
+> I'm suspecting the input layer - my synaptics device seems to have
+> disappeared?  See http://userweb.kernel.org/~akpm/mo/Xorg-log-diff.txt
+> 
 
-Yes.
+I think this patch should help with Synaptics:
 
-> - What's the normal way of finding out the source for a problem, if you k=
-now
->   a good commit (9bead9ae16728973cd31d9fd60c496e0e2fabbd1) and a
->   bad commit (dcb80fdb8cffd3fa06cd322b3e8227632ec23597)?
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH] Fix crash on kernels with extended keymap space
 
-It is much easier to use "git bisect" within a single linux-next release
-than between releases.  The latter should work some of the time but is
-complicated by the fact that linux-next is effectively rebased every
-day.  So it is sensible to see if the "stable" branch of linux-next works
-(as that is just Linus' tree) and use that as a "good" starting point if
-so.  If that doesn't work, then the problem is in Linus' tree already.
+The len argument of EVIOCGBIT(ev,len) is the size of the receiving
+buffer in bytes, not maximim number of bits to retrieve.
 
-> - As far as I can see, you are doing rebase on linux-next. Why don't you
->   continue to do git-merge?
+Signed-off-by: Dmitry Torokhov <dtor@mail.ru>
+---
+ eventcomm.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-Because some of the trees that are merged into linux-next are rebased
-fairly often as well.
+diff --git a/eventcomm.c b/eventcomm.c
+index e3257cd..2d0a347 100644
+--- a/eventcomm.c
++++ b/eventcomm.c
+@@ -89,7 +89,7 @@ event_query_is_touchpad(int fd)
+ 
+     /* Check for ABS_X, ABS_Y, ABS_PRESSURE and BTN_TOOL_FINGER */
+ 
+-    SYSCALL(ret = ioctl(fd, EVIOCGBIT(0, EV_MAX), evbits));
++    SYSCALL(ret = ioctl(fd, EVIOCGBIT(0, sizeof(evbits)), evbits));
+     if (ret < 0)
+ 	return FALSE;
+     if (!TEST_BIT(EV_SYN, evbits) ||
+@@ -97,7 +97,7 @@ event_query_is_touchpad(int fd)
+ 	!TEST_BIT(EV_KEY, evbits))
+ 	return FALSE;
+ 
+-    SYSCALL(ret = ioctl(fd, EVIOCGBIT(EV_ABS, KEY_MAX), evbits));
++    SYSCALL(ret = ioctl(fd, EVIOCGBIT(EV_ABS, sizeof(evbits)), evbits));
+     if (ret < 0)
+ 	return FALSE;
+     if (!TEST_BIT(ABS_X, evbits) ||
+@@ -105,7 +105,7 @@ event_query_is_touchpad(int fd)
+ 	!TEST_BIT(ABS_PRESSURE, evbits))
+ 	return FALSE;
+ 
+-    SYSCALL(ret = ioctl(fd, EVIOCGBIT(EV_KEY, KEY_MAX), evbits));
++    SYSCALL(ret = ioctl(fd, EVIOCGBIT(EV_KEY, sizeof(evbits)), evbits));
+     if (ret < 0)
+ 	return FALSE;
+     if (!TEST_BIT(BTN_TOOL_FINGER, evbits))
+-- 
+1.5.5.1
 
-> - And would a non-rebased tree not make life much easier for debugging
->   purposes?
-
-I don't know.  What it would do is produce a lot more merge conflicts as
-patches are moved around, changed, removed etc on a daily basis.
-
-> My motivation is to find out the reason why xorg crashes now together
-> with the xorg guys. But currently it seems to be impossible for me to
-> detect which commits have been between to snapshots of the master
-> branch of linux-next.
-
-Yeah, that is a pain.  Does Linus' tree work?
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__31_Jul_2008_23_35_58_+1000_pEzO4yK+MZSo4JF5
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkiRv74ACgkQjjKRsyhoI8wo8ACeJtJRXhtpeLfk9D2UEg5Kz0CO
-nz8AnRXs3kdf5UEsZoXldJQ3AlKsSjct
-=2q7k
------END PGP SIGNATURE-----
-
---Signature=_Thu__31_Jul_2008_23_35_58_+1000_pEzO4yK+MZSo4JF5--
