@@ -1,116 +1,40 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: Tree for July 30
-Date: Fri, 1 Aug 2008 12:12:19 -0700 (PDT)
-Message-ID: <alpine.LFD.1.10.0808011201480.3277@nehalem.linux-foundation.org>
-References: <20080730170635.f737ffe9.sfr@canb.auug.org.au> <20080731104437.5e5669bc.akpm@linux-foundation.org> <20080731141302.ZZRA012@mailhub.coreip.homeip.net> <200807312048.57575.rjw@sisk.pl> <20080731145023.ZZRA012@mailhub.coreip.homeip.net>
- <alpine.LFD.1.10.0807311207000.3277@nehalem.linux-foundation.org> <20080731151625.ZZRA012@mailhub.coreip.homeip.net> <20080731194207.GA12233@anvil.corenet.prv>
+From: Dean Nelson <dcn@sgi.com>
+Subject: [PATCH] add dependency of CONFIG_SGI_XP upon CONFIG_NET
+Date: Fri, 1 Aug 2008 14:19:08 -0500
+Message-ID: <20080801191908.GA457@sgi.com>
+References: <20080731175854.09ea35c8.sfr@canb.auug.org.au> <20080731223758.b5985dd7.randy.dunlap@oracle.com> <20080801145526.GA29354@sgi.com> <20080801105028.3411f703.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <20080731194207.GA12233@anvil.corenet.prv>
-Sender: linux-input-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Andrew Morton <akpm@linux-foundation.org>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from netops-testserver-3-out.sgi.com ([192.48.171.28]:52814 "EHLO
+	relay.sgi.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752935AbYHATTJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Aug 2008 15:19:09 -0400
+Content-Disposition: inline
+In-Reply-To: <20080801105028.3411f703.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Jack Steiner <steiner@sgi.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
+Add a dependency of CONFIG_SGI_XP upon CONFIG_NET to Kconfig.
 
-Ok, I apparently missed this whole subthread yesterday, only getting back 
-to it when going over my old queues.
+Signed-off-by: Dean Nelson <dcn@sgi.com>
 
-On Thu, 31 Jul 2008, Dmitry Torokhov wrote:
-> 
-> Input: paper over a bug in Synaptics X driver
-
-Yeah, it's not pretty, but how about moving that EV_KEY thing into the 
-switch() statement? Also, the printk could certainly be a bit more useful.
-
-But before doing _any_ of that, the first thing to do should be to not 
-have that four-deep indentation by just splitting that horrible function 
-up a bit.
-
-IOW, start off with a patch like the appended, and _then_ add the special 
-case handling to the EV_KEY thing. It would probably be most easily done 
-by just literally limiting "len" to OLD_KEY_MAX. Something like
-
-   #define OLD_KEY_MAX 0x1ff
-   ...
-	case EV_KEY:
-		bits = dev->keybit;
-		len = KEY_MAX;
-		/* Hacky workaround for old bug in Xorg */
-		if (buf_len == OLD_KEY_MAX) 
-			len = OLD_KEY_MAX;
-		break;
-  ...
-
-or similar.
-
-Yeah, it's not pretty, but pragmatism before beauty.
-
-		Linus
 ---
- drivers/input/evdev.c |   44 ++++++++++++++++++++++++--------------------
- 1 files changed, 24 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
-index 2d65411..ef8c2ed 100644
---- a/drivers/input/evdev.c
-+++ b/drivers/input/evdev.c
-@@ -647,6 +647,28 @@ static int str_to_user(const char *str, unsigned int maxlen, void __user *p)
- 	return copy_to_user(p, str, len) ? -EFAULT : len;
- }
+ drivers/misc/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+Index: linux/drivers/misc/Kconfig
+===================================================================
+--- linux.orig/drivers/misc/Kconfig	2008-08-01 09:16:53.000000000 -0500
++++ linux/drivers/misc/Kconfig	2008-08-01 14:02:59.000000000 -0500
+@@ -426,6 +426,7 @@ config ENCLOSURE_SERVICES
  
-+static int handle_eviocgbit(struct input_dev *dev, unsigned int cmd, void __user *p, int compat_mode)
-+{
-+	unsigned long *bits;
-+	int len;
-+
-+	switch (_IOC_NR(cmd) & EV_MAX) {
-+
-+	case      0: bits = dev->evbit;  len = EV_MAX;  break;
-+	case EV_KEY: bits = dev->keybit; len = KEY_MAX; break;
-+	case EV_REL: bits = dev->relbit; len = REL_MAX; break;
-+	case EV_ABS: bits = dev->absbit; len = ABS_MAX; break;
-+	case EV_MSC: bits = dev->mscbit; len = MSC_MAX; break;
-+	case EV_LED: bits = dev->ledbit; len = LED_MAX; break;
-+	case EV_SND: bits = dev->sndbit; len = SND_MAX; break;
-+	case EV_FF:  bits = dev->ffbit;  len = FF_MAX;  break;
-+	case EV_SW:  bits = dev->swbit;  len = SW_MAX;  break;
-+	default: return -EINVAL;
-+	}
-+	return bits_to_user(bits, len, _IOC_SIZE(cmd), p, compat_mode);
-+}
-+
-+
- static long evdev_do_ioctl(struct file *file, unsigned int cmd,
- 			   void __user *p, int compat_mode)
- {
-@@ -733,26 +755,8 @@ static long evdev_do_ioctl(struct file *file, unsigned int cmd,
- 
- 		if (_IOC_DIR(cmd) == _IOC_READ) {
- 
--			if ((_IOC_NR(cmd) & ~EV_MAX) == _IOC_NR(EVIOCGBIT(0, 0))) {
--
--				unsigned long *bits;
--				int len;
--
--				switch (_IOC_NR(cmd) & EV_MAX) {
--
--				case      0: bits = dev->evbit;  len = EV_MAX;  break;
--				case EV_KEY: bits = dev->keybit; len = KEY_MAX; break;
--				case EV_REL: bits = dev->relbit; len = REL_MAX; break;
--				case EV_ABS: bits = dev->absbit; len = ABS_MAX; break;
--				case EV_MSC: bits = dev->mscbit; len = MSC_MAX; break;
--				case EV_LED: bits = dev->ledbit; len = LED_MAX; break;
--				case EV_SND: bits = dev->sndbit; len = SND_MAX; break;
--				case EV_FF:  bits = dev->ffbit;  len = FF_MAX;  break;
--				case EV_SW:  bits = dev->swbit;  len = SW_MAX;  break;
--				default: return -EINVAL;
--				}
--				return bits_to_user(bits, len, _IOC_SIZE(cmd), p, compat_mode);
--			}
-+			if ((_IOC_NR(cmd) & ~EV_MAX) == _IOC_NR(EVIOCGBIT(0, 0)))
-+				return handle_eviocgbit(dev, cmd, p, compat_mode);
- 
- 			if (_IOC_NR(cmd) == _IOC_NR(EVIOCGKEY(0)))
- 				return bits_to_user(dev->key, KEY_MAX, _IOC_SIZE(cmd),
+ config SGI_XP
+ 	tristate "Support communication between SGI SSIs"
++	depends on NET
+ 	depends on IA64_GENERIC || IA64_SGI_SN2 || IA64_SGI_UV || (X86_64 && SMP)
+ 	select IA64_UNCACHED_ALLOCATOR if IA64_GENERIC || IA64_SGI_SN2
+ 	select GENERIC_ALLOCATOR if IA64_GENERIC || IA64_SGI_SN2
