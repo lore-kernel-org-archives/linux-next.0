@@ -1,52 +1,66 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: linux-next: m68k build failure
-Date: Fri, 1 Aug 2008 22:41:57 +0200
-Message-ID: <20080801204157.GA12390@uranus.ravnborg.org>
-References: <20080730175233.02dbf021.sfr@canb.auug.org.au> <20080730.010234.193703201.davem@davemloft.net> <20080730084935.GA18545@uranus.ravnborg.org> <20080801153710.815bbb74.sfr@canb.auug.org.au> <Pine.LNX.4.64.0808011551120.30950@anakin>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: [PATCH] Introduce rculist.h
+Date: Fri, 1 Aug 2008 14:09:07 -0700
+Message-ID: <20080801210907.GB14851@linux.vnet.ibm.com>
+References: <20080701125607.c5295759.sfr@canb.auug.org.au>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtpout3.tre.se ([80.251.192.228]:48610 "EHLO smtpout3.tre.se"
+Received: from e2.ny.us.ibm.com ([32.97.182.142]:37340 "EHLO e2.ny.us.ibm.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754205AbYHAUl0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 1 Aug 2008 16:41:26 -0400
+	id S1760723AbYHAVJL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 1 Aug 2008 17:09:11 -0400
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.64.0808011551120.30950@anakin>
+In-Reply-To: <20080701125607.c5295759.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Linux Kernel Development <linux-kernel@vger.kernel.org>, Linux/m68k <linux-m68k@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus <torvalds@linux-foundation.org>, Franck Bui-Huu <fbuihuu@gmail.com>, Josh Triplett <josh@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-On Fri, Aug 01, 2008 at 03:52:22PM +0200, Geert Uytterhoeven wrote:
-> 	Hi Stephen,
+On Tue, Jul 01, 2008 at 12:56:07PM +1000, Stephen Rothwell wrote:
+> In linux-next there is a commit ("rcu: split list.h and move rcu-protected
+> lists into rculist.h") that moved the rcu related list iterators from
+> list.h to rculist.h.  Add a trivial version of the file now so that
+> various subsystem trees can start using it now for -next changes and so
+> reduce the build errors caused by adding uses of the moved functions.
+
+Works for me!
+
+Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+
+> Cc: Franck Bui-Huu <fbuihuu@gmail.com>
+> Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> Cc: Josh Triplett <josh@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Ingo Molnar <mingo@elte.hu>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  include/linux/rculist.h |    6 ++++++
+>  1 files changed, 6 insertions(+), 0 deletions(-)
+>  create mode 100644 include/linux/rculist.h
 > 
-> On Fri, 1 Aug 2008, Stephen Rothwell wrote:
-> > On Wed, 30 Jul 2008 10:49:35 +0200 Sam Ravnborg <sam@ravnborg.org> wrote:
-> > >
-> > > Full list of relevant files:
-> > > include/asm-m68k/contregs.h:#include <asm-sparc/contregs.h>
-> > > include/asm-m68k/fbio.h:#include <asm-sparc/fbio.h>
-> > > include/asm-m68k/idprom.h:#include <asm-sparc/idprom.h>
-> > 
-> > I applied the following patch to today's linux-next.
+> Linus, would you consider patches like this for 2.6.26 that have no
+> effect on the current tree but help with conflicts in various subsystems
+> during the next merge window?  I already have three build fixups for this
+> one in particular.
 > 
-> Thanks!
+> diff --git a/include/linux/rculist.h b/include/linux/rculist.h
+> new file mode 100644
+> index 0000000..bde4586
+> --- /dev/null
+> +++ b/include/linux/rculist.h
+> @@ -0,0 +1,6 @@
+> +#ifndef _LINUX_RCULIST_H
+> +#define _LINUX_RCULIST_H
+> +
+> +#include <linux/list.h>
+> +
+> +#endif	/* _LINUX_RCULIST_H */
+> -- 
+> 1.5.6
 > 
-> BTW, is there a (good) way to have this without duplicating those header files?
-
-The only solution I can come up with right now is:
-
-Makefile:
-ccflags-y += -Iarch/sparc/include
-
-foo.c:
-#include <asm/fbio.h>
-
-Disadvantage is that we loose the explicit documentation that this
-is header files from another architecture.
-So we should at least add a comment saying this.
-
-And the above would not work if the file has same filename,
-but then that is not a likely situation either.
-
-	Sam
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
