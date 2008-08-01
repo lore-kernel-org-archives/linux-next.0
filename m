@@ -1,40 +1,50 @@
-From: Dean Nelson <dcn@sgi.com>
-Subject: [PATCH] add dependency of CONFIG_SGI_XP upon CONFIG_NET
-Date: Fri, 1 Aug 2008 14:19:08 -0500
-Message-ID: <20080801191908.GA457@sgi.com>
-References: <20080731175854.09ea35c8.sfr@canb.auug.org.au> <20080731223758.b5985dd7.randy.dunlap@oracle.com> <20080801145526.GA29354@sgi.com> <20080801105028.3411f703.randy.dunlap@oracle.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: linux-next: Tree for July 30
+Date: Fri, 1 Aug 2008 15:23:52 -0400
+Message-ID: <20080801151758.ZZRA012@mailhub.coreip.homeip.net>
+References: <20080730170635.f737ffe9.sfr@canb.auug.org.au> <20080731104437.5e5669bc.akpm@linux-foundation.org> <20080731141302.ZZRA012@mailhub.coreip.homeip.net> <200807312048.57575.rjw@sisk.pl> <20080731145023.ZZRA012@mailhub.coreip.homeip.net> <alpine.LFD.1.10.0807311207000.3277@nehalem.linux-foundation.org> <20080731151625.ZZRA012@mailhub.coreip.homeip.net> <20080731194207.GA12233@anvil.corenet.prv> <alpine.LFD.1.10.0808011201480.3277@nehalem.linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from netops-testserver-3-out.sgi.com ([192.48.171.28]:52814 "EHLO
-	relay.sgi.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752935AbYHATTJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Aug 2008 15:19:09 -0400
+Received: from yw-out-2324.google.com ([74.125.46.29]:50647 "EHLO
+	yw-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757960AbYHATX6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Aug 2008 15:23:58 -0400
+Received: by yw-out-2324.google.com with SMTP id 9so712627ywe.1
+        for <linux-next@vger.kernel.org>; Fri, 01 Aug 2008 12:23:57 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <20080801105028.3411f703.randy.dunlap@oracle.com>
+In-Reply-To: <alpine.LFD.1.10.0808011201480.3277@nehalem.linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Jack Steiner <steiner@sgi.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Andrew Morton <akpm@linux-foundation.org>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org
 
-Add a dependency of CONFIG_SGI_XP upon CONFIG_NET to Kconfig.
+On Fri, Aug 01, 2008 at 12:12:19PM -0700, Linus Torvalds wrote:
+> 
+> Ok, I apparently missed this whole subthread yesterday, only getting back 
+> to it when going over my old queues.
+> 
+> On Thu, 31 Jul 2008, Dmitry Torokhov wrote:
+> > 
+> > Input: paper over a bug in Synaptics X driver
+> 
+> Yeah, it's not pretty, but how about moving that EV_KEY thing into the 
+> switch() statement?
 
-Signed-off-by: Dean Nelson <dcn@sgi.com>
+I want to to be visually separated. It is not a hot path so extra
+comparison won't hurt us.
 
----
+> Also, the printk could certainly be a bit more useful.
 
- drivers/misc/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+I think I will follow Andrew's advice and point people to a page on
+kernel.org (to be written).
 
-Index: linux/drivers/misc/Kconfig
-===================================================================
---- linux.orig/drivers/misc/Kconfig	2008-08-01 09:16:53.000000000 -0500
-+++ linux/drivers/misc/Kconfig	2008-08-01 14:02:59.000000000 -0500
-@@ -426,6 +426,7 @@ config ENCLOSURE_SERVICES
- 
- config SGI_XP
- 	tristate "Support communication between SGI SSIs"
-+	depends on NET
- 	depends on IA64_GENERIC || IA64_SGI_SN2 || IA64_SGI_UV || (X86_64 && SMP)
- 	select IA64_UNCACHED_ALLOCATOR if IA64_GENERIC || IA64_SGI_SN2
- 	select GENERIC_ALLOCATOR if IA64_GENERIC || IA64_SGI_SN2
+> have that four-deep indentation by just splitting that horrible function 
+> up a bit.
+> 
+> IOW, start off with a patch like the appended,
+
+Makes sense. Signed-off-by please ;)
+
+-- 
+Dmitry
