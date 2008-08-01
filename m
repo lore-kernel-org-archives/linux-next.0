@@ -1,33 +1,53 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: linux-next: Tree for July 30
-Date: Thu, 31 Jul 2008 16:39:44 -0400
-Message-ID: <20080731163738.ZZRA012@mailhub.coreip.homeip.net>
-References: <20080731104437.5e5669bc.akpm@linux-foundation.org> <20080731141302.ZZRA012@mailhub.coreip.homeip.net> <200807312048.57575.rjw@sisk.pl> <20080731145023.ZZRA012@mailhub.coreip.homeip.net> <alpine.LFD.1.10.0807311207000.3277@nehalem.linux-foundation.org> <20080731151625.ZZRA012@mailhub.coreip.homeip.net> <alpine.LFD.1.10.0807311235350.3277@nehalem.linux-foundation.org> <20080731155701.ZZRA012@mailhub.coreip.homeip.net> <alpine.LFD.1.10.0807311310090.3277@nehalem.linux-foundation.org> <alpine.LFD.1.10.0807311318580.3277@nehalem.linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pci-current tree
+Date: Fri, 1 Aug 2008 10:22:45 +1000
+Message-ID: <20080801102245.2c25f666.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__1_Aug_2008_10_22_45_+1000_XkB7uJ5zF0vB3i/t"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from an-out-0708.google.com ([209.85.132.241]:50063 "EHLO
-	an-out-0708.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752705AbYGaUjz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 31 Jul 2008 16:39:55 -0400
-Received: by an-out-0708.google.com with SMTP id d40so118687and.103
-        for <linux-next@vger.kernel.org>; Thu, 31 Jul 2008 13:39:54 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <alpine.LFD.1.10.0807311318580.3277@nehalem.linux-foundation.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:52948 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751586AbYHAAWx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 31 Jul 2008 20:22:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Andrew Morton <akpm@linux-foundation.org>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>
 
-On Thu, Jul 31, 2008 at 01:28:37PM -0700, Linus Torvalds wrote:
-> 
-> +				/* Some people get confused about size in bits vs bytes */
-> +				if (size >= len/8)
-> +					size = size/8;
+--Signature=_Fri__1_Aug_2008_10_22_45_+1000_XkB7uJ5zF0vB3i/t
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-People usually allocate single buffer (big enough) and the do a bunch
-of tests so this condiion is likely to fire on EV_SW and similar event
-types. I think it is safer to explicitely test for EV_KEY/0x1ff.
+Hi Jesse,
 
--- 
-Dmitry
+Today's linux-next merge of the pci-current tree got a conflict in
+arch/x86/kernel/pci-gart_64.c between commit
+7968531880c89b3c987e6a7a0d33eafb0962d8d9 ("Revert "Merge branch
+'x86/iommu' of
+git://git.kernel.org/pub/scm/linux/kernel/git/tip/linux-2.6-tip into
+for-linus"") from the linux-next tree and commit
+074ec1727196c4a2ba2f909902d55ec5014e50c3 ("PCI: GART iommu alignment
+fixes") from the pci-current tree.
+
+This is, of course caused by my revert of the iommu_num_pages patches.  I
+fixed it up as best I could.=20
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__1_Aug_2008_10_22_45_+1000_XkB7uJ5zF0vB3i/t
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiSV1UACgkQjjKRsyhoI8xe7gCfVh8+rrnPqRH9DcIq8i1L9EaN
+9wUAoKGsE7vZmbkHGLKEEAS771nSEZ8h
+=NAkf
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__1_Aug_2008_10_22_45_+1000_XkB7uJ5zF0vB3i/t--
