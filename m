@@ -1,25 +1,40 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: Tree for July 30
-Date: Fri, 1 Aug 2008 12:26:53 -0700 (PDT)
-Message-ID: <alpine.LFD.1.10.0808011226300.3277@nehalem.linux-foundation.org>
-References: <20080730170635.f737ffe9.sfr@canb.auug.org.au> <20080731104437.5e5669bc.akpm@linux-foundation.org> <20080731141302.ZZRA012@mailhub.coreip.homeip.net> <200807312048.57575.rjw@sisk.pl> <20080731145023.ZZRA012@mailhub.coreip.homeip.net>
- <alpine.LFD.1.10.0807311207000.3277@nehalem.linux-foundation.org> <20080731151625.ZZRA012@mailhub.coreip.homeip.net> <20080731194207.GA12233@anvil.corenet.prv> <alpine.LFD.1.10.0808011201480.3277@nehalem.linux-foundation.org>
- <20080801151758.ZZRA012@mailhub.coreip.homeip.net>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: Tree for August 1 (sysfs.h)
+Date: Fri, 1 Aug 2008 11:26:12 -0700
+Message-ID: <20080801182612.GB4788@kroah.com>
+References: <20080801165808.68f833ec.sfr@canb.auug.org.au> <20080801111452.1b4c55d3.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <20080801151758.ZZRA012@mailhub.coreip.homeip.net>
-Sender: linux-input-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Andrew Morton <akpm@linux-foundation.org>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bombadil.infradead.org ([18.85.46.34]:57852 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754732AbYHAU2u (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Aug 2008 16:28:50 -0400
+Content-Disposition: inline
+In-Reply-To: <20080801111452.1b4c55d3.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-
-
-On Fri, 1 Aug 2008, Dmitry Torokhov wrote:
+On Fri, Aug 01, 2008 at 11:14:52AM -0700, Randy Dunlap wrote:
+> When CONFIG_SYSFS=n:
 > 
-> Makes sense. Signed-off-by please ;)
+>   CC      arch/x86/kernel/asm-offsets.s
+> In file included from linux-next-20080801/include/linux/kobject.h:21,
+>                  from linux-next-20080801/include/linux/module.h:16,
+>                  from linux-next-20080801/include/linux/crypto.h:21,
+>                  from linux-next-20080801/arch/x86/kernel/asm-offsets_64.c:7,
+>                  from linux-next-20080801/arch/x86/kernel/asm-offsets.c:4:
+> linux-next-20080801/include/linux/sysfs.h:247: error: return type is an incomplete type
+> linux-next-20080801/include/linux/sysfs.h: In function 'sysfs_get':
+> linux-next-20080801/include/linux/sysfs.h:248: warning: 'return' with a value, in function returning void
+> make[2]: *** [arch/x86/kernel/asm-offsets.s] Error 1
 
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Ah, missed a "*".  It's Neil's fault :)
 
-		Linus
+I'll go fix this up, it's for when CONFIG_SYSFS is set to N, right?
+
+thanks,
+
+greg k-h
