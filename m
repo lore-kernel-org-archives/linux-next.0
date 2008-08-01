@@ -1,107 +1,116 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for July 31 (IMA build error)
-Date: Fri, 1 Aug 2008 11:04:41 -0700
-Message-ID: <20080801110441.12a48b70.randy.dunlap@oracle.com>
-References: <1217611980.4000.10.camel@new-host-2>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: linux-next: Tree for July 30
+Date: Fri, 1 Aug 2008 12:12:19 -0700 (PDT)
+Message-ID: <alpine.LFD.1.10.0808011201480.3277@nehalem.linux-foundation.org>
+References: <20080730170635.f737ffe9.sfr@canb.auug.org.au> <20080731104437.5e5669bc.akpm@linux-foundation.org> <20080731141302.ZZRA012@mailhub.coreip.homeip.net> <200807312048.57575.rjw@sisk.pl> <20080731145023.ZZRA012@mailhub.coreip.homeip.net>
+ <alpine.LFD.1.10.0807311207000.3277@nehalem.linux-foundation.org> <20080731151625.ZZRA012@mailhub.coreip.homeip.net> <20080731194207.GA12233@anvil.corenet.prv>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rgminet01.oracle.com ([148.87.113.118]:23286 "EHLO
-	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758263AbYHASgA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Aug 2008 14:36:00 -0400
-In-Reply-To: <1217611980.4000.10.camel@new-host-2>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, safford@watson.ibm.com, serue@linux.vnet.ibm.com, sailer@watson.ibm.com, zohar@us.ibm.com
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <20080731194207.GA12233@anvil.corenet.prv>
+Sender: linux-input-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Andrew Morton <akpm@linux-foundation.org>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 01 Aug 2008 13:33:00 -0400 Mimi Zohar wrote:
 
+Ok, I apparently missed this whole subthread yesterday, only getting back 
+to it when going over my old queues.
+
+On Thu, 31 Jul 2008, Dmitry Torokhov wrote:
 > 
-> Randy Dunlap <randy.dunlap@oracle.com> wrote on 08/01/2008 01:34:14 AM:
-> > security/integrity/ima:
-> > 
-> > linux-next-20080731/security/integrity/ima/ima_policy.c:81: error: implicit 
-> > declaration of function 'security_audit_rule_match'
-> > linux-next-20080731/security/integrity/ima/ima_policy.c:206: error: implicit 
-> > declaration of function 'security_audit_rule_init'
-> > make[4]: *** [security/integrity/ima/ima_policy.o] Error 1
-> 
-> - Update security/integrity/ima/Kconfig for LSM based policy rules 
->   to select CONFIG_AUDIT.
-> - Add dummy security_filter_rule_init/match routines for when 
->   CONFIG_AUDIT is not configured.
-> 
-> Signed-off-by: Mimi Zohar <zohar@us.ibm.com>
+> Input: paper over a bug in Synaptics X driver
 
-Thanks.  Works for me.
+Yeah, it's not pretty, but how about moving that EV_KEY thing into the 
+switch() statement? Also, the printk could certainly be a bit more useful.
 
+But before doing _any_ of that, the first thing to do should be to not 
+have that four-deep indentation by just splitting that horrible function 
+up a bit.
 
-> Index: security-testing-2.6/security/integrity/ima/Kconfig
-> ===================================================================
-> --- security-testing-2.6.orig/security/integrity/ima/Kconfig
-> +++ security-testing-2.6/security/integrity/ima/Kconfig
-> @@ -39,3 +39,11 @@ config IMA_BASE_HOOKS
->  	default n
->  	help
->  	  Enable this option to allow the LSM module to enforce integrity.
-> +
-> +config IMA_LSM_BASED_RULES
-> +	bool "Enable LSM based measurement policy rules(requires audit)"
-> +	depends on IMA
-> +	select AUDIT
-> +	default y
-> +	help
-> +	  Disabling this option will not enforce LSM based policy rules.
-> Index: security-testing-2.6/security/integrity/ima/ima.h
-> ===================================================================
-> --- security-testing-2.6.orig/security/integrity/ima/ima.h
-> +++ security-testing-2.6/security/integrity/ima/ima.h
-> @@ -145,4 +145,25 @@ struct ima_iint_cache {
->  	u8 		digest[IMA_DIGEST_SIZE];
->  	struct mutex mutex;
->  };
-> +
-> +/* LSM based policy rules require audit */
-> +#ifdef CONFIG_AUDIT
-> +
-> +#define security_filter_rule_init security_audit_rule_init
-> +#define security_filter_rule_match security_audit_rule_match
-> +
-> +#else
-> +
-> +static inline int security_filter_rule_init(u32 field, u32 op, char *rulestr,
-> +					    void **lsmrule)
-> +{
-> +	return -EINVAL;
-> +}
-> +
-> +static inline int security_filter_rule_match(u32 secid, u32 field, u32 op,
-> +				   void *lsmrule, struct audit_context *actx)
-> +{
-> +	return -EINVAL;
-> +}
-> +#endif
->  #endif
-> Index: security-testing-2.6/security/integrity/ima/ima_policy.c
-> ===================================================================
-> --- security-testing-2.6.orig/security/integrity/ima/ima_policy.c
-> +++ security-testing-2.6/security/integrity/ima/ima_policy.c
-> @@ -20,9 +20,6 @@
->  
->  #include "ima.h"
->  
-> -#define security_filter_rule_init security_audit_rule_init
-> -#define security_filter_rule_match security_audit_rule_match
-> -
->  struct ima_measure_rule_entry {
->  	struct list_head list;
->  	int action;
+IOW, start off with a patch like the appended, and _then_ add the special 
+case handling to the EV_KEY thing. It would probably be most easily done 
+by just literally limiting "len" to OLD_KEY_MAX. Something like
 
+   #define OLD_KEY_MAX 0x1ff
+   ...
+	case EV_KEY:
+		bits = dev->keybit;
+		len = KEY_MAX;
+		/* Hacky workaround for old bug in Xorg */
+		if (buf_len == OLD_KEY_MAX) 
+			len = OLD_KEY_MAX;
+		break;
+  ...
 
+or similar.
+
+Yeah, it's not pretty, but pragmatism before beauty.
+
+		Linus
 ---
-~Randy
-Linux Plumbers Conference, 17-19 September 2008, Portland, Oregon USA
-http://linuxplumbersconf.org/
+ drivers/input/evdev.c |   44 ++++++++++++++++++++++++--------------------
+ 1 files changed, 24 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
+index 2d65411..ef8c2ed 100644
+--- a/drivers/input/evdev.c
++++ b/drivers/input/evdev.c
+@@ -647,6 +647,28 @@ static int str_to_user(const char *str, unsigned int maxlen, void __user *p)
+ 	return copy_to_user(p, str, len) ? -EFAULT : len;
+ }
+ 
++static int handle_eviocgbit(struct input_dev *dev, unsigned int cmd, void __user *p, int compat_mode)
++{
++	unsigned long *bits;
++	int len;
++
++	switch (_IOC_NR(cmd) & EV_MAX) {
++
++	case      0: bits = dev->evbit;  len = EV_MAX;  break;
++	case EV_KEY: bits = dev->keybit; len = KEY_MAX; break;
++	case EV_REL: bits = dev->relbit; len = REL_MAX; break;
++	case EV_ABS: bits = dev->absbit; len = ABS_MAX; break;
++	case EV_MSC: bits = dev->mscbit; len = MSC_MAX; break;
++	case EV_LED: bits = dev->ledbit; len = LED_MAX; break;
++	case EV_SND: bits = dev->sndbit; len = SND_MAX; break;
++	case EV_FF:  bits = dev->ffbit;  len = FF_MAX;  break;
++	case EV_SW:  bits = dev->swbit;  len = SW_MAX;  break;
++	default: return -EINVAL;
++	}
++	return bits_to_user(bits, len, _IOC_SIZE(cmd), p, compat_mode);
++}
++
++
+ static long evdev_do_ioctl(struct file *file, unsigned int cmd,
+ 			   void __user *p, int compat_mode)
+ {
+@@ -733,26 +755,8 @@ static long evdev_do_ioctl(struct file *file, unsigned int cmd,
+ 
+ 		if (_IOC_DIR(cmd) == _IOC_READ) {
+ 
+-			if ((_IOC_NR(cmd) & ~EV_MAX) == _IOC_NR(EVIOCGBIT(0, 0))) {
+-
+-				unsigned long *bits;
+-				int len;
+-
+-				switch (_IOC_NR(cmd) & EV_MAX) {
+-
+-				case      0: bits = dev->evbit;  len = EV_MAX;  break;
+-				case EV_KEY: bits = dev->keybit; len = KEY_MAX; break;
+-				case EV_REL: bits = dev->relbit; len = REL_MAX; break;
+-				case EV_ABS: bits = dev->absbit; len = ABS_MAX; break;
+-				case EV_MSC: bits = dev->mscbit; len = MSC_MAX; break;
+-				case EV_LED: bits = dev->ledbit; len = LED_MAX; break;
+-				case EV_SND: bits = dev->sndbit; len = SND_MAX; break;
+-				case EV_FF:  bits = dev->ffbit;  len = FF_MAX;  break;
+-				case EV_SW:  bits = dev->swbit;  len = SW_MAX;  break;
+-				default: return -EINVAL;
+-				}
+-				return bits_to_user(bits, len, _IOC_SIZE(cmd), p, compat_mode);
+-			}
++			if ((_IOC_NR(cmd) & ~EV_MAX) == _IOC_NR(EVIOCGBIT(0, 0)))
++				return handle_eviocgbit(dev, cmd, p, compat_mode);
+ 
+ 			if (_IOC_NR(cmd) == _IOC_NR(EVIOCGKEY(0)))
+ 				return bits_to_user(dev->key, KEY_MAX, _IOC_SIZE(cmd),
