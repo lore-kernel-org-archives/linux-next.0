@@ -1,39 +1,52 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for August 1 (sysfs.h)
-Date: Fri, 1 Aug 2008 15:36:14 -0500 (CDT)
-Message-ID: <33469382.1217622974098.JavaMail.oracle@acsmt303.oracle.com>
-References: <20080801165808.68f833ec.sfr@canb.auug.org.au> <20080801111452.1b4c55d3.randy.dunlap@oracle.com> <20080801182612.GB4788@kroah.com>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: linux-next: m68k build failure
+Date: Fri, 1 Aug 2008 22:41:57 +0200
+Message-ID: <20080801204157.GA12390@uranus.ravnborg.org>
+References: <20080730175233.02dbf021.sfr@canb.auug.org.au> <20080730.010234.193703201.davem@davemloft.net> <20080730084935.GA18545@uranus.ravnborg.org> <20080801153710.815bbb74.sfr@canb.auug.org.au> <Pine.LNX.4.64.0808011551120.30950@anakin>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from agminet01.oracle.com ([141.146.126.228]:29414 "EHLO
-	agminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755884AbYHAUgX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Aug 2008 16:36:23 -0400
-In-Reply-To: <20080801182612.GB4788@kroah.com>
-Content-Language: en-US
+Received: from smtpout3.tre.se ([80.251.192.228]:48610 "EHLO smtpout3.tre.se"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754205AbYHAUl0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 1 Aug 2008 16:41:26 -0400
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.64.0808011551120.30950@anakin>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Linux Kernel Development <linux-kernel@vger.kernel.org>, Linux/m68k <linux-m68k@vger.kernel.org>
 
-> > When CONFIG_SYSFS=n:
+On Fri, Aug 01, 2008 at 03:52:22PM +0200, Geert Uytterhoeven wrote:
+> 	Hi Stephen,
+> 
+> On Fri, 1 Aug 2008, Stephen Rothwell wrote:
+> > On Wed, 30 Jul 2008 10:49:35 +0200 Sam Ravnborg <sam@ravnborg.org> wrote:
+> > >
+> > > Full list of relevant files:
+> > > include/asm-m68k/contregs.h:#include <asm-sparc/contregs.h>
+> > > include/asm-m68k/fbio.h:#include <asm-sparc/fbio.h>
+> > > include/asm-m68k/idprom.h:#include <asm-sparc/idprom.h>
 > > 
-> >   CC      arch/x86/kernel/asm-offsets.s
-> > In file included from linux-next-20080801/include/linux/kobject.h:21,
-> >                  from linux-next-20080801/include/linux/module.h:16,
-> >                  from linux-next-20080801/include/linux/crypto.h:21,
-> >                  from linux-next-20080801/arch/x86/kernel/asm-offsets_64.c:7,
-> >                  from linux-next-20080801/arch/x86/kernel/asm-offsets.c:4:
-> > linux-next-20080801/include/linux/sysfs.h:247: error: return type is an incomplete type
-> > linux-next-20080801/include/linux/sysfs.h: In function 'sysfs_get':
-> > linux-next-20080801/include/linux/sysfs.h:248: warning: 'return' with a value, in function returning void
-> > make[2]: *** [arch/x86/kernel/asm-offsets.s] Error 1
+> > I applied the following patch to today's linux-next.
 > 
-> Ah, missed a "*".  It's Neil's fault :)
+> Thanks!
 > 
-> I'll go fix this up, it's for when CONFIG_SYSFS is set to N,
-> right?
+> BTW, is there a (good) way to have this without duplicating those header files?
 
-see line 1 above.
+The only solution I can come up with right now is:
+
+Makefile:
+ccflags-y += -Iarch/sparc/include
+
+foo.c:
+#include <asm/fbio.h>
+
+Disadvantage is that we loose the explicit documentation that this
+is header files from another architecture.
+So we should at least add a comment saying this.
+
+And the above would not work if the file has same filename,
+but then that is not a likely situation either.
+
+	Sam
