@@ -1,50 +1,25 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: linux-next: Tree for July 30
-Date: Fri, 1 Aug 2008 15:23:52 -0400
-Message-ID: <20080801151758.ZZRA012@mailhub.coreip.homeip.net>
-References: <20080730170635.f737ffe9.sfr@canb.auug.org.au> <20080731104437.5e5669bc.akpm@linux-foundation.org> <20080731141302.ZZRA012@mailhub.coreip.homeip.net> <200807312048.57575.rjw@sisk.pl> <20080731145023.ZZRA012@mailhub.coreip.homeip.net> <alpine.LFD.1.10.0807311207000.3277@nehalem.linux-foundation.org> <20080731151625.ZZRA012@mailhub.coreip.homeip.net> <20080731194207.GA12233@anvil.corenet.prv> <alpine.LFD.1.10.0808011201480.3277@nehalem.linux-foundation.org>
+Date: Fri, 1 Aug 2008 12:26:53 -0700 (PDT)
+Message-ID: <alpine.LFD.1.10.0808011226300.3277@nehalem.linux-foundation.org>
+References: <20080730170635.f737ffe9.sfr@canb.auug.org.au> <20080731104437.5e5669bc.akpm@linux-foundation.org> <20080731141302.ZZRA012@mailhub.coreip.homeip.net> <200807312048.57575.rjw@sisk.pl> <20080731145023.ZZRA012@mailhub.coreip.homeip.net>
+ <alpine.LFD.1.10.0807311207000.3277@nehalem.linux-foundation.org> <20080731151625.ZZRA012@mailhub.coreip.homeip.net> <20080731194207.GA12233@anvil.corenet.prv> <alpine.LFD.1.10.0808011201480.3277@nehalem.linux-foundation.org>
+ <20080801151758.ZZRA012@mailhub.coreip.homeip.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from yw-out-2324.google.com ([74.125.46.29]:50647 "EHLO
-	yw-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757960AbYHATX6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Aug 2008 15:23:58 -0400
-Received: by yw-out-2324.google.com with SMTP id 9so712627ywe.1
-        for <linux-next@vger.kernel.org>; Fri, 01 Aug 2008 12:23:57 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <alpine.LFD.1.10.0808011201480.3277@nehalem.linux-foundation.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <20080801151758.ZZRA012@mailhub.coreip.homeip.net>
+Sender: linux-input-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Andrew Morton <akpm@linux-foundation.org>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Aug 01, 2008 at 12:12:19PM -0700, Linus Torvalds wrote:
+
+
+On Fri, 1 Aug 2008, Dmitry Torokhov wrote:
 > 
-> Ok, I apparently missed this whole subthread yesterday, only getting back 
-> to it when going over my old queues.
-> 
-> On Thu, 31 Jul 2008, Dmitry Torokhov wrote:
-> > 
-> > Input: paper over a bug in Synaptics X driver
-> 
-> Yeah, it's not pretty, but how about moving that EV_KEY thing into the 
-> switch() statement?
+> Makes sense. Signed-off-by please ;)
 
-I want to to be visually separated. It is not a hot path so extra
-comparison won't hurt us.
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 
-> Also, the printk could certainly be a bit more useful.
-
-I think I will follow Andrew's advice and point people to a page on
-kernel.org (to be written).
-
-> have that four-deep indentation by just splitting that horrible function 
-> up a bit.
-> 
-> IOW, start off with a patch like the appended,
-
-Makes sense. Signed-off-by please ;)
-
--- 
-Dmitry
+		Linus
