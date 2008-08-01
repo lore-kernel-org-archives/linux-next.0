@@ -1,40 +1,94 @@
-From: Dean Nelson <dcn@sgi.com>
-Subject: [PATCH] add reverse dependency of CONFIG_SGI_XP upon CONFIG_SGI_GRU
-Date: Fri, 1 Aug 2008 09:55:26 -0500
-Message-ID: <20080801145526.GA29354@sgi.com>
-References: <20080731175854.09ea35c8.sfr@canb.auug.org.au> <20080731223758.b5985dd7.randy.dunlap@oracle.com>
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: Re: linux-next: Tree for July 31 (IMA build error)
+Date: Fri, 01 Aug 2008 13:33:00 -0400
+Message-ID: <1217611980.4000.10.camel@new-host-2>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay1.sgi.com ([192.48.171.29]:51889 "EHLO relay.sgi.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1750984AbYHAOz2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 1 Aug 2008 10:55:28 -0400
-Content-Disposition: inline
-In-Reply-To: <20080731223758.b5985dd7.randy.dunlap@oracle.com>
+Received: from e33.co.us.ibm.com ([32.97.110.151]:51011 "EHLO
+	e33.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751842AbYHARda (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Aug 2008 13:33:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <randy.dunlap@oracle.com>, Jack Steiner <steiner@sgi.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, safford@watson.ibm.com, serue@linux.vnet.ibm.com, sailer@watson.ibm.com, zohar@us.ibm.com
 
-Add a reverse dependency of CONFIG_SGI_XP upon CONFIG_SGI_GRU to Kconfig.
 
-Signed-off-by: Dean Nelson <dcn@sgi.com>
+Randy Dunlap <randy.dunlap@oracle.com> wrote on 08/01/2008 01:34:14 AM:
+> security/integrity/ima:
+> 
+> linux-next-20080731/security/integrity/ima/ima_policy.c:81: error: implicit 
+> declaration of function 'security_audit_rule_match'
+> linux-next-20080731/security/integrity/ima/ima_policy.c:206: error: implicit 
+> declaration of function 'security_audit_rule_init'
+> make[4]: *** [security/integrity/ima/ima_policy.o] Error 1
 
----
+- Update security/integrity/ima/Kconfig for LSM based policy rules 
+  to select CONFIG_AUDIT.
+- Add dummy security_filter_rule_init/match routines for when 
+  CONFIG_AUDIT is not configured.
 
- drivers/misc/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+Signed-off-by: Mimi Zohar <zohar@us.ibm.com>
 
-Index: linux/drivers/misc/Kconfig
+Index: security-testing-2.6/security/integrity/ima/Kconfig
 ===================================================================
---- linux.orig/drivers/misc/Kconfig	2008-07-31 12:34:08.000000000 -0500
-+++ linux/drivers/misc/Kconfig	2008-08-01 09:16:53.000000000 -0500
-@@ -429,6 +429,7 @@ config SGI_XP
- 	depends on IA64_GENERIC || IA64_SGI_SN2 || IA64_SGI_UV || (X86_64 && SMP)
- 	select IA64_UNCACHED_ALLOCATOR if IA64_GENERIC || IA64_SGI_SN2
- 	select GENERIC_ALLOCATOR if IA64_GENERIC || IA64_SGI_SN2
-+	select SGI_GRU if IA64_GENERIC || IA64_SGI_UV || (X86_64 && SMP)
- 	---help---
- 	  An SGI machine can be divided into multiple Single System
- 	  Images which act independently of each other and have
+--- security-testing-2.6.orig/security/integrity/ima/Kconfig
++++ security-testing-2.6/security/integrity/ima/Kconfig
+@@ -39,3 +39,11 @@ config IMA_BASE_HOOKS
+ 	default n
+ 	help
+ 	  Enable this option to allow the LSM module to enforce integrity.
++
++config IMA_LSM_BASED_RULES
++	bool "Enable LSM based measurement policy rules(requires audit)"
++	depends on IMA
++	select AUDIT
++	default y
++	help
++	  Disabling this option will not enforce LSM based policy rules.
+Index: security-testing-2.6/security/integrity/ima/ima.h
+===================================================================
+--- security-testing-2.6.orig/security/integrity/ima/ima.h
++++ security-testing-2.6/security/integrity/ima/ima.h
+@@ -145,4 +145,25 @@ struct ima_iint_cache {
+ 	u8 		digest[IMA_DIGEST_SIZE];
+ 	struct mutex mutex;
+ };
++
++/* LSM based policy rules require audit */
++#ifdef CONFIG_AUDIT
++
++#define security_filter_rule_init security_audit_rule_init
++#define security_filter_rule_match security_audit_rule_match
++
++#else
++
++static inline int security_filter_rule_init(u32 field, u32 op, char *rulestr,
++					    void **lsmrule)
++{
++	return -EINVAL;
++}
++
++static inline int security_filter_rule_match(u32 secid, u32 field, u32 op,
++				   void *lsmrule, struct audit_context *actx)
++{
++	return -EINVAL;
++}
++#endif
+ #endif
+Index: security-testing-2.6/security/integrity/ima/ima_policy.c
+===================================================================
+--- security-testing-2.6.orig/security/integrity/ima/ima_policy.c
++++ security-testing-2.6/security/integrity/ima/ima_policy.c
+@@ -20,9 +20,6 @@
+ 
+ #include "ima.h"
+ 
+-#define security_filter_rule_init security_audit_rule_init
+-#define security_filter_rule_match security_audit_rule_match
+-
+ struct ima_measure_rule_entry {
+ 	struct list_head list;
+ 	int action;
