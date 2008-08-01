@@ -1,48 +1,40 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: m68k build failure
-Date: Fri, 1 Aug 2008 15:52:22 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.0808011551120.30950@anakin>
-References: <20080730175233.02dbf021.sfr@canb.auug.org.au>
- <20080730.010234.193703201.davem@davemloft.net> <20080730084935.GA18545@uranus.ravnborg.org>
- <20080801153710.815bbb74.sfr@canb.auug.org.au>
+From: Dean Nelson <dcn@sgi.com>
+Subject: [PATCH] add reverse dependency of CONFIG_SGI_XP upon CONFIG_SGI_GRU
+Date: Fri, 1 Aug 2008 09:55:26 -0500
+Message-ID: <20080801145526.GA29354@sgi.com>
+References: <20080731175854.09ea35c8.sfr@canb.auug.org.au> <20080731223758.b5985dd7.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wilson.telenet-ops.be ([195.130.132.42]:57889 "EHLO
-	wilson.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751612AbYHANw0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Aug 2008 09:52:26 -0400
-In-Reply-To: <20080801153710.815bbb74.sfr@canb.auug.org.au>
+Received: from relay1.sgi.com ([192.48.171.29]:51889 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1750984AbYHAOz2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 1 Aug 2008 10:55:28 -0400
+Content-Disposition: inline
+In-Reply-To: <20080731223758.b5985dd7.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Sam Ravnborg <sam@ravnborg.org>, David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Linux Kernel Development <linux-kernel@vger.kernel.org>, Linux/m68k <linux-m68k@vger.kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <randy.dunlap@oracle.com>, Jack Steiner <steiner@sgi.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-	Hi Stephen,
+Add a reverse dependency of CONFIG_SGI_XP upon CONFIG_SGI_GRU to Kconfig.
 
-On Fri, 1 Aug 2008, Stephen Rothwell wrote:
-> On Wed, 30 Jul 2008 10:49:35 +0200 Sam Ravnborg <sam@ravnborg.org> wrote:
-> >
-> > Full list of relevant files:
-> > include/asm-m68k/contregs.h:#include <asm-sparc/contregs.h>
-> > include/asm-m68k/fbio.h:#include <asm-sparc/fbio.h>
-> > include/asm-m68k/idprom.h:#include <asm-sparc/idprom.h>
-> 
-> I applied the following patch to today's linux-next.
+Signed-off-by: Dean Nelson <dcn@sgi.com>
 
-Thanks!
+---
 
-BTW, is there a (good) way to have this without duplicating those header files?
+ drivers/misc/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
-I hope to move to arch/m68k/include soon, too.
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Index: linux/drivers/misc/Kconfig
+===================================================================
+--- linux.orig/drivers/misc/Kconfig	2008-07-31 12:34:08.000000000 -0500
++++ linux/drivers/misc/Kconfig	2008-08-01 09:16:53.000000000 -0500
+@@ -429,6 +429,7 @@ config SGI_XP
+ 	depends on IA64_GENERIC || IA64_SGI_SN2 || IA64_SGI_UV || (X86_64 && SMP)
+ 	select IA64_UNCACHED_ALLOCATOR if IA64_GENERIC || IA64_SGI_SN2
+ 	select GENERIC_ALLOCATOR if IA64_GENERIC || IA64_SGI_SN2
++	select SGI_GRU if IA64_GENERIC || IA64_SGI_UV || (X86_64 && SMP)
+ 	---help---
+ 	  An SGI machine can be divided into multiple Single System
+ 	  Images which act independently of each other and have
