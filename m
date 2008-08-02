@@ -1,66 +1,75 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: [PATCH] Introduce rculist.h
-Date: Fri, 1 Aug 2008 14:09:07 -0700
-Message-ID: <20080801210907.GB14851@linux.vnet.ibm.com>
-References: <20080701125607.c5295759.sfr@canb.auug.org.au>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: m68k build failure
+Date: Sat, 2 Aug 2008 14:06:50 +1000
+Message-ID: <20080802140650.ed81402d.sfr@canb.auug.org.au>
+References: <20080730175233.02dbf021.sfr@canb.auug.org.au>
+	<20080730.010234.193703201.davem@davemloft.net>
+	<20080730084935.GA18545@uranus.ravnborg.org>
+	<20080801153710.815bbb74.sfr@canb.auug.org.au>
+	<Pine.LNX.4.64.0808011551120.30950@anakin>
+	<20080801204157.GA12390@uranus.ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__2_Aug_2008_14_06_50_+1000_ISkAY9GDq13rjiXQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e2.ny.us.ibm.com ([32.97.182.142]:37340 "EHLO e2.ny.us.ibm.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52794 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760723AbYHAVJL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 1 Aug 2008 17:09:11 -0400
-Content-Disposition: inline
-In-Reply-To: <20080701125607.c5295759.sfr@canb.auug.org.au>
+	id S1751315AbYHBEHA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 2 Aug 2008 00:07:00 -0400
+In-Reply-To: <20080801204157.GA12390@uranus.ravnborg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus <torvalds@linux-foundation.org>, Franck Bui-Huu <fbuihuu@gmail.com>, Josh Triplett <josh@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Linux Kernel Development <linux-kernel@vger.kernel.org>, Linux/m68k <linux-m68k@vger.kernel.org>
 
-On Tue, Jul 01, 2008 at 12:56:07PM +1000, Stephen Rothwell wrote:
-> In linux-next there is a commit ("rcu: split list.h and move rcu-protected
-> lists into rculist.h") that moved the rcu related list iterators from
-> list.h to rculist.h.  Add a trivial version of the file now so that
-> various subsystem trees can start using it now for -next changes and so
-> reduce the build errors caused by adding uses of the moved functions.
+--Signature=_Sat__2_Aug_2008_14_06_50_+1000_ISkAY9GDq13rjiXQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Works for me!
+Hi Sam,
 
-Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+On Fri, 1 Aug 2008 22:41:57 +0200 Sam Ravnborg <sam@ravnborg.org> wrote:
+>
+> On Fri, Aug 01, 2008 at 03:52:22PM +0200, Geert Uytterhoeven wrote:
+> >=20
+> > BTW, is there a (good) way to have this without duplicating those heade=
+r files?
+>=20
+> The only solution I can come up with right now is:
+>=20
+> Makefile:
+> ccflags-y +=3D -Iarch/sparc/include
+>=20
+> foo.c:
+> #include <asm/fbio.h>
+>=20
+> Disadvantage is that we loose the explicit documentation that this
+> is header files from another architecture.
+> So we should at least add a comment saying this.
+>=20
+> And the above would not work if the file has same filename,
+> but then that is not a likely situation either.
 
-> Cc: Franck Bui-Huu <fbuihuu@gmail.com>
-> Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> Cc: Josh Triplett <josh@kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Ingo Molnar <mingo@elte.hu>
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  include/linux/rculist.h |    6 ++++++
->  1 files changed, 6 insertions(+), 0 deletions(-)
->  create mode 100644 include/linux/rculist.h
-> 
-> Linus, would you consider patches like this for 2.6.26 that have no
-> effect on the current tree but help with conflicts in various subsystems
-> during the next merge window?  I already have three build fixups for this
-> one in particular.
-> 
-> diff --git a/include/linux/rculist.h b/include/linux/rculist.h
-> new file mode 100644
-> index 0000000..bde4586
-> --- /dev/null
-> +++ b/include/linux/rculist.h
-> @@ -0,0 +1,6 @@
-> +#ifndef _LINUX_RCULIST_H
-> +#define _LINUX_RCULIST_H
-> +
-> +#include <linux/list.h>
-> +
-> +#endif	/* _LINUX_RCULIST_H */
-> -- 
-> 1.5.6
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
+There is at least one of the m68k header files that includes the sparc
+file of the same name and then does other stuff.  So this scheme would
+not cover that  (unless we used #include_next?)=20
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Sat__2_Aug_2008_14_06_50_+1000_ISkAY9GDq13rjiXQ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiT3VoACgkQjjKRsyhoI8w7hgCeLw3jIy3pfCWMGitfQfyakM39
+1ncAoISz17ijuk7I3GQNbUSF44+jV7Kq
+=xOzC
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__2_Aug_2008_14_06_50_+1000_ISkAY9GDq13rjiXQ--
