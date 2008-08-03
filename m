@@ -1,39 +1,56 @@
-From: Thomas Meyer <thomas@m3y3r.de>
-Subject: next-20080801: BUG in pktcdvd while mounting dvd
-Date: Sun, 03 Aug 2008 14:18:04 +0200
-Message-ID: <1217765884.9907.5.camel@dhcppc0>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for July 29
+Date: Mon, 4 Aug 2008 00:56:11 +1000
+Message-ID: <20080804005611.edda857c.sfr@canb.auug.org.au>
+References: <20080729172337.b3d74100.sfr@canb.auug.org.au>
+	<20080729144558.GC32430@isilmar.linta.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__4_Aug_2008_00_56_11_+1000_jeGPjDl+JCGwc=nJ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from www17.your-server.de ([213.133.104.17]:48616 "EHLO
-	www17.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753572AbYHCMSB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Aug 2008 08:18:01 -0400
+Received: from chilli.pcug.org.au ([203.10.76.44]:32890 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755390AbYHCO4U (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 3 Aug 2008 10:56:20 -0400
+In-Reply-To: <20080729144558.GC32430@isilmar.linta.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linux-Next <linux-next@vger.kernel.org>, Linux-Kernel <linux-kernel@vger.kernel.org>, alan@lxorguk.ukuu.org.uk, petero2@telia.com
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
-Greetings.
+--Signature=_Mon__4_Aug_2008_00_56_11_+1000_jeGPjDl+JCGwc=nJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please have a look at this bug report:
+Hi Dominik,
 
-http://kerneloops.org/raw.php?rawid=47211
+On Tue, 29 Jul 2008 16:45:58 +0200 Dominik Brodowski <linux@dominikbrodowsk=
+i.net> wrote:
+>
+> On Tue, Jul 29, 2008 at 05:23:37PM +1000, Stephen Rothwell wrote:
+> > Changes since next-20080728:
+>=20
+> is linux-next now open for 2.6.28 stuff?
 
-reverting commit 5b6155ee70e9c4d2ad7e6f514c8eee06e2711c3a fixes the
-problem
+Yeah, I would say it is, now.  (Notice how I cleverly delayed it for a
+week :-))
 
-commit 5b6155ee70e9c4d2ad7e6f514c8eee06e2711c3a
-Author: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Date:   Fri Jul 4 09:29:16 2008 +0200
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-    pktcdvd: push BKL down into driver
-    
-    Push the lock_kernel down into the driver and switch to
-unlocked_ioctl
-    
-    [akpm@linux-foundation.org: build fix]
-    Signed-off-by: Alan Cox <alan@redhat.com>
-    Acked-by: Peter Osterlund <petero2@telia.com>
-    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-    Signed-off-by: Jens Axboe <jens.axboe@oracle.com>
+--Signature=_Mon__4_Aug_2008_00_56_11_+1000_jeGPjDl+JCGwc=nJ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiVxwsACgkQjjKRsyhoI8zsZQCgsZyzXPSlJg8BJaS70l8p+rAm
+WrUAnjrfIFbYd0nQRWwkDIZqFOoH2Nt1
+=kW3d
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__4_Aug_2008_00_56_11_+1000_jeGPjDl+JCGwc=nJ--
