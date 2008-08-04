@@ -1,49 +1,75 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: Heavy suspend and io problems in 2.6.27-rc1-00156-g94ad374
-Date: Mon, 4 Aug 2008 21:32:40 +0200
-Message-ID: <200808042132.41020.rjw@sisk.pl>
-References: <20080731210507.GA6094@denkbrett.schottelius.org> <20080804090654.GA4747@denkbrett.schottelius.org> <20080804161443.GA4905@denkbrett.schottelius.org>
+From: Nico -telmich- Schottelius <nico-linux-next-xuaVFQXs+5hIG4jRRZ66WA@public.gmane.org>
+Subject: Re: Updated Next/Trees, problems with nfs-git
+Date: Tue, 5 Aug 2008 00:30:50 +0200
+Message-ID: <20080804223050.GA4168@denkbrett.schottelius.org>
+References: <20080804134444.GC4182@denkbrett.schottelius.org> <20080804150940.GF4182@denkbrett.schottelius.org> <20080804173556.GA25940@fieldses.org>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:46753 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754336AbYHDT36 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 4 Aug 2008 15:29:58 -0400
-In-Reply-To: <20080804161443.GA4905@denkbrett.schottelius.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FL5UXtIhxfXey3p5"
+Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Nico Schottelius <nico-linux-kernel-bugreport20080731@schottelius.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+In-Reply-To: <20080804173556.GA25940-uC3wQj2KruNg9hUCZPvPmw@public.gmane.org>
+Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "J. Bruce Fields" <bfields-uC3wQj2KruNg9hUCZPvPmw@public.gmane.org>
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-On Monday, 4 of August 2008, Nico Schottelius wrote:
-> Hello again!
-> 
-> I retested it with linux-next + updates from its branches
-> (=2.6.27-rc1-next-20080804-denkbrett-03792-g1d2be1a)
-> 
-> with and without the patch.
-> 
-> The result is still the same as below.
-> 
-> No xorg is running, btw.
-> 
-> Sincerly,
-> 
-> Nico
-> 
-> ps: I am using this tree:
-> 
->    http://unix.schottelius.org/cgi-bin/gitweb.cgi?p=foreign/linux-2.6;a=summary
-> 
->    Which is linux-next-20080804 + merges from the listed branches.
 
-Well, fine, but this is not exactly helpful.
+--FL5UXtIhxfXey3p5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Can you test the current Linus' tree with the patch from bug #11178, please?
+Hello Bruce!
 
-Thanks,
-Rafael
+J. Bruce Fields [Mon, Aug 04, 2008 at 01:35:56PM -0400]:
+> On Mon, Aug 04, 2008 at 05:09:40PM +0200, Nico -telmich- Schottelius wrot=
+e:
+> > Hello again!
+> >=20
+> > Found out that #linux-next should have been #nfsd-next and updated
+> > the patch to match.
+> >=20
+> > Patch attached.
+>=20
+> I'm lost:
+>=20
+> > -nfs		git	git://git.linux-nfs.org/projects/trondmy/nfs-2.6.git#linux-ne=
+xt
+> > +nfs		git	git://git.linux-nfs.org/projects/trondmy/nfs-2.6.git#nfsd-next
+>=20
+> There is no branch named "nfsd-next" in that git repository.  (Do I
+> misunderstand how this file is supposed to work?)  The only nfsd-next I
+> know of is the one I push to at:
+>=20
+> 	git://linux-nfs.org/~bfields/linux.git nfsd-next
+
+Sorry, I was somehow confused by the error reported in my original mail,
+searched for something that matched my eyes and took the wrong git-tree
+at http://git.linux-nfs.org/.
+
+So it must in fact be
+git://git.linux-nfs.org/projects/trondmy/nfs-2.6.git#linux-next
+
+Sorry for the inconvenience!
+
+Nico
+
+--FL5UXtIhxfXey3p5
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiXgxoACgkQuL75KpiFGIxCVwCeLgOb70yLFLGoUe+GcK1VcGi3
+XmwAmwdkA4wFTr/jSmrDVE89wSkjh6R9
+=GGmU
+-----END PGP SIGNATURE-----
+
+--FL5UXtIhxfXey3p5--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
