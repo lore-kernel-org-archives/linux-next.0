@@ -1,53 +1,51 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: m68k build failure
-Date: Sun, 3 Aug 2008 22:00:55 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.0808032200190.23329@anakin>
-References: <20080730175233.02dbf021.sfr@canb.auug.org.au>
- <20080730.010234.193703201.davem@davemloft.net> <20080730084935.GA18545@uranus.ravnborg.org>
- <20080801153710.815bbb74.sfr@canb.auug.org.au> <Pine.LNX.4.64.0808011551120.30950@anakin>
- <20080801204157.GA12390@uranus.ravnborg.org> <20080802140650.ed81402d.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip-core tree
+Date: Mon, 4 Aug 2008 11:08:20 +1000
+Message-ID: <20080804110820.626f27df.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1759396AbYHCUBQ@vger.kernel.org>
-In-Reply-To: <20080802140650.ed81402d.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Sam Ravnborg <sam@ravnborg.org>, David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Linux Kernel Development <linux-kernel@vger.kernel.org>, Linux/m68k <linux-m68k@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__4_Aug_2008_11_08_20_+1000_XxeiE3Llt+GxyZXH"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46710 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752992AbYHDBIc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 3 Aug 2008 21:08:32 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>
 
-On Sat, 2 Aug 2008, Stephen Rothwell wrote:
-> On Fri, 1 Aug 2008 22:41:57 +0200 Sam Ravnborg <sam@ravnborg.org> wrote:
-> > On Fri, Aug 01, 2008 at 03:52:22PM +0200, Geert Uytterhoeven wrote:
-> > > BTW, is there a (good) way to have this without duplicating those header files?
-> > 
-> > The only solution I can come up with right now is:
-> > 
-> > Makefile:
-> > ccflags-y += -Iarch/sparc/include
-> > 
-> > foo.c:
-> > #include <asm/fbio.h>
-> > 
-> > Disadvantage is that we loose the explicit documentation that this
-> > is header files from another architecture.
-> > So we should at least add a comment saying this.
-> > 
-> > And the above would not work if the file has same filename,
-> > but then that is not a likely situation either.
-> 
-> There is at least one of the m68k header files that includes the sparc
-> file of the same name and then does other stuff.  So this scheme would
-> not cover that  (unless we used #include_next?) 
+--Signature=_Mon__4_Aug_2008_11_08_20_+1000_XxeiE3Llt+GxyZXH
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK, so I'll take Stephen's patch (thanks!) and send it to Linus.
+Hi all,
 
-Gr{oetje,eeting}s,
+Today's linux-next merge of the tip-core tree got a conflict in
+include/asm-generic/vmlinux.lds.h between commit
+c6de002617c199f80f9a2a713dffc263bdc69b81 ("Missing symbol prefix on
+vmlinux.lds.h") from Linus' tree and commit
+d3794979a8a80c222ce9d016a6dfc4bed36965d0 ("Zero based percpu:
+infrastructure to rebase the per cpu area to zero") from the tip-core
+tree.
 
-						Geert
+Just simple overlapping changes,  I fixed it up.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--Signature=_Mon__4_Aug_2008_11_08_20_+1000_XxeiE3Llt+GxyZXH
+Content-Type: application/pgp-signature
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiWVoQACgkQjjKRsyhoI8w+TQCfVYIhWU7mkMcPP93f8eU732je
+fwwAnj57Oc+2DSYC7bluj7/eFdN8N4r6
+=2xHA
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__4_Aug_2008_11_08_20_+1000_XxeiE3Llt+GxyZXH--
