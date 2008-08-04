@@ -1,100 +1,110 @@
-From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
-Subject: Re: Updated Next/Trees, problems with nfs-git
-Date: Mon, 4 Aug 2008 17:09:40 +0200
-Message-ID: <20080804150940.GF4182@denkbrett.schottelius.org>
-References: <20080804134444.GC4182@denkbrett.schottelius.org>
+From: Nico Schottelius
+	<nico-linux-kernel-bugreport20080731@schottelius.org>
+Subject: Re: Heavy suspend and io problems in 2.6.27-rc1-00156-g94ad374
+Date: Mon, 4 Aug 2008 18:14:43 +0200
+Message-ID: <20080804161443.GA4905@denkbrett.schottelius.org>
+References: <20080731210507.GA6094@denkbrett.schottelius.org> <200807312349.47817.rjw@sisk.pl> <20080804090654.GA4747@denkbrett.schottelius.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="e5bfZ/T2xnjpUIbw"
+	protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.schottelius.org ([62.65.138.77]:39293 "EHLO
+Received: from mx2.schottelius.org ([62.65.138.77]:34569 "EHLO
 	mx2.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752838AbYHDPJm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Aug 2008 11:09:42 -0400
+	with ESMTP id S1753556AbYHDQW5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Aug 2008 12:22:57 -0400
 Content-Disposition: inline
-In-Reply-To: <20080804134444.GC4182@denkbrett.schottelius.org>
+In-Reply-To: <20080804090654.GA4747@denkbrett.schottelius.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-nfs@vger.kernel.org
+To: Nico Schottelius <nico-linux-kernel-bugreport20080731@schottelius.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
 
---e5bfZ/T2xnjpUIbw
-Content-Type: multipart/mixed; boundary="8bBEDOJVaa9YlTAt"
+--3MwIy2ne0vdjdPXF
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-
-
---8bBEDOJVaa9YlTAt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hello again!
 
-Found out that #linux-next should have been #nfsd-next and updated
-the patch to match.
+I retested it with linux-next + updates from its branches
+(=3D2.6.27-rc1-next-20080804-denkbrett-03792-g1d2be1a)
 
-Patch attached.
+with and without the patch.
+
+The result is still the same as below.
+
+No xorg is running, btw.
+
+Sincerly,
 
 Nico
 
---8bBEDOJVaa9YlTAt
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment; filename="Trees.diff"
+ps: I am using this tree:
 
-Update Next/Trees
+   http://unix.schottelius.org/cgi-bin/gitweb.cgi?p=3Dforeign/linux-2.6;a=
+=3Dsummary
 
-Signed-off-by: Nico Schottelius <nico@denkbrett.schottelius.org>
+   Which is linux-next-20080804 + merges from the listed branches.
 
-diff --git a/Next/Trees b/Next/Trees
-index bae9377..94a3962 100644
---- a/Next/Trees
-+++ b/Next/Trees
-@@ -8,7 +8,7 @@ scsi-rc-fixes	git	git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi-rc-fix
- net-current	git	git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-2.6.git#master
- sparc-current	git	git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc-2.6.git#master
- sound-current	git	git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound-2.6.git#for-linus
--arm-current	git	ssh://master.kernel.org/home/rmk/linux-2.6-arm.git#master
-+arm-current	git	http://ftp.arm.linux.org.uk/pub/linux/arm/kernel/git-cur/linux-2.6-arm.git/#master
- pci-current	git	git://git.kernel.org/pub/scm/linux/kernel/git/jbarnes/pci-2.6#for-linus
- wireless-current	git	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-2.6.git#master
- kbuild-current	git	git://git.kernel.org/pub/scm/linux/kernel/git/sam/kbuild-fixes.git#master
-@@ -41,7 +41,7 @@ jfs		git	git://git.kernel.org/pub/scm/linux/kernel/git/shaggy/jfs-2.6.git#next
- kbuild		git	git://git.kernel.org/pub/scm/linux/kernel/git/sam/kbuild-next.git#master
- ide		quilt	http://kernel.org/pub/linux/kernel/people/bart/pata-2.6/patches/
- libata		git	git://git.kernel.org/pub/scm/linux/kernel/git/jgarzik/libata-dev.git#NEXT
--nfs		git	git://git.linux-nfs.org/projects/trondmy/nfs-2.6.git#linux-next
-+nfs		git	git://git.linux-nfs.org/projects/trondmy/nfs-2.6.git#nfsd-next
- xfs		git	git://oss.sgi.com:8090/xfs/xfs-2.6.git#master
- infiniband	git	git://git.kernel.org/pub/scm/linux/kernel/git/roland/infiniband.git#for-next
- acpi		git	git://git.kernel.org/pub/scm/linux/kernel/git/ak/linux-acpi-2.6.git#test
-@@ -70,7 +70,7 @@ wireless	git	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-nex
- crypto		git	git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6#master
- vfs		git	git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs-2.6.git#for-next
- sound		git	git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound-2.6.git#for-next
--arm		git	ssh://master.kernel.org/home/rmk/linux-2.6-arm.git#devel
-+arm		git	http://ftp.arm.linux.org.uk/pub/linux/arm/kernel/git-cur/linux-2.6-arm.git/#devel
- cpufreq		git	git://git.kernel.org/pub/scm/linux/kernel/git/davej/cpufreq.git#next
- v9fs		git	git://git.kernel.org/pub/scm/linux/kernel/git/ericvh/v9fs.git#for-next
- rr		quilt	http://ozlabs.org/~rusty/kernel/rr-latest/
-@@ -83,7 +83,7 @@ semaphore-removal	git	git://git.kernel.org/pub/scm/linux/kernel/git/willy/misc.g
- bkl-removal	git	git://git.lwn.net/linux-2.6.git#bkl-removal
- trivial		git	git://git.kernel.org/pub/scm/linux/kernel/git/juhl/trivial-2.6.git#next
- ubifs		git	git://git.infradead.org/~dedekind/ubifs-2.6.git#linux-next
--lsm		git	git://gitkernel.org/pub/scm/linux/kernel/git/chrisw/lsm-2.6.git#for-next
-+lsm		git	git://git.kernel.org/pub/scm/linux/kernel/git/chrisw/lsm-2.6.git#for-next
- block		git	git://git.kernel.dk/linux-2.6-block.git#for-next
- embedded	git	git://git.infradead.org/embedded-2.6.git#master
- firmware	git	git://git.infradead.org/users/dwmw2/firmware-2.6.git#master
-@@ -107,4 +107,4 @@ voltage		git	git://git.kernel.org/pub/scm/linux/kernel/git/lrg/voltage-2.6.git#r
- security-testing	git	git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/security-testing-2.6.git#next
- lblnet		git	git://git.infradead.org/users/pcmoore/lblnet-2.6_next#master
- ttydev		quilt	http://www.linux.org.uk/~alan/ttydev/
--agp		git	git://git.kernel.org//pub/scm/linux/kernel/git/airlied/agp-2.6.git#agp-next
-+agp		git	git://git.kernel.org/pub/scm/linux/kernel/git/airlied/agp-2.6.git#agp-next
+Nico Schottelius [Mon, Aug 04, 2008 at 11:06:54AM +0200]:
+> Hello Rafael!
+>=20
+> I tested the patch and also linux-next-20080801:
+>=20
+>    linux-next-20080801: does not wake up
+>    linux-next-20080801+patch: wakes up, console keeps on being black
+>       -> no xorg running, as it cannot be run due to synaptics bug
+>          (fixed in git, not in debian lenny packages)
+>=20
+> So I was able to type "reboot" when running the patch, while I had to
+> force power-off on the main linux-next-tree.
+>=20
+> I am back on 2.6.26-next-20080725, which suspends and wakes up fine.
+>=20
+> Sincerly,
+>=20
+> Nico
+>=20
+> Rafael J. Wysocki [Thu, Jul 31, 2008 at 11:49:47PM +0200]:
+> > On Thursday, 31 of July 2008, Nico Schottelius wrote:
+> > > Hello=A1
+> > >=20
+> > > I've some serious problems with this kernel on the ibm t60:
+> > >=20
+> > > - wake up from suspend takes about 30 seconds
+> > > - i need to switch to console and back to see xorg screen again (befo=
+re:
+> > >   only black)
+> > > - after wake up, I get disk input/output errors, no access to sda is
+> > >   possible
+> > >=20
+> > > As I could not do any dumps I took photos of the dmesg output with my
+> > > camera and put them in high resolution to
+> > >=20
+> > >    http://home.schottelius.org/~nico/unix/linux/kernel/2.6.27-rc1-001=
+56-g94ad374/
+> >=20
+> > Can you test the fix in http://bugzilla.kernel.org/show_bug.cgi?id=3D11=
+178, please?
+> >=20
+> > Thanks,
+> > Rafael
+>=20
+> --=20
+> Think about Free and Open Source Software (FOSS).
+> http://nico.schottelius.org/documentations/foss/the-term-foss/
+>=20
+> PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
 
---8bBEDOJVaa9YlTAt--
 
---e5bfZ/T2xnjpUIbw
+
+--=20
+Think about Free and Open Source Software (FOSS).
+http://nico.schottelius.org/documentations/foss/the-term-foss/
+
+PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
+
+--3MwIy2ne0vdjdPXF
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 Content-Disposition: inline
@@ -102,9 +112,9 @@ Content-Disposition: inline
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkiXG7QACgkQuL75KpiFGIz5dgCfdB1FONsmkmKBBXeb8+p/hUu0
-MgwAn0YC7Lgr8NmCsmD91F8oTveMLxjK
-=oKpO
+iEYEARECAAYFAkiXKvMACgkQuL75KpiFGIw25wCgxgNWJhczTbVTPJbYhbdwcjln
+yGwAnju66cLrmO5z+hkDvQyUVztrigzb
+=L1V9
 -----END PGP SIGNATURE-----
 
---e5bfZ/T2xnjpUIbw--
+--3MwIy2ne0vdjdPXF--
