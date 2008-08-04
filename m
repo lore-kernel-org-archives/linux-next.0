@@ -1,42 +1,61 @@
-From: Thomas Meyer <thomas@m3y3r.de>
-Subject: Re: next-20080725: System hangs while suspending to disk
-Date: Mon, 04 Aug 2008 13:35:19 +0200
-Message-ID: <1217849719.4896e9771be61@213.133.104.17>
-References: <1217145731.3053.6.camel@dhcppc2> <20080804112811.GA12844@atrey.karlin.mff.cuni.cz>
+From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
+Subject: Unfetchable (=non-public) arm branches
+Date: Mon, 4 Aug 2008 15:19:39 +0200
+Message-ID: <20080804131939.GA4182@denkbrett.schottelius.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from www17.your-server.de ([213.133.104.17]:38106 "EHLO
-	www17.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752570AbYHDLfo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Aug 2008 07:35:44 -0400
-In-Reply-To: <20080804112811.GA12844@atrey.karlin.mff.cuni.cz>
+Received: from mx2.schottelius.org ([62.65.138.77]:55870 "EHLO
+	mx2.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755875AbYHDNTm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Aug 2008 09:19:42 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pavel Machek <pavel@suse.cz>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: rmk@arm.linux.org.uk
 
-Zitat von Pavel Machek <pavel@suse.cz>:
 
-> > I tried to get some console output, so i tried "test" instead of
-> > plattform and got an oops in native_cpu_up().
-> > 
-> > When i do "echo 0 > /sys/devices/system/cpu/cpu1/online" and
-> > "echo 1 > /sys/devices/system/cpu/cpu1/online" again, i get the
-> > same Oops report (as compared to a "test run with state disk")
-> > 
-> >
->
-http://kerneloops.org/guilty.php?guilty=native_cpu_up&version=2.6.26-release&start=1736704&end=1769471&class=oops
-> > 
-> > What is wrong here?
-> 
-> You may want to ping cpu hotplug people.
+--cNdxnHkX5QqsyA0e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Problem is already solved. See commit 583323b9d2f624884a8c9563fb5a4d795f39ab07
+Hello!
 
-Vegard Nossum did take care of the problem. See also thread "-git: BUG: unable
-to handle kernel paging request at c0100248 [CPU hotplug]" from 27.07.
+I am trying to fetch the trees listed in Next/Trees, but the following
+two are not accessable for people without ssh-access to
+master.kernel.org:
 
-Suspending to disk works fine now.
+[15:16] denkbrett:Next% grep ssh:// Trees
+arm-current git
+ssh://master.kernel.org/home/rmk/linux-2.6-arm.git#master
+arm      git   ssh://master.kernel.org/home/rmk/linux-2.6-arm.git#devel
+
+Is it possible to make it public on git://git.kernel.org, too?
+
+Sincerly,
+
+Nico
+
+--=20
+Think about Free and Open Source Software (FOSS).
+http://nico.schottelius.org/documentations/foss/the-term-foss/
+
+PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
+
+--cNdxnHkX5QqsyA0e
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiXAesACgkQuL75KpiFGIzCPACg2eV12+fIqLWUwo0eP+E+ts25
+ed4AoK5WvHLvy0H2xeBmCm37LPfR536g
+=RNpB
+-----END PGP SIGNATURE-----
+
+--cNdxnHkX5QqsyA0e--
