@@ -1,50 +1,73 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm tree
-Date: Mon, 4 Aug 2008 13:13:09 +1000
-Message-ID: <20080804131309.165722e4.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: sparc tree build failure
+Date: Sun, 03 Aug 2008 21:26:20 -0700 (PDT)
+Message-ID: <20080803.212620.17129972.davem@davemloft.net>
+References: <20080725170527.00a7bf4a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__4_Aug_2008_13_13_09_+1000_Fb7d5UJ1/uL0dk4Q"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58963 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753892AbYHDDNT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 3 Aug 2008 23:13:19 -0400
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:50988
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1751092AbYHDE0U (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Aug 2008 00:26:20 -0400
+In-Reply-To: <20080725170527.00a7bf4a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@qumranet.com>
+To: sfr@canb.auug.org.au
 Cc: linux-next@vger.kernel.org
 
---Signature=_Mon__4_Aug_2008_13_13_09_+1000_Fb7d5UJ1/uL0dk4Q
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 25 Jul 2008 17:05:27 +1000
 
-Hi Avi,
+> Hi Dave,
+> 
+> Today's linux-next build (sparc defconfig) failed like this:
+> 
+>   Building modules, stage 2.
+> .tmp_kallsyms2.o(.rodata+0x0): In function `kallsyms_addresses':
+> : relocation truncated to fit: R_SPARC_32 _text
 
-Today's linux-next merge of the kvm tree got a conflict in
-include/linux/kvm.h between commit
-ed8486243379ef3e6c61363df915882945c0eaec ("KVM: Advertise synchronized
-mmu support to userspace") from Linus' tree (which also extsts in the kvm
-tree) and commit a6a19661fc371c188b9cdeceba402b93de2b957f ("KVM: pci
-device assignment") from the kvm tree.
+FWIW, Sam had narrowed it down to:
 
-Just a contextual overlap.  I fixed it up.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+commit fd593d12770d4a0d1ff095d44b96436c18479ee8
+Author: Eric W. Biederman <ebiederm@xmission.com>
+Date:   Thu Dec 7 02:14:04 2006 +0100
 
---Signature=_Mon__4_Aug_2008_13_13_09_+1000_Fb7d5UJ1/uL0dk4Q
-Content-Type: application/pgp-signature
+    [PATCH] relocatable kernel: Kallsyms generate relocatable symbols
+    
+    Print the addresses of non-absolute symbols relative to _text
+    so that ld will generate relocations.  Allowing a relocatable
+    kernel to relocate them.  We can't actually use the symbol names
+    because kallsyms includes static symbols that are not exported
+    from their object files.
+    
+    Add the _text symbol definitions to the architectures which don't
+    define it otherwise linker will fail.
+    
+    Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+    Signed-off-by: Vivek Goyal <vgoyal@in.ibm.com>
+    Signed-off-by: Andi Kleen <ak@suse.de>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+and
 
-iEYEARECAAYFAkiWc8UACgkQjjKRsyhoI8wdLQCeL+vuvdhyB1vQcvygd5/eHJXI
-peUAn2GBXaIXxYgslnXUp7i/LVvyeO+2
-=sTfd
------END PGP SIGNATURE-----
+commit 2c22d8baa98a92022acb85b0b7c6f4a60df55f47
+Author: Vivek Goyal <vgoyal@in.ibm.com>
+Date:   Thu Dec 7 02:14:10 2006 +0100
 
---Signature=_Mon__4_Aug_2008_13_13_09_+1000_Fb7d5UJ1/uL0dk4Q--
+    [PATCH] relocatable kernel: Fix kallsyms on avr32 after relocatable kernel changes
+    
+    o On some platforms like avr32, section init comes before .text and
+      not necessarily a symbol's relative position w.r.t _text is positive.
+      In such cases assembler detects the overflow and emits warning. This
+      patch fixes it.
+    
+    Signed-off-by: Vivek Goyal <vgoyal@in.ibm.com>
+    Signed-off-by: Andi Kleen <ak@suse.de>
+    Cc: Andi Kleen <ak@suse.de>
+    Cc: Haavard Skinnemoen <hskinnemoen@atmel.com>
+    Signed-off-by: Andrew Morton <akpm@osdl.org>
+
+but I personally still can't reproduce this.  I even had the gcc-3.4.5
+that's installed on my box, using defconfig just like you, and I can't
+trigger this problem.
