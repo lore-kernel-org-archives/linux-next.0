@@ -1,68 +1,55 @@
-From: Nico Schottelius
-	<nico-linux-kernel-bugreport20080731@schottelius.org>
-Subject: Re: Heavy suspend and io problems in 2.6.27-rc1-00156-g94ad374
-Date: Tue, 5 Aug 2008 01:37:12 +0200
-Message-ID: <20080804233712.GA4181@denkbrett.schottelius.org>
-References: <20080731210507.GA6094@denkbrett.schottelius.org> <20080804090654.GA4747@denkbrett.schottelius.org> <20080804161443.GA4905@denkbrett.schottelius.org> <200808042132.41020.rjw@sisk.pl>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Merge report: unmergable (conflicting) tree: v4l-dvb
+Date: Tue, 5 Aug 2008 09:46:15 +1000
+Message-ID: <20080805094615.0bed1cf6.sfr@canb.auug.org.au>
+References: <20080804144718.GE4182@denkbrett.schottelius.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="gBBFr7Ir9EOA20Yy"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__5_Aug_2008_09_46_15_+1000_BuXXm.JAOg4=A1TQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.schottelius.org ([62.65.138.77]:42616 "EHLO
-	mx2.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752983AbYHDXhV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Aug 2008 19:37:21 -0400
-Content-Disposition: inline
-In-Reply-To: <200808042132.41020.rjw@sisk.pl>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36303 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753252AbYHDXq3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 4 Aug 2008 19:46:29 -0400
+In-Reply-To: <20080804144718.GE4182@denkbrett.schottelius.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Nico Schottelius <nico-linux-kernel-bugreport20080731@schottelius.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
+Cc: linux-next@vger.kernel.org
 
-
---gBBFr7Ir9EOA20Yy
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Tue__5_Aug_2008_09_46_15_+1000_BuXXm.JAOg4=A1TQ
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Rafael J. Wysocki [Mon, Aug 04, 2008 at 09:32:40PM +0200]:
-> On Monday, 4 of August 2008, Nico Schottelius wrote:
-> >=20
-> > I retested it with linux-next + updates from its branches
-> > (=3D2.6.27-rc1-next-20080804-denkbrett-03792-g1d2be1a)
->=20
-> Well, fine, but this is not exactly helpful.
->=20
-> Can you test the current Linus' tree with the patch from bug #11178, plea=
-se?
+Hi Nico,
 
-I am using 2.6.27-rc1-denkbrett-00555-g8f616cd-dirty now, latest fetch
-=66rom Linus' tree + the patch and the problem is the same: Wakeup works,
-but screen keeps on being blank.
+On Mon, 4 Aug 2008 16:47:18 +0200 Nico -telmich- Schottelius <nico-linux-ne=
+xt@schottelius.org> wrote:
+>
+> In my effort to merge all the trees, all but one was successful
+> (v4l-dvb).
 
-I am running next-20080725 now again, which works.
+At the top of my daily report you will see:
 
-Sincerly,
-
-Nico
+"Temporarily dropped tree: v4l-dvb (got lots of conflicts against the
+version that was merged to Linus)."
 
 --=20
-Think about Free and Open Source Software (FOSS).
-http://nico.schottelius.org/documentations/foss/the-term-foss/
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
-
---gBBFr7Ir9EOA20Yy
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
+--Signature=_Tue__5_Aug_2008_09_46_15_+1000_BuXXm.JAOg4=A1TQ
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkiXkqgACgkQuL75KpiFGIw3VACdHcmeaD6mNROGVDMjKICDzi7d
-Hg8AoJcGXlud3LUtTMpbEk9FePiFgDJO
-=OHEx
+iEYEARECAAYFAkiXlMcACgkQjjKRsyhoI8zwTgCfbexPea7QKyppFIBTfePnV7Jf
+HGUAoKCAmXOgidW8pZOAE30mn4UjZKgr
+=RqWI
 -----END PGP SIGNATURE-----
 
---gBBFr7Ir9EOA20Yy--
+--Signature=_Tue__5_Aug_2008_09_46_15_+1000_BuXXm.JAOg4=A1TQ--
