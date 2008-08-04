@@ -1,52 +1,47 @@
 From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
-Subject: Updated Next/Trees, problems with nfs-git
-Date: Mon, 4 Aug 2008 15:44:44 +0200
-Message-ID: <20080804134444.GC4182@denkbrett.schottelius.org>
+Subject: What's *NOT* in linux-next
+Date: Mon, 4 Aug 2008 16:32:20 +0200
+Message-ID: <20080804143220.GD4182@denkbrett.schottelius.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="pQhZXvAqiZgbeUkD"
+	protocol="application/pgp-signature"; boundary="47eKBCiAZYFK5l32"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.schottelius.org ([62.65.138.77]:60745 "EHLO
+Received: from mx2.schottelius.org ([62.65.138.77]:35144 "EHLO
 	mx2.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752190AbYHDNoq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Aug 2008 09:44:46 -0400
+	with ESMTP id S1757496AbYHDOcW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Aug 2008 10:32:22 -0400
+Received: from denkbrett.schottelius.org (natgw.netstream.ch [62.65.128.28])
+	(using TLSv1 with cipher ADH-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by mx2.schottelius.org (Postfix) with ESMTPSA id 38E112F9DAF
+	for <linux-next@vger.kernel.org>; Mon,  4 Aug 2008 16:32:17 +0200 (CEST)
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: linux-next@vger.kernel.org
-Cc: linux-nfs@vger.kernel.org
 
 
---pQhZXvAqiZgbeUkD
-Content-Type: multipart/mixed; boundary="qtZFehHsKgwS5rPz"
-Content-Disposition: inline
-
-
---qtZFehHsKgwS5rPz
+--47eKBCiAZYFK5l32
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hello!
 
-I just tried to fetch all trees listed in Next/Trees.
-Therefore I updated Trees to have arm via http instead of master ssh
-(so non-kernel-devs can fetch it) and updated a typo for lsm and agp.
+As I've the problem that linux-next is rebased and I want a merged path,
+I am also interested in what is in the trees Stephen follows, but is not
+merged into linux-next.
 
-The scripts I use can be found in my ~/bin-git:
+The script at
 
-http://unix.schottelius.org/cgi-bin/gitweb.cgi?p=3Dnsbin;a=3Dcommit;h=3D41a=
-bb532b828c1c704d10566918c2d42637d161d
+   http://unix.schottelius.org/cgi-bin/gitweb.cgi?p=3Dnsbin;a=3Dblob;f=3Dli=
+nux/cherry-branches.sh;h=3D15006458d51d049f6453cb8f9459a068baf8f0dc;hb=3D38=
+01d72e51a1c72dd10bac6c715b532ed8e17a4d
 
-The patch for Trees in attached (Signed-off-by: Nico Schottelius <nico@denk=
-brett.schottelius.org>).
+prints out the missing commits, prefixed by the remote name.
 
-The nfs-tree failed:
-
-[15:37] denkbrett:linux-nico% sh ~/bin/linux/merge-branches.sh
-fatal: Couldn't find remote ref refs/heads/linux-next
-Problem with nfs (see above)
-
+This allows me now to check those remote with changes and check whether
+they could be merged without the need to rebase stuff.
 
 Sincerly,
 
@@ -58,49 +53,7 @@ http://nico.schottelius.org/documentations/foss/the-term-foss/
 
 PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
 
---qtZFehHsKgwS5rPz
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment; filename="Trees.diff"
-
---- Trees.orig	2008-08-04 15:16:12.152650055 +0200
-+++ Trees	2008-08-04 15:39:45.543588078 +0200
-@@ -8,7 +8,7 @@
- net-current	git	git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-2.6.git#master
- sparc-current	git	git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc-2.6.git#master
- sound-current	git	git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound-2.6.git#for-linus
--arm-current	git	ssh://master.kernel.org/home/rmk/linux-2.6-arm.git#master
-+arm-current	git	http://ftp.arm.linux.org.uk/pub/linux/arm/kernel/git-cur/linux-2.6-arm.git/#master
- pci-current	git	git://git.kernel.org/pub/scm/linux/kernel/git/jbarnes/pci-2.6#for-linus
- wireless-current	git	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-2.6.git#master
- kbuild-current	git	git://git.kernel.org/pub/scm/linux/kernel/git/sam/kbuild-fixes.git#master
-@@ -70,7 +70,7 @@
- crypto		git	git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6#master
- vfs		git	git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs-2.6.git#for-next
- sound		git	git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound-2.6.git#for-next
--arm		git	ssh://master.kernel.org/home/rmk/linux-2.6-arm.git#devel
-+arm		git	http://ftp.arm.linux.org.uk/pub/linux/arm/kernel/git-cur/linux-2.6-arm.git/#devel
- cpufreq		git	git://git.kernel.org/pub/scm/linux/kernel/git/davej/cpufreq.git#next
- v9fs		git	git://git.kernel.org/pub/scm/linux/kernel/git/ericvh/v9fs.git#for-next
- rr		quilt	http://ozlabs.org/~rusty/kernel/rr-latest/
-@@ -83,7 +83,7 @@
- bkl-removal	git	git://git.lwn.net/linux-2.6.git#bkl-removal
- trivial		git	git://git.kernel.org/pub/scm/linux/kernel/git/juhl/trivial-2.6.git#next
- ubifs		git	git://git.infradead.org/~dedekind/ubifs-2.6.git#linux-next
--lsm		git	git://gitkernel.org/pub/scm/linux/kernel/git/chrisw/lsm-2.6.git#for-next
-+lsm		git	git://git.kernel.org/pub/scm/linux/kernel/git/chrisw/lsm-2.6.git#for-next
- block		git	git://git.kernel.dk/linux-2.6-block.git#for-next
- embedded	git	git://git.infradead.org/embedded-2.6.git#master
- firmware	git	git://git.infradead.org/users/dwmw2/firmware-2.6.git#master
-@@ -107,4 +107,4 @@
- security-testing	git	git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/security-testing-2.6.git#next
- lblnet		git	git://git.infradead.org/users/pcmoore/lblnet-2.6_next#master
- ttydev		quilt	http://www.linux.org.uk/~alan/ttydev/
--agp		git	git://git.kernel.org//pub/scm/linux/kernel/git/airlied/agp-2.6.git#agp-next
-+agp		git	git://git.kernel.org/pub/scm/linux/kernel/git/airlied/agp-2.6.git#agp-next
-
---qtZFehHsKgwS5rPz--
-
---pQhZXvAqiZgbeUkD
+--47eKBCiAZYFK5l32
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 Content-Disposition: inline
@@ -108,9 +61,9 @@ Content-Disposition: inline
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkiXB8wACgkQuL75KpiFGIyTnACg3MgTuDUAP1XekZdc/sOyzXXZ
-V30AnjaWNtRmD7JsUcqoyB05lu5aQ6VB
-=3F9g
+iEYEARECAAYFAkiXEvQACgkQuL75KpiFGIwORgCgq8Fr3otALIcW4fyPVywLnbre
++ewAoIMlUiSdCR+IkBdZo3Et6Lp28KYV
+=hyc0
 -----END PGP SIGNATURE-----
 
---pQhZXvAqiZgbeUkD--
+--47eKBCiAZYFK5l32--
