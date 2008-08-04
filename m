@@ -1,51 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip-core tree
-Date: Mon, 4 Aug 2008 11:08:20 +1000
-Message-ID: <20080804110820.626f27df.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree
+Date: Mon, 4 Aug 2008 13:13:09 +1000
+Message-ID: <20080804131309.165722e4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__4_Aug_2008_11_08_20_+1000_XxeiE3Llt+GxyZXH"
+ boundary="Signature=_Mon__4_Aug_2008_13_13_09_+1000_Fb7d5UJ1/uL0dk4Q"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46710 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58963 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752992AbYHDBIc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 3 Aug 2008 21:08:32 -0400
+	id S1753892AbYHDDNT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 3 Aug 2008 23:13:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>
+To: Avi Kivity <avi@qumranet.com>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Mon__4_Aug_2008_11_08_20_+1000_XxeiE3Llt+GxyZXH
+--Signature=_Mon__4_Aug_2008_13_13_09_+1000_Fb7d5UJ1/uL0dk4Q
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Avi,
 
-Today's linux-next merge of the tip-core tree got a conflict in
-include/asm-generic/vmlinux.lds.h between commit
-c6de002617c199f80f9a2a713dffc263bdc69b81 ("Missing symbol prefix on
-vmlinux.lds.h") from Linus' tree and commit
-d3794979a8a80c222ce9d016a6dfc4bed36965d0 ("Zero based percpu:
-infrastructure to rebase the per cpu area to zero") from the tip-core
-tree.
+Today's linux-next merge of the kvm tree got a conflict in
+include/linux/kvm.h between commit
+ed8486243379ef3e6c61363df915882945c0eaec ("KVM: Advertise synchronized
+mmu support to userspace") from Linus' tree (which also extsts in the kvm
+tree) and commit a6a19661fc371c188b9cdeceba402b93de2b957f ("KVM: pci
+device assignment") from the kvm tree.
 
-Just simple overlapping changes,  I fixed it up.
+Just a contextual overlap.  I fixed it up.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__4_Aug_2008_11_08_20_+1000_XxeiE3Llt+GxyZXH
+--Signature=_Mon__4_Aug_2008_13_13_09_+1000_Fb7d5UJ1/uL0dk4Q
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkiWVoQACgkQjjKRsyhoI8w+TQCfVYIhWU7mkMcPP93f8eU732je
-fwwAnj57Oc+2DSYC7bluj7/eFdN8N4r6
-=2xHA
+iEYEARECAAYFAkiWc8UACgkQjjKRsyhoI8wdLQCeL+vuvdhyB1vQcvygd5/eHJXI
+peUAn2GBXaIXxYgslnXUp7i/LVvyeO+2
+=sTfd
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__4_Aug_2008_11_08_20_+1000_XxeiE3Llt+GxyZXH--
+--Signature=_Mon__4_Aug_2008_13_13_09_+1000_Fb7d5UJ1/uL0dk4Q--
