@@ -1,65 +1,70 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: crypto tree build failure
-Date: Tue, 5 Aug 2008 22:05:04 +0800
-Message-ID: <20080805140503.GB23405@gondor.apana.org.au>
-References: <20080805140257.7fad0dc0.sfr@canb.auug.org.au> <20080805053628.GA19574@gondor.apana.org.au> <20080805233300.e98f9da5.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: mfd tree build failure
+Date: Wed, 6 Aug 2008 00:08:56 +1000
+Message-ID: <20080806000856.a5609577.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__6_Aug_2008_00_08_56_+1000_kXJ6ISu6psPaPn_t"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rhun.apana.org.au ([64.62.148.172]:48419 "EHLO
-	arnor.apana.org.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1754331AbYHEOFF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Aug 2008 10:05:05 -0400
-Content-Disposition: inline
-In-Reply-To: <20080805233300.e98f9da5.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49713 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753175AbYHEOJI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Aug 2008 10:09:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Samuel Ortiz <sameo@openedhand.com>
+Cc: linux-next@vger.kernel.org, Ian Molton <spyro@f2s.com>, "David S. Miller" <davem@davemloft.net>
 
-On Tue, Aug 05, 2008 at 11:33:00PM +1000, Stephen Rothwell wrote:
-> Hi Herbert,
-> 
-> On Tue, 5 Aug 2008 13:36:28 +0800 Herbert Xu <herbert@gondor.apana.org.au> wrote:
-> >
-> > I've fixed it with the following patch.
-> > 
-> > --
-> > diff --git a/crypto/Kconfig b/crypto/Kconfig
-> > index 4f72b30..a3f4b4f 100644
-> > --- a/crypto/Kconfig
-> > +++ b/crypto/Kconfig
-> > @@ -40,7 +40,9 @@ config CRYPTO_HASH
-> >  
-> >  config CRYPTO_MANAGER
-> >  	tristate "Cryptographic algorithm manager"
-> > -	select CRYPTO_ALGAPI
-> > +	select CRYPTO_AEAD
-> > +	select CRYPTO_HASH
-> > +	select CRYPTO_BLKCIPHER
-> >  	help
-> >  	  Create default cryptographic template instantiations such as
-> >  	  cbc(aes).
-> > @@ -85,9 +87,7 @@ config CRYPTO_AUTHENC
-> >  config CRYPTO_TEST
-> >  	tristate "Testing module"
-> >  	depends on m
-> > -	select CRYPTO_ALGAPI
-> > -	select CRYPTO_AEAD
-> > -	select CRYPTO_BLKCIPHER
-> > +	select CRYPTO_MANAGER
-> >  	help
-> >  	  Quick & dirty crypto test module.
-> 
-> I am guessing that will help with these errors as well?
-> 
-> testmgr.c:(.text+0x6404): undefined reference to `.crypto_alloc_ablkcipher
+--Signature=_Wed__6_Aug_2008_00_08_56_+1000_kXJ6ISu6psPaPn_t
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes it should.
+Hi Samuel,
 
+Today's linux-next build (sparc allmodconfig) failed like this:
+
+drivers/mfd/t7l66xb.c:167: error: implicit declaration of function `get_irq=
+_data'
+drivers/mfd/t7l66xb.c:177: error: implicit declaration of function `generic=
+_handle_irq'
+drivers/mfd/t7l66xb.c:182: error: implicit declaration of function `get_irq=
+_chip_data'
+drivers/mfd/t7l66xb.c:224: error: implicit declaration of function `set_irq=
+_chip'
+drivers/mfd/t7l66xb.c:225: error: implicit declaration of function `set_irq=
+_chip_data'
+drivers/mfd/t7l66xb.c:226: error: implicit declaration of function `set_irq=
+_handler'
+drivers/mfd/t7l66xb.c:226: error: `handle_level_irq' undeclared (first use =
+in this function)
+drivers/mfd/t7l66xb.c:226: error: (Each undeclared identifier is reported o=
+nly once
+drivers/mfd/t7l66xb.c:226: error: for each function it appears in.)
+drivers/mfd/t7l66xb.c:232: error: implicit declaration of function `set_irq=
+_type'
+drivers/mfd/t7l66xb.c:233: error: implicit declaration of function `set_irq=
+_data'
+drivers/mfd/t7l66xb.c:234: error: implicit declaration of function `set_irq=
+_chained_handler'
+
+This has actually been happening since Aug 1.
+
+--=20
 Cheers,
--- 
-Visit Openswan at http://www.openswan.org/
-Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__6_Aug_2008_00_08_56_+1000_kXJ6ISu6psPaPn_t
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiYXvgACgkQjjKRsyhoI8wjTACfacFT8pVzac3miUgl49iXAg7b
+PGoAn37XZcMcojZWhIt6sWWkQuEGhcKF
+=qHiX
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__6_Aug_2008_00_08_56_+1000_kXJ6ISu6psPaPn_t--
