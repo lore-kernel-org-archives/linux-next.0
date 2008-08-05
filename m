@@ -1,67 +1,55 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: crypto tree build failure
-Date: Tue, 5 Aug 2008 13:36:28 +0800
-Message-ID: <20080805053628.GA19574@gondor.apana.org.au>
-References: <20080805140257.7fad0dc0.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: wireless-current tree build failure
+Date: Tue, 5 Aug 2008 16:21:52 +1000
+Message-ID: <20080805162152.2b55ae5c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__5_Aug_2008_16_21_52_+1000_a57gTnvlpP_RUlqf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rhun.apana.org.au ([64.62.148.172]:49723 "EHLO
-	arnor.apana.org.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753666AbYHEFgb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Aug 2008 01:36:31 -0400
-Content-Disposition: inline
-In-Reply-To: <20080805140257.7fad0dc0.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41559 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750723AbYHEGWX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Aug 2008 02:22:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, David Miller <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>, "Luis R. Rodriguez" <lrodriguez@atheros.com>
 
-On Tue, Aug 05, 2008 at 02:02:57PM +1000, Stephen Rothwell wrote:
-> Hi Herbert,
-> 
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> 
-> crypto/built-in.o: In function `.test_aead':
-> testmgr.c:(.text+0x8378): undefined reference to `.crypto_aead_setauthsize'
-> testmgr.c:(.text+0x874c): undefined reference to `.crypto_aead_setauthsize'
-> crypto/built-in.o: In function `.alg_test_aead':
-> testmgr.c:(.text+0x8bb4): undefined reference to `.crypto_alloc_aead'
-> 
-> I added the following patch.
+--Signature=_Tue__5_Aug_2008_16_21_52_+1000_a57gTnvlpP_RUlqf
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks Stephen.  I've fixed it with the following patch.
+Hi John,
 
+Today's linux-next build (powerpc allyesconfig) failed like this:
+
+drivers/net/wireless/ath9k/hw.c: In function 'ath9k_hw_9280_spur_mitigate':
+drivers/net/wireless/ath9k/hw.c:4660: internal compiler error: in expand_ex=
+pr_real_1, at expr.c:9199
+
+Clearly not our fault! :-) I have informed our toolchain person.  This
+was using the Debian gcc-4.3.  It also fails using the Debian 4.2
+compiler but not the 4.1 one.
+
+For now, I will apply the following patch to just stop it building on
+PowerPC.
+
+--=20
 Cheers,
--- 
-Visit Openswan at http://www.openswan.org/
-Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
---
-diff --git a/crypto/Kconfig b/crypto/Kconfig
-index 4f72b30..a3f4b4f 100644
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@ -40,7 +40,9 @@ config CRYPTO_HASH
- 
- config CRYPTO_MANAGER
- 	tristate "Cryptographic algorithm manager"
--	select CRYPTO_ALGAPI
-+	select CRYPTO_AEAD
-+	select CRYPTO_HASH
-+	select CRYPTO_BLKCIPHER
- 	help
- 	  Create default cryptographic template instantiations such as
- 	  cbc(aes).
-@@ -85,9 +87,7 @@ config CRYPTO_AUTHENC
- config CRYPTO_TEST
- 	tristate "Testing module"
- 	depends on m
--	select CRYPTO_ALGAPI
--	select CRYPTO_AEAD
--	select CRYPTO_BLKCIPHER
-+	select CRYPTO_MANAGER
- 	help
- 	  Quick & dirty crypto test module.
- 
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__5_Aug_2008_16_21_52_+1000_a57gTnvlpP_RUlqf
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiX8YEACgkQjjKRsyhoI8zKogCfQZ+T2UdUsrR/IDt9RYaEGPoA
+99wAn0k7H6CBAscrsD/gqtHyBoY6eJWe
+=j6yf
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__5_Aug_2008_16_21_52_+1000_a57gTnvlpP_RUlqf--
