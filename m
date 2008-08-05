@@ -1,58 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: wireless-current tree build failure
-Date: Wed, 6 Aug 2008 02:35:52 +1000
-Message-ID: <20080806023552.604deebe.sfr@canb.auug.org.au>
-References: <20080805162152.2b55ae5c.sfr@canb.auug.org.au>
-	<20080805153757.GB22895@cs181140183.pp.htv.fi>
-	<20080805160026.GA14186@tuxdriver.com>
+From: Samuel Ortiz <sameo@openedhand.com>
+Subject: Re: linux-next: mfd tree build failure
+Date: Tue, 5 Aug 2008 19:40:48 +0200
+Message-ID: <20080805174047.GE6335@caravaggio>
+References: <20080806000856.a5609577.sfr@canb.auug.org.au> <1217950794.18866.32.camel@wirenth> <20080806020540.c22b1fa0.sfr@canb.auug.org.au> <20080805160840.GC6335@caravaggio> <20080806021614.965a5389.sfr@canb.auug.org.au>
+Reply-To: Samuel Ortiz <sameo@openedhand.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__6_Aug_2008_02_35_52_+1000_msCt9SvUnmol.F5i"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52898 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757704AbYHEQf7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 Aug 2008 12:35:59 -0400
-In-Reply-To: <20080805160026.GA14186@tuxdriver.com>
+Received: from 3a.49.1343.static.theplanet.com ([67.19.73.58]:44175 "EHLO
+	pug.o-hand.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759424AbYHERkx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Aug 2008 13:40:53 -0400
+Content-Disposition: inline
+In-Reply-To: <20080806021614.965a5389.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: Adrian Bunk <bunk@kernel.org>, linux-next@vger.kernel.org, David Miller <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>, "Luis R. Rodriguez" <lrodriguez@atheros.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: ian <spyro@f2s.com>, linux-next@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
---Signature=_Wed__6_Aug_2008_02_35_52_+1000_msCt9SvUnmol.F5i
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi John,
+On Wed, Aug 06, 2008 at 02:16:14AM +1000, Stephen Rothwell wrote:
+> On Tue, 5 Aug 2008 18:08:42 +0200 Samuel Ortiz <sameo@openedhand.com> wrote:
+> >
+> > :-) I'll take care of it, yep.
+> 
+> Thanks, I look forward to it.
+It should be fixed by now.
+All TMIO devices depend on ARM, and the MMC and NAND drivers now depend
+on a new symbol (MFD_TMIO) selected when choosing one of the TMIO devices.
 
-On Tue, 5 Aug 2008 12:00:26 -0400 "John W. Linville" <linville@tuxdriver.co=
-m> wrote:
->
-> I imagine that we would be happy to do that.  Anyone have a clue as to ho=
-w?
-
-I think that "not yet" is the answer :-(
-
-If we don't get a useful answer soon, we may just have to merge the
-driver with appropriately commented negative "depends on" in Kconfig for
-the arches it breaks.
-
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__6_Aug_2008_02_35_52_+1000_msCt9SvUnmol.F5i
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkiYgWgACgkQjjKRsyhoI8wSjACeKVR1n7yBBXpaIISHU5xayr0B
-owQAnRjx12+Puvto7jbu5eWtRPMjXFaH
-=KdQo
------END PGP SIGNATURE-----
-
---Signature=_Wed__6_Aug_2008_02_35_52_+1000_msCt9SvUnmol.F5i--
+Samuel.
