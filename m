@@ -1,45 +1,53 @@
-From: Samuel Ortiz <sameo@openedhand.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: mfd tree build failure
-Date: Tue, 5 Aug 2008 18:08:42 +0200
-Message-ID: <20080805160840.GC6335@caravaggio>
-References: <20080806000856.a5609577.sfr@canb.auug.org.au> <1217950794.18866.32.camel@wirenth> <20080806020540.c22b1fa0.sfr@canb.auug.org.au>
-Reply-To: Samuel Ortiz <sameo@openedhand.com>
+Date: Wed, 6 Aug 2008 02:16:14 +1000
+Message-ID: <20080806021614.965a5389.sfr@canb.auug.org.au>
+References: <20080806000856.a5609577.sfr@canb.auug.org.au>
+	<1217950794.18866.32.camel@wirenth>
+	<20080806020540.c22b1fa0.sfr@canb.auug.org.au>
+	<20080805160840.GC6335@caravaggio>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__6_Aug_2008_02_16_14_+1000_bRJk/Kn2V4wWuJ/_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 3a.49.1343.static.theplanet.com ([67.19.73.58]:36739 "EHLO
-	pug.o-hand.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760855AbYHEQIs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 Aug 2008 12:08:48 -0400
-Content-Disposition: inline
-In-Reply-To: <20080806020540.c22b1fa0.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:53846 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755655AbYHEQQW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Aug 2008 12:16:22 -0400
+In-Reply-To: <20080805160840.GC6335@caravaggio>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Samuel Ortiz <sameo@openedhand.com>
 Cc: ian <spyro@f2s.com>, linux-next@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
-On Wed, Aug 06, 2008 at 02:05:40AM +1000, Stephen Rothwell wrote:
-> Hi Ian,
-> 
-> On Tue, 05 Aug 2008 16:39:54 +0100 ian <spyro@f2s.com> wrote:
-> >
-> > I'd have expected the other TMIO drivers to fail too.
-> > 
-> > get_irq_data is defined in linux/irq.h only if 
-> > 
-> > CONFIG_GENERIC_HARDIRQs is set and you arent on S390 (so why doesnt S390
-> > fail?)
-> > 
-> > I dont see this as a big problem. As far as Im concerned, all the TMIO
-> > drivers can depend on CONFIG_ARM.
-> > 
-> > It may not be a bad idea to add CONFIG_MFD_TMIO_SUBDEVICE so that TMIO
-> > sub device drivers can only be selected when TMIO cores are selected.
-> > This would neatly fix the earlier problem, rather than making al lthe
-> > subdevices CONFIG_ARM.
-> 
-> It'd be real nice if someone did a patch to that effect :-)
-:-) I'll take care of it, yep.
+--Signature=_Wed__6_Aug_2008_02_16_14_+1000_bRJk/Kn2V4wWuJ/_
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Samuel,
+
+On Tue, 5 Aug 2008 18:08:42 +0200 Samuel Ortiz <sameo@openedhand.com> wrote:
+>
+> :-) I'll take care of it, yep.
+
+Thanks, I look forward to it.
+
+--=20
 Cheers,
-Samuel.
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__6_Aug_2008_02_16_14_+1000_bRJk/Kn2V4wWuJ/_
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiYfM4ACgkQjjKRsyhoI8zWKACgjpslIM78VWbvXsYQlQLRK3ng
+55UAoJELfM0t374csmh6vw1lbZqq7hTf
+=R6UE
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__6_Aug_2008_02_16_14_+1000_bRJk/Kn2V4wWuJ/_--
