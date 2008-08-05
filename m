@@ -1,29 +1,45 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Subject: Re: linux-next: Tree for August 5
-Date: Tue, 05 Aug 2008 16:55:24 +0100
-Message-ID: <1217951724.3454.776.camel@pmac.infradead.org>
-References: <20080805175914.7649537f.sfr@canb.auug.org.au>
-	 <48987694.2030403@s5r6.in-berlin.de>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: linux-next: wireless-current tree build failure
+Date: Tue, 5 Aug 2008 12:00:26 -0400
+Message-ID: <20080805160026.GA14186@tuxdriver.com>
+References: <20080805162152.2b55ae5c.sfr@canb.auug.org.au> <20080805153757.GB22895@cs181140183.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:47028 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757868AbYHEQ0O (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Aug 2008 12:26:14 -0400
-In-Reply-To: <48987694.2030403@s5r6.in-berlin.de>
+Received: from ra.tuxdriver.com ([70.61.120.52]:4951 "EHLO ra.tuxdriver.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758331AbYHEQcd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Aug 2008 12:32:33 -0400
+Content-Disposition: inline
+In-Reply-To: <20080805153757.GB22895@cs181140183.pp.htv.fi>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Adrian Bunk <bunk@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, David Miller <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>, "Luis R. Rodriguez" <lrodriguez@atheros.com>
 
-On Tue, 2008-08-05 at 17:49 +0200, Stefan Richter wrote:
-> I surely missed something.  What is the topic of dwmw2 a.k.a.
-> git://git.infradead.org/users/dwmw2/random-2.6.git#master ?
+On Tue, Aug 05, 2008 at 06:37:57PM +0300, Adrian Bunk wrote:
+> On Tue, Aug 05, 2008 at 04:21:52PM +1000, Stephen Rothwell wrote:
+> > Hi John,
+> > 
+> > Today's linux-next build (powerpc allyesconfig) failed like this:
+> > 
+> > drivers/net/wireless/ath9k/hw.c: In function 'ath9k_hw_9280_spur_mitigate':
+> > drivers/net/wireless/ath9k/hw.c:4660: internal compiler error: in expand_expr_real_1, at expr.c:9199
+> > 
+> > Clearly not our fault! :-) I have informed our toolchain person.  This
+> > was using the Debian gcc-4.3.  It also fails using the Debian 4.2
+> > compiler but not the 4.1 one.
+> >...
+> 
+> Alexandros Couloumbis already opened a bug for this issue on mips, which 
+> also seems to be affected:
+>   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=37014
+> 
+> It is a gcc bug, but we'll have to work around it in the ath9k driver.
 
-Miscellaneous fixes destined for Linus. Stuff that's my fault and I
-didn't feel right about leaving for akpm.
+I imagine that we would be happy to do that.  Anyone have a clue as to how?
 
+John
 -- 
-dwmw2
+John W. Linville
+linville@tuxdriver.com
