@@ -1,55 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Merge report: unmergable (conflicting) tree: v4l-dvb
-Date: Tue, 5 Aug 2008 09:46:15 +1000
-Message-ID: <20080805094615.0bed1cf6.sfr@canb.auug.org.au>
-References: <20080804144718.GE4182@denkbrett.schottelius.org>
+Subject: linux-next: crypto tree build failure
+Date: Tue, 5 Aug 2008 14:02:57 +1000
+Message-ID: <20080805140257.7fad0dc0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__5_Aug_2008_09_46_15_+1000_BuXXm.JAOg4=A1TQ"
+ boundary="Signature=_Tue__5_Aug_2008_14_02_57_+1000_CCXfr2q.M5DBVV+u"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36303 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38740 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753252AbYHDXq3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 4 Aug 2008 19:46:29 -0400
-In-Reply-To: <20080804144718.GE4182@denkbrett.schottelius.org>
+	id S1751510AbYHEEDF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Aug 2008 00:03:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
 Cc: linux-next@vger.kernel.org
 
---Signature=_Tue__5_Aug_2008_09_46_15_+1000_BuXXm.JAOg4=A1TQ
+--Signature=_Tue__5_Aug_2008_14_02_57_+1000_CCXfr2q.M5DBVV+u
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Nico,
+Hi Herbert,
 
-On Mon, 4 Aug 2008 16:47:18 +0200 Nico -telmich- Schottelius <nico-linux-ne=
-xt@schottelius.org> wrote:
->
-> In my effort to merge all the trees, all but one was successful
-> (v4l-dvb).
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-At the top of my daily report you will see:
+crypto/built-in.o: In function `.test_aead':
+testmgr.c:(.text+0x8378): undefined reference to `.crypto_aead_setauthsize'
+testmgr.c:(.text+0x874c): undefined reference to `.crypto_aead_setauthsize'
+crypto/built-in.o: In function `.alg_test_aead':
+testmgr.c:(.text+0x8bb4): undefined reference to `.crypto_alloc_aead'
 
-"Temporarily dropped tree: v4l-dvb (got lots of conflicts against the
-version that was merged to Linus)."
-
+I added the following patch.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__5_Aug_2008_09_46_15_+1000_BuXXm.JAOg4=A1TQ
+>From d72a0cb337ed3a553c502e221efbd8dcf725048d Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 5 Aug 2008 14:00:20 +1000
+Subject: [PATCH] crypto: tetsmgr linking fix
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ crypto/Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/crypto/Makefile b/crypto/Makefile
+index 59ab500..ba73c57 100644
+--- a/crypto/Makefile
++++ b/crypto/Makefile
+@@ -24,7 +24,7 @@ obj-$(CONFIG_CRYPTO_HASH) +=3D crypto_hash.o
+=20
+ cryptomgr-objs :=3D algboss.o testmgr.o
+=20
+-obj-$(CONFIG_CRYPTO_MANAGER) +=3D cryptomgr.o
++obj-$(CONFIG_CRYPTO_MANAGER) +=3D cryptomgr.o aead.o
+ obj-$(CONFIG_CRYPTO_HMAC) +=3D hmac.o
+ obj-$(CONFIG_CRYPTO_XCBC) +=3D xcbc.o
+ obj-$(CONFIG_CRYPTO_NULL) +=3D crypto_null.o
+--=20
+1.5.6.3
+
+
+--Signature=_Tue__5_Aug_2008_14_02_57_+1000_CCXfr2q.M5DBVV+u
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkiXlMcACgkQjjKRsyhoI8zwTgCfbexPea7QKyppFIBTfePnV7Jf
-HGUAoKCAmXOgidW8pZOAE30mn4UjZKgr
-=RqWI
+iEYEARECAAYFAkiX0PEACgkQjjKRsyhoI8yuYwCfbO2a1/VcdkivBn9zInZOVTqs
+tk0AnifJl+ecONynt7AtgyYrR3N+ixFv
+=N1RR
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__5_Aug_2008_09_46_15_+1000_BuXXm.JAOg4=A1TQ--
+--Signature=_Tue__5_Aug_2008_14_02_57_+1000_CCXfr2q.M5DBVV+u--
