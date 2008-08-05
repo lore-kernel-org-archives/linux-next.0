@@ -1,60 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: crypto tree build failure
-Date: Wed, 6 Aug 2008 00:20:26 +1000
-Message-ID: <20080806002026.47702e20.sfr@canb.auug.org.au>
-References: <20080805140257.7fad0dc0.sfr@canb.auug.org.au>
-	<20080805053628.GA19574@gondor.apana.org.au>
-	<20080805233300.e98f9da5.sfr@canb.auug.org.au>
-	<20080805140503.GB23405@gondor.apana.org.au>
+From: Adrian Bunk <bunk@kernel.org>
+Subject: Re: linux-next: wireless-current tree build failure
+Date: Tue, 5 Aug 2008 18:37:57 +0300
+Message-ID: <20080805153757.GB22895@cs181140183.pp.htv.fi>
+References: <20080805162152.2b55ae5c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__6_Aug_2008_00_20_26_+1000_JFK/n/oQr=k2hYYx"
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60898 "EHLO smtps.tip.net.au"
+Received: from smtp6.pp.htv.fi ([213.243.153.40]:39774 "EHLO smtp6.pp.htv.fi"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755700AbYHEOtc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 Aug 2008 10:49:32 -0400
-In-Reply-To: <20080805140503.GB23405@gondor.apana.org.au>
+	id S1759725AbYHEPjU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Aug 2008 11:39:20 -0400
+Content-Disposition: inline
+In-Reply-To: <20080805162152.2b55ae5c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, David Miller <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>, "Luis R. Rodriguez" <lrodriguez@atheros.com>
 
---Signature=_Wed__6_Aug_2008_00_20_26_+1000_JFK/n/oQr=k2hYYx
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Aug 05, 2008 at 04:21:52PM +1000, Stephen Rothwell wrote:
+> Hi John,
+> 
+> Today's linux-next build (powerpc allyesconfig) failed like this:
+> 
+> drivers/net/wireless/ath9k/hw.c: In function 'ath9k_hw_9280_spur_mitigate':
+> drivers/net/wireless/ath9k/hw.c:4660: internal compiler error: in expand_expr_real_1, at expr.c:9199
+> 
+> Clearly not our fault! :-) I have informed our toolchain person.  This
+> was using the Debian gcc-4.3.  It also fails using the Debian 4.2
+> compiler but not the 4.1 one.
+>...
 
-Hi Herbert,
+Alexandros Couloumbis already opened a bug for this issue on mips, which 
+also seems to be affected:
+  http://gcc.gnu.org/bugzilla/show_bug.cgi?id=37014
 
-On Tue, 5 Aug 2008 22:05:04 +0800 Herbert Xu <herbert@gondor.apana.org.au> =
-wrote:
->
-> On Tue, Aug 05, 2008 at 11:33:00PM +1000, Stephen Rothwell wrote:
-> >=20
-> > I am guessing that will help with these errors as well?
-> >=20
-> > testmgr.c:(.text+0x6404): undefined reference to `.crypto_alloc_ablkcip=
-her
->=20
-> Yes it should.
+It is a gcc bug, but we'll have to work around it in the ath9k driver.
 
-Great, thanks.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+cu
+Adrian
 
---Signature=_Wed__6_Aug_2008_00_20_26_+1000_JFK/n/oQr=k2hYYx
-Content-Type: application/pgp-signature
+-- 
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkiYYasACgkQjjKRsyhoI8yAbgCZAQ+NrXwYww2OvTNTd4lwTYQE
-Z6MAoKCFPiXDtgyniDcEaC2DTFvKUMY+
-=58dJ
------END PGP SIGNATURE-----
-
---Signature=_Wed__6_Aug_2008_00_20_26_+1000_JFK/n/oQr=k2hYYx--
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
