@@ -1,49 +1,45 @@
-From: Adrian Bunk <bunk@kernel.org>
+From: Samuel Ortiz <sameo@openedhand.com>
 Subject: Re: linux-next: mfd tree build failure
-Date: Tue, 5 Aug 2008 19:05:25 +0300
-Message-ID: <20080805160524.GE22895@cs181140183.pp.htv.fi>
-References: <20080806000856.a5609577.sfr@canb.auug.org.au> <1217950794.18866.32.camel@wirenth>
+Date: Tue, 5 Aug 2008 18:08:42 +0200
+Message-ID: <20080805160840.GC6335@caravaggio>
+References: <20080806000856.a5609577.sfr@canb.auug.org.au> <1217950794.18866.32.camel@wirenth> <20080806020540.c22b1fa0.sfr@canb.auug.org.au>
+Reply-To: Samuel Ortiz <sameo@openedhand.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp4.pp.htv.fi ([213.243.153.38]:57970 "EHLO smtp4.pp.htv.fi"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754516AbYHEQGs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 Aug 2008 12:06:48 -0400
+Received: from 3a.49.1343.static.theplanet.com ([67.19.73.58]:36739 "EHLO
+	pug.o-hand.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1760855AbYHEQIs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Aug 2008 12:08:48 -0400
 Content-Disposition: inline
-In-Reply-To: <1217950794.18866.32.camel@wirenth>
+In-Reply-To: <20080806020540.c22b1fa0.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: ian <spyro@f2s.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Samuel Ortiz <sameo@openedhand.com>, linux-next@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: ian <spyro@f2s.com>, linux-next@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
-On Tue, Aug 05, 2008 at 04:39:54PM +0100, ian wrote:
-> On Wed, 2008-08-06 at 00:08 +1000, Stephen Rothwell wrote:
-> > Hi Samuel,
+On Wed, Aug 06, 2008 at 02:05:40AM +1000, Stephen Rothwell wrote:
+> Hi Ian,
+> 
+> On Tue, 05 Aug 2008 16:39:54 +0100 ian <spyro@f2s.com> wrote:
+> >
+> > I'd have expected the other TMIO drivers to fail too.
 > > 
-> > Today's linux-next build (sparc allmodconfig) failed like this:
+> > get_irq_data is defined in linux/irq.h only if 
 > > 
-> > drivers/mfd/t7l66xb.c:167: error: implicit declaration of function
-> > `get_irq_data'
+> > CONFIG_GENERIC_HARDIRQs is set and you arent on S390 (so why doesnt S390
+> > fail?)
+> > 
+> > I dont see this as a big problem. As far as Im concerned, all the TMIO
+> > drivers can depend on CONFIG_ARM.
+> > 
+> > It may not be a bad idea to add CONFIG_MFD_TMIO_SUBDEVICE so that TMIO
+> > sub device drivers can only be selected when TMIO cores are selected.
+> > This would neatly fix the earlier problem, rather than making al lthe
+> > subdevices CONFIG_ARM.
 > 
-> Hi.
-> 
-> I'd have expected the other TMIO drivers to fail too.
-> 
-> get_irq_data is defined in linux/irq.h only if 
-> 
-> CONFIG_GENERIC_HARDIRQs is set and you arent on S390 (so why doesnt S390
-> fail?)
->...
+> It'd be real nice if someone did a patch to that effect :-)
+:-) I'll take care of it, yep.
 
-The "Multifunction device drivers" menu depends on HAS_IOMEM.
-
-cu
-Adrian
-
--- 
-
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
+Cheers,
+Samuel.
