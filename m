@@ -1,35 +1,42 @@
-From: Samuel Ortiz <sameo@openedhand.com>
-Subject: Re: linux-next: mfd tree build failure
-Date: Wed, 6 Aug 2008 11:53:05 +0200
-Message-ID: <20080806095304.GA6224@caravaggio>
-References: <20080806000856.a5609577.sfr@canb.auug.org.au> <1217950794.18866.32.camel@wirenth> <20080806020540.c22b1fa0.sfr@canb.auug.org.au> <20080805160840.GC6335@caravaggio> <20080806021614.965a5389.sfr@canb.auug.org.au> <20080805174047.GE6335@caravaggio> <1217961978.18866.36.camel@wirenth>
-Reply-To: Samuel Ortiz <sameo@openedhand.com>
+From: David Brownell <david-b@pacbell.net>
+Subject: Re: linux-next: Tree for August 5 (MTD build error)
+Date: Wed, 6 Aug 2008 04:13:08 -0700
+Message-ID: <200808060413.08723.david-b@pacbell.net>
+References: <20080805175914.7649537f.sfr@canb.auug.org.au> <20080805175518.9fc09b92.randy.dunlap@oracle.com> <200808060320.20064.david-b@pacbell.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 3a.49.1343.static.theplanet.com ([67.19.73.58]:34382 "EHLO
-	pug.o-hand.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754412AbYHFJxL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 Aug 2008 05:53:11 -0400
+Received: from smtp119.sbc.mail.sp1.yahoo.com ([69.147.64.92]:48471 "HELO
+	smtp119.sbc.mail.sp1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1756739AbYHFLNL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Aug 2008 07:13:11 -0400
+In-Reply-To: <200808060320.20064.david-b@pacbell.net>
 Content-Disposition: inline
-In-Reply-To: <1217961978.18866.36.camel@wirenth>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: ian <spyro@f2s.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: dwmw2@infradead.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, Aug 05, 2008 at 07:46:18PM +0100, ian wrote:
-> On Tue, 2008-08-05 at 19:40 +0200, Samuel Ortiz wrote:
+On Wednesday 06 August 2008, David Brownell wrote:
+> On Tuesday 05 August 2008, Randy Dunlap wrote:
 > > 
-> > All TMIO devices depend on ARM, and the MMC and NAND drivers now
-> > depend on a new symbol (MFD_TMIO) selected when choosing one of the
-> > TMIO devices.
+> > linux-next-20080805/drivers/mtd/devices/mtd_dataflash.c: In function 'add_dataflash_otp':
+> > linux-next-20080805/drivers/mtd/devices/mtd_dataflash.c:670: error: too many arguments to function 'otp_setup'
 > 
-> Sounds good.
-> 
-> Whens the merge date for mainline btw ?
-Later this week, hopefully.
+> Bad merge somewhere? 
 
-Cheers,
-Samuel.
+Whoops, sorry ... I see what was going on.  My bad.
+
+--- g26.orig/drivers/mtd/devices/mtd_dataflash.c	2008-08-06 04:12:45.000000000 -0700
++++ g26/drivers/mtd/devices/mtd_dataflash.c	2008-08-06 04:11:55.000000000 -0700
+@@ -616,7 +616,7 @@ static char *otp_setup(struct mtd_info *
  
+ #else
+ 
+-static char *otp_setup(struct mtd_info *device)
++static char *otp_setup(struct mtd_info *device, char revision)
+ {
+ 	return " (OTP)";
+ }
