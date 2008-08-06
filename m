@@ -1,52 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ide tree
-Date: Wed, 6 Aug 2008 13:35:28 +1000
-Message-ID: <20080806133528.f96811af.sfr@canb.auug.org.au>
+From: "NeilBrown" <neilb@suse.de>
+Subject: Re: linux-next: md tree not fetchable
+Date: Wed, 6 Aug 2008 13:44:56 +1000 (EST)
+Message-ID: <d6381929b46c13d0da2e7bccee566ac4.squirrel@neil.brown.name>
+References: <20080806131745.f5d377e6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__6_Aug_2008_13_35_28_+1000_0rA/hbD+nxsB7Fxu"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44858 "EHLO smtps.tip.net.au"
+Received: from cantor.suse.de ([195.135.220.2]:46200 "EHLO mx1.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752013AbYHFDfe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 Aug 2008 23:35:34 -0400
+	id S1752612AbYHFDpE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Aug 2008 23:45:04 -0400
+In-Reply-To: <20080806131745.f5d377e6.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org
 
---Signature=_Wed__6_Aug_2008_13_35_28_+1000_0rA/hbD+nxsB7Fxu
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, August 6, 2008 1:17 pm, Stephen Rothwell wrote:
+> Hi Neil,
+>
+> I could not fetch the md and md-current trees (git://neil.brown.name/md)
+> today.  I got this error:
+>
+> fatal: The remote end hung up unexpectedly
 
-Hi Bart,
+That's what you get for running "apt-get upgrade" and not testing things
+:-)
 
-Today's linux-next merge of the ide tree got conflicts in
-drivers/ide/ide-iops.c and drivers/ide/ide-dma.c between commits
-367fdcb4e401161e51aaee5d06b3f82098bafefc ("ide: fix pre-EIDE SWDMA
-support on big-endian") and 242f44261e6c5fdc13e3cd12f949ab717dc37d58
-("ide: fix ide_fix_driveid()") from Linus' tree (which are also in the
-ide tree) and further changes in the ide tree.
+Fixed now.
 
-This is just to let you know, there is not problem here.
+>
+> I will use what I had from yesterday.
 
-I just used the versions from the ide tree.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Ok.
 
---Signature=_Wed__6_Aug_2008_13_35_28_+1000_0rA/hbD+nxsB7Fxu
-Content-Type: application/pgp-signature
+BTW, there is only the one tree that you need to pull: "for-next".
+I think the other one (md-current??) was for-linus.  That will
+always be included in for-next so does not need to be pulled separately.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkiZHAAACgkQjjKRsyhoI8zaigCfR8pcuDx9KToa3zfScrqPpah/
-m1cAoI/GBUnZQNHhod0dnnixOhjWzBOa
-=tN/V
------END PGP SIGNATURE-----
-
---Signature=_Wed__6_Aug_2008_13_35_28_+1000_0rA/hbD+nxsB7Fxu--
+Thanks,
+NeilBrown
