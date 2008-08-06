@@ -1,88 +1,64 @@
-From: Adrian Bunk <bunk@kernel.org>
-Subject: [2.6 patch] ath9k: work around gcc ICEs
-Date: Tue, 5 Aug 2008 22:06:51 +0300
-Message-ID: <20080805190651.GI22895@cs181140183.pp.htv.fi>
-References: <20080805162152.2b55ae5c.sfr@canb.auug.org.au> <20080805153757.GB22895@cs181140183.pp.htv.fi> <20080805160026.GA14186@tuxdriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: mfd tree build failure
+Date: Wed, 6 Aug 2008 10:40:11 +1000
+Message-ID: <20080806104011.233e1443.sfr@canb.auug.org.au>
+References: <20080806000856.a5609577.sfr@canb.auug.org.au>
+	<1217950794.18866.32.camel@wirenth>
+	<20080806020540.c22b1fa0.sfr@canb.auug.org.au>
+	<20080805160840.GC6335@caravaggio>
+	<20080806021614.965a5389.sfr@canb.auug.org.au>
+	<20080805174047.GE6335@caravaggio>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__6_Aug_2008_10_40_11_+1000_AS2UNV+20MtqvBb3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp4.pp.htv.fi ([213.243.153.38]:40091 "EHLO smtp4.pp.htv.fi"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40592 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756273AbYHETIP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 Aug 2008 15:08:15 -0400
-Content-Disposition: inline
-In-Reply-To: <20080805160026.GA14186@tuxdriver.com>
+	id S1751667AbYHFAkS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Aug 2008 20:40:18 -0400
+In-Reply-To: <20080805174047.GE6335@caravaggio>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, David Miller <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>, "Luis R. Rodriguez" <lrodriguez@atheros.com>
+To: Samuel Ortiz <sameo@openedhand.com>
+Cc: ian <spyro@f2s.com>, linux-next@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
-On Tue, Aug 05, 2008 at 12:00:26PM -0400, John W. Linville wrote:
-> On Tue, Aug 05, 2008 at 06:37:57PM +0300, Adrian Bunk wrote:
-> > On Tue, Aug 05, 2008 at 04:21:52PM +1000, Stephen Rothwell wrote:
-> > > Hi John,
-> > > 
-> > > Today's linux-next build (powerpc allyesconfig) failed like this:
-> > > 
-> > > drivers/net/wireless/ath9k/hw.c: In function 'ath9k_hw_9280_spur_mitigate':
-> > > drivers/net/wireless/ath9k/hw.c:4660: internal compiler error: in expand_expr_real_1, at expr.c:9199
-> > > 
-> > > Clearly not our fault! :-) I have informed our toolchain person.  This
-> > > was using the Debian gcc-4.3.  It also fails using the Debian 4.2
-> > > compiler but not the 4.1 one.
-> > >...
-> > 
-> > Alexandros Couloumbis already opened a bug for this issue on mips, which 
-> > also seems to be affected:
-> >   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=37014
-> > 
-> > It is a gcc bug, but we'll have to work around it in the ath9k driver.
-> 
-> I imagine that we would be happy to do that.  Anyone have a clue as to how?
+--Signature=_Wed__6_Aug_2008_10_40_11_+1000_AS2UNV+20MtqvBb3
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Patch below, verified to fix the issue with the following compilers:
-- powerpc 4.2.4
-- powerpc latest 4.3 SVN
-- powerpc latest 4.4 SVN
-- mips 4.2.4
-- mips 4.3.1
+HI Samuel,
 
-The patch has to be applied twice for fixing both copies of the
-same code.  :-)
+On Tue, 5 Aug 2008 19:40:48 +0200 Samuel Ortiz <sameo@openedhand.com> wrote:
+>
+> On Wed, Aug 06, 2008 at 02:16:14AM +1000, Stephen Rothwell wrote:
+> > On Tue, 5 Aug 2008 18:08:42 +0200 Samuel Ortiz <sameo@openedhand.com> w=
+rote:
+> > >
+> > > :-) I'll take care of it, yep.
+> >=20
+> > Thanks, I look forward to it.
+> It should be fixed by now.
+> All TMIO devices depend on ARM, and the MMC and NAND drivers now depend
+> on a new symbol (MFD_TMIO) selected when choosing one of the TMIO devices.
 
-> John
+OK, thanks.  What I fetched looks good.
 
-cu
-Adrian
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+--Signature=_Wed__6_Aug_2008_10_40_11_+1000_AS2UNV+20MtqvBb3
+Content-Type: application/pgp-signature
 
-<--  snip  -->
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
+iEYEARECAAYFAkiY8usACgkQjjKRsyhoI8yXWACeNCLm+zl8hNR8PTEML87NFqQh
+GXYAn3rQ87DQgB1Ri2UawiPSN2t0CqNf
+=g3ka
+-----END PGP SIGNATURE-----
 
-This patch works around an internal compiler error (gcc bug #37014) in 
-all gcc 4.2 compilers and the gcc 4.3 series up to at least 4.3.1
-on at least powerpc and mips.
-
-Many thanks to Andrew Pinski for analyzing the gcc bug.
-
-Signed-off-by: Adrian Bunk <bunk@kernel.org>
-
----
-d1ec5b9fba6c50c7e98a85776a3b95d3a3a3179b 
-diff --git a/drivers/net/wireless/ath9k/hw.c b/drivers/net/wireless/ath9k/hw.c
-index 1f6f393..5edc56d 100644
---- a/drivers/net/wireless/ath9k/hw.c
-+++ b/drivers/net/wireless/ath9k/hw.c
-@@ -4801,7 +4801,11 @@
- 
- 	for (i = 0; i < 123; i++) {
- 		if ((cur_vit_mask > lower) && (cur_vit_mask < upper)) {
--			if ((abs(cur_vit_mask - bin)) < 75)
-+
-+			/* workaround for gcc bug #37014 */
-+			volatile int tmp = abs(cur_vit_mask - bin);
-+
-+			if (tmp < 75)
- 				mask_amt = 1;
- 			else
- 				mask_amt = 0;
+--Signature=_Wed__6_Aug_2008_10_40_11_+1000_AS2UNV+20MtqvBb3--
