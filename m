@@ -1,71 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: mtd tree build failure
-Date: Fri, 8 Aug 2008 00:19:39 +1000
-Message-ID: <20080808001939.574e7fad.sfr@canb.auug.org.au>
-References: <20080807133005.d37ea7b8.sfr@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: Suspend issues on 2.6.27-rc2 (was: Heavy suspend and io problems in 2.6.27-rc1-00156-g94ad374)
+Date: Thu, 7 Aug 2008 18:52:10 +0200
+Message-ID: <200808071852.11080.rjw@sisk.pl>
+References: <20080731210507.GA6094@denkbrett.schottelius.org> <20080804233712.GA4181@denkbrett.schottelius.org> <20080807083642.GA4370@denkbrett.schottelius.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__8_Aug_2008_00_19_39_+1000_qIRU3CX4aUfwGQmM"
+Content-Type: text/plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37111 "EHLO smtps.tip.net.au"
+Received: from ogre.sisk.pl ([217.79.144.158]:35695 "EHLO ogre.sisk.pl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751147AbYHGOTt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 7 Aug 2008 10:19:49 -0400
-In-Reply-To: <20080807133005.d37ea7b8.sfr@canb.auug.org.au>
+	id S1752603AbYHGQtC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 Aug 2008 12:49:02 -0400
+In-Reply-To: <20080807083642.GA4370@denkbrett.schottelius.org>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: linux-next@vger.kernel.org, Alexey Korolev <akorolev@infradead.org>, Russell King <rmk@arm.linux.org.uk>
+To: Nico Schottelius <nico-linux-kernel-bugreport20080731@schottelius.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
---Signature=_Fri__8_Aug_2008_00_19_39_+1000_qIRU3CX4aUfwGQmM
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thursday, 7 of August 2008, Nico Schottelius wrote:
+> Hello!
 
-Hi Dave,
+Hi,
+ 
+> The problem continues to exist:
+> 
+> I tested it on vanilla 2.6.27-rc2: Same problem, system does not wake up.
+> 
+> Did not test the proposed patch, because it did not restore the console
+> in any tested case yet, though it at least wakes the system up.
 
-On Thu, 7 Aug 2008 13:30:05 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
->=20
-> ERROR: "qry_present" [drivers/mtd/chips/cfi_probe.ko] undefined!
-> ERROR: "qry_mode_off" [drivers/mtd/chips/cfi_probe.ko] undefined!
-> ERROR: "qry_mode_on" [drivers/mtd/chips/cfi_probe.ko] undefined!
->=20
-> Caused by commit 2e489e077a6ad118c4f247faedf330117b107cce ("[MTD] [NOR]
-> Add qry_mode_on()/qry_omde_off() to deal with odd chips").
+What graphics adapter is there in your box?
 
-Also from an arm cam60_defconfig build:
-
-drivers/built-in.o: In function `cfi_probe_chip':
-i2c-dev.c:(.text+0x497a4): undefined reference to `qry_mode_on'
-i2c-dev.c:(.text+0x49810): undefined reference to `qry_present'
-i2c-dev.c:(.text+0x49850): undefined reference to `qry_mode_off'
-i2c-dev.c:(.text+0x498a0): undefined reference to `qry_mode_off'
-i2c-dev.c:(.text+0x498b0): undefined reference to `qry_present'
-i2c-dev.c:(.text+0x498c8): undefined reference to `qry_mode_off'
-i2c-dev.c:(.text+0x498d8): undefined reference to `qry_present'
-i2c-dev.c:(.text+0x49ca4): undefined reference to `qry_mode_off'
-
-This is today's linux-next with these symbols exported (which obviously
-makes no difference here).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__8_Aug_2008_00_19_39_+1000_qIRU3CX4aUfwGQmM
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkibBHsACgkQjjKRsyhoI8xxRQCbB0OmrkkX5v7XQGPesik5NWli
-7YwAn1+g48X0SzIuV5L+qMf+TMl+cDSU
-=rHsJ
------END PGP SIGNATURE-----
-
---Signature=_Fri__8_Aug_2008_00_19_39_+1000_qIRU3CX4aUfwGQmM--
+Rafael
