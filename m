@@ -1,37 +1,49 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: manual merge of the crypto tree
-Date: Thu, 7 Aug 2008 11:43:28 +0800
-Message-ID: <20080807034328.GA6866@gondor.apana.org.au>
-References: <20080807133525.8901e2ef.sfr@canb.auug.org.au>
+From: Greg KH <gregkh@suse.de>
+Subject: Re: linux-next: Tree for July 29
+Date: Wed, 6 Aug 2008 20:40:49 -0700
+Message-ID: <20080807034049.GC3495@suse.de>
+References: <20080729172337.b3d74100.sfr@canb.auug.org.au> <20080730090650.79a5a749@kopernikus.site> <20080730021947.def99edc.akpm@linux-foundation.org> <200807302127.42148.bzolnier@gmail.com> <20080730130419.49986a25.akpm@linux-foundation.org> <20080731094105.f6bec082.sfr@canb.auug.org.au> <20080730234419.GA12070@suse.de> <20080807110844.a912483a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rhun.apana.org.au ([64.62.148.172]:41511 "EHLO
-	arnor.apana.org.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753732AbYHGDnf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Aug 2008 23:43:35 -0400
+Received: from ns2.suse.de ([195.135.220.15]:53518 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753686AbYHGDoN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 6 Aug 2008 23:44:13 -0400
 Content-Disposition: inline
-In-Reply-To: <20080807133525.8901e2ef.sfr@canb.auug.org.au>
+In-Reply-To: <20080807110844.a912483a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Suresh Siddha <suresh.b.siddha@intel.com>, Austin Zhang <austin.zhang@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, bwalle@suse.de, greg@kroah.com, hugh@veritas.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, haveblue@us.ibm.com
 
-On Thu, Aug 07, 2008 at 01:35:25PM +1000, Stephen Rothwell wrote:
+On Thu, Aug 07, 2008 at 11:08:44AM +1000, Stephen Rothwell wrote:
+> HI Greg,
 > 
-> Today's linux-next merge of the crypto tree got a conflict in
-> include/asm-x86/cpufeature.h between commit
-> 32e1d0a0651004f5fe47f85a2a5c725ad579a90c ("x64, x2apic/intr-remap: cpuid
-> bits for x2apic feature") from the x86 tree and commit
-> 1f4f8a5d7935c81b5b3c7601ec9ac021db30ba4f ("crypto: crc32c - Use Intel
-> CRC32 instruction") from the crypto tree.
+> On Wed, 30 Jul 2008 16:44:19 -0700 Greg KH <gregkh@suse.de> wrote:
+> >
+> > On Thu, Jul 31, 2008 at 09:41:05AM +1000, Stephen Rothwell wrote:
+> > > Hi Andrew,
+> > > 
+> > > On Wed, 30 Jul 2008 13:04:19 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+> > > >
+> > > > The offending patch has just got itself turfed from linux-next so my
+> > > > fix now has nothing to fix.
+> > > > 
+> > > > We'll see what happens!
+> > > 
+> > > I will put Dave's patch back with yours on top of it (hoping that Greg
+> > > will take your patch).
+> > 
+> > Greg will, it's in my queue.
 > 
-> Just simple overlapping additions.  I added both of them and can carry
-> the fixup.
+> This is still not in your patch series ...  summary email with patch
+> repeated below.
 
-Thanks Stephen!
--- 
-Visit Openswan at http://www.openswan.org/
-Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Just went in about 3 hours ago :)
+
+I merged it with the original, that's the best way to do it.
+
+thanks,
+
+greg k-h
