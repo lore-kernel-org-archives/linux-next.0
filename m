@@ -1,53 +1,36 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH] USB: fix compiler warning fix
-Date: Thu, 7 Aug 2008 13:04:51 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.0808071303580.2598-100000@iolanthe.rowland.org>
-References: <20080807105600.76386f62.sfr@canb.auug.org.au>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: linux-next: Tree for July 30
+Date: Thu, 7 Aug 2008 14:11:09 -0400
+Message-ID: <20080807140357.ZZRA012@mailhub.coreip.homeip.net>
+References: <20080730170635.f737ffe9.sfr@canb.auug.org.au> <20080731104437.5e5669bc.akpm@linux-foundation.org> <20080731141302.ZZRA012@mailhub.coreip.homeip.net> <200807312048.57575.rjw@sisk.pl> <20080731145023.ZZRA012@mailhub.coreip.homeip.net> <alpine.LFD.1.10.0807311207000.3277@nehalem.linux-foundation.org> <20080731151625.ZZRA012@mailhub.coreip.homeip.net> <20080731194207.GA12233@anvil.corenet.prv> <20080731131056.eecc4826.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from iolanthe.rowland.org ([192.131.102.54]:54983 "HELO
-	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1755813AbYHGREw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Aug 2008 13:04:52 -0400
-In-Reply-To: <20080807105600.76386f62.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: USB list <linux-usb@vger.kernel.org>, linux-next@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20080731131056.eecc4826.akpm@linux-foundation.org>
+Sender: linux-input-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: torvalds@linux-foundation.org, rjw@sisk.pl, bzolnier@gmail.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-This patch (as1123b) fixes a compiler warning: do_unbind_rebind() is
-defined but not used if CONFIG_PM=n.
+On Thu, Jul 31, 2008 at 01:10:56PM -0700, Andrew Morton wrote:
+> 
+> If that works then great.  But I think the printk could be improved. 
+> Please provide sufficient information so that users (not programmers)
+> can go off and fix things up without needing to email kernel developers.
+> 
+> One suitable approach would be
+> 
+> 	printk("see http://userweb.kernel.org/~dtor/read-this.txt")
+> 
 
-Problem originally found and initial patch submitted by Alexander
-Beregalov <a.beregalov@gmail.com>.
+Ok, I made a small page here:
 
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+	http://userweb.kernel.org/~dtor/eviocgbit-bug.html
 
----
+If you think this is sufficient I'd like to put the patch with the
+warning in 2.6.27 so people and distributions could start updarting
+affected programs.
 
-This is what Stephen has already been using, I believe.
-
-
-Index: usb-2.6/drivers/usb/core/driver.c
-===================================================================
---- usb-2.6.orig/drivers/usb/core/driver.c
-+++ usb-2.6/drivers/usb/core/driver.c
-@@ -774,8 +774,6 @@ void usb_deregister(struct usb_driver *d
- }
- EXPORT_SYMBOL_GPL(usb_deregister);
- 
--#ifdef CONFIG_PM
--
- /* Forced unbinding of a USB interface driver, either because
-  * it doesn't support pre_reset/post_reset/reset_resume or
-  * because it doesn't support suspend/resume.
-@@ -822,6 +820,8 @@ void usb_rebind_intf(struct usb_interfac
- 		dev_warn(&intf->dev, "rebind failed: %d\n", rc);
- }
- 
-+#ifdef CONFIG_PM
-+
- #define DO_UNBIND	0
- #define DO_REBIND	1
- 
+-- 
+Dmitry
