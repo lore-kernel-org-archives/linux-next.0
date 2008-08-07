@@ -1,113 +1,80 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for July 29
-Date: Thu, 7 Aug 2008 11:08:44 +1000
-Message-ID: <20080807110844.a912483a.sfr@canb.auug.org.au>
-References: <20080729172337.b3d74100.sfr@canb.auug.org.au>
-	<20080730090650.79a5a749@kopernikus.site>
-	<20080730021947.def99edc.akpm@linux-foundation.org>
-	<200807302127.42148.bzolnier@gmail.com>
-	<20080730130419.49986a25.akpm@linux-foundation.org>
-	<20080731094105.f6bec082.sfr@canb.auug.org.au>
-	<20080730234419.GA12070@suse.de>
+From: Kevin Lloyd <klloyd@sierrawireless.com>
+Subject: RE: linux-next: usb.current tree build failure
+Date: Wed, 6 Aug 2008 18:56:16 -0700
+Message-ID: <20719A9A7E5F8040AC0590F6F6C1DF46116A01C1A4@uscbd-exchmb01.sierrawireless.local>
+References: <20080807105321.5aad96a4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46882 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754061AbYHGBIu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 Aug 2008 21:08:50 -0400
-In-Reply-To: <20080730234419.GA12070@suse.de>
+Received: from mx1.sierrawireless.com ([208.81.121.7]:20498 "EHLO
+	mx1.sierrawireless.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753801AbYHGCLc convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Aug 2008 22:11:32 -0400
+In-Reply-To: <20080807105321.5aad96a4.sfr@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <gregkh@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, bwalle@suse.de, greg@kroah.com, hugh@veritas.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, haveblue@us.ibm.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-HI Greg,
+Hi Stephen,
 
-On Wed, 30 Jul 2008 16:44:19 -0700 Greg KH <gregkh@suse.de> wrote:
->
-> On Thu, Jul 31, 2008 at 09:41:05AM +1000, Stephen Rothwell wrote:
-> > Hi Andrew,
-> > 
-> > On Wed, 30 Jul 2008 13:04:19 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
-> > >
-> > > The offending patch has just got itself turfed from linux-next so my
-> > > fix now has nothing to fix.
-> > > 
-> > > We'll see what happens!
-> > 
-> > I will put Dave's patch back with yours on top of it (hoping that Greg
-> > will take your patch).
-> 
-> Greg will, it's in my queue.
+Good catch, my apologies.
 
-This is still not in your patch series ...  summary email with patch
-repeated below.
+-Kevin
 
--- 
+-----Original Message-----
+From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+Sent: Wednesday, August 06, 2008 5:53 PM
+To: Greg KH
+Cc: linux-next@vger.kernel.org; Kevin Lloyd
+Subject: linux-next: usb.current tree build failure
+
+Hi Greg,
+
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+
+In file included from drivers/usb/storage/usb.c:177:
+drivers/usb/storage/unusual_devs.h:1577: error: 'sierra_ms_init' undeclared here (not in a function)
+
+Caused by commit ff28a24426410aa193b47a5e9ec091d46eaa66d1 ("USB Storage
+Sierra: TRU-Install feature update").
+
+I applied the following patch.
+--
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-Date: Wed, 30 Jul 2008 02:19:47 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Bernhard Walle <bwalle@suse.de>
-Cc: Greg KH <greg@kroah.com>, Hugh Dickins <hugh@veritas.com>,
-        Greg KH <gregkh@suse.de>,
-        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dave Hansen <haveblue@us.ibm.com>
-Subject: driver-core: kobject verification fixup
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 7 Aug 2008 10:51:49 +1000
+Subject: [PATCH] usb: build fix for sierra_ms unusual device
 
-On Wed, 30 Jul 2008 09:06:50 +0200 Bernhard Walle <bwalle@suse.de> wrote:
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/usb/storage/unusual_devs.h |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-> * Greg KH <greg@kroah.com> [2008-07-29 21:48]:
-> > > Isn't this the opposite end of the same problem for which Bernhard
-> > > has been repeatedly trying to find a taker for his patch:
-> > > 
-> > > http://article.gmane.org/gmane.linux.kernel.kexec/1882
-> > 
-> > Yes.  It's not the kobject patch at fault here, it's the use of kobjects
-> > so early in the boot process.  That needs to be fixed.
+diff --git a/drivers/usb/storage/unusual_devs.h b/drivers/usb/storage/unusual_devs.h
+index 0547853..564999c 100644
+--- a/drivers/usb/storage/unusual_devs.h
++++ b/drivers/usb/storage/unusual_devs.h
+@@ -1569,6 +1569,7 @@ UNUSUAL_DEV(  0x10d6, 0x2200, 0x0100, 0x0100,
+                US_SC_DEVICE, US_PR_DEVICE, NULL,
+                0),
 
-It was a bit optimistic to stick an unconditional GFP_KERNEL allocation
-into the previously-atomic kobject_init().
++#ifdef CONFIG_USB_STORAGE_SIERRA
+ /* Reported by Kevin Lloyd <linux@sierrawireless.com>
+  * Entry is needed for the initializer function override,
+  * which instructs the device to load as a modem
+@@ -1579,6 +1580,7 @@ UNUSUAL_DEV(  0x1199, 0x0fff, 0x0000, 0x9999,
+                "USB MMC Storage",
+                US_SC_DEVICE, US_PR_DEVICE, sierra_ms_init,
+                0),
++#endif
 
-It's only 128 bytes, so why can't we fix both problems thusly?
-
---- a/lib/kobject.c~a
-+++ a/lib/kobject.c
-@@ -38,12 +38,10 @@ static int ptr_in_range(void *ptr, void 
- 
- static void verify_dynamic_kobject_allocation(struct kobject *kobj)
- {
--	char *namebuf;
-+	char namebuf[KSYM_NAME_LEN];
- 	const char *ret;
- 
--	namebuf = kzalloc(KSYM_NAME_LEN, GFP_KERNEL);
--	ret = kallsyms_lookup((unsigned long)kobj, NULL, NULL, NULL,
--			namebuf);
-+	ret = kallsyms_lookup((unsigned long)kobj, NULL, NULL, NULL, namebuf);
- 	/*
- 	 * This is the X86_32-only part of this function.
- 	 * This is here because it is valid to have a kobject
-@@ -63,7 +61,7 @@ static void verify_dynamic_kobject_alloc
- 	/* dump_stack(); */
- 	pr_debug("---- end silly warning ----\n");
- out:
--	kfree(namebuf);
-+	return;
- }
- #else
- static void verify_dynamic_kobject_allocation(struct kobject *kobj) { }
-_
-
-
-> Yes, but if somebody could tell me why nobody takes the patch, I would
-> be happy. Then I would be able to improve the patch. :)
-
-Copy me on the patch.  Then I merge it and people know there will be no
-hiding from it.
+ /* Reported by Jaco Kroon <jaco@kroon.co.za>
+  * The usb-storage module found on the Digitech GNX4 (and supposedly other
+--
+1.5.6.3
