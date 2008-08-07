@@ -1,69 +1,113 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: usb.current tree build failure
-Date: Thu, 7 Aug 2008 10:56:00 +1000
-Message-ID: <20080807105600.76386f62.sfr@canb.auug.org.au>
-References: <20080801112021.547dfaea.sfr@canb.auug.org.au>
-	<20080801061250.GB8634@kroah.com>
+Subject: Re: linux-next: Tree for July 29
+Date: Thu, 7 Aug 2008 11:08:44 +1000
+Message-ID: <20080807110844.a912483a.sfr@canb.auug.org.au>
+References: <20080729172337.b3d74100.sfr@canb.auug.org.au>
+	<20080730090650.79a5a749@kopernikus.site>
+	<20080730021947.def99edc.akpm@linux-foundation.org>
+	<200807302127.42148.bzolnier@gmail.com>
+	<20080730130419.49986a25.akpm@linux-foundation.org>
+	<20080731094105.f6bec082.sfr@canb.auug.org.au>
+	<20080730234419.GA12070@suse.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__7_Aug_2008_10_56_00_+1000_GkemByzpTxd+J3c3"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46104 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:46882 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753389AbYHGA4I (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 Aug 2008 20:56:08 -0400
-In-Reply-To: <20080801061250.GB8634@kroah.com>
+	id S1754061AbYHGBIu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 6 Aug 2008 21:08:50 -0400
+In-Reply-To: <20080730234419.GA12070@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>
+To: Greg KH <gregkh@suse.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, bwalle@suse.de, greg@kroah.com, hugh@veritas.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, haveblue@us.ibm.com
 
---Signature=_Thu__7_Aug_2008_10_56_00_+1000_GkemByzpTxd+J3c3
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+HI Greg,
 
-Hi Greg,
-
-On Thu, 31 Jul 2008 23:12:50 -0700 Greg KH <greg@kroah.com> wrote:
+On Wed, 30 Jul 2008 16:44:19 -0700 Greg KH <gregkh@suse.de> wrote:
 >
-> On Fri, Aug 01, 2008 at 11:20:21AM +1000, Stephen Rothwell wrote:
-> >=20
-> > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> >=20
-> > drivers/built-in.o: In function `.usb_reset_device':
-> > (.text+0x1bfeb4): undefined reference to `.usb_forced_unbind_intf'
-> > drivers/built-in.o: In function `.usb_reset_device':
-> > (.text+0x1c03b8): undefined reference to `.usb_rebind_intf'
-> >=20
-> > Caused by commit 78d9a487ee961c356e1a934d9a92eca38ffb3a70 ("USB: Force
-> > unbinding of drivers lacking reset_resume or other methods").
-> >=20
-> > The above config has CONFIG_USB=3Dy and CONFIG_PM not set.
-> >=20
-> > I applied the following (probably incorrect) patch.
->=20
-> Thanks, this is my fault, I applied the wrong patch from Alan (he sent
-> me a later more correct version.)  Should be fixed in the tree for
-> tomorrow.
+> On Thu, Jul 31, 2008 at 09:41:05AM +1000, Stephen Rothwell wrote:
+> > Hi Andrew,
+> > 
+> > On Wed, 30 Jul 2008 13:04:19 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+> > >
+> > > The offending patch has just got itself turfed from linux-next so my
+> > > fix now has nothing to fix.
+> > > 
+> > > We'll see what happens!
+> > 
+> > I will put Dave's patch back with yours on top of it (hoping that Greg
+> > will take your patch).
+> 
+> Greg will, it's in my queue.
 
-This is still no fixed ...
+This is still not in your patch series ...  summary email with patch
+repeated below.
 
---=20
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__7_Aug_2008_10_56_00_+1000_GkemByzpTxd+J3c3
-Content-Type: application/pgp-signature
+Date: Wed, 30 Jul 2008 02:19:47 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Bernhard Walle <bwalle@suse.de>
+Cc: Greg KH <greg@kroah.com>, Hugh Dickins <hugh@veritas.com>,
+        Greg KH <gregkh@suse.de>,
+        Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dave Hansen <haveblue@us.ibm.com>
+Subject: driver-core: kobject verification fixup
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+On Wed, 30 Jul 2008 09:06:50 +0200 Bernhard Walle <bwalle@suse.de> wrote:
 
-iEYEARECAAYFAkiaSCAACgkQjjKRsyhoI8z9igCeI9HgTro4RvpNt8mjnn/E9r9T
-EusAmwavWs/umaBGa5QYQ6ItadBLgkXR
-=cAJW
------END PGP SIGNATURE-----
+> * Greg KH <greg@kroah.com> [2008-07-29 21:48]:
+> > > Isn't this the opposite end of the same problem for which Bernhard
+> > > has been repeatedly trying to find a taker for his patch:
+> > > 
+> > > http://article.gmane.org/gmane.linux.kernel.kexec/1882
+> > 
+> > Yes.  It's not the kobject patch at fault here, it's the use of kobjects
+> > so early in the boot process.  That needs to be fixed.
 
---Signature=_Thu__7_Aug_2008_10_56_00_+1000_GkemByzpTxd+J3c3--
+It was a bit optimistic to stick an unconditional GFP_KERNEL allocation
+into the previously-atomic kobject_init().
+
+It's only 128 bytes, so why can't we fix both problems thusly?
+
+--- a/lib/kobject.c~a
++++ a/lib/kobject.c
+@@ -38,12 +38,10 @@ static int ptr_in_range(void *ptr, void 
+ 
+ static void verify_dynamic_kobject_allocation(struct kobject *kobj)
+ {
+-	char *namebuf;
++	char namebuf[KSYM_NAME_LEN];
+ 	const char *ret;
+ 
+-	namebuf = kzalloc(KSYM_NAME_LEN, GFP_KERNEL);
+-	ret = kallsyms_lookup((unsigned long)kobj, NULL, NULL, NULL,
+-			namebuf);
++	ret = kallsyms_lookup((unsigned long)kobj, NULL, NULL, NULL, namebuf);
+ 	/*
+ 	 * This is the X86_32-only part of this function.
+ 	 * This is here because it is valid to have a kobject
+@@ -63,7 +61,7 @@ static void verify_dynamic_kobject_alloc
+ 	/* dump_stack(); */
+ 	pr_debug("---- end silly warning ----\n");
+ out:
+-	kfree(namebuf);
++	return;
+ }
+ #else
+ static void verify_dynamic_kobject_allocation(struct kobject *kobj) { }
+_
+
+
+> Yes, but if somebody could tell me why nobody takes the patch, I would
+> be happy. Then I would be able to improve the patch. :)
+
+Copy me on the patch.  Then I merge it and people know there will be no
+hiding from it.
