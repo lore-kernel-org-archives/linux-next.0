@@ -1,80 +1,76 @@
-From: Kevin Lloyd <klloyd@sierrawireless.com>
-Subject: RE: linux-next: usb.current tree build failure
-Date: Wed, 6 Aug 2008 18:56:16 -0700
-Message-ID: <20719A9A7E5F8040AC0590F6F6C1DF46116A01C1A4@uscbd-exchmb01.sierrawireless.local>
-References: <20080807105321.5aad96a4.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: mtd tree build failure
+Date: Thu, 7 Aug 2008 13:30:05 +1000
+Message-ID: <20080807133005.d37ea7b8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.sierrawireless.com ([208.81.121.7]:20498 "EHLO
-	mx1.sierrawireless.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753801AbYHGCLc convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Aug 2008 22:11:32 -0400
-In-Reply-To: <20080807105321.5aad96a4.sfr@canb.auug.org.au>
-Content-Language: en-US
+Received: from chilli.pcug.org.au ([203.10.76.44]:58249 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756302AbYHGDaK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 6 Aug 2008 23:30:10 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, Alexey Korolev <akorolev@infradead.org>
 
-Hi Stephen,
+Hi Dave,
 
-Good catch, my apologies.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
--Kevin
+ERROR: "qry_present" [drivers/mtd/chips/cfi_probe.ko] undefined!
+ERROR: "qry_mode_off" [drivers/mtd/chips/cfi_probe.ko] undefined!
+ERROR: "qry_mode_on" [drivers/mtd/chips/cfi_probe.ko] undefined!
 
------Original Message-----
-From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
-Sent: Wednesday, August 06, 2008 5:53 PM
-To: Greg KH
-Cc: linux-next@vger.kernel.org; Kevin Lloyd
-Subject: linux-next: usb.current tree build failure
+Caused by commit 2e489e077a6ad118c4f247faedf330117b107cce ("[MTD] [NOR]
+Add qry_mode_on()/qry_omde_off() to deal with odd chips").
 
-Hi Greg,
+I added the following patch.
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-
-In file included from drivers/usb/storage/usb.c:177:
-drivers/usb/storage/unusual_devs.h:1577: error: 'sierra_ms_init' undeclared here (not in a function)
-
-Caused by commit ff28a24426410aa193b47a5e9ec091d46eaa66d1 ("USB Storage
-Sierra: TRU-Install feature update").
-
-I applied the following patch.
---
+Those names are very generic for kernel global symbols ...
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
+>From 6e7b82917d1b8621c6520581c3e036956d16f8ab Mon Sep 17 00:00:00 2001
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 7 Aug 2008 10:51:49 +1000
-Subject: [PATCH] usb: build fix for sierra_ms unusual device
+Date: Thu, 7 Aug 2008 13:28:04 +1000
+Subject: [PATCH] mtd: export qry_{preset,mode_on,mode_off}
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/usb/storage/unusual_devs.h |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+ drivers/mtd/chips/cfi_util.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/usb/storage/unusual_devs.h b/drivers/usb/storage/unusual_devs.h
-index 0547853..564999c 100644
---- a/drivers/usb/storage/unusual_devs.h
-+++ b/drivers/usb/storage/unusual_devs.h
-@@ -1569,6 +1569,7 @@ UNUSUAL_DEV(  0x10d6, 0x2200, 0x0100, 0x0100,
-                US_SC_DEVICE, US_PR_DEVICE, NULL,
-                0),
-
-+#ifdef CONFIG_USB_STORAGE_SIERRA
- /* Reported by Kevin Lloyd <linux@sierrawireless.com>
-  * Entry is needed for the initializer function override,
-  * which instructs the device to load as a modem
-@@ -1579,6 +1580,7 @@ UNUSUAL_DEV(  0x1199, 0x0fff, 0x0000, 0x9999,
-                "USB MMC Storage",
-                US_SC_DEVICE, US_PR_DEVICE, sierra_ms_init,
-                0),
-+#endif
-
- /* Reported by Jaco Kroon <jaco@kroon.co.za>
-  * The usb-storage module found on the Digitech GNX4 (and supposedly other
---
+diff --git a/drivers/mtd/chips/cfi_util.c b/drivers/mtd/chips/cfi_util.c
+index 8d75536..4a60408 100644
+--- a/drivers/mtd/chips/cfi_util.c
++++ b/drivers/mtd/chips/cfi_util.c
+@@ -50,6 +50,7 @@ int __xipram qry_present(struct map_info *map, __u32 base,
+ 
+ 	return 1; 	/* "QRY" found */
+ }
++EXPORT_SYMBOL_GPL(qry_present);
+ 
+ int __xipram qry_mode_on(uint32_t base, struct map_info *map,
+ 				struct cfi_private *cfi)
+@@ -73,12 +74,15 @@ int __xipram qry_mode_on(uint32_t base, struct map_info *map,
+ 	/* QRY not found */
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(qry_mode_on);
++
+ void __xipram qry_mode_off(uint32_t base, struct map_info *map,
+ 				struct cfi_private *cfi)
+ {
+ 	cfi_send_gen_cmd(0xF0, 0, base, map, cfi, cfi->device_type, NULL);
+ 	cfi_send_gen_cmd(0xFF, 0, base, map, cfi, cfi->device_type, NULL);
+ }
++EXPORT_SYMBOL_GPL(qry_mode_off);
+ 
+ struct cfi_extquery *
+ __xipram cfi_read_pri(struct map_info *map, __u16 adr, __u16 size, const char* name)
+-- 
 1.5.6.3
