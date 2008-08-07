@@ -1,36 +1,53 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: Suspend issues on 2.6.27-rc2 (was: Heavy suspend and io problems in 2.6.27-rc1-00156-g94ad374)
-Date: Thu, 7 Aug 2008 18:52:10 +0200
-Message-ID: <200808071852.11080.rjw@sisk.pl>
-References: <20080731210507.GA6094@denkbrett.schottelius.org> <20080804233712.GA4181@denkbrett.schottelius.org> <20080807083642.GA4370@denkbrett.schottelius.org>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH] USB: fix compiler warning fix
+Date: Thu, 7 Aug 2008 13:04:51 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.0808071303580.2598-100000@iolanthe.rowland.org>
+References: <20080807105600.76386f62.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:35695 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752603AbYHGQtC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 7 Aug 2008 12:49:02 -0400
-In-Reply-To: <20080807083642.GA4370@denkbrett.schottelius.org>
-Content-Disposition: inline
+Received: from iolanthe.rowland.org ([192.131.102.54]:54983 "HELO
+	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1755813AbYHGREw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Aug 2008 13:04:52 -0400
+In-Reply-To: <20080807105600.76386f62.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nico Schottelius <nico-linux-kernel-bugreport20080731@schottelius.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: USB list <linux-usb@vger.kernel.org>, linux-next@vger.kernel.org
 
-On Thursday, 7 of August 2008, Nico Schottelius wrote:
-> Hello!
+This patch (as1123b) fixes a compiler warning: do_unbind_rebind() is
+defined but not used if CONFIG_PM=n.
 
-Hi,
+Problem originally found and initial patch submitted by Alexander
+Beregalov <a.beregalov@gmail.com>.
+
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+
+---
+
+This is what Stephen has already been using, I believe.
+
+
+Index: usb-2.6/drivers/usb/core/driver.c
+===================================================================
+--- usb-2.6.orig/drivers/usb/core/driver.c
++++ usb-2.6/drivers/usb/core/driver.c
+@@ -774,8 +774,6 @@ void usb_deregister(struct usb_driver *d
+ }
+ EXPORT_SYMBOL_GPL(usb_deregister);
  
-> The problem continues to exist:
-> 
-> I tested it on vanilla 2.6.27-rc2: Same problem, system does not wake up.
-> 
-> Did not test the proposed patch, because it did not restore the console
-> in any tested case yet, though it at least wakes the system up.
-
-What graphics adapter is there in your box?
-
-Rafael
+-#ifdef CONFIG_PM
+-
+ /* Forced unbinding of a USB interface driver, either because
+  * it doesn't support pre_reset/post_reset/reset_resume or
+  * because it doesn't support suspend/resume.
+@@ -822,6 +820,8 @@ void usb_rebind_intf(struct usb_interfac
+ 		dev_warn(&intf->dev, "rebind failed: %d\n", rc);
+ }
+ 
++#ifdef CONFIG_PM
++
+ #define DO_UNBIND	0
+ #define DO_REBIND	1
+ 
