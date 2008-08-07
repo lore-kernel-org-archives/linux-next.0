@@ -1,61 +1,44 @@
-From: Nico Schottelius
-	<nico-linux-kernel-bugreport20080731@schottelius.org>
-Subject: Suspend issues on 2.6.27-rc2 (was: Heavy suspend and io problems
-	in 2.6.27-rc1-00156-g94ad374)
-Date: Thu, 7 Aug 2008 10:36:42 +0200
-Message-ID: <20080807083642.GA4370@denkbrett.schottelius.org>
-References: <20080731210507.GA6094@denkbrett.schottelius.org> <20080804090654.GA4747@denkbrett.schottelius.org> <20080804161443.GA4905@denkbrett.schottelius.org> <200808042132.41020.rjw@sisk.pl> <20080804233712.GA4181@denkbrett.schottelius.org>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: Tree for August 6 (8390 et al)
+Date: Thu, 7 Aug 2008 10:29:31 +0100
+Message-ID: <20080807102931.1bb0607d@lxorguk.ukuu.org.uk>
+References: <20080806182828.6bfe0a16.sfr@canb.auug.org.au>
+	<20080806172148.7fac5999.randy.dunlap@oracle.com>
+	<Pine.LNX.4.64.0808070918510.17614@anakin>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="r5Pyd7+fXNt84Ff3"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.schottelius.org ([62.65.138.77]:40174 "EHLO
-	mx2.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753040AbYHGIgo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Aug 2008 04:36:44 -0400
-Content-Disposition: inline
-In-Reply-To: <20080804233712.GA4181@denkbrett.schottelius.org>
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:53405 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1754994AbYHGMYq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Aug 2008 08:24:46 -0400
+In-Reply-To: <Pine.LNX.4.64.0808070918510.17614@anakin>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
-Cc: Nico Schottelius <nico-linux-kernel-bugreport20080731@schottelius.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>
 
+On Thu, 7 Aug 2008 09:20:07 +0200 (CEST)
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
---r5Pyd7+fXNt84Ff3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Wed, 6 Aug 2008, Randy Dunlap wrote:
+> > One randconfig ends with:
+> > 
+> > drivers/built-in.o: In function `wd_probe1':
+> > wd.c:(.init.text+0x6179): undefined reference to `NS8390p_init'
+> > make[1]: *** [.tmp_vmlinux1] Error 1
+> 
+> drivers/net/Makefile has:
+> 
+> obj-$(CONFIG_WD80x3) += wd.o 8390.o
+> 
+> So either wd_probe1() should call NS8390_init(), or obj-$(CONFIG_WD80x3)
+> should link with 8390p.o. Don't know which is the appropriate change
+> here (my gut feeling says the latter).
 
-Hello!
-
-The problem continues to exist:
-
-I tested it on vanilla 2.6.27-rc2: Same problem, system does not wake up.
-
-Did not test the proposed patch, because it did not restore the console
-in any tested case yet, though it at least wakes the system up.
-
-Sincerly,
-
-Nico
-
---=20
-Think about Free and Open Source Software (FOSS).
-http://nico.schottelius.org/documentations/foss/the-term-foss/
-
-PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
-
---r5Pyd7+fXNt84Ff3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkiatBoACgkQuL75KpiFGIx9qQCgkBU1zJLccJkbQwbcQ3kN9iIV
-vwoAoIqVKmr5+nX49cFDM/675gSADyhD
-=RSuT
------END PGP SIGNATURE-----
-
---r5Pyd7+fXNt84Ff3--
+Safest is the latter. The shared memory interface on the wd is full speed
+8 or 16bit (depending on card/jumpers) but I'm not clear about the NIC.
+Most of the performance hit is on the packet transfer which is private
+methods on this device so using 8390p won't make a big difference on this
+board anyway.
