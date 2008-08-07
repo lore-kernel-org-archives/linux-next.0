@@ -1,62 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for July 29
-Date: Thu, 7 Aug 2008 16:10:36 +1000
-Message-ID: <20080807161036.92e7f9b0.sfr@canb.auug.org.au>
-References: <20080729172337.b3d74100.sfr@canb.auug.org.au>
-	<20080730090650.79a5a749@kopernikus.site>
-	<20080730021947.def99edc.akpm@linux-foundation.org>
-	<200807302127.42148.bzolnier@gmail.com>
-	<20080730130419.49986a25.akpm@linux-foundation.org>
-	<20080731094105.f6bec082.sfr@canb.auug.org.au>
-	<20080730234419.GA12070@suse.de>
-	<20080807110844.a912483a.sfr@canb.auug.org.au>
-	<20080807034049.GC3495@suse.de>
+Subject: Re: linux-next: usb.current tree build failure
+Date: Thu, 7 Aug 2008 16:25:14 +1000
+Message-ID: <20080807162514.1cbe3e5d.sfr@canb.auug.org.au>
+References: <20080807105321.5aad96a4.sfr@canb.auug.org.au>
+	<20080807042353.GB25803@kroah.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__7_Aug_2008_16_10_36_+1000_qQv6AH0Oy5nlF.PU"
+ boundary="Signature=_Thu__7_Aug_2008_16_25_14_+1000_Zih3lp7ztj5=8BCW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54187 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56476 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753304AbYHGGLE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 7 Aug 2008 02:11:04 -0400
-In-Reply-To: <20080807034049.GC3495@suse.de>
+	id S1754306AbYHGGZZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 Aug 2008 02:25:25 -0400
+In-Reply-To: <20080807042353.GB25803@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <gregkh@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, bwalle@suse.de, greg@kroah.com, hugh@veritas.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, haveblue@us.ibm.com
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, Kevin Lloyd <klloyd@sierrawireless.com>
 
---Signature=_Thu__7_Aug_2008_16_10_36_+1000_qQv6AH0Oy5nlF.PU
+--Signature=_Thu__7_Aug_2008_16_25_14_+1000_Zih3lp7ztj5=8BCW
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-On Wed, 6 Aug 2008 20:40:49 -0700 Greg KH <gregkh@suse.de> wrote:
+On Wed, 6 Aug 2008 21:23:53 -0700 Greg KH <greg@kroah.com> wrote:
 >
-> Just went in about 3 hours ago :)
+> On Thu, Aug 07, 2008 at 10:53:21AM +1000, Stephen Rothwell wrote:
+> >=20
+> > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> >=20
+> > In file included from drivers/usb/storage/usb.c:177:
+> > drivers/usb/storage/unusual_devs.h:1577: error: 'sierra_ms_init' undecl=
+ared here (not in a function)
+> >=20
+> > Caused by commit ff28a24426410aa193b47a5e9ec091d46eaa66d1 ("USB Storage
+> > Sierra: TRU-Install feature update").
+> >=20
+> > I applied the following patch.
+>=20
+> Thanks, now merged in.
 
 Thanks.
-
-> I merged it with the original, that's the best way to do it.
-
-Yep.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__7_Aug_2008_16_10_36_+1000_qQv6AH0Oy5nlF.PU
+--Signature=_Thu__7_Aug_2008_16_25_14_+1000_Zih3lp7ztj5=8BCW
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkiakdwACgkQjjKRsyhoI8zFsQCfU+jE4bb/celUqEe9UDiz3moP
-CZAAniydIBtB/2cMtSSmI0WzVDjk9WG1
-=EHjG
+iEYEARECAAYFAkialUoACgkQjjKRsyhoI8zgAQCgrh52G2l6jLMwjzfDQKUqUheT
+63kAn1vaDdY+dNkJSRl3n9+1ofgO66Sl
+=y8gm
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__7_Aug_2008_16_10_36_+1000_qQv6AH0Oy5nlF.PU--
+--Signature=_Thu__7_Aug_2008_16_25_14_+1000_Zih3lp7ztj5=8BCW--
