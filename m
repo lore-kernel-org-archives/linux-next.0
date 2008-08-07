@@ -1,44 +1,62 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: linux-next: Tree for August 6 (8390 et al)
-Date: Thu, 7 Aug 2008 10:29:31 +0100
-Message-ID: <20080807102931.1bb0607d@lxorguk.ukuu.org.uk>
-References: <20080806182828.6bfe0a16.sfr@canb.auug.org.au>
-	<20080806172148.7fac5999.randy.dunlap@oracle.com>
-	<Pine.LNX.4.64.0808070918510.17614@anakin>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for August 5 (MTD build error)
+Date: Thu, 7 Aug 2008 21:04:10 +1000
+Message-ID: <20080807210411.c646793c.sfr@canb.auug.org.au>
+References: <20080805175914.7649537f.sfr@canb.auug.org.au>
+	<20080805175518.9fc09b92.randy.dunlap@oracle.com>
+	<200808060320.20064.david-b@pacbell.net>
+	<200808060413.08723.david-b@pacbell.net>
+	<20080807144027.f805c7b1.sfr@canb.auug.org.au>
+	<1218097595.12232.5.camel@pmac.infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__7_Aug_2008_21_04_11_+1000_nYijT7b3YQdFUnIw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:53405 "EHLO
-	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1754994AbYHGMYq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Aug 2008 08:24:46 -0400
-In-Reply-To: <Pine.LNX.4.64.0808070918510.17614@anakin>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36895 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757223AbYHGNMx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 Aug 2008 09:12:53 -0400
+In-Reply-To: <1218097595.12232.5.camel@pmac.infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: David Brownell <david-b@pacbell.net>, Randy Dunlap <randy.dunlap@oracle.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Thu, 7 Aug 2008 09:20:07 +0200 (CEST)
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+--Signature=_Thu__7_Aug_2008_21_04_11_+1000_nYijT7b3YQdFUnIw
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Wed, 6 Aug 2008, Randy Dunlap wrote:
-> > One randconfig ends with:
-> > 
-> > drivers/built-in.o: In function `wd_probe1':
-> > wd.c:(.init.text+0x6179): undefined reference to `NS8390p_init'
-> > make[1]: *** [.tmp_vmlinux1] Error 1
-> 
-> drivers/net/Makefile has:
-> 
-> obj-$(CONFIG_WD80x3) += wd.o 8390.o
-> 
-> So either wd_probe1() should call NS8390_init(), or obj-$(CONFIG_WD80x3)
-> should link with 8390p.o. Don't know which is the appropriate change
-> here (my gut feeling says the latter).
+Hi Dave,
 
-Safest is the latter. The shared memory interface on the wd is full speed
-8 or 16bit (depending on card/jumpers) but I'm not clear about the NIC.
-Most of the performance hit is on the packet transfer which is private
-methods on this device so using 8390p won't make a big difference on this
-board anyway.
+On Thu, 07 Aug 2008 09:26:35 +0100 David Woodhouse <dwmw2@infradead.org> wr=
+ote:
+>
+> On Thu, 2008-08-07 at 14:40 +1000, Stephen Rothwell wrote:
+> >=20
+> > I will add this patch to linux-next today in the hope it will be
+> > integrated somewhere soon (hint, hint :-)).
+>=20
+> Yeah, I was waiting for a version with a signed-off-by, which I have now
+> so I'll merge it.
+
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__7_Aug_2008_21_04_11_+1000_nYijT7b3YQdFUnIw
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkia1qsACgkQjjKRsyhoI8xUvQCgtx++kp3i4QONUU6EkkHQEsCe
+MVoAnjA+ENY6DkIebrKndyWLCrcbw4y9
+=7S0f
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__7_Aug_2008_21_04_11_+1000_nYijT7b3YQdFUnIw--
