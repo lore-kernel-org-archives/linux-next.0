@@ -1,33 +1,61 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Subject: Re: linux-next: Tree for August 5 (MTD build error)
-Date: Thu, 07 Aug 2008 09:26:35 +0100
-Message-ID: <1218097595.12232.5.camel@pmac.infradead.org>
-References: <20080805175914.7649537f.sfr@canb.auug.org.au>
-	 <20080805175518.9fc09b92.randy.dunlap@oracle.com>
-	 <200808060320.20064.david-b@pacbell.net>
-	 <200808060413.08723.david-b@pacbell.net>
-	 <20080807144027.f805c7b1.sfr@canb.auug.org.au>
+From: Nico Schottelius
+	<nico-linux-kernel-bugreport20080731@schottelius.org>
+Subject: Suspend issues on 2.6.27-rc2 (was: Heavy suspend and io problems
+	in 2.6.27-rc1-00156-g94ad374)
+Date: Thu, 7 Aug 2008 10:36:42 +0200
+Message-ID: <20080807083642.GA4370@denkbrett.schottelius.org>
+References: <20080731210507.GA6094@denkbrett.schottelius.org> <20080804090654.GA4747@denkbrett.schottelius.org> <20080804161443.GA4905@denkbrett.schottelius.org> <200808042132.41020.rjw@sisk.pl> <20080804233712.GA4181@denkbrett.schottelius.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="r5Pyd7+fXNt84Ff3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:47398 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751196AbYHGI0o (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Aug 2008 04:26:44 -0400
-In-Reply-To: <20080807144027.f805c7b1.sfr@canb.auug.org.au>
+Received: from mx2.schottelius.org ([62.65.138.77]:40174 "EHLO
+	mx2.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753040AbYHGIgo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Aug 2008 04:36:44 -0400
+Content-Disposition: inline
+In-Reply-To: <20080804233712.GA4181@denkbrett.schottelius.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Brownell <david-b@pacbell.net>, Randy Dunlap <randy.dunlap@oracle.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+Cc: Nico Schottelius <nico-linux-kernel-bugreport20080731@schottelius.org>
 
-On Thu, 2008-08-07 at 14:40 +1000, Stephen Rothwell wrote:
-> 
-> I will add this patch to linux-next today in the hope it will be
-> integrated somewhere soon (hint, hint :-)).
 
-Yeah, I was waiting for a version with a signed-off-by, which I have now
-so I'll merge it.
+--r5Pyd7+fXNt84Ff3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-dwmw2
+Hello!
+
+The problem continues to exist:
+
+I tested it on vanilla 2.6.27-rc2: Same problem, system does not wake up.
+
+Did not test the proposed patch, because it did not restore the console
+in any tested case yet, though it at least wakes the system up.
+
+Sincerly,
+
+Nico
+
+--=20
+Think about Free and Open Source Software (FOSS).
+http://nico.schottelius.org/documentations/foss/the-term-foss/
+
+PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
+
+--r5Pyd7+fXNt84Ff3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiatBoACgkQuL75KpiFGIx9qQCgkBU1zJLccJkbQwbcQ3kN9iIV
+vwoAoIqVKmr5+nX49cFDM/675gSADyhD
+=RSuT
+-----END PGP SIGNATURE-----
+
+--r5Pyd7+fXNt84Ff3--
