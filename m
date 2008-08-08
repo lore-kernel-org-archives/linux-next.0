@@ -1,46 +1,36 @@
-From: Felipe Balbi <felipe.balbi@nokia.com>
-Subject: Re: musb bogosity
-Date: Fri, 8 Aug 2008 12:37:54 +0300
-Message-ID: <20080808093754.GU30719@gandalf.research.nokia.com>
-References: <20080808082722.GA6580@linux-sh.org> <20080808083245.GS30719@gandalf.research.nokia.com> <20080808090445.GT30719@gandalf.research.nokia.com> <20080808092109.GA7468@linux-sh.org>
-Reply-To: felipe.balbi@nokia.com
+From: Haavard Skinnemoen <haavard.skinnemoen@atmel.com>
+Subject: Re: linux-next: manual merge of the avr32 tree
+Date: Fri, 8 Aug 2008 11:31:25 +0200
+Message-ID: <20080808113125.5fa8ed61@hskinnemo-gx745.norway.atmel.com>
+References: <20080808135145.e77b8b4c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.105.134]:18369 "EHLO
-	mgw-mx09.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754666AbYHHJiR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Aug 2008 05:38:17 -0400
-Content-Disposition: inline
-In-Reply-To: <20080808092109.GA7468@linux-sh.org>
+Received: from newsmtp5.atmel.com ([204.2.163.5]:7911 "EHLO sjogate2.atmel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753064AbYHHJy2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 8 Aug 2008 05:54:28 -0400
+Received: from bagnes.atmel.com ([10.175.100.4])
+	by sjogate2.atmel.com (8.13.6/8.13.6) with ESMTP id m789rbKI001160
+	for <linux-next@vger.kernel.org>; Fri, 8 Aug 2008 02:53:38 -0700 (PDT)
+In-Reply-To: <20080808135145.e77b8b4c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: ext Paul Mundt <lethal@linux-sh.org>
-Cc: Felipe Balbi <felipe.balbi@nokia.com>, linux-next@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, linux-omap@vger.kernel.org, David Brownell <david-b@pacbell.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Haavard Skinnemoen <hskinnemoen@atmel.com>, linux-next@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
-On Fri, Aug 08, 2008 at 06:21:09PM +0900, ext Paul Mundt wrote:
-> Yes, that fixes that problem at least, thanks.
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Today's linux-next merge of the avr32 tree got conflicts in arch/avr32/mach-at32ap/at32ap700x.c and arch/avr32/mach-at32ap/pm.c between commit 3663b736a5083b3bce74520b637f630f01f66a7f ("avr32: Use <mach/foo.h> instead of <asm/arch/foo.h>") from the arm-current tree and the avr32 tree.
 
-Cool :-)
+Sorry. I should have expected that.
 
-> Now the I/O bits are the only outstanding issue, as I still need the
-> CONFIG_SUPERH test in musb_io.h to get around conflicting definitions.
+> The include files seem to have moved around quite a bit, so I didn't
+> apply the avr32 tree for today.  Hopefully, the arm-current tree will
+> migrate to Linus' tree soon and then the avr32 tree can be updated to
+> reflect the changes.
 
-I think we're gonna need that for a while, can you send a proper patch
-changing that ifndef ??
+The plan is to merge the conflicting stuff into the avr32 and then
+rebase the few commits I currently have on top of that. I'll fix it.
 
-Feel free to put my Acked-by: Felipe Balbi <felipe.balbi@nokia.com> if
-you wish.
-
-> Presently ARM and SH are the only ones that define the readsl() variants
-> anyways, so stubbing in an extra ifdef there is fine as a temporary
-> measure, but it's not a long-term solution. The only reason SH defines
-> them at all is because we ran in to this exact same problem the last time
-> an ARM driver tried passing itself off as generic ;-)
-
-eheh... But this actually is a generic driver, we're only missing a pci
-bus glue to use the musb chip on the opt cards, that would be really
-nice :-)
-
--- 
-balbi
+Haavard
