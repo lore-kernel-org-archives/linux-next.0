@@ -1,49 +1,53 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for August 7 (SGI UV)
-Date: Thu, 7 Aug 2008 15:07:50 -0700
-Message-ID: <20080807150750.162f816c.randy.dunlap@oracle.com>
-References: <20080807172027.8180312c.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb.current tree
+Date: Fri, 8 Aug 2008 11:26:46 +1000
+Message-ID: <20080808112646.b5502bf1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__8_Aug_2008_11_26_46_+1000_bznTJa3r2Q5jih6F"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from agminet01.oracle.com ([141.146.126.228]:14941 "EHLO
-	agminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754096AbYHGWKc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Aug 2008 18:10:32 -0400
-In-Reply-To: <20080807172027.8180312c.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55372 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751017AbYHHB05 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 Aug 2008 21:26:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Cliff Wickman <cpw@sgi.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, Dmitry Baryshkov <dbaryshkov@gmail.com>, Russell King <rmk@arm.linux.org.uk>
 
-(This may happen in mainline, but I haven't checked there.)
+--Signature=_Fri__8_Aug_2008_11_26_46_+1000_bznTJa3r2Q5jih6F
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-sparse complains about bitfields not being marked as signed or unsigned
-and about one-bit bitfields being (default) signed (sign bit only!):
+Hi Greg,
 
-  CHECK   /local/linsrc/linux-next-20080807/arch/x86/kernel/tlb_64.c
-include2/asm/uv/uv_bau.h:141:22: warning: dubious bitfield without explicit `signed' or `unsigned'
-include2/asm/uv/uv_bau.h:143:25: warning: dubious bitfield without explicit `signed' or `unsigned'
-include2/asm/uv/uv_bau.h:145:15: warning: dubious bitfield without explicit `signed' or `unsigned'
-include2/asm/uv/uv_bau.h:148:14: warning: dubious bitfield without explicit `signed' or `unsigned'
-include2/asm/uv/uv_bau.h:151:14: warning: dubious bitfield without explicit `signed' or `unsigned'
-include2/asm/uv/uv_bau.h:154:18: warning: dubious bitfield without explicit `signed' or `unsigned'
-include2/asm/uv/uv_bau.h:156:18: warning: dubious bitfield without explicit `signed' or `unsigned'
-include2/asm/uv/uv_bau.h:160:14: error: dubious one-bit signed bitfield
-include2/asm/uv/uv_bau.h:164:18: error: dubious one-bit signed bitfield
-include2/asm/uv/uv_bau.h:178:19: error: dubious one-bit signed bitfield
-include2/asm/uv/uv_bau.h:186:16: error: dubious one-bit signed bitfield
-include2/asm/uv/uv_bau.h:190:18: error: dubious one-bit signed bitfield
-include2/asm/uv/uv_bau.h:193:16: error: dubious one-bit signed bitfield
-  CC      arch/x86/kernel/tlb_64.o
+Today's linux-next merge of the usb.current tree got a conflict in
+drivers/usb/gadget/omap_udc.c between commit
+a09e64fbc0094e3073dbb09c3b4bfe4ab669244b ("[ARM] Move
+include/asm-arm/arch-* to arch/arm/*/include/mach") from the arm-current
+tree and commit b7eff3b991784964df1e7eeffd944032ccc3e11f ("USB: omap_udc:
+fix compilation with debug enabled") from the usb.current tree.
 
+Some of the arm header files have moved.  I think I fixed it up right (I
+changed asm/arch/control.h to mach/control.h) and will carry the fix
+while necessary.
 
-Can those struct bitfields be marked as signed or unsigned, please?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Thanks.
+--Signature=_Fri__8_Aug_2008_11_26_46_+1000_bznTJa3r2Q5jih6F
+Content-Type: application/pgp-signature
 
----
-~Randy
-Linux Plumbers Conference, 17-19 September 2008, Portland, Oregon USA
-http://linuxplumbersconf.org/
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiboNYACgkQjjKRsyhoI8zY/ACbBiEle4v9Jg2utXI9c/Bywy09
+TVYAoIlW2EcRoiHsLw3W++C0z70snw0A
+=1OLg
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__8_Aug_2008_11_26_46_+1000_bznTJa3r2Q5jih6F--
