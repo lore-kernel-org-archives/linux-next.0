@@ -1,28 +1,37 @@
-From: David Howells <dhowells@redhat.com>
-Subject: Re: next-20080808: bash: fork: Resource temporarily unavailable
-Date: Sat, 09 Aug 2008 00:23:58 +0100
-Message-ID: <16319.1218237838@redhat.com>
-References: <alpine.LRH.1.10.0808090847530.29741@tundra.namei.org> <20080808172141.GY14495@cs181140183.pp.htv.fi> <1218214935.3146.5.camel@dhcppc0> <17923.1218234735@redhat.com>
+From: James Morris <jmorris@namei.org>
+Subject: Re: next-20080808 fs/nfsctl.c build error
+Date: Sat, 9 Aug 2008 09:33:34 +1000 (EST)
+Message-ID: <alpine.LRH.1.10.0808090933210.30183@tundra.namei.org>
+References: <alpine.LRH.1.10.0808090825060.29741@tundra.namei.org> <20080808171624.24ae1e10.sfr@canb.auug.org.au> <20080808172527.GB4742@blackpad> <30847.1218236306@redhat.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([66.187.233.31]:41975 "EHLO mx1.redhat.com"
+Received: from tundra.namei.org ([65.99.196.166]:58240 "EHLO tundra.namei.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752904AbYHHXZH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 8 Aug 2008 19:25:07 -0400
-In-Reply-To: <alpine.LRH.1.10.0808090847530.29741@tundra.namei.org>
+	id S1755704AbYHHXeE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 8 Aug 2008 19:34:04 -0400
+In-Reply-To: <30847.1218236306@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: dhowells@redhat.com, Thomas Meyer <thomas@m3y3r.de>, Adrian Bunk <bunk@kernel.org>, Linux-Kernel <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Eduardo Habkost <ehabkost@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-James Morris <jmorris@namei.org> wrote:
+On Fri, 8 Aug 2008, David Howells wrote:
 
-> > I can, but I'll need a config file as it boots fine for me and passes the
-> > LTP testsuites I've run on it.
+> James Morris <jmorris@namei.org> wrote:
 > 
-> Is this with linux-next or my tree?
+> > In any case, it seems that linux/cred.h should include linux/sched.h to 
+> > provide a full definition of 'struct task_struct', so that 'current' can 
+> > be dereferenced (e.g. in current_cred()).
+> 
+> Not good.  That makes sched.h and cred.h recursively dependent.  sched.h
+> really needs splitting up, and the include dependencies need sorting.
+> 
+> However, for the moment I recommend the attached patch.
 
-It was actually with your tree, but I've just tested current linux-next and
-that passes the LTP SELinux and syscalls testscripts too, give or take the
-things that weren't passing anyway, even before my patches.
+Applied.
 
-David
+
+-- 
+James Morris
+<jmorris@namei.org>
