@@ -1,39 +1,70 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: next-20080808: bash: fork: Resource temporarily unavailable
-Date: Sat, 9 Aug 2008 08:48:39 +1000 (EST)
-Message-ID: <alpine.LRH.1.10.0808090847530.29741@tundra.namei.org>
-References: <20080808172141.GY14495@cs181140183.pp.htv.fi> <1218214935.3146.5.camel@dhcppc0> <17923.1218234735@redhat.com>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+From: David Howells <dhowells@redhat.com>
+Subject: Re: next-20080808 fs/nfsctl.c build error
+Date: Fri, 08 Aug 2008 23:58:26 +0100
+Message-ID: <30847.1218236306@redhat.com>
+References: <alpine.LRH.1.10.0808090825060.29741@tundra.namei.org> <20080808171624.24ae1e10.sfr@canb.auug.org.au> <20080808172527.GB4742@blackpad>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tundra.namei.org ([65.99.196.166]:51096 "EHLO tundra.namei.org"
+Received: from mx1.redhat.com ([66.187.233.31]:37460 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752258AbYHHWyw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 8 Aug 2008 18:54:52 -0400
-In-Reply-To: <17923.1218234735@redhat.com>
+	id S1754032AbYHHW6l (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 8 Aug 2008 18:58:41 -0400
+In-Reply-To: <alpine.LRH.1.10.0808090825060.29741@tundra.namei.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Thomas Meyer <thomas@m3y3r.de>, Adrian Bunk <bunk@kernel.org>, Linux-Kernel <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+To: James Morris <jmorris@namei.org>
+Cc: dhowells@redhat.com, Eduardo Habkost <ehabkost@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, 8 Aug 2008, David Howells wrote:
+James Morris <jmorris@namei.org> wrote:
 
-> 
-> Adrian Bunk <bunk@kernel.org> wrote:
-> 
-> > The only commits that touched kernel/fork.c between next-20080807 and 
-> > next-20080808 are David's CRED patches.
-> > 
-> > David, can you look at this?
-> 
-> I can, but I'll need a config file as it boots fine for me and passes the LTP
-> testsuites I've run on it.
+> In any case, it seems that linux/cred.h should include linux/sched.h to 
+> provide a full definition of 'struct task_struct', so that 'current' can 
+> be dereferenced (e.g. in current_cred()).
 
-Is this with linux-next or my tree?
+Not good.  That makes sched.h and cred.h recursively dependent.  sched.h
+really needs splitting up, and the include dependencies need sorting.
 
-(I'm currently building next-20080808 & will do some testing).
+However, for the moment I recommend the attached patch.
+
+David
+---
+From: David Howells <dhowells@redhat.com>
+
+CRED: Fix inclusion problems
+
+Under certain configurations, some .c files obtain linux/sched.h and/or
+linux/cred.h through other include files, but not under all configurations.
+
+A couple of places (one in Coda, one in nfsd) need extra includes.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+
+ fs/coda/file.c |    1 +
+ fs/nfsctl.c    |    1 +
+ 2 files changed, 2 insertions(+), 0 deletions(-)
 
 
--- 
-James Morris
-<jmorris@namei.org>
+diff --git a/fs/coda/file.c b/fs/coda/file.c
+index 5a87699..9d0d703 100644
+--- a/fs/coda/file.c
++++ b/fs/coda/file.c
+@@ -16,6 +16,7 @@
+ #include <linux/errno.h>
+ #include <linux/smp_lock.h>
+ #include <linux/string.h>
++#include <linux/cred.h>
+ #include <asm/uaccess.h>
+ 
+ #include <linux/coda.h>
+diff --git a/fs/nfsctl.c b/fs/nfsctl.c
+index cc4ef26..358e469 100644
+--- a/fs/nfsctl.c
++++ b/fs/nfsctl.c
+@@ -14,6 +14,7 @@
+ #include <linux/namei.h>
+ #include <linux/mount.h>
+ #include <linux/syscalls.h>
++#include <linux/sched.h>
+ #include <asm/uaccess.h>
+ 
+ /*
