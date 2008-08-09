@@ -1,38 +1,81 @@
-From: David Howells <dhowells@redhat.com>
+From: Thomas Meyer <thomas@m3y3r.de>
 Subject: Re: next-20080808: bash: fork: Resource temporarily unavailable
-Date: Sat, 09 Aug 2008 13:52:07 +0100
-Message-ID: <14476.1218286327@redhat.com>
-References: <1218281190.3155.5.camel@dhcppc0> <1218214935.3146.5.camel@dhcppc0> <alpine.LRH.1.10.0808090747150.29079@tundra.namei.org>
+Date: Sat, 09 Aug 2008 15:11:13 +0200
+Message-ID: <1218287473.3155.13.camel@dhcppc0>
+References: <1218281190.3155.5.camel@dhcppc0>
+	 <1218214935.3146.5.camel@dhcppc0>
+	 <alpine.LRH.1.10.0808090747150.29079@tundra.namei.org>
+	 <14476.1218286327@redhat.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([66.187.233.31]:53761 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750811AbYHIMxQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 9 Aug 2008 08:53:16 -0400
-In-Reply-To: <1218281190.3155.5.camel@dhcppc0>
+Received: from www17.your-server.de ([213.133.104.17]:42993 "EHLO
+	www17.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751421AbYHINLH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 9 Aug 2008 09:11:07 -0400
+In-Reply-To: <14476.1218286327@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Meyer <thomas@m3y3r.de>
-Cc: dhowells@redhat.com, James Morris <jmorris@namei.org>, Linux-Kernel <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: James Morris <jmorris@namei.org>, Linux-Kernel <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
 
-Thomas Meyer <thomas@m3y3r.de> wrote:
+Am Samstag, den 09.08.2008, 13:52 +0100 schrieb David Howells:
+> Thomas Meyer <thomas@m3y3r.de> wrote:
+> 
+> > > > Beginning with next-20080808 after letting the system run for 5 minutes
+> > > > or so, I get an error from the fork call, e.g.:
+> > > > 
+> > > > "bash: fork: Resource temporarily unavailable"
+> 
+> I modified your config slightly so that it'd run on my testbox (x86_64
+> unfortunately), but that survived LTP and seemed to work okay.  I'll have to
+> snag an i386 installation from somewhere, unless James can do me a favour and
+> test it on his, if he has one.
+> 
+> Can you try this please:
+> 
+> 	cat /proc/slabinfo  | cut -d: -f1 | sort -k 2 -n
+> 
+> Just to check to see if there's a memory leak.
 
-> > > Beginning with next-20080808 after letting the system run for 5 minutes
-> > > or so, I get an error from the fork call, e.g.:
-> > > 
-> > > "bash: fork: Resource temporarily unavailable"
+I'm too lazy to reboot now. But i can give you that from vmcore dump:
 
-I modified your config slightly so that it'd run on my testbox (x86_64
-unfortunately), but that survived LTP and seemed to work okay.  I'll have to
-snag an i386 installation from somewhere, unless James can do me a favour and
-test it on his, if he has one.
+crash> kmem -i
+              PAGES        TOTAL      PERCENTAGE
+ TOTAL MEM  1524251       5.8 GB         ----
+      FREE  1343484       5.1 GB   88% of TOTAL MEM
+      USED   180767     706.1 MB   11% of TOTAL MEM
+    SHARED    19076      74.5 MB    1% of TOTAL MEM
+   BUFFERS     3800      14.8 MB    0% of TOTAL MEM
+    CACHED   108483     423.8 MB    7% of TOTAL MEM
+      SLAB     6239      24.4 MB    0% of TOTAL MEM
 
-Can you try this please:
+TOTAL HIGH  1343440       5.1 GB   88% of TOTAL MEM
+ FREE HIGH        0            0    0% of TOTAL HIGH
+ TOTAL LOW   180811     706.3 MB   11% of TOTAL MEM
+  FREE LOW  1343484       5.1 GB  743% of TOTAL LOW
 
-	cat /proc/slabinfo  | cut -d: -f1 | sort -k 2 -n
+TOTAL SWAP  1596751       6.1 GB         ----
+ SWAP USED        0            0    0% of TOTAL SWAP
+ SWAP FREE  1596751       6.1 GB  100% of TOTAL SWAP
 
-Just to check to see if there's a memory leak.
+Is that what you wanted to know? Doesn't look like a memory leak for me.
 
-Interestingly, I notice that SLUB's /proc/slabinfo appears to be broken.  It's
-missing a number of slab caches from the list.
+kmem -s doesn't seem to work:
 
-David
+crash> kmem -s
+
+kmem: invalid structure member offset: kmem_cache_objects
+      FILE: memory.c  LINE: 13500  FUNCTION: dump_kmem_cache_slub()
+
+[/usr/bin/crash] error trace: 8085195 => 809f8cf => 80c0d82 => 813b9a0
+CACHE    NAME                 OBJSIZE  ALLOCATED     TOTAL  SLABS  SSIZE
+
+  813b9a0: OFFSET_verify+118
+  80c0d82: dump_kmem_cache_slub+1033
+  809f8cf: cmd_kmem+3077
+  8085195: exec_command+265
+
+kmem: invalid structure member offset: kmem_cache_objects
+      FILE: memory.c  LINE: 13500  FUNCTION: dump_kmem_cache_slub()
