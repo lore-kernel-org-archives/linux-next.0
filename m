@@ -1,32 +1,25 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Subject: Re: linux-next: mtd tree build failure
-Date: Sat, 09 Aug 2008 22:33:19 +0100
-Message-ID: <1218317599.5063.10.camel@pmac.infradead.org>
-References: <20080807133005.d37ea7b8.sfr@canb.auug.org.au>
-	 <20080808001939.574e7fad.sfr@canb.auug.org.au>
-	 <alpine.LFD.1.10.0808092131550.3488@casper.infradead.org>
+From: Jasper Bryant-Greene <jasper@amiton.co.nz>
+Subject: Re: next-20080808: bash: fork: Resource temporarily unavailable
+Date: Sun, 10 Aug 2008 10:55:18 +1200
+Message-ID: <1218322518.3268.0.camel@luna.unix.geek.nz>
+References: <1218287473.3155.13.camel@dhcppc0>
+	 <1218281190.3155.5.camel@dhcppc0> <1218214935.3146.5.camel@dhcppc0>
+	 <alpine.LRH.1.10.0808090747150.29079@tundra.namei.org>
+	 <14476.1218286327@redhat.com>  <15386.1218290826@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:60949 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751583AbYHIVda (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 9 Aug 2008 17:33:30 -0400
-In-Reply-To: <alpine.LFD.1.10.0808092131550.3488@casper.infradead.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alexey Korolev <akorolev@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754537AbYHIWzZ@vger.kernel.org>
+In-Reply-To: <15386.1218290826@redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Howells <dhowells@redhat.com>
+Cc: Thomas Meyer <thomas@m3y3r.de>, James Morris <jmorris@namei.org>, Linux-Kernel <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Sat, 2008-08-09 at 21:41 +0100, Alexey Korolev wrote:
-> Hi Stephen,
-> 
-> Thanks for catching export symbol problem.  
-> Hmm, it seems very strange why i2c_dev.c can't reference the exported symbols. 
-> We are looking after of the problem. I believe it will be fixed ASAP.
+On Sat, 2008-08-09 at 15:07 +0100, David Howells wrote:
+> I guess I need to get this thing running on an i386 box.
 
-http://git.infradead.org/mtd-2.6.git?a=commitdiff;h=c314dfdc
+This occurs on my x86_64 system, config was posted to this thread
+earlier.
 
--- 
-dwmw2
+-jasper
