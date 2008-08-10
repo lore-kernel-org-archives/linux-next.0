@@ -1,66 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the creds tree
-Date: Sun, 10 Aug 2008 22:53:18 +1000
-Message-ID: <20080810225318.0a4b656f.sfr@canb.auug.org.au>
-References: <20080808160844.796dfcc1.sfr@canb.auug.org.au>
-	<alpine.LRH.1.10.0808081920110.25130@tundra.namei.org>
+From: Grant Wilson <grant.wilson@zen.co.uk>
+Subject: Re: next-20080808: bash: fork: Resource temporarily unavailable
+Date: Sun, 10 Aug 2008 11:30:44 +0100
+Message-ID: <20080810113044.19143b0a@worthy.swandive.local>
+References: <1218322518.3268.0.camel@luna.unix.geek.nz>
+	<1218287473.3155.13.camel@dhcppc0>
+	<1218281190.3155.5.camel@dhcppc0>
+	<1218214935.3146.5.camel@dhcppc0>
+	<alpine.LRH.1.10.0808090747150.29079@tundra.namei.org>
+	<14476.1218286327@redhat.com>
+	<15386.1218290826@redhat.com>
+	<10251.1218361539@redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sun__10_Aug_2008_22_53_18_+1000_+lfB8I7D_wPqrt+7"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54541 "EHLO smtps.tip.net.au"
+Received: from fizeau.zen.co.uk ([212.23.8.67]:44728 "EHLO fizeau.zen.co.uk"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753573AbYHJMx2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 10 Aug 2008 08:53:28 -0400
-In-Reply-To: <alpine.LRH.1.10.0808081920110.25130@tundra.namei.org>
+	id S1753630AbYHJMzS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 10 Aug 2008 08:55:18 -0400
+In-Reply-To: <10251.1218361539@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: David Howells <dhowells@redhat.com>, linux-next@vger.kernel.org, David Chinner <dgc@sgi.com>, xfs-masters@oss.sgi.com
+Cc: Jasper Bryant-Greene <jasper@amiton.co.nz>, dhowells@redhat.com, Thomas Meyer <thomas@m3y3r.de>, James Morris <jmorris@namei.org>, Linux-Kernel <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
 
---Signature=_Sun__10_Aug_2008_22_53_18_+1000_+lfB8I7D_wPqrt+7
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sun, 10 Aug 2008 10:45:39 +0100
+David Howells <dhowells@redhat.com> wrote:
 
-Hi James,
+[snip]
+> 
+> Are you running as an unprivileged user?  If so, this may be the point that's
+> biting you.  Can you try applying the attached patch to find more information?
+[snip]
+I'm also experiencing this on an X86_64 system as an unprivileged user.
 
-On Fri, 8 Aug 2008 19:23:11 +1000 (EST) James Morris <jmorris@namei.org> wr=
-ote:
->
-> I'm not 100% clear on the new process.
->=20
-> What happens with your fixup patch?  Is this something you maintain in=20
-> your tree from now until these trees are merged with Linus?  (At which=20
-> point we'll run into the same conflicts again ?)
+With your patch applied I get the following repeated several times
+during the boot, but with no apparent ill effects:
 
-I redo the conflict fixup (well, "git rerere" usually does it for me)
-each day, and by the time the tree gets merged by Linus, he will either
-fix the conflict as well, or somewhere along the way it gets taken care
-of by the owner of one of the trees by doing a merge or rebase against
-Linus' tree after the other tree gets merged.
+[   31.033195] copy_process() = -513 
 
-Or sometimes we do a temporary form of an API change so that other trees
-can do the API change early and thus remove the conflict.
+When the fork call starts to fail after a few minutes the following is logged:
 
-There is nothing official about this procedure, I am just trying to make
-things easier by noticing possible problems early.
+[  223.039938] Rlimit EAGAIN (-1 >= 16375, uid 1000)
+[  223.044744] copy_process() = -11
+[  226.660319] Rlimit EAGAIN (-1 >= 16375, uid 1000)
+[  226.664166] copy_process() = -11
 
---=20
+HTH.
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Sun__10_Aug_2008_22_53_18_+1000_+lfB8I7D_wPqrt+7
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkie5L4ACgkQjjKRsyhoI8xFhQCghBtKJYYm8LRPCC1dF5jiPvoh
-Dc8AoLuUxOcBpyVTvnASWz5xg84UqRF1
-=tLLj
------END PGP SIGNATURE-----
-
---Signature=_Sun__10_Aug_2008_22_53_18_+1000_+lfB8I7D_wPqrt+7--
+GRant
