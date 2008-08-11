@@ -1,30 +1,84 @@
-From: Alexey Korolev <akorolev@infradead.org>
-Subject: Re: linux-next: mtd tree build failure
-Date: Mon, 11 Aug 2008 09:30:00 +0100 (BST)
-Message-ID: <alpine.LFD.1.10.0808110928050.27251@casper.infradead.org>
-References: <20080807133005.d37ea7b8.sfr@canb.auug.org.au>  <20080808001939.574e7fad.sfr@canb.auug.org.au>  <alpine.LFD.1.10.0808092131550.3488@casper.infradead.org> <1218317599.5063.10.camel@pmac.infradead.org>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: [PATCH] net, wd.c: fix undefined reference to `NS8390p_init'
+Date: Mon, 11 Aug 2008 11:11:05 +0200
+Message-ID: <20080811091105.GA8141@elte.hu>
+References: <20080806182828.6bfe0a16.sfr@canb.auug.org.au> <20080806172148.7fac5999.randy.dunlap@oracle.com> <Pine.LNX.4.64.0808070918510.17614@anakin> <20080807102931.1bb0607d@lxorguk.ukuu.org.uk>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:41030 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750989AbYHKIax (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Aug 2008 04:30:53 -0400
-In-Reply-To: <1218317599.5063.10.camel@pmac.infradead.org>
+Received: from mx3.mail.elte.hu ([157.181.1.138]:36493 "EHLO mx3.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751023AbYHKJLl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Aug 2008 05:11:41 -0400
+Content-Disposition: inline
+In-Reply-To: <20080807102931.1bb0607d@lxorguk.ukuu.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>, Jeff Garzik <jgarzik@pobox.com>
 
-Hi David,
 
-> > 
-> > Thanks for catching export symbol problem.  
-> > Hmm, it seems very strange why i2c_dev.c can't reference the exported symbols. 
-> > We are looking after of the problem. I believe it will be fixed ASAP.
+* Alan Cox <alan@lxorguk.ukuu.org.uk> wrote:
+
+> On Thu, 7 Aug 2008 09:20:07 +0200 (CEST)
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 > 
-> http://git.infradead.org/mtd-2.6.git?a=commitdiff;h=c314dfdc
->
-Oh Great! Thank you very much! 
+> > On Wed, 6 Aug 2008, Randy Dunlap wrote:
+> > > One randconfig ends with:
+> > > 
+> > > drivers/built-in.o: In function `wd_probe1':
+> > > wd.c:(.init.text+0x6179): undefined reference to `NS8390p_init'
+> > > make[1]: *** [.tmp_vmlinux1] Error 1
+> > 
+> > drivers/net/Makefile has:
+> > 
+> > obj-$(CONFIG_WD80x3) += wd.o 8390.o
+> > 
+> > So either wd_probe1() should call NS8390_init(), or obj-$(CONFIG_WD80x3)
+> > should link with 8390p.o. Don't know which is the appropriate change
+> > here (my gut feeling says the latter).
+> 
+> Safest is the latter. The shared memory interface on the wd is full 
+> speed 8 or 16bit (depending on card/jumpers) but I'm not clear about 
+> the NIC. Most of the performance hit is on the packet transfer which 
+> is private methods on this device so using 8390p won't make a big 
+> difference on this board anyway.
 
-Alexey
+Alan, Jeff, i triggered this too with latest -git, please pick up the 
+fix below if you dont have it already.
+
+	Ingo
+
+------------------>
+>From c03cb1727bb4c5433436bfb0fab59fdcc00749c3 Mon Sep 17 00:00:00 2001
+From: Ingo Molnar <mingo@elte.hu>
+Date: Mon, 11 Aug 2008 11:11:42 +0200
+Subject: [PATCH] net, wd.c: fix undefined reference to `NS8390p_init'
+
+fix:
+
+  drivers/built-in.o: In function `wd_probe1':
+  wd.c:(.init.text+0xb247): undefined reference to `NS8390p_init'
+
+that triggers with:
+
+  http://redhat.com/~mingo/misc/config-Mon_Aug_11_10_40_46_CEST_2008.bad
+
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+---
+ drivers/net/Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/Makefile b/drivers/net/Makefile
+index 7629c90..dc6dbf6 100644
+--- a/drivers/net/Makefile
++++ b/drivers/net/Makefile
+@@ -106,7 +106,7 @@ ifeq ($(CONFIG_FEC_MPC52xx_MDIO),y)
+ 	obj-$(CONFIG_FEC_MPC52xx) += fec_mpc52xx_phy.o
+ endif
+ obj-$(CONFIG_68360_ENET) += 68360enet.o
+-obj-$(CONFIG_WD80x3) += wd.o 8390.o
++obj-$(CONFIG_WD80x3) += wd.o 8390p.o
+ obj-$(CONFIG_EL2) += 3c503.o 8390p.o
+ obj-$(CONFIG_NE2000) += ne.o 8390p.o
+ obj-$(CONFIG_NE2_MCA) += ne2.o 8390p.o
