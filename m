@@ -1,40 +1,61 @@
-From: "Luis R. Rodriguez" <lrodriguez@atheros.com>
-Subject: Re: ath9k build failure
-Date: Mon, 11 Aug 2008 09:46:57 -0700
-Message-ID: <20080811164657.GE6128@tesla>
-References: <20080811162040.ed7b8ab7.sfr@canb.auug.org.au>
+From: Nico Schottelius
+	<nico-linux-kernel-bugreport20080731@schottelius.org>
+Subject: Re: Suspend issues on 2.6.27-rc2 (was: Heavy suspend and io
+	problems in 2.6.27-rc1-00156-g94ad374)
+Date: Mon, 11 Aug 2008 20:04:16 +0200
+Message-ID: <20080811180416.GA22969@denkbrett.schottelius.org>
+References: <20080731210507.GA6094@denkbrett.schottelius.org> <20080804233712.GA4181@denkbrett.schottelius.org> <20080807083642.GA4370@denkbrett.schottelius.org> <200808071852.11080.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.atheros.com ([12.36.123.2]:26911 "EHLO mail.atheros.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752108AbYHKQq6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 11 Aug 2008 12:46:58 -0400
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755785AbYHKSEd@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20080811162040.ed7b8ab7.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "John W. Linville" <linville@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Adrian Bunk <bunk@kernel.org>, Luis Rodriguez <Luis.Rodriguez@Atheros.com>, Sujith Manoharan <Sujith.Manoharan@Atheros.com>
+In-Reply-To: <200808071852.11080.rjw@sisk.pl>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Nico Schottelius <nico-linux-kernel-bugreport20080731@schottelius.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Sun, Aug 10, 2008 at 11:20:40PM -0700, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next build (powerpc allyesconfig) failed like this:
-> 
-> drivers/net/wireless/ath9k/hw.c: In function 'ath9k_hw_spur_mitigate':
-> drivers/net/wireless/ath9k/hw.c:4925: internal compiler error: in expand_expr_real_1, at expr.c:9199
-> 
-> This is a driver that is in Linus' tree and has no patches in the
-> linux-next tree.
-> 
-> The original work around talked about applying the patch twice, so I
-> applied the below patch.
 
-Stephen,
+--VbJkn9YxBvnuCH5J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-this is also in wireless-testing. I also see this in linux-2.6
-under b08cbcd4546445740c2a04291204b56f8baf7be2. Not sure how this didn't
-get through linux-next.
+Rafael J. Wysocki [Thu, Aug 07, 2008 at 06:52:10PM +0200]:
+> > The problem continues to exist:
+> >=20
+> > I tested it on vanilla 2.6.27-rc2: Same problem, system does not wake u=
+p.
+> >=20
+> > Did not test the proposed patch, because it did not restore the console
+> > in any tested case yet, though it at least wakes the system up.
+>=20
+> What graphics adapter is there in your box?
 
-  Luis
+x1400, using radeonhd (also from git)
+
+It's a T60 lenovo thinkpad.
+
+Nico
+
+--=20
+Think about Free and Open Source Software (FOSS).
+http://nico.schottelius.org/documentations/foss/the-term-foss/
+
+PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
+
+--VbJkn9YxBvnuCH5J
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkigfyAACgkQuL75KpiFGIzYSgCfbp8WxUe1YmDcY7EEIyWxPM7V
+UUEAoJzC8V+VUy7FWUJfgch5RwB+wi59
+=65+i
+-----END PGP SIGNATURE-----
+
+--VbJkn9YxBvnuCH5J--
