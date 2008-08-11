@@ -1,45 +1,26 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: Suspend issues on 2.6.27-rc2 (was: Heavy suspend and io problems in 2.6.27-rc1-00156-g94ad374)
-Date: Mon, 11 Aug 2008 22:39:28 +0200
-Message-ID: <200808112239.29292.rjw@sisk.pl>
-References: <20080731210507.GA6094@denkbrett.schottelius.org> <200808071852.11080.rjw@sisk.pl> <20080811180416.GA22969@denkbrett.schottelius.org>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH] net, wd.c: fix undefined reference to `NS8390p_init'
+Date: Mon, 11 Aug 2008 13:51:48 -0700 (PDT)
+Message-ID: <20080811.135148.153377940.davem@davemloft.net>
+References: <20080807102931.1bb0607d@lxorguk.ukuu.org.uk>
+	<20080811091105.GA8141@elte.hu>
+	<48A00AB5.1030108@pobox.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-15"
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:55857 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753891AbYHKUhB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 11 Aug 2008 16:37:01 -0400
-In-Reply-To: <20080811180416.GA22969@denkbrett.schottelius.org>
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Nico Schottelius <nico-linux-kernel-bugreport20080731@schottelius.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <48A00AB5.1030108@pobox.com>
+Sender: netdev-owner@vger.kernel.org
+To: jgarzik@pobox.com
+Cc: mingo@elte.hu, alan@lxorguk.ukuu.org.uk, geert@linux-m68k.org, randy.dunlap@oracle.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Monday, 11 of August 2008, Nico Schottelius wrote:
-> Rafael J. Wysocki [Thu, Aug 07, 2008 at 06:52:10PM +0200]:
-> > > The problem continues to exist:
-> > > 
-> > > I tested it on vanilla 2.6.27-rc2: Same problem, system does not wake up.
-> > > 
-> > > Did not test the proposed patch, because it did not restore the console
-> > > in any tested case yet, though it at least wakes the system up.
-> > 
-> > What graphics adapter is there in your box?
-> 
-> x1400, using radeonhd (also from git)
-> 
-> It's a T60 lenovo thinkpad.
+From: Jeff Garzik <jgarzik@pobox.com>
+Date: Mon, 11 Aug 2008 05:47:33 -0400
 
-There also are models with Intel graphics, I think.
+> DaveM should have it AFAIK, I'll double-check and make sure it got in 
+> somewhere.
 
-Anyway, the problem is related to either the graphics driver, or ACPI.
+I pushed your most recent merge of driver fixes to Linus so if it's
+not in his tree I haven't seen it yet. :-)
 
-Please verify if any ACPI-related settings haven't changed in your .config
-between the good kernel and the failing one.
-
-Thanks,
-Rafael
