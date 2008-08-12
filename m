@@ -1,38 +1,49 @@
-From: Andi Kleen <andi@firstfloor.org>
-Subject: Re: linux-next: acpi tree build failure
-Date: Tue, 12 Aug 2008 09:06:58 +0200
-Message-ID: <20080812070658.GY9038@one.firstfloor.org>
-References: <20080812131613.e3dfb2f5.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the creds tree
+Date: Tue, 12 Aug 2008 17:09:54 +1000
+Message-ID: <20080812170954.8dcf0318.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__12_Aug_2008_17_09_54_+1000_TmGi.EBkvtvtWRzM"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from one.firstfloor.org ([213.235.205.2]:51622 "EHLO
-	one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751457AbYHLHFu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Aug 2008 03:05:50 -0400
-Content-Disposition: inline
-In-Reply-To: <20080812131613.e3dfb2f5.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46368 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751350AbYHLHKD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 Aug 2008 03:10:03 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andi Kleen <andi@firstfloor.org>, Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, Carlos Corbacho <carlos@strangeworlds.co.uk>, stable@kernel.org
+To: David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 
-On Tue, Aug 12, 2008 at 01:16:13PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
-> 
-> drivers/misc/acer-wmi.c: In function 'set_u32':
-> drivers/misc/acer-wmi.c:831: error: 'status' undeclared (first use in this function)
-> 
-> Caused by commit 70ea586cc54ab2fb2af42d7ee97ba4f26e315f45 ("acer-wmi: Fix
-> wireless and bluetooth on early AMW0 v2 laptops").
-> 
-> Clearly, this hasn't even been build tested.  A bit more care, please.
+--Signature=_Tue__12_Aug_2008_17_09_54_+1000_TmGi.EBkvtvtWRzM
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It has, but the ACER_WMI option got disabled for unknown reasons in the
-test builds :/
+Hi David,
 
-Thanks, will fix.
+Today's linux-next merge of the creds tree got a conflict in
+fs/namespace.c between commit 7125f0b2f3b13510a2e786503aecd4e35822ea62
+("finally get rid of nameidata in namespace.c") from the vfs tree and
+commit f4d399d40debd14b22967153294b94087cbcf789 ("CRED: Wrap most
+current->e?[ug]id and some task->e?[ug]id") from the creds tree.
 
--Andi
+I did the obvious fixup and can carry it.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__12_Aug_2008_17_09_54_+1000_TmGi.EBkvtvtWRzM
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkihN0IACgkQjjKRsyhoI8xVPwCeNIznCHLbUciObDl0tlfaAwch
+1UAAoLF4pCHMLJNNd8CMz/pAf+oUAiT6
+=JsDv
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__12_Aug_2008_17_09_54_+1000_TmGi.EBkvtvtWRzM--
