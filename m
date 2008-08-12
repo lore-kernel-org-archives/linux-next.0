@@ -1,38 +1,50 @@
-From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
-Subject: Re: linux-next: ubifs tree build failure
-Date: Tue, 12 Aug 2008 10:11:14 +0300
-Message-ID: <48A13792.6090900@nokia.com>
-References: <20080812162409.91834486.sfr@canb.auug.org.au>
-Reply-To: Artem.Bityutskiy@nokia.com
+From: Borislav Petkov <petkovbb@googlemail.com>
+Subject: Re: linux-next: ide tree build failure
+Date: Tue, 12 Aug 2008 09:36:19 +0200
+Message-ID: <20080812073619.GA30453@gollum.tnic>
+References: <20080812111801.7c701498.sfr@canb.auug.org.au>
+Reply-To: petkovbb@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.105.134]:47329 "EHLO
-	mgw-mx09.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751583AbYHLHQN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Aug 2008 03:16:13 -0400
-In-Reply-To: <20080812162409.91834486.sfr@canb.auug.org.au>
+Received: from fg-out-1718.google.com ([72.14.220.157]:22784 "EHLO
+	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751507AbYHLHgX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Aug 2008 03:36:23 -0400
+Received: by fg-out-1718.google.com with SMTP id 19so1268483fgg.17
+        for <linux-next@vger.kernel.org>; Tue, 12 Aug 2008 00:36:21 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20080812111801.7c701498.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, linux-next@vger.kernel.org, David Miller <davem@davemloft.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Ralf Baechle <ralf@linux-mips.org>
 
-Stephen Rothwell wrote:
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
->=20
-> fs/ubifs/super.c: In function 'ubifs_fh_to_dentry':
-> fs/ubifs/super.c:1611: error: implicit declaration of function 'd_all=
-oc_anon'
-> fs/ubifs/super.c:1611: warning: assignment makes pointer from integer=
- without a cast
+On Tue, Aug 12, 2008 at 11:18:01AM +1000, Stephen Rothwell wrote:
+> Hi Bart,
+> 
+> The linux-next build for 20080808 and later failed like this (on at least
+> sparc, mips and m68k):
+> 
+> drivers/ide/ide-floppy.c:223: error: implicit declaration of function `sg_page'
+> drivers/ide/ide-floppy.c:232: error: implicit declaration of function `sg_virt'
+> drivers/ide/ide-floppy.c:242: error: implicit declaration of function `sg_next'
+> 
+> Caused by commit 788fc238e7b95dae0ff1e2e7c97351289277deea ("ide-floppy:
+> use scatterlists for pio transfers") which intrduced usages of the sg_
+> routines but did not include <linux/scatterlist.h>.
 
-Hi Stephen,
+Thanks and sorry about that. I am pretty sure I did include it but probably in
+an older version of the patch and forgot to refresh it before sending. Bart, can
+you please add the include-line?
 
-I'll look at this, thanks.
+> 
+> I will add an include of <linux/scatterlist.h> near the top of
+> drivers/ide/ide-floppy.c in linux-next today.  It would be good if the
+> above patch was fixed up, or another patch added to the ide tree fixing
+> this.
 
---=20
-Best Regards,
-Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
-=D1=86=D0=BA=D0=B8=D0=B9)
+
+-- 
+Regards/Gruss,
+    Boris.
