@@ -1,57 +1,66 @@
-From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
-Subject: Re: linux-next: ubifs tree build failure
-Date: Tue, 12 Aug 2008 10:37:28 +0300
-Message-ID: <48A13DB8.4090003@nokia.com>
-References: <20080812162409.91834486.sfr@canb.auug.org.au>
-Reply-To: Artem.Bityutskiy@nokia.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: creds build failure
+Date: Tue, 12 Aug 2008 18:29:39 +1000
+Message-ID: <20080812182939.9665a435.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__12_Aug_2008_18_29_39_+1000_jBZ.NBGXZ2hlt5qG"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.122.233]:24025 "EHLO
-	mgw-mx06.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751386AbYHLHmo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Aug 2008 03:42:44 -0400
-In-Reply-To: <20080812162409.91834486.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46784 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751575AbYHLIaB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 Aug 2008 04:30:01 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Christoph Hellwig <hch@lst.de>
-Cc: linux-next@vger.kernel.org
+To: David Howells <dhowells@redhat.com>
+Cc: James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, "Luck, Tony" <tony.luck@intel.com>
 
-ext Stephen Rothwell wrote:
-> Hi Artem,
->=20
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
->=20
-> fs/ubifs/super.c: In function 'ubifs_fh_to_dentry':
-> fs/ubifs/super.c:1611: error: implicit declaration of function 'd_all=
-oc_anon'
-> fs/ubifs/super.c:1611: warning: assignment makes pointer from integer=
- without a cast
->=20
-> Caused by interaction between commit
-> 95b53e84e8899258a1af011a7216abb978afae26 ("kill d_alloc_anon") from t=
-he
-> vfs tree and b51e4badb0248ac75fe3128bb369d987e28b2f88 ("UBIFS: add NF=
-S
-> support") from the ubifs tree.  The former removes d_alloc_anon and t=
-he
-> latter adds a new usage.
->=20
-> For now, I have reverted the ubifs commit.  Christoph, maybe you coul=
-d
-> provide a better solution.
->=20
-> I have appended the reverted patch below.
+--Signature=_Tue__12_Aug_2008_18_29_39_+1000_jBZ.NBGXZ2hlt5qG
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I am not sure how to resolve things like this actually. I am planning t=
-o
-send ubifs-2.6.git upstream soon, so probably Christoph will be able to=
- amend
-his stuff after this. Or any other suggestion?
+Hi David,
+
+The linux-next build for 20080811 failed (ia64 defconfig) like this (and
+I am pretty sure today's will as well):
+
+arch/ia64/kernel/perfmon.c:2410: error: structure has no member named `euid'
+arch/ia64/kernel/perfmon.c:2410: error: structure has no member named `suid'
+arch/ia64/kernel/perfmon.c:2410: error: structure has no member named `uid'
+arch/ia64/kernel/perfmon.c:2410: error: structure has no member named `egid'
+arch/ia64/kernel/perfmon.c:2410: error: structure has no member named `sgid'
+arch/ia64/kernel/perfmon.c:2419: error: structure has no member named `euid'
+arch/ia64/kernel/perfmon.c:2420: error: structure has no member named `suid'
+arch/ia64/kernel/perfmon.c:2421: error: structure has no member named `uid'
+arch/ia64/kernel/perfmon.c:2422: error: structure has no member named `egid'
+arch/ia64/kernel/perfmon.c:2423: error: structure has no member named `sgid'
+arch/ia64/kernel/perfmon.c:2424: error: structure has no member named `gid'
+arch/ia64/kernel/perfmon.c:2424: error: syntax error before ')' token
+arch/ia64/ia32/sys_ia32.c:2092: error: structure has no member named `group=
+_info'
+arch/ia64/ia32/sys_ia32.c:2093: error: structure has no member named `group=
+_info'
+arch/ia64/ia32/sys_ia32.c:2099: error: structure has no member named `group=
+_info'
+arch/ia64/ia32/sys_ia32.c:2105: error: structure has no member named `group=
+_info'
 
 --=20
-Best Regards,
-Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
-=D1=86=D0=BA=D0=B8=D0=B9)
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__12_Aug_2008_18_29_39_+1000_jBZ.NBGXZ2hlt5qG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkihSfMACgkQjjKRsyhoI8ximwCgtf6/UQ62aYOrGyaIqCYGu/AM
+MNsAn0WGyV2jnNcoWmiaPAfaw/G4ARgz
+=sB7s
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__12_Aug_2008_18_29_39_+1000_jBZ.NBGXZ2hlt5qG--
