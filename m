@@ -1,59 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: acpi tree build failure
-Date: Tue, 12 Aug 2008 13:16:13 +1000
-Message-ID: <20080812131613.e3dfb2f5.sfr@canb.auug.org.au>
+Subject: Re: ath9k build failure
+Date: Tue, 12 Aug 2008 13:33:54 +1000
+Message-ID: <20080812133354.2eadf82d.sfr@canb.auug.org.au>
+References: <20080811162040.ed7b8ab7.sfr@canb.auug.org.au>
+	<20080811164657.GE6128@tesla>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__12_Aug_2008_13_33_54_+1000_sXfP.3fTI1mnT3M3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48395 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56805 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753380AbYHLDQU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 11 Aug 2008 23:16:20 -0400
+	id S1751763AbYHLDeH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Aug 2008 23:34:07 -0400
+In-Reply-To: <20080811164657.GE6128@tesla>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andi Kleen <andi@firstfloor.org>, Len Brown <lenb@kernel.org>
-Cc: linux-next@vger.kernel.org, Carlos Corbacho <carlos@strangeworlds.co.uk>, stable@kernel.org
+To: "Luis R. Rodriguez" <lrodriguez@atheros.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Adrian Bunk <bunk@kernel.org>, Luis Rodriguez <Luis.Rodriguez@Atheros.com>, Sujith Manoharan <Sujith.Manoharan@Atheros.com>
 
-Hi all,
+--Signature=_Tue__12_Aug_2008_13_33_54_+1000_sXfP.3fTI1mnT3M3
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+Hi Luis,
 
-drivers/misc/acer-wmi.c: In function 'set_u32':
-drivers/misc/acer-wmi.c:831: error: 'status' undeclared (first use in this function)
+On Mon, 11 Aug 2008 09:46:57 -0700 "Luis R. Rodriguez" <lrodriguez@atheros.=
+com> wrote:
+>
+> On Sun, Aug 10, 2008 at 11:20:40PM -0700, Stephen Rothwell wrote:
+> >=20
+> > Today's linux-next build (powerpc allyesconfig) failed like this:
+> >=20
+> > drivers/net/wireless/ath9k/hw.c: In function 'ath9k_hw_spur_mitigate':
+> > drivers/net/wireless/ath9k/hw.c:4925: internal compiler error: in expan=
+d_expr_real_1, at expr.c:9199
+> >=20
+> > This is a driver that is in Linus' tree and has no patches in the
+> > linux-next tree.
+> >=20
+> > The original work around talked about applying the patch twice, so I
+> > applied the below patch.
+>=20
+> this is also in wireless-testing. I also see this in linux-2.6
+> under b08cbcd4546445740c2a04291204b56f8baf7be2. Not sure how this didn't
+> get through linux-next.
 
-Caused by commit 70ea586cc54ab2fb2af42d7ee97ba4f26e315f45 ("acer-wmi: Fix
-wireless and bluetooth on early AMW0 v2 laptops").
+That is only the first application of the patch, my patch is a fix of a
+second instance of the same code.  See Adrian's post.
 
-Clearly, this hasn't even been build tested.  A bit more care, please.
-
-I applied the following patch.
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 12 Aug 2008 13:10:47 +1000
-Subject: [PATCH] acpi: missing status declaration in acer-wmi.c
+--Signature=_Tue__12_Aug_2008_13_33_54_+1000_sXfP.3fTI1mnT3M3
+Content-Type: application/pgp-signature
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/misc/acer-wmi.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-diff --git a/drivers/misc/acer-wmi.c b/drivers/misc/acer-wmi.c
-index 894990f..6df52e8 100644
---- a/drivers/misc/acer-wmi.c
-+++ b/drivers/misc/acer-wmi.c
-@@ -812,6 +812,8 @@ static acpi_status get_u32(u32 *value, u32 cap)
- 
- static acpi_status set_u32(u32 value, u32 cap)
- {
-+	acpi_status status;
-+
- 	if (interface->capability & cap) {
- 		switch (interface->type) {
- 		case ACER_AMW0:
--- 
-1.5.6.3
+iEYEARECAAYFAkihBKIACgkQjjKRsyhoI8wPmwCgkSAWadUWxee3sNXBYDWqYac8
+0HcAni83vmUeEzDjl2w0BQHIc24pA4tn
+=H0sY
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__12_Aug_2008_13_33_54_+1000_sXfP.3fTI1mnT3M3--
