@@ -1,50 +1,57 @@
-From: Borislav Petkov <petkovbb@googlemail.com>
-Subject: Re: linux-next: ide tree build failure
-Date: Tue, 12 Aug 2008 09:36:19 +0200
-Message-ID: <20080812073619.GA30453@gollum.tnic>
-References: <20080812111801.7c701498.sfr@canb.auug.org.au>
-Reply-To: petkovbb@gmail.com
+From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+Subject: Re: linux-next: ubifs tree build failure
+Date: Tue, 12 Aug 2008 10:37:28 +0300
+Message-ID: <48A13DB8.4090003@nokia.com>
+References: <20080812162409.91834486.sfr@canb.auug.org.au>
+Reply-To: Artem.Bityutskiy@nokia.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fg-out-1718.google.com ([72.14.220.157]:22784 "EHLO
-	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751507AbYHLHgX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Aug 2008 03:36:23 -0400
-Received: by fg-out-1718.google.com with SMTP id 19so1268483fgg.17
-        for <linux-next@vger.kernel.org>; Tue, 12 Aug 2008 00:36:21 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20080812111801.7c701498.sfr@canb.auug.org.au>
+Received: from smtp.nokia.com ([192.100.122.233]:24025 "EHLO
+	mgw-mx06.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751386AbYHLHmo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Aug 2008 03:42:44 -0400
+In-Reply-To: <20080812162409.91834486.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, linux-next@vger.kernel.org, David Miller <davem@davemloft.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Ralf Baechle <ralf@linux-mips.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Christoph Hellwig <hch@lst.de>
+Cc: linux-next@vger.kernel.org
 
-On Tue, Aug 12, 2008 at 11:18:01AM +1000, Stephen Rothwell wrote:
-> Hi Bart,
-> 
-> The linux-next build for 20080808 and later failed like this (on at least
-> sparc, mips and m68k):
-> 
-> drivers/ide/ide-floppy.c:223: error: implicit declaration of function `sg_page'
-> drivers/ide/ide-floppy.c:232: error: implicit declaration of function `sg_virt'
-> drivers/ide/ide-floppy.c:242: error: implicit declaration of function `sg_next'
-> 
-> Caused by commit 788fc238e7b95dae0ff1e2e7c97351289277deea ("ide-floppy:
-> use scatterlists for pio transfers") which intrduced usages of the sg_
-> routines but did not include <linux/scatterlist.h>.
+ext Stephen Rothwell wrote:
+> Hi Artem,
+>=20
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+>=20
+> fs/ubifs/super.c: In function 'ubifs_fh_to_dentry':
+> fs/ubifs/super.c:1611: error: implicit declaration of function 'd_all=
+oc_anon'
+> fs/ubifs/super.c:1611: warning: assignment makes pointer from integer=
+ without a cast
+>=20
+> Caused by interaction between commit
+> 95b53e84e8899258a1af011a7216abb978afae26 ("kill d_alloc_anon") from t=
+he
+> vfs tree and b51e4badb0248ac75fe3128bb369d987e28b2f88 ("UBIFS: add NF=
+S
+> support") from the ubifs tree.  The former removes d_alloc_anon and t=
+he
+> latter adds a new usage.
+>=20
+> For now, I have reverted the ubifs commit.  Christoph, maybe you coul=
+d
+> provide a better solution.
+>=20
+> I have appended the reverted patch below.
 
-Thanks and sorry about that. I am pretty sure I did include it but probably in
-an older version of the patch and forgot to refresh it before sending. Bart, can
-you please add the include-line?
+I am not sure how to resolve things like this actually. I am planning t=
+o
+send ubifs-2.6.git upstream soon, so probably Christoph will be able to=
+ amend
+his stuff after this. Or any other suggestion?
 
-> 
-> I will add an include of <linux/scatterlist.h> near the top of
-> drivers/ide/ide-floppy.c in linux-next today.  It would be good if the
-> above patch was fixed up, or another patch added to the ide tree fixing
-> this.
-
-
--- 
-Regards/Gruss,
-    Boris.
+--=20
+Best Regards,
+Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
+=D1=86=D0=BA=D0=B8=D0=B9)
