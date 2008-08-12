@@ -1,43 +1,136 @@
-From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Subject: Re: linux-next: ide tree build failure
-Date: Tue, 12 Aug 2008 11:15:02 +0200
-Message-ID: <200808121115.03065.bzolnier@gmail.com>
-References: <20080812111801.7c701498.sfr@canb.auug.org.au> <20080812073619.GA30453@gollum.tnic>
+From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Subject: Re: [PATCH] CRED: Fix IA64 COW credentials handling
+Date: Tue, 12 Aug 2008 18:10:44 +0530
+Message-ID: <48A184CC.50805@linux.vnet.ibm.com>
+References: <20080812092454.20969.30774.stgit@warthog.procyon.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ik-out-1112.google.com ([66.249.90.182]:39719 "EHLO
-	ik-out-1112.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753274AbYHLJbw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Aug 2008 05:31:52 -0400
-Received: by ik-out-1112.google.com with SMTP id c28so2808604ika.5
-        for <linux-next@vger.kernel.org>; Tue, 12 Aug 2008 02:31:49 -0700 (PDT)
-In-Reply-To: <20080812073619.GA30453@gollum.tnic>
-Content-Disposition: inline
+Received: from E23SMTP02.au.ibm.com ([202.81.18.163]:48352 "EHLO
+	e23smtp02.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752254AbYHLMlJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Aug 2008 08:41:09 -0400
+In-Reply-To: <20080812092454.20969.30774.stgit@warthog.procyon.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: petkovbb@gmail.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, David Miller <davem@davemloft.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Ralf Baechle <ralf@linux-mips.org>
+To: David Howells <dhowells@redhat.com>
+Cc: sfr@canb.auug.org.au, jmorris@namei.org, tony.luck@intel.com, linux-next@vger.kernel.org, linux-security-module@vger.kernel.org
 
-On Tuesday 12 August 2008, Borislav Petkov wrote:
-> On Tue, Aug 12, 2008 at 11:18:01AM +1000, Stephen Rothwell wrote:
-> > Hi Bart,
-> > 
-> > The linux-next build for 20080808 and later failed like this (on at least
-> > sparc, mips and m68k):
-> > 
-> > drivers/ide/ide-floppy.c:223: error: implicit declaration of function `sg_page'
-> > drivers/ide/ide-floppy.c:232: error: implicit declaration of function `sg_virt'
-> > drivers/ide/ide-floppy.c:242: error: implicit declaration of function `sg_next'
-> > 
-> > Caused by commit 788fc238e7b95dae0ff1e2e7c97351289277deea ("ide-floppy:
-> > use scatterlists for pio transfers") which intrduced usages of the sg_
-> > routines but did not include <linux/scatterlist.h>.
+David Howells wrote:
+> Fix the IA64 arch's use of COW credentials.
+Hi David,
+
+Thanks, the build failure is fixed by the thanks.
+
+Tested-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+
 > 
-> Thanks and sorry about that. I am pretty sure I did include it but probably in
-> an older version of the patch and forgot to refresh it before sending. Bart, can
-> you please add the include-line?
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> ---
+> 
+>  arch/ia64/ia32/sys_ia32.c     |    7 +++----
+>  arch/ia64/kernel/perfmon.c    |   32 ++++++++++++++++++++------------
+>  include/sound/ad1848.h        |    0 
+>  sound/isa/ad1848/ad1848_lib.c |    0 
+>  4 files changed, 23 insertions(+), 16 deletions(-)
+>  delete mode 100644 include/sound/ad1848.h
+>  delete mode 100644 sound/isa/ad1848/ad1848_lib.c
+> 
+> diff --git a/arch/ia64/ia32/sys_ia32.c b/arch/ia64/ia32/sys_ia32.c
+> index 465116a..7f0704f 100644
+> --- a/arch/ia64/ia32/sys_ia32.c
+> +++ b/arch/ia64/ia32/sys_ia32.c
+> @@ -2084,25 +2084,24 @@ groups16_from_user(struct group_info *group_info, short __user *grouplist)
+>  asmlinkage long
+>  sys32_getgroups16 (int gidsetsize, short __user *grouplist)
+>  {
+> +	const struct cred *cred = current_cred();
+>  	int i;
+> 
+>  	if (gidsetsize < 0)
+>  		return -EINVAL;
+> 
+> -	get_group_info(current->group_info);
+> -	i = current->group_info->ngroups;
+> +	i = cred->group_info->ngroups;
+>  	if (gidsetsize) {
+>  		if (i > gidsetsize) {
+>  			i = -EINVAL;
+>  			goto out;
+>  		}
+> -		if (groups16_to_user(grouplist, current->group_info)) {
+> +		if (groups16_to_user(grouplist, cred->group_info)) {
+>  			i = -EFAULT;
+>  			goto out;
+>  		}
+>  	}
+>  out:
+> -	put_group_info(current->group_info);
+>  	return i;
+>  }
+> 
+> diff --git a/arch/ia64/kernel/perfmon.c b/arch/ia64/kernel/perfmon.c
+> index ffe6de0..a1aead7 100644
+> --- a/arch/ia64/kernel/perfmon.c
+> +++ b/arch/ia64/kernel/perfmon.c
+> @@ -2403,25 +2403,33 @@ error_kmem:
+>  static int
+>  pfm_bad_permissions(struct task_struct *task)
+>  {
+> +	const struct cred *tcred;
+>  	uid_t uid = current_uid();
+>  	gid_t gid = current_gid();
+> +	int ret;
+> +
+> +	rcu_read_lock();
+> +	tcred = __task_cred(task);
+> 
+>  	/* inspired by ptrace_attach() */
+>  	DPRINT(("cur: uid=%d gid=%d task: euid=%d suid=%d uid=%d egid=%d sgid=%d\n",
+>  		uid,
+>  		gid,
+> -		task->euid,
+> -		task->suid,
+> -		task->uid,
+> -		task->egid,
+> -		task->sgid));
+> -
+> -	return (uid != task->euid)
+> -	    || (uid != task->suid)
+> -	    || (uid != task->uid)
+> -	    || (gid != task->egid)
+> -	    || (gid != task->sgid)
+> -	    || (gid != task->gid)) && !capable(CAP_SYS_PTRACE);
+> +		tcred->euid,
+> +		tcred->suid,
+> +		tcred->uid,
+> +		tcred->egid,
+> +		tcred->sgid));
+> +
+> +	ret = ((uid != tcred->euid)
+> +	       || (uid != tcred->suid)
+> +	       || (uid != tcred->uid)
+> +	       || (gid != tcred->egid)
+> +	       || (gid != tcred->sgid)
+> +	       || (gid != tcred->gid)) && !capable(CAP_SYS_PTRACE);
+> +
+> +	rcu_read_unlock();
+> +	return ret;
+>  }
+> 
+>  static int
+> diff --git a/include/sound/ad1848.h b/include/sound/ad1848.h
+> deleted file mode 100644
+> index e69de29..0000000
+> diff --git a/sound/isa/ad1848/ad1848_lib.c b/sound/isa/ad1848/ad1848_lib.c
+> deleted file mode 100644
+> index e69de29..0000000
+> 
 
-Done.
+
+-- 
+Thanks & Regards,
+Kamalesh Babulal,
+Linux Technology Center,
+IBM, ISTL.
