@@ -1,23 +1,39 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: ubifs tree build failure
-Date: Tue, 12 Aug 2008 23:39:33 +0200
-Message-ID: <20080812213933.GA25538@lst.de>
-References: <20080812162409.91834486.sfr@canb.auug.org.au> <20080812182416.GA14420@lst.de>
+From: James Morris <jmorris@namei.org>
+Subject: Re: [PATCH] CRED: Fix IA64 COW credentials handling
+Date: Wed, 13 Aug 2008 08:48:12 +1000 (EST)
+Message-ID: <alpine.LRH.1.10.0808130847280.17839@tundra.namei.org>
+References: <20080812092454.20969.30774.stgit@warthog.procyon.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from verein.lst.de ([213.95.11.210]:43651 "EHLO verein.lst.de"
+Received: from tundra.namei.org ([65.99.196.166]:59787 "EHLO tundra.namei.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750849AbYHLVjm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 12 Aug 2008 17:39:42 -0400
-Content-Disposition: inline
-In-Reply-To: <20080812182416.GA14420@lst.de>
+	id S1752108AbYHLWsi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 Aug 2008 18:48:38 -0400
+In-Reply-To: <20080812092454.20969.30774.stgit@warthog.procyon.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>, linux-next@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+To: David Howells <dhowells@redhat.com>
+Cc: sfr@canb.auug.org.au, tony.luck@intel.com, linux-next@vger.kernel.org, linux-security-module@vger.kernel.org
 
-Btw, a good example for export ops on a filesystem with similar
-constraints is Dave's patch for jffs2:
+On Tue, 12 Aug 2008, David Howells wrote:
 
-	http://git.kernel.org/?p=linux/kernel/git/viro/vfs-2.6.git;a=commitdiff;h=dd9207c31d6712a4665f197db7740da6c633cea7
+> Fix the IA64 arch's use of COW credentials.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> ---
+
+> diff --git a/include/sound/ad1848.h b/include/sound/ad1848.h
+> deleted file mode 100644
+> index e69de29..0000000
+> diff --git a/sound/isa/ad1848/ad1848_lib.c b/sound/isa/ad1848/ad1848_lib.c
+> deleted file mode 100644
+> index e69de29..0000000
+
+Where did this come from ? :-)
+
+
+- James
+-- 
+James Morris
+<jmorris@namei.org>
