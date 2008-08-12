@@ -1,49 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the creds tree
-Date: Tue, 12 Aug 2008 17:13:16 +1000
-Message-ID: <20080812171316.31599db4.sfr@canb.auug.org.au>
+From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+Subject: Re: linux-next: ubifs tree build failure
+Date: Tue, 12 Aug 2008 10:11:14 +0300
+Message-ID: <48A13792.6090900@nokia.com>
+References: <20080812162409.91834486.sfr@canb.auug.org.au>
+Reply-To: Artem.Bityutskiy@nokia.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__12_Aug_2008_17_13_16_+1000_IelJJ7+r7N.cj/Yy"
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33640 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751388AbYHLHN2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 12 Aug 2008 03:13:28 -0400
+Received: from smtp.nokia.com ([192.100.105.134]:47329 "EHLO
+	mgw-mx09.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751583AbYHLHQN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Aug 2008 03:16:13 -0400
+In-Reply-To: <20080812162409.91834486.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>
-Cc: linux-next@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 
---Signature=_Tue__12_Aug_2008_17_13_16_+1000_IelJJ7+r7N.cj/Yy
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Stephen Rothwell wrote:
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+>=20
+> fs/ubifs/super.c: In function 'ubifs_fh_to_dentry':
+> fs/ubifs/super.c:1611: error: implicit declaration of function 'd_all=
+oc_anon'
+> fs/ubifs/super.c:1611: warning: assignment makes pointer from integer=
+ without a cast
 
-Hi David,
+Hi Stephen,
 
-Today's linux-next merge of the creds tree got a conflict in
-fs/nfsd/nfs4recover.c between commit
-eec56f5904cd79d7cf99efd74ad02f39c829fff1 ("switch nfsd to kern_path()")
-from the vfs tree and commit 3aef995c0537d5ba27936d2e8cb42d307084932c
-("CRED: Pass credentials through dentry_open()") from the creds tree.
+I'll look at this, thanks.
 
-I did the obvious fixup and can carry it.
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__12_Aug_2008_17_13_16_+1000_IelJJ7+r7N.cj/Yy
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkihOAwACgkQjjKRsyhoI8w2bwCeL4kzEQGxb3/Vx7dAF7kvvvjz
-+HwAn0ZgOiiDSWPVXPqfuo1FDNgXdHel
-=SRqZ
------END PGP SIGNATURE-----
-
---Signature=_Tue__12_Aug_2008_17_13_16_+1000_IelJJ7+r7N.cj/Yy--
+Best Regards,
+Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
+=D1=86=D0=BA=D0=B8=D0=B9)
