@@ -1,136 +1,46 @@
-From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Subject: Re: [PATCH] CRED: Fix IA64 COW credentials handling
-Date: Tue, 12 Aug 2008 18:10:44 +0530
-Message-ID: <48A184CC.50805@linux.vnet.ibm.com>
-References: <20080812092454.20969.30774.stgit@warthog.procyon.org.uk>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: ath9k build failure
+Date: Tue, 12 Aug 2008 09:21:48 -0400
+Message-ID: <20080812132148.GC27672@tuxdriver.com>
+References: <20080811162040.ed7b8ab7.sfr@canb.auug.org.au> <20080811164657.GE6128@tesla> <20080812133354.2eadf82d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from E23SMTP02.au.ibm.com ([202.81.18.163]:48352 "EHLO
-	e23smtp02.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752254AbYHLMlJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Aug 2008 08:41:09 -0400
-In-Reply-To: <20080812092454.20969.30774.stgit@warthog.procyon.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: sfr@canb.auug.org.au, jmorris@namei.org, tony.luck@intel.com, linux-next@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <netdev-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20080812133354.2eadf82d.sfr@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Luis R. Rodriguez" <lrodriguez@atheros.com>, "David S. Miller" <davem@davemloft.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Adrian Bunk <bunk@kernel.org>, Luis Rodriguez <Luis.Rodriguez@Atheros.com>, Sujith Manoharan <Sujith.Manoharan@Atheros.com>
+List-Id: linux-next.vger.kernel.org
 
-David Howells wrote:
-> Fix the IA64 arch's use of COW credentials.
-Hi David,
+On Tue, Aug 12, 2008 at 01:33:54PM +1000, Stephen Rothwell wrote:
+> Hi Luis,
+> 
+> On Mon, 11 Aug 2008 09:46:57 -0700 "Luis R. Rodriguez" <lrodriguez@atheros.com> wrote:
+> >
+> > On Sun, Aug 10, 2008 at 11:20:40PM -0700, Stephen Rothwell wrote:
+> > > 
+> > > Today's linux-next build (powerpc allyesconfig) failed like this:
+> > > 
+> > > drivers/net/wireless/ath9k/hw.c: In function 'ath9k_hw_spur_mitigate':
+> > > drivers/net/wireless/ath9k/hw.c:4925: internal compiler error: in expand_expr_real_1, at expr.c:9199
+> > > 
+> > > This is a driver that is in Linus' tree and has no patches in the
+> > > linux-next tree.
+> > > 
+> > > The original work around talked about applying the patch twice, so I
+> > > applied the below patch.
+> > 
+> > this is also in wireless-testing. I also see this in linux-2.6
+> > under b08cbcd4546445740c2a04291204b56f8baf7be2. Not sure how this didn't
+> > get through linux-next.
+> 
+> That is only the first application of the patch, my patch is a fix of a
+> second instance of the same code.  See Adrian's post.
 
-Thanks, the build failure is fixed by the thanks.
+My bad...I'll fix it up w/ the next batch of fixes...
 
-Tested-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> ---
-> 
->  arch/ia64/ia32/sys_ia32.c     |    7 +++----
->  arch/ia64/kernel/perfmon.c    |   32 ++++++++++++++++++++------------
->  include/sound/ad1848.h        |    0 
->  sound/isa/ad1848/ad1848_lib.c |    0 
->  4 files changed, 23 insertions(+), 16 deletions(-)
->  delete mode 100644 include/sound/ad1848.h
->  delete mode 100644 sound/isa/ad1848/ad1848_lib.c
-> 
-> diff --git a/arch/ia64/ia32/sys_ia32.c b/arch/ia64/ia32/sys_ia32.c
-> index 465116a..7f0704f 100644
-> --- a/arch/ia64/ia32/sys_ia32.c
-> +++ b/arch/ia64/ia32/sys_ia32.c
-> @@ -2084,25 +2084,24 @@ groups16_from_user(struct group_info *group_info, short __user *grouplist)
->  asmlinkage long
->  sys32_getgroups16 (int gidsetsize, short __user *grouplist)
->  {
-> +	const struct cred *cred = current_cred();
->  	int i;
-> 
->  	if (gidsetsize < 0)
->  		return -EINVAL;
-> 
-> -	get_group_info(current->group_info);
-> -	i = current->group_info->ngroups;
-> +	i = cred->group_info->ngroups;
->  	if (gidsetsize) {
->  		if (i > gidsetsize) {
->  			i = -EINVAL;
->  			goto out;
->  		}
-> -		if (groups16_to_user(grouplist, current->group_info)) {
-> +		if (groups16_to_user(grouplist, cred->group_info)) {
->  			i = -EFAULT;
->  			goto out;
->  		}
->  	}
->  out:
-> -	put_group_info(current->group_info);
->  	return i;
->  }
-> 
-> diff --git a/arch/ia64/kernel/perfmon.c b/arch/ia64/kernel/perfmon.c
-> index ffe6de0..a1aead7 100644
-> --- a/arch/ia64/kernel/perfmon.c
-> +++ b/arch/ia64/kernel/perfmon.c
-> @@ -2403,25 +2403,33 @@ error_kmem:
->  static int
->  pfm_bad_permissions(struct task_struct *task)
->  {
-> +	const struct cred *tcred;
->  	uid_t uid = current_uid();
->  	gid_t gid = current_gid();
-> +	int ret;
-> +
-> +	rcu_read_lock();
-> +	tcred = __task_cred(task);
-> 
->  	/* inspired by ptrace_attach() */
->  	DPRINT(("cur: uid=%d gid=%d task: euid=%d suid=%d uid=%d egid=%d sgid=%d\n",
->  		uid,
->  		gid,
-> -		task->euid,
-> -		task->suid,
-> -		task->uid,
-> -		task->egid,
-> -		task->sgid));
-> -
-> -	return (uid != task->euid)
-> -	    || (uid != task->suid)
-> -	    || (uid != task->uid)
-> -	    || (gid != task->egid)
-> -	    || (gid != task->sgid)
-> -	    || (gid != task->gid)) && !capable(CAP_SYS_PTRACE);
-> +		tcred->euid,
-> +		tcred->suid,
-> +		tcred->uid,
-> +		tcred->egid,
-> +		tcred->sgid));
-> +
-> +	ret = ((uid != tcred->euid)
-> +	       || (uid != tcred->suid)
-> +	       || (uid != tcred->uid)
-> +	       || (gid != tcred->egid)
-> +	       || (gid != tcred->sgid)
-> +	       || (gid != tcred->gid)) && !capable(CAP_SYS_PTRACE);
-> +
-> +	rcu_read_unlock();
-> +	return ret;
->  }
-> 
->  static int
-> diff --git a/include/sound/ad1848.h b/include/sound/ad1848.h
-> deleted file mode 100644
-> index e69de29..0000000
-> diff --git a/sound/isa/ad1848/ad1848_lib.c b/sound/isa/ad1848/ad1848_lib.c
-> deleted file mode 100644
-> index e69de29..0000000
-> 
-
-
+John
 -- 
-Thanks & Regards,
-Kamalesh Babulal,
-Linux Technology Center,
-IBM, ISTL.
+John W. Linville
+linville@tuxdriver.com
