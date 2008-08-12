@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the vfs tree
-Date: Tue, 12 Aug 2008 15:14:50 +1000
-Message-ID: <20080812151450.1dbc97fb.sfr@canb.auug.org.au>
+Date: Tue, 12 Aug 2008 15:20:37 +1000
+Message-ID: <20080812152037.b7de321f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__12_Aug_2008_15_14_50_+1000_q3NuQWJGqGHDxO=e"
+ boundary="Signature=_Tue__12_Aug_2008_15_20_37_+1000_Qx6maq/UH38cbRds"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51786 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35261 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750980AbYHLFPA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 12 Aug 2008 01:15:00 -0400
+	id S1750705AbYHLFUr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 Aug 2008 01:20:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Eric Sandeen <sandeen@sandeen.net>, David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
+Cc: linux-next@vger.kernel.org, Julia Lawall <julia@diku.dk>, "J. Bruce Fields" <bfields@fieldses.org>
 
---Signature=_Tue__12_Aug_2008_15_14_50_+1000_q3NuQWJGqGHDxO=e
+--Signature=_Tue__12_Aug_2008_15_20_37_+1000_Qx6maq/UH38cbRds
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,28 +24,27 @@ Content-Transfer-Encoding: quoted-printable
 Hi Al,
 
 Today's linux-next merge of the vfs tree got a conflict in
-fs/xfs/linux-2.6/xfs_export.c between commits
-31048586a1d967e855dce8a8d420b3acbcb7d879 ("[XFS] convert xfs to use
-ERR_CAST") and 293a47c282254cbae1c96cfb2e242e57c050f5c7 ("[XFS] In
-several places we directly convert from the XFS inode to the") from the
-xfs tree and commit 55b773e574bc6e14b11605059faeea613880b72b ("switch all
-filesystems over to d_obtain_alias") from the vfs tree.
+fs/nfsd/export.c between commit 53e6d8d182e97c5211da4ee1f163c840c7ecf8ca
+("fs/nfsd/export.c: Adjust error handling code involving
+auth_domain_put") from the nfsd tree and commit
+eec56f5904cd79d7cf99efd74ad02f39c829fff1 ("switch nfsd to kern_path()")
+from the vfs tree.
 
-I did the obvious fixups and can carry them.
+The conflict is contextual. I fixed it up and can carry the fixup.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__12_Aug_2008_15_14_50_+1000_q3NuQWJGqGHDxO=e
+--Signature=_Tue__12_Aug_2008_15_20_37_+1000_Qx6maq/UH38cbRds
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkihHEoACgkQjjKRsyhoI8zIQwCfRM2ajmmzBXCYNYYwDSVp5Q84
-CTAAnR75x0qPZocJnDlBkwdR6In428lI
-=qEY3
+iEYEARECAAYFAkihHaUACgkQjjKRsyhoI8y+EQCeKLAq//pGCi4o4aYH9KYCjJ9a
+M1wAn1lDppwOzkk6bu5qRHwsM/PPG4Bt
+=JwI2
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__12_Aug_2008_15_14_50_+1000_q3NuQWJGqGHDxO=e--
+--Signature=_Tue__12_Aug_2008_15_20_37_+1000_Qx6maq/UH38cbRds--
