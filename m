@@ -1,242 +1,119 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for August 12
-Date: Tue, 12 Aug 2008 18:53:45 +1000
-Message-ID: <20080812185345.d7496513.sfr@canb.auug.org.au>
+From: David Howells <dhowells@redhat.com>
+Subject: [PATCH] CRED: Fix IA64 COW credentials handling
+Date: Tue, 12 Aug 2008 10:24:54 +0100
+Message-ID: <20080812092454.20969.30774.stgit@warthog.procyon.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__12_Aug_2008_18_53_45_+1000_t_Ko4Uc5wTb+VP2X"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53427 "EHLO smtps.tip.net.au"
+Received: from mx1.redhat.com ([66.187.233.31]:41066 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751357AbYHLIxy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 12 Aug 2008 04:53:54 -0400
+	id S1750808AbYHLJZJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 Aug 2008 05:25:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: sfr@canb.auug.org.au, jmorris@namei.org
+Cc: tony.luck@intel.com, linux-next@vger.kernel.org, dhowells@redhat.com, linux-security-module@vger.kernel.org
 
---Signature=_Tue__12_Aug_2008_18_53_45_+1000_t_Ko4Uc5wTb+VP2X
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fix the IA64 arch's use of COW credentials.
 
-Hi all,
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
-Changes since next-20080811:
+ arch/ia64/ia32/sys_ia32.c     |    7 +++----
+ arch/ia64/kernel/perfmon.c    |   32 ++++++++++++++++++++------------
+ include/sound/ad1848.h        |    0 
+ sound/isa/ad1848/ad1848_lib.c |    0 
+ 4 files changed, 23 insertions(+), 16 deletions(-)
+ delete mode 100644 include/sound/ad1848.h
+ delete mode 100644 sound/isa/ad1848/ad1848_lib.c
 
-The arm-current tree gained a trivial whitespace conflict against Linus'
-tree (unreported).
-
-The ide tree gained a build fix patch.
-
-The acpi tree gained a build fix patch.
-
-The vfs tree gained 2 conflicts against the xfs tree and one against the
-nfsd tree.
-
-The ubifs tree gained a build failure which required a revert to a commit
-(interaction with the vfs tree).
-
-The ttydev tree gained 2 conflicts against Linus' tree and against the
-usb.current tree and lost one against Linus' tree.
-
-The creds tree gained a conflict against the vfs tree.
-
-I have also applied the following patches for known problems:
-
-	Add cuImage.mpc866ads to the bootwrapper as a cuboot-8xx target
-	xen-balloon: fix up sysfs issues
-	ath9k: work around gcc ICE again
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups, it is also built with powerpc allnoconfig,
-44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
-
-Below is a summary of the state of the merge.
-
-We are up to 108 trees (counting Linus' and 14 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging powerpc-merge/merge
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sparc-current/master
-Merging sound-current/for-linus
-Merging arm-current/master
-CONFLICT (content): Merge conflict in drivers/watchdog/at91rm9200_wdt.c
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-CONFLICT (content): Merge conflict in drivers/usb/gadget/omap_udc.c
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-2.6.26
-Merging dwmw2/master
-Merging quilt/driver-core
-Merging quilt/usb
-Merging tip-core/auto-core-next
-CONFLICT (content): Merge conflict in include/asm-generic/vmlinux.lds.h
-Merging cpus4096/auto-cpus4096-next
-CONFLICT (content): Merge conflict in net/sunrpc/svc.c
-Merging ftrace/auto-ftrace-next
-Merging genirq/auto-genirq-next
-Merging safe-poison-pointers/auto-safe-poison-pointers-next
-Merging sched/auto-sched-next
-Merging stackprotector/auto-stackprotector-next
-Merging timers/auto-timers-next
-Merging x86/auto-x86-next
-CONFLICT (content): Merge conflict in arch/x86/kernel/genapic_64.c
-CONFLICT (content): Merge conflict in drivers/pci/dmar.c
-Applying x86: export is_uv_system
-Merging pci/linux-next
-Merging quilt/device-mapper
-Merging hid/mm
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging avr32/avr32-arch
-Merging v4l-dvb/stable
-Merging s390/features
-Merging sh/master
-Merging jfs/next
-Merging kbuild/master
-Merging quilt/ide
-Applying ide: drivers/ide/floppy.c needs linux/scatterlist.h on some platfo=
-rms
-Merging libata/NEXT
-Merging nfs/linux-next
-Merging xfs/master
-Merging infiniband/for-next
-Merging acpi/test
-Applying acpi: missing status declaration in acer-wmi.c
-Merging blackfin/for-linus
-Merging nfsd/nfsd-next
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/master
-Merging dlm/next
-Merging scsi/master
-Merging ia64/test
-Merging tests/master
-Merging ocfs2/linux-next
-Merging quilt/m68k
-Merging powerpc/powerpc-next
-Merging ext4/next
-Merging 4xx/next
-Merging async_tx/next
-Merging udf/for_next
-Merging net/master
-Merging sparc/master
-Merging galak/powerpc-next
-Merging mtd/master
-Merging wireless/master
-Merging crypto/master
-CONFLICT (content): Merge conflict in include/asm-x86/cpufeature.h
-Merging vfs/for-next
-CONFLICT (content): Merge conflict in fs/nfsd/export.c
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_export.c
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_iops.c
-Merging sound/for-next
-Merging arm/devel
-Merging cpufreq/next
-Merging v9fs/for-next
-Merging quilt/rr
-Merging cifs/master
-Merging mmc/next
-Merging gfs2/master
-Merging input/next
-Merging semaphore/semaphore
-Merging semaphore-removal/semaphore-removal
-Merging bkl-removal/bkl-removal
-Merging trivial/next
-CONFLICT (content): Merge conflict in Documentation/edac.txt
-CONFLICT (content): Merge conflict in include/linux/securebits.h
-Merging ubifs/linux-next
-CONFLICT (content): Merge conflict in fs/ubifs/super.c
-Created commit c4e1eb4: Revert "UBIFS: add NFS support"
-Merging lsm/for-next
-Merging block/for-next
-Merging embedded/master
-Merging firmware/master
-CONFLICT (content): Merge conflict in drivers/media/dvb/ttpci/Kconfig
-CONFLICT (content): Merge conflict in drivers/media/dvb/ttpci/Makefile
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging m68knommu/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging cris/for-next
-Merging kmemcheck/auto-kmemcheck-next
-Merging generic-ipi/auto-generic-ipi-next
-Merging mips/mips-for-linux-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/reg-for-linus
-Merging security-testing/next
-Merging lblnet/master
-Merging quilt/ttydev
-CONFLICT (content): Merge conflict in drivers/char/tty_io.c
-CONFLICT (content): Merge conflict in drivers/usb/class/cdc-acm.c
-Merging agp/agp-next
-Merging creds/next-creds
-CONFLICT (content): Merge conflict in fs/namespace.c
-CONFLICT (content): Merge conflict in fs/nfsd/nfs4recover.c
-CONFLICT (content): Merge conflict in fs/xfs/xfs_acl.c
-Applying Add cuImage.mpc866ads to the bootwrapper as a cuboot-8xx target
-Applying xen-balloon: fix up sysfs issues
-Applying ath9k: work around gcc ICE again
-
---Signature=_Tue__12_Aug_2008_18_53_45_+1000_t_Ko4Uc5wTb+VP2X
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkihT5kACgkQjjKRsyhoI8wa5wCeM9txaIQhTbKIpCSmE7BheoXq
-sroAnjDzO/MTXmxjaN55KPRu1hVKaqE1
-=aAsS
------END PGP SIGNATURE-----
-
---Signature=_Tue__12_Aug_2008_18_53_45_+1000_t_Ko4Uc5wTb+VP2X--
+diff --git a/arch/ia64/ia32/sys_ia32.c b/arch/ia64/ia32/sys_ia32.c
+index 465116a..7f0704f 100644
+--- a/arch/ia64/ia32/sys_ia32.c
++++ b/arch/ia64/ia32/sys_ia32.c
+@@ -2084,25 +2084,24 @@ groups16_from_user(struct group_info *group_info, short __user *grouplist)
+ asmlinkage long
+ sys32_getgroups16 (int gidsetsize, short __user *grouplist)
+ {
++	const struct cred *cred = current_cred();
+ 	int i;
+ 
+ 	if (gidsetsize < 0)
+ 		return -EINVAL;
+ 
+-	get_group_info(current->group_info);
+-	i = current->group_info->ngroups;
++	i = cred->group_info->ngroups;
+ 	if (gidsetsize) {
+ 		if (i > gidsetsize) {
+ 			i = -EINVAL;
+ 			goto out;
+ 		}
+-		if (groups16_to_user(grouplist, current->group_info)) {
++		if (groups16_to_user(grouplist, cred->group_info)) {
+ 			i = -EFAULT;
+ 			goto out;
+ 		}
+ 	}
+ out:
+-	put_group_info(current->group_info);
+ 	return i;
+ }
+ 
+diff --git a/arch/ia64/kernel/perfmon.c b/arch/ia64/kernel/perfmon.c
+index ffe6de0..a1aead7 100644
+--- a/arch/ia64/kernel/perfmon.c
++++ b/arch/ia64/kernel/perfmon.c
+@@ -2403,25 +2403,33 @@ error_kmem:
+ static int
+ pfm_bad_permissions(struct task_struct *task)
+ {
++	const struct cred *tcred;
+ 	uid_t uid = current_uid();
+ 	gid_t gid = current_gid();
++	int ret;
++
++	rcu_read_lock();
++	tcred = __task_cred(task);
+ 
+ 	/* inspired by ptrace_attach() */
+ 	DPRINT(("cur: uid=%d gid=%d task: euid=%d suid=%d uid=%d egid=%d sgid=%d\n",
+ 		uid,
+ 		gid,
+-		task->euid,
+-		task->suid,
+-		task->uid,
+-		task->egid,
+-		task->sgid));
+-
+-	return (uid != task->euid)
+-	    || (uid != task->suid)
+-	    || (uid != task->uid)
+-	    || (gid != task->egid)
+-	    || (gid != task->sgid)
+-	    || (gid != task->gid)) && !capable(CAP_SYS_PTRACE);
++		tcred->euid,
++		tcred->suid,
++		tcred->uid,
++		tcred->egid,
++		tcred->sgid));
++
++	ret = ((uid != tcred->euid)
++	       || (uid != tcred->suid)
++	       || (uid != tcred->uid)
++	       || (gid != tcred->egid)
++	       || (gid != tcred->sgid)
++	       || (gid != tcred->gid)) && !capable(CAP_SYS_PTRACE);
++
++	rcu_read_unlock();
++	return ret;
+ }
+ 
+ static int
+diff --git a/include/sound/ad1848.h b/include/sound/ad1848.h
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/sound/isa/ad1848/ad1848_lib.c b/sound/isa/ad1848/ad1848_lib.c
+deleted file mode 100644
+index e69de29..0000000
