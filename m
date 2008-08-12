@@ -1,73 +1,59 @@
-From: Nicolas Pitre <nico@cam.org>
-Subject: Re: [PATCH 00/12] Thumb-2 kernel support
-Date: Mon, 11 Aug 2008 22:17:43 -0400 (EDT)
-Message-ID: <alpine.LFD.1.10.0808112129030.22892@xanadu.home>
-References: <20080606173300.7930.31525.stgit@pc1117.cambridge.arm.com>
- <20080630125110.1dc5689a.akpm@linux-foundation.org>
- <1214901131.29199.31.camel@pc1117.cambridge.arm.com>
- <20080701014529.272706d8.akpm@linux-foundation.org>
- <1216829155.23395.19.camel@pc1117.cambridge.arm.com>
- <20080723130140.ff016944.akpm@linux-foundation.org>
- <1216847422.6550.8.camel@localhost.localdomain>
- <20080723151045.bcae107e.akpm@linux-foundation.org>
- <20080727110804.GE32366@flint.arm.linux.org.uk>
- <1217245511.20282.121.camel@pc1117.cambridge.arm.com>
- <20080728125039.GK32366@flint.arm.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: acpi tree build failure
+Date: Tue, 12 Aug 2008 13:16:13 +1000
+Message-ID: <20080812131613.e3dfb2f5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relais.videotron.ca ([24.201.245.36]:22972 "EHLO
-	relais.videotron.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751466AbYHLCRt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Aug 2008 22:17:49 -0400
-Received: from xanadu.home ([66.131.194.97]) by VL-MO-MR004.ip.videotron.ca
- (Sun Java(tm) System Messaging Server 6.3-4.01 (built Aug  3 2007; 32bit))
- with ESMTP id <0K5G00DSPUDJSRH0@VL-MO-MR004.ip.videotron.ca> for
- linux-next@vger.kernel.org; Mon, 11 Aug 2008 22:17:43 -0400 (EDT)
-In-reply-to: <20080728125039.GK32366@flint.arm.linux.org.uk>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48395 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753380AbYHLDQU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Aug 2008 23:16:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-arm-kernel@lists.arm.linux.org.uk
+To: Andi Kleen <andi@firstfloor.org>, Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, Carlos Corbacho <carlos@strangeworlds.co.uk>, stable@kernel.org
 
-On Mon, 28 Jul 2008, Russell King - ARM Linux wrote:
+Hi all,
 
-> On Mon, Jul 28, 2008 at 12:45:11PM +0100, Catalin Marinas wrote:
-> > ???I would really like some clear statement from you to know where 
-> > to focus my attention (clean up the current patches even more or 
-> > create separate arch/arm-t2). AFAICT, you don't really like these 
-> > patches merged, in which case I'd have to focus on the second 
-> > option.
-> 
-> I've put my point of view forward in the responses to the patches.
-> I'm not sure what "clear statement" you're really after.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-For what my personal opinion is worth, simply considering a arch/arm-t2 
-solution should be completely out of the question.  T2 support is 
-possibly not too far from being somewhat tolerable given your latest 
-patch series plus all suggestions to improve it further.
+drivers/misc/acer-wmi.c: In function 'set_u32':
+drivers/misc/acer-wmi.c:831: error: 'status' undeclared (first use in this function)
 
-So my biggest issue with this whole T2 unified assembly 
-crap^H^H^H^Hsyntax has to do with the fact that it is apparently too 
-late to change it.  One of the best assets for the ARM architecture IMHO 
-was its really neat assembly syntax and now it feels like ARM just 
-screwed it.
+Caused by commit 70ea586cc54ab2fb2af42d7ee97ba4f26e315f45 ("acer-wmi: Fix
+wireless and bluetooth on early AMW0 v2 laptops").
 
-IMHO again, this was a big mistake from ARM Ltd not to consult people 
-from the Open Source community who do write ARM assembly code when this 
-unified syntax was elaborated.  for one I certainly wasn't consulted at 
-all. That could have provided ARM Ltd with inputs from folks whose first 
-concern is long term code maintainability.  Sure, many ARM Ltd partners 
-just don't have such concern as they usually do write-once-and-forget 
-assembly code and they're probably just happy with the current T2 
-syntax, or they simply don't care.  This is not my case.
+Clearly, this hasn't even been build tested.  A bit more care, please.
 
-In other words, and IMHO again, this whole new combined syntax just 
-sucks.  That is my personal statement and I don't know how to make it 
-more clear.  Now, since we're stuck with it for the foreseeable future, 
-let's find a way to best accommodate it which does NOT include a 
-separate architecture tree.
+I applied the following patch.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 12 Aug 2008 13:10:47 +1000
+Subject: [PATCH] acpi: missing status declaration in acer-wmi.c
 
-Nicolas
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/misc/acer-wmi.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/misc/acer-wmi.c b/drivers/misc/acer-wmi.c
+index 894990f..6df52e8 100644
+--- a/drivers/misc/acer-wmi.c
++++ b/drivers/misc/acer-wmi.c
+@@ -812,6 +812,8 @@ static acpi_status get_u32(u32 *value, u32 cap)
+ 
+ static acpi_status set_u32(u32 value, u32 cap)
+ {
++	acpi_status status;
++
+ 	if (interface->capability & cap) {
+ 		switch (interface->type) {
+ 		case ACER_AMW0:
+-- 
+1.5.6.3
