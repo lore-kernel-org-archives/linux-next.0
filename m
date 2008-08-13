@@ -1,34 +1,56 @@
-From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
-Subject: Re: linux-next: ubifs tree build failure
-Date: Wed, 13 Aug 2008 09:23:33 +0300
-Message-ID: <48A27DE5.20303@nokia.com>
-References: <20080812162409.91834486.sfr@canb.auug.org.au> <20080812182416.GA14420@lst.de> <20080812213933.GA25538@lst.de>
-Reply-To: Artem.Bityutskiy@nokia.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: usb tree build failure
+Date: Wed, 13 Aug 2008 16:37:28 +1000
+Message-ID: <20080813163728.08551adf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.122.230]:60318 "EHLO
-	mgw-mx03.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752454AbYHMGXl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Aug 2008 02:23:41 -0400
-In-Reply-To: <20080812213933.GA25538@lst.de>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34926 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750943AbYHMGhc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 13 Aug 2008 02:37:32 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org
 
-ext Christoph Hellwig wrote:
-> Btw, a good example for export ops on a filesystem with similar
-> constraints is Dave's patch for jffs2:
->=20
-> 	http://git.kernel.org/?p=3Dlinux/kernel/git/viro/vfs-2.6.git;a=3Dcom=
-mitdiff;h=3Ddd9207c31d6712a4665f197db7740da6c633cea7
+Hi Greg,
 
-OK, thanks.
+Today's linux-next build (powerpc ppc44x_config) failed like this:
 
---=20
-Best Regards,
-Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
-=D1=86=D0=BA=D0=B8=D0=B9)
+drivers/usb/host/ohci-ppc-of.c: In function 'ohci_hcd_ppc_of_probe':
+drivers/usb/host/ohci-ppc-of.c:103: error: implicit declaration of function 'usb_dbg'
+
+Caused by commit f64f8413f2cf9f4d549c033bc546b9c3d30e78f6 ("USB: convert
+the USB host controller code to use usb_dbg()").
+
+I applied the following patch.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 13 Aug 2008 16:34:50 +1000
+Subject: [PATCH] usb: fix up use of usb_dbg
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/usb/host/ohci-ppc-of.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/usb/host/ohci-ppc-of.c b/drivers/usb/host/ohci-ppc-of.c
+index a1170e4..5b07e42 100644
+--- a/drivers/usb/host/ohci-ppc-of.c
++++ b/drivers/usb/host/ohci-ppc-of.c
+@@ -18,6 +18,7 @@
+ 
+ #include <asm/prom.h>
+ 
++#include "../core/usb.h"
+ 
+ static int __devinit
+ ohci_ppc_of_start(struct usb_hcd *hcd)
+-- 
+1.5.6.3
