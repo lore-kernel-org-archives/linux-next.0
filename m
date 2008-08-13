@@ -1,59 +1,73 @@
-From: Pekka Enberg <penberg@cs.helsinki.fi>
-Subject: Re: linux-next: manual merge of the kmemcheck tree
-Date: Wed, 13 Aug 2008 14:37:13 +0300
-Message-ID: <1218627433.7813.320.camel@penberg-laptop>
-References: <20080813152907.b76a06e3.sfr@canb.auug.org.au>
-	 <20080813073205.GA398@elte.hu> <48A28DD9.7010108@cs.helsinki.fi>
-	 <20080813075808.GA11645@elte.hu> <1218615288.7813.310.camel@penberg-laptop>
-	 <20080813085800.GF23417@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for August 13
+Date: Wed, 13 Aug 2008 21:42:10 +1000
+Message-ID: <20080813214210.02609f00.sfr@canb.auug.org.au>
+References: <20080813172452.14b0775c.sfr@canb.auug.org.au>
+	<s5h7ial9nvm.wl%tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__13_Aug_2008_21_42_10_+1000_D1xg+CoQq=w=GMKW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from courier.cs.helsinki.fi ([128.214.9.1]:40456 "EHLO
-	mail.cs.helsinki.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750980AbYHMLhK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Aug 2008 07:37:10 -0400
-In-Reply-To: <20080813085800.GF23417@elte.hu>
+Received: from chilli.pcug.org.au ([203.10.76.44]:33815 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751848AbYHMLmS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 13 Aug 2008 07:42:18 -0400
+In-Reply-To: <s5h7ial9nvm.wl%tiwai@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Vegard Nossum <vegard.nossum@gmail.com>, linux-next@vger.kernel.org, Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>, Christoph Lameter <cl@linux-foundation.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi Ingo,
+--Signature=_Wed__13_Aug_2008_21_42_10_+1000_D1xg+CoQq=w=GMKW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2008-08-13 at 10:58 +0200, Ingo Molnar wrote:
-> what's your current workflow, what causes the sha1's for commits to 
-> change frequently? Do you work with patches (i.e. it's not really a Git 
-> workflow at all and you regenerate the git tree all the time you export 
-> it from your patch queue), or do you perhaps git-rebase often to clean 
-> up patches?
+Hi Takashi,
 
-No, I don't work with patches. A lot of the churn comes from the fact
-that I have been dropping and re-applying SLUB defrag patches from
-Christoph lately. I keep them in a topic branch and pull them for my
-'for-next' branch that appears in linux-next.
+On Wed, 13 Aug 2008 13:05:01 +0200 Takashi Iwai <tiwai@suse.de> wrote:
+>
+> I got a problem regarding tty with today's tree.
+> When re-starting X, it complains that it cannot change to VT7.
+> Via strace,=20
+>=20
+>   open("/dev/tty0", O_WRONLY)             =3D 7
+>   ioctl(7, VIDIOC_QUERYCAP or VT_OPENQRY, 0x81e80c4) =3D 0
+>   close(7)                                =3D 0
+>   write(0, "(--) using VT number 7\n\n", 24) =3D 24
+>   getppid()                               =3D 3240
+>   getpgid(0xca8)                          =3D 3240
+>   setpgid(0, 3240)                        =3D 0
+>   setsid()                                =3D 3241
+>   open("/dev/vc/7", O_RDWR|O_NONBLOCK)    =3D -1 ENOENT (No such file or =
+directory)
+>   open("/dev/tty7", O_RDWR|O_NONBLOCK)    =3D -1 EIO (Input/output error)
+>   write(2, "\nFatal server error:\n", 21) =3D 21
+>=20
+> A similar error can be seen at shutdown, complains about the tty error
+> and the halt process hangs up.
+>=20
+> Unfortunately it's hard to bisect since Aug 11 and Aug 12 trees don't
+> boot, and Aug 8 tree has a problem regarding cred...
 
-The basic workflow for me is as follows:
+But does -rc3 work?  If so, then could you bisect from there to
+next-20080813?
 
-  - Whenever someone sends me a patch, I apply it to my 'testing' 
-    branch, do a little bit testing there and if everything seems fine,
-    I pull the branch to my 'for-next' branch.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-  - After few days, I pull (or cherry pick) the patches to 'for-linus' 
-    branch and ask Linus to pull. Whenever he pulls, I usually rebase 
-    all of my branches to Linus' master.
+--Signature=_Wed__13_Aug_2008_21_42_10_+1000_D1xg+CoQq=w=GMKW
+Content-Type: application/pgp-signature
 
-  - For development, I maintain topic branches that are _not_ 
-    append-only (such as SLUB defrag and kmemtrace). Whenever something 
-    changes there I do a git-reset --hard on 'for-next' and re-pull the 
-    topic branches there.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-  - Also, I usually rebase my whole tree after an -rc release or two 
-    just to keep my tree in-sync with mainline. That usually doesn't 
-    affect my patches at all.
+iEYEARECAAYFAkiiyJIACgkQjjKRsyhoI8yKRgCfbJo9G9TciKeg42aINo4uQPTJ
+k2kAn0NzLvpArO863ZCVnvoPyIVH+HIt
+=HkOi
+-----END PGP SIGNATURE-----
 
-So AFAICT most of the changes to SHA1s are due to me doing development
-in the topic branches and recreating the 'for-next' branch.
-
-		Pekka
+--Signature=_Wed__13_Aug_2008_21_42_10_+1000_D1xg+CoQq=w=GMKW--
