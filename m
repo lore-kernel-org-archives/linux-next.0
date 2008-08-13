@@ -1,38 +1,38 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the kmemcheck tree
-Date: Wed, 13 Aug 2008 10:58:00 +0200
-Message-ID: <20080813085800.GF23417@elte.hu>
-References: <20080813152907.b76a06e3.sfr@canb.auug.org.au> <20080813073205.GA398@elte.hu> <48A28DD9.7010108@cs.helsinki.fi> <20080813075808.GA11645@elte.hu> <1218615288.7813.310.camel@penberg-laptop>
+From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+Subject: Re: linux-next: ubifs tree build failure
+Date: Wed, 13 Aug 2008 12:42:32 +0300
+Message-ID: <48A2AC88.3070608@nokia.com>
+References: <20080812162409.91834486.sfr@canb.auug.org.au> <48A13DB8.4090003@nokia.com> <20080812182444.GB14420@lst.de>
+Reply-To: Artem.Bityutskiy@nokia.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:47387 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752512AbYHMI6X (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 13 Aug 2008 04:58:23 -0400
-Content-Disposition: inline
-In-Reply-To: <1218615288.7813.310.camel@penberg-laptop>
+Received: from smtp.nokia.com ([192.100.122.233]:54452 "EHLO
+	mgw-mx06.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752655AbYHMJnM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Aug 2008 05:43:12 -0400
+In-Reply-To: <20080812182444.GB14420@lst.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pekka Enberg <penberg@cs.helsinki.fi>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Vegard Nossum <vegard.nossum@gmail.com>, linux-next@vger.kernel.org, Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>, Christoph Lameter <cl@linux-foundation.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
+Christoph Hellwig wrote:
+>>> I have appended the reverted patch below.
+>> I am not sure how to resolve things like this actually. I am plannin=
+g to
+>> send ubifs-2.6.git upstream soon, so probably Christoph will be able=
+ to=20
+>> amend
+>> his stuff after this. Or any other suggestion?
+>=20
+> Please back this patch out, it's defintively not ready.
 
-* Pekka Enberg <penberg@cs.helsinki.fi> wrote:
+OK
 
-> Hi Ingo,
-> 
-> On Wed, 2008-08-13 at 09:58 +0200, Ingo Molnar wrote:
-> > (This would be doable and pretty painless as long as slab.git is
-> > purely append-only and not rebased.)
-> 
-> Heh, it's not, as I never quite understood the workflow for that. But 
-> that's another discussion, I suppose.
-
-what's your current workflow, what causes the sha1's for commits to 
-change frequently? Do you work with patches (i.e. it's not really a Git 
-workflow at all and you regenerate the git tree all the time you export 
-it from your patch queue), or do you perhaps git-rebase often to clean 
-up patches?
-
-	Ingo
+--=20
+Best Regards,
+Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
+=D1=86=D0=BA=D0=B8=D0=B9)
