@@ -1,36 +1,38 @@
 From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
 Subject: Re: linux-next: ubifs tree build failure
-Date: Wed, 13 Aug 2008 12:42:32 +0300
-Message-ID: <48A2AC88.3070608@nokia.com>
-References: <20080812162409.91834486.sfr@canb.auug.org.au> <48A13DB8.4090003@nokia.com> <20080812182444.GB14420@lst.de>
+Date: Wed, 13 Aug 2008 12:58:06 +0300
+Message-ID: <48A2B02E.8020601@nokia.com>
+References: <20080812162409.91834486.sfr@canb.auug.org.au> <20080812182416.GA14420@lst.de> <20080812213933.GA25538@lst.de>
 Reply-To: Artem.Bityutskiy@nokia.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8;
 	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.122.233]:54452 "EHLO
+Received: from smtp.nokia.com ([192.100.122.233]:56336 "EHLO
 	mgw-mx06.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752655AbYHMJnM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Aug 2008 05:43:12 -0400
-In-Reply-To: <20080812182444.GB14420@lst.de>
+	with ESMTP id S1751907AbYHMJ6h (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Aug 2008 05:58:37 -0400
+In-Reply-To: <20080812213933.GA25538@lst.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Christoph Hellwig <hch@lst.de>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
 Christoph Hellwig wrote:
->>> I have appended the reverted patch below.
->> I am not sure how to resolve things like this actually. I am plannin=
-g to
->> send ubifs-2.6.git upstream soon, so probably Christoph will be able=
- to=20
->> amend
->> his stuff after this. Or any other suggestion?
+> Btw, a good example for export ops on a filesystem with similar
+> constraints is Dave's patch for jffs2:
 >=20
-> Please back this patch out, it's defintively not ready.
+> 	http://git.kernel.org/?p=3Dlinux/kernel/git/viro/vfs-2.6.git;a=3Dcom=
+mitdiff;h=3Ddd9207c31d6712a4665f197db7740da6c633cea7
 
-OK
+OK, it is probably best if UBIFS NFS support goes via VFS git tree
+just like JFFS2. I'll send a patch to fsdevel later.
+
+Thus,  I'll remove NFS support from my tree and the conflict will
+be solved.
+
+Thanks.
 
 --=20
 Best Regards,
