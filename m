@@ -1,38 +1,27 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: Tree for August 12
-Date: Wed, 13 Aug 2008 09:18:58 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.0808130917300.28400@anakin>
-References: <20080812185345.d7496513.sfr@canb.auug.org.au>
+From: Pekka Enberg <penberg@cs.helsinki.fi>
+Subject: Re: linux-next: manual merge of the slab tree
+Date: Wed, 13 Aug 2008 10:21:15 +0300
+Message-ID: <48A28B6B.9030907@cs.helsinki.fi>
+References: <20080813145741.43da1fc8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wilson.telenet-ops.be ([195.130.132.42]:52352 "EHLO
-	wilson.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751880AbYHMHTD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Aug 2008 03:19:03 -0400
-In-Reply-To: <20080812185345.d7496513.sfr@canb.auug.org.au>
+Received: from courier.cs.helsinki.fi ([128.214.9.1]:35272 "EHLO
+	mail.cs.helsinki.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750782AbYHMHYr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Aug 2008 03:24:47 -0400
+In-Reply-To: <20080813145741.43da1fc8.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>, Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>
 
-On Tue, 12 Aug 2008, Stephen Rothwell wrote:
-> Status of my local build tests will be at
-> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-> advice about cross compilers/configs that work, we are always open to add
-> more builds.
+Stephen Rothwell wrote:
+> Today's linux-next merge of the slab tree got a conflict in
+> lib/Kconfig.debug between commit 3794f3e812ef707a4f7931742274d1d0ca6597b4
+> ("docsrc: build Documentation/ sources") from Linus' tree and commit
+> 5db80305ad7ea891246aec24204630c2925e7b12 ("kmemtrace: Core
+> implementation") from the slab tree.
 
-It seems the global overview of the various trees at
-http://kisskb.ellerman.id.au/kisskb/matrix/ is no longer updated?
-The per-tree overviews are still up-to-date.
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+I've now fixed up the conflict in my tree. Thanks Stephen!
