@@ -1,42 +1,80 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Subject: Re: linux-next: Tree for August 13 (nfsd)
-Date: Wed, 13 Aug 2008 14:09:31 -0400
-Message-ID: <20080813180931.GC26765@fieldses.org>
-References: <20080813172452.14b0775c.sfr@canb.auug.org.au> <20080813104748.13848196.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: hdlc tree build failure
+Date: Thu, 14 Aug 2008 15:37:32 +1000
+Message-ID: <20080814153732.63307d0e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.fieldses.org ([66.93.2.214]:37494 "EHLO fieldses.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58003 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751934AbYHMSJw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 13 Aug 2008 14:09:52 -0400
-Content-Disposition: inline
-In-Reply-To: <20080813104748.13848196.randy.dunlap@oracle.com>
+	id S1750843AbYHNFhi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 14 Aug 2008 01:37:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, neilb@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Krzysztof Halasa <khc@pm.waw.pl>
+Cc: linux-next@vger.kernel.org
 
-On Wed, Aug 13, 2008 at 10:47:48AM -0700, Randy Dunlap wrote:
-> linux-next-20080813/fs/nfsd/nfs4state.c:259: error: implicit declaration of function 'vfs_setlease'
-> linux-next-20080813/fs/nfsd/nfs4state.c:1386: error: implicit declaration of function 'lease_modify'
-> make[3]: *** [fs/nfsd/nfs4state.o] Error 1
-> 
-> 
-> config attached.
+Hi Krzysztof,
 
-Probably relevant pieces:
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-	# CONFIG_FILE_LOCKING is not set
-	...
-	CONFIG_NFSD=m
-	CONFIG_NFSD_V3=y
-	# CONFIG_NFSD_V3_ACL is not set
-	CONFIG_NFSD_V4=y
+drivers/net/wan/hdlc_ppp.c: In function 'ppp_cp_parse_cr':
+drivers/net/wan/hdlc_ppp.c:384: error: 'struct hdlc_device' has no member named 'stats'
+drivers/net/wan/hdlc_ppp.c:390: error: 'struct hdlc_device' has no member named 'stats'
+drivers/net/wan/hdlc_ppp.c: In function 'ppp_rx':
+drivers/net/wan/hdlc_ppp.c:552: error: 'struct hdlc_device' has no member named 'stats'
 
-Looks like that's just two more functions that need to be stubbed out in
-the case where CONFIG_FILE_LOCKING is undefined?--hopefully Thomas
-Petazzoni (cc'd) could be talked into reproducing this and sending me an
-incremental fix....
+Caused by commit 198191c4a7ce4daba379608fb38b9bc5a4eedc61 ("WAN: convert
+drivers to use built-in netdev_stats") from Linus' tree interacting with
+commit 2c7275708f373ac387352f13e509fd0c7679e12c ("WAN: new synchronous
+PPP implementation for generic HDLC").
 
---b.
+I have to wonder if this was even build tested ...
+
+I added the following patch.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 14 Aug 2008 15:34:53 +1000
+Subject: [PATCH] hdlc_ppp: fix up for move of stats pointer
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/wan/hdlc_ppp.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/wan/hdlc_ppp.c b/drivers/net/wan/hdlc_ppp.c
+index b0a63be..72fae21 100644
+--- a/drivers/net/wan/hdlc_ppp.c
++++ b/drivers/net/wan/hdlc_ppp.c
+@@ -381,13 +381,13 @@ static void ppp_cp_parse_cr(struct net_device *dev, u16 pid, u8 id,
+ 	unsigned int nak_len = 0, rej_len = 0;
+ 
+ 	if (!(out = kmalloc(len, GFP_ATOMIC))) {
+-		dev_to_hdlc(dev)->stats.rx_dropped++;
++		dev->stats.rx_dropped++;
+ 		return;	/* out of memory, ignore CR packet */
+ 	}
+ 
+ 	for (opt = data; len; len -= opt[1], opt += opt[1]) {
+ 		if (len < 2 || len < opt[1]) {
+-			dev_to_hdlc(dev)->stats.rx_errors++;
++			dev->stats.rx_errors++;
+ 			return; /* bad packet, drop silently */
+ 		}
+ 
+@@ -549,7 +549,7 @@ static int ppp_rx(struct sk_buff *skb)
+ 	goto out;
+ 
+ rx_error:
+-	dev_to_hdlc(dev)->stats.rx_errors++;
++	dev->stats.rx_errors++;
+ out:
+ 	spin_unlock_irqrestore(&ppp->lock, flags);
+ 	dev_kfree_skb_any(skb);
+-- 
+1.5.6.3
