@@ -1,27 +1,51 @@
-From: Andi Kleen <ak@linux.intel.com>
-Subject: Re: linux-next: Tree for August 14 (sysfs/acpi errors)
-Date: Fri, 15 Aug 2008 05:11:22 +0200
-Message-ID: <48A4F3DA.9030200@linux.intel.com>
-References: <20080814172945.250a27f2.sfr@canb.auug.org.au>	 <20080814083828.d10e126d.randy.dunlap@oracle.com>	 <20080814154456.GA26388@kroah.com>  <48A4F05B.9050309@linux.intel.com> <1218769772.3209.46.camel@rzhang-dt>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the stackprotector tree
+Date: Fri, 15 Aug 2008 13:29:32 +1000
+Message-ID: <20080815132932.71f3f0da.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <1218769772.3209.46.camel@rzhang-dt>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: Greg KH <greg@kroah.com>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org, rusty@rustcorp.com.au
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__15_Aug_2008_13_29_32_+1000_gUfQNWgOsXQAM=YS"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34651 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752183AbYHOD3m (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 14 Aug 2008 23:29:42 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Eric Sandeen <sandeen@sandeen.net>, Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
 
+--Signature=_Fri__15_Aug_2008_13_29_32_+1000_gUfQNWgOsXQAM=YS
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> It looks more like the high level code that sets up these parameters
->> broke somehow and starts registering these twice and now ACPI is the
->> first one to hit it (maybe because it starts with 'a' :-). 
-> Perhaps we could try "acpi=off" and see if it still happens.
+Hi all,
 
-I doubt that would help because module_param()s are always registered
-even with acpi=off. They are not really processed by ACPI, but by
-kernel/params.c
+Today's linux-next merge of the stackprotector tree got a trivial
+conflict in kernel/fork.c between commit
+177a5f86ba5f60c783e24603bedf037d6c43a193 ("tracing, sched: LTTng
+instrumentation - scheduler") from the ftrace tree and commit
+7c9f8861e6c9c839f913e49b98c3854daca18f27 ("stackprotector: use canary at
+end of stack to indicate overruns at oops time") from the stackprotector
+tree.
 
--Andi
+Just overlapping additions of includes.  I added both.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+--Signature=_Fri__15_Aug_2008_13_29_32_+1000_gUfQNWgOsXQAM=YS
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkik+BwACgkQjjKRsyhoI8z9dACgpVYt4LIHlFTLTPfpfUyUALvJ
+N9gAn0pwUWnppTJCsmhBH4zY5bWN8kLE
+=mV6b
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__15_Aug_2008_13_29_32_+1000_gUfQNWgOsXQAM=YS--
