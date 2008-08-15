@@ -1,260 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for August 15
-Date: Fri, 15 Aug 2008 18:40:32 +1000
-Message-ID: <20080815184032.3acd8032.sfr@canb.auug.org.au>
+From: "Kay Sievers" <kay.sievers@vrfy.org>
+Subject: Re: linux-next: Tree for August 14 (sysfs/acpi errors)
+Date: Fri, 15 Aug 2008 13:27:00 +0200
+Message-ID: <3ae72650808150427q364842ccicf0a0978b30ca98c@mail.gmail.com>
+References: <20080814172945.250a27f2.sfr@canb.auug.org.au>
+	 <20080814083828.d10e126d.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__15_Aug_2008_18_40_32_+1000_fxVuH2YUju1ndoy3"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50104 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753011AbYHOIkl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 15 Aug 2008 04:40:41 -0400
+Received: from yx-out-2324.google.com ([74.125.44.30]:34730 "EHLO
+	yx-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753030AbYHOL1C (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Aug 2008 07:27:02 -0400
+Received: by yx-out-2324.google.com with SMTP id 8so682559yxm.1
+        for <linux-next@vger.kernel.org>; Fri, 15 Aug 2008 04:27:01 -0700 (PDT)
+In-Reply-To: <20080814083828.d10e126d.randy.dunlap@oracle.com>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh <greg@kroah.com>, ak@linux.intel.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org
 
---Signature=_Fri__15_Aug_2008_18_40_32_+1000_fxVuH2YUju1ndoy3
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Aug 14, 2008 at 17:38, Randy Dunlap <randy.dunlap@oracle.com> wrote:
+> calling  param_sysfs_init+0x0/0x1e7
+> ------------[ cut here ]------------
+> WARNING: at fs/sysfs/dir.c:463 sysfs_add_one+0x35/0x3d()
+> sysfs: duplicate filename 'acpi' can not be created
 
-Hi all,
+Hi Randy,
+care to add a printk to the module sysfs setup, and post dmesg again?
 
-Changes since next-20080814:
+--- a/kernel/params.c
++++ b/kernel/params.c
+@@ -603,6 +603,8 @@ static void __init param_sysfs_builtin(void)
+ 		}
+ 		name_len = dot - kp->name;
 
-New trees: oprofile and fastboot.
++		printk("XXX adding modparam:'%s' %i (%p)\n", kp->name, i, kp);
++
+  		/* new kbuild_modname? */
+ 		if (strlen(modname) != name_len
+ 		    || strncmp(modname, kp->name, name_len) != 0) {
 
-The tip-core tree lost its conflict.
+I might show the order of registering the /sys/modules/ directory, and
+if there is possibly another "acpi" section, which tries to add
+parameter names.
 
-The cpus4096 tree lost its conflict.
-
-The ftrace tree gained a conflict against the driver-core tree and a
-build failure required the revert of a commit.
-
-The stackprotector tree gained a conflict against the ftrace tree.
-
-The x86 tree gained a conflict against the stackprotector tree but lost
-two conflicts and a build fix patch.
-
-The kvm tree gained a conflict against the x86 tree.
-
-The test tree gained a conflict against the sched tree.
-
-The kmemcheck tree gained two conflicts against the x86 tree.
-
-The hdlc tree lost its build fix patch.
-
-The creds tree gained a conflict against the ftrace tree (and several
-against Linus' tree - but they were expected).
-
-The fastboot tree gained a conflist against the driver-core tree.
-
-I have also applied the following patches for known problems:
-
-	Add cuImage.mpc866ads to the bootwrapper as a cuboot-8xx target
-	ath9k: work around gcc ICE again
-	driver-core: don't export static functions
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups, it is also built with powerpc allnoconfig,
-44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
-
-Below is a summary of the state of the merge.
-
-We are up to 110 trees (counting Linus' and 14 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging powerpc-merge/merge
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sparc-current/master
-Merging sound-current/for-linus
-Merging arm-current/master
-CONFLICT (content): Merge conflict in drivers/watchdog/at91rm9200_wdt.c
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-2.6.26
-Merging dwmw2/master
-Merging quilt/driver-core
-Merging quilt/usb
-Merging tip-core/auto-core-next
-Merging cpus4096/auto-cpus4096-next
-Merging ftrace/auto-ftrace-next
-CONFLICT (content): Merge conflict in kernel/module.c
-Created commit b82f4d2: Revert "ftrace: do not trace NMI contexts"
-Merging genirq/auto-genirq-next
-Merging safe-poison-pointers/auto-safe-poison-pointers-next
-Merging sched/auto-sched-next
-Merging stackprotector/auto-stackprotector-next
-CONFLICT (content): Merge conflict in kernel/fork.c
-Merging timers/auto-timers-next
-Merging x86/auto-x86-next
-CONFLICT (content): Merge conflict in include/asm-x86/pda.h
-Merging pci/linux-next
-Merging quilt/device-mapper
-Merging hid/mm
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging avr32/avr32-arch
-Merging v4l-dvb/stable
-Merging s390/features
-Merging sh/master
-Merging jfs/next
-Merging kbuild/master
-Merging quilt/ide
-Merging libata/NEXT
-Merging nfs/linux-next
-Merging xfs/master
-Merging infiniband/for-next
-Merging acpi/test
-Applying acpi: missing status declaration in acer-wmi.c
-Merging blackfin/for-linus
-Merging nfsd/nfsd-next
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/master
-CONFLICT (content): Merge conflict in include/asm-x86/kvm.h
-Merging dlm/next
-Merging scsi/master
-Merging ia64/test
-Merging tests/master
-CONFLICT (content): Merge conflict in lib/Kconfig.debug
-Merging ocfs2/linux-next
-Merging quilt/m68k
-Merging powerpc/powerpc-next
-Merging ext4/next
-Merging 4xx/next
-Merging async_tx/next
-Merging udf/for_next
-Merging net/master
-Merging sparc/master
-Merging galak/powerpc-next
-Merging mtd/master
-Merging wireless/master
-Merging crypto/master
-CONFLICT (content): Merge conflict in include/asm-x86/cpufeature.h
-Merging vfs/for-next
-CONFLICT (content): Merge conflict in fs/nfsd/export.c
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_export.c
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_iops.c
-Merging sound/for-next
-Merging arm/devel
-Merging cpufreq/next
-Merging v9fs/for-next
-Merging quilt/rr
-Merging cifs/master
-Merging mmc/next
-Merging gfs2/master
-Merging input/next
-Merging semaphore/semaphore
-Merging semaphore-removal/semaphore-removal
-Merging bkl-removal/bkl-removal
-Merging trivial/next
-CONFLICT (content): Merge conflict in Documentation/edac.txt
-CONFLICT (content): Merge conflict in include/linux/securebits.h
-Merging ubifs/linux-next
-Merging lsm/for-next
-Merging block/for-next
-Merging embedded/master
-Merging firmware/master
-CONFLICT (content): Merge conflict in drivers/media/dvb/ttpci/Kconfig
-CONFLICT (content): Merge conflict in drivers/media/dvb/ttpci/Makefile
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging m68knommu/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging cris/for-next
-Merging kmemcheck/auto-kmemcheck-next
-CONFLICT (content): Merge conflict in MAINTAINERS
-CONFLICT (content): Merge conflict in arch/x86/kernel/process_64.c
-CONFLICT (content): Merge conflict in arch/x86/kernel/traps_64.c
-CONFLICT (content): Merge conflict in mm/Makefile
-CONFLICT (content): Merge conflict in mm/slab.c
-Merging generic-ipi/auto-generic-ipi-next
-Merging mips/mips-for-linux-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/reg-for-linus
-Merging security-testing/next
-Merging lblnet/master
-Merging quilt/ttydev
-CONFLICT (content): Merge conflict in drivers/net/usb/hso.c
-CONFLICT (content): Merge conflict in drivers/usb/class/cdc-acm.c
-Merging agp/agp-next
-Merging creds/next-creds
-CONFLICT (content): Merge conflict in fs/namespace.c
-CONFLICT (content): Merge conflict in fs/nfsd/nfs4recover.c
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_linux.h
-CONFLICT (content): Merge conflict in fs/xfs/xfs_inode.c
-CONFLICT (content): Merge conflict in fs/xfs/xfs_vnodeops.c
-CONFLICT (add/add): Merge conflict in include/linux/cred.h
-CONFLICT (content): Merge conflict in kernel/exit.c
-CONFLICT (content): Merge conflict in kernel/fork.c
-Merging oprofile/auto-oprofile-next
-Merging fastboot/auto-fastboot-next
-CONFLICT (content): Merge conflict in include/linux/init.h
-Applying Add cuImage.mpc866ads to the bootwrapper as a cuboot-8xx target
-Applying ath9k: work around gcc ICE again
-Applying driver-core: don't export static functions
-
---Signature=_Fri__15_Aug_2008_18_40_32_+1000_fxVuH2YUju1ndoy3
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkilQQAACgkQjjKRsyhoI8x3IQCgtwYrzvTYIjlmxE10Go0ZGljZ
-So0An1C7a7Tot35nBV3uTgXGfwqq8vGY
-=eNI9
------END PGP SIGNATURE-----
-
---Signature=_Fri__15_Aug_2008_18_40_32_+1000_fxVuH2YUju1ndoy3--
+Thanks,
+Kay
