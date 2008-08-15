@@ -1,70 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
 Subject: Re: linux-next: manual merge of the kmemcheck tree
-Date: Fri, 15 Aug 2008 18:00:23 +1000
-Message-ID: <20080815180023.e6f92a1a.sfr@canb.auug.org.au>
-References: <20080815164909.3d8beb10.sfr@canb.auug.org.au>
-	<19f34abd0808150004ma79af8ei9009a792b87a4c80@mail.gmail.com>
+Date: Fri, 15 Aug 2008 10:17:00 +0200
+Message-ID: <20080815081700.GA4776@elte.hu>
+References: <20080815164512.3f36d7a6.sfr@canb.auug.org.au> <48A525A3.8050705@cs.helsinki.fi>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__15_Aug_2008_18_00_23_+1000_dN1uqCHNQYqv6EjK"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55153 "EHLO smtps.tip.net.au"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:55253 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752732AbYHOIAb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 15 Aug 2008 04:00:31 -0400
-In-Reply-To: <19f34abd0808150004ma79af8ei9009a792b87a4c80@mail.gmail.com>
+	id S1751600AbYHOIR0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 15 Aug 2008 04:17:26 -0400
+Content-Disposition: inline
+In-Reply-To: <48A525A3.8050705@cs.helsinki.fi>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vegard Nossum <vegard.nossum@gmail.com>
-Cc: Pekka Enberg <penberg@cs.helsinki.fi>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, "Gustavo F. Padovan" <gustavo@las.ic.unicamp.br>
+To: Pekka Enberg <penberg@cs.helsinki.fi>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Vegard Nossum <vegard.nossum@gmail.com>, linux-next@vger.kernel.org, "Gustavo F. Padovan" <gustavo@las.ic.unicamp.br>
 
---Signature=_Fri__15_Aug_2008_18_00_23_+1000_dN1uqCHNQYqv6EjK
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Vegard,
+* Pekka Enberg <penberg@cs.helsinki.fi> wrote:
 
-On Fri, 15 Aug 2008 09:04:08 +0200 "Vegard Nossum" <vegard.nossum@gmail.com=
-> wrote:
+> Stephen Rothwell wrote:
+>> Today's linux-next merge of the kmemcheck tree got a conflict in
+>> arch/x86/kernel/process_64.c between commits
+>> 8092c654de9a964c14d89da56834f73a80548a58 ("x86: add KERN_INFO to printks
+>> on process_64.c") and 7de08b4e1ed8d80e6086f71b7e99fc4b397aae39 ("x86:
+>> coding styles fixes to arch/x86/kernel/process_64.c") from the x86 tree
+>> and commit afdb7023b849cffda679fcec324ff592d7b24a51 ("x86:
+>> __show_registers() and __show_regs() API unification") from the kmemcheck
+>> tree.
 >
-> Just out of curiosity: Do you have a script that produces these
-> messages? How hard would it be to include the "merge patch" (conflict
-> resolution) itself in this e-mail?
+> Ingo, can we push the unification patch to mainline before kmemcheck 
+> to get rid of the conflict?
 
-I do use a script, but I start the email before I figure out what the
-actual conflict and resolution are so I can fill in the details as I find
-them.
+hm, i think it's too late for that. The 130+ arch/x86 contributors were 
+very busy in this cycle too [1300+ commits (!)] so we need to slow down 
+during -rc's much harder and much sooner than other, lower-flux 
+subsystems.
 
-> I think that would be a very helpful addition (if it can be done with
-> no hassle on your side), because it means that I could actually look
-> over it and give a comment if it looks wrong (with no hassle on my
-> side, looking up the merge commit, etc.).
+Furthermore, this particular piece of code is not in a high-flux area so 
+git-rerere should properly take care of it i think, even in the longer 
+run. I've been carrying that merge fixup in tip/master for a long time.
 
-I'll see what I can do.  It shouldn't be to hard.
-
-> But if it can't be done easily, then don't bother. The issues are
-> mostly trivial anyway. Thanks for doing this work!
-
-The really trivial ones usually end up with nothing in the resolution
-diff as I take the commit from one or other tree, so I will leave those
-out.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__15_Aug_2008_18_00_23_+1000_dN1uqCHNQYqv6EjK
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkilN5cACgkQjjKRsyhoI8w6jwCfe1/rk8bLTgWZf/uaqcp6W4Sh
-+c0AoJzxDVqFDtXA6C8Ls3G4ihMTDvkc
-=pts8
------END PGP SIGNATURE-----
-
---Signature=_Fri__15_Aug_2008_18_00_23_+1000_dN1uqCHNQYqv6EjK--
+	Ingo
