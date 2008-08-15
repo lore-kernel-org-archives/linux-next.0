@@ -1,51 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tests tree
-Date: Fri, 15 Aug 2008 14:59:48 +1000
-Message-ID: <20080815145948.690f8529.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kmemcheck tree
+Date: Fri, 15 Aug 2008 16:45:12 +1000
+Message-ID: <20080815164512.3f36d7a6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__15_Aug_2008_14_59_48_+1000_OOviAie+dlf4ZVq/"
+ boundary="Signature=_Fri__15_Aug_2008_16_45_12_+1000_z4gJjqZ4Rms/m4B5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39764 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41530 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750790AbYHOE75 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 15 Aug 2008 00:59:57 -0400
+	id S1751393AbYHOGpX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 15 Aug 2008 02:45:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
-Cc: linux-next@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Ingo Molnar <mingo@elte.hu>
+To: Vegard Nossum <vegard.nossum@gmail.com>, Pekka Enberg <penberg@cs.helsinki.fi>, Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, "Gustavo F. Padovan" <gustavo@las.ic.unicamp.br>
 
---Signature=_Fri__15_Aug_2008_14_59_48_+1000_OOviAie+dlf4ZVq/
+--Signature=_Fri__15_Aug_2008_16_45_12_+1000_z4gJjqZ4Rms/m4B5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ananth,
+Hi all,
 
-Today's linux-next merge of the tests tree got a conflict in
-lib/Kconfig.debug between commit 67182ae1c42206e516f7efb292b745e826497b24
-("rcu, debug: detect stalled grace periods") from the sched tree and
-commit 2b9b631dd2507b5480b752bcca946b9767b9bae1 ("Move rcutorture to
-tests/") from the tests tree.
+Today's linux-next merge of the kmemcheck tree got a conflict in
+arch/x86/kernel/process_64.c between commits
+8092c654de9a964c14d89da56834f73a80548a58 ("x86: add KERN_INFO to printks
+on process_64.c") and 7de08b4e1ed8d80e6086f71b7e99fc4b397aae39 ("x86:
+coding styles fixes to arch/x86/kernel/process_64.c") from the x86 tree
+and commit afdb7023b849cffda679fcec324ff592d7b24a51 ("x86:
+__show_registers() and __show_regs() API unification") from the kmemcheck
+tree.
 
-I sort of fixed it up.
+I fixed them up as was pretty obvious.
 
-Ananth, you should try to get the testing stuff into Linus' tree ...
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__15_Aug_2008_14_59_48_+1000_OOviAie+dlf4ZVq/
+--Signature=_Fri__15_Aug_2008_16_45_12_+1000_z4gJjqZ4Rms/m4B5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkilDUQACgkQjjKRsyhoI8wySgCfY5heoAEESMj9kmDQgKocPKla
-9e8AoIVhzszwB5deqbYAkl/IIjaAI6gK
-=5UBz
+iEYEARECAAYFAkilJfgACgkQjjKRsyhoI8xwxACfUbW8wuSjukrV0z9aUsMybrJd
+xlEAnjM6QMK2j7PIEwXB1aKGY7Wr9/IB
+=rdn+
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__15_Aug_2008_14_59_48_+1000_OOviAie+dlf4ZVq/--
+--Signature=_Fri__15_Aug_2008_16_45_12_+1000_z4gJjqZ4Rms/m4B5--
