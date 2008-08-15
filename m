@@ -1,45 +1,42 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the kmemcheck tree
-Date: Fri, 15 Aug 2008 10:17:00 +0200
-Message-ID: <20080815081700.GA4776@elte.hu>
-References: <20080815164512.3f36d7a6.sfr@canb.auug.org.au> <48A525A3.8050705@cs.helsinki.fi>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next:  driver-core tree build failure
+Date: Fri, 15 Aug 2008 18:25:36 +1000
+Message-ID: <20080815182536.133fcad6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:55253 "EHLO mx2.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35645 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751600AbYHOIR0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 15 Aug 2008 04:17:26 -0400
-Content-Disposition: inline
-In-Reply-To: <48A525A3.8050705@cs.helsinki.fi>
+	id S1753306AbYHOIZk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 15 Aug 2008 04:25:40 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pekka Enberg <penberg@cs.helsinki.fi>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Vegard Nossum <vegard.nossum@gmail.com>, linux-next@vger.kernel.org, "Gustavo F. Padovan" <gustavo@las.ic.unicamp.br>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org
 
+Hi Greg,
 
-* Pekka Enberg <penberg@cs.helsinki.fi> wrote:
+Today's linux-next build (powerpc allyesconfig) failed like this:
 
-> Stephen Rothwell wrote:
->> Today's linux-next merge of the kmemcheck tree got a conflict in
->> arch/x86/kernel/process_64.c between commits
->> 8092c654de9a964c14d89da56834f73a80548a58 ("x86: add KERN_INFO to printks
->> on process_64.c") and 7de08b4e1ed8d80e6086f71b7e99fc4b397aae39 ("x86:
->> coding styles fixes to arch/x86/kernel/process_64.c") from the x86 tree
->> and commit afdb7023b849cffda679fcec324ff592d7b24a51 ("x86:
->> __show_registers() and __show_regs() API unification") from the kmemcheck
->> tree.
->
-> Ingo, can we push the unification patch to mainline before kmemcheck 
-> to get rid of the conflict?
+drivers/usb/gadget/f_ecm.c:737: error: __ksymtab_ecm_bind causes a section type conflict
 
-hm, i think it's too late for that. The 130+ arch/x86 contributors were 
-very busy in this cycle too [1300+ commits (!)] so we need to slow down 
-during -rc's much harder and much sooner than other, lower-flux 
-subsystems.
+You really shouldn't EXPORT static functions.  I applied the patch below.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Furthermore, this particular piece of code is not in a high-flux area so 
-git-rerere should properly take care of it i think, even in the longer 
-run. I've been carrying that merge fixup in tip/master for a long time.
-
-	Ingo
+diff --git a/drivers/usb/gadget/f_ecm.c b/drivers/usb/gadget/f_ecm.c
+index ff85c9d..6d0a88c 100644
+--- a/drivers/usb/gadget/f_ecm.c
++++ b/drivers/usb/gadget/f_ecm.c
+@@ -599,7 +599,7 @@ static void ecm_close(struct gether *geth)
+ 
+ /* ethernet function driver setup/binding */
+ 
+-static int __init
++int __init
+ ecm_bind(struct usb_configuration *c, struct usb_function *f)
+ {
+ 	struct usb_composite_dev *cdev = c->cdev;
