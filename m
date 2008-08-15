@@ -1,57 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: hdlc tree build failure
-Date: Fri, 15 Aug 2008 10:27:52 +1000
-Message-ID: <20080815102752.2126c64d.sfr@canb.auug.org.au>
-References: <20080814153732.63307d0e.sfr@canb.auug.org.au>
-	<m34p5nmo4x.fsf@maximus.localdomain>
+Subject: linux-next: manual merge of the ftrace tree
+Date: Fri, 15 Aug 2008 11:54:10 +1000
+Message-ID: <20080815115410.458633f1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__15_Aug_2008_10_27_52_+1000_EoHe9d5yaCZDTeLj"
+ boundary="Signature=_Fri__15_Aug_2008_11_54_10_+1000_+jHr=ruNoPCRiLy8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40486 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43471 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751864AbYHOA2B (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 14 Aug 2008 20:28:01 -0400
-In-Reply-To: <m34p5nmo4x.fsf@maximus.localdomain>
+	id S1751636AbYHOByV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 14 Aug 2008 21:54:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Krzysztof Halasa <khc@pm.waw.pl>
-Cc: linux-next@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>, Jason Baron <jbaron@redhat.com>, Greg KH <greg@kroah.com>
 
---Signature=_Fri__15_Aug_2008_10_27_52_+1000_EoHe9d5yaCZDTeLj
+--Signature=_Fri__15_Aug_2008_11_54_10_+1000_+jHr=ruNoPCRiLy8
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 14 Aug 2008 20:45:34 +0200 Krzysztof Halasa <khc@pm.waw.pl> wrote:
->
-> Stephen Rothwell <sfr@canb.auug.org.au> writes:
->=20
-> > Today's linux-next build (x86_64 allmodconfig) failed like this:
-> >
-> > drivers/net/wan/hdlc_ppp.c: In function 'ppp_cp_parse_cr':
-> > drivers/net/wan/hdlc_ppp.c:384: error: 'struct hdlc_device' has no
-> > member named 'stats'
->=20
-> Oops, sorry about that, my fault, already fixed it.
+Hi all,
 
-Ok, thanks.
+Today's linux-next merge of the ftrace tree got a conflict in
+kernel/module.c between commit 1b75321c2d0561d9ecfe3794fa939264f3eb7e26
+("driver core: basic infrastructure for per-module dynamic debug
+messages") from the driver-core tree and commit
+e543dff1468a55cdff9932dd3a806524790cf0b3 ("tracing: Kernel Tracepoints")
+from the ftrace tree.
+
+Overlapping additions.  I fixed it up. Probably worth a look once I
+publish the tree.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__15_Aug_2008_10_27_52_+1000_EoHe9d5yaCZDTeLj
+--Signature=_Fri__15_Aug_2008_11_54_10_+1000_+jHr=ruNoPCRiLy8
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkikzYgACgkQjjKRsyhoI8znUQCguva8XsCH0M03sY6wKPheVQRY
-ZxEAnibZ3kolwf01nVUXFiWEpXrDpHNc
-=3dB9
+iEYEARECAAYFAkik4cIACgkQjjKRsyhoI8yZkgCfQi6ZMBEK9MFg53NeNMSDO4EP
+NlcAn26KhDZN4sr8klLYRzsKR7ketG2y
+=AB29
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__15_Aug_2008_10_27_52_+1000_EoHe9d5yaCZDTeLj--
+--Signature=_Fri__15_Aug_2008_11_54_10_+1000_+jHr=ruNoPCRiLy8--
