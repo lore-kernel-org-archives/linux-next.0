@@ -1,49 +1,51 @@
 From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the fastboot tree
-Date: Fri, 15 Aug 2008 09:50:06 +0200
-Message-ID: <20080815075006.GA2399@elte.hu>
-References: <20080815174415.985eb69c.sfr@canb.auug.org.au>
+Subject: Re: linux-next: ftrace tree build failure
+Date: Fri, 15 Aug 2008 09:56:14 +0200
+Message-ID: <20080815075614.GA3010@elte.hu>
+References: <20080815122743.9715a5e1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:36944 "EHLO mx2.mail.elte.hu"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:34790 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752732AbYHOHud (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 15 Aug 2008 03:50:33 -0400
+	id S1751317AbYHOH4g (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 15 Aug 2008 03:56:36 -0400
 Content-Disposition: inline
-In-Reply-To: <20080815174415.985eb69c.sfr@canb.auug.org.au>
+In-Reply-To: <20080815122743.9715a5e1.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Arjan van de Ven <arjan@linux.intel.com>, Dave Hansen <haveblue@us.ibm.com>, Greg KH <greg@kroah.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
 
 
 * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> Hi Ingo,
+> Hi all,
 > 
-> Today's linux-next merge of the fastboot tree got a trivial conflict 
-> in include/linux/init.h between commit 
-> 95fc5687f58152d62904e7dea36dca3a52514160 ("Dave Hansen 
-> <haveblue@us.ibm.com>") from the driver-core tree and commit 
-
-[ sidenote: interesting commit name ;-) ]
-
-> a06e1c2b448b317bc141934879cbbbed8319b4d4 ("modules: extend 
-> initcall_debug functionality to the module loader") from the fastboot 
-> tree.
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
 > 
-> Just overlapping additions.  I fixed it up and will carry the fix.
+> kernel/trace/ftrace.c: In function 'ftrace_record_ip':
+> kernel/trace/ftrace.c:345: error: implicit declaration of function 'in_nmi'
+> 
+> Caused by commit 431e94644bde07a327dea17ee9be297c3d44a876 ("ftrace: do
+> not trace NMI contexts").
+> 
+> in_nmi() is not defined as a function (or macro) anywhere in my kernel 
+> tree, so I assume a patch was missed. More care, please.
+> 
+> I reverted the above commit.
 
-thanks.
+hm, it's present in my tree and has been there for a long time:
 
-> [I have been asked to try adding the merge result diff, so just as a 
-> test I have included it below.]
+| commit 0d84b78a606f1562532cd576ee8733caf5a4aed3
+| Author: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
+| Date:   Mon May 12 21:21:07 2008 +0200
+|
+|    x86 NMI-safe INT3 and Page Fault
 
-that's a very good idea!
-
-[ The inlining seems a bit weird though - Mutt didnt show it in its
-  default form, it only showed up when i did a reply to the mail. 
-  Strange. I use mutt-1.5.18-2.fc8. ]
+what happened is that i restructured the integration branches yesterday 
+and moved the tracing/nmisafe from auto-ftrace-next to auto-latest - 
+without realizing the dependency. I fixed that now and pushed out the 
+updated auto-ftrace-next branch.
 
 	Ingo
