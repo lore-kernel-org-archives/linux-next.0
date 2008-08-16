@@ -1,76 +1,65 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: Tree for August 14 (sysfs/acpi errors)
-Date: Sat, 16 Aug 2008 15:56:48 +1000
-Message-ID: <200808161556.48956.rusty@rustcorp.com.au>
-References: <20080814172945.250a27f2.sfr@canb.auug.org.au> <200808161347.41253.rusty@rustcorp.com.au> <20080816052552.GA21668@uranus.ravnborg.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: fs: Make linux kernel parser's match_table_t const
+Date: Sat, 16 Aug 2008 18:35:36 +1000
+Message-ID: <20080816183536.47dbfae6.sfr@canb.auug.org.au>
+References: <1218808842.20622.130.camel@quoit>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20080816052552.GA21668@uranus.ravnborg.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__16_Aug_2008_18_35_36_+1000_gByl5.2gMsmPxUq="
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:58927 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751973AbYHPIfo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 16 Aug 2008 04:35:44 -0400
+In-Reply-To: <1218808842.20622.130.camel@quoit>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Steven Whitehouse <swhiteho@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Alexander Viro <aviro@redhat.com>, Adrian Bunk <bunk@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>
+
+--Signature=_Sat__16_Aug_2008_18_35_36_+1000_gByl5.2gMsmPxUq=
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-Sender: linux-acpi-owner@vger.kernel.org
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Andi Kleen <ak@linux.intel.com>, Kay Sievers <kay.sievers@vrfy.org>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, gregkh <greg@kroah.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Saturday 16 August 2008 15:25:52 Sam Ravnborg wrote:
-> On Sat, Aug 16, 2008 at 01:47:40PM +1000, Rusty Russell wrote:
-> > (Sam: foo-objs-y would make this neater)
+Hi Steven,
+
+On Fri, 15 Aug 2008 15:00:42 +0100 Steven Whitehouse <swhiteho@redhat.com> =
+wrote:
 >
-> foo-y is even neater and works today.
+> Unlike the previous version, I've put the "const" by the individual
+> variable declarations, all aside from the nfsroot one that is
+> which was the cause of the problems. That is marked as __initconst
+> instead.
 
-Ah, missed that.  Thanks Sam!
+A much better approach - hiding the "const" in the typedef was always a
+bit strange.
 
-I had another bug: if both options were off, compile would fail.  Put
-everything in acpi.o to fix this.
+> Is this trivial enough for the trivial tree, or is there a better
+> place for it, VFS tree, or direct into linux-next for example?
 
-Rusty.
+linux-next currently has no easy way to include single patches like
+this.  An alternative approach would be to ask Linus to take just the
+changes to match_token() into his tree now (as they are clearly correct
+and don't adversely affect any other code) and then send all the other
+bits to each of the maintainers.  That way we avoid possible conflicts in
+linux-next over the following months and during the next merge window.
 
-diff -r 79f0d024aebc drivers/acpi/Makefile
---- a/drivers/acpi/Makefile	Fri Aug 15 11:23:34 2008 +1000
-+++ b/drivers/acpi/Makefile	Sat Aug 16 15:55:10 2008 +1000
-@@ -21,10 +21,15 @@ obj-$(CONFIG_X86)		+= blacklist.o
- #
- # ACPI Core Subsystem (Interpreter)
- #
--obj-y				+= osl.o utils.o reboot.o\
-+obj-y				+= acpi.o \
- 				   dispatcher/ events/ executer/ hardware/ \
- 				   namespace/ parser/ resources/ tables/ \
- 				   utilities/
-+
-+# "acpi." module_param namespace.
-+acpi-y				+= osl.o utils.o reboot.o 
-+acpi-$(CONFIG_ACPI_POWER)	+= power.o
-+acpi-$(CONFIG_ACPI_SYSTEM)	+= system.o event.o
- 
- #
- # ACPI Bus and Device Drivers
-@@ -49,11 +54,9 @@ obj-$(CONFIG_ACPI_VIDEO)	+= video.o
- obj-$(CONFIG_ACPI_VIDEO)	+= video.o
- obj-y				+= pci_root.o pci_link.o pci_irq.o pci_bind.o
- obj-$(CONFIG_ACPI_PCI_SLOT)	+= pci_slot.o
--obj-$(CONFIG_ACPI_POWER)	+= power.o
- obj-$(CONFIG_ACPI_PROCESSOR)	+= processor.o
- obj-$(CONFIG_ACPI_CONTAINER)	+= container.o
- obj-$(CONFIG_ACPI_THERMAL)	+= thermal.o
--obj-$(CONFIG_ACPI_SYSTEM)	+= system.o event.o
- obj-$(CONFIG_ACPI_DEBUG)	+= debug.o
- obj-$(CONFIG_ACPI_NUMA)		+= numa.o
- obj-$(CONFIG_ACPI_WMI)		+= wmi.o
-diff -r 79f0d024aebc drivers/acpi/system.c
---- a/drivers/acpi/system.c	Fri Aug 15 11:23:34 2008 +1000
-+++ b/drivers/acpi/system.c	Sat Aug 16 15:55:10 2008 +1000
-@@ -33,10 +33,6 @@
- 
- #define _COMPONENT		ACPI_SYSTEM_COMPONENT
- ACPI_MODULE_NAME("system");
--#ifdef MODULE_PARAM_PREFIX
--#undef MODULE_PARAM_PREFIX
--#endif
--#define MODULE_PARAM_PREFIX "acpi."
- 
- #define ACPI_SYSTEM_CLASS		"system"
- #define ACPI_SYSTEM_DEVICE_NAME		"System"
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Sat__16_Aug_2008_18_35_36_+1000_gByl5.2gMsmPxUq=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkimkVgACgkQjjKRsyhoI8ycXgCfa3oAA9rfhcc7HTKWjZ3xH6U8
+cw8AnA0OmYE074BHRzd12+SY1GANuJNk
+=szI1
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__16_Aug_2008_18_35_36_+1000_gByl5.2gMsmPxUq=--
