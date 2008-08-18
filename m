@@ -1,50 +1,92 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: linux-next: origin tree build failure
-Date: Tue, 19 Aug 2008 00:03:23 +1000 (EST)
-Message-ID: <alpine.LRH.1.10.0808190000210.21404@tundra.namei.org>
-References: <20080818100151.c2e9e508.sfr@canb.auug.org.au> <17141.1219064130@redhat.com>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: [PATCH] Fix allocation sizes of knfsd raparm hash
+Date: Mon, 18 Aug 2008 10:59:25 -0400
+Message-ID: <20080818145925.GB23127@fieldses.org>
+References: <20080815184032.3acd8032.sfr@canb.auug.org.au> <s5hr68q5rm8.wl%tiwai@suse.de> <20080815190221.GB26563@fieldses.org> <s5hvdy1ny9n.wl%tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tundra.namei.org ([65.99.196.166]:56365 "EHLO tundra.namei.org"
+Received: from mail.fieldses.org ([66.93.2.214]:36707 "EHLO fieldses.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752686AbYHROEc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Aug 2008 10:04:32 -0400
-In-Reply-To: <17141.1219064130@redhat.com>
+	id S1751323AbYHRO7a (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Aug 2008 10:59:30 -0400
+Content-Disposition: inline
+In-Reply-To: <s5hvdy1ny9n.wl%tiwai@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, David Fries <david@fries.net>, LKML <linux-kernel@vger.kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jeff Layton <jlayton@redhat.com>
 
-On Mon, 18 Aug 2008, David Howells wrote:
-
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > As expected (reported by David Fries), today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
+On Sat, Aug 16, 2008 at 10:45:56AM +0200, Takashi Iwai wrote:
+> At Fri, 15 Aug 2008 15:02:21 -0400,
+> J. Bruce Fields wrote:
 > > 
-> > In file included from include/linux/tracehook.h:52,
-> >                  from arch/powerpc/kernel/signal.c:13:
-> > include/linux/security.h: In function 'security_ptrace_traceme':
-> > include/linux/security.h:1760: error: 'parent' undeclared (first use in this function)
+> > On Fri, Aug 15, 2008 at 03:34:39PM +0200, Takashi Iwai wrote:
+> > > The raparm was allocated in a wrong size in the commit
+> > > 
+> > >    ca80290ebda9009aedc4bd93ede5d397cb1853dc
+> > >    nfsd: permit unauthenticated stat of export root
+> > > 
+> > > and thus it resulted in memory corruption, eventually Oopsing.
+> > > This patch fixes the allocation size.
 > > 
-> > Caused by commit 5cd9c58fbe9ec92b45b27e131719af4f2bd9eb40 ("security: Fix
-> > setting of PF_SUPERPRIV by __capable()").  The version of this commit
-> > that has been in the linux-next tree from Aug 8 to Aug 15 is correct, so
-> > I have no idea what happened.
+> > Whoops, my fault, now fixed; thanks!
+> > 
+> > (Out of curiosity--how did you find this?)
 > 
-> I accidentally posted an old patch which James, maybe, substituted for the
-> good one that he had.
+> Actually I hit the related Oops with the latest linux-next tree.
+> Since this bug appears first on that tree and didn't occur on the
+> previous tree, it was apparently a regression.  So, I looked through
+> changes over knfsd since the previous tree, found a suspicious one,
+> and tried to fix.
+> 
+> The linux-next tree is pretty helpful to catch a regression if one
+> eats own dog foods everyday.
 
-I took the patch you sent me, although after some IRC discussion, what 
-should have happened is that I should have git-cherry-pick'd the patch 
-from the next-creds branch (where it had been tested in linux-next for 
-some time) into for-linus rather than asking for an updated patch.
+OK, now I see my problem: my test systems deliver the rest of their
+results by email, but if I want to check the logs for oops messages I
+still need to remember to log in and look after each test run.  So I got
+lazy and missed the slab errors on nfsd shutdown.
 
-Sorry folks.
+I wonder what the easiest way would be to automate collection of oops
+messages from the logs?  I suppose I should look at what the code that
+submits to kerneloops.org does.
 
+--b.
 
-- James
--- 
-James Morris
-<jmorris@namei.org>
+> 
+> BTW, I've been building linux-next SUSE kernel packages at every
+> linux-next release.  The packages are found in the following URL:
+> 
+>     http://ftp.suse.com/pub/people/tiwai/kernel-next/
+> 
+> If anyone has a SUSE system and would like to try linux-next kernel,
+> just installs the package in addition.  It won't conflict with
+> existing standard kernel packages.
+> 
+> 
+> thanks,
+> 
+> Takashi
+> 
+> > 
+> > --b.
+> > 
+> > > 
+> > > Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> > > 
+> > > ---
+> > > diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> > > index bfa5453..30d606f 100644
+> > > --- a/fs/nfsd/vfs.c
+> > > +++ b/fs/nfsd/vfs.c
+> > > @@ -2093,7 +2093,7 @@ nfsd_racache_init(int cache_size)
+> > >  
+> > >  		raparm = &raparm_hash[i].pb_head;
+> > >  		for (j = 0; j < nperbucket; j++) {
+> > > -			*raparm = kzalloc(sizeof(*raparm), GFP_KERNEL);
+> > > +			*raparm = kzalloc(sizeof(**raparm), GFP_KERNEL);
+> > >  			if (!*raparm)
+> > >  				goto out_nomem;
+> > >  			raparm = &(*raparm)->p_next;
+> > 
