@@ -1,36 +1,52 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: Tree for August 14 (sysfs/acpi errors)
-Date: Sun, 17 Aug 2008 20:48:51 -0700
-Message-ID: <20080818034851.GB30843@kroah.com>
-References: <3ae72650808150427q364842ccicf0a0978b30ca98c@mail.gmail.com> <20080815085836.67e420f1.randy.dunlap@oracle.com> <1218854219.3629.30.camel@lgn.site> <48A64235.2030108@linux.intel.com> <1218856798.3629.45.camel@lgn.site> <48A64E0A.8090408@linux.intel.com> <20080816044714.GA19886@kroah.com> <48A78D4A.70609@linux.intel.com> <20080817034051.GA26849@kroah.com> <87hc9kxpp8.fsf@basil.nowhere.org>
+From: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+Subject: Re: linux-next: manual merge of the tests tree
+Date: Mon, 18 Aug 2008 10:12:35 +0530
+Message-ID: <20080818044235.GA3665@in.ibm.com>
+References: <20080815145948.690f8529.sfr@canb.auug.org.au>
+Reply-To: ananth@in.ibm.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:34764 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751369AbYHRDvz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Aug 2008 23:51:55 -0400
+Received: from e4.ny.us.ibm.com ([32.97.182.144]:38347 "EHLO e4.ny.us.ibm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750741AbYHREnG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Aug 2008 00:43:06 -0400
+Received: from d01relay02.pok.ibm.com (d01relay02.pok.ibm.com [9.56.227.234])
+	by e4.ny.us.ibm.com (8.13.8/8.13.8) with ESMTP id m7I4h3iY023191
+	for <linux-next@vger.kernel.org>; Mon, 18 Aug 2008 00:43:03 -0400
+Received: from d01av02.pok.ibm.com (d01av02.pok.ibm.com [9.56.224.216])
+	by d01relay02.pok.ibm.com (8.13.8/8.13.8/NCO v9.0) with ESMTP id m7I4h3u4203732
+	for <linux-next@vger.kernel.org>; Mon, 18 Aug 2008 00:43:03 -0400
+Received: from d01av02.pok.ibm.com (loopback [127.0.0.1])
+	by d01av02.pok.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id m7I4h2El021489
+	for <linux-next@vger.kernel.org>; Mon, 18 Aug 2008 00:43:03 -0400
 Content-Disposition: inline
-In-Reply-To: <87hc9kxpp8.fsf@basil.nowhere.org>
+In-Reply-To: <20080815145948.690f8529.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andi Kleen <andi@firstfloor.org>
-Cc: Kay Sievers <kay.sievers@vrfy.org>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org, rusty@rustcorp.com.au
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Ingo Molnar <mingo@elte.hu>
 
-On Sun, Aug 17, 2008 at 05:53:07AM +0200, Andi Kleen wrote:
-> Greg KH <greg@kroah.com> writes:
-> >> No!
-> >
-> > What you are doing here is wrong, trying to create two files with the
-> > same name.  You just should not be doing that at all, it's that simple.
-> > Fix the broken code/link order, don't paper it over in the sysfs layer.
+On Fri, Aug 15, 2008 at 02:59:48PM +1000, Stephen Rothwell wrote:
+> Hi Ananth,
 > 
-> Sorry, but relying on link order for anything is a mistake. It is subtle
-> and fragile and just means it'll eventually break again because it's
-> near impossible to properly maintain.
+> Today's linux-next merge of the tests tree got a conflict in
+> lib/Kconfig.debug between commit 67182ae1c42206e516f7efb292b745e826497b24
+> ("rcu, debug: detect stalled grace periods") from the sched tree and
+> commit 2b9b631dd2507b5480b752bcca946b9767b9bae1 ("Move rcutorture to
+> tests/") from the tests tree.
+> 
+> I sort of fixed it up.
 
-We rely on link order for all sorts of things, this isn't new at all.
+Thanks Stephen.
 
-thanks,
+> Ananth, you should try to get the testing stuff into Linus' tree ...
 
-greg k-h
+We've tried multiple times already (last attempt was
+http://marc.info/?l=linux-kernel&m=121727532926590&w=2).
+
+Guess as Andrew said, this is way below in the priority scale. I am not
+sure at this point if we should just let things be as they are if there
+isn't much interest in merging it upstream.
+
+Ananth
