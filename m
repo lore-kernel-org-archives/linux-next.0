@@ -1,247 +1,237 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for August 18
-Date: Mon, 18 Aug 2008 17:59:31 +1000
-Message-ID: <20080818175931.52d2b2d6.sfr@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: Tree for August 14 (sysfs/acpi errors)
+Date: Mon, 18 Aug 2008 19:43:22 +1000
+Message-ID: <200808181943.23034.rusty@rustcorp.com.au>
+References: <3ae72650808150427q364842ccicf0a0978b30ca98c@mail.gmail.com> <87hc9kxpp8.fsf@basil.nowhere.org> <20080818034851.GB30843@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__18_Aug_2008_17_59_31_+1000_f39p8ouNxrXRhmZS"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58428 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750829AbYHRH7k (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Aug 2008 03:59:40 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-
---Signature=_Mon__18_Aug_2008_17_59_31_+1000_f39p8ouNxrXRhmZS
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20080818034851.GB30843@kroah.com>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sender: linux-acpi-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Andi Kleen <andi@firstfloor.org>, Kay Sievers <kay.sievers@vrfy.org>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+On Monday 18 August 2008 13:48:51 Greg KH wrote:
+> On Sun, Aug 17, 2008 at 05:53:07AM +0200, Andi Kleen wrote:
+> > Greg KH <greg@kroah.com> writes:
+> > >> No!
+> > >
+> > > What you are doing here is wrong, trying to create two files with the
+> > > same name.  You just should not be doing that at all, it's that simple.
+> > > Fix the broken code/link order, don't paper it over in the sysfs layer.
+> >
+> > Sorry, but relying on link order for anything is a mistake. It is subtle
+> > and fragile and just means it'll eventually break again because it's
+> > near impossible to properly maintain.
+>
+> We rely on link order for all sorts of things, this isn't new at all.
 
-Changes since next-20080815:
+Sure, but this code should be rewritten to check if the directory exists,
+rather assuming it based on "previous prefix was the same".
 
-Linus' tree gained a build fix patch.
+It's relying on a horribly undocumented assumption, and it broke.
 
-The arm-current tree lost its conflict.
+We need to change kernel_param_sysfs_setup() to do something
+like "kobject_find(module_kset, name)" and only allocate a new mk if that
+fails.  Then we need to change the code to allow appending, like below.
 
-The ftrace tree lost its build failure revert.
-
-The acpi tree lost its build failure patch.
-
-The ttydev tree gained a conflict against Linus' tree.
-
-The creds tree gained 3 conflicts against Linus' tree.
-
-I have also applied the following patches for known problems:
-
-	Add cuImage.mpc866ads to the bootwrapper as a cuboot-8xx target
-	driver-core: don't export static functions
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups, it is also built with powerpc allnoconfig,
-44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
-
-Below is a summary of the state of the merge.
-
-We are up to 110 trees (counting Linus' and 14 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Applying Fix setting of PF_SUPERPRIV by __capable()
-Merging powerpc-merge/merge
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sparc-current/master
-Merging sound-current/for-linus
-Merging arm-current/master
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-2.6.26
-Merging dwmw2/master
-Merging quilt/driver-core
-Merging quilt/usb
-Merging tip-core/auto-core-next
-Merging cpus4096/auto-cpus4096-next
-Merging ftrace/auto-ftrace-next
-CONFLICT (content): Merge conflict in kernel/module.c
-Merging genirq/auto-genirq-next
-Merging safe-poison-pointers/auto-safe-poison-pointers-next
-Merging sched/auto-sched-next
-Merging stackprotector/auto-stackprotector-next
-CONFLICT (content): Merge conflict in kernel/fork.c
-Merging timers/auto-timers-next
-Merging x86/auto-x86-next
-CONFLICT (content): Merge conflict in include/asm-x86/pda.h
-Merging pci/linux-next
-Merging quilt/device-mapper
-Merging hid/mm
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging avr32/avr32-arch
-Merging v4l-dvb/stable
-Merging s390/features
-Merging sh/master
-Merging jfs/next
-Merging kbuild/master
-Merging quilt/ide
-Merging libata/NEXT
-Merging nfs/linux-next
-Merging xfs/master
-Merging infiniband/for-next
-Merging acpi/test
-Merging blackfin/for-linus
-Merging nfsd/nfsd-next
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/master
-CONFLICT (content): Merge conflict in include/asm-x86/kvm.h
-Merging dlm/next
-Merging scsi/master
-Merging ia64/test
-Merging tests/master
-CONFLICT (content): Merge conflict in lib/Kconfig.debug
-Merging ocfs2/linux-next
-Merging quilt/m68k
-Merging powerpc/powerpc-next
-Merging ext4/next
-Merging 4xx/next
-Merging async_tx/next
-Merging udf/for_next
-Merging net/master
-Merging sparc/master
-Merging galak/powerpc-next
-Merging mtd/master
-Merging wireless/master
-Merging crypto/master
-CONFLICT (content): Merge conflict in include/asm-x86/cpufeature.h
-Merging vfs/for-next
-CONFLICT (content): Merge conflict in fs/nfsd/export.c
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_export.c
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_iops.c
-Merging sound/for-next
-Merging arm/devel
-Merging cpufreq/next
-Merging v9fs/for-next
-Merging quilt/rr
-Merging cifs/master
-Merging mmc/next
-Merging gfs2/master
-Merging input/next
-Merging semaphore/semaphore
-Merging semaphore-removal/semaphore-removal
-Merging bkl-removal/bkl-removal
-Merging trivial/next
-CONFLICT (content): Merge conflict in Documentation/edac.txt
-CONFLICT (content): Merge conflict in include/linux/securebits.h
-Merging ubifs/linux-next
-Merging lsm/for-next
-Merging block/for-next
-Merging embedded/master
-Merging firmware/master
-CONFLICT (content): Merge conflict in drivers/media/dvb/ttpci/Kconfig
-CONFLICT (content): Merge conflict in drivers/media/dvb/ttpci/Makefile
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging m68knommu/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging cris/for-next
-Merging kmemcheck/auto-kmemcheck-next
-CONFLICT (content): Merge conflict in MAINTAINERS
-CONFLICT (content): Merge conflict in arch/x86/kernel/process_64.c
-CONFLICT (content): Merge conflict in arch/x86/kernel/traps_64.c
-CONFLICT (content): Merge conflict in mm/Makefile
-CONFLICT (content): Merge conflict in mm/slab.c
-Merging generic-ipi/auto-generic-ipi-next
-Merging mips/mips-for-linux-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/reg-for-linus
-Merging security-testing/next
-Merging lblnet/master
-Merging quilt/ttydev
-CONFLICT (content): Merge conflict in drivers/char/tty_io.c
-CONFLICT (content): Merge conflict in drivers/char/vt.c
-CONFLICT (content): Merge conflict in drivers/net/usb/hso.c
-CONFLICT (content): Merge conflict in drivers/usb/class/cdc-acm.c
-Merging agp/agp-next
-Merging creds/next-creds
-CONFLICT (content): Merge conflict in fs/namespace.c
-CONFLICT (content): Merge conflict in fs/nfsd/nfs4recover.c
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_linux.h
-CONFLICT (content): Merge conflict in fs/xfs/xfs_inode.c
-CONFLICT (content): Merge conflict in fs/xfs/xfs_vnodeops.c
-CONFLICT (content): Merge conflict in include/linux/capability.h
-CONFLICT (add/add): Merge conflict in include/linux/cred.h
-CONFLICT (content): Merge conflict in kernel/exit.c
-CONFLICT (content): Merge conflict in kernel/fork.c
-CONFLICT (content): Merge conflict in security/commoncap.c
-CONFLICT (content): Merge conflict in security/selinux/hooks.c
-CONFLICT (content): Merge conflict in security/smack/smack_lsm.c
-Merging oprofile/auto-oprofile-next
-Merging fastboot/auto-fastboot-next
-CONFLICT (content): Merge conflict in include/linux/init.h
-Applying Add cuImage.mpc866ads to the bootwrapper as a cuboot-8xx target
-Applying driver-core: don't export static functions
-
---Signature=_Mon__18_Aug_2008_17_59_31_+1000_f39p8ouNxrXRhmZS
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkipK+MACgkQjjKRsyhoI8xFUACgmQiPKRekGwiJ0IYx9SiS1bnN
-ng4AoK+8Y0w8mpwBWUY8pOSzr1KCsJoD
-=0UIo
------END PGP SIGNATURE-----
-
---Signature=_Mon__18_Aug_2008_17_59_31_+1000_f39p8ouNxrXRhmZS--
+diff -r e92a03313dc7 kernel/params.c
+--- a/kernel/params.c	Mon Aug 18 14:16:00 2008 +1000
++++ b/kernel/params.c	Mon Aug 18 18:52:20 2008 +1000
+@@ -384,6 +384,7 @@ struct param_attribute
+ 
+ struct module_param_attrs
+ {
++	unsigned int num;
+ 	struct attribute_group grp;
+ 	struct param_attribute attrs[0];
+ };
+@@ -434,69 +435,86 @@ static ssize_t param_attr_store(struct m
+ 
+ #ifdef CONFIG_SYSFS
+ /*
+- * param_sysfs_setup - setup sysfs support for one module or KBUILD_MODNAME
++ * add_sysfs_param - add a parameter to sysfs
++ * @mp: pointer to previous module_param_attrs, or NULL.
+  * @mk: struct module_kobject (contains parent kobject)
+- * @kparam: array of struct kernel_param, the actual parameter definitions
+- * @num_params: number of entries in array
+- * @name_skip: offset where the parameter name start in kparam[].name. Needed for built-in "modules"
++ * @kparam: the actual parameter definition to add to sysfs
++ * @name: name of parameter
+  *
+- * Create a kobject for a (per-module) group of parameters, and create files
+- * in sysfs. A pointer to the param_kobject is returned on success,
+- * NULL if there's no parameter to export, or other ERR_PTR(err).
++ * Create a kobject if for a (per-module) parameter if mp NULL, and
++ * create file in sysfs.  Returns an error on out of memory.  Always cleans up
++ * if there's an error.
+  */
+-static __modinit struct module_param_attrs *
+-param_sysfs_setup(struct module_kobject *mk,
+-		  struct kernel_param *kparam,
+-		  unsigned int num_params,
+-		  unsigned int name_skip)
++static __modinit int add_sysfs_param(struct module_param_attrs **mp,
++				     struct module_kobject *mk,
++				     struct kernel_param *kp,
++				     const char *name)
+ {
+-	struct module_param_attrs *mp;
+-	unsigned int valid_attrs = 0;
+-	unsigned int i, size[2];
+-	struct param_attribute *pattr;
+-	struct attribute **gattr;
+-	int err;
++	struct module_param_attrs *new;
++	struct attribute **attrs;
++	int err, num;
+ 
+-	for (i=0; i<num_params; i++) {
+-		if (kparam[i].perm)
+-			valid_attrs++;
++	if (kp->perm == 0)
++		return 0;
++
++	if (!*mp) {
++		num = 0;
++		attrs = NULL;
++	} else {
++		num = (*mp)->num;
++		attrs = (*mp)->grp.attrs;
++		/* FIXME: This isn't safe, they could be holding ref right now. */
++		sysfs_remove_group(&mk->kobj, &(*mp)->grp);
+ 	}
+ 
+-	if (!valid_attrs)
+-		return NULL;
++	/* Enlarge. */
++	new = krealloc(*mp, sizeof(**mp) + sizeof((*mp)->attrs[0]) * (num+1), GFP_KERNEL);
++	if (!new) {
++		err = -ENOMEM;
++		goto fail;
++	}
++	attrs = krealloc(attrs, sizeof(new->grp.attrs[0])*(num+2), GFP_KERNEL);
++	if (!attrs) {
++		err = -ENOMEM;
++		goto fail_free_new;
++	}
+ 
+-	size[0] = ALIGN(sizeof(*mp) +
+-			valid_attrs * sizeof(mp->attrs[0]),
+-			sizeof(mp->grp.attrs[0]));
+-	size[1] = (valid_attrs + 1) * sizeof(mp->grp.attrs[0]);
++	/* Sysfs wants everything zeroed. */
++	memset(new, 0, sizeof(**mp));
++	memset(&new->attrs[num], 0, sizeof(new->attrs[num]));
++	memset(&attrs[num], 0, sizeof(attrs[num]));
++	new->grp.name = "parameters";
++	new->grp.attrs = attrs;
+ 
+-	mp = kzalloc(size[0] + size[1], GFP_KERNEL);
+-	if (!mp)
+-		return ERR_PTR(-ENOMEM);
++	/* Tack new one on the end. */
++	new->attrs[num].param = kp;
++	new->attrs[num].mattr.show = param_attr_show;
++	new->attrs[num].mattr.store = param_attr_store;
++	new->attrs[num].mattr.attr.name = (char *)name;
++	new->attrs[num].mattr.attr.mode = kp->perm;
++	new->num = num+1;
+ 
+-	mp->grp.name = "parameters";
+-	mp->grp.attrs = (void *)mp + size[0];
++	/* Fix up all the pointers, since krealloc can move us */
++	for (num = 0; num < new->num; num++)
++		new->grp.attrs[num] = &new->attrs[num].mattr.attr;
++	new->grp.attrs[num] = NULL;
+ 
+-	pattr = &mp->attrs[0];
+-	gattr = &mp->grp.attrs[0];
+-	for (i = 0; i < num_params; i++) {
+-		struct kernel_param *kp = &kparam[i];
+-		if (kp->perm) {
+-			pattr->param = kp;
+-			pattr->mattr.show = param_attr_show;
+-			pattr->mattr.store = param_attr_store;
+-			pattr->mattr.attr.name = (char *)&kp->name[name_skip];
+-			pattr->mattr.attr.mode = kp->perm;
+-			*(gattr++) = &(pattr++)->mattr.attr;
+-		}
+-	}
+-	*gattr = NULL;
++	/* New param group? */
++	err = sysfs_create_group(&mk->kobj, &new->grp);
++	if (err)
++		goto fail_free_attrs;
+ 
+-	if ((err = sysfs_create_group(&mk->kobj, &mp->grp))) {
+-		kfree(mp);
+-		return ERR_PTR(err);
+-	}
+-	return mp;
++	*mp = new;
++	return 0;
++
++fail_free_attrs:
++	kfree(attrs);
++fail_free_new:
++	kfree(new);
++fail:
++	kfree(*mp);
++	*mp = NULL;
++	return err;
+ }
+ 
+ #ifdef CONFIG_MODULES
+@@ -513,13 +531,15 @@ int module_param_sysfs_setup(struct modu
+ 			     struct kernel_param *kparam,
+ 			     unsigned int num_params)
+ {
+-	struct module_param_attrs *mp;
++	int i, err;
+ 
+-	mp = param_sysfs_setup(&mod->mkobj, kparam, num_params, 0);
+-	if (IS_ERR(mp))
+-		return PTR_ERR(mp);
+-
+-	mod->param_attrs = mp;
++	mod->param_attrs = NULL;
++	for (i = 0; i < num_params; i++) {
++		err = add_sysfs_param(&mod->param_attrs, &mod->mkobj, &kparam[i],
++				      kparam[i].name);
++		if (err)
++			return err;
++	}
+ 	return 0;
+ }
+ 
+@@ -552,7 +572,8 @@ static void __init kernel_param_sysfs_se
+ 					    unsigned int name_skip)
+ {
+ 	struct module_kobject *mk;
+-	int ret;
++	struct module_param_attrs *mp = NULL;
++	int i, ret;
+ 
+ 	mk = kzalloc(sizeof(struct module_kobject), GFP_KERNEL);
+ 	BUG_ON(!mk);
+@@ -567,8 +588,12 @@ static void __init kernel_param_sysfs_se
+ 		printk(KERN_ERR	"The system will be unstable now.\n");
+ 		return;
+ 	}
+-	param_sysfs_setup(mk, kparam, num_params, name_skip);
+-	kobject_uevent(&mk->kobj, KOBJ_ADD);
++
++	for (i = 0; i < num_params; i++)
++		add_sysfs_param(&mp, mk, &kparam[i], kparam[i].name + name_skip);
++
++	if (mp)
++		kobject_uevent(&mk->kobj, KOBJ_ADD);
+ }
+ 
+ /*
