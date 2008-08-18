@@ -1,76 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: origin tree build failure
-Date: Mon, 18 Aug 2008 10:01:51 +1000
-Message-ID: <20080818100151.c2e9e508.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: Tree for August 14 (sysfs/acpi errors)
+Date: Sun, 17 Aug 2008 20:48:51 -0700
+Message-ID: <20080818034851.GB30843@kroah.com>
+References: <3ae72650808150427q364842ccicf0a0978b30ca98c@mail.gmail.com> <20080815085836.67e420f1.randy.dunlap@oracle.com> <1218854219.3629.30.camel@lgn.site> <48A64235.2030108@linux.intel.com> <1218856798.3629.45.camel@lgn.site> <48A64E0A.8090408@linux.intel.com> <20080816044714.GA19886@kroah.com> <48A78D4A.70609@linux.intel.com> <20080817034051.GA26849@kroah.com> <87hc9kxpp8.fsf@basil.nowhere.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37190 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751967AbYHRAB7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 17 Aug 2008 20:01:59 -0400
+Received: from casper.infradead.org ([85.118.1.10]:34764 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751369AbYHRDvz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Aug 2008 23:51:55 -0400
+Content-Disposition: inline
+In-Reply-To: <87hc9kxpp8.fsf@basil.nowhere.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, David Fries <david@fries.net>, David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>, LKML <linux-kernel@vger.kernel.org>
+To: Andi Kleen <andi@firstfloor.org>
+Cc: Kay Sievers <kay.sievers@vrfy.org>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org, rusty@rustcorp.com.au
 
-Hi Linus,
+On Sun, Aug 17, 2008 at 05:53:07AM +0200, Andi Kleen wrote:
+> Greg KH <greg@kroah.com> writes:
+> >> No!
+> >
+> > What you are doing here is wrong, trying to create two files with the
+> > same name.  You just should not be doing that at all, it's that simple.
+> > Fix the broken code/link order, don't paper it over in the sysfs layer.
+> 
+> Sorry, but relying on link order for anything is a mistake. It is subtle
+> and fragile and just means it'll eventually break again because it's
+> near impossible to properly maintain.
 
-As expected (reported by David Fries), today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+We rely on link order for all sorts of things, this isn't new at all.
 
-In file included from include/linux/tracehook.h:52,
-                 from arch/powerpc/kernel/signal.c:13:
-include/linux/security.h: In function 'security_ptrace_traceme':
-include/linux/security.h:1760: error: 'parent' undeclared (first use in this function)
+thanks,
 
-Caused by commit 5cd9c58fbe9ec92b45b27e131719af4f2bd9eb40 ("security: Fix
-setting of PF_SUPERPRIV by __capable()").  The version of this commit
-that has been in the linux-next tree from Aug 8 to Aug 15 is correct, so
-I have no idea what happened.
-
-More care needed ...
-
-I applied the following patch from David Fries.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
-Date: Sat, 16 Aug 2008 20:17:11 -0500
-From: David Fries <david@fries.net>
-To: David Howells <dhowells@redhat.com>
-Cc: sfr@canb.auug.org.au, jmorris@namei.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Fix setting of PF_SUPERPRIV by __capable()
-
-The first two submissions this patch had parent for the argument, the third
-one has child then parent and fails to compile with SECURITY disabled.
-Please apply the following patch.
-
-> +static inline int security_ptrace_traceme(struct task_struct *child)
->  {
-> -	return cap_ptrace(parent, child, mode);
-> +	return cap_ptrace_traceme(parent);
->  }
-
-    security_ptrace_traceme error: 'parent' undeclared
-
-    s/child/parent/
-
-    Signed-off-by: David Fries <david@fries.net>
-
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 2ee5ecf..80c4d00 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -1755,7 +1755,7 @@ static inline int security_ptrace_may_access(struct task_struct *child,
- 	return cap_ptrace_may_access(child, mode);
- }
- 
--static inline int security_ptrace_traceme(struct task_struct *child)
-+static inline int security_ptrace_traceme(struct task_struct *parent)
- {
- 	return cap_ptrace_traceme(parent);
- }
+greg k-h
