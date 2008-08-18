@@ -1,92 +1,73 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Subject: Re: [PATCH] Fix allocation sizes of knfsd raparm hash
-Date: Mon, 18 Aug 2008 10:59:25 -0400
-Message-ID: <20080818145925.GB23127@fieldses.org>
-References: <20080815184032.3acd8032.sfr@canb.auug.org.au> <s5hr68q5rm8.wl%tiwai@suse.de> <20080815190221.GB26563@fieldses.org> <s5hvdy1ny9n.wl%tiwai@suse.de>
+From: Jason Baron <jbaron@redhat.com>
+Subject: Re: linux-next: driver-core tree build warning
+Date: Mon, 18 Aug 2008 15:09:47 -0400
+Message-ID: <20080818190947.GA6200@redhat.com>
+References: <20080815125957.97930de0.sfr@canb.auug.org.au> <20080816053432.GC20161@kroah.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.fieldses.org ([66.93.2.214]:36707 "EHLO fieldses.org"
+Received: from mx1.redhat.com ([66.187.233.31]:45629 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751323AbYHRO7a (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Aug 2008 10:59:30 -0400
+	id S1763522AbYHRTKJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Aug 2008 15:10:09 -0400
 Content-Disposition: inline
-In-Reply-To: <s5hvdy1ny9n.wl%tiwai@suse.de>
+In-Reply-To: <20080816053432.GC20161@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jeff Layton <jlayton@redhat.com>
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-On Sat, Aug 16, 2008 at 10:45:56AM +0200, Takashi Iwai wrote:
-> At Fri, 15 Aug 2008 15:02:21 -0400,
-> J. Bruce Fields wrote:
+On Fri, Aug 15, 2008 at 10:34:32PM -0700, Greg KH wrote:
+> > Hi Greg,
 > > 
-> > On Fri, Aug 15, 2008 at 03:34:39PM +0200, Takashi Iwai wrote:
-> > > The raparm was allocated in a wrong size in the commit
-> > > 
-> > >    ca80290ebda9009aedc4bd93ede5d397cb1853dc
-> > >    nfsd: permit unauthenticated stat of export root
-> > > 
-> > > and thus it resulted in memory corruption, eventually Oopsing.
-> > > This patch fixes the allocation size.
+> > Today's linux-next build (x86_64 allmodconfig) produced this warning:
 > > 
-> > Whoops, my fault, now fixed; thanks!
+> > In file included from include2/asm/string.h:4,
+> >                  from include/linux/string.h:19,
+> >                  from include/linux/dynamic_printk.h:4,
+> >                  from include/linux/kernel.h:19,
+> >                  from arch/x86/boot/memory.c:16:
+> > include2/asm/string_64.h:34:1: warning: "memcpy" redefined
+> > In file included from /scratch/sfr/next/arch/x86/boot/memory.c:15:
+> > arch/x86/boot/boot.h:231:1: warning: this is the location of the previous definition
 > > 
-> > (Out of curiosity--how did you find this?)
+> > Probably caused by commit 1b75321c2d0561d9ecfe3794fa939264f3eb7e26
+> > ("driver core: basic infrastructure for per-module dynamic debug
+> > messages") which added an include of linux/dynamic_printk.h to
+> > linux/kernel.h.
 > 
-> Actually I hit the related Oops with the latest linux-next tree.
-> Since this bug appears first on that tree and didn't occur on the
-> previous tree, it was apparently a regression.  So, I looked through
-> changes over knfsd since the previous tree, found a suspicious one,
-> and tried to fix.
-> 
-> The linux-next tree is pretty helpful to catch a regression if one
-> eats own dog foods everyday.
-
-OK, now I see my problem: my test systems deliver the rest of their
-results by email, but if I want to check the logs for oops messages I
-still need to remember to log in and look after each test run.  So I got
-lazy and missed the slab errors on nfsd shutdown.
-
-I wonder what the easiest way would be to automate collection of oops
-messages from the logs?  I suppose I should look at what the code that
-submits to kerneloops.org does.
-
---b.
-
-> 
-> BTW, I've been building linux-next SUSE kernel packages at every
-> linux-next release.  The packages are found in the following URL:
-> 
->     http://ftp.suse.com/pub/people/tiwai/kernel-next/
-> 
-> If anyone has a SUSE system and would like to try linux-next kernel,
-> just installs the package in addition.  It won't conflict with
-> existing standard kernel packages.
-> 
+> Wierd.  Jason, any thoughts?
 > 
 > thanks,
 > 
-> Takashi
-> 
-> > 
-> > --b.
-> > 
-> > > 
-> > > Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> > > 
-> > > ---
-> > > diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> > > index bfa5453..30d606f 100644
-> > > --- a/fs/nfsd/vfs.c
-> > > +++ b/fs/nfsd/vfs.c
-> > > @@ -2093,7 +2093,7 @@ nfsd_racache_init(int cache_size)
-> > >  
-> > >  		raparm = &raparm_hash[i].pb_head;
-> > >  		for (j = 0; j < nperbucket; j++) {
-> > > -			*raparm = kzalloc(sizeof(*raparm), GFP_KERNEL);
-> > > +			*raparm = kzalloc(sizeof(**raparm), GFP_KERNEL);
-> > >  			if (!*raparm)
-> > >  				goto out_nomem;
-> > >  			raparm = &(*raparm)->p_next;
-> > 
+> greg k-h
+
+hmm...i wasn't actually able to reproduce this (gcc 4.3.0-8), but I think I see
+how this comes about. Anyways, we don't actually need to include "string.h",
+its a remnant from an earlier version. The following patch should resolve this
+issue.
+
+thanks,
+
+-Jason
+
+
+Signed-off-by: Jason Baron <jbaron@redhat.com>
+
+---
+
+
+diff --git a/include/linux/dynamic_printk.h b/include/linux/dynamic_printk.h
+index 210bf61..c54cf84 100644
+--- a/include/linux/dynamic_printk.h
++++ b/include/linux/dynamic_printk.h
+@@ -1,9 +1,6 @@
+ #ifndef _DYNAMIC_PRINTK_H
+ #define _DYNAMIC_PRINTK_H
+ 
+-#include <linux/string.h>
+-#include <linux/hash.h>
+-
+ #define DYNAMIC_DEBUG_HASH_BITS 6
+ #define DEBUG_HASH_TABLE_SIZE (1 << DYNAMIC_DEBUG_HASH_BITS)
+ 
