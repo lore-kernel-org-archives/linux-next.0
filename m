@@ -1,52 +1,52 @@
-From: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
-Subject: Re: linux-next: manual merge of the tests tree
-Date: Mon, 18 Aug 2008 10:12:35 +0530
-Message-ID: <20080818044235.GA3665@in.ibm.com>
-References: <20080815145948.690f8529.sfr@canb.auug.org.au>
-Reply-To: ananth@in.ibm.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ttydev tree
+Date: Mon, 18 Aug 2008 16:08:19 +1000
+Message-ID: <20080818160819.c2573877.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__18_Aug_2008_16_08_19_+1000__=kRuYxE2WI2_hCx"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e4.ny.us.ibm.com ([32.97.182.144]:38347 "EHLO e4.ny.us.ibm.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36770 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750741AbYHREnG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Aug 2008 00:43:06 -0400
-Received: from d01relay02.pok.ibm.com (d01relay02.pok.ibm.com [9.56.227.234])
-	by e4.ny.us.ibm.com (8.13.8/8.13.8) with ESMTP id m7I4h3iY023191
-	for <linux-next@vger.kernel.org>; Mon, 18 Aug 2008 00:43:03 -0400
-Received: from d01av02.pok.ibm.com (d01av02.pok.ibm.com [9.56.224.216])
-	by d01relay02.pok.ibm.com (8.13.8/8.13.8/NCO v9.0) with ESMTP id m7I4h3u4203732
-	for <linux-next@vger.kernel.org>; Mon, 18 Aug 2008 00:43:03 -0400
-Received: from d01av02.pok.ibm.com (loopback [127.0.0.1])
-	by d01av02.pok.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id m7I4h2El021489
-	for <linux-next@vger.kernel.org>; Mon, 18 Aug 2008 00:43:03 -0400
-Content-Disposition: inline
-In-Reply-To: <20080815145948.690f8529.sfr@canb.auug.org.au>
+	id S1750924AbYHRGIi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Aug 2008 02:08:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Ingo Molnar <mingo@elte.hu>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: linux-next@vger.kernel.org
 
-On Fri, Aug 15, 2008 at 02:59:48PM +1000, Stephen Rothwell wrote:
-> Hi Ananth,
-> 
-> Today's linux-next merge of the tests tree got a conflict in
-> lib/Kconfig.debug between commit 67182ae1c42206e516f7efb292b745e826497b24
-> ("rcu, debug: detect stalled grace periods") from the sched tree and
-> commit 2b9b631dd2507b5480b752bcca946b9767b9bae1 ("Move rcutorture to
-> tests/") from the tests tree.
-> 
-> I sort of fixed it up.
+--Signature=_Mon__18_Aug_2008_16_08_19_+1000__=kRuYxE2WI2_hCx
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks Stephen.
+Hi Alan,
 
-> Ananth, you should try to get the testing stuff into Linus' tree ...
+Today's linux-next merge of the ttydev tree got a conflict in
+drivers/char/tty_io.c between commit
+8c9a9dd0fa3a269d380eaae2dc1bee39e865fae1 ("tty: remove resize window
+special case") from Linus' tree (which appears to also be in the ttydev
+tree as "tty-remove-resize-special") and commit
+2283faa9cec083b6ddc1fa02a974ce1c797e847f ("tty-fix-pty-termios-race")
+from the ttydev tree.
 
-We've tried multiple times already (last attempt was
-http://marc.info/?l=linux-kernel&m=121727532926590&w=2).
+The latter is just further changes, so I took the ttydev tree version.
 
-Guess as Andrew said, this is way below in the priority scale. I am not
-sure at this point if we should just let things be as they are if there
-isn't much interest in merging it upstream.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Ananth
+--Signature=_Mon__18_Aug_2008_16_08_19_+1000__=kRuYxE2WI2_hCx
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkipEdMACgkQjjKRsyhoI8wL1ACgofl5iSQwIOUFd46FtXSMS+ab
+WPsAoKrKSrvWOSWa0AqaXQ4fHZvo2x9e
+=Nbmq
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__18_Aug_2008_16_08_19_+1000__=kRuYxE2WI2_hCx--
