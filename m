@@ -1,54 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ttydev tree
-Date: Tue, 19 Aug 2008 17:43:10 +1000
-Message-ID: <20080819174310.1eec34dc.sfr@canb.auug.org.au>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: import of ttydev failed
+Date: Tue, 19 Aug 2008 09:21:57 +0100
+Message-ID: <20080819092157.2ca2c23f@lxorguk.ukuu.org.uk>
+References: <20080819104952.ddf914e0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42510 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752271AbYHSHnR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 Aug 2008 03:43:17 -0400
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:51364 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751464AbYHSIjR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Aug 2008 04:39:17 -0400
+In-Reply-To: <20080819104952.ddf914e0.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: linux-next@vger.kernel.org, Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-Hi Alan,
+On Tue, 19 Aug 2008 10:49:52 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Today's linux-next merge of the ttydev tree got a conflict in
-drivers/usb/serial/safe_serial.c between commit
-8aac48f4f2460b00468fd5f1101addf3df04e94c ("USB: remove info() macro from
-usb.h") from the usb tree and commit
-5e6c4a742d494b0b049d7f01ce00da5b351d2cb8 ("tty-usbserial-kref") from the
-ttydev tree.
+> Hi Alan,
+> 
+> Firstly, can you put a line in your series files that looks like this:
+> 
+> # BASE <sha1|git commit identifier>
+> 
+> This could replace the current first line you have or be another line
+> with the same id in it.
 
-These changes modify each others context.  I fixed it up (see below) and
-can carry the fix.
+Its on my todo list - but I need to dig into the innards of stgit to do
+that. Fixed the others (forgot to do a clean after merging stuff)
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
-diff --cc drivers/usb/serial/safe_serial.c
-index e1f10a1,72903ac..0000000
---- a/drivers/usb/serial/safe_serial.c
-+++ b/drivers/usb/serial/safe_serial.c
-@@@ -248,11 -250,11 +250,11 @@@ static void safe_read_bulk_callback(str
-  		if (!fcs) {
-  			int actual_length = data[length - 2] >> 2;
-  			if (actual_length <= (length - 2)) {
- -				info("%s - actual: %d", __func__,
- -							actual_length);
- +				dev_info(&urb->dev->dev, "%s - actual: %d\n",
- +					 __func__, actual_length);
-- 				tty_insert_flip_string(port->port.tty,
-+ 				tty_insert_flip_string(tty,
-  							data, actual_length);
-- 				tty_flip_buffer_push(port->port.tty);
-+ 				tty_flip_buffer_push(tty);
-  			} else {
-  				err("%s - inconsistent lengths %d:%d",
-  					__func__, actual_length, length);
+Alan
