@@ -1,60 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the v4l-dvb tree
-Date: Tue, 19 Aug 2008 14:11:13 +1000
-Message-ID: <20080819141113.1a0a9819.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree
+Date: Tue, 19 Aug 2008 15:23:01 +1000
+Message-ID: <20080819152301.b36efbc3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__19_Aug_2008_15_23_01_+1000_LIl8a3TrUJIkR_wl"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57368 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33484 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751039AbYHSELe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 Aug 2008 00:11:34 -0400
+	id S1752053AbYHSFXL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Aug 2008 01:23:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, Greg KH <greg@kroah.com>, Hans Verkuil <hverkuil@xs4all.nl>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, Christoph Hellwig <hch@lst.de>, "Luck, Tony" <tony.luck@intel.com>
 
-Hi Mauro,
+--Signature=_Tue__19_Aug_2008_15_23_01_+1000_LIl8a3TrUJIkR_wl
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the v4l-dvb tree got a conflict in
-drivers/media/video/zr364xx.c between commit
-8aac48f4f2460b00468fd5f1101addf3df04e94c ("USB: remove info() macro from
-usb.h") from the usb tree and commit
-dcdbac23cc15325ae04696803537b35bb0bcb3cb ("V4L/DVB (8613): v4l: move BKL
-down to the driver level") from the v4l-dvb tree.
+Hi Al,
 
-A context clashing change and addition.  I fixed it up (see below) and
-can carry it.
+Today's linux-next merge of the vfs tree got a conflict in
+arch/ia64/ia32/sys_ia32.c between commit
+37c23e7fda6913d133ac12012395e58af1fe24c6 ("[IA64] use generic
+compat_old_sys_readdir") from the ia64 tree and commit
+8d88103c3046cd44df7591cb008afc22d526139b ("[PATCH] fix ia64 compat
+readdir/getdents") from the vfs tree.
 
--- 
+The former removes the code that the latter updates.  I used the version
+from the ia64 tree.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/media/video/zr364xx.c
-index 5eb8cb8,4e1ef10..0000000
---- a/drivers/media/video/zr364xx.c
-+++ b/drivers/media/video/zr364xx.c
-@@@ -651,7 -653,8 +654,8 @@@ static int zr364xx_open(struct inode *i
-  	if (!cam->framebuf) {
-  		cam->framebuf = vmalloc_32(MAX_FRAME_SIZE * FRAMES);
-  		if (!cam->framebuf) {
- -			info("vmalloc_32 failed!");
- +			dev_err(&cam->udev->dev, "vmalloc_32 failed!\n");
-+ 			unlock_kernel();
-  			return -ENOMEM;
-  		}
-  	}
-@@@ -663,9 -666,9 +667,10 @@@
-  				     0, init[cam->method][i].bytes,
-  				     init[cam->method][i].size);
-  		if (err < 0) {
- -			info("error during open sequence: %d", i);
- +			dev_err(&cam->udev->dev,
- +				"error during open sequence: %d\n", i);
-  			mutex_unlock(&cam->lock);
-+ 			unlock_kernel();
-  			return err;
-  		}
-  	}
+--Signature=_Tue__19_Aug_2008_15_23_01_+1000_LIl8a3TrUJIkR_wl
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiqWLUACgkQjjKRsyhoI8yQ2wCgr+cdCNpTASlIHvkRKMYwi2bt
+UYQAnjHtxfLdgGXjJDpAjuGkesuSt9YY
+=Vtvy
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__19_Aug_2008_15_23_01_+1000_LIl8a3TrUJIkR_wl--
