@@ -1,53 +1,58 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: driver-core tree build warning
-Date: Mon, 18 Aug 2008 15:35:01 -0700
-Message-ID: <20080818223501.GA14477@kroah.com>
-References: <20080815125957.97930de0.sfr@canb.auug.org.au> <20080816053432.GC20161@kroah.com> <20080818190947.GA6200@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: import of ttydev failed
+Date: Tue, 19 Aug 2008 10:49:52 +1000
+Message-ID: <20080819104952.ddf914e0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__19_Aug_2008_10_49_52_+1000_KPrxA3vbAn=x1+Fa"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:39718 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754540AbYHSAjM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Aug 2008 20:39:12 -0400
-Content-Disposition: inline
-In-Reply-To: <20080818190947.GA6200@redhat.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56564 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757332AbYHSAuB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Aug 2008 20:50:01 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Baron <jbaron@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: linux-next@vger.kernel.org
 
-On Mon, Aug 18, 2008 at 03:09:47PM -0400, Jason Baron wrote:
-> On Fri, Aug 15, 2008 at 10:34:32PM -0700, Greg KH wrote:
-> > > Hi Greg,
-> > > 
-> > > Today's linux-next build (x86_64 allmodconfig) produced this warning:
-> > > 
-> > > In file included from include2/asm/string.h:4,
-> > >                  from include/linux/string.h:19,
-> > >                  from include/linux/dynamic_printk.h:4,
-> > >                  from include/linux/kernel.h:19,
-> > >                  from arch/x86/boot/memory.c:16:
-> > > include2/asm/string_64.h:34:1: warning: "memcpy" redefined
-> > > In file included from /scratch/sfr/next/arch/x86/boot/memory.c:15:
-> > > arch/x86/boot/boot.h:231:1: warning: this is the location of the previous definition
-> > > 
-> > > Probably caused by commit 1b75321c2d0561d9ecfe3794fa939264f3eb7e26
-> > > ("driver core: basic infrastructure for per-module dynamic debug
-> > > messages") which added an include of linux/dynamic_printk.h to
-> > > linux/kernel.h.
-> > 
-> > Wierd.  Jason, any thoughts?
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> hmm...i wasn't actually able to reproduce this (gcc 4.3.0-8), but I think I see
-> how this comes about. Anyways, we don't actually need to include "string.h",
-> its a remnant from an earlier version. The following patch should resolve this
-> issue.
+--Signature=_Tue__19_Aug_2008_10_49_52_+1000_KPrxA3vbAn=x1+Fa
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, I've merged this with the original one.
+Hi Alan,
 
-greg k-h
+Firstly, can you put a line in your series files that looks like this:
+
+# BASE <sha1|git commit identifier>
+
+This could replace the current first line you have or be another line
+with the same id in it.
+
+Next, the import failed like this:
+
+tty-remove-resize-special
+error: No changes
+
+The same for tty-fix-cdc-acm.
+
+Not a biggy, I just removed those patches from the series file.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__19_Aug_2008_10_49_52_+1000_KPrxA3vbAn=x1+Fa
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiqGLAACgkQjjKRsyhoI8ytoQCfaoz1Wsb360n29CCY+s1Qfzec
+S7UAnRHMlSNb+m5E2f8SKcQ1T0IcRT7h
+=nqyp
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__19_Aug_2008_10_49_52_+1000_KPrxA3vbAn=x1+Fa--
