@@ -1,58 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: import of ttydev failed
-Date: Tue, 19 Aug 2008 10:49:52 +1000
-Message-ID: <20080819104952.ddf914e0.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the v4l-dvb tree
+Date: Tue, 19 Aug 2008 14:11:13 +1000
+Message-ID: <20080819141113.1a0a9819.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__19_Aug_2008_10_49_52_+1000_KPrxA3vbAn=x1+Fa"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56564 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57368 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757332AbYHSAuB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Aug 2008 20:50:01 -0400
+	id S1751039AbYHSELe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Aug 2008 00:11:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: linux-next@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, Greg KH <greg@kroah.com>, Hans Verkuil <hverkuil@xs4all.nl>
 
---Signature=_Tue__19_Aug_2008_10_49_52_+1000_KPrxA3vbAn=x1+Fa
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Mauro,
 
-Hi Alan,
+Today's linux-next merge of the v4l-dvb tree got a conflict in
+drivers/media/video/zr364xx.c between commit
+8aac48f4f2460b00468fd5f1101addf3df04e94c ("USB: remove info() macro from
+usb.h") from the usb tree and commit
+dcdbac23cc15325ae04696803537b35bb0bcb3cb ("V4L/DVB (8613): v4l: move BKL
+down to the driver level") from the v4l-dvb tree.
 
-Firstly, can you put a line in your series files that looks like this:
+A context clashing change and addition.  I fixed it up (see below) and
+can carry it.
 
-# BASE <sha1|git commit identifier>
-
-This could replace the current first line you have or be another line
-with the same id in it.
-
-Next, the import failed like this:
-
-tty-remove-resize-special
-error: No changes
-
-The same for tty-fix-cdc-acm.
-
-Not a biggy, I just removed those patches from the series file.
-
---=20
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__19_Aug_2008_10_49_52_+1000_KPrxA3vbAn=x1+Fa
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkiqGLAACgkQjjKRsyhoI8ytoQCfaoz1Wsb360n29CCY+s1Qfzec
-S7UAnRHMlSNb+m5E2f8SKcQ1T0IcRT7h
-=nqyp
------END PGP SIGNATURE-----
-
---Signature=_Tue__19_Aug_2008_10_49_52_+1000_KPrxA3vbAn=x1+Fa--
+diff --cc drivers/media/video/zr364xx.c
+index 5eb8cb8,4e1ef10..0000000
+--- a/drivers/media/video/zr364xx.c
++++ b/drivers/media/video/zr364xx.c
+@@@ -651,7 -653,8 +654,8 @@@ static int zr364xx_open(struct inode *i
+  	if (!cam->framebuf) {
+  		cam->framebuf = vmalloc_32(MAX_FRAME_SIZE * FRAMES);
+  		if (!cam->framebuf) {
+ -			info("vmalloc_32 failed!");
+ +			dev_err(&cam->udev->dev, "vmalloc_32 failed!\n");
++ 			unlock_kernel();
+  			return -ENOMEM;
+  		}
+  	}
+@@@ -663,9 -666,9 +667,10 @@@
+  				     0, init[cam->method][i].bytes,
+  				     init[cam->method][i].size);
+  		if (err < 0) {
+ -			info("error during open sequence: %d", i);
+ +			dev_err(&cam->udev->dev,
+ +				"error during open sequence: %d\n", i);
+  			mutex_unlock(&cam->lock);
++ 			unlock_kernel();
+  			return err;
+  		}
+  	}
