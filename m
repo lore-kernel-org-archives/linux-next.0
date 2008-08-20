@@ -1,67 +1,39 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: CONFIG_KMOD breakage in next kernel
-Date: Wed, 20 Aug 2008 20:16:05 +0200
-Message-ID: <1219256165.3502.10.camel@johannes.berg>
-References: <s5h3akzwtki.wl%tiwai@suse.de>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: input tree build failure
+Date: Wed, 20 Aug 2008 11:35:59 -0700
+Message-ID: <20080820183559.GA26064@kroah.com>
+References: <20080819163148.159c7d8c.sfr@canb.auug.org.au> <20080819200057.GD10502@kroah.com> <20080820154924.51ac3495.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-vOsB7XUG031uSQfMjjeo"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xc.sipsolutions.net ([83.246.72.84]:41416 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750801AbYHTSRP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Aug 2008 14:17:15 -0400
-In-Reply-To: <s5h3akzwtki.wl%tiwai@suse.de>
+Received: from casper.infradead.org ([85.118.1.10]:39996 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752175AbYHTSk2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Aug 2008 14:40:28 -0400
+Content-Disposition: inline
+In-Reply-To: <20080820154924.51ac3495.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Rusty Russell <rusty@rustcorp.com.au>, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, video4linux-list@redhat.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-next@vger.kernel.org, "Alfred E. Heggestad" <aeh@db.org>
 
+On Wed, Aug 20, 2008 at 03:49:24PM +1000, Stephen Rothwell wrote:
+> Hi Greg, Dmitry,
+> 
+> On Tue, 19 Aug 2008 13:00:57 -0700 Greg KH <greg@kroah.com> wrote:
+> >
+> > No, these should all use dev_info() instead.
+> > 
+> > Actually, they should all use dev_dbg() and drop the #if entirely.  With
+> > the dynamic dev_dbg() patch that is in -next, that will work just fine,
+> > no need to rebuild modules which is almost impossible for most users to
+> > do.
+> 
+> Today I used the following patch instead.  Dmitry, this should be able to
+> be applied to your tree (I think) assuming that it is OK.
 
---=-vOsB7XUG031uSQfMjjeo
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Looks good to me.
 
-Hi,
+thanks,
 
-> I found that CONFIG_KMOD was already removed in linux-next tree.
-> This seems to result in many breakages.  For example, I cannot mount a
-> FAT device automatically because of failure of automatic loading of
-> nls modules.
-
-This is odd. I had posted a long series of patches removing all of the
-users I had found (similar grep like the one you used), see
-http://lkml.org/lkml/2008/7/9/150 for the whole thread.
-
-
-For some reason, only seven of those eleven patches ended up in the
-kernel, you had taken the alsa one and Rusty posted only six of them.
-
-I'd hope that the patches posted at the URL above still apply, and I
-sure intended the series to go in as posted with the removal of
-CONFIG_KMOD coming last.
-
-johannes
-
---=-vOsB7XUG031uSQfMjjeo
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Comment: Johannes Berg (powerbook)
-
-iQIcBAABAgAGBQJIrF9hAAoJEKVg1VMiehFYJkkP/2WYDHyk2Z2u1CACt/pU0x/m
-gijNKGSaUi8ewe5Z14NGH5Fz5Gmx+OozdxKu6ZHvi9dzld97+57gjwYIpqcrIDTK
-2J3zFo6ZnVcpwJUpu1kbbEFQ9rXq3HH88P70eb2j2dPk1ysEO8G5t+awSpnfSHqI
-8PEOv2VnJn1xg9H0eWZcC6uKHyYDa+ArVwfVCtLzyeB8GLPUNvB1Th7iTiWB+5Gi
-qq4DZM+2k06aSe04HhRyVudWCxNDJu9KepVXo0OyhqpdUA9/M7BcTvLCSHl2CQnF
-LPxOb73wnrvEi8jTdo8v2ExefFiDKWx03EO4eaq/MpRGxCHS+jKVlACIEIPDni1M
-jJf4/t9u9A71HaXkX9OXpy+pRmn35b24QOiFRTscGxCgZF2UMPZfgvZRZykgSN9p
-SmfMesZI6QAffIe0DOIZSoldnRCxC2F/0qypgfm7mSiNURd+aIrZCcBpwfEQahCx
-HyknYwJsdhoM5zxRMtdrkarehWy+LehtQL0Z7xJ9SeSP0JB3HDyEpZDxeDlzU8dt
-wyo3vLr/+HMvObiNnZToT4VR35742RQrP/hyArlm6JmnYERcFDzVRMVwr9uaGfCU
-D2g4gXiR2Zu2ddMp8dSoBg+f2rMd+N6qKeN+J+Lsyja6mIVWc+RuGmIG4SXiCMd0
-11XLourY1XfWfY3IiKaF
-=9vFx
------END PGP SIGNATURE-----
-
---=-vOsB7XUG031uSQfMjjeo--
+greg k-h
