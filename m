@@ -1,36 +1,44 @@
-From: Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
+From: Greg KH <greg@kroah.com>
 Subject: Re: linux-next: Tree for August 20
-Date: Wed, 20 Aug 2008 14:36:56 -0700
-Message-ID: <20080820143656.88a03e1f.akpm@linux-foundation.org>
-References: <20080820190649.a63e3e00.sfr@canb.auug.org.au>
+Date: Wed, 20 Aug 2008 14:54:19 -0700
+Message-ID: <20080820215419.GA21339@kroah.com>
+References: <20080820190649.a63e3e00.sfr@canb.auug.org.au> <20080820143656.88a03e1f.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20080820190649.a63e3e00.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Duncan Sands <duncan.sands-GANU6spQydw@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from casper.infradead.org ([85.118.1.10]:49114 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752892AbYHTV4y (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Aug 2008 17:56:54 -0400
+Content-Disposition: inline
+In-Reply-To: <20080820143656.88a03e1f.akpm@linux-foundation.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Duncan Sands <duncan.sands@free.fr>, linux-usb@vger.kernel.org
 
-On Wed, 20 Aug 2008 19:06:49 +1000
-Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> wrote:
+On Wed, Aug 20, 2008 at 02:36:56PM -0700, Andrew Morton wrote:
+> On Wed, 20 Aug 2008 19:06:49 +1000
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> > I have created today's linux-next tree at
+> > git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+> 
+> drivers/usb/atm/usbatm.c: In function 'usbatm_extract_one_cell':
+> drivers/usb/atm/usbatm.c:347: error: implicit declaration of function 'warn'
+> 
+> due to
+> 
+> #define UDSL_ASSERT(x)  do { if (!(x)) warn("failed assertion '%s' at line %d", __stringify(x), __LINE__); } while(0)
+> 
+> which was quite clever really - neither drivers/usb/atm/usbatm.c nor
+> drivers/usb/atm/usbatm.h was changed.
+> 
+> config: http://userweb.kernel.org/~akpm/config-akpm2.txt  (it's x86_64)
 
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+This was already fixed up, it was getting warn() from usb.h, which I'm
+getting rid of.  dev_warn() should be used instead.
 
-drivers/usb/atm/usbatm.c: In function 'usbatm_extract_one_cell':
-drivers/usb/atm/usbatm.c:347: error: implicit declaration of function 'warn'
+thanks,
 
-due to
-
-#define UDSL_ASSERT(x)  do { if (!(x)) warn("failed assertion '%s' at line %d", __stringify(x), __LINE__); } while(0)
-
-which was quite clever really - neither drivers/usb/atm/usbatm.c nor
-drivers/usb/atm/usbatm.h was changed.
-
-config: http://userweb.kernel.org/~akpm/config-akpm2.txt  (it's x86_64)
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+greg k-h
