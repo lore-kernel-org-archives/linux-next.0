@@ -1,68 +1,58 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: CONFIG_KMOD breakage in next kernel
-Date: Wed, 20 Aug 2008 20:44:49 +0200
-Message-ID: <1219257889.3502.13.camel@johannes.berg>
-References: <s5h3akzwtki.wl%tiwai@suse.de>
-	 <1219252617.7591.350.camel@violet.holtmann.net>
+From: Harvey Harrison <harvey.harrison@gmail.com>
+Subject: Tonnes of new sparse warnings next-20080820
+Date: Wed, 20 Aug 2008 13:12:53 -0700
+Message-ID: <1219263173.27981.7.camel@brick>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-JUz9NAurQ+0t9jJ9Kemi"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xc.sipsolutions.net ([83.246.72.84]:46079 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752495AbYHTSpl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Aug 2008 14:45:41 -0400
-In-Reply-To: <1219252617.7591.350.camel@violet.holtmann.net>
+Received: from wf-out-1314.google.com ([209.85.200.173]:52062 "EHLO
+	wf-out-1314.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753258AbYHTUMx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Aug 2008 16:12:53 -0400
+Received: by wf-out-1314.google.com with SMTP id 27so749883wfd.4
+        for <linux-next@vger.kernel.org>; Wed, 20 Aug 2008 13:12:52 -0700 (PDT)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Marcel Holtmann <marcel@holtmann.org>
-Cc: Takashi Iwai <tiwai@suse.de>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Rusty Russell <rusty@rustcorp.com.au>, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, video4linux-list@redhat.com
+To: Eduard Munteanu <eduard.munteanu@linux360.ro>
+Cc: Ingo Molnar <mingo@elte.hu>, Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>, Al Viro <viro@ZenIV.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, linux-next <linux-next@vger.kernel.org>
 
+All of the form:
 
---=-JUz9NAurQ+0t9jJ9Kemi
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+include/linux/kmemtrace.h:33:2: warning: cast from restricted gfp_t
+The cast to unsigned long will need __force to avoid this warning as
+gfp_t is a bitwise type.
 
-On Wed, 2008-08-20 at 19:16 +0200, Marcel Holtmann wrote:
-> Hi guys,
->=20
-> > I found that CONFIG_KMOD was already removed in linux-next tree.
-> > This seems to result in many breakages.  For example, I cannot mount a
-> > FAT device automatically because of failure of automatic loading of
-> > nls modules.
-> >=20
-> > My particular problem would be fixed by the patch below, but I found
-> > CONFIG_KMOD is still referred in many places.
->=20
-> I am happy to fix the net/bluetooth/ part, you someone has to put out a
-> guideline how this should be fixed.
+include/linux/kmemtrace.h:33:2: warning: Initializer entry defined twice
+include/linux/kmemtrace.h:33:2:   also defined here
+This occurs at every occurance of trace_mark(), haven't dug into it yet
+to fix it.
 
-Bluetooth was already part of http://lkml.org/lkml/2008/7/9/144
+Dumb-patch for the first warning below:
 
-Basically, I got rid of CONFIG_KMOD, always enabling it when
-CONFIG_MODULES is defined and making it a dummy no-op inline when not.
+From: Harvey Harrison <harvey.harrison@gmail.com>
+Subject: [PATCH] kmemtrace: gfp_t is a __bitwise_ type, add __force to cast
 
-johannes
+Fixes sparse warnings of the form:
+include/linux/kmemtrace.h:33:2: warning: cast from restricted gfp_t
 
---=-JUz9NAurQ+0t9jJ9Kemi
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
+Signed-off-by: Harvey Harrison <harvey.harrison@gmail.com>
+---
+ include/linux/kmemtrace.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-Comment: Johannes Berg (powerbook)
-
-iQIcBAABAgAGBQJIrGYeAAoJEKVg1VMiehFYT5QP/1Q3lUrurxSO2lEmWPa8eCiU
-3WbXzKXQRrseZh2O1fJd/rrhxEjvmNntlTfXTra+3L0jox1uV12D2t+6LQMiuS4g
-2+mf0yJlEiTeCvEWb3ts8xA8/ryE/yuL/LdF3nvz1lLspju1S9h/4X9fnqT5lIVC
-p788yhXDRUOjJoIl4eEtuw/KIAxkPKnyp1Xo3WBGBAMw3vBvXwyHbFzvitWsaKdd
-KFGQGISY3l1dkazIKcfUApbZBegYtJEpTeLoHnZRzJH5bWGkIoe/iCjZylyBXTY+
-LvwLyoYRwHz2wT8wbJ4Vmz1eYanS4yIBDsE1ZSguuQUaYGyrGaHUtXCShMvTYYUP
-vo1cif1jt/66A3mgNWcnEu+ZmAMAmP4mz/O8ltUDsHwjVxIRk681zV/8UtO8Q/sW
-22fAlvPiFfRQhoCjfJLBJKZNfeQfNWGynPu5eVk5WvQlPIE9wvVcw5HYf8OoAsog
-82F+8Np9Fh2zHWxtzae6SsQhUrvQVJmUT1gasY3z7rOgFCF53Mo6pNiX1x574zQ4
-hUXnZWyguBDnXOMSc1PnXirpgfZ/GVo+E/fCnFJ8QRFsBbx7JNLLkNDt7K9QNRNc
-R+fMJUXik8cB4ERKY4uGOTMxbBsmAOwEvPk7XY9mdxDe0LCRDRHDdNS6ki+t8aat
-PxyoRvxb8pavE9Svj83V
-=1Fjh
------END PGP SIGNATURE-----
-
---=-JUz9NAurQ+0t9jJ9Kemi--
+diff --git a/include/linux/kmemtrace.h b/include/linux/kmemtrace.h
+index 5bea8ea..ab542aa 100644
+--- a/include/linux/kmemtrace.h
++++ b/include/linux/kmemtrace.h
+@@ -34,7 +34,7 @@ static inline void kmemtrace_mark_alloc_node(enum kmemtrace_type_id type_id,
+ 		   "bytes_req %lu bytes_alloc %lu gfp_flags %lu node %d",
+ 		   type_id, call_site, (unsigned long) ptr,
+ 		   (unsigned long) bytes_req, (unsigned long) bytes_alloc,
+-		   (unsigned long) gfp_flags, node);
++		   (__force unsigned long) gfp_flags, node);
+ }
+ 
+ static inline void kmemtrace_mark_free(enum kmemtrace_type_id type_id,
+-- 
+1.6.0.284.ga408
