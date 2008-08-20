@@ -1,45 +1,93 @@
-From: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH next-20080819] drivers/usb/atm: Fix non-existing warn()
-Date: Tue, 19 Aug 2008 17:47:23 -0700
-Message-ID: <20080820004723.GB385@kroah.com>
-References: <20080819185454.d9c74915.sfr@canb.auug.org.au> <s5hiqtxw8en.wl%tiwai@suse.de>
+From: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
+Subject: Re: linux-next: Tree for August 19 (mfd/ucb)
+Date: Wed, 20 Aug 2008 11:25:31 +0900
+Message-ID: <20080820112531.e50db074.kamezawa.hiroyu@jp.fujitsu.com>
+References: <20080819185454.d9c74915.sfr@canb.auug.org.au>
+	<20080819170517.04d91de8.randy.dunlap@oracle.com>
+	<20080819171658.4cdb8cd9.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <s5hiqtxw8en.wl%tiwai-l3A5Bk7waGM@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-l3A5Bk7waGM@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from fgwmail7.fujitsu.co.jp ([192.51.44.37]:54958 "EHLO
+	fgwmail7.fujitsu.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752053AbYHTCVX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Aug 2008 22:21:23 -0400
+In-Reply-To: <20080819171658.4cdb8cd9.akpm@linux-foundation.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, sfr@canb.auug.org.au, sam@ravnborg.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sameo@openedhand.com
 
-On Tue, Aug 19, 2008 at 01:28:48PM +0200, Takashi Iwai wrote:
-> Fix the die-hard warn() in drivers/usb/atm/usbatm.h that caused a
-> build error.
+On Tue, 19 Aug 2008 17:16:58 -0700
+Andrew Morton <akpm@linux-foundation.org> wrote:
+
+> On Tue, 19 Aug 2008 17:05:17 -0700
+> Randy Dunlap <randy.dunlap@oracle.com> wrote:
 > 
-> Signed-off-by: Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>
-> ---
-> diff --git a/drivers/usb/atm/usbatm.h b/drivers/usb/atm/usbatm.h
-> index e6887c6..714dc14 100644
-> --- a/drivers/usb/atm/usbatm.h
-> +++ b/drivers/usb/atm/usbatm.h
-> @@ -42,7 +42,7 @@
->  #ifdef DEBUG
->  #define UDSL_ASSERT(x)	BUG_ON(!(x))
->  #else
-> -#define UDSL_ASSERT(x)	do { if (!(x)) warn("failed assertion '%s' at line %d", __stringify(x), __LINE__); } while(0)
-> +#define UDSL_ASSERT(x)	do { if (!(x)) pr_warning("failed assertion '%s' at line %d", __stringify(x), __LINE__); } while(0)
->  #endif
+> > drivers/mfd/ucb1400 is a sound (AC97) driver, so it should depend
+> > on AC97_BUS, like in the patch below.  However, with that patch in
+> > place, oldconfig goes belly up on me:
+> > 
+> > 
+> > linux-next-20080819> make ARCH=x86_64  O=X64  V=1 oldconfig
+> > make -C /local/linsrc/linux-next-20080819/X64 \
+> > 	KBUILD_SRC=/local/linsrc/linux-next-20080819 \
+> > 	KBUILD_EXTMOD="" -f /local/linsrc/linux-next-20080819/Makefile \
+> > 	oldconfig
+> > make -f /local/linsrc/linux-next-20080819/scripts/Makefile.build obj=scripts/basic
+> > /bin/sh /local/linsrc/linux-next-20080819/scripts/mkmakefile \
+> > 	    /local/linsrc/linux-next-20080819 /local/linsrc/linux-next-20080819/X64 2 6
+> >   GEN     /local/linsrc/linux-next-20080819/X64/Makefile
+> > mkdir -p include/linux include/config
+> > make -f /local/linsrc/linux-next-20080819/scripts/Makefile.build obj=scripts/kconfig oldconfig
+> > scripts/kconfig/conf -o arch/x86/Kconfig
+> > make[2]: *** [oldconfig] Segmentation fault (core dumped)
+> > make[1]: *** [oldconfig] Error 2
+> > make: *** [sub-make] Error 2
+> > 
+> > 
+> > 
+> > ---
+> > From: Randy Dunlap <randy.dunlap@oracle.com>
+> > 
+> > mfd/ucb1400 sound driver uses/depends on AC97_BUS:
+> > 
+> > ERROR: "ac97_bus_type" [drivers/mfd/ucb1400_core.ko] undefined!
+> > 
+> > 
+> > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> > cc: Samuel Ortiz <sameo@openedhand.com>
+> > 
+> > ---
+> >  drivers/mfd/Kconfig |    1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > --- linux-next-20080819.orig/drivers/mfd/Kconfig
+> > +++ linux-next-20080819/drivers/mfd/Kconfig
+> > @@ -52,6 +52,7 @@ config HTC_PASIC3
+> >  
+> >  config UCB1400_CORE
+> >  	tristate "Philips UCB1400 Core driver"
+> > +	depends on AC97_BUS
+> >  	help
+> >  	  This enables support for the Philips UCB1400 core functions.
+> >  	  The UCB1400 is an AC97 audio codec.
+> 
+> And this:
+> 
+I still see SEGV in the latest mmtom (on x86-64)
 
-I fixed it a bit differently, using dev_warn() instead and passing the
-"instance" to the macro like the other macros defined in this file.
-That way any user knows exactly which device and driver caused the
-driver to go boom :)
+drivers/input/touchscreen/Kconfig has this definition.
 
-thanks,
+config TOUCHSCREEN_UCB1400
+        tristate "Philips UCB1400 touchscreen"
+        select AC97_BUS
+        depends on UCB1400_CORE
+        depends on GPIOLIB
 
-greg k-h
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+"select" should be "depends on" ,here ?
+
+
+Thanks,
+-Kame
