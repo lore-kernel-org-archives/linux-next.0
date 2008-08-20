@@ -1,39 +1,68 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: input tree build failure
-Date: Wed, 20 Aug 2008 11:35:59 -0700
-Message-ID: <20080820183559.GA26064@kroah.com>
-References: <20080819163148.159c7d8c.sfr@canb.auug.org.au> <20080819200057.GD10502@kroah.com> <20080820154924.51ac3495.sfr@canb.auug.org.au>
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: CONFIG_KMOD breakage in next kernel
+Date: Wed, 20 Aug 2008 20:44:49 +0200
+Message-ID: <1219257889.3502.13.camel@johannes.berg>
+References: <s5h3akzwtki.wl%tiwai@suse.de>
+	 <1219252617.7591.350.camel@violet.holtmann.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-JUz9NAurQ+0t9jJ9Kemi"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:39996 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752175AbYHTSk2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Aug 2008 14:40:28 -0400
-Content-Disposition: inline
-In-Reply-To: <20080820154924.51ac3495.sfr@canb.auug.org.au>
+Received: from xc.sipsolutions.net ([83.246.72.84]:46079 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752495AbYHTSpl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Aug 2008 14:45:41 -0400
+In-Reply-To: <1219252617.7591.350.camel@violet.holtmann.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-next@vger.kernel.org, "Alfred E. Heggestad" <aeh@db.org>
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: Takashi Iwai <tiwai@suse.de>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Rusty Russell <rusty@rustcorp.com.au>, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, video4linux-list@redhat.com
 
-On Wed, Aug 20, 2008 at 03:49:24PM +1000, Stephen Rothwell wrote:
-> Hi Greg, Dmitry,
-> 
-> On Tue, 19 Aug 2008 13:00:57 -0700 Greg KH <greg@kroah.com> wrote:
-> >
-> > No, these should all use dev_info() instead.
-> > 
-> > Actually, they should all use dev_dbg() and drop the #if entirely.  With
-> > the dynamic dev_dbg() patch that is in -next, that will work just fine,
-> > no need to rebuild modules which is almost impossible for most users to
-> > do.
-> 
-> Today I used the following patch instead.  Dmitry, this should be able to
-> be applied to your tree (I think) assuming that it is OK.
 
-Looks good to me.
+--=-JUz9NAurQ+0t9jJ9Kemi
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-thanks,
+On Wed, 2008-08-20 at 19:16 +0200, Marcel Holtmann wrote:
+> Hi guys,
+>=20
+> > I found that CONFIG_KMOD was already removed in linux-next tree.
+> > This seems to result in many breakages.  For example, I cannot mount a
+> > FAT device automatically because of failure of automatic loading of
+> > nls modules.
+> >=20
+> > My particular problem would be fixed by the patch below, but I found
+> > CONFIG_KMOD is still referred in many places.
+>=20
+> I am happy to fix the net/bluetooth/ part, you someone has to put out a
+> guideline how this should be fixed.
 
-greg k-h
+Bluetooth was already part of http://lkml.org/lkml/2008/7/9/144
+
+Basically, I got rid of CONFIG_KMOD, always enabling it when
+CONFIG_MODULES is defined and making it a dummy no-op inline when not.
+
+johannes
+
+--=-JUz9NAurQ+0t9jJ9Kemi
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Johannes Berg (powerbook)
+
+iQIcBAABAgAGBQJIrGYeAAoJEKVg1VMiehFYT5QP/1Q3lUrurxSO2lEmWPa8eCiU
+3WbXzKXQRrseZh2O1fJd/rrhxEjvmNntlTfXTra+3L0jox1uV12D2t+6LQMiuS4g
+2+mf0yJlEiTeCvEWb3ts8xA8/ryE/yuL/LdF3nvz1lLspju1S9h/4X9fnqT5lIVC
+p788yhXDRUOjJoIl4eEtuw/KIAxkPKnyp1Xo3WBGBAMw3vBvXwyHbFzvitWsaKdd
+KFGQGISY3l1dkazIKcfUApbZBegYtJEpTeLoHnZRzJH5bWGkIoe/iCjZylyBXTY+
+LvwLyoYRwHz2wT8wbJ4Vmz1eYanS4yIBDsE1ZSguuQUaYGyrGaHUtXCShMvTYYUP
+vo1cif1jt/66A3mgNWcnEu+ZmAMAmP4mz/O8ltUDsHwjVxIRk681zV/8UtO8Q/sW
+22fAlvPiFfRQhoCjfJLBJKZNfeQfNWGynPu5eVk5WvQlPIE9wvVcw5HYf8OoAsog
+82F+8Np9Fh2zHWxtzae6SsQhUrvQVJmUT1gasY3z7rOgFCF53Mo6pNiX1x574zQ4
+hUXnZWyguBDnXOMSc1PnXirpgfZ/GVo+E/fCnFJ8QRFsBbx7JNLLkNDt7K9QNRNc
+R+fMJUXik8cB4ERKY4uGOTMxbBsmAOwEvPk7XY9mdxDe0LCRDRHDdNS6ki+t8aat
+PxyoRvxb8pavE9Svj83V
+=1Fjh
+-----END PGP SIGNATURE-----
+
+--=-JUz9NAurQ+0t9jJ9Kemi--
