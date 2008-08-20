@@ -1,63 +1,101 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
+From: Andrew Morton <akpm@linux-foundation.org>
 Subject: Re: linux-next: Tree for August 19 (mfd/ucb)
-Date: Tue, 19 Aug 2008 17:05:17 -0700
-Message-ID: <20080819170517.04d91de8.randy.dunlap@oracle.com>
+Date: Tue, 19 Aug 2008 17:16:58 -0700
+Message-ID: <20080819171658.4cdb8cd9.akpm@linux-foundation.org>
 References: <20080819185454.d9c74915.sfr@canb.auug.org.au>
+	<20080819170517.04d91de8.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755509AbYHTAF2@vger.kernel.org>
-In-Reply-To: <20080819185454.d9c74915.sfr@canb.auug.org.au>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755789AbYHTASK@vger.kernel.org>
+In-Reply-To: <20080819170517.04d91de8.randy.dunlap@oracle.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, samr <sam@ravnborg.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sameo@openedhand.com
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: sfr@canb.auug.org.au, sam@ravnborg.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sameo@openedhand.com
 List-Id: linux-next.vger.kernel.org
 
-drivers/mfd/ucb1400 is a sound (AC97) driver, so it should depend
-on AC97_BUS, like in the patch below.  However, with that patch in
-place, oldconfig goes belly up on me:
+On Tue, 19 Aug 2008 17:05:17 -0700
+Randy Dunlap <randy.dunlap@oracle.com> wrote:
 
+> drivers/mfd/ucb1400 is a sound (AC97) driver, so it should depend
+> on AC97_BUS, like in the patch below.  However, with that patch in
+> place, oldconfig goes belly up on me:
+> 
+> 
+> linux-next-20080819> make ARCH=x86_64  O=X64  V=1 oldconfig
+> make -C /local/linsrc/linux-next-20080819/X64 \
+> 	KBUILD_SRC=/local/linsrc/linux-next-20080819 \
+> 	KBUILD_EXTMOD="" -f /local/linsrc/linux-next-20080819/Makefile \
+> 	oldconfig
+> make -f /local/linsrc/linux-next-20080819/scripts/Makefile.build obj=scripts/basic
+> /bin/sh /local/linsrc/linux-next-20080819/scripts/mkmakefile \
+> 	    /local/linsrc/linux-next-20080819 /local/linsrc/linux-next-20080819/X64 2 6
+>   GEN     /local/linsrc/linux-next-20080819/X64/Makefile
+> mkdir -p include/linux include/config
+> make -f /local/linsrc/linux-next-20080819/scripts/Makefile.build obj=scripts/kconfig oldconfig
+> scripts/kconfig/conf -o arch/x86/Kconfig
+> make[2]: *** [oldconfig] Segmentation fault (core dumped)
+> make[1]: *** [oldconfig] Error 2
+> make: *** [sub-make] Error 2
+> 
+> 
+> 
+> ---
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> mfd/ucb1400 sound driver uses/depends on AC97_BUS:
+> 
+> ERROR: "ac97_bus_type" [drivers/mfd/ucb1400_core.ko] undefined!
+> 
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> cc: Samuel Ortiz <sameo@openedhand.com>
+> 
+> ---
+>  drivers/mfd/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20080819.orig/drivers/mfd/Kconfig
+> +++ linux-next-20080819/drivers/mfd/Kconfig
+> @@ -52,6 +52,7 @@ config HTC_PASIC3
+>  
+>  config UCB1400_CORE
+>  	tristate "Philips UCB1400 Core driver"
+> +	depends on AC97_BUS
+>  	help
+>  	  This enables support for the Philips UCB1400 core functions.
+>  	  The UCB1400 is an AC97 audio codec.
 
-linux-next-20080819> make ARCH=x86_64  O=X64  V=1 oldconfig
-make -C /local/linsrc/linux-next-20080819/X64 \
-	KBUILD_SRC=/local/linsrc/linux-next-20080819 \
-	KBUILD_EXTMOD="" -f /local/linsrc/linux-next-20080819/Makefile \
-	oldconfig
-make -f /local/linsrc/linux-next-20080819/scripts/Makefile.build obj=scripts/basic
-/bin/sh /local/linsrc/linux-next-20080819/scripts/mkmakefile \
-	    /local/linsrc/linux-next-20080819 /local/linsrc/linux-next-20080819/X64 2 6
-  GEN     /local/linsrc/linux-next-20080819/X64/Makefile
-mkdir -p include/linux include/config
-make -f /local/linsrc/linux-next-20080819/scripts/Makefile.build obj=scripts/kconfig oldconfig
-scripts/kconfig/conf -o arch/x86/Kconfig
-make[2]: *** [oldconfig] Segmentation fault (core dumped)
-make[1]: *** [oldconfig] Error 2
-make: *** [sub-make] Error 2
+And this:
 
+From: Andrew Morton <akpm@linux-foundation.org>
 
+ia64 allmodconfig:
 
+In file included from include/linux/ucb1400.h:27,
+                 from drivers/mfd/ucb1400_core.c:24:
+include/asm-generic/gpio.h: In function `gpio_get_value_cansleep':
+include/asm-generic/gpio.h:147: error: implicit declaration of function `gpio_get_value'
+include/asm-generic/gpio.h: In function `gpio_set_value_cansleep':
+include/asm-generic/gpio.h:153: error: implicit declaration of function `gpio_set_value'
+drivers/mfd/ucb1400_core.c: At top level:
+
+Cc: Samuel Ortiz <sameo@openedhand.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 ---
-From: Randy Dunlap <randy.dunlap@oracle.com>
 
-mfd/ucb1400 sound driver uses/depends on AC97_BUS:
-
-ERROR: "ac97_bus_type" [drivers/mfd/ucb1400_core.ko] undefined!
-
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-cc: Samuel Ortiz <sameo@openedhand.com>
-
----
  drivers/mfd/Kconfig |    1 +
  1 file changed, 1 insertion(+)
 
---- linux-next-20080819.orig/drivers/mfd/Kconfig
-+++ linux-next-20080819/drivers/mfd/Kconfig
-@@ -52,6 +52,7 @@ config HTC_PASIC3
- 
+diff -puN drivers/mfd/Kconfig~drivers-mfd-ucb1400_corec-needs-gpio drivers/mfd/Kconfig
+--- a/drivers/mfd/Kconfig~drivers-mfd-ucb1400_corec-needs-gpio
++++ a/drivers/mfd/Kconfig
+@@ -53,6 +53,7 @@ config HTC_PASIC3
  config UCB1400_CORE
  	tristate "Philips UCB1400 Core driver"
-+	depends on AC97_BUS
+ 	depends on AC97_BUS
++	depends on GPIOLIB
  	help
  	  This enables support for the Philips UCB1400 core functions.
  	  The UCB1400 is an AC97 audio codec.
+_
