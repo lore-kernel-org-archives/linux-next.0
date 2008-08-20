@@ -1,18 +1,23 @@
 From: Andrew Morton <akpm@linux-foundation.org>
 Subject: Re: linux-next: Tree for August 19 (mfd/ucb)
-Date: Tue, 19 Aug 2008 17:16:58 -0700
-Message-ID: <20080819171658.4cdb8cd9.akpm@linux-foundation.org>
+Date: Tue, 19 Aug 2008 17:26:57 -0700
+Message-ID: <20080819172657.2f20cf91.akpm@linux-foundation.org>
 References: <20080819185454.d9c74915.sfr@canb.auug.org.au>
 	<20080819170517.04d91de8.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755789AbYHTASK@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:35091 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751566AbYHTA1P (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Aug 2008 20:27:15 -0400
 In-Reply-To: <20080819170517.04d91de8.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Randy Dunlap <randy.dunlap@oracle.com>
 Cc: sfr@canb.auug.org.au, sam@ravnborg.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sameo@openedhand.com
-List-Id: linux-next.vger.kernel.org
 
 On Tue, 19 Aug 2008 17:05:17 -0700
 Randy Dunlap <randy.dunlap@oracle.com> wrote:
@@ -36,66 +41,53 @@ Randy Dunlap <randy.dunlap@oracle.com> wrote:
 > scripts/kconfig/conf -o arch/x86/Kconfig
 > make[2]: *** [oldconfig] Segmentation fault (core dumped)
 > make[1]: *** [oldconfig] Error 2
-> make: *** [sub-make] Error 2
-> 
-> 
-> 
-> ---
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> mfd/ucb1400 sound driver uses/depends on AC97_BUS:
-> 
-> ERROR: "ac97_bus_type" [drivers/mfd/ucb1400_core.ko] undefined!
-> 
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> cc: Samuel Ortiz <sameo@openedhand.com>
-> 
-> ---
->  drivers/mfd/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> --- linux-next-20080819.orig/drivers/mfd/Kconfig
-> +++ linux-next-20080819/drivers/mfd/Kconfig
-> @@ -52,6 +52,7 @@ config HTC_PASIC3
->  
->  config UCB1400_CORE
->  	tristate "Philips UCB1400 Core driver"
-> +	depends on AC97_BUS
->  	help
->  	  This enables support for the Philips UCB1400 core functions.
->  	  The UCB1400 is an AC97 audio codec.
 
-And this:
+I'm hitting that segfault as well:
 
-From: Andrew Morton <akpm@linux-foundation.org>
+akpm2:/usr/src/25> scripts/kconfig/conf -o arch/ia64/Kconfig
+init/Kconfig:5:warning: environment variable KERNELVERSION undefined
+zsh: segmentation fault (core dumped)  scripts/kconfig/conf -o arch/ia64/Kconfig
 
-ia64 allmodconfig:
 
-In file included from include/linux/ucb1400.h:27,
-                 from drivers/mfd/ucb1400_core.c:24:
-include/asm-generic/gpio.h: In function `gpio_get_value_cansleep':
-include/asm-generic/gpio.h:147: error: implicit declaration of function `gpio_get_value'
-include/asm-generic/gpio.h: In function `gpio_set_value_cansleep':
-include/asm-generic/gpio.h:153: error: implicit declaration of function `gpio_set_value'
-drivers/mfd/ucb1400_core.c: At top level:
+Can't find the core file - wtf?  Plan B:
 
-Cc: Samuel Ortiz <sameo@openedhand.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
 
- drivers/mfd/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+akpm2:/usr/src/25> gdb scripts/kconfig/conf
+...
+This GDB was configured as "x86_64-redhat-linux-gnu"...(no debugging symbols found)
 
-diff -puN drivers/mfd/Kconfig~drivers-mfd-ucb1400_corec-needs-gpio drivers/mfd/Kconfig
---- a/drivers/mfd/Kconfig~drivers-mfd-ucb1400_corec-needs-gpio
-+++ a/drivers/mfd/Kconfig
-@@ -53,6 +53,7 @@ config HTC_PASIC3
- config UCB1400_CORE
- 	tristate "Philips UCB1400 Core driver"
- 	depends on AC97_BUS
-+	depends on GPIOLIB
- 	help
- 	  This enables support for the Philips UCB1400 core functions.
- 	  The UCB1400 is an AC97 audio codec.
-_
+why don't we build these things with -g by default?  grump.
+
+(gdb) r -o arch/ia64/Kconfig 
+Starting program: /usr/src/devel/scripts/kconfig/conf -o arch/ia64/Kconfig
+Failed to read a valid object file image from memory.
+(no debugging symbols found)
+(no debugging symbols found)
+(no debugging symbols found)
+(no debugging symbols found)
+init/Kconfig:5:warning: environment variable KERNELVERSION undefined
+
+Program received signal SIGSEGV, Segmentation fault.
+0x000000000040419c in sym_check_deps ()
+(gdb) bt
+#0  0x000000000040419c in sym_check_deps ()
+#1  0x0000000000404099 in sym_check_expr_deps ()
+#2  0x000000000040412c in sym_check_sym_deps ()
+#3  0x00000000004042f5 in sym_check_deps ()
+#4  0x0000000000404099 in sym_check_expr_deps ()
+#5  0x000000000040412c in sym_check_sym_deps ()
+#6  0x00000000004042f5 in sym_check_deps ()
+#7  0x0000000000404099 in sym_check_expr_deps ()
+#8  0x0000000000404099 in sym_check_expr_deps ()
+#9  0x0000000000404099 in sym_check_expr_deps ()
+#10 0x0000000000404099 in sym_check_expr_deps ()
+#11 0x0000000000404099 in sym_check_expr_deps ()
+#12 0x0000000000404099 in sym_check_expr_deps ()
+#13 0x00000000004040f2 in sym_check_sym_deps ()
+#14 0x00000000004042f5 in sym_check_deps ()
+#15 0x000000000040412c in sym_check_sym_deps ()
+#16 0x00000000004042f5 in sym_check_deps ()
+#17 0x000000000040412c in sym_check_sym_deps ()
+#18 0x00000000004042f5 in sym_check_deps ()
+#19 0x000000000040bb83 in conf_parse ()
+#20 0x000000000040269c in main ()
