@@ -1,27 +1,45 @@
-From: Greg KH <gregkh-l3A5Bk7waGM@public.gmane.org>
-Subject: Re: [BUG] linux-next: Tree for August 21 - WARNING: at
-	fs/sysfs/dir.c:465 sysfs_add_one()
-Date: Thu, 21 Aug 2008 12:23:15 -0700
-Message-ID: <20080821192315.GA17600@suse.de>
-References: <20080821191253.ba180d5e.sfr@canb.auug.org.au> <48ADC08C.6030406@linux.vnet.ibm.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] fb: metronome printk format warning
+Date: Thu, 21 Aug 2008 13:38:36 -0700
+Message-ID: <20080821133836.1c880abe.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <48ADC08C.6030406-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
-Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kamalesh Babulal <kamalesh-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kernel Testers List <kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andy Whitcroft <apw-26w3C0LaAnFg9hUCZPvPmw@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rgminet01.oracle.com ([148.87.113.118]:54646 "EHLO
+	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751705AbYHUUi2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Aug 2008 16:38:28 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: frame+buffer@ml.breakpoint.cc, linux-fbdev-devel@lists.sourceforge.net
+Cc: jayakumar.lkml@gmail.com, linux-next@vger.kernel.org, akpm <akpm@linux-foundation.org>
 
-On Fri, Aug 22, 2008 at 12:52:52AM +0530, Kamalesh Babulal wrote:
-> Hi,
-> 
-> while booting up the next-20080821 kernel on x86 machine, warning shows up for sysfs_add_one
-> of acpi getting called twice
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-See lkml, patches to resolve this have been posted.
+Fix printk format warning:
 
-thanks,
+linux-next-20080821/drivers/video/metronomefb.c:191: warning: format '%d' expects type 'int', but argument 4 has type 'size_t
 
-greg k-h
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/video/metronomefb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20080821.orig/drivers/video/metronomefb.c
++++ linux-next-20080821/drivers/video/metronomefb.c
+@@ -188,7 +188,7 @@ static int __devinit load_waveform(u8 *m
+ 		epd_frame_table[par->dt].wfm_size = user_wfm_size;
+ 
+ 	if (size != epd_frame_table[par->dt].wfm_size) {
+-		dev_err(dev, "Error: unexpected size %d != %d\n", size,
++		dev_err(dev, "Error: unexpected size %zu != %d\n", size,
+ 					epd_frame_table[par->dt].wfm_size);
+ 		return -EINVAL;
+ 	}
+
+
+---
+~Randy
+Linux Plumbers Conference, 17-19 September 2008, Portland, Oregon USA
+http://linuxplumbersconf.org/
