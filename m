@@ -1,59 +1,39 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] microcode_amd: fix shift warning
-Date: Thu, 21 Aug 2008 13:43:51 -0700
-Message-ID: <20080821134351.2b19ac2d.randy.dunlap@oracle.com>
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+Subject: Re: linux-next: pcmcia tree build warnings
+Date: Thu, 21 Aug 2008 23:16:30 +0200
+Message-ID: <20080821211630.GC24924@comet.dominikbrodowski.net>
+References: <20080820162410.82615889.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rgminet01.oracle.com ([148.87.113.118]:57816 "EHLO
-	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752762AbYHUUoS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Aug 2008 16:44:18 -0400
+Received: from isilmar.linta.de ([213.133.102.198]:49382 "EHLO linta.de"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751162AbYHUVSX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 21 Aug 2008 17:18:23 -0400
+Content-Disposition: inline
+In-Reply-To: <20080820162410.82615889.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Oruba <peter.oruba@amd.com>
-Cc: x86@kernel.org, linux-next@vger.kernel.org, akpm <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+Hi Stephen,
 
-microcode_amd.c uses ">> 32" on a 32-bit value, so gcc warns about that.
-The code could use something like this *untested* patch.
+On Wed, Aug 20, 2008 at 04:24:10PM +1000, Stephen Rothwell wrote:
+> These are worth fixing:
+> 
+> drivers/pcmcia/ds.c: In function 'pcmcia_devmatch':
+> drivers/pcmcia/ds.c:962: warning: passing argument 1 of 'dev_driver_string' from incompatible pointer type
+> drivers/pcmcia/ds.c:962: warning: passing argument 1 of 'dev_name' from incompatible pointer type
+> drivers/pcmcia/ds.c:969: warning: passing argument 1 of 'dev_driver_string' from incompatible pointer type
+> drivers/pcmcia/ds.c:969: warning: passing argument 1 of 'dev_name' from incompatible pointer type
+> 
+> You are passing a "struct pcmcia_device *" instead of a "struct device *"
+> to ds_dev_dbg().  (commit 5e42a2fcae73c08af2ae4d64b25f807708ff6193
+> "pcmcia: use dev_printk in module pcmcia")
 
-linux-next-20080821/arch/x86/kernel/microcode_amd.c:229: warning: right shift count >= width of type
+Thanks for noticing those. A patch to fix these issues will be in the next
+-next :)
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- arch/x86/kernel/microcode_amd.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
---- linux-next-20080821.orig/arch/x86/kernel/microcode_amd.c
-+++ linux-next-20080821/arch/x86/kernel/microcode_amd.c
-@@ -216,6 +216,7 @@ static void apply_microcode_amd(int cpu)
- 	unsigned int rev;
- 	int cpu_num = raw_smp_processor_id();
- 	struct ucode_cpu_info *uci = ucode_cpu_info + cpu_num;
-+	unsigned long addr;
- 
- 	/* We should bind the task to the CPU */
- 	BUG_ON(cpu_num != cpu);
-@@ -225,10 +226,9 @@ static void apply_microcode_amd(int cpu)
- 
- 	spin_lock_irqsave(&microcode_update_lock, flags);
- 
--	edx = (unsigned int)(((unsigned long)
--			      &(uci->mc.mc_amd->hdr.data_code)) >> 32);
--	eax = (unsigned int)(((unsigned long)
--			      &(uci->mc.mc_amd->hdr.data_code)) & 0xffffffffL);
-+	addr = (unsigned long)&uci->mc.mc_amd->hdr.data_code;
-+	edx = (unsigned int)(((unsigned long)upper_32_bits(addr)));
-+	eax = (unsigned int)(((unsigned long)lower_32_bits(addr)));
- 
- 	asm volatile("movl %0, %%ecx; wrmsr" :
- 		     : "i" (0xc0010020), "a" (eax), "d" (edx) : "ecx");
-
-
----
-~Randy
-Linux Plumbers Conference, 17-19 September 2008, Portland, Oregon USA
-http://linuxplumbersconf.org/
+Best,
+	Dominik
