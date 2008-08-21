@@ -1,44 +1,47 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: Tree for August 20
-Date: Wed, 20 Aug 2008 14:54:19 -0700
-Message-ID: <20080820215419.GA21339@kroah.com>
-References: <20080820190649.a63e3e00.sfr@canb.auug.org.au> <20080820143656.88a03e1f.akpm@linux-foundation.org>
+From: Marcel Holtmann <marcel@holtmann.org>
+Subject: Re: CONFIG_KMOD breakage in next kernel
+Date: Thu, 21 Aug 2008 03:49:17 +0200
+Message-ID: <1219283357.7591.370.camel@violet.holtmann.net>
+References: <s5h3akzwtki.wl%tiwai@suse.de>
+	 <1219252617.7591.350.camel@violet.holtmann.net>
+	 <1219257889.3502.13.camel@johannes.berg>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:49114 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752892AbYHTV4y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Aug 2008 17:56:54 -0400
-Content-Disposition: inline
-In-Reply-To: <20080820143656.88a03e1f.akpm@linux-foundation.org>
+Received: from senator.holtmann.net ([87.106.208.187]:48633 "EHLO
+	mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750819AbYHUBtM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Aug 2008 21:49:12 -0400
+In-Reply-To: <1219257889.3502.13.camel@johannes.berg>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Duncan Sands <duncan.sands@free.fr>, linux-usb@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Takashi Iwai <tiwai@suse.de>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Rusty Russell <rusty@rustcorp.com.au>, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, video4linux-list@redhat.com
 
-On Wed, Aug 20, 2008 at 02:36:56PM -0700, Andrew Morton wrote:
-> On Wed, 20 Aug 2008 19:06:49 +1000
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > I have created today's linux-next tree at
-> > git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-> 
-> drivers/usb/atm/usbatm.c: In function 'usbatm_extract_one_cell':
-> drivers/usb/atm/usbatm.c:347: error: implicit declaration of function 'warn'
-> 
-> due to
-> 
-> #define UDSL_ASSERT(x)  do { if (!(x)) warn("failed assertion '%s' at line %d", __stringify(x), __LINE__); } while(0)
-> 
-> which was quite clever really - neither drivers/usb/atm/usbatm.c nor
-> drivers/usb/atm/usbatm.h was changed.
-> 
-> config: http://userweb.kernel.org/~akpm/config-akpm2.txt  (it's x86_64)
+Hi Johannes,
 
-This was already fixed up, it was getting warn() from usb.h, which I'm
-getting rid of.  dev_warn() should be used instead.
+> > > I found that CONFIG_KMOD was already removed in linux-next tree.
+> > > This seems to result in many breakages.  For example, I cannot mount a
+> > > FAT device automatically because of failure of automatic loading of
+> > > nls modules.
+> > > 
+> > > My particular problem would be fixed by the patch below, but I found
+> > > CONFIG_KMOD is still referred in many places.
+> > 
+> > I am happy to fix the net/bluetooth/ part, you someone has to put out a
+> > guideline how this should be fixed.
+> 
+> Bluetooth was already part of http://lkml.org/lkml/2008/7/9/144
+> 
+> Basically, I got rid of CONFIG_KMOD, always enabling it when
+> CONFIG_MODULES is defined and making it a dummy no-op inline when not.
 
-thanks,
+I missed the patches, but that happens from time to time. Just looked at
+them and they look pretty nice. I like it this way.
 
-greg k-h
+Acked-by: Marcel Holtmann <marcel@holtmann.org>
+
+Regards
+
+Marcel
