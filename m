@@ -1,54 +1,254 @@
-From: "Vegard Nossum" <vegard.nossum@gmail.com>
-Subject: Re: Bug: "bad unlock balance detected" 2.6.27-rc3-next-20080820
-Date: Thu, 21 Aug 2008 10:19:49 +0200
-Message-ID: <19f34abd0808210119m70d95ea0t93d9887944a0c84b@mail.gmail.com>
-References: <6f31812b0808210004i63b3273ehf65ce9eb139256f0@mail.gmail.com>
-	 <19f34abd0808210110s4dd2ec12r6d3044e45a21d67@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Tree for August 21
+Date: Thu, 21 Aug 2008 19:12:53 +1000
+Message-ID: <20080821191253.ba180d5e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__21_Aug_2008_19_12_53_+1000_5JLV17ubhautLZ_z"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from py-out-1112.google.com ([64.233.166.177]:33644 "EHLO
-	py-out-1112.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756336AbYHUITu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Aug 2008 04:19:50 -0400
-Received: by py-out-1112.google.com with SMTP id p76so576797pyb.10
-        for <linux-next@vger.kernel.org>; Thu, 21 Aug 2008 01:19:50 -0700 (PDT)
-In-Reply-To: <19f34abd0808210110s4dd2ec12r6d3044e45a21d67@mail.gmail.com>
-Content-Disposition: inline
+Received: from chilli.pcug.org.au ([203.10.76.44]:55839 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754004AbYHUJNI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 21 Aug 2008 05:13:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: jay kumar <jaykumarks@gmail.com>
-Cc: David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On Thu, Aug 21, 2008 at 10:10 AM, Vegard Nossum <vegard.nossum@gmail.com> wrote:
-> On Thu, Aug 21, 2008 at 9:04 AM, jay kumar <jaykumarks@gmail.com> wrote:
->> While testing 2.6.27-rc3-next-20080820 ,  i observed this    "BUG:bad
->> unlock balance detected" during boot time
->>
-> Thanks for the report. The error comes from
->
-> commit d9a939fb80ef390b78b3c801f668bd1e35ebc970
-> Author: David Howells <dhowells@redhat.com>
-> Date:   Thu Aug 7 20:02:20 2008 +1000
->
->    CRED: Make execve() take advantage of copy-on-write credentials
->
-> (Added to Cc. I guess it's also nice to Cc linux-next on errors in -next code.)
->
-> I couldn't reproduce your original failure, but I've attempted to fix
-> it by reordering the mutex unlock and bprm free and removing the
-> extraneous unlock (see attached patch; it boots for me without
-> errors).
+--Signature=_Thu__21_Aug_2008_19_12_53_+1000_5JLV17ubhautLZ_z
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Actually, I was able to reproduce the original issue after all. And
-the patch fixed it for me. Please review :-)
+Hi all,
 
+Changes since next-20080820:
 
-Vegard
+New tree: parisc
 
--- 
-"The animistic metaphor of the bug that maliciously sneaked in while
-the programmer was not looking is intellectually dishonest as it
-disguises that the error is the programmer's own creation."
-	-- E. W. Dijkstra, EWD1036
+I have rearranged the trees so that the architecture trees are merged
+early on the assumption that they will be fairly well contained.  I have
+left the x86 tree where it is in case it has some dependencies on earlier
+trees.
+
+The arm tree lost its build fix patch.
+
+The ttydev tree gained 2 conflicts against the usb tree.
+
+I have also applied the following patches for known problems:
+
+	Add cuImage.mpc866ads to the bootwrapper as a cuboot-8xx target
+	ttydev: fix for tty-fix-shutdown
+	powerpc: export CMO_PageSize
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+(patches at
+http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups, it is also built with powerpc allnoconfig,
+44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
+
+Below is a summary of the state of the merge.
+
+We are up to 112 trees (counting Linus' and 14 trees of patches pending for
+Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging powerpc-merge/merge
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sparc-current/master
+Merging sound-current/for-linus
+Merging arm-current/master
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/master
+Merging quilt/driver-core.current
+Merging quilt/usb.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-2.6.26
+Merging dwmw2/master
+Merging arm/devel
+Merging avr32/avr32-arch
+Merging cris/for-next
+Merging ia64/test
+Merging quilt/m68k
+Merging m68knommu/for-next
+Merging mips/mips-for-linux-next
+Merging parisc/master
+Merging powerpc/powerpc-next
+Merging 4xx/next
+Merging galak/powerpc-next
+Merging s390/features
+Merging sh/master
+Merging sparc/master
+Merging xtensa/master
+Merging quilt/driver-core
+Merging quilt/usb
+Merging tip-core/auto-core-next
+Merging cpus4096/auto-cpus4096-next
+Merging ftrace/auto-ftrace-next
+CONFLICT (content): Merge conflict in kernel/module.c
+Merging genirq/auto-genirq-next
+Merging safe-poison-pointers/auto-safe-poison-pointers-next
+Merging sched/auto-sched-next
+Merging stackprotector/auto-stackprotector-next
+CONFLICT (content): Merge conflict in kernel/fork.c
+Merging timers/auto-timers-next
+Merging x86/auto-x86-next
+CONFLICT (content): Merge conflict in include/asm-x86/pda.h
+Merging pci/linux-next
+Merging quilt/device-mapper
+Merging hid/mm
+Merging quilt/i2c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/stable
+CONFLICT (content): Merge conflict in drivers/media/video/zr364xx.c
+Merging jfs/next
+Merging kbuild/master
+Merging quilt/ide
+Merging libata/NEXT
+Merging nfs/linux-next
+Merging xfs/master
+Merging infiniband/for-next
+Merging acpi/test
+Merging blackfin/for-linus
+Merging nfsd/nfsd-next
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/master
+CONFLICT (content): Merge conflict in include/asm-x86/kvm.h
+Merging dlm/next
+Merging scsi/master
+Merging tests/master
+CONFLICT (content): Merge conflict in lib/Kconfig.debug
+Merging ocfs2/linux-next
+Merging ext4/next
+Merging async_tx/next
+Merging udf/for_next
+Merging net/master
+Merging mtd/master
+Merging wireless/master
+Merging crypto/master
+CONFLICT (content): Merge conflict in include/asm-x86/cpufeature.h
+Merging vfs/for-next
+CONFLICT (content): Merge conflict in arch/ia64/ia32/sys_ia32.c
+CONFLICT (content): Merge conflict in arch/powerpc/kernel/sys_ppc32.c
+CONFLICT (content): Merge conflict in fs/nfsd/export.c
+CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_export.c
+CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_iops.c
+Merging sound/for-next
+Merging cpufreq/next
+Merging v9fs/for-next
+Merging quilt/rr
+Merging cifs/master
+Merging mmc/next
+Merging gfs2/master
+Merging input/next
+Applying input/cm109: fix up for info() removal
+Merging semaphore/semaphore
+Merging semaphore-removal/semaphore-removal
+Merging bkl-removal/bkl-removal
+Merging trivial/next
+CONFLICT (content): Merge conflict in Documentation/edac.txt
+CONFLICT (content): Merge conflict in include/linux/securebits.h
+Merging ubifs/linux-next
+Merging lsm/for-next
+Merging block/for-next
+Merging embedded/master
+Merging firmware/master
+CONFLICT (content): Merge conflict in drivers/media/dvb/ttpci/Kconfig
+CONFLICT (content): Merge conflict in drivers/media/dvb/ttpci/Makefile
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging kmemcheck/auto-kmemcheck-next
+CONFLICT (content): Merge conflict in MAINTAINERS
+CONFLICT (content): Merge conflict in arch/x86/kernel/process_64.c
+CONFLICT (content): Merge conflict in arch/x86/kernel/traps_64.c
+CONFLICT (content): Merge conflict in mm/Makefile
+CONFLICT (content): Merge conflict in mm/slab.c
+CONFLICT (content): Merge conflict in mm/slub.c
+Merging generic-ipi/auto-generic-ipi-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging voltage/reg-for-linus
+Merging security-testing/next
+Merging lblnet/master
+Merging quilt/ttydev
+CONFLICT (content): Merge conflict in drivers/net/usb/hso.c
+CONFLICT (content): Merge conflict in drivers/usb/serial/aircable.c
+CONFLICT (content): Merge conflict in drivers/usb/serial/keyspan_pda.c
+CONFLICT (content): Merge conflict in drivers/usb/serial/safe_serial.c
+Merging agp/agp-next
+Merging creds/next-creds
+CONFLICT (content): Merge conflict in fs/namespace.c
+CONFLICT (content): Merge conflict in fs/nfsd/nfs4recover.c
+CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_linux.h
+CONFLICT (content): Merge conflict in fs/xfs/xfs_inode.c
+CONFLICT (content): Merge conflict in fs/xfs/xfs_vnodeops.c
+CONFLICT (content): Merge conflict in include/linux/capability.h
+CONFLICT (add/add): Merge conflict in include/linux/cred.h
+CONFLICT (content): Merge conflict in kernel/exit.c
+CONFLICT (content): Merge conflict in kernel/fork.c
+CONFLICT (content): Merge conflict in security/commoncap.c
+CONFLICT (content): Merge conflict in security/selinux/hooks.c
+CONFLICT (content): Merge conflict in security/smack/smack_lsm.c
+Merging oprofile/auto-oprofile-next
+Merging fastboot/auto-fastboot-next
+CONFLICT (content): Merge conflict in include/linux/init.h
+Applying Add cuImage.mpc866ads to the bootwrapper as a cuboot-8xx target
+Applying ttydev: fix for tty-fix-shutdown
+Applying powerpc: export CMO_PageSize
+
+--Signature=_Thu__21_Aug_2008_19_12_53_+1000_5JLV17ubhautLZ_z
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkitMZUACgkQjjKRsyhoI8wfWQCgu39ArjbYLfJ7Vj9fFNkz+evk
+SHYAn0B9f1ZaYgsHYlVTd3Yq6yYB5j+H
+=BW9z
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__21_Aug_2008_19_12_53_+1000_5JLV17ubhautLZ_z--
