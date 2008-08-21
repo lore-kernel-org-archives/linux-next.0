@@ -1,59 +1,94 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the ttydev tree
-Date: Thu, 21 Aug 2008 22:14:21 +1000
-Message-ID: <20080821221421.de349c6a.sfr@canb.auug.org.au>
-References: <20080821180308.141bccb7.sfr@canb.auug.org.au>
-	<20080821112151.6383d0c3@lxorguk.ukuu.org.uk>
+From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Subject: Re: Bug: "bad unlock balance detected" 2.6.27-rc3-next-20080820
+Date: Fri, 22 Aug 2008 00:24:32 +0530
+Message-ID: <48ADB9E8.7060906@linux.vnet.ibm.com>
+References: <6f31812b0808210004i63b3273ehf65ce9eb139256f0@mail.gmail.com> <19f34abd0808210110s4dd2ec12r6d3044e45a21d67@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__21_Aug_2008_22_14_21_+1000_kODNh0Q3mb7K9OQ5"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43880 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750861AbYHUMO2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 Aug 2008 08:14:28 -0400
-In-Reply-To: <20080821112151.6383d0c3@lxorguk.ukuu.org.uk>
+Received: from e28smtp03.in.ibm.com ([59.145.155.3]:49221 "EHLO
+	e28esmtp03.in.ibm.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753893AbYHUSyl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Aug 2008 14:54:41 -0400
+In-Reply-To: <19f34abd0808210110s4dd2ec12r6d3044e45a21d67@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: linux-next@vger.kernel.org, Greg KH <greg@kroah.com>
+To: Vegard Nossum <vegard.nossum@gmail.com>
+Cc: jay kumar <jaykumarks@gmail.com>, David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
---Signature=_Thu__21_Aug_2008_22_14_21_+1000_kODNh0Q3mb7K9OQ5
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Vegard Nossum wrote:
+> On Thu, Aug 21, 2008 at 9:04 AM, jay kumar <jaykumarks@gmail.com> wrote:
+>> While testing 2.6.27-rc3-next-20080820 ,  i observed this    "BUG:bad
+>> unlock balance detected" during boot time
+>>
+>> commit 765d4840cc9cca98c0cc4ff4764608780c3265f6
+>> Author: Stephen Rothwell <sfr@canb.auug.org.au>
+>> Date:   Wed Aug 20 18:59:47 2008 +1000
+>>
+>>
+>> Bug info:
+>>
+>> [    0.140173] =====================================
+>> [    0.145977] [ BUG: bad unlock balance detected! ]
+>> [    0.145977] -------------------------------------
+>> [    0.145977] khelper/12 is trying to release lock (&p->cred_exec_mutex) at:
+>> [    0.146977] [<c05c624f>] mutex_unlock+0xd/0xf
+>> [    0.146977] but there are no more locks to release!
+>> [    0.146977]
+>> [    0.146977] other info that might help us debug this:
+>> [    0.146977] no locks held by khelper/12.
+>> [    0.146977]
+>> [    0.146977] stack backtrace:
+>> [    0.146977] Pid: 12, comm: khelper Not tainted 2.6.27-rc3-next-20080820 #13
+>> [    0.146977]  [<c05c624f>] ? mutex_unlock+0xd/0xf
+>> [    0.146977]  [<c0242944>] print_unlock_inbalance_bug+0xa5/0xb2
+>> [    0.146977]  [<c05c624f>] ? mutex_unlock+0xd/0xf
+>> [    0.146977]  [<c0245cd7>] lock_release+0x8f/0x186
+>> [    0.146977]  [<c05c61f0>] __mutex_unlock_slowpath+0x9b/0xed
+>> [    0.146977]  [<c05c624f>] mutex_unlock+0xd/0xf
+>> [    0.146977]  [<c029506f>] free_bprm+0x24/0x39
+>> [    0.146977]  [<c029644e>] do_execve+0x1e5/0x1fb
+>> [    0.146977]  [<c0202156>] sys_execve+0x2e/0x51
+>> [    0.146977]  [<c0203a72>] syscall_call+0x7/0xb
+>> [    0.146977]  [<c0206654>] ? kernel_execve+0x1c/0x21
+>> [    0.146977]  [<c023383c>] ? ____call_usermodehelper+0x0/0x129
+>> [    0.146977]  [<c023395b>] ? ____call_usermodehelper+0x11f/0x129
+>> [    0.146977]  [<c023383c>] ? ____call_usermodehelper+0x0/0x129
+>> [    0.146977]  [<c020466b>] ? kernel_thread_helper+0x7/0x10
+>> [    0.146977]  =======================
+> 
+> (config clipped)
+> 
+> Hi,
+> 
+> Thanks for the report. The error comes from
+> 
+> commit d9a939fb80ef390b78b3c801f668bd1e35ebc970
+> Author: David Howells <dhowells@redhat.com>
+> Date:   Thu Aug 7 20:02:20 2008 +1000
+> 
+>     CRED: Make execve() take advantage of copy-on-write credentials
+> 
+> (Added to Cc. I guess it's also nice to Cc linux-next on errors in -next code.)
+> 
+> I couldn't reproduce your original failure, but I've attempted to fix
+> it by reordering the mutex unlock and bprm free and removing the
+> extraneous unlock (see attached patch; it boots for me without
+> errors).
+> 
+> 
+> Vegard
+> 
+Hi,
 
-Hi Alan,
+Thanks, the patch fixes the "bad unlock balance" warning I was hitting
+with the next-20080821 patchset.
 
-On Thu, 21 Aug 2008 11:21:51 +0100 Alan Cox <alan@lxorguk.ukuu.org.uk> wrot=
-e:
->
-> On Thu, 21 Aug 2008 18:03:08 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
->=20
-> > Just overlapping context of changes. I fixed it up (see below).  I assu=
-me
-> > that the err -> dev_err changes could be added to your tree, Alan.
->=20
-> I took that as a hint and have done so.
+Tested-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 
-Great, thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__21_Aug_2008_22_14_21_+1000_kODNh0Q3mb7K9OQ5
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkitXB0ACgkQjjKRsyhoI8yOugCeKRZy4ibr7HNCQrV/KwKkJw8u
-pA8An2J4BJKNO67dGg8pMP6ko4G88cAn
-=v2yV
------END PGP SIGNATURE-----
-
---Signature=_Thu__21_Aug_2008_22_14_21_+1000_kODNh0Q3mb7K9OQ5--
+-- 
+Thanks & Regards,
+Kamalesh Babulal,
+Linux Technology Center,
+IBM, ISTL.
