@@ -1,101 +1,68 @@
-From: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
-Subject: Re: linux-next: manual merge of the ftrace tree
-Date: Thu, 21 Aug 2008 00:03:18 -0400
-Message-ID: <20080821040317.GA19629@Krystal>
-References: <20080821130903.1df56278.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ttydev tree
+Date: Thu, 21 Aug 2008 18:03:08 +1000
+Message-ID: <20080821180308.141bccb7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from toq8-srv.bellnexxia.net ([209.226.175.204]:61325 "EHLO
-	toq8-srv.bellnexxia.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750880AbYHUEnR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Aug 2008 00:43:17 -0400
-Received: from toip4.srvr.bell.ca ([209.226.175.87])
-          by tomts16-srv.bellnexxia.net
-          (InterMail vM.5.01.06.13 201-253-122-130-113-20050324) with ESMTP
-          id <20080821040318.LMH1723.tomts16-srv.bellnexxia.net@toip4.srvr.bell.ca>
-          for <linux-next@vger.kernel.org>; Thu, 21 Aug 2008 00:03:18 -0400
-Content-Disposition: inline
-In-Reply-To: <20080821130903.1df56278.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43524 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754592AbYHUIDO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 21 Aug 2008 04:03:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Greg KH <greg@kroah.com>, Jason Baron <jbaron@redhat.com>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: linux-next@vger.kernel.org, Greg KH <greg@kroah.com>
 
-* Stephen Rothwell (sfr@canb.auug.org.au) wrote:
-> Hi all,
-> 
-> [I have reported this previously but something has changed slightly.]
-> 
-> Today's linux-next merge of the ftrace tree got a conflict in
-> kernel/module.c between commit bf8b9a59e335ca159aa4b3878ced0e94ea74cbc4
-> ("driver core: basic infrastructure for per-module dynamic debug
-> messages") from the driver-core tree and commit
-> e543dff1468a55cdff9932dd3a806524790cf0b3 ("tracing: Kernel Tracepoints")
-> from the ftrace tree.
-> 
+Hi Alan,
 
-Looks good to me, thanks !
+Today's linux-next merge of the ttydev tree got trivial conflicts in
+drivers/usb/serial/aircable.c and drivers/usb/serial/keyspan_pda.c
+between commit 7b4dc5ed3acb8410fd078a6876d01c206af803ed ("USB: remove use
+of err() in drivers/usb/serial") from the usb tree and commit
+9c3656d0341bc2763b3f4abc9484776ff28c1c12 ("tty-usbserial-kref") from the
+ttydev tree.
 
-Mathieu
-
-> Just overlapping additions.  I fixed it up (see below).
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
-> 
-> diff --cc kernel/module.c
-> index b610466,6962348..0000000
-> --- a/kernel/module.c
-> +++ b/kernel/module.c
-> @@@ -44,9 -44,9 +44,10 @@@
->   #include <linux/unwind.h>
->   #include <asm/uaccess.h>
->   #include <asm/cacheflush.h>
->  +#include <asm/sections.h>
->   #include <linux/license.h>
->   #include <asm/sections.h>
-> + #include <linux/tracepoint.h>
->   
->   #if 0
->   #define DEBUGP printk
-> @@@ -1866,7 -1832,8 +1867,9 @@@ static struct module *load_module(void 
->   #endif
->   	unsigned int markersindex;
->   	unsigned int markersstringsindex;
->  +	unsigned int verboseindex;
-> + 	unsigned int tracepointsindex;
-> + 	unsigned int tracepointsstringsindex;
->   	struct module *mod;
->   	long err = 0;
->   	void *percpu = NULL, *ptr = NULL; /* Stops spurious gcc warning */
-> @@@ -2153,7 -2120,9 +2156,10 @@@
->   	markersindex = find_sec(hdr, sechdrs, secstrings, "__markers");
->    	markersstringsindex = find_sec(hdr, sechdrs, secstrings,
->   					"__markers_strings");
->  +	verboseindex = find_sec(hdr, sechdrs, secstrings, "__verbose");
-> + 	tracepointsindex = find_sec(hdr, sechdrs, secstrings, "__tracepoints");
-> + 	tracepointsstringsindex = find_sec(hdr, sechdrs, secstrings,
-> + 					"__tracepoints_strings");
->   
->   	/* Now do relocations. */
->   	for (i = 1; i < hdr->e_shnum; i++) {
-> @@@ -2203,8 -2179,11 +2216,12 @@@
->   		marker_update_probe_range(mod->markers,
->   			mod->markers + mod->num_markers);
->   #endif
-> + #ifdef CONFIG_TRACEPOINTS
-> + 		tracepoint_update_probe_range(mod->tracepoints,
-> + 			mod->tracepoints + mod->num_tracepoints);
-> + #endif
-> + 	}
->  +	dynamic_printk_setup(mod, sechdrs, verboseindex, secstrings);
->   	err = module_finalize(hdr, sechdrs, mod);
->   	if (err < 0)
->   		goto cleanup;
+Just overlapping context of changes. I fixed it up (see below).  I assume
+that the err -> dev_err changes could be added to your tree, Alan.
 
 -- 
-Mathieu Desnoyers
-OpenPGP key fingerprint: 8CD5 52C3 8E3C 4140 715F  BA06 3F25 A8FE 3BAE 9A68
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+diff --cc drivers/usb/serial/aircable.c
+index 27ea680,67dc982..0000000
+--- a/drivers/usb/serial/aircable.c
++++ b/drivers/usb/serial/aircable.c
+@@@ -287,9 -287,8 +287,9 @@@ static void aircable_read(struct work_s
+  
+  	tty_prepare_flip_string(tty, &data, count);
+  	if (!data) {
+ -		err("%s- kzalloc(%d) failed.", __func__, count);
+ +		dev_err(&port->dev, "%s- kzalloc(%d) failed.\n",
+ +			__func__, count);
+- 		return;
++ 		goto out;
+  	}
+  
+  	serial_buf_get(priv->rx_buf, data, count);
+diff --cc drivers/usb/serial/keyspan_pda.c
+index 507f8bd,d799883..0000000
+--- a/drivers/usb/serial/keyspan_pda.c
++++ b/drivers/usb/serial/keyspan_pda.c
+@@@ -261,9 -262,10 +262,11 @@@ static void keyspan_pda_rx_interrupt(st
+  exit:
+  	retval = usb_submit_urb(urb, GFP_ATOMIC);
+  	if (retval)
+ -		err("%s - usb_submit_urb failed with result %d",
+ -		     __func__, retval);
+ +		dev_err(&port->dev,
+ +			"%s - usb_submit_urb failed with result %d\n",
+ +			__func__, retval);
++ out:
++ 	tty_kref_put(tty);		     
+  }
+  
+  
