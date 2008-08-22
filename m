@@ -1,47 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: merge conflicts in firmware tree
-Date: Fri, 22 Aug 2008 14:34:43 +1000
-Message-ID: <20080822143443.1da1a0c8.sfr@canb.auug.org.au>
+Subject: linux-next: pcmcia tree build failure
+Date: Fri, 22 Aug 2008 14:52:31 +1000
+Message-ID: <20080822145231.d95b789b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__22_Aug_2008_14_34_43_+1000_GcDoiLc8M_Ze9Uq6"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38304 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59468 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751015AbYHVEev (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 22 Aug 2008 00:34:51 -0400
+	id S1752097AbYHVEwh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 Aug 2008 00:52:37 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: linux-next@vger.kernel.org, Jaswinder Singh <jaswinder@infradead.org>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Fri__22_Aug_2008_14_34_43_+1000_GcDoiLc8M_Ze9Uq6
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Dominik,
 
-Hi David,
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-The linux-next merge of the firmware tree get conflicts in
-drivers/media/dvb/ttpci/Kconfig and drivers/media/dvb/ttpci/Makefile.
-There conflicts are now against Linus' tree and so could they be resolved
-in the firmware tree (by merging at least 2.6.27-rc1), please?
+ERROR: "cs_debug_level" [drivers/pcmcia/pcmcia_core.ko] undefined!
 
---=20
+Caused by commit e84d3a8fd37981178933e706432fa9f763f8ba6a ("pcmcia: fix
+CONFIG_DEBUG and dev_debug in pcmcia_core.o") ?
+
+I added the following patch.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__22_Aug_2008_14_34_43_+1000_GcDoiLc8M_Ze9Uq6
-Content-Type: application/pgp-signature
+>From e1469fe9d72730c25adb94872a7b2783e37cc090 Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 22 Aug 2008 14:50:21 +1000
+Subject: [PATCH] pcmcia: fix cs_debug_level availablility
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/pcmcia/cs.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-iEYEARECAAYFAkiuQeMACgkQjjKRsyhoI8wiPwCgs3xXoFS23D2pWtps0TFiP3HF
-JTkAoIuoD9T2/ygjdsp7J7Qv5aq/SuxK
-=unNM
------END PGP SIGNATURE-----
-
---Signature=_Fri__22_Aug_2008_14_34_43_+1000_GcDoiLc8M_Ze9Uq6--
+diff --git a/drivers/pcmcia/cs.c b/drivers/pcmcia/cs.c
+index fcc6145..48386f3 100644
+--- a/drivers/pcmcia/cs.c
++++ b/drivers/pcmcia/cs.c
+@@ -61,7 +61,7 @@ INT_MODULE_PARM(unreset_limit,	30);		/* unreset_check's */
+ /* Access speed for attribute memory windows */
+ INT_MODULE_PARM(cis_speed,	300);		/* ns */
+ 
+-#ifdef DEBUG
++#ifdef CONFIG_PCMCIA_DEBUG
+ static int pc_debug;
+ 
+ module_param(pc_debug, int, 0644);
+-- 
+1.5.6.3
