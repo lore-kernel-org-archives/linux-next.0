@@ -1,57 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: pcmcia tree build failure
-Date: Fri, 22 Aug 2008 14:52:31 +1000
-Message-ID: <20080822145231.d95b789b.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH -next] microcode_amd: fix shift warning
+Date: Fri, 22 Aug 2008 06:55:34 +0200
+Message-ID: <20080822045534.GA3686@elte.hu>
+References: <20080821134351.2b19ac2d.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59468 "EHLO smtps.tip.net.au"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:33530 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752097AbYHVEwh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 22 Aug 2008 00:52:37 -0400
+	id S1751109AbYHVEz4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 Aug 2008 00:55:56 -0400
+Content-Disposition: inline
+In-Reply-To: <20080821134351.2b19ac2d.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: linux-next@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Peter Oruba <peter.oruba@amd.com>, x86@kernel.org, linux-next@vger.kernel.org, akpm <akpm@linux-foundation.org>
 
-Hi Dominik,
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+* Randy Dunlap <randy.dunlap@oracle.com> wrote:
 
-ERROR: "cs_debug_level" [drivers/pcmcia/pcmcia_core.ko] undefined!
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> microcode_amd.c uses ">> 32" on a 32-bit value, so gcc warns about that.
+> The code could use something like this *untested* patch.
+> 
+> linux-next-20080821/arch/x86/kernel/microcode_amd.c:229: warning: right shift count >= width of type
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-Caused by commit e84d3a8fd37981178933e706432fa9f763f8ba6a ("pcmcia: fix
-CONFIG_DEBUG and dev_debug in pcmcia_core.o") ?
+applied to tip/x86/microcode - thanks Randy!
 
-I added the following patch.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
->From e1469fe9d72730c25adb94872a7b2783e37cc090 Mon Sep 17 00:00:00 2001
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 22 Aug 2008 14:50:21 +1000
-Subject: [PATCH] pcmcia: fix cs_debug_level availablility
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/pcmcia/cs.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/pcmcia/cs.c b/drivers/pcmcia/cs.c
-index fcc6145..48386f3 100644
---- a/drivers/pcmcia/cs.c
-+++ b/drivers/pcmcia/cs.c
-@@ -61,7 +61,7 @@ INT_MODULE_PARM(unreset_limit,	30);		/* unreset_check's */
- /* Access speed for attribute memory windows */
- INT_MODULE_PARM(cis_speed,	300);		/* ns */
- 
--#ifdef DEBUG
-+#ifdef CONFIG_PCMCIA_DEBUG
- static int pc_debug;
- 
- module_param(pc_debug, int, 0644);
--- 
-1.5.6.3
+	Ingo
