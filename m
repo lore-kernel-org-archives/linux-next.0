@@ -1,34 +1,60 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH -next] microcode_amd: fix shift warning
-Date: Fri, 22 Aug 2008 06:55:34 +0200
-Message-ID: <20080822045534.GA3686@elte.hu>
-References: <20080821134351.2b19ac2d.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ttydev tree
+Date: Fri, 22 Aug 2008 15:51:29 +1000
+Message-ID: <20080822155129.ac486353.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:33530 "EHLO mx2.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33120 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751109AbYHVEz4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 22 Aug 2008 00:55:56 -0400
-Content-Disposition: inline
-In-Reply-To: <20080821134351.2b19ac2d.randy.dunlap@oracle.com>
+	id S1752669AbYHVFvk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 Aug 2008 01:51:40 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Peter Oruba <peter.oruba@amd.com>, x86@kernel.org, linux-next@vger.kernel.org, akpm <akpm@linux-foundation.org>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: linux-next@vger.kernel.org, Greg KH <greg@kroah.com>
 
+Hi Alan,
 
-* Randy Dunlap <randy.dunlap@oracle.com> wrote:
+Today's linux-next merge of the ttydev tree got a conflict in
+drivers/char/tty_io.c between commit
+e9b4b8816d7516318a3472f600ad9734e300c7bc ("device create: char: convert
+device_create_drvdata to device_create") from the driver-core tree and
+commit 05d425154eb1c1c053be5e54dcc4b1db36b15d3b("tty-move-special-cases")
+from the ttydev tree.
 
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> microcode_amd.c uses ">> 32" on a 32-bit value, so gcc warns about that.
-> The code could use something like this *untested* patch.
-> 
-> linux-next-20080821/arch/x86/kernel/microcode_amd.c:229: warning: right shift count >= width of type
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+The former renamed a function used in the code that the latter moved.  I
+fixed it up (see below).
 
-applied to tip/x86/microcode - thanks Randy!
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-	Ingo
+diff --git a/drivers/char/pty.c b/drivers/char/pty.c
+index af2ab67..328e8ac 100644
+--- a/drivers/char/pty.c
++++ b/drivers/char/pty.c
+@@ -535,7 +535,7 @@ static void __init unix98_pty_init(void)
+ 	if (cdev_add(&ptmx_cdev, MKDEV(TTYAUX_MAJOR, 2), 1) ||
+ 	    register_chrdev_region(MKDEV(TTYAUX_MAJOR, 2), 1, "/dev/ptmx") < 0)
+ 		panic("Couldn't register /dev/ptmx driver\n");
+-	device_create_drvdata(tty_class, NULL, MKDEV(TTYAUX_MAJOR, 2), NULL, "ptmx");
++	device_create(tty_class, NULL, MKDEV(TTYAUX_MAJOR, 2), NULL, "ptmx");
+ }
+ 
+ #else
+diff --git a/drivers/char/vt.c b/drivers/char/vt.c
+index 06a840d..2ec7bfe 100644
+--- a/drivers/char/vt.c
++++ b/drivers/char/vt.c
+@@ -2931,7 +2931,7 @@ int __init vty_init(const struct file_operations *console_fops)
+ 	if (cdev_add(&vc0_cdev, MKDEV(TTY_MAJOR, 0), 1) ||
+ 	    register_chrdev_region(MKDEV(TTY_MAJOR, 0), 1, "/dev/vc/0") < 0)
+ 		panic("Couldn't register /dev/tty0 driver\n");
+-	device_create_drvdata(tty_class, NULL, MKDEV(TTY_MAJOR, 0), NULL, "tty0");
++	device_create(tty_class, NULL, MKDEV(TTY_MAJOR, 0), NULL, "tty0");
+ 
+ 	vcs_init();
+ 
