@@ -1,60 +1,247 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ttydev tree
-Date: Fri, 22 Aug 2008 15:51:29 +1000
-Message-ID: <20080822155129.ac486353.sfr@canb.auug.org.au>
+Subject: linux-next: Tree for August 22
+Date: Fri, 22 Aug 2008 17:34:15 +1000
+Message-ID: <20080822173415.6958cbcc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__22_Aug_2008_17_34_15_+1000_3r9F.fL2bEG5J9nG"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33120 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56968 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752669AbYHVFvk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 22 Aug 2008 01:51:40 -0400
+	id S1752653AbYHVHe3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 Aug 2008 03:34:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: linux-next@vger.kernel.org, Greg KH <greg@kroah.com>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-Hi Alan,
+--Signature=_Fri__22_Aug_2008_17_34_15_+1000_3r9F.fL2bEG5J9nG
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the ttydev tree got a conflict in
-drivers/char/tty_io.c between commit
-e9b4b8816d7516318a3472f600ad9734e300c7bc ("device create: char: convert
-device_create_drvdata to device_create") from the driver-core tree and
-commit 05d425154eb1c1c053be5e54dcc4b1db36b15d3b("tty-move-special-cases")
-from the ttydev tree.
+Hi all,
 
-The former renamed a function used in the code that the latter moved.  I
-fixed it up (see below).
+Changes since next-20080821:
 
--- 
+The pcmcia tree gained a build fix patch.
+
+The ttydev tree gained a conflict against the driver-core tree.
+
+I have also applied the following patches for known problems:
+
+	Add cuImage.mpc866ads to the bootwrapper as a cuboot-8xx target
+	powerpc: export CMO_PageSize
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+(patches at
+http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups, it is also built with powerpc allnoconfig,
+44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
+
+Below is a summary of the state of the merge.
+
+We are up to 112 trees (counting Linus' and 14 trees of patches pending for
+Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
-diff --git a/drivers/char/pty.c b/drivers/char/pty.c
-index af2ab67..328e8ac 100644
---- a/drivers/char/pty.c
-+++ b/drivers/char/pty.c
-@@ -535,7 +535,7 @@ static void __init unix98_pty_init(void)
- 	if (cdev_add(&ptmx_cdev, MKDEV(TTYAUX_MAJOR, 2), 1) ||
- 	    register_chrdev_region(MKDEV(TTYAUX_MAJOR, 2), 1, "/dev/ptmx") < 0)
- 		panic("Couldn't register /dev/ptmx driver\n");
--	device_create_drvdata(tty_class, NULL, MKDEV(TTYAUX_MAJOR, 2), NULL, "ptmx");
-+	device_create(tty_class, NULL, MKDEV(TTYAUX_MAJOR, 2), NULL, "ptmx");
- }
- 
- #else
-diff --git a/drivers/char/vt.c b/drivers/char/vt.c
-index 06a840d..2ec7bfe 100644
---- a/drivers/char/vt.c
-+++ b/drivers/char/vt.c
-@@ -2931,7 +2931,7 @@ int __init vty_init(const struct file_operations *console_fops)
- 	if (cdev_add(&vc0_cdev, MKDEV(TTY_MAJOR, 0), 1) ||
- 	    register_chrdev_region(MKDEV(TTY_MAJOR, 0), 1, "/dev/vc/0") < 0)
- 		panic("Couldn't register /dev/tty0 driver\n");
--	device_create_drvdata(tty_class, NULL, MKDEV(TTY_MAJOR, 0), NULL, "tty0");
-+	device_create(tty_class, NULL, MKDEV(TTY_MAJOR, 0), NULL, "tty0");
- 
- 	vcs_init();
- 
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging powerpc-merge/merge
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sparc-current/master
+Merging sound-current/for-linus
+Merging arm-current/master
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/master
+Merging quilt/driver-core.current
+Merging quilt/usb.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-2.6.26
+Merging dwmw2/master
+Merging arm/devel
+Merging avr32/avr32-arch
+Merging cris/for-next
+Merging ia64/test
+Merging quilt/m68k
+Merging m68knommu/for-next
+Merging mips/mips-for-linux-next
+Merging parisc/master
+Merging powerpc/powerpc-next
+Merging 4xx/next
+Merging galak/powerpc-next
+Merging s390/features
+Merging sh/master
+Merging sparc/master
+Merging xtensa/master
+Merging quilt/driver-core
+Merging quilt/usb
+Merging tip-core/auto-core-next
+Merging cpus4096/auto-cpus4096-next
+Merging ftrace/auto-ftrace-next
+CONFLICT (content): Merge conflict in kernel/module.c
+Merging genirq/auto-genirq-next
+Merging safe-poison-pointers/auto-safe-poison-pointers-next
+Merging sched/auto-sched-next
+Merging stackprotector/auto-stackprotector-next
+CONFLICT (content): Merge conflict in kernel/fork.c
+Merging timers/auto-timers-next
+Merging x86/auto-x86-next
+CONFLICT (content): Merge conflict in include/asm-x86/pda.h
+Merging pci/linux-next
+Merging quilt/device-mapper
+Merging hid/mm
+Merging quilt/i2c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/stable
+CONFLICT (content): Merge conflict in drivers/media/video/zr364xx.c
+Merging jfs/next
+Merging kbuild/master
+Merging quilt/ide
+Merging libata/NEXT
+Merging nfs/linux-next
+Merging xfs/master
+Merging infiniband/for-next
+Merging acpi/test
+Merging blackfin/for-linus
+Merging nfsd/nfsd-next
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/master
+CONFLICT (content): Merge conflict in include/asm-x86/kvm.h
+Merging dlm/next
+Merging scsi/master
+Merging tests/master
+CONFLICT (content): Merge conflict in lib/Kconfig.debug
+Merging ocfs2/linux-next
+Merging ext4/next
+Merging async_tx/next
+Merging udf/for_next
+Merging net/master
+Merging mtd/master
+Merging wireless/master
+Merging crypto/master
+CONFLICT (content): Merge conflict in include/asm-x86/cpufeature.h
+Merging vfs/for-next
+CONFLICT (content): Merge conflict in arch/ia64/ia32/sys_ia32.c
+CONFLICT (content): Merge conflict in arch/powerpc/kernel/sys_ppc32.c
+CONFLICT (content): Merge conflict in fs/nfsd/export.c
+CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_export.c
+CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_iops.c
+Merging sound/for-next
+Merging cpufreq/next
+Merging v9fs/for-next
+Merging quilt/rr
+Merging cifs/master
+Merging mmc/next
+Merging gfs2/master
+Merging input/next
+Applying input/cm109: fix up for info() removal
+Merging semaphore/semaphore
+Merging semaphore-removal/semaphore-removal
+Merging bkl-removal/bkl-removal
+Merging trivial/next
+CONFLICT (content): Merge conflict in Documentation/edac.txt
+CONFLICT (content): Merge conflict in include/linux/securebits.h
+Merging ubifs/linux-next
+Merging lsm/for-next
+Merging block/for-next
+Merging embedded/master
+Merging firmware/master
+CONFLICT (content): Merge conflict in drivers/media/dvb/ttpci/Kconfig
+CONFLICT (content): Merge conflict in drivers/media/dvb/ttpci/Makefile
+Merging pcmcia/master
+Applying pcmcia: fix cs_debug_level availablility
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging kmemcheck/auto-kmemcheck-next
+CONFLICT (content): Merge conflict in MAINTAINERS
+CONFLICT (content): Merge conflict in arch/x86/kernel/process_64.c
+CONFLICT (content): Merge conflict in arch/x86/kernel/traps_64.c
+CONFLICT (content): Merge conflict in mm/Makefile
+CONFLICT (content): Merge conflict in mm/slab.c
+CONFLICT (content): Merge conflict in mm/slub.c
+Merging generic-ipi/auto-generic-ipi-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging voltage/reg-for-linus
+Merging security-testing/next
+Merging lblnet/master
+Merging quilt/ttydev
+CONFLICT (content): Merge conflict in drivers/char/tty_io.c
+CONFLICT (content): Merge conflict in drivers/net/usb/hso.c
+CONFLICT (content): Merge conflict in drivers/usb/serial/aircable.c
+CONFLICT (content): Merge conflict in drivers/usb/serial/keyspan_pda.c
+CONFLICT (content): Merge conflict in drivers/usb/serial/safe_serial.c
+Merging agp/agp-next
+Merging creds/next-creds
+CONFLICT (content): Merge conflict in fs/namespace.c
+CONFLICT (content): Merge conflict in fs/nfsd/nfs4recover.c
+CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_linux.h
+CONFLICT (content): Merge conflict in fs/xfs/xfs_inode.c
+CONFLICT (content): Merge conflict in fs/xfs/xfs_vnodeops.c
+CONFLICT (content): Merge conflict in include/linux/capability.h
+CONFLICT (add/add): Merge conflict in include/linux/cred.h
+CONFLICT (content): Merge conflict in kernel/exit.c
+CONFLICT (content): Merge conflict in kernel/fork.c
+CONFLICT (content): Merge conflict in security/commoncap.c
+CONFLICT (content): Merge conflict in security/selinux/hooks.c
+CONFLICT (content): Merge conflict in security/smack/smack_lsm.c
+Merging oprofile/auto-oprofile-next
+Merging fastboot/auto-fastboot-next
+CONFLICT (content): Merge conflict in include/linux/init.h
+Applying Add cuImage.mpc866ads to the bootwrapper as a cuboot-8xx target
+Applying powerpc: export CMO_PageSize
+
+--Signature=_Fri__22_Aug_2008_17_34_15_+1000_3r9F.fL2bEG5J9nG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkiua/cACgkQjjKRsyhoI8y1IgCfbWrpiLaAGBTCYRcWFonbWYIU
+3vIAn0j8mHtfrRuAhislhPhiyLV9dn8k
+=vrCu
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__22_Aug_2008_17_34_15_+1000_3r9F.fL2bEG5J9nG--
