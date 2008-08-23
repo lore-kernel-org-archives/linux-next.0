@@ -1,36 +1,63 @@
-From: Dominik Brodowski <linux@dominikbrodowski.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: pcmcia tree build failure
-Date: Sat, 23 Aug 2008 02:40:01 +0200
-Message-ID: <20080823004001.GA15344@isilmar.linta.de>
+Date: Sat, 23 Aug 2008 14:30:54 +1000
+Message-ID: <20080823143054.43c7748c.sfr@canb.auug.org.au>
 References: <20080822145231.d95b789b.sfr@canb.auug.org.au>
+	<20080823004001.GA15344@isilmar.linta.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__23_Aug_2008_14_30_54_+1000_yfB4CnnGhxBtj0zW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from isilmar.linta.de ([213.133.102.198]:41122 "EHLO linta.de"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751276AbYHWAkD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 22 Aug 2008 20:40:03 -0400
-Content-Disposition: inline
-In-Reply-To: <20080822145231.d95b789b.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43033 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750751AbYHWEbD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 23 Aug 2008 00:31:03 -0400
+In-Reply-To: <20080823004001.GA15344@isilmar.linta.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
 Cc: linux-next@vger.kernel.org
 
-Hi Stephen,
+--Signature=_Sat__23_Aug_2008_14_30_54_+1000_yfB4CnnGhxBtj0zW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 22, 2008 at 02:52:31PM +1000, Stephen Rothwell wrote:
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
-> 
-> ERROR: "cs_debug_level" [drivers/pcmcia/pcmcia_core.ko] undefined!
-> 
-> Caused by commit e84d3a8fd37981178933e706432fa9f763f8ba6a ("pcmcia: fix
-> CONFIG_DEBUG and dev_debug in pcmcia_core.o") ?
+Hi Dominik,
 
-ooops
+On Sat, 23 Aug 2008 02:40:01 +0200 Dominik Brodowski <linux@dominikbrodowsk=
+i.net> wrote:
+>
+> On Fri, Aug 22, 2008 at 02:52:31PM +1000, Stephen Rothwell wrote:
+> > Today's linux-next build (x86_64 allmodconfig) failed like this:
+> >=20
+> > ERROR: "cs_debug_level" [drivers/pcmcia/pcmcia_core.ko] undefined!
+> >=20
+> > Caused by commit e84d3a8fd37981178933e706432fa9f763f8ba6a ("pcmcia: fix
+> > CONFIG_DEBUG and dev_debug in pcmcia_core.o") ?
+>=20
+> ooops
+>=20
+> > I added the following patch.
+> Thanks. Squashed into the (much cleaned up) pcmcia git tree.
 
-> I added the following patch.
-Thanks. Squashed into the (much cleaned up) pcmcia git tree.
+Thanks.
 
-Best,
-	Dominik
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Sat__23_Aug_2008_14_30_54_+1000_yfB4CnnGhxBtj0zW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkivkn4ACgkQjjKRsyhoI8xVxQCgl9qPRO73M11Ct3ApdnejAd9J
+Ht4AnRDFQX808KY8f61FGHYEY8sbSW0G
+=Sf8D
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__23_Aug_2008_14_30_54_+1000_yfB4CnnGhxBtj0zW--
