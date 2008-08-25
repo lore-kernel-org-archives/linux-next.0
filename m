@@ -1,41 +1,43 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH] ftrace: objcopy version test for local symbols
-Date: Mon, 25 Aug 2008 21:01:03 +0200
-Message-ID: <20080825190103.GA24029@elte.hu>
-References: <20080825130117.33fe34bc.sfr@canb.auug.org.au> <20080825060934.GB14993@elte.hu> <alpine.DEB.1.10.0808251434000.23923@gandalf.stny.rr.com>
+From: Jeremy Fitzhardinge <jeremy@goop.org>
+Subject: Re: linux-next: manual merge of the sparseirq tree
+Date: Mon, 25 Aug 2008 12:37:27 -0700
+Message-ID: <48B309F7.20606@goop.org>
+References: <20080825193243.fdf24fcc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756641AbYHYTBi@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.1.10.0808251434000.23923@gandalf.stny.rr.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from gw.goop.org ([64.81.55.164]:49627 "EHLO mail.goop.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753562AbYHYTha (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 Aug 2008 15:37:30 -0400
+In-Reply-To: <20080825193243.fdf24fcc.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, Yinghai Lu <yhlu.kernel@gmail.com>
+
+Stephen Rothwell wrote:
+> [Ingo, thanks for the heads up about this ...]
+>
+> Hi Ingo,
+>
+> Today's linux-next merge of the sparseirq tree got a conflict in
+> arch/x86/xen/spinlock.c between commit
+> 168d2f464ab9860f0d1e66cf1f9684973222f1c6 ("xen: save previous spinlock
+> when blocking") from the x86 tree and commit
+> fb6dc57946f9ebfeac546dd0698d9f065c191668 ("x86: move kstat_irqs from
+> kstat to irq_desc") from the sparseirq tree.
+>
+> I fixed it up (see below) and can carry it.
+>   
+
+This is a diff-diff?  The change:
+
+- 	kstat_this_cpu.irqs[irq]++;
+ -	/* block until irq becomes pending */
+ -	xen_poll_irq(irq);
++ 	kstat_irqs_this_cpu(irq_to_desc(irq))++;
 
 
-* Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> From: Steven Rostedt <srostedt@redhat.com>
-> Subject: ftrace: objcopy version test for local symbols
-> 
-> The --globalize-symbols option came out in objcopy version 2.17.
-> If the kernel is being compiled on a system with a lower version of
-> objcopy, then we can not use the globalize / localize trick to
-> link to symbols pointing to local functions.
-> 
-> This patch tests the version of objcopy and will only use the trick
-> if the version is greater than or equal to 2.17. Otherwise, if an
-> object has only local functions within a section, it will give a
-> nice warning and recommend the user to upgrade their objcopy.
-> 
-> Leaving the symbols unrecorded is not that big of a deal, since the
-> mcount record method changes the actual mcount code to be a simple
-> "ret" without recording registers or anything.
-> 
-> Signed-off-by: Steven Rostedt <srostedt@redhat.com>
-
-applied to tip/tracing/ftrace, also have integrated it into 
-auto-ftrace-next. (without much testing - i hope it goes well)
-
-	Ingo
+looks fine.
