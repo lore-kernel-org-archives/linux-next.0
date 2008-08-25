@@ -1,43 +1,53 @@
-From: Jeremy Fitzhardinge <jeremy@goop.org>
-Subject: Re: linux-next: manual merge of the sparseirq tree
-Date: Mon, 25 Aug 2008 12:37:27 -0700
-Message-ID: <48B309F7.20606@goop.org>
-References: <20080825193243.fdf24fcc.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the hid tree
+Date: Tue, 26 Aug 2008 09:40:54 +1000
+Message-ID: <20080826094054.041d8d1d.sfr@canb.auug.org.au>
+References: <20080825144633.393096b5.sfr@canb.auug.org.au>
+	<20080825155056.GA17926@anvil.corenet.prv>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__26_Aug_2008_09_40_54_+1000_fKOyXyxhIc21E8jo"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gw.goop.org ([64.81.55.164]:49627 "EHLO mail.goop.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43885 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753562AbYHYTha (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Aug 2008 15:37:30 -0400
-In-Reply-To: <20080825193243.fdf24fcc.sfr@canb.auug.org.au>
+	id S1750935AbYHYXlE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 Aug 2008 19:41:04 -0400
+In-Reply-To: <20080825155056.GA17926@anvil.corenet.prv>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, Yinghai Lu <yhlu.kernel@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Jiri Kosina <jikos@jikos.cz>, linux-next@vger.kernel.org, Henrik Rydberg <rydberg@euromail.se>, Jiri Slaby <jirislaby@gmail.com>
 
-Stephen Rothwell wrote:
-> [Ingo, thanks for the heads up about this ...]
+--Signature=_Tue__26_Aug_2008_09_40_54_+1000_fKOyXyxhIc21E8jo
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Dmitry,
+
+On Mon, 25 Aug 2008 11:50:56 -0400 Dmitry Torokhov <dmitry.torokhov@gmail.c=
+om> wrote:
 >
-> Hi Ingo,
->
-> Today's linux-next merge of the sparseirq tree got a conflict in
-> arch/x86/xen/spinlock.c between commit
-> 168d2f464ab9860f0d1e66cf1f9684973222f1c6 ("xen: save previous spinlock
-> when blocking") from the x86 tree and commit
-> fb6dc57946f9ebfeac546dd0698d9f065c191668 ("x86: move kstat_irqs from
-> kstat to irq_desc") from the sparseirq tree.
->
-> I fixed it up (see below) and can carry it.
->   
+> I wonder what we should do in such case... are you going to use rerere
+> till we resync with Linus?
 
-This is a diff-diff?  The change:
+Yes, that is what happens (unless something dramatic changes :-)).
 
-- 	kstat_this_cpu.irqs[irq]++;
- -	/* block until irq becomes pending */
- -	xen_poll_irq(irq);
-+ 	kstat_irqs_this_cpu(irq_to_desc(irq))++;
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+--Signature=_Tue__26_Aug_2008_09_40_54_+1000_fKOyXyxhIc21E8jo
+Content-Type: application/pgp-signature
 
-looks fine.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkizQwYACgkQjjKRsyhoI8ynnACfU+wi6i70pmP+VYUfOcYGThan
+IjcAmgNZIiUxF/ZXKrghUeHsfJvUG6UY
+=uAFc
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__26_Aug_2008_09_40_54_+1000_fKOyXyxhIc21E8jo--
