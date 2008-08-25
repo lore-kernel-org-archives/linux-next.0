@@ -1,78 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next:  build failure
-Date: Mon, 25 Aug 2008 21:28:33 +1000
-Message-ID: <20080825212833.38550575.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the ftrace tree
+Date: Mon, 25 Aug 2008 21:56:47 +1000
+Message-ID: <20080825215647.28b9b780.sfr@canb.auug.org.au>
+References: <20080815115410.458633f1.sfr@canb.auug.org.au>
+	<20080825120140.af8e1fb5.sfr@canb.auug.org.au>
+	<20080825091643.GD9114@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754898AbYHYL2u@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__25_Aug_2008_21_56_47_+1000_h+Q2l6rzcMqPL5Tn"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35934 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752935AbYHYL5D (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 Aug 2008 07:57:03 -0400
+In-Reply-To: <20080825091643.GD9114@elte.hu>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Ingo Molnar <mingo@elte.hu>
-Cc: linux-next@vger.kernel.org, David Miller <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>, Jason Baron <jbaron@redhat.com>, Greg KH <greg@kroah.com>, Steven Rostedt <rostedt@goodmis.org>
+
+--Signature=_Mon__25_Aug_2008_21_56_47_+1000_h+Q2l6rzcMqPL5Tn
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Ingo,
 
-Today's linux-next build (sparc64 defconfig) failed like this:
+On Mon, 25 Aug 2008 11:16:43 +0200 Ingo Molnar <mingo@elte.hu> wrote:
+>
+> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>=20
+> > On Fri, 15 Aug 2008 11:54:10 +1000 Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote:
+> > >
+> > > Today's linux-next merge of the ftrace tree got a conflict in
+> > > kernel/module.c between commit 1b75321c2d0561d9ecfe3794fa939264f3eb7e=
+26
+> > > ("driver core: basic infrastructure for per-module dynamic debug
+> > > messages") from the driver-core tree and commit
+> > > e543dff1468a55cdff9932dd3a806524790cf0b3 ("tracing: Kernel Tracepoint=
+s")
+> > > from the ftrace tree.
+> > >=20
+> > > Overlapping additions.  I fixed it up. Probably worth a look once I
+> > > publish the tree.
+> >=20
+> > Today this has expanded to include commit=20
+> > be1c870c22e9b27170b5dd5028b6eaf2aab7b508 ("ftrace: enable mcount=20
+> > recording for modules") also from the ftrace tree.  I have fixed it up=
+=20
+> > as below.
+>=20
+> Thanks Stephen. I suspect there's not much we can do at this point to=20
+> resolve this conflict sooner than at the linux-next level, as Rusty uses=
+=20
+                                                                ^^^^^
+I assume you mean Greg.
 
-ERROR: "__BUILD_BUG_ON_non_constant" [drivers/net/sunvnet.ko] undefined!
-ERROR: "__BUILD_BUG_ON_non_constant" [drivers/block/sunvdc.ko] undefined!
+> Quilt queues.
 
-Probably intorduced by commit f5b5d41dd51a31fe70e3a04fb80a3b90b84c6a4e
-("debug: fix BUILD_BUG_ON() for non-constant expressions").
-
-The preprocessed code looks like this:
-
-static inline __attribute__((always_inline)) u32 vio_dring_avail(struct vio_dring_state *dr,
-      unsigned int ring_size)
-{
- do { (void)sizeof(char[1 - 2*!!(!is_power_of_2(ring_size))]); if (!__builtin_constant_p(!is_power_of_2(ring_size))) __BUILD_BUG_ON_non_constant++; } while (0);
-
- return (dr->pending -
-  ((dr->prod - dr->cons) & (ring_size - 1)));
-}
-
-I tried turning the above inline function into a macro to no avail.
-
-I applied the following patch (which is probably not what is wanted, but
-puts back what was there before).
-
-I see from LKML that this definition of BUILD_BUG_ON is to be replaced,
-so this is just a temporary measure.
-
--- 
+But yeah, not much we can do, but it is not a problem.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 25 Aug 2008 21:16:14 +1000
-Subject: [PATCH] revert BUILD_BUG_ON change
+--Signature=_Mon__25_Aug_2008_21_56_47_+1000_h+Q2l6rzcMqPL5Tn
+Content-Type: application/pgp-signature
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/linux/compiler.h |    6 ------
- 1 files changed, 0 insertions(+), 6 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index d7d313b..a1c082d 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -206,15 +206,9 @@ extern void __chk_io_ptr(const volatile void __iomem *);
-  * ( The linker trick relies on gcc optimizing out a multiplication with
-  *   constant zero - which should be reasonable enough. )
-  */
--#ifndef __ASSEMBLY__
--extern unsigned int __BUILD_BUG_ON_non_constant;
--#endif
--
- #define BUILD_BUG_ON(condition)					\
- do {								\
- 	(void)sizeof(char[1 - 2*!!(condition)]);		\
--	if (!__builtin_constant_p(condition))			\
--		__BUILD_BUG_ON_non_constant++;			\
- } while (0)
- 
- /*
--- 
-1.5.6.3
+iEYEARECAAYFAkiynf8ACgkQjjKRsyhoI8z4LQCfXGjkX2YF/8Uu6rrSvzo3n+YD
+zLsAoLUvDWlGZoVX0WxW3aai8hQtbAdI
+=xXNr
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__25_Aug_2008_21_56_47_+1000_h+Q2l6rzcMqPL5Tn--
