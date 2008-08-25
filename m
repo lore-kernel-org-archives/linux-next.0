@@ -1,38 +1,59 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: linux-next: ftrace tree build failure
-Date: Mon, 25 Aug 2008 12:46:09 -0400 (EDT)
-Message-ID: <alpine.DEB.1.10.0808251245400.23923@gandalf.stny.rr.com>
-References: <20080825130117.33fe34bc.sfr@canb.auug.org.au> <20080825060934.GB14993@elte.hu> <alpine.DEB.1.10.0808251239530.23923@gandalf.stny.rr.com>
+From: "Yinghai Lu" <yhlu.kernel@gmail.com>
+Subject: Re: linux-next: sparseirq tree build failure
+Date: Mon, 25 Aug 2008 10:42:54 -0700
+Message-ID: <86802c440808251042t79b9a9a7nd6fef3b9c3d37b25@mail.gmail.com>
+References: <20080825195024.d42b72e6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hrndva-omtalb.mail.rr.com ([71.74.56.123]:55299 "EHLO
-	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754025AbYHYQqP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Aug 2008 12:46:15 -0400
-In-Reply-To: <alpine.DEB.1.10.0808251239530.23923@gandalf.stny.rr.com>
+Received: from rv-out-0506.google.com ([209.85.198.236]:14025 "EHLO
+	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753752AbYHYRmz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Aug 2008 13:42:55 -0400
+Received: by rv-out-0506.google.com with SMTP id k40so1727499rvb.1
+        for <linux-next@vger.kernel.org>; Mon, 25 Aug 2008 10:42:55 -0700 (PDT)
+In-Reply-To: <20080825195024.d42b72e6.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org
+
+On Mon, Aug 25, 2008 at 2:50 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Ingo,
+>
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+>
+> arch/powerpc/platforms/cell/interrupt.c: In function 'handle_iic_irq':
+> arch/powerpc/platforms/cell/interrupt.c:257: error: 'struct kernel_stat' has no member named 'irqs'
+> arch/powerpc/kernel/irq.c: In function 'show_interrupts':
+> arch/powerpc/kernel/irq.c:193: error: 'struct kernel_stat' has no member named 'irqs'
+>
+> Presumably introduced by commit fb6dc57946f9ebfeac546dd0698d9f065c191668
+> ("x86: move kstat_irqs from kstat to irq_desc").
+>
+> Looks like there is more work here ...
+>
+> Its late, so I just dropped the whole tree for today.  We can try again
+> tomorrow.
+
+seems there is some merge problem...
+please check.
+
+diff --git a/include/linux/kernel_stat.h b/include/linux/kernel_stat.h
+index f106167..3cd7389 100644
+--- a/include/linux/kernel_stat.h
++++ b/include/linux/kernel_stat.h
+@@ -28,7 +28,7 @@ struct cpu_usage_stat {
+
+ struct kernel_stat {
+        struct cpu_usage_stat   cpustat;
+-#ifndef CONFIG_GENERIC_HARDIRQS
++#ifndef CONFIG_HAVE_SPARSE_IRQ
+        unsigned int irqs[NR_IRQS];
+ #endif
+ };
 
 
-
-
-On Mon, 25 Aug 2008, Steven Rostedt wrote:
-> > 
-> > ok. The binutils i've used for testing is 2.18 and this is indeed a new 
-> > option since 2.17. Steve?
-> 
-> 
-> Ouch! I didn't realize that.
-> 
-> OK, I can test to see if objdump is >= version 2.18 and if it is not, I 
-> can simply not mark those functions. The current mcount for MCOUNT_RECORD 
-> is simply a "ret". No saving of registers or anything.
-
->= 2.17?
-
-Hmm, I need to find a box with an old version of objcopy.
-
--- Steve
+YH
