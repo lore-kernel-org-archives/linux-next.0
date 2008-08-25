@@ -1,41 +1,46 @@
 From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the oprofile tree
-Date: Mon, 25 Aug 2008 11:13:41 +0200
-Message-ID: <20080825091341.GB9114@elte.hu>
-References: <20080825190822.591685e5.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the ftrace tree
+Date: Mon, 25 Aug 2008 11:16:43 +0200
+Message-ID: <20080825091643.GD9114@elte.hu>
+References: <20080815115410.458633f1.sfr@canb.auug.org.au> <20080825120140.af8e1fb5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:45144 "EHLO mx2.mail.elte.hu"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:37774 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756122AbYHYJOA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Aug 2008 05:14:00 -0400
+	id S1755590AbYHYJRJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 Aug 2008 05:17:09 -0400
 Content-Disposition: inline
-In-Reply-To: <20080825190822.591685e5.sfr@canb.auug.org.au>
+In-Reply-To: <20080825120140.af8e1fb5.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Robert Richter <robert.richter@amd.com>, Cyrill Gorcunov <gorcunov@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>, Jason Baron <jbaron@redhat.com>, Greg KH <greg@kroah.com>, Steven Rostedt <rostedt@goodmis.org>
 
 
 * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> Hi Ingo,
+> Hi All,
 > 
-> Today's linux-next merge of the oprofile tree got a conflict in
-> arch/x86/kernel/apic_32.c between commit
-> 274cfe5912eebe9d4e1a4c451fe617289a181fcf ("x86: apic - rearrange
-> functions and comments") from the x86 tree and commits
-> 286f571837ba9d67625afd015366d79345abb414 ("x86: apic_*.c: add description
-> to AMD's extended LVT functions"),
-> 09691616850b3614dfb44790e1e1419b6a7f5d13 ("x86: apic: export symbols for
-> extended interrupt LVT functions") and
-> 6aa360e6c16c145edf1837690e0f7aaea6b86ef3 ("x86: apic: changing export
-> symbols to *_GPL") from the oprofile tree.
+> On Fri, 15 Aug 2008 11:54:10 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Today's linux-next merge of the ftrace tree got a conflict in
+> > kernel/module.c between commit 1b75321c2d0561d9ecfe3794fa939264f3eb7e26
+> > ("driver core: basic infrastructure for per-module dynamic debug
+> > messages") from the driver-core tree and commit
+> > e543dff1468a55cdff9932dd3a806524790cf0b3 ("tracing: Kernel Tracepoints")
+> > from the ftrace tree.
+> > 
+> > Overlapping additions.  I fixed it up. Probably worth a look once I
+> > publish the tree.
 > 
-> The former moved some code that was updated by the latter.  I fixed it 
-> up (see below) and can carry it.
+> Today this has expanded to include commit 
+> be1c870c22e9b27170b5dd5028b6eaf2aab7b508 ("ftrace: enable mcount 
+> recording for modules") also from the ftrace tree.  I have fixed it up 
+> as below.
 
-thanks Stephen - conflict resolution looks good to me.
+Thanks Stephen. I suspect there's not much we can do at this point to 
+resolve this conflict sooner than at the linux-next level, as Rusty uses 
+Quilt queues.
 
 	Ingo
