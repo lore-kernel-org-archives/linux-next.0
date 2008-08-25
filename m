@@ -1,58 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: input tree build failure
-Date: Mon, 25 Aug 2008 10:01:52 +1000
-Message-ID: <20080825100152.c13279d3.sfr@canb.auug.org.au>
-References: <20080819163148.159c7d8c.sfr@canb.auug.org.au>
-	<20080819200057.GD10502@kroah.com>
-	<20080820154924.51ac3495.sfr@canb.auug.org.au>
-	<20080822162832.ZZRA012@mailhub.coreip.homeip.net>
-	<48AF3A6A.6040505@db.org>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: CONFIG_KMOD breakage in next kernel
+Date: Mon, 25 Aug 2008 10:13:58 +1000
+Message-ID: <200808251013.58975.rusty@rustcorp.com.au>
+References: <s5h3akzwtki.wl%tiwai@suse.de> <1219256165.3502.10.camel@johannes.berg>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__25_Aug_2008_10_01_52_+1000_2+ZBLKBtJOr8fIRF"
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50521 "EHLO smtps.tip.net.au"
+Received: from ozlabs.org ([203.10.76.45]:44758 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750909AbYHYACD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 24 Aug 2008 20:02:03 -0400
-In-Reply-To: <48AF3A6A.6040505@db.org>
+	id S1752412AbYHYAOF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 24 Aug 2008 20:14:05 -0400
+In-Reply-To: <1219256165.3502.10.camel@johannes.berg>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Alfred E. Heggestad" <aeh@db.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Takashi Iwai <tiwai@suse.de>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, video4linux-list@redhat.com
 
---Signature=_Mon__25_Aug_2008_10_01_52_+1000_2+ZBLKBtJOr8fIRF
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Alfred,
-
-On Sat, 23 Aug 2008 00:15:06 +0200 "Alfred E. Heggestad" <aeh@db.org> wrote:
+On Thursday 21 August 2008 04:16:05 Johannes Berg wrote:
+> Hi,
 >
-> I have tested the linux-next kernel on my i386 laptop with a
-> CM109 device (Komunikate KIP1000) and it is still working.
->=20
-> This patch does some minor cleanups, and adds the missing
-> newline to some debug statements.
+> > I found that CONFIG_KMOD was already removed in linux-next tree.
+> > This seems to result in many breakages.  For example, I cannot mount a
+> > FAT device automatically because of failure of automatic loading of
+> > nls modules.
+>
+> This is odd. I had posted a long series of patches removing all of the
+> users I had found (similar grep like the one you used), see
+> http://lkml.org/lkml/2008/7/9/150 for the whole thread.
+>
+>
+> For some reason, only seven of those eleven patches ended up in the
+> kernel, you had taken the alsa one and Rusty posted only six of them.
 
-Ooops!  Thanks, Alfred.
+OK, not quite sure what happened.  I'll grab the rest and push them into 
+tomorrow's linux-next.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+For today, I'll pull out the CONFIG_KMOD removal.
 
---Signature=_Mon__25_Aug_2008_10_01_52_+1000_2+ZBLKBtJOr8fIRF
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkix9nAACgkQjjKRsyhoI8zDUQCgvhmFicFi0Gxk8Z4cC6IJzFlB
-/AUAniMxQpSlBxHGxs0929sj1zI3kKk+
-=NRFc
------END PGP SIGNATURE-----
-
---Signature=_Mon__25_Aug_2008_10_01_52_+1000_2+ZBLKBtJOr8fIRF--
+Thanks,
+Rusty.
