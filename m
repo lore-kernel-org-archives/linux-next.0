@@ -1,40 +1,40 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: linux-next: manual merge of the hid tree
-Date: Mon, 25 Aug 2008 11:50:56 -0400
-Message-ID: <20080825155056.GA17926@anvil.corenet.prv>
-References: <20080825144633.393096b5.sfr@canb.auug.org.au>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: linux-next:  tree build failure
+Date: Mon, 25 Aug 2008 12:36:10 -0400 (EDT)
+Message-ID: <alpine.DEB.1.10.0808251234550.23923@gandalf.stny.rr.com>
+References: <20080825203333.e63a024a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from py-out-1112.google.com ([64.233.166.183]:53764 "EHLO
-	py-out-1112.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753242AbYHYPuy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Aug 2008 11:50:54 -0400
-Received: by py-out-1112.google.com with SMTP id p76so1083854pyb.10
-        for <linux-next@vger.kernel.org>; Mon, 25 Aug 2008 08:50:53 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20080825144633.393096b5.sfr@canb.auug.org.au>
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.123]:43672 "EHLO
+	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753925AbYHYQgN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Aug 2008 12:36:13 -0400
+In-Reply-To: <20080825203333.e63a024a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jiri Kosina <jikos@jikos.cz>, linux-next@vger.kernel.org, Henrik Rydberg <rydberg@euromail.se>, Jiri Slaby <jirislaby@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
 
-On Mon, Aug 25, 2008 at 02:46:33PM +1000, Stephen Rothwell wrote:
-> Hi Jiri,
-> 
-> Today's linux-next merge of the hid tree got a conflict in
-> drivers/hid/usbhid/hid-quirks.c between commit
-> f89bd95c5c946776f116ffeb997653d4193d6a35 ("Input: bcm5974 - add driver
-> for Macbook Air and Pro Penryn touchpads") from Linus' tree and
-> commit8216ac91aeff627cc6169df46e0fbb2097716f56 ("HID: move apple quirks")
-> from the hid tree.
-> 
-> I used the version of that file from the hid tree and then added the
-> following patch (which may be completely wrong).
-> 
 
-I wonder what we should do in such case... are you going to use rerere
-till we resync with Linus?
+On Mon, 25 Aug 2008, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next build (powerpc allyesconfig) failed like this:
+> 
+> kernel/trace/ftrace.c:317: error: redefinition of 'ftrace_release'
+> include/linux/ftrace.h:207: error: previous definition of 'ftrace_release' was here
+> 
+> Introduced by commit 61e679bf257baf9a089641999cf618e92f07b5dd ("ftrace:
+> remove old pointers to mcount").
+> 
+> I applied the following patch.
 
--- 
-Dmitry
+I'm also working on PPC right now, and saw this. I wrote a patch up, since 
+it actually can be used with either version of the Dynamic Tracing.
+We can keep this one for now, util I solve some of the issues I'm working 
+on.
+
+Thanks,
+
+-- Steve
