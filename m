@@ -1,62 +1,99 @@
-From: "Yinghai Lu" <yhlu.kernel@gmail.com>
-Subject: Re: linux-next: sparseirq tree build failure
-Date: Mon, 25 Aug 2008 10:45:22 -0700
-Message-ID: <86802c440808251045j351756c1oc825fc6f39a026a@mail.gmail.com>
-References: <20080825195024.d42b72e6.sfr@canb.auug.org.au>
-	 <86802c440808251042t79b9a9a7nd6fef3b9c3d37b25@mail.gmail.com>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH] ftrace: objcopy version test for local symbols
+Date: Mon, 25 Aug 2008 14:52:11 -0400 (EDT)
+Message-ID: <alpine.DEB.1.10.0808251434000.23923@gandalf.stny.rr.com>
+References: <20080825130117.33fe34bc.sfr@canb.auug.org.au> <20080825060934.GB14993@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rv-out-0506.google.com ([209.85.198.238]:17248 "EHLO
-	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753235AbYHYRpW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Aug 2008 13:45:22 -0400
-Received: by rv-out-0506.google.com with SMTP id k40so1728443rvb.1
-        for <linux-next@vger.kernel.org>; Mon, 25 Aug 2008 10:45:22 -0700 (PDT)
-In-Reply-To: <86802c440808251042t79b9a9a7nd6fef3b9c3d37b25@mail.gmail.com>
-Content-Disposition: inline
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.124]:58183 "EHLO
+	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751144AbYHYSwO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Aug 2008 14:52:14 -0400
+In-Reply-To: <20080825060934.GB14993@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Aug 25, 2008 at 10:42 AM, Yinghai Lu <yhlu.kernel@gmail.com> wrote:
-> On Mon, Aug 25, 2008 at 2:50 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Hi Ingo,
->>
->> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
->>
->> arch/powerpc/platforms/cell/interrupt.c: In function 'handle_iic_irq':
->> arch/powerpc/platforms/cell/interrupt.c:257: error: 'struct kernel_stat' has no member named 'irqs'
->> arch/powerpc/kernel/irq.c: In function 'show_interrupts':
->> arch/powerpc/kernel/irq.c:193: error: 'struct kernel_stat' has no member named 'irqs'
->>
->> Presumably introduced by commit fb6dc57946f9ebfeac546dd0698d9f065c191668
->> ("x86: move kstat_irqs from kstat to irq_desc").
->>
->> Looks like there is more work here ...
->>
->> Its late, so I just dropped the whole tree for today.  We can try again
->> tomorrow.
->
-> seems there is some merge problem...
-> please check.
->
-> diff --git a/include/linux/kernel_stat.h b/include/linux/kernel_stat.h
-> index f106167..3cd7389 100644
-> --- a/include/linux/kernel_stat.h
-> +++ b/include/linux/kernel_stat.h
-> @@ -28,7 +28,7 @@ struct cpu_usage_stat {
->
->  struct kernel_stat {
->        struct cpu_usage_stat   cpustat;
-> -#ifndef CONFIG_GENERIC_HARDIRQS
-> +#ifndef CONFIG_HAVE_SPARSE_IRQ
->        unsigned int irqs[NR_IRQS];
->  #endif
->  };
+From: Steven Rostedt <srostedt@redhat.com>
+Subject: ftrace: objcopy version test for local symbols
 
-more than that, will double check that.
+The --globalize-symbols option came out in objcopy version 2.17.
+If the kernel is being compiled on a system with a lower version of
+objcopy, then we can not use the globalize / localize trick to
+link to symbols pointing to local functions.
 
-YH
+This patch tests the version of objcopy and will only use the trick
+if the version is greater than or equal to 2.17. Otherwise, if an
+object has only local functions within a section, it will give a
+nice warning and recommend the user to upgrade their objcopy.
+
+Leaving the symbols unrecorded is not that big of a deal, since the
+mcount record method changes the actual mcount code to be a simple
+"ret" without recording registers or anything.
+
+Signed-off-by: Steven Rostedt <srostedt@redhat.com>
+---
+ scripts/recordmcount.pl |   41 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
+
+Index: linux-tip.git/scripts/recordmcount.pl
+===================================================================
+--- linux-tip.git.orig/scripts/recordmcount.pl	2008-08-25 14:02:03.000000000 -0400
++++ linux-tip.git/scripts/recordmcount.pl	2008-08-25 14:38:36.000000000 -0400
+@@ -187,6 +187,36 @@ my $mcount_s = $dirname . "/.tmp_mc_" . 
+ my $mcount_o = $dirname . "/.tmp_mc_" . $prefix . ".o";
+ 
+ #
++# --globalize-symbols came out in 2.17, we must test the version
++# of objcopy, and if it is less than 2.17, then we can not
++# record local functions.
++my $use_locals = 01;
++my $local_warn_once = 0;
++my $found_version = 0;
++
++open (IN, "$objcopy --version |") || die "error running $objcopy";
++while (<IN>) {
++    if (/objcopy.*\s(\d+)\.(\d+)/) {
++	my $major = $1;
++	my $minor = $2;
++
++	$found_version = 1;
++	if ($major < 2 ||
++	    ($major == 2 && $minor < 17)) {
++	    $use_locals = 0;
++	}
++	last;
++    }
++}
++close (IN);
++
++if (!$found_version) {
++    print STDERR "WARNING: could not find objcopy version.\n" .
++	"\tDisabling local function references.\n";
++}
++
++
++#
+ # Step 1: find all the local (static functions) and weak symbols.
+ #        't' is local, 'w/W' is weak (we never use a weak function)
+ #
+@@ -229,6 +259,17 @@ sub update_funcs
+ 
+     # is this function static? If so, note this fact.
+     if (defined $locals{$ref_func}) {
++
++	# only use locals if objcopy supports globalize-symbols
++	if (!$use_locals) {
++	    print STDERR
++		"$inputfile: WARNING: referencing local function " .
++		"$ref_func for mcount\n" .
++		"\tConsider upgrading objcopy to support the globalize-" .
++		"symbols option.\n"
++		if (!$local_warn_once++);
++	    return;
++	}
+ 	$convert{$ref_func} = 1;
+     }
+ 
