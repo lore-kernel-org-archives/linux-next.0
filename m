@@ -1,51 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the acpi tree
-Date: Mon, 25 Aug 2008 15:48:00 +1000
-Message-ID: <20080825154800.ff20bc0e.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: ftrace tree build failure
+Date: Mon, 25 Aug 2008 08:05:29 +0200
+Message-ID: <20080825060529.GA14993@elte.hu>
+References: <20080825130844.4d3a4399.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52985 "EHLO smtps.tip.net.au"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:43009 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751158AbYHYFsL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Aug 2008 01:48:11 -0400
+	id S1750734AbYHYGFv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 Aug 2008 02:05:51 -0400
+Content-Disposition: inline
+In-Reply-To: <20080825130844.4d3a4399.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andi Kleen <andi@firstfloor.org>, Len Brown <lenb@kernel.org>
-Cc: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
 
-Hi all,
 
-Today's linux-next merge of the acpi tree got a conflict in
-drivers/misc/acer-wmi.c between commit
-83097aca8567a0bd593534853b71fe0fa9a75d69 ("Fix oops in acer_wmi driver
-(acer_wmi_init)") from Linus' tree and commit
-017f8ecd1cedb482392f0500ee3701b8c50a46f9 ("Acer-WMI: fingers off
-backlight if video.ko is serving this functionality") from the acpi tree.
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Just overlapping additions.  I fixed it up (see below).
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+> Hi all,
+> 
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> 
+> kernel/trace/ftrace.c: In function 'ftrace_record_ip':
+> kernel/trace/ftrace.c:416: error: incompatible type for argument 1 of '_spin_lock_irqsave'
+> kernel/trace/ftrace.c:433: error: incompatible type for argument 1 of '_spin_lock_irqsave'
+> 
+> (This is after I have disabled CONFIG_FTRACE_MCOUNT_RECORD)
 
-diff --cc drivers/misc/acer-wmi.c
-index c6c77a5,6df52e8..0000000
---- a/drivers/misc/acer-wmi.c
-+++ b/drivers/misc/acer-wmi.c
-@@@ -1240,8 -1246,12 +1249,14 @@@ static int __init acer_wmi_init(void
-  		return -ENODEV;
-  	}
-  
- +	set_quirks();
- +
-+ 	if (!acpi_video_backlight_support() && has_cap(ACER_CAP_BRIGHTNESS)) {
-+ 		interface->capability &= ~ACER_CAP_BRIGHTNESS;
-+ 		printk(ACER_INFO "Brightness must be controlled by "
-+ 		       "generic video driver\n");
-+ 	}
-+ 
-  	if (platform_driver_register(&acer_platform_driver)) {
-  		printk(ACER_ERR "Unable to register platform driver.\n");
-  		goto error_platform_register;
+hm, how have you disabled it? It's not an interactive option and it's 
+always enabled when CONFIG_DYNAMIC_FTRACE is enabled. (that's how that 
+build failure never got discovered)
+
+> Introduced by commit 6dad8e07f4c10b17b038e84d29f3ca41c2e55cd0 ("ftrace:
+> add necessary locking for ftrace records").  I have applied the following
+> patch.
+
+thanks, applied - the fix makes sense.
+
+	Ingo
