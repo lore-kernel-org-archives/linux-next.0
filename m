@@ -1,55 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] ftrace: objcopy version test for local symbols
-Date: Tue, 26 Aug 2008 09:46:27 +1000
-Message-ID: <20080826094627.5d627b5b.sfr@canb.auug.org.au>
-References: <20080825130117.33fe34bc.sfr@canb.auug.org.au>
-	<20080825060934.GB14993@elte.hu>
-	<alpine.DEB.1.10.0808251434000.23923@gandalf.stny.rr.com>
-	<20080825190103.GA24029@elte.hu>
+Subject: Re: linux-next: manual merge of the sparseirq tree
+Date: Tue, 26 Aug 2008 09:48:16 +1000
+Message-ID: <20080826094816.4920906c.sfr@canb.auug.org.au>
+References: <20080825193243.fdf24fcc.sfr@canb.auug.org.au>
+	<48B309F7.20606@goop.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__26_Aug_2008_09_46_27_+1000_cIQphMTyOYX8KS.S"
+ boundary="Signature=_Tue__26_Aug_2008_09_48_16_+1000_HJ3chZI7y9tFWyCb"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50027 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56202 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753248AbYHYXqi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Aug 2008 19:46:38 -0400
-In-Reply-To: <20080825190103.GA24029@elte.hu>
+	id S1753066AbYHYXs1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 Aug 2008 19:48:27 -0400
+In-Reply-To: <48B309F7.20606@goop.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Jeremy Fitzhardinge <jeremy@goop.org>
+Cc: Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, Yinghai Lu <yhlu.kernel@gmail.com>
 
---Signature=_Tue__26_Aug_2008_09_46_27_+1000_cIQphMTyOYX8KS.S
+--Signature=_Tue__26_Aug_2008_09_48_16_+1000_HJ3chZI7y9tFWyCb
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ingo, Steve,
+Hi Jeremy,
 
-On Mon, 25 Aug 2008 21:01:03 +0200 Ingo Molnar <mingo@elte.hu> wrote:
+On Mon, 25 Aug 2008 12:37:27 -0700 Jeremy Fitzhardinge <jeremy@goop.org> wr=
+ote:
 >
-> applied to tip/tracing/ftrace, also have integrated it into=20
-> auto-ftrace-next. (without much testing - i hope it goes well)
+> This is a diff-diff?  The change:
 
-Looks ok at a first glance, but it may spam my build logs a bit ...
-Anyway, we will see.
+Its from "git diff" of the merge itself (which implies the -cc option of
+git diff).
+
+>=20
+> - 	kstat_this_cpu.irqs[irq]++;
+>  -	/* block until irq becomes pending */
+>  -	xen_poll_irq(irq);
+> + 	kstat_irqs_this_cpu(irq_to_desc(irq))++;
+>=20
+>=20
+> looks fine.
+
+Thanks.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__26_Aug_2008_09_46_27_+1000_cIQphMTyOYX8KS.S
+--Signature=_Tue__26_Aug_2008_09_48_16_+1000_HJ3chZI7y9tFWyCb
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkizRFMACgkQjjKRsyhoI8wOLwCfZMFPotqn2HiigOQ3okDjoT9A
-WOkAn22PhBVC95ieEgImJeecuPnYloHw
-=CAcl
+iEYEARECAAYFAkizRMAACgkQjjKRsyhoI8yF8QCeOtyMqSUs5kKgol7FFCfnRbHN
+IVIAn19w/N6yhXGnB4FoOedsg00HK+do
+=EnP8
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__26_Aug_2008_09_46_27_+1000_cIQphMTyOYX8KS.S--
+--Signature=_Tue__26_Aug_2008_09_48_16_+1000_HJ3chZI7y9tFWyCb--
