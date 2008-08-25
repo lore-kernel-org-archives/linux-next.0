@@ -1,93 +1,67 @@
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-Subject: Re: linux-next: manual merge of the oprofile tree
-Date: Mon, 25 Aug 2008 18:34:49 +0400
-Message-ID: <20080825143449.GA7249@lenovo>
-References: <20080825190822.591685e5.sfr@canb.auug.org.au>
+From: Austin Zhang <austin_zhang@linux.intel.com>
+Subject: Re: [Fwd: FW: linux-next: manual merge of the crypto tree]
+Date: Mon, 25 Aug 2008 11:14:51 -0400
+Message-ID: <1219677291.28140.3.camel@austinz.bj.intel.com.bj.intel.com>
+References: <1219661427.25749.11.camel@austinz.bj.intel.com.bj.intel.com>
+	 <20080825123246.GA8663@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fg-out-1718.google.com ([72.14.220.157]:49323 "EHLO
-	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752027AbYHYOey (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Aug 2008 10:34:54 -0400
-Received: by fg-out-1718.google.com with SMTP id 19so990272fgg.17
-        for <linux-next@vger.kernel.org>; Mon, 25 Aug 2008 07:34:52 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20080825190822.591685e5.sfr@canb.auug.org.au>
+Received: from mga05.intel.com ([192.55.52.89]:56197 "EHLO
+	fmsmga101.fm.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752740AbYHYPRi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Aug 2008 11:17:38 -0400
+In-Reply-To: <20080825123246.GA8663@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, Robert Richter <robert.richter@amd.com>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: herbert@gondor.apana.org.au, sfr@canb.auug.org.au, linux-next@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com, suresh.b.siddha@intel.com
 
-[Stephen Rothwell - Mon, Aug 25, 2008 at 07:08:22PM +1000]
-| Hi Ingo,
-| 
-| Today's linux-next merge of the oprofile tree got a conflict in
-| arch/x86/kernel/apic_32.c between commit
-| 274cfe5912eebe9d4e1a4c451fe617289a181fcf ("x86: apic - rearrange
-| functions and comments") from the x86 tree and commits
-| 286f571837ba9d67625afd015366d79345abb414 ("x86: apic_*.c: add description
-| to AMD's extended LVT functions"),
-| 09691616850b3614dfb44790e1e1419b6a7f5d13 ("x86: apic: export symbols for
-| extended interrupt LVT functions") and
-| 6aa360e6c16c145edf1837690e0f7aaea6b86ef3 ("x86: apic: changing export
-| symbols to *_GPL") from the oprofile tree.
-| 
-| The former moved some code that was updated by the latter.  I fixed it up
-| (see below) and can carry it.
-| 
-| -- 
-| Cheers,
-| Stephen Rothwell                    sfr@canb.auug.org.au
-| http://www.canb.auug.org.au/~sfr/
-| 
-| diff --cc arch/x86/kernel/apic_32.c
-| index a91c57c,0ff576d..0000000
-| --- a/arch/x86/kernel/apic_32.c
-| +++ b/arch/x86/kernel/apic_32.c
-| @@@ -291,36 -241,6 +291,40 @@@ static void __setup_APIC_LVTT(unsigned 
-|   }
-|   
-|   /*
-|  + * Setup extended LVT, AMD specific (K8, family 10h)
-|  + *
-|  + * Vector mappings are hard coded. On K8 only offset 0 (APIC500) and
-|  + * MCE interrupts are supported. Thus MCE offset must be set to 0.
-| ++ *
-| ++ * If mask=1, the LVT entry does not generate interrupts while mask=0
-| ++ * enables the vector. See also the BKDGs.
-|  + */
-|  +
-|  +#define APIC_EILVT_LVTOFF_MCE 0
-|  +#define APIC_EILVT_LVTOFF_IBS 1
-|  +
-|  +static void setup_APIC_eilvt(u8 lvt_off, u8 vector, u8 msg_type, u8 mask)
-|  +{
-|  +	unsigned long reg = (lvt_off << 4) + APIC_EILVT0;
-|  +	unsigned int  v   = (mask << 16) | (msg_type << 8) | vector;
-|  +
-|  +	apic_write(reg, v);
-|  +}
-|  +
-|  +u8 setup_APIC_eilvt_mce(u8 vector, u8 msg_type, u8 mask)
-|  +{
-|  +	setup_APIC_eilvt(APIC_EILVT_LVTOFF_MCE, vector, msg_type, mask);
-|  +	return APIC_EILVT_LVTOFF_MCE;
-|  +}
-|  +
-|  +u8 setup_APIC_eilvt_ibs(u8 vector, u8 msg_type, u8 mask)
-|  +{
-|  +	setup_APIC_eilvt(APIC_EILVT_LVTOFF_IBS, vector, msg_type, mask);
-|  +	return APIC_EILVT_LVTOFF_IBS;
-|  +}
-| ++EXPORT_SYMBOL_GPL(setup_APIC_eilvt_ibs);
-|  +
-|  +/*
-|    * Program the next event, relative to now
-|    */
-|   static int lapic_next_event(unsigned long delta,
-| 
+Added Intel processor SSE4.2 feature flag.
 
-Thanks Stephen
+Signed-off-by: Austin Zhang <austin.zhang@intel.com>
+---
+ cpufeature.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
-		- Cyrill -
+diff -Naurp linux-2.6-tip/include/asm-x86/cpufeature.h linux-2.6-tip-pa=
+tch/include/asm-x86/cpufeature.h
+--- linux-2.6-tip/include/asm-x86/cpufeature.h	2008-08-25 13:38:30.0000=
+00000 -0400
++++ linux-2.6-tip-patch/include/asm-x86/cpufeature.h	2008-08-25 06:17:0=
+7.000000000 -0400
+@@ -92,6 +92,7 @@
+ #define X86_FEATURE_CX16	(4*32+13) /* CMPXCHG16B */
+ #define X86_FEATURE_XTPR	(4*32+14) /* Send Task Priority Messages */
+ #define X86_FEATURE_DCA		(4*32+18) /* Direct Cache Access */
++#define X86_FEATURE_XMM4_2	(4*32+20) /* Streaming SIMD Extensions-4.2 =
+*/
+ #define X86_FEATURE_X2APIC	(4*32+21) /* x2APIC */
+ #define X86_FEATURE_XSAVE	(4*32+26) /* XSAVE */
+=20
+@@ -192,6 +193,7 @@ extern const char * const x86_power_flag
+ #define cpu_has_gbpages		boot_cpu_has(X86_FEATURE_GBPAGES)
+ #define cpu_has_arch_perfmon	boot_cpu_has(X86_FEATURE_ARCH_PERFMON)
+ #define cpu_has_pat		boot_cpu_has(X86_FEATURE_PAT)
++#define cpu_has_xmm4_2		boot_cpu_has(X86_FEATURE_XMM4_2)
+ #define cpu_has_x2apic		boot_cpu_has(X86_FEATURE_X2APIC)
+ #define cpu_has_xsave		boot_cpu_has(X86_FEATURE_XSAVE)
+=20
+
+On Mon, 2008-08-25 at 14:32 +0200, Ingo Molnar wrote:
+> * Austin Zhang <austin_zhang@linux.intel.com> wrote:
+>=20
+> > A =EF=BB=BFstandalone patch to add sse42 flags.
+>=20
+> a proper changelog with signoffs, etc. would be nice.
+>=20
+> > (But, Ingo, I thought this would still make conflicts when Stephen=20
+> > want to merge into crypto tree, right?)
+>=20
+> i can make the commit a separate branch that you can pull. (without=20
+> pulling anything else)
+>=20
+> (as long as the crypto tree is git based, which i assume it is.)
+>=20
+> 	Ingo
