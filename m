@@ -1,61 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] ftrace: only warn once on old objcopy and local
- functions
-Date: Tue, 26 Aug 2008 15:47:21 +1000
-Message-ID: <20080826154721.9416e2e9.sfr@canb.auug.org.au>
-References: <20080825130117.33fe34bc.sfr@canb.auug.org.au>
-	<20080825060934.GB14993@elte.hu>
-	<alpine.DEB.1.10.0808251434000.23923@gandalf.stny.rr.com>
-	<20080825190103.GA24029@elte.hu>
-	<20080826094627.5d627b5b.sfr@canb.auug.org.au>
-	<20080826115113.806cfe23.sfr@canb.auug.org.au>
-	<alpine.DEB.1.10.0808252324050.966@gandalf.stny.rr.com>
+From: Avi Kivity <avi@qumranet.com>
+Subject: Re: linux-next: manual merge of the kvm tree
+Date: Tue, 26 Aug 2008 10:39:49 +0300
+Message-ID: <48B3B345.9000409@qumranet.com>
+References: <20080826144542.9dabd12e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__26_Aug_2008_15_47_21_+1000_OBRQXw+DwLB9Nrvo"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44542 "EHLO smtps.tip.net.au"
+Received: from il.qumranet.com ([212.179.150.194]:48315 "EHLO il.qumranet.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751239AbYHZFrj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Aug 2008 01:47:39 -0400
-In-Reply-To: <alpine.DEB.1.10.0808252324050.966@gandalf.stny.rr.com>
+	id S1752100AbYHZHju (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Aug 2008 03:39:50 -0400
+In-Reply-To: <20080826144542.9dabd12e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Adrian Bunk <bunk@kernel.org>, Christian Ehrhardt <ehrhardt@linux.vnet.ibm.com>
 
---Signature=_Tue__26_Aug_2008_15_47_21_+1000_OBRQXw+DwLB9Nrvo
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Steve,
-
-On Mon, 25 Aug 2008 23:25:25 -0400 (EDT) Steven Rostedt <rostedt@goodmis.or=
-g> wrote:
+Stephen Rothwell wrote:
+> Hi Avi,
 >
->   Stephen, can you try to see if this works for you, with the
->   issue of spamming warnings?
+> Today's linux-next merge of the kvm tree got a conflict in
+> include/linux/kvm.h between commit
+> 1327138e294ffda120a50c8f31d792addb196c79 ("KVM: fix userspace ABI
+> breakage") from Linus' tree (a version of which which also exists in the
+> kvm tree) and commit b8486fbae0046883437c91e9b475f1878888fe72 ("KVM:
+> kvmtrace: replace get_cycles with ktime_get v3") from the kvm tree.
+>
+> I used the version from the kvm tree.
+>   
 
-I get no warnings at all.  I think this is because I always build with
-O=3D... so that the way you find $topdir (and therefore the .version file)
-does not work.
+Fixed it up; thanks.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__26_Aug_2008_15_47_21_+1000_OBRQXw+DwLB9Nrvo
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkizmOkACgkQjjKRsyhoI8z7ZQCeJLRWeXHPgSNBQ/8A3GUVTh60
-SaUAn3CiaTOUhNTbjQ2NYQLntp4FGmVi
-=YFMD
------END PGP SIGNATURE-----
-
---Signature=_Tue__26_Aug_2008_15_47_21_+1000_OBRQXw+DwLB9Nrvo--
+-- 
+error compiling committee.c: too many arguments to function
