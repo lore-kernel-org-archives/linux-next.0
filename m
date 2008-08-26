@@ -1,64 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the sparseirq tree
-Date: Tue, 26 Aug 2008 09:48:16 +1000
-Message-ID: <20080826094816.4920906c.sfr@canb.auug.org.au>
-References: <20080825193243.fdf24fcc.sfr@canb.auug.org.au>
-	<48B309F7.20606@goop.org>
+Subject: linux-next: origin tree build failure
+Date: Tue, 26 Aug 2008 10:37:08 +1000
+Message-ID: <20080826103708.3b4c3269.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__26_Aug_2008_09_48_16_+1000_HJ3chZI7y9tFWyCb"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56202 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57503 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753066AbYHYXs1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Aug 2008 19:48:27 -0400
-In-Reply-To: <48B309F7.20606@goop.org>
+	id S1752740AbYHZAhO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 Aug 2008 20:37:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeremy Fitzhardinge <jeremy@goop.org>
-Cc: Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, Yinghai Lu <yhlu.kernel@gmail.com>
+To: Travis Place <wishie@wishie.net>, Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Tue__26_Aug_2008_09_48_16_+1000_HJ3chZI7y9tFWyCb
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Jeremy,
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-On Mon, 25 Aug 2008 12:37:27 -0700 Jeremy Fitzhardinge <jeremy@goop.org> wr=
-ote:
->
-> This is a diff-diff?  The change:
+sound/pci/ca0106/ca0106_main.c:263: error: syntax error before '{' token
+sound/pci/ca0106/ca0106_main.c:264: error: field name not in record or union initializer
+sound/pci/ca0106/ca0106_main.c:264: error: (near initialization for 'ca0106_chip_details')
+sound/pci/ca0106/ca0106_main.c:264: warning: missing braces around initializer
+sound/pci/ca0106/ca0106_main.c:264: warning: (near initialization for 'ca0106_chip_details[10]')
+sound/pci/ca0106/ca0106_main.c:264: warning: initialization makes integer from pointer without a cast
+sound/pci/ca0106/ca0106_main.c:264: error: initializer element is not computable at load time
+sound/pci/ca0106/ca0106_main.c:264: error: (near initialization for 'ca0106_chip_details[10].serial')
+sound/pci/ca0106/ca0106_main.c:265: error: field name not in record or union initializer
+sound/pci/ca0106/ca0106_main.c:265: error: (near initialization for 'ca0106_chip_details')
+sound/pci/ca0106/ca0106_main.c:266: error: field name not in record or union initializer
+sound/pci/ca0106/ca0106_main.c:266: error: (near initialization for 'ca0106_chip_details')
+sound/pci/ca0106/ca0106_main.c:272: error: syntax error before '{' token
 
-Its from "git diff" of the merge itself (which implies the -cc option of
-git diff).
+This is just Linus' tree (head commit
+d25e26b61d59370eee8b7f2634641eb0fa76e952 "[x86] Clean up MAXSMP Kconfig,
+and limit NR_CPUS to 512").
 
->=20
-> - 	kstat_this_cpu.irqs[irq]++;
->  -	/* block until irq becomes pending */
->  -	xen_poll_irq(irq);
-> + 	kstat_irqs_this_cpu(irq_to_desc(irq))++;
->=20
->=20
-> looks fine.
+Introduced by commit c5d44423d55e3abca7b1d544af9e4c97ec203999 ("ALSA:
+CA0106 on MSI K8N Diamond PLUS Motherboard").
 
-Thanks.
-
---=20
+I added the following patch.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__26_Aug_2008_09_48_16_+1000_HJ3chZI7y9tFWyCb
-Content-Type: application/pgp-signature
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 26 Aug 2008 10:33:32 +1000
+Subject: [PATCH] ALSA: fix for CA0106 on MSI K8N Diamond PLUS Motherboard
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ sound/pci/ca0106/ca0106_main.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-iEYEARECAAYFAkizRMAACgkQjjKRsyhoI8yF8QCeOtyMqSUs5kKgol7FFCfnRbHN
-IVIAn19w/N6yhXGnB4FoOedsg00HK+do
-=EnP8
------END PGP SIGNATURE-----
-
---Signature=_Tue__26_Aug_2008_09_48_16_+1000_HJ3chZI7y9tFWyCb--
+diff --git a/sound/pci/ca0106/ca0106_main.c b/sound/pci/ca0106/ca0106_main.c
+index 03a274b..6abe8a3 100644
+--- a/sound/pci/ca0106/ca0106_main.c
++++ b/sound/pci/ca0106/ca0106_main.c
+@@ -254,7 +254,7 @@ static struct snd_ca0106_details ca0106_chip_details[] = {
+ 	   .name   = "MSI K8N Diamond MB",
+ 	   .gpio_type = 2,
+ 	   .i2c_adc = 1,
+-	   .spi_dac = 2 }
++	   .spi_dac = 2 },
+ 	 /* Shuttle XPC SD31P which has an onboard Creative Labs
+ 	  * Sound Blaster Live! 24-bit EAX
+ 	  * high-definition 7.1 audio processor".
+-- 
+1.5.6.3
