@@ -1,60 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the arm tree
-Date: Wed, 27 Aug 2008 09:43:49 +1000
-Message-ID: <20080827094349.2f3faf89.sfr@canb.auug.org.au>
-References: <20080825110348.9f5485ec.sfr@canb.auug.org.au>
-	<20080826222044.GA17277@flint.arm.linux.org.uk>
+From: Hiroshi Shimamoto <h-shimamoto@ct.jp.nec.com>
+Subject: [PATCH -next] net: fix compilation NG when !CONFIG_MODULE
+Date: Tue, 26 Aug 2008 16:49:48 -0700
+Message-ID: <48B4969C.60707@ct.jp.nec.com>
+References: <20080826184008.6be39f19.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__27_Aug_2008_09_43_49_+1000_oTUynl_4netENCXn"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50503 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750945AbYHZXoS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Aug 2008 19:44:18 -0400
-In-Reply-To: <20080826222044.GA17277@flint.arm.linux.org.uk>
+Received: from gateway-1237.mvista.com ([63.81.120.158]:8216 "EHLO
+	gateway-1237.mvista.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751068AbYHZXuT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Aug 2008 19:50:19 -0400
+In-Reply-To: <20080826184008.6be39f19.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, Ian Molton <spyro@f2s.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org
 
---Signature=_Wed__27_Aug_2008_09_43_49_+1000_oTUynl_4netENCXn
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Hiroshi Shimamoto <h-shimamoto@ct.jp.nec.com>
 
-Hi Russell,
+  CC      net/core/dev.o
+net/core/dev.c:1001: error: redefinition of 'dev_load'
+include/linux/netdevice.h:1645: error: previous definition of 'dev_load' was here
+make[2]: *** [net/core/dev.o] Error 1
 
-On Tue, 26 Aug 2008 23:20:44 +0100 Russell King <rmk@arm.linux.org.uk> wrot=
-e:
->
-> On Mon, Aug 25, 2008 at 11:03:48AM +1000, Stephen Rothwell wrote:
-> > Today's linux-next merge of the arm tree got a conflict in
-> > arch/arm/mach-pxa/include/mach/irqs.h between commit
-> > dec5abe9219aebf6d65e9af95de1c031d7039bdb ("[ARM] Fix eseries IRQ limit")
-> > from Linus' tree and commit 44b6deaa10e0b62fc6d6db0b673f8bfa61b745d1
-> > ("[ARM] pxa: introduce PXA_HAVE_BOARD_IRQS") from the arm tree.
->=20
-> I think you're seeing that because of my devel branch having multiple
-> common ancestors.  I've rebased most of the work in there so it doesn't
-> suffer from that problem, and it should resolve your problem.
+dev_load() is not used when CONFIG_MODULE disabled.
 
-Ok, thanks for that.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Signed-off-by: Hiroshi Shimamoto <h-shimamoto@ct.jp.nec.com>
+---
+ net/core/dev.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
---Signature=_Wed__27_Aug_2008_09_43_49_+1000_oTUynl_4netENCXn
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAki0lTUACgkQjjKRsyhoI8zX4gCgnmhTlBAVuGU3b6d/3y6XHPNY
-AL4An3cLcCUcRzqfotaHjcrlT6m5G8vY
-=3IeW
------END PGP SIGNATURE-----
-
---Signature=_Wed__27_Aug_2008_09_43_49_+1000_oTUynl_4netENCXn--
+diff --git a/net/core/dev.c b/net/core/dev.c
+index b0a1ee8..bde9790 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -996,7 +996,7 @@ EXPORT_SYMBOL(netdev_bonding_change);
+  *	privileges this function loads the module. If module loading is not
+  *	available in this kernel then it becomes a nop.
+  */
+-
++#ifdef CONFIG_MODULES
+ void dev_load(struct net *net, const char *name)
+ {
+ 	struct net_device *dev;
+@@ -1008,6 +1008,7 @@ void dev_load(struct net *net, const char *name)
+ 	if (!dev && capable(CAP_SYS_MODULE))
+ 		request_module("%s", name);
+ }
++#endif
+ 
+ /**
+  *	dev_open	- prepare an interface for use.
+-- 
+1.5.6
