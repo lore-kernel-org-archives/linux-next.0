@@ -1,72 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: origin tree build failure
-Date: Tue, 26 Aug 2008 10:37:08 +1000
-Message-ID: <20080826103708.3b4c3269.sfr@canb.auug.org.au>
+Subject: Re: [PATCH] ftrace: objcopy version test for local symbols
+Date: Tue, 26 Aug 2008 11:51:13 +1000
+Message-ID: <20080826115113.806cfe23.sfr@canb.auug.org.au>
+References: <20080825130117.33fe34bc.sfr@canb.auug.org.au>
+	<20080825060934.GB14993@elte.hu>
+	<alpine.DEB.1.10.0808251434000.23923@gandalf.stny.rr.com>
+	<20080825190103.GA24029@elte.hu>
+	<20080826094627.5d627b5b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57503 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37308 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752740AbYHZAhO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Aug 2008 20:37:14 -0400
+	id S1753577AbYHZBvZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 Aug 2008 21:51:25 -0400
+In-Reply-To: <20080826094627.5d627b5b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Travis Place <wishie@wishie.net>, Takashi Iwai <tiwai@suse.de>
-Cc: linux-next@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi all,
+Hi Ingo, Steve,
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+On Tue, 26 Aug 2008 09:46:27 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> On Mon, 25 Aug 2008 21:01:03 +0200 Ingo Molnar <mingo@elte.hu> wrote:
+> >
+> > applied to tip/tracing/ftrace, also have integrated it into 
+> > auto-ftrace-next. (without much testing - i hope it goes well)
+> 
+> Looks ok at a first glance, but it may spam my build logs a bit ...
+> Anyway, we will see.
 
-sound/pci/ca0106/ca0106_main.c:263: error: syntax error before '{' token
-sound/pci/ca0106/ca0106_main.c:264: error: field name not in record or union initializer
-sound/pci/ca0106/ca0106_main.c:264: error: (near initialization for 'ca0106_chip_details')
-sound/pci/ca0106/ca0106_main.c:264: warning: missing braces around initializer
-sound/pci/ca0106/ca0106_main.c:264: warning: (near initialization for 'ca0106_chip_details[10]')
-sound/pci/ca0106/ca0106_main.c:264: warning: initialization makes integer from pointer without a cast
-sound/pci/ca0106/ca0106_main.c:264: error: initializer element is not computable at load time
-sound/pci/ca0106/ca0106_main.c:264: error: (near initialization for 'ca0106_chip_details[10].serial')
-sound/pci/ca0106/ca0106_main.c:265: error: field name not in record or union initializer
-sound/pci/ca0106/ca0106_main.c:265: error: (near initialization for 'ca0106_chip_details')
-sound/pci/ca0106/ca0106_main.c:266: error: field name not in record or union initializer
-sound/pci/ca0106/ca0106_main.c:266: error: (near initialization for 'ca0106_chip_details')
-sound/pci/ca0106/ca0106_main.c:272: error: syntax error before '{' token
+I was right, it produces way to many messages :-(
 
-This is just Linus' tree (head commit
-d25e26b61d59370eee8b7f2634641eb0fa76e952 "[x86] Clean up MAXSMP Kconfig,
-and limit NR_CPUS to 512").
+I applied the following patch for now.  It would be nice if this check
+could be done once per build and warned about once as well.
 
-Introduced by commit c5d44423d55e3abca7b1d544af9e4c97ec203999 ("ALSA:
-CA0106 on MSI K8N Diamond PLUS Motherboard").
-
-I added the following patch.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
+>From 54bc3035c76a242d14df554966110e5964b3eac3 Mon Sep 17 00:00:00 2001
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 26 Aug 2008 10:33:32 +1000
-Subject: [PATCH] ALSA: fix for CA0106 on MSI K8N Diamond PLUS Motherboard
+Date: Tue, 26 Aug 2008 11:45:01 +1000
+Subject: [PATCH] ftrace: silence overly verbose warning
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- sound/pci/ca0106/ca0106_main.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ scripts/recordmcount.pl |   12 ++++++------
+ 1 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/sound/pci/ca0106/ca0106_main.c b/sound/pci/ca0106/ca0106_main.c
-index 03a274b..6abe8a3 100644
---- a/sound/pci/ca0106/ca0106_main.c
-+++ b/sound/pci/ca0106/ca0106_main.c
-@@ -254,7 +254,7 @@ static struct snd_ca0106_details ca0106_chip_details[] = {
- 	   .name   = "MSI K8N Diamond MB",
- 	   .gpio_type = 2,
- 	   .i2c_adc = 1,
--	   .spi_dac = 2 }
-+	   .spi_dac = 2 },
- 	 /* Shuttle XPC SD31P which has an onboard Creative Labs
- 	  * Sound Blaster Live! 24-bit EAX
- 	  * high-definition 7.1 audio processor".
+diff --git a/scripts/recordmcount.pl b/scripts/recordmcount.pl
+index ee9e126..ef0c6db 100755
+--- a/scripts/recordmcount.pl
++++ b/scripts/recordmcount.pl
+@@ -262,12 +262,12 @@ sub update_funcs
+ 
+ 	# only use locals if objcopy supports globalize-symbols
+ 	if (!$use_locals) {
+-	    print STDERR
+-		"$inputfile: WARNING: referencing local function " .
+-		"$ref_func for mcount\n" .
+-		"\tConsider upgrading objcopy to support the globalize-" .
+-		"symbols option.\n"
+-		if (!$local_warn_once++);
++#	    print STDERR
++#		"$inputfile: WARNING: referencing local function " .
++#		"$ref_func for mcount\n" .
++#		"\tConsider upgrading objcopy to support the globalize-" .
++#		"symbols option.\n"
++#		if (!$local_warn_once++);
+ 	    return;
+ 	}
+ 	$convert{$ref_func} = 1;
 -- 
 1.5.6.3
