@@ -1,56 +1,53 @@
 From: Hiroshi Shimamoto <h-shimamoto@ct.jp.nec.com>
-Subject: [PATCH -next] net: fix compilation NG when !CONFIG_MODULE
-Date: Tue, 26 Aug 2008 16:49:48 -0700
-Message-ID: <48B4969C.60707@ct.jp.nec.com>
+Subject: [PATCH -next] initramfs: fix compilation warning
+Date: Tue, 26 Aug 2008 16:56:58 -0700
+Message-ID: <48B4984A.6090508@ct.jp.nec.com>
 References: <20080826184008.6be39f19.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gateway-1237.mvista.com ([63.81.120.158]:8216 "EHLO
+Received: from gateway-1237.mvista.com ([63.81.120.158]:11773 "EHLO
 	gateway-1237.mvista.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751068AbYHZXuT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Aug 2008 19:50:19 -0400
+	with ESMTP id S1751887AbYHZX53 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Aug 2008 19:57:29 -0400
 In-Reply-To: <20080826184008.6be39f19.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Shaohua Li <shaohua.li@intel.com>, Arjan van de Ven <arjan@linux.intel.com>, Ingo Molnar <mingo@elte.hu>
 
 From: Hiroshi Shimamoto <h-shimamoto@ct.jp.nec.com>
 
-  CC      net/core/dev.o
-net/core/dev.c:1001: error: redefinition of 'dev_load'
-include/linux/netdevice.h:1645: error: previous definition of 'dev_load' was here
-make[2]: *** [net/core/dev.o] Error 1
+  CC      init/initramfs.o
+init/initramfs.c:517: warning: 'clean_rootfs' defined but not used
 
-dev_load() is not used when CONFIG_MODULE disabled.
+clean_rootfs is not used when CONFIG_BLK_DEV_RAM disabled.
 
 Signed-off-by: Hiroshi Shimamoto <h-shimamoto@ct.jp.nec.com>
 ---
- net/core/dev.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+ init/initramfs.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index b0a1ee8..bde9790 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -996,7 +996,7 @@ EXPORT_SYMBOL(netdev_bonding_change);
-  *	privileges this function loads the module. If module loading is not
-  *	available in this kernel then it becomes a nop.
-  */
--
-+#ifdef CONFIG_MODULES
- void dev_load(struct net *net, const char *name)
+diff --git a/init/initramfs.c b/init/initramfs.c
+index da8d030..2f056e2 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -512,6 +512,7 @@ skip:
+ 	initrd_end = 0;
+ }
+ 
++#ifdef CONFIG_BLK_DEV_RAM
+ #define BUF_SIZE 1024
+ static void __init clean_rootfs(void)
  {
- 	struct net_device *dev;
-@@ -1008,6 +1008,7 @@ void dev_load(struct net *net, const char *name)
- 	if (!dev && capable(CAP_SYS_MODULE))
- 		request_module("%s", name);
+@@ -558,6 +559,7 @@ static void __init clean_rootfs(void)
+ 	sys_close(fd);
+ 	kfree(buf);
  }
 +#endif
  
- /**
-  *	dev_open	- prepare an interface for use.
+ static int __init populate_rootfs(void)
+ {
 -- 
 1.5.6
