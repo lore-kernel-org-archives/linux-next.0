@@ -1,39 +1,34 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH] ftrace: only warn once on old objcopy and local
- functions
-Date: Tue, 26 Aug 2008 16:53:54 -0400 (EDT)
-Message-ID: <alpine.DEB.1.10.0808261652470.17093@gandalf.stny.rr.com>
-References: <20080825130117.33fe34bc.sfr@canb.auug.org.au> <20080825060934.GB14993@elte.hu> <alpine.DEB.1.10.0808251434000.23923@gandalf.stny.rr.com> <20080825190103.GA24029@elte.hu> <20080826094627.5d627b5b.sfr@canb.auug.org.au> <20080826115113.806cfe23.sfr@canb.auug.org.au>
- <alpine.DEB.1.10.0808252324050.966@gandalf.stny.rr.com> <20080826154721.9416e2e9.sfr@canb.auug.org.au>
+From: Russell King <rmk@arm.linux.org.uk>
+Subject: Re: linux-next: manual merge of the arm tree
+Date: Tue, 26 Aug 2008 23:20:44 +0100
+Message-ID: <20080826222044.GA17277@flint.arm.linux.org.uk>
+References: <20080825110348.9f5485ec.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hrndva-omtalb.mail.rr.com ([71.74.56.124]:42806 "EHLO
-	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758859AbYHZUx5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Aug 2008 16:53:57 -0400
-In-Reply-To: <20080826154721.9416e2e9.sfr@canb.auug.org.au>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:60622 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751055AbYHZWVE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Aug 2008 18:21:04 -0400
+Content-Disposition: inline
+In-Reply-To: <20080825110348.9f5485ec.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, Ian Molton <spyro@f2s.com>
 
+On Mon, Aug 25, 2008 at 11:03:48AM +1000, Stephen Rothwell wrote:
+> Today's linux-next merge of the arm tree got a conflict in
+> arch/arm/mach-pxa/include/mach/irqs.h between commit
+> dec5abe9219aebf6d65e9af95de1c031d7039bdb ("[ARM] Fix eseries IRQ limit")
+> from Linus' tree and commit 44b6deaa10e0b62fc6d6db0b673f8bfa61b745d1
+> ("[ARM] pxa: introduce PXA_HAVE_BOARD_IRQS") from the arm tree.
 
-On Tue, 26 Aug 2008, Stephen Rothwell wrote:
+I think you're seeing that because of my devel branch having multiple
+common ancestors.  I've rebased most of the work in there so it doesn't
+suffer from that problem, and it should resolve your problem.
 
-> Hi Steve,
-> 
-> On Mon, 25 Aug 2008 23:25:25 -0400 (EDT) Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> >   Stephen, can you try to see if this works for you, with the
-> >   issue of spamming warnings?
-> 
-> I get no warnings at all.  I think this is because I always build with
-> O=... so that the way you find $topdir (and therefore the .version file)
-> does not work.
-
-Hmm, Well we don't need the warning, although it would be nice to give. 
-There seems to be a lot of hacking to get a warning for this. Perhaps
-we just ignore the local functions and not warn at all?
-
--- Steve
+-- 
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
