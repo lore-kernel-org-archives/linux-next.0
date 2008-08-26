@@ -1,74 +1,278 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: sparseirq tree build failure
-Date: Tue, 26 Aug 2008 17:53:24 +1000
-Message-ID: <20080826175324.fe4f38db.sfr@canb.auug.org.au>
-References: <20080825195024.d42b72e6.sfr@canb.auug.org.au>
-	<86802c440808251042t79b9a9a7nd6fef3b9c3d37b25@mail.gmail.com>
-	<86802c440808251045j351756c1oc825fc6f39a026a@mail.gmail.com>
+Subject: linux-next: Tree for August 26
+Date: Tue, 26 Aug 2008 18:40:08 +1000
+Message-ID: <20080826184008.6be39f19.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__26_Aug_2008_17_53_24_+1000_resgTm0Rt8PfdL77"
+ boundary="Signature=_Tue__26_Aug_2008_18_40_08_+1000_aGrHLOvLTFTeeSb8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47641 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55521 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752089AbYHZHxd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Aug 2008 03:53:33 -0400
-In-Reply-To: <86802c440808251045j351756c1oc825fc6f39a026a@mail.gmail.com>
+	id S1751734AbYHZIkR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Aug 2008 04:40:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Yinghai Lu <yhlu.kernel@gmail.com>
-Cc: Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Tue__26_Aug_2008_17_53_24_+1000_resgTm0Rt8PfdL77
+--Signature=_Tue__26_Aug_2008_18_40_08_+1000_aGrHLOvLTFTeeSb8
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Yinghai,
+Hi all,
 
-On Mon, 25 Aug 2008 10:45:22 -0700 "Yinghai Lu" <yhlu.kernel@gmail.com> wro=
-te:
->
-> On Mon, Aug 25, 2008 at 10:42 AM, Yinghai Lu <yhlu.kernel@gmail.com> wrot=
-e:
-> >
-> > seems there is some merge problem...
-> > please check.
-> >
-> > diff --git a/include/linux/kernel_stat.h b/include/linux/kernel_stat.h
-> > index f106167..3cd7389 100644
-> > --- a/include/linux/kernel_stat.h
-> > +++ b/include/linux/kernel_stat.h
-> > @@ -28,7 +28,7 @@ struct cpu_usage_stat {
-> >
-> >  struct kernel_stat {
-> >        struct cpu_usage_stat   cpustat;
-> > -#ifndef CONFIG_GENERIC_HARDIRQS
-> > +#ifndef CONFIG_HAVE_SPARSE_IRQ
-> >        unsigned int irqs[NR_IRQS];
-> >  #endif
-> >  };
->=20
-> more than that, will double check that.
+Changes since next-20080825:
 
-I applied the above patch and it allows the tree to build, so I will
-leave it in for today.
+I have added the following overnight build targets:
+	For xtensa: defconfig, allnoconfig, allmodconfig
+	For parisc: defconfig, allnoconfig, allyesconfig
+	For parisc64: a500_defconfig
+
+Linus' tree gained a build fix patch (already added to his tree).
+
+The usb.current tree lost its conflicts.
+
+The usb tree lost its conflict.
+
+The ftrace tree lost its revert and build fix and gained another patch to
+silence its over the top warnings.
+
+The ide tree gained a build fix patch.
+
+The kvm tree gained a conflicta against Linus' tree.
+
+The sparseirq tree gained a build fix patch.
+
+I have also applied the following patches for known problems:
+
+	Add cuImage.mpc866ads to the bootwrapper as a cuboot-8xx target
+	powerpc: export CMO_PageSize
+	ftrace: protect the definition of ftrace_release
+	revert BUILD_BUG_ON change
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+(patches at
+http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups, it is also built with powerpc allnoconfig,
+44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
+
+Below is a summary of the state of the merge.
+
+We are up to 113 trees (counting Linus' and 14 trees of patches pending for
+Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__26_Aug_2008_17_53_24_+1000_resgTm0Rt8PfdL77
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Applying ALSA: fix for CA0106 on MSI K8N Diamond PLUS Motherboard
+Merging powerpc-merge/merge
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sparc-current/master
+Merging sound-current/for-linus
+Merging arm-current/master
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/master
+Merging quilt/driver-core.current
+Merging quilt/usb.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-2.6.26
+Merging dwmw2/master
+Merging arm/devel
+CONFLICT (content): Merge conflict in arch/arm/mach-pxa/include/mach/irqs.h
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging quilt/m68k
+Merging m68knommu/for-next
+Merging mips/mips-for-linux-next
+Merging parisc/master
+Merging powerpc/powerpc-next
+Merging 4xx/next
+Merging galak/powerpc-next
+Merging s390/features
+Merging sh/master
+Merging sparc/master
+Merging xtensa/master
+Merging quilt/driver-core
+Merging quilt/usb
+Merging tip-core/auto-core-next
+Merging cpus4096/auto-cpus4096-next
+Merging ftrace/auto-ftrace-next
+CONFLICT (content): Merge conflict in kernel/module.c
+Applying ftrace: silence overly verbose warning
+Merging genirq/auto-genirq-next
+Merging safe-poison-pointers/auto-safe-poison-pointers-next
+Merging sched/auto-sched-next
+Merging stackprotector/auto-stackprotector-next
+CONFLICT (content): Merge conflict in kernel/fork.c
+Merging timers/auto-timers-next
+Merging x86/auto-x86-next
+CONFLICT (content): Merge conflict in include/asm-x86/cpufeature.h
+CONFLICT (content): Merge conflict in include/asm-x86/pda.h
+Merging pci/linux-next
+Merging quilt/device-mapper
+Merging hid/mm
+CONFLICT (content): Merge conflict in drivers/hid/usbhid/hid-core.c
+CONFLICT (content): Merge conflict in drivers/hid/usbhid/hid-quirks.c
+Applying HID: fix for warn() removal
+Merging quilt/i2c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/stable
+CONFLICT (content): Merge conflict in drivers/media/video/zr364xx.c
+Merging jfs/next
+Merging kbuild/master
+Merging quilt/ide
+Applying ide: fix for idefloppy_ioctl name change
+Merging libata/NEXT
+Merging nfs/linux-next
+Merging xfs/master
+Merging infiniband/for-next
+Merging acpi/test
+CONFLICT (content): Merge conflict in drivers/misc/acer-wmi.c
+Merging nfsd/nfsd-next
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/master
+CONFLICT (content): Merge conflict in include/asm-x86/kvm.h
+CONFLICT (content): Merge conflict in include/linux/kvm.h
+Merging dlm/next
+Merging scsi/master
+Merging tests/master
+CONFLICT (content): Merge conflict in lib/Kconfig.debug
+Merging ocfs2/linux-next
+Merging ext4/next
+Merging async_tx/next
+Merging udf/for_next
+Merging net/master
+Merging mtd/master
+Merging wireless/master
+Merging crypto/master
+CONFLICT (content): Merge conflict in include/asm-x86/cpufeature.h
+Merging vfs/for-next
+Merging sound/for-next
+Merging cpufreq/next
+Merging v9fs/for-next
+Merging quilt/rr
+Merging cifs/master
+Merging mmc/next
+Merging gfs2/master
+Merging input/next
+Merging semaphore/semaphore
+Merging semaphore-removal/semaphore-removal
+Merging bkl-removal/bkl-removal
+Merging trivial/next
+CONFLICT (content): Merge conflict in Documentation/edac.txt
+CONFLICT (content): Merge conflict in include/linux/securebits.h
+Merging ubifs/linux-next
+Merging lsm/for-next
+Merging block/for-next
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging kmemcheck/auto-kmemcheck-next
+CONFLICT (content): Merge conflict in MAINTAINERS
+CONFLICT (content): Merge conflict in arch/x86/kernel/process_64.c
+CONFLICT (content): Merge conflict in arch/x86/kernel/traps_64.c
+CONFLICT (content): Merge conflict in init/main.c
+CONFLICT (content): Merge conflict in mm/Makefile
+CONFLICT (content): Merge conflict in mm/slab.c
+CONFLICT (content): Merge conflict in mm/slub.c
+Merging generic-ipi/auto-generic-ipi-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging voltage/reg-for-linus
+Merging security-testing/next
+Merging lblnet/master
+Merging quilt/ttydev
+CONFLICT (content): Merge conflict in Documentation/feature-removal-schedul=
+e.txt
+CONFLICT (content): Merge conflict in drivers/char/tty_io.c
+CONFLICT (content): Merge conflict in drivers/char/vt.c
+CONFLICT (content): Merge conflict in drivers/net/usb/hso.c
+CONFLICT (content): Merge conflict in drivers/usb/serial/aircable.c
+CONFLICT (content): Merge conflict in drivers/usb/serial/keyspan_pda.c
+CONFLICT (content): Merge conflict in drivers/usb/serial/safe_serial.c
+Merging agp/agp-next
+Merging creds/next-creds
+CONFLICT (content): Merge conflict in fs/namespace.c
+CONFLICT (content): Merge conflict in fs/nfsd/nfs4recover.c
+CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_linux.h
+CONFLICT (content): Merge conflict in fs/xfs/xfs_inode.c
+CONFLICT (content): Merge conflict in fs/xfs/xfs_vnodeops.c
+CONFLICT (content): Merge conflict in include/linux/capability.h
+CONFLICT (add/add): Merge conflict in include/linux/cred.h
+CONFLICT (content): Merge conflict in kernel/exit.c
+CONFLICT (content): Merge conflict in kernel/fork.c
+CONFLICT (content): Merge conflict in security/commoncap.c
+CONFLICT (content): Merge conflict in security/selinux/hooks.c
+CONFLICT (content): Merge conflict in security/smack/smack_lsm.c
+Merging oprofile/auto-oprofile-next
+CONFLICT (content): Merge conflict in arch/x86/kernel/apic_32.c
+Merging fastboot/auto-fastboot-next
+CONFLICT (content): Merge conflict in include/linux/init.h
+Merging sparseirq/auto-sparseirq-next
+CONFLICT (content): Merge conflict in arch/x86/xen/spinlock.c
+CONFLICT (content): Merge conflict in drivers/serial/68328serial.c
+CONFLICT (content): Merge conflict in drivers/serial/8250.c
+Applying sparseirq: build fix 1
+Applying Add cuImage.mpc866ads to the bootwrapper as a cuboot-8xx target
+Applying powerpc: export CMO_PageSize
+Applying ftrace: protect the definition of ftrace_release
+Applying revert BUILD_BUG_ON change
+
+--Signature=_Tue__26_Aug_2008_18_40_08_+1000_aGrHLOvLTFTeeSb8
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkiztnQACgkQjjKRsyhoI8zkCQCfdQDPEHv7xSnuFEx6MBF1rFKE
-IE4An0TTBhgc75HKtA3/pYP4wucj2JNO
-=hAR9
+iEYEARECAAYFAkizwWgACgkQjjKRsyhoI8xSGgCeI1osPKmrEUJCcZRTbr3Kit/H
+bekAni+13gJU83/R73raWQd/qJmjqpZk
+=t3i+
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__26_Aug_2008_17_53_24_+1000_resgTm0Rt8PfdL77--
+--Signature=_Tue__26_Aug_2008_18_40_08_+1000_aGrHLOvLTFTeeSb8--
