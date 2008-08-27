@@ -1,67 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure
-Date: Wed, 27 Aug 2008 14:54:49 +1000
-Message-ID: <20080827145449.2790d97d.sfr@canb.auug.org.au>
-References: <20080827100656.0f87e6b2.sfr@canb.auug.org.au>
-	<200808271255.22789.rusty@rustcorp.com.au>
+Subject: Re: linux-next: manual merge of the trivial tree
+Date: Wed, 27 Aug 2008 15:19:57 +1000
+Message-ID: <20080827151957.341e79fa.sfr@canb.auug.org.au>
+References: <20080728133707.087f1d73.sfr@canb.auug.org.au>
+	<20080728094110.GA6278@mail.local.tull.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__27_Aug_2008_15_19_57_+1000_qHUusmMpxj04+42n"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34880 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43284 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751257AbYH0EzA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 27 Aug 2008 00:55:00 -0400
-In-Reply-To: <200808271255.22789.rusty@rustcorp.com.au>
+	id S1751525AbYH0FUI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 27 Aug 2008 01:20:08 -0400
+In-Reply-To: <20080728094110.GA6278@mail.local.tull.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: Johannes Berg <johannes@sipsolutions.net>, linux-next@vger.kernel.org, netdev@vger.kernel.org
+To: Nick Andrew <nick@nick-andrew.net>
+Cc: Jesper Juhl <jesper.juhl@gmail.com>, linux-next@vger.kernel.org, Arthur Jones <ajones@riverbed.com>
 
-Hi Rusty,
+--Signature=_Wed__27_Aug_2008_15_19_57_+1000_qHUusmMpxj04+42n
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 27 Aug 2008 12:55:22 +1000 Rusty Russell <rusty@rustcorp.com.au> wrote:
+Hi Nick, Jesper,
+
+On Mon, 28 Jul 2008 19:41:10 +1000 Nick Andrew <nick@nick-andrew.net> wrote:
 >
-> On Wednesday 27 August 2008 10:06:56 Stephen Rothwell wrote:
-> > Introduced by commit 4cb9da6ecc2b0e25056b45981239475f8509d59d ("remove
-> > CONFIG_KMOD from net") which added a !CONFIG_MODULES (static inline)
-> > version of dev_load() to include/linux/netdevice.h but the copy in
-> > net/core/dev.c is not protected by CONFIG_MODULES.
-> 
-> Thanks.  I've fixed this the simplest way: remove the change to the header.
+> On Mon, Jul 28, 2008 at 01:37:07PM +1000, Stephen Rothwell wrote:
+> > Today's linux-next merge of the trivial tree got a conflict in
+> > Documentation/edac.txt between commit
+> > 327dafb1c61c9da7b95ac6cc7634a2340cc9509c ("edac: core fix redundant sys=
+fs
+> > controls to parameters") from Linus' tree and commit
+> > 0bb08241ce68aaa70b7b804b4d6319d8bad3ae24 ("Tighten up the use of loose")
+> > from the trivial tree.
+>=20
+> Should we drop the patch or alternately split it into one patch
+> per affected file? This must be at least the 3rd time this patch
+> has conflicted with other changes.
 
-So, for today, I have applied the following patch after importing the rr
-tree:
+Can you send all of the trivial tree (that is in -next) to Linus (asking
+nicely if he will take it), please?  Doing that will require rebasing at
+least the above patch (or merging Linus' tree (at least up to the commit
+above)) and fixing the conflicts.  It has been in its current state since
+May 20 ...
 
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 27 Aug 2008 14:45:37 +1000
-Subject: [PATCH] rr: build fix for remove CONFIG_KMOD from net
+--Signature=_Wed__27_Aug_2008_15_19_57_+1000_qHUusmMpxj04+42n
+Content-Type: application/pgp-signature
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/linux/netdevice.h |    4 ----
- 1 files changed, 0 insertions(+), 4 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index b215744..2254eb8 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -1639,11 +1639,7 @@ extern int		dev_set_allmulti(struct net_device *dev, int inc);
- extern void		netdev_state_change(struct net_device *dev);
- extern void		netdev_bonding_change(struct net_device *dev);
- extern void		netdev_features_change(struct net_device *dev);
--#ifdef CONFIG_MODULES
- extern void		dev_load(struct net *net, const char *name);
--#else
--static inline void	dev_load(struct net *net, const char *name) {};
--#endif
- extern void		dev_mcast_init(void);
- extern int		netdev_max_backlog;
- extern int		weight_p;
--- 
-1.5.6.5
+iEYEARECAAYFAki04/0ACgkQjjKRsyhoI8whAQCfU2K3Rwg1KaqwUv1Z1K4q5Y/3
+w9oAn0FBYRDf0kwdPGf3znVi5jPLGN0a
+=aZoS
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__27_Aug_2008_15_19_57_+1000_qHUusmMpxj04+42n--
