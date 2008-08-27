@@ -1,55 +1,69 @@
-From: Arjan van de Ven <arjan@linux.intel.com>
-Subject: Re: [BUG] linux-next: Tree for August 26 - Badness at kernel/notifier.c:25
-Date: Wed, 27 Aug 2008 06:48:06 -0700
-Message-ID: <48B55B16.7060804@linux.intel.com>
-References: <20080826184008.6be39f19.sfr@canb.auug.org.au> <48B44B2D.8070809@linux.vnet.ibm.com> <48B46610.1010809@linux.intel.com> <48B53695.3020703@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [BUG] linux-next: Tree for August 26 - Badness at
+ kernel/notifier.c:25
+Date: Thu, 28 Aug 2008 00:33:08 +1000
+Message-ID: <20080828003308.400038e0.sfr@canb.auug.org.au>
+References: <20080826184008.6be39f19.sfr@canb.auug.org.au>
+	<48B44B2D.8070809@linux.vnet.ibm.com>
+	<48B46610.1010809@linux.intel.com>
+	<48B53695.3020703@linux.vnet.ibm.com>
+	<48B55B16.7060804@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__28_Aug_2008_00_33_08_+1000_YX5+22H_Giwkidmk"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.89]:53242 "EHLO
-	fmsmga101.fm.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1756911AbYH0NsI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Aug 2008 09:48:08 -0400
-In-Reply-To: <48B53695.3020703@linux.vnet.ibm.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:52621 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754004AbYH0OdT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 27 Aug 2008 10:33:19 -0400
+In-Reply-To: <48B55B16.7060804@linux.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@ozlabs.org, mingo@elte.hu, Andy Whitcroft <apw@shadowen.org>
+To: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@ozlabs.org, mingo@elte.hu, Andy Whitcroft <apw@shadowen.org>
 
-Kamalesh Babulal wrote:
-> 
-> Thanks for reference of the patch, After replacing the patch with the latest 
-> one above on the powerpc, the warning still remains
-> 
-> Badness at kernel/notifier.c:86
+--Signature=_Thu__28_Aug_2008_00_33_08_+1000_YX5+22H_Giwkidmk
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-sadly you have something going on that doesn't list the modules loaded etc...
+Hi Arjan,
 
-is this during boot or way later?
-(because if it's the later, you might be hitting a legitimate bug ;-)
+On Wed, 27 Aug 2008 06:48:06 -0700 Arjan van de Ven <arjan@linux.intel.com>=
+ wrote:
+>
+> Kamalesh Babulal wrote:
+> >=20
+> > Thanks for reference of the patch, After replacing the patch with the l=
+atest=20
+> > one above on the powerpc, the warning still remains
+> >=20
+> > Badness at kernel/notifier.c:86
+>=20
+> sadly you have something going on that doesn't list the modules loaded et=
+c...
+>=20
+> is this during boot or way later?
+> (because if it's the later, you might be hitting a legitimate bug ;-)
 
-> NIP: c000000000081470 LR: c000000000081494 CTR: c00000000005a2d0
-> REGS: c0000021ce0bfaf0 TRAP: 0700   Not tainted  (2.6.27-rc4-next-20080826-autotest)
-> MSR: 8000000000029032 <EE,ME,IR,DR>  CR: 24008042  XER: 00000005
-> TASK = c0000015de080000[1] 'swapper' THREAD: c0000021ce0bc000 CPU: 0
-> GPR00: c000000000081494 c0000021ce0bfd70 c00000000081e940 c000000000749c38 
-> GPR04: 0000000000000003 0000000000000001 ffffffffffffffff c0000021ce0bfe90 
-> GPR08: ffffffffffffffff ffffffffffffffff c0000000004fd9f0 c0000000004fd9f0 
-> GPR12: 0000000024000042 c00000000089c300 0000000002307ef0 c0000000006332a0 
-> GPR16: c000000000631f28 c000000000633388 00000000018bf8b0 0000000002700000 
-> GPR20: c00000000070b07c c000000000707ef0 c000000000708160 c000000000631c58 
-> GPR24: 0000000000000003 0000000000000001 c0000021ce0bfe90 0000000000000000 
-> GPR28: ffffffffffffffff c000000000749c20 c0000000007bf338 c000000000749c38 
-> NIP [c000000000081470] .notifier_call_chain+0x70/0x140
-> LR [c000000000081494] .notifier_call_chain+0x94/0x140
-> Call Trace:
-> [c0000021ce0bfd70] [c000000000081494] .notifier_call_chain+0x94/0x140 (unreliable)
-> [c0000021ce0bfe20] [c0000000004fe3fc] .cpu_up+0x10c/0x200
-> [c0000021ce0bfee0] [c0000000006cdcc0] .kernel_init+0x1b0/0x440
-> [c0000021ce0bff90] [c0000000000299cc] .kernel_thread+0x4c/0x68
-> Instruction dump:
-> e8630000 2fa30000 419e00f0 2fa60000 419e00e8 2e270000 7c7f1b78 3b600000 
-> 48000028 60000000 60000000 60000000 <0fe00000> 2fbd0000 2f3c0000 7fbfeb78 
-> 
-> 
+The original reported trace was during setup_system which is very early in
+the boot.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__28_Aug_2008_00_33_08_+1000_YX5+22H_Giwkidmk
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAki1ZaQACgkQjjKRsyhoI8z5vwCgl4ClHwY0QMDLBsBxl3/sIoe7
+m9IAnA/GYD5p9M+lO0PUllTxajVvzhOC
+=UinA
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__28_Aug_2008_00_33_08_+1000_YX5+22H_Giwkidmk--
