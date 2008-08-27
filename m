@@ -1,47 +1,46 @@
-From: "Bartlomiej Zolnierkiewicz" <bzolnier@gmail.com>
-Subject: Re: linux-next: Tree for August 27
-Date: Wed, 27 Aug 2008 16:57:18 +0200
-Message-ID: <58cb370e0808270757k583c0fc2oc659bc8e2dd6c21e@mail.gmail.com>
-References: <20080827183453.eb651f50.sfr@canb.auug.org.au>
-	 <200808271206.48370.bzolnier@gmail.com>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH] ftrace: remove warning of old objcopy and local functions
+Date: Wed, 27 Aug 2008 13:02:01 -0400 (EDT)
+Message-ID: <alpine.DEB.1.10.0808271300540.16904@gandalf.stny.rr.com>
+References: <20080825130117.33fe34bc.sfr@canb.auug.org.au> <20080825060934.GB14993@elte.hu> <alpine.DEB.1.10.0808251434000.23923@gandalf.stny.rr.com> <20080825190103.GA24029@elte.hu> <20080826094627.5d627b5b.sfr@canb.auug.org.au> <20080826115113.806cfe23.sfr@canb.auug.org.au>
+ <alpine.DEB.1.10.0808252324050.966@gandalf.stny.rr.com> <20080826154721.9416e2e9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fg-out-1718.google.com ([72.14.220.153]:28496 "EHLO
-	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754188AbYH0O5T (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Aug 2008 10:57:19 -0400
-Received: by fg-out-1718.google.com with SMTP id 19so1575956fgg.17
-        for <linux-next@vger.kernel.org>; Wed, 27 Aug 2008 07:57:18 -0700 (PDT)
-In-Reply-To: <200808271206.48370.bzolnier@gmail.com>
-Content-Disposition: inline
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.125]:50214 "EHLO
+	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750765AbYH0RCF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Aug 2008 13:02:05 -0400
+In-Reply-To: <20080826154721.9416e2e9.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>
+Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Aug 27, 2008 at 12:06 PM, Bartlomiej Zolnierkiewicz
-<bzolnier@gmail.com> wrote:
->
-> Hi,
->
-> On Wednesday 27 August 2008, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since next-20080826:
->
-> it fails to build here with:
->
-> arch/x86/kernel/cpu/addon_cpuid_features.c: In function 'detect_extended_topology':
-> arch/x86/kernel/cpu/addon_cpuid_features.c:119: error: 'struct cpuinfo_x86' hasno member named 'cpu_core_id'
-> arch/x86/kernel/cpu/addon_cpuid_features.c:121: error: 'struct cpuinfo_x86' hasno member named 'phys_proc_id'
-> arch/x86/kernel/cpu/addon_cpuid_features.c:130: error: 'struct cpuinfo_x86' hasno member named 'phys_proc_id'
-> arch/x86/kernel/cpu/addon_cpuid_features.c:133: error: 'struct cpuinfo_x86' hasno member named 'cpu_core_id'
-> make[2]: *** [arch/x86/kernel/cpu/addon_cpuid_features.o] Error 1
-> make[1]: *** [arch/x86/kernel/cpu] Error 2
-> make: *** [arch/x86/kernel] Error 2
 
-which is most likely already fixed in x86 tree by
+The warning messages about old objcopy and local functions spam the
+user quite drastically.  Remove the warning until we can find a nicer
+way of tell the user to upgrade their objcopy.
 
-http://lkml.org/lkml/2008/8/27/34
+Signed-off-by: Steven Rostedt <srostedt@redhat.com>
+---
+ scripts/recordmcount.pl |    6 ------
+ 1 file changed, 6 deletions(-)
+
+Index: linux-tip.git/scripts/recordmcount.pl
+===================================================================
+--- linux-tip.git.orig/scripts/recordmcount.pl	2008-08-27 12:57:40.000000000 -0400
++++ linux-tip.git/scripts/recordmcount.pl	2008-08-27 12:58:03.000000000 -0400
+@@ -262,12 +262,6 @@ sub update_funcs
+ 
+ 	# only use locals if objcopy supports globalize-symbols
+ 	if (!$use_locals) {
+-	    print STDERR
+-		"$inputfile: WARNING: referencing local function " .
+-		"$ref_func for mcount\n" .
+-		"\tConsider upgrading objcopy to support the globalize-" .
+-		"symbols option.\n"
+-		if (!$local_warn_once++);
+ 	    return;
+ 	}
+ 	$convert{$ref_func} = 1;
