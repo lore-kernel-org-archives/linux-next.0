@@ -1,36 +1,86 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: manual merge of the crypto tree
-Date: Thu, 28 Aug 2008 17:33:59 +1000
-Message-ID: <20080828073359.GB28648@gondor.apana.org.au>
-References: <20080807133525.8901e2ef.sfr@canb.auug.org.au> <20080825164418.3e74cad0.sfr@canb.auug.org.au> <20080825065525.GA23089@gondor.apana.org.au> <20080828072858.GF21875@elte.hu>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure
+Date: Thu, 28 Aug 2008 00:40:32 -0700 (PDT)
+Message-ID: <20080828.004032.234293354.davem@davemloft.net>
+References: <20080825212833.38550575.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rhun.apana.org.au ([64.62.148.172]:46378 "EHLO
-	arnor.apana.org.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752917AbYH1HeN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Aug 2008 03:34:13 -0400
-Content-Disposition: inline
-In-Reply-To: <20080828072858.GF21875@elte.hu>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:51696
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1753033AbYH1Hkh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 Aug 2008 03:40:37 -0400
+In-Reply-To: <20080825212833.38550575.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Suresh Siddha <suresh.b.siddha@intel.com>, Austin Zhang <austin.zhang@intel.com>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+To: sfr@canb.auug.org.au
+Cc: mingo@elte.hu, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Aug 28, 2008 at 09:28:58AM +0200, Ingo Molnar wrote:
->
-> | commit 2a61812af2e564cba2c8170cf96e1c823210f619
-> | Author: Austin Zhang <austin_zhang@linux.intel.com>
-> | Date:   Mon Aug 25 11:14:51 2008 -0400
-> |
-> |     x86: add X86_FEATURE_XMM4_2 definitions
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 25 Aug 2008 21:28:33 +1000
+
+> Hi Ingo,
 > 
-> so you should be able to pick this up once you merge linus-latest to the 
-> crypto tree.
+> Today's linux-next build (sparc64 defconfig) failed like this:
+> 
+> ERROR: "__BUILD_BUG_ON_non_constant" [drivers/net/sunvnet.ko] undefined!
+> ERROR: "__BUILD_BUG_ON_non_constant" [drivers/block/sunvdc.ko] undefined!
+> 
+> Probably intorduced by commit f5b5d41dd51a31fe70e3a04fb80a3b90b84c6a4e
+> ("debug: fix BUILD_BUG_ON() for non-constant expressions").
 
-Thanks I'll do a rebase.
--- 
-Visit Openswan at http://www.openswan.org/
-Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+I think __builtin_constant_p() is not seeing something it
+should here.
+
+It isn't accepting:
+
+--------------------
+static inline __attribute__((const))
+bool is_power_of_2(unsigned long n)
+{
+	return (n != 0 && ((n & (n - 1)) == 0));
+}
+--------------------
+
+and thus is_power_of_2(256) as being a constant.
+
+If a 'const' inline function being passed a const argument isn't
+constant, what is! :-)
+
+I bet the problem is the fact that is_power_of_2() is a function.
+
+I did some tests and I can only trigger this problem with gcc-3.4 on
+sparc, gcc-4.1 and gcc-4.2 worked fine.
+
+It triggers with both -O2 and -Os for the following simple test case:
+
+static inline __attribute__((const))
+int is_power_of_2(unsigned long n)
+{
+	return (n != 0 && ((n & (n - 1)) == 0));
+}
+
+extern int bar;
+
+int main(void)
+{
+	if (!__builtin_constant_p(is_power_of_2(256)))
+		bar++;
+	return 0;
+}
+
+davem@sunset:~/src/GIT/linux-2.6$ gcc-3.4  -Os -o x x.c
+/tmp/ccy8FzD8.o: In function `main':
+x.c:(.text+0x0): undefined reference to `bar'
+x.c:(.text+0x4): undefined reference to `bar'
+x.c:(.text+0xc): undefined reference to `bar'
+collect2: ld returned 1 exit status
+davem@sunset:~/src/GIT/linux-2.6$ gcc-3.4  -O2 -o x x.c
+/tmp/ccQNzZuj.o: In function `main':
+x.c:(.text+0x0): undefined reference to `bar'
+x.c:(.text+0x4): undefined reference to `bar'
+x.c:(.text+0xc): undefined reference to `bar'
+collect2: ld returned 1 exit status
+davem@sunset:~/src/GIT/linux-2.6$ 
