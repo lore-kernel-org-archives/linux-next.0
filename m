@@ -1,37 +1,74 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: linux-next: manual merge of the crypto tree
-Date: Wed, 27 Aug 2008 16:47:26 -0700
-Message-ID: <48B5E78E.9010007@zytor.com>
-References: <20080807133525.8901e2ef.sfr@canb.auug.org.au> <20080825164418.3e74cad0.sfr@canb.auug.org.au> <20080825065525.GA23089@gondor.apana.org.au> <20080825073926.GA9147@elte.hu> <9D7649D18729DE4BB2BD7B494F7FEDC201B96C98@pdsmsx415.ccr.corp.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for August 27
+Date: Thu, 28 Aug 2008 11:25:41 +1000
+Message-ID: <20080828112541.7f8f8e0a.sfr@canb.auug.org.au>
+References: <20080827183453.eb651f50.sfr@canb.auug.org.au>
+	<200808271206.48370.bzolnier@gmail.com>
+	<58cb370e0808270757k583c0fc2oc659bc8e2dd6c21e@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__28_Aug_2008_11_25_41_+1000_wbLrunD8O+I=_K+z"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from terminus.zytor.com ([198.137.202.10]:40848 "EHLO
-	terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753980AbYH0Xsl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Aug 2008 19:48:41 -0400
-In-Reply-To: <9D7649D18729DE4BB2BD7B494F7FEDC201B96C98@pdsmsx415.ccr.corp.intel.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51639 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752962AbYH1BZy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 27 Aug 2008 21:25:54 -0400
+In-Reply-To: <58cb370e0808270757k583c0fc2oc659bc8e2dd6c21e@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Zhang, Austin" <austin.zhang@intel.com>
-Cc: Ingo Molnar <mingo@elte.hu>, Herbert Xu <herbert@gondor.apana.org.au>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, "Siddha, Suresh B" <suresh.b.siddha@intel.com>, Thomas Gleixner <tglx@linutronix.de>
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>
 
-Zhang, Austin wrote:
->>> new x86 feature bits should definitely show up in the x86 tree too
-> So can we add sse4.1 into this patch also as: 
-> #define X86_FEATURE_XMM4_1	(4*32+19)
-> even though now no obvious user is asking it in kernel. 
+--Signature=_Thu__28_Aug_2008_11_25_41_+1000_wbLrunD8O+I=_K+z
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The best would be to:
+Hi Bart,
 
-1. rename all the feature bits which have inconsistent names in their
-    #defines and in /proc/cpuinfo;
-2. generate the /proc/cpuinfo table
-    (arch/x86/kernel/cpu/feature_names.c) automatically from
-    cpufeature.h.
+On Wed, 27 Aug 2008 16:57:18 +0200 "Bartlomiej Zolnierkiewicz" <bzolnier@gm=
+ail.com> wrote:
+>
+> On Wed, Aug 27, 2008 at 12:06 PM, Bartlomiej Zolnierkiewicz
+> <bzolnier@gmail.com> wrote:
+> >
+> > it fails to build here with:
+> >
+> > arch/x86/kernel/cpu/addon_cpuid_features.c: In function 'detect_extende=
+d_topology':
+> > arch/x86/kernel/cpu/addon_cpuid_features.c:119: error: 'struct cpuinfo_=
+x86' hasno member named 'cpu_core_id'
+> > arch/x86/kernel/cpu/addon_cpuid_features.c:121: error: 'struct cpuinfo_=
+x86' hasno member named 'phys_proc_id'
+> > arch/x86/kernel/cpu/addon_cpuid_features.c:130: error: 'struct cpuinfo_=
+x86' hasno member named 'phys_proc_id'
+> > arch/x86/kernel/cpu/addon_cpuid_features.c:133: error: 'struct cpuinfo_=
+x86' hasno member named 'cpu_core_id'
+> > make[2]: *** [arch/x86/kernel/cpu/addon_cpuid_features.o] Error 1
+> > make[1]: *** [arch/x86/kernel/cpu] Error 2
+> > make: *** [arch/x86/kernel] Error 2
+>=20
+> which is most likely already fixed in x86 tree by
+>=20
+> http://lkml.org/lkml/2008/8/27/34
 
-2. is quite trivial, and 1. can be done largely automatically.  I will 
-experiment with this.
+Thanks for finding this, I will apply it to today's linux-next.
 
-	-hpa
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__28_Aug_2008_11_25_41_+1000_wbLrunD8O+I=_K+z
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAki1/pUACgkQjjKRsyhoI8x0WQCfYFuOImPZPKOuZoQBQpqZO7Gv
+7ncAnjz8RsPx8zNdlW2GwT/zx6cYAPe3
+=x8bg
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__28_Aug_2008_11_25_41_+1000_wbLrunD8O+I=_K+z--
