@@ -1,99 +1,41 @@
-From: Milton Miller <miltonm@bga.com>
-Subject: Re: [BUG] linux-next: Tree for August 26 - Badness at kernel/notifier.c:25
-Date: Thu, 28 Aug 2008 12:14:39 -0500 (CDT)
-Message-ID: <200808281714.m7SHEdCX096569@sullivan.realtime.net>
-References: <1219935307.7107.302.camel@pmac.infradead.org>
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754154AbYH1RTW@vger.kernel.org>
-In-Reply-To: <1219935307.7107.302.camel@pmac.infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, mingo@elte.hu, Arjan van de Ven <arjan@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
+From: "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: linux-next: manual merge of the crypto tree
+Date: Thu, 28 Aug 2008 10:52:41 -0700
+Message-ID: <48B6E5E9.5040106@zytor.com>
+References: <20080807133525.8901e2ef.sfr@canb.auug.org.au> <20080825164418.3e74cad0.sfr@canb.auug.org.au> <20080825065525.GA23089@gondor.apana.org.au> <20080825073926.GA9147@elte.hu> <9D7649D18729DE4BB2BD7B494F7FEDC201B96C98@pdsmsx415.ccr.corp.intel.com> <48B5E78E.9010007@zytor.com> <20080828072733.GE21875@elte.hu>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from terminus.zytor.com ([198.137.202.10]:39951 "EHLO
+	terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751805AbYH1Rxa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Aug 2008 13:53:30 -0400
+In-Reply-To: <20080828072733.GE21875@elte.hu>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: "Zhang, Austin" <austin.zhang@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, "Siddha, Suresh B" <suresh.b.siddha@intel.com>, Thomas Gleixner <tglx@linutronix.de>
 
-
-David Woodhouse dwmw2 at infradead.org
-Fri Aug 29 00:55:07 EST 2008
-
-> On Thu, 2008-08-28 at 15:23 +0100, David Woodhouse wrote:
->> On Thu, 2008-08-28 at 00:38 +1000, Stephen Rothwell wrote:
->>> Hi Arjan,
->>> 
->>> On Thu, 28 Aug 2008 00:33:08 +1000 Stephen Rothwell <sfr at canb.auug.org.au> wrote:
->>>>
->>>> The original reported trace was during setup_system which is very early in
->>>> the boot.
->>> 
->>> But, of course, that version didn't have the necessary extra dereference
->>> of the function address ...
->>> 
->>> And the later debug patch did not check the address at register time,
->>> only at notify time.
->>> 
->>> The later trace also looks to be early in the boot.
->> 
->> It's isa_bridge_notify(), which is neither within _[se]text nor
->> _[se]inittext, so the core_kernel_text() function disavows it.
->> 
->> Where are __devinit functions supposed to end up?
+Ingo Molnar wrote:
+>>
+>> 1. rename all the feature bits which have inconsistent names in their
+>>    #defines and in /proc/cpuinfo;
+>> 2. generate the /proc/cpuinfo table
+>>    (arch/x86/kernel/cpu/feature_names.c) automatically from
+>>    cpufeature.h.
+>>
+>> 2. is quite trivial, and 1. can be done largely automatically.  I will  
+>> experiment with this.
 > 
-> The TEXT_TEXT macro defined in <asm-generic/vmlinux.lds.h> should get
-> this right... but we don't use it. Is there any particular reason for
-> that, or should we....
-
-gitk -- arch/powerpc/kernel/vmlinux.S
-
-	e95c91821fa56b489d7beb74103a419466c5ec10
-	[POWERPC] Fix link errors for allyesconfig
-    
-    An allyesconfig build creates a .text section that is so big that the
-    .text.init.refok and .fixup sections are too far away for the relocations
-    to be fixed up correctly. This patch fixes that by linking all the
-    relevent text sections for each file together.
-    
-    Suggested by Paul Mackerras.
-    
-    Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-    Signed-off-by: Paul Mackerras <paulus@samba.org>
-
-
-Although I think its really fac23fe4be23259a8eaa9bad822f5b14dd07d15c 
-powerpc: Introduce infrastructure for feature sections with alternatives
-that causes the problems.
-
-If the problem is only reaching the branch-out-of-fixup-section, then
-we could create a macro that caculates the branch as if it were already
-at the destination address (using something like
-
-	b (target-fixup_start)-(current-alternative_start)
-
-and then removing the code that determines the branch target goes beyond
-the feature section.
-
-Just a concept, have't tried it yet and don't know if there are other
-problems with .text.init.refok.
-
-Or we fix our defintion and put a comment next to TEXT_TEXT that we
-don't use it for future editors.
-
+> i see you committed that into tip/x86/cpu - i just integrated that into 
+> tip/master and pushed out the result. This way starting at v2.6.28 we'll 
+> have only a single, non-redundant definition for CPU feature 
+> information, from which we auto-generate the rest.
 > 
-> Signed-off-by: David Woodhouse <David.Woodhouse at intel.com>
-> 
-> --- linux-2.6.26.ppc64/arch/powerpc/kernel/vmlinux.lds.S~	2008-07-13 22:51:29.000000000 +0100
-> +++ linux-2.6.26.ppc64/arch/powerpc/kernel/vmlinux.lds.S	2008-08-28 15:39:14.000000000 +0100
-> @@ -35,10 +35,11 @@ SECTIONS
->  		ALIGN_FUNCTION();
->  		*(.text.head)
->  		_text = .;
-> -		*(.text .fixup .text.init.refok .exit.text.refok)
-> +		TEXT_TEXT
->  		SCHED_TEXT
->  		LOCK_TEXT
->  		KPROBES_TEXT
-> +		*(.fixup)
->  
->  #ifdef CONFIG_PPC32
->  		*(.got1)
-> 
-> -- 
-> David Woodhouse                            Open Source Technology Centre
-> David.Woodhouse at intel.com                              Intel Corporation
+
+I did #2; I haven't done #1, since that's an all-sourcebase change; it 
+would probably make most sense to do at (approximately) the same time we 
+do the include/asm-x86 -> arch/x86/include change.
+
+	-hpa
