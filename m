@@ -1,51 +1,30 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: Tree for August 27
-Date: Thu, 28 Aug 2008 11:08:02 +0200
-Message-ID: <20080828090802.GE19422@elte.hu>
-References: <20080827183453.eb651f50.sfr@canb.auug.org.au> <200808271206.48370.bzolnier@gmail.com> <58cb370e0808270757k583c0fc2oc659bc8e2dd6c21e@mail.gmail.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: Tree for August 28
+Date: Thu, 28 Aug 2008 14:39:34 -0700
+Message-ID: <20080828143934.a5034a01.akpm@linux-foundation.org>
+References: <20080828183307.23c6be82.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:51109 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751242AbYH1JIW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 28 Aug 2008 05:08:22 -0400
-Content-Disposition: inline
-In-Reply-To: <58cb370e0808270757k583c0fc2oc659bc8e2dd6c21e@mail.gmail.com>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:52637 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752005AbYH1VkZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 Aug 2008 17:40:25 -0400
+In-Reply-To: <20080828183307.23c6be82.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, Andy Whitcroft <apw@shadowen.org>
 
+On Thu, 28 Aug 2008 18:33:07 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-* Bartlomiej Zolnierkiewicz <bzolnier@gmail.com> wrote:
+> I have created today's linux-next tree at
+> git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
 
-> On Wed, Aug 27, 2008 at 12:06 PM, Bartlomiej Zolnierkiewicz
-> <bzolnier@gmail.com> wrote:
-> >
-> > Hi,
-> >
-> > On Wednesday 27 August 2008, Stephen Rothwell wrote:
-> >> Hi all,
-> >>
-> >> Changes since next-20080826:
-> >
-> > it fails to build here with:
-> >
-> > arch/x86/kernel/cpu/addon_cpuid_features.c: In function 'detect_extended_topology':
-> > arch/x86/kernel/cpu/addon_cpuid_features.c:119: error: 'struct cpuinfo_x86' hasno member named 'cpu_core_id'
-> > arch/x86/kernel/cpu/addon_cpuid_features.c:121: error: 'struct cpuinfo_x86' hasno member named 'phys_proc_id'
-> > arch/x86/kernel/cpu/addon_cpuid_features.c:130: error: 'struct cpuinfo_x86' hasno member named 'phys_proc_id'
-> > arch/x86/kernel/cpu/addon_cpuid_features.c:133: error: 'struct cpuinfo_x86' hasno member named 'cpu_core_id'
-> > make[2]: *** [arch/x86/kernel/cpu/addon_cpuid_features.o] Error 1
-> > make[1]: *** [arch/x86/kernel/cpu] Error 2
-> > make: *** [arch/x86/kernel] Error 2
-> 
-> which is most likely already fixed in x86 tree by
-> 
-> http://lkml.org/lkml/2008/8/27/34
+firmware/yamaha/yss225_registers.bin.ihex uses \r\n line termination.
+Is that actually required, or can we use plain old \n?
 
-ok, i've propagated those commits to auto-x86-next as well, so that 
-linux-next is fixed too.
-
-	Ingo
+Andy, a checkpatch rule for this would be nice.
