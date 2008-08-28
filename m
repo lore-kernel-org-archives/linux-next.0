@@ -1,56 +1,26 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [BUG] linux-next: Tree for August 26 - Badness at
-	kernel/notifier.c:25
-Date: Thu, 28 Aug 2008 14:23:30 +0000
-Message-ID: <1219933410.7107.296.camel@pmac.infradead.org>
-References: <20080826184008.6be39f19.sfr@canb.auug.org.au>
-	 <48B44B2D.8070809@linux.vnet.ibm.com> <48B46610.1010809@linux.intel.com>
-	 <48B53695.3020703@linux.vnet.ibm.com> <48B55B16.7060804@linux.intel.com>
-	 <20080828003308.400038e0.sfr@canb.auug.org.au>
-	 <20080828003821.d29d2a03.sfr@canb.auug.org.au>
+From: Kyle McMartin <kyle@mcmartin.ca>
+Subject: Re: linux-next: parisc tree build failure
+Date: Thu, 28 Aug 2008 10:33:19 -0400
+Message-ID: <20080828143319.GD6298@phobos.i.cabal.ca>
+References: <20080828115820.d2e4f55b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:48402 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752518AbYH1OXi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Aug 2008 10:23:38 -0400
-In-Reply-To: <20080828003821.d29d2a03.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-parisc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20080828115820.d2e4f55b.sfr@canb.auug.org.au>
+Sender: linux-parisc-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arjan van de Ven <arjan@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, mingo@elte.hu
+Cc: Kyle McMartin <kyle@mcmartin.ca>, linux-parisc@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 2008-08-28 at 00:38 +1000, Stephen Rothwell wrote:
-> Hi Arjan,
+On Thu, Aug 28, 2008 at 11:58:20AM +1000, Stephen Rothwell wrote:
+> Hi Kyle,
 > 
-> On Thu, 28 Aug 2008 00:33:08 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > The original reported trace was during setup_system which is very early in
-> > the boot.
+> A parisc defconfig build of linux-next (next-20080827) fails like this:
 > 
-> But, of course, that version didn't have the necessary extra dereference
-> of the function address ...
+> sound/parisc/harmony.c:872: error: 'reutrn' undeclared (first use in this function)
 > 
-> And the later debug patch did not check the address at register time,
-> only at notify time.
-> 
-> The later trace also looks to be early in the boot.
 
-It's isa_bridge_notify(), which is neither within _[se]text nor
-_[se]inittext, so the core_kernel_text() function disavows it.
+You're looking the wrong way... we didn't touch this code...
 
-Where are __devinit functions supposed to end up?
-
- $ egrep _[es]init\|_[es]text\|isa_bridge_notify System.map 
-c000000000000000 T _stext
-c00000000045d000 T _etext
-c000000000463ca8 t .isa_bridge_notify
-c00000000063a000 T _sinittext
-c00000000067c3bc T _einittext
-c00000000071fd80 d isa_bridge_notify
-
--- 
-David Woodhouse                            Open Source Technology Centre
-David.Woodhouse@intel.com                              Intel Corporation
+r, Kyle
