@@ -1,53 +1,97 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: sparc build failure
-Date: Thu, 28 Aug 2008 16:51:49 +1000
-Message-ID: <20080828165149.4e6089e8.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: sparc build failure
+Date: Thu, 28 Aug 2008 08:57:54 +0200
+Message-ID: <20080828065754.GC16186@elte.hu>
+References: <20080828165149.4e6089e8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__28_Aug_2008_16_51_49_+1000_rOncyHcQ5fmThq_7"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35280 "EHLO smtps.tip.net.au"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:37777 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752095AbYH1Gv4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 28 Aug 2008 02:51:56 -0400
+	id S1752064AbYH1G6N (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 Aug 2008 02:58:13 -0400
+Content-Disposition: inline
+In-Reply-To: <20080828165149.4e6089e8.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Yinghai Lu <yhlu.kernel@gmail.com>, Ingo Molnar <mingo@elte.hu>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>, linux-next@vger.kernel.org, Yinghai Lu <yhlu.kernel@gmail.com>
 
---Signature=_Thu__28_Aug_2008_16_51_49_+1000_rOncyHcQ5fmThq_7
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-The sparc32 allmodconfig build of linux-next (next-20080827) failed like
-this (among other things):
+> Hi Dave,
+> 
+> The sparc32 allmodconfig build of linux-next (next-20080827) failed like
+> this (among other things):
+> 
+> ERROR: "nr_irqs" [drivers/net/hamradio/baycom_ser_fdx.ko] undefined!
+> ERROR: "nr_irqs" [drivers/net/3c59x.ko] undefined!
+> 
+> Introduced by the sparseirq tree.
+> 
+> nr_irqs is not exported for sparc.  I will add a patch to add the export
+> to linux-next today.
 
-ERROR: "nr_irqs" [drivers/net/hamradio/baycom_ser_fdx.ko] undefined!
-ERROR: "nr_irqs" [drivers/net/3c59x.ko] undefined!
+thanks - the patch below should fix all those architectures. (there's 
+also s390)
 
-Introduced by the sparseirq tree.
+	Ingo
 
-nr_irqs is not exported for sparc.  I will add a patch to add the export
-to linux-next today.
+---------->
+>From 3af7043c57080f1ae7cd80c661d3e1308f164e1b Mon Sep 17 00:00:00 2001
+From: Ingo Molnar <mingo@elte.hu>
+Date: Thu, 28 Aug 2008 08:56:33 +0200
+Subject: [PATCH] sparseirq: export nr_irqs on m68k/sparc/s390
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Stephen Rothwell reported such build failures on m68k/sparc/s390:
 
---Signature=_Thu__28_Aug_2008_16_51_49_+1000_rOncyHcQ5fmThq_7
-Content-Type: application/pgp-signature
+> ERROR: "nr_irqs" [drivers/net/hamradio/baycom_ser_fdx.ko] undefined!
+> ERROR: "nr_irqs" [drivers/net/3c59x.ko] undefined!
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+export nr_irqs on these architectures too.
 
-iEYEARECAAYFAki2SwYACgkQjjKRsyhoI8yq8QCfT4t4gEp4ut4VsDEEn59bg1Ju
-VCQAoLxU1nDzgYYt7B1LPVOpNwZfjoH5
-=B5Gx
------END PGP SIGNATURE-----
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+---
+ arch/m68k/kernel/ints.c |    1 +
+ arch/s390/kernel/irq.c  |    1 +
+ arch/sparc/kernel/irq.c |    1 +
+ 3 files changed, 3 insertions(+), 0 deletions(-)
 
---Signature=_Thu__28_Aug_2008_16_51_49_+1000_rOncyHcQ5fmThq_7--
+diff --git a/arch/m68k/kernel/ints.c b/arch/m68k/kernel/ints.c
+index d8aebfc..8dd5591 100644
+--- a/arch/m68k/kernel/ints.c
++++ b/arch/m68k/kernel/ints.c
+@@ -47,6 +47,7 @@
+ #endif
+ 
+ int nr_irqs = NR_IRQS;
++EXPORT_SYMBOL(nr_irqs);
+ 
+ extern u32 auto_irqhandler_fixup[];
+ extern u32 user_irqhandler_fixup[];
+diff --git a/arch/s390/kernel/irq.c b/arch/s390/kernel/irq.c
+index 14eb549..3624c4a 100644
+--- a/arch/s390/kernel/irq.c
++++ b/arch/s390/kernel/irq.c
+@@ -18,6 +18,7 @@
+ #include <linux/profile.h>
+ 
+ int nr_irqs = NR_IRQS;
++EXPORT_SYMBOL(nr_irqs);
+ 
+ /*
+  * show_interrupts is needed by /proc/interrupts.
+diff --git a/arch/sparc/kernel/irq.c b/arch/sparc/kernel/irq.c
+index 059598b..4b99e3c 100644
+--- a/arch/sparc/kernel/irq.c
++++ b/arch/sparc/kernel/irq.c
+@@ -57,6 +57,7 @@
+ #endif /* SMP */
+ 
+ int nr_irqs = NR_IRQS;
++EXPORT_SYMBOL(nr_irqs);
+ 
+ unsigned long __raw_local_irq_save(void)
+ {
