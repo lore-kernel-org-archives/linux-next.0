@@ -1,26 +1,72 @@
-From: Kyle McMartin <kyle@mcmartin.ca>
-Subject: Re: linux-next: parisc tree build failure
-Date: Thu, 28 Aug 2008 10:33:19 -0400
-Message-ID: <20080828143319.GD6298@phobos.i.cabal.ca>
-References: <20080828115820.d2e4f55b.sfr@canb.auug.org.au>
+From: David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [BUG] linux-next: Tree for August 26 - Badness at
+	kernel/notifier.c:25
+Date: Thu, 28 Aug 2008 15:55:07 +0100
+Message-ID: <1219935307.7107.302.camel@pmac.infradead.org>
+References: <20080826184008.6be39f19.sfr@canb.auug.org.au>
+	 <48B44B2D.8070809@linux.vnet.ibm.com> <48B46610.1010809@linux.intel.com>
+	 <48B53695.3020703@linux.vnet.ibm.com> <48B55B16.7060804@linux.intel.com>
+	 <20080828003308.400038e0.sfr@canb.auug.org.au>
+	 <20080828003821.d29d2a03.sfr@canb.auug.org.au>
+	 <1219933410.7107.296.camel@pmac.infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-parisc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20080828115820.d2e4f55b.sfr@canb.auug.org.au>
-Sender: linux-parisc-owner@vger.kernel.org
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bombadil.infradead.org ([18.85.46.34]:40319 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752830AbYH1O6X (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Aug 2008 10:58:23 -0400
+In-Reply-To: <1219933410.7107.296.camel@pmac.infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Kyle McMartin <kyle@mcmartin.ca>, linux-parisc@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: Arjan van de Ven <arjan@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, mingo@elte.hu
 
-On Thu, Aug 28, 2008 at 11:58:20AM +1000, Stephen Rothwell wrote:
-> Hi Kyle,
+On Thu, 2008-08-28 at 15:23 +0100, David Woodhouse wrote:
+> On Thu, 2008-08-28 at 00:38 +1000, Stephen Rothwell wrote:
+> > Hi Arjan,
+> > 
+> > On Thu, 28 Aug 2008 00:33:08 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > >
+> > > The original reported trace was during setup_system which is very early in
+> > > the boot.
+> > 
+> > But, of course, that version didn't have the necessary extra dereference
+> > of the function address ...
+> > 
+> > And the later debug patch did not check the address at register time,
+> > only at notify time.
+> > 
+> > The later trace also looks to be early in the boot.
 > 
-> A parisc defconfig build of linux-next (next-20080827) fails like this:
+> It's isa_bridge_notify(), which is neither within _[se]text nor
+> _[se]inittext, so the core_kernel_text() function disavows it.
 > 
-> sound/parisc/harmony.c:872: error: 'reutrn' undeclared (first use in this function)
-> 
+> Where are __devinit functions supposed to end up?
 
-You're looking the wrong way... we didn't touch this code...
+The TEXT_TEXT macro defined in <asm-generic/vmlinux.lds.h> should get
+this right... but we don't use it. Is there any particular reason for
+that, or should we....
 
-r, Kyle
+Signed-off-by: David Woodhouse <David.Woodhouse@intel.com>
+
+--- linux-2.6.26.ppc64/arch/powerpc/kernel/vmlinux.lds.S~	2008-07-13 22:51:29.000000000 +0100
++++ linux-2.6.26.ppc64/arch/powerpc/kernel/vmlinux.lds.S	2008-08-28 15:39:14.000000000 +0100
+@@ -35,10 +35,11 @@ SECTIONS
+ 		ALIGN_FUNCTION();
+ 		*(.text.head)
+ 		_text = .;
+-		*(.text .fixup .text.init.refok .exit.text.refok)
++		TEXT_TEXT
+ 		SCHED_TEXT
+ 		LOCK_TEXT
+ 		KPROBES_TEXT
++		*(.fixup)
+ 
+ #ifdef CONFIG_PPC32
+ 		*(.got1)
+
+-- 
+David Woodhouse                            Open Source Technology Centre
+David.Woodhouse@intel.com                              Intel Corporation
