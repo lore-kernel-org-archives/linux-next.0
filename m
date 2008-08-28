@@ -1,44 +1,45 @@
 From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: sparc build failure
-Date: Thu, 28 Aug 2008 08:57:54 +0200
-Message-ID: <20080828065754.GC16186@elte.hu>
-References: <20080828165149.4e6089e8.sfr@canb.auug.org.au>
+Subject: Re: linux-next: m68k build failure
+Date: Thu, 28 Aug 2008 08:59:07 +0200
+Message-ID: <20080828065907.GD16186@elte.hu>
+References: <20080828165004.4d833de6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:37777 "EHLO mx2.mail.elte.hu"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:43238 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752064AbYH1G6N (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 28 Aug 2008 02:58:13 -0400
+	id S1751984AbYH1G7U (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 Aug 2008 02:59:20 -0400
 Content-Disposition: inline
-In-Reply-To: <20080828165149.4e6089e8.sfr@canb.auug.org.au>
+In-Reply-To: <20080828165004.4d833de6.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>, linux-next@vger.kernel.org, Yinghai Lu <yhlu.kernel@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-next@vger.kernel.org, Yinghai Lu <yhlu.kernel@gmail.com>
 
 
 * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> Hi Dave,
+> Hi Geert,
 > 
-> The sparc32 allmodconfig build of linux-next (next-20080827) failed like
-> this (among other things):
+> The m68k allmodconfig build of linux-next (next-20080827) failed like
+> this:
 > 
+> ERROR: "nr_irqs" [drivers/serial/serial_core.ko] undefined!
+> ERROR: "nr_irqs" [drivers/serial/8250.ko] undefined!
 > ERROR: "nr_irqs" [drivers/net/hamradio/baycom_ser_fdx.ko] undefined!
-> ERROR: "nr_irqs" [drivers/net/3c59x.ko] undefined!
 > 
 > Introduced by the sparseirq tree.
 > 
-> nr_irqs is not exported for sparc.  I will add a patch to add the export
-> to linux-next today.
+> nr_irqs is not exported for m68k.  I will add a patch to add the 
+> export to linux-next today.
 
-thanks - the patch below should fix all those architectures. (there's 
-also s390)
+should be fixed by the patch below (also pushed out into the sparseirq 
+tree). Thanks,
 
 	Ingo
 
----------->
+--------------->
 >From 3af7043c57080f1ae7cd80c661d3e1308f164e1b Mon Sep 17 00:00:00 2001
 From: Ingo Molnar <mingo@elte.hu>
 Date: Thu, 28 Aug 2008 08:56:33 +0200
