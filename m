@@ -1,67 +1,173 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree
-Date: Thu, 28 Aug 2008 15:30:27 +1000
-Message-ID: <20080828153027.65912347.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the firmware tree
+Date: Thu, 28 Aug 2008 15:38:10 +1000
+Message-ID: <20080828153810.5f3421b3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43634 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48866 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753068AbYH1Fad (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 28 Aug 2008 01:30:33 -0400
+	id S1751242AbYH1FiP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 Aug 2008 01:38:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: linux-next@vger.kernel.org, Tejun Heo <tj@kernel.org>, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, Jaswinder Singh <jaswinder@infradead.org>
 
-Hi Jens,
+Hi David,
 
-Today's linux-next merge of the block tree got a conflict in
-include/linux/genhd.h between commit
-abf5439370491dd6fbb4fe1a7939680d2a9bc9d4 ("block: move cmdfilter from
-gendisk to request_queue") from Linus' tree (which also exists in the
-block tree) and commit 53b83963cc042f14b9773a1cee5a831799f6fd1a ("block:
-make partition array dynamic") from the block tree.
+Today's linux-next merge of the firmware tree got a conflict in
+firmware/Makefile firmware/WHENCE between commit
+d45ffcde084ce14815bf672e5ea0fc81d1f7ffc0 ("ALSA: wavefront - Always use
+request_firmware()") from the sound tree and various commits from the
+firmware tree.
 
-It looks as though the latter patch has readded some bits that were
-moved to include/linux/blkdev.h by the former patch.  I fixed it up (see
-below).
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc include/linux/genhd.h
-index be4f5e5,206cdf9..0000000
---- a/include/linux/genhd.h
-+++ b/include/linux/genhd.h
-@@@ -108,9 -115,27 +115,18 @@@ struct hd_struct 
-  #define GENHD_FL_CD				8
-  #define GENHD_FL_UP				16
-  #define GENHD_FL_SUPPRESS_PARTITION_INFO	32
-- #define GENHD_FL_FAIL				64
-+ #define GENHD_FL_EXT_DEVT			64 /* allow extended devt */
-+ 
- -#define BLK_SCSI_MAX_CMDS	(256)
- -#define BLK_SCSI_CMD_PER_LONG	(BLK_SCSI_MAX_CMDS / (sizeof(long) * 8))
- -
- -struct blk_scsi_cmd_filter {
- -	unsigned long read_ok[BLK_SCSI_CMD_PER_LONG];
- -	unsigned long write_ok[BLK_SCSI_CMD_PER_LONG];
- -	struct kobject kobj;
- -};
- -
-+ struct disk_part_tbl {
-+ 	struct rcu_head rcu_head;
-+ 	int len;
-+ 	struct hd_struct *part[];
-+ };
+diff --cc firmware/Makefile
+index f40ea7e,f3fb9e1..0000000
+--- a/firmware/Makefile
++++ b/firmware/Makefile
+@@@ -34,7 -51,8 +51,9 @@@ fw-shipped-$(CONFIG_SND_SB16_CSP) += sb
+  				     sb16/ima_adpcm_capture.csp
+  fw-shipped-$(CONFIG_SND_YMFPCI) += yamaha/ds1_ctrl.fw yamaha/ds1_dsp.fw \
+  				   yamaha/ds1e_ctrl.fw
+ +fw-shipped-$(CONFIG_SND_WAVEFRONT) += yamaha/yss225_registers.bin
++ fw-shipped-$(CONFIG_TIGON3) += tigon/tg3.bin tigon/tg3_tso.bin \
++ 			       tigon/tg3_tso5.bin
+  fw-shipped-$(CONFIG_USB_DABUSB) += dabusb/firmware.fw dabusb/bitstream.bin
+  fw-shipped-$(CONFIG_USB_EMI26) += emi26/loader.fw emi26/firmware.fw \
+  				  emi26/bitstream.fw
+diff --cc firmware/WHENCE
+index e31e5fc,c086cc3..0000000
+--- a/firmware/WHENCE
++++ b/firmware/WHENCE
+@@@ -340,13 -340,111 +340,122 @@@ Found in hex form in kernel source
   
-  struct gendisk {
-+ 	/* major, first_minor and minors are input parameters only,
-+ 	 * don't use directly.  Use disk_devt() and disk_max_parts().
-+ 	 */
-  	int major;			/* major number of driver */
-  	int first_minor;
-  	int minors;                     /* maximum number of minors, =1 for
+  --------------------------------------------------------------------------
+  
++ Driver: e100 -- Intel PRO/100 Ethernet NIC
++ 
++ File: e100/d101m_ucode.bin
++ File: e100/d101s_ucode.bin
++ File: e100/d102e_ucode.bin
++ 
++ Licence: Unknown
++ 
++ Found in hex form in kernel source.
++ 
++ --------------------------------------------------------------------------
++ 
++ Driver: acenic -- Alteon AceNIC Gigabit Ethernet card
++ 
++ File: acenic/tg1.bin
++ File: acenic/tg2.bin
++ 
++ Licence: Unknown
++ 
++ Found in hex form in kernel source, but source allegedly available at
++ http://alteon.shareable.org/
++ 
++ --------------------------------------------------------------------------
++ 
++ Driver: tigon3 -- Broadcom Tigon3 based gigabit Ethernet cards
++ 
++ File: tigon/tg3.bin
++ File: tigon/tg3_tso.bin
++ File: tigon/tg3_tso5.bin
++ 
++ Licence:
++  * Firmware is:
++  *	Derived from proprietary unpublished source code,
++  *	Copyright (C) 2000-2003 Broadcom Corporation.
++  *
++  *	Permission is hereby granted for the distribution of this firmware
++  *	data in hexadecimal or equivalent format, provided this copyright
++  *	notice is accompanying it.
++ 
++ Found in hex form in kernel source.
++ 
++ --------------------------------------------------------------------------
++ 
++ Driver: DVB AV7110 -- AV7110 cards
++ 
++ File: av7110/bootcode.bin
++ 
++ Licence: GPLv2 or later
++ 
++ ARM assembly source code available at http://www.linuxtv.org/downloads/firmware/Boot.S
++ 
++ --------------------------------------------------------------------------
++ 
++ Driver: SCSI_QLOGIC_1280 - Qlogic QLA 1240/1x80/1x160 SCSI support
++ 
++ File: qlogic/1040.bin
++ File: qlogic/1280.bin
++ File: qlogic/12160.bin
++ 
++ Licence: Allegedly GPLv2+, but no source visible. Marked:
++ 
++                    QLOGIC LINUX SOFTWARE
++   QLogic ISP1280/ device driver for Linux 2.2.x and 2.4.x
++   Copyright (C) 2001 Qlogic Corporation (www.qlogic.com)
++ 
++ --------------------------------------------------------------------------
++ 
++ Driver: SCSI_ADVANSYS - AdvanSys SCSI
++ 
++ File: advansys/mcode.bin
++ File: advansys/3550.bin
++ File: advansys/38C0800.bin
++ File: advansys/38C1600.bin
++ 
++ Licence: Allegedly GPLv2+, but no source visible.
++ 
++ Found in hex form in kernel source.
++ 
++ --------------------------------------------------------------------------
++ 
++ Driver: SCSI_QLOGICPTI - PTI Qlogic, ISP Driver
++ 
++ File: qlogic/isp1000.bin
++ 
++ Licence: Unknown
++ 
++ Found in hex form in kernel source.
++ 
++ --------------------------------------------------------------------------
++ 
++ Driver: ADAPTEC_STARFIRE - Adaptec Starfire/DuraLAN support
++ 
++ File: adaptec/starfire_rx.bin
++ File: adaptec/starfire_tx.bin
++ 
++ Licence: Allegedly GPLv2, but no source visible.
++ 
++ Found in hex form in kernel source, with the following notice:
++ 
++  BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE IT IS LICENSED "AS IS" AND
++  THERE IS NO WARRANTY FOR THE PROGRAM, INCLUDING BUT NOT LIMITED TO THE
++  IMPLIED WARRANTIES OF MERCHANTIBILITY OR FITNESS FOR A PARTICULAR PURPOSE
++  (TO THE EXTENT PERMITTED BY APPLICABLE LAW). USE OF THE PROGRAM IS AT YOUR
++  OWN RISK. IN NO EVENT WILL ADAPTEC OR ITS LICENSORS BE LIABLE TO YOU FOR
++  DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES
++  ARISING OUT OF THE USE OR INABILITY TO USE THE PROGRAM.
++ 
++ --------------------------------------------------------------------------
+++
+ +Driver: wavefront - ISA WaveFront sound card
+ +
+ +File: yamaha/yss225_registers.bin
+ +
+ +License: GPLv2+
+ +
+ +Found in hex form in kernel source, with the following comment:
+ +   Copyright (c) 1998-2002 by Paul Davis <pbd@op.net>
+ +
+ +--------------------------------------------------------------------------
