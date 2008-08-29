@@ -1,40 +1,23 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: linux-next: Tree for August 27
-Date: Fri, 29 Aug 2008 11:42:50 +0200
-Message-ID: <20080829094249.GQ20055@kernel.dk>
-References: <20080827183453.eb651f50.sfr@canb.auug.org.au> <58cb370e0808270757k583c0fc2oc659bc8e2dd6c21e@mail.gmail.com> <200808272145.20627.bzolnier@gmail.com> <200808290210.37211.bzolnier@gmail.com> <20080829070515.GL20055@kernel.dk> <48B7C361.9070008@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: David Howells <dhowells@redhat.com>
+Subject: Re: linux-next: manual merge of the creds tree
+Date: Fri, 29 Aug 2008 11:18:52 +0100
+Message-ID: <17292.1220005132@redhat.com>
+References: <20080829181442.e00b23ea.sfr@canb.auug.org.au>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pasmtpa.tele.dk ([80.160.77.114]:35807 "EHLO pasmtpA.tele.dk"
+Received: from mx1.redhat.com ([66.187.233.31]:53411 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750799AbYH2Jmx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 29 Aug 2008 05:42:53 -0400
-Content-Disposition: inline
-In-Reply-To: <48B7C361.9070008@kernel.org>
+	id S1750964AbYH2KUQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 29 Aug 2008 06:20:16 -0400
+In-Reply-To: <20080829181442.e00b23ea.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, dm-devel@redhat.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: dhowells@redhat.com, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, KaiGai Kohei <kaigai@ak.jp.nec.com>
 
-On Fri, Aug 29 2008, Tejun Heo wrote:
-> Jens Axboe wrote:
-> >> On the somehow related topic - CONFIG_DEBUG_BLOCK_EXT_DEVT which is
-> >> introduced by commit 3e5ba59bbab878f60b8b87004ac55a464bddc819 ("block:
-> >> implement CONFIG_DEBUG_BLOCK_EXT_DEVT") is way too intrusive to be
-> >> enabled by default if CONFIG_DEBUG_KERNEL is set as it easily results
-> >> in no longer bootable systems (+ help entry for the new option says
-> >> "Say N if you are unsure.").
-> >>
-> >> Tejun/Jens: please consider changing this.
-> > 
-> > I have change the default to 'n' for now.
-> 
-> Hmmm... it broke booting?  Bart, can you please elaborate a bit what got
-> broken?  Did it fail to locate the root partition or were you using
-> static device nodes?
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-It works fine for me, fwiw.
+> I fixed it up as best I could (see below) and can carry the fix.
 
--- 
-Jens Axboe
+That looks right.
+
+David
