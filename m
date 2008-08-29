@@ -1,53 +1,65 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: rcu build warnings
-Date: Fri, 29 Aug 2008 19:19:48 +1000
-Message-ID: <20080829191948.95cde73f.sfr@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: [PATCH] block: don't test for partition size in bdget_disk() and
+ blk_lookup_devt()
+Date: Fri, 29 Aug 2008 11:35:17 +0200
+Message-ID: <48B7C2D5.2060209@kernel.org>
+References: <20080827183453.eb651f50.sfr@canb.auug.org.au> <58cb370e0808270757k583c0fc2oc659bc8e2dd6c21e@mail.gmail.com> <200808272145.20627.bzolnier@gmail.com> <200808290210.37211.bzolnier@gmail.com> <20080829070515.GL20055@kernel.dk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__29_Aug_2008_19_19_48_+1000_MAA4Vj/q7/8Pn=/f"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59529 "EHLO smtps.tip.net.au"
+Received: from hera.kernel.org ([140.211.167.34]:51959 "EHLO hera.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753220AbYH2JT4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 29 Aug 2008 05:19:56 -0400
+	id S1755450AbYH2JhM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 29 Aug 2008 05:37:12 -0400
+In-Reply-To: <20080829070515.GL20055@kernel.dk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, dm-devel@redhat.com
 
---Signature=_Fri__29_Aug_2008_19_19_48_+1000_MAA4Vj/q7/8Pn=/f
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+bdget_disk() and blk_lookup_devt() never cared whether the specified
+partition (or disk) is zero sized or not.  I got confused while
+converting those not to depend on consecutive minor numbers in commit
+5a6411b1178baf534aa9138052864dfa89d3eada and later when dev0 was added
+it broke callers which expected to get valid return for zero sized
+disk devices.
 
-Hi Paul,
+So, they never needed nr_sects checks in the first place.  Kill them.
 
-Commit cd95851785bcfe95fdf73689e8ecb5a1c5959231 ("rcu: fix classic RCU
-locking cleanup lockdep problem") from the sched tree used a long
-(instead of unsigned long) for the flags argument to
-spin_lock_irqsave/restore producing these warnings:
+This problem was spotted and debugged by Bartlmoiej Zolnierkiewicz.
 
-kernel/rcuclassic.c: In function 'rcu_init_percpu_data':
-kernel/rcuclassic.c:719: warning: comparison of distinct pointer types lack=
-s a cast
-kernel/rcuclassic.c:727: warning: comparison of distinct pointer types lack=
-s a cast
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+---
+Thanks for the good spotting.  I got confused between the meaning of
+!part and !part->nr_sects and added the wrong check during conversion.
+I audited the rest and it seems those two are the only ones.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Thanks.
 
---Signature=_Fri__29_Aug_2008_19_19_48_+1000_MAA4Vj/q7/8Pn=/f
-Content-Type: application/pgp-signature
+ block/genhd.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAki3vzQACgkQjjKRsyhoI8zvAgCeL3Dii4yHVe8DVLe+x5crkEIx
-UZoAniRGlm0h5ig1p9TBqpDxp8OOjdB1
-=B6EC
------END PGP SIGNATURE-----
-
---Signature=_Fri__29_Aug_2008_19_19_48_+1000_MAA4Vj/q7/8Pn=/f--
+Index: work/block/genhd.c
+===================================================================
+--- work.orig/block/genhd.c
++++ work/block/genhd.c
+@@ -586,7 +586,7 @@ extern struct block_device *bdget_disk(s
+ 	struct block_device *bdev = NULL;
+ 
+ 	part = disk_get_part(disk, partno);
+-	if (part && (part->nr_sects || partno == 0))
++	if (part)
+ 		bdev = bdget(part_devt(part));
+ 	disk_put_part(part);
+ 
+@@ -1032,7 +1032,7 @@ dev_t blk_lookup_devt(const char *name,
+ 			continue;
+ 
+ 		part = disk_get_part(disk, partno);
+-		if (part && (part->nr_sects || partno == 0)) {
++		if (part) {
+ 			devt = part_devt(part);
+ 			disk_put_part(part);
+ 			break;
