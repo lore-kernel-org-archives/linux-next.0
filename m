@@ -1,56 +1,58 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: rcu build warnings
-Date: Sat, 30 Aug 2008 15:44:11 +1000
-Message-ID: <20080830154411.62615e9b.sfr@canb.auug.org.au>
-References: <20080829191948.95cde73f.sfr@canb.auug.org.au>
-	<20080829144200.GB6725@linux.vnet.ibm.com>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: Tree for August 27
+Date: Sat, 30 Aug 2008 11:10:25 +0200
+Message-ID: <48B90E81.5060905@kernel.org>
+References: <20080827183453.eb651f50.sfr@canb.auug.org.au> <48B7C361.9070008@kernel.org> <20080829094249.GQ20055@kernel.dk> <200808292123.07246.bzolnier@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__30_Aug_2008_15_44_11_+1000_h_Yj/tVEaw67Lg8z"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45393 "EHLO smtps.tip.net.au"
+Received: from hera.kernel.org ([140.211.167.34]:55465 "EHLO hera.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750876AbYH3FoW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 30 Aug 2008 01:44:22 -0400
-In-Reply-To: <20080829144200.GB6725@linux.vnet.ibm.com>
+	id S1751025AbYH3JM0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 30 Aug 2008 05:12:26 -0400
+In-Reply-To: <200808292123.07246.bzolnier@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: paulmck@linux.vnet.ibm.com
-Cc: linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: Jens Axboe <jens.axboe@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, dm-devel@redhat.com
 
---Signature=_Sat__30_Aug_2008_15_44_11_+1000_h_Yj/tVEaw67Lg8z
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi Paul,
+Bartlomiej Zolnierkiewicz wrote:
+>>> Hmmm... it broke booting?  Bart, can you please elaborate a bit what got
+>>> broken?  Did it fail to locate the root partition or were you using
+>>> static device nodes?
+>> It works fine for me, fwiw.
+> 
+> It fails to locate the root partition if you are using the default root
+> device on x86 (the one hard-wired into bzImage, it uses hard-coded 8-bit
+> major/minor numbers).
 
-On Fri, 29 Aug 2008 07:42:00 -0700 "Paul E. McKenney" <paulmck@linux.vnet.i=
-bm.com> wrote:
->
-> Commit 0cd418ddb1ee88df7d16d5df06cb2da68eceb9e4 from linux-2.6-tip in the
-> tip/core/rcu section addresses this problem.  Please accept my apologies
-> for the hassle!!!
+Right.  That would break it too.
 
-Not a real hassle, I just point out warnings from my builds to people
-when I get bored. :-)
+> Now I see that the issue is easily fixed by passing the root device name
+> with "root=" (since it will figure out the actual major/minor numbers
+> later) and that the default root device is said to be deprecated according
+> to Documentation/x86/boot.txt (OTOH there is no warning at all that it is
+> deprecated and that you should be using "root=" so I'm not convinced that
+> I'm the only one who would hit the unfortunate combination).
 
-I assume that patch will make it into linux-next at some point.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Yeap, in retrospect, enabling BLOCK_EXT_DEVT by default seems too
+disruptive.  There also are people running off static /dev.  I hope
+distros enable it during their alphas and betas tho so that they can
+spot problems in configuration utilities and stuff early.
 
---Signature=_Sat__30_Aug_2008_15_44_11_+1000_h_Yj/tVEaw67Lg8z
-Content-Type: application/pgp-signature
+> Actually it seems that CONFIG_DEBUG_BLOCK_EXT_DEVT introduction (which I
+> think is a nice step forward) is a good oportunity to put the deprecation
+> of the default root device further, i.e. it may be worth to hook the
+> default root device check and/or CONFIG_DEBUG_BLOCK_EXT_DEVT one into
+> mount_block_root().
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Maybe we can add a warning there if BLOCK_EXT_DEVT is enabled or do
+you have something else on mind?
 
-iEYEARECAAYFAki43isACgkQjjKRsyhoI8xG6QCdHsj3MMvVO8TnU7ZV8xpjtZya
-2mkAn19oBxjw43kS/5cwRVN/FD+WWf43
-=iFS7
------END PGP SIGNATURE-----
+Thanks.
 
---Signature=_Sat__30_Aug_2008_15_44_11_+1000_h_Yj/tVEaw67Lg8z--
+-- 
+tejun
