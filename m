@@ -1,118 +1,82 @@
-From: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
 Subject: Re: linux-next: Tree for August 29
-Date: Sun, 31 Aug 2008 18:14:10 +0900
-Message-ID: <20080831181410.1894289c.kamezawa.hiroyu@jp.fujitsu.com>
+Date: Sun, 31 Aug 2008 14:32:30 +0200
+Message-ID: <200808311432.30496.bzolnier@gmail.com>
 References: <20080829194010.5ca53e33.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fgwmail7.fujitsu.co.jp ([192.51.44.37]:33065 "EHLO
-	fgwmail7.fujitsu.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751495AbYHaJJQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 31 Aug 2008 05:09:16 -0400
+Received: from fg-out-1718.google.com ([72.14.220.158]:31180 "EHLO
+	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757848AbYHaMfQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 31 Aug 2008 08:35:16 -0400
+Received: by fg-out-1718.google.com with SMTP id 19so956668fgg.17
+        for <linux-next@vger.kernel.org>; Sun, 31 Aug 2008 05:35:14 -0700 (PDT)
 In-Reply-To: <20080829194010.5ca53e33.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: mingo@elte.hu
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Alan Cox <alan@redhat.com>
 
-On Fri, 29 Aug 2008 19:40:10 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
+Hi,
+
+On Friday 29 August 2008, Stephen Rothwell wrote:
 > Hi all,
 > 
 > Changes since next-20080828:
-> 
-> The block tree lost 3 conflicts but gained a build fix patch.
-> 
-> The firmware tree lost its 2 conflicts.
-> 
-> The pcmcia tree gained a build fix patch.
-> 
-> The creds tree gained a conflict against the security-testing tree.
-> 
 
-Hi, I got boot trouble on x86_64.
+All block issuses have been fixed now (thanks guys!)
+but the new warning emerged:
 
-I'm now trying recent mmtom tree but megaraid_sas get "page allocation failure"
-at megasas_probe_one() in boot because of __GFP_DMA.
+sysctl table check failed: /kernel/pty/nr .1.62.2 No data
+Pid: 1, comm: swapper Not tainted 2.6.27-rc3-00458-g0ea12ec-dirty #196
+ [<c012e004>] set_fail+0x30/0x39
+ [<c012e436>] sysctl_check_table+0x429/0x467
+ [<c012e44d>] sysctl_check_table+0x440/0x467
+ [<c012e44d>] sysctl_check_table+0x440/0x467
+ [<c01206d3>] __register_sysctl_paths+0xab/0x23c
+ [<c02f8fb9>] mutex_lock+0x15/0x23
+ [<c015f0ed>] exact_lock+0x0/0xd
+ [<c012087e>] register_sysctl_paths+0x1a/0x1c
+ [<c03d8106>] pty_init+0x215/0x293
+ [<c0101122>] _stext+0x3a/0x12a
+ [<c03d7ef1>] pty_init+0x0/0x293
+ [<c018a1a8>] create_proc_entry+0x72/0x84
+ [<c013ea0d>] register_irq_proc+0x6b/0x84
+ [<c03c443b>] kernel_init+0x6d/0xb9
+ [<c03c43ce>] kernel_init+0x0/0xb9
+ [<c01037f3>] kernel_thread_helper+0x7/0x10
+ =======================
 
-It seems dma_alloc_xxx patch set (in linux-next) changes the logic of pci_alloc_consistent().
+git bisect points at:
 
-For quick workaround, I'm now using this patch.
+commit 0ea12ecc2f11ab28478939a5902505bd47f9b765
+Author: Alan Cox <alan@redhat.com>
+Date:   Fri Aug 29 09:28:10 2008 +1000
 
-This patch just tries to make use of usual pages before using __GFP_DMA.
-(But I don't think this is a correct patch. )
+    tty-driver-kref
 
-new dma_alloc_coherent() seems to drop almost all logics used in
-old /arch/x86/kernel/pci-dma.c::dma_alloc_coherent().
+and somehow the following chunk looks suspicious:
 
-Thanks,
--Kame
+--- a/drivers/char/pty.c
++++ b/drivers/char/pty.c
+@@ -571,8 +571,11 @@ static void __init unix98_pty_init(void)
+        if (tty_register_driver(pts_driver))
+                panic("Couldn't register Unix98 pts driver");
 
----
- arch/x86/kernel/pci-swiotlb_64.c     |   34 +++++++++++++++++++++++++++++++++-
- drivers/scsi/megaraid/megaraid_sas.c |    1 +
- mm/page_alloc.c                      |    3 ++-
- 3 files changed, 36 insertions(+), 2 deletions(-)
++       /* FIXME: WTF */
++#if 0
+        pty_table[1].data = &ptm_driver->refcount;
+-       register_sysctl_table(pty_root_table);
++#endif
++       register_sysctl_table(pty_root_table);
 
-Index: mmtom-2.6.27-rc5+/drivers/scsi/megaraid/megaraid_sas.c
-===================================================================
---- mmtom-2.6.27-rc5+.orig/drivers/scsi/megaraid/megaraid_sas.c
-+++ mmtom-2.6.27-rc5+/drivers/scsi/megaraid/megaraid_sas.c
-@@ -2501,6 +2501,7 @@ megasas_set_dma_mask(struct pci_dev *pde
- 			if (pci_set_dma_mask(pdev, DMA_32BIT_MASK) != 0)
- 				goto fail_set_dma_mask;
- 		}
-+		pci_set_consistent_dma_mask(pdev, DMA_32BIT_MASK);
- 	} else {
- 		if (pci_set_dma_mask(pdev, DMA_32BIT_MASK) != 0)
- 			goto fail_set_dma_mask;
-Index: mmtom-2.6.27-rc5+/arch/x86/kernel/pci-swiotlb_64.c
-===================================================================
---- mmtom-2.6.27-rc5+.orig/arch/x86/kernel/pci-swiotlb_64.c
-+++ mmtom-2.6.27-rc5+/arch/x86/kernel/pci-swiotlb_64.c
-@@ -18,9 +18,41 @@ swiotlb_map_single_phys(struct device *h
- 	return swiotlb_map_single(hwdev, phys_to_virt(paddr), size, direction);
- }
- 
-+/*
-+ * We're only architecture which has DMA32.
-+ */
-+void *x86_64_swiotlb_alloc_coherent(struct device *hwdev, size_t size,
-+				dma_addr_t *dma_handle, gfp_t flags)
-+{
-+	unsigned long dma_mask;
-+	struct page *page;
-+	int node = node = dev_to_node(hwdev);
-+	int myflags = flags | __GFP_ZERO;
-+
-+	dma_mask = hwdev->coherent_dma_mask;
-+	if (!dma_mask)
-+		return swiotlb_alloc_coherent(hwdev, size, dma_handle, flags);
-+	if (dma_mask >= (max_pfn << PAGE_SHIFT)) {
-+		page = alloc_pages_node(node, myflags, get_order(size));
-+		if (page) {
-+			*dma_handle = page_to_phys(page);
-+			return page_address(page);
-+		}
-+	}
-+	if (dma_mask >= DMA_32BIT_MASK) {
-+		page = alloc_pages_node(node,
-+				myflags | GFP_DMA32, get_order(size));
-+		if (page) {
-+			*dma_handle = page_to_phys(page);
-+			return page_address(page);
-+		}
-+	}
-+	return swiotlb_alloc_coherent(hwdev, size, dma_handle, flags);
-+}
-+
- struct dma_mapping_ops swiotlb_dma_ops = {
- 	.mapping_error = swiotlb_dma_mapping_error,
--	.alloc_coherent = swiotlb_alloc_coherent,
-+	.alloc_coherent = x86_64_swiotlb_alloc_coherent,
- 	.free_coherent = swiotlb_free_coherent,
- 	.map_single = swiotlb_map_single_phys,
- 	.unmap_single = swiotlb_unmap_single,
+        /* Now create the /dev/ptmx special device */
+        tty_default_fops(&ptmx_fops);
+
+Unfortunately it cannot be simply reverted so it seems
+like WTF part will need some work after all... ;)
