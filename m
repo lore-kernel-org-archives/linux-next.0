@@ -1,50 +1,118 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: rcu build warnings
-Date: Sat, 30 Aug 2008 07:38:12 -0700
-Message-ID: <20080830143812.GH7107@linux.vnet.ibm.com>
-References: <20080829191948.95cde73f.sfr@canb.auug.org.au> <20080829144200.GB6725@linux.vnet.ibm.com> <20080830154411.62615e9b.sfr@canb.auug.org.au>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
+Subject: Re: linux-next: Tree for August 29
+Date: Sun, 31 Aug 2008 18:14:10 +0900
+Message-ID: <20080831181410.1894289c.kamezawa.hiroyu@jp.fujitsu.com>
+References: <20080829194010.5ca53e33.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e36.co.us.ibm.com ([32.97.110.154]:54339 "EHLO
-	e36.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750971AbYH3OiP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 30 Aug 2008 10:38:15 -0400
-Received: from d03relay02.boulder.ibm.com (d03relay02.boulder.ibm.com [9.17.195.227])
-	by e36.co.us.ibm.com (8.13.8/8.13.8) with ESMTP id m7UEcEwu005580
-	for <linux-next@vger.kernel.org>; Sat, 30 Aug 2008 10:38:14 -0400
-Received: from d03av04.boulder.ibm.com (d03av04.boulder.ibm.com [9.17.195.170])
-	by d03relay02.boulder.ibm.com (8.13.8/8.13.8/NCO v9.0) with ESMTP id m7UEcEJX213496
-	for <linux-next@vger.kernel.org>; Sat, 30 Aug 2008 08:38:14 -0600
-Received: from d03av04.boulder.ibm.com (loopback [127.0.0.1])
-	by d03av04.boulder.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id m7UEcCfY001757
-	for <linux-next@vger.kernel.org>; Sat, 30 Aug 2008 08:38:13 -0600
-Content-Disposition: inline
-In-Reply-To: <20080830154411.62615e9b.sfr@canb.auug.org.au>
+Received: from fgwmail7.fujitsu.co.jp ([192.51.44.37]:33065 "EHLO
+	fgwmail7.fujitsu.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751495AbYHaJJQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 31 Aug 2008 05:09:16 -0400
+In-Reply-To: <20080829194010.5ca53e33.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+To: mingo@elte.hu
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
-On Sat, Aug 30, 2008 at 03:44:11PM +1000, Stephen Rothwell wrote:
-> Hi Paul,
+On Fri, 29 Aug 2008 19:40:10 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi all,
 > 
-> On Fri, 29 Aug 2008 07:42:00 -0700 "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
-> >
-> > Commit 0cd418ddb1ee88df7d16d5df06cb2da68eceb9e4 from linux-2.6-tip in the
-> > tip/core/rcu section addresses this problem.  Please accept my apologies
-> > for the hassle!!!
+> Changes since next-20080828:
 > 
-> Not a real hassle, I just point out warnings from my builds to people
-> when I get bored. :-)
+> The block tree lost 3 conflicts but gained a build fix patch.
 > 
-> I assume that patch will make it into linux-next at some point.
+> The firmware tree lost its 2 conflicts.
+> 
+> The pcmcia tree gained a build fix patch.
+> 
+> The creds tree gained a conflict against the security-testing tree.
+> 
 
-Might be a good time to move it ahead.  ;-)
+Hi, I got boot trouble on x86_64.
 
-Hmmm...  Should I ask the git developers about some way of marking
-commits as being interdependent?  "Don't take commit #1 unless you also
-take commit #2?"
+I'm now trying recent mmtom tree but megaraid_sas get "page allocation failure"
+at megasas_probe_one() in boot because of __GFP_DMA.
 
-							Thanx, Paul
+It seems dma_alloc_xxx patch set (in linux-next) changes the logic of pci_alloc_consistent().
+
+For quick workaround, I'm now using this patch.
+
+This patch just tries to make use of usual pages before using __GFP_DMA.
+(But I don't think this is a correct patch. )
+
+new dma_alloc_coherent() seems to drop almost all logics used in
+old /arch/x86/kernel/pci-dma.c::dma_alloc_coherent().
+
+Thanks,
+-Kame
+
+---
+ arch/x86/kernel/pci-swiotlb_64.c     |   34 +++++++++++++++++++++++++++++++++-
+ drivers/scsi/megaraid/megaraid_sas.c |    1 +
+ mm/page_alloc.c                      |    3 ++-
+ 3 files changed, 36 insertions(+), 2 deletions(-)
+
+Index: mmtom-2.6.27-rc5+/drivers/scsi/megaraid/megaraid_sas.c
+===================================================================
+--- mmtom-2.6.27-rc5+.orig/drivers/scsi/megaraid/megaraid_sas.c
++++ mmtom-2.6.27-rc5+/drivers/scsi/megaraid/megaraid_sas.c
+@@ -2501,6 +2501,7 @@ megasas_set_dma_mask(struct pci_dev *pde
+ 			if (pci_set_dma_mask(pdev, DMA_32BIT_MASK) != 0)
+ 				goto fail_set_dma_mask;
+ 		}
++		pci_set_consistent_dma_mask(pdev, DMA_32BIT_MASK);
+ 	} else {
+ 		if (pci_set_dma_mask(pdev, DMA_32BIT_MASK) != 0)
+ 			goto fail_set_dma_mask;
+Index: mmtom-2.6.27-rc5+/arch/x86/kernel/pci-swiotlb_64.c
+===================================================================
+--- mmtom-2.6.27-rc5+.orig/arch/x86/kernel/pci-swiotlb_64.c
++++ mmtom-2.6.27-rc5+/arch/x86/kernel/pci-swiotlb_64.c
+@@ -18,9 +18,41 @@ swiotlb_map_single_phys(struct device *h
+ 	return swiotlb_map_single(hwdev, phys_to_virt(paddr), size, direction);
+ }
+ 
++/*
++ * We're only architecture which has DMA32.
++ */
++void *x86_64_swiotlb_alloc_coherent(struct device *hwdev, size_t size,
++				dma_addr_t *dma_handle, gfp_t flags)
++{
++	unsigned long dma_mask;
++	struct page *page;
++	int node = node = dev_to_node(hwdev);
++	int myflags = flags | __GFP_ZERO;
++
++	dma_mask = hwdev->coherent_dma_mask;
++	if (!dma_mask)
++		return swiotlb_alloc_coherent(hwdev, size, dma_handle, flags);
++	if (dma_mask >= (max_pfn << PAGE_SHIFT)) {
++		page = alloc_pages_node(node, myflags, get_order(size));
++		if (page) {
++			*dma_handle = page_to_phys(page);
++			return page_address(page);
++		}
++	}
++	if (dma_mask >= DMA_32BIT_MASK) {
++		page = alloc_pages_node(node,
++				myflags | GFP_DMA32, get_order(size));
++		if (page) {
++			*dma_handle = page_to_phys(page);
++			return page_address(page);
++		}
++	}
++	return swiotlb_alloc_coherent(hwdev, size, dma_handle, flags);
++}
++
+ struct dma_mapping_ops swiotlb_dma_ops = {
+ 	.mapping_error = swiotlb_dma_mapping_error,
+-	.alloc_coherent = swiotlb_alloc_coherent,
++	.alloc_coherent = x86_64_swiotlb_alloc_coherent,
+ 	.free_coherent = swiotlb_free_coherent,
+ 	.map_single = swiotlb_map_single_phys,
+ 	.unmap_single = swiotlb_unmap_single,
