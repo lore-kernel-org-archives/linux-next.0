@@ -1,55 +1,61 @@
-From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Subject: Re: linux-next: Tree for August 29
-Date: Mon, 1 Sep 2008 18:33:02 +0200
-Message-ID: <200809011833.02570.bzolnier@gmail.com>
-References: <1488691311.5043621220261605940.JavaMail.root@zmail02.collab.prod.int.phx2.redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: parisc tree build failure
+Date: Tue, 2 Sep 2008 03:32:42 +1000
+Message-ID: <20080902033242.bce78fa0.sfr@canb.auug.org.au>
+References: <20080828115820.d2e4f55b.sfr@canb.auug.org.au>
+	<20080828143319.GD6298@phobos.i.cabal.ca>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mu-out-0910.google.com ([209.85.134.191]:51198 "EHLO
-	mu-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751627AbYIAQgw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Sep 2008 12:36:52 -0400
-Received: by mu-out-0910.google.com with SMTP id g7so2026707muf.1
-        for <linux-next@vger.kernel.org>; Mon, 01 Sep 2008 09:36:50 -0700 (PDT)
-In-Reply-To: <1488691311.5043621220261605940.JavaMail.root@zmail02.collab.prod.int.phx2.redhat.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__2_Sep_2008_03_32_42_+1000_=bB4y9NGpOU/m=hb"
+Return-path: <linux-parisc-owner@vger.kernel.org>
+In-Reply-To: <20080828143319.GD6298@phobos.i.cabal.ca>
+Sender: linux-parisc-owner@vger.kernel.org
+To: Kyle McMartin <kyle@mcmartin.ca>, Takashi Iwai <tiwai@suse.de>
+Cc: linux-parisc@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Tue__2_Sep_2008_03_32_42_+1000_=bB4y9NGpOU/m=hb
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@redhat.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Transfer-Encoding: quoted-printable
 
-On Monday 01 September 2008, Alan Cox wrote:
-> > Unfortunately it cannot be simply reverted so it seems
-> > like WTF part will need some work after all... ;)
-> 
-> Tis already fixed ...
+Hi Kyle,
 
-Still happens with next-20080901, also upon closer look it is not
-just an innocent trace dump as /proc/sys/kernel/pty/ dir and its
-content are gone.
+On Thu, 28 Aug 2008 10:33:19 -0400 Kyle McMartin <kyle@mcmartin.ca> wrote:
+>
+> On Thu, Aug 28, 2008 at 11:58:20AM +1000, Stephen Rothwell wrote:
+> > Hi Kyle,
+> >=20
+> > A parisc defconfig build of linux-next (next-20080827) fails like this:
+> >=20
+> > sound/parisc/harmony.c:872: error: 'reutrn' undeclared (first use in th=
+is function)
+>=20
+> You're looking the wrong way... we didn't touch this code...
 
-Care to send a link to a patch and the patch itself to Stephen so
-we can have it fixed also in linux-next?
+Indeed.
 
-sysctl table check failed: /kernel/pty/nr .1.62.2 No data
-Pid: 1, comm: swapper Tainted: G        W 2.6.27-rc5-next-20080901 #197
- [<c012f45c>] set_fail+0x30/0x39
- [<c012f88e>] sysctl_check_table+0x429/0x467
- [<c012f8a5>] sysctl_check_table+0x440/0x467
- [<c012f8a5>] sysctl_check_table+0x440/0x467
- [<c0121b17>] __register_sysctl_paths+0xab/0x23c
- [<c02ff281>] mutex_lock+0x15/0x23
- [<c0160b49>] exact_lock+0x0/0xd
- [<c0121cc2>] register_sysctl_paths+0x1a/0x1c
- [<c03edd7c>] pty_init+0x215/0x293
- [<c0101122>] _stext+0x3a/0x12a
- [<c03edb67>] pty_init+0x0/0x293
- [<c0117300>] __enqueue_entity+0xcc/0xe2
- [<c0128baf>] __create_workqueue_key+0x14d/0x162
- [<c03d94ba>] kernel_init+0xec/0x150
- [<c03d93ce>] kernel_init+0x0/0x150
- [<c0103a47>] kernel_thread_helper+0x7/0x10
- =======================
+Hi Takashi,
+
+The above was introduced by commit
+59112f679b3ace91b5b74b965c4f918c5aa095fe ("ALSA: Kill snd_assert() in
+other places") in the sound tree.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__2_Sep_2008_03_32_42_+1000_=bB4y9NGpOU/m=hb
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAki8JzoACgkQjjKRsyhoI8w7egCeKoDiMEZKtp3AcsYqGJYjieHd
+BMUAoI7dXnPiZOkI/7rco6qgg1U2otKR
+=QqLw
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__2_Sep_2008_03_32_42_+1000_=bB4y9NGpOU/m=hb--
