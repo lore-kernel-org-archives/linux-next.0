@@ -1,27 +1,50 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: sparc/firmware build failure
-Date: Mon, 01 Sep 2008 02:46:52 -0700 (PDT)
-Message-ID: <20080901.024652.155907138.davem@davemloft.net>
-References: <20080901191019.5df57434.sfr@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: [PATCH #blk-for-2.8] init: DEBUG_BLOCK_EXT_DEVT requires explicit
+ root= param
+Date: Mon, 01 Sep 2008 13:00:50 +0200
+Message-ID: <48BBCB62.4040309@kernel.org>
+References: <20080827183453.eb651f50.sfr@canb.auug.org.au> <200808292123.07246.bzolnier@gmail.com> <48B90E81.5060905@kernel.org> <200808311538.38918.bzolnier@gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:35408
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1751657AbYIAJq6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Sep 2008 05:46:58 -0400
-In-Reply-To: <20080901191019.5df57434.sfr@canb.auug.org.au>
+Received: from hera.kernel.org ([140.211.167.34]:37033 "EHLO hera.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750839AbYIALCp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Sep 2008 07:02:45 -0400
+In-Reply-To: <200808311538.38918.bzolnier@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: dwmw2@infradead.org, linux-next@vger.kernel.org, jaswinder@infradead.org
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: Jens Axboe <jens.axboe@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, dm-devel@redhat.com
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 1 Sep 2008 19:10:19 +1000
+DEBUG_BLOCK_EXT_DEVT shuffles SCSI and IDE device numbers and root
+device number set using rdev become meaningless.  Root devices should
+be explicitly specified using textual names.  Warn about it if root
+can't be found and DEBUG_BLOCK_EXT_DEVT is enabled.
 
-> I have applied the following patch.  I will carry this patch unless a
-> better solution comes along.
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+---
+There are other ways to specify device numbers directly (ie. root=8:0)
+and DEBUG_BLOCK_EXT_DEVT being a debug option I don't think it
+warrants a complex logic, so I just added simple warning message.
 
-That patch is the proper way to resolve this merge conflict, please
-carry it :-)
+ init/do_mounts.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+Index: work/init/do_mounts.c
+===================================================================
+--- work.orig/init/do_mounts.c
++++ work/init/do_mounts.c
+@@ -263,6 +263,10 @@ retry:
+ 		printk("Please append a correct \"root=\" boot option; here are the available partitions:\n");
+ 
+ 		printk_all_partitions();
++#ifdef CONFIG_DEBUG_BLOCK_EXT_DEVT
++		printk("DEBUG_BLOCK_EXT_DEVT is enabled, you need to specify "
++		       "explicit textual name for \"root=\" boot option.\n");
++#endif
+ 		panic("VFS: Unable to mount root fs on %s", b);
+ 	}
+ 
