@@ -1,68 +1,35 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH #blk-for-2.8] init: DEBUG_BLOCK_EXT_DEVT requires explicit
-   root= param
-Date: Mon, 01 Sep 2008 13:38:17 +0200
-Message-ID: <48BBD429.50907@kernel.org>
-References: <20080827183453.eb651f50.sfr@canb.auug.org.au> <200808292123.07246.bzolnier@gmail.com> <48B90E81.5060905@kernel.org> <200808311538.38918.bzolnier@gmail.com> <48BBCB62.4040309@kernel.org> <20080901111635.GN20055@kernel.dk> <48BBD01A.7000603@kernel.org> <20080901113059.GO20055@kernel.dk>
+From: Arjan van de Ven <arjan@linux.intel.com>
+Subject: Re: linux-next: revert of "debug: add notifier chain debugging"
+Date: Mon, 01 Sep 2008 07:23:58 -0700
+Message-ID: <48BBFAFE.7030808@linux.intel.com>
+References: <20080901182619.cb799b52.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:54577 "EHLO hera.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751056AbYIALkW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Sep 2008 07:40:22 -0400
-In-Reply-To: <20080901113059.GO20055@kernel.dk>
+Received: from mga05.intel.com ([192.55.52.89]:42912 "EHLO
+	fmsmga101.fm.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751227AbYIAOYH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Sep 2008 10:24:07 -0400
+In-Reply-To: <20080901182619.cb799b52.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, dm-devel@redhat.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, David Woodhouse <dwmw2@infradead.org>
 
-DEBUG_BLOCK_EXT_DEVT shuffles SCSI and IDE device numbers and root
-device number set using rdev become meaningless.  Root devices should
-be explicitly specified using textual names.  Warn about it if root
-can't be found and DEBUG_BLOCK_EXT_DEVT is enabled.  Also, add warning
-to the help text.
+Stephen Rothwell wrote:
+> Hi all,
+> 
+> I have reverted commit 16f9b13de93c8bfdac16b4d15577af2c132358ef ("debug:
+> add notifier chain debugging") for today hate typing thas it prevents Powerpc kernels
+> from booting.  There is (I think) a bug there (__devinit routines are not
+> put in the right section as pointed otu by David Woodhouse), but not a
+> fatal bug and the above commit makes it one.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
----
-I think distros should enable it for early alpha/betas to catch odd
-problems.  Well, anyways, here's the updated version.  Thanks.
+well it's a pretty bad bug since there are many places that depend on the kernel text stuff to work.
+(backtracing, lockdep, some of the security checks etc). PPC needs to be fixed rather urgently.
+but yeah the system kept plodding on.
+David also sent a patch to fix it fwiw.
 
- init/do_mounts.c  |    4 ++++
- lib/Kconfig.debug |    6 ++++++
- 2 files changed, 10 insertions(+)
-
-Index: work/init/do_mounts.c
-===================================================================
---- work.orig/init/do_mounts.c
-+++ work/init/do_mounts.c
-@@ -263,6 +263,10 @@ retry:
- 		printk("Please append a correct \"root=\" boot option; here are the available partitions:\n");
- 
- 		printk_all_partitions();
-+#ifdef CONFIG_DEBUG_BLOCK_EXT_DEVT
-+		printk("DEBUG_BLOCK_EXT_DEVT is enabled, you need to specify "
-+		       "explicit textual name for \"root=\" boot option.\n");
-+#endif
- 		panic("VFS: Unable to mount root fs on %s", b);
- 	}
- 
-Index: work/lib/Kconfig.debug
-===================================================================
---- work.orig/lib/Kconfig.debug
-+++ work/lib/Kconfig.debug
-@@ -638,6 +638,12 @@ config DEBUG_BLOCK_EXT_DEVT
- 	  userland code paths which assume predetermined contiguous
- 	  device number allocation.
- 
-+	  Note that turning on this debug option shuffles all the
-+	  device numbers for all IDE and SCSI devices including libata
-+	  ones, so root partition specified using device number
-+	  directly (via rdev or root=MAJ:MIN) won't work anymore.
-+	  Textual device names (root=/dev/sdXn) will continue to work.
-+
- 	  Say N if you are unsure.
- 
- config LKDTM
+I'm a bit sad to see a debug patch get reverted just because it caught bugs ;-)
+at least I assume this is very temporary.
