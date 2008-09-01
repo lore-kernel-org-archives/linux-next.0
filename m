@@ -1,52 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: revert of "debug: add notifier chain debugging"
-Date: Mon, 1 Sep 2008 18:26:19 +1000
-Message-ID: <20080901182619.cb799b52.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the sound tree
+Date: Mon, 01 Sep 2008 01:28:27 -0700 (PDT)
+Message-ID: <20080901.012827.193698949.davem@davemloft.net>
+References: <20080901142030.513d82eb.sfr@canb.auug.org.au>
+	<20080831.213607.09599119.davem@davemloft.net>
+	<s5hej4476p0.wl%tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__1_Sep_2008_18_26_19_+1000_74E0g_SoRoVKtHvn"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48376 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751988AbYIAI0c (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Sep 2008 04:26:32 -0400
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:51106
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1752046AbYIAI2d (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Sep 2008 04:28:33 -0400
+In-Reply-To: <s5hej4476p0.wl%tiwai@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org, Arjan van de Ven <arjan@linux.intel.com>, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, David Woodhouse <dwmw2@infradead.org>
+To: tiwai@suse.de
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org
 
---Signature=_Mon__1_Sep_2008_18_26_19_+1000_74E0g_SoRoVKtHvn
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Takashi Iwai <tiwai@suse.de>
+Date: Mon, 01 Sep 2008 07:53:31 +0200
 
-Hi all,
+> Where can I find this change?  I now looked at
+>   git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc-2.6.git
+> but it has no such a commit
 
-I have reverted commit 16f9b13de93c8bfdac16b4d15577af2c132358ef ("debug:
-add notifier chain debugging") for today hate typing thas it prevents Power=
-pc kernels
-from booting.  There is (I think) a bug there (__devinit routines are not
-put in the right section as pointed otu by David Woodhouse), but not a
-fatal bug and the above commit makes it one.
+sparc-next-2.6.git is where "-next" changes for Sparc live :)
 
-Ingo, Arjan sent you a new version of this patch on Aug 27.
+> I can either remove the affecting chunk in my patch, or merge your
+> patch first to my tree and rebase.
 
-I will have a go at fixing the powerpc bug tomorrow.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__1_Sep_2008_18_26_19_+1000_74E0g_SoRoVKtHvn
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAki7pysACgkQjjKRsyhoI8xvWwCcC4Q+qqOC9A69B4EJdFz5aEUr
-7EgAoI8+YVhbkTXCnOWjxrhUATaVmeqY
-=KXaY
------END PGP SIGNATURE-----
-
---Signature=_Mon__1_Sep_2008_18_26_19_+1000_74E0g_SoRoVKtHvn--
+The other option is for Stephen to just keep fixing the merge,
+if we just do nothing his way of doing this is automated.
