@@ -1,39 +1,28 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for September 1 (recordmcount.pl)
-Date: Mon, 1 Sep 2008 11:25:49 -0700
-Message-ID: <20080901112549.9849ab39.randy.dunlap@oracle.com>
-References: <20080901191946.4c35ffc9.sfr@canb.auug.org.au>
+From: Alan Cox <alan@redhat.com>
+Subject: Re: linux-next: Tree for August 29
+Date: Mon, 1 Sep 2008 18:24:39 -0400 (EDT)
+Message-ID: <503446464.5113091220307879885.JavaMail.root@zmail02.collab.prod.int.phx2.redhat.com>
+References: <200809011833.02570.bzolnier@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from agminet01.oracle.com ([141.146.126.228]:14596 "EHLO
-	agminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751104AbYIAS0A (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Sep 2008 14:26:00 -0400
-In-Reply-To: <20080901191946.4c35ffc9.sfr@canb.auug.org.au>
+Received: from mx2.redhat.com ([66.187.237.31]:55025 "EHLO mx2.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751055AbYIAW1K (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Sep 2008 18:27:10 -0400
+In-Reply-To: <200809011833.02570.bzolnier@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Mon, 1 Sep 2008 19:19:46 +1000 Stephen Rothwell wrote:
+> Still happens with next-20080901, also upon closer look it is not
+> just an innocent trace dump as /proc/sys/kernel/pty/ dir and its
+> content are gone.
 
-> Hi all,
-> 
-> Changes since next-20080829:
+That would not surprise me. The 0901 tree would have been built at the end of the weekend. I don't actually work 7 days a week, but 5.
 
-When using patch tarballs and applying that to kernel bases,
-scripts/recordmcount.pl fails because it is not executable.
-(Yes, I know, using the git would/should fix this.)
+I've pushed that (including a new implementation of the needed field) tonight.
 
-Is there any way to make (new) scripts executable when using
-tarballs?
-
-I'll handle it on a case-by-case basis for now.
-
-Thanks,
----
-~Randy
-Linux Plumbers Conference, 17-19 September 2008, Portland, Oregon USA
-http://linuxplumbersconf.org/
+Alan
