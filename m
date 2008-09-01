@@ -1,35 +1,35 @@
-From: Arjan van de Ven <arjan@linux.intel.com>
-Subject: Re: linux-next: revert of "debug: add notifier chain debugging"
-Date: Mon, 01 Sep 2008 07:23:58 -0700
-Message-ID: <48BBFAFE.7030808@linux.intel.com>
-References: <20080901182619.cb799b52.sfr@canb.auug.org.au>
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Subject: Re: [PATCH #blk-for-2.8] init: DEBUG_BLOCK_EXT_DEVT requires explicit root= param
+Date: Mon, 1 Sep 2008 18:34:02 +0200
+Message-ID: <200809011834.02577.bzolnier@gmail.com>
+References: <20080827183453.eb651f50.sfr@canb.auug.org.au> <20080901113059.GO20055@kernel.dk> <48BBD429.50907@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.89]:42912 "EHLO
-	fmsmga101.fm.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751227AbYIAOYH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Sep 2008 10:24:07 -0400
-In-Reply-To: <20080901182619.cb799b52.sfr@canb.auug.org.au>
+Received: from mu-out-0910.google.com ([209.85.134.189]:49532 "EHLO
+	mu-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752238AbYIAQgx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Sep 2008 12:36:53 -0400
+Received: by mu-out-0910.google.com with SMTP id g7so2026717muf.1
+        for <linux-next@vger.kernel.org>; Mon, 01 Sep 2008 09:36:52 -0700 (PDT)
+In-Reply-To: <48BBD429.50907@kernel.org>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, David Woodhouse <dwmw2@infradead.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: Jens Axboe <jens.axboe@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, dm-devel@redhat.com
 
-Stephen Rothwell wrote:
-> Hi all,
+On Monday 01 September 2008, Tejun Heo wrote:
+> DEBUG_BLOCK_EXT_DEVT shuffles SCSI and IDE device numbers and root
+> device number set using rdev become meaningless.  Root devices should
+> be explicitly specified using textual names.  Warn about it if root
+> can't be found and DEBUG_BLOCK_EXT_DEVT is enabled.  Also, add warning
+> to the help text.
 > 
-> I have reverted commit 16f9b13de93c8bfdac16b4d15577af2c132358ef ("debug:
-> add notifier chain debugging") for today hate typing thas it prevents Powerpc kernels
-> from booting.  There is (I think) a bug there (__devinit routines are not
-> put in the right section as pointed otu by David Woodhouse), but not a
-> fatal bug and the above commit makes it one.
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
 
-well it's a pretty bad bug since there are many places that depend on the kernel text stuff to work.
-(backtracing, lockdep, some of the security checks etc). PPC needs to be fixed rather urgently.
-but yeah the system kept plodding on.
-David also sent a patch to fix it fwiw.
-
-I'm a bit sad to see a debug patch get reverted just because it caught bugs ;-)
-at least I assume this is very temporary.
+Thanks Tejun.  With this patch I'm also fine with having
+DEBUG_BLOCK_EXT_DEVT enabled by default.
