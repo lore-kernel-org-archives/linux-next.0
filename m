@@ -1,58 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the sound tree
-Date: Mon, 1 Sep 2008 19:03:07 +1000
-Message-ID: <20080901190307.f7ba8cca.sfr@canb.auug.org.au>
-References: <20080901142030.513d82eb.sfr@canb.auug.org.au>
-	<20080831.213607.09599119.davem@davemloft.net>
-	<s5hej4476p0.wl%tiwai@suse.de>
-	<20080901.012827.193698949.davem@davemloft.net>
-	<s5hk5dwfenb.wl%tiwai@suse.de>
+Subject: linux-next: sparc/firmware build failure
+Date: Mon, 1 Sep 2008 19:10:19 +1000
+Message-ID: <20080901191019.5df57434.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__1_Sep_2008_19_03_07_+1000_GS4Z/OmkCi5ttsq+"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49565 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37662 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751618AbYIAJDS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Sep 2008 05:03:18 -0400
-In-Reply-To: <s5hk5dwfenb.wl%tiwai@suse.de>
+	id S1750840AbYIAJKY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Sep 2008 05:10:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>, David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, Jaswinder Singh <jaswinder@infradead.org>
 
---Signature=_Mon__1_Sep_2008_19_03_07_+1000_GS4Z/OmkCi5ttsq+
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-On Mon, 01 Sep 2008 10:34:32 +0200 Takashi Iwai <tiwai@suse.de> wrote:
->
-> > The other option is for Stephen to just keep fixing the merge,
-> > if we just do nothing his way of doing this is automated.
->=20
-> That's fine for me, too.
-> But, I guess we'd need to fix the conflict anyway when 2.6.28 merge
-> window is opened.
+Today's linux-next build (sparc defconfig) failed like this:
 
-Thats fine by me.  Looks like whoever gets in first in the merge window
-wins :-)
+drivers/scsi/qlogicpti.c:478: error: structure has no member named `sdev'
 
---=20
+Caused by a combination of commits
+5dc2536bb8d8adb5fdfbe76cd6fdcdf9de3f40f8 ("qlogicpti: Convert to pure OF
+driver") from the sparc tree and 229d9a03273684dc2175821be4104dbaa52f3ce0
+("qlogicpti: use request_firmware") from the firmware tree.
+
+I have applied the following patch.  I will carry this patch unless a
+better solution comes along.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__1_Sep_2008_19_03_07_+1000_GS4Z/OmkCi5ttsq+
-Content-Type: application/pgp-signature
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 1 Sep 2008 18:56:52 +1000
+Subject: [PATCH] sparc: qlogicpti fallout from sbus removal
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/scsi/qlogicpti.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-iEYEARECAAYFAki7r8sACgkQjjKRsyhoI8w/hQCfcbwH9td9NjACnWhmhcn4VjLF
-LI0An0nXhUf7LP+YIssXrpYxRa9flOuQ
-=OSGa
------END PGP SIGNATURE-----
-
---Signature=_Mon__1_Sep_2008_19_03_07_+1000_GS4Z/OmkCi5ttsq+--
+diff --git a/drivers/scsi/qlogicpti.c b/drivers/scsi/qlogicpti.c
+index 3d59655..fb9c875 100644
+--- a/drivers/scsi/qlogicpti.c
++++ b/drivers/scsi/qlogicpti.c
+@@ -475,7 +475,7 @@ static int __devinit qlogicpti_load_firmware(struct qlogicpti *qpti)
+ 	unsigned long flags;
+ 	int i, timeout;
+ 
+-	err = request_firmware(&fw, fwname, &qpti->sdev->ofdev.dev);
++	err = request_firmware(&fw, fwname, &qpti->op->dev);
+ 	if (err) {
+ 		printk(KERN_ERR "Failed to load image \"%s\" err %d\n",
+ 		       fwname, err);
+-- 
+1.5.6.5
