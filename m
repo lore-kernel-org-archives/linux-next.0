@@ -1,32 +1,74 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Subject: Re: linux-next: revert of "debug: add notifier chain debugging"
-Date: Tue, 02 Sep 2008 19:00:29 +0100
-Message-ID: <1220378429.2982.236.camel@pmac.infradead.org>
-References: <20080901182619.cb799b52.sfr@canb.auug.org.au>
-	 <48BBFAFE.7030808@linux.intel.com>
-	 <1220378221.2982.234.camel@pmac.infradead.org>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] ide: fix Makefile for ide-disk_proc
+Date: Tue, 02 Sep 2008 11:44:54 -0700
+Message-ID: <48BD89A6.1040200@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:57966 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751686AbYIBSAi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Sep 2008 14:00:38 -0400
-In-Reply-To: <1220378221.2982.234.camel@pmac.infradead.org>
+Received: from agminet01.oracle.com ([141.146.126.228]:35097 "EHLO
+	agminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751437AbYIBSph (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Sep 2008 14:45:37 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+To: linux-ide@vger.kernel.org, linux-next@vger.kernel.org
+Cc: akpm <akpm@linux-foundation.org>, bzolnier@gmail.com
 
-On Tue, 2008-09-02 at 18:57 +0100, David Woodhouse wrote:
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-... some half-composed and out of date nonsense, which had since been
-used as a cut/paste scratch buffer.
+Fix ide-disk_proc build error due to 2 entries in Makefile, one of them
+being unconditional.
 
-Sorry, please ignore that -- I hate it when I accidentally click the
-mouse button twice, and end up hitting 'send' on something completely
-random that happens to be lying around my desktop...
+When CONFIG_IDE_PROC_FS=n, there are lots of errors/warnings:
 
--- 
-dwmw2
+linux-next-20080902/drivers/ide/ide-disk_proc.c:100: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'ide_disk_proc'
+linux-next-20080902/drivers/ide/ide-disk_proc.c:109: warning: data definition has no type or storage class
+linux-next-20080902/drivers/ide/ide-disk_proc.c:109: warning: type defaults to 'int' in declaration of 'ide_devset_rw_field'
+linux-next-20080902/drivers/ide/ide-disk_proc.c:109: warning: parameter names (without types) in function declaration
+linux-next-20080902/drivers/ide/ide-disk_proc.c:110: warning: data definition has no type or storage class
+linux-next-20080902/drivers/ide/ide-disk_proc.c:110: warning: type defaults to 'int' in declaration of 'ide_devset_rw_field'
+linux-next-20080902/drivers/ide/ide-disk_proc.c:110: warning: parameter names (without types) in function declaration
+linux-next-20080902/drivers/ide/ide-disk_proc.c:111: warning: data definition has no type or storage class
+linux-next-20080902/drivers/ide/ide-disk_proc.c:111: warning: type defaults to 'int' in declaration of 'ide_devset_rw_field'
+linux-next-20080902/drivers/ide/ide-disk_proc.c:111: warning: parameter names (without types) in function declaration
+linux-next-20080902/drivers/ide/ide-disk_proc.c:112: warning: data definition has no type or storage class
+linux-next-20080902/drivers/ide/ide-disk_proc.c:112: warning: type defaults to 'int' in declaration of 'ide_devset_rw_field'
+linux-next-20080902/drivers/ide/ide-disk_proc.c:112: warning: parameter names (without types) in function declaration
+linux-next-20080902/drivers/ide/ide-disk_proc.c:113: warning: data definition has no type or storage class
+linux-next-20080902/drivers/ide/ide-disk_proc.c:113: warning: type defaults to 'int' in declaration of 'ide_devset_rw_field'
+linux-next-20080902/drivers/ide/ide-disk_proc.c:113: warning: parameter names (without types) in function declaration
+linux-next-20080902/drivers/ide/ide-disk_proc.c:114: warning: data definition has no type or storage class
+linux-next-20080902/drivers/ide/ide-disk_proc.c:114: warning: type defaults to 'int' in declaration of 'ide_devset_rw_field'
+linux-next-20080902/drivers/ide/ide-disk_proc.c:114: warning: parameter names (without types) in function declaration
+linux-next-20080902/drivers/ide/ide-disk_proc.c:116: error: array type has incomplete element type
+linux-next-20080902/drivers/ide/ide-disk_proc.c:117: error: implicit declaration of function 'IDE_PROC_DEVSET'
+linux-next-20080902/drivers/ide/ide-disk_proc.c:117: error: 'acoustic' undeclared here (not in a function)
+linux-next-20080902/drivers/ide/ide-disk_proc.c:118: error: 'address' undeclared here (not in a function)
+linux-next-20080902/drivers/ide/ide-disk_proc.c:119: error: 'bios_cyl' undeclared here (not in a function)
+linux-next-20080902/drivers/ide/ide-disk_proc.c:120: error: 'bios_head' undeclared here (not in a function)
+linux-next-20080902/drivers/ide/ide-disk_proc.c:121: error: 'bios_sect' undeclared here (not in a function)
+linux-next-20080902/drivers/ide/ide-disk_proc.c:122: error: 'failures' undeclared here (not in a function)
+linux-next-20080902/drivers/ide/ide-disk_proc.c:123: error: 'lun' undeclared here (not in a function)
+linux-next-20080902/drivers/ide/ide-disk_proc.c:124: error: 'max_failures' undeclared here (not in a function)
+linux-next-20080902/drivers/ide/ide-disk_proc.c:125: error: 'multcount' undeclared here (not in a function)
+linux-next-20080902/drivers/ide/ide-disk_proc.c:126: error: 'nowerr' undeclared here (not in a function)
+linux-next-20080902/drivers/ide/ide-disk_proc.c:127: error: 'wcache' undeclared here (not in a function)
+make[3]: *** [drivers/ide/ide-disk_proc.o] Error 1
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/ide/Makefile |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20080902.orig/drivers/ide/Makefile
++++ linux-next-20080902/drivers/ide/Makefile
+@@ -36,7 +36,7 @@ obj-$(CONFIG_IDE_H8300)			+= h8300/
+ obj-$(CONFIG_IDE_GENERIC)		+= ide-generic.o
+ obj-$(CONFIG_BLK_DEV_IDEPNP)		+= ide-pnp.o
+ 
+-ide-disk_mod-y += ide-disk.o ide-disk_ioctl.o ide-disk_proc.o
++ide-disk_mod-y += ide-disk.o ide-disk_ioctl.o
+ ide-cd_mod-y += ide-cd.o ide-cd_ioctl.o ide-cd_verbose.o
+ ide-floppy_mod-y += ide-floppy.o ide-floppy_ioctl.o
+ 
