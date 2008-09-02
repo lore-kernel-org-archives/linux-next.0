@@ -1,82 +1,83 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree
-Date: Tue, 2 Sep 2008 16:06:55 +1000
-Message-ID: <20080902160655.6baf1965.sfr@canb.auug.org.au>
+Subject: linux-next: ttydev tree build failure
+Date: Tue, 2 Sep 2008 17:23:22 +1000
+Message-ID: <20080902172322.15c465e7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46218 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40991 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752181AbYIBGHD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Sep 2008 02:07:03 -0400
+	id S1752002AbYIBHXb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Sep 2008 03:23:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: linux-next@vger.kernel.org, Ananth N Mavinakayanahalli <ananth@in.ibm.com>, Tejun Heo <tj@kernel.org>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: linux-next@vger.kernel.org
 
-Hi Jens,
+Hi Alan,
 
-Today's linux-next merge of the block tree got a conflict in
-lib/Kconfig.debug between commits
-94a97a3018e55a27d1c29e011b3c38fee01a967f ("Move backtrace selftests to
-tests/") and 0f6add4bafdbff7a822e37dec0436e2392864d9a ("Move lkdtm to
-tests/") from the tests tree and the three commits dealing with
-CONFIG_DEBUG_BLOCK_EXT_DEVT from the block tree.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Just overlapping adds/removes.  I fixed it up (see below) and can carry
-the fix.
+/drivers/char/tty_ioctl.c: In function 'change_termios':
+drivers/isdn/capi/capi.c:1234: error: implicit declaration of function 'n_tty_ioctl'
+drivers/isdn/gigaset/ser-gigaset.c: In function 'gigaset_tty_ioctl':
+drivers/isdn/gigaset/ser-gigaset.c:648: error: implicit declaration of function 'n_tty_ioctl'
+
+Introduced by commit 686b5e4aea05a80e370dc931b7f4a8d03c80da54
+("tty-move-canon-specials").  I added the following patch (which may not
+be correct).
+
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc lib/Kconfig.debug
-index f62c706,2a50e95..0000000
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@@ -572,6 -624,44 +572,28 @@@ config RCU_CPU_STAL
-  
-  	  Say N if you are unsure.
-  
-+ config DEBUG_BLOCK_EXT_DEVT
-+         bool "Force extended block device numbers and spread them"
-+ 	depends on DEBUG_KERNEL
-+ 	depends on BLOCK
-+ 	default n
-+ 	help
-+ 	  Conventionally, block device numbers are allocated from
-+ 	  predetermined contiguous area.  However, extended block area
-+ 	  may introduce non-contiguous block device numbers.  This
-+ 	  option forces most block device numbers to be allocated from
-+ 	  the extended space and spreads them to discover kernel or
-+ 	  userland code paths which assume predetermined contiguous
-+ 	  device number allocation.
-+ 
-+ 	  Note that turning on this debug option shuffles all the
-+ 	  device numbers for all IDE and SCSI devices including libata
-+ 	  ones, so root partition specified using device number
-+ 	  directly (via rdev or root=MAJ:MIN) won't work anymore.
-+ 	  Textual device names (root=/dev/sdXn) will continue to work.
-+ 
-+ 	  Say N if you are unsure.
-+ 
- -config LKDTM
- -	tristate "Linux Kernel Dump Test Tool Module"
- -	depends on DEBUG_KERNEL
- -	depends on KPROBES
- -	depends on BLOCK
- -	default n
- -	help
- -	This module enables testing of the different dumping mechanisms by
- -	inducing system failures at predefined crash points.
- -	If you don't need it: say N
- -	Choose M here to compile this code as a module. The module will be
- -	called lkdtm.
- -
- -	Documentation on how to use the module can be found in
- -	drivers/misc/lkdtm.c
- -
-  config FAULT_INJECTION
-  	bool "Fault-injection framework"
-  	depends on DEBUG_KERNEL
+>From 90b2237399675ce920b1620426a6a231670574f3 Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 2 Sep 2008 17:21:47 +1000
+Subject: [PATCH] ttydev: fallout from tty-move-canon-specials
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/isdn/capi/capi.c           |    2 +-
+ drivers/isdn/gigaset/ser-gigaset.c |    4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/isdn/capi/capi.c b/drivers/isdn/capi/capi.c
+index 3b29c04..1b5bf87 100644
+--- a/drivers/isdn/capi/capi.c
++++ b/drivers/isdn/capi/capi.c
+@@ -1231,7 +1231,7 @@ static int capinc_tty_ioctl(struct tty_struct *tty, struct file * file,
+ 	int error = 0;
+ 	switch (cmd) {
+ 	default:
+-		error = n_tty_ioctl (tty, file, cmd, arg);
++		error = n_tty_ioctl_helper(tty, file, cmd, arg);
+ 		break;
+ 	}
+ 	return error;
+diff --git a/drivers/isdn/gigaset/ser-gigaset.c b/drivers/isdn/gigaset/ser-gigaset.c
+index 5e89fa1..cc4f4e4 100644
+--- a/drivers/isdn/gigaset/ser-gigaset.c
++++ b/drivers/isdn/gigaset/ser-gigaset.c
+@@ -645,7 +645,7 @@ gigaset_tty_ioctl(struct tty_struct *tty, struct file *file,
+ 	case TCGETS:
+ 	case TCGETA:
+ 		/* pass through to underlying serial device */
+-		rc = n_tty_ioctl(tty, file, cmd, arg);
++		rc = n_tty_ioctl_helper(tty, file, cmd, arg);
+ 		break;
+ 
+ 	case TCFLSH:
+@@ -660,7 +660,7 @@ gigaset_tty_ioctl(struct tty_struct *tty, struct file *file,
+ 			break;
+ 		}
+ 		/* flush the serial port's buffer */
+-		rc = n_tty_ioctl(tty, file, cmd, arg);
++		rc = n_tty_ioctl_helper(tty, file, cmd, arg);
+ 		break;
+ 
+ 	case FIONREAD:
+-- 
+1.5.6.5
