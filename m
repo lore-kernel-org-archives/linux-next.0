@@ -1,83 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: ttydev tree build failure
-Date: Tue, 2 Sep 2008 17:23:22 +1000
-Message-ID: <20080902172322.15c465e7.sfr@canb.auug.org.au>
+Subject: Re: linux-next: revert of "debug: add notifier chain debugging"
+Date: Tue, 2 Sep 2008 18:33:28 +1000
+Message-ID: <20080902183328.571911ca.sfr@canb.auug.org.au>
+References: <20080901182619.cb799b52.sfr@canb.auug.org.au>
+	<48BBFAFE.7030808@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__2_Sep_2008_18_33_28_+1000_YvnnVvzIcJ5MACCl"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40991 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37125 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752002AbYIBHXb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Sep 2008 03:23:31 -0400
+	id S1751818AbYIBIdm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Sep 2008 04:33:42 -0400
+In-Reply-To: <48BBFAFE.7030808@linux.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: linux-next@vger.kernel.org
+To: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, David Woodhouse <dwmw2@infradead.org>
 
-Hi Alan,
+--Signature=_Tue__2_Sep_2008_18_33_28_+1000_YvnnVvzIcJ5MACCl
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+Hi Arjan,
 
-/drivers/char/tty_ioctl.c: In function 'change_termios':
-drivers/isdn/capi/capi.c:1234: error: implicit declaration of function 'n_tty_ioctl'
-drivers/isdn/gigaset/ser-gigaset.c: In function 'gigaset_tty_ioctl':
-drivers/isdn/gigaset/ser-gigaset.c:648: error: implicit declaration of function 'n_tty_ioctl'
+On Mon, 01 Sep 2008 07:23:58 -0700 Arjan van de Ven <arjan@linux.intel.com>=
+ wrote:
+>
+> well it's a pretty bad bug since there are many places that depend on the=
+ kernel text stuff to work.
+> (backtracing, lockdep, some of the security checks etc). PPC needs to be =
+fixed rather urgently.
+> but yeah the system kept plodding on.
+> David also sent a patch to fix it fwiw.
+>=20
+> I'm a bit sad to see a debug patch get reverted just because it caught bu=
+gs ;-)
+> at least I assume this is very temporary.
 
-Introduced by commit 686b5e4aea05a80e370dc931b7f4a8d03c80da54
-("tty-move-canon-specials").  I added the following patch (which may not
-be correct).
+Today I still reverted the patch, but I applied the new version as well
+as applying the simple powerpc fix patch, so we shall see ...
 
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
->From 90b2237399675ce920b1620426a6a231670574f3 Mon Sep 17 00:00:00 2001
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 2 Sep 2008 17:21:47 +1000
-Subject: [PATCH] ttydev: fallout from tty-move-canon-specials
+--Signature=_Tue__2_Sep_2008_18_33_28_+1000_YvnnVvzIcJ5MACCl
+Content-Type: application/pgp-signature
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/isdn/capi/capi.c           |    2 +-
- drivers/isdn/gigaset/ser-gigaset.c |    4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-diff --git a/drivers/isdn/capi/capi.c b/drivers/isdn/capi/capi.c
-index 3b29c04..1b5bf87 100644
---- a/drivers/isdn/capi/capi.c
-+++ b/drivers/isdn/capi/capi.c
-@@ -1231,7 +1231,7 @@ static int capinc_tty_ioctl(struct tty_struct *tty, struct file * file,
- 	int error = 0;
- 	switch (cmd) {
- 	default:
--		error = n_tty_ioctl (tty, file, cmd, arg);
-+		error = n_tty_ioctl_helper(tty, file, cmd, arg);
- 		break;
- 	}
- 	return error;
-diff --git a/drivers/isdn/gigaset/ser-gigaset.c b/drivers/isdn/gigaset/ser-gigaset.c
-index 5e89fa1..cc4f4e4 100644
---- a/drivers/isdn/gigaset/ser-gigaset.c
-+++ b/drivers/isdn/gigaset/ser-gigaset.c
-@@ -645,7 +645,7 @@ gigaset_tty_ioctl(struct tty_struct *tty, struct file *file,
- 	case TCGETS:
- 	case TCGETA:
- 		/* pass through to underlying serial device */
--		rc = n_tty_ioctl(tty, file, cmd, arg);
-+		rc = n_tty_ioctl_helper(tty, file, cmd, arg);
- 		break;
- 
- 	case TCFLSH:
-@@ -660,7 +660,7 @@ gigaset_tty_ioctl(struct tty_struct *tty, struct file *file,
- 			break;
- 		}
- 		/* flush the serial port's buffer */
--		rc = n_tty_ioctl(tty, file, cmd, arg);
-+		rc = n_tty_ioctl_helper(tty, file, cmd, arg);
- 		break;
- 
- 	case FIONREAD:
--- 
-1.5.6.5
+iEYEARECAAYFAki8+lgACgkQjjKRsyhoI8yJiACePw6uwvyBXejdpNiIqa7KmOeZ
+bVgAn3vRiOOw6/5eIPmqRl5k/ZWXYt4g
+=VDqb
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__2_Sep_2008_18_33_28_+1000_YvnnVvzIcJ5MACCl--
