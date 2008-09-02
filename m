@@ -1,48 +1,35 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] hp-plus: fix link objects
-Date: Tue, 2 Sep 2008 13:03:44 -0700
-Message-ID: <20080902130344.d8847b3d.randy.dunlap@oracle.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [next 0902] sparc64: oops at boot: n_tty_set_termios
+Date: Tue, 02 Sep 2008 16:40:42 -0700 (PDT)
+Message-ID: <20080902.164042.147785415.davem@davemloft.net>
+References: <a4423d670809020908t4f763557l306a1db791677f8d@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rgminet01.oracle.com ([148.87.113.118]:45421 "EHLO
-	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751199AbYIBUEl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Sep 2008 16:04:41 -0400
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:38844
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1753981AbYIBXks (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Sep 2008 19:40:48 -0400
+In-Reply-To: <a4423d670809020908t4f763557l306a1db791677f8d@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: netdev <netdev@vger.kernel.org>, akpm <akpm@linux-foundation.org>, jgarzik <jgarzik@pobox.com>, alan@lxorguk.ukuu.org.uk
+To: a.beregalov@gmail.com
+Cc: alan@redhat.com, sparclinux@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+From: "Alexander Beregalov" <a.beregalov@gmail.com>
+Date: Tue, 2 Sep 2008 20:08:09 +0400
 
-Fix hp-plus Makefile object file:
+> Hi
+> 
+> Host is Sun Ultra 10.
+> 
+> Here is what can I see on screen:
+> 
+> swapper(1): Oops
+> 
+> TPC: n_tty_set_termios
+> i7: n_tty_open
 
-drivers/built-in.o: In function `hpp_open':
-hp-plus.c:(.text+0xaf445): undefined reference to `ei_interrupt'
-hp-plus.c:(.text+0xaf4ac): undefined reference to `ei_open'
-drivers/built-in.o: In function `hpp_close':
-hp-plus.c:(.text+0xaf59d): undefined reference to `ei_close'
-drivers/built-in.o: In function `hpp_probe1':
-hp-plus.c:(.init.text+0x7314): undefined reference to `ei_poll'
-drivers/built-in.o: In function `hp_plus_probe':
-(.init.text+0x7407): undefined reference to `__alloc_ei_netdev'
-make[1]: *** [.tmp_vmlinux1] Error 1
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/net/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20080902.orig/drivers/net/Makefile
-+++ linux-next-20080902/drivers/net/Makefile
-@@ -111,7 +111,7 @@ obj-$(CONFIG_EL2) += 3c503.o 8390p.o
- obj-$(CONFIG_NE2000) += ne.o 8390p.o
- obj-$(CONFIG_NE2_MCA) += ne2.o 8390p.o
- obj-$(CONFIG_HPLAN) += hp.o 8390p.o
--obj-$(CONFIG_HPLAN_PLUS) += hp-plus.o 8390p.o
-+obj-$(CONFIG_HPLAN_PLUS) += hp-plus.o 8390.o
- obj-$(CONFIG_ULTRA) += smc-ultra.o 8390.o
- obj-$(CONFIG_ULTRAMCA) += smc-mca.o 8390.o
- obj-$(CONFIG_ULTRA32) += smc-ultra32.o 8390.o
+Alan says he pushed a fix for this, see the thread titled:
+"Re: broken tty-move-canon-specials patch"
