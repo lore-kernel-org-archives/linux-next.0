@@ -1,80 +1,41 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: Tree for September 1 (recordmcount.pl)
-Date: Tue, 2 Sep 2008 23:26:39 -0700
-Message-ID: <20080902232639.255efb4f.akpm@linux-foundation.org>
-References: <20080901191946.4c35ffc9.sfr@canb.auug.org.au>
-	<20080901112549.9849ab39.randy.dunlap@oracle.com>
+From: Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: linux-next: block tree build failure
+Date: Wed, 3 Sep 2008 08:34:21 +0200
+Message-ID: <20080903063419.GK20055@kernel.dk>
+References: <20080903161526.636b6d0d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:60154 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754019AbYICG07 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Sep 2008 02:26:59 -0400
-In-Reply-To: <20080901112549.9849ab39.randy.dunlap@oracle.com>
+Received: from pasmtpa.tele.dk ([80.160.77.114]:45248 "EHLO pasmtpA.tele.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754011AbYICGeY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Sep 2008 02:34:24 -0400
+Content-Disposition: inline
+In-Reply-To: <20080903161526.636b6d0d.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Tejun Heo <tj@kernel.org>
 
-On Mon, 1 Sep 2008 11:25:49 -0700 Randy Dunlap <randy.dunlap@oracle.com> wrote:
-
-> On Mon, 1 Sep 2008 19:19:46 +1000 Stephen Rothwell wrote:
+On Wed, Sep 03 2008, Stephen Rothwell wrote:
+> Hi Jens,
 > 
-> > Hi all,
-> > 
-> > Changes since next-20080829:
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 > 
-> When using patch tarballs and applying that to kernel bases,
-> scripts/recordmcount.pl fails because it is not executable.
-> (Yes, I know, using the git would/should fix this.)
+> block/genhd.c: In function 'show_partition':
+> block/genhd.c:718: error: 'struct hd_struct' has no member named 'private'
+> block/genhd.c:719: warning: passing argument 1 of 'seq_puts' from incompatible pointer type
+> block/genhd.c:720: error: 'struct hd_struct' has no member named 'private'
 > 
-> Is there any way to make (new) scripts executable when using
-> tarballs?
-> 
-> I'll handle it on a case-by-case basis for now.
-> 
+> Caused by the merge because commit
+> ddef43a843f620c6742a06633739887a901ec06b ("block: restore original
+> behavior of /proc/partition when there's no partition") added references
+> to the 'private' member.  I removed the offending section of code (see
+> below) assuming the fix referred to in the comment has be done in the
+> block tree.
 
-I did this:
+I'm in the very midst of updating to latest -git, I'll push it out in 5
+minutes or so. It'll also solve the two latest conflicts you saw.
 
-From: Andrew Morton <akpm@linux-foundation.org>
-
-  CHK     include/linux/version.h
-  CHK     include/linux/utsrelease.h
-  CC      scripts/mod/empty.o
-/bin/sh: /usr/src/25/scripts/recordmcount.pl: Permission denied
-
-We shouldn't assume that files have their `x' bits set.  There are various
-ways in which file permissions get lost, including use of patch(1).
-
-It might not be correct to assume that perl lives in $PATH?
-
-Cc: Ingo Molnar <mingo@elte.hu>
-Cc: Sam Ravnborg <sam@ravnborg.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- scripts/Makefile.build |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff -puN scripts/Makefile.build~kbuild-ftrace-dont-assume-that-scripts-recordmcountpl-is-executable scripts/Makefile.build
---- a/scripts/Makefile.build~kbuild-ftrace-dont-assume-that-scripts-recordmcountpl-is-executable
-+++ a/scripts/Makefile.build
-@@ -199,8 +199,9 @@ cmd_modversions =							\
- endif
- 
- ifdef CONFIG_FTRACE_MCOUNT_RECORD
--cmd_record_mcount = $(srctree)/scripts/recordmcount.pl "$(ARCH)" \
--	"$(OBJDUMP)" "$(OBJCOPY)" "$(CC)" "$(LD)" "$(NM)" "$(RM)" "$(MV)" "$(@)";
-+cmd_record_mcount = perl $(srctree)/scripts/recordmcount.pl \
-+	"$(ARCH)" "$(OBJDUMP)" "$(OBJCOPY)" "$(CC)" "$(LD)" "$(NM)" "$(RM)" \
-+	"$(MV)" "$(@)";
- endif
- 
- define rule_cc_o_c
-_
-
-
-but I haven't been able to interest anyone in the patch yet.
+-- 
+Jens Axboe
