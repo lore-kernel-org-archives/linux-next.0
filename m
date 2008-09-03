@@ -1,54 +1,51 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: linux-next: block tree build failure
-Date: Wed, 3 Sep 2008 09:07:24 +0200
-Message-ID: <20080903070723.GL20055@kernel.dk>
-References: <20080903161526.636b6d0d.sfr@canb.auug.org.au> <20080903063419.GK20055@kernel.dk> <20080903000418.aa2434fe.akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: fastboot tree build warning
+Date: Wed, 3 Sep 2008 17:34:48 +1000
+Message-ID: <20080903173448.55f2745b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__3_Sep_2008_17_34_48_+1000_qYn7kdFA3CydjLi."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pasmtpa.tele.dk ([80.160.77.114]:55364 "EHLO pasmtpA.tele.dk"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49956 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751950AbYICHH1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Sep 2008 03:07:27 -0400
-Content-Disposition: inline
-In-Reply-To: <20080903000418.aa2434fe.akpm@linux-foundation.org>
+	id S1753933AbYICHfA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Sep 2008 03:35:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Tejun Heo <tj@kernel.org>
+To: Arjan van de Ven <arjan@linux.intel.com>
+Cc: linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
 
-On Wed, Sep 03 2008, Andrew Morton wrote:
-> On Wed, 3 Sep 2008 08:34:21 +0200 Jens Axboe <jens.axboe@oracle.com> wrote:
-> 
-> > On Wed, Sep 03 2008, Stephen Rothwell wrote:
-> > > Hi Jens,
-> > > 
-> > > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> > > 
-> > > block/genhd.c: In function 'show_partition':
-> > > block/genhd.c:718: error: 'struct hd_struct' has no member named 'private'
-> > > block/genhd.c:719: warning: passing argument 1 of 'seq_puts' from incompatible pointer type
-> > > block/genhd.c:720: error: 'struct hd_struct' has no member named 'private'
-> > > 
-> > > Caused by the merge because commit
-> > > ddef43a843f620c6742a06633739887a901ec06b ("block: restore original
-> > > behavior of /proc/partition when there's no partition") added references
-> > > to the 'private' member.  I removed the offending section of code (see
-> > > below) assuming the fix referred to in the comment has be done in the
-> > > block tree.
-> > 
-> > I'm in the very midst of updating to latest -git, I'll push it out in 5
-> > minutes or so. It'll also solve the two latest conflicts you saw.
-> > 
-> 
-> I get a nasty git reject around disk_seqf_next() from -next-20080902
-> and have yet to find a fix which doesn't oops all over the place. 
-> 
-> Am presently discommoded.  Please let this be fixed in -next-20080903 :(
+--Signature=_Wed__3_Sep_2008_17_34_48_+1000_qYn7kdFA3CydjLi.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I've updated for-2.6.28 (and thus for-next and for-akpm), we also had a
-couple of merge errors that resulted in bad bisect compiles. So I think
-it should be ok now.
+Hi Arjan,
 
--- 
-Jens Axboe
+The linux-next build produces the following warning:
+
+init/do_mounts_md.c: In function 'md_run_setup':
+init/do_mounts_md.c:282: warning: ISO C90 forbids mixed declarations and co=
+de
+
+Introduced by commit b52c36a95ed8026b6925fe8595ebcab6921ae62d ("fastboot:
+make the raid autodetect code wait for all devices to init").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__3_Sep_2008_17_34_48_+1000_qYn7kdFA3CydjLi.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAki+PhgACgkQjjKRsyhoI8wElwCfcZhK4+UXf0dqNJ62mCYybMuZ
+UiMAn34G48tM28N+OMA1uyAj+VmeRzwU
+=cBRy
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__3_Sep_2008_17_34_48_+1000_qYn7kdFA3CydjLi.--
