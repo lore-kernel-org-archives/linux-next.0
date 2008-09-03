@@ -1,47 +1,68 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: block tree build failure
-Date: Wed, 3 Sep 2008 00:04:18 -0700
-Message-ID: <20080903000418.aa2434fe.akpm@linux-foundation.org>
-References: <20080903161526.636b6d0d.sfr@canb.auug.org.au>
-	<20080903063419.GK20055@kernel.dk>
+From: Joerg Roedel <joerg.roedel@amd.com>
+Subject: Re: linux-next: Tree for September 2
+Date: Wed, 3 Sep 2008 09:06:10 +0200
+Message-ID: <20080903070610.GA17919@amd.com>
+References: <20080902190207.7bcd06dc.sfr@canb.auug.org.au> <20080903093011.a5cc6887.kamezawa.hiroyu@jp.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:42002 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751633AbYICHEm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Sep 2008 03:04:42 -0400
-In-Reply-To: <20080903063419.GK20055@kernel.dk>
+Received: from outbound-wa4.frontbridge.com ([216.32.181.16]:22752 "EHLO
+	WA4EHSOBE004.bigfish.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753037AbYICHGU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Sep 2008 03:06:20 -0400
+Content-Disposition: inline
+In-Reply-To: <20080903093011.a5cc6887.kamezawa.hiroyu@jp.fujitsu.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Tejun Heo <tj@kernel.org>
+To: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, mingo@elte.hu
 
-On Wed, 3 Sep 2008 08:34:21 +0200 Jens Axboe <jens.axboe@oracle.com> wrote:
-
-> On Wed, Sep 03 2008, Stephen Rothwell wrote:
-> > Hi Jens,
-> > 
-> > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> > 
-> > block/genhd.c: In function 'show_partition':
-> > block/genhd.c:718: error: 'struct hd_struct' has no member named 'private'
-> > block/genhd.c:719: warning: passing argument 1 of 'seq_puts' from incompatible pointer type
-> > block/genhd.c:720: error: 'struct hd_struct' has no member named 'private'
-> > 
-> > Caused by the merge because commit
-> > ddef43a843f620c6742a06633739887a901ec06b ("block: restore original
-> > behavior of /proc/partition when there's no partition") added references
-> > to the 'private' member.  I removed the offending section of code (see
-> > below) assuming the fix referred to in the comment has be done in the
-> > block tree.
+On Wed, Sep 03, 2008 at 09:30:11AM +0900, KAMEZAWA Hiroyuki wrote:
+> On Tue, 2 Sep 2008 19:02:07 +1000
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
-> I'm in the very midst of updating to latest -git, I'll push it out in 5
-> minutes or so. It'll also solve the two latest conflicts you saw.
-> 
+> > Hi all,
+> > 
+> > Changes since next-20080901:
+> > 
+> > The x86 tree gained a conflict against the dwmw2 tree for which I
+> > reverted a commit from the dwmw2 tree.
+> > 
+> > The sound tree lost its conflict.
+> > 
+> > The block tree gained a conflict against the device-mapper tree but lost
+> > its build fix patch.
+> > 
+> > The ttydev tree lost a conflict but gained a build fix patch.
+> > 
+> > I have also applied the following patches for known problems:
+> > 
+> > 	ftrace: protect the definition of ftrace_release
+> > 	revert BUILD_BUG_ON change
+> > 	Revert "debug: add notifier chain debugging"
+> > 	debug: add notifier chain debugging (different version)
+> > 	sparc: qlogicpti fallout from sbus removal
+> > 	powerpc: make sure all kernel test is before _etext
+> > 
+> From patch (not tested yet), it seems dma_alloc_coherent() on x86_64
+> is still broken as I reported to August 29's linux-next.
+> It easily goes down to swiotlb routine, which uses __GFP_DMA, and show
+> "page allocation failure" at boot. Old code used __GFP_DMA32 as much as
+> possible, I think.
 
-I get a nasty git reject around disk_seqf_next() from -next-20080902
-and have yet to find a fix which doesn't oops all over the place. 
+Hmm, SWIOTLB unconditionally allocates from the DMA zone. Thats bad but
+should be easy to change. I prepare a patch.
 
-Am presently discommoded.  Please let this be fixed in -next-20080903 :(
+> Just a notification.
+
+Thanks for pointing that out.
+
+Joerg
+
+-- 
+           |           AMD Saxony Limited Liability Company & Co. KG
+ Operating |         Wilschdorfer Landstr. 101, 01109 Dresden, Germany
+ System    |                  Register Court Dresden: HRA 4896
+ Research  |              General Partner authorized to represent:
+ Center    |             AMD Saxony LLC (Wilmington, Delaware, US)
+           | General Manager of AMD Saxony LLC: Dr. Hans-R. Deppe, Thomas McCoy
