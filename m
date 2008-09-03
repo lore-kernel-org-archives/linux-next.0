@@ -1,65 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure
-Date: Wed, 3 Sep 2008 18:45:01 +1000
-Message-ID: <20080903184501.f280daf7.sfr@canb.auug.org.au>
+Subject: Re: linux-next: block tree build failure
+Date: Wed, 3 Sep 2008 18:50:48 +1000
+Message-ID: <20080903185048.ef457fbd.sfr@canb.auug.org.au>
+References: <20080903161526.636b6d0d.sfr@canb.auug.org.au>
+	<20080903063419.GK20055@kernel.dk>
+	<20080903000418.aa2434fe.akpm@linux-foundation.org>
+	<20080903070723.GL20055@kernel.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__3_Sep_2008_18_50_48_+1000_q1hYkcU27w5u_nya"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58041 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44875 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751687AbYICIpI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Sep 2008 04:45:08 -0400
+	id S1751528AbYICIu7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Sep 2008 04:50:59 -0400
+In-Reply-To: <20080903070723.GL20055@kernel.dk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: linux-next@vger.kernel.org
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, Tejun Heo <tj@kernel.org>
 
-Hi David,
+--Signature=_Wed__3_Sep_2008_18_50_48_+1000_q1hYkcU27w5u_nya
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next build (powerpc allnoconfig) failed like this:
+Hi Jens, Andrew,
 
-In file included from arch/powerpc/include/asm/statfs.h:5,
-                 from include/linux/statfs.h:7,
-                 from include/linux/vfs.h:5,
-                 from fs/open.c:23:
-include/asm-generic/statfs.h:20: error: expected '=', ',', ';', 'asm' or '__attribute__' before '__u32'
-include/asm-generic/statfs.h:36: error: two or more data types in declaration specifiers
-include/asm-generic/statfs.h:36: warning: useless type name in empty declaration
-include/asm-generic/statfs.h:47: error: expected specifier-qualifier-list before '__statfs_word'
+On Wed, 3 Sep 2008 09:07:24 +0200 Jens Axboe <jens.axboe@oracle.com> wrote:
+>
+> On Wed, Sep 03 2008, Andrew Morton wrote:
+> >=20
+> > I get a nasty git reject around disk_seqf_next() from -next-20080902
+> > and have yet to find a fix which doesn't oops all over the place.=20
+> >=20
+> > Am presently discommoded.  Please let this be fixed in -next-20080903 :(
+>=20
+> I've updated for-2.6.28 (and thus for-next and for-akpm), we also had a
+> couple of merge errors that resulted in bad bisect compiles. So I think
+> it should be ok now.
 
-and it went downhill from there.
+OK, I have reverted the previous merge of the block tree and merged the
+new one (makes the linux-next tree look a little strange today, but
+hopefully helps Andrew out).
 
-Introduced by commit 97bea16fbd30f35637447cf0884ac0e1fe467a37 ("Make
-<asm-generic/statfs.h> suitable for 64-bit platforms") from the dwmw2
-tree.  I applied the following patch.
+I haven't released this yet (it will be -20080903 obviously) as I am
+still build testing ...
 
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 3 Sep 2008 18:37:34 +1000
-Subject: [PATCH] statfs: fix typo
+--Signature=_Wed__3_Sep_2008_18_50_48_+1000_q1hYkcU27w5u_nya
+Content-Type: application/pgp-signature
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/asm-generic/statfs.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-diff --git a/include/asm-generic/statfs.h b/include/asm-generic/statfs.h
-index 68b6d69..6129d68 100644
---- a/include/asm-generic/statfs.h
-+++ b/include/asm-generic/statfs.h
-@@ -17,7 +17,7 @@ typedef __kernel_fsid_t	fsid_t;
- #if BITS_PER_LONG == 64
- #define __statfs_word long
- #else
--typedef __statfs_word __u32
-+#define __statfs_word __u32
- #endif
- #endif
- 
--- 
-1.5.6.5
+iEYEARECAAYFAki+T+gACgkQjjKRsyhoI8wNQACggRuVL8m3Hj9/nZAiqMEqKXfR
+NBgAnjTIRS61CkePkoAEDlCdLNual8a/
+=HKOb
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__3_Sep_2008_18_50_48_+1000_q1hYkcU27w5u_nya--
