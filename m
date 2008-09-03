@@ -1,51 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: fastboot tree build warning
-Date: Wed, 3 Sep 2008 17:34:48 +1000
-Message-ID: <20080903173448.55f2745b.sfr@canb.auug.org.au>
+Subject: linux-next: build failure
+Date: Wed, 3 Sep 2008 18:45:01 +1000
+Message-ID: <20080903184501.f280daf7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__3_Sep_2008_17_34_48_+1000_qYn7kdFA3CydjLi."
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49956 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58041 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753933AbYICHfA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Sep 2008 03:35:00 -0400
+	id S1751687AbYICIpI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Sep 2008 04:45:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arjan van de Ven <arjan@linux.intel.com>
-Cc: linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Wed__3_Sep_2008_17_34_48_+1000_qYn7kdFA3CydjLi.
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi David,
 
-Hi Arjan,
+Today's linux-next build (powerpc allnoconfig) failed like this:
 
-The linux-next build produces the following warning:
+In file included from arch/powerpc/include/asm/statfs.h:5,
+                 from include/linux/statfs.h:7,
+                 from include/linux/vfs.h:5,
+                 from fs/open.c:23:
+include/asm-generic/statfs.h:20: error: expected '=', ',', ';', 'asm' or '__attribute__' before '__u32'
+include/asm-generic/statfs.h:36: error: two or more data types in declaration specifiers
+include/asm-generic/statfs.h:36: warning: useless type name in empty declaration
+include/asm-generic/statfs.h:47: error: expected specifier-qualifier-list before '__statfs_word'
 
-init/do_mounts_md.c: In function 'md_run_setup':
-init/do_mounts_md.c:282: warning: ISO C90 forbids mixed declarations and co=
-de
+and it went downhill from there.
 
-Introduced by commit b52c36a95ed8026b6925fe8595ebcab6921ae62d ("fastboot:
-make the raid autodetect code wait for all devices to init").
+Introduced by commit 97bea16fbd30f35637447cf0884ac0e1fe467a37 ("Make
+<asm-generic/statfs.h> suitable for 64-bit platforms") from the dwmw2
+tree.  I applied the following patch.
 
---=20
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__3_Sep_2008_17_34_48_+1000_qYn7kdFA3CydjLi.
-Content-Type: application/pgp-signature
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 3 Sep 2008 18:37:34 +1000
+Subject: [PATCH] statfs: fix typo
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/asm-generic/statfs.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-iEYEARECAAYFAki+PhgACgkQjjKRsyhoI8wElwCfcZhK4+UXf0dqNJ62mCYybMuZ
-UiMAn34G48tM28N+OMA1uyAj+VmeRzwU
-=cBRy
------END PGP SIGNATURE-----
-
---Signature=_Wed__3_Sep_2008_17_34_48_+1000_qYn7kdFA3CydjLi.--
+diff --git a/include/asm-generic/statfs.h b/include/asm-generic/statfs.h
+index 68b6d69..6129d68 100644
+--- a/include/asm-generic/statfs.h
++++ b/include/asm-generic/statfs.h
+@@ -17,7 +17,7 @@ typedef __kernel_fsid_t	fsid_t;
+ #if BITS_PER_LONG == 64
+ #define __statfs_word long
+ #else
+-typedef __statfs_word __u32
++#define __statfs_word __u32
+ #endif
+ #endif
+ 
+-- 
+1.5.6.5
