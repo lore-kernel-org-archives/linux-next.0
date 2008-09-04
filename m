@@ -1,72 +1,84 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+From: Andrew Morton <akpm@linux-foundation.org>
 Subject: Re: linux-next: Tree for September 3
-Date: Thu, 4 Sep 2008 15:35:42 +0100
-Message-ID: <20080904153542.6bf58c45@lxorguk.ukuu.org.uk>
+Date: Thu, 4 Sep 2008 10:45:54 -0700
+Message-ID: <20080904104554.32ffebea.akpm@linux-foundation.org>
 References: <20080903191619.6b6b230e.sfr@canb.auug.org.au>
 	<20080903214634.ea17ff53.akpm@linux-foundation.org>
-	<20080903215455.792c78a3.akpm@linux-foundation.org>
-	<20080904145744.3f791ca7.sfr@canb.auug.org.au>
-	<20080903220546.bd673658.akpm@linux-foundation.org>
-	<20080904152015.3145b06e.sfr@canb.auug.org.au>
-	<20080903230129.806d54af.akpm@linux-foundation.org>
-	<20080904001558.875f58b1.akpm@linux-foundation.org>
+	<alpine.LFD.1.10.0809032201510.3378@nehalem.linux-foundation.org>
+	<20080903223318.84b6ce8b.akpm@linux-foundation.org>
+	<alpine.LFD.1.10.0809040045190.3378@nehalem.linux-foundation.org>
+	<20080904012544.cabed847.akpm@linux-foundation.org>
+	<alpine.LFD.1.10.0809040143350.3452@nehalem.linux-foundation.org>
+	<20080904015701.5959623a.akpm@linux-foundation.org>
+	<alpine.LFD.1.10.0809040203510.3452@nehalem.linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:54305 "EHLO
-	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751481AbYIDOhE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Sep 2008 10:37:04 -0400
-In-Reply-To: <20080904001558.875f58b1.akpm@linux-foundation.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Yinghai Lu <yhlu.kernel@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, David Woodhouse <dwmw2@infradead.org>
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <alpine.LFD.1.10.0809040203510.3452@nehalem.linux-foundation.org>
+Sender: netdev-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Yinghai Lu <yhlu.kernel@gmail.com>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Jesse Barnes <jbarnes@virtuousgeek.org>, netdev@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+List-Id: linux-next.vger.kernel.org
 
-> I cannot revert tty-kref-get-current-tty and I can't immediately spot
-> the bug in it.
+On Thu, 4 Sep 2008 02:07:05 -0700 (PDT) Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Nailed it; magic ingredient is SELinux inclusion which then triggers a
-leak on a flush unauthorized
+> 
+> 
+> On Thu, 4 Sep 2008, Andrew Morton wrote:
+> > > 
+> > > commit 5f17cfce5776c566d64430f543a289e5cfa4538b
+> > > 
+> > >     PCI: fix pbus_size_mem() resource alignment for CardBus controllers
+> > 
+> > Is this worth backporting into 2.6.26.x?
+> 
+> It's certainly at least *potentially* -stable material, but because I 
+> suspect that the whole yenta_allocate_resources() -> pci_setup_cardbus() 
+> fallback code will end up resulting in a working setup, it may not be 
+> worth it.  At least not until we've heard from more people..
+> 
+> Can you check whether your vortex cardbus thing _works_ even without the 
+> fix?
+> 
 
-diff --git a/drivers/s390/char/fs3270.c b/drivers/s390/char/fs3270.c
-index d18e6d2..3ef5425 100644
---- a/drivers/s390/char/fs3270.c
-+++ b/drivers/s390/char/fs3270.c
-@@ -430,11 +430,12 @@ fs3270_open(struct inode *inode, struct file *filp)
- 		mutex_lock(&tty_mutex);
- 		tty = get_current_tty();
- 		if (!tty || tty->driver->major != IBM_TTY3270_MAJOR) {
--			mutex_unlock(&tty_mutex);
-+			tty_kref_put(tty);
- 			rc = -ENODEV;
- 			goto out;
- 		}
- 		minor = tty->index + RAW3270_FIRSTMINOR;
-+		tty_kref_put(tty);
- 		mutex_unlock(&tty_mutex);
- 	}
- 	/* Check if some other program is already using fullscreen mode. */
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 03fc6a8..c856db8 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2122,6 +2122,7 @@ static inline void flush_unauthorized_files(struct files_struct *files)
- 
- 	mutex_lock(&tty_mutex);
- 	tty = get_current_tty();
-+	mutex_unlock(&tty_mutex);
- 	if (tty) {
- 		file_list_lock();
- 		file = list_entry(tty->tty_files.next, typeof(*file), f_u.fu_list);
-@@ -2138,8 +2139,8 @@ static inline void flush_unauthorized_files(struct files_struct *files)
- 			}
- 		}
- 		file_list_unlock();
-+		tty_kref_put(tty);
- 	}
--	mutex_unlock(&tty_mutex);
- 	/* Reset controlling tty. */
- 	if (drop_tty)
- 		no_tty();
+Working on it, but got distracted by a /proc/net bug.
+
+
+
+sony:/home/akpm> ifconfig -a
+Warning: cannot open /proc/net/dev (Permission denied). Limited output.
+Warning: cannot open /proc/net/dev (Permission denied). Limited output.
+eth0      Link encap:Ethernet  HWaddr 00:01:4A:9F:7C:79  
+          inet addr:192.168.2.10  Bcast:192.168.2.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+
+Warning: cannot open /proc/net/dev (Permission denied). Limited output.
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+
+sony:/home/akpm> ls -l /proc/net/dev
+ls: /proc/net/dev: Permission denied
+
+sony:/home/akpm> ls -l /proc/net
+ls: /proc/net: Permission denied
+
+sony:/home/akpm> ls -ld /proc/net
+ls: /proc/net: Permission denied
+
+sony:/home/akpm> ls -l /proc | grep net
+?---------  ? ?         ?                 ?            ? /proc/net
+
+
+This is a pull of your tree from yesterday, ending at
+
+
+commit fbb16e243887332dd5754e48ffe5b963378f3cd2
+Author: Thomas Gleixner <tglx@linutronix.de>
+Date:   Wed Sep 3 00:54:47 2008 +0200
+
+    [x86] Fix TSC calibration issues
+
+config: http://userweb.kernel.org/~akpm/config-sony.txt
+dmesg: http://userweb.kernel.org/~akpm/dmesg-sony-without.txt
