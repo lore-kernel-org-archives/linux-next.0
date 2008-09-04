@@ -1,52 +1,61 @@
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Tree for September 3
-Date: Wed, 3 Sep 2008 22:05:46 -0700
-Message-ID: <20080903220546.bd673658.akpm@linux-foundation.org>
+Date: Thu, 4 Sep 2008 15:20:15 +1000
+Message-ID: <20080904152015.3145b06e.sfr@canb.auug.org.au>
 References: <20080903191619.6b6b230e.sfr@canb.auug.org.au>
 	<20080903214634.ea17ff53.akpm@linux-foundation.org>
 	<20080903215455.792c78a3.akpm@linux-foundation.org>
 	<20080904145744.3f791ca7.sfr@canb.auug.org.au>
+	<20080903220546.bd673658.akpm@linux-foundation.org>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__4_Sep_2008_15_20_15_+1000_UAzYWt9izz.wEp_S"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755904AbYIDFUu@vger.kernel.org>
+In-Reply-To: <20080903220546.bd673658.akpm@linux-foundation.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Yinghai Lu <yhlu.kernel@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, David Woodhouse <dwmw2@infradead.org>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Thu__4_Sep_2008_15_20_15_+1000_UAzYWt9izz.wEp_S
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:41024 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751124AbYIDFGT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Sep 2008 01:06:19 -0400
-In-Reply-To: <20080904145744.3f791ca7.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Yinghai Lu <yhlu.kernel@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 4 Sep 2008 14:57:44 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Andrew,
 
-> Hi Andrew,
-> 
-> On Wed, 3 Sep 2008 21:54:55 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> > On Wed, 3 Sep 2008 21:46:34 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
-> > 
-> > >  Apart from the lack of any
-> > > login prompt on the console (sshd works), but I suspect that was a
-> > > separate gift.
-> > 
-> > And the very first damn bisection point goes:
-> > 
-> > In file included from include/asm/statfs.h:11,
-> >                  from include/linux/statfs.h:6,
-> >                  from include/linux/vfs.h:4,
-> >                  from fs/open.c:22:
-> > include/asm-generic/statfs.h:20: error: expected '=', ',', ';', 'asm' or '__attribute__' before '__u32'
-> > 
-> > and that bisection breakage is going to get trotted into mainline
-> > for evermore.
-> 
-> No it isn't because it came from dwmw2's tree and that has already been
-> rewritten/rebased ...
+On Wed, 3 Sep 2008 22:05:46 -0700 Andrew Morton <akpm@linux-foundation.org>=
+ wrote:
+>
+> Thank gawd for that.
+>=20
+> This breakage spans over 1000 commits.  Not sure how that can happen in
+> a rebased tree, but whatever.
 
-Thank gawd for that.
+It happens because I merge that tree into linux-next early in the
+sequence and the two builds I do after each merge did not get the error
+(*and* David really did not do enough testing ...). The set of builds I
+do after merging all the trees hit that so I added a commit to the end of
+linux-next to fix it.
 
-This breakage spans over 1000 commits.  Not sure how that can happen in
-a rebased tree, but whatever.
+That particular build bug will not be in today's linux-next because that
+particular tree has been fixed.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__4_Sep_2008_15_20_15_+1000_UAzYWt9izz.wEp_S
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAki/cA8ACgkQjjKRsyhoI8zGpQCfaAsbUkNJRPxCz7J6XtRkvaFm
+T1wAn1zXeoFvyM3yrYlfLi5dLdDUj6Ew
+=vuM1
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__4_Sep_2008_15_20_15_+1000_UAzYWt9izz.wEp_S--
