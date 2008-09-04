@@ -1,70 +1,99 @@
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: linux-next: Tree for September 3
-Date: Thu, 4 Sep 2008 01:37:43 -0700
-Message-ID: <20080904013743.0ecc9ec5.akpm@linux-foundation.org>
-References: <20080903191619.6b6b230e.sfr@canb.auug.org.au>
-	<20080903214634.ea17ff53.akpm@linux-foundation.org>
-	<alpine.LFD.1.10.0809032201510.3378@nehalem.linux-foundation.org>
-	<20080903223318.84b6ce8b.akpm@linux-foundation.org>
-	<alpine.LFD.1.10.0809040045190.3378@nehalem.linux-foundation.org>
-	<20080904012544.cabed847.akpm@linux-foundation.org>
+Date: Thu, 4 Sep 2008 01:50:58 -0700 (PDT)
+Message-ID: <alpine.LFD.1.10.0809040143350.3452@nehalem.linux-foundation.org>
+References: <20080903191619.6b6b230e.sfr@canb.auug.org.au> <20080903214634.ea17ff53.akpm@linux-foundation.org> <alpine.LFD.1.10.0809032201510.3378@nehalem.linux-foundation.org> <20080903223318.84b6ce8b.akpm@linux-foundation.org>
+ <alpine.LFD.1.10.0809040045190.3378@nehalem.linux-foundation.org> <20080904012544.cabed847.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:44591 "EHLO
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:55286 "EHLO
 	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751671AbYIDIiU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Sep 2008 04:38:20 -0400
+	by vger.kernel.org with ESMTP id S1757352AbYIDIvX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Sep 2008 04:51:23 -0400
 In-Reply-To: <20080904012544.cabed847.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Yinghai Lu <yhlu.kernel@gmail.com>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>
-
-On Thu, 4 Sep 2008 01:25:44 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
-
-> can't complain about that, apart from the apparently-bogus "unable to
-> apply power".
-
-ooh look, I fixed something:
-
---- a/drivers/pcmcia/cs.c~a
-+++ a/drivers/pcmcia/cs.c
-@@ -477,6 +477,8 @@ static int socket_setup(struct pcmcia_so
- 	 */
- 	msleep(vcc_settle * 10);
- 
-+	msleep(100);
-+
- 	skt->ops->get_status(skt, &status);
- 	if (!(status & SS_POWERON)) {
- 		cs_err(skt, "unable to apply power.\n");
-_
-
-we seem not to be giving that card enough settling time.  Or is it
-a characteristic of the controller?  
-
-It's a module option, but google(linux "unable to apply power") gets
-859 hits.  Maybe the default is too short..
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Yinghai Lu <yhlu.kernel@gmail.com>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Jesse Barnes <jbarnes@virtuousgeek.org>
 
 
-btw, do we really need to spew all this?
 
-pccard: card ejected from slot 0
-3c59x 0000:07:00.0: restoring config space at offset 0xf (was 0xffffffff, writing 0x50a0115)
-3c59x 0000:07:00.0: restoring config space at offset 0xe (was 0xffffffff, writing 0x0)
-3c59x 0000:07:00.0: restoring config space at offset 0xd (was 0xffffffff, writing 0x50)
-3c59x 0000:07:00.0: restoring config space at offset 0xc (was 0xffffffff, writing 0x0)
-3c59x 0000:07:00.0: restoring config space at offset 0xb (was 0xffffffff, writing 0x5c5710b7)
-3c59x 0000:07:00.0: restoring config space at offset 0xa (was 0xffffffff, writing 0x90)
-3c59x 0000:07:00.0: restoring config space at offset 0x9 (was 0xffffffff, writing 0x0)
-3c59x 0000:07:00.0: restoring config space at offset 0x8 (was 0xffffffff, writing 0x0)
-3c59x 0000:07:00.0: restoring config space at offset 0x7 (was 0xffffffff, writing 0x0)
-3c59x 0000:07:00.0: restoring config space at offset 0x6 (was 0xffffffff, writing 0x58000080)
-3c59x 0000:07:00.0: restoring config space at offset 0x5 (was 0xffffffff, writing 0x58000000)
-3c59x 0000:07:00.0: restoring config space at offset 0x4 (was 0xffffffff, writing 0x2401)
-3c59x 0000:07:00.0: restoring config space at offset 0x3 (was 0xffffffff, writing 0x4000)
-3c59x 0000:07:00.0: restoring config space at offset 0x2 (was 0xffffffff, writing 0x2000010)
-3c59x 0000:07:00.0: restoring config space at offset 0x1 (was 0xffffffff, writing 0x2100007)
-3c59x 0000:07:00.0: restoring config space at offset 0x0 (was 0xffffffff, writing 0x525710b7)
+On Thu, 4 Sep 2008, Andrew Morton wrote:
+>
+> <plugs it in>
+> 
+> cs: pcmcia_socket0: unable to apply power.
+> pccard: CardBus card inserted into slot 0
+> pci 0000:07:00.0: supports D1
+> pci 0000:07:00.0: supports D2
+> pci 0000:07:00.0: PME# supported from D1 D2 D3hot D3cold
+> pci 0000:07:00.0: PME# disabled
+> 
+> sony:/home/akpm> lspci -s07:00
+> 07:00.0 Ethernet controller: 3Com Corporation 3cCFE575CT CardBus [Cyclone] (rev 10)
+
+Ok, the PCI resource side definitely works.
+
+I've committed the fix as follows.. (the explanation is about three times 
+the size, but whatever ;)
+
+As to that "unable to apply power" thing, that's a separate issue.. And 
+in fact one that probably doesn't even matter to a CardBus card, since 
+cardbus doesn't care about the insane CS state machines anyway.
+
+Anyway, Ivan and Jesse cc'd for the patch, but I committed it, since I 
+was involved in causing the bug in the first place.
+
+		Linus
+
+---
+commit 5f17cfce5776c566d64430f543a289e5cfa4538b
+Author: Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu Sep 4 01:33:59 2008 -0700
+
+    PCI: fix pbus_size_mem() resource alignment for CardBus controllers
+    
+    Commit 884525655d07fdee9245716b998ecdc45cdd8007 ("PCI: clean up resource
+    alignment management") changed the resource handling to mark how a
+    resource was aligned on a per-resource basis.
+    
+    Thus, instead of looking at the resource number to determine whether it
+    was a bridge resource or a regular resource (they have different
+    alignment rules), we should just ask the resource for its alignment
+    directly.
+    
+    The reason this broke only cardbus resources was that for the other
+    types of resources, the old way of deciding alignment actually still
+    happened to work.  But CardBus bridge resources had been changed by
+    commit 934b7024f0ed29003c95cef447d92737ab86dc4f ("Fix cardbus resource
+    allocation") to look more like regular resources than PCI bridge
+    resources from an alignment handling standpoint.
+    
+    Reported-and-tested-by: Andrew Morton <akpm@linux-foundation.org>
+    Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+    Cc: Jesse Barnes <jbarnes@virtuousgeek.org>
+    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+---
+ drivers/pci/setup-bus.c |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+index 82634a2..1aad599 100644
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -352,11 +352,12 @@ static int pbus_size_mem(struct pci_bus *bus, unsigned long mask, unsigned long
+ 				continue;
+ 			r_size = r->end - r->start + 1;
+ 			/* For bridges size != alignment */
+-			align = (i < PCI_BRIDGE_RESOURCES) ? r_size : r->start;
++			align = resource_alignment(r);
+ 			order = __ffs(align) - 20;
+ 			if (order > 11) {
+-				dev_warn(&dev->dev, "BAR %d too large: "
++				dev_warn(&dev->dev, "BAR %d bad alignment %llx: "
+ 				       "%#016llx-%#016llx\n", i,
++				       (unsigned long long)align,
+ 				       (unsigned long long)r->start,
+ 				       (unsigned long long)r->end);
+ 				r->flags = 0;
