@@ -1,109 +1,44 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: Tree for September 3
-Date: Thu, 4 Sep 2008 01:02:10 -0700 (PDT)
-Message-ID: <alpine.LFD.1.10.0809040045190.3378@nehalem.linux-foundation.org>
-References: <20080903191619.6b6b230e.sfr@canb.auug.org.au> <20080903214634.ea17ff53.akpm@linux-foundation.org> <alpine.LFD.1.10.0809032201510.3378@nehalem.linux-foundation.org> <20080903223318.84b6ce8b.akpm@linux-foundation.org>
+From: David Woodhouse <dwmw2@infradead.org>
+Subject: Re: linux-next: dwmw2 tree build failure
+Date: Thu, 04 Sep 2008 09:06:00 +0100
+Message-ID: <1220515560.2985.140.camel@pmac.infradead.org>
+References: <20080904105152.f82ed9e5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:48261 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751621AbYIDICT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Sep 2008 04:02:19 -0400
-In-Reply-To: <20080903223318.84b6ce8b.akpm@linux-foundation.org>
+Received: from casper.infradead.org ([85.118.1.10]:56666 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756518AbYIDIGF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Sep 2008 04:06:05 -0400
+In-Reply-To: <20080904105152.f82ed9e5.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Yinghai Lu <yhlu.kernel@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-
-
-On Wed, 3 Sep 2008, Andrew Morton wrote:
-
-> On Wed, 3 Sep 2008 22:21:54 -0700 (PDT) Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> > 
-> > Can you apply this patch, just to see if it fixes things.
+On Thu, 2008-09-04 at 10:51 +1000, Stephen Rothwell wrote:
+> Hi David,
 > 
-> Below..
+> Today's linux-next build (/scratch/sfr/x86_64_allmodconfig/Makefile) failed like this:
 > 
-> > And do you know when this started happening? It shouldn't have been all 
-> > that recent. Maybe you haven't tried your Vaio in a while?
+> arch/x86/kernel/early-quirks.c: In function 'intel_g33_dmar':
+> arch/x86/kernel/early-quirks.c:102: error: syntax error before '=' token
+> arch/x86/kernel/early-quirks.c:104: error: 'status' undeclared (first use in this function)
+> arch/x86/kernel/early-quirks.c:107: error: 'dmar_disabled' undeclared (first use in this function)
 > 
-> Yes, the Vaio had a vacation in New York.  Last kernel it booted was
-> 2.6.26-rc8-mm1.
+> Introduced by commit 1bc3029e516e62baa14318888985075f3f3a9f7e ("Blacklist
+> DMAR on Intel G31/G33 chipsets").  I have reverted that commit.
 > 
-> --- x	2008-09-03 21:38:24.000000000 -0700
-> +++ y	2008-09-03 22:29:04.000000000 -0700
-> ...
-> @@ -503,15 +503,15 @@
->  calling  init_acpi_pm_clocksource+0x0/0x14a
->  initcall init_acpi_pm_clocksource+0x0/0x14a returned 0 after 32 msecs
->  calling  pcibios_assign_resources+0x0/0x70
-> -pci 0000:06:05.0: BAR 9 too large: 0x00000000000000-0x00000003ffffff
+> Please, at least build test this stuff. :-(
 
-Ok, it fixed that particular thing, and now the mem windows look fine:
+I did, but perhaps building with CONFIG_DMAR would have been more
+appropriate. :)
 
->  pci 0000:06:05.0: CardBus bridge, secondary bus 0000:07
->  pci 0000:06:05.0:   IO window: 0x002400-0x0024ff
->  pci 0000:06:05.0:   IO window: 0x002800-0x0028ff
-> -pci 0000:06:05.0:   MEM window: 0x54000000-0x57ffffff
-> +pci 0000:06:05.0:   PREFETCH window: 0x50000000-0x53ffffff
-> +pci 0000:06:05.0:   MEM window: 0x58000000-0x5bffffff
+Sorry about that -- having killed the machine I was testing this on, I
+transplanted my tests to a new machine, and forgot the configs were
+different.
 
-so it fixed _one_ issue.
-
-This also then changes the parent bus bridge:
-
->  pci 0000:00:1e.0: PCI bridge, secondary bus 0000:06
->  pci 0000:00:1e.0:   IO window: 0x2000-0x2fff
->  pci 0000:00:1e.0:   MEM window: 0xb0100000-0xb01fffff
-> -pci 0000:00:1e.0:   PREFETCH window: disabled
-> +pci 0000:00:1e.0:   PREFETCH window: 0x00000050000000-0x00000053ffffff
-
-ie it has now allocated a prefetch window in the parent PCI bridge too 
-in order to fit that cardbus bridge in.
-
-So this all looks ok. I'd be happier if you also actually had some actual 
-_device_ in the Cardbus slot and reported that that works, but the patch 
-clearly 
-
- - fixes a very bogus alignment calculation
-
- - actually fixes a Cardbus setup issue for you.
-
-so I'll commit it.
-
-> also...
-> 
->  calling  yenta_socket_init+0x0/0x16
->  yenta_cardbus 0000:06:05.0: CardBus bridge found [104d:818f]
-> -yenta_cardbus 0000:06:05.0: CardBus bridge, secondary bus 0000:07
-> -yenta_cardbus 0000:06:05.0:   IO window: 0x002400-0x0024ff
-> -yenta_cardbus 0000:06:05.0:   IO window: 0x002800-0x0028ff
-> -yenta_cardbus 0000:06:05.0:   PREFETCH window: 0x50400000-0x507fffff
-> -yenta_cardbus 0000:06:05.0:   MEM window: 0x54000000-0x57ffffff
-
-these went away, because yenta_allocate_resources() will not try to 
-reprogram the controller if it's already been fully set up. So because 
-yenta_alloc_resources() is happy with the resource setup and leaves it 
-alone, there's no more noise about it.
-
-So I would say that the PCI resource issue is fixed.
-
-[ Side note: I actually suspect that your cardbus slot actually worked 
-  fine _despite_ the problems, because
-
- (a) the whole yenta_allocate_resources() -> pci_setup_cardbus() sequence 
-     did end up setting things up correctly int he end, even if the 
-     prefetchable memory resource ended up being in a non-prefetchable 
-     area
-
- (b) Very few cardbus cards would have any prefetchable resources, much 
-     less care about the theoretical performance difference even if they 
-     did.
-
- but that allocation issue was still a bug ]
-
-And you seem to have found your non-console problem separately.
-
-			Linus
+-- 
+David Woodhouse                            Open Source Technology Centre
+David.Woodhouse@intel.com                              Intel Corporation
