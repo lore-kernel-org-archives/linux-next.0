@@ -1,26 +1,26 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Tree for September 3
-Date: Thu, 4 Sep 2008 14:57:44 +1000
-Message-ID: <20080904145744.3f791ca7.sfr@canb.auug.org.au>
+Date: Thu, 4 Sep 2008 15:00:21 +1000
+Message-ID: <20080904150021.2a8548f8.sfr@canb.auug.org.au>
 References: <20080903191619.6b6b230e.sfr@canb.auug.org.au>
 	<20080903214634.ea17ff53.akpm@linux-foundation.org>
 	<20080903215455.792c78a3.akpm@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__4_Sep_2008_14_57_44_+1000_SXMWieTziobOvZ5w"
+ boundary="Signature=_Thu__4_Sep_2008_15_00_21_+1000_UYe3UccLJPp17yOl"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49023 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49114 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751165AbYIDE54 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 4 Sep 2008 00:57:56 -0400
+	id S1751261AbYIDFAg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 4 Sep 2008 01:00:36 -0400
 In-Reply-To: <20080903215455.792c78a3.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Yinghai Lu <yhlu.kernel@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>
 
---Signature=_Thu__4_Sep_2008_14_57_44_+1000_SXMWieTziobOvZ5w
+--Signature=_Thu__4_Sep_2008_15_00_21_+1000_UYe3UccLJPp17yOl
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -45,27 +45,24 @@ g> wrote:
 >                  from fs/open.c:22:
 > include/asm-generic/statfs.h:20: error: expected '=3D', ',', ';', 'asm' o=
 r '__attribute__' before '__u32'
->=20
-> and that bisection breakage is going to get trotted into mainline
-> for evermore.
 
-No it isn't because it came from dwmw2's tree and that has already been
-rewritten/rebased ...
+for a short term fix, apply the "statfs: fix typo" commit from right near
+the end of next-20080903.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__4_Sep_2008_14_57_44_+1000_SXMWieTziobOvZ5w
+--Signature=_Thu__4_Sep_2008_15_00_21_+1000_UYe3UccLJPp17yOl
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAki/asgACgkQjjKRsyhoI8zACgCgiZFCieVowmIdzt4DPrOnIjmr
-5JYAnA6X26lSkPZJGh/hjaR6NG/bDNld
-=PKIV
+iEYEARECAAYFAki/a2UACgkQjjKRsyhoI8zslgCeLBQsTPBpWDce2EwE7KVsHR1+
+qCUAnA19UuKFupKrHevj9Acnvrmqsdfg
+=sEHy
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__4_Sep_2008_14_57_44_+1000_SXMWieTziobOvZ5w--
+--Signature=_Thu__4_Sep_2008_15_00_21_+1000_UYe3UccLJPp17yOl--
