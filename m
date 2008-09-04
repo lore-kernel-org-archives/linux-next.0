@@ -1,56 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: dwmw2 tree build failure
-Date: Thu, 4 Sep 2008 10:51:52 +1000
-Message-ID: <20080904105152.f82ed9e5.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the sparc tree
+Date: Thu, 4 Sep 2008 11:17:17 +1000
+Message-ID: <20080904111717.8aec7545.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__4_Sep_2008_10_51_52_+1000_qqz/t+8eX5KUanN3"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54580 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47726 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751784AbYIDAwJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Sep 2008 20:52:09 -0400
+	id S1752133AbYIDBRZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Sep 2008 21:17:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
+To: David Miller <davem@davemloft.net>
 Cc: linux-next@vger.kernel.org
 
---Signature=_Thu__4_Sep_2008_10_51_52_+1000_qqz/t+8eX5KUanN3
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Dave,
 
-Hi David,
+Today's linux-next merge of the sparc tree got a conflict in
+arch/sparc/kernel/of_device.c between commit
+e3c71a32915fabb095de7108c22672e457631a08 ("sparc: Fix resource flags for
+PCI children in OF device tree") from Linus' tree and commit
+5280267c1dddb8d413595b87dc406624bb497946 ("sparc: Fix handling of LANCE
+and ESP parent nodes in of_device.c") from the sparc tree.
 
-Today's linux-next build (/scratch/sfr/x86_64_allmodconfig/Makefile) failed=
- like this:
+The former just changed the context of the latter.  I fixed it up (see
+below).
 
-arch/x86/kernel/early-quirks.c: In function 'intel_g33_dmar':
-arch/x86/kernel/early-quirks.c:102: error: syntax error before '=3D' token
-arch/x86/kernel/early-quirks.c:104: error: 'status' undeclared (first use i=
-n this function)
-arch/x86/kernel/early-quirks.c:107: error: 'dmar_disabled' undeclared (firs=
-t use in this function)
-
-Introduced by commit 1bc3029e516e62baa14318888985075f3f3a9f7e ("Blacklist
-DMAR on Intel G31/G33 chipsets").  I have reverted that commit.
-
-Please, at least build test this stuff. :-(
---=20
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__4_Sep_2008_10_51_52_+1000_qqz/t+8eX5KUanN3
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAki/MSgACgkQjjKRsyhoI8wPOwCfQWVs2PpcU8gXImT1VAuZ8gOZ
-VIIAoItI4YLENqUG2Fki+H12KLgWdli9
-=EeT5
------END PGP SIGNATURE-----
-
---Signature=_Thu__4_Sep_2008_10_51_52_+1000_qqz/t+8eX5KUanN3--
+diff --cc arch/sparc/kernel/of_device.c
+index c481d45,4ef1607..0000000
+--- a/arch/sparc/kernel/of_device.c
++++ b/arch/sparc/kernel/of_device.c
+@@@ -371,12 -409,8 +415,9 @@@ static void __init build_device_resourc
+  
+  		memcpy(addr, reg, na * 4);
+  
+ +		flags = bus->get_flags(reg, 0);
+ +
+- 		/* If the immediate parent has no ranges property to apply,
+- 		 * just use a 1<->1 mapping.
+- 		 */
+- 		if (of_find_property(pp, "ranges", NULL) == NULL) {
++ 		if (use_1to1_mapping(pp)) {
+  			result = of_read_addr(addr, na);
+  			goto build_res;
+  		}
