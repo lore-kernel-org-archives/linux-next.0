@@ -1,283 +1,130 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for September 4
-Date: Thu, 4 Sep 2008 19:36:06 +1000
-Message-ID: <20080904193606.573f2cb3.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: fastboot tree build warning
+Date: Thu, 4 Sep 2008 12:04:25 +0200
+Message-ID: <20080904100425.GA25428@elte.hu>
+References: <20080903173448.55f2745b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__4_Sep_2008_19_36_06_+1000_71NuTNf3Wa3Yr=aa"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48698 "EHLO smtps.tip.net.au"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:33708 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752502AbYIDJgY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 4 Sep 2008 05:36:24 -0400
+	id S1753296AbYIDKE6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 4 Sep 2008 06:04:58 -0400
+Content-Disposition: inline
+In-Reply-To: <20080903173448.55f2745b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arjan van de Ven <arjan@linux.intel.com>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Thu__4_Sep_2008_19_36_06_+1000_71NuTNf3Wa3Yr=aa
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Changes since next-20080903:
+> Hi Arjan,
+>=20
+> The linux-next build produces the following warning:
+>=20
+> init/do_mounts_md.c: In function 'md_run_setup':
+> init/do_mounts_md.c:282: warning: ISO C90 forbids mixed declarations =
+and code
+>=20
+> Introduced by commit b52c36a95ed8026b6925fe8595ebcab6921ae62d ("fastb=
+oot:
+> make the raid autodetect code wait for all devices to init").
 
-I have reverted the ttydev tree for today at Andrew's request since it is
-causing him a problem.
+i have this already fixed via the commit below - not yet pushed into th=
+e=20
+auto branches.
 
-The dwmw2 tree needed a commit reverted to fix the build.
+	Ingo
 
-The sparc tree gained a trivial conflict against Linus' tree.
+------------------>
+=46rom 606bd348acae9dc99f7f01a4cb3a416c7c753e9d Mon Sep 17 00:00:00 200=
+1
+=46rom: Ingo Molnar <mingo@elte.hu>
+Date: Mon, 18 Aug 2008 12:54:00 +0200
+Subject: [PATCH] warning: fix init do_mounts_md c
+MIME-Version: 1.0
+Content-Type: text/plain; charset=3Dutf-8
+Content-Transfer-Encoding: 8bit
 
-The block tree lost 2 conflicts and a build fix patch.
+fix warning:
 
-I have also applied the following patches for known problems:
+  init/do_mounts_md.c: In function =E2=80=98md_run_setup=E2=80=99:
+  init/do_mounts_md.c:282: warning: ISO C90 forbids mixed declarations =
+and code
 
-	ftrace: protect the definition of ftrace_release
-	revert BUILD_BUG_ON change
-	Revert "debug: add notifier chain debugging"
-	debug: add notifier chain debugging (different version)
-	sparc: qlogicpti fallout from sbus removal
-	powerpc: make sure all kernel test is before _etext
+also, use the opportunity to put the RAID autodetection code
+into a separate function - this also solves a checkpatch style warning.
 
-----------------------------------------------------------------------------
+No code changed:
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
+md5:
+   aa36a35faef371b05f1974ad583bdbbd  do_mounts_md.o.before.asm
+   aa36a35faef371b05f1974ad583bdbbd  do_mounts_md.o.after.asm
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups, it is also built with powerpc allnoconfig,
-44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+---
+ init/do_mounts_md.c |   36 +++++++++++++++++++++---------------
+ 1 files changed, 21 insertions(+), 15 deletions(-)
 
-Below is a summary of the state of the merge.
-
-We are up to 113 trees (counting Linus' and 14 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging powerpc-merge/merge
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sparc-current/master
-Merging sound-current/for-linus
-Merging arm-current/master
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-2.6.26
-Merging dwmw2/master
-Created commit 636b031: Revert "Blacklist DMAR on Intel G31/G33 chipsets"
-Merging arm/devel
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging quilt/m68k
-Merging m68knommu/for-next
-Merging mips/mips-for-linux-next
-Merging parisc/master
-Merging powerpc/powerpc-next
-Merging 4xx/next
-Merging galak/powerpc-next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-CONFLICT (content): Merge conflict in arch/sparc/kernel/of_device.c
-Merging x86/auto-x86-next
-CONFLICT (content): Merge conflict in include/asm-x86/cpufeature.h
-CONFLICT (content): Merge conflict in include/asm-x86/statfs.h
-Merging xtensa/master
-Merging quilt/driver-core
-Merging quilt/usb
-Merging tip-core/auto-core-next
-Merging cpus4096/auto-cpus4096-next
-Merging ftrace/auto-ftrace-next
-CONFLICT (content): Merge conflict in kernel/module.c
-Applying ftrace: remove warning of old objcopy and local functions
-Merging genirq/auto-genirq-next
-Merging safe-poison-pointers/auto-safe-poison-pointers-next
-Merging sched/auto-sched-next
-Merging stackprotector/auto-stackprotector-next
-CONFLICT (content): Merge conflict in include/asm-x86/pda.h
-CONFLICT (content): Merge conflict in kernel/fork.c
-Merging timers/auto-timers-next
-Merging pci/linux-next
-Merging quilt/device-mapper
-Merging hid/mm
-CONFLICT (content): Merge conflict in drivers/hid/usbhid/hid-core.c
-Applying HID: fix for warn() removal
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/stable
-CONFLICT (content): Merge conflict in drivers/media/radio/dsbr100.c
-CONFLICT (content): Merge conflict in drivers/media/video/zr364xx.c
-Merging jfs/next
-Merging kbuild/master
-Merging quilt/ide
-Merging libata/NEXT
-Merging nfs/linux-next
-Merging xfs/master
-Merging infiniband/for-next
-Merging acpi/test
-CONFLICT (content): Merge conflict in drivers/misc/acer-wmi.c
-Merging nfsd/nfsd-next
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/master
-CONFLICT (content): Merge conflict in include/asm-x86/kvm.h
-Merging dlm/next
-Merging scsi/master
-Merging tests/master
-CONFLICT (content): Merge conflict in lib/Kconfig.debug
-Merging ocfs2/linux-next
-Merging ext4/next
-Merging async_tx/next
-Merging udf/for_next
-Merging net/master
-Merging mtd/master
-Merging wireless/master
-Merging crypto/master
-Merging vfs/for-next
-Merging sound/for-next
-Merging cpufreq/next
-Merging v9fs/for-next
-Merging quilt/rr
-Merging cifs/master
-Merging mmc/next
-Merging gfs2/master
-Merging input/next
-Applying rr: build fix for remove CONFIG_KMOD from net
-Merging semaphore/semaphore
-Merging semaphore-removal/semaphore-removal
-Merging bkl-removal/bkl-removal
-Merging trivial/next
-CONFLICT (content): Merge conflict in Documentation/edac.txt
-CONFLICT (content): Merge conflict in include/linux/securebits.h
-Merging ubifs/linux-next
-Merging lsm/for-next
-Merging block/for-next
-CONFLICT (content): Merge conflict in drivers/ide/ide-disk.c
-CONFLICT (content): Merge conflict in drivers/md/dm-mpath.c
-CONFLICT (content): Merge conflict in lib/Kconfig.debug
-Merging embedded/master
-Merging firmware/master
-CONFLICT (content): Merge conflict in drivers/scsi/qlogicpti.c
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging kmemcheck/auto-kmemcheck-next
-CONFLICT (content): Merge conflict in MAINTAINERS
-CONFLICT (content): Merge conflict in arch/x86/kernel/process_64.c
-CONFLICT (content): Merge conflict in arch/x86/kernel/traps_64.c
-CONFLICT (content): Merge conflict in init/main.c
-CONFLICT (content): Merge conflict in mm/Makefile
-CONFLICT (content): Merge conflict in mm/slab.c
-CONFLICT (content): Merge conflict in mm/slub.c
-Merging generic-ipi/auto-generic-ipi-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/reg-for-linus
-Merging security-testing/next
-Merging lblnet/master
-Merging quilt/ttydev
-CONFLICT (content): Merge conflict in Documentation/feature-removal-schedul=
-e.txt
-CONFLICT (content): Merge conflict in drivers/char/tty_io.c
-CONFLICT (content): Merge conflict in drivers/char/vt.c
-CONFLICT (content): Merge conflict in drivers/usb/serial/aircable.c
-CONFLICT (content): Merge conflict in drivers/usb/serial/keyspan_pda.c
-CONFLICT (content): Merge conflict in drivers/usb/serial/safe_serial.c
-CONFLICT (content): Merge conflict in kernel/auditsc.c
-Merging agp/agp-next
-Merging creds/next-creds
-CONFLICT (content): Merge conflict in drivers/net/wan/sbni.c
-CONFLICT (content): Merge conflict in fs/namespace.c
-CONFLICT (content): Merge conflict in fs/nfsd/nfs4recover.c
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_linux.h
-CONFLICT (content): Merge conflict in fs/xfs/xfs_inode.c
-CONFLICT (content): Merge conflict in fs/xfs/xfs_vnodeops.c
-CONFLICT (content): Merge conflict in include/linux/capability.h
-CONFLICT (add/add): Merge conflict in include/linux/cred.h
-CONFLICT (content): Merge conflict in include/linux/security.h
-CONFLICT (content): Merge conflict in kernel/exit.c
-CONFLICT (content): Merge conflict in kernel/fork.c
-CONFLICT (content): Merge conflict in security/commoncap.c
-CONFLICT (content): Merge conflict in security/selinux/hooks.c
-CONFLICT (content): Merge conflict in security/smack/smack_lsm.c
-Merging oprofile/auto-oprofile-next
-CONFLICT (content): Merge conflict in arch/x86/kernel/apic_32.c
-Merging fastboot/auto-fastboot-next
-CONFLICT (content): Merge conflict in include/linux/init.h
-Merging sparseirq/auto-sparseirq-next
-CONFLICT (delete/modify): arch/x86/kernel/apic_64.c deleted in sparseirq/au=
-to-sparseirq-next and modified in HEAD. Version HEAD of arch/x86/kernel/api=
-c_64.c left in tree.
-CONFLICT (content): Merge conflict in arch/x86/xen/spinlock.c
-CONFLICT (content): Merge conflict in drivers/serial/68328serial.c
-CONFLICT (content): Merge conflict in drivers/serial/8250.c
-$ git rm arch/x86/kernel/apic_64.c
-CONFLICT (content): Merge conflict in kernel/fork.c
-mark the corrected paths with 'git add <paths>' or 'git rm <paths>' and com=
-mit the result.
-Created commit 0f6dc77: Revert "Merge branch 'quilt/ttydev'"
-Applying revert BUILD_BUG_ON change
-Applying ftrace: protect the definition of ftrace_release
-Created commit 201c2cd: Revert "debug: add notifier chain debugging"
-Applying debug: add notifier chain debugging
-Applying sparc: qlogicpti fallout from sbus removal
-Applying powerpc: make sure all kernel test is before _etext
-
---Signature=_Thu__4_Sep_2008_19_36_06_+1000_71NuTNf3Wa3Yr=aa
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAki/rAYACgkQjjKRsyhoI8wpqwCdGuFQG17oZtLl0m1WvVaYKgmP
-5DAAoKX0JJms68l9suyfgOMUuYFiudnJ
-=xMMI
------END PGP SIGNATURE-----
-
---Signature=_Thu__4_Sep_2008_19_36_06_+1000_71NuTNf3Wa3Yr=aa--
+diff --git a/init/do_mounts_md.c b/init/do_mounts_md.c
+index 1ec5c41..c0dfd3c 100644
+--- a/init/do_mounts_md.c
++++ b/init/do_mounts_md.c
+@@ -264,26 +264,32 @@ static int __init raid_setup(char *str)
+ __setup("raid=3D", raid_setup);
+ __setup("md=3D", md_setup);
+=20
++static void autodetect_raid(void)
++{
++	int fd;
++
++	/*
++	 * Since we don't want to detect and use half a raid array, we need t=
+o
++	 * wait for the known devices to complete their probing
++	 */
++	printk(KERN_INFO "md: Waiting for all devices to be available before =
+autodetect\n");
++	printk(KERN_INFO "md: If you don't use raid, use raid=3Dnoautodetect\=
+n");
++	while (driver_probe_done() < 0)
++		msleep(100);
++	fd =3D sys_open("/dev/md0", 0, 0);
++	if (fd >=3D 0) {
++		sys_ioctl(fd, RAID_AUTORUN, raid_autopart);
++		sys_close(fd);
++	}
++}
++
+ void __init md_run_setup(void)
+ {
+ 	create_dev("/dev/md0", MKDEV(MD_MAJOR, 0));
+=20
+ 	if (raid_noautodetect)
+ 		printk(KERN_INFO "md: Skipping autodetection of RAID arrays. (raid=3D=
+noautodetect)\n");
+-	else {
+-		/*=20
+-		 * Since we don't want to detect and use half a raid array, we need =
+to
+-		 * wait for the known devices to complete their probing
+-		 */
+-		printk(KERN_INFO "md: Waiting for all devices to be available before=
+ autodetect\n");
+-		printk(KERN_INFO "md: If you don't use raid, use raid=3Dnoautodetect=
+\n");
+-		while (driver_probe_done() < 0)
+-			msleep(100);
+-		int fd =3D sys_open("/dev/md0", 0, 0);
+-		if (fd >=3D 0) {
+-			sys_ioctl(fd, RAID_AUTORUN, raid_autopart);
+-			sys_close(fd);
+-		}
+-	}
++	else
++		autodetect_raid();
+ 	md_setup_drive();
+ }
