@@ -1,96 +1,71 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: Tree for September 3
-Date: Thu, 4 Sep 2008 00:15:58 -0700
-Message-ID: <20080904001558.875f58b1.akpm@linux-foundation.org>
-References: <20080903191619.6b6b230e.sfr@canb.auug.org.au>
-	<20080903214634.ea17ff53.akpm@linux-foundation.org>
-	<20080903215455.792c78a3.akpm@linux-foundation.org>
-	<20080904145744.3f791ca7.sfr@canb.auug.org.au>
-	<20080903220546.bd673658.akpm@linux-foundation.org>
-	<20080904152015.3145b06e.sfr@canb.auug.org.au>
-	<20080903230129.806d54af.akpm@linux-foundation.org>
+From: Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: list corruption in next-20080903
+Date: Thu, 4 Sep 2008 09:19:48 +0200
+Message-ID: <20080904071947.GW20055@kernel.dk>
+References: <20080903153915.GB5604@x200.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:50253 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751505AbYIDHQa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Sep 2008 03:16:30 -0400
-In-Reply-To: <20080903230129.806d54af.akpm@linux-foundation.org>
+Received: from pasmtpb.tele.dk ([80.160.77.98]:46271 "EHLO pasmtpB.tele.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751448AbYIDHTv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 4 Sep 2008 03:19:51 -0400
+Content-Disposition: inline
+In-Reply-To: <20080903153915.GB5604@x200.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Yinghai Lu <yhlu.kernel@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, David Woodhouse <dwmw2@infradead.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 3 Sep 2008 23:01:29 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+On Wed, Sep 03 2008, Alexey Dobriyan wrote:
+> Reproducible, happens during init scripts.
+> 
+> ------------[ cut here ]------------
+> WARNING: at lib/list_debug.c:30 __list_add+0x95/0xa0()
+> list_add corruption. prev->next should be next (ffff88017fb70420), but was ffff88017fb70588. (prev=ffff88017fb70858).
+> Modules linked in: xt_state iptable_filter ipt_MASQUERADE iptable_nat nf_nat nf_conntrack_ipv4 nf_conntrack ip_tables xt_tcpudp ip6table_filter ip6_tables x_tables ipv6 nls_utf8 ntfs fuse sr_mod cdrom
+> Pid: 4006, comm: bash Tainted: G        W 2.6.27-rc5-next-20080903 #2
+> Call Trace:
+>  [<ffffffff80232837>] warn_slowpath+0xb7/0xe0
+>  [<ffffffff8026ac31>] ? mempool_alloc_slab+0x11/0x20
+>  [<ffffffff8026ad8a>] ? mempool_alloc+0x4a/0x130
+>  [<ffffffff8028ec87>] ? kmem_cache_alloc+0x67/0xd0
+>  [<ffffffff80312bb0>] ? sg_init_table+0x20/0x80
+>  [<ffffffff80312c8c>] ? __sg_alloc_table+0x7c/0x140
+>  [<ffffffff80385801>] ? scsi_init_sgtable+0x51/0xb0
+>  [<ffffffff80385acf>] ? scsi_init_io+0x1f/0xd0
+>  [<ffffffff8038e3fc>] ? sd_prep_fn+0x5c/0x580
+>  [<ffffffff803145d5>] __list_add+0x95/0xa0
+>  [<ffffffff80301740>] blk_add_timer+0x50/0xd0
+>  [<ffffffff80386ce1>] scsi_request_fn+0xa1/0x380
+>  [<ffffffff802fd297>] __generic_unplug_device+0x27/0x30
+>  [<ffffffff802fda31>] ? generic_unplug_device+0x21/0x40
+>  [<ffffffff802fda39>] generic_unplug_device+0x29/0x40
+>  [<ffffffff802fb842>] blk_unplug+0x12/0x20
+>  [<ffffffff802fb85d>] blk_backing_dev_unplug+0xd/0x10
+>  [<ffffffff802b630e>] block_sync_page+0x3e/0x50
+>  [<ffffffff80267ff9>] sync_page+0x39/0x60
+>  [<ffffffff80269c29>] sync_page_killable+0x9/0x40
+>  [<ffffffff8042e61e>] __wait_on_bit_lock+0x4e/0x80
+>  [<ffffffff80269c20>] ? sync_page_killable+0x0/0x40
+>  [<ffffffff80267f35>] __lock_page_killable+0x65/0x70
+>  [<ffffffff802483a0>] ? wake_bit_function+0x0/0x30
+>  [<ffffffff8026a018>] generic_file_aio_read+0x3b8/0x660
+>  [<ffffffff802938b1>] do_sync_read+0xf1/0x130
+>  [<ffffffff80248360>] ? autoremove_wake_function+0x0/0x40
+>  [<ffffffff80256add>] ? trace_hardirqs_on+0xd/0x10
+>  [<ffffffff80430ef2>] ? _spin_unlock_irqrestore+0x42/0x80
+>  [<ffffffff80294017>] vfs_read+0xa7/0xe0
+>  [<ffffffff8029820a>] kernel_read+0x3a/0x60
+>  [<ffffffff8029831c>] prepare_binprm+0xec/0x120
+>  [<ffffffff80299467>] do_execve+0x197/0x280
+>  [<ffffffff80209b69>] sys_execve+0x49/0x80
+>  [<ffffffff8020bb2a>] stub_execve+0x6a/0xc0
+> ---[ end trace 4eaa2a86a8e2da22 ]---
 
-> I'll see if I cen reproduce the bug I'm
-> actually tring to find with E100=n.
+Thanks Alexey, I hit a problem with it yesterday as well. So it needs
+more development before going into -next/-mm, I'll put it in a seperate
+testing branch for now.
 
-OK, this regression[*] bisects down to
-
-commit b689ad2b010f09626a6158e1213a075a1aa9f299
-Author: Alan Cox <alan@redhat.com>
-Date:   Wed Sep 3 10:12:18 2008 +1000
-
-    tty-kref-get-current-tty
-    
-    We now return a kref covered tty reference. That ensures the tty structure
-    doesn't go away when you have a return from get_current_tty. This is not
-    enough to protect you from most of the resources being freed behind your
-    back - yet.
-    
-
-This got a bit ugly, because tty-kref-get-current-tty fixes a pile of
-compilation errors which were introduced in the innediately preceding
-patch (tty-kref-modcount, I think).  I roughly fixed those up by hand:
-
---- a/drivers/char/tty_io.c~b
-+++ a/drivers/char/tty_io.c
-@@ -1283,7 +1283,7 @@ static int init_dev(struct tty_driver *d
- 		o_tty = alloc_tty_struct();
- 		if (!o_tty)
- 			goto free_mem_out;
--		if (!try_module_get(driver->other)) {
-+		if (!try_module_get(driver->owner)) {
- 			/* This cannot in fact currently happen */
- 			free_tty_struct(o_tty);
- 			o_tty = NULL;
-@@ -1408,7 +1408,7 @@ end_init:
- free_mem_out:
- 	kfree(o_tp);
- 	if (o_tty) {
--		module_put(o_tty->driver);
-+		module_put(o_tty->driver->owner);
- 		free_tty_struct(o_tty);
- 	}
- 	kfree(ltp);
-@@ -1469,7 +1469,7 @@ static void release_one_tty(struct kref 
- 	tty->magic = 0;
- 	/* FIXME: locking on tty->driver->refcount */
- 	tty->driver->refcount--;
--	module_put(driver->owner);
-+	module_put(tty->driver->owner);
- 
- 	file_list_lock();
- 	list_del_init(&tty->tty_files);
-_
-
-
-I cannot find any of these patches on a mailing list.
-
-I cannot revert tty-kref-get-current-tty and I can't immediately spot
-the bug in it.
-
-I could revert the whole tty tree, but I'd prefer that you do it,
-please.  I've been trying for two days to get a -mm out, but I'm
-building on a foundation of straw :(
-
-
-[*] symptoms: there are no login prompts appearing on the VT consoles. 
-sshd works OK (will it did, but I had to disable the net driver due to
-networking bisect breakage).
-
-config: http://userweb.kernel.org/~akpm/config-sony.txt
-dmesg: http://userweb.kernel.org/~akpm/dmesg-sony-2.txt
+-- 
+Jens Axboe
