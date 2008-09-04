@@ -1,54 +1,72 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: fastboot tree build warning
-Date: Thu, 4 Sep 2008 22:55:44 +1000
-Message-ID: <20080904225544.805aee10.sfr@canb.auug.org.au>
-References: <20080903173448.55f2745b.sfr@canb.auug.org.au>
-	<20080904100425.GA25428@elte.hu>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: Tree for September 3
+Date: Thu, 4 Sep 2008 15:35:42 +0100
+Message-ID: <20080904153542.6bf58c45@lxorguk.ukuu.org.uk>
+References: <20080903191619.6b6b230e.sfr@canb.auug.org.au>
+	<20080903214634.ea17ff53.akpm@linux-foundation.org>
+	<20080903215455.792c78a3.akpm@linux-foundation.org>
+	<20080904145744.3f791ca7.sfr@canb.auug.org.au>
+	<20080903220546.bd673658.akpm@linux-foundation.org>
+	<20080904152015.3145b06e.sfr@canb.auug.org.au>
+	<20080903230129.806d54af.akpm@linux-foundation.org>
+	<20080904001558.875f58b1.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__4_Sep_2008_22_55_44_+1000_POy6JwbjhfauoNYF"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53906 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751543AbYIDMz7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 4 Sep 2008 08:55:59 -0400
-In-Reply-To: <20080904100425.GA25428@elte.hu>
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:54305 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751481AbYIDOhE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Sep 2008 10:37:04 -0400
+In-Reply-To: <20080904001558.875f58b1.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Arjan van de Ven <arjan@linux.intel.com>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Yinghai Lu <yhlu.kernel@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, David Woodhouse <dwmw2@infradead.org>
 
---Signature=_Thu__4_Sep_2008_22_55_44_+1000_POy6JwbjhfauoNYF
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> I cannot revert tty-kref-get-current-tty and I can't immediately spot
+> the bug in it.
 
-Hi Ingo,
+Nailed it; magic ingredient is SELinux inclusion which then triggers a
+leak on a flush unauthorized
 
-On Thu, 4 Sep 2008 12:04:25 +0200 Ingo Molnar <mingo@elte.hu> wrote:
->
-> i have this already fixed via the commit below - not yet pushed into the=
-=20
-> auto branches.
-
-Thanks, looks good.  I noticed that there have been no changes in the tip
-auto trees for a while - I assumed you were all on vacation :-)
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__4_Sep_2008_22_55_44_+1000_POy6JwbjhfauoNYF
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAki/2tAACgkQjjKRsyhoI8wSxgCguJtFZ24bmmGnA0WFYCh6bSzN
-pVoAoJ4FvcofV4qHZrZ/dYkHyNhzWS5+
-=FzJp
------END PGP SIGNATURE-----
-
---Signature=_Thu__4_Sep_2008_22_55_44_+1000_POy6JwbjhfauoNYF--
+diff --git a/drivers/s390/char/fs3270.c b/drivers/s390/char/fs3270.c
+index d18e6d2..3ef5425 100644
+--- a/drivers/s390/char/fs3270.c
++++ b/drivers/s390/char/fs3270.c
+@@ -430,11 +430,12 @@ fs3270_open(struct inode *inode, struct file *filp)
+ 		mutex_lock(&tty_mutex);
+ 		tty = get_current_tty();
+ 		if (!tty || tty->driver->major != IBM_TTY3270_MAJOR) {
+-			mutex_unlock(&tty_mutex);
++			tty_kref_put(tty);
+ 			rc = -ENODEV;
+ 			goto out;
+ 		}
+ 		minor = tty->index + RAW3270_FIRSTMINOR;
++		tty_kref_put(tty);
+ 		mutex_unlock(&tty_mutex);
+ 	}
+ 	/* Check if some other program is already using fullscreen mode. */
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 03fc6a8..c856db8 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2122,6 +2122,7 @@ static inline void flush_unauthorized_files(struct files_struct *files)
+ 
+ 	mutex_lock(&tty_mutex);
+ 	tty = get_current_tty();
++	mutex_unlock(&tty_mutex);
+ 	if (tty) {
+ 		file_list_lock();
+ 		file = list_entry(tty->tty_files.next, typeof(*file), f_u.fu_list);
+@@ -2138,8 +2139,8 @@ static inline void flush_unauthorized_files(struct files_struct *files)
+ 			}
+ 		}
+ 		file_list_unlock();
++		tty_kref_put(tty);
+ 	}
+-	mutex_unlock(&tty_mutex);
+ 	/* Reset controlling tty. */
+ 	if (drop_tty)
+ 		no_tty();
