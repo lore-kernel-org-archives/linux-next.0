@@ -1,68 +1,70 @@
 From: Andrew Morton <akpm@linux-foundation.org>
 Subject: Re: linux-next: Tree for September 3
-Date: Thu, 4 Sep 2008 01:25:44 -0700
-Message-ID: <20080904012544.cabed847.akpm@linux-foundation.org>
+Date: Thu, 4 Sep 2008 01:37:43 -0700
+Message-ID: <20080904013743.0ecc9ec5.akpm@linux-foundation.org>
 References: <20080903191619.6b6b230e.sfr@canb.auug.org.au>
 	<20080903214634.ea17ff53.akpm@linux-foundation.org>
 	<alpine.LFD.1.10.0809032201510.3378@nehalem.linux-foundation.org>
 	<20080903223318.84b6ce8b.akpm@linux-foundation.org>
 	<alpine.LFD.1.10.0809040045190.3378@nehalem.linux-foundation.org>
+	<20080904012544.cabed847.akpm@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:46435 "EHLO
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:44591 "EHLO
 	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757164AbYIDI0V (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Sep 2008 04:26:21 -0400
-In-Reply-To: <alpine.LFD.1.10.0809040045190.3378@nehalem.linux-foundation.org>
+	by vger.kernel.org with ESMTP id S1751671AbYIDIiU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Sep 2008 04:38:20 -0400
+In-Reply-To: <20080904012544.cabed847.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Yinghai Lu <yhlu.kernel@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Yinghai Lu <yhlu.kernel@gmail.com>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>
 
-On Thu, 4 Sep 2008 01:02:10 -0700 (PDT) Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Thu, 4 Sep 2008 01:25:44 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
 
-> So this all looks ok. I'd be happier if you also actually had some actual 
-> _device_ in the Cardbus slot and reported that that works, but the patch 
-> clearly 
+> can't complain about that, apart from the apparently-bogus "unable to
+> apply power".
 
-<rummages for ten minutes>
+ooh look, I fixed something:
 
-<found it!>
+--- a/drivers/pcmcia/cs.c~a
++++ a/drivers/pcmcia/cs.c
+@@ -477,6 +477,8 @@ static int socket_setup(struct pcmcia_so
+ 	 */
+ 	msleep(vcc_settle * 10);
+ 
++	msleep(100);
++
+ 	skt->ops->get_status(skt, &status);
+ 	if (!(status & SS_POWERON)) {
+ 		cs_err(skt, "unable to apply power.\n");
+_
 
-<plugs it in>
+we seem not to be giving that card enough settling time.  Or is it
+a characteristic of the controller?  
 
-cs: pcmcia_socket0: unable to apply power.
-pccard: CardBus card inserted into slot 0
-pci 0000:07:00.0: supports D1
-pci 0000:07:00.0: supports D2
-pci 0000:07:00.0: PME# supported from D1 D2 D3hot D3cold
-pci 0000:07:00.0: PME# disabled
-
-sony:/home/akpm> lspci -s07:00
-07:00.0 Ethernet controller: 3Com Corporation 3cCFE575CT CardBus [Cyclone] (rev 10)
+It's a module option, but google(linux "unable to apply power") gets
+859 hits.  Maybe the default is too short..
 
 
-seems OK.
+btw, do we really need to spew all this?
 
-<applies the patch, enables 3c59x.ko>
-
-<reboots, plugs in card>
-
-cs: pcmcia_socket0: unable to apply power.
-pccard: CardBus card inserted into slot 0
-pci 0000:07:00.0: supports D1
-pci 0000:07:00.0: supports D2
-pci 0000:07:00.0: PME# supported from D1 D2 D3hot D3cold
-pci 0000:07:00.0: PME# disabled
-calling  vortex_init+0x0/0x9e [3c59x]
-3c59x 0000:07:00.0: enabling device (0000 -> 0003)
-3c59x 0000:07:00.0: PCI INT A -> GSI 21 (level, low) -> IRQ 21
-3c59x: Donald Becker and others.
-0000:07:00.0: 3Com PCI 3CCFE575CT Tornado CardBus at f8cb2000.
-3c59x 0000:07:00.0: setting latency timer to 64
-initcall vortex_init+0x0/0x9e [3c59x] returned 0 after 36 msecs
-
-can't complain about that, apart from the apparently-bogus "unable to
-apply power".
+pccard: card ejected from slot 0
+3c59x 0000:07:00.0: restoring config space at offset 0xf (was 0xffffffff, writing 0x50a0115)
+3c59x 0000:07:00.0: restoring config space at offset 0xe (was 0xffffffff, writing 0x0)
+3c59x 0000:07:00.0: restoring config space at offset 0xd (was 0xffffffff, writing 0x50)
+3c59x 0000:07:00.0: restoring config space at offset 0xc (was 0xffffffff, writing 0x0)
+3c59x 0000:07:00.0: restoring config space at offset 0xb (was 0xffffffff, writing 0x5c5710b7)
+3c59x 0000:07:00.0: restoring config space at offset 0xa (was 0xffffffff, writing 0x90)
+3c59x 0000:07:00.0: restoring config space at offset 0x9 (was 0xffffffff, writing 0x0)
+3c59x 0000:07:00.0: restoring config space at offset 0x8 (was 0xffffffff, writing 0x0)
+3c59x 0000:07:00.0: restoring config space at offset 0x7 (was 0xffffffff, writing 0x0)
+3c59x 0000:07:00.0: restoring config space at offset 0x6 (was 0xffffffff, writing 0x58000080)
+3c59x 0000:07:00.0: restoring config space at offset 0x5 (was 0xffffffff, writing 0x58000000)
+3c59x 0000:07:00.0: restoring config space at offset 0x4 (was 0xffffffff, writing 0x2401)
+3c59x 0000:07:00.0: restoring config space at offset 0x3 (was 0xffffffff, writing 0x4000)
+3c59x 0000:07:00.0: restoring config space at offset 0x2 (was 0xffffffff, writing 0x2000010)
+3c59x 0000:07:00.0: restoring config space at offset 0x1 (was 0xffffffff, writing 0x2100007)
+3c59x 0000:07:00.0: restoring config space at offset 0x0 (was 0xffffffff, writing 0x525710b7)
