@@ -1,81 +1,55 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: Tree for September 3
-Date: Wed, 3 Sep 2008 21:42:25 -0700
-Message-ID: <20080903214225.d7831142.akpm@linux-foundation.org>
-References: <20080903191619.6b6b230e.sfr@canb.auug.org.au>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+Subject: Re: linux-next: manual merge of the v4l-dvb tree
+Date: Thu, 4 Sep 2008 01:44:18 -0300
+Message-ID: <20080904014418.1c4d57dd@mchehab.chehab.org>
+References: <20080901131458.24ac7832.sfr@canb.auug.org.au>
+	<20080901134239.7d95d83a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:58960 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750941AbYIDEmc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Sep 2008 00:42:32 -0400
-In-Reply-To: <20080903191619.6b6b230e.sfr@canb.auug.org.au>
+Received: from bombadil.infradead.org ([18.85.46.34]:44865 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750941AbYIDEoi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Sep 2008 00:44:38 -0400
+In-Reply-To: <20080901134239.7d95d83a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org
+Cc: linux-next@vger.kernel.org, Greg KH <greg@kroah.com>, Hans Verkuil <hverkuil@xs4all.nl>
 
-On Wed, 3 Sep 2008 19:16:19 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Mon, 1 Sep 2008 13:42:39 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+> Hi Mauro,
+> 
+> On Mon, 1 Sep 2008 13:14:58 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Today's linux-next merge of the v4l-dvb tree got a conflict in
+> > drivers/media/radio/dsbr100.c between commit
+> > 59d1f04f76c8386d468f74c18fe5c008752c9340 ("USB: remove warn() macro from
+> > usb.h") from the usb tree and commit
+> > 63057954eb49549963c4c5079381492575cab33a ("V4L/DVB (8778): radio: fix
+> > incorrect video_register_device result check") from the v4l-dvb tree.
+> > 
+> > Just a context clash.  I fixed it up (see below) and can carry the fix.
+> 
+> Of course, this is fixable in the v4l-dvb tree as well.
 
-ug.  What a lot of bugs.
+Hi Stephen,
 
-acpi:
+Thanks for warning me. Unfortunately, I got some issues on my current procedure
+of handling my tree. The old procedure of using stacked git were much better
+from my side, but were leading to a few inconsistencies. I'm still trying to
+find a way to allow me to merge my patches without generating merge noise on
+upstream tree and without needing to rebase every time a patch is merged
+upstream.
 
-calling  param_sysfs_init+0x0/0x153
-------------[ cut here ]------------
-WARNING: at fs/sysfs/dir.c:465 sysfs_add_one+0x2a/0x36()
-sysfs: duplicate filename 'acpi' can not be created
-Modules linked in:
-Pid: 1, comm: swapper Not tainted 2.6.27-rc5 #4
- [<c01208e4>] warn_slowpath+0x4e/0x77
- [<c013e30f>] ? __lock_acquire+0x671/0x6b7
- [<c013a79e>] ? trace_hardirqs_off+0xb/0xd
- [<c0108621>] ? native_sched_clock+0x82/0x96
- [<c018a1de>] ? ifind+0x7e/0x88
- [<c032fee9>] ? _spin_unlock+0x27/0x3c
- [<c018a1de>] ? ifind+0x7e/0x88
- [<c01b7262>] ? sysfs_find_dirent+0x16/0x27
- [<c01b72fc>] sysfs_add_one+0x2a/0x36
- [<c01b779d>] create_dir+0x43/0x71
- [<c01b77f8>] sysfs_create_dir+0x2d/0x41
- [<c032fee9>] ? _spin_unlock+0x27/0x3c
- [<c01fa600>] kobject_add_internal+0xb3/0x157
- [<c01fa74f>] kobject_add_varg+0x35/0x41
- [<c01fa8cd>] kobject_init_and_add+0x26/0x28
- [<c049160c>] kernel_param_sysfs_setup+0x4c/0x99
- [<c0491750>] param_sysfs_init+0xf7/0x153
- [<c0101125>] _stext+0x3d/0x11d
- [<c0491659>] ? param_sysfs_init+0x0/0x153
- [<c011c8af>] ? wake_up_process+0xf/0x11
- [<c012d8b9>] ? start_workqueue_thread+0x1d/0x20
- [<c012de97>] ? __create_workqueue_key+0xe4/0xfc
- [<c0482767>] kernel_init+0xeb/0x152
- [<c048267c>] ? kernel_init+0x0/0x152
- [<c01046ef>] kernel_thread_helper+0x7/0x10
- =======================
----[ end trace 4eaa2a86a8e2da22 ]---
-kobject_add_internal failed for acpi with -EEXIST, don't try to register things with the same name in the same directory.
-Pid: 1, comm: swapper Tainted: G        W 2.6.27-rc5 #4
- [<c01fa66c>] kobject_add_internal+0x11f/0x157
- [<c01fa74f>] kobject_add_varg+0x35/0x41
- [<c01fa8cd>] kobject_init_and_add+0x26/0x28
- [<c049160c>] kernel_param_sysfs_setup+0x4c/0x99
- [<c0491750>] param_sysfs_init+0xf7/0x153
- [<c0101125>] _stext+0x3d/0x11d
- [<c0491659>] ? param_sysfs_init+0x0/0x153
- [<c011c8af>] ? wake_up_process+0xf/0x11
- [<c012d8b9>] ? start_workqueue_thread+0x1d/0x20
- [<c012de97>] ? __create_workqueue_key+0xe4/0xfc
- [<c0482767>] kernel_init+0xeb/0x152
- [<c048267c>] ? kernel_init+0x0/0x152
- [<c01046ef>] kernel_thread_helper+0x7/0x10
- =======================
-Module 'acpi' failed to be added to sysfs, error number -17
+I'm trying to give a definitive solution to fix it. Due to
+that, I had to rebase my tree (in fact, I've re-created it). So, this conflict
+will likely rise on today's (and probably on tomorrow's merge), since I'm
+currently focused on fixing my tree to send a long list of pending stuff
+upstream.
 
-
-there seem to have been tens or even hunderds of reports of this.  Odd.
+Cheers,
+Mauro
