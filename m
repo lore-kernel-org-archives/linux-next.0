@@ -1,40 +1,32 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: SCSI git tree splitting into scsi-misc-2.6 and scsi-post-merge-2.6
-Date: Fri, 05 Sep 2008 11:34:03 -0500
-Message-ID: <1220632443.3331.19.camel@localhost.localdomain>
-References: <20080905161212.e3612601.sfr@canb.auug.org.au>
+From: "Brandeburg, Jesse" <jesse.brandeburg@intel.com>
+Subject: RE: [E1000-devel] linux-next: Tree for September 4 (PATCH: IXGBE)
+Date: Fri, 5 Sep 2008 09:38:17 -0700
+Message-ID: <36D9DB17C6DE9E40B059440DB8D95F520611FFF8@orsmsx418.amr.corp.intel.com>
+References: <20080904193606.573f2cb3.sfr@canb.auug.org.au> <20080904204137.9b31f644.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from accolon.hansenpartnership.com ([76.243.235.52]:36810 "EHLO
-	accolon.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751731AbYIEQeG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Sep 2008 12:34:06 -0400
-In-Reply-To: <20080905161212.e3612601.sfr@canb.auug.org.au>
+Received: from mga02.intel.com ([134.134.136.20]:53772 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751075AbYIEQii convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Sep 2008 12:38:38 -0400
+Content-class: urn:content-classes:message
+In-Reply-To: <20080904204137.9b31f644.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jens Axboe <jens.axboe@oracle.com>, linux-next@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Mike Christie <michaelc@cs.wisc.edu>, linux-scsi <linux-scsi@vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, jgarzik <jgarzik@pobox.com>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>, e1000-devel@l
+Cc: Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew@sc8-sf-spam2.sourceforge.net
 
-Due to conflicts with block#for-2.6.28 I'm splitting the tree to resolve
-them.  The two trees are now
+Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> ixgbe needs to be restricted to the same build config (m/y)
+> as DCA since it calls the dca_*() functions.
+> 
+> ixgbe_main.c:(.text+0xd9c09): undefined reference to `dca3_get_tag'
 
-git.kernel.org:/pub/scm/linux/kernel/git/jejb/scsi-post-merge-2.6.git
-git.kernel.org:/pub/scm/linux/kernel/git/jejb/scsi-misc-2.6.git
+Thanks Randy for catching that, you're correct.
 
-scsi-misc-2.6 will keep things that have no external dependencies, so
-will be merged very early in the merge window.  scsi-post-merge-2.6 will
-keep the other tree dependent pieces, and so won't be able to go until
-after the other trees have gone in.
-
-Since the trees will evolve semi-independently, you'll need to pull both
-in to get all the changes.
-
-Instructions for linux-next:
-
-You need to include the scsi-post-merge-2.6 tree last (or at least after
-all its component trees) and only the pieces from merge-base..master
-(that will insulate you from rebasing effects).
-
-James
+Acked-by: Jesse Brandeburg <jesse.brandeburg@intel.com>
