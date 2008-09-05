@@ -1,45 +1,89 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: linux-next: manual merge of the block tree
-Date: Fri, 05 Sep 2008 08:58:27 -0500
-Message-ID: <1220623107.3331.0.camel@localhost.localdomain>
-References: <20080905161212.e3612601.sfr@canb.auug.org.au>
-	 <20080905062237.GM20055@kernel.dk>
+From: Nicolas Pitre <nico@cam.org>
+Subject: Re: [PATCH] ucb1400_ts depends SND_AC97_BUS
+Date: Fri, 05 Sep 2008 10:52:25 -0400 (EDT)
+Message-ID: <alpine.LFD.1.10.0809051049460.23787@xanadu.home>
+References: <20061209003635.e778ff76.randy.dunlap@oracle.com>
+ <200612092150.02940.dtor@insightbb.com>
+ <20061209185737.1768315d.randy.dunlap@oracle.com>
+ <200612092205.19358.dtor@insightbb.com>
+ <Pine.LNX.4.64.0612092212410.2630@xanadu.home>
+ <20061209210945.5abe2d89.randy.dunlap@oracle.com>
+ <Pine.LNX.4.64.0612102244140.2630@xanadu.home>
+ <20080904195744.f367cd2d.randy.dunlap@oracle.com>
+ <alpine.LFD.1.10.0809050028590.23787@xanadu.home>
+ <20080904214444.0dccf859.randy.dunlap@oracle.com>
+ <alpine.LFD.1.10.0809050104560.23787@xanadu.home>
+ <s5htzcvt7id.wl%tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from accolon.hansenpartnership.com ([76.243.235.52]:47328 "EHLO
-	accolon.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752781AbYIEN6d (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Sep 2008 09:58:33 -0400
-In-Reply-To: <20080905062237.GM20055@kernel.dk>
+Received: from relais.videotron.ca ([24.201.245.36]:8576 "EHLO
+	relais.videotron.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753154AbYIEOwb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Sep 2008 10:52:31 -0400
+In-reply-to: <s5htzcvt7id.wl%tiwai@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Mike Christie <michaelc@cs.wisc.edu>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Dmitry Torokhov <dtor@insightbb.com>, lkml <linux-kernel@vger.kernel.org>, akpm <akpm@osdl.org>, linux-next@vger.kernel.org
 
-On Fri, 2008-09-05 at 08:22 +0200, Jens Axboe wrote:
-> On Fri, Sep 05 2008, Stephen Rothwell wrote:
-> > Hi Jens,
+On Fri, 5 Sep 2008, Takashi Iwai wrote:
+
+> At Fri, 05 Sep 2008 01:09:48 -0400 (EDT),
+> Nicolas Pitre wrote:
 > > 
-> > Today's linux-next merge of the block tree got a conflict in
-> > include/linux/bio.h and include/linux/blkdev.h between commit
-> > 81449f3f2013d92ec3bcb9d2c1877ce3140d2271 ("[SCSI] block: separate
-> > failfast into multiple bits") from the scsi tree and commit
-> > 5d112a624058caabe5b570d2c9827bce82c18be1 ("Add 'discard' request
-> > handling") from the block tree.
+> > On Thu, 4 Sep 2008, Randy Dunlap wrote:
 > > 
-> > Overlapping changes/additions to some bit definitions.  I have fixed it
-> > up as best I can (see below) and can carry the fix.
+> > > On Fri, 05 Sep 2008 00:37:17 -0400 (EDT) Nicolas Pitre wrote:
+> > > 
+> > > > On Thu, 4 Sep 2008, Randy Dunlap wrote:
+> > > > 
+> > > > > On Sun, 10 Dec 2006 22:55:25 -0500 (EST) Nicolas Pitre wrote:
+> > > > > 
+> > > > > > On Sat, 9 Dec 2006, Randy Dunlap wrote:
+> > > > > > 
+> > > > > > > On Sat, 09 Dec 2006 22:17:55 -0500 (EST) Nicolas Pitre wrote:
+> > > > > > > 
+> > > > > > > > Please consider what SND_CONFIG_AC97_BUS corresponds to.  It is 
+> > > > > > > > sound/pci/ac97/ac97_bus.c and if you look into this file you'll see that 
+> > > > > > > > it is perfectly buildable even if sound is entirely configured out, just 
+> > > > > > > > like some lib code would be.
+> > > > > > > 
+> > > > > > > OK.  Should it (CONFIG_SND_AC97_BUS -> sound/pci/ac97/ac97_bus.c)
+> > > > > > > be buildable when sound is disabled?
+> > > > > > 
+> > > > > > Yes.
+> > > > > > 
+> > > > > > > If so, where should it be moved to (since afaik, make won't even
+> > > > > > > descend into sound/ if SOUND=n; I don't see that changing
+> > > > > > > any time soon).
+> > > > > > 
+> > > > > > What about this patch?
+> > > > > 
+> > > > > Can we get this patch or some patch into the input tree for linux-next?
+> > > > 
+> > > > This patch is commit e1036502e5263851259d147771226161e5ccc85a and 
+> > > > appeared in mainline almost 2 years ago.
+> > > 
+> > > Ack.  Sorry about that.  Wrong ucb thread.
+> > > 
+> > > ucb1400_core still has build errors in linux-next
+> > > since it uses ac97_bus_type even when CONFIG_SOUND=n.
+> > 
+> > Both sound (AC97) and UCB1400 should be able to select CONFIG_AC97_BUS 
+> > independently from each other.
+> > 
+> > And in linux/sound/Makefile one can find this note:
+> > 
+> > 	# This one must be compilable even if sound is configured out
+> > 	obj-$(CONFIG_AC97_BUS) += ac97_bus.o
+> > 
+> > This was fixed 2 years ago.  Who broke it this time?
 > 
-> James, would it not have been a lot better to carry the block bits in
-> the block tree instead??
+> Oh, it must be me.
 
-They're only a tiny piece of all of this ... and without them, my SCSI
-tree won't compile.  I'll separate them into a post merge tree again to
-resolve the conflicts.
+I think both your patch and the one I previously posted are needed.
 
-However, this time, I really need linux-next to work out how it handles
-post merge trees ... this will be the third time I've asked.
 
-James
+Nicolas
