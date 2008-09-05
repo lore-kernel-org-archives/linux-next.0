@@ -1,73 +1,45 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: Tree for September 3
-Date: Fri, 5 Sep 2008 13:04:11 +0200
-Message-ID: <20080905110411.GA26846@elte.hu>
-References: <20080904012544.cabed847.akpm@linux-foundation.org> <alpine.LFD.1.10.0809040143350.3452@nehalem.linux-foundation.org> <20080904015701.5959623a.akpm@linux-foundation.org> <alpine.LFD.1.10.0809040203510.3452@nehalem.linux-foundation.org> <20080904104554.32ffebea.akpm@linux-foundation.org> <alpine.LFD.1.10.0809041058140.3400@nehalem.linux-foundation.org> <20080904113408.d47c65f6.akpm@linux-foundation.org> <alpine.LFD.1.10.0809050041520.3243@apollo.tec.linutronix.de> <20080904161746.dc4800a4.akpm@linux-foundation.org> <alpine.LFD.1.10.0809050121440.3243@apollo.tec.linutronix.de>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: manual merge of the block tree
+Date: Fri, 05 Sep 2008 08:58:27 -0500
+Message-ID: <1220623107.3331.0.camel@localhost.localdomain>
+References: <20080905161212.e3612601.sfr@canb.auug.org.au>
+	 <20080905062237.GM20055@kernel.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:36442 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751671AbYIELFG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 5 Sep 2008 07:05:06 -0400
-Content-Disposition: inline
-In-Reply-To: <alpine.LFD.1.10.0809050121440.3243@apollo.tec.linutronix.de>
+Received: from accolon.hansenpartnership.com ([76.243.235.52]:47328 "EHLO
+	accolon.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752781AbYIEN6d (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Sep 2008 09:58:33 -0400
+In-Reply-To: <20080905062237.GM20055@kernel.dk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, torvalds@linux-foundation.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, yhlu.kernel@gmail.com, ink@jurassic.park.msu.ru, jbarnes@virtuousgeek.org, netdev@vger.kernel.org, viro@zeniv.linux.org.uk, ebiederm@xmission.com, dwmw2@infradead.org, sam@ravnborg.org, johnstul@us.ibm.com
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Mike Christie <michaelc@cs.wisc.edu>
 
-
-* Thomas Gleixner <tglx@linutronix.de> wrote:
-
-> On Thu, 4 Sep 2008, Andrew Morton wrote:
-> > > 
-> > > Cute, NULL pointer in the timer check code. Can you please addr2line
-> > > the exact code line or upload the vmlinux somewhere ?
-> > > 
+On Fri, 2008-09-05 at 08:22 +0200, Jens Axboe wrote:
+> On Fri, Sep 05 2008, Stephen Rothwell wrote:
+> > Hi Jens,
 > > 
-> > erm, I might have lost that binary, and it only happened the once.  It
-> > happened shortly after the machine had fully booted, during
-> > establishment of the first sshd session.
+> > Today's linux-next merge of the block tree got a conflict in
+> > include/linux/bio.h and include/linux/blkdev.h between commit
+> > 81449f3f2013d92ec3bcb9d2c1877ce3140d2271 ("[SCSI] block: separate
+> > failfast into multiple bits") from the scsi tree and commit
+> > 5d112a624058caabe5b570d2c9827bce82c18be1 ("Add 'discard' request
+> > handling") from the block tree.
 > > 
-> > It nuked the machine really well, too.  I had to pull the battery to
-> > get it back.
+> > Overlapping changes/additions to some bit definitions.  I have fixed it
+> > up as best I can (see below) and can carry the fix.
 > 
-> Known problem on Sonys. :(
-> 
-> > fwiw:
-> >
-> > (gdb) l *0xc0126e7f
-> > 0xc0126e7f is in get_next_timer_interrupt (kernel/timer.c:863).
-> > warning: Source file is more recent than executable.
-> > 858             for (array = 0; array < 4; array++) {
-> > 859                     struct tvec *varp = varray[array];
-> > 860     
-> > 861                     index = slot = timer_jiffies & TVN_MASK;
-> > 862                     do {
-> > 863                             list_for_each_entry(nte, varp->vec + slot, entry) {
-> > 864                                     found = 1;
-> > 865                                     if (time_before(nte->expires, expires))
-> > 866                                             expires = nte->expires;
-> > 867                             }
-> > 
-> > which looks reasonable.
-> 
-> Yeah, as Linus decoded it's that loop. So we look at some corrupted
-> entry here. 
-> 
-> CONFIG_DEBUG_OBJECTS (add debug_objects to the command line as well)
-> should catch it when this is a timer being discarded, freed or
-> reinitialized.
-> 
-> Otherwise, when it is just random corruption it wont help much.
+> James, would it not have been a lot better to carry the block bits in
+> the block tree instead??
 
-i guess CONFIG_DEBUG_OBJECTS_TIMERS=y is practical, and 
-CONFIG_DEBUG_LIST=y would be nice as well - it can catch memory 
-corruptions rather early and is relatively light-weight.
+They're only a tiny piece of all of this ... and without them, my SCSI
+tree won't compile.  I'll separate them into a post merge tree again to
+resolve the conflicts.
 
-[ and if there's any reproducability of the corruption and if it happens 
-  at a stable kernel address then a small custom hack in ftrace can 
-  catch it the moment it happens. ]
+However, this time, I really need linux-next to work out how it handles
+post merge trees ... this will be the third time I've asked.
 
-	Ingo
+James
