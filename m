@@ -1,88 +1,73 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: Tree for September 4
-Date: Fri, 5 Sep 2008 12:56:35 +0200
-Message-ID: <200809051256.36257.rjw@sisk.pl>
-References: <20080904193606.573f2cb3.sfr@canb.auug.org.au> <20080904214437.c53f02d9.akpm@linux-foundation.org>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: Tree for September 3
+Date: Fri, 5 Sep 2008 13:04:11 +0200
+Message-ID: <20080905110411.GA26846@elte.hu>
+References: <20080904012544.cabed847.akpm@linux-foundation.org> <alpine.LFD.1.10.0809040143350.3452@nehalem.linux-foundation.org> <20080904015701.5959623a.akpm@linux-foundation.org> <alpine.LFD.1.10.0809040203510.3452@nehalem.linux-foundation.org> <20080904104554.32ffebea.akpm@linux-foundation.org> <alpine.LFD.1.10.0809041058140.3400@nehalem.linux-foundation.org> <20080904113408.d47c65f6.akpm@linux-foundation.org> <alpine.LFD.1.10.0809050041520.3243@apollo.tec.linutronix.de> <20080904161746.dc4800a4.akpm@linux-foundation.org> <alpine.LFD.1.10.0809050121440.3243@apollo.tec.linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:59585 "EHLO ogre.sisk.pl"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:36442 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751670AbYIEKwB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 5 Sep 2008 06:52:01 -0400
-In-Reply-To: <20080904214437.c53f02d9.akpm@linux-foundation.org>
+	id S1751671AbYIELFG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 5 Sep 2008 07:05:06 -0400
 Content-Disposition: inline
+In-Reply-To: <alpine.LFD.1.10.0809050121440.3243@apollo.tec.linutronix.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>, torvalds@linux-foundation.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, yhlu.kernel@gmail.com, ink@jurassic.park.msu.ru, jbarnes@virtuousgeek.org, netdev@vger.kernel.org, viro@zeniv.linux.org.uk, ebiederm@xmission.com, dwmw2@infradead.org, sam@ravnborg.org, johnstul@us.ibm.com
 
-On Friday, 5 of September 2008, Andrew Morton wrote:
-> On Thu, 4 Sep 2008 19:36:06 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > I have created today's linux-next tree at
-> > git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-> 
-> The infamous Vaio hasn't finished catching up with you guys yet. 
-> Something in linux-next broke suspend-to-RAM.
-> 
-> An `echo mem > /sys/power/state' causes "Freezing of tasks failed after
-> 20.00 seconds (1 tasks refusing to freeze):"
-> 
-> dmesg: http://userweb.kernel.org/~akpm/dmesg-sony-suspend.txt
-> config: http://userweb.kernel.org/~akpm/config-sony.txt
-> 
-> This only happens after the X server has been started.
-> 
-> Mainline is OK.
 
-According to your dmesg the process that refused to freeze was
+* Thomas Gleixner <tglx@linutronix.de> wrote:
 
-hald-addon-stor
+> On Thu, 4 Sep 2008, Andrew Morton wrote:
+> > > 
+> > > Cute, NULL pointer in the timer check code. Can you please addr2line
+> > > the exact code line or upload the vmlinux somewhere ?
+> > > 
+> > 
+> > erm, I might have lost that binary, and it only happened the once.  It
+> > happened shortly after the machine had fully booted, during
+> > establishment of the first sshd session.
+> > 
+> > It nuked the machine really well, too.  I had to pull the battery to
+> > get it back.
+> 
+> Known problem on Sonys. :(
+> 
+> > fwiw:
+> >
+> > (gdb) l *0xc0126e7f
+> > 0xc0126e7f is in get_next_timer_interrupt (kernel/timer.c:863).
+> > warning: Source file is more recent than executable.
+> > 858             for (array = 0; array < 4; array++) {
+> > 859                     struct tvec *varp = varray[array];
+> > 860     
+> > 861                     index = slot = timer_jiffies & TVN_MASK;
+> > 862                     do {
+> > 863                             list_for_each_entry(nte, varp->vec + slot, entry) {
+> > 864                                     found = 1;
+> > 865                                     if (time_before(nte->expires, expires))
+> > 866                                             expires = nte->expires;
+> > 867                             }
+> > 
+> > which looks reasonable.
+> 
+> Yeah, as Linus decoded it's that loop. So we look at some corrupted
+> entry here. 
+> 
+> CONFIG_DEBUG_OBJECTS (add debug_objects to the command line as well)
+> should catch it when this is a timer being discarded, freed or
+> reinitialized.
+> 
+> Otherwise, when it is just random corruption it wont help much.
 
-which got stuck in ... getnstimeofday (???) (can you check what
-source code corresponds to getnstimeofday+0x37/0xbc pls?):
+i guess CONFIG_DEBUG_OBJECTS_TIMERS=y is practical, and 
+CONFIG_DEBUG_LIST=y would be nice as well - it can catch memory 
+corruptions rather early and is relatively light-weight.
 
-hald-addon-st D 00000046     0  2322   2282
-       f4de5b74 00000046 f4de5b54 00000046 f4de5b5c c0135f56 f6b96e44 f4deaf40 
-       f4deb0bc f5580948 f4de5bb0 f4de5b6c c013336e f6aa77c8 f6aa77c8 f6aa77a0 
-       f4de5bb0 f4de5b7c c0331f09 f4de5bd0 c01f4205 00000000 00000000 00000000 
-Call Trace:
- [<c0135f56>] ? getnstimeofday+0x37/0xbc
- [<c013336e>] ? ktime_get_ts+0x40/0x44
- [<c0331f09>] io_schedule+0x39/0x6c
- [<c01f4205>] get_request_wait+0x80/0xcd
- [<c0130615>] ? autoremove_wake_function+0x0/0x33
- [<c01f4285>] blk_get_request+0x33/0x5f
- [<c027a2a5>] scsi_execute+0x1f/0x10a
- [<c027a40a>] scsi_execute_req+0x7a/0x97
- [<f862c0f9>] sr_test_unit_ready+0x39/0x95 [sr_mod]
- [<f862ccbf>] sr_media_change+0x3c/0x1f9 [sr_mod]
- [<c0331d2f>] ? schedule+0x438/0x451
- [<f85c1073>] media_changed+0x43/0x71 [cdrom]
- [<f85c10cd>] cdrom_media_changed+0x2c/0x32 [cdrom]
- [<f862c19e>] sr_block_media_changed+0x11/0x13 [sr_mod]
- [<c019eee0>] check_disk_change+0x1c/0x79
- [<f85c4c72>] cdrom_open+0x7ec/0x85a [cdrom]
- [<c01d8499>] ? avc_has_perm_noaudit+0x38c/0x42e
- [<c01d84c0>] ? avc_has_perm_noaudit+0x3b3/0x42e
- [<c01f62e4>] ? blk_execute_rq_nowait+0x74/0x7c
- [<c01d8129>] ? avc_has_perm_noaudit+0x1c/0x42e
- [<c01d84c0>] ? avc_has_perm_noaudit+0x3b3/0x42e
- [<c033264f>] ? mutex_unlock+0x8/0xa
- [<c013d4c5>] ? trace_hardirqs_on+0xb/0xd
- [<f862c25d>] sr_block_open+0x83/0x91 [sr_mod]
- [<c019f48a>] do_open+0xa9/0x2b5
- [<c019f94b>] blkdev_open+0x28/0x51
- [<c017df80>] __dentry_open+0x181/0x29f
- [<c017edc5>] nameidata_to_filp+0x2b/0x42
- [<c019f923>] ? blkdev_open+0x0/0x51
- [<c0189251>] do_filp_open+0x391/0x662
- [<c013d4c5>] ? trace_hardirqs_on+0xb/0xd
- [<c018ffe9>] ? alloc_fd+0xbf/0xc9
- [<c018ffe9>] ? alloc_fd+0xbf/0xc9
- [<c017f0a8>] do_sys_open+0x44/0xb9
- [<c017f15f>] sys_open+0x1e/0x26
- [<c0103925>] sysenter_do_call+0x12/0x31
+[ and if there's any reproducability of the corruption and if it happens 
+  at a stable kernel address then a small custom hack in ftrace can 
+  catch it the moment it happens. ]
+
+	Ingo
