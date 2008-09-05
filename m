@@ -1,288 +1,88 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for September 5
-Date: Fri, 5 Sep 2008 19:09:41 +1000
-Message-ID: <20080905190941.0f86ebac.sfr@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for September 4
+Date: Fri, 5 Sep 2008 12:56:35 +0200
+Message-ID: <200809051256.36257.rjw@sisk.pl>
+References: <20080904193606.573f2cb3.sfr@canb.auug.org.au> <20080904214437.c53f02d9.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__5_Sep_2008_19_09_41_+1000_BdfPauginRz2uBuD"
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58408 "EHLO smtps.tip.net.au"
+Received: from ogre.sisk.pl ([217.79.144.158]:59585 "EHLO ogre.sisk.pl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751825AbYIEJKA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 5 Sep 2008 05:10:00 -0400
+	id S1751670AbYIEKwB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 5 Sep 2008 06:52:01 -0400
+In-Reply-To: <20080904214437.c53f02d9.akpm@linux-foundation.org>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Fri__5_Sep_2008_19_09_41_+1000_BdfPauginRz2uBuD
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Friday, 5 of September 2008, Andrew Morton wrote:
+> On Thu, 4 Sep 2008 19:36:06 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> > I have created today's linux-next tree at
+> > git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+> 
+> The infamous Vaio hasn't finished catching up with you guys yet. 
+> Something in linux-next broke suspend-to-RAM.
+> 
+> An `echo mem > /sys/power/state' causes "Freezing of tasks failed after
+> 20.00 seconds (1 tasks refusing to freeze):"
+> 
+> dmesg: http://userweb.kernel.org/~akpm/dmesg-sony-suspend.txt
+> config: http://userweb.kernel.org/~akpm/config-sony.txt
+> 
+> This only happens after the X server has been started.
+> 
+> Mainline is OK.
 
-Hi all,
+According to your dmesg the process that refused to freeze was
 
-There will be no linux-next tree until at least September 9 (US Central
-time) as I will be travelling.
+hald-addon-stor
 
-Changes since next-20080904:
+which got stuck in ... getnstimeofday (???) (can you check what
+source code corresponds to getnstimeofday+0x37/0xbc pls?):
 
-The ttydev tree is back since Alan thinks he has fixed Andrew's problem.
-
-The dwmw2 tree lost the build breakage that required a revert.
-
-The arm tree gained some trivial conflicts (unreported).
-
-The block tree lost a conflict but gained a conflict against the scsi tree.
-
-I have also applied the following patches for known problems:
-
-	ftrace: protect the definition of ftrace_release
-	revert BUILD_BUG_ON change
-	Revert "debug: add notifier chain debugging"
-	debug: add notifier chain debugging (different version)
-	sparc: qlogicpti fallout from sbus removal
-	fix SND_USB_US122L selection
-	fix IXGBE dependencies
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups, it is also built with powerpc allnoconfig,
-44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
-
-Below is a summary of the state of the merge.
-
-We are up to 113 trees (counting Linus' and 14 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging powerpc-merge/merge
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sparc-current/master
-Merging sound-current/for-linus
-Merging arm-current/master
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-2.6.26
-Merging dwmw2/master
-Merging arm/devel
-CONFLICT (content): Merge conflict in arch/arm/mach-omap1/mcbsp.c
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/mcbsp.c
-CONFLICT (content): Merge conflict in arch/arm/plat-omap/include/mach/mcbsp=
-.h
-CONFLICT (content): Merge conflict in arch/arm/plat-omap/mcbsp.c
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging quilt/m68k
-Merging m68knommu/for-next
-Merging mips/mips-for-linux-next
-Merging parisc/master
-Merging powerpc/powerpc-next
-Merging 4xx/next
-Merging galak/powerpc-next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-CONFLICT (content): Merge conflict in arch/sparc/kernel/of_device.c
-Merging x86/auto-x86-next
-CONFLICT (content): Merge conflict in include/asm-x86/cpufeature.h
-CONFLICT (content): Merge conflict in include/asm-x86/statfs.h
-Merging xtensa/master
-Merging quilt/driver-core
-Merging quilt/usb
-Merging tip-core/auto-core-next
-Merging cpus4096/auto-cpus4096-next
-Merging ftrace/auto-ftrace-next
-CONFLICT (content): Merge conflict in kernel/module.c
-Applying ftrace: remove warning of old objcopy and local functions
-Merging genirq/auto-genirq-next
-Merging safe-poison-pointers/auto-safe-poison-pointers-next
-Merging sched/auto-sched-next
-Merging stackprotector/auto-stackprotector-next
-CONFLICT (content): Merge conflict in include/asm-x86/pda.h
-CONFLICT (content): Merge conflict in kernel/fork.c
-Merging timers/auto-timers-next
-Merging pci/linux-next
-Merging quilt/device-mapper
-Merging hid/mm
-CONFLICT (content): Merge conflict in drivers/hid/usbhid/hid-core.c
-Applying HID: fix for warn() removal
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/stable
-CONFLICT (content): Merge conflict in drivers/media/radio/dsbr100.c
-CONFLICT (content): Merge conflict in drivers/media/video/zr364xx.c
-Merging jfs/next
-Merging kbuild/master
-Merging quilt/ide
-Merging libata/NEXT
-Merging nfs/linux-next
-Merging xfs/master
-Merging infiniband/for-next
-Merging acpi/test
-CONFLICT (content): Merge conflict in drivers/misc/acer-wmi.c
-Merging nfsd/nfsd-next
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/master
-CONFLICT (content): Merge conflict in include/asm-x86/kvm.h
-Merging dlm/next
-Merging scsi/master
-Merging tests/master
-CONFLICT (content): Merge conflict in lib/Kconfig.debug
-Merging ocfs2/linux-next
-Merging ext4/next
-Merging async_tx/next
-Merging udf/for_next
-Merging net/master
-Merging mtd/master
-Merging wireless/master
-Merging crypto/master
-Merging vfs/for-next
-Merging sound/for-next
-Merging cpufreq/next
-Merging v9fs/for-next
-Merging quilt/rr
-Merging cifs/master
-Merging mmc/next
-Merging gfs2/master
-Merging input/next
-Merging semaphore/semaphore
-Merging semaphore-removal/semaphore-removal
-Merging bkl-removal/bkl-removal
-Merging trivial/next
-CONFLICT (content): Merge conflict in Documentation/edac.txt
-CONFLICT (content): Merge conflict in include/linux/securebits.h
-Applying rr: build fix for remove CONFIG_KMOD from net
-Merging ubifs/linux-next
-Merging lsm/for-next
-Merging block/for-next
-CONFLICT (content): Merge conflict in drivers/ide/ide-disk.c
-CONFLICT (content): Merge conflict in include/linux/bio.h
-CONFLICT (content): Merge conflict in include/linux/blkdev.h
-CONFLICT (content): Merge conflict in lib/Kconfig.debug
-Merging embedded/master
-Merging firmware/master
-CONFLICT (content): Merge conflict in drivers/scsi/qlogicpti.c
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging kmemcheck/auto-kmemcheck-next
-CONFLICT (content): Merge conflict in MAINTAINERS
-CONFLICT (content): Merge conflict in arch/x86/kernel/process_64.c
-CONFLICT (content): Merge conflict in arch/x86/kernel/traps_64.c
-CONFLICT (content): Merge conflict in init/main.c
-CONFLICT (content): Merge conflict in mm/Makefile
-CONFLICT (content): Merge conflict in mm/slab.c
-CONFLICT (content): Merge conflict in mm/slub.c
-Merging generic-ipi/auto-generic-ipi-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/reg-for-linus
-Merging security-testing/next
-Merging lblnet/master
-Merging quilt/ttydev
-CONFLICT (content): Merge conflict in Documentation/feature-removal-schedul=
-e.txt
-CONFLICT (content): Merge conflict in drivers/char/tty_io.c
-CONFLICT (content): Merge conflict in drivers/char/vt.c
-CONFLICT (content): Merge conflict in drivers/usb/serial/aircable.c
-CONFLICT (content): Merge conflict in drivers/usb/serial/keyspan_pda.c
-CONFLICT (content): Merge conflict in drivers/usb/serial/safe_serial.c
-CONFLICT (content): Merge conflict in kernel/auditsc.c
-Merging agp/agp-next
-Merging creds/next-creds
-CONFLICT (content): Merge conflict in drivers/net/wan/sbni.c
-CONFLICT (content): Merge conflict in fs/namespace.c
-CONFLICT (content): Merge conflict in fs/nfsd/nfs4recover.c
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_linux.h
-CONFLICT (content): Merge conflict in fs/xfs/xfs_inode.c
-CONFLICT (content): Merge conflict in fs/xfs/xfs_vnodeops.c
-CONFLICT (content): Merge conflict in include/linux/capability.h
-CONFLICT (add/add): Merge conflict in include/linux/cred.h
-CONFLICT (content): Merge conflict in include/linux/security.h
-CONFLICT (content): Merge conflict in kernel/exit.c
-CONFLICT (content): Merge conflict in kernel/fork.c
-CONFLICT (content): Merge conflict in security/commoncap.c
-CONFLICT (content): Merge conflict in security/selinux/hooks.c
-CONFLICT (content): Merge conflict in security/smack/smack_lsm.c
-Merging oprofile/auto-oprofile-next
-CONFLICT (content): Merge conflict in arch/x86/kernel/apic_32.c
-Merging fastboot/auto-fastboot-next
-CONFLICT (content): Merge conflict in include/linux/init.h
-Merging sparseirq/auto-sparseirq-next
-CONFLICT (delete/modify): arch/x86/kernel/apic_64.c deleted in sparseirq/au=
-to-sparseirq-next and modified in HEAD. Version HEAD of arch/x86/kernel/api=
-c_64.c left in tree.
-CONFLICT (content): Merge conflict in arch/x86/xen/spinlock.c
-CONFLICT (content): Merge conflict in drivers/serial/68328serial.c
-CONFLICT (content): Merge conflict in drivers/serial/8250.c
-$ git rm arch/x86/kernel/apic_64.c
-Applying revert BUILD_BUG_ON change
-Applying ftrace: protect the definition of ftrace_release
-Created commit 5e8cacc: Revert "debug: add notifier chain debugging"
-Applying debug: add notifier chain debugging
-Applying sparc: qlogicpti fallout from sbus removal
-Applying fix SND_USB_US122L selection
-Applying fix IXGBE dependencies
-
---Signature=_Fri__5_Sep_2008_19_09_41_+1000_BdfPauginRz2uBuD
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkjA91UACgkQjjKRsyhoI8wPLQCgwHWbfV+LK4V3lQxg4hn+mI6d
-lMcAn1aFNcQlBH2LbAz6XAzViSIid9AU
-=sGUa
------END PGP SIGNATURE-----
-
---Signature=_Fri__5_Sep_2008_19_09_41_+1000_BdfPauginRz2uBuD--
+hald-addon-st D 00000046     0  2322   2282
+       f4de5b74 00000046 f4de5b54 00000046 f4de5b5c c0135f56 f6b96e44 f4deaf40 
+       f4deb0bc f5580948 f4de5bb0 f4de5b6c c013336e f6aa77c8 f6aa77c8 f6aa77a0 
+       f4de5bb0 f4de5b7c c0331f09 f4de5bd0 c01f4205 00000000 00000000 00000000 
+Call Trace:
+ [<c0135f56>] ? getnstimeofday+0x37/0xbc
+ [<c013336e>] ? ktime_get_ts+0x40/0x44
+ [<c0331f09>] io_schedule+0x39/0x6c
+ [<c01f4205>] get_request_wait+0x80/0xcd
+ [<c0130615>] ? autoremove_wake_function+0x0/0x33
+ [<c01f4285>] blk_get_request+0x33/0x5f
+ [<c027a2a5>] scsi_execute+0x1f/0x10a
+ [<c027a40a>] scsi_execute_req+0x7a/0x97
+ [<f862c0f9>] sr_test_unit_ready+0x39/0x95 [sr_mod]
+ [<f862ccbf>] sr_media_change+0x3c/0x1f9 [sr_mod]
+ [<c0331d2f>] ? schedule+0x438/0x451
+ [<f85c1073>] media_changed+0x43/0x71 [cdrom]
+ [<f85c10cd>] cdrom_media_changed+0x2c/0x32 [cdrom]
+ [<f862c19e>] sr_block_media_changed+0x11/0x13 [sr_mod]
+ [<c019eee0>] check_disk_change+0x1c/0x79
+ [<f85c4c72>] cdrom_open+0x7ec/0x85a [cdrom]
+ [<c01d8499>] ? avc_has_perm_noaudit+0x38c/0x42e
+ [<c01d84c0>] ? avc_has_perm_noaudit+0x3b3/0x42e
+ [<c01f62e4>] ? blk_execute_rq_nowait+0x74/0x7c
+ [<c01d8129>] ? avc_has_perm_noaudit+0x1c/0x42e
+ [<c01d84c0>] ? avc_has_perm_noaudit+0x3b3/0x42e
+ [<c033264f>] ? mutex_unlock+0x8/0xa
+ [<c013d4c5>] ? trace_hardirqs_on+0xb/0xd
+ [<f862c25d>] sr_block_open+0x83/0x91 [sr_mod]
+ [<c019f48a>] do_open+0xa9/0x2b5
+ [<c019f94b>] blkdev_open+0x28/0x51
+ [<c017df80>] __dentry_open+0x181/0x29f
+ [<c017edc5>] nameidata_to_filp+0x2b/0x42
+ [<c019f923>] ? blkdev_open+0x0/0x51
+ [<c0189251>] do_filp_open+0x391/0x662
+ [<c013d4c5>] ? trace_hardirqs_on+0xb/0xd
+ [<c018ffe9>] ? alloc_fd+0xbf/0xc9
+ [<c018ffe9>] ? alloc_fd+0xbf/0xc9
+ [<c017f0a8>] do_sys_open+0x44/0xb9
+ [<c017f15f>] sys_open+0x1e/0x26
+ [<c0103925>] sysenter_do_call+0x12/0x31
