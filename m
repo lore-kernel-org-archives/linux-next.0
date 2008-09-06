@@ -1,42 +1,50 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: b43 build error on m68k (was: Re: linux-next: Tree for September 5)
-Date: Sat, 6 Sep 2008 18:41:17 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.0809061837400.4138@anakin>
-References: <20080905190941.0f86ebac.sfr@canb.auug.org.au>
+From: Michael Buesch <mb-fseUSCV1ubazQB+pC5nmwQ@public.gmane.org>
+Subject: [PATCH] b43 G-PHY: Remove mmiowb()
+Date: Sat, 6 Sep 2008 19:28:55 +0200
+Message-ID: <200809061928.56550.mb@bu3sch.de>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from edna.telenet-ops.be ([195.130.132.58]:48044 "EHLO
-	edna.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752224AbYIFQlT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 6 Sep 2008 12:41:19 -0400
-In-Reply-To: <20080905190941.0f86ebac.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Michael Buesch <mb@bu3sch.de>, Stefano Brivio <stefano.brivio@polimi.it>
-Cc: linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <bcm43xx-dev-bounces-0fE9KPoRgkgATYTw5x5z8w@public.gmane.org>
+Content-Disposition: inline
+List-Unsubscribe: <https://lists.berlios.de/mailman/listinfo/bcm43xx-dev>,
+	<mailto:bcm43xx-dev-request-0fE9KPoRgkgATYTw5x5z8w@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.berlios.de/pipermail/bcm43xx-dev>
+List-Post: <mailto:bcm43xx-dev-0fE9KPoRgkgATYTw5x5z8w@public.gmane.org>
+List-Help: <mailto:bcm43xx-dev-request-0fE9KPoRgkgATYTw5x5z8w@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.berlios.de/mailman/listinfo/bcm43xx-dev>,
+	<mailto:bcm43xx-dev-request-0fE9KPoRgkgATYTw5x5z8w@public.gmane.org?subject=subscribe>
+Sender: bcm43xx-dev-bounces-0fE9KPoRgkgATYTw5x5z8w@public.gmane.org
+Errors-To: bcm43xx-dev-bounces-0fE9KPoRgkgATYTw5x5z8w@public.gmane.org
+To: John Linville <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
+Cc: Stefano Brivio <stefano.brivio-hl5o88x/ua9eoWH0uzbU5w@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, bcm43xx-dev-0fE9KPoRgkgATYTw5x5z8w@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 5 Sep 2008, Stephen Rothwell wrote:
-> Status of my local build tests will be at
-> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-> advice about cross compilers/configs that work, we are always open to add
-> more builds.
+It causes compile errors on m68k and it is not needed.
+Remove it.
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/45949/:
+Signed-off-by: Michael Buesch <mb-fseUSCV1ubazQB+pC5nmwQ@public.gmane.org>
 
-| drivers/net/wireless/b43/phy_g.c:388: error: implicit declaration of function 'mmiowb'
-| distcc[4257] ERROR: compile drivers/net/wireless/b43/phy_g.c on localhost failed
-| make[5]: *** [drivers/net/wireless/b43/phy_g.o] Error 1
+---
 
-Missing #include <asm/io.h>?
+John, please queue for the next merge window.
 
-Gr{oetje,eeting}s,
 
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Index: wireless-testing/drivers/net/wireless/b43/phy_g.c
+===================================================================
+--- wireless-testing.orig/drivers/net/wireless/b43/phy_g.c	2008-09-06 15:06:56.000000000 +0200
++++ wireless-testing/drivers/net/wireless/b43/phy_g.c	2008-09-06 19:24:35.000000000 +0200
+@@ -383,13 +383,12 @@ static void b43_set_original_gains(struc
+ }
+ 
+ /* http://bcm-specs.sipsolutions.net/NRSSILookupTable */
+ void b43_nrssi_hw_write(struct b43_wldev *dev, u16 offset, s16 val)
+ {
+ 	b43_phy_write(dev, B43_PHY_NRSSILT_CTRL, offset);
+-	mmiowb();
+ 	b43_phy_write(dev, B43_PHY_NRSSILT_DATA, (u16) val);
+ }
+ 
+ /* http://bcm-specs.sipsolutions.net/NRSSILookupTable */
+ s16 b43_nrssi_hw_read(struct b43_wldev *dev, u16 offset)
+ {
