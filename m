@@ -1,47 +1,53 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next releases
-Date: Wed, 10 Sep 2008 08:13:30 +1000
-Message-ID: <20080910081330.c2c96945.sfr@canb.auug.org.au>
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Subject: Re: linux-next: Tree for September 5
+Date: Wed, 10 Sep 2008 02:57:56 +0200
+Message-ID: <200809100257.56108.bzolnier@gmail.com>
+References: <20080905190941.0f86ebac.sfr@canb.auug.org.au> <48C51CF8.2030208@suse.de> <48C6F031.1050300@suse.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__10_Sep_2008_08_13_30_+1000_x1R_y6ITzwjfpjSf"
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51476 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751961AbYIIWNp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Sep 2008 18:13:45 -0400
+Received: from mail-gx0-f16.google.com ([209.85.217.16]:35729 "EHLO
+	mail-gx0-f16.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751478AbYIJBCd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Sep 2008 21:02:33 -0400
+Received: by gxk9 with SMTP id 9so12381129gxk.13
+        for <linux-next@vger.kernel.org>; Tue, 09 Sep 2008 18:02:31 -0700 (PDT)
+In-Reply-To: <48C6F031.1050300@suse.de>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Alexey Starikovskiy <astarikovskiy@suse.de>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Wed__10_Sep_2008_08_13_30_+1000_x1R_y6ITzwjfpjSf
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi,
 
-There will be no linux-next release for Sep 9 (as my body and brain are in
-two widely distant time zones) or Sep 10 (as I am travelling again).
-Hopefully normal releases will start again on Thursday (US west coast
-time).
+On Tuesday 09 September 2008, Alexey Starikovskiy wrote:
+> Hi Bartolmiej,
+> 
+> This patch is really important for many people, and your report
+> blocks it from being used.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Interesting, "bad" bugreport blocks "good" patch from being used?
 
---Signature=_Wed__10_Sep_2008_08_13_30_+1000_x1R_y6ITzwjfpjSf
-Content-Type: application/pgp-signature
+While the patch may be really important for some people it broke
+things here in the major way and you sent me the updated patch
+only _yesterday_.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+> It would be very great if you could test the updated patch.
 
-iEYEARECAAYFAkjG9QoACgkQjjKRsyhoI8xbSACfZ8O1yWZ7OuoWdEKr6957q7z5
-W5IAoJasjogiSV4K6bcaJbEXXRxEDOBj
-=yxB2
------END PGP SIGNATURE-----
+Anyway this one works fine (at least with Linus' tree since it
+won't apply to linux-next).
 
---Signature=_Wed__10_Sep_2008_08_13_30_+1000_x1R_y6ITzwjfpjSf--
+> Thanks in advance,
+> Alex.
+> 
+> Alexey Starikovskiy wrote:
+> > Hi Bartlomiej,
+> > 
+> > Could you please try updated patch?
+> > 
+> > Thanks,
+> > Alex.
