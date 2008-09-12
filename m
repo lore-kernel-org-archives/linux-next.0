@@ -1,56 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: x86 tree build failure
-Date: Fri, 12 Sep 2008 09:56:18 +1000
-Message-ID: <20080912095618.728658a5.sfr@canb.auug.org.au>
+From: "Eric Miao" <eric.y.miao@gmail.com>
+Subject: Re: linux-next: manual merge of the pxa tree
+Date: Fri, 12 Sep 2008 08:49:55 +0800
+Message-ID: <f17812d70809111749n1f0300c8j2f69d933d2c8fdf6@mail.gmail.com>
+References: <20080912083515.19517514.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38584 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754393AbYIKX4a (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 11 Sep 2008 19:56:30 -0400
+Received: from yx-out-2324.google.com ([74.125.44.29]:62356 "EHLO
+	yx-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752698AbYILAt5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Sep 2008 20:49:57 -0400
+Received: by yx-out-2324.google.com with SMTP id 8so231366yxm.1
+        for <linux-next@vger.kernel.org>; Thu, 11 Sep 2008 17:49:55 -0700 (PDT)
+In-Reply-To: <20080912083515.19517514.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org, Joerg Roedel <joerg.roedel@amd.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-Hi all,
+On Fri, Sep 12, 2008 at 6:35 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Eric,
+>
+> Today's linux-next merge of the pxa tree got a conflict in
+> arch/arm/mach-pxa/corgi.c arch/arm/mach-pxa/spitz.c between commit
+> fced80c735941fa518ac67c0b61bbe153fb8c050 ("[ARM] Convert asm/io.h to
+> linux/io.h") from the arm tree and commits
+> c22e92f200a2b5ab8b3571747865afe3dcc7b6b3 ("[ARM] pxa/corgi: use SPI-based
+> driver for ads7846, corgi-lcd and max1111"),
+> db710817e3432af4d30896cdc41f144e4da7c7e2 ("[ARM] pxa/akita: use pca953x
+> instead of akita-ioexp") and 43d5f82350734562e22b9ad9de3ad0aaec6aaffe
+> ("[ARM] pxa/spitz: use SPI-based driver for ads7846, corgi-lcd and
+> max1111") from the pxa tree.
+>
+> Just overlapping additions of includes.  I fixed it up (see below) and
+> can carry the fixup.
+>
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
-
-arch/x86/kernel/k8.c:20: error: 'PCI_DEVICE_ID_AMD_10H_NB_MISC' undeclared here (not in a function)
-
-Introduced by commit cf169702ba6928cee9d4f4adf3e932b643b8db7a ("x86,
-gart: add detection of AMD family 0x11 northbridges").  I applied the
-following patch.
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 12 Sep 2008 09:52:19 +1000
-Subject: [PATCH] x86: fix arch/x86/kernel/k8.c
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/x86/kernel/k8.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/arch/x86/kernel/k8.c b/arch/x86/kernel/k8.c
-index 304d8ba..3f5b832 100644
---- a/arch/x86/kernel/k8.c
-+++ b/arch/x86/kernel/k8.c
-@@ -17,7 +17,7 @@ static u32 *flush_words;
- 
- struct pci_device_id k8_nb_ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_K8_NB_MISC) },
--	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_10H_NB_MISC) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, 0x1203) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_11H_NB_MISC) },
- 	{}
- };
--- 
-1.5.6.3
+Just found that, the fixup looks correct to me. Thanks.
