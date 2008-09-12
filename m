@@ -1,30 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: driver-core tree build failure
-Date: Fri, 12 Sep 2008 13:53:11 +1000
-Message-ID: <20080912135311.c7d43744.sfr@canb.auug.org.au>
+Subject: linux-next: tip-core tree build wanings
+Date: Fri, 12 Sep 2008 15:07:53 +1000
+Message-ID: <20080912150753.1ce5002c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34813 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44629 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752341AbYILDxT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 11 Sep 2008 23:53:19 -0400
+	id S1751126AbYILFIB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 12 Sep 2008 01:08:01 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, Hannes Reinecke <hare@suse.de>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org
 
-Hi Greg,
+Hi all,
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+Today's linux-next build (powerpc_ppc64_defconfig) produced lots of
+warnings like this:
 
-drivers/net/wireless/atmel_cs.c: In function 'atmel_config':
-drivers/net/wireless/atmel_cs.c:237: error: incompatible type for argument 1 of 'dev_get_drvdata'
+In file included from arch/powerpc/platforms/powermac/smp.c:24:
+include/linux/kernel.h:498:1: warning: "BUILD_BUG_ON" redefined
+In file included from include/linux/linkage.h:4,
+                 from include/linux/kernel.h:11,
+                 from arch/powerpc/platforms/powermac/smp.c:24:
+include/linux/compiler.h:209:1: warning: this is the location of the previous definition
 
-Introduced by commit 107aeb9753159da848f066b26557f0aaab900a90 ("Driver
-core: Use dev_get_drvdata() accessors").  handle_to_dev returns a struct
-device not a struct device *.
+Introduced by commit 3cff9a338bd3ace9cfb501e08aeb69913b47c53d ("manual
+merge of core/debug") which recreated the definition of the BUILD_BUG_ON
+macro in kernel.h.
 
 I applied the following patch.
 -- 
@@ -33,26 +38,36 @@ Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 12 Sep 2008 13:50:07 +1000
-Subject: [PATCH] driver-core: atmel_cs.c fixup
+Date: Fri, 12 Sep 2008 15:04:37 +1000
+Subject: [PATCH] tip-core: fix for mismerge of kernel.h
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/net/wireless/atmel_cs.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ include/linux/kernel.h |   12 ------------
+ 1 files changed, 0 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/wireless/atmel_cs.c b/drivers/net/wireless/atmel_cs.c
-index 9b002cc..8ef37d0 100644
---- a/drivers/net/wireless/atmel_cs.c
-+++ b/drivers/net/wireless/atmel_cs.c
-@@ -234,7 +234,7 @@ static int atmel_config(struct pcmcia_device *link)
- 	struct pcmcia_device_id *did;
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index 0af82d5..74605be 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -494,18 +494,6 @@ struct sysinfo {
+ 	char _f[20-2*sizeof(long)-sizeof(int)];	/* Padding: libc5 uses this.. */
+ };
  
- 	dev = link->priv;
--	did = dev_get_drvdata(handle_to_dev(link));
-+	did = dev_get_drvdata(&handle_to_dev(link));
- 
- 	DEBUG(0, "atmel_config(0x%p)\n", link);
- 
+-/* Force a compilation error if condition is true */
+-#define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
+-
+-/* Force a compilation error if condition is true, but also produce a
+-   result (of value 0 and type size_t), so the expression can be used
+-   e.g. in a structure initializer (or where-ever else comma expressions
+-   aren't permitted). */
+-#define BUILD_BUG_ON_ZERO(e) (sizeof(char[1 - 2 * !!(e)]) - 1)
+-
+-/* Trap pasters of __FUNCTION__ at compile-time */
+-#define __FUNCTION__ (__func__)
+-
+ /* This helps us to avoid #ifdef CONFIG_NUMA */
+ #ifdef CONFIG_NUMA
+ #define NUMA_BUILD 1
 -- 
 1.5.6.3
