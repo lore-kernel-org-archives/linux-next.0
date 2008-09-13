@@ -1,64 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: tip-core build failure
-Date: Sat, 13 Sep 2008 11:14:23 +1000
-Message-ID: <20080913111423.981554c3.sfr@canb.auug.org.au>
+Subject: linux-next: net tree build failure
+Date: Sat, 13 Sep 2008 15:03:26 +1000
+Message-ID: <20080913150326.245fbb6f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__13_Sep_2008_11_14_23_+1000_p1mM4BXRKXQ_Nh8X"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43366 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55397 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751462AbYIMBOk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 12 Sep 2008 21:14:40 -0400
+	id S1751384AbYIMFDg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 13 Sep 2008 01:03:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: linux-next@vger.kernel.org, Rui Sousa <rui.p.m.sousa@gmail.com>
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, Julius Volz <juliusv@google.com>, Simon Horman <horms@verge.net.au>
 
---Signature=_Sat__13_Sep_2008_11_14_23_+1000_p1mM4BXRKXQ_Nh8X
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Dave,
 
-Hi Ingo,
+Today's linux-next build (powerpc allyesconfig) failed like this:
 
-Today's linux-next build (powerpc allnoconfig) failed like this:
+net/ipv4/ipvs/ip_vs_proto_tcp.c: In function 'tcp_snat_handler':
+net/ipv4/ipvs/ip_vs_proto_tcp.c:208: error: implicit declaration of function 'csum_ipv6_magic'
+net/ipv4/ipvs/ip_vs_proto_udp.c: In function 'udp_snat_handler':
+net/ipv4/ipvs/ip_vs_proto_udp.c:219: error: implicit declaration of function 'csum_ipv6_magic'
 
-In file included from arch/powerpc/include/asm/system.h:8,
-                 from include/linux/list.h:7,
-                 from include/linux/signal.h:8,
-                 from arch/powerpc/kernel/asm-offsets.c:16:
-include/linux/irqflags.h:89:1: warning: "local_irq_save" redefined
-In file included from arch/powerpc/include/asm/irqflags.h:11,
-                 from include/linux/irqflags.h:55,
-                 from arch/powerpc/include/asm/system.h:8,
-                 from include/linux/list.h:7,
-                 from include/linux/signal.h:8,
-                 from arch/powerpc/kernel/asm-offsets.c:16:
-arch/powerpc/include/asm/hw_irq.h:115:1: warning: this is the location of t=
-he previous definition
+Introduced by commit 0bbdd42b7efa66685b6d74701bcde3a596a3a59d ("IPVS:
+Extend protocol DNAT/SNAT and state handlers") which added a call to
+csum_ipv6_magic but didn't include net/ip6_checksum.h.  I applied the
+following patch.
 
-And it went downhill from there.
-
-Introduced by commit bd8fbdee6562ee526f3c2582a3b373ef195015dd ("lockdep:
-fix compilation when CONFIG_TRACE_IRQFLAGS_SUPPORT is not set") which I
-have reverted.
-
---=20
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Sat__13_Sep_2008_11_14_23_+1000_p1mM4BXRKXQ_Nh8X
-Content-Type: application/pgp-signature
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Sat, 13 Sep 2008 14:37:04 +1000
+Subject: [PATCH] net: ip_vs_proto_tcp build fix
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/ipv4/ipvs/ip_vs_proto_tcp.c |    1 +
+ net/ipv4/ipvs/ip_vs_proto_udp.c |    1 +
+ 2 files changed, 2 insertions(+), 0 deletions(-)
 
-iEYEARECAAYFAkjLE+8ACgkQjjKRsyhoI8zGqgCgiRSUITF0wKpjsFcx0N5L4Q2q
-T+0AnjBodcuPplSDBLUeK/4v9tkcde2j
-=IyV5
------END PGP SIGNATURE-----
-
---Signature=_Sat__13_Sep_2008_11_14_23_+1000_p1mM4BXRKXQ_Nh8X--
+diff --git a/net/ipv4/ipvs/ip_vs_proto_tcp.c b/net/ipv4/ipvs/ip_vs_proto_tcp.c
+index 537f616..dd4566e 100644
+--- a/net/ipv4/ipvs/ip_vs_proto_tcp.c
++++ b/net/ipv4/ipvs/ip_vs_proto_tcp.c
+@@ -18,6 +18,7 @@
+ #include <linux/tcp.h>                  /* for tcphdr */
+ #include <net/ip.h>
+ #include <net/tcp.h>                    /* for csum_tcpudp_magic */
++#include <net/ip6_checksum.h>
+ #include <linux/netfilter.h>
+ #include <linux/netfilter_ipv4.h>
+ 
+diff --git a/net/ipv4/ipvs/ip_vs_proto_udp.c b/net/ipv4/ipvs/ip_vs_proto_udp.c
+index e3ee26b..6eb6039 100644
+--- a/net/ipv4/ipvs/ip_vs_proto_udp.c
++++ b/net/ipv4/ipvs/ip_vs_proto_udp.c
+@@ -22,6 +22,7 @@
+ 
+ #include <net/ip_vs.h>
+ #include <net/ip.h>
++#include <net/ip6_checksum.h>
+ 
+ static struct ip_vs_conn *
+ udp_conn_in_get(int af, const struct sk_buff *skb, struct ip_vs_protocol *pp,
+-- 
+1.5.6.3
