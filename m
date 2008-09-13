@@ -1,33 +1,42 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: net tree build failure (depca)
-Date: Sat, 13 Sep 2008 08:04:38 -0700
-Message-ID: <20080913080438.30a37469.randy.dunlap@oracle.com>
-References: <20080913150326.245fbb6f.sfr@canb.auug.org.au>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: Tree for September 13
+Date: Sat, 13 Sep 2008 10:33:10 -0500
+Message-ID: <1221319990.3516.6.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rgminet01.oracle.com ([148.87.113.118]:30968 "EHLO
-	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750886AbYIMPGb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 13 Sep 2008 11:06:31 -0400
-In-Reply-To: <20080913150326.245fbb6f.sfr@canb.auug.org.au>
+Received: from accolon.hansenpartnership.com ([76.243.235.52]:58939 "EHLO
+	accolon.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752768AbYIMPdN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Sat, 13 Sep 2008 11:33:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Julius Volz <juliusv@google.com>, Simon Horman <horms@verge.net.au>
+To: linux-next@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
 
+Actually, there's a grave problem with this tree in that it's missing
+90% of the SCSI tree for upstream.  Until this can be fixed, could
+people test this merge candidate tree instead:
 
-Also this one on i386:
+http://www.kernel.org/pub/linux/kernel/people/jejb/merge-tree/
 
-drivers/net/depca.c:404: error: implicit declaration of function 'depca_common_remove'
-drivers/net/depca.c:1602: error: static declaration of 'depca_common_remove' follows non-static declaration
-drivers/net/depca.c:404: error: previous implicit declaration of 'depca_common_remove' was here
-make[2]: *** [drivers/net/depca.o] Error 1
+2.6.27-rc6-mc1 contains all of linux-next-20080913 plus all the missing
+bits.
 
+There's also a corresponding git tree here:
 
+git://git.kernel.org/pub/scm/linux/kernel/jejb/merge-tree/.git
 
----
-~Randy
-Linux Plumbers Conference, 17-19 September 2008, Portland, Oregon USA
-http://linuxplumbersconf.org/
+The reason we need this done is because the SCSI patches could do with a
+thorough test run, particularly in the areas of block layer timers and
+the new target reset infrastructure.
+
+There's a cron job running that will build a new merge candidate tree
+nightly (in the above directory) from whatever the latest incarnation of
+linux-next is, so it will give daily snapshots.
+
+Thanks,
+
+James
