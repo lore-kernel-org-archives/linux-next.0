@@ -1,39 +1,61 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the x86 tree
-Date: Sun, 14 Sep 2008 17:18:07 +0200
-Message-ID: <20080914151807.GB29290@elte.hu>
-References: <20080912093443.2f226fe7.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: tip-core build failure
+Date: Mon, 15 Sep 2008 04:01:00 +1000
+Message-ID: <20080915040100.5a6f634f.sfr@canb.auug.org.au>
+References: <20080913111423.981554c3.sfr@canb.auug.org.au>
+	<200809131144.36507.rui.p.m.sousa@gmail.com>
+	<20080914124320.GG16097@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__15_Sep_2008_04_01_00_+1000_8J9dEXF2tWH_Y_fn"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:42496 "EHLO mx3.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43121 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752799AbYINPSa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 14 Sep 2008 11:18:30 -0400
-Content-Disposition: inline
-In-Reply-To: <20080912093443.2f226fe7.sfr@canb.auug.org.au>
+	id S1753213AbYINSBN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 14 Sep 2008 14:01:13 -0400
+In-Reply-To: <20080914124320.GG16097@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Daniel J Blueman <daniel.blueman@gmail.com>, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Rui Sousa <rui.p.m.sousa@gmail.com>, linux-next@vger.kernel.org
 
+--Signature=_Mon__15_Sep_2008_04_01_00_+1000_8J9dEXF2tWH_Y_fn
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Ingo,
 
-> Hi all,
-> 
-> Today's linux-next merge of the x86 tree got a conflict in 
-> lib/swiotlb.c between commit 36223a399f639b13b7a454349565934e6d3e2db0 
-> ("swiotlb: fix back-off path when memory allocation fails") from 
-> Linus' tree and commit 9dfda12b8b769e224ca4efbc35ace4524b9c017b 
-> ("swiotlb: use map_single instead of swiotlb_map_single in 
-> swiotlb_alloc_coherent") from the x86 tree.
-> 
-> It looks like the bug fixed by the former is also fixed in the latter, so
-> I used the latter version.
+On Sun, 14 Sep 2008 14:43:20 +0200 Ingo Molnar <mingo@elte.hu> wrote:
+>
+> yes, i agree with that direction. But it's difficult: the non-x86=20
+> architectures do not get much testing in practice at the development=20
+> stage so trivial build bugs like this get only found at the latest=20
+> stage. That's not actually bad in itself - stuff that is not used does=20
+> not matter nearly as much as stuff that does get used.
 
-right, that's the correct resolution - as there are more changes in the 
-latter that are needed. Should also be resolved in today's 
-tip/auto-x86-next. Thanks Stephen,
+Well, its not really that difficult, you just have to remember that x86
+is not the whole world and touching generic code just might affect the
+other architectures - especially when the code you are touching is using
+stuff that is clearly implemented by the architectures. Posting stuff
+like this to linux-arch usually gets some attention (my apologies if you
+did so, I don't remember seeing it).
 
-	Ingo
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__15_Sep_2008_04_01_00_+1000_8J9dEXF2tWH_Y_fn
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkjNUVwACgkQjjKRsyhoI8zglwCcDmCMdvXc0KY1zvyDh9snVlDJ
+FuMAoKr8LD3cBV2FCRY5480DrDN8eamc
+=ku8J
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__15_Sep_2008_04_01_00_+1000_8J9dEXF2tWH_Y_fn--
