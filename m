@@ -1,66 +1,80 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: x86 tree build failure
-Date: Mon, 15 Sep 2008 05:52:31 +1000
-Message-ID: <20080915055231.3356303b.sfr@canb.auug.org.au>
-References: <20080912095618.728658a5.sfr@canb.auug.org.au>
-	<20080912060527.GA22003@amd.com>
-	<20080912173141.5b268bed.sfr@canb.auug.org.au>
-	<20080912083023.GA1082@elte.hu>
+From: Harvey Harrison <harvey.harrison@gmail.com>
+Subject: Re: linux-next: net tree build failure (depca)
+Date: Sun, 14 Sep 2008 13:49:36 -0700
+Message-ID: <1221425376.6397.1.camel@brick>
+References: <20080913150326.245fbb6f.sfr@canb.auug.org.au>
+	 <20080913080438.30a37469.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__15_Sep_2008_05_52_31_+1000_FSClHeM7GzLhyTGt"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57547 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753625AbYINTwm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 14 Sep 2008 15:52:42 -0400
-In-Reply-To: <20080912083023.GA1082@elte.hu>
+Received: from wf-out-1314.google.com ([209.85.200.172]:17816 "EHLO
+	wf-out-1314.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753736AbYINUtj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 14 Sep 2008 16:49:39 -0400
+Received: by wf-out-1314.google.com with SMTP id 27so1730797wfd.4
+        for <linux-next@vger.kernel.org>; Sun, 14 Sep 2008 13:49:39 -0700 (PDT)
+In-Reply-To: <20080913080438.30a37469.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Joerg Roedel <joerg.roedel@amd.com>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Julius Volz <juliusv@google.com>, Simon Horman <horms@verge.net.au>, Greg KH <gregkh@suse.de>, Hannes Reinecke <hare@suse.de>
 
---Signature=_Mon__15_Sep_2008_05_52_31_+1000_FSClHeM7GzLhyTGt
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sat, 2008-09-13 at 08:04 -0700, Randy Dunlap wrote:
+> Also this one on i386:
+>=20
+> drivers/net/depca.c:404: error: implicit declaration of function 'dep=
+ca_common_remove'
+> drivers/net/depca.c:1602: error: static declaration of 'depca_common_=
+remove' follows non-static declaration
+> drivers/net/depca.c:404: error: previous implicit declaration of 'dep=
+ca_common_remove' was here
+> make[2]: *** [drivers/net/depca.o] Error 1
+>=20
 
-Hi Ingo,
+I'd already sent a patch for that to those responsible:
 
-On Fri, 12 Sep 2008 10:30:23 +0200 Ingo Molnar <mingo@elte.hu> wrote:
->
-> hm, but linux-next should have the timers tree merged too. So how come=20
-> you triggered this build error?
+=46rom: Harvey Harrison <harvey.harrison@gmail.com>
+Subject: [PATCH] net: compile fix depca.c
 
-Because (as I say in every daily announcement) I build the tree between
-each merge.  This is because each (sub)tree that is merged into
-linux-next is meant to be fairly independent (or have dependencies I know
-about) and be ready (except for interactions with other trees) to be
-merged by Linus when he opens the next merge window.  Also, I hope that
-the linux-next tree each day is mostly bisectable (between stable and
-master) so people can find bugs in it if necessary.
+Adding accessors to the ->driver_data field missed a forward
+declaration that is needed to compile.
 
-I assumed that the various TIP trees are fairly independent because you
-do internal merges.
+Caused by:
+commit 107aeb9753159da848f066b26557f0aaab900a90
+Author: Hannes Reinecke <hare@suse.de>
+Date:   Wed Sep 10 14:16:04 2008 +0200
 
-You can see the merge order by looking in the merge.log file in the Next
-directory of the linux-next tree.
+    Driver core: Use dev_get_drvdata() accessors
 
+Otherwise:
+drivers/net/depca.c:404:9: error: undefined identifier 'depca_common_re=
+move'
+drivers/net/depca.c: In function =E2=80=98depca_isa_remove=E2=80=99:
+drivers/net/depca.c:404: error: implicit declaration of function =E2=80=
+=98depca_common_remove=E2=80=99
+drivers/net/depca.c: At top level:
+drivers/net/depca.c:1601: error: static declaration of =E2=80=98depca_c=
+ommon_remove=E2=80=99 follows non-static declaration
+drivers/net/depca.c:404: error: previous implicit declaration of =E2=80=
+=98depca_common_remove=E2=80=99 was here
+
+Signed-off-by: Harvey Harrison <harvey.harrison@gmail.com>
+---
+ drivers/net/depca.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/net/depca.c b/drivers/net/depca.c
+index 6ce66e0..d72c6bc 100644
+--- a/drivers/net/depca.c
++++ b/drivers/net/depca.c
+@@ -398,6 +398,7 @@ static struct mca_driver depca_mca_driver =3D {
+ #endif
+=20
+ static int depca_isa_probe (struct platform_device *);
++static int depca_common_remove(struct net_device *dev);
+=20
+ static int __devexit depca_isa_remove(struct platform_device *pdev)
+ {
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__15_Sep_2008_05_52_31_+1000_FSClHeM7GzLhyTGt
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkjNa38ACgkQjjKRsyhoI8wy4QCfT/7CHy73GILf6c6OD/LpkvUd
-DTgAoLK2ORqY9OvqielMluJT5d57I2R6
-=bGPh
------END PGP SIGNATURE-----
-
---Signature=_Mon__15_Sep_2008_05_52_31_+1000_FSClHeM7GzLhyTGt--
+1.6.0.1.650.gbf45a
