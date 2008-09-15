@@ -1,83 +1,62 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: linux-next: net tree build failure
-Date: Mon, 15 Sep 2008 10:54:53 +1000
-Message-ID: <20080915005453.GA6714@verge.net.au>
-References: <20080913150326.245fbb6f.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: block tree build failure
+Date: Mon, 15 Sep 2008 15:18:44 +1000
+Message-ID: <20080915151844.16569141.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60931 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751044AbYIOAy4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 14 Sep 2008 20:54:56 -0400
-Content-Disposition: inline
-In-Reply-To: <20080913150326.245fbb6f.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:57803 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750721AbYIOFSw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Sep 2008 01:18:52 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Julius Volz <juliusv@google.com>
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: linux-next@vger.kernel.org, Alex Dubov <oakad@yahoo.com>, Tejun Heo <tj@kernel.org>
 
-On Sat, Sep 13, 2008 at 03:03:26PM +1000, Stephen Rothwell wrote:
-> Hi Dave,
-> 
-> Today's linux-next build (powerpc allyesconfig) failed like this:
-> 
-> net/ipv4/ipvs/ip_vs_proto_tcp.c: In function 'tcp_snat_handler':
-> net/ipv4/ipvs/ip_vs_proto_tcp.c:208: error: implicit declaration of function 'csum_ipv6_magic'
-> net/ipv4/ipvs/ip_vs_proto_udp.c: In function 'udp_snat_handler':
-> net/ipv4/ipvs/ip_vs_proto_udp.c:219: error: implicit declaration of function 'csum_ipv6_magic'
-> 
-> Introduced by commit 0bbdd42b7efa66685b6d74701bcde3a596a3a59d ("IPVS:
-> Extend protocol DNAT/SNAT and state handlers") which added a call to
-> csum_ipv6_magic but didn't include net/ip6_checksum.h.  I applied the
-> following patch.
+Hi Jens,
 
-Hi Stephen, Hi Dave, Hi all,
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-sorry for letting that one slip through.
+drivers/memstick/core/mspro_block.c: In function 'mspro_block_disk_release':
+drivers/memstick/core/mspro_block.c:200: error: 'MEMSTICK_PART_SHIFT' undeclared (first use in this function)
 
-I am wondering if it is appropriate to wrap these includes
-in #ifdef CONFIG_IP_VS_IPV6, as csum_ipv6_magic() should only
-be used in that case.
+Caused by the interaction of commit
+1f773dd9deada2ad7efdd71577beb59fae80cdef ("block: don't depend on
+consecutive minor space") from the block tree with commit
+8e82f8c34b1759ae0d80fe96101746ec51fb1ba4 ("memstick: fix MSProHG 8-bit
+interface mode support") form Linus' tree.
 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Sat, 13 Sep 2008 14:37:04 +1000
-> Subject: [PATCH] net: ip_vs_proto_tcp build fix
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  net/ipv4/ipvs/ip_vs_proto_tcp.c |    1 +
->  net/ipv4/ipvs/ip_vs_proto_udp.c |    1 +
->  2 files changed, 2 insertions(+), 0 deletions(-)
-> 
-> diff --git a/net/ipv4/ipvs/ip_vs_proto_tcp.c b/net/ipv4/ipvs/ip_vs_proto_tcp.c
-> index 537f616..dd4566e 100644
-> --- a/net/ipv4/ipvs/ip_vs_proto_tcp.c
-> +++ b/net/ipv4/ipvs/ip_vs_proto_tcp.c
-> @@ -18,6 +18,7 @@
->  #include <linux/tcp.h>                  /* for tcphdr */
->  #include <net/ip.h>
->  #include <net/tcp.h>                    /* for csum_tcpudp_magic */
-> +#include <net/ip6_checksum.h>
->  #include <linux/netfilter.h>
->  #include <linux/netfilter_ipv4.h>
->  
-> diff --git a/net/ipv4/ipvs/ip_vs_proto_udp.c b/net/ipv4/ipvs/ip_vs_proto_udp.c
-> index e3ee26b..6eb6039 100644
-> --- a/net/ipv4/ipvs/ip_vs_proto_udp.c
-> +++ b/net/ipv4/ipvs/ip_vs_proto_udp.c
-> @@ -22,6 +22,7 @@
->  
->  #include <net/ip_vs.h>
->  #include <net/ip.h>
-> +#include <net/ip6_checksum.h>
->  
->  static struct ip_vs_conn *
->  udp_conn_in_get(int af, const struct sk_buff *skb, struct ip_vs_protocol *pp,
-> -- 
-> 1.5.6.3
+The latter removed the definition of MEMSTICK_PART_SHIFT while the former
+added a reference.  I added the following patch.
 
 -- 
-Simon Horman
-  VA Linux Systems Japan K.K., Sydney, Australia Satellite Office
-  H: www.vergenet.net/~horms/             W: www.valinux.co.jp/en
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 15 Sep 2008 15:13:07 +1000
+Subject: [PATCH] block: fix build of mspro_block
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/memstick/core/mspro_block.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/memstick/core/mspro_block.c b/drivers/memstick/core/mspro_block.c
+index 055c5f9..82bf649 100644
+--- a/drivers/memstick/core/mspro_block.c
++++ b/drivers/memstick/core/mspro_block.c
+@@ -197,7 +197,7 @@ static int mspro_block_bd_open(struct inode *inode, struct file *filp)
+ static int mspro_block_disk_release(struct gendisk *disk)
+ {
+ 	struct mspro_block_data *msb = disk->private_data;
+-	int disk_id = MINOR(disk_devt(disk)) >> MEMSTICK_PART_SHIFT;
++	int disk_id = MINOR(disk_devt(disk)) >> MSPRO_BLOCK_PART_SHIFT;
+ 
+ 	mutex_lock(&mspro_block_disk_lock);
+ 
+-- 
+1.5.6.5
