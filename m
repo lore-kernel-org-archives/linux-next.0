@@ -1,59 +1,46 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: linux-next: Tree for September 13 (3c509)
-Date: Mon, 15 Sep 2008 11:55:55 -0700
-Message-ID: <20080915185555.GA31996@suse.de>
-References: <20080913162344.ab395285.sfr@canb.auug.org.au> <20080914141757.899f71eb.randy.dunlap@oracle.com> <20080915141149.GA10002@cs181140183.pp.htv.fi> <48CE70CC.7020901@suse.de> <20080915080357.2eaae073.randy.dunlap@oracle.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: driver-core tree build failure
+Date: Mon, 15 Sep 2008 11:58:14 -0700
+Message-ID: <20080915185814.GA32003@kroah.com>
+References: <20080912135311.c7d43744.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ns.suse.de ([195.135.220.2]:47928 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753006AbYIOTB1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Sep 2008 15:01:27 -0400
+Received: from casper.infradead.org ([85.118.1.10]:52070 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753810AbYIOTBd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Sep 2008 15:01:33 -0400
 Content-Disposition: inline
-In-Reply-To: <20080915080357.2eaae073.randy.dunlap@oracle.com>
+In-Reply-To: <20080912135311.c7d43744.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Hannes Reinecke <hare@suse.de>, Adrian Bunk <bunk@kernel.org>, Kay Sievers <kay.sievers@vrfy.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Hannes Reinecke <hare@suse.de>
 
-On Mon, Sep 15, 2008 at 08:03:57AM -0700, Randy Dunlap wrote:
-> On Mon, 15 Sep 2008 16:27:24 +0200 Hannes Reinecke wrote:
+On Fri, Sep 12, 2008 at 01:53:11PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> > Hi Adrian,
-> > 
-> > Adrian Bunk wrote:
-> > > On Sun, Sep 14, 2008 at 02:17:57PM -0700, Randy Dunlap wrote:
-> > >> drivers/net/3c509.c fails (CONFIG_PM=y) with:
-> > >>
-> > >> drivers/built-in.o:(.data+0x7dcc): undefined reference to `el3_resume'
-> > >> drivers/built-in.o:(.data+0x7e08): undefined reference to `el3_resume'
-> > >>
-> > >> It seems that this function does not exist in the source file.
-> > > 
-> > > 
-> > > It got removed by:
-> > > 
-> > > 
-> > > commit 107aeb9753159da848f066b26557f0aaab900a90
-> > > Author: Hannes Reinecke <hare@suse.de>
-> > > Date:   Wed Sep 10 14:16:04 2008 +0200
-> > > 
-> > >     Driver core: Use dev_get_drvdata() accessors
-> > >     
-> > >     Deprecated direct access to the ->driver_data field and
-> > >     use accessors throughout.
-> > >     
-> > >     Signed-off-by: Hannes Reinecke <hare@suse.de>
-> > >     Cc: Kay Sievers <kay.sievers@vrfy.org>
-> > >     Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
-> > > 
-> > Sorry. Here it is again.
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
 > 
-> Ack, that [attached] patch fixes the build.
+> drivers/net/wireless/atmel_cs.c: In function 'atmel_config':
+> drivers/net/wireless/atmel_cs.c:237: error: incompatible type for argument 1 of 'dev_get_drvdata'
+> 
+> Introduced by commit 107aeb9753159da848f066b26557f0aaab900a90 ("Driver
+> core: Use dev_get_drvdata() accessors").  handle_to_dev returns a struct
+> device not a struct device *.
+> 
+> I applied the following patch.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 12 Sep 2008 13:50:07 +1000
+> Subject: [PATCH] driver-core: atmel_cs.c fixup
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-Now merged in with Hannes's original patch.
-
-thanks,
+Merged in, thanks.
 
 greg k-h
