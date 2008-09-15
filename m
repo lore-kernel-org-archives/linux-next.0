@@ -1,49 +1,51 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: linux-next: block tree build failure
-Date: Mon, 15 Sep 2008 15:18:39 +0200
-Message-ID: <20080915131837.GP20055@kernel.dk>
-References: <20080915151844.16569141.sfr@canb.auug.org.au> <278380.30002.qm@web37604.mail.mud.yahoo.com>
+From: Adrian Bunk <bunk@kernel.org>
+Subject: Re: linux-next: Tree for September 13 (3c509)
+Date: Mon, 15 Sep 2008 17:11:49 +0300
+Message-ID: <20080915141149.GA10002@cs181140183.pp.htv.fi>
+References: <20080913162344.ab395285.sfr@canb.auug.org.au> <20080914141757.899f71eb.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pasmtpa.tele.dk ([80.160.77.114]:55482 "EHLO pasmtpA.tele.dk"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753334AbYIONSm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Sep 2008 09:18:42 -0400
+Content-Type: text/plain; charset=utf-8
+Return-path: <netdev-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <278380.30002.qm@web37604.mail.mud.yahoo.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alex Dubov <oakad@yahoo.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Tejun Heo <tj@kernel.org>
+In-Reply-To: <20080914141757.899f71eb.randy.dunlap@oracle.com>
+Sender: netdev-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>, Hannes Reinecke <hare@suse.de>, Kay Sievers <kay.sievers@vrfy.org>, Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Sun, Sep 14 2008, Alex Dubov wrote:
+On Sun, Sep 14, 2008 at 02:17:57PM -0700, Randy Dunlap wrote:
+> drivers/net/3c509.c fails (CONFIG_PM=y) with:
 > 
+> drivers/built-in.o:(.data+0x7dcc): undefined reference to `el3_resume'
+> drivers/built-in.o:(.data+0x7e08): undefined reference to `el3_resume'
 > 
-> 
-> --- On Sun, 9/14/08, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Subject: linux-next: block tree build failure
-> > To: "Jens Axboe" <jens.axboe@oracle.com>
-> > Cc: linux-next@vger.kernel.org, "Alex Dubov" <oakad@yahoo.com>, "Tejun Heo" <tj@kernel.org>
-> > Date: Sunday, September 14, 2008, 10:18 PM
-> > Hi Jens,
-> > 
-> > Today's linux-next build (x86_64 allmodconfig) failed
-> > like this:
-> > 
-> > drivers/memstick/core/mspro_block.c: In function
-> > 'mspro_block_disk_release':
-> > drivers/memstick/core/mspro_block.c:200: error:
-> > 'MEMSTICK_PART_SHIFT' undeclared (first use in this
-> > function)
-> > 
-> 
-> That's funny. My last patch replaced all occurrences of this macro.
+> It seems that this function does not exist in the source file.
 
-Doh it's me, fixed up the git merge conflict wrong. Thanks for the
-report.
+
+It got removed by:
+
+
+commit 107aeb9753159da848f066b26557f0aaab900a90
+Author: Hannes Reinecke <hare@suse.de>
+Date:   Wed Sep 10 14:16:04 2008 +0200
+
+    Driver core: Use dev_get_drvdata() accessors
+    
+    Deprecated direct access to the ->driver_data field and
+    use accessors throughout.
+    
+    Signed-off-by: Hannes Reinecke <hare@suse.de>
+    Cc: Kay Sievers <kay.sievers@vrfy.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+
+cu
+Adrian
 
 -- 
-Jens Axboe
+
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
+
