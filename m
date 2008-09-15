@@ -1,57 +1,49 @@
-From: Ned Forrester <nforrester-/d+BM93fTQY@public.gmane.org>
-Subject: Re: linux-next: manual merge of the pxa tree
-Date: Mon, 15 Sep 2008 09:18:30 -0400
-Message-ID: <48CE60A6.4000705@whoi.edu>
-References: <20080915052750.0b0c924c.sfr@canb.auug.org.au>
+From: Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: linux-next: block tree build failure
+Date: Mon, 15 Sep 2008 15:18:39 +0200
+Message-ID: <20080915131837.GP20055@kernel.dk>
+References: <20080915151844.16569141.sfr@canb.auug.org.au> <278380.30002.qm@web37604.mail.mud.yahoo.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-In-Reply-To: <20080915052750.0b0c924c.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
-List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
-Sender: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: spi-devel <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from pasmtpa.tele.dk ([80.160.77.114]:55482 "EHLO pasmtpA.tele.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753334AbYIONSm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Sep 2008 09:18:42 -0400
+Content-Disposition: inline
+In-Reply-To: <278380.30002.qm@web37604.mail.mud.yahoo.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alex Dubov <oakad@yahoo.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Tejun Heo <tj@kernel.org>
 
-Stephen Rothwell wrote:
-> Hi Eric,
+On Sun, Sep 14 2008, Alex Dubov wrote:
 > 
-> Today's linux-next merge of the pxa tree got a conflict in
-> drivers/spi/pxa2xx_spi.c between commit
-> 8423597d676615f3dd2d9ab36f59f147086b90b8 ("pxa2xx_spi: chipselect
-> bugfixes") from Linus' tree and commit
-> 5625ef19d54c02838c867b6a5c87823e021ac7a5 ("spi: pxa2xx_spi introduce chip
-> select gpio to simplify the common cases") from the pxa tree.
 > 
-> I fixed it up (see below) and can carry the fixup (though it could be
-> fixed in the pxa tree in a merge with Linus' tree).  Please check the
-> fixup.
+> 
+> --- On Sun, 9/14/08, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Subject: linux-next: block tree build failure
+> > To: "Jens Axboe" <jens.axboe@oracle.com>
+> > Cc: linux-next@vger.kernel.org, "Alex Dubov" <oakad@yahoo.com>, "Tejun Heo" <tj@kernel.org>
+> > Date: Sunday, September 14, 2008, 10:18 PM
+> > Hi Jens,
+> > 
+> > Today's linux-next build (x86_64 allmodconfig) failed
+> > like this:
+> > 
+> > drivers/memstick/core/mspro_block.c: In function
+> > 'mspro_block_disk_release':
+> > drivers/memstick/core/mspro_block.c:200: error:
+> > 'MEMSTICK_PART_SHIFT' undeclared (first use in this
+> > function)
+> > 
+> 
+> That's funny. My last patch replaced all occurrences of this macro.
 
-The last word I had from David Brownell, was that Eric should make his
-patch fit after mine.  I think Eric was planning to re-submit, but maybe
-you have saved him the trouble.  I will leave it to Eric to decide if
-you fixed everything needed.
+Doh it's me, fixed up the git merge conflict wrong. Thanks for the
+report.
 
 -- 
-Ned Forrester                                       nforrester-/d+BM93fTQY@public.gmane.org
-Oceanographic Systems Lab                                  508-289-2226
-Applied Ocean Physics and Engineering Dept.
-Woods Hole Oceanographic Institution          Woods Hole, MA 02543, USA
-http://www.whoi.edu/sbl/liteSite.do?litesiteid=7212
-http://www.whoi.edu/hpb/Site.do?id=1532
-http://www.whoi.edu/page.do?pid=10079
-
-
--------------------------------------------------------------------------
-This SF.Net email is sponsored by the Moblin Your Move Developer's challenge
-Build the coolest Linux based applications with Moblin SDK & win great prizes
-Grand prize is a trip for two to an Open Source event anywhere in the world
-http://moblin-contest.org/redirect.php?banner_id=100&url=/
+Jens Axboe
