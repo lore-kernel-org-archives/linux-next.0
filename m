@@ -1,45 +1,39 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: driver-core tree build failure
-Date: Mon, 15 Sep 2008 11:58:14 -0700
-Message-ID: <20080915185814.GA32003@kroah.com>
-References: <20080912135311.c7d43744.sfr@canb.auug.org.au>
+Subject: Re: linux-next: net tree build failure (depca)
+Date: Mon, 15 Sep 2008 11:59:17 -0700
+Message-ID: <20080915185917.GB32003@kroah.com>
+References: <20080913150326.245fbb6f.sfr@canb.auug.org.au> <20080913080438.30a37469.randy.dunlap@oracle.com> <1221425376.6397.1.camel@brick>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:52070 "EHLO
+Received: from casper.infradead.org ([85.118.1.10]:52078 "EHLO
 	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753810AbYIOTBd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Sep 2008 15:01:33 -0400
+	with ESMTP id S1753207AbYIOTBp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Sep 2008 15:01:45 -0400
 Content-Disposition: inline
-In-Reply-To: <20080912135311.c7d43744.sfr@canb.auug.org.au>
+In-Reply-To: <1221425376.6397.1.camel@brick>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Hannes Reinecke <hare@suse.de>
+To: Harvey Harrison <harvey.harrison@gmail.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Julius Volz <juliusv@google.com>, Simon Horman <horms@verge.net.au>, Greg KH <gregkh@suse.de>, Hannes Reinecke <hare@suse.de>
 
-On Fri, Sep 12, 2008 at 01:53:11PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On Sun, Sep 14, 2008 at 01:49:36PM -0700, Harvey Harrison wrote:
+> On Sat, 2008-09-13 at 08:04 -0700, Randy Dunlap wrote:
+> > Also this one on i386:
+> > 
+> > drivers/net/depca.c:404: error: implicit declaration of function 'depca_common_remove'
+> > drivers/net/depca.c:1602: error: static declaration of 'depca_common_remove' follows non-static declaration
+> > drivers/net/depca.c:404: error: previous implicit declaration of 'depca_common_remove' was here
+> > make[2]: *** [drivers/net/depca.o] Error 1
+> > 
 > 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> I'd already sent a patch for that to those responsible:
 > 
-> drivers/net/wireless/atmel_cs.c: In function 'atmel_config':
-> drivers/net/wireless/atmel_cs.c:237: error: incompatible type for argument 1 of 'dev_get_drvdata'
+> From: Harvey Harrison <harvey.harrison@gmail.com>
+> Subject: [PATCH] net: compile fix depca.c
 > 
-> Introduced by commit 107aeb9753159da848f066b26557f0aaab900a90 ("Driver
-> core: Use dev_get_drvdata() accessors").  handle_to_dev returns a struct
-> device not a struct device *.
-> 
-> I applied the following patch.
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 12 Sep 2008 13:50:07 +1000
-> Subject: [PATCH] driver-core: atmel_cs.c fixup
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Adding accessors to the ->driver_data field missed a forward
+> declaration that is needed to compile.
 
 Merged in, thanks.
 
