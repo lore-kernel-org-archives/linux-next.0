@@ -1,47 +1,39 @@
-From: Alex Dubov <oakad@yahoo.com>
-Subject: Re: linux-next: block tree build failure
-Date: Sun, 14 Sep 2008 22:38:32 -0700 (PDT)
-Message-ID: <278380.30002.qm@web37604.mail.mud.yahoo.com>
-References: <20080915151844.16569141.sfr@canb.auug.org.au>
-Reply-To: oakad@yahoo.com
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the kvm tree
+Date: Mon, 15 Sep 2008 08:53:16 +0200
+Message-ID: <20080915065316.GF15680@elte.hu>
+References: <20080915101407.2e45a509.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from web37604.mail.mud.yahoo.com ([209.191.87.87]:47818 "HELO
-	web37604.mail.mud.yahoo.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1750833AbYIOFpO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Sep 2008 01:45:14 -0400
-In-Reply-To: <20080915151844.16569141.sfr@canb.auug.org.au>
+Received: from mx3.mail.elte.hu ([157.181.1.138]:34558 "EHLO mx3.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751257AbYIOGxh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Sep 2008 02:53:37 -0400
+Content-Disposition: inline
+In-Reply-To: <20080915101407.2e45a509.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Tejun Heo <tj@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Avi Kivity <avi@qumranet.com>, linux-next@vger.kernel.org, Sheng Yang <sheng.yang@intel.com>, Vegard Nossum <vegard.nossum@gmail.com>
 
 
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-
---- On Sun, 9/14/08, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Subject: linux-next: block tree build failure
-> To: "Jens Axboe" <jens.axboe@oracle.com>
-> Cc: linux-next@vger.kernel.org, "Alex Dubov" <oakad@yahoo.com>, "Tejun Heo" <tj@kernel.org>
-> Date: Sunday, September 14, 2008, 10:18 PM
-> Hi Jens,
+> Hi Avi,
 > 
-> Today's linux-next build (x86_64 allmodconfig) failed
-> like this:
-> 
-> drivers/memstick/core/mspro_block.c: In function
-> 'mspro_block_disk_release':
-> drivers/memstick/core/mspro_block.c:200: error:
-> 'MEMSTICK_PART_SHIFT' undeclared (first use in this
-> function)
-> 
+> Today's linux-next merge of the kvm tree got a trivial conflict in
+> include/asm-x86/msr-index.h between commit
+> 77ef50a522717fa040636ee1017179ceba12ff62 ("x86: consolidate header
+> guards") from the x86 tree and commit
+> 370ad813e210ac91935c6b5fa2e9cf80a0305fad ("x86: Move VMX MSRs to
+> msr-index.h") from the kvm tree.
 
-That's funny. My last patch replaced all occurrences of this macro.
+these changes will likely be driven from the KVM tree, so it should not 
+go beyond this initial conflict. (commit 77ef50a is already interwoven)
 
+> I fixed it up (see below) and can carry the fixup.
 
+thanks!
 
-      
+	Ingo
