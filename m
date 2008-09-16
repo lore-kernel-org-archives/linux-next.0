@@ -1,48 +1,48 @@
-From: "Eric Miao" <eric.y.miao@gmail.com>
-Subject: Re: linux-next: manual merge of the pxa tree
-Date: Tue, 16 Sep 2008 11:02:50 +0800
-Message-ID: <f17812d70809152002p6df35c05o743d9d86fca37827@mail.gmail.com>
-References: <20080915052750.0b0c924c.sfr@canb.auug.org.au>
-	 <48CE60A6.4000705@whoi.edu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: bdev tree added
+Date: Tue, 16 Sep 2008 16:50:33 +1000
+Message-ID: <20080916165033.788a787a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__16_Sep_2008_16_50_33_+1000_96xVdsO7n8EZfQt8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from yx-out-2324.google.com ([74.125.44.29]:53785 "EHLO
-	yx-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754020AbYIPDCw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Sep 2008 23:02:52 -0400
-Received: by yx-out-2324.google.com with SMTP id 8so747386yxm.1
-        for <linux-next@vger.kernel.org>; Mon, 15 Sep 2008 20:02:51 -0700 (PDT)
-In-Reply-To: <48CE60A6.4000705@whoi.edu>
-Content-Disposition: inline
+Received: from chilli.pcug.org.au ([203.10.76.44]:60759 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750864AbYIPGut (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Sep 2008 02:50:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ned Forrester <nforrester@whoi.edu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, spi-devel <spi-devel-general@lists.sourceforge.net>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org
 
-On Mon, Sep 15, 2008 at 9:18 PM, Ned Forrester <nforrester@whoi.edu> wrote:
-> Stephen Rothwell wrote:
->> Hi Eric,
->>
->> Today's linux-next merge of the pxa tree got a conflict in
->> drivers/spi/pxa2xx_spi.c between commit
->> 8423597d676615f3dd2d9ab36f59f147086b90b8 ("pxa2xx_spi: chipselect
->> bugfixes") from Linus' tree and commit
->> 5625ef19d54c02838c867b6a5c87823e021ac7a5 ("spi: pxa2xx_spi introduce chip
->> select gpio to simplify the common cases") from the pxa tree.
->>
->> I fixed it up (see below) and can carry the fixup (though it could be
->> fixed in the pxa tree in a merge with Linus' tree).  Please check the
->> fixup.
->
-> The last word I had from David Brownell, was that Eric should make his
-> patch fit after mine.  I think Eric was planning to re-submit, but maybe
-> you have saved him the trouble.  I will leave it to Eric to decide if
-> you fixed everything needed.
->
+--Signature=_Tue__16_Sep_2008_16_50_33_+1000_96xVdsO7n8EZfQt8
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'll take off the patch to save Stephen's time on this. Sorry for the
-noise.
+Hi Al,
 
-- eric
+<viro> sfr: FWIW, see /pub/scm/linux/kernel/git/viro/bdev-next.git on kerne=
+l.org
+
+I rebased base..master of that tree onto the end of linux-next today ... we
+will see how it goes.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__16_Sep_2008_16_50_33_+1000_96xVdsO7n8EZfQt8
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkjPVzkACgkQjjKRsyhoI8yidQCgukSYkPwVEGlyvT5RDgmy9SfM
+J/IAn2wqFyOUzFFOJBL9bVfNLLq9rccO
+=eZbo
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__16_Sep_2008_16_50_33_+1000_96xVdsO7n8EZfQt8--
