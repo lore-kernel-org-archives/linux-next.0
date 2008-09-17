@@ -1,42 +1,33 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the sparseirq tree
-Date: Wed, 17 Sep 2008 12:20:45 +0200
-Message-ID: <20080917102045.GA18764@elte.hu>
-References: <20080916011904.1e53d750.sfr@canb.auug.org.au> <20080915183511.1B510640A3@pipsqueak.localdomain>
+From: David Vrabel <david.vrabel@csr.com>
+Subject: UWB: A new subsystem tree
+Date: Wed, 17 Sep 2008 15:58:19 +0100
+Message-ID: <48D11B0B.3040804@csr.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:38738 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751788AbYIQKVK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Sep 2008 06:21:10 -0400
-Content-Disposition: inline
-In-Reply-To: <20080915183511.1B510640A3@pipsqueak.localdomain>
+Received: from cluster-g.mailcontrol.com ([208.87.233.190]:50862 "EHLO
+	cluster-g.mailcontrol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751747AbYIQO6c (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Sep 2008 10:58:32 -0400
+Received: from cameurexb01.EUROPE.ROOT.PRI ([193.128.72.68])
+	by rly12g.srv.mailcontrol.com (MailControl) with ESMTP id m8HEwK98027531
+	for <linux-next@vger.kernel.org>; Wed, 17 Sep 2008 15:58:22 +0100
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Roland McGrath <roland@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Markus Metzger <markus.t.metzger@intel.com>, Thomas Gleixner <tglx@linutronix.de>
+To: linux-next@vger.kernel.org
 
+There's a new tree for the UWB, WUSB and WLP subsystems.  Can it be
+added to the set of trees in linux-next?
 
-* Roland McGrath <roland@redhat.com> wrote:
+git://git.kernel.org/pub/scm/linux/kernel/git/dvrabel/uwb.git
 
-> The ioperm patch (tip/x86/ptrace) adds the new ioperm_* functions, 
-> which could go anywhere in the file (before the *_regsets[] decls).  
-> It might be simplest to just change the patch to put them earlier or 
-> later where the patch text is not near the lines touched by BTS 
-> patches.
+You'll want the 'for-upstream' branch.
 
-yeah - but these are old commits, we better not upset them.
+Thanks.
 
-I've carried that conflict fixup for a long time and made it visible 
-because i updated sparseirq tree to propagate a fix but the x86 tree for 
-linux-next was at an older version (with PEBS topic not integrated yet) 
-- so Stephen got to see this conflict.
-
-It should disappear on the next integration run this week. (the 
-frequency of integration runs is weekly - the frequency of bugfix/hotfix 
-propagation is daily/hourly)
-
-Thanks Stephen for taking care of it.
-
-	Ingo
+David
+-- 
+David Vrabel, Senior Software Engineer, Drivers
+CSR, Churchill House, Cambridge Business Park,  Tel: +44 (0)1223 692562
+Cowley Road, Cambridge, CB4 0WZ                 http://www.csr.com/
