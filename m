@@ -1,33 +1,59 @@
-From: David Vrabel <david.vrabel@csr.com>
-Subject: UWB: A new subsystem tree
-Date: Wed, 17 Sep 2008 15:58:19 +0100
-Message-ID: <48D11B0B.3040804@csr.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: UWB: A new subsystem tree
+Date: Thu, 18 Sep 2008 04:33:41 +1000
+Message-ID: <20080918043341.710eb66b.sfr@canb.auug.org.au>
+References: <48D11B0B.3040804@csr.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__18_Sep_2008_04_33_41_+1000_0/A=pyEe6l.Mko1Y"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cluster-g.mailcontrol.com ([208.87.233.190]:50862 "EHLO
-	cluster-g.mailcontrol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751747AbYIQO6c (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Sep 2008 10:58:32 -0400
-Received: from cameurexb01.EUROPE.ROOT.PRI ([193.128.72.68])
-	by rly12g.srv.mailcontrol.com (MailControl) with ESMTP id m8HEwK98027531
-	for <linux-next@vger.kernel.org>; Wed, 17 Sep 2008 15:58:22 +0100
+Received: from chilli.pcug.org.au ([203.10.76.44]:59916 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754588AbYIQSdy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Sep 2008 14:33:54 -0400
+In-Reply-To: <48D11B0B.3040804@csr.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+To: David Vrabel <david.vrabel@csr.com>
+Cc: linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-There's a new tree for the UWB, WUSB and WLP subsystems.  Can it be
-added to the set of trees in linux-next?
+--Signature=_Thu__18_Sep_2008_04_33_41_+1000_0/A=pyEe6l.Mko1Y
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-git://git.kernel.org/pub/scm/linux/kernel/git/dvrabel/uwb.git
+Hi David,
 
-You'll want the 'for-upstream' branch.
+On Wed, 17 Sep 2008 15:58:19 +0100 David Vrabel <david.vrabel@csr.com> wrot=
+e:
+>
+> There's a new tree for the UWB, WUSB and WLP subsystems.  Can it be
+> added to the set of trees in linux-next?
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/dvrabel/uwb.git
+>=20
+> You'll want the 'for-upstream' branch.
 
-Thanks.
+I have added that for today's linux-next.
 
-David
--- 
-David Vrabel, Senior Software Engineer, Drivers
-CSR, Churchill House, Cambridge Business Park,  Tel: +44 (0)1223 692562
-Cowley Road, Cambridge, CB4 0WZ                 http://www.csr.com/
+Usual speech I give everybody: changes must be posted somewhere relevant,
+reviewed, unit tested and destined for the next merge window (or the
+current release).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__18_Sep_2008_04_33_41_+1000_0/A=pyEe6l.Mko1Y
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkjRTYUACgkQjjKRsyhoI8x5dwCeO3DubP9eoUJMmDsFndPPYiil
+RLcAnAmDtp99JJ/baG6oztW1kexcRMTx
+=oyd9
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__18_Sep_2008_04_33_41_+1000_0/A=pyEe6l.Mko1Y--
