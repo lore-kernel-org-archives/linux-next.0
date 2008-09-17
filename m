@@ -1,59 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: UWB: A new subsystem tree
-Date: Thu, 18 Sep 2008 04:33:41 +1000
-Message-ID: <20080918043341.710eb66b.sfr@canb.auug.org.au>
-References: <48D11B0B.3040804@csr.com>
+Subject: linux-next: manual merge of the pxa tree
+Date: Thu, 18 Sep 2008 06:31:09 +1000
+Message-ID: <20080918063109.5aee733d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__18_Sep_2008_04_33_41_+1000_0/A=pyEe6l.Mko1Y"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59916 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35090 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754588AbYIQSdy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Sep 2008 14:33:54 -0400
-In-Reply-To: <48D11B0B.3040804@csr.com>
+	id S1751671AbYIQUbR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Sep 2008 16:31:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Vrabel <david.vrabel@csr.com>
-Cc: linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: Eric Miao <eric.y.miao@gmail.com>
+Cc: linux-next@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
---Signature=_Thu__18_Sep_2008_04_33_41_+1000_0/A=pyEe6l.Mko1Y
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Eric,
 
-Hi David,
+Today's linux-next merge of the pxa tree got a conflict in
+arch/arm/mach-pxa/spitz.c between commit
+fced80c735941fa518ac67c0b61bbe153fb8c050 ("[ARM] Convert asm/io.h to
+linux/io.h") from the arm tree and commit
+546ed5880bf813e1386696c02d288d7ffba517d6 ("[ARM] pxa/spitz: use SPI-based
+driver for ads7846, corgi-lcd and max1111") from the pxa tree.
 
-On Wed, 17 Sep 2008 15:58:19 +0100 David Vrabel <david.vrabel@csr.com> wrot=
-e:
->
-> There's a new tree for the UWB, WUSB and WLP subsystems.  Can it be
-> added to the set of trees in linux-next?
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/dvrabel/uwb.git
->=20
-> You'll want the 'for-upstream' branch.
-
-I have added that for today's linux-next.
-
-Usual speech I give everybody: changes must be posted somewhere relevant,
-reviewed, unit tested and destined for the next merge window (or the
-current release).
---=20
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__18_Sep_2008_04_33_41_+1000_0/A=pyEe6l.Mko1Y
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkjRTYUACgkQjjKRsyhoI8x5dwCeO3DubP9eoUJMmDsFndPPYiil
-RLcAnAmDtp99JJ/baG6oztW1kexcRMTx
-=oyd9
------END PGP SIGNATURE-----
-
---Signature=_Thu__18_Sep_2008_04_33_41_+1000_0/A=pyEe6l.Mko1Y--
+diff --cc arch/arm/mach-pxa/spitz.c
+index 7e181afc,8b06b7a..0000000
+--- a/arch/arm/mach-pxa/spitz.c
++++ b/arch/arm/mach-pxa/spitz.c
+@@@ -22,7 -23,9 +23,10 @@@
+  #include <linux/mmc/host.h>
+  #include <linux/pm.h>
+  #include <linux/backlight.h>
+ +#include <linux/io.h>
++ #include <linux/spi/spi.h>
++ #include <linux/spi/ads7846.h>
++ #include <linux/spi/corgi_lcd.h>
+  
+  #include <asm/setup.h>
+  #include <asm/memory.h>
