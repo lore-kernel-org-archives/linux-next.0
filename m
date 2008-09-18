@@ -1,34 +1,51 @@
-From: "Eric Miao" <eric.y.miao@gmail.com>
-Subject: Re: linux-next: manual merge of the pxa tree
-Date: Fri, 19 Sep 2008 03:00:06 +0800
-Message-ID: <f17812d70809181200i356f013aoeac6dc1785cacae2@mail.gmail.com>
-References: <20080919044626.bdec6d1a.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next:  build warning
+Date: Fri, 19 Sep 2008 07:17:58 +1000
+Message-ID: <20080919071758.b4ddf90d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__19_Sep_2008_07_17_58_+1000_O6KIGyRZvE7bvbDQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rv-out-0506.google.com ([209.85.198.226]:29239 "EHLO
-	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754288AbYIRTAH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 18 Sep 2008 15:00:07 -0400
-Received: by rv-out-0506.google.com with SMTP id k40so42826rvb.1
-        for <linux-next@vger.kernel.org>; Thu, 18 Sep 2008 12:00:07 -0700 (PDT)
-In-Reply-To: <20080919044626.bdec6d1a.sfr@canb.auug.org.au>
-Content-Disposition: inline
+Received: from chilli.pcug.org.au ([203.10.76.44]:34595 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754195AbYIRVSO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 18 Sep 2008 17:18:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Arjan van de Ven <arjan@linux.intel.com>
 
-On Fri, Sep 19, 2008 at 2:46 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Eric,
->
-> Today's linux-next merge of the pxa tree got a lot of conflicts against
-> the arm tree.  Unfortunately, I don't have time today to resolve them, so
-> you should probably rebase your tree on the arm tree (or merge the arm
-> tree into yours) and resolve the conflicts.
+--Signature=_Fri__19_Sep_2008_07_17_58_+1000_O6KIGyRZvE7bvbDQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Done. Most of the patches have been merged into the arm tree, so I just
-reset the 'for-next' to the mainline again.
+Hi all,
 
-Sorry for the noise.
+Today's linux-next build (x86_64 allmodconfig) produced this warning:
+
+In file included from kernel/trace/trace_stack.c:6:
+include/linux/stacktrace.h:13: warning: 'struct task_struct' declared insid=
+e parameter list
+include/linux/stacktrace.h:13: warning: its scope is only this definition o=
+r declaration, which is probably not what you want
+
+I just noticed this in passing.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__19_Sep_2008_07_17_58_+1000_O6KIGyRZvE7bvbDQ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkjSxYYACgkQjjKRsyhoI8z2zQCfYHCObNVOHjuLO5hWrY4QJnxg
+VB0AoJ+b4XrlyILCzKa3m7KMwAMsTJae
+=vA18
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__19_Sep_2008_07_17_58_+1000_O6KIGyRZvE7bvbDQ--
