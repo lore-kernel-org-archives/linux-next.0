@@ -1,57 +1,82 @@
-From: Russell King <rmk@arm.linux.org.uk>
-Subject: Re: linux-next: arm tree build failure
-Date: Thu, 18 Sep 2008 23:04:57 +0100
-Message-ID: <20080918220457.GC17688@flint.arm.linux.org.uk>
-References: <20080919040901.4a55f305.sfr@canb.auug.org.au> <f17812d70809181126x374b3056ib1fa7aad5475b89@mail.gmail.com> <f17812d70809181133ha833a5ewbdcea402dccfea92@mail.gmail.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH -tip] uaccess: fix parameters inversion for
+ __copy_from_user_inatomic()
+Date: Thu, 18 Sep 2008 15:19:08 -0700
+Message-ID: <20080918151908.9857ba64.akpm@linux-foundation.org>
+References: <48CF061A.5060002@ct.jp.nec.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:40100 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754472AbYIRWFV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 18 Sep 2008 18:05:21 -0400
-Content-Disposition: inline
-In-Reply-To: <f17812d70809181133ha833a5ewbdcea402dccfea92@mail.gmail.com>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:47087 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754715AbYIRWTy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 18 Sep 2008 18:19:54 -0400
+In-Reply-To: <48CF061A.5060002@ct.jp.nec.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Eric Miao <eric.y.miao@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Hiroshi Shimamoto <h-shimamoto@ct.jp.nec.com>
+Cc: mingo@elte.hu, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-On Fri, Sep 19, 2008 at 02:33:02AM +0800, Eric Miao wrote:
-> On Fri, Sep 19, 2008 at 2:26 AM, Eric Miao <eric.y.miao@gmail.com> wrote:
-> >> diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
-> >> index 8854dbb..361240a 100644
-> >> --- a/drivers/video/backlight/Kconfig
-> >> +++ b/drivers/video/backlight/Kconfig
-> >> @@ -27,6 +27,7 @@ config LCD_CLASS_DEVICE
-> >>  config LCD_CORGI
-> >>        tristate "LCD Panel support for SHARP corgi/spitz model"
-> >>        depends on LCD_CLASS_DEVICE && SPI_MASTER
-> >> +       depends on ARM
-> >
-> > I think a "depends on PXA_SHARPSL" would be more precise here.
-> >
-> >>        default n
-> >>        help
-> >>          Say y here to support the LCD panels usually found on SHARP
-> >
-> 
-> Russell,
-> 
-> Since the patch titled:
-> 
-> "lcd: add SPI-based LCD and backlight driver for SHARP corgi/spitz"
-> 
-> is merged in your tree, and I don't know if it hits the mainline or not
-> (most likely not), I'd suggest to merge this into that one with Stephen's
-> Signed-off-by. Would you please do that at your convenience, or let
-> me know if you would like me to.
+On Mon, 15 Sep 2008 18:04:26 -0700
+Hiroshi Shimamoto <h-shimamoto@ct.jp.nec.com> wrote:
 
-I've added your suggested change instead (PXA_SHARPSL makes much more
-sense) so it doesn't require any additional sign-offs.  Will push it
-out in about half an hour.
+> From: Hiroshi Shimamoto <h-shimamoto@ct.jp.nec.com>
+> 
+> The following patch changes to use __copy_from_user_inatomic(),
+> but the passing parameters incorrect.
+> 
+>     x86: some lock annotations for user copy paths, v3
+> 
+>     - add annotation back to clear_user()
+>     - change probe_kernel_address() to _inatomic*() method
+> 
+> Signed-off-by: Hiroshi Shimamoto <h-shimamoto@ct.jp.nec.com>
+> ---
+>  include/linux/uaccess.h |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+> index 2062293..6b58367 100644
+> --- a/include/linux/uaccess.h
+> +++ b/include/linux/uaccess.h
+> @@ -78,7 +78,7 @@ static inline unsigned long __copy_from_user_nocache(void *to,
+>  							\
+>  		set_fs(KERNEL_DS);			\
+>  		pagefault_disable();			\
+> -		ret = __copy_from_user_inatomic((__force typeof(retval) __user *)(addr), &(retval), sizeof(retval));		\
+> +		ret = __copy_from_user_inatomic(&(retval), (__force typeof(retval) __user *)(addr), sizeof(retval));		\
+>  		pagefault_enable();			\
+>  		set_fs(old_fs);				\
+>  		ret;					\
 
--- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+The bug which this fixes was merged into linux-next-20080918, and
+manifests as squillions of messages like
+
+[   58.693759] SLAB: cache with size 65536 has lost its name
+[   58.693926] SLAB: cache with size 65536 has lost its name
+[   58.694095] SLAB: cache with size 32768 has lost its name
+[   58.694261] SLAB: cache with size 32768 has lost its name
+[   58.694434] SLAB: cache with size 16384 has lost its name
+[   58.694606] SLAB: cache with size 16384 has lost its name
+[   58.694773] SLAB: cache with size 8192 has lost its name
+[   58.694940] SLAB: cache with size 8192 has lost its name
+[   58.695101] SLAB: cache with size 4096 has lost its name
+
+so this version of linux-next (which will be the most-recent
+version of linux-next for the next three weeks) will need this patch:
+
+
+--- a/include/linux/uaccess.h~uaccess-fix-parameters-inversion-for-__copy_from_user_inatomic
++++ a/include/linux/uaccess.h
+@@ -78,7 +78,7 @@ static inline unsigned long __copy_from_
+ 							\
+ 		set_fs(KERNEL_DS);			\
+ 		pagefault_disable();			\
+-		ret = __copy_from_user_inatomic((__force typeof(retval) __user *)(addr), &(retval), sizeof(retval));		\
++		ret = __copy_from_user_inatomic(&(retval), (__force typeof(retval) __user *)(addr), sizeof(retval));		\
+ 		pagefault_enable();			\
+ 		set_fs(old_fs);				\
+ 		ret;					\
+_
