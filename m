@@ -1,57 +1,47 @@
-From: "Eric Miao" <eric.y.miao@gmail.com>
-Subject: Re: linux-next: arm tree build failure
-Date: Fri, 19 Sep 2008 02:33:02 +0800
-Message-ID: <f17812d70809181133ha833a5ewbdcea402dccfea92@mail.gmail.com>
-References: <20080919040901.4a55f305.sfr@canb.auug.org.au>
-	 <f17812d70809181126x374b3056ib1fa7aad5475b89@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pxa tree
+Date: Fri, 19 Sep 2008 04:46:26 +1000
+Message-ID: <20080919044626.bdec6d1a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__19_Sep_2008_04_46_26_+1000_lrXvdR.5TMOCx8v2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gx0-f16.google.com ([209.85.217.16]:59730 "EHLO
-	mail-gx0-f16.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755538AbYIRSdD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 18 Sep 2008 14:33:03 -0400
-Received: by gxk9 with SMTP id 9so31654192gxk.13
-        for <linux-next@vger.kernel.org>; Thu, 18 Sep 2008 11:33:02 -0700 (PDT)
-In-Reply-To: <f17812d70809181126x374b3056ib1fa7aad5475b89@mail.gmail.com>
-Content-Disposition: inline
+Received: from chilli.pcug.org.au ([203.10.76.44]:57954 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754501AbYIRSqi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 18 Sep 2008 14:46:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Eric Miao <eric.y.miao@gmail.com>
+Cc: linux-next@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
-On Fri, Sep 19, 2008 at 2:26 AM, Eric Miao <eric.y.miao@gmail.com> wrote:
->> diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
->> index 8854dbb..361240a 100644
->> --- a/drivers/video/backlight/Kconfig
->> +++ b/drivers/video/backlight/Kconfig
->> @@ -27,6 +27,7 @@ config LCD_CLASS_DEVICE
->>  config LCD_CORGI
->>        tristate "LCD Panel support for SHARP corgi/spitz model"
->>        depends on LCD_CLASS_DEVICE && SPI_MASTER
->> +       depends on ARM
->
-> I think a "depends on PXA_SHARPSL" would be more precise here.
->
->>        default n
->>        help
->>          Say y here to support the LCD panels usually found on SHARP
->
+--Signature=_Fri__19_Sep_2008_04_46_26_+1000_lrXvdR.5TMOCx8v2
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Russell,
+Hi Eric,
 
-Since the patch titled:
+Today's linux-next merge of the pxa tree got a lot of conflicts against
+the arm tree.  Unfortunately, I don't have time today to resolve them, so
+you should probably rebase your tree on the arm tree (or merge the arm
+tree into yours) and resolve the conflicts.
 
-"lcd: add SPI-based LCD and backlight driver for SHARP corgi/spitz"
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-is merged in your tree, and I don't know if it hits the mainline or not
-(most likely not), I'd suggest to merge this into that one with Stephen's
-Signed-off-by. Would you please do that at your convenience, or let
-me know if you would like me to.
+--Signature=_Fri__19_Sep_2008_04_46_26_+1000_lrXvdR.5TMOCx8v2
+Content-Type: application/pgp-signature
 
-Thanks.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
--- 
-Cheers
-- eric
+iEYEARECAAYFAkjSogIACgkQjjKRsyhoI8yyaQCgnMfnKfOt9xP/S7ld+d36BUCQ
+0NUAoLzs0WMdanoCrRJAdHwXmtCRTn86
+=+odh
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__19_Sep_2008_04_46_26_+1000_lrXvdR.5TMOCx8v2--
