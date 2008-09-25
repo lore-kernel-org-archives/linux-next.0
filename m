@@ -1,50 +1,45 @@
-From: "Eric Miao" <eric.y.miao@gmail.com>
-Subject: Re: [spi-devel-general] linux-next: manual merge of the pxa tree
-Date: Thu, 25 Sep 2008 15:49:18 +0800
-Message-ID: <f17812d70809250049g3f3b86e7x12dab8cc4f8b1cd6@mail.gmail.com>
+From: David Brownell <david-b-yBeKhBN/0LDR7s880joybQ@public.gmane.org>
+Subject: Re: linux-next: manual merge of the pxa tree
+Date: Thu, 25 Sep 2008 01:20:33 -0700
+Message-ID: <200809250120.33749.david-b@pacbell.net>
 References: <20080915052750.0b0c924c.sfr@canb.auug.org.au>
-	 <48CE60A6.4000705@whoi.edu>
-	 <f17812d70809152002p6df35c05o743d9d86fca37827@mail.gmail.com>
-	 <200809242157.47494.david-b@pacbell.net>
+	<200809242157.47494.david-b@pacbell.net>
+	<f17812d70809250049g3f3b86e7x12dab8cc4f8b1cd6@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wx-out-0506.google.com ([66.249.82.233]:45868 "EHLO
-	wx-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751280AbYIYHtT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Sep 2008 03:49:19 -0400
-Received: by wx-out-0506.google.com with SMTP id h27so73557wxd.4
-        for <linux-next@vger.kernel.org>; Thu, 25 Sep 2008 00:49:18 -0700 (PDT)
-In-Reply-To: <200809242157.47494.david-b@pacbell.net>
+Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+In-Reply-To: <f17812d70809250049g3f3b86e7x12dab8cc4f8b1cd6-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Brownell <david-b@pacbell.net>
-Cc: spi-devel-general@lists.sourceforge.net, Stephen Rothwell <sfr@canb.auug.org.au>, Ned Forrester <nforrester@whoi.edu>, linux-next@vger.kernel.org
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
+List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
+Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+To: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+Cc: Ned Forrester <nforrester-/d+BM93fTQY@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Sep 25, 2008 at 12:57 PM, David Brownell <david-b@pacbell.net> wrote:
-> On Monday 15 September 2008, Eric Miao wrote:
->> >> I fixed it up (see below) and can carry the fixup (though it could be
->> >> fixed in the pxa tree in a merge with Linus' tree).  Please check the
->> >> fixup.
->> >
->> > The last word I had from David Brownell, was that Eric should make his
->> > patch fit after mine.  I think Eric was planning to re-submit, but maybe
->> > you have saved him the trouble.  I will leave it to Eric to decide if
->> > you fixed everything needed.
->> >
->>
->> I'll take off the patch to save Stephen's time on this. Sorry for the
->> noise.
->
-> Uh, I have yet to see any version of this patch... could someone post
-> it so the SPI maintainer at least has a chance to look at it?
->
+On Thursday 25 September 2008, Eric Miao wrote:
+> > Uh, I have yet to see any version of this patch... could someone post
+> > it so the SPI maintainer at least has a chance to look at it?
+> >
+> 
+> Expect a week or two before this happen, I'm currently busy with
+> other stuffs. Sorry for the delay.
 
-Expect a week or two before this happen, I'm currently busy with
-other stuffs. Sorry for the delay.
+I thought the situation was that there was a working version
+that hadn't been sent to the SPI list ...
 
--- 
-Cheers
-- eric
+If that's not the case, no worries.
+
+
+
+-------------------------------------------------------------------------
+This SF.Net email is sponsored by the Moblin Your Move Developer's challenge
+Build the coolest Linux based applications with Moblin SDK & win great prizes
+Grand prize is a trip for two to an Open Source event anywhere in the world
+http://moblin-contest.org/redirect.php?banner_id=100&url=/
