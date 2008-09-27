@@ -1,45 +1,37 @@
-From: David Brownell <david-b-yBeKhBN/0LDR7s880joybQ@public.gmane.org>
-Subject: Re: linux-next: manual merge of the pxa tree
-Date: Thu, 25 Sep 2008 01:20:33 -0700
-Message-ID: <200809250120.33749.david-b@pacbell.net>
-References: <20080915052750.0b0c924c.sfr@canb.auug.org.au>
-	<200809242157.47494.david-b@pacbell.net>
-	<f17812d70809250049g3f3b86e7x12dab8cc4f8b1cd6@mail.gmail.com>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: linux-next:  build warning
+Date: Fri, 26 Sep 2008 21:17:34 -0400 (EDT)
+Message-ID: <alpine.DEB.1.10.0809262117070.29360@gandalf.stny.rr.com>
+References: <20080919071758.b4ddf90d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-In-Reply-To: <f17812d70809250049g3f3b86e7x12dab8cc4f8b1cd6-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Disposition: inline
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
-List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
-Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-To: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-Cc: Ned Forrester <nforrester-/d+BM93fTQY@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.124]:38386 "EHLO
+	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750886AbYI0BRh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Sep 2008 21:17:37 -0400
+In-Reply-To: <20080919071758.b4ddf90d.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Arjan van de Ven <arjan@linux.intel.com>
 
-On Thursday 25 September 2008, Eric Miao wrote:
-> > Uh, I have yet to see any version of this patch... could someone post
-> > it so the SPI maintainer at least has a chance to look at it?
-> >
+
+On Fri, 19 Sep 2008, Stephen Rothwell wrote:
+
+> Hi all,
 > 
-> Expect a week or two before this happen, I'm currently busy with
-> other stuffs. Sorry for the delay.
+> Today's linux-next build (x86_64 allmodconfig) produced this warning:
+> 
+> In file included from kernel/trace/trace_stack.c:6:
+> include/linux/stacktrace.h:13: warning: 'struct task_struct' declared inside parameter list
+> include/linux/stacktrace.h:13: warning: its scope is only this definition or declaration, which is probably not what you want
+> 
+> I just noticed this in passing.
 
-I thought the situation was that there was a working version
-that hadn't been sent to the SPI list ...
+Ah, I've seen this too. If it is not already fixed, I'll have to send Ingo 
+a patch.
 
-If that's not the case, no worries.
+Thanks,
 
-
-
--------------------------------------------------------------------------
-This SF.Net email is sponsored by the Moblin Your Move Developer's challenge
-Build the coolest Linux based applications with Moblin SDK & win great prizes
-Grand prize is a trip for two to an Open Source event anywhere in the world
-http://moblin-contest.org/redirect.php?banner_id=100&url=/
+-- Steve
