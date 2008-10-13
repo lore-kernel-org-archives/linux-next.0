@@ -1,49 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next will be back soon
-Date: Mon, 13 Oct 2008 20:28:58 +1100
-Message-ID: <20081013202858.e7bba38d.sfr@canb.auug.org.au>
+Subject: linux-next: ide tree import failure
+Date: Tue, 14 Oct 2008 10:55:59 +1100
+Message-ID: <20081014105559.a2ecd2fc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__13_Oct_2008_20_28_58_+1100_7MY2Tqx2y/Wlk7Ko"
+ boundary="Signature=_Tue__14_Oct_2008_10_55_59_+1100_WLOSIC=K95loQYMK"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33221 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40553 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755969AbYJMJ3J (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Oct 2008 05:29:09 -0400
+	id S1755278AbYJNC0o (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Oct 2008 22:26:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Mon__13_Oct_2008_20_28_58_+1100_7MY2Tqx2y/Wlk7Ko
+--Signature=_Tue__14_Oct_2008_10_55_59_+1100_WLOSIC=K95loQYMK
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Bart,
 
-I am planning to start linux-next releases again tomorrow so if anyone
-has updates they want to make to any of the trees I fetch, now would be
-the time.  This includes resetting your tree to be a subset of Linus' if
-it has all been merged - this saves me quite a bit of time and is much
-more relevant if you rebase your tree (or what you sent Linus is not
-quite what is in the tree I fetch).
+Importing the ide quilt series today gave me this error:
+
+ide-remove-dead-asm-arm-arch-sa1100-ide-h.patch
+error: include/asm-arm/arch-sa1100/ide.h: does not exist in index
+
+That file doesn't seem to be in the tree you based your patches on, so I
+just removed the patch (as all it did was remove the file).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__13_Oct_2008_20_28_58_+1100_7MY2Tqx2y/Wlk7Ko
+--Signature=_Tue__14_Oct_2008_10_55_59_+1100_WLOSIC=K95loQYMK
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkjzFNoACgkQjjKRsyhoI8z0NwCfTTd/ZF+MrWfI83BDIrcPEPCy
-2lwAoLyYVDAuhgWMbT564drdpG3zBDU0
-=FjhV
+iEYEARECAAYFAkjz4A8ACgkQjjKRsyhoI8yWLQCdHdUnSGMeC0pqk6GE3FuDNsdU
+EZoAoKByEmBzZ96q8h0VHpuuypbRIf+l
+=MWLb
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__13_Oct_2008_20_28_58_+1100_7MY2Tqx2y/Wlk7Ko--
+--Signature=_Tue__14_Oct_2008_10_55_59_+1100_WLOSIC=K95loQYMK--
