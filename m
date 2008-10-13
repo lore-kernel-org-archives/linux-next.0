@@ -1,58 +1,49 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: /proc git tree
-Date: Mon, 13 Oct 2008 17:32:48 +1100
-Message-ID: <20081013173248.9cc844c2.sfr@canb.auug.org.au>
-References: <20081002212632.GA5852@x200.localdomain>
+Subject: linux-next will be back soon
+Date: Mon, 13 Oct 2008 20:28:58 +1100
+Message-ID: <20081013202858.e7bba38d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__13_Oct_2008_17_32_48_+1100_xVhjq3mqPdXQ+T5n"
+ boundary="Signature=_Mon__13_Oct_2008_20_28_58_+1100_7MY2Tqx2y/Wlk7Ko"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57896 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33221 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752870AbYJMGc5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Oct 2008 02:32:57 -0400
-In-Reply-To: <20081002212632.GA5852@x200.localdomain>
+	id S1755969AbYJMJ3J (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Oct 2008 05:29:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: akpm@osdl.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, torvalds@osdl.org
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Mon__13_Oct_2008_17_32_48_+1100_xVhjq3mqPdXQ+T5n
-Content-Type: text/plain; charset=UTF-8
+--Signature=_Mon__13_Oct_2008_20_28_58_+1100_7MY2Tqx2y/Wlk7Ko
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Alexey,
+Hi all,
 
-On Fri, 3 Oct 2008 01:26:32 +0400 Alexey Dobriyan <adobriyan@gmail.com> wro=
-te:
->
-> Please, add the following to the list of poor souls:
->=20
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/adobriyan/proc.git proc
->=20
-> So far it consists of 5 trivial patches from -mm, in future there will
-> be smallish fs/proc/ reorganization, removing final defense line of ->rea=
-d_proc()
-> users and officially bug-free=C2=B9 examples of showing stuff via seq_fil=
-es.
+I am planning to start linux-next releases again tomorrow so if anyone
+has updates they want to make to any of the trees I fetch, now would be
+the time.  This includes resetting your tree to be a subset of Linus' if
+it has all been merged - this saves me quite a bit of time and is much
+more relevant if you rebase your tree (or what you sent Linus is not
+quite what is in the tree I fetch).
 
-Added.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__13_Oct_2008_17_32_48_+1100_xVhjq3mqPdXQ+T5n
+--Signature=_Mon__13_Oct_2008_20_28_58_+1100_7MY2Tqx2y/Wlk7Ko
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkjy65AACgkQjjKRsyhoI8xHDwCfWcwH8Ip4E5WmZKS5EfU+fUs8
-mLIAoJDDQZiLLVp30eCwnkQfvJ3v6ABt
-=YRLu
+iEYEARECAAYFAkjzFNoACgkQjjKRsyhoI8z0NwCfTTd/ZF+MrWfI83BDIrcPEPCy
+2lwAoLyYVDAuhgWMbT564drdpG3zBDU0
+=FjhV
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__13_Oct_2008_17_32_48_+1100_xVhjq3mqPdXQ+T5n--
+--Signature=_Mon__13_Oct_2008_20_28_58_+1100_7MY2Tqx2y/Wlk7Ko--
