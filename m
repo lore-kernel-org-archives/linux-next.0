@@ -1,91 +1,37 @@
-From: "Alexey Klimov" <klimov.linux@gmail.com>
-Subject: Re: linux-next: usb tree build failure
-Date: Tue, 14 Oct 2008 21:41:52 +0400
-Message-ID: <208cbae30810141041j2133d5a6s92d61fd5ea40fd9f@mail.gmail.com>
-References: <20081014150802.e043baf3.sfr@canb.auug.org.au>
-	 <208cbae30810132251k7c671a12rf259855a252d093@mail.gmail.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: manual merge of the kernel-doc tree
+Date: Tue, 14 Oct 2008 10:43:23 -0700
+Message-ID: <48F4DA3B.2090003@oracle.com>
+References: <20081014181114.c069b145.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
-	boundary="----=_Part_60654_11107185.1224006112467"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ug-out-1314.google.com ([66.249.92.172]:4826 "EHLO
-	ug-out-1314.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751414AbYJNRmC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Oct 2008 13:42:02 -0400
-Received: by ug-out-1314.google.com with SMTP id k3so999938ugf.37
-        for <linux-next@vger.kernel.org>; Tue, 14 Oct 2008 10:41:52 -0700 (PDT)
-In-Reply-To: <208cbae30810132251k7c671a12rf259855a252d093@mail.gmail.com>
+Received: from rgminet01.oracle.com ([148.87.113.118]:32912 "EHLO
+	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751472AbYJNRns (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Oct 2008 13:43:48 -0400
+In-Reply-To: <20081014181114.c069b145.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>, Douglas Schilling Landgraf <dougsland@gmail.com>
+Cc: linux-next@vger.kernel.org, Kiyoshi Ueda <k-ueda@ct.jp.nec.com>
 
-------=_Part_60654_11107185.1224006112467
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Stephen Rothwell wrote:
+> Hi Randy,
+> 
+> Today's linux-next merge of the kernel-doc tree got a conflict in
+> block/blk-core.c between commit d00e29fd99dd63d1c51917604e35dee824ed567f
+> ("block: remove end_{queued|dequeued}_request()") from Linus' tree and
+> commit bcbfb613cdca2d5c4c3f67ed428d7464abe7fb2f ("kerndoc-block-add")
+> from the kernel-doc tree.
+> 
+> The former removed what the latter was modifying, so I just removed the
+> code.
 
-Hello, all
-Sorry, bother you all again.
-Here is the patch that removes info() and err()-statements in
-drivers/media/radio/radio-mr800.c
-Also, in previous letter i sent you patch that removes
-warn()-statements from there.
+Hi Stephen,
 
-May be it can help current situation.
--- 
-Best regards, Klimov Alexey
+Fixed & updated.  Better luck tomorrow.
 
-------=_Part_60654_11107185.1224006112467
-Content-Type: application/octet-stream;
- name=radio-mr800-remove-warn-and-err.patch
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_fmaszvbb0
-Content-Disposition: attachment;
- filename=radio-mr800-remove-warn-and-err.patch
-
-ZGlmZiAtciAyNzA3MjNhNzMyMDcgbGludXgvZHJpdmVycy9tZWRpYS9yYWRpby9yYWRpby1tcjgw
-MC5jCi0tLSBhL2xpbnV4L2RyaXZlcnMvbWVkaWEvcmFkaW8vcmFkaW8tbXI4MDAuYwlUdWUgT2N0
-IDE0IDIwOjQ2OjUyIDIwMDggKzA0MDAKKysrIGIvbGludXgvZHJpdmVycy9tZWRpYS9yYWRpby9y
-YWRpby1tcjgwMC5jCVR1ZSBPY3QgMTQgMjE6MjI6MTUgMjAwOCArMDQwMApAQCAtMzYyLDcgKzM2
-Miw3IEBACiAKIAlyYWRpby0+Y3VyZnJlcSA9IGYtPmZyZXF1ZW5jeTsKIAlpZiAoYW1yYWRpb19z
-ZXRmcmVxKHJhZGlvLCByYWRpby0+Y3VyZnJlcSkgPCAwKQotCQl3YXJuKCJTZXQgZnJlcXVlbmN5
-IGZhaWxlZCIpOworCQlwcmludGsoS0VSTl9XQVJOSU5HIEtCVUlMRF9NT0ROQU1FICI6IFNldCBm
-cmVxdWVuY3kgZmFpbGVkXG4iKTsKIAlyZXR1cm4gMDsKIH0KIApAQCAtNDE3LDEyICs0MTcsMTQg
-QEAKIAljYXNlIFY0TDJfQ0lEX0FVRElPX01VVEU6CiAJCWlmIChjdHJsLT52YWx1ZSkgewogCQkJ
-aWYgKGFtcmFkaW9fc3RvcChyYWRpbykgPCAwKSB7Ci0JCQkJd2FybigiYW1yYWRpb19zdG9wKCkg
-ZmFpbGVkIik7CisJCQkJcHJpbnRrKEtFUk5fV0FSTklORyBLQlVJTERfTU9ETkFNRQorCQkJCQkJ
-IjogYW1yYWRpb19zdG9wKCkgZmFpbGVkXG4iKTsKIAkJCQlyZXR1cm4gLTE7CiAJCQl9CiAJCX0g
-ZWxzZSB7CiAJCQlpZiAoYW1yYWRpb19zdGFydChyYWRpbykgPCAwKSB7Ci0JCQkJd2FybigiYW1y
-YWRpb19zdGFydCgpIGZhaWxlZCIpOworCQkJCXByaW50ayhLRVJOX1dBUk5JTkcgS0JVSUxEX01P
-RE5BTUUKKwkJCQkJCSI6IGFtcmFkaW9fc3RhcnQoKSBmYWlsZWRcbiIpOwogCQkJCXJldHVybiAt
-MTsKIAkJCX0KIAkJfQpAQCAtNDc2LDEyICs0NzgsMTMgQEAKIAlyYWRpby0+bXV0ZWQgPSAxOwog
-CiAJaWYgKGFtcmFkaW9fc3RhcnQocmFkaW8pIDwgMCkgewotCQl3YXJuKCJSYWRpbyBkaWQgbm90
-IHN0YXJ0IHVwIHByb3Blcmx5Iik7CisJCXByaW50ayhLRVJOX1dBUk5JTkcgS0JVSUxEX01PRE5B
-TUUKKwkJCQkJIjogUmFkaW8gZGlkIG5vdCBzdGFydCB1cCBwcm9wZXJseVxuIik7CiAJCXJhZGlv
-LT51c2VycyA9IDA7CiAJCXJldHVybiAtRUlPOwogCX0KIAlpZiAoYW1yYWRpb19zZXRmcmVxKHJh
-ZGlvLCByYWRpby0+Y3VyZnJlcSkgPCAwKQotCQl3YXJuKCJTZXQgZnJlcXVlbmN5IGZhaWxlZCIp
-OworCQlwcmludGsoS0VSTl9XQVJOSU5HIEtCVUlMRF9NT0ROQU1FICI6IFNldCBmcmVxdWVuY3kg
-ZmFpbGVkXG4iKTsKIAlyZXR1cm4gMDsKIH0KIApAQCAtNTA2LDcgKzUwOSw3IEBACiAJc3RydWN0
-IGFtcmFkaW9fZGV2aWNlICpyYWRpbyA9IHVzYl9nZXRfaW50ZmRhdGEoaW50Zik7CiAKIAlpZiAo
-YW1yYWRpb19zdG9wKHJhZGlvKSA8IDApCi0JCXdhcm4oImFtcmFkaW9fc3RvcCgpIGZhaWxlZCIp
-OworCQlwcmludGsoS0VSTl9XQVJOSU5HIEtCVUlMRF9NT0ROQU1FICI6IGFtcmFkaW9fc3RvcCgp
-IGZhaWxlZFxuIik7CiAKIAlwcmludGsoS0VSTl9JTkZPIEtCVUlMRF9NT0ROQU1FICI6IEdvaW5n
-IGludG8gc3VzcGVuZC4uXG4iKTsKIApAQCAtNTE5LDcgKzUyMiw4IEBACiAJc3RydWN0IGFtcmFk
-aW9fZGV2aWNlICpyYWRpbyA9IHVzYl9nZXRfaW50ZmRhdGEoaW50Zik7CiAKIAlpZiAoYW1yYWRp
-b19zdGFydChyYWRpbykgPCAwKQotCQl3YXJuKCJhbXJhZGlvX3N0YXJ0KCkgZmFpbGVkIik7CisJ
-CXByaW50ayhLRVJOX1dBUk5JTkcgS0JVSUxEX01PRE5BTUUKKwkJCQkJCSI6IGFtcmFkaW9fc3Rh
-cnQoKSBmYWlsZWRcbiIpOwogCiAJcHJpbnRrKEtFUk5fSU5GTyBLQlVJTERfTU9ETkFNRSAiOiBD
-b21pbmcgb3V0IG9mIHN1c3BlbmQuLlxuIik7CiAKQEAgLTYwMCw3ICs2MDQsOCBAQAogCiAJdmlk
-ZW9fc2V0X2RydmRhdGEocmFkaW8tPnZpZGVvZGV2LCByYWRpbyk7CiAJaWYgKHZpZGVvX3JlZ2lz
-dGVyX2RldmljZShyYWRpby0+dmlkZW9kZXYsIFZGTF9UWVBFX1JBRElPLCByYWRpb19ucikpIHsK
-LQkJd2FybigiQ291bGQgbm90IHJlZ2lzdGVyIHZpZGVvIGRldmljZSIpOworCQlwcmludGsoS0VS
-Tl9XQVJOSU5HIEtCVUlMRF9NT0ROQU1FCisJCQkJCSI6IENvdWxkIG5vdCByZWdpc3RlciB2aWRl
-byBkZXZpY2VcbiIpOwogCQl2aWRlb19kZXZpY2VfcmVsZWFzZShyYWRpby0+dmlkZW9kZXYpOwog
-CQlrZnJlZShyYWRpby0+YnVmZmVyKTsKIAkJa2ZyZWUocmFkaW8pOwpAQCAtNjE4LDcgKzYyMyw4
-IEBACiAJcHJpbnRrKEtFUk5fSU5GTyBLQlVJTERfTU9ETkFNRSAiOiAiCiAJCQlEUklWRVJfVkVS
-U0lPTiAiICIgRFJJVkVSX0RFU0MgIlxuIik7CiAJaWYgKHJldHZhbCkKLQkJZXJyKCJ1c2JfcmVn
-aXN0ZXIgZmFpbGVkLiBFcnJvciBudW1iZXIgJWQiLCByZXR2YWwpOworCQlwcmludGsoS0VSTl9F
-UlIgS0JVSUxEX01PRE5BTUUKKwkJCSI6IHVzYl9yZWdpc3RlciBmYWlsZWQuIEVycm9yIG51bWJl
-ciAlZFxuIiwgcmV0dmFsKTsKIAlyZXR1cm4gcmV0dmFsOwogfQogCg==
-------=_Part_60654_11107185.1224006112467--
+Thanks,
+~Randy
