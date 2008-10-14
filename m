@@ -1,53 +1,44 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: Re: linux-next: usb tree build failure
-Date: Tue, 14 Oct 2008 15:26:55 -0200
-Message-ID: <20081014152655.0d89f02b@pedra.chehab.org>
-References: <20081014150802.e043baf3.sfr@canb.auug.org.au>
-	<208cbae30810132251k7c671a12rf259855a252d093@mail.gmail.com>
-	<208cbae30810141041j2133d5a6s92d61fd5ea40fd9f@mail.gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: linux-next: manual merge of the arm tree
+Date: Tue, 14 Oct 2008 13:08:05 -0700
+Message-ID: <20081014200805.GF8150@atomide.com>
+References: <20081014132745.051f6418.sfr@canb.auug.org.au> <20081014075950.GA22855@flint.arm.linux.org.uk> <200810140107.14647.david-b@pacbell.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:53322 "EHLO mx2.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751046AbYJNS1g (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Oct 2008 14:27:36 -0400
-In-Reply-To: <208cbae30810141041j2133d5a6s92d61fd5ea40fd9f@mail.gmail.com>
+Received: from mho-01-bos.mailhop.org ([63.208.196.178]:53204 "EHLO
+	mho-01-bos.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751955AbYJNUIY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Oct 2008 16:08:24 -0400
+Content-Disposition: inline
+In-Reply-To: <200810140107.14647.david-b@pacbell.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexey Klimov <klimov.linux@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Douglas Schilling Landgraf <dougsland@gmail.com>
+To: David Brownell <david-b@pacbell.net>
+Cc: Russell King <rmk@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-omap@vger.kernel.org, Richard Woodruff <r-woodruff2@ti.com>, linux-next@vger.kernel.org, Felipe Balbi <felipe.balbi@nokia.com>, Wim Van Sebroeck <wim@iguana.be>, Syed Mohammed Khasim <khasim@ti.com>
 
-Hi Alexey,
+* David Brownell <david-b@pacbell.net> [081014 11:53]:
+> On Tuesday 14 October 2008, Russell King wrote:
+> > Since the OMAP updates I merged from Tony are already broken due to
+> > missing definitions, and I'm not getting any response from Tony on
+> > fixing those,
 
-The V4L/DVB and USB conflicts on linux-next are due to the merge of my tree
-upstream, plus the conflict between Greg's original patch and the one on my
-tree that were already merged.
+I just sent you a fix for that few hours ago.
 
-No action is required from your side. It is just a matter of me and Greg to
-update our trees.
+> Probably has to do with his travel plans, which he mentioned
+> last week (Thursday?).  I think he's back online in the next
+> day or two.
+>=20
+>=20
+> > I will be dropping the problematical updates so we can=20
+> > at least keep mainline OMAP in a buildable state. =A0That seems to =
+mean
+> > dropping the new OMAP3 support.
 
-Cheers,
-Mauro
+Yes, I'm back online. And please don't drop these patches, sounds
+like this is a trivial merge issue.
 
-It it just a matter of me updating my linux-next tree.
+Regards,
 
-
-On Tue, 14 Oct 2008 21:41:52 +0400
-"Alexey Klimov" <klimov.linux@gmail.com> wrote:
-
-> Hello, all
-> Sorry, bother you all again.
-> Here is the patch that removes info() and err()-statements in
-> drivers/media/radio/radio-mr800.c
-> Also, in previous letter i sent you patch that removes
-> warn()-statements from there.
-> 
-> May be it can help current situation.
-
-
--- 
-
-Cheers,
-Mauro
+Tony
