@@ -1,56 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the x86 tree
-Date: Tue, 14 Oct 2008 13:23:15 +1100
-Message-ID: <20081014132315.aac4a97a.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm tree
+Date: Tue, 14 Oct 2008 13:27:45 +1100
+Message-ID: <20081014132745.051f6418.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__14_Oct_2008_13_23_15_+1100_1yqOurF77ny/jXTi"
+ boundary="Signature=_Tue__14_Oct_2008_13_27_45_+1100_d6+nD9zlUY+P3TKg"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40583 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40603 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755496AbYJNC1N (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Oct 2008 22:27:13 -0400
+	id S1755512AbYJNC16 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Oct 2008 22:27:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org, Suresh Siddha <suresh.b.siddha@intel.com>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, Felipe Balbi <felipe.balbi@nokia.com>, Wim Van Sebroeck <wim@iguana.be>, Syed Mohammed Khasim <khasim@ti.com>, Tony Lindgren <tony@atomide.com>
 
---Signature=_Tue__14_Oct_2008_13_23_15_+1100_1yqOurF77ny/jXTi
+--Signature=_Tue__14_Oct_2008_13_27_45_+1100_d6+nD9zlUY+P3TKg
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Russell,
 
-Today's linux-next merge of the x86 tree got a conflict in
-arch/x86/mm/init_64.c between commit
-b27a43c1e90582facad44de67d02bc9e9f900289 ("x86, cpa: make the kernel
-physical mapping initialization a two pass sequence") from Linus' tree
-and commit 065ae73c5462d42e9761afb76f2b52965ff45bd6 ("x86, cpa: make the
-kernel physical mapping initialization a two pass sequence") from the x86
-tree.
+Today's linux-next merge of the arm tree got a conflict in
+arch/arm/plat-omap/devices.c between commit
+2817142f31bfbf26c216bf4f9192540c81b2d071 ("[WATCHDOG] omap_wdt.c: sync
+linux-omap changes") from Linus' tree and commit
+cc26b3b01bc96a8b8c36671b0dc4898b2a152ea8 ("ARM: OMAP3: Add minimal
+omap3430 support") from the arm tree.
 
-The former is clearly a fixed version of the latter, but I cannot easily
-see how to resolve them given other changes to this file in both trees.
-I think my only option (given time constraints) is to drop the x86 tree
-for today in the hope that it will be fixed by those who understand the
-code.
+The former removed code that the latter modified.  I fixed it up
+by just removing the section of code as the former patch seems to take
+account of what the latter is trying to do (but it may not be correct).
+You can fix it by merging Linus' tree and doing this or a similar (maybe
+correct) fixup.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__14_Oct_2008_13_23_15_+1100_1yqOurF77ny/jXTi
+
+--Signature=_Tue__14_Oct_2008_13_27_45_+1100_d6+nD9zlUY+P3TKg
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkj0ApMACgkQjjKRsyhoI8yDGgCgpCyQwnRq3DRmykWHiI/npxYN
-sw8AoLuPs11sX76zYOWlv6NURvEWt3cS
-=V+/R
+iEYEARECAAYFAkj0A6EACgkQjjKRsyhoI8wp4gCdFB2eRhT0Gmro2WaXdaGN+fYM
+ygwAoKz7XRZrUZejb8LcsxuU1wOnuAqn
+=X154
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__14_Oct_2008_13_23_15_+1100_1yqOurF77ny/jXTi--
+--Signature=_Tue__14_Oct_2008_13_27_45_+1100_d6+nD9zlUY+P3TKg--
