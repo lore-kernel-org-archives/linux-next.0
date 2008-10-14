@@ -1,19 +1,19 @@
 From: "Alexey Klimov" <klimov.linux@gmail.com>
-Subject: Re: linux-next: manual merge of the usb tree
-Date: Tue, 14 Oct 2008 09:44:07 +0400
-Message-ID: <208cbae30810132244k89e8ce7p5d7423c008a5fc77@mail.gmail.com>
-References: <20081014143137.007fe44c.sfr@canb.auug.org.au>
+Subject: Re: linux-next: usb tree build failure
+Date: Tue, 14 Oct 2008 09:51:21 +0400
+Message-ID: <208cbae30810132251k7c671a12rf259855a252d093@mail.gmail.com>
+References: <20081014150802.e043baf3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from qb-out-0506.google.com ([72.14.204.239]:22419 "EHLO
+Received: from qb-out-0506.google.com ([72.14.204.225]:18674 "EHLO
 	qb-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750958AbYJNFoJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Oct 2008 01:44:09 -0400
-Received: by qb-out-0506.google.com with SMTP id f11so2060210qba.17
-        for <linux-next@vger.kernel.org>; Mon, 13 Oct 2008 22:44:08 -0700 (PDT)
-In-Reply-To: <20081014143137.007fe44c.sfr@canb.auug.org.au>
+	with ESMTP id S1751374AbYJNFvX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Oct 2008 01:51:23 -0400
+Received: by qb-out-0506.google.com with SMTP id o24so1627108qba.1
+        for <linux-next@vger.kernel.org>; Mon, 13 Oct 2008 22:51:22 -0700 (PDT)
+In-Reply-To: <20081014150802.e043baf3.sfr@canb.auug.org.au>
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
@@ -22,66 +22,33 @@ Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Mauro Carvalho Chehab 
 
 Hi, all
 
-On Tue, Oct 14, 2008 at 7:31 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Tue, Oct 14, 2008 at 8:08 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > Hi Greg,
 >
-> Today's linux-next merge of the usb tree got a conflict in
-> drivers/media/radio/dsbr100.c between commit
-> 90b698dd47f3929f20746f828e2cd648bc6539dd ("V4L/DVB (9151): dsbr100: Add
-> returns and fix codingstyle for vidioc_s_ctrl") from Linus' tree and
-> commit 58e43f3f48c28cc35be7502b5aa81ce53de51815 ("USB: remove warn()
-> macro from usb media drivers") from the usb tree.
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+>
+> drivers/media/radio/radio-mr800.c: In function 'vidioc_s_frequency':
+> drivers/media/radio/radio-mr800.c:362: error: implicit declaration of function 'warn'
+> drivers/media/radio/radio-mr800.c: In function 'usb_amradio_suspend':
+> drivers/media/radio/radio-mr800.c:508: error: implicit declaration of function 'info'
+>
+> Direct cause is commits 9ade02815223bc15481f64dc9bef0ba7493d9fdc ("USB:
+> remove info() macro from usb.h") and
+> fb2d8e064998cfc6fdc3f8e2d30382e4f8dfd40a ("USB: remove warn() macro from
+> usb.h") which I have reverted.
 
-Let's see the flight of time: i sent this patch to v4l-dvb team, may
-be simultaneously warn()-statements were removed from all usb-devices,
-but i didn't saw it. Actually i didn't know about it. (I saw patch
-about removing info()-macros) Probably there is bad delay between
-USB-subsystem-tree and V4L-tree.
+Again, i didn't know about removing warn()-macro. When i saw patch
+that removes info()-macro from usb.h, i created patch for radio-mr800,
+and sent it to Douglas Schilling Landgraf. Bad delay!
 
-> Just trivial overlaps.  I fixed it up (see below).
+> Commit 2aa72f3b63e4b524e9e4b1438f6c0d50a214d836 ("4L/DVB (9101):
+> radio-mr800: Add driver for AverMedia MR 800 USB FM radio devices") in
+> Linus' tree added new references to warn() and info().
+>
 > --
 > Cheers,
 > Stephen Rothwell                    sfr@canb.auug.org.au
 > http://www.canb.auug.org.au/~sfr/
->
-> diff --cc drivers/media/radio/dsbr100.c
-> index 66783ff,bbd237d..0000000
-> --- a/drivers/media/radio/dsbr100.c
-> +++ b/drivers/media/radio/dsbr100.c
-> @@@ -360,15 -360,13 +360,17 @@@ static int vidioc_s_ctrl(struct file *f
->        switch (ctrl->id) {
->        case V4L2_CID_AUDIO_MUTE:
->                if (ctrl->value) {
->  -                      if (dsbr100_stop(radio)==-1)
->  +                      if (dsbr100_stop(radio) == -1) {
-> -                               warn("Radio did not respond properly");
-> +                               dev_warn(&radio->usbdev->dev,
-> +                                        "Radio did not respond properly\n");
->  +                              return -EBUSY;
->  +                      }
->                } else {
->  -                      if (dsbr100_start(radio)==-1)
->  +                      if (dsbr100_start(radio) == -1) {
-> -                               warn("Radio did not respond properly");
-> +                               dev_warn(&radio->usbdev->dev,
-> +                                        "Radio did not respond properly\n");
->  +                              return -EBUSY;
->  +                      }
->                }
->                return 0;
->        }
-> @@@ -416,9 -413,9 +418,10 @@@ static int usb_dsbr100_open(struct inod
->        radio->muted = 1;
->
->        if (dsbr100_start(radio)<0) {
-> -               warn("Radio did not start up properly");
-> +               dev_warn(&radio->usbdev->dev,
-> +                        "Radio did not start up properly\n");
->                radio->users = 0;
->  +              unlock_kernel();
->                return -EIO;
->        }
->        dsbr100_setfreq(radio, radio->curfreq);
 
 -- 
 Best regards, Klimov Alexey
