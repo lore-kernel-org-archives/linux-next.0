@@ -1,54 +1,70 @@
 From: "Alexey Klimov" <klimov.linux@gmail.com>
-Subject: Re: linux-next: usb tree build failure
-Date: Tue, 14 Oct 2008 09:51:21 +0400
-Message-ID: <208cbae30810132251k7c671a12rf259855a252d093@mail.gmail.com>
-References: <20081014150802.e043baf3.sfr@canb.auug.org.au>
+Subject: Fwd: [patch] radio-mr800: remove info-macro
+Date: Tue, 14 Oct 2008 09:54:59 +0400
+Message-ID: <208cbae30810132254x7235f152h64018d88b488a073@mail.gmail.com>
+References: <208cbae30810111605r38d9122bme0e4dfd7d6c8b736@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed;
+	boundary="----=_Part_48836_2097858.1223963699147"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from qb-out-0506.google.com ([72.14.204.225]:18674 "EHLO
+Received: from qb-out-0506.google.com ([72.14.204.229]:17597 "EHLO
 	qb-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751374AbYJNFvX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Oct 2008 01:51:23 -0400
-Received: by qb-out-0506.google.com with SMTP id o24so1627108qba.1
-        for <linux-next@vger.kernel.org>; Mon, 13 Oct 2008 22:51:22 -0700 (PDT)
-In-Reply-To: <20081014150802.e043baf3.sfr@canb.auug.org.au>
-Content-Disposition: inline
+	with ESMTP id S1751751AbYJNFzA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Oct 2008 01:55:00 -0400
+Received: by qb-out-0506.google.com with SMTP id f11so2062358qba.17
+        for <linux-next@vger.kernel.org>; Mon, 13 Oct 2008 22:54:59 -0700 (PDT)
+In-Reply-To: <208cbae30810111605r38d9122bme0e4dfd7d6c8b736@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>, Douglas Schilling Landgraf <dougsland@gmail.com>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, Douglas Schilling Landgraf <dougsland@gmail.com>
 
-Hi, all
+------=_Part_48836_2097858.1223963699147
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-On Tue, Oct 14, 2008 at 8:08 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Greg,
->
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
->
-> drivers/media/radio/radio-mr800.c: In function 'vidioc_s_frequency':
-> drivers/media/radio/radio-mr800.c:362: error: implicit declaration of function 'warn'
-> drivers/media/radio/radio-mr800.c: In function 'usb_amradio_suspend':
-> drivers/media/radio/radio-mr800.c:508: error: implicit declaration of function 'info'
->
-> Direct cause is commits 9ade02815223bc15481f64dc9bef0ba7493d9fdc ("USB:
-> remove info() macro from usb.h") and
-> fb2d8e064998cfc6fdc3f8e2d30382e4f8dfd40a ("USB: remove warn() macro from
-> usb.h") which I have reverted.
+Here, just look.
 
-Again, i didn't know about removing warn()-macro. When i saw patch
-that removes info()-macro from usb.h, i created patch for radio-mr800,
-and sent it to Douglas Schilling Landgraf. Bad delay!
+---------- Forwarded message ----------
+From: Alexey Klimov <klimov.linux@gmail.com>
+Date: Sun, Oct 12, 2008 at 3:05 AM
+Subject: [patch] radio-mr800: remove info-macro
+To: Douglas Schilling Landgraf <dougsland@gmail.com>
 
-> Commit 2aa72f3b63e4b524e9e4b1438f6c0d50a214d836 ("4L/DVB (9101):
-> radio-mr800: Add driver for AverMedia MR 800 USB FM radio devices") in
-> Linus' tree added new references to warn() and info().
->
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
+
+Hello, Douglas!
+Here is the patch, that removes 3 info()-statements in radio-mr800,
+and place standart printk() there.
+
+Signed-off-by: Alexey Klimov <klimov.linux@gmail.com>
 
 -- 
 Best regards, Klimov Alexey
+
+------=_Part_48836_2097858.1223963699147
+Content-Type: application/octet-stream;
+ name=radio-mr800-remove-info-macro.patch
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_fm6uqn300
+Content-Disposition: attachment;
+ filename=radio-mr800-remove-info-macro.patch
+
+ZGlmZiAtciA0MDkyZWQ5MDQxMmIgbGludXgvZHJpdmVycy9tZWRpYS9yYWRpby9yYWRpby1tcjgw
+MC5jCi0tLSBhL2xpbnV4L2RyaXZlcnMvbWVkaWEvcmFkaW8vcmFkaW8tbXI4MDAuYwlTdW4gT2N0
+IDEyIDAxOjM0OjQzIDIwMDggKzA0MDAKKysrIGIvbGludXgvZHJpdmVycy9tZWRpYS9yYWRpby9y
+YWRpby1tcjgwMC5jCVN1biBPY3QgMTIgMDI6NTU6MzIgMjAwOCArMDQwMApAQCAtNTA4LDcgKzUw
+OCw3IEBACiAJaWYgKGFtcmFkaW9fc3RvcChyYWRpbykgPCAwKQogCQl3YXJuKCJhbXJhZGlvX3N0
+b3AoKSBmYWlsZWQiKTsKIAotCWluZm8oInJhZGlvLW1yODAwOiBHb2luZyBpbnRvIHN1c3BlbmQu
+LiIpOworCXByaW50ayhLRVJOX0lORk8gS0JVSUxEX01PRE5BTUUgIjogR29pbmcgaW50byBzdXNw
+ZW5kLi5cbiIpOwogCiAJcmV0dXJuIDA7CiB9CkBAIC01MjEsNyArNTIxLDcgQEAKIAlpZiAoYW1y
+YWRpb19zdGFydChyYWRpbykgPCAwKQogCQl3YXJuKCJhbXJhZGlvX3N0YXJ0KCkgZmFpbGVkIik7
+CiAKLQlpbmZvKCJyYWRpby1tcjgwMDogQ29taW5nIG91dCBvZiBzdXNwZW5kLi4iKTsKKwlwcmlu
+dGsoS0VSTl9JTkZPIEtCVUlMRF9NT0ROQU1FICI6IENvbWluZyBvdXQgb2Ygc3VzcGVuZC4uXG4i
+KTsKIAogCXJldHVybiAwOwogfQpAQCAtNjE1LDcgKzYxNSw4IEBACiB7CiAJaW50IHJldHZhbCA9
+IHVzYl9yZWdpc3RlcigmdXNiX2FtcmFkaW9fZHJpdmVyKTsKIAotCWluZm8oRFJJVkVSX1ZFUlNJ
+T04gIiAiIERSSVZFUl9ERVNDKTsKKwlwcmludGsoS0VSTl9JTkZPIEtCVUlMRF9NT0ROQU1FICI6
+ICIKKwkJCURSSVZFUl9WRVJTSU9OICIgIiBEUklWRVJfREVTQyAiXG4iKTsKIAlpZiAocmV0dmFs
+KQogCQllcnIoInVzYl9yZWdpc3RlciBmYWlsZWQuIEVycm9yIG51bWJlciAlZCIsIHJldHZhbCk7
+CiAJcmV0dXJuIHJldHZhbDsK
+------=_Part_48836_2097858.1223963699147--
