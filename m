@@ -1,46 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next tree for Oct 14
-Date: Tue, 14 Oct 2008 18:31:51 +1100
-Message-ID: <20081014183151.61e2cfb9.sfr@canb.auug.org.au>
+From: Russell King <rmk@arm.linux.org.uk>
+Subject: Re: linux-next: manual merge of the arm tree
+Date: Tue, 14 Oct 2008 08:59:50 +0100
+Message-ID: <20081014075950.GA22855@flint.arm.linux.org.uk>
+References: <20081014132745.051f6418.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__14_Oct_2008_18_31_51_+1100_X2.UJc/.FK8y1grM"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58499 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1761244AbYJNHcB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Oct 2008 03:32:01 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-
---Signature=_Tue__14_Oct_2008_18_31_51_+1100_X2.UJc/.FK8y1grM
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-omap-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20081014132745.051f6418.sfr@canb.auug.org.au>
+Sender: linux-omap-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-omap@vger.kernel.org, Richard Woodruff <r-woodruff2@ti.com>
+Cc: linux-next@vger.kernel.org, Felipe Balbi <felipe.balbi@nokia.com>, Wim Van Sebroeck <wim@iguana.be>, Syed Mohammed Khasim <khasim@ti.com>, Tony Lindgren <tony@atomide.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+On Tue, Oct 14, 2008 at 01:27:45PM +1100, Stephen Rothwell wrote:
+> Hi Russell,
+> 
+> Today's linux-next merge of the arm tree got a conflict in
+> arch/arm/plat-omap/devices.c between commit
+> 2817142f31bfbf26c216bf4f9192540c81b2d071 ("[WATCHDOG] omap_wdt.c: sync
+> linux-omap changes") from Linus' tree and commit
+> cc26b3b01bc96a8b8c36671b0dc4898b2a152ea8 ("ARM: OMAP3: Add minimal
+> omap3430 support") from the arm tree.
+> 
+> The former removed code that the latter modified.  I fixed it up
+> by just removing the section of code as the former patch seems to take
+> account of what the latter is trying to do (but it may not be correct).
+> You can fix it by merging Linus' tree and doing this or a similar (maybe
+> correct) fixup.
 
-Sorry, this tree didn't make it.  It has just taken way to long.  I will
-make another attempt tomorrow when, hopefully, some of the things I have
-reported today will be fixed.
+This sounds very messy.  I suspect I need Tony to look at that and
+tell me what the right solution is.  However...
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Since the OMAP updates I merged from Tony are already broken due to
+missing definitions, and I'm not getting any response from Tony on
+fixing those, I will be dropping the problematical updates so we can
+at least keep mainline OMAP in a buildable state.  That seems to mean
+dropping the new OMAP3 support.
 
---Signature=_Tue__14_Oct_2008_18_31_51_+1100_X2.UJc/.FK8y1grM
-Content-Type: application/pgp-signature
+That would include dropping the above commit causing the merge conflict.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkj0SucACgkQjjKRsyhoI8xJlQCgif7D+rv9QbMmomvhdv0CNP9+
-ce4AoL4qR52au4wWEVZyYpJ2NBpB58Dr
-=jnB6
------END PGP SIGNATURE-----
-
---Signature=_Tue__14_Oct_2008_18_31_51_+1100_X2.UJc/.FK8y1grM--
+-- 
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
