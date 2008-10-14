@@ -1,60 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: usb tree build failure
-Date: Tue, 14 Oct 2008 15:08:02 +1100
-Message-ID: <20081014150802.e043baf3.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip-core tree
+Date: Tue, 14 Oct 2008 15:24:47 +1100
+Message-ID: <20081014152447.bc21965d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__14_Oct_2008_15_08_02_+1100_ZcY32VUWoCdYRXQQ"
+ boundary="Signature=_Tue__14_Oct_2008_15_24_47_+1100_ENoqJd3NqIl5D9I2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59340 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59366 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757011AbYJNEmM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Oct 2008 00:42:12 -0400
+	id S1751699AbYJNEmY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Oct 2008 00:42:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, Alexey Klimov <klimov.linux@gmail.com>, Mauro Carvalho Chehab <mchehab@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@ozlabs.org, Becky Bruce <becky.bruce@freescale.com>, Kumar Gala <galak@kernel.crashing.org>, Jeremy Fitzhardinge <jeremy@goop.org>
 
---Signature=_Tue__14_Oct_2008_15_08_02_+1100_ZcY32VUWoCdYRXQQ
+--Signature=_Tue__14_Oct_2008_15_24_47_+1100_ENoqJd3NqIl5D9I2
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+Today's linux-next merge of the tip-core tree got a conflict in
+arch/powerpc/include/asm/types.h between commit
+b9579689ad3a208c342aed806afc7a9a808c4e1e ("powerpc: Make dma_addr_t a u64
+if CONFIG_PHYS_64BIT is set") from the powerpc tree and commit
+600715dcdf567c86f8b2c6173fcfb4b873e25a19 ("generic: add phys_addr_t for
+holding physical addresses") from the tip-core tree.
 
-drivers/media/radio/radio-mr800.c: In function 'vidioc_s_frequency':
-drivers/media/radio/radio-mr800.c:362: error: implicit declaration of funct=
-ion 'warn'
-drivers/media/radio/radio-mr800.c: In function 'usb_amradio_suspend':
-drivers/media/radio/radio-mr800.c:508: error: implicit declaration of funct=
-ion 'info'
-
-Direct cause is commits 9ade02815223bc15481f64dc9bef0ba7493d9fdc ("USB:
-remove info() macro from usb.h") and
-fb2d8e064998cfc6fdc3f8e2d30382e4f8dfd40a ("USB: remove warn() macro from
-usb.h") which I have reverted.
-
-Commit 2aa72f3b63e4b524e9e4b1438f6c0d50a214d836 ("4L/DVB (9101):
-radio-mr800: Add driver for AverMedia MR 800 USB FM radio devices") in
-Linus' tree added new references to warn() and info().
+Just a context clash.  I fixed it up (see below) and can carry the fix.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__14_Oct_2008_15_08_02_+1100_ZcY32VUWoCdYRXQQ
+diff --cc arch/powerpc/include/asm/types.h
+index a9a9262,c646f34..0000000
+--- a/arch/powerpc/include/asm/types.h
++++ b/arch/powerpc/include/asm/types.h
+@@@ -48,14 -48,7 +48,7 @@@ typedef struct=20
+ =20
+  typedef __vector128 vector128;
+ =20
+- /* Physical address used by some IO functions */
+- #if defined(CONFIG_PPC64) || defined(CONFIG_PHYS_64BIT)
+- typedef u64 phys_addr_t;
+- #else
+- typedef u32 phys_addr_t;
+- #endif
+-=20
+ -#ifdef __powerpc64__
+ +#if defined(__powerpc64__) || defined(CONFIG_PHYS_64BIT)
+  typedef u64 dma_addr_t;
+  #else
+  typedef u32 dma_addr_t;
+
+
+--Signature=_Tue__14_Oct_2008_15_24_47_+1100_ENoqJd3NqIl5D9I2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkj0GyIACgkQjjKRsyhoI8xeGwCePZEJZZL01WBeWNK1BHmcDfm3
-mNgAn3GNy0w18vq2gVgQCs/kqDn1dnDG
-=5Vz8
+iEYEARECAAYFAkj0Hw8ACgkQjjKRsyhoI8xzHgCfSg8Hdh3Z2s3RSNByfHQxg/s/
+M/gAoJGDEiPpONFxNzZlImXaplAdAb7C
+=W/b2
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__14_Oct_2008_15_08_02_+1100_ZcY32VUWoCdYRXQQ--
+--Signature=_Tue__14_Oct_2008_15_24_47_+1100_ENoqJd3NqIl5D9I2--
