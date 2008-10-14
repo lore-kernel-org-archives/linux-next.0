@@ -1,48 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the v4l-dvb tree
-Date: Tue, 14 Oct 2008 18:28:46 +1100
-Message-ID: <20081014182846.d60f2e8b.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kernel-doc tree
+Date: Tue, 14 Oct 2008 18:11:14 +1100
+Message-ID: <20081014181114.c069b145.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__14_Oct_2008_18_28_46_+1100_scd97SO1tUNwiqFI"
+ boundary="Signature=_Tue__14_Oct_2008_18_11_14_+1100_Kdsa8Td_342dnsW4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34124 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34147 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759801AbYJNH2z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Oct 2008 03:28:55 -0400
+	id S1760252AbYJNH3w (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Oct 2008 03:29:52 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: linux-next@vger.kernel.org, Kiyoshi Ueda <k-ueda@ct.jp.nec.com>
 
---Signature=_Tue__14_Oct_2008_18_28_46_+1100_scd97SO1tUNwiqFI
+--Signature=_Tue__14_Oct_2008_18_11_14_+1100_Kdsa8Td_342dnsW4
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mauro,
+Hi Randy,
 
-Today's linux-next merge of the v4l-dvb tree got a lot of conflicts
-against Linus' tree.  It looks like it has been rebased and has
-cheery-picked a lot of commits from Linus' tree.  However it got into
-this state, it needs a major fixup.
+Today's linux-next merge of the kernel-doc tree got a conflict in
+block/blk-core.c between commit d00e29fd99dd63d1c51917604e35dee824ed567f
+("block: remove end_{queued|dequeued}_request()") from Linus' tree and
+commit bcbfb613cdca2d5c4c3f67ed428d7464abe7fb2f ("kerndoc-block-add")
+from the kernel-doc tree.
 
-I have dropped it for today.
+The former removed what the latter was modifying, so I just removed the
+code.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__14_Oct_2008_18_28_46_+1100_scd97SO1tUNwiqFI
+--Signature=_Tue__14_Oct_2008_18_11_14_+1100_Kdsa8Td_342dnsW4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkj0Si4ACgkQjjKRsyhoI8y21ACgiZOI9aQbRSiwkasi/MJvlVxh
-g+8AnAu37tAGFF7btrygW0ZoM2ow3Qto
-=IxYR
+iEYEARECAAYFAkj0RhIACgkQjjKRsyhoI8zW3gCcCjnYndHAxXLki5RDVfUGh+sA
+jcIAoIXHsXtBYz8ypNePtdZla7TGGlZZ
+=iPUB
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__14_Oct_2008_18_28_46_+1100_scd97SO1tUNwiqFI--
+--Signature=_Tue__14_Oct_2008_18_11_14_+1100_Kdsa8Td_342dnsW4--
