@@ -1,110 +1,102 @@
 From: Neil Brown <neilb@suse.de>
-Subject: Re: linux-next: manual merge of the md tree
-Date: Wed, 15 Oct 2008 21:52:38 +1100
-Message-ID: <18677.52086.914687.271000@notabene.brown>
-References: <20081015193413.90ec9792.sfr@canb.auug.org.au>
+Subject: Re: linux-next: md tree build failure
+Date: Wed, 15 Oct 2008 21:55:12 +1100
+Message-ID: <18677.52240.178867.615640@notabene.brown>
+References: <20081015200921.ce510804.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:51358 "EHLO mx2.suse.de"
+Received: from ns1.suse.de ([195.135.220.2]:47751 "EHLO mx1.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751844AbYJOKw6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 Oct 2008 06:52:58 -0400
+	id S1751637AbYJOK4L (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 Oct 2008 06:56:11 -0400
 In-Reply-To: message from Stephen Rothwell on Wednesday October 15
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Denis ChengRq <crquan@gmail.com>, Jens Axboe <jens.axboe@oracle.com>, Tejun Heo <tj@kernel.org>, Andre Noll <maan@systemlinux.org>
+Cc: linux-next@vger.kernel.org
 
 On Wednesday October 15, sfr@canb.auug.org.au wrote:
 > Hi Neil,
 > 
-> Today's linux-next merge of the md tree got a conflict in
-> drivers/md/linear.c between commits
-> c9959059161ddd7bf4670cf47367033d6b2f79c4 ("block: fix diskstats access")
-> and 6feef531f55cf4a20fd9eb39f5352e5745203603 ("block: mark bio_split_pool
-> static") from Linus' tree and commit
-> 2bc5b53551d8246e18562fa8e0cf5fe64b5f8184 ("md: linear: Represent
-> dev_info->size and dev_info->offset in sectors") from the md tree.
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 > 
-> Just overlapping changes.  I fixed it up (see below).
+> drivers/md/raid1.c: In function 'sync_request':
+> drivers/md/raid1.c:1759: error: implicit declaration of function 'msleep_interruptible'
+> make[3]: *** [drivers/md/raid1.o] Error 1
+> make[3]: *** Waiting for unfinished jobs....
+> drivers/md/raid10.c: In function 'sync_request':
+> drivers/md/raid10.c:1749: error: implicit declaration of function 'msleep_interruptible'
+> make[3]: *** [drivers/md/raid10.o] Error 1
+> drivers/md/md.c: In function 'md_do_sync':
+> drivers/md/md.c:5915: error: implicit declaration of function 'msleep'
+> 
+> Caused by commit 6caa3b0bbdb474647f6bdd8a958ffc46f78d8d58 ("md: Remove
+> unnecessary #includes, #defines, and function declarations").  I added
+> the following patch.
 
-Thanks.
-I pushed out a new for-next just a couple of hours before I got this
-email which resolves that, so the conflict should disappear in your
-next merge.
+Thanks.  I had heard of this problem in -mm but as I couldn't
+reproduce it I thought it might be -mm specific and held off taking
+the patch.
+I'll add it to my tree now.
 
+Thanks,
 NeilBrown
 
 
+> 
 > -- 
 > Cheers,
 > Stephen Rothwell                    sfr@canb.auug.org.au
 > http://www.canb.auug.org.au/~sfr/
 > 
-> diff --cc drivers/md/linear.c
-> index b9cbee68,9b0c5b0..0000000
-> --- a/drivers/md/linear.c
-> +++ b/drivers/md/linear.c
-> @@@ -317,33 -307,29 +307,33 @@@ static int linear_make_request (struct 
->   	const int rw = bio_data_dir(bio);
->   	mddev_t *mddev = q->queuedata;
->   	dev_info_t *tmp_dev;
-> - 	sector_t block;
->  +	int cpu;
->   
->   	if (unlikely(bio_barrier(bio))) {
->   		bio_endio(bio, -EOPNOTSUPP);
->   		return 0;
->   	}
->   
->  -	disk_stat_inc(mddev->gendisk, ios[rw]);
->  -	disk_stat_add(mddev->gendisk, sectors[rw], bio_sectors(bio));
->  +	cpu = part_stat_lock();
->  +	part_stat_inc(cpu, &mddev->gendisk->part0, ios[rw]);
->  +	part_stat_add(cpu, &mddev->gendisk->part0, sectors[rw],
->  +		      bio_sectors(bio));
->  +	part_stat_unlock();
->   
->   	tmp_dev = which_dev(mddev, bio->bi_sector);
-> - 	block = bio->bi_sector >> 1;
->       
-> - 	if (unlikely(block >= (tmp_dev->size + tmp_dev->offset)
-> - 		     || block < tmp_dev->offset)) {
-> + 	if (unlikely(bio->bi_sector >= (tmp_dev->num_sectors +
-> + 					tmp_dev->start_sector)
-> + 		     || (bio->bi_sector <
-> + 			 tmp_dev->start_sector))) {
->   		char b[BDEVNAME_SIZE];
->   
-> - 		printk("linear_make_request: Block %llu out of bounds on "
-> - 			"dev %s size %llu offset %llu\n",
-> - 			(unsigned long long)block,
-> + 		printk("linear_make_request: Sector %llu out of bounds on "
-> + 			"dev %s: %llu sectors, offset %llu\n",
-> + 			(unsigned long long)bio->bi_sector,
->   			bdevname(tmp_dev->rdev->bdev, b),
-> - 			(unsigned long long)tmp_dev->size,
-> - 		        (unsigned long long)tmp_dev->offset);
-> + 			(unsigned long long)tmp_dev->num_sectors,
-> + 			(unsigned long long)tmp_dev->start_sector);
->   		bio_io_error(bio);
->   		return 0;
->   	}
-> @@@ -353,8 -339,9 +343,9 @@@
->   		 * split it.
->   		 */
->   		struct bio_pair *bp;
->  -		bp = bio_split(bio, bio_split_pool,
->  +		bp = bio_split(bio,
-> - 			       ((tmp_dev->offset + tmp_dev->size)<<1) - bio->bi_sector);
-> + 			       tmp_dev->start_sector + tmp_dev->num_sectors
-> + 			       - bio->bi_sector);
->   		if (linear_make_request(q, &bp->bio1))
->   			generic_make_request(&bp->bio1);
->   		if (linear_make_request(q, &bp->bio2))
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 15 Oct 2008 20:05:50 +1100
+> Subject: [PATCH] md: msleep need include of linux/delay.h
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/md/md.c     |    1 +
+>  drivers/md/raid1.c  |    1 +
+>  drivers/md/raid10.c |    1 +
+>  3 files changed, 3 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 4c89836..abc82f2 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -45,6 +45,7 @@
+>  #include <linux/random.h>
+>  #include <linux/reboot.h>
+>  #include <linux/file.h>
+> +#include <linux/delay.h>
+>  
+>  #define MAJOR_NR MD_MAJOR
+>  
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index b976442..9c788e2 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -32,6 +32,7 @@
+>   */
+>  
+>  #include "dm-bio-list.h"
+> +#include <linux/delay.h>
+>  #include <linux/raid/raid1.h>
+>  #include <linux/raid/bitmap.h>
+>  
+> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+> index 8bdc9bf..7d7f345 100644
+> --- a/drivers/md/raid10.c
+> +++ b/drivers/md/raid10.c
+> @@ -19,6 +19,7 @@
+>   */
+>  
+>  #include "dm-bio-list.h"
+> +#include <linux/delay.h>
+>  #include <linux/raid/raid10.h>
+>  #include <linux/raid/bitmap.h>
+>  
+> -- 
+> 1.5.6.5
