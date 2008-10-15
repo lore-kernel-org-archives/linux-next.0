@@ -1,59 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: vfs tree build failure
-Date: Wed, 15 Oct 2008 17:49:47 +1100
-Message-ID: <20081015174947.64f4b008.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree
+Date: Wed, 15 Oct 2008 17:50:16 +1100
+Message-ID: <20081015175016.b55b4ed3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48542 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48548 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751431AbYJOGuh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 Oct 2008 02:50:37 -0400
+	id S1751479AbYJOGum (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 Oct 2008 02:50:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, Hidehiro Kawai <hidehiro.kawai.ez@hitachi.com>, Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Christoph Hellwig <hch@lst.de>
 
 Hi Al,
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+Today's linux-next merge of the vfs tree got a conflict in
+fs/ext4/namei.c between commit f702ba0fd7d50b5f5f5aea5317875a10d40b869f
+("ext4: Don't use 'struct dentry' for internal lookups") from Linus' tree
+and commit 8ee6b8fff20962d17a008e230006e48c7f79ade4 ("[PATCH] switch all
+filesystems over to d_obtain_alias") from the vfs tree.
 
-fs/ext4/super.c: In function 'ext4_quota_on':
-fs/ext4/super.c:3437: error: 'nd' undeclared (first use in this function)
-
-Caused by the merge of commit 7ffe1ea8949c75ecffb7a4d988bb881a9fa62fbe
-("ext4: add checks for errors from jbd2" from Linus' tree and commit
-6ac465f99b29f74ca5a62bc32a8772985d9a071b ("[PATCH] switch
-quota_on-related stuff to kern_path()") from the vfs tree.
-
-I added the following patch.
+Just context changes.  I fixed it up (see below).
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 15 Oct 2008 17:45:27 +1100
-Subject: [PATCH] vfs: fix up merge of ext4
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/ext4/super.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 4042fd4..2844e1d 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -3434,7 +3434,7 @@ static int ext4_quota_on(struct super_block *sb, int type, int format_id,
- 		err = jbd2_journal_flush(EXT4_SB(sb)->s_journal);
- 		jbd2_journal_unlock_updates(EXT4_SB(sb)->s_journal);
- 		if (err) {
--			path_put(&nd.path);
-+			path_put(&path);
- 			return err;
- 		}
- 	}
--- 
-1.5.6.5
+diff --cc fs/ext4/namei.c
+index 92db9e9,542c013..0000000
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@@ -1061,17 -1060,15 +1061,14 @@@ static struct dentry *ext4_lookup(struc
+  struct dentry *ext4_get_parent(struct dentry *child)
+  {
+  	unsigned long ino;
+- 	struct dentry *parent;
+- 	struct inode *inode;
+ -	struct dentry dotdot;
+ +	static const struct qstr dotdot = {
+ +		.name = "..",
+ +		.len = 2,
+ +	};
+  	struct ext4_dir_entry_2 * de;
+  	struct buffer_head *bh;
+  
+ -	dotdot.d_name.name = "..";
+ -	dotdot.d_name.len = 2;
+ -	dotdot.d_parent = child; /* confusing, isn't it! */
+ -
+ -	bh = ext4_find_entry(&dotdot, &de);
+ +	bh = ext4_find_entry(child->d_inode, &dotdot, &de);
+- 	inode = NULL;
+  	if (!bh)
+  		return ERR_PTR(-ENOENT);
+  	ino = le32_to_cpu(de->inode);
