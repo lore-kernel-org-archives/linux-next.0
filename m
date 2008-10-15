@@ -1,33 +1,48 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: linux-next: origin tree build failure
-Date: Wed, 15 Oct 2008 10:02:47 +0100
-Message-ID: <20081015100247.1dc2d99f@lxorguk.ukuu.org.uk>
-References: <20081015095916.f30c0979.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH] make do_mounts_md use of msleep more robust
+Date: Wed, 15 Oct 2008 20:03:52 +1100
+Message-ID: <20081015200352.17b12999.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:33154 "EHLO
-	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752111AbYJOJDP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Oct 2008 05:03:15 -0400
-In-Reply-To: <20081015095916.f30c0979.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:58965 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752040AbYJOJOr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 Oct 2008 05:14:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, LKML <linux-kernel@vger.kernel.org>, Liam Girdwood <lrg@slimlogic.co.uk>
+To: Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, Arjan van de Ven <arjan@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Neil Brown <neilb@suse.de>
 
-> drivers/mfd/wm8350-core.c: In function 'wm8350_device_init':
-> drivers/mfd/wm8350-core.c:1220: error: 'NO_IRQ' undeclared (first use in this function)
-> 
-> Caused by commit ebccec0fa4e35dff0c18663a492a65f4dc6cad7a ("mfd: Add
-> WM8350 interrupt support").
+Commit 589f800bb12c5cd6c9167bbf9bf3cb70cd8e422c ("fastboot: make the raid
+autodetect code wait for all devices to init") added a call to msleep to
+do_mounts_md.c but the declaration of that was only included implicitly
+through linux/raid/md.h.  Make the include of linux/delay.h explicit.
 
-Should just be testing !irq
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-> 
-> I applied the following (probably incorrect) patch.  Maybe this driver
-> needs to be restricted to certain architectures?  (NO_IRQ appears to only
-> be defined for arm, blackfin, powerpc, mn10300 and parisc)
+---
+ init/do_mounts_md.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-NO_IRQ is an old IDE private define that some people kept abusing
+Discovered when commit 6caa3b0bbdb474647f6bdd8a958ffc46f78d8d58 ("md:
+Remove unnecessary #includes, #defines, and function declarations") was
+added to linux-next from the md tree.
+
+diff --git a/init/do_mounts_md.c b/init/do_mounts_md.c
+index 48b3fad..cbc447d 100644
+--- a/init/do_mounts_md.c
++++ b/init/do_mounts_md.c
+@@ -1,4 +1,5 @@
+ 
++#include <linux/delay.h>
+ #include <linux/raid/md.h>
+ 
+ #include "do_mounts.h"
+-- 
+1.5.6.5
+
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
