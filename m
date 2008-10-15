@@ -1,46 +1,292 @@
-From: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
-Subject: Re: linux-next: manual merge of the tests tree
-Date: Wed, 15 Oct 2008 19:45:54 +0530
-Message-ID: <20081015141554.GA24141@in.ibm.com>
-References: <20081015170503.1130c183.sfr@canb.auug.org.au>
-Reply-To: ananth@in.ibm.com
+From: Samuel Ortiz <sameo@openedhand.com>
+Subject: Re: linux-next: manual merge of the mfd tree
+Date: Wed, 15 Oct 2008 10:33:45 -0400
+Message-ID: <266ffd6cd4f71f0f9ef796792ec504a1@localhost>
+References: <20081015203010.279b57dc.sfr@canb.auug.org.au>
+Reply-To: sameo@openedhand.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e34.co.us.ibm.com ([32.97.110.152]:54825 "EHLO
-	e34.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754829AbYJOOQ1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Oct 2008 10:16:27 -0400
-Received: from d03relay02.boulder.ibm.com (d03relay02.boulder.ibm.com [9.17.195.227])
-	by e34.co.us.ibm.com (8.13.8/8.13.8) with ESMTP id m9FEGOQZ027879
-	for <linux-next@vger.kernel.org>; Wed, 15 Oct 2008 10:16:24 -0400
-Received: from d03av01.boulder.ibm.com (d03av01.boulder.ibm.com [9.17.195.167])
-	by d03relay02.boulder.ibm.com (8.13.8/8.13.8/NCO v9.1) with ESMTP id m9FEGLE6209924
-	for <linux-next@vger.kernel.org>; Wed, 15 Oct 2008 08:16:22 -0600
-Received: from d03av01.boulder.ibm.com (loopback [127.0.0.1])
-	by d03av01.boulder.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id m9FEGBhm020956
-	for <linux-next@vger.kernel.org>; Wed, 15 Oct 2008 08:16:19 -0600
-Content-Disposition: inline
-In-Reply-To: <20081015170503.1130c183.sfr@canb.auug.org.au>
+Received: from 3a.49.1343.static.theplanet.com ([67.19.73.58]:37025 "EHLO
+	pug.o-hand.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751671AbYJOOdr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 Oct 2008 10:33:47 -0400
+In-Reply-To: <20081015203010.279b57dc.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Sam Ravnborg <sam@ravnborg.org>
-Cc: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, =?UTF-8?Q?Marek_Va=C5=A1ut?= <marek.vasut@gmail.com>, David Brownell <dbrownell@users.sourceforge.net>, Eric Miao <eric.miao@marvell.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
 
-On Wed, Oct 15, 2008 at 05:05:03PM +1100, Stephen Rothwell wrote:
-> Hi Ananth,
+
+Hi Stephen,
+
+
+
+On Wed, 15 Oct 2008 20:30:10 +1100, Stephen Rothwell <sfr@canb.auug.org.au>
+
+wrote:
+
+> Hi Samuel,
+
 > 
-> Today's linux-next merge of the tests tree got a conflicts in lib/Kconfig.debug.
+
+> Today's linux-next merge of the mfd tree got a conflict in
+
+> drivers/mfd/Kconfig and drivers/mfd/Makefile between various commits from
+
+> Linus' tree and commits from the mfd tree.
+
+That should be fixed now.
+
+
+
+
+
+> Just overlapping additions.  I fixed it up (see below).
+
+Thanks. Good to have you back, btw.
+
+
+
+Cheers,
+
+Samuel.
+
+
+
+> -- 
+
+> Cheers,
+
+> Stephen Rothwell                    sfr@canb.auug.org.au
+
+> http://www.canb.auug.org.au/~sfr/
+
 > 
-> You need to determine if this tree is ever going to be merged into Linus'
-> tree.  I am going to drop it until you decide.
 
-Stephen,
+> diff --cc drivers/mfd/Kconfig
 
-I am at a loss to determine the same. Sam Ravnborg had taken on the task
-to push it upstream and he has also tried a couple of times, without
-success.
+> index 5eff8ad,fe3c083..0000000
 
-Sam?
+> --- a/drivers/mfd/Kconfig
 
-Ananth
+> +++ b/drivers/mfd/Kconfig
+
+> @@@ -50,15 -50,20 +50,29 @@@ config HTC_PASIC
+
+>   	  HTC Magician devices, respectively. Actual functionality is
+
+>   	  handled by the leds-pasic3 and ds1wm drivers.
+
+>   
+
+>  +config UCB1400_CORE
+
+>  +	tristate "Philips UCB1400 Core driver"
+
+>  +	help
+
+>  +	  This enables support for the Philips UCB1400 core functions.
+
+>  +	  The UCB1400 is an AC97 audio codec.
+
+>  +
+
+>  +	  To compile this driver as a module, choose M here: the
+
+>  +	  module will be called ucb1400_core.
+
+>  +
+
+> + config TWL4030_CORE
+
+> + 	bool "Texas Instruments TWL4030/TPS659x0 Support"
+
+> + 	depends on I2C=y && GENERIC_HARDIRQS && (ARCH_OMAP2 || ARCH_OMAP3)
+
+> + 	help
+
+> + 	  Say yes here if you have TWL4030 family chip on your board.
+
+> + 	  This core driver provides register access and IRQ handling
+
+> + 	  facilities, and registers devices for the various functions
+
+> + 	  so that function-specific drivers can bind to them.
+
+> + 
+
+> + 	  These multi-function chips are found on many OMAP2 and OMAP3
+
+> + 	  boards, providing power management, RTC, GPIO, keypad, a
+
+> + 	  high speed USB OTG transceiver, an audio codec (on most
+
+> + 	  versions) and many other features.
+
+> + 
+
+>   config MFD_TMIO
+
+>   	bool
+
+>   	default n
+
+> @@@ -87,44 -92,17 +101,55 @@@ config MFD_TC6393X
+
+>   	help
+
+>   	  Support for Toshiba Mobile IO Controller TC6393XB
+
+>   
+
+>  +config MFD_WM8400
+
+>  +	tristate "Support Wolfson Microelectronics WM8400"
+
+>  +	help
+
+>  +	  Support for the Wolfson Microelecronics WM8400 PMIC and audio
+
+>  +	  CODEC.  This driver adds provides common support for accessing
+
+>  +	  the device, additional drivers must be enabled in order to use
+
+>  +	  the functionality of the device.
+
+>  +
+
+>  +config MFD_WM8350
+
+>  +	tristate
+
+>  +
+
+>  +config MFD_WM8350_CONFIG_MODE_0
+
+>  +	bool
+
+>  +	depends on MFD_WM8350
+
+>  +
+
+>  +config MFD_WM8350_CONFIG_MODE_1
+
+>  +	bool
+
+>  +	depends on MFD_WM8350
+
+>  +
+
+>  +config MFD_WM8350_CONFIG_MODE_2
+
+>  +	bool
+
+>  +	depends on MFD_WM8350
+
+>  +
+
+>  +config MFD_WM8350_CONFIG_MODE_3
+
+>  +	bool
+
+>  +	depends on MFD_WM8350
+
+>  +
+
+>  +config MFD_WM8350_I2C
+
+>  +	tristate "Support Wolfson Microelectronics WM8350 with I2C"
+
+>  +	select MFD_WM8350
+
+>  +	depends on I2C
+
+>  +	help
+
+>  +	  The WM8350 is an integrated audio and power management
+
+>  +	  subsystem with watchdog and RTC functionality for embedded
+
+>  +	  systems.  This option enables core support for the WM8350 with
+
+>  +	  I2C as the control interface.  Additional options must be
+
+>  +	  selected to enable support for the functionality of the chip.
+
+>  +
+
+> + config PMIC_DA903X
+
+> + 	bool "Dialog Semiconductor DA9030/DA9034 PMIC Support"
+
+> + 	depends on I2C=y
+
+> + 	help
+
+> + 	  Say yes here to support for Dialog Semiconductor DA9030 (a.k.a
+
+> + 	  ARAVA) and DA9034 (a.k.a MICCO), these are Power Management IC
+
+> + 	  usually found on PXA processors-based platforms. This includes
+
+> + 	  the I2C driver and the core APIs _only_, you have to select
+
+> + 	  individual components like LCD backlight, voltage regulators,
+
+> + 	  LEDs and battery-charger under the corresponding menus.
+
+> + 
+
+>   endmenu
+
+>   
+
+>   menu "Multimedia Capabilities Port drivers"
+
+> diff --cc drivers/mfd/Makefile
+
+> index 759b1fe,8dcbb51..0000000
+
+> --- a/drivers/mfd/Makefile
+
+> +++ b/drivers/mfd/Makefile
+
+> @@@ -12,10 -12,7 +12,11 @@@ obj-$(CONFIG_MFD_T7L66XB)	+= t7l66xb.
+
+>   obj-$(CONFIG_MFD_TC6387XB)	+= tc6387xb.o
+
+>   obj-$(CONFIG_MFD_TC6393XB)	+= tc6393xb.o
+
+>   
+
+>  +obj-$(CONFIG_MFD_WM8400)	+= wm8400-core.o
+
+>  +wm8350-objs			:= wm8350-core.o wm8350-regmap.o wm8350-gpio.o
+
+>  +obj-$(CONFIG_MFD_WM8350)	+= wm8350.o
+
+>  +obj-$(CONFIG_MFD_WM8350_I2C)	+= wm8350-i2c.o
+
+> + obj-$(CONFIG_TWL4030_CORE)	+= twl4030-core.o
+
+>   
+
+>   obj-$(CONFIG_MFD_CORE)		+= mfd-core.o
+
+>   
+
+> @@@ -27,4 -24,5 +28,6 @@@ obj-$(CONFIG_MCP_UCB1200_TS)	+= ucb1x00
+
+>   ifeq ($(CONFIG_SA1100_ASSABET),y)
+
+>   obj-$(CONFIG_MCP_UCB1200)	+= ucb1x00-assabet.o
+
+>   endif
+
+>  +obj-$(CONFIG_UCB1400_CORE)	+= ucb1400_core.o
+
+> + 
+
+> + obj-$(CONFIG_PMIC_DA903X)	+= da903x.o
