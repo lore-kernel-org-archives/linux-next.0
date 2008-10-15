@@ -1,43 +1,49 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: linux-next: origin tree build failure
-Date: Wed, 15 Oct 2008 01:05:41 +0100
-Message-ID: <20081015000541.GA22570@opensource.wolfsonmicro.com>
-References: <20081015095916.f30c0979.sfr@canb.auug.org.au> <alpine.LFD.2.00.0810141637210.3288@nehalem.linux-foundation.org>
+Date: Tue, 14 Oct 2008 17:34:57 -0700 (PDT)
+Message-ID: <alpine.LFD.2.00.0810141721450.3288@nehalem.linux-foundation.org>
+References: <20081015095916.f30c0979.sfr@canb.auug.org.au> <alpine.LFD.2.00.0810141637210.3288@nehalem.linux-foundation.org> <20081015000541.GA22570@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:42903 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753867AbYJOAFn (ORCPT
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:47965 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751434AbYJOAfL (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Oct 2008 20:05:43 -0400
-Content-Disposition: inline
-In-Reply-To: <alpine.LFD.2.00.0810141637210.3288@nehalem.linux-foundation.org>
+	Tue, 14 Oct 2008 20:35:11 -0400
+In-Reply-To: <20081015000541.GA22570@opensource.wolfsonmicro.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Liam Girdwood <lrg@slimlogic.co.uk>
 
-On Tue, Oct 14, 2008 at 04:43:12PM -0700, Linus Torvalds wrote:
 
-> I assume that broken driver is some ARM-specific thing. I certainly don't 
-> want to see NO_IRQ in any general drivers. So instead of having that 
-> NO_IRQ insanity spread any more, I'd much rather see the driver either 
-> fixed to not use it, or just marked ARM-only.
 
-It's not ARM-specific, though the overwhelming majority of users will be
-ARM systems (it's an embedded PMIC) - I'll post a patch tomorrow
-changing it to check for non-zero IRQ instead.  That makes other bits of
-the driver easier, anyway.
+On Wed, 15 Oct 2008, Mark Brown wrote:
+>
+> That would be people on the ARM list.  Unless I misremember I first
+> heard about using NO_IRQ from the ARM list in connection with another
+> (much less ARM-specific) driver only within the past six months.
 
-> The proper way to test for whether an interrupt is valid or not is to do
+ARM should just do
 
-> 	if (dev->irq) {
-> 		...
+	#define NO_IRQ (0)
 
-> and no other. There is no spoon. That NO_IRQ was insane. And architectures 
-> or drivers that still think otherwise should fix themselves.
+and be done with it. It's what powerpc did long ago. That allows old 
+broken drivers to work, and doesn't require new drivers to introduce more 
+NO_IRQ insanity.
 
-That would be people on the ARM list.  Unless I misremember I first
-heard about using NO_IRQ from the ARM list in connection with another
-(much less ARM-specific) driver only within the past six months.
+If there is a "hardware irq 0", either it can be special (eg some 
+system-only irq not used by any drivers) or the irq numbers can/must be 
+remapped.
+
+ARM already converted to the generic irq layer, and there are actually 
+parts of that that know that irq 0 has special meaning. Like the 
+autoprobing and spurious irq handling. Of course, ARM may not care, and 
+the generic code is generally trying to avoid any assumptions, but it's 
+still true that all generic _drivers_ do the whole "if (irq)" thing.
+
+Yeah, yeah, we've let NO_IRQ poison some subsystems (like IDE and 
+apparently parts of i2c), but that was a mistake.
+
+		Linus
