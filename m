@@ -1,44 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the battery tree
-Date: Wed, 15 Oct 2008 19:04:47 +1100
-Message-ID: <20081015190447.75432e5d.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree
+Date: Wed, 15 Oct 2008 18:40:55 +1100
+Message-ID: <20081015184055.54fc34c9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__15_Oct_2008_18_40_55_+1100_RbgvYtNKpRp_q3cQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50343 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34341 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751736AbYJOIE7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 Oct 2008 04:04:59 -0400
+	id S1750999AbYJOIGq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 Oct 2008 04:06:46 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Anton Vorontsov <avorontsov@ru.mvista.com>
-Cc: linux-next@vger.kernel.org, =?UTF-8?B?Ik1hcmVrIFZhxaF1dCI=?= <marek.vasut@gmail.com>, Russell King <rmk@arm.linux.org.uk>, Rodolfo Giometti <giometti@linux.it>
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: linux-next@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, "David S. Miller" <davem@davemloft.net>, Ingo Molnar <mingo@elte.hu>, Andrew Morton <akpm@linux-foundation.org>
 
-Hi Anton,
+--Signature=_Wed__15_Oct_2008_18_40_55_+1100_RbgvYtNKpRp_q3cQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the battery tree got a conflict in
-drivers/power/Makefile between commit
-4e9687d9c843dc34d368358a36f5f1610e4fbab3 ("[ARM] 5248/1: wm97xx generic
-battery driver") from Linus' tree and commit
-b996ad0e9fb15ca4acc60bcd0380912117a45d13 ("power_supply: Support for
-Texas Instruments BQ27200 battery managers") from the battery tree.
+Hi Jens,
 
-Just overlapping addition/change.  I fixed it up (see below).
--- 
+Today's linux-next merge of the block tree got conflicts in
+include/linux/interrupt.h and kernel/softirq.c between commit
+978b0116cd225682a29e3d1d5010319bf2de32c2 ("softirq: allocate less
+vectors") from the tip-core tree and commit
+c065c007d92de6ed071c9939bd1982d3a35ebd0f ("softirq: Define and use
+NR_SOFTIRQ") from the block tree.
+
+These two commits seem to do the same thing.  I have used the latter as
+other things in the block tree depend on it.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/power/Makefile
-index 4e20026,6cb301b..0000000
---- a/drivers/power/Makefile
-+++ b/drivers/power/Makefile
-@@@ -21,4 -21,5 +21,5 @@@ obj-$(CONFIG_BATTERY_DS2760)	+= ds2760_
-  obj-$(CONFIG_BATTERY_PMU)	+= pmu_battery.o
-  obj-$(CONFIG_BATTERY_OLPC)	+= olpc_battery.o
-  obj-$(CONFIG_BATTERY_TOSA)	+= tosa_battery.o
-- obj-$(CONFIG_BATTERY_WM97XX)	+= wm97xx_battery.o
- -obj-$(CONFIG_BATTERY_PALMTX)	+= palmtx_battery.o
-++obj-$(CONFIG_BATTERY_WM97XX)	+= wm97xx_battery.o
-+ obj-$(CONFIG_BATTERY_BQ27x00)	+= bq27x00_battery.o
+--Signature=_Wed__15_Oct_2008_18_40_55_+1100_RbgvYtNKpRp_q3cQ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkj1nocACgkQjjKRsyhoI8wGhACghw4WpX4zJIVt1kBnx0JI0Hpz
+8sEAoLlB1WsvNZYzSEH8xvKon0bLJefe
+=8wY1
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__15_Oct_2008_18_40_55_+1100_RbgvYtNKpRp_q3cQ--
