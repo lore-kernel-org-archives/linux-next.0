@@ -1,32 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: scsi tree build failure
-Date: Wed, 15 Oct 2008 17:49:16 +1100
-Message-ID: <20081015174916.6cc04bdb.sfr@canb.auug.org.au>
+Subject: linux-next: vfs tree build failure
+Date: Wed, 15 Oct 2008 17:49:47 +1100
+Message-ID: <20081015174947.64f4b008.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43879 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48542 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751024AbYJOGt0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 Oct 2008 02:49:26 -0400
+	id S1751431AbYJOGuh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 Oct 2008 02:50:37 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-next@vger.kernel.org, "Martin K. Petersen" <martin.petersen@oracle.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, Hidehiro Kawai <hidehiro.kawai.ez@hitachi.com>, Theodore Ts'o <tytso@mit.edu>
 
-[Resent to get past vger's filters]
+Hi Al,
 
-Hi James,
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+fs/ext4/super.c: In function 'ext4_quota_on':
+fs/ext4/super.c:3437: error: 'nd' undeclared (first use in this function)
 
-drivers/scsi/sd.c:579:27: error: macro "sd_dif_op" passed 4 arguments, but takes just 3
-drivers/scsi/sd.c: In function 'sd_prep_fn':
-drivers/scsi/sd.c:578: error: 'sd_dif_op' undeclared (first use in this function)
-
-Caused by commit 9e06688e7d60149cc9ef78ff29515c20186bb418 ("[SCSI] sd:
-Correctly handle all combinations of DIF and DIX").
+Caused by the merge of commit 7ffe1ea8949c75ecffb7a4d988bb881a9fa62fbe
+("ext4: add checks for errors from jbd2" from Linus' tree and commit
+6ac465f99b29f74ca5a62bc32a8772985d9a071b ("[PATCH] switch
+quota_on-related stuff to kern_path()") from the vfs tree.
 
 I added the following patch.
 -- 
@@ -35,26 +34,26 @@ Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 15 Oct 2008 16:54:59 +1100
-Subject: [PATCH] scsi: sd_dif_op has four parameters
+Date: Wed, 15 Oct 2008 17:45:27 +1100
+Subject: [PATCH] vfs: fix up merge of ext4
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/scsi/sd.h |    2 +-
+ fs/ext4/super.c |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/scsi/sd.h b/drivers/scsi/sd.h
-index a92b991..1347e00 100644
---- a/drivers/scsi/sd.h
-+++ b/drivers/scsi/sd.h
-@@ -106,7 +106,7 @@ extern void sd_dif_complete(struct scsi_cmnd *, unsigned int);
- 
- #else /* CONFIG_BLK_DEV_INTEGRITY */
- 
--#define sd_dif_op(a, b, c)			do { } while (0)
-+#define sd_dif_op(a, b, c, d)			do { } while (0)
- #define sd_dif_config_host(a)			do { } while (0)
- #define sd_dif_prepare(a, b, c)			(0)
- #define sd_dif_complete(a, b)			(0)
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 4042fd4..2844e1d 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -3434,7 +3434,7 @@ static int ext4_quota_on(struct super_block *sb, int type, int format_id,
+ 		err = jbd2_journal_flush(EXT4_SB(sb)->s_journal);
+ 		jbd2_journal_unlock_updates(EXT4_SB(sb)->s_journal);
+ 		if (err) {
+-			path_put(&nd.path);
++			path_put(&path);
+ 			return err;
+ 		}
+ 	}
 -- 
 1.5.6.5
