@@ -1,32 +1,53 @@
-From: David Howells <dhowells@redhat.com>
-Subject: Re: linux-next: Tree for October 16
-Date: Thu, 16 Oct 2008 23:22:06 +0100
-Message-ID: <19912.1224195726@redhat.com>
-References: <20081016184118.GA19976@x200.localdomain> <20081016211811.a523c8f2.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: bad import of rr tree
+Date: Fri, 17 Oct 2008 09:26:16 +1100
+Message-ID: <20081017092616.f207ff3e.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__17_Oct_2008_09_26_16_+1100_2fVGth8jbNVm4noY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:34157 "EHLO mx2.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38191 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755071AbYJPWWR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Oct 2008 18:22:17 -0400
-In-Reply-To: <20081016184118.GA19976@x200.localdomain>
+	id S1753325AbYJPW0Y (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Oct 2008 18:26:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: dhowells@redhat.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org
 
-Alexey Dobriyan <adobriyan@gmail.com> wrote:
+--Signature=_Fri__17_Oct_2008_09_26_16_+1100_2fVGth8jbNVm4noY
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +#include <linux/cred.h>
->  #include <linux/types.h>
->  #include <linux/file.h>
->  #include <linux/fs.h>
-> @@ -13,6 +14,7 @@
->  #include <linux/linkage.h>
->  #include <linux/namei.h>
->  #include <linux/mount.h>
-> +#include <linux/sched.h>
+Hi Rusty,
 
-Only the latter addition should be necessary.  linux/sched.h #includes
-linux/cred.h.
+Today's linux-next import of the rr tree failed like this:
 
-David
+lguest:physical_address_extension_support.patch
+Context reduced to (1/1) to apply fragment at 851
+error: patch failed: drivers/lguest/page_tables.c:645
+error: drivers/lguest/page_tables.c: patch does not apply
+
+So that and the following patch
+(lguest:page_size_extension_support.patch) did not get applied.  I hope
+that still makes sense.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__17_Oct_2008_09_26_16_+1100_2fVGth8jbNVm4noY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkj3v4gACgkQjjKRsyhoI8wSJwCdHEPTjHXT2X17fseZdyQdjUWs
+HpUAnR5Zx1imiVUYq6qPrPrpqNbdJ5qC
+=rUUU
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__17_Oct_2008_09_26_16_+1100_2fVGth8jbNVm4noY--
