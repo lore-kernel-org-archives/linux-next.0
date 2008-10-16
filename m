@@ -1,42 +1,52 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next:  build failure
-Date: Thu, 16 Oct 2008 12:39:17 +0200
-Message-ID: <20081016103916.GA30745@elte.hu>
-References: <20081016202907.978d00b1.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for October 16
+Date: Thu, 16 Oct 2008 21:40:17 +1100
+Message-ID: <20081016214017.ffa5f75e.sfr@canb.auug.org.au>
+References: <20081016211811.a523c8f2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__16_Oct_2008_21_40_17_+1100_dF9TU+31Hmb6er6j"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:33422 "EHLO mx3.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34114 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751534AbYJPKjk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Oct 2008 06:39:40 -0400
-Content-Disposition: inline
-In-Reply-To: <20081016202907.978d00b1.sfr@canb.auug.org.au>
+	id S1751183AbYJPKkY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Oct 2008 06:40:24 -0400
+In-Reply-To: <20081016211811.a523c8f2.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jeremy Fitzhardinge <jeremy@goop.org>, linux-next@vger.kernel.org, ppc-dev <linuxppc-dev@ozlabs.org>, Andrew Morton <akpm@linux-foundation.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
+--Signature=_Thu__16_Oct_2008_21_40_17_+1100_dF9TU+31Hmb6er6j
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Thu, 16 Oct 2008 21:18:11 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> New trees:
+> 	iommu
+> 	watchdog
+> 	proc
 
-> Hi all,
-> 
-> Today's linux-next build (powerpc allyesconfig) failed like this:
-> 
-> In file included from arch/powerpc/include/asm/mmu-hash64.h:17,
->                  from arch/powerpc/include/asm/mmu.h:8,
->                  from arch/powerpc/include/asm/pgtable.h:8,
->                  from arch/powerpc/mm/slb.c:20:
-> arch/powerpc/include/asm/page.h:76: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'memstart_addr'
-> arch/powerpc/include/asm/page.h:77: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'kernstart_addr'
-> 
-> Caused by commit 600715dcdf567c86f8b2c6173fcfb4b873e25a19 ("generic: add
-> phys_addr_t for holding physical addresses") from the tip-core tree.
-> This only fails if CONFIG_RELOCATABLE is set.
-> 
-> I have applied the patch below.
+	uwb
 
-applied to tip/core/urgent, thanks Stephen!
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-	Ingo
+--Signature=_Thu__16_Oct_2008_21_40_17_+1100_dF9TU+31Hmb6er6j
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkj3GhEACgkQjjKRsyhoI8xoowCdGtk0W7OPJ02D384prljdGpvs
+ZWwAnjnuIbFgeIXkomzzkXRX1NfeI7po
+=9cMS
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__16_Oct_2008_21_40_17_+1100_dF9TU+31Hmb6er6j--
