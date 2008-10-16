@@ -1,57 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure
-Date: Thu, 16 Oct 2008 20:28:56 +1100
-Message-ID: <20081016202856.3dcaeac7.sfr@canb.auug.org.au>
+Subject: linux-next:  build failure
+Date: Thu, 16 Oct 2008 20:29:07 +1100
+Message-ID: <20081016202907.978d00b1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50158 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50163 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753526AbYJPKeQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Oct 2008 06:34:16 -0400
+	id S1753527AbYJPKeX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Oct 2008 06:34:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Eric Van Hensbergen <ericvh@gmail.com>
-Cc: linux-next@vger.kernel.org
+To: Jeremy Fitzhardinge <jeremy@goop.org>
+Cc: linux-next@vger.kernel.org, ppc-dev <linuxppc-dev@ozlabs.org>, Ingo Molnar <mingo@elte.hu>, Andrew Morton <akpm@linux-foundation.org>
 
-Hi Eric,
+Hi all,
 
 Today's linux-next build (powerpc allyesconfig) failed like this:
 
-net/9p/client.c: At top level:
-net/9p/client.c:698: error: __ksymtab_p9_client_version causes a section type conflict
+In file included from arch/powerpc/include/asm/mmu-hash64.h:17,
+                 from arch/powerpc/include/asm/mmu.h:8,
+                 from arch/powerpc/include/asm/pgtable.h:8,
+                 from arch/powerpc/mm/slb.c:20:
+arch/powerpc/include/asm/page.h:76: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'memstart_addr'
+arch/powerpc/include/asm/page.h:77: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'kernstart_addr'
 
-Caused by commit f0cad54013b07371dcefd8fa36ff1d3918b49695 ("9p: rework
-client code to use new protocol support functions") from the v9fs tree
-which exported a static function.  I have applied the following patch.
+Caused by commit 600715dcdf567c86f8b2c6173fcfb4b873e25a19 ("generic: add
+phys_addr_t for holding physical addresses") from the tip-core tree.
+This only fails if CONFIG_RELOCATABLE is set.
 
+I have applied the patch below.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
+>From 3e3a6a5f9479a4d35070c15f863a8635e9865058 Mon Sep 17 00:00:00 2001
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 16 Oct 2008 20:27:24 +1100
-Subject: [PATCH] v9fs: don't export static functions
+Date: Thu, 16 Oct 2008 20:07:00 +1100
+Subject: [PATCH] tip-core/powerpc: phys_addr_t has moved to linux/types.h
+
+So include that instead of asm/types.h in asm/page.h for
+the CONFIG_RELOCATABLE case.
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- net/9p/client.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ arch/powerpc/include/asm/page.h |    6 +++++-
+ 1 files changed, 5 insertions(+), 1 deletions(-)
 
-diff --git a/net/9p/client.c b/net/9p/client.c
-index 4cd9e70..7621fe8 100644
---- a/net/9p/client.c
-+++ b/net/9p/client.c
-@@ -655,7 +655,7 @@ static void p9_fid_destroy(struct p9_fid *fid)
- 	kfree(fid);
- }
+diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
+index 64e1445..5ac51e6 100644
+--- a/arch/powerpc/include/asm/page.h
++++ b/arch/powerpc/include/asm/page.h
+@@ -10,9 +10,13 @@
+  * 2 of the License, or (at your option) any later version.
+  */
  
--static int p9_client_version(struct p9_client *c)
-+int p9_client_version(struct p9_client *c)
- {
- 	int err = 0;
- 	struct p9_req_t *req;
++#ifndef __ASSEMBLY__
++#include <linux/types.h>
++#else
++#include <asm/types.h>
++#endif
+ #include <asm/asm-compat.h>
+ #include <asm/kdump.h>
+-#include <asm/types.h>
+ 
+ /*
+  * On PPC32 page size is 4K. For PPC64 we support either 4K or 64K software
 -- 
 1.5.6.5
