@@ -1,38 +1,48 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: manual merge of the pci tree
-Date: Thu, 16 Oct 2008 05:32:30 -0700
-Message-ID: <200810160532.30691.jbarnes@virtuousgeek.org>
-References: <20081016142418.c94967d8.sfr@canb.auug.org.au>
+From: Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: linux-next: origin tree build failure
+Date: Thu, 16 Oct 2008 13:58:17 +0100
+Message-ID: <20081016125817.GA28746@linux-mips.org>
+References: <20081016113112.698aa9ae.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from outbound-mail-33.bluehost.com ([69.89.18.153]:57567 "HELO
-	outbound-mail-33.bluehost.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1751072AbYJPMjQ (ORCPT
+Received: from h4.dl5rb.org.uk ([81.2.74.4]:50868 "EHLO
+	ditditdahdahdah-dahdahdahditdit.dl5rb.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751255AbYJPNTh (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Oct 2008 08:39:16 -0400
-In-Reply-To: <20081016142418.c94967d8.sfr@canb.auug.org.au>
+	Thu, 16 Oct 2008 09:19:37 -0400
 Content-Disposition: inline
+In-Reply-To: <20081016113112.698aa9ae.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Vincent Legoll <vincent.legoll@gmail.com>, Sitsofe Wheeler <sitsofe@yahoo.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, LKML <linux-kernel@vger.kernel.org>
 
-On Wednesday, October 15, 2008 8:24 pm Stephen Rothwell wrote:
-> Hi Jesse,
->
-> Today's linux-next merge of the pci tree got a conflict in
-> drivers/pci/pcie/aspm.c between commit
-> e1f4f59d1ab9ebac44830d6ae450fb358ac559d3 ("PCI: Fix pcie_aspm=force")
-> from Linus' tree and commit 4f56ffe4ff214284f9c92037f9ad5f389a74bb84
-> ("PCI: probing debug message uniformization") from the pci tree.
->
-> Just context.  I fixed it up (see below).
+On Thu, Oct 16, 2008 at 11:31:12AM +1100, Stephen Rothwell wrote:
 
-Yeah I sent that fix to Linus but it's not in my linux-next tree.  Looks like 
-I'll have to do some re-basing to fix up Ben's PPC legacy stuff so I can take 
-care of it then.
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> 
+> drivers/rtc/rtc-ds1286.c: In function 'ds1286_rtc_read':
+> drivers/rtc/rtc-ds1286.c:33: error: implicit declaration of function '__raw_readl'
+> drivers/rtc/rtc-ds1286.c: In function 'ds1286_rtc_write':
+> drivers/rtc/rtc-ds1286.c:38: error: implicit declaration of function '__raw_writel'
+> drivers/rtc/rtc-ds1286.c: In function 'ds1286_probe':
+> drivers/rtc/rtc-ds1286.c:345: error: implicit declaration of function 'ioremap'
+> drivers/rtc/rtc-ds1286.c:345: warning: assignment makes pointer from integer without a cast
+> drivers/rtc/rtc-ds1286.c:365: error: implicit declaration of function 'iounmap'
+> 
+> Caused by commit 5f119f29063c9a9bf1ab40112c02710c2db84f29 ("MIPS: DS1286:
+> New RTC driver") which presumably needs to depend in some architecture or
+> feature.
+> 
+> I just reverted it for now.
 
-Jesse
+It's just missing an include which Geert has already posted in a different
+thread.
+
+As far as I can say these two RTC chips are only being uses in MIPS
+systems so maybe it's a good idea to allow configuring the driver if it
+builds and does no harm on another platform/architecture?  I can cook up
+a patch if that's what people want.
+
+  Ralf
