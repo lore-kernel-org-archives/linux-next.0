@@ -1,53 +1,49 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next:  build failure
-Date: Thu, 16 Oct 2008 18:14:05 +0200
-Message-ID: <20081016161405.GA14440@elte.hu>
-References: <20081016202907.978d00b1.sfr@canb.auug.org.au> <20081016103916.GA30745@elte.hu> <48F767C5.8000207@goop.org>
+From: Dmitry Baryshkov <dbaryshkov@gmail.com>
+Subject: Re: linux-next: usb tree build failure
+Date: Thu, 16 Oct 2008 21:27:51 +0400
+Message-ID: <48F77997.80309@gmail.com>
+References: <20081014145917.708bace4.sfr@canb.auug.org.au> <20081016160503.GB27769@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:50850 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751226AbYJPQOo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Oct 2008 12:14:44 -0400
-Content-Disposition: inline
-In-Reply-To: <48F767C5.8000207@goop.org>
+Received: from nf-out-0910.google.com ([64.233.182.186]:56498 "EHLO
+	nf-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759495AbYJPR2W (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Oct 2008 13:28:22 -0400
+Received: by nf-out-0910.google.com with SMTP id d3so63162nfc.21
+        for <linux-next@vger.kernel.org>; Thu, 16 Oct 2008 10:28:20 -0700 (PDT)
+In-Reply-To: <20081016160503.GB27769@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeremy Fitzhardinge <jeremy@goop.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, ppc-dev <linuxppc-dev@ozlabs.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-
-* Jeremy Fitzhardinge <jeremy@goop.org> wrote:
-
-> Ingo Molnar wrote:
->> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Greg KH wrote:
+> On Tue, Oct 14, 2008 at 02:59:17PM +1100, Stephen Rothwell wrote:
+>> Hi Greg,
 >>
->>   
->>> Hi all,
->>>
->>> Today's linux-next build (powerpc allyesconfig) failed like this:
->>>
->>> In file included from arch/powerpc/include/asm/mmu-hash64.h:17,
->>>                  from arch/powerpc/include/asm/mmu.h:8,
->>>                  from arch/powerpc/include/asm/pgtable.h:8,
->>>                  from arch/powerpc/mm/slb.c:20:
->>> arch/powerpc/include/asm/page.h:76: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'memstart_addr'
->>> arch/powerpc/include/asm/page.h:77: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'kernstart_addr'
->>>
->>> Caused by commit 600715dcdf567c86f8b2c6173fcfb4b873e25a19 ("generic: add
->>> phys_addr_t for holding physical addresses") from the tip-core tree.
->>> This only fails if CONFIG_RELOCATABLE is set.
->>>
->>> I have applied the patch below.
->>>     
+>> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 >>
->> applied to tip/core/urgent, thanks Stephen!
->>   
->
-> Shouldn't this go via a ppc tree?  Won't having ppc changes in tip.git  
-> make people grumpy?
+>> drivers/usb/Kconfig:63:error: found recursive dependency: USB -> USB_OHCI_HCD -> I2C -> MCU_MPC8349EMITX -> ARCH_REQUIRE_GPIOLIB -> GPIOLIB -> MFD_TC6393XB -> USB_ARCH_HAS_OHCI -> USB_ARCH_HAS_HCD -> MOUSE_APPLETOUCH -> USB
+>> make[2]: *** [ppc64_defconfig] Error 1
+>> make[1]: *** [ppc64_defconfig] Error 2
+>> make: *** [sub-make] Error 2
+>>
+>> Direct cause is commit 51f54ddba226b3b33f55d1be058e809fcfdc30c4 ("USB:
+>> ohci: add support for tmio-ohci cell") which I have reverted.
+> 
+> Dmitry, I can reproduce this with this patch on top of Linus's tree
+> right now.  Care to fix it up?
 
-it was broken via a generic topic: tip/core/resources, not the x86 tree.
+I'll look into it in a few hours. However if I get it correct, I don't 
+know how to solve it, strictly speaking. Indeed, it adds a possibility
+to have the OHCI if TC6393XB driver is loaded, thus adding dependancy
+USB_ARCH_HAS_OHCI->MFD_TC6393XB closing this dependancy circle. In 
+reality it isn't a problem, since e.g. MCU_MPC8349EMITX is PPC-only (if 
+it isn't, it's a bug) and on the other hand MFD_TC6393XB is arm-only 
+thing which correctly depends on ARM.
 
-	Ingo
+-- 
+With best wishes
+Dmitry
