@@ -1,33 +1,29 @@
-From: Alexey Dobriyan <adobriyan-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: linux-next: Tree for October 16
-Date: Thu, 16 Oct 2008 17:47:06 +0400
-Message-ID: <20081016134706.GA13417@x200.localdomain>
-References: <20081016211811.a523c8f2.sfr@canb.auug.org.au>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: manual merge of the scsi-post-merge tree
+Date: Thu, 16 Oct 2008 08:56:24 -0500
+Message-ID: <1224165384.3322.1.camel@localhost.localdomain>
+References: <20081016194143.69fe282c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20081016211811.a523c8f2.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from accolon.hansenpartnership.com ([76.243.235.52]:55386 "EHLO
+	accolon.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752269AbYJPN4c (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Oct 2008 09:56:32 -0400
+In-Reply-To: <20081016194143.69fe282c.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-On alpha-smp-n-debug-n:
+On Thu, 2008-10-16 at 19:41 +1100, Stephen Rothwell wrote:
+> I attempted to merge this tree, but it appears that it already applied or
+> even updated.  So I have dropped it for today.
 
-drivers/usb/host/ehci-dbg.c:839: error: implicit declaration of function 'vmalloc'
+Yes, sorry; now all the precursors are upstream I moved its contents to
+scsi-misc.  I'll clean the tree out and make merge base equal to head so
+it won't cause trouble until it's needed again.
 
---- a/drivers/usb/host/ehci-hcd.c
-+++ b/drivers/usb/host/ehci-hcd.c
-@@ -34,6 +34,7 @@
- #include <linux/moduleparam.h>
- #include <linux/dma-mapping.h>
- #include <linux/debugfs.h>
-+#include <linux/vmalloc.h>
- 
- #include "../core/hcd.h"
- 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+James
