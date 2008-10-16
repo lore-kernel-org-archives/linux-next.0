@@ -1,56 +1,57 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: Re: linux-next: Tree for October 16
-Date: Thu, 16 Oct 2008 22:41:18 +0400
-Message-ID: <20081016184118.GA19976@x200.localdomain>
+From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Subject: [PATCH] linux-next: Tree for October 16 - build failure at MAL
+	support on powerpc
+Date: Fri, 17 Oct 2008 00:53:20 +0530
+Message-ID: <20081016192320.GA7534@linux.vnet.ibm.com>
 References: <20081016211811.a523c8f2.sfr@canb.auug.org.au>
+Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nf-out-0910.google.com ([64.233.182.184]:60479 "EHLO
-	nf-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751892AbYJPSiU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Oct 2008 14:38:20 -0400
-Received: by nf-out-0910.google.com with SMTP id d3so85098nfc.21
-        for <linux-next@vger.kernel.org>; Thu, 16 Oct 2008 11:38:18 -0700 (PDT)
+Received: from E23SMTP04.au.ibm.com ([202.81.18.173]:50791 "EHLO
+	e23smtp04.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753042AbYJPTXc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Oct 2008 15:23:32 -0400
 Content-Disposition: inline
 In-Reply-To: <20081016211811.a523c8f2.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, dhowells@redhat.com
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, benh@kernel.crashing.org, jwboyer@linux.vnet.ibm.com, apw@shadowen.org
 
-on i386-smp-n-debug-n-preempt-n-paravirt-n-mem-01:
-cred.h compile fixes.
+Hi Stephen,
 
+        next-20081016 kernel build fails on powerpc, with build error
 
---- a/fs/coda/file.c
-+++ b/fs/coda/file.c
-@@ -6,7 +6,7 @@
-  * Carnegie Mellon encourages users of this code to contribute improvements
-  * to the Coda project. Contact Peter Braam <coda@cs.cmu.edu>.
-  */
--
-+#include <linux/cred.h>
- #include <linux/types.h>
- #include <linux/kernel.h>
- #include <linux/time.h>
-diff --git a/fs/nfsctl.c b/fs/nfsctl.c
-index cc4ef26..830df68 100644
---- a/fs/nfsctl.c
-+++ b/fs/nfsctl.c
-@@ -4,6 +4,7 @@
-  *	This should eventually move to userland.
-  *
-  */
-+#include <linux/cred.h>
- #include <linux/types.h>
- #include <linux/file.h>
- #include <linux/fs.h>
-@@ -13,6 +14,7 @@
- #include <linux/linkage.h>
- #include <linux/namei.h>
- #include <linux/mount.h>
-+#include <linux/sched.h>
- #include <linux/syscalls.h>
- #include <asm/uaccess.h>
+drivers/net/ibm_newemac/mal.c: In function 'mal_txeob':
+drivers/net/ibm_newemac/mal.c:284: error: implicit declaration of function 'mtdcri'
+drivers/net/ibm_newemac/mal.c:284: error: 'SDR0' undeclared (first use in this function)
+drivers/net/ibm_newemac/mal.c:284: error: (Each undeclared identifier is reported only once
+drivers/net/ibm_newemac/mal.c:284: error: for each function it appears in.)
+drivers/net/ibm_newemac/mal.c:285: error: implicit declaration of function 'mfdcri'
+drivers/net/ibm_newemac/mal.c: In function 'mal_rxeob':
+drivers/net/ibm_newemac/mal.c:302: error: 'SDR0' undeclared (first use in this function)
+make[3]: *** [drivers/net/ibm_newemac/mal.o] Error 1
+
+Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+---
+ drivers/net/ibm_newemac/mal.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/net/ibm_newemac/mal.c b/drivers/net/ibm_newemac/mal.c
+index 1839d3f..c5f91a6 100644
+--- a/drivers/net/ibm_newemac/mal.c
++++ b/drivers/net/ibm_newemac/mal.c
+@@ -29,6 +29,7 @@
  
+ #include "core.h"
+ #include <asm/dcr-regs.h>
++#include <asm/dcr-native.h>
+ 
+ static int mal_count;
+ 
+-- 
+Thanks & Regards,
+Kamalesh Babulal,
+Linux Technology Center,
+IBM, ISTL.
