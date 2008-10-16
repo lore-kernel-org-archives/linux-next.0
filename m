@@ -1,36 +1,37 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build warning
-Date: Thu, 16 Oct 2008 09:04:12 -0700
-Message-ID: <20081016160412.GA27769@kroah.com>
-References: <20081016170410.bf919b38.sfr@canb.auug.org.au>
+Subject: Re: linux-next: usb tree build failure
+Date: Thu, 16 Oct 2008 09:05:03 -0700
+Message-ID: <20081016160503.GB27769@kroah.com>
+References: <20081014145917.708bace4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:42484 "EHLO coco.kroah.org"
+Received: from kroah.org ([198.145.64.141]:42489 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1754762AbYJPQIY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Oct 2008 12:08:24 -0400
+	id S1754762AbYJPQIZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Oct 2008 12:08:25 -0400
 Content-Disposition: inline
-In-Reply-To: <20081016170410.bf919b38.sfr@canb.auug.org.au>
+In-Reply-To: <20081014145917.708bace4.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Hannes Reinecke <hare@suse.de>, linux-next@vger.kernel.org
+Cc: linux-next@vger.kernel.org, Dmitry Baryshkov <dbaryshkov@gmail.com>
 
-On Thu, Oct 16, 2008 at 05:04:10PM +1100, Stephen Rothwell wrote:
+On Tue, Oct 14, 2008 at 02:59:17PM +1100, Stephen Rothwell wrote:
 > Hi Greg,
 > 
-> Today's linux-next build gives this warning:
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 > 
-> drivers/net/wireless/iwlwifi/iwl3945-base.c: In function 'iwl3945_pci_probe':
-> drivers/net/wireless/iwlwifi/iwl3945-base.c:7871: warning: passing argument 1 of 'dev_get_drvdata' from incompatible pointer type
+> drivers/usb/Kconfig:63:error: found recursive dependency: USB -> USB_OHCI_HCD -> I2C -> MCU_MPC8349EMITX -> ARCH_REQUIRE_GPIOLIB -> GPIOLIB -> MFD_TC6393XB -> USB_ARCH_HAS_OHCI -> USB_ARCH_HAS_HCD -> MOUSE_APPLETOUCH -> USB
+> make[2]: *** [ppc64_defconfig] Error 1
+> make[1]: *** [ppc64_defconfig] Error 2
+> make: *** [sub-make] Error 2
 > 
-> Git blame points at commit 64d3bd686e868597694bb3088bdfe2de362c8358
-> ("Driver core: Use dev_get_drvdata() accessors").  I suspect that the
-> conversion in iwl3945_pci_probe should not have been done.
+> Direct cause is commit 51f54ddba226b3b33f55d1be058e809fcfdc30c4 ("USB:
+> ohci: add support for tmio-ohci cell") which I have reverted.
 
-Yes, I'm going to drop that patch and split it up into the proper
-pieces, like it should have in the first place :(
+Dmitry, I can reproduce this with this patch on top of Linus's tree
+right now.  Care to fix it up?
 
 thanks,
 
