@@ -1,34 +1,26 @@
-From: Krzysztof Halasa <khc@pm.waw.pl>
-Subject: Re: linux-next: manual merge of the hdlc tree
-Date: Fri, 17 Oct 2008 16:30:38 +0200
-Message-ID: <m3tzbbway9.fsf@maximus.localdomain>
-References: <20081017165046.b5a05953.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: David Howells <dhowells@redhat.com>
+Subject: Re: linux-next: creds tree build failure
+Date: Fri, 17 Oct 2008 17:17:47 +0100
+Message-ID: <1336.1224260267@redhat.com>
+References: <alpine.LFD.2.00.0810171937040.11344@raven.themaw.net> <alpine.LFD.2.00.0810171925220.10714@raven.themaw.net> <20081017172546.ee699528.sfr@canb.auug.org.au> <6672.1224243287@redhat.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from khc.piap.pl ([195.187.100.11]:58322 "EHLO khc.piap.pl"
+Received: from mx2.redhat.com ([66.187.237.31]:60296 "EHLO mx2.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752358AbYJQOak (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 17 Oct 2008 10:30:40 -0400
-In-Reply-To: <20081017165046.b5a05953.sfr@canb.auug.org.au> (Stephen Rothwell's message of "Fri\, 17 Oct 2008 16\:50\:46 +1100")
+	id S1753677AbYJQQSE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 17 Oct 2008 12:18:04 -0400
+In-Reply-To: <alpine.LFD.2.00.0810171937040.11344@raven.themaw.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+To: Ian Kent <raven@themaw.net>
+Cc: dhowells@redhat.com, Stephen Rothwell <sfr@canb.auug.org.au>, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-Hi Stephen,
+Ian Kent <raven@themaw.net> wrote:
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+> Right, I've got some updates to send to Andrew.
+> Would it be best for me to add this in those or would it be best for 
+> someone else here to do it?
 
-> Today's linux-next merge of the hdlc tree got a conflict in
-> Documentation/DocBook/Makefile between commit
-> 7e3975617df8dd8b7fd94f14200abdec9f71729e ("Remove videobook.tmpl") from
-> Linus' tree and commit 9c7205161b03a43861765a26fc72f5a00fdadf75 ("WAN:
-> syncppp.c is no longer used by any kernel code. Remove it") from the hdlc
-> tree.
->
-> Overlapping changes.  I fixed it up (see below).
+I believe it should be fixed in linux-next, if not now then next time he
+redoes it.
 
-Thanks. I will update to have the latest Linus' tree.
--- 
-Krzysztof Halasa
+David
