@@ -1,53 +1,33 @@
-From: "Randy.Dunlap" <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for October 17
-Date: Fri, 17 Oct 2008 09:18:36 -0700 (PDT)
-Message-ID: <Pine.LNX.4.64.0810170917200.685@shark.he.net>
-References: <20081017194045.202e6271.sfr@canb.auug.org.au>
- <19f34abd0810170230s755aa0e4vea38c26e093e173c@mail.gmail.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: BUG: sleeping function called from invalid context at
+	kernel/rwsem.c:131 XFS? (was: Re: linux-next: Tree for October 17)
+Date: Fri, 17 Oct 2008 12:41:16 -0400
+Message-ID: <20081017164116.GA17375@infradead.org>
+References: <a4423d670810170543vd6b4c39p44bf125610d8540@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xenotime.net ([66.160.160.81]:50305 "HELO xenotime.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-	id S1753791AbYJQQSj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 17 Oct 2008 12:18:39 -0400
-Received: from shark.he.net ([66.160.160.2]) by xenotime.net for <linux-next@vger.kernel.org>; Fri, 17 Oct 2008 09:18:36 -0700
-In-Reply-To: <19f34abd0810170230s755aa0e4vea38c26e093e173c@mail.gmail.com>
+Received: from bombadil.infradead.org ([18.85.46.34]:48648 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755440AbYJQQlT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Oct 2008 12:41:19 -0400
+Content-Disposition: inline
+In-Reply-To: <a4423d670810170543vd6b4c39p44bf125610d8540@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vegard Nossum <vegard.nossum@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Eric Van Hensbergen <ericvh@gmail.com>, Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: xfs@oss.sgi.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, 17 Oct 2008, Vegard Nossum wrote:
+On Fri, Oct 17, 2008 at 04:43:07PM +0400, Alexander Beregalov wrote:
+> It is SMP x86_64, rootfs is on XFS
 
-> On Fri, Oct 17, 2008 at 10:40 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi all,
-> >
-> > Today's tree will not build for powerpc allyesconfig (libc aborts the
-> > link due to a free() problem), sparc(32) defconfig and probably some
-> > other configurations.
-> 
-> Hi, I ran into this with slightly modified fedora config:
-> 
->   CC      net/9p/protocol.o
-> net/9p/protocol.c: In function 'p9pdu_finalize':
-> net/9p/protocol.c:545: error: 'p9_debug_level' undeclared (first use
-> in this function)
-> net/9p/protocol.c:545: error: (Each undeclared identifier is reported only once
-> net/9p/protocol.c:545: error: for each function it appears in.)
-> net/9p/protocol.c:545: error: 'P9_DEBUG_PKT' undeclared (first use in
-> this function)
-> make[2]: *** [net/9p/protocol.o] Error 1
-> make[1]: *** [net/9p] Error 2
-> make: *** [net] Error 2
-> 
-> ...and couldn't find it in the automatic build test results either. 9P
-> maintainers Cced.
+The message comes from code in XFS, but I really wonder where the atomic
+context comes from.  xfs_iget_core has a few changes in the tree pulled
+into todays Linux-next, but it's still missing the recent updates
+redoing this area completely.  In some ways it looks like this process
+has the the atomic context flag left pending somewhere, but that should
+also trigger warnings on the VFS locks like i_mutex.
 
-This build failure happened with 20081016 also.
+Very misterious.
 
-There are plenty of randconfig build failures and not enough time
-in the day to fix all of them before Stephen produces the next next.
-
--- 
-~Randy
+IS there a specific workload you can reproduce this with?
