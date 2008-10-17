@@ -1,53 +1,50 @@
-From: Dmitry <dbaryshkov@gmail.com>
-Subject: Re: linux-next: usb tree build failure
-Date: Fri, 17 Oct 2008 04:41:50 +0400
-Message-ID: <bc64b4640810161741g5329d8c1od6910f05352370b8@mail.gmail.com>
-References: <20081014145917.708bace4.sfr@canb.auug.org.au>
-	 <20081016160503.GB27769@kroah.com>
-	 <20081016213613.GB11876@doriath.ww600.siemens.net>
-	 <20081017112610.83a67160.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the v9fs tree
+Date: Fri, 17 Oct 2008 15:17:29 +1100
+Message-ID: <20081017151729.0cd36dae.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__17_Oct_2008_15_17_29_+1100_9jyTOneylpf9QvEE"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from yw-out-2324.google.com ([74.125.46.30]:10594 "EHLO
-	yw-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751134AbYJQAlv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Oct 2008 20:41:51 -0400
-Received: by yw-out-2324.google.com with SMTP id 9so71114ywe.1
-        for <linux-next@vger.kernel.org>; Thu, 16 Oct 2008 17:41:50 -0700 (PDT)
-In-Reply-To: <20081017112610.83a67160.sfr@canb.auug.org.au>
-Content-Disposition: inline
+Received: from chilli.pcug.org.au ([203.10.76.44]:36431 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750838AbYJQERj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 17 Oct 2008 00:17:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org
+To: Eric Van Hensbergen <ericvh@gmail.com>
+Cc: linux-next@vger.kernel.org
 
-2008/10/17 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Hi Dmitry,
->
-> On Fri, 17 Oct 2008 01:36:13 +0400 Dmitry Baryshkov <dbaryshkov@gmail.com> wrote:
->>
->> After few tries I can come with pretty simple but pretty strange solution:
->>
->> >From 1c6dd41e074c5f526fc29b00a2bf265497d2819d Mon Sep 17 00:00:00 2001
->> From: Dmitry Baryshkov <dbaryshkov@gmail.com>
->> Date: Fri, 17 Oct 2008 01:30:15 +0400
->> Subject: [PATCH] USB: unbreak recursive dependancy
->>
->> After addition of TMIO usb driver Kconfig sees the recursive dependency
->> Break it by rephrasing ARCH_PNX4008 OHCI deps.
->
-> I will add this to today's linux-next, thanks.
+--Signature=_Fri__17_Oct_2008_15_17_29_+1100_9jyTOneylpf9QvEE
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thank you. However I suggest to take this as a precaution. As kernel
-grows, various interdeps
-also grow. I fear that soon we will have to rewrite Kconfig
-depencencies to take care
-upon impossible combinations of symbols (the chain that raised this
-topic is impossible,
-as I said before).
+Hi Eric,
 
--- 
-With best wishes
-Dmitry
+Today's linux-next merge of the v9fs tree got a conflict in
+include/net/9p/9p.h between commit
+d5c003b4d1690e666dbab02bc8e705947baa848c ("include: replace __FUNCTION__
+with __func__") from Linus' tree and commit
+33363af997469100ed3f56c2eb43da06f2a1795b ("9p: eliminate depricated conv
+functions") from the v9fs tree.
+
+The latter included the former's change, so I just used the latter.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__17_Oct_2008_15_17_29_+1100_9jyTOneylpf9QvEE
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkj4EdkACgkQjjKRsyhoI8wGvACfUUDbcOX5zjIRN0ehrSlUNQev
+xoAAnjW3rgD2u9C55SRGtqjRbJ6ancxW
+=yqOe
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__17_Oct_2008_15_17_29_+1100_9jyTOneylpf9QvEE--
