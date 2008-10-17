@@ -1,53 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: creds tree build failure
-Date: Fri, 17 Oct 2008 18:56:10 +1100
-Message-ID: <20081017185610.327d7219.sfr@canb.auug.org.au>
-References: <20081017172546.ee699528.sfr@canb.auug.org.au>
-	<alpine.LRH.1.10.0810171836310.19670@tundra.namei.org>
+Subject: linux-next: build failure
+Date: Fri, 17 Oct 2008 18:59:11 +1100
+Message-ID: <20081017185911.45295d6b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__17_Oct_2008_18_56_10_+1100_9aWPAOuhDsFPOvPl"
+ boundary="Signature=_Fri__17_Oct_2008_18_59_11_+1100_SZ752k8x3hY=B6F9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47773 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47919 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751501AbYJQH4X (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 17 Oct 2008 03:56:23 -0400
-In-Reply-To: <alpine.LRH.1.10.0810171836310.19670@tundra.namei.org>
+	id S1753333AbYJQH7T (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 17 Oct 2008 03:59:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: David Howells <dhowells@redhat.com>, linux-next@vger.kernel.org, Ian Kent <raven@themaw.net>, Andrew Morton <akpm@linux-foundation.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Fri__17_Oct_2008_18_56_10_+1100_9aWPAOuhDsFPOvPl
+--Signature=_Fri__17_Oct_2008_18_59_11_+1100_SZ752k8x3hY=B6F9
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+Hi ,
 
-On Fri, 17 Oct 2008 18:36:58 +1100 (EST) James Morris <jmorris@namei.org> w=
-rote:
->
-> When did you fetch my tree?  I fixed this earlier today.
+Today's linux-next build (sparc defconfig) failed like this:
 
-I always fetch the tree in the morning my time (to get a mostly
-consistent snapshot).  Today it was about 9am (+1100).
+.tmp_kallsyms2.o(.rodata+0x0): In function `kallsyms_addresses':
+: relocation truncated to fit: R_SPARC_32 _text
+.tmp_kallsyms2.o(.rodata+0x4): In function `kallsyms_addresses':
+: relocation truncated to fit: R_SPARC_32 _text
+.tmp_kallsyms2.o(.rodata+0x8): In function `kallsyms_addresses':
+: relocation truncated to fit: R_SPARC_32 _text
+.tmp_kallsyms2.o(.rodata+0xc): In function `kallsyms_addresses':
+: relocation truncated to fit: R_SPARC_32 _text
+.tmp_kallsyms2.o(.rodata+0x10): In function `kallsyms_addresses':
+: relocation truncated to fit: R_SPARC_32 _text
+.tmp_kallsyms2.o(.rodata+0x14): In function `kallsyms_addresses':
+: relocation truncated to fit: R_SPARC_32 _text
+.tmp_kallsyms2.o(.rodata+0x18): In function `kallsyms_addresses':
+: relocation truncated to fit: R_SPARC_32 _text
+.tmp_kallsyms2.o(.rodata+0x1c): In function `kallsyms_addresses':
+: relocation truncated to fit: R_SPARC_32 _text
+.tmp_kallsyms2.o(.rodata+0x20): In function `kallsyms_addresses':
+: relocation truncated to fit: R_SPARC_32 _text
+.tmp_kallsyms2.o(.rodata+0x24): In function `kallsyms_addresses':
+: relocation truncated to fit: R_SPARC_32 _text
+.tmp_kallsyms2.o(.rodata+0x28): In function `kallsyms_addresses':
+: additional relocation overflows omitted from the output
 
+I have no idea what to do about this.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__17_Oct_2008_18_56_10_+1100_9aWPAOuhDsFPOvPl
+--Signature=_Fri__17_Oct_2008_18_59_11_+1100_SZ752k8x3hY=B6F9
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkj4RRoACgkQjjKRsyhoI8zkfwCgqA5p3HYT4+b7oFe71t16SV4a
-v2MAoKT/dw52dksKLY2etkishkSnK1vA
-=l3K4
+iEYEARECAAYFAkj4Rc8ACgkQjjKRsyhoI8wOyQCaAr7/wPcjYtQr4shSKidObv9l
+H1UAoL2CVqFNAbeQHoRevIFLiumr+snC
+=FwT6
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__17_Oct_2008_18_56_10_+1100_9aWPAOuhDsFPOvPl--
+--Signature=_Fri__17_Oct_2008_18_59_11_+1100_SZ752k8x3hY=B6F9--
