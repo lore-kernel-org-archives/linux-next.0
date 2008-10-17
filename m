@@ -1,46 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the hdlc tree
-Date: Fri, 17 Oct 2008 16:50:46 +1100
-Message-ID: <20081017165046.b5a05953.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree
+Date: Fri, 17 Oct 2008 16:56:27 +1100
+Message-ID: <20081017165627.90d1008f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34992 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38100 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751455AbYJQFuw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 17 Oct 2008 01:50:52 -0400
+	id S1750991AbYJQF4g (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 17 Oct 2008 01:56:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Krzysztof Halasa <khc@pm.waw.pl>
-Cc: linux-next@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, Harvey Harrison <harvey.harrison@gmail.com>, Eric Anholt <eric@anholt.net>
 
-Hi Krzysztof,
+Hi Dave,
 
-Today's linux-next merge of the hdlc tree got a conflict in
-Documentation/DocBook/Makefile between commit
-7e3975617df8dd8b7fd94f14200abdec9f71729e ("Remove videobook.tmpl") from
-Linus' tree and commit 9c7205161b03a43861765a26fc72f5a00fdadf75 ("WAN:
-syncppp.c is no longer used by any kernel code. Remove it") from the hdlc
-tree.
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/i915/i915_dma.c between commit
+80a914dc05683ecfc98f9e1887fd6564846ffbec ("misc: replace __FUNCTION__
+with __func__") from Linus' tree and commit
+811c552c21f3d7fca8eb647ccf0d303378ccea7d ("i915: Use struct_mutex to
+protect ring in GEM mode") from the drm tree.
 
-Overlapping changes.  I fixed it up (see below).
+Just context changes.  I fixed it up (see below).
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc Documentation/DocBook/Makefile
-index fabc064,69f4a93..0000000
---- a/Documentation/DocBook/Makefile
-+++ b/Documentation/DocBook/Makefile
-@@@ -6,7 -6,7 +6,7 @@@
-  # To add a new book the only step required is to add the book to the
-  # list of DOCBOOKS.
+diff --cc drivers/gpu/drm/i915/i915_dma.c
+index 9ac4720,593286e..0000000
+--- a/drivers/gpu/drm/i915/i915_dma.c
++++ b/drivers/gpu/drm/i915/i915_dma.c
+@@@ -516,8 -536,11 +536,11 @@@ static int i915_dispatch_flip(struct dr
+  	drm_i915_private_t *dev_priv = dev->dev_private;
+  	RING_LOCALS;
   
-- DOCBOOKS := wanbook.xml z8530book.xml mcabook.xml \
- -DOCBOOKS := z8530book.xml mcabook.xml videobook.xml \
-++DOCBOOKS := z8530book.xml mcabook.xml \
-  	    kernel-hacking.xml kernel-locking.xml deviceiobook.xml \
-  	    procfs-guide.xml writing_usb_driver.xml networking.xml \
-  	    kernel-api.xml filesystems.xml lsm.xml usb.xml kgdb.xml \
++ 	if (!dev_priv->sarea_priv)
++ 		return -EINVAL;
++ 
+  	DRM_DEBUG("%s: page=%d pfCurrentPage=%d\n",
+ -		  __FUNCTION__,
+ +		  __func__,
+  		  dev_priv->current_page,
+  		  dev_priv->sarea_priv->pf_current_page);
+  
+@@@ -642,11 -677,17 +677,17 @@@ static int i915_cmdbuffer(struct drm_de
+  static int i915_flip_bufs(struct drm_device *dev, void *data,
+  			  struct drm_file *file_priv)
+  {
++ 	int ret;
++ 
+ -	DRM_DEBUG("%s\n", __FUNCTION__);
+ +	DRM_DEBUG("%s\n", __func__);
+  
+- 	LOCK_TEST_WITH_RETURN(dev, file_priv);
++ 	RING_LOCK_TEST_WITH_RETURN(dev, file_priv);
++ 
++ 	mutex_lock(&dev->struct_mutex);
++ 	ret = i915_dispatch_flip(dev);
++ 	mutex_unlock(&dev->struct_mutex);
+  
+- 	return i915_dispatch_flip(dev);
++ 	return ret;
+  }
+  
+  static int i915_getparam(struct drm_device *dev, void *data,
