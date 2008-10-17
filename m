@@ -1,53 +1,54 @@
-From: "Bartlomiej Zolnierkiewicz" <bzolnier@gmail.com>
-Subject: Re: linux-next: manual merge of the bdev tree
-Date: Fri, 17 Oct 2008 10:58:42 +0200
-Message-ID: <58cb370e0810170158p666c1dbcm6f7b08b4aa7bdffb@mail.gmail.com>
-References: <20081017183557.f831ab54.sfr@canb.auug.org.au>
-	 <20081017184259.b66089bc.sfr@canb.auug.org.au>
+From: "Vegard Nossum" <vegard.nossum@gmail.com>
+Subject: Re: linux-next: Tree for October 17
+Date: Fri, 17 Oct 2008 11:30:04 +0200
+Message-ID: <19f34abd0810170230s755aa0e4vea38c26e093e173c@mail.gmail.com>
+References: <20081017194045.202e6271.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rv-out-0506.google.com ([209.85.198.225]:33257 "EHLO
-	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752131AbYJQI6n (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Oct 2008 04:58:43 -0400
-Received: by rv-out-0506.google.com with SMTP id k40so446264rvb.1
-        for <linux-next@vger.kernel.org>; Fri, 17 Oct 2008 01:58:43 -0700 (PDT)
-In-Reply-To: <20081017184259.b66089bc.sfr@canb.auug.org.au>
+Received: from wa-out-1112.google.com ([209.85.146.178]:17089 "EHLO
+	wa-out-1112.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752471AbYJQJaF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Oct 2008 05:30:05 -0400
+Received: by wa-out-1112.google.com with SMTP id v27so280252wah.21
+        for <linux-next@vger.kernel.org>; Fri, 17 Oct 2008 02:30:04 -0700 (PDT)
+In-Reply-To: <20081017194045.202e6271.sfr@canb.auug.org.au>
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Eric Van Hensbergen <ericvh@gmail.com>, Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>
 
-On Fri, Oct 17, 2008 at 9:42 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Al,
+On Fri, Oct 17, 2008 at 10:40 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
 >
-> On Fri, 17 Oct 2008 18:35:57 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> Today's linux-next merge of the bdev tree got a conflict in
->> drivers/ide/ide-floppy.c between commits from the ide tree and commit
->> a55897a7d06734d1ae32124a5e19cb903c33b8e3 ("[PATCH] eliminate use of
->> ->f_flags in block methods") from the bdev tree.
->>
->> Again you don't need to patch drivers/ide/ide-floppy.c any more, but
->> drivers/ide/ide-gd.c instead.  Patch below.
+> Today's tree will not build for powerpc allyesconfig (libc aborts the
+> link due to a free() problem), sparc(32) defconfig and probably some
+> other configurations.
 
-Yes, the common ide-{disk,floppy}.c code resides now in ide-gd.c.
+Hi, I ran into this with slightly modified fedora config:
 
-> I got a bit harder after that ... so I have again dropped the bdev for
-> today.
+  CC      net/9p/protocol.o
+net/9p/protocol.c: In function 'p9pdu_finalize':
+net/9p/protocol.c:545: error: 'p9_debug_level' undeclared (first use
+in this function)
+net/9p/protocol.c:545: error: (Each undeclared identifier is reported only once
+net/9p/protocol.c:545: error: for each function it appears in.)
+net/9p/protocol.c:545: error: 'P9_DEBUG_PKT' undeclared (first use in
+this function)
+make[2]: *** [net/9p/protocol.o] Error 1
+make[1]: *** [net/9p] Error 2
+make: *** [net] Error 2
 
-This may be actually my fault since I remember Al asking me about some
-conflicting
-changes during KS/LPC? (though I later forgot about it).
+...and couldn't find it in the automatic build test results either. 9P
+maintainers Cced.
 
-Al, is stuff in bdev-next going in during this merge window?  If so
-please push it
-to Linus ASAP and I'll take care of fixing IDE patches.  Otherwise I'm
-going to push
-IDE stuff to Linus and you'll have to fixup bdev-next. ;-)
 
-Thanks,
-Bart
+Vegard
+
+-- 
+"The animistic metaphor of the bug that maliciously sneaked in while
+the programmer was not looking is intellectually dishonest as it
+disguises that the error is the programmer's own creation."
+	-- E. W. Dijkstra, EWD1036
