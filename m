@@ -1,45 +1,77 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: manual merge of the bdev tree
-Date: Fri, 17 Oct 2008 12:14:23 +0100
-Message-ID: <20081017111423.GI28946@ZenIV.linux.org.uk>
-References: <20081017183557.f831ab54.sfr@canb.auug.org.au> <20081017184259.b66089bc.sfr@canb.auug.org.au> <58cb370e0810170158p666c1dbcm6f7b08b4aa7bdffb@mail.gmail.com>
+From: Ian Kent <raven@themaw.net>
+Subject: Re: linux-next: creds tree build failure
+Date: Fri, 17 Oct 2008 19:26:34 +0800 (WST)
+Message-ID: <alpine.LFD.2.00.0810171925220.10714@raven.themaw.net>
+References: <20081017172546.ee699528.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:55499 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752859AbYJQLO1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Oct 2008 07:14:27 -0400
-Content-Disposition: inline
-In-Reply-To: <58cb370e0810170158p666c1dbcm6f7b08b4aa7bdffb@mail.gmail.com>
+Received: from out3.smtp.messagingengine.com ([66.111.4.27]:34675 "EHLO
+	out3.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754442AbYJQL0o (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 17 Oct 2008 07:26:44 -0400
+In-Reply-To: <20081017172546.ee699528.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-On Fri, Oct 17, 2008 at 10:58:42AM +0200, Bartlomiej Zolnierkiewicz wrote:
+On Fri, 17 Oct 2008, Stephen Rothwell wrote:
 
-> Yes, the common ide-{disk,floppy}.c code resides now in ide-gd.c.
+> Hi David,
 > 
-> > I got a bit harder after that ... so I have again dropped the bdev for
-> > today.
+> Today's linux-next build (powerpc_ppc64_defconfig) failed like this:
 > 
-> This may be actually my fault since I remember Al asking me about some
-> conflicting
-> changes during KS/LPC? (though I later forgot about it).
+> fs/autofs4/dev-ioctl.c: In function 'autofs_dev_ioctl_open_mountpoint':
+> fs/autofs4/dev-ioctl.c:310: error: too few arguments to function 'dentry_open'
 > 
-> Al, is stuff in bdev-next going in during this merge window?  If so
-> please push it
-> to Linus ASAP and I'll take care of fixing IDE patches.  Otherwise I'm
-> going to push
-> IDE stuff to Linus and you'll have to fixup bdev-next. ;-)
+> Commit 8d7b48e0bc5fa01a818eac713d4cb0763090cd0e ("autofs4: add
+> miscellaneous device for ioctls") added this file and interacts with
+> commit 327a669334991cb9d42e7eddf771fd760721fbf8 ("CRED: Pass credentials
+> through dentry_open()") from the creds tree.
+> 
+> I applied the following patch (which may not be correct).
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 17 Oct 2008 17:23:07 +1100
+> Subject: [PATCH] creds: autofs4 needs updating for dentry_open change
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  fs/autofs4/dev-ioctl.c |    4 +++-
+>  1 files changed, 3 insertions(+), 1 deletions(-)
+> 
+> diff --git a/fs/autofs4/dev-ioctl.c b/fs/autofs4/dev-ioctl.c
+> index 625abf5..3c299be 100644
+> --- a/fs/autofs4/dev-ioctl.c
+> +++ b/fs/autofs4/dev-ioctl.c
+> @@ -288,6 +288,7 @@ static int autofs_dev_ioctl_open_mountpoint(const char *path, dev_t devid)
+>  	struct file *filp;
+>  	struct nameidata nd;
+>  	int err, fd;
+> +	const struct cred *cred = current_cred();
+>  
+>  	fd = get_unused_fd();
+>  	if (likely(fd >= 0)) {
+> @@ -307,7 +308,8 @@ static int autofs_dev_ioctl_open_mountpoint(const char *path, dev_t devid)
+>  			goto out;
+>  		}
+>  
+> -		filp = dentry_open(nd.path.dentry, nd.path.mnt, O_RDONLY);
+> +		filp = dentry_open(nd.path.dentry, nd.path.mnt, O_RDONLY,
+> +			cred);
 
-As the matter of fact, I've got bdev-next variant covering ide-gd, so
-if you can push the relevant ide patch(es) to Linus, bdev would be ready
-to go.  Or I can push the mainline-based variant and send the pieces
-that affect ide-gd your way (basically, it's a matter of f_mode/f_flags
-stuff being touched in ide-gd instead of ide-floppy, converting your
-disk_ops->ioctl() to sane prototype and converting ide-gd.c to new
-bdev method prototypes).  Up to you...
+btw, I believe that in Andrews tree a NULL has been added to dentry_open.
 
-Al, trying to order the VFS patch-pile into mergable shape right now...
+>  		if (IS_ERR(filp)) {
+>  			err = PTR_ERR(filp);
+>  			goto out;
+> -- 
+> 1.5.6.5
+> 
+> 
