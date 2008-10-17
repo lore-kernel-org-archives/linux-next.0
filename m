@@ -1,26 +1,53 @@
-From: David Howells <dhowells@redhat.com>
-Subject: Re: linux-next: creds tree build failure
-Date: Fri, 17 Oct 2008 17:17:47 +0100
-Message-ID: <1336.1224260267@redhat.com>
-References: <alpine.LFD.2.00.0810171937040.11344@raven.themaw.net> <alpine.LFD.2.00.0810171925220.10714@raven.themaw.net> <20081017172546.ee699528.sfr@canb.auug.org.au> <6672.1224243287@redhat.com>
+From: "Randy.Dunlap" <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for October 17
+Date: Fri, 17 Oct 2008 09:18:36 -0700 (PDT)
+Message-ID: <Pine.LNX.4.64.0810170917200.685@shark.he.net>
+References: <20081017194045.202e6271.sfr@canb.auug.org.au>
+ <19f34abd0810170230s755aa0e4vea38c26e093e173c@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:60296 "EHLO mx2.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753677AbYJQQSE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 17 Oct 2008 12:18:04 -0400
-In-Reply-To: <alpine.LFD.2.00.0810171937040.11344@raven.themaw.net>
+Received: from xenotime.net ([66.160.160.81]:50305 "HELO xenotime.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+	id S1753791AbYJQQSj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 17 Oct 2008 12:18:39 -0400
+Received: from shark.he.net ([66.160.160.2]) by xenotime.net for <linux-next@vger.kernel.org>; Fri, 17 Oct 2008 09:18:36 -0700
+In-Reply-To: <19f34abd0810170230s755aa0e4vea38c26e093e173c@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ian Kent <raven@themaw.net>
-Cc: dhowells@redhat.com, Stephen Rothwell <sfr@canb.auug.org.au>, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: Vegard Nossum <vegard.nossum@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Eric Van Hensbergen <ericvh@gmail.com>, Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>
 
-Ian Kent <raven@themaw.net> wrote:
+On Fri, 17 Oct 2008, Vegard Nossum wrote:
 
-> Right, I've got some updates to send to Andrew.
-> Would it be best for me to add this in those or would it be best for 
-> someone else here to do it?
+> On Fri, Oct 17, 2008 at 10:40 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi all,
+> >
+> > Today's tree will not build for powerpc allyesconfig (libc aborts the
+> > link due to a free() problem), sparc(32) defconfig and probably some
+> > other configurations.
+> 
+> Hi, I ran into this with slightly modified fedora config:
+> 
+>   CC      net/9p/protocol.o
+> net/9p/protocol.c: In function 'p9pdu_finalize':
+> net/9p/protocol.c:545: error: 'p9_debug_level' undeclared (first use
+> in this function)
+> net/9p/protocol.c:545: error: (Each undeclared identifier is reported only once
+> net/9p/protocol.c:545: error: for each function it appears in.)
+> net/9p/protocol.c:545: error: 'P9_DEBUG_PKT' undeclared (first use in
+> this function)
+> make[2]: *** [net/9p/protocol.o] Error 1
+> make[1]: *** [net/9p] Error 2
+> make: *** [net] Error 2
+> 
+> ...and couldn't find it in the automatic build test results either. 9P
+> maintainers Cced.
 
-I believe it should be fixed in linux-next, if not now then next time he
-redoes it.
+This build failure happened with 20081016 also.
 
-David
+There are plenty of randconfig build failures and not enough time
+in the day to fix all of them before Stephen produces the next next.
+
+-- 
+~Randy
