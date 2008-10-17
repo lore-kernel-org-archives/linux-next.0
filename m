@@ -1,66 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [BUG] linux-next: Tree for October 16 - softlockup detected at
- blk_invoke_request_fn
-Date: Sat, 18 Oct 2008 00:15:33 +1100
-Message-ID: <20081018001533.06ec0d1b.sfr@canb.auug.org.au>
-References: <20081016211811.a523c8f2.sfr@canb.auug.org.au>
-	<20081016204212.GC7534@linux.vnet.ibm.com>
-	<20081017065558.GD19428@kernel.dk>
-	<20081017102456.GA8115@linux.vnet.ibm.com>
-	<20081017105753.GG19428@kernel.dk>
+From: "Bartlomiej Zolnierkiewicz" <bzolnier@gmail.com>
+Subject: Re: linux-next: manual merge of the bdev tree
+Date: Fri, 17 Oct 2008 15:24:53 +0200
+Message-ID: <58cb370e0810170624y20090878pa0dff1a41b851fd5@mail.gmail.com>
+References: <20081017183557.f831ab54.sfr@canb.auug.org.au>
+	 <20081017184259.b66089bc.sfr@canb.auug.org.au>
+	 <58cb370e0810170158p666c1dbcm6f7b08b4aa7bdffb@mail.gmail.com>
+	 <20081017111423.GI28946@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__18_Oct_2008_00_15_33_+1100_rA+J70Sxcs+wtYxl"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43948 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752744AbYJQNPn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 17 Oct 2008 09:15:43 -0400
-In-Reply-To: <20081017105753.GG19428@kernel.dk>
+Received: from rv-out-0506.google.com ([209.85.198.228]:55903 "EHLO
+	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753684AbYJQNYy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Oct 2008 09:24:54 -0400
+Received: by rv-out-0506.google.com with SMTP id k40so557024rvb.1
+        for <linux-next@vger.kernel.org>; Fri, 17 Oct 2008 06:24:54 -0700 (PDT)
+In-Reply-To: <20081017111423.GI28946@ZenIV.linux.org.uk>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
---Signature=_Sat__18_Oct_2008_00_15_33_+1100_rA+J70Sxcs+wtYxl
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Jens,
-
-On Fri, 17 Oct 2008 12:57:55 +0200 Jens Axboe <jens.axboe@oracle.com> wrote:
+On Fri, Oct 17, 2008 at 1:14 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Fri, Oct 17, 2008 at 10:58:42AM +0200, Bartlomiej Zolnierkiewicz wrote:
 >
-> OK, I'm guessing it's a merge mess in linux-next. I tried to look at the
-> diff, but it was pretty much impossible to read and even included lots
-> of things in -git already.
+>> Yes, the common ide-{disk,floppy}.c code resides now in ide-gd.c.
+>>
+>> > I got a bit harder after that ... so I have again dropped the bdev for
+>> > today.
+>>
+>> This may be actually my fault since I remember Al asking me about some
+>> conflicting
+>> changes during KS/LPC? (though I later forgot about it).
+>>
+>> Al, is stuff in bdev-next going in during this merge window?  If so
+>> please push it
+>> to Linus ASAP and I'll take care of fixing IDE patches.  Otherwise I'm
+>> going to push
+>> IDE stuff to Linus and you'll have to fixup bdev-next. ;-)
+>
+> As the matter of fact, I've got bdev-next variant covering ide-gd, so
+> if you can push the relevant ide patch(es) to Linus, bdev would be ready
 
-If you are looking at the linux-next patch on kernel.org, then it is
-relative to 2.6.27, so will contain a lot of stuff in Linus' tree.  Its
-purpose is to allow people to recreate the linux-next tree from a kernel
-tarball.
+Great!  Thanks for taking care of it.
 
-In the linux-next git tree, the point in Linus' tree that it is based on
-the the "stable" branch.  If necessary, people should be able to bisect
-between the "stabel" and "master" branches of a linux-next tree.  Or, I
-am told, between one linux-next tree and another (but that sounds painful
-to me).
+> to go.  Or I can push the mainline-based variant and send the pieces
+>
+> that affect ide-gd your way (basically, it's a matter of f_mode/f_flags
+> stuff being touched in ide-gd instead of ide-floppy, converting your
+> disk_ops->ioctl() to sane prototype and converting ide-gd.c to new
+> bdev method prototypes).  Up to you...
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+I prefer to push IDE changes first...
 
---Signature=_Sat__18_Oct_2008_00_15_33_+1100_rA+J70Sxcs+wtYxl
-Content-Type: application/pgp-signature
+[ I'll send another pull request to Linus later today. ]
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkj4j/UACgkQjjKRsyhoI8zjEACfdkb2u8Qj4If0z7qWmpm4n9/q
-f5IAoJHV9olNDzepaNvY8CrCSJrIk18I
-=uN4x
------END PGP SIGNATURE-----
-
---Signature=_Sat__18_Oct_2008_00_15_33_+1100_rA+J70Sxcs+wtYxl--
+Bart
