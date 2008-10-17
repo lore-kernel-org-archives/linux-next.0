@@ -1,63 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the creds tree
-Date: Fri, 17 Oct 2008 17:13:50 +1100
-Message-ID: <20081017171350.bb82c42a.sfr@canb.auug.org.au>
+Subject: linux-next: creds tree build failure
+Date: Fri, 17 Oct 2008 17:25:46 +1100
+Message-ID: <20081017172546.ee699528.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33681 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:32930 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750991AbYJQGN6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 17 Oct 2008 02:13:58 -0400
+	id S1753975AbYJQGjz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 17 Oct 2008 02:39:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>
-Cc: linux-next@vger.kernel.org, "Kirill A. Shutemov" <kirill@shutemov.name>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, Ian Kent <raven@themaw.net>, Andrew Morton <akpm@linux-foundation.org>
 
 Hi David,
 
-Today's linux-next merge of the creds tree got a conflict in
-include/linux/binfmts.h between commits
-53112488bebe25c0f5f8a002470046c0fe9a6c61 ("alpha: introduce field 'taso'
-into struct linux_binprm") and bf2a9a39639b8b51377905397a5005f444e9a892
-("Allow recursion in binfmt_script and binfmt_misc") from Linus' tree and
-commit e87a7f7a60e07326cd18987f1d490e42c083792c ("CRED: Make execve()
-take advantage of copy-on-write credentials") from the creds tree.
+Today's linux-next build (powerpc_ppc64_defconfig) failed like this:
 
-Just context changes.  I fixed it up (see below).
+fs/autofs4/dev-ioctl.c: In function 'autofs_dev_ioctl_open_mountpoint':
+fs/autofs4/dev-ioctl.c:310: error: too few arguments to function 'dentry_open'
+
+Commit 8d7b48e0bc5fa01a818eac713d4cb0763090cd0e ("autofs4: add
+miscellaneous device for ioctls") added this file and interacts with
+commit 327a669334991cb9d42e7eddf771fd760721fbf8 ("CRED: Pass credentials
+through dentry_open()") from the creds tree.
+
+I applied the following patch (which may not be correct).
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc include/linux/binfmts.h
-index 7394b5b,26f9c1b..0000000
---- a/include/linux/binfmts.h
-+++ b/include/linux/binfmts.h
-@@@ -35,16 -35,16 +35,20 @@@ struct linux_binprm
-  	struct mm_struct *mm;
-  	unsigned long p; /* current top of mem */
-  	unsigned int sh_bang:1,
-- 		     misc_bang:1;
-+ 		misc_bang:1,
-+ 		cred_prepared:1,/* true if creds already prepared (multiple
-+ 				 * preps happen for interpreters) */
-+ 		cap_effective:1;/* true if has elevated effective capabilities,
-+ 				 * false if not; except for init which inherits
-+ 				 * its parent's caps anyway */
- +#ifdef __alpha__
- +	unsigned int taso:1;
- +#endif
- +	unsigned int recursion_depth;
-  	struct file * file;
-- 	int e_uid, e_gid;
-- 	kernel_cap_t cap_post_exec_permitted;
-- 	bool cap_effective;
-- 	void *security;
-+ 	struct cred *cred;	/* new credentials */
-+ 	int unsafe;		/* how unsafe this exec is (mask of LSM_UNSAFE_*) */
-+ 	unsigned int per_clear;	/* bits to clear in current->personality */
-  	int argc, envc;
-  	char * filename;	/* Name of binary as seen by procps */
-  	char * interp;		/* Name of the binary really executed. Most
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 17 Oct 2008 17:23:07 +1100
+Subject: [PATCH] creds: autofs4 needs updating for dentry_open change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/autofs4/dev-ioctl.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/fs/autofs4/dev-ioctl.c b/fs/autofs4/dev-ioctl.c
+index 625abf5..3c299be 100644
+--- a/fs/autofs4/dev-ioctl.c
++++ b/fs/autofs4/dev-ioctl.c
+@@ -288,6 +288,7 @@ static int autofs_dev_ioctl_open_mountpoint(const char *path, dev_t devid)
+ 	struct file *filp;
+ 	struct nameidata nd;
+ 	int err, fd;
++	const struct cred *cred = current_cred();
+ 
+ 	fd = get_unused_fd();
+ 	if (likely(fd >= 0)) {
+@@ -307,7 +308,8 @@ static int autofs_dev_ioctl_open_mountpoint(const char *path, dev_t devid)
+ 			goto out;
+ 		}
+ 
+-		filp = dentry_open(nd.path.dentry, nd.path.mnt, O_RDONLY);
++		filp = dentry_open(nd.path.dentry, nd.path.mnt, O_RDONLY,
++			cred);
+ 		if (IS_ERR(filp)) {
+ 			err = PTR_ERR(filp);
+ 			goto out;
+-- 
+1.5.6.5
