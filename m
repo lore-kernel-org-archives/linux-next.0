@@ -1,60 +1,44 @@
-From: "Bartlomiej Zolnierkiewicz" <bzolnier@gmail.com>
-Subject: Re: linux-next: manual merge of the bdev tree
-Date: Fri, 17 Oct 2008 15:24:53 +0200
-Message-ID: <58cb370e0810170624y20090878pa0dff1a41b851fd5@mail.gmail.com>
-References: <20081017183557.f831ab54.sfr@canb.auug.org.au>
-	 <20081017184259.b66089bc.sfr@canb.auug.org.au>
-	 <58cb370e0810170158p666c1dbcm6f7b08b4aa7bdffb@mail.gmail.com>
-	 <20081017111423.GI28946@ZenIV.linux.org.uk>
+From: Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: [BUG] linux-next: Tree for October 16 - softlockup detected at blk_invoke_request_fn
+Date: Fri, 17 Oct 2008 15:37:50 +0200
+Message-ID: <20081017133750.GL19428@kernel.dk>
+References: <20081016211811.a523c8f2.sfr@canb.auug.org.au> <20081016204212.GC7534@linux.vnet.ibm.com> <20081017065558.GD19428@kernel.dk> <20081017102456.GA8115@linux.vnet.ibm.com> <20081017105753.GG19428@kernel.dk> <20081018001533.06ec0d1b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rv-out-0506.google.com ([209.85.198.228]:55903 "EHLO
-	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753684AbYJQNYy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Oct 2008 09:24:54 -0400
-Received: by rv-out-0506.google.com with SMTP id k40so557024rvb.1
-        for <linux-next@vger.kernel.org>; Fri, 17 Oct 2008 06:24:54 -0700 (PDT)
-In-Reply-To: <20081017111423.GI28946@ZenIV.linux.org.uk>
+Received: from pasmtpa.tele.dk ([80.160.77.114]:56801 "EHLO pasmtpA.tele.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754186AbYJQNii (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 17 Oct 2008 09:38:38 -0400
 Content-Disposition: inline
+In-Reply-To: <20081018001533.06ec0d1b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org
 
-On Fri, Oct 17, 2008 at 1:14 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Fri, Oct 17, 2008 at 10:58:42AM +0200, Bartlomiej Zolnierkiewicz wrote:
->
->> Yes, the common ide-{disk,floppy}.c code resides now in ide-gd.c.
->>
->> > I got a bit harder after that ... so I have again dropped the bdev for
->> > today.
->>
->> This may be actually my fault since I remember Al asking me about some
->> conflicting
->> changes during KS/LPC? (though I later forgot about it).
->>
->> Al, is stuff in bdev-next going in during this merge window?  If so
->> please push it
->> to Linus ASAP and I'll take care of fixing IDE patches.  Otherwise I'm
->> going to push
->> IDE stuff to Linus and you'll have to fixup bdev-next. ;-)
->
-> As the matter of fact, I've got bdev-next variant covering ide-gd, so
-> if you can push the relevant ide patch(es) to Linus, bdev would be ready
+On Sat, Oct 18 2008, Stephen Rothwell wrote:
+> Hi Jens,
+> 
+> On Fri, 17 Oct 2008 12:57:55 +0200 Jens Axboe <jens.axboe@oracle.com> wrote:
+> >
+> > OK, I'm guessing it's a merge mess in linux-next. I tried to look at the
+> > diff, but it was pretty much impossible to read and even included lots
+> > of things in -git already.
+> 
+> If you are looking at the linux-next patch on kernel.org, then it is
+> relative to 2.6.27, so will contain a lot of stuff in Linus' tree.  Its
+> purpose is to allow people to recreate the linux-next tree from a kernel
+> tarball.
+> 
+> In the linux-next git tree, the point in Linus' tree that it is based on
+> the the "stable" branch.  If necessary, people should be able to bisect
+> between the "stabel" and "master" branches of a linux-next tree.  Or, I
+> am told, between one linux-next tree and another (but that sounds painful
+> to me).
 
-Great!  Thanks for taking care of it.
+OK, I'll try the -git tree next time I have to lookup changes in -next.
+Thanks for the explanation!
 
-> to go.  Or I can push the mainline-based variant and send the pieces
->
-> that affect ide-gd your way (basically, it's a matter of f_mode/f_flags
-> stuff being touched in ide-gd instead of ide-floppy, converting your
-> disk_ops->ioctl() to sane prototype and converting ide-gd.c to new
-> bdev method prototypes).  Up to you...
-
-I prefer to push IDE changes first...
-
-[ I'll send another pull request to Linus later today. ]
-
-Bart
+-- 
+Jens Axboe
