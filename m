@@ -1,80 +1,54 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: linux-next: creds tree build failure
-Date: Fri, 17 Oct 2008 18:36:58 +1100 (EST)
-Message-ID: <alpine.LRH.1.10.0810171836310.19670@tundra.namei.org>
-References: <20081017172546.ee699528.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the bdev tree
+Date: Fri, 17 Oct 2008 18:29:33 +1100
+Message-ID: <20081017182933.172f6f84.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tundra.namei.org ([65.99.196.166]:59637 "EHLO tundra.namei.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45657 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751605AbYJQHhd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 17 Oct 2008 03:37:33 -0400
-In-Reply-To: <20081017172546.ee699528.sfr@canb.auug.org.au>
+	id S1751501AbYJQHls (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 17 Oct 2008 03:41:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Howells <dhowells@redhat.com>, linux-next@vger.kernel.org, Ian Kent <raven@themaw.net>, Andrew Morton <akpm@linux-foundation.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
 
-On Fri, 17 Oct 2008, Stephen Rothwell wrote:
+Hi Al,
 
-> Hi David,
-> 
-> Today's linux-next build (powerpc_ppc64_defconfig) failed like this:
-> 
-> fs/autofs4/dev-ioctl.c: In function 'autofs_dev_ioctl_open_mountpoint':
-> fs/autofs4/dev-ioctl.c:310: error: too few arguments to function 'dentry_open'
-> 
-> Commit 8d7b48e0bc5fa01a818eac713d4cb0763090cd0e ("autofs4: add
-> miscellaneous device for ioctls") added this file and interacts with
-> commit 327a669334991cb9d42e7eddf771fd760721fbf8 ("CRED: Pass credentials
-> through dentry_open()") from the creds tree.
-> 
-> I applied the following patch (which may not be correct).
+Today's linux-next merge of the bdev tree got a conflict in
+drivers/ide/ide-floppy.c between commit idefloppy_open ("ide-floppy:
+factor out generic disk handling code to ide-gd-floppy.c") from the ide
+tree and commit 30819ee65ed2e69fab5d5986ae0177795615a7fc ("[PATCH]
+introduce fmode_t, do annotations") from the bdev tree.
 
-When did you fetch my tree?  I fixed this earlier today.
-
-
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 17 Oct 2008 17:23:07 +1100
-> Subject: [PATCH] creds: autofs4 needs updating for dentry_open change
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  fs/autofs4/dev-ioctl.c |    4 +++-
->  1 files changed, 3 insertions(+), 1 deletions(-)
-> 
-> diff --git a/fs/autofs4/dev-ioctl.c b/fs/autofs4/dev-ioctl.c
-> index 625abf5..3c299be 100644
-> --- a/fs/autofs4/dev-ioctl.c
-> +++ b/fs/autofs4/dev-ioctl.c
-> @@ -288,6 +288,7 @@ static int autofs_dev_ioctl_open_mountpoint(const char *path, dev_t devid)
->  	struct file *filp;
->  	struct nameidata nd;
->  	int err, fd;
-> +	const struct cred *cred = current_cred();
->  
->  	fd = get_unused_fd();
->  	if (likely(fd >= 0)) {
-> @@ -307,7 +308,8 @@ static int autofs_dev_ioctl_open_mountpoint(const char *path, dev_t devid)
->  			goto out;
->  		}
->  
-> -		filp = dentry_open(nd.path.dentry, nd.path.mnt, O_RDONLY);
-> +		filp = dentry_open(nd.path.dentry, nd.path.mnt, O_RDONLY,
-> +			cred);
->  		if (IS_ERR(filp)) {
->  			err = PTR_ERR(filp);
->  			goto out;
-> -- 
-> 1.5.6.5
-> 
-
+The former moved the code that the latter modified.  You no longer need
+to patch drivers/ide/ide-floppy.c - I think you need to patch
+drivers/ide/ide-gd.c instead.  I added the patch below.
 -- 
-James Morris
-<jmorris@namei.org>
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+diff --git a/drivers/ide/ide-gd.c b/drivers/ide/ide-gd.c
+index d44898f..5e5090a 100644
+--- a/drivers/ide/ide-gd.c
++++ b/drivers/ide/ide-gd.c
+@@ -7,6 +7,7 @@
+ #include <linux/mutex.h>
+ #include <linux/ide.h>
+ #include <linux/hdreg.h>
++#include <linux/fs.h>
+ 
+ #if !defined(CONFIG_DEBUG_BLOCK_EXT_DEVT)
+ #define IDE_DISK_MINORS		(1 << PARTN_BITS)
+@@ -202,7 +203,7 @@ static int ide_gd_open(struct inode *inode, struct file *filp)
+ 			goto out_put_idkp;
+ 		}
+ 
+-		if ((drive->dev_flags & IDE_DFLAG_WP) && (filp->f_mode & 2)) {
++		if ((drive->dev_flags & IDE_DFLAG_WP) && (filp->f_mode & FMODE_WRITE)) {
+ 			ret = -EROFS;
+ 			goto out_put_idkp;
+ 		}
