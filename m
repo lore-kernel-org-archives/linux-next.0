@@ -1,38 +1,57 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: pci tree build failure
-Date: Sat, 18 Oct 2008 15:41:00 -0700
-Message-ID: <200810181541.00638.jbarnes@virtuousgeek.org>
-References: <20081016144105.fd0f5d5b.sfr@canb.auug.org.au> <200810152123.55165.jbarnes@virtuousgeek.org> <1224131300.8157.536.camel@pasglop>
+Date: Sun, 19 Oct 2008 15:15:26 +1100
+Message-ID: <20081019151526.2e21b2b7.sfr@canb.auug.org.au>
+References: <20081016144105.fd0f5d5b.sfr@canb.auug.org.au>
+	<200810152123.55165.jbarnes@virtuousgeek.org>
+	<1224131300.8157.536.camel@pasglop>
+	<200810181541.00638.jbarnes@virtuousgeek.org>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sun__19_Oct_2008_15_15_26_+1100_z04vDWYWjaYpIk6p"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from outbound-mail-22.bluehost.com ([69.89.21.17]:34299 "HELO
-	outbound-mail-22.bluehost.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1750933AbYJRWlF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sat, 18 Oct 2008 18:41:05 -0400
-In-Reply-To: <1224131300.8157.536.camel@pasglop>
-Content-Disposition: inline
+Received: from chilli.pcug.org.au ([203.10.76.44]:60865 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750719AbYJSEPj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 19 Oct 2008 00:15:39 -0400
+In-Reply-To: <200810181541.00638.jbarnes@virtuousgeek.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: benh@kernel.crashing.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: benh@kernel.crashing.org, linux-next@vger.kernel.org
 
-On Wednesday, October 15, 2008 9:28 pm Benjamin Herrenschmidt wrote:
-> > Hm, I must have applied the wrong ones... but I didn't do a ppc build to
-> > test. I'll fix it up.
+--Signature=_Sun__19_Oct_2008_15_15_26_+1100_z04vDWYWjaYpIk6p
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Jesse,
+
+On Sat, 18 Oct 2008 15:41:00 -0700 Jesse Barnes <jbarnes@virtuousgeek.org> =
+wrote:
 >
-> Thanks. So apply 1/2 from my orginal post and v3 of 2/2 that I sent
-> yesterday. Let me know if you want me to just resend both.
+> No I've got them.  I must have accidentally dropped the 1/2 when I rebase=
+d=20
+> last time, so d965c04f27d4df28b1ce77b0aea6329c07a8e13d is an orphan (btw=
+=20
+> Stephen how did you find it?).
 
-No I've got them.  I must have accidentally dropped the 1/2 when I rebased 
-last time, so d965c04f27d4df28b1ce77b0aea6329c07a8e13d is an orphan (btw 
-Stephen how did you find it?).
+I have older versions of your tree in my git repository.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Just test building & booting now, then I'll send Linus the pull request.
+--Signature=_Sun__19_Oct_2008_15_15_26_+1100_z04vDWYWjaYpIk6p
+Content-Type: application/pgp-signature
 
-Thanks,
--- 
-Jesse Barnes, Intel Open Source Technology Center
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkj6tF4ACgkQjjKRsyhoI8ysSgCgjNq+OZXGMcEFFk2XoqxLQU0h
+cx4AniCOCrMCd7vIQ/gjHePjnmazokbv
+=lUC6
+-----END PGP SIGNATURE-----
+
+--Signature=_Sun__19_Oct_2008_15_15_26_+1100_z04vDWYWjaYpIk6p--
