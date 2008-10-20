@@ -1,61 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure
-Date: Mon, 20 Oct 2008 23:04:20 +1100
-Message-ID: <20081020230420.aa85f83b.sfr@canb.auug.org.au>
+From: David Woodhouse <dwmw2@infradead.org>
+Subject: Re: linux-next: mtd tree build failure
+Date: Mon, 20 Oct 2008 09:48:02 +0100
+Message-ID: <1224492482.6770.1531.camel@macbook.infradead.org>
+References: <20081020163518.b858f3f7.sfr@canb.auug.org.au>
+	 <1224487490.6770.1509.camel@macbook.infradead.org>
+	 <48FC4277.2000405@compulab.co.il>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40705 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751898AbYJTMEY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 20 Oct 2008 08:04:24 -0400
+Received: from bombadil.infradead.org ([18.85.46.34]:47703 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751617AbYJTIsZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Oct 2008 04:48:25 -0400
+In-Reply-To: <48FC4277.2000405@compulab.co.il>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, Christopher Harrer <charrer@alacritech.com>, Michael Miles <mmiles@alacritech.com>, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, linus@vger.kernel.org
+To: Mike Rapoport <mike@compulab.co.il>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>
 
-Hi Greg,
+On Mon, 2008-10-20 at 10:33 +0200, Mike Rapoport wrote:
+> You applied the correct version of the patch. It did depend on ARM at the
+> beginning, but after discussion it was decided to make it generic so that other
+> architecture would be able to use it. I just haven't thought that readsw/writesw
+> might be not available on all architectures.
 
-Today's linux-next build (powerpc allyesconfig) failed like this:
+I've made it depend on ARM again for now. For 2.6.29, let's look at
+making use ioread8_rep().
 
-In file included from drivers/staging/sxg/sxg.c:77:
-drivers/staging/sxg/sxghif.h:859: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'Compilation'
-drivers/staging/sxg/sxg.c: In function 'sxg_transmit_packet':
-drivers/staging/sxg/sxg.c:1949: error: 'SXG_SGL_BUF_SIZE' undeclared (first use in this function)
-drivers/staging/sxg/sxg.c:1958: error: implicit declaration of function 'SXG_SGL_BUFFER'
-drivers/staging/sxg/sxg.c:1958: warning: assignment makes pointer from integer without a cast
-drivers/staging/sxg/sxg.c: In function 'sxg_mcast_set_mask':
-drivers/staging/sxg/sxg.c:2846: warning: format '%llx' expects type 'long long unsigned int', but argument 5 has type 'u64'
-
-I applied the following patch.
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 20 Oct 2008 22:59:18 +1100
-Subject: [PATCH] staging: sxg depends on X86
-
-sxghif.h has code that explicitly will not build fo other architecures.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/staging/sxg/Kconfig |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/staging/sxg/Kconfig b/drivers/staging/sxg/Kconfig
-index 1ae3508..6e6cf0b 100644
---- a/drivers/staging/sxg/Kconfig
-+++ b/drivers/staging/sxg/Kconfig
-@@ -1,6 +1,7 @@
- config SXG
- 	tristate "Alacritech SLIC Technology Non-Accelerated 10Gbe support"
- 	depends on PCI && NETDEV_10000
-+	depends on X86
- 	default n
- 	help
- 	  This driver supports the Alacritech SLIC Technology Non-Accelerated
--- 
-1.5.6.5
+David Woodhouse                            Open Source Technology Centre
+David.Woodhouse@intel.com                              Intel Corporation
