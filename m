@@ -1,58 +1,66 @@
-From: Jason Baron <jbaron@redhat.com>
-Subject: Re: linux-next: Tree for October 20
-Date: Mon, 20 Oct 2008 13:35:45 -0400
-Message-ID: <20081020173545.GB3161@redhat.com>
-References: <20081020235904.2f9a8db4.sfr@canb.auug.org.au>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: pci_ioremap_bar() breaks s390 build
+Date: Mon, 20 Oct 2008 19:45:43 +0200
+Message-ID: <20081020174543.GA6964@osiris.boeblingen.de.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([66.187.233.31]:60928 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752837AbYJTRgv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 20 Oct 2008 13:36:51 -0400
+Received: from mtagate6.de.ibm.com ([195.212.29.155]:61199 "EHLO
+	mtagate6.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751906AbYJTRqc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Oct 2008 13:46:32 -0400
+Received: from d12nrmr1607.megacenter.de.ibm.com (d12nrmr1607.megacenter.de.ibm.com [9.149.167.49])
+	by mtagate6.de.ibm.com (8.13.8/8.13.8) with ESMTP id m9KHjip4328310
+	for <linux-next@vger.kernel.org>; Mon, 20 Oct 2008 17:45:44 GMT
+Received: from d12av04.megacenter.de.ibm.com (d12av04.megacenter.de.ibm.com [9.149.165.229])
+	by d12nrmr1607.megacenter.de.ibm.com (8.13.8/8.13.8/NCO v9.1) with ESMTP id m9KHji3Q3006506
+	for <linux-next@vger.kernel.org>; Mon, 20 Oct 2008 19:45:44 +0200
+Received: from d12av04.megacenter.de.ibm.com (loopback [127.0.0.1])
+	by d12av04.megacenter.de.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id m9KHjhgH015581
+	for <linux-next@vger.kernel.org>; Mon, 20 Oct 2008 19:45:44 +0200
 Content-Disposition: inline
-In-Reply-To: <20081020235904.2f9a8db4.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org
 
-On Mon, Oct 20, 2008 at 11:59:04PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's tree will not build for powerpc allyesconfig (libc aborts the
-> link due to a free() problem), sparc(32) defconfig and probably some
-> other configurations.
-> 
+Hi Arjan,
 
-hmmm...yeah, on x86_64 i've hit:
+your patch "PCI: introduce an pci_ioremap(pdev, barnr) function" breaks s390:
 
-  CC [M]  net/9p/protocol.o
-  LD [M]  net/9p/9pnet.o
-  LD [M]  net/9p/9pnet_virtio.o
-  Building modules, stage 2.
-  MODPOST 1616 modules
-ERROR: "p9_debug_level" [net/9p/9pnet.ko] undefined!
+  CC      fs/compat_ioctl.o
+In file included from fs/compat_ioctl.c:52:
+include/linux/pci.h: In function 'pci_ioremap_bar':
+include/linux/pci.h:1136: error: implicit declaration of function 'ioremap_nocache'
+include/linux/pci.h:1137: warning: return makes pointer from integer without a cast
+make[1]: *** [fs/compat_ioctl.o] Error 1
+make: *** [fs] Error 2
 
+please fix :)
 
-seems to be resolved by this simple patch:
+maybe something like this:
 
+---
+ include/linux/pci.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
-Signed-off-by: Jason Baron <jbaron@redhat.com>
-
-
-diff --git a/net/9p/protocol.c b/net/9p/protocol.c
-index 29be524..ebf819e 100644
---- a/net/9p/protocol.c
-+++ b/net/9p/protocol.c
-@@ -542,8 +542,10 @@ int p9pdu_finalize(struct p9_fcall *pdu)
- 	err = p9pdu_writef(pdu, 0, "d", size);
- 	pdu->size = size;
+Index: linux-next/include/linux/pci.h
+===================================================================
+--- linux-next.orig/include/linux/pci.h
++++ linux-next/include/linux/pci.h
+@@ -1124,6 +1124,7 @@ static inline void pci_mmcfg_early_init(
+ static inline void pci_mmcfg_late_init(void) { }
+ #endif
  
-+#ifdef CONFIG_NET_9P_DEBUG
- 	if ((p9_debug_level & P9_DEBUG_PKT) == P9_DEBUG_PKT)
- 		p9pdu_dump(0, pdu);
++#ifdef CONFIG_HAS_IOMEM
+ static inline void * pci_ioremap_bar(struct pci_dev *pdev, int bar)
+ {
+ 	/*
+@@ -1136,6 +1137,7 @@ static inline void * pci_ioremap_bar(str
+ 	return ioremap_nocache(pci_resource_start(pdev, bar),
+ 				     pci_resource_len(pdev, bar));
+ }
 +#endif
  
- 	P9_DPRINTK(P9_DEBUG_9P, ">>> size=%d type: %d tag: %d\n", pdu->size,
- 							pdu->id, pdu->tag);
+ #endif /* __KERNEL__ */
+ #endif /* LINUX_PCI_H */
