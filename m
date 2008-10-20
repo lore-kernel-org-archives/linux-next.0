@@ -1,50 +1,59 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: usb tree build failure
-Date: Mon, 20 Oct 2008 11:45:15 -0700
-Message-ID: <20081020184515.GA15359@kroah.com>
-References: <20081014145917.708bace4.sfr@canb.auug.org.au> <20081016160503.GB27769@kroah.com> <20081016213613.GB11876@doriath.ww600.siemens.net> <20081017112610.83a67160.sfr@canb.auug.org.au> <bc64b4640810161741g5329d8c1od6910f05352370b8@mail.gmail.com>
+Subject: Re: linux-next: build failure
+Date: Mon, 20 Oct 2008 13:47:50 -0700
+Message-ID: <20081020204750.GA22377@kroah.com>
+References: <20081020230420.aa85f83b.sfr@canb.auug.org.au> <20081020154857.GC24666@kroah.com> <3aaafc130810200933s7299378eg6924089a58b9778a@mail.gmail.com> <20081020165142.GA7166@kroah.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:58351 "EHLO coco.kroah.org"
+Received: from kroah.org ([198.145.64.141]:37441 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1753189AbYJTT3T (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 20 Oct 2008 15:29:19 -0400
+	id S1755677AbYJTVg0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 20 Oct 2008 17:36:26 -0400
 Content-Disposition: inline
-In-Reply-To: <bc64b4640810161741g5329d8c1od6910f05352370b8@mail.gmail.com>
+In-Reply-To: <20081020165142.GA7166@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dmitry <dbaryshkov@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: "J.R. Mauro" <jrm8005@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Christopher Harrer <charrer@alacritech.com>, Michael Miles <mmiles@alacritech.com>, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, linus@kroah.com
 
-On Fri, Oct 17, 2008 at 04:41:50AM +0400, Dmitry wrote:
-> 2008/10/17 Stephen Rothwell <sfr@canb.auug.org.au>:
-> > Hi Dmitry,
-> >
-> > On Fri, 17 Oct 2008 01:36:13 +0400 Dmitry Baryshkov <dbaryshkov@gmail.com> wrote:
-> >>
-> >> After few tries I can come with pretty simple but pretty strange solution:
-> >>
-> >> >From 1c6dd41e074c5f526fc29b00a2bf265497d2819d Mon Sep 17 00:00:00 2001
-> >> From: Dmitry Baryshkov <dbaryshkov@gmail.com>
-> >> Date: Fri, 17 Oct 2008 01:30:15 +0400
-> >> Subject: [PATCH] USB: unbreak recursive dependancy
-> >>
-> >> After addition of TMIO usb driver Kconfig sees the recursive dependency
-> >> Break it by rephrasing ARCH_PNX4008 OHCI deps.
-> >
-> > I will add this to today's linux-next, thanks.
+On Mon, Oct 20, 2008 at 09:51:42AM -0700, Greg KH wrote:
+> On Mon, Oct 20, 2008 at 12:33:29PM -0400, J.R. Mauro wrote:
+> > On Mon, Oct 20, 2008 at 11:48 AM, Greg KH <greg@kroah.com> wrote:
+> > > On Mon, Oct 20, 2008 at 11:04:20PM +1100, Stephen Rothwell wrote:
+> > >> Hi Greg,
+> > >>
+> > >> Today's linux-next build (powerpc allyesconfig) failed like this:
+> > >>
+> > >> In file included from drivers/staging/sxg/sxg.c:77:
+> > >> drivers/staging/sxg/sxghif.h:859: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'Compilation'
+> > >> drivers/staging/sxg/sxg.c: In function 'sxg_transmit_packet':
+> > >> drivers/staging/sxg/sxg.c:1949: error: 'SXG_SGL_BUF_SIZE' undeclared (first use in this function)
+> > >> drivers/staging/sxg/sxg.c:1958: error: implicit declaration of function 'SXG_SGL_BUFFER'
+> > >> drivers/staging/sxg/sxg.c:1958: warning: assignment makes pointer from integer without a cast
+> > >> drivers/staging/sxg/sxg.c: In function 'sxg_mcast_set_mask':
+> > >> drivers/staging/sxg/sxg.c:2846: warning: format '%llx' expects type 'long long unsigned int', but argument 5 has type 'u64'
+> > >>
+> > >> I applied the following patch.
+> > >
+> > > Ah, doh, sorry, I should have caught that.  I'll go apply this to the
+> > > tree, thanks.
+> > 
+> > Greg,
+> > 
+> > The slicoss driver also from Alacritech looks like it needs a depends
+> > on X86 as well. Should the sxg and slicoss drivers from Alacritech be
+> > doing things like this (sxg/sxghif.h:851, slicoss/slicoss.c:960):
 > 
-> Thank you. However I suggest to take this as a precaution. As kernel
-> grows, various interdeps
-> also grow. I fear that soon we will have to rewrite Kconfig
-> depencencies to take care
-> upon impossible combinations of symbols (the chain that raised this
-> topic is impossible,
-> as I said before).
+> Yes, it needs it too.
 
-I've merged this into the original offending patch now so that there are
-no build breakages.
+Hm, it already has this dependancy.  In drivers/staging/slicoss/Kconfig
+we have:
+	config SLICOSS
+		tristate "Alacritech Gigabit IS-NIC support"
+		depends on PCI && X86 && NETDEV_1000
+
+So we should be fine here.
 
 thanks,
 
