@@ -1,66 +1,35 @@
-From: "J.R. Mauro" <jrm8005@gmail.com>
-Subject: Re: linux-next: build failure
-Date: Mon, 20 Oct 2008 12:33:29 -0400
-Message-ID: <3aaafc130810200933s7299378eg6924089a58b9778a@mail.gmail.com>
-References: <20081020230420.aa85f83b.sfr@canb.auug.org.au>
-	 <20081020154857.GC24666@kroah.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: BUG: sleeping function called from invalid context at
+	kernel/rwsem.c:131 XFS? (was: Re: linux-next: Tree for October 17)
+Date: Mon, 20 Oct 2008 12:33:27 -0400
+Message-ID: <20081020163327.GA15651@infradead.org>
+References: <a4423d670810170543vd6b4c39p44bf125610d8540@mail.gmail.com> <20081017164116.GA17375@infradead.org> <a4423d670810170954h7ca130aaw8895380a4c6b125@mail.gmail.com> <20081017165738.GA20818@infradead.org> <a4423d670810171013g5bc19c1cm3f7d9c014ee70349@mail.gmail.com> <20081017203710.GA27187@infradead.org> <20081017135510.7127c4e7@infradead.org> <a4423d670810200758m3cea3841h40988afc8eaf81@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rv-out-0506.google.com ([209.85.198.232]:12670 "EHLO
-	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752084AbYJTQda (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Oct 2008 12:33:30 -0400
-Received: by rv-out-0506.google.com with SMTP id k40so1946154rvb.1
-        for <linux-next@vger.kernel.org>; Mon, 20 Oct 2008 09:33:29 -0700 (PDT)
-In-Reply-To: <20081020154857.GC24666@kroah.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <xfs-bounce@oss.sgi.com>
 Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Christopher Harrer <charrer@alacritech.com>, Michael Miles <mmiles@alacritech.com>, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, linus@kroah.com
+In-Reply-To: <a4423d670810200758m3cea3841h40988afc8eaf81@mail.gmail.com>
+Sender: xfs-bounce@oss.sgi.com
+Errors-to: xfs-bounce@oss.sgi.com
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: Arjan van de Ven <arjan@infradead.org>, Christoph Hellwig <hch@infradead.org>, xfs@oss.sgi.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Oct 20, 2008 at 11:48 AM, Greg KH <greg@kroah.com> wrote:
-> On Mon, Oct 20, 2008 at 11:04:20PM +1100, Stephen Rothwell wrote:
->> Hi Greg,
->>
->> Today's linux-next build (powerpc allyesconfig) failed like this:
->>
->> In file included from drivers/staging/sxg/sxg.c:77:
->> drivers/staging/sxg/sxghif.h:859: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'Compilation'
->> drivers/staging/sxg/sxg.c: In function 'sxg_transmit_packet':
->> drivers/staging/sxg/sxg.c:1949: error: 'SXG_SGL_BUF_SIZE' undeclared (first use in this function)
->> drivers/staging/sxg/sxg.c:1958: error: implicit declaration of function 'SXG_SGL_BUFFER'
->> drivers/staging/sxg/sxg.c:1958: warning: assignment makes pointer from integer without a cast
->> drivers/staging/sxg/sxg.c: In function 'sxg_mcast_set_mask':
->> drivers/staging/sxg/sxg.c:2846: warning: format '%llx' expects type 'long long unsigned int', but argument 5 has type 'u64'
->>
->> I applied the following patch.
->
-> Ah, doh, sorry, I should have caught that.  I'll go apply this to the
-> tree, thanks.
+On Mon, Oct 20, 2008 at 06:58:09PM +0400, Alexander Beregalov wrote:
+> Hi Christoph
+> 
+> I have the same result with next-1020 and today's xfs-2.6.git/master
+> (
+> commit bfd2bd10da76378dc4afd87d7d204a1d3d70b347
+> Author: David Chinner <david@fromorbit.com>
+> Date:   Fri Oct 17 15:36:23 2008 +1000
+>     Inode: Allow external list initialisation
+> )
+> 
+> Should I start bisecting?
 
-Greg,
-
-The slicoss driver also from Alacritech looks like it needs a depends
-on X86 as well. Should the sxg and slicoss drivers from Alacritech be
-doing things like this (sxg/sxghif.h:851, slicoss/slicoss.c:960):
-
-#if defined(CONFIG_X86_64)
-
-...
-
-#else
-    Stop Compilation;
-#endif
+That would be extremely helpful! 
 
 
->
-> greg k-h
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
->
+And as mentioned in the other mail I still can't reproduce it, but I can
+currently only test on x86-32, not x86-64.
