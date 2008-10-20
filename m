@@ -1,56 +1,30 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: ttydev tree build failure
-Date: Mon, 20 Oct 2008 19:06:00 +1100
-Message-ID: <20081020190600.65a8b298.sfr@canb.auug.org.au>
+From: David Woodhouse <dwmw2@infradead.org>
+Subject: Re: linux-next: mtd tree build failure
+Date: Mon, 20 Oct 2008 08:24:50 +0100
+Message-ID: <1224487490.6770.1509.camel@macbook.infradead.org>
+References: <20081020163518.b858f3f7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__20_Oct_2008_19_06_00_+1100_YHUrdD2aEK/Tfibg"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33471 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750878AbYJTIGL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 20 Oct 2008 04:06:11 -0400
+Received: from bombadil.infradead.org ([18.85.46.34]:39638 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750966AbYJTHYy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Oct 2008 03:24:54 -0400
+In-Reply-To: <20081020163518.b858f3f7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: linux-next@vger.kernel.org, Lee Howard <lee.howard@mainpine.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Mike Rapoport <mike@compulab.co.il>, Russell King <rmk+kernel@arm.linux.org.uk>
 
---Signature=_Mon__20_Oct_2008_19_06_00_+1100_YHUrdD2aEK/Tfibg
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2008-10-20 at 16:35 +1100, Stephen Rothwell wrote:
+> Caused by commit aaf7ea20000436df3cbb397ccb734ad1e2e5164d ("[MTD]
+> [NAND] GPIO NAND flash driver").  I assume this needs to depend on
+> some architecture/platform so I reverted it for now.
 
-Hi Alan,
+Hm, indeed. I thought it _did_ depend on ARM -- did I apply the wrong
+version of the patch?
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-
-drivers/serial/8250_pci.c: In function 'pci_oxsemi_tornado_init':
-drivers/serial/8250_pci.c:1869: error: 'PCI_VENDOR_OXSEMI' undeclared (firs=
-t use in this function)
-drivers/serial/8250_pci.c: In function 'pciserial_init_ports':
-drivers/serial/8250_pci.c:1903: error: expected ')' before 'pci_oxsemi_torn=
-ado_init'
-drivers/serial/8250_pci.c:1969: error: expected expression before '}' token
-
-Caused by commit fd13cafdcc95c68e9ea3af4ea1d629abeac55638
-("8250-oxsemi-mainpine") which was clearly never even built!  :-(
-
-I reverted it (I shouldn't have to fix simple typos).
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__20_Oct_2008_19_06_00_+1100_YHUrdD2aEK/Tfibg
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkj8O+gACgkQjjKRsyhoI8yjjwCfXtMfFUIeh8pSd+x9gQZ2Pggh
-FigAniuVnS5c6bJuXqtFds+vYV/UUUWr
-=dEzG
------END PGP SIGNATURE-----
-
---Signature=_Mon__20_Oct_2008_19_06_00_+1100_YHUrdD2aEK/Tfibg--
+-- 
+David Woodhouse                            Open Source Technology Centre
+David.Woodhouse@intel.com                              Intel Corporation
