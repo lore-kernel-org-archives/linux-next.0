@@ -1,66 +1,50 @@
-From: "J.R. Mauro" <jrm8005@gmail.com>
-Subject: Re: linux-next: build failure
-Date: Mon, 20 Oct 2008 18:34:35 -0400
-Message-ID: <20081020223435.GA11079@localhost>
-References: <20081020230420.aa85f83b.sfr@canb.auug.org.au> <20081020154857.GC24666@kroah.com> <3aaafc130810200933s7299378eg6924089a58b9778a@mail.gmail.com> <20081020165142.GA7166@kroah.com> <20081020204750.GA22377@kroah.com>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: BUG: sleeping function called from invalid context at
+	kernel/rwsem.c:131 XFS? (was: Re: linux-next: Tree for October 17)
+Date: Tue, 21 Oct 2008 09:35:49 +1100
+Message-ID: <20081020223549.GA21152@disturbed>
+References: <a4423d670810170543vd6b4c39p44bf125610d8540@mail.gmail.com> <20081017164116.GA17375@infradead.org> <a4423d670810170954h7ca130aaw8895380a4c6b125@mail.gmail.com> <20081017165738.GA20818@infradead.org> <a4423d670810171013g5bc19c1cm3f7d9c014ee70349@mail.gmail.com> <20081017203710.GA27187@infradead.org> <20081017135510.7127c4e7@infradead.org> <a4423d670810200758m3cea3841h40988afc8eaf81@mail.gmail.com> <20081020163327.GA15651@infradead.org> <a4423d670810201013w6448cb38w402771799cefb5f5@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wx-out-0506.google.com ([66.249.82.224]:40900 "EHLO
-	wx-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751587AbYJTWea (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Oct 2008 18:34:30 -0400
-Received: by wx-out-0506.google.com with SMTP id h27so927317wxd.4
-        for <linux-next@vger.kernel.org>; Mon, 20 Oct 2008 15:34:29 -0700 (PDT)
+Received: from ipmail01.adl6.internode.on.net ([203.16.214.146]:32678 "EHLO
+	ipmail01.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751583AbYJTWgE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 20 Oct 2008 18:36:04 -0400
 Content-Disposition: inline
-In-Reply-To: <20081020204750.GA22377@kroah.com>
+In-Reply-To: <a4423d670810201013w6448cb38w402771799cefb5f5@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Christopher Harrer <charrer@alacritech.com>, Michael Miles <mmiles@alacritech.com>, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, linus@kroah.com
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Arjan van de Ven <arjan@infradead.org>, xfs@oss.sgi.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Oct 20, 2008 at 01:47:50PM -0700, Greg KH wrote:
-> On Mon, Oct 20, 2008 at 09:51:42AM -0700, Greg KH wrote:
-> > On Mon, Oct 20, 2008 at 12:33:29PM -0400, J.R. Mauro wrote:
-> > > On Mon, Oct 20, 2008 at 11:48 AM, Greg KH <greg@kroah.com> wrote:
-> > > > On Mon, Oct 20, 2008 at 11:04:20PM +1100, Stephen Rothwell wrote:
-> > > >> Hi Greg,
-> > > >>
-> > > >> Today's linux-next build (powerpc allyesconfig) failed like this:
-> > > >>
-> > > >> In file included from drivers/staging/sxg/sxg.c:77:
-> > > >> drivers/staging/sxg/sxghif.h:859: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'Compilation'
-> > > >> drivers/staging/sxg/sxg.c: In function 'sxg_transmit_packet':
-> > > >> drivers/staging/sxg/sxg.c:1949: error: 'SXG_SGL_BUF_SIZE' undeclared (first use in this function)
-> > > >> drivers/staging/sxg/sxg.c:1958: error: implicit declaration of function 'SXG_SGL_BUFFER'
-> > > >> drivers/staging/sxg/sxg.c:1958: warning: assignment makes pointer from integer without a cast
-> > > >> drivers/staging/sxg/sxg.c: In function 'sxg_mcast_set_mask':
-> > > >> drivers/staging/sxg/sxg.c:2846: warning: format '%llx' expects type 'long long unsigned int', but argument 5 has type 'u64'
-> > > >>
-> > > >> I applied the following patch.
-> > > >
-> > > > Ah, doh, sorry, I should have caught that.  I'll go apply this to the
-> > > > tree, thanks.
-> > > 
-> > > Greg,
-> > > 
-> > > The slicoss driver also from Alacritech looks like it needs a depends
-> > > on X86 as well. Should the sxg and slicoss drivers from Alacritech be
-> > > doing things like this (sxg/sxghif.h:851, slicoss/slicoss.c:960):
-> > 
-> > Yes, it needs it too.
-> 
-> Hm, it already has this dependancy.  In drivers/staging/slicoss/Kconfig
-> we have:
-> 	config SLICOSS
-> 		tristate "Alacritech Gigabit IS-NIC support"
-> 		depends on PCI && X86 && NETDEV_1000
-> 
-> So we should be fine here.
+On Mon, Oct 20, 2008 at 09:13:05PM +0400, Alexander Beregalov wrote:
+> 2008/10/20 Christoph Hellwig <hch@infradead.org>:
+> > On Mon, Oct 20, 2008 at 06:58:09PM +0400, Alexander Beregalov wrote:
+> >> Hi Christoph
+> >>
+> >> I have the same result with next-1020 and today's xfs-2.6.git/master
+> >> (
+> >> commit bfd2bd10da76378dc4afd87d7d204a1d3d70b347
+> >> Author: David Chinner <david@fromorbit.com>
+> >> Date:   Fri Oct 17 15:36:23 2008 +1000
+> >>     Inode: Allow external list initialisation
+> >> )
+> Ha, that kernel (xfs/master) has made my system dead locked.
+> SysRQ-d:
+> Show all locks held in the system
+> 1 lock held by pdflush
+> (&type->s_umount_key#18{----}, at writeback_inodes
+> 1 lock held by login
+> (&(&ip->i_iolock)->mr_lock){----} at xfs_ilock
+> and so on ( many locks at xfs_ilock)
 
-Sorry about that, had to pull from Linus's tree
+Curious. Can you post the full stack traces?
 
-> 
-> thanks,
-> 
-> greg k-h
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
