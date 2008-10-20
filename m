@@ -1,51 +1,58 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure
-Date: Mon, 20 Oct 2008 09:51:42 -0700
-Message-ID: <20081020165142.GA7166@kroah.com>
-References: <20081020230420.aa85f83b.sfr@canb.auug.org.au> <20081020154857.GC24666@kroah.com> <3aaafc130810200933s7299378eg6924089a58b9778a@mail.gmail.com>
+From: Jason Baron <jbaron@redhat.com>
+Subject: Re: linux-next: Tree for October 20
+Date: Mon, 20 Oct 2008 13:35:45 -0400
+Message-ID: <20081020173545.GB3161@redhat.com>
+References: <20081020235904.2f9a8db4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:45254 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752557AbYJTRcs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 20 Oct 2008 13:32:48 -0400
+Received: from mx1.redhat.com ([66.187.233.31]:60928 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752837AbYJTRgv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 20 Oct 2008 13:36:51 -0400
 Content-Disposition: inline
-In-Reply-To: <3aaafc130810200933s7299378eg6924089a58b9778a@mail.gmail.com>
+In-Reply-To: <20081020235904.2f9a8db4.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "J.R. Mauro" <jrm8005@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Christopher Harrer <charrer@alacritech.com>, Michael Miles <mmiles@alacritech.com>, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, linus@kroah.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Oct 20, 2008 at 12:33:29PM -0400, J.R. Mauro wrote:
-> On Mon, Oct 20, 2008 at 11:48 AM, Greg KH <greg@kroah.com> wrote:
-> > On Mon, Oct 20, 2008 at 11:04:20PM +1100, Stephen Rothwell wrote:
-> >> Hi Greg,
-> >>
-> >> Today's linux-next build (powerpc allyesconfig) failed like this:
-> >>
-> >> In file included from drivers/staging/sxg/sxg.c:77:
-> >> drivers/staging/sxg/sxghif.h:859: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'Compilation'
-> >> drivers/staging/sxg/sxg.c: In function 'sxg_transmit_packet':
-> >> drivers/staging/sxg/sxg.c:1949: error: 'SXG_SGL_BUF_SIZE' undeclared (first use in this function)
-> >> drivers/staging/sxg/sxg.c:1958: error: implicit declaration of function 'SXG_SGL_BUFFER'
-> >> drivers/staging/sxg/sxg.c:1958: warning: assignment makes pointer from integer without a cast
-> >> drivers/staging/sxg/sxg.c: In function 'sxg_mcast_set_mask':
-> >> drivers/staging/sxg/sxg.c:2846: warning: format '%llx' expects type 'long long unsigned int', but argument 5 has type 'u64'
-> >>
-> >> I applied the following patch.
-> >
-> > Ah, doh, sorry, I should have caught that.  I'll go apply this to the
-> > tree, thanks.
+On Mon, Oct 20, 2008 at 11:59:04PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Greg,
+> Today's tree will not build for powerpc allyesconfig (libc aborts the
+> link due to a free() problem), sparc(32) defconfig and probably some
+> other configurations.
 > 
-> The slicoss driver also from Alacritech looks like it needs a depends
-> on X86 as well. Should the sxg and slicoss drivers from Alacritech be
-> doing things like this (sxg/sxghif.h:851, slicoss/slicoss.c:960):
 
-Yes, it needs it too.
+hmmm...yeah, on x86_64 i've hit:
 
-thanks,
+  CC [M]  net/9p/protocol.o
+  LD [M]  net/9p/9pnet.o
+  LD [M]  net/9p/9pnet_virtio.o
+  Building modules, stage 2.
+  MODPOST 1616 modules
+ERROR: "p9_debug_level" [net/9p/9pnet.ko] undefined!
 
-greg k-h
+
+seems to be resolved by this simple patch:
+
+
+Signed-off-by: Jason Baron <jbaron@redhat.com>
+
+
+diff --git a/net/9p/protocol.c b/net/9p/protocol.c
+index 29be524..ebf819e 100644
+--- a/net/9p/protocol.c
++++ b/net/9p/protocol.c
+@@ -542,8 +542,10 @@ int p9pdu_finalize(struct p9_fcall *pdu)
+ 	err = p9pdu_writef(pdu, 0, "d", size);
+ 	pdu->size = size;
+ 
++#ifdef CONFIG_NET_9P_DEBUG
+ 	if ((p9_debug_level & P9_DEBUG_PKT) == P9_DEBUG_PKT)
+ 		p9pdu_dump(0, pdu);
++#endif
+ 
+ 	P9_DPRINTK(P9_DEBUG_9P, ">>> size=%d type: %d tag: %d\n", pdu->size,
+ 							pdu->id, pdu->tag);
