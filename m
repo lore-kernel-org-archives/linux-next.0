@@ -1,36 +1,52 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core.current tree
-Date: Sun, 19 Oct 2008 20:47:56 -0700
-Message-ID: <20081020034756.GC26650@kroah.com>
-References: <20081020114842.e6cd6f90.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the acpi tree
+Date: Mon, 20 Oct 2008 15:45:52 +1100
+Message-ID: <20081020154552.feb7c962.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__20_Oct_2008_15_45_52_+1100_1EW7DfvQ9f=3Q82X"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:56555 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751583AbYJTDvy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 19 Oct 2008 23:51:54 -0400
-Content-Disposition: inline
-In-Reply-To: <20081020114842.e6cd6f90.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34416 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751735AbYJTEqG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 20 Oct 2008 00:46:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, Bjorn Helgaas <bjorn.helgaas@hp.com>
 
-On Mon, Oct 20, 2008 at 11:48:42AM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the driver-core.current tree got a conflict
-> in Documentation/sysctl/kernel.txt between commit
-> 061b1bd394ca8628b7c24eb4658ba3535da4249a ("Staging: add TAINT_CRAP for
-> all drivers/staging code") from Linus' tree and commit
-> ac7b643ad9c570efa0b5cbc9af5581db8c2faf64 ("Document kernel taint flags
-> properly") from the driver-core.current tree.
+--Signature=_Mon__20_Oct_2008_15_45_52_+1100_1EW7DfvQ9f=3Q82X
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That's odd, I'll check this tomorrow when I resync my tree (it still
-contains a lot of stuff that is in Linus's tree right now), I haven't
-had the chance to clean it out yet.
+Hi Len,
 
-thanks,
+Today's linux-next merge of the acpi tree got a conflict in
+drivers/pnp/quirks.c between commit
+2e532d68a2b3e2aa6b19731501222069735c741c ("{pci,pnp} quirks.c: don't use
+deprecated print_fn_descriptor_symbol()") from Linus' tree and commit
+2f53432c2aedbe79020e44525eb069d9138a01dd ("PNP: convert to using pnp_dbg
+()") from the acpi tree.
 
-greg k-h
+I used the acpi tree version (since it was just a follow on from Linus'
+version).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__20_Oct_2008_15_45_52_+1100_1EW7DfvQ9f=3Q82X
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkj8DQAACgkQjjKRsyhoI8zYhACdHJWRfqx+DGpCisdBgRH33Mev
+I5wAoIgzSWV8T4vzlI/4AxDv25+MDbrN
+=ZphQ
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__20_Oct_2008_15_45_52_+1100_1EW7DfvQ9f=3Q82X--
