@@ -1,73 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the timers tree
-Date: Tue, 21 Oct 2008 12:43:05 +1100
-Message-ID: <20081021124305.e6cdd2cc.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the acpi tree
+Date: Tue, 21 Oct 2008 13:55:09 +1100
+Message-ID: <20081021135509.9435493b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43398 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36859 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751927AbYJUBnK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 20 Oct 2008 21:43:10 -0400
+	id S1752356AbYJUCzP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 20 Oct 2008 22:55:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org, Arjan van de Ven <arjan@linux.intel.com>
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, Matt Mackall <mpm@selenic.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
 
-Hi all,
+Hi Len,
 
-Today's linux-next merge of the timers tree got a conflict in
-kernel/time/tick-sched.c between commit
-c34bec5a44e9486597d78e7a686b2f9088a0564c ("") from Linus' tree and commit
-cc584b213f252bf698849cf4be2377cd3ec7501a ("hrtimer: convert kernel/* to
-the new hrtimer apis") from the timers tree.
+Today's linux-next merge of the acpi tree got a conflict in
+arch/x86/kernel/acpi/sleep.c between commit
+3038edabf48f01421c621cb77a712b446d3a5d67 ("x86 ACPI: fix breakage of
+resume on 64-bit UP systems with SMP kernel") from Linus' tree and commit
+d0d0f7432c9cbd52cb2f31d499f8292b13a7ecac ("x86: remove magic number from
+ACPI sleep stack buffer") from the acpi tree.
 
-The former moved the code that the latter modified.  I fixed it up (see
-below).
+Just overlapping context.  I fixed it up (see below).
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc kernel/time/tick-sched.c
-index 0581c11,55b0e91..0000000
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@@ -377,32 -377,6 +377,32 @@@ ktime_t tick_nohz_get_sleep_length(void
-  	return ts->sleep_length;
-  }
-  
- +static void tick_nohz_restart(struct tick_sched *ts, ktime_t now)
- +{
- +	hrtimer_cancel(&ts->sched_timer);
-- 	ts->sched_timer.expires = ts->idle_tick;
-++	hrtimer_set_expires(&ts->sched_timer, ts->idle_tick);
- +
- +	while (1) {
- +		/* Forward the time to expire in the future */
- +		hrtimer_forward(&ts->sched_timer, now, tick_period);
- +
- +		if (ts->nohz_mode == NOHZ_MODE_HIGHRES) {
-- 			hrtimer_start(&ts->sched_timer,
-- 				      ts->sched_timer.expires,
-++			hrtimer_start_expires(&ts->sched_timer,
- +				      HRTIMER_MODE_ABS);
- +			/* Check, if the timer was already in the past */
- +			if (hrtimer_active(&ts->sched_timer))
- +				break;
- +		} else {
-- 			if (!tick_program_event(ts->sched_timer.expires, 0))
-++			if (!tick_program_event(
-++				hrtimer_get_expires(&ts->sched_timer), 0))
- +				break;
- +		}
- +		/* Update jiffies and reread time */
- +		tick_do_update_jiffies64(now);
- +		now = ktime_get();
- +	}
- +}
- +
-  /**
-   * tick_nohz_restart_sched_tick - restart the idle tick from the idle task
-   *
+diff --cc arch/x86/kernel/acpi/sleep.c
+index c44cd6d,55d10cb..0000000
+--- a/arch/x86/kernel/acpi/sleep.c
++++ b/arch/x86/kernel/acpi/sleep.c
+@@@ -98,9 -97,7 +98,9 @@@ int acpi_save_state_mem(void
+  #else /* CONFIG_64BIT */
+  	header->trampoline_segment = setup_trampoline() >> 4;
+  #ifdef CONFIG_SMP
+- 	stack_start.sp = temp_stack + 4096;
++ 	stack_start.sp = temp_stack + sizeof(temp_stack);
+ +	early_gdt_descr.address =
+ +			(unsigned long)get_cpu_gdt_table(smp_processor_id());
+  #endif
+  	initial_code = (unsigned long)wakeup_long64;
+  	saved_magic = 0x123456789abcdef0;
