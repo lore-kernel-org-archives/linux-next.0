@@ -1,52 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linuxt-next: nfsd strange commit
-Date: Tue, 21 Oct 2008 14:13:57 +1100
-Message-ID: <20081021141357.ab15406f.sfr@canb.auug.org.au>
+Subject: linux-next: leds tree build failure
+Date: Tue, 21 Oct 2008 15:47:22 +1100
+Message-ID: <20081021154722.fa74b698.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__21_Oct_2008_14_13_57_+1100_1.0KYLkWvCL_UOA3"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58725 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58865 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751338AbYJUDOI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 20 Oct 2008 23:14:08 -0400
+	id S1751056AbYJUEra (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Oct 2008 00:47:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: linux-next@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>
+Cc: linux-next@vger.kernel.org, Pavel Machek <pavel@suse.cz>, Len Brown <len.brown@intel.com>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Tue__21_Oct_2008_14_13_57_+1100_1.0KYLkWvCL_UOA3
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Richard,
 
-Hi Bruce,
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-I was just wondering what commit 9966acbedc54b9c2d38d97bdd56b612d8da45b8d
-("proc: move rest of /proc/locks to fs/locks.c") is doing in the
-nfsd-next tree?  As far as I can see, it has nothing to do with nfsd and
-no interaction with the nfsd code.
+drivers/leds/leds-hp-disk.c: In function 'hpled_add':
+drivers/leds/leds-hp-disk.c:101: error: invalid lvalue in assignment
 
-Adding random patches to trees in linux-next just makes my job
-harder ...  especially when it touched something like include/linux/fs.h
-and triggers a major rebuild of the tree (*and* it is the only thing in
-the nfsd-next tree).
+Caused by commit 9c78ff6e65cad9f9fcf0bbde2bfbbf3a544fb704 ("leds: Add
+driver for HP harddisk protection LEDs") from the leds tree inertacting
+with commit db89b4f0dbab837d0f3de2c3e9427a8d5393afa3 ("ACPI: catch calls
+of acpi_driver_data on pointer of wrong type") from the acpi tree.
 
---=20
+I fixed it up (see below).
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__21_Oct_2008_14_13_57_+1100_1.0KYLkWvCL_UOA3
-Content-Type: application/pgp-signature
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 21 Oct 2008 15:44:45 +1100
+Subject: [PATCH] leds/acpi: fix merge fallout from acpi_driver_data change
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/leds/leds-hp-disk.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-iEYEARECAAYFAkj9SPUACgkQjjKRsyhoI8yo1QCgtDAS46wNBcbPuLvAKw62lMvT
-z6kAn2R0Oq2DRpg06YuacmTegJFLblM0
-=cJMP
------END PGP SIGNATURE-----
-
---Signature=_Tue__21_Oct_2008_14_13_57_+1100_1.0KYLkWvCL_UOA3--
+diff --git a/drivers/leds/leds-hp-disk.c b/drivers/leds/leds-hp-disk.c
+index d636280..53a25b1 100644
+--- a/drivers/leds/leds-hp-disk.c
++++ b/drivers/leds/leds-hp-disk.c
+@@ -98,7 +98,7 @@ static int hpled_add(struct acpi_device *device)
+ 	adev.device = device;
+ 	strcpy(acpi_device_name(device), DRIVER_NAME);
+ 	strcpy(acpi_device_class(device), ACPI_MDPS_CLASS);
+-	acpi_driver_data(device) = &adev;
++	device->driver_data = &adev;
+ 
+ 	ret = led_classdev_register(NULL, &hpled_led);
+ 	return ret;
+-- 
+1.5.6.5
