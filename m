@@ -1,47 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the acpi tree
-Date: Tue, 21 Oct 2008 13:55:09 +1100
-Message-ID: <20081021135509.9435493b.sfr@canb.auug.org.au>
+Subject: linuxt-next: nfsd strange commit
+Date: Tue, 21 Oct 2008 14:13:57 +1100
+Message-ID: <20081021141357.ab15406f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__21_Oct_2008_14_13_57_+1100_1.0KYLkWvCL_UOA3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36859 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58725 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752356AbYJUCzP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 20 Oct 2008 22:55:15 -0400
+	id S1751338AbYJUDOI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 20 Oct 2008 23:14:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: linux-next@vger.kernel.org, Matt Mackall <mpm@selenic.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: linux-next@vger.kernel.org
 
-Hi Len,
+--Signature=_Tue__21_Oct_2008_14_13_57_+1100_1.0KYLkWvCL_UOA3
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the acpi tree got a conflict in
-arch/x86/kernel/acpi/sleep.c between commit
-3038edabf48f01421c621cb77a712b446d3a5d67 ("x86 ACPI: fix breakage of
-resume on 64-bit UP systems with SMP kernel") from Linus' tree and commit
-d0d0f7432c9cbd52cb2f31d499f8292b13a7ecac ("x86: remove magic number from
-ACPI sleep stack buffer") from the acpi tree.
+Hi Bruce,
 
-Just overlapping context.  I fixed it up (see below).
--- 
+I was just wondering what commit 9966acbedc54b9c2d38d97bdd56b612d8da45b8d
+("proc: move rest of /proc/locks to fs/locks.c") is doing in the
+nfsd-next tree?  As far as I can see, it has nothing to do with nfsd and
+no interaction with the nfsd code.
+
+Adding random patches to trees in linux-next just makes my job
+harder ...  especially when it touched something like include/linux/fs.h
+and triggers a major rebuild of the tree (*and* it is the only thing in
+the nfsd-next tree).
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/x86/kernel/acpi/sleep.c
-index c44cd6d,55d10cb..0000000
---- a/arch/x86/kernel/acpi/sleep.c
-+++ b/arch/x86/kernel/acpi/sleep.c
-@@@ -98,9 -97,7 +98,9 @@@ int acpi_save_state_mem(void
-  #else /* CONFIG_64BIT */
-  	header->trampoline_segment = setup_trampoline() >> 4;
-  #ifdef CONFIG_SMP
-- 	stack_start.sp = temp_stack + 4096;
-+ 	stack_start.sp = temp_stack + sizeof(temp_stack);
- +	early_gdt_descr.address =
- +			(unsigned long)get_cpu_gdt_table(smp_processor_id());
-  #endif
-  	initial_code = (unsigned long)wakeup_long64;
-  	saved_magic = 0x123456789abcdef0;
+--Signature=_Tue__21_Oct_2008_14_13_57_+1100_1.0KYLkWvCL_UOA3
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkj9SPUACgkQjjKRsyhoI8yo1QCgtDAS46wNBcbPuLvAKw62lMvT
+z6kAn2R0Oq2DRpg06YuacmTegJFLblM0
+=cJMP
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__21_Oct_2008_14_13_57_+1100_1.0KYLkWvCL_UOA3--
