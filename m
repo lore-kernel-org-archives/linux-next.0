@@ -1,50 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the kmemcheck tree
-Date: Tue, 21 Oct 2008 16:15:05 +1100
-Message-ID: <20081021161505.29ee7cc9.sfr@canb.auug.org.au>
+Date: Tue, 21 Oct 2008 16:29:42 +1100
+Message-ID: <20081021162942.00517398.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51223 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51231 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751321AbYJUFe7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Oct 2008 01:34:59 -0400
+	id S1750866AbYJUFfD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Oct 2008 01:35:03 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Vegard Nossum <vegard.nossum@gmail.com>, Pekka Enberg <penberg@cs.helsinki.fi>, Ingo Molnar <mingo@elte.hu>
-Cc: linux-next@vger.kernel.org, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
+Cc: linux-next@vger.kernel.org
 
 Hi all,
 
 Today's linux-next merge of the kmemcheck tree got a conflict in
-include/linux/mm_types.h between commit
-52d4b9ac0b985168009c2a57098324e67bae171f ("memcg: allocate all
-page_cgroup at boot") from Linus' tree and commit
+kernel/sysctl.c between commit af936a1606246a10c145feac3770f6287f483f02
+("vmscan: unevictable LRU scan sysctl") from Linus' tree and commit
 385e31b9eae0528bada07d16a189f3f40df23961 ("kmemcheck: add the kmemcheck
 core") from the kmemcheck tree.
 
-Just changed context.  I fixed it up (see below).
+Just overlapping additions (combined with a bad merge in the kmemcheck
+tree).  I fixed it up (see below).
+
+[Ingo: it looks like commit 05416cc42ac7072f39bcff036485e2b0fc1da3a9
+("Merge branch 'linus' into kmemcheck") in the kmemcheck tree merged the
+"rcutorture_runnable" sysctl into the wrong table.]
+
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc include/linux/mm_types.h
-index fe82547,bca924a..0000000
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@@ -94,6 -94,13 +94,10 @@@ struct page 
-  	void *virtual;			/* Kernel virtual address (NULL if
-  					   not kmapped, ie. highmem) */
-  #endif /* WANT_PAGE_VIRTUAL */
- -#ifdef CONFIG_CGROUP_MEM_RES_CTLR
- -	unsigned long page_cgroup;
- -#endif
-+ 
+diff --cc kernel/sysctl.c
+index b3cc739,3383afd..0000000
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@@ -823,26 -825,17 +824,37 @@@ static struct ctl_table kern_table[] = 
+  		.child		= key_sysctls,
+  	},
+  #endif
+ +#ifdef CONFIG_RCU_TORTURE_TEST
+ +	{
+ +		.ctl_name       = CTL_UNNUMBERED,
+ +		.procname       = "rcutorture_runnable",
+ +		.data           = &rcutorture_runnable,
+ +		.maxlen         = sizeof(int),
+ +		.mode           = 0644,
+ +		.proc_handler   = &proc_dointvec,
+ +	},
+ +#endif
+ +#ifdef CONFIG_UNEVICTABLE_LRU
+ +	{
+ +		.ctl_name	= CTL_UNNUMBERED,
+ +		.procname	= "scan_unevictable_pages",
+ +		.data		= &scan_unevictable_pages,
+ +		.maxlen		= sizeof(scan_unevictable_pages),
+ +		.mode		= 0644,
+ +		.proc_handler	= &scan_unevictable_handler,
+ +	},
+ +#endif
 + #ifdef CONFIG_KMEMCHECK
-+ 	void *shadow;
++ 	{
++ 		.ctl_name	= CTL_UNNUMBERED,
++ 		.procname	= "kmemcheck",
++ 		.data		= &kmemcheck_enabled,
++ 		.maxlen		= sizeof(int),
++ 		.mode		= 0644,
++ 		.proc_handler	= &proc_dointvec,
++ 	},
 + #endif
-  };
-  
++ 
   /*
+   * NOTE: do not add new entries to this table unless you have read
+   * Documentation/sysctl/ctl_unnumbered.txt
