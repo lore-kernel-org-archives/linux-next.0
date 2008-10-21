@@ -1,42 +1,39 @@
-From: Josh Boyer <jwboyer@linux.vnet.ibm.com>
-Subject: Re: linux-next: Tree for October 21
-Date: Tue, 21 Oct 2008 09:02:01 -0400
-Message-ID: <20081021130201.GB31686@yoda.jdub.homelinux.org>
-References: <20081021195109.ed83b102.sfr@canb.auug.org.au> <20081021120735.GA10567@yoda.jdub.homelinux.org> <20081021231421.a9cdfcb4.sfr@canb.auug.org.au>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: linuxt-next: nfsd strange commit
+Date: Tue, 21 Oct 2008 09:20:59 -0400
+Message-ID: <20081021132059.GA8029@fieldses.org>
+References: <20081021141357.ab15406f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gx0-f16.google.com ([209.85.217.16]:33500 "EHLO
-	mail-gx0-f16.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751965AbYJUNDe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Oct 2008 09:03:34 -0400
-Received: by gxk9 with SMTP id 9so5364517gxk.13
-        for <linux-next@vger.kernel.org>; Tue, 21 Oct 2008 06:03:33 -0700 (PDT)
+Received: from mail.fieldses.org ([66.93.2.214]:39887 "EHLO fieldses.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752252AbYJUNVB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Oct 2008 09:21:01 -0400
 Content-Disposition: inline
-In-Reply-To: <20081021231421.a9cdfcb4.sfr@canb.auug.org.au>
+In-Reply-To: <20081021141357.ab15406f.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org
 
-On Tue, Oct 21, 2008 at 11:14:21PM +1100, Stephen Rothwell wrote:
->Hi Josh,
->
->On Tue, 21 Oct 2008 08:07:35 -0400 Josh Boyer <jwboyer@linux.vnet.ibm.com> wrote:
->>
->> On Tue, Oct 21, 2008 at 07:51:09PM +1100, Stephen Rothwell wrote:
->> >I have also applied the following patches for known problems:
->> >
->> >	sparc: qlogicpti fallout from sbus removal
->> >	ibm_newemac: Fix new MAL feature handling
->> 
->> Did you?  I put that in my next branch, which Ben pulled into his powerpc
->> tree, so it shouldn't have needed applying separately.
->
->It got into Ben's tree way after I started building linux-next for
->today.  Tomorrow I will indeed not need it any more, thanks.
+On Tue, Oct 21, 2008 at 02:13:57PM +1100, Stephen Rothwell wrote:
+> Hi Bruce,
+> 
+> I was just wondering what commit 9966acbedc54b9c2d38d97bdd56b612d8da45b8d
+> ("proc: move rest of /proc/locks to fs/locks.c") is doing in the
+> nfsd-next tree?  As far as I can see, it has nothing to do with nfsd and
+> no interaction with the nfsd code.
+> 
+> Adding random patches to trees in linux-next just makes my job
+> harder ...  especially when it touched something like include/linux/fs.h
+> and triggers a major rebuild of the tree (*and* it is the only thing in
+> the nfsd-next tree).
 
-Ah.  I sort of guessed that after I sent out my first mail.  Silly me
-for emailing before coffee again.
+I've also been acting as a (somewhat inconsistent) locks.c maintainer.
 
-josh
+Would it make it any easier if I kept a locks-next branch that you could
+pull separately?  Or should I try to get that stuff into some other
+tree?
+
+--b.
