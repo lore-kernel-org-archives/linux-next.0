@@ -1,79 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kmemcheck tree
-Date: Tue, 21 Oct 2008 16:29:42 +1100
-Message-ID: <20081021162942.00517398.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the kmemcheck tree
+Date: Tue, 21 Oct 2008 09:32:01 +0200
+Message-ID: <20081021073201.GB333@elte.hu>
+References: <20081021162942.00517398.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51231 "EHLO smtps.tip.net.au"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:49573 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750866AbYJUFfD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Oct 2008 01:35:03 -0400
+	id S1751330AbYJUHcO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Oct 2008 03:32:14 -0400
+Content-Disposition: inline
+In-Reply-To: <20081021162942.00517398.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vegard Nossum <vegard.nossum@gmail.com>, Pekka Enberg <penberg@cs.helsinki.fi>, Ingo Molnar <mingo@elte.hu>
-Cc: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Vegard Nossum <vegard.nossum@gmail.com>, Pekka Enberg <penberg@cs.helsinki.fi>, linux-next@vger.kernel.org
 
-Hi all,
 
-Today's linux-next merge of the kmemcheck tree got a conflict in
-kernel/sysctl.c between commit af936a1606246a10c145feac3770f6287f483f02
-("vmscan: unevictable LRU scan sysctl") from Linus' tree and commit
-385e31b9eae0528bada07d16a189f3f40df23961 ("kmemcheck: add the kmemcheck
-core") from the kmemcheck tree.
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Just overlapping additions (combined with a bad merge in the kmemcheck
-tree).  I fixed it up (see below).
+> Hi all,
+> 
+> Today's linux-next merge of the kmemcheck tree got a conflict in
+> kernel/sysctl.c between commit af936a1606246a10c145feac3770f6287f483f02
+> ("vmscan: unevictable LRU scan sysctl") from Linus' tree and commit
+> 385e31b9eae0528bada07d16a189f3f40df23961 ("kmemcheck: add the kmemcheck
+> core") from the kmemcheck tree.
+> 
+> Just overlapping additions (combined with a bad merge in the kmemcheck
+> tree).  I fixed it up (see below).
 
-[Ingo: it looks like commit 05416cc42ac7072f39bcff036485e2b0fc1da3a9
-("Merge branch 'linus' into kmemcheck") in the kmemcheck tree merged the
-"rcutorture_runnable" sysctl into the wrong table.]
+thanks!
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+> [Ingo: it looks like commit 05416cc42ac7072f39bcff036485e2b0fc1da3a9 
+> ("Merge branch 'linus' into kmemcheck") in the kmemcheck tree merged 
+> the "rcutorture_runnable" sysctl into the wrong table.]
 
-diff --cc kernel/sysctl.c
-index b3cc739,3383afd..0000000
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@@ -823,26 -825,17 +824,37 @@@ static struct ctl_table kern_table[] = 
-  		.child		= key_sysctls,
-  	},
-  #endif
- +#ifdef CONFIG_RCU_TORTURE_TEST
- +	{
- +		.ctl_name       = CTL_UNNUMBERED,
- +		.procname       = "rcutorture_runnable",
- +		.data           = &rcutorture_runnable,
- +		.maxlen         = sizeof(int),
- +		.mode           = 0644,
- +		.proc_handler   = &proc_dointvec,
- +	},
- +#endif
- +#ifdef CONFIG_UNEVICTABLE_LRU
- +	{
- +		.ctl_name	= CTL_UNNUMBERED,
- +		.procname	= "scan_unevictable_pages",
- +		.data		= &scan_unevictable_pages,
- +		.maxlen		= sizeof(scan_unevictable_pages),
- +		.mode		= 0644,
- +		.proc_handler	= &scan_unevictable_handler,
- +	},
- +#endif
-+ #ifdef CONFIG_KMEMCHECK
-+ 	{
-+ 		.ctl_name	= CTL_UNNUMBERED,
-+ 		.procname	= "kmemcheck",
-+ 		.data		= &kmemcheck_enabled,
-+ 		.maxlen		= sizeof(int),
-+ 		.mode		= 0644,
-+ 		.proc_handler	= &proc_dointvec,
-+ 	},
-+ #endif
-+ 
-  /*
-   * NOTE: do not add new entries to this table unless you have read
-   * Documentation/sysctl/ctl_unnumbered.txt
+hm, good spotting! Vegard, will you apply it to your tree? If kmemcheck 
+does not make it in in this cycle then maybe it's best to rebase it 
+shortly after -rc1 is released, to get rid of uglies like that?
+
+	Ingo
