@@ -1,63 +1,79 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: stackprotector tree build failure
-Date: Wed, 22 Oct 2008 09:29:23 +0200
-Message-ID: <20081022072923.GC27637@elte.hu>
-References: <20081022131124.a572b11f.sfr@canb.auug.org.au> <20081022043227.GA31413@elte.hu> <20081022182149.f89fe88d.sfr@canb.auug.org.au>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: BUG: sleeping function called from invalid context at
+	kernel/rwsem.c:131 XFS? (was: Re: linux-next: Tree for October 17)
+Date: Wed, 22 Oct 2008 18:58:38 +1100
+Message-ID: <20081022075838.GK18495@disturbed>
+References: <a4423d670810170954h7ca130aaw8895380a4c6b125@mail.gmail.com> <20081017165738.GA20818@infradead.org> <a4423d670810171013g5bc19c1cm3f7d9c014ee70349@mail.gmail.com> <20081017203710.GA27187@infradead.org> <20081017135510.7127c4e7@infradead.org> <a4423d670810200758m3cea3841h40988afc8eaf81@mail.gmail.com> <20081020163327.GA15651@infradead.org> <a4423d670810201013w6448cb38w402771799cefb5f5@mail.gmail.com> <20081020223549.GA21152@disturbed> <a4423d670810210442y51b62fc2naf6cb649e6b26942@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:34322 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751631AbYJVH3l (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 Oct 2008 03:29:41 -0400
+Received: from ipmail01.adl6.internode.on.net ([203.16.214.146]:37881 "EHLO
+	ipmail01.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752219AbYJVH6q (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 Oct 2008 03:58:46 -0400
 Content-Disposition: inline
-In-Reply-To: <20081022182149.f89fe88d.sfr@canb.auug.org.au>
+In-Reply-To: <a4423d670810210442y51b62fc2naf6cb649e6b26942@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Junio C Hamano <gitster@pobox.com>, git@vger.kernel.org
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: lachlan@sgi.com, Christoph Hellwig <hch@infradead.org>, Arjan van de Ven <arjan@infradead.org>, xfs@oss.sgi.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi Ingo,
-> 
-> On Wed, 22 Oct 2008 06:32:27 +0200 Ingo Molnar <mingo@elte.hu> wrote:
+On Tue, Oct 21, 2008 at 03:42:16PM +0400, Alexander Beregalov wrote:
+> 2008/10/21 Dave Chinner <david@fromorbit.com>:
+> > On Mon, Oct 20, 2008 at 09:13:05PM +0400, Alexander Beregalov wrote:
+> >> 2008/10/20 Christoph Hellwig <hch@infradead.org>:
+> >> > On Mon, Oct 20, 2008 at 06:58:09PM +0400, Alexander Beregalov wrote:
+> >> >> Hi Christoph
+> >> >>
+> >> >> I have the same result with next-1020 and today's xfs-2.6.git/master
+> >> >> (
+> >> >> commit bfd2bd10da76378dc4afd87d7d204a1d3d70b347
+> >> >> Author: David Chinner <david@fromorbit.com>
+> >> >> Date:   Fri Oct 17 15:36:23 2008 +1000
+> >> >>     Inode: Allow external list initialisation
+> >> >> )
+> >> Ha, that kernel (xfs/master) has made my system dead locked.
+> >> SysRQ-d:
+> >> Show all locks held in the system
+> >> 1 lock held by pdflush
+> >> (&type->s_umount_key#18{----}, at writeback_inodes
+> >> 1 lock held by login
+> >> (&(&ip->i_iolock)->mr_lock){----} at xfs_ilock
+> >> and so on ( many locks at xfs_ilock)
 > >
-> > This seems to have been caused by a git-rerere bug - it mis-matched a 
-> > timers tree conflict resolution. I cleared out that resolution (it had 
-> > nothing to do with stackprotector), re-did the conflict resolution 
-> > (which was about overlapping additions of header files), and pushed out 
-> > a new stackprotector tree - the delta below has the expected result.
+> > Curious. Can you post the full stack traces?
+> I can not reproduce it, yet.
 > 
-> I wondered how you could have possibly got that result - aren't 
-> computers wonderful! :-)
+> Bisected to:
+> dd509097cb0b76d3836385f80d6b2d6fd3b97757 is first bad commit
+> commit dd509097cb0b76d3836385f80d6b2d6fd3b97757
+> Author: Lachlan McIlroy <lachlan@sgi.com>
+> Date:   Mon Sep 29 14:56:40 2008 +1000
+> 
+>     [XFS] Unlock inode before calling xfs_idestroy()
+> 
+>     Lock debugging reported the ilock was being destroyed without being
+>     unlocked. We don't need to lock the inode until we are going to insert it
+>     into the radix tree.
 
-heh, yes :)
+Ah, OK, I see the problem, though I don't understand why I'm not
+seeing the might_sleep() triggering all the time given that I always
+build with:
 
-this is the second time i met a git-rerere mismatch - the first one was 
-half a year ago.
+$ grep SLEEP .config
+CONFIG_DEBUG_SPINLOCK_SLEEP=y
 
-Unfortunately i failed at generating a reproducer back then and even now 
-- as to resolve this problem i manually removed the preimage and 
-postimage, so it's gone now.
+Basically the above commit moved xfs_ilock() inside
+radix_tree_preload()/radix_tree_preload_end(), which means we are
+taking a rwsem() while we have an elevated preempt count. I'll
+get a patch out to fix it.
 
-I've Cc:-ed Junio and the Git list as a general FYI - but it must be 
-frustrating to get such a bugreport, because i have no reproducer.
+The question is why isn't this triggering for me during QA runs?
 
-git-rerere sometimes seems to be picking up the wrong resolution. VERY 
-rarely.
+Cheers,
 
-It seems random and content dependent. Once it happened to 
-arch/x86/kernel/traps_32.c and now to kernel/fork.c. Along the ~170 
-successful resolutions i have in my tree right now. And i do many 
-conflict resolutions every day - and it happened only once every 6 
-months or so.
-
-(the arch/x86/kernel/traps_32.c one happened regularly, that's why i 
-thought it's content sha1 dependent, and not some corruption.)
-
-Next time it happens i'll be on the watchout and will save the complete 
-tree.
-
-	Ingo
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
