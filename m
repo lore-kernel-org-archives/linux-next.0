@@ -1,99 +1,40 @@
-From: Johannes Schindelin <Johannes.Schindelin@gmx.de>
-Subject: Re: linux-next: stackprotector tree build failure
-Date: Wed, 22 Oct 2008 19:41:18 +0200 (CEST)
-Message-ID: <alpine.DEB.1.00.0810221908100.22125@pacific.mpi-cbg.de.mpi-cbg.de>
-References: <20081022131124.a572b11f.sfr@canb.auug.org.au> <20081022043227.GA31413@elte.hu> <20081022182149.f89fe88d.sfr@canb.auug.org.au> <20081022072923.GC27637@elte.hu> <20081022192725.5f5de711.sfr@canb.auug.org.au> <20081022083139.GA4369@elte.hu>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: BUG: sleeping function called from invalid context at
+	kernel/rwsem.c:131 XFS? (was: Re: linux-next: Tree for October 17)
+Date: Thu, 23 Oct 2008 08:10:28 +1100
+Message-ID: <20081022211028.GO18495@disturbed>
+References: <20081017203710.GA27187@infradead.org> <20081017135510.7127c4e7@infradead.org> <a4423d670810200758m3cea3841h40988afc8eaf81@mail.gmail.com> <20081020163327.GA15651@infradead.org> <a4423d670810201013w6448cb38w402771799cefb5f5@mail.gmail.com> <20081020223549.GA21152@disturbed> <a4423d670810210442y51b62fc2naf6cb649e6b26942@mail.gmail.com> <20081022075838.GK18495@disturbed> <20081022082550.GM18495@disturbed> <20081022101351.GB11313@infradead.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.gmx.net ([213.165.64.20]:45576 "HELO mail.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-	id S1757582AbYJVReX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 Oct 2008 13:34:23 -0400
-In-Reply-To: <20081022083139.GA4369@elte.hu>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Junio C Hamano <gitster@pobox.com>, git@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1759617AbYJVVKr@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20081022101351.GB11313@infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Alexander Beregalov <a.beregalov@gmail.com>, lachlan@sgi.com, Arjan van de Ven <arjan@infradead.org>, xfs@oss.sgi.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi,
-
-On Wed, 22 Oct 2008, Ingo Molnar wrote:
-
+On Wed, Oct 22, 2008 at 06:13:51AM -0400, Christoph Hellwig wrote:
+> On Wed, Oct 22, 2008 at 07:25:50PM +1100, Dave Chinner wrote:
+> > > Basically the above commit moved xfs_ilock() inside
+> > > radix_tree_preload()/radix_tree_preload_end(), which means we are
+> > > taking a rwsem() while we have an elevated preempt count. I'll
+> > > get a patch out to fix it.
 > 
-> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > On Wed, 22 Oct 2008 09:29:23 +0200 Ingo Molnar <mingo@elte.hu> wrote:
-> > >
-> > > I've Cc:-ed Junio and the Git list as a general FYI - but it must be 
-> > > frustrating to get such a bugreport, because i have no reproducer.
-> > > 
-> > > git-rerere sometimes seems to be picking up the wrong resolution. VERY 
-> > > rarely.
-> > > 
-> > > It seems random and content dependent. Once it happened to 
-> > > arch/x86/kernel/traps_32.c and now to kernel/fork.c. Along the ~170 
-> > > successful resolutions i have in my tree right now. And i do many 
-> > > conflict resolutions every day - and it happened only once every 6 
-> > > months or so.
-> > > 
-> > > (the arch/x86/kernel/traps_32.c one happened regularly, that's why i 
-> > > thought it's content sha1 dependent, and not some corruption.)
-> > > 
-> > > Next time it happens i'll be on the watchout and will save the complete 
-> > > tree.
-> > 
-> > I think rerere matches preimages on the SHA1 of the conflict (or its 
-> > reverse), so sufficiently similar pieces of code will match.  I would 
-> > expect things like ext2/3/4 to be candidates.  Did the traps_32.c one 
-> > match one for traps_64.c?
-> > 
-> > I may be mistaken, but I once followed the code in rerere to try to 
-> > figure out how to fix a resolution.
-> 
-> the traps_32.c one was that git-rerere put in a traps_64.c end result. 
-> So i ended up with a 32-bit kernel that tried to build a 64-bit piece of 
-> code - fireworks. That condition persisted - i had to fix it up manually 
-> all the time i integrated that portion of the tree. That too was i think 
-> centered around a header file chunk - perhaps the #include section of 
-> traps_32.c and traps_64.c was similar enough in that section?
+> This really needs a warning.  Then again I don't really understand this
+> as the point of radix_tree_preload was that we can do the actual
+> radix-tree under a lock, or not?
 
-I think it might be in order to explain how git-rerere works internally:
+Right - the preload allows us to do GFP_KERNEL allocations for radix
+tree nodes and use a spinlock for inserts into the tree. We could
+drop the preload stuff if we initialised the radix tree to use
+GFP_ATOMIC allocations for radix tree nodes, but that is more likely
+to lead to insert failures under low memory conditions compared to
+the preload method.
 
-- in case of a conflicts, the files' conflicts are written into the 
-  rr-cache _per file_.
+Cheers,
 
-  First, the human readable stuff after the "<<<", "|||" and ">>>" lines 
-  is removed.
-
-  Then, the "||| ... ===" part is removed, too (in effect turning the 
-  diff3-style conflicts into an RCS merge-style conflicts).
-
-  The result is recorded as "preimage".  The conflict is identified by the 
-  SHA-1 of _just_ the conflicts (including the "<<<", "===" and ">>>" 
-  lines).
-
-  After all the conflicted files have been handled, a list is written to 
-  the file "MERGE_RR" containing the SHA-1s of the conflicts together with 
-  the file names.
-
-- when committing, the files whose conflicts were resolved are recorded 
-  verbatim in the file "postimage".
-
-Now, when rerere is called again and there are conflicted files, again the 
-files' conflicts are identified by their SHA-1.  If a resolution exists, a 
-3-way merge is performed with the recorded preimage (the 
-original file with conflict lines) as base, the postimage (the originally 
-resolved file) and the current file with conflict lines.
-
-The idea being: the diff between the recorded preimage and postimage gives 
-the resolution that you want, and the diff between the recorded preimage 
-and the current file with conflict lines gives you the changes that 
-happened to the file in-between.
-
-So I think that you might hit the unfortunate case where two files 
-happened to have the same conflicts, but you needed to resolve them one 
-way for one file, and another way for the other file.
-
-Ciao,
-Dscho
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
