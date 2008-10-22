@@ -1,81 +1,70 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] kgdb: fix kernel-doc error
-Date: Wed, 22 Oct 2008 16:34:13 -0700
-Message-ID: <48FFB875.2090103@xenotime.net>
+Subject: [PTCH -next] i2o: fix kernel-doc warnings
+Date: Wed, 22 Oct 2008 16:38:38 -0700
+Message-ID: <48FFB97E.3020909@xenotime.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xenotime.net ([66.160.160.81]:38098 "HELO xenotime.net"
+Received: from xenotime.net ([66.160.160.81]:37208 "HELO xenotime.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-	id S1752204AbYJVXeY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 Oct 2008 19:34:24 -0400
-Received: from 69.30.121.162 ([69.30.121.162]) by xenotime.net for <linux-next@vger.kernel.org>; Wed, 22 Oct 2008 16:34:13 -0700
+	id S1752763AbYJVXir (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 Oct 2008 19:38:47 -0400
+Received: from 69.30.121.162 ([69.30.121.162]) by xenotime.net for <linux-next@vger.kernel.org>; Wed, 22 Oct 2008 16:38:44 -0700
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
-Cc: jason.wessel@windriver.com, akpm <akpm@linux-foundation.org>
+To: linux-next@vger.kernel.org
+Cc: akpm <akpm@linux-foundation.org>, viro@zeniv.linux.org.uk
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Fix kernel-doc format error in kgdb.h:
+Fixup i2o kernel-doc warnings:
 
-linux-next-20081022//include/linux/kgdb.h:308): duplicate section name 'Description'
-
-and fix typos in that file's kernel-doc comments.
+Warning(linux-next-20081022//drivers/message/i2o/i2o_block.c:579): No description found for parameter 'bdev'
+Warning(linux-next-20081022//drivers/message/i2o/i2o_block.c:579): No description found for parameter 'mode'
+Warning(linux-next-20081022//drivers/message/i2o/i2o_block.c:608): No description found for parameter 'disk'
+Warning(linux-next-20081022//drivers/message/i2o/i2o_block.c:608): No description found for parameter 'mode'
+Warning(linux-next-20081022//drivers/message/i2o/i2o_block.c:657): No description found for parameter 'bdev'
+Warning(linux-next-20081022//drivers/message/i2o/i2o_block.c:657): No description found for parameter 'mode'
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-cc: Jason Wessel <jason.wessel@windriver.com>
+cc: Al Viro <viro@zeniv.linux.org.uk>
 ---
- include/linux/kgdb.h |   12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ drivers/message/i2o/i2o_block.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- linux-next-20081022.orig/include/linux/kgdb.h
-+++ linux-next-20081022/include/linux/kgdb.h
-@@ -29,8 +29,7 @@ struct pt_regs;
-  *
-  *	On some architectures it is required to skip a breakpoint
-  *	exception when it occurs after a breakpoint has been removed.
-- *	This can be implemented in the architecture specific portion of
-- *	for kgdb.
-+ *	This can be implemented in the architecture specific portion of kgdb.
-  */
- extern int kgdb_skipexception(int exception, struct pt_regs *regs);
- 
-@@ -42,7 +41,7 @@ extern int kgdb_skipexception(int except
-  *
-  *	This is usually needed on architectures which support SMP and
-  *	KGDB.  This function is called after all the secondary cpus have
-- *	been put to a know spin state and the primary CPU has control over
-+ *	been put to a known spin state and the primary CPU has control over
-  *	KGDB.
-  */
- extern void kgdb_post_primary_code(struct pt_regs *regs, int e_vector,
-@@ -65,7 +64,7 @@ struct uart_port;
- /**
-  *	kgdb_breakpoint - compiled in breakpoint
-  *
-- *	This will be impelmented a static inline per architecture.  This
-+ *	This will be implemented as a static inline per architecture.  This
-  *	function is called by the kgdb core to execute an architecture
-  *	specific trap to cause kgdb to enter the exception processing.
-  *
-@@ -190,7 +189,7 @@ kgdb_arch_handle_exception(int vector, i
-  *	@flags: Current IRQ state
-  *
-  *	On SMP systems, we need to get the attention of the other CPUs
-- *	and get them be in a known state.  This should do what is needed
-+ *	and get them into a known state.  This should do what is needed
-  *	to get the other CPUs to call kgdb_wait(). Note that on some arches,
-  *	the NMI approach is not used for rounding up all the CPUs. For example,
-  *	in case of MIPS, smp_call_function() is used to roundup CPUs. In
-@@ -295,8 +294,7 @@ extern int __weak kgdb_mem2hex(char *mem
- extern int __weak kgdb_hex2mem(char *buf, char *mem, int count);
+--- linux-next-20081022.orig/drivers/message/i2o/i2o_block.c
++++ linux-next-20081022/drivers/message/i2o/i2o_block.c
+@@ -567,8 +567,8 @@ static void i2o_block_biosparam(unsigned
  
  /**
-- *      kgdb_ebin2mem - (optional arch override) Copy the binary array
-- *     pointed to by buf into mem.
-+ *      kgdb_ebin2mem - (optional arch override) Copy binary array from @buf into @mem
-  *      @buf: source buffer
-  *      @mem: target buffer
-  *      @count: number of bytes in mem
+  *	i2o_block_open - Open the block device
+- *	@inode: inode for block device being opened
+- *	@file: file to open
++ *	@bdev: block device being opened
++ *	@mode: file open mode
+  *
+  *	Power up the device, mount and lock the media. This function is called,
+  *	if the block device is opened for access.
+@@ -596,8 +596,8 @@ static int i2o_block_open(struct block_d
+ 
+ /**
+  *	i2o_block_release - Release the I2O block device
+- *	@inode: inode for block device being released
+- *	@file: file to close
++ *	@disk: gendisk device being released
++ *	@mode: file open mode
+  *
+  *	Unlock and unmount the media, and power down the device. Gets called if
+  *	the block device is closed.
+@@ -643,8 +643,8 @@ static int i2o_block_getgeo(struct block
+ 
+ /**
+  *	i2o_block_ioctl - Issue device specific ioctl calls.
+- *	@inode: inode for block device ioctl
+- *	@file: file for ioctl
++ *	@bdev: block device being opened
++ *	@mode: file open mode
+  *	@cmd: ioctl command
+  *	@arg: arg
+  *
