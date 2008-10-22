@@ -1,61 +1,31 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] mfd/wm8350: don't export static functions
-Date: Wed, 22 Oct 2008 20:54:24 +1100
-Message-ID: <20081022205424.7163e6ec.sfr@canb.auug.org.au>
-References: <20081016204754.a41646e5.sfr@canb.auug.org.au>
-	<20081016120416.GA5753@rakim.wolfsonmicro.main>
-	<20081022203112.5a213e8c.sfr@canb.auug.org.au>
-	<20081022093721.GA10499@rakim.wolfsonmicro.main>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: BUG: sleeping function called from invalid context at
+	kernel/rwsem.c:131 XFS? (was: Re: linux-next: Tree for October 17)
+Date: Wed, 22 Oct 2008 06:13:51 -0400
+Message-ID: <20081022101351.GB11313@infradead.org>
+References: <a4423d670810171013g5bc19c1cm3f7d9c014ee70349@mail.gmail.com> <20081017203710.GA27187@infradead.org> <20081017135510.7127c4e7@infradead.org> <a4423d670810200758m3cea3841h40988afc8eaf81@mail.gmail.com> <20081020163327.GA15651@infradead.org> <a4423d670810201013w6448cb38w402771799cefb5f5@mail.gmail.com> <20081020223549.GA21152@disturbed> <a4423d670810210442y51b62fc2naf6cb649e6b26942@mail.gmail.com> <20081022075838.GK18495@disturbed> <20081022082550.GM18495@disturbed>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__22_Oct_2008_20_54_24_+1100_XqF9jGtAW/1ZVANS"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48175 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751575AbYJVJye (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 Oct 2008 05:54:34 -0400
-In-Reply-To: <20081022093721.GA10499@rakim.wolfsonmicro.main>
+Received: from bombadil.infradead.org ([18.85.46.34]:53296 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752075AbYJVKNx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Oct 2008 06:13:53 -0400
+Content-Disposition: inline
+In-Reply-To: <20081022082550.GM18495@disturbed>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, ppc-dev <linuxppc-dev@ozlabs.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Alexander Beregalov <a.beregalov@gmail.com>, lachlan@sgi.com, Christoph Hellwig <hch@infradead.org>, Arjan van de Ven <arjan@infradead.org>, xfs@oss.sgi.com, linux-next@vger.kernel.or
 
---Signature=_Wed__22_Oct_2008_20_54_24_+1100_XqF9jGtAW/1ZVANS
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Oct 22, 2008 at 07:25:50PM +1100, Dave Chinner wrote:
+> > Basically the above commit moved xfs_ilock() inside
+> > radix_tree_preload()/radix_tree_preload_end(), which means we are
+> > taking a rwsem() while we have an elevated preempt count. I'll
+> > get a patch out to fix it.
 
-Hi Mark,
+This really needs a warning.  Then again I don't really understand this
+as the point of radix_tree_preload was that we can do the actual
+radix-tree under a lock, or not?
 
-On Wed, 22 Oct 2008 10:37:22 +0100 Mark Brown <broonie@opensource.wolfsonmi=
-cro.com> wrote:
->
-> On Wed, Oct 22, 2008 at 08:31:12PM +1100, Stephen Rothwell wrote:
->=20
-> > I thought that this had been applied, but I have had to apply it to my
-> > tree today again.
->=20
-> Samuel doesn't seem to have picked it up (though looking at the CC list
-> you've not sent it to him).  I'm going to push another batch of stuff to
-> him later today, hopefully he will pick it up then.
-
-OK, thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__22_Oct_2008_20_54_24_+1100_XqF9jGtAW/1ZVANS
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkj++FAACgkQjjKRsyhoI8zkMACeOzMeKulLpoaF0yQ+Zcq4JB8o
-wSQAniHf/kLZ8yyOnahwVeKSRClcAqJT
-=Q8bw
------END PGP SIGNATURE-----
-
---Signature=_Wed__22_Oct_2008_20_54_24_+1100_XqF9jGtAW/1ZVANS--
+Anyway, the patch looks correct to me, including the slightly unrelated
+hunk to fix the missing unlock and preload leak.
