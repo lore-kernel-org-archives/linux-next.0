@@ -1,39 +1,87 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for October 21 (jffs2)
-Date: Tue, 21 Oct 2008 21:25:44 -0700
-Message-ID: <20081021212544.06588df7.randy.dunlap@oracle.com>
-References: <20081021195109.ed83b102.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: stackprotector tree build failure
+Date: Wed, 22 Oct 2008 06:32:27 +0200
+Message-ID: <20081022043227.GA31413@elte.hu>
+References: <20081022131124.a572b11f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from agminet01.oracle.com ([141.146.126.228]:20551 "EHLO
-	agminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750815AbYJVE0L (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Oct 2008 00:26:11 -0400
-In-Reply-To: <20081021195109.ed83b102.sfr@canb.auug.org.au>
+Received: from mx2.mail.elte.hu ([157.181.151.9]:35869 "EHLO mx2.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750815AbYJVEcl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 Oct 2008 00:32:41 -0400
+Content-Disposition: inline
+In-Reply-To: <20081022131124.a572b11f.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dwmw2@infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
 
-On Tue, 21 Oct 2008 19:51:09 +1100 Stephen Rothwell wrote:
+
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
 > Hi all,
 > 
-> Today's tree will not build for powerpc allyesconfig (libc aborts the
-> link due to a free() problem), sparc(32) defconfig and probably some
-> other configurations.
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 > 
-> I am no longer commenting on conflicts that are clearly just caused by
-> slight differences in what has been merged into Linus' tree and
-> linux-next or conflicts caused by further changes in the linux-next after
-> a subset of a tree has been merged.
+> kernel/fork.c: In function 'copy_process':
+> kernel/fork.c:1026: error: 'struct task_struct' has no member named 'default_timer_slack_ns'
+> kernel/fork.c:1026: error: 'struct task_struct' has no member named 'timer_slack_ns'
+> 
+> Caused by commit 929c12f25feeec881fd67eaa9b551f98588a2931 ("manual merge
+> of stackprotector") which introduced the above line.
+> 
+> I applied the following patch.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 22 Oct 2008 13:09:17 +1100
+> Subject: [PATCH] stackprotector: fix up bad merge
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  kernel/fork.c |    2 --
+>  1 files changed, 0 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index 194dc04..3bc1f86 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -1023,8 +1023,6 @@ static struct task_struct *copy_process(unsigned long clone_flags,
+>  	p->prev_utime = cputime_zero;
+>  	p->prev_stime = cputime_zero;
+>  
+> -	p->default_timer_slack_ns = current->timer_slack_ns;
+> -
+>  #ifdef CONFIG_DETECT_SOFTLOCKUP
+>  	p->last_switch_count = 0;
+>  	p->last_switch_timestamp = 0;
+> -- 
+> 1.5.6.5
 
-linux-next-20081021/fs/jffs2/nodemgmt.c:265: error: 'struct jffs2_sb_info' has no member named 'wbuf_ofs'
-linux-next-20081021/fs/jffs2/nodemgmt.c:265: error: 'struct jffs2_sb_info' has no member named 'wbuf_len'
-linux-next-20081021/fs/jffs2/nodemgmt.c:266: error: 'struct jffs2_sb_info' has no member named 'wbuf_ofs'
+thanks Stephen!
 
+This seems to have been caused by a git-rerere bug - it mis-matched a 
+timers tree conflict resolution. I cleared out that resolution (it had 
+nothing to do with stackprotector), re-did the conflict resolution 
+(which was about overlapping additions of header files), and pushed out 
+a new stackprotector tree - the delta below has the expected result.
 
----
-~Randy
+	Ingo
+
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 194dc04..3bc1f86 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1023,8 +1023,6 @@ static struct task_struct *copy_process(unsigned long clone_flags,
+ 	p->prev_utime = cputime_zero;
+ 	p->prev_stime = cputime_zero;
+ 
+-	p->default_timer_slack_ns = current->timer_slack_ns;
+-
+ #ifdef CONFIG_DETECT_SOFTLOCKUP
+ 	p->last_switch_count = 0;
+ 	p->last_switch_timestamp = 0;
