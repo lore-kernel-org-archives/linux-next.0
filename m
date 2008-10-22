@@ -1,57 +1,59 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] fs: fix inode.c kernel-doc warnings
-Date: Wed, 22 Oct 2008 16:39:47 -0700
-Message-ID: <48FFB9C3.1000703@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: stackprotector tree build failure
+Date: Thu, 23 Oct 2008 10:54:54 +1100
+Message-ID: <20081023105454.880e13e2.sfr@canb.auug.org.au>
+References: <20081022131124.a572b11f.sfr@canb.auug.org.au>
+	<20081022043227.GA31413@elte.hu>
+	<20081022182149.f89fe88d.sfr@canb.auug.org.au>
+	<20081022072923.GC27637@elte.hu>
+	<20081022192725.5f5de711.sfr@canb.auug.org.au>
+	<20081022083139.GA4369@elte.hu>
+	<alpine.DEB.1.00.0810221908100.22125@pacific.mpi-cbg.de.mpi-cbg.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xenotime.net ([66.160.160.81]:48211 "HELO xenotime.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-	id S1751915AbYJVXjv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 Oct 2008 19:39:51 -0400
-Received: from 69.30.121.162 ([69.30.121.162]) by xenotime.net for <linux-next@vger.kernel.org>; Wed, 22 Oct 2008 16:39:48 -0700
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: akpm <akpm@linux-foundation.org>, viro@zeniv.linux.org.uk
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__23_Oct_2008_10_54_54_+1100_8MVWjtOBShGGYB7M"
+Return-path: <git-owner@vger.kernel.org>
+In-Reply-To: <alpine.DEB.1.00.0810221908100.22125@pacific.mpi-cbg.de.mpi-cbg.de>
+Sender: git-owner@vger.kernel.org
+To: Johannes Schindelin <Johannes.Schindelin@gmx.de>
+Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Junio C Hamano <gitster@pobox.com>, git@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+--Signature=_Thu__23_Oct_2008_10_54_54_+1100_8MVWjtOBShGGYB7M
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix fs/inode.c kernel-doc warnings:
+Hi Johannes,
 
-Warning(linux-next-20081022//fs/inode.c:120): No description found for parameter 'sb'
-Warning(linux-next-20081022//fs/inode.c:120): No description found for parameter 'inode'
-Warning(linux-next-20081022//fs/inode.c:587): No description found for parameter 'sb'
-Warning(linux-next-20081022//fs/inode.c:587): No description found for parameter 'inode'
+On Wed, 22 Oct 2008 19:41:18 +0200 (CEST) Johannes Schindelin <Johannes.Sch=
+indelin@gmx.de> wrote:
+>
+> I think it might be in order to explain how git-rerere works internally:
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-cc: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/inode.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Thanks for the explanation.
 
---- linux-next-20081022.orig/fs/inode.c
-+++ linux-next-20081022/fs/inode.c
-@@ -110,8 +110,8 @@ static void wake_up_inode(struct inode *
- 
- /**
-  * inode_init_always - perform inode structure intialisation
-- * @sb		- superblock inode belongs to.
-- * @inode	- inode to initialise
-+ * @sb: superblock inode belongs to.
-+ * @inode: inode to initialise
-  *
-  * These are initializations that need to be done on every inode
-  * allocation as the fields are not initialised by slab allocation.
-@@ -573,8 +573,8 @@ __inode_add_to_lists(struct super_block 
- 
- /**
-  * inode_add_to_lists - add a new inode to relevant lists
-- * @sb		- superblock inode belongs to.
-- * @inode	- inode to mark in use
-+ * @sb: superblock inode belongs to.
-+ * @inode: inode to mark in use
-  *
-  * When an inode is allocated it needs to be accounted for, added to the in use
-  * list, the owning superblock and the inode hash. This needs to be done under
+> So I think that you might hit the unfortunate case where two files=20
+> happened to have the same conflicts, but you needed to resolve them one=20
+> way for one file, and another way for the other file.
+
+Which makes perfect sense, unfortunately.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__23_Oct_2008_10_54_54_+1100_8MVWjtOBShGGYB7M
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkj/vU4ACgkQjjKRsyhoI8zKYgCggqSrqEKLzEeIpuKwhFNwDqX7
+UBgAn27NQwN703trPMgve8PNFvXAC0ND
+=7mrv
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__23_Oct_2008_10_54_54_+1100_8MVWjtOBShGGYB7M--
