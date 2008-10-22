@@ -1,45 +1,64 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 01/31] proc: switch /proc/loadavg to seq_file
-Date: Tue, 21 Oct 2008 16:58:22 -0700
-Message-ID: <20081021165822.8d574935.akpm@linux-foundation.org>
-References: <20081017123958.GB22653@x200.localdomain>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] byteorder: remove direct includes of
+ linux/byteorder/swab[b].h
+Date: Wed, 22 Oct 2008 11:43:00 +1100
+Message-ID: <20081022114300.0a0589ee.sfr@canb.auug.org.au>
+References: <1224523418.31861.4.camel@brick>
+	<20081021131534.7c084fdb.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__22_Oct_2008_11_43_00_+1100_K63NYkVnzAzt8tEp"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:57705 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752194AbYJUX6l (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Oct 2008 19:58:41 -0400
-In-Reply-To: <20081017123958.GB22653@x200.localdomain>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41991 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751704AbYJVAnM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Oct 2008 20:43:12 -0400
+In-Reply-To: <20081021131534.7c084fdb.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Harvey Harrison <harvey.harrison@gmail.com>, torvalds@linux-foundation.org, paulmck@us.ibm.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Ananth N Mavinakayanahalli <ananth@in.ibm.com>, Sam Ravnborg <sam@ravnborg.org>
 
-On Fri, 17 Oct 2008 16:39:58 +0400
-Alexey Dobriyan <adobriyan@gmail.com> wrote:
+--Signature=_Wed__22_Oct_2008_11_43_00_+1100_K63NYkVnzAzt8tEp
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> and move it to fs/proc/loadavg.c while I'm at it.
-> 
-> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-> ---
->  fs/proc/Makefile    |    2 +-
->  fs/proc/loadavg.c   |   51 +++++++++++++++++++++++++++++++++++++++++++++++++++
->  fs/proc/proc_misc.c |   26 --------------------------
+On Tue, 21 Oct 2008 13:15:34 -0700 Andrew Morton <akpm@linux-foundation.org=
+> wrote:
+>
+> > Andrew, this hunk seems to have been lost when you sent it to Linus, it=
+'s possible
+> > you applied this on top of the -next tree where this file has moved, bu=
+t the tests
+> > tree hasn't been pulled yet.
+> >=20
+> > The rest of the patch went into mainline as 1d8cca44b6a244b7e378546d719=
+041819049a0f9
+> >=20
+>=20
+> Grump.  It happens sometimes.  People putting stuff into linux-next and
+> then not merging it into the next kernel.
 
-While I think the patchset is a good thing, this is absolutely the worst
-possible time to merge large code-motion changes into linux-next.  We
-need to maintain this stuff for more than two months, and everyone and
-his puppy is altering those files.  Today's linux-next already broke.
+The "tests" tree has been requested to be pulled twice (or so) with no
+response apparently, so I have now dropped it from the -next tree until
+someone decides if we want to integrate it at all.
 
-So I'd suggest that this all be deferred until the day before
-2.6.29-rc1(!).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+--Signature=_Wed__22_Oct_2008_11_43_00_+1100_K63NYkVnzAzt8tEp
+Content-Type: application/pgp-signature
 
-fs/proc/meminfo.c: In function 'meminfo_proc_show':
-fs/proc/meminfo.c:90: error: 'NR_ACTIVE' undeclared (first use in this function)
-fs/proc/meminfo.c:90: error: (Each undeclared identifier is reported only once
-fs/proc/meminfo.c:90: error: for each function it appears in.)
-fs/proc/meminfo.c:91: error: 'NR_INACTIVE' undeclared (first use in this function)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkj+dxQACgkQjjKRsyhoI8zvzQCfeMK/aIjm7gv5qTtIDIDYWwhg
+GwkAnA2vbNY589Fxu9w7dMYOv7QkdNP0
+=MtdV
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__22_Oct_2008_11_43_00_+1100_K63NYkVnzAzt8tEp--
