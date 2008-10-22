@@ -1,60 +1,81 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: failed import of the rr tree
-Date: Thu, 23 Oct 2008 10:29:51 +1100
-Message-ID: <20081023102951.db38e08c.sfr@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] kgdb: fix kernel-doc error
+Date: Wed, 22 Oct 2008 16:34:13 -0700
+Message-ID: <48FFB875.2090103@xenotime.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__23_Oct_2008_10_29_51_+1100_5t82vnaf0p9pOZ3B"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34972 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751571AbYJVX37 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 Oct 2008 19:29:59 -0400
+Received: from xenotime.net ([66.160.160.81]:38098 "HELO xenotime.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+	id S1752204AbYJVXeY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 Oct 2008 19:34:24 -0400
+Received: from 69.30.121.162 ([69.30.121.162]) by xenotime.net for <linux-next@vger.kernel.org>; Wed, 22 Oct 2008 16:34:13 -0700
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org
+To: linux-next@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
+Cc: jason.wessel@windriver.com, akpm <akpm@linux-foundation.org>
 
---Signature=_Thu__23_Oct_2008_10_29_51_+1100_5t82vnaf0p9pOZ3B
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Hi Rusty,
+Fix kernel-doc format error in kgdb.h:
 
-Today's linux-next import of the rr tree failed like this:
+linux-next-20081022//include/linux/kgdb.h:308): duplicate section name 'Description'
 
-virtio:net-mergeable-rx-bufs.patch
-error: patch failed: include/linux/virtio_net.h:44
-error: include/linux/virtio_net.h: patch does not apply
+and fix typos in that file's kernel-doc comments.
 
-patch(1) will not apply that patch either ...
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+cc: Jason Wessel <jason.wessel@windriver.com>
+---
+ include/linux/kgdb.h |   12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-$ patch -p1 -E <.dotest/patch=20
-patching file drivers/net/virtio_net.c
-patching file include/linux/virtio_net.h
-Hunk #2 FAILED at 45.
-1 out of 2 hunks FAILED -- saving rejects to file include/linux/virtio_net.=
-h.rej
-
-I removed that patch from the series today and hope that nothing later
-depended on it.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__23_Oct_2008_10_29_51_+1100_5t82vnaf0p9pOZ3B
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkj/t28ACgkQjjKRsyhoI8zEAACdHDVMZnbNtr9Od/8VOFmH8Bjt
-AXIAn3HoTc37nCTTGuArG8oDTBI6dKVq
-=ZN2F
------END PGP SIGNATURE-----
-
---Signature=_Thu__23_Oct_2008_10_29_51_+1100_5t82vnaf0p9pOZ3B--
+--- linux-next-20081022.orig/include/linux/kgdb.h
++++ linux-next-20081022/include/linux/kgdb.h
+@@ -29,8 +29,7 @@ struct pt_regs;
+  *
+  *	On some architectures it is required to skip a breakpoint
+  *	exception when it occurs after a breakpoint has been removed.
+- *	This can be implemented in the architecture specific portion of
+- *	for kgdb.
++ *	This can be implemented in the architecture specific portion of kgdb.
+  */
+ extern int kgdb_skipexception(int exception, struct pt_regs *regs);
+ 
+@@ -42,7 +41,7 @@ extern int kgdb_skipexception(int except
+  *
+  *	This is usually needed on architectures which support SMP and
+  *	KGDB.  This function is called after all the secondary cpus have
+- *	been put to a know spin state and the primary CPU has control over
++ *	been put to a known spin state and the primary CPU has control over
+  *	KGDB.
+  */
+ extern void kgdb_post_primary_code(struct pt_regs *regs, int e_vector,
+@@ -65,7 +64,7 @@ struct uart_port;
+ /**
+  *	kgdb_breakpoint - compiled in breakpoint
+  *
+- *	This will be impelmented a static inline per architecture.  This
++ *	This will be implemented as a static inline per architecture.  This
+  *	function is called by the kgdb core to execute an architecture
+  *	specific trap to cause kgdb to enter the exception processing.
+  *
+@@ -190,7 +189,7 @@ kgdb_arch_handle_exception(int vector, i
+  *	@flags: Current IRQ state
+  *
+  *	On SMP systems, we need to get the attention of the other CPUs
+- *	and get them be in a known state.  This should do what is needed
++ *	and get them into a known state.  This should do what is needed
+  *	to get the other CPUs to call kgdb_wait(). Note that on some arches,
+  *	the NMI approach is not used for rounding up all the CPUs. For example,
+  *	in case of MIPS, smp_call_function() is used to roundup CPUs. In
+@@ -295,8 +294,7 @@ extern int __weak kgdb_mem2hex(char *mem
+ extern int __weak kgdb_hex2mem(char *buf, char *mem, int count);
+ 
+ /**
+- *      kgdb_ebin2mem - (optional arch override) Copy the binary array
+- *     pointed to by buf into mem.
++ *      kgdb_ebin2mem - (optional arch override) Copy binary array from @buf into @mem
+  *      @buf: source buffer
+  *      @mem: target buffer
+  *      @count: number of bytes in mem
