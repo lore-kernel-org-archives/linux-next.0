@@ -1,63 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linuxt-next: nfsd strange commit
-Date: Thu, 23 Oct 2008 09:30:04 +1100
-Message-ID: <20081023093004.b061d357.sfr@canb.auug.org.au>
-References: <20081021141357.ab15406f.sfr@canb.auug.org.au>
-	<20081021132059.GA8029@fieldses.org>
+Subject: linux-next: v9fs patch comment
+Date: Thu, 23 Oct 2008 09:36:51 +1100
+Message-ID: <20081023093651.1b8b92d3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__23_Oct_2008_09_30_04_+1100_yDdDU9AJbwQEN5Hc"
+ boundary="Signature=_Thu__23_Oct_2008_09_36_51_+1100_VmG/IGMZg2SbyDpz"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37566 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38267 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753783AbYJVWaO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 Oct 2008 18:30:14 -0400
-In-Reply-To: <20081021132059.GA8029@fieldses.org>
+	id S1751315AbYJVWhB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 Oct 2008 18:37:01 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: Eric Van Hensbergen <ericvh@gmail.com>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Thu__23_Oct_2008_09_30_04_+1100_yDdDU9AJbwQEN5Hc
+--Signature=_Thu__23_Oct_2008_09_36_51_+1100_VmG/IGMZg2SbyDpz
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bruce,
+Hi Eric,
 
-On Tue, 21 Oct 2008 09:20:59 -0400 "J. Bruce Fields" <bfields@fieldses.org>=
- wrote:
->
-> I've also been acting as a (somewhat inconsistent) locks.c maintainer.
+> commit d48be775412f4d9526da636754ebc108eac54b80
+> Author: Eric Van Hensbergen <ericvh@gmail.com>
+> Date:   Wed Oct 22 16:58:59 2008 -0500
 >=20
-> Would it make it any easier if I kept a locks-next branch that you could
-> pull separately?  Or should I try to get that stuff into some other
-> tree?
+>     9p: fix format warning
+>    =20
+>     This patch fixes a format warning which appears on 64-bit builds.
+>    =20
+>     Signed-off-by: Eric Van Hensbergen <ericvh@gmail.com>
+>=20
+> diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+> index 041c526..b218e23 100644
+> --- a/fs/9p/vfs_file.c
+> +++ b/fs/9p/vfs_file.c
+> @@ -178,7 +178,8 @@ v9fs_file_read(struct file *filp, char __user *udata,=
+ size_t count,
+>  	int ret;
+>  	struct p9_fid *fid;
+> =20
+> -	P9_DPRINTK(P9_DEBUG_VFS, "count %d offset %lld\n", count, *offset);
+> +	P9_DPRINTK(P9_DEBUG_VFS, "count %lu offset %lld\n",
+> +						(unsigned long) count, *offset);
 
-A separate branch is possible, but if it is only one or two commits it is
-hardly worth it.  Lets see how it goes.
-
-However (I don't mean to pick on you, really :-)) your current tree has a
-merge that says "Merge branch 'for-2.6.29' into for-mm".  I (and Andrew)
-really don't want any 2.6.29 stuff in linux-next until after 2.6.28-rc1 -
-it just muddies the conflicts.  So can you remove that merge for now (its
-only a few days) and I will revert that merge in linux-next today.
+This is not the correct fix, you should use %zu to print size_t variables
+and then you don't need the cast.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__23_Oct_2008_09_30_04_+1100_yDdDU9AJbwQEN5Hc
+--Signature=_Thu__23_Oct_2008_09_36_51_+1100_VmG/IGMZg2SbyDpz
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkj/qWwACgkQjjKRsyhoI8yKNwCgr/uo+32fSOjvfFoBWDJAtTBX
-xu0An1dk5HroJJ6DWqnHc2jYd7y5/97F
-=7IkY
+iEYEARECAAYFAkj/qwMACgkQjjKRsyhoI8yvRgCeOh/pqTTlSxySCdeAOzzzQet8
+EmQAnA5Ie1a0Pe1qQstrq9Z4GeZHgtEn
+=VebC
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__23_Oct_2008_09_30_04_+1100_yDdDU9AJbwQEN5Hc--
+--Signature=_Thu__23_Oct_2008_09_36_51_+1100_VmG/IGMZg2SbyDpz--
