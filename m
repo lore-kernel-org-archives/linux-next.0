@@ -1,61 +1,55 @@
-From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
-Subject: xorg not working on 2.6.27-next-20081017 (intel/lenovo x200)
-Date: Thu, 23 Oct 2008 17:37:45 +0200
-Message-ID: <20081023153745.GA4909@denkbrett.schottelius.org>
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: [PATCH] tracing: fix a build error on alpha and m68k
+Date: Thu, 23 Oct 2008 19:27:48 +0200
+Message-ID: <4900B414.7090002@gmail.com>
+References: <20081023213637.eff9b414.sfr@canb.auug.org.au> <20081023121145.GB27984@x200.localdomain> <c62985530810230548t1b569f61g34d1900bb94fde83@mail.gmail.com> <c62985530810230615s3252a54ao6488e763d72dc939@mail.gmail.com> <49008D12.5090204@gmail.com> <Pine.LNX.4.64.0810231635440.18978@anakin> <c62985530810230757r411b4e3dj4ecec649cf8cf0b3@mail.gmail.com> <Pine.LNX.4.64.0810231727430.18978@anakin>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.schottelius.org ([77.109.138.221]:42660 "EHLO
-	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751638AbYJWPiZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Oct 2008 11:38:25 -0400
-Content-Disposition: inline
+Received: from fk-out-0910.google.com ([209.85.128.191]:46415 "EHLO
+	fk-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751291AbYJWQV6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Oct 2008 12:21:58 -0400
+Received: by fk-out-0910.google.com with SMTP id 18so288673fkq.5
+        for <linux-next@vger.kernel.org>; Thu, 23 Oct 2008 09:21:56 -0700 (PDT)
+In-Reply-To: <Pine.LNX.4.64.0810231727430.18978@anakin>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: 502387@bugs.debian.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Alexey Dobriyan <adobriyan@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+
+When tracing is enabled, some arch have included <linux/irqflags.h>
+on their <asm/system.h> but others like alpha or m68k don't.
+
+Build error on alpha:
+
+kernel/trace/trace.c: In function 'tracing_generic_entry_update':
+kernel/trace/trace.c:658: error: implicit declaration of function 'irqs_disabled_flags'
+kernel/trace/trace.c: In function 'tracing_cpumask_write':
+kernel/trace/trace.c:2145: error: implicit declaration of function 'raw_local_irq_disable'
+kernel/trace/trace.c:2162: error: implicit declaration of function 'raw_local_irq_enable'
+kernel/trace/trace.c: In function 'trace_die_handler':
+kernel/trace/trace.c:3039: error: 'DIE_OOPS' undeclared (first use in this function)
+
+Build error on m68k:
+http://kisskb.ellerman.id.au/kisskb/buildresult/50641/
 
 
---azLHFNyN32YCQGCU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Include it on kernel/trace/trace.c
 
-Hello!
-
-When trying to startx on that kernel with
-
-Intel Corporation Mobile 4 Series Chipset Integrated Graphics Controller (r=
-ev 07)
-
-(driver: intel)
-
-the system freezes. Maybe related to debian bug #502387.
-
-This does *not* happen on 2.6.27-rc9.
-
-Will try latest stable and next in the next days.
-
-Nico
-
---=20
-Think about Free and Open Source Software (FOSS).
-http://nico.schottelius.org/documentations/foss/the-term-foss/
-
-PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
-
---azLHFNyN32YCQGCU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkAmkgACgkQuL75KpiFGIys2QCfVSW6+qEpocDHk0Dqj8mzyXQs
-JxQAn286mnhC0z1tnezjMLAi0Nu390Lj
-=zDVX
------END PGP SIGNATURE-----
-
---azLHFNyN32YCQGCU--
+Reported-by: Alexey Dobriyan <adobriyan@gmail.com>
+Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
+---
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 78d5661..deb9684 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -34,6 +34,7 @@
+ 
+ #include <linux/stacktrace.h>
+ #include <linux/ring_buffer.h>
++#include <linux/irqflags.h>
+ 
+ #include "trace.h"
+ 
