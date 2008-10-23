@@ -1,81 +1,36 @@
 From: Cyrill Gorcunov <gorcunov@gmail.com>
 Subject: Re: next-20081023 x86_64 boot hang: int3
-Date: Thu, 23 Oct 2008 21:50:08 +0400
-Message-ID: <20081023175008.GC29659@localhost>
-References: <4900B7CC.5060005@oracle.com>
+Date: Thu, 23 Oct 2008 21:57:23 +0400
+Message-ID: <20081023175723.GD29659@localhost>
+References: <4900B7CC.5060005@oracle.com> <20081023175008.GC29659@localhost>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ey-out-2122.google.com ([74.125.78.27]:12953 "EHLO
-	ey-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752822AbYJWRuP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Oct 2008 13:50:15 -0400
-Received: by ey-out-2122.google.com with SMTP id 6so142762eyi.37
-        for <linux-next@vger.kernel.org>; Thu, 23 Oct 2008 10:50:13 -0700 (PDT)
+Received: from gv-out-0910.google.com ([216.239.58.186]:46749 "EHLO
+	gv-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753754AbYJWR5e (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Oct 2008 13:57:34 -0400
+Received: by gv-out-0910.google.com with SMTP id e6so50672gvc.37
+        for <linux-next@vger.kernel.org>; Thu, 23 Oct 2008 10:57:27 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <4900B7CC.5060005@oracle.com>
+In-Reply-To: <20081023175008.GC29659@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>, lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-[Randy Dunlap - Thu, Oct 23, 2008 at 10:43:40AM -0700]
-| 2 out of 2 x86_64 SMP boots stop with:
+[Cyrill Gorcunov - Thu, Oct 23, 2008 at 09:50:08PM +0400]
+...
 | 
-| calling  tcp_congestion_default+0x0/0x12 @ 1
-| initcall tcp_congestion_default+0x0/0x12 returned 0 after 2 usecs
-| Freeing unused kernel memory: 448k freed
-| Write protecting the kernel read-only data: 4816k
-| int3: 0000 [#1] SMP
-| last sysfs file:
-| CPU 2
-| Modules linked in:
-| Pid: 0, comm: events/0 Not tainted 2.6.27-next-20081023 #1
-| RIP: 0010:[<ffffffff8078ba2b>]  [<ffffffff8078ba2b>] nmi_cpu_busy+0x1/0x15
-| RSP: 0018:ffff88017faa7f80  EFLAGS: 00000086
-| RAX: 00000000ffffffff RBX: ffff88027f60e000 RCX: ffff88017fa98000
-| RDX: ffffffff807eb480 RSI: 0000000000000000 RDI: ffffffff807b9e5c
-| RBP: ffff88017faa7f98 R08: 0000000000000000 R09: ffff88002802c768
-| R10: 0000000000000000 R11: ffff88027e023e90 R12: 0000000000000002
-| R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-| FS:  0000000000000000(0000) GS:ffff88017fa32280(0000) knlGS:0000000000000000
-| CS:  0010 DS: 0018 ES: 0018 CR0: 000000008005003b
-| CR2: 0000000000000000 CR3: 0000000000201000 CR4: 00000000000006e0
-| DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-| DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
-| Process events/0 (pid: 0, threadinfo ffff88017fa8c000, task ffff88017fa98000)
-| Stack:
-|  ffffffff80257afe ffffffff8076d938 0000000000000000 ffff88017faa7fa8
-|  ffffffff8021f1b0 ffff88017fa8de50 ffffffff8020cabb ffff88017fa8de50 <EOI>
-|  ffff88017fa8ded8 ffff88027e023e90 0000000000000000 ffff88002802c768
-| Call Trace:
-|  <IRQ> <0> [<ffffffff80257afe>] ? generic_smp_call_function_interrupt+0x35/0xd7
-|  [<ffffffff8021f1b0>] smp_call_function_interrupt+0x1f/0x2f
-|  [<ffffffff8020cabb>] call_function_interrupt+0x6b/0x70
-|  <EOI> <0> [<ffffffff80212659>] ? default_idle+0x2b/0x40
-|  [<ffffffff8021287d>] ? c1e_idle+0xe5/0xec
-|  [<ffffffff8057072f>] ? atomic_notifier_call_chain+0xf/0x11
-|  [<ffffffff8020ad1d>] ? cpu_idle+0x48/0x66
-|  [<ffffffff80568784>] ? start_secondary+0x177/0x17c
-| Code: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc <cc> cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc
-| RIP  [<ffffffff8078ba2b>] nmi_cpu_busy+0x1/0x15
-|  RSP <ffff88017faa7f80>
-| Kernel panic - not syncing: Fatal exception in interrupt
+| Hi Randy,
 | 
+| i don't remember the details -- these int3 opcodes are likely to
+| come from some paging or stack protector... hmm... can't remember
+| absolutely :) There was a thread on LKML about half a year ago about
+| why to fill pages with int3 opcode. But I may be absolutely wrong :)
 | 
-| Full boot log is at
-| http://oss.oracle.com/~rdunlap/kerneltest/logs/netcon-5175.log
-| and .config is at http://oss.oracle.com/~rdunlap/kerneltest/logs/kconfig-5175
-| 
-| ---
-| ~Randy
-| 
+| 		- Cyrill -
 
-Hi Randy,
-
-i don't remember the details -- these int3 opcodes are likely to
-come from some paging or stack protector... hmm... can't remember
-absolutely :) There was a thread on LKML about half a year ago about
-why to fill pages with int3 opcode. But I may be absolutely wrong :)
+Hmm, I think I'm not in touch don't play attention on this mail,
+sorry :)
 
 		- Cyrill -
