@@ -1,36 +1,70 @@
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-Subject: Re: next-20081023 x86_64 boot hang: int3
-Date: Thu, 23 Oct 2008 21:57:23 +0400
-Message-ID: <20081023175723.GD29659@localhost>
-References: <4900B7CC.5060005@oracle.com> <20081023175008.GC29659@localhost>
+From: "=?ISO-8859-1?Q?Fr=E9d=E9ric_Weisbecker?=" <fweisbec@gmail.com>
+Subject: Re: [PATCH] tracing: fix a build error on alpha and m68k
+Date: Thu, 23 Oct 2008 18:24:14 +0200
+Message-ID: <c62985530810230924q7f5bd48es3353428766ee49eb@mail.gmail.com>
+References: <20081023213637.eff9b414.sfr@canb.auug.org.au>
+	 <20081023121145.GB27984@x200.localdomain>
+	 <c62985530810230548t1b569f61g34d1900bb94fde83@mail.gmail.com>
+	 <c62985530810230615s3252a54ao6488e763d72dc939@mail.gmail.com>
+	 <49008D12.5090204@gmail.com>
+	 <Pine.LNX.4.64.0810231635440.18978@anakin>
+	 <c62985530810230757r411b4e3dj4ecec649cf8cf0b3@mail.gmail.com>
+	 <Pine.LNX.4.64.0810231727430.18978@anakin>
+	 <4900B414.7090002@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gv-out-0910.google.com ([216.239.58.186]:46749 "EHLO
-	gv-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753754AbYJWR5e (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Oct 2008 13:57:34 -0400
-Received: by gv-out-0910.google.com with SMTP id e6so50672gvc.37
-        for <linux-next@vger.kernel.org>; Thu, 23 Oct 2008 10:57:27 -0700 (PDT)
+Received: from qb-out-0506.google.com ([72.14.204.227]:37525 "EHLO
+	qb-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755747AbYJWSbc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Oct 2008 14:31:32 -0400
+Received: by qb-out-0506.google.com with SMTP id e12so435723qbe.1
+        for <linux-next@vger.kernel.org>; Thu, 23 Oct 2008 11:31:31 -0700 (PDT)
+In-Reply-To: <4900B414.7090002@gmail.com>
 Content-Disposition: inline
-In-Reply-To: <20081023175008.GC29659@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>, lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Alexey Dobriyan <adobriyan@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
 
-[Cyrill Gorcunov - Thu, Oct 23, 2008 at 09:50:08PM +0400]
-...
-| 
-| Hi Randy,
-| 
-| i don't remember the details -- these int3 opcodes are likely to
-| come from some paging or stack protector... hmm... can't remember
-| absolutely :) There was a thread on LKML about half a year ago about
-| why to fill pages with int3 opcode. But I may be absolutely wrong :)
-| 
-| 		- Cyrill -
+2008/10/23 Frederic Weisbecker <fweisbec@gmail.com>:
+> When tracing is enabled, some arch have included <linux/irqflags.h>
+> on their <asm/system.h> but others like alpha or m68k don't.
+>
+> Build error on alpha:
+>
+> kernel/trace/trace.c: In function 'tracing_generic_entry_update':
+> kernel/trace/trace.c:658: error: implicit declaration of function 'irqs_disabled_flags'
+> kernel/trace/trace.c: In function 'tracing_cpumask_write':
+> kernel/trace/trace.c:2145: error: implicit declaration of function 'raw_local_irq_disable'
+> kernel/trace/trace.c:2162: error: implicit declaration of function 'raw_local_irq_enable'
+> kernel/trace/trace.c: In function 'trace_die_handler':
+> kernel/trace/trace.c:3039: error: 'DIE_OOPS' undeclared (first use in this function)
+>
+> Build error on m68k:
+> http://kisskb.ellerman.id.au/kisskb/buildresult/50641/
+>
+>
+> Include it on kernel/trace/trace.c
+>
+> Reported-by: Alexey Dobriyan <adobriyan@gmail.com>
+> Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
+> ---
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index 78d5661..deb9684 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -34,6 +34,7 @@
+>
+>  #include <linux/stacktrace.h>
+>  #include <linux/ring_buffer.h>
+> +#include <linux/irqflags.h>
+>
+>  #include "trace.h"
+>
+>
 
-Hmm, I think I'm not in touch don't play attention on this mail,
-sorry :)
+And one other "reported by" for the m68k error:
 
-		- Cyrill -
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
