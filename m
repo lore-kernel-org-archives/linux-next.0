@@ -1,50 +1,65 @@
-From: "=?ISO-8859-1?Q?Fr=E9d=E9ric_Weisbecker?=" <fweisbec@gmail.com>
-Subject: Re: [PATCH] tracing: fix a build error on alpha and m68k
-Date: Thu, 23 Oct 2008 19:25:10 +0200
-Message-ID: <c62985530810231025j69c38776q1244510bd7990c6f@mail.gmail.com>
-References: <c62985530810230548t1b569f61g34d1900bb94fde83@mail.gmail.com>
-	 <c62985530810230757r411b4e3dj4ecec649cf8cf0b3@mail.gmail.com>
-	 <Pine.LNX.4.64.0810231727430.18978@anakin>
-	 <4900B414.7090002@gmail.com> <20081023163433.GA3160@x200.localdomain>
-	 <20081023163850.GB16591@elte.hu>
-	 <c62985530810230951u7ae640d5ya45bed466f030074@mail.gmail.com>
-	 <20081023165504.GB25697@elte.hu>
-	 <c62985530810231006p726bb237qe288ec80b005d8b0@mail.gmail.com>
-	 <alpine.DEB.1.10.0810231311170.1765@gandalf.stny.rr.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: next-20081023 x86_64 boot hang: int3
+Date: Thu, 23 Oct 2008 10:43:40 -0700
+Message-ID: <4900B7CC.5060005@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from qb-out-0506.google.com ([72.14.204.228]:20443 "EHLO
-	qb-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753581AbYJWRZM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Oct 2008 13:25:12 -0400
-Received: by qb-out-0506.google.com with SMTP id f11so379103qba.17
-        for <linux-next@vger.kernel.org>; Thu, 23 Oct 2008 10:25:11 -0700 (PDT)
-In-Reply-To: <alpine.DEB.1.10.0810231311170.1765@gandalf.stny.rr.com>
-Content-Disposition: inline
+Received: from rgminet01.oracle.com ([148.87.113.118]:20701 "EHLO
+	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752396AbYJWRnp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Oct 2008 13:43:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ingo Molnar <mingo@elte.hu>, Alexey Dobriyan <adobriyan@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-2008/10/23 Steven Rostedt <rostedt@goodmis.org>:
->
-> On Thu, 23 Oct 2008, Fr?d?ric Weisbecker wrote:
->>
->> But to let the core trace.c to be built for other types of tracing,
->> the best thing I see is to put some ifdef CONFIG_TRACE_IRQFLAGS on the
->> tracing_cpumask functions and structure, and actually on the creation
->> of this file.
->
-> Is there a reason that you use "raw_local_irq_disable" instead of
-> local_irq_disable?
+2 out of 2 x86_64 SMP boots stop with:
+
+calling  tcp_congestion_default+0x0/0x12 @ 1
+initcall tcp_congestion_default+0x0/0x12 returned 0 after 2 usecs
+Freeing unused kernel memory: 448k freed
+Write protecting the kernel read-only data: 4816k
+int3: 0000 [#1] SMP
+last sysfs file:
+CPU 2
+Modules linked in:
+Pid: 0, comm: events/0 Not tainted 2.6.27-next-20081023 #1
+RIP: 0010:[<ffffffff8078ba2b>]  [<ffffffff8078ba2b>] nmi_cpu_busy+0x1/0x15
+RSP: 0018:ffff88017faa7f80  EFLAGS: 00000086
+RAX: 00000000ffffffff RBX: ffff88027f60e000 RCX: ffff88017fa98000
+RDX: ffffffff807eb480 RSI: 0000000000000000 RDI: ffffffff807b9e5c
+RBP: ffff88017faa7f98 R08: 0000000000000000 R09: ffff88002802c768
+R10: 0000000000000000 R11: ffff88027e023e90 R12: 0000000000000002
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff88017fa32280(0000) knlGS:0000000000000000
+CS:  0010 DS: 0018 ES: 0018 CR0: 000000008005003b
+CR2: 0000000000000000 CR3: 0000000000201000 CR4: 00000000000006e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+Process events/0 (pid: 0, threadinfo ffff88017fa8c000, task ffff88017fa98000)
+Stack:
+ ffffffff80257afe ffffffff8076d938 0000000000000000 ffff88017faa7fa8
+ ffffffff8021f1b0 ffff88017fa8de50 ffffffff8020cabb ffff88017fa8de50 <EOI>
+ ffff88017fa8ded8 ffff88027e023e90 0000000000000000 ffff88002802c768
+Call Trace:
+ <IRQ> <0> [<ffffffff80257afe>] ? generic_smp_call_function_interrupt+0x35/0xd7
+ [<ffffffff8021f1b0>] smp_call_function_interrupt+0x1f/0x2f
+ [<ffffffff8020cabb>] call_function_interrupt+0x6b/0x70
+ <EOI> <0> [<ffffffff80212659>] ? default_idle+0x2b/0x40
+ [<ffffffff8021287d>] ? c1e_idle+0xe5/0xec
+ [<ffffffff8057072f>] ? atomic_notifier_call_chain+0xf/0x11
+ [<ffffffff8020ad1d>] ? cpu_idle+0x48/0x66
+ [<ffffffff80568784>] ? start_secondary+0x177/0x17c
+Code: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc <cc> cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc
+RIP  [<ffffffff8078ba2b>] nmi_cpu_busy+0x1/0x15
+ RSP <ffff88017faa7f80>
+Kernel panic - not syncing: Fatal exception in interrupt
 
 
-I'm not using anything :)
-This is about the tracing_cpumask debugfs file implemented in trace.c
-It's tracing_cpumask_write function uses the raw_local functions, I
-guess because its locking doesn't need to be traced.
-And the problem here is that some archs don't implement raw_local
-functions and so trace.c doesn't compile with alpha or m68k.
-But actually this file is not needed for them.
+Full boot log is at
+http://oss.oracle.com/~rdunlap/kerneltest/logs/netcon-5175.log
+and .config is at http://oss.oracle.com/~rdunlap/kerneltest/logs/kconfig-5175
+
+---
+~Randy
