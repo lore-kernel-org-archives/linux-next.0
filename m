@@ -1,67 +1,57 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure
-Date: Thu, 23 Oct 2008 20:51:51 +1100
-Message-ID: <20081023205151.33eda8ad.sfr@canb.auug.org.au>
+From: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Subject: Re: linux-next: ttydev tree build failure
+Date: Thu, 23 Oct 2008 12:28:05 +0200
+Message-ID: <20081023102805.GA4197@cetus.boeblingen.de.ibm.com>
+References: <20081023172938.0460b191.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33270 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754118AbYJWJwT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Oct 2008 05:52:19 -0400
+Received: from mtagate8.uk.ibm.com ([195.212.29.141]:36567 "EHLO
+	mtagate8.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751221AbYJWK32 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Oct 2008 06:29:28 -0400
+Received: from d06nrmr1407.portsmouth.uk.ibm.com (d06nrmr1407.portsmouth.uk.ibm.com [9.149.38.185])
+	by mtagate8.uk.ibm.com (8.13.8/8.13.8) with ESMTP id m9NAS7Mg199726
+	for <linux-next@vger.kernel.org>; Thu, 23 Oct 2008 10:28:07 GMT
+Received: from d06av03.portsmouth.uk.ibm.com (d06av03.portsmouth.uk.ibm.com [9.149.37.213])
+	by d06nrmr1407.portsmouth.uk.ibm.com (8.13.8/8.13.8/NCO v9.1) with ESMTP id m9NAS7t14210774
+	for <linux-next@vger.kernel.org>; Thu, 23 Oct 2008 11:28:07 +0100
+Received: from d06av03.portsmouth.uk.ibm.com (loopback [127.0.0.1])
+	by d06av03.portsmouth.uk.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id m9NAS6DD029096
+	for <linux-next@vger.kernel.org>; Thu, 23 Oct 2008 11:28:07 +0100
+Content-Disposition: inline
+In-Reply-To: <20081023172938.0460b191.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, linux-next@vger.kernel.org, Hendrik Brueckner <brueckner@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, ppc-dev <linuxppc-dev@ozlabs.org>
 
-Hi Rusty,
+On Thu, Oct 23, 2008 at 05:29:38PM +1100, Stephen Rothwell wrote:
+> drivers/char/hvc_console.c: In function 'hvc_set_winsz':
+> drivers/char/hvc_console.c:532: warning: passing argument 2 of 'tty_do_resize' from incompatible pointer type
+> drivers/char/hvc_console.c:532: error: too many arguments to function 'tty_do_resize'
+> 
+> Caused by commit eb6ab2d361a49470ca9785c70482772c19e49bec
+> ("pty-simplify-resize") from the ttydev tree interacting with commit
+> febde3711992a64ea83a47a719f68a90c4b0927a ("hvc_console: Add support for
+> tty window resizing").
+> 
+> The former added another call to the function that the latter changed.
+In linux-next, the pty-simplify-resize patch has changed the
+tty_do_resize() signature; and therefore the hvc patch did not compile.
 
-Today's linux-next build (sparc defconfig) failed like this:
+> I applied the following patch.
+The patch is correct.
+Thanks.
 
-In file included from arch/sparc/include/asm/smp_32.h:15,
-                 from arch/sparc/include/asm/smp.h:6,
-                 from arch/sparc/include/asm/system_32.h:12,
-                 from arch/sparc/include/asm/system.h:6,
-                 from include/linux/list.h:7,
-                 from include/linux/preempt.h:11,
-                 from include/linux/spinlock.h:50,
-                 from include/linux/seqlock.h:29,
-                 from include/linux/time.h:8,
-                 from include/linux/timex.h:57,
-                 from include/linux/sched.h:54,
-                 from arch/sparc/kernel/asm-offsets.c:13:
-include/linux/cpumask.h:110: error: `CONFIG_NR_CPUS' undeclared here (not in a function)
+Acked-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
 
-and it went on ...
-
-I applied the following patch.
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Regards
+Hendrik
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 23 Oct 2008 20:48:36 +1100
-Subject: [PATCH] sparc: fallout from cpumask CONFIG_NR_CPUS changes
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/sparc/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
-index 6b4970e..7b1a000 100644
---- a/arch/sparc/Kconfig
-+++ b/arch/sparc/Kconfig
-@@ -66,7 +66,7 @@ config SMP
- config NR_CPUS
- 	int "Maximum number of CPUs (2-32)" if SMP
- 	range 2 32 if SMP
--	default "1" if SMP
-+	default "1" if !SMP
- 	default "32" if SMP
- 
- config SPARC
--- 
-1.5.6.5
+IBM Deutschland Research & Development GmbH
+Vorsitzender des Aufsichtsrats: Martin Jetter
+Geschaeftsfuehrung: Erich Baier
+Sitz der Gesellschaft: Boeblingen
+Registergericht: Amtsgericht Stuttgart, HRB 243294
