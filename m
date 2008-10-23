@@ -1,36 +1,48 @@
-From: "=?ISO-8859-1?Q?Fr=E9d=E9ric_Weisbecker?=" <fweisbec@gmail.com>
-Subject: Re: linux-next: kernel/trace/trace.c:658: error:
-Date: Thu, 23 Oct 2008 14:48:15 +0200
-Message-ID: <c62985530810230548t1b569f61g34d1900bb94fde83@mail.gmail.com>
-References: <20081023213637.eff9b414.sfr@canb.auug.org.au>
-	 <20081023121145.GB27984@x200.localdomain>
+From: Mike Travis <travis@sgi.com>
+Subject: Re: linux-next: manual merge of the rr tree
+Date: Thu, 23 Oct 2008 05:50:20 -0700
+Message-ID: <4900730C.8020607@sgi.com>
+References: <20081023151241.d5ad0919.sfr@canb.auug.org.au> <200810231616.12076.rusty@rustcorp.com.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755862AbYJWMsb@vger.kernel.org>
-In-Reply-To: <20081023121145.GB27984@x200.localdomain>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from relay1.sgi.com ([192.48.171.29]:42427 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751812AbYJWMtV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 23 Oct 2008 08:49:21 -0400
+In-Reply-To: <200810231616.12076.rusty@rustcorp.com.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
 
-2008/10/23 Alexey Dobriyan <adobriyan@gmail.com>:
-> On alpha-smp-n-debug-y:
->
-> kernel/trace/trace.c: In function 'tracing_generic_entry_update':
-> kernel/trace/trace.c:658: error: implicit declaration of function 'irqs_disabled_flags'
-> kernel/trace/trace.c: In function 'tracing_cpumask_write':
-> kernel/trace/trace.c:2145: error: implicit declaration of function 'raw_local_irq_disable'
-> kernel/trace/trace.c:2162: error: implicit declaration of function 'raw_local_irq_enable'
-> kernel/trace/trace.c: In function 'trace_die_handler':
-> kernel/trace/trace.c:3039: error: 'DIE_OOPS' undeclared (first use in this function)
->
-> This has something with config dependencies, because adding include doesn't fix it.
->
+Rusty Russell wrote:
+> On Thursday 23 October 2008 15:12:41 Stephen Rothwell wrote:
+>> Hi Rusty,
+>>
+>> Today's linux-next merge of the rr tree got a conflict in kernel/smp.c
+>> between commit 562d8c23497402eb7eb9caf8dab84439a03a49ea ("smp: reduce
+>> stack requirements for smp_call_function_mask") from the cpus4096 tree
+>> and commit  ("1855648ee0b5ed8fe800edf401bbe25a3f2ed94a") from the rr tree.
+>>
+>> Overlapping changes.  I have used the version from the rr tree, but I am
+>> not sure if that is the correct thing to do.
+> 
+> Mike?
+> 
+> Rusty.
 
-A lot of arch have an asm/irqflags.h but not alpha.
-In linux/irqflags, raw_local_irq_* functions are defined to be
-local_irq_* function if they don't support
-CONFIG_TRACE_IRQFLAGS_SUPPORT.
-It seems the error is here, alpha may turn this option off.
+Hi,
+
+Yes, I just started looking at them... Did you push upstream the last
+version I sent last night?  Or perhaps my view of the tip tree doesn't
+include the cpus4096 tree?
+
+I'll update my linux-next tree and examine the conflicts.
+
+Thanks!
+
+(And Thanks Stephen for dealing with these!  Sorry for the headaches.)
+
+Mike
