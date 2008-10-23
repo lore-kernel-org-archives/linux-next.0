@@ -1,15 +1,15 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure
-Date: Thu, 23 Oct 2008 20:18:55 +1100
-Message-ID: <20081023201855.faf8bec5.sfr@canb.auug.org.au>
+Date: Thu, 23 Oct 2008 20:51:51 +1100
+Message-ID: <20081023205151.33eda8ad.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33267 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33270 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753970AbYJWJwS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Oct 2008 05:52:18 -0400
+	id S1754118AbYJWJwT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 23 Oct 2008 05:52:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Rusty Russell <rusty@rustcorp.com.au>
@@ -17,47 +17,51 @@ Cc: linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>
 
 Hi Rusty,
 
-Today's linux-next build (powerpc allnoconfig) failed like this:
+Today's linux-next build (sparc defconfig) failed like this:
 
-In file included from include/linux/sched.h:58,
-                 from arch/powerpc/kernel/asm-offsets.c:17:
-include/linux/cpumask.h:110: error: 'CONFIG_NR_CPUS' undeclared here (not in a function)
+In file included from arch/sparc/include/asm/smp_32.h:15,
+                 from arch/sparc/include/asm/smp.h:6,
+                 from arch/sparc/include/asm/system_32.h:12,
+                 from arch/sparc/include/asm/system.h:6,
+                 from include/linux/list.h:7,
+                 from include/linux/preempt.h:11,
+                 from include/linux/spinlock.h:50,
+                 from include/linux/seqlock.h:29,
+                 from include/linux/time.h:8,
+                 from include/linux/timex.h:57,
+                 from include/linux/sched.h:54,
+                 from arch/sparc/kernel/asm-offsets.c:13:
+include/linux/cpumask.h:110: error: `CONFIG_NR_CPUS' undeclared here (not in a function)
 
-Caused by commit d08dde18aebb15633e5c4480814b77d93a4d68f6 ("cpumask:CONFIG_NR_CPUS-always") from the rr tree.  I applied the following patch.
+and it went on ...
 
-There are several other architectures that don't appear to have been
-updated for this change - how confident ae you that none of them have
-been broken as powerpc was?
+I applied the following patch.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 23 Oct 2008 20:14:18 +1100
-Subject: [PATCH] powerpc: fallout from cpumask CONFIG_NR_CPUS changes
+Date: Thu, 23 Oct 2008 20:48:36 +1100
+Subject: [PATCH] sparc: fallout from cpumask CONFIG_NR_CPUS changes
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- arch/powerpc/platforms/Kconfig.cputype |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
+ arch/sparc/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
-index 548efa5..e8fd928 100644
---- a/arch/powerpc/platforms/Kconfig.cputype
-+++ b/arch/powerpc/platforms/Kconfig.cputype
-@@ -242,9 +242,9 @@ config SMP
- 	  If you don't know what to do here, say N.
- 
+diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
+index 6b4970e..7b1a000 100644
+--- a/arch/sparc/Kconfig
++++ b/arch/sparc/Kconfig
+@@ -66,7 +66,7 @@ config SMP
  config NR_CPUS
--	int "Maximum number of CPUs (2-1024)"
--	range 2 1024
--	depends on SMP
-+	int "Maximum number of CPUs (2-1024)" if SMP
-+	range 2 1024 if SMP
+ 	int "Maximum number of CPUs (2-32)" if SMP
+ 	range 2 32 if SMP
+-	default "1" if SMP
 +	default "1" if !SMP
- 	default "32" if PPC64
- 	default "4"
+ 	default "32" if SMP
  
+ config SPARC
 -- 
 1.5.6.5
