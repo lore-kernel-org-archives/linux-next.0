@@ -1,59 +1,62 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: stackprotector tree build failure
-Date: Thu, 23 Oct 2008 10:54:54 +1100
-Message-ID: <20081023105454.880e13e2.sfr@canb.auug.org.au>
-References: <20081022131124.a572b11f.sfr@canb.auug.org.au>
-	<20081022043227.GA31413@elte.hu>
-	<20081022182149.f89fe88d.sfr@canb.auug.org.au>
-	<20081022072923.GC27637@elte.hu>
-	<20081022192725.5f5de711.sfr@canb.auug.org.au>
-	<20081022083139.GA4369@elte.hu>
-	<alpine.DEB.1.00.0810221908100.22125@pacific.mpi-cbg.de.mpi-cbg.de>
+From: "Eric Van Hensbergen" <ericvh@gmail.com>
+Subject: Re: linux-next: v9fs patch comment
+Date: Wed, 22 Oct 2008 19:03:21 -0500
+Message-ID: <a4e6962a0810221703p624fb5f9idaa7f662def5266e@mail.gmail.com>
+References: <20081023093651.1b8b92d3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__23_Oct_2008_10_54_54_+1100_8MVWjtOBShGGYB7M"
-Return-path: <git-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.1.00.0810221908100.22125@pacific.mpi-cbg.de.mpi-cbg.de>
-Sender: git-owner@vger.kernel.org
-To: Johannes Schindelin <Johannes.Schindelin@gmx.de>
-Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Junio C Hamano <gitster@pobox.com>, git@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Thu__23_Oct_2008_10_54_54_+1100_8MVWjtOBShGGYB7M
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rv-out-0506.google.com ([209.85.198.226]:15988 "EHLO
+	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752124AbYJWADW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Oct 2008 20:03:22 -0400
+Received: by rv-out-0506.google.com with SMTP id k40so58044rvb.1
+        for <linux-next@vger.kernel.org>; Wed, 22 Oct 2008 17:03:21 -0700 (PDT)
+In-Reply-To: <20081023093651.1b8b92d3.sfr@canb.auug.org.au>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-Hi Johannes,
+Thanks -- I've update my for-next branch as suggested and it looks
+like I've got to go back and look through the rest of the code for
+similar situations.
 
-On Wed, 22 Oct 2008 19:41:18 +0200 (CEST) Johannes Schindelin <Johannes.Sch=
-indelin@gmx.de> wrote:
+             -eric
+
+
+On Wed, Oct 22, 2008 at 5:36 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Eric,
 >
-> I think it might be in order to explain how git-rerere works internally:
-
-Thanks for the explanation.
-
-> So I think that you might hit the unfortunate case where two files=20
-> happened to have the same conflicts, but you needed to resolve them one=20
-> way for one file, and another way for the other file.
-
-Which makes perfect sense, unfortunately.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__23_Oct_2008_10_54_54_+1100_8MVWjtOBShGGYB7M
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkj/vU4ACgkQjjKRsyhoI8zKYgCggqSrqEKLzEeIpuKwhFNwDqX7
-UBgAn27NQwN703trPMgve8PNFvXAC0ND
-=7mrv
------END PGP SIGNATURE-----
-
---Signature=_Thu__23_Oct_2008_10_54_54_+1100_8MVWjtOBShGGYB7M--
+>> commit d48be775412f4d9526da636754ebc108eac54b80
+>> Author: Eric Van Hensbergen <ericvh@gmail.com>
+>> Date:   Wed Oct 22 16:58:59 2008 -0500
+>>
+>>     9p: fix format warning
+>>
+>>     This patch fixes a format warning which appears on 64-bit builds.
+>>
+>>     Signed-off-by: Eric Van Hensbergen <ericvh@gmail.com>
+>>
+>> diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+>> index 041c526..b218e23 100644
+>> --- a/fs/9p/vfs_file.c
+>> +++ b/fs/9p/vfs_file.c
+>> @@ -178,7 +178,8 @@ v9fs_file_read(struct file *filp, char __user *udata, size_t count,
+>>       int ret;
+>>       struct p9_fid *fid;
+>>
+>> -     P9_DPRINTK(P9_DEBUG_VFS, "count %d offset %lld\n", count, *offset);
+>> +     P9_DPRINTK(P9_DEBUG_VFS, "count %lu offset %lld\n",
+>> +                                             (unsigned long) count, *offset);
+>
+> This is not the correct fix, you should use %zu to print size_t variables
+> and then you don't need the cast.
+>
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
+>
