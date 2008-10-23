@@ -1,48 +1,87 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: linux-next: x86_64 UML broken
-Date: Thu, 23 Oct 2008 18:14:55 +0400
-Message-ID: <20081023141455.GA1594@x200.localdomain>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: kernel/trace/trace.c:658: error:
+Date: Thu, 23 Oct 2008 16:37:01 +0200 (CEST)
+Message-ID: <Pine.LNX.4.64.0810231635440.18978@anakin>
 References: <20081023213637.eff9b414.sfr@canb.auug.org.au>
+ <20081023121145.GB27984@x200.localdomain>  <c62985530810230548t1b569f61g34d1900bb94fde83@mail.gmail.com>
+ <c62985530810230615s3252a54ao6488e763d72dc939@mail.gmail.com>
+ <49008D12.5090204@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: MULTIPART/MIXED; BOUNDARY="-1463808415-1462764117-1224772621=:18978"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nf-out-0910.google.com ([64.233.182.191]:15125 "EHLO
-	nf-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752046AbYJWOLo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Oct 2008 10:11:44 -0400
-Received: by nf-out-0910.google.com with SMTP id d3so137561nfc.21
-        for <linux-next@vger.kernel.org>; Thu, 23 Oct 2008 07:11:42 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20081023213637.eff9b414.sfr@canb.auug.org.au>
+Received: from yorgi.telenet-ops.be ([195.130.133.69]:48218 "EHLO
+	yorgi.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753337AbYJWOhl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Oct 2008 10:37:41 -0400
+Received: from nelson.telenet-ops.be (nelson.telenet-ops.be [195.130.133.66])
+	by yorgi.telenet-ops.be (Postfix) with ESMTP id A6CD368154A
+	for <linux-next@vger.kernel.org>; Thu, 23 Oct 2008 16:37:39 +0200 (CEST)
+In-Reply-To: <49008D12.5090204@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, rui.p.m.sousa@gmail.com, mingo@elte.hu
+To: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
 
-On um-x86_64-debug-y:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-  SYMLINK arch/um/include/kern_constants.h
-  SYMLINK arch/um/include/sysdep
-make[2]: `arch/um/sys-x86_64/user-offsets.s' is up to date.
-  Using /src/linux-1 as source for kernel
-  GEN     /src/build/um-x86_64-debug-y/Makefile
-  CHK     include/linux/version.h
-  CHK     include/linux/utsrelease.h
-  CC      arch/um/kernel/asm-offsets.s
-In file included from /src/linux-1/include/linux/spinlock.h:90,
-                 from /src/linux-1/include/linux/seqlock.h:29,
-                 from /src/linux-1/include/linux/time.h:8,
-                 from /src/linux-1/include/linux/timex.h:57,
-                 from /src/linux-1/include/linux/sched.h:54,
-                 from arch/um/include/sysdep/kernel-offsets.h:2,
-                 from /src/linux-1/arch/um/kernel/asm-offsets.c:1:
-/src/linux-1/include/linux/spinlock_up.h: In function '__raw_spin_lock_flags':
-/src/linux-1/include/linux/spinlock_up.h:31: error: implicit declaration of function 'local_irq_save'
-In file included from /src/linux-1/include/linux/sched.h:77,
-                 from arch/um/include/sysdep/kernel-offsets.h:2,
-                 from /src/linux-1/arch/um/kernel/asm-offsets.c:1:
-/src/linux-1/include/linux/proportions.h: In function 'prop_inc_percpu':
-/src/linux-1/include/linux/proportions.h:77: error: implicit declaration of function 'local_irq_restore'
-make[2]: *** [arch/um/kernel/asm-offsets.s] Error 1
-make[1]: *** [prepare0] Error 2
-make: *** [sub-make] Error 2
+---1463808415-1462764117-1224772621=:18978
+Content-Type: TEXT/PLAIN; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+
+On Thu, 23 Oct 2008, Frederic Weisbecker wrote:
+> Frédéric Weisbecker wrote:
+> > 2008/10/23 Frédéric Weisbecker <fweisbec@gmail.com>:
+> >> 2008/10/23 Alexey Dobriyan <adobriyan@gmail.com>:
+> >>> On alpha-smp-n-debug-y:
+> >>>
+> >>> kernel/trace/trace.c: In function 'tracing_generic_entry_update':
+> >>> kernel/trace/trace.c:658: error: implicit declaration of function 'irqs_disabled_flags'
+> >>> kernel/trace/trace.c: In function 'tracing_cpumask_write':
+> >>> kernel/trace/trace.c:2145: error: implicit declaration of function 'raw_local_irq_disable'
+> >>> kernel/trace/trace.c:2162: error: implicit declaration of function 'raw_local_irq_enable'
+> >>> kernel/trace/trace.c: In function 'trace_die_handler':
+> >>> kernel/trace/trace.c:3039: error: 'DIE_OOPS' undeclared (first use in this function)
+> >>>
+> >>> This has something with config dependencies, because adding include doesn't fix it.
+> >>>
+> >> A lot of arch have an asm/irqflags.h but not alpha.
+> >> In linux/irqflags, raw_local_irq_* functions are defined to be
+> >> local_irq_* function if they don't support
+> >> CONFIG_TRACE_IRQFLAGS_SUPPORT.
+> >> It seems the error is here, alpha may turn this option off.
+> >>
+> > 
+> > Hmm no actually your CONFIG_TRACE_IRFLAGS_SUPPORT is not set.
+> > So that's because the linux/irqflags.h is not included in the
+> > asm/system.h on alpha (other archs do).
+> > 
+> 
+> Does this patch correct the issue?
+> It applies on last -tip
+> ---
+> 
+> From: Frederic Weisbecker <fweisbec@gmail.com>
+> Subject: [PATCH] alpha: include irqflags.h to enable use of tracing
+> 
+> asm/system.h should include linux/irqflags.h to enable the use of tracing
+> which needs raw_local_irq_* functions.
+
+If kernel/trace/trace.c calls irqs_disabled_flags(), it should include
+the include that defines irqs_disabled_flags(). You should not add it to
+some other random include.
+
+It's also happening on m68k:
+http://kisskb.ellerman.id.au/kisskb/buildresult/50641/
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
+---1463808415-1462764117-1224772621=:18978--
