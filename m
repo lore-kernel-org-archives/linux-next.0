@@ -1,70 +1,54 @@
-From: "=?ISO-8859-1?Q?Fr=E9d=E9ric_Weisbecker?=" <fweisbec@gmail.com>
-Subject: Re: [PATCH] tracing: fix a build error on alpha and m68k
-Date: Thu, 23 Oct 2008 18:24:14 +0200
-Message-ID: <c62985530810230924q7f5bd48es3353428766ee49eb@mail.gmail.com>
-References: <20081023213637.eff9b414.sfr@canb.auug.org.au>
-	 <20081023121145.GB27984@x200.localdomain>
-	 <c62985530810230548t1b569f61g34d1900bb94fde83@mail.gmail.com>
-	 <c62985530810230615s3252a54ao6488e763d72dc939@mail.gmail.com>
-	 <49008D12.5090204@gmail.com>
-	 <Pine.LNX.4.64.0810231635440.18978@anakin>
-	 <c62985530810230757r411b4e3dj4ecec649cf8cf0b3@mail.gmail.com>
-	 <Pine.LNX.4.64.0810231727430.18978@anakin>
-	 <4900B414.7090002@gmail.com>
+From: Nico Schottelius <nico-linux-next@schottelius.org>
+Subject: Re: Current suspend issues on Lenovo X200
+Date: Thu, 23 Oct 2008 23:07:07 +0200
+Message-ID: <20081023210707.GA5089@denkbrett.schottelius.org>
+References: <20081023204326.GB4175@denkbrett.schottelius.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="sdtB3X0nJg68CQEu"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from qb-out-0506.google.com ([72.14.204.227]:37525 "EHLO
-	qb-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755747AbYJWSbc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Oct 2008 14:31:32 -0400
-Received: by qb-out-0506.google.com with SMTP id e12so435723qbe.1
-        for <linux-next@vger.kernel.org>; Thu, 23 Oct 2008 11:31:31 -0700 (PDT)
-In-Reply-To: <4900B414.7090002@gmail.com>
+Received: from mx3.schottelius.org ([77.109.138.221]:35564 "EHLO
+	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752296AbYJWVYY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Oct 2008 17:24:24 -0400
 Content-Disposition: inline
+In-Reply-To: <20081023204326.GB4175@denkbrett.schottelius.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Alexey Dobriyan <adobriyan@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+To: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-2008/10/23 Frederic Weisbecker <fweisbec@gmail.com>:
-> When tracing is enabled, some arch have included <linux/irqflags.h>
-> on their <asm/system.h> but others like alpha or m68k don't.
->
-> Build error on alpha:
->
-> kernel/trace/trace.c: In function 'tracing_generic_entry_update':
-> kernel/trace/trace.c:658: error: implicit declaration of function 'irqs_disabled_flags'
-> kernel/trace/trace.c: In function 'tracing_cpumask_write':
-> kernel/trace/trace.c:2145: error: implicit declaration of function 'raw_local_irq_disable'
-> kernel/trace/trace.c:2162: error: implicit declaration of function 'raw_local_irq_enable'
-> kernel/trace/trace.c: In function 'trace_die_handler':
-> kernel/trace/trace.c:3039: error: 'DIE_OOPS' undeclared (first use in this function)
->
-> Build error on m68k:
-> http://kisskb.ellerman.id.au/kisskb/buildresult/50641/
->
->
-> Include it on kernel/trace/trace.c
->
-> Reported-by: Alexey Dobriyan <adobriyan@gmail.com>
-> Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
-> ---
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index 78d5661..deb9684 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -34,6 +34,7 @@
->
->  #include <linux/stacktrace.h>
->  #include <linux/ring_buffer.h>
-> +#include <linux/irqflags.h>
->
->  #include "trace.h"
->
->
 
-And one other "reported by" for the m68k error:
+--sdtB3X0nJg68CQEu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+First of all, this was wrong:
+
+Nico -telmich- Schottelius [Thu, Oct 23, 2008 at 10:43:26PM +0200]:
+>  - 2.6.27: system freeze instead of wakeup
+>    -> shows parts of the X screen, but does not react on ping
+
+System does not freeze, but reboots instead.
+
+Tried next-20081023 and 2.6.27 with acpi_sleep=s3_bios:
+
+- suspend and wakeup on console works fine for both!
+- no X running on next
+- 2.6.27 + X -> reboot on wakeup
+
+Nico
+
+--sdtB3X0nJg68CQEu
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkA53sACgkQuL75KpiFGIzsYwCg1Aau0azNz0RY7IAYKjJXox6b
+kXQAni+hito4Aan49XHcbRfcEm1xfB9b
+=ePu0
+-----END PGP SIGNATURE-----
+
+--sdtB3X0nJg68CQEu--
