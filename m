@@ -1,40 +1,39 @@
-From: Richard Purdie <rpurdie@rpsys.net>
-Subject: Re: linux-next: leds tree build failure
-Date: Thu, 23 Oct 2008 22:46:13 +0100
-Message-ID: <1224798373.5427.79.camel@dax.rpnet.com>
-References: <20081021154722.fa74b698.sfr@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: Current suspend issues on Lenovo X200
+Date: Fri, 24 Oct 2008 00:06:19 +0200
+Message-ID: <200810240006.19857.rjw@sisk.pl>
+References: <20081023204326.GB4175@denkbrett.schottelius.org> <20081023210707.GA5089@denkbrett.schottelius.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tim.rpsys.net ([194.106.48.114]:49773 "EHLO tim.rpsys.net"
+Received: from ogre.sisk.pl ([217.79.144.158]:41141 "EHLO ogre.sisk.pl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754026AbYJWVqz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Oct 2008 17:46:55 -0400
-In-Reply-To: <20081021154722.fa74b698.sfr@canb.auug.org.au>
+	id S1751589AbYJWWB4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 23 Oct 2008 18:01:56 -0400
+In-Reply-To: <20081023210707.GA5089@denkbrett.schottelius.org>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Pavel Machek <pavel@suse.cz>, Len Brown <len.brown@intel.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Nico Schottelius <nico-linux-next@schottelius.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi Stephen,
-
-On Tue, 2008-10-21 at 15:47 +1100, Stephen Rothwell wrote:
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
+On Thursday, 23 of October 2008, Nico Schottelius wrote:
+> First of all, this was wrong:
 > 
-> drivers/leds/leds-hp-disk.c: In function 'hpled_add':
-> drivers/leds/leds-hp-disk.c:101: error: invalid lvalue in assignment
+> Nico -telmich- Schottelius [Thu, Oct 23, 2008 at 10:43:26PM +0200]:
+> >  - 2.6.27: system freeze instead of wakeup
+> >    -> shows parts of the X screen, but does not react on ping
 > 
-> Caused by commit 9c78ff6e65cad9f9fcf0bbde2bfbbf3a544fb704 ("leds: Add
-> driver for HP harddisk protection LEDs") from the leds tree inertacting
-> with commit db89b4f0dbab837d0f3de2c3e9427a8d5393afa3 ("ACPI: catch calls
-> of acpi_driver_data on pointer of wrong type") from the acpi tree.
+> System does not freeze, but reboots instead.
 > 
-> I fixed it up (see below).
+> Tried next-20081023 and 2.6.27 with acpi_sleep=s3_bios:
+> 
+> - suspend and wakeup on console works fine for both!
+> - no X running on next
+> - 2.6.27 + X -> reboot on wakeup
 
-Thanks for spotting that and fixing. I've added the fix to the tree
-before I sent the pull request.
+Let me guess, you have a NVidia graphics?
 
-Cheers,
-
-Richard
+Rafael
