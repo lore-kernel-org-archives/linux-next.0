@@ -1,40 +1,66 @@
 From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: linux-next: kernel/trace/trace.c:658: error:
-Date: Thu, 23 Oct 2008 16:11:45 +0400
-Message-ID: <20081023121145.GB27984@x200.localdomain>
+Subject: linux-next: arch/alpha/include/asm/smp.h:48:1: error:
+	"cpu_possible_map" redefined
+Date: Thu, 23 Oct 2008 16:15:50 +0400
+Message-ID: <20081023121550.GC27984@x200.localdomain>
 References: <20081023213637.eff9b414.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ug-out-1314.google.com ([66.249.92.170]:25023 "EHLO
-	ug-out-1314.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751085AbYJWMIh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Oct 2008 08:08:37 -0400
-Received: by ug-out-1314.google.com with SMTP id k3so1666283ugf.37
-        for <linux-next@vger.kernel.org>; Thu, 23 Oct 2008 05:08:33 -0700 (PDT)
+Received: from nf-out-0910.google.com ([64.233.182.184]:64461 "EHLO
+	nf-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751712AbYJWMMm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Oct 2008 08:12:42 -0400
+Received: by nf-out-0910.google.com with SMTP id d3so117133nfc.21
+        for <linux-next@vger.kernel.org>; Thu, 23 Oct 2008 05:12:39 -0700 (PDT)
 Content-Disposition: inline
 In-Reply-To: <20081023213637.eff9b414.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, rusty@rustcorp.com.au
 
-On alpha-smp-n-debug-y:
+On alpha-smp-y-debug-n:
 
-kernel/trace/trace.c: In function 'tracing_generic_entry_update':
-kernel/trace/trace.c:658: error: implicit declaration of function 'irqs_disabled_flags'
-kernel/trace/trace.c: In function 'tracing_cpumask_write':
-kernel/trace/trace.c:2145: error: implicit declaration of function 'raw_local_irq_disable'
-kernel/trace/trace.c:2162: error: implicit declaration of function 'raw_local_irq_enable'
-kernel/trace/trace.c: In function 'trace_die_handler':
-kernel/trace/trace.c:3039: error: 'DIE_OOPS' undeclared (first use in this function)
+  Using /src/linux-1 as source for kernel
+  GEN     /src/build/alpha-smp-y-debug-n/Makefile
+  CHK     include/linux/version.h
+  CHK     include/linux/utsrelease.h
+  CALL    /src/linux-1/scripts/checksyscalls.sh
+<stdin>:1377:2: warning: #warning syscall timerfd_create not implemented
+<stdin>:1385:2: warning: #warning syscall fallocate not implemented
+<stdin>:1389:2: warning: #warning syscall timerfd_settime not implemented
+<stdin>:1393:2: warning: #warning syscall timerfd_gettime not implemented
+<stdin>:1397:2: warning: #warning syscall signalfd4 not implemented
+<stdin>:1401:2: warning: #warning syscall eventfd2 not implemented
+<stdin>:1405:2: warning: #warning syscall epoll_create1 not implemented
+<stdin>:1409:2: warning: #warning syscall dup3 not implemented
+<stdin>:1413:2: warning: #warning syscall pipe2 not implemented
+<stdin>:1417:2: warning: #warning syscall inotify_init1 not implemented
+  CHK     include/linux/compile.h
+  CC      arch/alpha/kernel/traps.o
+In file included from /src/linux-1/include/linux/smp.h:30,
+                 from /src/linux-1/include/linux/topology.h:33,
+                 from /src/linux-1/include/linux/mmzone.h:763,
+                 from /src/linux-1/include/linux/gfp.h:4,
+                 from /src/linux-1/include/linux/mm.h:8,
+                 from /src/linux-1/arch/alpha/kernel/traps.c:12:
+/src/linux-1/arch/alpha/include/asm/smp.h:48:1: error: "cpu_possible_map" redefined
+In file included from /src/linux-1/include/linux/topology.h:30,
+                 from /src/linux-1/include/linux/mmzone.h:763,
+                 from /src/linux-1/include/linux/gfp.h:4,
+                 from /src/linux-1/include/linux/mm.h:8,
+                 from /src/linux-1/arch/alpha/kernel/traps.c:12:
+/src/linux-1/include/linux/cpumask.h:247:1: error: this is the location of the previous definition
+make[2]: *** [arch/alpha/kernel/traps.o] Error 1
+make[1]: *** [arch/alpha/kernel] Error 2
+make: *** [sub-make] Error 2
 
-This has something with config dependencies, because adding include doesn't fix it.
 
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.27
-# Thu Oct 23 14:50:50 2008
+# Thu Oct 23 14:50:53 2008
 #
 CONFIG_ALPHA=y
 CONFIG_64BIT=y
@@ -49,13 +75,14 @@ CONFIG_GENERIC_ISA_DMA=y
 # CONFIG_GENERIC_IOMAP is not set
 CONFIG_GENERIC_HARDIRQS=y
 CONFIG_GENERIC_IRQ_PROBE=y
+CONFIG_AUTO_IRQ_AFFINITY=y
 CONFIG_DEFCONFIG_LIST="/lib/modules/$UNAME_RELEASE/.config"
 
 #
 # General setup
 #
 CONFIG_EXPERIMENTAL=y
-CONFIG_BROKEN_ON_SMP=y
+CONFIG_LOCK_KERNEL=y
 CONFIG_INIT_ENV_ARG_LIMIT=32
 CONFIG_LOCALVERSION=""
 CONFIG_SWAP=y
@@ -77,6 +104,7 @@ CONFIG_CGROUP_DEBUG=y
 CONFIG_CGROUP_NS=y
 CONFIG_CGROUP_FREEZER=y
 CONFIG_CGROUP_DEVICE=y
+CONFIG_CPUSETS=y
 CONFIG_GROUP_SCHED=y
 CONFIG_FAIR_GROUP_SCHED=y
 CONFIG_RT_GROUP_SCHED=y
@@ -88,6 +116,7 @@ CONFIG_MM_OWNER=y
 CONFIG_CGROUP_MEM_RES_CTLR=y
 CONFIG_SYSFS_DEPRECATED=y
 CONFIG_SYSFS_DEPRECATED_V2=y
+CONFIG_PROC_PID_CPUSET=y
 CONFIG_RELAY=y
 CONFIG_NAMESPACES=y
 CONFIG_UTS_NS=y
@@ -124,10 +153,10 @@ CONFIG_SLUB_DEBUG=y
 CONFIG_SLUB=y
 # CONFIG_SLOB is not set
 CONFIG_PROFILING=y
-CONFIG_TRACEPOINTS=y
 CONFIG_MARKERS=y
 CONFIG_OPROFILE=y
 CONFIG_HAVE_OPROFILE=y
+CONFIG_USE_GENERIC_SMP_HELPERS=y
 # CONFIG_HAVE_GENERIC_DMA_COHERENT is not set
 CONFIG_SLABINFO=y
 CONFIG_RT_MUTEXES=y
@@ -200,8 +229,9 @@ CONFIG_ALPHA_BROKEN_IRQ_MASK=y
 CONFIG_VGA_HOSE=y
 CONFIG_EISA=y
 CONFIG_ARCH_MAY_HAVE_PC_FDC=y
-# CONFIG_SMP is not set
-CONFIG_NR_CPUS=1
+CONFIG_SMP=y
+CONFIG_HAVE_DEC_LOCK=y
+CONFIG_NR_CPUS=32
 CONFIG_ARCH_DISCONTIGMEM_ENABLE=y
 CONFIG_SELECT_MEMORY_MODEL=y
 # CONFIG_FLATMEM_MANUAL is not set
@@ -224,7 +254,6 @@ CONFIG_VERBOSE_MCHECK_ON=1
 CONFIG_HZ=1024
 # CONFIG_ARCH_SUPPORTS_MSI is not set
 CONFIG_PCI_LEGACY=y
-CONFIG_PCI_DEBUG=y
 CONFIG_EISA_PCI_EISA=y
 CONFIG_EISA_VIRTUAL_ROOT=y
 CONFIG_EISA_NAMES=y
@@ -568,11 +597,6 @@ CONFIG_IP_DCCP_CCID3_DEBUG=y
 CONFIG_IP_DCCP_CCID3_RTO=100
 CONFIG_IP_DCCP_TFRC_LIB=y
 CONFIG_IP_DCCP_TFRC_DEBUG=y
-
-#
-# DCCP Kernel Hacking
-#
-CONFIG_IP_DCCP_DEBUG=y
 CONFIG_IP_SCTP=y
 CONFIG_SCTP_DBG_MSG=y
 CONFIG_SCTP_DBG_OBJCNT=y
@@ -705,7 +729,6 @@ CONFIG_ROSE=y
 CONFIG_MKISS=y
 CONFIG_6PACK=y
 CONFIG_BPQETHER=y
-CONFIG_DMASCC=y
 CONFIG_SCC=y
 CONFIG_SCC_DELAY=y
 CONFIG_SCC_TRXECHO=y
@@ -866,8 +889,6 @@ CONFIG_PREVENT_FIRMWARE_BUILD=y
 CONFIG_FW_LOADER=y
 CONFIG_FIRMWARE_IN_KERNEL=y
 CONFIG_EXTRA_FIRMWARE=""
-CONFIG_DEBUG_DRIVER=y
-CONFIG_DEBUG_DEVRES=y
 # CONFIG_SYS_HYPERVISOR is not set
 CONFIG_CONNECTOR=y
 CONFIG_PROC_EVENTS=y
@@ -1491,7 +1512,6 @@ CONFIG_SMC9194=y
 CONFIG_ENC28J60=y
 CONFIG_ENC28J60_WRITEVERIFY=y
 CONFIG_NET_VENDOR_RACAL=y
-CONFIG_NI5010=y
 CONFIG_NI52=y
 CONFIG_NI65=y
 CONFIG_NET_TULIP=y
@@ -1879,7 +1899,6 @@ CONFIG_ISDN_X25=y
 #
 # ISDN feature submodules
 #
-CONFIG_ISDN_DRV_LOOP=y
 CONFIG_ISDN_DIVERSION=y
 
 #
@@ -2230,7 +2249,6 @@ CONFIG_I2C_BOARDINFO=y
 CONFIG_I2C_CHARDEV=y
 CONFIG_I2C_HELPER_AUTO=y
 CONFIG_I2C_ALGOBIT=y
-CONFIG_I2C_ALGOPCF=y
 CONFIG_I2C_ALGOPCA=y
 
 #
@@ -2277,7 +2295,6 @@ CONFIG_I2C_VOODOO3=y
 #
 # Other I2C/SMBus bus drivers
 #
-CONFIG_I2C_ELEKTOR=y
 CONFIG_I2C_PCA_ISA=y
 CONFIG_I2C_PCA_PLATFORM=y
 
@@ -2298,7 +2315,6 @@ CONFIG_I2C_DEBUG_ALGO=y
 CONFIG_I2C_DEBUG_BUS=y
 CONFIG_I2C_DEBUG_CHIP=y
 CONFIG_SPI=y
-CONFIG_SPI_DEBUG=y
 CONFIG_SPI_MASTER=y
 
 #
@@ -3411,7 +3427,6 @@ CONFIG_USB_CXACRU=y
 CONFIG_USB_UEAGLEATM=y
 CONFIG_USB_XUSBATM=y
 CONFIG_USB_GADGET=y
-CONFIG_USB_GADGET_DEBUG=y
 CONFIG_USB_GADGET_DEBUG_FILES=y
 CONFIG_USB_GADGET_DEBUG_FS=y
 CONFIG_USB_GADGET_VBUS_DRAW=2
@@ -3879,50 +3894,13 @@ CONFIG_UNUSED_SYMBOLS=y
 CONFIG_DEBUG_FS=y
 CONFIG_HEADERS_CHECK=y
 CONFIG_DEBUG_SECTION_MISMATCH=y
-CONFIG_DEBUG_KERNEL=y
-CONFIG_DEBUG_SHIRQ=y
-CONFIG_DETECT_SOFTLOCKUP=y
-CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC=y
-CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC_VALUE=1
-CONFIG_SCHED_DEBUG=y
-CONFIG_SCHEDSTATS=y
-CONFIG_TIMER_STATS=y
-CONFIG_DEBUG_OBJECTS=y
-CONFIG_DEBUG_OBJECTS_SELFTEST=y
-CONFIG_DEBUG_OBJECTS_FREE=y
-CONFIG_DEBUG_OBJECTS_TIMERS=y
+# CONFIG_DEBUG_KERNEL is not set
 CONFIG_SLUB_DEBUG_ON=y
 CONFIG_SLUB_STATS=y
-CONFIG_DEBUG_RT_MUTEXES=y
-CONFIG_DEBUG_PI_LIST=y
-CONFIG_DEBUG_SPINLOCK=y
-CONFIG_DEBUG_MUTEXES=y
-CONFIG_DEBUG_SPINLOCK_SLEEP=y
-CONFIG_STACKTRACE=y
-CONFIG_DEBUG_KOBJECT=y
-CONFIG_DEBUG_VM=y
-CONFIG_DEBUG_WRITECOUNT=y
 CONFIG_DEBUG_MEMORY_INIT=y
-CONFIG_DEBUG_LIST=y
-CONFIG_DEBUG_SG=y
-CONFIG_DEBUG_NOTIFIERS=y
-CONFIG_BOOT_PRINTK_DELAY=y
 CONFIG_RCU_CPU_STALL_DETECTOR=y
-CONFIG_DEBUG_BLOCK_EXT_DEVT=y
-CONFIG_FAULT_INJECTION=y
-CONFIG_FAILSLAB=y
-CONFIG_FAIL_PAGE_ALLOC=y
-CONFIG_FAIL_MAKE_REQUEST=y
-CONFIG_FAIL_IO_TIMEOUT=y
-CONFIG_FAULT_INJECTION_DEBUG_FS=y
 CONFIG_SYSCTL_SYSCALL_CHECK=y
 CONFIG_DEBUG_PER_CPU_MAPS=y
-CONFIG_TRACER_MAX_TRACE=y
-CONFIG_RING_BUFFER=y
-CONFIG_TRACING=y
-CONFIG_SCHED_TRACER=y
-CONFIG_CONTEXT_SWITCH_TRACER=y
-CONFIG_BOOT_TRACER=y
 CONFIG_FIREWIRE_OHCI_REMOTE_DMA=y
 CONFIG_KMEMTRACE=y
 CONFIG_BUILD_DOCSRC=y
@@ -3930,11 +3908,6 @@ CONFIG_DYNAMIC_PRINTK_DEBUG=y
 CONFIG_SAMPLES=y
 CONFIG_SAMPLE_KOBJECT=y
 CONFIG_KERNEL_TESTS=y
-CONFIG_DEBUG_LOCKING_API_SELFTESTS=y
-CONFIG_RCU_TORTURE_TEST=y
-CONFIG_RCU_TORTURE_TEST_RUNNABLE=y
-CONFIG_RT_MUTEX_TESTER=y
-CONFIG_BACKTRACE_SELF_TEST=y
 CONFIG_EARLY_PRINTK=y
 CONFIG_ALPHA_LEGACY_START_ADDRESS=y
 CONFIG_MATHEMU=y
