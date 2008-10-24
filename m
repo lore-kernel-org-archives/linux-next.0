@@ -1,59 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree
-Date: Fri, 24 Oct 2008 13:21:52 +1100
-Message-ID: <20081024132152.9e4e8297.sfr@canb.auug.org.au>
+Subject: linux-next: rr tree build warning
+Date: Fri, 24 Oct 2008 13:34:07 +1100
+Message-ID: <20081024133407.8c4df5f6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__24_Oct_2008_13_34_07_+1100_vs0OWH.tL+CZro.U"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34311 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44050 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751369AbYJXCV4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Oct 2008 22:21:56 -0400
+	id S1751572AbYJXCeP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 23 Oct 2008 22:34:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>
+Cc: linux-next@vger.kernel.org
+
+--Signature=_Fri__24_Oct_2008_13_34_07_+1100_vs0OWH.tL+CZro.U
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Rusty,
 
-Today's linux-next merge of the rr tree got a conflict in
-arch/x86/include/asm/ipi.h between commit
-1965aae3c98397aad957412413c07e97b1bd4e64 ("x86: Fix ASM_X86__ header
-guards") from Linus' tree and commit
-8bb673a4d8312a71783b8ff190622fd03dfe34b8 ("x86 smp: modify send_IPI_mask
-interface to accept cpumask_t pointers") from the rr tree.
+Today's linux-next build (powerpc ppc64_defconfig) got this warning:
 
-Just trivial context changes.  I fixed it up (see below).
--- 
+kernel/workqueue.c: In function 'work_on_cpu':
+kernel/workqueue.c:1009: warning: passing argument 1 of 'flush_workqueue' f=
+rom incompatible pointer type
+
+You are passing a "struct work_struct *" to fluxh_workqueue which wants a
+"struct workqueue_struct *".
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/x86/include/asm/ipi.h
-index f89dffb,fcb7424..0000000
---- a/arch/x86/include/asm/ipi.h
-+++ b/arch/x86/include/asm/ipi.h
-@@@ -135,4 -135,21 +135,21 @@@ static inline void send_IPI_mask_sequen
-  	local_irq_restore(flags);
-  }
-  
-+ static inline void send_IPI_mask_allbutself(const cpumask_t *mask, int vector)
-+ {
-+ 	unsigned long flags;
-+ 	unsigned int query_cpu;
-+ 	unsigned int this_cpu = smp_processor_id();
-+ 
-+ 	/* See Hack comment above */
-+ 
-+ 	local_irq_save(flags);
-+ 	for_each_cpu_mask_nr(query_cpu, *mask)
-+ 		if (query_cpu != this_cpu)
-+ 			__send_IPI_dest_field(
-+ 				per_cpu(x86_cpu_to_apicid, query_cpu),
-+ 				vector, APIC_DEST_PHYSICAL);
-+ 	local_irq_restore(flags);
-+ }
-+ 
- -#endif /* ASM_X86__IPI_H */
- +#endif /* _ASM_X86_IPI_H */
+--Signature=_Fri__24_Oct_2008_13_34_07_+1100_vs0OWH.tL+CZro.U
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkBNB8ACgkQjjKRsyhoI8xmugCgjeQkZnaBpldP6yyZWz4uiF/Q
+qjgAoKPTM1qF9KWlHzfOc3BHQsIxi1rF
+=j28c
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__24_Oct_2008_13_34_07_+1100_vs0OWH.tL+CZro.U--
