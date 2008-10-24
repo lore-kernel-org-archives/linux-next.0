@@ -1,35 +1,40 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for October 23
-Date: Thu, 23 Oct 2008 18:04:12 -0700
-Message-ID: <20081023180412.394d40c2.randy.dunlap@oracle.com>
+Subject: [PATCH] PCI hotplug printk format
+Date: Thu, 23 Oct 2008 18:14:55 -0700
+Message-ID: <20081023181455.336e5d03.randy.dunlap@oracle.com>
 References: <20081023213637.eff9b414.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757182AbYJXBFF@vger.kernel.org>
+Return-path: <linux-pci-owner@vger.kernel.org>
 In-Reply-To: <20081023213637.eff9b414.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, ericvh@gmail.com, rolandd@cisco.com
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, v9fs-developer@lists.sourceforge.net, general@lists.openfabrics.org
+Sender: linux-pci-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, torvalds <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 23 Oct 2008 21:36:37 +1100 Stephen Rothwell wrote:
+I made this patch for linux-next, but now mainline has this same code/warning.
 
-> Hi all,
 
-Building with CONFIG_INFINIBAND=m, kconfig allows CONFIG_NET_9P_RDMA=m,
-so one module wants symbols from the other (net/9p wants symbols from rmda_*).
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-ERROR: "rdma_destroy_id" [net/9p/9pnet_rdma.ko] undefined!
-ERROR: "rdma_connect" [net/9p/9pnet_rdma.ko] undefined!
-ERROR: "rdma_create_id" [net/9p/9pnet_rdma.ko] undefined!
-ERROR: "rdma_create_qp" [net/9p/9pnet_rdma.ko] undefined!
-ERROR: "rdma_resolve_route" [net/9p/9pnet_rdma.ko] undefined!
-ERROR: "rdma_disconnect" [net/9p/9pnet_rdma.ko] undefined!
-ERROR: "rdma_resolve_addr" [net/9p/9pnet_rdma.ko] undefined!
+Fix printk format warning:
 
-Is this supposed to be allowed/possible?  Otherwise NET_9P_RDMA might
-have to depend on INFINBAND=y...
+linux-next-20081023/drivers/pci/hotplug/acpiphp_ibm.c:207: warning: format '%08lx' expects type 'long unsigned int', but argument 3 has type 'long long unsigned int'
 
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 ---
-~Randy
+ drivers/pci/hotplug/acpiphp_ibm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20081023.orig/drivers/pci/hotplug/acpiphp_ibm.c
++++ linux-next-20081023/drivers/pci/hotplug/acpiphp_ibm.c
+@@ -204,7 +204,7 @@ static int ibm_set_attention_status(stru
+ 		err("APLS evaluation failed:  0x%08x\n", stat);
+ 		return -ENODEV;
+ 	} else if (!rc) {
+-		err("APLS method failed:  0x%08lx\n", rc);
++		err("APLS method failed:  0x%08llx\n", rc);
+ 		return -ERANGE;
+ 	}
+ 	return 0;
