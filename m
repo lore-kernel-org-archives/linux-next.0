@@ -1,41 +1,42 @@
-From: "=?ISO-8859-1?Q?Fr=E9d=E9ric_Weisbecker?=" <fweisbec@gmail.com>
-Subject: Re: [PATCH] ftrace: handle archs that do not support irqs_disabled_flags
-Date: Fri, 24 Oct 2008 15:54:40 +0200
-Message-ID: <c62985530810240654o3e58a0abt12221507855be005@mail.gmail.com>
-References: <20081023213637.eff9b414.sfr@canb.auug.org.au>
-	 <49008D12.5090204@gmail.com>
-	 <Pine.LNX.4.64.0810231635440.18978@anakin>
-	 <c62985530810230757r411b4e3dj4ecec649cf8cf0b3@mail.gmail.com>
-	 <Pine.LNX.4.64.0810231727430.18978@anakin>
-	 <4900B414.7090002@gmail.com> <20081023163433.GA3160@x200.localdomain>
-	 <20081023163850.GB16591@elte.hu> <4901D8CD.7000405@gmail.com>
-	 <alpine.DEB.1.10.0810240937130.3882@gandalf.stny.rr.com>
+From: Mikael Abrahamsson <swmike@swm.pp.se>
+Subject: Re: Current suspend issues on Lenovo X200 (w/ Intel graphics)
+Date: Fri, 24 Oct 2008 16:01:25 +0200 (CEST)
+Message-ID: <alpine.DEB.1.10.0810241546460.4948@uplift.swm.pp.se>
+References: <20081023204326.GB4175@denkbrett.schottelius.org> <200810240006.19857.rjw@sisk.pl> <1224817394.6623.12.camel@nigel-laptop> <200810240911.05193.rjw@sisk.pl> <20081024130130.GA5816@denkbrett.schottelius.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fg-out-1718.google.com ([72.14.220.157]:6401 "EHLO
-	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751040AbYJXNym (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Oct 2008 09:54:42 -0400
-Received: by fg-out-1718.google.com with SMTP id 19so977834fgg.17
-        for <linux-next@vger.kernel.org>; Fri, 24 Oct 2008 06:54:40 -0700 (PDT)
-In-Reply-To: <alpine.DEB.1.10.0810240937130.3882@gandalf.stny.rr.com>
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ingo Molnar <mingo@elte.hu>, Alexey Dobriyan <adobriyan@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756063AbYJXOBh@vger.kernel.org>
+In-Reply-To: <20081024130130.GA5816@denkbrett.schottelius.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Nigel Cunningham <ncunningham@crca.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jesse Barnes <jbarnes@virtuousgeek.org>
+List-Id: linux-next.vger.kernel.org
 
-2008/10/24 Steven Rostedt <rostedt@goodmis.org>:
-> This patch adds a 'X' in the output to let the user know that the
-> architecture they are running on does not support a way for the tracer
-> to determine if interrupts were enabled or disabled. It also lets those
-> same archs compile with tracing enabled.
+On Fri, 24 Oct 2008, Nico -telmich- Schottelius wrote:
 
-That's almost exactly what I thought to repair the warning caused by those
-FLAG_IRQS_NOSUPPORT archs :)
+> Yes, I'm on amd64;
 
-So we have now all the three patches that correct the warning reported
-by Alexey in
-Linux-next: http://lkml.org/lkml/2008/10/23/145
+I'm on ubuntu 8.10-rc with all updates (so I'm on their 2.6.27-7 kernel) 
+on Lenovo X200.
+
+I can replicate the problems without X, I get an oops when it comes out of 
+sleep (can't scroll up and nothing in the log).
+
+If I shut down X, power down bluetooth (fn-F4) and rmmod btusb and 
+bluetooth, I can successfully get the X200 to sleep (by executing the 
+/etc/acpi/sleep.sh script) and come back up again properly.
+
+If I have X enabled, power down bluetooth, /etc/ini.d/bluetooth stop and 
+rmmod btusb/bluetooth, I still get the problem when coming out of sleep. I 
+get a mouse pointer (unmovable), black background, and after 5-10 seconds 
+I get hard power down (watchdog?).
+
+I have tried to ctrl-alt-F1 to text console and make it go to sleep to see 
+if this works in conjunction with X running, but it seems some X daemon is 
+catching/hindering the fn-F4 and ./sleep.sh, so I haven't been able to try 
+this.
+
+Anything else I can test that might help?
+
+-- 
+Mikael Abrahamsson    email: swmike@swm.pp.se
