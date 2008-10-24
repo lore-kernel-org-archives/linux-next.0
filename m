@@ -1,55 +1,44 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: S3 sleep no longer works on x86_64 in 2.6.27
-Date: Thu, 23 Oct 2008 19:44:39 -0700
-Message-ID: <49013697.2040902@zytor.com>
-References: <20081023122405.GC14838@redhat.com> <20081023125104.GA9506@elte.hu>
+From: Nigel Cunningham <ncunningham@crca.org.au>
+Subject: Re: Current suspend issues on Lenovo X200
+Date: Fri, 24 Oct 2008 14:03:14 +1100
+Message-ID: <1224817394.6623.12.camel@nigel-laptop>
+References: <20081023204326.GB4175@denkbrett.schottelius.org>
+	 <20081023210707.GA5089@denkbrett.schottelius.org>
+	 <200810240006.19857.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from terminus.zytor.com ([198.137.202.10]:37740 "EHLO
-	terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752427AbYJXCqk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Oct 2008 22:46:40 -0400
-In-Reply-To: <20081023125104.GA9506@elte.hu>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>, stable@kernel.org
-Cc: Gleb Natapov <gleb@redhat.com>, gcosta@redhat.com, linux-next@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756139AbYJXDDa@vger.kernel.org>
+In-Reply-To: <200810240006.19857.rjw@sisk.pl>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Nico Schottelius <nico-linux-next@schottelius.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Ingo Molnar wrote:
-> * Gleb Natapov <gleb@redhat.com> wrote:
-> 
->> Hi,
->>
->> S3 sleep no longer works on x86_64 (at least in KVM, but it looks like 
->> this is the kernel bug). Kernel 2.6.26 works. I think that the commit 
->> that caused the problem is a939098af, but I can't be 100% sure since 
->> compilation is broken at this point.
->>
->> Triple fault happens during S3 resume. It happens in 
->> arch/x86/kernel/head_64.S during access to GDT after it was loaded on 
->> line 213 (lgdt early_gdt_descr(%rip)) early_gdt_descr points to 
->> per_cpu__gdt_page and this address contains valid GDT entries during a 
->> regular boot, but on S3 resume in contains garbage. It seems that 
->> per_cpu area is reallocated somewhere, but I don't understand this 
->> magic enough to fix it. Can somebody look at this and explain what 
->> happens?
-> 
-> could you check whether the (post-v2.6.27) upstream fix below does the 
-> trick for you?
-> 
-> 	Ingo
-> 
-> From 3038edabf48f01421c621cb77a712b446d3a5d67 Mon Sep 17 00:00:00 2001
-> From: Rafael J. Wysocki <rjw@sisk.pl>
-> Date: Fri, 17 Oct 2008 01:26:27 +0200
-> Subject: [PATCH] x86 ACPI: fix breakage of resume on 64-bit UP systems with SMP kernel
-> 
-> x86 ACPI: Fix breakage of resume on 64-bit UP systems with SMP kernel
-> 
+Hey Rafael :)
 
-Is this patch scheduled for 2.6.27-stable?  If not, it sounds like it 
-should be.
+On Fri, 2008-10-24 at 00:06 +0200, Rafael J. Wysocki wrote:
+> On Thursday, 23 of October 2008, Nico Schottelius wrote:
+> > First of all, this was wrong:
+> >=20
+> > Nico -telmich- Schottelius [Thu, Oct 23, 2008 at 10:43:26PM +0200]:
+> > >  - 2.6.27: system freeze instead of wakeup
+> > >    -> shows parts of the X screen, but does not react on ping
+> >=20
+> > System does not freeze, but reboots instead.
+> >=20
+> > Tried next-20081023 and 2.6.27 with acpi_sleep=3Ds3_bios:
+> >=20
+> > - suspend and wakeup on console works fine for both!
+> > - no X running on next
+> > - 2.6.27 + X -> reboot on wakeup
+>=20
+> Let me guess, you have a NVidia graphics?
 
-	-hpa
+Not this time. Going off the other log he posted, it's...
+
+Chipset Mobile Intel=C2=AE GM45 Express Chipset found
+
+Regards,
+
+Nigel
