@@ -1,52 +1,24 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: Current suspend issues on Lenovo X200 (w/ Intel graphics)
-Date: Fri, 24 Oct 2008 09:11:04 +0200
-Message-ID: <200810240911.05193.rjw@sisk.pl>
-References: <20081023204326.GB4175@denkbrett.schottelius.org> <200810240006.19857.rjw@sisk.pl> <1224817394.6623.12.camel@nigel-laptop>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: David Howells <dhowells@redhat.com>
+Subject: Re: Fw: [PATCH] nfsctl: credentials error
+Date: Fri, 24 Oct 2008 11:04:27 +0100
+Message-ID: <3209.1224842667@redhat.com>
+References: <20081024165524.1a1ff01c.sfr@canb.auug.org.au>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:42597 "EHLO ogre.sisk.pl"
+Received: from mx2.redhat.com ([66.187.237.31]:33095 "EHLO mx2.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751876AbYJXHGg convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Oct 2008 03:06:36 -0400
-In-Reply-To: <1224817394.6623.12.camel@nigel-laptop>
-Content-Disposition: inline
+	id S1750881AbYJXKFm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 24 Oct 2008 06:05:42 -0400
+In-Reply-To: <20081024165524.1a1ff01c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nigel Cunningham <ncunningham@crca.org.au>, Nico Schottelius <nico-linux-next@schottelius.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jesse Barnes <jbarnes@virtuousgeek.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: dhowells@redhat.com, James Morris <jmorris@namei.org>, Randy Dunlap <randy.dunlap@oracle.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
 
-On Friday, 24 of October 2008, Nigel Cunningham wrote:
-> Hey Rafael :)
->=20
-> On Fri, 2008-10-24 at 00:06 +0200, Rafael J. Wysocki wrote:
-> > On Thursday, 23 of October 2008, Nico Schottelius wrote:
-> > > First of all, this was wrong:
-> > >=20
-> > > Nico -telmich- Schottelius [Thu, Oct 23, 2008 at 10:43:26PM +0200=
-]:
-> > > >  - 2.6.27: system freeze instead of wakeup
-> > > >    -> shows parts of the X screen, but does not react on ping
-> > >=20
-> > > System does not freeze, but reboots instead.
-> > >=20
-> > > Tried next-20081023 and 2.6.27 with acpi_sleep=3Ds3_bios:
-> > >=20
-> > > - suspend and wakeup on console works fine for both!
-> > > - no X running on next
-> > > - 2.6.27 + X -> reboot on wakeup
-> >=20
-> > Let me guess, you have a NVidia graphics?
->=20
-> Not this time. Going off the other log he posted, it's...
->=20
-> Chipset Mobile Intel=C2=AE GM45 Express Chipset found
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-This is going to be interesting. :-)
+> +#include <linux/cred.h>
+> +#include <linux/sched.h>
 
-Nico, if the system is 64-bit, I'd recommend trying .28-rc1.
+The first inclusion should be superfluous in the face of the second.
 
-Thanks,
-Rafael
+David
