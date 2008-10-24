@@ -1,51 +1,55 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: rr tree build warning
-Date: Fri, 24 Oct 2008 13:34:07 +1100
-Message-ID: <20081024133407.8c4df5f6.sfr@canb.auug.org.au>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: S3 sleep no longer works on x86_64 in 2.6.27
+Date: Thu, 23 Oct 2008 19:44:39 -0700
+Message-ID: <49013697.2040902@zytor.com>
+References: <20081023122405.GC14838@redhat.com> <20081023125104.GA9506@elte.hu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__24_Oct_2008_13_34_07_+1100_vs0OWH.tL+CZro.U"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44050 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751572AbYJXCeP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Oct 2008 22:34:15 -0400
+Received: from terminus.zytor.com ([198.137.202.10]:37740 "EHLO
+	terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752427AbYJXCqk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Oct 2008 22:46:40 -0400
+In-Reply-To: <20081023125104.GA9506@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>, stable@kernel.org
+Cc: Gleb Natapov <gleb@redhat.com>, gcosta@redhat.com, linux-next@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Thomas Gleixner <tglx@linutronix.de>
 
---Signature=_Fri__24_Oct_2008_13_34_07_+1100_vs0OWH.tL+CZro.U
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ingo Molnar wrote:
+> * Gleb Natapov <gleb@redhat.com> wrote:
+> 
+>> Hi,
+>>
+>> S3 sleep no longer works on x86_64 (at least in KVM, but it looks like 
+>> this is the kernel bug). Kernel 2.6.26 works. I think that the commit 
+>> that caused the problem is a939098af, but I can't be 100% sure since 
+>> compilation is broken at this point.
+>>
+>> Triple fault happens during S3 resume. It happens in 
+>> arch/x86/kernel/head_64.S during access to GDT after it was loaded on 
+>> line 213 (lgdt early_gdt_descr(%rip)) early_gdt_descr points to 
+>> per_cpu__gdt_page and this address contains valid GDT entries during a 
+>> regular boot, but on S3 resume in contains garbage. It seems that 
+>> per_cpu area is reallocated somewhere, but I don't understand this 
+>> magic enough to fix it. Can somebody look at this and explain what 
+>> happens?
+> 
+> could you check whether the (post-v2.6.27) upstream fix below does the 
+> trick for you?
+> 
+> 	Ingo
+> 
+> From 3038edabf48f01421c621cb77a712b446d3a5d67 Mon Sep 17 00:00:00 2001
+> From: Rafael J. Wysocki <rjw@sisk.pl>
+> Date: Fri, 17 Oct 2008 01:26:27 +0200
+> Subject: [PATCH] x86 ACPI: fix breakage of resume on 64-bit UP systems with SMP kernel
+> 
+> x86 ACPI: Fix breakage of resume on 64-bit UP systems with SMP kernel
+> 
 
-Hi Rusty,
+Is this patch scheduled for 2.6.27-stable?  If not, it sounds like it 
+should be.
 
-Today's linux-next build (powerpc ppc64_defconfig) got this warning:
-
-kernel/workqueue.c: In function 'work_on_cpu':
-kernel/workqueue.c:1009: warning: passing argument 1 of 'flush_workqueue' f=
-rom incompatible pointer type
-
-You are passing a "struct work_struct *" to fluxh_workqueue which wants a
-"struct workqueue_struct *".
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__24_Oct_2008_13_34_07_+1100_vs0OWH.tL+CZro.U
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkBNB8ACgkQjjKRsyhoI8xmugCgjeQkZnaBpldP6yyZWz4uiF/Q
-qjgAoKPTM1qF9KWlHzfOc3BHQsIxi1rF
-=j28c
------END PGP SIGNATURE-----
-
---Signature=_Fri__24_Oct_2008_13_34_07_+1100_vs0OWH.tL+CZro.U--
+	-hpa
