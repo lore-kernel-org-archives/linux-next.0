@@ -1,42 +1,64 @@
-From: Mikael Abrahamsson <swmike@swm.pp.se>
-Subject: Re: Current suspend issues on Lenovo X200 (w/ Intel graphics)
-Date: Fri, 24 Oct 2008 16:01:25 +0200 (CEST)
-Message-ID: <alpine.DEB.1.10.0810241546460.4948@uplift.swm.pp.se>
-References: <20081023204326.GB4175@denkbrett.schottelius.org> <200810240006.19857.rjw@sisk.pl> <1224817394.6623.12.camel@nigel-laptop> <200810240911.05193.rjw@sisk.pl> <20081024130130.GA5816@denkbrett.schottelius.org>
+From: Andres Freund <andres@anarazel.de>
+Subject: Re: Current suspend issues on Lenovo X200
+Date: Fri, 24 Oct 2008 16:28:18 +0200
+Message-ID: <200810241628.23002.andres@anarazel.de>
+References: <20081023204326.GB4175@denkbrett.schottelius.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756063AbYJXOBh@vger.kernel.org>
-In-Reply-To: <20081024130130.GA5816@denkbrett.schottelius.org>
+Content-Type: multipart/signed;
+  boundary="nextPart3172384.ypnD5ZmNPS";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755494AbYJXO2g@vger.kernel.org>
+In-Reply-To: <20081023204326.GB4175@denkbrett.schottelius.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Nigel Cunningham <ncunningham@crca.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, 24 Oct 2008, Nico -telmich- Schottelius wrote:
+--nextPart3172384.ypnD5ZmNPS
+Content-Type: text/plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-> Yes, I'm on amd64;
+Hi Nico,
 
-I'm on ubuntu 8.10-rc with all updates (so I'm on their 2.6.27-7 kernel) 
-on Lenovo X200.
+On Thursday 23 October 2008 22:43:26 Nico -telmich- Schottelius wrote:
+>  - 2.6.27-next-20081023:
+>    -> no X running (because xorg does not work with that kernel)
+I think what you need is one rather short fix for the intel xorg driver:
 
-I can replicate the problems without X, I get an oops when it comes out of 
-sleep (can't scroll up and nothing in the log).
+diff --git a/src/i830_driver.c b/src/i830_driver.c
+index c1d61f4..eaf5d27 100644
+--- a/src/i830_driver.c
++++ b/src/i830_driver.c
+@@ -502,8 +502,8 @@ I830DetectMemory(ScrnInfoPtr pScrn)
+    range = gtt_size + 4;
 
-If I shut down X, power down bluetooth (fn-F4) and rmmod btusb and 
-bluetooth, I can successfully get the X200 to sleep (by executing the 
-/etc/acpi/sleep.sh script) and come back up again properly.
+    /* new 4 series hardware has seperate GTT stolen with GFX stolen */
+- if (IS_G4X(pI830))
+- range = 0;
++ if (IS_G4X(pI830) || IS_GM45(pI830))
++ range = 4;
 
-If I have X enabled, power down bluetooth, /etc/ini.d/bluetooth stop and 
-rmmod btusb/bluetooth, I still get the problem when coming out of sleep. I 
-get a mouse pointer (unmovable), black background, and after 5-10 seconds 
-I get hard power down (watchdog?).
+    if (IS_I85X(pI830) || IS_I865G(pI830) || IS_I9XX(pI830)) {
+       switch (gmch_ctrl & I855_GMCH_GMS_MASK) {
 
-I have tried to ctrl-alt-F1 to text console and make it go to sleep to see 
-if this works in conjunction with X running, but it seems some X daemon is 
-catching/hindering the fn-F4 and ./sleep.sh, so I haven't been able to try 
-this.
+(Out of the "[git pull] agp patches for 2.6.28-rc1" thread)
 
-Anything else I can test that might help?
+Andres
 
--- 
-Mikael Abrahamsson    email: swmike@swm.pp.se
+--nextPart3172384.ypnD5ZmNPS
+Content-Type: application/pgp-signature; name=signature.asc 
+Content-Description: This is a digitally signed message part.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEABECAAYFAkkB24IACgkQporPraT14ij/UACfW3WyXkDO2thWGJ7eldq084UX
+ObsAn1newQ5L2oy/WHI70LSB8pLQwrAT
+=VqLG
+-----END PGP SIGNATURE-----
+
+--nextPart3172384.ypnD5ZmNPS--
