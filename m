@@ -1,40 +1,43 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH] PCI hotplug printk format
-Date: Thu, 23 Oct 2008 18:14:55 -0700
-Message-ID: <20081023181455.336e5d03.randy.dunlap@oracle.com>
+Subject: [PATCH] nfsctl: credentials error
+Date: Thu, 23 Oct 2008 18:17:01 -0700
+Message-ID: <20081023181701.7f236519.randy.dunlap@oracle.com>
 References: <20081023213637.eff9b414.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from agminet01.oracle.com ([141.146.126.228]:58883 "EHLO
+	agminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751673AbYJXBR7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Oct 2008 21:17:59 -0400
 In-Reply-To: <20081023213637.eff9b414.sfr@canb.auug.org.au>
-Sender: linux-pci-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, torvalds <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
-
-I made this patch for linux-next, but now mainline has this same code/warning.
-
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Fix printk format warning:
+Needs headers help for current_cred:
 
-linux-next-20081023/drivers/pci/hotplug/acpiphp_ibm.c:207: warning: format '%08lx' expects type 'long unsigned int', but argument 3 has type 'long long unsigned int'
+Adding only cred.h wasn't enough.
+
+linux-next-20081023/fs/nfsctl.c:45: error: implicit declaration of function 'current_cred'
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 ---
- drivers/pci/hotplug/acpiphp_ibm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/nfsctl.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- linux-next-20081023.orig/drivers/pci/hotplug/acpiphp_ibm.c
-+++ linux-next-20081023/drivers/pci/hotplug/acpiphp_ibm.c
-@@ -204,7 +204,7 @@ static int ibm_set_attention_status(stru
- 		err("APLS evaluation failed:  0x%08x\n", stat);
- 		return -ENODEV;
- 	} else if (!rc) {
--		err("APLS method failed:  0x%08lx\n", rc);
-+		err("APLS method failed:  0x%08llx\n", rc);
- 		return -ERANGE;
- 	}
- 	return 0;
+--- linux-next-20081023.orig/fs/nfsctl.c
++++ linux-next-20081023/fs/nfsctl.c
+@@ -10,6 +10,8 @@
+ #include <linux/sunrpc/svc.h>
+ #include <linux/nfsd/nfsd.h>
+ #include <linux/nfsd/syscall.h>
++#include <linux/cred.h>
++#include <linux/sched.h>
+ #include <linux/linkage.h>
+ #include <linux/namei.h>
+ #include <linux/mount.h>
