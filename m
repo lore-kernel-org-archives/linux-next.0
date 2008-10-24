@@ -1,44 +1,65 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: Current suspend issues on Lenovo X200 (w/ Intel graphics)
-Date: Fri, 24 Oct 2008 20:26:39 +0200
-Message-ID: <200810242026.40503.rjw@sisk.pl>
-References: <20081023204326.GB4175@denkbrett.schottelius.org> <20081024130130.GA5816@denkbrett.schottelius.org> <200810241630.52740.andres@anarazel.de>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: Current suspend issues on Lenovo X200
+Date: Fri, 24 Oct 2008 11:23:17 -0700
+Message-ID: <200810241123.17883.jbarnes@virtuousgeek.org>
+References: <20081023204326.GB4175@denkbrett.schottelius.org> <200810241628.23002.andres@anarazel.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:47372 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751092AbYJXSWT convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Oct 2008 14:22:19 -0400
-In-Reply-To: <200810241630.52740.andres@anarazel.de>
+Received: from outbound-mail-03.bluehost.com ([69.89.21.13]:40985 "HELO
+	outbound-mail-03.bluehost.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1751341AbYJXSXW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 24 Oct 2008 14:23:22 -0400
+In-Reply-To: <200810241628.23002.andres@anarazel.de>
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andres Freund <andres@anarazel.de>
-Cc: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>, Nigel Cunningham <ncunningham@crca.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jesse Barnes <jbarnes@virtuousgeek.org>, Mikael Abrahamsson <swmike@swm.pp.se>
+Cc: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Friday, 24 of October 2008, Andres Freund wrote:
-> On Friday 24 October 2008 15:01:31 Nico -telmich- Schottelius wrote:
-> > > > Chipset Mobile Intel=AE GM45 Express Chipset found
-> > > This is going to be interesting. :-)
-> > > Nico, if the system is 64-bit, I'd recommend trying .28-rc1.
-> > Yes, I'm on amd64;
-> > As seen on my other post: xorg does not run on .28-rc1
-> The kernel has a fix for memory management for GM45 cards since 2.6.2=
-8-rc1=20
-> which require a newer driver, so trying this may be benifical (patch =
-in reply=20
-> to your first post).
-
-Nico, Mikael, if the Andres' patch doesn't help, please add the output =
-of
-lspci -vv from Lenovo X200 and a boot log into
-http://bugzilla.kernel.org/show_bug.cgi?id=3D11220 .
-
-Also, if you are able to get a debugging info from the box right before=
- the
-failure, it may help a lot.
-
-Thanks,
-Rafael
+T24gRnJpZGF5LCBPY3RvYmVyIDI0LCAyMDA4IDc6MjggYW0gQW5kcmVzIEZyZXVuZCB3cm90ZToK
+PiBIaSBOaWNvLAo+Cj4gT24gVGh1cnNkYXkgMjMgT2N0b2JlciAyMDA4IDIyOjQzOjI2IE5pY28g
+LXRlbG1pY2gtIFNjaG90dGVsaXVzIHdyb3RlOgo+ID4gIC0gMi42LjI3LW5leHQtMjAwODEwMjM6
+Cj4gPiAgICAtPiBubyBYIHJ1bm5pbmcgKGJlY2F1c2UgeG9yZyBkb2VzIG5vdCB3b3JrIHdpdGgg
+dGhhdCBrZXJuZWwpCj4KPiBJIHRoaW5rIHdoYXQgeW91IG5lZWQgaXMgb25lIHJhdGhlciBzaG9y
+dCBmaXggZm9yIHRoZSBpbnRlbCB4b3JnIGRyaXZlcjoKPgo+IGRpZmYgLS1naXQgYS9zcmMvaTgz
+MF9kcml2ZXIuYyBiL3NyYy9pODMwX2RyaXZlci5jCj4gaW5kZXggYzFkNjFmNC4uZWFmNWQyNyAx
+MDA2NDQKPiAtLS0gYS9zcmMvaTgzMF9kcml2ZXIuYwo+ICsrKyBiL3NyYy9pODMwX2RyaXZlci5j
+Cj4gQEAgLTUwMiw4ICs1MDIsOCBAQCBJODMwRGV0ZWN0TWVtb3J5KFNjcm5JbmZvUHRyIHBTY3Ju
+KQo+ICAgICByYW5nZSA9IGd0dF9zaXplICsgNDsKPgo+ICAgICAvKiBuZXcgNCBzZXJpZXMgaGFy
+ZHdhcmUgaGFzIHNlcGVyYXRlIEdUVCBzdG9sZW4gd2l0aCBHRlggc3RvbGVuICovCj4gLSBpZiAo
+SVNfRzRYKHBJODMwKSkKPiAtIHJhbmdlID0gMDsKPiArIGlmIChJU19HNFgocEk4MzApIHx8IElT
+X0dNNDUocEk4MzApKQo+ICsgcmFuZ2UgPSA0Owo+Cj4gICAgIGlmIChJU19JODVYKHBJODMwKSB8
+fCBJU19JODY1RyhwSTgzMCkgfHwgSVNfSTlYWChwSTgzMCkpIHsKPiAgICAgICAgc3dpdGNoIChn
+bWNoX2N0cmwgJiBJODU1X0dNQ0hfR01TX01BU0spIHsKPgo+IChPdXQgb2YgdGhlICJbZ2l0IHB1
+bGxdIGFncCBwYXRjaGVzIGZvciAyLjYuMjgtcmMxIiB0aHJlYWQpCgpTb21ldGhpbmcgbGlrZSB0
+aGlzIG1pZ2h0IGFsc28gaGVscC4KCkc0eCBjaGlwcyBkbyB0aGVpciBvd24gbWVtb3J5IGFyYml0
+cmF0aW9uIG1hbmFnZW1lbnQsIHNvIHdlIHNob3VsZG4ndCB0cnlpbmcKdG8gc2F2ZS9yZXN0b3Jl
+IHRoZSBEU1BBUkIgcmVnLgoKSmVzc2UKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vaTkx
+NS9pOTE1X2Rydi5oIGIvZHJpdmVycy9ncHUvZHJtL2k5MTUvaTkxNV9kcnYuaAppbmRleCBmMjBm
+ZmUxLi42YmE4NzEyIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2Rydi5o
+CisrKyBiL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2k5MTVfZHJ2LmgKQEAgLTY1Nyw2ICs2NTcsOSBA
+QCBleHRlcm4gaW50IGk5MTVfd2FpdF9yaW5nKHN0cnVjdCBkcm1fZGV2aWNlICogZGV2LCBpbnQg
+biwgY29uc3QgY2hhciAqY2FsbGVyKTsKIAogI2RlZmluZSBJOTE1X05FRURfR0ZYX0hXUyhkZXYp
+IChJU19HMzMoZGV2KSB8fCBJU19HTTQ1KGRldikgfHwgSVNfRzRYKGRldikpCiAKKy8qIGRzcGFy
+YiBjb250cm9sbGVkIGJ5IGh3IG9ubHkgKi8KKyNkZWZpbmUgRFNQQVJCX0hXQ09OVFJPTChkZXYp
+IChJU19HNFgoZGV2KSB8fCBJU19HTTQ1KGRldikpCisKICNkZWZpbmUgUFJJTUFSWV9SSU5HQlVG
+RkVSX1NJWkUgICAgICAgICAoMTI4KjEwMjQpCiAKICNlbmRpZgpkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9ncHUvZHJtL2k5MTUvaTkxNV9zdXNwZW5kLmMgYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1
+X3N1c3BlbmQuYwppbmRleCA2MDNmZTc0Li40YmVhNmVhIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
+dS9kcm0vaTkxNS9pOTE1X3N1c3BlbmQuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1
+X3N1c3BlbmQuYwpAQCAtMjQxLDcgKzI0MSw4IEBAIGludCBpOTE1X3NhdmVfc3RhdGUoc3RydWN0
+IGRybV9kZXZpY2UgKmRldikKIAlwY2lfcmVhZF9jb25maWdfYnl0ZShkZXYtPnBkZXYsIExCQiwg
+JmRldl9wcml2LT5zYXZlTEJCKTsKIAogCS8qIERpc3BsYXkgYXJiaXRyYXRpb24gY29udHJvbCAq
+LwotCWRldl9wcml2LT5zYXZlRFNQQVJCID0gSTkxNV9SRUFEKERTUEFSQik7CisJaWYgKCFEU1BB
+UkJfSFdDT05UUk9MKGRldikpCisJCWRldl9wcml2LT5zYXZlRFNQQVJCID0gSTkxNV9SRUFEKERT
+UEFSQik7CiAKIAkvKiBQaXBlICYgcGxhbmUgQSBpbmZvICovCiAJZGV2X3ByaXYtPnNhdmVQSVBF
+QUNPTkYgPSBJOTE1X1JFQUQoUElQRUFDT05GKTsKQEAgLTM2NSw3ICszNjYsOCBAQCBpbnQgaTkx
+NV9yZXN0b3JlX3N0YXRlKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpCiAKIAlwY2lfd3JpdGVfY29u
+ZmlnX2J5dGUoZGV2LT5wZGV2LCBMQkIsIGRldl9wcml2LT5zYXZlTEJCKTsKIAotCUk5MTVfV1JJ
+VEUoRFNQQVJCLCBkZXZfcHJpdi0+c2F2ZURTUEFSQik7CisJaWYgKCFEU1BBUkJfSFdDT05UUk9M
+KGRldikpCisJCUk5MTVfV1JJVEUoRFNQQVJCLCBkZXZfcHJpdi0+c2F2ZURTUEFSQik7CiAKIAkv
+KiBQaXBlICYgcGxhbmUgQSBpbmZvICovCiAJLyogUHJpbWUgdGhlIGNsb2NrICovCgAK
