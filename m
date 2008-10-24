@@ -1,78 +1,74 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: ttydev tree build failure
-Date: Fri, 24 Oct 2008 15:58:13 +1100
-Message-ID: <20081024155813.ee16dd57.sfr@canb.auug.org.au>
-References: <20081023172938.0460b191.sfr@canb.auug.org.au>
-	<20081023083406.671d4101@lxorguk.ukuu.org.uk>
+From: Hiroshi Shimamoto <h-shimamoto@ct.jp.nec.com>
+Subject: Re: next-20081023 x86_64 boot hang: int3
+Date: Thu, 23 Oct 2008 22:07:57 -0700
+Message-ID: <4901582D.9050006@ct.jp.nec.com>
+References: <4900B7CC.5060005@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__24_Oct_2008_15_58_13_+1100__j_u1ofSxxpeC6tW"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39869 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751159AbYJXE6c (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 24 Oct 2008 00:58:32 -0400
-In-Reply-To: <20081023083406.671d4101@lxorguk.ukuu.org.uk>
+Received: from gateway-1237.mvista.com ([63.81.120.158]:32270 "EHLO
+	gateway-1237.mvista.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751095AbYJXFH6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Oct 2008 01:07:58 -0400
+In-Reply-To: <4900B7CC.5060005@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: linux-next@vger.kernel.org, Hendrik Brueckner <brueckner@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, ppc-dev <linuxppc-dev@ozlabs.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
---Signature=_Fri__24_Oct_2008_15_58_13_+1100__j_u1ofSxxpeC6tW
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Randy Dunlap wrote:
+> 2 out of 2 x86_64 SMP boots stop with:
+> 
+> calling  tcp_congestion_default+0x0/0x12 @ 1
+> initcall tcp_congestion_default+0x0/0x12 returned 0 after 2 usecs
+> Freeing unused kernel memory: 448k freed
+> Write protecting the kernel read-only data: 4816k
+> int3: 0000 [#1] SMP
+> last sysfs file:
+> CPU 2
+> Modules linked in:
+> Pid: 0, comm: events/0 Not tainted 2.6.27-next-20081023 #1
+> RIP: 0010:[<ffffffff8078ba2b>]  [<ffffffff8078ba2b>] nmi_cpu_busy+0x1/0x15
+> RSP: 0018:ffff88017faa7f80  EFLAGS: 00000086
+> RAX: 00000000ffffffff RBX: ffff88027f60e000 RCX: ffff88017fa98000
+> RDX: ffffffff807eb480 RSI: 0000000000000000 RDI: ffffffff807b9e5c
+> RBP: ffff88017faa7f98 R08: 0000000000000000 R09: ffff88002802c768
+> R10: 0000000000000000 R11: ffff88027e023e90 R12: 0000000000000002
+> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+> FS:  0000000000000000(0000) GS:ffff88017fa32280(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0018 ES: 0018 CR0: 000000008005003b
+> CR2: 0000000000000000 CR3: 0000000000201000 CR4: 00000000000006e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+> Process events/0 (pid: 0, threadinfo ffff88017fa8c000, task ffff88017fa98000)
+> Stack:
+>  ffffffff80257afe ffffffff8076d938 0000000000000000 ffff88017faa7fa8
+>  ffffffff8021f1b0 ffff88017fa8de50 ffffffff8020cabb ffff88017fa8de50 <EOI>
+>  ffff88017fa8ded8 ffff88027e023e90 0000000000000000 ffff88002802c768
+> Call Trace:
+>  <IRQ> <0> [<ffffffff80257afe>] ? generic_smp_call_function_interrupt+0x35/0xd7
+>  [<ffffffff8021f1b0>] smp_call_function_interrupt+0x1f/0x2f
+>  [<ffffffff8020cabb>] call_function_interrupt+0x6b/0x70
+>  <EOI> <0> [<ffffffff80212659>] ? default_idle+0x2b/0x40
+>  [<ffffffff8021287d>] ? c1e_idle+0xe5/0xec
+>  [<ffffffff8057072f>] ? atomic_notifier_call_chain+0xf/0x11
+>  [<ffffffff8020ad1d>] ? cpu_idle+0x48/0x66
+>  [<ffffffff80568784>] ? start_secondary+0x177/0x17c
+> Code: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc <cc> cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc
+> RIP  [<ffffffff8078ba2b>] nmi_cpu_busy+0x1/0x15
+>  RSP <ffff88017faa7f80>
+> Kernel panic - not syncing: Fatal exception in interrupt
+> 
+> 
+> Full boot log is at
+> http://oss.oracle.com/~rdunlap/kerneltest/logs/netcon-5175.log
+> and .config is at http://oss.oracle.com/~rdunlap/kerneltest/logs/kconfig-5175
 
-Hi Alan, Hendrik,
+Hi,
 
-On Thu, 23 Oct 2008 08:34:06 +0100 Alan Cox <alan@lxorguk.ukuu.org.uk> wrot=
-e:
->
-> On Thu, 23 Oct 2008 17:29:38 +1100
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->=20
-> > Hi Alan,
-> >=20
-> > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> >=20
-> > drivers/char/hvc_console.c: In function 'hvc_set_winsz':
-> > drivers/char/hvc_console.c:532: warning: passing argument 2 of 'tty_do_=
-resize' from incompatible pointer type
-> > drivers/char/hvc_console.c:532: error: too many arguments to function '=
-tty_do_resize'
-> >=20
-> > Caused by commit eb6ab2d361a49470ca9785c70482772c19e49bec
-> > ("pty-simplify-resize") from the ttydev tree interacting with commit
-> > febde3711992a64ea83a47a719f68a90c4b0927a ("hvc_console: Add support for
-> > tty window resizing").
-> >=20
-> > The former added another call to the function that the latter changed.
-> >=20
-> > I applied the following patch
->=20
-> Patch is correct.
->=20
-> Do the hvc patches have dependancies on the PPC tree as well as the tty
-> tree ?
+this patch will fix this issue.
+http://marc.info/?l=linux-kernel&m=122482422513626&w=2
 
-The powerpc patches including these hvc_console patches have now gone
-upstream to Linus' tree ...
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__24_Oct_2008_15_58_13_+1100__j_u1ofSxxpeC6tW
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkBVeUACgkQjjKRsyhoI8z95wCeKjTtj0xvFqR6rJ0tKCQ4vz9m
-InsAnR4UuDztoJpQBQSc/J6cNRneSM7W
-=1mrv
------END PGP SIGNATURE-----
-
---Signature=_Fri__24_Oct_2008_15_58_13_+1100__j_u1ofSxxpeC6tW--
+thanks,
+Hiroshi Shimamoto
