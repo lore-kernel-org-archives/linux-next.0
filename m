@@ -1,75 +1,38 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] ftrace: handle archs that do not support irqs_disabled_flags
-Date: Sat, 25 Oct 2008 10:24:11 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.0810251018370.15317@anakin>
-References: <20081023213637.eff9b414.sfr@canb.auug.org.au>
- <20081023121145.GB27984@x200.localdomain> <c62985530810230548t1b569f61g34d1900bb94fde83@mail.gmail.com>
- <c62985530810230615s3252a54ao6488e763d72dc939@mail.gmail.com>
- <49008D12.5090204@gmail.com> <Pine.LNX.4.64.0810231635440.18978@anakin>
- <c62985530810230757r411b4e3dj4ecec649cf8cf0b3@mail.gmail.com>
- <Pine.LNX.4.64.0810231727430.18978@anakin> <4900B414.7090002@gmail.com>
- <20081023163433.GA3160@x200.localdomain> <20081023163850.GB16591@elte.hu>
- <4901D8CD.7000405@gmail.com> <alpine.DEB.1.10.0810240937130.3882@gandalf.stny.rr.com>
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Subject: Re: linux-next: Tree for October 24 - powerpc - build failure with !CONFIG_BLK_DEV_IDEDMA_PMAC
+Date: Sat, 25 Oct 2008 15:19:57 +0200
+Message-ID: <200810251519.57543.bzolnier@gmail.com>
+References: <20081024171932.1e8131d0.sfr@canb.auug.org.au> <49024EA3.1080404@ru.mvista.com> <1224889818.7654.466.camel@pasglop>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-m68k-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.1.10.0810240937130.3882@gandalf.stny.rr.com>
-Sender: linux-m68k-owner@vger.kernel.org
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>, Ingo Molnar <mingo@elte.hu>, Alexey Dobriyan <adobriyan@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Richard Henderson <rth@twiddle.net>, Greg Ungerer <gerg@uclinux.org>, Linux/m68k <linux-m68k@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from gv-out-0910.google.com ([216.239.58.188]:61585 "EHLO
+	gv-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751403AbYJYNWI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 25 Oct 2008 09:22:08 -0400
+Received: by gv-out-0910.google.com with SMTP id e6so174591gvc.37
+        for <linux-next@vger.kernel.org>; Sat, 25 Oct 2008 06:22:05 -0700 (PDT)
+In-Reply-To: <1224889818.7654.466.camel@pasglop>
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: benh@kernel.crashing.org
+Cc: Sergei Shtylyov <sshtylyov@ru.mvista.com>, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org
 
-On Fri, 24 Oct 2008, Steven Rostedt wrote:
-> Some architectures do not support a way to read the irq flags that
-> is set from "local_irq_save(flags)" to determine if interrupts were
-> disabled or enabled. Ftrace uses this information to display to the user
-> if the trace occurred with interrupts enabled or disabled.
+On Saturday 25 October 2008, Benjamin Herrenschmidt wrote:
+> On Sat, 2008-10-25 at 02:39 +0400, Sergei Shtylyov wrote:
+> > >>    Hm, looks like this configuration was never buildable --
+> > #ifdef's are 
+> > >> missing and wrongly placed. CCing Ben Herrenschmidt...
+> > >>     
+> > >
+> > > What configuration ?
+> > >   
+> > 
+> >    See the subject.
+> 
+> Ah ok. We should probably just remove the option...
 
-Both alpha
-
-	#define irqs_disabled() (getipl() == IPL_MAX)
-
-and m68k
-
-	static inline int irqs_disabled(void)
-	{
-		unsigned long flags;
-		local_save_flags(flags);
-		return flags & ~ALLOWINT;
-	}
-
-do have irqs_disabled(), but they don't have irqs_disabled_flags().
-
-M68knommu has both, but they don't check the same thing:
-
-	#define irqs_disabled()                 \
-	({                                      \
-		unsigned long flags;            \
-		local_save_flags(flags);        \
-		((flags & 0x0700) == 0x0700);   \
-	})
-
-	static inline int irqs_disabled_flags(unsigned long flags)
-	{
-		if (flags & 0x0700)
-			return 0;
-		else
-			return 1;
-	}
-
-Is there a semantic difference between them (except that the latter takes the
-flags as a parameter)?
-
-Or can we just extract the core logic of irqs_disabled() into
-irqs_disabled_flags()?
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Fine with me.  Anybody want an easy +1 patch-point? :)
