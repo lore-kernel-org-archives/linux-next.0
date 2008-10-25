@@ -1,44 +1,71 @@
-From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Subject: Re: linux-next: Tree for October 24 - powerpc - build failure with !CONFIG_BLK_DEV_IDEDMA_PMAC
-Date: Sat, 25 Oct 2008 21:35:15 +0200
-Message-ID: <200810252135.16056.bzolnier@gmail.com>
-References: <20081024171932.1e8131d0.sfr@canb.auug.org.au> <200810251519.57543.bzolnier@gmail.com> <49036C17.1060604@ru.mvista.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: left over things in linux-next after 2.6.28-c1
+Date: Sat, 25 Oct 2008 14:20:37 -0700
+Message-ID: <20081025212037.GB32027@kroah.com>
+References: <20081026005009.50dbbb33.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mu-out-0910.google.com ([209.85.134.191]:38788 "EHLO
-	mu-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750942AbYJYTg4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 25 Oct 2008 15:36:56 -0400
-Received: by mu-out-0910.google.com with SMTP id g7so1086384muf.1
-        for <linux-next@vger.kernel.org>; Sat, 25 Oct 2008 12:36:54 -0700 (PDT)
-In-Reply-To: <49036C17.1060604@ru.mvista.com>
+Received: from kroah.org ([198.145.64.141]:52985 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751356AbYJYVWu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 25 Oct 2008 17:22:50 -0400
 Content-Disposition: inline
+In-Reply-To: <20081026005009.50dbbb33.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sergei Shtylyov <sshtylyov@ru.mvista.com>
-Cc: benh@kernel.crashing.org, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
-On Saturday 25 October 2008, Sergei Shtylyov wrote:
-> Hello.
+On Sun, Oct 26, 2008 at 12:50:09AM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Bartlomiej Zolnierkiewicz wrote:
-> 
-> >>>>>    Hm, looks like this configuration was never buildable -- #ifdef's are missing and wrongly placed. CCing Ben Herrenschmidt...   
-> >>>>>           
-> >>>> What configuration ?
-> >>>>   
-> >>>>         
-> >>>    See the subject.
-> >>>       
-> >> Ah ok. We should probably just remove the option...
-> >>     
-> >
-> > Fine with me.  Anybody want an easy +1 patch-point? :)
-> >   
-> 
->    BTW, why this option selects BLK_DEV_IDEDMA_PCI?
+> The following is an approximate list of commits left in linux-next
+> relative to 2.6.28-rc1.  Some things here may have been included in
+> Linus' tree in a slightly different form.  The kvm tree is excluded from
+> this list because the bits of it submitted to Linus are often different
+> to what is in linux-next (my scipt says that it has ~1400 outstanding
+> commits).
 
-Leftover from the dark-ages...  needs fixing.
+Nice report, thanks for doing this.
+
+> driver-core.current
+> 
+> 	Andi Kleen (1):
+> 	      sysfs: Fix return values for sysdev_store_{ulong,int}
+> 
+> 	Greg Kroah-Hartman (1):
+> 	      Document kernel taint flags properly
+> 
+> 	Qinghuang Feng (1):
+> 	      driver core: drivers/base/sys.c: update comments
+
+Yes, all of these will be sent to Linus soon.
+
+> usb
+> 
+> 	Denis Joseph Barrow (2):
+> 	      HSO: fix hso_serial_close refcounting
+> 	      HSO: put linefeeds on printk's in hso.c
+
+I'm holding on to these so they don't get lost, but Denis is reworking
+them at the moment to make them fix the problems correctly.
+
+> 	Greg Kroah-Hartman (2):
+> 	      USB: remove warn() macro from usb.h
+> 	      USB: remove info() macro from usb.h
+
+I had hopes for these to be merged, but don't think they will be due to
+some remaining usages in the media tree.  I'll wait until 2.6.29 to push
+them in.
+
+> xfs
+
+<snip>
+
+wow, did XFS ever merge with Linus?  That looks like a lot of
+outstanding patches :(
+
+thanks,
+
+greg k-h
