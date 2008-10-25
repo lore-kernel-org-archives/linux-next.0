@@ -1,89 +1,68 @@
-From: Andres Freund <andres@anarazel.de>
-Subject: Re: Current suspend issues on Lenovo X200
-Date: Sat, 25 Oct 2008 17:55:06 +0200
-Message-ID: <200810251755.11253.andres@anarazel.de>
-References: <20081023204326.GB4175@denkbrett.schottelius.org> <200810241123.17883.jbarnes@virtuousgeek.org> <20081025145329.GB4273@denkbrett.schottelius.org>
+From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
+Subject: Re: IRC channel: Re-Announce
+Date: Sat, 25 Oct 2008 18:21:53 +0200
+Message-ID: <20081025162153.GC4273@denkbrett.schottelius.org>
+References: <20081024134543.GB5816@denkbrett.schottelius.org> <20081024.154708.82846890.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart1398266.XEXbYssOhb";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="WplhKdTI2c8ulnbP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.anarazel.de ([217.115.131.40]:43084 "EHLO smtp.anarazel.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752439AbYJYPzP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 25 Oct 2008 11:55:15 -0400
-In-Reply-To: <20081025145329.GB4273@denkbrett.schottelius.org>
+Received: from mx3.schottelius.org ([77.109.138.221]:37875 "EHLO
+	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751098AbYJYQXl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 25 Oct 2008 12:23:41 -0400
+Content-Disposition: inline
+In-Reply-To: <20081024.154708.82846890.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org
 
---nextPart1398266.XEXbYssOhb
-Content-Type: text/plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: quoted-printable
+
+--WplhKdTI2c8ulnbP
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Nico,
+David Miller [Fri, Oct 24, 2008 at 03:47:08PM -0700]:
+> From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
+> Date: Fri, 24 Oct 2008 15:45:43 +0200
+>=20
+> > Just wanted to tell you that the IRC channel
+> >=20
+> >    #linux-next on irc.freenode.org
+>=20
+> Using freenode is pretty pointless because:
+>=20
+> 1) There is an IRC network most of the kernel hackers hang out on
+>    (I'm not divulging it here, the people who need to know already
+>    know how to get onto it)
 
-On Saturday 25 October 2008 16:53:29 Nico -telmich- Schottelius wrote:
-> Jesse Barnes [Fri, Oct 24, 2008 at 11:23:17AM -0700]:
-> > On Friday, October 24, 2008 7:28 am Andres Freund wrote:
-> > > On Thursday 23 October 2008 22:43:26 Nico -telmich- Schottelius wrote:
-> > > >  - 2.6.27-next-20081023:
-> > > >    -> no X running (because xorg does not work with that kernel)
-> > > I think what you need is one rather short fix for the intel xorg
-> > > driver:
-> > > diff --git a/src/i830_driver.c b/src/i830_driver.c
-> > > index c1d61f4..eaf5d27 100644
-> > > --- a/src/i830_driver.c
-> > > +++ b/src/i830_driver.c
-> > > @@ -502,8 +502,8 @@ I830DetectMemory(ScrnInfoPtr pScrn)
-> > >     range =3D gtt_size + 4;
-> > >
-> > >     /* new 4 series hardware has seperate GTT stolen with GFX stolen =
-*/
-> > > - if (IS_G4X(pI830))
-> > > - range =3D 0;
-> > > + if (IS_G4X(pI830) || IS_GM45(pI830))
-> > > + range =3D 4;
-> > >
-> > >     if (IS_I85X(pI830) || IS_I865G(pI830) || IS_I9XX(pI830)) {
-> > >        switch (gmch_ctrl & I855_GMCH_GMS_MASK) {
-> > >
-> > > (Out of the "[git pull] agp patches for 2.6.28-rc1" thread)
-> > Something like this might also help.
-> > G4x chips do their own memory arbitration management, so we shouldn't
-> > trying to save/restore the DSPARB reg.
-> I'm a bit confused. Which of both patches against 2.6.28-rc1 should I try?
-"My" patch is definitely needed to make the X intel driver work with 2.6.28-
-rc1. Its a patch for X and not for the kernel.
-Its not necessarily directly related to what you reported, but to:
->=A0- 2.6.27-next-20081023:
-> =A0-> no X running (because xorg does not work with that kernel)
-It might also help to work with suspend, because seemingly (according to In=
-tel=20
-people) its not expected that the driver works with that bug.
+I would like to get a hint (oftc?) on which network it is.
 
-So try the patch I posted (which is out of the upstream development version=
-)=20
-to make X work with 2.6.28-rc1 and continue testing if X works with 2.6.28-
-rcx.
+> 2) The nickname 'davem' is already taken on freenode :-)
 
-Andres
+That is pretty bad! Maybe you should marry (again?)? ;-)
 
---nextPart1398266.XEXbYssOhb
-Content-Type: application/pgp-signature; name=signature.asc 
-Content-Description: This is a digitally signed message part.
+Nico
+
+--=20
+Think about Free and Open Source Software (FOSS).
+http://nico.schottelius.org/documentations/foss/the-term-foss/
+
+PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
+
+--WplhKdTI2c8ulnbP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEABECAAYFAkkDQVsACgkQporPraT14igBKgCfZhWBOMJ7siSvGEw8gqX/ipvK
-6n8AoKNo0Jlvp2TBD9Mq530rBbbTbNSC
-=5L0Q
+iEYEARECAAYFAkkDR6EACgkQuL75KpiFGIwM0gCgtceWIGZkUklX1HfJIJOFlh+M
+59QAoMaB3DNgJBFITUBpQHocjCns5TvC
+=HFgz
 -----END PGP SIGNATURE-----
 
---nextPart1398266.XEXbYssOhb--
+--WplhKdTI2c8ulnbP--
