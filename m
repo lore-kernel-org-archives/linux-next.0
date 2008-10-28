@@ -1,85 +1,44 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [PTCH -next] i2o: fix kernel-doc warnings
-Date: Mon, 27 Oct 2008 13:58:19 -0700
-Message-ID: <20081027135819.84619bc7.rdunlap@xenotime.net>
-References: <48FFB97E.3020909@xenotime.net>
-	<20081027131401.f2f9e535.akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rr tree
+Date: Tue, 28 Oct 2008 13:55:58 +1100
+Message-ID: <20081028135558.536174c5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xenotime.net ([72.52.64.118]:40149 "HELO xenotime.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-	id S1751379AbYJ0U6X (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 27 Oct 2008 16:58:23 -0400
-Received: from dragon.site ([24.21.38.27]) by xenotime.net for <linux-next@vger.kernel.org>; Mon, 27 Oct 2008 13:58:19 -0700
-In-Reply-To: <20081027131401.f2f9e535.akpm@linux-foundation.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49788 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752089AbYJ1C4F (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 27 Oct 2008 22:56:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, viro@zeniv.linux.org.uk
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-On Mon, 27 Oct 2008 13:14:01 -0700
-Andrew Morton <akpm@linux-foundation.org> wrote:
+Hi Rusty,
 
-> On Wed, 22 Oct 2008 16:38:38 -0700
-> Randy Dunlap <rdunlap@xenotime.net> wrote:
-> 
-> > From: Randy Dunlap <randy.dunlap@oracle.com>
-> > 
-> > Fixup i2o kernel-doc warnings:
-> > 
-> > Warning(linux-next-20081022//drivers/message/i2o/i2o_block.c:579): No description found for parameter 'bdev'
-> > Warning(linux-next-20081022//drivers/message/i2o/i2o_block.c:579): No description found for parameter 'mode'
-> > Warning(linux-next-20081022//drivers/message/i2o/i2o_block.c:608): No description found for parameter 'disk'
-> > Warning(linux-next-20081022//drivers/message/i2o/i2o_block.c:608): No description found for parameter 'mode'
-> > Warning(linux-next-20081022//drivers/message/i2o/i2o_block.c:657): No description found for parameter 'bdev'
-> > Warning(linux-next-20081022//drivers/message/i2o/i2o_block.c:657): No description found for parameter 'mode'
-> > 
-> > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> > cc: Al Viro <viro@zeniv.linux.org.uk>
-> > ---
-> >  drivers/message/i2o/i2o_block.c |   12 ++++++------
-> >  1 file changed, 6 insertions(+), 6 deletions(-)
-> > 
-> > --- linux-next-20081022.orig/drivers/message/i2o/i2o_block.c
-> > +++ linux-next-20081022/drivers/message/i2o/i2o_block.c
-> > @@ -567,8 +567,8 @@ static void i2o_block_biosparam(unsigned
-> >  
-> >  /**
-> >   *	i2o_block_open - Open the block device
-> > - *	@inode: inode for block device being opened
-> > - *	@file: file to open
-> > + *	@bdev: block device being opened
-> > + *	@mode: file open mode
-> >   *
-> >   *	Power up the device, mount and lock the media. This function is called,
-> >   *	if the block device is opened for access.
-> > @@ -596,8 +596,8 @@ static int i2o_block_open(struct block_d
-> >  
-> >  /**
-> >   *	i2o_block_release - Release the I2O block device
-> > - *	@inode: inode for block device being released
-> > - *	@file: file to close
-> > + *	@disk: gendisk device being released
-> > + *	@mode: file open mode
-> >   *
-> >   *	Unlock and unmount the media, and power down the device. Gets called if
-> >   *	the block device is closed.
-> > @@ -643,8 +643,8 @@ static int i2o_block_getgeo(struct block
-> >  
-> >  /**
-> >   *	i2o_block_ioctl - Issue device specific ioctl calls.
-> > - *	@inode: inode for block device ioctl
-> > - *	@file: file for ioctl
-> > + *	@bdev: block device being opened
-> > + *	@mode: file open mode
-> >   *	@cmd: ioctl command
-> >   *	@arg: arg
-> 
-> From my reading this is needed in current mainline?
+Today's linux-next merge of the rr tree got a conflict in
+arch/s390/Kconfig between commit 0d2a4a69f5a01c8886323afe742487f35493e209
+("[S390] convert s390 to generic IPI infrastructure") from the s390 tree
+and commit a5f0c6822e6795927091d756c51b51320305654a
+("cpumask:centralize-common-maps") from the rr tree.
 
-True.  Al's -next patch (git tree) was merged into mainline.
-
+Just overlapping additions.  I fixed it up (see below) and can carry the fix.
 -- 
-~Randy
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+diff --cc arch/s390/Kconfig
+index abcc7f9,f7270d5..0000000
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@@ -78,7 -75,7 +78,8 @@@ config S39
+  	select HAVE_KRETPROBES
+  	select HAVE_KVM if 64BIT
+  	select HAVE_ARCH_TRACEHOOK
+ +	select USE_GENERIC_SMP_HELPERS if SMP
++ 	select INIT_ALL_POSSIBLE
+  
+  source "init/Kconfig"
+  
