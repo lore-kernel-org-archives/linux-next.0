@@ -1,52 +1,81 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the rr tree
-Date: Tue, 28 Oct 2008 18:24:57 +1100
-Message-ID: <20081028182457.c7188523.sfr@canb.auug.org.au>
-References: <20081028135558.536174c5.sfr@canb.auug.org.au>
-	<20081028071931.GA4959@osiris.boeblingen.de.ibm.com>
+From: Greg Ungerer <gerg@snapgear.com>
+Subject: Re: [PATCH] ftrace: handle archs that do not support irqs_disabled_flags
+Date: Tue, 28 Oct 2008 17:25:21 +1000
+Message-ID: <4906BE61.1090000@snapgear.com>
+References: <20081023213637.eff9b414.sfr@canb.auug.org.au> <20081023121145.GB27984@x200.localdomain> <c62985530810230548t1b569f61g34d1900bb94fde83@mail.gmail.com> <c62985530810230615s3252a54ao6488e763d72dc939@mail.gmail.com> <49008D12.5090204@gmail.com> <Pine.LNX.4.64.0810231635440.18978@anakin> <c62985530810230757r411b4e3dj4ecec649cf8cf0b3@mail.gmail.com> <Pine.LNX.4.64.0810231727430.18978@anakin> <4900B414.7090002@gmail.com> <20081023163433.GA3160@x200.localdomain> <20081023163850.GB16591@elte.hu> <4901D8CD.7000405@gmail.com> <alpine.DEB.1.10.0810240937130.3882@gandalf.stny.rr.com> <Pine.LNX.4.64.0810251018370.15317@anakin>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__28_Oct_2008_18_24_57_+1100_t/T0=3Wvi_2szpji"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53595 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751092AbYJ1HZJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Oct 2008 03:25:09 -0400
-In-Reply-To: <20081028071931.GA4959@osiris.boeblingen.de.ibm.com>
+Received: from rex.securecomputing.com ([203.24.151.4]:49153 "EHLO
+	cyberguard.com.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752371AbYJ1HaA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Oct 2008 03:30:00 -0400
+In-Reply-To: <Pine.LNX.4.64.0810251018370.15317@anakin>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Frederic Weisbecker <fweisbec@gmail.com>, Ingo Molnar <mingo@elte.hu>, Alexey Dobriyan <adobriyan@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Richard Henderson <rth@twiddle.net>, Greg Ungerer <gerg@uclinux.org>, Linux/m68k <linux-m68k@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Tue__28_Oct_2008_18_24_57_+1100_t/T0=3Wvi_2szpji
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Geert,
 
-Hi Heiko,
+Geert Uytterhoeven wrote:
+> On Fri, 24 Oct 2008, Steven Rostedt wrote:
+>> Some architectures do not support a way to read the irq flags that
+>> is set from "local_irq_save(flags)" to determine if interrupts were
+>> disabled or enabled. Ftrace uses this information to display to the user
+>> if the trace occurred with interrupts enabled or disabled.
+> 
+> Both alpha
+> 
+> 	#define irqs_disabled() (getipl() == IPL_MAX)
+> 
+> and m68k
+> 
+> 	static inline int irqs_disabled(void)
+> 	{
+> 		unsigned long flags;
+> 		local_save_flags(flags);
+> 		return flags & ~ALLOWINT;
+> 	}
+> 
+> do have irqs_disabled(), but they don't have irqs_disabled_flags().
+> 
+> M68knommu has both, but they don't check the same thing:
+> 
+> 	#define irqs_disabled()                 \
+> 	({                                      \
+> 		unsigned long flags;            \
+> 		local_save_flags(flags);        \
+> 		((flags & 0x0700) == 0x0700);   \
+> 	})
+> 
+> 	static inline int irqs_disabled_flags(unsigned long flags)
+> 	{
+> 		if (flags & 0x0700)
+> 			return 0;
+> 		else
+> 			return 1;
+> 	}
+> 
+> Is there a semantic difference between them (except that the latter takes the
+> flags as a parameter)?
 
-On Tue, 28 Oct 2008 08:19:31 +0100 Heiko Carstens <heiko.carstens@de.ibm.co=
-m> wrote:
->
-> I will move the USE_GENERIC_SMP_HELPERS select to the top, so the merge
-> conflict should be resolved in future.
+No...
 
-OK, thanks.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__28_Oct_2008_18_24_57_+1100_t/T0=3Wvi_2szpji
-Content-Type: application/pgp-signature
+> Or can we just extract the core logic of irqs_disabled() into
+> irqs_disabled_flags()?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Yep, could certainly do that. I'll put a patch together.
 
-iEYEARECAAYFAkkGvkkACgkQjjKRsyhoI8zO5ACfbP0kexAyjvsthFtAC3pEl+Gv
-wV0Ani/9l9XzYvkyPUZJhwVKRpbAGLaS
-=F9+Z
------END PGP SIGNATURE-----
+Regards
+Greg
 
---Signature=_Tue__28_Oct_2008_18_24_57_+1100_t/T0=3Wvi_2szpji--
+
+
+------------------------------------------------------------------------
+Greg Ungerer  --  Chief Software Dude       EMAIL:     gerg@snapgear.com
+Secure Computing Corporation                PHONE:       +61 7 3435 2888
+825 Stanley St,                             FAX:         +61 7 3891 3630
+Woolloongabba, QLD, 4102, Australia         WEB: http://www.SnapGear.com
