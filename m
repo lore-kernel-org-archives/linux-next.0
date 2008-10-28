@@ -1,39 +1,63 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Subject: Re: linux-next: sparc/firmware build failure
-Date: Tue, 28 Oct 2008 11:42:34 +0000
-Message-ID: <1225194154.18031.185.camel@macbook.infradead.org>
-References: <20080901191019.5df57434.sfr@canb.auug.org.au>
-	 <20081028214559.c6715cc0.sfr@canb.auug.org.au>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+Subject: Re: linux-next: manual merge of the v4l-dvb tree
+Date: Tue, 28 Oct 2008 09:48:27 -0200
+Message-ID: <20081028094827.1c4e4f97@pedra.chehab.org>
+References: <20081014182846.d60f2e8b.sfr@canb.auug.org.au>
+	<20081027181632.97d18410.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:53683 "EHLO
+Received: from bombadil.infradead.org ([18.85.46.34]:50612 "EHLO
 	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751939AbYJ1Lmh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Oct 2008 07:42:37 -0400
-In-Reply-To: <20081028214559.c6715cc0.sfr@canb.auug.org.au>
+	with ESMTP id S1752613AbYJ1LsZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Oct 2008 07:48:25 -0400
+In-Reply-To: <20081027181632.97d18410.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Jaswinder Singh <jaswinder@infradead.org>, David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org
 
-On Tue, 2008-10-28 at 21:45 +1100, Stephen Rothwell wrote:
-> I have now been carrying this patch since September 1.  David (W), are
-> going to pick it up, please?  This should be put into the firmware tree
-> as part of the merge commit merging Linus' current tree.
+Hi Stephen,
 
-I'll merge it; thanks.
+On Mon, 27 Oct 2008 18:16:32 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> Incidentally, what is to be the fate of the rest of the firmware tree?
+> Hi Mauro,
+> 
+> On Tue, 14 Oct 2008 18:28:46 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Today's linux-next merge of the v4l-dvb tree got a lot of conflicts
+> > against Linus' tree.  It looks like it has been rebased and has
+> > cherry-picked a lot of commits from Linus' tree.  However it got into
+> > this state, it needs a major fixup.
+> > 
+> > I have dropped it for today.
+> 
+> And continue to do so.  Please clean it up.
+> 
+> (Just as a reminder, I fetch your "stable" branch.)
 
-We're planning to get the patches in for 2.6.29. 
+I've changed my git procedures on 2.6.27 to avoid having to rebase my tree, but
+this works really badly, generating lots of rework for me. So, I had to alter
+my procedures again for 2.6.28.
 
-I told Dave that I'd hold off on the network bits until the first round
-of patches had been shipped successfully -- so putting them into
-2.6.28-rc within _days_ of the 2.6.27 release didn't seem to be the
-right thing to do.
+Now, everything is simpler and I hope it will work like a charm.
 
--- 
-David Woodhouse                            Open Source Technology Centre
-David.Woodhouse@intel.com                              Intel Corporation
+I've finished those procedures yesterday by preparing my first set of patches
+after the end of the merge window, with an independent tree with patches that
+aren't just fixes (in the past, this were a branch at the same tree, but this
+weren't work fine).
+
+I've just updated today my linux-next tree. I'm now using branch "master" for
+V4L/DVB patches. "stable" is now just a copy of your "stable" branch.
+
+I have one doubt about what would work better for you: should I merge also the
+patches for the current kernel version, that I intend to send upstream, or it
+would be better to just have there the newer patches for the next version?
+
+Anyway, please start pushing from 
+ ssh://master.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-next.git master
+
+Cheers,
+Mauro
