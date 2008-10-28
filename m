@@ -1,49 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the cpu_alloc tree
-Date: Tue, 28 Oct 2008 16:58:31 +1100
-Message-ID: <20081028165831.ff892db6.sfr@canb.auug.org.au>
+Subject: Re: build failure on sparc64 (Re: linux-next: Tree for October 27)
+Date: Tue, 28 Oct 2008 17:15:12 +1100
+Message-ID: <20081028171512.1f4502db.sfr@canb.auug.org.au>
+References: <a4423d670810270816x20ea60a7s4fdee99b046a15a4@mail.gmail.com>
+	<a4423d670810270843j55cf1bd9s223aaa447667903e@mail.gmail.com>
+	<20081028043523.GA3113@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__28_Oct_2008_17_15_12_+1100_q1OMMDVaa4g5DRo/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52689 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37903 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752294AbYJ1GGE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Oct 2008 02:06:04 -0400
+	id S1752360AbYJ1GP2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Oct 2008 02:15:28 -0400
+In-Reply-To: <20081028043523.GA3113@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Lameter <cl@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Mike Travis <travis@sgi.com>, Ingo Molnar <mingo@elte.hu>
+To: ananth@in.ibm.com
+Cc: Alexander Beregalov <a.beregalov@gmail.com>, linux-next@vger.kernel.org, sparclinux <sparclinux@vger.kernel.org>
 
-Hi Christoph,
+--Signature=_Tue__28_Oct_2008_17_15_12_+1100_q1OMMDVaa4g5DRo/
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the cpu_alloc tree got a conflict in
-kernel/lockdep.c between commit d3794979a8a80c222ce9d016a6dfc4bed36965d0
-("Zero based percpu: infrastructure to rebase the per cpu area to zero")
-from the tip-core tree and commit
-67cc04164a030c715717fd70dc935a5298c4034b ("cpualloc: percpu: rename
-variables PERCPU_ENOUGH_ROOM -> PERCPU_AREA_SIZE") from the cpu_alloc
-tree.
+Hi Ananth,
 
-Overlapping changes.  I have fixed it up (see below) and can carry the fix.
--- 
+On Tue, 28 Oct 2008 10:05:23 +0530 Ananth N Mavinakayanahalli <ananth@in.ib=
+m.com> wrote:
+>
+> No wonder :-) Stephen dropped the tests/ tree pending a decision on its
+> future.
+
+But I reinstated it a couple of days later ...
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc kernel/lockdep.c
-index e0352c9,a91b26b..0000000
---- a/kernel/lockdep.c
-+++ b/kernel/lockdep.c
-@@@ -642,8 -638,8 +642,8 @@@ static int static_obj(void *obj
-  	 * percpu var?
-  	 */
-  	for_each_possible_cpu(i) {
- -		start = (unsigned long) &__per_cpu_start + per_cpu_offset(i);
- -		end   = (unsigned long) &__per_cpu_start + PERCPU_AREA_SIZE
- +		start = (unsigned long) __per_cpu_start + per_cpu_offset(i);
-- 		end   = (unsigned long) __per_cpu_start + PERCPU_ENOUGH_ROOM
-++		end   = (unsigned long) __per_cpu_start + PERCPU_AREA_SIZE
-  					+ per_cpu_offset(i);
-  
-  		if ((addr >= start) && (addr < end))
+--Signature=_Tue__28_Oct_2008_17_15_12_+1100_q1OMMDVaa4g5DRo/
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkGrfAACgkQjjKRsyhoI8x06QCgnlI7sA4xV1K1hkEJvNzB2qKT
+Q2sAn0ICO2WIhYj4deu3j+JUm7QYW2Pm
+=DFA4
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__28_Oct_2008_17_15_12_+1100_q1OMMDVaa4g5DRo/--
