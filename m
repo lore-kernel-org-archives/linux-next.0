@@ -1,54 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: build failure on sparc64 (Re: linux-next: Tree for October 27)
-Date: Tue, 28 Oct 2008 17:15:12 +1100
-Message-ID: <20081028171512.1f4502db.sfr@canb.auug.org.au>
-References: <a4423d670810270816x20ea60a7s4fdee99b046a15a4@mail.gmail.com>
-	<a4423d670810270843j55cf1bd9s223aaa447667903e@mail.gmail.com>
-	<20081028043523.GA3113@in.ibm.com>
+Subject: linux-next: tree build warning
+Date: Tue, 28 Oct 2008 18:13:40 +1100
+Message-ID: <20081028181340.daec73cb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__28_Oct_2008_17_15_12_+1100_q1OMMDVaa4g5DRo/"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37903 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58204 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752360AbYJ1GP2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Oct 2008 02:15:28 -0400
-In-Reply-To: <20081028043523.GA3113@in.ibm.com>
+	id S1751548AbYJ1HNq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Oct 2008 03:13:46 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: ananth@in.ibm.com
-Cc: Alexander Beregalov <a.beregalov@gmail.com>, linux-next@vger.kernel.org, sparclinux <sparclinux@vger.kernel.org>
+To: Christoph Lameter <cl@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Tue__28_Oct_2008_17_15_12_+1100_q1OMMDVaa4g5DRo/
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Christoph,
 
-Hi Ananth,
+Today's linux-next build (powerpc ppc44x_config) produced many warnings like
+this:
 
-On Tue, 28 Oct 2008 10:05:23 +0530 Ananth N Mavinakayanahalli <ananth@in.ib=
-m.com> wrote:
->
-> No wonder :-) Stephen dropped the tests/ tree pending a decision on its
-> future.
+In file included from include/linux/rcupdate.h:39,
+                 from include/linux/sem.h:81,
+                 from include/linux/sched.h:69,
+                 from arch/powerpc/include/asm/elf.h:5,
+                 from include/linux/elf.h:7,
+                 from include/linux/module.h:14,
+                 from drivers/mtd/chips/chipreg.c:7:
+include/linux/percpu.h:177:1: warning: "per_cpu_offset" redefined
+include/asm-generic/percpu.h:81:1: warning: this is the location of the previous definition
 
-But I reinstated it a couple of days later ...
+Probably caused by commit 66f2d2c531e755656a5481fb92a9d137404d9f44
+("cpualloc: the allocator") from the cpu_alloc tree which adds the
+definition to linux/percpu.h in the non-CONFIG_SMP case.
 
---=20
+I applied the following patch (which may not be correct but made the
+warnings go away).
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__28_Oct_2008_17_15_12_+1100_q1OMMDVaa4g5DRo/
-Content-Type: application/pgp-signature
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 28 Oct 2008 17:56:26 +1100
+Subject: [PATCH] cpu_alloc: per_cpu_offset is already defined for !CONFIG_SMP
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+in asm-generic/percpu.h which is included by asm/percpu.h on all
+architectures except alpha.
 
-iEYEARECAAYFAkkGrfAACgkQjjKRsyhoI8x06QCgnlI7sA4xV1K1hkEJvNzB2qKT
-Q2sAn0ICO2WIhYj4deu3j+JUm7QYW2Pm
-=DFA4
------END PGP SIGNATURE-----
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/alpha/include/asm/percpu.h |    1 +
+ include/linux/percpu.h          |    1 -
+ 2 files changed, 1 insertions(+), 1 deletions(-)
 
---Signature=_Tue__28_Oct_2008_17_15_12_+1100_q1OMMDVaa4g5DRo/--
+diff --git a/arch/alpha/include/asm/percpu.h b/arch/alpha/include/asm/percpu.h
+index 3495e8e..4d0f7f3 100644
+--- a/arch/alpha/include/asm/percpu.h
++++ b/arch/alpha/include/asm/percpu.h
+@@ -68,6 +68,7 @@ extern unsigned long __per_cpu_offset[NR_CPUS];
+ #define per_cpu(var, cpu)		(*((void)(cpu), &per_cpu_var(var)))
+ #define __get_cpu_var(var)		per_cpu_var(var)
+ #define __raw_get_cpu_var(var)		per_cpu_var(var)
++#define per_cpu_offset(x) 0
+ 
+ #define PER_CPU_ATTRIBUTES
+ 
+diff --git a/include/linux/percpu.h b/include/linux/percpu.h
+index dd6693f..2eab4d5 100644
+--- a/include/linux/percpu.h
++++ b/include/linux/percpu.h
+@@ -174,7 +174,6 @@ static inline void cpu_free(void *cpu_pointer, unsigned long size)
+ }
+ 
+ #define SHIFT_PERCPU_PTR(__p, __offset)	(__p)
+-#define per_cpu_offset(x) 0
+ #endif
+ 
+ /* Return a pointer to the instance of a object for a particular processor */
+-- 
+1.5.6.5
