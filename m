@@ -1,47 +1,57 @@
-From: Kumar Gala <galak@kernel.crashing.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: Add a tree to linux-next
-Date: Tue, 28 Oct 2008 08:53:15 -0500
-Message-ID: <82FFE878-3EAC-4464-8658-F8CE1AB4645F@kernel.crashing.org>
-References: <18716398-5007-40FC-AF01-E926D417B06D@kernel.crashing.org> <20080309222953.4d895cce.sfr@canb.auug.org.au>
-Mime-Version: 1.0 (Apple Message framework v929.2)
-Content-Type: text/plain; charset=US-ASCII; format=flowed; delsp=yes
-Content-Transfer-Encoding: 7bit
+Date: Wed, 29 Oct 2008 01:13:42 +1100
+Message-ID: <20081029011342.20b9e4c9.sfr@canb.auug.org.au>
+References: <18716398-5007-40FC-AF01-E926D417B06D@kernel.crashing.org>
+	<20080309222953.4d895cce.sfr@canb.auug.org.au>
+	<82FFE878-3EAC-4464-8658-F8CE1AB4645F@kernel.crashing.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__29_Oct_2008_01_13_42_+1100_LfQFw6ck1I32uVHJ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:59231 "EHLO gate.crashing.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51867 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752089AbYJ1Nxa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Oct 2008 09:53:30 -0400
-In-Reply-To: <20080309222953.4d895cce.sfr@canb.auug.org.au>
+	id S1751165AbYJ1ONt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Oct 2008 10:13:49 -0400
+In-Reply-To: <82FFE878-3EAC-4464-8658-F8CE1AB4645F@kernel.crashing.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kumar Gala <galak@kernel.crashing.org>
 Cc: linux-next@vger.kernel.org
 
+--Signature=_Wed__29_Oct_2008_01_13_42_+1100_LfQFw6ck1I32uVHJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mar 9, 2008, at 6:29 AM, Stephen Rothwell wrote:
+Hi Kumar,
 
-> Hi Kumar,
+On Tue, 28 Oct 2008 08:53:15 -0500 Kumar Gala <galak@kernel.crashing.org> w=
+rote:
 >
-> On Fri, 7 Mar 2008 08:54:01 -0600 Kumar Gala <galak@kernel.crashing.org 
-> > wrote:
->>
->> Can you add the following tree to the linux-next set:
->>
->> 	git.kernel.org:/pub/scm/linux/kernel/git/galak/powerpc.git powerpc- 
->> next
->
-> OK, added, thanks.  I have currently called it "galak" but would  
-> prefer a
-> name that describes its content.  Could you suggest one, please?
+>=20
+> To match what BenH is doing with the powerpc.git tree as he takes over =20
+> as maintainer I've renamed my next branch from 'powerpc-next' to 'next'.
+>=20
+> Can you please update whatever scripts you have.
 
+Done.
 
-Stephen,
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-To match what BenH is doing with the powerpc.git tree as he takes over  
-as maintainer I've renamed my next branch from 'powerpc-next' to 'next'.
+--Signature=_Wed__29_Oct_2008_01_13_42_+1100_LfQFw6ck1I32uVHJ
+Content-Type: application/pgp-signature
 
-Can you please update whatever scripts you have.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-thanks
+iEYEARECAAYFAkkHHhYACgkQjjKRsyhoI8xHzgCglL9ACpUrUOdXyDvRWcvc6mt6
+tj4An29vyo+5+ZUXsnCmLFMMJZak0ruP
+=ctCC
+-----END PGP SIGNATURE-----
 
-- k
+--Signature=_Wed__29_Oct_2008_01_13_42_+1100_LfQFw6ck1I32uVHJ--
