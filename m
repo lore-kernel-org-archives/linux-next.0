@@ -1,35 +1,52 @@
-From: Mark Fasheh <mfasheh-IBi9RG/b67k@public.gmane.org>
-Subject: Re: linux-next: Tree for October 28
-Date: Wed, 29 Oct 2008 14:39:02 -0700
-Message-ID: <20081029213902.GF15154@wotan.suse.de>
-References: <20081028183055.fbcf5420.sfr@canb.auug.org.au> <20081028220741.f5d331ba.akpm@linux-foundation.org>
-Reply-To: Mark Fasheh <mfasheh-IBi9RG/b67k@public.gmane.org>
+From: Russ Anderson <rja@sgi.com>
+Subject: [PATCH trivial] ia64: Fix gru compiler warning
+Date: Wed, 29 Oct 2008 17:29:18 -0500
+Message-ID: <20081029222918.GA71188@sgi.com>
+Reply-To: Russ Anderson <rja@sgi.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-ia64-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20081028220741.f5d331ba.akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-ia64-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>, Steven Rostedt <rostedt-nx8X9YLhiw1AfugRpC6u6w@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joel Becker <Joel.Becker-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Sender: linux-ia64-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Oct 28, 2008 at 10:07:41PM -0700, Andrew Morton wrote:
-> plus of course enough compile warnings to start a small war.   ocfs2 is
-> prominent.
-> 
-> fs/ocfs2/xattr.c: In function `ocfs2_xattr_index_block_find':
-> fs/ocfs2/xattr.c:2338: warning: long long unsigned int format, u64 arg (arg 7)
-> fs/ocfs2/xattr.c:2338: warning: long long unsigned int format, u64 arg (arg 7)
-> fs/ocfs2/xattr.c:2338: warning: long long unsigned int format, u64 arg (arg 7)
+Fix compiler warning in sgi-gru driver.
 
-Thanks for pointing these out Andrew. They slipped by me. I'll get them
-fixed up before the conflict escalates  ;)
-	--Mark
+Signed-off-by: Russ Anderson <rja@sgi.com>
 
---
-Mark Fasheh
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+---
+Andrew,
+
+This patch gets rid of the gru compiler warnings.
+
+
+In file included from drivers/misc/sgi-gru/gruhandles.h:25,
+                 from drivers/misc/sgi-gru/grutables.h:151,
+                 from drivers/misc/sgi-gru/grufile.c:41:
+drivers/misc/sgi-gru/gru_instructions.h: In function `gru_flush_cache':
+drivers/misc/sgi-gru/gru_instructions.h:292: warning: passing arg 1 of pointer to
+function makes integer from pointer without a cast
+
+
+
+ drivers/misc/sgi-gru/gru_instructions.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: test/drivers/misc/sgi-gru/gru_instructions.h
+===================================================================
+--- test.orig/drivers/misc/sgi-gru/gru_instructions.h	2008-10-29 11:19:56.000000000 -0500
++++ test/drivers/misc/sgi-gru/gru_instructions.h	2008-10-29 14:23:43.230943026 -0500
+@@ -29,7 +29,7 @@
+ #if defined(CONFIG_IA64)
+ #include <linux/compiler.h>
+ #include <asm/intrinsics.h>
+-#define __flush_cache(p)		ia64_fc(p)
++#define __flush_cache(p)		ia64_fc((unsigned long)p)
+ /* Use volatile on IA64 to ensure ordering via st4.rel */
+ #define gru_ordered_store_int(p,v)					\
+ 		do {							\
+-- 
+Russ Anderson, OS RAS/Partitioning Project Lead  
+SGI - Silicon Graphics Inc          rja@sgi.com
