@@ -1,51 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the s390 tree
-Date: Wed, 29 Oct 2008 11:06:38 +1100
-Message-ID: <20081029110638.f40c73d9.sfr@canb.auug.org.au>
+Subject: linux-next: v4l-dvb tree build failure
+Date: Wed, 29 Oct 2008 13:20:11 +1100
+Message-ID: <20081029132011.920a9b6f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__29_Oct_2008_11_06_39_+1100_hYos_+0=GjJ8hulB"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37291 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51292 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752781AbYJ2AGs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Oct 2008 20:06:48 -0400
+	id S1752234AbYJ2CUR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Oct 2008 22:20:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: linux-next@vger.kernel.org, Frank Blaschka <frank.blaschka@de.ibm.com>, Ursula Braun <ursula.braun@de.ibm.com>, Jeff Garzik <jgarzik@redhat.com>, "David S. Miller" <davem@davemloft.net>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, Andreas Oberritter <obi@linuxtv.org>
 
---Signature=_Wed__29_Oct_2008_11_06_39_+1100_hYos_+0=GjJ8hulB
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Mauro,
 
-Hi Martin, Heiko,
+Today's linux-next build (x86_64 allmodconfig) failed like this:
+drivers/media/dvb/dvb-core/dvbdev.c: In function 'dvb_register_device':
+drivers/media/dvb/dvb-core/dvbdev.c:254: error: implicit declaration of function 'nums2minor'
 
-Today's linux-next merge of the s390 tree got conflicts in
-drivers/s390/net/qeth_l2_main.c and drivers/s390/net/qeth_l3_main.c
-between commit 0f5623c9ebfc6576c5682ab3b335c57812f6c87e ("qeth: remove
-non-recover-thread checkings") from the net-current tree and commit
-fef944b54d0cf71d1f775532439f2e1c3ff3d29b ("[S390] convert qeth printks to
-dev_xxx and pr_xxx macros.") from the s390 tree.
+Caused by commit f3d9182030d9655d9ffff33dfceb45b4a127b6ec ("V4L/DVB
+(9361): Dynamic DVB minor allocation") which clearly has not even been
+built with CONFIG_DVB_DYNAMIC_MINORS=y.
 
-Overlapping removals. So I removed the whole sections i.e. used the
-net-current version.
---=20
+I applied the following patch.
+
+More care required, please.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__29_Oct_2008_11_06_39_+1100_hYos_+0=GjJ8hulB
-Content-Type: application/pgp-signature
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 29 Oct 2008 13:16:19 +1100
+Subject: [PATCH] v4l-dvb: fallout from DVB_DYNAMIC_MINORS addition
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/media/dvb/dvb-core/dvbdev.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-iEYEARECAAYFAkkHqQ8ACgkQjjKRsyhoI8wylwCeJqI0c8KsGf/8k9UdZiEaHwDV
-h0EAn1iqVNbcMQQO4QpRTGIPVC/a18Yr
-=EYFR
------END PGP SIGNATURE-----
-
---Signature=_Wed__29_Oct_2008_11_06_39_+1100_hYos_+0=GjJ8hulB--
+diff --git a/drivers/media/dvb/dvb-core/dvbdev.c b/drivers/media/dvb/dvb-core/dvbdev.c
+index e363a3b..ebfd913 100644
+--- a/drivers/media/dvb/dvb-core/dvbdev.c
++++ b/drivers/media/dvb/dvb-core/dvbdev.c
+@@ -251,7 +251,7 @@ int dvb_register_device(struct dvb_adapter *adap, struct dvb_device **pdvbdev,
+ 	mutex_unlock(&dvbdev_register_lock);
+ 
+ 	clsdev = device_create(dvb_class, adap->device,
+-			       MKDEV(DVB_MAJOR, nums2minor(adap->num, type, id)),
++			       MKDEV(DVB_MAJOR, minor),
+ 			       NULL, "dvb%d.%s%d", adap->num, dnames[type], id);
+ 	if (IS_ERR(clsdev)) {
+ 		printk(KERN_ERR "%s: failed to create device dvb%d.%s%d (%ld)\n",
+-- 
+1.5.6.5
