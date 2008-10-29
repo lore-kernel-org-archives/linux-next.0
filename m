@@ -1,51 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the hdlc tree
-Date: Wed, 29 Oct 2008 17:52:31 +1100
-Message-ID: <20081029175231.116cca1d.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: Tree for October 28
+Date: Wed, 29 Oct 2008 08:49:13 +0100
+Message-ID: <20081029074913.GD17992@elte.hu>
+References: <20081028183055.fbcf5420.sfr@canb.auug.org.au> <20081028160045.2a890509.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__29_Oct_2008_17_52_31_+1100_AJsLhAc=xcQ.yyW/"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54231 "EHLO smtps.tip.net.au"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:42568 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751357AbYJ2Gwm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Oct 2008 02:52:42 -0400
+	id S1752020AbYJ2Hta (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Oct 2008 03:49:30 -0400
+Content-Disposition: inline
+In-Reply-To: <20081028160045.2a890509.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Krzysztof Halasa <khc@pm.waw.pl>
-Cc: linux-next@vger.kernel.org, Jeff Garzik <jeff@garzik.org>, "David S. Miller" <davem@davemloft.net>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
 
---Signature=_Wed__29_Oct_2008_17_52_31_+1100_AJsLhAc=xcQ.yyW/
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
+* Andrew Morton <akpm@linux-foundation.org> wrote:
 
-Today's linux-next merge of the hdlc tree got a conflict in
-drivers/net/wan/syncppp.c between commit
-404b12c10d2f4d77649a193af2ec69f77b852926 ("drivers/net/wan/syncppp: Fix
-unused-var warnings") from the net-current tree and commit
-8a8c8f08abe7d3fd82c2853d0e1f391f8bfc96db ("WAN: syncppp.c is no longer
-used by any kernel code. Remove it.") from the hdlc tree.
+> On Tue, 28 Oct 2008 18:30:55 +1100
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> > I have created today's linux-next tree at
+> > git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+> 
+> x86_64 allnoconfig:
+> 
+> arch/x86/kernel/genx2apic_uv_x.c: In function 'uv_rtc_init':
+> arch/x86/kernel/genx2apic_uv_x.c:355: error: implicit declaration of function 'uv_bios_freq_base'
+> arch/x86/kernel/genx2apic_uv_x.c: In function 'uv_system_init':
+> arch/x86/kernel/genx2apic_uv_x.c:438: error: implicit declaration of function 'uv_bios_init'
+> arch/x86/kernel/genx2apic_uv_x.c:439: error: implicit declaration of function 'uv_bios_get_sn_info'
+> arch/x86/kernel/genx2apic_uv_x.c:439: error: 'uv_type' undeclared (first use in this function)
+> arch/x86/kernel/genx2apic_uv_x.c:439: error: (Each undeclared identifier is reported only once
+> arch/x86/kernel/genx2apic_uv_x.c:439: error: for each function it appears in.)
+> arch/x86/kernel/genx2apic_uv_x.c:439: error: 'sn_partition_id' undeclared (first use in this function)
+> arch/x86/kernel/genx2apic_uv_x.c:440: error: 'uv_coherency_id' undeclared (first use in this function)
+> arch/x86/kernel/genx2apic_uv_x.c:440: error: 'uv_region_size' undeclared (first use in this function)
+> make[1]: *** [arch/x86/kernel/genx2apic_uv_x.o] Error 1
+> make: *** [arch/x86/kernel/genx2apic_uv_x.o] Error 2
+> 
+> 
+> Guys, allnoconfig breakage is very common.  It's easy to configure and
+> is very quick to test.  Please use it.
 
-The former modifies code while the latter removes the whole driver.  I
-just removed it.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+i test allnoconfig multiple times a day.
 
---Signature=_Wed__29_Oct_2008_17_52_31_+1100_AJsLhAc=xcQ.yyW/
-Content-Type: application/pgp-signature
+By the looks of it i suspect Git left around some stale file which 
+fooled my testing? Checking now.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkICC8ACgkQjjKRsyhoI8xwGgCgi1pQUyFIqioRMW1qsOQmiX5Q
-/GQAoL9FPTzvZr3EzXNC1BwaP91xtv9+
-=Q66+
------END PGP SIGNATURE-----
-
---Signature=_Wed__29_Oct_2008_17_52_31_+1100_AJsLhAc=xcQ.yyW/--
+	Ingo
