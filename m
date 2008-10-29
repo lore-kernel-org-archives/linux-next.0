@@ -1,51 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm tree
-Date: Wed, 29 Oct 2008 13:58:07 +1100
-Message-ID: <20081029135807.110c8735.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree
+Date: Wed, 29 Oct 2008 14:11:23 +1100
+Message-ID: <20081029141123.38d83ab7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__29_Oct_2008_13_58_07_+1100_MfWfm_Zm50P5FqII"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40833 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:39969 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752213AbYJ2C6S (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Oct 2008 22:58:18 -0400
+	id S1752020AbYJ2DL2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Oct 2008 23:11:28 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@qumranet.com>
-Cc: linux-next@vger.kernel.org, Sheng Yang <sheng@linux.intel.com>, Amit Shah <amit.shah@redhat.com>, Xiantao Zhang <xiantao.zhang@intel.com>
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, Christian Lamparter <chunkeey@web.de>, "John W. Linville" <linville@tuxdriver.com>, Johannes Berg <johannes@sipsolutions.net>
 
---Signature=_Wed__29_Oct_2008_13_58_07_+1100_MfWfm_Zm50P5FqII
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi David,
 
-Hi Avi,
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/wireless/p54/p54common.c between commit
+f2c2e25554991f9c17bcd24028db5e1c50ecb0ad ("p54: fix build warnings") from
+the net-current tree and commit e174961ca1a0b28f7abf0be47973ad57cb74e5f0
+("net: convert print_mac to %pM") from the net tree.
 
-Today's linux-next merge of the kvm tree got a conflict in
-include/linux/kvm_host.h virt/kvm/kvm_main.c between commit
-5550af4df179e52753d3a43a788a113ad8cd95cd ("KVM: Fix guest shared
-interrupt with in-kernel irqchip") from Linus' tree and commit
-89c6b6a1b5059efa255ec254c8ee6667bdf6b2a0 ("KVM: IRQ ACK notifier should
-be used with in-kernel irqchip") from the kvm tree.
-
-Just a context change.  I fixed it up (taking the kvm tree's removal of
-the first argument of kvm_unregister_irq_ack_notifier).
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix
+(hopefully only until net-current is merged into Linus' tree).
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__29_Oct_2008_13_58_07_+1100_MfWfm_Zm50P5FqII
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkH0UAACgkQjjKRsyhoI8zNuACfd0E6UpYgzlhElfpJrwHUqEdQ
-+wIAnRx3FQTRLxRG7wpCcLDepbEcIcAG
-=qYDZ
------END PGP SIGNATURE-----
-
---Signature=_Wed__29_Oct_2008_13_58_07_+1100_MfWfm_Zm50P5FqII--
+diff --cc drivers/net/wireless/p54/p54common.c
+index 827ca03,72859de..0000000
+--- a/drivers/net/wireless/p54/p54common.c
++++ b/drivers/net/wireless/p54/p54common.c
+@@@ -319,8 -319,7 +319,7 @@@ static int p54_parse_eeprom(struct ieee
+  	void *tmp;
+  	int err;
+  	u8 *end = (u8 *)eeprom + len;
+ -	u16 synth;
+ +	u16 synth = 0;
+- 	DECLARE_MAC_BUF(mac);
+  
+  	wrap = (struct eeprom_pda_wrap *) eeprom;
+  	entry = (void *)wrap->data + le16_to_cpu(wrap->len);
