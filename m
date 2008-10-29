@@ -1,53 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the kvm tree
-Date: Wed, 29 Oct 2008 21:35:07 +1100
-Message-ID: <20081029213507.1d223e1f.sfr@canb.auug.org.au>
-References: <20081029135807.110c8735.sfr@canb.auug.org.au>
-	<49083328.1010400@redhat.com>
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: linux-next: Tree for October 28
+Date: Wed, 29 Oct 2008 13:01:21 +0100
+Message-ID: <1225281681.5439.7.camel@johannes.berg>
+References: <20081028183055.fbcf5420.sfr@canb.auug.org.au>
+	 <20081028220741.f5d331ba.akpm@linux-foundation.org>
+	 (sfid-20081029_060823_839692_3F85A756)
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__29_Oct_2008_21_35_07_+1100_gAMU0sZ.g_s80G2_"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46802 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752186AbYJ2KfP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Oct 2008 06:35:15 -0400
-In-Reply-To: <49083328.1010400@redhat.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@redhat.com>
-Cc: Avi Kivity <avi@qumranet.com>, linux-next@vger.kernel.org, Sheng Yang <sheng@linux.intel.com>, Amit Shah <amit.shah@redhat.com>, Xiantao Zhang <xiantao.zhang@intel.com>
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-e088Dj2w9G7nGlmS0qHw"
+Return-path: <linux-ia64-owner@vger.kernel.org>
+In-Reply-To: <20081028220741.f5d331ba.akpm@linux-foundation.org> (sfid-20081029_060823_839692_3F85A756)
+Sender: linux-ia64-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ia64@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Steven Rostedt <rostedt@goodmis.org>, linux-wireless@vger.kernel.org, Mark Fasheh <mfasheh@suse.com>, Joel Becker <Joel.Becker@oracle.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__29_Oct_2008_21_35_07_+1100_gAMU0sZ.g_s80G2_
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
+
+--=-e088Dj2w9G7nGlmS0qHw
+Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-Hi Avi,
+On Tue, 2008-10-28 at 22:07 -0700, Andrew Morton wrote:
 
-On Wed, 29 Oct 2008 11:55:52 +0200 Avi Kivity <avi@redhat.com> wrote:
->
-> I've done the same merge and pushed kvm.git, so this should disappear on=
-=20
-> the next -next.
+> and wireless needs some Kconfig help.  Please don't just break other
+> architecture's build like this.
+>=20
+> drivers/staging/wlan-ng/wlan_compat.h:136:3: #error "No CPU identified!"
+> drivers/staging/wlan-ng/wlan_compat.h:695:6: warning: "WLAN_CPU_FAMILY" i=
+s not defined
+> drivers/staging/wlan-ng/wlan_compat.h:699:6: warning: "WLAN_CPU_FAMILY" i=
+s not defined
 
-Thanks for that.
+This isn't wireless, it's staging. Talk to Greg, not to linux-wireless.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+johannes
 
---Signature=_Wed__29_Oct_2008_21_35_07_+1100_gAMU0sZ.g_s80G2_
-Content-Type: application/pgp-signature
+--=-e088Dj2w9G7nGlmS0qHw
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Comment: Johannes Berg (powerbook)
 
-iEYEARECAAYFAkkIPFsACgkQjjKRsyhoI8xzgwCaAqZ/8eugrowfgUmymFTr+MX0
-SxoAn1GzZdHELUiizk46Px7yjv1Vtmdh
-=tWP4
+iQIcBAABAgAGBQJJCFCNAAoJEKVg1VMiehFYFIkP/0YGJO/fu/libSPrwysAyYt6
+O7RS96vjcjqEdde7OzwLQuJar75KdTe2XWg2CVv/SgNlFZRwGVKwqcZ1Yc08b7EW
+SNatkJdsZ08tkmdRIzb2UZ+91efB8+Id+vOV/H4pRxLghznB7QII7z94QwUq9JAi
+XkPGMvMNXq5jjv8dZNZNtFXTTyVnPNuLQLcMZli6GWVBUHEpguJxz7N+oLDU/wz1
+rs7HQOQ3bWv2NxgRUKJZUaF6NWzWpCy3pqazxDmR1yTq9kewrjGB/akDYzJjt9p/
+fTXl5AVYVLhrppxL4aQhWZYdMYYOagxM3/m5QTf63ivllBa+R4wsse4UPU+qdVlN
+o7sIZZhV0AaMDQOx6SzNgxj0Yh1ruSrWlH1DBHbVzHaAsT7IvgEe9zAOrcPNmitS
+9AJQtqhM17gfxXuaFFtO9Q3+WJ5Bz4njwh7RfxQsNgulp95T7DsQtIfPghe7vBmG
+l4VaQZbVw4d9n+6akB0sdz0bS4YOZWRI5TAZMCbrNyQV1mUJEuIvd+b3k6ANo+i6
+3K2FJk3VF8+yb6gC5PkfliRgc45Q5g4qLjqy36vJAi5/8cKPEQn3Ke1BDxUpUhF9
+sl7m7hfU3P+WXMxrqwQMkJ2Qx4BVHNnvzWhM3PnNltnx2aZGcPtRZpuecrCa0Ytx
+olvxtw+c2oLCtwOv3EVh
+=JjNC
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__29_Oct_2008_21_35_07_+1100_gAMU0sZ.g_s80G2_--
+--=-e088Dj2w9G7nGlmS0qHw--
+
