@@ -1,60 +1,41 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: linux-next: Tree for October 28
-Date: Wed, 29 Oct 2008 13:01:21 +0100
-Message-ID: <1225281681.5439.7.camel@johannes.berg>
-References: <20081028183055.fbcf5420.sfr@canb.auug.org.au>
-	 <20081028220741.f5d331ba.akpm@linux-foundation.org>
-	 (sfid-20081029_060823_839692_3F85A756)
+From: Andreas Oberritter <obi@linuxtv.org>
+Subject: Re: linux-next: v4l-dvb tree build failure
+Date: Wed, 29 Oct 2008 13:26:05 +0100
+Message-ID: <4908565D.6020000@linuxtv.org>
+References: <20081029132011.920a9b6f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-e088Dj2w9G7nGlmS0qHw"
-Return-path: <linux-ia64-owner@vger.kernel.org>
-In-Reply-To: <20081028220741.f5d331ba.akpm@linux-foundation.org> (sfid-20081029_060823_839692_3F85A756)
-Sender: linux-ia64-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ia64@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Steven Rostedt <rostedt@goodmis.org>, linux-wireless@vger.kernel.org, Mark Fasheh <mfasheh@suse.com>, Joel Becker <Joel.Becker@oracle.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ffm.saftware.de ([83.141.3.46]:33711 "EHLO ffm.saftware.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752372AbYJ2Mel (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Oct 2008 08:34:41 -0400
+In-Reply-To: <20081029132011.920a9b6f.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org
 
+Hello Stephen,
 
---=-e088Dj2w9G7nGlmS0qHw
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Stephen Rothwell wrote:
+> Hi Mauro,
+> 
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> drivers/media/dvb/dvb-core/dvbdev.c: In function 'dvb_register_device':
+> drivers/media/dvb/dvb-core/dvbdev.c:254: error: implicit declaration of function 'nums2minor'
+> 
+> Caused by commit f3d9182030d9655d9ffff33dfceb45b4a127b6ec ("V4L/DVB
+> (9361): Dynamic DVB minor allocation") which clearly has not even been
+> built with CONFIG_DVB_DYNAMIC_MINORS=y.
+> 
+> I applied the following patch.
+> 
+> More care required, please.
 
-On Tue, 2008-10-28 at 22:07 -0700, Andrew Morton wrote:
+thank you! The error is hidden by #if LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 27)
+in the v4l-dvb repository. That's why it didn't show up during testing.
 
-> and wireless needs some Kconfig help.  Please don't just break other
-> architecture's build like this.
->=20
-> drivers/staging/wlan-ng/wlan_compat.h:136:3: #error "No CPU identified!"
-> drivers/staging/wlan-ng/wlan_compat.h:695:6: warning: "WLAN_CPU_FAMILY" i=
-s not defined
-> drivers/staging/wlan-ng/wlan_compat.h:699:6: warning: "WLAN_CPU_FAMILY" i=
-s not defined
-
-This isn't wireless, it's staging. Talk to Greg, not to linux-wireless.
-
-johannes
-
---=-e088Dj2w9G7nGlmS0qHw
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Comment: Johannes Berg (powerbook)
-
-iQIcBAABAgAGBQJJCFCNAAoJEKVg1VMiehFYFIkP/0YGJO/fu/libSPrwysAyYt6
-O7RS96vjcjqEdde7OzwLQuJar75KdTe2XWg2CVv/SgNlFZRwGVKwqcZ1Yc08b7EW
-SNatkJdsZ08tkmdRIzb2UZ+91efB8+Id+vOV/H4pRxLghznB7QII7z94QwUq9JAi
-XkPGMvMNXq5jjv8dZNZNtFXTTyVnPNuLQLcMZli6GWVBUHEpguJxz7N+oLDU/wz1
-rs7HQOQ3bWv2NxgRUKJZUaF6NWzWpCy3pqazxDmR1yTq9kewrjGB/akDYzJjt9p/
-fTXl5AVYVLhrppxL4aQhWZYdMYYOagxM3/m5QTf63ivllBa+R4wsse4UPU+qdVlN
-o7sIZZhV0AaMDQOx6SzNgxj0Yh1ruSrWlH1DBHbVzHaAsT7IvgEe9zAOrcPNmitS
-9AJQtqhM17gfxXuaFFtO9Q3+WJ5Bz4njwh7RfxQsNgulp95T7DsQtIfPghe7vBmG
-l4VaQZbVw4d9n+6akB0sdz0bS4YOZWRI5TAZMCbrNyQV1mUJEuIvd+b3k6ANo+i6
-3K2FJk3VF8+yb6gC5PkfliRgc45Q5g4qLjqy36vJAi5/8cKPEQn3Ke1BDxUpUhF9
-sl7m7hfU3P+WXMxrqwQMkJ2Qx4BVHNnvzWhM3PnNltnx2aZGcPtRZpuecrCa0Ytx
-olvxtw+c2oLCtwOv3EVh
-=JjNC
------END PGP SIGNATURE-----
-
---=-e088Dj2w9G7nGlmS0qHw--
-
+Regards,
+Andreas
