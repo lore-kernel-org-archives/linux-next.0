@@ -1,46 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree
-Date: Wed, 29 Oct 2008 14:11:23 +1100
-Message-ID: <20081029141123.38d83ab7.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rr tree
+Date: Wed, 29 Oct 2008 15:28:49 +1100
+Message-ID: <20081029152849.3883d072.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__29_Oct_2008_15_28_49_+1100_s18S.h1SEWKQmRdx"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39969 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55315 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752020AbYJ2DL2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Oct 2008 23:11:28 -0400
+	id S1750869AbYJ2E27 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Oct 2008 00:28:59 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Christian Lamparter <chunkeey@web.de>, "John W. Linville" <linville@tuxdriver.com>, Johannes Berg <johannes@sipsolutions.net>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>, Ingo Molnar <mingo@elte.hu>
 
-Hi David,
+--Signature=_Wed__29_Oct_2008_15_28_49_+1100_s18S.h1SEWKQmRdx
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/net/wireless/p54/p54common.c between commit
-f2c2e25554991f9c17bcd24028db5e1c50ecb0ad ("p54: fix build warnings") from
-the net-current tree and commit e174961ca1a0b28f7abf0be47973ad57cb74e5f0
-("net: convert print_mac to %pM") from the net tree.
+Hi Rusty,
 
-Just context changes.  I fixed it up (see below) and can carry the fix
-(hopefully only until net-current is merged into Linus' tree).
--- 
+Today's linux-next merge of the rr tree got quite a few conflicts - too
+many for me to fix up right now.  I shall drop it for today and try again
+tomorrow.
+
+One thing:  You need to sort out where patches belong as at least one
+change that conflicted was because different versions of the same fix was
+applied to the rr and cpus4096 trees.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/net/wireless/p54/p54common.c
-index 827ca03,72859de..0000000
---- a/drivers/net/wireless/p54/p54common.c
-+++ b/drivers/net/wireless/p54/p54common.c
-@@@ -319,8 -319,7 +319,7 @@@ static int p54_parse_eeprom(struct ieee
-  	void *tmp;
-  	int err;
-  	u8 *end = (u8 *)eeprom + len;
- -	u16 synth;
- +	u16 synth = 0;
-- 	DECLARE_MAC_BUF(mac);
-  
-  	wrap = (struct eeprom_pda_wrap *) eeprom;
-  	entry = (void *)wrap->data + le16_to_cpu(wrap->len);
+P.S. looking at commit dba205acec6f7db0b53abdf5b26802c19c0d9abf
+("cpumask: fixlets") from the cpus4096 tree, "Signed-of-by: has two
+'f's :-)
+
+--Signature=_Wed__29_Oct_2008_15_28_49_+1100_s18S.h1SEWKQmRdx
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkH5oEACgkQjjKRsyhoI8zQ8QCgkXSqmzfOOS+y6khODilmyraM
+K2cAoJ7agyvNZ9xGG9O6D/AbRfo5+nWM
+=aCxe
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__29_Oct_2008_15_28_49_+1100_s18S.h1SEWKQmRdx--
