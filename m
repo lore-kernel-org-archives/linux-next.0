@@ -1,43 +1,45 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: linux-next: Tree for October 28
-Date: Wed, 29 Oct 2008 09:01:26 -0700
-Message-ID: <20081029160126.GA19132@suse.de>
-References: <20081028183055.fbcf5420.sfr@canb.auug.org.au> <20081028220741.f5d331ba.akpm@linux-foundation.org> <20081029125449.GD24103@tuxdriver.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net tree
+Date: Wed, 29 Oct 2008 13:20:50 -0700 (PDT)
+Message-ID: <20081029.132050.176478819.davem@davemloft.net>
+References: <20081029141123.38d83ab7.sfr@canb.auug.org.au>
+	<20081028.215309.157244158.davem@davemloft.net>
+	<20081029123440.GA24103@tuxdriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ns1.suse.de ([195.135.220.2]:45368 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753511AbYJ2QGx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Oct 2008 12:06:53 -0400
-Content-Disposition: inline
-In-Reply-To: <20081029125449.GD24103@tuxdriver.com>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:57680
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1753962AbYJ2UVP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Oct 2008 16:21:15 -0400
+In-Reply-To: <20081029123440.GA24103@tuxdriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ia64@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Steven Rostedt <rostedt@goodmis.org>, linux-wireless@vger.kernel.org, Mark Fasheh <mfasheh@suse.com>, Joel Becker <Joel.Becker@oracle.com>
+To: linville@tuxdriver.com
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, chunkeey@web.de, johannes@sipsolutions.net
 
-On Wed, Oct 29, 2008 at 08:54:49AM -0400, John W. Linville wrote:
-> On Tue, Oct 28, 2008 at 10:07:41PM -0700, Andrew Morton wrote:
-> > On Tue, 28 Oct 2008 18:30:55 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+From: "John W. Linville" <linville@tuxdriver.com>
+Date: Wed, 29 Oct 2008 08:34:41 -0400
+
+> On Tue, Oct 28, 2008 at 09:53:09PM -0700, David Miller wrote:
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Wed, 29 Oct 2008 14:11:23 +1100
 > > 
-> > > I have created today's linux-next tree at
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-> > > (patches at
-> > > http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).
-> 
-> > and wireless needs some Kconfig help.  Please don't just break other
-> > architecture's build like this.
+> > > Today's linux-next merge of the net tree got a conflict in
+> > > drivers/net/wireless/p54/p54common.c between commit
+> > > f2c2e25554991f9c17bcd24028db5e1c50ecb0ad ("p54: fix build warnings") from
+> > > the net-current tree and commit e174961ca1a0b28f7abf0be47973ad57cb74e5f0
+> > > ("net: convert print_mac to %pM") from the net tree.
+> > > 
+> > > Just context changes.  I fixed it up (see below) and can carry the fix
+> > > (hopefully only until net-current is merged into Linus' tree).
 > > 
-> > drivers/staging/wlan-ng/wlan_compat.h:136:3: #error "No CPU identified!"
-> > drivers/staging/wlan-ng/wlan_compat.h:695:6: warning: "WLAN_CPU_FAMILY" is not defined
-> > drivers/staging/wlan-ng/wlan_compat.h:699:6: warning: "WLAN_CPU_FAMILY" is not defined
+> > Yep, I'll merge after the next time net-current goes to Linus's tree.
 > 
-> For the record, I blame Greg K-H for this... :-)
+> BTW, any idea when that will be?  I have stuff that could go to -next
+> but that will conflict with what has been sent for 2.6.28.
 
-Ick, yes, _ANYTHING_ in drivers/staging/ is my fault, please let me know
-about this.
-
-I'll fix this up, thanks for the report.
-
-greg k-h
+I just sent a pull request out to Linus, when he grabs that I'll
+merge everything into net-next-2.6 and send a note to netdev.
