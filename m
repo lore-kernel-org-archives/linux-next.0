@@ -1,33 +1,51 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: Tree for October 28
-Date: Tue, 28 Oct 2008 16:23:45 -0700
-Message-ID: <20081028162345.72b3180f.akpm@linux-foundation.org>
-References: <20081028183055.fbcf5420.sfr@canb.auug.org.au>
-	<20081028160045.2a890509.akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the s390 tree
+Date: Wed, 29 Oct 2008 11:06:38 +1100
+Message-ID: <20081029110638.f40c73d9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__29_Oct_2008_11_06_39_+1100_hYos_+0=GjJ8hulB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:34263 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753455AbYJ1XYn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Oct 2008 19:24:43 -0400
-In-Reply-To: <20081028160045.2a890509.akpm@linux-foundation.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37291 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752781AbYJ2AGs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Oct 2008 20:06:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@elte.hu, tglx@linutronix.de
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: linux-next@vger.kernel.org, Frank Blaschka <frank.blaschka@de.ibm.com>, Ursula Braun <ursula.braun@de.ibm.com>, Jeff Garzik <jgarzik@redhat.com>, "David S. Miller" <davem@davemloft.net>
 
-On Tue, 28 Oct 2008 16:00:45 -0700
-Andrew Morton <akpm@linux-foundation.org> wrote:
+--Signature=_Wed__29_Oct_2008_11_06_39_+1100_hYos_+0=GjJ8hulB
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > I have created today's linux-next tree at
-> > git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-> 
-> x86_64 allnoconfig:
-> 
-> arch/x86/kernel/genx2apic_uv_x.c: In function 'uv_rtc_init':
-> arch/x86/kernel/genx2apic_uv_x.c:355: error: implicit declaration of function 'uv_bios_freq_base'
+Hi Martin, Heiko,
 
-oop, seems that this was caused by the presence of a stale
-include/asm-x86/uv/bios.h.
+Today's linux-next merge of the s390 tree got conflicts in
+drivers/s390/net/qeth_l2_main.c and drivers/s390/net/qeth_l3_main.c
+between commit 0f5623c9ebfc6576c5682ab3b335c57812f6c87e ("qeth: remove
+non-recover-thread checkings") from the net-current tree and commit
+fef944b54d0cf71d1f775532439f2e1c3ff3d29b ("[S390] convert qeth printks to
+dev_xxx and pr_xxx macros.") from the s390 tree.
+
+Overlapping removals. So I removed the whole sections i.e. used the
+net-current version.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__29_Oct_2008_11_06_39_+1100_hYos_+0=GjJ8hulB
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkHqQ8ACgkQjjKRsyhoI8wylwCeJqI0c8KsGf/8k9UdZiEaHwDV
+h0EAn1iqVNbcMQQO4QpRTGIPVC/a18Yr
+=EYFR
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__29_Oct_2008_11_06_39_+1100_hYos_+0=GjJ8hulB--
