@@ -1,52 +1,41 @@
-From: Russ Anderson <rja@sgi.com>
-Subject: [PATCH trivial] ia64: Fix gru compiler warning
-Date: Wed, 29 Oct 2008 17:29:18 -0500
-Message-ID: <20081029222918.GA71188@sgi.com>
-Reply-To: Russ Anderson <rja@sgi.com>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: manual merge of the rr tree
+Date: Thu, 30 Oct 2008 09:42:05 +1100
+Message-ID: <200810300942.05493.rusty@rustcorp.com.au>
+References: <20081029152849.3883d072.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-ia64-owner@vger.kernel.org>
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:53978 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754668AbYJ2WmJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Oct 2008 18:42:09 -0400
+In-Reply-To: <20081029152849.3883d072.sfr@canb.auug.org.au>
 Content-Disposition: inline
-Sender: linux-ia64-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>, Ingo Molnar <mingo@elte.hu>
 
-Fix compiler warning in sgi-gru driver.
+On Wednesday 29 October 2008 15:28:49 Stephen Rothwell wrote:
+> Hi Rusty,
+>
+> Today's linux-next merge of the rr tree got quite a few conflicts - too
+> many for me to fix up right now.  I shall drop it for today and try again
+> tomorrow.
+>
+> One thing:  You need to sort out where patches belong as at least one
+> change that conflicted was because different versions of the same fix was
+> applied to the rr and cpus4096 trees.
 
-Signed-off-by: Russ Anderson <rja@sgi.com>
+We were hoping Linus would take the cpumask API patches this time around so 
+this issue would vanish.  I've moved them out of my -next tree for the 
+moment.
 
----
-Andrew,
+After that, it's a matter of pushing conversion patches through misc. 
+maintainers over the next cycle.
 
-This patch gets rid of the gru compiler warnings.
-
-
-In file included from drivers/misc/sgi-gru/gruhandles.h:25,
-                 from drivers/misc/sgi-gru/grutables.h:151,
-                 from drivers/misc/sgi-gru/grufile.c:41:
-drivers/misc/sgi-gru/gru_instructions.h: In function `gru_flush_cache':
-drivers/misc/sgi-gru/gru_instructions.h:292: warning: passing arg 1 of pointer to
-function makes integer from pointer without a cast
-
-
-
- drivers/misc/sgi-gru/gru_instructions.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-Index: test/drivers/misc/sgi-gru/gru_instructions.h
-===================================================================
---- test.orig/drivers/misc/sgi-gru/gru_instructions.h	2008-10-29 11:19:56.000000000 -0500
-+++ test/drivers/misc/sgi-gru/gru_instructions.h	2008-10-29 14:23:43.230943026 -0500
-@@ -29,7 +29,7 @@
- #if defined(CONFIG_IA64)
- #include <linux/compiler.h>
- #include <asm/intrinsics.h>
--#define __flush_cache(p)		ia64_fc(p)
-+#define __flush_cache(p)		ia64_fc((unsigned long)p)
- /* Use volatile on IA64 to ensure ordering via st4.rel */
- #define gru_ordered_store_int(p,v)					\
- 		do {							\
--- 
-Russ Anderson, OS RAS/Partitioning Project Lead  
-SGI - Silicon Graphics Inc          rja@sgi.com
+Thanks,
+Rusty.
