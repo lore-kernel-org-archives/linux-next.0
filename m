@@ -1,45 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net tree
-Date: Wed, 29 Oct 2008 13:20:50 -0700 (PDT)
-Message-ID: <20081029.132050.176478819.davem@davemloft.net>
-References: <20081029141123.38d83ab7.sfr@canb.auug.org.au>
-	<20081028.215309.157244158.davem@davemloft.net>
-	<20081029123440.GA24103@tuxdriver.com>
+From: Mark Fasheh <mfasheh-IBi9RG/b67k@public.gmane.org>
+Subject: Re: linux-next: Tree for October 28
+Date: Wed, 29 Oct 2008 14:39:02 -0700
+Message-ID: <20081029213902.GF15154@wotan.suse.de>
+References: <20081028183055.fbcf5420.sfr@canb.auug.org.au> <20081028220741.f5d331ba.akpm@linux-foundation.org>
+Reply-To: Mark Fasheh <mfasheh-IBi9RG/b67k@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:57680
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1753962AbYJ2UVP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Oct 2008 16:21:15 -0400
-In-Reply-To: <20081029123440.GA24103@tuxdriver.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linville@tuxdriver.com
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, chunkeey@web.de, johannes@sipsolutions.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20081028220741.f5d331ba.akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-ia64-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>, Steven Rostedt <rostedt-nx8X9YLhiw1AfugRpC6u6w@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joel Becker <Joel.Becker-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-From: "John W. Linville" <linville@tuxdriver.com>
-Date: Wed, 29 Oct 2008 08:34:41 -0400
-
-> On Tue, Oct 28, 2008 at 09:53:09PM -0700, David Miller wrote:
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Wed, 29 Oct 2008 14:11:23 +1100
-> > 
-> > > Today's linux-next merge of the net tree got a conflict in
-> > > drivers/net/wireless/p54/p54common.c between commit
-> > > f2c2e25554991f9c17bcd24028db5e1c50ecb0ad ("p54: fix build warnings") from
-> > > the net-current tree and commit e174961ca1a0b28f7abf0be47973ad57cb74e5f0
-> > > ("net: convert print_mac to %pM") from the net tree.
-> > > 
-> > > Just context changes.  I fixed it up (see below) and can carry the fix
-> > > (hopefully only until net-current is merged into Linus' tree).
-> > 
-> > Yep, I'll merge after the next time net-current goes to Linus's tree.
+On Tue, Oct 28, 2008 at 10:07:41PM -0700, Andrew Morton wrote:
+> plus of course enough compile warnings to start a small war.   ocfs2 is
+> prominent.
 > 
-> BTW, any idea when that will be?  I have stuff that could go to -next
-> but that will conflict with what has been sent for 2.6.28.
+> fs/ocfs2/xattr.c: In function `ocfs2_xattr_index_block_find':
+> fs/ocfs2/xattr.c:2338: warning: long long unsigned int format, u64 arg (arg 7)
+> fs/ocfs2/xattr.c:2338: warning: long long unsigned int format, u64 arg (arg 7)
+> fs/ocfs2/xattr.c:2338: warning: long long unsigned int format, u64 arg (arg 7)
 
-I just sent a pull request out to Linus, when he grabs that I'll
-merge everything into net-next-2.6 and send a note to netdev.
+Thanks for pointing these out Andrew. They slipped by me. I'll get them
+fixed up before the conflict escalates  ;)
+	--Mark
+
+--
+Mark Fasheh
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
