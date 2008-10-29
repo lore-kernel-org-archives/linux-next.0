@@ -1,33 +1,113 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net tree
-Date: Tue, 28 Oct 2008 21:53:09 -0700 (PDT)
-Message-ID: <20081028.215309.157244158.davem@davemloft.net>
-References: <20081029141123.38d83ab7.sfr@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: Tree for October 28
+Date: Tue, 28 Oct 2008 22:07:41 -0700
+Message-ID: <20081028220741.f5d331ba.akpm@linux-foundation.org>
+References: <20081028183055.fbcf5420.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:40256
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1751223AbYJ2Exc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Oct 2008 00:53:32 -0400
-In-Reply-To: <20081029141123.38d83ab7.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, chunkeey@web.de, linville@tuxdriver.com, johannes@sipsolutions.net
+Return-path: <linux-ia64-owner@vger.kernel.org>
+In-Reply-To: <20081028183055.fbcf5420.sfr@canb.auug.org.au>
+Sender: linux-ia64-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ia64@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Steven Rostedt <rostedt@goodmis.org>, linux-wireless@vger.kernel.org, Mark Fasheh <mfasheh@suse.com>, Joel Becker <Joel.Becker@oracle.com>
+List-Id: linux-next.vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 29 Oct 2008 14:11:23 +1100
+On Tue, 28 Oct 2008 18:30:55 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> Today's linux-next merge of the net tree got a conflict in
-> drivers/net/wireless/p54/p54common.c between commit
-> f2c2e25554991f9c17bcd24028db5e1c50ecb0ad ("p54: fix build warnings") from
-> the net-current tree and commit e174961ca1a0b28f7abf0be47973ad57cb74e5f0
-> ("net: convert print_mac to %pM") from the net tree.
-> 
-> Just context changes.  I fixed it up (see below) and can carry the fix
-> (hopefully only until net-current is merged into Linus' tree).
+> I have created today's linux-next tree at
+> git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+> (patches at
+> http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).
 
-Yep, I'll merge after the next time net-current goes to Linus's tree.
+ia64 allmodconfig:
+
+arch/ia64/kernel/iosapic.c: In function `get_target_cpu':
+arch/ia64/kernel/iosapic.c:723: error: `nr_cpus_ids' undeclared (first use in this function)
+arch/ia64/kernel/iosapic.c:723: error: (Each undeclared identifier is reported only once
+arch/ia64/kernel/iosapic.c:723: error: for each function it appears in.)
+
+Fixed by:
+
+From: Andrew Morton <akpm@linux-foundation.org>
+
+- someone can't type (or test)
+
+- nr_cpu_ids is declared in cpumask.h.  Include it.
+
+--- a/arch/ia64/kernel/iosapic.c~ia64-fix-arch-ia64-kernel-iosapicc-build
++++ a/arch/ia64/kernel/iosapic.c
+@@ -85,6 +85,7 @@
+ #include <linux/irq.h>
+ #include <linux/kernel.h>
+ #include <linux/list.h>
++#include <linux/cpumask.h>
+ #include <linux/pci.h>
+ #include <linux/smp.h>
+ #include <linux/string.h>
+@@ -720,7 +721,7 @@ get_target_cpu (unsigned int gsi, int ir
+ 		for (numa_cpu = first_cpu(cpu_mask) ; i < cpu_index ; i++)
+ 			numa_cpu = next_cpu(numa_cpu, cpu_mask);
+ 
+-		if (numa_cpu < nr_cpus_ids)
++		if (numa_cpu < nr_cpu_ids)
+ 			return cpu_physical_id(numa_cpu);
+ 	}
+ skip_numa_setup:
+_
+
+
+
+also rather a lot of these:
+
+
+In file included from drivers/misc/sgi-gru/gruhandles.h:25,
+                 from drivers/misc/sgi-gru/grutables.h:151,
+                 from drivers/misc/sgi-gru/grufile.c:41:
+drivers/misc/sgi-gru/gru_instructions.h: In function `gru_flush_cache':
+drivers/misc/sgi-gru/gru_instructions.h:292: warning: passing arg 1 of pointer to function makes integer from pointer without a cast
+In file included from drivers/misc/sgi-gru/gruhandles.h:25,
+                 from drivers/misc/sgi-gru/grutables.h:151,
+                 from drivers/misc/sgi-gru/grumain.c:22:
+drivers/misc/sgi-gru/gru_instructions.h: In function `gru_flush_cache':
+drivers/misc/sgi-gru/gru_instructions.h:292: warning: passing arg 1 of pointer to function makes integer from pointer without a cast
+
+
+
+and this:
+
+
+kernel/trace/trace.c: In function `tracing_generic_entry_update':
+kernel/trace/trace.c:681: error: implicit declaration of function `irqs_disabled_flags'
+kernel/trace/trace.c: In function `kretprobed':
+kernel/trace/trace.c:1112: error: `kretprobe_trampoline' undeclared (first use in this function)
+kernel/trace/trace.c:1112: error: (Each undeclared identifier is reported only once
+kernel/trace/trace.c:1112: error: for each function it appears in.)
+
+
+and wireless needs some Kconfig help.  Please don't just break other
+architecture's build like this.
+
+drivers/staging/wlan-ng/wlan_compat.h:136:3: #error "No CPU identified!"
+drivers/staging/wlan-ng/wlan_compat.h:695:6: warning: "WLAN_CPU_FAMILY" is not defined
+drivers/staging/wlan-ng/wlan_compat.h:699:6: warning: "WLAN_CPU_FAMILY" is not defined
+
+
+
+plus of course enough compile warnings to start a small war.   ocfs2 is prominent.
+
+fs/ocfs2/xattr.c: In function `ocfs2_xattr_index_block_find':
+fs/ocfs2/xattr.c:2338: warning: long long unsigned int format, u64 arg (arg 7)
+fs/ocfs2/xattr.c:2338: warning: long long unsigned int format, u64 arg (arg 7)
+fs/ocfs2/xattr.c:2338: warning: long long unsigned int format, u64 arg (arg 7)
+fs/ocfs2/xattr.c: In function `ocfs2_iterate_xattr_buckets':
+fs/ocfs2/xattr.c:2362: warning: long long unsigned int format, u64 arg (arg 7)
+fs/ocfs2/xattr.c:2362: warning: long long unsigned int format, u64 arg (arg 7)
+fs/ocfs2/xattr.c:2362: warning: long long unsigned int format, u64 arg (arg 7)
+fs/ocfs2/xattr.c:2381: warning: long long unsigned int format, u64 arg (arg 6)
+fs/ocfs2/xattr.c:2381: warning: long long unsigned int format, u64 arg (arg 6)
+fs/ocfs2/xattr.c:2381: warning: long long unsigned int format, u64 arg (arg 6)
+fs/ocfs2/xattr.c: In function `ocfs2_xattr_create_index_block':
+fs/ocfs2/xattr.c:2717: warning: long long unsigned int format, u64 arg (arg 6)
+fs/ocfs2/xattr.c:2717: warning: long long unsigned int format, u64 arg (arg 6)
+
