@@ -1,64 +1,58 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: left over things in linux-next after 2.6.28-c1
-Date: Wed, 29 Oct 2008 16:53:24 -0700
-Message-ID: <20081029235324.GB23101@kroah.com>
-References: <20081026005009.50dbbb33.sfr@canb.auug.org.au> <20081025143715.GB30900@uranus.ravnborg.org> <20081025211651.GA32027@kroah.com> <20081025215245.GA27572@uranus.ravnborg.org> <20081025221015.GA32568@kroah.com> <20081028053435.GA3473@in.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: xfs tree build failure
+Date: Thu, 30 Oct 2008 13:23:24 +1100
+Message-ID: <20081030132324.0d619fdd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:41062 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1753676AbYJ2X5T (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Oct 2008 19:57:19 -0400
-Content-Disposition: inline
-In-Reply-To: <20081028053435.GA3473@in.ibm.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43074 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751690AbYJ3CXb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Oct 2008 22:23:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
-Cc: Sam Ravnborg <sam@ravnborg.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+To: David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
+Cc: linux-next@vger.kernel.org, Lachlan McIlroy <lachlan@sgi.com>, linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 28, 2008 at 11:04:35AM +0530, Ananth N Mavinakayanahalli wrote:
-> > Ok, that's great, but the current tree is just the in-kernel tests so
-> > far, right?
-> 
-> Right
+Hi David,
 
-Ok, that makes more sense why it isn't going anywhere.
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-> > > Having a set of tests to run when introducing a new syscall
-> > > would make it much easier for an arch maintainer to verify
-> > > that the implemented syscall works as expected.
-> > > 
-> > > And forcing the developer to use the interface from user-space
-> > > will hopefully catch a few issues earlier.
-> > 
-> > I totally agree that this is a good thing to have.
-> > 
-> > But I don't necessarily think that moving the in-kernel tests to this
-> > directory makes that much sense here, wouldn't the in-kernel tests work
-> > out better living next to the code they are testing, like they are right
-> > now?   Or do you and others think that moving them would help things
-> > out?
-> 
-> I guess at the time, the consensus was to collate all such tests (except
-> the arch specific ones) to under tests/. But yes, there isn't too much
-> difference in it living next to the actual code itself. The other neat
-> thing this would do is to have one config sub-menu for all the in-kernel
-> tests, which can still be done with a new Kconfig in lib/ or something.
-> 
-> > And are there any proposed userspace tests in this tree right now?
-> 
-> No, it is currently limited to kernel code.
+ERROR: "inode_wait" [fs/xfs/xfs.ko] undefined!
 
-Ok, I really don't care about moving files around.
+Caused by commit 676a7711ee281c3bf41db18e29e296584de82793 ("[XFS] Fix
+race when looking up reclaimable inodes") which introduced a use of
+wait_on_inode() which is an inline that calls inode_wait().
 
-What I do care about is the goal of having userspace tests, or tests
-that people can run to test out the kernel in some kind of way, like
-mentioned earlier in this thread.
+I applied the following patch (probably wrong :-)).
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-If someone wants to start collecting them, I'll glady host that tree and
-work to push that to mainline.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 30 Oct 2008 13:19:46 +1100
+Subject: [PATCH] fs: xfs needs inode_wait to be exported
 
-thanks,
+Since wait_on_inode() references it.
 
-greg k-h
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/inode.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/fs/inode.c b/fs/inode.c
+index f84ba33..098a244 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1334,6 +1334,7 @@ int inode_wait(void *word)
+ 	schedule();
+ 	return 0;
+ }
++EXPORT_SYMBOL(inode_wait);
+ 
+ /*
+  * If we try to find an inode in the inode hash while it is being
+-- 
+1.5.6.5
