@@ -1,84 +1,44 @@
-From: "Peter Teoh" <htmldeveloper@gmail.com>
-Subject: =?WINDOWS-1252?Q?Re:_[uml-devel]_"warning:_passing_argument_1_of_=91um=5F?= =?WINDOWS-1252?Q?execve=92_discards_qualifiers_from_pointer_target_type"?=
-Date: Thu, 30 Oct 2008 23:14:02 +0800
-Message-ID: <804dabb00810300814h1867f44bl7933e73fddbbb821@mail.gmail.com>
-References: <804dabb00810291851xc617690wac1404176437fb84@mail.gmail.com>
-	 <Pine.LNX.4.64.0810300925590.4898@anakin>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: "Luck, Tony" <tony.luck@intel.com>
+Subject: next-20081029: arch/ia64/include/asm/smp.h:60: error: expected ')'
+	before '*' token
+Date: Thu, 30 Oct 2008 09:56:27 -0700
+Message-ID: <200810301656.m9UGuQUQ007129@agluck-lia64.sc.intel.com>
+References: <20081029145150.GA8668@x200.localdomain>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fg-out-1718.google.com ([72.14.220.152]:34843 "EHLO
-	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754708AbYJ3POF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 30 Oct 2008 11:14:05 -0400
-Received: by fg-out-1718.google.com with SMTP id 19so530065fgg.17
-        for <linux-next@vger.kernel.org>; Thu, 30 Oct 2008 08:14:02 -0700 (PDT)
-In-Reply-To: <Pine.LNX.4.64.0810300925590.4898@anakin>
-Content-Disposition: inline
+Received: from mga09.intel.com ([134.134.136.24]:33725 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753931AbYJ3Q4l (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Oct 2008 12:56:41 -0400
+In-Reply-To: <20081029145150.GA8668@x200.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, uml-devel <user-mode-linux-devel@lists.sourceforge.net>, linux-next@vger.kernel.org
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Thu, Oct 30, 2008 at 4:31 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Thu, 30 Oct 2008, Peter Teoh wrote:
->> While compiling the latest 2.6.28-rc2 (make linux ARCH=um O=uml):
->>
->>   CC      arch/um/kernel/syscall.o
->> /hdc1/download/2.6/linux26-acer/arch/um/kernel/syscall.c: In function
->> 'kernel_execve':
->> /hdc1/download/2.6/linux26-acer/arch/um/kernel/syscall.c:130: warning:
->> passing argument 1 of 'um_execve' discards qualifiers from pointer
->> target type
->> /hdc1/download/2.6/linux26-acer/arch/um/kernel/syscall.c:130: warning:
->> passing argument 2 of 'um_execve' discards qualifiers from pointer
->> target type
->> /hdc1/download/2.6/linux26-acer/arch/um/kernel/syscall.c:130: warning:
->> passing argument 3 of 'um_execve' discards qualifiers from pointer
->> target type
->> u  CC      arch/um/kernel/sysrq.o
->>   CC      arch/um/kernel/time.o
->>
->> snip
->>
->>   CC      kernel/trace/trace.o
->> /hdc1/download/2.6/linux26-acer/kernel/trace/trace.c: In function
->> 'tracing_generic_entry_update':
->> /hdc1/download/2.6/linux26-acer/kernel/trace/trace.c:659: error:
->> implicit declaration of function 'irqs_disabled_flags'
->> make[3]: *** [kernel/trace/trace.o] Error 1
->> make[2]: *** [kernel/trace] Error 2
->> make[1]: *** [kernel] Error 2
->> make: *** [sub-make] Error 2
->>
->> The .config as per attached.
->
-> I see there are no UML builds yet on
-> http://kisskb.ellerman.id.au/kisskb/matrix/.
-> Perhaps it would be a good idea to add them?
->
+> On ia64-bigsur (and other ia64 defconfigs):
+> 
+>   CC      arch/ia64/kernel/asm-offsets.s
+> In file included from include/linux/smp.h:30,
+>                  from include/linux/sched.h:68,
+>                  from arch/ia64/kernel/asm-offsets.c:9:
+> arch/ia64/include/asm/smp.h:60: error: expected ')' before '*' token
+> arch/ia64/include/asm/smp.h:60: error: expected ')' before 'cpu_online_mask'
 
-sorry i don't understand how to read the table.   my target is x86
-32bit UML, compiler is x86 32bit as well.   and the defconfig i used
-is arch/um/defconfig, with some modification.
+Looks like we simply need to delete the declaration in smp.h
 
+Like this:
 
-> Gr{oetje,eeting}s,
->
->                                                Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                                            -- Linus Torvalds
->
+---
 
-
-
--- 
-Regards,
-Peter Teoh
+diff --git a/arch/ia64/include/asm/smp.h b/arch/ia64/include/asm/smp.h
+index 12d96e0..21c4023 100644
+--- a/arch/ia64/include/asm/smp.h
++++ b/arch/ia64/include/asm/smp.h
+@@ -57,7 +57,6 @@ extern struct smp_boot_data {
+ 
+ extern char no_int_routing __devinitdata;
+ 
+-extern cpumask_t cpu_online_map;
+ extern cpumask_t cpu_core_map[NR_CPUS];
+ DECLARE_PER_CPU(cpumask_t, cpu_sibling_map);
+ extern int smp_num_siblings;
