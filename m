@@ -1,101 +1,26 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: next-20081030: voyager compile busted
-Date: Thu, 30 Oct 2008 15:58:03 -0500
-Message-ID: <1225400283.19324.6.camel@localhost.localdomain>
-References: <20081030173030.d8847df6.sfr@canb.auug.org.au>
-	 <20081030180323.GA13399@x200.localdomain>
-	 <1225398287.19324.1.camel@localhost.localdomain>
-	 <20081030205230.GO27407@elte.hu>
+From: David Miller <davem@davemloft.net>
+Subject: Re: UDP/bnx2: inconsistent lock state
+Date: Thu, 30 Oct 2008 14:01:34 -0700 (PDT)
+Message-ID: <20081030.140134.68573546.davem@davemloft.net>
+References: <a4423d670810300340i27cd7fe3wea42767431ad3574@mail.gmail.com>
+	<4909B4D9.20807@cosmosbay.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from accolon.hansenpartnership.com ([76.243.235.52]:48607 "EHLO
-	accolon.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753131AbYJ3U6I (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 30 Oct 2008 16:58:08 -0400
-In-Reply-To: <20081030205230.GO27407@elte.hu>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Yinghai Lu <yinghai@kernel.org>
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <4909B4D9.20807@cosmosbay.com>
+Sender: netdev-owner@vger.kernel.org
+To: dada1@cosmosbay.com
+Cc: a.beregalov@gmail.com, mchan@broadcom.com, linux-next@vger.kernel.org, netdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 2008-10-30 at 21:52 +0100, Ingo Molnar wrote:
-> * James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
-> 
-> > On Thu, 2008-10-30 at 21:03 +0300, Alexey Dobriyan wrote:
-> > > On i386-voyager:
-> > > 
-> > >   Using /src/linux-1 as source for kernel
-> > >   GEN     /src/build/i386-voyager/Makefile
-> > >   CHK     include/linux/version.h
-> > >   CHK     include/linux/utsrelease.h
-> > >   SYMLINK include/asm -> include/asm-x86
-> > >   CALL    scripts/checksyscalls.sh
-> > >   CHK     include/linux/compile.h
-> > >   CC      arch/x86/kernel/tsc.o
-> > > arch/x86/kernel/tsc.c: In function 'unsynchronized_tsc':
-> > > arch/x86/kernel/tsc.c:763: error: implicit declaration of function 'apic_is_clustered_box'
-> > > make[2]: *** [arch/x86/kernel/tsc.o] Error 1
-> > >   CC      arch/x86/kernel/cpu/addon_cpuid_features.o
-> > > arch/x86/kernel/cpu/addon_cpuid_features.c: In function 'detect_extended_topology':
-> > > arch/x86/kernel/cpu/addon_cpuid_features.c:120: error: implicit declaration of function 'phys_pkg_id'
-> > > make[3]: *** [arch/x86/kernel/cpu/addon_cpuid_features.o] Error 1
-> > > make[3]: Target `__build' not remade because of errors.
-> > > make[2]: *** [arch/x86/kernel/cpu] Error 2
-> > > make[2]: Target `__build' not remade because of errors.
-> > > make[1]: *** [arch/x86/kernel] Error 2
-> > >   CC      arch/x86/mach-voyager/setup.o
-> > > arch/x86/mach-voyager/setup.c: In function 'intr_init_hook':
-> > > arch/x86/mach-voyager/setup.c:30: error: implicit declaration of function 'smp_intr_init'
-> > > arch/x86/mach-voyager/setup.c: In function 'machine_specific_memory_setup':
-> > > arch/x86/mach-voyager/setup.c:65: warning: unused variable 'new_nr'
-> > > make[2]: *** [arch/x86/mach-voyager/setup.o] Error 1
-> > >   CC      arch/x86/mach-voyager/voyager_smp.o
-> > > arch/x86/mach-voyager/voyager_smp.c:67: error: conflicting types for 'phys_cpu_present_map'
-> > > arch/x86/include/asm/mpspec.h:143: error: previous declaration of 'phys_cpu_present_map' was here
-> > > arch/x86/mach-voyager/voyager_smp.c: In function 'start_secondary':
-> > > arch/x86/mach-voyager/voyager_smp.c:444: error: implicit declaration of function 'notify_cpu_starting'
-> > > arch/x86/mach-voyager/voyager_smp.c: In function 'smp_call_function_interrupt':
-> > > arch/x86/mach-voyager/voyager_smp.c:955: error: implicit declaration of function 'generic_smp_call_function_interrupt'
-> > > arch/x86/mach-voyager/voyager_smp.c: In function 'smp_call_function_single_interrupt':
-> > > arch/x86/mach-voyager/voyager_smp.c:963: error: implicit declaration of function 'generic_smp_call_function_single_interrupt'
-> > > make[2]: *** [arch/x86/mach-voyager/voyager_smp.o] Error 1
-> > > make[2]: Target `__build' not remade because of errors.
-> > > make[1]: *** [arch/x86/mach-voyager] Error 2
-> > 
-> > Yes ... present in the 2.6.28-rc as well.  I've got it all fixed up
-> > locally.
-> >
-> > This type of breakage is more or less expected given that I wait 
-> > until -rc1 for the tree to stop churning before trying to fix 
-> > voyager and the subarchitectures, and the fact that the current way 
-> > x86 is being developed tends to break them.
-> 
-> one problem is the number of x86/Voyager testboxes - how many of them 
-> is there in existence - one or two, all of them owned by you?
-> 
-> the other problem is that you are apparently checking whether 
-> x86/Voyager builds (boots?) at all only once every couple of months - 
-> once per kernel cycle or so. That obviously means you'll be affected 
-> by an accumulated set of bugs. Nobody else _can_ test it instead of 
-> you, because no other kernel hacker owns this hardware.
-> 
-> So ... the right long-term way out of this is to do what we did with 
-> all the other x86 subarchitectures: to convert Voyager into a generic 
-> platform, via extension of the x86_quirks interfaces. That way we can 
-> remove the remainder of the fragile "x86 subarchitecture" concept. 
-> (which should never have been added to begin with)
-> 
-> Would you be interested in helping us out with such a project? It 
-> would be a nice cleanup for sure.
+From: Eric Dumazet <dada1@cosmosbay.com>
+Date: Thu, 30 Oct 2008 14:21:29 +0100
 
-Sure, I'd be interested in looking into that.
+> [PATCH] udp: Should use spin_lock_bh()/spin_unlock_bh() in udp_lib_unhash()
+> 
+> Spotted by Alexander Beregalov
+> 
+> Signed-off-by: Eric Dumazet <dada1@cosmosbay.com>
 
-However, it won't help the problems since they're mostly compile
-breakages caused by tampering with the HAL API for x86 and not seeing
-that this affects various subarches.  Moving voyager to a quirk wouldn't
-fix that problem.
-
-James
+Applied, thanks for fixing this so quickly Eric.
