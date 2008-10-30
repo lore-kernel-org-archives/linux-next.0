@@ -1,45 +1,46 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: next-20081030: voyager compile busted
-Date: Thu, 30 Oct 2008 23:40:57 +0100
-Message-ID: <20081030224057.GB20507@elte.hu>
-References: <20081030173030.d8847df6.sfr@canb.auug.org.au> <20081030180323.GA13399@x200.localdomain> <1225398287.19324.1.camel@localhost.localdomain> <20081030205230.GO27407@elte.hu> <1225400283.19324.6.camel@localhost.localdomain> <20081030210704.GA25665@elte.hu> <1225401708.19324.35.camel@localhost.localdomain> <490A2A30.5040905@zytor.com> <1225403266.19324.42.camel@localhost.localdomain> <490A2C3D.4020202@zytor.com>
+From: "=?ISO-8859-1?Q?Fr=E9d=E9ric_Weisbecker?=" <fweisbec@gmail.com>
+Subject: Re: [PATCH] tracing: fix a build error on alpha and m68k
+Date: Thu, 30 Oct 2008 23:57:36 +0100
+Message-ID: <c62985530810301557x2c92a78ay49cdc72931b6caae@mail.gmail.com>
+References: <20081023213637.eff9b414.sfr@canb.auug.org.au>
+	 <c62985530810230548t1b569f61g34d1900bb94fde83@mail.gmail.com>
+	 <c62985530810230615s3252a54ao6488e763d72dc939@mail.gmail.com>
+	 <49008D12.5090204@gmail.com>
+	 <Pine.LNX.4.64.0810231635440.18978@anakin>
+	 <c62985530810230757r411b4e3dj4ecec649cf8cf0b3@mail.gmail.com>
+	 <Pine.LNX.4.64.0810231727430.18978@anakin>
+	 <4900B414.7090002@gmail.com> <20081023163433.GA3160@x200.localdomain>
+	 <20081030214910.GA14679@x200.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:38941 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750941AbYJ3WlL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 30 Oct 2008 18:41:11 -0400
+Received: from rn-out-0910.google.com ([64.233.170.187]:48696 "EHLO
+	rn-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752648AbYJ3W5j (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 30 Oct 2008 18:57:39 -0400
+In-Reply-To: <20081030214910.GA14679@x200.localdomain>
 Content-Disposition: inline
-In-Reply-To: <490A2C3D.4020202@zytor.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, Alexey Dobriyan <adobriyan@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Yinghai Lu <yinghai@kernel.org>
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Ingo Molnar <mingo@elte.hu>, Geert Uytterhoeven <geert@linux-m68k.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
 
+2008/10/30 Alexey Dobriyan <adobriyan@gmail.com>:
+> On Thu, Oct 23, 2008 at 08:34:33PM +0400, Alexey Dobriyan wrote:
+>> On Thu, Oct 23, 2008 at 07:27:48PM +0200, Frederic Weisbecker wrote:
+>> > When tracing is enabled, some arch have included <linux/irqflags.h>
+>> > on their <asm/system.h> but others like alpha or m68k don't.
+>> >
+>> > Build error on alpha:
+>> >
+>> > kernel/trace/trace.c: In function 'tracing_generic_entry_update':
+>> > kernel/trace/trace.c:658: error: implicit declaration of function 'irqs_disabled_flags'
+>
+> FYI, this error still exists in mainline (7f82f000ed030d1108b4de47d9e2d556092980c6).
+>
 
-* H. Peter Anvin <hpa@zytor.com> wrote:
+Thanks.
 
-> James Bottomley wrote:
-> > 
-> > Yes ... been having IRC conversations about that.  We'd need to use
-> > runtime patching to fix the performance regressions virtualisation has
-> > been causing us first ... but then we could use it for voyager.
-> 
-> I thought we already were, at least to some degree (the call sites 
-> are way too big and way bigger than they need to be, so we end up 
-> with a lot of NOPs.  I proposed a solution to Jeremy at Kernel 
-> Summit, but he basically said "I don't want to maintain that, I 
-> don't care about hardware performance", which is understandable but 
-> highly unfortunate.)
-
-in practice the function pointer overhead is almost unmeasurable for 
-things like IPIs which are rather expensive to issue. In fact it's 
-probably more expensive on Voyager as it does not utilize the local 
-APIC for SMP messaging (which is pretty much the only 
-performance-sensitive thing here). It uses its own glue logic it 
-appears, which is almost certainly behind the system bus.
-
-James, how many cycles do typical SMP ops take on Voyager?
-
-	Ingo
+Yes Steven sent a patch to correct it: http://lkml.org/lkml/2008/10/24/205
+But it has not been applied yet (still in discussion?).
