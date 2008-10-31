@@ -1,34 +1,69 @@
-From: Eric Paris <eparis@redhat.com>
-Subject: Re: linux-next: manual merge of the creds tree
-Date: Fri, 31 Oct 2008 17:32:34 -0400
-Message-ID: <1225488754.3371.2.camel@localhost.localdomain>
-References: <20081031170609.a3fcda4e.sfr@canb.auug.org.au>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: next-20081030: voyager compile busted
+Date: Fri, 31 Oct 2008 12:42:14 -0500
+Message-ID: <1225474934.3264.4.camel@localhost.localdomain>
+References: <20081030173030.d8847df6.sfr@canb.auug.org.au>
+	 <20081030180323.GA13399@x200.localdomain>
+	 <1225398287.19324.1.camel@localhost.localdomain>
+	 <20081030205230.GO27407@elte.hu>
+	 <1225400283.19324.6.camel@localhost.localdomain>
+	 <20081030210704.GA25665@elte.hu>
+	 <1225401708.19324.35.camel@localhost.localdomain>
+	 <490A2A30.5040905@zytor.com>
+	 <1225403266.19324.42.camel@localhost.localdomain>
+	 <490A2C3D.4020202@zytor.com>  <20081030224057.GB20507@elte.hu>
 Mime-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:45274 "EHLO mx2.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752491AbYJaVdN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 31 Oct 2008 17:33:13 -0400
-In-Reply-To: <20081031170609.a3fcda4e.sfr@canb.auug.org.au>
+Received: from accolon.hansenpartnership.com ([76.243.235.52]:37905 "EHLO
+	accolon.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752634AbYJaWBp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 31 Oct 2008 18:01:45 -0400
+In-Reply-To: <20081030224057.GB20507@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Alexey Dobriyan <adobriyan@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Yinghai Lu <yinghai@kernel.org>
 
-On Fri, 2008-10-31 at 17:06 +1100, Stephen Rothwell wrote:
-> Hi David,
+On Thu, 2008-10-30 at 23:40 +0100, Ingo Molnar wrote: 
+> * H. Peter Anvin <hpa@zytor.com> wrote:
 > 
-> Today's linux-next merge of the creds tree got a conflict in
-> security/selinux/hooks.c between commit
-> 8b6a5a37f87a414ef8636e36ec75accb27bb7508 ("SELinux: check open perms in
-> dentry_open not inode_permission") from the security-testing tree and
-> commits 7113316bdf8c9f91df7bd68ab739d9bd0f5e8efc ("CRED: Make
-> inode_has_perm() and file_has_perm() take a cred pointer") and
-> a9018998dcc1e3b4401a7f6d2050ffedbd1b64da ("CRED: Inaugurate COW
-> credentials") from the creds tree.
+> > James Bottomley wrote:
+> > > 
+> > > Yes ... been having IRC conversations about that.  We'd need to use
+> > > runtime patching to fix the performance regressions virtualisation has
+> > > been causing us first ... but then we could use it for voyager.
+> > 
+> > I thought we already were, at least to some degree (the call sites 
+> > are way too big and way bigger than they need to be, so we end up 
+> > with a lot of NOPs.  I proposed a solution to Jeremy at Kernel 
+> > Summit, but he basically said "I don't want to maintain that, I 
+> > don't care about hardware performance", which is understandable but 
+> > highly unfortunate.)
 > 
-> Overlapping changes.  I fixed it up (see below) and can carry the fix.
+> in practice the function pointer overhead is almost unmeasurable for 
+> things like IPIs which are rather expensive to issue. In fact it's 
+> probably more expensive on Voyager as it does not utilize the local 
+> APIC for SMP messaging (which is pretty much the only 
+> performance-sensitive thing here). It uses its own glue logic it 
+> appears, which is almost certainly behind the system bus.
 
-ACK  Looks good to me, thanks.
+Heh ... don't be so sure:  The VIC uses an array of up to 8 standard
+8255 IRQ lines, which is slow.  The QIC uses CPI trigger via cache line
+interference, which is far faster than APIC bus based systems (but is
+fairly similar to the way SAPIC systems work ... almost a decade after
+the original QIC system).
+
+> James, how many cycles do typical SMP ops take on Voyager?
+
+To be honest, I'm not too bothered about that.  What bothers me is that
+if a normal system performance goes down because of the function pointer
+replacement (remember all x86 SMP systems will see an increase in
+function pointer usage because of this approach), then it probably
+wasn't worth it.
+
+However, the only way to be sure is to try it and get the benchmarks.
+
+James
