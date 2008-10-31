@@ -1,65 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the creds tree
-Date: Fri, 31 Oct 2008 13:49:31 +1100
-Message-ID: <20081031134931.950e271a.sfr@canb.auug.org.au>
-References: <20081030080343.GA20548@infradead.org>
-	<20081030154741.2651e779.sfr@canb.auug.org.au>
-	<12531.1225361647@redhat.com>
-	<20081030101626.GA12209@infradead.org>
-	<490A5781.9050301@sgi.com>
+Subject: linux-next: sound tree build failure
+Date: Fri, 31 Oct 2008 14:41:06 +1100
+Message-ID: <20081031144106.f66b7084.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__31_Oct_2008_13_49_31_+1100_pVZUiPfTYH3pqFOT"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34938 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56649 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752695AbYJaCtm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 30 Oct 2008 22:49:42 -0400
-In-Reply-To: <490A5781.9050301@sgi.com>
+	id S1750950AbYJaDlM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Oct 2008 23:41:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: lachlan@sgi.com
-Cc: Christoph Hellwig <hch@infradead.org>, David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, David Chinner <david@fromorbit.com>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, Troy Kisky <troy.kisky@boundarydevices.com>
 
---Signature=_Fri__31_Oct_2008_13_49_31_+1100_pVZUiPfTYH3pqFOT
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Takashi,
 
-Hi Lachlan,
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-On Fri, 31 Oct 2008 11:55:29 +1100 Lachlan McIlroy <lachlan@sgi.com> wrote:
->
-> Christoph Hellwig wrote:
-> > On Thu, Oct 30, 2008 at 10:14:07AM +0000, David Howells wrote:
-> >>
-> >> Could you pull my XFS wrapper patch into the XFS tree?  That might mak=
-e things
-> >> easier for Stephen.  The prerequisite patch is already upstream.  Now =
-if only
-> >> Linus would take the rest of it.
-> >=20
-> > I can't put anything in the XFS tree.
->=20
-> I can.  It's in.
+sound/soc/soc-dapm.c: In function 'snd_soc_dapm_sys_add':
+sound/soc/soc-dapm.c:828: error: 'ret' undeclared (first use in this function)
 
-Thanks.
+Caused by commit 12ef193d5817504621e503e78d641265f6a86ac4 ("ASoC: Allow
+setting codec register with debugfs filesystem") which removed the
+declaration.
 
---=20
+I applied the following patch.  More care required.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__31_Oct_2008_13_49_31_+1100_pVZUiPfTYH3pqFOT
-Content-Type: application/pgp-signature
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 31 Oct 2008 14:39:03 +1100
+Subject: [PATCH] ALSA: restore removeed variable declaration
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ sound/soc/soc-dapm.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-iEYEARECAAYFAkkKcjsACgkQjjKRsyhoI8xsOgCeJ29ImcgxK0YVoi0O8Y8Qo4PC
-SCEAn2klVX9YFGp0Id9Ao2UVA1hP5Kk6
-=c7qo
------END PGP SIGNATURE-----
-
---Signature=_Fri__31_Oct_2008_13_49_31_+1100_pVZUiPfTYH3pqFOT--
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index 407092c..7bf3c40 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -822,6 +822,8 @@ static DEVICE_ATTR(dapm_widget, 0444, dapm_widget_show, NULL);
+ 
+ int snd_soc_dapm_sys_add(struct device *dev)
+ {
++	int ret;
++
+ 	if (!dapm_status)
+ 		return 0;
+ 
+-- 
+1.5.6.5
