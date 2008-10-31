@@ -1,36 +1,35 @@
-From: Eric Sandeen <sandeen@redhat.com>
-Subject: Re: linux-next: manual merge of the creds tree
-Date: Fri, 31 Oct 2008 11:54:19 -0500
-Message-ID: <490B383B.5040409@redhat.com>
-References: <20081031164708.fd0bfba5.sfr@canb.auug.org.au>
+From: Krzysztof Halasa <khc@pm.waw.pl>
+Subject: Re: linux-next: manual merge of the hdlc tree
+Date: Fri, 31 Oct 2008 18:50:09 +0100
+Message-ID: <m3prlgfycu.fsf@maximus.localdomain>
+References: <20081031162913.3cc30025.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:53061 "EHLO mx2.redhat.com"
+Received: from khc.piap.pl ([195.187.100.11]:59782 "EHLO khc.piap.pl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752294AbYJaQy6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 31 Oct 2008 12:54:58 -0400
-In-Reply-To: <20081031164708.fd0bfba5.sfr@canb.auug.org.au>
+	id S1751373AbYJaRuM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 31 Oct 2008 13:50:12 -0400
+In-Reply-To: <20081031162913.3cc30025.sfr@canb.auug.org.au> (Stephen Rothwell's message of "Fri\, 31 Oct 2008 16\:29\:13 +1100")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, Alan Cox <alan@redhat.com>
 
-Stephen Rothwell wrote:
-> Hi David,
-> 
-> Today's linux-next merge of the creds tree got conflicts in
-> fs/ext4/balloc.c between commits 8c3bf8a01c005385e9be0bc992e10abfb355278c
-> ("merge ext4_claim_free_blocks & ext4_has_free_blocks") and
-> a996031c87e093017c0763326a08896a3a4817f4 ("delay capable() check in
-> ext4_has_free_blocks()") from the ext4 tree and commit
-> e6396a30cfa855ccca8cc21bcd92bb40ed10619f ("CRED: Wrap task credential
-> accesses in the Ext4 filesystem") from the creds tree.
-> 
-> Overlapping change/move of code.  I fixed it up (see below) and can carry
-> the fix.
+Hi Stephen,
 
-Looks fine, thanks.
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
--Eric
+> Today's linux-next merge of the hdlc tree got a conflict in
+> Documentation/DocBook/wanbook.tmpl between commit
+> 89a056df78b113fcab21d71cd24aa1893c09225b ("Rationalise Randy's address a
+> bit") from Linus' tree and commit
+> 8a8c8f08abe7d3fd82c2853d0e1f391f8bfc96db ("WAN: syncppp.c is no longer
+> used by any kernel code. Remove it.") from the hdlc tree.
+>
+> The former updated a file that the latter removed.  I just removed it.
+
+Thanks. I will request Jeff to pull this code soon (the tree will be
+reset) so I hope the conflicts will end in few days.
+-- 
+Krzysztof Halasa
