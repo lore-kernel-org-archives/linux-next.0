@@ -1,33 +1,33 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for October 30
-Date: Thu, 30 Oct 2008 16:55:32 -0700
-Message-ID: <20081030165532.802375f8.randy.dunlap@oracle.com>
-References: <20081030173030.d8847df6.sfr@canb.auug.org.au>
+From: Lachlan McIlroy <lachlan@sgi.com>
+Subject: Re: linux-next: manual merge of the creds tree
+Date: Fri, 31 Oct 2008 11:55:29 +1100
+Message-ID: <490A5781.9050301@sgi.com>
+References: <20081030080343.GA20548@infradead.org> <20081030154741.2651e779.sfr@canb.auug.org.au> <12531.1225361647@redhat.com> <20081030101626.GA12209@infradead.org>
+Reply-To: lachlan@sgi.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from agminet01.oracle.com ([141.146.126.228]:58350 "EHLO
-	agminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752946AbYJ3X4C (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 30 Oct 2008 19:56:02 -0400
-In-Reply-To: <20081030173030.d8847df6.sfr@canb.auug.org.au>
+Received: from netops-testserver-3-out.sgi.com ([192.48.171.28]:39058 "EHLO
+	relay.sgi.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752977AbYJaA50 (ORCPT
+	<rfc822;@relay.corp.sgi.com:linux-next@vger.kernel.org>);
+	Thu, 30 Oct 2008 20:57:26 -0400
+In-Reply-To: <20081030101626.GA12209@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh <greg@kroah.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: David Howells <dhowells@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, David Chinner <david@fromorbit.com>
 
-On Thu, 30 Oct 2008 17:30:30 +1100 Stephen Rothwell wrote:
+Christoph Hellwig wrote:
+> On Thu, Oct 30, 2008 at 10:14:07AM +0000, David Howells wrote:
+>> Hi Christoph,
+>>
+>> Could you pull my XFS wrapper patch into the XFS tree?  That might make things
+>> easier for Stephen.  The prerequisite patch is already upstream.  Now if only
+>> Linus would take the rest of it.
+> 
+> I can't put anything in the XFS tree.
+> 
 
-
-Greg told me that he would fix these, but they are still around:
-
-drivers/staging/poch/poch.c:388: warning: format '%x' expects type 'unsigned int', but argument 4 has type 'dma_addr_t'
-
-drivers/usb/misc/vstusb.c:623: warning: format '%d' expects type 'int', but argument 5 has type 'size_t'
-
-
-Otherwise it's a quiet randconfig tree.  Must be short of new commits.  ;)
-
----
-~Randy
+I can.  It's in.
