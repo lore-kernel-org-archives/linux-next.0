@@ -1,30 +1,37 @@
-From: David Howells <dhowells@redhat.com>
-Subject: Re: linux-next: manual merge of the creds tree
-Date: Fri, 31 Oct 2008 10:37:18 +0000
-Message-ID: <11176.1225449438@redhat.com>
-References: <20081031165606.52de69dc.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: Tree for October 30
+Date: Fri, 31 Oct 2008 09:40:34 -0700
+Message-ID: <20081031164034.GA17208@kroah.com>
+References: <20081030173030.d8847df6.sfr@canb.auug.org.au> <20081030165532.802375f8.randy.dunlap@oracle.com> <20081031062557.GB22015@kroah.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:48354 "EHLO mx2.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751988AbYJaKhk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 31 Oct 2008 06:37:40 -0400
-In-Reply-To: <20081031165606.52de69dc.sfr@canb.auug.org.au>
+Received: from kroah.org ([198.145.64.141]:53828 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751679AbYJaQtj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 31 Oct 2008 12:49:39 -0400
+Content-Disposition: inline
+In-Reply-To: <20081031062557.GB22015@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: dhowells@redhat.com, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, Alan Cox <alan@redhat.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Thu, Oct 30, 2008 at 11:25:57PM -0700, Greg KH wrote:
+> On Thu, Oct 30, 2008 at 04:55:32PM -0700, Randy Dunlap wrote:
+> > On Thu, 30 Oct 2008 17:30:30 +1100 Stephen Rothwell wrote:
+> > 
+> > 
+> > Greg told me that he would fix these, but they are still around:
+> > 
+> > drivers/staging/poch/poch.c:388: warning: format '%x' expects type 'unsigned int', but argument 4 has type 'dma_addr_t'
 
-> Today's linux-next merge of the creds tree got conflicts in
-> include/linux/security.h and security/security.c between commit
-> 731572d39fcd3498702eda4600db4c43d51e0b26 ("nfsd: fix vm overcommit
-> crash") from Linus' tree and commit
-> a3338909826d32d821158a6adc43ce0a1654b31d ("CRED: Make execve() take
-> advantage of copy-on-write credentials") from the creds tree.
-> 
-> Just overlapping additions changes. I fixed it up (see below).
+This one is fixed in my trees, so you should not get this anymore.
 
-Looks good.  I've pushed my own version of this into my tree.
+> > drivers/usb/misc/vstusb.c:623: warning: format '%d' expects type 'int', but argument 5 has type 'size_t'
 
-David
+I've now fixed this one.
+
+thanks,
+
+greg k-h
