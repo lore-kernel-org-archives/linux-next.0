@@ -1,69 +1,52 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: next-20081030: voyager compile busted
-Date: Fri, 31 Oct 2008 12:42:14 -0500
-Message-ID: <1225474934.3264.4.camel@localhost.localdomain>
-References: <20081030173030.d8847df6.sfr@canb.auug.org.au>
-	 <20081030180323.GA13399@x200.localdomain>
-	 <1225398287.19324.1.camel@localhost.localdomain>
-	 <20081030205230.GO27407@elte.hu>
-	 <1225400283.19324.6.camel@localhost.localdomain>
-	 <20081030210704.GA25665@elte.hu>
-	 <1225401708.19324.35.camel@localhost.localdomain>
-	 <490A2A30.5040905@zytor.com>
-	 <1225403266.19324.42.camel@localhost.localdomain>
-	 <490A2C3D.4020202@zytor.com>  <20081030224057.GB20507@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the hdlc tree
+Date: Sat, 1 Nov 2008 11:54:18 +1100
+Message-ID: <20081101115418.eee39d79.sfr@canb.auug.org.au>
+References: <20081031162913.3cc30025.sfr@canb.auug.org.au>
+	<m3prlgfycu.fsf@maximus.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__1_Nov_2008_11_54_18_+1100_TQWk8YJfBtUpcwL1"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from accolon.hansenpartnership.com ([76.243.235.52]:37905 "EHLO
-	accolon.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752634AbYJaWBp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 31 Oct 2008 18:01:45 -0400
-In-Reply-To: <20081030224057.GB20507@elte.hu>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46643 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751368AbYKAAyY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 31 Oct 2008 20:54:24 -0400
+In-Reply-To: <m3prlgfycu.fsf@maximus.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Alexey Dobriyan <adobriyan@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Yinghai Lu <yinghai@kernel.org>
+To: Krzysztof Halasa <khc@pm.waw.pl>
+Cc: linux-next@vger.kernel.org, Alan Cox <alan@redhat.com>
 
-On Thu, 2008-10-30 at 23:40 +0100, Ingo Molnar wrote: 
-> * H. Peter Anvin <hpa@zytor.com> wrote:
-> 
-> > James Bottomley wrote:
-> > > 
-> > > Yes ... been having IRC conversations about that.  We'd need to use
-> > > runtime patching to fix the performance regressions virtualisation has
-> > > been causing us first ... but then we could use it for voyager.
-> > 
-> > I thought we already were, at least to some degree (the call sites 
-> > are way too big and way bigger than they need to be, so we end up 
-> > with a lot of NOPs.  I proposed a solution to Jeremy at Kernel 
-> > Summit, but he basically said "I don't want to maintain that, I 
-> > don't care about hardware performance", which is understandable but 
-> > highly unfortunate.)
-> 
-> in practice the function pointer overhead is almost unmeasurable for 
-> things like IPIs which are rather expensive to issue. In fact it's 
-> probably more expensive on Voyager as it does not utilize the local 
-> APIC for SMP messaging (which is pretty much the only 
-> performance-sensitive thing here). It uses its own glue logic it 
-> appears, which is almost certainly behind the system bus.
+--Signature=_Sat__1_Nov_2008_11_54_18_+1100_TQWk8YJfBtUpcwL1
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Heh ... don't be so sure:  The VIC uses an array of up to 8 standard
-8255 IRQ lines, which is slow.  The QIC uses CPI trigger via cache line
-interference, which is far faster than APIC bus based systems (but is
-fairly similar to the way SAPIC systems work ... almost a decade after
-the original QIC system).
+Hi Krzysztof,
 
-> James, how many cycles do typical SMP ops take on Voyager?
+On Fri, 31 Oct 2008 18:50:09 +0100 Krzysztof Halasa <khc@pm.waw.pl> wrote:
+>
+> Thanks. I will request Jeff to pull this code soon (the tree will be
+> reset) so I hope the conflicts will end in few days.
 
-To be honest, I'm not too bothered about that.  What bothers me is that
-if a normal system performance goes down because of the function pointer
-replacement (remember all x86 SMP systems will see an increase in
-function pointer usage because of this approach), then it probably
-wasn't worth it.
+Thanks.
 
-However, the only way to be sure is to try it and get the benchmarks.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-James
+--Signature=_Sat__1_Nov_2008_11_54_18_+1100_TQWk8YJfBtUpcwL1
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkLqLoACgkQjjKRsyhoI8xnewCfVWDaTbKwBh/lQkofIMekHxPX
+V1oAn1mDbjk9BPR8OEFUXpzqw/FP5QXV
+=TcPw
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__1_Nov_2008_11_54_18_+1100_TQWk8YJfBtUpcwL1--
