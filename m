@@ -1,32 +1,69 @@
-From: Russell King <rmk+lkml@arm.linux.org.uk>
-Subject: Re: next-20081103: arch/arm/kernel/elf.c:30: error: 'e_flags' undeclared
-Date: Mon, 3 Nov 2008 15:31:54 +0000
-Message-ID: <20081103153154.GC26372@flint.arm.linux.org.uk>
-References: <20081103183214.aac32543.sfr@canb.auug.org.au> <20081103142801.GA3918@x200.localdomain> <18703.5082.59702.571742@harpo.it.uu.se>
+From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
+Subject: 2.6.28-rc3(-next20081103) suspend issues on Lenovo X200
+Date: Mon, 3 Nov 2008 16:39:45 +0100
+Message-ID: <20081103153945.GA20618@denkbrett.schottelius.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="huq684BweRXVnRxX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:45198 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753824AbYKCPcY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Nov 2008 10:32:24 -0500
+Received: from mx3.schottelius.org ([77.109.138.221]:54655 "EHLO
+	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752763AbYKCPkf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Nov 2008 10:40:35 -0500
 Content-Disposition: inline
-In-Reply-To: <18703.5082.59702.571742@harpo.it.uu.se>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mikael Pettersson <mikpe@it.uu.se>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Nov 03, 2008 at 04:08:10PM +0100, Mikael Pettersson wrote:
-> Alexey Dobriyan writes:
->  > s/e_flags/eflags/ but I'm not sure.
-> 
-> Correct. I sent the fixup patch below to rmk and the linux arm mailing
-> list yesterday, but I guess it hasn't found it's way to linux-next yet:
 
-I committed the fix yesterday, but I haven't pushed my tree out yet.
+--huq684BweRXVnRxX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+Updating my last post, system now runs with
+the new Debian xserver-xorg-intel package:
+
+2.6.28-rc3 and 2.6.28-rc3-next-20081103: acpi_sleep=3Ds3_bios
+   - suspend on console works
+   - wakeup on console works
+   - xorg (intel 2.3.2-2+lenny5) works
+   - suspend on xorg works
+   - wakeup on xorg is BROKEN:
+      - console (kernel messages) is seen for a few seconds
+      - kernel switches back to X
+      - screen is partly drawn: X cursor is shown, background, no windows
+      - system hard reboots after about 20 seconds (watchdog?)
+
+The Debian packages includes the lates G45 bugfix:
+
+http://packages.debian.org/changelogs/pool/main/x/xserver-xorg-video-intel/=
+xserver-xorg-video-intel_2.3.2-2+lenny5/changelog
+
+So I'm waiting for your input on where to update what next ;-)
+
+Sincerly,
+
+Nico
+
+--=20
+Think about Free and Open Source Software (FOSS).
+http://nico.schottelius.org/documentations/foss/the-term-foss/
+
+PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
+
+--huq684BweRXVnRxX
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkPG0EACgkQuL75KpiFGIwWHACfdaw83DOMQNN4j9re8Q8bTc7k
+k6EAmwWzfs/1+PCPXmViPmIULolKkeB6
+=DgId
+-----END PGP SIGNATURE-----
+
+--huq684BweRXVnRxX--
