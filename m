@@ -1,63 +1,29 @@
-From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
-Subject: Lenovo X200 configuration
-Date: Mon, 3 Nov 2008 09:20:46 +0100
-Message-ID: <20081103082046.GA4377@denkbrett.schottelius.org>
+From: Pekka Enberg <penberg@cs.helsinki.fi>
+Subject: Re: linux-next: slab tree build failure
+Date: Mon, 03 Nov 2008 11:38:17 +0200
+Message-ID: <1225705098.22949.11.camel@penberg-laptop>
+References: <20081103154221.e68a50f0.sfr@canb.auug.org.au>
+	 <20081103051433.GS19509@disturbed>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="M9NhX3UHpAaciwkO"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.schottelius.org ([77.109.138.221]:44996 "EHLO
-	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754757AbYKCIVb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Nov 2008 03:21:31 -0500
-Received: from ikn.ethz.ch (unknown [91.190.14.67])
-	by mx3.schottelius.org (Postfix) with ESMTPSA id 12665197A070
-	for <linux-next@vger.kernel.org>; Mon,  3 Nov 2008 09:21:29 +0100 (CET)
-Content-Disposition: inline
+Received: from courier.cs.helsinki.fi ([128.214.9.1]:43857 "EHLO
+	mail.cs.helsinki.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754829AbYKCJh2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Nov 2008 04:37:28 -0500
+In-Reply-To: <20081103051433.GS19509@disturbed>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+To: Dave Chinner <david@fromorbit.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, Rik van Riel <riel@redhat.com>, Lachlan McIlroy <lachlan@sgi.com>, Christoph Hellwig <hch@infradead.org>
 
+On Mon, 2008-11-03 at 16:14 +1100, Dave Chinner wrote:
+> Yeah, that will work for the moment. It's probably best that we
+> don't try to add defrag back into the XFS inode code until we've
+> sorted all the niggling problems as a result of the "combine..."
+> patch.
 
---M9NhX3UHpAaciwkO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+OK, I dropped the XFS defrag patch from my tree for now. Thanks guys!
 
-Good morning!
-
-I just put my (working) configuration for the Lenovo X200 and T60
-online at
-
-   http://git.schottelius.org/?p=3Dconfigs/linux;a=3Dsummary
-
-This includes a next branch for next configurations.
-
-I am wondering, whether we already have some centralised website
-that contains working kernel configurations for different
-devices?
-
-Sincelry,
-
-Nico
-
---=20
-Think about Free and Open Source Software (FOSS).
-http://nico.schottelius.org/documentations/foss/the-term-foss/
-
-PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
-
---M9NhX3UHpAaciwkO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkOtF4ACgkQuL75KpiFGIwMPQCgn8KMbaymltCggD+3wD9ZgVV4
-RMoAoJ5NWnRB19B4/jk0KOSBodmdjpQB
-=d4Kj
------END PGP SIGNATURE-----
-
---M9NhX3UHpAaciwkO--
+		Pekka
