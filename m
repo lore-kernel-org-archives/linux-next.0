@@ -1,187 +1,87 @@
-From: "Vegard Nossum" <vegard.nossum@gmail.com>
-Subject: Re: linux-next: Tree for October 31
-Date: Sat, 1 Nov 2008 11:44:39 +0100
-Message-ID: <19f34abd0811010344h7fe9fb8by79f9ae02dbf03ec7@mail.gmail.com>
-References: <20081031185613.7892fd8d.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: usb tree build failure
+Date: Mon, 3 Nov 2008 11:36:40 +1100
+Message-ID: <20081103113640.1ad6899d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wa-out-1112.google.com ([209.85.146.180]:3765 "EHLO
-	wa-out-1112.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751387AbYKAKok (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 1 Nov 2008 06:44:40 -0400
-In-Reply-To: <20081031185613.7892fd8d.sfr@canb.auug.org.au>
-Content-Disposition: inline
+Received: from chilli.pcug.org.au ([203.10.76.44]:60853 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753872AbYKCAgr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 2 Nov 2008 19:36:47 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Christoph Lameter <cl@linux-foundation.org>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, Andrew Morton <akpm@linux-foundation.org>, Pekka Enberg <penberg@cs.helsinki.fi>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, Alexey Klimov <klimov.linux@gmail.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Douglas Schilling Landgraf <dougsland@gmail.com>
 
-On Fri, Oct 31, 2008 at 8:56 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-> (patches at
-> http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-> are tracking the linux-next tree using git, you should not use "git pull"
-> to do so as that will try to merge the new linux-next release with the
-> old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-> (see below).
+Hi Greg,
 
-Hm, won't boot for me :-(
+I am still getting these errors after merging the usb tree:
 
-   [Linux-bzImage, setup=0x3000, size=0xfdbd90]
+drivers/media/radio/radio-mr800.c: In function 'vidioc_s_frequency':
+drivers/media/radio/radio-mr800.c:362: error: implicit declaration of function 'warn'
+drivers/media/radio/radio-mr800.c: In function 'usb_amradio_suspend':
+drivers/media/radio/radio-mr800.c:513: error: implicit declaration of function 'info'
 
-BIOS EBDA/lowmem at: 0009fc00/0009fc00
-Initializing cgroup subsys cpuset
-Initializing cgroup subsys cpu
-Linux version 2.6.28-rc2-next-20081031 (vegard@localhost.localdomain) (gcc versi
-on 4.3.0 20080428 (Red Hat 4.3.0-8) (GCC) ) #59 SMP Sat Nov 1 08:01:36 CET 2008
-KERNEL supported cpus:
-  Intel GenuineIntel
-  AMD AuthenticAMD
-  NSC Geode by NSC
-  Cyrix CyrixInstead
-  Centaur CentaurHauls
-  Transmeta GenuineTMx86
-  Transmeta TransmetaCPU
-  UMC UMC UMC UMC
-BIOS-provided physical RAM map:
- BIOS-e820: 0000000000000000 - 000000000009fc00 (usable)
- BIOS-e820: 000000000009fc00 - 00000000000a0000 (reserved)
- BIOS-e820: 00000000000e6000 - 0000000000100000 (reserved)
- BIOS-e820: 0000000000100000 - 000000003ffc0000 (usable)
- BIOS-e820: 000000003ffc0000 - 000000003ffce000 (ACPI data)
- BIOS-e820: 000000003ffce000 - 000000003fff0000 (ACPI NVS)
- BIOS-e820: 000000003fff0000 - 0000000040000000 (reserved)
- BIOS-e820: 00000000fee00000 - 00000000fee01000 (reserved)
- BIOS-e820: 00000000ffb80000 - 0000000100000000 (reserved)
-console [earlyser0] enabled
-debug: ignoring loglevel setting.
-DMI 2.3 present.
-AMI BIOS detected: BIOS may corrupt low RAM, working it around.
-last_pfn = 0x3ffc0 max_arch_pfn = 0x100000
-x86 PAT enabled: cpu 0, old 0x7040600070406, new 0x7010600070106
-kernel direct mapping tables up to 373fe000 @ 100000-1e1000
-ACPI: RSDP 000F9380, 0014 (r0 ACPIAM)
-ACPI: RSDT 3FFC0000, 0034 (r1 A M I  OEMRSDT   7000624 MSFT       97)
-ACPI: FACP 3FFC0200, 0084 (r2 A M I  OEMFACP   7000624 MSFT       97)
-ACPI: DSDT 3FFC0430, 42F0 (r1   945P  945PA30        0 INTL  2002026)
-ACPI: FACS 3FFCE000, 0040
-ACPI: APIC 3FFC0390, 005C (r1 A M I  OEMAPIC   7000624 MSFT       97)
-ACPI: MCFG 3FFC03F0, 003C (r1 A M I  OEMMCFG   7000624 MSFT       97)
-ACPI: OEMB 3FFCE040, 0046 (r1 A M I  AMI_OEM   7000624 MSFT       97)
-ACPI: Local APIC address 0xfee00000
-139MB HIGHMEM available.
-883MB LOWMEM available.
-  mapped low ram: 0 - 373fe000
-  low ram: 00000000 - 373fe000
-  bootmap 00010000 - 00016e80
-(8 early reservations) ==> bootmem [0000000000 - 00373fe000]
-  #0 [0000000000 - 0000001000]   BIOS data page ==> [0000000000 - 0000001000]
-  #1 [0000001000 - 0000002000]    EX TRAMPOLINE ==> [0000001000 - 0000002000]
-  #2 [0000006000 - 0000007000]       TRAMPOLINE ==> [0000006000 - 0000007000]
-  #3 [0000400000 - 0002915914]    TEXT DATA BSS ==> [0000400000 - 0002915914]
-  #4 [0002916000 - 0002932000]    INIT_PG_TABLE ==> [0002916000 - 0002932000]
-  #5 [000009fc00 - 0000100000]    BIOS reserved ==> [000009fc00 - 0000100000]
-  #6 [0000100000 - 00001c2000]          PGTABLE ==> [0000100000 - 00001c2000]
-  #7 [0000010000 - 0000017000]          BOOTMAP ==> [0000010000 - 0000017000]
-found SMP MP-table at [c00ff780] 000ff780
-Zone PFN ranges:
-  DMA      0x00000010 -> 0x00001000
-  Normal   0x00001000 -> 0x000373fe
-  HighMem  0x000373fe -> 0x0003ffc0
-Movable zone start PFN for each node
-early_node_map[2] active PFN ranges
-    0: 0x00000010 -> 0x0000009f
-    0: 0x00000100 -> 0x0003ffc0
-On node 0 totalpages: 261967
-free_area_init_node: node 0, pgdat c22fbf80, node_mem_map c2933380
-  DMA zone: 56 pages used for memmap
-  DMA zone: 0 pages reserved
-  DMA zone: 3927 pages, LIFO batch:0
-  Normal zone: 3038 pages used for memmap
-  Normal zone: 219168 pages, LIFO batch:31
-  HighMem zone: 490 pages used for memmap
-  HighMem zone: 35288 pages, LIFO batch:7
-  Movable zone: 0 pages used for memmap
-Using APIC driver default
-ACPI: PM-Timer IO Port: 0x808
-ACPI: Local APIC address 0xfee00000
-ACPI: LAPIC (acpi_id[0x01] lapic_id[0x00] enabled)
-ACPI: LAPIC (acpi_id[0x02] lapic_id[0x01] enabled)
-ACPI: IOAPIC (id[0x02] address[0xfec00000] gsi_base[0])
-IOAPIC[0]: apic_id 2, version 32, address 0xfec00000, GSI 0-23
-ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
-ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
-ACPI: IRQ0 used by override.
-ACPI: IRQ2 used by override.
-ACPI: IRQ9 used by override.
-Enabling APIC mode:  Flat.  Using 1 I/O APICs
-Using ACPI (MADT) for SMP configuration information
-SMP: Allowing 2 CPUs, 0 hotplug CPUs
-PM: Registered nosave memory: 000000000009f000 - 00000000000a0000
-PM: Registered nosave memory: 00000000000a0000 - 00000000000e6000
-PM: Registered nosave memory: 00000000000e6000 - 0000000000100000
-Allocating PCI resources starting at 50000000 (gap: 40000000:bee00000)
-BUG: Int 6: CR2 00000000
-     EDI 01000000  ESI 00000000  EBP c2345f6c  ESP c2345f0c
-     EBX c23e3dac  EDX 00000006  ECX 00000080  EAX c23e3dac
-     err 00000000  EIP c2372d2a   CS 00000060  flg 00010046
-Stack: c2345f74 c2372f3f 00000001 fffffeec 00000114 00000046 c2345fb0 c0465301
-       00000080 00000000 c23e3dac 000000df c23e3dac 00001001 000373fe 00000000
-       00000000 c23e3dac 01000000 00000000 c2345f98 c2372ff8 01000000 00000000
-Pid: 0, comm: swapper Not tainted 2.6.28-rc2-next-20081031 #59
-Call Trace:
- [<c2372d2a>] ? alloc_bootmem_core+0x49/0x2b2
- [<c2372f3f>] ? alloc_bootmem_core+0x25e/0x2b2
- [<c0465301>] ? vprintk+0x181/0x440
- [<c2372ff8>] ? ___alloc_bootmem_nopanic+0x65/0x91
- [<c237308d>] ? ___alloc_bootmem+0x16/0x3c
- [<c237308d>] ? ___alloc_bootmem+0x16/0x3c
- [<c2373163>] ? __alloc_bootmem+0x12/0x14
- [<c23757fe>] ? cpu_alloc_init+0x4b/0x5d
- [<c2354709>] ? start_kernel+0xe9/0x3c1
- [<c2354099>] ? __init_begin+0x99/0xa1
+I have been reverting these patches for a while:
+	USB: remove info() macro from usb.h
+	USB: remove warn() macro from usb.h
 
-This is EIP:
+Today, I excluded those patches completely from my tree and they will
+stay excluded until a fix is applied to drivers/media/radio/radio-mr800.c.
 
-static void * __init alloc_bootmem_core(struct bootmem_data *bdata,
-                                unsigned long size, unsigned long align,
-                                unsigned long goal, unsigned long limit)
-{
-        unsigned long fallback = 0;
-        unsigned long min, max, start, sidx, midx, step;
+Alexey sent a patch on Oct 12 (see below).  Greg, you might as well put
+this your series until Mauro or Douglas gets around to sending it to
+Linus.  However, that patch does not address the warn() usage ...
 
-        BUG_ON(!size); <-- HERE!
-
-...coming from:
-
-void __init cpu_alloc_init(void)
-{
-        base_percpu_in_units = (__per_cpu_end - __per_cpu_start
-                                        + UNIT_SIZE - 1) / UNIT_SIZE;
-
-        nr_units = PERCPU_AREA_SIZE / UNIT_SIZE - base_percpu_in_units;
-
-        cpu_alloc_map = alloc_bootmem(BITS_TO_LONGS(nr_units)); <-- HERE!
-}
-
-...looks to have been introduced in:
-
-commit 66f2d2c531e755656a5481fb92a9d137404d9f44
-Author: Christoph Lameter <cl@linux-foundation.org>
-Date:   Mon Oct 27 14:45:46 2008 -0500
-
-    cpualloc: the allocator
-
-Adding to Cc.
-
-
-Vegard
+Mauro, Douglas, any comment?
 
 -- 
-"The animistic metaphor of the bug that maliciously sneaked in while
-the programmer was not looking is intellectually dishonest as it
-disguises that the error is the programmer's own creation."
-	-- E. W. Dijkstra, EWD1036
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+From: Alexey Klimov <klimov.linux@gmail.com>
+Date: Sun, Oct 12, 2008 at 3:05 AM
+Subject: [patch] radio-mr800: remove info-macro
+To: Douglas Schilling Landgraf <dougsland@gmail.com>
+
+
+Hello, Douglas!
+Here is the patch, that removes 3 info()-statements in radio-mr800,
+and place standart printk() there.
+
+Signed-off-by: Alexey Klimov <klimov.linux@gmail.com>
+
+diff -r 4092ed90412b linux/drivers/media/radio/radio-mr800.c
+--- a/linux/drivers/media/radio/radio-mr800.c	Sun Oct 12 01:34:43 2008 +0400
++++ b/linux/drivers/media/radio/radio-mr800.c	Sun Oct 12 02:55:32 2008 +0400
+@@ -508,7 +508,7 @@
+ 	if (amradio_stop(radio) < 0)
+ 		warn("amradio_stop() failed");
+ 
+-	info("radio-mr800: Going into suspend..");
++	printk(KERN_INFO KBUILD_MODNAME ": Going into suspend..\n");
+ 
+ 	return 0;
+ }
+@@ -521,7 +521,7 @@
+ 	if (amradio_start(radio) < 0)
+ 		warn("amradio_start() failed");
+ 
+-	info("radio-mr800: Coming out of suspend..");
++	printk(KERN_INFO KBUILD_MODNAME ": Coming out of suspend..\n");
+ 
+ 	return 0;
+ }
+@@ -615,7 +615,8 @@
+ {
+ 	int retval = usb_register(&usb_amradio_driver);
+ 
+-	info(DRIVER_VERSION " " DRIVER_DESC);
++	printk(KERN_INFO KBUILD_MODNAME ": "
++			DRIVER_VERSION " " DRIVER_DESC "\n");
+ 	if (retval)
+ 		err("usb_register failed. Error number %d", retval);
+ 	return retval;
