@@ -1,46 +1,36 @@
-From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
-Subject: Re: 2.6.28-rc3(-next20081103) suspend issues on Lenovo X200
-Date: Mon, 3 Nov 2008 17:53:08 +0100
-Message-ID: <20081103165308.GA27272@denkbrett.schottelius.org>
-References: <20081103153945.GA20618@denkbrett.schottelius.org>
+From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Subject: print_ssid undefined (linux-next 20081103)
+Date: Mon, 3 Nov 2008 11:42:22 -0800
+Message-ID: <20081103114222.b257f711.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.schottelius.org ([77.109.138.221]:38213 "EHLO
-	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754618AbYKCQxj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Nov 2008 11:53:39 -0500
-Content-Disposition: inline
-In-Reply-To: <20081103153945.GA20618@denkbrett.schottelius.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
+Hi,
 
---ew6BAiZeqk4r7MaW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I'm seeing a few instances of
 
-Update2:
+ERROR: "print_ssid" [drivers/net/wireless/ipw2100.ko] undefined!
 
-Nico -telmich- Schottelius [Mon, Nov 03, 2008 at 04:39:45PM +0100]:
-> 2.6.28-rc3 and 2.6.28-rc3-next-20081103: acpi_sleep=s3_bios
+with ipw2100 & ipw2200 in today's linux-next (20081103).
 
-   - Switching to console before suspending makes
-     everything work: suspend and wakeup, also when xorg is running.
+These configs have
+# CONFIG_WIRELESS is not set
+CONFIG_WIRELESS_EXT=y
 
---ew6BAiZeqk4r7MaW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
+In looking into this more, I see that the wireless drivers can be enabled
+& built even when CONFIG_WIRELESS=n.  Is this the expected behavior?
+Seems a bit odd.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkPLHQACgkQuL75KpiFGIyHgACdGktab5b0avbGooNkBIDIMsX1
-WBIAoORI9xbjmhtQnHWbhI4iTkuT4R0s
-=Tedy
------END PGP SIGNATURE-----
-
---ew6BAiZeqk4r7MaW--
+Thanks,
+---
+~Randy
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
