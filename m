@@ -1,37 +1,73 @@
-From: Roland Dreier <rdreier@cisco.com>
-Subject: Re: [PATCH] net/9p: limit RDMA to INET
-Date: Mon, 03 Nov 2008 12:52:50 -0800
-Message-ID: <aday700v8f1.fsf@cisco.com>
-References: <20081103111731.d12dbb84.randy.dunlap@oracle.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: print_ssid undefined (linux-next 20081103)
+Date: Mon, 3 Nov 2008 13:32:18 -0800
+Message-ID: <20081103133218.c2b8ce5d.randy.dunlap@oracle.com>
+References: <20081103114222.b257f711.randy.dunlap@oracle.com>
+	<20081103201206.GB6378@tesla>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20081103111731.d12dbb84.randy.dunlap@oracle.com> (Randy Dunlap's
-	message of "Mon, 3 Nov 2008 11:17:31 -0800")
-Sender: netdev-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, sfr <sfr@canb.auug.org.au>, rolandd@cisco.com, ericvh@gmail.com, akpm <akpm@linux-foundation.org>, davem@davemloft.net, netdev <netdev@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rgminet01.oracle.com ([148.87.113.118]:16741 "EHLO
+	rgminet01.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754782AbYKCVcy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Nov 2008 16:32:54 -0500
+In-Reply-To: <20081103201206.GB6378@tesla>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Luis R. Rodriguez" <lrodriguez@atheros.com>
+Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
- > Make 9p's RDMA option depend on INET since it uses Infiniband rdma_*
- > functions and that code depends on INET.  Otherwise 9p can try to
- > use symbols which don't exist.
- > 
- > ERROR: "rdma_destroy_id" [net/9p/9pnet_rdma.ko] undefined!
+On Mon, 3 Nov 2008 12:12:06 -0800 Luis R. Rodriguez wrote:
 
-Good catch.
+> On Mon, Nov 03, 2008 at 11:42:22AM -0800, Randy Dunlap wrote:
+> > Hi,
+> > 
+> > I'm seeing a few instances of
+> > 
+> > ERROR: "print_ssid" [drivers/net/wireless/ipw2100.ko] undefined!
+> > 
+> > with ipw2100 & ipw2200 in today's linux-next (20081103).
+> > 
+> > These configs have
+> > # CONFIG_WIRELESS is not set
+> > CONFIG_WIRELESS_EXT=y
+> > 
+> > In looking into this more, I see that the wireless drivers can be enabled
+> > & built even when CONFIG_WIRELESS=n.  Is this the expected behavior?
+> > Seems a bit odd.
+> 
+> Try this.
+> 
+> diff --git a/drivers/net/wireless/Kconfig b/drivers/net/wireless/Kconfig
+> index 42afaed..6f85bec 100644
+> --- a/drivers/net/wireless/Kconfig
+> +++ b/drivers/net/wireless/Kconfig
+> @@ -125,7 +125,7 @@ config PCMCIA_RAYCS
+>  
+>  config IPW2100
+>  	tristate "Intel PRO/Wireless 2100 Network Connection"
+> -	depends on PCI && WLAN_80211
+> +	depends on PCI && WLAN_80211 && LIB80211
+>  	select WIRELESS_EXT
+>  	select FW_LOADER
+>  	select IEEE80211
+> @@ -183,7 +183,7 @@ config IPW2100_DEBUG
+>  
+>  config IPW2200
+>  	tristate "Intel PRO/Wireless 2200BG and 2915ABG Network Connection"
+> -	depends on PCI && WLAN_80211
+> +	depends on PCI && WLAN_80211 && LIB80211
+>  	select WIRELESS_EXT
+>  	select FW_LOADER
+>  	select IEEE80211
+> --
 
- >  config NET_9P_RDMA
- > -	depends on NET_9P && INFINIBAND && EXPERIMENTAL
- > +	depends on INET && INFINIBAND && EXPERIMENTAL
+> make ARCH=i386 O=X32 oldconfig
+  GEN     /local/linsrc/linux-next-20081103/X32/Makefile
+scripts/kconfig/conf -o arch/x86/Kconfig
+net/ieee80211/Kconfig:3:error: found recursive dependency: IEEE80211 -> LIB80211 -> IPW2100 -> IEEE80211
+make[2]: *** [oldconfig] Error 1
 
-I wonder if there's a way to make this depend on INFINIBAND_ADDR_TRANS
-instead of INET, since that's the real dependency to get the rdma_*
-symbols.  However INFINIBAND_ADDR_TRANS is a bool that gets set to y iff
-INET and INFINIBAND are set, so it's not trivial to make a tristate
-depend on it.
-
-Maybe this patch is fine as it is, since the Kconfig dependencies are
-unlikely to change anyway...
-
- - R.
+---
+~Randy
