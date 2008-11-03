@@ -1,63 +1,37 @@
-From: "Luis R. Rodriguez" <lrodriguez@atheros.com>
-Subject: Re: print_ssid undefined (linux-next 20081103)
-Date: Mon, 3 Nov 2008 12:12:06 -0800
-Message-ID: <20081103201206.GB6378@tesla>
-References: <20081103114222.b257f711.randy.dunlap@oracle.com>
+From: Roland Dreier <rdreier@cisco.com>
+Subject: Re: [PATCH] net/9p: limit RDMA to INET
+Date: Mon, 03 Nov 2008 12:52:50 -0800
+Message-ID: <aday700v8f1.fsf@cisco.com>
+References: <20081103111731.d12dbb84.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.atheros.com ([12.36.123.2]:21401 "EHLO mail.atheros.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756252AbYKCUMI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 3 Nov 2008 15:12:08 -0500
-Received: from mail.atheros.com ([10.10.20.105])
-	by sidewinder.atheros.com
-	for <linux-next@vger.kernel.org>; Mon, 03 Nov 2008 12:12:08 -0800
-Content-Disposition: inline
-In-Reply-To: <20081103114222.b257f711.randy.dunlap@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20081103111731.d12dbb84.randy.dunlap@oracle.com> (Randy Dunlap's
+	message of "Mon, 3 Nov 2008 11:17:31 -0800")
+Sender: netdev-owner@vger.kernel.org
 To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, sfr <sfr@canb.auug.org.au>, rolandd@cisco.com, ericvh@gmail.com, akpm <akpm@linux-foundation.org>, davem@davemloft.net, netdev <netdev@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Nov 03, 2008 at 11:42:22AM -0800, Randy Dunlap wrote:
-> Hi,
-> 
-> I'm seeing a few instances of
-> 
-> ERROR: "print_ssid" [drivers/net/wireless/ipw2100.ko] undefined!
-> 
-> with ipw2100 & ipw2200 in today's linux-next (20081103).
-> 
-> These configs have
-> # CONFIG_WIRELESS is not set
-> CONFIG_WIRELESS_EXT=y
-> 
-> In looking into this more, I see that the wireless drivers can be enabled
-> & built even when CONFIG_WIRELESS=n.  Is this the expected behavior?
-> Seems a bit odd.
+ > Make 9p's RDMA option depend on INET since it uses Infiniband rdma_*
+ > functions and that code depends on INET.  Otherwise 9p can try to
+ > use symbols which don't exist.
+ > 
+ > ERROR: "rdma_destroy_id" [net/9p/9pnet_rdma.ko] undefined!
 
-Try this.
+Good catch.
 
-diff --git a/drivers/net/wireless/Kconfig b/drivers/net/wireless/Kconfig
-index 42afaed..6f85bec 100644
---- a/drivers/net/wireless/Kconfig
-+++ b/drivers/net/wireless/Kconfig
-@@ -125,7 +125,7 @@ config PCMCIA_RAYCS
- 
- config IPW2100
- 	tristate "Intel PRO/Wireless 2100 Network Connection"
--	depends on PCI && WLAN_80211
-+	depends on PCI && WLAN_80211 && LIB80211
- 	select WIRELESS_EXT
- 	select FW_LOADER
- 	select IEEE80211
-@@ -183,7 +183,7 @@ config IPW2100_DEBUG
- 
- config IPW2200
- 	tristate "Intel PRO/Wireless 2200BG and 2915ABG Network Connection"
--	depends on PCI && WLAN_80211
-+	depends on PCI && WLAN_80211 && LIB80211
- 	select WIRELESS_EXT
- 	select FW_LOADER
- 	select IEEE80211
+ >  config NET_9P_RDMA
+ > -	depends on NET_9P && INFINIBAND && EXPERIMENTAL
+ > +	depends on INET && INFINIBAND && EXPERIMENTAL
+
+I wonder if there's a way to make this depend on INFINIBAND_ADDR_TRANS
+instead of INET, since that's the real dependency to get the rdma_*
+symbols.  However INFINIBAND_ADDR_TRANS is a bool that gets set to y iff
+INET and INFINIBAND are set, so it's not trivial to make a tristate
+depend on it.
+
+Maybe this patch is fine as it is, since the Kconfig dependencies are
+unlikely to change anyway...
+
+ - R.
