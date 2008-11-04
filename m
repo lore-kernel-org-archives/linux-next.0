@@ -1,45 +1,61 @@
-From: Rodolfo Giometti <giometti-AVVDYK/kqiJWk0Htik3J/w@public.gmane.org>
-Subject: Re: next-20081103: oxu210hp-hcd.c:3849: error: implicit
-	declaration of function 'set_irq_type'
-Date: Tue, 4 Nov 2008 20:45:29 +0100
-Message-ID: <20081104194528.GI32133@tekkaman>
-References: <20081103183214.aac32543.sfr@canb.auug.org.au> <20081103155047.GA14489@x200.localdomain> <20081104163038.GF32133@tekkaman> <20081104184334.GA1840@suse.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: git tree with cputime changes
+Date: Wed, 5 Nov 2008 08:48:28 +1100
+Message-ID: <20081105084828.1988445a.sfr@canb.auug.org.au>
+References: <1225725054.24817.15.camel@localhost>
+	<20081105020139.a6a2be85.sfr@canb.auug.org.au>
+	<1225812759.5805.0.camel@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__5_Nov_2008_08_48_28_+1100_fylIlxXUbeg1lTaY"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:57091 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754370AbYKDVsh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 4 Nov 2008 16:48:37 -0500
+In-Reply-To: <1225812759.5805.0.camel@localhost>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: schwidefsky@de.ibm.com
+Cc: linux-next@vger.kernel.org
+
+--Signature=_Wed__5_Nov_2008_08_48_28_+1100_fylIlxXUbeg1lTaY
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20081104184334.GA1840-l3A5Bk7waGM@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg KH <gregkh-l3A5Bk7waGM@public.gmane.org>
-Cc: Alexey Dobriyan <adobriyan-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 04, 2008 at 10:43:34AM -0800, Greg KH wrote:
-> On Tue, Nov 04, 2008 at 05:30:38PM +0100, Rodolfo Giometti wrote:
-> > On Mon, Nov 03, 2008 at 06:50:47PM +0300, Alexey Dobriyan wrote:
-> > > On sparc:
-> > > 
-> > > drivers/usb/host/oxu210hp-hcd.c:3849: error: implicit declaration of function 'set_irq_type'
-> > > 
-> > > and including linux/irq.h doesn't cut it CONFIG_GENERIC_HARDIRQS aren't set.
-> > 
-> > Should I force CONFIG_GENERIC_HARDIRQS selection?
-> 
-> Can this hardware work on SPARC?
+Hi Martin,
 
-I think so even if on the data sheet is not specified...
+On Tue, 04 Nov 2008 16:32:39 +0100 Martin Schwidefsky <schwidefsky@de.ibm.c=
+om> wrote:
+>
+> On Wed, 2008-11-05 at 02:01 +1100, Stephen Rothwell wrote:
+> > > Martin Schwidefsky (4):
+> > >       [S390] fix scaled & unscaled cputime accounting
+> > >       [S390] idle cputime accounting
+> >=20
+> > These first two aren't really s390 specific, are they?
+>=20
+> Yeah that is true. The stupid script that applies the patches always
+> replaces [PATCH] with [S390] ..
 
-Ciao,
+That's OK, it was just a small point.
 
-Rodolfo
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
--- 
+--Signature=_Wed__5_Nov_2008_08_48_28_+1100_fylIlxXUbeg1lTaY
+Content-Type: application/pgp-signature
 
-GNU/Linux Solutions                  e-mail: giometti-AVVDYK/kqiJWk0Htik3J/w@public.gmane.org
-Linux Device Driver                          giometti-k2GhghHVRtY@public.gmane.org
-Embedded Systems                     phone:  +39 349 2432127
-UNIX programming                     skype:  rodolfo.giometti
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkQwywACgkQjjKRsyhoI8zmKwCff7DMvDnRYvP4kOnzpmztUU9L
+3lIAn0UHlXYUyfCUvKAJslMjwFrWSG/W
+=Qhvi
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__5_Nov_2008_08_48_28_+1100_fylIlxXUbeg1lTaY--
