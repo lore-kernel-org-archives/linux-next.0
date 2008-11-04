@@ -1,64 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Subject: Re: git tree with cputime changes
-Date: Wed, 5 Nov 2008 02:01:39 +1100
-Message-ID: <20081105020139.a6a2be85.sfr@canb.auug.org.au>
+Date: Tue, 04 Nov 2008 16:32:39 +0100
+Message-ID: <1225812759.5805.0.camel@localhost>
 References: <1225725054.24817.15.camel@localhost>
+	 <20081105020139.a6a2be85.sfr@canb.auug.org.au>
+Reply-To: schwidefsky@de.ibm.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__5_Nov_2008_02_01_39_+1100_HnEKHh4QmpJrTq/Z"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55161 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751938AbYKDPBr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 4 Nov 2008 10:01:47 -0500
-In-Reply-To: <1225725054.24817.15.camel@localhost>
+Received: from mtagate6.de.ibm.com ([195.212.29.155]:36964 "EHLO
+	mtagate6.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752501AbYKDPiT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Nov 2008 10:38:19 -0500
+Received: from d12nrmr1607.megacenter.de.ibm.com (d12nrmr1607.megacenter.de.ibm.com [9.149.167.49])
+	by mtagate6.de.ibm.com (8.13.8/8.13.8) with ESMTP id mA4FaS0u091330
+	for <linux-next@vger.kernel.org>; Tue, 4 Nov 2008 15:36:28 GMT
+Received: from d12av02.megacenter.de.ibm.com (d12av02.megacenter.de.ibm.com [9.149.165.228])
+	by d12nrmr1607.megacenter.de.ibm.com (8.13.8/8.13.8/NCO v9.1) with ESMTP id mA4FaSMi3383494
+	for <linux-next@vger.kernel.org>; Tue, 4 Nov 2008 16:36:28 +0100
+Received: from d12av02.megacenter.de.ibm.com (loopback [127.0.0.1])
+	by d12av02.megacenter.de.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id mA4FaRmh014337
+	for <linux-next@vger.kernel.org>; Tue, 4 Nov 2008 16:36:28 +0100
+In-Reply-To: <20081105020139.a6a2be85.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org
 
---Signature=_Wed__5_Nov_2008_02_01_39_+1100_HnEKHh4QmpJrTq/Z
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2008-11-05 at 02:01 +1100, Stephen Rothwell wrote:
+> > Martin Schwidefsky (4):
+> >       [S390] fix scaled & unscaled cputime accounting
+> >       [S390] idle cputime accounting
+> 
+> These first two aren't really s390 specific, are they?
 
-Hi Martin,
+Yeah that is true. The stupid script that applies the patches always
+replaces [PATCH] with [S390] ..
 
-On Mon, 03 Nov 2008 16:10:54 +0100 Martin Schwidefsky <schwidefsky@de.ibm.c=
-om> wrote:
->
-> I've created the cputime git branch on git390.osdl.marist.edu with the
-> improvements for the idle time accounting. I've got feedback from the
-> ia64 and powerpc maintainers but nothing really conclusive yet. To find
-> potential problems it would be nice if you could add=20
->=20
-> 	git://git390.osdl.marist.edu/pub/scm/linux-2.6.git cputime
->=20
-> to linux-next. The branch has four patches:
+-- 
+blue skies,
+  Martin.
 
-Sure, I have added it for the next tree.
-
-> Martin Schwidefsky (4):
->       [S390] fix scaled & unscaled cputime accounting
->       [S390] idle cputime accounting
-
-These first two aren't really s390 specific, are they?
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__5_Nov_2008_02_01_39_+1100_HnEKHh4QmpJrTq/Z
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkQY9MACgkQjjKRsyhoI8xwqwCguvqhTgOjBkzO4pqaaU4scuuB
-ACsAnjxDoJb7oqz7LnjYiNsrVUKg7L8b
-=3Fi9
------END PGP SIGNATURE-----
-
---Signature=_Wed__5_Nov_2008_02_01_39_+1100_HnEKHh4QmpJrTq/Z--
+"Reality continues to ruin my life." - Calvin.
