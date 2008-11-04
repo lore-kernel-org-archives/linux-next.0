@@ -1,45 +1,39 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: git tree with cputime changes
-Date: Tue, 04 Nov 2008 16:32:39 +0100
-Message-ID: <1225812759.5805.0.camel@localhost>
-References: <1225725054.24817.15.camel@localhost>
-	 <20081105020139.a6a2be85.sfr@canb.auug.org.au>
-Reply-To: schwidefsky@de.ibm.com
+From: Rodolfo Giometti <giometti-AVVDYK/kqiJWk0Htik3J/w@public.gmane.org>
+Subject: Re: next-20081103: oxu210hp-hcd.c:3849: error: implicit
+	declaration of function 'set_irq_type'
+Date: Tue, 4 Nov 2008 17:30:38 +0100
+Message-ID: <20081104163038.GF32133@tekkaman>
+References: <20081103183214.aac32543.sfr@canb.auug.org.au> <20081103155047.GA14489@x200.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate6.de.ibm.com ([195.212.29.155]:36964 "EHLO
-	mtagate6.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752501AbYKDPiT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Nov 2008 10:38:19 -0500
-Received: from d12nrmr1607.megacenter.de.ibm.com (d12nrmr1607.megacenter.de.ibm.com [9.149.167.49])
-	by mtagate6.de.ibm.com (8.13.8/8.13.8) with ESMTP id mA4FaS0u091330
-	for <linux-next@vger.kernel.org>; Tue, 4 Nov 2008 15:36:28 GMT
-Received: from d12av02.megacenter.de.ibm.com (d12av02.megacenter.de.ibm.com [9.149.165.228])
-	by d12nrmr1607.megacenter.de.ibm.com (8.13.8/8.13.8/NCO v9.1) with ESMTP id mA4FaSMi3383494
-	for <linux-next@vger.kernel.org>; Tue, 4 Nov 2008 16:36:28 +0100
-Received: from d12av02.megacenter.de.ibm.com (loopback [127.0.0.1])
-	by d12av02.megacenter.de.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id mA4FaRmh014337
-	for <linux-next@vger.kernel.org>; Tue, 4 Nov 2008 16:36:28 +0100
-In-Reply-To: <20081105020139.a6a2be85.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20081103155047.GA14489-2ev+ksY9ol182hYKe6nXyg@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexey Dobriyan <adobriyan-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-l3A5Bk7waGM@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 2008-11-05 at 02:01 +1100, Stephen Rothwell wrote:
-> > Martin Schwidefsky (4):
-> >       [S390] fix scaled & unscaled cputime accounting
-> >       [S390] idle cputime accounting
+On Mon, Nov 03, 2008 at 06:50:47PM +0300, Alexey Dobriyan wrote:
+> On sparc:
 > 
-> These first two aren't really s390 specific, are they?
+> drivers/usb/host/oxu210hp-hcd.c:3849: error: implicit declaration of function 'set_irq_type'
+> 
+> and including linux/irq.h doesn't cut it CONFIG_GENERIC_HARDIRQS aren't set.
 
-Yeah that is true. The stupid script that applies the patches always
-replaces [PATCH] with [S390] ..
+Should I force CONFIG_GENERIC_HARDIRQS selection?
+
+Ciao,
+
+Rodolfo
 
 -- 
-blue skies,
-  Martin.
 
-"Reality continues to ruin my life." - Calvin.
+GNU/Linux Solutions                  e-mail: giometti-AVVDYK/kqiJWk0Htik3J/w@public.gmane.org
+Linux Device Driver                          giometti-k2GhghHVRtY@public.gmane.org
+Embedded Systems                     phone:  +39 349 2432127
+UNIX programming                     skype:  rodolfo.giometti
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
