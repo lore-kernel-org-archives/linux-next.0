@@ -1,33 +1,67 @@
-From: David Howells <dhowells@redhat.com>
-Subject: Re: linux-next: manual merge of the creds tree
-Date: Wed, 05 Nov 2008 12:08:16 +0000
-Message-ID: <26171.1225886896@redhat.com>
-References: <20081105155620.8da6ac84.sfr@canb.auug.org.au>
+From: Boaz Harrosh <bharrosh@panasas.com>
+Subject: Re: [PATCHSET 00/18] open-osd: OSD Initiator library for Linux
+Date: Wed, 05 Nov 2008 15:56:56 +0200
+Message-ID: <4911A628.6000504@panasas.com>
+References: <48876009.8010701@panasas.com>	<491073BB.4000900@panasas.com> <20081104111923.bb19c238.akpm@linux-foundation.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:56514 "EHLO mx2.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750890AbYKEMI3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 5 Nov 2008 07:08:29 -0500
-In-Reply-To: <20081105155620.8da6ac84.sfr@canb.auug.org.au>
+Received: from qb-out-0506.google.com ([72.14.204.226]:5671 "EHLO
+	qb-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755185AbYKEN5E (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Nov 2008 08:57:04 -0500
+In-Reply-To: <20081104111923.bb19c238.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: dhowells@redhat.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Eric Paris <eparis@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: James.Bottomley@HansenPartnership.com, michaelc@cs.wisc.edu, fujita.tomonori@lab.ntt.co.jp, jeff@garzik.org, osd-dev@open-osd.org, linux-scsi@vger.kernel.org, Sami.Iren@seagate.com, pw@padd.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Today's linux-next merge of the creds tree got a conflict in
-> security/selinux/hooks.c between commit
-> 41d9f9c524a53477467b7e0111ff3d644198f191 ("SELinux: hold tasklist_lock
-> and siglock while waking wait_chldexit") from security-testing tree and
-> commit a3338909826d32d821158a6adc43ce0a1654b31d ("CRED: Make execve()
-> take advantage of copy-on-write credentials") from the creds tree.
+Andrew Morton wrote:
+> On Tue, 04 Nov 2008 18:09:31 +0200
+> Boaz Harrosh <bharrosh@panasas.com> wrote:
 > 
-> I can't see how to fix this easily, so I will have to drop the tree for
-> today.  Please try the merge for yourself and see if you can come up with
-> a solution, thanks.
+>> Please consider for inclusion, an in-kernel OSD initiator
+>> library. Its main users are planned to be various OSD based file
+>> systems and the pNFS-Objects Layout Driver. (To be submitted soon)
+>>  
+>> To try out and run the library please visit
+>> http://open-osd.org and follow the instructions there.
+>>
+>> The submitted patchset is also available via git at:
+>>    git://git.open-osd.org/linux-open-osd.git osd
+>>    http://git.open-osd.org/gitweb.cgi?p=linux-open-osd.git;a=shortlog;h=osd
+>>
+>> Or a compact out-of-tree repository that includes sources 
+>> and some extras:
+>>    git://git.open-osd.org/open-osd.git master
+>>    http://git.open-osd.org/gitweb.cgi?p=open-osd.git;a=summary
+>>
+>> ...
+>>
+>> We would like this to sit in -mm tree for a while to make sure it is compilable
+>> on all platform.
+> 
+> The best way to do that is to include your git tree in linux-next.  If
+> this code has a probably-will-be-merged-in-2.6.29 status then please
+> prepare a branch for Stephen to include in the linux-next lineup.
+> 
 
-James: is it worth you pulling my patches into your tree?
+Thanks Andrew
+I was thinking this code would eventually go into Linux-next threw
+James tree. But thought if there was a way for some exposure, so to
+give James some confidence in the code before he commits to it. But
+this way it could be perfect, thanks.
 
-David
+Stephen Hi
+I have just that branch ready it is:
+git://git.open-osd.org/linux-open-osd.git osd
+Note the "osd" branch. Do I need to call it something special like
+"linux-next"? (Give me 24 hours to fix all current comments)
+
+Also one more question. This tree is based on latest scsi-misc-2.6.git,
+Because it is destined to go threw James tree at the end. Do I need
+to prepare a special tree based on Linus-latest?
+
+Thanks in advance
+Boaz
