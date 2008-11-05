@@ -1,31 +1,60 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: Re: next-20081103: oxu210hp-hcd.c:3849: error: implicit
-	declaration of function 'set_irq_type'
-Date: Wed, 5 Nov 2008 11:50:24 +0300
-Message-ID: <20081105085024.GA3570@x200.localdomain>
-References: <20081103183214.aac32543.sfr@canb.auug.org.au> <20081103155047.GA14489@x200.localdomain> <20081104163038.GF32133@tekkaman>
+From: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
+Subject: Re: next-20081103 - possible circular locking dependency detected while bring up eth1
+Date: Wed,  5 Nov 2008 18:14:43 +0900 (JST)
+Message-ID: <20081105181242.9688.KOSAKI.MOTOHIRO@jp.fujitsu.com>
+References: <20081105071306.GB10881@linux.vnet.ibm.com> <1225871332.7803.2626.camel@twins>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ey-out-2122.google.com ([74.125.78.25]:57283 "EHLO
-	ey-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753865AbYKEIrP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Nov 2008 03:47:15 -0500
-Content-Disposition: inline
-In-Reply-To: <20081104163038.GF32133@tekkaman>
+Received: from fgwmail6.fujitsu.co.jp ([192.51.44.36]:43220 "EHLO
+	fgwmail6.fujitsu.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751184AbYKEJOr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Nov 2008 04:14:47 -0500
+In-Reply-To: <1225871332.7803.2626.camel@twins>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rodolfo Giometti <giometti@enneenne.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, gregkh@suse.de
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: kosaki.motohiro@jp.fujitsu.com, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, mel@csn.ul.ie
 
-On Tue, Nov 04, 2008 at 05:30:38PM +0100, Rodolfo Giometti wrote:
-> On Mon, Nov 03, 2008 at 06:50:47PM +0300, Alexey Dobriyan wrote:
-> > On sparc:
-> > 
-> > drivers/usb/host/oxu210hp-hcd.c:3849: error: implicit declaration of function 'set_irq_type'
-> > 
-> > and including linux/irq.h doesn't cut it CONFIG_GENERIC_HARDIRQS aren't set.
+> > [   31.989072] 2 locks held by events/3/18:
+> > [   31.989072]  #0:  (events){--..}, at: [<c04367bf>] run_workqueue+0x80/0x189
+> > [   31.989072]  #1:  ((linkwatch_work).work){--..}, at: [<c04367bf>] run_workqueue+0x80/0x189
+> > [   31.989072] 
+> > [   31.989072] stack backtrace:
+> > [   31.989072] Pid: 18, comm: events/3 Not tainted 2.6.28-rc3-next-20081103-autotest #1
+> > [   31.989072] Call Trace:
+> > [   31.989072]  [<c0445662>] print_circular_bug_tail+0xa4/0xaf
+> > [   31.989072]  [<c0445c10>] validate_chain+0x5a3/0xb35
+> > [   31.989072]  [<c0446822>] __lock_acquire+0x680/0x70e
+> > [   31.989072]  [<c04367bf>] ? run_workqueue+0x80/0x189
+> > [   31.989072]  [<c044690d>] lock_acquire+0x5d/0x7a
+> > [   31.989072]  [<c05e8ef5>] ? rtnl_lock+0xf/0x11
+> > [   31.989072]  [<c0651c04>] mutex_lock_nested+0xdf/0x251
+> > [   31.989072]  [<c05e8ef5>] ? rtnl_lock+0xf/0x11
+> > [   31.989072]  [<c05e8ef5>] ? rtnl_lock+0xf/0x11
+> > [   31.989072]  [<c05e8ef5>] rtnl_lock+0xf/0x11
+> > [   31.989072]  [<c05ea07a>] linkwatch_event+0x8/0x27
+> > [   31.989072]  [<c04367fd>] run_workqueue+0xbe/0x189
+> > [   31.989072]  [<c04367bf>] ? run_workqueue+0x80/0x189
+> > [   31.989072]  [<c05ea072>] ? linkwatch_event+0x0/0x27
+> > [   31.989072]  [<c043713f>] ? worker_thread+0x0/0xbf
+> > [   31.989072]  [<c04371f3>] worker_thread+0xb4/0xbf
+> > [   31.989072]  [<c0439765>] ? autoremove_wake_function+0x0/0x33
+> > [   31.989072]  [<c04396a6>] kthread+0x3b/0x61
+> > [   33.690691] tg3: eth1: Link is up at 100 Mbps, full duplex.
+> > [   33.690696] tg3: eth1: Flow control is off for TX and off for RX.
+> > [   31.989072]  [<c043966b>] ? kthread+0x0/0x61
+> > [   31.989072]  [<c040481b>] kernel_thread_helper+0x7/0x10
+> > [   33.762336] ADDRCONF(NETDEV_CHANGE): eth1: link becomes ready
+> > [  OK  ]
 > 
-> Should I force CONFIG_GENERIC_HARDIRQS selection?
+> I think we have to go with Kosaki-san's vm workqueue...
 
-Of course, no!
+Very sorry for my lazyness.
+akpm did nak vm workqueue patch.
+
+So I prepare new patch now. (it is under testing now)
+I expect I can post it tommorow.
+
+Thanks.
