@@ -1,51 +1,52 @@
-From: Christoph Lameter <cl@linux-foundation.org>
-Subject: Re: Git next: Second stage of cpu_alloc patches
-Date: Wed, 5 Nov 2008 07:59:01 -0600 (CST)
-Message-ID: <Pine.LNX.4.64.0811050757360.11867@quilx.com>
-References: <Pine.LNX.4.64.0811042053510.31638@quilx.com>
- <20081104195205.fe1bf62b.akpm@linux-foundation.org>
- <20081105182642.8497301a.sfr@canb.auug.org.au>
- <19f34abd0811042352q2df6ed0r6c92a35159d2b04c@mail.gmail.com>
+From: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+Subject: Re: linux-next: manual merge of the tests tree
+Date: Wed, 5 Nov 2008 19:41:37 +0530
+Message-ID: <20081105141137.GA5216@in.ibm.com>
+References: <20081015170503.1130c183.sfr@canb.auug.org.au> <20081105135211.52bbbd8d.sfr@canb.auug.org.au> <20081105060631.GA17079@uranus.ravnborg.org>
+Reply-To: ananth@in.ibm.com
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nlpi025.sbcis.sbc.com ([207.115.36.54]:37870 "EHLO
-	nlpi025.prodigy.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756766AbYKEN71 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Nov 2008 08:59:27 -0500
-In-Reply-To: <19f34abd0811042352q2df6ed0r6c92a35159d2b04c@mail.gmail.com>
+Received: from e2.ny.us.ibm.com ([32.97.182.142]:32971 "EHLO e2.ny.us.ibm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751154AbYKEOMg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 5 Nov 2008 09:12:36 -0500
+Received: from d01relay02.pok.ibm.com (d01relay02.pok.ibm.com [9.56.227.234])
+	by e2.ny.us.ibm.com (8.13.8/8.13.8) with ESMTP id mA5ECZLo001284
+	for <linux-next@vger.kernel.org>; Wed, 5 Nov 2008 09:12:35 -0500
+Received: from d01av02.pok.ibm.com (d01av02.pok.ibm.com [9.56.224.216])
+	by d01relay02.pok.ibm.com (8.13.8/8.13.8/NCO v9.1) with ESMTP id mA5ECZQO063838
+	for <linux-next@vger.kernel.org>; Wed, 5 Nov 2008 09:12:35 -0500
+Received: from d01av02.pok.ibm.com (loopback [127.0.0.1])
+	by d01av02.pok.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id mA5ECN3I015531
+	for <linux-next@vger.kernel.org>; Wed, 5 Nov 2008 09:12:24 -0500
+Content-Disposition: inline
+In-Reply-To: <20081105060631.GA17079@uranus.ravnborg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vegard Nossum <vegard.nossum@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, travis@sgi.com, linux-next@vger.kernel.org
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-On Wed, 5 Nov 2008, Vegard Nossum wrote:
+On Wed, Nov 05, 2008 at 07:06:31AM +0100, Sam Ravnborg wrote:
+> On Wed, Nov 05, 2008 at 01:52:11PM +1100, Stephen Rothwell wrote:
+> > Hi Ananth,
+> > 
+> > On Wed, 15 Oct 2008 17:05:03 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > >
+> > > Today's linux-next merge of the tests tree got a conflicts in lib/Kconfig.debug.
+> > > 
+> > > You need to determine if this tree is ever going to be merged into Linus'
+> > > tree.  I am going to drop it until you decide.
+> > 
+> > Given the discussion, I am dropping the tests tree until something is
+> > decided.  (in which case, I assume the tree will have its conflicts with
+> > Linus' tree fixed up)
+> 
+> Agreed. We can revisit this when we have a proper framework to execute
+> small user space test programs.
+> 
+> Ananth - thanks for your effort but I will drop the tree too.
 
-> Just in case it helps track down the problem: Adding percpu=100000 to
-> the kernel command line got the thing booting for me. The number
-> itself was picked at random, but it worked on the first try. The
-> machine is a single-core P4 3.0 GHz with HT, 1G RAM, using slightly
-> modified F9 config.
+OK by me :-)
 
-Its only happening if !CONFIG_MODULES because then the reserve size is 
-zero. The second stage patches fix that because there will then be other 
-uses of the allocator so that reserves are always needed. This hunk from 
-the second stage fixes the !CONFIG_MODULES issue.
-
-
-Index: linux-2.6/include/linux/percpu.h
-===================================================================
---- linux-2.6.orig/include/linux/percpu.h	2008-11-05 07:41:22.134646124 -0600
-+++ linux-2.6/include/linux/percpu.h	2008-11-05 07:44:28.603155403 -0600
-@@ -44,11 +44,7 @@
-  extern unsigned int percpu_reserve;
-  /* Enough to cover all DEFINE_PER_CPUs in kernel, including modules. */
-  #ifndef PERCPU_AREA_SIZE
--#ifdef CONFIG_MODULES
-  #define PERCPU_RESERVE_SIZE	8192
--#else
--#define PERCPU_RESERVE_SIZE	0
--#endif
-
-  #define PERCPU_AREA_SIZE						\
-  	(__per_cpu_end - __per_cpu_start + percpu_reserve)
+Ananth
