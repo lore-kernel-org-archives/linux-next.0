@@ -1,57 +1,73 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: usb tree build failure
-Date: Wed, 5 Nov 2008 16:19:16 -0200
-Message-ID: <20081105161916.78713e20@pedra.chehab.org>
-References: <20081103113640.1ad6899d.sfr@canb.auug.org.au>
-	<20081105044745.GB3668@kroah.com>
+From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
+Subject: Re: 2.6.28-rc3(-next20081103) suspend issues on Lenovo X200
+Date: Wed, 5 Nov 2008 18:31:32 +0100
+Message-ID: <20081105173132.GA4289@denkbrett.schottelius.org>
+References: <20081103153945.GA20618@denkbrett.schottelius.org> <200811040155.59933.rjw@sisk.pl> <200811031704.25717.jbarnes@virtuousgeek.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:55987 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753339AbYKESTK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Nov 2008 13:19:10 -0500
-In-Reply-To: <20081105044745.GB3668@kroah.com>
+Received: from mx3.schottelius.org ([77.109.138.221]:39186 "EHLO
+	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752735AbYKETPW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Nov 2008 14:15:22 -0500
+Content-Disposition: inline
+In-Reply-To: <200811031704.25717.jbarnes@virtuousgeek.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Alexey Klimov <klimov.linux@gmail.com>, Douglas Schilling Landgraf <dougsland@gmail.com>
-
-On Tue, 4 Nov 2008 20:47:45 -0800
-Greg KH <greg@kroah.com> wrote:
-
-> On Mon, Nov 03, 2008 at 11:36:40AM +1100, Stephen Rothwell wrote:
-> > Hi Greg,
-> > 
-> > I am still getting these errors after merging the usb tree:
-> > 
-> > drivers/media/radio/radio-mr800.c: In function 'vidioc_s_frequency':
-> > drivers/media/radio/radio-mr800.c:362: error: implicit declaration of function 'warn'
-> > drivers/media/radio/radio-mr800.c: In function 'usb_amradio_suspend':
-> > drivers/media/radio/radio-mr800.c:513: error: implicit declaration of function 'info'
-> > 
-> > I have been reverting these patches for a while:
-> > 	USB: remove info() macro from usb.h
-> > 	USB: remove warn() macro from usb.h
-> > 
-> > Today, I excluded those patches completely from my tree and they will
-> > stay excluded until a fix is applied to drivers/media/radio/radio-mr800.c.
-> > 
-> > Alexey sent a patch on Oct 12 (see below).  Greg, you might as well put
-> > this your series until Mauro or Douglas gets around to sending it to
-> > Linus.  However, that patch does not address the warn() usage ...
-> > 
-> > Mauro, Douglas, any comment?
-> 
-> Mauro, do you want me to send patches cleaning this up to you?
-
-Greg,
-
-You don't need to bother with this. Alexey already sent me a patch hopefully
-fixing this. I'm about to check and apply.
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 
+--wRRV7LY7NUeQGEoC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cheers,
-Mauro
+Jesse Barnes [Mon, Nov 03, 2008 at 05:04:25PM -0800]:
+> On Monday, November 3, 2008 4:55 pm Rafael J. Wysocki wrote:
+> >
+> > Jesse, any ideas?  Can that be related to the DRM problem with radeon?
+>=20
+> On many machines, we've found that re-POSTing the video device is incompa=
+tible=20
+> with the i915 driver's suspend/resume functionality.  So things like s3_b=
+ios=20
+> and vbetool shouldn't be used if the i915 driver works by itself.
+
+I removed the s3_bios option; not the console keeps on being black,
+but the system wakes up (tested with next-20081105).
+
+When running xorg the system freezes on wakeup and hard reboots after
+20 seconds (again: looks like some kind of watchdog, though I am not
+aware of anything like that in the X200).
+
+Sincerly,
+
+Nico (again: looks like some kind of watchdog, though I am not
+aware of anything like that in the X200).
+
+Sincerly,
+
+Nico
+
+--=20
+Think about Free and Open Source Software (FOSS).
+http://nico.schottelius.org/documentations/foss/the-term-foss/
+
+PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
+
+--wRRV7LY7NUeQGEoC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkR2HQACgkQuL75KpiFGIwNLgCgmmgFnVHP0eLnfWABIYW03nth
+bqMAoJLb0Yc52PduXBM7zOV3vXsZZ7VU
+=/T5b
+-----END PGP SIGNATURE-----
+
+--wRRV7LY7NUeQGEoC--
