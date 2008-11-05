@@ -1,47 +1,52 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: usb tree build failure
-Date: Tue, 4 Nov 2008 20:47:45 -0800
-Message-ID: <20081105044745.GB3668@kroah.com>
-References: <20081103113640.1ad6899d.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the creds tree
+Date: Wed, 5 Nov 2008 15:56:20 +1100
+Message-ID: <20081105155620.8da6ac84.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__5_Nov_2008_15_56_20_+1100_OLDcBmHZ.abnpmZH"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:38619 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1754517AbYKEEtr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 4 Nov 2008 23:49:47 -0500
-Content-Disposition: inline
-In-Reply-To: <20081103113640.1ad6899d.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43763 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754517AbYKEE4b (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 4 Nov 2008 23:56:31 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Alexey Klimov <klimov.linux@gmail.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Douglas Schilling Landgraf <dougsland@gmail.com>
+To: David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, Eric Paris <eparis@redhat.com>
 
-On Mon, Nov 03, 2008 at 11:36:40AM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> I am still getting these errors after merging the usb tree:
-> 
-> drivers/media/radio/radio-mr800.c: In function 'vidioc_s_frequency':
-> drivers/media/radio/radio-mr800.c:362: error: implicit declaration of function 'warn'
-> drivers/media/radio/radio-mr800.c: In function 'usb_amradio_suspend':
-> drivers/media/radio/radio-mr800.c:513: error: implicit declaration of function 'info'
-> 
-> I have been reverting these patches for a while:
-> 	USB: remove info() macro from usb.h
-> 	USB: remove warn() macro from usb.h
-> 
-> Today, I excluded those patches completely from my tree and they will
-> stay excluded until a fix is applied to drivers/media/radio/radio-mr800.c.
-> 
-> Alexey sent a patch on Oct 12 (see below).  Greg, you might as well put
-> this your series until Mauro or Douglas gets around to sending it to
-> Linus.  However, that patch does not address the warn() usage ...
-> 
-> Mauro, Douglas, any comment?
+--Signature=_Wed__5_Nov_2008_15_56_20_+1100_OLDcBmHZ.abnpmZH
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Mauro, do you want me to send patches cleaning this up to you?
+Hi David,
 
-thanks,
+Today's linux-next merge of the creds tree got a conflict in
+security/selinux/hooks.c between commit
+41d9f9c524a53477467b7e0111ff3d644198f191 ("SELinux: hold tasklist_lock
+and siglock while waking wait_chldexit") from security-testing tree and
+commit a3338909826d32d821158a6adc43ce0a1654b31d ("CRED: Make execve()
+take advantage of copy-on-write credentials") from the creds tree.
 
-greg k-h
+I can't see how to fix this easily, so I will have to drop the tree for
+today.  Please try the merge for yourself and see if you can come up with
+a solution, thanks.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__5_Nov_2008_15_56_20_+1100_OLDcBmHZ.abnpmZH
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkRJ3QACgkQjjKRsyhoI8z7uwCfRNfLoi5Q5n7wRZ53CRnBogiL
+HeIAnRK5lY6WvP36wG6L3AEzbE0WC4rt
+=7N5o
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__5_Nov_2008_15_56_20_+1100_OLDcBmHZ.abnpmZH--
