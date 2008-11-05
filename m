@@ -1,30 +1,33 @@
 From: David Howells <dhowells@redhat.com>
-Subject: Re: linux-next: manual merge of the userns tree
-Date: Wed, 05 Nov 2008 11:49:03 +0000
-Message-ID: <22795.1225885743@redhat.com>
-References: <20081105163314.30c72d57.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the creds tree
+Date: Wed, 05 Nov 2008 12:08:16 +0000
+Message-ID: <26171.1225886896@redhat.com>
+References: <20081105155620.8da6ac84.sfr@canb.auug.org.au>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:55496 "EHLO mx2.redhat.com"
+Received: from mx2.redhat.com ([66.187.237.31]:56514 "EHLO mx2.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755271AbYKELtr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 5 Nov 2008 06:49:47 -0500
-In-Reply-To: <20081105163314.30c72d57.sfr@canb.auug.org.au>
+	id S1750890AbYKEMI3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 5 Nov 2008 07:08:29 -0500
+In-Reply-To: <20081105155620.8da6ac84.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: dhowells@redhat.com, "Serge E. Hallyn" <serue@us.ibm.com>, linux-next@vger.kernel.org, James Morris <jmorris@namei.org>
+To: James Morris <jmorris@namei.org>
+Cc: dhowells@redhat.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Eric Paris <eparis@redhat.com>
+
 
 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
+> Today's linux-next merge of the creds tree got a conflict in
+> security/selinux/hooks.c between commit
+> 41d9f9c524a53477467b7e0111ff3d644198f191 ("SELinux: hold tasklist_lock
+> and siglock while waking wait_chldexit") from security-testing tree and
+> commit a3338909826d32d821158a6adc43ce0a1654b31d ("CRED: Make execve()
+> take advantage of copy-on-write credentials") from the creds tree.
 > 
-> Today's linux-next merge of the userns tree got conflicts caused by the
-> creds tree that the userns tree is based on.  I excluded the creds tree
-> (since the conflicts were a bit complex) so I need to exclude the userns
-> tree as well for today.
+> I can't see how to fix this easily, so I will have to drop the tree for
+> today.  Please try the merge for yourself and see if you can come up with
+> a solution, thanks.
 
-Can you give more details?
-
-I wonder if I need to be more proactive in getting the wrapper patches pushed
-into their respective subsys trees.
+James: is it worth you pulling my patches into your tree?
 
 David
