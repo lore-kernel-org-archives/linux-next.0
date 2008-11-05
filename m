@@ -1,54 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: patch excluded from usb tree
-Date: Wed, 5 Nov 2008 16:55:07 +1100
-Message-ID: <20081105165507.a1a78bb8.sfr@canb.auug.org.au>
-References: <20081103114011.0bddceaa.sfr@canb.auug.org.au>
-	<20081105130329.83967496.sfr@canb.auug.org.au>
-	<20081105044715.GA3668@kroah.com>
+Subject: Re: linux-next: sparc/firmware build failure
+Date: Wed, 5 Nov 2008 17:02:56 +1100
+Message-ID: <20081105170256.5fef7e93.sfr@canb.auug.org.au>
+References: <20080901191019.5df57434.sfr@canb.auug.org.au>
+	<20081028214559.c6715cc0.sfr@canb.auug.org.au>
+	<1225194154.18031.185.camel@macbook.infradead.org>
+	<20081103145542.498447c6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__5_Nov_2008_16_55_07_+1100_F/QhI89XMrQu1Yu2"
+ boundary="Signature=_Wed__5_Nov_2008_17_02_56_+1100_PW0Alp68l.87poPf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41509 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36970 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750743AbYKEFzQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 5 Nov 2008 00:55:16 -0500
-In-Reply-To: <20081105044715.GA3668@kroah.com>
+	id S1750801AbYKEGDI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 5 Nov 2008 01:03:08 -0500
+In-Reply-To: <20081103145542.498447c6.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, Jaswinder Singh <jaswinder@infradead.org>, David Miller <davem@davemloft.net>
 
---Signature=_Wed__5_Nov_2008_16_55_07_+1100_F/QhI89XMrQu1Yu2
+--Signature=_Wed__5_Nov_2008_17_02_56_+1100_PW0Alp68l.87poPf
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi David,
 
-On Tue, 4 Nov 2008 20:47:15 -0800 Greg KH <greg@kroah.com> wrote:
+On Mon, 3 Nov 2008 14:55:42 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
 >
-> Ick, sorry, I missed this.
+> On Tue, 28 Oct 2008 11:42:34 +0000 David Woodhouse <dwmw2@infradead.org> =
+wrote:
+> >
+> > On Tue, 2008-10-28 at 21:45 +1100, Stephen Rothwell wrote:
+> > > I have now been carrying this patch since September 1.  David (W), are
+> > > going to pick it up, please?  This should be put into the firmware tr=
+ee
+> > > as part of the merge commit merging Linus' current tree.
+> >=20
+> > I'll merge it; thanks.
 >=20
-> I'll move them out of my tree right now.
+> Still pending ...
 
-Thanks.
+I have reverted commit 229d9a03273684dc2175821be4104dbaa52f3ce0
+("qlogicpti: use request_firmware") because the above build fix has not
+been applied.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__5_Nov_2008_16_55_07_+1100_F/QhI89XMrQu1Yu2
+--Signature=_Wed__5_Nov_2008_17_02_56_+1100_PW0Alp68l.87poPf
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkkRNTsACgkQjjKRsyhoI8yrnwCgh4EYq/cnjSrBv6IsaMT6VzlN
-T1gAn3A/lNGdM47VjccoqEUk6GPqD00C
-=vqAc
+iEYEARECAAYFAkkRNxAACgkQjjKRsyhoI8yggACfUh53u33I4jZRThMJ4calRVfG
+aE8AoKtWhFeybJKy/6cePaiQRtb1VFSe
+=7H0C
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__5_Nov_2008_16_55_07_+1100_F/QhI89XMrQu1Yu2--
+--Signature=_Wed__5_Nov_2008_17_02_56_+1100_PW0Alp68l.87poPf--
