@@ -1,67 +1,51 @@
-From: Boaz Harrosh <bharrosh@panasas.com>
-Subject: Re: [PATCHSET 00/18] open-osd: OSD Initiator library for Linux
-Date: Wed, 05 Nov 2008 15:56:56 +0200
-Message-ID: <4911A628.6000504@panasas.com>
-References: <48876009.8010701@panasas.com>	<491073BB.4000900@panasas.com> <20081104111923.bb19c238.akpm@linux-foundation.org>
+From: Christoph Lameter <cl@linux-foundation.org>
+Subject: Re: Git next: Second stage of cpu_alloc patches
+Date: Wed, 5 Nov 2008 07:59:01 -0600 (CST)
+Message-ID: <Pine.LNX.4.64.0811050757360.11867@quilx.com>
+References: <Pine.LNX.4.64.0811042053510.31638@quilx.com>
+ <20081104195205.fe1bf62b.akpm@linux-foundation.org>
+ <20081105182642.8497301a.sfr@canb.auug.org.au>
+ <19f34abd0811042352q2df6ed0r6c92a35159d2b04c@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from qb-out-0506.google.com ([72.14.204.226]:5671 "EHLO
-	qb-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755185AbYKEN5E (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Nov 2008 08:57:04 -0500
-In-Reply-To: <20081104111923.bb19c238.akpm@linux-foundation.org>
+Received: from nlpi025.sbcis.sbc.com ([207.115.36.54]:37870 "EHLO
+	nlpi025.prodigy.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756766AbYKEN71 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Nov 2008 08:59:27 -0500
+In-Reply-To: <19f34abd0811042352q2df6ed0r6c92a35159d2b04c@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: James.Bottomley@HansenPartnership.com, michaelc@cs.wisc.edu, fujita.tomonori@lab.ntt.co.jp, jeff@garzik.org, osd-dev@open-osd.org, linux-scsi@vger.kernel.org, Sami.Iren@seagate.com, pw@padd.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: Vegard Nossum <vegard.nossum@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, travis@sgi.com, linux-next@vger.kernel.org
 
-Andrew Morton wrote:
-> On Tue, 04 Nov 2008 18:09:31 +0200
-> Boaz Harrosh <bharrosh@panasas.com> wrote:
-> 
->> Please consider for inclusion, an in-kernel OSD initiator
->> library. Its main users are planned to be various OSD based file
->> systems and the pNFS-Objects Layout Driver. (To be submitted soon)
->>  
->> To try out and run the library please visit
->> http://open-osd.org and follow the instructions there.
->>
->> The submitted patchset is also available via git at:
->>    git://git.open-osd.org/linux-open-osd.git osd
->>    http://git.open-osd.org/gitweb.cgi?p=linux-open-osd.git;a=shortlog;h=osd
->>
->> Or a compact out-of-tree repository that includes sources 
->> and some extras:
->>    git://git.open-osd.org/open-osd.git master
->>    http://git.open-osd.org/gitweb.cgi?p=open-osd.git;a=summary
->>
->> ...
->>
->> We would like this to sit in -mm tree for a while to make sure it is compilable
->> on all platform.
-> 
-> The best way to do that is to include your git tree in linux-next.  If
-> this code has a probably-will-be-merged-in-2.6.29 status then please
-> prepare a branch for Stephen to include in the linux-next lineup.
-> 
+On Wed, 5 Nov 2008, Vegard Nossum wrote:
 
-Thanks Andrew
-I was thinking this code would eventually go into Linux-next threw
-James tree. But thought if there was a way for some exposure, so to
-give James some confidence in the code before he commits to it. But
-this way it could be perfect, thanks.
+> Just in case it helps track down the problem: Adding percpu=100000 to
+> the kernel command line got the thing booting for me. The number
+> itself was picked at random, but it worked on the first try. The
+> machine is a single-core P4 3.0 GHz with HT, 1G RAM, using slightly
+> modified F9 config.
 
-Stephen Hi
-I have just that branch ready it is:
-git://git.open-osd.org/linux-open-osd.git osd
-Note the "osd" branch. Do I need to call it something special like
-"linux-next"? (Give me 24 hours to fix all current comments)
+Its only happening if !CONFIG_MODULES because then the reserve size is 
+zero. The second stage patches fix that because there will then be other 
+uses of the allocator so that reserves are always needed. This hunk from 
+the second stage fixes the !CONFIG_MODULES issue.
 
-Also one more question. This tree is based on latest scsi-misc-2.6.git,
-Because it is destined to go threw James tree at the end. Do I need
-to prepare a special tree based on Linus-latest?
 
-Thanks in advance
-Boaz
+Index: linux-2.6/include/linux/percpu.h
+===================================================================
+--- linux-2.6.orig/include/linux/percpu.h	2008-11-05 07:41:22.134646124 -0600
++++ linux-2.6/include/linux/percpu.h	2008-11-05 07:44:28.603155403 -0600
+@@ -44,11 +44,7 @@
+  extern unsigned int percpu_reserve;
+  /* Enough to cover all DEFINE_PER_CPUs in kernel, including modules. */
+  #ifndef PERCPU_AREA_SIZE
+-#ifdef CONFIG_MODULES
+  #define PERCPU_RESERVE_SIZE	8192
+-#else
+-#define PERCPU_RESERVE_SIZE	0
+-#endif
+
+  #define PERCPU_AREA_SIZE						\
+  	(__per_cpu_end - __per_cpu_start + percpu_reserve)
