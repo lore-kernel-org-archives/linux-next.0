@@ -1,42 +1,46 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: patch excluded from usb tree
-Date: Tue, 4 Nov 2008 20:47:15 -0800
-Message-ID: <20081105044715.GA3668@kroah.com>
-References: <20081103114011.0bddceaa.sfr@canb.auug.org.au> <20081105130329.83967496.sfr@canb.auug.org.au>
+Subject: Re: linux-next: usb tree build failure
+Date: Tue, 4 Nov 2008 20:47:45 -0800
+Message-ID: <20081105044745.GB3668@kroah.com>
+References: <20081103113640.1ad6899d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:38614 "EHLO coco.kroah.org"
+Received: from kroah.org ([198.145.64.141]:38619 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1754243AbYKEEtq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 4 Nov 2008 23:49:46 -0500
+	id S1754517AbYKEEtr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 4 Nov 2008 23:49:47 -0500
 Content-Disposition: inline
-In-Reply-To: <20081105130329.83967496.sfr@canb.auug.org.au>
+In-Reply-To: <20081103113640.1ad6899d.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+Cc: linux-next@vger.kernel.org, Alexey Klimov <klimov.linux@gmail.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Douglas Schilling Landgraf <dougsland@gmail.com>
 
-On Wed, Nov 05, 2008 at 01:03:29PM +1100, Stephen Rothwell wrote:
+On Mon, Nov 03, 2008 at 11:36:40AM +1100, Stephen Rothwell wrote:
 > Hi Greg,
 > 
-> On Mon, 3 Nov 2008 11:40:11 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > I have excluded the patch "USB: driver for gotemp device" from the
-> > linux-next tree.  Its commit message starts like this:
-> > 
-> > NOT FOR MAINLINE!
-> > 
-> > Which, I think, cannot be interpreted as "intended for the next merge
-> > window".  :-)
-> > 
-> > Could you please move it out of the NEXT section of your series.
+> I am still getting these errors after merging the usb tree:
 > 
-> Please?  :-) I have excluded the same three patches.
+> drivers/media/radio/radio-mr800.c: In function 'vidioc_s_frequency':
+> drivers/media/radio/radio-mr800.c:362: error: implicit declaration of function 'warn'
+> drivers/media/radio/radio-mr800.c: In function 'usb_amradio_suspend':
+> drivers/media/radio/radio-mr800.c:513: error: implicit declaration of function 'info'
+> 
+> I have been reverting these patches for a while:
+> 	USB: remove info() macro from usb.h
+> 	USB: remove warn() macro from usb.h
+> 
+> Today, I excluded those patches completely from my tree and they will
+> stay excluded until a fix is applied to drivers/media/radio/radio-mr800.c.
+> 
+> Alexey sent a patch on Oct 12 (see below).  Greg, you might as well put
+> this your series until Mauro or Douglas gets around to sending it to
+> Linus.  However, that patch does not address the warn() usage ...
+> 
+> Mauro, Douglas, any comment?
 
-Ick, sorry, I missed this.
-
-I'll move them out of my tree right now.
+Mauro, do you want me to send patches cleaning this up to you?
 
 thanks,
 
