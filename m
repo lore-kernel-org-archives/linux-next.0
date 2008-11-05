@@ -1,245 +1,151 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for November 5
-Date: Wed, 5 Nov 2008 18:43:29 +1100
-Message-ID: <20081105184329.54511ab4.sfr@canb.auug.org.au>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: next-20081103 - possible circular locking dependency detected
+ while bring up eth1
+Date: Wed, 05 Nov 2008 08:48:52 +0100
+Message-ID: <1225871332.7803.2626.camel@twins>
+References: <20081103183214.aac32543.sfr@canb.auug.org.au>
+	 <20081105071306.GB10881@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__5_Nov_2008_18_43_29_+1100_Oy1iSQiUXOJqOEm6"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754919AbYKEHnw@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bombadil.infradead.org ([18.85.46.34]:48909 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751400AbYKEHsW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Nov 2008 02:48:22 -0500
+In-Reply-To: <20081105071306.GB10881@linux.vnet.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, mel@csn.ul.ie, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
 
---Signature=_Wed__5_Nov_2008_18_43_29_+1100_Oy1iSQiUXOJqOEm6
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2008-11-05 at 12:43 +0530, Kamalesh Babulal wrote:
+> While booting with the next-20081103 kernel on x86 box, circular locking
+> dependency is detected.
+> 
+> Bringing up interface eth1:  [   31.988230] 
+> [   31.988234] =======================================================
+> [   31.989072] [ INFO: possible circular locking dependency detected ]
+> [   31.989072] 2.6.28-rc3-next-20081103-autotest #1
+> [   31.989072] -------------------------------------------------------
+> [   31.989072] events/3/18 is trying to acquire lock:
+> [   32.074777] ADDRCONF(NETDEV_UP): eth1: link is not ready
+> [   31.989072]  (rtnl_mutex){--..}, at: [<c05e8ef5>] rtnl_lock+0xf/0x11
+> [   31.989072] 
+> [   31.989072] but task is already holding lock:
+> [   31.989072]  ((linkwatch_work).work){--..}, at: [<c04367bf>] run_workqueue+0x80/0x189
+> [   31.989072] 
+> [   31.989072] which lock already depends on the new lock.
+> [   31.989072] 
+> [   31.989072] 
+> [   31.989072] the existing dependency chain (in reverse order) is:
+> [   31.989072] 
+> [   31.989072] -> #4 ((linkwatch_work).work){--..}:
+> [   31.989072]        [<c0445edb>] validate_chain+0x86e/0xb35
+> [   31.989072]        [<c0446822>] __lock_acquire+0x680/0x70e
+> [   31.989072]        [<c044690d>] lock_acquire+0x5d/0x7a
+> [   31.989072]        [<c04367f8>] run_workqueue+0xb9/0x189
+> [   31.989072]        [<c04371f3>] worker_thread+0xb4/0xbf
+> [   31.989072]        [<c04396a6>] kthread+0x3b/0x61
+> [   31.989072]        [<c040481b>] kernel_thread_helper+0x7/0x10
+> [   31.989072]        [<ffffffff>] 0xffffffff
+> [   31.989072] 
+> [   31.989072] -> #3 (events){--..}:
+> [   31.989072]        [<c0445edb>] validate_chain+0x86e/0xb35
+> [   31.989072]        [<c0446822>] __lock_acquire+0x680/0x70e
+> [   31.989072]        [<c044690d>] lock_acquire+0x5d/0x7a
+> [   31.989072]        [<c0436e21>] flush_work+0x45/0xb6
+> [   31.989072]        [<c043729a>] schedule_on_each_cpu+0x9c/0xca
+> [   31.989072]        [<c0466c97>] lru_add_drain_all+0xd/0xf
+> [   31.989072]        [<c046f1b6>] __mlock_vma_pages_range+0x96/0x1e5
+> [   31.989072]        [<c046f43a>] mlock_fixup+0x135/0x199
+> [   31.989072]        [<c046f50b>] do_mlockall+0x6d/0x82
+> [   31.989072]        [<c046f839>] sys_mlockall+0x7b/0x9e
+> [   31.989072]        [<c040398d>] sysenter_do_call+0x12/0x31
+> [   31.989072]        [<ffffffff>] 0xffffffff
+> [   31.989072] 
+> [   31.989072] -> #2 (&mm->mmap_sem){----}:
+> [   31.989072]        [<c0445edb>] validate_chain+0x86e/0xb35
+> [   31.989072]        [<c0446822>] __lock_acquire+0x680/0x70e
+> [   31.989072]        [<c044690d>] lock_acquire+0x5d/0x7a
+> [   31.989072]        [<c046e570>] might_fault+0x53/0x73
+> [   31.989072]        [<c0508bf5>] copy_to_user+0x28/0x3f
+> [   31.989072]        [<c048cd11>] filldir+0x88/0xc8
+> [   31.989072]        [<c04bee82>] sysfs_readdir+0x11d/0x156
+> [   31.989072]        [<c048cdb9>] vfs_readdir+0x68/0x94
+> [   31.989072]        [<c048d00b>] sys_getdents+0x5f/0xa0
+> [   31.989072]        [<c0403a66>] syscall_call+0x7/0xb
+> [   31.989072]        [<ffffffff>] 0xffffffff
+> [   31.989072] 
+> [   31.989072] -> #1 (sysfs_mutex){--..}:
+> [   31.989072]        [<c0445edb>] validate_chain+0x86e/0xb35
+> [   31.989072]        [<c0446822>] __lock_acquire+0x680/0x70e
+> [   31.989072]        [<c044690d>] lock_acquire+0x5d/0x7a
+> [   31.989072]        [<c0651c04>] mutex_lock_nested+0xdf/0x251
+> [   31.989072]        [<c04bf039>] sysfs_addrm_start+0x23/0x90
+> [   31.989072]        [<c04bf4af>] create_dir+0x3a/0x72
+> [   31.989072]        [<c04bf514>] sysfs_create_dir+0x2d/0x41
+> [   31.989072]        [<c0503e05>] kobject_add_internal+0xe5/0x189
+> [   31.989072]        [<c0503f54>] kobject_add_varg+0x35/0x41
+> [   31.989072]        [<c05042f7>] kobject_add+0x49/0x4f
+> [   31.989072]        [<c05777e1>] device_add+0x76/0x4c8
+> [   31.989072]        [<c05eb70e>] netdev_register_kobject+0x64/0x69
+> [   31.989072]        [<c05e1581>] register_netdevice+0x1fe/0x274
+> [   31.989072]        [<c05e1629>] register_netdev+0x32/0x3f
+> [   31.989072]        [<c07fa965>] loopback_net_init+0x2e/0x5d
+> [   31.989072]        [<c05de93b>] register_pernet_operations+0x13/0x15
+> [   31.989072]        [<c05de9a4>] register_pernet_device+0x1f/0x4c
+> [   31.989072]        [<c07fa935>] loopback_init+0xd/0xf
+> [   31.989072]        [<c0401130>] _stext+0x48/0x10d
+> [   31.989072]        [<c07db530>] kernel_init+0xf1/0x142
+> [   31.989072]        [<c040481b>] kernel_thread_helper+0x7/0x10
+> [   31.989072]        [<ffffffff>] 0xffffffff
+> [   31.989072] 
+> [   31.989072] -> #0 (rtnl_mutex){--..}:
+> [   31.989072]        [<c0445c10>] validate_chain+0x5a3/0xb35
+> [   31.989072]        [<c0446822>] __lock_acquire+0x680/0x70e
+> [   31.989072]        [<c044690d>] lock_acquire+0x5d/0x7a
+> [   31.989072]        [<c0651c04>] mutex_lock_nested+0xdf/0x251
+> [   31.989072]        [<c05e8ef5>] rtnl_lock+0xf/0x11
+> [   31.989072]        [<c05ea07a>] linkwatch_event+0x8/0x27
+> [   31.989072]        [<c04367fd>] run_workqueue+0xbe/0x189
+> [   31.989072]        [<c04371f3>] worker_thread+0xb4/0xbf
+> [   31.989072]        [<c04396a6>] kthread+0x3b/0x61
+> [   31.989072]        [<c040481b>] kernel_thread_helper+0x7/0x10
+> [   31.989072]        [<ffffffff>] 0xffffffff
+> [   31.989072] 
+> [   31.989072] other info that might help us debug this:
+> [   31.989072] 
+> [   31.989072] 2 locks held by events/3/18:
+> [   31.989072]  #0:  (events){--..}, at: [<c04367bf>] run_workqueue+0x80/0x189
+> [   31.989072]  #1:  ((linkwatch_work).work){--..}, at: [<c04367bf>] run_workqueue+0x80/0x189
+> [   31.989072] 
+> [   31.989072] stack backtrace:
+> [   31.989072] Pid: 18, comm: events/3 Not tainted 2.6.28-rc3-next-20081103-autotest #1
+> [   31.989072] Call Trace:
+> [   31.989072]  [<c0445662>] print_circular_bug_tail+0xa4/0xaf
+> [   31.989072]  [<c0445c10>] validate_chain+0x5a3/0xb35
+> [   31.989072]  [<c0446822>] __lock_acquire+0x680/0x70e
+> [   31.989072]  [<c04367bf>] ? run_workqueue+0x80/0x189
+> [   31.989072]  [<c044690d>] lock_acquire+0x5d/0x7a
+> [   31.989072]  [<c05e8ef5>] ? rtnl_lock+0xf/0x11
+> [   31.989072]  [<c0651c04>] mutex_lock_nested+0xdf/0x251
+> [   31.989072]  [<c05e8ef5>] ? rtnl_lock+0xf/0x11
+> [   31.989072]  [<c05e8ef5>] ? rtnl_lock+0xf/0x11
+> [   31.989072]  [<c05e8ef5>] rtnl_lock+0xf/0x11
+> [   31.989072]  [<c05ea07a>] linkwatch_event+0x8/0x27
+> [   31.989072]  [<c04367fd>] run_workqueue+0xbe/0x189
+> [   31.989072]  [<c04367bf>] ? run_workqueue+0x80/0x189
+> [   31.989072]  [<c05ea072>] ? linkwatch_event+0x0/0x27
+> [   31.989072]  [<c043713f>] ? worker_thread+0x0/0xbf
+> [   31.989072]  [<c04371f3>] worker_thread+0xb4/0xbf
+> [   31.989072]  [<c0439765>] ? autoremove_wake_function+0x0/0x33
+> [   31.989072]  [<c04396a6>] kthread+0x3b/0x61
+> [   33.690691] tg3: eth1: Link is up at 100 Mbps, full duplex.
+> [   33.690696] tg3: eth1: Flow control is off for TX and off for RX.
+> [   31.989072]  [<c043966b>] ? kthread+0x0/0x61
+> [   31.989072]  [<c040481b>] kernel_thread_helper+0x7/0x10
+> [   33.762336] ADDRCONF(NETDEV_CHANGE): eth1: link becomes ready
+> [  OK  ]
 
-Hi all,
-
-Changes since 20081103:
-
-New tree:
-	cputime
-
-Dropped trees (temporarily):
-	v4l-dvb (due to an unfixed build failure)
-	semaphore-removal (due to unfixed conflicts against Linus' tree)
-	creds (non obvious conflict)
-	userns (because it depends on the creds tree)
-
-Removed tree:
-	tests (maybe revived in the future)
-
-The s390 tree lost its 2 conflicts.
-
-The slab tree lost all its conflicts and its build fix.
-
-The creds tree gained a conflict against the security-testing tree which
-did not have an obvious fix, so I have dropped the tree for today.
-
-I have also applied the following patches for known problems:
-
-	Revert "qlogicpti: use request_firmware"
-	cpu_alloc: per_cpu_offset is already defined for !CONFIG_SMP
-	ps3: ps3-lpm.c compile fix
-	cell: fix ras.c compilation
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups, it is also built with powerpc allnoconfig,
-44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
-
-Below is a summary of the state of the merge.
-
-We are up to 122 trees (counting Linus' and 14 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging powerpc-merge/merge
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sparc-current/master
-Merging sound-current/for-linus
-Merging arm-current/master
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-2.6.26
-Merging dwmw2/master
-Merging arm/devel
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging quilt/m68k
-Merging m68knommu/for-next
-Merging mips/mips-for-linux-next
-Merging parisc/master
-Merging powerpc/powerpc-next
-Merging 4xx/next
-Merging galak/next
-Merging pxa/for-next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging x86/auto-x86-next
-Merging xtensa/master
-Merging quilt/driver-core
-Merging quilt/usb
-Merging tip-core/auto-core-next
-Merging cpus4096/auto-cpus4096-next
-Merging ftrace/auto-ftrace-next
-Merging genirq/auto-genirq-next
-Merging safe-poison-pointers/auto-safe-poison-pointers-next
-Merging sched/auto-sched-next
-Merging stackprotector/auto-stackprotector-next
-Merging timers/auto-timers-next
-Merging pci/linux-next
-Merging quilt/device-mapper
-Merging hid/mm
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging jfs/next
-Merging kbuild/master
-Merging quilt/ide
-Merging libata/NEXT
-Merging nfs/linux-next
-Merging xfs/master
-Applying fs: xfs needs inode_wait to be exported
-Merging infiniband/for-next
-Merging acpi/test
-Merging nfsd/nfsd-next
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/master
-Merging dlm/next
-Merging scsi/master
-Merging ocfs2/linux-next
-Merging ext4/next
-Merging async_tx/next
-Merging udf/for_next
-Merging net/master
-Merging mtd/master
-Merging wireless/master
-Merging crypto/master
-Merging vfs/for-next
-Merging sound/for-next
-Merging cpufreq/next
-Merging v9fs/for-next
-Merging quilt/rr
-Merging cifs/master
-Merging mmc/next
-Merging gfs2/master
-Merging input/next
-Merging semaphore/semaphore
-Merging bkl-removal/bkl-removal
-Merging ubifs/linux-next
-Merging lsm/for-next
-Merging block/for-next
-Merging embedded/master
-Merging firmware/master
-CONFLICT (content): Merge conflict in drivers/scsi/qlogicpti.c
-CONFLICT (content): Merge conflict in firmware/WHENCE
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging kmemcheck/auto-kmemcheck-next
-CONFLICT (content): Merge conflict in MAINTAINERS
-CONFLICT (content): Merge conflict in arch/x86/mm/Makefile
-CONFLICT (content): Merge conflict in mm/slab.c
-CONFLICT (content): Merge conflict in mm/slub.c
-Merging generic-ipi/auto-generic-ipi-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-CONFLICT (delete/modify): Documentation/DocBook/wanbook.tmpl deleted in hdl=
-c/hdlc-next and modified in HEAD. Version HEAD of Documentation/DocBook/wan=
-book.tmpl left in tree.
-CONFLICT (delete/modify): drivers/net/wan/syncppp.c deleted in hdlc/hdlc-ne=
-xt and modified in HEAD. Version HEAD of drivers/net/wan/syncppp.c left in =
-tree.
-$ git rm -f drivers/net/wan/syncppp.c Documentation/DocBook/wanbook.tmpl
-Merging drm/drm-next
-Merging voltage/for-linus
-Merging security-testing/next
-Merging lblnet/master
-Merging quilt/ttydev
-Merging agp/agp-next
-Merging oprofile/auto-oprofile-next
-Merging fastboot/auto-fastboot-next
-Merging sparseirq/auto-sparseirq-next
-Merging iommu/auto-iommu-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging proc/proc
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cpu_alloc/cpu_alloc
-CONFLICT (content): Merge conflict in kernel/lockdep.c
-CONFLICT (content): Merge conflict in kernel/module.c
-Merging cputime/cputime
-Merging scsi-post-merge/master
-CONFLICT (content): Merge conflict in drivers/scsi/qlogicpti.c
-CONFLICT (content): Merge conflict in firmware/WHENCE
-mark the corrected paths with 'git add <paths>' or 'git rm <paths>' and com=
-mit the result.
-Applying ps3: ps3-lpm.c compile fix
-Applying cell: fix ras.c compilation
-Applying cpu_alloc: per_cpu_offset is already defined for !CONFIG_SMP
-
---Signature=_Wed__5_Nov_2008_18_43_29_+1100_Oy1iSQiUXOJqOEm6
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkRTqEACgkQjjKRsyhoI8yGvQCfb9UJlh1qrSdImma7G3tNGdJG
-bogAn39K28jsCU+wfMFBUqD6sEtAHQOU
-=iag9
------END PGP SIGNATURE-----
-
---Signature=_Wed__5_Nov_2008_18_43_29_+1100_Oy1iSQiUXOJqOEm6--
+I think we have to go with Kosaki-san's vm workqueue...
