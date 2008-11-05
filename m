@@ -1,57 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the tests tree
-Date: Wed, 5 Nov 2008 13:52:11 +1100
-Message-ID: <20081105135211.52bbbd8d.sfr@canb.auug.org.au>
-References: <20081015170503.1130c183.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the semaphore-removal tree
+Date: Wed, 5 Nov 2008 14:31:10 +1100
+Message-ID: <20081105143110.c6e410d6.sfr@canb.auug.org.au>
+References: <20081015182615.a9089a9f.sfr@canb.auug.org.au>
+	<20081103144124.701d33f7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__5_Nov_2008_13_52_11_+1100_5ENTJ=sMlwnXWCeD"
+ boundary="Signature=_Wed__5_Nov_2008_14_31_10_+1100_9EVRXJn+GUxN9Nit"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52777 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35022 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754406AbYKECwY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 4 Nov 2008 21:52:24 -0500
-In-Reply-To: <20081015170503.1130c183.sfr@canb.auug.org.au>
+	id S1754307AbYKEDbT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 4 Nov 2008 22:31:19 -0500
+In-Reply-To: <20081103144124.701d33f7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
-Cc: linux-next@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
+To: Matthew Wilcox <matthew@wil.cx>
+Cc: linux-next@vger.kernel.org, Eric Van Hensbergen <ericvh@gmail.com>
 
---Signature=_Wed__5_Nov_2008_13_52_11_+1100_5ENTJ=sMlwnXWCeD
+--Signature=_Wed__5_Nov_2008_14_31_10_+1100_9EVRXJn+GUxN9Nit
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ananth,
+Hi Willy,
 
-On Wed, 15 Oct 2008 17:05:03 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On Mon, 3 Nov 2008 14:41:24 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
 >
-> Today's linux-next merge of the tests tree got a conflicts in lib/Kconfig=
-.debug.
+> On Wed, 15 Oct 2008 18:26:15 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > Today's linux-next merge of the semaphore-removal tree got a conflict in
+> > net/9p/trans_virtio.c between commits
+> > 5c1f7a7bf4c0baea08f6f3e913dd67cb17e78c20 ("9p: move request management =
+to
+> > client code") and 6a29d78c78b9cc4178997695f8d518d0506a87a9 ("9p:
+> > consolidate transport structure") from the v9fs tree and commit
+> > 2a0e26c90de6245213ac53390b1f125c749ebba9 ("9p: Convert from mutex to
+> > spinlock") from the semaphore-removal tree.
+> >=20
+> > The context was changed by the v9fs changes.  I fixed it up (see below).
 >=20
-> You need to determine if this tree is ever going to be merged into Linus'
-> tree.  I am going to drop it until you decide.
+> These changes from the v9fs tree are now in Linus' tree (since
+> 2.6.28-rc1) and the conflict persists, so I am dropping the
+> semaphore-removal tree for today.
 
-Given the discussion, I am dropping the tests tree until something is
-decided.  (in which case, I assume the tree will have its conflicts with
-Linus' tree fixed up)
+And again today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__5_Nov_2008_13_52_11_+1100_5ENTJ=sMlwnXWCeD
+--Signature=_Wed__5_Nov_2008_14_31_10_+1100_9EVRXJn+GUxN9Nit
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkkRClsACgkQjjKRsyhoI8wUZgCcCgJCZUfMJBtAXXle3xKmGxvy
-VjYAniV4LeGbPuYVgNL1cZVnN5UTvc8u
-=pduy
+iEYEARECAAYFAkkRE34ACgkQjjKRsyhoI8yqigCcC683yzR7AmqI77UK9HF4ZyOd
+nIMAoImPkB1qkzlBAWw2GKts0fuLuyYl
+=kE/A
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__5_Nov_2008_13_52_11_+1100_5ENTJ=sMlwnXWCeD--
+--Signature=_Wed__5_Nov_2008_14_31_10_+1100_9EVRXJn+GUxN9Nit--
