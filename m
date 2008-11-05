@@ -1,64 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: xfs tree build failure
-Date: Wed, 5 Nov 2008 13:20:00 +1100
-Message-ID: <20081105132000.4e560cad.sfr@canb.auug.org.au>
-References: <20081030132324.0d619fdd.sfr@canb.auug.org.au>
-	<20081030090832.GQ17077@disturbed>
+Subject: Re: linux-next: manual merge of the tests tree
+Date: Wed, 5 Nov 2008 13:52:11 +1100
+Message-ID: <20081105135211.52bbbd8d.sfr@canb.auug.org.au>
+References: <20081015170503.1130c183.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__5_Nov_2008_13_20_00_+1100_t_BRxWqGCWmfMbZ3"
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20081030090832.GQ17077@disturbed>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Dave Chinner <david@fromorbit.com>
-Cc: xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, Lachlan McIlroy <lachlan@sgi.com>, linux-fsdevel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__5_Nov_2008_13_52_11_+1100_5ENTJ=sMlwnXWCeD"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:52777 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754406AbYKECwY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 4 Nov 2008 21:52:24 -0500
+In-Reply-To: <20081015170503.1130c183.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+Cc: linux-next@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
 
---Signature=_Wed__5_Nov_2008_13_20_00_+1100_t_BRxWqGCWmfMbZ3
+--Signature=_Wed__5_Nov_2008_13_52_11_+1100_5ENTJ=sMlwnXWCeD
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Ananth,
 
-On Thu, 30 Oct 2008 20:08:32 +1100 Dave Chinner <david@fromorbit.com> wrote:
+On Wed, 15 Oct 2008 17:05:03 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> On Thu, Oct 30, 2008 at 01:23:24PM +1100, Stephen Rothwell wrote:
-> >=20
-> > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> >=20
-> > ERROR: "inode_wait" [fs/xfs/xfs.ko] undefined!
-> >=20
-> > Caused by commit 676a7711ee281c3bf41db18e29e296584de82793 ("[XFS] Fix
-> > race when looking up reclaimable inodes") which introduced a use of
-> > wait_on_inode() which is an inline that calls inode_wait().
+> Today's linux-next merge of the tests tree got a conflicts in lib/Kconfig=
+.debug.
 >=20
-> Putting a non-exported symbol in an inline function in a header file
-> that is full of exported functions.  That's pretty anti-social. ;)
->=20
-> > I applied the following patch (probably wrong :-)).
->=20
-> I think it's probably the only solution - we need to wait until
-> the I_LOCK bit is cleared from the inode and AFAICT wait_on_inode()
-> is the only way to do it.
+> You need to determine if this tree is ever going to be merged into Linus'
+> tree.  I am going to drop it until you decide.
 
-Any resolution?
+Given the discussion, I am dropping the tests tree until something is
+decided.  (in which case, I assume the tree will have its conflicts with
+Linus' tree fixed up)
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__5_Nov_2008_13_20_00_+1100_t_BRxWqGCWmfMbZ3
+--Signature=_Wed__5_Nov_2008_13_52_11_+1100_5ENTJ=sMlwnXWCeD
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkkRAtAACgkQjjKRsyhoI8yd5wCdFYWW0QqCeh0K/Rm9DtMBSenF
-eDoAn2cveyC26sNcrCYqn+WWsvJ8Z3wW
-=Psn2
+iEYEARECAAYFAkkRClsACgkQjjKRsyhoI8wUZgCcCgJCZUfMJBtAXXle3xKmGxvy
+VjYAniV4LeGbPuYVgNL1cZVnN5UTvc8u
+=pduy
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__5_Nov_2008_13_20_00_+1100_t_BRxWqGCWmfMbZ3--
+--Signature=_Wed__5_Nov_2008_13_52_11_+1100_5ENTJ=sMlwnXWCeD--
