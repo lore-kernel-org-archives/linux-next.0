@@ -1,57 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: sparc/firmware build failure
-Date: Thu, 6 Nov 2008 13:44:44 +1100
-Message-ID: <20081106134444.c6b6ca5f.sfr@canb.auug.org.au>
-References: <20080901191019.5df57434.sfr@canb.auug.org.au>
-	<20081028214559.c6715cc0.sfr@canb.auug.org.au>
-	<1225194154.18031.185.camel@macbook.infradead.org>
-	<20081103145542.498447c6.sfr@canb.auug.org.au>
-	<20081105170256.5fef7e93.sfr@canb.auug.org.au>
+Subject: linux-next: new warnings
+Date: Thu, 6 Nov 2008 14:25:14 +1100
+Message-ID: <20081106142514.42bbe615.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__6_Nov_2008_13_44_44_+1100_0gu/io2cxPkFxQ09"
+ boundary="Signature=_Thu__6_Nov_2008_14_25_14_+1100_MLj81niVdFnrAUcC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45049 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56030 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751870AbYKFCpC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 5 Nov 2008 21:45:02 -0500
-In-Reply-To: <20081105170256.5fef7e93.sfr@canb.auug.org.au>
+	id S1752629AbYKFDZY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 5 Nov 2008 22:25:24 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: linux-next@vger.kernel.org, Jaswinder Singh <jaswinder@infradead.org>, David Miller <davem@davemloft.net>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-next@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>
 
---Signature=_Thu__6_Nov_2008_13_44_44_+1100_0gu/io2cxPkFxQ09
+--Signature=_Thu__6_Nov_2008_14_25_14_+1100_MLj81niVdFnrAUcC
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi David,
+Hi all,
 
-On Wed, 5 Nov 2008 17:02:56 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> I have reverted commit 229d9a03273684dc2175821be4104dbaa52f3ce0
-> ("qlogicpti: use request_firmware") because the above build fix has not
-> been applied.
+Commit 7a5158ef8da70fdedeb0530faaa8128aa645be3c ("mac80211: fix short
+slot handling") added this:
 
-And today I have dropped the firmware tree.
+/* XXX: remove all this once drivers stop trying to use it */
+static inline int __deprecated __IEEE80211_CONF_SHORT_SLOT_TIME(void)
+	.
+	.
+#define IEEE80211_CONF_SHORT_SLOT_TIME (__IEEE80211_CONF_SHORT_SLOT_TIME())
 
+to include/net/mac80211.h.  I was wondering if any thought was given to
+getting rid of the (currently 4) in tree uses of
+IEEE80211_CONF_SHORT_SLOT_TIME before doing this so that we don't have
+even more new warnings from the kernel build.
+
+The least that could be done is to clean them up now ...
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__6_Nov_2008_13_44_44_+1100_0gu/io2cxPkFxQ09
+--Signature=_Thu__6_Nov_2008_14_25_14_+1100_MLj81niVdFnrAUcC
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkkSWhwACgkQjjKRsyhoI8wmqQCeNHbcI6fTDzThGWuz/5WDvfNK
-eB4AmgOS9gEAcD4AcYUVX5HsyXQ8IuwT
-=4K1w
+iEYEARECAAYFAkkSY5oACgkQjjKRsyhoI8ynsACfZIhajfZ/kcI8UEs5EJ4SPwHB
+j5UAoLIezX0OjaSKCo2UCpvZz/s1FL6u
+=Y5kz
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__6_Nov_2008_13_44_44_+1100_0gu/io2cxPkFxQ09--
+--Signature=_Thu__6_Nov_2008_14_25_14_+1100_MLj81niVdFnrAUcC--
