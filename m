@@ -1,43 +1,55 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: testing of new cpumask API introduction patch
-Date: Thu, 6 Nov 2008 09:08:37 +0100
-Message-ID: <20081106080837.GA22574@elte.hu>
-References: <20081106110539.22fd7426.sfr@canb.auug.org.au> <20081106055947.GA4031@elte.hu>
+From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
+Subject: Re: linux-next: Tree for November 3
+Date: Thu, 6 Nov 2008 11:18:12 +0100
+Message-ID: <20081106101812.GA13870@denkbrett.schottelius.org>
+References: <20081103183214.aac32543.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="bp/iNruPH9dso1Pn"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:58463 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752034AbYKFII6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 6 Nov 2008 03:08:58 -0500
+Received: from mx3.schottelius.org ([77.109.138.221]:56981 "EHLO
+	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753304AbYKFKSW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Nov 2008 05:18:22 -0500
 Content-Disposition: inline
-In-Reply-To: <20081106055947.GA4031@elte.hu>
+In-Reply-To: <20081103183214.aac32543.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+To: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, trivial@kernel.org
 
 
-* Ingo Molnar <mingo@elte.hu> wrote:
+--bp/iNruPH9dso1Pn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > Today I have temporarily dropped the cpus4096 tree from linux-next 
-> > in order to integrate and test Rusty's API introducing only patch.  
-> > Linus has said he will consider this patch for 2.6.28 if it is 
-> > very contained and has no net effect - which is what it looks like 
-> > (having reviewed the patch).
-> > 
-> > Of course, if Linus' takes Rusty's patch, it will mean significant 
-> > changes for the cpus4096 tree and this may be one case where 
-> > rebasing the tree makes sense.  But we should burn that bridge 
-> > when we come to it.
-> 
-> Rusty, could you please send a patch that introduces the new header 
-> on the cpus4096 tree, without killing all the stuff that's tested in 
-> there?
+Stephen Rothwell [Mon, Nov 03, 2008 at 06:32:14PM +1100]:
+> Changes since 20081031:
+> [...]=20
+> Removed tree:
+> 	trivial (Jesper no longer has the time to maintain it)
+> [...]=20
 
-Stephen, could you please re-pickup the cpus4096 branch and drop the 
-out-of-flow patch (which is the same patch)? I've added Rusty's patch 
-and disabled the topic that had the other, more intrusive changes - 
-and started testing it.
+Jesper, don't you maintain the linux-next branch anymore
+or did you stop accepting trivial patches at all?
 
-	Ingo
+In both cases: Is there somebody who continues your work?
+
+Sincerly,
+
+Nico
+
+--bp/iNruPH9dso1Pn
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkSxGQACgkQuL75KpiFGIxaoQCcD+vw7oa9mIHwe8tU6FFiSoOe
+e90AoLxyIhbmC4mU0LBaQT86d9t2ucS+
+=ZLnw
+-----END PGP SIGNATURE-----
+
+--bp/iNruPH9dso1Pn--
