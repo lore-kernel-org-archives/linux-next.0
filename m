@@ -1,42 +1,52 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: linux-next: manual merge of the creds tree
-Date: Thu, 6 Nov 2008 10:19:55 +1100 (EST)
-Message-ID: <alpine.LRH.1.10.0811061019280.6690@tundra.namei.org>
-References: <20081105155620.8da6ac84.sfr@canb.auug.org.au> <26171.1225886896@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: testing of new cpumask API introduction patch
+Date: Thu, 6 Nov 2008 11:05:39 +1100
+Message-ID: <20081106110539.22fd7426.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__6_Nov_2008_11_05_39_+1100_9Bj9JpIqGyLGrHs8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tundra.namei.org ([65.99.196.166]:45759 "EHLO tundra.namei.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37434 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752354AbYKEXUV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 5 Nov 2008 18:20:21 -0500
-In-Reply-To: <26171.1225886896@redhat.com>
+	id S1751568AbYKFAFy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 5 Nov 2008 19:05:54 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Eric Paris <eparis@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
-On Wed, 5 Nov 2008, David Howells wrote:
+--Signature=_Thu__6_Nov_2008_11_05_39_+1100_9Bj9JpIqGyLGrHs8
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > Today's linux-next merge of the creds tree got a conflict in
-> > security/selinux/hooks.c between commit
-> > 41d9f9c524a53477467b7e0111ff3d644198f191 ("SELinux: hold tasklist_lock
-> > and siglock while waking wait_chldexit") from security-testing tree and
-> > commit a3338909826d32d821158a6adc43ce0a1654b31d ("CRED: Make execve()
-> > take advantage of copy-on-write credentials") from the creds tree.
-> > 
-> > I can't see how to fix this easily, so I will have to drop the tree for
-> > today.  Please try the merge for yourself and see if you can come up with
-> > a solution, thanks.
-> 
-> James: is it worth you pulling my patches into your tree?
+Hi all,
 
-Possibly after I get back from foss.my next week.  Can you tru and get 
-more of the API changes into subsytem trees?
+Today I have temporarily dropped the cpus4096 tree from linux-next in
+order to integrate and test Rusty's API introducing only patch.  Linus has
+said he will consider this patch for 2.6.28 if it is very contained and
+has no net effect - which is what it looks like (having reviewed the
+patch).
 
--- 
-James Morris
-<jmorris@namei.org>
+Of course, if Linus' takes Rusty's patch, it will mean significant
+changes for the cpus4096 tree and this may be one case where rebasing the
+tree makes sense.  But we should burn that bridge when we come to it.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__6_Nov_2008_11_05_39_+1100_9Bj9JpIqGyLGrHs8
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkSNNMACgkQjjKRsyhoI8xFVQCgh5Cclug8C/QRB2LqvFrJ4e5z
+nRgAnjqvAjCpJZrpDupB6qurXInYLRQj
+=qzP7
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__6_Nov_2008_11_05_39_+1100_9Bj9JpIqGyLGrHs8--
