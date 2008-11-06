@@ -1,53 +1,28 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: linux-next: new warnings
-Date: Thu, 6 Nov 2008 08:30:02 -0500
-Message-ID: <20081106133001.GA14184@tuxdriver.com>
-References: <20081106142514.42bbe615.sfr@canb.auug.org.au> <20081105.200901.00689398.davem@davemloft.net>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: linux-next: xfs tree build failure
+Date: Thu, 6 Nov 2008 10:27:53 -0500
+Message-ID: <20081106152753.GA9161@infradead.org>
+References: <20081030132324.0d619fdd.sfr@canb.auug.org.au> <20081030090832.GQ17077@disturbed> <20081105132000.4e560cad.sfr@canb.auug.org.au> <20081105204754.GO4985@disturbed>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:48025 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753777AbYKFNqI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Nov 2008 08:46:08 -0500
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20081105.200901.00689398.davem@davemloft.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, johannes@sipsolutions.net, linux-next@vger.kernel.org
+In-Reply-To: <20081105204754.GO4985@disturbed>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, Lachlan McIlroy <lachlan@sgi.com>, linux-fsdevel@vger.kernel.org, hch@infradead.org, viro
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Nov 05, 2008 at 08:09:01PM -0800, David Miller wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 6 Nov 2008 14:25:14 +1100
+On Thu, Nov 06, 2008 at 07:47:54AM +1100, Dave Chinner wrote:
+> > > I think it's probably the only solution - we need to wait until
+> > > the I_LOCK bit is cleared from the inode and AFAICT wait_on_inode()
+> > > is the only way to do it.
+> > 
+> > Any resolution?
 > 
-> > Hi all,
-> > 
-> > Commit 7a5158ef8da70fdedeb0530faaa8128aa645be3c ("mac80211: fix short
-> > slot handling") added this:
-> > 
-> > /* XXX: remove all this once drivers stop trying to use it */
-> > static inline int __deprecated __IEEE80211_CONF_SHORT_SLOT_TIME(void)
-> > 	.
-> > 	.
-> > #define IEEE80211_CONF_SHORT_SLOT_TIME (__IEEE80211_CONF_SHORT_SLOT_TIME())
-> > 
-> > to include/net/mac80211.h.  I was wondering if any thought was given to
-> > getting rid of the (currently 4) in tree uses of
-> > IEEE80211_CONF_SHORT_SLOT_TIME before doing this so that we don't have
-> > even more new warnings from the kernel build.
-> > 
-> > The least that could be done is to clean them up now ...
-> 
-> John Linville told me that these warnings would show up because
-> of one of his merges and that he also has the patches pending
-> to get rid of them as well.
-> 
-> Please just ignore them for now.
+> I was waiting on a comment from Christoph. I'll cc him directly this
+> time ;)
 
-Yes, sorry for the delay.  I've been down with pneumonia all week. :-(
+What comment do you expect from me?  The fix looks correct, but at some
+point you should probably run all these exports past Al to get another
+review.  Especially as he's doing major work in this area currently.
 
-John
--- 
-John W. Linville		Linux should be at the core
-linville@tuxdriver.com			of your literate lifestyle.
