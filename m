@@ -1,64 +1,75 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree
-Date: Fri, 7 Nov 2008 17:14:00 +1100
-Message-ID: <20081107171400.697e2896.sfr@canb.auug.org.au>
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: linux-next: wireless/arm build failure
+Date: Fri, 07 Nov 2008 07:39:35 +0100
+Message-ID: <1226039975.3619.254.camel@johannes.berg>
+References: <20081107121941.911bc31a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-QpGxEgc8suYoMjFPJEBu"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41354 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751213AbYKGGOG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 7 Nov 2008 01:14:06 -0500
+Received: from xc.sipsolutions.net ([83.246.72.84]:33450 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750929AbYKGGjj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 7 Nov 2008 01:39:39 -0500
+In-Reply-To: <20081107121941.911bc31a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: linux-next@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, Russell King <rmk@arm.linux.org.uk>
 
-Hi Jens,
 
-Today's linux-next merge of the block tree got a conflict in
-block/blk-timeout.c between commit
-7838c15b8dd18e78a523513749e5b54bda07b0cb ("Block: use round_jiffies_up
-()") from Linus' tree and commit 514054ea03191f529c6783bc0048e173e5194a27
-("block: optimizations in blk_rq_timed_out_timer()") from the block tree.
+--=-QpGxEgc8suYoMjFPJEBu
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Just a context change.  I fixed it up (see below) and assume it will be
-fixed in your tree shortly.
+On Fri, 2008-11-07 at 12:19 +1100, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> An arm cam60_defconfig build of next-20081106 produces these errors:
+>=20
+> include/net/mac80211.h:405: error: size of array 'type name' is negative
+> net/mac80211/main.c:957: error: size of array 'type name' is negative
+>=20
+> The first is
+>         BUILD_BUG_ON(
+>             offsetof(struct ieee80211_tx_info, status.ampdu_ack_len) !=3D=
+ 23);
+> in ieee80211_tx_info_clear_status().
+> The second is
+>         BUILD_BUG_ON(sizeof(struct ieee80211_tx_info) > sizeof(skb->cb));
+> in ieee80211_init().
+>=20
+> Maybe something to do with commit
+> e6a9854b05c1a6af1308fe2b8c68f35abf28a3ee ("mac80211/drivers: rewrite the
+> rate control API") from the wireless tree (which introduced the
+> BUILD_BUG_ON in mac80211.h and modified struct ieee80211_tx_info
+> somewhat).
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Yeah, it does, a few people have observed it, we missed some special arm
+alignment rules and our structures got too large for skb->cb on arm, a
+patch is on its way. Thanks!
 
-diff --cc block/blk-timeout.c
-index 69185ea,151790e..0000000
---- a/block/blk-timeout.c
-+++ b/block/blk-timeout.c
-@@@ -126,16 -133,19 +126,19 @@@ void blk_rq_timed_out_timer(unsigned lo
-  			if (blk_mark_rq_complete(rq))
-  				continue;
-  			blk_rq_timed_out(rq);
-+ 		} else {
-+ 			if (!next || time_after(next, rq->deadline))
-+ 				next = rq->deadline;
-  		}
-- 		if (!next_set) {
-- 			next = rq->deadline;
-- 			next_set = 1;
-- 		} else if (time_after(next, rq->deadline))
-- 			next = rq->deadline;
-  	}
-  
-- 	if (next_set && !list_empty(&q->timeout_list))
-+ 	/*
-+ 	 * next can never be 0 here with the list non-empty, since we always
-+ 	 * bump ->deadline to 1 so we can detect if the timer was ever added or not.
-+ 	 * See comment in blk_add_timer()
-+ 	 */
-+ 	if (next)
- -		mod_timer(&q->timeout, round_jiffies(next));
- +		mod_timer(&q->timeout, round_jiffies_up(next));
-  
-  	spin_unlock_irqrestore(q->queue_lock, flags);
-  }
+johannes
+
+--=-QpGxEgc8suYoMjFPJEBu
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Johannes Berg (powerbook)
+
+iQIcBAABAgAGBQJJE+KhAAoJEKVg1VMiehFYz8IP/ix7bemml1UnJfTDqGNfsSdz
+EOgwxn9yvtHpKRn9ugsEFLttaxHLWP3iRgYVsATdUiBLZCQ2HRACPulOaMm6W1aC
+OyI+N3fuSGSI6SzpXK9I2jgoAr4J0kwZ80cOGGVux9zTkAN+tQH1Y+TyHlKrI+tu
+rA5blB9Cjs0kadZ36BXhyPPEDG4vhX3NoI3qJ8/Y3nHYz5hdM71VTmwyrHrHMC39
+HVAcVx3UKO97UT5a/VTdEw9v78KAtTfCseRREa/Tv8KGpI9F7VJIpscqsu73tMxS
+vdvUT9d42OfIBihWDR958DeQBw6EKzazaMxNVRoUD6y1rJQbjDjtrByUu35iGuui
+14QpTkWeN71DN9qMptgjBn/C3kb8LNuNYO/Q8KKqMQYgAG1b++p0C0RLCp8MP2ry
+XjJQtNPB5/r9S9O9sExOnejMYJ7CzInxfmxy/wZOuqCnlxr+z2GVcCXq1REpU5Kn
+uIFVm0/78MdWrvCJrL9nOSy/5DAw/xjnQzwdldKTGLNN8jGQA/xloiIIDZ5DN6BY
+FKMJmHOOedFoIRPRNhmUi8RY7RxAZRbdvuuuDgV58ZzvvROrK2C3klQoR7moSt7Y
+Q20rNk5/Sdfxk9xWL4QYQFggduLkfRbcwdYCVP0ft9kCJn7GB/6kJGgZgTNoKVtl
+oaWotpGgXfZeNUzva+SP
+=wyqt
+-----END PGP SIGNATURE-----
+
+--=-QpGxEgc8suYoMjFPJEBu--
