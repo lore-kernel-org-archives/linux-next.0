@@ -1,42 +1,79 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: possible circular locking dependency for
-	cryptsetup
-Date: Fri, 7 Nov 2008 20:40:23 +0800
-Message-ID: <20081107124023.GA12021@gondor.apana.org.au>
-References: <20081107083200.GA5109@vimes.madsworld.lan> <20081107203750.91bd0e73.sfr@canb.auug.org.au>
+From: "stephane eranian" <eranian@googlemail.com>
+Subject: Re: linux-next: perfmon3 tree build failure
+Date: Fri, 7 Nov 2008 14:16:32 +0100
+Message-ID: <7c86c4470811070516x21e7f77fk1129db02e2237fc4@mail.gmail.com>
+References: <20081107200336.57abfca7.sfr@canb.auug.org.au>
+Reply-To: eranian@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rhun.apana.org.au ([64.62.148.172]:43885 "EHLO
-	arnor.apana.org.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752358AbYKGMkh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 7 Nov 2008 07:40:37 -0500
+Received: from mu-out-0910.google.com ([209.85.134.191]:14033 "EHLO
+	mu-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751019AbYKGNQf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 7 Nov 2008 08:16:35 -0500
+Received: by mu-out-0910.google.com with SMTP id g7so1190619muf.1
+        for <linux-next@vger.kernel.org>; Fri, 07 Nov 2008 05:16:33 -0800 (PST)
+In-Reply-To: <20081107200336.57abfca7.sfr@canb.auug.org.au>
 Content-Disposition: inline
-In-Reply-To: <20081107203750.91bd0e73.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Markus Dahms <mad@automagically.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org
 
-On Fri, Nov 07, 2008 at 08:37:50PM +1100, Stephen Rothwell wrote:
+Stephen,
+
+All problems have been fixed in my linux-next tree.
+
+For sched.h, it is a bit more complicated because of Itanium.
+On Itanium, there is an older version of perfmon called v2.0. It used
+to use CONFIG_PERFMON but that clashed with new perfmon also
+using the same macro. So my first patch renamed CONFIG_PERFMON
+into CONFIG_PERFMON_V20 for Itanium. In sched.h however, the pfm_context
+field is used by both the legacy Itanium v2.0 and new perfmon. The fix is
+to add this field if either CONFIG_PERFMON or CONFIG_PERFMON_V20
+is set.
+
+I also made the changes for fsuid and fsgid.
+
+Just pull from my linux-next tree again.
+
+Thanks.
+
+
+On Fri, Nov 7, 2008 at 10:03 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Stephane,
 >
-> > =======================================================
-> > [ INFO: possible circular locking dependency detected ]
-> > 2.6.28-rc3-next-20081106-mad-1 #2
-> > -------------------------------------------------------
-> > cryptsetup/2554 is trying to acquire lock:
-> >  (&cpu_hotplug.lock){--..}, at: [<c012cd32>] get_online_cpus+0x22/0x40
-> > 
-> > but task is already holding lock:
-> >  (&mm->mmap_sem){----}, at: [<c018b98e>] sys_mlockall+0x5e/0xd0
-
-I don't see anything in the back-trace that's crypto related
-or even dm related.  Therefore I suspect the problem is in core
-sysfs, mm or CPU hot plugging.
-
-Cheers,
--- 
-Visit Openswan at http://www.openswan.org/
-Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+>
+> In file included from arch/x86/perfmon/perfmon.c:26:
+> include/linux/perfmon_kern.h: In function 'pfm_exit_thread':
+> include/linux/perfmon_kern.h:200: error: 'struct task_struct' has no member named 'pfm_context'
+>
+> and lots more.  Caused by commit 46b4dfdc1dd4976d892fa47b5e8a2551fe6278fa
+> ("perfmon(ia64): rename CONFIG_PERFMON to CONFIG_PERFMON_V20") which
+> probably should not have renamed CONFIG_PERFMON to CONFIG_PERFMON_V20 in
+> sched.h.
+>
+> I would suggest that you clean this up by rebasing your tree onto Linus'
+> latest (to fix the merge conflicts) and in the process, do the
+> CONFIG_PERFMON rename patch first ...
+>
+> I also got these errors:
+>
+> perfmon/perfmon_file.c: In function 'pfm_alloc_fd':
+> perfmon/perfmon_file.c:270: error: 'struct task_struct' has no member named 'fsuid'
+> perfmon/perfmon_file.c:271: error: 'struct task_struct' has no member named 'fsgid'
+>
+> These fields are being removed by another tree in linux-next, but there
+> are already accessor functions in Linus' tree that you should be using
+> anyway (see current_fsuid() and current_fsgid() in include/linux/cred.h).
+>
+> So I will drop your tree for today in the hope that it will be fixed by
+> Monday.
+>
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
+>
