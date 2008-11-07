@@ -1,52 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the block tree
-Date: Fri, 7 Nov 2008 17:10:05 +1100
-Message-ID: <20081107171005.31e2a08d.sfr@canb.auug.org.au>
+Date: Fri, 7 Nov 2008 17:14:00 +1100
+Message-ID: <20081107171400.697e2896.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47442 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41354 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751124AbYKGGKU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 7 Nov 2008 01:10:20 -0500
+	id S1751213AbYKGGOG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 7 Nov 2008 01:14:06 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Jens Axboe <jens.axboe@oracle.com>
-Cc: linux-next@vger.kernel.org, Tejun Heo <tj@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: linux-next@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>
 
 Hi Jens,
 
 Today's linux-next merge of the block tree got a conflict in
-block/elevator.c between commit 2920ebbd65f3e80c318adf5191ac0987142bda80
-("block: add timer on blkdev_dequeue_request() not elv_next_request()")
-from Linus' tree and commit 8b3806453dd25d15a7ca7d537124af14ba8546bc
-("blktrace: port to tracepoints") from the block tree.
+block/blk-timeout.c between commit
+7838c15b8dd18e78a523513749e5b54bda07b0cb ("Block: use round_jiffies_up
+()") from Linus' tree and commit 514054ea03191f529c6783bc0048e173e5194a27
+("block: optimizations in blk_rq_timed_out_timer()") from the block tree.
 
 Just a context change.  I fixed it up (see below) and assume it will be
-fixed in your tree soon.
+fixed in your tree shortly.
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc block/elevator.c
-index 9ac82dd,e09183b..0000000
---- a/block/elevator.c
-+++ b/block/elevator.c
-@@@ -772,7 -787,13 +787,7 @@@ struct request *elv_next_request(struc
-  			 * not be passed by new incoming requests
-  			 */
-  			rq->cmd_flags |= REQ_STARTED;
-- 			blk_add_trace_rq(q, rq, BLK_TA_ISSUE);
-+ 			trace_block_rq_issue(q, rq);
- -
- -			/*
- -			 * We are now handing the request to the hardware,
- -			 * add the timeout handler
- -			 */
- -			blk_add_timer(rq);
+diff --cc block/blk-timeout.c
+index 69185ea,151790e..0000000
+--- a/block/blk-timeout.c
++++ b/block/blk-timeout.c
+@@@ -126,16 -133,19 +126,19 @@@ void blk_rq_timed_out_timer(unsigned lo
+  			if (blk_mark_rq_complete(rq))
+  				continue;
+  			blk_rq_timed_out(rq);
++ 		} else {
++ 			if (!next || time_after(next, rq->deadline))
++ 				next = rq->deadline;
   		}
+- 		if (!next_set) {
+- 			next = rq->deadline;
+- 			next_set = 1;
+- 		} else if (time_after(next, rq->deadline))
+- 			next = rq->deadline;
+  	}
   
-  		if (!q->boundary_rq || q->boundary_rq == rq) {
+- 	if (next_set && !list_empty(&q->timeout_list))
++ 	/*
++ 	 * next can never be 0 here with the list non-empty, since we always
++ 	 * bump ->deadline to 1 so we can detect if the timer was ever added or not.
++ 	 * See comment in blk_add_timer()
++ 	 */
++ 	if (next)
+ -		mod_timer(&q->timeout, round_jiffies(next));
+ +		mod_timer(&q->timeout, round_jiffies_up(next));
+  
+  	spin_unlock_irqrestore(q->queue_lock, flags);
+  }
