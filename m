@@ -1,68 +1,45 @@
-From: Christoph Lameter <cl@linux-foundation.org>
-Subject: Re: next-20081106: undefined reference to `__per_cpu_start'
-Date: Fri, 7 Nov 2008 12:40:17 -0600 (CST)
-Message-ID: <Pine.LNX.4.64.0811071235040.5387@quilx.com>
-References: <20081106173645.e7e79071.sfr@canb.auug.org.au>
- <20081106183939.GA26925@x200.localdomain> <Pine.LNX.4.64.0811061310350.6009@quilx.com>
- <20081107162114.2a41c623.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: v4l-dvb tree build failure
+Date: Fri, 7 Nov 2008 10:41:48 -0800
+Message-ID: <20081107184148.GA2320@kroah.com>
+References: <20081107143046.7b2b171a.sfr@canb.auug.org.au> <1226079837.11596.19.camel@brick>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nlpi053.sbcis.sbc.com ([207.115.36.82]:39690 "EHLO
-	nlpi053.prodigy.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751119AbYKGSkl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 7 Nov 2008 13:40:41 -0500
-In-Reply-To: <20081107162114.2a41c623.sfr@canb.auug.org.au>
+Received: from kroah.org ([198.145.64.141]:57287 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752406AbYKGUMu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 7 Nov 2008 15:12:50 -0500
+Content-Disposition: inline
+In-Reply-To: <1226079837.11596.19.camel@brick>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, rusty@rustcorp.com.au, Haavard Skinnemoen <hskinnemoen@atmel.com>
+To: Harvey Harrison <harvey.harrison@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
 
-On Fri, 7 Nov 2008, Stephen Rothwell wrote:
+On Fri, Nov 07, 2008 at 09:43:57AM -0800, Harvey Harrison wrote:
+> On Fri, 2008-11-07 at 14:30 +1100, Stephen Rothwell wrote:
+> > Hi Mauro,
+> > 
+> > Today's linux-next build (x86_64 allmodconfig) failed like this:
+> > 
+> > drivers/staging/go7007/go7007-v4l2.c: In function 'go7007_ioctl':
+> > drivers/staging/go7007/go7007-v4l2.c:1338: warning: passing argument 1 of 'video_usercopy' from incompatible pointer type
+> > drivers/staging/go7007/go7007-v4l2.c:1338: warning: passing argument 2 of 'video_usercopy' makes integer from pointer without a cast
+> > drivers/staging/go7007/go7007-v4l2.c:1338: warning: passing argument 4 of 'video_usercopy' makes pointer from integer without a cast
+> > drivers/staging/go7007/go7007-v4l2.c:1338: error: too many arguments to function 'video_usercopy'
+> > 
+> > Caused by commit 579209181bfc24ee03a0d167bdc32106afd4e269 ("V4L/DVB
+> > (9503): v4l: remove inode argument from video_usercopy") which missed the
+> > above driver.
+> > 
+> > I have dropped your tree again for today.
+> 
+> Is it really fair to drop the v4l tree when it was -staging that broke?  I'd humbly
+> suggest that staging be weighted somewhat lower than the other trees.
 
-> > Or did you use generic percpu support and set
-> > CONFIG_HAVE_ZERO_BASED_PER_CPU?
->
-> Also a avr32 allnoconfig
-> (http://kisskb.ellerman.id.au/kisskb/buildresult/53233/) gets:
->
-> backing-dev.c:(.init.text+0xc4c): undefined reference to `__per_cpu_start'
-> backing-dev.c:(.init.text+0xc50): undefined reference to `__per_cpu_end'
->
-> and avr32 defconfig
-> (http://kisskb.ellerman.id.au/kisskb/buildresult/53225/) gets:
->
-> vmstat.c:(.init.text+0xff0): undefined reference to `__per_cpu_start'
-> vmstat.c:(.init.text+0xff4): undefined reference to `__per_cpu_end'
+I agree, please always drop the staging tree, not any "real" tree :)
 
-All of these have no invocation of the PERCPU macro from
-asm-generic/vmlinus.lds.h in their arch vmlinux.lds.S. Thus the symbols
-are missing. They are kind of irrelevant since we are only interested in
-the difference between those...
+thanks,
 
-Either we add the PERCPU() macro invocations to each arches vmlinux.lds.S
-file or we need to special case each time __per_cpu_end/__start is used.
-The only use added for the cpu allocator is in include/linux/percpu.h
-
-Make it conditional on CONFIG_SMP
-
-Signed-off-by: Christoph Lameter <cl@linux-foundation.org>
-
-Index: linux-next/include/linux/percpu.h
-===================================================================
---- linux-next.orig/include/linux/percpu.h	2008-11-06 10:03:22.985665656 -0600
-+++ linux-next/include/linux/percpu.h	2008-11-07 12:38:06.223165740 -0600
-@@ -61,8 +61,13 @@
- #ifndef PERCPU_AREA_SIZE
- #define PERCPU_RESERVE_SIZE	8192
-
-+#ifdef CONFIG_SMP
- #define PERCPU_AREA_SIZE						\
- 	(__per_cpu_end - __per_cpu_start + percpu_reserve)
-+#else
-+#define PERCPU_AREA_SIZE percpu_reserve
-+#endif
-+
- #endif	/* PERCPU_AREA_SIZE */
-
- /*
+greg k-h
