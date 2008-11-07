@@ -1,59 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: v4l-dvb tree build failure
-Date: Fri, 7 Nov 2008 14:30:46 +1100
-Message-ID: <20081107143046.7b2b171a.sfr@canb.auug.org.au>
+Subject: Re: linux-next: unable to fetch the xfs tree
+Date: Fri, 7 Nov 2008 14:53:32 +1100
+Message-ID: <20081107145332.52d49390.sfr@canb.auug.org.au>
+References: <20081107111125.ef33b1dc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__7_Nov_2008_14_30_46_+1100_tS6k3ZbifM=STCgv"
+ boundary="Signature=_Fri__7_Nov_2008_14_53_32_+1100_YSMbXh7D3Ukc/9wO"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39212 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:39989 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750904AbYKGDa5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 6 Nov 2008 22:30:57 -0500
+	id S1751001AbYKGDxl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 6 Nov 2008 22:53:41 -0500
+In-Reply-To: <20081107111125.ef33b1dc.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
+To: David Chinner <david@fromorbit.com>
+Cc: linux-next@vger.kernel.org, linuxfs-devel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@infradead.org>, Lachlan McIlroy <lachlan@sgi.com>
 
---Signature=_Fri__7_Nov_2008_14_30_46_+1100_tS6k3ZbifM=STCgv
+--Signature=_Fri__7_Nov_2008_14_53_32_+1100_YSMbXh7D3Ukc/9wO
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mauro,
+Hi all,
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+On Fri, 7 Nov 2008 11:11:25 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> I am getting:
+>=20
+> oss.sgi.com[0: 192.48.170.157]: errno=3DConnection refused
+>=20
+> so I will use what I fetched yesterday.
 
-drivers/staging/go7007/go7007-v4l2.c: In function 'go7007_ioctl':
-drivers/staging/go7007/go7007-v4l2.c:1338: warning: passing argument 1 of '=
-video_usercopy' from incompatible pointer type
-drivers/staging/go7007/go7007-v4l2.c:1338: warning: passing argument 2 of '=
-video_usercopy' makes integer from pointer without a cast
-drivers/staging/go7007/go7007-v4l2.c:1338: warning: passing argument 4 of '=
-video_usercopy' makes pointer from integer without a cast
-drivers/staging/go7007/go7007-v4l2.c:1338: error: too many arguments to fun=
-ction 'video_usercopy'
+And now I have received:
 
-Caused by commit 579209181bfc24ee03a0d167bdc32106afd4e269 ("V4L/DVB
-(9503): v4l: remove inode argument from video_usercopy") which missed the
-above driver.
+<xfs-masters@oss.sgi.com>: host cuda-allmx.sgi.com[192.48.176.16] said: 550
+    cuda_nsu 5.1.1 <xfs-masters@oss.sgi.com>... User unknown (in reply to R=
+CPT
+    TO command)
 
-I have dropped your tree again for today.
+So, is this a permanent state of affairs, or just a temporary glitch?
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__7_Nov_2008_14_30_46_+1100_tS6k3ZbifM=STCgv
+--Signature=_Fri__7_Nov_2008_14_53_32_+1100_YSMbXh7D3Ukc/9wO
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkkTtmYACgkQjjKRsyhoI8wsUwCdFJmeiB/crz0M4xBNIHhaBa94
-wBgAnjbyi5eelaDjpUlP9bPaEb05IgyB
-=C7l3
+iEYEARECAAYFAkkTu7wACgkQjjKRsyhoI8wDiACfWwL3hdavMYaKszlr05qJEnZZ
+GzMAn1JkHBRsDngtNt7ipWSUzu1jfMBq
+=LYZT
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__7_Nov_2008_14_30_46_+1100_tS6k3ZbifM=STCgv--
+--Signature=_Fri__7_Nov_2008_14_53_32_+1100_YSMbXh7D3Ukc/9wO--
