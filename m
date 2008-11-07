@@ -1,75 +1,164 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: linux-next: wireless/arm build failure
-Date: Fri, 07 Nov 2008 07:39:35 +0100
-Message-ID: <1226039975.3619.254.camel@johannes.berg>
-References: <20081107121941.911bc31a.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the creds tree
+Date: Fri, 7 Nov 2008 18:49:34 +1100
+Message-ID: <20081107184934.8ad8b6ca.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=-QpGxEgc8suYoMjFPJEBu"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xc.sipsolutions.net ([83.246.72.84]:33450 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750929AbYKGGjj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 7 Nov 2008 01:39:39 -0500
-In-Reply-To: <20081107121941.911bc31a.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:54172 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750929AbYKGHtl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 7 Nov 2008 02:49:41 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, Russell King <rmk@arm.linux.org.uk>
+To: David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, Eric Paris <eparis@redhat.com>
 
+Hi David,
 
---=-QpGxEgc8suYoMjFPJEBu
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Today's linux-next merge of the creds tree got conflicts in
+security/selinux/hooks.c between commit
+8b6a5a37f87a414ef8636e36ec75accb27bb7508 ("") from the security-testing
+tree and commit selinux_dentry_open ("CRED: Make inode_has_perm() and
+file_has_perm() take a cred pointer") from the creds tree.
 
-On Fri, 2008-11-07 at 12:19 +1100, Stephen Rothwell wrote:
-> Hi all,
->=20
-> An arm cam60_defconfig build of next-20081106 produces these errors:
->=20
-> include/net/mac80211.h:405: error: size of array 'type name' is negative
-> net/mac80211/main.c:957: error: size of array 'type name' is negative
->=20
-> The first is
->         BUILD_BUG_ON(
->             offsetof(struct ieee80211_tx_info, status.ampdu_ack_len) !=3D=
- 23);
-> in ieee80211_tx_info_clear_status().
-> The second is
->         BUILD_BUG_ON(sizeof(struct ieee80211_tx_info) > sizeof(skb->cb));
-> in ieee80211_init().
->=20
-> Maybe something to do with commit
-> e6a9854b05c1a6af1308fe2b8c68f35abf28a3ee ("mac80211/drivers: rewrite the
-> rate control API") from the wireless tree (which introduced the
-> BUILD_BUG_ON in mac80211.h and modified struct ieee80211_tx_info
-> somewhat).
+Just overlapping changes.  I fixed it up (see below) and can carry the
+fix.
 
-Yeah, it does, a few people have observed it, we missed some special arm
-alignment rules and our structures got too large for skb->cb on arm, a
-patch is on its way. Thanks!
+The file also got a conflict between commit
+41d9f9c524a53477467b7e0111ff3d644198f191 ("SELinux: hold tasklist_lock
+and siglock while waking wait_chldexit") from the security-testing tree
+and commit a3338909826d32d821158a6adc43ce0a1654b31d ("CRED: Make execve()
+take advantage of copy-on-write credentials") from the creds tree.
 
-johannes
+This was more complex but I fixed it up as best I could (see below) and
+can carry the fix.  Please let me know if it is not correct (or could be
+better).
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---=-QpGxEgc8suYoMjFPJEBu
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Comment: Johannes Berg (powerbook)
-
-iQIcBAABAgAGBQJJE+KhAAoJEKVg1VMiehFYz8IP/ix7bemml1UnJfTDqGNfsSdz
-EOgwxn9yvtHpKRn9ugsEFLttaxHLWP3iRgYVsATdUiBLZCQ2HRACPulOaMm6W1aC
-OyI+N3fuSGSI6SzpXK9I2jgoAr4J0kwZ80cOGGVux9zTkAN+tQH1Y+TyHlKrI+tu
-rA5blB9Cjs0kadZ36BXhyPPEDG4vhX3NoI3qJ8/Y3nHYz5hdM71VTmwyrHrHMC39
-HVAcVx3UKO97UT5a/VTdEw9v78KAtTfCseRREa/Tv8KGpI9F7VJIpscqsu73tMxS
-vdvUT9d42OfIBihWDR958DeQBw6EKzazaMxNVRoUD6y1rJQbjDjtrByUu35iGuui
-14QpTkWeN71DN9qMptgjBn/C3kb8LNuNYO/Q8KKqMQYgAG1b++p0C0RLCp8MP2ry
-XjJQtNPB5/r9S9O9sExOnejMYJ7CzInxfmxy/wZOuqCnlxr+z2GVcCXq1REpU5Kn
-uIFVm0/78MdWrvCJrL9nOSy/5DAw/xjnQzwdldKTGLNN8jGQA/xloiIIDZ5DN6BY
-FKMJmHOOedFoIRPRNhmUi8RY7RxAZRbdvuuuDgV58ZzvvROrK2C3klQoR7moSt7Y
-Q20rNk5/Sdfxk9xWL4QYQFggduLkfRbcwdYCVP0ft9kCJn7GB/6kJGgZgTNoKVtl
-oaWotpGgXfZeNUzva+SP
-=wyqt
------END PGP SIGNATURE-----
-
---=-QpGxEgc8suYoMjFPJEBu--
+diff --cc security/selinux/hooks.c
+index eb7955d,b530cd1..0000000
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@@ -2262,39 -2323,32 +2324,34 @@@ static void selinux_bprm_committing_cre
+  }
+  
+  /*
+-  * called after apply_creds without the task lock held
++  * Clean up the process immediately after the installation of new credentials
++  * due to exec
+   */
+- static void selinux_bprm_post_apply_creds(struct linux_binprm *bprm)
++ static void selinux_bprm_committed_creds(struct linux_binprm *bprm)
+  {
+- 	struct task_security_struct *tsec;
+- 	struct rlimit *rlim, *initrlim;
++ 	const struct task_security_struct *tsec = current_security();
+  	struct itimerval itimer;
+- 	struct bprm_security_struct *bsec;
+ +	struct sighand_struct *psig;
++ 	u32 osid, sid;
+  	int rc, i;
+ +	unsigned long flags;
+  
+- 	tsec = current->security;
+- 	bsec = bprm->security;
++ 	secondary_ops->bprm_committed_creds(bprm);
+  
+- 	if (bsec->unsafe) {
+- 		force_sig_specific(SIGKILL, current);
+- 		return;
+- 	}
+- 	if (tsec->osid == tsec->sid)
++ 	osid = tsec->osid;
++ 	sid = tsec->sid;
++ 
++ 	if (sid == osid)
+  		return;
+  
+- 	/* Close files for which the new task SID is not authorized. */
+- 	flush_unauthorized_files(current->files);
+- 
+- 	/* Check whether the new SID can inherit signal state
+- 	   from the old SID.  If not, clear itimers to avoid
+- 	   subsequent signal generation and flush and unblock
+- 	   signals. This must occur _after_ the task SID has
+- 	  been updated so that any kill done after the flush
+- 	  will be checked against the new SID. */
+- 	rc = avc_has_perm(tsec->osid, tsec->sid, SECCLASS_PROCESS,
+- 			  PROCESS__SIGINH, NULL);
++ 	/* Check whether the new SID can inherit signal state from the old SID.
++ 	 * If not, clear itimers to avoid subsequent signal generation and
++ 	 * flush and unblock signals.
++ 	 *
++ 	 * This must occur _after_ the task SID has been updated so that any
++ 	 * kill done after the flush will be checked against the new SID.
++ 	 */
++ 	rc = avc_has_perm(osid, sid, SECCLASS_PROCESS, PROCESS__SIGINH, NULL);
+  	if (rc) {
+  		memset(&itimer, 0, sizeof itimer);
+  		for (i = 0; i < 3; i++)
+@@@ -2307,38 -2361,9 +2364,14 @@@
+  		spin_unlock_irq(&current->sighand->siglock);
+  	}
+  
+- 	/* Always clear parent death signal on SID transitions. */
+- 	current->pdeath_signal = 0;
+- 
+- 	/* Check whether the new SID can inherit resource limits
+- 	   from the old SID.  If not, reset all soft limits to
+- 	   the lower of the current task's hard limit and the init
+- 	   task's soft limit.  Note that the setting of hard limits
+- 	   (even to lower them) can be controlled by the setrlimit
+- 	   check. The inclusion of the init task's soft limit into
+- 	   the computation is to avoid resetting soft limits higher
+- 	   than the default soft limit for cases where the default
+- 	   is lower than the hard limit, e.g. RLIMIT_CORE or
+- 	   RLIMIT_STACK.*/
+- 	rc = avc_has_perm(tsec->osid, tsec->sid, SECCLASS_PROCESS,
+- 			  PROCESS__RLIMITINH, NULL);
+- 	if (rc) {
+- 		for (i = 0; i < RLIM_NLIMITS; i++) {
+- 			rlim = current->signal->rlim + i;
+- 			initrlim = init_task.signal->rlim+i;
+- 			rlim->rlim_cur = min(rlim->rlim_max, initrlim->rlim_cur);
+- 		}
+- 		update_rlimit_cpu(rlim->rlim_cur);
+- 	}
+- 
+  	/* Wake up the parent if it is waiting so that it can
+  	   recheck wait permission to the new task SID. */
+ +	read_lock_irq(&tasklist_lock);
+ +	psig = current->parent->sighand;
+ +	spin_lock_irqsave(&psig->siglock, flags);
+  	wake_up_interruptible(&current->parent->signal->wait_chldexit);
+ +	spin_unlock_irqrestore(&psig->siglock, flags);
+ +	read_unlock_irq(&tasklist_lock);
+  }
+  
+  /* superblock security operations */
+@@@ -2657,8 -2691,8 +2699,8 @@@ static int selinux_inode_permission(str
+  		return 0;
+  	}
+  
+- 	return inode_has_perm(current, inode,
++ 	return inode_has_perm(cred, inode,
+ -			      open_file_mask_to_av(inode->i_mode, mask), NULL);
+ +			      file_mask_to_av(inode->i_mode, mask), NULL);
+  }
+  
+  static int selinux_inode_setattr(struct dentry *dentry, struct iattr *iattr)
+@@@ -3174,7 -3225,7 +3233,7 @@@ static int selinux_dentry_open(struct f
+  	 * new inode label or new policy.
+  	 * This check is not redundant - do not remove.
+  	 */
+- 	return inode_has_perm(current, inode, open_file_to_av(file), NULL);
+ -	return inode_has_perm(cred, inode, file_to_av(file), NULL);
+++	return inode_has_perm(cred, inode, open_file_to_av(file), NULL);
+  }
+  
+  /* task security operations */
