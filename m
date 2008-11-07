@@ -1,71 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: perfmon3 tree build failure
-Date: Sat, 8 Nov 2008 09:30:51 +1100
-Message-ID: <20081108093051.58d45a2a.sfr@canb.auug.org.au>
-References: <20081107200336.57abfca7.sfr@canb.auug.org.au>
-	<7c86c4470811070516x21e7f77fk1129db02e2237fc4@mail.gmail.com>
+Subject: Re: linux-next: build failure
+Date: Sat, 8 Nov 2008 09:54:29 +1100
+Message-ID: <20081108095429.1ade66c9.sfr@canb.auug.org.au>
+References: <20081107202541.85d6a823.sfr@canb.auug.org.au>
+	<1226076005.9309.9.camel@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Sat__8_Nov_2008_09_30_51_+1100__yRA5uR.L6Q./UYi"
+ boundary="Signature=_Sat__8_Nov_2008_09_54_29_+1100_qbjP68k3qunPTFNw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52027 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51957 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751415AbYKGWa7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 7 Nov 2008 17:30:59 -0500
-In-Reply-To: <7c86c4470811070516x21e7f77fk1129db02e2237fc4@mail.gmail.com>
+	id S1751065AbYKGWyi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 7 Nov 2008 17:54:38 -0500
+In-Reply-To: <1226076005.9309.9.camel@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: eranian@gmail.com
-Cc: stephane eranian <eranian@googlemail.com>, linux-next@vger.kernel.org
+To: Hollis Blanchard <hollisb@us.ibm.com>
+Cc: Avi Kivity <avi@qumranet.com>, linux-next@vger.kernel.org, Josh Boyer <jwboyer@linux.vnet.ibm.com>
 
---Signature=_Sat__8_Nov_2008_09_30_51_+1100__yRA5uR.L6Q./UYi
+--Signature=_Sat__8_Nov_2008_09_54_29_+1100_qbjP68k3qunPTFNw
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Stephane,
+Hi Hollis,
 
-On Fri, 7 Nov 2008 14:16:32 +0100 "stephane eranian" <eranian@googlemail.co=
-m> wrote:
+On Fri, 07 Nov 2008 10:40:05 -0600 Hollis Blanchard <hollisb@us.ibm.com> wr=
+ote:
 >
-> All problems have been fixed in my linux-next tree.
+> Hi Stephen, it looks like Josh accidentally set the following options in
+> ppc44x_defconfig:
+> +CONFIG_VIRTUALIZATION=3Dy
+> +CONFIG_KVM=3Dy
+> +CONFIG_KVM_BOOKE_HOST=3Dy
+>=20
+> http://git.kernel.org/?p=3Dlinux/kernel/git/jwboyer/powerpc-4xx.git;a=3Dc=
+ommitdiff;h=3D8531b7a805833649591fa324cadbab7d6b667f4b
+>=20
+> Since then, CONFIG_KVM_BOOKE_HOST was renamed to CONFIG_KVM_440.
+> Unfortunately I don't have the right Kconfig constraint in place to
+> catch that, leading to this problem. I will submit a patch for this
+> today.
 
-Excellent.
+OK, thanks.
 
-> For sched.h, it is a bit more complicated because of Itanium.
-> On Itanium, there is an older version of perfmon called v2.0. It used
-> to use CONFIG_PERFMON but that clashed with new perfmon also
-> using the same macro. So my first patch renamed CONFIG_PERFMON
-> into CONFIG_PERFMON_V20 for Itanium. In sched.h however, the pfm_context
-> field is used by both the legacy Itanium v2.0 and new perfmon. The fix is
-> to add this field if either CONFIG_PERFMON or CONFIG_PERFMON_V20
-> is set.
-
-This is why I prefer to leave fixes to people who know the code :-)
-
-> I also made the changes for fsuid and fsgid.
-
-Great.
-
-> Just pull from my linux-next tree again.
-
-Will do.  I automatically refetch all the trees before each time I create
-the linux-next tree.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Sat__8_Nov_2008_09_30_51_+1100__yRA5uR.L6Q./UYi
+--Signature=_Sat__8_Nov_2008_09_54_29_+1100_qbjP68k3qunPTFNw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkkUwZsACgkQjjKRsyhoI8xSSwCeM62vTcs6M0CB6ppR44+y9GmI
-e/sAnR1l6gJzkyv+A3xUTPZ/7IVeCMAM
-=axZl
+iEYEARECAAYFAkkUxyUACgkQjjKRsyhoI8wkNACdHqYXqTEUTQudiLjQh4Yuf9By
+E/oAn2JR66DUOXqrFSPCY7hvCs4/F2Vi
+=fcwW
 -----END PGP SIGNATURE-----
 
---Signature=_Sat__8_Nov_2008_09_30_51_+1100__yRA5uR.L6Q./UYi--
+--Signature=_Sat__8_Nov_2008_09_54_29_+1100_qbjP68k3qunPTFNw--
