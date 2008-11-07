@@ -1,48 +1,52 @@
-From: Lachlan McIlroy <lachlan@sgi.com>
-Subject: Re: linux-next: unable to fetch the xfs tree
-Date: Fri, 07 Nov 2008 15:51:51 +1100
-Message-ID: <4913C967.30309@sgi.com>
-References: <20081107111125.ef33b1dc.sfr@canb.auug.org.au>	<20081107145332.52d49390.sfr@canb.auug.org.au>	<4913BEC6.6080901@sgi.com> <20081107154602.8621ea3d.sfr@canb.auug.org.au>
-Reply-To: lachlan@sgi.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rr tree
+Date: Fri, 7 Nov 2008 16:01:37 +1100
+Message-ID: <20081107160137.620c1104.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__7_Nov_2008_16_01_37_+1100_8GfIuaCzSZHG/LBk"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay2.sgi.com ([192.48.179.30]:40874 "EHLO relay.sgi.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751157AbYKGExM (ORCPT
-	<rfc822;@relay.corp.sgi.com:linux-next@vger.kernel.org>);
-	Thu, 6 Nov 2008 23:53:12 -0500
-In-Reply-To: <20081107154602.8621ea3d.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:33281 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750745AbYKGFBr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 7 Nov 2008 00:01:47 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Chinner <david@fromorbit.com>, linux-next@vger.kernel.org, linuxf-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@infradead.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
 
-Stephen Rothwell wrote:
-> Hi Lachlan,
-> 
-> On Fri, 07 Nov 2008 15:06:30 +1100 Lachlan McIlroy <lachlan@sgi.com> wrote:
->> Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> On Fri, 7 Nov 2008 11:11:25 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>>> I am getting:
->>>>
->>>> oss.sgi.com[0: 192.48.170.157]: errno=Connection refused
->>>>
->>>> so I will use what I fetched yesterday.
->>> And now I have received:
->>>
->>> <xfs-masters@oss.sgi.com>: host cuda-allmx.sgi.com[192.48.176.16] said: 550
->>>     cuda_nsu 5.1.1 <xfs-masters@oss.sgi.com>... User unknown (in reply to RCPT
->>>     TO command)
->>>
->>> So, is this a permanent state of affairs, or just a temporary glitch?
->> Should be temporary.  We have known DNS and email issues that we are working
->> on.  We're also moving oss.sgi.com but I have no idea what the schedule is.
-> 
-> Thanks.
-> 
+--Signature=_Fri__7_Nov_2008_16_01_37_+1100_8GfIuaCzSZHG/LBk
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I actually got a bounce message when I sent that reply.  Gotta love the irony.
+Hi Rusty,
+
+Today's linux-next merge of the rr tree got a conflicts in
+include/linux/cpumask.h and lib/cpumask.c between commit
+2d3854a37e8b767a51aba38ed6d22817b0631e33 ("cpumask: introduce new API,
+without changing anything") from the cpus4096 tree and commit
+0c82f41da4f9a68874b584f23feca217ba4fcd62 ("cpumask:new-API-only") from
+the rr tree.
+
+These are just different versions of the same patch, so I used the rr tree
+version.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__7_Nov_2008_16_01_37_+1100_8GfIuaCzSZHG/LBk
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkTy7EACgkQjjKRsyhoI8xjywCfYAN/zM/lHIb2/QE/L6nhSmSd
+jggAoL6u81TRgOsadm33TfveVZVrHjRh
+=Ykrx
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__7_Nov_2008_16_01_37_+1100_8GfIuaCzSZHG/LBk--
