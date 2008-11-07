@@ -1,79 +1,35 @@
-From: "stephane eranian" <eranian@googlemail.com>
-Subject: Re: linux-next: perfmon3 tree build failure
-Date: Fri, 7 Nov 2008 14:16:32 +0100
-Message-ID: <7c86c4470811070516x21e7f77fk1129db02e2237fc4@mail.gmail.com>
-References: <20081107200336.57abfca7.sfr@canb.auug.org.au>
-Reply-To: eranian@gmail.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: David Howells <dhowells@redhat.com>
+Subject: Re: linux-next: manual merge of the creds tree
+Date: Fri, 07 Nov 2008 15:04:48 +0000
+Message-ID: <27012.1226070288@redhat.com>
+References: <20081107184934.8ad8b6ca.sfr@canb.auug.org.au>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mu-out-0910.google.com ([209.85.134.191]:14033 "EHLO
-	mu-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751019AbYKGNQf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 7 Nov 2008 08:16:35 -0500
-Received: by mu-out-0910.google.com with SMTP id g7so1190619muf.1
-        for <linux-next@vger.kernel.org>; Fri, 07 Nov 2008 05:16:33 -0800 (PST)
-In-Reply-To: <20081107200336.57abfca7.sfr@canb.auug.org.au>
-Content-Disposition: inline
+Received: from mx2.redhat.com ([66.187.237.31]:51336 "EHLO mx2.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752242AbYKGPFA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 7 Nov 2008 10:05:00 -0500
+In-Reply-To: <20081107184934.8ad8b6ca.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+Cc: dhowells@redhat.com, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, Eric Paris <eparis@redhat.com>
 
-Stephen,
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-All problems have been fixed in my linux-next tree.
+>  +	read_lock_irq(&tasklist_lock);
+>  +	psig = current->parent->sighand;
+>  +	spin_lock_irqsave(&psig->siglock, flags);
 
-For sched.h, it is a bit more complicated because of Itanium.
-On Itanium, there is an older version of perfmon called v2.0. It used
-to use CONFIG_PERFMON but that clashed with new perfmon also
-using the same macro. So my first patch renamed CONFIG_PERFMON
-into CONFIG_PERFMON_V20 for Itanium. In sched.h however, the pfm_context
-field is used by both the legacy Itanium v2.0 and new perfmon. The fix is
-to add this field if either CONFIG_PERFMON or CONFIG_PERFMON_V20
-is set.
+There's no point using spin_lock_irqsave(): you've already disabled interrupts
+with read_lock_irq().  Similarly:
 
-I also made the changes for fsuid and fsgid.
+>  +	spin_unlock_irqrestore(&psig->siglock, flags);
+>  +	read_unlock_irq(&tasklist_lock);
 
-Just pull from my linux-next tree again.
+spin_unlock_irqrestore() here is never going to re-enable interrupts.
 
-Thanks.
+Apart from that, it looks okay.
 
+My tree and James's tree definitely need to meet before you see them.
 
-On Fri, Nov 7, 2008 at 10:03 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Stephane,
->
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
->
-> In file included from arch/x86/perfmon/perfmon.c:26:
-> include/linux/perfmon_kern.h: In function 'pfm_exit_thread':
-> include/linux/perfmon_kern.h:200: error: 'struct task_struct' has no member named 'pfm_context'
->
-> and lots more.  Caused by commit 46b4dfdc1dd4976d892fa47b5e8a2551fe6278fa
-> ("perfmon(ia64): rename CONFIG_PERFMON to CONFIG_PERFMON_V20") which
-> probably should not have renamed CONFIG_PERFMON to CONFIG_PERFMON_V20 in
-> sched.h.
->
-> I would suggest that you clean this up by rebasing your tree onto Linus'
-> latest (to fix the merge conflicts) and in the process, do the
-> CONFIG_PERFMON rename patch first ...
->
-> I also got these errors:
->
-> perfmon/perfmon_file.c: In function 'pfm_alloc_fd':
-> perfmon/perfmon_file.c:270: error: 'struct task_struct' has no member named 'fsuid'
-> perfmon/perfmon_file.c:271: error: 'struct task_struct' has no member named 'fsgid'
->
-> These fields are being removed by another tree in linux-next, but there
-> are already accessor functions in Linus' tree that you should be using
-> anyway (see current_fsuid() and current_fsgid() in include/linux/cred.h).
->
-> So I will drop your tree for today in the hope that it will be fixed by
-> Monday.
->
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
->
+David
