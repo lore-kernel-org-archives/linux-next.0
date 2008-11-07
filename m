@@ -1,33 +1,48 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net tree
-Date: Thu, 06 Nov 2008 20:47:58 -0800 (PST)
-Message-ID: <20081106.204758.156056378.davem@davemloft.net>
-References: <20081107152424.175b101a.sfr@canb.auug.org.au>
+From: Lachlan McIlroy <lachlan@sgi.com>
+Subject: Re: linux-next: unable to fetch the xfs tree
+Date: Fri, 07 Nov 2008 15:51:51 +1100
+Message-ID: <4913C967.30309@sgi.com>
+References: <20081107111125.ef33b1dc.sfr@canb.auug.org.au>	<20081107145332.52d49390.sfr@canb.auug.org.au>	<4913BEC6.6080901@sgi.com> <20081107154602.8621ea3d.sfr@canb.auug.org.au>
+Reply-To: lachlan@sgi.com
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:47567
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1751665AbYKGEr7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Nov 2008 23:47:59 -0500
-In-Reply-To: <20081107152424.175b101a.sfr@canb.auug.org.au>
+Received: from relay2.sgi.com ([192.48.179.30]:40874 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751157AbYKGExM (ORCPT
+	<rfc822;@relay.corp.sgi.com:linux-next@vger.kernel.org>);
+	Thu, 6 Nov 2008 23:53:12 -0500
+In-Reply-To: <20081107154602.8621ea3d.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, andrey@cozybit.com, linville@tuxdriver.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Chinner <david@fromorbit.com>, linux-next@vger.kernel.org, linuxf-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@infradead.org>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 7 Nov 2008 15:24:24 +1100
-
-> Today's linux-next merge of the net tree got a conflict in
-> drivers/net/wireless/ath5k/base.c between commit
-> 934f6c3f8e7f5d6a6d07ae2df283fd02393019dd ("Revert "ath5k: honor
-> FIF_BCN_PRBRESP_PROMISC in STA mode"") from the net-current tree and
-> commit b706e65b40417e03c2451bb3f92488f3736843fa ("ath5k: fix mesh point
-> operation") from the net tree.
+Stephen Rothwell wrote:
+> Hi Lachlan,
 > 
-> Just a context change.  I fixed it up (see below) and assume it will be
-> fixed in your tree soon.
+> On Fri, 07 Nov 2008 15:06:30 +1100 Lachlan McIlroy <lachlan@sgi.com> wrote:
+>> Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> On Fri, 7 Nov 2008 11:11:25 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>>> I am getting:
+>>>>
+>>>> oss.sgi.com[0: 192.48.170.157]: errno=Connection refused
+>>>>
+>>>> so I will use what I fetched yesterday.
+>>> And now I have received:
+>>>
+>>> <xfs-masters@oss.sgi.com>: host cuda-allmx.sgi.com[192.48.176.16] said: 550
+>>>     cuda_nsu 5.1.1 <xfs-masters@oss.sgi.com>... User unknown (in reply to RCPT
+>>>     TO command)
+>>>
+>>> So, is this a permanent state of affairs, or just a temporary glitch?
+>> Should be temporary.  We have known DNS and email issues that we are working
+>> on.  We're also moving oss.sgi.com but I have no idea what the schedule is.
+> 
+> Thanks.
+> 
 
-Thanks a lot Stephen, I'll do a merge to fix this up!
+I actually got a bounce message when I sent that reply.  Gotta love the irony.
