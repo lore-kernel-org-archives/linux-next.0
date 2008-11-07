@@ -1,54 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree
-Date: Fri, 7 Nov 2008 15:33:21 +1100
-Message-ID: <20081107153321.9168715f.sfr@canb.auug.org.au>
+Subject: Re: linux-next: unable to fetch the xfs tree
+Date: Fri, 7 Nov 2008 15:46:02 +1100
+Message-ID: <20081107154602.8621ea3d.sfr@canb.auug.org.au>
+References: <20081107111125.ef33b1dc.sfr@canb.auug.org.au>
+	<20081107145332.52d49390.sfr@canb.auug.org.au>
+	<4913BEC6.6080901@sgi.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__7_Nov_2008_15_33_21_+1100_SXvyS8yPV/s=g4L4"
+ boundary="Signature=_Fri__7_Nov_2008_15_46_02_+1100_k6+7yxsx/SEkz9MF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51397 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45431 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751083AbYKGEdc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 6 Nov 2008 23:33:32 -0500
+	id S1751399AbYKGEqN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 6 Nov 2008 23:46:13 -0500
+In-Reply-To: <4913BEC6.6080901@sgi.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Patrick McHardy <kaber@trash.net>
+To: lachlan@sgi.com
+Cc: David Chinner <david@fromorbit.com>, linux-next@vger.kernel.org, linuxf-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@infradead.org>
 
---Signature=_Fri__7_Nov_2008_15_33_21_+1100_SXvyS8yPV/s=g4L4
+--Signature=_Fri__7_Nov_2008_15_46_02_+1100_k6+7yxsx/SEkz9MF
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Lachlan,
 
-Today's linux-next merge of the net tree got a conflict in
-net/8021q/vlan_core.c between commit
-9b22ea560957de1484e6b3e8538f7eef202e3596 ("net: fix packet socket
-delivery in rx irq handler") from the net-current tree and commit
-d2ad3ca88da02baeccd5216780f1fe983c6953ba ("net/: Kill now superfluous
-->last_rx stores") from the net tree.
+On Fri, 07 Nov 2008 15:06:30 +1100 Lachlan McIlroy <lachlan@sgi.com> wrote:
+>
+> Stephen Rothwell wrote:
+> > Hi all,
+> >=20
+> > On Fri, 7 Nov 2008 11:11:25 +1100 Stephen Rothwell <sfr@canb.auug.org.a=
+u> wrote:
+> >> I am getting:
+> >>
+> >> oss.sgi.com[0: 192.48.170.157]: errno=3DConnection refused
+> >>
+> >> so I will use what I fetched yesterday.
+> >=20
+> > And now I have received:
+> >=20
+> > <xfs-masters@oss.sgi.com>: host cuda-allmx.sgi.com[192.48.176.16] said:=
+ 550
+> >     cuda_nsu 5.1.1 <xfs-masters@oss.sgi.com>... User unknown (in reply =
+to RCPT
+> >     TO command)
+> >=20
+> > So, is this a permanent state of affairs, or just a temporary glitch?
+>=20
+> Should be temporary.  We have known DNS and email issues that we are work=
+ing
+> on.  We're also moving oss.sgi.com but I have no idea what the schedule i=
+s.
 
-The former moved the code around that the latter was removing.  It seems
-that the net-current change supercedes the net one (I may be wrong).  I
-assume that this will be fixed in your tree soon.
+Thanks.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-
---Signature=_Fri__7_Nov_2008_15_33_21_+1100_SXvyS8yPV/s=g4L4
+--Signature=_Fri__7_Nov_2008_15_46_02_+1100_k6+7yxsx/SEkz9MF
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkkTxREACgkQjjKRsyhoI8x8UQCeKlVNV2MxL8p3j8JatwMjC/qS
-WYYAn2RKYm4Yng6968vNN3G1YKr+Mift
-=Wc7f
+iEYEARECAAYFAkkTyAoACgkQjjKRsyhoI8zIbwCfcig917DLvcVm1rIGnco5/Wzx
+QmgAoL2fwdEutzseIPCE57Ylg3q3oo63
+=N1lx
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__7_Nov_2008_15_33_21_+1100_SXvyS8yPV/s=g4L4--
+--Signature=_Fri__7_Nov_2008_15_46_02_+1100_k6+7yxsx/SEkz9MF--
