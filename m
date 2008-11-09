@@ -1,80 +1,45 @@
-From: Boaz Harrosh <bharrosh@panasas.com>
-Subject: Re: [PATCHSET 00/18] open-osd: OSD Initiator library for Linux
-Date: Sun, 09 Nov 2008 16:58:59 +0200
-Message-ID: <4916FAB3.4010409@panasas.com>
-References: <48876009.8010701@panasas.com>	<491073BB.4000900@panasas.com> <20081104111923.bb19c238.akpm@linux-foundation.org>
+From: Avi Kivity <avi@redhat.com>
+Subject: Re: linux-next: build failure
+Date: Sun, 09 Nov 2008 17:50:24 +0200
+Message-ID: <491706C0.8090102@redhat.com>
+References: <20081107202541.85d6a823.sfr@canb.auug.org.au>	<1226076005.9309.9.camel@localhost.localdomain> <20081108095429.1ade66c9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gw-ca.panasas.com ([66.104.249.162]:31644 "EHLO
-	laguna.int.panasas.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1754765AbYKIO6v (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 9 Nov 2008 09:58:51 -0500
-In-Reply-To: <20081104111923.bb19c238.akpm@linux-foundation.org>
+Received: from mx2.redhat.com ([66.187.237.31]:60895 "EHLO mx2.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755168AbYKIPue (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 9 Nov 2008 10:50:34 -0500
+In-Reply-To: <20081108095429.1ade66c9.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, James.Bottomley@HansenPartnership.com, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Sam Ravnborg <sam@ravnborg.org>
-Cc: michaelc@cs.wisc.edu, fujita.tomonori@lab.ntt.co.jp, jeff@garzik.org, osd-dev@open-osd.org, linux-scsi@vger.kernel.org, Sami.Iren@seagate.com, Pete Wyckoff <pw@padd.com>, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Hollis Blanchard <hollisb@us.ibm.com>, Avi Kivity <avi@qumranet.com>, linux-next@vger.kernel.org, Josh Boyer <jwboyer@linux.vnet.ibm.com>
 
-Andrew Morton wrote:
-> On Tue, 04 Nov 2008 18:09:31 +0200
-> Boaz Harrosh <bharrosh@panasas.com> wrote:
-> 
->> Please consider for inclusion, an in-kernel OSD initiator
->> library. Its main users are planned to be various OSD based file
->> systems and the pNFS-Objects Layout Driver. (To be submitted soon)
->>  
->> To try out and run the library please visit
->> http://open-osd.org and follow the instructions there.
+Stephen Rothwell wrote:
+> Hi Hollis,
+>
+> On Fri, 07 Nov 2008 10:40:05 -0600 Hollis Blanchard <hollisb@us.ibm.com> wrote:
+>   
+>> Hi Stephen, it looks like Josh accidentally set the following options in
+>> ppc44x_defconfig:
+>> +CONFIG_VIRTUALIZATION=y
+>> +CONFIG_KVM=y
+>> +CONFIG_KVM_BOOKE_HOST=y
 >>
->> The submitted patchset is also available via git at:
->>    git://git.open-osd.org/linux-open-osd.git osd
->>    http://git.open-osd.org/gitweb.cgi?p=linux-open-osd.git;a=shortlog;h=osd
+>> http://git.kernel.org/?p=linux/kernel/git/jwboyer/powerpc-4xx.git;a=commitdiff;h=8531b7a805833649591fa324cadbab7d6b667f4b
 >>
->> Or a compact out-of-tree repository that includes sources 
->> and some extras:
->>    git://git.open-osd.org/open-osd.git master
->>    http://git.open-osd.org/gitweb.cgi?p=open-osd.git;a=summary
->>
->> ...
->>
->> We would like this to sit in -mm tree for a while to make sure it is compilable
->> on all platform.
-> 
-> The best way to do that is to include your git tree in linux-next.  If
-> this code has a probably-will-be-merged-in-2.6.29 status then please
-> prepare a branch for Stephen to include in the linux-next lineup.
-> 
+>> Since then, CONFIG_KVM_BOOKE_HOST was renamed to CONFIG_KVM_440.
+>> Unfortunately I don't have the right Kconfig constraint in place to
+>> catch that, leading to this problem. I will submit a patch for this
+>> today.
+>>     
+>
+> OK, thanks.
+>   
 
-Hi Stephen and James
+I've merged and pushed this patch, so this should be fixed.
 
-I have prepared a branch for linux-next based on today's Linus tree
-It is here:
-    git://git.open-osd.org/linux-open-osd.git linux-next
-This is if it's OK with James, as these bits are his responsibility.
-They need only sit in linux-next for a couple of weeks to get some wider
-compilation exposure. Other then that they are totally new code and
-are safe. Eventually they should be included into Linux-next through
-scsi-misc-2.6.
-
-I have only posted "ver 2" updates to a couple of patches that had
-comments by people but more patches changed. Mainly:
-- rename of scsi_dev => scsi_device
-- missing static keyword
-- Kbuild fixes and comments by Sam Ravnborg
-- small typos found on the way
-
-The new patchset can be reviewed at:
-    git://git.open-osd.org/linux-open-osd.git linux-next
-    http://git.open-osd.org/gitweb.cgi?p=linux-open-osd.git;a=shortlog;h=linux-next
-
-or Based on current scsi-misc-2.6:
-    git://git.open-osd.org/linux-open-osd.git osd
-    http://git.open-osd.org/gitweb.cgi?p=linux-open-osd.git;a=shortlog;h=osd
-
-I did not want to spam the mailing-list with somewhat same patches.
-I will post them, if any one needs me to.
-
-Thanks everyone for your help
-Boaz
+-- 
+error compiling committee.c: too many arguments to function
