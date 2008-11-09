@@ -1,45 +1,27 @@
-From: Avi Kivity <avi@redhat.com>
-Subject: Re: linux-next: build failure
-Date: Sun, 09 Nov 2008 17:50:24 +0200
-Message-ID: <491706C0.8090102@redhat.com>
-References: <20081107202541.85d6a823.sfr@canb.auug.org.au>	<1226076005.9309.9.camel@localhost.localdomain> <20081108095429.1ade66c9.sfr@canb.auug.org.au>
+From: Liam Girdwood <lrg@slimlogic.co.uk>
+Subject: voltage regulator tree branch change
+Date: Sun, 09 Nov 2008 16:35:08 +0000
+Message-ID: <1226248508.6727.81.camel@vega.slimlogic.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:60895 "EHLO mx2.redhat.com"
+Received: from slimlogic.co.uk ([89.16.172.20]:49941 "EHLO slimlogic.co.uk"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755168AbYKIPue (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 9 Nov 2008 10:50:34 -0500
-In-Reply-To: <20081108095429.1ade66c9.sfr@canb.auug.org.au>
+	id S1755412AbYKIRIO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 9 Nov 2008 12:08:14 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Hollis Blanchard <hollisb@us.ibm.com>, Avi Kivity <avi@qumranet.com>, linux-next@vger.kernel.org, Josh Boyer <jwboyer@linux.vnet.ibm.com>
+Cc: linux-next <linux-next@vger.kernel.org>
 
-Stephen Rothwell wrote:
-> Hi Hollis,
->
-> On Fri, 07 Nov 2008 10:40:05 -0600 Hollis Blanchard <hollisb@us.ibm.com> wrote:
->   
->> Hi Stephen, it looks like Josh accidentally set the following options in
->> ppc44x_defconfig:
->> +CONFIG_VIRTUALIZATION=y
->> +CONFIG_KVM=y
->> +CONFIG_KVM_BOOKE_HOST=y
->>
->> http://git.kernel.org/?p=linux/kernel/git/jwboyer/powerpc-4xx.git;a=commitdiff;h=8531b7a805833649591fa324cadbab7d6b667f4b
->>
->> Since then, CONFIG_KVM_BOOKE_HOST was renamed to CONFIG_KVM_440.
->> Unfortunately I don't have the right Kconfig constraint in place to
->> catch that, leading to this problem. I will submit a patch for this
->> today.
->>     
->
-> OK, thanks.
->   
+Hi Stephen,
 
-I've merged and pushed this patch, so this should be fixed.
+I've changed the voltage branch for next. Please could you update your
+scripts to use :-
 
--- 
-error compiling committee.c: too many arguments to function
+git://git.kernel.org/pub/scm/linux/kernel/git/lrg/voltage-2.6.git for-next
+
+Thanks
+
+Liam 
