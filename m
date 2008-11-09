@@ -1,48 +1,46 @@
-From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Subject: Re: linux-next: Tree for November 7
-Date: Sat, 8 Nov 2008 20:13:03 +0100
-Message-ID: <200811082013.04066.bzolnier@gmail.com>
-References: <20081107205457.f64dea59.sfr@canb.auug.org.au> <200811081257.45184.bzolnier@gmail.com> <20081108184315.GA9382@x200.localdomain>
+From: Avi Kivity <avi@redhat.com>
+Subject: Re: next-20081107: ia64 vs kvm
+Date: Sun, 09 Nov 2008 12:00:14 +0200
+Message-ID: <4916B4AE.50101@redhat.com>
+References: <20081107205457.f64dea59.sfr@canb.auug.org.au> <20081107223001.GA16733@x200.localdomain> <706158FABBBA044BAD4FE898A02E4BC21983F9EB@pdsmsx503.ccr.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nf-out-0910.google.com ([64.233.182.187]:53679 "EHLO
-	nf-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750921AbYKHTS5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 8 Nov 2008 14:18:57 -0500
-In-Reply-To: <20081108184315.GA9382@x200.localdomain>
-Content-Disposition: inline
+Received: from mx2.redhat.com ([66.187.237.31]:38814 "EHLO mx2.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753098AbYKIKAZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 9 Nov 2008 05:00:25 -0500
+In-Reply-To: <706158FABBBA044BAD4FE898A02E4BC21983F9EB@pdsmsx503.ccr.corp.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Eric W. Biederman" <ebiederm@xmission.com>, "David S. Miller" <davem@davemloft.net>
+To: "Zhang, Xiantao" <xiantao.zhang@intel.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "avi@qumranet.com" <avi@qumranet.com>
 
-On Saturday 08 November 2008, Alexey Dobriyan wrote:
-> On Sat, Nov 08, 2008 at 12:57:44PM +0100, Bartlomiej Zolnierkiewicz wrote:
-> > On Friday 07 November 2008, Stephen Rothwell wrote:
-> > > Changes since 20081106:
-> > 
-> > The following patch fixes the panic on loopback device registration
-> > (patch is an interdiff between old and new version of "net: Guaranetee
-> > the proper ordering of the loopback device." fix from Eric).
-> > 
-> > [ I'm sure this will get fixed in -net tree (if not fixed already)
-> >   but at the moment it is needed for linux-next. ]
-> 
-> This patch alone is a) not enough, and b) davem already pushed out correct
-> version.
+Zhang, Xiantao wrote:
+> Alexey Dobriyan wrote:
+>   
+>> On ia64-smp-n-debug-n-preempt-n:
+>>
+>> arch/ia64/kvm/vmm.c:63: error: 'raw_spinlock_t' has no member named
+>> 'lock' 
+>>
+>>     
+> Hi, Avi
+> 	This patch should fix the issue Alex met, please apply to kvm.git and queue it for 2.6.28 fixes. Thanks!
+> Xiantao
+>
+> From fae5782b369f4bd6e8edecad5912fea7624f0374 Mon Sep 17 00:00:00 2001
+> From: Xiantao Zhang <xiantao.zhang@intel.com>
+> Date: Sat, 8 Nov 2008 15:46:59 +0800
+> Subject: [PATCH] KVM: IA64: Fix vmm_spin_{un}lock for !CONFIG_SMP.
+>
+> In the case of !CONFIG_SMP, raw_spinlock_t has no any member
+> so vmm_spin_lock should also defines the version for !CONFIG_SMP.
+>
+>   
 
-Well, it was enough to make next-20081107 bootable for me. :-)
+Thanks, applied.
 
-However, it seems like the following patch is also neeed by linux-next users:
- http://git.kernel.org/?p=linux/kernel/git/davem/net-next-2.6.git;a=commitdiff;h=5d6d480908300a0c0b3be8b58567dfcef62c83a5
-
-[ I also see that it is fixed now but it was actually an overdue mail from
-  yesterday and like I said earlier, the sole its purpose was to help people
-  trying linux-next kernels (linux-next is not released on weekends so from
-  their POV it doesn't really matter if it already got fixed in net-next). ]
-
-Thanks,
-Bart
+-- 
+error compiling committee.c: too many arguments to function
