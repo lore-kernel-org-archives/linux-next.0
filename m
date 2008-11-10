@@ -1,43 +1,49 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: Re: linux-next: Tree for November 10
-Date: Mon, 10 Nov 2008 15:26:52 +0300
-Message-ID: <20081110122652.GA20072@x200.localdomain>
-References: <20081110181649.fa586eb3.sfr@canb.auug.org.au>
+From: Boaz Harrosh <bharrosh@panasas.com>
+Subject: Re: [PATCHSET 00/18] open-osd: OSD Initiator library for Linux
+Date: Mon, 10 Nov 2008 14:52:21 +0200
+Message-ID: <49182E85.9010405@panasas.com>
+References: <48876009.8010701@panasas.com>	<491073BB.4000900@panasas.com>	<20081104111923.bb19c238.akpm@linux-foundation.org>	<4916FAB3.4010409@panasas.com> <20081110102607.378c3279.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ug-out-1314.google.com ([66.249.92.174]:16518 "EHLO
-	ug-out-1314.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754708AbYKJMX3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Nov 2008 07:23:29 -0500
-Content-Disposition: inline
-In-Reply-To: <20081110181649.fa586eb3.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <20081110102607.378c3279.sfr@canb.auug.org.au>
+Sender: linux-scsi-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, James.Bottomley@HansenPartnership.com, linux-next@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>, michaelc@cs.wisc.edu, fujita.tomonori@lab.ntt.co.jp, jeff@garzik.org, osd-dev@open-osd.org, linux-scsi@vger.kernel.org, Sami.Iren@seagate.com, Pete Wyckoff <pw@padd.com>, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-This is a reminder that x86_64 UML is still busted:
+Stephen Rothwell wrote:
+> Hi Boaz,
+> 
+> On Sun, 09 Nov 2008 16:58:59 +0200 Boaz Harrosh <bharrosh@panasas.com> wrote:
+>> I have prepared a branch for linux-next based on today's Linus tree
+>> It is here:
+>>     git://git.open-osd.org/linux-open-osd.git linux-next
+>> This is if it's OK with James, as these bits are his responsibility.
+>> They need only sit in linux-next for a couple of weeks to get some wider
+>> compilation exposure. Other then that they are totally new code and
+>> are safe. Eventually they should be included into Linux-next through
+>> scsi-misc-2.6.
+> 
+> I have added that tree to linux-next for today.
+> 
+> What I say to everyone:  commits in that branch must have been posted
+> somewhere appropriate, reviewed, unit tested and destined for the next
+> merge window.  Also, note that my (new) practise is to temporarily drop a
+> tree if it causes non-trivial conflicts (especially with Linus' tree), so
+> don't be too upset if you get a message from me to that effect.
+> 
 
-  CC      arch/um/kernel/asm-offsets.s
-In file included from arch/um/include/asm/fixmap.h:5,
-                 from arch/um/include/shared/um_uaccess.h:10,
-                 from arch/um/include/asm/uaccess.h:41,
-                 from arch/um/include/asm/thread_info.h:13,
-                 from include/linux/thread_info.h:55,
-                 from include/linux/preempt.h:9,
-                 from include/linux/spinlock.h:50,
-                 from include/linux/seqlock.h:29,
-                 from include/linux/time.h:8,
-                 from include/linux/timex.h:57,
-                 from include/linux/sched.h:54,
-                 from arch/um/sys-x86_64/shared/sysdep/kernel-offsets.h:2,
-                 from arch/um/kernel/asm-offsets.c:1:
-arch/um/include/asm/system.h:16:1: warning: "raw_local_irq_restore" redefined
+Thank you Stephen, very much
 
-			...
+This has proven itself already. I found some warnings on some ARCHs
+concerning printk of u64 types. I have made a sweep and fixed all these
+places and others.
+(same place: git://git.open-osd.org/linux-open-osd.git linux-next)
 
-                 from arch/um/kernel/asm-offsets.c:1:
-include/linux/proportions.h: In function 'prop_inc_percpu':
-include/linux/proportions.h:75: error: implicit declaration of function 'local_irq_save'
-include/linux/proportions.h:77: error: implicit declaration of function 'local_irq_restore'
+If you could keep it for the next round it could be grate. So I can make
+sure I got rid of all the warnings.
+
+Thanks again
+Boaz
