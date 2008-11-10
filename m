@@ -1,51 +1,52 @@
-From: malahal@us.ibm.com
-Subject: Re: linux-next: block tree build failure
-Date: Sun, 9 Nov 2008 20:13:52 -0800
-Message-ID: <20081110041352.GA2935@us.ibm.com>
-References: <20081110145442.d60e57b7.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: warning from build
+Date: Mon, 10 Nov 2008 15:25:46 +1100
+Message-ID: <20081110152546.0d13a794.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__10_Nov_2008_15_25_46_+1100_d8sn6D70jftSJqb7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e5.ny.us.ibm.com ([32.97.182.145]:60527 "EHLO e5.ny.us.ibm.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:54165 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752620AbYKJENz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 9 Nov 2008 23:13:55 -0500
-Received: from d01relay02.pok.ibm.com (d01relay02.pok.ibm.com [9.56.227.234])
-	by e5.ny.us.ibm.com (8.13.8/8.13.8) with ESMTP id mAA4Dsul016735
-	for <linux-next@vger.kernel.org>; Sun, 9 Nov 2008 23:13:54 -0500
-Received: from d01av01.pok.ibm.com (d01av01.pok.ibm.com [9.56.224.215])
-	by d01relay02.pok.ibm.com (8.13.8/8.13.8/NCO v9.1) with ESMTP id mAA4DsW5112278
-	for <linux-next@vger.kernel.org>; Sun, 9 Nov 2008 23:13:54 -0500
-Received: from d01av01.pok.ibm.com (loopback [127.0.0.1])
-	by d01av01.pok.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id mAA4DrU5023781
-	for <linux-next@vger.kernel.org>; Sun, 9 Nov 2008 23:13:54 -0500
-Content-Disposition: inline
-In-Reply-To: <20081110145442.d60e57b7.sfr@canb.auug.org.au>
+	id S1752474AbYKJE0C (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 9 Nov 2008 23:26:02 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jens Axboe <jens.axboe@oracle.com>, linux-next@vger.kernel.org
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Anirban Chakraborty <anirban.chakraborty@qlogic.com>, linux-next@vger.kernel.org
 
-The original patch is split into two commits and Jen missed to change
-'next_set' to 'next' in the first commit! Just changing the 'next_set'
-to 'next' should work. I will send a patch very soon.
+--Signature=_Mon__10_Nov_2008_15_25_46_+1100_d8sn6D70jftSJqb7
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---Malahal.
+Hi James,
 
-Stephen Rothwell [sfr@canb.auug.org.au] wrote:
-> Hi Jens,
-> 
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> 
-> block/blk-timeout.c: In function 'blk_rq_timed_out_timer':
-> block/blk-timeout.c:140: error: 'next_set' undeclared (first use in this function)
-> 
-> Caused by commit 66f067c93b0eefc8613fd7a91cd6853e2bf48806 ("block:
-> optimizations in blk_rq_timed_out_timer()").  Clearly not even
-> compiled ...
-> 
-> I have dropped the block tree for today.
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
+The current linux-next build (x86_64 allmodconfig) produces this warning:
+
+drivers/scsi/qla2xxx/qla_os.c: In function 'qla2x00_probe_one':
+drivers/scsi/qla2xxx/qla_os.c:1582: warning: 'mem_only' is used uninitializ=
+ed in this function
+
+Caused by commit 00aeec5c93a80145cfa939bb9c9e244b207cb48c ("[SCSI]
+qla2xxx: Code changes for qla data structure refactoring") which removed
+the initialisation of mem_only.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__10_Nov_2008_15_25_46_+1100_d8sn6D70jftSJqb7
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkXt8oACgkQjjKRsyhoI8wxDACfbt/1Jzlm0HY501FvAGqGaY7p
+RLMAn35cGvKNuUH/LWbu7IzejJ0/TgkW
+=vPCe
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__10_Nov_2008_15_25_46_+1100_d8sn6D70jftSJqb7--
