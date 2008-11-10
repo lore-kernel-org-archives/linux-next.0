@@ -1,53 +1,56 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: linux-next: manual merge of the cputime tree
-Date: Mon, 10 Nov 2008 09:45:26 +0100
-Message-ID: <1226306726.23046.14.camel@localhost>
-References: <20081110170943.114a7786.sfr@canb.auug.org.au>
-Reply-To: schwidefsky@de.ibm.com
+From: Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: linux-next: block tree build failure
+Date: Mon, 10 Nov 2008 13:12:56 +0100
+Message-ID: <20081110121256.GD26778@kernel.dk>
+References: <20081110145442.d60e57b7.sfr@canb.auug.org.au> <20081110044649.GA18587@us.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate6.de.ibm.com ([195.212.29.155]:44763 "EHLO
-	mtagate6.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750970AbYKJIy4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Nov 2008 03:54:56 -0500
-Received: from d12nrmr1607.megacenter.de.ibm.com (d12nrmr1607.megacenter.de.ibm.com [9.149.167.49])
-	by mtagate6.de.ibm.com (8.13.8/8.13.8) with ESMTP id mAA8sr3n442478
-	for <linux-next@vger.kernel.org>; Mon, 10 Nov 2008 08:54:53 GMT
-Received: from d12av02.megacenter.de.ibm.com (d12av02.megacenter.de.ibm.com [9.149.165.228])
-	by d12nrmr1607.megacenter.de.ibm.com (8.13.8/8.13.8/NCO v9.1) with ESMTP id mAA8srsY4141240
-	for <linux-next@vger.kernel.org>; Mon, 10 Nov 2008 09:54:53 +0100
-Received: from d12av02.megacenter.de.ibm.com (loopback [127.0.0.1])
-	by d12av02.megacenter.de.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id mAA8sqLu000510
-	for <linux-next@vger.kernel.org>; Mon, 10 Nov 2008 09:54:53 +0100
-In-Reply-To: <20081110170943.114a7786.sfr@canb.auug.org.au>
+Received: from pasmtpb.tele.dk ([80.160.77.98]:56128 "EHLO pasmtpB.tele.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754483AbYKJMOa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 Nov 2008 07:14:30 -0500
+Content-Disposition: inline
+In-Reply-To: <20081110044649.GA18587@us.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>
+To: malahal@us.ibm.com
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-Hi Stephen,
-
-On Mon, 2008-11-10 at 17:09 +1100, Stephen Rothwell wrote:
-> Today's linux-next merge of the cputime tree got a conflict in
-> arch/s390/kernel/process.c between commit
-> 2933aa2758dc5e520f83a5f4c3f255aea297bd3f ("[S390] ftrace: disable tracing
-> on idle psw") from the s390 tree and commit
-> bbda3e73a200e966955b15a08a8be05a7c1d430e ("[PATCH] improve precision of
-> idle accounting") from the cputime tree.
+On Sun, Nov 09 2008, malahal@us.ibm.com wrote:
+> Stephen Rothwell [sfr@canb.auug.org.au] wrote:
+> > Hi Jens,
+> > 
+> > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> > 
+> > block/blk-timeout.c: In function 'blk_rq_timed_out_timer':
+> > block/blk-timeout.c:140: error: 'next_set' undeclared (first use in this function)
+> > 
+> > Caused by commit 66f067c93b0eefc8613fd7a91cd6853e2bf48806 ("block:
+> > optimizations in blk_rq_timed_out_timer()").  Clearly not even
+> > compiled ...
+> > 
 > 
-> I attempted a fix (see below) but please either provide me with a better
-> patch or fix this conflict in one or the other tree.  You could do this
-> by merging the s390 tree into the cputime tree (but you would need to be
-> careful to keep the consistent) and fixing this in the merge commit.
+> I compiled the code with the following patch on i386 arch. Should work
+> on powerpc too!
+> 
+> Signed-off-by: Malahal Naineni <malahal@us.ibm.com>
+> 
+> 
+> diff -r b824bf5f19d4 block/blk-timeout.c
+> --- a/block/blk-timeout.c	Sun Nov 09 20:15:10 2008 -0800
+> +++ b/block/blk-timeout.c	Sun Nov 09 20:18:07 2008 -0800
+> @@ -137,7 +137,7 @@
+>  	 * bump ->deadline to 1 so we can detect if the timer was ever added
+>  	 * or not. See comment in blk_add_timer()
+>  	 */
+> -	if (next_set)
+> +	if (next)
+>  		mod_timer(&q->timeout, round_jiffies_up(next));
+>  
+>  	spin_unlock_irqrestore(q->queue_lock, flags);
 
-You are pulling the s390 tree first and then the cputime tree, no? Then
-I could simply rebase the cputime tree off the s390 tree. You'll find
-new features/cputime branches on git390.
+Duh thanks, I'll rebase and fix it!
 
 -- 
-blue skies,
-  Martin.
-
-"Reality continues to ruin my life." - Calvin.
+Jens Axboe
