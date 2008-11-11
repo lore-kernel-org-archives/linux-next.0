@@ -1,53 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: xfs tree build failure
-Date: Tue, 11 Nov 2008 13:11:09 +1100
-Message-ID: <20081111131109.aa82f37b.sfr@canb.auug.org.au>
-References: <20081030132324.0d619fdd.sfr@canb.auug.org.au>
-	<20081030090832.GQ17077@disturbed>
-	<20081105132000.4e560cad.sfr@canb.auug.org.au>
-	<20081105204754.GO4985@disturbed>
-	<20081106152753.GA9161@infradead.org>
-	<20081107160611.d6f64fdd.sfr@canb.auug.org.au>
-	<4918E85A.5000701@sgi.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__11_Nov_2008_13_11_09_+1100_Z8h3Amtvh7SCfym_"
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <4918E85A.5000701@sgi.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: lachlan@sgi.com
-Cc: Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-List-Id: linux-next.vger.kernel.org
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH 0/2] ftrace updates for 2.6.28
+Date: Mon, 10 Nov 2008 21:58:08 -0500
+Message-ID: <20081111025808.946638585@goodmis.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.125]:45038 "EHLO
+	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754517AbYKKDFU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Nov 2008 22:05:20 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
 
---Signature=_Tue__11_Nov_2008_13_11_09_+1100_Z8h3Amtvh7SCfym_
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Lachlan,
+Stephen and Ingo,
 
-On Tue, 11 Nov 2008 13:05:14 +1100 Lachlan McIlroy <lachlan@sgi.com> wrote:
->
-> Okay, your fix is in and it is building again.
+The following patches are needed for 2.6.28. The first one solves a bug
+where the resizing of the buffer array was not protected against
+modifications by ftrace.
 
-Thanks, I saw that this morning, so the xfs tree should be in linux-next
-today.
+The second patch solves an issue tha Thomas Gleixner was seeing where
+the tracer would detect the infinite recursion too easily by
+tracing the timer code. This patch prevents the loop from happening
+and still does not lose any trace entries.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+The changes caused by these patches are low in risk, but I would
+still like to put them through linux-next before passing them
+off to Linus.
 
---Signature=_Tue__11_Nov_2008_13_11_09_+1100_Z8h3Amtvh7SCfym_
-Content-Type: application/pgp-signature
+Note, these changes are based against Linus's mainline and not tip.
+Also note that the branch in this tree is "devel" and not "tip/devel".
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+The following patches are in:
 
-iEYEARECAAYFAkkY6b0ACgkQjjKRsyhoI8xAJgCgt+jOE77uO2YaEaBK+5wrhiKX
-YlgAn0f6zv0y/eu2p7Kbwqqb1o7mw+62
-=ly9U
------END PGP SIGNATURE-----
+  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-2.6-trace.git
 
---Signature=_Tue__11_Nov_2008_13_11_09_+1100_Z8h3Amtvh7SCfym_--
+    branch: devel
+
+
+Steven Rostedt (2):
+      ftrace: disable tracing on resize
+      ring-buffer: prevent infinite looping on time stamping
+
+----
+ kernel/trace/ring_buffer.c |    2 +-
+ kernel/trace/trace.c       |   17 ++++++++++++++++-
+ 2 files changed, 17 insertions(+), 2 deletions(-)
