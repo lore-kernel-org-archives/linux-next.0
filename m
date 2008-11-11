@@ -1,44 +1,56 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH 1/1] ring-buffer: buffer record on/off switch
-Date: Tue, 11 Nov 2008 22:08:31 +0100
-Message-ID: <20081111210831.GA16179@elte.hu>
-References: <20081111200601.147669239@goodmis.org> <20081111201034.315528609@goodmis.org> <20081111125645.4f7a5827.akpm@linux-foundation.org> <alpine.DEB.1.10.0811111603590.3275@gandalf.stny.rr.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the net tree
+Date: Wed, 12 Nov 2008 10:17:31 +1100
+Message-ID: <20081112101731.4577021a.sfr@canb.auug.org.au>
+References: <20081110140253.f2c1d262.sfr@canb.auug.org.au>
+	<20081110.230049.128216257.davem@davemloft.net>
+	<20081111192453.96f685d1.sfr@canb.auug.org.au>
+	<20081111.012131.33382347.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__12_Nov_2008_10_17_31_+1100_VF8ZypEds/7Y+OEo"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:57366 "EHLO mx2.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40150 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752130AbYKKVJE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 11 Nov 2008 16:09:04 -0500
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.1.10.0811111603590.3275@gandalf.stny.rr.com>
+	id S1751692AbYKKXRt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 11 Nov 2008 18:17:49 -0500
+In-Reply-To: <20081111.012131.33382347.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>, Andy Whitcroft <apw@shadowen.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, tglx@linutronix.de, torvalds@linux-foundation.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, srostedt@redhat.com
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, alan@lxorguk.ukuu.org.uk, johannes@sipsolutions.net
 
+--Signature=_Wed__12_Nov_2008_10_17_31_+1100_VF8ZypEds/7Y+OEo
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Steven Rostedt <rostedt@goodmis.org> wrote:
+Hi Dave,
 
-> 
-> On Tue, 11 Nov 2008, Andrew Morton wrote:
-> 
-> > On Tue, 11 Nov 2008 15:06:02 -0500
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
-> > 
-> > > +static struct file_operations rb_simple_fops = {
-> > 
-> > should be const...
-> > 
-> > Probably it isn't worth fixing.  Someone(tm) should do period sweeps -
-> > 10% of our file_operationses aren't const.
-> 
-> Thanks, I never really thought about it.
-> 
-> I'll add to my todo list to send out a patch that cleans all of this 
-> up. I think I'm guilty at doing this in more than one place.
+On Tue, 11 Nov 2008 01:21:31 -0800 (PST) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> What usually happens is I wait for Linus to take net-2.6 into
+> his tree (in case he doesn't like what I have pending and
+> I thus have to respin to eliminate the offending commits).
 
-Perhaps checkpatch.pl could remind us about it? a new file_operations 
-struct definition should be const in 99.9% of the cases.
+That make sense.
 
-	Ingo
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__12_Nov_2008_10_17_31_+1100_VF8ZypEds/7Y+OEo
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkaEosACgkQjjKRsyhoI8yCigCghFILKiIiyvWPgqLOUWgqkZOX
+PggAn0LdYCWSaRcteV+OVDe+BZrE1qhq
+=eGj5
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__12_Nov_2008_10_17_31_+1100_VF8ZypEds/7Y+OEo--
