@@ -1,39 +1,40 @@
-From: Anirban Chakraborty <anirban.chakraborty@qlogic.com>
-Subject: Re: [PATCH] qla2xxx: Fix for build warning
-Date: Mon, 10 Nov 2008 15:53:20 -0800 (PST)
-Message-ID: <alpine.OSX.1.00.0811101547560.2000@n4012av5rky081.qlogic.org>
-References: <200811071744.mA7HiJaf012195@hera.kernel.org> <alpine.OSX.1.00.0811101211050.1560@n4012av5rky081.qlogic.org>
+From: Lachlan McIlroy <lachlan@sgi.com>
+Subject: Re: linux-next: xfs tree build failure
+Date: Tue, 11 Nov 2008 13:05:14 +1100
+Message-ID: <4918E85A.5000701@sgi.com>
+References: <20081030132324.0d619fdd.sfr@canb.auug.org.au>	<20081030090832.GQ17077@disturbed>	<20081105132000.4e560cad.sfr@canb.auug.org.au>	<20081105204754.GO4985@disturbed>	<20081106152753.GA9161@infradead.org> <20081107160611.d6f64fdd.sfr@canb.auug.org.au>
+Reply-To: lachlan@sgi.com
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <alpine.OSX.1.00.0811101211050.1560@n4012av5rky081.qlogic.org>
-Sender: linux-scsi-owner@vger.kernel.org
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-scsi@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from netops-testserver-3-out.sgi.com ([192.48.171.28]:56997 "EHLO
+	relay.sgi.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753765AbYKKCGR (ORCPT
+	<rfc822;@relay.corp.sgi.com:linux-next@vger.kernel.org>);
+	Mon, 10 Nov 2008 21:06:17 -0500
+In-Reply-To: <20081107160611.d6f64fdd.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
 
-Thanks Stephen for pointing it out. The updated patch goes here.
+Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Thu, 6 Nov 2008 10:27:53 -0500 Christoph Hellwig <hch@infradead.org> wrote:
+>> On Thu, Nov 06, 2008 at 07:47:54AM +1100, Dave Chinner wrote:
+>>>>> I think it's probably the only solution - we need to wait until
+>>>>> the I_LOCK bit is cleared from the inode and AFAICT wait_on_inode()
+>>>>> is the only way to do it.
+>>>> Any resolution?
+>>> I was waiting on a comment from Christoph. I'll cc him directly this
+>>> time ;)
+>> What comment do you expect from me?  The fix looks correct, but at some
+>> point you should probably run all these exports past Al to get another
+>> review.  Especially as he's doing major work in this area currently.
+> 
+> OK, I have dropped the xfs tree for today.  Let me know when it is sorted
+> out.
 
-Thanks,
-Anirban
-
-Signed-off-by: Anirban Chakraborty <anirban.chakraborty@qlogic.com>
-
----
- drivers/scsi/qla2xxx/qla_os.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index 05db166..9830fcb 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -1563,7 +1563,7 @@ qla2x00_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
- 	char pci_info[30];
- 	char fw_str[30];
- 	struct scsi_host_template *sht;
--	int bars, mem_only, max_id = 0;
-+	int bars, max_id, mem_only = 0;
- 	uint16_t req_length = 0, rsp_length = 0;
- 
- 	bars = pci_select_bars(pdev, IORESOURCE_MEM | IORESOURCE_IO);
-
+Okay, your fix is in and it is building again.
