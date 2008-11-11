@@ -1,96 +1,39 @@
 From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 1/2] ftrace: disable tracing on resize
-Date: Mon, 10 Nov 2008 22:18:19 -0500 (EST)
-Message-ID: <alpine.DEB.1.10.0811102216240.10298@gandalf.stny.rr.com>
-References: <20081111025808.946638585@goodmis.org> <20081111030517.017566077@goodmis.org>
+Subject: Re: [PATCH 0/2] ftrace updates for 2.6.28
+Date: Mon, 10 Nov 2008 22:27:01 -0500 (EST)
+Message-ID: <alpine.DEB.1.10.0811102225470.12447@gandalf.stny.rr.com>
+References: <20081111025808.946638585@goodmis.org>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hrndva-omtalb.mail.rr.com ([71.74.56.124]:62471 "EHLO
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.122]:34903 "EHLO
 	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754138AbYKKDSW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Nov 2008 22:18:22 -0500
-In-Reply-To: <20081111030517.017566077@goodmis.org>
+	with ESMTP id S1754164AbYKKD1F (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Nov 2008 22:27:05 -0500
+In-Reply-To: <20081111025808.946638585@goodmis.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pekka Paalanen <pq@iki.fi>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Steven Rostedt <srostedt@redhat.com>
-
-
-Pekka,
-
-I forgot to add you to the Cc list. Could you test this patch to see if it 
-fixes the bug you reported. It fixed a bug I was able to reproduce, but I 
-was never able to reproduce the exact same bug you have seen.
-
--- Steve
+To: Ingo Molnar <mingo@elte.hu>
+Cc: LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
 
 
 On Mon, 10 Nov 2008, Steven Rostedt wrote:
+> 
+> The following patches are in:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-2.6-trace.git
+> 
+>     branch: devel
+> 
+> 
+> Steven Rostedt (2):
+>       ftrace: disable tracing on resize
+>       ring-buffer: prevent infinite looping on time stamping
+> 
 
-> Impact: fix for bug on resize
-> 
-> This patch addresses the bug found here:
-> 
->  http://bugzilla.kernel.org/show_bug.cgi?id=11996
-> 
-> When ftrace converted to the new unified trace buffer, the resizing of
-> the buffer was not protected as much as it was originally. If tracing
-> is performed while the resize occurs, then the buffer can be corrupted.
-> 
-> This patch disables all ftrace buffer modifications before a resize
-> takes place.
-> 
-> Signed-off-by: Steven Rostedt <srostedt@redhat.com>
-> ---
->  kernel/trace/trace.c |   17 ++++++++++++++++-
->  1 files changed, 16 insertions(+), 1 deletions(-)
-> 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index 9f3b478..abfa810 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -2676,7 +2676,7 @@ tracing_entries_write(struct file *filp, const char __user *ubuf,
->  {
->  	unsigned long val;
->  	char buf[64];
-> -	int ret;
-> +	int ret, cpu;
->  	struct trace_array *tr = filp->private_data;
->  
->  	if (cnt >= sizeof(buf))
-> @@ -2704,6 +2704,14 @@ tracing_entries_write(struct file *filp, const char __user *ubuf,
->  		goto out;
->  	}
->  
-> +	/* disable all cpu buffers */
-> +	for_each_tracing_cpu(cpu) {
-> +		if (global_trace.data[cpu])
-> +			atomic_inc(&global_trace.data[cpu]->disabled);
-> +		if (max_tr.data[cpu])
-> +			atomic_inc(&max_tr.data[cpu]->disabled);
-> +	}
-> +
->  	if (val != global_trace.entries) {
->  		ret = ring_buffer_resize(global_trace.buffer, val);
->  		if (ret < 0) {
-> @@ -2735,6 +2743,13 @@ tracing_entries_write(struct file *filp, const char __user *ubuf,
->  	if (tracing_disabled)
->  		cnt = -ENOMEM;
->   out:
-> +	for_each_tracing_cpu(cpu) {
-> +		if (global_trace.data[cpu])
-> +			atomic_dec(&global_trace.data[cpu]->disabled);
-> +		if (max_tr.data[cpu])
-> +			atomic_dec(&max_tr.data[cpu]->disabled);
-> +	}
-> +
->  	max_tr.entries = global_trace.entries;
->  	mutex_unlock(&trace_types_lock);
->  
-> -- 
-> 1.5.6.5
-> 
-> -- 
-> 
-> 
+Ingo,
+
+I just pushed these two patches to tip/devel after solving a conflict with 
+the first one.
+
+-- Steve
