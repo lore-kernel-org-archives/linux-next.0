@@ -1,52 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: crypto tree build failure
-Date: Tue, 11 Nov 2008 16:34:17 +1100
-Message-ID: <20081111163417.51f5d968.sfr@canb.auug.org.au>
-References: <20081111150731.c8826d1e.sfr@canb.auug.org.au>
-	<20081111042259.GB8251@gondor.apana.org.au>
+Subject: linux-next: manual merge of the cputime tree
+Date: Tue, 11 Nov 2008 17:56:21 +1100
+Message-ID: <20081111175621.7a21e7aa.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__11_Nov_2008_16_34_17_+1100_.IvZ=KxvckSQ/Q6b"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50206 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48745 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750836AbYKKFeb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 11 Nov 2008 00:34:31 -0500
-In-Reply-To: <20081111042259.GB8251@gondor.apana.org.au>
+	id S1754694AbYKKG4b (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 11 Nov 2008 01:56:31 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-next@vger.kernel.org
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>
 
---Signature=_Tue__11_Nov_2008_16_34_17_+1100_.IvZ=KxvckSQ/Q6b
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Martin,
 
-Hi Herbert,
+Today's linux-next merge of the cputime tree got a conflict in
+kernel/time/tick-sched.c between commit
+26105f6432b27212ad5563c4d32826f7b778f0b8 ("tick: cleanup idle checks")
+from the timers tree and commit 84dd5d04573c132ff107cf9d5d311d93c6ac6b61
+("[PATCH] idle cputime accounting") from the cputime tree.
 
-On Tue, 11 Nov 2008 12:22:59 +0800 Herbert Xu <herbert@gondor.apana.org.au>=
- wrote:
->
-> I've just pushed an update to master which should fix this issue.
-
-Thanks.  The crypto tree should be back in linux-next tomorrow, then.
-
---=20
+Just context.  I fixed it up (see below) and can carry it for now.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__11_Nov_2008_16_34_17_+1100_.IvZ=KxvckSQ/Q6b
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkZGVkACgkQjjKRsyhoI8xwqACgqdCwe/n6eOk2CN3h8kNhBZNz
-/iIAn0RtJ/qmzJM7T5faJu8sl33mEyJW
-=1T1f
------END PGP SIGNATURE-----
-
---Signature=_Tue__11_Nov_2008_16_34_17_+1100_.IvZ=KxvckSQ/Q6b--
+diff --cc kernel/time/tick-sched.c
+index 35a775e,1bcbca6..0000000
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@@ -410,11 -412,13 +410,13 @@@ void tick_nohz_restart_sched_tick(void
+  {
+  	int cpu = smp_processor_id();
+  	struct tick_sched *ts = &per_cpu(tick_cpu_sched, cpu);
++ #ifndef CONFIG_VIRT_CPU_ACCOUNTING
+  	unsigned long ticks;
++ #endif
+ -	ktime_t now;
+ +	ktime_t now = ktime_get();
+  
+  	local_irq_disable();
+ -	tick_nohz_stop_idle(cpu);
+ +	tick_nohz_stop_idle(ts, now);
+  
+  	if (!ts->inidle || !ts->tick_stopped) {
+  		ts->inidle = 0;
