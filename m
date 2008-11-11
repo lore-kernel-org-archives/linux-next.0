@@ -1,48 +1,61 @@
-From: Sujith <Sujith.Manoharan@atheros.com>
-Subject: linux-next: build failure
-Date: Tue, 11 Nov 2008 13:45:52 +0530
-Message-ID: <18713.16184.610870.368360@gargle.gargle.HOWL>
-References: <20081111191042.ad5eab44.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH 0/2] ftrace updates for 2.6.28
+Date: Tue, 11 Nov 2008 09:23:47 +0100
+Message-ID: <20081111082347.GB29901@elte.hu>
+References: <20081111025808.946638585@goodmis.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.atheros.com ([12.36.123.2]:14415 "EHLO mail.atheros.com"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:37159 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752248AbYKKISv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 11 Nov 2008 03:18:51 -0500
-Received: from mail.atheros.com ([10.10.20.105])
-	by sidewinder.atheros.com
-	for <linux-next@vger.kernel.org>; Tue, 11 Nov 2008 00:18:51 -0800
-In-Reply-To: <20081111191042.ad5eab44.sfr@canb.auug.org.au>
+	id S1752481AbYKKIYJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 11 Nov 2008 03:24:09 -0500
+Content-Disposition: inline
+In-Reply-To: <20081111025808.946638585@goodmis.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "John W. Linville" <linville@tuxdriver.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Sujith Manoharan <Sujith.Manoharan@Atheros.com>, "David S. Miller" <davem@davemloft.net>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
 
-Stephen Rothwell wrote:
-> Hi John, Dave,
-> 
-> Today's linux-next build (powerpc allyesconfig) failed like this:
-> 
-> drivers/net/wireless/ath9k/main.c: At top level:
-> drivers/net/wireless/ath9k/main.c:827: warning: conflicting types for 'ath_detach'
-> drivers/net/wireless/ath9k/main.c:827: error: static declaration of 'ath_detach' follows non-static declaration
-> drivers/net/wireless/ath9k/main.c:812: error: previous implicit declaration of 'ath_detach' was here
-> 
-> Caused by commit 9c84b7978f1b99048bf31be5a0218cd509e74148 ("ath9k:
-> Streamline attach/detach") (from the wireless/net tree) which added a
-> call to the static function before it was defined.
-> 
-> I added the patch below, which then lead to:
-> 
-> drivers/net/wireless/ath9k/main.c: In function 'ath_start_rfkill_poll':
-> drivers/net/wireless/ath9k/main.c:818: error: 'hw' undeclared (first use in this function)
-> 
-> So I gave up and reverted the wireless tree for today (I actually
-> reverted the merge of the wireless tree into the net tree).
 
-A patch was already posted to fix this:
-http://marc.info/?l=linux-wireless&m=122580350232179&w=2
+* Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Sujith
+> The following patches are in:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-2.6-trace.git
+> 
+>     branch: devel
+> 
+> Steven Rostedt (2):
+>       ftrace: disable tracing on resize
+>       ring-buffer: prevent infinite looping on time stamping
+> 
+> ----
+>  kernel/trace/ring_buffer.c |    2 +-
+>  kernel/trace/trace.c       |   17 ++++++++++++++++-
+>  2 files changed, 17 insertions(+), 2 deletions(-)
+
+pulled into tip/tracing/urgent, thanks Steve!
+
+> The following patches are needed for 2.6.28. The first one solves a 
+> bug where the resizing of the buffer array was not protected against 
+> modifications by ftrace.
+> 
+> The second patch solves an issue tha Thomas Gleixner was seeing 
+> where the tracer would detect the infinite recursion too easily by 
+> tracing the timer code. This patch prevents the loop from happening 
+> and still does not lose any trace entries.
+> 
+> The changes caused by these patches are low in risk, but I would 
+> still like to put them through linux-next before passing them off to 
+> Linus.
+> 
+> Note, these changes are based against Linus's mainline and not tip. 
+> Also note that the branch in this tree is "devel" and not 
+> "tip/devel".
+
+that's OK. I resolved the (trivial) conflict with pending changes in 
+tip/tracing/ftrace and pushed out a new ftrace integration branch 
+towards linux-next.
+
+	Ingo
