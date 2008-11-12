@@ -1,50 +1,43 @@
-From: Eric Paris <eparis@redhat.com>
-Subject: Re: linux-next: security-testing tree build failure
-Date: Wed, 12 Nov 2008 09:05:06 -0500
-Message-ID: <1226498706.3353.11.camel@localhost.localdomain>
-References: <20081112160553.33ad43df.sfr@canb.auug.org.au>
-	 <alpine.LRH.1.10.0811122155510.12886@tundra.namei.org>
+From: Andy Whitcroft <apw@shadowen.org>
+Subject: Re: [PATCH 1/1] ring-buffer: buffer record on/off switch
+Date: Wed, 12 Nov 2008 14:11:13 +0000
+Message-ID: <20081112141113.GG8302@shadowen.org>
+References: <20081111200601.147669239@goodmis.org> <20081111201034.315528609@goodmis.org> <20081111125645.4f7a5827.akpm@linux-foundation.org> <alpine.DEB.1.10.0811111603590.3275@gandalf.stny.rr.com> <20081111210831.GA16179@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:52640 "EHLO mx2.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750763AbYKLOFZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 12 Nov 2008 09:05:25 -0500
-In-Reply-To: <alpine.LRH.1.10.0811122155510.12886@tundra.namei.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Stephen Smalley <sds@tycho.nsa.gov>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753533AbYKLOLa@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20081111210831.GA16179@elte.hu>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, tglx@linutronix.de, torvalds@linux-foundation.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, srostedt@redhat.com
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 2008-11-12 at 21:56 +1100, James Morris wrote:
-> On Wed, 12 Nov 2008, Stephen Rothwell wrote:
+On Tue, Nov 11, 2008 at 10:08:31PM +0100, Ingo Molnar wrote:
 > 
-> > Hi James,
-> > 
-> > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> > 
-> > In file included from init/main.c:35:
-> > include/linux/security.h:1788: error: static declaration of 'security_capable' follows non-static declaration
-> > include/linux/capability.h:524: error: previous declaration of 'security_capable' was here
-> > include/linux/security.h:1793: error: static declaration of 'security_capable_noaudit' follows non-static declaration
-> > include/linux/capability.h:525: error: previous declaration of 'security_capable_noaudit' was here
-> > 
-> > Caused by commit 06112163f5fd9e491a7f810443d81efa9d88e247 ("Add a new
-> > capable interface that will be used by systems that use audit to").
-> > 
-> > Please compile test with and without CONFIG_SECURITY.
+> * Steven Rostedt <rostedt@goodmis.org> wrote:
 > 
-> Done, with the patch below (now pushed to the tree).
+> > 
+> > On Tue, 11 Nov 2008, Andrew Morton wrote:
+> > 
+> > > On Tue, 11 Nov 2008 15:06:02 -0500
+> > > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > > 
+> > > > +static struct file_operations rb_simple_fops = {
+> > > 
+> > > should be const...
+> > > 
+> > > Probably it isn't worth fixing.  Someone(tm) should do period sweeps -
+> > > 10% of our file_operationses aren't const.
+> > 
+> > Thanks, I never really thought about it.
+> > 
+> > I'll add to my todo list to send out a patch that cleans all of this 
+> > up. I think I'm guilty at doing this in more than one place.
+> 
+> Perhaps checkpatch.pl could remind us about it? a new file_operations 
+> struct definition should be const in 99.9% of the cases.
 
-Only works in the config security case because every function that calls
-has_capability() also includes security.h
+Added to my TODO list.
 
-Since these are inlined the original caller needs to have the
-security_capable and security_capable_noaudit prototype.  The filesystem
-changes to use this new interface often do not already #include
-security.h.  I'll look at it and wrap them in CONFIG_SECURITY rather
-than include security.h in all the filesystem changes.....
-
--Eric
+-apw
