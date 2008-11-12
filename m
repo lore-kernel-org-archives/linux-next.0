@@ -1,58 +1,50 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: [PATCH] sparc64: add function save_stack_trace_tsk()
-Date: Wed, 12 Nov 2008 16:47:49 +0300
-Message-ID: <20081112134749.GD12456@orion>
+From: Eric Paris <eparis@redhat.com>
+Subject: Re: linux-next: security-testing tree build failure
+Date: Wed, 12 Nov 2008 09:05:06 -0500
+Message-ID: <1226498706.3353.11.camel@localhost.localdomain>
+References: <20081112160553.33ad43df.sfr@canb.auug.org.au>
+	 <alpine.LRH.1.10.0811122155510.12886@tundra.namei.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <sparclinux-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: sparclinux-owner@vger.kernel.org
-To: davem@davemloft.net, sparclinux@vger.kernel.org, linux-next@vger.kernel.org, kenchen@google.com, mingo@elte.hu, adobriyan@gmail.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.redhat.com ([66.187.237.31]:52640 "EHLO mx2.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750763AbYKLOFZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 Nov 2008 09:05:25 -0500
+In-Reply-To: <alpine.LRH.1.10.0811122155510.12886@tundra.namei.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: James Morris <jmorris@namei.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Stephen Smalley <sds@tycho.nsa.gov>
 
-Hi
+On Wed, 2008-11-12 at 21:56 +1100, James Morris wrote:
+> On Wed, 12 Nov 2008, Stephen Rothwell wrote:
+> 
+> > Hi James,
+> > 
+> > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> > 
+> > In file included from init/main.c:35:
+> > include/linux/security.h:1788: error: static declaration of 'security_capable' follows non-static declaration
+> > include/linux/capability.h:524: error: previous declaration of 'security_capable' was here
+> > include/linux/security.h:1793: error: static declaration of 'security_capable_noaudit' follows non-static declaration
+> > include/linux/capability.h:525: error: previous declaration of 'security_capable_noaudit' was here
+> > 
+> > Caused by commit 06112163f5fd9e491a7f810443d81efa9d88e247 ("Add a new
+> > capable interface that will be used by systems that use audit to").
+> > 
+> > Please compile test with and without CONFIG_SECURITY.
+> 
+> Done, with the patch below (now pushed to the tree).
 
-Current -next does not build on sparc64:
-  LD      .tmp_vmlinux1
-  fs/built-in.o: In function `proc_pid_stack':
-  /home/alexb/linux-2.6/fs/proc/base.c:360: undefined reference to
-  `save_stack_trace_tsk'
+Only works in the config security case because every function that calls
+has_capability() also includes security.h
 
----
+Since these are inlined the original caller needs to have the
+security_capable and security_capable_noaudit prototype.  The filesystem
+changes to use this new interface often do not already #include
+security.h.  I'll look at it and wrap them in CONFIG_SECURITY rather
+than include security.h in all the filesystem changes.....
 
-  Add function save_stack_trace_tsk() on sparc64.
-
-
-Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
----
-
- arch/sparc64/kernel/stacktrace.c |   10 ++++++++--
- 1 files changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/arch/sparc64/kernel/stacktrace.c b/arch/sparc64/kernel/stacktrace.c
-index 4e21d4a..a22eb8e 100644
---- a/arch/sparc64/kernel/stacktrace.c
-+++ b/arch/sparc64/kernel/stacktrace.c
-@@ -7,9 +7,9 @@
- 
- #include "kstack.h"
- 
--void save_stack_trace(struct stack_trace *trace)
-+void save_stack_trace_tsk(struct task_struct *tsk, struct stack_trace *trace)
- {
--	struct thread_info *tp = task_thread_info(current);
-+	struct thread_info *tp = task_thread_info(tsk);
- 	unsigned long ksp, fp;
- 
- 	stack_trace_flush();
-@@ -47,4 +47,10 @@ void save_stack_trace(struct stack_trace *trace)
- 			trace->entries[trace->nr_entries++] = pc;
- 	} while (trace->nr_entries < trace->max_entries);
- }
-+EXPORT_SYMBOL_GPL(save_stack_trace_tsk);
-+
-+inline void save_stack_trace(struct stack_trace *trace)
-+{
-+	save_stack_trace_tsk(current, trace);
-+}
- EXPORT_SYMBOL_GPL(save_stack_trace);
+-Eric
