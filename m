@@ -1,66 +1,56 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: next-20081106: undefined reference to `__per_cpu_start'
-Date: Wed, 12 Nov 2008 08:59:55 +0100 (CET)
-Message-ID: <Pine.LNX.4.64.0811120859160.13217@anakin>
-References: <20081106173645.e7e79071.sfr@canb.auug.org.au>
- <20081106183939.GA26925@x200.localdomain> <Pine.LNX.4.64.0811061310350.6009@quilx.com>
- <20081107162114.2a41c623.sfr@canb.auug.org.au>
+From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Subject: linux-next: Tree for November 12 - lguest build failure
+Date: Wed, 12 Nov 2008 14:41:02 +0530
+Message-ID: <20081112091102.GA8063@linux.vnet.ibm.com>
+References: <20081112182818.6e259488.sfr@canb.auug.org.au>
+Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752152AbYKLIAT@vger.kernel.org>
-In-Reply-To: <20081107162114.2a41c623.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christoph Lameter <cl@linux-foundation.org>, Alexey Dobriyan <adobriyan@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, rusty@rustcorp.com.au, Haavard Skinnemoen <hskinnemoen@atmel.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from E23SMTP02.au.ibm.com ([202.81.18.163]:49367 "EHLO
+	e23smtp02.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751129AbYKLJL0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Nov 2008 04:11:26 -0500
+Content-Disposition: inline
+In-Reply-To: <20081112182818.6e259488.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: rusty@rustcorp.com.au
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sfr@canb.auug.org.au, lguest@ozlabs.org
 
-On Fri, 7 Nov 2008, Stephen Rothwell wrote:
-> On Thu, 6 Nov 2008 13:15:07 -0600 (CST) Christoph Lameter <cl@linux-foundation.org> wrote:
-> >
-> > On Thu, 6 Nov 2008, Alexey Dobriyan wrote:
-> > 
-> > > On blackfin-BF526-EZBRD and other blackfins:
-> > >
-> > >   LD      .tmp_vmlinux1
-> > > mm/built-in.o: In function `cpu_alloc_init':
-> > > (.init.text+0x1486): undefined reference to `__per_cpu_start'
-> > > mm/built-in.o: In function `cpu_alloc_init':
-> > > (.init.text+0x148c): undefined reference to `__per_cpu_start'
-> > > mm/built-in.o: In function `cpu_alloc_init':
-> > > (.init.text+0x1492): undefined reference to `__per_cpu_end'
-> > > mm/built-in.o: In function `cpu_alloc_init':
-> > > (.init.text+0x1496): undefined reference to `__per_cpu_end'
-> > 
-> > Any contigencies for __per_cpu_start/end in your blackfin vmlinux.lds.h?
-> > That is where these symbols are defined
-> > 
-> > Or did you use generic percpu support and set
-> > CONFIG_HAVE_ZERO_BASED_PER_CPU?
-> 
-> Also a avr32 allnoconfig
-> (http://kisskb.ellerman.id.au/kisskb/buildresult/53233/) gets:
-> 
-> backing-dev.c:(.init.text+0xc4c): undefined reference to `__per_cpu_start'
-> backing-dev.c:(.init.text+0xc50): undefined reference to `__per_cpu_end'
-> 
-> and avr32 defconfig
-> (http://kisskb.ellerman.id.au/kisskb/buildresult/53225/) gets:
-> 
-> vmstat.c:(.init.text+0xff0): undefined reference to `__per_cpu_start'
-> vmstat.c:(.init.text+0xff4): undefined reference to `__per_cpu_end'
+Hi Rusty,
 
-And m68k defconfig (http://kisskb.ellerman.id.au/kisskb/buildresult/54216/):
+ lguest build fails with next-20081112 kernel,
 
-| : undefined reference to `__per_cpu_start'
-| : undefined reference to `__per_cpu_end'
+drivers/lguest/lguest_device.c: In function =E2=80=98lg_find_vq=E2=80=99=
+:
+drivers/lguest/lguest_device.c:252: error: too many arguments to functi=
+on =E2=80=98vring_size=E2=80=99
+make[2]: *** [drivers/lguest/lguest_device.o] Error 1
 
-Gr{oetje,eeting}s,
+removing the extra argument passed to vring_size function.
 
-						Geert
-
+Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+--- linux-2.6/drivers/lguest/lguest_device.c	2008-09-22 15:32:33.000000=
+000 +0530
++++ linux-2.6/drivers/lguest/~lguest_device.c	2008-11-12 14:16:17.00000=
+0000 +0530
+@@ -249,8 +249,7 @@ static struct virtqueue *lg_find_vq(stru
+ 	       (unsigned long)lvq->config.pfn << PAGE_SHIFT);
+ 	/* Figure out how many pages the ring will take, and map that memory =
+*/
+ 	lvq->pages =3D lguest_map((unsigned long)lvq->config.pfn << PAGE_SHIF=
+T,
+-				DIV_ROUND_UP(vring_size(lvq->config.num,
+-							PAGE_SIZE),
++				DIV_ROUND_UP(vring_size(lvq->config.num),
+ 					     PAGE_SIZE));
+ 	if (!lvq->pages) {
+ 		err =3D -ENOMEM;
+--=20
+Thanks & Regards,
+Kamalesh Babulal,
+Linux Technology Center,
+IBM, ISTL.
