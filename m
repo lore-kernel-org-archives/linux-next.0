@@ -1,43 +1,60 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: linux-next: manual merge of the net tree
-Date: Tue, 11 Nov 2008 22:07:05 -0500
-Message-ID: <20081112030705.GA3465@tuxdriver.com>
-References: <20081112135934.763d688b.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: security-testing tree build failure
+Date: Wed, 12 Nov 2008 16:05:53 +1100
+Message-ID: <20081112160553.33ad43df.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__12_Nov_2008_16_05_53_+1100_K0io.hlA_oBlC8Y/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:34132 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751297AbYKLDQP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Nov 2008 22:16:15 -0500
-Content-Disposition: inline
-In-Reply-To: <20081112135934.763d688b.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60166 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750778AbYKLFGL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 Nov 2008 00:06:11 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, Jianjun Kong <jianjun@zeuux.org>
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, Eric Paris <eparis@redhat.com>, Stephen Smalley <sds@tycho.nsa.gov>
 
-On Wed, Nov 12, 2008 at 01:59:34PM +1100, Stephen Rothwell wrote:
-> Hi Dave,
-> 
-> Today's linux-next merge of the net tree got a conflict in
-> net/mac80211/debugfs_sta.c between commit
-> 013cd397532e5803a1625954a884d021653da720 ("mac80211: fix a buffer overrun
-> in station debug code") from Linus' tree and commit
-> 804feeb826f8a32c8c71a09101fae31804b40ad1 ("mac80211: remove aggregation
-> status write support from debugfs") from the wireless/net tree.
-> 
-> The latter change just removes the code that the former change was
-> modifying.  I used the latter and assume that this will be fixed in your
-> tree soon.
+--Signature=_Wed__12_Nov_2008_16_05_53_+1100_K0io.hlA_oBlC8Y/
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I have a patch in wireless-next-2.6 that addresses the same issue as
-a one-liner Dave merged already.  FWIW, I like mine better -- so it
-should go to Dave with the next batch of -next stuff in a day or two.
+Hi James,
 
-Thanks,
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-John
--- 
-John W. Linville		Linux should be at the core
-linville@tuxdriver.com			of your literate lifestyle.
+In file included from init/main.c:35:
+include/linux/security.h:1788: error: static declaration of 'security_capab=
+le' follows non-static declaration
+include/linux/capability.h:524: error: previous declaration of 'security_ca=
+pable' was here
+include/linux/security.h:1793: error: static declaration of 'security_capab=
+le_noaudit' follows non-static declaration
+include/linux/capability.h:525: error: previous declaration of 'security_ca=
+pable_noaudit' was here
+
+Caused by commit 06112163f5fd9e491a7f810443d81efa9d88e247 ("Add a new
+capable interface that will be used by systems that use audit to").
+
+Please compile test with and without CONFIG_SECURITY.
+
+I have dropped the security-testing tree for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__12_Nov_2008_16_05_53_+1100_K0io.hlA_oBlC8Y/
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkaZDEACgkQjjKRsyhoI8yOSQCeLmOs4yZRi7t+mwSRKl0qUzgj
+uY4An0W52/hadDrLpKmq6lxDQwBy1FEU
+=YsJm
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__12_Nov_2008_16_05_53_+1100_K0io.hlA_oBlC8Y/--
