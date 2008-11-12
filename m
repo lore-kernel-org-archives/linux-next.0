@@ -1,53 +1,52 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 1/2] ftrace: disable tracing on resize
-Date: Wed, 12 Nov 2008 15:32:29 -0500 (EST)
-Message-ID: <alpine.DEB.1.10.0811121531490.17319@gandalf.stny.rr.com>
-References: <20081111025808.946638585@goodmis.org> <20081111030517.017566077@goodmis.org> <alpine.DEB.1.10.0811102216240.10298@gandalf.stny.rr.com> <20081112215630.242ce97e@daedalus.pq.iki.fi>
+From: "Rob Latham" <rlatham@gmail.com>
+Subject: Re: 2.6.28-rc3(-next20081103) suspend issues on Lenovo X200
+Date: Wed, 12 Nov 2008 14:49:56 -0600
+Message-ID: <67f22cb80811121249n300177c8l26a57aaf0030120b@mail.gmail.com>
+References: <20081103153945.GA20618@denkbrett.schottelius.org>
+	 <200811040155.59933.rjw@sisk.pl>
+	 <200811031704.25717.jbarnes@virtuousgeek.org>
+	 <20081105173132.GA4289@denkbrett.schottelius.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hrndva-omtalb.mail.rr.com ([71.74.56.125]:64845 "EHLO
-	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751903AbYKLUcc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Nov 2008 15:32:32 -0500
-In-Reply-To: <20081112215630.242ce97e@daedalus.pq.iki.fi>
+Received: from wf-out-1314.google.com ([209.85.200.172]:34467 "EHLO
+	wf-out-1314.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752844AbYKLUt5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Nov 2008 15:49:57 -0500
+Received: by wf-out-1314.google.com with SMTP id 27so584149wfd.4
+        for <linux-next@vger.kernel.org>; Wed, 12 Nov 2008 12:49:56 -0800 (PST)
+In-Reply-To: <20081105173132.GA4289@denkbrett.schottelius.org>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pekka Paalanen <pq@iki.fi>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Steven Rostedt <srostedt@redhat.com>, fweisbec@gmail.com
+To: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>, Jesse Barnes <jbarnes@virtuousgeek.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-next@vger.kernel.org, LKML <linux-k>
 
+On Wed, Nov 5, 2008 at 11:31 AM, Nico -telmich- Schottelius
+<nico-linux-next@schottelius.org> wrote:
+> When running xorg the system freezes on wakeup and hard reboots after
+> 20 seconds (again: looks like some kind of watchdog, though I am not
+> aware of anything like that in the X200).
+>
+> Sincerly,
+>
+> Nico (again: looks like some kind of watchdog, though I am not
+> aware of anything like that in the X200).
 
-On Wed, 12 Nov 2008, Pekka Paalanen wrote:
+Hi Nico, all.
 
-> On Mon, 10 Nov 2008 22:18:19 -0500 (EST)
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > 
-> > Pekka,
-> > 
-> > I forgot to add you to the Cc list. Could you test this patch to see if it 
-> > fixes the bug you reported. It fixed a bug I was able to reproduce, but I 
-> > was never able to reproduce the exact same bug you have seen.
-> 
-> Thanks, Steve.
-> 
-> I didn't have time to try it myself yet, but a kind soul tried it for me.
-> He used 2.6.28-rc4 and was immediately able to trigger the bug by just:
-> cd /debug/tracing
-> echo 0 > tracing_enabled
-> echo 200 > trace_entries
-> 
-> Then he applied the patch you referred to, and the bug is still present.
-> He has a 32-bit x86 amd system, and I'm on x86_64.
-> 
-> I don't know why you couldn't reproduce it, maybe you have all the tracers
-> enabled in the kernel config, when we only have MMIOTRACE.
-> 
-> I can't promise to look into this deeper in the near future :-/
-> 
+I've had good results disabling one core before suspending, and then
+enabling the extra core after wakeup.   The watchdog in that case
+might not be the intel driver at all, but rather something in the
+kernel that kicks in in such conditions?
 
-OK, I'll disable everything but MMIOTRACE and see if I can reproduce it.
+http://ubuntuforums.org/showpost.php?p=6105510&postcount=12
 
-Thanks,
+(I put the "sleep before enabling 2nd core" in the background and for
+a longer period of time)
 
--- Steve
+Suspending/resuming in this single-core mode has worked really well
+for me for the last day or so.
+
+Hope that helps  point to the root cause...
+==rob
