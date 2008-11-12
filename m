@@ -1,35 +1,58 @@
-From: Pavel Machek <pavel@suse.cz>
-Subject: Re: [PATCH 1/1] ring-buffer: buffer record on/off switch
-Date: Wed, 12 Nov 2008 13:51:50 +0100
-Message-ID: <20081112125149.GA13192@ucw.cz>
-References: <20081111200601.147669239@goodmis.org> <20081111201034.315528609@goodmis.org> <20081111125645.4f7a5827.akpm@linux-foundation.org>
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: [PATCH] sparc64: add function save_stack_trace_tsk()
+Date: Wed, 12 Nov 2008 16:47:49 +0300
+Message-ID: <20081112134749.GD12456@orion>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gprs189-60.eurotel.cz ([160.218.189.60]:54410 "EHLO UNKNOWN"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751911AbYKLMwN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 12 Nov 2008 07:52:13 -0500
+Return-path: <sparclinux-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20081111125645.4f7a5827.akpm@linux-foundation.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org, mingo@elte.hu, tglx@linutronix.de, torvalds@linux-foundation.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, srostedt@redhat.com
+Sender: sparclinux-owner@vger.kernel.org
+To: davem@davemloft.net, sparclinux@vger.kernel.org, linux-next@vger.kernel.org, kenchen@google.com, mingo@elte.hu, adobriyan@gmail.com
+List-Id: linux-next.vger.kernel.org
 
-On Tue 2008-11-11 12:56:45, Andrew Morton wrote:
-> On Tue, 11 Nov 2008 15:06:02 -0500
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > +static struct file_operations rb_simple_fops = {
-> 
-> should be const...
-> 
-> Probably it isn't worth fixing.  Someone(tm) should do period sweeps -
-> 10% of our file_operationses aren't const.
+Hi
 
-checkptch rule? struct file_operations .* = { -> needs const?
+Current -next does not build on sparc64:
+  LD      .tmp_vmlinux1
+  fs/built-in.o: In function `proc_pid_stack':
+  /home/alexb/linux-2.6/fs/proc/base.c:360: undefined reference to
+  `save_stack_trace_tsk'
 
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+---
+
+  Add function save_stack_trace_tsk() on sparc64.
+
+
+Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+---
+
+ arch/sparc64/kernel/stacktrace.c |   10 ++++++++--
+ 1 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/arch/sparc64/kernel/stacktrace.c b/arch/sparc64/kernel/stacktrace.c
+index 4e21d4a..a22eb8e 100644
+--- a/arch/sparc64/kernel/stacktrace.c
++++ b/arch/sparc64/kernel/stacktrace.c
+@@ -7,9 +7,9 @@
+ 
+ #include "kstack.h"
+ 
+-void save_stack_trace(struct stack_trace *trace)
++void save_stack_trace_tsk(struct task_struct *tsk, struct stack_trace *trace)
+ {
+-	struct thread_info *tp = task_thread_info(current);
++	struct thread_info *tp = task_thread_info(tsk);
+ 	unsigned long ksp, fp;
+ 
+ 	stack_trace_flush();
+@@ -47,4 +47,10 @@ void save_stack_trace(struct stack_trace *trace)
+ 			trace->entries[trace->nr_entries++] = pc;
+ 	} while (trace->nr_entries < trace->max_entries);
+ }
++EXPORT_SYMBOL_GPL(save_stack_trace_tsk);
++
++inline void save_stack_trace(struct stack_trace *trace)
++{
++	save_stack_trace_tsk(current, trace);
++}
+ EXPORT_SYMBOL_GPL(save_stack_trace);
