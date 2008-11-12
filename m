@@ -1,56 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the creds tree
-Date: Wed, 12 Nov 2008 16:22:14 +1100
-Message-ID: <20081112162214.56872ba7.sfr@canb.auug.org.au>
+Date: Wed, 12 Nov 2008 16:30:06 +1100
+Message-ID: <20081112163006.d526f0eb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__12_Nov_2008_16_30_06_+1100_zEZ7uXoFFYuD0fmK"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52452 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40069 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750778AbYKLFW0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 12 Nov 2008 00:22:26 -0500
+	id S1750995AbYKLFaR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 Nov 2008 00:30:17 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>
-Cc: linux-next@vger.kernel.org, Alan Cox <alan@lxorguk.ukuu.org.uk>, Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org
+
+--Signature=_Wed__12_Nov_2008_16_30_06_+1100_zEZ7uXoFFYuD0fmK
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi David,
 
-Today's linux-next merge of the creds tree got a conflict in
-fs/devpts/inode.c between commit 2f6b28889414a43b570123886d1fc38abbdd363e
-("pty-per-mount-config") from the ttydev tree and commit
-533a45d7003203b147c4861ff45353387b4b05db ("CRED: Wrap task credential
-accesses in the devpts filesystem") from the creds tree.
+Today's linux-next merge of the creds tree got a conflicts in
+security/keys/internal.h and security/keys/process_keys.c between commit
+1f8f5cf6e4f038552a3e47b66085452c08556d71 ("KEYS: Make request key
+instantiate the per-user keyrings") from Linus' tree and
+f71e534c1149637f4eb186b351e6afeb8584551c ("KEYS: Alter use of key
+instantiation link-to-keyring argument") from the creds tree.
 
-Overlapping changes. I fixed it up (see below) and will carry it for a
-while.  You should send the creds tree patch above to Alan now that the
-APIs are available in mainline.
-
--- 
+It needs local knowledge to fix up, so I will drop the creds tree for
+today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc fs/devpts/inode.c
-index 5006485,5d61b7c..0000000
---- a/fs/devpts/inode.c
-+++ b/fs/devpts/inode.c
-@@@ -594,11 -221,11 +594,11 @@@ int devpts_pty_new(struct inode *ptmx_i
-  	if (!inode)
-  		return -ENOMEM;
-  
- -	inode->i_ino = number+2;
- -	inode->i_uid = config.setuid ? config.uid : current_fsuid();
- -	inode->i_gid = config.setgid ? config.gid : current_fsgid();
- +	inode->i_ino = number+3;
-- 	inode->i_uid = opts->setuid ? opts->uid : current->fsuid;
-- 	inode->i_gid = opts->setgid ? opts->gid : current->fsgid;
-++	inode->i_uid = opts->setuid ? opts->uid : current_fsuid();
-++	inode->i_gid = opts->setgid ? opts->gid : current_fsgid();
-  	inode->i_mtime = inode->i_atime = inode->i_ctime = CURRENT_TIME;
- -	init_special_inode(inode, S_IFCHR|config.mode, device);
- +	init_special_inode(inode, S_IFCHR|opts->mode, device);
-  	inode->i_private = tty;
-  	tty->driver_data = inode;
-  
+--Signature=_Wed__12_Nov_2008_16_30_06_+1100_zEZ7uXoFFYuD0fmK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkaad4ACgkQjjKRsyhoI8zhRQCffJ1Sfh3sMGdCxHyw0cxM16U8
+JwIAnjvok90rr+gcvIk2zmupL5j9n4iz
+=ZEHM
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__12_Nov_2008_16_30_06_+1100_zEZ7uXoFFYuD0fmK--
