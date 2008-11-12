@@ -1,68 +1,43 @@
-From: "Mike Frysinger" <vapier.adi@gmail.com>
-Subject: Re: next-20081106: undefined reference to `__per_cpu_start'
-Date: Wed, 12 Nov 2008 06:18:26 -0500
-Message-ID: <8bd0f97a0811120318m52ccbde4g5434ddfb3f56e048@mail.gmail.com>
-References: <20081106173645.e7e79071.sfr@canb.auug.org.au>
-	 <20081106183939.GA26925@x200.localdomain>
-	 <Pine.LNX.4.64.0811061310350.6009@quilx.com>
-	 <20081107162114.2a41c623.sfr@canb.auug.org.au>
-	 <Pine.LNX.4.64.0811120859160.13217@anakin>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: [Lguest] linux-next: Tree for November 12 - lguest build failure
+Date: Wed, 12 Nov 2008 22:56:00 +1030
+Message-ID: <200811122256.01487.rusty@rustcorp.com.au>
+References: <20081112182818.6e259488.sfr@canb.auug.org.au> <20081112091102.GA8063@linux.vnet.ibm.com> <200811122110.56290.rusty@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rv-out-0506.google.com ([209.85.198.237]:39815 "EHLO
-	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751525AbYKLLS1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Nov 2008 06:18:27 -0500
-Received: by rv-out-0506.google.com with SMTP id k40so376704rvb.1
-        for <linux-next@vger.kernel.org>; Wed, 12 Nov 2008 03:18:26 -0800 (PST)
-In-Reply-To: <Pine.LNX.4.64.0811120859160.13217@anakin>
+Received: from ozlabs.org ([203.10.76.45]:36588 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751587AbYKLM0J convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Nov 2008 07:26:09 -0500
+In-Reply-To: <200811122110.56290.rusty@rustcorp.com.au>
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Christoph Lameter <cl@linux-foundation.org>, Alexey Dobriyan <adobriyan@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, rusty@rustcorp.com.au, Haavard Skinnemoen <hskinnemoen@atmel.com>
+To: lguest@ozlabs.org
+Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, sfr@canb.auug.org.au, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Nov 12, 2008 at 02:59, Geert Uytterhoeven wrote:
-> On Fri, 7 Nov 2008, Stephen Rothwell wrote:
->> On Thu, 6 Nov 2008 13:15:07 -0600 (CST) Christoph Lameter wrote:
->> > On Thu, 6 Nov 2008, Alexey Dobriyan wrote:
->> > > On blackfin-BF526-EZBRD and other blackfins:
->> > >
->> > >   LD      .tmp_vmlinux1
->> > > mm/built-in.o: In function `cpu_alloc_init':
->> > > (.init.text+0x1486): undefined reference to `__per_cpu_start'
->> > > mm/built-in.o: In function `cpu_alloc_init':
->> > > (.init.text+0x148c): undefined reference to `__per_cpu_start'
->> > > mm/built-in.o: In function `cpu_alloc_init':
->> > > (.init.text+0x1492): undefined reference to `__per_cpu_end'
->> > > mm/built-in.o: In function `cpu_alloc_init':
->> > > (.init.text+0x1496): undefined reference to `__per_cpu_end'
->> >
->> > Any contigencies for __per_cpu_start/end in your blackfin vmlinux.lds.h?
->> > That is where these symbols are defined
->> >
->> > Or did you use generic percpu support and set
->> > CONFIG_HAVE_ZERO_BASED_PER_CPU?
->>
->> Also a avr32 allnoconfig
->> (http://kisskb.ellerman.id.au/kisskb/buildresult/53233/) gets:
->>
->> backing-dev.c:(.init.text+0xc4c): undefined reference to `__per_cpu_start'
->> backing-dev.c:(.init.text+0xc50): undefined reference to `__per_cpu_end'
->>
->> and avr32 defconfig
->> (http://kisskb.ellerman.id.au/kisskb/buildresult/53225/) gets:
->>
->> vmstat.c:(.init.text+0xff0): undefined reference to `__per_cpu_start'
->> vmstat.c:(.init.text+0xff4): undefined reference to `__per_cpu_end'
+On Wednesday 12 November 2008 21:10:55 Rusty Russell wrote:
+> On Wednesday 12 November 2008 19:41:02 Kamalesh Babulal wrote:
+> > Hi Rusty,
+> >
+> >  lguest build fails with next-20081112 kernel,
+> >
+> > drivers/lguest/lguest_device.c: In function =E2=80=98lg_find_vq=E2=80=
+=99:
+> > drivers/lguest/lguest_device.c:252: error: too many arguments to fu=
+nction
+> > =E2=80=98vring_size=E2=80=99 make[2]: *** [drivers/lguest/lguest_de=
+vice.o] Error 1
 >
-> And m68k defconfig (http://kisskb.ellerman.id.au/kisskb/buildresult/54216/):
+> Hey, what idiot put in a patch which broke lguest?  Oh wait...
 >
-> | : undefined reference to `__per_cpu_start'
-> | : undefined reference to `__per_cpu_end'
+> Thanks, applied!
+> Rusty.
 
-i already posted a patch:
-http://lkml.org/lkml/2008/11/8/145
--mike
+Actually, I just reworked all these patches, so this is no longer neces=
+sary.
+
+Thanks again,
+Rusty.
