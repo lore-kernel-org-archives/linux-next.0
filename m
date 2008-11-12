@@ -1,43 +1,35 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: [Lguest] linux-next: Tree for November 12 - lguest build failure
-Date: Wed, 12 Nov 2008 22:56:00 +1030
-Message-ID: <200811122256.01487.rusty@rustcorp.com.au>
-References: <20081112182818.6e259488.sfr@canb.auug.org.au> <20081112091102.GA8063@linux.vnet.ibm.com> <200811122110.56290.rusty@rustcorp.com.au>
+From: Pavel Machek <pavel@suse.cz>
+Subject: Re: [PATCH 1/1] ring-buffer: buffer record on/off switch
+Date: Wed, 12 Nov 2008 13:51:50 +0100
+Message-ID: <20081112125149.GA13192@ucw.cz>
+References: <20081111200601.147669239@goodmis.org> <20081111201034.315528609@goodmis.org> <20081111125645.4f7a5827.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:36588 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751587AbYKLM0J convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Nov 2008 07:26:09 -0500
-In-Reply-To: <200811122110.56290.rusty@rustcorp.com.au>
+Received: from gprs189-60.eurotel.cz ([160.218.189.60]:54410 "EHLO UNKNOWN"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751911AbYKLMwN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 Nov 2008 07:52:13 -0500
 Content-Disposition: inline
+In-Reply-To: <20081111125645.4f7a5827.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: lguest@ozlabs.org
-Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, sfr@canb.auug.org.au, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org, mingo@elte.hu, tglx@linutronix.de, torvalds@linux-foundation.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, srostedt@redhat.com
 
-On Wednesday 12 November 2008 21:10:55 Rusty Russell wrote:
-> On Wednesday 12 November 2008 19:41:02 Kamalesh Babulal wrote:
-> > Hi Rusty,
-> >
-> >  lguest build fails with next-20081112 kernel,
-> >
-> > drivers/lguest/lguest_device.c: In function =E2=80=98lg_find_vq=E2=80=
-=99:
-> > drivers/lguest/lguest_device.c:252: error: too many arguments to fu=
-nction
-> > =E2=80=98vring_size=E2=80=99 make[2]: *** [drivers/lguest/lguest_de=
-vice.o] Error 1
->
-> Hey, what idiot put in a patch which broke lguest?  Oh wait...
->
-> Thanks, applied!
-> Rusty.
+On Tue 2008-11-11 12:56:45, Andrew Morton wrote:
+> On Tue, 11 Nov 2008 15:06:02 -0500
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > +static struct file_operations rb_simple_fops = {
+> 
+> should be const...
+> 
+> Probably it isn't worth fixing.  Someone(tm) should do period sweeps -
+> 10% of our file_operationses aren't const.
 
-Actually, I just reworked all these patches, so this is no longer neces=
-sary.
+checkptch rule? struct file_operations .* = { -> needs const?
 
-Thanks again,
-Rusty.
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
