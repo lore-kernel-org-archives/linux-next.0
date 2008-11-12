@@ -1,32 +1,40 @@
-From: "Alexander Beregalov" <a.beregalov@gmail.com>
-Subject: Re: [PATCH] sparc64: add function save_stack_trace_tsk()
-Date: Wed, 12 Nov 2008 17:13:14 +0300
-Message-ID: <a4423d670811120613p79a365d8se7a8ccf1afb005e8@mail.gmail.com>
-References: <20081112134749.GD12456@orion>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <sparclinux-owner@vger.kernel.org>
-In-Reply-To: <20081112134749.GD12456@orion>
-Content-Disposition: inline
-Sender: sparclinux-owner@vger.kernel.org
-To: davem@davemloft.net, sparclinux@vger.kernel.org, linux-next@vger.kernel.org, kenchen@google.com, mingo@elte.hu, adobriyan@gmail.com
-List-Id: linux-next.vger.kernel.org
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: [PATCH] mac80211: add explicit padding in struct ieee80211_tx_info
+Date: Wed, 12 Nov 2008 10:05:37 -0500
+Message-ID: <1226502337-11085-1-git-send-email-linville@tuxdriver.com>
+References: <Pine.LNX.4.64.0811120854290.13217@anakin>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:45703 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752545AbYKLPQS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Nov 2008 10:16:18 -0500
+In-Reply-To: <Pine.LNX.4.64.0811120854290.13217@anakin>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-wireless@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Geert Uytterhoeven <geert@linux-m68k.org>, Johannes Berg <johannes@sipsolutions.net>, "John W. Linville" <linville@tuxdriver.com>
 
-2008/11/12 Alexander Beregalov <a.beregalov@gmail.com>:
-> Hi
->
-> Current -next does not build on sparc64:
->  LD      .tmp_vmlinux1
->  fs/built-in.o: In function `proc_pid_stack':
->  /home/alexb/linux-2.6/fs/proc/base.c:360: undefined reference to
->  `save_stack_trace_tsk'
->
-> ---
->
->  Add function save_stack_trace_tsk() on sparc64.
->
->
-> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
-> ---
-No, it does not work, it is not so simple.
+Otherwise, the BUILD_BUG_ON calls in ieee80211_tx_info_clear_status can
+fail on some architectures.
+
+Signed-off-by: John W. Linville <linville@tuxdriver.com>
+---
+Why do we have those BUILD_BUG_ON calls anyway?  Hmmm...
+
+ include/net/mac80211.h |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/include/net/mac80211.h b/include/net/mac80211.h
+index feb52cc..38302d6 100644
+--- a/include/net/mac80211.h
++++ b/include/net/mac80211.h
+@@ -333,6 +333,7 @@ struct ieee80211_tx_info {
+ 	u8 antenna_sel_tx;
+ 
+ 	/* 2 byte hole */
++	u8 pad[2];
+ 
+ 	union {
+ 		struct {
+-- 
+1.5.4.3
