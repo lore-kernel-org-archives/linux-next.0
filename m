@@ -1,60 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: security-testing tree build failure
-Date: Wed, 12 Nov 2008 16:05:53 +1100
-Message-ID: <20081112160553.33ad43df.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the creds tree
+Date: Wed, 12 Nov 2008 16:22:14 +1100
+Message-ID: <20081112162214.56872ba7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__12_Nov_2008_16_05_53_+1100_K0io.hlA_oBlC8Y/"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60166 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52452 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750778AbYKLFGL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 12 Nov 2008 00:06:11 -0500
+	id S1750778AbYKLFW0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 Nov 2008 00:22:26 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: linux-next@vger.kernel.org, Eric Paris <eparis@redhat.com>, Stephen Smalley <sds@tycho.nsa.gov>
+To: David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, Alan Cox <alan@lxorguk.ukuu.org.uk>, Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
 
---Signature=_Wed__12_Nov_2008_16_05_53_+1100_K0io.hlA_oBlC8Y/
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi David,
 
-Hi James,
+Today's linux-next merge of the creds tree got a conflict in
+fs/devpts/inode.c between commit 2f6b28889414a43b570123886d1fc38abbdd363e
+("pty-per-mount-config") from the ttydev tree and commit
+533a45d7003203b147c4861ff45353387b4b05db ("CRED: Wrap task credential
+accesses in the devpts filesystem") from the creds tree.
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+Overlapping changes. I fixed it up (see below) and will carry it for a
+while.  You should send the creds tree patch above to Alan now that the
+APIs are available in mainline.
 
-In file included from init/main.c:35:
-include/linux/security.h:1788: error: static declaration of 'security_capab=
-le' follows non-static declaration
-include/linux/capability.h:524: error: previous declaration of 'security_ca=
-pable' was here
-include/linux/security.h:1793: error: static declaration of 'security_capab=
-le_noaudit' follows non-static declaration
-include/linux/capability.h:525: error: previous declaration of 'security_ca=
-pable_noaudit' was here
-
-Caused by commit 06112163f5fd9e491a7f810443d81efa9d88e247 ("Add a new
-capable interface that will be used by systems that use audit to").
-
-Please compile test with and without CONFIG_SECURITY.
-
-I have dropped the security-testing tree for today.
---=20
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__12_Nov_2008_16_05_53_+1100_K0io.hlA_oBlC8Y/
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkaZDEACgkQjjKRsyhoI8yOSQCeLmOs4yZRi7t+mwSRKl0qUzgj
-uY4An0W52/hadDrLpKmq6lxDQwBy1FEU
-=YsJm
------END PGP SIGNATURE-----
-
---Signature=_Wed__12_Nov_2008_16_05_53_+1100_K0io.hlA_oBlC8Y/--
+diff --cc fs/devpts/inode.c
+index 5006485,5d61b7c..0000000
+--- a/fs/devpts/inode.c
++++ b/fs/devpts/inode.c
+@@@ -594,11 -221,11 +594,11 @@@ int devpts_pty_new(struct inode *ptmx_i
+  	if (!inode)
+  		return -ENOMEM;
+  
+ -	inode->i_ino = number+2;
+ -	inode->i_uid = config.setuid ? config.uid : current_fsuid();
+ -	inode->i_gid = config.setgid ? config.gid : current_fsgid();
+ +	inode->i_ino = number+3;
+- 	inode->i_uid = opts->setuid ? opts->uid : current->fsuid;
+- 	inode->i_gid = opts->setgid ? opts->gid : current->fsgid;
+++	inode->i_uid = opts->setuid ? opts->uid : current_fsuid();
+++	inode->i_gid = opts->setgid ? opts->gid : current_fsgid();
+  	inode->i_mtime = inode->i_atime = inode->i_ctime = CURRENT_TIME;
+ -	init_special_inode(inode, S_IFCHR|config.mode, device);
+ +	init_special_inode(inode, S_IFCHR|opts->mode, device);
+  	inode->i_private = tty;
+  	tty->driver_data = inode;
+  
