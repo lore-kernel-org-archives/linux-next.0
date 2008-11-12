@@ -1,36 +1,62 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: Tree for November 12 - lguest build failure
-Date: Wed, 12 Nov 2008 21:10:55 +1030
-Message-ID: <200811122110.56290.rusty@rustcorp.com.au>
-References: <20081112182818.6e259488.sfr@canb.auug.org.au> <20081112091102.GA8063@linux.vnet.ibm.com>
+From: James Morris <jmorris@namei.org>
+Subject: Re: linux-next: security-testing tree build failure
+Date: Wed, 12 Nov 2008 21:56:36 +1100 (EST)
+Message-ID: <alpine.LRH.1.10.0811122155510.12886@tundra.namei.org>
+References: <20081112160553.33ad43df.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:60836 "EHLO ozlabs.org"
+Received: from tundra.namei.org ([65.99.196.166]:38579 "EHLO tundra.namei.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750886AbYKLKlE convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Nov 2008 05:41:04 -0500
-In-Reply-To: <20081112091102.GA8063@linux.vnet.ibm.com>
-Content-Disposition: inline
+	id S1750873AbYKLK45 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 Nov 2008 05:56:57 -0500
+In-Reply-To: <20081112160553.33ad43df.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sfr@canb.auug.org.au, lguest@ozlabs.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Eric Paris <eparis@redhat.com>, Stephen Smalley <sds@tycho.nsa.gov>
 
-On Wednesday 12 November 2008 19:41:02 Kamalesh Babulal wrote:
-> Hi Rusty,
->
->  lguest build fails with next-20081112 kernel,
->
-> drivers/lguest/lguest_device.c: In function =E2=80=98lg_find_vq=E2=80=
-=99:
-> drivers/lguest/lguest_device.c:252: error: too many arguments to func=
-tion
-> =E2=80=98vring_size=E2=80=99 make[2]: *** [drivers/lguest/lguest_devi=
-ce.o] Error 1
+On Wed, 12 Nov 2008, Stephen Rothwell wrote:
 
-Hey, what idiot put in a patch which broke lguest?  Oh wait...
+> Hi James,
+> 
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> 
+> In file included from init/main.c:35:
+> include/linux/security.h:1788: error: static declaration of 'security_capable' follows non-static declaration
+> include/linux/capability.h:524: error: previous declaration of 'security_capable' was here
+> include/linux/security.h:1793: error: static declaration of 'security_capable_noaudit' follows non-static declaration
+> include/linux/capability.h:525: error: previous declaration of 'security_capable_noaudit' was here
+> 
+> Caused by commit 06112163f5fd9e491a7f810443d81efa9d88e247 ("Add a new
+> capable interface that will be used by systems that use audit to").
+> 
+> Please compile test with and without CONFIG_SECURITY.
 
-Thanks, applied!
-Rusty.
+Done, with the patch below (now pushed to the tree).
+
+
+commit 92a77aac9812d5397abbe6f1920e085e50838635
+Author: James Morris <jmorris@namei.org>
+Date:   Wed Nov 12 21:20:00 2008 +1100
+
+    security: remove broken and useless declarations
+    
+    Remove broken declarations for security_capable* functions,
+    which were not needed anyway.
+    
+    Signed-off-by: James Morris <jmorris@namei.org>
+
+diff --git a/include/linux/capability.h b/include/linux/capability.h
+index b313ba1..7f26580 100644
+--- a/include/linux/capability.h
++++ b/include/linux/capability.h
+@@ -521,8 +521,6 @@ extern const kernel_cap_t __cap_init_eff_set;
+ 
+ kernel_cap_t cap_set_effective(const kernel_cap_t pE_new);
+ 
+-extern int security_capable(struct task_struct *t, int cap);
+-extern int security_capable_noaudit(struct task_struct *t, int cap);
+ /**
+  * has_capability - Determine if a task has a superior capability available
+  * @t: The task in question
