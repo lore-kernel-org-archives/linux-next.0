@@ -1,42 +1,58 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: mac80211.h (was: Re: linux-next: Tree for November 12)
-Date: Wed, 12 Nov 2008 08:56:31 +0100 (CET)
-Message-ID: <Pine.LNX.4.64.0811120854290.13217@anakin>
-References: <20081112182818.6e259488.sfr@canb.auug.org.au>
+Subject: Re: next-20081106: undefined reference to `__per_cpu_start'
+Date: Wed, 12 Nov 2008 08:59:55 +0100 (CET)
+Message-ID: <Pine.LNX.4.64.0811120859160.13217@anakin>
+References: <20081106173645.e7e79071.sfr@canb.auug.org.au>
+ <20081106183939.GA26925@x200.localdomain> <Pine.LNX.4.64.0811061310350.6009@quilx.com>
+ <20081107162114.2a41c623.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752009AbYKLH4p@vger.kernel.org>
-In-Reply-To: <20081112182818.6e259488.sfr@canb.auug.org.au>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752152AbYKLIAT@vger.kernel.org>
+In-Reply-To: <20081107162114.2a41c623.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: Christoph Lameter <cl@linux-foundation.org>, Alexey Dobriyan <adobriyan@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, rusty@rustcorp.com.au, Haavard Skinnemoen <hskinnemoen@atmel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, 12 Nov 2008, Stephen Rothwell wrote:
-> Status of my local build tests will be at
-> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-> advice about cross compilers/configs that work, we are always open to add
-> more builds.
+On Fri, 7 Nov 2008, Stephen Rothwell wrote:
+> On Thu, 6 Nov 2008 13:15:07 -0600 (CST) Christoph Lameter <cl@linux-foundation.org> wrote:
+> >
+> > On Thu, 6 Nov 2008, Alexey Dobriyan wrote:
+> > 
+> > > On blackfin-BF526-EZBRD and other blackfins:
+> > >
+> > >   LD      .tmp_vmlinux1
+> > > mm/built-in.o: In function `cpu_alloc_init':
+> > > (.init.text+0x1486): undefined reference to `__per_cpu_start'
+> > > mm/built-in.o: In function `cpu_alloc_init':
+> > > (.init.text+0x148c): undefined reference to `__per_cpu_start'
+> > > mm/built-in.o: In function `cpu_alloc_init':
+> > > (.init.text+0x1492): undefined reference to `__per_cpu_end'
+> > > mm/built-in.o: In function `cpu_alloc_init':
+> > > (.init.text+0x1496): undefined reference to `__per_cpu_end'
+> > 
+> > Any contigencies for __per_cpu_start/end in your blackfin vmlinux.lds.h?
+> > That is where these symbols are defined
+> > 
+> > Or did you use generic percpu support and set
+> > CONFIG_HAVE_ZERO_BASED_PER_CPU?
+> 
+> Also a avr32 allnoconfig
+> (http://kisskb.ellerman.id.au/kisskb/buildresult/53233/) gets:
+> 
+> backing-dev.c:(.init.text+0xc4c): undefined reference to `__per_cpu_start'
+> backing-dev.c:(.init.text+0xc50): undefined reference to `__per_cpu_end'
+> 
+> and avr32 defconfig
+> (http://kisskb.ellerman.id.au/kisskb/buildresult/53225/) gets:
+> 
+> vmstat.c:(.init.text+0xff0): undefined reference to `__per_cpu_start'
+> vmstat.c:(.init.text+0xff4): undefined reference to `__per_cpu_end'
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/54400/
+And m68k defconfig (http://kisskb.ellerman.id.au/kisskb/buildresult/54216/):
 
-include/net/mac80211.h:400: error: size of array 'type name' is negative
-include/net/mac80211.h:405: error: size of array 'type name' is negative
-
-| struct ieee80211_tx_info {
-| 	/* common information */
-| 	u32 flags;
-| 	u8 band;
-| 
-| 	u8 antenna_sel_tx;
-| 
-| 	/* 2 byte hole */
-        ^^^^^^^^^^^^^^^^^^
-
-This must be made explicit using padding, as on some architecture the alignment
-of 32-bit values is 2 bytes, not 4.
-
-| 	union {
+| : undefined reference to `__per_cpu_start'
+| : undefined reference to `__per_cpu_end'
 
 Gr{oetje,eeting}s,
 
