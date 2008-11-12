@@ -1,43 +1,29 @@
-From: Andy Whitcroft <apw@shadowen.org>
-Subject: Re: [PATCH 1/1] ring-buffer: buffer record on/off switch
-Date: Wed, 12 Nov 2008 14:11:13 +0000
-Message-ID: <20081112141113.GG8302@shadowen.org>
-References: <20081111200601.147669239@goodmis.org> <20081111201034.315528609@goodmis.org> <20081111125645.4f7a5827.akpm@linux-foundation.org> <alpine.DEB.1.10.0811111603590.3275@gandalf.stny.rr.com> <20081111210831.GA16179@elte.hu>
+From: Frank Seidel <fseidel@suse.de>
+Subject: linux-next infrastructure open?
+Date: Wed, 12 Nov 2008 15:16:05 +0100
+Message-ID: <491AE525.1030201@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753533AbYKLOLa@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20081111210831.GA16179@elte.hu>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, tglx@linutronix.de, torvalds@linux-foundation.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, srostedt@redhat.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ns2.suse.de ([195.135.220.15]:53001 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752075AbYKLOQR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 Nov 2008 09:16:17 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Tue, Nov 11, 2008 at 10:08:31PM +0100, Ingo Molnar wrote:
-> 
-> * Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > 
-> > On Tue, 11 Nov 2008, Andrew Morton wrote:
-> > 
-> > > On Tue, 11 Nov 2008 15:06:02 -0500
-> > > Steven Rostedt <rostedt@goodmis.org> wrote:
-> > > 
-> > > > +static struct file_operations rb_simple_fops = {
-> > > 
-> > > should be const...
-> > > 
-> > > Probably it isn't worth fixing.  Someone(tm) should do period sweeps -
-> > > 10% of our file_operationses aren't const.
-> > 
-> > Thanks, I never really thought about it.
-> > 
-> > I'll add to my todo list to send out a patch that cleans all of this 
-> > up. I think I'm guilty at doing this in more than one place.
-> 
-> Perhaps checkpatch.pl could remind us about it? a new file_operations 
-> struct definition should be const in 99.9% of the cases.
+Hi Stephen,
 
-Added to my TODO list.
+i wonder wether you are willing to give me some insights
+to the infrastructure you are using to setup linux-next.
+I guess you have a large set of scripts and tools in place
+to help you make this great job more easy.
 
--apw
+Would it be possible to get a look on that or some more
+detailed info on your setup?
+
+Thanks,
+Frank
