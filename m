@@ -1,55 +1,65 @@
-From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Subject: Re: Missing CONFIG_IDE_LEGACY definition (Re: linux-next: Tree for November 13)
-Date: Thu, 13 Nov 2008 22:08:42 +0100
-Message-ID: <200811132208.43694.bzolnier@gmail.com>
-References: <20081113183316.3601c13d.sfr@canb.auug.org.au> <s5hiqqsq9pv.wl%tiwai@suse.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Can you add the staging tree to -next?
+Date: Fri, 14 Nov 2008 10:44:21 +1100
+Message-ID: <20081114104421.772feee3.sfr@canb.auug.org.au>
+References: <20081112235600.GA27554@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__14_Nov_2008_10_44_21_+1100_Cx_0lKbC2GlOpmi+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gv-out-0910.google.com ([216.239.58.190]:40036 "EHLO
-	gv-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751980AbYKMVNR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Nov 2008 16:13:17 -0500
-Received: by gv-out-0910.google.com with SMTP id e6so247115gvc.37
-        for <linux-next@vger.kernel.org>; Thu, 13 Nov 2008 13:13:15 -0800 (PST)
-In-Reply-To: <s5hiqqsq9pv.wl%tiwai@suse.de>
-Content-Disposition: inline
+Received: from chilli.pcug.org.au ([203.10.76.44]:60150 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752686AbYKMXoe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 Nov 2008 18:44:34 -0500
+In-Reply-To: <20081112235600.GA27554@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thursday 13 November 2008, Takashi Iwai wrote:
-> At Thu, 13 Nov 2008 18:33:16 +1100,
-> Stephen Rothwell wrote:
-> > 
-> > Hi all,
-> > 
-> > Changes since 20081112:
-> > 
-> > Undropped tree:
-> > 	security-testing
-> > 
-> > Dropped trees (temporarily):
-> > 	sh (build problems)
-> > 	creds (non-trivial conflict)
-> > 	userns (it depends on creds)
-> > 	semaphore-removal (due to unfixed conflicts against Linus' tree)
-> > 	firmware (unfixed build failure)
-> > 
-> > The usb tree lost its conflict.
-> > 
-> > The net tree lost its 3 conflicts.
-> 
-> The IDE tree update seems broken for some old devices.
-> CONFIG_IDE_LEGACY is selected by them but it's nowhere defined in
-> Kconfig.
+--Signature=_Fri__14_Nov_2008_10_44_21_+1100_Cx_0lKbC2GlOpmi+
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for noticing and fixing this.
+Hi Greg,
 
-I've integrated your fix into the guilty patch ("ide: move legacy
-ISA/VLB ports handling to ide-legacy.c") to preserve bisectability.
+On Wed, 12 Nov 2008 15:56:00 -0800 Greg KH <greg@kroah.com> wrote:
+>
+> I'm starting to get people sending me patches against -next for the
+> drivers/staging/ tree that don't apply as -next does not include my
+> quilt tree of staging patches.
+>=20
+> Can you please pick it up?  You can put it at the end of your series,
+> and the 'make allmodconfig' option disables building anything in the
+> drivers/staging/ subdirectory, so it should not have any build or merge
+> conflicts with anything.
+>=20
+> It can be found at:
+> 	http://kernel.org/pub/linux/kernel/people/gregkh/gregkh-2.6/gregkh-05-st=
+aging/
+> and is a quilt tree.
+>=20
+> It will follow all the same rules as other trees, with patches only for
+> the next merge window (2.6.29 right now) in it.
 
-Bart
+OK, I have added it starting today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__14_Nov_2008_10_44_21_+1100_Cx_0lKbC2GlOpmi+
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkcu9UACgkQjjKRsyhoI8wM8QCgt77NbngIabJKAjj2B+mt7PRm
+uNQAn0sC3t9qVAZ1uyVlIlWy6U1oed9F
+=6j92
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__14_Nov_2008_10_44_21_+1100_Cx_0lKbC2GlOpmi+--
