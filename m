@@ -1,235 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for November 13
-Date: Thu, 13 Nov 2008 18:33:16 +1100
-Message-ID: <20081113183316.3601c13d.sfr@canb.auug.org.au>
+Subject: linux-next: security-testing tree build failure
+Date: Thu, 13 Nov 2008 18:46:24 +1100
+Message-ID: <20081113184624.7e29385f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__13_Nov_2008_18_33_16_+1100_vDQa3kwFD1J/LwNt"
+ boundary="Signature=_Thu__13_Nov_2008_18_46_24_+1100_Xq4/1alyFb3LUTVU"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42822 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:46935 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751261AbYKMHd3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 13 Nov 2008 02:33:29 -0500
+	id S1750927AbYKMHqg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 Nov 2008 02:46:36 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, Eric Paris <eparis@redhat.com>
 
---Signature=_Thu__13_Nov_2008_18_33_16_+1100_vDQa3kwFD1J/LwNt
+--Signature=_Thu__13_Nov_2008_18_46_24_+1100_Xq4/1alyFb3LUTVU
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi James,
 
-Changes since 20081112:
+Today's linux-next build (powerpc pseries_defconfig) failed like this:
 
-Undropped tree:
-	security-testing
+kernel/built-in.o: In function `.__audit_log_bprm_fcaps':
+(.text+0x63aec): undefined reference to `.get_vfs_caps_from_disk'
+kernel/built-in.o: In function `.audit_copy_inode':
+auditsc.c:(.text+0x64594): undefined reference to `.get_vfs_caps_from_disk'
 
-Dropped trees (temporarily):
-	sh (build problems)
-	creds (non-trivial conflict)
-	userns (it depends on creds)
-	semaphore-removal (due to unfixed conflicts against Linus' tree)
-	firmware (unfixed build failure)
-
-The usb tree lost its conflict.
-
-The net tree lost its 3 conflicts.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig,
-44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
-
-Below is a summary of the state of the merge.
-
-We are up to 125 trees (counting Linus' and 14 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+get_vfs_caps_from_disk() is protected by
+CONFIG_SECURITY_FILE_CAPABILITIES but the call sites in kernel/auditsc.c
+are not.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging powerpc-merge/merge
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sparc-current/master
-Merging sound-current/for-linus
-Merging arm-current/master
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-2.6.26
-Merging dwmw2/master
-Merging arm/devel
-CONFLICT (content): Merge conflict in arch/arm/mach-realview/clock.c
-CONFLICT (content): Merge conflict in arch/arm/mach-versatile/clock.c
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging quilt/m68k
-Merging m68knommu/for-next
-Merging mips/mips-for-linux-next
-Merging parisc/master
-Merging powerpc/next
-Merging 4xx/next
-Merging galak/next
-Merging pxa/for-next
-Merging s390/features
-Merging sh/master
-$ git reset --hard HEAD^
-Merging sparc/master
-Merging x86/auto-x86-next
-Merging xtensa/master
-Merging quilt/driver-core
-Merging quilt/usb
-Merging tip-core/auto-core-next
-Merging cpus4096/auto-cpus4096-next
-Merging ftrace/auto-ftrace-next
-Merging genirq/auto-genirq-next
-Merging safe-poison-pointers/auto-safe-poison-pointers-next
-Merging sched/auto-sched-next
-Merging stackprotector/auto-stackprotector-next
-Merging timers/auto-timers-next
-Merging pci/linux-next
-Merging quilt/device-mapper
-Merging hid/mm
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging jfs/next
-Merging kbuild/master
-Merging quilt/ide
-Merging libata/NEXT
-Merging nfs/linux-next
-Merging xfs/master
-Merging infiniband/for-next
-Merging acpi/test
-Merging nfsd/nfsd-next
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/master
-CONFLICT (content): Merge conflict in arch/x86/kvm/vmx.c
-Merging dlm/next
-Merging scsi/master
-Merging ocfs2/linux-next
-Merging ext4/next
-Merging async_tx/next
-Merging udf/for_next
-Merging net/master
-Merging mtd/master
-Merging wireless/master
-Merging crypto/master
-Merging vfs/for-next
-Merging sound/for-next
-Merging cpufreq/next
-Merging v9fs/for-next
-Merging quilt/rr
-Merging cifs/master
-Merging mmc/next
-Merging gfs2/master
-Merging input/next
-Merging semaphore/semaphore
-Merging bkl-removal/bkl-removal
-Merging ubifs/linux-next
-Merging lsm/for-next
-Merging block/for-next
-Merging embedded/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging kmemcheck/auto-kmemcheck-next
-CONFLICT (content): Merge conflict in MAINTAINERS
-CONFLICT (content): Merge conflict in arch/x86/mm/Makefile
-CONFLICT (content): Merge conflict in mm/slab.c
-CONFLICT (content): Merge conflict in mm/slub.c
-Merging generic-ipi/auto-generic-ipi-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-CONFLICT (delete/modify): Documentation/DocBook/wanbook.tmpl deleted in hdl=
-c/hdlc-next and modified in HEAD. Version HEAD of Documentation/DocBook/wan=
-book.tmpl left in tree.
-CONFLICT (delete/modify): drivers/net/wan/syncppp.c deleted in hdlc/hdlc-ne=
-xt and modified in HEAD. Version HEAD of drivers/net/wan/syncppp.c left in =
-tree.
-$ git rm -f drivers/net/wan/syncppp.c Documentation/DocBook/wanbook.tmpl
-Merging drm/drm-next
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging quilt/ttydev
-Merging agp/agp-next
-Merging oprofile/auto-oprofile-next
-Merging fastboot/auto-fastboot-next
-Merging sparseirq/auto-sparseirq-next
-Merging iommu/auto-iommu-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging proc/proc
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cpu_alloc/cpu_alloc
-CONFLICT (content): Merge conflict in kernel/lockdep.c
-CONFLICT (content): Merge conflict in kernel/module.c
-Merging cputime/cputime
-Applying cpu_alloc: merge_fix_1
-Merging perfmon3/master
-Merging osd/linux-next
-Merging fatfs/master
-Merging scsi-post-merge/master
-
---Signature=_Thu__13_Nov_2008_18_33_16_+1100_vDQa3kwFD1J/LwNt
+--Signature=_Thu__13_Nov_2008_18_46_24_+1100_Xq4/1alyFb3LUTVU
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkkb2DwACgkQjjKRsyhoI8wi0QCfe3ZH7MeF7W0lefm0r/dhSSBt
-ex4An03KIgZMlRW3fUt6k981oWpcsbXs
-=wVUA
+iEYEARECAAYFAkkb21AACgkQjjKRsyhoI8yLowCfbspT+LNhNJC70B5JPTT7GpxP
+zxQAn0kW84la3iYDNwM7BWgcEfhJYssO
+=LEN6
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__13_Nov_2008_18_33_16_+1100_vDQa3kwFD1J/LwNt--
+--Signature=_Thu__13_Nov_2008_18_46_24_+1100_Xq4/1alyFb3LUTVU--
