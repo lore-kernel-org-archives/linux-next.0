@@ -1,15 +1,15 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the creds tree
-Date: Thu, 13 Nov 2008 16:09:37 +1100
-Message-ID: <20081113160937.276bbd71.sfr@canb.auug.org.au>
+Date: Thu, 13 Nov 2008 16:19:17 +1100
+Message-ID: <20081113161917.9fb40489.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43531 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:39176 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750728AbYKMFJq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 13 Nov 2008 00:09:46 -0500
+	id S1750740AbYKMFT0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 Nov 2008 00:19:26 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>
@@ -18,62 +18,67 @@ Cc: linux-next@vger.kernel.org, Eric Paris <eparis@redhat.com>
 Hi David,
 
 Today's linux-next merge of the creds tree got a conflict in
-include/linux/security.h between commit
-06112163f5fd9e491a7f810443d81efa9d88e247 ("Add a new capable interface
-that will be used by systems that use audit to") from the
-security-testing tree and commit a9018998dcc1e3b4401a7f6d2050ffedbd1b64da
-("CRED: Inaugurate COW credentials") from the creds tree.
+kernel/capability.c between commit
+e68b75a027bb94066576139ee33676264f867b87 ("When the capset syscall is
+used it is not possible for audit to record the") from the
+security-testing tree and commit 2ea2fe20bdef1300ea07a9c38dbfea5d0c042898
+("CRED: Neuter sys_capset()") from the creds tree.
 
-Context changes.  I fixed it up (see below) and can carry it for a while.
+Context changes. I fixed it up (see below) and can carry the fix for now
+(though I am not sure of this fix).
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc include/linux/security.h
-index 5fe28a6,9a71bcf..0000000
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@@ -1303,15 -1281,12 +1285,12 @@@ struct security_operations 
-  	int (*capget) (struct task_struct *target,
-  		       kernel_cap_t *effective,
-  		       kernel_cap_t *inheritable, kernel_cap_t *permitted);
-- 	int (*capset_check) (struct task_struct *target,
-- 			     kernel_cap_t *effective,
-- 			     kernel_cap_t *inheritable,
-- 			     kernel_cap_t *permitted);
-- 	void (*capset_set) (struct task_struct *target,
-- 			    kernel_cap_t *effective,
-- 			    kernel_cap_t *inheritable,
-- 			    kernel_cap_t *permitted);
-+ 	int (*capset) (struct cred *new,
-+ 		       const struct cred *old,
-+ 		       const kernel_cap_t *effective,
-+ 		       const kernel_cap_t *inheritable,
-+ 		       const kernel_cap_t *permitted);
- -	int (*capable) (struct task_struct *tsk, int cap);
- +	int (*capable) (struct task_struct *tsk, int cap, int audit);
-  	int (*acct) (struct file *file);
-  	int (*sysctl) (struct ctl_table *table, int op);
-  	int (*quotactl) (int cmds, int type, int id, struct super_block *sb);
-@@@ -1572,16 -1548,11 +1552,12 @@@ int security_capget(struct task_struct 
-  		    kernel_cap_t *effective,
-  		    kernel_cap_t *inheritable,
-  		    kernel_cap_t *permitted);
-- int security_capset_check(struct task_struct *target,
-- 			  kernel_cap_t *effective,
-- 			  kernel_cap_t *inheritable,
-- 			  kernel_cap_t *permitted);
-- void security_capset_set(struct task_struct *target,
-- 			 kernel_cap_t *effective,
-- 			 kernel_cap_t *inheritable,
-- 			 kernel_cap_t *permitted);
-+ int security_capset(struct cred *new, const struct cred *old,
-+ 		    const kernel_cap_t *effective,
-+ 		    const kernel_cap_t *inheritable,
-+ 		    const kernel_cap_t *permitted);
-  int security_capable(struct task_struct *tsk, int cap);
- +int security_capable_noaudit(struct task_struct *tsk, int cap);
-  int security_acct(struct file *file);
-  int security_sysctl(struct ctl_table *table, int op);
-  int security_quotactl(int cmds, int type, int id, struct super_block *sb);
+diff --cc kernel/capability.c
+index adb262f,6465ab7..0000000
+--- a/kernel/capability.c
++++ b/kernel/capability.c
+@@@ -469,36 -259,18 +271,22 @@@ asmlinkage long sys_capset(cap_user_hea
+  		i++;
+  	}
+  
+ +	ret = audit_log_capset(pid, &effective, &inheritable, &permitted);
+ +	if (ret)
+ +		return ret;
+ +
+- 	if (pid && (pid != task_pid_vnr(current)))
+- 		ret = do_sys_capset_other_tasks(pid, &effective, &inheritable,
+- 						&permitted);
+- 	else {
+- 		/*
+- 		 * This lock is required even when filesystem
+- 		 * capability support is configured - it protects the
+- 		 * sys_capget() call from returning incorrect data in
+- 		 * the case that the targeted process is not the
+- 		 * current one.
+- 		 */
+- 		spin_lock(&task_capability_lock);
+- 
+- 		ret = security_capset_check(current, &effective, &inheritable,
+- 					    &permitted);
+- 		/*
+- 		 * Having verified that the proposed changes are
+- 		 * legal, we now put them into effect.
+- 		 */
+- 		if (!ret)
+- 			security_capset_set(current, &effective, &inheritable,
+- 					    &permitted);
+- 		spin_unlock(&task_capability_lock);
+- 	}
++ 	new = prepare_creds();
++ 	if (!new)
++ 		return -ENOMEM;
+  
++ 	ret = security_capset(new, current_cred(),
++ 			      &effective, &inheritable, &permitted);
++ 	if (ret < 0)
++ 		goto error;
++ 	return commit_creds(new);
+  
++ error:
++ 	abort_creds(new);
+  	return ret;
+  }
+  
