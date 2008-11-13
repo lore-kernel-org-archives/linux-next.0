@@ -1,50 +1,53 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 1/2] ftrace: disable tracing on resize
-Date: Wed, 12 Nov 2008 19:03:24 -0500 (EST)
-Message-ID: <alpine.DEB.1.10.0811121902490.30248@gandalf.stny.rr.com>
-References: <20081111025808.946638585@goodmis.org> <20081111030517.017566077@goodmis.org> <alpine.DEB.1.10.0811102216240.10298@gandalf.stny.rr.com> <20081112215630.242ce97e@daedalus.pq.iki.fi>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: sh tree build failure
+Date: Thu, 13 Nov 2008 11:04:16 +1100
+Message-ID: <20081113110416.6d93c698.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__13_Nov_2008_11_04_16_+1100_8vq.QfG_PgxzbFCg"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hrndva-omtalb.mail.rr.com ([71.74.56.125]:46670 "EHLO
-	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753805AbYKMAD1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Nov 2008 19:03:27 -0500
-In-Reply-To: <20081112215630.242ce97e@daedalus.pq.iki.fi>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44508 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751064AbYKMAE2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 Nov 2008 19:04:28 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pekka Paalanen <pq@iki.fi>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Steven Rostedt <srostedt@redhat.com>, fweisbec@gmail.com
+To: Paul Mundt <lethal@linux-sh.org>
+Cc: linux-next@vger.kernel.org
 
+--Signature=_Thu__13_Nov_2008_11_04_16_+1100_8vq.QfG_PgxzbFCg
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 12 Nov 2008, Pekka Paalanen wrote:
+Hi Paul,
 
-> On Mon, 10 Nov 2008 22:18:19 -0500 (EST)
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > 
-> > Pekka,
-> > 
-> > I forgot to add you to the Cc list. Could you test this patch to see if it 
-> > fixes the bug you reported. It fixed a bug I was able to reproduce, but I 
-> > was never able to reproduce the exact same bug you have seen.
-> 
-> Thanks, Steve.
-> 
-> I didn't have time to try it myself yet, but a kind soul tried it for me.
-> He used 2.6.28-rc4 and was immediately able to trigger the bug by just:
-> cd /debug/tracing
-> echo 0 > tracing_enabled
-> echo 200 > trace_entries
-> 
-> Then he applied the patch you referred to, and the bug is still present.
-> He has a 32-bit x86 amd system, and I'm on x86_64.
-> 
-> I don't know why you couldn't reproduce it, maybe you have all the tracers
-> enabled in the kernel config, when we only have MMIOTRACE.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-After disabling all other tracers, you are right. This sequence crashes.
+ERROR: "clk_enable" [drivers/media/video/sh_mobile_ceu_camera.ko] undefined!
+ERROR: "clk_disable" [drivers/media/video/sh_mobile_ceu_camera.ko] undefine=
+d!
+ERROR: "clk_put" [drivers/media/video/sh_mobile_ceu_camera.ko] undefined!
+ERROR: "clk_get" [drivers/media/video/sh_mobile_ceu_camera.ko] undefined!
 
-I'll look into it, and I should have a patch sometime tonight.
+Maybe that needs restricting to SH or those routines need exporting?
+Anyway, I have dropped the sh tree for today.
 
--- Steve
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__13_Nov_2008_11_04_16_+1100_8vq.QfG_PgxzbFCg
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkbbwAACgkQjjKRsyhoI8ziyACfRpWOvggoAaB/NPk/4i/irnhj
+YfgAn3mHXJY+7W8i2wiNX8UCJZyHvuHN
+=6oFh
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__13_Nov_2008_11_04_16_+1100_8vq.QfG_PgxzbFCg--
