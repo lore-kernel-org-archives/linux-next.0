@@ -1,27 +1,21 @@
 From: "J.R. Mauro" <jrm8005@gmail.com>
-Subject: Re: linux-next: Tree for November 14 (staging/agnx/)
-Date: Fri, 14 Nov 2008 16:28:13 -0500
-Message-ID: <3aaafc130811141328n61b3fe43wd838140ef350f219@mail.gmail.com>
+Subject: Re: linux-next: Tree for November 14 (staging#2)
+Date: Fri, 14 Nov 2008 17:13:07 -0500
+Message-ID: <3aaafc130811141413u7d1ee054g9690f1837d96ae6d@mail.gmail.com>
 References: <20081114184021.ed198f4b.sfr@canb.auug.org.au>
-	 <20081114111517.c2d9b2f9.randy.dunlap@oracle.com>
+	 <20081114101111.f138c2ba.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mu-out-0910.google.com ([209.85.134.189]:3320 "EHLO
-	mu-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753616AbYKNV2Q (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Nov 2008 16:28:16 -0500
-Received: by mu-out-0910.google.com with SMTP id g7so1546152muf.1
-        for <linux-next@vger.kernel.org>; Fri, 14 Nov 2008 13:28:14 -0800 (PST)
-In-Reply-To: <20081114111517.c2d9b2f9.randy.dunlap@oracle.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755015AbYKNWNU@vger.kernel.org>
+In-Reply-To: <20081114101111.f138c2ba.randy.dunlap@oracle.com>
 Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh <greg@kroah.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Nov 14, 2008 at 2:15 PM, Randy Dunlap <randy.dunlap@oracle.com> wrote:
+On Fri, Nov 14, 2008 at 1:11 PM, Randy Dunlap <randy.dunlap@oracle.com> wrote:
 > On Fri, 14 Nov 2008 18:40:21 +1100 Stephen Rothwell wrote:
 >
 >> Hi all,
@@ -31,25 +25,29 @@ On Fri, Nov 14, 2008 at 2:15 PM, Randy Dunlap <randy.dunlap@oracle.com> wrote:
 >> New tree:
 >>       staging
 >
+> ERROR: "usb_deregister" [drivers/staging/asus_oled/asus_oled.ko] undefined!
+> ERROR: "usb_get_dev" [drivers/staging/asus_oled/asus_oled.ko] undefined!
+> ERROR: "usb_bulk_msg" [drivers/staging/asus_oled/asus_oled.ko] undefined!
+> ERROR: "usb_put_dev" [drivers/staging/asus_oled/asus_oled.ko] undefined!
+> ERROR: "usb_register_driver" [drivers/staging/asus_oled/asus_oled.ko] undefined!
 >
-> drivers/staging/agnx/pci.c:327: error: 'struct ieee80211_if_conf' has no member named 'ssid_len'
-> drivers/staging/agnx/pci.c:328: error: 'struct ieee80211_if_conf' has no member named 'ssid'
-> drivers/staging/agnx/pci.c:328: error: 'struct ieee80211_if_conf' has no member named 'ssid_len'
-> drivers/staging/agnx/pci.c:329: error: 'struct ieee80211_if_conf' has no member named 'ssid'
-> drivers/staging/agnx/pci.c:329: error: 'struct ieee80211_if_conf' has no member named 'ssid_len'
-> drivers/staging/agnx/pci.c:330: error: 'struct ieee80211_if_conf' has no member named 'ssid_len'
-> drivers/staging/agnx/pci.c:331: error: 'struct ieee80211_if_conf' has no member named 'ssid_len'
-> drivers/staging/agnx/pci.c:331: error: 'struct ieee80211_if_conf' has no member named 'ssid_len'
-> drivers/staging/agnx/pci.c:331: error: 'struct ieee80211_if_conf' has no member named 'ssid'
-> drivers/staging/agnx/pci.c:331: error: 'struct ieee80211_if_conf' has no member named 'ssid
+> (CONFIG_USB=n)
 
-It looks like commit 41bb73eeac5ff5fb217257ba33b654747b3abf11 removed
-these members from ieee80211_if_conf under the assumption that no
-drivers used them.
+Randy,
 
->
-> config attached.
+Can you send the whole .config? I turned off USB and asus_oled still
+built, but it's hard to narrow down due to all the other staging build
+failures.
+
+Thanks
+~J.R.
+
 >
 > ---
 > ~Randy
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
 >
