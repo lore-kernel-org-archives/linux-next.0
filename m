@@ -1,69 +1,55 @@
-From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
-Subject: 2.6.28-rc4 suspend issues on Lenovo X200
-Date: Fri, 14 Nov 2008 12:54:51 +0100
-Message-ID: <20081114115451.GB4877@denkbrett.schottelius.org>
+From: "Alexander Beregalov" <a.beregalov@gmail.com>
+Subject: next-20081114: WARNING: at block/blk-barrier.c:246 blk_do_ordered()
+Date: Fri, 14 Nov 2008 16:56:22 +0300
+Message-ID: <a4423d670811140556o45f0063dn85f695f74d158b03@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="i0/AhcQY5QxfSsSZ"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.schottelius.org ([77.109.138.221]:56390 "EHLO
-	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751613AbYKNNkX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Nov 2008 08:40:23 -0500
+Received: from an-out-0708.google.com ([209.85.132.246]:1101 "EHLO
+	an-out-0708.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751117AbYKNN4X (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Nov 2008 08:56:23 -0500
+Received: by an-out-0708.google.com with SMTP id d40so632158and.1
+        for <linux-next@vger.kernel.org>; Fri, 14 Nov 2008 05:56:22 -0800 (PST)
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, jens.axboe@oracle.com
 
-
---i0/AhcQY5QxfSsSZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hello!
-
-Using 2.6.28-rc4 and *NO* acpi_sleep=3Ds3_bios:
-
-   - suspend and wakeup on console works (!)
-      -> this is new, before screen was black after wakeup
-   - suspend on x11 works
-     wakeup on x11 freezes, causes automatic reboot
-   - switch away from x11 to console,
-     suspend on console:
-         wakeup -> works
-         switch to x11 -> freeze & reboot
-
-It would be nice, if someone could CC me to
-
-   'nico-linux-lenovox200-suspend at schottelius.org'
-
-if there is some progress made. Currently it's just getting
-me tired always having to fsck the filesystem after a suspend
-try.
-
-Sincerly,
-
-Nico
-
-
---=20
-Think about Free and Open Source Software (FOSS).
-http://nico.schottelius.org/documentations/foss/the-term-foss/
-
-PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
-
---i0/AhcQY5QxfSsSZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkdZwsACgkQuL75KpiFGIwQQQCg4YfiAsOSBaOhOWMZd30kLpOw
-Xu8AoOzKqR3Bfg4YaUipWoe6mUa9EwVQ
-=Sxya
------END PGP SIGNATURE-----
-
---i0/AhcQY5QxfSsSZ--
+WARNING: at block/blk-barrier.c:246 blk_do_ordered+0x22b/0x26a()
+Modules linked in:
+Pid: 0, comm: swapper Not tainted 2.6.28-rc4-next-20081114 #3
+Call Trace:
+ <IRQ>  [<ffffffff80236d63>] warn_on_slowpath+0x58/0x7d
+ [<ffffffff802570e3>] ? mark_lock+0x1c/0x37a
+ [<ffffffff803a69f9>] ? elv_rb_del+0x30/0x4b
+ [<ffffffff803b1092>] ? cfq_remove_request+0x180/0x1d8
+ [<ffffffff803afd03>] ? __cfq_slice_expired+0xd6/0xeb
+ [<ffffffff803afd31>] ? cfq_slice_expired+0x19/0x1b
+ [<ffffffff803b1832>] ? cfq_dispatch_requests+0x2c1/0x37e
+ [<ffffffff803aa98c>] blk_do_ordered+0x22b/0x26a
+ [<ffffffff803a6560>] elv_next_request+0x1d0/0x210
+ [<ffffffff80439c7c>] scsi_request_fn+0x9e/0x539
+ [<ffffffff80255c66>] ? put_lock_stats+0xe/0x27
+ [<ffffffff803a827e>] blk_invoke_request_fn+0x3b/0x6e
+ [<ffffffff803a87fd>] __blk_run_queue+0x25/0x29
+ [<ffffffff803a8822>] blk_run_queue+0x21/0x35
+ [<ffffffff80439509>] scsi_run_queue+0x2cf/0x379
+ [<ffffffff8043a33e>] scsi_next_command+0x36/0x46
+ [<ffffffff8043a509>] scsi_end_request+0x92/0xa4
+ [<ffffffff8043aae7>] scsi_io_completion+0x1a7/0x3ad
+ [<ffffffff80434551>] scsi_finish_command+0xe9/0xf2
+ [<ffffffff8043afd5>] scsi_softirq_done+0x10e/0x117
+ [<ffffffff803ac393>] blk_done_softirq+0x7f/0x8f
+ [<ffffffff8023c173>] __do_softirq+0x70/0x101
+ [<ffffffff8020cc0c>] call_softirq+0x1c/0x28
+ [<ffffffff8020e229>] do_softirq+0x39/0x8a
+ [<ffffffff8023bd78>] irq_exit+0x45/0xa2
+ [<ffffffff8020e53a>] do_IRQ+0x16a/0x19c
+ [<ffffffff8020bceb>] ret_from_intr+0x0/0xf
+ <EOI>  [<ffffffff80212e09>] ? mwait_idle+0x3e/0x48
+ [<ffffffff80212e00>] ? mwait_idle+0x35/0x48
+ [<ffffffff8020a940>] ? cpu_idle+0x51/0xba
+ [<ffffffff80514f9c>] ? rest_init+0x70/0x72
+---[ end trace 115cb4be7e150bb9 ]---
