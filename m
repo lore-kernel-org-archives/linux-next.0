@@ -1,60 +1,69 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Can you add the staging tree to -next?
-Date: Fri, 14 Nov 2008 18:50:16 +1100
-Message-ID: <20081114185016.0097d4eb.sfr@canb.auug.org.au>
-References: <20081112235600.GA27554@kroah.com>
-	<Pine.LNX.4.64.0811140825410.11953@anakin>
+From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
+Subject: 2.6.28-rc4 suspend issues on Lenovo X200
+Date: Fri, 14 Nov 2008 12:54:51 +0100
+Message-ID: <20081114115451.GB4877@denkbrett.schottelius.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__14_Nov_2008_18_50_16_+1100_eqiIfzh4W8nWKlSQ"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="i0/AhcQY5QxfSsSZ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40217 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751009AbYKNHu1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 14 Nov 2008 02:50:27 -0500
-In-Reply-To: <Pine.LNX.4.64.0811140825410.11953@anakin>
+Received: from mx3.schottelius.org ([77.109.138.221]:56390 "EHLO
+	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751613AbYKNNkX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Nov 2008 08:40:23 -0500
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Fri__14_Nov_2008_18_50_16_+1100_eqiIfzh4W8nWKlSQ
-Content-Type: text/plain; charset=US-ASCII
+
+--i0/AhcQY5QxfSsSZ
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
+Hello!
 
-On Fri, 14 Nov 2008 08:42:48 +0100 (CET) Geert Uytterhoeven <geert@linux-m6=
-8k.org> wrote:
->
-> Apart from the patches you receive against -next, is there any other
-> advantage, giving staging is disabled?
+Using 2.6.28-rc4 and *NO* acpi_sleep=3Ds3_bios:
 
-Others compile linux-next with all sorts of configs, so we hopefully will
-see any build failures.  In fact, Greg might even built it with staging
-enabled :-)
+   - suspend and wakeup on console works (!)
+      -> this is new, before screen was black after wakeup
+   - suspend on x11 works
+     wakeup on x11 freezes, causes automatic reboot
+   - switch away from x11 to console,
+     suspend on console:
+         wakeup -> works
+         switch to x11 -> freeze & reboot
 
-We will also see any merge conflicts (though there probably won't be
-many).
+It would be nice, if someone could CC me to
 
-I may also see if I can arrange for a build in each architecture with
-staging enabled in my infrastructure here, but it may take a little while.
+   'nico-linux-lenovox200-suspend at schottelius.org'
+
+if there is some progress made. Currently it's just getting
+me tired always having to fsck the filesystem after a suspend
+try.
+
+Sincerly,
+
+Nico
+
+
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Think about Free and Open Source Software (FOSS).
+http://nico.schottelius.org/documentations/foss/the-term-foss/
 
---Signature=_Fri__14_Nov_2008_18_50_16_+1100_eqiIfzh4W8nWKlSQ
-Content-Type: application/pgp-signature
+PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
+
+--i0/AhcQY5QxfSsSZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkkdLbgACgkQjjKRsyhoI8woAQCglBkmHLYg5q+XAbcwuov3aX0p
-S0sAn1BTUT8nuYR4HbhvR3R3dhPuLlIX
-=yUED
+iEYEARECAAYFAkkdZwsACgkQuL75KpiFGIwQQQCg4YfiAsOSBaOhOWMZd30kLpOw
+Xu8AoOzKqR3Bfg4YaUipWoe6mUa9EwVQ
+=Sxya
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__14_Nov_2008_18_50_16_+1100_eqiIfzh4W8nWKlSQ--
+--i0/AhcQY5QxfSsSZ--
