@@ -1,55 +1,44 @@
-From: "Alexander Beregalov" <a.beregalov@gmail.com>
-Subject: next-20081114: WARNING: at block/blk-barrier.c:246 blk_do_ordered()
-Date: Fri, 14 Nov 2008 16:56:22 +0300
-Message-ID: <a4423d670811140556o45f0063dn85f695f74d158b03@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: Can you add the staging tree to -next?
+Date: Fri, 14 Nov 2008 15:16:25 +0100 (CET)
+Message-ID: <Pine.LNX.4.64.0811141515470.26818@anakin>
+References: <20081112235600.GA27554@kroah.com> <Pine.LNX.4.64.0811140825410.11953@anakin>
+ <20081114185016.0097d4eb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from an-out-0708.google.com ([209.85.132.246]:1101 "EHLO
-	an-out-0708.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751117AbYKNN4X (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Nov 2008 08:56:23 -0500
-Received: by an-out-0708.google.com with SMTP id d40so632158and.1
-        for <linux-next@vger.kernel.org>; Fri, 14 Nov 2008 05:56:22 -0800 (PST)
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, jens.axboe@oracle.com
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752818AbYKNOQj@vger.kernel.org>
+In-Reply-To: <20081114185016.0097d4eb.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-WARNING: at block/blk-barrier.c:246 blk_do_ordered+0x22b/0x26a()
-Modules linked in:
-Pid: 0, comm: swapper Not tainted 2.6.28-rc4-next-20081114 #3
-Call Trace:
- <IRQ>  [<ffffffff80236d63>] warn_on_slowpath+0x58/0x7d
- [<ffffffff802570e3>] ? mark_lock+0x1c/0x37a
- [<ffffffff803a69f9>] ? elv_rb_del+0x30/0x4b
- [<ffffffff803b1092>] ? cfq_remove_request+0x180/0x1d8
- [<ffffffff803afd03>] ? __cfq_slice_expired+0xd6/0xeb
- [<ffffffff803afd31>] ? cfq_slice_expired+0x19/0x1b
- [<ffffffff803b1832>] ? cfq_dispatch_requests+0x2c1/0x37e
- [<ffffffff803aa98c>] blk_do_ordered+0x22b/0x26a
- [<ffffffff803a6560>] elv_next_request+0x1d0/0x210
- [<ffffffff80439c7c>] scsi_request_fn+0x9e/0x539
- [<ffffffff80255c66>] ? put_lock_stats+0xe/0x27
- [<ffffffff803a827e>] blk_invoke_request_fn+0x3b/0x6e
- [<ffffffff803a87fd>] __blk_run_queue+0x25/0x29
- [<ffffffff803a8822>] blk_run_queue+0x21/0x35
- [<ffffffff80439509>] scsi_run_queue+0x2cf/0x379
- [<ffffffff8043a33e>] scsi_next_command+0x36/0x46
- [<ffffffff8043a509>] scsi_end_request+0x92/0xa4
- [<ffffffff8043aae7>] scsi_io_completion+0x1a7/0x3ad
- [<ffffffff80434551>] scsi_finish_command+0xe9/0xf2
- [<ffffffff8043afd5>] scsi_softirq_done+0x10e/0x117
- [<ffffffff803ac393>] blk_done_softirq+0x7f/0x8f
- [<ffffffff8023c173>] __do_softirq+0x70/0x101
- [<ffffffff8020cc0c>] call_softirq+0x1c/0x28
- [<ffffffff8020e229>] do_softirq+0x39/0x8a
- [<ffffffff8023bd78>] irq_exit+0x45/0xa2
- [<ffffffff8020e53a>] do_IRQ+0x16a/0x19c
- [<ffffffff8020bceb>] ret_from_intr+0x0/0xf
- <EOI>  [<ffffffff80212e09>] ? mwait_idle+0x3e/0x48
- [<ffffffff80212e00>] ? mwait_idle+0x35/0x48
- [<ffffffff8020a940>] ? cpu_idle+0x51/0xba
- [<ffffffff80514f9c>] ? rest_init+0x70/0x72
----[ end trace 115cb4be7e150bb9 ]---
+On Fri, 14 Nov 2008, Stephen Rothwell wrote:
+> On Fri, 14 Nov 2008 08:42:48 +0100 (CET) Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> >
+> > Apart from the patches you receive against -next, is there any other
+> > advantage, giving staging is disabled?
+> 
+> Others compile linux-next with all sorts of configs, so we hopefully will
+> see any build failures.  In fact, Greg might even built it with staging
+> enabled :-)
+> 
+> We will also see any merge conflicts (though there probably won't be
+> many).
+> 
+> I may also see if I can arrange for a build in each architecture with
+> staging enabled in my infrastructure here, but it may take a little while.
+
+I build them for m68k anyway, but due to timezone differences, you usually find
+(and sometimes even fix ;-) the problems long before I notice them.
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
