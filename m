@@ -1,57 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: sound tree build failure
-Date: Fri, 14 Nov 2008 18:46:33 +1100
-Message-ID: <20081114184633.4b5ab1f6.sfr@canb.auug.org.au>
-References: <20081114145630.31f312ce.sfr@canb.auug.org.au>
-	<s5hiqqqlsw8.wl%tiwai@suse.de>
-	<20081114175856.2ab38113.sfr@canb.auug.org.au>
-	<s5habc2lr9b.wl%tiwai@suse.de>
-	<20081114182718.e93352c3.sfr@canb.auug.org.au>
-	<s5h1vxelpp0.wl%tiwai@suse.de>
+Subject: Re: Can you add the staging tree to -next?
+Date: Fri, 14 Nov 2008 18:50:16 +1100
+Message-ID: <20081114185016.0097d4eb.sfr@canb.auug.org.au>
+References: <20081112235600.GA27554@kroah.com>
+	<Pine.LNX.4.64.0811140825410.11953@anakin>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__14_Nov_2008_18_46_33_+1100_QnzhdJlQ9JYidxWA"
+ boundary="Signature=_Fri__14_Nov_2008_18_50_16_+1100_eqiIfzh4W8nWKlSQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44700 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40217 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750734AbYKNHqr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 14 Nov 2008 02:46:47 -0500
-In-Reply-To: <s5h1vxelpp0.wl%tiwai@suse.de>
+	id S1751009AbYKNHu1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 14 Nov 2008 02:50:27 -0500
+In-Reply-To: <Pine.LNX.4.64.0811140825410.11953@anakin>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-next@vger.kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>, Ingo Molnar <mingo@elte.hu>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__14_Nov_2008_18_46_33_+1100_QnzhdJlQ9JYidxWA
+--Signature=_Fri__14_Nov_2008_18_50_16_+1100_eqiIfzh4W8nWKlSQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Takashi,
+Hi Geert,
 
-On Fri, 14 Nov 2008 08:41:31 +0100 Takashi Iwai <tiwai@suse.de> wrote:
+On Fri, 14 Nov 2008 08:42:48 +0100 (CET) Geert Uytterhoeven <geert@linux-m6=
+8k.org> wrote:
 >
-> BTW, what would be the best fix?  To me, the easiest is to revert the
-> commit.  But, if other HRTIMER_CB_IRQSAFE_* flag is known and confirmed
-> to work like HRTIMER_CB_IRQSAFE, I can simply change to it as a fix.
+> Apart from the patches you receive against -next, is there any other
+> advantage, giving staging is disabled?
 
-I don't know, sorry - that is why I am leaving fixes to those who do.
+Others compile linux-next with all sorts of configs, so we hopefully will
+see any build failures.  In fact, Greg might even built it with staging
+enabled :-)
 
+We will also see any merge conflicts (though there probably won't be
+many).
+
+I may also see if I can arrange for a build in each architecture with
+staging enabled in my infrastructure here, but it may take a little while.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__14_Nov_2008_18_46_33_+1100_QnzhdJlQ9JYidxWA
+--Signature=_Fri__14_Nov_2008_18_50_16_+1100_eqiIfzh4W8nWKlSQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkkdLNkACgkQjjKRsyhoI8y2kgCfWv5bLH7DbMvBEg3J4jL7iy7S
-NowAn0Rg3fQmCQrzdapbdwNBUnN1A8Ul
-=V3M9
+iEYEARECAAYFAkkdLbgACgkQjjKRsyhoI8woAQCglBkmHLYg5q+XAbcwuov3aX0p
+S0sAn1BTUT8nuYR4HbhvR3R3dhPuLlIX
+=yUED
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__14_Nov_2008_18_46_33_+1100_QnzhdJlQ9JYidxWA--
+--Signature=_Fri__14_Nov_2008_18_50_16_+1100_eqiIfzh4W8nWKlSQ--
