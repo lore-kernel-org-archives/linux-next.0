@@ -1,44 +1,49 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Greg KH <greg@kroah.com>
 Subject: Re: Can you add the staging tree to -next?
-Date: Fri, 14 Nov 2008 15:16:25 +0100 (CET)
-Message-ID: <Pine.LNX.4.64.0811141515470.26818@anakin>
+Date: Fri, 14 Nov 2008 09:32:58 -0800
+Message-ID: <20081114173258.GC22980@kroah.com>
 References: <20081112235600.GA27554@kroah.com> <Pine.LNX.4.64.0811140825410.11953@anakin>
- <20081114185016.0097d4eb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752818AbYKNOQj@vger.kernel.org>
-In-Reply-To: <20081114185016.0097d4eb.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from kroah.org ([198.145.64.141]:44766 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751810AbYKNRoY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 14 Nov 2008 12:44:24 -0500
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.64.0811140825410.11953@anakin>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 14 Nov 2008, Stephen Rothwell wrote:
-> On Fri, 14 Nov 2008 08:42:48 +0100 (CET) Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> >
-> > Apart from the patches you receive against -next, is there any other
-> > advantage, giving staging is disabled?
+On Fri, Nov 14, 2008 at 08:42:48AM +0100, Geert Uytterhoeven wrote:
+> On Wed, 12 Nov 2008, Greg KH wrote:
+> > I'm starting to get people sending me patches against -next for the
+> > drivers/staging/ tree that don't apply as -next does not include my
+> > quilt tree of staging patches.
+> > 
+> > Can you please pick it up?  You can put it at the end of your series,
+> > and the 'make allmodconfig' option disables building anything in the
+> > drivers/staging/ subdirectory, so it should not have any build or merge
+> > conflicts with anything.
 > 
-> Others compile linux-next with all sorts of configs, so we hopefully will
-> see any build failures.  In fact, Greg might even built it with staging
-> enabled :-)
-> 
-> We will also see any merge conflicts (though there probably won't be
-> many).
-> 
-> I may also see if I can arrange for a build in each architecture with
-> staging enabled in my infrastructure here, but it may take a little while.
+> Apart from the patches you receive against -next, is there any other
+> advantage, giving staging is disabled?
 
-I build them for m68k anyway, but due to timezone differences, you usually find
-(and sometimes even fix ;-) the problems long before I notice them.
+That is a huge advantage, don't discount it.  My staging tree has over
+150 patches in it right now, and is quite diverged from what is in
+Linus's tree.  I have been getting the same patches sent over and over
+to fix the same thing that is already resolved in my tree, as the
+developers are working against -next thinking that they were working
+with the latest development tree.
 
-Gr{oetje,eeting}s,
+This will save a lot of redundant developer time, a good thing.
 
-						Geert
+It also lets me test -next with -staging in it so I can anticipate the
+merge issues that will be happening in the next big merge (v4l is going
+to have issues that I've noticed already.)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+thanks,
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+greg k-h
