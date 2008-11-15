@@ -1,52 +1,48 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: manual merge of the rr tree
-Date: Sun, 16 Nov 2008 09:02:52 +1030
-Message-ID: <200811160902.53029.rusty@rustcorp.com.au>
-References: <20081114153625.1ea7e841.sfr@canb.auug.org.au> <20081114160638.12340c65.sfr@canb.auug.org.au> <20081113.224255.145576986.davem@davemloft.net>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: 2.6.28-rc4 suspend issues on Lenovo X200
+Date: Sun, 16 Nov 2008 00:24:44 +0100
+Message-ID: <200811160024.45156.rjw@sisk.pl>
+References: <20081114115451.GB4877@denkbrett.schottelius.org>
 Mime-Version: 1.0
 Content-Type: text/plain;
-  charset="iso-8859-1"
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:35660 "EHLO ozlabs.org"
+Received: from ogre.sisk.pl ([217.79.144.158]:41269 "EHLO ogre.sisk.pl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751319AbYKOWc5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 15 Nov 2008 17:32:57 -0500
-In-Reply-To: <20081113.224255.145576986.davem@davemloft.net>
+	id S1751815AbYKOXTo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 15 Nov 2008 18:19:44 -0500
+In-Reply-To: <20081114115451.GB4877@denkbrett.schottelius.org>
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, wangchen@cn.fujitsu.com, markmc@redhat.com
+To: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jesse Barnes <jbarnes@virtuousgeek.org>
 
-On Friday 14 November 2008 17:12:55 David Miller wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 14 Nov 2008 16:06:38 +1100
->
-> > On Thu, 13 Nov 2008 20:41:21 -0800 (PST) David Miller 
-<davem@davemloft.net> wrote:
-> > > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > Date: Fri, 14 Nov 2008 15:36:25 +1100
-> > >
-> > > > The only issue would be if you have patches to remove/rename the
-> > > > netdev priv field - they would have to be delayed until after Rusty's
-> > > > tree was merged, or someone could submit a trivial patch to Linus to
-> > > > do that last netdev_priv() conversion in virtio_net.c and you could
-> > > > both rebase/merge that.
-> > >
-> > > Another option is simply for Rusty to submit his virtio stuff
-> > > through my tree.  I'm more than happy to take care of that
-> > > as soon as Rusty can put the patches together.
-> >
-> > I was about to send the below to Linus.  I will hold onto it for a couple
-> > of days.
->
-> Ok.  We'll try to sort it out.
->
-> Rusty, are your changes 2.6.28 bound or -next?
+On Friday, 14 of November 2008, Nico -telmich- Schottelius wrote:
+> Hello!
+> 
+> Using 2.6.28-rc4 and *NO* acpi_sleep=s3_bios:
+> 
+>    - suspend and wakeup on console works (!)
+>       -> this is new, before screen was black after wakeup
+>    - suspend on x11 works
+>      wakeup on x11 freezes, causes automatic reboot
+>    - switch away from x11 to console,
+>      suspend on console:
+>          wakeup -> works
+>          switch to x11 -> freeze & reboot
+> 
+> It would be nice, if someone could CC me to
+> 
+>    'nico-linux-lenovox200-suspend at schottelius.org'
+> 
+> if there is some progress made. Currently it's just getting
+> me tired always having to fsck the filesystem after a suspend
+> try.
 
-They missed 2.6.28, they're 2.6.29 material.  I've fixed them with s/dev-
->priv/netdev_priv(dev)/, and will send them to netdev now.
+Well, given that you appear to be the only person able to reproduce this
+problem, it'll rather be difficult to debug it without your help.
 
 Thanks,
-Rusty.
+Rafael
