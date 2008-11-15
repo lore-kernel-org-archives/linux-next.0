@@ -1,66 +1,52 @@
-From: "Alexander Beregalov" <a.beregalov@gmail.com>
-Subject: Re: next-20081114: WARNING: at block/blk-barrier.c:246 blk_do_ordered()
-Date: Sat, 15 Nov 2008 20:25:58 +0300
-Message-ID: <a4423d670811150925qf74b63dy1ef923347140a8fe@mail.gmail.com>
-References: <a4423d670811140556o45f0063dn85f695f74d158b03@mail.gmail.com>
-	 <20081115160739.GA26778@kernel.dk>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: manual merge of the rr tree
+Date: Sun, 16 Nov 2008 09:02:52 +1030
+Message-ID: <200811160902.53029.rusty@rustcorp.com.au>
+References: <20081114153625.1ea7e841.sfr@canb.auug.org.au> <20081114160638.12340c65.sfr@canb.auug.org.au> <20081113.224255.145576986.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from an-out-0708.google.com ([209.85.132.241]:25946 "EHLO
-	an-out-0708.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754868AbYKOR0A (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 15 Nov 2008 12:26:00 -0500
-Received: by an-out-0708.google.com with SMTP id d40so819089and.1
-        for <linux-next@vger.kernel.org>; Sat, 15 Nov 2008 09:25:58 -0800 (PST)
-In-Reply-To: <20081115160739.GA26778@kernel.dk>
+Received: from ozlabs.org ([203.10.76.45]:35660 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751319AbYKOWc5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 15 Nov 2008 17:32:57 -0500
+In-Reply-To: <20081113.224255.145576986.davem@davemloft.net>
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, wangchen@cn.fujitsu.com, markmc@redhat.com
 
-2008/11/15 Jens Axboe <jens.axboe@oracle.com>:
-> On Fri, Nov 14 2008, Alexander Beregalov wrote:
->> WARNING: at block/blk-barrier.c:246 blk_do_ordered+0x22b/0x26a()
->> Modules linked in:
->> Pid: 0, comm: swapper Not tainted 2.6.28-rc4-next-20081114 #3
->> Call Trace:
->>  <IRQ>  [<ffffffff80236d63>] warn_on_slowpath+0x58/0x7d
->>  [<ffffffff802570e3>] ? mark_lock+0x1c/0x37a
->>  [<ffffffff803a69f9>] ? elv_rb_del+0x30/0x4b
->>  [<ffffffff803b1092>] ? cfq_remove_request+0x180/0x1d8
->>  [<ffffffff803afd03>] ? __cfq_slice_expired+0xd6/0xeb
->>  [<ffffffff803afd31>] ? cfq_slice_expired+0x19/0x1b
->>  [<ffffffff803b1832>] ? cfq_dispatch_requests+0x2c1/0x37e
->>  [<ffffffff803aa98c>] blk_do_ordered+0x22b/0x26a
->>  [<ffffffff803a6560>] elv_next_request+0x1d0/0x210
->>  [<ffffffff80439c7c>] scsi_request_fn+0x9e/0x539
->>  [<ffffffff80255c66>] ? put_lock_stats+0xe/0x27
->>  [<ffffffff803a827e>] blk_invoke_request_fn+0x3b/0x6e
->>  [<ffffffff803a87fd>] __blk_run_queue+0x25/0x29
->>  [<ffffffff803a8822>] blk_run_queue+0x21/0x35
->>  [<ffffffff80439509>] scsi_run_queue+0x2cf/0x379
->>  [<ffffffff8043a33e>] scsi_next_command+0x36/0x46
->>  [<ffffffff8043a509>] scsi_end_request+0x92/0xa4
->>  [<ffffffff8043aae7>] scsi_io_completion+0x1a7/0x3ad
->>  [<ffffffff80434551>] scsi_finish_command+0xe9/0xf2
->>  [<ffffffff8043afd5>] scsi_softirq_done+0x10e/0x117
->>  [<ffffffff803ac393>] blk_done_softirq+0x7f/0x8f
->>  [<ffffffff8023c173>] __do_softirq+0x70/0x101
->>  [<ffffffff8020cc0c>] call_softirq+0x1c/0x28
->>  [<ffffffff8020e229>] do_softirq+0x39/0x8a
->>  [<ffffffff8023bd78>] irq_exit+0x45/0xa2
->>  [<ffffffff8020e53a>] do_IRQ+0x16a/0x19c
->>  [<ffffffff8020bceb>] ret_from_intr+0x0/0xf
->>  <EOI>  [<ffffffff80212e09>] ? mwait_idle+0x3e/0x48
->>  [<ffffffff80212e00>] ? mwait_idle+0x35/0x48
->>  [<ffffffff8020a940>] ? cpu_idle+0x51/0xba
->>  [<ffffffff80514f9c>] ? rest_init+0x70/0x72
->> ---[ end trace 115cb4be7e150bb9 ]---
+On Friday 14 November 2008 17:12:55 David Miller wrote:
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 14 Nov 2008 16:06:38 +1100
 >
-> I'm assuming this is new with -next and doesn't happen with 2.6.28-rc4?
-Yes.
-> Is it reproducible in -next?
-I have seen it only once yet.
+> > On Thu, 13 Nov 2008 20:41:21 -0800 (PST) David Miller 
+<davem@davemloft.net> wrote:
+> > > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > Date: Fri, 14 Nov 2008 15:36:25 +1100
+> > >
+> > > > The only issue would be if you have patches to remove/rename the
+> > > > netdev priv field - they would have to be delayed until after Rusty's
+> > > > tree was merged, or someone could submit a trivial patch to Linus to
+> > > > do that last netdev_priv() conversion in virtio_net.c and you could
+> > > > both rebase/merge that.
+> > >
+> > > Another option is simply for Rusty to submit his virtio stuff
+> > > through my tree.  I'm more than happy to take care of that
+> > > as soon as Rusty can put the patches together.
+> >
+> > I was about to send the below to Linus.  I will hold onto it for a couple
+> > of days.
+>
+> Ok.  We'll try to sort it out.
+>
+> Rusty, are your changes 2.6.28 bound or -next?
+
+They missed 2.6.28, they're 2.6.29 material.  I've fixed them with s/dev-
+>priv/netdev_priv(dev)/, and will send them to netdev now.
+
+Thanks,
+Rusty.
