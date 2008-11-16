@@ -1,39 +1,47 @@
-From: Boaz Harrosh <bharrosh@panasas.com>
-Subject: Re: linux-next: osd tree build failure
-Date: Sun, 16 Nov 2008 12:14:18 +0200
-Message-ID: <491FF27A.6090400@panasas.com>
-References: <20081114175328.5120af70.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: next-20081114 build failure
+Date: Sun, 16 Nov 2008 22:30:08 +1100
+Message-ID: <20081116223008.4772920e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sun__16_Nov_2008_22_30_08_+1100_rwaj5lZGR10WwveT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gw-ca.panasas.com ([66.104.249.162]:32435 "EHLO
-	laguna.int.panasas.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751589AbYKPKOV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Nov 2008 05:14:21 -0500
-In-Reply-To: <20081114175328.5120af70.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48470 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751601AbYKPLaf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 16 Nov 2008 06:30:35 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, David Howells <dhowells@redhat.com>
 
-Stephen Rothwell wrote:
-> Hi Boaz,
-> 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
-> 
-> In file included from drivers/scsi/osd/osd_initiator.c:43:
-> include/scsi/osd_initiator.h: In function 'osd_dev_set_ver':
-> include/scsi/osd_initiator.h:72: error: 'dev' undeclared (first use in this function)
-> 
-> Caused by commit 1bdb488972f83cccfcbdbf45f7653ebc07f47313 ("libosd: OSD
-> version 2 Support").  I have dropped the osd tree for today.
-> 
-Hi Stephen, I'm so sorry. I accidentally pushed the wrong branch.
+--Signature=_Sun__16_Nov_2008_22_30_08_+1100_rwaj5lZGR10WwveT
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-(Anything left to do by hand is an error to happen)
+Hi James, David,
 
-I have fix that just now.
+Today's linux-next build (mips defconfig) failed like this:
 
-Thanks
-Boaz
+fs/nfsctl.c:45: error: implicit declaration of function 'current_cred'
+
+This is why you need explicit includes ...
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Sun__16_Nov_2008_22_30_08_+1100_rwaj5lZGR10WwveT
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkgBEAACgkQjjKRsyhoI8yrwgCgjB3XAr8f+Pr9LMNiDCry0wlU
+4zYAniHPV2i8W36DdeykCmuavGCNrU79
+=MHyH
+-----END PGP SIGNATURE-----
+
+--Signature=_Sun__16_Nov_2008_22_30_08_+1100_rwaj5lZGR10WwveT--
