@@ -1,69 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: parisc build failure
-Date: Sun, 16 Nov 2008 23:13:42 +1100
-Message-ID: <20081116231342.0cd747bd.sfr@canb.auug.org.au>
+Subject: Re: linux-next: osd tree build failure
+Date: Sun, 16 Nov 2008 23:21:09 +1100
+Message-ID: <20081116232109.137373ae.sfr@canb.auug.org.au>
+References: <20081114175328.5120af70.sfr@canb.auug.org.au>
+	<491FF27A.6090400@panasas.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Sun__16_Nov_2008_23_13_42_+1100_n+AZsqsfjkK73wvx"
+ boundary="Signature=_Sun__16_Nov_2008_23_21_09_+1100_pIElvmG/Zs32ejzy"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36176 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56048 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751888AbYKPMOO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 16 Nov 2008 07:14:14 -0500
+	id S1751900AbYKPMVn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 16 Nov 2008 07:21:43 -0500
+In-Reply-To: <491FF27A.6090400@panasas.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kyle McMartin <kyle@mcmartin.ca>, linux-parisc@vger.kernel.org
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>
+To: Boaz Harrosh <bharrosh@panasas.com>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Sun__16_Nov_2008_23_13_42_+1100_n+AZsqsfjkK73wvx
+--Signature=_Sun__16_Nov_2008_23_21_09_+1100_pIElvmG/Zs32ejzy
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kyle,
+Hi Boaz,
 
-Today's linux-next build (parisc allmodconfig) failed like this:
+On Sun, 16 Nov 2008 12:14:18 +0200 Boaz Harrosh <bharrosh@panasas.com> wrot=
+e:
+>
+> Hi Stephen, I'm so sorry. I accidentally pushed the wrong branch.
 
-In file included from drivers/serial/mux.c:38:
-include/linux/serial_core.h: In function 'uart_handle_sysrq_char':
-include/linux/serial_core.h:450: error: 'struct uart_port' has no member na=
-med 'sysrq'
-include/linux/serial_core.h:451: error: 'struct uart_port' has no member na=
-med 'sysrq'
-include/linux/serial_core.h:451: error: 'struct uart_port' has no member na=
-med 'sysrq'
-include/linux/serial_core.h:453: error: 'struct uart_port' has no member na=
-med 'sysrq'
-include/linux/serial_core.h:456: error: 'struct uart_port' has no member na=
-med 'sysrq'
-include/linux/serial_core.h:473: error: 'struct uart_port' has no member na=
-med 'sysrq'
-include/linux/serial_core.h:474: error: 'struct uart_port' has no member na=
-med 'sysrq'
-include/linux/serial_core.h:477: error: 'struct uart_port' has no member na=
-med 'sysrq'
+That would explain it.
 
-This is happening in mainline as well. In fact, this has been happening
-back as far as I have results (Aug 27).  The sysrq element of struct
-uart_port is dependent on CONFIG_SERIAL_CORE_CONSOLE while the references
-failing above are dependent on SUPPORT_SYSRQ which is defined if
-CONFIG_MAGIC_SYSRQ is defined in mux.c.
+> (Anything left to do by hand is an error to happen)
+
+Yes, automate much as possible.
+
+> I have fix that just now.
+
+Thanks.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Sun__16_Nov_2008_23_13_42_+1100_n+AZsqsfjkK73wvx
+--Signature=_Sun__16_Nov_2008_23_21_09_+1100_pIElvmG/Zs32ejzy
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkkgDnYACgkQjjKRsyhoI8zyIwCdF+noH6S5a7Ys3tJ8fInPNI2Q
-0/UAoJQ6t69Tza0sqB8l6PcCoDH7A9gM
-=1jhk
+iEYEARECAAYFAkkgEDUACgkQjjKRsyhoI8z12ACfY6HaPhx8fCKOlN0NR7M4GG51
+22cAn09wfAtChG2weB+cgGvyVL8uneGQ
+=pKp8
 -----END PGP SIGNATURE-----
 
---Signature=_Sun__16_Nov_2008_23_13_42_+1100_n+AZsqsfjkK73wvx--
+--Signature=_Sun__16_Nov_2008_23_21_09_+1100_pIElvmG/Zs32ejzy--
