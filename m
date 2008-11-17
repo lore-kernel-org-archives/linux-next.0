@@ -1,64 +1,238 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: Automated Build Infrastructure
-Date: Sun, 16 Nov 2008 21:24:55 -0800
-Message-ID: <49210027.8070608@oracle.com>
-References: <A938C8A5-205C-4DBF-A242-3966757C02E6@gmail.com> <20081117144535.6981ecef.sfr@canb.auug.org.au> <4920F951.5080109@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Tree for November 17
+Date: Mon, 17 Nov 2008 18:06:51 +1100
+Message-ID: <20081117180651.8a498cd9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__17_Nov_2008_18_06_51_+1100_Hhsr6dCj8l/lXrfV"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:52004 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751076AbYKQFZS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Nov 2008 00:25:18 -0500
-In-Reply-To: <4920F951.5080109@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:59998 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751888AbYKQHHD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Nov 2008 02:07:03 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: linux-next@vger.kernel.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Richard Holden <aciddeath@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-Randy Dunlap wrote:
-> Stephen Rothwell wrote:
->> Hi Richard,
->>
->> On Sun, 16 Nov 2008 20:32:39 -0700 Richard Holden <aciddeath@gmail.com> wrote:
->>> Does anyone have any scripts to kick off compilation when Stephen  
->>> releases a new linux-next? I've started to plan out my own but wanted  
->>> to see if anyone had something first so I don't reinvent the wheel.
->> In case it helps, your most reliable trigger would be the LATEST-IS file
->> in http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/
->> changing.  I think Randy Dunlap (cc'd) has some stuff.
-> 
-> Hi,
-> 
-> My scripts are available in
->    http://www.xenotime.net/linux/scripts/
-> 
-> The scripts are:  grab_kernel (for mainline), grab_next (for -next),
-> and get-mmotm (for mmotm).  They all work with tarballs and patches,
-> not git trees.  get-mmotm requires an mainline tree for its patch
-> series to be applied to.  The 'kcurrent' script tells me what
-> linux-next or mmotm applies to:
-> 
-> The latest stable version of the Linux kernel is:           2.6.27.6
-> The latest prepatch for the stable Linux kernel tree is:    2.6.28-rc5
-> The latest snapshot for the stable Linux kernel tree is:    2.6.28-rc5-git1
-> The latest 2.4 version of the Linux kernel is:              2.4.36.9
-> The latest prepatch for the 2.4 Linux kernel tree is:       2.4.37-rc2
-> The latest 2.2 version of the Linux kernel is:              2.2.26
-> The latest prepatch for the 2.2 Linux kernel tree is:       2.2.27-rc2
-> The latest -mm patch to the stable Linux kernels is:        2.6.28-rc2-mm1
-> mmotm-2008-1114-2050 ... applies to: 2.6.28-rc4
-> next-20081114 ... applies to: v2.6.28-rc4
-> 
-> grab_kernel downloads & applies any mainline kernel (except for
-> -stable kernels); it knows how to apply -rc & -git patches (zipped).
-> 
-> If you have any questions about them, just ask.
+--Signature=_Mon__17_Nov_2008_18_06_51_+1100_Hhsr6dCj8l/lXrfV
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK, these scripts don't do the automated kickoff part.
-For that, I'm using Crucible (crucible.sf.net).
-The scripts are all in the subversion repository at sf.net.
+Hi all,
 
--- 
-~Randy
+Changes since 20081114:
+
+Undropped trees:
+	sound
+	osd
+
+Dropped trees (temporarily):
+	userns (it depends on creds)
+	semaphore-removal (due to unfixed conflicts against Linus' tree)
+	firmware (unfixed build failure)
+
+The cifs tree gained a conflict against the net tree.
+
+The hdlc tree lost a conflict.
+
+The security-testing tree gained a conflict against the cifs tree.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+(patches at
+http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig,
+44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
+
+Below is a summary of the state of the merge.
+
+We are up to 125 trees (counting Linus' and 14 trees of patches pending for
+Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging powerpc-merge/merge
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sparc-current/master
+Merging sound-current/for-linus
+Merging arm-current/master
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/master
+Merging quilt/driver-core.current
+Merging quilt/usb.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-2.6.26
+Merging dwmw2/master
+Merging arm/devel
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging quilt/m68k
+Merging m68knommu/for-next
+Merging mips/mips-for-linux-next
+Merging parisc/master
+Merging powerpc/next
+Merging 4xx/next
+Merging galak/next
+Merging pxa/for-next
+Merging s390/features
+CONFLICT (content): Merge conflict in include/linux/kernel.h
+Merging sh/master
+Merging sparc/master
+Merging x86/auto-x86-next
+Merging xtensa/master
+Merging quilt/driver-core
+Merging quilt/usb
+Merging tip-core/auto-core-next
+Merging cpus4096/auto-cpus4096-next
+Merging ftrace/auto-ftrace-next
+Merging genirq/auto-genirq-next
+Merging safe-poison-pointers/auto-safe-poison-pointers-next
+Merging sched/auto-sched-next
+Merging stackprotector/auto-stackprotector-next
+Merging timers/auto-timers-next
+Merging pci/linux-next
+Merging quilt/device-mapper
+Merging hid/mm
+Merging quilt/i2c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+Merging jfs/next
+Merging kbuild/master
+Merging quilt/ide
+Merging libata/NEXT
+Merging nfs/linux-next
+Merging xfs/master
+Merging infiniband/for-next
+Merging acpi/test
+Merging nfsd/nfsd-next
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/master
+Merging dlm/next
+Merging scsi/master
+Merging ocfs2/linux-next
+Merging ext4/next
+Merging async_tx/next
+Merging udf/for_next
+Merging net/master
+Merging mtd/master
+Merging wireless/master
+Merging crypto/master
+Merging vfs/for-next
+Merging sound/for-next
+Merging cpufreq/next
+Merging v9fs/for-next
+Merging quilt/rr
+CONFLICT (content): Merge conflict in drivers/net/virtio_net.c
+Merging cifs/master
+CONFLICT (content): Merge conflict in fs/cifs/connect.c
+Merging mmc/next
+Merging gfs2/master
+Merging input/next
+Merging semaphore/semaphore
+Merging bkl-removal/bkl-removal
+Merging ubifs/linux-next
+Merging lsm/for-next
+Merging block/for-next
+Merging embedded/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging kmemcheck/auto-kmemcheck-next
+CONFLICT (content): Merge conflict in MAINTAINERS
+CONFLICT (content): Merge conflict in arch/x86/mm/Makefile
+CONFLICT (content): Merge conflict in mm/slab.c
+CONFLICT (content): Merge conflict in mm/slub.c
+Merging generic-ipi/auto-generic-ipi-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+CONFLICT (delete/modify): drivers/net/wan/syncppp.c deleted in hdlc/hdlc-ne=
+xt and modified in HEAD. Version HEAD of drivers/net/wan/syncppp.c left in =
+tree.
+$ git rm -f drivers/net/wan/syncppp.c
+Merging drm/drm-next
+Merging voltage/for-next
+Merging security-testing/next
+CONFLICT (content): Merge conflict in fs/cifs/misc.c
+CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_cred.h
+CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_globals.h
+CONFLICT (content): Merge conflict in fs/xfs/xfs_vnodeops.h
+Merging lblnet/master
+Merging quilt/ttydev
+CONFLICT (content): Merge conflict in fs/devpts/inode.c
+Merging agp/agp-next
+Merging oprofile/auto-oprofile-next
+Merging fastboot/auto-fastboot-next
+Merging sparseirq/auto-sparseirq-next
+Merging iommu/auto-iommu-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging proc/proc
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cpu_alloc/cpu_alloc
+CONFLICT (content): Merge conflict in kernel/lockdep.c
+CONFLICT (content): Merge conflict in kernel/module.c
+Applying cpu_alloc: merge_fix_1
+Merging cputime/cputime
+Merging perfmon3/master
+Merging osd/linux-next
+Merging fatfs/master
+Merging quilt/staging
+Merging scsi-post-merge/master
+
+--Signature=_Mon__17_Nov_2008_18_06_51_+1100_Hhsr6dCj8l/lXrfV
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkhGAsACgkQjjKRsyhoI8zhdwCgoie6PDz5CecZdQ9eMoIrvqp2
+x4kAoLKgZP3asiaYf5CsIOp2ye4HySNP
+=rP2b
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__17_Nov_2008_18_06_51_+1100_Hhsr6dCj8l/lXrfV--
