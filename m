@@ -1,59 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the security-testing tree
-Date: Mon, 17 Nov 2008 15:44:10 +1100
-Message-ID: <20081117154410.dc25a2d9.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: Automated Build Infrastructure
+Date: Sun, 16 Nov 2008 20:55:45 -0800
+Message-ID: <4920F951.5080109@oracle.com>
+References: <A938C8A5-205C-4DBF-A242-3966757C02E6@gmail.com> <20081117144535.6981ecef.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52382 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755878AbYKQEoR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 16 Nov 2008 23:44:17 -0500
+Received: from rcsinet13.oracle.com ([148.87.113.125]:28046 "EHLO
+	rgminet13.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756008AbYKQE4S (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Nov 2008 23:56:18 -0500
+In-Reply-To: <20081117144535.6981ecef.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: linux-next@vger.kernel.org, Jeff Layton <jlayton@redhat.com>, Steve French <sfrench@us.ibm.com>, David Howells <dhowells@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Richard Holden <aciddeath@gmail.com>, linux-next@vger.kernel.org
 
-Hi James,
+Stephen Rothwell wrote:
+> Hi Richard,
+> 
+> On Sun, 16 Nov 2008 20:32:39 -0700 Richard Holden <aciddeath@gmail.com> wrote:
+>> Does anyone have any scripts to kick off compilation when Stephen  
+>> releases a new linux-next? I've started to plan out my own but wanted  
+>> to see if anyone had something first so I don't reinvent the wheel.
+> 
+> In case it helps, your most reliable trigger would be the LATEST-IS file
+> in http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/
+> changing.  I think Randy Dunlap (cc'd) has some stuff.
 
-Today's linux-next merge of the security-testing tree got a conflict in
-fs/cifs/misc.c between commit 14fbf50d695207754daeb96270b3027a3821121f
-("cifs: reinstate sharing of SMB sessions sans races") from the cifs tree
-and commit a001e5b558f25eb1e588522d73ac949b643b7a37 ("CRED: Wrap task
-credential accesses in the CIFS filesystem") from the security-testing
-tree.
+Hi,
 
-I fixed it up (see below) and can carry it for a short while.
+My scripts are available in
+   http://www.xenotime.net/linux/scripts/
 
-Steve, you should apply the patch from the security-testing (creds) tree
-that was sent to you - its dependencies are upstream already.
+The scripts are:  grab_kernel (for mainline), grab_next (for -next),
+and get-mmotm (for mmotm).  They all work with tarballs and patches,
+not git trees.  get-mmotm requires an mainline tree for its patch
+series to be applied to.  The 'kcurrent' script tells me what
+linux-next or mmotm applies to:
+
+The latest stable version of the Linux kernel is:           2.6.27.6
+The latest prepatch for the stable Linux kernel tree is:    2.6.28-rc5
+The latest snapshot for the stable Linux kernel tree is:    2.6.28-rc5-git1
+The latest 2.4 version of the Linux kernel is:              2.4.36.9
+The latest prepatch for the 2.4 Linux kernel tree is:       2.4.37-rc2
+The latest 2.2 version of the Linux kernel is:              2.2.26
+The latest prepatch for the 2.2 Linux kernel tree is:       2.2.27-rc2
+The latest -mm patch to the stable Linux kernels is:        2.6.28-rc2-mm1
+mmotm-2008-1114-2050 ... applies to: 2.6.28-rc4
+next-20081114 ... applies to: v2.6.28-rc4
+
+grab_kernel downloads & applies any mainline kernel (except for
+-stable kernels); it knows how to apply -rc & -git patches (zipped).
+
+If you have any questions about them, just ask.
+
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
-2343ec9bd0c5c15a77e7261355dc93a075e8f753
-diff --cc fs/cifs/misc.c
-index 46c8c7b,ec36410..1913b65
---- a/fs/cifs/misc.c
-+++ b/fs/cifs/misc.c
-@@@ -343,13 -347,13 +343,13 @@@ header_assemble(struct smb_hdr *buffer
-  		/*  BB Add support for establishing new tCon and SMB Session  */
-  		/*      with userid/password pairs found on the smb session   */
-  		/*	for other target tcp/ip addresses 		BB    */
-- 				if (current->fsuid != treeCon->ses->linux_uid) {
-+ 				if (current_fsuid() != treeCon->ses->linux_uid) {
-  					cFYI(1, ("Multiuser mode and UID "
-  						 "did not match tcon uid"));
- -					read_lock(&GlobalSMBSeslock);
- -					list_for_each(temp_item, &GlobalSMBSessionList) {
- -						ses = list_entry(temp_item, struct cifsSesInfo, cifsSessionList);
- +					read_lock(&cifs_tcp_ses_lock);
- +					list_for_each(temp_item, &treeCon->ses->server->smb_ses_list) {
- +						ses = list_entry(temp_item, struct cifsSesInfo, smb_ses_list);
-- 						if (ses->linux_uid == current->fsuid) {
-+ 						if (ses->linux_uid == current_fsuid()) {
-  							if (ses->server == treeCon->ses->server) {
-  								cFYI(1, ("found matching uid substitute right smb_uid"));
-  								buffer->Uid = ses->Suid;
+~Randy
