@@ -1,23 +1,55 @@
-From: Richard Holden <aciddeath@gmail.com>
-Subject: Automated Build Infrastructure
-Date: Sun, 16 Nov 2008 20:32:39 -0700
-Message-ID: <A938C8A5-205C-4DBF-A242-3966757C02E6@gmail.com>
-Mime-Version: 1.0 (Apple Message framework v929.2)
-Content-Type: text/plain; charset=US-ASCII; format=flowed; delsp=yes
-Content-Transfer-Encoding: 7bit
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Automated Build Infrastructure
+Date: Mon, 17 Nov 2008 14:45:35 +1100
+Message-ID: <20081117144535.6981ecef.sfr@canb.auug.org.au>
+References: <A938C8A5-205C-4DBF-A242-3966757C02E6@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__17_Nov_2008_14_45_35_+1100_Tw3OLArUrsyH18Vf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rv-out-0506.google.com ([209.85.198.239]:35581 "EHLO
-	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756337AbYKQDcn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Nov 2008 22:32:43 -0500
-Received: by rv-out-0506.google.com with SMTP id f9so771656rvb.0
-        for <linux-next@vger.kernel.org>; Sun, 16 Nov 2008 19:32:42 -0800 (PST)
+Received: from chilli.pcug.org.au ([203.10.76.44]:37578 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755498AbYKQDps (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 16 Nov 2008 22:45:48 -0500
+In-Reply-To: <A938C8A5-205C-4DBF-A242-3966757C02E6@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+To: Richard Holden <aciddeath@gmail.com>
+Cc: linux-next@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>
 
-Does anyone have any scripts to kick off compilation when Stephen  
-releases a new linux-next? I've started to plan out my own but wanted  
-to see if anyone had something first so I don't reinvent the wheel.
+--Signature=_Mon__17_Nov_2008_14_45_35_+1100_Tw3OLArUrsyH18Vf
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--Richard Holden
+Hi Richard,
+
+On Sun, 16 Nov 2008 20:32:39 -0700 Richard Holden <aciddeath@gmail.com> wro=
+te:
+>
+> Does anyone have any scripts to kick off compilation when Stephen =20
+> releases a new linux-next? I've started to plan out my own but wanted =20
+> to see if anyone had something first so I don't reinvent the wheel.
+
+In case it helps, your most reliable trigger would be the LATEST-IS file
+in http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/
+changing.  I think Randy Dunlap (cc'd) has some stuff.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__17_Nov_2008_14_45_35_+1100_Tw3OLArUrsyH18Vf
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkg6N8ACgkQjjKRsyhoI8zfgwCgp0EAf/2PAcq44I68fnG67KIx
+H/EAmwTmJGTHM2LsDiJ2911k2YhG1pNo
+=uJZu
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__17_Nov_2008_14_45_35_+1100_Tw3OLArUrsyH18Vf--
