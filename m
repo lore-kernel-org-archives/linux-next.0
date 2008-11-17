@@ -1,55 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Automated Build Infrastructure
-Date: Mon, 17 Nov 2008 14:45:35 +1100
-Message-ID: <20081117144535.6981ecef.sfr@canb.auug.org.au>
-References: <A938C8A5-205C-4DBF-A242-3966757C02E6@gmail.com>
+Subject: linux-next: manual merge of the security-testing tree
+Date: Mon, 17 Nov 2008 15:44:10 +1100
+Message-ID: <20081117154410.dc25a2d9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__17_Nov_2008_14_45_35_+1100_Tw3OLArUrsyH18Vf"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37578 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52382 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755498AbYKQDps (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 16 Nov 2008 22:45:48 -0500
-In-Reply-To: <A938C8A5-205C-4DBF-A242-3966757C02E6@gmail.com>
+	id S1755878AbYKQEoR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 16 Nov 2008 23:44:17 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Richard Holden <aciddeath@gmail.com>
-Cc: linux-next@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, Jeff Layton <jlayton@redhat.com>, Steve French <sfrench@us.ibm.com>, David Howells <dhowells@redhat.com>
 
---Signature=_Mon__17_Nov_2008_14_45_35_+1100_Tw3OLArUrsyH18Vf
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi James,
 
-Hi Richard,
+Today's linux-next merge of the security-testing tree got a conflict in
+fs/cifs/misc.c between commit 14fbf50d695207754daeb96270b3027a3821121f
+("cifs: reinstate sharing of SMB sessions sans races") from the cifs tree
+and commit a001e5b558f25eb1e588522d73ac949b643b7a37 ("CRED: Wrap task
+credential accesses in the CIFS filesystem") from the security-testing
+tree.
 
-On Sun, 16 Nov 2008 20:32:39 -0700 Richard Holden <aciddeath@gmail.com> wro=
-te:
->
-> Does anyone have any scripts to kick off compilation when Stephen =20
-> releases a new linux-next? I've started to plan out my own but wanted =20
-> to see if anyone had something first so I don't reinvent the wheel.
+I fixed it up (see below) and can carry it for a short while.
 
-In case it helps, your most reliable trigger would be the LATEST-IS file
-in http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/
-changing.  I think Randy Dunlap (cc'd) has some stuff.
-
---=20
+Steve, you should apply the patch from the security-testing (creds) tree
+that was sent to you - its dependencies are upstream already.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__17_Nov_2008_14_45_35_+1100_Tw3OLArUrsyH18Vf
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkg6N8ACgkQjjKRsyhoI8zfgwCgp0EAf/2PAcq44I68fnG67KIx
-H/EAmwTmJGTHM2LsDiJ2911k2YhG1pNo
-=uJZu
------END PGP SIGNATURE-----
-
---Signature=_Mon__17_Nov_2008_14_45_35_+1100_Tw3OLArUrsyH18Vf--
+2343ec9bd0c5c15a77e7261355dc93a075e8f753
+diff --cc fs/cifs/misc.c
+index 46c8c7b,ec36410..1913b65
+--- a/fs/cifs/misc.c
++++ b/fs/cifs/misc.c
+@@@ -343,13 -347,13 +343,13 @@@ header_assemble(struct smb_hdr *buffer
+  		/*  BB Add support for establishing new tCon and SMB Session  */
+  		/*      with userid/password pairs found on the smb session   */
+  		/*	for other target tcp/ip addresses 		BB    */
+- 				if (current->fsuid != treeCon->ses->linux_uid) {
++ 				if (current_fsuid() != treeCon->ses->linux_uid) {
+  					cFYI(1, ("Multiuser mode and UID "
+  						 "did not match tcon uid"));
+ -					read_lock(&GlobalSMBSeslock);
+ -					list_for_each(temp_item, &GlobalSMBSessionList) {
+ -						ses = list_entry(temp_item, struct cifsSesInfo, cifsSessionList);
+ +					read_lock(&cifs_tcp_ses_lock);
+ +					list_for_each(temp_item, &treeCon->ses->server->smb_ses_list) {
+ +						ses = list_entry(temp_item, struct cifsSesInfo, smb_ses_list);
+- 						if (ses->linux_uid == current->fsuid) {
++ 						if (ses->linux_uid == current_fsuid()) {
+  							if (ses->server == treeCon->ses->server) {
+  								cFYI(1, ("found matching uid substitute right smb_uid"));
+  								buffer->Uid = ses->Suid;
