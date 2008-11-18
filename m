@@ -1,91 +1,51 @@
-From: Helge Deller <deller@gmx.de>
-Subject: struct uart_port has no member named 'sysrq'   (was: linux-next: parisc build failure)
-Date: Tue, 18 Nov 2008 20:24:24 +0100
-Message-ID: <200811182024.24781.deller@gmx.de>
-References: <20081116231342.0cd747bd.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: lblnet tree build failure
+Date: Wed, 19 Nov 2008 07:08:19 +1100
+Message-ID: <20081119070819.c3ea9265.sfr@canb.auug.org.au>
+References: <20081118151112.aa7fa93d.sfr@canb.auug.org.au>
+	<200811180926.11318.paul.moore@hp.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-parisc-owner@vger.kernel.org>
-In-Reply-To: <20081116231342.0cd747bd.sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__19_Nov_2008_07_08_19_+1100_8JwLfxcD0Sfbp_L="
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:53487 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752216AbYKRUIa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 Nov 2008 15:08:30 -0500
+In-Reply-To: <200811180926.11318.paul.moore@hp.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Moore <paul.moore@hp.com>
+Cc: linux-next@vger.kernel.org
+
+--Signature=_Wed__19_Nov_2008_07_08_19_+1100_8JwLfxcD0Sfbp_L=
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-Sender: linux-parisc-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-serial@vger.kernel.org
-Cc: Kyle McMartin <kyle@mcmartin.ca>, linux-parisc@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Sunday 16 November 2008, Stephen Rothwell wrote:
-> Hi Kyle,
-> 
-> Today's linux-next build (parisc allmodconfig) failed like this:
-> 
-> In file included from drivers/serial/mux.c:38:
-> include/linux/serial_core.h: In function 'uart_handle_sysrq_char':
-> include/linux/serial_core.h:450: error: 'struct uart_port' has no member named 'sysrq'
-> include/linux/serial_core.h:451: error: 'struct uart_port' has no member named 'sysrq'
-> include/linux/serial_core.h:451: error: 'struct uart_port' has no member named 'sysrq'
-> include/linux/serial_core.h:453: error: 'struct uart_port' has no member named 'sysrq'
-> include/linux/serial_core.h:456: error: 'struct uart_port' has no member named 'sysrq'
-> include/linux/serial_core.h:473: error: 'struct uart_port' has no member named 'sysrq'
-> include/linux/serial_core.h:474: error: 'struct uart_port' has no member named 'sysrq'
-> include/linux/serial_core.h:477: error: 'struct uart_port' has no member named 'sysrq'
-> 
-> This is happening in mainline as well. In fact, this has been happening
-> back as far as I have results (Aug 27).  The sysrq element of struct
-> uart_port is dependent on CONFIG_SERIAL_CORE_CONSOLE while the references
-> failing above are dependent on SUPPORT_SYSRQ which is defined if
-> CONFIG_MAGIC_SYSRQ is defined in mux.c.
+Hi Paul,
 
-I assume you don't have CONFIG_SERIAL_CORE_CONSOLE set in your config, which is probably why this build failure shows up.
-Looking at other serial drivers, which all seem to have similiar coding like mux.c, I'm wondering that it only shows up on parisc.
+On Tue, 18 Nov 2008 09:26:11 -0500 Paul Moore <paul.moore@hp.com> wrote:
+>
+> Okay, sorry about that, I'll get it fixed up for tomorrow.
 
-Anyway, since I assume we can't make the sysrq element of struct uart_port depended on SUPPORT_SYSRQ (since it depends on each serial driver if it wants to support the sysrq feature and we need to keep the size of struct uart_port constant), I think we need to add an additional check for CONFIG_SERIAL_CORE_CONSOLE to where we already check for SUPPORT_SYSRQ. 
-Proposed patch and RFC below.
+Thanks.
 
--------
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-[RFC] [PATCH] check for SUPPORT_SYSRQ and CONFIG_SERIAL_CORE_CONSOLE before accessing the "sysrq" member of struct uart_port.
+--Signature=_Wed__19_Nov_2008_07_08_19_+1100_8JwLfxcD0Sfbp_L=
+Content-Type: application/pgp-signature
 
-Serial drivers (like mux.c) can #define SUPPORT_SYSRQ to tell the core serial functions that they want to have SYSRQ-support built-in.
-If SUPPORT_SYSRQ is defined, the functions uart_handle_sysrq_char() and uart_handle_break() in include/linux/serial_core.h unconditionally access the "sysrq" member of struct uart_port.
-Since the "sysrq" member of struct uart_port is only compiled into the kernel if CONFIG_SERIAL_CORE_CONSOLE is defined, builds will break if
-SUPPORT_SYSRQ is defined and CONFIG_SERIAL_CORE_CONSOLE is not defined.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-This patch works around the problem by checking for SUPPORT_SYSRQ _and_ CONFIG_SERIAL_CORE_CONSOLE before accessing the "sysrq" member of struct uart_port.
+iEYEARECAAYFAkkjILMACgkQjjKRsyhoI8zOMgCfYSfuHit0eEnQY9n4ytOvgFaJ
+sZ8AnA2tCRnWv7KekK6Q3cJYUZ2ZSVaL
+=rlRA
+-----END PGP SIGNATURE-----
 
-Signed-off-by: Helge Deller <deller@gmx.de>
-
-
-diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
-index 4e4f127..b9d79f1 100644
---- a/include/linux/serial_core.h
-+++ b/include/linux/serial_core.h
-@@ -446,7 +446,7 @@ int uart_resume_port(struct uart_driver *reg, struct uart_port *port);
- static inline int
- uart_handle_sysrq_char(struct uart_port *port, unsigned int ch)
- {
--#ifdef SUPPORT_SYSRQ
-+#if defined(SUPPORT_SYSRQ) && defined(CONFIG_SERIAL_CORE_CONSOLE)
- 	if (port->sysrq) {
- 		if (ch && time_before(jiffies, port->sysrq)) {
- 			handle_sysrq(ch, port->info ? port->info->port.tty : NULL);
-@@ -458,9 +458,6 @@ uart_handle_sysrq_char(struct uart_port *port, unsigned int ch)
- #endif
- 	return 0;
- }
--#ifndef SUPPORT_SYSRQ
--#define uart_handle_sysrq_char(port,ch) uart_handle_sysrq_char(port, 0)
--#endif
- 
- /*
-  * We do the SysRQ and SAK checking like this...
-@@ -468,7 +465,7 @@ uart_handle_sysrq_char(struct uart_port *port, unsigned int ch)
- static inline int uart_handle_break(struct uart_port *port)
- {
- 	struct uart_info *info = port->info;
--#ifdef SUPPORT_SYSRQ
-+#if defined(SUPPORT_SYSRQ) && defined(CONFIG_SERIAL_CORE_CONSOLE)
- 	if (port->cons && port->cons->index == port->line) {
- 		if (!port->sysrq) {
- 			port->sysrq = jiffies + HZ*5;
+--Signature=_Wed__19_Nov_2008_07_08_19_+1100_8JwLfxcD0Sfbp_L=--
