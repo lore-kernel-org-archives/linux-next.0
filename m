@@ -1,37 +1,91 @@
-From: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Subject: Re: Can you add the staging tree to -next?
-Date: Tue, 18 Nov 2008 19:36:42 +0100
-Message-ID: <49230B3A.2000509@s5r6.in-berlin.de>
-References: <20081112235600.GA27554@kroah.com> <Pine.LNX.4.64.0811140825410.11953@anakin> <20081114173258.GC22980@kroah.com>
+From: Helge Deller <deller@gmx.de>
+Subject: struct uart_port has no member named 'sysrq'   (was: linux-next: parisc build failure)
+Date: Tue, 18 Nov 2008 20:24:24 +0100
+Message-ID: <200811182024.24781.deller@gmx.de>
+References: <20081116231342.0cd747bd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from einhorn.in-berlin.de ([192.109.42.8]:36583 "EHLO
-	einhorn.in-berlin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751935AbYKRShD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Nov 2008 13:37:03 -0500
-In-Reply-To: <20081114173258.GC22980@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-parisc-owner@vger.kernel.org>
+In-Reply-To: <20081116231342.0cd747bd.sfr@canb.auug.org.au>
+Content-Disposition: inline
+Sender: linux-parisc-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-serial@vger.kernel.org
+Cc: Kyle McMartin <kyle@mcmartin.ca>, linux-parisc@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>
+List-Id: linux-next.vger.kernel.org
 
-Greg KH wrote on November 14:
-> On Fri, Nov 14, 2008 at 08:42:48AM +0100, Geert Uytterhoeven wrote:
->> Apart from the patches you receive against -next, is there any other
->> advantage, giving staging is disabled?
+On Sunday 16 November 2008, Stephen Rothwell wrote:
+> Hi Kyle,
 > 
-> That is a huge advantage, don't discount it.  My staging tree has over
-> 150 patches in it right now, and is quite diverged from what is in
-> Linus's tree.  I have been getting the same patches sent over and over
-> to fix the same thing that is already resolved in my tree, as the
-> developers are working against -next thinking that they were working
-> with the latest development tree.
+> Today's linux-next build (parisc allmodconfig) failed like this:
+> 
+> In file included from drivers/serial/mux.c:38:
+> include/linux/serial_core.h: In function 'uart_handle_sysrq_char':
+> include/linux/serial_core.h:450: error: 'struct uart_port' has no member named 'sysrq'
+> include/linux/serial_core.h:451: error: 'struct uart_port' has no member named 'sysrq'
+> include/linux/serial_core.h:451: error: 'struct uart_port' has no member named 'sysrq'
+> include/linux/serial_core.h:453: error: 'struct uart_port' has no member named 'sysrq'
+> include/linux/serial_core.h:456: error: 'struct uart_port' has no member named 'sysrq'
+> include/linux/serial_core.h:473: error: 'struct uart_port' has no member named 'sysrq'
+> include/linux/serial_core.h:474: error: 'struct uart_port' has no member named 'sysrq'
+> include/linux/serial_core.h:477: error: 'struct uart_port' has no member named 'sysrq'
+> 
+> This is happening in mainline as well. In fact, this has been happening
+> back as far as I have results (Aug 27).  The sysrq element of struct
+> uart_port is dependent on CONFIG_SERIAL_CORE_CONSOLE while the references
+> failing above are dependent on SUPPORT_SYSRQ which is defined if
+> CONFIG_MAGIC_SYSRQ is defined in mux.c.
 
-These people are missing that -next is not a development tree.
-(Unless final integration tests count still as development.)
--- 
-Stefan Richter
--=====-==--- =-== =--=-
-http://arcgraph.de/sr/
+I assume you don't have CONFIG_SERIAL_CORE_CONSOLE set in your config, which is probably why this build failure shows up.
+Looking at other serial drivers, which all seem to have similiar coding like mux.c, I'm wondering that it only shows up on parisc.
+
+Anyway, since I assume we can't make the sysrq element of struct uart_port depended on SUPPORT_SYSRQ (since it depends on each serial driver if it wants to support the sysrq feature and we need to keep the size of struct uart_port constant), I think we need to add an additional check for CONFIG_SERIAL_CORE_CONSOLE to where we already check for SUPPORT_SYSRQ. 
+Proposed patch and RFC below.
+
+-------
+
+[RFC] [PATCH] check for SUPPORT_SYSRQ and CONFIG_SERIAL_CORE_CONSOLE before accessing the "sysrq" member of struct uart_port.
+
+Serial drivers (like mux.c) can #define SUPPORT_SYSRQ to tell the core serial functions that they want to have SYSRQ-support built-in.
+If SUPPORT_SYSRQ is defined, the functions uart_handle_sysrq_char() and uart_handle_break() in include/linux/serial_core.h unconditionally access the "sysrq" member of struct uart_port.
+Since the "sysrq" member of struct uart_port is only compiled into the kernel if CONFIG_SERIAL_CORE_CONSOLE is defined, builds will break if
+SUPPORT_SYSRQ is defined and CONFIG_SERIAL_CORE_CONSOLE is not defined.
+
+This patch works around the problem by checking for SUPPORT_SYSRQ _and_ CONFIG_SERIAL_CORE_CONSOLE before accessing the "sysrq" member of struct uart_port.
+
+Signed-off-by: Helge Deller <deller@gmx.de>
+
+
+diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
+index 4e4f127..b9d79f1 100644
+--- a/include/linux/serial_core.h
++++ b/include/linux/serial_core.h
+@@ -446,7 +446,7 @@ int uart_resume_port(struct uart_driver *reg, struct uart_port *port);
+ static inline int
+ uart_handle_sysrq_char(struct uart_port *port, unsigned int ch)
+ {
+-#ifdef SUPPORT_SYSRQ
++#if defined(SUPPORT_SYSRQ) && defined(CONFIG_SERIAL_CORE_CONSOLE)
+ 	if (port->sysrq) {
+ 		if (ch && time_before(jiffies, port->sysrq)) {
+ 			handle_sysrq(ch, port->info ? port->info->port.tty : NULL);
+@@ -458,9 +458,6 @@ uart_handle_sysrq_char(struct uart_port *port, unsigned int ch)
+ #endif
+ 	return 0;
+ }
+-#ifndef SUPPORT_SYSRQ
+-#define uart_handle_sysrq_char(port,ch) uart_handle_sysrq_char(port, 0)
+-#endif
+ 
+ /*
+  * We do the SysRQ and SAK checking like this...
+@@ -468,7 +465,7 @@ uart_handle_sysrq_char(struct uart_port *port, unsigned int ch)
+ static inline int uart_handle_break(struct uart_port *port)
+ {
+ 	struct uart_info *info = port->info;
+-#ifdef SUPPORT_SYSRQ
++#if defined(SUPPORT_SYSRQ) && defined(CONFIG_SERIAL_CORE_CONSOLE)
+ 	if (port->cons && port->cons->index == port->line) {
+ 		if (!port->sysrq) {
+ 			port->sysrq = jiffies + HZ*5;
