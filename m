@@ -1,45 +1,33 @@
-From: Paul Moore <paul.moore@hp.com>
-Subject: Re: linux-next: lblnet tree build failure
-Date: Tue, 18 Nov 2008 09:26:11 -0500
-Message-ID: <200811180926.11318.paul.moore@hp.com>
-References: <20081118151112.aa7fa93d.sfr@canb.auug.org.au>
+From: David Woodhouse <dwmw2@infradead.org>
+Subject: Re: linux-next: sparc/firmware build failure
+Date: Tue, 18 Nov 2008 15:37:17 +0000
+Message-ID: <1227022637.27728.412.camel@macbook.infradead.org>
+References: <20081105170256.5fef7e93.sfr@canb.auug.org.au>
+	 <20081106134444.c6b6ca5f.sfr@canb.auug.org.au>
+	 <20081113143535.847d5290.sfr@canb.auug.org.au>
+	 <20081112.225748.255613824.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from g1t0027.austin.hp.com ([15.216.28.34]:18118 "EHLO
-	g1t0027.austin.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750854AbYKRO0e (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Nov 2008 09:26:34 -0500
-In-Reply-To: <20081118151112.aa7fa93d.sfr@canb.auug.org.au>
-Content-Disposition: inline
+Received: from bombadil.infradead.org ([18.85.46.34]:50878 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751681AbYKRPhV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Nov 2008 10:37:21 -0500
+In-Reply-To: <20081112.225748.255613824.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, jaswinder@infradead.org
 
-On Monday 17 November 2008 11:11:12 pm Stephen Rothwell wrote:
-> Hi Paul,
->
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
->
-> In file included from include/net/cipso_ipv4.h:43,
->                  from net/ipv4/ip_options.c:26:
-> include/net/netlabel.h:512: error: redefinition of
-> 'netlbl_cfg_cipsov4_add' include/net/netlabel.h:477: error: previous
-> definition of 'netlbl_cfg_cipsov4_add' was here
-> include/net/netlabel.h:517: error: redefinition of
-> 'netlbl_cfg_cipsov4_del' include/net/netlabel.h:482: error: previous
-> definition of 'netlbl_cfg_cipsov4_del' was here
-> include/net/netlabel.h:522: error: conflicting types for
-> 'netlbl_cfg_cipsov4_map_add' include/net/netlabel.h:490: error:
-> previous definition of 'netlbl_cfg_cipsov4_map_add' was here
->
-> I have dropped the lblnet tree for today.
+On Wed, 2008-11-12 at 22:57 -0800, David Miller wrote:
+> > The firmware tree is still dropped.  Please do a merge with Linus' tree
+> > and fix the conflicts.
+> 
+> Yes, pretty please David :-)
 
-Okay, sorry about that, I'll get it fixed up for tomorrow.
+Apologies for the delay. This should be up to date again now.
 
 -- 
-paul moore
-linux @ hp
+David Woodhouse                            Open Source Technology Centre
+David.Woodhouse@intel.com                              Intel Corporation
