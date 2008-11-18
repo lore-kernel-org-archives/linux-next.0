@@ -1,58 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: lblnet tree build failure
-Date: Tue, 18 Nov 2008 15:11:12 +1100
-Message-ID: <20081118151112.aa7fa93d.sfr@canb.auug.org.au>
+Subject: linux-next: cpu_alloc tree patch (Was: Re: next-20081106: undefined
+ reference to `__per_cpu_start')
+Date: Tue, 18 Nov 2008 15:33:46 +1100
+Message-ID: <20081118153346.62bf9c11.sfr@canb.auug.org.au>
+References: <20081106173645.e7e79071.sfr@canb.auug.org.au>
+	<20081106183939.GA26925@x200.localdomain>
+	<Pine.LNX.4.64.0811061310350.6009@quilx.com>
+	<20081107162114.2a41c623.sfr@canb.auug.org.au>
+	<Pine.LNX.4.64.0811071235040.5387@quilx.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__18_Nov_2008_15_11_12_+1100_hv+D58VyTsQlwXy6"
+ boundary="Signature=_Tue__18_Nov_2008_15_33_46_+1100_kXC4YmWP5Q.i567_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54995 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38465 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751589AbYKRELY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Nov 2008 23:11:24 -0500
+	id S1751371AbYKREeE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Nov 2008 23:34:04 -0500
+In-Reply-To: <Pine.LNX.4.64.0811071235040.5387@quilx.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Moore <paul.moore@hp.com>
-Cc: linux-next@vger.kernel.org
+To: Christoph Lameter <cl@linux-foundation.org>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, rusty@rustcorp.com.au, Haavard Skinnemoen <hskinnemoen@atmel.com>
 
---Signature=_Tue__18_Nov_2008_15_11_12_+1100_hv+D58VyTsQlwXy6
+--Signature=_Tue__18_Nov_2008_15_33_46_+1100_kXC4YmWP5Q.i567_
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi Christoph,
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+On Fri, 7 Nov 2008 12:40:17 -0600 (CST) Christoph Lameter <cl@linux-foundat=
+ion.org> wrote:
+>
+> All of these have no invocation of the PERCPU macro from
+> asm-generic/vmlinus.lds.h in their arch vmlinux.lds.S. Thus the symbols
+> are missing. They are kind of irrelevant since we are only interested in
+> the difference between those...
+>=20
+> Either we add the PERCPU() macro invocations to each arches vmlinux.lds.S
+> file or we need to special case each time __per_cpu_end/__start is used.
+> The only use added for the cpu allocator is in include/linux/percpu.h
+>=20
+> Make it conditional on CONFIG_SMP
+>=20
+> Signed-off-by: Christoph Lameter <cl@linux-foundation.org>
 
-In file included from include/net/cipso_ipv4.h:43,
-                 from net/ipv4/ip_options.c:26:
-include/net/netlabel.h:512: error: redefinition of 'netlbl_cfg_cipsov4_add'
-include/net/netlabel.h:477: error: previous definition of 'netlbl_cfg_cipso=
-v4_add' was here
-include/net/netlabel.h:517: error: redefinition of 'netlbl_cfg_cipsov4_del'
-include/net/netlabel.h:482: error: previous definition of 'netlbl_cfg_cipso=
-v4_del' was here
-include/net/netlabel.h:522: error: conflicting types for 'netlbl_cfg_cipsov=
-4_map_add'
-include/net/netlabel.h:490: error: previous definition of 'netlbl_cfg_cipso=
-v4_map_add' was here
+I have applied this to linux-next today.  It is not clear to me if this
+is a fix for the cpu_alloc tree or the zero-based per_cpu area patches or
+a combination of both.  If the first, please apply this to the cpu_alloc
+tree or I will have to drop the tree.  Otherwise, let me know where it
+belongs.
 
-I have dropped the lblnet tree for today.
+Also, considering the "discussions" between Rusty and yourself, I may
+need to drop the cpu_alloc tree until they are resolved.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__18_Nov_2008_15_11_12_+1100_hv+D58VyTsQlwXy6
+--Signature=_Tue__18_Nov_2008_15_33_46_+1100_kXC4YmWP5Q.i567_
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkkiQGAACgkQjjKRsyhoI8zXoQCghQxz9gN+hREYdnuSjt6H8vsX
-ty0AnAoBFJTm/1j8mvlI7mvVO8rP2ysv
-=7LH/
+iEYEARECAAYFAkkiRaoACgkQjjKRsyhoI8xJ4wCgplAd8nliX3IFFQVuJaO43BLg
+prgAoJxv/neUJ+RZVOCnfotcMucv40RX
+=42A4
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__18_Nov_2008_15_11_12_+1100_hv+D58VyTsQlwXy6--
+--Signature=_Tue__18_Nov_2008_15_33_46_+1100_kXC4YmWP5Q.i567_--
