@@ -1,51 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree
-Date: Tue, 18 Nov 2008 11:51:46 +1100
-Message-ID: <20081118115146.a3ddef68.sfr@canb.auug.org.au>
+From: Paul Mundt <lethal@linux-sh.org>
+Subject: Re: linux-next: sh tree build warning
+Date: Tue, 18 Nov 2008 12:42:06 +0900
+Message-ID: <20081118034206.GA23923@linux-sh.org>
+References: <20081117103446.e5c66fec.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__18_Nov_2008_11_51_46_+1100_04LpqooUOcCpiet7"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33611 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751620AbYKRAwD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Nov 2008 19:52:03 -0500
+Received: from mta23.gyao.ne.jp ([125.63.38.249]:51424 "EHLO mx.gate01.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751864AbYKRDnQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Nov 2008 22:43:16 -0500
+Content-Disposition: inline
+In-Reply-To: <20081117103446.e5c66fec.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Harvey Harrison <harvey.harrison@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Magnus Damm <damm@igel.co.jp>
 
---Signature=_Tue__18_Nov_2008_11_51_46_+1100_04LpqooUOcCpiet7
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Nov 17, 2008 at 10:34:46AM +1100, Stephen Rothwell wrote:
+> Hi Paul,
+> 
+> Today's linux-next build (x86_64 allmodconfig) produced these warning:
+> 
+> drivers/usb/gadget/m66592-udc.c: In function 'm66592_probe':
+> drivers/usb/gadget/m66592-udc.c:1672: warning: label 'clean_up2' defined but not used
+> drivers/usb/host/r8a66597-hcd.c: In function 'r8a66597_probe':
+> drivers/usb/host/r8a66597-hcd.c:2401: warning: label 'clean_up2' defined but not used
+> 
+> Added by commit 985fc7c81c7852f2e104c71cbe913ace683c9e6a ("sh: sh_mobile
+> usbf clock framework support").
 
-Hi Dave,
-
-Today's linux-next merge of the net tree got a conflict in
-drivers/isdn/i4l/isdn_net.c between commit
-584c650b4e6fa16f9ab45d382f86ad6d9c625227 ("isdn: remove extra byteswap in
-isdn_net_ciscohdlck_slarp_send_reply") from the net-current tree and
-commit 00bcd522ea0a62f5e2a9c6ad4924cbbd8d05b026 ("isdn: use %pI4, remove
-get_{u8/u16/u32} and put_{u8/u16/u32} inlines") from the net tree.
-
-I fixed it up by using the version from the net tree.  I assume that this
-will be fixed in that tree shortly.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__18_Nov_2008_11_51_46_+1100_04LpqooUOcCpiet7
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkiEaIACgkQjjKRsyhoI8wzqgCfX0kVFLvAJyVwKML6iJ1d9es5
-3vQAoLoZ0ltAIb0pmyt1juJkZEl70e4L
-=k4Jj
------END PGP SIGNATURE-----
-
---Signature=_Tue__18_Nov_2008_11_51_46_+1100_04LpqooUOcCpiet7--
+Fixed, thanks.
