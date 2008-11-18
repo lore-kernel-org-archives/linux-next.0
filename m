@@ -1,73 +1,234 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: cpu_alloc tree patch (Was: Re: next-20081106: undefined
- reference to `__per_cpu_start')
-Date: Tue, 18 Nov 2008 15:33:46 +1100
-Message-ID: <20081118153346.62bf9c11.sfr@canb.auug.org.au>
-References: <20081106173645.e7e79071.sfr@canb.auug.org.au>
-	<20081106183939.GA26925@x200.localdomain>
-	<Pine.LNX.4.64.0811061310350.6009@quilx.com>
-	<20081107162114.2a41c623.sfr@canb.auug.org.au>
-	<Pine.LNX.4.64.0811071235040.5387@quilx.com>
+Subject: linux-next: Tree for November 18
+Date: Tue, 18 Nov 2008 17:17:14 +1100
+Message-ID: <20081118171714.8c6d8512.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__18_Nov_2008_15_33_46_+1100_kXC4YmWP5Q.i567_"
+ boundary="Signature=_Tue__18_Nov_2008_17_17_14_+1100_g.H52T+5.MK8mnbQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38465 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44624 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751371AbYKREeE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Nov 2008 23:34:04 -0500
-In-Reply-To: <Pine.LNX.4.64.0811071235040.5387@quilx.com>
+	id S1750870AbYKRGRb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 Nov 2008 01:17:31 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Lameter <cl@linux-foundation.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, rusty@rustcorp.com.au, Haavard Skinnemoen <hskinnemoen@atmel.com>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Tue__18_Nov_2008_15_33_46_+1100_kXC4YmWP5Q.i567_
+--Signature=_Tue__18_Nov_2008_17_17_14_+1100_g.H52T+5.MK8mnbQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Christoph,
+Hi all,
 
-On Fri, 7 Nov 2008 12:40:17 -0600 (CST) Christoph Lameter <cl@linux-foundat=
-ion.org> wrote:
->
-> All of these have no invocation of the PERCPU macro from
-> asm-generic/vmlinus.lds.h in their arch vmlinux.lds.S. Thus the symbols
-> are missing. They are kind of irrelevant since we are only interested in
-> the difference between those...
->=20
-> Either we add the PERCPU() macro invocations to each arches vmlinux.lds.S
-> file or we need to special case each time __per_cpu_end/__start is used.
-> The only use added for the cpu allocator is in include/linux/percpu.h
->=20
-> Make it conditional on CONFIG_SMP
->=20
-> Signed-off-by: Christoph Lameter <cl@linux-foundation.org>
+Changes since 20081117:
 
-I have applied this to linux-next today.  It is not clear to me if this
-is a fix for the cpu_alloc tree or the zero-based per_cpu area patches or
-a combination of both.  If the first, please apply this to the cpu_alloc
-tree or I will have to drop the tree.  Otherwise, let me know where it
-belongs.
+Dropped trees (temporarily):
+	lblnet (build problem)
+	userns (it depends on creds)
+	semaphore-removal (due to unfixed conflicts against Linus' tree)
+	firmware (unfixed build failure)
 
-Also, considering the "discussions" between Rusty and yourself, I may
-need to drop the cpu_alloc tree until they are resolved.
+The net tree gained a conflict against the net-current tree.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+(patches at
+http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig,
+44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
+
+Below is a summary of the state of the merge.
+
+We are up to 125 trees (counting Linus' and 14 trees of patches pending for
+Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__18_Nov_2008_15_33_46_+1100_kXC4YmWP5Q.i567_
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging powerpc-merge/merge
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sparc-current/master
+Merging sound-current/for-linus
+Merging arm-current/master
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/master
+Merging quilt/driver-core.current
+Merging quilt/usb.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-2.6.26
+Merging dwmw2/master
+Merging arm/devel
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging quilt/m68k
+Merging m68knommu/for-next
+Merging mips/mips-for-linux-next
+Merging parisc/master
+Merging powerpc/next
+Merging 4xx/next
+Merging galak/next
+Merging pxa/for-next
+Merging s390/features
+CONFLICT (content): Merge conflict in include/linux/kernel.h
+Merging sh/master
+Merging sparc/master
+Merging x86/auto-x86-next
+Merging xtensa/master
+Merging quilt/driver-core
+Merging quilt/usb
+Merging tip-core/auto-core-next
+Merging cpus4096/auto-cpus4096-next
+Merging ftrace/auto-ftrace-next
+Merging genirq/auto-genirq-next
+Merging safe-poison-pointers/auto-safe-poison-pointers-next
+Merging sched/auto-sched-next
+Merging stackprotector/auto-stackprotector-next
+Merging timers/auto-timers-next
+Merging pci/linux-next
+Merging quilt/device-mapper
+Merging hid/mm
+Merging quilt/i2c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+Merging jfs/next
+Merging kbuild/master
+Merging quilt/ide
+Merging libata/NEXT
+Merging nfs/linux-next
+Merging xfs/master
+Merging infiniband/for-next
+Merging acpi/test
+Merging nfsd/nfsd-next
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/master
+Merging dlm/next
+Merging scsi/master
+Merging ocfs2/linux-next
+Merging ext4/next
+Merging async_tx/next
+Merging udf/for_next
+Merging net/master
+CONFLICT (content): Merge conflict in drivers/isdn/i4l/isdn_net.c
+Merging mtd/master
+Merging wireless/master
+Merging crypto/master
+Merging vfs/for-next
+Merging sound/for-next
+Merging cpufreq/next
+Merging v9fs/for-next
+Merging quilt/rr
+CONFLICT (content): Merge conflict in drivers/net/virtio_net.c
+Merging cifs/master
+CONFLICT (content): Merge conflict in fs/cifs/connect.c
+Merging mmc/next
+Merging gfs2/master
+Merging input/next
+Merging semaphore/semaphore
+Merging bkl-removal/bkl-removal
+Merging ubifs/linux-next
+Merging lsm/for-next
+Merging block/for-next
+Merging embedded/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging kmemcheck/auto-kmemcheck-next
+CONFLICT (content): Merge conflict in MAINTAINERS
+CONFLICT (content): Merge conflict in arch/x86/mm/Makefile
+CONFLICT (content): Merge conflict in mm/slab.c
+CONFLICT (content): Merge conflict in mm/slub.c
+Merging generic-ipi/auto-generic-ipi-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+CONFLICT (delete/modify): drivers/net/wan/syncppp.c deleted in hdlc/hdlc-ne=
+xt and modified in HEAD. Version HEAD of drivers/net/wan/syncppp.c left in =
+tree.
+$ git rm -f drivers/net/wan/syncppp.c
+Merging drm/drm-next
+Merging voltage/for-next
+Merging security-testing/next
+CONFLICT (content): Merge conflict in fs/cifs/misc.c
+CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_cred.h
+CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_globals.h
+CONFLICT (content): Merge conflict in fs/xfs/xfs_vnodeops.h
+Merging lblnet/master
+$ git reset --hard HEAD^
+Merging quilt/ttydev
+CONFLICT (content): Merge conflict in fs/devpts/inode.c
+Merging agp/agp-next
+Merging oprofile/auto-oprofile-next
+Merging fastboot/auto-fastboot-next
+Merging sparseirq/auto-sparseirq-next
+Merging iommu/auto-iommu-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging proc/proc
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cpu_alloc/cpu_alloc
+CONFLICT (content): Merge conflict in kernel/lockdep.c
+CONFLICT (content): Merge conflict in kernel/module.c
+Applying cpu_alloc: merge_fix_1
+Applying undefined reference to __per_cpu_start
+Merging cputime/cputime
+Merging perfmon3/master
+Merging osd/linux-next
+Merging fatfs/master
+Merging quilt/staging
+Merging scsi-post-merge/master
+
+--Signature=_Tue__18_Nov_2008_17_17_14_+1100_g.H52T+5.MK8mnbQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkkiRaoACgkQjjKRsyhoI8xJ4wCgplAd8nliX3IFFQVuJaO43BLg
-prgAoJxv/neUJ+RZVOCnfotcMucv40RX
-=42A4
+iEYEARECAAYFAkkiXeoACgkQjjKRsyhoI8x/pQCfUjTXG+T6H7+WgDmrkCXGrnjv
+GsQAn3n292NWNXy6xHDuOZA3h7c+VZUG
+=n9Tn
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__18_Nov_2008_15_33_46_+1100_kXC4YmWP5Q.i567_--
+--Signature=_Tue__18_Nov_2008_17_17_14_+1100_g.H52T+5.MK8mnbQ--
