@@ -1,73 +1,51 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: next-20081114: WARNING: at block/blk-barrier.c:246 blk_do_ordered()
-Date: Mon, 17 Nov 2008 19:06:04 +0100
-Message-ID: <20081117180604.GV26778@kernel.dk>
-References: <a4423d670811140556o45f0063dn85f695f74d158b03@mail.gmail.com> <20081115160739.GA26778@kernel.dk> <a4423d670811150925qf74b63dy1ef923347140a8fe@mail.gmail.com> <a4423d670811170739w3cab002aqda014ab87ebed529@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree
+Date: Tue, 18 Nov 2008 11:51:46 +1100
+Message-ID: <20081118115146.a3ddef68.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__18_Nov_2008_11_51_46_+1100_04LpqooUOcCpiet7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pasmtpb.tele.dk ([80.160.77.98]:33192 "EHLO pasmtpB.tele.dk"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33611 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750893AbYKQSHu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Nov 2008 13:07:50 -0500
-Content-Disposition: inline
-In-Reply-To: <a4423d670811170739w3cab002aqda014ab87ebed529@mail.gmail.com>
+	id S1751620AbYKRAwD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Nov 2008 19:52:03 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, Harvey Harrison <harvey.harrison@gmail.com>
 
-On Mon, Nov 17 2008, Alexander Beregalov wrote:
-> 2008/11/15 Alexander Beregalov <a.beregalov@gmail.com>:
-> > 2008/11/15 Jens Axboe <jens.axboe@oracle.com>:
-> >> On Fri, Nov 14 2008, Alexander Beregalov wrote:
-> >>> WARNING: at block/blk-barrier.c:246 blk_do_ordered+0x22b/0x26a()
-> >>> Modules linked in:
-> >>> Pid: 0, comm: swapper Not tainted 2.6.28-rc4-next-20081114 #3
-> >>> Call Trace:
-> >>>  <IRQ>  [<ffffffff80236d63>] warn_on_slowpath+0x58/0x7d
-> >>>  [<ffffffff802570e3>] ? mark_lock+0x1c/0x37a
-> >>>  [<ffffffff803a69f9>] ? elv_rb_del+0x30/0x4b
-> >>>  [<ffffffff803b1092>] ? cfq_remove_request+0x180/0x1d8
-> >>>  [<ffffffff803afd03>] ? __cfq_slice_expired+0xd6/0xeb
-> >>>  [<ffffffff803afd31>] ? cfq_slice_expired+0x19/0x1b
-> >>>  [<ffffffff803b1832>] ? cfq_dispatch_requests+0x2c1/0x37e
-> >>>  [<ffffffff803aa98c>] blk_do_ordered+0x22b/0x26a
-> >>>  [<ffffffff803a6560>] elv_next_request+0x1d0/0x210
-> >>>  [<ffffffff80439c7c>] scsi_request_fn+0x9e/0x539
-> >>>  [<ffffffff80255c66>] ? put_lock_stats+0xe/0x27
-> >>>  [<ffffffff803a827e>] blk_invoke_request_fn+0x3b/0x6e
-> >>>  [<ffffffff803a87fd>] __blk_run_queue+0x25/0x29
-> >>>  [<ffffffff803a8822>] blk_run_queue+0x21/0x35
-> >>>  [<ffffffff80439509>] scsi_run_queue+0x2cf/0x379
-> >>>  [<ffffffff8043a33e>] scsi_next_command+0x36/0x46
-> >>>  [<ffffffff8043a509>] scsi_end_request+0x92/0xa4
-> >>>  [<ffffffff8043aae7>] scsi_io_completion+0x1a7/0x3ad
-> >>>  [<ffffffff80434551>] scsi_finish_command+0xe9/0xf2
-> >>>  [<ffffffff8043afd5>] scsi_softirq_done+0x10e/0x117
-> >>>  [<ffffffff803ac393>] blk_done_softirq+0x7f/0x8f
-> >>>  [<ffffffff8023c173>] __do_softirq+0x70/0x101
-> >>>  [<ffffffff8020cc0c>] call_softirq+0x1c/0x28
-> >>>  [<ffffffff8020e229>] do_softirq+0x39/0x8a
-> >>>  [<ffffffff8023bd78>] irq_exit+0x45/0xa2
-> >>>  [<ffffffff8020e53a>] do_IRQ+0x16a/0x19c
-> >>>  [<ffffffff8020bceb>] ret_from_intr+0x0/0xf
-> >>>  <EOI>  [<ffffffff80212e09>] ? mwait_idle+0x3e/0x48
-> >>>  [<ffffffff80212e00>] ? mwait_idle+0x35/0x48
-> >>>  [<ffffffff8020a940>] ? cpu_idle+0x51/0xba
-> >>>  [<ffffffff80514f9c>] ? rest_init+0x70/0x72
-> >>> ---[ end trace 115cb4be7e150bb9 ]---
-> >>
-> >> I'm assuming this is new with -next and doesn't happen with 2.6.28-rc4?
-> > Yes.
-> >> Is it reproducible in -next?
-> > I have seen it only once yet.
-> 
-> I have the same warning on 2.6.28-rc5-next-20081117, reproducible on dbench.
+--Signature=_Tue__18_Nov_2008_11_51_46_+1100_04LpqooUOcCpiet7
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-How big is the file system, how much ram do you have, what are your
-mount options, how many dbench clients, and what dbench version? I tried
-reproducing it today with no luck on -git + for-2.6.29.
+Hi Dave,
 
--- 
-Jens Axboe
+Today's linux-next merge of the net tree got a conflict in
+drivers/isdn/i4l/isdn_net.c between commit
+584c650b4e6fa16f9ab45d382f86ad6d9c625227 ("isdn: remove extra byteswap in
+isdn_net_ciscohdlck_slarp_send_reply") from the net-current tree and
+commit 00bcd522ea0a62f5e2a9c6ad4924cbbd8d05b026 ("isdn: use %pI4, remove
+get_{u8/u16/u32} and put_{u8/u16/u32} inlines") from the net tree.
+
+I fixed it up by using the version from the net tree.  I assume that this
+will be fixed in that tree shortly.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__18_Nov_2008_11_51_46_+1100_04LpqooUOcCpiet7
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkiEaIACgkQjjKRsyhoI8wzqgCfX0kVFLvAJyVwKML6iJ1d9es5
+3vQAoLoZ0ltAIb0pmyt1juJkZEl70e4L
+=k4Jj
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__18_Nov_2008_11_51_46_+1100_04LpqooUOcCpiet7--
