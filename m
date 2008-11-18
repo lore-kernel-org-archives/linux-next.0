@@ -1,44 +1,45 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: linux-next: manual merge of the security-testing tree
-Date: Tue, 18 Nov 2008 18:55:41 +1100 (EST)
-Message-ID: <alpine.LRH.1.10.0811181853550.13945@tundra.namei.org>
-References: <20081117154410.dc25a2d9.sfr@canb.auug.org.au>
+From: Paul Moore <paul.moore@hp.com>
+Subject: Re: linux-next: lblnet tree build failure
+Date: Tue, 18 Nov 2008 09:26:11 -0500
+Message-ID: <200811180926.11318.paul.moore@hp.com>
+References: <20081118151112.aa7fa93d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tundra.namei.org ([65.99.196.166]:59411 "EHLO tundra.namei.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754200AbYKRH4h (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 Nov 2008 02:56:37 -0500
-In-Reply-To: <20081117154410.dc25a2d9.sfr@canb.auug.org.au>
+Received: from g1t0027.austin.hp.com ([15.216.28.34]:18118 "EHLO
+	g1t0027.austin.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750854AbYKRO0e (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Nov 2008 09:26:34 -0500
+In-Reply-To: <20081118151112.aa7fa93d.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Jeff Layton <jlayton@redhat.com>, Steve French <sfrench@us.ibm.com>, David Howells <dhowells@redhat.com>
+Cc: linux-next@vger.kernel.org
 
-On Mon, 17 Nov 2008, Stephen Rothwell wrote:
+On Monday 17 November 2008 11:11:12 pm Stephen Rothwell wrote:
+> Hi Paul,
+>
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+>
+> In file included from include/net/cipso_ipv4.h:43,
+>                  from net/ipv4/ip_options.c:26:
+> include/net/netlabel.h:512: error: redefinition of
+> 'netlbl_cfg_cipsov4_add' include/net/netlabel.h:477: error: previous
+> definition of 'netlbl_cfg_cipsov4_add' was here
+> include/net/netlabel.h:517: error: redefinition of
+> 'netlbl_cfg_cipsov4_del' include/net/netlabel.h:482: error: previous
+> definition of 'netlbl_cfg_cipsov4_del' was here
+> include/net/netlabel.h:522: error: conflicting types for
+> 'netlbl_cfg_cipsov4_map_add' include/net/netlabel.h:490: error:
+> previous definition of 'netlbl_cfg_cipsov4_map_add' was here
+>
+> I have dropped the lblnet tree for today.
 
-> Hi James,
-> 
-> Today's linux-next merge of the security-testing tree got a conflict in
-> fs/cifs/misc.c between commit 14fbf50d695207754daeb96270b3027a3821121f
-> ("cifs: reinstate sharing of SMB sessions sans races") from the cifs tree
-> and commit a001e5b558f25eb1e588522d73ac949b643b7a37 ("CRED: Wrap task
-> credential accesses in the CIFS filesystem") from the security-testing
-> tree.
-> 
-> I fixed it up (see below) and can carry it for a short while.
+Okay, sorry about that, I'll get it fixed up for tomorrow.
 
-I merged with linus to resolve this, in 
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/security-testing-2.6#next
-
-commit f3a5c547012a09f38f7c27b17a8e3150b69cd259
-
-Please test.
-
-
-
-- James
 -- 
-James Morris
-<jmorris@namei.org>
+paul moore
+linux @ hp
