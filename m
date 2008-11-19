@@ -1,53 +1,75 @@
-From: "Richard A. Holden III" <aciddeath@gmail.com>
-Subject: [PATCH] Fix arch/x86/kernel/setup.c build warning when !CONFIG_X86_RESERVE_LOW_64K
-Date: Wed, 19 Nov 2008 16:05:15 -0700
-Message-ID: <1227135915-32628-2-git-send-email-aciddeath@gmail.com>
-References: <1227135915-32628-1-git-send-email-aciddeath@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the s390 tree
+Date: Thu, 20 Nov 2008 10:13:09 +1100
+Message-ID: <20081120101309.0553d091.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rv-out-0506.google.com ([209.85.198.230]:38290 "EHLO
-	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751408AbYKSWD0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Nov 2008 17:03:26 -0500
-Received: by rv-out-0506.google.com with SMTP id k40so145346rvb.1
-        for <linux-next@vger.kernel.org>; Wed, 19 Nov 2008 14:03:26 -0800 (PST)
-In-Reply-To: <1227135915-32628-1-git-send-email-aciddeath@gmail.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:57683 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751712AbYKSXNZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 Nov 2008 18:13:25 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: linux-next@vger.kernel.org, David Gibson <david@gibson.dropbear.id.au>, Paul Mackerras <paulus@samba.org>, Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
 
-Fix
-arch/x86/kernel/setup.c:592: warning: 'dmi_low_memory_corruption' defined but not used
+Hi Martin,
 
-this is only used if CONFIG_X86_RESERVE_LOW_64K is defined.
+Today's linux-next merge of the s390 tree got a conflict in
+drivers/char/Kconfig drivers/char/Makefile between commit
+d5e54913433fff89609adfc4b96fefcf807a9030 ("powerpc: udbg-based backend
+for hvc_console") from the powerpc tree and commit
+c7f224c72b6973056497af6bb69efce6d5a19e86 ("[S390] s390/hvc_console: z/VM
+IUCV hypervisor console support") from the s390 tree.
 
-Signed-off-by: Richard A. Holden III <aciddeath@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
----
- arch/x86/kernel/setup.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
-
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 598435b..e417308 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -588,6 +588,7 @@ static struct x86_quirks default_x86_quirks __initdata;
- 
- struct x86_quirks *x86_quirks __initdata = &default_x86_quirks;
- 
-+#ifdef CONFIG_X86_RESERVE_LOW_64K
- static int __init dmi_low_memory_corruption(const struct dmi_system_id *d)
- {
- 	printk(KERN_NOTICE
-@@ -599,6 +600,7 @@ static int __init dmi_low_memory_corruption(const struct dmi_system_id *d)
- 
- 	return 0;
- }
-+#endif
- 
- /* List of systems that have known low memory corruption BIOS problems */
- static struct dmi_system_id __initdata bad_bios_dmi_table[] = {
+Just overlapping additions. I fixed it up (see below) and can carry the
+fix.  The conflict could be eliminated by one of the two sets of changes
+moving slightly in the files (I am hinting about the s390 ones here as
+Paul does not like rebasing his tree ...).
 -- 
-1.5.6.4
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+diff --cc drivers/char/Kconfig
+index f57907a,755adf7..0000000
+--- a/drivers/char/Kconfig
++++ b/drivers/char/Kconfig
+@@@ -631,12 -631,16 +631,22 @@@ config HVC_XE
+  	help
+  	  Xen virtual console device driver
+  
+ +config HVC_UDBG
+ +       bool "udbg based fake hypervisor console"
+ +       depends on PPC && EXPERIMENTAL
+ +       select HVC_DRIVER
+ +       default n
+ +
++ config HVC_IUCV
++ 	bool "z/VM IUCV Hypervisor console support (VM only)"
++ 	depends on S390
++ 	select HVC_DRIVER
++ 	select IUCV
++ 	default y
++ 	help
++ 	  This driver provides a Hypervisor console (HVC) back-end to access
++ 	  a Linux (console) terminal via a z/VM IUCV communication path.
++ 
+  config VIRTIO_CONSOLE
+  	tristate "Virtio console"
+  	depends on VIRTIO
+diff --cc drivers/char/Makefile
+index 52e1552,36151ba..0000000
+--- a/drivers/char/Makefile
++++ b/drivers/char/Makefile
+@@@ -50,7 -50,7 +50,8 @@@ obj-$(CONFIG_HVC_BEAT)		+= hvc_beat.
+  obj-$(CONFIG_HVC_DRIVER)	+= hvc_console.o
+  obj-$(CONFIG_HVC_IRQ)		+= hvc_irq.o
+  obj-$(CONFIG_HVC_XEN)		+= hvc_xen.o
+ +obj-$(CONFIG_HVC_UDBG)		+= hvc_udbg.o
++ obj-$(CONFIG_HVC_IUCV)		+= hvc_iucv.o
+  obj-$(CONFIG_VIRTIO_CONSOLE)	+= virtio_console.o
+  obj-$(CONFIG_RAW_DRIVER)	+= raw.o
+  obj-$(CONFIG_SGI_SNSC)		+= snsc.o snsc_event.o
