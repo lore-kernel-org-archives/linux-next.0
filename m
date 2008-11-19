@@ -1,52 +1,40 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-m68k.git
-Date: Wed, 19 Nov 2008 09:44:03 +0100 (CET)
-Message-ID: <Pine.LNX.4.64.0811190942490.27671@anakin>
-References: <Pine.LNX.4.64.0811182136060.27671@anakin>
- <20081119081951.a1a33403.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the sched tree
+Date: Wed, 19 Nov 2008 09:45:53 +0100
+Message-ID: <20081119084553.GE1078@elte.hu>
+References: <20081119122746.29db6c3a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from winston.telenet-ops.be ([195.130.137.75]:52028 "EHLO
-	winston.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752016AbYKSIoJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Nov 2008 03:44:09 -0500
-In-Reply-To: <20081119081951.a1a33403.sfr@canb.auug.org.au>
+Received: from mx2.mail.elte.hu ([157.181.151.9]:55477 "EHLO mx2.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751360AbYKSIqR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 Nov 2008 03:46:17 -0500
+Content-Disposition: inline
+In-Reply-To: <20081119122746.29db6c3a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux/m68k <linux-m68k@vger.kernel.org>, Ralf Baechle <ralf@linux-mips.org>, David Woodhouse <dwmw2@infradead.org>, Linux Kernel Development <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Kumar Gala <galak@kernel.crashing.org>
 
-	Hi Stephen,
 
-On Wed, 19 Nov 2008, Stephen Rothwell wrote:
-> On Tue, 18 Nov 2008 21:49:01 +0100 (CET) Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > (Finally) I created an experimental git tree for Linux/m68k:
-> > http://git.kernel.org/?p=linux/kernel/git/geert/linux-m68k.git
-> > 
-> > It contains more or less all patches I had in my quilt series at
-> > http://www.kernel.org/pub/linux/kernel/people/geert/linux-m68k-patches-2.6/
-> > A notable exception is m68k-PRIVATE-m68k-changes.diff, which hardcoded ARCH to
-> > m68k.
-> > 
-> > I also created for-next and for-linus branches. Do they look OK?
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi all,
 > 
-> They look good.  I have added the for-linus branch as my m68k-current
+> Today's linux-next merge of the sched tree got a conflict in 
+> kernel/Makefile between commit 
+> 65ecc14a30ad21bed9aabdfd6a2ae1a1aaaa6a00 ("Remove -mno-spe flags as 
+> they dont belong") from Linus' tree and commit 
+> 8bb8c4386d08f2cc5d871d22f220d35032213f84 ("sched, ftrace: trace 
+> sched.c") from the sched tree.
+> 
+> I fixed it up (see below) and can carry it for a short while.
 
-What's the purpose of your m68k-current tree? There should not be anything
-in m68k#for-linus that's not in m68k#for-next.
+i did a similar conflict resolution yesterday. I have pushed out a new 
+tip/auto-sched-next branch - you should not see this conflict in the 
+future.
 
-> tree and changed my m68k tree over to the for-next branch.
+Thanks,
 
-Thanks!
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+	Ingo
