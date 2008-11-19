@@ -1,67 +1,36 @@
-From: Ben Hutchings <bhutchings@solarflare.com>
-Subject: Re: linux-next: Tree for November 19 (mtd build error)
-Date: Wed, 19 Nov 2008 19:18:07 +0000
-Message-ID: <1227122287.3052.7.camel@achroite>
-References: <20081119175917.7d21cf77.sfr@canb.auug.org.au>
-	 <20081119105321.477e618a.randy.dunlap@oracle.com>
-	 <1227121104.27728.618.camel@macbook.infradead.org>
-	 <492463A1.3000306@oracle.com>
+From: Christoph Lameter <cl@linux-foundation.org>
+Subject: Re: linux-next: cpu_alloc tree patch (Was: Re: next-20081106:
+ undefined reference to `__per_cpu_start')
+Date: Wed, 19 Nov 2008 13:18:17 -0600 (CST)
+Message-ID: <Pine.LNX.4.64.0811191317120.23084@quilx.com>
+References: <20081106173645.e7e79071.sfr@canb.auug.org.au>
+ <20081106183939.GA26925@x200.localdomain> <Pine.LNX.4.64.0811061310350.6009@quilx.com>
+ <20081107162114.2a41c623.sfr@canb.auug.org.au> <Pine.LNX.4.64.0811071235040.5387@quilx.com>
+ <20081118153346.62bf9c11.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754870AbYKSTSY@vger.kernel.org>
-In-Reply-To: <492463A1.3000306@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: David Woodhouse <dwmw2@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-net-drivers@solarflare.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from nlpi053.sbcis.sbc.com ([207.115.36.82]:39202 "EHLO
+	nlpi053.prodigy.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755231AbYKSTSm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Nov 2008 14:18:42 -0500
+In-Reply-To: <20081118153346.62bf9c11.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, rusty@rustcorp.com.au, Haavard Skinnemoen <hskinnemoen@atmel.com>
 
-On Wed, 2008-11-19 at 11:06 -0800, Randy Dunlap wrote:
-> David Woodhouse wrote:
-> > On Wed, 2008-11-19 at 10:53 -0800, Randy Dunlap wrote:
-> >> On Wed, 19 Nov 2008 17:59:17 +1100 Stephen Rothwell wrote:
-> >>
-> >> (.text+0x104879): undefined reference to `add_mtd_device'
-> >> (.text+0x1048e1): undefined reference to `del_mtd_device'
-> >> mtd.c:(.text+0x104999): undefined reference to `mtd_erase_callback=
-'
-> >>
-> >>
-> >> config attached.
-> >=20
-> > CONFIG_SFC_MTD=3Dy
-> >=20
-> > What's that?
->=20
-> drivers/net/sfc/Kconfig:
->=20
-> config SFC_MTD
-> 	bool "Solarflare Solarstorm SFC4000 flash MTD support"
-> 	depends on SFC && MTD
-> 	default y
-> 	help
-> 	  This exposes the on-board flash memory as an MTD device (e.g.
->           /dev/mtd1).  This makes it possible to upload new boot code
->           to the NIC.
->=20
->=20
-> sfc people added to cc.
+On Tue, 18 Nov 2008, Stephen Rothwell wrote:
 
-=EF=BB=BFPlease use the address linux-net-drivers@solarflare.com, as li=
-sted in
-MAINTAINERS.=EF=BB=BF  There are several of us working on the driver, a=
-nd they
-no longer include Michael Brown.
+> I have applied this to linux-next today.  It is not clear to me if this
+> is a fix for the cpu_alloc tree or the zero-based per_cpu area patches or
+> a combination of both.  If the first, please apply this to the cpu_alloc
+> tree or I will have to drop the tree.  Otherwise, let me know where it
+> belongs.
 
-David Woodhouse wrote:
-> =EF=BB=BFSounds like this was built-in while CONFIG_MTD=3Dm
+Its a fix to the cpu_alloc stuff.
 
-So does the dependency need to be something like
-"depends on SFC && MTD && !(SFC=3Dy && MTD=3Dm)"?
+> Also, considering the "discussions" between Rusty and yourself, I may
+> need to drop the cpu_alloc tree until they are resolved.
 
-Ben.
-
---=20
-Ben Hutchings, Senior Software Engineer, Solarflare Communications
-Not speaking for my employer; that's the marketing department's job.
-They asked us to note that Solarflare product names are trademarked.
+Just came back from the conference. Hope I can catch up with email soon.
