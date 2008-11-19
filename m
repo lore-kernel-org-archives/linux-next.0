@@ -1,44 +1,48 @@
-From: "Kay Sievers" <kay.sievers@vrfy.org>
-Subject: Re: linux-next: driver-core tree build failure
-Date: Wed, 19 Nov 2008 01:40:42 +0100
-Message-ID: <ac3eb2510811181640r6c864c7en28a097d3e7c1ab75@mail.gmail.com>
-References: <20081119113031.28e2ae68.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the sched tree
+Date: Wed, 19 Nov 2008 12:27:46 +1100
+Message-ID: <20081119122746.29db6c3a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ey-out-2122.google.com ([74.125.78.27]:10883 "EHLO
-	ey-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750928AbYKSAkp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Nov 2008 19:40:45 -0500
-Received: by ey-out-2122.google.com with SMTP id 6so1285682eyi.37
-        for <linux-next@vger.kernel.org>; Tue, 18 Nov 2008 16:40:42 -0800 (PST)
-In-Reply-To: <20081119113031.28e2ae68.sfr@canb.auug.org.au>
-Content-Disposition: inline
+Received: from chilli.pcug.org.au ([203.10.76.44]:41266 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751321AbYKSB2A (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 Nov 2008 20:28:00 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Kumar Gala <galak@kernel.crashing.org>
 
-On Wed, Nov 19, 2008 at 01:30, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
->
-> arch/powerpc/kernel/vio.c: In function 'vio_register_device_node':
-> arch/powerpc/kernel/vio.c:1246: error: incompatible type for argument 1 of 'dev_name'
->
-> Caused by commit 92136135687b1f8f5d3f03baa3cec40dbc6e73e9 ("powerpc:
-> struct device - replace bus_id with dev_name(), dev_set_name()").
->
-> I have dropped the driver-core tree (and the usb tree that depends on it)
-> from linux-next for today.
+Hi all,
 
-Yep, a '&' is missing. It should be
-  -                               __func__, viodev->dev.bus_id);
- +                               __func__, dev_name(&viodev->dev));
+Today's linux-next merge of the sched tree got a conflict in
+kernel/Makefile between commit 65ecc14a30ad21bed9aabdfd6a2ae1a1aaaa6a00
+("Remove -mno-spe flags as they dont belong") from Linus' tree and commit
+8bb8c4386d08f2cc5d871d22f220d35032213f84 ("sched, ftrace: trace sched.c")
+from the sched tree.
 
-Is this the only one, or only the first failure you've seen with the
-driver-core tree? Some of the patches we've been unable to test, and
-unfortunately the maintainers didn't respond for weeks now.
+I fixed it up (see below) and can carry it for a short while.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Thanks,
-Kay
+diff --cc kernel/Makefile
+index 03a45e7,46e67a3..0000000
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@@ -19,12 -21,7 +19,11 @@@ CFLAGS_REMOVE_mutex-debug.o = -p
+  CFLAGS_REMOVE_rtmutex-debug.o = -pg
+  CFLAGS_REMOVE_cgroup-debug.o = -pg
+  CFLAGS_REMOVE_sched_clock.o = -pg
+- CFLAGS_REMOVE_sched.o = -pg
+  endif
+ +ifdef CONFIG_FUNCTION_RET_TRACER
+ +CFLAGS_REMOVE_extable.o = -pg # For __kernel_text_address()
+ +CFLAGS_REMOVE_module.o = -pg # For __module_text_address()
+ +endif
+  
+  obj-$(CONFIG_FREEZER) += freezer.o
+  obj-$(CONFIG_PROFILING) += profile.o
