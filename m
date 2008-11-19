@@ -1,41 +1,49 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: driver-core tree build failure
-Date: Tue, 18 Nov 2008 22:55:55 -0800
-Message-ID: <20081119065555.GA4853@kroah.com>
-References: <20081119113031.28e2ae68.sfr@canb.auug.org.au> <20081119164317.9bfff78d.sfr@canb.auug.org.au> <20081119062644.GB4444@kroah.com> <20081119175112.416adc24.sfr@canb.auug.org.au>
+From: Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: linux-m68k.git
+Date: Wed, 19 Nov 2008 08:13:59 +0000
+Message-ID: <20081119081359.GB794@linux-mips.org>
+References: <Pine.LNX.4.64.0811182136060.27671@anakin>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:60156 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751769AbYKSHAF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 19 Nov 2008 02:00:05 -0500
+Received: from h4.dl5rb.org.uk ([81.2.74.4]:46462 "EHLO
+	ditditdahdahdah-dahdahdahditdit.dl5rb.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751308AbYKSIOZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 Nov 2008 03:14:25 -0500
 Content-Disposition: inline
-In-Reply-To: <20081119175112.416adc24.sfr@canb.auug.org.au>
+In-Reply-To: <Pine.LNX.4.64.0811182136060.27671@anakin>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux/m68k <linux-m68k@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Development <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-On Wed, Nov 19, 2008 at 05:51:12PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
+On Tue, Nov 18, 2008 at 09:49:01PM +0100, Geert Uytterhoeven wrote:
+
+> (Finally) I created an experimental git tree for Linux/m68k:
+> http://git.kernel.org/?p=linux/kernel/git/geert/linux-m68k.git
 > 
-> On Tue, 18 Nov 2008 22:26:44 -0800 Greg KH <greg@kroah.com> wrote:
-> >
-> > Right now there is no such dependancy (USB should build and apply just
-> > fine without driver core, and staging depends on neither of these from
-> > what I can see.)
+> It contains more or less all patches I had in my quilt series at
+> http://www.kernel.org/pub/linux/kernel/people/geert/linux-m68k-patches-2.6/
+> A notable exception is m68k-PRIVATE-m68k-changes.diff, which hardcoded ARCH to
+> m68k.
 > 
-> The real problem is that because you tell me that usb is based on
-> driver-core, then if I merge the usb tree it will pull in all of
-> driver-core again after I have dropped it.  So if the trees are really
-> independent, you could change (or remove) the NEXT-BASE comment in the
-> series files.  But that means that you do have to test them independently
-> as well, so it is probably not worth the effort.
+> As suggested by David Woodhouse, I grouped the commits by topic. But unlike
+> David's suggestion, I used topic branches, not topic repositories. Oh well,
+> we'll see...
 
-Yeah, for now, it's fine, no big deal, I can live with being dropped for
-a day :)
+That's easy enough to undo if the need should arise.
 
-thanks,
+> I also created for-next and for-linus branches. Do they look OK?
+> 
+> If I did something wrong, please let me know.
+> This is still experimental stuff, which may be rebased if needed.
+> 
+> In addition, one day I may pull from Ralf's repository that reflects the state
+> of Linux/m68k CVS a few commits before our server died...
 
-greg k-h
+It's CVS that must die, not the poor server ;-)  If you're actually going
+to pull the old CVS stuff into the new git repository and you happen to have
+a newer snapshot than the one which I've converted I can re-run my converter.
+
+  Ralf
