@@ -1,62 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-m68k.git
-Date: Wed, 19 Nov 2008 20:28:59 +1100
-Message-ID: <20081119202859.783a97d5.sfr@canb.auug.org.au>
-References: <Pine.LNX.4.64.0811182136060.27671@anakin>
-	<20081119081951.a1a33403.sfr@canb.auug.org.au>
-	<Pine.LNX.4.64.0811190942490.27671@anakin>
+Subject: Re: linux-next: manual merge of the sched tree
+Date: Wed, 19 Nov 2008 20:29:55 +1100
+Message-ID: <20081119202955.f6c3869d.sfr@canb.auug.org.au>
+References: <20081119122746.29db6c3a.sfr@canb.auug.org.au>
+	<20081119084553.GE1078@elte.hu>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__19_Nov_2008_20_28_59_+1100_/VGpR_lDW6d8uwZQ"
+ boundary="Signature=_Wed__19_Nov_2008_20_29_55_+1100_t1w2xoJ4tMO6Ky/5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51300 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51317 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752305AbYKSJ3P (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 19 Nov 2008 04:29:15 -0500
-In-Reply-To: <Pine.LNX.4.64.0811190942490.27671@anakin>
+	id S1752443AbYKSJaM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 Nov 2008 04:30:12 -0500
+In-Reply-To: <20081119084553.GE1078@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linux/m68k <linux-m68k@vger.kernel.org>, Ralf Baechle <ralf@linux-mips.org>, David Woodhouse <dwmw2@infradead.org>, Linux Kernel Development <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Kumar Gala <galak@kernel.crashing.org>
 
---Signature=_Wed__19_Nov_2008_20_28_59_+1100_/VGpR_lDW6d8uwZQ
+--Signature=_Wed__19_Nov_2008_20_29_55_+1100_t1w2xoJ4tMO6Ky/5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
+Hi Ingo,
 
-On Wed, 19 Nov 2008 09:44:03 +0100 (CET) Geert Uytterhoeven <geert@linux-m6=
-8k.org> wrote:
+On Wed, 19 Nov 2008 09:45:53 +0100 Ingo Molnar <mingo@elte.hu> wrote:
 >
-> What's the purpose of your m68k-current tree? There should not be anything
-> in m68k#for-linus that's not in m68k#for-next.
+> i did a similar conflict resolution yesterday. I have pushed out a new=20
+> tip/auto-sched-next branch - you should not see this conflict in the=20
+> future.
 
-I have a set of trees (15 so far) that are just patches pending for the
-current release (mostly bug fixes).  These trees are usually empty (since
-things get sent to Linus fairly quickly during the -rc's) but it means
-that between the time between when the fixes are ready and when Linus
-integrates them, people testing linux-next don't have to worry about bugs
-that already have fixes.
+Thanks.
 
-Having them in a (logically) separate tree, as far as linux-next is
-concerned, means that if I have to drop your -next tree for any reason
-then the bug fixes can stay.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__19_Nov_2008_20_28_59_+1100_/VGpR_lDW6d8uwZQ
+--Signature=_Wed__19_Nov_2008_20_29_55_+1100_t1w2xoJ4tMO6Ky/5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkkj3FsACgkQjjKRsyhoI8xLJACgp5eS/t4DrMiS+zWSoSeEtI/X
-oHoAniE/gO80CkijpMEjQ5cCXrMrfm7r
-=Axp3
+iEYEARECAAYFAkkj3JMACgkQjjKRsyhoI8zHKACfZU5K423IApvOZsrRnrHjJ3SV
+80EAnRBRyW/zc4K7DzcMN9FG7HZoP32Q
+=sa6n
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__19_Nov_2008_20_28_59_+1100_/VGpR_lDW6d8uwZQ--
+--Signature=_Wed__19_Nov_2008_20_29_55_+1100_t1w2xoJ4tMO6Ky/5--
