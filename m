@@ -1,124 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the cifs tree
-Date: Wed, 19 Nov 2008 13:32:10 +1100
-Message-ID: <20081119133210.0cac4142.sfr@canb.auug.org.au>
-References: <20081117134243.0d729c7a.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree
+Date: Wed, 19 Nov 2008 14:21:05 +1100
+Message-ID: <20081119142105.43c0e9bf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__19_Nov_2008_14_21_05_+1100_W6TT+rBpawTeUaO0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35065 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51550 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751926AbYKSCc0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 Nov 2008 21:32:26 -0500
-In-Reply-To: <20081117134243.0d729c7a.sfr@canb.auug.org.au>
+	id S1751479AbYKSDVY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 Nov 2008 22:21:24 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Harvey Harrison <harvey.harrison@gmail.com>, Jeff Layton <jlayton@redhat.com>, Steve French <smfrench@gmail.com>, linux-cifs-client@lists.samba.org
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: linux-next@vger.kernel.org, Zhaolei <zhaolei@cn.fujitsu.com>, Fernando Luis =?UTF-8?B?VsOhenF1ZXo=?= Cao <fernando@oss.ntt.co.jp>
 
-Hi Dave,
+--Signature=_Wed__19_Nov_2008_14_21_05_+1100_W6TT+rBpawTeUaO0
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 17 Nov 2008 13:42:43 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Today's linux-next merge of the cifs tree got a conflict in
-> fs/cifs/connect.c between commit be859405487324ed548f1ba11dc949b8230ab991
-> ("fs: replace NIPQUAD()") from the net tree and commit
-> 14fbf50d695207754daeb96270b3027a3821121f ("cifs: reinstate sharing of SMB
-> sessions sans races") from the cifs tree.
+Hi Jens,
 
-This conflict is now between Linus' tree and the net tree ...
+Today's linux-next merge of the block tree got a conflict in
+drivers/block/xen-blkfront.c between commit
+68aee07f9bad2c830a898cf6d6bfc11ea24efc40 ("Release old elevator on change
+elevator") from Linus' tree and commit
+f7ed11048c85660828fa2017ea2e3da27235f76a ("xen-blkfront: set queue
+paravirt flag") from the block tree.
 
-I have fixed it up for today (see below) but assume you will fix it soon
-in the net tree.
--- 
+I used the version from the block tree and will carry this fix for a
+while but assume that you will fix the conflict in the block tree soon.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc fs/cifs/connect.c
-index c7d3417,2df8e6d..0000000
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@@ -2221,44 -2078,43 +2221,44 @@@ cifs_mount(struct super_block *sb, stru
-  	} else if (!rc) {
-  		cFYI(1, ("Existing smb sess not found"));
-  		pSesInfo = sesInfoAlloc();
- -		if (pSesInfo == NULL)
- +		if (pSesInfo == NULL) {
-  			rc = -ENOMEM;
- -		else {
- -			pSesInfo->server = srvTcp;
- -			sprintf(pSesInfo->serverName, "%pI4",
- -				&sin_server.sin_addr.s_addr);
- -		}
- +			goto mount_fail_check;
- +		}
- +
- +		/* new SMB session uses our srvTcp ref */
- +		pSesInfo->server = srvTcp;
-- 		sprintf(pSesInfo->serverName, "%u.%u.%u.%u",
-- 			NIPQUAD(sin_server->sin_addr.s_addr));
-++		sprintf(pSesInfo->serverName, "%pI4",
-++			&sin_server->sin_addr.s_addr);
- +
- +		write_lock(&cifs_tcp_ses_lock);
- +		list_add(&pSesInfo->smb_ses_list, &srvTcp->smb_ses_list);
- +		write_unlock(&cifs_tcp_ses_lock);
- +
- +		/* volume_info.password freed at unmount */
- +		if (volume_info.password) {
- +			pSesInfo->password = volume_info.password;
- +			/* set to NULL to prevent freeing on exit */
- +			volume_info.password = NULL;
- +		}
- +		if (volume_info.username)
- +			strncpy(pSesInfo->userName, volume_info.username,
- +				MAX_USERNAME_SIZE);
- +		if (volume_info.domainname) {
- +			int len = strlen(volume_info.domainname);
- +			pSesInfo->domainName = kmalloc(len + 1, GFP_KERNEL);
- +			if (pSesInfo->domainName)
- +				strcpy(pSesInfo->domainName,
- +					volume_info.domainname);
- +		}
- +		pSesInfo->linux_uid = volume_info.linux_uid;
- +		pSesInfo->overrideSecFlg = volume_info.secFlg;
- +		down(&pSesInfo->sesSem);
-  
- -		if (!rc) {
- -			/* volume_info.password freed at unmount */
- -			if (volume_info.password) {
- -				pSesInfo->password = volume_info.password;
- -				/* set to NULL to prevent freeing on exit */
- -				volume_info.password = NULL;
- -			}
- -			if (volume_info.username)
- -				strncpy(pSesInfo->userName,
- -					volume_info.username,
- -					MAX_USERNAME_SIZE);
- -			if (volume_info.domainname) {
- -				int len = strlen(volume_info.domainname);
- -				pSesInfo->domainName =
- -					kmalloc(len + 1, GFP_KERNEL);
- -				if (pSesInfo->domainName)
- -					strcpy(pSesInfo->domainName,
- -						volume_info.domainname);
- -			}
- -			pSesInfo->linux_uid = volume_info.linux_uid;
- -			pSesInfo->overrideSecFlg = volume_info.secFlg;
- -			down(&pSesInfo->sesSem);
- -			/* BB FIXME need to pass vol->secFlgs BB */
- -			rc = cifs_setup_session(xid, pSesInfo,
- -						cifs_sb->local_nls);
- -			up(&pSesInfo->sesSem);
- -			if (!rc)
- -				atomic_inc(&srvTcp->socketUseCount);
- -		}
- +		/* BB FIXME need to pass vol->secFlgs BB */
- +		rc = cifs_setup_session(xid, pSesInfo,
- +					cifs_sb->local_nls);
- +		up(&pSesInfo->sesSem);
-  	}
-  
-  	/* search for existing tcon to this server share */
+--Signature=_Wed__19_Nov_2008_14_21_05_+1100_W6TT+rBpawTeUaO0
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkjhiEACgkQjjKRsyhoI8ypPQCcCubvFv7IEdUS+ThN+ezii9WR
+CyQAn1is+rYxTBRsWYy2wYy2BRxA8/nA
+=XHBg
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__19_Nov_2008_14_21_05_+1100_W6TT+rBpawTeUaO0--
