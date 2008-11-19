@@ -1,50 +1,51 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH] sfc: Fix dependency for SFC_MTD
-Date: Wed, 19 Nov 2008 13:37:50 -0800
-Message-ID: <4924872E.5070102@oracle.com>
-References: <20081119204850.GF8240@solarflare.com> <20081119205353.GG8240@solarflare.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20081119205353.GG8240@solarflare.com>
-Sender: netdev-owner@vger.kernel.org
-To: Ben Hutchings <bhutchings@solarflare.com>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-net-drivers@solarflare.com, David Woodhouse <dwmw2@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+From: "Richard A. Holden III" <aciddeath@gmail.com>
+Subject: [PATCH] Fix arch/x86/kernel/genx2apic_uv_x.c build warning when !CONFIG_HOTPLUG_CPU
+Date: Wed, 19 Nov 2008 16:05:14 -0700
+Message-ID: <1227135915-32628-1-git-send-email-aciddeath@gmail.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rv-out-0506.google.com ([209.85.198.229]:45136 "EHLO
+	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750965AbYKSWD0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Nov 2008 17:03:26 -0500
+Received: by rv-out-0506.google.com with SMTP id k40so145345rvb.1
+        for <linux-next@vger.kernel.org>; Wed, 19 Nov 2008 14:03:25 -0800 (PST)
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
 
-Ben Hutchings wrote:
-> Randy Dunlap found that SFC_MTD was selected when sfc was built-in and
-> the MTD core was a module.  Don't allow that combination.
-> 
-> Signed-off-by: Ben Hutchings <bhutchings@solarflare.com>
+Fix
+arch/x86/kernel/genx2apic_uv_x.c:403: warning: 'uv_heartbeat_disable' defined but not used
 
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+the function is only used when CONFIG_HOTPLUG_CPU is defined.
 
-I realized that this problem came up because SFC_MTD is a boolean
-that depends on tristates, so the boolean is set (=y) when
-SFC=y or SFC=m.  Thus extra handling for it is needed,
-like Ben did here.
+Signed-off-by: Richard A. Holden III <aciddeath@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+---
+ arch/x86/kernel/genx2apic_uv_x.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-> ---
->  drivers/net/sfc/Kconfig |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> Now with S-o-b; sorry for the spam.
-> 
-> Ben.
-> 
-> diff --git a/drivers/net/sfc/Kconfig b/drivers/net/sfc/Kconfig
-> index 3e25fb3..c535408 100644
-> --- a/drivers/net/sfc/Kconfig
-> +++ b/drivers/net/sfc/Kconfig
-> @@ -14,7 +14,7 @@ config SFC
->  	  will be called sfc.
->  config SFC_MTD
->  	bool "Solarflare Solarstorm SFC4000 flash MTD support"
-> -	depends on SFC && MTD
-> +	depends on SFC && MTD && !(SFC=y && MTD=m)
->  	default y
->  	help
->  	  This exposes the on-board flash memory as an MTD device (e.g.
-
+diff --git a/arch/x86/kernel/genx2apic_uv_x.c b/arch/x86/kernel/genx2apic_uv_x.c
+index fb80b17..3076bc6 100644
+--- a/arch/x86/kernel/genx2apic_uv_x.c
++++ b/arch/x86/kernel/genx2apic_uv_x.c
+@@ -399,6 +399,7 @@ static void __cpuinit uv_heartbeat_enable(int cpu)
+ 		uv_heartbeat_enable(0);
+ }
+ 
++#ifdef CONFIG_HOTPLUG_CPU
+ static void __cpuinit uv_heartbeat_disable(int cpu)
+ {
+ 	if (uv_cpu_hub_info(cpu)->scir.enabled) {
+@@ -408,7 +409,6 @@ static void __cpuinit uv_heartbeat_disable(int cpu)
+ 	uv_set_cpu_scir_bits(cpu, 0xff);
+ }
+ 
+-#ifdef CONFIG_HOTPLUG_CPU
+ /*
+  * cpu hotplug notifier
+  */
+-- 
+1.5.6.4
