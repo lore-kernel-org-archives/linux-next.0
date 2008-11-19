@@ -1,49 +1,36 @@
-From: Ben Hutchings <bhutchings@solarflare.com>
-Subject: Re: [PATCH] sfc: Fix dependency for SFC_MTD
-Date: Wed, 19 Nov 2008 20:53:55 +0000
-Message-ID: <20081119205353.GG8240@solarflare.com>
-References: <20081119204850.GF8240@solarflare.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: next-20081119: general protection fault:
+ get_next_timer_interrupt()
+Date: Wed, 19 Nov 2008 13:14:37 -0800 (PST)
+Message-ID: <alpine.LFD.2.00.0811191308030.3119@localhost.localdomain>
+References: <a4423d670811190714k13721ae8s125e63d520892440@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smarthost01.mail.zen.net.uk ([212.23.3.140]:58573 "EHLO
-	smarthost01.mail.zen.net.uk" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752059AbYKSUyE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 19 Nov 2008 15:54:04 -0500
-Content-Disposition: inline
-In-Reply-To: <20081119204850.GF8240@solarflare.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-net-drivers@solarflare.com, Randy Dunlap <randy.dunlap@oracle.com>, David Woodhouse <dwmw2@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754213AbYKSVPU@vger.kernel.org>
+In-Reply-To: <a4423d670811190714k13721ae8s125e63d520892440@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, mingo@elte.hu
+List-Id: linux-next.vger.kernel.org
 
-Randy Dunlap found that SFC_MTD was selected when sfc was built-in and
-the MTD core was a module.  Don't allow that combination.
+Alexander,
 
-Signed-off-by: Ben Hutchings <bhutchings@solarflare.com>
----
- drivers/net/sfc/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+On Wed, 19 Nov 2008, Alexander Beregalov wrote:
+> 
+> It is 4way X86_64
+> The kernel does not boot.
+ 
+> RIP: 0010:[<ffffffff80240061>]  [<ffffffff80240061>]
+> get_next_timer_interrupt+0x11b/0x1f0
 
-Now with S-o-b; sorry for the spam.
+Can you please enable:
 
-Ben.
+CONFIG_DEBUG_OBJECTS=y
+CONFIG_DEBUG_OBJECTS_FREE=y
+CONFIG_DEBUG_OBJECTS_TIMERS=Y
 
-diff --git a/drivers/net/sfc/Kconfig b/drivers/net/sfc/Kconfig
-index 3e25fb3..c535408 100644
---- a/drivers/net/sfc/Kconfig
-+++ b/drivers/net/sfc/Kconfig
-@@ -14,7 +14,7 @@ config SFC
- 	  will be called sfc.
- config SFC_MTD
- 	bool "Solarflare Solarstorm SFC4000 flash MTD support"
--	depends on SFC && MTD
-+	depends on SFC && MTD && !(SFC=y && MTD=m)
- 	default y
- 	help
- 	  This exposes the on-board flash memory as an MTD device (e.g.
--- 
-Ben Hutchings, Senior Software Engineer, Solarflare Communications
-Not speaking for my employer; that's the marketing department's job.
-They asked us to note that Solarflare product names are trademarked.
+and add "debug_objects" to the kernel command line ?
+
+Thanks,
+
+	tglx
