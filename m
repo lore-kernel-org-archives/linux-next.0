@@ -1,48 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sched tree
-Date: Wed, 19 Nov 2008 12:27:46 +1100
-Message-ID: <20081119122746.29db6c3a.sfr@canb.auug.org.au>
+Subject: Re: linux-next: driver-core tree build failure
+Date: Wed, 19 Nov 2008 13:22:14 +1100
+Message-ID: <20081119132214.681066b4.sfr@canb.auug.org.au>
+References: <20081119113031.28e2ae68.sfr@canb.auug.org.au>
+	<ac3eb2510811181640r6c864c7en28a097d3e7c1ab75@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__19_Nov_2008_13_22_14_+1100_8Rb6TbXtFkKf+hov"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41266 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40530 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751321AbYKSB2A (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 Nov 2008 20:28:00 -0500
+	id S1751926AbYKSCW0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 Nov 2008 21:22:26 -0500
+In-Reply-To: <ac3eb2510811181640r6c864c7en28a097d3e7c1ab75@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Kumar Gala <galak@kernel.crashing.org>
+To: Kay Sievers <kay.sievers@vrfy.org>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org
 
-Hi all,
+--Signature=_Wed__19_Nov_2008_13_22_14_+1100_8Rb6TbXtFkKf+hov
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the sched tree got a conflict in
-kernel/Makefile between commit 65ecc14a30ad21bed9aabdfd6a2ae1a1aaaa6a00
-("Remove -mno-spe flags as they dont belong") from Linus' tree and commit
-8bb8c4386d08f2cc5d871d22f220d35032213f84 ("sched, ftrace: trace sched.c")
-from the sched tree.
+Hi Kay,
 
-I fixed it up (see below) and can carry it for a short while.
--- 
+[Firstly, let me say that I appreciate all the work you are doing ...]
+
+On Wed, 19 Nov 2008 01:40:42 +0100 "Kay Sievers" <kay.sievers@vrfy.org> wro=
+te:
+>
+> Is this the only one, or only the first failure you've seen with the
+> driver-core tree? Some of the patches we've been unable to test, and
+> unfortunately the maintainers didn't respond for weeks now.
+
+It is the first since that series of patches was added to the
+driver-core tree yesterday, but I have only built for powerpc and x86_64
+so far.
+
+The patch had a CC for Paul Mackerras but not for the list associated
+with the PowerPC archiecture (in MAINTAINERS - linuxppc-dev@ozlabs.org).
+Some maintainers are very busy and cannot (or don't) test every single
+patch sent to them but the patches would probably would receive more
+attention if CC'd to the associated list.  [I am on the particular list
+and didn't see that patch posted.]
+
+[And the Acked-by: Geoff Levand would really only cover the ps3 part of
+the patch.]
+
+In any case, I assume it will be fixed tomorrow in Greg's tree.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc kernel/Makefile
-index 03a45e7,46e67a3..0000000
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@@ -19,12 -21,7 +19,11 @@@ CFLAGS_REMOVE_mutex-debug.o = -p
-  CFLAGS_REMOVE_rtmutex-debug.o = -pg
-  CFLAGS_REMOVE_cgroup-debug.o = -pg
-  CFLAGS_REMOVE_sched_clock.o = -pg
-- CFLAGS_REMOVE_sched.o = -pg
-  endif
- +ifdef CONFIG_FUNCTION_RET_TRACER
- +CFLAGS_REMOVE_extable.o = -pg # For __kernel_text_address()
- +CFLAGS_REMOVE_module.o = -pg # For __module_text_address()
- +endif
-  
-  obj-$(CONFIG_FREEZER) += freezer.o
-  obj-$(CONFIG_PROFILING) += profile.o
+--Signature=_Wed__19_Nov_2008_13_22_14_+1100_8Rb6TbXtFkKf+hov
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkjeFYACgkQjjKRsyhoI8wK5gCeMOQ+Vj0QWaRO5XevUVx/t7n2
+ZNEAoJKjIMGCI6A51JcH3gSaOqoUggZ4
+=8uS0
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__19_Nov_2008_13_22_14_+1100_8Rb6TbXtFkKf+hov--
