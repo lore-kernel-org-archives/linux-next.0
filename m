@@ -1,136 +1,58 @@
-From: Neil Brown <neilb@suse.de>
-Subject: Re: [PATCH] md_print_devices: use le{32,64}_to_cpu to access data correctly
-Date: Thu, 20 Nov 2008 22:50:52 +1100
-Message-ID: <18725.20252.24921.39204@notabene.brown>
-References: <1227179997-6394-1-git-send-email-crquan@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the s390 tree
+Date: Thu, 20 Nov 2008 22:57:26 +1100
+Message-ID: <20081120225726.a344891d.sfr@canb.auug.org.au>
+References: <20081120101309.0553d091.sfr@canb.auug.org.au>
+	<1227179414.23671.1.camel@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__20_Nov_2008_22_57_26_+1100_DepcZzTVPWDaX4J_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ns2.suse.de ([195.135.220.15]:53229 "EHLO mx2.suse.de"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37419 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752170AbYKTLvD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 20 Nov 2008 06:51:03 -0500
-In-Reply-To: message from crquan@gmail.com on Thursday November 20
+	id S1751310AbYKTL5n (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 20 Nov 2008 06:57:43 -0500
+In-Reply-To: <1227179414.23671.1.camel@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: crquan@gmail.com
-Cc: linux-raid@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, wshen_gfkd@163.com
+To: schwidefsky@de.ibm.com
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, linux-next@vger.kernel.org, David Gibson <david@gibson.dropbear.id.au>, Paul Mackerras <paulus@samba.org>, Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
 
-On Thursday November 20, crquan@gmail.com wrote:
-> From: Cheng Renquan <crquan@gmail.com>
-> 
-> The previous direct accessing have endian problems,
-> Sorry for that lacking of thoughtful consideration.
-> 
-> At the same time define a MASK value to get the seconds
-> value of time conveniently.
+--Signature=_Thu__20_Nov_2008_22_57_26_+1100_DepcZzTVPWDaX4J_
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks.
-I have merged this with the previous patch and also made the change
-Stephen mentioned about casting 64bit values to (unsigned long long).
-This has now been pushed out to for-next.
+Hi Martin,
 
-Where we print a 64bit value I changed the format string from %L
-to %ll because that is what is used elsewhere in md.c, and consistency
-is good.  
-On some architectures, a 64bit value is an "unsigned long", on others
-it is "unsigned long long".  So we cannot always print such a value
-with %llx.
-So I added a cast: (unsigned long long) to each 64 bit value that was
-being passed to printk.
+On Thu, 20 Nov 2008 12:10:14 +0100 Martin Schwidefsky <schwidefsky@de.ibm.c=
+om> wrote:
+>
+> On Thu, 2008-11-20 at 10:13 +1100, Stephen Rothwell wrote:
+> > Just overlapping additions. I fixed it up (see below) and can carry the
+> > fix.  The conflict could be eliminated by one of the two sets of changes
+> > moving slightly in the files (I am hinting about the s390 ones here as
+> > Paul does not like rebasing his tree ...).
+>=20
+> Ok, done. I moved the HCV_ICUV option before HVC_BEAT.
 
-Thanks,
-NeilBrown
+Thanks - just makes my life a little easier :-)
 
-> 
-> Signed-off-by: Cheng Renquan <crquan@gmail.com>
-> ---
-> This patch can be applied on git://neil.brown.name/md for-next branch.
-> 
->  drivers/md/md.c           |   38 +++++++++++++++++++++++---------------
->  include/linux/raid/md_p.h |    2 ++
->  2 files changed, 25 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index ffc63be..058cf34 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -1664,37 +1664,45 @@ static void print_sb_1(struct mdp_superblock_1 *sb)
->  	__u8 *uuid;
->  
->  	uuid = sb->set_uuid;
-> -	printk(KERN_INFO "md:  SB: (V:%d) (F:%x) Array-ID:<%02x%02x%02x%02x"
-> +	printk(KERN_INFO "md:  SB: (V:%u) (F:0x%08x) Array-ID:<%02x%02x%02x%02x"
->  			":%02x%02x:%02x%02x:%02x%02x:%02x%02x%02x%02x%02x%02x>\n"
->  	       KERN_INFO "md:    Name: \"%s\" CT:%Lu\n",
-> -		sb->major_version, sb->feature_map,
-> +		le32_to_cpu(sb->major_version),
-> +		le32_to_cpu(sb->feature_map),
->  		uuid[0], uuid[1], uuid[2], uuid[3],
->  		uuid[4], uuid[5], uuid[6], uuid[7],
->  		uuid[8], uuid[9], uuid[10], uuid[11],
->  		uuid[12], uuid[13], uuid[14], uuid[15],
->  		sb->set_name,
-> -		sb->ctime & 0xffffffffffLL);
-> +		le64_to_cpu(sb->ctime) & MD_SUPERBLOCK_1_TIME_SEC_MASK);
->  
->  	uuid = sb->device_uuid;
-> -	printk(KERN_INFO "md:       L%d SZ%Ld RD:%d LO:%d CS:%d DO:%Ld DS:%Ld SO:%Ld"
-> -			" RO:%Ld\n"
-> +	printk(KERN_INFO "md:       L%u SZ%Lu RD:%u LO:%u CS:%u DO:%Lu DS:%Lu SO:%Lu"
-> +			" RO:%Lu\n"
->  	       KERN_INFO "md:     Dev:%08x UUID: %02x%02x%02x%02x:%02x%02x:%02x%02x:%02x%02x"
->  			":%02x%02x%02x%02x%02x%02x\n"
-> -	       KERN_INFO "md:       (F:%d) UT:%Lu Events:%Ld ResyncOffset:%Ld CSUM:%08x\n"
-> -	       KERN_INFO "md:         (MaxDev:%d) \n",
-> -		sb->level, sb->size, sb->raid_disks,
-> -		sb->layout, sb->chunksize,
-> -		sb->data_offset, sb->data_size,
-> -		sb->super_offset, sb->recovery_offset,
-> -		sb->dev_number,
-> +	       KERN_INFO "md:       (F:0x%08x) UT:%Lu Events:%Lu ResyncOffset:%Lu CSUM:0x%08x\n"
-> +	       KERN_INFO "md:         (MaxDev:%u) \n",
-> +		le32_to_cpu(sb->level),
-> +		le64_to_cpu(sb->size),
-> +		le32_to_cpu(sb->raid_disks),
-> +		le32_to_cpu(sb->layout),
-> +		le32_to_cpu(sb->chunksize),
-> +		le64_to_cpu(sb->data_offset),
-> +		le64_to_cpu(sb->data_size),
-> +		le64_to_cpu(sb->super_offset),
-> +		le64_to_cpu(sb->recovery_offset),
-> +		le32_to_cpu(sb->dev_number),
->  		uuid[0], uuid[1], uuid[2], uuid[3],
->  		uuid[4], uuid[5], uuid[6], uuid[7],
->  		uuid[8], uuid[9], uuid[10], uuid[11],
->  		uuid[12], uuid[13], uuid[14], uuid[15],
->  		sb->devflags,
-> -		sb->utime, sb->events,
-> -		sb->resync_offset,
-> -		sb->sb_csum, sb->max_dev
-> +		le64_to_cpu(sb->utime) & MD_SUPERBLOCK_1_TIME_SEC_MASK,
-> +		le64_to_cpu(sb->events),
-> +		le64_to_cpu(sb->resync_offset),
-> +		le32_to_cpu(sb->sb_csum),
-> +		le32_to_cpu(sb->max_dev)
->  		);
->  }
->  
-> diff --git a/include/linux/raid/md_p.h b/include/linux/raid/md_p.h
-> index 8b4de4a..269e147 100644
-> --- a/include/linux/raid/md_p.h
-> +++ b/include/linux/raid/md_p.h
-> @@ -194,6 +194,8 @@ static inline __u64 md_event(mdp_super_t *sb) {
->  	return (ev<<32)| sb->events_lo;
->  }
->  
-> +#define MD_SUPERBLOCK_1_TIME_SEC_MASK ((1UL<<40) - 1)
-> +
->  /*
->   * The version-1 superblock :
->   * All numeric fields are little-endian.
-> -- 
-> 1.6.0.4.757.g6d002.dirty
-> 
-> Cheng Renquan, Shenzhen, China
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__20_Nov_2008_22_57_26_+1100_DepcZzTVPWDaX4J_
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkklUKYACgkQjjKRsyhoI8wNOgCghfP1YBlTOl8whkj/YwxL5Lq0
+p+sAoJf/jqgWPkcxZEHTxpLK3P+S39DM
+=7hWE
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__20_Nov_2008_22_57_26_+1100_DepcZzTVPWDaX4J_--
