@@ -1,59 +1,76 @@
-From: "rae l" <crquan@gmail.com>
-Subject: Re: linux-next: md tree build warnings
-Date: Thu, 20 Nov 2008 13:21:41 +0800
-Message-ID: <91b13c310811192121q909bf25x1408458010a8f9cd@mail.gmail.com>
-References: <20081120161056.47b6130e.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the security-testing tree
+Date: Thu, 20 Nov 2008 16:37:34 +1100
+Message-ID: <20081120163734.9e5f0d61.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fg-out-1718.google.com ([72.14.220.159]:20516 "EHLO
-	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752885AbYKTF1M (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Nov 2008 00:27:12 -0500
-Received: by fg-out-1718.google.com with SMTP id 19so237015fgg.17
-        for <linux-next@vger.kernel.org>; Wed, 19 Nov 2008 21:27:10 -0800 (PST)
-In-Reply-To: <20081120161056.47b6130e.sfr@canb.auug.org.au>
-Content-Disposition: inline
+Received: from chilli.pcug.org.au ([203.10.76.44]:45185 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751473AbYKTFhq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 20 Nov 2008 00:37:46 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Neil Brown <neilb@suse.de>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, David Howells <dhowells@redhat.com>, Tiger Yang <tiger.yang@oracle.com>, Mark Fasheh <mfasheh@suse.com>, Jan Kara <jack@suse.cz>
 
-On Thu, Nov 20, 2008 at 1:10 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Neil,
->
-> Today's linux-next build (powerpc ppc64_defconfig) produced these new
-> warnings:
->
-> drivers/md/md.c: In function 'print_sb_1':
-> drivers/md/md.c:1698: warning: format '%Ld' expects type 'long long int', but argument 3 has type '__le64'
-> drivers/md/md.c:1698: warning: format '%Ld' expects type 'long long int', but argument 7 has type '__le64'
-> drivers/md/md.c:1698: warning: format '%Ld' expects type 'long long int', but argument 8 has type '__le64'
-> drivers/md/md.c:1698: warning: format '%Ld' expects type 'long long int', but argument 9 has type '__le64'
-> drivers/md/md.c:1698: warning: format '%Ld' expects type 'long long int', but argument 10 has type '__le64'
-> drivers/md/md.c:1698: warning: format '%Lu' expects type 'long long unsigned int', but argument 29 has type '__le64'
-> drivers/md/md.c:1698: warning: format '%Ld' expects type 'long long int', but argument 30 has type '__le64'
-> drivers/md/md.c:1698: warning: format '%Ld' expects type 'long long int', but argument 31 has type '__le64'
->
-> Added by commit 4c3da1f23cf20603339493525adf8903a5722417 "md: need
-> another print_sb for mdp_superblock_1".  We cast 64 bit quantities to
-> "unsigned long long" when we print them since they are just "unsigned
-> long" on some architectures.  Also since they are __le64, will they print
-> anything useful on a big endian architecture?
+Hi James,
 
-That's my problem, I'm checking __le64 to cpu_le64 at once, and will
-post another patch later.
+Today's linux-next merge of the security-testing tree got a conflict in
+fs/ocfs2/namei.c between commit 8b50970dda2c81dfbd120ae650fcf5439f268f37
+("[PATCH 01/10] ocfs2: move new inode allocation out of the transaction")
+from the ocsf2 tree and commit b19c2a3b839b9dfb3f258e8943dc3784ae20c7b0
+("CRED: Wrap task credential accesses in the OCFS2 filesystem") from the
+security-testing tree.
 
->
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
->
-
-
-
+I fixed it up (see below) and can carry it.  The ocfs2 tree change moved
+the place where the security-testing tree change to this file needs to be
+made.  The below patch could be applied to the ocfs2 tree (as part of the
+above security-testing patch as all its dependencies are already upstream.
 -- 
-Cheng Renquan, Shenzhen, China
-Dan Quayle  - "This President is going to lead us out of this recovery."
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+diff --cc fs/ocfs2/namei.c
+index 98fd325,2545e74..0000000
+--- a/fs/ocfs2/namei.c
++++ b/fs/ocfs2/namei.c
+@@@ -187,34 -186,6 +187,34 @@@ bail
+  	return ret;
+  }
+  
+ +static struct inode *ocfs2_get_init_inode(struct inode *dir, int mode)
+ +{
+ +	struct inode *inode;
+ +
+ +	inode = new_inode(dir->i_sb);
+ +	if (!inode) {
+ +		mlog(ML_ERROR, "new_inode failed!\n");
+ +		return NULL;
+ +	}
+ +
+ +	/* populate as many fields early on as possible - many of
+ +	 * these are used by the support functions here and in
+ +	 * callers. */
+ +	if (S_ISDIR(mode))
+ +		inode->i_nlink = 2;
+ +	else
+ +		inode->i_nlink = 1;
+- 	inode->i_uid = current->fsuid;
+++	inode->i_uid = current_fsuid();
+ +	if (dir->i_mode & S_ISGID) {
+ +		inode->i_gid = dir->i_gid;
+ +		if (S_ISDIR(mode))
+ +			mode |= S_ISGID;
+ +	} else
+- 		inode->i_gid = current->fsgid;
+++		inode->i_gid = current_fsgid();
+ +	inode->i_mode = mode;
+ +	return inode;
+ +}
+ +
+  static int ocfs2_mknod(struct inode *dir,
+  		       struct dentry *dentry,
+  		       int mode,
