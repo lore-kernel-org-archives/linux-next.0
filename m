@@ -1,57 +1,31 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: proc tree build failure
-Date: Thu, 20 Nov 2008 17:24:25 +1100
-Message-ID: <20081120172425.135c8cf8.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH] Fix arch/x86/kernel/genx2apic_uv_x.c build warning
+	when !CONFIG_HOTPLUG_CPU
+Date: Thu, 20 Nov 2008 09:03:16 +0100
+Message-ID: <20081120080316.GB21785@elte.hu>
+References: <1227135915-32628-1-git-send-email-aciddeath@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__20_Nov_2008_17_24_25_+1100_r5jAP4Vnw/eewO+V"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38381 "EHLO smtps.tip.net.au"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:54193 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753604AbYKTGYj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 20 Nov 2008 01:24:39 -0500
+	id S1753510AbYKTID3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 20 Nov 2008 03:03:29 -0500
+Content-Disposition: inline
+In-Reply-To: <1227135915-32628-1-git-send-email-aciddeath@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: linux-next@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>
+To: "Richard A. Holden III" <aciddeath@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
 
---Signature=_Thu__20_Nov_2008_17_24_25_+1100_r5jAP4Vnw/eewO+V
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Alexey,
+* Richard A. Holden III <aciddeath@gmail.com> wrote:
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+> Fix
+> arch/x86/kernel/genx2apic_uv_x.c:403: warning: 'uv_heartbeat_disable' defined but not used
+> 
+> the function is only used when CONFIG_HOTPLUG_CPU is defined.
 
-security/selinux/hooks.c: In function 'selinux_proc_get_sid':
-security/selinux/hooks.c:1182: error: 'struct super_block' has no member na=
-med 'type'
-security/selinux/hooks.c:1183: error: 'struct super_block' has no member na=
-med 'type'
-security/selinux/hooks.c:1189: error: too few arguments to function 'memcpy'
+applied to tip/x86/uv, thanks Richard!
 
-Caused by commit e23b822350796e690a46873058d220878a18564c ("proc:
-make /proc/net it's own filesystem"). This has clearly never been
-compiled with CONFIG_PROC_FS set!  I have dropped the proc tree for today.
-Much better testing is required - this should never have been submitted
-to linux-next in this state.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__20_Nov_2008_17_24_25_+1100_r5jAP4Vnw/eewO+V
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkklApkACgkQjjKRsyhoI8zdOwCfW1igx6F0TmhfHutd1mJ/4pe1
-zHMAn3XZHrd77Wrjm3WsC+OOpSRlPCdo
-=k2+G
------END PGP SIGNATURE-----
-
---Signature=_Thu__20_Nov_2008_17_24_25_+1100_r5jAP4Vnw/eewO+V--
+	Ingo
