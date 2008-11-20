@@ -1,93 +1,59 @@
-From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Subject: Re: linux-next-20081120 - staging - meilhaus driver build fails
-Date: Thu, 20 Nov 2008 21:46:45 +0530
-Message-ID: <20081120161645.GA4821@linux.vnet.ibm.com>
-References: <20081120212907.efc2276b.sfr@canb.auug.org.au>
-Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755540AbYKTQTy@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20081120212907.efc2276b.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de, k.gantzke@meilhaus.de
-List-Id: linux-next.vger.kernel.org
+From: "Richard A. Holden III" <aciddeath@gmail.com>
+Subject: [PATCH] Fix arch/x86/kernel/cpu/mtrr/main.c build warning
+Date: Thu, 20 Nov 2008 11:03:21 -0700
+Message-ID: <1227204203-32112-1-git-send-email-aciddeath@gmail.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rv-out-0506.google.com ([209.85.198.238]:10640 "EHLO
+	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753543AbYKTRBb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Nov 2008 12:01:31 -0500
+Received: by rv-out-0506.google.com with SMTP id k40so541081rvb.1
+        for <linux-next@vger.kernel.org>; Thu, 20 Nov 2008 09:01:30 -0800 (PST)
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+Fix
+arch/x86/kernel/cpu/mtrr/main.c: In function 'mtrr_bp_init':
+arch/x86/kernel/cpu/mtrr/main.c:1364: warning: 'gran_base' may be used uninitialized in this function
 
- next-20081120 kernel randconfig on x86_64 box fails, while !CONFIG_MODULES
+gran_base is only used within the if (debug_print) sections of the for loop, so combine both sections
+and move the declaration to within if (debug_print). The overhead of to_size_factor may be a consideration
+but the compiler should be able to optimize out the multiple calls.
 
-drivers/staging/meilhaus/memain.c: In function 'me_probe_pci':
-drivers/staging/meilhaus/memain.c:425: error: implicit declaration of function '__symbol_get'
-drivers/staging/meilhaus/memain.c:425: warning: cast to pointer from integer of different size
-drivers/staging/meilhaus/memain.c:433: warning: cast to pointer from integer of different size
-drivers/staging/meilhaus/memain.c:453: error: implicit declaration of function '__symbol_put'
-make[3]: *** [drivers/staging/meilhaus/memain.o] Error 1
-
-the driver uses __symbol_get and __symbol_put instead of marco's symbol_get and symbol_put, 
-I have only build tested the patch.
-
-Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Signed-off-by: Richard A. Holden III <aciddeath@gmail.com>
 ---
---- linux/drivers/staging/meilhaus/memain.c	2008-11-20 06:08:43.000000000 -0500
-+++ linux/drivers/staging/meilhaus/~memain.c	2008-11-20 09:04:15.000000000 -0500
-@@ -422,7 +422,7 @@ static int me_probe_pci(struct pci_dev *
- 	PDEBUG("module_name: %s\n", module_name);
+ arch/x86/kernel/cpu/mtrr/main.c |   10 +++-------
+ 1 files changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/mtrr/main.c b/arch/x86/kernel/cpu/mtrr/main.c
+index c091d06..b751e3a 100644
+--- a/arch/x86/kernel/cpu/mtrr/main.c
++++ b/arch/x86/kernel/cpu/mtrr/main.c
+@@ -1360,20 +1360,16 @@ static int __init mtrr_cleanup(unsigned address_bits)
+ 	memset(min_loss_pfn, 0xff, sizeof(min_loss_pfn));
+ 	memset(result, 0, sizeof(result));
+ 	for (gran_size = (1ULL<<16); gran_size < (1ULL<<32); gran_size <<= 1) {
+-		char gran_factor;
+-		unsigned long gran_base;
+-
+-		if (debug_print)
+-			gran_base = to_size_factor(gran_size >> 10, &gran_factor);
  
- 	if ((constructor =
--	     (me_pci_constructor_t) __symbol_get(constructor_name)) == NULL) {
-+	     (me_pci_constructor_t) symbol_get(constructor_name)) == NULL) {
- 		if (request_module(module_name)) {
- 			PERROR("Error while request for module %s.\n",
- 			       module_name);
-@@ -430,7 +430,7 @@ static int me_probe_pci(struct pci_dev *
- 		}
+ 		for (chunk_size = gran_size; chunk_size < (1ULL<<32);
+ 		     chunk_size <<= 1) {
+ 			int num_reg;
  
- 		if ((constructor =
--		     (me_pci_constructor_t) __symbol_get(constructor_name)) ==
-+		     (me_pci_constructor_t) symbol_get(constructor_name)) ==
- 		    NULL) {
- 			PERROR("Can't get %s driver module constructor.\n",
- 			       module_name);
-@@ -441,7 +441,7 @@ static int me_probe_pci(struct pci_dev *
- 	if ((device & 0xF000) == 0x4000) {	// Bosch build has differnt constructor for me4600.
- 		if ((n_device =
- 		     (*constructor_bosch) (dev, me_bosch_fw)) == NULL) {
--			__symbol_put(constructor_name);
-+			symbol_put(constructor_name);
- 			PERROR
- 			    ("Can't get device instance of %s driver module.\n",
- 			     module_name);
-@@ -450,7 +450,7 @@ static int me_probe_pci(struct pci_dev *
- 	} else {
- #endif
- 		if ((n_device = (*constructor) (dev)) == NULL) {
--			__symbol_put(constructor_name);
-+			symbol_put(constructor_name);
- 			PERROR
- 			    ("Can't get device instance of %s driver module.\n",
- 			     module_name);
-@@ -503,7 +503,7 @@ static void release_instance(me_device_t
- 	if (plugged != ME_PLUGGED_IN) {
- 		PDEBUG("release: medummy_constructor\n");
+ 			if (debug_print) {
+-				char chunk_factor;
+-				unsigned long chunk_base;
++				char gran_factor, chunk_factor;
++				unsigned long gran_base, chunk_base;
  
--		__symbol_put("medummy_constructor");
-+		symbol_put("medummy_constructor");
- 	} else {
- 		if ((dev_id & 0xF000) == 0x6000) {	// Exceptions: me61xx, me62xx, me63xx are handled by one driver.
- 			dev_id &= 0xF0FF;
-@@ -513,7 +513,7 @@ static void release_instance(me_device_t
- 		constructor_name[3] += (char)((dev_id >> 8) & 0x000F);
- 		PDEBUG("release: %s\n", constructor_name);
- 
--		__symbol_put(constructor_name);
-+		symbol_put(constructor_name);
- 	}
- }
- 
++				gran_base = to_size_factor(gran_size >> 10, &gran_factor);
+ 				chunk_base = to_size_factor(chunk_size>>10, &chunk_factor),
+ 				printk(KERN_INFO "\n");
+ 				printk(KERN_INFO "gran_size: %ld%c   chunk_size: %ld%c \n",
 -- 
-Thanks & Regards,
-Kamalesh Babulal,
-Linux Technology Center,
-IBM, ISTL.
+1.5.6.4
