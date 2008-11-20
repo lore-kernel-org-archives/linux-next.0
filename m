@@ -1,76 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the security-testing tree
-Date: Thu, 20 Nov 2008 16:37:34 +1100
-Message-ID: <20081120163734.9e5f0d61.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the proc tree
+Date: Thu, 20 Nov 2008 17:05:30 +1100
+Message-ID: <20081120170530.a8cd0472.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45185 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37466 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751473AbYKTFhq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 20 Nov 2008 00:37:46 -0500
+	id S1751473AbYKTGFn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 20 Nov 2008 01:05:43 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: linux-next@vger.kernel.org, David Howells <dhowells@redhat.com>, Tiger Yang <tiger.yang@oracle.com>, Mark Fasheh <mfasheh@suse.com>, Jan Kara <jack@suse.cz>
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: linux-next@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>
 
-Hi James,
+Hi Alexey,
 
-Today's linux-next merge of the security-testing tree got a conflict in
-fs/ocfs2/namei.c between commit 8b50970dda2c81dfbd120ae650fcf5439f268f37
-("[PATCH 01/10] ocfs2: move new inode allocation out of the transaction")
-from the ocsf2 tree and commit b19c2a3b839b9dfb3f258e8943dc3784ae20c7b0
-("CRED: Wrap task credential accesses in the OCFS2 filesystem") from the
-security-testing tree.
+Today's linux-next merge of the proc tree got a conflict in
+fs/proc/base.c between commit c69e8d9c01db2adc503464993c358901c9af9de4
+("CRED: Use RCU to access another task's creds and to release a task's
+own creds") from the security-testing tree and commit
+e19b45ac5884142791216739fa077cebe626e085 ("proc: don't show the
+wrong /proc/net after unshare") from the proc tree.
 
-I fixed it up (see below) and can carry it.  The ocfs2 tree change moved
-the place where the security-testing tree change to this file needs to be
-made.  The below patch could be applied to the ocfs2 tree (as part of the
-above security-testing patch as all its dependencies are already upstream.
+Just a trivial overlap.  I fixed it up (see below) and can carry the fix.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc fs/ocfs2/namei.c
-index 98fd325,2545e74..0000000
---- a/fs/ocfs2/namei.c
-+++ b/fs/ocfs2/namei.c
-@@@ -187,34 -186,6 +187,34 @@@ bail
-  	return ret;
-  }
-  
- +static struct inode *ocfs2_get_init_inode(struct inode *dir, int mode)
- +{
- +	struct inode *inode;
+diff --cc fs/proc/base.c
+index cf42c42,250154f..0000000
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@@ -1490,8 -1510,7 +1517,9 @@@ static int pid_revalidate(struct dentr
+  {
+  	struct inode *inode = dentry->d_inode;
+  	struct task_struct *task = get_proc_task(inode);
+ +	const struct cred *cred;
++ 	int ret = 0;
  +
- +	inode = new_inode(dir->i_sb);
- +	if (!inode) {
- +		mlog(ML_ERROR, "new_inode failed!\n");
- +		return NULL;
- +	}
- +
- +	/* populate as many fields early on as possible - many of
- +	 * these are used by the support functions here and in
- +	 * callers. */
- +	if (S_ISDIR(mode))
- +		inode->i_nlink = 2;
- +	else
- +		inode->i_nlink = 1;
-- 	inode->i_uid = current->fsuid;
-++	inode->i_uid = current_fsuid();
- +	if (dir->i_mode & S_ISGID) {
- +		inode->i_gid = dir->i_gid;
- +		if (S_ISDIR(mode))
- +			mode |= S_ISGID;
- +	} else
-- 		inode->i_gid = current->fsgid;
-++		inode->i_gid = current_fsgid();
- +	inode->i_mode = mode;
- +	return inode;
- +}
- +
-  static int ocfs2_mknod(struct inode *dir,
-  		       struct dentry *dentry,
-  		       int mode,
+  	if (task) {
+  		if ((inode->i_mode == (S_IFDIR|S_IRUGO|S_IXUGO)) ||
+  		    task_dumpable(task)) {
