@@ -1,75 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the s390 tree
-Date: Thu, 20 Nov 2008 10:13:09 +1100
-Message-ID: <20081120101309.0553d091.sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for November 19 (v4l2 warnings)
+Date: Thu, 20 Nov 2008 11:02:53 +1100
+Message-ID: <20081120110253.c0f2e80b.sfr@canb.auug.org.au>
+References: <20081119175917.7d21cf77.sfr@canb.auug.org.au>
+	<20081119105100.26de5ff0.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__20_Nov_2008_11_02_53_+1100_BlqoAmEZ/EXf0.oU"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57683 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58203 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751712AbYKSXNZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 19 Nov 2008 18:13:25 -0500
+	id S1752010AbYKTADK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 Nov 2008 19:03:10 -0500
+In-Reply-To: <20081119105100.26de5ff0.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: linux-next@vger.kernel.org, David Gibson <david@gibson.dropbear.id.au>, Paul Mackerras <paulus@samba.org>, Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>
 
-Hi Martin,
+--Signature=_Thu__20_Nov_2008_11_02_53_+1100_BlqoAmEZ/EXf0.oU
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the s390 tree got a conflict in
-drivers/char/Kconfig drivers/char/Makefile between commit
-d5e54913433fff89609adfc4b96fefcf807a9030 ("powerpc: udbg-based backend
-for hvc_console") from the powerpc tree and commit
-c7f224c72b6973056497af6bb69efce6d5a19e86 ("[S390] s390/hvc_console: z/VM
-IUCV hypervisor console support") from the s390 tree.
+Hi Mauro,
 
-Just overlapping additions. I fixed it up (see below) and can carry the
-fix.  The conflict could be eliminated by one of the two sets of changes
-moving slightly in the files (I am hinting about the s390 ones here as
-Paul does not like rebasing his tree ...).
--- 
+On Wed, 19 Nov 2008 10:51:00 -0800 Randy Dunlap <randy.dunlap@oracle.com> w=
+rote:
+>
+> On Wed, 19 Nov 2008 17:59:17 +1100 Stephen Rothwell wrote:
+
+(Randy, I didn't really ...)
+
+> drivers/media/video/v4l2-ioctl.c:1819: warning: format '%d' expects type =
+'int', but argument 3 has type 'struct v4l2_fract'
+> drivers/media/video/v4l2-ioctl.c:1819: warning: format '%d' expects type =
+'int', but argument 4 has type 'struct v4l2_fract'
+> drivers/media/video/v4l2-ioctl.c:1819: warning: format '%d' expects type =
+'int', but argument 5 has type 'struct v4l2_fract'
+
+Introduced in commit b35e0c6035369de9f3273b6a3fbb1c67f830cf49 "4L/DVB
+(9578): v4l core: add support for enumerating frame sizes and intervals"
+and been there for some time now.
+
+Mauro, please fix this.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/char/Kconfig
-index f57907a,755adf7..0000000
---- a/drivers/char/Kconfig
-+++ b/drivers/char/Kconfig
-@@@ -631,12 -631,16 +631,22 @@@ config HVC_XE
-  	help
-  	  Xen virtual console device driver
-  
- +config HVC_UDBG
- +       bool "udbg based fake hypervisor console"
- +       depends on PPC && EXPERIMENTAL
- +       select HVC_DRIVER
- +       default n
- +
-+ config HVC_IUCV
-+ 	bool "z/VM IUCV Hypervisor console support (VM only)"
-+ 	depends on S390
-+ 	select HVC_DRIVER
-+ 	select IUCV
-+ 	default y
-+ 	help
-+ 	  This driver provides a Hypervisor console (HVC) back-end to access
-+ 	  a Linux (console) terminal via a z/VM IUCV communication path.
-+ 
-  config VIRTIO_CONSOLE
-  	tristate "Virtio console"
-  	depends on VIRTIO
-diff --cc drivers/char/Makefile
-index 52e1552,36151ba..0000000
---- a/drivers/char/Makefile
-+++ b/drivers/char/Makefile
-@@@ -50,7 -50,7 +50,8 @@@ obj-$(CONFIG_HVC_BEAT)		+= hvc_beat.
-  obj-$(CONFIG_HVC_DRIVER)	+= hvc_console.o
-  obj-$(CONFIG_HVC_IRQ)		+= hvc_irq.o
-  obj-$(CONFIG_HVC_XEN)		+= hvc_xen.o
- +obj-$(CONFIG_HVC_UDBG)		+= hvc_udbg.o
-+ obj-$(CONFIG_HVC_IUCV)		+= hvc_iucv.o
-  obj-$(CONFIG_VIRTIO_CONSOLE)	+= virtio_console.o
-  obj-$(CONFIG_RAW_DRIVER)	+= raw.o
-  obj-$(CONFIG_SGI_SNSC)		+= snsc.o snsc_event.o
+--Signature=_Thu__20_Nov_2008_11_02_53_+1100_BlqoAmEZ/EXf0.oU
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkkqS0ACgkQjjKRsyhoI8z3PwCgjbRalkdjjqLsULyZGncp78FD
+6F8An1SktKaIgWvWeM+yKLL0v8BsMdkI
+=wSC7
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__20_Nov_2008_11_02_53_+1100_BlqoAmEZ/EXf0.oU--
