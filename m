@@ -1,48 +1,42 @@
 From: "Richard A. Holden III" <aciddeath@gmail.com>
-Subject: [PATCH] Remove unused variable from tlv320aic23 codec
-Date: Thu, 20 Nov 2008 11:03:23 -0700
-Message-ID: <1227204203-32112-3-git-send-email-aciddeath@gmail.com>
+Subject: [PATCH] Remove unused variables from the cirrusfb driver
+Date: Thu, 20 Nov 2008 11:03:22 -0700
+Message-ID: <1227204203-32112-2-git-send-email-aciddeath@gmail.com>
 References: <1227204203-32112-1-git-send-email-aciddeath@gmail.com>
- <1227204203-32112-2-git-send-email-aciddeath@gmail.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rv-out-0506.google.com ([209.85.198.238]:10640 "EHLO
+Received: from rv-out-0506.google.com ([209.85.198.233]:11249 "EHLO
 	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755003AbYKTRBc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Nov 2008 12:01:32 -0500
-Received: by rv-out-0506.google.com with SMTP id k40so541081rvb.1
-        for <linux-next@vger.kernel.org>; Thu, 20 Nov 2008 09:01:32 -0800 (PST)
-In-Reply-To: <1227204203-32112-2-git-send-email-aciddeath@gmail.com>
+	with ESMTP id S1755349AbYKTRBb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Nov 2008 12:01:31 -0500
+Received: by rv-out-0506.google.com with SMTP id k40so541083rvb.1
+        for <linux-next@vger.kernel.org>; Thu, 20 Nov 2008 09:01:31 -0800 (PST)
+In-Reply-To: <1227204203-32112-1-git-send-email-aciddeath@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Liam Girdwood <lrg@slimlogic.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, alsa-devel@alsa-project.org
+Cc: linux-kernel@vger.kernel.org
 
-Remove codec var from tlv320aic23_set_dai_sysclk, it is assigned to
-but never read.
+Remove i and s vars from cirrusfb_setup as they are not used
+anywhere in that function. This fixes 2 unused vars build warnings.
 
 Signed-off-by: Richard A. Holden III <aciddeath@gmail.com>
-
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.de>
-Cc: Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: alsa-devel@alsa-project.org
 ---
- sound/soc/codecs/tlv320aic23.c |    2 --
- 1 files changed, 0 insertions(+), 2 deletions(-)
+ drivers/video/cirrusfb.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/tlv320aic23.c b/sound/soc/codecs/tlv320aic23.c
-index 44308da..45395d0 100644
---- a/sound/soc/codecs/tlv320aic23.c
-+++ b/sound/soc/codecs/tlv320aic23.c
-@@ -421,8 +421,6 @@ static int tlv320aic23_set_dai_fmt(struct snd_soc_dai *codec_dai,
- static int tlv320aic23_set_dai_sysclk(struct snd_soc_dai *codec_dai,
- 				      int clk_id, unsigned int freq, int dir)
- {
--	struct snd_soc_codec *codec = codec_dai->codec;
--
- 	switch (freq) {
- 	case 12000000:
- 		return 0;
+diff --git a/drivers/video/cirrusfb.c b/drivers/video/cirrusfb.c
+index 8a87602..a2aa6dd 100644
+--- a/drivers/video/cirrusfb.c
++++ b/drivers/video/cirrusfb.c
+@@ -2462,8 +2462,7 @@ static int __init cirrusfb_init(void)
+ 
+ #ifndef MODULE
+ static int __init cirrusfb_setup(char *options) {
+-	char *this_opt, s[32];
+-	int i;
++	char *this_opt;
+ 
+ 	DPRINTK("ENTER\n");
+ 
 -- 
 1.5.6.4
