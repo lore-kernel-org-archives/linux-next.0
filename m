@@ -1,149 +1,51 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for November 20 (staging* [lots])
-Date: Thu, 20 Nov 2008 12:52:40 -0800
-Message-ID: <20081120125240.149af529.randy.dunlap@oracle.com>
-References: <20081120212907.efc2276b.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] Remove unused variables from the cirrusfb driver
+Date: Fri, 21 Nov 2008 10:34:09 +1100
+Message-ID: <20081121103409.fed9a837.sfr@canb.auug.org.au>
+References: <1227204203-32112-1-git-send-email-aciddeath@gmail.com>
+	<1227204203-32112-2-git-send-email-aciddeath@gmail.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__21_Nov_2008_10_34_09_+1100_o/BJIl1SY+1qXpfe"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755469AbYKTXef@vger.kernel.org>
+In-Reply-To: <1227204203-32112-2-git-send-email-aciddeath@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Richard A. Holden III" <aciddeath@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Fri__21_Nov_2008_10_34_09_+1100_o/BJIl1SY+1qXpfe
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet11.oracle.com ([148.87.113.123]:58559 "EHLO
-	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757572AbYKTUw5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Nov 2008 15:52:57 -0500
-In-Reply-To: <20081120212907.efc2276b.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 20 Nov 2008 21:29:07 +1100 Stephen Rothwell wrote:
+Hi Richard,
 
-> Hi all,
-> 
-> Changes since 20081119:
-> 
-> Undropped trees:
-> 	driver-core
-> 	usb
-> 	staging
+On Thu, 20 Nov 2008 11:03:22 -0700 "Richard A. Holden III" <aciddeath@gmail=
+.com> wrote:
+>
+> Remove i and s vars from cirrusfb_setup as they are not used
+> anywhere in that function. This fixes 2 unused vars build warnings.
 
-drivers/staging/agnx/pci.c:327: error: 'struct ieee80211_if_conf' has no member named 'ssid_len'
-drivers/staging/agnx/pci.c:328: error: 'struct ieee80211_if_conf' has no member named 'ssid'
-drivers/staging/agnx/pci.c:328: error: 'struct ieee80211_if_conf' has no member named 'ssid_len'
-drivers/staging/agnx/pci.c:329: error: 'struct ieee80211_if_conf' has no member named 'ssid'
-drivers/staging/agnx/pci.c:329: error: 'struct ieee80211_if_conf' has no member named 'ssid_len'
-drivers/staging/agnx/pci.c:330: error: 'struct ieee80211_if_conf' has no member named 'ssid_len'
-drivers/staging/agnx/pci.c:331: error: 'struct ieee80211_if_conf' has no member named 'ssid_len'
-drivers/staging/agnx/pci.c:331: error: 'struct ieee80211_if_conf' has no member named 'ssid'
-drivers/staging/agnx/pci.c:331: error: 'struct ieee80211_if_conf' has no member named 'ssid_len'
-drivers/staging/agnx/pci.c:331: error: 'struct ieee80211_if_conf' has no member named 'ssid'
-drivers/staging/agnx/pci.c:331: error: 'struct ieee80211_if_conf' has no member named 'ssid_len'
-(r6260 & r6298 & r6300)
+Thanks for the patch, but this is already fixed in mainline (commit
+ee11940f8e7a2f064af22d52180cb5f9643eef61 "cirrusfb: remove unused
+variables").
 
-drivers/staging/rt2860/rt_profile.c:928: error: 'struct task_struct' has no member named 'fsuid'
-drivers/staging/rt2860/rt_profile.c:929: error: 'struct task_struct' has no member named 'fsgid'
-drivers/staging/rt2860/rt_profile.c:930: error: 'struct task_struct' has no member named 'fsuid'
-drivers/staging/rt2860/rt_profile.c:930: error: 'struct task_struct' has no member named 'fsgid'
-drivers/staging/rt2860/rt_profile.c:1554: error: 'struct task_struct' has no member named 'fsuid'
-drivers/staging/rt2860/rt_profile.c:1555: error: 'struct task_struct' has no member named 'fsgid'
-(r6265)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-(.text+0x5e0): multiple definition of `comedi_unmap'
-(r6272 & r6297 & r6259)
+--Signature=_Fri__21_Nov_2008_10_34_09_+1100_o/BJIl1SY+1qXpfe
+Content-Type: application/pgp-signature
 
-asus_oled.c:(.text+0x164fb4): undefined reference to `usb_bulk_msg'
-asus_oled.c:(.text+0x16508d): undefined reference to `usb_bulk_msg'
-asus_oled.c:(.text+0x1651ef): undefined reference to `usb_put_dev'
-asus_oled.c:(.text+0x1652f3): undefined reference to `usb_bulk_msg'
-asus_oled.c:(.text+0x1654eb): undefined reference to `usb_get_dev'
-asus_oled.c:(.text+0x1655b0): undefined reference to `usb_put_dev'
-asus_oled.c:(.init.text+0xcb01): undefined reference to `usb_register_driver'
-asus_oled.c:(.exit.text+0x1acb): undefined reference to `usb_deregister'
-(r6261)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-drivers/staging/meilhaus/me0600_device.o: WARNING: referencing weak function me0600_pci_constructor for mcount
-drivers/staging/meilhaus/me0900_device.o: WARNING: referencing weak function me0900_pci_constructor for mcount
-drivers/staging/meilhaus/me1400_device.o: WARNING: referencing weak function me1400_pci_constructor for mcount
-drivers/staging/meilhaus/me4600_device.o: WARNING: referencing weak function me4600_pci_constructor for mcount
-drivers/staging/meilhaus/me6000_device.o: WARNING: referencing weak function me6000_pci_constructor for mcount
-drivers/staging/meilhaus/me8100_device.o: WARNING: referencing weak function me8100_pci_constructor for mcount
-(r6263)
+iEYEARECAAYFAkkl8/EACgkQjjKRsyhoI8watQCfeQli2t8ue5fIuXqaqPjNg6fZ
+6WQAn0oqpkpQVgOw928jAL7S+9w2xXjF
+=yc7T
+-----END PGP SIGNATURE-----
 
-drivers/staging/comedi/proc.c:89: error: redefinition of 'comedi_proc_init'
-drivers/staging/comedi/comedidev.h:368: error: previous definition of 'comedi_proc_init' was here
-drivers/staging/comedi/proc.c:98: error: redefinition of 'comedi_proc_cleanup'
-drivers/staging/comedi/comedidev.h:371: error: previous definition of 'comedi_proc_cleanup' was here
-(r6287)
-
-(.init.text+0x0): multiple definition of `init_module'
-(.text+0x1d1d): multiple definition of `me_dlock_lock'
-(.text+0x1c5b): multiple definition of `me_dlist_deinit'
-(.text+0x1ca4): multiple definition of `me_dlist_get_device'
-(.exit.text+0x0): multiple definition of `cleanup_module'
-(.text+0x20fc): multiple definition of `me_slist_add_subdevice_tail'
-(.text+0x2123): multiple definition of `me_slist_deinit'
-(.text+0x1ebc): multiple definition of `me_dlock_enter'
-(.text+0x226c): multiple definition of `me_slock_deinit'
-(.text+0x22f4): multiple definition of `me_slock_lock'
-(.init.text+0x0): multiple definition of `init_module'
-(.text+0x20f0): multiple definition of `me_slist_query_number_subdevices'
-(.text+0x2112): multiple definition of `me_slist_init'
-(.text+0x1d04): multiple definition of `me_dlock_deinit'
-(.text+0x1fb6): multiple definition of `me_subdevice_deinit'
-(.text+0x1c4a): multiple definition of `me_dlist_init'
-(.text+0x220a): multiple definition of `me_slist_get_subdevice'
-(.text+0x226d): multiple definition of `me_slock_init'
-(.text+0x1c34): multiple definition of `me_dlist_add_device_tail'
-(.text+0x222f): multiple definition of `me_slist_del_subdevice_tail'
-(.text+0x1c30): multiple definition of `me_dlist_get_number_devices'
-(.text+0x2285): multiple definition of `me_slock_enter'
-(.text+0x1c28): multiple definition of `me_dlist_query_number_devices'
-(.text+0x1cc9): multiple definition of `me_dlist_del_device_tail'
-(.text+0x1fbf): multiple definition of `me_subdevice_init'
-(.text+0x20f8): multiple definition of `me_slist_get_number_subdevices'
-(.text+0x86): multiple definition of `me_device_deinit'
-(.text+0x1f04): multiple definition of `me_dlock_exit'
-(.text+0xbd): multiple definition of `me_device_pci_init'
-(.text+0x216c): multiple definition of `me_slist_get_subdevice_by_type'
-(.text+0x1d05): multiple definition of `me_dlock_init'
-(.text+0x22cd): multiple definition of `me_slock_exit'
-(.text+0x1d1d): multiple definition of `me_dlock_lock'
-(.text+0x1c5b): multiple definition of `me_dlist_deinit'
-(.text+0x1ca4): multiple definition of `me_dlist_get_device'
-(.exit.text+0x0): multiple definition of `cleanup_module'
-(.text+0x20fc): multiple definition of `me_slist_add_subdevice_tail'
-(.text+0x2123): multiple definition of `me_slist_deinit'
-(.text+0x1ebc): multiple definition of `me_dlock_enter'
-(.text+0x226c): multiple definition of `me_slock_deinit'
-(.text+0x22f4): multiple definition of `me_slock_lock'
-(.init.text+0x0): multiple definition of `init_module'
-(.text+0x20f0): multiple definition of `me_slist_query_number_subdevices'
-(.text+0x2112): multiple definition of `me_slist_init'
-(.text+0x1d04): multiple definition of `me_dlock_deinit'
-(.text+0x1fb6): multiple definition of `me_subdevice_deinit'
-(.text+0x1c4a): multiple definition of `me_dlist_init'
-(.text+0x220a): multiple definition of `me_slist_get_subdevice'
-(.text+0x226d): multiple definition of `me_slock_init'
-(.text+0x1c34): multiple definition of `me_dlist_add_device_tail'
-(.text+0x222f): multiple definition of `me_slist_del_subdevice_tail'
-(.text+0x1c30): multiple definition of `me_dlist_get_number_devices'
-(.text+0x2285): multiple definition of `me_slock_enter'
-(.text+0x1c28): multiple definition of `me_dlist_query_number_devices'
-(.text+0x1cc9): multiple definition of `me_dlist_del_device_tail'
-(.text+0x1fbf): multiple definition of `me_subdevice_init'
-(.text+0x20f8): multiple definition of `me_slist_get_number_subdevices'
-(.text+0x86): multiple definition of `me_device_deinit'
-(.text+0x1f04): multiple definition of `me_dlock_exit'
-(.text+0xbd): multiple definition of `me_device_pci_init'
-(.text+0x216c): multiple definition of `me_slist_get_subdevice_by_type'
-(.text+0x1d05): multiple definition of `me_dlock_init'
-(.text+0x22cd): multiple definition of `me_slock_exit'
-make[4]: *** [drivers/staging/meilhaus/built-in.o] Error 1
-(r6291)
-
-
-Let me know if/which .config files are needed.
-
----
-~Randy
+--Signature=_Fri__21_Nov_2008_10_34_09_+1100_o/BJIl1SY+1qXpfe--
