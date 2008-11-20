@@ -1,58 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the s390 tree
-Date: Thu, 20 Nov 2008 22:57:26 +1100
-Message-ID: <20081120225726.a344891d.sfr@canb.auug.org.au>
-References: <20081120101309.0553d091.sfr@canb.auug.org.au>
-	<1227179414.23671.1.camel@localhost>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH] sfc: Fix dependency for SFC_MTD
+Date: Thu, 20 Nov 2008 04:17:53 -0800 (PST)
+Message-ID: <20081120.041753.264904694.davem@davemloft.net>
+References: <20081119204850.GF8240@solarflare.com>
+	<20081119205353.GG8240@solarflare.com>
+	<4924872E.5070102@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__20_Nov_2008_22_57_26_+1100_DepcZzTVPWDaX4J_"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37419 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751310AbYKTL5n (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 20 Nov 2008 06:57:43 -0500
-In-Reply-To: <1227179414.23671.1.camel@localhost>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:60505
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1754589AbYKTMRx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 20 Nov 2008 07:17:53 -0500
+In-Reply-To: <4924872E.5070102@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: schwidefsky@de.ibm.com
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, linux-next@vger.kernel.org, David Gibson <david@gibson.dropbear.id.au>, Paul Mackerras <paulus@samba.org>, Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+To: randy.dunlap@oracle.com
+Cc: bhutchings@solarflare.com, netdev@vger.kernel.org, linux-net-drivers@solarflare.com, dwmw2@infradead.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org
 
---Signature=_Thu__20_Nov_2008_22_57_26_+1100_DepcZzTVPWDaX4J_
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Date: Wed, 19 Nov 2008 13:37:50 -0800
 
-Hi Martin,
+> Ben Hutchings wrote:
+> > Randy Dunlap found that SFC_MTD was selected when sfc was built-in and
+> > the MTD core was a module.  Don't allow that combination.
+> > 
+> > Signed-off-by: Ben Hutchings <bhutchings@solarflare.com>
+> 
+> Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> I realized that this problem came up because SFC_MTD is a boolean
+> that depends on tristates, so the boolean is set (=y) when
+> SFC=y or SFC=m.  Thus extra handling for it is needed,
+> like Ben did here.
 
-On Thu, 20 Nov 2008 12:10:14 +0100 Martin Schwidefsky <schwidefsky@de.ibm.c=
-om> wrote:
->
-> On Thu, 2008-11-20 at 10:13 +1100, Stephen Rothwell wrote:
-> > Just overlapping additions. I fixed it up (see below) and can carry the
-> > fix.  The conflict could be eliminated by one of the two sets of changes
-> > moving slightly in the files (I am hinting about the s390 ones here as
-> > Paul does not like rebasing his tree ...).
->=20
-> Ok, done. I moved the HCV_ICUV option before HVC_BEAT.
-
-Thanks - just makes my life a little easier :-)
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__20_Nov_2008_22_57_26_+1100_DepcZzTVPWDaX4J_
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkklUKYACgkQjjKRsyhoI8wNOgCghfP1YBlTOl8whkj/YwxL5Lq0
-p+sAoJf/jqgWPkcxZEHTxpLK3P+S39DM
-=7hWE
------END PGP SIGNATURE-----
-
---Signature=_Thu__20_Nov_2008_22_57_26_+1100_DepcZzTVPWDaX4J_--
+Applied, thanks everyone.
