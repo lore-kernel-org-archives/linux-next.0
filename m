@@ -1,15 +1,15 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the proc tree
-Date: Thu, 20 Nov 2008 17:05:30 +1100
-Message-ID: <20081120170530.a8cd0472.sfr@canb.auug.org.au>
+Date: Thu, 20 Nov 2008 17:12:12 +1100
+Message-ID: <20081120171212.7380ea43.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37466 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53837 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751473AbYKTGFn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 20 Nov 2008 01:05:43 -0500
+	id S1752453AbYKTGM1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 20 Nov 2008 01:12:27 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Alexey Dobriyan <adobriyan@gmail.com>
@@ -17,30 +17,33 @@ Cc: linux-next@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Dav
 
 Hi Alexey,
 
-Today's linux-next merge of the proc tree got a conflict in
-fs/proc/base.c between commit c69e8d9c01db2adc503464993c358901c9af9de4
-("CRED: Use RCU to access another task's creds and to release a task's
-own creds") from the security-testing tree and commit
-e19b45ac5884142791216739fa077cebe626e085 ("proc: don't show the
-wrong /proc/net after unshare") from the proc tree.
+Today's linux-next merge of the proc tree got a conflict in kernel/exit.c
+between commit c69e8d9c01db2adc503464993c358901c9af9de4 ("CRED: Use RCU
+to access another task's creds and to release a task's own creds") from
+the security-testing tree and commit
+214ce93109bdec6fa474c8f742d56911180a8d4a ("proc: implement support for
+automounts in task directories") from the proc tree.
 
-Just a trivial overlap.  I fixed it up (see below) and can carry the fix.
+I fixed it up (see below) and can carry the fix.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc fs/proc/base.c
-index cf42c42,250154f..0000000
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@@ -1490,8 -1510,7 +1517,9 @@@ static int pid_revalidate(struct dentr
-  {
-  	struct inode *inode = dentry->d_inode;
-  	struct task_struct *task = get_proc_task(inode);
- +	const struct cred *cred;
-+ 	int ret = 0;
+diff --cc kernel/exit.c
+index 048065d,abd5bd4..0000000
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@@ -166,10 -164,8 +166,11 @@@ void release_task(struct task_struct * 
+  	int zap_leader;
+  repeat:
+  	tracehook_prepare_release_task(p);
+ -	atomic_dec(&p->user->processes);
+ +	/* don't need to get the RCU readlock here - the process is dead and
+ +	 * can't be modifying its own credentials */
+ +	atomic_dec(&__task_cred(p)->user->processes);
  +
-  	if (task) {
-  		if ((inode->i_mode == (S_IFDIR|S_IRUGO|S_IXUGO)) ||
-  		    task_dumpable(task)) {
++ 	proc_shrink_automounts();
+  	proc_flush_task(p);
+  	write_lock_irq(&tasklist_lock);
+  	tracehook_finish_release_task(p);
