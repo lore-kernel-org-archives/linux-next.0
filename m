@@ -1,44 +1,93 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: linux-next: manual merge of the wireless tree
-Date: Thu, 20 Nov 2008 08:48:09 -0500
-Message-ID: <20081120134808.GA4329@tuxdriver.com>
-References: <20081120140750.1373326e.sfr@canb.auug.org.au> <20081120.002705.95132527.davem@davemloft.net>
+From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Subject: Re: linux-next-20081120 - staging - meilhaus driver build fails
+Date: Thu, 20 Nov 2008 21:46:45 +0530
+Message-ID: <20081120161645.GA4821@linux.vnet.ibm.com>
+References: <20081120212907.efc2276b.sfr@canb.auug.org.au>
+Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:41814 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754756AbYKTOBR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Nov 2008 09:01:17 -0500
+Content-Type: text/plain; charset=iso-8859-1
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755540AbYKTQTy@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20081120.002705.95132527.davem@davemloft.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, johannes@sipsolutions.net, tomas.winkler@intel.com, reinette.chatre@intel.com, yi.zhu@intel.com
+In-Reply-To: <20081120212907.efc2276b.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de, k.gantzke@meilhaus.de
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Nov 20, 2008 at 12:27:05AM -0800, David Miller wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 20 Nov 2008 14:07:50 +1100
-> 
-> > Today's linux-next merge of the wireless tree got a conflict in
-> > drivers/net/wireless/iwlwifi/iwl-rx.c between commit
-> > 4018517a1a69a85c3d61b20fa02f187b80773137 ("iwlagn: fix RX skb alignment")
-> > from the wireless-current tree and commit
-> > 07e27f25d0c73f42562473f642f20b8fa996a9de ("iwlwifi: move rx queue read
-> > pointer into rxq") from the wireless tree.
-> > 
-> > I wasn't sure how to resolve the conflict so have dropped the wireless
-> > tree for today.  I assume it will be fixed in the wireless (or net) tree
-> > soon.
-> 
-> I'll sort these out with John somehow, thanks for the report
-> Stephen,
+Hi Stephen,
 
-I have all these sorted (including the ieee80211_notify_mac one)
-in the merge-test branch of wireless-next-2.6.
+ next-20081120 kernel randconfig on x86_64 box fails, while !CONFIG_MODULES
 
-John
+drivers/staging/meilhaus/memain.c: In function 'me_probe_pci':
+drivers/staging/meilhaus/memain.c:425: error: implicit declaration of function '__symbol_get'
+drivers/staging/meilhaus/memain.c:425: warning: cast to pointer from integer of different size
+drivers/staging/meilhaus/memain.c:433: warning: cast to pointer from integer of different size
+drivers/staging/meilhaus/memain.c:453: error: implicit declaration of function '__symbol_put'
+make[3]: *** [drivers/staging/meilhaus/memain.o] Error 1
+
+the driver uses __symbol_get and __symbol_put instead of marco's symbol_get and symbol_put, 
+I have only build tested the patch.
+
+Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+---
+--- linux/drivers/staging/meilhaus/memain.c	2008-11-20 06:08:43.000000000 -0500
++++ linux/drivers/staging/meilhaus/~memain.c	2008-11-20 09:04:15.000000000 -0500
+@@ -422,7 +422,7 @@ static int me_probe_pci(struct pci_dev *
+ 	PDEBUG("module_name: %s\n", module_name);
+ 
+ 	if ((constructor =
+-	     (me_pci_constructor_t) __symbol_get(constructor_name)) == NULL) {
++	     (me_pci_constructor_t) symbol_get(constructor_name)) == NULL) {
+ 		if (request_module(module_name)) {
+ 			PERROR("Error while request for module %s.\n",
+ 			       module_name);
+@@ -430,7 +430,7 @@ static int me_probe_pci(struct pci_dev *
+ 		}
+ 
+ 		if ((constructor =
+-		     (me_pci_constructor_t) __symbol_get(constructor_name)) ==
++		     (me_pci_constructor_t) symbol_get(constructor_name)) ==
+ 		    NULL) {
+ 			PERROR("Can't get %s driver module constructor.\n",
+ 			       module_name);
+@@ -441,7 +441,7 @@ static int me_probe_pci(struct pci_dev *
+ 	if ((device & 0xF000) == 0x4000) {	// Bosch build has differnt constructor for me4600.
+ 		if ((n_device =
+ 		     (*constructor_bosch) (dev, me_bosch_fw)) == NULL) {
+-			__symbol_put(constructor_name);
++			symbol_put(constructor_name);
+ 			PERROR
+ 			    ("Can't get device instance of %s driver module.\n",
+ 			     module_name);
+@@ -450,7 +450,7 @@ static int me_probe_pci(struct pci_dev *
+ 	} else {
+ #endif
+ 		if ((n_device = (*constructor) (dev)) == NULL) {
+-			__symbol_put(constructor_name);
++			symbol_put(constructor_name);
+ 			PERROR
+ 			    ("Can't get device instance of %s driver module.\n",
+ 			     module_name);
+@@ -503,7 +503,7 @@ static void release_instance(me_device_t
+ 	if (plugged != ME_PLUGGED_IN) {
+ 		PDEBUG("release: medummy_constructor\n");
+ 
+-		__symbol_put("medummy_constructor");
++		symbol_put("medummy_constructor");
+ 	} else {
+ 		if ((dev_id & 0xF000) == 0x6000) {	// Exceptions: me61xx, me62xx, me63xx are handled by one driver.
+ 			dev_id &= 0xF0FF;
+@@ -513,7 +513,7 @@ static void release_instance(me_device_t
+ 		constructor_name[3] += (char)((dev_id >> 8) & 0x000F);
+ 		PDEBUG("release: %s\n", constructor_name);
+ 
+-		__symbol_put(constructor_name);
++		symbol_put(constructor_name);
+ 	}
+ }
+ 
 -- 
-John W. Linville		Linux should be at the core
-linville@tuxdriver.com			of your literate lifestyle.
+Thanks & Regards,
+Kamalesh Babulal,
+Linux Technology Center,
+IBM, ISTL.
