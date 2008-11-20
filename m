@@ -1,59 +1,48 @@
 From: "Richard A. Holden III" <aciddeath@gmail.com>
-Subject: [PATCH] Fix arch/x86/kernel/cpu/mtrr/main.c build warning
-Date: Thu, 20 Nov 2008 11:03:21 -0700
-Message-ID: <1227204203-32112-1-git-send-email-aciddeath@gmail.com>
+Subject: [PATCH] Remove unused variable from tlv320aic23 codec
+Date: Thu, 20 Nov 2008 11:03:23 -0700
+Message-ID: <1227204203-32112-3-git-send-email-aciddeath@gmail.com>
+References: <1227204203-32112-1-git-send-email-aciddeath@gmail.com>
+ <1227204203-32112-2-git-send-email-aciddeath@gmail.com>
 Return-path: <linux-next-owner@vger.kernel.org>
 Received: from rv-out-0506.google.com ([209.85.198.238]:10640 "EHLO
 	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753543AbYKTRBb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Nov 2008 12:01:31 -0500
+	with ESMTP id S1755003AbYKTRBc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Nov 2008 12:01:32 -0500
 Received: by rv-out-0506.google.com with SMTP id k40so541081rvb.1
-        for <linux-next@vger.kernel.org>; Thu, 20 Nov 2008 09:01:30 -0800 (PST)
+        for <linux-next@vger.kernel.org>; Thu, 20 Nov 2008 09:01:32 -0800 (PST)
+In-Reply-To: <1227204203-32112-2-git-send-email-aciddeath@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Liam Girdwood <lrg@slimlogic.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, alsa-devel@alsa-project.org
 
-Fix
-arch/x86/kernel/cpu/mtrr/main.c: In function 'mtrr_bp_init':
-arch/x86/kernel/cpu/mtrr/main.c:1364: warning: 'gran_base' may be used uninitialized in this function
-
-gran_base is only used within the if (debug_print) sections of the for loop, so combine both sections
-and move the declaration to within if (debug_print). The overhead of to_size_factor may be a consideration
-but the compiler should be able to optimize out the multiple calls.
+Remove codec var from tlv320aic23_set_dai_sysclk, it is assigned to
+but never read.
 
 Signed-off-by: Richard A. Holden III <aciddeath@gmail.com>
----
- arch/x86/kernel/cpu/mtrr/main.c |   10 +++-------
- 1 files changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/mtrr/main.c b/arch/x86/kernel/cpu/mtrr/main.c
-index c091d06..b751e3a 100644
---- a/arch/x86/kernel/cpu/mtrr/main.c
-+++ b/arch/x86/kernel/cpu/mtrr/main.c
-@@ -1360,20 +1360,16 @@ static int __init mtrr_cleanup(unsigned address_bits)
- 	memset(min_loss_pfn, 0xff, sizeof(min_loss_pfn));
- 	memset(result, 0, sizeof(result));
- 	for (gran_size = (1ULL<<16); gran_size < (1ULL<<32); gran_size <<= 1) {
--		char gran_factor;
--		unsigned long gran_base;
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>
+Cc: Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: alsa-devel@alsa-project.org
+---
+ sound/soc/codecs/tlv320aic23.c |    2 --
+ 1 files changed, 0 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/codecs/tlv320aic23.c b/sound/soc/codecs/tlv320aic23.c
+index 44308da..45395d0 100644
+--- a/sound/soc/codecs/tlv320aic23.c
++++ b/sound/soc/codecs/tlv320aic23.c
+@@ -421,8 +421,6 @@ static int tlv320aic23_set_dai_fmt(struct snd_soc_dai *codec_dai,
+ static int tlv320aic23_set_dai_sysclk(struct snd_soc_dai *codec_dai,
+ 				      int clk_id, unsigned int freq, int dir)
+ {
+-	struct snd_soc_codec *codec = codec_dai->codec;
 -
--		if (debug_print)
--			gran_base = to_size_factor(gran_size >> 10, &gran_factor);
- 
- 		for (chunk_size = gran_size; chunk_size < (1ULL<<32);
- 		     chunk_size <<= 1) {
- 			int num_reg;
- 
- 			if (debug_print) {
--				char chunk_factor;
--				unsigned long chunk_base;
-+				char gran_factor, chunk_factor;
-+				unsigned long gran_base, chunk_base;
- 
-+				gran_base = to_size_factor(gran_size >> 10, &gran_factor);
- 				chunk_base = to_size_factor(chunk_size>>10, &chunk_factor),
- 				printk(KERN_INFO "\n");
- 				printk(KERN_INFO "gran_size: %ld%c   chunk_size: %ld%c \n",
+ 	switch (freq) {
+ 	case 12000000:
+ 		return 0;
 -- 
 1.5.6.4
