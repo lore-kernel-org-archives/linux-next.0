@@ -1,51 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: rr tree build failure
-Date: Fri, 21 Nov 2008 14:19:13 +1100
-Message-ID: <20081121141913.90d05091.sfr@canb.auug.org.au>
+From: Stephen Hemminger <shemminger@vyatta.com>
+Subject: Re: linux-next: net tree build failure
+Date: Thu, 20 Nov 2008 20:02:26 -0800
+Message-ID: <20081120200226.6dc2b209@extreme>
+References: <20081121134457.85e1d384.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__21_Nov_2008_14_19_13_+1100_GuY7K+MKofBKrSxT"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49332 "EHLO smtps.tip.net.au"
+Received: from mail.vyatta.com ([76.74.103.46]:49718 "EHLO mail.vyatta.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756461AbYKUDT1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 20 Nov 2008 22:19:27 -0500
+	id S1751687AbYKUEC2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 20 Nov 2008 23:02:28 -0500
+In-Reply-To: <20081121134457.85e1d384.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org
 
---Signature=_Fri__21_Nov_2008_14_19_13_+1100_GuY7K+MKofBKrSxT
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 21 Nov 2008 13:44:57 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi Rusty,
+> Hi Dave,
+> 
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> 
+> drivers/net/acenic.c:461: error: 'ace_vlan_rx_register' undeclared here (not in a function)
+> 
+> Caused by commit d8b83c57a7e497cba9b5cb156e63176323035785 ("acenic:
+> convert to net_device_ops").  This commit should also be looked at
+> again as ace_vlan_rx_register() is only defined if ACENIC_DO_VLAN is
+> set but it is used in net_device_ops unconditionally.   And it needs to
+> be forward declared to get rid of the compiler error above, of course.
+> 
+> I have dropped the net tree for today.
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-
-drivers/usb/core/usb.c:958:76: error: macro "__module_param_call" requires =
-7 arguments, but only 6 given
-
-Caused by commit 636c06e04b23e9dabf709c496cb9a28459f63eaa
-("param:core_param-really-really-early").
-
-I have dropped the rr tree again.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__21_Nov_2008_14_19_13_+1100_GuY7K+MKofBKrSxT
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkmKLEACgkQjjKRsyhoI8ye8gCglZA7quYKyz55TRQbc1sP+/5I
-6+oAn3oqtMXyfVrbnZVsobM2+5Cu6/bU
-=xpKW
------END PGP SIGNATURE-----
-
---Signature=_Fri__21_Nov_2008_14_19_13_+1100_GuY7K+MKofBKrSxT--
+Fixed by later patch (in second wave)
