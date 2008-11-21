@@ -1,25 +1,106 @@
 From: "Alexander Beregalov" <a.beregalov@gmail.com>
-Subject: next-20081121: WARNING: at lib/debugobjects.c: hpet
-Date: Fri, 21 Nov 2008 13:23:45 +0300
-Message-ID: <a4423d670811210223j53883165mb6651d8fa1bef95f@mail.gmail.com>
+Subject: next-20081121:WARNING: at drivers/dma/dmaengine.c:665 dma_async_device_unregister()
+Date: Fri, 21 Nov 2008 13:40:39 +0300
+Message-ID: <a4423d670811210240t77ec97d1pbe1ef0e4ae3a1a2e@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from yw-out-2324.google.com ([74.125.46.29]:7619 "EHLO
-	yw-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752110AbYKUKXr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Nov 2008 05:23:47 -0500
-Received: by yw-out-2324.google.com with SMTP id 9so387513ywe.1
-        for <linux-next@vger.kernel.org>; Fri, 21 Nov 2008 02:23:45 -0800 (PST)
+Received: from yx-out-2324.google.com ([74.125.44.30]:38007 "EHLO
+	yx-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755285AbYKUKkk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Nov 2008 05:40:40 -0500
+Received: by yx-out-2324.google.com with SMTP id 8so388042yxm.1
+        for <linux-next@vger.kernel.org>; Fri, 21 Nov 2008 02:40:39 -0800 (PST)
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, vojtech@suse.cz, tglx@linutronix.de
+To: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, maciej.sosnowski@intel.com, dan.j.williams@intel.com
 
 Hi
 
-It is x86_64 SMP
+It occured during shutdown process:
+
+sd 0:2:0:0: [sda] Synchronizing SCSI cache
+ioatdma 0000:00:08.0: Removing dma and dca services
+------------[ cut here ]------------
+WARNING: at drivers/dma/dmaengine.c:665 dma_async_device_unregister+0x90/0xd0()
+dma_async_device_unregister called while 1 clients hold a reference
+Modules linked in:
+Pid: 12246, comm: reboot Tainted: G        W  2.6.28-rc5-next-20081121 #8
+Call Trace:
+ [<ffffffff80236b7c>] warn_slowpath+0xae/0xd5
+ [<ffffffff80298414>] ? add_partial+0x1a/0x50
+ [<ffffffff804588e6>] ? dma_async_device_unregister+0x22/0xd0
+ [<ffffffff802576c4>] ? trace_hardirqs_on_caller+0x1f/0x153
+ [<ffffffff804e4829>] ? __mutex_lock_common+0x371/0x3be
+ [<ffffffff804588e6>] ? dma_async_device_unregister+0x22/0xd0
+ [<ffffffff802576c4>] ? trace_hardirqs_on_caller+0x1f/0x153
+ [<ffffffff80257805>] ? trace_hardirqs_on+0xd/0xf
+ [<ffffffff804e4a51>] ? __mutex_unlock_slowpath+0x13c/0x145
+ [<ffffffff80458954>] dma_async_device_unregister+0x90/0xd0
+ [<ffffffff80459b62>] ioat_dma_remove+0x1c/0xd0
+ [<ffffffff80459992>] ioat_shutdown_functionality+0x66/0x74
+ [<ffffffff80388ad2>] pci_device_shutdown+0x24/0x38
+ [<ffffffff803e042c>] device_shutdown+0x50/0x99
+ [<ffffffff80245612>] kernel_restart_prepare+0x27/0x2e
+ [<ffffffff80245652>] kernel_restart+0x11/0x44
+ [<ffffffff802457af>] sys_reboot+0x11d/0x149
+ [<ffffffff8024d3f1>] ? hrtimer_nanosleep+0x104/0x119
+ [<ffffffff8024c9f6>] ? hrtimer_wakeup+0x0/0x21
+ [<ffffffff804e4ab5>] ? do_nanosleep+0x50/0xb6
+ [<ffffffff802576c4>] ? trace_hardirqs_on_caller+0x1f/0x153
+ [<ffffffff804e583a>] ? trace_hardirqs_on_thunk+0x3a/0x3f
+ [<ffffffff8020b75b>] system_call_fastpath+0x16/0x1b
+---[ end trace 4eaa2a86a8e2da22 ]---
+------------[ cut here ]------------
+WARNING: at drivers/base/core.c:122 device_release+0x66/0x68()
+Device 'dma0chan0' does not have a release() function, it is broken and must be
+fixed.
+Modules linked in:
+Pid: 12246, comm: reboot Tainted: G        W  2.6.28-rc5-next-20081121 #8
+Call Trace:
+ [<ffffffff80236b7c>] warn_slowpath+0xae/0xd5
+ [<ffffffff802e4812>] ? release_sysfs_dirent+0x7d/0x9d
+ [<ffffffff802e484a>] ? __sysfs_put+0x18/0x1a
+ [<ffffffff802e4aa3>] ? sysfs_addrm_finish+0x233/0x27b
+ [<ffffffff802af85f>] ? ifind+0x2c/0x84
+ [<ffffffff80257805>] ? trace_hardirqs_on+0xd/0xf
+ [<ffffffff804e44a4>] ? mutex_trylock+0x146/0x15a
+ [<ffffffff802e4668>] ? sysfs_addrm_start+0x78/0xa5
+ [<ffffffff802e4668>] ? sysfs_addrm_start+0x78/0xa5
+ [<ffffffff8037657c>] ? kobj_kset_leave+0x1e/0x57
+ [<ffffffff803e0b57>] device_release+0x66/0x68
+ [<ffffffff8037663e>] kobject_release+0x52/0x68
+ [<ffffffff803765ec>] ? kobject_release+0x0/0x68
+ [<ffffffff80377429>] kref_put+0x43/0x4f
+ [<ffffffff80376546>] kobject_put+0x47/0x4b
+ [<ffffffff803e048a>] put_device+0x15/0x17
+ [<ffffffff803e12a3>] device_unregister+0x19/0x1e
+ [<ffffffff80458968>] dma_async_device_unregister+0xa4/0xd0
+ [<ffffffff80459b62>] ioat_dma_remove+0x1c/0xd0
+ [<ffffffff80459992>] ioat_shutdown_functionality+0x66/0x74
+ [<ffffffff80388ad2>] pci_device_shutdown+0x24/0x38
+ [<ffffffff803e042c>] device_shutdown+0x50/0x99
+ [<ffffffff80245612>] kernel_restart_prepare+0x27/0x2e
+ [<ffffffff80245652>] kernel_restart+0x11/0x44
+ [<ffffffff802457af>] sys_reboot+0x11d/0x149
+ [<ffffffff8024d3f1>] ? hrtimer_nanosleep+0x104/0x119
+ [<ffffffff8024c9f6>] ? hrtimer_wakeup+0x0/0x21
+ [<ffffffff804e4ab5>] ? do_nanosleep+0x50/0xb6
+ [<ffffffff802576c4>] ? trace_hardirqs_on_caller+0x1f/0x153
+ [<ffffffff804e583a>] ? trace_hardirqs_on_thunk+0x3a/0x3f
+ [<ffffffff8020b75b>] system_call_fastpath+0x16/0x1b
+---[ end trace 4eaa2a86a8e2da22 ]---
+------------[ cut here ]------------
+WARNING: at drivers/base/core.c:122 device_release+0x66/0x68()
+Device 'dma0chan1' does not have a release() function, it is broken and must be
+fixed.
+Modules linked in:
+Pid: 12246, comm: reboot Tainted: G        W  2.6.28-rc5-next-20081121 #8
+
+
+I guess it was tainted by previous warning on hpet:
 
 hpet0: at MMIO 0xfed00000, IRQs 2, 8, 0
 hpet0: 3 comparators, 64-bit 14.318180 MHz counter
@@ -29,36 +110,3 @@ WARNING: at lib/debugobjects.c:251 __debug_object_init+0x2bf/0x36d()
 Modules linked in:
 Pid: 1, comm: swapper Not tainted 2.6.28-rc5-next-20081121 #8
 Call Trace:
- [<ffffffff80236bfb>] warn_on_slowpath+0x58/0x7d
- [<ffffffff804e3405>] ? printk+0x67/0x6a
- [<ffffffff803803cc>] ? __debug_object_init+0x191/0x36d
- [<ffffffff803804fa>] __debug_object_init+0x2bf/0x36d
- [<ffffffff80297856>] ? compound_order+0x15/0x26
- [<ffffffff803805d5>] debug_object_init+0x14/0x17
- [<ffffffff8023fcbf>] init_timer+0x18/0x5b
- [<ffffffff8022087d>] hpet_cpuhp_notify+0x93/0x105
- [<ffffffff802209b6>] ? hpet_work+0x0/0x206
- [<ffffffff803d1ae8>] ? hpet_alloc+0x333/0x38f
- [<ffffffff802577cd>] ? trace_hardirqs_on_caller+0x128/0x153
- [<ffffffff80257805>] ? trace_hardirqs_on+0xd/0xf
- [<ffffffff806d15f5>] ? hpet_late_init+0x0/0x19e
- [<ffffffff806d15f5>] ? hpet_late_init+0x0/0x19e
- [<ffffffff806d175f>] hpet_late_init+0x16a/0x19e
- [<ffffffff806cf7c2>] ? print_all_ICs+0x0/0x540
- [<ffffffff80209058>] _stext+0x58/0x138
- [<ffffffff804e5e83>] ? _spin_unlock+0x4a/0x57
- [<ffffffff802de3c4>] ? proc_register+0x10b/0x118
- [<ffffffff802de4f9>] ? create_proc_entry+0x7e/0x94
- [<ffffffff80268745>] ? register_irq_proc+0xb0/0xcc
- [<ffffffff802d0000>] ? do_usbdevfs_discsignal+0x20/0x84
- [<ffffffff806c666d>] kernel_init+0x125/0x179
- [<ffffffff804e583a>] ? trace_hardirqs_on_thunk+0x3a/0x3f
- [<ffffffff8020c8a9>] child_rip+0xa/0x11
- [<ffffffff8020bd98>] ? restore_args+0x0/0x30
- [<ffffffff806c6548>] ? kernel_init+0x0/0x179
- [<ffffffff8020c89f>] ? child_rip+0x0/0x11
----[ end trace 4eaa2a86a8e2da22 ]---
-Switched to high resolution mode on CPU 0
-Switched to high resolution mode on CPU 3
-Switched to high resolution mode on CPU 2
-Switched to high resolution mode on CPU 1
