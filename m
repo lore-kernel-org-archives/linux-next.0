@@ -1,47 +1,59 @@
-From: Richard Holden <aciddeath@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: [PATCH] Remove unused variables from the cirrusfb driver
-Date: Thu, 20 Nov 2008 23:12:42 -0700
-Message-ID: <DE425C06-700A-4042-B0AB-1CDE2134C4DF@gmail.com>
-References: <1227204203-32112-1-git-send-email-aciddeath@gmail.com> <1227204203-32112-2-git-send-email-aciddeath@gmail.com> <20081121103409.fed9a837.sfr@canb.auug.org.au>
-Mime-Version: 1.0 (Apple Message framework v929.2)
-Content-Type: text/plain; charset=US-ASCII; format=flowed; delsp=yes
-Content-Transfer-Encoding: 7bit
+Date: Fri, 21 Nov 2008 17:40:27 +1100
+Message-ID: <20081121174027.f95bad9a.sfr@canb.auug.org.au>
+References: <1227204203-32112-1-git-send-email-aciddeath@gmail.com>
+	<1227204203-32112-2-git-send-email-aciddeath@gmail.com>
+	<20081121103409.fed9a837.sfr@canb.auug.org.au>
+	<DE425C06-700A-4042-B0AB-1CDE2134C4DF@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__21_Nov_2008_17_40_27_+1100_WXyPubIGuJV0h/eC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rv-out-0506.google.com ([209.85.198.237]:3898 "EHLO
-	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751130AbYKUGMo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Nov 2008 01:12:44 -0500
-Received: by rv-out-0506.google.com with SMTP id k40so806770rvb.1
-        for <linux-next@vger.kernel.org>; Thu, 20 Nov 2008 22:12:43 -0800 (PST)
-In-Reply-To: <20081121103409.fed9a837.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:59068 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751549AbYKUGkq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 21 Nov 2008 01:40:46 -0500
+In-Reply-To: <DE425C06-700A-4042-B0AB-1CDE2134C4DF@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Richard Holden <aciddeath@gmail.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+--Signature=_Fri__21_Nov_2008_17_40_27_+1100_WXyPubIGuJV0h/eC
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Nov 20, 2008, at 4:34 PM, Stephen Rothwell wrote:
+Hi Richard,
 
-> Hi Richard,
+On Thu, 20 Nov 2008 23:12:42 -0700 Richard Holden <aciddeath@gmail.com> wro=
+te:
 >
-> On Thu, 20 Nov 2008 11:03:22 -0700 "Richard A. Holden III" <aciddeath@gmail.com 
-> > wrote:
->>
->> Remove i and s vars from cirrusfb_setup as they are not used
->> anywhere in that function. This fixes 2 unused vars build warnings.
->
-> Thanks for the patch, but this is already fixed in mainline (commit
-> ee11940f8e7a2f064af22d52180cb5f9643eef61 "cirrusfb: remove unused
-> variables").
->
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
+> Am I right in assuming you pulled mainline before this commit for =20
+> next-20081120? I don't see the changelog in next and I'm getting the =20
+> build warnings still, but I can recheck this in the next version of =20
+> next.
 
-Am I right in assuming you pulled mainline before this commit for  
-next-20081120? I don't see the changelog in next and I'm getting the  
-build warnings still, but I can recheck this in the next version of  
-next.
+Yes, I refetch all the trees before I begin building the tree each day.
+That patch went to Linus yesterday so it will be in today's linux-next
+when I release it.
 
--Richard Holden
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__21_Nov_2008_17_40_27_+1100_WXyPubIGuJV0h/eC
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkmV9sACgkQjjKRsyhoI8xFCACbBMbihhSlR1xfCl5hmWBKmbAN
+WtEAoIELMyIrOCe62KsAh64Gx0UYcVcz
+=Ffw3
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__21_Nov_2008_17_40_27_+1100_WXyPubIGuJV0h/eC--
