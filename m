@@ -1,49 +1,30 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: rr tree build failure
-Date: Fri, 21 Nov 2008 21:28:51 +1030
-Message-ID: <200811212128.52317.rusty@rustcorp.com.au>
-References: <20081121141913.90d05091.sfr@canb.auug.org.au>
+From: "Alexander Beregalov" <a.beregalov@gmail.com>
+Subject: Re: next-20081117: kernel freezes with netconsole enabled
+Date: Fri, 21 Nov 2008 19:52:02 +0300
+Message-ID: <a4423d670811210852q739a3929g23a0476927bbcc11@mail.gmail.com>
+References: <20081119175740.GE12456@orion> <1227119251.3149.57.camel@calx>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:33904 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753306AbYKUK64 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 21 Nov 2008 05:58:56 -0500
-In-Reply-To: <20081121141913.90d05091.sfr@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <1227119251.3149.57.camel@calx>
 Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Greg KH <gregkh@suse.de>, Pete Zaitcev <zaitcev@redhat.com>
+Sender: netdev-owner@vger.kernel.org
+To: Matt Mackall <mpm@selenic.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, satyam.sharma@gmail.com
+List-Id: linux-next.vger.kernel.org
 
-T24gRnJpZGF5IDIxIE5vdmVtYmVyIDIwMDggMTM6NDk6MTMgU3RlcGhlbiBSb3Rod2VsbCB3cm90
-ZToKPiBIaSBSdXN0eSwKPgo+IFRvZGF5J3MgbGludXgtbmV4dCBidWlsZCAocG93ZXJwYyBwcGM2
-NF9kZWZjb25maWcpIGZhaWxlZCBsaWtlIHRoaXM6Cj4KPiBkcml2ZXJzL3VzYi9jb3JlL3VzYi5j
-Ojk1ODo3NjogZXJyb3I6IG1hY3JvICJfX21vZHVsZV9wYXJhbV9jYWxsIiByZXF1aXJlcwo+IDcg
-YXJndW1lbnRzLCBidXQgb25seSA2IGdpdmVuCj4KPiBDYXVzZWQgYnkgY29tbWl0IDYzNmMwNmUw
-NGIyM2U5ZGFiZjcwOWM0OTZjYjlhMjg0NTlmNjNlYWEKPiAoInBhcmFtOmNvcmVfcGFyYW0tcmVh
-bGx5LXJlYWxseS1lYXJseSIpLgo+Cj4gSSBoYXZlIGRyb3BwZWQgdGhlIHJyIHRyZWUgYWdhaW4u
-CgpZZXMsIEkgZGlkbid0IGdldCBhIHJlcGx5IGZyb20gR3JlZyBhYm91dCB3aGV0aGVyIGhlIHJl
-YWxseSBuZWVkcyAibm91c2IiIHRvCmJlIGEgbW9kdWxlIHBhcmFtLCBzbyBJIGRyb3BwZWQgbXkg
-cHJvcG9zZWQgVVNCIGZpeC4gIEkndmUgcmVzdG9yZWQgaXQgbm93LgoKR3JlZywgaGVyZSdzIHRo
-ZSBjb21wbGV0ZSBwYXRjaCBJIGhhdmUgbm93OgoKU3ViamVjdDogVVNCOiBVc2UgY29yZV9wYXJh
-bS4KCkZvdW5kIHRoaXMgd2hlbiBJIGNoYW5nZWQgYXJncyB0byBfX21vZHVsZV9wYXJhbV9jYWxs
-LiAgV2Ugbm93IGhhdmUKY29yZV9wYXJhbSBmb3IgZXhhY3RseSB0aGlzLgoKVGhpcyByZXZlcnRz
-IHRvIHRoZSAyMDA1IChwcmUtIGFhZmJmMjRhKSBiZWhhdmlvdXIgd2hlcmUgIm5vdXNiIiB3YXMK
-bm90IGEgbW9kdWxlIHBhcmFtZXRlciwganVzdCBhIGtlcm5lbCBjb21tYW5kIGxpbmUgcGFyYW1l
-dGVyLiAgVGhhdCdzCm1vcmUgc2Vuc2libGUgYW55d2F5LgoKU2lnbmVkLW9mZi1ieTogUnVzdHkg
-UnVzc2VsbCA8cnVzdHlAcnVzdGNvcnAuY29tLmF1PgpDYzogR3JlZyBLcm9haC1IYXJ0bWFuIDxn
-cmVna2hAc3VzZS5kZT4KQ2M6IFBldGUgWmFpdGNldiA8emFpdGNldkByZWRoYXQuY29tPgotLS0K
-IGRyaXZlcnMvdXNiL2NvcmUvdXNiLmMgfCAgICA0ICsrKy0KIDEgZmlsZSBjaGFuZ2VkLCAzIGlu
-c2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKCi0tLSBsaW51eC0yLjYub3JpZy9kcml2ZXJzL3Vz
-Yi9jb3JlL3VzYi5jCisrKyBsaW51eC0yLjYvZHJpdmVycy91c2IvY29yZS91c2IuYwpAQCAtOTYz
-LDcgKzk2Myw5IEBAIHZvaWQgdXNiX2J1ZmZlcl91bm1hcF9zZyhjb25zdCBzdHJ1Y3QgdXMKIEVY
-UE9SVF9TWU1CT0xfR1BMKHVzYl9idWZmZXJfdW5tYXBfc2cpOwogCiAvKiBmb3JtYXQgdG8gZGlz
-YWJsZSBVU0Igb24ga2VybmVsIGNvbW1hbmQgbGluZSBpczogbm91c2IgKi8KLV9fbW9kdWxlX3Bh
-cmFtX2NhbGwoIiIsIG5vdXNiLCBwYXJhbV9zZXRfYm9vbCwgcGFyYW1fZ2V0X2Jvb2wsICZub3Vz
-YiwgMDQ0NCk7CisjaWZuZGVmIE1PRFVMRQorY29yZV9wYXJhbShub3VzYiwgbm91c2IsIGJvb2ws
-IDA0NDQpOworI2VuZGlmCiAKIC8qCiAgKiBmb3IgZXh0ZXJuYWwgcmVhZCBhY2Nlc3MgdG8gPG5v
-dXNiPgoACg==
+2008/11/19 Matt Mackall <mpm@selenic.com>:
+> On Wed, 2008-11-19 at 20:57 +0300, Alexander Beregalov wrote:
+>> Hi
+>>
+>> It is x86_64 SMP
+>> The kernel freezes while transferring kernel log through netconsole,
+>> SysRq does not work at that moment.
+>
+> Does it survive if you boot with 'quiet'? Is this new behavior or have
+> you successfully used netconsole before?
+
+`queit` parameter does not help. The problem happens on 2.6.28-rc6 and
+2.6.27 as well.
+I will try older kernels next week.
