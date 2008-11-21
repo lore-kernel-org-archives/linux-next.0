@@ -1,248 +1,64 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for November 21
-Date: Fri, 21 Nov 2008 18:19:48 +1100
-Message-ID: <20081121181948.ee771502.sfr@canb.auug.org.au>
+From: "Alexander Beregalov" <a.beregalov@gmail.com>
+Subject: next-20081121: WARNING: at lib/debugobjects.c: hpet
+Date: Fri, 21 Nov 2008 13:23:45 +0300
+Message-ID: <a4423d670811210223j53883165mb6651d8fa1bef95f@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__21_Nov_2008_18_19_48_+1100_YkhlKON7Y4bL_ih8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49452 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751178AbYKUHUE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 21 Nov 2008 02:20:04 -0500
+Received: from yw-out-2324.google.com ([74.125.46.29]:7619 "EHLO
+	yw-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752110AbYKUKXr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Nov 2008 05:23:47 -0500
+Received: by yw-out-2324.google.com with SMTP id 9so387513ywe.1
+        for <linux-next@vger.kernel.org>; Fri, 21 Nov 2008 02:23:45 -0800 (PST)
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, vojtech@suse.cz, tglx@linutronix.de
 
---Signature=_Fri__21_Nov_2008_18_19_48_+1100_YkhlKON7Y4bL_ih8
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi
 
-Hi all,
+It is x86_64 SMP
 
-Changes since 20081120:
-
-Undropped trees:
-	proc
-
-Dropped trees (temporarily):
-	net (build problem)
-	wireless (conflicts due to net tree being dropped)
-	rr (build problem)
-	userns (it depends on creds)
-	semaphore-removal (due to unfixed conflicts against Linus' tree)
-
-The s390 tree lost 2 conflicts.
-
-The net tree gained 2 conflicts against the net-current tree and a build
-problem that caused me to drop it.
-
-The rr tree lost its 2 conflicts and fixed its build problem only to get
-another.
-
-The hdlc tree lost its conflict (because the net tree was dropped).
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig,
-44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
-
-Below is a summary of the state of the merge.
-
-We are up to 126 trees (counting Linus' and 15 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-2.6.26
-Merging dwmw2/master
-Merging arm/devel
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging mips/mips-for-linux-next
-Merging parisc/master
-Merging powerpc/next
-Merging 4xx/next
-Merging galak/next
-Merging pxa/for-next
-Merging s390/features
-CONFLICT (content): Merge conflict in drivers/char/Makefile
-Merging sh/master
-Merging sparc/master
-Merging x86/auto-x86-next
-Merging xtensa/master
-Merging quilt/driver-core
-Merging quilt/usb
-Merging tip-core/auto-core-next
-Merging cpus4096/auto-cpus4096-next
-Merging ftrace/auto-ftrace-next
-Merging genirq/auto-genirq-next
-Merging safe-poison-pointers/auto-safe-poison-pointers-next
-Merging sched/auto-sched-next
-Merging stackprotector/auto-stackprotector-next
-Merging timers/auto-timers-next
-Merging pci/linux-next
-Merging quilt/device-mapper
-Merging hid/mm
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging jfs/next
-Merging kbuild/master
-Merging quilt/ide
-Merging libata/NEXT
-Merging nfs/linux-next
-Merging xfs/master
-Merging infiniband/for-next
-Merging acpi/test
-Merging nfsd/nfsd-next
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/master
-Merging dlm/next
-Merging scsi/master
-Merging ocfs2/linux-next
-Merging ext4/next
-Merging async_tx/next
-Merging udf/for_next
-Merging net/master
-CONFLICT (content): Merge conflict in drivers/net/ixgbe/ixgbe_main.c
-CONFLICT (content): Merge conflict in include/net/mac80211.h
-CONFLICT (content): Merge conflict in net/phonet/af_phonet.c
-Applying net: async_tx merge fix
-Applying net: ieee80211_notify_mac merge fix
-$ git reset --hard HEAD^
-Merging mtd/master
-Merging crypto/master
-Merging vfs/for-next
-Merging sound/for-next
-Merging cpufreq/next
-Merging v9fs/for-next
-Merging quilt/rr
-$ git reset --hard HEAD^
-Merging cifs/master
-Merging mmc/next
-Merging gfs2/master
-Merging input/next
-Merging semaphore/semaphore
-Merging bkl-removal/bkl-removal
-Merging ubifs/linux-next
-Merging lsm/for-next
-Merging block/for-next
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging kmemcheck/auto-kmemcheck-next
-CONFLICT (content): Merge conflict in MAINTAINERS
-CONFLICT (content): Merge conflict in arch/x86/mm/Makefile
-CONFLICT (content): Merge conflict in mm/slab.c
-CONFLICT (content): Merge conflict in mm/slub.c
-Merging generic-ipi/auto-generic-ipi-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/for-next
-Merging security-testing/next
-CONFLICT (content): Merge conflict in fs/ocfs2/namei.c
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_cred.h
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_globals.h
-CONFLICT (content): Merge conflict in fs/xfs/xfs_vnodeops.h
-Merging lblnet/master
-Merging quilt/ttydev
-CONFLICT (content): Merge conflict in fs/devpts/inode.c
-Merging agp/agp-next
-Merging oprofile/auto-oprofile-next
-Merging fastboot/auto-fastboot-next
-Merging sparseirq/auto-sparseirq-next
-Merging iommu/auto-iommu-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging proc/proc
-CONFLICT (content): Merge conflict in fs/proc/base.c
-CONFLICT (content): Merge conflict in kernel/exit.c
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cpu_alloc/cpu_alloc
-CONFLICT (content): Merge conflict in kernel/lockdep.c
-CONFLICT (content): Merge conflict in kernel/module.c
-Applying cpu_alloc: merge_fix_1
-Applying undefined reference to __per_cpu_start
-Merging cputime/cputime
-Merging perfmon3/master
-Merging osd/linux-next
-Merging fatfs/master
-Merging quilt/staging
-Merging scsi-post-merge/master
-
---Signature=_Fri__21_Nov_2008_18_19_48_+1100_YkhlKON7Y4bL_ih8
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkmYRQACgkQjjKRsyhoI8zDbwCdEzM+7VzJ2Nl80FJVicr4Ew23
-TFcAn05GNzjkgmThfL+bedMYHTm83FeK
-=z/rJ
------END PGP SIGNATURE-----
-
---Signature=_Fri__21_Nov_2008_18_19_48_+1100_YkhlKON7Y4bL_ih8--
+hpet0: at MMIO 0xfed00000, IRQs 2, 8, 0
+hpet0: 3 comparators, 64-bit 14.318180 MHz counter
+ODEBUG: object is on stack, but not annotated
+------------[ cut here ]------------
+WARNING: at lib/debugobjects.c:251 __debug_object_init+0x2bf/0x36d()
+Modules linked in:
+Pid: 1, comm: swapper Not tainted 2.6.28-rc5-next-20081121 #8
+Call Trace:
+ [<ffffffff80236bfb>] warn_on_slowpath+0x58/0x7d
+ [<ffffffff804e3405>] ? printk+0x67/0x6a
+ [<ffffffff803803cc>] ? __debug_object_init+0x191/0x36d
+ [<ffffffff803804fa>] __debug_object_init+0x2bf/0x36d
+ [<ffffffff80297856>] ? compound_order+0x15/0x26
+ [<ffffffff803805d5>] debug_object_init+0x14/0x17
+ [<ffffffff8023fcbf>] init_timer+0x18/0x5b
+ [<ffffffff8022087d>] hpet_cpuhp_notify+0x93/0x105
+ [<ffffffff802209b6>] ? hpet_work+0x0/0x206
+ [<ffffffff803d1ae8>] ? hpet_alloc+0x333/0x38f
+ [<ffffffff802577cd>] ? trace_hardirqs_on_caller+0x128/0x153
+ [<ffffffff80257805>] ? trace_hardirqs_on+0xd/0xf
+ [<ffffffff806d15f5>] ? hpet_late_init+0x0/0x19e
+ [<ffffffff806d15f5>] ? hpet_late_init+0x0/0x19e
+ [<ffffffff806d175f>] hpet_late_init+0x16a/0x19e
+ [<ffffffff806cf7c2>] ? print_all_ICs+0x0/0x540
+ [<ffffffff80209058>] _stext+0x58/0x138
+ [<ffffffff804e5e83>] ? _spin_unlock+0x4a/0x57
+ [<ffffffff802de3c4>] ? proc_register+0x10b/0x118
+ [<ffffffff802de4f9>] ? create_proc_entry+0x7e/0x94
+ [<ffffffff80268745>] ? register_irq_proc+0xb0/0xcc
+ [<ffffffff802d0000>] ? do_usbdevfs_discsignal+0x20/0x84
+ [<ffffffff806c666d>] kernel_init+0x125/0x179
+ [<ffffffff804e583a>] ? trace_hardirqs_on_thunk+0x3a/0x3f
+ [<ffffffff8020c8a9>] child_rip+0xa/0x11
+ [<ffffffff8020bd98>] ? restore_args+0x0/0x30
+ [<ffffffff806c6548>] ? kernel_init+0x0/0x179
+ [<ffffffff8020c89f>] ? child_rip+0x0/0x11
+---[ end trace 4eaa2a86a8e2da22 ]---
+Switched to high resolution mode on CPU 0
+Switched to high resolution mode on CPU 3
+Switched to high resolution mode on CPU 2
+Switched to high resolution mode on CPU 1
