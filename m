@@ -1,53 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the net tree
-Date: Fri, 21 Nov 2008 15:22:17 +1100
-Message-ID: <20081121152217.021eed0b.sfr@canb.auug.org.au>
-References: <20081121132941.87c9eacc.sfr@canb.auug.org.au>
-	<20081120.201102.250443248.davem@davemloft.net>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__21_Nov_2008_15_22_17_+1100_ZxAHZrwsjJsLACXR"
+From: Richard Holden <aciddeath@gmail.com>
+Subject: Re: [PATCH] Remove unused variables from the cirrusfb driver
+Date: Thu, 20 Nov 2008 23:12:42 -0700
+Message-ID: <DE425C06-700A-4042-B0AB-1CDE2134C4DF@gmail.com>
+References: <1227204203-32112-1-git-send-email-aciddeath@gmail.com> <1227204203-32112-2-git-send-email-aciddeath@gmail.com> <20081121103409.fed9a837.sfr@canb.auug.org.au>
+Mime-Version: 1.0 (Apple Message framework v929.2)
+Content-Type: text/plain; charset=US-ASCII; format=flowed; delsp=yes
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35604 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751867AbYKUEWc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 20 Nov 2008 23:22:32 -0500
-In-Reply-To: <20081120.201102.250443248.davem@davemloft.net>
+Received: from rv-out-0506.google.com ([209.85.198.237]:3898 "EHLO
+	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751130AbYKUGMo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Nov 2008 01:12:44 -0500
+Received: by rv-out-0506.google.com with SMTP id k40so806770rvb.1
+        for <linux-next@vger.kernel.org>; Thu, 20 Nov 2008 22:12:43 -0800 (PST)
+In-Reply-To: <20081121103409.fed9a837.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, jesse.brandeburg@intel.com, jgarzik@redhat.com, jeffrey.t.kirsher@intel.com, adobriyan@gmail.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__21_Nov_2008_15_22_17_+1100_ZxAHZrwsjJsLACXR
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+On Nov 20, 2008, at 4:34 PM, Stephen Rothwell wrote:
 
-On Thu, 20 Nov 2008 20:11:02 -0800 (PST) David Miller <davem@davemloft.net>=
- wrote:
+> Hi Richard,
 >
-> If you would have pulled 20 minutes later you would have gotten
-> my tree after sorting out these merge hassles :)
+> On Thu, 20 Nov 2008 11:03:22 -0700 "Richard A. Holden III" <aciddeath@gmail.com 
+> > wrote:
+>>
+>> Remove i and s vars from cirrusfb_setup as they are not used
+>> anywhere in that function. This fixes 2 unused vars build warnings.
+>
+> Thanks for the patch, but this is already fixed in mainline (commit
+> ee11940f8e7a2f064af22d52180cb5f9643eef61 "cirrusfb: remove unused
+> variables").
+>
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
 
-I will start sleeping in :-)
+Am I right in assuming you pulled mainline before this commit for  
+next-20081120? I don't see the changelog in next and I'm getting the  
+build warnings still, but I can recheck this in the next version of  
+next.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__21_Nov_2008_15_22_17_+1100_ZxAHZrwsjJsLACXR
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkmN3kACgkQjjKRsyhoI8z4uwCfWKRONxlAsJCCJ0Py9HqP1Swh
-osgAmwfwvIPjsAHug2a7yHTrunW84lCx
-=Gcxj
------END PGP SIGNATURE-----
-
---Signature=_Fri__21_Nov_2008_15_22_17_+1100_ZxAHZrwsjJsLACXR--
+-Richard Holden
