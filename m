@@ -1,211 +1,58 @@
-From: Dan Williams <dan.j.williams@intel.com>
-Subject: Re: next-20081121:WARNING: at drivers/dma/dmaengine.c:665
-	dma_async_device_unregister()
-Date: Fri, 21 Nov 2008 17:53:44 -0700
-Message-ID: <1227315224.32103.7.camel@dwillia2-linux.ch.intel.com>
-References: <a4423d670811210240t77ec97d1pbe1ef0e4ae3a1a2e@mail.gmail.com>
+From: Wu Fengguang <wfg@linux.intel.com>
+Subject: Re: [PATCH linux-next] snd-hda: fix build errors
+Date: Sat, 22 Nov 2008 09:39:02 +0800
+Message-ID: <20081122013902.GA12810@localhost>
+References: <20081121181948.ee771502.sfr@canb.auug.org.au> <492713E8.9080103@oracle.com> <s5hy6zc7rjr.wl%tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:19398 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754919AbYKVAxq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 21 Nov 2008 19:53:46 -0500
-In-Reply-To: <a4423d670811210240t77ec97d1pbe1ef0e4ae3a1a2e@mail.gmail.com>
+Received: from mga12.intel.com ([143.182.124.36]:32357 "EHLO
+	azsmga102.ch.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1758104AbYKVBjU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Nov 2008 20:39:20 -0500
+Content-Disposition: inline
+In-Reply-To: <s5hy6zc7rjr.wl%tiwai@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "Sosnowski, Maciej" <maciej.sosnowski@intel.com>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, 2008-11-21 at 03:40 -0700, Alexander Beregalov wrote:
-> Hi
+On Fri, Nov 21, 2008 at 09:27:52PM +0100, Takashi Iwai wrote:
+> At Fri, 21 Nov 2008 12:02:48 -0800,
+> Randy Dunlap wrote:
+> > 
+> > From: Randy Dunlap <randy.dunlap@oracle.com>
+> > 
+> > First error comes from snd_hda_eld_proc_new() not being static
+> > when CONFIG_PROC_FS=n.  After that is fixed, the next problem is:
+> > ERROR: "snd_print_pcm_rates" [sound/pci/hda/snd-hda-intel.ko] undefined!
+> > 
+> > so I made a static inline version of that one too, for CONFIG_PROC_FS=n.
+> > Please build/test more config variations.
+> > 
+> >   LD [M]  sound/pci/hda/snd-hda-intel.o
+> > sound/pci/hda/hda_eld.o: In function `snd_hda_eld_proc_new':
+> > (.text+0x0): multiple definition of `snd_hda_eld_proc_new'
+> > sound/pci/hda/hda_codec.o:(.text+0x58): first defined here
+> > sound/pci/hda/hda_hwdep.o: In function `snd_hda_eld_proc_new':
+[...]
+> > sound/pci/hda/patch_intelhdmi.o: In function `snd_hda_eld_proc_new':
+> > (.text+0x3b): multiple definition of `snd_hda_eld_proc_new'
+> > sound/pci/hda/hda_codec.o:(.text+0x58): first defined here
+> > make[4]: *** [sound/pci/hda/snd-hda-intel.o] Error 1
+> > 
+> > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> > cc: Wu Fengguang <wfg@linux.intel.com>
+> > cc: Takashi Iwai <tiwai@suse.de>
+> > ---
+> >  sound/pci/hda/hda_local.h |    7 ++++++-
+> >  1 file changed, 6 insertions(+), 1 deletion(-)
 > 
-> It occured during shutdown process:
-> 
-> sd 0:2:0:0: [sda] Synchronizing SCSI cache
-> ioatdma 0000:00:08.0: Removing dma and dca services
-> ------------[ cut here ]------------
-> WARNING: at drivers/dma/dmaengine.c:665 dma_async_device_unregister+0x90/0xd0()
-> dma_async_device_unregister called while 1 clients hold a reference
-...
-> WARNING: at drivers/base/core.c:122 device_release+0x66/0x68()
-> Device 'dma0chan0' does not have a release() function, it is broken and must be
-> fixed.
+> Thanks, but these have been differently fixed on the latest ALSA tree.
+> snd_print_pcm_*() have to be defined no matter what CONFIG_PROC_FS is.
 
-The following fixes these up for me.  Maciej, do these look alright?:
+Thank you!
 
-commit 16f5de60e2406c0c879627177aecd7ef489c30e5
-Author: Dan Williams <dan.j.williams@intel.com>
-Date:   Fri Nov 21 17:48:55 2008 -0700
+I'll send another fix for remaining build warnings when CONFIG_PROC_FS=n.
 
-    dmaengine: add a release for dma class devices
-    
-    Resolves:
-    WARNING: at drivers/base/core.c:122 device_release+0x4d/0x52()
-    Device 'dma0chan0' does not have a release() function, it is broken and must be fixed.
-    
-    Reported-by: Alexander Beregalov <a.beregalov@gmail.com>
-    Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-
-diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-index 6fc6595..94dcc64 100644
---- a/drivers/dma/dmaengine.c
-+++ b/drivers/dma/dmaengine.c
-@@ -103,9 +103,16 @@ static struct device_attribute dma_attrs[] = {
- 	__ATTR_NULL
- };
- 
-+static void chan_dev_release(struct device *dev)
-+{
-+	/* nothing to do */
-+	do { } while (0);
-+}
-+
- static struct class dma_devclass = {
- 	.name		= "dma",
- 	.dev_attrs	= dma_attrs,
-+	.dev_release	= chan_dev_release,
- };
- 
- /* --- client and device registration --- */
-
-commit 34323672c38c8e4e8fdd3aa5fa37daa617b51a29
-Author: Dan Williams <dan.j.williams@intel.com>
-Date:   Fri Nov 21 17:39:18 2008 -0700
-
-    ioat: do not perform removal actions at shutdown
-    
-    Unregistering services should only happen at "remove" time.  This prevents
-    the device from being unregistered while dmaengine clients are still
-    active.  Also, the comment on ioat_remove is stale since removal is prevented
-    while a channel may be in use.
-    
-    Reported-by: Alexander Beregalov <a.beregalov@gmail.com>
-    Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-
-diff --git a/drivers/dma/ioat.c b/drivers/dma/ioat.c
-index 9b16a3a..4105d65 100644
---- a/drivers/dma/ioat.c
-+++ b/drivers/dma/ioat.c
-@@ -75,60 +75,10 @@ static int ioat_dca_enabled = 1;
- module_param(ioat_dca_enabled, int, 0644);
- MODULE_PARM_DESC(ioat_dca_enabled, "control support of dca service (default: 1)");
- 
--static int ioat_setup_functionality(struct pci_dev *pdev, void __iomem *iobase)
--{
--	struct ioat_device *device = pci_get_drvdata(pdev);
--	u8 version;
--	int err = 0;
--
--	version = readb(iobase + IOAT_VER_OFFSET);
--	switch (version) {
--	case IOAT_VER_1_2:
--		device->dma = ioat_dma_probe(pdev, iobase);
--		if (device->dma && ioat_dca_enabled)
--			device->dca = ioat_dca_init(pdev, iobase);
--		break;
--	case IOAT_VER_2_0:
--		device->dma = ioat_dma_probe(pdev, iobase);
--		if (device->dma && ioat_dca_enabled)
--			device->dca = ioat2_dca_init(pdev, iobase);
--		break;
--	case IOAT_VER_3_0:
--		device->dma = ioat_dma_probe(pdev, iobase);
--		if (device->dma && ioat_dca_enabled)
--			device->dca = ioat3_dca_init(pdev, iobase);
--		break;
--	default:
--		err = -ENODEV;
--		break;
--	}
--	if (!device->dma)
--		err = -ENODEV;
--	return err;
--}
--
--static void ioat_shutdown_functionality(struct pci_dev *pdev)
--{
--	struct ioat_device *device = pci_get_drvdata(pdev);
--
--	dev_err(&pdev->dev, "Removing dma and dca services\n");
--	if (device->dca) {
--		unregister_dca_provider(device->dca);
--		free_dca_provider(device->dca);
--		device->dca = NULL;
--	}
--
--	if (device->dma) {
--		ioat_dma_remove(device->dma);
--		device->dma = NULL;
--	}
--}
--
- static struct pci_driver ioat_pci_driver = {
- 	.name		= "ioatdma",
- 	.id_table	= ioat_pci_tbl,
- 	.probe		= ioat_probe,
--	.shutdown	= ioat_shutdown_functionality,
- 	.remove		= __devexit_p(ioat_remove),
- };
- 
-@@ -179,7 +129,29 @@ static int __devinit ioat_probe(struct pci_dev *pdev,
- 
- 	pci_set_master(pdev);
- 
--	err = ioat_setup_functionality(pdev, iobase);
-+	switch (readb(iobase + IOAT_VER_OFFSET)) {
-+	case IOAT_VER_1_2:
-+		device->dma = ioat_dma_probe(pdev, iobase);
-+		if (device->dma && ioat_dca_enabled)
-+			device->dca = ioat_dca_init(pdev, iobase);
-+		break;
-+	case IOAT_VER_2_0:
-+		device->dma = ioat_dma_probe(pdev, iobase);
-+		if (device->dma && ioat_dca_enabled)
-+			device->dca = ioat2_dca_init(pdev, iobase);
-+		break;
-+	case IOAT_VER_3_0:
-+		device->dma = ioat_dma_probe(pdev, iobase);
-+		if (device->dma && ioat_dca_enabled)
-+			device->dca = ioat3_dca_init(pdev, iobase);
-+		break;
-+	default:
-+		err = -ENODEV;
-+		break;
-+	}
-+	if (!device->dma)
-+		err = -ENODEV;
-+
- 	if (err)
- 		goto err_version;
- 
-@@ -198,17 +170,21 @@ err_enable_device:
- 	return err;
- }
- 
--/*
-- * It is unsafe to remove this module: if removed while a requested
-- * dma is outstanding, esp. from tcp, it is possible to hang while
-- * waiting for something that will never finish.  However, if you're
-- * feeling lucky, this usually works just fine.
-- */
- static void __devexit ioat_remove(struct pci_dev *pdev)
- {
- 	struct ioat_device *device = pci_get_drvdata(pdev);
- 
--	ioat_shutdown_functionality(pdev);
-+	dev_err(&pdev->dev, "Removing dma and dca services\n");
-+	if (device->dca) {
-+		unregister_dca_provider(device->dca);
-+		free_dca_provider(device->dca);
-+		device->dca = NULL;
-+	}
-+
-+	if (device->dma) {
-+		ioat_dma_remove(device->dma);
-+		device->dma = NULL;
-+	}
- 
- 	kfree(device);
- }
+Fengguang
