@@ -1,49 +1,38 @@
-From: Michael Schmitz <schmitz@biophys.uni-duesseldorf.de>
+From: Brad Boyer <flar@allandria.com>
 Subject: Re: vme_scc.c breakage (was: Re: linux-next: Tree for November 21)
-Date: Sun, 23 Nov 2008 03:29:19 +0100 (CET)
-Message-ID: <alpine.DEB.1.00.0811230250290.8478@zirkon.biophys.uni-duesseldorf.de>
-References: <20081121181948.ee771502.sfr@canb.auug.org.au>
- <Pine.LNX.4.64.0811221558340.30025@anakin>
- <20081122164738.2226b63e@lxorguk.ukuu.org.uk>
+Date: Sat, 22 Nov 2008 18:59:30 -0800
+Message-ID: <20081123025930.GA1409@cynthia.pants.nu>
+References: <20081121181948.ee771502.sfr@canb.auug.org.au> <Pine.LNX.4.64.0811221558340.30025@anakin> <20081122164738.2226b63e@lxorguk.ukuu.org.uk> <alpine.DEB.1.00.0811230250290.8478@zirkon.biophys.uni-duesseldorf.de>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-m68k-owner@vger.kernel.org>
-In-reply-to: <20081122164738.2226b63e@lxorguk.ukuu.org.uk>
-Sender: linux-m68k-owner@vger.kernel.org
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linux/m68k <linux-m68k@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from [76.245.85.235] ([76.245.85.235]:57388 "EHLO cynthia.pants.nu"
+	rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+	id S1755360AbYKWDAQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 22 Nov 2008 22:00:16 -0500
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.1.00.0811230250290.8478@zirkon.biophys.uni-duesseldorf.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Michael Schmitz <schmitz@biophys.uni-duesseldorf.de>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Geert Uytterhoeven <geert@linux-m68k.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linux/m68k <linux-m68k@vger.kernel.org>
 
-Hi,
+On Sun, Nov 23, 2008 at 03:29:19AM +0100, Michael Schmitz wrote:
+> Time to merge with pmac_zilog or ip22zilog (the latter even needing similar 
+> register access delays as Ataris). 
 
-> > Issues:
-> >   1. When Atari support is enabled, `scc' is defined in
-> >      include/asm-m68k/atari.h as:
-> > 
-> > 	# define scc ((*(volatile struct SCC*)SCC_BAS))
+I can't recommend trying to merge with pmac_zilog. It's got some very
+mac specific bits including workarounds for the hardware bugs in some
+revisions of the ASIC that included Apple's implementation of the Zilog
+ESCC. It also has to handle the odd way Apple hooked up some of the
+non-data lines such as hardware flow control. The last issue would be
+the fact that it's a macio bus driver rather than a platform bus driver
+or something else available more generically.
 
-This can be renamed - it is only used for control and data port address init 
-(aside from serial console, which should probably be separated out if it cannot 
-be reconciled). 
+I'm not even 100% sure I can make pmac_zilog get shared with m68k
+macs, although I'm still looking into it.
 
-> > 
-> >      However, renaming the variable `scc' doesn't help, as
-> > 
-> >   2. the variable `scc' is not used in scc_carrier_raised(),
-> > 
-> >   3. `port->channel' on line 635 still fails as `port' is not longer `struct
-> >      scc_port', but a 'struct tty_port', which has no member named 'channel'.
-> 
-> Will take a look at this, but gs is going to away so at some point
-> someone with hardware is going to have to admit to owning this driver or
-> just mark it BROKEN..
+I would definitely look at one of the other *zilog drivers first.
 
-Time to merge with pmac_zilog or ip22zilog (the latter even needing similar 
-register access delays as Ataris). 
-
-What is the time frame to gs being removed? I admit to 'owning' atari_scc which 
-was based on vme_scc so I'll have to deal with that sooner or later.
-
-	Michael
-
+	Brad Boyer
+	flar@allandria.com
