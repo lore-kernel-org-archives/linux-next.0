@@ -1,52 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: proc tree build failure
-Date: Mon, 24 Nov 2008 18:15:59 +1100
-Message-ID: <20081124181559.3896a756.sfr@canb.auug.org.au>
+From: "NeilBrown" <neilb@suse.de>
+Subject: Re: linux-next: build warning
+Date: Mon, 24 Nov 2008 18:53:46 +1100 (EST)
+Message-ID: <c102bd10dc67100b000665a13846f114.squirrel@neil.brown.name>
+References: <20081124173823.cb6a22cf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__24_Nov_2008_18_15_59_+1100_bJw2gNFqEyGwwns4"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58210 "EHLO smtps.tip.net.au"
+Received: from mx2.suse.de ([195.135.220.15]:33692 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750751AbYKXHQS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 24 Nov 2008 02:16:18 -0500
+	id S1750722AbYKXHxx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Nov 2008 02:53:53 -0500
+In-Reply-To: <20081124173823.cb6a22cf.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: linux-next@vger.kernel.org, Ken Chen <kenchen@google.com>, Ingo Molnar <mingo@elte.hu>, "David S. Miller" <davem@davemloft.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Cheng Renquan <crquan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Mon__24_Nov_2008_18_15_59_+1100_bJw2gNFqEyGwwns4
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, November 24, 2008 5:38 pm, Stephen Rothwell wrote:
+> Hi Neil,
+>
+> Today's linux-next build (i386 defconfig) produced these warnings:
+>
+> drivers/md/md.c: In function 'print_sb_1':
+> drivers/md/md.c:1678: warning: left shift count >= width of type
+> drivers/md/md.c:1702: warning: left shift count >= width of type
+>
+> Caused by commit 8a11632aeb9ad49bbda3e2c6978b207c6aff1aa8 ("md: need
+> another print_sb for mdp_superblock_1").
 
-Hi Alexey,
+Thanks.  That's now fixed in my tree - you should see happiness tomorrow.
 
-Today's linux-next build (sparc64 allmodconfig) failed like this:
-
-fs/proc/base.c:362: undefined reference to `save_stack_trace_tsk'
-
-It has been failing like this for some time.
-
-Caused by commit 788ff43b53179f3af8677d59c87104aff1f75bde ("proc:
-add /proc/*/stack") which has been fixed up for MIPS, but needs another
-fix for Sparc.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__24_Nov_2008_18_15_59_+1100_bJw2gNFqEyGwwns4
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkqVK8ACgkQjjKRsyhoI8z8BgCgwCPhC4lraR/06n0pD1VsuuLw
-9BYAn3ocHAKOGjMnj1O1/kmFSskXDmkY
-=ll3h
------END PGP SIGNATURE-----
-
---Signature=_Mon__24_Nov_2008_18_15_59_+1100_bJw2gNFqEyGwwns4--
+NeilBrown
