@@ -1,31 +1,57 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: net tree build failure
-Date: Sun, 23 Nov 2008 21:04:52 -0800 (PST)
-Message-ID: <20081123.210452.160784844.davem@davemloft.net>
-References: <20081124152550.6a06efa4.sfr@canb.auug.org.au>
-	<20081123.202847.85900696.davem@davemloft.net>
-	<20081124154938.bac22cd5.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: ttydev tree build failure
+Date: Mon, 24 Nov 2008 16:13:14 +1100
+Message-ID: <20081124161314.a61de8e9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__24_Nov_2008_16_13_14_+1100_zM.=fJYzVNZ0HayY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:59080
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1750701AbYKXFEx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 24 Nov 2008 00:04:53 -0500
-In-Reply-To: <20081124154938.bac22cd5.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:53097 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750795AbYKXFN3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Nov 2008 00:13:29 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, shemminger@vyatta.com
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: linux-next@vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 24 Nov 2008 15:49:38 +1100
+--Signature=_Mon__24_Nov_2008_16_13_14_+1100_zM.=fJYzVNZ0HayY
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> So I wonder what prevents CONFIG_PCMCIA being set on a sparc64
-> allmodconfig?  Just looking at the Kconfig files, I thought it
-> would, but obviously not.
+Hi Alan,
 
-drivers/Kconfig doesn't include drivers/pcmcia/Kconfig,
-each arch Kconfig has to do it explicitly
+I have dropped the ttydev tree for today due to unresolved build issues on
+m68k caused by a bad conversion of drivers/char/vme_scc.c in
+tty-port-extract-cd causing these errors:
+
+drivers/char/vme_scc.c:634: error: syntax error before 'volatile'
+drivers/char/vme_scc.c:634: error: '__mptr' undeclared (first use in this f=
+unction)
+drivers/char/vme_scc.c:634: error: (Each undeclared identifier is reported =
+only once
+drivers/char/vme_scc.c:634: error: for each function it appears in.)
+drivers/char/vme_scc.c:634: error: syntax error before ')' token
+drivers/char/vme_scc.c:635: error: 'port' undeclared here (not in a functio=
+n)
+drivers/char/vme_scc.c:637: error: syntax error before 'return'
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__24_Nov_2008_16_13_14_+1100_zM.=fJYzVNZ0HayY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkqN+oACgkQjjKRsyhoI8w5XwCgiDuhxSBJGROTdg+zNSBP4DWQ
+4fcAnR4yfnGipNjP82HBvtt9iJbwOH/m
+=jAfi
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__24_Nov_2008_16_13_14_+1100_zM.=fJYzVNZ0HayY--
