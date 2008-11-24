@@ -1,50 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: cpu_alloc tree build failure
-Date: Mon, 24 Nov 2008 16:36:12 +1100
-Message-ID: <20081124163612.11c6f13d.sfr@canb.auug.org.au>
+Subject: Re: linux-next: net tree build failure
+Date: Mon, 24 Nov 2008 16:38:44 +1100
+Message-ID: <20081124163844.004469a6.sfr@canb.auug.org.au>
+References: <20081124154938.bac22cd5.sfr@canb.auug.org.au>
+	<20081123.210452.160784844.davem@davemloft.net>
+	<20081124162044.f3333fcf.sfr@canb.auug.org.au>
+	<20081123.212339.131214270.davem@davemloft.net>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__24_Nov_2008_16_36_12_+1100_kl/6DAkkiwFM=HcS"
+ boundary="Signature=_Mon__24_Nov_2008_16_38_44_+1100_iWaae2am00z7IVG+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39771 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57199 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750733AbYKXFgk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 24 Nov 2008 00:36:40 -0500
+	id S1750719AbYKXFjI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Nov 2008 00:39:08 -0500
+In-Reply-To: <20081123.212339.131214270.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Lameter <cl@linux-foundation.org>
-Cc: linux-next@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, shemminger@vyatta.com, sam@ravnborg.org
 
---Signature=_Mon__24_Nov_2008_16_36_12_+1100_kl/6DAkkiwFM=HcS
+--Signature=_Mon__24_Nov_2008_16_38_44_+1100_iWaae2am00z7IVG+
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Christoph,
+On Sun, 23 Nov 2008 21:23:39 -0800 (PST) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> Probably it didn't build for some obscure reason a long time
+> ago.  I'll try to get it turned back on, but better is to
+> bring it in via drivers/Kconfig don't you think? :-)
 
-I have dropped the cpu_alloc tree for today (it is my day for being hard
-on people :-)) because it breaks the build on a few architectures and the
-fix has been know since at least Nov 7 (when you published a patch that
-doesn't appear in your tree).
+Only if you test build all the other architectures that currently don't
+include it. :-)
 
-If this is caused by an interaction with another tree (and I don't think
-it is), let me know and I will carry the patch.  Otherwise you need to
-fix the cpu_alloc tree.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__24_Nov_2008_16_36_12_+1100_kl/6DAkkiwFM=HcS
+--Signature=_Mon__24_Nov_2008_16_38_44_+1100_iWaae2am00z7IVG+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkkqPUwACgkQjjKRsyhoI8zirgCguk8rSOf1pLPpKb88/D1z72o3
-Sb0An0J8M4jfzY9tJWM847aRC3i2yw54
-=J8a5
+iEYEARECAAYFAkkqPeQACgkQjjKRsyhoI8zEZwCgt7vhI8ogf476qhwRNgbDZuKm
+bQ8AniMAsLU8ae/8mXYuPiKQXyutwRQ8
+=ezsy
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Nov_2008_16_36_12_+1100_kl/6DAkkiwFM=HcS--
+--Signature=_Mon__24_Nov_2008_16_38_44_+1100_iWaae2am00z7IVG+--
