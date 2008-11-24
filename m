@@ -1,51 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning
-Date: Mon, 24 Nov 2008 20:14:09 +1100
-Message-ID: <20081124201409.141bb18d.sfr@canb.auug.org.au>
-References: <20081124173823.cb6a22cf.sfr@canb.auug.org.au>
-	<c102bd10dc67100b000665a13846f114.squirrel@neil.brown.name>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: ttydev tree build failure
+Date: Mon, 24 Nov 2008 09:59:17 +0000
+Message-ID: <20081124095917.40ea6dd2@lxorguk.ukuu.org.uk>
+References: <20081124161314.a61de8e9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__24_Nov_2008_20_14_09_+1100_IS4T6lsMrY189x+I"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38931 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751478AbYKXJO0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 24 Nov 2008 04:14:26 -0500
-In-Reply-To: <c102bd10dc67100b000665a13846f114.squirrel@neil.brown.name>
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:43577 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751612AbYKXJ71 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Nov 2008 04:59:27 -0500
+In-Reply-To: <20081124161314.a61de8e9.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: NeilBrown <neilb@suse.de>
-Cc: linux-next@vger.kernel.org, Cheng Renquan <crquan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Mon__24_Nov_2008_20_14_09_+1100_IS4T6lsMrY189x+I
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 24 Nov 2008 16:13:14 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi Neil,
+> Hi Alan,
+> 
+> I have dropped the ttydev tree for today due to unresolved build issues on
+> m68k caused by a bad conversion of drivers/char/vme_scc.c in
 
-On Mon, 24 Nov 2008 18:53:46 +1100 (EST) "NeilBrown" <neilb@suse.de> wrote:
->
-> Thanks.  That's now fixed in my tree - you should see happiness tomorrow.
+I've not gone a viable m68k build tree or time to work on what is
+basically a dead port. I will change policy to fit linux-next. That is
+old obscure serial ports will not be updated but marked as broken and
+then deleted if nobody is willing to maintain them.
 
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__24_Nov_2008_20_14_09_+1100_IS4T6lsMrY189x+I
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkqcGEACgkQjjKRsyhoI8wAdwCfSrzHrUbT87+OoUJNFJrljYXC
-XvUAn024Khki44xyeKkNVPTNLGZ6f7WA
-=DVLM
------END PGP SIGNATURE-----
-
---Signature=_Mon__24_Nov_2008_20_14_09_+1100_IS4T6lsMrY189x+I--
+Alan
