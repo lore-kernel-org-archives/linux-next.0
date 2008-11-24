@@ -1,68 +1,50 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: net tree build failure
-Date: Sun, 23 Nov 2008 21:29:29 -0800 (PST)
-Message-ID: <20081123.212929.13595907.davem@davemloft.net>
-References: <20081123.210452.160784844.davem@davemloft.net>
-	<20081124162044.f3333fcf.sfr@canb.auug.org.au>
-	<20081123.212339.131214270.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: cpu_alloc tree build failure
+Date: Mon, 24 Nov 2008 16:36:12 +1100
+Message-ID: <20081124163612.11c6f13d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__24_Nov_2008_16_36_12_+1100_kl/6DAkkiwFM=HcS"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:57750
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1750704AbYKXF3a (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 24 Nov 2008 00:29:30 -0500
-In-Reply-To: <20081123.212339.131214270.davem@davemloft.net>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39771 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750733AbYKXFgk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Nov 2008 00:36:40 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, shemminger@vyatta.com, sam@ravnborg.org
+To: Christoph Lameter <cl@linux-foundation.org>
+Cc: linux-next@vger.kernel.org
 
-From: David Miller <davem@davemloft.net>
-Date: Sun, 23 Nov 2008 21:23:39 -0800 (PST)
+--Signature=_Mon__24_Nov_2008_16_36_12_+1100_kl/6DAkkiwFM=HcS
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> I'll try to get it turned back on,
+Hi Christoph,
 
-Ok the following seems to build on sparc64, so after some
-sparc 32-bit build tests I'll check this into sparc-next-2.6
+I have dropped the cpu_alloc tree for today (it is my day for being hard
+on people :-)) because it breaks the build on a few architectures and the
+fix has been know since at least Nov 7 (when you published a patch that
+doesn't appear in your tree).
 
-diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
-index 41c4cd2..10945c3 100644
---- a/arch/sparc/Kconfig
-+++ b/arch/sparc/Kconfig
-@@ -435,24 +435,6 @@ config MCA
- 	help
- 	  MCA is not supported.
- 
--config PCMCIA
--	tristate
--	---help---
--	  Say Y here if you want to attach PCMCIA- or PC-cards to your Linux
--	  computer.  These are credit-card size devices such as network cards,
--	  modems or hard drives often used with laptops computers.  There are
--	  actually two varieties of these cards: the older 16 bit PCMCIA cards
--	  and the newer 32 bit CardBus cards.  If you want to use CardBus
--	  cards, you need to say Y here and also to "CardBus support" below.
--
--	  To use your PC-cards, you will need supporting software from David
--	  Hinds' pcmcia-cs package (see the file <file:Documentation/Changes>
--	  for location).  Please also read the PCMCIA-HOWTO, available from
--	  <http://www.tldp.org/docs.html#howto>.
--
--	  To compile this driver as modules, choose M here: the
--	  modules will be called pcmcia_core and ds.
--
- config SBUS
- 	bool
- 	default y
-@@ -497,6 +479,8 @@ config PCI_SYSCALL
- 
- source "drivers/pci/Kconfig"
- 
-+source "drivers/pcmcia/Kconfig"
-+
- config SUN_OPENPROMFS
- 	tristate "Openprom tree appears in /proc/openprom"
- 	help
+If this is caused by an interaction with another tree (and I don't think
+it is), let me know and I will carry the patch.  Otherwise you need to
+fix the cpu_alloc tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__24_Nov_2008_16_36_12_+1100_kl/6DAkkiwFM=HcS
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkqPUwACgkQjjKRsyhoI8zirgCguk8rSOf1pLPpKb88/D1z72o3
+Sb0An0J8M4jfzY9tJWM847aRC3i2yw54
+=J8a5
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__24_Nov_2008_16_36_12_+1100_kl/6DAkkiwFM=HcS--
