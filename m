@@ -1,74 +1,43 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: next-20081119: general protection fault:
- get_next_timer_interrupt()
-Date: Mon, 24 Nov 2008 20:31:08 +0100 (CET)
-Message-ID: <alpine.LFD.2.00.0811242018370.3235@localhost.localdomain>
-References: <a4423d670811190714k13721ae8s125e63d520892440@mail.gmail.com>  <alpine.LFD.2.00.0811191308030.3119@localhost.localdomain>  <a4423d670811210250t6b75645evd9646ffb07745867@mail.gmail.com>  <alpine.LFD.2.00.0811241816120.3301@localhost.localdomain>
- <1227554117.25499.46.camel@localhost.localdomain>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: linux-next: net tree build failure
+Date: Mon, 24 Nov 2008 22:00:28 +0100
+Message-ID: <20081124210028.GA32585@uranus.ravnborg.org>
+References: <20081124154938.bac22cd5.sfr@canb.auug.org.au> <20081123.210452.160784844.davem@davemloft.net> <20081124162044.f3333fcf.sfr@canb.auug.org.au> <20081123.212339.131214270.davem@davemloft.net> <20081124163844.004469a6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from www.tglx.de ([62.245.132.106]:47417 "EHLO www.tglx.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752676AbYKXTba (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 24 Nov 2008 14:31:30 -0500
-In-Reply-To: <1227554117.25499.46.camel@localhost.localdomain>
+Received: from pfepa.post.tele.dk ([195.41.46.235]:50144 "EHLO
+	pfepa.post.tele.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752690AbYKXVCW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Nov 2008 16:02:22 -0500
+Content-Disposition: inline
+In-Reply-To: <20081124163844.004469a6.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Alexander Beregalov <a.beregalov@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, linux-scsi@vger.kernel.org, David Miller <davem@davemloft.net>, Jens Axboe <jens.axboe@oracle.com>, Mike Anderson <andmike@linux.vnet.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, shemminger@vyatta.com
 
-On Mon, 24 Nov 2008, James Bottomley wrote:
-> On Mon, 2008-11-24 at 18:43 +0100, Thomas Gleixner wrote:
-> > > scsi0 : LSI SAS based MegaRAID driver
-> > > Driver 'sd' needs updating - please use bus_type methods
-> > > scsi 0:0:0:0: Direct-Access     ATA      SAMSUNG HE160HJ  0-24 PQ: 0 ANSI: 5
-> > > ------------[ cut here ]------------
-> > > WARNING: at lib/debugobjects.c:215 debug_print_object+0x4f/0x57()
-> > > ODEBUG: free active object type: timer_list
-> > 
-> > That's the cause for your boot crash. The scsi/blk code is freeing a
-> > page which contains an active timer, so the timer code references gone
-> > memory. You triggered it because DEBUG_PAGEALLOC unmaps the page when
-> > it's freed.
-> > 
-> > James, or other scsi experts please.
+On Mon, Nov 24, 2008 at 04:38:44PM +1100, Stephen Rothwell wrote:
+> On Sun, 23 Nov 2008 21:23:39 -0800 (PST) David Miller <davem@davemloft.net> wrote:
+> >
+> > Probably it didn't build for some obscure reason a long time
+> > ago.  I'll try to get it turned back on, but better is to
+> > bring it in via drivers/Kconfig don't you think? :-)
 > 
-> Well, not sure.  Most likely candidate is the new block timer code.
-> What seems to be happening is that the queue is being released with
-> either an outstanding request (refcounting problem) or ticking timer
-> with no work (block timer problem).  The way scanning works is that we
-> create a request queue for each device we probe and then delete it again
-> if nothing appears after the bus settle time.   The argument against
-> this is that it should show up on every scanned bus.  However, these are
-> getting rarer; I was just about to write that I hadn't seen it when I
-> remembered that all my SCSI testing systems are currently running
-> hotplug reporting busses (i.e. don't do scanning).  However,
-> fortunately, I've also booted voyager recently which does use parallel
-> SCSI and doesn't see this either, so it could also be megaraid_sas
-> specific.
+> Only if you test build all the other architectures that currently don't
+> include it. :-)
 
-Yeah, block could it be as well. Jens, Mike ?
+Stephen, could I ask you to try to do so?
+You have the infrastructure to do it.
 
-One note about not seeing it: We have had such bugs before where the
-page was freed but not touched and the timer survived w/o tripping the
-system over. Alexander noticed because of DEBUG_PAGEALLOC and you can
-also see it by enabling debugobjects, which will give you the nice
-backtrace.
+I would love to see any simplification of the nightmare
+of Kconfig files we have.
 
-CONFIG_DEBUG_OBJECTS=y
-CONFIG_DEBUG_OBJECTS_FREE=y
-CONFIG_DEBUG_OBJECTS_TIMERS=Y
 
-and add "debug_objects" to the kernel command line.
- 
-> Could you turn on SCSI logging so we can see the sequences.  Probably
-> since this is boot time, just enable all logging:
-> 
-> echo 0xffffffff > /sys/module/scsi_mod/parameters/scsi_logging_level
-> 
-> (kernel must be compiled with CONFIG_SCSI_LOGGING=y
-> 
-> James
-> 
-> 
+I have only: arm, x86, sparc sparc64, alpha here so that
+does not give any decent enough coverage.
+
+And my current Linux box is a Pentium 850 MHz so it would take
+forever...
+
+	Sam
