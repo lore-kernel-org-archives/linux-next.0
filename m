@@ -1,95 +1,162 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: [PATCH] tracing, tty: fix warnings caused by branch tracing and
-	tty_kref_get()
-Date: Tue, 25 Nov 2008 13:19:56 +0100
-Message-ID: <20081125121956.GA26727@elte.hu>
-References: <20081125133828.8f9b49df.sfr@canb.auug.org.au> <20081125102515.54282c0d@lxorguk.ukuu.org.uk>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+Subject: Re: linux-next: rr tree build failure
+Date: Tue, 25 Nov 2008 13:36:26 +0100
+Message-ID: <200811251336.26864.borntraeger@de.ibm.com>
+References: <20081125174554.dbd84cde.sfr@canb.auug.org.au> <200811252217.37125.rusty@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:42929 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751363AbYKYMUY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Nov 2008 07:20:24 -0500
+Received: from mtagate5.uk.ibm.com ([195.212.29.138]:55196 "EHLO
+	mtagate5.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752078AbYKYMgn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Nov 2008 07:36:43 -0500
+Received: from d06nrmr1407.portsmouth.uk.ibm.com (d06nrmr1407.portsmouth.uk.ibm.com [9.149.38.185])
+	by mtagate5.uk.ibm.com (8.13.8/8.13.8) with ESMTP id mAPCagIV417516
+	for <linux-next@vger.kernel.org>; Tue, 25 Nov 2008 12:36:42 GMT
+Received: from d06av01.portsmouth.uk.ibm.com (d06av01.portsmouth.uk.ibm.com [9.149.37.212])
+	by d06nrmr1407.portsmouth.uk.ibm.com (8.13.8/8.13.8/NCO v9.1) with ESMTP id mAPCag052060454
+	for <linux-next@vger.kernel.org>; Tue, 25 Nov 2008 12:36:42 GMT
+Received: from d06av01.portsmouth.uk.ibm.com (loopback [127.0.0.1])
+	by d06av01.portsmouth.uk.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id mAPCafHu030922
+	for <linux-next@vger.kernel.org>; Tue, 25 Nov 2008 12:36:41 GMT
+In-Reply-To: <200811252217.37125.rusty@rustcorp.com.au>
 Content-Disposition: inline
-In-Reply-To: <20081125102515.54282c0d@lxorguk.ukuu.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Steven Rostedt <srostedt@redhat.com>, Alan Cox <alan@redhat.com>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>
 
+Am Dienstag, 25. November 2008 schrieb Rusty Russell:
+> > Also, the x86_64 allmodconfig build failed like this:
+> >
+> > ERROR: "hvc_resize" [drivers/char/virtio_console.ko] undefined!
+> >
+> > hvc_resize is currently not exported to modules.
+> >
+> > I have dropped the rr tree again.
+> 
+> OK, I've dropped Christian's patch for the moment until he fixes this.  I'm 
+> travelling to Sydney for the day so I won't get a chance to fix this if it 
+> breaks tomorrow :(
 
-* Alan Cox <alan@lxorguk.ukuu.org.uk> wrote:
+Ok. Sorry about that. allmodconfig on s390 and i386 select VIRTIO_CONSOLE as 
+(y) and not as (m), therefore my tests did not trigger this problem. I will 
+try to get an x86_64 box to test on in the future.
 
-> On Tue, 25 Nov 2008 13:38:28 +1100
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->=20
-> > Hi all,
-> >=20
-> > Today's linux-next build (x86_64 allmodconfig) produced lots of the=
-se
-> > warnings:
-> >=20
-> > include/linux/tty.h:330: warning: '______f' is static but declared =
-in inline function 'tty_kref_get' which is not static
-> >=20
-> > Caused by commit 2bcd521a684cc94befbe2ce7d5b613c841b0d304 ("trace:
-> > profile all if conditionals").  Something needs to be done about
-> > this ...  maybe tty_kref_get needs to be "static inline" instead of
-> > "extern inline"?
->=20
-> If someone from the ftrace crew can sort the problem out and send me=20
-> a diff for the ttydev tree that shouldn't be a problem, but really=20
-> it looks like a problem with ftrace as that can't be the only case=20
-> this happens surely ?
+This version of the patch adds an EXPORT_SYMBOL_GPL. Feel free to add it 
+whenever it fits your schedule. 
 
-i've done quite wide build testing of it and tty.h seems to be the=20
-only affected file triggering a warning due to this. ('extern inline'=20
-has been eliminated from most of the kernel in recent cycles)
+[PATCH 1/2]: virtio_console: support console resizing
 
-	Ingo
+From: Christian Borntraeger <borntraeger@de.ibm.com>
 
----------------->
-=46rom 14bfc987e395797dfe03e915e8b4c7fc9e5078e4 Mon Sep 17 00:00:00 200=
-1
-=46rom: Ingo Molnar <mingo@elte.hu>
-Date: Tue, 25 Nov 2008 08:58:11 +0100
-Subject: [PATCH] tracing, tty: fix warnings caused by branch tracing an=
-d tty_kref_get()
-MIME-Version: 1.0
-Content-Type: text/plain; charset=3Dutf-8
-Content-Transfer-Encoding: 8bit
+this patch uses the new hvc callback hvc_resize to set the window site 
+which allows to change the tty size of hvc_console via a hvc_resize 
+function.
 
-Stephen Rothwell reported tht this warning started triggering in
-linux-next:
+I have added a new feature bit VIRTIO_CONSOLE_F_SIZE. The driver will 
+change the window size on tty open and via the config_changed callback
+of the transport. Currently lguest and kvm_s390 have not implemented this
+callback, but the callback can be implemented at a later point in time.
 
-  In file included from init/main.c:27:
-  include/linux/tty.h: In function =E2=80=98tty_kref_get=E2=80=99:
-  include/linux/tty.h:330: warning: =E2=80=98______f=E2=80=99 is static=
- but declared in inline function =E2=80=98tty_kref_get=E2=80=99 which i=
-s not static
-
-Which gcc emits for 'extern inline' functions that nevertheless define
-static variables. Change it to 'static inline', which is the norm
-in the kernel anyway.
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Ingo Molnar <mingo@elte.hu>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 ---
- include/linux/tty.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/char/hvc_console.c     |    1 +
+ drivers/char/virtio_console.c  |   30 +++++++++++++++++++++++++++++-
+ include/linux/virtio_console.h |   11 +++++++++++
+ 3 files changed, 41 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/tty.h b/include/linux/tty.h
-index 3b8121d..eaec37c 100644
---- a/include/linux/tty.h
-+++ b/include/linux/tty.h
-@@ -325,7 +325,7 @@ extern struct class *tty_class;
-  *	go away
+Index: kvm/drivers/char/hvc_console.c
+===================================================================
+--- kvm.orig/drivers/char/hvc_console.c
++++ kvm/drivers/char/hvc_console.c
+@@ -694,6 +694,7 @@ void hvc_resize(struct hvc_struct *hp, s
+ 		schedule_work(&hp->tty_resize);
+ 	}
+ }
++EXPORT_SYMBOL_GPL(hvc_resize);
+ 
+ /*
+  * This kthread is either polling or interrupt driven.  This is determined by
+Index: kvm/drivers/char/virtio_console.c
+===================================================================
+--- kvm.orig/drivers/char/virtio_console.c
++++ kvm/drivers/char/virtio_console.c
+@@ -138,12 +138,33 @@ int __init virtio_cons_early_init(int (*
+ }
+ 
+ /*
++ * virtio console configuration. This supports:
++ * - console resize
++ */
++static void virtcons_apply_config(struct virtio_device *dev)
++{
++	struct winsize ws;
++
++	if (virtio_has_feature(dev, VIRTIO_CONSOLE_F_SIZE)) {
++		dev->config->get(dev,
++				 offsetof(struct virtio_console_config, cols),
++				 &ws.ws_col, sizeof(u16));
++		dev->config->get(dev,
++				 offsetof(struct virtio_console_config, rows),
++				 &ws.ws_row, sizeof(u16));
++		hvc_resize(hvc, ws);
++	}
++}
++
++/*
+  * we support only one console, the hvc struct is a global var
+- * There is no need to do anything
++ * We set the configuration at this point, since we now have a tty
   */
-=20
--extern inline struct tty_struct *tty_kref_get(struct tty_struct *tty)
-+static inline struct tty_struct *tty_kref_get(struct tty_struct *tty)
+ static int notifier_add_vio(struct hvc_struct *hp, int data)
  {
- 	if (tty)
- 		kref_get(&tty->kref);
+ 	hp->irq_requested = 1;
++	virtcons_apply_config(vdev);
++
+ 	return 0;
+ }
+ 
+@@ -234,11 +255,18 @@ static struct virtio_device_id id_table[
+ 	{ 0 },
+ };
+ 
++static unsigned int features[] = {
++	VIRTIO_CONSOLE_F_SIZE,
++};
++
+ static struct virtio_driver virtio_console = {
++	.feature_table = features,
++	.feature_table_size = ARRAY_SIZE(features),
+ 	.driver.name =	KBUILD_MODNAME,
+ 	.driver.owner =	THIS_MODULE,
+ 	.id_table =	id_table,
+ 	.probe =	virtcons_probe,
++	.config_changed = virtcons_apply_config,
+ };
+ 
+ static int __init init(void)
+Index: kvm/include/linux/virtio_console.h
+===================================================================
+--- kvm.orig/include/linux/virtio_console.h
++++ kvm/include/linux/virtio_console.h
+@@ -7,6 +7,17 @@
+ /* The ID for virtio console */
+ #define VIRTIO_ID_CONSOLE	3
+ 
++/* Feature bits */
++#define VIRTIO_CONSOLE_F_SIZE	0	/* Does host provide console size? */
++
++struct virtio_console_config {
++	/* colums of the screens */
++	__u16 cols;
++	/* rows of the screens */
++	__u16 rows;
++} __attribute__((packed));
++
++
+ #ifdef __KERNEL__
+ int __init virtio_cons_early_init(int (*put_chars)(u32, const char *, int));
+ #endif /* __KERNEL__ */
