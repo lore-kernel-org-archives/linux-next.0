@@ -1,44 +1,53 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: ftrace tree build failure
-Date: Tue, 25 Nov 2008 09:04:10 +0100
-Message-ID: <20081125080410.GA28912@elte.hu>
-References: <20081125140719.03a8cdfb.sfr@canb.auug.org.au> <20081125072801.GA15592@elte.hu> <20081125184335.330cf28e.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the security-testing tree
+Date: Tue, 25 Nov 2008 19:11:37 +1100
+Message-ID: <20081125191137.d5474c9e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:60707 "EHLO mx3.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44093 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751390AbYKYIEn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Nov 2008 03:04:43 -0500
-Content-Disposition: inline
-In-Reply-To: <20081125184335.330cf28e.sfr@canb.auug.org.au>
+	id S1751860AbYKYILw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 Nov 2008 03:11:52 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Steven Rostedt <srostedt@redhat.com>, "Luis R. Rodriguez" <lrodriguez@atheros.com>, "John W. Linville" <linville@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, David Howells <dhowells@redhat.com>, "J. Bruce Fields" <bfields@citi.umich.edu>
 
+Hi James,
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Today's linux-next merge of the security-testing tree got a conflict in
+fs/nfsd/nfs4recover.c between commit
+e4625eb826de4f6774ee602c442ba23b686bdcc7 ("nfsd: use of unitialized list
+head on error exit in nfs4recover.c") from the nfsd tree and commit
+d84f4f992cbd76e8f39c488cf0c5d123843923b1 ("CRED: Inaugurate COW
+credentials") from the security-testing tree.
 
-> Hi Ingo,
-> 
-> On Tue, 25 Nov 2008 08:28:01 +0100 Ingo Molnar <mingo@elte.hu> wrote:
-> >
-> > this fix is wrong - the intention of that line was to add a proper 
-> > WARN(), not a WARN_ON(). Your change loses the message that WARN() 
-> > prints.
-> > 
-> > i posted a tested fix for this two days ago:
-> > 
-> >   http://marc.info/?l=linux-kernel&m=122745649425646&w=2
-> > 
-> > see it also below.
-> 
-> Yeah, Steve told me.  However, it might have been useful to tell the 
-> wireless maintainer, the network maintainer and the original author 
-> (and probably netdev - which I also left off).
+Just a context change. I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-yep, i too forgot to add full Cc:s (it was in the context of a tracing 
-discussion) - but lkml was Cc:-ed so it wasnt actually lost.
-
-	Ingo
+diff --cc fs/nfsd/nfs4recover.c
+index cf94563,9371ea1..0000000
+--- a/fs/nfsd/nfs4recover.c
++++ b/fs/nfsd/nfs4recover.c
+@@@ -224,10 -230,12 +230,13 @@@ nfsd4_list_rec_dir(struct dentry *dir, 
+  	if (!rec_dir_init)
+  		return 0;
+  
+- 	nfs4_save_user(&uid, &gid);
++ 	status = nfs4_save_creds(&original_cred);
++ 	if (status < 0)
++ 		return status;
+ +	INIT_LIST_HEAD(dentries);
+  
+- 	filp = dentry_open(dget(dir), mntget(rec_dir.mnt), O_RDONLY);
++ 	filp = dentry_open(dget(dir), mntget(rec_dir.mnt), O_RDONLY,
++ 			   current_cred());
+  	status = PTR_ERR(filp);
+  	if (IS_ERR(filp))
+  		goto out;
