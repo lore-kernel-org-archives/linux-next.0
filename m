@@ -1,55 +1,31 @@
-From: "Luis R. Rodriguez" <lrodriguez@atheros.com>
-Subject: Re: linux-next: ftrace tree build failure
-Date: Tue, 25 Nov 2008 10:46:30 -0800
-Message-ID: <20081125184630.GA5950@tesla>
-References: <20081125140719.03a8cdfb.sfr@canb.auug.org.au> <20081125072801.GA15592@elte.hu> <20081125184335.330cf28e.sfr@canb.auug.org.au> <20081125080410.GA28912@elte.hu> <20081125145701.GA25962@tuxdriver.com>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: [BUILD_FAILURE] linux-next: 20081125 - 8390 network driver
+ build fails
+Date: Tue, 25 Nov 2008 18:51:54 +0000
+Message-ID: <20081125185154.2845e8f1@lxorguk.ukuu.org.uk>
+References: <20081125213738.881b425e.sfr@canb.auug.org.au>
+	<20081125182542.GA4914@linux.vnet.ibm.com>
+	<492C464D.4080704@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.atheros.com ([12.36.123.2]:44144 "EHLO mail.atheros.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751976AbYKYSqb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Nov 2008 13:46:31 -0500
-Received: from mail.atheros.com ([10.10.20.108])
-	by sidewinder.atheros.com
-	for <linux-next@vger.kernel.org>; Tue, 25 Nov 2008 10:46:31 -0800
-Content-Disposition: inline
-In-Reply-To: <20081125145701.GA25962@tuxdriver.com>
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:50324 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751976AbYKYSwd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Nov 2008 13:52:33 -0500
+In-Reply-To: <492C464D.4080704@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Steven Rostedt <srostedt@redhat.com>, Luis Rodriguez <Luis.Rodriguez@Atheros.com>, "David S. Miller" <davem@davemloft.net>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, p_gortmaker@yahoo.com, netdev@vger.kernel.org, mel@csn.ul.ie
 
-On Tue, Nov 25, 2008 at 06:57:01AM -0800, John W. Linville wrote:
-> On Tue, Nov 25, 2008 at 09:04:10AM +0100, Ingo Molnar wrote:
-> >
-> > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > > Hi Ingo,
-> > >
-> > > On Tue, 25 Nov 2008 08:28:01 +0100 Ingo Molnar <mingo@elte.hu> wrote:
-> > > >
-> > > > this fix is wrong - the intention of that line was to add a proper
-> > > > WARN(), not a WARN_ON(). Your change loses the message that WARN()
-> > > > prints.
-> > > >
-> > > > i posted a tested fix for this two days ago:
-> > > >
-> > > >   http://marc.info/?l=linux-kernel&m=122745649425646&w=2
-> > > >
-> > > > see it also below.
-> > >
-> > > Yeah, Steve told me.  However, it might have been useful to tell the
-> > > wireless maintainer, the network maintainer and the original author
-> > > (and probably netdev - which I also left off).
-> >
-> > yep, i too forgot to add full Cc:s (it was in the context of a tracing
-> > discussion) - but lkml was Cc:-ed so it wasnt actually lost.
-> 
-> I have the patch now...thanks!
-> 
-> Now, if I only knew why my build didn't fail with the original code...
+> I just reported this on netdev and said that DaveM might want to drop a patch
+> that I had submitted.  Anyway, I'm looking into it.
 
-Same here I run tests with sparse too prior to sending patches.
+Ditto and the only sane interpretation I can see is that someone
+somewhere has crap in their tree that does
 
-  Luis
+#define static
+
+and this is leaking out.
