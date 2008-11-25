@@ -1,64 +1,59 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the perfmon3 tree
-Date: Tue, 25 Nov 2008 17:51:18 +0100
-Message-ID: <20081125165118.GF22504@elte.hu>
-References: <20081125210319.35b2d189.sfr@canb.auug.org.au> <20081125102234.GA4281@elte.hu> <7c86c4470811250640v4417fa4fs196f0d0bea136a45@mail.gmail.com> <20081125153345.GA20733@elte.hu> <7c86c4470811250836k2f798c21pe4766a565a6231ab@mail.gmail.com>
+From: malahal@us.ibm.com
+Subject: Re: next-20081119: general protection fault:
+	get_next_timer_interrupt()
+Date: Tue, 25 Nov 2008 08:59:55 -0800
+Message-ID: <20081125165955.GB529@us.ibm.com>
+References: <a4423d670811210250t6b75645evd9646ffb07745867@mail.gmail.com> <alpine.LFD.2.00.0811241816120.3301@localhost.localdomain> <1227554117.25499.46.camel@localhost.localdomain> <alpine.LFD.2.00.0811242018370.3235@localhost.localdomain> <20081124213517.GA25898@linux.vnet.ibm.com> <alpine.LFD.2.00.0811242327130.3235@localhost.localdomain> <20081125000902.GA24251@us.ibm.com> <20081125115710.6c249f32.sfr@canb.auug.org.au> <20081125020852.GA27280@us.ibm.com> <20081125085109.GR26308@kernel.dk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:48489 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752218AbYKYQvr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Nov 2008 11:51:47 -0500
+Received: from e35.co.us.ibm.com ([32.97.110.153]:40103 "EHLO
+	e35.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752251AbYKYRAU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Nov 2008 12:00:20 -0500
 Content-Disposition: inline
-In-Reply-To: <7c86c4470811250836k2f798c21pe4766a565a6231ab@mail.gmail.com>
+In-Reply-To: <20081125085109.GR26308@kernel.dk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: eranian@gmail.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Alexander van Heukelum <heukelum@mailshack.com>, the arch/x86 maintainers <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Andrew Morton <akpm@linux-foundation.org>
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Mike Anderson <andmike@linux.vnet.ibm.com>, James Bottomley <James.Bottomley@HansenPartnership.com>, Alexander Beregalov <a.beregalov@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, linux-scsi@vger.kernel.org, David Miller <davem@davemloft.net>
 
-
-* stephane eranian <eranian@googlemail.com> wrote:
-
-> Ingo,
+Jens Axboe [jens.axboe@oracle.com] wrote:
+> On Mon, Nov 24 2008, malahal@us.ibm.com wrote:
+> > Stephen Rothwell [sfr@canb.auug.org.au] wrote:
+> > > > The block timer code calls del_timer(), should it call del_timer_sync()?
+> > > > It is possible although unlikely that you are hitting del_timer_sync vs
+> > > > del_timer problem in the block timeout code. Can only be seen on SMP
+> > > > systems though!
+> > > 
+> > > Is this still a problem in next-20081121? In that tree, the block commit
+> > > "block: leave the request timeout timer running even on an empty list"
+> > > was changed to add this:
+> > > 
+> > > diff --git a/block/blk-core.c b/block/blk-core.c
+> > > index 04267d6..44f547c 100644
+> > > --- a/block/blk-core.c
+> > > +++ b/block/blk-core.c
+> > > @@ -391,6 +391,7 @@ EXPORT_SYMBOL(blk_stop_queue);
+> > >  void blk_sync_queue(struct request_queue *q)
+> > >  {
+> > >  	del_timer_sync(&q->unplug_timer);
+> > > +	del_timer_sync(&q->timeout);
+> > >  	kblockd_flush_work(&q->unplug_work);
+> > >  }
+> > >  EXPORT_SYMBOL(blk_sync_queue);
+> > 
+> > I was looking at the Linux tree. Clearly same problem doesn't exist with
+> > the above commit! I wonder why kblockd_flush_work() is called after the
+> > del_timer_sync(). It makes sense to cancel the work and then shutdown
+> > the timer(s). I doubt if you are running into this problem though.
 > 
-> 
-> On Tue, Nov 25, 2008 at 4:33 PM, Ingo Molnar <mingo@elte.hu> wrote:
-> >
-> > * stephane eranian <eranian@googlemail.com> wrote:
-> >
-> >> So I am not sure I understand your point about submitting the
-> >> changes to the x86 tree first.
-> >
-> > You are modifying x86 architecture files to enable a kernel feature on
-> > x86. Such feature enablement, if it's pushed into linux-next, must go
-> > via the arch maintainers.
-> >
-> > The x86 impact of the perfmon3 tree is substantial:
-> >
-> [snip]
-> >  25 files changed, 2340 insertions(+), 6 deletions(-)
-> >
-> > linux-next is not a development kernel - it is an integration tree
-> > simulating the next version of the upstream kernel and hence all trees
-> > that are in it must be synced up (and in this case, go via) their
-> > respective maintainers.
-> >
->
-> Perfmon3 as it exists in linux-next has two components: generic + 
-> x86 I can send x86@kernel.org the x86 specific patches to integrate 
-> them into the x86 tree even though they would not be operational 
-> without the generic part. But then, where do I send the generic 
-> code?
+> If the kernel tested doesn't include the above fix, it'll surely go
+> boom. Can someone verify that this is the case?
 
-There are a number of ways to do that - and we'll sure be able to work 
-that out - but first please submit the full patchset (x86 and generic 
-bits as well) to lkml with the x86 maintainers Cc:-ed.
+Just looked, next-20081119 doesn't have the above fix. It is included in
+next-20081120. Also note that the above fix is only partially copied,
+there is other part that removed deleting the timer when there are no
+outstanding requests.
 
-In any case, until that happens and until there's agreement with the 
-x86 maintainers (there's none at the moment) the perfmon3 tree (or at 
-least its x86 bits) needs to be removed from linux-next. I already see 
-a number of problems with the patchset that we'll have to work out via 
-an iterative review process.
-
-	Ingo
+--Malahal.
