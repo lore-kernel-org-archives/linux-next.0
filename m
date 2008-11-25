@@ -1,45 +1,75 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: manual merge of the cputime tree
-Date: Tue, 25 Nov 2008 11:28:00 +0100
-Message-ID: <1227608880.4259.1451.camel@twins>
-References: <20081125202105.2e80cf92.sfr@canb.auug.org.au>
-	 <1227607612.4259.1428.camel@twins>  <1227608128.30264.2.camel@localhost>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: ocsf2 tree build warnings
+Date: Tue, 25 Nov 2008 21:31:02 +1100
+Message-ID: <20081125213102.28efa104.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__25_Nov_2008_21_31_02_+1100_PND3OBBNYMBD=T4m"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:45325 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752478AbYKYK2J (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Nov 2008 05:28:09 -0500
-In-Reply-To: <1227608128.30264.2.camel@localhost>
+Received: from chilli.pcug.org.au ([203.10.76.44]:40248 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752507AbYKYKbU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 Nov 2008 05:31:20 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: schwidefsky@de.ibm.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@elte.hu>
+To: Mark Fasheh <mfasheh@suse.com>
+Cc: linux-next@vger.kernel.org, Jan Kara <jack@suse.cz>
 
-On Tue, 2008-11-25 at 11:15 +0100, Martin Schwidefsky wrote:
-> On Tue, 2008-11-25 at 11:06 +0100, Peter Zijlstra wrote:
-> > On Tue, 2008-11-25 at 20:21 +1100, Stephen Rothwell wrote:
-> > > Hi Martin,
-> > > 
-> > > Today's linux-next merge of the cputime tree got a conflict in
-> > > kernel/sched.c between commit 74fcd524e808975dd546dac847119f1995a7c622
-> > > ("account_steal_time: kill the unneeded account_group_system_time()")
-> > > from the tip-core tree and commit
-> > > b7f4776b7f575ed8f288c44b64befd241fd44458 ("[PATCH] idle cputime
-> > > accounting") from the cputime tree.
-> > > 
-> > > The latter removes the call to account_group_system_time() as a side
-> > > effect of further changes.  So the fixup is to just take the latter
-> > > change.  I can carry the merge fix.
-> > 
-> > Why does s390 do its own cpu accounting?
-> 
-> Is that a trick question? I invented the cputime accounting specifically
-> for s390 because it is a virtual architecture and the standard cpu
-> accounting numbers are just useless.
+--Signature=_Tue__25_Nov_2008_21_31_02_+1100_PND3OBBNYMBD=T4m
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Nah, just general ignorance brought on by the mondays on a tuesday ;-)
+Hi Mark,
 
-Right, makes sense, is it shared with all other virt* folks out there?
+Today's linux-next build (powerpc allyesconfig) produced these warnings:
+
+fs/ocfs2/quota_local.c: In function 'olq_set_dquot':
+fs/ocfs2/quota_local.c:844: warning: format '%lld' expects type 'long long =
+int', but argument 7 has type '__le64'
+fs/ocfs2/quota_local.c:844: warning: format '%lld' expects type 'long long =
+int', but argument 8 has type '__le64'
+fs/ocfs2/quota_local.c:844: warning: format '%lld' expects type 'long long =
+int', but argument 7 has type '__le64'
+fs/ocfs2/quota_local.c:844: warning: format '%lld' expects type 'long long =
+int', but argument 8 has type '__le64'
+fs/ocfs2/quota_local.c:844: warning: format '%lld' expects type 'long long =
+int', but argument 7 has type '__le64'
+fs/ocfs2/quota_local.c:844: warning: format '%lld' expects type 'long long =
+int', but argument 8 has type '__le64'
+fs/ocfs2/quota_global.c: In function '__ocfs2_sync_dquot':
+fs/ocfs2/quota_global.c:457: warning: format '%lld' expects type 'long long=
+ int', but argument 8 has type 's64'
+fs/ocfs2/quota_global.c:457: warning: format '%lld' expects type 'long long=
+ int', but argument 10 has type 's64'
+fs/ocfs2/quota_global.c:457: warning: format '%lld' expects type 'long long=
+ int', but argument 8 has type 's64'
+fs/ocfs2/quota_global.c:457: warning: format '%lld' expects type 'long long=
+ int', but argument 10 has type 's64'
+fs/ocfs2/quota_global.c:457: warning: format '%lld' expects type 'long long=
+ int', but argument 8 has type 's64'
+fs/ocfs2/quota_global.c:457: warning: format '%lld' expects type 'long long=
+ int', but argument 10 has type 's64'
+
+These are because s64 is "long" on some architectures.  Our usual
+solution is to cast them to "long long" when printing them.  Also, you
+shouldn't directly print an __le64 (you need to convert it to the host
+type first for it to make much sense.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__25_Nov_2008_21_31_02_+1100_PND3OBBNYMBD=T4m
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkr0+YACgkQjjKRsyhoI8ykFwCggK1mg2vZRMQkR0QMTktK9ldZ
+lzgAoId4zNoEhLq65v6KHBOL1pzgn1jY
+=3hI4
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__25_Nov_2008_21_31_02_+1100_PND3OBBNYMBD=T4m--
