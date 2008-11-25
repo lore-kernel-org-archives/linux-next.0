@@ -1,40 +1,53 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH] use limited register constraint for setnz
-Date: Tue, 25 Nov 2008 00:42:37 -0500 (EST)
-Message-ID: <alpine.DEB.1.10.0811250040060.2977@gandalf.stny.rr.com>
+From: Steven Rostedt <srostedt@redhat.com>
+Subject: Re: linux-next: ftrace tree build failure
+Date: Tue, 25 Nov 2008 00:44:16 -0500
+Message-ID: <1227591856.7622.26.camel@localhost.localdomain>
+References: <20081125142105.2b6d464a.sfr@canb.auug.org.au>
+	 <1227584931.7622.11.camel@localhost.localdomain>
+	 <20081125151345.3f0ed493.sfr@canb.auug.org.au>
+	 <1227587493.7622.14.camel@localhost.localdomain>
+	 <20081125160935.2bd3dcb2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hrndva-omtalb.mail.rr.com ([71.74.56.124]:40188 "EHLO
-	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751154AbYKYFmk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Nov 2008 00:42:40 -0500
+Received: from mx2.redhat.com ([66.187.237.31]:40935 "EHLO mx2.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750894AbYKYFpY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 Nov 2008 00:45:24 -0500
+In-Reply-To: <20081125160935.2bd3dcb2.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
 
 
-Impact: fix in compiling
+On Tue, 2008-11-25 at 16:09 +1100, Stephen Rothwell wrote:
+> Hi Steve,
+> 
+> On Mon, 24 Nov 2008 23:31:33 -0500 Steven Rostedt <srostedt@redhat.com> wrote:
+> >
+> > This may be a compiler bug, or something introduced by the compiler. I
+> > compiled it fine first with gcc 4.0.2, but then tried with the same
+> > compiler you used, and got the same error as you.
+> 
+> A quick bisect points to this commit:
+> 
+> commit 2bcd521a684cc94befbe2ce7d5b613c841b0d304
+> Author: Steven Rostedt <srostedt@redhat.com>
+> Date:   Fri Nov 21 01:30:54 2008 -0500
+> 
+>     trace: profile all if conditionals
+> 
+> I guess something in there is tickling the compiler ...
 
-GCC can decide to use %dil when "r" is used, which is not valid for
-setnz.
+Yep, it was the wrong constraint used in the asm. Googling around, I
+found a similar bug listed in gcc, which was not a bug.
 
-This bug was brought out by Stephen Rothwell's merging of the
-branch tracer into linux-next.
+Patch has been sent to fix this.
 
-Signed-off-by: Steven Rostedt <srostedt@redhat.com>
+Ah, I forgot to Cc Peter on that patch.
 
-diff --git a/arch/x86/boot/tty.c b/arch/x86/boot/tty.c
-index 0be77b3..c2121d2 100644
---- a/arch/x86/boot/tty.c
-+++ b/arch/x86/boot/tty.c
-@@ -74,7 +74,7 @@ static int kbd_pending(void)
- {
- 	u8 pending;
- 	asm volatile("int $0x16; setnz %0"
--		     : "=rm" (pending)
-+		     : "=Qm" (pending)
- 		     : "a" (0x0100));
- 	return pending;
- }
+I'll bounce it to him ;-)
+
+-- Steve
