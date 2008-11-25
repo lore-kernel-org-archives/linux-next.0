@@ -1,59 +1,98 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
 Subject: Re: linux-next: ftrace tree build failure
-Date: Tue, 25 Nov 2008 18:26:26 +1100
-Message-ID: <20081125182626.f1fba897.sfr@canb.auug.org.au>
-References: <20081125142105.2b6d464a.sfr@canb.auug.org.au>
-	<1227584931.7622.11.camel@localhost.localdomain>
-	<20081125151345.3f0ed493.sfr@canb.auug.org.au>
-	<1227587493.7622.14.camel@localhost.localdomain>
-	<20081125160935.2bd3dcb2.sfr@canb.auug.org.au>
-	<1227591856.7622.26.camel@localhost.localdomain>
-	<20081125175708.d28d08cd.sfr@canb.auug.org.au>
-	<20081125071436.GA9660@elte.hu>
+Date: Tue, 25 Nov 2008 08:28:01 +0100
+Message-ID: <20081125072801.GA15592@elte.hu>
+References: <20081125140719.03a8cdfb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__25_Nov_2008_18_26_26_+1100_Z6bohre8FOxz+h/="
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:32839 "EHLO smtps.tip.net.au"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:40696 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751189AbYKYH0n (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Nov 2008 02:26:43 -0500
-In-Reply-To: <20081125071436.GA9660@elte.hu>
+	id S1751170AbYKYH2h (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 Nov 2008 02:28:37 -0500
+Content-Disposition: inline
+In-Reply-To: <20081125140719.03a8cdfb.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Steven Rostedt <srostedt@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Steven Rostedt <srostedt@redhat.com>, "Luis R. Rodriguez" <lrodriguez@atheros.com>, "John W. Linville" <linville@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>
 
---Signature=_Tue__25_Nov_2008_18_26_26_+1100_Z6bohre8FOxz+h/=
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Ingo,
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-On Tue, 25 Nov 2008 08:14:36 +0100 Ingo Molnar <mingo@elte.hu> wrote:
->
-> i've applied the assembly constraint fix to the x86 tree and i've=20
-> integrated a new version of auto-x86-next which includes the fix, and=20
-> pushed it out.
+> Hi all,
+> 
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> 
+> net/wireless/reg.c:348:29: error: macro "if" passed 2 arguments, but takes just 1
+> net/wireless/reg.c: In function 'ignore_request':
+> net/wireless/reg.c:349: error: expected '(' before 'return'
+> 
+> This is clearly a bug in in the above file and should be fixed there, so
+> I have applied the following patch for today.  I expect some patch to fix
+> this to appear in the wireless-current or net-current tree very soon.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
+> 
+> diff --git a/net/wireless/reg.c b/net/wireless/reg.c
+> index 626dbb6..648c765 100644
+> --- a/net/wireless/reg.c
+> +++ b/net/wireless/reg.c
+> @@ -343,9 +343,7 @@ static int ignore_request(struct wiphy *wiphy, enum reg_set_by set_by,
+>  				return 0;
+>  			return -EALREADY;
+>  		}
+> -		if (WARN_ON(!is_alpha2_set(alpha2) || !is_an_alpha2(alpha2)),
+> -				"Invalid Country IE regulatory hint passed "
+> -				"to the wireless core\n")
+> +		if (WARN_ON(!is_alpha2_set(alpha2) || !is_an_alpha2(alpha2)))
 
-Thanks.
+this fix is wrong - the intention of that line was to add a proper 
+WARN(), not a WARN_ON(). Your change loses the message that WARN() 
+prints.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+i posted a tested fix for this two days ago:
 
---Signature=_Tue__25_Nov_2008_18_26_26_+1100_Z6bohre8FOxz+h/=
-Content-Type: application/pgp-signature
+  http://marc.info/?l=linux-kernel&m=122745649425646&w=2
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+see it also below.
 
-iEYEARECAAYFAkkrqKIACgkQjjKRsyhoI8xk0ACfbCwQjPaJ3lmfj2Gg+POgmOax
-xd4AoIvwtCpsiyFszEoOp/VtbLB2BhSE
-=Da8H
------END PGP SIGNATURE-----
+	Ingo
 
---Signature=_Tue__25_Nov_2008_18_26_26_+1100_Z6bohre8FOxz+h/=--
+--------------->
+>From de734ba59d249ee785a1ead600e5a6ea1dd62639 Mon Sep 17 00:00:00 2001
+From: Ingo Molnar <mingo@elte.hu>
+Date: Sun, 23 Nov 2008 20:09:54 +0100
+Subject: [PATCH] net/wireless/reg.c: fix
+
+fix:
+
+  net/wireless/reg.c:348:29: error: macro "if" passed 2 arguments, but takes just 1
+
+triggered by the branch-tracer.
+
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+ # Please enter the commit message for your changes. Lines starting
+---
+ net/wireless/reg.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/net/wireless/reg.c b/net/wireless/reg.c
+index 626dbb6..eb3b1a9 100644
+--- a/net/wireless/reg.c
++++ b/net/wireless/reg.c
+@@ -343,9 +343,9 @@ static int ignore_request(struct wiphy *wiphy, enum reg_set_by set_by,
+ 				return 0;
+ 			return -EALREADY;
+ 		}
+-		if (WARN_ON(!is_alpha2_set(alpha2) || !is_an_alpha2(alpha2)),
++		if (WARN(!is_alpha2_set(alpha2) || !is_an_alpha2(alpha2),
+ 				"Invalid Country IE regulatory hint passed "
+-				"to the wireless core\n")
++				"to the wireless core\n"))
+ 			return -EINVAL;
+ 		/* We ignore Country IE hints for now, as we haven't yet
+ 		 * added the dot11MultiDomainCapabilityEnabled flag
