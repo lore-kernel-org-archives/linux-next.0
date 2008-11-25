@@ -1,51 +1,95 @@
-From: "Serge E. Hallyn" <serue@us.ibm.com>
-Subject: Re: userns tree ready
-Date: Tue, 25 Nov 2008 08:24:06 -0600
-Message-ID: <20081125142406.GA9761@us.ibm.com>
-References: <20081125001651.GA10661@us.ibm.com> <alpine.LRH.1.10.0811251204450.18891@tundra.namei.org>
+From: "stephane eranian" <eranian@googlemail.com>
+Subject: Re: linux-next: manual merge of the perfmon3 tree
+Date: Tue, 25 Nov 2008 15:40:20 +0100
+Message-ID: <7c86c4470811250640v4417fa4fs196f0d0bea136a45@mail.gmail.com>
+References: <20081125210319.35b2d189.sfr@canb.auug.org.au>
+	 <20081125102234.GA4281@elte.hu>
+Reply-To: eranian@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e38.co.us.ibm.com ([32.97.110.159]:51227 "EHLO
-	e38.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750894AbYKYOYK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Nov 2008 09:24:10 -0500
-Received: from d03relay04.boulder.ibm.com (d03relay04.boulder.ibm.com [9.17.195.106])
-	by e38.co.us.ibm.com (8.13.1/8.13.1) with ESMTP id mAPENA0Z015119
-	for <linux-next@vger.kernel.org>; Tue, 25 Nov 2008 07:23:10 -0700
-Received: from d03av02.boulder.ibm.com (d03av02.boulder.ibm.com [9.17.195.168])
-	by d03relay04.boulder.ibm.com (8.13.8/8.13.8/NCO v9.1) with ESMTP id mAPEO8Lw128684
-	for <linux-next@vger.kernel.org>; Tue, 25 Nov 2008 07:24:08 -0700
-Received: from d03av02.boulder.ibm.com (loopback [127.0.0.1])
-	by d03av02.boulder.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id mAPEO75Y032060
-	for <linux-next@vger.kernel.org>; Tue, 25 Nov 2008 07:24:08 -0700
+Received: from fg-out-1718.google.com ([72.14.220.158]:10999 "EHLO
+	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751282AbYKYOkW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Nov 2008 09:40:22 -0500
+Received: by fg-out-1718.google.com with SMTP id 19so1872fgg.17
+        for <linux-next@vger.kernel.org>; Tue, 25 Nov 2008 06:40:21 -0800 (PST)
+In-Reply-To: <20081125102234.GA4281@elte.hu>
 Content-Disposition: inline
-In-Reply-To: <alpine.LRH.1.10.0811251204450.18891@tundra.namei.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Howells <dhowells@redhat.com>, linux-next@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Alexander van Heukelum <heukelum@mailshack.com>, the arch/x86 maintainers <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Andrew Morton <akpm@linux-foundation.org>
 
-Quoting James Morris (jmorris@namei.org):
-> On Mon, 24 Nov 2008, Serge E. Hallyn wrote:
-> 
-> > Hi Stephen,
-> > 
-> > I've created a new userns tree - although the patches are completely
-> > unchanged from before they were pulled along with David's patches.
-> > They apply fine either right after James' security-next tree or at
-> > the end of linux-next.  The tree is at
-> > 
-> > git://git.kernel.org/pub/scm/linux/kernel/git/sergeh/userns-2.6#next
-> > 
-> > like before, and is based on James's security-next tree.
-> 
-> I can merge this into my tree, although if it breaks, I'll need help from 
-> you to fix it.
+Hi,
 
-Thanks, James.  I don't know which (security-next or linux-next) is more
-appropriate, but I think Stephen may have already added it to
-Next/Trees.  I'll of course fix any breakages in any case.
 
-thanks,
--serge
+I looked at the modifications to entry_32.S and entry_64.S generated
+by perfmon in 2.6.28-rc6
+and they are quite minimal:
+
+--- a/arch/x86/kernel/entry_32.S
++++ b/arch/x86/kernel/entry_32.S
+@@ -513,7 +513,7 @@ ENDPROC(system_call)
+        ALIGN
+        RING0_PTREGS_FRAME              # can't unwind into user space anyway
+ work_pending:
+-       testb $_TIF_NEED_RESCHED, %cl
++       testw $(_TIF_NEED_RESCHED|_TIF_PERFMON_WORK), %cx
+        jz work_notifysig
+ work_resched:
+        call schedule
+diff --git a/arch/x86/kernel/entry_64.S b/arch/x86/kernel/entry_64.S
+index b86f332..b6f061e 100644
+--- a/arch/x86/kernel/entry_64.S
++++ b/arch/x86/kernel/entry_64.S
+@@ -869,7 +869,13 @@ END(error_interrupt)
+ ENTRY(spurious_interrupt)
+        apicinterrupt SPURIOUS_APIC_VECTOR,smp_spurious_interrupt
+ END(spurious_interrupt)
+-
++
++#ifdef CONFIG_PERFMON
++ENTRY(pmu_interrupt)
++       apicinterrupt LOCAL_PERFMON_VECTOR,smp_pmu_interrupt
++END(pmu_interrupt)
++#endif
++
+ /*
+  * Exception entry points.
+  */
+
+
+Looking at Stephen's tree, looks like there were some new macros introduced to
+declare the lowest level interrupt handler for entry_64. There is not much I can
+do in advance to avoid this kind of problems. The handler is part of perfmon not
+some generic x86 modification. Same thing for entry_32.S.
+
+So I am not sure I understand your point about submitting the changes to the x86
+tree first.
+
+
+
+
+On Tue, Nov 25, 2008 at 11:22 AM, Ingo Molnar <mingo@elte.hu> wrote:
+>
+> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+>> Hi Stephane,
+>>
+>> Today's linux-next merge of the perfmon3 tree got a conflict in
+>> arch/x86/kernel/entry_64.S between commit
+>> 322648d1ba75280d62f114d47048beb0b35f5047 ("x86: include ENTRY/END in
+>> entry handlers in entry_64.S") from the x86 tree and commit
+>> 3511a04973eaac18ee386f0db8c109e589019511 ("perfmon: x86-64 hooks")
+>> from the perfmon3 tree.
+>
+> very emphatic NAK on carrying such x86 changes in the perfmon tree,
+> and putting that into linux-next!
+>
+> Those perfmon changes should be submitted to the x86 tree. The code it
+> touches is sensitive and the design questions matter a lot as well.
+>
+>        Ingo
+>
