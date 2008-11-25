@@ -1,53 +1,36 @@
-From: Steven Rostedt <srostedt@redhat.com>
-Subject: Re: linux-next: ftrace tree build failure
-Date: Tue, 25 Nov 2008 00:44:16 -0500
-Message-ID: <1227591856.7622.26.camel@localhost.localdomain>
-References: <20081125142105.2b6d464a.sfr@canb.auug.org.au>
-	 <1227584931.7622.11.camel@localhost.localdomain>
-	 <20081125151345.3f0ed493.sfr@canb.auug.org.au>
-	 <1227587493.7622.14.camel@localhost.localdomain>
-	 <20081125160935.2bd3dcb2.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: Tree for November 14 (staging)
+Date: Mon, 24 Nov 2008 21:50:19 -0800
+Message-ID: <20081125055019.GA26807@kroah.com>
+References: <20081114184021.ed198f4b.sfr@canb.auug.org.au> <20081114095247.6b195091.randy.dunlap@oracle.com> <20081114181124.GA23441@kroah.com> <491DC1CC.8020502@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:40935 "EHLO mx2.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750894AbYKYFpY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Nov 2008 00:45:24 -0500
-In-Reply-To: <20081125160935.2bd3dcb2.sfr@canb.auug.org.au>
+Received: from kroah.org ([198.145.64.141]:33963 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751083AbYKYFxy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 Nov 2008 00:53:54 -0500
+Content-Disposition: inline
+In-Reply-To: <491DC1CC.8020502@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
+On Fri, Nov 14, 2008 at 10:22:04AM -0800, Randy Dunlap wrote:
+> Greg KH wrote:
+> > On Fri, Nov 14, 2008 at 09:52:47AM -0800, Randy Dunlap wrote:
+> >> On Fri, 14 Nov 2008 18:40:21 +1100 Stephen Rothwell wrote:
+> >>
+> >>> Hi all,
+> >>>
+> >>> Changes since 20081113:
+> >>>
+> >>> New tree:
+> >>> 	staging
+> >>
+> >> drivers/staging/benet/mpu.c:146: error: implicit declaration of function 'udelay'
 
-On Tue, 2008-11-25 at 16:09 +1100, Stephen Rothwell wrote:
-> Hi Steve,
-> 
-> On Mon, 24 Nov 2008 23:31:33 -0500 Steven Rostedt <srostedt@redhat.com> wrote:
-> >
-> > This may be a compiler bug, or something introduced by the compiler. I
-> > compiled it fine first with gcc 4.0.2, but then tried with the same
-> > compiler you used, and got the same error as you.
-> 
-> A quick bisect points to this commit:
-> 
-> commit 2bcd521a684cc94befbe2ce7d5b613c841b0d304
-> Author: Steven Rostedt <srostedt@redhat.com>
-> Date:   Fri Nov 21 01:30:54 2008 -0500
-> 
->     trace: profile all if conditionals
-> 
-> I guess something in there is tickling the compiler ...
+Thanks, got this one now.
 
-Yep, it was the wrong constraint used in the asm. Googling around, I
-found a similar bug listed in gcc, which was not a bug.
-
-Patch has been sent to fix this.
-
-Ah, I forgot to Cc Peter on that patch.
-
-I'll bounce it to him ;-)
-
--- Steve
+greg k-h
