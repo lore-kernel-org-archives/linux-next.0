@@ -1,39 +1,38 @@
-From: malahal@us.ibm.com
-Subject: Re: next-20081119: general protection fault:
-	get_next_timer_interrupt()
-Date: Mon, 24 Nov 2008 16:09:02 -0800
-Message-ID: <20081125000902.GA24251@us.ibm.com>
-References: <a4423d670811190714k13721ae8s125e63d520892440@mail.gmail.com> <alpine.LFD.2.00.0811191308030.3119@localhost.localdomain> <a4423d670811210250t6b75645evd9646ffb07745867@mail.gmail.com> <alpine.LFD.2.00.0811241816120.3301@localhost.localdomain> <1227554117.25499.46.camel@localhost.localdomain> <alpine.LFD.2.00.0811242018370.3235@localhost.localdomain> <20081124213517.GA25898@linux.vnet.ibm.com> <alpine.LFD.2.00.0811242327130.3235@localhost.localdomain>
+From: "Serge E. Hallyn" <serue@us.ibm.com>
+Subject: userns tree ready
+Date: Mon, 24 Nov 2008 18:16:51 -0600
+Message-ID: <20081125001651.GA10661@us.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-scsi-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e33.co.us.ibm.com ([32.97.110.151]:41729 "EHLO
+	e33.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753309AbYKYAQx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Nov 2008 19:16:53 -0500
+Received: from d03relay04.boulder.ibm.com (d03relay04.boulder.ibm.com [9.17.195.106])
+	by e33.co.us.ibm.com (8.13.1/8.13.1) with ESMTP id mAP0GLYV011421
+	for <linux-next@vger.kernel.org>; Mon, 24 Nov 2008 17:16:21 -0700
+Received: from d03av02.boulder.ibm.com (d03av02.boulder.ibm.com [9.17.195.168])
+	by d03relay04.boulder.ibm.com (8.13.8/8.13.8/NCO v9.1) with ESMTP id mAP0GrsW090522
+	for <linux-next@vger.kernel.org>; Mon, 24 Nov 2008 17:16:53 -0700
+Received: from d03av02.boulder.ibm.com (loopback [127.0.0.1])
+	by d03av02.boulder.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id mAP0Gq0b004528
+	for <linux-next@vger.kernel.org>; Mon, 24 Nov 2008 17:16:52 -0700
 Content-Disposition: inline
-In-Reply-To: <alpine.LFD.2.00.0811242327130.3235@localhost.localdomain>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Mike Anderson <andmike@linux.vnet.ibm.com>, James Bottomley <James.Bottomley@HansenPartnership.com>, Alexander Beregalov <a.beregalov@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, linux-scsi@vger.kernel.org, David Miller <davem@davemloft.net>, Jens Axboe <jens.axboe@oracle.com>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Howells <dhowells@redhat.com>, linux-next@vger.kernel.org
 
-Thomas Gleixner [tglx@linutronix.de] wrote:
-> On Mon, 24 Nov 2008, Mike Anderson wrote:
-> > Thomas Gleixner <tglx@linutronix.de> wrote:
-> > > Yeah, block could it be as well. Jens, Mike ?
-> > 
-> > I added a comment to bug 12020 on Thursday about a few other systems that
-> > where seeing the signature shown in bug 12020. It appeared from debug that
-> > there where a few paths that where adding timers for requests that where
-> > not expected.
-> > 
-> > http://bugzilla.kernel.org/show_bug.cgi?id=12020
-> > 
-> > It would be good to know if the debug patch below effects your problem as while.
-> > 
-> > If it does we need to investigated a solution to resolve not adding a
-> > timer for these requests.
+Hi Stephen,
 
-The block timer code calls del_timer(), should it call del_timer_sync()?
-It is possible although unlikely that you are hitting del_timer_sync vs
-del_timer problem in the block timeout code. Can only be seen on SMP
-systems though!
+I've created a new userns tree - although the patches are completely
+unchanged from before they were pulled along with David's patches.
+They apply fine either right after James' security-next tree or at
+the end of linux-next.  The tree is at
 
---Malahal.
+git://git.kernel.org/pub/scm/linux/kernel/git/sergeh/userns-2.6#next
+
+like before, and is based on James's security-next tree.
+
+thanks,
+-serge
