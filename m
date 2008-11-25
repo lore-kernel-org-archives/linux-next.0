@@ -1,53 +1,62 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: next-20081119: general protection fault: get_next_timer_interrupt()
-Date: Tue, 25 Nov 2008 09:51:09 +0100
-Message-ID: <20081125085109.GR26308@kernel.dk>
-References: <alpine.LFD.2.00.0811191308030.3119@localhost.localdomain> <a4423d670811210250t6b75645evd9646ffb07745867@mail.gmail.com> <alpine.LFD.2.00.0811241816120.3301@localhost.localdomain> <1227554117.25499.46.camel@localhost.localdomain> <alpine.LFD.2.00.0811242018370.3235@localhost.localdomain> <20081124213517.GA25898@linux.vnet.ibm.com> <alpine.LFD.2.00.0811242327130.3235@localhost.localdomain> <20081125000902.GA24251@us.ibm.com> <20081125115710.6c249f32.sfr@canb.auug.org.au> <20081125020852.GA27280@us.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: kbuild tree build failure
+Date: Tue, 25 Nov 2008 19:58:05 +1100
+Message-ID: <20081125195805.85eb5941.sfr@canb.auug.org.au>
+References: <20081125154705.09683583.sfr@canb.auug.org.au>
+	<20081125084226.GA31444@uranus.ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__25_Nov_2008_19_58_05_+1100_8vq+5z76CMvpTCAK"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pasmtpa.tele.dk ([80.160.77.114]:43919 "EHLO pasmtpA.tele.dk"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48304 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751154AbYKYIxK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Nov 2008 03:53:10 -0500
-Content-Disposition: inline
-In-Reply-To: <20081125020852.GA27280@us.ibm.com>
+	id S1751836AbYKYI6Z (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 Nov 2008 03:58:25 -0500
+In-Reply-To: <20081125084226.GA31444@uranus.ravnborg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: malahal@us.ibm.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Mike Anderson <andmike@linux.vnet.ibm.com>, James Bottomley <James.Bottomley@HansenPartnership.com>, Alexander Beregalov <a.beregalov@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, linux-scsi@vger.kernel.org, David Miller <davem@davemloft.net>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: linux-next@vger.kernel.org
 
-On Mon, Nov 24 2008, malahal@us.ibm.com wrote:
-> Stephen Rothwell [sfr@canb.auug.org.au] wrote:
-> > > The block timer code calls del_timer(), should it call del_timer_sync()?
-> > > It is possible although unlikely that you are hitting del_timer_sync vs
-> > > del_timer problem in the block timeout code. Can only be seen on SMP
-> > > systems though!
-> > 
-> > Is this still a problem in next-20081121? In that tree, the block commit
-> > "block: leave the request timeout timer running even on an empty list"
-> > was changed to add this:
-> > 
-> > diff --git a/block/blk-core.c b/block/blk-core.c
-> > index 04267d6..44f547c 100644
-> > --- a/block/blk-core.c
-> > +++ b/block/blk-core.c
-> > @@ -391,6 +391,7 @@ EXPORT_SYMBOL(blk_stop_queue);
-> >  void blk_sync_queue(struct request_queue *q)
-> >  {
-> >  	del_timer_sync(&q->unplug_timer);
-> > +	del_timer_sync(&q->timeout);
-> >  	kblockd_flush_work(&q->unplug_work);
-> >  }
-> >  EXPORT_SYMBOL(blk_sync_queue);
-> 
-> I was looking at the Linux tree. Clearly same problem doesn't exist with
-> the above commit! I wonder why kblockd_flush_work() is called after the
-> del_timer_sync(). It makes sense to cancel the work and then shutdown
-> the timer(s). I doubt if you are running into this problem though.
+--Signature=_Tue__25_Nov_2008_19_58_05_+1100_8vq+5z76CMvpTCAK
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-If the kernel tested doesn't include the above fix, it'll surely go
-boom. Can someone verify that this is the case?
+Hi Sam,
 
--- 
-Jens Axboe
+On Tue, 25 Nov 2008 09:42:26 +0100 Sam Ravnborg <sam@ravnborg.org> wrote:
+>
+> On Tue, Nov 25, 2008 at 03:47:05PM +1100, Stephen Rothwell wrote:
+> >=20
+> > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> >=20
+> > WARNING: modpost: Found 11 section mismatch(es).
+> > To see full details build your kernel with:
+> > 'make CONFIG_DEBUG_SECTION_MISMATCH=3Dy'
+> > .tmp_kallsyms1.S:1:23: error: asm/types.h: No such file or directory
+> >=20
+> > I have dropped the kbuild tree for today.
+>=20
+> Fixed.
+
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__25_Nov_2008_19_58_05_+1100_8vq+5z76CMvpTCAK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkrvh0ACgkQjjKRsyhoI8zLPgCfdYU20+ADDfYuw8XGLgk54qKd
++pUAn1497bS2gwkG7rhsruEEYK/8fPbs
+=N5lm
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__25_Nov_2008_19_58_05_+1100_8vq+5z76CMvpTCAK--
