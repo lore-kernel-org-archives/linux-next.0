@@ -1,41 +1,53 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: linux-next: net tree build failure
-Date: Tue, 25 Nov 2008 10:01:35 +0100
-Message-ID: <20081125090135.GA31581@uranus.ravnborg.org>
-References: <20081124154938.bac22cd5.sfr@canb.auug.org.au> <20081123.210452.160784844.davem@davemloft.net> <20081124162044.f3333fcf.sfr@canb.auug.org.au> <20081123.212339.131214270.davem@davemloft.net> <20081124163844.004469a6.sfr@canb.auug.org.au> <20081124210028.GA32585@uranus.ravnborg.org> <20081124135251.51196003@extreme> <20081124221232.GA945@uranus.ravnborg.org> <20081125194257.84089d9b.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the cputime tree
+Date: Tue, 25 Nov 2008 20:21:05 +1100
+Message-ID: <20081125202105.2e80cf92.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__25_Nov_2008_20_21_05_+1100_=15eLgH+OIBcbVYU"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pfepb.post.tele.dk ([195.41.46.236]:50660 "EHLO
-	pfepb.post.tele.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751928AbYKYJAP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Nov 2008 04:00:15 -0500
-Content-Disposition: inline
-In-Reply-To: <20081125194257.84089d9b.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39965 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752473AbYKYJVZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 Nov 2008 04:21:25 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Stephen Hemminger <shemminger@vyatta.com>, David Miller <davem@davemloft.net>, linux-next@vger.kernel.org
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: linux-next@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@elte.hu>
 
-On Tue, Nov 25, 2008 at 07:42:57PM +1100, Stephen Rothwell wrote:
-> Hi Sam,
-> 
-> On Mon, 24 Nov 2008 23:12:32 +0100 Sam Ravnborg <sam@ravnborg.org> wrote:
-> >
-> > Anyway - I can see that only "cris m68k parisc s390 sparc sparc64 um" lacks
-> 
-> Actually parisc gets it through drivers/parisc/Kconfig.
->  
-> > the include of drivers/scsi/pcmcia/Kconfig.
-> > So I will try to add it to drivers/Kconfig in my tree and see it -next
-> > blows up. I will wait until next -next as I want to see my current
-> > pending patches there in a clean run first.
-> 
-> I started to do this but then decided that ordering of the includes may
-> need some thought.
+--Signature=_Tue__25_Nov_2008_20_21_05_+1100_=15eLgH+OIBcbVYU
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-x86 at least put it in the "Bus" menu where I also think it belongs.
-So it is not a simple move to drivers/Kconfig as I orginally thought
-and I think we should let it be as it is for now.
+Hi Martin,
 
-	Sam
+Today's linux-next merge of the cputime tree got a conflict in
+kernel/sched.c between commit 74fcd524e808975dd546dac847119f1995a7c622
+("account_steal_time: kill the unneeded account_group_system_time()")
+from the tip-core tree and commit
+b7f4776b7f575ed8f288c44b64befd241fd44458 ("[PATCH] idle cputime
+accounting") from the cputime tree.
+
+The latter removes the call to account_group_system_time() as a side
+effect of further changes.  So the fixup is to just take the latter
+change.  I can carry the merge fix.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__25_Nov_2008_20_21_05_+1100_=15eLgH+OIBcbVYU
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkrw4EACgkQjjKRsyhoI8zaWQCghtA2UMSOCRW7XHrtcZ7eLGEo
+O5cAoJRsL2FfzUi1vcwkeHq2W4yR4uY8
+=q0Po
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__25_Nov_2008_20_21_05_+1100_=15eLgH+OIBcbVYU--
