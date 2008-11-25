@@ -1,38 +1,38 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the perfmon3 tree
-Date: Tue, 25 Nov 2008 11:22:34 +0100
-Message-ID: <20081125102234.GA4281@elte.hu>
-References: <20081125210319.35b2d189.sfr@canb.auug.org.au>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: ftrace tree build warnings
+Date: Tue, 25 Nov 2008 10:25:15 +0000
+Message-ID: <20081125102515.54282c0d@lxorguk.ukuu.org.uk>
+References: <20081125133828.8f9b49df.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:43643 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752076AbYKYKXJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Nov 2008 05:23:09 -0500
-Content-Disposition: inline
-In-Reply-To: <20081125210319.35b2d189.sfr@canb.auug.org.au>
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:43260 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752885AbYKYKZ4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Nov 2008 05:25:56 -0500
+In-Reply-To: <20081125133828.8f9b49df.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: stephane eranian <eranian@googlemail.com>, linux-next@vger.kernel.org, Alexander van Heukelum <heukelum@mailshack.com>, the arch/x86 maintainers <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Steven Rostedt <srostedt@redhat.com>, Alan Cox <alan@redhat.com>
 
+On Tue, 25 Nov 2008 13:38:28 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi Stephane,
+> Hi all,
 > 
-> Today's linux-next merge of the perfmon3 tree got a conflict in 
-> arch/x86/kernel/entry_64.S between commit 
-> 322648d1ba75280d62f114d47048beb0b35f5047 ("x86: include ENTRY/END in 
-> entry handlers in entry_64.S") from the x86 tree and commit 
-> 3511a04973eaac18ee386f0db8c109e589019511 ("perfmon: x86-64 hooks") 
-> from the perfmon3 tree.
+> Today's linux-next build (x86_64 allmodconfig) produced lots of these
+> warnings:
+> 
+> include/linux/tty.h:330: warning: '______f' is static but declared in inline function 'tty_kref_get' which is not static
+> 
+> Caused by commit 2bcd521a684cc94befbe2ce7d5b613c841b0d304 ("trace:
+> profile all if conditionals").  Something needs to be done about
+> this ...  maybe tty_kref_get needs to be "static inline" instead of
+> "extern inline"?
 
-very emphatic NAK on carrying such x86 changes in the perfmon tree, 
-and putting that into linux-next!
-
-Those perfmon changes should be submitted to the x86 tree. The code it 
-touches is sensitive and the design questions matter a lot as well.
-
-	Ingo
+If someone from the ftrace crew can sort the problem out and send me a
+diff for the ttydev tree that shouldn't be a problem, but really it looks
+like a problem with ftrace as that can't be the only case this happens
+surely ?
