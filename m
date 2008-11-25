@@ -1,29 +1,69 @@
-From: David Howells <dhowells@redhat.com>
-Subject: Re: linux-next: manual merge of the security-testing tree
-Date: Tue, 25 Nov 2008 11:04:40 +0000
-Message-ID: <8055.1227611080@redhat.com>
-References: <20081125191137.d5474c9e.sfr@canb.auug.org.au>
+From: Alexander van Heukelum <heukelum@mailshack.com>
+Subject: Re: linux-next: manual merge of the perfmon3 tree
+Date: Tue, 25 Nov 2008 11:39:51 +0100
+Message-ID: <20081125103951.GA18992@mailshack.com>
+References: <20081125210319.35b2d189.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:59534 "EHLO mx2.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751280AbYKYLFN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Nov 2008 06:05:13 -0500
-In-Reply-To: <20081125191137.d5474c9e.sfr@canb.auug.org.au>
+Received: from theia.rz.uni-saarland.de ([134.96.7.31]:13217 "EHLO
+	theia.rz.uni-saarland.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753230AbYKYLpI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Nov 2008 06:45:08 -0500
+Content-Disposition: inline
+In-Reply-To: <20081125210319.35b2d189.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: dhowells@redhat.com, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, "J. Bruce Fields" <bfields@citi.umich.edu>
+Cc: stephane eranian <eranian@googlemail.com>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Today's linux-next merge of the security-testing tree got a conflict in
-> fs/nfsd/nfs4recover.c between commit
-> e4625eb826de4f6774ee602c442ba23b686bdcc7 ("nfsd: use of unitialized list
-> head on error exit in nfs4recover.c") from the nfsd tree and commit
-> d84f4f992cbd76e8f39c488cf0c5d123843923b1 ("CRED: Inaugurate COW
-> credentials") from the security-testing tree.
+On Tue, Nov 25, 2008 at 09:03:19PM +1100, Stephen Rothwell wrote:
+> Hi Stephane,
 > 
-> Just a context change. I fixed it up (see below) and can carry the fix as
-> necessary.
+> Today's linux-next merge of the perfmon3 tree got a conflict in
+> arch/x86/kernel/entry_64.S between commit
+> 322648d1ba75280d62f114d47048beb0b35f5047 ("x86: include ENTRY/END in
+> entry handlers in entry_64.S") from the x86 tree and commit
+> 3511a04973eaac18ee386f0db8c109e589019511 ("perfmon: x86-64 hooks") from
+> the perfmon3 tree.
+> 
+> A new way of doing things.  I fixed it up (see below) and can carry the
+> fixup as necessary.  I am not sure about this fix, confirmation would be
+> nice.
 
-That looks okay.
+Yes, this is a good fixup.
+
+Thanks,
+	Alexander
+
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
+> 
+> diff --cc arch/x86/kernel/entry_64.S
+> index fc0ad87,b6f061e..0000000
+> --- a/arch/x86/kernel/entry_64.S
+> +++ b/arch/x86/kernel/entry_64.S
+[...removed uninteresting part...]
+>  +apicinterrupt ERROR_APIC_VECTOR \
+>  +	error_interrupt smp_error_interrupt
+>  +apicinterrupt SPURIOUS_APIC_VECTOR \
+>  +	spurious_interrupt smp_spurious_interrupt
+>   
+> + #ifdef CONFIG_PERFMON
+>  -ENTRY(pmu_interrupt)
+>  -	apicinterrupt LOCAL_PERFMON_VECTOR,smp_pmu_interrupt
+>  -END(pmu_interrupt)
+> ++apicinterrupt LOCAL_PERFMON_VECTOR \
+> ++	pmu_interrupt smp_pmu_interrupt
+> + #endif
+> + 
+>   /*
+>    * Exception entry points.
+>  - */ 		
+>  -	.macro zeroentry sym
+>  + */
+>  +.macro zeroentry sym do_sym
+>  +ENTRY(\sym)
+> [...]
