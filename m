@@ -1,69 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the perfmon3 tree
-Date: Tue, 25 Nov 2008 21:03:27 +1100
-Message-ID: <20081125210327.48e0eae0.sfr@canb.auug.org.au>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: linux-next: manual merge of the cputime tree
+Date: Tue, 25 Nov 2008 11:06:52 +0100
+Message-ID: <1227607612.4259.1428.camel@twins>
+References: <20081125202105.2e80cf92.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41692 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751918AbYKYKDv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Nov 2008 05:03:51 -0500
+Received: from casper.infradead.org ([85.118.1.10]:49718 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752231AbYKYKHF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Nov 2008 05:07:05 -0500
+In-Reply-To: <20081125202105.2e80cf92.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: stephane eranian <eranian@googlemail.com>
-Cc: linux-next@vger.kernel.org, Hiroshi Shimamoto <h-shimamoto@ct.jp.nec.com>, Ingo Molnar <mingo@elte.hu>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-next@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@elte.hu>
 
-Hi Stephane,
+On Tue, 2008-11-25 at 20:21 +1100, Stephen Rothwell wrote:
+> Hi Martin,
+> 
+> Today's linux-next merge of the cputime tree got a conflict in
+> kernel/sched.c between commit 74fcd524e808975dd546dac847119f1995a7c622
+> ("account_steal_time: kill the unneeded account_group_system_time()")
+> from the tip-core tree and commit
+> b7f4776b7f575ed8f288c44b64befd241fd44458 ("[PATCH] idle cputime
+> accounting") from the cputime tree.
+> 
+> The latter removes the call to account_group_system_time() as a side
+> effect of further changes.  So the fixup is to just take the latter
+> change.  I can carry the merge fix.
 
-Today's linux-next merge of the perfmon3 tree got a conflict in
-arch/x86/kernel/signal_32.c between commit
-5c9b3a0c7b8be3cdef3d7418f0a49127e7cdc998 ("x86: signal: cosmetic
-unification of including headers") from the x86 tree and commit
-b8509b08e429bf36e4ac99dd03d24a3618428f71 ("perfmon: x86-32 hooks") from
-the perfmon3 tree.
+Martin,
 
-I fixed it up (see below) and can carry the fix.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
-diff --cc arch/x86/kernel/signal_32.c
-index f7dd6c4,74da315..0000000
---- a/arch/x86/kernel/signal_32.c
-+++ b/arch/x86/kernel/signal_32.c
-@@@ -4,20 -4,24 +4,21 @@@
-   *  1997-11-28  Modified for POSIX.1b signals by Richard Henderson
-   *  2000-06-20  Pentium III FXSR, SSE support by Gareth Hughes
-   */
- -#include <linux/list.h>
-  
- -#include <linux/personality.h>
- -#include <linux/binfmts.h>
- -#include <linux/suspend.h>
- +#include <linux/sched.h>
- +#include <linux/mm.h>
- +#include <linux/smp.h>
-  #include <linux/kernel.h>
- -#include <linux/ptrace.h>
-  #include <linux/signal.h>
- -#include <linux/stddef.h>
- -#include <linux/unistd.h>
-  #include <linux/errno.h>
- -#include <linux/sched.h>
-  #include <linux/wait.h>
- +#include <linux/ptrace.h>
-  #include <linux/tracehook.h>
- -#include <linux/elf.h>
- +#include <linux/unistd.h>
- +#include <linux/stddef.h>
- +#include <linux/personality.h>
- +#include <linux/uaccess.h>
-+ #include <linux/perfmon_kern.h>
- -#include <linux/smp.h>
- -#include <linux/mm.h>
-  
-  #include <asm/processor.h>
-  #include <asm/ucontext.h>
+Why does s390 do its own cpu accounting?
