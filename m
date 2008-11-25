@@ -1,43 +1,49 @@
-From: Steven Rostedt <srostedt@redhat.com>
-Subject: Re: linux-next: ftrace tree build warnings
-Date: Mon, 24 Nov 2008 21:44:56 -0500
-Message-ID: <1227581096.7622.7.camel@localhost.localdomain>
-References: <20081125133828.8f9b49df.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: ftrace tree build failure
+Date: Tue, 25 Nov 2008 14:07:19 +1100
+Message-ID: <20081125140719.03a8cdfb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:37495 "EHLO mx2.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60548 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751924AbYKYCpv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 24 Nov 2008 21:45:51 -0500
-In-Reply-To: <20081125133828.8f9b49df.sfr@canb.auug.org.au>
+	id S1752606AbYKYDHe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Nov 2008 22:07:34 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Alan Cox <alan@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Steven Rostedt <srostedt@redhat.com>, "Luis R. Rodriguez" <lrodriguez@atheros.com>, "John W. Linville" <linville@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>
 
+Hi all,
 
-On Tue, 2008-11-25 at 13:38 +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next build (x86_64 allmodconfig) produced lots of these
-> warnings:
-> 
-> include/linux/tty.h:330: warning: '______f' is static but declared in inline function 'tty_kref_get' which is not static
-> 
-> Caused by commit 2bcd521a684cc94befbe2ce7d5b613c841b0d304 ("trace:
-> profile all if conditionals").  Something needs to be done about
-> this ...  maybe tty_kref_get needs to be "static inline" instead of
-> "extern inline"?
-> 
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Is there a way to suppress this warning here? Since we are only
-profiling, if it complies fine, then it should not be an issue.
+net/wireless/reg.c:348:29: error: macro "if" passed 2 arguments, but takes just 1
+net/wireless/reg.c: In function 'ignore_request':
+net/wireless/reg.c:349: error: expected '(' before 'return'
 
+This is clearly a bug in in the above file and should be fixed there, so
+I have applied the following patch for today.  I expect some patch to fix
+this to appear in the wireless-current or net-current tree very soon.
 
-Looking at the uses of this function, is there any reason that it is not
-"static inline"?
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
--- Steve
- 
+diff --git a/net/wireless/reg.c b/net/wireless/reg.c
+index 626dbb6..648c765 100644
+--- a/net/wireless/reg.c
++++ b/net/wireless/reg.c
+@@ -343,9 +343,7 @@ static int ignore_request(struct wiphy *wiphy, enum reg_set_by set_by,
+ 				return 0;
+ 			return -EALREADY;
+ 		}
+-		if (WARN_ON(!is_alpha2_set(alpha2) || !is_an_alpha2(alpha2)),
+-				"Invalid Country IE regulatory hint passed "
+-				"to the wireless core\n")
++		if (WARN_ON(!is_alpha2_set(alpha2) || !is_an_alpha2(alpha2)))
+ 			return -EINVAL;
+ 		/* We ignore Country IE hints for now, as we haven't yet
+ 		 * added the dot11MultiDomainCapabilityEnabled flag
