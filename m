@@ -1,34 +1,52 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH 0/1] Update for constraint fix
-Date: Tue, 25 Nov 2008 15:40:59 +0100
-Message-ID: <20081125144056.GA14147@elte.hu>
-References: <20081125142041.038383632@goodmis.org>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: linux-next: ftrace tree build failure
+Date: Tue, 25 Nov 2008 09:57:01 -0500
+Message-ID: <20081125145701.GA25962@tuxdriver.com>
+References: <20081125140719.03a8cdfb.sfr@canb.auug.org.au> <20081125072801.GA15592@elte.hu> <20081125184335.330cf28e.sfr@canb.auug.org.au> <20081125080410.GA28912@elte.hu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:49240 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751282AbYKYOlT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Nov 2008 09:41:19 -0500
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:42322 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751379AbYKYPBS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Nov 2008 10:01:18 -0500
 Content-Disposition: inline
-In-Reply-To: <20081125142041.038383632@goodmis.org>
+In-Reply-To: <20081125080410.GA28912@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, "H. Peter Anvin" <hpa@zytor.com>, Uros Bizjak <ubizjak@gmail.com>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Steven Rostedt <srostedt@redhat.com>, "Luis R. Rodriguez" <lrodriguez@atheros.com>, "David S. Miller" <davem@davemloft.net>
 
-
-* Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> Ingo and Stephen,
+On Tue, Nov 25, 2008 at 09:04:10AM +0100, Ingo Molnar wrote:
 > 
-> Please use this patch instead. Uros Bizjak suggested using 'q' over 
-> 'Q'.
+> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
-> The following patches are in:
+> > Hi Ingo,
+> > 
+> > On Tue, 25 Nov 2008 08:28:01 +0100 Ingo Molnar <mingo@elte.hu> wrote:
+> > >
+> > > this fix is wrong - the intention of that line was to add a proper 
+> > > WARN(), not a WARN_ON(). Your change loses the message that WARN() 
+> > > prints.
+> > > 
+> > > i posted a tested fix for this two days ago:
+> > > 
+> > >   http://marc.info/?l=linux-kernel&m=122745649425646&w=2
+> > > 
+> > > see it also below.
+> > 
+> > Yeah, Steve told me.  However, it might have been useful to tell the 
+> > wireless maintainer, the network maintainer and the original author 
+> > (and probably netdev - which I also left off).
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-2.6-trace.git
+> yep, i too forgot to add full Cc:s (it was in the context of a tracing 
+> discussion) - but lkml was Cc:-ed so it wasnt actually lost.
 
-applied and pushed out into x86-next, thanks Steve!
+I have the patch now...thanks!
 
-	Ingo
+Now, if I only knew why my build didn't fail with the original code...
+
+John
+-- 
+John W. Linville		Linux should be at the core
+linville@tuxdriver.com			of your literate lifestyle.
