@@ -1,56 +1,38 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: linux-next: manual merge of the cputime tree
-Date: Tue, 25 Nov 2008 11:15:28 +0100
-Message-ID: <1227608128.30264.2.camel@localhost>
-References: <20081125202105.2e80cf92.sfr@canb.auug.org.au>
-	 <1227607612.4259.1428.camel@twins>
-Reply-To: schwidefsky@de.ibm.com
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the perfmon3 tree
+Date: Tue, 25 Nov 2008 11:22:34 +0100
+Message-ID: <20081125102234.GA4281@elte.hu>
+References: <20081125210319.35b2d189.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate7.de.ibm.com ([195.212.29.156]:41986 "EHLO
-	mtagate7.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751038AbYKYKTF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Nov 2008 05:19:05 -0500
-Received: from d12nrmr1607.megacenter.de.ibm.com (d12nrmr1607.megacenter.de.ibm.com [9.149.167.49])
-	by mtagate7.de.ibm.com (8.13.8/8.13.8) with ESMTP id mAPAJ2hJ379046
-	for <linux-next@vger.kernel.org>; Tue, 25 Nov 2008 10:19:02 GMT
-Received: from d12av02.megacenter.de.ibm.com (d12av02.megacenter.de.ibm.com [9.149.165.228])
-	by d12nrmr1607.megacenter.de.ibm.com (8.13.8/8.13.8/NCO v9.1) with ESMTP id mAPAIxko3629274
-	for <linux-next@vger.kernel.org>; Tue, 25 Nov 2008 11:18:59 +0100
-Received: from d12av02.megacenter.de.ibm.com (loopback [127.0.0.1])
-	by d12av02.megacenter.de.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id mAPAIwn1021658
-	for <linux-next@vger.kernel.org>; Tue, 25 Nov 2008 11:18:59 +0100
-In-Reply-To: <1227607612.4259.1428.camel@twins>
+Received: from mx2.mail.elte.hu ([157.181.151.9]:43643 "EHLO mx2.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752076AbYKYKXJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 Nov 2008 05:23:09 -0500
+Content-Disposition: inline
+In-Reply-To: <20081125210319.35b2d189.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@elte.hu>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: stephane eranian <eranian@googlemail.com>, linux-next@vger.kernel.org, Alexander van Heukelum <heukelum@mailshack.com>, the arch/x86 maintainers <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Andrew Morton <akpm@linux-foundation.org>
 
-On Tue, 2008-11-25 at 11:06 +0100, Peter Zijlstra wrote:
-> On Tue, 2008-11-25 at 20:21 +1100, Stephen Rothwell wrote:
-> > Hi Martin,
-> > 
-> > Today's linux-next merge of the cputime tree got a conflict in
-> > kernel/sched.c between commit 74fcd524e808975dd546dac847119f1995a7c622
-> > ("account_steal_time: kill the unneeded account_group_system_time()")
-> > from the tip-core tree and commit
-> > b7f4776b7f575ed8f288c44b64befd241fd44458 ("[PATCH] idle cputime
-> > accounting") from the cputime tree.
-> > 
-> > The latter removes the call to account_group_system_time() as a side
-> > effect of further changes.  So the fixup is to just take the latter
-> > change.  I can carry the merge fix.
+
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi Stephane,
 > 
-> Why does s390 do its own cpu accounting?
+> Today's linux-next merge of the perfmon3 tree got a conflict in 
+> arch/x86/kernel/entry_64.S between commit 
+> 322648d1ba75280d62f114d47048beb0b35f5047 ("x86: include ENTRY/END in 
+> entry handlers in entry_64.S") from the x86 tree and commit 
+> 3511a04973eaac18ee386f0db8c109e589019511 ("perfmon: x86-64 hooks") 
+> from the perfmon3 tree.
 
-Is that a trick question? I invented the cputime accounting specifically
-for s390 because it is a virtual architecture and the standard cpu
-accounting numbers are just useless.
+very emphatic NAK on carrying such x86 changes in the perfmon tree, 
+and putting that into linux-next!
 
--- 
-blue skies,
-  Martin.
+Those perfmon changes should be submitted to the x86 tree. The code it 
+touches is sensitive and the design questions matter a lot as well.
 
-"Reality continues to ruin my life." - Calvin.
+	Ingo
