@@ -1,51 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: ftrace tree build warnings
-Date: Tue, 25 Nov 2008 19:17:12 +1100
-Message-ID: <20081125191712.93461642.sfr@canb.auug.org.au>
-References: <20081125133828.8f9b49df.sfr@canb.auug.org.au>
-	<20081125080035.GA27513@elte.hu>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: linux-next: kbuild tree build failure
+Date: Tue, 25 Nov 2008 09:42:26 +0100
+Message-ID: <20081125084226.GA31444@uranus.ravnborg.org>
+References: <20081125154705.09683583.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__25_Nov_2008_19_17_12_+1100_=QAHcQJsw6E/H+1n"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54908 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750958AbYKYIRa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Nov 2008 03:17:30 -0500
-In-Reply-To: <20081125080035.GA27513@elte.hu>
+Received: from pfepb.post.tele.dk ([195.41.46.236]:50997 "EHLO
+	pfepb.post.tele.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752081AbYKYIlD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Nov 2008 03:41:03 -0500
+Content-Disposition: inline
+In-Reply-To: <20081125154705.09683583.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Steven Rostedt <srostedt@redhat.com>, Alan Cox <alan@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Tue__25_Nov_2008_19_17_12_+1100_=QAHcQJsw6E/H+1n
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Nov 25, 2008 at 03:47:05PM +1100, Stephen Rothwell wrote:
+> Hi Sam,
+> 
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> 
+> WARNING: modpost: Found 11 section mismatch(es).
+> To see full details build your kernel with:
+> 'make CONFIG_DEBUG_SECTION_MISMATCH=y'
+> .tmp_kallsyms1.S:1:23: error: asm/types.h: No such file or directory
+> 
+> I have dropped the kbuild tree for today.
 
-Hi Ingo,
+Fixed.
 
-On Tue, 25 Nov 2008 09:00:35 +0100 Ingo Molnar <mingo@elte.hu> wrote:
->
-> i've queued up the fix below, and pushed out a new ftrace-next tree.
-
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__25_Nov_2008_19_17_12_+1100_=QAHcQJsw6E/H+1n
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkrtIgACgkQjjKRsyhoI8wedQCeOwvp3oWcpHii21KEyVgJF+Yf
-zwIAnjLGo24BgctL2m4GPkBDKzbXIrxH
-=jRZt
------END PGP SIGNATURE-----
-
---Signature=_Tue__25_Nov_2008_19_17_12_+1100_=QAHcQJsw6E/H+1n--
+	Sam
