@@ -1,38 +1,53 @@
-From: "Serge E. Hallyn" <serue@us.ibm.com>
-Subject: userns tree ready
-Date: Mon, 24 Nov 2008 18:16:51 -0600
-Message-ID: <20081125001651.GA10661@us.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the 4xx tree
+Date: Tue, 25 Nov 2008 11:50:21 +1100
+Message-ID: <20081125115021.b4782240.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__25_Nov_2008_11_50_21_+1100_gP8y59MK.Ue6zqJw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e33.co.us.ibm.com ([32.97.110.151]:41729 "EHLO
-	e33.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753309AbYKYAQx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Nov 2008 19:16:53 -0500
-Received: from d03relay04.boulder.ibm.com (d03relay04.boulder.ibm.com [9.17.195.106])
-	by e33.co.us.ibm.com (8.13.1/8.13.1) with ESMTP id mAP0GLYV011421
-	for <linux-next@vger.kernel.org>; Mon, 24 Nov 2008 17:16:21 -0700
-Received: from d03av02.boulder.ibm.com (d03av02.boulder.ibm.com [9.17.195.168])
-	by d03relay04.boulder.ibm.com (8.13.8/8.13.8/NCO v9.1) with ESMTP id mAP0GrsW090522
-	for <linux-next@vger.kernel.org>; Mon, 24 Nov 2008 17:16:53 -0700
-Received: from d03av02.boulder.ibm.com (loopback [127.0.0.1])
-	by d03av02.boulder.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id mAP0Gq0b004528
-	for <linux-next@vger.kernel.org>; Mon, 24 Nov 2008 17:16:52 -0700
-Content-Disposition: inline
+Received: from chilli.pcug.org.au ([203.10.76.44]:48721 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753946AbYKYAuo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Nov 2008 19:50:44 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Howells <dhowells@redhat.com>, linux-next@vger.kernel.org
+To: Josh Boyer <jwboyer@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, paulus@samba.org, ppc-dev <linuxppc-dev@ozlabs.org>, benh@kernel.crashing.org
 
-Hi Stephen,
+--Signature=_Tue__25_Nov_2008_11_50_21_+1100_gP8y59MK.Ue6zqJw
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I've created a new userns tree - although the patches are completely
-unchanged from before they were pulled along with David's patches.
-They apply fine either right after James' security-next tree or at
-the end of linux-next.  The tree is at
+Hi Josh,
 
-git://git.kernel.org/pub/scm/linux/kernel/git/sergeh/userns-2.6#next
+Today's linux-next merge of the 4xx tree got a conflict in
+arch/powerpc/configs/ppc44x_defconfig between commit
+c8d698849e135780738c2cb08f07f06eda982a8c ("powerpc/virtex: Update
+defconfigs") from the powerpc-merge tree and commit
+867b71f3da64eb917c23cfd8babcd1c4fc0ba7fd ("powerpc/44x: update
+ppc44x_defconfig") from the 4xx tree.
 
-like before, and is based on James's security-next tree.
+I fixed it up (by setting CONFIG_GPIO_XILINX to y as is done in the
+former).  I can carry this fix until either your tree is merged by Paul or
+you do a merge against the powerpc-merge tree (or Linus' tree after he
+takes Paul's tree).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-thanks,
--serge
+--Signature=_Tue__25_Nov_2008_11_50_21_+1100_gP8y59MK.Ue6zqJw
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEUEARECAAYFAkkrS80ACgkQjjKRsyhoI8xZAQCfUaczEMe9CsACiTk9O78eLNK5
+9YAAmOrAewDvGizcUaZnnYBK8TNLqlA=
+=lsEy
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__25_Nov_2008_11_50_21_+1100_gP8y59MK.Ue6zqJw--
