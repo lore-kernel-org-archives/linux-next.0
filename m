@@ -1,62 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: kbuild tree build failure
-Date: Tue, 25 Nov 2008 19:58:05 +1100
-Message-ID: <20081125195805.85eb5941.sfr@canb.auug.org.au>
-References: <20081125154705.09683583.sfr@canb.auug.org.au>
-	<20081125084226.GA31444@uranus.ravnborg.org>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: linux-next: net tree build failure
+Date: Tue, 25 Nov 2008 10:01:35 +0100
+Message-ID: <20081125090135.GA31581@uranus.ravnborg.org>
+References: <20081124154938.bac22cd5.sfr@canb.auug.org.au> <20081123.210452.160784844.davem@davemloft.net> <20081124162044.f3333fcf.sfr@canb.auug.org.au> <20081123.212339.131214270.davem@davemloft.net> <20081124163844.004469a6.sfr@canb.auug.org.au> <20081124210028.GA32585@uranus.ravnborg.org> <20081124135251.51196003@extreme> <20081124221232.GA945@uranus.ravnborg.org> <20081125194257.84089d9b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__25_Nov_2008_19_58_05_+1100_8vq+5z76CMvpTCAK"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48304 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751836AbYKYI6Z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Nov 2008 03:58:25 -0500
-In-Reply-To: <20081125084226.GA31444@uranus.ravnborg.org>
+Received: from pfepb.post.tele.dk ([195.41.46.236]:50660 "EHLO
+	pfepb.post.tele.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751928AbYKYJAP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Nov 2008 04:00:15 -0500
+Content-Disposition: inline
+In-Reply-To: <20081125194257.84089d9b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Stephen Hemminger <shemminger@vyatta.com>, David Miller <davem@davemloft.net>, linux-next@vger.kernel.org
 
---Signature=_Tue__25_Nov_2008_19_58_05_+1100_8vq+5z76CMvpTCAK
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Nov 25, 2008 at 07:42:57PM +1100, Stephen Rothwell wrote:
+> Hi Sam,
+> 
+> On Mon, 24 Nov 2008 23:12:32 +0100 Sam Ravnborg <sam@ravnborg.org> wrote:
+> >
+> > Anyway - I can see that only "cris m68k parisc s390 sparc sparc64 um" lacks
+> 
+> Actually parisc gets it through drivers/parisc/Kconfig.
+>  
+> > the include of drivers/scsi/pcmcia/Kconfig.
+> > So I will try to add it to drivers/Kconfig in my tree and see it -next
+> > blows up. I will wait until next -next as I want to see my current
+> > pending patches there in a clean run first.
+> 
+> I started to do this but then decided that ordering of the includes may
+> need some thought.
 
-Hi Sam,
+x86 at least put it in the "Bus" menu where I also think it belongs.
+So it is not a simple move to drivers/Kconfig as I orginally thought
+and I think we should let it be as it is for now.
 
-On Tue, 25 Nov 2008 09:42:26 +0100 Sam Ravnborg <sam@ravnborg.org> wrote:
->
-> On Tue, Nov 25, 2008 at 03:47:05PM +1100, Stephen Rothwell wrote:
-> >=20
-> > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> >=20
-> > WARNING: modpost: Found 11 section mismatch(es).
-> > To see full details build your kernel with:
-> > 'make CONFIG_DEBUG_SECTION_MISMATCH=3Dy'
-> > .tmp_kallsyms1.S:1:23: error: asm/types.h: No such file or directory
-> >=20
-> > I have dropped the kbuild tree for today.
->=20
-> Fixed.
-
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__25_Nov_2008_19_58_05_+1100_8vq+5z76CMvpTCAK
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkrvh0ACgkQjjKRsyhoI8zLPgCfdYU20+ADDfYuw8XGLgk54qKd
-+pUAn1497bS2gwkG7rhsruEEYK/8fPbs
-=N5lm
------END PGP SIGNATURE-----
-
---Signature=_Tue__25_Nov_2008_19_58_05_+1100_8vq+5z76CMvpTCAK--
+	Sam
