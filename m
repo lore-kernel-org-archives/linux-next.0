@@ -1,57 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm tree
-Date: Tue, 25 Nov 2008 17:49:48 +1100
-Message-ID: <20081125174948.1459c451.sfr@canb.auug.org.au>
+Subject: Re: linux-next: ftrace tree build failure
+Date: Tue, 25 Nov 2008 17:57:08 +1100
+Message-ID: <20081125175708.d28d08cd.sfr@canb.auug.org.au>
+References: <20081125142105.2b6d464a.sfr@canb.auug.org.au>
+	<1227584931.7622.11.camel@localhost.localdomain>
+	<20081125151345.3f0ed493.sfr@canb.auug.org.au>
+	<1227587493.7622.14.camel@localhost.localdomain>
+	<20081125160935.2bd3dcb2.sfr@canb.auug.org.au>
+	<1227591856.7622.26.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__25_Nov_2008_17_57_08_+1100_8nqi+mKrx_wL2/Cw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33706 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34073 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751519AbYKYGuD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Nov 2008 01:50:03 -0500
+	id S1751533AbYKYG5b (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 Nov 2008 01:57:31 -0500
+In-Reply-To: <1227591856.7622.26.camel@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@qumranet.com>
-Cc: linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Eduardo Habkost <ehabkost@redhat.com>
+To: Steven Rostedt <srostedt@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
 
-[Resent to get past vgers filters]
+--Signature=_Tue__25_Nov_2008_17_57_08_+1100_8nqi+mKrx_wL2/Cw
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Avi,
+Hi Steve,
 
-Today's linux-next merge of the kvm tree got a conflict in
-arch/x86/kernel/reboot.c between commit
-14d7ca5c575853664d8fe4f225a77b8df1b7de7d ("x86: attempt reboot via port
-CF9 if we have standard PCI ports") from the x86 tree and commit
-87238e8d2a086678c246825bc1a9dd148bba77cb ("x86: disable VMX on all CPUs
-on reboot") from the kvm tree.
+On Tue, 25 Nov 2008 00:44:16 -0500 Steven Rostedt <srostedt@redhat.com> wro=
+te:
+>
+> Yep, it was the wrong constraint used in the asm. Googling around, I
+> found a similar bug listed in gcc, which was not a bug.
 
-Just a context change.  I fixed it up (see below) and can carry the fix
-as needed.
--- 
+Amazing what we trip over :-(
+
+> Patch has been sent to fix this.
+
+Can you put that patch in your tree as well, or will it reach linux-next
+quickly enough anyway?
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/x86/kernel/reboot.c
-index 0acde8f,a8b9304..0000000
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@@ -39,10 -40,13 +40,16 @@@ int reboot_force
-  static int reboot_cpu = -1;
-  #endif
-  
-+ /* This is set if we need to go through the 'emergency' path.
-+  * When machine_emergency_restart() is called, we may be on
-+  * an inconsistent state and won't be able to do a clean cleanup
-+  */
-+ static int reboot_emergency;
-+ 
- -/* reboot=b[ios] | s[mp] | t[riple] | k[bd] | e[fi] [, [w]arm | [c]old]
- +/* This is set by the PCI code if either type 1 or type 2 PCI is detected */
- +bool port_cf9_safe = false;
- +
- +/* reboot=b[ios] | s[mp] | t[riple] | k[bd] | e[fi] [, [w]arm | [c]old] | p[ci]
-     warm   Don't set the cold reboot flag
-     cold   Set the cold reboot flag
-     bios   Reboot by jumping through the BIOS (only for X86_32)
+--Signature=_Tue__25_Nov_2008_17_57_08_+1100_8nqi+mKrx_wL2/Cw
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkrocQACgkQjjKRsyhoI8whvgCeM6NiWfstgKe10jb8uzxlIEg1
+zz4AoKhC/G0ovr+pIdVHnsGRS7R3Px0H
+=gJVe
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__25_Nov_2008_17_57_08_+1100_8nqi+mKrx_wL2/Cw--
