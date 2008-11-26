@@ -1,61 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: block tree build failure
-Date: Wed, 26 Nov 2008 21:29:20 +1100
-Message-ID: <20081126212920.f992f7a5.sfr@canb.auug.org.au>
+Subject: linux-next: concerns over the perfmon3 tree
+Date: Wed, 26 Nov 2008 21:34:49 +1100
+Message-ID: <20081126213449.ab269449.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__26_Nov_2008_21_29_20_+1100_AH/MQBAGYs1rBFAx"
+ boundary="Signature=_Wed__26_Nov_2008_21_34_49_+1100_7Rth/3ziyuxlgXAF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39387 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:54368 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751364AbYKZK3i (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 Nov 2008 05:29:38 -0500
+	id S1750797AbYKZKfG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Nov 2008 05:35:06 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: linux-next@vger.kernel.org, Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>, Ingo Molnar <mingo@elte.hu>, Arnaldo Carvalho de Melo <acme@redhat.com>
+To: stephane eranian <eranian@googlemail.com>
+Cc: linux-next@vger.kernel.org, paulus@samba.org, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
 
---Signature=_Wed__26_Nov_2008_21_29_20_+1100_AH/MQBAGYs1rBFAx
+--Signature=_Wed__26_Nov_2008_21_34_49_+1100_7Rth/3ziyuxlgXAF
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+Hi Stephane,
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+Given the concerns expressed by Ingo, I have dropped the perfmon3 tree
+from linux-next until they have been addressed.  Hopefully that will not
+be loo long.  Let us all know how we can help with this.
 
-In file included from block/blk-core.c:31:
-include/trace/block.h:9:15: error: macro "DEFINE_TRACE" passed 3 arguments,=
- but takes just 1
-In file included from block/blk-core.c:31:
-include/trace/block.h:7: warning: data definition has no type or storage cl=
-ass
-include/trace/block.h:7: warning: type defaults to 'int' in declaration of =
-'DEFINE_TRACE'
-
-and many more.  This is caused by commit
-714d010b5c249c2e9282515e0a2309a61ababbf4 ("blktrace: port to
-tracepoints") interacting with commit
-7e066fb870fcd1025ec3ba7bbde5d541094f4ce1 ("tracepoints: add DECLARE_TRACE
-() and DEFINE_TRACE()") which entered linux-next for the first time today
-via the ftrace tree. This latter commit has changed the tracepoints API.
-
-I will drop the block tree for today.  I am not sure of the way forward.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__26_Nov_2008_21_29_20_+1100_AH/MQBAGYs1rBFAx
+--Signature=_Wed__26_Nov_2008_21_34_49_+1100_7Rth/3ziyuxlgXAF
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkktJQAACgkQjjKRsyhoI8zqrwCfY3O8yFMR9FijWS/pOrck4PUp
-0pMAoIBEsC47Jolf8Nuea+J/1CaklmyV
-=xiFu
+iEYEARECAAYFAkktJkkACgkQjjKRsyhoI8w47gCgoVB/BkoJ9kDRPBBPChzRktxs
+VVIAnAgNwCS3AbtNE7bzca8yYyizwSzm
+=3nYe
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__26_Nov_2008_21_29_20_+1100_AH/MQBAGYs1rBFAx--
+--Signature=_Wed__26_Nov_2008_21_34_49_+1100_7Rth/3ziyuxlgXAF--
