@@ -1,51 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: kbuild tree build failure
-Date: Thu, 27 Nov 2008 10:49:25 +1100
-Message-ID: <20081127104925.308e2db8.sfr@canb.auug.org.au>
-References: <20081126154206.31958aed.sfr@canb.auug.org.au>
-	<20081126210657.GA11963@uranus.ravnborg.org>
+From: Mark Fasheh <mfasheh@suse.com>
+Subject: Re: linux-next: ocfs2 tree build failure
+Date: Wed, 26 Nov 2008 15:49:54 -0800
+Message-ID: <20081126234954.GJ8378@wotan.suse.de>
+References: <20081125164204.6817a397.sfr@canb.auug.org.au> <20081126163028.d7c1fa2d.sfr@canb.auug.org.au> <20081126204348.GG8378@wotan.suse.de> <20081127104241.6b119b19.sfr@canb.auug.org.au>
+Reply-To: Mark Fasheh <mfasheh@suse.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__27_Nov_2008_10_49_25_+1100_H+qrH=m/B9t/AyYb"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43951 "EHLO smtps.tip.net.au"
+Received: from ns2.suse.de ([195.135.220.15]:57662 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752307AbYKZXtm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 Nov 2008 18:49:42 -0500
-In-Reply-To: <20081126210657.GA11963@uranus.ravnborg.org>
+	id S1751403AbYKZXtz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Nov 2008 18:49:55 -0500
+Content-Disposition: inline
+In-Reply-To: <20081127104241.6b119b19.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Jan Kara <jack@suse.cz>
 
---Signature=_Thu__27_Nov_2008_10_49_25_+1100_H+qrH=m/B9t/AyYb
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Nov 27, 2008 at 10:42:41AM +1100, Stephen Rothwell wrote:
+> Hi Mark,
+> 
+> On Wed, 26 Nov 2008 12:43:48 -0800 Mark Fasheh <mfasheh@suse.com> wrote:
+> >
+> > Ok. Does the attached patch fix this for you? It's in ocfs2.git now.
+> 
+> That commit is not in your linux-next branch.
 
-Hi Sam,
+Right, sorry - I forgot to update the linux-next branch after this mornings
+merges. I'm uploading the changes now, they should be available soon.
+	--Mark
 
-On Wed, 26 Nov 2008 22:06:57 +0100 Sam Ravnborg <sam@ravnborg.org> wrote:
->
-> I will cook up a fix tomorrow if day-time job does not become night-time.
-
-OK, thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__27_Nov_2008_10_49_25_+1100_H+qrH=m/B9t/AyYb
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkt4IUACgkQjjKRsyhoI8xmiwCdFT8W4JJmKI/gAUiZxw2oF1nM
-QAEAn05OB2Q3KsOigSlPDsq3RYWif06C
-=Gy4m
------END PGP SIGNATURE-----
-
---Signature=_Thu__27_Nov_2008_10_49_25_+1100_H+qrH=m/B9t/AyYb--
+--
+Mark Fasheh
