@@ -1,31 +1,54 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: net tree build failure
-Date: Wed, 26 Nov 2008 00:45:13 -0800 (PST)
-Message-ID: <20081126.004513.58499930.davem@davemloft.net>
-References: <20081126181543.0d7fba17.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the perfmon3 tree
+Date: Wed, 26 Nov 2008 09:46:04 +0100
+Message-ID: <20081126084604.GN26036@elte.hu>
+References: <20081125210319.35b2d189.sfr@canb.auug.org.au> <20081125102234.GA4281@elte.hu> <7c86c4470811250640v4417fa4fs196f0d0bea136a45@mail.gmail.com> <20081125153345.GA20733@elte.hu> <7c86c4470811250836k2f798c21pe4766a565a6231ab@mail.gmail.com> <20081125165118.GF22504@elte.hu> <20081126140032.72d86f17.sfr@canb.auug.org.au> <20081126033318.GE8242@elte.hu> <7c86c4470811260032n64d69b04w5762e5f6cbd0cff9@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:39479
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1754445AbYKZIpN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 Nov 2008 03:45:13 -0500
-In-Reply-To: <20081126181543.0d7fba17.sfr@canb.auug.org.au>
+Received: from mx2.mail.elte.hu ([157.181.151.9]:52616 "EHLO mx2.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754365AbYKZIqx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Nov 2008 03:46:53 -0500
+Content-Disposition: inline
+In-Reply-To: <7c86c4470811260032n64d69b04w5762e5f6cbd0cff9@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, herbert@gondor.apana.org.au, kaber@trash.net, adobriyan@gmail.com
+To: eranian@gmail.com
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Alexander van Heukelum <heukelum@mailshack.com>, the arch/x86 maintainers <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Andrew Morton <akpm@linux-foundation.org>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 26 Nov 2008 18:15:43 +1100
 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
+* stephane eranian <eranian@googlemail.com> wrote:
 
-Stephen, thanks for all of these merge and build fixups.
+> > We know and knew about the existence of the perfmon patches, but 
+> > they were always in the vague RFC category and never directly 
+> > submitted or Cc:-ed to us.
+>
+> As Stephen pointed out, the full patchset was posted on LKML in 
+> October I never saw any comments from you or any other x86 
+> maintainers. I always assumed you were ALL on LKML anyway.
 
-I think I'll do a preemptive merge later today of net-2.6 into
-net-next-2.6 to try and resolve most of this.
+There's nothing to be "pointed out" about that - i was well aware of 
+the regular perfmon spam on lkml ;-)
 
-But no promises as it's my birthday :)
+What was done in stealth was its sudden "will go upstream in 1-2 
+months" status change, and its showing up in linux-next. There was 
+ample opportunity to Cc: the maintainers for all of those steps - when 
+you sent the tree setup request to Stephen, etc.
+
+Really, in such cases you are expected to ping the respective 
+maintainers about what they think about it and whether there's any 
+objections. If they only notice it via conflicts of problem patches in 
+linux-next they'll (rightfully) go into grumpy mode. _Especially_ if 
+then the linux-next integrator also plays stupid about basic kernel 
+workflow questions ;-)
+
+> I have reposted the full patchset yesterday on LKML but 
+> unfortunately my script dropped the cc-list. I will repost today 
+> making sure x86@kernel.org is cc'ed. I am sorry about that, it never 
+> was intentional. I will be waiting for your feedback on the x86 
+> code.
+
+ok, thanks. That's all that is needed normally.
+
+	Ingo
