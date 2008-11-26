@@ -1,21 +1,35 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the perfmon3 tree
-Date: Wed, 26 Nov 2008 04:33:18 +0100
-Message-ID: <20081126033318.GE8242@elte.hu>
-References: <20081125210319.35b2d189.sfr@canb.auug.org.au> <20081125102234.GA4281@elte.hu> <7c86c4470811250640v4417fa4fs196f0d0bea136a45@mail.gmail.com> <20081125153345.GA20733@elte.hu> <7c86c4470811250836k2f798c21pe4766a565a6231ab@mail.gmail.com> <20081125165118.GF22504@elte.hu> <20081126140032.72d86f17.sfr@canb.auug.org.au>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Subject: RE: linux-next: manual merge of the perfmon3 tree
+Date: Tue, 25 Nov 2008 20:24:39 -0800
+Message-ID: <200811260423.mAQ4NAae023517@terminus.zytor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:42952 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752532AbYKZDdo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Nov 2008 22:33:44 -0500
-Content-Disposition: inline
-In-Reply-To: <20081126140032.72d86f17.sfr@canb.auug.org.au>
+Received: from terminus.zytor.com ([198.137.202.10]:54177 "EHLO
+	terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751403AbYKZEZV convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Nov 2008 23:25:21 -0500
+content-class: 
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: eranian@gmail.com, linux-next@vger.kernel.org, Alexander van Heukelum <heukelum@mailshack.com>, the arch/x86 maintainers <x86@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Andrew Morton <akpm@linux-foundation.org>
+
+I guess it really comes down to: is -next a merge window preview tree, or is it another -mm tree just based on a different toolset/workflow?
+
+    -hpa
+
+-- 
+Sent from my mobile phone (pardon any lack of formatting)
+
+
+-----Original Message-----
+From: Ingo Molnar <mingo@elte.hu>
+Sent: Tuesday, November 25, 2008 19:33
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: eranian@gmail.com, linux-next@vger.kernel.org, Alexander van Heukelum <heukelum@mailshack.com>, the arch/x86 maintainers <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Andrew Morton <akpm@linux-foundation.org>
+Cc: eranian@gmail.com; linux-next@vger.kernel.org; Alexander van Heukelum <heukelum@mailshack.com>; the arch/x86 maintainers <x86@kernel.org>; H. Peter Anvin <hpa@zytor.com>; Thomas Gleixner <tglx@linutronix.de>; Peter Zijlstra <a.p.zijlstra@chello.nl>; Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the perfmon3 tree
 
 
 * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
