@@ -1,49 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: net tree build failure
-Date: Wed, 26 Nov 2008 18:15:43 +1100
-Message-ID: <20081126181543.0d7fba17.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the perfmon3 tree
+Date: Wed, 26 Nov 2008 08:16:50 +0100
+Message-ID: <20081126071650.GE26036@elte.hu>
+References: <20081125210319.35b2d189.sfr@canb.auug.org.au> <20081125102234.GA4281@elte.hu> <7c86c4470811250640v4417fa4fs196f0d0bea136a45@mail.gmail.com> <20081125153345.GA20733@elte.hu> <7c86c4470811250836k2f798c21pe4766a565a6231ab@mail.gmail.com> <20081125165118.GF22504@elte.hu> <20081126140032.72d86f17.sfr@canb.auug.org.au> <20081126033318.GE8242@elte.hu> <18732.62831.286805.400379@cargo.ozlabs.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55852 "EHLO smtps.tip.net.au"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:33842 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751954AbYKZHQA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 Nov 2008 02:16:00 -0500
+	id S1750696AbYKZHRS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Nov 2008 02:17:18 -0500
+Content-Disposition: inline
+In-Reply-To: <18732.62831.286805.400379@cargo.ozlabs.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, Patrick McHardy <kaber@trash.net>, Alexey Dobriyan <adobriyan@gmail.com>
+To: Paul Mackerras <paulus@samba.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, eranian@gmail.com, linux-next@vger.kernel.org, Alexander van Heukelum <heukelum@mailshack.com>, the arch/x86 maintainers <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Andrew Morton <akpm@linux-foundation.org>
 
-Hi Dave,
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+* Paul Mackerras <paulus@samba.org> wrote:
 
-net/bridge/br_netfilter.c:112: error: unknown field 'entry_size' specified in initializer
-net/bridge/br_netfilter.c:112: warning: initialization makes pointer from integer without a cast
+> Ingo Molnar writes:
+> 
+> > We know and knew about the existence of the perfmon patches, but they 
+> > were always in the vague RFC category and never directly submitted or 
+> > Cc:-ed to us.
+> 
+> So at least now we have your attention. :)
+> 
+> The best thing now might be for Stephane to do a patch set with the 
+> perfmon3 core + powerpc bits.  I'd be happy to take that through my 
+> tree, and I really want to see perfmon3 get upstream.  X86 can 
+> follow whenever you can get some time to take a look at it.
 
-Caused by commit 631339f1e544a4d39a63cfe6708c5bddcd5a2c48 ("bridge:
-netfilter: fix update_pmtu crash with GRE") from the net-current tree
-interacting with commit 6bb3ce25d05f2990c8a19adaf427531430267c1f ("net:
-remove struct dst_entry::entry_size") from the net tree.
+Sounds sensible. x86 doesnt always have to be the guinea pig for new 
+kernel features :)
 
-I added the below patch as a temporary merge fix.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
-diff --git a/net/bridge/br_netfilter.c b/net/bridge/br_netfilter.c
-index 0b3cd89..274194b 100644
---- a/net/bridge/br_netfilter.c
-+++ b/net/bridge/br_netfilter.c
-@@ -109,7 +109,6 @@ static struct dst_ops fake_dst_ops = {
- 	.family =		AF_INET,
- 	.protocol =		__constant_htons(ETH_P_IP),
- 	.update_pmtu =		fake_update_pmtu,
--	.entry_size =		sizeof(struct rtable),
- 	.entries =		ATOMIC_INIT(0),
- };
- 
--- 
-1.5.6.5
+	Ingo
