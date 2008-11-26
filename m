@@ -1,52 +1,68 @@
-From: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: linux-next: manual merge of the perfmon3 tree
-Date: Wed, 26 Nov 2008 10:31:29 +0100
-Message-ID: <1227691889.4259.2871.camel@twins>
-References: <20081125210319.35b2d189.sfr@canb.auug.org.au>
-	 <20081125102234.GA4281@elte.hu>
-	 <7c86c4470811250640v4417fa4fs196f0d0bea136a45@mail.gmail.com>
-	 <20081125153345.GA20733@elte.hu>
-	 <7c86c4470811250836k2f798c21pe4766a565a6231ab@mail.gmail.com>
-	 <20081125165118.GF22504@elte.hu>
-	 <20081126140032.72d86f17.sfr@canb.auug.org.au>
-	 <20081126033318.GE8242@elte.hu>
-	 <7c86c4470811260032n64d69b04w5762e5f6cbd0cff9@mail.gmail.com>
-	 <20081126084604.GN26036@elte.hu>
-	 <20081126010022.63049908.akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: net tree build failure
+Date: Wed, 26 Nov 2008 20:40:00 +1100
+Message-ID: <20081126204000.eedb8bcf.sfr@canb.auug.org.au>
+References: <20081126181543.0d7fba17.sfr@canb.auug.org.au>
+	<20081126.004513.58499930.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__26_Nov_2008_20_40_00_+1100_bqu0tNsw473s632j"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from viefep18-int.chello.at ([213.46.255.22]:28653 "EHLO
-	viefep18-int.chello.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750797AbYKZJcB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Nov 2008 04:32:01 -0500
-In-Reply-To: <20081126010022.63049908.akpm@linux-foundation.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43107 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752138AbYKZJkQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Nov 2008 04:40:16 -0500
+In-Reply-To: <20081126.004513.58499930.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ingo Molnar <mingo@elte.hu>, eranian@gmail.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Alexander van Heukelum <heukelum@mailshack.com>, the arch/x86 maintainers <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, herbert@gondor.apana.org.au, kaber@trash.net, adobriyan@gmail.com
 
-On Wed, 2008-11-26 at 01:00 -0800, Andrew Morton wrote:
-> On Wed, 26 Nov 2008 09:46:04 +0100 Ingo Molnar <mingo@elte.hu> wrote:
-> 
-> > _Especially_ if 
-> > then the linux-next integrator also plays stupid about basic kernel 
-> > workflow questions ;-)
-> 
-> He didn't.  I suggested to Stephane and Stephen that we get this stuff
-> into linux-next for a shot at 2.6.29 and that the collective 'we' make
-> an extra effort to get perfmon over the hump and merged up.
-> 
-> You missed that email, missed the presence of perfmon in linux-next
-> and repeatedly chose to not review the perfmon patch series when it went
-> past.
-> 
-> So here we all are.
+--Signature=_Wed__26_Nov_2008_20_40_00_+1100_bqu0tNsw473s632j
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It just seems to me that CC-ing the intended 'we' at that point would
-have saved a lot of grief.
+Hi Dave,
 
-Stuffing 2.3k lines of code in without the maintainers ACK is not
-something we do each day, and I can understand them getting miffed about
-that. I think every maintainer would consider such an action plain rude.
+On Wed, 26 Nov 2008 00:45:13 -0800 (PST) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 26 Nov 2008 18:15:43 +1100
+>=20
+> > Today's linux-next build (x86_64 allmodconfig) failed like this:
+>=20
+> Stephen, thanks for all of these merge and build fixups.
+>=20
+> I think I'll do a preemptive merge later today of net-2.6 into
+> net-next-2.6 to try and resolve most of this.
+
+Then when the poobah returns from slacking off and rejects some stuff we
+both can grumble :-)
+
+Thanks.
+
+> But no promises as it's my birthday :)
+
+Happy Birthday!  Have a really nice long lunch (like until next
+Monday :-))
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__26_Nov_2008_20_40_00_+1100_bqu0tNsw473s632j
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkktGXAACgkQjjKRsyhoI8wLUgCdGHPFdEwJ/n7a+zpmjlSgmL3O
+mxQAoIC7U1agBzrnP5pmR28a1FBrUh1o
+=94jW
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__26_Nov_2008_20_40_00_+1100_bqu0tNsw473s632j--
