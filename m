@@ -1,110 +1,117 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: Automated Build Infrastructure
-Date: Wed, 26 Nov 2008 11:59:46 -0800
-Message-ID: <20081126115946.6d425563.randy.dunlap@oracle.com>
-References: <A938C8A5-205C-4DBF-A242-3966757C02E6@gmail.com>
-	<20081117144535.6981ecef.sfr@canb.auug.org.au>
-	<4920F951.5080109@oracle.com>
-	<49210027.8070608@oracle.com>
+From: Mark Fasheh <mfasheh@suse.com>
+Subject: Re: linux-next: ocfs2 tree build failure
+Date: Wed, 26 Nov 2008 12:43:48 -0800
+Message-ID: <20081126204348.GG8378@wotan.suse.de>
+References: <20081125164204.6817a397.sfr@canb.auug.org.au> <20081126163028.d7c1fa2d.sfr@canb.auug.org.au>
+Reply-To: Mark Fasheh <mfasheh@suse.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet13.oracle.com ([148.87.113.125]:16771 "EHLO
-	rgminet13.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750816AbYKZUAD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Nov 2008 15:00:03 -0500
-In-Reply-To: <49210027.8070608@oracle.com>
+Received: from mail.suse.de ([195.135.220.2]:51688 "EHLO mx1.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752092AbYKZUnu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Nov 2008 15:43:50 -0500
+Content-Disposition: inline
+In-Reply-To: <20081126163028.d7c1fa2d.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Richard Holden <aciddeath@gmail.com>
-Cc: linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Jan Kara <jack@suse.cz>
 
-On Sun, 16 Nov 2008 21:24:55 -0800 Randy Dunlap wrote:
-
-> Randy Dunlap wrote:
-> > Stephen Rothwell wrote:
-> >> Hi Richard,
-> >>
-> >> On Sun, 16 Nov 2008 20:32:39 -0700 Richard Holden <aciddeath@gmail.com> wrote:
-> >>> Does anyone have any scripts to kick off compilation when Stephen  
-> >>> releases a new linux-next? I've started to plan out my own but wanted  
-> >>> to see if anyone had something first so I don't reinvent the wheel.
-> >> In case it helps, your most reliable trigger would be the LATEST-IS file
-> >> in http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/
-> >> changing.  I think Randy Dunlap (cc'd) has some stuff.
-> > 
-> > Hi,
-> > 
-> > My scripts are available in
-> >    http://www.xenotime.net/linux/scripts/
-> > 
-> > The scripts are:  grab_kernel (for mainline), grab_next (for -next),
-> > and get-mmotm (for mmotm).  They all work with tarballs and patches,
-> > not git trees.  get-mmotm requires an mainline tree for its patch
-> > series to be applied to.  The 'kcurrent' script tells me what
-> > linux-next or mmotm applies to:
-> > 
-> > The latest stable version of the Linux kernel is:           2.6.27.6
-> > The latest prepatch for the stable Linux kernel tree is:    2.6.28-rc5
-> > The latest snapshot for the stable Linux kernel tree is:    2.6.28-rc5-git1
-> > The latest 2.4 version of the Linux kernel is:              2.4.36.9
-> > The latest prepatch for the 2.4 Linux kernel tree is:       2.4.37-rc2
-> > The latest 2.2 version of the Linux kernel is:              2.2.26
-> > The latest prepatch for the 2.2 Linux kernel tree is:       2.2.27-rc2
-> > The latest -mm patch to the stable Linux kernels is:        2.6.28-rc2-mm1
-> > mmotm-2008-1114-2050 ... applies to: 2.6.28-rc4
-> > next-20081114 ... applies to: v2.6.28-rc4
-> > 
-> > grab_kernel downloads & applies any mainline kernel (except for
-> > -stable kernels); it knows how to apply -rc & -git patches (zipped).
-> > 
-> > If you have any questions about them, just ask.
+On Wed, Nov 26, 2008 at 04:30:28PM +1100, Stephen Rothwell wrote:
+> Hi Mark,
 > 
-> OK, these scripts don't do the automated kickoff part.
-> For that, I'm using Crucible (crucible.sf.net).
-> The scripts are all in the subversion repository at sf.net.
+> On Tue, 25 Nov 2008 16:42:04 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Today's linux-next build (x86_64 allmodconfig) failed like this:
+> > 
+> > usr/include/linux/dqblk_v2.h:8: included file 'linux/dqblk_qtree.h' is not exported
+> > make[4]: *** [/scratch/sfr/x86_64_allmodconfig/usr/include/linux/.check] Error 1
+> > 
+> > Caused by commit 603f68d0c2b66052093ea29bf1ff7a8a58667af6 ("quota: Split
+> > off quota tree handling into a separate file").  dqblk_qtree.h needs to
+> > be added to the Kbuild file.
+> 
+> Still fails, so I have dropped the ocfs2 tree for today.
 
+Ok. Does the attached patch fix this for you? It's in ocfs2.git now.
+	--Mark
 
-Hi,
-Here are 2 other options for you (besides Crucible, which may be
-overkill for this task).  The first one uses git.
+--
+Mark Fasheh
 
+From: Jan Kara <jack@suse.cz>
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
+[PATCH] quota: Unexport dqblk_v1.h and dqblk_v2.h
 
-A.  From:	Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
-To:	linux-next@vger.kernel.org
-Subject: Script to automatically build and test linux-next locally
-Date:	Tue, 29 Jul 2008 17:57:28 +0200
+Unexport header files dqblk_v[12].h since except for quota format ID they
+don't contain information userspace should be interested in. Move ID
+definitions to quota.h.
 
-Hello!
-
-Just wanted to share this [0] script for easy rebuild with others, who
-build their kernel quite regullary, like I do.
-
-Sincerly,
-
-Nico
-
-[0]: http://unix.schottelius.org/cgi-bin/gitweb.cgi?p=nsbin;a=blob;f=linux-next-build.sh;h=a53aac2e3d5df099fa5cf0f7e3c65f62bc02ccc0;hb=HEAD
-
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-B.  I just added 2 small scripts to my library of many scripts:
-wait4next and build_next.  They use the scripts that I mentioned above.
-
-The usage is simply:  build_next 20081130
-
-build_next waits for the target linux-next to be available (defaults to the
-current day's version), downloads it (using grab_next mentioned above),
-then kicks off some builds of it.  You can customize the builds part
-as you see fit.  I use it to kick off a bunch of randconfig builds.
-
-
-http://www.xenotime.net/linux/scripts/build_next
-http://www.xenotime.net/linux/scripts/wait4next
-
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Mark Fasheh <mfasheh@suse.com>
 ---
-~Randy
+ include/linux/Kbuild     |    2 --
+ include/linux/dqblk_v1.h |    3 ---
+ include/linux/dqblk_v2.h |    3 ---
+ include/linux/quota.h    |    4 ++++
+ 4 files changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/include/linux/Kbuild b/include/linux/Kbuild
+index 0fd2da3..4c32642 100644
+--- a/include/linux/Kbuild
++++ b/include/linux/Kbuild
+@@ -56,8 +56,6 @@ header-y += dlm_device.h
+ header-y += dlm_netlink.h
+ header-y += dm-ioctl.h
+ header-y += dn.h
+-header-y += dqblk_v1.h
+-header-y += dqblk_v2.h
+ header-y += dqblk_xfs.h
+ header-y += efs_fs_sb.h
+ header-y += elf-fdpic.h
+diff --git a/include/linux/dqblk_v1.h b/include/linux/dqblk_v1.h
+index 9cea901..3713a72 100644
+--- a/include/linux/dqblk_v1.h
++++ b/include/linux/dqblk_v1.h
+@@ -5,9 +5,6 @@
+ #ifndef _LINUX_DQBLK_V1_H
+ #define _LINUX_DQBLK_V1_H
+ 
+-/* Id of quota format */
+-#define QFMT_VFS_OLD 1
+-
+ /* Root squash turned on */
+ #define V1_DQF_RSQUASH 1
+ 
+diff --git a/include/linux/dqblk_v2.h b/include/linux/dqblk_v2.h
+index ff8af1b..18000a5 100644
+--- a/include/linux/dqblk_v2.h
++++ b/include/linux/dqblk_v2.h
+@@ -7,9 +7,6 @@
+ 
+ #include <linux/dqblk_qtree.h>
+ 
+-/* Id number of quota format */
+-#define QFMT_VFS_V0 2
+-
+ /* Numbers of blocks needed for updates */
+ #define V2_INIT_ALLOC QTREE_INIT_ALLOC
+ #define V2_INIT_REWRITE QTREE_INIT_REWRITE
+diff --git a/include/linux/quota.h b/include/linux/quota.h
+index ec82beb..d72d5d8 100644
+--- a/include/linux/quota.h
++++ b/include/linux/quota.h
+@@ -70,6 +70,10 @@
+ #define Q_GETQUOTA 0x800007	/* get user quota structure */
+ #define Q_SETQUOTA 0x800008	/* set user quota structure */
+ 
++/* Quota format type IDs */
++#define	QFMT_VFS_OLD 1
++#define	QFMT_VFS_V0 2
++
+ /* Size of block in which space limits are passed through the quota
+  * interface */
+ #define QIF_DQBLKSIZE_BITS 10
+-- 
+1.5.6
