@@ -1,48 +1,48 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: block tree build failure
-Date: Wed, 26 Nov 2008 12:25:46 +0100
-Message-ID: <20081126112546.GA23544@elte.hu>
-References: <20081126212920.f992f7a5.sfr@canb.auug.org.au> <20081126104259.GB6052@elte.hu> <20081126104700.GI26308@kernel.dk> <20081126111621.GA20601@elte.hu> <20081126112310.GA17392@Krystal>
+From: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
+Subject: Re: [PATCH] Blktrace : conversion to tracepoint define
+Date: Wed, 26 Nov 2008 06:27:13 -0500
+Message-ID: <20081126112713.GC17392@Krystal>
+References: <20081126212920.f992f7a5.sfr@canb.auug.org.au> <20081126104259.GB6052@elte.hu> <20081126104700.GI26308@kernel.dk> <20081126110631.GD14826@Krystal> <20081126112208.GB20601@elte.hu> <20081126112351.GA23386@elte.hu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:54188 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750971AbYKZL0I (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 Nov 2008 06:26:08 -0500
+Received: from tomts10.bellnexxia.net ([209.226.175.54]:36132 "EHLO
+	tomts10-srv.bellnexxia.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750971AbYKZL1P (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Nov 2008 06:27:15 -0500
+Received: from toip4.srvr.bell.ca ([209.226.175.87])
+          by tomts10-srv.bellnexxia.net
+          (InterMail vM.5.01.06.13 201-253-122-130-113-20050324) with ESMTP
+          id <20081126112713.ZRZW1703.tomts10-srv.bellnexxia.net@toip4.srvr.bell.ca>
+          for <linux-next@vger.kernel.org>; Wed, 26 Nov 2008 06:27:13 -0500
 Content-Disposition: inline
-In-Reply-To: <20081126112310.GA17392@Krystal>
+In-Reply-To: <20081126112351.GA23386@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
+To: Ingo Molnar <mingo@elte.hu>
 Cc: Jens Axboe <jens.axboe@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
 
-
-* Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca> wrote:
-
-> * Ingo Molnar (mingo@elte.hu) wrote:
-> > 
-> > * Jens Axboe <jens.axboe@oracle.com> wrote:
-> > 
-> > > > the other direction (you merging ftrace bits) doesnt look too hot, 
-> > > > you'd have to pick up:
-> > > > 
-> > > >    95 files changed, 5308 insertions(+), 1603 deletions(-)
-> > > 
-> > > Lets do that, it's just a single patch here from Arnaldo. I have 
-> > > attached it to this email.
-> > 
-> > thanks, here's the conversion to tracepoints below. Stephen, you might 
-> > want to pick up the blk tree straight away plus the fix below.
+* Ingo Molnar (mingo@elte.hu) wrote:
 > 
-> I guess the only difference between your implementation and mine is 
-> that you define all the tracepoints in block/blktrace.c, while I 
-> define them in the various files where they are used. I don't feel 
-> very strongly opinioned about any of the two alternatives.
+> * Ingo Molnar <mingo@elte.hu> wrote:
+> 
+> > Moving the tracepoint definitions into blktrace.c consolidates it 
+> > nicely without cluttering the various block/* files and ties their 
+> > presence to CONFIG_BLK_DEV_IO_TRACE as well.
+> 
+> hm, the latter is not a good idea: the tracepoints will be undefined 
+> when the io tracer is disabled - not good. I'll spread them out like 
+> you did.
+> 
+> 	Ingo
 
-usage site build attribute must be the same as definition site 
-attribute. So blktrace.c is not a good place - we will fail the build 
-in the !CONFIG_BLK_DEV_IO_TRACE case. I'll apply your spread-out 
-definition variant.
+Ah, yes, I thought there should be good reason for me doing things the
+way I did them. ;)
 
-	Ingo
+Mathieu
+
+-- 
+Mathieu Desnoyers
+OpenPGP key fingerprint: 8CD5 52C3 8E3C 4140 715F  BA06 3F25 A8FE 3BAE 9A68
