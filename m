@@ -1,39 +1,40 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the perfmon3 tree
-Date: Wed, 26 Nov 2008 08:16:50 +0100
-Message-ID: <20081126071650.GE26036@elte.hu>
-References: <20081125210319.35b2d189.sfr@canb.auug.org.au> <20081125102234.GA4281@elte.hu> <7c86c4470811250640v4417fa4fs196f0d0bea136a45@mail.gmail.com> <20081125153345.GA20733@elte.hu> <7c86c4470811250836k2f798c21pe4766a565a6231ab@mail.gmail.com> <20081125165118.GF22504@elte.hu> <20081126140032.72d86f17.sfr@canb.auug.org.au> <20081126033318.GE8242@elte.hu> <18732.62831.286805.400379@cargo.ozlabs.ibm.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: net tree build failure
+Date: Wed, 26 Nov 2008 15:51:09 +0800
+Message-ID: <20081126075109.GA3642@gondor.apana.org.au>
+References: <20081126181543.0d7fba17.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:33842 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750696AbYKZHRS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 Nov 2008 02:17:18 -0500
+Received: from rhun.apana.org.au ([64.62.148.172]:57972 "EHLO
+	arnor.apana.org.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750981AbYKZHvR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Nov 2008 02:51:17 -0500
 Content-Disposition: inline
-In-Reply-To: <18732.62831.286805.400379@cargo.ozlabs.ibm.com>
+In-Reply-To: <20081126181543.0d7fba17.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Mackerras <paulus@samba.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, eranian@gmail.com, linux-next@vger.kernel.org, Alexander van Heukelum <heukelum@mailshack.com>, the arch/x86 maintainers <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Patrick McHardy <kaber@trash.net>, Alexey Dobriyan <adobriyan@gmail.com>
 
-
-* Paul Mackerras <paulus@samba.org> wrote:
-
-> Ingo Molnar writes:
+On Wed, Nov 26, 2008 at 06:15:43PM +1100, Stephen Rothwell wrote:
+> Hi Dave,
 > 
-> > We know and knew about the existence of the perfmon patches, but they 
-> > were always in the vague RFC category and never directly submitted or 
-> > Cc:-ed to us.
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
 > 
-> So at least now we have your attention. :)
+> net/bridge/br_netfilter.c:112: error: unknown field 'entry_size' specified in initializer
+> net/bridge/br_netfilter.c:112: warning: initialization makes pointer from integer without a cast
 > 
-> The best thing now might be for Stephane to do a patch set with the 
-> perfmon3 core + powerpc bits.  I'd be happy to take that through my 
-> tree, and I really want to see perfmon3 get upstream.  X86 can 
-> follow whenever you can get some time to take a look at it.
+> Caused by commit 631339f1e544a4d39a63cfe6708c5bddcd5a2c48 ("bridge:
+> netfilter: fix update_pmtu crash with GRE") from the net-current tree
+> interacting with commit 6bb3ce25d05f2990c8a19adaf427531430267c1f ("net:
+> remove struct dst_entry::entry_size") from the net tree.
+> 
+> I added the below patch as a temporary merge fix.
 
-Sounds sensible. x86 doesnt always have to be the guinea pig for new 
-kernel features :)
-
-	Ingo
+Yes your patch is correct.  Thanks Stephen!
+-- 
+Visit Openswan at http://www.openswan.org/
+Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
