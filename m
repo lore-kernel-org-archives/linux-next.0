@@ -1,41 +1,47 @@
-From: Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: fuse tree
-Date: Thu, 27 Nov 2008 17:31:22 +0100
-Message-ID: <E1L5jly-0004ZD-SG@pomaz-ex.szeredi.hu>
-References: <E1L5Ia7-0001gb-2X@pomaz-ex.szeredi.hu> <20081127022036.1dd0e2e6.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] sctp: fix missing label when PROC_FS=n
+Date: Thu, 27 Nov 2008 12:18:24 -0800
+Message-ID: <20081127121824.5b3515c9.randy.dunlap@oracle.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fxip-0047f.externet.hu ([88.209.222.127]:44662 "EHLO
-	pomaz-ex.szeredi.hu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751272AbYK0Qba (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Nov 2008 11:31:30 -0500
-In-reply-to: <20081127022036.1dd0e2e6.sfr@canb.auug.org.au> (message from
-	Stephen Rothwell on Thu, 27 Nov 2008 02:20:36 +1100)
+Received: from acsinet11.oracle.com ([141.146.126.233]:22131 "EHLO
+	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752177AbYK0USd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Nov 2008 15:18:33 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: miklos@szeredi.hu, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, tj@kernel.org
+To: linux-next@vger.kernel.org
+Cc: netdev <netdev@vger.kernel.org>, davem@davemloft.net
 
-On Thu, 27 Nov 2008, Stephen Rothwell wrote:
-> On Wed, 26 Nov 2008 12:29:19 +0100 Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> > Could you please add the following git tree, containing fuse patches
-> > to be included in 2.6.29, to the linux-next lineup?
-> > 
-> > git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git for-next
-> 
-> I have added it for tomorrow's tree.
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Thanks Stephen.
+Fix missing label when CONFIG_PROC_FS=n:
 
-> 
-> What I tell everyone: all patches in that branch must have been
-> 	posted to a relevant mailing list
-> 	reviewed
-> 	unit tested
-> 	destined for the next merge window (or the current release)
-> *before* they are included.
+net/sctp/protocol.c: In function 'sctp_proc_init':
+net/sctp/protocol.c:106: error: label 'out_nomem' used but not defined
+make[3]: *** [net/sctp/protocol.o] Error 1
 
-Ack.
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ net/sctp/protocol.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Thanks,
-Miklos
+--- linux-next-20081127.orig/net/sctp/protocol.c
++++ linux-next-20081127/net/sctp/protocol.c
+@@ -139,11 +139,12 @@ out_snmp_proc_init:
+ 	}
+ out_free_percpu:
+ 	percpu_counter_destroy(&sctp_sockets_allocated);
+-out_nomem:
+-	return -ENOMEM;
+ #else
+ 	return 0;
+ #endif /* CONFIG_PROC_FS */
++
++out_nomem:
++	return -ENOMEM;
+ }
+ 
+ /* Clean up the proc fs entry for the SCTP protocol.
