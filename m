@@ -1,60 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree
-Date: Thu, 27 Nov 2008 14:40:43 +1100
-Message-ID: <20081127144043.6cba4a7f.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the mtd tree
+Date: Thu, 27 Nov 2008 15:15:48 +1100
+Message-ID: <20081127151548.eb40da3c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43945 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60551 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751276AbYK0DlA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 Nov 2008 22:41:00 -0500
+	id S1752168AbYK0EQH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Nov 2008 23:16:07 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Hemminger <shemminger@vyatta.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, Atsushi Nemoto <anemo@mba.ocn.ne.jp>, Andrew Morton <akpm@linux-foundation.org>, Kay Sievers <kay.sievers@vrfy.org>, Greg KH <greg@kroah.com>
 
-Hi Dave,
+Hi David,
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/net/hp-plus.c between commit
-1d71da164d7fb40fac72c0406a4a531265916fc8 ("net: hp-plus uses eip_poll")
-from the net-current tree and commit
-d4a97d425c2f59849ebdcc94281ecf108818efbf ("hp-plus: convert to
-net_device_ops") from the net tree.
+Today's linux-next merge of the mtd tree got a conflict in
+drivers/mtd/maps/physmap.c between commit
+a64cbdb4da5c8482929e7bc9c542e9757ad3e0f1 ("mtd: struct device - replace
+bus_id with dev_name(), dev_set_name()") from the driver-core tree and
+commit 3136e903fa2d493ebc1b8a8fbdde2d3a17f85acd ("[MTD] physmap: fix
+memory leak on physmap_flash_remove by using devres") from the mtd tree.
 
-The fixed it up (see below) but assume it will be fixed soon in the net
-tree.
+I fixed it up (see below) and can carry it for a short while.
+
+Dave, you should apply the patch from the driver-core tree (which was
+cc:d to you) (and cope with the rejects :-)) and let Greg KH know when
+you have.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/net/hp-plus.c
-index c01e290,c34411c..0000000
---- a/drivers/net/hp-plus.c
-+++ b/drivers/net/hp-plus.c
-@@@ -158,6 -158,21 +158,21 @@@ out
-  }
-  #endif
+diff --cc drivers/mtd/maps/physmap.c
+index 8e2ee92,dfbf3f2..0000000
+--- a/drivers/mtd/maps/physmap.c
++++ b/drivers/mtd/maps/physmap.c
+@@@ -114,10 -105,10 +105,10 @@@ static int physmap_flash_probe(struct p
+  		       (unsigned long long)(dev->resource[i].end - dev->resource[i].start + 1),
+  		       (unsigned long long)dev->resource[i].start);
   
-+ static const struct net_device_ops hpp_netdev_ops = {
-+ 	.ndo_open		= hpp_open,
-+ 	.ndo_stop		= hpp_close,
-+ 	.ndo_start_xmit		= ei_start_xmit,
-+ 	.ndo_tx_timeout		= ei_tx_timeout,
-+ 	.ndo_get_stats		= ei_get_stats,
-+ 	.ndo_set_multicast_list = ei_set_multicast_list,
-+ 	.ndo_validate_addr	= eth_validate_addr,
-+ 	.ndo_change_mtu		= eth_change_mtu,
-+ #ifdef CONFIG_NET_POLL_CONTROLLER
- -	.ndo_poll_controller	= ei_poll,
-++	.ndo_poll_controller	= eip_poll,
-+ #endif
-+ };
-+ 
-+ 
-  /* Do the interesting part of the probe at a single address. */
-  static int __init hpp_probe1(struct net_device *dev, int ioaddr)
-  {
+- 		info->res = request_mem_region(dev->resource[i].start,
+- 					       dev->resource[i].end - dev->resource[i].start + 1,
+- 					       dev_name(&dev->dev));
+- 		if (info->res == NULL) {
++ 		if (!devm_request_mem_region(&dev->dev,
++ 			dev->resource[i].start,
++ 			dev->resource[i].end - dev->resource[i].start + 1,
+ -			dev->dev.bus_id)) {
+++			dev_name(&dev->dev))) {
+  			dev_err(&dev->dev, "Could not reserve memory region\n");
+  			err = -ENOMEM;
+  			goto err_out;
