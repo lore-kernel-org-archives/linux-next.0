@@ -1,29 +1,29 @@
 From: Jiri Kosina <jkosina@suse.cz>
-Subject: linux-next: trivial tree
-Date: Thu, 27 Nov 2008 11:49:59 +0100 (CET)
-Message-ID: <alpine.LNX.1.10.0811271145180.19853@jikos.suse.cz>
+Subject: linux-next: branch name change for HID tree
+Date: Thu, 27 Nov 2008 11:52:53 +0100 (CET)
+Message-ID: <alpine.LNX.1.10.0811271151080.19853@jikos.suse.cz>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from styx.suse.cz ([82.119.242.94]:35202 "EHLO mail.suse.cz"
+Received: from styx.suse.cz ([82.119.242.94]:35303 "EHLO mail.suse.cz"
 	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1756884AbYK0KuB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 27 Nov 2008 05:50:01 -0500
+	id S1755996AbYK0Kwy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 27 Nov 2008 05:52:54 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Jesper Juhl <jesper.juhl@gmail.com>
+Cc: linux-next@vger.kernel.org
 
 Hi Stephen,
 
-I have taken over trivial patches maintainership from Jesper. I will 
-process all the patches in Jesper's queue when he sends them over to me. 
-Could you please re-introduce trivial tree into linux-next lineup? It is 
-'for-next' branch of
+could you please change the branch name you are pulling from HID git tree 
+into linux-next? 
+The current branch name 'mm' is a historic artifact from times akpm has 
+been pullin this directly into -mm. I have introduced 'for-next' branch, 
+which I'd like to ask you to pull instead.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jikos/trivial.git for-next
-
-Thanks.
+Thanks,
 
 -- 
 Jiri Kosina
+SUSE Labs
