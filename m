@@ -1,60 +1,29 @@
-From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
-Subject: Suspend on X200 with next-20081125: Success!
-Date: Thu, 27 Nov 2008 10:06:47 +0100
-Message-ID: <20081127090647.GA16088@denkbrett.schottelius.org>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: linux-next: trivial tree
+Date: Thu, 27 Nov 2008 11:49:59 +0100 (CET)
+Message-ID: <alpine.LNX.1.10.0811271145180.19853@jikos.suse.cz>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.schottelius.org ([77.109.138.221]:56986 "EHLO
-	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752642AbYK0JGu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Nov 2008 04:06:50 -0500
-Content-Disposition: inline
+Received: from styx.suse.cz ([82.119.242.94]:35202 "EHLO mail.suse.cz"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1756884AbYK0KuB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 27 Nov 2008 05:50:01 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Jesper Juhl <jesper.juhl@gmail.com>
 
+Hi Stephen,
 
---vkogqOf2sHV7VnPd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I have taken over trivial patches maintainership from Jesper. I will 
+process all the patches in Jesper's queue when he sends them over to me. 
+Could you please re-introduce trivial tree into linux-next lineup? It is 
+'for-next' branch of
 
-Good morning everybody!
+git://git.kernel.org/pub/scm/linux/kernel/git/jikos/trivial.git for-next
 
-I just resumed the Lenovo X200 running
-2.6.28-rc6-next-20081125-denkbrett #15 SMP PREEMPT
-with xorg running!
+Thanks.
 
-Currently just once and after the resume it beeped until
-I released it from the docking station (putting back in
-works), though it looks pretty good!
-
-Thanks for your work!
-
-Sincerly,
-
-Nico
-
---=20
-Think about Free and Open Source Software (FOSS).
-http://nico.schottelius.org/documentations/foss/the-term-foss/
-
-PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
-
---vkogqOf2sHV7VnPd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkuYycACgkQuL75KpiFGIwJcACfUVu33UxJbZr1YzTzvA3kt/p/
-B/UAn2idtiRFuCvY8AKXAy9AVlMEG5aW
-=iwza
------END PGP SIGNATURE-----
-
---vkogqOf2sHV7VnPd--
+-- 
+Jiri Kosina
