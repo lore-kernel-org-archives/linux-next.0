@@ -1,48 +1,60 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: Tree for November 26 (lib80211 + crypto)
-Date: Thu, 27 Nov 2008 09:51:32 +0800
-Message-ID: <20081127015131.GA11493@gondor.apana.org.au>
-References: <20081127014949.9b9a69b7.sfr@canb.auug.org.au> <20081126133234.2a8323d0.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree
+Date: Thu, 27 Nov 2008 14:40:43 +1100
+Message-ID: <20081127144043.6cba4a7f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rhun.apana.org.au ([64.62.148.172]:58177 "EHLO
-	arnor.apana.org.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750797AbYK0Bvn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Nov 2008 20:51:43 -0500
-Content-Disposition: inline
-In-Reply-To: <20081126133234.2a8323d0.randy.dunlap@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43945 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751276AbYK0DlA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Nov 2008 22:41:00 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-crypto@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Hemminger <shemminger@vyatta.com>
 
-On Wed, Nov 26, 2008 at 01:32:34PM -0800, Randy Dunlap wrote:
-> On Thu, 27 Nov 2008 01:49:49 +1100 Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > Changes since 20081125:
-> > 
-> > Today's tree fails the powerpc allyesconfig build.
-> 
-> 
-> lib80211_crypt_wep.c:(.text+0x388c7): undefined reference to `crypto_free_tfm'
-> lib80211_crypt_wep.c:(.text+0x388fc): undefined reference to `crypto_alloc_base'
-> lib80211_crypt_ccmp.c:(.text+0x39131): undefined reference to `crypto_alloc_base'
-> lib80211_crypt_ccmp.c:(.text+0x390e7): undefined reference to `crypto_free_tfm'
-> lib80211_crypt_tkip.c:(.text+0x3a219): undefined reference to `crypto_free_tfm'
-> lib80211_crypt_tkip.c:(.text+0x3a21e): undefined reference to `crypto_free_tfm'
-> lib80211_crypt_tkip.c:(.text+0x3a26e): undefined reference to `crypto_alloc_base'
-> lib80211_crypt_tkip.c:(.text+0x3a27c): undefined reference to `crypto_alloc_base'
-> 
-> config attached.  Drivers are built-in, crypto is modular.
+Hi Dave,
 
-John, looks like wireless is missing a select on CRYPTO somewhere.
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/hp-plus.c between commit
+1d71da164d7fb40fac72c0406a4a531265916fc8 ("net: hp-plus uses eip_poll")
+from the net-current tree and commit
+d4a97d425c2f59849ebdcc94281ecf108818efbf ("hp-plus: convert to
+net_device_ops") from the net tree.
 
-Cheers,
+The fixed it up (see below) but assume it will be fixed soon in the net
+tree.
 -- 
-Visit Openswan at http://www.openswan.org/
-Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+diff --cc drivers/net/hp-plus.c
+index c01e290,c34411c..0000000
+--- a/drivers/net/hp-plus.c
++++ b/drivers/net/hp-plus.c
+@@@ -158,6 -158,21 +158,21 @@@ out
+  }
+  #endif
+  
++ static const struct net_device_ops hpp_netdev_ops = {
++ 	.ndo_open		= hpp_open,
++ 	.ndo_stop		= hpp_close,
++ 	.ndo_start_xmit		= ei_start_xmit,
++ 	.ndo_tx_timeout		= ei_tx_timeout,
++ 	.ndo_get_stats		= ei_get_stats,
++ 	.ndo_set_multicast_list = ei_set_multicast_list,
++ 	.ndo_validate_addr	= eth_validate_addr,
++ 	.ndo_change_mtu		= eth_change_mtu,
++ #ifdef CONFIG_NET_POLL_CONTROLLER
+ -	.ndo_poll_controller	= ei_poll,
+++	.ndo_poll_controller	= eip_poll,
++ #endif
++ };
++ 
++ 
+  /* Do the interesting part of the probe at a single address. */
+  static int __init hpp_probe1(struct net_device *dev, int ioaddr)
+  {
