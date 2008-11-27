@@ -1,35 +1,50 @@
-From: Mark Fasheh <mfasheh@suse.com>
-Subject: Re: linux-next: ocfs2 tree build failure
-Date: Wed, 26 Nov 2008 15:49:54 -0800
-Message-ID: <20081126234954.GJ8378@wotan.suse.de>
-References: <20081125164204.6817a397.sfr@canb.auug.org.au> <20081126163028.d7c1fa2d.sfr@canb.auug.org.au> <20081126204348.GG8378@wotan.suse.de> <20081127104241.6b119b19.sfr@canb.auug.org.au>
-Reply-To: Mark Fasheh <mfasheh@suse.com>
+From: "Peter Teoh" <htmldeveloper@gmail.com>
+Subject: Re: linux-next: powerpc build failure
+Date: Thu, 27 Nov 2008 08:26:45 +0800
+Message-ID: <804dabb00811261626n6b94bd5dh5dc2a3d329014718@mail.gmail.com>
+References: <20081127013405.fcdaaed2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ns2.suse.de ([195.135.220.15]:57662 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751403AbYKZXtz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 Nov 2008 18:49:55 -0500
+Received: from an-out-0708.google.com ([209.85.132.241]:16145 "EHLO
+	an-out-0708.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752507AbYK0A0q (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Nov 2008 19:26:46 -0500
+Received: by an-out-0708.google.com with SMTP id d40so308800and.1
+        for <linux-next@vger.kernel.org>; Wed, 26 Nov 2008 16:26:45 -0800 (PST)
+In-Reply-To: <20081127013405.fcdaaed2.sfr@canb.auug.org.au>
 Content-Disposition: inline
-In-Reply-To: <20081127104241.6b119b19.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Jan Kara <jack@suse.cz>
+Cc: paulus@samba.org, linux-next@vger.kernel.org
 
-On Thu, Nov 27, 2008 at 10:42:41AM +1100, Stephen Rothwell wrote:
-> Hi Mark,
-> 
-> On Wed, 26 Nov 2008 12:43:48 -0800 Mark Fasheh <mfasheh@suse.com> wrote:
-> >
-> > Ok. Does the attached patch fix this for you? It's in ocfs2.git now.
-> 
-> That commit is not in your linux-next branch.
+On Wed, Nov 26, 2008 at 10:34 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Paul,
+>
+> Today's linux-next build (powerpc allyesconfig) failed like this:
+>
+> drivers/built-in.o: In function `get_dma_ops':
+> arch/powerpc/include/asm/dma-mapping.h:97: relocation truncated to fit: R_PPC64_REL24 against symbol `.ftrace_likely_update' defined in .text section in kernel/built-in.o
+> drivers/built-in.o: In function `init_shadow_tids':
+> drivers/infiniband/hw/ipath/ipath_init_chip.c:457: relocation truncated to fit: R_PPC64_REL24 against symbol `.vfree' defined in .text section in mm/built-in.o
 
-Right, sorry - I forgot to update the linux-next branch after this mornings
-merges. I'm uploading the changes now, they should be available soon.
-	--Mark
+Not sure if my guess is correct, but the explanation for the
+"relocation truncated to fit" error is here:
 
---
-Mark Fasheh
+http://www.gossamer-threads.com/lists/linux/kernel/156801?search_string=%26quot%3Brelocation%20truncated%20to%20fit%3A%20%26quot%3B;#156801
+
+and solved here:
+
+http://www.gossamer-threads.com/lists/linux/kernel/156815?search_string=%26quot%3Brelocation%20truncated%20to%20fit%3A%20%26quot%3B;#156815
+
+as well.
+
+Perhaps u have a clue now?
+
+-- 
+Regards,
+Peter Teoh
+
+Ernest Hemingway - "Never mistake motion for action."
