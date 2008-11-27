@@ -1,47 +1,64 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] sctp: fix missing label when PROC_FS=n
-Date: Thu, 27 Nov 2008 12:18:24 -0800
-Message-ID: <20081127121824.5b3515c9.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: trivial tree
+Date: Fri, 28 Nov 2008 09:58:14 +1100
+Message-ID: <20081128095814.8c3a2b43.sfr@canb.auug.org.au>
+References: <alpine.LNX.1.10.0811271145180.19853@jikos.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__28_Nov_2008_09_58_14_+1100_63c+KDuE01P.4YqW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:22131 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752177AbYK0USd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Nov 2008 15:18:33 -0500
+Received: from chilli.pcug.org.au ([203.10.76.44]:53353 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751330AbYK0W6c (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 27 Nov 2008 17:58:32 -0500
+In-Reply-To: <alpine.LNX.1.10.0811271145180.19853@jikos.suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: netdev <netdev@vger.kernel.org>, davem@davemloft.net
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Jesper Juhl <jesper.juhl@gmail.com>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+--Signature=_Fri__28_Nov_2008_09_58_14_+1100_63c+KDuE01P.4YqW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix missing label when CONFIG_PROC_FS=n:
+Hi Jiri,
 
-net/sctp/protocol.c: In function 'sctp_proc_init':
-net/sctp/protocol.c:106: error: label 'out_nomem' used but not defined
-make[3]: *** [net/sctp/protocol.o] Error 1
+On Thu, 27 Nov 2008 11:49:59 +0100 (CET) Jiri Kosina <jkosina@suse.cz> wrot=
+e:
+>
+> I have taken over trivial patches maintainership from Jesper. I will=20
+> process all the patches in Jesper's queue when he sends them over to me.=
+=20
+> Could you please re-introduce trivial tree into linux-next lineup? It is=
+=20
+> 'for-next' branch of
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/jikos/trivial.git for-next
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- net/sctp/protocol.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Added from today.
 
---- linux-next-20081127.orig/net/sctp/protocol.c
-+++ linux-next-20081127/net/sctp/protocol.c
-@@ -139,11 +139,12 @@ out_snmp_proc_init:
- 	}
- out_free_percpu:
- 	percpu_counter_destroy(&sctp_sockets_allocated);
--out_nomem:
--	return -ENOMEM;
- #else
- 	return 0;
- #endif /* CONFIG_PROC_FS */
-+
-+out_nomem:
-+	return -ENOMEM;
- }
- 
- /* Clean up the proc fs entry for the SCTP protocol.
+What I tell everyone: all patches in that branch must have been
+	posted to a relevant mailing list
+	reviewed
+	unit tested
+	destined for the next merge window (or the current release)
+*before* they are included.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__28_Nov_2008_09_58_14_+1100_63c+KDuE01P.4YqW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkvJgYACgkQjjKRsyhoI8yEfACfQ0Uv3rIgdm9pqP2uQvdcXunn
+6sgAoLCtLjhFrVraWnjS2DioKuzy00GW
+=sPck
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__28_Nov_2008_09_58_14_+1100_63c+KDuE01P.4YqW--
