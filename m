@@ -1,52 +1,117 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next:  tree build failure
-Date: Fri, 28 Nov 2008 21:04:12 +1100
-Message-ID: <20081128210412.a7df2494.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: proc tree build failure
+Date: Fri, 28 Nov 2008 02:25:17 -0800 (PST)
+Message-ID: <20081128.022517.12021740.davem@davemloft.net>
+References: <20081124181559.3896a756.sfr@canb.auug.org.au>
+	<20081128080555.GC3495@x200.localdomain>
+	<20081128.010025.224611672.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__28_Nov_2008_21_04_12_+1100_ULRVfMz6pKGk_TmX"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57007 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750770AbYK1KEa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 28 Nov 2008 05:04:30 -0500
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:37576
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1750770AbYK1KZU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 28 Nov 2008 05:25:20 -0500
+In-Reply-To: <20081128.010025.224611672.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-next@vger.kernel.org
+To: adobriyan@gmail.com
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, kenchen@google.com, mingo@elte.hu
 
---Signature=_Fri__28_Nov_2008_21_04_12_+1100_ULRVfMz6pKGk_TmX
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: David Miller <davem@davemloft.net>
+Date: Fri, 28 Nov 2008 01:00:25 -0800 (PST)
 
-Hi Takashi,
+> From: Alexey Dobriyan <adobriyan@gmail.com>
+> Date: Fri, 28 Nov 2008 11:05:55 +0300
+> 
+> > David, can you implement save_stack_trace_tsk() for sparc64? I have
+> > no idea how to do it or is it doable at all.
+> 
+> Sure thing Alexey.
 
-Today's linux-next build (i386 defconfig) failed like this:
+I just pushed the following patch into sparc-next-2.6, so it
+should show up in the next tree that Stephen builds:
 
-sound/pci/hda/hda_intel.c: In function 'azx_codec_create':
-sound/pci/hda/hda_intel.c:1236: error: 'power_save' undeclared (first use i=
-n this function)
+sparc64: Add save_stack_trace_tsk().
 
-Caused by commit fee2fba3586f78762ecc5f432dfd3602765a31b3 ("ALSA: hda -
-Move power_save option to hda_intel.c").
+And this allows us to indicate HAVE_LATENCYTOP_SUPPORT.
 
-I have reverted that commit.  It needs to be fixed soon.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ arch/sparc/Kconfig               |    4 ++++
+ arch/sparc64/kernel/stacktrace.c |   32 +++++++++++++++++++++++---------
+ 2 files changed, 27 insertions(+), 9 deletions(-)
 
---Signature=_Fri__28_Nov_2008_21_04_12_+1100_ULRVfMz6pKGk_TmX
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkvwhwACgkQjjKRsyhoI8zn1wCfcYekdqQrJk6YztFgygyuyxmB
-+CIAoJXjxpbhlRggUikTHoXFWvWGR09D
-=6jHF
------END PGP SIGNATURE-----
-
---Signature=_Fri__28_Nov_2008_21_04_12_+1100_ULRVfMz6pKGk_TmX--
+diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
+index 10945c3..e162535 100644
+--- a/arch/sparc/Kconfig
++++ b/arch/sparc/Kconfig
+@@ -72,6 +72,10 @@ config LOCKDEP_SUPPORT
+ 	bool
+ 	default y if SPARC64
+ 
++config HAVE_LATENCYTOP_SUPPORT
++	bool
++	default y if SPARC64
++
+ config AUDIT_ARCH
+ 	bool
+ 	default y if SPARC64
+diff --git a/arch/sparc64/kernel/stacktrace.c b/arch/sparc64/kernel/stacktrace.c
+index 4e21d4a..acb12f6 100644
+--- a/arch/sparc64/kernel/stacktrace.c
++++ b/arch/sparc64/kernel/stacktrace.c
+@@ -7,17 +7,18 @@
+ 
+ #include "kstack.h"
+ 
+-void save_stack_trace(struct stack_trace *trace)
++static void __save_stack_trace(struct thread_info *tp,
++			       struct stack_trace *trace,
++			       bool skip_sched)
+ {
+-	struct thread_info *tp = task_thread_info(current);
+ 	unsigned long ksp, fp;
+ 
+-	stack_trace_flush();
+-
+-	__asm__ __volatile__(
+-		"mov	%%fp, %0"
+-		: "=r" (ksp)
+-	);
++	if (tp == current_thread_info()) {
++		stack_trace_flush();
++		__asm__ __volatile__("mov %%fp, %0" : "=r" (ksp));
++	} else {
++		ksp = tp->ksp;
++	}
+ 
+ 	fp = ksp + STACK_BIAS;
+ 	do {
+@@ -43,8 +44,21 @@ void save_stack_trace(struct stack_trace *trace)
+ 
+ 		if (trace->skip > 0)
+ 			trace->skip--;
+-		else
++		else if (!skip_sched || !in_sched_functions(pc))
+ 			trace->entries[trace->nr_entries++] = pc;
+ 	} while (trace->nr_entries < trace->max_entries);
+ }
++
++void save_stack_trace(struct stack_trace *trace)
++{
++	__save_stack_trace(current_thread_info(), trace, false);
++}
+ EXPORT_SYMBOL_GPL(save_stack_trace);
++
++void save_stack_trace_tsk(struct task_struct *tsk, struct stack_trace *trace)
++{
++	struct thread_info *tp = task_thread_info(tsk);
++
++	__save_stack_trace(tp, trace, true);
++}
++EXPORT_SYMBOL_GPL(save_stack_trace_tsk);
+-- 
+1.5.6.5
