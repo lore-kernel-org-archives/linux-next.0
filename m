@@ -1,39 +1,39 @@
-From: "Alexander Beregalov" <a.beregalov@gmail.com>
-Subject: Re: next-20081126: x86_64: kernel BUG at kernel/params.c:637
-Date: Fri, 28 Nov 2008 15:58:54 +0300
-Message-ID: <a4423d670811280458r6e905433xa31d8d67741d8406@mail.gmail.com>
-References: <a4423d670811260830w19a67faak38b09f6153579af3@mail.gmail.com>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Subject: next-2008-11-28: bfin vs cpumask fixlet
+Date: Fri, 28 Nov 2008 18:17:55 +0300
+Message-ID: <20081128151755.GA27660@x200.localdomain>
+References: <20081128213620.2ec593d4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752689AbYK1M7U@vger.kernel.org>
-In-Reply-To: <a4423d670811260830w19a67faak38b09f6153579af3@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ug-out-1314.google.com ([66.249.92.172]:27490 "EHLO
+	ug-out-1314.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752308AbYK1PNz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 28 Nov 2008 10:13:55 -0500
+Received: by ug-out-1314.google.com with SMTP id 39so2000149ugf.37
+        for <linux-next@vger.kernel.org>; Fri, 28 Nov 2008 07:13:53 -0800 (PST)
 Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20081128213620.2ec593d4.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, rusty@rustcorp.com.au
 
-2008/11/26 Alexander Beregalov <a.beregalov@gmail.com>:
-> Brought up 4 CPUs
-> Total of 4 processors activated (23949.39 BogoMIPS).
-> khelper used greatest stack depth: 5712 bytes left
-> net_namespace: 752 bytes
-> NET: Registered protocol family 16
-> ACPI FADT declares the system doesn't support PCIe ASPM, so disab
->
-> ACPI: bus type pci registered
-> PCI: MCFG configuration 0: base e0000000 segment 0 buses 0 - 255
-> PCI: MCFG area at e0000000 reserved in E820
-> PCI: Using MMCONFIG at e0000000 - efffffff
-> PCI: Using configuration type 1 for base access
-> PCI: Dell PowerEdge 1950 detected, enabling pci=bfsort.
-> ------------[ cut here ]------------
-> kernel BUG at kernel/params.c:637!
-> invalid opcode: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC
-> last sysfs file:
-> CPU 0
-> Modules linked in:
-> Pid: 1, comm: swapper Not tainted 2.6.28-rc6-next-20081126 #24
-> RIP: 0010:[<ffffffff806d7b25>]  [<ffffffff806d7b25>] param_sysfs_init+0x86/0xf3
-
-Works again on next-20081128
+--- a/arch/blackfin/kernel/time-ts.c
++++ b/arch/blackfin/kernel/time-ts.c
+@@ -162,7 +162,6 @@ static struct clock_event_device clockevent_bfin = {
+ 	.name		= "bfin_core_timer",
+ 	.features	= CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
+ 	.shift		= 32,
+-	.cpumask	= CPU_MASK_CPU0,
+ 	.set_next_event = bfin_timer_set_next_event,
+ 	.set_mode	= bfin_timer_set_mode,
+ };
+@@ -193,6 +192,7 @@ static int __init bfin_clockevent_init(void)
+ 	clockevent_bfin.mult = div_sc(timer_clk, NSEC_PER_SEC, clockevent_bfin.shift);
+ 	clockevent_bfin.max_delta_ns = clockevent_delta2ns(-1, &clockevent_bfin);
+ 	clockevent_bfin.min_delta_ns = clockevent_delta2ns(100, &clockevent_bfin);
++	clockevent_bfin.cpumask = cpumask_of(0);
+ 	clockevents_register_device(&clockevent_bfin);
+ 
+ 	return 0;
