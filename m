@@ -1,51 +1,52 @@
-From: =?utf-8?q?T=C3=B6r=C3=B6k=20Edwin?= <edwintorok@gmail.com>
-Subject: [PATCH] fix build: add missing #ifdef CONFIG_STACKTRACE
-Date: Fri, 28 Nov 2008 11:17:56 +0200
-Message-ID: <1227863876-22747-1-git-send-email-edwintorok@gmail.com>
-References: <c62985530811280114s50abe288q255a185b6d64c81b@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next:  tree build failure
+Date: Fri, 28 Nov 2008 21:04:12 +1100
+Message-ID: <20081128210412.a7df2494.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__28_Nov_2008_21_04_12_+1100_ULRVfMz6pKGk_TmX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ey-out-2122.google.com ([74.125.78.27]:20626 "EHLO
-	ey-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752762AbYK1JSC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 28 Nov 2008 04:18:02 -0500
-Received: by ey-out-2122.google.com with SMTP id 6so568050eyi.37
-        for <linux-next@vger.kernel.org>; Fri, 28 Nov 2008 01:18:00 -0800 (PST)
-In-Reply-To: <c62985530811280114s50abe288q255a185b6d64c81b@mail.gmail.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:57007 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750770AbYK1KEa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 28 Nov 2008 05:04:30 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: adobriyan@gmail.com
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, mingo@elte.hu, linux-kernel@vger.kernel.org, =?utf-8?q?T=C3=B6r=C3=B6k=20Edwin?= <edwintorok@gmail.com>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org
 
+--Signature=_Fri__28_Nov_2008_21_04_12_+1100_ULRVfMz6pKGk_TmX
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: T=C3=B6r=C3=B6k Edwin <edwintorok@gmail.com>
----
- kernel/trace/trace.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+Hi Takashi,
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 5811e0a..91887a2 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -983,6 +983,7 @@ static void ftrace_trace_userstack(struct trace_arr=
-ay *tr,
- 		   struct trace_array_cpu *data,
- 		   unsigned long flags, int pc)
- {
-+#ifdef CONFIG_STACKTRACE
- 	struct ring_buffer_event *event;
- 	struct userstack_entry *entry;
- 	struct stack_trace trace;
-@@ -1008,6 +1009,7 @@ static void ftrace_trace_userstack(struct trace_a=
-rray *tr,
-=20
- 	save_stack_trace_user(&trace);
- 	ring_buffer_unlock_commit(tr->buffer, event, irq_flags);
-+#endif
- }
-=20
- void __trace_userstack(struct trace_array *tr,
+Today's linux-next build (i386 defconfig) failed like this:
+
+sound/pci/hda/hda_intel.c: In function 'azx_codec_create':
+sound/pci/hda/hda_intel.c:1236: error: 'power_save' undeclared (first use i=
+n this function)
+
+Caused by commit fee2fba3586f78762ecc5f432dfd3602765a31b3 ("ALSA: hda -
+Move power_save option to hda_intel.c").
+
+I have reverted that commit.  It needs to be fixed soon.
 --=20
-1.5.6.5
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__28_Nov_2008_21_04_12_+1100_ULRVfMz6pKGk_TmX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkvwhwACgkQjjKRsyhoI8zn1wCfcYekdqQrJk6YztFgygyuyxmB
++CIAoJXjxpbhlRggUikTHoXFWvWGR09D
+=6jHF
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__28_Nov_2008_21_04_12_+1100_ULRVfMz6pKGk_TmX--
