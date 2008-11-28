@@ -1,30 +1,28 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: next-2008-11-27: tracing on alpha (again)
-Date: Fri, 28 Nov 2008 12:02:58 +0300
-Message-ID: <20081128090258.GA27346@x200.localdomain>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: proc tree build failure
+Date: Fri, 28 Nov 2008 01:00:25 -0800 (PST)
+Message-ID: <20081128.010025.224611672.davem@davemloft.net>
+References: <20081124181559.3896a756.sfr@canb.auug.org.au>
+	<20081128080555.GC3495@x200.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nf-out-0910.google.com ([64.233.182.191]:16066 "EHLO
-	nf-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752618AbYK1I7B (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 28 Nov 2008 03:59:01 -0500
-Received: by nf-out-0910.google.com with SMTP id d3so701548nfc.21
-        for <linux-next@vger.kernel.org>; Fri, 28 Nov 2008 00:58:58 -0800 (PST)
-Content-Disposition: inline
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:52923
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1752646AbYK1JA0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 28 Nov 2008 04:00:26 -0500
+In-Reply-To: <20081128080555.GC3495@x200.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, fweisbec@gmail.com, mingo@elte.hu, edwintorok@gmail.com, linux-kernel@vger.kernel.org
+To: adobriyan@gmail.com
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, kenchen@google.com, mingo@elte.hu
 
-On alpha-smp-n-debug-y:
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Fri, 28 Nov 2008 11:05:55 +0300
 
-  CC      kernel/trace/trace.o
-kernel/trace/trace.c: In function 'ftrace_trace_userstack':
-kernel/trace/trace.c:968: error: storage size of 'trace' isn't known
-kernel/trace/trace.c:968: warning: unused variable 'trace'
-make[3]: *** [kernel/trace/trace.o] Error 1
-  CC      kernel/trace/trace_branch.o
-kernel/trace/trace_branch.c: In function 'probe_likely_condition':
-kernel/trace/trace_branch.c:44: error: implicit declaration of function 'raw_local_irq_save'
-kernel/trace/trace_branch.c:76: error: implicit declaration of function 'raw_local_irq_restore'
+> David, can you implement save_stack_trace_tsk() for sparc64? I have
+> no idea how to do it or is it doable at all.
+
+Sure thing Alexey.
