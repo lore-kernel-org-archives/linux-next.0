@@ -1,68 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH -next] at91rm9200 vs cpumask changes
-Date: Fri, 28 Nov 2008 21:59:12 +1100
-Message-ID: <20081128215912.f12c644e.sfr@canb.auug.org.au>
-References: <20081128103913.GA8488@x200.localdomain>
+From: "Alexander Beregalov" <a.beregalov@gmail.com>
+Subject: Re: next-20081126: x86_64: kernel BUG at kernel/params.c:637
+Date: Fri, 28 Nov 2008 15:58:54 +0300
+Message-ID: <a4423d670811280458r6e905433xa31d8d67741d8406@mail.gmail.com>
+References: <a4423d670811260830w19a67faak38b09f6153579af3@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__28_Nov_2008_21_59_12_+1100_pMe2eM.9Ldqf/VZ0"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45508 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750912AbYK1K72 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 28 Nov 2008 05:59:28 -0500
-In-Reply-To: <20081128103913.GA8488@x200.localdomain>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, rusty@rustcorp.com.au
-
---Signature=_Fri__28_Nov_2008_21_59_12_+1100_pMe2eM.9Ldqf/VZ0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752689AbYK1M7U@vger.kernel.org>
+In-Reply-To: <a4423d670811260830w19a67faak38b09f6153579af3@mail.gmail.com>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sender: linux-kernel-owner@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
+List-Id: linux-next.vger.kernel.org
 
-Hi Alexey,
-
-On Fri, 28 Nov 2008 13:39:13 +0300 Alexey Dobriyan <adobriyan@gmail.com> wr=
-ote:
+2008/11/26 Alexander Beregalov <a.beregalov@gmail.com>:
+> Brought up 4 CPUs
+> Total of 4 processors activated (23949.39 BogoMIPS).
+> khelper used greatest stack depth: 5712 bytes left
+> net_namespace: 752 bytes
+> NET: Registered protocol family 16
+> ACPI FADT declares the system doesn't support PCIe ASPM, so disab
 >
-> --- a/arch/arm/mach-at91/at91rm9200_time.c
-> +++ b/arch/arm/mach-at91/at91rm9200_time.c
-> @@ -169,7 +169,6 @@ static struct clock_event_device clkevt =3D {
->  	.features	=3D CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
->  	.shift		=3D 32,
->  	.rating		=3D 150,
-> -	.cpumask	=3D CPU_MASK_CPU0,
->  	.set_next_event	=3D clkevt32k_next_event,
->  	.set_mode	=3D clkevt32k_mode,
->  };
-> @@ -197,7 +196,7 @@ void __init at91rm9200_timer_init(void)
->  	clkevt.mult =3D div_sc(AT91_SLOW_CLOCK, NSEC_PER_SEC, clkevt.shift);
->  	clkevt.max_delta_ns =3D clockevent_delta2ns(AT91_ST_ALMV, &clkevt);
->  	clkevt.min_delta_ns =3D clockevent_delta2ns(2, &clkevt) + 1;
-> -	clkevt.cpumask =3D cpumask_of_cpu(0);
-> +	clkevt.cpumask =3D cpumask_of(0);
->  	clockevents_register_device(&clkevt);
-> =20
->  	/* register clocksource */
+> ACPI: bus type pci registered
+> PCI: MCFG configuration 0: base e0000000 segment 0 buses 0 - 255
+> PCI: MCFG area at e0000000 reserved in E820
+> PCI: Using MMCONFIG at e0000000 - efffffff
+> PCI: Using configuration type 1 for base access
+> PCI: Dell PowerEdge 1950 detected, enabling pci=bfsort.
+> ------------[ cut here ]------------
+> kernel BUG at kernel/params.c:637!
+> invalid opcode: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC
+> last sysfs file:
+> CPU 0
+> Modules linked in:
+> Pid: 1, comm: swapper Not tainted 2.6.28-rc6-next-20081126 #24
+> RIP: 0010:[<ffffffff806d7b25>]  [<ffffffff806d7b25>] param_sysfs_init+0x86/0xf3
 
-This patch is already in the rr tree today.  But thanks for the patch.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__28_Nov_2008_21_59_12_+1100_pMe2eM.9Ldqf/VZ0
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkvzwAACgkQjjKRsyhoI8xULgCgp2u+YHPkSVctmHPJowsGnRyU
-KY8AmQE6FY3r7FyGUSCBznwZOSdxsXAp
-=CrvK
------END PGP SIGNATURE-----
-
---Signature=_Fri__28_Nov_2008_21_59_12_+1100_pMe2eM.9Ldqf/VZ0--
+Works again on next-20081128
