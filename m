@@ -1,50 +1,46 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: drivers/x86 (Was: Re: linux-next: Tree for November 28
-	(misc/tc1100))
-Date: Sat, 29 Nov 2008 10:34:14 +0100
-Message-ID: <20081129093414.GB26691@elte.hu>
-References: <20081128213620.2ec593d4.sfr@canb.auug.org.au> <4930307C.30106@oracle.com> <20081129083550.3c23af37.sfr@canb.auug.org.au>
+From: David Woodhouse <dwmw2@infradead.org>
+Subject: Re: linux-next: manual merge of the firmware tree
+Date: Sat, 29 Nov 2008 10:11:45 +0000
+Message-ID: <1227953505.22021.6.camel@macbook.infradead.org>
+References: <20081128160339.23fa014f.sfr@canb.auug.org.au>
+	 <49308976.7010206@chelsio.com>
+	 <20081129114846.4b97cd96.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:47344 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751146AbYK2Jee (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 29 Nov 2008 04:34:34 -0500
-Content-Disposition: inline
-In-Reply-To: <20081129083550.3c23af37.sfr@canb.auug.org.au>
+Received: from bombadil.infradead.org ([18.85.46.34]:40389 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751082AbYK2KLx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 29 Nov 2008 05:11:53 -0500
+In-Reply-To: <20081129114846.4b97cd96.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Len Brown <len.brown@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>, x86@kernel.org
+Cc: Divy Le Ray <divy@chelsio.com>, linux-next@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jaswinder Singh <jaswinder@infradead.org>
 
+On Sat, 2008-11-29 at 11:48 +1100, Stephen Rothwell wrote:
+> On Fri, 28 Nov 2008 16:14:46 -0800 Divy Le Ray <divy@chelsio.com> wrote:
+> > I created this situation and apologize for it. I should have sent the
+> > patch to the firmware tree maintainer.
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+No, I think you did the right thing. Thank you for the patch.
 
-> Hi Len,
-> 
-> On Fri, 28 Nov 2008 09:55:08 -0800 Randy Dunlap <randy.dunlap@oracle.com> wrote:
-> >
-> > make[2]: *** No rule to make target `drivers/misc/tc1100-wmi.o', needed by `drivers/misc/built-in.o'.
-> > 
-> > on allmodconfig & allyesconfig for i386.
-> > 
-> > On, moved to drivers/x86/.  Someone needs to clean up drivers/misc/Makefile.
-> 
-> Just wondering where the move to drivers/x86 was discussed, (reviewed 
-> and tested) and why the change is in the acpi tree and not the x86 
-> tree?
+> Its not a big issue - the conflict has a very obvious resolution and "git
+> rerere" remembers it for me.  As far as I know, there is no "firmware
+> maintainer" - David just has a git tree that was used when the initial
+> conversions were done.  Some of those have not yet been finalised and so
+> are still in his tree.
 
-it will all conflict with pending bits in the x86 tree, so i'd prefer if 
-Len did this atomically after 2.6.29-rc1, without it having this 
-long-term breakage effect.
+I had said that it's time for the 'firmware tree' to be discarded, and
+the patches pushed upstream via the appropriate maintainers. The reason
+I'd waited was because I'd told DaveM I'd wait for the dust to settle on
+the first round of patches before sending the rest.
 
-Historically drivers/misc/ has been more active via the ACPI tree. (Len 
-being the (in-)voluntary maintainer for those platform details)
+Now I'm a little concerned about the conflicts in the WHENCE file if we
+have patches going through different routes. Perhaps we should stop just
+adding stuff at the _end_ and sort it? Or rearrange it differently?
 
-So drivers/x86/ makes sense i guess. Eventually the really lowlevel bits 
-might move to arch/x86/drivers/ or so - but i've got no strong opinion on 
-it. There seems to be enough precedent of existing drivers/$ARCH 
-hierarchies.
-
-	Ingo
+-- 
+David Woodhouse                            Open Source Technology Centre
+David.Woodhouse@intel.com                              Intel Corporation
