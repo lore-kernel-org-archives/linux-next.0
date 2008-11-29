@@ -1,62 +1,70 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
+From: Sam Ravnborg <sam@ravnborg.org>
 Subject: Re: [RFC PATCH] x86: create drivers/x86/ from drivers/misc/
-Date: Fri, 28 Nov 2008 17:00:00 -0800
-Message-ID: <49309410.1060609@oracle.com>
+Date: Sat, 29 Nov 2008 08:23:21 +0100
+Message-ID: <20081129072321.GA8351@uranus.ravnborg.org>
 References: <20081128213620.2ec593d4.sfr@canb.auug.org.au> <4930307C.30106@oracle.com> <20081129083550.3c23af37.sfr@canb.auug.org.au> <alpine.LFD.2.00.0811281649001.24773@localhost.localdomain> <alpine.LFD.2.00.0811281702570.24773@localhost.localdomain> <alpine.LFD.2.00.0811281706540.24773@localhost.localdomain> <20081128223533.GA5175@uranus.ravnborg.org> <alpine.LFD.2.00.0811281801520.24773@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from pfepb.post.tele.dk ([195.41.46.236]:57707 "EHLO
+	pfepb.post.tele.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750865AbYK2HV7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 29 Nov 2008 02:21:59 -0500
+Content-Disposition: inline
 In-Reply-To: <alpine.LFD.2.00.0811281801520.24773@localhost.localdomain>
-Sender: linux-acpi-owner@vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Len Brown <lenb@kernel.org>
-Cc: Sam Ravnborg <sam@ravnborg.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Len Brown <len.brown@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, x86@kernel.org, linux-acpi@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Len Brown <len.brown@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>, x86@kernel.org, linux-acpi@vger.kernel.org
 
-Len Brown wrote:
-> 
->>> Move x86 platform specific drivers from drivers/misc/
->>> to a new home under drivers/x86/.
->>>
->>> The community has been maintaining x86 platform specific drivers
->>> under /drivers/misc/ for a few years.  The oldest ones started
->>> life under drivers/acpi, but got booted out because they are
->>> generally vendor-specific extensions to ACPI, or simply
->>> users of ACPI, rather than implementers of the ACPI spec.
->>>
->>> The thing that they have in common is that they are
->>> x86 vendor specific platform drivers.  So when asked,
->>> Linus suggested we move them to drivers/x86.
->> We already have 81 one directory entries under drivers/
->> and with patch you open up for an additional
->> directory for each arch - not elegant.
 > 
 > I followed the example of drivers/s390/,
 > per Linus' suggestion.
-> 
+
+And in s390 we have:
+
+block/
+char/
+cio/
+crypto/
+ebcdic.c
+kvm/
+Makefile
+net/
+s390mach.c
+s390mach.h
+s390_rdev.c
+scsi/
+sysinfo.c
+
+So we end up with block drivers in drivers/block AND drivers/s390/block
+This is the wrong way to divide up things.
+
+find -name arm
+./net/arm
+./scsi/arm
+
+find -name cris
+./net/cris
+
+find -name x86
+./lguest/x86
+
+
+See above. I have all net drivers under drivers/net/ and for 
+arm and cris they have their own subdirectory.
+Except for s390 where I have to go finding them in other places.
+
 > The other place that seemed to suggest itself was
 > arch/x86/drivers/, as we already have:
 > 
 > arch/um/drivers/
 > arch/sh/drivers/
 > arch/cris/*/drivers/
-> 
->> As it is today (before this patch) the directories unider
->> drivers/ said what the drivers was used for - which is logical.
->>
->> But with this new arch specific directory it is no longer obvious
->> is a driver should be located under say drivers/net/* or
->> drivers/arm/* in case it is a arm specific driver.
-> 
-> These are vendor-specific, aka "platform specific" drivers
-> for various x86 platforms.
-> 
->> What is wrong with the current location under misc/*?
-> 
-> mostly that it "misc" means nothing at all...
-> Indeed, misc should probably be deleted for this reason...
 
-Yes, IIRC, we had eliminated drivers/misc/ at one point,
-and then it came back on us.
+The approach has been for a long time to move away from
+storing drivers under arch/*/drivers and cris is slowly
+moving their drivers.
+I dunno about um and sh.
 
-~Randy
+	Sam
