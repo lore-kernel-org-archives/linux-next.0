@@ -1,59 +1,56 @@
-From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-Subject: Re: [RFC PATCH] x86: create drivers/x86/ from drivers/misc/
-Date: Fri, 28 Nov 2008 22:16:47 -0200
-Message-ID: <20081129001647.GA8699@khazad-dum.debian.net>
-References: <20081128213620.2ec593d4.sfr@canb.auug.org.au> <4930307C.30106@oracle.com> <20081129083550.3c23af37.sfr@canb.auug.org.au> <alpine.LFD.2.00.0811281649001.24773@localhost.localdomain> <alpine.LFD.2.00.0811281702570.24773@localhost.localdomain> <alpine.LFD.2.00.0811281706540.24773@localhost.localdomain> <20081128223533.GA5175@uranus.ravnborg.org> <alpine.LFD.2.00.0811281801520.24773@localhost.localdomain>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the firmware tree
+Date: Sat, 29 Nov 2008 11:48:46 +1100
+Message-ID: <20081129114846.4b97cd96.sfr@canb.auug.org.au>
+References: <20081128160339.23fa014f.sfr@canb.auug.org.au>
+	<49308976.7010206@chelsio.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__29_Nov_2008_11_48_46_+1100_+ipySnAce4scVcx/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1.smtp.messagingengine.com ([66.111.4.25]:32966 "EHLO
-	out1.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752876AbYK2AQv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 28 Nov 2008 19:16:51 -0500
-Content-Disposition: inline
-In-Reply-To: <alpine.LFD.2.00.0811281801520.24773@localhost.localdomain>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44003 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752030AbYK2AtL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 28 Nov 2008 19:49:11 -0500
+In-Reply-To: <49308976.7010206@chelsio.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: Sam Ravnborg <sam@ravnborg.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Len Brown <len.brown@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>, x86@kernel.org, linux-acpi@vger.kernel.org
+To: Divy Le Ray <divy@chelsio.com>
+Cc: David Woodhouse <dwmw2@infradead.org>, linux-next@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jaswinder Singh <jaswinder@infradead.org>
 
-On Fri, 28 Nov 2008, Len Brown wrote:
-> > > Move x86 platform specific drivers from drivers/misc/
-> > > to a new home under drivers/x86/.
-[...]
-> > We already have 81 one directory entries under drivers/
-> > and with patch you open up for an additional
-> > directory for each arch - not elegant.
-> 
-> I followed the example of drivers/s390/,
-> per Linus' suggestion.
-> 
-> The other place that seemed to suggest itself was
-> arch/x86/drivers/, as we already have:
-> 
-> arch/um/drivers/
-> arch/sh/drivers/
-> arch/cris/*/drivers/
+--Signature=_Sat__29_Nov_2008_11_48_46_+1100_+ipySnAce4scVcx/
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-IMHO, from a purely "tree organization" point of view, it would be best if
-arch-specific platform drivers were under drivers/platform/<arch>/.  And
-arch/ be left for the core arch-specific stuff.
+Hi Divy,
 
-Whether that would work well, when arch maintenance factors are taken into
-account, I don't know.
+On Fri, 28 Nov 2008 16:14:46 -0800 Divy Le Ray <divy@chelsio.com> wrote:
+>
+> I created this situation and apologize for it. I should have sent the
+> patch to the firmware tree maintainer.
 
-> > As it is today (before this patch) the directories unider
-> > drivers/ said what the drivers was used for - which is logical.
-> > 
-> > But with this new arch specific directory it is no longer obvious
-> > is a driver should be located under say drivers/net/* or
-> > drivers/arm/* in case it is a arm specific driver.
+Its not a big issue - the conflict has a very obvious resolution and "git
+rerere" remembers it for me.  As far as I know, there is no "firmware
+maintainer" - David just has a git tree that was used when the initial
+conversions were done.  Some of those have not yet been finalised and so
+are still in his tree.
 
-drivers/platform/<arch> would help in that regard, I think.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
--- 
-  "One disk to rule them all, One disk to find them. One disk to bring
-  them all and in the darkness grind them. In the Land of Redmond
-  where the shadows lie." -- The Silicon Valley Tarot
-  Henrique Holschuh
+--Signature=_Sat__29_Nov_2008_11_48_46_+1100_+ipySnAce4scVcx/
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkwkW4ACgkQjjKRsyhoI8wwNQCfZ1ked87hxSkzYOgQZCMf/KDF
+kFgAoJSqcLtWpUDkh5DuMQE2BIJk6qfK
+=9po4
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__29_Nov_2008_11_48_46_+1100_+ipySnAce4scVcx/--
