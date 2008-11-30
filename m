@@ -1,46 +1,85 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: next-20081125: crypto hard disk gets unaccessable
-Date: Sun, 30 Nov 2008 12:32:15 +0800
-Message-ID: <20081130043215.GA10310@gondor.apana.org.au>
-References: <20081128063355.GA4700@denkbrett.schottelius.org>
-	<20081129192939.925275f0.akpm@linux-foundation.org>
-Reply-To: device-mapper development <dm-devel@redhat.com>
+From: Laurent Riffard <laurent.riffard@free.fr>
+Subject: next-2008-11-28 : can't mount UDF DVD
+Date: Mon, 01 Dec 2008 00:44:05 +0100
+Message-ID: <49332545.5020604@free.fr>
+References: <20081128213620.2ec593d4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <dm-devel-bounces@redhat.com>
-Content-Disposition: inline
-In-Reply-To: <20081129192939.925275f0.akpm@linux-foundation.org>
-List-Unsubscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
-	<mailto:dm-devel-request@redhat.com?subject=unsubscribe>
-List-Archive: <https://www.redhat.com/archives/dm-devel>
-List-Post: <mailto:dm-devel@redhat.com>
-List-Help: <mailto:dm-devel-request@redhat.com?subject=help>
-List-Subscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
-	<mailto:dm-devel-request@redhat.com?subject=subscribe>
-Sender: dm-devel-bounces@redhat.com
-Errors-To: dm-devel-bounces@redhat.com
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Christophe Saout <christophe@saout.de>, Nico -telmich- Schottelius <nico-linux-next@schottelius.org>, LKML <linux-kernel@vger.kernel.org>, dm-devel@redhat.com, linux-next@vger.kernel.org, linux-crypto@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp6-g19.free.fr ([212.27.42.36]:37648 "EHLO smtp6-g19.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754836AbYK3XoJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 30 Nov 2008 18:44:09 -0500
+In-Reply-To: <20081128213620.2ec593d4.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jan Kara <jack@suse.cz>, Marcin Slusarz <marcin.slusarz@gmail.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Sat, Nov 29, 2008 at 07:29:39PM -0800, Andrew Morton wrote:
->
-> > [69186.618377] RAX: 00000000fffffff0 RBX: b6e3880000000010 RCX: 0000000000000000
-> > [69186.618382] RDX: 0000000000000010 RSI: b6e3880000000000 RDI: ffff88007a3da4e0
+Hi,
 
-> > [69186.618611] Code: 08 48 89 51 08 48 89 0a 48 b9 00 01 10 00 00 00 ad de 48 ba 00 02 20 00 00 00 ad de 48 89 08 48 89 50 08 c3 41 89 d0 31 c9 eb 0e <8b> 04 0e 41 83 e8 04 31 04 0f 48 83 c1 04 41 83 f8 03 77 ec 41 
+With next-2008-11-28, I was unable to mount an UDF-formatted DVD-RW:
 
-	8b 04 0e                mov    (%rsi,%rcx,1),%eax
+~$ mount -oro -t udf /dev/sr0 /media/cdrom/
+mount: Not a directory
 
-So we were fed a bogus pointer by the caller.
- 
-> I assume that 2.6.28-rc6 is OK?
+There was no problem with 2.6.28-rc6.
 
-Nothing has changed in the crypto ciphers lately.
+I made a bisection:
 
-Cheers,
--- 
-Visit Openswan at http://www.openswan.org/
-Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+33284bdf40f88160a154202510b27d983138c805 is first bad commit
+commit 33284bdf40f88160a154202510b27d983138c805
+Author: Marcin Slusarz <marcin.slusarz@gmail.com>
+Date:   Sun Nov 16 20:52:19 2008 +0100
+
+    udf: implement mode and dmode mounting options
+
+    "dmode" allows overriding permissions of directories and
+    "mode" allows overriding permissions of files.
+
+    Signed-off-by: Marcin Slusarz <marcin.slusarz@gmail.com>
+    Cc: Jan Kara <jack@suse.cz>
+    Signed-off-by: Jan Kara <jack@suse.cz>
+
+
+Indeed, with this commit, I *must* use the dmode option to mount my DVD:
+
+~$ sudo mount -oro,dmode=0755 -t udf /dev/sr0 /media/cdrom/
+~$ grep /media/cdrom /proc/mounts 
+/dev/scd0 /media/cdrom udf ro,mode=177777,dmode=755,utf8 0 0
+~$ ls -la /media/cdrom/
+total 46
+drwxr-xr-x  5 root    root     344 Dec 24  2007 .
+drwxr-xr-x 12 root    root    4096 Dec  1 00:17 ..
+drwxr-xr-x  2 laurent laurent 7112 Nov 30 20:14 flexbackup
+drwxr-xr-x  2 root    root      40 Nov 20  2005 lost+found
+drwxr-xr-x 10 laurent laurent 4548 Nov 25  2005 patches
+~$ ls -la /media/cdrom/flexbackup/
+total 4307946
+drwxr-xr-x 2 laurent laurent       7112 Nov 30 20:14 .
+drwxr-xr-x 5 root    root           344 Dec 24  2007 ..
+?rwsrwsrwt 1 laurent laurent         44 Oct  1  2006 00-index-key
+...
+
+Althought I was able to mount it with no special option on 2.6.28-rc6:
+
+~$ sudo mount -oro -t udf /dev/sr0 /media/cdrom/
+~$ grep /media/cdrom /proc/mounts 
+/dev/scd0 /media/cdrom udf ro,utf8 0 0
+~$ ls -la /media/cdrom/
+total 46
+drwxrwxrwx  5 root    root     344 2007-12-24 18:09 .
+drwxr-xr-x 12 root    root    4096 2008-12-01 00:22 ..
+drwxr-x---  2 laurent laurent 7112 2008-11-30 20:14 flexbackup
+drwxr-xr-x  2 root    root      40 2005-11-20 23:37 lost+found
+drwxr-x--- 10 laurent laurent 4548 2005-11-25 18:18 patches
+~$ ls -la /media/cdrom/flexbackup/
+total 4307946
+drwxr-x--- 2 laurent laurent       7112 2008-11-30 20:14 .
+drwxrwxrwx 5 root    root           344 2007-12-24 18:09 ..
+-rw-r----- 1 laurent laurent         44 2006-10-01 15:36 00-index-key
+...
+
+~~
+laurent
