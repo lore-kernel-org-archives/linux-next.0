@@ -1,74 +1,61 @@
-From: Len Brown <lenb@kernel.org>
-Subject: Re: [RFC PATCH] x86: create drivers/x86/ from drivers/misc/
-Date: Sun, 30 Nov 2008 23:35:19 -0500 (EST)
-Message-ID: <alpine.LFD.2.00.0811302329440.3314@localhost.localdomain>
-References: <20081128213620.2ec593d4.sfr@canb.auug.org.au>
- <4930307C.30106@oracle.com> <20081129083550.3c23af37.sfr@canb.auug.org.au>
- <alpine.LFD.2.00.0811281649001.24773@localhost.localdomain>
- <alpine.LFD.2.00.0811281702570.24773@localhost.localdomain>
- <alpine.LFD.2.00.0811281706540.24773@localhost.localdomain>
- <20081128223533.GA5175@uranus.ravnborg.org>
- <alpine.LFD.2.00.0811281801520.24773@localhost.localdomain>
- <20081129001647.GA8699@khazad-dum.debian.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the acpi tree
+Date: Mon, 1 Dec 2008 15:37:23 +1100
+Message-ID: <20081201153723.bee5f756.sfr@canb.auug.org.au>
+References: <20081201131029.58f6d00c.sfr@canb.auug.org.au>
+	<alpine.LFD.2.00.0811302150290.3314@localhost.localdomain>
+	<20081201140233.cf65c890.sfr@canb.auug.org.au>
+	<alpine.LFD.2.00.0811302246100.3314@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__1_Dec_2008_15_37_23_+1100_hFknXonaDf4lV7uy"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from vms173003pub.verizon.net ([206.46.173.3]:60647 "EHLO
-	vms173003pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751565AbYLAEfk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 30 Nov 2008 23:35:40 -0500
-In-reply-to: <20081129001647.GA8699@khazad-dum.debian.net>
+Received: from chilli.pcug.org.au ([203.10.76.44]:33279 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753217AbYLAEhn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 30 Nov 2008 23:37:43 -0500
+In-Reply-To: <alpine.LFD.2.00.0811302246100.3314@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-Cc: Sam Ravnborg <sam@ravnborg.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Len Brown <len.brown@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>, x86@kernel.org, linux-acpi@vger.kernel.org
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org
 
+--Signature=_Mon__1_Dec_2008_15_37_23_+1100_hFknXonaDf4lV7uy
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Len,
 
-On Fri, 28 Nov 2008, Henrique de Moraes Holschuh wrote:
+On Sun, 30 Nov 2008 23:11:50 -0500 (EST) Len Brown <lenb@kernel.org> wrote:
+>
+> Your guess was correct -- the patch with the later commit time
+> was the correct one to keep.
+>=20
+> This was my pilot error.  I updated the patch in my release tree
+> and so you got the updated patch via Linus.  But I failed to update
+> my test tree, so you got the old patch from my test tree.
+>=20
+> I've just re-constituted my test branch, so the old patch is gone,
+> and with it this conflict.
 
-> On Fri, 28 Nov 2008, Len Brown wrote:
-> > > > Move x86 platform specific drivers from drivers/misc/
-> > > > to a new home under drivers/x86/.
-> [...]
-> > > We already have 81 one directory entries under drivers/
-> > > and with patch you open up for an additional
-> > > directory for each arch - not elegant.
-> > 
-> > I followed the example of drivers/s390/,
-> > per Linus' suggestion.
-> > 
-> > The other place that seemed to suggest itself was
-> > arch/x86/drivers/, as we already have:
-> > 
-> > arch/um/drivers/
-> > arch/sh/drivers/
-> > arch/cris/*/drivers/
-> 
-> IMHO, from a purely "tree organization" point of view, it would be best if
-> arch-specific platform drivers were under drivers/platform/<arch>/.  And
-> arch/ be left for the core arch-specific stuff.
-> 
-> Whether that would work well, when arch maintenance factors are taken into
-> account, I don't know.
+OK, thanks.
 
-Each of the drivers has a primary maintainer --
-though some of them jare  more active than others...
-And I'll continue to be available to help them where I can.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-> > > As it is today (before this patch) the directories unider
-> > > drivers/ said what the drivers was used for - which is logical.
-> > > 
-> > > But with this new arch specific directory it is no longer obvious
-> > > is a driver should be located under say drivers/net/* or
-> > > drivers/arm/* in case it is a arm specific driver.
-> 
-> drivers/platform/<arch> would help in that regard, I think.
+--Signature=_Mon__1_Dec_2008_15_37_23_+1100_hFknXonaDf4lV7uy
+Content-Type: application/pgp-signature
 
-I agree.
-drivers/platform/x86/ seems to be a better home than drivers/x86/
-for this bunch.  I'll update the patch to do this.
-The other arch's can follow later if they choose.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-thanks,
--Len
+iEYEARECAAYFAkkzagMACgkQjjKRsyhoI8wm9ACdFJQfeB3hJxkTq84xcsdSJuBY
+OgwAn2EnTHwbXIvues+P47Nx9VaE3zAs
+=6qBh
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__1_Dec_2008_15_37_23_+1100_hFknXonaDf4lV7uy--
