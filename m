@@ -1,54 +1,57 @@
 From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: linux-next: sparc tree build failure
-Date: Mon, 1 Dec 2008 06:41:40 +0100
-Message-ID: <20081201054140.GA21718@uranus.ravnborg.org>
-References: <20081201104639.5080f12e.sfr@canb.auug.org.au>
+Subject: Re: [RFC PATCH] x86: create drivers/x86/ from drivers/misc/
+Date: Mon, 1 Dec 2008 06:54:06 +0100
+Message-ID: <20081201055406.GB21782@uranus.ravnborg.org>
+References: <20081128213620.2ec593d4.sfr@canb.auug.org.au> <4930307C.30106@oracle.com> <20081129083550.3c23af37.sfr@canb.auug.org.au> <alpine.LFD.2.00.0811281649001.24773@localhost.localdomain> <alpine.LFD.2.00.0811281702570.24773@localhost.localdomain> <alpine.LFD.2.00.0811281706540.24773@localhost.localdomain> <20081128223533.GA5175@uranus.ravnborg.org> <alpine.LFD.2.00.0811281801520.24773@localhost.localdomain> <20081129073816.GB8351@uranus.ravnborg.org> <alpine.LFD.2.00.0811302338450.3314@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pfepb.post.tele.dk ([195.41.46.236]:36831 "EHLO
-	pfepb.post.tele.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750709AbYLAFkR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Dec 2008 00:40:17 -0500
+Received: from pfepa.post.tele.dk ([195.41.46.235]:45725 "EHLO
+	pfepa.post.tele.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750714AbYLAF6d (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Dec 2008 00:58:33 -0500
 Content-Disposition: inline
-In-Reply-To: <20081201104639.5080f12e.sfr@canb.auug.org.au>
+In-Reply-To: <alpine.LFD.2.00.0811302338450.3314@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org
+To: Len Brown <lenb@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Len Brown <len.brown@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>, x86@kernel.org, linux-acpi@vger.kernel.org
 
-On Mon, Dec 01, 2008 at 10:46:39AM +1100, Stephen Rothwell wrote:
-> Hi Dave,
+On Mon, Dec 01, 2008 at 12:00:04AM -0500, Len Brown wrote:
+> > 
+> > Any chance we can have this in drivers/Kconfig?
+> > 
+> > Just wrap all of the file in an
+> > 
+> > if X86
+> > .....
+> > endif
+> > 
+> > So we keep all the drivers/ stuff in one Kconfig file and
+> > not spread all over.
 > 
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> grep 'source "drivers"' arch/x86/Kconfig 
 > 
->   GEN     /scratch/sfr/powerpc_ppc64_defconfig/Makefile
-> ***
-> *** Can't find default configuration "arch/sparc/configs/ppc64_defconfig"!
-> ***
+> source "drivers/acpi/Kconfig"
+> source "drivers/cpuidle/Kconfig"
+> source "drivers/idle/Kconfig"
+> source "drivers/pci/pcie/Kconfig"
+> source "drivers/pci/Kconfig"
+> source "drivers/eisa/Kconfig"
+> source "drivers/mca/Kconfig"
+> source "drivers/pcmcia/Kconfig"
+> source "drivers/pci/hotplug/Kconfig"
+> source "drivers/Kconfig"
+> source "drivers/firmware/Kconfig"
+> source "drivers/x86/Kconfig"
 > 
-> Caused by commit 9cdcf85e1bf5dca97c1304292810041af2fcbd42 ("Subject:
-> [PATCH 08/10] sparc,sparc64: unify Makefile") which seems to arbitrarily
-> set SRCARCH in the top level make file to sparc!
-Crap - missed an if/endif
-Fix is simple:
-diff --git a/Makefile b/Makefile
-index 0043224..45f4300 100644
---- a/Makefile
-+++ b/Makefile
-@@ -206,7 +206,9 @@ ifeq ($(ARCH),x86_64)
- endif
- 
- # Additional ARCH settings for sparc
-+ifeq ($(ARCH),sparc64)
-        SRCARCH := sparc
-+endif
- 
- # Where to locate arch specific headers
- hdr-arch  := $(SRCARCH)
+> Are the lines above a good example, a bad example,
+> or did I miss a nuance of the grand Kconfig design?
 
-> 
-> (One way to take over the world, I guess :-))
-Reminds me about Pinky & Brain - we almost suceeded!
+Unfortunately a typical example but if you look
+closer most of the above is bus stuff, not driver stuff.
+
+This is not the easist part to deal with
+as there are > 10 arch to synchronize.
 
 	Sam
