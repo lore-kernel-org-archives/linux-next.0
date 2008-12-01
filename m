@@ -1,65 +1,256 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [RFC PATCH v2] create drivers/platform/x86/ from drivers/misc/
-Date: Mon, 1 Dec 2008 08:48:42 +0100
-Message-ID: <20081201074842.GC27768@elte.hu>
-References: <20081128213620.2ec593d4.sfr@canb.auug.org.au> <4930307C.30106@oracle.com> <20081129083550.3c23af37.sfr@canb.auug.org.au> <alpine.LFD.2.00.0811281649001.24773@localhost.localdomain> <alpine.LFD.2.00.0811281702570.24773@localhost.localdomain> <alpine.LFD.2.00.0811281706540.24773@localhost.localdomain> <20081128223533.GA5175@uranus.ravnborg.org> <alpine.LFD.2.00.0811281801520.24773@localhost.localdomain> <20081129073816.GB8351@uranus.ravnborg.org> <alpine.LFD.2.00.0812010053100.3314@localhost.localdomain>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Tree for December 1
+Date: Mon, 1 Dec 2008 19:08:27 +1100
+Message-ID: <20081201190827.2d02b1a5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__1_Dec_2008_19_08_27_+1100_gMDZXVNXsMXpAQpH"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:36070 "EHLO mx3.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35222 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751015AbYLAHtG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Dec 2008 02:49:06 -0500
-Content-Disposition: inline
-In-Reply-To: <alpine.LFD.2.00.0812010053100.3314@localhost.localdomain>
+	id S1750718AbYLAIIv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Dec 2008 03:08:51 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: Sam Ravnborg <sam@ravnborg.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Len Brown <len.brown@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>, x86@kernel.org, linux-acpi@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
+--Signature=_Mon__1_Dec_2008_19_08_27_+1100_gMDZXVNXsMXpAQpH
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Len Brown <lenb@kernel.org> wrote:
+Hi all,
 
-> Sam, Henrique,
-> I've responded to your feedback in v2, which follows.
-> 
-> Ingo,
-> this version does not touch arch/x86/
+Changes since 20081128:
 
-the problem isnt the bits that touch arch/x86/, but that we carry these 
-commits:
+Today's tree fails the powerpc allyesconfig build.
 
- fbc2a06: Merge branch 'linus' into x86/uv
- a3d732f: x86, UV: fix redundant creation of sgi_uv
- 7d9d1f2: sgi-xp: support getting the address of a partition's reserved page
- 31de5ec: sgi-xp: define xp_partition_id and xp_region_size
- 2525789: sgi-xp: create activate and notify gru message queues
- 6c1c325: sgi-xp: define xp_expand_memprotect() and xp_restrict_memprotect()
+Dropped trees (temporarily):
+	sparc (build problem)
+	v4l-dvb (build problem)
+	kbuild (build problem)
+	semaphore-removal (due to unfixed conflicts against Linus' tree)
+	cpu_alloc (build problem)
+	perfmon3 (concerns from the x86 team)
 
-their drivers/misc impact is significant:
+The sparc tree gained a build failure and was dropped.
 
- drivers/misc/sgi-gru/grufault.c  |    4 +-
- drivers/misc/sgi-gru/gruprocfs.c |    1 -
- drivers/misc/sgi-xp/xp.h         |    7 +-
- drivers/misc/sgi-xp/xp_main.c    |    7 +
- drivers/misc/sgi-xp/xp_sn2.c     |   34 +++++
- drivers/misc/sgi-xp/xp_uv.c      |   70 +++++++++-
- drivers/misc/sgi-xp/xpc.h        |   12 ++
- drivers/misc/sgi-xp/xpc_sn2.c    |   15 +--
- drivers/misc/sgi-xp/xpc_uv.c     |  290 ++++++++++++++++++++++++++++++--------
- 10 files changed, 368 insertions(+), 74 deletions(-)
+The driver-core tree gained a conflicts against the arm tree.
 
-And we'll likely get new commits in that space.
+The ftrace tree gained a conflict against Linus' tree.
 
-So if this is causing conflicts in linux-next then i'd suggest for you to 
-please do this "git mv drivers/misc/ drivers/x86/" rename (with which i 
-fully agree!) right after v2.6.29-rc1 - or near the end of the -rc1 merge 
-window.
+The acpi tree gained a conflict against Linus' tree.
 
-In any case, please keep it in a separate branch in the ACPI tree so that 
-we can reconsider the ordering of this change in the future as well - 
-should it cause problems.
+The net tree gained 2 conflicts against Linus' tree and lost a build fix.
 
-Thanks,
+----------------------------------------------------------------------------
 
-	Ingo
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+(patches at
+http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig,
+44x_defconfig and allyesconfig and i386, sparc and sparc64 defconfig.
+
+Below is a summary of the state of the merge.
+
+We are up to 127 trees (counting Linus' and 15 trees of patches pending for
+Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/master
+Merging quilt/driver-core.current
+Merging quilt/usb.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-2.6.26
+Merging dwmw2/master
+Merging arm/devel
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging mips/mips-for-linux-next
+Merging parisc/master
+Merging powerpc/next
+Merging 4xx/next
+CONFLICT (content): Merge conflict in arch/powerpc/configs/ppc44x_defconfig
+Merging galak/next
+Merging pxa/for-next
+Merging s390/features
+CONFLICT (content): Merge conflict in drivers/char/Makefile
+Merging sh/master
+Merging sparc/master
+$ git reset --hard HEAD^
+Merging x86/auto-x86-next
+Merging xtensa/master
+Merging quilt/driver-core
+CONFLICT (content): Merge conflict in drivers/mtd/maps/integrator-flash.c
+Merging quilt/usb
+Merging tip-core/auto-core-next
+Merging cpus4096/auto-cpus4096-next
+Merging ftrace/auto-ftrace-next
+CONFLICT (content): Merge conflict in kernel/trace/ring_buffer.c
+CONFLICT (content): Merge conflict in scripts/recordmcount.pl
+Merging genirq/auto-genirq-next
+Merging safe-poison-pointers/auto-safe-poison-pointers-next
+Merging sched/auto-sched-next
+Merging stackprotector/auto-stackprotector-next
+Merging timers/auto-timers-next
+Merging pci/linux-next
+Merging quilt/device-mapper
+Merging hid/for-next
+Merging quilt/i2c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging jfs/next
+Merging quilt/ide
+Merging libata/NEXT
+Merging nfs/linux-next
+Merging xfs/master
+Merging infiniband/for-next
+Merging acpi/test
+CONFLICT (content): Merge conflict in drivers/acpi/blacklist.c
+Merging nfsd/nfsd-next
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/master
+CONFLICT (content): Merge conflict in arch/x86/kernel/reboot.c
+Merging dlm/next
+Merging scsi/master
+Merging ocfs2/linux-next
+Merging ext4/next
+Merging async_tx/next
+Merging udf/for_next
+Merging net/master
+CONFLICT (content): Merge conflict in drivers/net/ixgbe/ixgbe_main.c
+CONFLICT (content): Merge conflict in drivers/net/smc91x.c
+Applying net: async_tx merge fix
+Merging mtd/master
+CONFLICT (content): Merge conflict in drivers/mtd/maps/physmap.c
+Merging wireless/master
+Merging crypto/master
+Merging vfs/for-next
+Merging sound/for-next
+Merging cpufreq/next
+Merging v9fs/for-next
+Merging quilt/rr
+CONFLICT (content): Merge conflict in arch/x86/kernel/io_apic.c
+CONFLICT (content): Merge conflict in arch/x86/kernel/setup.c
+CONFLICT (content): Merge conflict in kernel/irq/manage.c
+CONFLICT (content): Merge conflict in kernel/irq/proc.c
+Merging cifs/master
+Merging mmc/next
+Merging gfs2/master
+Merging input/next
+Merging semaphore/semaphore
+Merging bkl-removal/bkl-removal
+Merging ubifs/linux-next
+Merging lsm/for-next
+Merging block/for-next
+Merging embedded/master
+Merging firmware/master
+CONFLICT (content): Merge conflict in drivers/net/tg3.c
+CONFLICT (content): Merge conflict in firmware/Makefile
+CONFLICT (content): Merge conflict in firmware/WHENCE
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging kmemcheck/auto-kmemcheck-next
+CONFLICT (content): Merge conflict in MAINTAINERS
+CONFLICT (content): Merge conflict in arch/x86/mm/Makefile
+CONFLICT (content): Merge conflict in mm/slab.c
+CONFLICT (content): Merge conflict in mm/slub.c
+Merging generic-ipi/auto-generic-ipi-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging voltage/for-next
+Merging security-testing/next
+CONFLICT (content): Merge conflict in fs/nfsd/nfs4recover.c
+CONFLICT (content): Merge conflict in fs/ocfs2/namei.c
+CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_cred.h
+CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_globals.h
+CONFLICT (content): Merge conflict in fs/xfs/xfs_vnodeops.h
+Merging lblnet/master
+Merging quilt/ttydev
+CONFLICT (content): Merge conflict in fs/devpts/inode.c
+Merging agp/agp-next
+Merging oprofile/auto-oprofile-next
+Merging fastboot/auto-fastboot-next
+Merging sparseirq/auto-sparseirq-next
+Merging iommu/auto-iommu-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging proc/proc
+CONFLICT (content): Merge conflict in fs/proc/base.c
+CONFLICT (content): Merge conflict in kernel/exit.c
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+CONFLICT (content): Merge conflict in kernel/sched.c
+Merging osd/linux-next
+Merging fatfs/master
+Merging fuse/for-next
+Merging trivial/for-next
+Merging quilt/staging
+Merging scsi-post-merge/master
+
+--Signature=_Mon__1_Dec_2008_19_08_27_+1100_gMDZXVNXsMXpAQpH
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkkzm3sACgkQjjKRsyhoI8xwmQCgqvLS6Rg+es7MpWITkKowipBH
+o28An3DtrDUhhVF1I+y1qa4PEnI1/FTq
+=gPYQ
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__1_Dec_2008_19_08_27_+1100_gMDZXVNXsMXpAQpH--
