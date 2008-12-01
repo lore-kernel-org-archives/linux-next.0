@@ -1,107 +1,89 @@
-From: Marcin Slusarz <marcin.slusarz@gmail.com>
-Subject: [PATCH] udf: fix default mode and dmode options handling
-Date: Tue, 2 Dec 2008 00:22:31 +0100
-Message-ID: <20081201232227.GA7925@joi>
-References: <20081128213620.2ec593d4.sfr@canb.auug.org.au> <49332545.5020604@free.fr> <20081201001854.GA9881@joi> <49343AC2.3010808@free.fr>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the driver-core tree
+Date: Tue, 2 Dec 2008 10:31:51 +1100
+Message-ID: <20081202103151.fb8f7227.sfr@canb.auug.org.au>
+References: <20081201111552.8b1cbf9b.sfr@canb.auug.org.au>
+	<1228152771.25929.109.camel@pc1117.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__2_Dec_2008_10_31_51_+1100_vXejbPf7vxl5foWI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ug-out-1314.google.com ([66.249.92.171]:52851 "EHLO
-	ug-out-1314.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751388AbYLAXXF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Dec 2008 18:23:05 -0500
-Received: by ug-out-1314.google.com with SMTP id 39so2838223ugf.37
-        for <linux-next@vger.kernel.org>; Mon, 01 Dec 2008 15:23:03 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <49343AC2.3010808@free.fr>
+Received: from chilli.pcug.org.au ([203.10.76.44]:42259 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751068AbYLAXcN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Dec 2008 18:32:13 -0500
+In-Reply-To: <1228152771.25929.109.camel@pc1117.cambridge.arm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Laurent Riffard <laurent.riffard@free.fr>, Jan Kara <jack@suse.cz>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Kay Sievers <kay.sievers@vrfy.org>, David Woodhouse <dwmw2@infradead.org>
 
-On Mon, Dec 01, 2008 at 08:28:02PM +0100, Laurent Riffard wrote:
-> >> With next-2008-11-28, I was unable to mount an UDF-formatted DVD-RW:
-> > Can you check whether attached patch fixes it?
-> Current kernel is next-20081128 + reiser4 patches + your patch: it seems to works well now.
-> (...)
-> Tested-by: Laurent Riffard <laurent.riffard@free.fr>
+--Signature=_Tue__2_Dec_2008_10_31_51_+1100_vXejbPf7vxl5foWI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks!
+Hi Catalin,
 
-Jan, please apply this patch:
+On Mon, 01 Dec 2008 17:32:51 +0000 Catalin Marinas <catalin.marinas@arm.com=
+> wrote:
+>
+> On Mon, 2008-12-01 at 11:15 +1100, Stephen Rothwell wrote:
+> > Today's linux-next merge of the driver-core tree got a conflict in
+> > drivers/mtd/maps/integrator-flash.c between commit
+> > ffc86cf850dcd0e181a69c6fa0217d6c7ddf9c85 ("Add armflash support for
+> > multiple blocks of flash") from the arm tree and commit
+> > 0b1ea7e6450b3cc2e87d1c7295439483d007bb6e ("mtd: struct device - replace
+> > bus_id with dev_name(), dev_set_name()") from the driver-core tree.
+> >=20
+> > I fixed it up (see below). =20
+>=20
+> I'll send a separate patch on linux-mtd to make the third argument of
+> mtd_concat_create a "const char *" to avoid a warning (dev_name returns
+> const char *).
 
----
-From: Marcin Slusarz <marcin.slusarz@gmail.com>
-Subject: [PATCH] udf: fix default mode and dmode options handling
+That would be good.
 
-On x86 (and several other archs) mode_t is defined as "unsigned short"
-and comparing unsigned shorts to negative ints is broken (because short
-is promoted to int and then compared). Fix it.
+> > Maybe you, Russell and David Woodhouse could
+> > sort out who should coordinate these updates.
+>=20
+> I dropped the patch from my series and I suspect Russell will re-merge
+> my tree (there shouldn't be other conflicts via the arm tree).
+>=20
+> Now the question, where should I send the changes to integrator-flash.c
+> to? I assume it's linux-mtd with ack from Russell.
 
-Reported-and-tested-by: Laurent Riffard <laurent.riffard@free.fr>
-Signed-off-by: Marcin Slusarz <marcin.slusarz@gmail.com>
----
- fs/udf/inode.c  |    4 ++--
- fs/udf/super.c  |    8 ++++----
- fs/udf/udf_sb.h |    2 ++
- 3 files changed, 8 insertions(+), 6 deletions(-)
+I would guess that makes sense.
 
-diff --git a/fs/udf/inode.c b/fs/udf/inode.c
-index 6612a27..2d7e56a 100644
---- a/fs/udf/inode.c
-+++ b/fs/udf/inode.c
-@@ -1222,10 +1222,10 @@ static void udf_fill_inode(struct inode *inode, struct buffer_head *bh)
- 	iinfo->i_lenExtents = inode->i_size;
- 
- 	if (fe->icbTag.fileType != ICBTAG_FILE_TYPE_DIRECTORY &&
--			sbi->s_fmode != -1)
-+			sbi->s_fmode != UDF_INVALID_MODE)
- 		inode->i_mode = sbi->s_fmode;
- 	else if (fe->icbTag.fileType == ICBTAG_FILE_TYPE_DIRECTORY &&
--			sbi->s_dmode != -1)
-+			sbi->s_dmode != UDF_INVALID_MODE)
- 		inode->i_mode = sbi->s_dmode;
- 	else
- 		inode->i_mode = udf_convert_permissions(fe);
-diff --git a/fs/udf/super.c b/fs/udf/super.c
-index e5d121d..8deaa61 100644
---- a/fs/udf/super.c
-+++ b/fs/udf/super.c
-@@ -284,9 +284,9 @@ static int udf_show_options(struct seq_file *seq, struct vfsmount *mnt)
- 		seq_printf(seq, ",gid=%u", sbi->s_gid);
- 	if (sbi->s_umask != 0)
- 		seq_printf(seq, ",umask=%o", sbi->s_umask);
--	if (sbi->s_fmode != -1)
-+	if (sbi->s_fmode != UDF_INVALID_MODE)
- 		seq_printf(seq, ",mode=%o", sbi->s_fmode);
--	if (sbi->s_dmode != -1)
-+	if (sbi->s_dmode != UDF_INVALID_MODE)
- 		seq_printf(seq, ",dmode=%o", sbi->s_dmode);
- 	if (UDF_QUERY_FLAG(sb, UDF_FLAG_SESSION_SET))
- 		seq_printf(seq, ",session=%u", sbi->s_session);
-@@ -1894,8 +1894,8 @@ static int udf_fill_super(struct super_block *sb, void *options, int silent)
- 	uopt.uid = -1;
- 	uopt.gid = -1;
- 	uopt.umask = 0;
--	uopt.fmode = -1;
--	uopt.dmode = -1;
-+	uopt.fmode = UDF_INVALID_MODE;
-+	uopt.dmode = UDF_INVALID_MODE;
- 
- 	sbi = kzalloc(sizeof(struct udf_sb_info), GFP_KERNEL);
- 	if (!sbi)
-diff --git a/fs/udf/udf_sb.h b/fs/udf/udf_sb.h
-index 5d32c60..158221e 100644
---- a/fs/udf/udf_sb.h
-+++ b/fs/udf/udf_sb.h
-@@ -48,6 +48,8 @@
- #define UDF_SPARABLE_MAP15		0x1522U
- #define UDF_METADATA_MAP25		0x2511U
- 
-+#define UDF_INVALID_MODE		((mode_t)-1)
-+
- #pragma pack(1) /* XXX(hch): Why?  This file just defines in-core structures */
- 
- struct udf_meta_data {
--- 
-1.5.6.4
+> Anyway, no matter who'll merge it, as long as it is based on the
+> mainline kernel it will create a conflict in linux-next. Is the rule
+> that there shouldn't be any conflicts in linux-next at this stage? The
+> alternative is to get it merged via the driver-core tree.
+
+There will always be conflicts between trees in linux-next.  My concern
+is to try to minimise them if possible.  I can carry fixes to the merges
+I do without to much pain and presumably Linus can cope with anything I
+can.  Conflicts against Linus' tree should be fixed as soon as makes
+sense, but some conflicts between the other constituent trees of
+linux-next can only be resolved during the next merge window.
+
+(I usually put "and I can carry the fix as necessary" in my messages, but
+I missed that in this case, sorry).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__2_Dec_2008_10_31_51_+1100_vXejbPf7vxl5foWI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkk0c+cACgkQjjKRsyhoI8xkHACcDlLxrL2usJnnGUs/Jfc/uP2V
+CTQAoKeb5UDDrqaSm02Z5Et25PLJAe51
+=dlOf
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__2_Dec_2008_10_31_51_+1100_vXejbPf7vxl5foWI--
