@@ -1,43 +1,74 @@
-From: reinette chatre <reinette.chatre@intel.com>
-Subject: Re: [ipw3945-devel] next-20081125: call trace for iwlagn (rfkill
-	switch on)
-Date: Mon, 01 Dec 2008 10:39:43 -0800
-Message-ID: <1228156783.10900.21.camel@rc-desk>
-References: <20081128063859.GB4700@denkbrett.schottelius.org>
+From: Len Brown <lenb@kernel.org>
+Subject: Re: [RFC PATCH v2] create drivers/platform/x86/ from drivers/misc/
+Date: Mon, 01 Dec 2008 14:12:40 -0500 (EST)
+Message-ID: <alpine.LFD.2.00.0812011405070.3197@localhost.localdomain>
+References: <20081128213620.2ec593d4.sfr@canb.auug.org.au>
+ <4930307C.30106@oracle.com> <20081129083550.3c23af37.sfr@canb.auug.org.au>
+ <alpine.LFD.2.00.0811281649001.24773@localhost.localdomain>
+ <alpine.LFD.2.00.0811281702570.24773@localhost.localdomain>
+ <alpine.LFD.2.00.0811281706540.24773@localhost.localdomain>
+ <20081128223533.GA5175@uranus.ravnborg.org>
+ <alpine.LFD.2.00.0811281801520.24773@localhost.localdomain>
+ <20081129073816.GB8351@uranus.ravnborg.org>
+ <alpine.LFD.2.00.0812010053100.3314@localhost.localdomain>
+ <20081201074842.GC27768@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:10062 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753310AbYLASis (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Dec 2008 13:38:48 -0500
-In-Reply-To: <20081128063859.GB4700@denkbrett.schottelius.org>
+Received: from vms173003pub.verizon.net ([206.46.173.3]:42993 "EHLO
+	vms173003pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751382AbYLATM6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Dec 2008 14:12:58 -0500
+In-reply-to: <20081201074842.GC27768@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nico -telmich- Schottelius <nico-linux-ipw3945-devel@schottelius.org>
-Cc: "ipw3945-devel@lists.sourceforge.net" <ipw3945-devel@lists.sourceforge.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Sam Ravnborg <sam@ravnborg.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Len Brown <len.brown@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>, x86@kernel.org, linux-acpi@vger.kernel.org
 
-On Thu, 2008-11-27 at 22:38 -0800, Nico -telmich- Schottelius wrote:
-> Hello!
+
+
+> > this version does not touch arch/x86/
 > 
-> After a fresh reboot and enabled rfkill switch (-> radio turned off!),
-> I get the following call trace:
+> the problem isnt the bits that touch arch/x86/, but that we carry these 
+> commits:
 > 
-> [   89.169572] iwlagn 0000:03:00.0: PCI INT A -> GSI 17 (level, low) -> IRQ 17
-> [   89.169791] iwlagn 0000:03:00.0: restoring config space at offset 0x1 (was 0x100102, writing 0x100106)
-> [   89.169898] iwlagn 0000:03:00.0: irq 314 for MSI/MSI-X
-> [   89.169980] iwlagn 0000:03:00.0: firmware: requesting iwlwifi-5000-1.ucode
-> [   89.370030] iwlagn: Radio disabled by HW RF Kill switch
-> [   89.381023] ------------[ cut here ]------------
-> [   89.381215] WARNING: at net/mac80211/main.c:227 ieee80211_hw_config+0x71/0x79 [mac80211]()
-> [   89.381455] Modules linked in: rfcomm l2cap bluetooth uinput autofs4 ipv6 cpufreq_powersave md_mod loop sha256_generic ansi_cprng krng chainiv rng aes_x86_64 aes_generic cbc dm_crypt dm_mod arc4 ecb cryptomgr aead crypto_blkcipher crypto_hash snd_hda_intel snd_pcm snd_page_alloc iwlagn snd_hwdep iwlcore thinkpad_acpi snd_seq snd_timer snd_seq_device rfkill snd hwmon mac80211 video wmi rtc_cmos rtc_core i2c_i801 backlight led_class e1000e output soundcore rtc_lib intel_agp uhci_hcd ehci_hcd i2c_core cfg80211 nvram usbcore pcspkr
-> [   89.384858] Pid: 3923, comm: NetworkManager Not tainted 2.6.28-rc6-next-20081125-denkbrett #15
-> [   89.385074] Call Trace:
+>  fbc2a06: Merge branch 'linus' into x86/uv
+>  a3d732f: x86, UV: fix redundant creation of sgi_uv
+>  7d9d1f2: sgi-xp: support getting the address of a partition's reserved page
+>  31de5ec: sgi-xp: define xp_partition_id and xp_region_size
+>  2525789: sgi-xp: create activate and notify gru message queues
+>  6c1c325: sgi-xp: define xp_expand_memprotect() and xp_restrict_memprotect()
+> 
+> their drivers/misc impact is significant:
+> 
+>  drivers/misc/sgi-gru/grufault.c  |    4 +-
+>  drivers/misc/sgi-gru/gruprocfs.c |    1 -
+>  drivers/misc/sgi-xp/xp.h         |    7 +-
+>  drivers/misc/sgi-xp/xp_main.c    |    7 +
+>  drivers/misc/sgi-xp/xp_sn2.c     |   34 +++++
+>  drivers/misc/sgi-xp/xp_uv.c      |   70 +++++++++-
+>  drivers/misc/sgi-xp/xpc.h        |   12 ++
+>  drivers/misc/sgi-xp/xpc_sn2.c    |   15 +--
+>  drivers/misc/sgi-xp/xpc_uv.c     |  290 ++++++++++++++++++++++++++++++--------
+>  10 files changed, 368 insertions(+), 74 deletions(-)
+>
+> And we'll likely get new commits in that space.
+> 
+> So if this is causing conflicts in linux-next then i'd suggest for you to 
+> please do this "git mv drivers/misc/ drivers/x86/" rename (with which i 
+> fully agree!) right after v2.6.29-rc1 - or near the end of the -rc1 merge 
+> window.
 
-The driver does not send a command to hardware if HW RF Kill switch is
-enabled. This causes a command sent by mac80211 stack to fail as
-expected. This warning can be ignored. We need to work out how to
-address this issue and not make it appear as a failure.
+I only moved only the laptop drivers, didn't touch misc/sgi*/,
+so I don't see any conflicts here.
 
-Reinette
+> In any case, please keep it in a separate branch in the ACPI tree so that 
+> we can reconsider the ordering of this change in the future as well - 
+> should it cause problems.
+
+sure.
+Since we have no problems in linux-next now, I don't expect any at merge 
+time, but we'll have eyes open for issues then.
+
+thanks,
+-Len
