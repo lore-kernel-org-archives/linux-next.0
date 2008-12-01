@@ -1,42 +1,51 @@
 From: Len Brown <lenb@kernel.org>
-Subject: Re: linux-next: manual merge of the acpi tree
-Date: Sun, 30 Nov 2008 23:11:50 -0500 (EST)
-Message-ID: <alpine.LFD.2.00.0811302246100.3314@localhost.localdomain>
-References: <20081201131029.58f6d00c.sfr@canb.auug.org.au>
- <alpine.LFD.2.00.0811302150290.3314@localhost.localdomain>
- <20081201140233.cf65c890.sfr@canb.auug.org.au>
+Subject: Re: drivers/x86 (Was: Re: linux-next: Tree for November 28
+ (misc/tc1100))
+Date: Sun, 30 Nov 2008 23:29:14 -0500 (EST)
+Message-ID: <alpine.LFD.2.00.0811302325050.3314@localhost.localdomain>
+References: <20081128213620.2ec593d4.sfr@canb.auug.org.au>
+ <4930307C.30106@oracle.com> <20081129083550.3c23af37.sfr@canb.auug.org.au>
+ <20081129093414.GB26691@elte.hu>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from vms046pub.verizon.net ([206.46.252.46]:61033 "EHLO
-	vms046pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751470AbYLAEMP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 30 Nov 2008 23:12:15 -0500
-Received: from localhost.localdomain ([96.237.168.40])
- by vms046.mailsrvcs.net (Sun Java System Messaging Server 6.2-6.01 (built Apr
- 3 2006)) with ESMTPA id <0KB6008BMJNT90B2@vms046.mailsrvcs.net> for
- linux-next@vger.kernel.org; Sun, 30 Nov 2008 22:11:54 -0600 (CST)
-In-reply-to: <20081201140233.cf65c890.sfr@canb.auug.org.au>
+Received: from vms173003pub.verizon.net ([206.46.173.3]:57313 "EHLO
+	vms173003pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751698AbYLAE3Z (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 30 Nov 2008 23:29:25 -0500
+In-reply-to: <20081129093414.GB26691@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Len Brown <len.brown@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>, x86@kernel.org
 
 
 
-> And if you pull Linus' tree into the acpi tree the conflict will go away
-> as well ... but you (who understand the intention of the code) get to fix
-> it up rather than me (who is guessing).
+On Sat, 29 Nov 2008, Ingo Molnar wrote:
 
-Your guess was correct -- the patch with the later commit time
-was the correct one to keep.
+> 
+> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> > Hi Len,
+> > 
+> > On Fri, 28 Nov 2008 09:55:08 -0800 Randy Dunlap <randy.dunlap@oracle.com> wrote:
+> > >
+> > > make[2]: *** No rule to make target `drivers/misc/tc1100-wmi.o', needed by `drivers/misc/built-in.o'.
+> > > 
+> > > on allmodconfig & allyesconfig for i386.
+> > > 
+> > > On, moved to drivers/x86/.  Someone needs to clean up drivers/misc/Makefile.
+> > 
+> > Just wondering where the move to drivers/x86 was discussed, (reviewed 
+> > and tested) and why the change is in the acpi tree and not the x86 
+> > tree?
+> 
+> it will all conflict with pending bits in the x86 tree, so i'd prefer if 
+> Len did this atomically after 2.6.29-rc1, without it having this 
+> long-term breakage effect.
 
-This was my pilot error.  I updated the patch in my release tree
-and so you got the updated patch via Linus.  But I failed to update
-my test tree, so you got the old patch from my test tree.
+Is linux-next running into a conflict between x86 and the acpi 
+tree today?
 
-I've just re-constituted my test branch, so the old patch is gone,
-and with it this conflict.
-
-thanks for pointing this out,
+thanks,
 -Len
