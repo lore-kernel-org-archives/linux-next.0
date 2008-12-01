@@ -1,52 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree
-Date: Mon, 1 Dec 2008 14:26:23 +1100
-Message-ID: <20081201142623.5c38680b.sfr@canb.auug.org.au>
+From: Len Brown <lenb@kernel.org>
+Subject: Re: linux-next: manual merge of the acpi tree
+Date: Sun, 30 Nov 2008 23:11:50 -0500 (EST)
+Message-ID: <alpine.LFD.2.00.0811302246100.3314@localhost.localdomain>
+References: <20081201131029.58f6d00c.sfr@canb.auug.org.au>
+ <alpine.LFD.2.00.0811302150290.3314@localhost.localdomain>
+ <20081201140233.cf65c890.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__1_Dec_2008_14_26_23_+1100_Jg_aC4l/po5bGTcL"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57247 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751499AbYLAD0o (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 30 Nov 2008 22:26:44 -0500
+Received: from vms046pub.verizon.net ([206.46.252.46]:61033 "EHLO
+	vms046pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751470AbYLAEMP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 30 Nov 2008 23:12:15 -0500
+Received: from localhost.localdomain ([96.237.168.40])
+ by vms046.mailsrvcs.net (Sun Java System Messaging Server 6.2-6.01 (built Apr
+ 3 2006)) with ESMTPA id <0KB6008BMJNT90B2@vms046.mailsrvcs.net> for
+ linux-next@vger.kernel.org; Sun, 30 Nov 2008 22:11:54 -0600 (CST)
+In-reply-to: <20081201140233.cf65c890.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Al Viro <viro@ftp.linux.org.uk>, Mike Frysinger <vapier@gentoo.org>, Jeff Garzik <jgarzik@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Mon__1_Dec_2008_14_26_23_+1100_Jg_aC4l/po5bGTcL
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/net/smc91x.c between commit
-f57628d76bd201a444ca822f3622522a44acbf60 ("section errors in
-smc911x/smc91x") from Linus' tree and commit smc_drv_probe ("smc91x: add
-__init markings to smc_drv_probe()") from the net tree.
+> And if you pull Linus' tree into the acpi tree the conflict will go away
+> as well ... but you (who understand the intention of the code) get to fix
+> it up rather than me (who is guessing).
 
-The former changed smc_drv_probe() to __devinit while the latter to
-__init.  I used the latter and it can be fixed up in your tree.
+Your guess was correct -- the patch with the later commit time
+was the correct one to keep.
 
-I do wonder why the former change didn't go through Jeff's tree ...
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+This was my pilot error.  I updated the patch in my release tree
+and so you got the updated patch via Linus.  But I failed to update
+my test tree, so you got the old patch from my test tree.
 
---Signature=_Mon__1_Dec_2008_14_26_23_+1100_Jg_aC4l/po5bGTcL
-Content-Type: application/pgp-signature
+I've just re-constituted my test branch, so the old patch is gone,
+and with it this conflict.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkzWV8ACgkQjjKRsyhoI8wkOwCfcpEf0N4bMk8V27JhXud87AAD
-E5IAnRMmSadAE1CgjFH91chJR1+ERt16
-=aRKy
------END PGP SIGNATURE-----
-
---Signature=_Mon__1_Dec_2008_14_26_23_+1100_Jg_aC4l/po5bGTcL--
+thanks for pointing this out,
+-Len
