@@ -1,61 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the acpi tree
-Date: Mon, 1 Dec 2008 15:37:23 +1100
-Message-ID: <20081201153723.bee5f756.sfr@canb.auug.org.au>
-References: <20081201131029.58f6d00c.sfr@canb.auug.org.au>
-	<alpine.LFD.2.00.0811302150290.3314@localhost.localdomain>
-	<20081201140233.cf65c890.sfr@canb.auug.org.au>
-	<alpine.LFD.2.00.0811302246100.3314@localhost.localdomain>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: next-2008-11-28: bfin vs cpumask fixlet
+Date: Mon, 1 Dec 2008 15:17:57 +1030
+Message-ID: <200812011517.57601.rusty@rustcorp.com.au>
+References: <20081128213620.2ec593d4.sfr@canb.auug.org.au> <20081128151755.GA27660@x200.localdomain>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__1_Dec_2008_15_37_23_+1100_hFknXonaDf4lV7uy"
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33279 "EHLO smtps.tip.net.au"
+Received: from ozlabs.org ([203.10.76.45]:34056 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753217AbYLAEhn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 30 Nov 2008 23:37:43 -0500
-In-Reply-To: <alpine.LFD.2.00.0811302246100.3314@localhost.localdomain>
+	id S1751565AbYLAEsD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 30 Nov 2008 23:48:03 -0500
+In-Reply-To: <20081128151755.GA27660@x200.localdomain>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: linux-next@vger.kernel.org
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__1_Dec_2008_15_37_23_+1100_hFknXonaDf4lV7uy
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Saturday 29 November 2008 01:47:55 Alexey Dobriyan wrote:
+> --- a/arch/blackfin/kernel/time-ts.c
+> +++ b/arch/blackfin/kernel/time-ts.c
+> @@ -162,7 +162,6 @@ static struct clock_event_device clockevent_bfin = {
+>  	.name		= "bfin_core_timer",
+>  	.features	= CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
+>  	.shift		= 32,
+> -	.cpumask	= CPU_MASK_CPU0,
 
-Hi Len,
+Thanks Alexey, applied.
 
-On Sun, 30 Nov 2008 23:11:50 -0500 (EST) Len Brown <lenb@kernel.org> wrote:
->
-> Your guess was correct -- the patch with the later commit time
-> was the correct one to keep.
->=20
-> This was my pilot error.  I updated the patch in my release tree
-> and so you got the updated patch via Linus.  But I failed to update
-> my test tree, so you got the old patch from my test tree.
->=20
-> I've just re-constituted my test branch, so the old patch is gone,
-> and with it this conflict.
+I grepped harder, and this seems to be the last one.
 
-OK, thanks.
-
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__1_Dec_2008_15_37_23_+1100_hFknXonaDf4lV7uy
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkkzagMACgkQjjKRsyhoI8wm9ACdFJQfeB3hJxkTq84xcsdSJuBY
-OgwAn2EnTHwbXIvues+P47Nx9VaE3zAs
-=6qBh
------END PGP SIGNATURE-----
-
---Signature=_Mon__1_Dec_2008_15_37_23_+1100_hFknXonaDf4lV7uy--
+Rusty.
