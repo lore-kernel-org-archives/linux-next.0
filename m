@@ -1,31 +1,48 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [RFC PATCH] x86: create drivers/x86/ from drivers/misc/
-Date: Sun, 30 Nov 2008 20:49:00 -0800
-Message-ID: <49336CBC.5090706@oracle.com>
-References: <20081128213620.2ec593d4.sfr@canb.auug.org.au> <4930307C.30106@oracle.com> <20081129083550.3c23af37.sfr@canb.auug.org.au> <alpine.LFD.2.00.0811281649001.24773@localhost.localdomain> <alpine.LFD.2.00.0811281702570.24773@localhost.localdomain> <alpine.LFD.2.00.0811281706540.24773@localhost.localdomain> <20081128223533.GA5175@uranus.ravnborg.org> <alpine.LFD.2.00.0811281819070.24773@localhost.localdomain>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: Re: next-20081125: crypto hard disk gets unaccessable
+Date: Mon, 1 Dec 2008 12:57:49 +0800
+Message-ID: <20081201045749.GA18292@gondor.apana.org.au>
+References: <20081128063355.GA4700@denkbrett.schottelius.org>
+	<20081129192939.925275f0.akpm@linux-foundation.org>
+	<49332CC6.4080606@redhat.com>
+Reply-To: device-mapper development <dm-devel@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet11.oracle.com ([148.87.113.123]:37184 "EHLO
-	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751525AbYLAEtY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 30 Nov 2008 23:49:24 -0500
-In-Reply-To: <alpine.LFD.2.00.0811281819070.24773@localhost.localdomain>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: Sam Ravnborg <sam@ravnborg.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Len Brown <len.brown@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>, x86@kernel.org, linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <dm-devel-bounces@redhat.com>
+Content-Disposition: inline
+In-Reply-To: <49332CC6.4080606@redhat.com>
+List-Unsubscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
+	<mailto:dm-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/dm-devel>
+List-Post: <mailto:dm-devel@redhat.com>
+List-Help: <mailto:dm-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
+	<mailto:dm-devel-request@redhat.com?subject=subscribe>
+Sender: dm-devel-bounces@redhat.com
+Errors-To: dm-devel-bounces@redhat.com
+To: Milan Broz <mbroz@redhat.com>
+Cc: Christophe Saout <christophe@saout.de>, Nico -telmich- Schottelius <nico-linux-next@schottelius.org>, LKML <linux-kernel@vger.kernel.org>, device-mapper development <dm-devel@redhat.com>, linux-next@vger.kernel.org, linux-crypto@vger.kernel.org, Herbert@redhat.com
+List-Id: linux-next.vger.kernel.org
 
-Len Brown wrote:
+On Mon, Dec 01, 2008 at 01:16:06AM +0100, Milan Broz wrote:
+>
+> > [69186.618468]  [<ffffffffa027226a>] ? crypto_cbc_encrypt+0xfa/0x15a [cbc]
+> > [69186.618481]  [<ffffffffa0285705>] ? aes_encrypt+0x0/0x7 [aes_x86_64]
+> > [69186.618494]  [<ffffffffa020667d>] ? async_encrypt+0x35/0x3a [crypto_blkcipher]
+> > [69186.618509]  [<ffffffffa0269a6f>] ? crypt_convert+0x1d2/0x253 [dm_crypt]
+> > [69186.618522]  [<ffffffffa0269ed6>] ? kcryptd_crypt+0x3e6/0x407 [dm_crypt]
+> > [69186.618533]  [<ffffffffa0269af0>] ? kcryptd_crypt+0x0/0x407 [dm_crypt]
 > 
->> You move 12 files but delete 11 lines.
+> I assume that crypto run here synchronously (not through asynchronous completion callback).
 > 
-> obj-$(CONFIG_TC1100_WMI)        += tc1100-wmi.o
-> 
-> was left behind by mistake.
+> Herbert - is my guess ok? (The asynchronous handling in dm-crypt was the only part changed recently.)
+> (And I think that except crypto hw nobody uses asynchronous mode yet by default.)
 
-Yes, that caused the build error that was the original posting
-for this thread.
+Yes that's definitely synchronous.
 
-~Randy
+Cheers,
+-- 
+Visit Openswan at http://www.openswan.org/
+Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
