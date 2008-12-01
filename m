@@ -1,33 +1,54 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for December 1 (etherh network driver)
-Date: Mon, 1 Dec 2008 13:27:54 -0800
-Message-ID: <20081201132754.9c5055d3.randy.dunlap@oracle.com>
-References: <20081201190827.2d02b1a5.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the s390 tree
+Date: Tue, 2 Dec 2008 09:39:20 +1100
+Message-ID: <20081202093920.7f700183.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20081201190827.2d02b1a5.sfr@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, shemminger@vyatta.com, rmk@arm.linux.org.uk
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:33046 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752529AbYLAWjp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Dec 2008 17:39:45 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: linux-next@vger.kernel.org, Swen Schillig <swen@vnet.ibm.com>, James Bottomley <James.Bottomley@HansenPartnership.com>, Christof Schmitt <christof.schmitt@de.ibm.com>
 
-On Mon, 1 Dec 2008 19:08:27 +1100 Stephen Rothwell wrote:
+Hi Martin,
 
-> Hi all,
-> 
-> Changes since 20081128:
-> 
-> Today's tree fails the powerpc allyesconfig build.
+Today's linux-next merge of the s390 tree got a conflict in
+drivers/s390/scsi/zfcp_erp.c between commit
+fca55b6fb587e42c7761ee30bd1a6c313a9270c9 ("[SCSI] zfcp: fix deadlock
+between wq triggered port scan and ERP") from the scsi-rc-fixes tree and
+commit c70beccd971850d07d0dc5afcd5e1c6580c7e1e5 ("[S390] zfcp: Report
+microcode level through service level interface") from the s390 tree.
 
+I fixed it up (by taking both changes - see below) and can carry the
+fix.  Someone should check that it is correct.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Steve (Hemminger),
-Please look into this build error:
-  http://kisskb.ellerman.id.au/kisskb/buildresult/58438/
-
-It looks like the network driver at drivers/net/arm/etherh.c
-is missing the conversion to use netdev_ops.
-
----
-~Randy
+diff --cc drivers/s390/scsi/zfcp_erp.c
+index c557ba3,e63eebf..0000000
+--- a/drivers/s390/scsi/zfcp_erp.c
++++ b/drivers/s390/scsi/zfcp_erp.c
+@@@ -1281,10 -1283,11 +1284,13 @@@ static void zfcp_erp_action_cleanup(str
+  		break;
+  
+  	case ZFCP_ERP_ACTION_REOPEN_ADAPTER:
+- 		if (result != ZFCP_ERP_SUCCEEDED)
++ 		if (result != ZFCP_ERP_SUCCEEDED) {
++ 			unregister_service_level(&adapter->service_level);
+  			zfcp_erp_rports_del(adapter);
+- 		else
+ -		} else
+++		} else {
++ 			register_service_level(&adapter->service_level);
+ +			schedule_work(&adapter->scan_work);
+++		}
+  		zfcp_adapter_put(adapter);
+  		break;
+  	}
