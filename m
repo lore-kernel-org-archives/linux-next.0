@@ -1,44 +1,68 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: linux-next: manual merge of the driver-core tree
-Date: Mon, 01 Dec 2008 11:17:02 +0000
-Message-ID: <1228130222.25929.43.camel@pc1117.cambridge.arm.com>
-References: <20081201111552.8b1cbf9b.sfr@canb.auug.org.au>
-	 <20081201092314.GA28971@flint.arm.linux.org.uk>
+From: Mike Frysinger <vapier@gentoo.org>
+Subject: Re: linux-next: manual merge of the net tree
+Date: Mon, 1 Dec 2008 12:06:07 -0500
+Message-ID: <200812011206.09129.vapier@gentoo.org>
+References: <20081201142623.5c38680b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed;
+  boundary="nextPart2283615.kZoLHvUcPK";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([193.131.176.58]:61017 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750748AbYLAL3P (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Dec 2008 06:29:15 -0500
-In-Reply-To: <20081201092314.GA28971@flint.arm.linux.org.uk>
+Received: from smtp.gentoo.org ([140.211.166.183]:40614 "EHLO smtp.gentoo.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751585AbYLARGK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Dec 2008 12:06:10 -0500
+In-Reply-To: <20081201142623.5c38680b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, David Woodhouse <dwmw2@infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Al Viro <viro@ftp.linux.org.uk>, Jeff Garzik <jgarzik@redhat.com>
 
-On Mon, 2008-12-01 at 09:23 +0000, Russell King wrote:
-> On Mon, Dec 01, 2008 at 11:15:52AM +1100, Stephen Rothwell wrote:
-> > Today's linux-next merge of the driver-core tree got a conflict in
-> > drivers/mtd/maps/integrator-flash.c between commit
-> > ffc86cf850dcd0e181a69c6fa0217d6c7ddf9c85 ("Add armflash support for
-> > multiple blocks of flash") from the arm tree and commit
-> > 0b1ea7e6450b3cc2e87d1c7295439483d007bb6e ("mtd: struct device - replace
-> > bus_id with dev_name(), dev_set_name()") from the driver-core tree.
-> > 
-> > I fixed it up (see below).  Maybe you, Russell and David Woodhouse could
-> > sort out who should coordinate these updates.
-> 
-> Or maybe Catalin rather than me.
+--nextPart2283615.kZoLHvUcPK
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Sorry for this, I didn't follow the linux-next tree. I sent the patch to
-Russell as he wrote the initial driver but I should have cc'ed David W.
-as well.
+On Sunday 30 November 2008 22:26:23 Stephen Rothwell wrote:
+> Hi Dave,
+>
+> Today's linux-next merge of the net tree got a conflict in
+> drivers/net/smc91x.c between commit
+> f57628d76bd201a444ca822f3622522a44acbf60 ("section errors in
+> smc911x/smc91x") from Linus' tree and commit smc_drv_probe ("smc91x: add
+> __init markings to smc_drv_probe()") from the net tree.
+>
+> The former changed smc_drv_probe() to __devinit while the latter to
+> __init.  I used the latter and it can be fixed up in your tree.
+>
+> I do wonder why the former change didn't go through Jeff's tree ...
 
-The fix looks alright. Should I resend an updated patch?
+__devinit is correct ... it's a probe function
+-mike
 
-Thanks.
+--nextPart2283615.kZoLHvUcPK
+Content-Type: application/pgp-signature; name=signature.asc 
+Content-Description: This is a digitally signed message part.
 
--- 
-Catalin
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.9 (GNU/Linux)
+
+iQIcBAABAgAGBQJJNBmAAAoJEEFjO5/oN/WBIU8P+gMs9E+hopmfN5d0L3N9CgWk
+Qgnw6/0qNmOi+wqzLS+kKjeSp3uanJlQYMV7glFbWvlq2lMGxwj/lSlOhFbK6TS0
+4duwuo61tWo6LVhuZzAobso2auRJA8wcFZaqEQCq/+apRSiUpBqBunisy4eW2HkQ
+JyQZaFTbd1JVx7x9+J6DD3bheryK3U2o2uLVOzKOPBD0WkdgKHVFWmwbyhBawmDq
+Dr5rD63ebmdOAyUov5R36K+13LTgnRhnbLV7d66WXccx+C3VTt29awWvSd3/QzXL
+pHSIIyvT5ShnHdDrzY53/B606ZSyhPGi4KzskFD26K4CTkRFzl59tpeRBTZ702Fp
+onCjeU62m5R6W90sLCf8Op+JLZVhRslctmY27rvsy8s59bJVmwBzFzPPJQZVeyt9
+Tcs9AC2HMSy5tfZ56G757IFbv699pfvl+asVNhl1IOQb8SWXzZETlCaGgP58BkEq
+8fEHUR5e7R6E32hZsgjW9TrJSaXJJv5iVdzEOkHjplrixB44wG5wf6MYGPlJ5JTz
+/igl0UH6J1+vGD7c8l1sRAq1+I+8nsOZEgd66N0eMNNW4oQg3rcXpr8Au8zIzfoo
+QH7/Zfu4raekkxpsqtM+hLgeY7L6JVB/YHHcpn4W0twOR5uHQ6sprd/IOkcbGqtY
+kX+Ahpwf+6fmq3B55CxY
+=PK1p
+-----END PGP SIGNATURE-----
+
+--nextPart2283615.kZoLHvUcPK--
