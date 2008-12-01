@@ -1,71 +1,43 @@
-From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
-Subject: Re: [dm-devel] Re: next-20081125: crypto hard disk gets
-	unaccessable
-Date: Mon, 1 Dec 2008 18:36:39 +0100
-Message-ID: <20081201173639.GE8005@denkbrett.schottelius.org>
-References: <20081128063355.GA4700@denkbrett.schottelius.org> <20081129192939.925275f0.akpm@linux-foundation.org> <49332CC6.4080606@redhat.com>
+From: reinette chatre <reinette.chatre@intel.com>
+Subject: Re: [ipw3945-devel] next-20081125: call trace for iwlagn (rfkill
+	switch on)
+Date: Mon, 01 Dec 2008 10:39:43 -0800
+Message-ID: <1228156783.10900.21.camel@rc-desk>
+References: <20081128063859.GB4700@denkbrett.schottelius.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="a+b56+3nqLzpiR9O"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.schottelius.org ([77.109.138.221]:44005 "EHLO
-	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751565AbYLARgl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Dec 2008 12:36:41 -0500
-Content-Disposition: inline
-In-Reply-To: <49332CC6.4080606@redhat.com>
+Received: from mga09.intel.com ([134.134.136.24]:10062 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753310AbYLASis (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Dec 2008 13:38:48 -0500
+In-Reply-To: <20081128063859.GB4700@denkbrett.schottelius.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Milan Broz <mbroz@redhat.com>
-Cc: device-mapper development <dm-devel@redhat.com>, Christophe Saout <christophe@saout.de>, LKML <linux-kernel@vger.kernel.org>, Herbert@redhat.com, linux-next@vger.kernel.org, linux-crypto@vger.kernel.org, Xu <herbert@gondor.apana.org.au>
+To: Nico -telmich- Schottelius <nico-linux-ipw3945-devel@schottelius.org>
+Cc: "ipw3945-devel@lists.sourceforge.net" <ipw3945-devel@lists.sourceforge.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
+On Thu, 2008-11-27 at 22:38 -0800, Nico -telmich- Schottelius wrote:
+> Hello!
+> 
+> After a fresh reboot and enabled rfkill switch (-> radio turned off!),
+> I get the following call trace:
+> 
+> [   89.169572] iwlagn 0000:03:00.0: PCI INT A -> GSI 17 (level, low) -> IRQ 17
+> [   89.169791] iwlagn 0000:03:00.0: restoring config space at offset 0x1 (was 0x100102, writing 0x100106)
+> [   89.169898] iwlagn 0000:03:00.0: irq 314 for MSI/MSI-X
+> [   89.169980] iwlagn 0000:03:00.0: firmware: requesting iwlwifi-5000-1.ucode
+> [   89.370030] iwlagn: Radio disabled by HW RF Kill switch
+> [   89.381023] ------------[ cut here ]------------
+> [   89.381215] WARNING: at net/mac80211/main.c:227 ieee80211_hw_config+0x71/0x79 [mac80211]()
+> [   89.381455] Modules linked in: rfcomm l2cap bluetooth uinput autofs4 ipv6 cpufreq_powersave md_mod loop sha256_generic ansi_cprng krng chainiv rng aes_x86_64 aes_generic cbc dm_crypt dm_mod arc4 ecb cryptomgr aead crypto_blkcipher crypto_hash snd_hda_intel snd_pcm snd_page_alloc iwlagn snd_hwdep iwlcore thinkpad_acpi snd_seq snd_timer snd_seq_device rfkill snd hwmon mac80211 video wmi rtc_cmos rtc_core i2c_i801 backlight led_class e1000e output soundcore rtc_lib intel_agp uhci_hcd ehci_hcd i2c_core cfg80211 nvram usbcore pcspkr
+> [   89.384858] Pid: 3923, comm: NetworkManager Not tainted 2.6.28-rc6-next-20081125-denkbrett #15
+> [   89.385074] Call Trace:
 
---a+b56+3nqLzpiR9O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The driver does not send a command to hardware if HW RF Kill switch is
+enabled. This causes a command sent by mac80211 stack to fail as
+expected. This warning can be ignored. We need to work out how to
+address this issue and not make it appear as a failure.
 
-Milan Broz [Mon, Dec 01, 2008 at 01:16:06AM +0100]:
-> Andrew Morton wrote:
-> > (cc's added)
-> >=20
-> >> After about four suspend & resume operations in the midst of editing
-> >> a file, the system beeped twice and issued this error:
->=20
-> Did this work before?
-
-yep
-
-> If so, please can you provide version where
-> it works?
-
-2.6.28-rc6
-
-> It is suspend to encrypted swap?
-
-No, suspend to ram.
-
-Sincerly,
-
-Nico
-
---=20
-Think about Free and Open Source Software (FOSS).
-http://nico.schottelius.org/documentations/foss/the-term-foss/
-
-PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
-
---a+b56+3nqLzpiR9O
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkk0IKYACgkQuL75KpiFGIxnqACcDklSGoWardXdYmqB72ttBQJH
-2oQAnRQdkQk6xKyTAA+NsdWSERJ9Zfr2
-=VGKU
------END PGP SIGNATURE-----
-
---a+b56+3nqLzpiR9O--
+Reinette
