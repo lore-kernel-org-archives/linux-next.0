@@ -1,155 +1,59 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the driver-core tree
-Date: Mon, 1 Dec 2008 11:15:52 +1100
-Message-ID: <20081201111552.8b1cbf9b.sfr@canb.auug.org.au>
+From: Milan Broz <mbroz@redhat.com>
+Subject: Re: Re: next-20081125: crypto hard disk gets unaccessable
+Date: Mon, 01 Dec 2008 01:16:06 +0100
+Message-ID: <49332CC6.4080606@redhat.com>
+References: <20081128063355.GA4700@denkbrett.schottelius.org>
+	<20081129192939.925275f0.akpm@linux-foundation.org>
+Reply-To: device-mapper development <dm-devel@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40434 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752627AbYLAAQL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 30 Nov 2008 19:16:11 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Russell King <rmk@arm.linux.org.uk>, Kay Sievers <kay.sievers@vrfy.org>, David Woodhouse <dwmw2@infradead.org>
+Return-path: <dm-devel-bounces@redhat.com>
+In-Reply-To: <20081129192939.925275f0.akpm@linux-foundation.org>
+List-Unsubscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
+	<mailto:dm-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/dm-devel>
+List-Post: <mailto:dm-devel@redhat.com>
+List-Help: <mailto:dm-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
+	<mailto:dm-devel-request@redhat.com?subject=subscribe>
+Sender: dm-devel-bounces@redhat.com
+Errors-To: dm-devel-bounces@redhat.com
+To: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
+Cc: Christophe Saout <christophe@saout.de>, LKML <linux-kernel@vger.kernel.org>, device-mapper development <dm-devel@redhat.com>, linux-next@vger.kernel.org, linux-crypto@vger.kernel.org, Herbert@redhat.com, Xu <herbert@gondor.apana.org.au>
+List-Id: linux-next.vger.kernel.org
 
-Hi Greg,
+Andrew Morton wrote:
+> (cc's added)
+> 
+>> After about four suspend & resume operations in the midst of editing
+>> a file, the system beeped twice and issued this error:
 
-Today's linux-next merge of the driver-core tree got a conflict in
-drivers/mtd/maps/integrator-flash.c between commit
-ffc86cf850dcd0e181a69c6fa0217d6c7ddf9c85 ("Add armflash support for
-multiple blocks of flash") from the arm tree and commit
-0b1ea7e6450b3cc2e87d1c7295439483d007bb6e ("mtd: struct device - replace
-bus_id with dev_name(), dev_set_name()") from the driver-core tree.
+Did this work before? If so, please can you provide version where
+it works?
 
-I fixed it up (see below).  Maybe you, Russell and David Woodhouse could
-sort out who should coordinate these updates.
+It is suspend to encrypted swap?
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+There should not be any recent change in dm-crypt related to this path,
+so I expect it is some bug related to suspend/resume in combination with
+running crypto - like corruption of some memory caused during suspend...
 
-diff --cc drivers/mtd/maps/integrator-flash.c
-index 5a773a3,d2ec262..0000000
---- a/drivers/mtd/maps/integrator-flash.c
-+++ b/drivers/mtd/maps/integrator-flash.c
-@@@ -112,112 -121,7 +112,112 @@@ static int armflash_subdev_probe(struc
-  		goto no_device;
-  	}
-  
- -	info->mtd->owner = THIS_MODULE;
- +	subdev->mtd->owner = THIS_MODULE;
- +
- +	/* Successful? */
- +	if (err == 0)
- +		return err;
- +
- +	if (subdev->mtd)
- +		map_destroy(subdev->mtd);
- + no_device:
- +	iounmap(base);
- + no_mem:
- +	release_mem_region(res->start, size);
- + out:
- +	return err;
- +}
- +
- +static void armflash_subdev_remove(struct armflash_subdev_info *subdev)
- +{
- +	if (subdev->mtd)
- +		map_destroy(subdev->mtd);
- +	if (subdev->map.virt)
- +		iounmap(subdev->map.virt);
- +	release_mem_region(subdev->map.phys, subdev->map.size);
- +}
- +
- +static int armflash_probe(struct platform_device *dev)
- +{
- +	struct flash_platform_data *plat = dev->dev.platform_data;
- +	unsigned int size;
- +	struct armflash_info *info;
- +	int i, nr, err;
- +
- +	/* Count the number of devices */
- +	for (nr = 0; ; nr++)
- +		if (!platform_get_resource(dev, IORESOURCE_MEM, nr))
- +			break;
- +	if (nr == 0) {
- +		err = -ENODEV;
- +		goto out;
- +	}
- +
- +	size = sizeof(struct armflash_info) +
- +		sizeof(struct armflash_subdev_info) * nr;
- +	info = kzalloc(size, GFP_KERNEL);
- +	if (!info) {
- +		err = -ENOMEM;
- +		goto out;
- +	}
- +
- +	if (plat && plat->init) {
- +		err = plat->init();
- +		if (err)
- +			goto no_resource;
- +	}
- +
- +	for (i = 0; i < nr; i++) {
- +		struct armflash_subdev_info *subdev = &info->subdev[i];
- +		struct resource *res;
- +
- +		res = platform_get_resource(dev, IORESOURCE_MEM, i);
- +		if (!res)
- +			break;
- +
- +		if (nr == 1)
- +			/* No MTD concatenation, just use the default name */
- +			snprintf(subdev->name, SUBDEV_NAME_SIZE, "%s",
-- 				 dev->dev.bus_id);
-++				 dev_name(&dev->dev));
- +		else
- +			snprintf(subdev->name, SUBDEV_NAME_SIZE, "%s-%d",
-- 				 dev->dev.bus_id, i);
-++				 dev_name(&dev->dev), i);
- +		subdev->plat = plat;
- +
- +		err = armflash_subdev_probe(subdev, res);
- +		if (err)
- +			break;
- +	}
- +	info->nr_subdev = i;
- +
- +	if (err)
- +		goto subdev_err;
- +
- +	if (info->nr_subdev == 1)
- +		info->mtd = info->subdev[0].mtd;
- +	else if (info->nr_subdev > 1) {
- +#ifdef CONFIG_MTD_CONCAT
- +		struct mtd_info *cdev[info->nr_subdev];
- +
- +		/*
- +		 * We detected multiple devices.  Concatenate them together.
- +		 */
- +		for (i = 0; i < info->nr_subdev; i++)
- +			cdev[i] = info->subdev[i].mtd;
- +
- +		info->mtd = mtd_concat_create(cdev, info->nr_subdev,
-- 					      dev->dev.bus_id);
-++					      dev_name(&dev->dev));
- +		if (info->mtd == NULL)
- +			err = -ENXIO;
- +#else
- +		printk(KERN_ERR "armflash: multiple devices found but "
- +		       "MTD concat support disabled.\n");
- +		err = -ENXIO;
- +#endif
- +	}
- +
- +	if (err < 0)
- +		goto cleanup;
-  
-  	err = parse_mtd_partitions(info->mtd, probes, &info->parts, 0);
-  	if (err > 0) {
+
+> [lots of snippage]
+>> [69186.618357] RIP: 0010:[<ffffffff8031f246>]  [<ffffffff8031f246>] crypto_xor+0x7/0x48
+
+> [69186.618468]  [<ffffffffa027226a>] ? crypto_cbc_encrypt+0xfa/0x15a [cbc]
+> [69186.618481]  [<ffffffffa0285705>] ? aes_encrypt+0x0/0x7 [aes_x86_64]
+> [69186.618494]  [<ffffffffa020667d>] ? async_encrypt+0x35/0x3a [crypto_blkcipher]
+> [69186.618509]  [<ffffffffa0269a6f>] ? crypt_convert+0x1d2/0x253 [dm_crypt]
+> [69186.618522]  [<ffffffffa0269ed6>] ? kcryptd_crypt+0x3e6/0x407 [dm_crypt]
+> [69186.618533]  [<ffffffffa0269af0>] ? kcryptd_crypt+0x0/0x407 [dm_crypt]
+
+I assume that crypto run here synchronously (not through asynchronous completion callback).
+
+Herbert - is my guess ok? (The asynchronous handling in dm-crypt was the only part changed recently.)
+(And I think that except crypto hw nobody uses asynchronous mode yet by default.)
+
+Milan
+--
+mbroz@redhat.com
