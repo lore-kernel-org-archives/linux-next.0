@@ -1,54 +1,107 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the s390 tree
-Date: Tue, 2 Dec 2008 09:39:20 +1100
-Message-ID: <20081202093920.7f700183.sfr@canb.auug.org.au>
+From: Marcin Slusarz <marcin.slusarz@gmail.com>
+Subject: [PATCH] udf: fix default mode and dmode options handling
+Date: Tue, 2 Dec 2008 00:22:31 +0100
+Message-ID: <20081201232227.GA7925@joi>
+References: <20081128213620.2ec593d4.sfr@canb.auug.org.au> <49332545.5020604@free.fr> <20081201001854.GA9881@joi> <49343AC2.3010808@free.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33046 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752529AbYLAWjp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Dec 2008 17:39:45 -0500
+Received: from ug-out-1314.google.com ([66.249.92.171]:52851 "EHLO
+	ug-out-1314.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751388AbYLAXXF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Dec 2008 18:23:05 -0500
+Received: by ug-out-1314.google.com with SMTP id 39so2838223ugf.37
+        for <linux-next@vger.kernel.org>; Mon, 01 Dec 2008 15:23:03 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <49343AC2.3010808@free.fr>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: linux-next@vger.kernel.org, Swen Schillig <swen@vnet.ibm.com>, James Bottomley <James.Bottomley@HansenPartnership.com>, Christof Schmitt <christof.schmitt@de.ibm.com>
+To: Laurent Riffard <laurent.riffard@free.fr>, Jan Kara <jack@suse.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi Martin,
+On Mon, Dec 01, 2008 at 08:28:02PM +0100, Laurent Riffard wrote:
+> >> With next-2008-11-28, I was unable to mount an UDF-formatted DVD-RW:
+> > Can you check whether attached patch fixes it?
+> Current kernel is next-20081128 + reiser4 patches + your patch: it seems to works well now.
+> (...)
+> Tested-by: Laurent Riffard <laurent.riffard@free.fr>
 
-Today's linux-next merge of the s390 tree got a conflict in
-drivers/s390/scsi/zfcp_erp.c between commit
-fca55b6fb587e42c7761ee30bd1a6c313a9270c9 ("[SCSI] zfcp: fix deadlock
-between wq triggered port scan and ERP") from the scsi-rc-fixes tree and
-commit c70beccd971850d07d0dc5afcd5e1c6580c7e1e5 ("[S390] zfcp: Report
-microcode level through service level interface") from the s390 tree.
+Thanks!
 
-I fixed it up (by taking both changes - see below) and can carry the
-fix.  Someone should check that it is correct.
+Jan, please apply this patch:
+
+---
+From: Marcin Slusarz <marcin.slusarz@gmail.com>
+Subject: [PATCH] udf: fix default mode and dmode options handling
+
+On x86 (and several other archs) mode_t is defined as "unsigned short"
+and comparing unsigned shorts to negative ints is broken (because short
+is promoted to int and then compared). Fix it.
+
+Reported-and-tested-by: Laurent Riffard <laurent.riffard@free.fr>
+Signed-off-by: Marcin Slusarz <marcin.slusarz@gmail.com>
+---
+ fs/udf/inode.c  |    4 ++--
+ fs/udf/super.c  |    8 ++++----
+ fs/udf/udf_sb.h |    2 ++
+ 3 files changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/fs/udf/inode.c b/fs/udf/inode.c
+index 6612a27..2d7e56a 100644
+--- a/fs/udf/inode.c
++++ b/fs/udf/inode.c
+@@ -1222,10 +1222,10 @@ static void udf_fill_inode(struct inode *inode, struct buffer_head *bh)
+ 	iinfo->i_lenExtents = inode->i_size;
+ 
+ 	if (fe->icbTag.fileType != ICBTAG_FILE_TYPE_DIRECTORY &&
+-			sbi->s_fmode != -1)
++			sbi->s_fmode != UDF_INVALID_MODE)
+ 		inode->i_mode = sbi->s_fmode;
+ 	else if (fe->icbTag.fileType == ICBTAG_FILE_TYPE_DIRECTORY &&
+-			sbi->s_dmode != -1)
++			sbi->s_dmode != UDF_INVALID_MODE)
+ 		inode->i_mode = sbi->s_dmode;
+ 	else
+ 		inode->i_mode = udf_convert_permissions(fe);
+diff --git a/fs/udf/super.c b/fs/udf/super.c
+index e5d121d..8deaa61 100644
+--- a/fs/udf/super.c
++++ b/fs/udf/super.c
+@@ -284,9 +284,9 @@ static int udf_show_options(struct seq_file *seq, struct vfsmount *mnt)
+ 		seq_printf(seq, ",gid=%u", sbi->s_gid);
+ 	if (sbi->s_umask != 0)
+ 		seq_printf(seq, ",umask=%o", sbi->s_umask);
+-	if (sbi->s_fmode != -1)
++	if (sbi->s_fmode != UDF_INVALID_MODE)
+ 		seq_printf(seq, ",mode=%o", sbi->s_fmode);
+-	if (sbi->s_dmode != -1)
++	if (sbi->s_dmode != UDF_INVALID_MODE)
+ 		seq_printf(seq, ",dmode=%o", sbi->s_dmode);
+ 	if (UDF_QUERY_FLAG(sb, UDF_FLAG_SESSION_SET))
+ 		seq_printf(seq, ",session=%u", sbi->s_session);
+@@ -1894,8 +1894,8 @@ static int udf_fill_super(struct super_block *sb, void *options, int silent)
+ 	uopt.uid = -1;
+ 	uopt.gid = -1;
+ 	uopt.umask = 0;
+-	uopt.fmode = -1;
+-	uopt.dmode = -1;
++	uopt.fmode = UDF_INVALID_MODE;
++	uopt.dmode = UDF_INVALID_MODE;
+ 
+ 	sbi = kzalloc(sizeof(struct udf_sb_info), GFP_KERNEL);
+ 	if (!sbi)
+diff --git a/fs/udf/udf_sb.h b/fs/udf/udf_sb.h
+index 5d32c60..158221e 100644
+--- a/fs/udf/udf_sb.h
++++ b/fs/udf/udf_sb.h
+@@ -48,6 +48,8 @@
+ #define UDF_SPARABLE_MAP15		0x1522U
+ #define UDF_METADATA_MAP25		0x2511U
+ 
++#define UDF_INVALID_MODE		((mode_t)-1)
++
+ #pragma pack(1) /* XXX(hch): Why?  This file just defines in-core structures */
+ 
+ struct udf_meta_data {
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
-diff --cc drivers/s390/scsi/zfcp_erp.c
-index c557ba3,e63eebf..0000000
---- a/drivers/s390/scsi/zfcp_erp.c
-+++ b/drivers/s390/scsi/zfcp_erp.c
-@@@ -1281,10 -1283,11 +1284,13 @@@ static void zfcp_erp_action_cleanup(str
-  		break;
-  
-  	case ZFCP_ERP_ACTION_REOPEN_ADAPTER:
-- 		if (result != ZFCP_ERP_SUCCEEDED)
-+ 		if (result != ZFCP_ERP_SUCCEEDED) {
-+ 			unregister_service_level(&adapter->service_level);
-  			zfcp_erp_rports_del(adapter);
-- 		else
- -		} else
-++		} else {
-+ 			register_service_level(&adapter->service_level);
- +			schedule_work(&adapter->scan_work);
-++		}
-  		zfcp_adapter_put(adapter);
-  		break;
-  	}
+1.5.6.4
