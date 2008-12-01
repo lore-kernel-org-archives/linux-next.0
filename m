@@ -1,48 +1,178 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: Re: next-20081125: crypto hard disk gets unaccessable
-Date: Mon, 1 Dec 2008 12:57:49 +0800
-Message-ID: <20081201045749.GA18292@gondor.apana.org.au>
-References: <20081128063355.GA4700@denkbrett.schottelius.org>
-	<20081129192939.925275f0.akpm@linux-foundation.org>
-	<49332CC6.4080606@redhat.com>
-Reply-To: device-mapper development <dm-devel@redhat.com>
+From: Len Brown <lenb@kernel.org>
+Subject: Re: [RFC PATCH] x86: create drivers/x86/ from drivers/misc/
+Date: Mon, 01 Dec 2008 00:00:04 -0500 (EST)
+Message-ID: <alpine.LFD.2.00.0811302338450.3314@localhost.localdomain>
+References: <20081128213620.2ec593d4.sfr@canb.auug.org.au>
+ <4930307C.30106@oracle.com> <20081129083550.3c23af37.sfr@canb.auug.org.au>
+ <alpine.LFD.2.00.0811281649001.24773@localhost.localdomain>
+ <alpine.LFD.2.00.0811281702570.24773@localhost.localdomain>
+ <alpine.LFD.2.00.0811281706540.24773@localhost.localdomain>
+ <20081128223533.GA5175@uranus.ravnborg.org>
+ <alpine.LFD.2.00.0811281801520.24773@localhost.localdomain>
+ <20081129073816.GB8351@uranus.ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <dm-devel-bounces@redhat.com>
-Content-Disposition: inline
-In-Reply-To: <49332CC6.4080606@redhat.com>
-List-Unsubscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
-	<mailto:dm-devel-request@redhat.com?subject=unsubscribe>
-List-Archive: <https://www.redhat.com/archives/dm-devel>
-List-Post: <mailto:dm-devel@redhat.com>
-List-Help: <mailto:dm-devel-request@redhat.com?subject=help>
-List-Subscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
-	<mailto:dm-devel-request@redhat.com?subject=subscribe>
-Sender: dm-devel-bounces@redhat.com
-Errors-To: dm-devel-bounces@redhat.com
-To: Milan Broz <mbroz@redhat.com>
-Cc: Christophe Saout <christophe@saout.de>, Nico -telmich- Schottelius <nico-linux-next@schottelius.org>, LKML <linux-kernel@vger.kernel.org>, device-mapper development <dm-devel@redhat.com>, linux-next@vger.kernel.org, linux-crypto@vger.kernel.org, Herbert@redhat.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from vms042pub.verizon.net ([206.46.252.42]:33183 "EHLO
+	vms042pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750740AbYLAFAb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Dec 2008 00:00:31 -0500
+In-reply-to: <20081129073816.GB8351@uranus.ravnborg.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Len Brown <len.brown@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>, x86@kernel.org, linux-acpi@vger.kernel.org
 
-On Mon, Dec 01, 2008 at 01:16:06AM +0100, Milan Broz wrote:
->
-> > [69186.618468]  [<ffffffffa027226a>] ? crypto_cbc_encrypt+0xfa/0x15a [cbc]
-> > [69186.618481]  [<ffffffffa0285705>] ? aes_encrypt+0x0/0x7 [aes_x86_64]
-> > [69186.618494]  [<ffffffffa020667d>] ? async_encrypt+0x35/0x3a [crypto_blkcipher]
-> > [69186.618509]  [<ffffffffa0269a6f>] ? crypt_convert+0x1d2/0x253 [dm_crypt]
-> > [69186.618522]  [<ffffffffa0269ed6>] ? kcryptd_crypt+0x3e6/0x407 [dm_crypt]
-> > [69186.618533]  [<ffffffffa0269af0>] ? kcryptd_crypt+0x0/0x407 [dm_crypt]
+
+
+On Sat, 29 Nov 2008, Sam Ravnborg wrote:
+
+> Comments below in case we stick to this drivers/x86 thing...
+
+now the "drivers/platform/x86/ thing"
+aka the "get rid of drivers/misc/ thing":-)
+
+> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> > index 93224b5..b89db1e 100644
+> > --- a/arch/x86/Kconfig
+> > +++ b/arch/x86/Kconfig
+> > @@ -1904,6 +1904,8 @@ source "drivers/Kconfig"
+> >  
+> >  source "drivers/firmware/Kconfig"
+> >  
+> > +source "drivers/x86/Kconfig"
+> > +
+> >  source "fs/Kconfig"
 > 
-> I assume that crypto run here synchronously (not through asynchronous completion callback).
+> Any chance we can have this in drivers/Kconfig?
 > 
-> Herbert - is my guess ok? (The asynchronous handling in dm-crypt was the only part changed recently.)
-> (And I think that except crypto hw nobody uses asynchronous mode yet by default.)
+> Just wrap all of the file in an
+> 
+> if X86
+> .....
+> endif
+> 
+> So we keep all the drivers/ stuff in one Kconfig file and
+> not spread all over.
 
-Yes that's definitely synchronous.
+grep 'source "drivers"' arch/x86/Kconfig 
 
-Cheers,
--- 
-Visit Openswan at http://www.openswan.org/
-Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+source "drivers/acpi/Kconfig"
+source "drivers/cpuidle/Kconfig"
+source "drivers/idle/Kconfig"
+source "drivers/pci/pcie/Kconfig"
+source "drivers/pci/Kconfig"
+source "drivers/eisa/Kconfig"
+source "drivers/mca/Kconfig"
+source "drivers/pcmcia/Kconfig"
+source "drivers/pci/hotplug/Kconfig"
+source "drivers/Kconfig"
+source "drivers/firmware/Kconfig"
+source "drivers/x86/Kconfig"
+
+Are the lines above a good example, a bad example,
+or did I miss a nuance of the grand Kconfig design?
+
+I really don't care one way or another, but there
+seem to be examples of both ways...
+
+> > diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+> > index d1a47ad..a750519 100644
+> > --- a/arch/x86/Makefile
+> > +++ b/arch/x86/Makefile
+> > @@ -171,6 +171,9 @@ ifeq ($(CONFIG_X86_32),y)
+> >  drivers-$(CONFIG_FB) += arch/x86/video/
+> >  endif
+> >  
+> > +# x86 platform-specific drivers
+> > +drivers-y       += drivers/x86/
+> > +
+> 
+> Can this be included in drivers/Makefile like this:
+> 
+> obj-$(CONFIG_X86) += x86/
+> 
+> Notice that parisc already do the same. (Yes they have
+> a drivers/parisc dir).
+> 
+> We shall try to visit our tree in natural order when we build
+> and such a rule breaks this.
+> Also it is good to keep drivers/ stuff in one place.
+
+sure, that sounds reasonable.
+
+> > +++ b/drivers/x86/Kconfig
+> > @@ -0,0 +1,290 @@
+> > +#
+> > +# X86 Platform Specific Drivers
+> > +#
+> > +
+> > +menuconfig X86_PLATFORM_DEVICES
+> > +	bool "X86 Platform devices"
+> > +	default y
+> > +	---help---
+> > +	  Say Y here to get to see options for device drivers for various
+> > +	  x86 platforms, including vendor-specific laptop extension drivers.
+> > +	  This option alone does not add any kernel code.
+> > +
+> > +	  If you say N, all options in this submenu will be skipped and disabled.
+> > +
+> > +if X86_PLATFORM_DEVICES
+> > +
+> > +config ACER_WMI
+> > +        tristate "Acer WMI Laptop Extras (EXPERIMENTAL)"
+> spaces => tab
+> 
+> > +config ASUS_LAPTOP
+> > +        tristate "Asus Laptop Extras (EXPERIMENTAL)"
+> > +        depends on ACPI
+> spaces => tab
+> 
+> > +config FUJITSU_LAPTOP
+> > +        tristate "Fujitsu Laptop Extras"
+> > +        depends on ACPI
+> > +	depends on INPUT
+> > +        depends on BACKLIGHT_CLASS_DEVICE
+> > +        ---help---
+> spaces => tab
+> 
+> > +config HP_WMI
+> > +       tristate "HP WMI extras"
+> > +       depends on ACPI_WMI
+> > +       depends on INPUT
+> > +       depends on RFKILL
+> > +       help
+> > +         Say Y here if you want to support WMI-based hotkeys on HP laptops and
+> spaces => tab
+> 
+> > +	 to read data from WMI such as docking or ambient light sensor state.
+> > +
+> > +         To compile this driver as a module, choose M here: the module will
+> > +         be called hp-wmi.
+> > +
+> > +config MSI_LAPTOP
+> > +        tristate "MSI Laptop Extras"
+> > +        depends on ACPI
+> > +        depends on BACKLIGHT_CLASS_DEVICE
+> > +        ---help---
+> spaces => tab
+> 
+> > diff --git a/drivers/x86/Makefile b/drivers/x86/Makefile
+> > new file mode 100644
+> > index 0000000..4f14f28
+> > --- /dev/null
+> > +++ b/drivers/x86/Makefile
+> > @@ -0,0 +1,17 @@
+> > +#
+> > +# x86 Platform-Specific Drivers
+> > +#
+> > +obj- := x86.o	# Dummy rule to force built-in.o to be made
+> 
+> This is not needed. I can see divers/misc uses the same
+> but it is bogus.
+
+Yes, all of this text came from the existing drivers/misc/
+I'll fix it.
+
+thanks,
+-Len
