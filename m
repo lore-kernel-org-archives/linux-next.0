@@ -1,33 +1,49 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
+From: Greg KH <greg@kroah.com>
 Subject: Re: linux-next: Tree for December 2 (staging)
-Date: Tue, 02 Dec 2008 10:13:36 -0800
-Message-ID: <49357AD0.7090005@oracle.com>
-References: <20081202173101.e2b72437.sfr@canb.auug.org.au>
+Date: Tue, 2 Dec 2008 11:29:52 -0800
+Message-ID: <20081202192952.GA2329@kroah.com>
+References: <20081202173101.e2b72437.sfr@canb.auug.org.au> <49357AD0.7090005@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet12.oracle.com ([148.87.113.124]:44906 "EHLO
-	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751724AbYLBSNw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Dec 2008 13:13:52 -0500
-In-Reply-To: <20081202173101.e2b72437.sfr@canb.auug.org.au>
+Received: from kroah.org ([198.145.64.141]:43046 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1755033AbYLBTav (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Dec 2008 14:30:51 -0500
+Content-Disposition: inline
+In-Reply-To: <49357AD0.7090005@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg KH <greg@kroah.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Stephen Rothwell wrote:
-> Hi all,
+On Tue, Dec 02, 2008 at 10:13:36AM -0800, Randy Dunlap wrote:
+> Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20081201:
+> > 
+> > Today's tree fails the powerpc allyesconfig build.
 > 
-> Changes since 20081201:
-> 
-> Today's tree fails the powerpc allyesconfig build.
+> Greg,
+> FYI, the staging drivers still have lots of errors (as reported
+> over 1 week ago; yes, I know, holiday time), but I've stopped reporting
+> on them until I see some reason to think that fixes have been made.
 
-Greg,
-FYI, the staging drivers still have lots of errors (as reported
-over 1 week ago; yes, I know, holiday time), but I've stopped reporting
-on them until I see some reason to think that fixes have been made.
+I've fixed the errors that I can in my tree.  The majority of the errors
+you are seeing are ones that are caused by api changes in other trees
+that I can't fix up now in -staging until those changes go into Linus's
+tree.
 
--- 
-~Randy
+Which is fine, I'll fix them up when I push them to Linus, so you don't
+have to worry about them.
+
+Some of the other warnings are just due to horrible code, like the
+drivers/staging/otus/ driver that has some looney macros that cause lots
+of build warnings.  Those will take more work and I'm hoping that the
+community of developers that have been helping out with the staging tree
+will help there.
+
+thanks,
+
+greg k-h
