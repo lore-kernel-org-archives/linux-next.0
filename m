@@ -1,43 +1,53 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: v4l-dvb tree build failure
-Date: Tue, 2 Dec 2008 08:03:02 -0200
-Message-ID: <20081202080302.2f1180e8@pedra.chehab.org>
-References: <20081202103741.9b234e49.sfr@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: sparc tree build failure
+Date: Tue, 2 Dec 2008 21:52:25 +1030
+Message-ID: <200812022152.25989.rusty@rustcorp.com.au>
+References: <20081202172413.f14fe387.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:38031 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751557AbYLBKDn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Dec 2008 05:03:43 -0500
-In-Reply-To: <20081202103741.9b234e49.sfr@canb.auug.org.au>
+Received: from ozlabs.org ([203.10.76.45]:57077 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752863AbYLBLWb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Dec 2008 06:22:31 -0500
+In-Reply-To: <20081202172413.f14fe387.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, linux-next@vger.kernel.org
 
-On Tue, 2 Dec 2008 10:37:41 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Tuesday 02 December 2008 16:54:13 Stephen Rothwell wrote:
+> Hi Dave,
+>
+> Today's linux-next build (sparc defconfig) failed like this:
+>
+> lib/find_next_bit.c: In function 'find_last_bit':
+> lib/find_next_bit.c:183: error: implicit declaration of function '__fls'
 
-> Hi Mauro,
-> 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
-> 
-> drivers/media/video/em28xx/em28xx-video.c: In function 'em28xx_supports_audio_extension':
-> drivers/media/video/em28xx/em28xx-video.c:1966: error: 'EM28XX_NO_AUDIO' undeclared (first use in this function)
-> drivers/media/video/em28xx/em28xx-video.c:1966: error: (Each undeclared identifier is reported only once
-> drivers/media/video/em28xx/em28xx-video.c:1966: error: for each function it appears in.)
-> drivers/media/video/em28xx/em28xx-video.c:1977: error: 'EM28XX_AC97' undeclared (first use in this function)
-> drivers/media/video/em28xx/em28xx-video.c:1981: error: 'EM28XX_I2S_3_SAMPLE_RATES' undeclared (first use in this function)
-> drivers/media/video/em28xx/em28xx-video.c:1985: error: 'EM28XX_I2S_5_SAMPLE_RATES' undeclared (first use in this function)
-> 
-> I have dropped the v4l-dvb tree again today.
+Thanks Stephen... that's a surprise.
 
-I suspect you've pulled from my tree while I was testing it, or before my last
-update yesterday night. Anyway, I've re-merged my patches at my linux-next and
-tested. Everything seems to be ok now.
+Dave, I think this is a sparc issue.
 
+sparc: asm/bitops.h should define __fls
 
-Cheers,
-Mauro
+bitops_64.h includes the generic one; pretty sure 32 should too.
+
+(Found by using __fls in generic code and breaking sparc defconfig build:
+ thanks Stephen and linux-next!)
+
+Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
+
+diff --git a/arch/sparc/include/asm/bitops_32.h b/arch/sparc/include/asm/bitops_32.h
+--- a/arch/sparc/include/asm/bitops_32.h
++++ b/arch/sparc/include/asm/bitops_32.h
+@@ -98,6 +98,7 @@ static inline void change_bit(unsigned l
+ #include <asm-generic/bitops/sched.h>
+ #include <asm-generic/bitops/ffs.h>
+ #include <asm-generic/bitops/fls.h>
++#include <asm-generic/bitops/__fls.h>
+ #include <asm-generic/bitops/fls64.h>
+ #include <asm-generic/bitops/hweight.h>
+ #include <asm-generic/bitops/lock.h>
