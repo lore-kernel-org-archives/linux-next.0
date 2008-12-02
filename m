@@ -1,52 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the s390 tree
-Date: Wed, 3 Dec 2008 09:09:00 +1100
-Message-ID: <20081203090900.f09d8a6c.sfr@canb.auug.org.au>
-References: <20081202093920.7f700183.sfr@canb.auug.org.au>
-	<1228205531.3250.3.camel@localhost>
+Subject: Re: linux-next: v4l-dvb tree build failure
+Date: Wed, 3 Dec 2008 09:23:54 +1100
+Message-ID: <20081203092354.b3727f05.sfr@canb.auug.org.au>
+References: <20081202103741.9b234e49.sfr@canb.auug.org.au>
+	<20081202080302.2f1180e8@pedra.chehab.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__3_Dec_2008_09_09_00_+1100_4OiVaAkpgo++t9Tg"
+ boundary="Signature=_Wed__3_Dec_2008_09_23_54_+1100_PFk4FelE4CbeHZrU"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49087 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59584 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751027AbYLBWJL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Dec 2008 17:09:11 -0500
-In-Reply-To: <1228205531.3250.3.camel@localhost>
+	id S1752376AbYLBWYG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Dec 2008 17:24:06 -0500
+In-Reply-To: <20081202080302.2f1180e8@pedra.chehab.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: schwidefsky@de.ibm.com
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, linux-next@vger.kernel.org, Swen Schillig <swen@vnet.ibm.com>, James Bottomley <James.Bottomley@HansenPartnership.com>, Christof Schmitt <christof.schmitt@de.ibm.com>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Wed__3_Dec_2008_09_09_00_+1100_4OiVaAkpgo++t9Tg
+--Signature=_Wed__3_Dec_2008_09_23_54_+1100_PFk4FelE4CbeHZrU
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Martin,
+Hi Mauro,
 
-On Tue, 02 Dec 2008 09:12:11 +0100 Martin Schwidefsky <schwidefsky@de.ibm.c=
-om> wrote:
+On Tue, 2 Dec 2008 08:03:02 -0200 Mauro Carvalho Chehab <mchehab@infradead.=
+org> wrote:
 >
-> Your fixup is fine.
+> I suspect you've pulled from my tree while I was testing it, or before my=
+ last
+> update yesterday night. Anyway, I've re-merged my patches at my linux-nex=
+t and
+> tested. Everything seems to be ok now.
 
-Thanks.
+You should do things in this order:
+	write, and test your own patches
+	gather patches form other people
+	make sure all the patches have been posted on some appropriate
+		mailing list for review
+	put all the patches in a private tree
+	test
+	publish the tree for linux-next (and others)
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__3_Dec_2008_09_09_00_+1100_4OiVaAkpgo++t9Tg
+--Signature=_Wed__3_Dec_2008_09_23_54_+1100_PFk4FelE4CbeHZrU
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkk1sfwACgkQjjKRsyhoI8x/1QCfStXel4wXFs1u0Xnbpk28bw2G
-/hsAoKIyQ8UQ9lrjyzhFYUlh0cnzOPUf
-=T7qX
+iEYEARECAAYFAkk1tXoACgkQjjKRsyhoI8wL3QCcDaS6HvqQ6PGfq/LcC2WWbfrL
+we4AoJ5fWP4W/bvWEMCG/fg9zDAILYm3
+=MFaU
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__3_Dec_2008_09_09_00_+1100_4OiVaAkpgo++t9Tg--
+--Signature=_Wed__3_Dec_2008_09_23_54_+1100_PFk4FelE4CbeHZrU--
