@@ -1,66 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: kbuild tree build failure
-Date: Wed, 3 Dec 2008 11:36:50 +1100
-Message-ID: <20081203113650.d4245a05.sfr@canb.auug.org.au>
-References: <20081126154206.31958aed.sfr@canb.auug.org.au>
-	<20081126210657.GA11963@uranus.ravnborg.org>
+Subject: linux-next: manual merge of the cifs tree
+Date: Wed, 3 Dec 2008 13:51:01 +1100
+Message-ID: <20081203135101.cded370f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__3_Dec_2008_11_36_50_+1100_XIhLuSYjob2DjQzT"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34246 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35470 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753234AbYLCAhA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Dec 2008 19:37:00 -0500
-In-Reply-To: <20081126210657.GA11963@uranus.ravnborg.org>
+	id S1753483AbYLCCvI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Dec 2008 21:51:08 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: linux-next@vger.kernel.org
+To: Steve French <smfrench@gmail.com>, linux-cifs-client@lists.samba.org
+Cc: linux-next@vger.kernel.org, Jeff Layton <jlayton@redhat.com>, Harvey Harrison <harvey.harrison@gmail.com>, "David S. Miller" <davem@davemloft.net>
 
---Signature=_Wed__3_Dec_2008_11_36_50_+1100_XIhLuSYjob2DjQzT
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Steve,
 
-Hi Sam,
+Today's linux-next merge of the cifs tree got a conflict in
+fs/cifs/connect.c between commit be859405487324ed548f1ba11dc949b8230ab991
+("fs: replace NIPQUAD()") from the net tree and commits
+c14eef12edfa4b495fe9f6e81571759fe720db1d ("cifs: account for IPv6 in
+ses->serverName and clean up netbios name handling") and
+6f694429f03ea9b9d2e253fdad2fc3b4cb801195 ("cifs: move allocation of new
+TCP_Server_Info into separate function") from the cifs tree.
 
-On Wed, 26 Nov 2008 22:06:57 +0100 Sam Ravnborg <sam@ravnborg.org> wrote:
->
-> On Wed, Nov 26, 2008 at 03:42:06PM +1100, Stephen Rothwell wrote:
-> > Hi Sam,
-> >=20
-> > Today's linux-next build (x86_64 allmodconfig) failed like this:
-> >=20
-> > In file included from arch/x86/include/asm/processor.h:15,
-> >                  from include/linux/prefetch.h:14,
-> >                  from include/linux/list.h:6,
-> >                  from include/linux/module.h:9,
-> >                  from kernel/configs.mod.c:1:
-> > arch/x86/include/asm/current.h:23: error: expected '=3D', ',', ';', 'as=
-m' or '__attribute__' before 'struct'
-> >=20
-> > and went rapidly down hill from there.
->=20
-> I will cook up a fix tomorrow if day-time job does not become night-time.
-
-I am still getting the same errors ...
-
---=20
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__3_Dec_2008_11_36_50_+1100_XIhLuSYjob2DjQzT
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkk11KIACgkQjjKRsyhoI8ysnQCgmc88gxFfot2T/zKqFeuXHDR9
-3IMAoJVH+sbKeRuUNqIOn1T1cjVrDTF9
-=BIHu
------END PGP SIGNATURE-----
-
---Signature=_Wed__3_Dec_2008_11_36_50_+1100_XIhLuSYjob2DjQzT--
+diff --cc fs/cifs/connect.c
+index 204bd13,3519420..0000000
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@@ -2228,8 -2269,12 +2269,12 @@@ cifs_mount(struct super_block *sb, stru
+  
+  		/* new SMB session uses our srvTcp ref */
+  		pSesInfo->server = srvTcp;
+- 		sprintf(pSesInfo->serverName, "%pI4",
+- 			&sin_server->sin_addr.s_addr);
++ 		if (srvTcp->addr.sockAddr6.sin6_family == AF_INET6)
+ -			sprintf(pSesInfo->serverName, NIP6_FMT,
+ -				NIP6(srvTcp->addr.sockAddr6.sin6_addr));
+++			sprintf(pSesInfo->serverName, "%pI6",
+++				&srvTcp->addr.sockAddr6.sin6_addr);
++ 		else
+ -			sprintf(pSesInfo->serverName, NIPQUAD_FMT,
+ -				NIPQUAD(srvTcp->addr.sockAddr.sin_addr.s_addr));
+++			sprintf(pSesInfo->serverName, "%pI4",
+++				&srvTcp->addr.sockAddr.sin_addr.s_addr);
+  
+  		write_lock(&cifs_tcp_ses_lock);
+  		list_add(&pSesInfo->smb_ses_list, &srvTcp->smb_ses_list);
