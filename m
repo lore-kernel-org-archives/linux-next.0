@@ -1,44 +1,61 @@
-From: Paul Moore <paul.moore@hp.com>
-Subject: Re: linux-next: lblnet tree build failure
-Date: Wed, 3 Dec 2008 09:51:06 -0500
-Message-ID: <200812030951.06686.paul.moore@hp.com>
-References: <20081203162202.01a3088f.sfr@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: m68k 8390 breakage (was: Re: linux-next: Tree for December 3)
+Date: Wed, 3 Dec 2008 20:49:39 +0100 (CET)
+Message-ID: <Pine.LNX.4.64.0812032042480.10635@anakin>
+References: <20081203183602.c06f8c39.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from g5t0007.atlanta.hp.com ([15.192.0.44]:30108 "EHLO
-	g5t0007.atlanta.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751930AbYLCOvJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Dec 2008 09:51:09 -0500
-In-Reply-To: <20081203162202.01a3088f.sfr@canb.auug.org.au>
-Content-Disposition: inline
+Received: from winston.telenet-ops.be ([195.130.137.75]:55492 "EHLO
+	winston.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751227AbYLCTtn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Dec 2008 14:49:43 -0500
+In-Reply-To: <20081203183602.c06f8c39.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Stephen Hemminger <shemminger@vyatta.com>, "David S. Miller" <davem@davemloft.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, netdev@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wednesday 03 December 2008 12:22:02 am Stephen Rothwell wrote:
-> Hi Paul,
->
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
->
-> security/smack/smackfs.c: In function 'smk_unlbl_ambient':
-> security/smack/smackfs.c:386: warning: passing argument 2 of
-> 'netlbl_cfg_map_del' makes integer from pointer without a cast
-> security/smack/smackfs.c:386: error: too few arguments to function
-> 'netlbl_cfg_map_del'
->
-> Caused by commit dc9d06d6226e4855c50961940498427acb4f9866 ("netlabel:
-> Update kernel configuration API").
->
-> I have dropped the lblnet tree for today.
+On Wed, 3 Dec 2008, Stephen Rothwell wrote:
+> Status of my local build tests will be at
+> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+> advice about cross compilers/configs that work, we are always open to add
+> more builds.
 
-My apologies (again), I'll get that fixed up today.  Casey, the Smack 
-maintainer, and I have been changing things around a fair amount lately 
-and it looks like I missed something in the last update.
+Since a few days, m68k defconfig and allmodconfig give:
 
--- 
-paul moore
-linux @ hp
+| drivers/net/lib8390.c:1014: undefined reference to `ei_start_xmit'
+| drivers/net/lib8390.c:1015: undefined reference to `ei_get_stats'
+| drivers/net/lib8390.c:1016: undefined reference to `ei_set_multicast_list'
+
+(cfr. e.g. http://kisskb.ellerman.id.au/kisskb/buildresult/58795/)
+
+git bisect run on "make ARCH=m68k mac_defconfig vmlinux" tells me:
+
+8884c092e5e4f9a1b6e44f2e02a3eb5481af87ab is first bad commit
+commit 8884c092e5e4f9a1b6e44f2e02a3eb5481af87ab
+Author: Stephen Hemminger <shemminger@vyatta.com>
+Date:   Tue Nov 25 18:12:49 2008 -0800
+
+    8390: add common net_device ops
+
+    Fix the defactoring of ei_XXX functions in 8390 and 8390p.
+    Remove the tx_timeout hack since no driver including the 3c503
+    overrides tx_timeout at this time, looks like a legacy thing.
+
+    Also, since several drivers all have same hooks, provide common
+    netdev_ops.
+
+    Signed-off-by: Stephen Hemminger <shemminger@vyatta.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
