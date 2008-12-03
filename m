@@ -1,109 +1,45 @@
 From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Subject: Re: next-20081203 build failure, when building xfs_file.o
-Date: Wed, 3 Dec 2008 19:45:55 +0530
-Message-ID: <20081203141555.GB5400@linux.vnet.ibm.com>
-References: <20081203183602.c06f8c39.sfr@canb.auug.org.au> <20081203124104.GA5400@linux.vnet.ibm.com> <20081203125534.GA8007@infradead.org>
+Subject: Re: linux-next: Tree for December 2 (mfd)
+Date: Wed, 3 Dec 2008 19:50:00 +0530
+Message-ID: <20081203142000.GC5400@linux.vnet.ibm.com>
+References: <20081202173101.e2b72437.sfr@canb.auug.org.au> <4935771F.6050500@oracle.com>
 Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from E23SMTP06.au.ibm.com ([202.81.18.175]:53736 "EHLO
+Received: from E23SMTP06.au.ibm.com ([202.81.18.175]:55569 "EHLO
 	e23smtp06.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751078AbYLCOQJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Dec 2008 09:16:09 -0500
+	with ESMTP id S1751487AbYLCO00 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Dec 2008 09:26:26 -0500
 Content-Disposition: inline
-In-Reply-To: <20081203125534.GA8007@infradead.org>
+In-Reply-To: <4935771F.6050500@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, xfs@oss.sgi.com
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sameo@openedhand.com
 
-* Christoph Hellwig <hch@infradead.org> [2008-12-03 07:55:34]:
+* Randy Dunlap <randy.dunlap@oracle.com> [2008-12-02 09:57:51]:
 
-> On Wed, Dec 03, 2008 at 06:11:04PM +0530, Kamalesh Babulal wrote:
-> > Hi Stephen,
+> Stephen Rothwell wrote:
+> > Hi all,
 > > 
-> > 	next-20081203 kernel build fails on x86 with build failure
+> > Changes since 20081201:
 > > 
-> > In file included from fs/xfs/linux-2.6/xfs_file.c:39:
+> > Today's tree fails the powerpc allyesconfig build.
 > 
-> This is the fix I submitted for it yesterday:
+> 
+> allyesconfig on x86_64 fails with:
+> 
+> linux-next-20081202/drivers/mfd/twl4030-core.c:682: undefined reference to `clk_get_rate'
+> linux-next-20081202/drivers/mfd/twl4030-core.c:683: undefined reference to `clk_put'
+
+The x86 allyesconfig build of next-20081203 kernel fails with same build
+failure.
+
+> 
 > 
 > -- 
-> 
-> fix compile on 32 bit systems
-> 
-> The recent compat patches make xfs_file.c include xfs_ioctl32.h unconditional,
-> which breaks the build on 32 bit systems which don't have the various compat
-> defintions.
-> 
-> Remove the include and move the defintion of xfs_file_compat_ioctl to
-> xfs_ioctl.h so that we can avoid including all the compat defintions in
-> xfs_file.c
-> 
-
-
-Hi Chirstoph,
-
-	Thanks, the patch fixes the build failure.
-
-  Tested-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> 
-> Index: xfs-master/fs/xfs/linux-2.6/xfs_file.c
-> ===================================================================
-> --- xfs-master.orig/fs/xfs/linux-2.6/xfs_file.c	2008-12-02 11:43:38.000000000 +0100
-> +++ xfs-master/fs/xfs/linux-2.6/xfs_file.c	2008-12-02 11:44:06.000000000 +0100
-> @@ -36,9 +36,9 @@
->  #include "xfs_inode.h"
->  #include "xfs_error.h"
->  #include "xfs_rw.h"
-> -#include "xfs_ioctl32.h"
->  #include "xfs_vnodeops.h"
->  #include "xfs_da_btree.h"
-> +#include "xfs_ioctl.h"
-> 
->  #include <linux/dcache.h>
->  #include <linux/smp_lock.h>
-> Index: xfs-master/fs/xfs/linux-2.6/xfs_ioctl.h
-> ===================================================================
-> --- xfs-master.orig/fs/xfs/linux-2.6/xfs_ioctl.h	2008-12-02 11:44:10.000000000 +0100
-> +++ xfs-master/fs/xfs/linux-2.6/xfs_ioctl.h	2008-12-02 11:44:52.000000000 +0100
-> @@ -67,4 +67,16 @@ xfs_attrmulti_attr_remove(
->  	char			*name,
->  	__uint32_t		flags);
-> 
-> +extern long
-> +xfs_file_compat_ioctl(
-> +	struct file		*file,
-> +	unsigned int		cmd,
-> +	unsigned long		arg);
-> +
-> +extern long
-> +xfs_file_compat_ioctl_invis(
-> +	struct file		*file,
-> +	unsigned int		cmd,
-> +	unsigned long		arg);
-> +
->  #endif
-> Index: xfs-master/fs/xfs/linux-2.6/xfs_ioctl32.h
-> ===================================================================
-> --- xfs-master.orig/fs/xfs/linux-2.6/xfs_ioctl32.h	2008-12-02 11:44:10.000000000 +0100
-> +++ xfs-master/fs/xfs/linux-2.6/xfs_ioctl32.h	2008-12-02 11:44:18.000000000 +0100
-> @@ -20,9 +20,6 @@
-> 
->  #include <linux/compat.h>
-> 
-> -extern long xfs_file_compat_ioctl(struct file *, unsigned, unsigned long);
-> -extern long xfs_file_compat_invis_ioctl(struct file *, unsigned, unsigned long);
-> -
->  /*
->   * on 32-bit arches, ioctl argument structures may have different sizes
->   * and/or alignment.  We define compat structures which match the
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> ~Randy
 
 -- 
 Thanks & Regards,
