@@ -1,71 +1,92 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: sparc tree build failure
-Date: Thu, 4 Dec 2008 19:54:24 +1100
-Message-ID: <20081204195424.1cbd42a7.sfr@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: XFS breakage on m68k (was: Re: linux-next: Tree for December 3)
+Date: Thu, 4 Dec 2008 10:02:15 +0100 (CET)
+Message-ID: <Pine.LNX.4.64.0812040956370.10635@anakin>
+References: <20081203183602.c06f8c39.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__4_Dec_2008_19_54_24_+1100__fgbpGrg1bz9UWFd"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57860 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751810AbYLDIyd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 4 Dec 2008 03:54:33 -0500
+Received: from monty.telenet-ops.be ([195.130.132.56]:54844 "EHLO
+	monty.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753417AbYLDJCU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Dec 2008 04:02:20 -0500
+In-Reply-To: <20081203183602.c06f8c39.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
+To: Eric Sandeen <sandeen@sandeen.net>, Christoph Hellwig <hch@lst.de>, Lachlan McIlroy <lachlan@sgi.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, xfs@oss.sgi.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Thu__4_Dec_2008_19_54_24_+1100__fgbpGrg1bz9UWFd
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 3 Dec 2008, Stephen Rothwell wrote:
+> Status of my local build tests will be at
+> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+> advice about cross compilers/configs that work, we are always open to add
+> more builds.
 
-Hi Dave,
+On m68k (32-bit only, no compat32), XFS fails to build in linux-next:
 
-Today's linux-next build (sparc64 defconfig) failed like this:
+| fs/xfs/linux-2.6/xfs_ioctl32.h:50: error: syntax error before 'compat_time_t'
+| fs/xfs/linux-2.6/xfs_ioctl32.h:52: error: syntax error before '}' token
+| fs/xfs/linux-2.6/xfs_ioctl32.h:63: error: syntax error before 'compat_xfs_bstime_t'
+| fs/xfs/linux-2.6/xfs_ioctl32.h:65: error: syntax error before 'bs_ctime'
+| fs/xfs/linux-2.6/xfs_ioctl32.h:76: error: syntax error before '}' token
+| fs/xfs/linux-2.6/xfs_ioctl32.h:79: error: syntax error before 'compat_uptr_t'
+| fs/xfs/linux-2.6/xfs_ioctl32.h:81: error: syntax error before 'ubuffer'
+| fs/xfs/linux-2.6/xfs_ioctl32.h:82: error: syntax error before 'ocount'
+| fs/xfs/linux-2.6/xfs_ioctl32.h:94: error: syntax error before 'compat_uptr_t'
+| fs/xfs/linux-2.6/xfs_ioctl32.h:96: error: syntax error before 'ihandle'
+| fs/xfs/linux-2.6/xfs_ioctl32.h:98: error: syntax error before 'ohandle'
+| fs/xfs/linux-2.6/xfs_ioctl32.h:99: error: syntax error before 'ohandlen'
+| fs/xfs/linux-2.6/xfs_ioctl32.h:121: error: syntax error before 'compat_xfs_bstat_t'
+| fs/xfs/linux-2.6/xfs_ioctl32.h:127: error: field 'hreq' has incomplete type
+| fs/xfs/linux-2.6/xfs_ioctl32.h:131: error: syntax error before 'compat_uptr_t'
+| fs/xfs/linux-2.6/xfs_ioctl32.h:142: error: syntax error before 'compat_uptr_t'
+| fs/xfs/linux-2.6/xfs_ioctl32.h:146: error: syntax error before '}' token
+| fs/xfs/linux-2.6/xfs_ioctl32.h:149: error: field 'hreq' has incomplete type
+| fs/xfs/linux-2.6/xfs_ioctl32.h:152: error: syntax error before 'compat_uptr_t'
+| fs/xfs/linux-2.6/xfs_ioctl32.h:159: error: field 'hreq' has incomplete type
+| fs/xfs/linux-2.6/xfs_ioctl32.h:161: error: syntax error before 'compat_uptr_t'
+| distcc[28223] ERROR: compile fs/xfs/linux-2.6/xfs_file.c on localhost failed
 
-  HOSTCC  scripts/basic/fixdep
-  HOSTCC  scripts/basic/docproc
-  HOSTCC  scripts/basic/hash
-  GEN     /scratch/sfr/sparc64_defconfig/Makefile
-  HOSTCC  scripts/kconfig/conf.o
-  HOSTCC  scripts/kconfig/kxgettext.o
-  SHIPPED scripts/kconfig/zconf.tab.c
-  SHIPPED scripts/kconfig/lex.zconf.c
-  SHIPPED scripts/kconfig/zconf.hash.c
-  HOSTCC  scripts/kconfig/zconf.tab.o
-  HOSTLD  scripts/kconfig/conf
-*** Default configuration is based on 'sparc64_defconfig'
-***
-*** Can't find default configuration "arch/sparc/configs/sparc64_defconfig"!
-***
+(http://kisskb.ellerman.id.au/kisskb/buildresult/58941/)
 
-Caused, I suspect by commit 60f2e8ffcf7291fc7df05dd91caf84d75c5181c5
-("sparc,sparc64: unify Makefile") which I reverted (along with
-commit 9251dc5153ee5dae27e81835a35f3b7c0a73259e "sparc,sparc64: unify
-prom/" which depended on it).  But that just got me to this error:
+or (with a different compiler):
 
-cc1: fatal error: opening output file arch/sparc64/kernel/../../sparc/kerne=
-l/vmlinux.lds: No such file or directory
+| In file included from fs/xfs/linux-2.6/xfs_file.c:39:
+| fs/xfs/linux-2.6/xfs_ioctl32.h:50: error: expected specifier-qualifier-list before 'compat_time_t'
+| fs/xfs/linux-2.6/xfs_ioctl32.h:79: error: expected specifier-qualifier-list before 'compat_uptr_t'
+| fs/xfs/linux-2.6/xfs_ioctl32.h:94: error: expected specifier-qualifier-list before 'compat_uptr_t'
+| make[2]: *** [fs/xfs/linux-2.6/xfs_file.o] Error 1
 
-(I build in a separate object directory.)
+git bisect run says:
 
-So I reverted the whole sparc tree for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+ffae263a640b736a7206a0d7bd14ab44eb58cd28 is first bad commit
+commit ffae263a640b736a7206a0d7bd14ab44eb58cd28
+Author: sandeen@sandeen.net <sandeen@sandeen.net>
+Date:   Tue Nov 25 21:20:07 2008 -0600
 
---Signature=_Thu__4_Dec_2008_19_54_24_+1100__fgbpGrg1bz9UWFd
-Content-Type: application/pgp-signature
+    [XFS] Move compat ioctl structs & numbers into xfs_ioctl32.h
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+    This makes the c file less cluttered and a bit more
+    readable.   Consistently name the ioctl number
+    macros with "_32" and the compatibility stuctures
+    with "_compat."  Rename the helpers which simply
+    copy in the arg with "_copyin" for easy identification.
 
-iEYEARECAAYFAkk3msAACgkQjjKRsyhoI8y4VgCeLIR9Hq8OAap86K5/D31TUq+A
-miwAoJyTYXzHilKmB3nLK2SE4HkL+Let
-=HXYe
------END PGP SIGNATURE-----
+    Finally, for a few of the existing helpers, modify them
+    so that they directly call the native ioctl helper
+    after userspace argument fixup.
 
---Signature=_Thu__4_Dec_2008_19_54_24_+1100__fgbpGrg1bz9UWFd--
+    Signed-off-by: Eric Sandeen <sandeen@sandeen.net>
+    Reviewed-by: Christoph Hellwig <hch@lst.de>
+    Signed-off-by: Lachlan McIlroy <lachlan@sgi.com>
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
