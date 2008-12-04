@@ -1,60 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the driver-core tree
-Date: Thu, 4 Dec 2008 10:44:18 +1100
-Message-ID: <20081204104418.97f848b4.sfr@canb.auug.org.au>
+Subject: Re: linux-next: lblnet tree build failure
+Date: Thu, 4 Dec 2008 11:04:13 +1100
+Message-ID: <20081204110413.326c548d.sfr@canb.auug.org.au>
+References: <20081203162202.01a3088f.sfr@canb.auug.org.au>
+	<200812030951.06686.paul.moore@hp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__4_Dec_2008_11_04_13_+1100_uNpeB25d15y/RT=n"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34033 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34541 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754570AbYLCXo0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Dec 2008 18:44:26 -0500
+	id S1757853AbYLDAEW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Dec 2008 19:04:22 -0500
+In-Reply-To: <200812030951.06686.paul.moore@hp.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, Kumar Gala <galak@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@ozlabs.org
+To: Paul Moore <paul.moore@hp.com>
+Cc: linux-next@vger.kernel.org
 
-Hi Greg,
+--Signature=_Thu__4_Dec_2008_11_04_13_+1100_uNpeB25d15y/RT=n
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the driver-core tree got a conflict in
-arch/powerpc/platforms/85xx/mpc85xx_mds.c between commit
-24a99596f7465274a8e65ddd29a7d9028969b9f9 ("powerpc/85xx: Fix compile
-warnings in mpc85xx_mds.c") from the galak tree and commit
-f58f23751464d095f9942304bc5f6072b79a2cc3 ("powerpc: struct device -
-replace bus_id with dev_name(), dev_set_name()") from the driver-core
-tree.
+Hi Paul,
 
-I fixed it up (see below) and can carry the fix as necessary.
+On Wed, 3 Dec 2008 09:51:06 -0500 Paul Moore <paul.moore@hp.com> wrote:
+>=20
+> My apologies (again), I'll get that fixed up today.  Casey, the Smack=20
+> maintainer, and I have been changing things around a fair amount lately=20
+> and it looks like I missed something in the last update.
 
-Paul, maybe you should apply the patch from the driver-core tree as it
-was cc'd to you and all its prerequisites are upstream.
--- 
+Thanks.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/powerpc/platforms/85xx/mpc85xx_mds.c
-index b915bf5,80c55a5..0000000
---- a/arch/powerpc/platforms/85xx/mpc85xx_mds.c
-+++ b/arch/powerpc/platforms/85xx/mpc85xx_mds.c
-@@@ -241,15 -241,13 +241,15 @@@ static int __init board_fixups(void
-  		mdio = of_find_compatible_node(NULL, NULL, compstrs[i]);
-  
-  		of_address_to_resource(mdio, 0, &res);
-- 		snprintf(phy_id, BUS_ID_SIZE, "%llx:%02x",
- -		snprintf(phy_id, sizeof(phy_id), "%x:%02x", res.start, 1);
-++		snprintf(phy_id, sizeof(phy_id), "%llx:%02x",
- +			(unsigned long long)res.start, 1);
-  
-  		phy_register_fixup_for_id(phy_id, mpc8568_fixup_125_clock);
-  		phy_register_fixup_for_id(phy_id, mpc8568_mds_phy_fixups);
-  
-  		/* Register a workaround for errata */
-- 		snprintf(phy_id, BUS_ID_SIZE, "%llx:%02x",
- -		snprintf(phy_id, sizeof(phy_id), "%x:%02x", res.start, 7);
-++		snprintf(phy_id, sizeof(phy_id), "%llx:%02x",
- +			(unsigned long long)res.start, 7);
-  		phy_register_fixup_for_id(phy_id, mpc8568_mds_phy_fixups);
-  
-  		of_node_put(mdio);
+--Signature=_Thu__4_Dec_2008_11_04_13_+1100_uNpeB25d15y/RT=n
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkk3Hn0ACgkQjjKRsyhoI8yHbQCfRNeo/IwakO9G/GtFGSpnPpvc
+s1UAn3SiihN/eoP/vxIYjmlFMzf1xfqK
+=/zIH
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__4_Dec_2008_11_04_13_+1100_uNpeB25d15y/RT=n--
