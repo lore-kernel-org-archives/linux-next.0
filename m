@@ -1,47 +1,42 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: XFS breakage on m68k (was: Re: linux-next: Tree for December 3)
-Date: Thu, 4 Dec 2008 14:23:27 +0100
-Message-ID: <20081204132327.GA12971@lst.de>
-References: <20081203183602.c06f8c39.sfr@canb.auug.org.au> <Pine.LNX.4.64.0812040956370.10635@anakin> <20081204121330.GA18815@infradead.org> <20081204234603.b5a28cd6.sfr@canb.auug.org.au> <20081204125006.GA13411@infradead.org>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Subject: next-2008-12-04: ca0106 compile fix
+Date: Thu, 4 Dec 2008 17:00:10 +0300
+Message-ID: <20081204140010.GA13953@x200.localdomain>
+References: <20081204200745.eff0ac87.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from verein.lst.de ([213.95.11.210]:58630 "EHLO verein.lst.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754174AbYLDNdE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 4 Dec 2008 08:33:04 -0500
+Received: from ug-out-1314.google.com ([66.249.92.173]:4534 "EHLO
+	ug-out-1314.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754501AbYLDNz7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Dec 2008 08:55:59 -0500
+Received: by ug-out-1314.google.com with SMTP id 39so3773884ugf.37
+        for <linux-next@vger.kernel.org>; Thu, 04 Dec 2008 05:55:57 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <20081204125006.GA13411@infradead.org>
+In-Reply-To: <20081204200745.eff0ac87.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Geert Uytterhoeven <geert@linux-m68k.org>, Eric Sandeen <sandeen@sandeen.net>, Christoph Hellwig <hch@lst.de>, Lachlan McIlroy <lachlan@sgi.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, xfs@oss.sgi.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, tiwai@suse.de
 
-On Thu, Dec 04, 2008 at 07:50:06AM -0500, Christoph Hellwig wrote:
-> Yeah, but Niv fixed it up and the correct version is not in the xfs git
-> tree.
+Please, fold into 2c5dd6425e72a6e97d9fb9fee9910a58f02d77df
+aka "ALSA: ca0106 - Add power-amangement support"
+			      ^^
 
-Hah, he noticed the bug but the wrong version got checked in anyway.
+  CC [M]  sound/pci/ca0106/ca0106_main.o
+sound/pci/ca0106/ca0106_main.c:1809: error: 'snd_ca0106_suspend' undeclared here (not in a function)
+sound/pci/ca0106/ca0106_main.c:1810: error: 'snd_ca0106_resume' undeclared here (not in a function)
 
-Here's the fix (for todays xfs tree):
-
--- 
-
-[XFS] Fix compile with CONFIG_COMPAT enabled
-
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-
-Index: xfs/fs/xfs/linux-2.6/xfs_ioctl.h
-===================================================================
---- xfs.orig/fs/xfs/linux-2.6/xfs_ioctl.h	2008-12-04 14:19:32.000000000 +0100
-+++ xfs/fs/xfs/linux-2.6/xfs_ioctl.h	2008-12-04 14:19:38.000000000 +0100
-@@ -74,7 +74,7 @@ xfs_file_compat_ioctl(
- 	unsigned long		arg);
+--- a/sound/pci/ca0106/ca0106_main.c
++++ b/sound/pci/ca0106/ca0106_main.c
+@@ -1806,8 +1806,10 @@ static struct pci_driver driver = {
+ 	.id_table = snd_ca0106_ids,
+ 	.probe = snd_ca0106_probe,
+ 	.remove = __devexit_p(snd_ca0106_remove),
++#ifdef CONFIG_PM
+ 	.suspend = snd_ca0106_suspend,
+ 	.resume = snd_ca0106_resume,
++#endif
+ };
  
- extern long
--xfs_file_compat_ioctl_invis(
-+xfs_file_compat_invis_ioctl(
- 	struct file		*file,
- 	unsigned int		cmd,
- 	unsigned long		arg);
+ // initialization of the module
