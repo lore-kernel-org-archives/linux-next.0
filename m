@@ -1,60 +1,62 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: Tree for December 2 (staging)
-Date: Wed, 3 Dec 2008 20:38:22 -0800
-Message-ID: <20081204043822.GF18027@kroah.com>
-References: <20081202173101.e2b72437.sfr@canb.auug.org.au> <49357AD0.7090005@oracle.com> <20081202192952.GA2329@kroah.com> <4936F7C8.1000400@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: backlight tree build failure
+Date: Thu, 4 Dec 2008 16:30:59 +1100
+Message-ID: <20081204163059.98d02c8c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__4_Dec_2008_16_30_59_+1100_1WBgl.+wzKhqSALg"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:51881 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1755370AbYLDEs0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Dec 2008 23:48:26 -0500
-Content-Disposition: inline
-In-Reply-To: <4936F7C8.1000400@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36640 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751638AbYLDFbJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 4 Dec 2008 00:31:09 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Richard Purdie <rpurdie@rpsys.net>
+Cc: linux-next@vger.kernel.org
 
-On Wed, Dec 03, 2008 at 01:19:04PM -0800, Randy Dunlap wrote:
-> Greg KH wrote:
-> > On Tue, Dec 02, 2008 at 10:13:36AM -0800, Randy Dunlap wrote:
-> >> Stephen Rothwell wrote:
-> >>> Hi all,
-> >>>
-> >>> Changes since 20081201:
-> >>>
-> >>> Today's tree fails the powerpc allyesconfig build.
-> >> Greg,
-> >> FYI, the staging drivers still have lots of errors (as reported
-> >> over 1 week ago; yes, I know, holiday time), but I've stopped reporting
-> >> on them until I see some reason to think that fixes have been made.
-> > 
-> > I've fixed the errors that I can in my tree.  The majority of the errors
-> > you are seeing are ones that are caused by api changes in other trees
-> > that I can't fix up now in -staging until those changes go into Linus's
-> > tree.
-> > 
-> > Which is fine, I'll fix them up when I push them to Linus, so you don't
-> > have to worry about them.
-> > 
-> > Some of the other warnings are just due to horrible code, like the
-> > drivers/staging/otus/ driver that has some looney macros that cause lots
-> > of build warnings.  Those will take more work and I'm hoping that the
-> > community of developers that have been helping out with the staging tree
-> > will help there.
-> 
-> So this one is an API change or it's fixed in your tree but not in linux-next
-> of 20081203?
-> 
-> drivers/built-in.o: In function `enable_oled':
-> asus_oled.c:(.text+0x52c38): undefined reference to `usb_bulk_msg'
+--Signature=_Thu__4_Dec_2008_16_30_59_+1100_1WBgl.+wzKhqSALg
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I thought this was fixed...
+Hi Richard,
 
-Ah, tricky, the dependancy is on CONFIG_USB_SUPPORT, not CONFIG_USB,
-wierd that this snuck through.  I'll go fix this up, thanks for letting
-me know.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-greg k-h
+drivers/video/backlight/tdo24m.c:17:30: error: linux/spi/tdo24m.h: No such =
+file or directory
+drivers/video/backlight/tdo24m.c: In function 'tdo24m_probe':
+drivers/video/backlight/tdo24m.c:337: error: storage size of 'model' isn't =
+known
+drivers/video/backlight/tdo24m.c:342: error: dereferencing pointer to incom=
+plete type
+drivers/video/backlight/tdo24m.c:344: error: 'TDO24M' undeclared (first use=
+ in this function)
+drivers/video/backlight/tdo24m.c:344: error: (Each undeclared identifier is=
+ reported only once
+drivers/video/backlight/tdo24m.c:344: error: for each function it appears i=
+n.)
+drivers/video/backlight/tdo24m.c:379: error: 'TDO35S' undeclared (first use=
+ in this function)
+drivers/video/backlight/tdo24m.c:337: warning: unused variable 'model'
+
+I have dropped the backlight tree for today.  More care, please.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__4_Dec_2008_16_30_59_+1100_1WBgl.+wzKhqSALg
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkk3axMACgkQjjKRsyhoI8xdBgCgpCJr+7Nt3hQ8Wg5jCYuzINdD
+TrwAoKqHD2jtvKZ2XUAY65gjxMOPJ81F
+=ghsQ
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__4_Dec_2008_16_30_59_+1100_1WBgl.+wzKhqSALg--
