@@ -1,33 +1,64 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree
-Date: Thu, 4 Dec 2008 10:00:44 -0800
-Message-ID: <20081204180044.GB29869@kroah.com>
-References: <20081204104418.97f848b4.sfr@canb.auug.org.au> <20081204042154.GA18027@kroah.com> <18743.46086.609709.557371@cargo.ozlabs.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: rr tree build warning
+Date: Fri, 5 Dec 2008 10:42:11 +1100
+Message-ID: <20081205104211.374a7c2b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__5_Dec_2008_10_42_11_+1100_n6_epJ6WHFIuDIqk"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:53198 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1754669AbYLDSDe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 4 Dec 2008 13:03:34 -0500
-Content-Disposition: inline
-In-Reply-To: <18743.46086.609709.557371@cargo.ozlabs.ibm.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36743 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751800AbYLDXm0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 4 Dec 2008 18:42:26 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Mackerras <paulus@samba.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, Kumar Gala <galak@kernel.crashing.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@ozlabs.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org
 
-On Thu, Dec 04, 2008 at 09:42:14PM +1100, Paul Mackerras wrote:
-> Greg KH writes:
-> 
-> > Yes, Paul, please apply the patch, and let me know.  It will make things
-> > much easier in the end for everyone involved.
-> 
-> Hmmm, I don't have it in my inbox, all I can find is an email from Kay
-> saying it had a problem.  Care to forward it to me?
+--Signature=_Fri__5_Dec_2008_10_42_11_+1100_n6_epJ6WHFIuDIqk
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'll resend them now.
+Hi Rusty,
 
-thanks,
+The next-20081204 build (powerpc ppc64_defconfig) produced these warnings:
 
-greg k-h
+include/linux/cpumask.h: In function 'set_cpu_possible':
+include/linux/cpumask.h:1052: warning: passing argument 2 of 'cpumask_set_c=
+pu' discards qualifiers from pointer target type
+include/linux/cpumask.h:1054: warning: passing argument 2 of 'cpumask_clear=
+_cpu' discards qualifiers from pointer target type
+include/linux/cpumask.h: In function 'set_cpu_present':
+include/linux/cpumask.h:1060: warning: passing argument 2 of 'cpumask_set_c=
+pu' discards qualifiers from pointer target type
+include/linux/cpumask.h:1062: warning: passing argument 2 of 'cpumask_clear=
+_cpu' discards qualifiers from pointer target type
+include/linux/cpumask.h: In function 'set_cpu_online':
+include/linux/cpumask.h:1068: warning: passing argument 2 of 'cpumask_set_c=
+pu' discards qualifiers from pointer target type
+include/linux/cpumask.h:1070: warning: passing argument 2 of 'cpumask_clear=
+_cpu' discards qualifiers from pointer target type
+
+Caused by commit 38b04c5f8ddd01137b1524b126ac936d87b58213
+("cpumask:cpu_online_mask-etc-as-primary") from the rr tree. Gcc (version
+4.2.4) doesn't seem to let you just cast away the "const" from a variable.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__5_Dec_2008_10_42_11_+1100_n6_epJ6WHFIuDIqk
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkk4atMACgkQjjKRsyhoI8yUNACdFGhKoKL0vrM1rJl6q9jMzbhZ
+qfcAn0hQ4KmMb/nuJZ7Q9ugY8aizFsFt
+=XU3X
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__5_Dec_2008_10_42_11_+1100_n6_epJ6WHFIuDIqk--
