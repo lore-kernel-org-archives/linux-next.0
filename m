@@ -1,39 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: m68k 8390 breakage
-Date: Wed, 03 Dec 2008 22:18:15 -0800 (PST)
-Message-ID: <20081203.221815.80265808.davem@davemloft.net>
-References: <Pine.LNX.4.64.0812032042480.10635@anakin>
-	<20081203115622.50256091@extreme>
-	<Pine.LNX.4.64.0812032135220.10635@anakin>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: crypto tree build failure
+Date: Thu, 4 Dec 2008 14:38:48 +0800
+Message-ID: <20081204063848.GA18141@gondor.apana.org.au>
+References: <20081204134331.016d38c4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.64.0812032135220.10635@anakin>
-Sender: netdev-owner@vger.kernel.org
-To: geert@linux-m68k.org
-Cc: shemminger@vyatta.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rhun.apana.org.au ([64.62.148.172]:55288 "EHLO
+	arnor.apana.org.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1754491AbYLDGiv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Dec 2008 01:38:51 -0500
+Content-Disposition: inline
+In-Reply-To: <20081204134331.016d38c4.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Adrian-Ken Rueegsegger <ken@codelabs.ch>
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 3 Dec 2008 21:38:41 +0100 (CET)
-
-> Oops, the log above is from allmodconfig and indeed doesn't show it.
+On Thu, Dec 04, 2008 at 01:43:31PM +1100, Stephen Rothwell wrote:
+> Hi Herbert,
 > 
-> mac_defconfig (which has CONFIG_MAC8390=y) shows more info:
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
 > 
-> | drivers/net/lib8390.c:303: warning: '__ei_start_xmit' defined but not used
-> | drivers/net/lib8390.c:881: warning: '__ei_get_stats' defined but not used
-> | drivers/net/lib8390.c:990: warning: '__ei_set_multicast_list' defined but not
-> | ...
-> | drivers/built-in.o: In function `ethdev_setup':
-> | mac8390.c:(.text+0x29684): undefined reference to `ei_start_xmit'
-> | mac8390.c:(.text+0x2968c): undefined reference to `ei_get_stats'
-> | mac8390.c:(.text+0x29694): undefined reference to `ei_set_multicast_list'
-> 
-> defconfig log at http://kisskb.ellerman.id.au/kisskb/buildresult/58646/
+> crypto/built-in.o: In function `md5_mod_init':
+> crypto/md5.c:239: undefined reference to `crypto_register_shash'
+> crypto/built-in.o: In function `md5_mod_fini':
+> crypto/md5.c:244: undefined reference to `crypto_unregister_shash'
 
-This mac8390 driver uses the lib8390.c/8390.[ch] mechanism a little
-bit oddly, but of course we should not have broken it :-)
+Thanks for the note Stephen.  It should be fixed now.
 
-Stephen please take a look, thanks!
+Cheers,
+-- 
+Visit Openswan at http://www.openswan.org/
+Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
