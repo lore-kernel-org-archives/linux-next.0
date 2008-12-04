@@ -1,45 +1,39 @@
-From: Eric Sandeen <sandeen@sandeen.net>
-Subject: Re: linux-next: xfs tree build failure
-Date: Wed, 03 Dec 2008 23:20:10 -0600
-Message-ID: <4937688A.9030607@sandeen.net>
-References: <20081204101612.ec0d4d7c.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: m68k 8390 breakage
+Date: Wed, 03 Dec 2008 22:18:15 -0800 (PST)
+Message-ID: <20081203.221815.80265808.davem@davemloft.net>
+References: <Pine.LNX.4.64.0812032042480.10635@anakin>
+	<20081203115622.50256091@extreme>
+	<Pine.LNX.4.64.0812032135220.10635@anakin>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sandeen.net ([209.173.210.139]:27640 "EHLO sandeen.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752127AbYLDFzh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 4 Dec 2008 00:55:37 -0500
-In-Reply-To: <20081204101612.ec0d4d7c.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Lachlan McIlroy <lachlan@sgi.com>
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.64.0812032135220.10635@anakin>
+Sender: netdev-owner@vger.kernel.org
+To: geert@linux-m68k.org
+Cc: shemminger@vyatta.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell wrote:
-> Hi David,
-> 
-> The build of next-20081203 (sh titan_defconfig, powerpc ppc6xx_defconfig,
-> mips defconfig, m68k defconfig and others) failed like this:
-> 
-> In file included from fs/xfs/linux-2.6/xfs_file.c:40:
-> fs/xfs/linux-2.6/xfs_ioctl32.h:50: error: expected specifier-qualifier-list before 'compat_time_t'
-> fs/xfs/linux-2.6/xfs_ioctl32.h:79: error: expected specifier-qualifier-list before 'compat_uptr_t'
-> fs/xfs/linux-2.6/xfs_ioctl32.h:94: error: expected specifier-qualifier-list before 'compat_uptr_t'
-> fs/xfs/linux-2.6/xfs_ioctl32.h:131: error: expected specifier-qualifier-list before 'compat_uptr_t'
-> fs/xfs/linux-2.6/xfs_ioctl32.h:142: error: expected specifier-qualifier-list before 'compat_uptr_t'
-> fs/xfs/linux-2.6/xfs_ioctl32.h:152: error: expected specifier-qualifier-list before 'compat_uptr_t'
-> fs/xfs/linux-2.6/xfs_ioctl32.h:161: error: expected specifier-qualifier-list before 'compat_uptr_t'
-> 
-> a and few other errors depending on which arch and config.
-> 
-> I have dropped the xfs tree for today.
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 3 Dec 2008 21:38:41 +0100 (CET)
 
-My fault, grr.  Christoph sent a patch to fix it which had a problem of
-its own, but the sgi guys know about it all and a fix should be in their
-tree soon.  Sorry about that!
+> Oops, the log above is from allmodconfig and indeed doesn't show it.
+> 
+> mac_defconfig (which has CONFIG_MAC8390=y) shows more info:
+> 
+> | drivers/net/lib8390.c:303: warning: '__ei_start_xmit' defined but not used
+> | drivers/net/lib8390.c:881: warning: '__ei_get_stats' defined but not used
+> | drivers/net/lib8390.c:990: warning: '__ei_set_multicast_list' defined but not
+> | ...
+> | drivers/built-in.o: In function `ethdev_setup':
+> | mac8390.c:(.text+0x29684): undefined reference to `ei_start_xmit'
+> | mac8390.c:(.text+0x2968c): undefined reference to `ei_get_stats'
+> | mac8390.c:(.text+0x29694): undefined reference to `ei_set_multicast_list'
+> 
+> defconfig log at http://kisskb.ellerman.id.au/kisskb/buildresult/58646/
 
-Thanks,
+This mac8390 driver uses the lib8390.c/8390.[ch] mechanism a little
+bit oddly, but of course we should not have broken it :-)
 
--Eric
+Stephen please take a look, thanks!
