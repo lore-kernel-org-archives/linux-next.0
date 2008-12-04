@@ -1,49 +1,45 @@
-From: Philip Langdale <philipl@overt.org>
-Subject: Re: linux-next: mmc tree build failure
-Date: Wed, 03 Dec 2008 20:54:00 -0800
-Message-ID: <49376268.6030302@overt.org>
-References: <20081204152829.69a795a3.sfr@canb.auug.org.au>
+From: Eric Sandeen <sandeen@sandeen.net>
+Subject: Re: linux-next: xfs tree build failure
+Date: Wed, 03 Dec 2008 23:20:10 -0600
+Message-ID: <4937688A.9030607@sandeen.net>
+References: <20081204101612.ec0d4d7c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from usul.saidi.cx ([204.11.33.34]:49146 "EHLO usul.overt.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751969AbYLDFkv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 4 Dec 2008 00:40:51 -0500
-In-Reply-To: <20081204152829.69a795a3.sfr@canb.auug.org.au>
+Received: from sandeen.net ([209.173.210.139]:27640 "EHLO sandeen.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752127AbYLDFzh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 4 Dec 2008 00:55:37 -0500
+In-Reply-To: <20081204101612.ec0d4d7c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Pierre Ossman <drzeus-list@drzeus.cx>, linux-next@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Greg KH <greg@kroah.com>
+Cc: David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Lachlan McIlroy <lachlan@sgi.com>
 
 Stephen Rothwell wrote:
-> Hi Pierre,
+> Hi David,
 > 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> The build of next-20081203 (sh titan_defconfig, powerpc ppc6xx_defconfig,
+> mips defconfig, m68k defconfig and others) failed like this:
 > 
-> drivers/mmc/host/ricoh_mmc.c:235: error: variable 'ricoh_mmc_pm_ext_opts' has initializer but incomplete type
-> drivers/mmc/host/ricoh_mmc.c:236: error: unknown field 'suspend_noirq' specified in initializer
-> drivers/mmc/host/ricoh_mmc.c:236: warning: excess elements in struct initializer
-> drivers/mmc/host/ricoh_mmc.c:236: warning: (near initialization for 'ricoh_mmc_pm_ext_opts')
-> drivers/mmc/host/ricoh_mmc.c:237: error: unknown field 'resume_noirq' specified in initializer
-> drivers/mmc/host/ricoh_mmc.c:237: warning: excess elements in struct initializer
-> drivers/mmc/host/ricoh_mmc.c:237: warning: (near initialization for 'ricoh_mmc_pm_ext_opts')
-> drivers/mmc/host/ricoh_mmc.c:245: error: unknown field 'pm' specified in initializer
-> drivers/mmc/host/ricoh_mmc.c:245: warning: initialization from incompatible pointer type
+> In file included from fs/xfs/linux-2.6/xfs_file.c:40:
+> fs/xfs/linux-2.6/xfs_ioctl32.h:50: error: expected specifier-qualifier-list before 'compat_time_t'
+> fs/xfs/linux-2.6/xfs_ioctl32.h:79: error: expected specifier-qualifier-list before 'compat_uptr_t'
+> fs/xfs/linux-2.6/xfs_ioctl32.h:94: error: expected specifier-qualifier-list before 'compat_uptr_t'
+> fs/xfs/linux-2.6/xfs_ioctl32.h:131: error: expected specifier-qualifier-list before 'compat_uptr_t'
+> fs/xfs/linux-2.6/xfs_ioctl32.h:142: error: expected specifier-qualifier-list before 'compat_uptr_t'
+> fs/xfs/linux-2.6/xfs_ioctl32.h:152: error: expected specifier-qualifier-list before 'compat_uptr_t'
+> fs/xfs/linux-2.6/xfs_ioctl32.h:161: error: expected specifier-qualifier-list before 'compat_uptr_t'
 > 
-> Due to commit 75766a3cee0a1eb2f373e8112a73e69262e7831a ("ricoh_mmc: Use
-> suspend/resume_noirq") clashing with commit
-> 6e674b2ed59695a90166d9500aa2696a495696e7 ("PM: Simplify the new
-> suspend/hibernation framework for devices") from the driver-core tree.
+> a and few other errors depending on which arch and config.
 > 
-> I am not sure what to do with this, so I have reverted the mmc tree
-> commit above for today.  Hopefully, Rafael can suggest a fix.
+> I have dropped the xfs tree for today.
 
-Pierre doesn't have Rafael's change in his tree yet.
+My fault, grr.  Christoph sent a patch to fix it which had a problem of
+its own, but the sgi guys know about it all and a fix should be in their
+tree soon.  Sorry about that!
 
-I posted an updated version of my change here:
+Thanks,
 
-http://lkml.org/lkml/2008/12/3/219
-
---phil
+-Eric
