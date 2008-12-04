@@ -1,38 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: sparc tree build failure
-Date: Wed, 03 Dec 2008 16:04:23 -0800 (PST)
-Message-ID: <20081203.160423.173238095.davem@davemloft.net>
-References: <20081202172413.f14fe387.sfr@canb.auug.org.au>
-	<200812022152.25989.rusty@rustcorp.com.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] rtc twl4030: rename ioctl function when RTC_INTF_DEV=n
+Date: Wed, 03 Dec 2008 17:30:59 -0800
+Message-ID: <493732D3.4020902@xenotime.net>
+References: <20081203183602.c06f8c39.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:38884
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1757864AbYLDAEX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Dec 2008 19:04:23 -0500
-In-Reply-To: <200812022152.25989.rusty@rustcorp.com.au>
+Received: from xenotime.net ([72.52.64.118]:59185 "HELO xenotime.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+	id S1754259AbYLDBbF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Dec 2008 20:31:05 -0500
+Received: from ::ffff:71.117.247.66 ([71.117.247.66]) by xenotime.net for <linux-next@vger.kernel.org>; Wed, 3 Dec 2008 17:31:00 -0800
+In-Reply-To: <20081203183602.c06f8c39.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: rusty@rustcorp.com.au
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sameo@openedhand.com, akpm <akpm@linux-foundation.org>, a.zummo@towertech.it
 
-From: Rusty Russell <rusty@rustcorp.com.au>
-Date: Tue, 2 Dec 2008 21:52:25 +1030
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-> On Tuesday 02 December 2008 16:54:13 Stephen Rothwell wrote:
-> > Hi Dave,
-> >
-> > Today's linux-next build (sparc defconfig) failed like this:
-> >
-> > lib/find_next_bit.c: In function 'find_last_bit':
-> > lib/find_next_bit.c:183: error: implicit declaration of function '__fls'
-> 
-> Thanks Stephen... that's a surprise.
-> 
-> Dave, I think this is a sparc issue.
-> 
-> sparc: asm/bitops.h should define __fls
+Fix build error when RTC_INTF_DEV=n:
 
-I'll add this patch, thanks Rusty.
+drivers/rtc/rtc-twl4030.c:402: error: 'twl4030_rtc_ioctl' undeclared here (not in a function)
+make[3]: *** [drivers/rtc/rtc-twl4030.o] Error 1
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/rtc/rtc-twl4030.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20081203.orig/drivers/rtc/rtc-twl4030.c
++++ linux-next-20081203/drivers/rtc/rtc-twl4030.c
+@@ -337,7 +337,7 @@ static int twl4030_rtc_ioctl(struct devi
+ }
+ 
+ #else
+-#define	omap_rtc_ioctl	NULL
++#define	twl4030_rtc_ioctl	NULL
+ #endif
+ 
+ static irqreturn_t twl4030_rtc_interrupt(int irq, void *rtc)
