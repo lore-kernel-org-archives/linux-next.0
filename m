@@ -1,40 +1,44 @@
-From: "Luo, Ximin" <ximin.luo@intel.com>
-Subject: RE: [ipw3945-devel] next-20081125: call trace for iwlagn	(rfkill
-	switch on)
-Date: Fri, 5 Dec 2008 14:30:57 +0800
-Message-ID: <AFAB8585072C7E48BC5C6F9C87F9B797021DA422@pdsmsx502.ccr.corp.intel.com>
-References: <20081128063859.GB4700@denkbrett.schottelius.org>
-	 <AFAB8585072C7E48BC5C6F9C87F9B7970214D75A@pdsmsx502.ccr.corp.intel.com>
-	 <20081204112302.GA22532@denkbrett.schottelius.org>
-	 <AFAB8585072C7E48BC5C6F9C87F9B797021DA134@pdsmsx502.ccr.corp.intel.com>
- <1228457862.26014.3.camel@rc-desk>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Subject: next-2008-12-04: vm.bio_inline_vecs
+Date: Fri, 5 Dec 2008 10:06:42 +0300
+Message-ID: <20081205070642.GA31087@x200.localdomain>
+References: <20081204200745.eff0ac87.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:15791 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751692AbYLEGbD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 5 Dec 2008 01:31:03 -0500
-In-Reply-To: <1228457862.26014.3.camel@rc-desk>
-Content-Language: en-US
+Received: from ug-out-1314.google.com ([66.249.92.168]:1316 "EHLO
+	ug-out-1314.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751279AbYLEHC1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Dec 2008 02:02:27 -0500
+Received: by ug-out-1314.google.com with SMTP id 39so4008346ugf.37
+        for <linux-next@vger.kernel.org>; Thu, 04 Dec 2008 23:02:25 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <20081204200745.eff0ac87.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Chatre, Reinette" <reinette.chatre@intel.com>
-Cc: Nico -telmich- Schottelius <nico-linux-ipw3945-devel@schottelius.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "ipw3945-devel@lists.sourceforge.net" <ipw3945-devel@lists.sourceforge.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jens.axboe@oracle.com
 
-UmVpbmV0dGUsDQpUaGFua3MgZm9yIHlvdXIgZXhhY3QgZXhwbGFuYXRpb24uDQoNCkJlc3QgUmVn
-YXJkcywNClhpbWluDQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpGcm9tOiBDaGF0cmUs
-IFJlaW5ldHRlIA0KU2VudDogMjAwOMTqMTLUwjXI1SAxNDoxOA0KVG86IEx1bywgWGltaW4NCkNj
-OiBOaWNvIC10ZWxtaWNoLSBTY2hvdHRlbGl1czsgbGludXgtbmV4dEB2Z2VyLmtlcm5lbC5vcmc7
-IGlwdzM5NDUtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0DQpTdWJqZWN0OiBSZTogW2lwdzM5
-NDUtZGV2ZWxdIG5leHQtMjAwODExMjU6IGNhbGwgdHJhY2UgZm9yIGl3bGFnbiAocmZraWxsIHN3
-aXRjaCBvbikNCg0KT24gVGh1LCAyMDA4LTEyLTA0IGF0IDE2OjQ4IC0wODAwLCBMdW8sIFhpbWlu
-IHdyb3RlOg0KPiBSZWluZXR0ZSBtZWFucyB0aGUgV0FSTklORyBtZXNzYWdlIGNhbiBiZSBpZ25v
-cmVkLiBEaWQgeW91IGNhcmQgd29ya3Mgd2VsbCBmb3IgdGhlIGlzc3VlPyBNYXliZSB5b3UgY2Fu
-IGFkZCBuZXcgY29tbWVudHMuIFRoYW5rcyBmb3IgeW91ciB3b3Jrcy4gOikNCg0KWWVzIC0gdGhl
-IHdhcm5pbmcgY2FuIGJlIGlnbm9yZWQsIHRoZSBlcnJvciBtZXNzYWdlcyBzdXJyb3VuZGluZyBp
-dA0Kc2hvdWxkIG5vdCBiZSBpZ25vcmVkIHRob3VnaC4gQSBwYXRjaCB0byByZW1vdmUgdGhlIHBy
-aW50aW5nIG9mIHRoZSBXQVJODQpoYXMgYmVlbiBzdWJtaXR0ZWQuIFlvdSBjYW4gZmluZCBpdCBh
-dA0KaHR0cDovL21hcmMuaW5mby8/bD1saW51eC13aXJlbGVzcyZtPTEyMjg0MzA5MjcxNDQ0OSZ3
-PTINCg0KUmVpbmV0dGUNCg0KDQo=
+Please, merge into 4d539d965767b98582fa9b7b57f51dbc0ab54fc4
+aka "bio: add experimental support for inlining a number of bio_vecs inside the bio"
+
+kernel/sysctl.c:1233: error: 'bio_inline_vecs' undeclared here (not in a function)
+
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1227,6 +1227,7 @@ static struct ctl_table vm_table[] = {
+ 		.extra2		= &one,
+ 	},
+ #endif
++#ifdef CONFIG_BLOCK
+ 	{
+ 		.ctl_name	= CTL_UNNUMBERED,
+ 		.procname	= "bio_inline_vecs",
+@@ -1237,6 +1238,7 @@ static struct ctl_table vm_table[] = {
+ 		.strategy	= &sysctl_intvec,
+ 		.extra1		= &zero,
+ 	},
++#endif
+ /*
+  * NOTE: do not add new entries to this table unless you have read
+  * Documentation/sysctl/ctl_unnumbered.txt
