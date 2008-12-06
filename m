@@ -1,70 +1,63 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: linux-next: "aio: make the lookup_ioctx() lockless" causes
-	s390 build bug
-Date: Sat, 6 Dec 2008 13:53:34 +0100
-Message-ID: <20081206125334.GA12040@osiris.boeblingen.de.ibm.com>
-References: <20081205164155.GC4491@osiris.boeblingen.de.ibm.com> <20081205220634.GR18255@kernel.dk>
+From: "Alexander Beregalov" <a.beregalov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: linux-next: Tree for December 4
+Date: Sat, 6 Dec 2008 16:42:40 +0300
+Message-ID: <a4423d670812060542u4c646891oc4db646b3f89b2ad@mail.gmail.com>
+References: <20081204200745.eff0ac87.sfr@canb.auug.org.au>
+	 <200812061304.12216.m.kozlowski@tuxland.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate8.de.ibm.com ([195.212.29.157]:62223 "EHLO
-	mtagate8.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750952AbYLFMxh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 6 Dec 2008 07:53:37 -0500
-Received: from d12nrmr1607.megacenter.de.ibm.com (d12nrmr1607.megacenter.de.ibm.com [9.149.167.49])
-	by mtagate8.de.ibm.com (8.13.8/8.13.8) with ESMTP id mB6CrZOI379522
-	for <linux-next@vger.kernel.org>; Sat, 6 Dec 2008 12:53:35 GMT
-Received: from d12av04.megacenter.de.ibm.com (d12av04.megacenter.de.ibm.com [9.149.165.229])
-	by d12nrmr1607.megacenter.de.ibm.com (8.13.8/8.13.8/NCO v9.1) with ESMTP id mB6CrZg92859106
-	for <linux-next@vger.kernel.org>; Sat, 6 Dec 2008 13:53:35 +0100
-Received: from d12av04.megacenter.de.ibm.com (loopback [127.0.0.1])
-	by d12av04.megacenter.de.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id mB6CrYd2002370
-	for <linux-next@vger.kernel.org>; Sat, 6 Dec 2008 13:53:35 +0100
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <200812061304.12216.m.kozlowski-NWF1p15JEu3VItvQsEIGlw@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20081205220634.GR18255@kernel.dk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mariusz Kozlowski <m.kozlowski-NWF1p15JEu3VItvQsEIGlw@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Dec 05, 2008 at 11:06:35PM +0100, Jens Axboe wrote:
-> On Fri, Dec 05 2008, Heiko Carstens wrote:
-> > Hi Jens,
-> > 
-> > your patch "aio: make the lookup_ioctx() lockless" in linux-next
-> > causes this build bug on s390:
-> > 
-> > arch/s390/mm/pgtable.c: In function 's390_enable_sie':
-> > arch/s390/mm/pgtable.c:266: error: invalid operands to binary || (have 'int' and 'struct hlist_head')
-> > arch/s390/mm/pgtable.c:282: error: invalid operands to binary || (have 'int' and 'struct hlist_head')
-> > make[1]: *** [arch/s390/mm/pgtable.o] Error 1
-> > make: *** [arch/s390/mm] Error 2
-> > 
-> > Could you please fix that? Thanks! ;)
-> 
-> Something like this?
-> 
-> diff --git a/arch/s390/mm/pgtable.c b/arch/s390/mm/pgtable.c
-> index ef3635b..0767827 100644
-> --- a/arch/s390/mm/pgtable.c
-> +++ b/arch/s390/mm/pgtable.c
-> @@ -263,7 +263,7 @@ int s390_enable_sie(void)
->  	/* lets check if we are allowed to replace the mm */
->  	task_lock(tsk);
->  	if (!tsk->mm || atomic_read(&tsk->mm->mm_users) > 1 ||
-> -	    tsk->mm != tsk->active_mm || tsk->mm->ioctx_list) {
-> +	    tsk->mm != tsk->active_mm || !hlist_empty(&tsk->mm->ioctx_list)) {
->  		task_unlock(tsk);
->  		return -EINVAL;
->  	}
-> @@ -279,7 +279,7 @@ int s390_enable_sie(void)
->  	/* Now lets check again if something happened */
->  	task_lock(tsk);
->  	if (!tsk->mm || atomic_read(&tsk->mm->mm_users) > 1 ||
-> -	    tsk->mm != tsk->active_mm || tsk->mm->ioctx_list) {
-> +	    tsk->mm != tsk->active_mm || !hlist_empty(&tsk->mm->ioctx_list)) {
->  		mmput(mm);
->  		task_unlock(tsk);
->  		return -EINVAL;
+2008/12/6 Mariusz Kozlowski <m.kozlowski-NWF1p15JEu3VItvQsEIGlw@public.gmane.org>:
+> =============================================================================
+> BUG kmalloc-4096: Invalid object pointer 0xffff88007fb20010
+> -----------------------------------------------------------------------------
+>
+> INFO: Slab 0xffffe20001beef00 objects=7 used=1 fp=0xffff88007fb21048 flags=0x40000000000020c3
+> Pid: 1, comm: swapper Not tainted 2.6.28-rc7-next-20081204 #1
+> Call Trace:
+>  [<ffffffff802a4edd>] slab_err+0x9d/0xc0
+>  [<ffffffff80218992>] save_stack_trace+0x22/0x40
+>  [<ffffffff80260f57>] save_trace+0x37/0xa0
+>  [<ffffffff80261027>] add_lock_to_list+0x67/0xf0
+>  [<ffffffff80244c42>] __release_region+0x22/0xc0
+>  [<ffffffff80264dac>] validate_chain+0xcdc/0x1200
+>  [<ffffffff802a558b>] check_bytes_and_report+0x4b/0x100
+>  [<ffffffff802a53f7>] slab_pad_check+0xe7/0x170
+>  [<ffffffff803bf590>] uart_remove_one_port+0xf0/0x120
+>  [<ffffffff802a6c28>] __slab_free+0x258/0x380
+>  [<ffffffff803bf590>] uart_remove_one_port+0xf0/0x120
+>  [<ffffffff802a6ee2>] kfree+0xb2/0x150
+>  [<ffffffff803bf590>] uart_remove_one_port+0xf0/0x120
+>  [<ffffffff803c4f18>] serial8250_register_port+0x88/0x1f0
+>  [<ffffffff804851d0>] serial_pnp_probe+0x1a0/0x220
+>  [<ffffffff8039bfef>] match_device+0x2f/0x50
+>  [<ffffffff8039c0a4>] pnp_device_probe+0x64/0xe0
+>  [<ffffffff803ca4d6>] driver_probe_device+0x96/0x1b0
+>  [<ffffffff803ca68c>] __driver_attach+0x9c/0xa0
+>  [<ffffffff803ca5f0>] __driver_attach+0x0/0xa0
+>  [<ffffffff803c98f3>] bus_for_each_dev+0x53/0x80
+>  [<ffffffff803ca08b>] bus_add_driver+0x1cb/0x230
+>  [<ffffffff803ca855>] driver_register+0x55/0x140
+>  [<ffffffff8062e200>] serial8250_pnp_init+0x0/0x10
+>  [<ffffffff8020903b>] _stext+0x3b/0x170
+>  [<ffffffff8027b181>] register_irq_proc+0xc1/0xe0
+>  [<ffffffff806119ad>] kernel_init+0x15d/0x1f0
+>  [<ffffffff8020c9fa>] child_rip+0xa/0x20
+>  [<ffffffff8020c3c0>] restore_args+0x0/0x30
+>  [<ffffffff80611850>] kernel_init+0x0/0x1f0
+>  [<ffffffff8020c9f0>] child_rip+0x0/0x20
+> FIX kmalloc-4096: Object at 0xffff88007fb20010 not freed
+> 00:06: ttyS0 at I/O 0x3f8 (irq = 4) is a 16550A
 
-Yes, exactly. Thanks!
+Hi Mariusz
+
+This patch should fix it.
+http://lkml.org/lkml/2008/12/4/249
