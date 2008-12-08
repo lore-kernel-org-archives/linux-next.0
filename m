@@ -1,49 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the staging tree
-Date: Mon, 08 Dec 2008 12:35:57 -0800 (PST)
-Message-ID: <20081208.123557.22263181.davem@davemloft.net>
-References: <20081208203403.320ea0bb.sfr@canb.auug.org.au>
-	<20081208151750.GE19711@kroah.com>
+From: James Morris <jmorris@namei.org>
+Subject: Re: linux-next: manual merge of the lblnet tree
+Date: Tue, 9 Dec 2008 08:16:24 +1100 (EST)
+Message-ID: <alpine.LRH.1.10.0812090815370.6220@tundra.namei.org>
+References: <20081208190708.1d2c37ec.sfr@canb.auug.org.au> <200812081441.12338.paul.moore@hp.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:57589
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1751949AbYLHUf4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Dec 2008 15:35:56 -0500
-In-Reply-To: <20081208151750.GE19711@kroah.com>
+Received: from tundra.namei.org ([65.99.196.166]:3470 "EHLO tundra.namei.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752054AbYLHVSU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Dec 2008 16:18:20 -0500
+In-Reply-To: <200812081441.12338.paul.moore@hp.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: greg@kroah.com
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, wangchen@cn.fujitsu.com
+To: Paul Moore <paul.moore@hp.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, David Howells <dhowells@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>
 
-From: Greg KH <greg@kroah.com>
-Date: Mon, 8 Dec 2008 07:17:50 -0800
+On Mon, 8 Dec 2008, Paul Moore wrote:
 
-> On Mon, Dec 08, 2008 at 08:34:03PM +1100, Stephen Rothwell wrote:
-> > Hi Greg,
-> > 
-> > Today's linux-next merge of the staging tree got a conflicts in
-> > drivers/staging/wlan-ng/p80211netdev.c and
-> > drivers/staging/wlan-ng/p80211wext.c between commit
-> > 979123d5343b4fdcd4c682745b8a0be9b8fac248 ("staging-p80211: Kill directly
-> > reference of netdev->priv") from the net tree and various commits from
-> > the staging tree.
-> > 
-> > I fixed it up (see below) and can carry the fixes as necessary. (In the
-> > case of the second file, the latter removed the code that the former
-> > modified.)
-> 
-> Dave, can you just drop the patch from your queue?  This should already
-> be fixed up in the -next tree to not use the field you are wanting to
-> remove, right?  So you shouldn't get any build errors from what I can
-> tell.
+> James, is the security-testing tree rebased regularly or is suitable to 
+> back a tree against?
 
-I'd have to revert, which is ugly, because I tend to never
-rebase my tree as too many people depend upon it.
+No, it doesn't get rebased.
 
-Do you _really_ want me to do that?
+>  If so, I can rebase the lblnet-2.6_next tree 
+> against security-testing to resolve the conflict ...
 
-Because I have to do allmodconfig test builds _too_, and the build
-will fail for me if I do these reverts which really would suck.
+Ok, and I can carry your patches in there if necessary.
+
+
+-- 
+James Morris
+<jmorris@namei.org>
