@@ -1,89 +1,90 @@
-From: "Dave Airlie" <airlied@gmail.com>
-Subject: Re: next-2008120[3,4] drm oops (was Re: vanilla kernels hang randomly under Fedora 10 on system with Radeon card)
-Date: Mon, 8 Dec 2008 10:17:40 +1000
-Message-ID: <21d7e9970812071617u72d5f6d9k1bbde5a09ed9412f@mail.gmail.com>
-References: <200812012342.32575.bzolnier@gmail.com>
-	 <200812040107.36616.bzolnier@gmail.com>
-	 <200812042055.13731.bzolnier@gmail.com>
-	 <200812051950.28443.bzolnier@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: v4l-dvb tree build failure
+Date: Mon, 8 Dec 2008 13:07:22 +1100
+Message-ID: <20081208130722.8c2479e4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__8_Dec_2008_13_07_22_+1100_O0OX4i46EbryH/cc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rn-out-0910.google.com ([64.233.170.186]:58062 "EHLO
-	rn-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752850AbYLHARl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 7 Dec 2008 19:17:41 -0500
-Received: by rn-out-0910.google.com with SMTP id k40so737824rnd.17
-        for <linux-next@vger.kernel.org>; Sun, 07 Dec 2008 16:17:40 -0800 (PST)
-In-Reply-To: <200812051950.28443.bzolnier@gmail.com>
-Content-Disposition: inline
+Received: from chilli.pcug.org.au ([203.10.76.44]:52922 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753847AbYLHCHd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 7 Dec 2008 21:07:33 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Benny Amorsen <benny+usenet@amorsen.dk>, linux-next@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org
 
-On Sat, Dec 6, 2008 at 4:50 AM, Bartlomiej Zolnierkiewicz
-<bzolnier@gmail.com> wrote:
-> On Thursday 04 December 2008, Bartlomiej Zolnierkiewicz wrote:
->
-> [...]
->
->> To add more fun I'm getting following DRM oops with next-2008120[3,4]:
->
-> Here is refreshed oops (I needed to tweak/rebuild the kernel):
->
-> BUG: unable to handle kernel NULL pointer dereference at 00000144
-> IP: [<c0247371>] drm_addmap_core+0x548/0x561
-> *pde = 00000000
-> Oops: 0000 [#1] PREEMPT SMP
-> last sysfs file: /sys/devices/pci0000:00/0000:00:01.0/0000:01:00.0/enable
-> Modules linked in: radeon(+) lib80211_crypt_tkip xt_state ipt_MASQUERADE iptable_nat nf_nat nf_conntrack_ipv4 nf_conntrack nf_defrag_ipv4 acerhk cpufreq_ondemand binfmt_misc snd_intel8x0 snd_intel8x0m snd_ac97_codec snd_seq_dummy ac97_bus snd_seq_oss snd_seq_midi_event snd_seq snd_seq_device snd_pcm_oss snd_mixer_oss snd_pcm ipw2200 snd_timer libipw snd soundcore snd_page_alloc lib80211 ehci_hcd uhci_hcd parport_pc parport
->
-> Pid: 1740, comm: modprobe Not tainted (2.6.28-rc7-next-20081204 #268) Extensa 2900
-> EIP: 0060:[<c0247371>] EFLAGS: 00213202 CPU: 0
-> EIP is at drm_addmap_core+0x548/0x561
-> EAX: 00000000 EBX: 00000000 ECX: 00000000 EDX: da1dec00
-> ESI: da2baac0 EDI: da177a80 EBP: e0010000 ESP: da2c1ea4
->  DS: 007b ES: 007b FS: 00d8 GS: 0033 SS: 0068
-> Process modprobe (pid: 1740, ti=da2c1000 task=df8741b0 task.ti=da2c1000)
-> Stack:
->  da177a80 00010000 da1dec00 00000002 da1dec20 da177a88 da1decd4 da1decd4
->  da1dece0 00010000 da2c1eec da285800 da285b44 da1dec00 c02473f2 00000001
->  00000082 da2c1eec da2c1ef4 00010000 e085674c 00000001 00000082 da285b40
-> Call Trace:
->  [<c02473f2>] drm_addmap+0x14/0x2e
->  [<e085674c>] radeon_driver_load+0xef/0x15a [radeon]
->  [<c024bb73>] drm_get_dev+0x240/0x4ab
->  [<c01e48af>] kobject_get+0xf/0x13
->  [<c024821d>] drm_init+0x5a/0x89
->  [<e0832000>] radeon_init+0x0/0x14 [radeon]
->  [<c010112c>] _stext+0x44/0x108
->  [<c01430a8>] sys_init_module+0x87/0x174
->  [<c0102eb1>] sysenter_do_call+0x12/0x25
->  [<c0310000>] rtl8139_init_one+0x685/0x85e
-> Code: 12 0d 00 eb 35 8b 3c 24 8b 47 10 c7 47 1c 00 00 00 00 c1 e0 0c 89 47 18 8b 44 24 10 e8 a8 12 0d 00 8b 54 24 08 8b 82 b0 02 00 00 <8b> 80 44 01 00 00 89 47 20 8b 4c 24 44 89 39 83 c4 28 89 d8 5b
-> EIP: [<c0247371>] drm_addmap_core+0x548/0x561 SS:ESP 0068:da2c1ea4
-> ---[ end trace b2c7f2a062698806 ]---
->
-> [...]
->
->> which I think may be caused by:
->>
->> commit c2f29f764c0daa0084674d4a463e7158ac5c4dc4
->> Author: Dave Airlie <airlied@redhat.com>
->> Date:   Fri Nov 28 14:22:24 2008 +1000
->>
->>     drm: move to kref per-master structures.
->>
->> however I haven't verified it yet.
+--Signature=_Mon__8_Dec_2008_13_07_22_+1100_O0OX4i46EbryH/cc
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Mauro,
 
-Thanks for that, I've pushed the fix into drm-next
-(d5de2d1a3a88628396c895410ae9e06f732d6591)
-which was to reorganise the startup sequence so things happened in a
-more correct order.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Let me know if it still breaks.
+drivers/media/video/em28xx/em28xx-video.c: In function 'em28xx_supports_aud=
+io_extension':
+drivers/media/video/em28xx/em28xx-video.c:1966: error: 'EM28XX_NO_AUDIO' un=
+declared (first use in this function)
+drivers/media/video/em28xx/em28xx-video.c:1977: error: 'EM28XX_AC97' undecl=
+ared (first use in this function)
+drivers/media/video/em28xx/em28xx-video.c:1981: error: 'EM28XX_I2S_3_SAMPLE=
+_RATES' undeclared (first use in this function)
+drivers/media/video/em28xx/em28xx-video.c:1985: error: 'EM28XX_I2S_5_SAMPLE=
+_RATES' undeclared (first use in this function)
+drivers/media/video/em28xx/em28xx-core.c: In function 'em28xx_set_audio_sou=
+rce':
+drivers/media/video/em28xx/em28xx-core.c:394: warning: ISO C90 forbids mixe=
+d declarations and code
+drivers/media/video/em28xx/em28xx-core.c:459: error: non-static declaration=
+ of 'em28xx_audio_analog_set' follows static declaration
+drivers/media/video/em28xx/em28xx-core.c:403: error: previous definition of=
+ 'em28xx_audio_analog_set' was here
+drivers/media/video/em28xx/em28xx-core.c:556: error: non-static declaration=
+ of 'em28xx_audio_setup' follows static declaration
+drivers/media/video/em28xx/em28xx-core.c:462: error: previous definition of=
+ 'em28xx_audio_setup' was here
+drivers/media/video/em28xx/em28xx-core.c:632: error: invalid storage class =
+for function 'em28xx_accumulator_set'
+drivers/media/video/em28xx/em28xx-core.c:644: error: invalid storage class =
+for function 'em28xx_capture_area_set'
+drivers/media/video/em28xx/em28xx-core.c:661: error: invalid storage class =
+for function 'em28xx_scaler_set'
+drivers/media/video/em28xx/em28xx-core.c:790: error: non-static declaration=
+ of 'em28xx_set_mode' follows static declaration
+drivers/media/video/em28xx/em28xx-core.c:771: error: previous definition of=
+ 'em28xx_set_mode' was here
+drivers/media/video/em28xx/em28xx-core.c:800: error: invalid storage class =
+for function 'em28xx_irq_callback'
+drivers/media/video/em28xx/em28xx-core.c:861: error: non-static declaration=
+ of 'em28xx_uninit_isoc' follows static declaration
+drivers/media/video/em28xx/em28xx-core.c:828: error: previous definition of=
+ 'em28xx_uninit_isoc' was here
+drivers/media/video/em28xx/em28xx-core.c:966: error: non-static declaration=
+ of 'em28xx_init_isoc' follows static declaration
+drivers/media/video/em28xx/em28xx-core.c:869: error: previous definition of=
+ 'em28xx_init_isoc' was here
+drivers/media/video/em28xx/em28xx-core.c:966: error: expected declaration o=
+r statement at end of input
 
-Dave.
+So I have dropped the tree for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__8_Dec_2008_13_07_22_+1100_O0OX4i46EbryH/cc
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkk8gVoACgkQjjKRsyhoI8yNlQCfdsShd+OFiAOTtuMEuaCrXIHO
+BjcAmwensCFtiE2PWZAJOcT6nVqrJx8U
+=4FN1
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__8_Dec_2008_13_07_22_+1100_O0OX4i46EbryH/cc--
