@@ -1,100 +1,263 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the lblnet tree
-Date: Mon, 8 Dec 2008 19:07:08 +1100
-Message-ID: <20081208190708.1d2c37ec.sfr@canb.auug.org.au>
+From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Subject: Re: linux-next: Tree for October 24 - powerpc - build failure with
+	!CONFIG_BLK_DEV_IDEDMA_PMAC
+Date: Mon, 8 Dec 2008 14:35:49 +0530
+Message-ID: <20081208090549.GA16544@linux.vnet.ibm.com>
+References: <20081024171932.1e8131d0.sfr@canb.auug.org.au> <1224889818.7654.466.camel@pasglop> <200810251519.57543.bzolnier@gmail.com> <200812071527.52886.bzolnier@gmail.com>
+Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37717 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752590AbYLHIHP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Dec 2008 03:07:15 -0500
+Received: from E23SMTP04.au.ibm.com ([202.81.18.173]:52925 "EHLO
+	e23smtp04.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751066AbYLHJF6 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Dec 2008 04:05:58 -0500
+Content-Disposition: inline
+In-Reply-To: <200812071527.52886.bzolnier@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Moore <paul.moore@hp.com>
-Cc: linux-next@vger.kernel.org, David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>, Casey Schaufler <casey@schaufler-ca.com>
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: benh@kernel.crashing.org, Sergei Shtylyov <sshtylyov@ru.mvista.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org
 
-Hi Paul,
+* Bartlomiej Zolnierkiewicz <bzolnier@gmail.com> [2008-12-07 15:27:52]:
 
-Today's linux-next merge of the lblnet tree got a conflicts in
-security/smack/smack_lsm.c and security/smack/smackfs.c between commits
-86a264abe542cfececb4df129bc45a0338d8cdb9 ("CRED: Wrap current->cred and a
-few other accessors") and d84f4f992cbd76e8f39c488cf0c5d123843923b1
-("CRED: Inaugurate COW credentials") from the security-testing tree and
-commit d936691ab765fbac809e9a05c7f0c36ce2c2119e ("smack: Add support for
-unlabeled network hosts and networks") from the lblnet tree.
+> On Saturday 25 October 2008, Bartlomiej Zolnierkiewicz wrote:
+> > On Saturday 25 October 2008, Benjamin Herrenschmidt wrote:
+> > > On Sat, 2008-10-25 at 02:39 +0400, Sergei Shtylyov wrote:
+> > > > >>    Hm, looks like this configuration was never buildable --
+> > > > #ifdef's are 
+> > > > >> missing and wrongly placed. CCing Ben Herrenschmidt...
+> > > > >>     
+> > > > >
+> > > > > What configuration ?
+> > > > >   
+> > > > 
+> > > >    See the subject.
+> > > 
+> > > Ah ok. We should probably just remove the option...
+> > 
+> > Fine with me.  Anybody want an easy +1 patch-point? :)
+> 
+> Seems like ppc people are either very busy or don't care...  Oh well...
+> 
+> From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+> Subject: [PATCH] ide: build-fix for CONFIG_BLK_DEV_IDEDMA_PMAC=n
+> 
+> IDE pmac host driver build fails with CONFIG_BLK_DEV_IDEDMA_PMAC=n
+> as reported by Kamalesh:
+> 
+> > drivers/ide/pmac.c: In function 'pmac_ide_set_pio_mode':
+> > drivers/ide/pmac.c:527: error: implicit declaration of function 'kauai_lookup_timing'
+> > drivers/ide/pmac.c:527: error: 'shasta_pio_timings' undeclared (first use in this function)
+> > drivers/ide/pmac.c:527: error: (Each undeclared identifier is reported only once
+> > drivers/ide/pmac.c:527: error: for each function it appears in.)
+> > drivers/ide/pmac.c:534: error: 'kauai_pio_timings' undeclared (first use in this function)
+> > drivers/ide/pmac.c: In function 'pmac_ide_do_resume':
+> > drivers/ide/pmac.c:914: error: 'IDE_WAKEUP_DELAY' undeclared (first use in this function)
+> > drivers/ide/pmac.c: At top level:
+> > drivers/ide/pmac.c:1007: error: 'pmac_ide_init_dma' undeclared here (not in a function)
+> > drivers/ide/pmac.c: In function 'pmac_ide_setup_device':
+> > drivers/ide/pmac.c:1107: error: 'IDE_WAKEUP_DELAY' undeclared (first use in this function)
+> > drivers/ide/pmac.c: In function 'pmac_ide_macio_attach':
+> > drivers/ide/pmac.c:1209: error: 'pmac_ide_hwif_t' has no member named 'dma_regs'
+> > drivers/ide/pmac.c:1210: error: 'pmac_ide_hwif_t' has no member named 'dma_regs'
+> > make[2]: *** [drivers/ide/pmac.o] Error 1
+> 
+> Fix it by removing the superfluous config option.
 
-I fixed it up (see below) and can carry the fixes as necessary.
+Thanks for the patch, it fixes the build failure.
+> 
+> Reported-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Sergei Shtylyov <sshtylyov@ru.mvista.com>
+> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+> ---
+>  drivers/ide/Kconfig |   14 +++-----------
+>  drivers/ide/pmac.c  |   30 +++---------------------------
+>  2 files changed, 6 insertions(+), 38 deletions(-)
+> 
+> Index: b/drivers/ide/Kconfig
+> ===================================================================
+> --- a/drivers/ide/Kconfig
+> +++ b/drivers/ide/Kconfig
+> @@ -655,10 +655,12 @@ config BLK_DEV_CELLEB
+>  
+>  endif
+>  
+> +# TODO: BLK_DEV_IDEDMA_PCI -> BLK_DEV_IDEDMA_SFF
+>  config BLK_DEV_IDE_PMAC
+>  	tristate "PowerMac on-board IDE support"
+>  	depends on PPC_PMAC && IDE=y
+>  	select IDE_TIMINGS
+> +	select BLK_DEV_IDEDMA_PCI
+>  	help
+>  	  This driver provides support for the on-board IDE controller on
+>  	  most of the recent Apple Power Macintoshes and PowerBooks.
+> @@ -675,16 +677,6 @@ config BLK_DEV_IDE_PMAC_ATA100FIRST
+>  	  CD-ROM on hda. This option changes this to more natural hda for
+>  	  hard disk and hdc for CD-ROM.
+>  
+> -config BLK_DEV_IDEDMA_PMAC
+> -	bool "PowerMac IDE DMA support"
+> -	depends on BLK_DEV_IDE_PMAC
+> -	select BLK_DEV_IDEDMA_PCI
+> -	help
+> -	  This option allows the driver for the on-board IDE controller on
+> -	  Power Macintoshes and PowerBooks to use DMA (direct memory access)
+> -	  to transfer data to and from memory.  Saying Y is safe and improves
+> -	  performance.
+> -
+>  config BLK_DEV_IDE_AU1XXX
+>         bool "IDE for AMD Alchemy Au1200"
+>         depends on SOC_AU1200
+> @@ -903,7 +895,7 @@ config BLK_DEV_UMC8672
+>  endif
+>  
+>  config BLK_DEV_IDEDMA
+> -	def_bool BLK_DEV_IDEDMA_SFF || BLK_DEV_IDEDMA_PMAC || \
+> +	def_bool BLK_DEV_IDEDMA_SFF || \
+>  		 BLK_DEV_IDEDMA_ICS || BLK_DEV_IDE_AU1XXX_MDMA2_DBDMA
+>  
+>  endif # IDE
+> Index: b/drivers/ide/pmac.c
+> ===================================================================
+> --- a/drivers/ide/pmac.c
+> +++ b/drivers/ide/pmac.c
+> @@ -66,7 +66,6 @@ typedef struct pmac_ide_hwif {
+>  	struct macio_dev		*mdev;
+>  	u32				timings[4];
+>  	volatile u32 __iomem *		*kauai_fcr;
+> -#ifdef CONFIG_BLK_DEV_IDEDMA_PMAC
+>  	/* Those fields are duplicating what is in hwif. We currently
+>  	 * can't use the hwif ones because of some assumptions that are
+>  	 * beeing done by the generic code about the kind of dma controller
+> @@ -74,8 +73,6 @@ typedef struct pmac_ide_hwif {
+>  	 */
+>  	volatile struct dbdma_regs __iomem *	dma_regs;
+>  	struct dbdma_cmd*		dma_table_cpu;
+> -#endif
+> -	
+>  } pmac_ide_hwif_t;
+>  
+>  enum {
+> @@ -222,8 +219,6 @@ static const char* model_name[] = {
+>  #define KAUAI_FCR_UATA_RESET_N		0x00000002
+>  #define KAUAI_FCR_UATA_ENABLE		0x00000001
+>  
+> -#ifdef CONFIG_BLK_DEV_IDEDMA_PMAC
+> -
+>  /* Rounded Multiword DMA timings
+>   * 
+>   * I gave up finding a generic formula for all controller
+> @@ -413,8 +408,6 @@ static int pmac_ide_build_dmatable(ide_d
+>  static void pmac_ide_selectproc(ide_drive_t *drive);
+>  static void pmac_ide_kauai_selectproc(ide_drive_t *drive);
+>  
+> -#endif /* CONFIG_BLK_DEV_IDEDMA_PMAC */
+> -
+>  #define PMAC_IDE_REG(x) \
+>  	((void __iomem *)((drive)->hwif->io_ports.data_addr + (x)))
+>  
+> @@ -584,8 +577,6 @@ pmac_ide_set_pio_mode(ide_drive_t *drive
+>  	pmac_ide_do_update_timings(drive);
+>  }
+>  
+> -#ifdef CONFIG_BLK_DEV_IDEDMA_PMAC
+> -
+>  /*
+>   * Calculate KeyLargo ATA/66 UDMA timings
+>   */
+> @@ -786,7 +777,6 @@ set_timings_mdma(ide_drive_t *drive, int
+>  		drive->name, speed & 0xf,  *timings);
+>  #endif	
+>  }
+> -#endif /* #ifdef CONFIG_BLK_DEV_IDEDMA_PMAC */
+>  
+>  static void pmac_ide_set_dma_mode(ide_drive_t *drive, const u8 speed)
+>  {
+> @@ -804,7 +794,6 @@ static void pmac_ide_set_dma_mode(ide_dr
+>  	tl[0] = *timings;
+>  	tl[1] = *timings2;
+>  
+> -#ifdef CONFIG_BLK_DEV_IDEDMA_PMAC
+>  	if (speed >= XFER_UDMA_0) {
+>  		if (pmif->kind == controller_kl_ata4)
+>  			ret = set_timings_udma_ata4(&tl[0], speed);
+> @@ -817,7 +806,7 @@ static void pmac_ide_set_dma_mode(ide_dr
+>  			ret = -1;
+>  	} else
+>  		set_timings_mdma(drive, pmif->kind, &tl[0], &tl[1], speed);
+> -#endif /* CONFIG_BLK_DEV_IDEDMA_PMAC */
+> +
+>  	if (ret)
+>  		return;
+>  
+> @@ -1008,9 +997,7 @@ static const struct ide_port_info pmac_p
+>  	.chipset		= ide_pmac,
+>  	.tp_ops			= &pmac_tp_ops,
+>  	.port_ops		= &pmac_ide_port_ops,
+> -#ifdef CONFIG_BLK_DEV_IDEDMA_PMAC
+>  	.dma_ops		= &pmac_dma_ops,
+> -#endif
+>  	.host_flags		= IDE_HFLAG_SET_PIO_MODE_KEEP_DMA |
+>  				  IDE_HFLAG_POST_SET_MODE |
+>  				  IDE_HFLAG_MMIO |
+> @@ -1182,7 +1169,7 @@ pmac_ide_macio_attach(struct macio_dev *
+>  	pmif->regbase = regbase;
+>  	pmif->irq = irq;
+>  	pmif->kauai_fcr = NULL;
+> -#ifdef CONFIG_BLK_DEV_IDEDMA_PMAC
+> +
+>  	if (macio_resource_count(mdev) >= 2) {
+>  		if (macio_request_resource(mdev, 1, "ide-pmac (dma)"))
+>  			printk(KERN_WARNING "ide-pmac: can't request DMA "
+> @@ -1192,7 +1179,7 @@ pmac_ide_macio_attach(struct macio_dev *
+>  			pmif->dma_regs = ioremap(macio_resource_start(mdev, 1), 0x1000);
+>  	} else
+>  		pmif->dma_regs = NULL;
+> -#endif /* CONFIG_BLK_DEV_IDEDMA_PMAC */
+> +
+>  	dev_set_drvdata(&mdev->ofdev.dev, pmif);
+>  
+>  	memset(&hw, 0, sizeof(hw));
+> @@ -1300,9 +1287,7 @@ pmac_ide_pci_attach(struct pci_dev *pdev
+>  
+>  	base = ioremap(rbase, rlen);
+>  	pmif->regbase = (unsigned long) base + 0x2000;
+> -#ifdef CONFIG_BLK_DEV_IDEDMA_PMAC
+>  	pmif->dma_regs = base + 0x1000;
+> -#endif /* CONFIG_BLK_DEV_IDEDMA_PMAC */
+>  	pmif->kauai_fcr = base;
+>  	pmif->irq = pdev->irq;
+>  
+> @@ -1434,8 +1419,6 @@ out:
+>  	return error;
+>  }
+>  
+> -#ifdef CONFIG_BLK_DEV_IDEDMA_PMAC
+> -
+>  /*
+>   * pmac_ide_build_dmatable builds the DBDMA command list
+>   * for a transfer and sets the DBDMA channel to point to it.
+> @@ -1723,13 +1706,6 @@ static int __devinit pmac_ide_init_dma(i
+>  
+>  	return 0;
+>  }
+> -#else
+> -static int __devinit pmac_ide_init_dma(ide_hwif_t *hwif,
+> -				       const struct ide_port_info *d)
+> -{
+> -	return -EOPNOTSUPP;
+> -}
+> -#endif /* CONFIG_BLK_DEV_IDEDMA_PMAC */
+>  
+>  module_init(pmac_ide_probe);
+>  
+> 
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
-diff --cc security/smack/smack_lsm.c
-index 8ad4816,06471e8..0000000
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@@ -2100,11 -2181,13 +2226,17 @@@ static int smack_setprocattr(struct tas
-  	if (newsmack == NULL)
-  		return -EINVAL;
-  
-+ 	/*
-+ 	 * No process is ever allowed the web ("@") label.
-+ 	 */
-+ 	if (newsmack == smack_known_web.smk_known)
-+ 		return -EPERM;
-+ 
- -	p->security = newsmack;
- +	new = prepare_creds();
- +	if (!new)
- +		return -ENOMEM;
- +	new->security = newsmack;
- +	commit_creds(new);
-  	return size;
-  }
-  
-@@@ -2337,10 -2488,11 +2537,10 @@@ static void smack_sock_graft(struct soc
-  		return;
-  
-  	ssp = sk->sk_security;
- -	ssp->smk_in = current->security;
- -	ssp->smk_out = current->security;
- +	ssp->smk_in = ssp->smk_out = current_security();
-  	ssp->smk_packet[0] = '\0';
-  
-- 	rc = smack_netlabel(sk);
-+ 	rc = smack_netlabel(sk, SMACK_CIPSO_SOCKET);
-  	if (rc != 0)
-  		printk(KERN_WARNING "Smack: \"%s\" netlbl error %d.\n",
-  		       __func__, -rc);
-diff --cc security/smack/smackfs.c
-index ca257df,a75013f..0000000
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@@ -104,6 -107,24 +107,24 @@@ struct smk_list_entry *smack_list
-  #define SMK_ACCESSLEN (sizeof(SMK_ACCESS) - 1)
-  #define SMK_LOADLEN   (SMK_LABELLEN + SMK_LABELLEN + SMK_ACCESSLEN)
-  
-+ /**
-+  * smk_netlabel_audit_set - fill a netlbl_audit struct
-+  * @nap: structure to fill
-+  */
-+ static void smk_netlabel_audit_set(struct netlbl_audit *nap)
-+ {
-+ 	nap->loginuid = audit_get_loginuid(current);
-+ 	nap->sessionid = audit_get_sessionid(current);
- -	nap->secid = smack_to_secid(current->security);
-++	nap->secid = smack_to_secid(current_security());
-+ }
-+ 
-+ /*
-+  * Values for parsing single label host rules
-+  * "1.2.3.4 X"
-+  * "192.168.138.129/32 abcdefghijklmnopqrstuvw"
-+  */
-+ #define SMK_NETLBLADDRMIN	9
-+ #define SMK_NETLBLADDRMAX	42
-  
-  /*
-   * Seq_file read operations for /smack/load
+Thanks & Regards,
+Kamalesh Babulal,
+Linux Technology Center,
+IBM, ISTL.
