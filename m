@@ -1,41 +1,33 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree
-Date: Mon, 8 Dec 2008 07:17:50 -0800
-Message-ID: <20081208151750.GE19711@kroah.com>
-References: <20081208203403.320ea0bb.sfr@canb.auug.org.au>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: linux-next: manual merge of the lblnet tree
+Date: Mon, 08 Dec 2008 08:09:39 -0800
+Message-ID: <493D46C3.30306@schaufler-ca.com>
+References: <20081208190708.1d2c37ec.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:58994 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1754646AbYLHP1z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Dec 2008 10:27:55 -0500
-Content-Disposition: inline
-In-Reply-To: <20081208203403.320ea0bb.sfr@canb.auug.org.au>
+Received: from smtp107.prem.mail.sp1.yahoo.com ([98.136.44.62]:33153 "HELO
+	smtp107.prem.mail.sp1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1753503AbYLHQQd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Dec 2008 11:16:33 -0500
+In-Reply-To: <20081208190708.1d2c37ec.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Wang Chen <wangchen@cn.fujitsu.com>, "David S. Miller" <davem@davemloft.net>
+Cc: Paul Moore <paul.moore@hp.com>, linux-next@vger.kernel.org, David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>, casey@schaufler-ca.com
 
-On Mon, Dec 08, 2008 at 08:34:03PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the staging tree got a conflicts in
-> drivers/staging/wlan-ng/p80211netdev.c and
-> drivers/staging/wlan-ng/p80211wext.c between commit
-> 979123d5343b4fdcd4c682745b8a0be9b8fac248 ("staging-p80211: Kill directly
-> reference of netdev->priv") from the net tree and various commits from
-> the staging tree.
-> 
-> I fixed it up (see below) and can carry the fixes as necessary. (In the
-> case of the second file, the latter removed the code that the former
-> modified.)
-
-Dave, can you just drop the patch from your queue?  This should already
-be fixed up in the -next tree to not use the field you are wanting to
-remove, right?  So you shouldn't get any build errors from what I can
-tell.
-
-thanks,
-
-greg k-h
+Stephen Rothwell wrote:
+> Hi Paul,
+>
+> Today's linux-next merge of the lblnet tree got a conflicts in
+> security/smack/smack_lsm.c and security/smack/smackfs.c between commits
+> 86a264abe542cfececb4df129bc45a0338d8cdb9 ("CRED: Wrap current->cred and a
+> few other accessors") and d84f4f992cbd76e8f39c488cf0c5d123843923b1
+> ("CRED: Inaugurate COW credentials") from the security-testing tree and
+> commit d936691ab765fbac809e9a05c7f0c36ce2c2119e ("smack: Add support for
+> unlabeled network hosts and networks") from the lblnet tree.
+>
+> I fixed it up (see below) and can carry the fixes as necessary.
+>   
+I don't see any problems with the changes. Thank you.
