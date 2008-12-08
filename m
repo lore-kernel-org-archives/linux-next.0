@@ -1,49 +1,49 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: linux-next: manual merge of the lblnet tree
-Date: Mon, 8 Dec 2008 21:19:41 +0100
-Message-ID: <20081208211941.6d2c2261@hyperion.delvare>
-References: <20081208184957.ae6f1726.sfr@canb.auug.org.au>
-	<200812081438.04489.paul.moore@hp.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the staging tree
+Date: Mon, 08 Dec 2008 12:35:57 -0800 (PST)
+Message-ID: <20081208.123557.22263181.davem@davemloft.net>
+References: <20081208203403.320ea0bb.sfr@canb.auug.org.au>
+	<20081208151750.GE19711@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zone0.gcu-squad.org ([212.85.147.21]:48631 "EHLO
-	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751468AbYLHUT6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Dec 2008 15:19:58 -0500
-In-Reply-To: <200812081438.04489.paul.moore@hp.com>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:57589
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1751949AbYLHUf4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Dec 2008 15:35:56 -0500
+In-Reply-To: <20081208151750.GE19711@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Moore <paul.moore@hp.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
+To: greg@kroah.com
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, wangchen@cn.fujitsu.com
 
-On Mon, 8 Dec 2008 14:38:04 -0500, Paul Moore wrote:
-> On Monday 08 December 2008 2:49:57 am Stephen Rothwell wrote:
-> > Hi Paul,
-> >
-> > Today's linux-next merge of the lblnet tree got a conflict in
-> > Documentation/feature-removal-schedule.txt between commit
-> > 839361440c4cf848dddc5705fa4ac7c25d00dddf ("hwmon: Deprecate the
-> > fscher and fscpos drivers") from the jdelvare-hwmon tree and commit
-> > d45075ffb96a78c0f7137cfcec9fe816a6d23cfb ("selinux: Deprecate and
-> > schedule the removal of the the compat_net functionality") from the
-> > lblnet tree.
-> >
-> > Just overlapping additions.  I fixed it up (see below) and can carry
-> > it as necessary.
+From: Greg KH <greg@kroah.com>
+Date: Mon, 8 Dec 2008 07:17:50 -0800
+
+> On Mon, Dec 08, 2008 at 08:34:03PM +1100, Stephen Rothwell wrote:
+> > Hi Greg,
+> > 
+> > Today's linux-next merge of the staging tree got a conflicts in
+> > drivers/staging/wlan-ng/p80211netdev.c and
+> > drivers/staging/wlan-ng/p80211wext.c between commit
+> > 979123d5343b4fdcd4c682745b8a0be9b8fac248 ("staging-p80211: Kill directly
+> > reference of netdev->priv") from the net tree and various commits from
+> > the staging tree.
+> > 
+> > I fixed it up (see below) and can carry the fixes as necessary. (In the
+> > case of the second file, the latter removed the code that the former
+> > modified.)
 > 
-> Thanks.  Other than pulling in the jdelvare-hwmon tree or moving the 
-> entry somewhere else in the file (not solving anything, just 
-> moving/delaying the problem) I'm not sure how to resolve the conflict.  
-> If you don't mind carrying your fix-up patch until the merge window 
-> opens that sounds like the best approach to me.
+> Dave, can you just drop the patch from your queue?  This should already
+> be fixed up in the -next tree to not use the field you are wanting to
+> remove, right?  So you shouldn't get any build errors from what I can
+> tell.
 
-All in all I don't think it really matters.
-Documentation/feature-removal-schedule.txt will always have conflicts
-by design, but it's only a text file and if it isn't totally up-to-date
-in linux-next, I doubt anybody cares. So I would vote for permanently
-ignoring conflicts to this file.
+I'd have to revert, which is ugly, because I tend to never
+rebase my tree as too many people depend upon it.
 
--- 
-Jean Delvare
+Do you _really_ want me to do that?
+
+Because I have to do allmodconfig test builds _too_, and the build
+will fail for me if I do these reverts which really would suck.
