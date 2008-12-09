@@ -1,59 +1,31 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [PATCH] simnet: convert to net_device_ops
-Date: Tue, 9 Dec 2008 18:08:27 +0300
-Message-ID: <20081209150827.GA8134@x200.localdomain>
-References: <a4423d670812090611v715309adq3e9d2d95254e2e16@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <netdev-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <a4423d670812090611v715309adq3e9d2d95254e2e16@mail.gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: Alexander Beregalov <a.beregalov@gmail.com>, davem@davemloft.net
-Cc: linux-next@vger.kernel.org, Netdev <netdev@vger.kernel.org>, linux-ia64@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+From: David Howells <dhowells@redhat.com>
+Subject: Re: linux-next: manual merge of the security-testing tree
+Date: Tue, 09 Dec 2008 15:28:01 +0000
+Message-ID: <31186.1228836481@redhat.com>
+References: <20081209164026.022dfa39.sfr@canb.auug.org.au>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.redhat.com ([66.187.237.31]:59594 "EHLO mx2.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750788AbYLIP2l (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Dec 2008 10:28:41 -0500
+In-Reply-To: <20081209164026.022dfa39.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: dhowells@redhat.com, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, Miloslav Trmac <mitr@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>
 
-On Tue, Dec 09, 2008 at 05:11:17PM +0300, Alexander Beregalov wrote:
->   CC      arch/ia64/hp/sim/simeth.o
-> arch/ia64/hp/sim/simeth.c: In function 'simeth_probe1':
-> arch/ia64/hp/sim/simeth.c:212: error: 'struct net_device' has no member named 'open'
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-[PATCH] simeth: convert to net_device_ops
+> Today's linux-next merge of the security-testing tree got a conflict in
+> drivers/char/tty_audit.c between commit
+> 49518720d67042cf431e7f96aed5b0f5c51a84e3 ("[PATCH] Audit: Log TIOCSTI")
+> from the audit-current tree and commit
+> 66303bce9b924e35e435d35409d3abc371755767 ("CRED: Wrap task credential
+> accesses in the tty driver") from the security-testing tree.
+> 
+> The former moved the code that the latter was modifying.  I fixed it up
+> (see below) and can carry the fix as necessary.
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+Your changes look okay.
 
- arch/ia64/hp/sim/simeth.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
-
---- a/arch/ia64/hp/sim/simeth.c
-+++ b/arch/ia64/hp/sim/simeth.c
-@@ -167,6 +167,15 @@ netdev_read(int fd, unsigned char *buf, unsigned int len)
- 	return ia64_ssc(fd, __pa(buf), len, 0, SSC_NETDEV_RECV);
- }
- 
-+static const struct net_device_ops simeth_netdev_ops = {
-+	.ndo_open		= simeth_open,
-+	.ndo_stop		= simeth_close,
-+	.ndo_start_xmit		= simeth_tx,
-+	.ndo_get_stats		= simeth_get_stats,
-+	.ndo_set_multicast_list	= set_multicast_list, /* not yet used */
-+
-+};
-+
- /*
-  * Function shared with module code, so cannot be in init section
-  *
-@@ -209,11 +218,7 @@ simeth_probe1(void)
- 	local = netdev_priv(dev);
- 	local->simfd = fd; /* keep track of underlying file descriptor */
- 
--	dev->open		= simeth_open;
--	dev->stop		= simeth_close;
--	dev->hard_start_xmit	= simeth_tx;
--	dev->get_stats		= simeth_get_stats;
--	dev->set_multicast_list = set_multicast_list; /* no yet used */
-+	dev->netdev_ops = &simeth_netdev_ops;
- 
- 	err = register_netdev(dev);
- 	if (err) {
+David
