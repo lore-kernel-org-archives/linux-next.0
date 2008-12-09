@@ -1,55 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: mmc tree build failure
-Date: Tue, 9 Dec 2008 18:16:36 +1100
-Message-ID: <20081209181636.5de824e0.sfr@canb.auug.org.au>
-References: <20081204152829.69a795a3.sfr@canb.auug.org.au>
-	<20081209144244.fc3ebaa0.sfr@canb.auug.org.au>
-	<20081209074751.3967406b@mjolnir.drzeus.cx>
+Subject: linux-next: build failure
+Date: Tue, 9 Dec 2008 18:34:04 +1100
+Message-ID: <20081209183404.637d3331.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__9_Dec_2008_18_16_36_+1100_mEa1GpMI=HvpMVKQ"
+ boundary="Signature=_Tue__9_Dec_2008_18_34_04_+1100_q7Knm9wxHD0C/E_a"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36787 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53791 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751696AbYLIHQq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Dec 2008 02:16:46 -0500
-In-Reply-To: <20081209074751.3967406b@mjolnir.drzeus.cx>
+	id S1751962AbYLIHeP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Dec 2008 02:34:15 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pierre Ossman <drzeus-list@drzeus.cx>
-Cc: linux-next@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Greg KH <greg@kroah.com>, Philip Langdale <philipl@overt.org>
+To: Dave Airlie <airlied@redhat.com>
+Cc: linux-next@vger.kernel.org, Jesse Barnes <jbarnes@virtuousgeek.org>, Eric Anholt <eric@anholt.net>
 
---Signature=_Tue__9_Dec_2008_18_16_36_+1100_mEa1GpMI=HvpMVKQ
+--Signature=_Tue__9_Dec_2008_18_34_04_+1100_q7Knm9wxHD0C/E_a
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Pierre,
+Hi Dave,
 
-On Tue, 9 Dec 2008 07:47:51 +0100 Pierre Ossman <drzeus-list@drzeus.cx> wro=
-te:
->
-> Sorry about that. I got side-tracked and forgot to push the fixed tree.
-> It should be up now.
+Today's linux-next build (powerpc allyesconfig) failed like this:
 
-It happens.  I will include it tomorrow.
+drivers/gpu/drm/drm_gem.c: In function 'drm_gem_mmap':
+drivers/gpu/drm/drm_gem.c:519: error: '_PAGE_CACHE_WC' undeclared (first us=
+e in this function)
 
-Thanks.
+Caused by commit 33b801854540a4f5205c0b2b4b91987e7f21af08 ("drm: GEM mmap
+support").  I tried to revert just that commit, but it lead me down a
+road of dependent commits, so I have reverted the whole drm tree for
+today.
+
+_PAGE_CACHE_WC appears to be defined only for x86 and, before the above
+commit, was not used outside arch/x86.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__9_Dec_2008_18_16_36_+1100_mEa1GpMI=HvpMVKQ
+--Signature=_Tue__9_Dec_2008_18_34_04_+1100_q7Knm9wxHD0C/E_a
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkk+G1QACgkQjjKRsyhoI8xrUACgi6NdeTwA3bGsHYhxTeadN/IK
-lFYAnix7ZoRPhnY1gi1Vkb/ZjBPrUVgg
-=A4GM
+iEYEARECAAYFAkk+H2wACgkQjjKRsyhoI8ywlACguMXG1wqZ0Ya68HDx9e7YWCMA
+dt0AoKiaDPmWZGiJ4BBq5weOlsfeDBl/
+=k35K
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__9_Dec_2008_18_16_36_+1100_mEa1GpMI=HvpMVKQ--
+--Signature=_Tue__9_Dec_2008_18_34_04_+1100_q7Knm9wxHD0C/E_a--
