@@ -1,53 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: m68k build failure
-Date: Tue, 9 Dec 2008 19:50:40 +1100
-Message-ID: <20081209195040.ce0641c1.sfr@canb.auug.org.au>
-References: <20081209174534.17ad7991.sfr@canb.auug.org.au>
-	<20081209.000052.32930290.davem@davemloft.net>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: Tree for December 9
+Date: Tue, 9 Dec 2008 08:53:17 +0000
+Message-ID: <20081209085317.GD28946@ZenIV.linux.org.uk>
+References: <20081209185237.8bb715d7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__9_Dec_2008_19_50_40_+1100_SHd7..efpP2F3EO5"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41151 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751466AbYLIIuv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Dec 2008 03:50:51 -0500
-In-Reply-To: <20081209.000052.32930290.davem@davemloft.net>
+Received: from zeniv.linux.org.uk ([195.92.253.2]:39471 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752060AbYLIIxT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Dec 2008 03:53:19 -0500
+Content-Disposition: inline
+In-Reply-To: <20081209185237.8bb715d7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, geert@linux-m68k.org, shemminger@vyatta.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Tue__9_Dec_2008_19_50_40_+1100_SHd7..efpP2F3EO5
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Dec 09, 2008 at 06:52:37PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20081208:
+> 
+> Today's tree fails the powerpc allyesconfig build but succeeds with
+> CONFIG_PROFILE_ALL_BRANCHES turned off.
+> 
+> New trees:
+> 	audit-current
+> 	audit
 
-Hi Dave,
-
-On Tue, 09 Dec 2008 00:00:52 -0800 (PST) David Miller <davem@davemloft.net>=
- wrote:
->
-> Sorry about that.  I just pushed a fix for this to net-next-2.6
-> from Alexey D.
-
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__9_Dec_2008_19_50_40_+1100_SHd7..efpP2F3EO5
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkk+MWAACgkQjjKRsyhoI8x+/wCfSGl+KAZU8sY99rzslqy8UnEe
-H9sAn0eVwBFWHV5Md1mjYa+mFFZSpZQI
-=Mv/l
------END PGP SIGNATURE-----
-
---Signature=_Tue__9_Dec_2008_19_50_40_+1100_SHd7..efpP2F3EO5--
+FWIW, I've bumped the conflicting patch out of audit/for-linus and sent
+pull request for rest of that queue.  The rest will get thrown to
+assorted trees, assuming that security folks are willing to host a rebased
+version of [PATCH] Audit: Log TIOCSTI.
