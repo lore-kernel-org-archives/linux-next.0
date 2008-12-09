@@ -1,33 +1,44 @@
-From: "Luck, Tony" <tony.luck@intel.com>
-Subject: RE: next-20081209: fails to build IA64 allyesconfig
-Date: Tue, 9 Dec 2008 10:55:02 -0800
-Message-ID: <57C9024A16AD2D4C97DC78E552063EA35C7EEAB0@orsmsx505.amr.corp.intel.com>
-References: <a4423d670812090622h668b597ah7e4c9b4c5a1cbb@mail.gmail.com>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: linux-next: build failure
+Date: Tue, 9 Dec 2008 13:05:26 -0800
+Message-ID: <200812091305.28858.jbarnes@virtuousgeek.org>
+References: <20081209183404.637d3331.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:35899 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753926AbYLISzY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Dec 2008 13:55:24 -0500
-In-Reply-To: <a4423d670812090622h668b597ah7e4c9b4c5a1cbb@mail.gmail.com>
-Content-Language: en-US
+Received: from outbound-mail-124.bluehost.com ([67.222.38.24]:42470 "HELO
+	outbound-mail-124.bluehost.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1753515AbYLIVMe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Dec 2008 16:12:34 -0500
+In-Reply-To: <20081209183404.637d3331.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>, "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dave Airlie <airlied@redhat.com>, linux-next@vger.kernel.org, Eric Anholt <eric@anholt.net>, Venki Pallipadi <venkatesh.pallipadi@intel.com>
 
-PiAgR0VOICAgICBpbmNsdWRlL2xpbnV4L2JvdW5kcy5oDQo+ICBDQyAgICAgIGFyY2gvaWE2NC9r
-ZXJuZWwvYXNtLW9mZnNldHMucw0KPiBJbiBmaWxlIGluY2x1ZGVkIGZyb20gaW5jbHVkZS9saW51
-eC9iaXRvcHMuaDoxNywNCj4gICAgICAgICAgICAgICAgIGZyb20gaW5jbHVkZS9saW51eC9rZXJu
-ZWwuaDoxNSwNCj4gICAgICAgICAgICAgICAgIGZyb20gaW5jbHVkZS9saW51eC9zY2hlZC5oOjUy
-LA0KPiAgICAgICAgICAgICAgICAgZnJvbSBhcmNoL2lhNjQva2VybmVsL2FzbS1vZmZzZXRzLmM6
-OToNCj4gL2hvbWUvYWxleGIvbGludXgtMi42L2FyY2gvaWE2NC9pbmNsdWRlL2FzbS9iaXRvcHMu
-aDogSW4gZnVuY3Rpb24gJ3NldF9iaXQnOg0KPiAvaG9tZS9hbGV4Yi9saW51eC0yLjYvYXJjaC9p
-YTY0L2luY2x1ZGUvYXNtL2JpdG9wcy5oOjQ3OiBlcnJvcjoNCj4gaW1wbGljaXQgZGVjbGFyYXRp
-b24gb2YgZnVuY3Rpb24gJ0JVSUxEX0JVR19PTicNCg0KU2FtZSBzaWduYXR1cmUgYXMgaHR0cDov
-L21hcmMuaW5mby8/bD1saW51eC1pYTY0Jm09MTIyNzIzOTkxOTAyOTc1Jnc9Mg0KDQpJIHdhcyBz
-dXJlIHRoYXQgSSBhbHJlYWR5IGFwcGxpZWQgdGhhdCBwYXRjaCAuLi4gYnV0IEkgbXVzdCBoYXZl
-IHB1dA0KaXQgaW50byBhIHRlbXBvcmFyeSBicmFuY2ggYW5kIGZvcmdvdCB0byBtZXJnZSBpdC4g
-IEkndmUgYXBwbGllZCBpdA0KZm9yIHJlYWwgdGhpcyB0aW1lIGFuZCB3aWxsIHB1c2ggb3V0IHNv
-b24uDQoNCi1Ub255DQo=
+On Monday, December 08, 2008 11:34 pm Stephen Rothwell wrote:
+> Hi Dave,
+>
+> Today's linux-next build (powerpc allyesconfig) failed like this:
+>
+> drivers/gpu/drm/drm_gem.c: In function 'drm_gem_mmap':
+> drivers/gpu/drm/drm_gem.c:519: error: '_PAGE_CACHE_WC' undeclared (first
+> use in this function)
+>
+> Caused by commit 33b801854540a4f5205c0b2b4b91987e7f21af08 ("drm: GEM mmap
+> support").  I tried to revert just that commit, but it lead me down a
+> road of dependent commits, so I have reverted the whole drm tree for
+> today.
+>
+> _PAGE_CACHE_WC appears to be defined only for x86 and, before the above
+> commit, was not used outside arch/x86.
+
+We might be able to use the new pgprot_writecombine function, but I think 
+that's only in an x86 branch atm...  And it doesn't look like it's properly 
+stubbed out on non-x86, which means more #ifdefs.
+
+-- 
+Jesse Barnes, Intel Open Source Technology Center
