@@ -1,50 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the net tree
-Date: Tue, 9 Dec 2008 13:13:58 +1100
-Message-ID: <20081209131358.8529a1a0.sfr@canb.auug.org.au>
+Date: Tue, 9 Dec 2008 13:21:36 +1100
+Message-ID: <20081209132136.c58c0ca5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__9_Dec_2008_13_13_58_+1100_iE/qMRun/YlmpPQw"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55514 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:46554 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752017AbYLICOM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Dec 2008 21:14:12 -0500
+	id S1750829AbYLICVm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Dec 2008 21:21:42 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>, "J. Bruce Fields" <bfields@fieldses.org>, Harvey Harrison <harvey.harrison@gmail.com>
-
---Signature=_Tue__9_Dec_2008_13_13_58_+1100_iE/qMRun/YlmpPQw
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cc: linux-next@vger.kernel.org, Harvey Harrison <harvey.harrison@gmail.com>, Chuck Lever <chuck.lever@oracle.com>, "J. Bruce Fields" <bfields@fieldses.org>
 
 Hi Dave,
 
-Today's linux-next merge of the net tree got a conflict in fs/lockd/mon.c
-between commit 9e414471988c5558df3674b94e145d8f926a683f ("NSM: Support
-IPv6 version of mon_name") from the nfsd tree and commit
-be859405487324ed548f1ba11dc949b8230ab991 ("fs: replace NIPQUAD()") from
-the net tree.
+Today's linux-next merge of the net tree got a conflict in
+fs/lockd/host.c between commit 3105d87fe1d311e80fd4781e82fa519fd5e2ffe2
+("NLM: Support IPv6 scope IDs in nlm_display_address()") from the nfsd
+tree and various commits that replace the NIP* macros from the net tree.
 
-The former removed the code that the latter modified.  However, the nfsd
-tree has added some more usages of the NIP macros ...
---=20
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__9_Dec_2008_13_13_58_+1100_iE/qMRun/YlmpPQw
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkk91GYACgkQjjKRsyhoI8yvzQCgrLPYvf8mHPKnn6fwjkb75z9d
-MzUAoKynqkQhmzrWtkEzrK4l20yYhHB2
-=Vx9P
------END PGP SIGNATURE-----
-
---Signature=_Tue__9_Dec_2008_13_13_58_+1100_iE/qMRun/YlmpPQw--
+diff --cc fs/lockd/host.c
+index 472aac1,c48c263..0000000
+--- a/fs/lockd/host.c
++++ b/fs/lockd/host.c
+@@@ -105,37 -104,25 +105,37 @@@ static void nlm_clear_port(struct socka
+  	}
+  }
+  
+ -static void nlm_display_address(const struct sockaddr *sap,
+ -				char *buf, const size_t len)
+ +static void nlm_display_ipv4_address(const struct sockaddr *sap, char *buf,
+ +				     const size_t len)
+  {
+  	const struct sockaddr_in *sin = (struct sockaddr_in *)sap;
+- 	snprintf(buf, len, NIPQUAD_FMT, NIPQUAD(sin->sin_addr.s_addr));
+++	snprintf(buf, len, "%pI4", &sin->sin_addr.s_addr);
+ +}
+ +
+ +static void nlm_display_ipv6_address(const struct sockaddr *sap, char *buf,
+ +				     const size_t len)
+ +{
+  	const struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)sap;
+  
+ +	if (ipv6_addr_v4mapped(&sin6->sin6_addr))
+- 		snprintf(buf, len, NIPQUAD_FMT,
+- 				NIPQUAD(sin6->sin6_addr.s6_addr32[3]));
+++		snprintf(buf, len, "%pI4",
+++				&sin6->sin6_addr.s6_addr32[3]);
+ +	else if (sin6->sin6_scope_id != 0)
+- 		snprintf(buf, len, NIP6_FMT "%%%u", NIP6(sin6->sin6_addr),
+++		snprintf(buf, len, "%pI6%%%u", &sin6->sin6_addr,
+ +				sin6->sin6_scope_id);
+ +	else
+- 		snprintf(buf, len, NIP6_FMT, NIP6(sin6->sin6_addr));
+++		snprintf(buf, len, "%pI6", &sin6->sin6_addr);
+ +}
+ +
+ +static void nlm_display_address(const struct sockaddr *sap,
+ +				char *buf, const size_t len)
+ +{
+  	switch (sap->sa_family) {
+ -	case AF_UNSPEC:
+ -		snprintf(buf, len, "unspecified");
+ -		break;
+  	case AF_INET:
+ -		snprintf(buf, len, "%pI4", &sin->sin_addr.s_addr);
+ +		nlm_display_ipv4_address(sap, buf, len);
+  		break;
+  	case AF_INET6:
+ -		if (ipv6_addr_v4mapped(&sin6->sin6_addr))
+ -			snprintf(buf, len, "%pI4",
+ -				 &sin6->sin6_addr.s6_addr32[3]);
+ -		else
+ -			snprintf(buf, len, "%pI6", &sin6->sin6_addr);
+ +		nlm_display_ipv6_address(sap, buf, len);
+  		break;
+  	default:
+  		snprintf(buf, len, "unsupported address family");
