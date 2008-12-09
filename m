@@ -1,88 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree
-Date: Tue, 9 Dec 2008 13:21:36 +1100
-Message-ID: <20081209132136.c58c0ca5.sfr@canb.auug.org.au>
+Subject: Re: linux-next: mmc tree build failure
+Date: Tue, 9 Dec 2008 14:42:44 +1100
+Message-ID: <20081209144244.fc3ebaa0.sfr@canb.auug.org.au>
+References: <20081204152829.69a795a3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__9_Dec_2008_14_42_44_+1100_bn/XRutpvIY_kimC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46554 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53807 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750829AbYLICVm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Dec 2008 21:21:42 -0500
+	id S1751369AbYLIDnA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Dec 2008 22:43:00 -0500
+In-Reply-To: <20081204152829.69a795a3.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Harvey Harrison <harvey.harrison@gmail.com>, Chuck Lever <chuck.lever@oracle.com>, "J. Bruce Fields" <bfields@fieldses.org>
+To: Pierre Ossman <drzeus-list@drzeus.cx>
+Cc: linux-next@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Greg KH <greg@kroah.com>, Philip Langdale <philipl@overt.org>
 
-Hi Dave,
+--Signature=_Tue__9_Dec_2008_14_42_44_+1100_bn/XRutpvIY_kimC
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the net tree got a conflict in
-fs/lockd/host.c between commit 3105d87fe1d311e80fd4781e82fa519fd5e2ffe2
-("NLM: Support IPv6 scope IDs in nlm_display_address()") from the nfsd
-tree and various commits that replace the NIP* macros from the net tree.
+Hi Pierre,
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
+On Thu, 4 Dec 2008 15:28:29 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+>=20
+> drivers/mmc/host/ricoh_mmc.c:235: error: variable 'ricoh_mmc_pm_ext_opts'=
+ has initializer but incomplete type
+> drivers/mmc/host/ricoh_mmc.c:236: error: unknown field 'suspend_noirq' sp=
+ecified in initializer
+> drivers/mmc/host/ricoh_mmc.c:236: warning: excess elements in struct init=
+ializer
+> drivers/mmc/host/ricoh_mmc.c:236: warning: (near initialization for 'rico=
+h_mmc_pm_ext_opts')
+> drivers/mmc/host/ricoh_mmc.c:237: error: unknown field 'resume_noirq' spe=
+cified in initializer
+> drivers/mmc/host/ricoh_mmc.c:237: warning: excess elements in struct init=
+ializer
+> drivers/mmc/host/ricoh_mmc.c:237: warning: (near initialization for 'rico=
+h_mmc_pm_ext_opts')
+> drivers/mmc/host/ricoh_mmc.c:245: error: unknown field 'pm' specified in =
+initializer
+> drivers/mmc/host/ricoh_mmc.c:245: warning: initialization from incompatib=
+le pointer type
+>=20
+> Due to commit 75766a3cee0a1eb2f373e8112a73e69262e7831a ("ricoh_mmc: Use
+> suspend/resume_noirq") clashing with commit
+> 6e674b2ed59695a90166d9500aa2696a495696e7 ("PM: Simplify the new
+> suspend/hibernation framework for devices") from the driver-core tree.
+>=20
+> I am not sure what to do with this, so I have reverted the mmc tree
+> commit above for today.  Hopefully, Rafael can suggest a fix.
+
+Since I am still getting this error, I have dropped the mmc tree for
+today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc fs/lockd/host.c
-index 472aac1,c48c263..0000000
---- a/fs/lockd/host.c
-+++ b/fs/lockd/host.c
-@@@ -105,37 -104,25 +105,37 @@@ static void nlm_clear_port(struct socka
-  	}
-  }
-  
- -static void nlm_display_address(const struct sockaddr *sap,
- -				char *buf, const size_t len)
- +static void nlm_display_ipv4_address(const struct sockaddr *sap, char *buf,
- +				     const size_t len)
-  {
-  	const struct sockaddr_in *sin = (struct sockaddr_in *)sap;
-- 	snprintf(buf, len, NIPQUAD_FMT, NIPQUAD(sin->sin_addr.s_addr));
-++	snprintf(buf, len, "%pI4", &sin->sin_addr.s_addr);
- +}
- +
- +static void nlm_display_ipv6_address(const struct sockaddr *sap, char *buf,
- +				     const size_t len)
- +{
-  	const struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)sap;
-  
- +	if (ipv6_addr_v4mapped(&sin6->sin6_addr))
-- 		snprintf(buf, len, NIPQUAD_FMT,
-- 				NIPQUAD(sin6->sin6_addr.s6_addr32[3]));
-++		snprintf(buf, len, "%pI4",
-++				&sin6->sin6_addr.s6_addr32[3]);
- +	else if (sin6->sin6_scope_id != 0)
-- 		snprintf(buf, len, NIP6_FMT "%%%u", NIP6(sin6->sin6_addr),
-++		snprintf(buf, len, "%pI6%%%u", &sin6->sin6_addr,
- +				sin6->sin6_scope_id);
- +	else
-- 		snprintf(buf, len, NIP6_FMT, NIP6(sin6->sin6_addr));
-++		snprintf(buf, len, "%pI6", &sin6->sin6_addr);
- +}
- +
- +static void nlm_display_address(const struct sockaddr *sap,
- +				char *buf, const size_t len)
- +{
-  	switch (sap->sa_family) {
- -	case AF_UNSPEC:
- -		snprintf(buf, len, "unspecified");
- -		break;
-  	case AF_INET:
- -		snprintf(buf, len, "%pI4", &sin->sin_addr.s_addr);
- +		nlm_display_ipv4_address(sap, buf, len);
-  		break;
-  	case AF_INET6:
- -		if (ipv6_addr_v4mapped(&sin6->sin6_addr))
- -			snprintf(buf, len, "%pI4",
- -				 &sin6->sin6_addr.s6_addr32[3]);
- -		else
- -			snprintf(buf, len, "%pI6", &sin6->sin6_addr);
- +		nlm_display_ipv6_address(sap, buf, len);
-  		break;
-  	default:
-  		snprintf(buf, len, "unsupported address family");
+--Signature=_Tue__9_Dec_2008_14_42_44_+1100_bn/XRutpvIY_kimC
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkk96TQACgkQjjKRsyhoI8wJ5QCgkPLwNIUo8UWhyj2lUW5SGRMs
+OWEAoJPc57k6Fvw6rYkA3pTsPMagxkI1
+=/xv+
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__9_Dec_2008_14_42_44_+1100_bn/XRutpvIY_kimC--
