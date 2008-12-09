@@ -1,28 +1,149 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net tree
-Date: Tue, 09 Dec 2008 15:22:38 -0800 (PST)
-Message-ID: <20081209.152238.74217915.davem@davemloft.net>
-References: <20081209132136.c58c0ca5.sfr@canb.auug.org.au>
-	<20081209221708.GH8596@fieldses.org>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: Tree for December 9
+Date: Tue, 9 Dec 2008 15:34:18 -0800
+Message-ID: <20081209153418.4628723d.akpm@linux-foundation.org>
+References: <20081209185237.8bb715d7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:56723
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1753362AbYLIXWh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Dec 2008 18:22:37 -0500
-In-Reply-To: <20081209221708.GH8596@fieldses.org>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:47909 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750972AbYLIXe6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Dec 2008 18:34:58 -0500
+In-Reply-To: <20081209185237.8bb715d7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: bfields@fieldses.org
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, harvey.harrison@gmail.com, chuck.lever@oracle.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Greg KH <greg@kroah.com>, Kay Sievers <kay.sievers@vrfy.org>
 
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Date: Tue, 9 Dec 2008 17:17:08 -0500
+On Tue, 9 Dec 2008 18:52:37 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> I could rebase nfsd onto net in this case if that'd simplify your life.
-> Assuming net never rebases that wouldn't cause additional conflicts for
-> you.
+> I have created today's linux-next tree at
+> git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
 
-It never rebases, promise :-)
+udevd is sitting there chewing up 100% of a CPU all the time.
+
+The machine is x86_64, running FC6.  It still happens with
+CONFIG_SELINUX=n.
+
+config:			http://userweb.kernel.org/~akpm/config-akpm2.txt
+dmesg:			http://userweb.kernel.org/~akpm/dmesg-akpm2.txt
+strace of udevd:	http://userweb.kernel.org/~akpm/strace.out.txt
+
+excerpt:
+
+close(9)                                = 0
+open("/proc/21707/stat", O_RDONLY)      = 9
+read(9, "21707 (hald-addon-stor) S 21033 "..., 255) = 240
+close(9)                                = 0
+open("/proc/22340/stat", O_RDONLY)      = 9
+read(9, "22340 (smartd) S 1 22339 22339 0"..., 255) = 245
+close(9)                                = 0
+open("/proc/22347/stat", O_RDONLY)      = 9
+read(9, "22347 (mingetty) S 1 22347 22347"..., 255) = 231
+close(9)                                = 0
+open("/proc/22348/stat", O_RDONLY)      = 9
+read(9, "22348 (mingetty) S 1 22348 22348"..., 255) = 231
+close(9)                                = 0
+open("/proc/22350/stat", O_RDONLY)      = 9
+read(9, "22350 (mingetty) S 1 22350 22350"..., 255) = 231
+close(9)                                = 0
+open("/proc/22351/stat", O_RDONLY)      = 9
+read(9, "22351 (mingetty) S 1 22351 22351"..., 255) = 231
+close(9)                                = 0
+open("/proc/22352/stat", O_RDONLY)      = 9
+read(9, "22352 (mingetty) S 1 22352 22352"..., 255) = 231
+close(9)                                = 0
+open("/proc/22353/stat", O_RDONLY)      = 9
+read(9, "22353 (mingetty) S 1 22353 22353"..., 255) = 231
+close(9)                                = 0
+getdents(8, /* 0 entries */, 1024)      = 0
+close(8)                                = 0
+clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f77a89267a0) = 9474
+select(8, [3 4 5 7], NULL, NULL, NULL)  = 2 (in [4 5])
+recvfrom(4, "remove@/block/md0\0ACTION=remove\0"..., 2560, 0, NULL, NULL) = 109
+open("/dev/.udev/uevent_seqnum", O_WRONLY|O_CREAT|O_TRUNC, 0644) = 8
+write(8, "10081\n", 6)                  = 6
+close(8)                                = 0
+unlink("/dev/.udev/failed/block@md0")   = -1 ENOENT (No such file or directory)
+rmdir("/dev/.udev/failed")              = -1 ENOTEMPTY (Directory not empty)
+stat("/dev/.udev/queue", {st_mode=S_IFDIR|0755, st_size=80, ...}) = 0
+symlink("/sys/block/md0", "/dev/.udev/queue/block@md0") = -1 EEXIST (File exists)
+read(5, "\0", 256)                      = 1
+wait4(-1, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], WNOHANG, NULL) = 9470
+unlink("/dev/.udev/failed/class@bdi@9:0") = -1 ENOENT (No such file or directory)
+rmdir("/dev/.udev/failed")              = -1 ENOTEMPTY (Directory not empty)
+wait4(-1, 0x7fffb09643cc, WNOHANG, NULL) = 0
+open("/proc/stat", O_RDONLY)            = 8
+read(8, "cpu  4028 0 11313 54268 7224 6 2"..., 4095) = 4095
+close(8)                                = 0
+open("/proc", O_RDONLY|O_NONBLOCK|O_DIRECTORY) = 8
+fstat(8, {st_mode=S_IFDIR|0555, st_size=0, ...}) = 0
+fcntl(8, F_SETFD, FD_CLOEXEC)           = 0
+getdents(8, /* 33 entries */, 1024)     = 1016
+getdents(8, /* 39 entries */, 1024)     = 1024
+open("/proc/1/stat", O_RDONLY)          = 9
+read(9, "1 (init) S 0 1 1 0 -1 4194560 10"..., 255) = 243
+close(9)                                = 0
+open("/proc/2/stat", O_RDONLY)          = 9
+read(9, "2 (kthreadd) S 0 0 0 0 -1 214961"..., 255) = 156
+close(9)                                = 0
+open("/proc/3/stat", O_RDONLY)          = 9
+read(9, "3 (migration/0) S 2 0 0 0 -1 221"..., 255) = 163
+close(9)                                = 0
+open("/proc/4/stat", O_RDONLY)          = 9
+read(9, "4 (ksoftirqd/0) S 2 0 0 0 -1 221"..., 255) = 160
+--- SIGCHLD (Child exited) @ 0 (0) ---
+write(6, "\0", 1)                       = 1
+rt_sigreturn(0x6)                       = 160
+close(9)                                = 0
+open("/proc/5/stat", O_RDONLY)          = 9
+read(9, "5 (watchdog/0) S 2 0 0 0 -1 2216"..., 255) = 162
+close(9)                                = 0
+open("/proc/6/stat", O_RDONLY)          = 9
+read(9, "6 (migration/1) S 2 0 0 0 -1 221"..., 255) = 163
+close(9)                                = 0
+open("/proc/7/stat", O_RDONLY)          = 9
+read(9, "7 (ksoftirqd/1) S 2 0 0 0 -1 221"..., 255) = 160
+close(9)                                = 0
+open("/proc/8/stat", O_RDONLY)          = 9
+read(9, "8 (watchdog/1) S 2 0 0 0 -1 2216"..., 255) = 162
+close(9)                                = 0
+open("/proc/9/stat", O_RDONLY)          = 9
+read(9, "9 (migration/2) S 2 0 0 0 -1 221"..., 255) = 164
+close(9)                                = 0
+open("/proc/10/stat", O_RDONLY)         = 9
+read(9, "10 (ksoftirqd/2) S 2 0 0 0 -1 22"..., 255) = 162
+close(9)                                = 0
+open("/proc/11/stat", O_RDONLY)         = 9
+read(9, "11 (watchdog/2) S 2 0 0 0 -1 221"..., 255) = 164
+close(9)                                = 0
+open("/proc/12/stat", O_RDONLY)         = 9
+read(9, "12 (migration/3) S 2 0 0 0 -1 22"..., 255) = 165
+close(9)                                = 0
+open("/proc/13/stat", O_RDONLY)         = 9
+read(9, "13 (ksoftirqd/3) S 2 0 0 0 -1 22"..., 255) = 162
+close(9)                                = 0
+open("/proc/14/stat", O_RDONLY)         = 9
+read(9, "14 (watchdog/3) S 2 0 0 0 -1 221"..., 255) = 164
+close(9)                                = 0
+open("/proc/15/stat", O_RDONLY)         = 9
+read(9, "15 (migration/4) S 2 0 0 0 -1 22"..., 255) = 165
+close(9)                                = 0
+getdents(8, /* 42 entries */, 1024)     = 1008
+open("/proc/16/stat", O_RDONLY)         = 9
+read(9, "16 (ksoftirqd/4) S 2 0 0 0 -1 22"..., 255) = 162
+close(9)                                = 0
+open("/proc/17/stat", O_RDONLY)         = 9
+read(9, "17 (watchdog/4) S 2 0 0 0 -1 221"..., 255) = 164
+close(9)                                = 0
+open("/proc/18/stat", O_RDONLY)         = 9
+read(9, "18 (migration/5) S 2 0 0 0 -1 22"..., 255) = 165
+close(9)                                = 0
+open("/proc/19/stat", O_RDONLY)         = 9
+read(9, "19 (ksoftirqd/5) S 2 0 0 0 -1 22"..., 255) = 162
+close(9)                                = 0
+open("/proc/20/stat", O_RDONLY)         = 9
+read(9, "20 (watchdog/5) S 2 0 0 0 -1 221"..., 255) = 164
