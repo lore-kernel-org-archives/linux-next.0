@@ -1,76 +1,55 @@
-From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Subject: Re: linux-next: Tree for December 1 (netfilter build error)
-Date: Wed, 10 Dec 2008 22:24:55 +0530
-Message-ID: <20081210165455.GC6391@linux.vnet.ibm.com>
-References: <20081201190827.2d02b1a5.sfr@canb.auug.org.au> <20081201115934.00ba918a.randy.dunlap@oracle.com>
-Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: linux-next: manual merge of the lblnet tree
+Date: Wed, 10 Dec 2008 09:05:44 -0800
+Message-ID: <493FF6E8.2090201@schaufler-ca.com>
+References: <20081208190708.1d2c37ec.sfr@canb.auug.org.au> <200812081441.12338.paul.moore@hp.com> <alpine.LRH.1.10.0812090815370.6220@tundra.namei.org> <200812081758.10731.paul.moore@hp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp06.in.ibm.com ([59.145.155.6]:52106 "EHLO
-	e28smtp06.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752963AbYLJQzB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Dec 2008 11:55:01 -0500
-Content-Disposition: inline
-In-Reply-To: <20081201115934.00ba918a.randy.dunlap@oracle.com>
+Received: from smtp101.prem.mail.sp1.yahoo.com ([98.136.44.56]:23465 "HELO
+	smtp101.prem.mail.sp1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1752963AbYLJRF5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Dec 2008 12:05:57 -0500
+In-Reply-To: <200812081758.10731.paul.moore@hp.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netfilter-devel@vger.kernel.org, eric@inl.fr, kaber@trash.net
+To: Paul Moore <paul.moore@hp.com>
+Cc: James Morris <jmorris@namei.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, David Howells <dhowells@redhat.com>, casey@schaufler-ca.com
 
-* Randy Dunlap <randy.dunlap@oracle.com> [2008-12-01 11:59:34]:
+Paul Moore wrote:
+> On Monday 08 December 2008 4:16:24 pm James Morris wrote:
+>   
+>> On Mon, 8 Dec 2008, Paul Moore wrote:
+>>     
+>>> James, is the security-testing tree rebased regularly or is
+>>> suitable to back a tree against?
+>>>       
+>> No, it doesn't get rebased.
+>>     
+>
+> Okay, experiment time.  I think I managed to pull from all the right 
+> spots, merge everything appropriately and end up with a security/ 
+> directory that builds so I pushed it back out to the lblnet-2.6_next 
+> tree.  I'm not quite sure the proper etiquette here but I had to fix 
+> Casey's patch a bit since it would apply cleanly; Casey if you could 
+> take a look I would appreciate it (it isn't exactly like what Stephen 
+> posted earlier but it is pretty darn close).
+>
+>   
 
-> On Mon, 1 Dec 2008 19:08:27 +1100 Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > Changes since 20081128:
-> > 
-> > Today's tree fails the powerpc allyesconfig build.
-> 
-> 
-> ERROR: "nfulnl_log_packet" [net/netfilter/xt_NFLOG.ko] undefined!
-> 
-> config attached.
+The Smack Verification Laboratory reports that lblnet-2.6_next is
+working as expected for UDP and TCP.
 
-	next-20081210 kernel build fails when !CONFIG_NETFILTER_NETLINK_LOG 
-This was introduced by the 
-
-commit 5f7340eff8f68f41b7e5c7ad47ec4cd1ea1afb40
-Author: Eric Leblond <eric@inl.fr>
-Date:   Tue Nov 4 14:21:08 2008 +0100
-
-    netfilter: xt_NFLOG: don't call nf_log_packet in NFLOG module.
-	    
-the function nfulnl_log_packet is exported only if
-CONFIG_NETFILTER_NETLINK_LOG is enabled, so marking the loging function
-between ifdef.
-
-I have tested the patch for build failure only
-
-Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
---
- net/netfilter/xt_NFLOG.c |    3 +++
- 1 files changed, 3 insertions(+), 0 deletions(-)
-
-diff --git a/net/netfilter/xt_NFLOG.c b/net/netfilter/xt_NFLOG.c
-index a57c5cf..fa814a6 100644
---- a/net/netfilter/xt_NFLOG.c
-+++ b/net/netfilter/xt_NFLOG.c
-@@ -32,8 +32,11 @@ nflog_tg(struct sk_buff *skb, const struct xt_target_param *par)
- 	li.u.ulog.group	     = info->group;
- 	li.u.ulog.qthreshold = info->threshold;
- 
-+#ifdef CONFIG_NETFILTER_NETLINK_LOG
- 	nfulnl_log_packet(par->family, par->hooknum, skb, par->in,
- 			  par->out, &li, info->prefix);
-+#endif /* CONFIG_NETFILTER_NETLINK_LOG */
-+
- 	return XT_CONTINUE;
- }
- 
--- 
-Thanks & Regards,
-Kamalesh Babulal,
-Linux Technology Center,
-IBM, ISTL.
+>>>  If so, I can rebase the lblnet-2.6_next tree
+>>> against security-testing to resolve the conflict ...
+>>>       
+>> Ok, and I can carry your patches in there if necessary.
+>>     
+>
+> I would like to figure out to make this work as it is likely to happen 
+> again at some point in the future, but if I can't get it working 
+> quickly I may punt on it and ask you to pull in the patches.
+>
+>   
