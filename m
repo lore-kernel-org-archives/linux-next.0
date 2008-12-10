@@ -1,25 +1,44 @@
-From: Mark Brown <broonie@sirena.org.uk>
-Subject: Re: linux-next:  sound tree build failure
-Date: Wed, 10 Dec 2008 11:47:10 +0000
-Message-ID: <20081210114708.GF31542@sirena.org.uk>
-References: <20081210162309.add4393f.sfr@canb.auug.org.au> <s5h63lsldwe.wl%tiwai@suse.de>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Subject: Re: [PATCH] simnet: convert to net_device_ops
+Date: Wed, 10 Dec 2008 14:54:17 +0300
+Message-ID: <20081210115417.GC20973@x200.localdomain>
+References: <a4423d670812090611v715309adq3e9d2d95254e2e16@mail.gmail.com> <20081209150827.GA8134@x200.localdomain> <20081209.225728.07389385.davem@davemloft.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:1361 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750949AbYLJLrO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Dec 2008 06:47:14 -0500
+Return-path: <linux-ia64-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <s5h63lsldwe.wl%tiwai@suse.de>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+In-Reply-To: <20081209.225728.07389385.davem@davemloft.net>
+Sender: linux-ia64-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: a.beregalov@gmail.com, linux-next@vger.kernel.org, netdev@vger.kernel.org, linux-ia64@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Dec 10, 2008 at 07:53:21AM +0100, Takashi Iwai wrote:
+On Tue, Dec 09, 2008 at 10:57:28PM -0800, David Miller wrote:
+> From: Alexey Dobriyan <adobriyan@gmail.com>
+> Date: Tue, 9 Dec 2008 18:08:27 +0300
+> 
+> > On Tue, Dec 09, 2008 at 05:11:17PM +0300, Alexander Beregalov wrote:
+> > >   CC      arch/ia64/hp/sim/simeth.o
+> > > arch/ia64/hp/sim/simeth.c: In function 'simeth_probe1':
+> > > arch/ia64/hp/sim/simeth.c:212: error: 'struct net_device' has no member named 'open'
+> > 
+> > [PATCH] simeth: convert to net_device_ops
+> > 
+> > Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+> 
+> This doesn't explain the build failure.
 
-> Thanks for noticing.  I fixed it on sound git tree now.
-> FWIW, the patch below should fix the build problem.
+I triggered it manually.
 
-Thanks for taking care of this.
+And most certainly forgot .ndo_validate_addr, so patch needs resend anyway.
+
+> Using ->open() and friends should work perfectly fine for drivers not
+> yet converted to netdev_ops.  The code protected by COMPAT_NET_DEV_OPS
+> provides this, and we force that Kconfig option to always be on.
+> 
+> I don't want to add this patch and just shrug off this build failure.
+> If this build failures, we should be seeing 200 other drivers not
+> build too.
+> 
+> I suspect something is messed up with this person's kernel config
+> or similar.
