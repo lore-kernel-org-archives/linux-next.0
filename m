@@ -1,40 +1,39 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH] simnet: convert to net_device_ops
-Date: Tue, 09 Dec 2008 22:57:28 -0800 (PST)
-Message-ID: <20081209.225728.07389385.davem@davemloft.net>
-References: <a4423d670812090611v715309adq3e9d2d95254e2e16@mail.gmail.com>
-	<20081209150827.GA8134@x200.localdomain>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the mtd tree
+Date: Tue, 9 Dec 2008 20:04:58 -0800
+Message-ID: <20081210040458.GA29450@kroah.com>
+References: <20081127151548.eb40da3c.sfr@canb.auug.org.au> <20081210130806.27fcb097.sfr@canb.auug.org.au> <20081210022711.GA28801@kroah.com> <20081210133428.321b5e9f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-ia64-owner@vger.kernel.org>
-In-Reply-To: <20081209150827.GA8134@x200.localdomain>
-Sender: linux-ia64-owner@vger.kernel.org
-To: adobriyan@gmail.com
-Cc: a.beregalov@gmail.com, linux-next@vger.kernel.org, netdev@vger.kernel.org, linux-ia64@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from kroah.org ([198.145.64.141]:38502 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753883AbYLJHF7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Dec 2008 02:05:59 -0500
+Content-Disposition: inline
+In-Reply-To: <20081210133428.321b5e9f.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Atsushi Nemoto <anemo@mba.ocn.ne.jp>, Andrew Morton <akpm@linux-foundation.org>, Kay Sievers <kay.sievers@vrfy.org>
 
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Tue, 9 Dec 2008 18:08:27 +0300
-
-> On Tue, Dec 09, 2008 at 05:11:17PM +0300, Alexander Beregalov wrote:
-> >   CC      arch/ia64/hp/sim/simeth.o
-> > arch/ia64/hp/sim/simeth.c: In function 'simeth_probe1':
-> > arch/ia64/hp/sim/simeth.c:212: error: 'struct net_device' has no member named 'open'
+On Wed, Dec 10, 2008 at 01:34:28PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> [PATCH] simeth: convert to net_device_ops
+> On Tue, 9 Dec 2008 18:27:11 -0800 Greg KH <greg@kroah.com> wrote:
+> >
+> > Ah, thanks, will update my tree with this one, didn't realize mtd had
+> > merged with Linus.
 > 
-> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+> It only happened last night (my time).
 
-This doesn't explain the build failure.
+I've now merged it all and pushed it out.
 
-Using ->open() and friends should work perfectly fine for drivers not
-yet converted to netdev_ops.  The code protected by COMPAT_NET_DEV_OPS
-provides this, and we force that Kconfig option to always be on.
+thanks,
 
-I don't want to add this patch and just shrug off this build failure.
-If this build failures, we should be seeing 200 other drivers not
-build too.
+greg k-h
 
-I suspect something is messed up with this person's kernel config
-or similar.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
