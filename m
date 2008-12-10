@@ -1,223 +1,148 @@
-From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Subject: [BUG] linux-next: 20081209 - kernel bug at
-	__rcu_process_callbacks, while booting up
-Date: Wed, 10 Dec 2008 17:27:21 +0530
-Message-ID: <20081210115721.GB6107@linux.vnet.ibm.com>
-References: <20081209185237.8bb715d7.sfr@canb.auug.org.au>
-Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+From: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
+Subject: [bug?] bio: add experimental support for inlining a number of bio_vecs inside the bio
+Date: Wed, 10 Dec 2008 21:05:29 +0900 (JST)
+Message-ID: <20081210204630.4FE3.KOSAKI.MOTOHIRO@jp.fujitsu.com>
+References: <20081210164659.9ebb8158.sfr@canb.auug.org.au> <20081210183059.4FD6.KOSAKI.MOTOHIRO@jp.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp02.in.ibm.com ([59.145.155.2]:42596 "EHLO
-	e28smtp02.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751013AbYLJL51 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Dec 2008 06:57:27 -0500
-Content-Disposition: inline
-In-Reply-To: <20081209185237.8bb715d7.sfr@canb.auug.org.au>
+Received: from fgwmail7.fujitsu.co.jp ([192.51.44.37]:53666 "EHLO
+	fgwmail7.fujitsu.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750928AbYLJMFc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Dec 2008 07:05:32 -0500
+In-Reply-To: <20081210183059.4FD6.KOSAKI.MOTOHIRO@jp.fujitsu.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dm-devel@redhat.com, tglx@linutronix.de, mel@csn.ul.ie, paulmck@linux.vnet.ibm.com
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: kosaki.motohiro@jp.fujitsu.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi,
+CC to Jens Axboe
 
-	Kernel bug is hit while booting up the next-20081208/09 kernels over
-the x86_64 box. The IP is pointing to 0x0 and its stuck at
-__rcu_process_callbacks.
+> message
+> ==================================
+> Creating root device.
+> Unable to handle kernel NULL pointer dereference (address 00000000000000c8)
+> swapper[0]: Oops 8813272891392 [1]
+> Modules linked in: dm_snapshot dm_zero dm_mirror dm_region_hash dm_log dm_mod lpfc mptspi mptscsih mptbase ehci_hcd ohci_hcd uhci_hcd usbcore
+> 
+> Pid: 0, CPU 0, comm:              swapper
+> psr : 0000101008026018 ifs : 800000000000038a ip  : [<a00000010032be00>]    Not tainted (2.6.28-rc7-next-20081210)
+> ip is at __blk_complete_request+0x20/0x2a0
+> unat: 0000000000000000 pfs : 0000000000000205 rsc : 0000000000000003
+> rnat: 000000000000000c bsps: e000000001143180 pr  : 656960155aa55695
+> ldrs: 0000000000000000 ccv : 0000000000000000 fpsr: 0009804c0270033f
+> csd : 0000000000000000 ssd : 0000000000000000
+> b0  : a00000010032c0e0 b6  : a000000100364480 b7  : a000000100504600
+> f6  : 0fffcfffffffff0000000 f7  : 0ffe6e830000000000000
+> f8  : 1000ae830000000000000 f9  : 1003e0000000000004020
+> f10 : 1003e0000000000000060 f11 : 1003e00000000000000ab
+> r1  : a000000100ef6c30 r2  : 00000000000000c8 r3  : e0000040c2611fe0
+> r8  : 0000000000000000 r9  : 0000000000000801 r10 : 0000000000000a01
+> r11 : 0000000000000801 r12 : a000000100b2fb40 r13 : a000000100b20000
+> r14 : 0000000000000000 r15 : 0000000000000000 r16 : 0000000000000001
+> r17 : e0000040c2611ff0 r18 : 0000000000000200 r19 : e0000040c3100000
+> r20 : a040000000000000 r21 : 000000000000000e r22 : a000000100504600
+> r23 : e0000040c0722a90 r24 : a000000100b2fbd0 r25 : a000000100ba3908
+> r26 : 0000000000000400 r27 : 00000000000000ff r28 : 0000000000000000
+> r29 : a000000100b20d34 r30 : 000000000000000d r31 : 0000000000007fff
+> 
+> Call Trace:
+>  [<a000000100017940>] show_stack+0x80/0xa0
+>                                 sp=a000000100b2f710 bsp=a000000100b21358
+>  [<a000000100018240>] show_regs+0x880/0x8c0
+>                                 sp=a000000100b2f8e0 bsp=a000000100b21300
+>  [<a000000100040570>] die+0x1b0/0x2e0
+>                                 sp=a000000100b2f8e0 bsp=a000000100b212b8
+>  [<a000000100773dd0>] ia64_do_page_fault+0x810/0xb00
+>                                 sp=a000000100b2f8e0 bsp=a000000100b21258
+>  [<a00000010000c860>] ia64_native_leave_kernel+0x0/0x270
+>                                 sp=a000000100b2f970 bsp=a000000100b21258
+>  [<a00000010032be00>] __blk_complete_request+0x20/0x2a0
+>                                 sp=a000000100b2fb40 bsp=a000000100b21208
+>  [<a00000010032c0e0>] blk_complete_request+0x60/0x80
+>                                 sp=a000000100b2fb40 bsp=a000000100b211e0
+>  [<a000000100504620>] scsi_done+0x20/0x40
+>                                 sp=a000000100b2fb40 bsp=a000000100b211c0
+>  [<a000000201b12160>] mptscsih_io_done+0x7c0/0xf40 [mptscsih]
+>                                 sp=a000000100b2fb40 bsp=a000000100b210f8
+>  [<a000000201a480f0>] mpt_interrupt+0x1f0/0x1280 [mptbase]
+>                                 sp=a000000100b2fb40 bsp=a000000100b21098
+>  [<a0000001001211a0>] handle_IRQ_event+0x80/0x120
+>                                 sp=a000000100b2fbb0 bsp=a000000100b21060
+>  [<a000000100121570>] __do_IRQ+0x330/0x440
+>                                 sp=a000000100b2fbb0 bsp=a000000100b21000
+>  [<a000000100014990>] ia64_handle_irq+0x410/0x440
+>                                 sp=a000000100b2fbb0 bsp=a000000100b20f78
+>  [<a00000010000c860>] ia64_native_leave_kernel+0x0/0x270
+>                                 sp=a000000100b2fbb0 bsp=a000000100b20f78
+>  [<a0000001000186e0>] default_idle+0x1a0/0x1c0
+>                                 sp=a000000100b2fd80 bsp=a000000100b20f10
+>  [<a0000001000175a0>] cpu_idle+0x1e0/0x3c0
+>                                 sp=a000000100b2fe20 bsp=a000000100b20eb0
+>  [<a000000100733c50>] rest_init+0xd0/0x100
+>                                 sp=a000000100b2fe20 bsp=a000000100b20e98
+>  [<a000000100971440>] start_kernel+0x740/0x800
+>                                 sp=a000000100b2fe20 bsp=a000000100b20e20
+>  [<a000000100777e00>] __kprobes_text_end+0x760/0x780
+>                                 sp=a000000100b2fe30 bsp=a000000100b20d80
+> Kernel panic - not syncing: Aiee, killing interrupt handler!
 
-Activating logical volumes
-  4 logical volume(s) in volume group "VolGroup00"BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-IP: [<0000000000000000>] 0x0
-PGD 3e8ad067 PUD 3e8ac067 PMD 0 
-Oops: 0010 [#1] SMP 
-last sysfs file: /sys/block/dm-1/removable
-CPU 3 
-Modules linked in:
-Pid: 0, comm: swapper Not tainted 2.6.28-rc7-next-20081209-autotest #1
-RIP: 0010:[<0000000000000000>]  [<0000000000000000>] 0x0
-RSP: 0018:ffff88003fa73ef0  EFLAGS: 00010286
-RAX: ffff88003eae0500 RBX: ffff880001047040 RCX: ffffffff80268f66
-RDX: 0000000000000000 RSI: ffffe20000fab800 RDI: ffff88003eae0500
-RBP: 0000000000000000 R08: ffff880001047040 R09: ffffffff80853950
-R10: 0000000000000038 R11: ffffffff8032222d R12: 0000000000000005
-R13: 0000000000000038 R14: 0000000000000009 R15: 0000000000000018
-FS:  000000000066d870(0000) GS:ffff88003f803f00(0000) knlGS:0000000000000000
-CS:  0010 DS: 0018 ES: 0018 CR0: 000000008005003b
-CR2: 0000000000000000 CR3: 000000003e8a9000 CR4: 00000000000006e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
-Process swapper (pid: 0, threadinfo ffff88003fa64000, task ffff88003f9dde00)
-Stack:
- ffffffff80268f66 ffff88003fa73ef8 0000000000000100 0000000000000001
- ffffffff807400b8 0000000000000038 ffffffff80269001 0000000000000018
- ffffffff8023b891 ffffffff8020e79e 0000000000000046 ffff88003fa73f80
-Call Trace:
- <IRQ> <0> [<ffffffff80268f66>] __rcu_process_callbacks+0x14e/0x1c3
- [<ffffffff80269001>] rcu_process_callbacks+0x26/0x4a
- [<ffffffff8023b891>] __do_softirq+0x76/0x136
- [<ffffffff8020e79e>] profile_pc+0x21/0x5b
- [<ffffffff8020d03c>] call_softirq+0x1c/0x28
- [<ffffffff8020e091>] do_softirq+0x2c/0x6c
- [<ffffffff8021e018>] smp_apic_timer_interrupt+0x93/0xac
- [<ffffffff8020ca73>] apic_timer_interrupt+0x13/0x20
- <EOI> <0>Code:  Bad RIP value.
-RIP  [<0000000000000000>] 0x0
- RSP <ffff88003fa73ef0>
-CR2: 0000000000000000
----[ end trace 69ecde41a682e571 ]---
-Kernel panic - not syncing: Fatal exception in interrupt
-Pid: 0, comm: swapper Tainted: G      D    2.6.28-rc7-next-20081209-autotest #1
-Call Trace:
-Mounting root fi <IRQ> lesystem.
- [<ffffffff80236e7d>] panic+0x86/0x144
- [<ffffffff8020ca73>] apic_timer_interrupt+0x13/0x20
- [<ffffffff8051fd57>] oops_end+0x61/0xad
- [<ffffffff8051fd96>] oops_end+0xa0/0xad
- [<ffffffff805215ac>] do_page_fault+0x748/0x801
- [<ffffffff8051f3af>] page_fault+0x1f/0x30
- [<ffffffff8032222d>] selinux_cred_free+0x0/0x14
-BUG: unable to handle kernel NULL pointer dereference at 0000000000000002
-IP: [<ffffffff802926da>] kmem_cache_alloc+0x6a/0x99
-PGD 3e8ad067 PUD 3e8ac067 PMD 0 
-Oops: 0000 [#2] SMP 
-last sysfs file: /sys/block/ram7/removable
-CPU 2 
-Modules linked in:
-Pid: 1, comm: init Tainted: G      D    2.6.28-rc7-next-20081209-autotest #1
-RIP: 0010:[<ffffffff802926da>]  [<ffffffff802926da>] kmem_cache_alloc+0x6a/0x99
-RSP: 0018:ffff88003f9d7db8  EFLAGS: 00010002
-RAX: 0000000000000000 RBX: 0000000000000246 RCX: 0000000000000001
-RDX: ffff880001037800 RSI: 0000000000000002 RDI: ffffffff80854f70
-RBP: 0000000000000020 R08: 0000000000000000 R09: ffffffff80859a80
-R10: 0000000000000001 R11: ffff88003f426018 R12: ffffffff80854f70
-R13: ffffffff80253ab1 R14: 0000000000000080 R15: ffffffff802b4141
-FS:  000000000066d870(0063) GS:ffff88003f803c80(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
-CR2: 0000000000000002 CR3: 000000003e8a9000 CR4: 00000000000006e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
-Process init (pid: 1, threadinfo ffff88003f9d6000, task ffff88003f9d8000)
-Stack:
- 00000000ffffffff ffff88003f426000 ffffffff80859a80 ffffffff80859a80
- 0000000000000000 ffffffff80253ab1 00000000006f1db0 0000000000000000
- ffff88003eb6a2f8 ffff88003f9d7e48 0000000000000000 01ff88003e97c400
-Call Trace:
- [<ffffffff80253ab1>] ? smp_call_function_many+0xdb/0x220
- [<ffffffff802704ca>] ? do_writepages+0x23/0x30
- [<ffffffff802b4141>] ? invalidate_bh_lru+0x0/0x42
- [<ffffffff80253c16>] ? smp_call_function+0x20/0x24
- [<ffffffff8023b483>] ? on_each_cpu+0x10/0x22
- [<ffffffff802b919b>] ? kill_bdev+0x1b/0x30
- [<ffffffff802b9892>] ? __blkdev_put+0x54/0x151
- [<ffffffff8029899f>] ? __fput+0xe7/0x1b4
- [<ffffffff802961ea>] ? filp_close+0x5e/0x66
- [<ffffffff8029627f>] ? sys_close+0x8d/0xd1
- [<ffffffff8020bf5b>] ? system_call_fastpath+0x16/0x1b
-Code: 18 03 00 00 48 8b 32 44 8b 72 18 48 85 f6 75 18 49 89 d0 89 ee 4c 89 e9 83 ca ff 4c 89 e7 e8 57 f8 ff ff 48 89 c6 eb 0a 8b 42 14 <48> 8b 04 c6 48 89 02 53 9d 31 c0 c1 ed 0f 48 85 f6 0f 95 c0 85 
-RIP  [<ffffffff802926da>] kmem_cache_alloc+0x6a/0x99
- RSP <ffff88003f9d7db8>
-CR2: 0000000000000002
----[ end trace 69ecde41a682e571 ]---
-Kernel panic - not syncing: Attempted to kill init!
-Pid: 1, comm: init Tainted: G      D    2.6.28-rc7-next-20081209-autotest #1
-Call Trace:
- [<ffffffff80236e7d>] panic+0x86/0x144
- [<ffffffff802abbfb>] mntput_no_expire+0x1e/0x139
- [<ffffffff802961ea>] filp_close+0x5e/0x66
- [<ffffffff8023870d>] exit_fs+0x35/0x46
- [<ffffffff80239b7a>] do_exit+0x75/0x766
- [<ffffffff8051fd9e>] oops_end+0xa8/0xad
- [<ffffffff805215ac>] do_page_fault+0x748/0x801
- [<ffffffff80253ab1>] smp_call_function_many+0xdb/0x220
- [<ffffffff802b4141>] invalidate_bh_lru+0x0/0x42
- [<ffffffff8051f3af>] page_fault+0x1f/0x30
- [<ffffffff802b4141>] invalidate_bh_lru+0x0/0x42
- [<ffffffff80253ab1>] smp_call_function_many+0xdb/0x220
- [<ffffffff802926da>] kmem_cache_alloc+0x6a/0x99
- [<ffffffff80253ab1>] smp_call_function_many+0xdb/0x220
- [<ffffffff802704ca>] do_writepages+0x23/0x30
- [<ffffffff802b4141>] invalidate_bh_lru+0x0/0x42
- [<ffffffff80253c16>] smp_call_function+0x20/0x24
- [<ffffffff8023b483>] on_each_cpu+0x10/0x22
- [<ffffffff802b919b>] kill_bdev+0x1b/0x30
- [<ffffffff802b9892>] __blkdev_put+0x54/0x151
- [<ffffffff8029899f>] __fput+0xe7/0x1b4
- [<ffffffff802961ea>] filp_close+0x5e/0x66
- [<ffffffff8029627f>] sys_close+0x8d/0xd1
- [<ffffffff8020bf5b>] system_call_fastpath+0x16/0x1b
-BUG: unable to handle kernel NULL pointer dereference at 0000000000000002
-IP: [<ffffffff802926da>] kmem_cache_alloc+0x6a/0x99
-PGD 0 
-Oops: 0000 [#3] SMP 
-last sysfs file: /sys/block/ram7/removable
-CPU 2 
-Modules linked in:
-Pid: 1, comm: init Tainted: G      D    2.6.28-rc7-next-20081209-autotest #1
-RIP: 0010:[<ffffffff802926da>]  [<ffffffff802926da>] kmem_cache_alloc+0x6a/0x99
-RSP: 0018:ffff88003f9d7a58  EFLAGS: 00010002
-RAX: 0000000000000000 RBX: 0000000000000246 RCX: 0000000000000001
-RDX: ffff880001037800 RSI: 0000000000000002 RDI: ffffffff80854f70
-RBP: 0000000000000020 R08: ffffffff8052a5c0 R09: ffffffff80859a80
-R10: 0000000000000000 R11: ffffffff8067c887 R12: ffffffff80854f70
-R13: ffffffff80253ab1 R14: 0000000000000080 R15: ffffffff80211dd3
-FS:  000000000066d870(0000) GS:ffff88003f803c80(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
-CR2: 0000000000000002 CR3: 0000000000201000 CR4: 00000000000006e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
-Process init (pid: 1, threadinfo ffff88003f9d6000, task ffff88003f9d8000)
-Stack:
- 00000000ffffffff ffff88003f9d8000 ffffffff80859a80 ffffffff80859a80
- 0000000000000000 ffffffff80253ab1 ffffffff8052a5c0 ffff88003fa3bfc0
- 0000000000000000 ffffffff8020e525 0000000000000010 000000003e943800
-Call Trace:
- [<ffffffff80253ab1>] ? smp_call_function_many+0xdb/0x220
- [<ffffffff8020e525>] ? dump_trace+0x223/0x232
- [<ffffffff80253c16>] ? smp_call_function+0x20/0x24
- [<ffffffff8021ccc1>] ? native_smp_send_stop+0x1a/0x26
- [<ffffffff80236e91>] ? panic+0x9a/0x144
- [<ffffffff802abbfb>] ? mntput_no_expire+0x1e/0x139
- [<ffffffff802961ea>] ? filp_close+0x5e/0x66
- [<ffffffff8023870d>] ? exit_fs+0x35/0x46
- [<ffffffff80239b7a>] ? do_exit+0x75/0x766
- [<ffffffff8051fd9e>] ? oops_end+0xa8/0xad
- [<ffffffff805215ac>] ? do_page_fault+0x748/0x801
- [<ffffffff80253ab1>] ? smp_call_function_many+0xdb/0x220
- [<ffffffff802b4141>] ? invalidate_bh_lru+0x0/0x42
- [<ffffffff8051f3af>] ? page_fault+0x1f/0x30
- [<ffffffff802b4141>] ? invalidate_bh_lru+0x0/0x42
- [<ffffffff80253ab1>] ? smp_call_function_many+0xdb/0x220
- [<ffffffff802926da>] ? kmem_cache_alloc+0x6a/0x99
- [<ffffffff80253ab1>] ? smp_call_function_many+0xdb/0x220
- [<ffffffff802704ca>] ? do_writepages+0x23/0x30
- [<ffffffff802b4141>] ? invalidate_bh_lru+0x0/0x42
- [<ffffffff80253c16>] ? smp_call_function+0x20/0x24
- [<ffffffff8023b483>] ? on_each_cpu+0x10/0x22
- [<ffffffff802b919b>] ? kill_bdev+0x1b/0x30
- [<ffffffff802b9892>] ? __blkdev_put+0x54/0x151
- [<ffffffff8029899f>] ? __fput+0xe7/0x1b4
- [<ffffffff802961ea>] ? filp_close+0x5e/0x66
- [<ffffffff8029627f>] ? sys_close+0x8d/0xd1
- [<ffffffff8020bf5b>] ? system_call_fastpath+0x16/0x1b
-Code: 18 03 00 00 48 8b 32 44 8b 72 18 48 85 f6 75 18 49 89 d0 89 ee 4c 89 e9 83 ca ff 4c 89 e7 e8 57 f8 ff ff 48 89 c6 eb 0a 8b 42 14 <48> 8b 04 c6 48 89 02 53 9d 31 c0 c1 ed 0f 48 85 f6 0f 95 c0 85 
-RIP  [<ffffffff802926da>] kmem_cache_alloc+0x6a/0x99
- RSP <ffff88003f9d7a58>
-CR2: 0000000000000002
----[ end trace 69ecde41a682e571 ]---
-Fixing recursive fault but reboot is needed!
- [<ffffffff80268f66>] __rcu_process_callbacks+0x14e/0x1c3
- [<ffffffff80268f66>] __rcu_process_callbacks+0x14e/0x1c3
- [<ffffffff80269001>] rcu_process_callbacks+0x26/0x4a
- [<ffffffff8023b891>] __do_softirq+0x76/0x136
- [<ffffffff8020e79e>] profile_pc+0x21/0x5b
- [<ffffffff8020d03c>] call_softirq+0x1c/0x28
- [<ffffffff8020e091>] do_softirq+0x2c/0x6c
- [<ffffffff8021e018>] smp_apic_timer_interrupt+0x93/0xac
- [<ffffffff8020ca73>] apic_timer_interrupt+0x13/0x20
- <EOI> 
+bisect information is here.
 
--- 
-Thanks & Regards,
-Kamalesh Babulal,
-Linux Technology Center,
-IBM, ISTL.
+
+% git bisect log
+git bisect start
+# bad: [87602124ea74da54ae39e713a28d5593af9ad5ef] Add linux-next specific files for 20081210
+git bisect bad 87602124ea74da54ae39e713a28d5593af9ad5ef
+# good: [061e41fdb5047b1fb161e89664057835935ca1d2] Linux 2.6.28-rc7
+git bisect good 061e41fdb5047b1fb161e89664057835935ca1d2
+# good: [9be550f4dabca95e3b6d02a6865b58bfdf255902] Merge commit 'kvm/master'
+git bisect good 9be550f4dabca95e3b6d02a6865b58bfdf255902
+# good: [472ec6db8c6ca2d6088b7ebff6fa3210b9f9726c] Merge commit 'net/master'
+git bisect good 472ec6db8c6ca2d6088b7ebff6fa3210b9f9726c
+# good: [359ec37f233829f8765e41fb7dcb79f5b24a20db] Merge commit 'gfs2/master'
+git bisect good 359ec37f233829f8765e41fb7dcb79f5b24a20db
+# bad: [17ed6c92c143ff0b5d5eaac9fadd258cc4e8252b] Merge commit 'voltage/for-next'
+git bisect bad 17ed6c92c143ff0b5d5eaac9fadd258cc4e8252b
+# bad: [678ac94e1e49ba2094d43cf3a9ffa0fff78457d1] Merge commit 'slab/for-next'
+git bisect bad 678ac94e1e49ba2094d43cf3a9ffa0fff78457d1
+# bad: [da9849d8bc82d8764f3ada875764f64714d8b018] Merge commit 'firmware/master'
+git bisect bad da9849d8bc82d8764f3ada875764f64714d8b018
+# bad: [ecf323abe734650adb0790fa681490b288fc9073] block: use min_not_zero in blk_queue_stack_limits
+git bisect bad ecf323abe734650adb0790fa681490b288fc9073
+# good: [834ec249cbbefc4121964d5e843ac02ecc253d39] block: reorder struct bio to remove padding on 64bit
+git bisect good 834ec249cbbefc4121964d5e843ac02ecc253d39
+# good: [520e832e193f61001dc5d35d9536850713880630] bio: only mempool back the largest bio_vec slab cache
+git bisect good 520e832e193f61001dc5d35d9536850713880630
+# bad: [102e8207838eabe09a4275f97a03334fa8609aa0] aio: make the lookup_ioctx() lockless
+git bisect bad 102e8207838eabe09a4275f97a03334fa8609aa0
+# good: [dc23b3285aaaa0dbd013bcfacad26f752e23927e] bio: allow individual slabs in the bio_set
+git bisect good dc23b3285aaaa0dbd013bcfacad26f752e23927e
+# bad: [30e62ce1ce96ff01d4826b0e476941169c94041d] bio: add experimental support for inlining a number of bio_vecs inside the bio
+git bisect bad 30e62ce1ce96ff01d4826b0e476941169c94041d
+
+
+
+---------------------
+commit 30e62ce1ce96ff01d4826b0e476941169c94041d
+Author: Jens Axboe <jens.axboe@oracle.com>
+Date:   Fri Dec 5 13:58:19 2008 +0100
+
+    bio: add experimental support for inlining a number of bio_vecs inside the bio
+
+    When we go and allocate a bio for IO, we actually do two allocations.
+    One for the bio itself, and one for the bi_io_vec that holds the
+    actual pages we are interested in.
+
+    This feature inlines a definable amount of io vecs inside the bio
+    itself, so we eliminate the bio_vec array allocation for IO's up
+    to a certain size. It defaults to 4 vecs, which is typically 16k
+    of IO.
+
+    Signed-off-by: Jens Axboe <jens.axboe@oracle.com>
+
+------------------------
+
+
+experimental??
