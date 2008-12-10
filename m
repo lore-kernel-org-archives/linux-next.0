@@ -1,43 +1,37 @@
-From: Eric Leblond <eric@inl.fr>
-Subject: netfilter: xt_NFLOG is dependant of nfnetlink_log
-Date: Wed, 10 Dec 2008 19:49:17 +0100
-Message-ID: <1228934957-11967-1-git-send-email-eric@inl.fr>
-References: <1228934630.5961.8.camel@ice-age>
-Return-path: <netfilter-devel-owner@vger.kernel.org>
-In-Reply-To: <1228934630.5961.8.camel@ice-age>
-Sender: netfilter-devel-owner@vger.kernel.org
-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netfilter-devel@vger.kernel.org, kaber@trash.net, Eric Leblond <eric@inl.fr>
-List-Id: linux-next.vger.kernel.org
+From: David Howells <dhowells@redhat.com>
+Subject: Re: linux-next: manual merge of the audit tree
+Date: Wed, 10 Dec 2008 18:58:29 +0000
+Message-ID: <13157.1228935509@redhat.com>
+References: <20081209175726.682d77cd.sfr@canb.auug.org.au>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.redhat.com ([66.187.237.31]:34859 "EHLO mx2.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754414AbYLJS7V (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Dec 2008 13:59:21 -0500
+In-Reply-To: <20081209175726.682d77cd.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: dhowells@redhat.com, Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org, James Morris <jmorris@namei.org>, Eric Paris <eparis@redhat.com>, Serge Hallyn <serue@us.ibm.com>
 
-The patch "don't call nf_log_packet in NFLOG module" make xt_NFLOG
-dependant of nfnetlink_log. This patch forces the dependencies to fix
-compilation in case only xt_NFLOG compilation was asked and modifies the
-help message accordingly to the change.
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Signed-off-by: Eric Leblond <eric@inl.fr>
----
- net/netfilter/Kconfig |    5 ++---
- 1 files changed, 2 insertions(+), 3 deletions(-)
+> Today's linux-next merge of the audit tree got a lot of conflict in
+> include/linux/audit.h, kernel/auditsc.c, kernel/capability.c and
+> security/commoncap.c against commits in the security-testing tree.
+> 
+> Its not obvious how to resolve these, so can you, Eric, James and Dave
+> have a conversation and see what you can come up with.  Some will be
+> easy, but there are several overlapping changes here.
+> 
+> Looking harder, it looks like some (all?) of Eric's patches may already
+> be in the security-testing tree ...
+> 
+> I have dropped the audit tree for today.
 
-diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
-index 25dcef9..c2bac9c 100644
---- a/net/netfilter/Kconfig
-+++ b/net/netfilter/Kconfig
-@@ -373,11 +373,10 @@ config NETFILTER_XT_TARGET_MARK
- config NETFILTER_XT_TARGET_NFLOG
- 	tristate '"NFLOG" target support'
- 	default m if NETFILTER_ADVANCED=n
-+	select NETFILTER_NETLINK_LOG
- 	help
- 	  This option enables the NFLOG target, which allows to LOG
--	  messages through the netfilter logging API, which can use
--	  either the old LOG target, the old ULOG target or nfnetlink_log
--	  as backend.
-+	  messages through nfnetlink_log.
- 
- 	  To compile it as a module, choose M here.  If unsure, say N.
- 
--- 
-1.5.6.3
+I've looked at all the conflicting bits, and I think you should take what's in
+the security tree over what's in Al's tree for all of them.  I think the
+security tree already has everything that Al's tree applies in the conflicting
+areas, it's just that the security tree has further changes parked on top.
 
+David
