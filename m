@@ -1,72 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the net tree
-Date: Wed, 10 Dec 2008 10:41:10 +1100
-Message-ID: <20081210104110.31256648.sfr@canb.auug.org.au>
-References: <20081209132136.c58c0ca5.sfr@canb.auug.org.au>
-	<20081209221708.GH8596@fieldses.org>
+From: "Kay Sievers" <kay.sievers@vrfy.org>
+Subject: Re: linux-next: Tree for December 9
+Date: Wed, 10 Dec 2008 01:06:47 +0100
+Message-ID: <ac3eb2510812091606k5615135fn87d35aaa16834ea8@mail.gmail.com>
+References: <20081209185237.8bb715d7.sfr@canb.auug.org.au>
+	 <20081209153418.4628723d.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__10_Dec_2008_10_41_10_+1100_PF90FcAJDEx7YXwu"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54594 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752011AbYLIXlU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Dec 2008 18:41:20 -0500
-In-Reply-To: <20081209221708.GH8596@fieldses.org>
+Received: from mail-ew0-f17.google.com ([209.85.219.17]:51793 "EHLO
+	mail-ew0-f17.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750766AbYLJAGt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Dec 2008 19:06:49 -0500
+Received: by ewy10 with SMTP id 10so339203ewy.13
+        for <linux-next@vger.kernel.org>; Tue, 09 Dec 2008 16:06:47 -0800 (PST)
+In-Reply-To: <20081209153418.4628723d.akpm@linux-foundation.org>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Harvey Harrison <harvey.harrison@gmail.com>, Chuck Lever <chuck.lever@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Greg KH <greg@kroah.com>
 
---Signature=_Wed__10_Dec_2008_10_41_10_+1100_PF90FcAJDEx7YXwu
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Bruce,
-
-On Tue, 9 Dec 2008 17:17:08 -0500 "J. Bruce Fields" <bfields@fieldses.org> =
-wrote:
+On Wed, Dec 10, 2008 at 00:34, Andrew Morton <akpm@linux-foundation.org> wrote:
+> On Tue, 9 Dec 2008 18:52:37 +1100
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> I could rebase nfsd onto net in this case if that'd simplify your life.
-> Assuming net never rebases that wouldn't cause additional conflicts for
-> you.
->=20
-> And that's more-or-less what we'll end up doing come the merge window
-> anyway.
->=20
-> (Or we could pull one of net or nfsd into the other.)
+>> I have created today's linux-next tree at
+>> git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+>
+> udevd is sitting there chewing up 100% of a CPU all the time.
+>
+> The machine is x86_64, running FC6.  It still happens with
+> CONFIG_SELINUX=n.
+>
+> config:                 http://userweb.kernel.org/~akpm/config-akpm2.txt
+> dmesg:                  http://userweb.kernel.org/~akpm/dmesg-akpm2.txt
+> strace of udevd:        http://userweb.kernel.org/~akpm/strace.out.txt
+>
+> excerpt:
+>
+> close(9)                                = 0
+> open("/proc/21707/stat", O_RDONLY)      = 9
+> read(9, "21707 (hald-addon-stor) S 21033 "..., 255) = 240
+> close(9)                                = 0
+> open("/proc/22340/stat", O_RDONLY)      = 9
+> read(9, "22340 (smartd) S 1 22339 22339 0"..., 255) = 245
+> close(9)                                = 0
 
-The net tree never rebases, so pulling it into your tree is fine and a
-good solution.  That would move the conflict resolution from my tree to
-yours (which is always better since you know your code better than I do).
+Maybe an event loop, caused by something.
 
-The only thing to remember is that the net tree should be merged into
-Linus' before the nfsd tree during the merge window.  (It doesn't really
-matter, but is good form as then Dave will get blamed for any problems
-introduced by his tree rather than you :-))
+Are you still able to run:
+  udevmonitor --kernel
+and see if we get events, maybe in a loop, from the kernel?
 
-The only other downside is that if Dave's tree has a bug (in the part you
-have merged) that causes me to drop it then I will have to drop your tree
-as well.  However, that doesn't happen very often (right, Dave?  :-)).
-
-The alternative of Dave merging your tree into his only works if you can
-guarantee that you will never rebase your tree.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__10_Dec_2008_10_41_10_+1100_PF90FcAJDEx7YXwu
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkk/AhYACgkQjjKRsyhoI8yx4ACffWAHL33O7zaiYCPeEYT/ONK/
-4dgAnR+QfJ+k3U6mQ4vS/6IfXyzIO7jl
-=5C41
------END PGP SIGNATURE-----
-
---Signature=_Wed__10_Dec_2008_10_41_10_+1100_PF90FcAJDEx7YXwu--
+Kay
