@@ -1,94 +1,74 @@
 From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Subject: Re: [BUILD-FAILURE] linux-next: next-20081210 - s390x - lcs
-	drivers breaks with !CONFIG_IP_MULTICAST
-Date: Wed, 10 Dec 2008 22:01:39 +0530
-Message-ID: <20081210163139.GB6391@linux.vnet.ibm.com>
-References: <20081210164659.9ebb8158.sfr@canb.auug.org.au> <20081210111740.GA6107@linux.vnet.ibm.com> <20081210120833.GA4586@osiris.boeblingen.de.ibm.com>
+Subject: Re: linux-next: Tree for December 1 (netfilter build error)
+Date: Wed, 10 Dec 2008 22:24:55 +0530
+Message-ID: <20081210165455.GC6391@linux.vnet.ibm.com>
+References: <20081201190827.2d02b1a5.sfr@canb.auug.org.au> <20081201115934.00ba918a.randy.dunlap@oracle.com>
 Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp04.in.ibm.com ([59.145.155.4]:48079 "EHLO
-	e28smtp04.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755283AbYLJQdK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Dec 2008 11:33:10 -0500
+Received: from e28smtp06.in.ibm.com ([59.145.155.6]:52106 "EHLO
+	e28smtp06.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752963AbYLJQzB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Dec 2008 11:55:01 -0500
 Content-Disposition: inline
-In-Reply-To: <20081210120833.GA4586@osiris.boeblingen.de.ibm.com>
+In-Reply-To: <20081201115934.00ba918a.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org, schwidefsky@de.ibm.com, Frank Blaschka <frank.blaschka@de.ibm.com>, Ursula Braun <braunu@de.ibm.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netfilter-devel@vger.kernel.org, eric@inl.fr, kaber@trash.net
 
-* Heiko Carstens <heiko.carstens@de.ibm.com> [2008-12-10 13:08:33]:
+* Randy Dunlap <randy.dunlap@oracle.com> [2008-12-01 11:59:34]:
 
-> On Wed, Dec 10, 2008 at 04:47:40PM +0530, Kamalesh Babulal wrote:
-> > Hi,
+> On Mon, 1 Dec 2008 19:08:27 +1100 Stephen Rothwell wrote:
+> 
+> > Hi all,
 > > 
-> > 	next-20081210 randconfig kernel builds fails with !CONFIG_IP_MULTICAST
+> > Changes since 20081128:
 > > 
-> > drivers/s390/net/lcs.c: In function 'lcs_new_device':
-> > drivers/s390/net/lcs.c:2179: error: implicit declaration of function 'lcs_set_multicast_list'
-> > make[2]: *** [drivers/s390/net/lcs.o] Error 1
-> > make[1]: *** [drivers/s390/net] Error 2
-> > make: *** [drivers/s390] Error 2
+> > Today's tree fails the powerpc allyesconfig build.
 > 
-> Thanks for reporting!
 > 
-> This should do the trick:
+> ERROR: "nfulnl_log_packet" [net/netfilter/xt_NFLOG.ko] undefined!
+> 
+> config attached.
 
-Hi Heiko,
+	next-20081210 kernel build fails when !CONFIG_NETFILTER_NETLINK_LOG 
+This was introduced by the 
 
-	Thanks, the patch did the trick.
+commit 5f7340eff8f68f41b7e5c7ad47ec4cd1ea1afb40
+Author: Eric Leblond <eric@inl.fr>
+Date:   Tue Nov 4 14:21:08 2008 +0100
 
-Tested-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-> 
-> ---
->  drivers/s390/net/lcs.c |    7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> Index: linux-2.6/drivers/s390/net/lcs.c
-> ===================================================================
-> --- linux-2.6.orig/drivers/s390/net/lcs.c
-> +++ linux-2.6/drivers/s390/net/lcs.c
-> @@ -69,7 +69,9 @@ static char debug_buffer[255];
->  static void lcs_tasklet(unsigned long);
->  static void lcs_start_kernel_thread(struct work_struct *);
->  static void lcs_get_frames_cb(struct lcs_channel *, struct lcs_buffer *);
-> +#ifdef CONFIG_IP_MULTICAST
->  static int lcs_send_delipm(struct lcs_card *, struct lcs_ipm_list *);
-> +#endif /* CONFIG_IP_MULTICAST */
->  static int lcs_recovery(void *ptr);
-> 
->  /**
-> @@ -1280,6 +1282,8 @@ out:
->  	lcs_clear_thread_running_bit(card, LCS_SET_MC_THREAD);
->  	return 0;
->  }
-> +#endif /* CONFIG_IP_MULTICAST */
-> +
->  /**
->   * function called by net device to
->   * handle multicast address relevant things
-> @@ -1287,6 +1291,7 @@ out:
->  static void
->  lcs_set_multicast_list(struct net_device *dev)
->  {
-> +#ifdef CONFIG_IP_MULTICAST
->          struct lcs_card *card;
-> 
->          LCS_DBF_TEXT(4, trace, "setmulti");
-> @@ -1294,9 +1299,9 @@ lcs_set_multicast_list(struct net_device
-> 
->          if (!lcs_set_thread_start_bit(card, LCS_SET_MC_THREAD))
->  		schedule_work(&card->kernel_thread_starter);
-> +#endif /* CONFIG_IP_MULTICAST */
->  }
-> 
-> -#endif /* CONFIG_IP_MULTICAST */
-> 
->  static long
->  lcs_check_irb_error(struct ccw_device *cdev, struct irb *irb)
+    netfilter: xt_NFLOG: don't call nf_log_packet in NFLOG module.
+	    
+the function nfulnl_log_packet is exported only if
+CONFIG_NETFILTER_NETLINK_LOG is enabled, so marking the loging function
+between ifdef.
 
+I have tested the patch for build failure only
+
+Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+--
+ net/netfilter/xt_NFLOG.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/net/netfilter/xt_NFLOG.c b/net/netfilter/xt_NFLOG.c
+index a57c5cf..fa814a6 100644
+--- a/net/netfilter/xt_NFLOG.c
++++ b/net/netfilter/xt_NFLOG.c
+@@ -32,8 +32,11 @@ nflog_tg(struct sk_buff *skb, const struct xt_target_param *par)
+ 	li.u.ulog.group	     = info->group;
+ 	li.u.ulog.qthreshold = info->threshold;
+ 
++#ifdef CONFIG_NETFILTER_NETLINK_LOG
+ 	nfulnl_log_packet(par->family, par->hooknum, skb, par->in,
+ 			  par->out, &li, info->prefix);
++#endif /* CONFIG_NETFILTER_NETLINK_LOG */
++
+ 	return XT_CONTINUE;
+ }
+ 
 -- 
 Thanks & Regards,
 Kamalesh Babulal,
