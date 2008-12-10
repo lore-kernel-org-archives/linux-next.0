@@ -1,39 +1,32 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the mtd tree
-Date: Tue, 9 Dec 2008 20:04:58 -0800
-Message-ID: <20081210040458.GA29450@kroah.com>
-References: <20081127151548.eb40da3c.sfr@canb.auug.org.au> <20081210130806.27fcb097.sfr@canb.auug.org.au> <20081210022711.GA28801@kroah.com> <20081210133428.321b5e9f.sfr@canb.auug.org.au>
+From: "Zhang, Xiantao" <xiantao.zhang@intel.com>
+Subject: RE: next-20081209: fail to build ia64/kvm
+Date: Wed, 10 Dec 2008 16:48:39 +0800
+Message-ID: <706158FABBBA044BAD4FE898A02E4BC219CABA93@pdsmsx503.ccr.corp.intel.com>
+References: <a4423d670812090509q4d3dbe15h780ec3f4f11d1b3c@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:38502 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1753883AbYLJHF7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Dec 2008 02:05:59 -0500
-Content-Disposition: inline
-In-Reply-To: <20081210133428.321b5e9f.sfr@canb.auug.org.au>
+Received: from mga01.intel.com ([192.55.52.88]:43091 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754894AbYLJIsx convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Dec 2008 03:48:53 -0500
+In-Reply-To: <a4423d670812090509q4d3dbe15h780ec3f4f11d1b3c@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Atsushi Nemoto <anemo@mba.ocn.ne.jp>, Andrew Morton <akpm@linux-foundation.org>, Kay Sievers <kay.sievers@vrfy.org>
+To: Alexander Beregalov <a.beregalov@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "anthony.xu@intel.com" <anthony.xu@intel.com>, "kvm-ia64@vger.kernel.org" <kvm->
 
-On Wed, Dec 10, 2008 at 01:34:28PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> On Tue, 9 Dec 2008 18:27:11 -0800 Greg KH <greg@kroah.com> wrote:
-> >
-> > Ah, thanks, will update my tree with this one, didn't realize mtd had
-> > merged with Linus.
-> 
-> It only happened last night (my time).
+Hi, Alexander
+   Have you fixed the issue ?  I didn't run into it when building linux-next 20081210.  If it is pending, can you share the .config with me ? 
+Xiantao
 
-I've now merged it all and pushed it out.
+-----Original Message-----
+From: Alexander Beregalov [mailto:a.beregalov@gmail.com] 
+Sent: Tuesday, December 09, 2008 9:10 PM
+To: linux-next@vger.kernel.org; anthony.xu@intel.com; Zhang, Xiantao; kvm-ia64@vger.kernel.org
+Subject: next-20081209: fail to build ia64/kvm
 
-thanks,
-
-greg k-h
-
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
+arch/ia64/kvm/kvm-ia64.c: In function 'kvm_relocate_vmm':
+arch/ia64/kvm/kvm-ia64.c:1547: error: dereferencing pointer to incomplete type
+arch/ia64/kvm/kvm-ia64.c:1548: error: dereferencing pointer to incomplete type
