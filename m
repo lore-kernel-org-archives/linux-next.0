@@ -1,263 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for December 10
-Date: Wed, 10 Dec 2008 16:46:59 +1100
-Message-ID: <20081210164659.9ebb8158.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: next-20081209: build problem at arch/ia64/hp/sim/simeth.c
+Date: Tue, 09 Dec 2008 22:41:08 -0800 (PST)
+Message-ID: <20081209.224108.265455718.davem@davemloft.net>
+References: <a4423d670812090611v715309adq3e9d2d95254e2e16@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__10_Dec_2008_16_46_59_+1100_zZUhIe8urnkQh0vK"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43396 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750736AbYLJFrJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Dec 2008 00:47:09 -0500
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:56778
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1751820AbYLJGlH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Dec 2008 01:41:07 -0500
+In-Reply-To: <a4423d670812090611v715309adq3e9d2d95254e2e16@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: a.beregalov@gmail.com
+Cc: linux-next@vger.kernel.org, netdev@vger.kernel.org, linux-ia64@vger.kernel.org
 
---Signature=_Wed__10_Dec_2008_16_46_59_+1100_zZUhIe8urnkQh0vK
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: "Alexander Beregalov" <a.beregalov@gmail.com>
+Date: Tue, 9 Dec 2008 17:11:17 +0300
 
-Hi all,
+>   CC      arch/ia64/hp/sim/simeth.o
+> arch/ia64/hp/sim/simeth.c: In function 'simeth_probe1':
+> arch/ia64/hp/sim/simeth.c:212: error: 'struct net_device' has no
+> member named 'open'
+> arch/ia64/hp/sim/simeth.c:213: error: 'struct net_device' has no
+> member named 'stop'
+> arch/ia64/hp/sim/simeth.c:214: error: 'struct net_device' has no
+> member named 'hard_start_xmit'
+> arch/ia64/hp/sim/simeth.c:215: error: 'struct net_device' has no
+> member named 'get_stats'
+> arch/ia64/hp/sim/simeth.c:216: error: 'struct net_device' has no
+> member named 'set_multicast_list'
 
-Changes since 20081209:
+The only way for this to happen is if CONFIG_COMPAT_NET_DEV_OPS
+is not set.
 
-Undropped tree:
-	mmc
+And we force it on in net/Kconfig:
 
-Dropped trees (temporarily):
-	v4l-dvb (build problem)
-	sound (build problem)
-	drm (build problem)
-	semaphore-removal (due to unfixed conflicts against Linus' tree)
-	cpu_alloc (build problem)
-	perfmon3 (concerns from the x86 team)
-	audit (difficult conflicts)
-	staging (build failure)
+config COMPAT_NET_DEV_OPS
+       def_bool y
 
-The mtd tree transferred its conflict to the driver-core tree (by being
-merged into Linus' tree).
-
-The sound tree gained a build failure and was dropped.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig,
-44x_defconfig and allyesconfig (minus CONFIG_PROFILE_ALL_BRANCHES) and
-i386, sparc and sparc64 defconfig.
-
-Below is a summary of the state of the merge.
-
-We are up to 131 trees (counting Linus' and 15 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-2.6.26
-Merging audit-current/for-linus
-Merging dwmw2/master
-Merging arm/devel
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging mips/mips-for-linux-next
-Merging parisc/master
-Merging powerpc/next
-Merging 4xx/next
-Merging galak/next
-Merging pxa/for-next
-Merging s390/features
-CONFLICT (content): Merge conflict in drivers/char/Makefile
-Merging sh/master
-Merging sparc/master
-Merging x86/auto-x86-next
-Merging xtensa/master
-Merging quilt/driver-core
-CONFLICT (content): Merge conflict in arch/powerpc/platforms/85xx/mpc85xx_m=
-ds.c
-CONFLICT (content): Merge conflict in drivers/mtd/maps/physmap.c
-Merging quilt/usb
-Merging tip-core/auto-core-next
-Merging cpus4096/auto-cpus4096-next
-Merging ftrace/auto-ftrace-next
-CONFLICT (content): Merge conflict in scripts/recordmcount.pl
-Merging genirq/auto-genirq-next
-Merging safe-poison-pointers/auto-safe-poison-pointers-next
-Merging sched/auto-sched-next
-Merging stackprotector/auto-stackprotector-next
-Merging timers/auto-timers-next
-Merging pci/linux-next
-Merging quilt/device-mapper
-Merging hid/for-next
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging jfs/next
-Merging kbuild/master
-Merging quilt/ide
-Merging libata/NEXT
-Merging nfs/linux-next
-Merging xfs/master
-Merging infiniband/for-next
-Merging acpi/test
-Merging nfsd/nfsd-next
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/master
-CONFLICT (content): Merge conflict in arch/x86/kernel/reboot.c
-Merging dlm/next
-Merging scsi/master
-Merging ocfs2/linux-next
-Merging ext4/next
-Merging async_tx/next
-Merging udf/for_next
-Merging net/master
-CONFLICT (delete/modify): arch/sparc64/kernel/idprom.c deleted in HEAD and =
-modified in net/master. Version net/master of arch/sparc64/kernel/idprom.c =
-left in tree.
-CONFLICT (content): Merge conflict in fs/lockd/host.c
-CONFLICT (content): Merge conflict in fs/lockd/mon.c
-$ git rm -f arch/sparc64/kernel/idprom.c
-Applying: net: async_tx merge fix
-Merging mtd/master
-Merging wireless/master
-Merging crypto/master
-Merging vfs/for-next
-Merging sound/for-next
-Merging cpufreq/next
-Merging v9fs/for-next
-Merging rr_cpumask/master
-Merging quilt/rr
-CONFLICT (content): Merge conflict in arch/x86/kernel/setup.c
-CONFLICT (content): Merge conflict in kernel/cpu.c
-Merging cifs/master
-CONFLICT (content): Merge conflict in fs/cifs/connect.c
-Applying: cifs: update for new IP4/6 address printing
-Merging mmc/next
-Merging gfs2/master
-Merging input/next
-Merging semaphore/semaphore
-Merging bkl-removal/bkl-removal
-CONFLICT (content): Merge conflict in fs/ioctl.c
-Merging ubifs/linux-next
-Merging lsm/for-next
-Merging block/for-next
-Merging embedded/master
-Merging firmware/master
-CONFLICT (content): Merge conflict in drivers/net/tg3.c
-CONFLICT (content): Merge conflict in firmware/Makefile
-CONFLICT (content): Merge conflict in firmware/WHENCE
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging kmemcheck/auto-kmemcheck-next
-CONFLICT (content): Merge conflict in MAINTAINERS
-CONFLICT (content): Merge conflict in arch/x86/mm/Makefile
-CONFLICT (content): Merge conflict in mm/slab.c
-CONFLICT (content): Merge conflict in mm/slub.c
-Merging generic-ipi/auto-generic-ipi-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging voltage/for-next
-Merging security-testing/next
-CONFLICT (content): Merge conflict in drivers/char/tty_audit.c
-CONFLICT (content): Merge conflict in fs/cifs/cifs_fs_sb.h
-CONFLICT (content): Merge conflict in fs/ocfs2/namei.c
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_cred.h
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_globals.h
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_ioctl.c
-CONFLICT (content): Merge conflict in fs/xfs/xfs_vnodeops.h
-Merging lblnet/master
-CONFLICT (content): Merge conflict in Documentation/feature-removal-schedul=
-e.txt
-Merging quilt/ttydev
-CONFLICT (content): Merge conflict in fs/devpts/inode.c
-Merging agp/agp-next
-Merging oprofile/auto-oprofile-next
-Merging fastboot/auto-fastboot-next
-Merging sparseirq/auto-sparseirq-next
-Merging iommu/auto-iommu-next
-Merging uwb/for-upstream
-Merging watchdog/master
-CONFLICT (content): Merge conflict in drivers/watchdog/iTCO_wdt.c
-Merging proc/proc
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-CONFLICT (content): Merge conflict in kernel/sched.c
-Merging osd/linux-next
-Merging fatfs/master
-Merging fuse/for-next
-Merging jc_docs/docs-next
-Merging trivial/for-next
-Merging scsi-post-merge/master
-Created commit c4f764d: Revert "Merge commit 'sound/for-next'"
-
---Signature=_Wed__10_Dec_2008_16_46_59_+1100_zZUhIe8urnkQh0vK
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkk/V9MACgkQjjKRsyhoI8y8OwCgiTPcYx1PMsCSdhwjqVeRKrGg
-vwYAnA5/0Fn4LySi7aD03/emhHniFq38
-=uDI9
------END PGP SIGNATURE-----
-
---Signature=_Wed__10_Dec_2008_16_46_59_+1100_zZUhIe8urnkQh0vK--
+Perhaps you simply need to update your config properly or something
+like that.
