@@ -1,71 +1,25 @@
-From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
-Subject: Suspend on X200 works on 2.6.28-rc6, but not -rc7
-Date: Wed, 10 Dec 2008 12:32:03 +0100
-Message-ID: <20081210113203.GB11869@denkbrett.schottelius.org>
+From: Mark Brown <broonie@sirena.org.uk>
+Subject: Re: linux-next:  sound tree build failure
+Date: Wed, 10 Dec 2008 11:47:10 +0000
+Message-ID: <20081210114708.GF31542@sirena.org.uk>
+References: <20081210162309.add4393f.sfr@canb.auug.org.au> <s5h63lsldwe.wl%tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="DKU6Jbt7q3WqK7+M"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.schottelius.org ([77.109.138.221]:43505 "EHLO
-	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750761AbYLJLcF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Dec 2008 06:32:05 -0500
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:1361 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750949AbYLJLrO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Dec 2008 06:47:14 -0500
 Content-Disposition: inline
+In-Reply-To: <s5h63lsldwe.wl%tiwai@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
+On Wed, Dec 10, 2008 at 07:53:21AM +0100, Takashi Iwai wrote:
 
---DKU6Jbt7q3WqK7+M
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Thanks for noticing.  I fixed it on sound git tree now.
+> FWIW, the patch below should fix the build problem.
 
-Hello!
-
-What the last next-trees already showed is now confirmed in -rc7:
-Suspend works, on resume the system freezes (screen is partly drawn).
-
-Xorg is always running, without xorg it works on most of the recent kernels.
-
-Working version:
-
-2.6.28-rc6
-2.6.28-rc6-wl-21906-g24e8b9a (running this right now)
-
-Crashing versions (at least):
-
-next-20081125
-next-20081127
-next-20081201
-next-20081202
-2.6.28-rc7
-
-Just wondering what happened between those versions that it does not work a=
-nymore.
-
-Sincerly,
-
-Nico
-
---=20
-Think about Free and Open Source Software (FOSS).
-http://nico.schottelius.org/documentations/foss/the-term-foss/
-
-PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
-
---DKU6Jbt7q3WqK7+M
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkk/qLMACgkQuL75KpiFGIyeVQCfesIJeGm8VDdwK82DpRnBqaqt
-OkUAoL5KmSf6iOqQ645k2uxfn+RhBVCX
-=PiDm
------END PGP SIGNATURE-----
-
---DKU6Jbt7q3WqK7+M--
+Thanks for taking care of this.
