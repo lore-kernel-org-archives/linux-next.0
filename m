@@ -1,35 +1,55 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: Tree for December 10
-Date: Wed, 10 Dec 2008 14:52:26 -0800
-Message-ID: <20081210145226.8a174e68.akpm@linux-foundation.org>
-References: <20081210164659.9ebb8158.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH] simnet: convert to net_device_ops
+Date: Wed, 10 Dec 2008 15:25:24 -0800 (PST)
+Message-ID: <20081210.152524.226506156.davem@davemloft.net>
+References: <20081209150827.GA8134@x200.localdomain>
+	<20081209.225728.07389385.davem@davemloft.net>
+	<a4423d670812100321qc93060evd0d3ae3f78418b29@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:56319 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752501AbYLJWxV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Dec 2008 17:53:21 -0500
-In-Reply-To: <20081210164659.9ebb8158.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <a4423d670812100321qc93060evd0d3ae3f78418b29@mail.gmail.com>
+Sender: netdev-owner@vger.kernel.org
+To: a.beregalov@gmail.com
+Cc: adobriyan@gmail.com, linux-next@vger.kernel.org, netdev@vger.kernel.org, linux-ia64@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 10 Dec 2008 16:46:59 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+From: "Alexander Beregalov" <a.beregalov@gmail.com>
+Date: Wed, 10 Dec 2008 14:21:46 +0300
 
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-> (patches at
-> http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/)
+> 2008/12/10 David Miller <davem@davemloft.net>:
+> > From: Alexey Dobriyan <adobriyan@gmail.com>
+> > Date: Tue, 9 Dec 2008 18:08:27 +0300
+> >
+> >> On Tue, Dec 09, 2008 at 05:11:17PM +0300, Alexander Beregalov wrote:
+> >> >   CC      arch/ia64/hp/sim/simeth.o
+> >> > arch/ia64/hp/sim/simeth.c: In function 'simeth_probe1':
+> >> > arch/ia64/hp/sim/simeth.c:212: error: 'struct net_device' has no member named 'open'
+> >>
+> >> [PATCH] simeth: convert to net_device_ops
+> >>
+> >> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+> >
+> > This doesn't explain the build failure.
+> >
+> > Using ->open() and friends should work perfectly fine for drivers not
+> > yet converted to netdev_ops.  The code protected by COMPAT_NET_DEV_OPS
+> > provides this, and we force that Kconfig option to always be on.
+> >
+> > I don't want to add this patch and just shrug off this build failure.
+> > If this build failures, we should be seeing 200 other drivers not
+> > build too.
+> >
+> > I suspect something is messed up with this person's kernel config
+> > or similar.
+> >
+> 
+> Thanks for explanation.
+> Is it better?
 
-This tree breaks poweroff on my x86_64 test box.  `halt -pfn' does all
-the usual things, but the machine doesn't turn off.
+Good fix, except that your email client corrupted the patch
+by turning tab characters into spaces.
 
-config: http://userweb.kernel.org/~akpm/config-akpm2.txt
-dmesg: http://userweb.kernel.org/~akpm/dmesg-akpm2.txt
-
-Any suggestions which don't include the word "bisect" would be most welcome.
+I fixed this up and applied your patch.  But please next
+time provide a proper Signed-off-by line too.
