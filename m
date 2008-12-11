@@ -1,40 +1,74 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: manual merge of the audit tree
-Date: Thu, 11 Dec 2008 06:31:38 +0000
-Message-ID: <20081211063138.GP28946@ZenIV.linux.org.uk>
-References: <1228935701.3524.3.camel@localhost.localdomain> <20081209175726.682d77cd.sfr@canb.auug.org.au> <13157.1228935509@redhat.com> <13530.1228937583@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the nommu tree
+Date: Thu, 11 Dec 2008 18:25:30 +1100
+Message-ID: <20081211182530.924d4af6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:39995 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750990AbYLKGbt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Dec 2008 01:31:49 -0500
-Content-Disposition: inline
-In-Reply-To: <13530.1228937583@redhat.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39595 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751811AbYLKHZn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Dec 2008 02:25:43 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: David Howells <dhowells@redhat.com>
-Cc: Eric Paris <eparis@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, James Morris <jmorris@namei.org>, Serge Hallyn <serue@us.ibm.com>
+Cc: linux-next@vger.kernel.org, Christoph Lameter <cl@linux-foundation.org>, Paul Mundt <lethal@linux-sh.org>, Pekka Enberg <penberg@cs.helsinki.fi>
 
-On Wed, Dec 10, 2008 at 07:33:03PM +0000, David Howells wrote:
-> Eric Paris <eparis@redhat.com> wrote:
-> 
-> > I think David is right, all the conflicts should come from
-> > security-testing.  Al does have other good stuff in his tree though, Al
-> > do you want to just kick all of my patches out?
-> 
-> Maybe it's worth James taking Al's changes into his tree and resolving all the
-> conflicts in favour of what's in his tree.
+Hi David,
 
-It's already done.  Everything that used to be in for-linus except
-tty_audit.c one went into mainline; tty_audit got rediffed and sent
-to James; for-linus..for-next had several Eric's patches that were
-in security tree (and thus are dropped from audit one - I couldn't
-care less which tree are they merged from as long as they get into
-the mainline) and an s390 patch that got sent off to linux-s390@vger
-and would be better off going via the s390 tree anyway.
+Today's linux-next merge of the nommu tree got a conflict in
+Documentation/sysctl/vm.txt between commit
+cb8fc7a88a0069ebdab220180bf9b45e568f0ba9 ("slub: Trigger defragmentation
+from memory reclaim") from the slab tree and commit
+1a5d96d0151ce2ec77bf08498751fe8d9365c95f ("NOMMU: Make mmap allocation
+page trimming behaviour configurable.") from the nommu tree.
 
-So at this point everything in that branch is taken care of.  I do have
-several more in a private queue, but those will need review and testing
-before they go into -next.
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+diff --cc Documentation/sysctl/vm.txt
+index 5e7329a,e9a5c28..0000000
+--- a/Documentation/sysctl/vm.txt
++++ b/Documentation/sysctl/vm.txt
+@@@ -38,7 -38,7 +38,8 @@@ Currently, these files are in /proc/sys
+  - numa_zonelist_order
+  - nr_hugepages
+  - nr_overcommit_hugepages
+ +- slab_defrag_limit
++ - nr_trim_pages		(only if CONFIG_MMU=n)
+  
+  ==============================================================
+  
+@@@ -351,11 -351,17 +352,27 @@@ See Documentation/vm/hugetlbpage.tx
+  
+  ==============================================================
+  
+ +slab_defrag_limit
+ +
+ +Determines the frequency of calls from reclaim into slab defragmentation.
+ +Slab defrag reclaims objects from sparsely populates slab pages.
+ +The default is 1000. Increase if slab defragmentation occurs
+ +too frequently. Decrease if more slab defragmentation passes
+ +are needed. The slabinfo tool can report on the frequency of the callbacks.
+ +
+++==============================================================
+++
++ nr_trim_pages
++ 
++ This is available only on NOMMU kernels.
++ 
++ This value adjusts the excess page trimming behaviour of power-of-2 aligned
++ NOMMU mmap allocations.
++ 
++ A value of 0 disables trimming of allocations entirely, while a value of 1
++ trims excess pages aggressively. Any value >= 1 acts as the watermark where
++ trimming of allocations is initiated.
++ 
++ The default value is 1.
++ 
++ See Documentation/nommu-mmap.txt for more information.
