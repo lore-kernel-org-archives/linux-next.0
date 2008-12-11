@@ -1,150 +1,44 @@
-From: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-Subject: Re: [PATCH] cpumask:cpumask_of_node-ia64 fix
-Date: Thu, 11 Dec 2008 13:53:09 +0900 (JST)
-Message-ID: <20081211132146.4FFD.KOSAKI.MOTOHIRO@jp.fujitsu.com>
-References: <20081211105721.4FEE.KOSAKI.MOTOHIRO@jp.fujitsu.com> <494093F7.5020000@sgi.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: driver-core tree build failure
+Date: Wed, 10 Dec 2008 20:55:17 -0800
+Message-ID: <20081211045517.GA410@kroah.com>
+References: <20081211112127.7aa2c373.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fgwmail7.fujitsu.co.jp ([192.51.44.37]:47425 "EHLO
-	fgwmail7.fujitsu.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752500AbYLKExM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Dec 2008 23:53:12 -0500
-In-Reply-To: <494093F7.5020000@sgi.com>
+Received: from kroah.org ([198.145.64.141]:60563 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1754757AbYLKE7X (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Dec 2008 23:59:23 -0500
+Content-Disposition: inline
+In-Reply-To: <20081211112127.7aa2c373.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Travis <travis@sgi.com>
-Cc: kosaki.motohiro@jp.fujitsu.com, "Luck, Tony" <tony.luck@intel.com>, Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>
 
-> KOSAKI Motohiro wrote:
-> > ===
-> > Subject: [PATCH] cpumask:cpumask_of_node-ia64 fix
-> > Impact: bug fix
-> > 
-> > commit 07c636deede53ff3e96d54df0ece2c838e61951f introduce new CPU mask API and change cpu_mask variable type.
-> > 
-> > -----------------------------------------------
-> > -               cpumask_t cpu_mask;
-> > +               const struct cpumask *cpu_mask;
-> > --------------------------------------------------
-> > 
-> > 
-> > However, its change is incomplete. in build time, compiler output following type mismatch warnings.
-> > 
-> >   arch/ia64/kernel/iosapic.c:708: warning: passing argument 2 of '__cpu_clear' from incompatible pointer type
-> >   arch/ia64/kernel/iosapic.c:711: warning: passing argument 1 of '__cpus_weight' from incompatible pointer type
-> >   arch/ia64/kernel/iosapic.c:719: warning: passing argument 1 of '__first_cpu' from incompatible pointer type
-> >   arch/ia64/kernel/iosapic.c:720: warning: passing argument 2 of '__next_cpu' from incompatible pointer type
+On Thu, Dec 11, 2008 at 11:21:27AM +1100, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> Good catch, however ...
-> > 
-> > 
-> > Signed-off-by: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-> > CC: "Luck, Tony" <tony.luck@intel.com>
-> > CC: Rusty Russell <rusty@rustcorp.com.au>
-> > ---
-> >  arch/ia64/kernel/iosapic.c |   10 +++++-----
-> >  1 file changed, 5 insertions(+), 5 deletions(-)
-> > 
-> > Index: b/arch/ia64/kernel/iosapic.c
-> > ===================================================================
-> > --- a/arch/ia64/kernel/iosapic.c
-> > +++ b/arch/ia64/kernel/iosapic.c
-> > @@ -695,7 +695,7 @@ get_target_cpu (unsigned int gsi, int ir
-> >  #ifdef CONFIG_NUMA
-> >  	{
-> >  		int num_cpus, cpu_index, iosapic_index, numa_cpu, i = 0;
-> > -		const struct cpumask *cpu_mask;
-> > +		struct cpumask *cpu_mask;
-> >  
-> >  		iosapic_index = find_iosapic(gsi);
-> >  		if (iosapic_index < 0 ||
-> > @@ -705,10 +705,10 @@ get_target_cpu (unsigned int gsi, int ir
-> >  		cpu_mask = cpumask_of_node(iosapic_lists[iosapic_index].node);
-> >  		for_each_cpu_and(numa_cpu, cpu_mask, &domain) {
-> >  			if (!cpu_online(numa_cpu))
-> > -				cpu_clear(numa_cpu, cpu_mask);
-> > +				cpu_clear(numa_cpu, *cpu_mask);
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
 > 
-> ... you cannot modify the read-only cpumask_of_node map.  Suggested alternative below.
+> drivers/mtd/maps/physmap.c: In function 'physmap_flash_probe':
+> drivers/mtd/maps/physmap.c:108: error: expected ')' before '{' token
+> drivers/mtd/maps/physmap.c:144: error: expected expression before '}' token
+> 
+> Caused by commit 7267696c2421503e280d9da5bbdbd5c11e1e5b25 ("mtd: struct
+> device - replace bus_id with dev_name(), dev_set_name()").
+> 
+> I have reverted that patch for today.
+> 
+> Please be more careful ... allmodconfig is your friend when doing wide
+> ranging changes ...
 
-Oh, I see.
-I didn't understand original intention.
+Very sorry about that, I did kick off such a build, but forgot to look
+at the result of it, my fault.
 
-and my review and test doen't find any problem in your patch.
-Very thanks.
+I've now fixed this up so it should be fine for tomorrow.
 
+thanks for keeping us honest :)
 
-The following is the folded patch of your patch and your over-simplified fix.
-
-
-===
-Subject: [PATCH] don't change cpumask_of_node
-Impact: bug fix
-
-commit 07c636deede53ff3e96d54df0ece2c838e61951f introduce new CPU mask API and change cpu_mask variable type.
-However, its change is incomplete. in build time, compiler output following type mismatch warnings.
-
-  arch/ia64/kernel/iosapic.c:708: warning: passing argument 2 of '__cpu_clear' from incompatible pointer type
-  arch/ia64/kernel/iosapic.c:711: warning: passing argument 1 of '__cpus_weight' from incompatible pointer type
-  arch/ia64/kernel/iosapic.c:719: warning: passing argument 1 of '__first_cpu' from incompatible pointer type
-  arch/ia64/kernel/iosapic.c:720: warning: passing argument 2 of '__next_cpu' from incompatible pointer type
-
-
-More unfortunately, current code change the return value o cpumask_of_node().
-but it is unacceptable operation. it cause to corrupt data structure.
-
-
-Signed-off-by: Mike Travis <travis@sgi.com>
-Signed-off-by: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-CC: "Luck, Tony" <tony.luck@intel.com>
-CC: Rusty Russell <rusty@rustcorp.com.au>
----
- arch/ia64/kernel/iosapic.c |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-Index: b/arch/ia64/kernel/iosapic.c
-===================================================================
---- a/arch/ia64/kernel/iosapic.c
-+++ b/arch/ia64/kernel/iosapic.c
-@@ -703,23 +703,23 @@ get_target_cpu (unsigned int gsi, int ir
- 			goto skip_numa_setup;
- 
- 		cpu_mask = cpumask_of_node(iosapic_lists[iosapic_index].node);
-+		num_cpus = 0;
- 		for_each_cpu_and(numa_cpu, cpu_mask, &domain) {
--			if (!cpu_online(numa_cpu))
--				cpu_clear(numa_cpu, cpu_mask);
-+			if (cpu_online(numa_cpu))
-+				num_cpus++;
- 		}
- 
--		num_cpus = cpus_weight(cpu_mask);
--
- 		if (!num_cpus)
- 			goto skip_numa_setup;
- 
- 		/* Use irq assignment to distribute across cpus in node */
- 		cpu_index = irq % num_cpus;
- 
--		for (numa_cpu = first_cpu(cpu_mask) ; i < cpu_index ; i++)
--			numa_cpu = next_cpu(numa_cpu, cpu_mask);
-+		for_each_cpu_and(numa_cpu, cpu_mask, &domain)
-+			if (cpu_online(numa_cpu) && i++ >= cpu_index)
-+				break;
- 
--		if (numa_cpu != NR_CPUS)
-+		if (numa_cpu < nr_cpu_ids)
- 			return cpu_physical_id(numa_cpu);
- 	}
- skip_numa_setup:
-@@ -730,7 +730,7 @@ skip_numa_setup:
- 	 * case of NUMA.)
- 	 */
- 	do {
--		if (++cpu >= NR_CPUS)
-+		if (++cpu >= nr_cpu_ids)
- 			cpu = 0;
- 	} while (!cpu_online(cpu) || !cpu_isset(cpu, domain));
- 
+greg k-h
