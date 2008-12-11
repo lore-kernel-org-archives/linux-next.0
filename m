@@ -1,41 +1,93 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: [xfs-masters] next-20081210: BUG: sleeping function called from invalid context at mm/slub.c:1619 (XFS)
-Date: Thu, 11 Dec 2008 19:29:55 +0100
-Message-ID: <20081211182955.GB27952@lst.de>
-References: <a4423d670812110210g50d66304pb0a7d96b3dde00c7@mail.gmail.com>
+From: Mike Travis <travis@sgi.com>
+Subject: [PATCH 1/1] cpumask: force nr_cpumask_bit to NR_CPUS for CPUMASK_OFFSTACK=n
+Date: Thu, 11 Dec 2008 12:44:09 -0800
+Message-ID: <49417B99.7090004@sgi.com>
+References: <200812082136.33212.rusty@rustcorp.com.au> <493E4EE4.6010609@sgi.com> <200812101019.42908.rusty@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from verein.lst.de ([213.95.11.210]:60411 "EHLO verein.lst.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755510AbYLKSaB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 11 Dec 2008 13:30:01 -0500
-Content-Disposition: inline
-In-Reply-To: <a4423d670812110210g50d66304pb0a7d96b3dde00c7@mail.gmail.com>
+Received: from relay1.sgi.com ([192.48.179.29]:38198 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1756840AbYLKUoO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Dec 2008 15:44:14 -0500
+In-Reply-To: <200812101019.42908.rusty@rustcorp.com.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, xfs@oss.sgi.com, xfs-masters@oss.sgi.com
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Ingo Molnar <mingo@elte.hu>, David Miller <davem@davemloft.net>, Paul Mackerras <paulus@samba.org>, Martin Schwidefsky <schwidefsky@googlemail.com>, Ralf Baechle <ralf@linux-mips.org>, Tony Luck <tony.luck@intel.com>, Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-On Thu, Dec 11, 2008 at 01:10:23PM +0300, Alexander Beregalov wrote:
-> BUG: sleeping function called from invalid context at mm/slub.c:1619
-> in_atomic(): 1, irqs_disabled(): 0, pid: 8096, name: sh
-> INFO: lockdep is turned off.
-> Pid: 8096, comm: sh Tainted: G        W  2.6.28-rc7-next-20081210 #2
-> Call Trace:
->  [<ffffffff80256e5a>] ? __debug_show_held_locks+0x1b/0x24
->  [<ffffffff8022fb55>] __might_sleep+0x120/0x122
->  [<ffffffff8029c526>] __kmalloc+0x70/0xfc
->  [<ffffffff803534d2>] kmem_alloc+0x75/0xd7
->  [<ffffffff803350ba>] xfs_fs_vcmn_err+0x46/0x94
->  [<ffffffff80335297>] xfs_fs_cmn_err+0x59/0x5e
+Re: cpumask conversions, or not?
 
-xfs_fs_vcmn_err does a sleeping memory allocation under a spinlock,
-nasty.  I have an idea that will get rid of the memory allocation
-completely, I'll come back to you once I have hacked something up.
+Rusty Russell wrote:
+> On Tuesday 09 December 2008 21:26:36 Mike Travis wrote:
+>> Rusty Russell wrote:
+>>> Hi all,
+>>>
+>>>    The new cpumask conversions are going well, but unfortunately Stephen
+>>> uncovered a nasty bug via linux-next: the new cpumask operators only go to
+>>> nr_cpumask_bits which can be less than NR_CPUS if NR_CPUS > BITS_PER_LONG.
+>>> The undefined bits confuse the old cpumask operators.  We fixed one case,
+>>> but I am concerned that we will break archs as we convert more core code.
+>> Hi Rusty,
+>>
+>> I think we can avoid this problem if we make cpumask_bits == NR_CPUS iff
+>> CONFIG_CPUMASK_OFFSTACK=n.  This complies with the current cpumask_t
+>> approach and should cause all cpumask operators to always operate on
+>> all cpumask bits.
+> 
+> A very good point.  And it's no worse than the old method.
+> 
+> OK, forget about this for now, no urgent conversions needed :)
+> Rusty.
 
-> Filesystem "sda2": xlog_space_left: head behind tail
->   tail_cycle = 1802201963, tail_bytes = -690563584
->   GH   cycle = 3078, GH   bytes = 69183384
+This probably should be submitted through linux-next for wider test coverage?
 
-This btw is a bug, too..
+Thanks,
+Mike
+---
+cpumask: force nr_cpumask_bits to be NR_CPUS when CPUMASK_OFFSTACK is false
+
+This maintains compatibility with the current cpumask_t.  Once an architecture
+is "cpumask clean" [IOW, all references span 0..(nr_cpus_ids-1) only, ignoring
+any bits >= nr_cpu_ids], then it can set CPUMASK_OFFSTACK=y.
+
+Signed-off-by: Mike Travis <travis@sgi.com>
+---
+ include/linux/cpumask.h |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+
+--- linux-2.6-for-ingo.orig/include/linux/cpumask.h
++++ linux-2.6-for-ingo/include/linux/cpumask.h
+@@ -510,9 +510,6 @@ extern cpumask_t cpu_active_map;
+ 	[BITS_TO_LONGS(NR_CPUS)-1] = CPU_MASK_LAST_WORD	\
+ }
+ 
+-/* This produces more efficient code. */
+-#define nr_cpumask_bits	NR_CPUS
+-
+ #else /* NR_CPUS > BITS_PER_LONG */
+ 
+ #define CPU_BITS_ALL						\
+@@ -521,9 +518,20 @@ extern cpumask_t cpu_active_map;
+ 	[BITS_TO_LONGS(NR_CPUS)-1] = CPU_MASK_LAST_WORD		\
+ }
+ 
+-#define nr_cpumask_bits	nr_cpu_ids
+ #endif /* NR_CPUS > BITS_PER_LONG */
+ 
++#ifndef CONFIG_CPUMASK_OFFSTACK
++
++/* This produces more efficient code. */
++#define nr_cpumask_bits	NR_CPUS
++
++#else
++
++/* This allows for variabled-sized cpumask's */
++#define nr_cpumask_bits	nr_cpu_ids
++
++#endif
++
+ /* verify cpu argument to cpumask_* operators */
+ static inline unsigned int cpumask_check(unsigned int cpu)
+ {
