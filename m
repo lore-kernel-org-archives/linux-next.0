@@ -1,57 +1,94 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mtd tree
-Date: Thu, 11 Dec 2008 13:43:07 +1100
-Message-ID: <20081211134307.b7ce748d.sfr@canb.auug.org.au>
+From: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
+Subject: Re: [linux-next][PATCH] cpumask:cpumask_of_node-ia64 fix
+Date: Thu, 11 Dec 2008 13:09:17 +0900 (JST)
+Message-ID: <20081211130833.4FFA.KOSAKI.MOTOHIRO@jp.fujitsu.com>
+References: <20081210164659.9ebb8158.sfr@canb.auug.org.au> <20081211105721.4FEE.KOSAKI.MOTOHIRO@jp.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__11_Dec_2008_13_43_07_+1100_sp4GVRy8pv0IGHl7"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39129 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752798AbYLKCnW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Dec 2008 21:43:22 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: linux-next@vger.kernel.org, Dmitry Baryshkov <dbaryshkov@gmail.com>, Eric Miao <eric.miao@marvell.com>, Russell King <rmk@arm.linux.org.uk>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-ia64-owner@vger.kernel.org>
+In-Reply-To: <20081211105721.4FEE.KOSAKI.MOTOHIRO@jp.fujitsu.com>
+Sender: linux-ia64-owner@vger.kernel.org
+To: linux-ia64 <linux-ia64@vger.kernel.org>
+Cc: kosaki.motohiro@jp.fujitsu.com, "Luck, Tony" <tony.luck@intel.com>, Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__11_Dec_2008_13_43_07_+1100_sp4GVRy8pv0IGHl7
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Oops, sorry.
 
-Hi David,
+I forgot cc to linux-ia64.
 
-Today's linux-next merge of the mtd tree got conflicts in
-arch/arm/mach-pxa/corgi.c, arch/arm/mach-pxa/poodle.c and
-arch/arm/mach-pxa/spitz.c between commits
-4a9295ccb43ead9ec054d0bd374c992c692b2cf4 ("[ARM] pxa/corgi: add physmap
-mapping for ROM"), 431a2cff07446b0325ec063e5b401ca7c11e0058 ("[ARM]
-pxa/poodle: add physmap mapping for ROM") and
-e5d3bf3c106c0557199076a57800adb85206c1ce ("[ARM] pxa/spitz: add physmap
-mapping for ROM") from the arm tree and commit
-6af7a8eb1eb2b5a0967fccf61e750b085d60ad48 ("[MTD] sharpsl-nand: move
-registration to board code") from the mtd tree.
 
-They seem to be overlapping changes.  Can you guys rationalise this,
-please, as I am in no position to fix these conflicts up.
+> ===
+> Subject: [PATCH] cpumask:cpumask_of_node-ia64 fix
+> Impact: bug fix
+> 
+> commit 07c636deede53ff3e96d54df0ece2c838e61951f introduce new CPU mask API and change cpu_mask variable type.
+> 
+> -----------------------------------------------
+> -               cpumask_t cpu_mask;
+> +               const struct cpumask *cpu_mask;
+> --------------------------------------------------
+> 
+> 
+> However, its change is incomplete. in build time, compiler output following type mismatch warnings.
+> 
+>   arch/ia64/kernel/iosapic.c:708: warning: passing argument 2 of '__cpu_clear' from incompatible pointer type
+>   arch/ia64/kernel/iosapic.c:711: warning: passing argument 1 of '__cpus_weight' from incompatible pointer type
+>   arch/ia64/kernel/iosapic.c:719: warning: passing argument 1 of '__first_cpu' from incompatible pointer type
+>   arch/ia64/kernel/iosapic.c:720: warning: passing argument 2 of '__next_cpu' from incompatible pointer type
+> 
+> 
+> Signed-off-by: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
+> CC: "Luck, Tony" <tony.luck@intel.com>
+> CC: Rusty Russell <rusty@rustcorp.com.au>
+> ---
+>  arch/ia64/kernel/iosapic.c |   10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> Index: b/arch/ia64/kernel/iosapic.c
+> ===================================================================
+> --- a/arch/ia64/kernel/iosapic.c
+> +++ b/arch/ia64/kernel/iosapic.c
+> @@ -695,7 +695,7 @@ get_target_cpu (unsigned int gsi, int ir
+>  #ifdef CONFIG_NUMA
+>  	{
+>  		int num_cpus, cpu_index, iosapic_index, numa_cpu, i = 0;
+> -		const struct cpumask *cpu_mask;
+> +		struct cpumask *cpu_mask;
+>  
+>  		iosapic_index = find_iosapic(gsi);
+>  		if (iosapic_index < 0 ||
+> @@ -705,10 +705,10 @@ get_target_cpu (unsigned int gsi, int ir
+>  		cpu_mask = cpumask_of_node(iosapic_lists[iosapic_index].node);
+>  		for_each_cpu_and(numa_cpu, cpu_mask, &domain) {
+>  			if (!cpu_online(numa_cpu))
+> -				cpu_clear(numa_cpu, cpu_mask);
+> +				cpu_clear(numa_cpu, *cpu_mask);
+>  		}
+>  
+> -		num_cpus = cpus_weight(cpu_mask);
+> +		num_cpus = cpus_weight(*cpu_mask);
+>  
+>  		if (!num_cpus)
+>  			goto skip_numa_setup;
+> @@ -716,8 +716,8 @@ get_target_cpu (unsigned int gsi, int ir
+>  		/* Use irq assignment to distribute across cpus in node */
+>  		cpu_index = irq % num_cpus;
+>  
+> -		for (numa_cpu = first_cpu(cpu_mask) ; i < cpu_index ; i++)
+> -			numa_cpu = next_cpu(numa_cpu, cpu_mask);
+> +		for (numa_cpu = first_cpu(*cpu_mask) ; i < cpu_index ; i++)
+> +			numa_cpu = next_cpu(numa_cpu, *cpu_mask);
+>  
+>  		if (numa_cpu != NR_CPUS)
+>  			return cpu_physical_id(numa_cpu);
+> 
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
 
-I have dropped the mtd tree for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__11_Dec_2008_13_43_07_+1100_sp4GVRy8pv0IGHl7
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklAfjsACgkQjjKRsyhoI8xy4ACeMLWoh05u8rHG+s1B1QC/9N4g
-lhgAnR1uGzsrHS6nR2j6nVojRjD5lj4t
-=CaN3
------END PGP SIGNATURE-----
-
---Signature=_Thu__11_Dec_2008_13_43_07_+1100_sp4GVRy8pv0IGHl7--
