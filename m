@@ -1,57 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ftrace tree
-Date: Thu, 11 Dec 2008 11:41:54 +1100
-Message-ID: <20081211114154.5d420ff5.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pci tree
+Date: Thu, 11 Dec 2008 11:53:11 +1100
+Message-ID: <20081211115311.0337ffe9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48632 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58278 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753158AbYLKAmD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Dec 2008 19:42:03 -0500
+	id S1755560AbYLKAxR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Dec 2008 19:53:17 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org, Hugh Dickins <hugh@veritas.com>, Frederic Weisbecker <fweisbec@gmail.com>, Steven Rostedt <rostedt@goodmis.org>
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Greg KH <greg@kroah.com>, Roel Kluin <roel.kluin@gmail.com>
 
-Hi all,
+Hi Jesse,
 
-Today's linux-next merge of the ftrace tree got a conflict in
-include/linux/ftrace.h between commit
-9c24624727f6d6c460e45762a408ca5f5b9b8ef2 ("KSYM_SYMBOL_LEN fixes") from
-Linus' tree and commit 3f5ec13696fd4a33bde42f385406cbb1d3cc96fd
-("tracing/fastboot: move boot tracer structs and funcs into their own
-header") from the ftrace tree.
+Today's linux-next merge of the pci tree got a conflict in
+drivers/pci/pci-driver.c between commit
+fc9f864789c8a9e3ce747765f31ee8320bb66b60 ("PM: Simplify the new
+suspend/hibernation framework for devices") from the driver-core tree and
+commit be74163f1a84d5e5cfecda34232afceef8eb0b93 ("PCI: Make some
+functions & structures static") from the pci tree.
 
-The latter moved some code that the former fixed.  I fixed it up as best
-I could (see below - I used the ftrace tree version of
-include/linux/ftrace.h), but it should be checked and a merge with Linus'
-tree done to resolve this conflict.
+I fixed it up (see below) and can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --git a/include/trace/boot.h b/include/trace/boot.h
-index 6b54537..3ec58b4 100644
---- a/include/trace/boot.h
-+++ b/include/trace/boot.h
-@@ -9,7 +9,7 @@
-  */
- struct boot_trace_call {
- 	pid_t			caller;
--	char			func[KSYM_NAME_LEN];
-+	char			func[KSYM_SYMBOL_LEN];
- };
- 
- /*
-@@ -17,7 +17,7 @@ struct boot_trace_call {
-  * while it returns.
-  */
- struct boot_trace_ret {
--	char			func[KSYM_NAME_LEN];
-+	char			func[KSYM_SYMBOL_LEN];
- 	int				result;
- 	unsigned long long	duration;		/* nsecs */
- };
+diff --cc drivers/pci/pci-driver.c
+index 99d867b,20c89a1..0000000
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@@ -681,15 -668,17 +695,15 @@@ static int pci_pm_restore_noirq(struct 
+  
+  #endif /* !CONFIG_HIBERNATION */
+  
+- struct dev_pm_ops pci_dev_pm_ops = {
+ -static struct pm_ext_ops pci_pm_ops = {
+ -	.base = {
+ -		.prepare = pci_pm_prepare,
+ -		.complete = pci_pm_complete,
+ -		.suspend = pci_pm_suspend,
+ -		.resume = pci_pm_resume,
+ -		.freeze = pci_pm_freeze,
+ -		.thaw = pci_pm_thaw,
+ -		.poweroff = pci_pm_poweroff,
+ -		.restore = pci_pm_restore,
+ -	},
+++static struct dev_pm_ops pci_dev_pm_ops = {
+ +	.prepare = pci_pm_prepare,
+ +	.complete = pci_pm_complete,
+ +	.suspend = pci_pm_suspend,
+ +	.resume = pci_pm_resume,
+ +	.freeze = pci_pm_freeze,
+ +	.thaw = pci_pm_thaw,
+ +	.poweroff = pci_pm_poweroff,
+ +	.restore = pci_pm_restore,
+  	.suspend_noirq = pci_pm_suspend_noirq,
+  	.resume_noirq = pci_pm_resume_noirq,
+  	.freeze_noirq = pci_pm_freeze_noirq,
