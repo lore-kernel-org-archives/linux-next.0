@@ -1,35 +1,51 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Subject: Re: linux-next: manual merge of the nommu tree
-Date: Thu, 11 Dec 2008 16:42:49 +0900
-Message-ID: <20081211074248.GA11314@linux-sh.org>
-References: <20081211182530.924d4af6.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: scsi-post-merge tree build failure
+Date: Thu, 11 Dec 2008 19:27:37 +1100
+Message-ID: <20081211192737.44532af0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__11_Dec_2008_19_27_37_+1100_4KN5uiKEX3Q9TX6H"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mta23.gyao.ne.jp ([125.63.38.249]:13008 "EHLO mx.gate01.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751811AbYLKHos (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 11 Dec 2008 02:44:48 -0500
-Content-Disposition: inline
-In-Reply-To: <20081211182530.924d4af6.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44826 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754702AbYLKI1q (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Dec 2008 03:27:46 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Howells <dhowells@redhat.com>, linux-next@vger.kernel.org, Christoph Lameter <cl@linux-foundation.org>, Pekka Enberg <penberg@cs.helsinki.fi>
+To: David Howells <dhowells@redhat.com>
+Cc: linux-next@vger.kernel.org
 
-On Thu, Dec 11, 2008 at 06:25:30PM +1100, Stephen Rothwell wrote:
-> Hi David,
-> 
-> Today's linux-next merge of the nommu tree got a conflict in
-> Documentation/sysctl/vm.txt between commit
-> cb8fc7a88a0069ebdab220180bf9b45e568f0ba9 ("slub: Trigger defragmentation
-> from memory reclaim") from the slab tree and commit
-> 1a5d96d0151ce2ec77bf08498751fe8d9365c95f ("NOMMU: Make mmap allocation
-> page trimming behaviour configurable.") from the nommu tree.
-> 
-> Just overlapping additions.  I fixed it up (see below) and can carry the
-> fix as necessary.
+--Signature=_Thu__11_Dec_2008_19_27_37_+1100_4KN5uiKEX3Q9TX6H
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I suppose this is what happens when everyone has the same bright idea of
-appending to the end of the file. Though I am surprised that there was
-contention in Documentation/ of all places. Thanks for fixing this up.
+Hi David,
+
+Today's linux-next build (powerpc ppc44x_config) failed like this:
+
+arch/powerpc/lib/dma-noncoherent.c:80: error: redefinition of 'struct vm_re=
+gion'
+
+Caused by commit f65466230e8afd45f716e5b836711ce270f45105 ("NOMMU: Make
+VMAs per MM as for MMU-mode linux").
+
+I have dropped the nommu tree for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__11_Dec_2008_19_27_37_+1100_4KN5uiKEX3Q9TX6H
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAklAzvkACgkQjjKRsyhoI8zqhwCdEf/HNOqSlnRWkFeLqI274fNH
+mVwAn3jQAYjPWli++jyBYbD1q1YsyCCB
+=v5Du
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__11_Dec_2008_19_27_37_+1100_4KN5uiKEX3Q9TX6H--
