@@ -1,83 +1,58 @@
-From: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-Subject: [PATCH] cpumask:cpumask_of_node-ia64 fix
-Date: Thu, 11 Dec 2008 10:58:50 +0900 (JST)
-Message-ID: <20081211105721.4FEE.KOSAKI.MOTOHIRO@jp.fujitsu.com>
-References: <20081210164659.9ebb8158.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the ftrace tree
+Date: Thu, 11 Dec 2008 13:07:54 +1100
+Message-ID: <20081211130754.54839489.sfr@canb.auug.org.au>
+References: <20081211114154.5d420ff5.sfr@canb.auug.org.au>
+	<c62985530812101723u66dd1662x279ff15fa741e8e5@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__11_Dec_2008_13_07_54_+1100_h.53UzV3twGZmZOa"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fgwmail7.fujitsu.co.jp ([192.51.44.37]:40528 "EHLO
-	fgwmail7.fujitsu.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754048AbYLKB64 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Dec 2008 20:58:56 -0500
-In-Reply-To: <20081210164659.9ebb8158.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60048 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754048AbYLKCIF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Dec 2008 21:08:05 -0500
+In-Reply-To: <c62985530812101723u66dd1662x279ff15fa741e8e5@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Luck, Tony" <tony.luck@intel.com>, Rusty Russell <rusty@rustcorp.com.au>
-Cc: kosaki.motohiro@jp.fujitsu.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: =?UTF-8?B?IkZyw6lkw6lyaWMgV2Vpc2JlY2tlciI=?= <fweisbec@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Hugh Dickins <hugh@veritas.com>, Steven Rostedt <rostedt@goodmis.org>
 
-===
-Subject: [PATCH] cpumask:cpumask_of_node-ia64 fix
-Impact: bug fix
+--Signature=_Thu__11_Dec_2008_13_07_54_+1100_h.53UzV3twGZmZOa
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-commit 07c636deede53ff3e96d54df0ece2c838e61951f introduce new CPU mask API and change cpu_mask variable type.
+Hi Fr=C3=A9d=C3=A9ric,
 
------------------------------------------------
--               cpumask_t cpu_mask;
-+               const struct cpumask *cpu_mask;
---------------------------------------------------
+On Thu, 11 Dec 2008 02:23:57 +0100 "Fr=C3=A9d=C3=A9ric Weisbecker" <fweisbe=
+c@gmail.com> wrote:
+>
+> Yes that's the right fix. The headers for the boot tracer have moved
+> for 2.6.29 merge window and the fix
+> should follow this move. If you agree, I will submit your patch to
+> latest -tip with the right "from " and
+> "signed-off-by" tags....
 
+Thanks, that would save me carrying it.
 
-However, its change is incomplete. in build time, compiler output following type mismatch warnings.
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-  arch/ia64/kernel/iosapic.c:708: warning: passing argument 2 of '__cpu_clear' from incompatible pointer type
-  arch/ia64/kernel/iosapic.c:711: warning: passing argument 1 of '__cpus_weight' from incompatible pointer type
-  arch/ia64/kernel/iosapic.c:719: warning: passing argument 1 of '__first_cpu' from incompatible pointer type
-  arch/ia64/kernel/iosapic.c:720: warning: passing argument 2 of '__next_cpu' from incompatible pointer type
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+--Signature=_Thu__11_Dec_2008_13_07_54_+1100_h.53UzV3twGZmZOa
+Content-Type: application/pgp-signature
 
-Signed-off-by: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-CC: "Luck, Tony" <tony.luck@intel.com>
-CC: Rusty Russell <rusty@rustcorp.com.au>
----
- arch/ia64/kernel/iosapic.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-Index: b/arch/ia64/kernel/iosapic.c
-===================================================================
---- a/arch/ia64/kernel/iosapic.c
-+++ b/arch/ia64/kernel/iosapic.c
-@@ -695,7 +695,7 @@ get_target_cpu (unsigned int gsi, int ir
- #ifdef CONFIG_NUMA
- 	{
- 		int num_cpus, cpu_index, iosapic_index, numa_cpu, i = 0;
--		const struct cpumask *cpu_mask;
-+		struct cpumask *cpu_mask;
- 
- 		iosapic_index = find_iosapic(gsi);
- 		if (iosapic_index < 0 ||
-@@ -705,10 +705,10 @@ get_target_cpu (unsigned int gsi, int ir
- 		cpu_mask = cpumask_of_node(iosapic_lists[iosapic_index].node);
- 		for_each_cpu_and(numa_cpu, cpu_mask, &domain) {
- 			if (!cpu_online(numa_cpu))
--				cpu_clear(numa_cpu, cpu_mask);
-+				cpu_clear(numa_cpu, *cpu_mask);
- 		}
- 
--		num_cpus = cpus_weight(cpu_mask);
-+		num_cpus = cpus_weight(*cpu_mask);
- 
- 		if (!num_cpus)
- 			goto skip_numa_setup;
-@@ -716,8 +716,8 @@ get_target_cpu (unsigned int gsi, int ir
- 		/* Use irq assignment to distribute across cpus in node */
- 		cpu_index = irq % num_cpus;
- 
--		for (numa_cpu = first_cpu(cpu_mask) ; i < cpu_index ; i++)
--			numa_cpu = next_cpu(numa_cpu, cpu_mask);
-+		for (numa_cpu = first_cpu(*cpu_mask) ; i < cpu_index ; i++)
-+			numa_cpu = next_cpu(numa_cpu, *cpu_mask);
- 
- 		if (numa_cpu != NR_CPUS)
- 			return cpu_physical_id(numa_cpu);
+iEYEARECAAYFAklAdfoACgkQjjKRsyhoI8w1fQCeOYLQYCGrzjdbsE3Sns5zOmVW
+2YMAn3HsImXhHLYozYo5eY+CHtDP4Jgd
+=fPaD
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__11_Dec_2008_13_07_54_+1100_h.53UzV3twGZmZOa--
