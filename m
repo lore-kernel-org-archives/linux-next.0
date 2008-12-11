@@ -1,39 +1,57 @@
-From: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-Subject: Re: [bug?] bio: add experimental support for inlining a number of bio_vecs inside the bio
-Date: Thu, 11 Dec 2008 09:39:23 +0900 (JST)
-Message-ID: <20081211093620.4FE8.KOSAKI.MOTOHIRO@jp.fujitsu.com>
-References: <20081210204630.4FE3.KOSAKI.MOTOHIRO@jp.fujitsu.com> <20081210121237.GQ23742@kernel.dk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ftrace tree
+Date: Thu, 11 Dec 2008 11:41:54 +1100
+Message-ID: <20081211114154.5d420ff5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fgwmail6.fujitsu.co.jp ([192.51.44.36]:54448 "EHLO
-	fgwmail6.fujitsu.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753858AbYLKAj1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Dec 2008 19:39:27 -0500
-In-Reply-To: <20081210121237.GQ23742@kernel.dk>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48632 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753158AbYLKAmD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Dec 2008 19:42:03 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: kosaki.motohiro@jp.fujitsu.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Hugh Dickins <hugh@veritas.com>, Frederic Weisbecker <fweisbec@gmail.com>, Steven Rostedt <rostedt@goodmis.org>
 
-> > experimental??
-> 
-> Experimental in the sense that it's the first version, not the concept.
-> It's held up well for me, but just yesterday I received the first bug
-> report on a ppc platform and now you have this on ia64. Can you pin
-> point where in __blk_complete_request() it dies with the NULL pointer
-> deref? I'm assuming you don't have CONFIG_FAIL_IO_TIMEOUT set, otherwise
-> I don't see how it could fail. So that looks like req->q being NULL,
-> which doesn't have much relation to this.
-> 
-> Can you try with slab and pagealloc debugging options switched on? The
-> above looks like a side effect of some badness there.
+Hi all,
 
-Yes, I don't set CONFIG_FAIL_IO_TIMEOUT.
-However, your memory corruption fixing patch solve my problem too.
+Today's linux-next merge of the ftrace tree got a conflict in
+include/linux/ftrace.h between commit
+9c24624727f6d6c460e45762a408ca5f5b9b8ef2 ("KSYM_SYMBOL_LEN fixes") from
+Linus' tree and commit 3f5ec13696fd4a33bde42f385406cbb1d3cc96fd
+("tracing/fastboot: move boot tracer structs and funcs into their own
+header") from the ftrace tree.
 
-	http://marc.info/?l=linux-kernel&m=122891947725303&w=2
+The latter moved some code that the former fixed.  I fixed it up as best
+I could (see below - I used the ftrace tree version of
+include/linux/ftrace.h), but it should be checked and a merge with Linus'
+tree done to resolve this conflict.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-
-Thanks.
+diff --git a/include/trace/boot.h b/include/trace/boot.h
+index 6b54537..3ec58b4 100644
+--- a/include/trace/boot.h
++++ b/include/trace/boot.h
+@@ -9,7 +9,7 @@
+  */
+ struct boot_trace_call {
+ 	pid_t			caller;
+-	char			func[KSYM_NAME_LEN];
++	char			func[KSYM_SYMBOL_LEN];
+ };
+ 
+ /*
+@@ -17,7 +17,7 @@ struct boot_trace_call {
+  * while it returns.
+  */
+ struct boot_trace_ret {
+-	char			func[KSYM_NAME_LEN];
++	char			func[KSYM_SYMBOL_LEN];
+ 	int				result;
+ 	unsigned long long	duration;		/* nsecs */
+ };
