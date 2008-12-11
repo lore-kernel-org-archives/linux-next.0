@@ -1,74 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the nommu tree
-Date: Thu, 11 Dec 2008 18:25:30 +1100
-Message-ID: <20081211182530.924d4af6.sfr@canb.auug.org.au>
+From: Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: [bug?] bio: add experimental support for inlining a number of bio_vecs inside the bio
+Date: Thu, 11 Dec 2008 08:32:28 +0100
+Message-ID: <20081211073226.GW23742@kernel.dk>
+References: <20081210164659.9ebb8158.sfr@canb.auug.org.au> <20081210183059.4FD6.KOSAKI.MOTOHIRO@jp.fujitsu.com> <20081210204630.4FE3.KOSAKI.MOTOHIRO@jp.fujitsu.com> <20081210121237.GQ23742@kernel.dk> <20081210131311.e03d6fc5.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39595 "EHLO smtps.tip.net.au"
+Received: from brick.kernel.dk ([93.163.65.50]:27271 "EHLO kernel.dk"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751811AbYLKHZn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 11 Dec 2008 02:25:43 -0500
+	id S1751094AbYLKHcp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Dec 2008 02:32:45 -0500
+Content-Disposition: inline
+In-Reply-To: <20081210131311.e03d6fc5.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: linux-next@vger.kernel.org, Christoph Lameter <cl@linux-foundation.org>, Paul Mundt <lethal@linux-sh.org>, Pekka Enberg <penberg@cs.helsinki.fi>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: kosaki.motohiro@jp.fujitsu.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi David,
+On Wed, Dec 10 2008, Andrew Morton wrote:
+> On Wed, 10 Dec 2008 13:12:38 +0100
+> Jens Axboe <jens.axboe@oracle.com> wrote:
+> 
+> > > experimental??
+> > 
+> > Experimental in the sense that it's the first version, not the concept.
+> > It's held up well for me, but just yesterday I received the first bug
+> > report on a ppc platform and now you have this on ia64.
+> 
+> 
+> Well there's another bug report up-list.  "next-20081209: pdflush: page
+> allocation failure (xfs)".
+> 
+> The clearing of (__GFP_WAIT | __GFP_IO) will call the page allocator in the
+> weakest possible mode and will of course spew page allocations warnings
+> with great frequency.  It should at least add in __GFP_NOWARN.
 
-Today's linux-next merge of the nommu tree got a conflict in
-Documentation/sysctl/vm.txt between commit
-cb8fc7a88a0069ebdab220180bf9b45e568f0ba9 ("slub: Trigger defragmentation
-from memory reclaim") from the slab tree and commit
-1a5d96d0151ce2ec77bf08498751fe8d9365c95f ("NOMMU: Make mmap allocation
-page trimming behaviour configurable.") from the nommu tree.
+OK, that must be for the change titled
 
-Just overlapping additions.  I fixed it up (see below) and can carry the
-fix as necessary.
+"bio: only mempool back the largest bio_vec slab cache"
+
+and yes, that does look like it wants a bit more gfp loving, probably
+the same as mempool_alloc() would use anyway. I'll get that fixed.
+
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
-diff --cc Documentation/sysctl/vm.txt
-index 5e7329a,e9a5c28..0000000
---- a/Documentation/sysctl/vm.txt
-+++ b/Documentation/sysctl/vm.txt
-@@@ -38,7 -38,7 +38,8 @@@ Currently, these files are in /proc/sys
-  - numa_zonelist_order
-  - nr_hugepages
-  - nr_overcommit_hugepages
- +- slab_defrag_limit
-+ - nr_trim_pages		(only if CONFIG_MMU=n)
-  
-  ==============================================================
-  
-@@@ -351,11 -351,17 +352,27 @@@ See Documentation/vm/hugetlbpage.tx
-  
-  ==============================================================
-  
- +slab_defrag_limit
- +
- +Determines the frequency of calls from reclaim into slab defragmentation.
- +Slab defrag reclaims objects from sparsely populates slab pages.
- +The default is 1000. Increase if slab defragmentation occurs
- +too frequently. Decrease if more slab defragmentation passes
- +are needed. The slabinfo tool can report on the frequency of the callbacks.
- +
-++==============================================================
-++
-+ nr_trim_pages
-+ 
-+ This is available only on NOMMU kernels.
-+ 
-+ This value adjusts the excess page trimming behaviour of power-of-2 aligned
-+ NOMMU mmap allocations.
-+ 
-+ A value of 0 disables trimming of allocations entirely, while a value of 1
-+ trims excess pages aggressively. Any value >= 1 acts as the watermark where
-+ trimming of allocations is initiated.
-+ 
-+ The default value is 1.
-+ 
-+ See Documentation/nommu-mmap.txt for more information.
+Jens Axboe
