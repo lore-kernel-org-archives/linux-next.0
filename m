@@ -1,23 +1,23 @@
-From: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-Subject: Re: [linux-next][PATCH] cpumask:cpumask_of_node-ia64 fix
-Date: Thu, 11 Dec 2008 13:09:17 +0900 (JST)
-Message-ID: <20081211130833.4FFA.KOSAKI.MOTOHIRO@jp.fujitsu.com>
+From: Mike Travis <travis@sgi.com>
+Subject: Re: [PATCH] cpumask:cpumask_of_node-ia64 fix
+Date: Wed, 10 Dec 2008 20:15:51 -0800
+Message-ID: <494093F7.5020000@sgi.com>
 References: <20081210164659.9ebb8158.sfr@canb.auug.org.au> <20081211105721.4FEE.KOSAKI.MOTOHIRO@jp.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-ia64-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from relay1.sgi.com ([192.48.179.29]:48591 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751666AbYLKEPz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Dec 2008 23:15:55 -0500
 In-Reply-To: <20081211105721.4FEE.KOSAKI.MOTOHIRO@jp.fujitsu.com>
-Sender: linux-ia64-owner@vger.kernel.org
-To: linux-ia64 <linux-ia64@vger.kernel.org>
-Cc: kosaki.motohiro@jp.fujitsu.com, "Luck, Tony" <tony.luck@intel.com>, Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
+Cc: "Luck, Tony" <tony.luck@intel.com>, Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-Oops, sorry.
-
-I forgot cc to linux-ia64.
-
-
+KOSAKI Motohiro wrote:
 > ===
 > Subject: [PATCH] cpumask:cpumask_of_node-ia64 fix
 > Impact: bug fix
@@ -36,6 +36,8 @@ I forgot cc to linux-ia64.
 >   arch/ia64/kernel/iosapic.c:711: warning: passing argument 1 of '__cpus_weight' from incompatible pointer type
 >   arch/ia64/kernel/iosapic.c:719: warning: passing argument 1 of '__first_cpu' from incompatible pointer type
 >   arch/ia64/kernel/iosapic.c:720: warning: passing argument 2 of '__next_cpu' from incompatible pointer type
+
+Good catch, however ...
 > 
 > 
 > Signed-off-by: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
@@ -64,6 +66,9 @@ I forgot cc to linux-ia64.
 >  			if (!cpu_online(numa_cpu))
 > -				cpu_clear(numa_cpu, cpu_mask);
 > +				cpu_clear(numa_cpu, *cpu_mask);
+
+... you cannot modify the read-only cpumask_of_node map.  Suggested alternative below.
+
 >  		}
 >  
 > -		num_cpus = cpus_weight(cpu_mask);
@@ -85,10 +90,54 @@ I forgot cc to linux-ia64.
 > 
 > 
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+---
+ arch/ia64/kernel/iosapic.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
+--- linux-2.6-next.orig/arch/ia64/kernel/iosapic.c
++++ linux-2.6-next/arch/ia64/kernel/iosapic.c
+@@ -703,23 +703,23 @@ get_target_cpu (unsigned int gsi, int ir
+ 			goto skip_numa_setup;
+ 
+ 		cpu_mask = cpumask_of_node(iosapic_lists[iosapic_index].node);
++		num_cpus = 0;
+ 		for_each_cpu_and(numa_cpu, cpu_mask, &domain) {
+-			if (!cpu_online(numa_cpu))
+-				cpu_clear(numa_cpu, cpu_mask);
++			if (cpu_online(numa_cpu))
++				num_cpus++;
+ 		}
+ 
+-		num_cpus = cpus_weight(cpu_mask);
+-
+ 		if (!num_cpus)
+ 			goto skip_numa_setup;
+ 
+ 		/* Use irq assignment to distribute across cpus in node */
+ 		cpu_index = irq % num_cpus;
+ 
+-		for (numa_cpu = first_cpu(cpu_mask) ; i < cpu_index ; i++)
+-			numa_cpu = next_cpu(numa_cpu, cpu_mask);
++		for_each_cpu_and(numa_cpu, cpu_mask, cpu_online_mask)
++			if (i++ >= cpu_index)
++				break;
+ 
+-		if (numa_cpu != NR_CPUS)
++		if (numa_cpu < nr_cpu_ids)
+ 			return cpu_physical_id(numa_cpu);
+ 	}
+ skip_numa_setup:
+@@ -730,7 +730,7 @@ skip_numa_setup:
+ 	 * case of NUMA.)
+ 	 */
+ 	do {
+-		if (++cpu >= NR_CPUS)
++		if (++cpu >= nr_cpu_ids)
+ 			cpu = 0;
+ 	} while (!cpu_online(cpu) || !cpu_isset(cpu, domain));
+ 
+---
 
-
+One aside, I'm not sure of ia64, but x86_64 keeps only online cpus in the cpumask_of_node_map.
+IOW, if a cpu goes offline, it's removed from the map.  So the whole and'ing thing above may
+be unnecessary. 
