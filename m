@@ -1,46 +1,96 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: [bug?] bio: add experimental support for inlining a number of bio_vecs inside the bio
-Date: Thu, 11 Dec 2008 08:32:28 +0100
-Message-ID: <20081211073226.GW23742@kernel.dk>
-References: <20081210164659.9ebb8158.sfr@canb.auug.org.au> <20081210183059.4FD6.KOSAKI.MOTOHIRO@jp.fujitsu.com> <20081210204630.4FE3.KOSAKI.MOTOHIRO@jp.fujitsu.com> <20081210121237.GQ23742@kernel.dk> <20081210131311.e03d6fc5.akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the nommu tree
+Date: Thu, 11 Dec 2008 18:43:35 +1100
+Message-ID: <20081211184335.837aca47.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from brick.kernel.dk ([93.163.65.50]:27271 "EHLO kernel.dk"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51540 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751094AbYLKHcp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 11 Dec 2008 02:32:45 -0500
-Content-Disposition: inline
-In-Reply-To: <20081210131311.e03d6fc5.akpm@linux-foundation.org>
+	id S1751094AbYLKHnm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Dec 2008 02:43:42 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kosaki.motohiro@jp.fujitsu.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Howells <dhowells@redhat.com>
+Cc: linux-next@vger.kernel.org, Vegard Nossum <vegard.nossum@gmail.com>, Pekka Enberg <penberg@cs.helsinki.fi>, Ingo Molnar <mingo@elte.hu>
 
-On Wed, Dec 10 2008, Andrew Morton wrote:
-> On Wed, 10 Dec 2008 13:12:38 +0100
-> Jens Axboe <jens.axboe@oracle.com> wrote:
-> 
-> > > experimental??
-> > 
-> > Experimental in the sense that it's the first version, not the concept.
-> > It's held up well for me, but just yesterday I received the first bug
-> > report on a ppc platform and now you have this on ia64.
-> 
-> 
-> Well there's another bug report up-list.  "next-20081209: pdflush: page
-> allocation failure (xfs)".
-> 
-> The clearing of (__GFP_WAIT | __GFP_IO) will call the page allocator in the
-> weakest possible mode and will of course spew page allocations warnings
-> with great frequency.  It should at least add in __GFP_NOWARN.
+Hi David,
 
-OK, that must be for the change titled
+Today's linux-next merge of the nommu tree got a conflict in
+kernel/fork.c between commit e6df1035b1b488cafde1e69f1a25f2706c3ac1f7
+("kmemcheck: add mm functions") from the kmemcheck tree and commit
+f65466230e8afd45f716e5b836711ce270f45105 ("NOMMU: Make VMAs per MM as for
+MMU-mode linux") from the nommu tree.
 
-"bio: only mempool back the largest bio_vec slab cache"
-
-and yes, that does look like it wants a bit more gfp loving, probably
-the same as mempool_alloc() would use anyway. I'll get that fixed.
-
+I fixed it up as best I can (see below) and can carry the fix as
+necessary (though it would be good if you guys could figure out a better
+solution).
 -- 
-Jens Axboe
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+diff --cc kernel/fork.c
+index 446167a,d7c5b42..0000000
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@@ -1459,23 -1451,21 +1459,21 @@@ void __init proc_caches_init(void
+  {
+  	sighand_cachep = kmem_cache_create("sighand_cache",
+  			sizeof(struct sighand_struct), 0,
+ -			SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_DESTROY_BY_RCU,
+ -			sighand_ctor);
+ +			SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_DESTROY_BY_RCU|
+ +			SLAB_NOTRACK, sighand_ctor);
+  	signal_cachep = kmem_cache_create("signal_cache",
+  			sizeof(struct signal_struct), 0,
+ -			SLAB_HWCACHE_ALIGN|SLAB_PANIC, NULL);
+ +			SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_NOTRACK, NULL);
+  	files_cachep = kmem_cache_create("files_cache",
+  			sizeof(struct files_struct), 0,
+ -			SLAB_HWCACHE_ALIGN|SLAB_PANIC, NULL);
+ +			SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_NOTRACK, NULL);
+  	fs_cachep = kmem_cache_create("fs_cache",
+  			sizeof(struct fs_struct), 0,
+ -			SLAB_HWCACHE_ALIGN|SLAB_PANIC, NULL);
+ +			SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_NOTRACK, NULL);
+- 	vm_area_cachep = kmem_cache_create("vm_area_struct",
+- 			sizeof(struct vm_area_struct), 0,
+- 			SLAB_PANIC|SLAB_NOTRACK, NULL);
+  	mm_cachep = kmem_cache_create("mm_struct",
+  			sizeof(struct mm_struct), ARCH_MIN_MMSTRUCT_ALIGN,
+ -			SLAB_HWCACHE_ALIGN|SLAB_PANIC, NULL);
+ +			SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_NOTRACK, NULL);
++ 	mmap_init();
+  }
+  
+  /*
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 6e5fc98..d85193e 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -2478,5 +2478,5 @@ void __init mmap_init(void)
+ {
+ 	vm_area_cachep = kmem_cache_create("vm_area_struct",
+ 			sizeof(struct vm_area_struct), 0,
+-			SLAB_PANIC, NULL);
++			SLAB_PANIC|SLAB_NOTRACK, NULL);
+ }
+diff --git a/mm/nommu.c b/mm/nommu.c
+index 61b7f7a..efb3d01 100644
+--- a/mm/nommu.c
++++ b/mm/nommu.c
+@@ -447,10 +447,10 @@ void __init mmap_init(void)
+ {
+ 	vm_region_jar = kmem_cache_create("vm_region_jar",
+ 					  sizeof(struct vm_region), 0,
+-					  SLAB_PANIC, NULL);
++					  SLAB_PANIC|SLAB_NOTRACK, NULL);
+ 	vm_area_cachep = kmem_cache_create("vm_area_struct",
+ 					   sizeof(struct vm_area_struct), 0,
+-					   SLAB_PANIC, NULL);
++					   SLAB_PANIC|SLAB_NOTRACK, NULL);
+ }
+ 
+ /*
