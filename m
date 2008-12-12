@@ -1,34 +1,40 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: [PATCH] cpumask:cpumask_of_node-ia64 fix
-Date: Fri, 12 Dec 2008 18:41:24 +1030
-Message-ID: <200812121841.25429.rusty@rustcorp.com.au>
-References: <20081211105721.4FEE.KOSAKI.MOTOHIRO@jp.fujitsu.com> <494093F7.5020000@sgi.com> <20081211132146.4FFD.KOSAKI.MOTOHIRO@jp.fujitsu.com>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the ftrace tree
+Date: Fri, 12 Dec 2008 10:23:08 +0100
+Message-ID: <20081212092308.GI25106@elte.hu>
+References: <20081211114154.5d420ff5.sfr@canb.auug.org.au> <c62985530812101723u66dd1662x279ff15fa741e8e5@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:54494 "EHLO ozlabs.org"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:55085 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750703AbYLLILe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 12 Dec 2008 03:11:34 -0500
-In-Reply-To: <20081211132146.4FFD.KOSAKI.MOTOHIRO@jp.fujitsu.com>
+	id S1758172AbYLLJXW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 12 Dec 2008 04:23:22 -0500
 Content-Disposition: inline
+In-Reply-To: <c62985530812101723u66dd1662x279ff15fa741e8e5@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-Cc: Mike Travis <travis@sgi.com>, "Luck, Tony" <tony.luck@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Hugh Dickins <hugh@veritas.com>, Steven Rostedt <rostedt@goodmis.org>
 
-On Thursday 11 December 2008 15:23:09 KOSAKI Motohiro wrote:
-> and my review and test doen't find any problem in your patch.
-> Very thanks.
-...
-> The following is the folded patch of your patch and your over-simplified fix.
 
-Thanks for this.  I do not know how I missed these (I did not have an IA64
-cross-compiler then though).
+* Fr=E9d=E9ric Weisbecker <fweisbec@gmail.com> wrote:
 
-I will fold this fix into the ia64 cpumask_of_node patch.
+> >  struct boot_trace_ret {
+> > -       char                    func[KSYM_NAME_LEN];
+> > +       char                    func[KSYM_SYMBOL_LEN];
+> >        int                             result;
+> >        unsigned long long      duration;               /* nsecs */
+> >  };
+> >
+>=20
+> Yes that's the right fix. The headers for the boot tracer have moved=20
+> for 2.6.29 merge window and the fix should follow this move. If you=20
+> agree, I will submit your patch to latest -tip with the right "from "=
+=20
+> and "signed-off-by" tags....
 
-Thanks,
-Rusty.
+i missed that bit indeed - so i've picked up your patch, thanks.
+
+	Ingo
