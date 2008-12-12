@@ -1,38 +1,32 @@
-From: Pavel Machek <pavel@suse.cz>
-Subject: Re: Suspend on X200 with next-20081125: Success!
-Date: Fri, 12 Dec 2008 19:59:38 +0100
-Message-ID: <20081212185938.GH11974@elf.ucw.cz>
-References: <20081127090647.GA16088@denkbrett.schottelius.org>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH] staging: really fix up Kconfig automatic deselction
+Date: Fri, 12 Dec 2008 10:55:57 -0800
+Message-ID: <20081212185557.GB25992@kroah.com>
+References: <20081208150832.GB19711@kroah.com> <1228785051-12954-1-git-send-email-dbaryshkov@gmail.com> <20081209035444.GA22626@suse.de> <493DF4EC.70509@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59936 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750805AbYLLS54 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 12 Dec 2008 13:57:56 -0500
+Received: from kroah.org ([198.145.64.141]:37847 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753110AbYLLTiJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 12 Dec 2008 14:38:09 -0500
 Content-Disposition: inline
-In-Reply-To: <20081127090647.GA16088@denkbrett.schottelius.org>
+In-Reply-To: <493DF4EC.70509@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: Greg KH <gregkh@suse.de>, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Thu 2008-11-27 10:06:47, Nico -telmich- Schottelius wrote:
-> Good morning everybody!
-> 
-> I just resumed the Lenovo X200 running
-> 2.6.28-rc6-next-20081125-denkbrett #15 SMP PREEMPT
-> with xorg running!
-> 
-> Currently just once and after the resume it beeped until
-> I released it from the docking station (putting back in
-> works), though it looks pretty good!
-> 
-> Thanks for your work!
+On Tue, Dec 09, 2008 at 07:32:44AM +0300, Dmitry Eremin-Solenikov wrote:
+> Greg KH wrote:
+>> On Tue, Dec 09, 2008 at 04:10:51AM +0300, Dmitry Eremin-Solenikov wrote:
+>>> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+>> This patch should be used instead of your current one in my tree, right?
+>> Or apply it on top of your current one?
+>
+> On top of the previous one. If you want, you can squash them into one 
+> commit, of course.
 
-See suspend.sf.net/ , whitelist entry might be nice for the
-mailinglist...
-									Pavel
+I've merged them together now, thanks for the fix.
 
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+greg k-h
