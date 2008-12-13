@@ -1,50 +1,52 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for December 12 (drm)
-Date: Fri, 12 Dec 2008 20:55:54 -0800
-Message-ID: <4943405A.4080009@xenotime.net>
-References: <20081212185654.0af8b4a1.sfr@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: [PATCH 1/1] cpumask: force nr_cpumask_bit to NR_CPUS for CPUMASK_OFFSTACK=n
+Date: Sat, 13 Dec 2008 20:25:05 +1030
+Message-ID: <200812132025.06514.rusty@rustcorp.com.au>
+References: <200812082136.33212.rusty@rustcorp.com.au> <200812101019.42908.rusty@rustcorp.com.au> <49417B99.7090004@sgi.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xenotime.net ([72.52.64.118]:43001 "HELO xenotime.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-	id S1754127AbYLMEzy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 12 Dec 2008 23:55:54 -0500
-Received: from ::ffff:71.117.247.66 ([71.117.247.66]) by xenotime.net for <linux-next@vger.kernel.org>; Fri, 12 Dec 2008 20:55:52 -0800
-In-Reply-To: <20081212185654.0af8b4a1.sfr@canb.auug.org.au>
+Received: from ozlabs.org ([203.10.76.45]:35728 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754458AbYLMJzL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 13 Dec 2008 04:55:11 -0500
+In-Reply-To: <49417B99.7090004@sgi.com>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, jesse.barnes@intel.com, airlied@linux.ie
+To: Mike Travis <travis@sgi.com>
+Cc: Ingo Molnar <mingo@elte.hu>, David Miller <davem@davemloft.net>, Paul Mackerras <paulus@samba.org>, Martin Schwidefsky <schwidefsky@googlemail.com>, Ralf Baechle <ralf@linux-mips.org>, Tony Luck <tony.luck@intel.com>, Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-Stephen Rothwell wrote:
-> Hi all,
+On Friday 12 December 2008 07:14:09 Mike Travis wrote:
+> Re: cpumask conversions, or not?
 > 
-> Changes since 20081211:
+> Rusty Russell wrote:
+> > On Tuesday 09 December 2008 21:26:36 Mike Travis wrote:
+> >> Rusty Russell wrote:
+> >>> Hi all,
+> >>>
+> >>>    The new cpumask conversions are going well, but unfortunately Stephen
+> >>> uncovered a nasty bug via linux-next: the new cpumask operators only go to
+> >>> nr_cpumask_bits which can be less than NR_CPUS if NR_CPUS > BITS_PER_LONG.
+> >>> The undefined bits confuse the old cpumask operators.  We fixed one case,
+> >>> but I am concerned that we will break archs as we convert more core code.
+> >> Hi Rusty,
+> >>
+> >> I think we can avoid this problem if we make cpumask_bits == NR_CPUS iff
+> >> CONFIG_CPUMASK_OFFSTACK=n.  This complies with the current cpumask_t
+> >> approach and should cause all cpumask operators to always operate on
+> >> all cpumask bits.
+> > 
+> > A very good point.  And it's no worse than the old method.
+> > 
+> > OK, forget about this for now, no urgent conversions needed :)
+> > Rusty.
 > 
-> Undropped tree:
-> 	drm
+> This probably should be submitted through linux-next for wider test coverage?
 
-oops    ^^^
+Identical patch already in series.
 
-
-When I2C=n, and drm is built-in or modular, this build error
-happens:
-
-(drm built-in:)
-
-build-r7079.out:(.text+0x47e5f): undefined reference to `i2c_transfer'
-7080	same
-7086	same
-7089	same
-(from gpu/drm/drm_edid.c)
-
-
-(drm modular:)
-
-build-r7103.out:ERROR: "i2c_transfer" [drivers/gpu/drm/drm.ko] undefined!
-(from gpu/drm/drm_edid.c)
-
-
-~Randy
+Thanks,
+Rusty.
