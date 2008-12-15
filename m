@@ -1,55 +1,66 @@
-From: Jesse Barnes <jesse.barnes@intel.com>
-Subject: Re: linux-next: Tree for December 12 (drm)
-Date: Sun, 14 Dec 2008 11:21:13 -0800
-Message-ID: <200812141121.14400.jesse.barnes@intel.com>
-References: <20081212185654.0af8b4a1.sfr@canb.auug.org.au> <4943405A.4080009@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the device-mapper tree
+Date: Mon, 15 Dec 2008 11:58:23 +1100
+Message-ID: <20081215115823.dc3029d5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:23425 "EHLO mga03.intel.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37346 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750945AbYLNTVT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 14 Dec 2008 14:21:19 -0500
-In-Reply-To: <4943405A.4080009@xenotime.net>
-Content-Disposition: inline
+	id S1750790AbYLOA6d (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 14 Dec 2008 19:58:33 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "airlied@linux.ie" <airlied@linux.ie>
+To: Alasdair G Kergon <agk@redhat.com>
+Cc: linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Kiyoshi Ueda <k-ueda@ct.jp.nec.com>
 
-On Friday, December 12, 2008 8:55 pm Randy Dunlap wrote:
-> Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > Changes since 20081211:
-> >
-> > Undropped tree:
-> > 	drm
->
-> oops    ^^^
->
->
-> When I2C=n, and drm is built-in or modular, this build error
-> happens:
->
-> (drm built-in:)
->
-> build-r7079.out:(.text+0x47e5f): undefined reference to `i2c_transfer'
-> 7080	same
-> 7086	same
-> 7089	same
-> (from gpu/drm/drm_edid.c)
->
->
-> (drm modular:)
->
-> build-r7103.out:ERROR: "i2c_transfer" [drivers/gpu/drm/drm.ko] undefined!
-> (from gpu/drm/drm_edid.c)
+Hi Alasdair,
 
-Looks like Dave pushed a fix for this by making DRM select the required I2C 
-bits.  Dunno that or depends is preferred these days though...
+Today's linux-next merge of the device-mapper tree got a conflict in
+drivers/md/dm.c between commit 0bfc24559d7945506184d86739fe365a181f06b7
+("blktrace: port to tracepoints, update") from the ftrace tree and commit
+758cc022ae793c8418fca30ed1e30466efaae37a ("dm-request-add-caches") from
+the device-mapper tree.
 
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
 -- 
-Jesse Barnes, Intel Open Source Technology Center
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+diff --cc drivers/md/dm.c
+index 343094c,50a1f10..0000000
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@@ -52,8 -53,27 +54,29 @@@ struct dm_target_io 
+  	union map_info info;
+  };
+  
++ /*
++  * For request-based dm.
++  * One of these is allocated per request.
++  */
++ struct dm_rq_target_io {
++ 	struct mapped_device *md;
++ 	struct dm_target *ti;
++ 	struct request *orig, clone;
++ 	int error;
++ 	union map_info info;
++ };
++ 
++ /*
++  * For request-based dm.
++  * One of these is allocated per bio.
++  */
++ struct dm_rq_clone_bio_info {
++ 	struct bio *orig;
++ 	struct request *rq;
++ };
++ 
+ +DEFINE_TRACE(block_bio_complete);
+ +
+  union map_info *dm_get_mapinfo(struct bio *bio)
+  {
+  	if (bio && bio->bi_private)
