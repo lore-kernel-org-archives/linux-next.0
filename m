@@ -1,16 +1,16 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] mtd: fix nettel printk formats
-Date: Mon, 15 Dec 2008 15:38:39 -0800
-Message-ID: <4946EA7F.1@oracle.com>
+Subject: [PATCH -next] mtd: fix nandsim sched.h references
+Date: Mon, 15 Dec 2008 15:37:33 -0800
+Message-ID: <4946EA3D.8060604@oracle.com>
 References: <20081216020642.fc1007d9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet11.oracle.com ([148.87.113.123]:35782 "EHLO
-	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752905AbYLOXjU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Dec 2008 18:39:20 -0500
+Received: from rcsinet13.oracle.com ([148.87.113.125]:54119 "EHLO
+	rgminet13.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752905AbYLOXkL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Dec 2008 18:40:11 -0500
 In-Reply-To: <20081216020642.fc1007d9.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
@@ -19,25 +19,27 @@ Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David Woodh
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Fix printk format references:
+Fix sched.h references:
 
-drivers/mtd/maps/nettel.c:361: warning: format '%d' expects type 'int', but argument 2 has type 'uint64_t'
+build-r7149.out:/local/linsrc/linux-next-20081215/drivers/mtd/nand/nandsim.c:1326: error: dereferencing pointer to incomplete type
+build-r7149.out:/local/linsrc/linux-next-20081215/drivers/mtd/nand/nandsim.c:1326: error: 'PF_MEMALLOC' undeclared (first use in this function)
+build-r7149.out:/local/linsrc/linux-next-20081215/drivers/mtd/nand/nandsim.c:1328: error: dereferencing pointer to incomplete type
+build-r7149.out:/local/linsrc/linux-next-20081215/drivers/mtd/nand/nandsim.c:1335: error: dereferencing pointer to incomplete type
+build-r7149.out:/local/linsrc/linux-next-20081215/drivers/mtd/nand/nandsim.c:1335: error: 'PF_MEMALLOC' undeclared (first use in this function)
+build-r7149.out:make[4]: *** [drivers/mtd/nand/nandsim.o] Error 1
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 ---
- drivers/mtd/maps/nettel.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mtd/nand/nandsim.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- linux-next-20081215.orig/drivers/mtd/maps/nettel.c
-+++ linux-next-20081215/drivers/mtd/maps/nettel.c
-@@ -357,8 +357,8 @@ static int __init nettel_init(void)
- 		*intel1par = 0;
- 	}
- 
--	printk(KERN_NOTICE "SNAPGEAR: Intel flash device size = %dK\n",
--		(intel_mtd->size >> 10));
-+	printk(KERN_NOTICE "SNAPGEAR: Intel flash device size = %lluK\n",
-+		(unsigned long long)(intel_mtd->size >> 10));
- 
- 	intel_mtd->owner = THIS_MODULE;
+--- linux-next-20081215.orig/drivers/mtd/nand/nandsim.c
++++ linux-next-20081215/drivers/mtd/nand/nandsim.c
+@@ -38,6 +38,7 @@
+ #include <linux/delay.h>
+ #include <linux/list.h>
+ #include <linux/random.h>
++#include <linux/sched.h>
+ #include <linux/fs.h>
+ #include <linux/pagemap.h>
  
