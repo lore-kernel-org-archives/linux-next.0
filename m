@@ -1,74 +1,84 @@
-From: Mike Travis <travis@sgi.com>
-Subject: Re: linux-next: manual merge of the rr_cpumask tree
-Date: Mon, 15 Dec 2008 10:40:32 -0800
-Message-ID: <4946A4A0.5080806@sgi.com>
-References: <20081215170945.b91f3b9c.sfr@canb.auug.org.au> <200812151711.36134.rusty@rustcorp.com.au> <4946855D.7070403@sgi.com>
+From: Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: next-20081215: kernel BUG at block/cfq-iosched.c:1243
+Date: Mon, 15 Dec 2008 19:44:41 +0100
+Message-ID: <20081215184440.GI32491@kernel.dk>
+References: <a4423d670812151029u5458f9b4iaa36316a5f210ff1@mail.gmail.com> <20081215183235.GG32491@kernel.dk> <a4423d670812151038p4bab739fo3a6f9afd1ad3e358@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay2.sgi.com ([192.48.179.30]:33596 "EHLO relay.sgi.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752939AbYLOSkg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Dec 2008 13:40:36 -0500
-In-Reply-To: <4946855D.7070403@sgi.com>
+Received: from brick.kernel.dk ([93.163.65.50]:9603 "EHLO kernel.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753241AbYLOSpH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Dec 2008 13:45:07 -0500
+Content-Disposition: inline
+In-Reply-To: <a4423d670812151038p4bab739fo3a6f9afd1ad3e358@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>, Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-Mike Travis wrote:
-> Rusty Russell wrote:
->> On Monday 15 December 2008 16:39:45 Stephen Rothwell wrote:
->>> Hi Rusty,
->>>
->>> Today's linux-next merge of the rr_cpumask tree got a conflict in
->>> arch/x86/kernel/io_apic.c between commit
->>> 3145e941fcfe2548fa2270afb1a05bab3a6bc418 ("x86, MSI: pass irq_cfg and
->>> irq_desc") from the sparseirq tree and commit
->>> 0de26520c7cabf36e1de090ea8092f011a6106ce ("cpumask: make irq_set_affinity
->>> () take a const struct cpumask") from the rr_cpumask tree.
->>>
->>> There are lots of overlapping changes.  I fixed it up (see below) and can carry the
->>> fix as necessary.
->> I have performed this merge before.  The results are in
->> 	git://git.kernel.org/pub/scm/linux/kernel/git/rusty/linux-2.6-for-ingo.git
->>
->> Ingo, can you pull these into cpus4096?  It's just the cpumask/cpus4096 merge.
->>
->> Thanks,
->> Rusty.
+On Mon, Dec 15 2008, Alexander Beregalov wrote:
+> 2008/12/15 Jens Axboe <jens.axboe@oracle.com>:
+> >> [   23.080733] kernel BUG at block/cfq-iosched.c:1243!
+> >> [   23.080733] invalid opcode: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC
 > 
-> Hi Rusty,
+> > Odd, is it reproducible? What is your .config?
+> Yes, it is
 > 
-> Did you update your tip/cpus4096 branch?  The resultant code in the above tree
-> does not have the additions from the sparseirq branch, which was the 6 hour merge
-> I did last week (but used the wrong tip branch.)  I'm re-doing the merge based
-> on the latest tip/cpus4096 which has this as the HEAD commit:
-> 
+> Config is in attach
 
-Hmm, building the tree a bit differently and the below commit does show up:
+It's weird, because the only change for CFQ in that area is the one
+below. Does the oops go away if you back this out?
 
-git-remote add linus git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git
-git-remote add tip git://git.kernel.org/pub/scm/linux/kernel/git/tip/linux-2.6-tip.git
-git-remote add for-ingo git://git.kernel.org/pub/scm/linux/kernel/git/rusty/linux-2.6-for-ingo.git
-git-remote update
-git-checkout -b for-ingo for-ingo/master
 
-Ingo - does this mean that the above "for-ingo" tree will merge into your tip/cpus4096 correctly?
+>From 030a3f02bb42fad91ae84c99924fe3ee162a634d Mon Sep 17 00:00:00 2001
+From: Jens Axboe <jens.axboe@oracle.com>
+Date: Fri, 12 Dec 2008 15:56:31 +0100
+Subject: [PATCH] cfq-iosched: fix race between exiting queue and exiting task
 
-(I'm doing a patch now to add in the missing pieces that were dropped after the rebase.)
+Original patch from Nikanth Karthikesan <knikanth@suse.de>
 
-> 
-> commit 8299608f140ae321e4eb5d1306184265d2b9511e
-> Merge: 45ab6b0... 30cb367... 69b88af... 8daa190...
-> Author: Ingo Molnar <mingo@elte.hu>
-> Date:   Fri Dec 12 13:49:17 2008 +0100
-> 
->     Merge branches 'irq/sparseirq', 'x86/quirks' and 'x86/reboot' into cpus4096
-> 
->     We merge the irq/sparseirq, x86/quirks and x86/reboot trees into the
->     cpus4096 tree because the io-apic changes in the sparseirq change
->     conflict with the cpumask changes in the cpumask tree, and we
->     want to resolve those.
-> 
+When a queue exits the queue lock is taken and cfq_exit_queue() would free all
+the cic's associated with the queue.
+
+But when a task exits, cfq_exit_io_context() gets cic one by one and then
+locks the associated queue to call __cfq_exit_single_io_context. It looks like
+between getting a cic from the ioc and locking the queue, the queue might have
+exited on another cpu.
+
+Fix this by rechecking the cfq_io_context queue key inside the queue lock
+again, and not calling into __cfq_exit_single_io_context() if somebody
+beat us to it.
+
+Signed-off-by: Jens Axboe <jens.axboe@oracle.com>
+---
+ block/cfq-iosched.c |    9 +++++++++
+ 1 files changed, 9 insertions(+), 0 deletions(-)
+
+diff --git a/block/cfq-iosched.c b/block/cfq-iosched.c
+index ee8a90c..8a2485d 100644
+--- a/block/cfq-iosched.c
++++ b/block/cfq-iosched.c
+@@ -1314,7 +1314,16 @@ static void cfq_exit_single_io_context(struct io_context *ioc,
+ 		unsigned long flags;
+ 
+ 		spin_lock_irqsave(q->queue_lock, flags);
++
++		/*
++		 * Ensure we get a fresh copy of the ->key to prevent
++		 * race between exiting task and queue
++		 */
++		smp_read_barrier_depends();
++		if (cic->key)
++			__cfq_exit_single_io_context(cfqd, cic);
+ 		__cfq_exit_single_io_context(cfqd, cic);
++
+ 		spin_unlock_irqrestore(q->queue_lock, flags);
+ 	}
+ }
+-- 
+1.6.0.4.755.g6e139
+
+
+-- 
+Jens Axboe
