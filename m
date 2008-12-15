@@ -1,17 +1,16 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] mtd: fix dataflash printk formats
-Date: Mon, 15 Dec 2008 15:33:59 -0800
-Message-ID: <4946E967.6030908@xenotime.net>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] mtd: fix m25p80 printk formats
+Date: Mon, 15 Dec 2008 15:36:26 -0800
+Message-ID: <4946E9FA.6030607@oracle.com>
 References: <20081216020642.fc1007d9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xenotime.net ([72.52.64.118]:60126 "HELO xenotime.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-	id S1752078AbYLOXdx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Dec 2008 18:33:53 -0500
-Received: from ::ffff:71.117.247.66 ([71.117.247.66]) by xenotime.net for <linux-next@vger.kernel.org>; Mon, 15 Dec 2008 15:33:44 -0800
+Received: from acsinet11.oracle.com ([141.146.126.233]:36262 "EHLO
+	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752078AbYLOXgu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Dec 2008 18:36:50 -0500
 In-Reply-To: <20081216020642.fc1007d9.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
@@ -22,38 +21,96 @@ From: Randy Dunlap <randy.dunlap@oracle.com>
 
 Fix printk format warnings:
 
-build-r7137.out:/local/linsrc/linux-next-20081215/drivers/mtd/devices/mtd_dataflash.c:156: warning: format '%x' expects type 'unsigned int', but argument 3 has type 'uint64_t'
-build-r7137.out:/local/linsrc/linux-next-20081215/drivers/mtd/devices/mtd_dataflash.c:156: warning: format '%x' expects type 'unsigned int', but argument 4 has type 'uint64_t'
-build-r7137.out:/local/linsrc/linux-next-20081215/drivers/mtd/devices/mtd_dataflash.c:670: warning: format '%d' expects type 'int', but argument 5 has type 'uint64_t'
+build-r7150.out:/local/linsrc/linux-next-20081215/drivers/mtd/devices/m25p80.c:172: warning: format '%d' expects type 'int', but argument 4 has type 'uint64_t'
+build-r7150.out:/local/linsrc/linux-next-20081215/drivers/mtd/devices/m25p80.c:236: warning: format '%d' expects type 'int', but argument 6 has type 'uint64_t'
+build-r7150.out:/local/linsrc/linux-next-20081215/drivers/mtd/devices/m25p80.c:680: warning: format '%d' expects type 'int', but argument 5 has type 'uint64_t'
+build-r7150.out:/local/linsrc/linux-next-20081215/drivers/mtd/devices/m25p80.c:683: warning: format '%.8x' expects type 'unsigned int', but argument 3 has type 'uint64_t'
+build-r7150.out:/local/linsrc/linux-next-20081215/drivers/mtd/devices/m25p80.c:683: warning: format '%u' expects type 'unsigned int', but argument 4 has type 'uint64_t'
+build-r7150.out:/local/linsrc/linux-next-20081215/drivers/mtd/devices/m25p80.c:693: warning: format '%.8x' expects type 'unsigned int', but argument 3 has type 'uint64_t'
+build-r7150.out:/local/linsrc/linux-next-20081215/drivers/mtd/devices/m25p80.c:724: warning: format '%.8x' expects type 'unsigned int', but argument 4 has type 'uint64_t'
+build-r7150.out:/local/linsrc/linux-next-20081215/drivers/mtd/devices/m25p80.c:724: warning: format '%.8x' expects type 'unsigned int', but argument 5 has type 'uint64_t'
+build-r7150.out:/local/linsrc/linux-next-20081215/drivers/mtd/devices/m25p80.c:724: warning: format '%u' expects type 'unsigned int', but argument 6 has type 'uint64_t'
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 ---
- drivers/mtd/devices/mtd_dataflash.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/mtd/devices/m25p80.c |   34 ++++++++++++++++++----------------
+ 1 file changed, 18 insertions(+), 16 deletions(-)
 
---- linux-next-20081215.orig/drivers/mtd/devices/mtd_dataflash.c
-+++ linux-next-20081215/drivers/mtd/devices/mtd_dataflash.c
-@@ -153,9 +153,10 @@ static int dataflash_erase(struct mtd_in
- 	unsigned		blocksize = priv->page_size << 3;
- 	uint8_t			*command;
+--- linux-next-20081215.orig/drivers/mtd/devices/m25p80.c
++++ linux-next-20081215/drivers/mtd/devices/m25p80.c
+@@ -169,9 +169,9 @@ static int wait_till_ready(struct m25p *
+  */
+ static int erase_chip(struct m25p *flash)
+ {
+-	DEBUG(MTD_DEBUG_LEVEL3, "%s: %s %dKiB\n",
++	DEBUG(MTD_DEBUG_LEVEL3, "%s: %s %lluKiB\n",
+ 			dev_name(&flash->spi->dev), __func__,
+-			flash->mtd.size / 1024);
++			(unsigned long long)flash->mtd.size / 1024);
  
--	DEBUG(MTD_DEBUG_LEVEL2, "%s: erase addr=0x%x len 0x%x\n",
-+	DEBUG(MTD_DEBUG_LEVEL2, "%s: erase addr=0x%llx len 0x%llx\n",
- 			dev_name(&spi->dev),
--			instr->addr, instr->len);
-+			(unsigned long long)instr->addr,
-+			(unsigned long long)instr->len);
+ 	/* Wait until finished previous write command. */
+ 	if (wait_till_ready(flash))
+@@ -233,9 +233,9 @@ static int m25p80_erase(struct mtd_info 
+ 	struct m25p *flash = mtd_to_m25p(mtd);
+ 	u32 addr,len;
  
- 	/* Sanity checks */
- 	if ((instr->addr + instr->len) > mtd->size
-@@ -667,8 +668,8 @@ add_dataflash_otp(struct spi_device *spi
- 	if (revision >= 'c')
- 		otp_tag = otp_setup(device, revision);
+-	DEBUG(MTD_DEBUG_LEVEL2, "%s: %s %s 0x%08x, len %d\n",
++	DEBUG(MTD_DEBUG_LEVEL2, "%s: %s %s 0x%08x, len %u\n",
+ 			dev_name(&flash->spi->dev), __func__, "at",
+-			(u32)instr->addr, instr->len);
++			(u32)instr->addr, (u32)instr->len);
  
--	dev_info(&spi->dev, "%s (%d KBytes) pagesize %d bytes%s\n",
--			name, DIV_ROUND_UP(device->size, 1024),
-+	dev_info(&spi->dev, "%s (%llu KBytes) pagesize %d bytes%s\n",
-+			name, (unsigned long long)DIV_ROUND_UP(device->size, 1024),
- 			pagesize, otp_tag);
- 	dev_set_drvdata(&spi->dev, priv);
+ 	/* sanity checks */
+ 	if (instr->addr + instr->len > flash->mtd.size)
+@@ -677,24 +677,26 @@ static int __devinit m25p_probe(struct s
+ 		flash->mtd.erasesize = info->sector_size;
+ 	}
  
+-	dev_info(&spi->dev, "%s (%d Kbytes)\n", info->name,
+-			flash->mtd.size / 1024);
++	dev_info(&spi->dev, "%s (%llu Kbytes)\n", info->name,
++			(unsigned long long)flash->mtd.size / 1024);
+ 
+ 	DEBUG(MTD_DEBUG_LEVEL2,
+-		"mtd .name = %s, .size = 0x%.8x (%uMiB) "
++		"mtd .name = %s, .size = 0x%.8llx (%lluMiB) "
+ 			".erasesize = 0x%.8x (%uKiB) .numeraseregions = %d\n",
+ 		flash->mtd.name,
+-		flash->mtd.size, flash->mtd.size / (1024*1024),
++		(unsigned long long)flash->mtd.size,
++		(unsigned long long)flash->mtd.size / (1024*1024),
+ 		flash->mtd.erasesize, flash->mtd.erasesize / 1024,
+ 		flash->mtd.numeraseregions);
+ 
+ 	if (flash->mtd.numeraseregions)
+ 		for (i = 0; i < flash->mtd.numeraseregions; i++)
+ 			DEBUG(MTD_DEBUG_LEVEL2,
+-				"mtd.eraseregions[%d] = { .offset = 0x%.8x, "
++				"mtd.eraseregions[%d] = { .offset = 0x%.8llx, "
+ 				".erasesize = 0x%.8x (%uKiB), "
+-				".numblocks = %d }\n",
+-				i, flash->mtd.eraseregions[i].offset,
++				".numblocks = %d }\n", i,
++				(unsigned long long)
++				  flash->mtd.eraseregions[i].offset,
+ 				flash->mtd.eraseregions[i].erasesize,
+ 				flash->mtd.eraseregions[i].erasesize / 1024,
+ 				flash->mtd.eraseregions[i].numblocks);
+@@ -722,12 +724,12 @@ static int __devinit m25p_probe(struct s
+ 		if (nr_parts > 0) {
+ 			for (i = 0; i < nr_parts; i++) {
+ 				DEBUG(MTD_DEBUG_LEVEL2, "partitions[%d] = "
+-					"{.name = %s, .offset = 0x%.8x, "
+-						".size = 0x%.8x (%uKiB) }\n",
++					"{.name = %s, .offset = 0x%.8llx, "
++						".size = 0x%.8llx (%lluKiB) }\n",
+ 					i, parts[i].name,
+-					parts[i].offset,
+-					parts[i].size,
+-					parts[i].size / 1024);
++					(unsigned long long)parts[i].offset,
++					(unsigned long long)parts[i].size,
++					(unsigned long long)(parts[i].size / 1024));
+ 			}
+ 			flash->partitioned = 1;
+ 			return add_mtd_partitions(&flash->mtd, parts, nr_parts);
