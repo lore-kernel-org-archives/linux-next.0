@@ -1,36 +1,54 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net tree
-Date: Sun, 14 Dec 2008 22:59:09 -0800 (PST)
-Message-ID: <20081214.225909.128383970.davem@davemloft.net>
-References: <20081215144405.d284833d.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree
+Date: Mon, 15 Dec 2008 18:08:31 +1100
+Message-ID: <20081215180831.d0eee19b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:48362
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1753487AbYLOG7I (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Dec 2008 01:59:08 -0500
-In-Reply-To: <20081215144405.d284833d.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41911 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754215AbYLOHIe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Dec 2008 02:08:34 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, jeffrey.t.kirsher@intel.com, bruce.w.allan@intel.com
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 15 Dec 2008 14:44:05 +1100
+Hi Jens,
 
-> Today's linux-next merge of the net tree got a conflict in
-> drivers/net/e1000e/ich8lan.c between commit
-> 30bb0e0dce78427f3e5cb728d6b5ea73acbefffa ("e1000e: fix double release of
-> mutex") from the net-current tree and commit
-> 0285c8dcaeaa73ddadc4f38383e5bbc03c394a29 ("e1000e: cosmetic newline in
-> debug message") from the net tree.
-> 
-> Trivial context overlap.  I fixed it up (see below) and will carry as
-> necessary.
+Today's linux-next merge of the block tree got a conflict in fs/bio.c
+between commit 0bfc24559d7945506184d86739fe365a181f06b7 ("blktrace: port
+to tracepoints, update") from the ftrace tree and commit
+18e08407d87bed3a9c4205e53bb16fe36088a521 ("bio: allow individual slabs in
+the bio_set") from the block tree.
 
-Thanks Stephen.
+Just an overlapping addition/removal.  I fixed it up (see below) and can
+carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-This will be cleared up next time I merge.
+diff --cc fs/bio.c
+index df99c88,3bd633d..0000000
+--- a/fs/bio.c
++++ b/fs/bio.c
+@@@ -26,12 -26,13 +26,16 @@@
+  #include <linux/mempool.h>
+  #include <linux/workqueue.h>
+  #include <linux/blktrace_api.h>
+ +#include <trace/block.h>
+  #include <scsi/sg.h>		/* for struct sg_iovec */
+  
+ +DEFINE_TRACE(block_split);
+ +
+- static struct kmem_cache *bio_slab __read_mostly;
++ /*
++  * Test patch to inline a certain number of bi_io_vec's inside the bio
++  * itself, to shrink a bio data allocation from two mempool calls to one
++  */
++ #define BIO_INLINE_VECS		4
+  
+  static mempool_t *bio_split_pool __read_mostly;
+  
