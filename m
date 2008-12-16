@@ -1,53 +1,45 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: manual merge of the rr_cpumask tree
-Date: Tue, 16 Dec 2008 16:10:58 +1030
-Message-ID: <200812161610.58496.rusty@rustcorp.com.au>
-References: <20081215170945.b91f3b9c.sfr@canb.auug.org.au> <200812151711.36134.rusty@rustcorp.com.au> <4946855D.7070403@sgi.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: semaphore-removal tree
+Date: Tue, 16 Dec 2008 16:49:38 +1100
+Message-ID: <20081216164938.c35c8a95.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__16_Dec_2008_16_49_38_+1100_Kj0bAYqs59CTd_jM"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:53090 "EHLO ozlabs.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49183 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750759AbYLPFlC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Dec 2008 00:41:02 -0500
-In-Reply-To: <4946855D.7070403@sgi.com>
-Content-Disposition: inline
+	id S1750721AbYLPFtt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Dec 2008 00:49:49 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Travis <travis@sgi.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Ingo Molnar <mingo@elte.hu>
+To: Matthew Wilcox <matthew@wil.cx>
+Cc: linux-next@vger.kernel.org
 
-On Tuesday 16 December 2008 02:57:09 Mike Travis wrote:
-> Rusty Russell wrote:
-> > On Monday 15 December 2008 16:39:45 Stephen Rothwell wrote:
-> >> Hi Rusty,
-> >>
-> >> Today's linux-next merge of the rr_cpumask tree got a conflict in
-> >> arch/x86/kernel/io_apic.c between commit
-> >> 3145e941fcfe2548fa2270afb1a05bab3a6bc418 ("x86, MSI: pass irq_cfg and
-> >> irq_desc") from the sparseirq tree and commit
-> >> 0de26520c7cabf36e1de090ea8092f011a6106ce ("cpumask: make irq_set_affinity
-> >> () take a const struct cpumask") from the rr_cpumask tree.
-> >>
-> >> There are lots of overlapping changes.  I fixed it up (see below) and can carry the
-> >> fix as necessary.
-> > 
-> > I have performed this merge before.  The results are in
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/rusty/linux-2.6-for-ingo.git
-> > 
-> > Ingo, can you pull these into cpus4096?  It's just the cpumask/cpus4096 merge.
-> > 
-> > Thanks,
-> > Rusty.
-> 
-> Hi Rusty,
-> 
-> Did you update your tip/cpus4096 branch?
+--Signature=_Tue__16_Dec_2008_16_49_38_+1100_Kj0bAYqs59CTd_jM
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-No.  As I said, I just did a merge of ingo's 4096 tree with the cpumask tree.
-He should pull that, and then the rest of the x86 patches can go on top.
+Hi Willy,
 
+Is anything in this tree destined for 2.6.29?  It has been not been in
+linux-next since Oct 31 due to unresolved conflicts with Linus' tree.
+
+--=20
 Cheers,
-Rusty.
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__16_Dec_2008_16_49_38_+1100_Kj0bAYqs59CTd_jM
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAklHQXIACgkQjjKRsyhoI8xSxgCgtvKxysCn67XGjK6yLIhLH7xb
+r38AoKxFc+1zAfvcrdtZOUAArz3/n1FO
+=mRVd
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__16_Dec_2008_16_49_38_+1100_Kj0bAYqs59CTd_jM--
