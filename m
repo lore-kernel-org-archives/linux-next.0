@@ -1,60 +1,51 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: Tree for December 11
-Date: Tue, 16 Dec 2008 23:23:05 +0100
-Message-ID: <20081216222305.GJ14787@elte.hu>
-References: <20081211200459.14d18d7a.sfr@canb.auug.org.au> <f19298770812110440s7e3781eex4a16b961ad6847b2@mail.gmail.com> <f19298770812140634j434bf6a6gd883688f00dac45e@mail.gmail.com> <20081216210834.GM14787@elte.hu> <f19298770812161421r77a10575ia956e59a52d7efb2@mail.gmail.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: Tree for December 16
+Date: Tue, 16 Dec 2008 15:26:07 -0800
+Message-ID: <20081216152607.f232fafd.akpm@linux-foundation.org>
+References: <20081216223754.0c8e21d4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:57078 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752937AbYLPWXR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Dec 2008 17:23:17 -0500
-Content-Disposition: inline
-In-Reply-To: <f19298770812161421r77a10575ia956e59a52d7efb2@mail.gmail.com>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:37119 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754921AbYLPX0w (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Dec 2008 18:26:52 -0500
+In-Reply-To: <20081216223754.0c8e21d4.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexey Zaytsev <alexey.zaytsev@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Nick Piggin <nickpiggin@yahoo.com.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Adrian Hunter <ext-adrian.hunter@nokia.com>, Artem Bityutskiy <Artem.Bityutskiy@nokia.com>, David Woodhouse <David.Woodhouse@intel.com>
 
+On Tue, 16 Dec 2008 22:37:54 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-* Alexey Zaytsev <alexey.zaytsev@gmail.com> wrote:
+> I have created today's linux-next tree at
+> git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+> (patches at
+> http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/)
 
-> On Wed, Dec 17, 2008 at 00:08, Ingo Molnar <mingo@elte.hu> wrote:
-> 
-> >>
-> >> The warning can also be reproduced in qemu, so it was easy to bisect.
-> >>
-> >> commit 7317d7b87edb41a9135e30be1ec3f7ef817c53dd
-> >> Author: Nick Piggin <nickpiggin@yahoo.com.au>
-> >> Date:   Tue Sep 30 20:50:27 2008 +1000
-> >>
-> >>     sched: improve preempt debugging
-> >>
-> >>     This patch helped me out with a problem I recently had....
-> >>
-> >>     Basically, when the kernel lock is held, then preempt_count
-> >> underflow does not
-> >>     get detected until it is released which may be a long time (and arbitrarily,
-> >>     eg at different points it may be rescheduled). If the bkl is released at
-> >>     schedule, the resulting output is actually fairly cryptic...
-> >>
-> >>     With any other lock that elevates preempt_count, it is illegal to schedule
-> >>     under it (which would get found pretty quickly). bkl allows scheduling with
-> >>     preempt_count elevated, which makes underflows hard to debug.
-> >>
-> >>     Signed-off-by: Ingo Molnar <mingo@elte.hu>
-> >>
-> >> I understand that not this particular commit is buggy, but at least
-> >> I've got someone to add to the CC. ;)
-> >>
-> >> Also the author's e-mail looks suspicious.
-> >
-> > Suspicious in what way?
-> 
-> Does not appear in signed-off-by.
+This MTD patch:
 
-yes, because i applied and tested it through before Nick was comfortable 
-with signing off on it.
+commit 69423d99fc182a81f3c5db3eb5c140acc6fc64be
+Author:     Adrian Hunter <ext-adrian.hunter@nokia.com>
+AuthorDate: Wed Dec 10 13:37:21 2008 +0000
+Commit:     David Woodhouse <David.Woodhouse@intel.com>
+CommitDate: Wed Dec 10 13:37:21 2008 +0000
 
-	Ingo
+    [MTD] update internal API to support 64-bit device size
+
+broke the i386 build:
+
+ERROR: "__udivdi3" [drivers/mtd/devices/mtd_dataflash.ko] undefined!
+ERROR: "__umoddi3" [drivers/mtd/devices/mtd_dataflash.ko] undefined!
+ERROR: "__umoddi3" [drivers/mtd/devices/m25p80.ko] undefined!
+
+because things like
+
+                pageaddr = instr->addr / priv->page_size;
+
+are now doing a 64-bit divide.
+
+These will all need to be hunted down and converted to do_div().
