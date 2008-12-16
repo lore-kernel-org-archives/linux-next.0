@@ -1,62 +1,57 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the rr_cpumask tree
-Date: Tue, 16 Dec 2008 17:09:40 +1100
-Message-ID: <20081216170940.3c74d4d0.sfr@canb.auug.org.au>
-References: <20081215170945.b91f3b9c.sfr@canb.auug.org.au>
-	<200812151711.36134.rusty@rustcorp.com.au>
-	<4946855D.7070403@sgi.com>
-	<200812161610.58496.rusty@rustcorp.com.au>
-	<49474471.2090409@sgi.com>
+From: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
+Subject: [mmotm and linux-next][PATCH] irq: enclose irq_desc_lock_class in CONFIG_LOCKDEP
+Date: Tue, 16 Dec 2008 17:08:43 +0900 (JST)
+Message-ID: <20081216170635.DBB8.KOSAKI.MOTOHIRO@jp.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__16_Dec_2008_17_09_40_+1100_PKjA++8NsqFT4gkl"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60233 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750721AbYLPGJt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Dec 2008 01:09:49 -0500
-In-Reply-To: <49474471.2090409@sgi.com>
+Received: from fgwmail5.fujitsu.co.jp ([192.51.44.35]:59745 "EHLO
+	fgwmail5.fujitsu.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751802AbYLPIIr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Dec 2008 03:08:47 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Travis <travis@sgi.com>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Ingo Molnar <mingo@elte.hu>
+To: Yinghai Lu <yhlu.kernel@gmail.com>, Ingo Molnar <mingo@elte.hu>, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, linux-next <linux-next@vger.kernel.org>
+Cc: kosaki.motohiro@jp.fujitsu.com
 
---Signature=_Tue__16_Dec_2008_17_09_40_+1100_PKjA++8NsqFT4gkl
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Mike,
 
-On Mon, 15 Dec 2008 22:02:25 -0800 Mike Travis <travis@sgi.com> wrote:
->
-> Yes, I did finally figure that out.  Thanks for rebasing the part that In=
-go needed
-> so maybe the rest can be pushed.  There was a problem when the 'for-ingo'=
- tree was
-> merged as there were mixed up API calls in io_apic.c, but I fixed them in=
- the first
-> x86 only patch.  I wasn't sure of what else to do.
+Applied after: linux-next.patch
 
-You could have fixed them up as part of the actual merge commit.  If each
-tree was correct on it own, then the merge is the place for such
-resolutions.
+==
+Subject: [mmotm][PATCH] irq: enclose irq_desc_lock_class in CONFIG_LOCKDEP
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+commit 08678b0841267c1d00d771fe01548d86043d065e introduced
+irq_desc_lock_class variable.
+But it is used only if CONFIG_LOCKDEP=Y.
+otherwise, following warnings happend.
 
---Signature=_Tue__16_Dec_2008_17_09_40_+1100_PKjA++8NsqFT4gkl
-Content-Type: application/pgp-signature
+	  CC      kernel/irq/handle.o
+	kernel/irq/handle.c:26: warning: 'irq_desc_lock_class' defined but not used
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAklHRiQACgkQjjKRsyhoI8zvjgCcD9uPq7mWqMW84LUTGvPYbycP
-K58An3fq1Znx9DJh3jGF6gi7Ter/woDj
-=K7RM
------END PGP SIGNATURE-----
+Signed-off-by: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
+CC: Yinghai Lu <yhlu.kernel@gmail.com>
+CC: Ingo Molnar <mingo@elte.hu>
+---
+ kernel/irq/handle.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---Signature=_Tue__16_Dec_2008_17_09_40_+1100_PKjA++8NsqFT4gkl--
+Index: b/kernel/irq/handle.c
+===================================================================
+--- a/kernel/irq/handle.c
++++ b/kernel/irq/handle.c
+@@ -20,10 +20,12 @@
+ 
+ #include "internals.h"
+ 
++#ifdef CONFIG_LOCKDEP
+ /*
+  * lockdep: we want to handle all irq_desc locks as a single lock-class:
+  */
+ static struct lock_class_key irq_desc_lock_class;
++#endif
+ 
+ /**
+  * handle_bad_irq - handle spurious and unhandled irqs
