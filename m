@@ -1,49 +1,77 @@
-From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: mtd tree build failures (Was: Re: linux-next: Tree
  for December 16)
-Date: Wed, 17 Dec 2008 11:32:12 +0200
-Message-ID: <4948C71C.2000700@nokia.com>
-References: <20081216223754.0c8e21d4.sfr@canb.auug.org.au>	<20081216152607.f232fafd.akpm@linux-foundation.org> <20081217175911.594ae84f.sfr@canb.auug.org.au>
-Reply-To: Artem.Bityutskiy@nokia.com
+Date: Wed, 17 Dec 2008 20:57:06 +1100
+Message-ID: <20081217205706.378973c5.sfr@canb.auug.org.au>
+References: <20081216223754.0c8e21d4.sfr@canb.auug.org.au>
+	<20081216152607.f232fafd.akpm@linux-foundation.org>
+	<20081217175911.594ae84f.sfr@canb.auug.org.au>
+	<4948C71C.2000700@nokia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__17_Dec_2008_20_57_06_+1100_gEb5rZZHlY+SEZ+m"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.122.230]:62914 "EHLO
-	mgw-mx03.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750865AbYLQJe5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Dec 2008 04:34:57 -0500
-In-Reply-To: <20081217175911.594ae84f.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:33925 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751577AbYLQJ5R (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Dec 2008 04:57:17 -0500
+In-Reply-To: <4948C71C.2000700@nokia.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Artem.Bityutskiy@nokia.com
 Cc: David Woodhouse <David.Woodhouse@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Adrian Hunter <ext-adrian.hunter@nokia.com>, Andrew Morton <akpm@linux-foundation.org>
 
-ext Stephen Rothwell wrote:
-> On Tue, 16 Dec 2008 15:26:07 -0800 Andrew Morton <akpm@linux-foundati=
-on.org> wrote:
->> This MTD patch:
->>
->> commit 69423d99fc182a81f3c5db3eb5c140acc6fc64be
->> Author:     Adrian Hunter <ext-adrian.hunter@nokia.com>
->> AuthorDate: Wed Dec 10 13:37:21 2008 +0000
->> Commit:     David Woodhouse <David.Woodhouse@intel.com>
->> CommitDate: Wed Dec 10 13:37:21 2008 +0000
->>
->>     [MTD] update internal API to support 64-bit device size
->>
->> broke the i386 build:
->=20
-> Also a few arm configs and the m68k allmodconfig.  I shall revert the=
- mtd
-> tree from linux-next today.
+--Signature=_Wed__17_Dec_2008_20_57_06_+1100_gEb5rZZHlY+SEZ+m
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It would be nice if you sent the error messages. I do not have m68k
-compilers, but I could fix the errors anyway, because it is just
-about doing divisions with 'do_div()'.
+Hi Artem,
+
+On Wed, 17 Dec 2008 11:32:12 +0200 Artem Bityutskiy <Artem.Bityutskiy@nokia=
+.com> wrote:
+>
+> It would be nice if you sent the error messages. I do not have m68k
+> compilers, but I could fix the errors anyway, because it is just
+> about doing divisions with 'do_div()'.
+
+Normally I would have sent them, but they are basically the same error as
+i386 gets.
+
+arm: (various configs)
+
+hid-input.c:(.text+0x41470): undefined reference to `__umoddi3'
+hid-input.c:(.text+0x4148c): undefined reference to `__umoddi3'
+hid-input.c:(.text+0x41504): undefined reference to `__udivdi3'
+drivers/mtd/devices/mtd_dataflash.c:161: undefined reference to `__umoddi3'
+drivers/mtd/devices/mtd_dataflash.c:161: undefined reference to `__umoddi3'
+drivers/mtd/devices/mtd_dataflash.c:181: undefined reference to `__udivdi3'
+i2c-dev.c:(.text+0x4d424): undefined reference to `__umoddi3'
+i2c-dev.c:(.text+0x4d44c): undefined reference to `__umoddi3'
+i2c-dev.c:(.text+0x4d4b4): undefined reference to `__udivdi3'
+
+m68k: (allmodconfig)
+ERROR: "__udivdi3" [drivers/mtd/devices/mtd_dataflash.ko] undefined!
+ERROR: "__umoddi3" [drivers/mtd/devices/mtd_dataflash.ko] undefined!
+ERROR: "__umoddi3" [drivers/mtd/devices/m25p80.ko] undefined!
+
+All these are from: http://kisskb.ellerman.id.au/kisskb/branch/9/
 
 --=20
-Best Regards,
-Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
-=D1=86=D0=BA=D0=B8=D0=B9)
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__17_Dec_2008_20_57_06_+1100_gEb5rZZHlY+SEZ+m
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAklIzPIACgkQjjKRsyhoI8yz0gCfdJM1CrLI8sLmZkfaOvsLcvSZ
+FnkAn39PWH5sfNi18FJ7+8A6Dok0X4Li
+=uKqp
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__17_Dec_2008_20_57_06_+1100_gEb5rZZHlY+SEZ+m--
