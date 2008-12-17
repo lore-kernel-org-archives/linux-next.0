@@ -1,46 +1,49 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: boot-params tree build failure
-Date: Wed, 17 Dec 2008 09:18:32 +0100 (CET)
-Message-ID: <Pine.LNX.4.64.0812170915400.29433@anakin>
-References: <20081217165557.b4898a4b.sfr@canb.auug.org.au>
+From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+Subject: Re: linux-next: mtd tree build failures (Was: Re: linux-next: Tree
+ for December 16)
+Date: Wed, 17 Dec 2008 11:32:12 +0200
+Message-ID: <4948C71C.2000700@nokia.com>
+References: <20081216223754.0c8e21d4.sfr@canb.auug.org.au>	<20081216152607.f232fafd.akpm@linux-foundation.org> <20081217175911.594ae84f.sfr@canb.auug.org.au>
+Reply-To: Artem.Bityutskiy@nokia.com
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-m68k-owner@vger.kernel.org>
-In-Reply-To: <20081217165557.b4898a4b.sfr@canb.auug.org.au>
-Sender: linux-m68k-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp.nokia.com ([192.100.122.230]:62914 "EHLO
+	mgw-mx03.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750865AbYLQJe5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Dec 2008 04:34:57 -0500
+In-Reply-To: <20081217175911.594ae84f.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, Linux/m68k <linux-m68k@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: David Woodhouse <David.Woodhouse@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Adrian Hunter <ext-adrian.hunter@nokia.com>, Andrew Morton <akpm@linux-foundation.org>
 
-On Wed, 17 Dec 2008, Stephen Rothwell wrote:
-> The build of next-20081216 (m68k defconfig) failed like this:
-> 
-> arch/m68k/kernel/setup.c:230: error: conflicting types for '_end'
-> arch/m68k/kernel/setup.c:215: error: previous declaration of '_end' was here
-> 
-> Caused by commit 0de5c2d9f02d2018fd671ca1015432dffa5eb338 ("param:
-> arch_get_boot_command_line()") from the poot-params tree.
+ext Stephen Rothwell wrote:
+> On Tue, 16 Dec 2008 15:26:07 -0800 Andrew Morton <akpm@linux-foundati=
+on.org> wrote:
+>> This MTD patch:
+>>
+>> commit 69423d99fc182a81f3c5db3eb5c140acc6fc64be
+>> Author:     Adrian Hunter <ext-adrian.hunter@nokia.com>
+>> AuthorDate: Wed Dec 10 13:37:21 2008 +0000
+>> Commit:     David Woodhouse <David.Woodhouse@intel.com>
+>> CommitDate: Wed Dec 10 13:37:21 2008 +0000
+>>
+>>     [MTD] update internal API to support 64-bit device size
+>>
+>> broke the i386 build:
+>=20
+> Also a few arm configs and the m68k allmodconfig.  I shall revert the=
+ mtd
+> tree from linux-next today.
 
-This is due to the existing
+It would be nice if you sent the error messages. I do not have m68k
+compilers, but I could fix the errors anyway, because it is just
+about doing divisions with 'do_div()'.
 
-    extern int _etext, _edata, _end;
-
-in and the newly added
-
-    extern char _end[];
-
-to arch/m68k/kernel/setup.c.
-
-As these are already declared in asm-generic/sections.h (which is used by
-asm-m68k/sections.h), I'll switch arch/m68k/kernel/setup.c to using them.
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+--=20
+Best Regards,
+Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
+=D1=86=D0=BA=D0=B8=D0=B9)
