@@ -1,140 +1,189 @@
-From: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-Subject: Re: [mmotm and linux-next][PATCH] irq: enclose irq_desc_lock_class in CONFIG_LOCKDEP
-Date: Wed, 17 Dec 2008 19:40:33 +0900 (JST)
-Message-ID: <20081217193815.F674.KOSAKI.MOTOHIRO@jp.fujitsu.com>
-References: <20081216121815.GA25019@elte.hu> <2f11576a0812160458y1c376878vc5fc7f3d208aa344@mail.gmail.com>
+From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Subject: Re: [BUG] linux-next: 20081209 - kernel bug at
+	__rcu_process_callbacks, while booting up
+Date: Wed, 17 Dec 2008 16:42:03 +0530
+Message-ID: <20081217111203.GA4426@linux.vnet.ibm.com>
+References: <20081210115721.GB6107@linux.vnet.ibm.com> <20081210145414.GA6945@linux.vnet.ibm.com> <20081210163007.GA6391@linux.vnet.ibm.com> <20081210175338.GB6745@linux.vnet.ibm.com> <20081210180936.GD6391@linux.vnet.ibm.com> <20081210183302.GD6745@linux.vnet.ibm.com> <20081212194026.GA5455@linux.vnet.ibm.com> <20081212221611.GG6950@linux.vnet.ibm.com> <20081216143001.GA4365@linux.vnet.ibm.com> <20081216143721.GT32491@kernel.dk>
+Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fgwmail7.fujitsu.co.jp ([192.51.44.37]:37581 "EHLO
-	fgwmail7.fujitsu.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751998AbYLQKki (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Dec 2008 05:40:38 -0500
-In-Reply-To: <2f11576a0812160458y1c376878vc5fc7f3d208aa344@mail.gmail.com>
+Received: from E23SMTP05.au.ibm.com ([202.81.18.174]:33998 "EHLO
+	e23smtp05.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750994AbYLQLOu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Dec 2008 06:14:50 -0500
+Content-Disposition: inline
+In-Reply-To: <20081216143721.GT32491@kernel.dk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: kosaki.motohiro@jp.fujitsu.com, Andrew Morton <akpm@linux-foundation.org>, Yinghai Lu <yhlu.kernel@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dm-devel@redhat.com, tglx@linutronix.de, mel@csn.ul.ie
 
-> >> or, following #ifdef ?
-> >>
-> >> #if defined(CONFIG_SPARSE_IRQ) || defined(CONFIG_TRACE_IRQFLAGS)
-> >>
-> >>  /*
-> >>  * lockdep: we want to handle all irq_desc locks as a single lock-class:
-> >>  */
-> >>  static struct lock_class_key irq_desc_lock_class;
-> >
-> > instead of increasing the #ifdef jungle, how about removing some? For
-> > example is this distinction:
-> >
-> >> >  #ifndef CONFIG_SPARSE_IRQ
-> >
-> > really needed? We should use symmetric lock class annotations, regardless
-> > of how irq_desc[] is laid out.
+* Jens Axboe <jens.axboe@oracle.com> [2008-12-16 15:37:21]:
+
+> On Tue, Dec 16 2008, Kamalesh Babulal wrote:
+> > * Paul E. McKenney <paulmck@linux.vnet.ibm.com> [2008-12-12 14:16:11]:
+> > 
+> > > On Sat, Dec 13, 2008 at 01:10:26AM +0530, Kamalesh Babulal wrote:
+> > > > * Paul E. McKenney <paulmck@linux.vnet.ibm.com> [2008-12-10 10:33:02]:
+> > > > 
+> > > > > On Wed, Dec 10, 2008 at 11:39:36PM +0530, Kamalesh Babulal wrote:
+> > > > > > * Paul E. McKenney <paulmck@linux.vnet.ibm.com> [2008-12-10 09:53:38]:
+> > > > > > 
+> > > > > > > On Wed, Dec 10, 2008 at 10:00:07PM +0530, Kamalesh Babulal wrote:
+> > > > > > > > * Paul E. McKenney <paulmck@linux.vnet.ibm.com> [2008-12-10 06:54:14]:
+> > > > > > > > 
+> > > > > > > > > On Wed, Dec 10, 2008 at 05:27:21PM +0530, Kamalesh Babulal wrote:
+> > > > > > > > > > Hi,
+> > > > > > > > > > 
+> > > > > > > > > > 	Kernel bug is hit while booting up the next-20081208/09 kernels over
+> > > > > > > > > > the x86_64 box. The IP is pointing to 0x0 and its stuck at
+> > > > > > > > > > __rcu_process_callbacks.
+> > > > > > > > > 
+> > > > > > > > > Kernel config?
+> > > > > > > > > 
+> > > > > > > > > 							Thanx, Paul
+> > > > > > > > > 
+> > > > > > > > Hi Paul,
+> > > > > > > > 
+> > > > > > > > 	I have attached the kernel config file.
+> > > > > > > 
+> > > > > > > Hello, Kamalesh,
+> > > > > > > 
+> > > > > > > No significant recent changes in this area.  Is this consistent?
+> > > > > > > Any chance of "git bisect"?
+> > > > > > > 
+> > > > > > > 							Thanx, Paul
+> > > > > > > 
+> > > > > > Hi Paul,
+> > > > > > 
+> > > > > > 	I tried reproducing it for three times and I was successfull in reproducing it thrice.
+> > > > > > I have already started the git bisect, will update the results soon.
+> > > > > 
+> > > > > Very good, looking forward to seeing the result!
+> > > > > 
+> > > > > 							Thanx, Paul
+> > > > > 
+> > > > Hi Paul,
+> > > > 
+> > > > 	After a Complete round of git bisect, I was not able to reproduce the oops,
+> > > > but when I tried again with complete next-20081209 patch, I am getting
+> > > > different warning message altogether this time
+> > > 
+> > > Might be that the two oopses are different manifestations of the same
+> > > underlying problem, right?
+> > > 
+> > > 							Thanx, Paul
+> > > 
+> > Hi Paul,
+> > 
+> > 	Your were right, those were the manifestation of the same
+> > 	problem. Adding to it another calltrace was commonly visible
+> > 	during the git-bisect.
 > 
-> it seems make much sense. I'll test your idea tommorow.
+> Did you try with a newer version? Should be fixed since last week.
+> 
+> -- 
+> Jens Axboe
+> 
+Hi Jens,
 
-Ingo, you are right. I confirmed your idea works well.
+	I tried with the next-20081216 kernel, but the kernel was stuck
+after loading the initrd image, passing unknown_nmi_panic=1, triggered
+following call trace,
 
-
-I tested following ten pattern.
-
-o handle.c can compile without any warnings?
-
-SPARSE_IRQ	TRACE_IRQ	LOCKDEP
-------------------------------------------
-n		n		n
-Y		n		n
-n		Y		n
-n		n		Y
-Y		Y		n
-N		Y		Y
-Y		n		Y
-Y		Y		Y
-
-
-o builded kernel works well? (tested on x86_64)
-
-SPARSE_IRQ	TRACE_IRQ	LOCKDEP
-------------------------------------------
-n		n		n
-Y		Y		Y
-
-
-==
-Subject: [PATCH] irq: remove unnecessary ifdef
-
-commit 08678b0841267c1d00d771fe01548d86043d065e introduced
-irq_desc_lock_class variable.
-
-But it is used only if CONFIG_SPARSE_IRQ=Y or CONFIG_TRACE_IRQFLAGS=Y.
-otherwise, following warnings happend.
-
-	CC      kernel/irq/handle.o
-	kernel/irq/handle.c:26: warning: 'irq_desc_lock_class' defined but not used
-
-Actually, current early_init_irq_lock_class has a bit strange and messy ifdef.
-In addition, it is not valueable.
-
-1. this function protected by !CONFIG_SPARSE_IRQ. but it is not necessary.
-   if CONFIG_SPARSE_IRQ=Y, desc of all irq number are initialized by NULL at first.
-   then this function calling is safe.
-
-2. this function protected by CONFIG_TRACE_IRQFLAGS too. but it is not necessary too.
-   because lockdep_set_class() doesn't have bad side effect even if CONFIG_TRACE_IRQFLAGS=n, 
-
-This patch bloat kernel size a bit on CONFIG_TRACE_IRQFLAGS=n and CONFIG_SPARSE_IRQ=Y.
-that's ok. early_init_irq_lock_class() is not fastpatch at all.
-
-To avoid ifdef messy is important than few byte diet.
-
-
-Signed-off-by: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-CC: Yinghai Lu <yhlu.kernel@gmail.com>
-CC: Ingo Molnar <mingo@elte.hu>
----
- include/linux/lockdep.h |    2 +-
- kernel/irq/handle.c     |    5 -----
- 2 files changed, 1 insertion(+), 6 deletions(-)
-
-Index: b/kernel/irq/handle.c
-===================================================================
---- a/kernel/irq/handle.c	2008-12-17 10:45:56.000000000 +0900
-+++ b/kernel/irq/handle.c	2008-12-17 17:26:42.000000000 +0900
-@@ -417,11 +417,8 @@ out:
- }
- #endif
- 
--
--#ifdef CONFIG_TRACE_IRQFLAGS
- void early_init_irq_lock_class(void)
- {
--#ifndef CONFIG_SPARSE_IRQ
- 	struct irq_desc *desc;
- 	int i;
- 
-@@ -431,9 +428,7 @@ void early_init_irq_lock_class(void)
- 
- 		lockdep_set_class(&desc->lock, &irq_desc_lock_class);
- 	}
--#endif
- }
--#endif
- 
- #ifdef CONFIG_SPARSE_IRQ
- unsigned int kstat_irqs_cpu(unsigned int irq, int cpu)
-Index: b/include/linux/lockdep.h
-===================================================================
---- a/include/linux/lockdep.h	2008-12-17 10:46:26.000000000 +0900
-+++ b/include/linux/lockdep.h	2008-12-17 17:27:18.000000000 +0900
-@@ -407,7 +407,7 @@ do {								\
- 
- #endif /* CONFIG_LOCKDEP */
- 
--#if defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_GENERIC_HARDIRQS)
-+#ifdef CONFIG_GENERIC_HARDIRQS
- extern void early_init_irq_lock_class(void);
- #else
- static inline void early_init_irq_lock_class(void)
+Initializing CPU#0
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000048
+IP: [<ffffffff8072c547>] init_ISA_irqs+0x20/0x5d
+PGD 0 
+Thread overran stack, or stack corrupted
+Oops: 0002 [#1] SMP 
+last sysfs file: 
+CPU 0 
+Modules linked in:
+Pid: 0, comm: swapper Not tainted 2.6.28-rc8-next-20081216-autokern1 #1
+RIP: 0010:[<ffffffff8072c547>]  [<ffffffff8072c547>] init_ISA_irqs+0x20/0x5d
+RSP: 0018:ffffffff8071df38  EFLAGS: 00010093
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff80796e40
+RDX: 0000000000000100 RSI: 0000000000000092 RDI: 0000000000000000
+RBP: ffffffff8071df48 R08: 0000000000000000 R09: 0000000000000000
+R10: ffffffff8071df18 R11: 0000000000000070 R12: ffff88000103a040
+R13: cccccccccccccccd R14: 0000000000000000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffffffff8070e3c0(0000) knlGS:0000000000000000
+CS:  0010 DS: 0018 ES: 0018 CR0: 000000008005003b
+CR2: 0000000000000048 CR3: 0000000000201000 CR4: 00000000000006a0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+Process swapper (pid: 0, threadinfo ffffffff8071c000, task ffffffff806a43a0)
+Stack:
+ cccccccccccccccd ffffffff80754aa0 ffffffff8071df68 ffffffff8072c591
+ ffffffff8071df68 ffffffff8073ca50 ffffffff8071df98 ffffffff80725af2
+ 0000000000000000 0000000000837a70 0000000000000000 0000000000000000
+Call Trace:
+ [<ffffffff8072c591>] native_init_IRQ+0xd/0x8a2
+ [<ffffffff8073ca50>] ? rcu_init+0x9/0xb
+ [<ffffffff80725af2>] start_kernel+0x1a1/0x315
+ [<ffffffff807252a0>] x86_64_start_reservations+0xaf/0xb3
+ [<ffffffff807253a1>] x86_64_start_kernel+0xda/0xe1
+Code: 20 5f 6a 80 e8 63 08 cb ff c9 c3 55 48 89 e5 53 31 db 48 83 ec 08 e8 05 88 00 00 31 ff e8 cd 2f ae ff 89 df e8 4d d5 b3 ff 89 df <c7> 40 48 00 02 00 00 48 c7 40 40 00 00 00 00 c7 40 4c 01 00 00 
+RIP  [<ffffffff8072c547>] init_ISA_irqs+0x20/0x5d
+ RSP <ffffffff8071df38>
+CR2: 0000000000000048
+---[ end trace 4eaa2a86a8e2da22 ]---
+Kernel panic - not syncing: Attempted to kill the idle task!
+Pid: 0, comm: swapper Tainted: G      D    2.6.28-rc8-next-20081216-autokern1 #1
+Call Trace:
+ [<ffffffff80237e80>] panic+0xa0/0x160
+ [<ffffffff803b6b40>] ? account+0xe2/0xf1
+ [<ffffffff8024e065>] ? blocking_notifier_call_chain+0xf/0x11
+ [<ffffffff8023ad07>] do_exit+0x7c/0x7a9
+ [<ffffffff803b6cf1>] ? get_random_bytes+0x1b/0x1d
+ [<ffffffff80546456>] oops_end+0xb2/0xba
+ [<ffffffff80547cfb>] do_page_fault+0x738/0x7e7
+ [<ffffffff80545a3f>] page_fault+0x1f/0x30
+ [<ffffffff8072c547>] ? init_ISA_irqs+0x20/0x5d
+ [<ffffffff8072c545>] ? init_ISA_irqs+0x1e/0x5d
+ [<ffffffff8072c591>] native_init_IRQ+0xd/0x8a2
+ [<ffffffff8073ca50>] ? rcu_init+0x9/0xb
+ [<ffffffff80725af2>] start_kernel+0x1a1/0x315
+ [<ffffffff807252a0>] x86_64_start_reservations+0xaf/0xb3
+ [<ffffffff807253a1>] x86_64_start_kernel+0xda/0xe1
+------------[ cut here ]------------
+WARNING: at kernel/smp.c:299 smp_call_function_many+0x3a/0x215()
+Hardware name: IBM eServer BladeCenter LS20 -[885055U]-
+Modules linked in:
+Pid: 0, comm: swapper Tainted: G      D    2.6.28-rc8-next-20081216-autokern1 #1
+Call Trace:
+ [<ffffffff80237db2>] warn_slowpath+0xd3/0xf2
+ [<ffffffff80238ada>] ? printk+0x67/0x69
+ [<ffffffff807253a1>] ? x86_64_start_kernel+0xda/0xe1
+ [<ffffffff8021eb4b>] ? touch_nmi_watchdog+0x65/0x69
+ [<ffffffff8020f26e>] ? printk_address+0x2c/0x2e
+ [<ffffffff807253a1>] ? x86_64_start_kernel+0xda/0xe1
+ [<ffffffff8020f453>] ? print_context_stack+0x97/0xaf
+ [<ffffffff8020e6b9>] ? dump_trace+0x26f/0x27e
+ [<ffffffff8025631c>] smp_call_function_many+0x3a/0x215
+ [<ffffffff80212130>] ? stop_this_cpu+0x0/0x20
+ [<ffffffff80256517>] smp_call_function+0x20/0x24
+ [<ffffffff8021d4fb>] native_smp_send_stop+0x22/0x30
+ [<ffffffff80237e94>] panic+0xb4/0x160
+ [<ffffffff803b6b40>] ? account+0xe2/0xf1
+ [<ffffffff8024e065>] ? blocking_notifier_call_chain+0xf/0x11
+ [<ffffffff8023ad07>] do_exit+0x7c/0x7a9
+ [<ffffffff803b6cf1>] ? get_random_bytes+0x1b/0x1d
+ [<ffffffff80546456>] oops_end+0xb2/0xba
+ [<ffffffff80547cfb>] do_page_fault+0x738/0x7e7
+ [<ffffffff80545a3f>] page_fault+0x1f/0x30
+ [<ffffffff8072c547>] ? init_ISA_irqs+0x20/0x5d
+ [<ffffffff8072c545>] ? init_ISA_irqs+0x1e/0x5d
+ [<ffffffff8072c591>] native_init_IRQ+0xd/0x8a2
+ [<ffffffff8073ca50>] ? rcu_init+0x9/0xb
+ [<ffffffff80725af2>] start_kernel+0x1a1/0x315
+ [<ffffffff807252a0>] x86_64_start_reservations+0xaf/0xb3
+ [<ffffffff807253a1>] x86_64_start_kernel+0xda/0xe1
+---[ end trace 4eaa2a86a8e2da22 ]---
+-- 
+Thanks & Regards,
+Kamalesh Babulal,
+Linux Technology Center,
+IBM, ISTL.
