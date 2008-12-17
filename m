@@ -1,65 +1,53 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
 Subject: Re: linux-next: v4l-dvb tree
-Date: Wed, 17 Dec 2008 11:10:59 +1100
-Message-ID: <20081217111059.f6e7db06.sfr@canb.auug.org.au>
+Date: Wed, 17 Dec 2008 00:18:18 -0200
+Message-ID: <20081217001818.7ad1c476@caramujo.chehab.org>
 References: <20081216165734.98535728.sfr@canb.auug.org.au>
 	<20081216173636.7664bced@caramujo.chehab.org>
+	<20081217111059.f6e7db06.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__17_Dec_2008_11_10_59_+1100_.uip66lX.IEE7W9x"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51999 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760059AbYLQALJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Dec 2008 19:11:09 -0500
-In-Reply-To: <20081216173636.7664bced@caramujo.chehab.org>
+Received: from bombadil.infradead.org ([18.85.46.34]:33153 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752171AbYLQCSh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Dec 2008 21:18:37 -0500
+In-Reply-To: <20081217111059.f6e7db06.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org
 
---Signature=_Wed__17_Dec_2008_11_10_59_+1100_.uip66lX.IEE7W9x
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 17 Dec 2008 11:10:59 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi Mauro,
+> Hi Mauro,
+> 
+> On Tue, 16 Dec 2008 17:36:36 -0200 Mauro Carvalho Chehab <mchehab@infradead.org> wrote:
+> >
+> > On Tue, 16 Dec 2008 16:57:34 +1100
+> > Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > 
+> > > The v4l-dvb tree has not been in linux-next since Nov 25 due to build
+> > > problems.  The tree I am fetching
+> > > (git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-next.git#master)
+> > > has not been updated since Dec 2.  (The current head of branch commit is
+> > > 6e65a8a8f16144b0f092915c9f89c2beb957e14b "Merge branch 'next'
+> > > of ../devel")
+> > > 
+> > > Is there any progress in this?
+> > 
+> > I've just updated it today. Please let me know if you have any troubles.
+> 
+> Please check your procedures, as there still has been no update to the
+> tree I fetch (see above).
 
-On Tue, 16 Dec 2008 17:36:36 -0200 Mauro Carvalho Chehab <mchehab@infradead=
-.org> wrote:
->
-> On Tue, 16 Dec 2008 16:57:34 +1100
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->=20
-> > The v4l-dvb tree has not been in linux-next since Nov 25 due to build
-> > problems.  The tree I am fetching
-> > (git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-next.git#m=
-aster)
-> > has not been updated since Dec 2.  (The current head of branch commit is
-> > 6e65a8a8f16144b0f092915c9f89c2beb957e14b "Merge branch 'next'
-> > of ../devel")
-> >=20
-> > Is there any progress in this?
->=20
-> I've just updated it today. Please let me know if you have any troubles.
+I got the error. My update scripts weren't adding the patches at the right
+branch. I fixed the scripts and checked it on master.kernel.org.
 
-Please check your procedures, as there still has been no update to the
-tree I fetch (see above).
---=20
+Now, you should be seen this changeset:
+	53e66c026200c8de67bf188bddc6c25d78dc8809
+
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__17_Dec_2008_11_10_59_+1100_.uip66lX.IEE7W9x
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklIQ5MACgkQjjKRsyhoI8xZ6wCbBWkJ36BRk7iZsl/BmBlAM/sh
-9eAAoKqPhtwZOsCTUY9AelBm4VURuZ/B
-=Nfr2
------END PGP SIGNATURE-----
-
---Signature=_Wed__17_Dec_2008_11_10_59_+1100_.uip66lX.IEE7W9x--
+Mauro
