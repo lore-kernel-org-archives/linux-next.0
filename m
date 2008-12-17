@@ -1,50 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: boot-params tree build failure
-Date: Wed, 17 Dec 2008 17:40:35 +1100
-Message-ID: <20081217174035.58b79167.sfr@canb.auug.org.au>
+Subject: linux-next: mtd tree build failures (Was: Re: linux-next: Tree for
+ December 16)
+Date: Wed, 17 Dec 2008 17:59:11 +1100
+Message-ID: <20081217175911.594ae84f.sfr@canb.auug.org.au>
+References: <20081216223754.0c8e21d4.sfr@canb.auug.org.au>
+	<20081216152607.f232fafd.akpm@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__17_Dec_2008_17_40_35_+1100_q/=KLLWS31LKGhrg"
+ boundary="Signature=_Wed__17_Dec_2008_17_59_11_+1100_ZmOmGec1uvXcL=B3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56488 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41814 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751194AbYLQGkp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Dec 2008 01:40:45 -0500
+	id S1751249AbYLQG7a (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Dec 2008 01:59:30 -0500
+In-Reply-To: <20081216152607.f232fafd.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, Chris Zankel <chris@zankel.net>
+To: David Woodhouse <David.Woodhouse@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Adrian Hunter <ext-adrian.hunter@nokia.com>, Artem Bityutskiy <Artem.Bityutskiy@nokia.com>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Wed__17_Dec_2008_17_40_35_+1100_q/=KLLWS31LKGhrg
+--Signature=_Wed__17_Dec_2008_17_59_11_+1100_ZmOmGec1uvXcL=B3
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+On Tue, 16 Dec 2008 15:26:07 -0800 Andrew Morton <akpm@linux-foundation.org=
+> wrote:
+>
+> This MTD patch:
+>=20
+> commit 69423d99fc182a81f3c5db3eb5c140acc6fc64be
+> Author:     Adrian Hunter <ext-adrian.hunter@nokia.com>
+> AuthorDate: Wed Dec 10 13:37:21 2008 +0000
+> Commit:     David Woodhouse <David.Woodhouse@intel.com>
+> CommitDate: Wed Dec 10 13:37:21 2008 +0000
+>=20
+>     [MTD] update internal API to support 64-bit device size
+>=20
+> broke the i386 build:
 
-The build of next-20081216 (xtensa defconfig) failed like this:
-
-arch/xtensa/kernel/setup.c:284: error: 'cmdline_p' undeclared (first use in=
- this function)
-
-Caused by commit 0de5c2d9f02d2018fd671ca1015432dffa5eb338 ("param:
-arch_get_boot_command_line()") from the boot-params tree.
+Also a few arm configs and the m68k allmodconfig.  I shall revert the mtd
+tree from linux-next today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__17_Dec_2008_17_40_35_+1100_q/=KLLWS31LKGhrg
+--Signature=_Wed__17_Dec_2008_17_59_11_+1100_ZmOmGec1uvXcL=B3
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAklInuMACgkQjjKRsyhoI8zKggCfcvBbT4ZXbcoF1SZH6o7M55YC
-leIAoLTviTLXS0jJumSpgnm29h8+u7d2
-=m6/Y
+iEYEARECAAYFAklIoz8ACgkQjjKRsyhoI8wQRwCgo9YGNCQSRqepx8yzl9oB5fg4
+MwMAn3WVJXlLzHGIAbw84QIO051yF90j
+=Bsci
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__17_Dec_2008_17_40_35_+1100_q/=KLLWS31LKGhrg--
+--Signature=_Wed__17_Dec_2008_17_59_11_+1100_ZmOmGec1uvXcL=B3--
