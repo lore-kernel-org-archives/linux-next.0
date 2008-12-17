@@ -1,57 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: boot-params tree build failure
-Date: Wed, 17 Dec 2008 18:04:40 +1100
-Message-ID: <20081217180440.d0256b69.sfr@canb.auug.org.au>
-References: <20081217174035.58b79167.sfr@canb.auug.org.au>
+From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+Subject: Re: linux-next: Tree for December 16
+Date: Wed, 17 Dec 2008 09:07:20 +0200
+Message-ID: <4948A528.9090605@nokia.com>
+References: <20081216223754.0c8e21d4.sfr@canb.auug.org.au> <20081216152607.f232fafd.akpm@linux-foundation.org>
+Reply-To: Artem.Bityutskiy@nokia.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__17_Dec_2008_18_04_40_+1100_W2PqFZ9x632xnn_c"
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58563 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751005AbYLQHEt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Dec 2008 02:04:49 -0500
-In-Reply-To: <20081217174035.58b79167.sfr@canb.auug.org.au>
+Received: from smtp.nokia.com ([192.100.122.230]:33336 "EHLO
+	mgw-mx03.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751194AbYLQHLr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Dec 2008 02:11:47 -0500
+In-Reply-To: <20081216152607.f232fafd.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, Chris Zankel <chris@zankel.net>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Adrian Hunter <ext-adrian.hunter@nokia.com>, David Woodhouse <David.Woodhouse@intel.com>
 
---Signature=_Wed__17_Dec_2008_18_04_40_+1100_W2PqFZ9x632xnn_c
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Rusty,
-
-On Wed, 17 Dec 2008 17:40:35 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> The build of next-20081216 (xtensa defconfig) failed like this:
+ext Andrew Morton wrote:
+> On Tue, 16 Dec 2008 22:37:54 +1100
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >=20
-> arch/xtensa/kernel/setup.c:284: error: 'cmdline_p' undeclared (first use =
-in this function)
+>> I have created today's linux-next tree at
+>> git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+>> (patches at
+>> http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/)
 >=20
-> Caused by commit 0de5c2d9f02d2018fd671ca1015432dffa5eb338 ("param:
-> arch_get_boot_command_line()") from the boot-params tree.
+> This MTD patch:
+>=20
+> commit 69423d99fc182a81f3c5db3eb5c140acc6fc64be
+> Author:     Adrian Hunter <ext-adrian.hunter@nokia.com>
+> AuthorDate: Wed Dec 10 13:37:21 2008 +0000
+> Commit:     David Woodhouse <David.Woodhouse@intel.com>
+> CommitDate: Wed Dec 10 13:37:21 2008 +0000
+>=20
+>     [MTD] update internal API to support 64-bit device size
+>=20
+> broke the i386 build:
+>=20
+> ERROR: "__udivdi3" [drivers/mtd/devices/mtd_dataflash.ko] undefined!
+> ERROR: "__umoddi3" [drivers/mtd/devices/mtd_dataflash.ko] undefined!
+> ERROR: "__umoddi3" [drivers/mtd/devices/m25p80.ko] undefined!
+>=20
+> because things like
+>=20
+>                 pageaddr =3D instr->addr / priv->page_size;
+>=20
+> are now doing a 64-bit divide.
+>=20
+> These will all need to be hunted down and converted to do_div().
 
-I will drop the boot-params tree for today.
+Right, I'll fix this shortly.
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__17_Dec_2008_18_04_40_+1100_W2PqFZ9x632xnn_c
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklIpIgACgkQjjKRsyhoI8wv+wCfZBZhNSSGCFjjEtHjynazmMYE
-82oAoKGfK90QGEJtg9FLD17M8gkUyvYg
-=ub3y
------END PGP SIGNATURE-----
-
---Signature=_Wed__17_Dec_2008_18_04_40_+1100_W2PqFZ9x632xnn_c--
+Best Regards,
+Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
+=D1=86=D0=BA=D0=B8=D0=B9)
