@@ -1,43 +1,73 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: cpu_alloc tree
-Date: Wed, 17 Dec 2008 22:36:19 +1030
-Message-ID: <200812172236.20226.rusty@rustcorp.com.au>
-References: <20081216170521.8453f7e4.sfr@canb.auug.org.au> <Pine.LNX.4.64.0812160851080.18671@quilx.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: scsi tree build failure
+Date: Wed, 17 Dec 2008 23:20:49 +1100
+Message-ID: <20081217232049.67b72448.sfr@canb.auug.org.au>
+References: <20081216013704.2496da40.sfr@canb.auug.org.au>
+	<1229352762.3293.1.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__17_Dec_2008_23_20_49_+1100_A_7bUF3kSXSfZAlW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:50280 "EHLO ozlabs.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41892 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751510AbYLQMGY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Dec 2008 07:06:24 -0500
-In-Reply-To: <Pine.LNX.4.64.0812160851080.18671@quilx.com>
-Content-Disposition: inline
+	id S1750944AbYLQMU7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Dec 2008 07:20:59 -0500
+In-Reply-To: <1229352762.3293.1.camel@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Lameter <cl@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, Robert Love <robert.w.love@intel.com>
 
-On Wednesday 17 December 2008 01:21:26 Christoph Lameter wrote:
-> On Tue, 16 Dec 2008, Stephen Rothwell wrote:
-> 
-> > The cpu_alloc tree has not been included in linux-next since Nov 21.  Have
-> > your discussions with Rusty come to any conclusions?  Should I remove
-> > this tree permanently or will it be updated?
-> 
-> I thought Rusty would be doing something. If not then I will bring things
-> up to snuff.
+--Signature=_Wed__17_Dec_2008_23_20_49_+1100_A_7bUF3kSXSfZAlW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the prod, I was distracted by cpumasks and local_t, the latter
-tangentially related.
+Hi James,
 
-The current patches work, but introduce new limits on eg. number of
-network devices.  Those have to be diverted to a lesser percpu allocator
-until we get dynamic percpu sizing.  I do not want to block this work on
-that: you've shown how useful even small allocs can be in key places.
+On Mon, 15 Dec 2008 08:52:42 -0600 James Bottomley <James.Bottomley@HansenP=
+artnership.com> wrote:
+>
+> On Tue, 2008-12-16 at 01:37 +1100, Stephen Rothwell wrote:
+> >=20
+> > Today's linux-next build (powerpc allyesconfig) failed like this:
+>=20
+> Heh, I really need to get this terrasoft system integrated into my
+> builds
+>=20
+> > drivers/scsi/libfc/fc_fcp.c: In function 'fc_eh_host_reset':
+> > drivers/scsi/libfc/fc_fcp.c:1987: error: implicit declaration of functi=
+on 'msleep'
+> >=20
+> > That file needs to include <linux/delay.h>.
+>=20
+> Thanks, that's exactly the problem.
+>=20
+> Robert, please reroll the patches with this fix in ... I'll just
+> exchange the new patches for the ones in my tree.
+>=20
+> > Introduced by commit 389571f347629d879f9044582bbbafb43e4fe00b ("[SCSI]
+> > libfc: A modular Fibre Channel library") from the scsi tree.  I reverted
+> > that commit and commit 7aba33c5cfc7a9c104cc7469558c7849f373c3da ("[SCSI]
+> > fcoe: Fibre Channel over Ethernet") which depended on it.
 
-Expect another set of patches this week.
+I have dropped the scsi tree until this is fixed up.
 
-Thanks,
-Rusty.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__17_Dec_2008_23_20_49_+1100_A_7bUF3kSXSfZAlW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAklI7qEACgkQjjKRsyhoI8xobACgp1uTt4TYu/YGIDAsjnpjAn+j
+R5wAoKwwWbfZLrXRvsxp1SUJ7tXSsEeP
+=jE0W
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__17_Dec_2008_23_20_49_+1100_A_7bUF3kSXSfZAlW--
