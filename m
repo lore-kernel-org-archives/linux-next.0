@@ -1,57 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: net tree build warnings
-Date: Wed, 17 Dec 2008 18:22:24 +1100
-Message-ID: <20081217182224.a7f20a12.sfr@canb.auug.org.au>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: next-20081216 - powerpc link error 'dynreloc miscount'
+Date: Wed, 17 Dec 2008 08:28:23 +0100
+Message-ID: <20081217072823.GB3551@uranus.ravnborg.org>
+References: <20081216223754.0c8e21d4.sfr@canb.auug.org.au> <20081217070858.GA7424@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__17_Dec_2008_18_22_24_+1100_FGaC0ONLxFXflL5p"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39381 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751393AbYLQHWh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Dec 2008 02:22:37 -0500
+Received: from pfepb.post.tele.dk ([195.41.46.236]:59595 "EHLO
+	pfepb.post.tele.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751258AbYLQH04 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Dec 2008 02:26:56 -0500
+Content-Disposition: inline
+In-Reply-To: <20081217070858.GA7424@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Steve Glendinning <steve.glendinning@smsc.com>, Yaniv Rosner <yanivr@broadcom.com>, Eilong Greenstein <eilong@broadcom.com>
+To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@ozlabs.org, mel@csn.ul.ie, linux-kbuild@vger.kernel.org
 
---Signature=_Wed__17_Dec_2008_18_22_24_+1100_FGaC0ONLxFXflL5p
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Dec 17, 2008 at 12:38:58PM +0530, Kamalesh Babulal wrote:
+> Hi,
+> 	next-20081216 build breaks on powerpc
+> 
+> ld: dynreloc miscount for kernel/built-in.o, section .opd
+> ld: can not edit opd Bad value
+> make: *** [vmlinux.o] Error 1
 
-Hi Dave,
+Could it be this:
 
-Today's linux-next build (x86_64 allmodconfig) produced these warnings:
+     http://sourceware.org/ml/binutils/2005-10/msg00334.html
 
-In file included from drivers/net/bnx2x_main.c:58:
-drivers/net/bnx2x_link.h:30:1: warning: "FLOW_CTRL_TX" redefined
-In file included from drivers/net/bnx2x_main.c:40:
-include/linux/mii.h:139:1: warning: this is the location of the previous de=
-finition
-In file included from drivers/net/bnx2x_main.c:58:
-drivers/net/bnx2x_link.h:31:1: warning: "FLOW_CTRL_RX" redefined
-In file included from drivers/net/bnx2x_main.c:40:
-include/linux/mii.h:140:1: warning: this is the location of the previous de=
-finition
-
-Caused by commit e18ce3465477502108187c6c08b6423fb784a313 ("net: Move flow =
-control definitions to mii.h").
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__17_Dec_2008_18_22_24_+1100_FGaC0ONLxFXflL5p
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklIqLAACgkQjjKRsyhoI8zT/wCeOwQpoKNtq5dnBGy06vUhQ0+p
-yQEAn1QhcKSsg5KZzLpYkHzrlqreCMMI
-=mAn+
------END PGP SIGNATURE-----
-
---Signature=_Wed__17_Dec_2008_18_22_24_+1100_FGaC0ONLxFXflL5p--
+	Sam
