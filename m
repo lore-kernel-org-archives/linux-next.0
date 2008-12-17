@@ -1,40 +1,92 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for December 15 (mfd)
-Date: Wed, 17 Dec 2008 11:43:00 -0800
-Message-ID: <20081217114300.9476f8da.randy.dunlap@oracle.com>
-References: <20081216020642.fc1007d9.sfr@canb.auug.org.au>
-	<4946AF6A.8030107@oracle.com>
+From: Mike Travis <travis@sgi.com>
+Subject: Re: [PATCH 1/4] cpumask: cpu_coregroup_mask(): x86
+Date: Wed, 17 Dec 2008 14:54:19 -0800
+Message-ID: <4949831B.2000809@sgi.com>
+References: <200812011646.35018.rusty@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet11.oracle.com ([148.87.113.123]:40797 "EHLO
-	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752551AbYLQTnR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Dec 2008 14:43:17 -0500
-In-Reply-To: <4946AF6A.8030107@oracle.com>
+Received: from relay3.sgi.com ([192.48.171.31]:38550 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751971AbYLQWyV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Dec 2008 17:54:21 -0500
+In-Reply-To: <200812011646.35018.rusty@rustcorp.com.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sameo@openedhand.com
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Ingo Molnar <mingo@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Jack Steiner <steiner@sgi.com>
 
-On Mon, 15 Dec 2008 11:26:34 -0800 Randy Dunlap wrote:
-
-> Lots of mfd build failures like this:
+Rusty Russell wrote:
+> Like cpu_coregroup_map, but returns a (const) pointer.
 > 
+> (This will go to Ingo separately as part of the x86 series, just
+> airing it here for thoroughness).
 > 
-> build-r7123.out:/local/linsrc/linux-next-20081215/drivers/mfd/twl4030-irq.c:183: error: 'irq_desc' undeclared (first use in this function)
-> build-r7123.out:/local/linsrc/linux-next-20081215/drivers/mfd/twl4030-irq.c:455: error: 'irq_desc' undeclared (first use in this function)
-> build-r7123.out:/local/linsrc/linux-next-20081215/drivers/mfd/twl4030-irq.c:515: error: 'irq_desc' undeclared (first use in this function)
-> build-r7123.out:make[3]: *** [drivers/mfd/twl4030-irq.o] Error 1
+> Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
+> Signed-off-by: Mike Travis <travis@sgi.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
 
+I've pulled this patch into the queue for my cpus4096-for-ingo tree.
 
-This build error still happens in linux-next-20081217.
+	[PATCH 1/4] cpumask: cpu_coregroup_mask(): x86
 
-It only occurs when I2C=y (see drivers/mfd/Kconfig).
+I can also line up a queue for sched related changes:
 
-Stephen, doing an allyesconfig i386 or x86_64 build will catch this,
-then you can drop the mfd tree and hopefully prod someone into fixing this...
+	[PATCH 4/4] cpumask: Replace cpu_coregroup_map with cpu_coregroup_map()
 
----
-~Randy
+Is there any status on the corresponding changes for sparc, s390?  (I assume
+that they'll need to be merged into linux-next?)
+
+	[PATCH 2/4] cpumask: cpu_coregroup_mask(): sparc
+	[PATCH 3/4] cpumask: cpu_coregroup_mask(): s390
+
+Thanks,
+Mike
+
+> ---
+>  arch/x86/include/asm/topology.h |    1 +
+>  arch/x86/kernel/smpboot.c       |   11 ++++++++---
+>  2 files changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff -r 11a884ebd99b arch/x86/include/asm/topology.h
+> --- a/arch/x86/include/asm/topology.h	Thu Nov 20 13:54:24 2008 +1030
+> +++ b/arch/x86/include/asm/topology.h	Thu Nov 20 13:55:44 2008 +1030
+> @@ -231,6 +231,7 @@
+>  #endif
+>  
+>  extern cpumask_t cpu_coregroup_map(int cpu);
+> +extern const struct cpumask *cpu_coregroup_mask(int cpu);
+>  
+>  #ifdef ENABLE_TOPO_DEFINES
+>  #define topology_physical_package_id(cpu)	(cpu_data(cpu).phys_proc_id)
+> diff -r 11a884ebd99b arch/x86/kernel/smpboot.c
+> --- a/arch/x86/kernel/smpboot.c	Thu Nov 20 13:54:24 2008 +1030
+> +++ b/arch/x86/kernel/smpboot.c	Thu Nov 20 13:55:44 2008 +1030
+> @@ -497,7 +497,7 @@
+>  }
+>  
+>  /* maps the cpu to the sched domain representing multi-core */
+> -cpumask_t cpu_coregroup_map(int cpu)
+> +const struct cpumask *cpu_coregroup_mask(int cpu)
+>  {
+>  	struct cpuinfo_x86 *c = &cpu_data(cpu);
+>  	/*
+> @@ -505,9 +505,14 @@
+>  	 * And for power savings, we return cpu_core_map
+>  	 */
+>  	if (sched_mc_power_savings || sched_smt_power_savings)
+> -		return per_cpu(cpu_core_map, cpu);
+> +		return &per_cpu(cpu_core_map, cpu);
+>  	else
+> -		return c->llc_shared_map;
+> +		return &c->llc_shared_map;
+> +}
+> +
+> +cpumask_t cpu_coregroup_map(int cpu)
+> +{
+> +	return *cpu_coregroup_mask(cpu);
+>  }
+>  
+>  static void impress_friends(void)
+> 
