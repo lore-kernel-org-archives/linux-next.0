@@ -1,59 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: v4l-dvb tree
-Date: Wed, 17 Dec 2008 14:01:50 +1100
-Message-ID: <20081217140150.b9c03f32.sfr@canb.auug.org.au>
-References: <20081216165734.98535728.sfr@canb.auug.org.au>
-	<20081216173636.7664bced@caramujo.chehab.org>
-	<20081217111059.f6e7db06.sfr@canb.auug.org.au>
-	<20081217001818.7ad1c476@caramujo.chehab.org>
+Subject: linux-next: boot-params tree build failure
+Date: Wed, 17 Dec 2008 16:55:57 +1100
+Message-ID: <20081217165557.b4898a4b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__17_Dec_2008_14_01_50_+1100_KC1n9nz7WEW443FE"
+ boundary="Signature=_Wed__17_Dec_2008_16_55_57_+1100_IeNe+hxv2ZYdNod3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35713 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49177 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751927AbYLQDCA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Dec 2008 22:02:00 -0500
-In-Reply-To: <20081217001818.7ad1c476@caramujo.chehab.org>
+	id S1751041AbYLQF4P (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Dec 2008 00:56:15 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
---Signature=_Wed__17_Dec_2008_14_01_50_+1100_KC1n9nz7WEW443FE
+--Signature=_Wed__17_Dec_2008_16_55_57_+1100_IeNe+hxv2ZYdNod3
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mauro,
+Hi Rusty,
 
-On Wed, 17 Dec 2008 00:18:18 -0200 Mauro Carvalho Chehab <mchehab@infradead=
-.org> wrote:
->
-> I got the error. My update scripts weren't adding the patches at the right
-> branch. I fixed the scripts and checked it on master.kernel.org.
->=20
-> Now, you should be seen this changeset:
-> 	53e66c026200c8de67bf188bddc6c25d78dc8809
+The build of next-20081216 (m68k defconfig) failed like this:
 
-I do now, thanks.  I will readd the v4l-dvb tree at the end of today's
-linux-next.
+arch/m68k/kernel/setup.c:230: error: conflicting types for '_end'
+arch/m68k/kernel/setup.c:215: error: previous declaration of '_end' was here
+
+Caused by commit 0de5c2d9f02d2018fd671ca1015432dffa5eb338 ("param:
+arch_get_boot_command_line()") from the poot-params tree.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__17_Dec_2008_14_01_50_+1100_KC1n9nz7WEW443FE
+--Signature=_Wed__17_Dec_2008_16_55_57_+1100_IeNe+hxv2ZYdNod3
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAklIa54ACgkQjjKRsyhoI8yZOwCeN/lgKNCA5Sb1xYyTG/nGoHWo
-83AAn3VbfB+evhNpw2uylvO/5Bb1+gP1
-=v3KS
+iEYEARECAAYFAklIlG0ACgkQjjKRsyhoI8xOmQCgjCYKawK3LP6Y82qovFpW+x3t
+x3AAoKsRFSueRYYvTFzeAsVWNG3xR64o
+=2kP8
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__17_Dec_2008_14_01_50_+1100_KC1n9nz7WEW443FE--
+--Signature=_Wed__17_Dec_2008_16_55_57_+1100_IeNe+hxv2ZYdNod3--
