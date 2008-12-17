@@ -1,51 +1,51 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: Tree for December 16
-Date: Tue, 16 Dec 2008 15:26:07 -0800
-Message-ID: <20081216152607.f232fafd.akpm@linux-foundation.org>
-References: <20081216223754.0c8e21d4.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: lblnet tree build failure
+Date: Wed, 17 Dec 2008 11:04:55 +1100
+Message-ID: <20081217110455.06dd8e3d.sfr@canb.auug.org.au>
+References: <20081216191419.43ae28af.sfr@canb.auug.org.au>
+	<200812161133.48529.paul.moore@hp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__17_Dec_2008_11_04_55_+1100_ri64Iez65lj3_KPW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:37119 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754921AbYLPX0w (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Dec 2008 18:26:52 -0500
-In-Reply-To: <20081216223754.0c8e21d4.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56391 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759582AbYLQAFJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Dec 2008 19:05:09 -0500
+In-Reply-To: <200812161133.48529.paul.moore@hp.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Adrian Hunter <ext-adrian.hunter@nokia.com>, Artem Bityutskiy <Artem.Bityutskiy@nokia.com>, David Woodhouse <David.Woodhouse@intel.com>
+To: Paul Moore <paul.moore@hp.com>
+Cc: linux-next@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
 
-On Tue, 16 Dec 2008 22:37:54 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Signature=_Wed__17_Dec_2008_11_04_55_+1100_ri64Iez65lj3_KPW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-> (patches at
-> http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/)
+Hi Paul,
 
-This MTD patch:
+On Tue, 16 Dec 2008 11:33:48 -0500 Paul Moore <paul.moore@hp.com> wrote:
+>
+> My mistake, it should be fixed now.
 
-commit 69423d99fc182a81f3c5db3eb5c140acc6fc64be
-Author:     Adrian Hunter <ext-adrian.hunter@nokia.com>
-AuthorDate: Wed Dec 10 13:37:21 2008 +0000
-Commit:     David Woodhouse <David.Woodhouse@intel.com>
-CommitDate: Wed Dec 10 13:37:21 2008 +0000
+Thanks.
 
-    [MTD] update internal API to support 64-bit device size
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-broke the i386 build:
+--Signature=_Wed__17_Dec_2008_11_04_55_+1100_ri64Iez65lj3_KPW
+Content-Type: application/pgp-signature
 
-ERROR: "__udivdi3" [drivers/mtd/devices/mtd_dataflash.ko] undefined!
-ERROR: "__umoddi3" [drivers/mtd/devices/mtd_dataflash.ko] undefined!
-ERROR: "__umoddi3" [drivers/mtd/devices/m25p80.ko] undefined!
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-because things like
+iEYEARECAAYFAklIQicACgkQjjKRsyhoI8wOMgCdE6g5/cXks2zBpQS8q4BncZVa
+2fsAoJJ8tZmcwny/iJ3Qzyan2FUv2iqZ
+=OyEO
+-----END PGP SIGNATURE-----
 
-                pageaddr = instr->addr / priv->page_size;
-
-are now doing a 64-bit divide.
-
-These will all need to be hunted down and converted to do_div().
+--Signature=_Wed__17_Dec_2008_11_04_55_+1100_ri64Iez65lj3_KPW--
