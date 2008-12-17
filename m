@@ -1,77 +1,140 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: mtd tree build failures (Was: Re: linux-next: Tree
- for December 16)
-Date: Wed, 17 Dec 2008 20:57:06 +1100
-Message-ID: <20081217205706.378973c5.sfr@canb.auug.org.au>
-References: <20081216223754.0c8e21d4.sfr@canb.auug.org.au>
-	<20081216152607.f232fafd.akpm@linux-foundation.org>
-	<20081217175911.594ae84f.sfr@canb.auug.org.au>
-	<4948C71C.2000700@nokia.com>
+From: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
+Subject: Re: [mmotm and linux-next][PATCH] irq: enclose irq_desc_lock_class in CONFIG_LOCKDEP
+Date: Wed, 17 Dec 2008 19:40:33 +0900 (JST)
+Message-ID: <20081217193815.F674.KOSAKI.MOTOHIRO@jp.fujitsu.com>
+References: <20081216121815.GA25019@elte.hu> <2f11576a0812160458y1c376878vc5fc7f3d208aa344@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__17_Dec_2008_20_57_06_+1100_gEb5rZZHlY+SEZ+m"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33925 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751577AbYLQJ5R (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Dec 2008 04:57:17 -0500
-In-Reply-To: <4948C71C.2000700@nokia.com>
+Received: from fgwmail7.fujitsu.co.jp ([192.51.44.37]:37581 "EHLO
+	fgwmail7.fujitsu.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751998AbYLQKki (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Dec 2008 05:40:38 -0500
+In-Reply-To: <2f11576a0812160458y1c376878vc5fc7f3d208aa344@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Artem.Bityutskiy@nokia.com
-Cc: David Woodhouse <David.Woodhouse@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Adrian Hunter <ext-adrian.hunter@nokia.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: kosaki.motohiro@jp.fujitsu.com, Andrew Morton <akpm@linux-foundation.org>, Yinghai Lu <yhlu.kernel@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
 
---Signature=_Wed__17_Dec_2008_20_57_06_+1100_gEb5rZZHlY+SEZ+m
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> >> or, following #ifdef ?
+> >>
+> >> #if defined(CONFIG_SPARSE_IRQ) || defined(CONFIG_TRACE_IRQFLAGS)
+> >>
+> >>  /*
+> >>  * lockdep: we want to handle all irq_desc locks as a single lock-class:
+> >>  */
+> >>  static struct lock_class_key irq_desc_lock_class;
+> >
+> > instead of increasing the #ifdef jungle, how about removing some? For
+> > example is this distinction:
+> >
+> >> >  #ifndef CONFIG_SPARSE_IRQ
+> >
+> > really needed? We should use symmetric lock class annotations, regardless
+> > of how irq_desc[] is laid out.
+> 
+> it seems make much sense. I'll test your idea tommorow.
 
-Hi Artem,
+Ingo, you are right. I confirmed your idea works well.
 
-On Wed, 17 Dec 2008 11:32:12 +0200 Artem Bityutskiy <Artem.Bityutskiy@nokia=
-.com> wrote:
->
-> It would be nice if you sent the error messages. I do not have m68k
-> compilers, but I could fix the errors anyway, because it is just
-> about doing divisions with 'do_div()'.
 
-Normally I would have sent them, but they are basically the same error as
-i386 gets.
+I tested following ten pattern.
 
-arm: (various configs)
+o handle.c can compile without any warnings?
 
-hid-input.c:(.text+0x41470): undefined reference to `__umoddi3'
-hid-input.c:(.text+0x4148c): undefined reference to `__umoddi3'
-hid-input.c:(.text+0x41504): undefined reference to `__udivdi3'
-drivers/mtd/devices/mtd_dataflash.c:161: undefined reference to `__umoddi3'
-drivers/mtd/devices/mtd_dataflash.c:161: undefined reference to `__umoddi3'
-drivers/mtd/devices/mtd_dataflash.c:181: undefined reference to `__udivdi3'
-i2c-dev.c:(.text+0x4d424): undefined reference to `__umoddi3'
-i2c-dev.c:(.text+0x4d44c): undefined reference to `__umoddi3'
-i2c-dev.c:(.text+0x4d4b4): undefined reference to `__udivdi3'
+SPARSE_IRQ	TRACE_IRQ	LOCKDEP
+------------------------------------------
+n		n		n
+Y		n		n
+n		Y		n
+n		n		Y
+Y		Y		n
+N		Y		Y
+Y		n		Y
+Y		Y		Y
 
-m68k: (allmodconfig)
-ERROR: "__udivdi3" [drivers/mtd/devices/mtd_dataflash.ko] undefined!
-ERROR: "__umoddi3" [drivers/mtd/devices/mtd_dataflash.ko] undefined!
-ERROR: "__umoddi3" [drivers/mtd/devices/m25p80.ko] undefined!
 
-All these are from: http://kisskb.ellerman.id.au/kisskb/branch/9/
+o builded kernel works well? (tested on x86_64)
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+SPARSE_IRQ	TRACE_IRQ	LOCKDEP
+------------------------------------------
+n		n		n
+Y		Y		Y
 
---Signature=_Wed__17_Dec_2008_20_57_06_+1100_gEb5rZZHlY+SEZ+m
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+==
+Subject: [PATCH] irq: remove unnecessary ifdef
 
-iEYEARECAAYFAklIzPIACgkQjjKRsyhoI8yz0gCfdJM1CrLI8sLmZkfaOvsLcvSZ
-FnkAn39PWH5sfNi18FJ7+8A6Dok0X4Li
-=uKqp
------END PGP SIGNATURE-----
+commit 08678b0841267c1d00d771fe01548d86043d065e introduced
+irq_desc_lock_class variable.
 
---Signature=_Wed__17_Dec_2008_20_57_06_+1100_gEb5rZZHlY+SEZ+m--
+But it is used only if CONFIG_SPARSE_IRQ=Y or CONFIG_TRACE_IRQFLAGS=Y.
+otherwise, following warnings happend.
+
+	CC      kernel/irq/handle.o
+	kernel/irq/handle.c:26: warning: 'irq_desc_lock_class' defined but not used
+
+Actually, current early_init_irq_lock_class has a bit strange and messy ifdef.
+In addition, it is not valueable.
+
+1. this function protected by !CONFIG_SPARSE_IRQ. but it is not necessary.
+   if CONFIG_SPARSE_IRQ=Y, desc of all irq number are initialized by NULL at first.
+   then this function calling is safe.
+
+2. this function protected by CONFIG_TRACE_IRQFLAGS too. but it is not necessary too.
+   because lockdep_set_class() doesn't have bad side effect even if CONFIG_TRACE_IRQFLAGS=n, 
+
+This patch bloat kernel size a bit on CONFIG_TRACE_IRQFLAGS=n and CONFIG_SPARSE_IRQ=Y.
+that's ok. early_init_irq_lock_class() is not fastpatch at all.
+
+To avoid ifdef messy is important than few byte diet.
+
+
+Signed-off-by: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
+CC: Yinghai Lu <yhlu.kernel@gmail.com>
+CC: Ingo Molnar <mingo@elte.hu>
+---
+ include/linux/lockdep.h |    2 +-
+ kernel/irq/handle.c     |    5 -----
+ 2 files changed, 1 insertion(+), 6 deletions(-)
+
+Index: b/kernel/irq/handle.c
+===================================================================
+--- a/kernel/irq/handle.c	2008-12-17 10:45:56.000000000 +0900
++++ b/kernel/irq/handle.c	2008-12-17 17:26:42.000000000 +0900
+@@ -417,11 +417,8 @@ out:
+ }
+ #endif
+ 
+-
+-#ifdef CONFIG_TRACE_IRQFLAGS
+ void early_init_irq_lock_class(void)
+ {
+-#ifndef CONFIG_SPARSE_IRQ
+ 	struct irq_desc *desc;
+ 	int i;
+ 
+@@ -431,9 +428,7 @@ void early_init_irq_lock_class(void)
+ 
+ 		lockdep_set_class(&desc->lock, &irq_desc_lock_class);
+ 	}
+-#endif
+ }
+-#endif
+ 
+ #ifdef CONFIG_SPARSE_IRQ
+ unsigned int kstat_irqs_cpu(unsigned int irq, int cpu)
+Index: b/include/linux/lockdep.h
+===================================================================
+--- a/include/linux/lockdep.h	2008-12-17 10:46:26.000000000 +0900
++++ b/include/linux/lockdep.h	2008-12-17 17:27:18.000000000 +0900
+@@ -407,7 +407,7 @@ do {								\
+ 
+ #endif /* CONFIG_LOCKDEP */
+ 
+-#if defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_GENERIC_HARDIRQS)
++#ifdef CONFIG_GENERIC_HARDIRQS
+ extern void early_init_irq_lock_class(void);
+ #else
+ static inline void early_init_irq_lock_class(void)
