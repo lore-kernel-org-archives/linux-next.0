@@ -1,286 +1,96 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for December 17
-Date: Wed, 17 Dec 2008 23:25:36 +1100
-Message-ID: <20081217232536.0b18f4a7.sfr@canb.auug.org.au>
+From: "Alexander Beregalov" <a.beregalov@gmail.com>
+Subject: next-20081217: general protection fault: tty
+Date: Wed, 17 Dec 2008 16:02:27 +0300
+Message-ID: <a4423d670812170502s72303b10m2a0d0565924a63fd@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__17_Dec_2008_23_25_36_+1100_N9ZCFUJWxdD=btmb"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58743 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751493AbYLQMZn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Dec 2008 07:25:43 -0500
+Received: from yw-out-2324.google.com ([74.125.46.30]:37812 "EHLO
+	yw-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751285AbYLQNC3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Dec 2008 08:02:29 -0500
+Received: by yw-out-2324.google.com with SMTP id 9so1533941ywe.1
+        for <linux-next@vger.kernel.org>; Wed, 17 Dec 2008 05:02:27 -0800 (PST)
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, alan@redhat.com
 
---Signature=_Wed__17_Dec_2008_23_25_36_+1100_N9ZCFUJWxdD=btmb
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-Changes since 20081216:
-
-Undropped tree:
-	v4l-dvb
-	lblnet
-
-Dropped trees (temporarily):
-	scsi (build problem)
-	mtd (build problems)
-	semaphore-removal (due to unfixed conflicts against Linus' tree)
-	cpu_alloc (build problem)
-	perfmon3 (concerns from the x86 team)
-	nommu (build problem)
-	boot-params (build problems)
-	audit (difficult conflicts)
-
-The pci tree lost its conflict.
-
-The net tree lost a conflict.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig,
-44x_defconfig and allyesconfig (minus CONFIG_PROFILE_ALL_BRANCHES) and
-i386, sparc and sparc64 defconfig.
-
-Below is a summary of the state of the merge.
-
-We are up to 133 trees (counting Linus' and 15 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-2.6.26
-Merging audit-current/for-linus
-Merging dwmw2/master
-Merging arm/devel
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging mips/mips-for-linux-next
-Merging parisc/master
-Merging powerpc/next
-Merging 4xx/next
-Merging galak/next
-Merging pxa/for-next
-Merging s390/features
-CONFLICT (content): Merge conflict in drivers/char/Makefile
-Merging sh/master
-Merging sparc/master
-Merging x86/auto-x86-next
-Merging xtensa/master
-Merging quilt/driver-core
-CONFLICT (content): Merge conflict in arch/powerpc/platforms/85xx/mpc85xx_m=
-ds.c
-Merging quilt/usb
-Merging tip-core/auto-core-next
-Merging cpus4096/auto-cpus4096-next
-CONFLICT (content): Merge conflict in scripts/recordmcount.pl
-Merging ftrace/auto-ftrace-next
-Merging genirq/auto-genirq-next
-Merging safe-poison-pointers/auto-safe-poison-pointers-next
-Merging sched/auto-sched-next
-Merging stackprotector/auto-stackprotector-next
-Merging timers/auto-timers-next
-Merging pci/linux-next
-Merging quilt/device-mapper
-CONFLICT (content): Merge conflict in drivers/md/dm.c
-Merging hid/for-next
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging jfs/next
-Merging kbuild/master
-Merging quilt/ide
-Merging libata/NEXT
-Merging nfs/linux-next
-Merging xfs/master
-CONFLICT (content): Merge conflict in fs/xfs/xfs_rename.c
-Merging infiniband/for-next
-Merging acpi/test
-Merging nfsd/nfsd-next
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/master
-CONFLICT (content): Merge conflict in arch/x86/kernel/reboot.c
-Merging dlm/next
-Merging ocfs2/linux-next
-Merging ext4/next
-Merging async_tx/next
-Merging udf/for_next
-Merging net/master
-CONFLICT (delete/modify): arch/sparc64/kernel/idprom.c deleted in HEAD and =
-modified in net/master. Version net/master of arch/sparc64/kernel/idprom.c =
-left in tree.
-CONFLICT (content): Merge conflict in fs/lockd/host.c
-CONFLICT (content): Merge conflict in fs/lockd/mon.c
-$ git rm -f arch/sparc64/kernel/idprom.c
-Applying: net: async_tx merge fix
-Merging mtd/master
-CONFLICT (content): Merge conflict in arch/arm/mach-pxa/corgi.c
-CONFLICT (content): Merge conflict in arch/arm/mach-pxa/poodle.c
-CONFLICT (content): Merge conflict in arch/arm/mach-pxa/spitz.c
-Merging wireless/master
-Merging crypto/master
-Merging vfs/for-next
-Merging sound/for-next
-CONFLICT (content): Merge conflict in sound/drivers/pcsp/pcsp.c
-Applying: sound: fixup for timers tree interaction
-Merging cpufreq/next
-Merging v9fs/for-next
-Merging rr_cpumask/master
-CONFLICT (content): Merge conflict in arch/x86/kernel/io_apic.c
-CONFLICT (content): Merge conflict in kernel/sched.c
-CONFLICT (content): Merge conflict in kernel/sched_stats.h
-Merging quilt/rr
-CONFLICT (content): Merge conflict in kernel/sched.c
-Merging cifs/master
-CONFLICT (content): Merge conflict in fs/cifs/connect.c
-Applying: cifs: update for new IP4/6 address printing
-Merging mmc/next
-Merging gfs2/master
-Merging input/next
-Merging semaphore/semaphore
-Merging bkl-removal/bkl-removal
-CONFLICT (content): Merge conflict in fs/ioctl.c
-Merging ubifs/linux-next
-Merging lsm/for-next
-Merging block/for-next
-CONFLICT (content): Merge conflict in fs/bio.c
-Merging embedded/master
-Merging firmware/master
-CONFLICT (content): Merge conflict in drivers/net/tg3.c
-CONFLICT (content): Merge conflict in firmware/Makefile
-CONFLICT (content): Merge conflict in firmware/WHENCE
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging kmemcheck/auto-kmemcheck-next
-CONFLICT (content): Merge conflict in MAINTAINERS
-CONFLICT (content): Merge conflict in arch/x86/mm/Makefile
-CONFLICT (content): Merge conflict in mm/slab.c
-CONFLICT (content): Merge conflict in mm/slub.c
-Merging generic-ipi/auto-generic-ipi-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/for-next
-Merging security-testing/next
-CONFLICT (content): Merge conflict in drivers/char/tty_audit.c
-CONFLICT (content): Merge conflict in fs/cifs/cifs_fs_sb.h
-CONFLICT (content): Merge conflict in fs/ocfs2/namei.c
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_cred.h
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_globals.h
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_ioctl.c
-CONFLICT (content): Merge conflict in fs/xfs/xfs_vnodeops.h
-Merging lblnet/master
-CONFLICT (content): Merge conflict in Documentation/feature-removal-schedul=
-e.txt
-Merging quilt/ttydev
-CONFLICT (content): Merge conflict in fs/devpts/inode.c
-Merging agp/agp-next
-Merging oprofile/auto-oprofile-next
-Merging fastboot/auto-fastboot-next
-Merging sparseirq/auto-sparseirq-next
-Merging iommu/auto-iommu-next
-Merging uwb/for-upstream
-Merging watchdog/master
-CONFLICT (content): Merge conflict in drivers/watchdog/iTCO_wdt.c
-Merging proc/proc
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-CONFLICT (content): Merge conflict in kernel/sched.c
-Merging osd/linux-next
-Merging fatfs/master
-Merging fuse/for-next
-Merging jc_docs/docs-next
-Merging boot-params/master
-CONFLICT (content): Merge conflict in arch/arm/kernel/setup.c
-CONFLICT (content): Merge conflict in arch/parisc/kernel/setup.c
-CONFLICT (content): Merge conflict in arch/sh/boards/mach-migor/setup.c
-CONFLICT (content): Merge conflict in init/main.c
-$ git reset --hard
-Merging trivial/for-next
-Merging quilt/staging
-CONFLICT (delete/modify): drivers/staging/winbond/linux/wbusb.c deleted in =
-quilt/staging and modified in HEAD. Version HEAD of drivers/staging/winbond=
-/linux/wbusb.c left in tree.
-CONFLICT (content): Merge conflict in drivers/staging/wlan-ng/p80211netdev.c
-CONFLICT (content): Merge conflict in drivers/staging/wlan-ng/p80211wext.c
-$ git rm -f drivers/staging/winbond/linux/wbusb.c
-Merging scsi-post-merge/master
-Merging v4l-dvb/master
-Created commit e1ad45d: Revert "Merge commit 'mtd/master'"
-
---Signature=_Wed__17_Dec_2008_23_25_36_+1100_N9ZCFUJWxdD=btmb
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklI78AACgkQjjKRsyhoI8wy9QCdGU5FibzrVBGyiqX58261iCo1
-LNMAn3Jv1RKxwtx80LB3aPY13wDQmpOU
-=581z
------END PGP SIGNATURE-----
-
---Signature=_Wed__17_Dec_2008_23_25_36_+1100_N9ZCFUJWxdD=btmb--
+[   17.728579] serial8250: ttyS0 at I/O 0x3f8 (irq = 4) is a 16550A
+[   17.800713] serial8250: ttyS1 at I/O 0x2f8 (irq = 3) is a 16550A
+[   17.873669] general protection fault: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC
+[   17.876969] last sysfs file:
+[   17.876969] CPU 3
+[   17.876969] Modules linked in:
+[   17.876969] Pid: 1, comm: swapper Tainted: G        W
+2.6.28-rc8-next-20081217 #102
+[   17.876969] RIP: 0010:[<ffffffff80299271>]  [<ffffffff80299271>]
+constant_test_bit+0x15/0x21
+[   17.876969] RSP: 0018:ffff88007f46ba00  EFLAGS: 00010212
+[   17.876969] RAX: 0000000000000000 RBX: 02ba1f463a3a39f0 RCX: 000000000000000e
+[   17.876969] RDX: 0000000000000000 RSI: 02ba1f463a3a39f0 RDI: 0000000000000040
+[   17.876969] RBP: ffff88007f46ba00 R08: ffffffff8069cf78 R09: 000000000000005a
+[   17.876969] R10: ffff88007cd38688 R11: ffffe200032b4b40 R12: 6b6b6b6b6b6b6b6b
+[   17.876969] R13: ffff88007d95f5f0 R14: ffffffff80660f20 R15: ffffffff8065a670
+[   17.876969] FS:  0000000000000000(0000) GS:ffff88007f402a28(0000)
+knlGS:0000000000000000
+[   17.876969] CS:  0010 DS: 0018 ES: 0018 CR0: 000000008005003b
+[   17.876969] CR2: 0000000000000000 CR3: 0000000000201000 CR4: 00000000000006e0
+[   17.876969] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   17.876969] DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+[   17.876969] Process swapper (pid: 1, threadinfo ffff88007f46a000,
+task ffff88007f470000)
+[   17.876969] Stack:
+[   17.876969]  ffff88007f46ba20 ffffffff8029b2a9 ffff88007f46ba50
+ffff88007cd0a6d8
+[   17.876969]  ffff88007f46ba60 ffffffff8029c6ef ffffffff806630b0
+ffff88007cd0a6d8
+[   17.876969]  ffffffff806630b0 ffff88007d95f5f0 ffffffff80660f20
+ffffffff8065a670
+[   17.876969] Call Trace:
+[   17.876969]  [<ffffffff8029b2a9>] virt_to_head_page+0x31/0x40
+[   17.876969]  [<ffffffff8029c6ef>] kfree+0x23/0xf2
+[   17.876969]  [<ffffffff803e3276>] device_release+0x6e/0x72
+[   17.876969]  [<ffffffff8037879e>] kobject_release+0x52/0x68
+[   17.876969]  [<ffffffff8037874c>] ? kobject_release+0x0/0x68
+[   17.876969]  [<ffffffff80379591>] kref_put+0x4b/0x57
+[   17.876969]  [<ffffffff803786a6>] kobject_put+0x47/0x4b
+[   17.876969]  [<ffffffff803e2bd8>] put_device+0x12/0x14
+[   17.876969]  [<ffffffff803e39cc>] device_unregister+0x19/0x1e
+[   17.876969]  [<ffffffff803e3a07>] device_destroy+0x36/0x3b
+[   17.876969]  [<ffffffff803bf4f6>] tty_unregister_device+0x21/0x23
+[   17.876969]  [<ffffffff803dc419>] uart_remove_one_port+0xa4/0x108
+[   17.876969]  [<ffffffff803e1a3c>] serial8250_register_port+0xd8/0x1fb
+[   17.876969]  [<ffffffff802b1313>] ? ifind+0x2c/0x84
+[   17.876969]  [<ffffffff804d9d69>] serial_pnp_probe+0x1a7/0x20a
+[   17.876969]  [<ffffffff804e6e6b>] ? _spin_unlock+0x4a/0x57
+[   17.876969]  [<ffffffff803b8c50>] pnp_device_probe+0x9b/0xc0
+[   17.876969]  [<ffffffff803e5c62>] driver_probe_device+0xbe/0x163
+[   17.876969]  [<ffffffff803e5d5f>] __driver_attach+0x58/0x7c
+[   17.876969]  [<ffffffff803e5d07>] ? __driver_attach+0x0/0x7c
+[   17.876969]  [<ffffffff803e5501>] bus_for_each_dev+0x54/0x8b
+[   17.876969]  [<ffffffff806cd95c>] ? serial8250_pnp_init+0x0/0x12
+[   17.876969]  [<ffffffff803e5ab4>] driver_attach+0x1c/0x1e
+[   17.876969]  [<ffffffff803e4e24>] bus_add_driver+0xb8/0x205
+[   17.876969]  [<ffffffff806cd95c>] ? serial8250_pnp_init+0x0/0x12
+[   17.876969]  [<ffffffff803e5f4a>] driver_register+0xab/0x12b
+[   17.876969]  [<ffffffff806cd95c>] ? serial8250_pnp_init+0x0/0x12
+[   17.876969]  [<ffffffff803b8a27>] pnp_register_driver+0x1c/0x1e
+[   17.876969]  [<ffffffff806cd96c>] serial8250_pnp_init+0x10/0x12
+[   17.876969]  [<ffffffff80209056>] _stext+0x56/0x130
+[   17.876969]  [<ffffffff802692b5>] ? register_irq_proc+0xb0/0xcc
+[   17.876969]  [<ffffffff802e0000>] ? proc_file_read+0x100/0x20c
+[   17.876969]  [<ffffffff806b26c3>] kernel_init+0x1a2/0x1fa
+[   17.876969]  [<ffffffff8020c8fa>] child_rip+0xa/0x20
+[   17.876969]  [<ffffffff8020c2c0>] ? restore_args+0x0/0x30
+[   17.876969]  [<ffffffff806b2521>] ? kernel_init+0x0/0x1fa
+[   17.876969]  [<ffffffff8020c8f0>] ? child_rip+0x0/0x20
+[   17.876969] Code: 5e c9 c3 55 48 c7 c2 10 88 64 80 48 89 e5 e8 a8 12 04 00 c9
+ c3 90 89 f9 55 89 c8 48 89 e5 bf 40 00 00 00 99 f7 ff 89 d1 48 63 d0 <48> 8b 04
+ d6 c9 48 d3 e8 83 e0 01 c3 55 48 89 fe 48 89 e5 53 48
+[   17.876969] RIP  [<ffffffff80299271>] constant_test_bit+0x15/0x21
+[   17.876969]  RSP <ffff88007f46ba00>
+[   22.390436] ---[ end trace 4eaa2a86a8e2da22 ]---
+[   22.445647] swapper used greatest stack depth: 4008 bytes left
+[   22.515413] Kernel panic - not syncing: Attempted to kill init!
