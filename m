@@ -1,75 +1,68 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [mmotm and linux-next][PATCH] irq: enclose irq_desc_lock_class
-	in CONFIG_LOCKDEP
-Date: Thu, 18 Dec 2008 14:36:23 +0100
-Message-ID: <20081218133621.GA4624@elte.hu>
-References: <20081216121815.GA25019@elte.hu> <2f11576a0812160458y1c376878vc5fc7f3d208aa344@mail.gmail.com> <20081217193815.F674.KOSAKI.MOTOHIRO@jp.fujitsu.com>
+From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Subject: Re: [BUILD-FAILURE] next-20081217-s390x-'struct device' has no
+	member named 'knode_parent'
+Date: Thu, 18 Dec 2008 22:47:08 +0530
+Message-ID: <20081218171708.GA28135@linux.vnet.ibm.com>
+References: <20081217232536.0b18f4a7.sfr@canb.auug.org.au> <20081217181745.GA18420@linux.vnet.ibm.com> <1229593665.7086.1.camel@localhost>
+Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:40559 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750853AbYLRNgl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 18 Dec 2008 08:36:41 -0500
+Received: from E23SMTP06.au.ibm.com ([202.81.18.175]:54154 "EHLO
+	e23smtp06.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750915AbYLRRR5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 18 Dec 2008 12:17:57 -0500
 Content-Disposition: inline
-In-Reply-To: <20081217193815.F674.KOSAKI.MOTOHIRO@jp.fujitsu.com>
+In-Reply-To: <1229593665.7086.1.camel@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Yinghai Lu <yhlu.kernel@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org, heiko.carstens@de.ibm.com
 
+* Martin Schwidefsky <schwidefsky@de.ibm.com> [2008-12-18 10:47:45]:
 
-* KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com> wrote:
+> On Wed, 2008-12-17 at 23:47 +0530, Kamalesh Babulal wrote:
+> > drivers/s390/cio/device.c: In function 'io_subchannel_register':
+> > drivers/s390/cio/device.c:913: error: 'struct device' has no member
+> > named 'knode_parent'
+> > make[2]: *** [drivers/s390/cio/device.o] Error 1
+> > make[1]: *** [drivers/s390/cio] Error 2
+> > make: *** [drivers/s390] Error 2
+> 
+> Should be fixed now by the following patch from Cornelia:
+> 
+> commit efe46b59567ae999ff7d344170d21f093159ad80
+> Author: Cornelia Huck <cornelia.huck@de.ibm.com>
+> Date:   Thu Dec 18 10:26:55 2008 +0100
+> 
+>     [S390] cio: Use device_is_registered().
+> 
+>     Check if a ccw device is registered via device_is_registered()
+>     and not via the old kludge of checking the membership in driver
+>     core internal klists.
+> 
+>     Signed-off-by: Cornelia Huck <cornelia.huck@de.ibm.com>
+>     Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+> 
+> You'll find the fix in the features branch of git390 which will be
+> included in the next linux-next kernel.
 
-> > >> or, following #ifdef ?
-> > >>
-> > >> #if defined(CONFIG_SPARSE_IRQ) || defined(CONFIG_TRACE_IRQFLAGS)
-> > >>
-> > >>  /*
-> > >>  * lockdep: we want to handle all irq_desc locks as a single lock-class:
-> > >>  */
-> > >>  static struct lock_class_key irq_desc_lock_class;
-> > >
-> > > instead of increasing the #ifdef jungle, how about removing some? For
-> > > example is this distinction:
-> > >
-> > >> >  #ifndef CONFIG_SPARSE_IRQ
-> > >
-> > > really needed? We should use symmetric lock class annotations, regardless
-> > > of how irq_desc[] is laid out.
-> > 
-> > it seems make much sense. I'll test your idea tommorow.
-> 
-> Ingo, you are right. I confirmed your idea works well.
-> 
-> 
-> I tested following ten pattern.
-> 
-> o handle.c can compile without any warnings?
-> 
-> SPARSE_IRQ	TRACE_IRQ	LOCKDEP
-> ------------------------------------------
-> n		n		n
-> Y		n		n
-> n		Y		n
-> n		n		Y
-> Y		Y		n
-> N		Y		Y
-> Y		n		Y
-> Y		Y		Y
-> 
-> 
-> o builded kernel works well? (tested on x86_64)
-> 
-> SPARSE_IRQ	TRACE_IRQ	LOCKDEP
-> ------------------------------------------
-> n		n		n
-> Y		Y		Y
-> 
-> 
-> ==
-> Subject: [PATCH] irq: remove unnecessary ifdef
+Hi Martin,
 
-Applied to tip/irq/sparseirq, thanks!
+	Thanks, the patch fixes the build failure.I tested the patch with
+today's next (20081218), which also has the same build failure.
 
-	Ingo
+> 
+> -- 
+> blue skies,
+>   Martin.
+> 
+> "Reality continues to ruin my life." - Calvin.
+> 
+> 
+
+-- 
+Thanks & Regards,
+Kamalesh Babulal,
+Linux Technology Center,
+IBM, ISTL.
