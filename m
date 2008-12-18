@@ -1,50 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the boot-params tree
-Date: Thu, 18 Dec 2008 20:35:07 +1100
-Message-ID: <20081218203507.572c455d.sfr@canb.auug.org.au>
+From: Samuel Ortiz <sameo@openedhand.com>
+Subject: Re: linux-next: Tree for December 15 (mfd)
+Date: Thu, 18 Dec 2008 10:45:57 +0100
+Message-ID: <20081218094556.GA2517@sortiz.org>
+References: <20081216020642.fc1007d9.sfr@canb.auug.org.au> <4946AF6A.8030107@oracle.com> <20081217114300.9476f8da.randy.dunlap@oracle.com>
+Reply-To: Samuel Ortiz <sameo@openedhand.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__18_Dec_2008_20_35_07_+1100_zU3+Sn_XIf2m=Qac"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57185 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751996AbYLRJfQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 18 Dec 2008 04:35:16 -0500
+Received: from 3a.49.1343.static.theplanet.com ([67.19.73.58]:41219 "EHLO
+	pug.o-hand.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751575AbYLRJnd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 18 Dec 2008 04:43:33 -0500
+Content-Disposition: inline
+In-Reply-To: <20081217114300.9476f8da.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Thu__18_Dec_2008_20_35_07_+1100_zU3+Sn_XIf2m=Qac
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Dec 17, 2008 at 11:43:00AM -0800, Randy Dunlap wrote:
+> On Mon, 15 Dec 2008 11:26:34 -0800 Randy Dunlap wrote:
+> 
+> > Lots of mfd build failures like this:
+> > 
+> > 
+> > build-r7123.out:/local/linsrc/linux-next-20081215/drivers/mfd/twl4030-irq.c:183: error: 'irq_desc' undeclared (first use in this function)
+> > build-r7123.out:/local/linsrc/linux-next-20081215/drivers/mfd/twl4030-irq.c:455: error: 'irq_desc' undeclared (first use in this function)
+> > build-r7123.out:/local/linsrc/linux-next-20081215/drivers/mfd/twl4030-irq.c:515: error: 'irq_desc' undeclared (first use in this function)
+> > build-r7123.out:make[3]: *** [drivers/mfd/twl4030-irq.o] Error 1
+> 
+> 
+> This build error still happens in linux-next-20081217.
+> 
+> It only occurs when I2C=y (see drivers/mfd/Kconfig).
+> 
+> Stephen, doing an allyesconfig i386 or x86_64 build will catch this,
+> then you can drop the mfd tree and hopefully prod someone into fixing this...
+Sorry for the delay, I was away from the interweb for the last 2 days.
+I'll look into it.
 
-Hi Rusty,
-
-Today's linux-next merge of the boot-params tree got a conflict in
-arch/sh/boards/mach-microdev/setup.c between commit
-cee3e05ee0c727945280b754b3d4bfe0d7bcb622 ("sh: mach-microdev: Split out
-the fdc37c93xapm initialization code") from the sh tree and commit
-0de5c2d9f02d2018fd671ca1015432dffa5eb338 ("param:
-arch_get_boot_command_line()") from the boot-params tree.
-
-The former removed the code that the latter changed.
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Samuel.
 
---Signature=_Thu__18_Dec_2008_20_35_07_+1100_zU3+Sn_XIf2m=Qac
-Content-Type: application/pgp-signature
+ 
+> ---
+> ~Randy
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklKGUsACgkQjjKRsyhoI8yK9ACeNHc2i1aLEPmjfQqbhivk44vi
-YE0An3uhGP6A51SuZqM+F3CgJAtS3HJg
-=ca8D
------END PGP SIGNATURE-----
-
---Signature=_Thu__18_Dec_2008_20_35_07_+1100_zU3+Sn_XIf2m=Qac--
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
