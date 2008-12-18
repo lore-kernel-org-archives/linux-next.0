@@ -1,53 +1,36 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: [BUILD-FAILURE] next-20081217-s390x-'struct device' has no
-	member named 'knode_parent'
-Date: Thu, 18 Dec 2008 10:47:45 +0100
-Message-ID: <1229593665.7086.1.camel@localhost>
-References: <20081217232536.0b18f4a7.sfr@canb.auug.org.au>
-	 <20081217181745.GA18420@linux.vnet.ibm.com>
-Reply-To: schwidefsky@de.ibm.com
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next:  rr series import failure
+Date: Thu, 18 Dec 2008 11:36:47 +0100
+Message-ID: <20081218103647.GA14300@elte.hu>
+References: <20081218105019.6f564a38.sfr@canb.auug.org.au> <494998ED.6080206@sgi.com> <200812181119.16550.rusty@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate7.de.ibm.com ([195.212.29.156]:47239 "EHLO
-	mtagate7.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751575AbYLRJrs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 18 Dec 2008 04:47:48 -0500
-In-Reply-To: <20081217181745.GA18420@linux.vnet.ibm.com>
+Received: from mx2.mail.elte.hu ([157.181.151.9]:34390 "EHLO mx2.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750776AbYLRKhQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 18 Dec 2008 05:37:16 -0500
+Content-Disposition: inline
+In-Reply-To: <200812181119.16550.rusty@rustcorp.com.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org, heiko.carstens@de.ibm.com
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Mike Travis <travis@sgi.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Greg KH <gregkh@suse.de>
 
-On Wed, 2008-12-17 at 23:47 +0530, Kamalesh Babulal wrote:
-> drivers/s390/cio/device.c: In function 'io_subchannel_register':
-> drivers/s390/cio/device.c:913: error: 'struct device' has no member
-> named 'knode_parent'
-> make[2]: *** [drivers/s390/cio/device.o] Error 1
-> make[1]: *** [drivers/s390/cio] Error 2
-> make: *** [drivers/s390] Error 2
 
-Should be fixed now by the following patch from Cornelia:
+* Rusty Russell <rusty@rustcorp.com.au> wrote:
 
-commit efe46b59567ae999ff7d344170d21f093159ad80
-Author: Cornelia Huck <cornelia.huck@de.ibm.com>
-Date:   Thu Dec 18 10:26:55 2008 +0100
+> On Thursday 18 December 2008 10:57:25 Mike Travis wrote:
+> > > cpumask:add_sysfs_displays_for_configured_and_disabled_cpu_maps.patch
+> > Rusty - do you want to do this in your rr queue?
+> 
+> Once Greg's happy and Ack'ed, and we've run it through normal tests, 
+> I'll put it in the cpumask git tree and Ingo can simply merge it from 
+> there.
+> 
+> Thanks,
+> Rusty.
 
-    [S390] cio: Use device_is_registered().
+perfect, thanks Rusty!
 
-    Check if a ccw device is registered via device_is_registered()
-    and not via the old kludge of checking the membership in driver
-    core internal klists.
-
-    Signed-off-by: Cornelia Huck <cornelia.huck@de.ibm.com>
-    Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
-
-You'll find the fix in the features branch of git390 which will be
-included in the next linux-next kernel.
-
--- 
-blue skies,
-  Martin.
-
-"Reality continues to ruin my life." - Calvin.
+	Ingo
