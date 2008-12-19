@@ -1,47 +1,43 @@
-From: "Jaswinder Singh" <jaswinderlinux@gmail.com>
-Subject: Re: Firmware patches for Network
-Date: Sat, 20 Dec 2008 01:41:36 +0530
-Message-ID: <3f9a31f40812191211x12fc08cateb3502c6765d0c4c@mail.gmail.com>
-References: <3f9a31f40812191131m48802157r596d7773fb435f34@mail.gmail.com>
-	 <1229715971.3097.6.camel@achroite>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: Firmware patches for SCSI
+Date: Fri, 19 Dec 2008 15:29:03 -0500
+Message-ID: <1229718543.18778.4.camel@localhost.localdomain>
+References: <3f9a31f40812191153n636888f4i549409453266d58c@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wa-out-1112.google.com ([209.85.146.176]:13757 "EHLO
-	wa-out-1112.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751201AbYLSULh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Dec 2008 15:11:37 -0500
-In-Reply-To: <1229715971.3097.6.camel@achroite>
-Content-Disposition: inline
+Received: from accolon.hansenpartnership.com ([76.243.235.52]:53560 "EHLO
+	accolon.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750978AbYLSU2z (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 19 Dec 2008 15:28:55 -0500
+In-Reply-To: <3f9a31f40812191153n636888f4i549409453266d58c@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ben Hutchings <bhutchings@solarflare.com>
-Cc: netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, davem@davemloft.net, Jeff Garzik <jeff@garzik.org>, David Woodhouse <dwmw2@infradead.org>, sfr@canb.auug.org.au, linux-next@vger.kernel.org
+To: Jaswinder Singh <jaswinderlinux@gmail.com>
+Cc: linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sfr@canb.auug.org.au, linux-next@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>
 
-Hello Ben,
+On Sat, 2008-12-20 at 01:23 +0530, Jaswinder Singh wrote:
+> Hello all,
+> 
+> These SCSI's firmware patches are floating in linux-next from long time :
+> 
+> 1. qla1280: use request_firmware
+> http://git.kernel.org/?p=linux/kernel/git/sfr/linux-next.git;a=commit;h=7c84df1aec1bbb4e43ac9e2ba65b137042279a8d
+> 2. advansys: use request_firmware
+> http://git.kernel.org/?p=linux/kernel/git/sfr/linux-next.git;a=commit;h=baca2b168d3b7340eac87414c046f7d49de4bf71
+> 3. qlogicpti: use request_firmware
+> http://git.kernel.org/?p=linux/kernel/git/sfr/linux-next.git;a=commit;h=2c68b5b6db13786a425accc8576217b120f885f2
+> 
+> Should I need to resend these patches to merge main-stream.
 
-On Sat, Dec 20, 2008 at 1:16 AM, Ben Hutchings
-<bhutchings@solarflare.com> wrote:
->> 3. git.kernel.org/pub/scm/linux/kernel/git/davem/net-next-2.6.git
->
-> This one.
->
+Um ... depends how they got into linux-next.  The head commit just says
 
-4 out of 10 Networking's firmware patches are already floating in
-linux-next from long time :
+Merge commit 'firmware/master'
 
-1. firmware: convert e100 driver to request_firmware()
-http://git.kernel.org/?p=linux/kernel/git/sfr/linux-next.git;a=commit;h=c98e632b660ef49b67a9591040230b518785e38a
-2. firmware: convert acenic driver to request_firmware()
-http://git.kernel.org/?p=linux/kernel/git/sfr/linux-next.git;a=commit;h=e39c0e190f52331b35931fbe5e34a07114d66171
-3. firmware: convert tg3 driver to request_firmware()
-http://git.kernel.org/?p=linux/kernel/git/sfr/linux-next.git;a=commit;h=aadd3ed38a6745e21dc8d2f388bbba42ead0a085
-4. starfire: use request_firmware()
-http://git.kernel.org/?p=linux/kernel/git/sfr/linux-next.git;a=commit;h=df3eea674103ce451357be8eb873092943ad3551
+Which isn't very descriptive of where it came from.  It looks like
+either a tree that linux-next shouldn't pull (or one the owner forgot to
+push to linus).
 
-Should I need to resend all 10 or remaining 6.
-
-Thank you,
-
-Jaswinder Singh.
+James
