@@ -1,45 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: perfmon3 tree removed
-Date: Fri, 19 Dec 2008 11:20:24 +1100
-Message-ID: <20081219112024.5eb1b517.sfr@canb.auug.org.au>
+From: Yinghai Lu <yinghai@kernel.org>
+Subject: Re: linux-next: Tree for December 18 (irq.h documentation)
+Date: Thu, 18 Dec 2008 16:33:14 -0800
+Message-ID: <494AEBCA.70108@kernel.org>
+References: <20081218230637.c879a046.sfr@canb.auug.org.au> <20081218155709.bf435d8c.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__19_Dec_2008_11_20_24_+1100_CT3MIVsic1eoIxTw"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45699 "EHLO smtps.tip.net.au"
+Received: from hera.kernel.org ([140.211.167.34]:35387 "EHLO hera.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752457AbYLSAUe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 18 Dec 2008 19:20:34 -0500
+	id S1752375AbYLSAeB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 18 Dec 2008 19:34:01 -0500
+In-Reply-To: <20081218155709.bf435d8c.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: stephane eranian <eranian@googlemail.com>
-Cc: linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>
+To: Randy Dunlap <randy.dunlap@oracle.com>, Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Fri__19_Dec_2008_11_20_24_+1100_CT3MIVsic1eoIxTw
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Randy Dunlap wrote:
+> Hi YH,
+> 
+> Whenever you update a struct in a header file that uses kernel-doc,
+> like struct irq_desc in include/linux/irq.h, please also update the
+> corresponding kernel-doc notation for the new struct members, so
+> that kernel-doc warnings are not caused:
+> 
+> from linux-next-20081218:
+> 
+> Warning(linux-next-20081218//include/linux/irq.h:192): No description found for parameter 'timer_rand_state'
+> Warning(linux-next-20081218//include/linux/irq.h:192): No description found for parameter 'kstat_irqs'
+> Warning(linux-next-20081218//include/linux/irq.h:192): No description found for parameter 'irq_2_iommu'
+> 
+> 
+please check
 
-Hi Stephane,
+[PATCH] sparseirq: add kernel-doc notation for new member in irq_desc
 
-Due to ongoing discussions and development, I have removed perfmon3 from
-linux-next.  This should be revisited when things settle back down again.=20
+Signed-off-by: Yinghai Lu <yinghai@kernel.org>
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__19_Dec_2008_11_20_24_+1100_CT3MIVsic1eoIxTw
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklK6MgACgkQjjKRsyhoI8yBvQCfc1iQ6WCalXBi3ClrsE8kOjKD
-I3EAn1nuIqJddT83P9xM+nVWw8znxnEj
-=SAhN
------END PGP SIGNATURE-----
-
---Signature=_Fri__19_Dec_2008_11_20_24_+1100_CT3MIVsic1eoIxTw--
+diff --git a/include/linux/irq.h b/include/linux/irq.h
+index 1beb63a..4675682 100644
+--- a/include/linux/irq.h
++++ b/include/linux/irq.h
+@@ -135,6 +135,9 @@ struct irq_2_iommu;
+ /**
+  * struct irq_desc - interrupt descriptor
+  * @irq:		interrupt number for this descriptor
++ * @timer_rand_state	pointer to timer rand state struct
++ * @kstat_irqs		irq stats per cpu
++ * @irq_2_iommu		iommu with this irq
+  * @handle_irq:		highlevel irq-events handler [if NULL, __do_IRQ()]
+  * @chip:		low level interrupt hardware access
+  * @msi_desc:		MSI descriptor
