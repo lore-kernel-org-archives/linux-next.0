@@ -1,30 +1,46 @@
 From: "Jaswinder Singh" <jaswinderlinux@gmail.com>
-Subject: Firmware patches for DVB
-Date: Sat, 20 Dec 2008 01:33:44 +0530
-Message-ID: <3f9a31f40812191203v22401bb5j7a8809a5125de3ce__13188.5945717388$1229717236$gmane$org@mail.gmail.com>
+Subject: Re: Firmware patches for Network
+Date: Sat, 20 Dec 2008 01:41:36 +0530
+Message-ID: <3f9a31f40812191211x12fc08cateb3502c6765d0c4c@mail.gmail.com>
+References: <3f9a31f40812191131m48802157r596d7773fb435f34@mail.gmail.com>
+	 <1229715971.3097.6.camel@achroite>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wf-out-1314.google.com ([209.85.200.175]:1087 "EHLO
-	wf-out-1314.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751555AbYLSUDp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Dec 2008 15:03:45 -0500
+Received: from wa-out-1112.google.com ([209.85.146.176]:13757 "EHLO
+	wa-out-1112.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751201AbYLSULh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Dec 2008 15:11:37 -0500
+In-Reply-To: <1229715971.3097.6.camel@achroite>
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: mchehab@infradead.org, v4l-dvb-maintainer@linuxtv.org, video4linux-list@redhat.com, David Woodhouse <dwmw2@infradead.org>, Jaswinder Singh <jaswinder@infradead.org>LKML <linux->
+To: Ben Hutchings <bhutchings@solarflare.com>
+Cc: netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, davem@davemloft.net, Jeff Garzik <jeff@garzik.org>, David Woodhouse <dwmw2@infradead.org>, sfr@canb.auug.org.au, linux-next@vger.kernel.org
 
-Hello all,
+Hello Ben,
 
-These DVB's firmware patches are floating in linux-next from long time :
+On Sat, Dec 20, 2008 at 1:16 AM, Ben Hutchings
+<bhutchings@solarflare.com> wrote:
+>> 3. git.kernel.org/pub/scm/linux/kernel/git/davem/net-next-2.6.git
+>
+> This one.
+>
 
-1. firmware: convert av7110 driver to request_firmware()
-http://git.kernel.org/?p=linux/kernel/git/sfr/linux-next.git;a=commit;h=402669d75012c5f12c27b799145c10db79715f51
-2. Remove fdump tool for av7110 firmware
-http://git.kernel.org/?p=linux/kernel/git/sfr/linux-next.git;a=commit;h=43b0a12fa4ac50f6875ea5a238f9e9e26f3fe390
+4 out of 10 Networking's firmware patches are already floating in
+linux-next from long time :
 
-Should I need to resend these patches to merge main-stream.
+1. firmware: convert e100 driver to request_firmware()
+http://git.kernel.org/?p=linux/kernel/git/sfr/linux-next.git;a=commit;h=c98e632b660ef49b67a9591040230b518785e38a
+2. firmware: convert acenic driver to request_firmware()
+http://git.kernel.org/?p=linux/kernel/git/sfr/linux-next.git;a=commit;h=e39c0e190f52331b35931fbe5e34a07114d66171
+3. firmware: convert tg3 driver to request_firmware()
+http://git.kernel.org/?p=linux/kernel/git/sfr/linux-next.git;a=commit;h=aadd3ed38a6745e21dc8d2f388bbba42ead0a085
+4. starfire: use request_firmware()
+http://git.kernel.org/?p=linux/kernel/git/sfr/linux-next.git;a=commit;h=df3eea674103ce451357be8eb873092943ad3551
+
+Should I need to resend all 10 or remaining 6.
 
 Thank you,
 
