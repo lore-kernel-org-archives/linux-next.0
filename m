@@ -1,53 +1,83 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: Tree for December 19 (new
-	CONFIG_NUMA_MIGRATE_IRQ_DESC option)
-Date: Fri, 19 Dec 2008 22:42:21 +0100
-Message-ID: <20081219214221.GE2351@elte.hu>
-References: <20081219235757.6b94d9ef.sfr@canb.auug.org.au> <200812192201.28665.bzolnier@gmail.com> <494C0D28.6040002@kernel.org>
+From: Yinghai Lu <yinghai@kernel.org>
+Subject: [PATCH] sparseirq: fix numa_migrate_irq_desc dependency and comments
+Date: Fri, 19 Dec 2008 13:48:34 -0800
+Message-ID: <494C16B2.9000005@kernel.org>
+References: <20081219235757.6b94d9ef.sfr@canb.auug.org.au> <200812192201.28665.bzolnier@gmail.com> <494C0D28.6040002@kernel.org> <20081219214221.GE2351@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:46812 "EHLO mx3.mail.elte.hu"
+Received: from hera.kernel.org ([140.211.167.34]:54696 "EHLO hera.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751167AbYLSVmh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 19 Dec 2008 16:42:37 -0500
-Content-Disposition: inline
-In-Reply-To: <494C0D28.6040002@kernel.org>
+	id S1753263AbYLSVtI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 19 Dec 2008 16:49:08 -0500
+In-Reply-To: <20081219214221.GE2351@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Yinghai Lu <yinghai@kernel.org>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
 
 
-* Yinghai Lu <yinghai@kernel.org> wrote:
 
-> > +++ b/kernel/irq/numa_migrate.c
-> > @@ -0,0 +1,127 @@
-> > +/*
-> > + * linux/kernel/irq/handle.c
-> > + *
-> > + * Copyright (C) 1992, 1998-2006 Linus Torvalds, Ingo Molnar
-> > + * Copyright (C) 2005-2006, Thomas Gleixner, Russell King
-> > + *
-> > + * This file contains the core interrupt handling code.
-> > + *
-> > + * Detailed information is available in Documentation/DocBook/genericirq
-> > + *
-> > + */
-> > 
-> > hmmm? ;-)
-> 
-> seperated from irq/handle.c
-> 
-> oh, will remove those lines.
+Impact: clean up
 
-Yeah, replace them with something like:
+Bartlomiej Zolnierkiewicz <bzolnier@gmail.com> pointed out config and comments
+are not right.
 
-/*
- * NUMA irq-desc migration code
- *
- * Migrate IRQ data structures (irq_desc, chip_data, etc.) over to
- * the new "home node" of the IRQ.
- */
+update it depend to NUMA, and fix some comments
 
-	Ingo
+Signed-off-by: Yinghai Lu <yinghai@kernel.org>
+
+---
+ arch/x86/Kconfig          |    2 +-
+ arch/x86/kernel/io_apic.c |    2 +-
+ kernel/irq/numa_migrate.c |   11 +++--------
+ 3 files changed, 5 insertions(+), 10 deletions(-)
+
+Index: linux-2.6/arch/x86/Kconfig
+===================================================================
+--- linux-2.6.orig/arch/x86/Kconfig
++++ linux-2.6/arch/x86/Kconfig
+@@ -259,7 +259,7 @@ config SPARSE_IRQ
+ 
+ config NUMA_MIGRATE_IRQ_DESC
+ 	bool "Move irq desc when changing irq smp_affinity"
+-	depends on SPARSE_IRQ && SMP
++	depends on SPARSE_IRQ && NUMA
+ 	default n
+ 	help
+ 	  This enables moving irq_desc to cpu/node that irq will use handled.
+Index: linux-2.6/arch/x86/kernel/io_apic.c
+===================================================================
+--- linux-2.6.orig/arch/x86/kernel/io_apic.c
++++ linux-2.6/arch/x86/kernel/io_apic.c
+@@ -2519,7 +2519,7 @@ static void irq_complete_move(struct irq
+ 		if (likely(!cfg->move_desc_pending))
+ 			return;
+ 
+-		/* domain is not change, but affinity is changed */
++		/* domain has not changed, but affinity did */
+ 		me = smp_processor_id();
+ 		if (cpu_isset(me, desc->affinity)) {
+ 			*descp = desc = move_irq_desc(desc, me);
+Index: linux-2.6/kernel/irq/numa_migrate.c
+===================================================================
+--- linux-2.6.orig/kernel/irq/numa_migrate.c
++++ linux-2.6/kernel/irq/numa_migrate.c
+@@ -1,13 +1,8 @@
+ /*
+- * linux/kernel/irq/handle.c
+- *
+- * Copyright (C) 1992, 1998-2006 Linus Torvalds, Ingo Molnar
+- * Copyright (C) 2005-2006, Thomas Gleixner, Russell King
+- *
+- * This file contains the core interrupt handling code.
+- *
+- * Detailed information is available in Documentation/DocBook/genericirq
++ * NUMA irq-desc migration code
+  *
++ * Migrate IRQ data structures (irq_desc, chip_data, etc.) over to
++ * the new "home node" of the IRQ.
+  */
+ 
+ #include <linux/irq.h>
