@@ -1,28 +1,30 @@
-From: Yinghai Lu <yinghai@kernel.org>
-Subject: Re: linux-next: Tree for December 19 (new CONFIG_NUMA_MIGRATE_IRQ_DESC
- option)
-Date: Fri, 19 Dec 2008 13:07:52 -0800
-Message-ID: <494C0D28.6040002@kernel.org>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: Tree for December 19 (new
+	CONFIG_NUMA_MIGRATE_IRQ_DESC option)
+Date: Fri, 19 Dec 2008 22:40:31 +0100
+Message-ID: <20081219214031.GD2351@elte.hu>
 References: <20081219235757.6b94d9ef.sfr@canb.auug.org.au> <200812192201.28665.bzolnier@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:41800 "EHLO hera.kernel.org"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:46556 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751144AbYLSVIT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 19 Dec 2008 16:08:19 -0500
+	id S1754846AbYLSVkw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 19 Dec 2008 16:40:52 -0500
+Content-Disposition: inline
 In-Reply-To: <200812192201.28665.bzolnier@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Yinghai Lu <yinghai@kernel.org>
 
-Bartlomiej Zolnierkiewicz wrote:
+
+* Bartlomiej Zolnierkiewicz <bzolnier@gmail.com> wrote:
+
 > On Friday 19 December 2008, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20081218:
+> > Hi all,
+> > 
+> > Changes since 20081218:
 >  
 > Just few very minor issues w.r.t. "x86, sparseirq: move irq_desc according
 > to smp_affinity, v7" (commit 48a1b10aff588833b73994704c47bbd0deb73e9c):
@@ -36,14 +38,12 @@ Bartlomiej Zolnierkiewicz wrote:
 > +
 > +	  If you don't know what to do here, say N.
 > 
-> This is a bit confusing (at least I was confused since I don't have NUMA
-> set in my config) -- either it should depend on NUMA or the config option
-> name should be changed.
+> This is a bit confusing (at least I was confused since I don't have NUMA 
+> set in my config) -- either it should depend on NUMA or the config 
+> option name should be changed.
 
-should be changed to 
-depends on SPARSE_IRQ && NUMA
+yeah, should be "depends on NUMA".
 
-> 
 > @@ -2346,14 +2466,34 @@ static void irq_complete_move(struct irq_desc **descp)
 >  	struct irq_cfg *cfg = desc->chip_data;
 >  	unsigned vector, me;
@@ -57,13 +57,13 @@ depends on SPARSE_IRQ && NUMA
 > +		/* domain is not change, but affinity is changed */
 > 
 > this comment sounds weird
-
-for logical flat mode, domain will be online_cpu_mask.
-so need to move irq_desc when smp_affinity is changed.
-
 > 
 > perhaps: /* only affinity is changed */ would be better?
-> 
+
+perhaps:
+
+	/* domain has not changed, but affinity did */
+
 > +++ b/kernel/irq/numa_migrate.c
 > @@ -0,0 +1,127 @@
 > +/*
@@ -80,8 +80,6 @@ so need to move irq_desc when smp_affinity is changed.
 > 
 > hmmm? ;-)
 
-seperated from irq/handle.c
+indeed, needs fixing too :)
 
-oh, will remove those lines.
-
-YH
+	Ingo
