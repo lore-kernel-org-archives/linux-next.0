@@ -1,38 +1,48 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for December 18 (irq.h documentation)
-Date: Thu, 18 Dec 2008 15:57:09 -0800
-Message-ID: <20081218155709.bf435d8c.randy.dunlap@oracle.com>
-References: <20081218230637.c879a046.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Pull request for FS-Cache, including NFS patches
+Date: Fri, 19 Dec 2008 11:05:39 +1100
+Message-ID: <20081219110539.7e7e230c.sfr@canb.auug.org.au>
+References: <8930.1229560221@redhat.com>
+	<20081218142420.GA16728@infradead.org>
+	<20081218123601.11810b7f.akpm@linux-foundation.org>
+	<200812190007.34581.bernd.schubert@fastmail.fm>
+	<20081218152616.a24c013f.akpm@linux-foundation.org>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__19_Dec_2008_11_05_39_+1100_P_kj1envGlQP_0Q."
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20081218152616.a24c013f.akpm@linux-foundation.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: dhowells@redhat.com
+Cc: Andrew Morton <akpm@linux-foundation.org>, Bernd Schubert <bernd.schubert@fastmail.fm>, nfsv4@linux-nfs.org, hch@infradead.org, linux-kernel@vger.kernel.org, steved@redhat.com, linux-fsdevel@vger.kernel.org, rwheeler@redhat.com, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Fri__19_Dec_2008_11_05_39_+1100_P_kj1envGlQP_0Q.
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet12.oracle.com ([148.87.113.124]:56386 "EHLO
-	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750894AbYLRX5i (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 18 Dec 2008 18:57:38 -0500
-In-Reply-To: <20081218230637.c879a046.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Yinghai Lu <yinghai@kernel.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi YH,
+Hi David,
 
-Whenever you update a struct in a header file that uses kernel-doc,
-like struct irq_desc in include/linux/irq.h, please also update the
-corresponding kernel-doc notation for the new struct members, so
-that kernel-doc warnings are not caused:
+Given the ongoing discussions around FS-Cache, I have removed it from
+linux-next.  Please ask me to include it again (if sensible) once some
+decision has been reached about its future.
 
-from linux-next-20081218:
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Warning(linux-next-20081218//include/linux/irq.h:192): No description found for parameter 'timer_rand_state'
-Warning(linux-next-20081218//include/linux/irq.h:192): No description found for parameter 'kstat_irqs'
-Warning(linux-next-20081218//include/linux/irq.h:192): No description found for parameter 'irq_2_iommu'
+--Signature=_Fri__19_Dec_2008_11_05_39_+1100_P_kj1envGlQP_0Q.
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-Please add kernel-doc notation for those missing struct members.
+iEYEARECAAYFAklK5VMACgkQjjKRsyhoI8xJzQCfb1a9LSsjK5b8VLmIaRS84Kx4
+/uwAn3jU/qcYkee0c+nre5UpCkBs5BgK
+=ccN7
+-----END PGP SIGNATURE-----
 
-Thanks,
----
-~Randy
+--Signature=_Fri__19_Dec_2008_11_05_39_+1100_P_kj1envGlQP_0Q.--
