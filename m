@@ -1,43 +1,51 @@
-From: Kevin Winchester <kjwinchester@gmail.com>
-Subject: Re: linux-next: Tree for December 17 (Radeon DRM BUG)
-Date: Fri, 19 Dec 2008 21:58:54 -0400
-Message-ID: <494C515E.9040403@gmail.com>
-References: <20081217232536.0b18f4a7.sfr@canb.auug.org.au>	 <494995D7.6090009@gmail.com> <21d7e9970812172247t3d67e6f0waffa99587e2e024b@mail.gmail.com>
+From: Matthew Wilcox <matthew@wil.cx>
+Subject: Re: [PATCH] advansys: use request_firmware
+Date: Sat, 20 Dec 2008 08:32:58 -0700
+Message-ID: <20081220153258.GU19967@parisc-linux.org>
+References: <1229786727.15438.5.camel@jaswinder.satnam>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gx0-f13.google.com ([209.85.217.13]:43009 "EHLO
-	mail-gx0-f13.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752581AbYLTB66 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Dec 2008 20:58:58 -0500
-In-Reply-To: <21d7e9970812172247t3d67e6f0waffa99587e2e024b@mail.gmail.com>
+Received: from palinux.external.hp.com ([192.25.206.14]:52669 "EHLO
+	mail.parisc-linux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752016AbYLTPdA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 20 Dec 2008 10:33:00 -0500
+Content-Disposition: inline
+In-Reply-To: <1229786727.15438.5.camel@jaswinder.satnam>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Dave Airlie <airlied@redhat.com>
+To: Jaswinder Singh <jaswinder@infradead.org>
+Cc: James.Bottomley@hansenpartnership.com, linux-scsi@vger.kernel.org, willy@linux.intel.com, LKML <linux-kernel@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, sfr@canb.auug.org.au, linux-next@vger.kernel.org
 
-Dave Airlie wrote:
-> On Thu, Dec 18, 2008 at 10:14 AM, Kevin Winchester
-> <kjwinchester@gmail.com> wrote:
->> Stephen Rothwell wrote:
->>> Hi all,
->>>
->>>
->> I get the following BUG in the radeon drm code with today's linux-next when
->> I run "startx".  I have not built or tested linux-next in a while, but the
->> problem definitely does not occur in mainline.
-> 
-> Do you have another X server running or just console?
-> 
-> can you get a full dmesg with
-> 
-> echo 1 > /sys/module/drm/parameters/debug
-> 
+On Sat, Dec 20, 2008 at 08:55:27PM +0530, Jaswinder Singh wrote:
+> diff --git a/firmware/WHENCE b/firmware/WHENCE
+> index 299301f..27105bc 100644
+> --- a/firmware/WHENCE
+> +++ b/firmware/WHENCE
+> @@ -363,3 +363,16 @@ Licence: Allegedly GPLv2+, but no source visible. Marked:
+>    Copyright (C) 2001 Qlogic Corporation (www.qlogic.com)
+>  
+>  --------------------------------------------------------------------------
+> +
+> +Driver: SCSI_ADVANSYS - AdvanSys SCSI
+> +
+> +File: advansys/mcode.bin
+> +File: advansys/3550.bin
+> +File: advansys/38C0800.bin
+> +File: advansys/38C1600.bin
+> +
+> +Licence: Allegedly GPLv2+, but no source visible.
+> +
+> +Found in hex form in kernel source.
 
-I just tried today's next (20081219) and the problem seems to be fixed.
+I thought we discussed this before.  If you take it from an earlier
+version of the driver, you can get it under a disjunction of BSD and
+GPL, and take the BSD option.
 
-Thank you,
+As far as I know, no source code has been published.
 
 -- 
-Kevin Winchester
+Matthew Wilcox				Intel Open Source Technology Centre
+"Bill, look, we understand that you're interested in selling us this
+operating system, but compare it to ours.  We can't possibly take such
+a retrograde step."
