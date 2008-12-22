@@ -1,45 +1,73 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: no linux-next for Dec 22
-Date: Tue, 23 Dec 2008 01:32:32 +1100
-Message-ID: <20081223013232.4a9e318f.sfr@canb.auug.org.au>
+From: Mark McLoughlin <markmc@redhat.com>
+Subject: Re: linux-next: driver-core tree build failure
+Date: Mon, 22 Dec 2008 14:50:46 +0000
+Message-ID: <1229957446.19474.19.camel@localhost.localdomain>
+References: <20081222235936.5971ad15.sfr@canb.auug.org.au>
+Reply-To: Mark McLoughlin <markmc@redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__23_Dec_2008_01_32_32_+1100_+cHRGwPcdmGBNG6g"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57058 "EHLO smtps.tip.net.au"
+Received: from mx2.redhat.com ([66.187.237.31]:33124 "EHLO mx2.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754198AbYLVOcj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 22 Dec 2008 09:32:39 -0500
+	id S1754588AbYLVOuy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Dec 2008 09:50:54 -0500
+In-Reply-To: <20081222235936.5971ad15.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org
 
---Signature=_Tue__23_Dec_2008_01_32_32_+1100_+cHRGwPcdmGBNG6g
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2008-12-22 at 23:59 +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next build (powerpc allnoconfig) failed like this:
+> 
+> drivers/base/core.c: In function '__root_device_register':
+> drivers/base/core.c:1277: error: dereferencing pointer to incomplete type
+> 
+> Caused by bf86dbd2451d1012c2c968a960470e485b869f5b ("driver core: add
+> root_device_register()").  This needs to cope with !CONFIG_MODULES (where
+> struct module is not defined).
 
-Hi all,
+Ouch, my bad.
 
-There will be no release for Dec 22.  Too much has gone badly.  Hopefully
-tomorrow with some of today's reported problems fixed, it will go better.
+> I applied the following patch but only for today because it is too hard
+> to revert the above patch ...
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 22 Dec 2008 23:50:56 +1100
+> Subject: [PATCH] driver core: fix root_device_register for not CONFIG_MODULES
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/base/core.c |    2 ++
+>  1 files changed, 2 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index 6fbdd8b..aa93980 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -1273,6 +1273,7 @@ struct device *__root_device_register(const char *name, struct module *owner)
+>  		return ERR_PTR(err);
+>  	}
+>  
+> +#ifdef CONFIG_MODULE
+>  	if (owner) {
+>  		struct module_kobject *mk = &owner->mkobj;
+>  
+> @@ -1283,6 +1284,7 @@ struct device *__root_device_register(const char *name, struct module *owner)
+>  		}
+>  		root->owner = owner;
+>  	}
+> +#endif
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Yep, looks correct to me ...
 
---Signature=_Tue__23_Dec_2008_01_32_32_+1100_+cHRGwPcdmGBNG6g
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklPpQAACgkQjjKRsyhoI8yPeQCfcLCFx6JgaIuFP9jZ4ZVMJL+w
-ujYAoI/XsoXN3n76usXsh4U/T9fMnpSj
-=CQ+m
------END PGP SIGNATURE-----
-
---Signature=_Tue__23_Dec_2008_01_32_32_+1100_+cHRGwPcdmGBNG6g--
+Thanks,
+Mark.
