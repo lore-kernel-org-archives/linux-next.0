@@ -1,67 +1,77 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Firmware patches for SCSI
-Date: Tue, 23 Dec 2008 02:28:22 +1100
-Message-ID: <20081223022822.0dd8aa66.sfr@canb.auug.org.au>
-References: <3f9a31f40812191153n636888f4i549409453266d58c@mail.gmail.com>
-	<1229718543.18778.4.camel@localhost.localdomain>
-	<3f9a31f40812191241q40dafdb0lfd2f4487f2870e2@mail.gmail.com>
-	<1229720031.18778.8.camel@localhost.localdomain>
-	<20081222171904.b588da94.sfr@canb.auug.org.au>
-	<494F4656.6010109@panasas.com>
-	<1229958063.3345.3.camel@localhost.localdomain>
+From: Inaky Perez-Gonzalez <inaky@linux.intel.com>
+Subject: Re: linux-next: usb tree build failure
+Date: Mon, 22 Dec 2008 09:26:43 -0800
+Message-ID: <200812220926.43784.inaky@linux.intel.com>
+References: <20081222113335.667c2d01.sfr@canb.auug.org.au> <20081222134221.6961bcf6.sfr@canb.auug.org.au> <20081222064542.GA24252@uranus.ravnborg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__23_Dec_2008_02_28_22_+1100_SUCfyRkGPaXS.Auq"
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <1229958063.3345.3.camel@localhost.localdomain>
-Sender: linux-scsi-owner@vger.kernel.org
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Boaz Harrosh <bharrosh@panasas.com>, Jaswinder Singh <jaswinderlinux@gmail.com>, linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Tue__23_Dec_2008_02_28_22_+1100_SUCfyRkGPaXS.Auq
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga10.intel.com ([192.55.52.92]:42143 "EHLO
+	fmsmga102.fm.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751816AbYLVR2O (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Dec 2008 12:28:14 -0500
+In-Reply-To: <20081222064542.GA24252@uranus.ravnborg.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org
 
-On Mon, 22 Dec 2008 09:01:03 -0600 James Bottomley <James.Bottomley@HansenP=
-artnership.com> wrote:
+On Sunday 21 December 2008, Sam Ravnborg wrote:
+> On Mon, Dec 22, 2008 at 01:42:21PM +1100, Stephen Rothwell wrote:
+> > (Just cc'ing Sam)
+> >
+> > On Sun, 21 Dec 2008 17:31:10 -0800 Greg KH <greg@kroah.com> wrote:
+> > > On Mon, Dec 22, 2008 at 11:33:35AM +1100, Stephen Rothwell wrote:
+> > > > Hi Greg,
+> > > >
+> > > > Today's linux-next build (x86_64 allmodconfig) failed like this:
+> > > >
+> > > > x86_64-linux-ld: drivers/net/wimax/built-in.o: No such file: No such
+> > > > file or directory
+> > > >
+> > > > I reverted commit 66aa675719ab82a03a66b75210fd40be6541f8fb ("wimax:
+> > > > Makefile, Kconfig and docbook linkage for the stack") just to make
+> > > > the build work.
+> > >
+> > > Inaky, any ideas?  This really looks like a build system error that I
+> > > ran into with the staging tree in the past.  I had to add a "dummy"
+> > > file to the empty directory to get it to build properly.
+> > >
+> > > I tried to duplicate the problem with a sample patch, but never could
+> > > :(
 >
-> On Mon, 2008-12-22 at 09:48 +0200, Boaz Harrosh wrote:
-> >=20
-> > I think what James meant is to rebase over linux-next when cutting the
-> > patches in order to send them to the different maintainers over email.
-> > In that case linux-next is perfect because you are sure none of the
-> > patches will conflict with any maintainer and you do that all in one
-> > place. Since you are not merging then linux-next volatility does not
-> > matter.
+> Incidentally I sent some review comments to said patch yesterday
+> but missed this one.
+>
+> We have:
+> diff --git a/drivers/net/wimax/Makefile b/drivers/net/wimax/Makefile
+> new file mode 100644
+> index 0000000..bda9430
+> --- /dev/null
+> +++ b/drivers/net/wimax/Makefile
+> @@ -0,0 +1,2 @@
+> +
+> +obj-$(CONFIG_WIMAX_I2400M)	+= i2400m/
+>
+>
+>
+> But the problem here is that because we do not even pretend to
+> build some files in this dir thus kbuild does not create build-in.o
+>
+> The fix is a bit ugly but simple. Add a dummy statement to
+> the drivers/net/wimax/Makefile like this:
+>
+> # force kbuild to create built-in.o
+> obj- := dummy.o
 
-Unless there are conflict resolutions in the linux-next tree (and there
-are a few) that involve the files in the generated patch.  In that case
-the patch may not apply cleanly to any of the individual trees.
+ops -- ok, I will. I guess I have to add this in all the similar ones, right?
 
-> The point is that it's hard to work out where all the maintainer trees
+Greg, do you want a new patch series or just another patch on top?
 
-Hopefully you can glean that information from the MAINTAINERS file or the
-Trees file in any linux-next tree (available via git-web if not from the
-tree itself).
 
-Just pointing out the possible problems ...
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__23_Dec_2008_02_28_22_+1100_SUCfyRkGPaXS.Auq
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklPshYACgkQjjKRsyhoI8z39wCeNBNhgeK3yjr5ZqRdzwOXUUpB
-PzYAn23j+Hn2gVj1lJ5ETk9facpBlsRQ
-=HUDa
------END PGP SIGNATURE-----
-
---Signature=_Tue__23_Dec_2008_02_28_22_+1100_SUCfyRkGPaXS.Auq--
+-- 
+Inaky
