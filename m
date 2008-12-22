@@ -1,67 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: kvm tree build failure
-Date: Tue, 23 Dec 2008 00:25:14 +1100
-Message-ID: <20081223002514.6fbcfe4f.sfr@canb.auug.org.au>
+Subject: linux-next: scsi-post-merge tree build failure
+Date: Tue, 23 Dec 2008 01:25:45 +1100
+Message-ID: <20081223012545.5b1e7f5e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__23_Dec_2008_00_25_14_+1100_KEhqiEWfdeX6cT7N"
+ boundary="Signature=_Tue__23_Dec_2008_01_25_45_+1100_C4uTIam8W6Qi0gB4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53285 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59245 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754181AbYLVNZq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 22 Dec 2008 08:25:46 -0500
+	id S1754198AbYLVOZy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Dec 2008 09:25:54 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@qumranet.com>
-Cc: linux-next@vger.kernel.org, Jan Kiszka <jan.kiszka@siemens.com>, Hollis Blanchard <hollisb@us.ibm.com>
+To: Paul Mackerras <paulus@samba.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@ozlabs.org
+Cc: linux-next@vger.kernel.org, Kumar Gala <galak@kernel.crashing.org>
 
---Signature=_Tue__23_Dec_2008_00_25_14_+1100_KEhqiEWfdeX6cT7N
+--Signature=_Tue__23_Dec_2008_01_25_45_+1100_C4uTIam8W6Qi0gB4
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Avi,
+Hi Paul, Ben,
 
 Today's linux-next build (powerpc ppc44x_config) failed like this:
 
-arch/powerpc/kvm/44x.c: In function 'kvmppc_core_load_guest_debugstate':
-arch/powerpc/kvm/44x.c:58: warning: initialization from incompatible pointe=
-r type
-arch/powerpc/kvm/44x.c:75: error: 'struct kvm_guest_debug' has no member na=
-med 'bp'
-arch/powerpc/kvm/44x.c:76: error: 'struct kvm_guest_debug' has no member na=
-med 'bp'
-arch/powerpc/kvm/44x.c:79: error: 'struct kvm_guest_debug' has no member na=
-med 'bp'
-arch/powerpc/kvm/44x.c:80: error: 'struct kvm_guest_debug' has no member na=
-med 'bp'
-arch/powerpc/kvm/44x.c:83: error: 'struct kvm_guest_debug' has no member na=
-med 'bp'
-arch/powerpc/kvm/44x.c:84: error: 'struct kvm_guest_debug' has no member na=
-med 'bp'
-arch/powerpc/kvm/44x.c:87: error: 'struct kvm_guest_debug' has no member na=
-med 'bp'
-arch/powerpc/kvm/44x.c:88: error: 'struct kvm_guest_debug' has no member na=
-med 'bp'
+arch/powerpc/kvm/powerpc.c: In function 'kvm_arch_vcpu_put':
+arch/powerpc/kvm/powerpc.c:333: error: implicit declaration of function '_t=
+lbil_all'
 
-Probably caused by commit 6968f31a2163f8fcf26ea8775c44d7e5be54d622 ("KVM:
-Remove old kvm_guest_debug structs") so I have reverted the kvm tree for
-today.
+Probably caused by commit 2a4aca1144394653269720ffbb5a325a77abd5fa
+("powerpc/mm: Split low level tlb invalidate for nohash processors").
+Reverting just that commit was too difficult, so I have reverted the
+powerpc tree for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__23_Dec_2008_00_25_14_+1100_KEhqiEWfdeX6cT7N
+--Signature=_Tue__23_Dec_2008_01_25_45_+1100_C4uTIam8W6Qi0gB4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAklPlTsACgkQjjKRsyhoI8zVAACdFvIa33HbGv1gtC3pimFSwQ77
-nhkAoIY7HlGxC5ZCLgNyDAzfNV/ySYUb
-=JMoZ
+iEYEARECAAYFAklPo2kACgkQjjKRsyhoI8ziswCdGd83tTUePmb/VttFAMm7qbk9
+raMAoKZDYnH54V5Dq3g2T1w5LaqJK6Yv
+=EYk9
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__23_Dec_2008_00_25_14_+1100_KEhqiEWfdeX6cT7N--
+--Signature=_Tue__23_Dec_2008_01_25_45_+1100_C4uTIam8W6Qi0gB4--
