@@ -1,72 +1,42 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: Tree for December 18 (patch: kernel-doc notation)
-Date: Mon, 22 Dec 2008 14:49:45 -0800
-Message-ID: <20081222144945.8ef2748e.akpm@linux-foundation.org>
-References: <20081218230637.c879a046.sfr@canb.auug.org.au>
-	<20081218161437.fe2d2675.randy.dunlap@oracle.com>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: [patch] powerpc: change u64/s64 to a long long integer type
+Date: Tue, 23 Dec 2008 00:00:35 +0100
+Message-ID: <20081222230035.GB4074@uranus.ravnborg.org>
+References: <20081222152247.b934ed5b.sfr@canb.auug.org.au> <b040c32a0812212249p45aba306tbb68a960b79cd0ee@mail.gmail.com> <20081222070426.GD29160@elte.hu> <20081222181932.5dd9514e.sfr@canb.auug.org.au> <20081222080341.GA18897@elte.hu> <20081222144319.1bfc0061.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:56249 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754570AbYLVWuE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 22 Dec 2008 17:50:04 -0500
-In-Reply-To: <20081218161437.fe2d2675.randy.dunlap@oracle.com>
+Received: from pfepa.post.tele.dk ([195.41.46.235]:40882 "EHLO
+	pfepa.post.tele.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754936AbYLVW7H (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Dec 2008 17:59:07 -0500
+Content-Disposition: inline
+In-Reply-To: <20081222144319.1bfc0061.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: sfr@canb.auug.org.au, david@fromorbit.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ingo Molnar <mingo@elte.hu>, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, kenchen@google.com, paulus@samba.org, tglx@linutronix.de, hpa@zytor.com, linux-next@vger.kernel.org, David Miller <davem@davemloft.net>
 
-On Thu, 18 Dec 2008 16:14:37 -0800
-Randy Dunlap <randy.dunlap@oracle.com> wrote:
+On Mon, Dec 22, 2008 at 02:43:19PM -0800, Andrew Morton wrote:
+> On Mon, 22 Dec 2008 09:03:41 +0100
+> Ingo Molnar <mingo@elte.hu> wrote:
+> 
+> > Subject: powerpc: change u64/s64 to a long long integer type
+> 
+> <applause>
+> 
+> There are lots of other architctures that need doing though.
 
-> fs/inode.c and mm/filemap.c need kernel-doc fixes.
-> 
-> What tree were these merged into for linux-next?
+I have missed the introduction.
+Can you explain why?
 
-I use git-blame.
+I have done a bit of sparc hacking lately and was wondering if
+sparc needs something similar.
 
-> How do I get these doc fixes merged?  (2 patches below)
-> 
-> ---
-> 
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Fix fs/inode.c kernel-doc function parameters:
-> 
-> Warning(linux-next-20081218//fs/inode.c:120): No description found for parameter 'sb'
-> Warning(linux-next-20081218//fs/inode.c:120): No description found for parameter 'inode'
-> Warning(linux-next-20081218//fs/inode.c:588): No description found for parameter 'sb'
-> Warning(linux-next-20081218//fs/inode.c:588): No description found for parameter 'inode'
-> 
+cd arch/sparc
+git grep u64 | grep -v __u64 | wc -l
+448
 
->From the XFS tree:
+[On the unified tree]
 
-commit 2cb1599f9b2ecdd7a9e59feeee647eb258966839
-Author:     David Chinner <david@fromorbit.com>
-AuthorDate: Thu Oct 30 17:32:23 2008 +1100
-Commit:     Lachlan McIlroy <lachlan@redback.melbourne.sgi.com>
-CommitDate: Thu Oct 30 17:32:23 2008 +1100
-
-    Inode: Allow external initialisers
-
-
-> ---
-> 
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Fix mm/filemap.c functions' kernel-doc:
-> 
-> Warning(/local/linsrc/linux-next-20081218//mm/filemap.c:575): No description found for parameter 'page'
-> Warning(/local/linsrc/linux-next-20081218//mm/filemap.c:575): No description found for parameter 'waiter'
-> Warning(/local/linsrc/linux-next-20081218//mm/filemap.c:2348): No description found for parameter 'mapping'
-> Warning(/local/linsrc/linux-next-20081218//mm/filemap.c:2348): No description found for parameter 'index'
-> Warning(/local/linsrc/linux-next-20081218//mm/filemap.c:2348): No description found for parameter 'source'
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> cc: Dave Chinner <david@fromorbit.com>
-
-That's no longer in linux-next.  I'd guess it was from the fs-cache
-patches.
+	Sam
