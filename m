@@ -1,76 +1,62 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: manual merge of the sched tree
-Date: Sun, 21 Dec 2008 17:46:34 -0800
-Message-ID: <20081222014634.GC7163@linux.vnet.ibm.com>
-References: <20081222120543.92004d90.sfr@canb.auug.org.au>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: scsi tree build failure
+Date: Sun, 21 Dec 2008 19:59:25 -0600
+Message-ID: <1229911165.25634.0.camel@localhost.localdomain>
+References: <20081216013704.2496da40.sfr@canb.auug.org.au>
+	 <1229352762.3293.1.camel@localhost.localdomain>
+	 <20081217232049.67b72448.sfr@canb.auug.org.au>
+	 <20081221143024.ed97091c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e5.ny.us.ibm.com ([32.97.182.145]:56814 "EHLO e5.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751578AbYLVBqb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 21 Dec 2008 20:46:31 -0500
-Received: from d01relay02.pok.ibm.com (d01relay02.pok.ibm.com [9.56.227.234])
-	by e5.ny.us.ibm.com (8.13.1/8.13.1) with ESMTP id mBM1jWvi008242
-	for <linux-next@vger.kernel.org>; Sun, 21 Dec 2008 20:45:32 -0500
-Received: from d01av04.pok.ibm.com (d01av04.pok.ibm.com [9.56.224.64])
-	by d01relay02.pok.ibm.com (8.13.8/8.13.8/NCO v9.1) with ESMTP id mBM1kUSn187138
-	for <linux-next@vger.kernel.org>; Sun, 21 Dec 2008 20:46:30 -0500
-Received: from d01av04.pok.ibm.com (loopback [127.0.0.1])
-	by d01av04.pok.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id mBM2kdHE030174
-	for <linux-next@vger.kernel.org>; Sun, 21 Dec 2008 21:46:40 -0500
-Content-Disposition: inline
-In-Reply-To: <20081222120543.92004d90.sfr@canb.auug.org.au>
+Received: from accolon.hansenpartnership.com ([76.243.235.52]:50032 "EHLO
+	accolon.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753295AbYLVB73 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Sun, 21 Dec 2008 20:59:29 -0500
+In-Reply-To: <20081221143024.ed97091c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-next@vger.kernel.org, Robert Love <robert.w.love@intel.com>
 
-On Mon, Dec 22, 2008 at 12:05:43PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Sun, 2008-12-21 at 14:30 +1100, Stephen Rothwell wrote:
+> Hi James, Robert,
 > 
-> Today's linux-next merge of the sched tree got a conflict in
-> include/linux/hardirq.h between commit
-> 17666f02b118099028522dfc3df00a235700e216 ("ftrace: nmi safe code
-> modification") from the ftrace tree and commit
-> 64db4cfff99c04cd5f550357edcc8780f96b54a2 (""Tree RCU": scalable classic
-> RCU implementation") from the sched tree.
+> On Wed, 17 Dec 2008 23:20:49 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > On Mon, 15 Dec 2008 08:52:42 -0600 James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+> > >
+> > > On Tue, 2008-12-16 at 01:37 +1100, Stephen Rothwell wrote:
+> > > > 
+> > > > Today's linux-next build (powerpc allyesconfig) failed like this:
+> > > 
+> > > Heh, I really need to get this terrasoft system integrated into my
+> > > builds
+> > > 
+> > > > drivers/scsi/libfc/fc_fcp.c: In function 'fc_eh_host_reset':
+> > > > drivers/scsi/libfc/fc_fcp.c:1987: error: implicit declaration of function 'msleep'
+> > > > 
+> > > > That file needs to include <linux/delay.h>.
+> > > 
+> > > Thanks, that's exactly the problem.
+> > > 
+> > > Robert, please reroll the patches with this fix in ... I'll just
+> > > exchange the new patches for the ones in my tree.
+> > > 
+> > > > Introduced by commit 389571f347629d879f9044582bbbafb43e4fe00b ("[SCSI]
+> > > > libfc: A modular Fibre Channel library") from the scsi tree.  I reverted
+> > > > that commit and commit 7aba33c5cfc7a9c104cc7469558c7849f373c3da ("[SCSI]
+> > > > fcoe: Fibre Channel over Ethernet") which depended on it.
+> > 
+> > I have dropped the scsi tree until this is fixed up.
 > 
-> I fixed it up (see below) and can carry the fix as necessary.
+> I still haven't see a fix for this ...
 
-Looks like the right approach to me!
+OK, gave up waiting for an updated patch, so I fixed this myself in my
+tree.  scsi-misc should be safe to go again.
 
-							Thanx, Paul
+Thanks,
 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
-> 
-> diff --cc include/linux/hardirq.h
-> index 89a56d7,9b70b92..0000000
-> --- a/include/linux/hardirq.h
-> +++ b/include/linux/hardirq.h
-> @@@ -162,17 -163,7 +164,19 @@@ extern void irq_enter(void)
->    */
->   extern void irq_exit(void);
->   
->  -#define nmi_enter()		do { lockdep_off(); rcu_nmi_enter(); __irq_enter(); } while (0)
->  -#define nmi_exit()		do { __irq_exit(); rcu_nmi_exit(); lockdep_on(); } while (0)
->  +#define nmi_enter()				\
->  +	do {					\
->  +		ftrace_nmi_enter();		\
->  +		lockdep_off();			\
-> ++		rcu_nmi_enter();		\
->  +		__irq_enter();			\
->  +	} while (0)
->  +#define nmi_exit()				\
->  +	do {					\
->  +		__irq_exit();			\
-> ++		rcu_nmi_exit();			\
->  +		lockdep_on();			\
->  +		ftrace_nmi_exit();		\
->  +	} while (0)
->   
->   #endif /* LINUX_HARDIRQ_H */
+James
