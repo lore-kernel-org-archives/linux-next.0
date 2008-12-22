@@ -1,55 +1,81 @@
-From: Sam Ravnborg <sam@ravnborg.org>
+From: Andrew Morton <akpm@linux-foundation.org>
 Subject: Re: [patch] powerpc: change u64/s64 to a long long integer type
-Date: Tue, 23 Dec 2008 00:13:46 +0100
-Message-ID: <20081222231346.GA4258@uranus.ravnborg.org>
-References: <20081222152247.b934ed5b.sfr@canb.auug.org.au> <b040c32a0812212249p45aba306tbb68a960b79cd0ee@mail.gmail.com> <20081222070426.GD29160@elte.hu> <20081222181932.5dd9514e.sfr@canb.auug.org.au> <20081222080341.GA18897@elte.hu> <20081222144319.1bfc0061.akpm@linux-foundation.org> <20081222230035.GB4074@uranus.ravnborg.org> <49501CC9.5040507@zytor.com>
+Date: Mon, 22 Dec 2008 15:13:38 -0800
+Message-ID: <20081222151338.3b6ef997.akpm@linux-foundation.org>
+References: <20081222152247.b934ed5b.sfr@canb.auug.org.au>
+	<b040c32a0812212249p45aba306tbb68a960b79cd0ee@mail.gmail.com>
+	<20081222070426.GD29160@elte.hu>
+	<20081222181932.5dd9514e.sfr@canb.auug.org.au>
+	<20081222080341.GA18897@elte.hu>
+	<20081222144319.1bfc0061.akpm@linux-foundation.org>
+	<20081222230035.GB4074@uranus.ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pfepa.post.tele.dk ([195.41.46.235]:42920 "EHLO
-	pfepa.post.tele.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754793AbYLVXMQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Dec 2008 18:12:16 -0500
-Content-Disposition: inline
-In-Reply-To: <49501CC9.5040507@zytor.com>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:54502 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755167AbYLVXOv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Dec 2008 18:14:51 -0500
+In-Reply-To: <20081222230035.GB4074@uranus.ravnborg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, kenchen@google.com, paulus@samba.org, tglx@linutronix.de, linux-next@vger.kernel.org, David Miller <davem@davemloft.net>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: mingo@elte.hu, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, kenchen@google.com, paulus@samba.org, tglx@linutronix.de, hpa@zytor.com, linux-next@vger.kernel.org, davem@davemloft.net
 
-On Mon, Dec 22, 2008 at 03:03:37PM -0800, H. Peter Anvin wrote:
-> Sam Ravnborg wrote:
-> > On Mon, Dec 22, 2008 at 02:43:19PM -0800, Andrew Morton wrote:
-> >> On Mon, 22 Dec 2008 09:03:41 +0100
-> >> Ingo Molnar <mingo@elte.hu> wrote:
-> >>
-> >>> Subject: powerpc: change u64/s64 to a long long integer type
-> >> <applause>
-> >>
-> >> There are lots of other architctures that need doing though.
+On Tue, 23 Dec 2008 00:00:35 +0100
+Sam Ravnborg <sam@ravnborg.org> wrote:
+
+> On Mon, Dec 22, 2008 at 02:43:19PM -0800, Andrew Morton wrote:
+> > On Mon, 22 Dec 2008 09:03:41 +0100
+> > Ingo Molnar <mingo@elte.hu> wrote:
 > > 
-> > I have missed the introduction.
-> > Can you explain why?
+> > > Subject: powerpc: change u64/s64 to a long long integer type
 > > 
-> > I have done a bit of sparc hacking lately and was wondering if
-> > sparc needs something similar.
+> > <applause>
 > > 
-> > cd arch/sparc
-> > git grep u64 | grep -v __u64 | wc -l
-> > 448
-> > 
+> > There are lots of other architctures that need doing though.
 > 
-> This should only affect 64-bit architectures.
+> I have missed the introduction.
+> Can you explain why?
 
-In the sparc-next tree:
+People keep on doing
 
-ls arch/sparc64
-ls: arch/sparc64: No such file or directory
+	printk("%llu", some_u64);
 
-We have unified sparc and sparc64 so they are in the same arch directory now.
-This will hit mainline in the upcoming merge window.
+testing it only on x86_64 and this generates a warning storm on
+powerpc, sparc64, etc.  Because they use `long', not `long long'.
 
-This has happended over at the sparclinux mailing list as this was
-sparc/sparc64 specific stuff so no wonder you have not heard about it.
+And not just a little bit - this bug gets repeated maybe ten times per
+week - it's insane.
 
-	Sam
+If we make all architectures use `long long' then the above code
+becomes correct and warning-free on all architectures.
+
+And we then get to remove all the open-coded (unsigned long long) casts
+which we added all over the tree (hundreds of them).
+
+> I have done a bit of sparc hacking lately and was wondering if
+> sparc needs something similar.
+> 
+> cd arch/sparc
+> git grep u64 | grep -v __u64 | wc -l
+> 448
+> 
+> [On the unified tree]
+
+Yes, quite a few 64-bit architectures are using `long' for their
+s64/u64 types.  We should convert them all to `long long'.
+
+That's quite trivial to do, but it causes a lot of warnings due to code
+in arch-speciic files which does
+
+	printk("%lu", some_u64);
+
+which will then generate a warning.  Or an error if the archtiecture
+uses -Werror, which several do.  So we need to simultaneously convert
+all those to %llu.  (Or %Lu, which saves a byte :))
+
+
+	
