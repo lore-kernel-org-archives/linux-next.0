@@ -1,52 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: sched tree build warning
-Date: Mon, 22 Dec 2008 15:22:47 +1100
-Message-ID: <20081222152247.b934ed5b.sfr@canb.auug.org.au>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: linux-next: manual merge of the kvm tree
+Date: Mon, 22 Dec 2008 16:13:24 +1100
+Message-ID: <1229922804.13001.84.camel@pasglop>
+References: <20081222145255.17f885f2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__22_Dec_2008_15_22_47_+1100_A/9ix_6Py/LJ9++s"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49112 "EHLO smtps.tip.net.au"
+Received: from gate.crashing.org ([63.228.1.57]:60196 "EHLO gate.crashing.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753077AbYLVEW4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 21 Dec 2008 23:22:56 -0500
+	id S1750718AbYLVFNn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Dec 2008 00:13:43 -0500
+In-Reply-To: <20081222145255.17f885f2.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org, Ken Chen <kenchen@google.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Avi Kivity <avi@qumranet.com>, linux-next@vger.kernel.org, Kumar Gala <galak@kernel.crashing.org>, Hollis Blanchard <hollisb@us.ibm.com>
 
---Signature=_Mon__22_Dec_2008_15_22_47_+1100_A/9ix_6Py/LJ9++s
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2008-12-22 at 14:52 +1100, Stephen Rothwell wrote:
+> 
+> The former patch changes the _tlbia() to _tlbil_all() in
+> kvm_arch_vcpu_put().  The latter restructures this code.
+> 
+> I don't know enough to fix this up, so for today I have merely used the
+> kvm tree version.  Please come up with something better (if needed) and I
+> can use that as a merge resolution.
 
-Hi all,
+Hollis, can you have a look ? I suspect whatever is in the kvm tree is
+ok, provided it doesn't use the old names such as _tlbia() or _tlbie()
+which don't exist anymore for nohash...
 
-Today's linux-next build (powerpc ppc64_defconfig) produced this new
-warning:
-
-fs/proc/base.c: In function 'proc_pid_schedstat':
-fs/proc/base.c:352: warning: format '%llu' expects type 'long long unsigned=
- int', but argument 3 has type 'u64'
-
-Introduced by commit 9c2c48020ec0dd6ecd27e5a1298f73b40d85a595
-("schedstat: consolidate per-task cpu runtime stats").
-
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__22_Dec_2008_15_22_47_+1100_A/9ix_6Py/LJ9++s
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklPFhcACgkQjjKRsyhoI8z4rQCfV0a+NhlXRCjIhl58+b4HZojp
-Ys8AnjXqYz76mMD6Q7l81rrwh8XIpQo2
-=QyXa
------END PGP SIGNATURE-----
-
---Signature=_Mon__22_Dec_2008_15_22_47_+1100_A/9ix_6Py/LJ9++s--
+Ben.
