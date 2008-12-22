@@ -1,67 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: driver-core tree build failure
-Date: Mon, 22 Dec 2008 23:59:36 +1100
-Message-ID: <20081222235936.5971ad15.sfr@canb.auug.org.au>
+Subject: linux-next: kvm tree build failure
+Date: Tue, 23 Dec 2008 00:25:14 +1100
+Message-ID: <20081223002514.6fbcfe4f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__23_Dec_2008_00_25_14_+1100_KEhqiEWfdeX6cT7N"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52329 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53285 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751677AbYLVM7k (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 22 Dec 2008 07:59:40 -0500
+	id S1754181AbYLVNZq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Dec 2008 08:25:46 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, Mark McLoughlin <markmc@redhat.com>
+To: Avi Kivity <avi@qumranet.com>
+Cc: linux-next@vger.kernel.org, Jan Kiszka <jan.kiszka@siemens.com>, Hollis Blanchard <hollisb@us.ibm.com>
 
-Hi Greg,
+--Signature=_Tue__23_Dec_2008_00_25_14_+1100_KEhqiEWfdeX6cT7N
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next build (powerpc allnoconfig) failed like this:
+Hi Avi,
 
-drivers/base/core.c: In function '__root_device_register':
-drivers/base/core.c:1277: error: dereferencing pointer to incomplete type
+Today's linux-next build (powerpc ppc44x_config) failed like this:
 
-Caused by bf86dbd2451d1012c2c968a960470e485b869f5b ("driver core: add
-root_device_register()").  This needs to cope with !CONFIG_MODULES (where
-struct module is not defined).
+arch/powerpc/kvm/44x.c: In function 'kvmppc_core_load_guest_debugstate':
+arch/powerpc/kvm/44x.c:58: warning: initialization from incompatible pointe=
+r type
+arch/powerpc/kvm/44x.c:75: error: 'struct kvm_guest_debug' has no member na=
+med 'bp'
+arch/powerpc/kvm/44x.c:76: error: 'struct kvm_guest_debug' has no member na=
+med 'bp'
+arch/powerpc/kvm/44x.c:79: error: 'struct kvm_guest_debug' has no member na=
+med 'bp'
+arch/powerpc/kvm/44x.c:80: error: 'struct kvm_guest_debug' has no member na=
+med 'bp'
+arch/powerpc/kvm/44x.c:83: error: 'struct kvm_guest_debug' has no member na=
+med 'bp'
+arch/powerpc/kvm/44x.c:84: error: 'struct kvm_guest_debug' has no member na=
+med 'bp'
+arch/powerpc/kvm/44x.c:87: error: 'struct kvm_guest_debug' has no member na=
+med 'bp'
+arch/powerpc/kvm/44x.c:88: error: 'struct kvm_guest_debug' has no member na=
+med 'bp'
 
-I applied the following patch but only for today because it is too hard
-to revert the above patch ...
-
--- 
+Probably caused by commit 6968f31a2163f8fcf26ea8775c44d7e5be54d622 ("KVM:
+Remove old kvm_guest_debug structs") so I have reverted the kvm tree for
+today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 22 Dec 2008 23:50:56 +1100
-Subject: [PATCH] driver core: fix root_device_register for not CONFIG_MODULES
+--Signature=_Tue__23_Dec_2008_00_25_14_+1100_KEhqiEWfdeX6cT7N
+Content-Type: application/pgp-signature
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/base/core.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 6fbdd8b..aa93980 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -1273,6 +1273,7 @@ struct device *__root_device_register(const char *name, struct module *owner)
- 		return ERR_PTR(err);
- 	}
- 
-+#ifdef CONFIG_MODULE
- 	if (owner) {
- 		struct module_kobject *mk = &owner->mkobj;
- 
-@@ -1283,6 +1284,7 @@ struct device *__root_device_register(const char *name, struct module *owner)
- 		}
- 		root->owner = owner;
- 	}
-+#endif
- 
- 	return &root->dev;
- }
--- 
-1.6.0.5
+iEYEARECAAYFAklPlTsACgkQjjKRsyhoI8zVAACdFvIa33HbGv1gtC3pimFSwQ77
+nhkAoIY7HlGxC5ZCLgNyDAzfNV/ySYUb
+=JMoZ
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__23_Dec_2008_00_25_14_+1100_KEhqiEWfdeX6cT7N--
