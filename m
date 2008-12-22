@@ -1,58 +1,72 @@
-From: Hollis Blanchard <hollisb@us.ibm.com>
-Subject: Re: linux-next: manual merge of the kvm tree
-Date: Mon, 22 Dec 2008 16:44:13 -0600
-Message-ID: <1229985853.7181.10.camel@localhost.localdomain>
-References: <20081222145255.17f885f2.sfr@canb.auug.org.au>
-	 <1229922804.13001.84.camel@pasglop>
-	 <1229981967.7181.5.camel@localhost.localdomain>
-	 <1229982095.4360.19.camel@pasglop>
-	 <1229983422.7181.7.camel@localhost.localdomain>
-	 <18768.5298.173232.227168@cargo.ozlabs.ibm.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: Tree for December 18 (patch: kernel-doc notation)
+Date: Mon, 22 Dec 2008 14:49:45 -0800
+Message-ID: <20081222144945.8ef2748e.akpm@linux-foundation.org>
+References: <20081218230637.c879a046.sfr@canb.auug.org.au>
+	<20081218161437.fe2d2675.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e3.ny.us.ibm.com ([32.97.182.143]:32890 "EHLO e3.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755866AbYLVWoR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 22 Dec 2008 17:44:17 -0500
-Received: from d01relay02.pok.ibm.com (d01relay02.pok.ibm.com [9.56.227.234])
-	by e3.ny.us.ibm.com (8.13.1/8.13.1) with ESMTP id mBMMhIvq025137
-	for <linux-next@vger.kernel.org>; Mon, 22 Dec 2008 17:43:18 -0500
-Received: from d01av02.pok.ibm.com (d01av02.pok.ibm.com [9.56.224.216])
-	by d01relay02.pok.ibm.com (8.13.8/8.13.8/NCO v9.1) with ESMTP id mBMMiG2U173672
-	for <linux-next@vger.kernel.org>; Mon, 22 Dec 2008 17:44:16 -0500
-Received: from d01av02.pok.ibm.com (loopback [127.0.0.1])
-	by d01av02.pok.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id mBMMhbQw032559
-	for <linux-next@vger.kernel.org>; Mon, 22 Dec 2008 17:43:38 -0500
-In-Reply-To: <18768.5298.173232.227168@cargo.ozlabs.ibm.com>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:56249 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754570AbYLVWuE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Dec 2008 17:50:04 -0500
+In-Reply-To: <20081218161437.fe2d2675.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Mackerras <paulus@samba.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Avi Kivity <avi@qumranet.com>, linux-next@vger.kernel.org, Kumar Gala <galak@kernel.crashing.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: sfr@canb.auug.org.au, david@fromorbit.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 2008-12-23 at 09:29 +1100, Paul Mackerras wrote:
-> Hollis Blanchard writes:
+On Thu, 18 Dec 2008 16:14:37 -0800
+Randy Dunlap <randy.dunlap@oracle.com> wrote:
+
+> fs/inode.c and mm/filemap.c need kernel-doc fixes.
 > 
-> > > Patch is in Paulus -next already so we'll have to do a manual resolve.
-> > 
-> > Who has to do it? My code should "win".
+> What tree were these merged into for linux-next?
+
+I use git-blame.
+
+> How do I get these doc fixes merged?  (2 patches below)
 > 
-> Do you have your own tree or is all your stuff in the main kvm tree?
+> ---
 > 
-> If there is a powerpc KVM tree, I could pull that and resolve the
-> conflict, but I don't want to pull all the queued up KVM stuff.
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> Fix fs/inode.c kernel-doc function parameters:
+> 
+> Warning(linux-next-20081218//fs/inode.c:120): No description found for parameter 'sb'
+> Warning(linux-next-20081218//fs/inode.c:120): No description found for parameter 'inode'
+> Warning(linux-next-20081218//fs/inode.c:588): No description found for parameter 'sb'
+> Warning(linux-next-20081218//fs/inode.c:588): No description found for parameter 'inode'
+> 
 
-It's just the main KVM tree.
+>From the XFS tree:
 
-> Worst case is Linus gets to resolve the conflict in the merge window.
-> If that's just a matter of him taking your version of the file, it
-> should be within his powers to manage. :)
+commit 2cb1599f9b2ecdd7a9e59feeee647eb258966839
+Author:     David Chinner <david@fromorbit.com>
+AuthorDate: Thu Oct 30 17:32:23 2008 +1100
+Commit:     Lachlan McIlroy <lachlan@redback.melbourne.sgi.com>
+CommitDate: Thu Oct 30 17:32:23 2008 +1100
 
-Yeah, that's what I meant by "win"... whatever changes Ben made are to
-now-dead code, so the code in kvm.git should be used. Does Linus need
-special instruction to do this, or how does that work?
+    Inode: Allow external initialisers
 
--- 
-Hollis Blanchard
-IBM Linux Technology Center
+
+> ---
+> 
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> Fix mm/filemap.c functions' kernel-doc:
+> 
+> Warning(/local/linsrc/linux-next-20081218//mm/filemap.c:575): No description found for parameter 'page'
+> Warning(/local/linsrc/linux-next-20081218//mm/filemap.c:575): No description found for parameter 'waiter'
+> Warning(/local/linsrc/linux-next-20081218//mm/filemap.c:2348): No description found for parameter 'mapping'
+> Warning(/local/linsrc/linux-next-20081218//mm/filemap.c:2348): No description found for parameter 'index'
+> Warning(/local/linsrc/linux-next-20081218//mm/filemap.c:2348): No description found for parameter 'source'
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> cc: Dave Chinner <david@fromorbit.com>
+
+That's no longer in linux-next.  I'd guess it was from the fs-cache
+patches.
