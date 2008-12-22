@@ -1,52 +1,50 @@
-From: Mark McLoughlin <markmc@redhat.com>
-Subject: Re: linux-next: manual merge of the rr tree
-Date: Mon, 22 Dec 2008 08:45:56 +0000
-Message-ID: <1229935556.3858.8.camel@localhost.localdomain>
-References: <20081222173213.b7340f63.sfr@canb.auug.org.au>
-	 <200812221828.33016.rusty@rustcorp.com.au>
-Reply-To: Mark McLoughlin <markmc@redhat.com>
+From: Paul Mackerras <paulus@samba.org>
+Subject: Re: linux-next: sched tree build warning
+Date: Mon, 22 Dec 2008 20:44:15 +1100
+Message-ID: <18767.24943.183634.866661@cargo.ozlabs.ibm.com>
+References: <20081222152247.b934ed5b.sfr@canb.auug.org.au>
+	<b040c32a0812212249p45aba306tbb68a960b79cd0ee@mail.gmail.com>
+	<20081222070426.GD29160@elte.hu>
+	<18767.19576.286910.148623@cargo.ozlabs.ibm.com>
+	<20081222081811.GA10950@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:50686 "EHLO mx2.redhat.com"
+Received: from ozlabs.org ([203.10.76.45]:59734 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754060AbYLVIqP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 22 Dec 2008 03:46:15 -0500
-In-Reply-To: <200812221828.33016.rusty@rustcorp.com.au>
+	id S1750992AbYLVJoW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Dec 2008 04:44:22 -0500
+In-Reply-To: <20081222081811.GA10950@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, Greg KH <greg@kroah.com>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Ken Chen <kenchen@google.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
 
-Hi Stephen/Rusty,
+Ingo Molnar writes:
 
-On Mon, 2008-12-22 at 18:28 +1030, Rusty Russell wrote:
-> On Monday 22 December 2008 17:02:13 Stephen Rothwell wrote:
-> > Hi Rusty,
-> > 
-> > Today's linux-next merge of the rr tree got a conflict in
-> > drivers/virtio/virtio_pci.c between commit
-> > b5146336e3bc3786712919e94106063036dae86b ("virtio: do not statically
-> > allocate root device") from the driver-core tree and commits
-> > f53dba3a1ea82dfb37f094a942ae74032413809f ("virtio: struct device -
-> > replace bus_id with dev_name(), dev_set_name()") and
-> > ab4e479d47ceac2fa5bebd5b99d27f01fe0e0c8b ("virtio: add PCI device release
-> > () function") from the rr tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary.  Mark, does
-> > this driver-core patch obsolete the second rr tree patch above?
+> which APIs do you mean exactly, could you give me an example please and 
+> the type of breakage you suspect?
 
-The conflict resolution is correct.
+Any struct with a __u64 or __s64 in it that gets exported to userland
+will have a different type signature with the change, hence has the
+potential to cause compile warnings or errors on correct code
+(e.g. warnings on printf's that use %ld to print an __s64 field on
+ppc64).  It's possible that C++ stuff will fail to link because of
+mangled names coming out differently.  And so on.
 
-> This is not unexpected.  Mark sent me those two, the others went to
-> Greg.  I'm happy to ack them and send them on to Greg.
+> I cannot see how the binary representation could ever change from this. 
+> (and that is all that an ABI is about - it is an application Binary 
+> interface. I.e. there's no ABI breakage.)
 
-You could do that, or let Stephen carry the fixup or pull these bits
-from Greg's tree into your before NEXT_PATCHES_START:
+Yes, the bits are the same, but that doesn't mean the types are the
+same.  And we do export type definitions.
 
-  http://www.kernel.org/pub/linux/kernel/people/gregkh/gregkh-2.6/patches/driver-core/driver-core-add-root_device_register.patch
-  http://www.kernel.org/pub/linux/kernel/people/gregkh/gregkh-2.6/patches/driver-core/virtio-do-not-statically-allocate-root-device.patch
+I once wanted to change the ppc32 size_t definition from unsigned int
+to unsigned long to match up with ppc64.  That caused more pain than
+it was worth because of exactly this issue (and also because gcc has
+fixed ideas about size_t) so I abandoned it.  That's why I'm cautious
+about changing user-visible types.  I'm not saying we can't do it, I'm
+saying we shouldn't do it unilaterally.
 
-Thanks,
-Mark.
+Paul.
