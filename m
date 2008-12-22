@@ -1,39 +1,32 @@
-From: Paul Mackerras <paulus@samba.org>
-Subject: Re: linux-next: manual merge of the kvm tree
-Date: Tue, 23 Dec 2008 09:29:06 +1100
-Message-ID: <18768.5298.173232.227168@cargo.ozlabs.ibm.com>
-References: <20081222145255.17f885f2.sfr@canb.auug.org.au>
-	<1229922804.13001.84.camel@pasglop>
-	<1229981967.7181.5.camel@localhost.localdomain>
-	<1229982095.4360.19.camel@pasglop>
-	<1229983422.7181.7.camel@localhost.localdomain>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [patch] powerpc: change u64/s64 to a long long integer type
+Date: Mon, 22 Dec 2008 14:43:19 -0800
+Message-ID: <20081222144319.1bfc0061.akpm@linux-foundation.org>
+References: <20081222152247.b934ed5b.sfr@canb.auug.org.au>
+	<b040c32a0812212249p45aba306tbb68a960b79cd0ee@mail.gmail.com>
+	<20081222070426.GD29160@elte.hu>
+	<20081222181932.5dd9514e.sfr@canb.auug.org.au>
+	<20081222080341.GA18897@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:55279 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754654AbYLVW3f (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 22 Dec 2008 17:29:35 -0500
-In-Reply-To: <1229983422.7181.7.camel@localhost.localdomain>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:55917 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754638AbYLVWn5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Dec 2008 17:43:57 -0500
+In-Reply-To: <20081222080341.GA18897@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Hollis Blanchard <hollisb@us.ibm.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Avi Kivity <avi@qumranet.com>, linux-next@vger.kernel.org, Kumar Gala <galak@kernel.crashing.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, kenchen@google.com, paulus@samba.org, tglx@linutronix.de, hpa@zytor.com, linux-next@vger.kernel.org
 
-Hollis Blanchard writes:
+On Mon, 22 Dec 2008 09:03:41 +0100
+Ingo Molnar <mingo@elte.hu> wrote:
 
-> > Patch is in Paulus -next already so we'll have to do a manual resolve.
-> 
-> Who has to do it? My code should "win".
+> Subject: powerpc: change u64/s64 to a long long integer type
 
-Do you have your own tree or is all your stuff in the main kvm tree?
+<applause>
 
-If there is a powerpc KVM tree, I could pull that and resolve the
-conflict, but I don't want to pull all the queued up KVM stuff.
-
-Worst case is Linus gets to resolve the conflict in the merge window.
-If that's just a matter of him taking your version of the file, it
-should be within his powers to manage. :)
-
-Paul.
+There are lots of other architctures that need doing though.
