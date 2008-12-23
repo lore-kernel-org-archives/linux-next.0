@@ -1,72 +1,55 @@
-From: Inaky Perez-Gonzalez <inaky@linux.intel.com>
-Subject: Re: linux-next: usb tree build failure
-Date: Mon, 22 Dec 2008 15:37:16 -0800
-Message-ID: <200812221537.17363.inaky@linux.intel.com>
-References: <20081222113335.667c2d01.sfr@canb.auug.org.au> <200812220926.43784.inaky@linux.intel.com> <20081222175336.GA22701@uranus.ravnborg.org>
+From: Paul Mackerras <paulus@samba.org>
+Subject: Re: linux-next: manual merge of the kvm tree
+Date: Tue, 23 Dec 2008 11:07:22 +1100
+Message-ID: <18768.11194.175787.360371@cargo.ozlabs.ibm.com>
+References: <20081222145255.17f885f2.sfr@canb.auug.org.au>
+	<1229922804.13001.84.camel@pasglop>
+	<1229981967.7181.5.camel@localhost.localdomain>
+	<1229982095.4360.19.camel@pasglop>
+	<1229983422.7181.7.camel@localhost.localdomain>
+	<18768.5298.173232.227168@cargo.ozlabs.ibm.com>
+	<1229985853.7181.10.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:45283 "EHLO mga09.intel.com"
+Received: from ozlabs.org ([203.10.76.45]:51214 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754442AbYLVXjj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 22 Dec 2008 18:39:39 -0500
-In-Reply-To: <20081222175336.GA22701@uranus.ravnborg.org>
-Content-Disposition: inline
+	id S1755279AbYLWAHg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Dec 2008 19:07:36 -0500
+In-Reply-To: <1229985853.7181.10.camel@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org
+To: Hollis Blanchard <hollisb@us.ibm.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Avi Kivity <avi@qumranet.com>, linux-next@vger.kernel.org, Kumar Gala <galak@kernel.crashing.org>, Josh Boyer <jwboyer@linux.vnet.ibm.com>
 
-On Monday 22 December 2008, Sam Ravnborg wrote:
-> On Mon, Dec 22, 2008 at 09:26:43AM -0800, Inaky Perez-Gonzalez wrote:
-> > On Sunday 21 December 2008, Sam Ravnborg wrote:
-> > > On Mon, Dec 22, 2008 at 01:42:21PM +1100, Stephen Rothwell wrote:
-> > > > (Just cc'ing Sam)
-> > > >
-> > > > On Sun, 21 Dec 2008 17:31:10 -0800 Greg KH <greg@kroah.com> wrote:
-> > > > > On Mon, Dec 22, 2008 at 11:33:35AM +1100, Stephen Rothwell wrote:
-> > > > > > Hi Greg,
-> > > > > >
-> > > > > > Today's linux-next build (x86_64 allmodconfig) failed like this:
-> > > > > >
-> > > > > > x86_64-linux-ld: drivers/net/wimax/built-in.o: No such file: No
-> > > > > > such file or directory
-> > > > > >
-....
-> > > diff --git a/drivers/net/wimax/Makefile b/drivers/net/wimax/Makefile
-> > > new file mode 100644
-> > > index 0000000..bda9430
-> > > --- /dev/null
-> > > +++ b/drivers/net/wimax/Makefile
-> > > @@ -0,0 +1,2 @@
-> > > +
-> > > +obj-$(CONFIG_WIMAX_I2400M)	+= i2400m/
-> > >
-> > >
-> > >
-> > > But the problem here is that because we do not even pretend to
-> > > build some files in this dir thus kbuild does not create build-in.o
-> > >
-> > > The fix is a bit ugly but simple. Add a dummy statement to
-> > > the drivers/net/wimax/Makefile like this:
-> > >
-> > > # force kbuild to create built-in.o
-> > > obj- := dummy.o
-> >
-> > ops -- ok, I will. I guess I have to add this in all the similar ones,
-> > right?
->
-> You need this in all cases where you have a Makefile that
-> only specify sub directories. I assume thilinux-wimax.git/s is the only 
-Makefile
-> where you have this.
+Hollis Blanchard writes:
 
-It is -- I've been trying to reproduce it in the current tree I had and I 
-can't get to do it. In any case, I'll leave the workaround in.
+> On Tue, 2008-12-23 at 09:29 +1100, Paul Mackerras wrote:
+> > Hollis Blanchard writes:
+> > 
+> > > > Patch is in Paulus -next already so we'll have to do a manual resolve.
+> > > 
+> > > Who has to do it? My code should "win".
+> > 
+> > Do you have your own tree or is all your stuff in the main kvm tree?
+> > 
+> > If there is a powerpc KVM tree, I could pull that and resolve the
+> > conflict, but I don't want to pull all the queued up KVM stuff.
+> 
+> It's just the main KVM tree.
+> 
+> > Worst case is Linus gets to resolve the conflict in the merge window.
+> > If that's just a matter of him taking your version of the file, it
+> > should be within his powers to manage. :)
+> 
+> Yeah, that's what I meant by "win"... whatever changes Ben made are to
+> now-dead code, so the code in kvm.git should be used. Does Linus need
+> special instruction to do this, or how does that work?
 
-Thanks,
+ppc44x_defconfig now fails to build in my tree because of _tlbil_all
+being undefined (it has CONFIG_KVM=y), so I need some sort of fix.
+What would happen if I made arch/powerpc/kvm/powerpc.c look like the
+version from the KVM tree?
 
--- 
-Inaky
+Paul.
