@@ -1,69 +1,76 @@
-From: Josh Boyer <jwboyer@linux.vnet.ibm.com>
-Subject: Re: testing (Was: Re: linux-next: scsi-post-merge tree build
-	failure)
-Date: Mon, 22 Dec 2008 20:52:36 -0500
-Message-ID: <20081223015236.GA7137@zod.rchland.ibm.com>
-References: <20081223012545.5b1e7f5e.sfr@canb.auug.org.au> <1229979392.4360.15.camel@pasglop> <20081223100456.bb556b19.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: driver-core tree build failure
+Date: Mon, 22 Dec 2008 20:29:32 -0800
+Message-ID: <20081223042932.GD1928@kroah.com>
+References: <20081222235936.5971ad15.sfr@canb.auug.org.au> <1229957446.19474.19.camel@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from yx-out-2324.google.com ([74.125.44.30]:32675 "EHLO
-	yx-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753952AbYLWBww (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Dec 2008 20:52:52 -0500
-Received: by yx-out-2324.google.com with SMTP id 8so798720yxm.1
-        for <linux-next@vger.kernel.org>; Mon, 22 Dec 2008 17:52:50 -0800 (PST)
+Received: from kroah.org ([198.145.64.141]:44933 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1755502AbYLWEtg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Dec 2008 23:49:36 -0500
 Content-Disposition: inline
-In-Reply-To: <20081223100456.bb556b19.sfr@canb.auug.org.au>
+In-Reply-To: <1229957446.19474.19.camel@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Blanchard <hollisb@us.ibm.com>, Hollis@ozlabs.org, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>
+To: Mark McLoughlin <markmc@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-On Tue, Dec 23, 2008 at 10:04:56AM +1100, Stephen Rothwell wrote:
->Hi Ben,
->
->On Tue, 23 Dec 2008 07:56:32 +1100 Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
->>
->> On Tue, 2008-12-23 at 01:25 +1100, Stephen Rothwell wrote:
->> > Hi Paul, Ben,
->> > 
->> > Today's linux-next build (powerpc ppc44x_config) failed like this:
->> > 
->> > arch/powerpc/kvm/powerpc.c: In function 'kvm_arch_vcpu_put':
->> > arch/powerpc/kvm/powerpc.c:333: error: implicit declaration of function '_tlbil_all'
->> > 
->> > Probably caused by commit 2a4aca1144394653269720ffbb5a325a77abd5fa
->> > ("powerpc/mm: Split low level tlb invalidate for nohash processors").
->> > Reverting just that commit was too difficult, so I have reverted the
->> > powerpc tree for today.
->> 
->> You can't revert that without reverting my whole series.
->
->I know that ... I tried.
->
->> Adding a #include ../mm/mmu_decl.h to the kvm code should fix it for
->> now.
->> 
->> I need to talk to hollis about the right way to do that stuff in
->> the long run but it might be it... those _tlbil things are low level
->> stuff that aren't supposed to be used by the outside world which is
->> why I moved the declarations there, but KVM is also low level :-)
->
->So, why is this series in powerpc/next at all if some of the modified
->files haven't even been compiled?  A simple ppc44x_defconfig build of the
->powerpc/next tree fails - which I would have thought would be part of the
->testing since KVM is only implemented for 44x on powerpc.
+On Mon, Dec 22, 2008 at 02:50:46PM +0000, Mark McLoughlin wrote:
+> On Mon, 2008-12-22 at 23:59 +1100, Stephen Rothwell wrote:
+> > Hi Greg,
+> > 
+> > Today's linux-next build (powerpc allnoconfig) failed like this:
+> > 
+> > drivers/base/core.c: In function '__root_device_register':
+> > drivers/base/core.c:1277: error: dereferencing pointer to incomplete type
+> > 
+> > Caused by bf86dbd2451d1012c2c968a960470e485b869f5b ("driver core: add
+> > root_device_register()").  This needs to cope with !CONFIG_MODULES (where
+> > struct module is not defined).
+> 
+> Ouch, my bad.
+> 
+> > I applied the following patch but only for today because it is too hard
+> > to revert the above patch ...
+> > 
+> > -- 
+> > Cheers,
+> > Stephen Rothwell                    sfr@canb.auug.org.au
+> > http://www.canb.auug.org.au/~sfr/
+> > 
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Mon, 22 Dec 2008 23:50:56 +1100
+> > Subject: [PATCH] driver core: fix root_device_register for not CONFIG_MODULES
+> > 
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+> >  drivers/base/core.c |    2 ++
+> >  1 files changed, 2 insertions(+), 0 deletions(-)
+> > 
+> > diff --git a/drivers/base/core.c b/drivers/base/core.c
+> > index 6fbdd8b..aa93980 100644
+> > --- a/drivers/base/core.c
+> > +++ b/drivers/base/core.c
+> > @@ -1273,6 +1273,7 @@ struct device *__root_device_register(const char *name, struct module *owner)
+> >  		return ERR_PTR(err);
+> >  	}
+> >  
+> > +#ifdef CONFIG_MODULE
+> >  	if (owner) {
+> >  		struct module_kobject *mk = &owner->mkobj;
+> >  
+> > @@ -1283,6 +1284,7 @@ struct device *__root_device_register(const char *name, struct module *owner)
+> >  		}
+> >  		root->owner = owner;
+> >  	}
+> > +#endif
+> 
+> Yep, looks correct to me ...
 
-Well, they were, and then they weren't.  I tested this series starting
-with the ppc44x_defconfig.  However, I was incrementally compiling them
-and I also had the 16/64K pages patch applied and 64K enabled.  That
-resulted in a kernel that was too big for the wrapper, so I went in
-and turned some stuff off to make the kernel smaller.  That included
-the KVM stuff.  By the time I was done building and testing the whole
-series, it had remained disabled.
+Ick, I hate ifdefs...  I'll go fix this up.
 
-That might sound like a cop-out, but it's what happend.  I should have
-done a simple build after I was done.  Sorry Stephen.
+thanks,
 
-josh
+greg k-h
