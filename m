@@ -1,47 +1,83 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: usb tree build failure
-Date: Tue, 23 Dec 2008 09:17:26 -0800
-Message-ID: <20081223171726.GB4043@kroah.com>
-References: <20081222113335.667c2d01.sfr@canb.auug.org.au> <200812220926.43784.inaky@linux.intel.com> <20081223043139.GG1928@kroah.com> <200812230226.29519.inaky@linux.intel.com>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: [PATCH] sparc64: use unsigned long long for u64
+Date: Tue, 23 Dec 2008 18:26:10 +0100
+Message-ID: <20081223172610.GA5957@uranus.ravnborg.org>
+References: <20081222152247.b934ed5b.sfr@canb.auug.org.au> <b040c32a0812212249p45aba306tbb68a960b79cd0ee@mail.gmail.com> <20081222070426.GD29160@elte.hu> <20081222181932.5dd9514e.sfr@canb.auug.org.au> <20081222080341.GA18897@elte.hu> <20081222144319.1bfc0061.akpm@linux-foundation.org> <20081222230035.GB4074@uranus.ravnborg.org> <20081222151338.3b6ef997.akpm@linux-foundation.org> <20081223131746.GA7456@uranus.ravnborg.org> <b040c32a0812230905q3a257163r35373b0cb50df35c@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:49232 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751183AbYLWRU1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Dec 2008 12:20:27 -0500
+Received: from pfepb.post.tele.dk ([195.41.46.236]:57216 "EHLO
+	pfepb.post.tele.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751193AbYLWRYi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Dec 2008 12:24:38 -0500
 Content-Disposition: inline
-In-Reply-To: <200812230226.29519.inaky@linux.intel.com>
+In-Reply-To: <b040c32a0812230905q3a257163r35373b0cb50df35c@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Inaky Perez-Gonzalez <inaky@linux.intel.com>
-Cc: Sam Ravnborg <sam@ravnborg.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Ken Chen <kenchen@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, David Miller <davem@davemloft.net>, sparclinux <sparclinux@vger.kernel.org>, mingo@elte.hu, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, paulus@samba.org, tglx@linutronix.de, hpa@zytor.com, linux-next@vger.kernel.org
 
-On Tue, Dec 23, 2008 at 02:26:28AM -0800, Inaky Perez-Gonzalez wrote:
-> On Monday 22 December 2008, Greg KH wrote:
-> > On Mon, Dec 22, 2008 at 09:26:43AM -0800, Inaky Perez-Gonzalez wrote:
-> > > On Sunday 21 December 2008, Sam Ravnborg wrote:
-> > >
-> > > ops -- ok, I will. I guess I have to add this in all the similar ones,
-> > > right?
-> > >
-> > > Greg, do you want a new patch series or just another patch on top?
+On Tue, Dec 23, 2008 at 09:05:44AM -0800, Ken Chen wrote:
+> On Tue, Dec 23, 2008 at 5:17 AM, Sam Ravnborg <sam@ravnborg.org> wrote:
+> > Andrew Morton wrote:
 > >
-> > Just a single replacement patch for when we add this makefile is fine
-> > with me.
+> >    People keep on doing
+> >
+> >            printk("%llu", some_u64);
+> >
+> >    testing it only on x86_64 and this generates a warning storm on
+> >    powerpc, sparc64, etc.  Because they use `long', not `long long'.
+> >
+> >    Quite a few 64-bit architectures are using `long' for their
+> >    s64/u64 types.  We should convert them all to `long long'.
+> >
+> > Update types.h so we use unsigned long long for u64 and
+> > fix all warnings in sparc64 code.
+> > Tested with an allnoconfig, defconfig and allmodconfig builds.
+> >
+> > This patch introduces additional warnings in several drivers.
+> > These will be dealt with in separate patches.
+> >
+> > Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > ---
+> >
+> > It may take a few days before the drivers gets fixed.
+> > Christmas is approaching fast by now.
+> >
+> >        Sam
+> >
+> > diff --git a/arch/sparc/include/asm/timer_64.h b/arch/sparc/include/asm/timer_64.h
+> > index 5b779fd..ef3c368 100644
+> > --- a/arch/sparc/include/asm/timer_64.h
+> > +++ b/arch/sparc/include/asm/timer_64.h
+> > @@ -10,7 +10,7 @@
+> >  #include <linux/init.h>
+> >
+> >  struct sparc64_tick_ops {
+> > -       unsigned long (*get_tick)(void);
+> > +       unsigned long long (*get_tick)(void);
 > 
-> Hmmm, there was more feedback Sam gave me on Kconfig and Makefiles I added,
-> so at the end the patch touches more files than just this one. Maybe a whole
-> new series will be the way to go.
+> wait, why does this need to be changed?
 
-Ick, I really don't want that.  But feel free to respin them yourself,
-and then just send the different patches?  It's easy to just replace a
-few individual ones than to drop the whole series and redo it (well on
-my end at least...)
+We have:
+        clocksource_tick.read = tick_ops->get_tick;
 
-Heck, tell me what to edit and I can edit individual patches quite
-easily as well, I'd rather do that as well :)
+And clocksource_tick is of type clocksource:
 
-thanks,
+struct clocksource {
+	...
+        cycle_t (*read)(void);
 
-greg k-h
+And cycle_t is:
+/* clocksource cycle base type */
+typedef u64 cycle_t;
+
+And u64 is now:
+unsigned long long - thus we need to fix prototype
+of get_tick to fix the warnings.
+
+A cast could do it - but fixing the real problem
+is better here.
+
+	Sam
