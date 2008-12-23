@@ -1,55 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the net tree
-Date: Wed, 24 Dec 2008 10:15:13 +1100
-Message-ID: <20081224101513.def05c7e.sfr@canb.auug.org.au>
+Date: Wed, 24 Dec 2008 10:19:34 +1100
+Message-ID: <20081224101934.0da26dab.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39944 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37028 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751791AbYLWXPV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Dec 2008 18:15:21 -0500
+	id S1752008AbYLWXTl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Dec 2008 18:19:41 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, =?UTF-8?B?IktyenlzenRvZiBIYcWCYXNhIg==?= <khc@pm.waw.pl>, Inaky Perez-Gonzalez <inaky@linux.intel.com>
+Cc: linux-next@vger.kernel.org, James Chapman <jchapman@katalix.com>, Cyrill Gorcunov <gorcunov@openvz.org>
 
 Hi Dave,
 
 Today's linux-next merge of the net tree got a conflict in
-Documentation/DocBook/networking.tmpl between commit
-66aa675719ab82a03a66b75210fd40be6541f8fb ("wimax: Makefile, Kconfig and
-docbook linkage for the stack") from the usb tree and commit
-72364706c3b7c09a658e356218a918c5f92dcad0 ("WAN: syncppp.c is no longer
-used by any kernel code. Remove it") from the net tree.
+drivers/net/ppp_generic.c between commit
+739840d529eb7505d3cbfe9d468bf1440c9a8e27 ("ppp: fix segfaults introduced
+by netdev_priv changes") from the net-current tree and commit
+7a95d267fb62cd6b80ef73be0592bbbe1dbd5df7 ("net: ppp_generic - use idr
+technique instead of cardmaps") from the net tree.
 
-Juts an overlapping add/remove. I fixed it up (see below) and can carry
-the fix as necessary.
+I fixed it up (see below) and can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc Documentation/DocBook/networking.tmpl
-index 7053c1c,627707a..0000000
---- a/Documentation/DocBook/networking.tmpl
-+++ b/Documentation/DocBook/networking.tmpl
-@@@ -98,17 -98,6 +98,14 @@@
-  X!Enet/core/wireless.c
-       </sect1>
-  -->
--      <sect1><title>Synchronous PPP</title>
-- !Edrivers/net/wan/syncppp.c
--      </sect1>
- +     <sect1><title>WiMAX</title>
- +!Enet/wimax/op-msg.c
- +!Enet/wimax/op-reset.c
- +!Enet/wimax/op-rfkill.c
- +!Enet/wimax/stack.c
- +!Iinclude/net/wimax.h
- +!Iinclude/linux/wimax.h
- +     </sect1>
-    </chapter>
-  
-  </book>
+diff --cc drivers/net/ppp_generic.c
+index 714a230,c832d60..0000000
+--- a/drivers/net/ppp_generic.c
++++ b/drivers/net/ppp_generic.c
+@@@ -2498,17 -2484,19 +2484,17 @@@ init_ppp_file(struct ppp_file *pf, int 
+   */
+  static void ppp_shutdown_interface(struct ppp *ppp)
+  {
+ -	struct net_device *dev;
+ -
+  	mutex_lock(&all_ppp_mutex);
+ -	ppp_lock(ppp);
+ -	dev = ppp->dev;
+ -	ppp->dev = NULL;
+ -	ppp_unlock(ppp);
+  	/* This will call dev_close() for us. */
+ -	if (dev) {
+ -		unregister_netdev(dev);
+ -		free_netdev(dev);
+ -	}
+ +	ppp_lock(ppp);
+ +	if (!ppp->closing) {
+ +		ppp->closing = 1;
+ +		ppp_unlock(ppp);
+ +		unregister_netdev(ppp->dev);
+ +	} else
+ +		ppp_unlock(ppp);
+ +
+- 	cardmap_set(&all_ppp_units, ppp->file.index, NULL);
++ 	unit_put(&ppp_units_idr, ppp->file.index);
+  	ppp->file.dead = 1;
+  	ppp->owner = NULL;
+  	wake_up_interruptible(&ppp->file.rwait);
