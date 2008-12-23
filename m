@@ -1,45 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: no linux-next release for Dec 23
-Date: Tue, 23 Dec 2008 18:14:21 +1100
-Message-ID: <20081223181421.3e02860c.sfr@canb.auug.org.au>
+From: Inaky Perez-Gonzalez <inaky@linux.intel.com>
+Subject: Re: linux-next: usb tree build failure
+Date: Tue, 23 Dec 2008 02:26:28 -0800
+Message-ID: <200812230226.29519.inaky@linux.intel.com>
+References: <20081222113335.667c2d01.sfr@canb.auug.org.au> <200812220926.43784.inaky@linux.intel.com> <20081223043139.GG1928@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__23_Dec_2008_18_14_21_+1100_cX8BH3iTyCTana1m"
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52879 "EHLO smtps.tip.net.au"
+Received: from mga09.intel.com ([134.134.136.24]:28907 "EHLO mga09.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752071AbYLWHOa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Dec 2008 02:14:30 -0500
+	id S1750813AbYLWK0o (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Dec 2008 05:26:44 -0500
+In-Reply-To: <20081223043139.GG1928@kroah.com>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Sam Ravnborg <sam@ravnborg.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
---Signature=_Tue__23_Dec_2008_18_14_21_+1100_cX8BH3iTyCTana1m
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Monday 22 December 2008, Greg KH wrote:
+> On Mon, Dec 22, 2008 at 09:26:43AM -0800, Inaky Perez-Gonzalez wrote:
+> > On Sunday 21 December 2008, Sam Ravnborg wrote:
+> >
+> > ops -- ok, I will. I guess I have to add this in all the similar ones,
+> > right?
+> >
+> > Greg, do you want a new patch series or just another patch on top?
+>
+> Just a single replacement patch for when we add this makefile is fine
+> with me.
 
-Hi all,
+Hmmm, there was more feedback Sam gave me on Kconfig and Makefiles I added,
+so at the end the patch touches more files than just this one. Maybe a whole
+new series will be the way to go.
 
-There will be no more releases until (hopefully) Dec 29.  Hope you all
-have a nice rest.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__23_Dec_2008_18_14_21_+1100_cX8BH3iTyCTana1m
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklQj80ACgkQjjKRsyhoI8xcwgCgm4T7MGzT6sA/OWKi12s9DnZo
-ONkAoLanAplz1hxup2AZFCr4pBbYGSCz
-=bN/q
------END PGP SIGNATURE-----
-
---Signature=_Tue__23_Dec_2008_18_14_21_+1100_cX8BH3iTyCTana1m--
+-- 
+Inaky
