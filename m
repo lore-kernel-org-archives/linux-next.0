@@ -1,40 +1,69 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: manual merge of the kvm tree
-Date: Tue, 23 Dec 2008 12:38:50 +1100
-Message-ID: <1229996331.4360.32.camel@pasglop>
-References: <20081222145255.17f885f2.sfr@canb.auug.org.au>
-	 <1229922804.13001.84.camel@pasglop>
-	 <1229981967.7181.5.camel@localhost.localdomain>
-	 <1229982095.4360.19.camel@pasglop>
-	 <1229983422.7181.7.camel@localhost.localdomain>
-	 <18768.5298.173232.227168@cargo.ozlabs.ibm.com>
-	 <1229985853.7181.10.camel@localhost.localdomain>
-	 <18768.11194.175787.360371@cargo.ozlabs.ibm.com>
-	 <1229994151.7181.24.camel@localhost.localdomain>
+From: Josh Boyer <jwboyer@linux.vnet.ibm.com>
+Subject: Re: testing (Was: Re: linux-next: scsi-post-merge tree build
+	failure)
+Date: Mon, 22 Dec 2008 20:52:36 -0500
+Message-ID: <20081223015236.GA7137@zod.rchland.ibm.com>
+References: <20081223012545.5b1e7f5e.sfr@canb.auug.org.au> <1229979392.4360.15.camel@pasglop> <20081223100456.bb556b19.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:50385 "EHLO gate.crashing.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753553AbYLWBjQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 22 Dec 2008 20:39:16 -0500
-In-Reply-To: <1229994151.7181.24.camel@localhost.localdomain>
+Received: from yx-out-2324.google.com ([74.125.44.30]:32675 "EHLO
+	yx-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753952AbYLWBww (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Dec 2008 20:52:52 -0500
+Received: by yx-out-2324.google.com with SMTP id 8so798720yxm.1
+        for <linux-next@vger.kernel.org>; Mon, 22 Dec 2008 17:52:50 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <20081223100456.bb556b19.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Hollis Blanchard <hollisb@us.ibm.com>
-Cc: Paul Mackerras <paulus@samba.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Avi Kivity <avi@qumranet.com>, linux-next@vger.kernel.org, Kumar Gala <galak@kernel.crashing.org>, Josh Boyer <jwboyer@linux.vnet.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Blanchard <hollisb@us.ibm.com>, Hollis@ozlabs.org, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>
 
-On Mon, 2008-12-22 at 19:02 -0600, Hollis Blanchard wrote:
-> If you commit a new change to your tree that reverses only the
-> arch/powerpc/kvm/powerpc.c part of Ben's patch, would that solve the
-> merge problem? ppc44x_defconfig would still fail in the meantime though.
-> If you fix the ppc44x_defconfig build, the merge problem is compounded.
-> Either way I guess it is something that needs to be sorted out in
-> powerpc.git, so you can pick which style of breakage you'd prefer?
+On Tue, Dec 23, 2008 at 10:04:56AM +1100, Stephen Rothwell wrote:
+>Hi Ben,
+>
+>On Tue, 23 Dec 2008 07:56:32 +1100 Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
+>>
+>> On Tue, 2008-12-23 at 01:25 +1100, Stephen Rothwell wrote:
+>> > Hi Paul, Ben,
+>> > 
+>> > Today's linux-next build (powerpc ppc44x_config) failed like this:
+>> > 
+>> > arch/powerpc/kvm/powerpc.c: In function 'kvm_arch_vcpu_put':
+>> > arch/powerpc/kvm/powerpc.c:333: error: implicit declaration of function '_tlbil_all'
+>> > 
+>> > Probably caused by commit 2a4aca1144394653269720ffbb5a325a77abd5fa
+>> > ("powerpc/mm: Split low level tlb invalidate for nohash processors").
+>> > Reverting just that commit was too difficult, so I have reverted the
+>> > powerpc tree for today.
+>> 
+>> You can't revert that without reverting my whole series.
+>
+>I know that ... I tried.
+>
+>> Adding a #include ../mm/mmu_decl.h to the kvm code should fix it for
+>> now.
+>> 
+>> I need to talk to hollis about the right way to do that stuff in
+>> the long run but it might be it... those _tlbil things are low level
+>> stuff that aren't supposed to be used by the outside world which is
+>> why I moved the declarations there, but KVM is also low level :-)
+>
+>So, why is this series in powerpc/next at all if some of the modified
+>files haven't even been compiled?  A simple ppc44x_defconfig build of the
+>powerpc/next tree fails - which I would have thought would be part of the
+>testing since KVM is only implemented for 44x on powerpc.
 
-Or add #include "../mm/mmu_decl.h" to powerpc to fix the local build
-breakage now and fix the merge conflict later at merge time.
+Well, they were, and then they weren't.  I tested this series starting
+with the ppc44x_defconfig.  However, I was incrementally compiling them
+and I also had the 16/64K pages patch applied and 64K enabled.  That
+resulted in a kernel that was too big for the wrapper, so I went in
+and turned some stuff off to make the kernel smaller.  That included
+the KVM stuff.  By the time I was done building and testing the whole
+series, it had remained disabled.
 
-Cheers,
-Ben.
+That might sound like a cop-out, but it's what happend.  I should have
+done a simple build after I was done.  Sorry Stephen.
+
+josh
