@@ -1,34 +1,41 @@
-From: David Miller <davem@davemloft.net>
+From: Cyrill Gorcunov <gorcunov@gmail.com>
 Subject: Re: linux-next: manual merge of the net tree
-Date: Tue, 23 Dec 2008 18:16:23 -0800 (PST)
-Message-ID: <20081223.181623.209798200.davem@davemloft.net>
-References: <20081224101513.def05c7e.sfr@canb.auug.org.au>
+Date: Wed, 24 Dec 2008 17:41:48 +0300
+Message-ID: <20081224144148.GA8030@localhost>
+References: <20081224101934.0da26dab.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:39299
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1751911AbYLXCQV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Dec 2008 21:16:21 -0500
-In-Reply-To: <20081224101513.def05c7e.sfr@canb.auug.org.au>
+Received: from fg-out-1718.google.com ([72.14.220.158]:59555 "EHLO
+	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752503AbYLXOlw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Dec 2008 09:41:52 -0500
+Received: by fg-out-1718.google.com with SMTP id 19so1139603fgg.17
+        for <linux-next@vger.kernel.org>; Wed, 24 Dec 2008 06:41:50 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <20081224101934.0da26dab.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, khc@pm.waw.pl, inaky@linux.intel.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, James Chapman <jchapman@katalix.com>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 24 Dec 2008 10:15:13 +1100
+[Stephen Rothwell - Wed, Dec 24, 2008 at 10:19:34AM +1100]
+| Hi Dave,
+| 
+| Today's linux-next merge of the net tree got a conflict in
+| drivers/net/ppp_generic.c between commit
+| 739840d529eb7505d3cbfe9d468bf1440c9a8e27 ("ppp: fix segfaults introduced
+| by netdev_priv changes") from the net-current tree and commit
+| 7a95d267fb62cd6b80ef73be0592bbbe1dbd5df7 ("net: ppp_generic - use idr
+| technique instead of cardmaps") from the net tree.
+| 
+| I fixed it up (see below) and can carry the fix as necessary.
+| -- 
+| Cheers,
+| Stephen Rothwell                    sfr@canb.auug.org.au
+| http://www.canb.auug.org.au/~sfr/
+|
 
-> Today's linux-next merge of the net tree got a conflict in
-> Documentation/DocBook/networking.tmpl between commit
-> 66aa675719ab82a03a66b75210fd40be6541f8fb ("wimax: Makefile, Kconfig and
-> docbook linkage for the stack") from the usb tree and commit
-> 72364706c3b7c09a658e356218a918c5f92dcad0 ("WAN: syncppp.c is no longer
-> used by any kernel code. Remove it") from the net tree.
-> 
-> Juts an overlapping add/remove. I fixed it up (see below) and can carry
-> the fix as necessary.
+Thanks a lot, Stephen!
 
-Thanks Stephen.  You'll need to carry this one.
+		- Cyrill -
