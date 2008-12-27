@@ -1,104 +1,55 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [BUG] next-20081216 - WARNING: at kernel/smp.c:333
-	smp_call_function_mask
-Date: Fri, 26 Dec 2008 19:17:34 +0100
-Message-ID: <20081226181733.GA24439@elte.hu>
-References: <20081223132127.GA5450@linux.vnet.ibm.com> <495153A4.5060201@kernel.org> <20081224163400.GA11562@linux.vnet.ibm.com> <49529CE1.4040005@kernel.org> <20081226091217.GA5100@linux.vnet.ibm.com> <4954AC7B.3020603@kernel.org> <20081226102716.GA31450@uranus.ravnborg.org> <20081226152804.GB5100@linux.vnet.ibm.com> <20081226153318.GA4514@elte.hu> <20081226170452.GC5100@linux.vnet.ibm.com>
+From: Paul Mackerras <paulus@samba.org>
+Subject: Re: [PATCH] kbuild, sparseirq: work around GCC bug with __weak aliases
+Date: Sat, 27 Dec 2008 15:09:44 +1100
+Message-ID: <18773.43656.189438.155690@cargo.ozlabs.ibm.com>
+References: <20081219134636.GA11772@linux.vnet.ibm.com>
+	<494C0BF0.3080109@kernel.org>
+	<20081223132127.GA5450@linux.vnet.ibm.com>
+	<495153A4.5060201@kernel.org>
+	<20081224163400.GA11562@linux.vnet.ibm.com>
+	<49529CE1.4040005@kernel.org>
+	<20081226091217.GA5100@linux.vnet.ibm.com>
+	<4954AC7B.3020603@kernel.org>
+	<20081226102716.GA31450@uranus.ravnborg.org>
+	<20081226133354.GC29265@elte.hu>
+	<20081226134218.GA1054@elte.hu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:57947 "EHLO mx3.mail.elte.hu"
+Received: from ozlabs.org ([203.10.76.45]:52819 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750953AbYLZSSx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 26 Dec 2008 13:18:53 -0500
-Content-Disposition: inline
-In-Reply-To: <20081226170452.GC5100@linux.vnet.ibm.com>
+	id S1752369AbYL0ELs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 26 Dec 2008 23:11:48 -0500
+In-Reply-To: <20081226134218.GA1054@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Cc: Sam Ravnborg <sam@ravnborg.org>, Yinghai Lu <yinghai@kernel.org>, David Howells <dhowells@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, mel@csn.ul.ie
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Sam Ravnborg <sam@ravnborg.org>, Yinghai Lu <yinghai@kernel.org>, David Howells <dhowells@redhat.com>, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, mel@csn.ul.ie
 
+Ingo Molnar writes:
 
-* Kamalesh Babulal <kamalesh@linux.vnet.ibm.com> wrote:
-
-> > how about the patch below, does that work too? (after removing 
-> > Yinghai's patch)
+> * Ingo Molnar <mingo@elte.hu> wrote:
 > 
-> Hi Ingo,
+> > > I recall David Howells had a similar issue with the bootparamter patch 
+> > > set. The workaround he used was to add a barrier(); call in the weak 
+> > > function to avoid the inline.
+> > 
+> > could we add some extra attribute to __weak that would have a similar 
+> > effect? Something like __attribute__((noinline)), or something silly 
+> > like __attribute__((deprecated)) - just to keep gcc from screwing up 
+> > __weak functions? Perhaps adding a section attribute would have a 
+> > similar effect? (putting weak definitions into an extra section is 
+> > probably helpful anyway)
 > 
-> 	Kernel crashes with the same trace, after the applying the patch.
+> I've applied the patch below to tip/irq/sparseirq - could someone with an 
+> affected GCC version please check whether this solves the crash?
 
-okay, thanks - does the below cleaner variant of Yinghai's patch solve the 
-problem too?
+I recall from discussions earlier that noinline doesn't fix the
+problem, and I just tested a similar case and verified that adding
+noinline doesn't stop some versions of gcc from inlining them.  The
+empty weak functions in kernel/perf_counter.c were getting inlined by
+the cross-gcc (gcc 4.1.1) I use for compiling powerpc kernels on my
+laptop, and adding noinline doesn't help there.
 
-	Ingo
-
--------------------->
->From 9c93fc72ec95dc97d65b840978f9d605f4e5823a Mon Sep 17 00:00:00 2001
-From: Yinghai Lu <yinghai@kernel.org>
-Date: Fri, 26 Dec 2008 02:05:47 -0800
-Subject: [PATCH] sparseirq: work around compiler optimizing away __weak functions
-
-Impact: fix panic on null pointer with sparseirq
-
-Some GCC versions seem to inline the weak global function,
-when that function is empty.
-
-Work it around, by putting a barrier into the function.
-
-Signed-off-by: Yinghai <yinghai@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@elte.hu>
----
- init/main.c         |    9 +++++++++
- kernel/irq/handle.c |    3 ++-
- 2 files changed, 11 insertions(+), 1 deletions(-)
-
-diff --git a/init/main.c b/init/main.c
-index c1f999a..841d2b2 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -531,20 +531,29 @@ static void __init boot_cpu_init(void)
- 	cpu_set(cpu, cpu_possible_map);
- }
- 
-+/*
-+ * The barriers are needed to keep a GCC bug from optimizing
-+ * away these weak functions:
-+ */
-+
- void __init __weak smp_setup_processor_id(void)
- {
-+	barrier();
- }
- 
- void __init __weak thread_info_cache_init(void)
- {
-+	barrier();
- }
- 
- void __init __weak arch_early_irq_init(void)
- {
-+	barrier();
- }
- 
- void __init __weak early_irq_init(void)
- {
-+	barrier();
- 	arch_early_irq_init();
- }
- 
-diff --git a/kernel/irq/handle.c b/kernel/irq/handle.c
-index 06b05a4..a6d16a4 100644
---- a/kernel/irq/handle.c
-+++ b/kernel/irq/handle.c
-@@ -86,8 +86,9 @@ void init_kstat_irqs(struct irq_desc *desc, int cpu, int nr)
- 		desc->kstat_irqs = (unsigned int *)ptr;
- }
- 
--void __attribute__((weak)) arch_init_chip_data(struct irq_desc *desc, int cpu)
-+void __weak arch_init_chip_data(struct irq_desc *desc, int cpu)
- {
-+	barrier();
- }
- 
- static void init_one_irq_desc(int irq, struct irq_desc *desc, int cpu)
+Paul.
