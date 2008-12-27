@@ -1,41 +1,56 @@
-From: Ingo Molnar <mingo@elte.hu>
+From: Andrew Morton <akpm@linux-foundation.org>
 Subject: Re: [PATCH] kgdb: more barrier in blank weak function
-Date: Sat, 27 Dec 2008 09:17:37 +0100
-Message-ID: <20081227081737.GA26218@elte.hu>
-References: <494C0BF0.3080109@kernel.org> <20081223132127.GA5450@linux.vnet.ibm.com> <495153A4.5060201@kernel.org> <20081224163400.GA11562@linux.vnet.ibm.com> <49529CE1.4040005@kernel.org> <20081226091217.GA5100@linux.vnet.ibm.com> <4954AC7B.3020603@kernel.org> <20081226102716.GA31450@uranus.ravnborg.org> <4955B782.3030407@kernel.org> <4955B7EC.7050002@kernel.org>
+Date: Sat, 27 Dec 2008 00:34:48 -0800
+Message-ID: <20081227003448.b78b0a6f.akpm@linux-foundation.org>
+References: <494C0BF0.3080109@kernel.org>
+	<20081223132127.GA5450@linux.vnet.ibm.com>
+	<495153A4.5060201@kernel.org>
+	<20081224163400.GA11562@linux.vnet.ibm.com>
+	<49529CE1.4040005@kernel.org>
+	<20081226091217.GA5100@linux.vnet.ibm.com>
+	<4954AC7B.3020603@kernel.org>
+	<20081226102716.GA31450@uranus.ravnborg.org>
+	<4955B782.3030407@kernel.org>
+	<4955B7EC.7050002@kernel.org>
+	<20081227081737.GA26218@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:33182 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751338AbYL0ISW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 27 Dec 2008 03:18:22 -0500
-Content-Disposition: inline
-In-Reply-To: <4955B7EC.7050002@kernel.org>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:58007 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751295AbYL0Igr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Sat, 27 Dec 2008 03:36:47 -0500
+In-Reply-To: <20081227081737.GA26218@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Yinghai Lu <yinghai@kernel.org>
-Cc: Sam Ravnborg <sam@ravnborg.org>, David Howells <dhowells@redhat.com>, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, mel@csn.ul.ie
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Yinghai Lu <yinghai@kernel.org>, Sam Ravnborg <sam@ravnborg.org>, David Howells <dhowells@redhat.com>, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, mel@csn.ul.ie
 
+On Sat, 27 Dec 2008 09:17:37 +0100 Ingo Molnar <mingo@elte.hu> wrote:
 
-* Yinghai Lu <yinghai@kernel.org> wrote:
-
-> Impact: fix panic possible panic etc
 > 
-> some compiler seems to inline the weak global function if no line in it
+> * Yinghai Lu <yinghai@kernel.org> wrote:
+> 
+> > Impact: fix panic possible panic etc
+> > 
+> > some compiler seems to inline the weak global function if no line in it
+> 
+> >  kgdb_post_primary_code(struct pt_regs *regs, int e_vector, int err_code)
+> >  {
+> > -	return;
+> > +	barrier();
+> >  }
+> 
+> >  void __weak kgdb_disable_hw_debug(struct pt_regs *regs)
+> >  {
+> > +	barrier();
+> >  }
+> 
+> seems like the barrier() is not enough - the only safe sequence seems to 
+> be to turn it into a function that returns an integer.
+> 
 
->  kgdb_post_primary_code(struct pt_regs *regs, int e_vector, int err_code)
->  {
-> -	return;
-> +	barrier();
->  }
-
->  void __weak kgdb_disable_hw_debug(struct pt_regs *regs)
->  {
-> +	barrier();
->  }
-
-seems like the barrier() is not enough - the only safe sequence seems to 
-be to turn it into a function that returns an integer.
-
-	Ingo
+Give up, and ban that gcc version?  Adrian had a patch a while back,
+but I don't know how he worked out the affected compiler versions.
