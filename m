@@ -1,38 +1,108 @@
-From: Paul Mackerras <paulus@samba.org>
-Subject: Re: [PATCH] kbuild, sparseirq: work around GCC bug with __weak
-	aliases
-Date: Mon, 29 Dec 2008 10:27:35 +1100
-Message-ID: <18776.2919.275253.180651@cargo.ozlabs.ibm.com>
-References: <20081223132127.GA5450@linux.vnet.ibm.com>
-	<495153A4.5060201@kernel.org>
-	<20081224163400.GA11562@linux.vnet.ibm.com>
-	<49529CE1.4040005@kernel.org>
-	<20081226091217.GA5100@linux.vnet.ibm.com>
-	<4954AC7B.3020603@kernel.org>
-	<20081226102716.GA31450@uranus.ravnborg.org>
-	<20081226133354.GC29265@elte.hu>
-	<20081226134218.GA1054@elte.hu>
-	<18773.43656.189438.155690@cargo.ozlabs.ibm.com>
-	<20081227105944.GA13198@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: origin tree build failure
+Date: Mon, 29 Dec 2008 10:38:49 +1100
+Message-ID: <20081229103849.1cb1eb54.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:59636 "EHLO ozlabs.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:39947 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752563AbYL1X1n (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 28 Dec 2008 18:27:43 -0500
-In-Reply-To: <20081227105944.GA13198@elte.hu>
+	id S1754178AbYL1Xix (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 28 Dec 2008 18:38:53 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Sam Ravnborg <sam@ravnborg.org>, Yinghai Lu <yinghai@kernel.org>, David Howells <dhowells@redhat.com>, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, mel@csn.ul.ie
+To: Steve French <smfrench@gmail.com>, linux-cifs-client@lists.samba.org, "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
-Ingo Molnar writes:
+Hi Steve, Dave,
 
-> hm, does Yinghai's patch below do the trick? (also in perfcounters/core 
-> and tip/master)
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-Yes, it seems to fix the problem.
+fs/cifs/cifsfs.c: In function 'cifs_show_options':
+fs/cifs/cifsfs.c:364: error: 'NIP6_FMT' undeclared (first use in this function)
+fs/cifs/cifsfs.c:364: error: (Each undeclared identifier is reported only once
+fs/cifs/cifsfs.c:364: error: for each function it appears in.)
+fs/cifs/cifsfs.c:365: error: implicit declaration of function 'NIP6'
 
-Paul.
+Maybe someone should have warned Linus about the below known interaction
+between the net tree and the cifs tree ...
+
+I have applied the patch to today's linux-next tree.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+Date: Wed, 3 Dec 2008 13:53:12 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Steve French <smfrench@gmail.com>, <linux-cifs-client@lists.samba.org>
+Cc: linux-next@vger.kernel.org, Harvey Harrison <harvey.harrison@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Jeff Layton <jlayton@redhat.com>
+Subject: Re: linux-next: cifs tree build failure
+Message-Id: <20081203135312.60d4518d.sfr@canb.auug.org.au>
+In-Reply-To: <20081202132318.7e1581db.sfr@canb.auug.org.au>
+References: <20081202132318.7e1581db.sfr@canb.auug.org.au>
+X-Mailer: Sylpheed 2.5.0 (GTK+ 2.12.11; i486-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+Hi Steve, Dave,
+
+On Tue, 2 Dec 2008 13:23:18 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> 
+> fs/cifs/cifsfs.c: In function 'cifs_show_options':
+> fs/cifs/cifsfs.c:363: error: 'NIP6_FMT' undeclared (first use in this function)
+> fs/cifs/cifsfs.c:363: error: (Each undeclared identifier is reported only once
+> fs/cifs/cifsfs.c:363: error: for each function it appears in.)
+> fs/cifs/cifsfs.c:364: error: implicit declaration of function 'NIP6'
+> 
+> Caused by the interaction of commits
+> b189db5d299c6824780af5590564ff608adb3dea ("net: remove NIP6(), NIP6_FMT,
+> NIP6_SEQFMT and final users") from the net tree and
+> 20c4eef4f817ff65337e2fb3f1f5df52eeca09eb ("cifs: display addr and
+> prefixpath options in /proc/mounts") from the cifs tree.
+
+Today I have fixed this by applying a merge fix patch (see below) and
+will carry this as necessary.
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 3 Dec 2008 13:49:23 +1100
+Subject: [PATCH] cifs: update for new IP4/6 address printing
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/cifs/cifsfs.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+index 061a1dc..1b09330 100644
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -362,12 +362,12 @@ cifs_show_options(struct seq_file *s, struct vfsmount *m)
+ 					switch (server->addr.sockAddr6.
+ 						sin6_family) {
+ 					case AF_INET6:
+-						seq_printf(s, NIP6_FMT,
+-							   NIP6(server->addr.sockAddr6.sin6_addr));
++						seq_printf(s, "%pI6",
++							   &server->addr.sockAddr6.sin6_addr);
+ 						break;
+ 					case AF_INET:
+-						seq_printf(s, NIPQUAD_FMT,
+-							   NIPQUAD(server->addr.sockAddr.sin_addr.s_addr));
++						seq_printf(s, "%pI4",
++							   &server->addr.sockAddr.sin_addr.s_addr);
+ 						break;
+ 					}
+ 				}
+-- 
+1.5.6.5
