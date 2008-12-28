@@ -1,46 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: 2.6.30 inclusions
-Date: Sun, 28 Dec 2008 10:46:53 +1100
-Message-ID: <20081228104653.cc44b036.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH] sparc64: use unsigned long long for u64
+Date: Sat, 27 Dec 2008 20:25:52 -0800 (PST)
+Message-ID: <20081227.202552.27482357.davem@davemloft.net>
+References: <20081227092404.GA10375@uranus.ravnborg.org>
+	<20081227.013712.63335017.davem@davemloft.net>
+	<20081227094955.GA1355@uranus.ravnborg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sun__28_Dec_2008_10_46_53_+1100_p9nH09xXEUjo.yor"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34506 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754358AbYL0XrA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 27 Dec 2008 18:47:00 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: linux-next@vger.kernel.org
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <sparclinux-owner@vger.kernel.org>
+In-Reply-To: <20081227094955.GA1355@uranus.ravnborg.org>
+Sender: sparclinux-owner@vger.kernel.org
+To: sam@ravnborg.org
+Cc: akpm@linux-foundation.org, sparclinux@vger.kernel.org, mingo@elte.hu, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, kenchen@google.com, paulus@samba.org, tglx@linutronix.de, hpa@zytor.com, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Sun__28_Dec_2008_10_46_53_+1100_p9nH09xXEUjo.yor
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Sam Ravnborg <sam@ravnborg.org>
+Date: Sat, 27 Dec 2008 10:49:55 +0100
 
-Hi all,
+> I have ordered a used Sun Blade 100(*) that should show up
+> before new eve.
+> So when I have it and it is up and running I will redo this
+> patch set. That will likely take a few weeks though.
 
-Just a reminder that I do *not* want anything destined for 2.6.30 in
-linux-next until (at least) 2.6.29-rc1 is released.  We should give the
-current trees a chance to drain :-)
+Another option, of course, is to use 64-bit cross tools
+on an x86_64 system if you have access to one of those.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+> (*) Any distribution recommendations? I will only use it for
+>     sparc kernel development so nothing fancy...
 
---Signature=_Sun__28_Dec_2008_10_46_53_+1100_p9nH09xXEUjo.yor
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklWvm0ACgkQjjKRsyhoI8z/DwCfWVqGy15enCmSI/71PU785sPB
-mrQAn3GN4BHGYAS/0xOfyW35iqsEPhfH
-=wfK2
------END PGP SIGNATURE-----
-
---Signature=_Sun__28_Dec_2008_10_46_53_+1100_p9nH09xXEUjo.yor--
+Debian testing works fine, and that's what I'm typing this
+on.
