@@ -1,60 +1,53 @@
-From: Roland Dreier <rdreier@cisco.com>
-Subject: [ofa-general] Re: linux-next: origin tree build failure
-Date: Mon, 29 Dec 2008 13:35:02 -0800
-Message-ID: <adahc4mu0l5.fsf@cisco.com>
-References: <20081229114321.4b6baea5.sfr@canb.auug.org.au>
-	<ada4p0nve4r.fsf@cisco.com> <1230544737.4261.33.camel@alst60>
-	<adaljtyu45d.fsf@cisco.com>
-	<alpine.LFD.2.00.0812291304471.3082@localhost.localdomain>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: Tree for December 29 (fcoe)
+Date: Mon, 29 Dec 2008 15:35:20 -0600
+Message-ID: <1230586520.3302.61.camel@localhost.localdomain>
+References: <20081230031621.60acd90b.sfr@canb.auug.org.au>
+	 <20081229123115.9a255fa8.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <general-bounces@lists.openfabrics.org>
-In-Reply-To: <alpine.LFD.2.00.0812291304471.3082@localhost.localdomain> (Linus
-	Torvalds's message of "Mon, 29 Dec 2008 13:07:16 -0800 (PST)")
-List-Unsubscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
-	<mailto:general-request@lists.openfabrics.org?subject=unsubscribe>
-List-Archive: <http://lists.openfabrics.org/pipermail/general>
-List-Post: <mailto:general@lists.openfabrics.org>
-List-Help: <mailto:general-request@lists.openfabrics.org?subject=help>
-List-Subscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
-	<mailto:general-request@lists.openfabrics.org?subject=subscribe>
-Sender: general-bounces@lists.openfabrics.org
-Errors-To: general-bounces@lists.openfabrics.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "general@lists.openfabrics.org" <general@lists.openfabrics.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <20081229123115.9a255fa8.randy.dunlap@oracle.com>
+Sender: linux-scsi-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, scsi <linux-scsi@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
- > I'd suggest
- > 
- >   config IF_IPV6
- > 	bool
- > 	depends on INET
- > 	depends on !(INFINIBAND = y && IPV6 = m)
- > 	default y
+On Mon, 2008-12-29 at 12:31 -0800, Randy Dunlap wrote:
+> On Tue, 30 Dec 2008 03:16:21 +1100 Stephen Rothwell wrote:
+> 
+> > Hi all,
+> > 
+> > Changes since 20081219:
+> > 
+> > Undropped tree:
+> > 	scci
+> > 	mtd
+> > 
+> > Dropped trees (temporarily):
+> > 	nfs (akpm request due to 2.6.30 features)
+> > 	kvm (build problem)
+> > 	rr (build poblem)
+> > 	semaphore-removal (due to unfixed conflicts against Linus' tree)
+> > 	cpu_alloc (build problem)
+> > 	audit (difficult conflicts)
+> > 
+> > Linus' tree had three build failures requiring patches and one requiring
+> > a revert.
+> 
+> 
+> linux-next-20081229/drivers/scsi/fcoe/libfcoe.c:995: error: dereferencing pointer to incomplete type
+> linux-next-20081229/drivers/scsi/fcoe/libfcoe.c:1015: error: dereferencing pointer to incomplete type
+> 
+> (on netdev->name ?)
 
-Makes sense, will do.  How about calling it INFINIBAND_USE_IPV6 or
-something like that, though?  (Since it's under the INFINIBAND config
-stuff and exists to forbid INFINIBAND=y && IPV6=m trying to use IPv6).
-But see below:
+This looks a bit odd.  libfcoe.h #includes linux/netdevice.h which
+defines the structure ... I can't see how netdev could have an
+incomplete type.  Could you make libfcoe.i and see what's happening?
 
- > but also use it in the source code as a more readable version:
- > 
- > > diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
- > > index d98b05b..ec7abb5 100644
- > > --- a/drivers/infiniband/core/addr.c> +++ b/drivers/infiniband/core/addr.c
- > > @@ -128,6 +128,7 @@ int rdma_translate_ip(struct sockaddr *addr, struct rdma_dev_addr *dev_addr)
- > >  		ret = rdma_copy_addr(dev_addr, dev, NULL);
- > >  		dev_put(dev);
- > >  		break;
- > > +#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
- > 
- > ie use
- > 
- > 	#ifdef CONFIG_IF_IPV6
+Thanks,
 
-this doesn't make sense, does it?  Your CONFIG_IF_IPV6 will be set in
-the case IPV6=n too I think.  (Which is the whole point... we want to
-build this code, just without IPv6 support, if IPv6 is turned off
-completely)
+James
 
- - R.
+
