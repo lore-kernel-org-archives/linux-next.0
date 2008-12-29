@@ -1,63 +1,56 @@
-From: Roland Dreier <rdreier@cisco.com>
-Subject: Re: [ofa-general] Re: linux-next: origin tree build failure
-Date: Mon, 29 Dec 2008 13:48:18 -0800
-Message-ID: <adad4fatzz1.fsf@cisco.com>
-References: <20081229114321.4b6baea5.sfr@canb.auug.org.au>
-	<ada4p0nve4r.fsf@cisco.com> <1230544737.4261.33.camel@alst60>
-	<adaljtyu45d.fsf@cisco.com>
-	<alpine.LFD.2.00.0812291304471.3082@localhost.localdomain>
-	<adahc4mu0l5.fsf@cisco.com>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: Tree for December 29 (cxgb3i)
+Date: Mon, 29 Dec 2008 15:51:07 -0600
+Message-ID: <1230587467.3302.67.camel@localhost.localdomain>
+References: <20081230031621.60acd90b.sfr@canb.auug.org.au>
+	 <20081229123517.23fd6169.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <general-bounces@lists.openfabrics.org>
-In-Reply-To: <adahc4mu0l5.fsf@cisco.com> (Roland Dreier's message of "Mon, 29
-	Dec 2008 13:35:02 -0800")
-List-Unsubscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
-	<mailto:general-request@lists.openfabrics.org?subject=unsubscribe>
-List-Archive: <http://lists.openfabrics.org/pipermail/general>
-List-Post: <mailto:general@lists.openfabrics.org>
-List-Help: <mailto:general-request@lists.openfabrics.org?subject=help>
-List-Subscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
-	<mailto:general-request@lists.openfabrics.org?subject=subscribe>
-Sender: general-bounces@lists.openfabrics.org
-Errors-To: general-bounces@lists.openfabrics.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "general@lists.openfabrics.org" <general@lists.openfabrics.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from accolon.hansenpartnership.com ([76.243.235.52]:59334 "EHLO
+	accolon.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753196AbYL2VvL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Dec 2008 16:51:11 -0500
+In-Reply-To: <20081229123517.23fd6169.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, scsi <linux-scsi@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kxie@chelsio.com
 
- >  > I'd suggest
- >  > 
- >  >   config IF_IPV6
- >  > 	bool
- >  > 	depends on INET
- >  > 	depends on !(INFINIBAND = y && IPV6 = m)
- >  > 	default y
- > 
- > Makes sense, will do.  How about calling it INFINIBAND_USE_IPV6 or
- > something like that, though?  (Since it's under the INFINIBAND config
- > stuff and exists to forbid INFINIBAND=y && IPV6=m trying to use IPv6).
+On Mon, 2008-12-29 at 12:35 -0800, Randy Dunlap wrote:
+> On Tue, 30 Dec 2008 03:16:21 +1100 Stephen Rothwell wrote:
+> 
+> > Hi all,
+> > 
+> > Changes since 20081219:
+> > 
+> > Undropped tree:
+> > 	scci
+> > 	mtd
+> > 
+> > Dropped trees (temporarily):
+> > 	nfs (akpm request due to 2.6.30 features)
+> > 	kvm (build problem)
+> > 	rr (build poblem)
+> > 	semaphore-removal (due to unfixed conflicts against Linus' tree)
+> > 	cpu_alloc (build problem)
+> > 	audit (difficult conflicts)
+> > 
+> > Linus' tree had three build failures requiring patches and one requiring
+> > a revert.
+> 
+> 
+> linux-next-20081229/drivers/scsi/cxgb3i/cxgb3i_offload.c:499: error: 'struct sk_buff' has no member named 'sp'
+> linux-next-20081229/drivers/scsi/cxgb3i/cxgb3i_offload.c:512: error: 'struct sk_buff' has no member named 'sp'
+> linux-next-20081229/drivers/scsi/cxgb3i/cxgb3i_offload.c:532: error: 'struct sk_buff' has no member named 'sp'
+> linux-next-20081229/drivers/scsi/cxgb3i/cxgb3i_offload.c:533: error: 'struct sk_buff' has no member named 'sp'
 
-Actually, thinking about this for 30 more seconds, I'm not sure how
-another config symbol helps at all.  I do like splitting dependencies
-onto multiple lines as a replacement for &&, so I have:
+In the config 20 questions, my guess for this is CONFIG_XFRM=n
 
-config INFINIBAND_ADDR_TRANS
-	bool
-	depends on INET
-	depends on !(INFINIBAND = y && IPV6 = m)
-	default y
+I'm not at all sure why this driver is playing with the secure path ...
+I suspect the use needs to be enclosed in #ifdef CONFIG_XFRM pairs, but
+I'd like the maintainers to verify.
 
-right now.
-
-Not sure if it's worth introducing another Kconfig symbol that depends
-on IPV6 != n to avoid the
-
-#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
-
-tests.  I note that there are tons of that construction all over the
-tree, and the places without it look somewhat dubious (eg
-net/ipv4/ip_gre.c looks as if it will do the wrong thing if IPV6=m).
-Maybe adding CONFIG_IPV6_ENABLED or something and cleaning up the whole
-tree would be a good janitorial project?
-
- - R.
+James
