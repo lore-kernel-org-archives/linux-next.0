@@ -1,32 +1,54 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: origin tree build warnings
-Date: Sun, 28 Dec 2008 20:21:15 -0800 (PST)
-Message-ID: <20081228.202115.210807179.davem@davemloft.net>
-References: <20081229113525.89450db7.sfr@canb.auug.org.au>
-	<20081228.200145.33502228.davem@davemloft.net>
-	<20081229151749.8dd82c02.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20081229151749.8dd82c02.sfr@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: nhorman@tuxdriver.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
-
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 29 Dec 2008 15:17:49 +1100
+Subject: linux-next: manual merge of the kvm tree
+Date: Mon, 29 Dec 2008 16:11:05 +1100
+Message-ID: <20081229161105.2a5125e9.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__29_Dec_2008_16_11_05_+1100_Yr2Bm8h3.uBl0dNK"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37452 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750801AbYL2FLR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Dec 2008 00:11:17 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Avi Kivity <avi@qumranet.com>
+Cc: linux-next@vger.kernel.org, Hollis Blanchard <hollisb@us.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>
 
-> On Sun, 28 Dec 2008 20:01:45 -0800 (PST) David Miller <davem@davemloft.net> wrote:
-> >
-> > I'll take care of all of these issues, along with the
-> 
-> Thanks.
-> 
-> > ibmveth et al. ones you reported seperately.
-> 
-> Linus already took my patches for cifs, ibmveth and ehea (probably
-> assuming that they were trivial).
+--Signature=_Mon__29_Dec_2008_16_11_05_+1100_Yr2Bm8h3.uBl0dNK
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yep I noticed that, thanks a lot Stephen.
+Hi Avi,
+
+Today's linux-next merge of the kvm tree got a conflict in
+arch/powerpc/kvm/powerpc.c between commits
+2a4aca1144394653269720ffbb5a325a77abd5fa ("powerpc/mm: Split low level
+tlb invalidate for nohash processors") and
+fad7b9b51e21a97e9e2662f1b51869ed2d209097 ("powerpc: Fix KVM build on
+ppc440") from the powerpc tree (already merged into Linus' tree) and
+commits 48e5562f7278782ae5d1772b7baa1ff76f035285 ("KVM: ppc: Refactor
+powerpc.c to relocate 440-specific code") and
+408e29020273079445b5a9161a80d6ce07ab6b1c ("KVM: ppc: Implement in-kernel
+exit timing statistics") from the kvm tree.
+
+I just used the kvm tree version of the file.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__29_Dec_2008_16_11_05_+1100_Yr2Bm8h3.uBl0dNK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAklYW+kACgkQjjKRsyhoI8yVpgCgl72irUoID+Nxl8tUbPUAwIJG
+Oq4Ani7H3PXDo3zMnjAwrttowAoVRTzs
+=aNSG
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__29_Dec_2008_16_11_05_+1100_Yr2Bm8h3.uBl0dNK--
