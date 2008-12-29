@@ -1,54 +1,45 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] cxgb3i: use same dependencies as CHELSIO_T3
-Date: Mon, 29 Dec 2008 13:01:10 -0800
-Message-ID: <20081229130110.67d5271a.randy.dunlap@oracle.com>
-References: <20081230031621.60acd90b.sfr@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: rr tree build failure
+Date: Tue, 30 Dec 2008 07:31:40 +1030
+Message-ID: <200812300731.40641.rusty@rustcorp.com.au>
+References: <20081229191253.6c04bf3e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:40031 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753580AbYL2VBh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Dec 2008 16:01:37 -0500
-In-Reply-To: <20081230031621.60acd90b.sfr@canb.auug.org.au>
+Received: from ozlabs.org ([203.10.76.45]:44871 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753861AbYL2VBr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Dec 2008 16:01:47 -0500
+In-Reply-To: <20081229191253.6c04bf3e.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, kxie@chelsio.com, akpm <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>, jejb <James.Bottomley@hansenpartnership.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Monday 29 December 2008 18:42:53 Stephen Rothwell wrote:
+> Hi Rusty,
+> 
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> 
+> In file included from include/linux/smp.h:33,
+>                  from include/linux/topology.h:33,
+>                  from include/linux/mmzone.h:763,
+>                  from include/linux/gfp.h:4,
+>                  from include/linux/kmod.h:22,
+>                  from include/linux/module.h:13,
+>                  from include/linux/crypto.h:21,
+>                  from arch/x86/kernel/asm-offsets_64.c:7,
+>                  from arch/x86/kernel/asm-offsets.c:4:
+> arch/x86/include/asm/smp.h: In function 'num_booting_cpus':
+> arch/x86/include/asm/smp.h:152: error: implicit declaration of function 'cpus_weight'
 
-Make the CXGB iSCSI driver (that selects the CXGB net driver) have the same
-dependencies as the net driver, since kconfig doesn't do that automatically.
+Oh, fun.  We added a config option to disable the deprecated cpus_* functions;
+it's mainly for those interested in helping with the conversion.
 
-drivers/net/cxgb3/cxgb3_main.c:269: error: implicit declaration of function 'pci_disable_msix'
-drivers/net/cxgb3/cxgb3_main.c:272: error: implicit declaration of function 'pci_disable_msi'
-drivers/net/cxgb3/cxgb3_main.c:2778: error: array type has incomplete element type
-drivers/net/cxgb3/cxgb3_main.c:2781: warning: type defaults to 'int' in declaration of 'type name'
-drivers/net/cxgb3/cxgb3_main.c:2781: warning: type defaults to 'int' in declaration of 'type name'
-drivers/net/cxgb3/cxgb3_main.c:2781: error: size of array 'type name' is negative
-drivers/net/cxgb3/cxgb3_main.c:2784: error: implicit declaration of function 'pci_enable_msix'
-drivers/net/cxgb3/cxgb3_main.c:2784: warning: type defaults to 'int' in declaration of 'type name'
-drivers/net/cxgb3/cxgb3_main.c:2784: warning: type defaults to 'int' in declaration of 'type name'
-drivers/net/cxgb3/cxgb3_main.c:2784: error: size of array 'type name' is negative
-drivers/net/cxgb3/cxgb3_main.c:2786: warning: type defaults to 'int' in declaration of 'type name'
-drivers/net/cxgb3/cxgb3_main.c:2786: warning: type defaults to 'int' in declaration of 'type name'
-drivers/net/cxgb3/cxgb3_main.c:2786: error: size of array 'type name' is negative
-drivers/net/cxgb3/cxgb3_main.c:2778: warning: unused variable 'entries'
-drivers/net/cxgb3/cxgb3_main.c:3011: error: implicit declaration of function 'pci_enable_msi'
+Of course, allmodconfig turns it on.  I made it depend on CONFIG_BROKEN for now.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/scsi/cxgb3i/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
-
---- linux-next-20081229.orig/drivers/scsi/cxgb3i/Kconfig
-+++ linux-next-20081229/drivers/scsi/cxgb3i/Kconfig
-@@ -1,5 +1,6 @@
- config SCSI_CXGB3_ISCSI
- 	tristate "Chelsio S3xx iSCSI support"
-+	depends on PCI && INET
- 	select CHELSIO_T3
- 	select SCSI_ISCSI_ATTRS
- 	---help---
+Thanks,
+Rusty.
