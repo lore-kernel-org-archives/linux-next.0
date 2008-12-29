@@ -1,61 +1,62 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: Pull request for FS-Cache, including NFS patches
-Date: Sun, 28 Dec 2008 20:01:34 -0800
-Message-ID: <20081228200134.426bf203.akpm@linux-foundation.org>
-References: <8930.1229560221@redhat.com> <20081218142420.GA16728@infradead.org>
-	<20081218123601.11810b7f.akpm@linux-foundation.org>
-	<200812190007.34581.bernd.schubert@fastmail.fm>
-	<20081218152616.a24c013f.akpm@linux-foundation.org>
-	<20081219110539.7e7e230c.sfr@canb.auug.org.au>
-	<20081229144533.4a0ab696.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the creds tree
+Date: Mon, 29 Dec 2008 15:06:45 +1100
+Message-ID: <20081229150645.98f2000f.sfr@canb.auug.org.au>
+References: <20081030154741.2651e779.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <nfsv4-bounces@linux-nfs.org>
-In-Reply-To: <20081229144533.4a0ab696.sfr@canb.auug.org.au>
-List-Unsubscribe: <http://linux-nfs.org/cgi-bin/mailman/listinfo/nfsv4>,
-	<mailto:nfsv4-request@linux-nfs.org?subject=unsubscribe>
-List-Archive: <http://linux-nfs.org/pipermail/nfsv4>
-List-Post: <mailto:nfsv4@linux-nfs.org>
-List-Help: <mailto:nfsv4-request@linux-nfs.org?subject=help>
-List-Subscribe: <http://linux-nfs.org/cgi-bin/mailman/listinfo/nfsv4>,
-	<mailto:nfsv4-request@linux-nfs.org?subject=subscribe>
-Sender: nfsv4-bounces@linux-nfs.org
-Errors-To: nfsv4-bounces@linux-nfs.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, nfsv4@linux-nfs.org, steved@redhat.com, linux-kernel@vger.kernel.org, dhowells@redhat.com, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, rwheeler@redhat.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__29_Dec_2008_15_06_45_+1100_l_o+3G=vtz+YJKg8"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:38471 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752255AbYL2EGw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 28 Dec 2008 23:06:52 -0500
+In-Reply-To: <20081030154741.2651e779.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Chinner <david@fromorbit.com>, Lachlan McIlroy <lachlan@sgi.com>
+Cc: linux-next@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>
 
-On Mon, 29 Dec 2008 14:45:33 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Signature=_Mon__29_Dec_2008_15_06_45_+1100_l_o+3G=vtz+YJKg8
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi David,
-> 
-> On Fri, 19 Dec 2008 11:05:39 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Given the ongoing discussions around FS-Cache, I have removed it from
-> > linux-next.  Please ask me to include it again (if sensible) once some
-> > decision has been reached about its future.
-> 
-> What was the result of discussions around FS-Cache?
+Hi David,
 
-There was none.
+On Thu, 30 Oct 2008 15:47:41 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the creds tree got conflicts in
+> fs/xfs/linux-2.6/xfs_cred.h, fs/xfs/linux-2.6/xfs_globals.h and
+> fs/xfs/xfs_vnodeops.h between commit
+> 959f0f5b48d25a478694e04d024cd1ca681ea4bf ("[XFS] kill sys_cred") from the
+> xfs tree and commit 3634a8a33b2cd7296e265d01d606b58c22b6a557 ("CRED:
+> Separate task security context from task_struct") from the creds tree.
+>=20
+> The former mostly removed what the latter changed.  I fixed it up (see
+> below - I just removed the "extern cred_t *sys_cred;" from xfs_globals.h
+> and the cred_t arguments to xfs_setattr and xfs_change_file_space in
+> xfs_vnodeops.h) and can carry the fix.
 
-Dan Muntz's question:
+These conflicts are now between the xfs tree and Linus' tree and so could
+be sorted out by merging Linus' tree into the xfs tree before asking
+Linus to pull the xfs tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-  Solaris has had CacheFS since ~1995, HPUX had a port of it since
-  ~1997.  I'd be interested in evidence of even a small fraction of
-  Solaris and/or HPUX shops using CacheFS.  I am aware of customers who
-  thought it sounded like a good idea, but ended up ditching it for
-  various reasons (e.g., CacheFS just adds overhead if you almost
-  always hit your local mem cache).
+--Signature=_Mon__29_Dec_2008_15_06_45_+1100_l_o+3G=vtz+YJKg8
+Content-Type: application/pgp-signature
 
-was an very very good one.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-Seems that instead of answering it, we've decided to investigate the
-fate of those who do not learn from history.
+iEYEARECAAYFAklYTNUACgkQjjKRsyhoI8x16wCaA+lnqDJUeIkQt97mfdHoMX3N
+KZkAnRWwrhgZlMpUpcYAQCj4o8xUnxax
+=Yh0N
+-----END PGP SIGNATURE-----
 
->  I ask because it
-> reappeared in linux-next today via the nfs tree (merged into that on Dec
-> 24 and 25) ...
-
-oh.
+--Signature=_Mon__29_Dec_2008_15_06_45_+1100_l_o+3G=vtz+YJKg8--
