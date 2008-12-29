@@ -1,54 +1,51 @@
-From: Aleksey Senin <alekseys@voltaire.com>
-Subject: Re: linux-next: origin tree build failure
-Date: Mon, 29 Dec 2008 11:58:57 +0200
-Message-ID: <1230544737.4261.33.camel@alst60>
-References: <20081229114321.4b6baea5.sfr@canb.auug.org.au>
-	 <ada4p0nve4r.fsf@cisco.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: timers tree build failure
+Date: Mon, 29 Dec 2008 21:14:53 +1100
+Message-ID: <20081229211453.04084055.sfr@canb.auug.org.au>
+References: <20081229133028.363f5094.sfr@canb.auug.org.au>
+	<20081229093125.GA27293@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__29_Dec_2008_21_14_53_+1100_vLLkzlYCFH5Yeo4w"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fwil.voltaire.com ([193.47.165.2]:24318 "EHLO exil.voltaire.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1753827AbYL2J75 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Dec 2008 04:59:57 -0500
-In-Reply-To: <ada4p0nve4r.fsf@cisco.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:59073 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750832AbYL2KPH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Dec 2008 05:15:07 -0500
+In-Reply-To: <20081229093125.GA27293@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "general@lists.openfabrics.org" <general@lists.openfabrics.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Roland Dreier <rdreier@cisco.com>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
 
-After another investigation of this problem, I think that proposed
-solution is #ifdef as good for a first stage. IPv6 support is mandatory
-when we are talking about running linux in some organization. But, of
-course, the way how it implemented in IB stack should be changed. So on
-the second stage, I'd like drop out these "defines" and at the time of
-module initialization obtain addresses of IPv6 functions and in the case
-if they are present at the runtime, call them. It should be nice
-solution for RMDA_CM and IPoIB modules.
-On Sun, 2008-12-28 at 19:44 -0800, Roland Dreier wrote:
-> > ERROR: ".ipv6_chk_addr" [drivers/infiniband/core/ib_addr.ko] undefined!
->  > ERROR: ".ip6_route_output" [drivers/infiniband/core/ib_addr.ko] undefined!
->  > 
->  > Caused by commit 38617c64bf9a10bf20e41d95b69bb81e8560fe9d ("RDMA/addr:
->  > Add support for translating IPv6 addresses").  This requires a dependency
->  > on IPV6.
-> 
-> So how do we want to fix this?  (This question is mostly directed to the
-> IB guys)  One possibility is to make all this depend on IPV6 in Kconfig,
-> but I think we want the RDMA CM to be buildable/usable even if IPv6
-> isn't enabled.  A better option is to just put all the IPv6 related
-> stuff into
-> 
-> #if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
-> 
-> and add a Kconfig dependency on (IPV6 || IPV6=n) as we did for IPoIB.
-> 
-> But then this leads to the behavior that loading the RDMA CM will cause
-> the ipv6 module to be loaded if IPV6=m in the kernel config, even if the
-> administrator doesn't want to enable IPv6, just as with IPoIB today.
-> And people already complain about that.
-> 
-> Anyone see a better solution (which we could use for IPoIB even)?
-> 
->  - R.
+--Signature=_Mon__29_Dec_2008_21_14_53_+1100_vLLkzlYCFH5Yeo4w
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Ingo,
+
+On Mon, 29 Dec 2008 10:31:25 +0100 Ingo Molnar <mingo@elte.hu> wrote:
+>
+> yes, trivial oneliner conflict, i pushed out a new auto-timers-next tree.
+
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__29_Dec_2008_21_14_53_+1100_vLLkzlYCFH5Yeo4w
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAklYox0ACgkQjjKRsyhoI8wH8QCghYadcJnyHzp4MEKsD4rpOt5G
+yAsAniPBWop4BsIoGL9OtvbE9SjGGOlQ
+=OEbZ
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__29_Dec_2008_21_14_53_+1100_vLLkzlYCFH5Yeo4w--
