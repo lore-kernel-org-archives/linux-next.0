@@ -1,55 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the iommu tree
-Date: Mon, 29 Dec 2008 23:20:02 +1100
-Message-ID: <20081229232002.cd7aa33d.sfr@canb.auug.org.au>
-References: <20081229230451.4e322cde.sfr@canb.auug.org.au>
-	<20081229121501.GE9628@elte.hu>
+Subject: linux-next: manual merge of the uwb tree
+Date: Mon, 29 Dec 2008 23:30:54 +1100
+Message-ID: <20081229233054.6e8d9a14.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__29_Dec_2008_23_20_02_+1100_sFkjo.NSP9NPVZcp"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55634 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50335 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753054AbYL2MUM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Dec 2008 07:20:12 -0500
-In-Reply-To: <20081229121501.GE9628@elte.hu>
+	id S1750862AbYL2Ma5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Dec 2008 07:30:57 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, Jeremy Fitzhardinge <jeremy@goop.org>
+To: David Vrabel <david.vrabel@csr.com>
+Cc: linux-next@vger.kernel.org, Harvey Harrison <harvey.harrison@gmail.com>, Greg KH <greg@kroah.com>
 
---Signature=_Mon__29_Dec_2008_23_20_02_+1100_sFkjo.NSP9NPVZcp
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi David,
 
-Hi Ingo,
+Today's linux-next merge of the uwb tree got a conflict in
+drivers/usb/wusbcore/rh.c between commit
+96f391057a3c29655b82b90d902f678d901c0eb1 ("USB: wusb: annotate
+association types withe proper endianness") from the usb tree and commit
+bce83697c5fe84a7a5d38c96fbbe43b4bc028c3e ("uwb: use dev_dbg() for debug
+messages") from the uwb tree.
 
-On Mon, 29 Dec 2008 13:15:01 +0100 Ingo Molnar <mingo@elte.hu> wrote:
->
-> had a resolution for this cached from tip/master - so i just re-integrate=
-d=20
-> and re-pushed auto-iommu-next so it should go away next time you pick it=
-=20
-> up. Thanks,
-
-Thanks.
-
---=20
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__29_Dec_2008_23_20_02_+1100_sFkjo.NSP9NPVZcp
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklYwHIACgkQjjKRsyhoI8y9KwCgjdynm+Cs9C0KKlfq6BABpjxH
-b74AnRRxOBi6JD4cH+F7UaZ1HX6paprL
-=36hl
------END PGP SIGNATURE-----
-
---Signature=_Mon__29_Dec_2008_23_20_02_+1100_sFkjo.NSP9NPVZcp--
+diff --cc drivers/usb/wusbcore/rh.c
+index b1bb82d,95c6fa3..0000000
+--- a/drivers/usb/wusbcore/rh.c
++++ b/drivers/usb/wusbcore/rh.c
+@@@ -351,13 -326,11 +326,11 @@@ static int wusbhc_rh_clear_port_feat(st
+  static int wusbhc_rh_get_port_status(struct wusbhc *wusbhc, u16 port_idx,
+  				     u32 *_buf, u16 wLength)
+  {
+- 	int result = -EINVAL;
+ -	u16 *buf = (u16 *) _buf;
+ +	__le16 *buf = (__le16 *)_buf;
+  
+- 	d_fnstart(1, wusbhc->dev, "(wusbhc %p port_idx %u wLength %u)\n",
+- 		  wusbhc, port_idx, wLength);
+  	if (port_idx > wusbhc->ports_max)
+- 		goto error;
++ 		return -EINVAL;
++ 
+  	mutex_lock(&wusbhc->mutex);
+  	buf[0] = cpu_to_le16(wusb_port_by_idx(wusbhc, port_idx)->status);
+  	buf[1] = cpu_to_le16(wusb_port_by_idx(wusbhc, port_idx)->change);
