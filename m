@@ -1,99 +1,29 @@
 From: David Howells <dhowells@redhat.com>
 Subject: Re: Pull request for FS-Cache, including NFS patches
-Date: Mon, 29 Dec 2008 15:01:09 +0000
-Message-ID: <12214.1230562869@redhat.com>
-References: <20081228200134.426bf203.akpm@linux-foundation.org>
-	<8930.1229560221@redhat.com> <20081218142420.GA16728@infradead.org>
-	<20081218123601.11810b7f.akpm@linux-foundation.org>
-	<200812190007.34581.bernd.schubert@fastmail.fm>
-	<20081218152616.a24c013f.akpm@linux-foundation.org>
-	<20081219110539.7e7e230c.sfr@canb.auug.org.au>
-	<20081229144533.4a0ab696.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <nfsv4-bounces@linux-nfs.org>
-In-Reply-To: <20081228200134.426bf203.akpm@linux-foundation.org>
-List-Unsubscribe: <http://linux-nfs.org/cgi-bin/mailman/listinfo/nfsv4>,
-	<mailto:nfsv4-request@linux-nfs.org?subject=unsubscribe>
-List-Archive: <http://linux-nfs.org/pipermail/nfsv4>
-List-Post: <mailto:nfsv4@linux-nfs.org>
-List-Help: <mailto:nfsv4-request@linux-nfs.org?subject=help>
-List-Subscribe: <http://linux-nfs.org/cgi-bin/mailman/listinfo/nfsv4>,
-	<mailto:nfsv4-request@linux-nfs.org?subject=subscribe>
-Sender: nfsv4-bounces@linux-nfs.org
-Errors-To: nfsv4-bounces@linux-nfs.org
+Date: Mon, 29 Dec 2008 15:04:35 +0000
+Message-ID: <12273.1230563075@redhat.com>
+References: <20081228200726.7b7078b4.akpm@linux-foundation.org> <8930.1229560221@redhat.com> <20081218142420.GA16728@infradead.org> <20081218123601.11810b7f.akpm@linux-foundation.org> <200812190007.34581.bernd.schubert@fastmail.fm> <20081218152616.a24c013f.akpm@linux-foundation.org> <20081219110539.7e7e230c.sfr@canb.auug.org.au> <20081229144533.4a0ab696.sfr@canb.auug.org.au>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20081228200726.7b7078b4.akpm@linux-foundation.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Bernd Schubert <bernd.schubert@fastmail.fm>, nfsv4@linux-nfs.org, linux-kernel@vger.kernel.org, steved@redhat.com, dhowells@redhat.com, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, rwheeler@redhat.com
+Cc: dhowells@redhat.com, Stephen Rothwell <sfr@canb.auug.org.au>, Bernd Schubert <bernd.schubert@fastmail.fm>, nfsv4@linux-nfs.org, hch@infradead.org, linux-kernel@vger.kernel.org, steved@redhat.com, linux-fsdevel@vger.kernel.org, rwheeler@redhat.com, linux-next@vger.kernel.org, Trond Myklebust <trond.myklebust@fys.uio.no>
 List-Id: linux-next.vger.kernel.org
 
 Andrew Morton <akpm@linux-foundation.org> wrote:
 
-> > What was the result of discussions around FS-Cache?
+> And that of course means that many many 2.6.28 patches which I am
+> maintaining will need significant rework to apply on top of linux-next,
+> and then they won't apply to mainline.  Or that linux-next will not apply
+> on top of those patches.  Mainly memory management.
+
+Significant rework to many many patches?  The FS-Cache patches don't have all
+that much impact outside of their own directories, AFS and NFS.
+
+> Please drop the NFS tree until after -rc1.
 > 
-> There was none.
+> Guys, this: http://lkml.org/lkml/2008/12/27/173
 
-I disagree with your assertion that there was no result.  Various people,
-beside myself, have weighed in with situations where FS-Cache is or may be
-useful.  You've been presented with benchmarks showing that it can make a
-difference.
-
-However, *you* are the antagonist, as strictly defined in the dictionary; we
-were trying to convince *you*, so a result has to come from *you*.  I feel
-that you are completely against it and that we've no hope of shifting you.
-
-> Dan Muntz's question:
-> 
->   Solaris has had CacheFS since ~1995, HPUX had a port of it since
->   ~1997.  I'd be interested in evidence of even a small fraction of
->   Solaris and/or HPUX shops using CacheFS.  I am aware of customers who
->   thought it sounded like a good idea, but ended up ditching it for
->   various reasons (e.g., CacheFS just adds overhead if you almost
->   always hit your local mem cache).
-> 
-> was an very very good one.
-
-And to a large extent irrelevant.  Yes, we know caching adds overhead; I've
-never tried to pretend otherwise.  It's an exercise in compromise.  You don't
-just go and slap a cache on everything.  There *are* situations in which a
-cache will help.  We have customers who know about them and are willing to
-live with the overhead.
-
-What I have done is to ensure that, even if caching is compiled in, then the
-overhead is minimal if there is _no_ cache present.  That is requirement #1 on
-my list.
-
-Assuming I understand what he said correctly, I've avoided the main issue
-listed by Dan because I don't do as Solaris does and interpolate the cache
-between the user and NFS.  Of course, that probably buys me other issues (FS
-design is an exercise in compromise too).
-
-> Seems that instead of answering it, we've decided to investigate the
-> fate of those who do not learn from history.
-
-Sigh.
-
-The main point is that caching _is_ useful, even with its drawbacks.  Dan may
-be aware of customers of Sun/HP who thought caching sounds like a good idea,
-but then ended up ditching it.  I can well believe it.  But I am also aware of
-customers of Red Hat who are actively using the caching we put in RHEL-5 and
-customers who really want caching available in future RHEL and Fedora versions
-for various reasons.
-
-To sum up:
-
- (1) Overhead is minimal if there is no cache.
-
- (2) Benchmarks show that the cache can be effective.
-
- (3) People are already using it and finding it useful.
-
- (4) There are people who want it for various projects.
-
- (5) The use of a cache does not automatically buy you an improvement in
-     performance: it's a matter of compromise.
-
- (6) The performance improvement may be in the network or the servers, not the
-     client that is actually doing the caching.
+Okay, that's a reasonable request.
 
 David
