@@ -1,42 +1,55 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: Pull request for FS-Cache, including NFS patches
-Date: Sun, 28 Dec 2008 20:07:26 -0800
-Message-ID: <20081228200726.7b7078b4.akpm@linux-foundation.org>
-References: <8930.1229560221@redhat.com> <20081218142420.GA16728@infradead.org>
-	<20081218123601.11810b7f.akpm@linux-foundation.org>
-	<200812190007.34581.bernd.schubert@fastmail.fm>
-	<20081218152616.a24c013f.akpm@linux-foundation.org>
-	<20081219110539.7e7e230c.sfr@canb.auug.org.au>
-	<20081229144533.4a0ab696.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the net tree
+Date: Mon, 29 Dec 2008 15:14:29 +1100
+Message-ID: <20081229151429.5f9362b8.sfr@canb.auug.org.au>
+References: <20081208144851.c02cc7da.sfr@canb.auug.org.au>
+	<20081207.232658.64516148.davem@davemloft.net>
+	<20081229145300.0a86e1de.sfr@canb.auug.org.au>
+	<20081228.200055.170405541.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <nfsv4-bounces@linux-nfs.org>
-In-Reply-To: <20081229144533.4a0ab696.sfr@canb.auug.org.au>
-List-Unsubscribe: <http://linux-nfs.org/cgi-bin/mailman/listinfo/nfsv4>,
-	<mailto:nfsv4-request@linux-nfs.org?subject=unsubscribe>
-List-Archive: <http://linux-nfs.org/pipermail/nfsv4>
-List-Post: <mailto:nfsv4@linux-nfs.org>
-List-Help: <mailto:nfsv4-request@linux-nfs.org?subject=help>
-List-Subscribe: <http://linux-nfs.org/cgi-bin/mailman/listinfo/nfsv4>,
-	<mailto:nfsv4-request@linux-nfs.org?subject=subscribe>
-Sender: nfsv4-bounces@linux-nfs.org
-Errors-To: nfsv4-bounces@linux-nfs.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, nfsv4@linux-nfs.org, steved@redhat.com, linux-kernel@vger.kernel.org, dhowells@redhat.com, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, rwheeler@redhat.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__29_Dec_2008_15_14_29_+1100_gxyX.wxf.0TXm8.w"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36516 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750737AbYL2EOh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 28 Dec 2008 23:14:37 -0500
+In-Reply-To: <20081228.200055.170405541.davem@davemloft.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, johannes@sipsolutions.net, sam@ravnborg.org
 
-On Mon, 29 Dec 2008 14:45:33 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Signature=_Mon__29_Dec_2008_15_14_29_+1100_gxyX.wxf.0TXm8.w
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> I ask because it
-> reappeared in linux-next today via the nfs tree (merged into that on Dec
-> 24 and 25) ...
+Hi Dave,
 
-And that of course means that many many 2.6.28 patches which I am
-maintaining will need significant rework to apply on top of linux-next,
-and then they won't apply to mainline.  Or that linux-next will not apply
-on top of those patches.  Mainly memory management.
+On Sun, 28 Dec 2008 20:00:55 -0800 (PST) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> I'll take care of this as I prepare the sparc-next-2.6 tree for
+> merging.
 
-Please drop the NFS tree until after -rc1.
+Thanks.
 
-Guys, this: http://lkml.org/lkml/2008/12/27/173
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__29_Dec_2008_15_14_29_+1100_gxyX.wxf.0TXm8.w
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAklYTqUACgkQjjKRsyhoI8yVRQCgus4EGNdZ41mfcw7eTj96rDMm
+vRIAn274gZh40ZVH8VSb3h1CIUb+gtv1
+=GVMQ
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__29_Dec_2008_15_14_29_+1100_gxyX.wxf.0TXm8.w--
