@@ -1,64 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: origin tree build failure
-Date: Mon, 29 Dec 2008 11:00:41 +1100
-Message-ID: <20081229110041.0eca977a.sfr@canb.auug.org.au>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: linux-next: origin tree build failure
+Date: Sun, 28 Dec 2008 16:31:15 -0800 (PST)
+Message-ID: <alpine.LFD.2.00.0812281630100.3082@localhost.localdomain>
+References: <20081229103849.1cb1eb54.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41343 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751573AbYL2AAn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 28 Dec 2008 19:00:43 -0500
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:38209 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751620AbYL2Ab1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Sun, 28 Dec 2008 19:31:27 -0500
+In-Reply-To: <20081229103849.1cb1eb54.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "David S. Miller" <davem@davemloft.net>, Neil Horman <nhorman@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, netdev@vger.kernel.org, ppc-dev <linuxppc-dev@ozlabs.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Steve French <smfrench@gmail.com>, linux-cifs-client@lists.samba.org, "David S. Miller" <davem@davemloft.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
-Hi Dave, Neil,
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-drivers/net/ibmveth.c: In function 'ibmveth_poll':
-drivers/net/ibmveth.c:1034: warning: passing argument 1 of 'netif_rx_reschedule' from incompatible pointer type
-drivers/net/ibmveth.c:1034: error: too many arguments to function 'netif_rx_reschedule'
+On Mon, 29 Dec 2008, Stephen Rothwell wrote:
+> 
+> Maybe someone should have warned Linus about the below known interaction
+> between the net tree and the cifs tree ...
 
-Another miss in commit 908a7a16b852ffd618a9127be8d62432182d81b4 ("net: Remove
-unused netdev arg from some NAPI interfaces").
+Gaah. I should have grepped for it, since the other place caused a 
+conflict that I fixed. And I even tested that the result of my conflict 
+resolution compiled, but since I don't configure cifs myself, I literally 
+tested just the conflicting file.
 
-I have added the following patch for today.
+Applied the fix, thanks,
 
-(I wonder how many more there will be? :-()
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 29 Dec 2008 10:56:00 +1100
-Subject: [PATCH] net: ibmveth NAPI interface cleanup fix
-
-Commit 908a7a16b852ffd618a9127be8d62432182d81b4 ("net: Remove unused
-netdev arg from some NAPI interfaces") missed one spot.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/ibmveth.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/net/ibmveth.c b/drivers/net/ibmveth.c
-index 1f055a9..9bc0f17 100644
---- a/drivers/net/ibmveth.c
-+++ b/drivers/net/ibmveth.c
-@@ -1031,7 +1031,7 @@ static int ibmveth_poll(struct napi_struct *napi, int budget)
- 		netif_rx_complete(napi);
- 
- 		if (ibmveth_rxq_pending_buffer(adapter) &&
--		    netif_rx_reschedule(netdev, napi)) {
-+		    netif_rx_reschedule(napi)) {
- 			lpar_rc = h_vio_signal(adapter->vdev->unit_address,
- 					       VIO_IRQ_DISABLE);
- 			goto restart_poll;
--- 
-1.6.0.5
+		Linus
