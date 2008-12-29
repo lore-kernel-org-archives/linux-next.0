@@ -1,75 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: kvm tree build failure
-Date: Mon, 29 Dec 2008 16:17:50 +1100
-Message-ID: <20081229161750.e2197bad.sfr@canb.auug.org.au>
-References: <20081223002514.6fbcfe4f.sfr@canb.auug.org.au>
+Subject: Re: Pull request for FS-Cache, including NFS patches
+Date: Mon, 29 Dec 2008 16:26:18 +1100
+Message-ID: <20081229162618.e2fea7a9.sfr@canb.auug.org.au>
+References: <8930.1229560221@redhat.com> <20081218142420.GA16728@infradead.org>
+	<20081218123601.11810b7f.akpm@linux-foundation.org>
+	<200812190007.34581.bernd.schubert@fastmail.fm>
+	<20081218152616.a24c013f.akpm@linux-foundation.org>
+	<20081219110539.7e7e230c.sfr@canb.auug.org.au>
+	<20081229144533.4a0ab696.sfr@canb.auug.org.au>
+	<20081228200726.7b7078b4.akpm@linux-foundation.org>
 Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============0965650124=="
+Return-path: <nfsv4-bounces@linux-nfs.org>
+In-Reply-To: <20081228200726.7b7078b4.akpm@linux-foundation.org>
+List-Unsubscribe: <http://linux-nfs.org/cgi-bin/mailman/listinfo/nfsv4>,
+	<mailto:nfsv4-request@linux-nfs.org?subject=unsubscribe>
+List-Archive: <http://linux-nfs.org/pipermail/nfsv4>
+List-Post: <mailto:nfsv4@linux-nfs.org>
+List-Help: <mailto:nfsv4-request@linux-nfs.org?subject=help>
+List-Subscribe: <http://linux-nfs.org/cgi-bin/mailman/listinfo/nfsv4>,
+	<mailto:nfsv4-request@linux-nfs.org?subject=subscribe>
+Mime-version: 1.0
+Sender: nfsv4-bounces@linux-nfs.org
+Errors-To: nfsv4-bounces@linux-nfs.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, nfsv4@linux-nfs.org, steved@redhat.com, linux-kernel@vger.kernel.org, dhowells@redhat.com, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, rwheeler@redhat.com
+List-Id: linux-next.vger.kernel.org
+
+--===============0965650124==
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__29_Dec_2008_16_17_50_+1100_2b.wOBWp6HYLIO9X"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46674 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750780AbYL2FR4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Dec 2008 00:17:56 -0500
-In-Reply-To: <20081223002514.6fbcfe4f.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@qumranet.com>
-Cc: linux-next@vger.kernel.org, Jan Kiszka <jan.kiszka@siemens.com>, Hollis Blanchard <hollisb@us.ibm.com>
+ boundary="Signature=_Mon__29_Dec_2008_16_26_18_+1100_iXRUVF.IBG7THewh"
 
---Signature=_Mon__29_Dec_2008_16_17_50_+1100_2b.wOBWp6HYLIO9X
+--Signature=_Mon__29_Dec_2008_16_26_18_+1100_iXRUVF.IBG7THewh
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Avi,
+Hi Andrew, Trond,
 
-On Tue, 23 Dec 2008 00:25:14 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On Sun, 28 Dec 2008 20:07:26 -0800 Andrew Morton <akpm@linux-foundation.org=
+> wrote:
 >
-> Today's linux-next build (powerpc ppc44x_config) failed like this:
+> And that of course means that many many 2.6.28 patches which I am
+> maintaining will need significant rework to apply on top of linux-next,
+> and then they won't apply to mainline.  Or that linux-next will not apply
+> on top of those patches.  Mainly memory management.
 >=20
-> arch/powerpc/kvm/44x.c: In function 'kvmppc_core_load_guest_debugstate':
-> arch/powerpc/kvm/44x.c:58: warning: initialization from incompatible poin=
-ter type
-> arch/powerpc/kvm/44x.c:75: error: 'struct kvm_guest_debug' has no member =
-named 'bp'
-> arch/powerpc/kvm/44x.c:76: error: 'struct kvm_guest_debug' has no member =
-named 'bp'
-> arch/powerpc/kvm/44x.c:79: error: 'struct kvm_guest_debug' has no member =
-named 'bp'
-> arch/powerpc/kvm/44x.c:80: error: 'struct kvm_guest_debug' has no member =
-named 'bp'
-> arch/powerpc/kvm/44x.c:83: error: 'struct kvm_guest_debug' has no member =
-named 'bp'
-> arch/powerpc/kvm/44x.c:84: error: 'struct kvm_guest_debug' has no member =
-named 'bp'
-> arch/powerpc/kvm/44x.c:87: error: 'struct kvm_guest_debug' has no member =
-named 'bp'
-> arch/powerpc/kvm/44x.c:88: error: 'struct kvm_guest_debug' has no member =
-named 'bp'
->=20
-> Probably caused by commit 6968f31a2163f8fcf26ea8775c44d7e5be54d622 ("KVM:
-> Remove old kvm_guest_debug structs") so I have reverted the kvm tree for
-> today.
+> Please drop the NFS tree until after -rc1.
 
-This error is still there, so I have dropped the kvm tree again today.
+OK, it is dropped for now (including today's tree).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__29_Dec_2008_16_17_50_+1100_2b.wOBWp6HYLIO9X
+--Signature=_Mon__29_Dec_2008_16_26_18_+1100_iXRUVF.IBG7THewh
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAklYXX4ACgkQjjKRsyhoI8wNeACfaEp1ienILb/3oY/r56Vbe+yy
-rTIAoLvQBcG6fWU0e1jRjt/eCzkXk8Vd
-=1qxf
+iEYEARECAAYFAklYX3oACgkQjjKRsyhoI8x2FgCguLyWN0574cD4ck4JmUOp5yF1
+DFoAn0lyhgYZEN6ScB+hVnHaT5xu/8/z
+=bgHt
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__29_Dec_2008_16_17_50_+1100_2b.wOBWp6HYLIO9X--
+--Signature=_Mon__29_Dec_2008_16_26_18_+1100_iXRUVF.IBG7THewh--
+
+--===============0965650124==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+NFSv4 mailing list
+NFSv4@linux-nfs.org
+http://linux-nfs.org/cgi-bin/mailman/listinfo/nfsv4
+--===============0965650124==--
