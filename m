@@ -1,57 +1,41 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for December 29 (fcoe)
-Date: Mon, 29 Dec 2008 14:21:45 -0800
-Message-ID: <49594D79.30806@oracle.com>
-References: <20081230031621.60acd90b.sfr@canb.auug.org.au>	 <20081229123115.9a255fa8.randy.dunlap@oracle.com>	 <1230586520.3302.61.camel@localhost.localdomain> <1230587141.3302.64.camel@localhost.localdomain>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next:  rr_cpumask tree build failure
+Date: Tue, 30 Dec 2008 09:22:08 +1030
+Message-ID: <200812300922.08889.rusty@rustcorp.com.au>
+References: <20081230025557.89d2565e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <1230587141.3302.64.camel@localhost.localdomain>
-Sender: linux-scsi-owner@vger.kernel.org
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, scsi <linux-scsi@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:60917 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753366AbYL2WwQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Dec 2008 17:52:16 -0500
+In-Reply-To: <20081230025557.89d2565e.sfr@canb.auug.org.au>
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>
 
-James Bottomley wrote:
+On Tuesday 30 December 2008 02:25:57 Stephen Rothwell wrote:
+> Hi Rusty,
 > 
-> Actually, I deduce the problem is owner->name and your build has
-> CONFIG_MODULE=n ... the definition of struct module is enclosed in a
-> #ifdef CONFIG_MODULE.
+> Today's linux-next build (powerpc allnoconfig) failed like this:
 > 
-> This should fix it.
+> drivers/base/cpu.c: In function 'print_cpus_kernel_max':
+> drivers/base/cpu.c:136: error: 'CONFIG_NR_CPUS' undeclared (first use in this function)
 > 
-> James
+> Caused by commit e057d7aea9d8f2a46cd440d8bfb72245d4e72d79 ("cpumask: add
+> sysfs displays for configured and disabled cpu maps") from the rr_cpumask
+> tree.  Powerpc (at least) does not define CONFIG_NR_CPUS for a non SMP
+> build.
+> 
+> I have reverted that commit for today.
 
-Ack.  Thanks.
+Thanks, we defined that in a later patch which hadn't been put in the cpumask
+tree yet.  I've moved it (and several others) in now.
 
-> ---
-> 
-> diff --git a/drivers/scsi/fcoe/libfcoe.c b/drivers/scsi/fcoe/libfcoe.c
-> index 1cb549c..fec38f6 100644
-> --- a/drivers/scsi/fcoe/libfcoe.c
-> +++ b/drivers/scsi/fcoe/libfcoe.c
-> @@ -992,7 +992,7 @@ static int fcoe_ethdrv_get(const struct net_device *netdev)
->  	owner = fcoe_netdev_to_module_owner(netdev);
->  	if (owner) {
->  		printk(KERN_DEBUG "foce:hold driver module %s for %s\n",
-> -		       owner->name, netdev->name);
-> +		       module_name(owner), netdev->name);
->  		return  try_module_get(owner);
->  	}
->  	return -ENODEV;
-> @@ -1012,7 +1012,7 @@ static int fcoe_ethdrv_put(const struct net_device *netdev)
->  	owner = fcoe_netdev_to_module_owner(netdev);
->  	if (owner) {
->  		printk(KERN_DEBUG "foce:release driver module %s for %s\n",
-> -		       owner->name, netdev->name);
-> +		       module_name(owner), netdev->name);
->  		module_put(owner);
->  		return 0;
->  	}
-> 
-> 
-
-
--- 
-~Randy
+Thanks,
+Rusty.
