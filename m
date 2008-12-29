@@ -1,43 +1,60 @@
-From: Aleksey Senin <alekseys@voltaire.com>
-Subject: [ofa-general] Re: linux-next: origin tree build failure
-Date: Mon, 29 Dec 2008 10:48:19 +0200
-Message-ID: <1230540499.4261.24.camel@alst60>
-References: <20081229114321.4b6baea5.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [xfs-masters] linux-next: xfs tree build warnings
+Date: Mon, 29 Dec 2008 19:51:24 +1100
+Message-ID: <20081229195124.59bfbc75.sfr@canb.auug.org.au>
+References: <20081229192649.7099188b.sfr@canb.auug.org.au>
+	<20081229083650.GA14699@lst.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <general-bounces@lists.openfabrics.org>
-In-Reply-To: <20081229114321.4b6baea5.sfr@canb.auug.org.au>
-List-Unsubscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
-	<mailto:general-request@lists.openfabrics.org?subject=unsubscribe>
-List-Archive: <http://lists.openfabrics.org/pipermail/general>
-List-Post: <mailto:general@lists.openfabrics.org>
-List-Help: <mailto:general-request@lists.openfabrics.org?subject=help>
-List-Subscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
-	<mailto:general-request@lists.openfabrics.org?subject=subscribe>
-Sender: general-bounces@lists.openfabrics.org
-Errors-To: general-bounces@lists.openfabrics.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Roland Dreier <rdreier@cisco.com>, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, general@lists.openfabrics.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__29_Dec_2008_19_51_24_+1100_fqe=PaTARA/HMEWp"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55012 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752689AbYL2Ivc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Dec 2008 03:51:32 -0500
+In-Reply-To: <20081229083650.GA14699@lst.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org
 
-I'm going to change it by adding 
+--Signature=_Mon__29_Dec_2008_19_51_24_+1100_fqe=PaTARA/HMEWp
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+Hi Christoph,
 
-exactly as it solved in ipoib module and as Roland says.
+On Mon, 29 Dec 2008 09:36:50 +0100 Christoph Hellwig <hch@lst.de> wrote:
+>
+> On Mon, Dec 29, 2008 at 07:26:49PM +1100, Stephen Rothwell wrote:
+> > Hi David,
+> >=20
+> > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+>=20
+> Yeah, just noticed when doing my first ppc64 build after a while.  For
+> now I threw a patch in to always make xfs_ino and unsigned long long
+> and it works so far.  I'll make sure this or another fix goes in through
+> the usual ways.
 
-On Mon, 2008-12-29 at 11:43 +1100, Stephen Rothwell wrote:
-> Hi Roland,
-> 
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> 
-> ERROR: ".ipv6_chk_addr" [drivers/infiniband/core/ib_addr.ko] undefined!
-> ERROR: ".ip6_route_output" [drivers/infiniband/core/ib_addr.ko] undefined!
-> 
-> Caused by commit 38617c64bf9a10bf20e41d95b69bb81e8560fe9d ("RDMA/addr:
-> Add support for translating IPv6 addresses").  This requires a dependency
-> on IPV6.
-> 
-> I have reverted that commit for today (which fixes the build, but may not
-> be the correct solution).
+Thanks.  We do seem to be actually getting somewhere towards making u64
+unsigned long long everywhere ...
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__29_Dec_2008_19_51_24_+1100_fqe=PaTARA/HMEWp
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAklYj4wACgkQjjKRsyhoI8yv+gCeJh3U/UqnKM6qg0ipIfdtb+P0
+LZQAn0dg7sUG8BB8GTDih0euGTzF4xIP
+=B6w6
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__29_Dec_2008_19_51_24_+1100_fqe=PaTARA/HMEWp--
