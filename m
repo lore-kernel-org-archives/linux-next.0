@@ -1,53 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the boot-params tree
-Date: Tue, 30 Dec 2008 01:10:55 +1100
-Message-ID: <20081230011055.d2f6ced2.sfr@canb.auug.org.au>
+Date: Tue, 30 Dec 2008 01:22:31 +1100
+Message-ID: <20081230012231.fcd112cd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__30_Dec_2008_01_10_55_+1100_3gD+6bOuF3x/kllY"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48656 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:42964 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753692AbYL2OLA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Dec 2008 09:11:00 -0500
+	id S1750818AbYL2OWe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Dec 2008 09:22:34 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, Greg KH <greg@kroah.com>
-
---Signature=_Tue__30_Dec_2008_01_10_55_+1100_3gD+6bOuF3x/kllY
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cc: linux-next@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Ingo Molnar <mingo@elte.hu>
 
 Hi Rusty,
 
 Today's linux-next merge of the boot-params tree got a conflict in
-drivers/usb/core/usb.c between commit
-6e7b5429a08fe4f71c336710bd45acdce6cd3df7 ("USB: don't use
-__module_param_call") from the usb tree and commit
-9634765245cd7aba71328c71813ca882d008632d ("USB: Don't use
-__module_param_call; use core_param") from the boot-params tree.
+init/main.c between commit 0b8f1efad30bd58f89961b82dfe68b9edf8fd2ac
+("sparse irq_desc[] array: core kernel and x86 changes") from the
+sparseirq tree and commit 25bf48b74b9fb23b347d00656b604f9e55c72183 ("Fix
+powerpc (tested on ppc64) command line handling") from the boot-params
+tree.
 
-Two different versions of the same change?  I fixed it up (used the
-boot-params tree version) and can carry the fix as necessary.  It sounds
-like Greg should drop the patch from the usb tree (or pick up the version
-from the boot-params tree).
---=20
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__30_Dec_2008_01_10_55_+1100_3gD+6bOuF3x/kllY
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklY2m8ACgkQjjKRsyhoI8zwSgCfZCB+jgWCFCnifd57Y2z3g+bW
-ceUAoKoJ0BnFl8RA+UFva6B65XrEvte0
-=6PRl
------END PGP SIGNATURE-----
-
---Signature=_Tue__30_Dec_2008_01_10_55_+1100_3gD+6bOuF3x/kllY--
+diff --cc init/main.c
+index 396b271,ad933ad..0000000
+--- a/init/main.c
++++ b/init/main.c
+@@@ -543,20 -522,30 +526,40 @@@ void __init __weak thread_info_cache_in
+  {
+  }
+  
+ +int __init __weak arch_early_irq_init(void)
+ +{
+ +	return 0;
+ +}
+ +
+ +int __init __weak early_irq_init(void)
+ +{
+ +	return arch_early_irq_init();
+ +}
+ +
++ /* Non-destructive early parse of commandline.  PowerPC calls this early. */
++ void __init parse_early_and_core_params(char *cmdline)
++ {
++ 	static bool __initdata done = false;
++ 
++ 	if (done)
++ 		return;
++ 
++ 	parse_args("Core and early params", cmdline,
++ 		   __start___core_param,
++ 		   __stop___core_param - __start___core_param,
++ 		   do_early_param, true);
++ 	done = true;
++ }
++ 
+  asmlinkage void __init start_kernel(void)
+  {
+- 	char * command_line;
+- 	extern struct kernel_param __start___param[], __stop___param[];
++ 	char *static_command_line;
++ 
++ 	printk(KERN_NOTICE);
++ 	printk(linux_banner);
++ 
++ 	arch_get_boot_command_line();
++ 	parse_early_and_core_params(boot_command_line);
+  
+  	smp_setup_processor_id();
+  
