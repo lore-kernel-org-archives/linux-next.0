@@ -1,45 +1,78 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: rr tree build failure
-Date: Tue, 30 Dec 2008 07:31:40 +1030
-Message-ID: <200812300731.40641.rusty@rustcorp.com.au>
-References: <20081229191253.6c04bf3e.sfr@canb.auug.org.au>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [ofa-general] Re: linux-next: origin tree build failure
+Date: Mon, 29 Dec 2008 13:07:16 -0800 (PST)
+Message-ID: <alpine.LFD.2.00.0812291304471.3082@localhost.localdomain>
+References: <20081229114321.4b6baea5.sfr@canb.auug.org.au>
+	<ada4p0nve4r.fsf@cisco.com> <1230544737.4261.33.camel@alst60>
+	<adaljtyu45d.fsf@cisco.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:44871 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753861AbYL2VBr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Dec 2008 16:01:47 -0500
-In-Reply-To: <20081229191253.6c04bf3e.sfr@canb.auug.org.au>
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <general-bounces@lists.openfabrics.org>
+In-Reply-To: <adaljtyu45d.fsf@cisco.com>
+List-Unsubscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
+	<mailto:general-request@lists.openfabrics.org?subject=unsubscribe>
+List-Archive: <http://lists.openfabrics.org/pipermail/general>
+List-Post: <mailto:general@lists.openfabrics.org>
+List-Help: <mailto:general-request@lists.openfabrics.org?subject=help>
+List-Subscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
+	<mailto:general-request@lists.openfabrics.org?subject=subscribe>
+Sender: general-bounces@lists.openfabrics.org
+Errors-To: general-bounces@lists.openfabrics.org
+To: Roland Dreier <rdreier@cisco.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "general@lists.openfabrics.org" <general@lists.openfabrics.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+List-Id: linux-next.vger.kernel.org
 
-On Monday 29 December 2008 18:42:53 Stephen Rothwell wrote:
-> Hi Rusty,
+
+
+On Mon, 29 Dec 2008, Roland Dreier wrote:
+>
+> Something like the following maybe?  (This turns off the RDMA CM if
+> INFINIBAND=y and IPV6=m -- another possibility would be to just turn off
+> RDMA CM IPv6 support in the case that IB is build-in but IPv6 is
+> modular, but that seems like a worse idea overall)
 > 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
-> 
-> In file included from include/linux/smp.h:33,
->                  from include/linux/topology.h:33,
->                  from include/linux/mmzone.h:763,
->                  from include/linux/gfp.h:4,
->                  from include/linux/kmod.h:22,
->                  from include/linux/module.h:13,
->                  from include/linux/crypto.h:21,
->                  from arch/x86/kernel/asm-offsets_64.c:7,
->                  from arch/x86/kernel/asm-offsets.c:4:
-> arch/x86/include/asm/smp.h: In function 'num_booting_cpus':
-> arch/x86/include/asm/smp.h:152: error: implicit declaration of function 'cpus_weight'
+> diff --git a/drivers/infiniband/Kconfig b/drivers/infiniband/Kconfig
+> index a5dc78a..538a0ba 100644
+> --- a/drivers/infiniband/Kconfig
+> +++ b/drivers/infiniband/Kconfig
+> @@ -36,7 +36,7 @@ config INFINIBAND_USER_MEM
+>  
+>  config INFINIBAND_ADDR_TRANS
+>  	bool
+> -	depends on INET
+> +	depends on INET && !(INFINIBAND = y && IPV6 = m)
+>  	default y
 
-Oh, fun.  We added a config option to disable the deprecated cpus_* functions;
-it's mainly for those interested in helping with the conversion.
+I'd suggest
 
-Of course, allmodconfig turns it on.  I made it depend on CONFIG_BROKEN for now.
+  config IF_IPV6
+	bool
+	depends on INET
+	depends on !(INFINIBAND = y && IPV6 = m)
+	default y
 
-Thanks,
-Rusty.
+and then you can use it not only for the above:
+
+  config INFINIBAND_ADDR_TRANS
+	bool
+	depends on IF_IPV6
+	default y
+
+but also use it in the source code as a more readable version:
+
+> diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
+> index d98b05b..ec7abb5 100644
+> --- a/drivers/infiniband/core/addr.c> +++ b/drivers/infiniband/core/addr.c
+> @@ -128,6 +128,7 @@ int rdma_translate_ip(struct sockaddr *addr, struct rdma_dev_addr *dev_addr)
+>  		ret = rdma_copy_addr(dev_addr, dev, NULL);
+>  		dev_put(dev);
+>  		break;
+> +#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+
+ie use
+
+	#ifdef CONFIG_IF_IPV6
+
+here instead.
+
+		Linus
