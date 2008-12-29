@@ -1,29 +1,56 @@
-From: David Howells <dhowells@redhat.com>
-Subject: Re: Pull request for FS-Cache, including NFS patches
-Date: Mon, 29 Dec 2008 15:04:35 +0000
-Message-ID: <12273.1230563075@redhat.com>
-References: <20081228200726.7b7078b4.akpm@linux-foundation.org> <8930.1229560221@redhat.com> <20081218142420.GA16728@infradead.org> <20081218123601.11810b7f.akpm@linux-foundation.org> <200812190007.34581.bernd.schubert@fastmail.fm> <20081218152616.a24c013f.akpm@linux-foundation.org> <20081219110539.7e7e230c.sfr@canb.auug.org.au> <20081229144533.4a0ab696.sfr@canb.auug.org.au>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20081228200726.7b7078b4.akpm@linux-foundation.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: dhowells@redhat.com, Stephen Rothwell <sfr@canb.auug.org.au>, Bernd Schubert <bernd.schubert@fastmail.fm>, nfsv4@linux-nfs.org, hch@infradead.org, linux-kernel@vger.kernel.org, steved@redhat.com, linux-fsdevel@vger.kernel.org, rwheeler@redhat.com, linux-next@vger.kernel.org, Trond Myklebust <trond.myklebust@fys.uio.no>
-List-Id: linux-next.vger.kernel.org
+From: Mike Travis <travis@sgi.com>
+Subject: Re: linux-next: rr tree build failure
+Date: Mon, 29 Dec 2008 07:23:34 -0800
+Message-ID: <4958EB76.2040306@sgi.com>
+References: <20081229191253.6c04bf3e.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from relay1.sgi.com ([192.48.179.29]:38459 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751368AbYL2PXi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Dec 2008 10:23:38 -0500
+In-Reply-To: <20081229191253.6c04bf3e.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
 
-Andrew Morton <akpm@linux-foundation.org> wrote:
-
-> And that of course means that many many 2.6.28 patches which I am
-> maintaining will need significant rework to apply on top of linux-next,
-> and then they won't apply to mainline.  Or that linux-next will not apply
-> on top of those patches.  Mainly memory management.
-
-Significant rework to many many patches?  The FS-Cache patches don't have all
-that much impact outside of their own directories, AFS and NFS.
-
-> Please drop the NFS tree until after -rc1.
+Stephen Rothwell wrote:
+> Hi Rusty,
 > 
-> Guys, this: http://lkml.org/lkml/2008/12/27/173
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> 
+> In file included from include/linux/smp.h:33,
+>                  from include/linux/topology.h:33,
+>                  from include/linux/mmzone.h:763,
+>                  from include/linux/gfp.h:4,
+>                  from include/linux/kmod.h:22,
+>                  from include/linux/module.h:13,
+>                  from include/linux/crypto.h:21,
+>                  from arch/x86/kernel/asm-offsets_64.c:7,
+>                  from arch/x86/kernel/asm-offsets.c:4:
+> arch/x86/include/asm/smp.h: In function 'num_booting_cpus':
+> arch/x86/include/asm/smp.h:152: error: implicit declaration of function 'cpus_weight'
+> 
+> I have dropped the rr tree for today.
+> 
 
-Okay, that's a reasonable request.
+Hi Stephen,
 
-David
+I have this fixed in:
+
+
+commit 3b656ce6c3d7ea2a36c1ebe77d436d5550980baa
+Author: Mike Travis <travis@sgi.com>
+Date:   Sat Dec 27 01:45:56 2008 -0800
+
+    x86: cleanup remaining cpumask_t ops in smpboot code
+
+which was pushed via tip/cpus4096.  It includes many other
+updates so I'm not exactly sure how this merges into
+linux-next.
+
+Thanks,
+Mike
