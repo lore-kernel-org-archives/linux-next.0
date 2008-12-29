@@ -1,72 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] clean up of netif_rx_reschedule() changes in drivers
-Date: Mon, 29 Dec 2008 21:41:44 +1100
-Message-ID: <20081229214144.43be8c1d.sfr@canb.auug.org.au>
-References: <20081229110041.0eca977a.sfr@canb.auug.org.au>
-	<20081229102509.GA11111@linux.vnet.ibm.com>
+Subject: linux-next: manual merge of the iommu tree
+Date: Mon, 29 Dec 2008 23:04:51 +1100
+Message-ID: <20081229230451.4e322cde.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__29_Dec_2008_21_41_44_+1100_Vy=lfNnRvOVlTdOm"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37120 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37346 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752689AbYL2Kl4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Dec 2008 05:41:56 -0500
-In-Reply-To: <20081229102509.GA11111@linux.vnet.ibm.com>
+	id S1752347AbYL2ME4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Dec 2008 07:04:56 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Neil Horman <nhorman@tuxdriver.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, netdev@vger.kernel.org, ppc-dev <linuxppc-dev@ozlabs.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, Jeremy Fitzhardinge <jeremy@goop.org>
 
---Signature=_Mon__29_Dec_2008_21_41_44_+1100_Vy=lfNnRvOVlTdOm
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Ingo,
 
-Hi Kamalesh,
+Today's linux-next merge of the iommu tree got a conflict in
+arch/x86/kernel/Makefile between commit
+b43d196c4d3fe46d6dda7c987c47792612b80b1b ("x86: corruption-check: some
+post-move cleanups") from Linus' tree and commit
+cfb80c9eae8c7ed8f2ee81090062d15ead51cbe8 ("x86: unify pci iommu setup and
+allow swiotlb to compile for 32 bit") from the iommu tree.
 
-On Mon, 29 Dec 2008 15:55:29 +0530 Kamalesh Babulal <kamalesh@linux.vnet.ib=
-m.com> wrote:
->
-> I hit similar build failure due to the change in the netif_rx_reschedule()
->=20
-> drivers/net/ehea/ehea_main.c: In function 'ehea_poll':
-> drivers/net/ehea/ehea_main.c:844: warning: passing argument 1 of 'netif_r=
-x_reschedule' from incompatible pointer type
-> drivers/net/ehea/ehea_main.c:844: error: too many arguments to function '=
-netif_rx_reschedule'
-> make[3]: *** [drivers/net/ehea/ehea_main.o] Error 1
-
-Linus already took a patch for ibmveth and ehea.
-
-> greping through the sources for the changes missed out, we have
->=20
-	.
-	.
->=20
-> Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-> --
->  drivers/net/arm/ep93xx_eth.c |    2 +-
->  drivers/net/arm/ixp4xx_eth.c |    2 +-
->  drivers/net/wan/ixp4xx_hss.c |    2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-
-Thanks for the patch, I assume that Dave or Linus will take care of that.
---=20
+Simply overlapping additions.  I fixed it up (see below) and can carry
+the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__29_Dec_2008_21_41_44_+1100_Vy=lfNnRvOVlTdOm
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklYqWgACgkQjjKRsyhoI8yNdwCdFgntGytN5djrgItDgbErjx9S
-YuEAn0SWGpiEYM8A0yZA9FnEHJn6mWBd
-=B5Pg
------END PGP SIGNATURE-----
-
---Signature=_Mon__29_Dec_2008_21_41_44_+1100_Vy=lfNnRvOVlTdOm--
+diff --cc arch/x86/kernel/Makefile
+index 3d82c15,a9c656f..0000000
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@@ -108,7 -105,7 +108,8 @@@ microcode-$(CONFIG_MICROCODE_INTEL)	+= 
+  microcode-$(CONFIG_MICROCODE_AMD)	+= microcode_amd.o
+  obj-$(CONFIG_MICROCODE)			+= microcode.o
+  
+ +obj-$(CONFIG_X86_CHECK_BIOS_CORRUPTION) += check.o
++ obj-$(CONFIG_SWIOTLB)			+= pci-swiotlb_64.o # NB rename without _64
+  
+  ###
+  # 64 bit specific files
