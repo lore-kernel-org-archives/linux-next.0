@@ -1,54 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next:  rr_cpumask tree build failure
-Date: Tue, 30 Dec 2008 02:55:57 +1100
-Message-ID: <20081230025557.89d2565e.sfr@canb.auug.org.au>
+From: Roland Dreier <rdreier@cisco.com>
+Subject: [ofa-general] Re: linux-next: origin tree build failure
+Date: Mon, 29 Dec 2008 08:13:36 -0800
+Message-ID: <adavdt3t0wf.fsf@cisco.com>
+References: <20081229114321.4b6baea5.sfr@canb.auug.org.au>
+	<ada4p0nve4r.fsf@cisco.com> <1230544737.4261.33.camel@alst60>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__30_Dec_2008_02_55_57_+1100_8XyHT8y/=1uK=2b8"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45803 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751538AbYL2P4F (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Dec 2008 10:56:05 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <general-bounces@lists.openfabrics.org>
+In-Reply-To: <1230544737.4261.33.camel@alst60> (Aleksey Senin's message of
+	"Mon, 29 Dec 2008 11:58:57 +0200")
+List-Unsubscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
+	<mailto:general-request@lists.openfabrics.org?subject=unsubscribe>
+List-Archive: <http://lists.openfabrics.org/pipermail/general>
+List-Post: <mailto:general@lists.openfabrics.org>
+List-Help: <mailto:general-request@lists.openfabrics.org?subject=help>
+List-Subscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
+	<mailto:general-request@lists.openfabrics.org?subject=subscribe>
+Sender: general-bounces@lists.openfabrics.org
+Errors-To: general-bounces@lists.openfabrics.org
+To: Aleksey Senin <alekseys@voltaire.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, "general@lists.openfabrics.org" <general@lists.openfabrics.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__30_Dec_2008_02_55_57_+1100_8XyHT8y/=1uK=2b8
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+ > After another investigation of this problem, I think that proposed
+ > solution is #ifdef as good for a first stage. IPv6 support is mandatory
+ > when we are talking about running linux in some organization. But, of
+ > course, the way how it implemented in IB stack should be changed. So on
+ > the second stage, I'd like drop out these "defines" and at the time of
+ > module initialization obtain addresses of IPv6 functions and in the case
+ > if they are present at the runtime, call them. It should be nice
+ > solution for RMDA_CM and IPoIB modules.
 
-Hi Rusty,
+I don't think this second stage sounds like a good idea.  Suppose
+someone loads the RDMA CM first, so it doesn't find the ipv6 functions,
+and then later loads and configures ipv6.  You'll end up in a situation
+where trying to make an IPv6 connection fails spuriously.  (And just the
+ugliness of looking up function pointers isn't very nice either)
 
-Today's linux-next build (powerpc allnoconfig) failed like this:
-
-drivers/base/cpu.c: In function 'print_cpus_kernel_max':
-drivers/base/cpu.c:136: error: 'CONFIG_NR_CPUS' undeclared (first use in th=
-is function)
-
-Caused by commit e057d7aea9d8f2a46cd440d8bfb72245d4e72d79 ("cpumask: add
-sysfs displays for configured and disabled cpu maps") from the rr_cpumask
-tree.  Powerpc (at least) does not define CONFIG_NR_CPUS for a non SMP
-build.
-
-I have reverted that commit for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__30_Dec_2008_02_55_57_+1100_8XyHT8y/=1uK=2b8
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklY8w0ACgkQjjKRsyhoI8wkRgCgtSg8PRuomtGhooWJFaPGZ35t
-E8sAmwfuYmO4HLNjLqLRv+rI0CZHHHGI
-=VpNz
------END PGP SIGNATURE-----
-
---Signature=_Tue__30_Dec_2008_02_55_57_+1100_8XyHT8y/=1uK=2b8--
+ - R.
