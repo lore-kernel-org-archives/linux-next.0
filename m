@@ -1,62 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the creds tree
-Date: Mon, 29 Dec 2008 15:06:45 +1100
-Message-ID: <20081229150645.98f2000f.sfr@canb.auug.org.au>
-References: <20081030154741.2651e779.sfr@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: Pull request for FS-Cache, including NFS patches
+Date: Sun, 28 Dec 2008 20:07:26 -0800
+Message-ID: <20081228200726.7b7078b4.akpm@linux-foundation.org>
+References: <8930.1229560221@redhat.com> <20081218142420.GA16728@infradead.org>
+	<20081218123601.11810b7f.akpm@linux-foundation.org>
+	<200812190007.34581.bernd.schubert@fastmail.fm>
+	<20081218152616.a24c013f.akpm@linux-foundation.org>
+	<20081219110539.7e7e230c.sfr@canb.auug.org.au>
+	<20081229144533.4a0ab696.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__29_Dec_2008_15_06_45_+1100_l_o+3G=vtz+YJKg8"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38471 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752255AbYL2EGw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 28 Dec 2008 23:06:52 -0500
-In-Reply-To: <20081030154741.2651e779.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Chinner <david@fromorbit.com>, Lachlan McIlroy <lachlan@sgi.com>
-Cc: linux-next@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <nfsv4-bounces@linux-nfs.org>
+In-Reply-To: <20081229144533.4a0ab696.sfr@canb.auug.org.au>
+List-Unsubscribe: <http://linux-nfs.org/cgi-bin/mailman/listinfo/nfsv4>,
+	<mailto:nfsv4-request@linux-nfs.org?subject=unsubscribe>
+List-Archive: <http://linux-nfs.org/pipermail/nfsv4>
+List-Post: <mailto:nfsv4@linux-nfs.org>
+List-Help: <mailto:nfsv4-request@linux-nfs.org?subject=help>
+List-Subscribe: <http://linux-nfs.org/cgi-bin/mailman/listinfo/nfsv4>,
+	<mailto:nfsv4-request@linux-nfs.org?subject=subscribe>
+Sender: nfsv4-bounces@linux-nfs.org
+Errors-To: nfsv4-bounces@linux-nfs.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, nfsv4@linux-nfs.org, steved@redhat.com, linux-kernel@vger.kernel.org, dhowells@redhat.com, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, rwheeler@redhat.com
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__29_Dec_2008_15_06_45_+1100_l_o+3G=vtz+YJKg8
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 29 Dec 2008 14:45:33 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi David,
+> I ask because it
+> reappeared in linux-next today via the nfs tree (merged into that on Dec
+> 24 and 25) ...
 
-On Thu, 30 Oct 2008 15:47:41 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the creds tree got conflicts in
-> fs/xfs/linux-2.6/xfs_cred.h, fs/xfs/linux-2.6/xfs_globals.h and
-> fs/xfs/xfs_vnodeops.h between commit
-> 959f0f5b48d25a478694e04d024cd1ca681ea4bf ("[XFS] kill sys_cred") from the
-> xfs tree and commit 3634a8a33b2cd7296e265d01d606b58c22b6a557 ("CRED:
-> Separate task security context from task_struct") from the creds tree.
->=20
-> The former mostly removed what the latter changed.  I fixed it up (see
-> below - I just removed the "extern cred_t *sys_cred;" from xfs_globals.h
-> and the cred_t arguments to xfs_setattr and xfs_change_file_space in
-> xfs_vnodeops.h) and can carry the fix.
+And that of course means that many many 2.6.28 patches which I am
+maintaining will need significant rework to apply on top of linux-next,
+and then they won't apply to mainline.  Or that linux-next will not apply
+on top of those patches.  Mainly memory management.
 
-These conflicts are now between the xfs tree and Linus' tree and so could
-be sorted out by merging Linus' tree into the xfs tree before asking
-Linus to pull the xfs tree.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Please drop the NFS tree until after -rc1.
 
---Signature=_Mon__29_Dec_2008_15_06_45_+1100_l_o+3G=vtz+YJKg8
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklYTNUACgkQjjKRsyhoI8x16wCaA+lnqDJUeIkQt97mfdHoMX3N
-KZkAnRWwrhgZlMpUpcYAQCj4o8xUnxax
-=Yh0N
------END PGP SIGNATURE-----
-
---Signature=_Mon__29_Dec_2008_15_06_45_+1100_l_o+3G=vtz+YJKg8--
+Guys, this: http://lkml.org/lkml/2008/12/27/173
