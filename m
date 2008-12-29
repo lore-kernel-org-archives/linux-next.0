@@ -1,49 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the boot-params tree
-Date: Tue, 30 Dec 2008 01:01:15 +1100
-Message-ID: <20081230010115.754e9d01.sfr@canb.auug.org.au>
+Date: Tue, 30 Dec 2008 01:10:55 +1100
+Message-ID: <20081230011055.d2f6ced2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__30_Dec_2008_01_10_55_+1100_3gD+6bOuF3x/kllY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59102 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48656 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752910AbYL2OBX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Dec 2008 09:01:23 -0500
+	id S1753692AbYL2OLA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Dec 2008 09:11:00 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, Alok Kataria <akataria@vmware.com>, Dan Hecht <dhecht@vmware.com>, "H. Peter Anvin" <hpa@zytor.com>, Yinghai Lu <yinghai.lu@kernel.org>
+Cc: linux-next@vger.kernel.org, Greg KH <greg@kroah.com>
+
+--Signature=_Tue__30_Dec_2008_01_10_55_+1100_3gD+6bOuF3x/kllY
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Rusty,
 
 Today's linux-next merge of the boot-params tree got a conflict in
-arch/x86/kernel/cpu/common.c between commit
-88b094fb8d4fe43b7025ea8d487059e8813e02cd ("x86: Hypervisor detection and
-get tsc_freq from hypervisor") from Linus' tree and commit
-568991994fb3aad34504e9bdac458a2bfd388c7f ("x86: clean up
-setup_clear/force_cpu_cap handling") from the boot-params tree.
+drivers/usb/core/usb.c between commit
+6e7b5429a08fe4f71c336710bd45acdce6cd3df7 ("USB: don't use
+__module_param_call") from the usb tree and commit
+9634765245cd7aba71328c71813ca882d008632d ("USB: Don't use
+__module_param_call; use core_param") from the boot-params tree.
 
-Just overlapping additions.  I fixed it up (see below) and can carry the
-fix for now.
--- 
+Two different versions of the same change?  I fixed it up (used the
+boot-params tree version) and can carry the fix as necessary.  It sounds
+like Greg should drop the patch from the usb tree (or pick up the version
+from the boot-params tree).
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/x86/kernel/cpu/common.c
-index 42e0853,63531c9..0000000
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@@ -704,7 -716,9 +717,11 @@@ static void __cpuinit identify_cpu(stru
-  	detect_ht(c);
-  #endif
-  
- +	init_hypervisor(c);
-++
-+ 	/* Command-line override before we AND into smp all cpus cap. */
-+ 	override_capabilities(c->x86_capability);
-+ 
-  	/*
-  	 * On SMP, boot_cpu_data holds the common feature set between
-  	 * all CPUs; so make sure that we indicate which features are
+--Signature=_Tue__30_Dec_2008_01_10_55_+1100_3gD+6bOuF3x/kllY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAklY2m8ACgkQjjKRsyhoI8zwSgCfZCB+jgWCFCnifd57Y2z3g+bW
+ceUAoKoJ0BnFl8RA+UFva6B65XrEvte0
+=6PRl
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__30_Dec_2008_01_10_55_+1100_3gD+6bOuF3x/kllY--
