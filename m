@@ -1,57 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: usb tree build failure
-Date: Mon, 29 Dec 2008 14:55:06 +1100
-Message-ID: <20081229145506.115307fe.sfr@canb.auug.org.au>
-References: <20081222113335.667c2d01.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net tree
+Date: Sun, 28 Dec 2008 20:00:55 -0800 (PST)
+Message-ID: <20081228.200055.170405541.davem@davemloft.net>
+References: <20081208144851.c02cc7da.sfr@canb.auug.org.au>
+	<20081207.232658.64516148.davem@davemloft.net>
+	<20081229145300.0a86e1de.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__29_Dec_2008_14_55_06_+1100_ScyX17iQOpCwCChk"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47013 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751449AbYL2DzO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 28 Dec 2008 22:55:14 -0500
-In-Reply-To: <20081222113335.667c2d01.sfr@canb.auug.org.au>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:53911
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1752242AbYL2EAx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Sun, 28 Dec 2008 23:00:53 -0500
+In-Reply-To: <20081229145300.0a86e1de.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, Inaky Perez-Gonzalez <inaky@linux.intel.com>
+To: sfr@canb.auug.org.au
+Cc: linux-next@vger.kernel.org, johannes@sipsolutions.net, sam@ravnborg.org
 
---Signature=_Mon__29_Dec_2008_14_55_06_+1100_ScyX17iQOpCwCChk
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 29 Dec 2008 14:53:00 +1100
 
-Hi Greg,
+> Hi Dave,
+> 
+> On Sun, 07 Dec 2008 23:26:58 -0800 (PST) David Miller <davem@davemloft.net> wrote:
+> >
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Mon, 8 Dec 2008 14:48:51 +1100
+> > 
+> > > Today's linux-next merge of the net tree got a conflict in
+> > > arch/sparc64/kernel/idprom.c between commit
+> > > a88b5ba8bd8ac18aad65ee6c6a254e2e74876db3 (sparc,sparc64: unify kernel/"")
+> > > from the sparc tree and commit 7c510e4b730a92cecf94ada45c989d8be0200d47
+> > > ("net: convert more to %pM") from the net tree.
+> > 
+> > Thanks for reporting this.
+> > 
+> > > The former renamed the file while the latter modified it.  I just deleted
+> > > the renamed file for now, the %pM conversion can be done later.
+> > 
+> > Yes it's probably the best way to handle this for now.
+> 
+> This conflict is now between the sparc tree and Linus' tree ...
 
-On Mon, 22 Dec 2008 11:33:35 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
->=20
-> x86_64-linux-ld: drivers/net/wimax/built-in.o: No such file: No such file=
- or directory
->=20
-> I reverted commit 66aa675719ab82a03a66b75210fd40be6541f8fb ("wimax:
-> Makefile, Kconfig and docbook linkage for the stack") just to make the
-> build work.
-
-Still there today.  Inaky sent you a patch, I think.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__29_Dec_2008_14_55_06_+1100_ScyX17iQOpCwCChk
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklYShoACgkQjjKRsyhoI8zTkwCeIJhPvIpjAY/farYLoKWMEaMO
-DgEAnA4kVPTMX+F+DnOTQJnFO4gt4v5W
-=gx4r
------END PGP SIGNATURE-----
-
---Signature=_Mon__29_Dec_2008_14_55_06_+1100_ScyX17iQOpCwCChk--
+I'll take care of this as I prepare the sparc-next-2.6 tree for
+merging.
