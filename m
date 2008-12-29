@@ -1,78 +1,79 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [ofa-general] Re: linux-next: origin tree build failure
-Date: Mon, 29 Dec 2008 13:07:16 -0800 (PST)
-Message-ID: <alpine.LFD.2.00.0812291304471.3082@localhost.localdomain>
-References: <20081229114321.4b6baea5.sfr@canb.auug.org.au>
-	<ada4p0nve4r.fsf@cisco.com> <1230544737.4261.33.camel@alst60>
-	<adaljtyu45d.fsf@cisco.com>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: manual merge of the boot-params tree
+Date: Tue, 30 Dec 2008 07:52:01 +1030
+Message-ID: <200812300752.02671.rusty@rustcorp.com.au>
+References: <20081230011055.d2f6ced2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <general-bounces@lists.openfabrics.org>
-In-Reply-To: <adaljtyu45d.fsf@cisco.com>
-List-Unsubscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
-	<mailto:general-request@lists.openfabrics.org?subject=unsubscribe>
-List-Archive: <http://lists.openfabrics.org/pipermail/general>
-List-Post: <mailto:general@lists.openfabrics.org>
-List-Help: <mailto:general-request@lists.openfabrics.org?subject=help>
-List-Subscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
-	<mailto:general-request@lists.openfabrics.org?subject=subscribe>
-Sender: general-bounces@lists.openfabrics.org
-Errors-To: general-bounces@lists.openfabrics.org
-To: Roland Dreier <rdreier@cisco.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "general@lists.openfabrics.org" <general@lists.openfabrics.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:35030 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752782AbYL2VWI convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Dec 2008 16:22:08 -0500
+In-Reply-To: <20081230011055.d2f6ced2.sfr@canb.auug.org.au>
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Greg KH <greg@kroah.com>, "Pete Zaitcev (Red Hat, Inc.)" <zaitcev@redhat.com>
 
-
-
-On Mon, 29 Dec 2008, Roland Dreier wrote:
->
-> Something like the following maybe?  (This turns off the RDMA CM if
-> INFINIBAND=y and IPV6=m -- another possibility would be to just turn off
-> RDMA CM IPv6 support in the case that IB is build-in but IPv6 is
-> modular, but that seems like a worse idea overall)
+On Tuesday 30 December 2008 00:40:55 Stephen Rothwell wrote:
+> Hi Rusty,
 > 
-> diff --git a/drivers/infiniband/Kconfig b/drivers/infiniband/Kconfig
-> index a5dc78a..538a0ba 100644
-> --- a/drivers/infiniband/Kconfig
-> +++ b/drivers/infiniband/Kconfig
-> @@ -36,7 +36,7 @@ config INFINIBAND_USER_MEM
->  
->  config INFINIBAND_ADDR_TRANS
->  	bool
-> -	depends on INET
-> +	depends on INET && !(INFINIBAND = y && IPV6 = m)
->  	default y
+> Today's linux-next merge of the boot-params tree got a conflict in
+> drivers/usb/core/usb.c between commit
+> 6e7b5429a08fe4f71c336710bd45acdce6cd3df7 ("USB: don't use
+> __module_param_call") from the usb tree and commit
+> 9634765245cd7aba71328c71813ca882d008632d ("USB: Don't use
+> __module_param_call; use core_param") from the boot-params tree.
+> 
+> Two different versions of the same change?  I fixed it up (used the
+> boot-params tree version) and can carry the fix as necessary.  It sounds
+> like Greg should drop the patch from the usb tree (or pick up the version
+> from the boot-params tree).
 
-I'd suggest
+Yes; I sent Greg an email but it might have been lost in the flood.  Pete
+acked.
 
-  config IF_IPV6
-	bool
-	depends on INET
-	depends on !(INFINIBAND = y && IPV6 = m)
-	default y
+I'd rather this version for simplicity in the other patches, but I can live
+if not.  It's also a little clearer, IMHO.
 
-and then you can use it not only for the above:
+Thanks,
+Rusty.
 
-  config INFINIBAND_ADDR_TRANS
-	bool
-	depends on IF_IPV6
-	default y
+>From 9634765245cd7aba71328c71813ca882d008632d Mon Sep 17 00:00:00 2001
+From: Rusty Russell <rusty@rustcorp.com.au>
+Date: Thu, 25 Dec 2008 22:06:14 +1030
+Subject: [PATCH] USB: Don't use __module_param_call; use core_param.
 
-but also use it in the source code as a more readable version:
+Impact: cleanup
 
-> diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
-> index d98b05b..ec7abb5 100644
-> --- a/drivers/infiniband/core/addr.c> +++ b/drivers/infiniband/core/addr.c
-> @@ -128,6 +128,7 @@ int rdma_translate_ip(struct sockaddr *addr, struct rdma_dev_addr *dev_addr)
->  		ret = rdma_copy_addr(dev_addr, dev, NULL);
->  		dev_put(dev);
->  		break;
-> +#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+Found this when I changed args to __module_param_call.  We now have
+core_param for exactly this, but Greg assures me "nousb" is used as a
+module parameter, so we need the #ifdef MODULE.
 
-ie use
+Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Pete Zaitcev <zaitcev@redhat.com>
 
-	#ifdef CONFIG_IF_IPV6
-
-here instead.
-
-		Linus
+diff --git a/drivers/usb/core/usb.c b/drivers/usb/core/usb.c
+index be1fa07..74d9dcd 100644
+--- a/drivers/usb/core/usb.c
++++ b/drivers/usb/core/usb.c
+@@ -962,8 +962,12 @@ void usb_buffer_unmap_sg(const struct usb_device *dev, int is_in,
+ }
+ EXPORT_SYMBOL_GPL(usb_buffer_unmap_sg);
+ 
+-/* format to disable USB on kernel command line is: nousb */
+-__module_param_call("", nousb, param_set_bool, param_get_bool, &nousb, 0444);
++/* To disable USB, kernel command line is 'nousb' not 'usbcore.nousb' */
++#ifdef MODULE
++module_param(nousb, bool, 0444);
++#else
++core_param(nousb, nousb, bool, 0444);
++#endif
+ 
+ /*
+  * for external read access to <nousb>
