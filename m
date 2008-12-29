@@ -1,55 +1,54 @@
-From: Neil Horman <nhorman@tuxdriver.com>
-Subject: Re: [PATCH] clean up of netif_rx_reschedule() changes in drivers
-Date: Mon, 29 Dec 2008 10:37:57 -0500
-Message-ID: <20081229153757.GA2857@localhost.localdomain>
-References: <20081229110041.0eca977a.sfr@canb.auug.org.au> <20081229102509.GA11111@linux.vnet.ibm.com> <20081229214144.43be8c1d.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next:  rr_cpumask tree build failure
+Date: Tue, 30 Dec 2008 02:55:57 +1100
+Message-ID: <20081230025557.89d2565e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__30_Dec_2008_02_55_57_+1100_8XyHT8y/=1uK=2b8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:39760 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751388AbYL2PkL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Dec 2008 10:40:11 -0500
-Content-Disposition: inline
-In-Reply-To: <20081229214144.43be8c1d.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:45803 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751538AbYL2P4F (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Dec 2008 10:56:05 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, "David S. Miller" <davem@davemloft.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, netdev@vger.kernel.org, ppc-dev <linuxppc-dev@ozlabs.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>
 
-On Mon, Dec 29, 2008 at 09:41:44PM +1100, Stephen Rothwell wrote:
-> Hi Kamalesh,
-> 
-> On Mon, 29 Dec 2008 15:55:29 +0530 Kamalesh Babulal <kamalesh@linux.vnet.ibm.com> wrote:
-> >
-> > I hit similar build failure due to the change in the netif_rx_reschedule()
-> > 
-> > drivers/net/ehea/ehea_main.c: In function 'ehea_poll':
-> > drivers/net/ehea/ehea_main.c:844: warning: passing argument 1 of 'netif_rx_reschedule' from incompatible pointer type
-> > drivers/net/ehea/ehea_main.c:844: error: too many arguments to function 'netif_rx_reschedule'
-> > make[3]: *** [drivers/net/ehea/ehea_main.o] Error 1
-> 
-> Linus already took a patch for ibmveth and ehea.
-> 
-> > greping through the sources for the changes missed out, we have
-> > 
-> 	.
-> 	.
-> > 
-> > Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-> > --
-> >  drivers/net/arm/ep93xx_eth.c |    2 +-
-> >  drivers/net/arm/ixp4xx_eth.c |    2 +-
-> >  drivers/net/wan/ixp4xx_hss.c |    2 +-
-> >  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> Thanks for the patch, I assume that Dave or Linus will take care of that.
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
+--Signature=_Tue__30_Dec_2008_02_55_57_+1100_8XyHT8y/=1uK=2b8
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks guys, not sure how my patch missed that.  I did an allmodconfig build
-that passed successfully.  Thanks!
+Hi Rusty,
 
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Today's linux-next build (powerpc allnoconfig) failed like this:
+
+drivers/base/cpu.c: In function 'print_cpus_kernel_max':
+drivers/base/cpu.c:136: error: 'CONFIG_NR_CPUS' undeclared (first use in th=
+is function)
+
+Caused by commit e057d7aea9d8f2a46cd440d8bfb72245d4e72d79 ("cpumask: add
+sysfs displays for configured and disabled cpu maps") from the rr_cpumask
+tree.  Powerpc (at least) does not define CONFIG_NR_CPUS for a non SMP
+build.
+
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__30_Dec_2008_02_55_57_+1100_8XyHT8y/=1uK=2b8
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAklY8w0ACgkQjjKRsyhoI8wkRgCgtSg8PRuomtGhooWJFaPGZ35t
+E8sAmwfuYmO4HLNjLqLRv+rI0CZHHHGI
+=VpNz
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__30_Dec_2008_02_55_57_+1100_8XyHT8y/=1uK=2b8--
