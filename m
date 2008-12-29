@@ -1,59 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: rr tree build failure
-Date: Mon, 29 Dec 2008 19:12:53 +1100
-Message-ID: <20081229191253.6c04bf3e.sfr@canb.auug.org.au>
+Subject: linux-next: xfs tree build warnings
+Date: Mon, 29 Dec 2008 19:26:49 +1100
+Message-ID: <20081229192649.7099188b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__29_Dec_2008_19_12_53_+1100_9_7rUV/4LBzJVD5h"
+ boundary="Signature=_Mon__29_Dec_2008_19_26_49_+1100_mJpiZtBkghNUXtFj"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37421 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44165 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752509AbYL2INA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Dec 2008 03:13:00 -0500
+	id S1752423AbYL2I06 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Dec 2008 03:26:58 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
+To: David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
 Cc: linux-next@vger.kernel.org
 
---Signature=_Mon__29_Dec_2008_19_12_53_+1100_9_7rUV/4LBzJVD5h
+--Signature=_Mon__29_Dec_2008_19_26_49_+1100_mJpiZtBkghNUXtFj
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi David,
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-In file included from include/linux/smp.h:33,
-                 from include/linux/topology.h:33,
-                 from include/linux/mmzone.h:763,
-                 from include/linux/gfp.h:4,
-                 from include/linux/kmod.h:22,
-                 from include/linux/module.h:13,
-                 from include/linux/crypto.h:21,
-                 from arch/x86/kernel/asm-offsets_64.c:7,
-                 from arch/x86/kernel/asm-offsets.c:4:
-arch/x86/include/asm/smp.h: In function 'num_booting_cpus':
-arch/x86/include/asm/smp.h:152: error: implicit declaration of function 'cp=
-us_weight'
+fs/xfs/xfs_inode.c: In function 'xfs_iflush_int':
+fs/xfs/xfs_inode.c:3055: warning: format '%Lu' expects type 'long long unsi=
+gned int', but argument 5 has type 'xfs_ino_t'
+fs/xfs/xfs_inode.c:3062: warning: format '%Lu' expects type 'long long unsi=
+gned int', but argument 5 has type 'xfs_ino_t'
+fs/xfs/xfs_inode.c:3072: warning: format '%Lu' expects type 'long long unsi=
+gned int', but argument 5 has type 'xfs_ino_t'
+fs/xfs/xfs_inode.c:3083: warning: format '%Lu' expects type 'long long unsi=
+gned int', but argument 5 has type 'xfs_ino_t'
+fs/xfs/xfs_inode.c:3095: warning: format '%Lu' expects type 'long long unsi=
+gned int', but argument 5 has type 'xfs_ino_t'
+fs/xfs/xfs_inode.c:3102: warning: format '%Lu' expects type 'long long unsi=
+gned int', but argument 5 has type 'xfs_ino_t'
+fs/xfs/xfs_log_recover.c: In function 'xlog_recover_do_inode_trans':
+fs/xfs/xfs_log_recover.c:2300: warning: format '%Ld' expects type 'long lon=
+g int', but argument 6 has type 'xfs_ino_t'
+fs/xfs/xfs_log_recover.c:2311: warning: format '%Ld' expects type 'long lon=
+g int', but argument 5 has type 'xfs_ino_t'
+fs/xfs/xfs_log_recover.c:2344: warning: format '%Ld' expects type 'long lon=
+g int', but argument 7 has type 'xfs_ino_t'
+fs/xfs/xfs_log_recover.c:2357: warning: format '%Ld' expects type 'long lon=
+g int', but argument 7 has type 'xfs_ino_t'
+fs/xfs/xfs_log_recover.c:2370: warning: format '%Ld' expects type 'long lon=
+g int', but argument 7 has type 'xfs_ino_t'
+fs/xfs/xfs_log_recover.c:2380: warning: format '%Ld' expects type 'long lon=
+g int', but argument 7 has type 'xfs_ino_t'
 
-I have dropped the rr tree for today.
+I am just flagging these to be consistent.  Ingo will probably say
+something about u64 and unsigned long long vs. unsigned long ...
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__29_Dec_2008_19_12_53_+1100_9_7rUV/4LBzJVD5h
+--Signature=_Mon__29_Dec_2008_19_26_49_+1100_mJpiZtBkghNUXtFj
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAklYhoUACgkQjjKRsyhoI8zAIgCfV4MpYjvaHpLzf61rliQBLGPz
-0LMAoKaQXJCeRGMKkPocj2qcbpf9SABH
-=IHom
+iEYEARECAAYFAklYickACgkQjjKRsyhoI8wM5wCgsL3jkOlE2d++f8u28YhRjXym
+2ZUAnAwP/JGOFDK4KmaZEvSsU4Zt/qvo
+=Sxfz
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__29_Dec_2008_19_12_53_+1100_9_7rUV/4LBzJVD5h--
+--Signature=_Mon__29_Dec_2008_19_26_49_+1100_mJpiZtBkghNUXtFj--
