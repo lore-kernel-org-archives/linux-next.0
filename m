@@ -1,68 +1,60 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next v2] cxgb3i: use same dependencies & selects as
- CHELSIO_T3
-Date: Mon, 29 Dec 2008 13:23:12 -0800
-Message-ID: <20081229132312.10934479.randy.dunlap@oracle.com>
-References: <20081230031621.60acd90b.sfr@canb.auug.org.au>
-	<20081229130110.67d5271a.randy.dunlap@oracle.com>
+From: Roland Dreier <rdreier@cisco.com>
+Subject: [ofa-general] Re: linux-next: origin tree build failure
+Date: Mon, 29 Dec 2008 13:35:02 -0800
+Message-ID: <adahc4mu0l5.fsf@cisco.com>
+References: <20081229114321.4b6baea5.sfr@canb.auug.org.au>
+	<ada4p0nve4r.fsf@cisco.com> <1230544737.4261.33.camel@alst60>
+	<adaljtyu45d.fsf@cisco.com>
+	<alpine.LFD.2.00.0812291304471.3082@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:57142 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752600AbYL2VXf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Dec 2008 16:23:35 -0500
-In-Reply-To: <20081229130110.67d5271a.randy.dunlap@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: scsi <linux-scsi@vger.kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, kxie@chelsio.com, akpm <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, jejb <James.Bottomley@hansenpartnership.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <general-bounces@lists.openfabrics.org>
+In-Reply-To: <alpine.LFD.2.00.0812291304471.3082@localhost.localdomain> (Linus
+	Torvalds's message of "Mon, 29 Dec 2008 13:07:16 -0800 (PST)")
+List-Unsubscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
+	<mailto:general-request@lists.openfabrics.org?subject=unsubscribe>
+List-Archive: <http://lists.openfabrics.org/pipermail/general>
+List-Post: <mailto:general@lists.openfabrics.org>
+List-Help: <mailto:general-request@lists.openfabrics.org?subject=help>
+List-Subscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
+	<mailto:general-request@lists.openfabrics.org?subject=subscribe>
+Sender: general-bounces@lists.openfabrics.org
+Errors-To: general-bounces@lists.openfabrics.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "general@lists.openfabrics.org" <general@lists.openfabrics.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+ > I'd suggest
+ > 
+ >   config IF_IPV6
+ > 	bool
+ > 	depends on INET
+ > 	depends on !(INFINIBAND = y && IPV6 = m)
+ > 	default y
 
-Make the CXGB iSCSI driver (that selects the CXGB net driver) have the same
-dependencies as the net driver, since kconfig doesn't do that automatically.
-Also make it select INET_LRO & FW_LOADER like the net driver does.
+Makes sense, will do.  How about calling it INFINIBAND_USE_IPV6 or
+something like that, though?  (Since it's under the INFINIBAND config
+stuff and exists to forbid INFINIBAND=y && IPV6=m trying to use IPv6).
+But see below:
 
-drivers/net/cxgb3/cxgb3_main.c:269: error: implicit declaration of function 'pci_disable_msix'
-drivers/net/cxgb3/cxgb3_main.c:272: error: implicit declaration of function 'pci_disable_msi'
-drivers/net/cxgb3/cxgb3_main.c:2778: error: array type has incomplete element type
-drivers/net/cxgb3/cxgb3_main.c:2781: warning: type defaults to 'int' in declaration of 'type name'
-drivers/net/cxgb3/cxgb3_main.c:2781: warning: type defaults to 'int' in declaration of 'type name'
-drivers/net/cxgb3/cxgb3_main.c:2781: error: size of array 'type name' is negative
-drivers/net/cxgb3/cxgb3_main.c:2784: error: implicit declaration of function 'pci_enable_msix'
-drivers/net/cxgb3/cxgb3_main.c:2784: warning: type defaults to 'int' in declaration of 'type name'
-drivers/net/cxgb3/cxgb3_main.c:2784: warning: type defaults to 'int' in declaration of 'type name'
-drivers/net/cxgb3/cxgb3_main.c:2784: error: size of array 'type name' is negative
-drivers/net/cxgb3/cxgb3_main.c:2786: warning: type defaults to 'int' in declaration of 'type name'
-drivers/net/cxgb3/cxgb3_main.c:2786: warning: type defaults to 'int' in declaration of 'type name'
-drivers/net/cxgb3/cxgb3_main.c:2786: error: size of array 'type name' is negative
-drivers/net/cxgb3/cxgb3_main.c:2778: warning: unused variable 'entries'
-drivers/net/cxgb3/cxgb3_main.c:3011: error: implicit declaration of function 'pci_enable_msi'
+ > but also use it in the source code as a more readable version:
+ > 
+ > > diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
+ > > index d98b05b..ec7abb5 100644
+ > > --- a/drivers/infiniband/core/addr.c> +++ b/drivers/infiniband/core/addr.c
+ > > @@ -128,6 +128,7 @@ int rdma_translate_ip(struct sockaddr *addr, struct rdma_dev_addr *dev_addr)
+ > >  		ret = rdma_copy_addr(dev_addr, dev, NULL);
+ > >  		dev_put(dev);
+ > >  		break;
+ > > +#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+ > 
+ > ie use
+ > 
+ > 	#ifdef CONFIG_IF_IPV6
 
-and from a different build:
+this doesn't make sense, does it?  Your CONFIG_IF_IPV6 will be set in
+the case IPV6=n too I think.  (Which is the whole point... we want to
+build this code, just without IPv6 support, if IPv6 is turned off
+completely)
 
-ERROR: "lro_vlan_hwaccel_receive_frags" [drivers/net/cxgb3/cxgb3.ko] undefined!
-ERROR: "lro_receive_frags" [drivers/net/cxgb3/cxgb3.ko] undefined!
-ERROR: "lro_receive_skb" [drivers/net/cxgb3/cxgb3.ko] undefined!
-ERROR: "lro_vlan_hwaccel_receive_skb" [drivers/net/cxgb3/cxgb3.ko] undefined!
-ERROR: "lro_flush_all" [drivers/net/cxgb3/cxgb3.ko] undefined!
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/scsi/cxgb3i/Kconfig |    3 +++
- 1 file changed, 3 insertions(+)
-
---- linux-next-20081229.orig/drivers/scsi/cxgb3i/Kconfig
-+++ linux-next-20081229/drivers/scsi/cxgb3i/Kconfig
-@@ -1,6 +1,9 @@
- config SCSI_CXGB3_ISCSI
- 	tristate "Chelsio S3xx iSCSI support"
-+	depends on PCI && INET
- 	select CHELSIO_T3
- 	select SCSI_ISCSI_ATTRS
-+	select INET_LRO
-+	select FW_LOADER
- 	---help---
- 	This driver supports iSCSI offload for the Chelsio S3 series devices.
+ - R.
