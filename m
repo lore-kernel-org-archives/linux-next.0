@@ -1,30 +1,75 @@
-From: Roland Dreier <rdreier@cisco.com>
-Subject: Re: [ofa-general] Re: linux-next: origin tree build failure
-Date: Tue, 30 Dec 2008 14:56:05 -0800
-Message-ID: <adahc4ls262.fsf@cisco.com>
-References: <20081229114321.4b6baea5.sfr@canb.auug.org.au>
-	<adavdt2ru39.fsf@cisco.com>
-	<20081230193048.db7ee462.sfr@canb.auug.org.au>
-	<adaljtxsma7.fsf@cisco.com>
-	<20081231024654.a73f20df.sfr@canb.auug.org.au>
-	<20081231095228.b21cffe0.sfr@canb.auug.org.au>
+From: "Muntz, Daniel" <Dan.Muntz@netapp.com>
+Subject: RE: Pull request for FS-Cache, including NFS patches
+Date: Tue, 30 Dec 2008 15:00:02 -0800
+Message-ID: <7A24DF798E223B4C9864E8F92E8C93EC01AAFE6E@SACMVEXC1-PRD.hq.netapp.com>
+References: <1230676568.11508.21.camel@heimdal.trondhjem.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sj-iport-6.cisco.com ([171.71.176.117]:36840 "EHLO
-	sj-iport-6.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752147AbYL3W4O (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Dec 2008 17:56:14 -0500
-In-Reply-To: <20081231095228.b21cffe0.sfr@canb.auug.org.au> (Stephen
-	Rothwell's message of "Wed, 31 Dec 2008 09:52:28 +1100")
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, general@lists.openfabrics.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <nfsv4-bounces@linux-nfs.org>
+Content-class: urn:content-classes:message
+In-Reply-To: <1230676568.11508.21.camel@heimdal.trondhjem.org>
+List-Unsubscribe: <http://linux-nfs.org/cgi-bin/mailman/listinfo/nfsv4>,
+	<mailto:nfsv4-request@linux-nfs.org?subject=unsubscribe>
+List-Archive: <http://linux-nfs.org/pipermail/nfsv4>
+List-Post: <mailto:nfsv4@linux-nfs.org>
+List-Help: <mailto:nfsv4-request@linux-nfs.org?subject=help>
+List-Subscribe: <http://linux-nfs.org/cgi-bin/mailman/listinfo/nfsv4>,
+	<mailto:nfsv4-request@linux-nfs.org?subject=subscribe>
+Sender: nfsv4-bounces@linux-nfs.org
+Errors-To: nfsv4-bounces@linux-nfs.org
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Bernd Schubert <bernd.schubert@fastmail.fm>, nfsv4@linux-nfs.org, steved@redhat.com, linux-kernel@vger.kernel.org, dhowells@redhat.com, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, rwheeler@redhat.com
+List-Id: linux-next.vger.kernel.org
 
- > So instead of the revert, I will cherry-pick your fix commit just after
- > Linus' tree today on the assumption that you will send it to him ASAP.
+Yes, and if you have a single user on the machine at a time (with cache
+flushed inbetween, kernel refreshed), root can read /dev/kmem, swap,
+intercept traffic and read cachefs data to its heart's content--hence,
+those requirements.
 
-Yes, I will batch up a few other things and send a pull request today.
+  -Dan
 
- - R.
+-----Original Message-----
+From: Trond Myklebust [mailto:trond.myklebust@fys.uio.no] 
+Sent: Tuesday, December 30, 2008 2:36 PM
+To: Muntz, Daniel
+Cc: Andrew Morton; Stephen Rothwell; Bernd Schubert;
+nfsv4@linux-nfs.org; linux-kernel@vger.kernel.org; steved@redhat.com;
+dhowells@redhat.com; linux-next@vger.kernel.org;
+linux-fsdevel@vger.kernel.org; rwheeler@redhat.com
+Subject: RE: Pull request for FS-Cache, including NFS patches
+
+On Tue, 2008-12-30 at 14:15 -0800, Muntz, Daniel wrote:
+> >> As for security, look at what MIT had to do to prevent local disk 
+> >> caching from breaking the security guarantees of AFS.
+> >
+> >See what David has added to the LSM code to provide the same 
+> >guarantees
+> for cachefs...
+> >
+> >Trond
+> 
+> Unless it (at least) leverages TPM, the issues I had in mind can't 
+> really be addressed in code.  One requirement is to prevent a local 
+> root user from accessing fs information without appropriate
+permissions.
+> This leads to unwieldly requirements such as allowing only one user on
+
+> a machine at a time, blowing away the cache on logout, validating 
+> (e.g.,
+> refreshing) the kernel on each boot, etc.  Sure, some applications 
+> won't care, but you're also potentially opening holes that users may 
+> not consider.
+
+You can't prevent a local root user from accessing cached data: that's
+true with or without cachefs. root can typically access the data using
+/dev/kmem, swap, intercepting tty traffic, spoofing user creds,...
+If root can't be trusted, then find another machine.
+
+The worry is rather that privileged daemons may be tricked into
+revealing said data to unprivileged users, or that unprivileged users
+may attempt to read data from files to which they have no rights using
+the cachefs itself. That is a problem that is addressable by means of
+LSM, and is what David has attempted to solve.
+
+  Trond
