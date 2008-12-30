@@ -1,92 +1,70 @@
-From: Trond Myklebust <trond.myklebust@fys.uio.no>
-Subject: RE: Pull request for FS-Cache, including NFS patches
-Date: Tue, 30 Dec 2008 18:17:36 -0500
-Message-ID: <1230679056.11508.37.camel@heimdal.trondhjem.org>
-References: <7A24DF798E223B4C9864E8F92E8C93EC01AAFE6E@SACMVEXC1-PRD.hq.netapp.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the sched tree
+Date: Wed, 31 Dec 2008 10:45:48 +1100
+Message-ID: <20081231104548.000c5729.sfr@canb.auug.org.au>
+References: <20081222120543.92004d90.sfr@canb.auug.org.au>
+	<20081222063501.GA29160@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <nfsv4-bounces@linux-nfs.org>
-In-Reply-To: <7A24DF798E223B4C9864E8F92E8C93EC01AAFE6E@SACMVEXC1-PRD.hq.netapp.com>
-List-Unsubscribe: <http://linux-nfs.org/cgi-bin/mailman/listinfo/nfsv4>,
-	<mailto:nfsv4-request@linux-nfs.org?subject=unsubscribe>
-List-Archive: <http://linux-nfs.org/pipermail/nfsv4>
-List-Post: <mailto:nfsv4@linux-nfs.org>
-List-Help: <mailto:nfsv4-request@linux-nfs.org?subject=help>
-List-Subscribe: <http://linux-nfs.org/cgi-bin/mailman/listinfo/nfsv4>,
-	<mailto:nfsv4-request@linux-nfs.org?subject=subscribe>
-Sender: nfsv4-bounces@linux-nfs.org
-Errors-To: nfsv4-bounces@linux-nfs.org
-To: "Muntz, Daniel" <Dan.Muntz@netapp.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Bernd Schubert <bernd.schubert@fastmail.fm>, nfsv4@linux-nfs.org, steved@redhat.com, linux-kernel@vger.kernel.org, dhowells@redhat.com, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, rwheeler@redhat.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__31_Dec_2008_10_45_48_+1100_U.tdTSVKX_1UDopQ"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35289 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752241AbYL3Xp4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 30 Dec 2008 18:45:56 -0500
+In-Reply-To: <20081222063501.GA29160@elte.hu>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Steven Rostedt <rostedt@goodmis.org>
 
-On Tue, 2008-12-30 at 15:00 -0800, Muntz, Daniel wrote:
-> Yes, and if you have a single user on the machine at a time (with cache
-> flushed inbetween, kernel refreshed), root can read /dev/kmem, swap,
-> intercept traffic and read cachefs data to its heart's content--hence,
-> those requirements.
+--Signature=_Wed__31_Dec_2008_10_45_48_+1100_U.tdTSVKX_1UDopQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Unless you _are_ root and can check every executable, after presumably
-rebooting into your own trusted kernel, then those requirements won't
-mean squat. If you're that paranoid, then you will presumably also be
-using a cryptfs-encrypted partition for cachefs, which you unmount when
-you're not logged in.
+Hi Ingo,
 
-That said, most cluster environments will tend to put most of their
-security resources into keeping untrusted users out altogether. The
-client nodes tend to be a homogeneous lot with presumably only a trusted
-few sysadmins...
+On Mon, 22 Dec 2008 07:35:02 +0100 Ingo Molnar <mingo@elte.hu> wrote:
+>
+>=20
+> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>=20
+> >  +#define nmi_enter()				\
+> >  +	do {					\
+> >  +		ftrace_nmi_enter();		\
+> >  +		lockdep_off();			\
+> > ++		rcu_nmi_enter();		\
+> >  +		__irq_enter();			\
+> >  +	} while (0)
+> >  +#define nmi_exit()				\
+> >  +	do {					\
+> >  +		__irq_exit();			\
+> > ++		rcu_nmi_exit();			\
+> >  +		lockdep_on();			\
+> >  +		ftrace_nmi_exit();		\
+> >  +	} while (0)
+>=20
+> yes, that's the same resolution i did for this conflict three days ago in=
+=20
+> tip/master. Thanks,
 
-Trond
+This conflict is now the sched tree and Linus' tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-> -----Original Message-----
-> From: Trond Myklebust [mailto:trond.myklebust@fys.uio.no] 
-> Sent: Tuesday, December 30, 2008 2:36 PM
-> To: Muntz, Daniel
-> Cc: Andrew Morton; Stephen Rothwell; Bernd Schubert;
-> nfsv4@linux-nfs.org; linux-kernel@vger.kernel.org; steved@redhat.com;
-> dhowells@redhat.com; linux-next@vger.kernel.org;
-> linux-fsdevel@vger.kernel.org; rwheeler@redhat.com
-> Subject: RE: Pull request for FS-Cache, including NFS patches
-> 
-> On Tue, 2008-12-30 at 14:15 -0800, Muntz, Daniel wrote:
-> > >> As for security, look at what MIT had to do to prevent local disk 
-> > >> caching from breaking the security guarantees of AFS.
-> > >
-> > >See what David has added to the LSM code to provide the same 
-> > >guarantees
-> > for cachefs...
-> > >
-> > >Trond
-> > 
-> > Unless it (at least) leverages TPM, the issues I had in mind can't 
-> > really be addressed in code.  One requirement is to prevent a local 
-> > root user from accessing fs information without appropriate
-> permissions.
-> > This leads to unwieldly requirements such as allowing only one user on
-> 
-> > a machine at a time, blowing away the cache on logout, validating 
-> > (e.g.,
-> > refreshing) the kernel on each boot, etc.  Sure, some applications 
-> > won't care, but you're also potentially opening holes that users may 
-> > not consider.
-> 
-> You can't prevent a local root user from accessing cached data: that's
-> true with or without cachefs. root can typically access the data using
-> /dev/kmem, swap, intercepting tty traffic, spoofing user creds,...
-> If root can't be trusted, then find another machine.
-> 
-> The worry is rather that privileged daemons may be tricked into
-> revealing said data to unprivileged users, or that unprivileged users
-> may attempt to read data from files to which they have no rights using
-> the cachefs itself. That is a problem that is addressable by means of
-> LSM, and is what David has attempted to solve.
-> 
->   Trond
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+--Signature=_Wed__31_Dec_2008_10_45_48_+1100_U.tdTSVKX_1UDopQ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAklasqwACgkQjjKRsyhoI8w0TQCePNEKDYuBHuW2r3IhtysKZEJ5
+GjcAn2mQEU57HXru5AoLpmYtDeMy3Q2f
+=MzPE
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__31_Dec_2008_10_45_48_+1100_U.tdTSVKX_1UDopQ--
