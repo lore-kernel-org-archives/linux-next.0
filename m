@@ -1,50 +1,44 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 00/14] Kernel memory leak detector
-Date: Mon, 29 Dec 2008 16:23:10 -0800
-Message-ID: <20081229162310.705a25fe.akpm@linux-foundation.org>
-References: <20081219181255.7778.52219.stgit@pc1117.cambridge.arm.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH] clean up of netif_rx_reschedule() changes in drivers
+Date: Mon, 29 Dec 2008 18:19:08 -0800 (PST)
+Message-ID: <20081229.181908.214463121.davem@davemloft.net>
+References: <20081229102509.GA11111@linux.vnet.ibm.com>
+	<20081229214144.43be8c1d.sfr@canb.auug.org.au>
+	<20081229153757.GA2857@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:47270 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752539AbYL3AXU (ORCPT
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:33206
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1751299AbYL3CTF (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Dec 2008 19:23:20 -0500
-In-Reply-To: <20081219181255.7778.52219.stgit@pc1117.cambridge.arm.com>
+	Mon, 29 Dec 2008 21:19:05 -0500
+In-Reply-To: <20081229153757.GA2857@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: nhorman@tuxdriver.com
+Cc: sfr@canb.auug.org.au, kamalesh@linux.vnet.ibm.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, netdev@vger.kernel.org, linuxppc-dev@ozlabs.org
 
-On Fri, 19 Dec 2008 18:12:56 +0000
-Catalin Marinas <catalin.marinas@arm.com> wrote:
+From: Neil Horman <nhorman@tuxdriver.com>
+Date: Mon, 29 Dec 2008 10:37:57 -0500
 
-> A new kmemleak version is available. Thanks to all who reviewed the code
-> and provided feedback.
+> On Mon, Dec 29, 2008 at 09:41:44PM +1100, Stephen Rothwell wrote:
+> > Hi Kamalesh,
+> > 
+> > On Mon, 29 Dec 2008 15:55:29 +0530 Kamalesh Babulal <kamalesh@linux.vnet.ibm.com> wrote:
+> > > greping through the sources for the changes missed out, we have
+> > > 
+> > 	.
+> > 	.
+> > > 
+> > > Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+ ...
+> Thanks guys, not sure how my patch missed that.  I did an allmodconfig build
+> that passed successfully.  Thanks!
 
-There are a largeish number of trivialish rejects against all the
-pending 2.6.29 code.  Fairly easily fixed.
+It's very simple, you're not building on powerpc or ARM :-)
 
-I merge these patches into my tree, but I'd like to drop them again ;)
+> Acked-by: Neil Horman <nhorman@tuxdriver.com>
 
-> Kmemleak can also be found on this git tree:
-> 
-> git://linux-arm.org/linux-2.6.git kmemleak
-
-Please prepare and maintain a tree for inclusion in linux-next shortly
-after 2.6.29-rc1 is released.
-
-
-
-
-What is the track record of this code?  Has it found many leaks?  Do
-we expect that it will find sufficient leaks of sufficient importance
-to justify kmemleak's inclusion and maintenance?
-
-
-I'm a little doubtful personally.  We often fix leaks, and they are
-almost always things which nobody noticed at runtime, and which were
-found by code inspection or source-code checking tools.  And they're
-usually leaks which nobody would care about much anyway?
+Applied, thanks everyone.
