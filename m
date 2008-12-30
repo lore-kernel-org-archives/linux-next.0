@@ -1,96 +1,95 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
 Subject: Re: linux-next: Tree for December 29 (fcoe/libfc)
-Date: Tue, 30 Dec 2008 17:12:04 +0000
-Message-ID: <1230657124.3296.20.camel@localhost.localdomain>
-References: <20081230031621.60acd90b.sfr@canb.auug.org.au>
-	 <20081229195358.6a239657.randy.dunlap@oracle.com>
-	 <1230651870.3296.2.camel@localhost.localdomain>
-	 <495A5259.2080208@oracle.com>
+Date: Tue, 30 Dec 2008 09:36:16 -0800
+Message-ID: <495A5C10.3060204@oracle.com>
+References: <20081230031621.60acd90b.sfr@canb.auug.org.au>	 <20081229195358.6a239657.randy.dunlap@oracle.com>	 <1230651870.3296.2.camel@localhost.localdomain>	 <495A5259.2080208@oracle.com> <1230657124.3296.20.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from accolon.hansenpartnership.com ([76.243.235.52]:60647 "EHLO
-	accolon.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751530AbYL3RMI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Dec 2008 12:12:08 -0500
-In-Reply-To: <495A5259.2080208@oracle.com>
+Received: from rcsinet13.oracle.com ([148.87.113.125]:36785 "EHLO
+	rgminet13.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751972AbYL3Rgc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Dec 2008 12:36:32 -0500
+In-Reply-To: <1230657124.3296.20.camel@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, scsi <linux-scsi@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Robert Love <robert.w.love@intel.com>
 
-On Tue, 2008-12-30 at 08:54 -0800, Randy Dunlap wrote:
-> James Bottomley wrote:
-> > diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-> > index 0e5e084..9f4cc8e 100644
-> > --- a/drivers/scsi/Kconfig
-> > +++ b/drivers/scsi/Kconfig
-> > @@ -607,13 +607,12 @@ config SCSI_FLASHPOINT
-> >  
-> >  config LIBFC
-> >  	tristate "LibFC module"
-> > -	depends on SCSI && SCSI_FC_ATTRS
-> > +	select SCSI_FC_ATTRS
-> >  	---help---
-> >  	  Fibre Channel library module
-> >  
-> >  config FCOE
-> >  	tristate "FCoE module"
-> > -	depends on SCSI
-> >  	select LIBFC
-> >  	---help---
-> >  	  Fibre Channel over Ethernet module
-> > 
-> > 
+James Bottomley wrote:
+> On Tue, 2008-12-30 at 08:54 -0800, Randy Dunlap wrote:
+>> James Bottomley wrote:
+>>> diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
+>>> index 0e5e084..9f4cc8e 100644
+>>> --- a/drivers/scsi/Kconfig
+>>> +++ b/drivers/scsi/Kconfig
+>>> @@ -607,13 +607,12 @@ config SCSI_FLASHPOINT
+>>>  
+>>>  config LIBFC
+>>>  	tristate "LibFC module"
+>>> -	depends on SCSI && SCSI_FC_ATTRS
+>>> +	select SCSI_FC_ATTRS
+>>>  	---help---
+>>>  	  Fibre Channel library module
+>>>  
+>>>  config FCOE
+>>>  	tristate "FCoE module"
+>>> -	depends on SCSI
+>>>  	select LIBFC
+>>>  	---help---
+>>>  	  Fibre Channel over Ethernet module
+>>>
+>>>
+>> This still has a build error when CONFIG_PCI=n:
+>>
+>>
+>> linux-next-20081229/drivers/scsi/fcoe/fc_transport_fcoe.c: In function 'fcoe_load_transport_driver':
+>> linux-next-20081229/drivers/scsi/fcoe/fc_transport_fcoe.c:324: error: 'pci_bus_type' undeclared (first use in this function)
+>> make[4]: *** [drivers/scsi/fcoe/fc_transport_fcoe.o] Error 1
 > 
-> This still has a build error when CONFIG_PCI=n:
+> OK, so take two would make FCOE depend on SCSI, like this.
 > 
+> James
 > 
-> linux-next-20081229/drivers/scsi/fcoe/fc_transport_fcoe.c: In function 'fcoe_load_transport_driver':
-> linux-next-20081229/drivers/scsi/fcoe/fc_transport_fcoe.c:324: error: 'pci_bus_type' undeclared (first use in this function)
-> make[4]: *** [drivers/scsi/fcoe/fc_transport_fcoe.o] Error 1
+> ---
+> 
+> From: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Subject: [SCSI] fcoe: fix configuration problems
+> 
+> fcoe selects libfc and requires SCSI and PCI (the SCSI requirement is
+> implicitly covered by an enclosing if).  Fix them both up so they
+> cannot be configured in an invalid state: make LIBFC select
+> SCSI_FC_ATTRS and make FCOE depend on PCI and select LIBFC.
+> 
+> Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> ---
+>  drivers/scsi/Kconfig |    4 ++--
+>  1 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
+> index 0e5e084..152d4aa 100644
+> --- a/drivers/scsi/Kconfig
+> +++ b/drivers/scsi/Kconfig
+> @@ -607,13 +607,13 @@ config SCSI_FLASHPOINT
+>  
+>  config LIBFC
+>  	tristate "LibFC module"
+> -	depends on SCSI && SCSI_FC_ATTRS
+> +	select SCSI_FC_ATTRS
+>  	---help---
+>  	  Fibre Channel library module
+>  
+>  config FCOE
+>  	tristate "FCoE module"
+> -	depends on SCSI
+> +	depends on PCI
+>  	select LIBFC
+>  	---help---
+>  	  Fibre Channel over Ethernet module
 
-OK, so take two would make FCOE depend on SCSI, like this.
+OK, that works for me.  Ack.  Thanks.
 
-James
-
----
-
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: [SCSI] fcoe: fix configuration problems
-
-fcoe selects libfc and requires SCSI and PCI (the SCSI requirement is
-implicitly covered by an enclosing if).  Fix them both up so they
-cannot be configured in an invalid state: make LIBFC select
-SCSI_FC_ATTRS and make FCOE depend on PCI and select LIBFC.
-
-Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
----
- drivers/scsi/Kconfig |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-index 0e5e084..152d4aa 100644
---- a/drivers/scsi/Kconfig
-+++ b/drivers/scsi/Kconfig
-@@ -607,13 +607,13 @@ config SCSI_FLASHPOINT
- 
- config LIBFC
- 	tristate "LibFC module"
--	depends on SCSI && SCSI_FC_ATTRS
-+	select SCSI_FC_ATTRS
- 	---help---
- 	  Fibre Channel library module
- 
- config FCOE
- 	tristate "FCoE module"
--	depends on SCSI
-+	depends on PCI
- 	select LIBFC
- 	---help---
- 	  Fibre Channel over Ethernet module
 -- 
-1.5.6.6
+~Randy
