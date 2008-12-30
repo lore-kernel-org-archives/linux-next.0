@@ -1,117 +1,79 @@
-From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Subject: Re: linux-next: Tree for December 29 (fcoe/libfc)
-Date: Tue, 30 Dec 2008 23:10:27 +0530
-Message-ID: <20081230174027.GC18636@linux.vnet.ibm.com>
-References: <20081230031621.60acd90b.sfr@canb.auug.org.au> <20081229195358.6a239657.randy.dunlap@oracle.com> <1230651870.3296.2.camel@localhost.localdomain> <495A5259.2080208@oracle.com> <1230657124.3296.20.camel@localhost.localdomain>
-Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+From: Trond Myklebust <trond.myklebust@fys.uio.no>
+Subject: RE: Pull request for FS-Cache, including NFS patches
+Date: Tue, 30 Dec 2008 13:44:36 -0500
+Message-ID: <1230662677.4952.37.camel@heimdal.trondhjem.org>
+References: <7A24DF798E223B4C9864E8F92E8C93EC01AAFE24@SACMVEXC1-PRD.hq.netapp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ausmtp04.au.ibm.com ([202.81.18.152]:40753 "EHLO
-	ausmtp04.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752005AbYL3RsJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Dec 2008 12:48:09 -0500
-Content-Disposition: inline
-In-Reply-To: <1230657124.3296.20.camel@localhost.localdomain>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, scsi <linux-scsi@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Robert Love <robert.w.love@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <nfsv4-bounces@linux-nfs.org>
+In-Reply-To: <7A24DF798E223B4C9864E8F92E8C93EC01AAFE24@SACMVEXC1-PRD.hq.netapp.com>
+List-Unsubscribe: <http://linux-nfs.org/cgi-bin/mailman/listinfo/nfsv4>,
+	<mailto:nfsv4-request@linux-nfs.org?subject=unsubscribe>
+List-Archive: <http://linux-nfs.org/pipermail/nfsv4>
+List-Post: <mailto:nfsv4@linux-nfs.org>
+List-Help: <mailto:nfsv4-request@linux-nfs.org?subject=help>
+List-Subscribe: <http://linux-nfs.org/cgi-bin/mailman/listinfo/nfsv4>,
+	<mailto:nfsv4-request@linux-nfs.org?subject=subscribe>
+Sender: nfsv4-bounces@linux-nfs.org
+Errors-To: nfsv4-bounces@linux-nfs.org
+To: "Muntz, Daniel" <Dan.Muntz@netapp.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Bernd Schubert <bernd.schubert@fastmail.fm>, nfsv4@linux-nfs.org, steved@redhat.com, linux-kernel@vger.kernel.org, dhowells@redhat.com, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, rwheeler@redhat.com
+List-Id: linux-next.vger.kernel.org
 
-* James Bottomley <James.Bottomley@HansenPartnership.com> [2008-12-30 17:12:04]:
+On Mon, 2008-12-29 at 15:05 -0800, Muntz, Daniel wrote:
+> Before throwing the 'FUD' acronym around, maybe you should re-read the
+> details.  My point was that there were few users of cachefs even when
+> the technology had the potential for greater benefit (slower networks,
+> less powerful servers, smaller memory caches).  Obviously cachefs can
+> improve performance--it's simply a function of workload and the
+> assumptions made about server/disk/network bandwidth.  However, I would
+> expect the real benefits and real beneficiaries to be fewer than in the
+> past.  HOWEVER^2 I did provide some argument(s) in favor of adding
+> cachefs, and look forward to extensions to support delayed write,
+> offline operation, and NFSv4 support with real consistency checking (as
+> long as I don't have to take the customer calls ;-).  BTW,
+> animation/video shops were one group that did benefit, and I imagine
+> they still could today (the one I had in mind did work across Britain,
+> the US, and Asia and relied on cachefs for overcoming slow network
+> connections).  Wonder if the same company is a RH customer...
 
-> On Tue, 2008-12-30 at 08:54 -0800, Randy Dunlap wrote:
-> > James Bottomley wrote:
-> > > diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-> > > index 0e5e084..9f4cc8e 100644
-> > > --- a/drivers/scsi/Kconfig
-> > > +++ b/drivers/scsi/Kconfig
-> > > @@ -607,13 +607,12 @@ config SCSI_FLASHPOINT
-> > >  
-> > >  config LIBFC
-> > >  	tristate "LibFC module"
-> > > -	depends on SCSI && SCSI_FC_ATTRS
-> > > +	select SCSI_FC_ATTRS
-> > >  	---help---
-> > >  	  Fibre Channel library module
-> > >  
-> > >  config FCOE
-> > >  	tristate "FCoE module"
-> > > -	depends on SCSI
-> > >  	select LIBFC
-> > >  	---help---
-> > >  	  Fibre Channel over Ethernet module
-> > > 
-> > > 
-> > 
-> > This still has a build error when CONFIG_PCI=n:
-> > 
-> > 
-> > linux-next-20081229/drivers/scsi/fcoe/fc_transport_fcoe.c: In function 'fcoe_load_transport_driver':
-> > linux-next-20081229/drivers/scsi/fcoe/fc_transport_fcoe.c:324: error: 'pci_bus_type' undeclared (first use in this function)
-> > make[4]: *** [drivers/scsi/fcoe/fc_transport_fcoe.o] Error 1
-> 
-> OK, so take two would make FCOE depend on SCSI, like this.
-> 
-> James
-> 
+I did read your argument. My point is that although the argument sounds
+reasonable, it ignores the fact that the customer bases are completely
+different. The people asking for cachefs on Linux typically run a
+cluster of 2000+ clients all accessing the same read-only data from just
+a handful of servers. They're primarily looking to improve the
+performance and stability of the _servers_, since those are the single
+point of failure of the cluster.
 
+As far as I know, historically there has never been a market for 2000+
+HP-UX, or even Solaris based clusters, and unless the HP and Sun product
+plans change drastically, then simple economics dictates that nor will
+there ever be such a market, whether or not they have cachefs support.
 
-Hi James,
+OpenSolaris is a different kettle of fish since it has cachefs, and does
+run on COTS hardware, but there are other reasons why that hasn't yet
+penetrated the HPC market.
 
-	Thanks, the patch fixes same build failure, with !CONFIG_PCI, which I reported some
-time back today.
+> All the comparisons to HTTP browser implementations are, imho, absurd.
+> It's fine to keep a bunch of http data around on disk because a) it's RO
+> data, b) correctness is not terribly important, and c) a human is
+> generally the consumer and can manually request non-cached data if
+> things look wonky.  It is a trivial case of caching.
 
+See above. The majority of people I'm aware of that have been asking for
+this are interested mainly in improving read-only workloads for data
+that changes infrequently. Correctness tends to be important, but the
+requirements are no different from those that apply to the page cache.
+You mentioned the animation industry: they are prime example of an
+industry that satisfies (a), (b), and (c). Ditto the oil and gas
+exploration industry, as well as pretty much all scientific computing,
+to mention only a few examples...
 
-> ---
-> 
-> From: James Bottomley <James.Bottomley@HansenPartnership.com>
-> Subject: [SCSI] fcoe: fix configuration problems
-> 
-> fcoe selects libfc and requires SCSI and PCI (the SCSI requirement is
-> implicitly covered by an enclosing if).  Fix them both up so they
-> cannot be configured in an invalid state: make LIBFC select
-> SCSI_FC_ATTRS and make FCOE depend on PCI and select LIBFC.
-> 
-  Tested-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-> Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> ---
->  drivers/scsi/Kconfig |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-> index 0e5e084..152d4aa 100644
-> --- a/drivers/scsi/Kconfig
-> +++ b/drivers/scsi/Kconfig
-> @@ -607,13 +607,13 @@ config SCSI_FLASHPOINT
-> 
->  config LIBFC
->  	tristate "LibFC module"
-> -	depends on SCSI && SCSI_FC_ATTRS
-> +	select SCSI_FC_ATTRS
->  	---help---
->  	  Fibre Channel library module
-> 
->  config FCOE
->  	tristate "FCoE module"
-> -	depends on SCSI
-> +	depends on PCI
->  	select LIBFC
->  	---help---
->  	  Fibre Channel over Ethernet module
-> -- 
-> 1.5.6.6
-> 
-> 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> As for security, look at what MIT had to do to prevent local disk
+> caching from breaking the security guarantees of AFS.
 
--- 
-Thanks & Regards,
-Kamalesh Babulal,
-Linux Technology Center,
-IBM, ISTL.
+See what David has added to the LSM code to provide the same guarantees
+for cachefs...
+
+Trond
