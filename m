@@ -1,58 +1,88 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: scsi tree build failure
-Date: Wed, 31 Dec 2008 03:16:39 +1100
-Message-ID: <20081231031639.dc19a03c.sfr@canb.auug.org.au>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: [PATCH -next v2] cxgb3i: use same dependencies & selects
+	as	CHELSIO_T3
+Date: Tue, 30 Dec 2008 10:20:24 -0600
+Message-ID: <1230654024.3296.9.camel@localhost.localdomain>
+References: <20081230031621.60acd90b.sfr@canb.auug.org.au>
+	 <20081229130110.67d5271a.randy.dunlap@oracle.com>
+	 <20081229132312.10934479.randy.dunlap@oracle.com>
+	 <1230587887.3302.70.camel@localhost.localdomain>
+	 <49594A4D.6050303@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__31_Dec_2008_03_16_39_+1100_p6KAUY0KRK99rCxN"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50049 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751779AbYL3QRD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Dec 2008 11:17:03 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-next@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jaswinder Singh <jaswinder@infradead.org>
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <49594A4D.6050303@oracle.com>
+Sender: linux-scsi-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: scsi <linux-scsi@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, kxie@chelsio.com, akpm <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, samr <sam@ravnborg.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__31_Dec_2008_03_16_39_+1100_p6KAUY0KRK99rCxN
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2008-12-29 at 14:08 -0800, Randy Dunlap wrote:
+> James Bottomley wrote:
+> > On Mon, 2008-12-29 at 13:23 -0800, Randy Dunlap wrote:
+> >> From: Randy Dunlap <randy.dunlap@oracle.com>
+> >>
+> >> Make the CXGB iSCSI driver (that selects the CXGB net driver) have the same
+> >> dependencies as the net driver, since kconfig doesn't do that automatically.
+> >> Also make it select INET_LRO & FW_LOADER like the net driver does.
+> > 
+> > I thought select of a symbol that selected something else propagated
+> > correctly (even if select of a symbol that depends on something else
+> > doesn't).
+> 
+> I don't see that happening, at least in this case.
+> Sam, can you clarify?
 
-Hi James,
+I've verified it works empirically ... and it's behaviour a lot more
+than SCSI seems to be relying on.  However, confirming and documenting
+this as expected behaviour would seem to be in order.
 
-Today's linux-next build (sparc defconfig) failed like this:
+> > If this is untrue, we have several other Kconfig problems in
+> > the kernel.
+> 
+> That would not be a surprise.
 
-drivers/scsi/qlogicpti.c: In function 'qlogicpti_load_firmware':
-drivers/scsi/qlogicpti.c:480: error: 'struct qlogicpti' has no member named=
- 'sdev'
+So, relying on the behaviour, I think this is the fix for the cxgb3i: it
+splits the chelsio_t3 depends off so cxgbi3 can depend on them
+separately and still select the option.
 
-An interaction between commit 68175399c8b5ee90960e78c1bb8e3353e71fbf33
-("[SCSI] qlogicpti: use request_firmware") from the scsi tree and commit
-5dc2536bb8d8adb5fdfbe76cd6fdcdf9de3f40f8 ("qlogicpti: Convert to pure OF
-driver") which is in Linus' tree.
+James
 
-The version of the firmware commit that has been in the firmware tree
-since Nov 19 has this conflict corrected.
+---
 
-I have left it for today (as it is getting way to late).  Please fix it
-up for tomorrow.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
+index 72a9212..9a18270 100644
+--- a/drivers/net/Kconfig
++++ b/drivers/net/Kconfig
+@@ -2399,9 +2399,14 @@ config CHELSIO_T1_1G
+           Enables support for Chelsio's gigabit Ethernet PCI cards.  If you
+           are using only 10G cards say 'N' here.
+ 
++config CHELSIO_T3_DEPENDS
++	tristate
++	depends on PCI && INET
++	default y
++
+ config CHELSIO_T3
+ 	tristate "Chelsio Communications T3 10Gb Ethernet support"
+-	depends on PCI && INET
++	depends on CHELSIO_T3_DEPENDS
+ 	select FW_LOADER
+ 	select INET_LRO
+ 	help
+diff --git a/drivers/scsi/cxgb3i/Kconfig b/drivers/scsi/cxgb3i/Kconfig
+index 2762814..bfdcaf5 100644
+--- a/drivers/scsi/cxgb3i/Kconfig
++++ b/drivers/scsi/cxgb3i/Kconfig
+@@ -1,5 +1,6 @@
+ config SCSI_CXGB3_ISCSI
+ 	tristate "Chelsio S3xx iSCSI support"
++	depends on CHELSIO_T3_DEPENDS
+ 	select CHELSIO_T3
+ 	select SCSI_ISCSI_ATTRS
+ 	---help---
 
---Signature=_Wed__31_Dec_2008_03_16_39_+1100_p6KAUY0KRK99rCxN
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAklaSWcACgkQjjKRsyhoI8z0oQCgmHSAdH/onAzc9Odko0rFFzGr
-ZkwAoJO96cfKLDtr0Php2JeB+KZIkmTm
-=BnXq
------END PGP SIGNATURE-----
 
---Signature=_Wed__31_Dec_2008_03_16_39_+1100_p6KAUY0KRK99rCxN--
