@@ -1,293 +1,102 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for December 30
-Date: Wed, 31 Dec 2008 03:30:39 +1100
-Message-ID: <20081231033039.f203b59c.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH 1/1] cxgb3i - remove use of skb->sp
+Date: Tue, 30 Dec 2008 08:41:25 -0800
+Message-ID: <495A4F35.2080603@oracle.com>
+References: <200812300543.mBU5hPcb020725@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__31_Dec_2008_03_30_39_+1100_ug6xroVpzRbglL+e"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50926 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751727AbYL3Qau (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Dec 2008 11:30:50 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <200812300543.mBU5hPcb020725@localhost.localdomain>
+Sender: linux-scsi-owner@vger.kernel.org
+To: Karen Xie <kxie@chelsio.com>
+Cc: James.Bottomley@hansenpartnership.com, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__31_Dec_2008_03_30_39_+1100_ug6xroVpzRbglL+e
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Karen Xie wrote:
+> [PATCH 1/1] cxgb3i - remove use of skb->sp
+> 
+> From: Karen Xie <kxie@chelsio.com>
+> 
+> The cxgb3i was using skb->sp pointer for some internal book-keeping which is not related to the secure path. Changed it to use skb->cb[] instead.
+> 
+> Signed-off-by: Karen Xie <kxie@chelsio.com>
 
-Hi all,
+Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-Changes since 20081229:
 
-Undropped tree:
-	nfs (FS-Cache has been removed)
-	rr
+> ---
+> 
+>  drivers/scsi/cxgb3i/cxgb3i_offload.c |    8 ++++----
+>  drivers/scsi/cxgb3i/cxgb3i_offload.h |    6 +++---
+>  2 files changed, 7 insertions(+), 7 deletions(-)
+> 
+> 
+> diff --git a/drivers/scsi/cxgb3i/cxgb3i_offload.c b/drivers/scsi/cxgb3i/cxgb3i_offload.c
+> index 5f16081..a865f1f 100644
+> --- a/drivers/scsi/cxgb3i/cxgb3i_offload.c
+> +++ b/drivers/scsi/cxgb3i/cxgb3i_offload.c
+> @@ -496,7 +496,7 @@ static inline void reset_wr_list(struct s3_conn *c3cn)
+>  static inline void enqueue_wr(struct s3_conn *c3cn,
+>  			      struct sk_buff *skb)
+>  {
+> -	skb->sp = NULL;
+> +	skb_wr_data(skb) = NULL;
+>  
+>  	/*
+>  	 * We want to take an extra reference since both us and the driver
+> @@ -509,7 +509,7 @@ static inline void enqueue_wr(struct s3_conn *c3cn,
+>  	if (!c3cn->wr_pending_head)
+>  		c3cn->wr_pending_head = skb;
+>  	else
+> -		c3cn->wr_pending_tail->sp = (void *)skb;
+> +		skb_wr_data(skb) = skb;
+>  	c3cn->wr_pending_tail = skb;
+>  }
+>  
+> @@ -529,8 +529,8 @@ static inline struct sk_buff *dequeue_wr(struct s3_conn *c3cn)
+>  
+>  	if (likely(skb)) {
+>  		/* Don't bother clearing the tail */
+> -		c3cn->wr_pending_head = (struct sk_buff *)skb->sp;
+> -		skb->sp = NULL;
+> +		c3cn->wr_pending_head = skb_wr_data(skb);
+> +		skb_wr_data(skb) = NULL;
+>  	}
+>  	return skb;
+>  }
+> diff --git a/drivers/scsi/cxgb3i/cxgb3i_offload.h b/drivers/scsi/cxgb3i/cxgb3i_offload.h
+> index 5b93d62..d231569 100644
+> --- a/drivers/scsi/cxgb3i/cxgb3i_offload.h
+> +++ b/drivers/scsi/cxgb3i/cxgb3i_offload.h
+> @@ -180,7 +180,7 @@ void cxgb3i_c3cn_release(struct s3_conn *);
+>   * @seq:	tcp sequence number
+>   * @ddigest:	pdu data digest
+>   * @pdulen:	recovered pdu length
+> - * @ulp_data:	scratch area for ULP
+> + * @wr_data:	scratch area for tx wr
+>   */
+>  struct cxgb3_skb_cb {
+>  	__u8 flags;
+> @@ -188,7 +188,7 @@ struct cxgb3_skb_cb {
+>  	__u32 seq;
+>  	__u32 ddigest;
+>  	__u32 pdulen;
+> -	__u8 ulp_data[16];
+> +	struct sk_buff *wr_data;
+>  };
+>  
+>  #define CXGB3_SKB_CB(skb)	((struct cxgb3_skb_cb *)&((skb)->cb[0]))
+> @@ -196,7 +196,7 @@ struct cxgb3_skb_cb {
+>  #define skb_ulp_mode(skb)	(CXGB3_SKB_CB(skb)->ulp_mode)
+>  #define skb_ulp_ddigest(skb)	(CXGB3_SKB_CB(skb)->ddigest)
+>  #define skb_ulp_pdulen(skb)	(CXGB3_SKB_CB(skb)->pdulen)
+> -#define skb_ulp_data(skb)	(CXGB3_SKB_CB(skb)->ulp_data)
+> +#define skb_wr_data(skb)	(CXGB3_SKB_CB(skb)->wr_data)
+>  
+>  enum c3cb_flags {
+>  	C3CB_FLAG_NEED_HDR = 1 << 0,	/* packet needs a TX_DATA_WR header */
 
-Dropped trees (temporarily):
-	driver-core (build problem)
-	usb (depends on driver-core)
-	kvm (build problem)
-	semaphore-removal (due to unfixed conflicts against Linus' tree)
-	cpu_alloc (build problem)
-	audit (difficult conflicts)
-	staging (depends on usb)
 
-Linus' tree lost three build failures.
-
-The powerpc tree lost its conflict.
-
-The sparc tree lost its conflict.
-
-The driver-core tree was dopped because of an ongoing build failure.
-This means that the usb and staging trees had to be dropped as well as
-they depend on the driver-core tree.
-
-The timers tree lost a conflict and a merge fixup.
-
-The scsi tree gained a build failure.
-
-The mtd tree lost 2 conflicts.
-
-The rr tree lost two conflicts and its build failure.
-
-The block tree lost its conflict.
-
-The kmemcheck tree lost two conflicts, but gained 2 conflicts against the
-slab tree.
-
-The iommu tree lost its conflicts.
-
-The uwb tree lost a conflict.
-
-The nommu tree lost a conflict.
-
-The boot-params tree lost 2 conflicts.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig,
-44x_defconfig and allyesconfig (minus CONFIG_PROFILE_ALL_BRANCHES) and
-i386, sparc and sparc64 defconfig.
-
-Below is a summary of the state of the merge.
-
-We are up to 132 trees (counting Linus' and 15 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-CONFLICT (content): Merge conflict in drivers/char/tty_audit.c
-Merging dwmw2/master
-Created commit 708de92: Revert "RDMA/addr: Add support for translating IPv6=
- addresses"
-Merging arm/devel
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging mips/mips-for-linux-next
-Merging parisc/master
-Merging powerpc/next
-Merging 4xx/next
-Merging galak/next
-Merging pxa/for-next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging x86/auto-x86-next
-Merging xtensa/master
-Merging tip-core/auto-core-next
-CONFLICT (content): Merge conflict in include/linux/hardirq.h
-Merging cpus4096/auto-cpus4096-next
-Merging ftrace/auto-ftrace-next
-Merging genirq/auto-genirq-next
-Merging safe-poison-pointers/auto-safe-poison-pointers-next
-Merging sched/auto-sched-next
-Merging stackprotector/auto-stackprotector-next
-Merging timers/auto-timers-next
-CONFLICT (content): Merge conflict in kernel/time/tick-sched.c
-Merging pci/linux-next
-Merging quilt/device-mapper
-CONFLICT (content): Merge conflict in drivers/md/dm.c
-Merging hid/for-next
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging jfs/next
-Merging kbuild/master
-Merging quilt/ide
-Merging libata/NEXT
-Merging nfs/linux-next
-Merging xfs/master
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_cred.h
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_globals.h
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_ioctl.c
-CONFLICT (content): Merge conflict in fs/xfs/xfs_vnodeops.h
-Merging infiniband/for-next
-Merging acpi/test
-Merging nfsd/nfsd-next
-CONFLICT (content): Merge conflict in fs/lockd/host.c
-CONFLICT (content): Merge conflict in fs/lockd/mon.c
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging dlm/next
-Merging scsi/master
-Merging ocfs2/linux-next
-CONFLICT (content): Merge conflict in fs/ocfs2/namei.c
-Merging ext4/next
-Merging async_tx/next
-Applying: net: async_tx merge fix
-Merging udf/for_next
-Merging net/master
-Merging mtd/master
-CONFLICT (content): Merge conflict in arch/arm/mach-pxa/corgi.c
-CONFLICT (content): Merge conflict in arch/arm/mach-pxa/poodle.c
-CONFLICT (content): Merge conflict in arch/arm/mach-pxa/spitz.c
-Merging wireless/master
-Merging crypto/master
-Merging vfs/for-next
-Merging sound/for-next
-Merging cpufreq/next
-Merging v9fs/for-next
-Merging rr_cpumask/master
-CONFLICT (content): Merge conflict in kernel/sched.c
-Merging quilt/rr
-CONFLICT (content): Merge conflict in kernel/rcuclassic.c
-Merging cifs/master
-Merging mmc/next
-Merging gfs2/master
-Merging input/next
-Merging semaphore/semaphore
-Merging bkl-removal/bkl-removal
-CONFLICT (content): Merge conflict in fs/ioctl.c
-Merging ubifs/linux-next
-Merging lsm/for-next
-Merging block/for-next
-Merging embedded/master
-Merging firmware/master
-CONFLICT (content): Merge conflict in drivers/net/tg3.c
-CONFLICT (content): Merge conflict in drivers/scsi/advansys.c
-CONFLICT (content): Merge conflict in drivers/scsi/qla1280.c
-CONFLICT (content): Merge conflict in drivers/scsi/qlogicpti.c
-CONFLICT (content): Merge conflict in firmware/Makefile
-CONFLICT (content): Merge conflict in firmware/WHENCE
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging kmemcheck/auto-kmemcheck-next
-CONFLICT (content): Merge conflict in arch/x86/mm/Makefile
-CONFLICT (content): Merge conflict in mm/Makefile
-CONFLICT (content): Merge conflict in mm/slub.c
-Merging generic-ipi/auto-generic-ipi-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-CONFLICT (content): Merge conflict in Documentation/feature-removal-schedul=
-e.txt
-Merging quilt/ttydev
-CONFLICT (content): Merge conflict in fs/devpts/inode.c
-Merging agp/agp-next
-Merging oprofile/auto-oprofile-next
-Merging fastboot/auto-fastboot-next
-Merging sparseirq/auto-sparseirq-next
-Merging iommu/auto-iommu-next
-Merging uwb/for-upstream
-CONFLICT (content): Merge conflict in drivers/uwb/wlp/eda.c
-Merging watchdog/master
-Merging proc/proc
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-CONFLICT (content): Merge conflict in kernel/sched.c
-Merging osd/linux-next
-Merging fatfs/master
-Merging fuse/for-next
-Merging jc_docs/docs-next
-Merging nommu/master
-CONFLICT (content): Merge conflict in kernel/fork.c
-Merging boot-params/master
-CONFLICT (content): Merge conflict in arch/arm/kernel/setup.c
-CONFLICT (content): Merge conflict in arch/parisc/kernel/setup.c
-CONFLICT (content): Merge conflict in arch/sh/boards/mach-microdev/setup.c
-CONFLICT (content): Merge conflict in arch/sh/boards/mach-migor/setup.c
-CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/common.c
-Merging trivial/for-next
-$ git checkout -b temp scsi-post-merge/master
-$ git checkout master
-
---Signature=_Wed__31_Dec_2008_03_30_39_+1100_ug6xroVpzRbglL+e
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklaTLAACgkQjjKRsyhoI8zt9wCeNchBD3jb3tUS7Yv6ku5XMYbE
-2t0Anj5loGLamaTHUgW6cucTJ+e1nRMX
-=Ob/B
------END PGP SIGNATURE-----
-
---Signature=_Wed__31_Dec_2008_03_30_39_+1100_ug6xroVpzRbglL+e--
+-- 
+~Randy
