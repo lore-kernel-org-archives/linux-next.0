@@ -1,67 +1,293 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: linux-next: scsi tree build failure
-Date: Tue, 30 Dec 2008 10:30:31 -0600
-Message-ID: <1230654631.3296.13.camel@localhost.localdomain>
-References: <20081231031639.dc19a03c.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Tree for December 30
+Date: Wed, 31 Dec 2008 03:30:39 +1100
+Message-ID: <20081231033039.f203b59c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__31_Dec_2008_03_30_39_+1100_ug6xroVpzRbglL+e"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from accolon.hansenpartnership.com ([76.243.235.52]:39789 "EHLO
-	accolon.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751580AbYL3Qaf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Dec 2008 11:30:35 -0500
-In-Reply-To: <20081231031639.dc19a03c.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:50926 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751727AbYL3Qau (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 30 Dec 2008 11:30:50 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Jaswinder Singh <jaswinder@infradead.org>, linux-scsi <linux-scsi@vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On Wed, 2008-12-31 at 03:16 +1100, Stephen Rothwell wrote:
-> Hi James,
-> 
-> Today's linux-next build (sparc defconfig) failed like this:
-> 
-> drivers/scsi/qlogicpti.c: In function 'qlogicpti_load_firmware':
-> drivers/scsi/qlogicpti.c:480: error: 'struct qlogicpti' has no member named 'sdev'
-> 
-> An interaction between commit 68175399c8b5ee90960e78c1bb8e3353e71fbf33
-> ("[SCSI] qlogicpti: use request_firmware") from the scsi tree and commit
-> 5dc2536bb8d8adb5fdfbe76cd6fdcdf9de3f40f8 ("qlogicpti: Convert to pure OF
-> driver") which is in Linus' tree.
-> 
-> The version of the firmware commit that has been in the firmware tree
-> since Nov 19 has this conflict corrected.
-> 
-> I have left it for today (as it is getting way to late).  Please fix it
-> up for tomorrow.
+--Signature=_Wed__31_Dec_2008_03_30_39_+1100_ug6xroVpzRbglL+e
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm slightly annoyed this hasn't been building.  I accepted it into the
-SCSI tree because I was under the impression it had been well tested in
-linux-next.
+Hi all,
 
-I can't actually build this driver, but I think this is the fix, if
-someone can verify, I'll fold it into the patch.
+Changes since 20081229:
 
-Looking at the firmware patches, they all seem to have a kconfig
-deficiency in that the modified drivers should now be selecting
-FW_LOADER ... it this the case?
+Undropped tree:
+	nfs (FS-Cache has been removed)
+	rr
 
-James
+Dropped trees (temporarily):
+	driver-core (build problem)
+	usb (depends on driver-core)
+	kvm (build problem)
+	semaphore-removal (due to unfixed conflicts against Linus' tree)
+	cpu_alloc (build problem)
+	audit (difficult conflicts)
+	staging (depends on usb)
 
----
+Linus' tree lost three build failures.
 
-diff --git a/drivers/scsi/qlogicpti.c b/drivers/scsi/qlogicpti.c
-index e17a4d2..a342426 100644
---- a/drivers/scsi/qlogicpti.c
-+++ b/drivers/scsi/qlogicpti.c
-@@ -477,7 +477,7 @@ static int __devinit qlogicpti_load_firmware(struct qlogicpti *qpti)
- 	unsigned long flags;
- 	int i, timeout;
- 
--	err = request_firmware(&fw, FIRMWARE_1000, &qpti->sdev->ofdev.dev);
-+	err = request_firmware(&fw, FIRMWARE_1000, &qpti->op->dev);
- 	if (err) {
- 		printk(KERN_ERR "Failed to load image \"%s\" err %d\n",
- 		       FIRMWARE_1000, err);
+The powerpc tree lost its conflict.
+
+The sparc tree lost its conflict.
+
+The driver-core tree was dopped because of an ongoing build failure.
+This means that the usb and staging trees had to be dropped as well as
+they depend on the driver-core tree.
+
+The timers tree lost a conflict and a merge fixup.
+
+The scsi tree gained a build failure.
+
+The mtd tree lost 2 conflicts.
+
+The rr tree lost two conflicts and its build failure.
+
+The block tree lost its conflict.
+
+The kmemcheck tree lost two conflicts, but gained 2 conflicts against the
+slab tree.
+
+The iommu tree lost its conflicts.
+
+The uwb tree lost a conflict.
+
+The nommu tree lost a conflict.
+
+The boot-params tree lost 2 conflicts.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+(patches at
+http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig,
+44x_defconfig and allyesconfig (minus CONFIG_PROFILE_ALL_BRANCHES) and
+i386, sparc and sparc64 defconfig.
+
+Below is a summary of the state of the merge.
+
+We are up to 132 trees (counting Linus' and 15 trees of patches pending for
+Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/master
+Merging quilt/driver-core.current
+Merging quilt/usb.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+CONFLICT (content): Merge conflict in drivers/char/tty_audit.c
+Merging dwmw2/master
+Created commit 708de92: Revert "RDMA/addr: Add support for translating IPv6=
+ addresses"
+Merging arm/devel
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging mips/mips-for-linux-next
+Merging parisc/master
+Merging powerpc/next
+Merging 4xx/next
+Merging galak/next
+Merging pxa/for-next
+Merging s390/features
+Merging sh/master
+Merging sparc/master
+Merging x86/auto-x86-next
+Merging xtensa/master
+Merging tip-core/auto-core-next
+CONFLICT (content): Merge conflict in include/linux/hardirq.h
+Merging cpus4096/auto-cpus4096-next
+Merging ftrace/auto-ftrace-next
+Merging genirq/auto-genirq-next
+Merging safe-poison-pointers/auto-safe-poison-pointers-next
+Merging sched/auto-sched-next
+Merging stackprotector/auto-stackprotector-next
+Merging timers/auto-timers-next
+CONFLICT (content): Merge conflict in kernel/time/tick-sched.c
+Merging pci/linux-next
+Merging quilt/device-mapper
+CONFLICT (content): Merge conflict in drivers/md/dm.c
+Merging hid/for-next
+Merging quilt/i2c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+Merging jfs/next
+Merging kbuild/master
+Merging quilt/ide
+Merging libata/NEXT
+Merging nfs/linux-next
+Merging xfs/master
+CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_cred.h
+CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_globals.h
+CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_ioctl.c
+CONFLICT (content): Merge conflict in fs/xfs/xfs_vnodeops.h
+Merging infiniband/for-next
+Merging acpi/test
+Merging nfsd/nfsd-next
+CONFLICT (content): Merge conflict in fs/lockd/host.c
+CONFLICT (content): Merge conflict in fs/lockd/mon.c
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging dlm/next
+Merging scsi/master
+Merging ocfs2/linux-next
+CONFLICT (content): Merge conflict in fs/ocfs2/namei.c
+Merging ext4/next
+Merging async_tx/next
+Applying: net: async_tx merge fix
+Merging udf/for_next
+Merging net/master
+Merging mtd/master
+CONFLICT (content): Merge conflict in arch/arm/mach-pxa/corgi.c
+CONFLICT (content): Merge conflict in arch/arm/mach-pxa/poodle.c
+CONFLICT (content): Merge conflict in arch/arm/mach-pxa/spitz.c
+Merging wireless/master
+Merging crypto/master
+Merging vfs/for-next
+Merging sound/for-next
+Merging cpufreq/next
+Merging v9fs/for-next
+Merging rr_cpumask/master
+CONFLICT (content): Merge conflict in kernel/sched.c
+Merging quilt/rr
+CONFLICT (content): Merge conflict in kernel/rcuclassic.c
+Merging cifs/master
+Merging mmc/next
+Merging gfs2/master
+Merging input/next
+Merging semaphore/semaphore
+Merging bkl-removal/bkl-removal
+CONFLICT (content): Merge conflict in fs/ioctl.c
+Merging ubifs/linux-next
+Merging lsm/for-next
+Merging block/for-next
+Merging embedded/master
+Merging firmware/master
+CONFLICT (content): Merge conflict in drivers/net/tg3.c
+CONFLICT (content): Merge conflict in drivers/scsi/advansys.c
+CONFLICT (content): Merge conflict in drivers/scsi/qla1280.c
+CONFLICT (content): Merge conflict in drivers/scsi/qlogicpti.c
+CONFLICT (content): Merge conflict in firmware/Makefile
+CONFLICT (content): Merge conflict in firmware/WHENCE
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging kmemcheck/auto-kmemcheck-next
+CONFLICT (content): Merge conflict in arch/x86/mm/Makefile
+CONFLICT (content): Merge conflict in mm/Makefile
+CONFLICT (content): Merge conflict in mm/slub.c
+Merging generic-ipi/auto-generic-ipi-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging voltage/for-next
+Merging security-testing/next
+Merging lblnet/master
+CONFLICT (content): Merge conflict in Documentation/feature-removal-schedul=
+e.txt
+Merging quilt/ttydev
+CONFLICT (content): Merge conflict in fs/devpts/inode.c
+Merging agp/agp-next
+Merging oprofile/auto-oprofile-next
+Merging fastboot/auto-fastboot-next
+Merging sparseirq/auto-sparseirq-next
+Merging iommu/auto-iommu-next
+Merging uwb/for-upstream
+CONFLICT (content): Merge conflict in drivers/uwb/wlp/eda.c
+Merging watchdog/master
+Merging proc/proc
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+CONFLICT (content): Merge conflict in kernel/sched.c
+Merging osd/linux-next
+Merging fatfs/master
+Merging fuse/for-next
+Merging jc_docs/docs-next
+Merging nommu/master
+CONFLICT (content): Merge conflict in kernel/fork.c
+Merging boot-params/master
+CONFLICT (content): Merge conflict in arch/arm/kernel/setup.c
+CONFLICT (content): Merge conflict in arch/parisc/kernel/setup.c
+CONFLICT (content): Merge conflict in arch/sh/boards/mach-microdev/setup.c
+CONFLICT (content): Merge conflict in arch/sh/boards/mach-migor/setup.c
+CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/common.c
+Merging trivial/for-next
+$ git checkout -b temp scsi-post-merge/master
+$ git checkout master
+
+--Signature=_Wed__31_Dec_2008_03_30_39_+1100_ug6xroVpzRbglL+e
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAklaTLAACgkQjjKRsyhoI8zt9wCeNchBD3jb3tUS7Yv6ku5XMYbE
+2t0Anj5loGLamaTHUgW6cucTJ+e1nRMX
+=Ob/B
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__31_Dec_2008_03_30_39_+1100_ug6xroVpzRbglL+e--
