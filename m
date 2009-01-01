@@ -1,126 +1,54 @@
-From: "Muntz, Daniel" <Dan.Muntz@netapp.com>
-Subject: RE: Pull request for FS-Cache, including NFS patches
-Date: Wed, 31 Dec 2008 20:11:13 -0800
-Message-ID: <7A24DF798E223B4C9864E8F92E8C93EC01BD14BB@SACMVEXC1-PRD.hq.netapp.com>
+From: Arjan van de Ven <arjan@infradead.org>
+Subject: Re: Pull request for FS-Cache, including NFS patches
+Date: Thu, 1 Jan 2009 09:09:00 +0100
+Message-ID: <20090101090900.551ada4a@infradead.org>
 References: <1230679056.11508.37.camel@heimdal.trondhjem.org>
+	<7A24DF798E223B4C9864E8F92E8C93EC01BD14BB@SACMVEXC1-PRD.hq.netapp.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.netapp.com ([216.240.18.37]:32112 "EHLO mx2.netapp.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753829AbZAAELS convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 31 Dec 2008 23:11:18 -0500
-Content-class: urn:content-classes:message
-In-Reply-To: <1230679056.11508.37.camel@heimdal.trondhjem.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Bernd Schubert <bernd.schubert@fastmail.fm>, nfsv4@linux-nfs.org, linux-kernel@vger.kernel.org, steved@redhat.com, dhowells@redhat.com, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, rwheeler@redhat.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <7A24DF798E223B4C9864E8F92E8C93EC01BD14BB@SACMVEXC1-PRD.hq.netapp.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: "Muntz, Daniel" <Dan.Muntz@netapp.com>
+Cc: Trond Myklebust <trond.myklebust@fys.uio.no>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Bernd Schubert <bernd.schubert@fastmail.fm>, nfsv4@linux-nfs.org, linux-kernel@vger.kernel.org, steved@redhat.com, dhowells@redhat.com, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, rwheeler@redhat.com
+List-Id: linux-next.vger.kernel.org
 
-Sure, trusted kernel and trusted executables,  but it's easier than it
-sounds.  If you start with a "clean" system, you don't need to verify
-excutables _if_ they're coming from the secured file server (by
-induction: if you started out secure, the executables on the file server
-will remain secure).  You simply can't trust the local disk from one
-user to the next.  Following the protocol, a student can log into a
-machine, su to do their OS homework, but not compromise the security of
-the distributed file system.
+On Wed, 31 Dec 2008 20:11:13 -0800
+"Muntz, Daniel" <Dan.Muntz@netapp.com> wrote:
 
-If I can su while another user is logged in, or the kernel/cmds are not
-validated between users, cryptfs isn't safe either.
+please don't top post.
 
-If you're following the protocol, it doesn't even matter if a bad guy
-("untrusted user"?) gets root on the client--they still can't gain
-inappropriate access to the file server.  OTOH, if my security plan is
-simply to not allow root access to untrusted users, history says I'm
-going to lose.
-
-  -Dan
-
------Original Message-----
-From: Trond Myklebust [mailto:trond.myklebust@fys.uio.no] 
-Sent: Tuesday, December 30, 2008 3:18 PM
-To: Muntz, Daniel
-Cc: Andrew Morton; Stephen Rothwell; Bernd Schubert;
-nfsv4@linux-nfs.org; linux-kernel@vger.kernel.org; steved@redhat.com;
-dhowells@redhat.com; linux-next@vger.kernel.org;
-linux-fsdevel@vger.kernel.org; rwheeler@redhat.com
-Subject: RE: Pull request for FS-Cache, including NFS patches
-
-On Tue, 2008-12-30 at 15:00 -0800, Muntz, Daniel wrote:
-> Yes, and if you have a single user on the machine at a time (with 
-> cache flushed inbetween, kernel refreshed), root can read /dev/kmem, 
-> swap, intercept traffic and read cachefs data to its heart's 
-> content--hence, those requirements.
-
-Unless you _are_ root and can check every executable, after presumably
-rebooting into your own trusted kernel, then those requirements won't
-mean squat. If you're that paranoid, then you will presumably also be
-using a cryptfs-encrypted partition for cachefs, which you unmount when
-you're not logged in.
-
-That said, most cluster environments will tend to put most of their
-security resources into keeping untrusted users out altogether. The
-client nodes tend to be a homogeneous lot with presumably only a trusted
-few sysadmins...
-
-Trond
-
-> -----Original Message-----
-> From: Trond Myklebust [mailto:trond.myklebust@fys.uio.no]
-> Sent: Tuesday, December 30, 2008 2:36 PM
-> To: Muntz, Daniel
-> Cc: Andrew Morton; Stephen Rothwell; Bernd Schubert; 
-> nfsv4@linux-nfs.org; linux-kernel@vger.kernel.org; steved@redhat.com; 
-> dhowells@redhat.com; linux-next@vger.kernel.org; 
-> linux-fsdevel@vger.kernel.org; rwheeler@redhat.com
-> Subject: RE: Pull request for FS-Cache, including NFS patches
+> Sure, trusted kernel and trusted executables,  but it's easier than it
+> sounds.  If you start with a "clean" system, you don't need to verify
+> excutables _if_ they're coming from the secured file server (by
+> induction: if you started out secure, the executables on the file
+> server will remain secure).  You simply can't trust the local disk
+> from one user to the next.  Following the protocol, a student can log
+> into a machine, su to do their OS homework, but not compromise the
+> security of the distributed file system.
 > 
-> On Tue, 2008-12-30 at 14:15 -0800, Muntz, Daniel wrote:
-> > >> As for security, look at what MIT had to do to prevent local disk
-
-> > >> caching from breaking the security guarantees of AFS.
-> > >
-> > >See what David has added to the LSM code to provide the same 
-> > >guarantees
-> > for cachefs...
-> > >
-> > >Trond
-> > 
-> > Unless it (at least) leverages TPM, the issues I had in mind can't 
-> > really be addressed in code.  One requirement is to prevent a local 
-> > root user from accessing fs information without appropriate
-> permissions.
-> > This leads to unwieldly requirements such as allowing only one user 
-> > on
+> If I can su while another user is logged in, or the kernel/cmds are
+> not validated between users, cryptfs isn't safe either.
 > 
-> > a machine at a time, blowing away the cache on logout, validating 
-> > (e.g.,
-> > refreshing) the kernel on each boot, etc.  Sure, some applications 
-> > won't care, but you're also potentially opening holes that users may
+> If you're following the protocol, it doesn't even matter if a bad guy
+> ("untrusted user"?) gets root on the client--they still can't gain
+> inappropriate access to the file server.  OTOH, if my security plan is
+> simply to not allow root access to untrusted users, history says I'm
+> going to lose.
 
-> > not consider.
-> 
-> You can't prevent a local root user from accessing cached data: that's
+if you have a user, history says you're going to lose.
 
-> true with or without cachefs. root can typically access the data using
+you can make your system as secure as you want, with physical access
+all bets are off.
+keyboard sniffer.. easy.
+special dimms that mirror data... not even all THAT hard, just takes a
+bit of cash.
+running the user in a VM without him noticing.. not too hard either.
+etc.
 
-> /dev/kmem, swap, intercepting tty traffic, spoofing user creds,...
-> If root can't be trusted, then find another machine.
-> 
-> The worry is rather that privileged daemons may be tricked into 
-> revealing said data to unprivileged users, or that unprivileged users 
-> may attempt to read data from files to which they have no rights using
 
-> the cachefs itself. That is a problem that is addressable by means of 
-> LSM, and is what David has attempted to solve.
-> 
->   Trond
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe 
-> linux-kernel" in the body of a message to majordomo@vger.kernel.org 
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+-- 
+Arjan van de Ven 	Intel Open Source Technology Centre
+For development, discussion and tips for power savings, 
+visit http://www.lesswatts.org
