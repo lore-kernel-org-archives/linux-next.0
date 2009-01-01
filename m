@@ -1,95 +1,126 @@
-From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Subject: [BUG] next-20081231 -powerpc - panic at tasklet_kill_immediate()
-Date: Wed, 31 Dec 2008 21:43:41 +0530
-Message-ID: <20081231161341.GD4268@linux.vnet.ibm.com>
-References: <20090101003258.eaa44700.sfr@canb.auug.org.au>
-Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+From: "Muntz, Daniel" <Dan.Muntz@netapp.com>
+Subject: RE: Pull request for FS-Cache, including NFS patches
+Date: Wed, 31 Dec 2008 20:11:13 -0800
+Message-ID: <7A24DF798E223B4C9864E8F92E8C93EC01BD14BB@SACMVEXC1-PRD.hq.netapp.com>
+References: <1230679056.11508.37.camel@heimdal.trondhjem.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from E23SMTP01.au.ibm.com ([202.81.18.162]:59382 "EHLO
-	e23smtp01.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754923AbYLaQNu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 31 Dec 2008 11:13:50 -0500
-Content-Disposition: inline
-In-Reply-To: <20090101003258.eaa44700.sfr@canb.auug.org.au>
+Received: from mx2.netapp.com ([216.240.18.37]:32112 "EHLO mx2.netapp.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753829AbZAAELS convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 31 Dec 2008 23:11:18 -0500
+Content-class: urn:content-classes:message
+In-Reply-To: <1230679056.11508.37.camel@heimdal.trondhjem.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@ozlabs.org, mel@csn.ul.ie
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Bernd Schubert <bernd.schubert@fastmail.fm>, nfsv4@linux-nfs.org, linux-kernel@vger.kernel.org, steved@redhat.com, dhowells@redhat.com, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, rwheeler@redhat.com
 
-Hi Stephen,
+Sure, trusted kernel and trusted executables,  but it's easier than it
+sounds.  If you start with a "clean" system, you don't need to verify
+excutables _if_ they're coming from the secured file server (by
+induction: if you started out secure, the executables on the file server
+will remain secure).  You simply can't trust the local disk from one
+user to the next.  Following the protocol, a student can log into a
+machine, su to do their OS homework, but not compromise the security of
+the distributed file system.
 
-	next-20081231 kernel panic's, while booting up on powerpc. This
-panic was visible in next-20081230 kernel also.
+If I can su while another user is logged in, or the kernel/cmds are not
+validated between users, cryptfs isn't safe either.
 
-[    1.268844] Brought up 2 CPUs
-[    1.268873] Unable to handle kernel paging request for data at address 0x00000009
-[    1.268876] Faulting instruction address: 0xc00000000005a9f8
-[    1.268880] Oops: Kernel access of bad area, sig: 11 [#1]
-[    1.268882] SMP NR_CPUS=32 NUMA PowerMac
-[    1.268886] Modules linked in:
-[    1.268889] NIP: c00000000005a9f8 LR: c00000000006ee54 CTR: c00000000005a9c0
-[    1.268893] REGS: c0000002763c3c80 TRAP: 0300   Not tainted  (2.6.28-next-20081231-autokern1)
-[    1.268896] MSR: 9000000000009032 <EE,ME,IR,DR>  CR: 24000024  XER: 000fffff
-[    1.268903] DAR: 0000000000000009, DSISR: 0000000040000000
-[    1.268905] TASK = c0000002760e20c0[5] 'ksoftirqd/1' THREAD: c0000002763c0000 CPU: 1
-[    1.268908] GPR00: 0000000000000000 c0000002763c3f00 c0000000004f9088 0000000000000001 
-[    1.268913] GPR04: c0000002760e28d0 0000000000000000 0000000024000022 c000000000010098 
-[    1.268917] GPR08: 0000000000000000 000000000ec1c518 c000000000514a40 0000000000000010 
-[    1.268922] GPR12: c00000000051c700 c00000000051c500 0000000000000000 0000000000000000 
-[    1.268926] GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
-[    1.268930] GPR20: 0000000000000000 0000000000000000 0000000000000000 0000000001400000 
-[    1.268934] GPR24: 0000000001829d88 c000000000429b28 0000000001400000 0000000000000000 
-[    1.268939] GPR28: c0000002760bfc48 0000000000000001 c000000000498a98 c0000000004b0150 
-[    1.268950] NIP [c00000000005a9f8] .tasklet_kill_immediate+0x38/0xb8
-[    1.268955] LR [c00000000006ee54] .kthread+0x78/0xc4
-[    1.268957] Call Trace:
-[    1.268960] [c0000002763c3f00] [c00000000006ee1c] .kthread+0x40/0xc4 (unreliable)
-[    1.268967] [c0000002763c3f90] [c0000000000227a8] .kernel_thread+0x54/0x70
-[    1.268969] Instruction dump:
-[    1.268971] 7c8b07b4 7d693670 7d290194 556b06be e95e8040 7d2907b4 79291f24 e94a0000 
-[    1.268977] 7c0a482a 7c005c36 780007e0 0b000000 <e8030008> 7800ffe2 0b000000 e8030008 
-[    1.268992] ---[ end trace 31fd0ba7d8756001 ]---
-[    1.269016] Unable to handle kernel paging request for data at address 0x00000000
-[    1.269019] Faulting instruction address: 0xc0000000000d9b4c
-[    1.269022] Oops: Kernel access of bad area, sig: 11 [#2]
-[    1.269024] SMP NR_CPUS=32 NUMA PowerMac
-[    1.269026] Modules linked in:
-[    1.269029] NIP: c0000000000d9b4c LR: c0000000000511fc CTR: 0000000000000003
-[    1.269032] REGS: c0000002763c35d0 TRAP: 0300   Tainted: G      D     (2.6.28-next-20081231-autokern1)
-[    1.269035] MSR: 9000000000009032 <EE,ME,IR,DR>  CR: 28004082  XER: 200fffff
-[    1.269040] DAR: 0000000000000000, DSISR: 0000000040000000
-[    1.269043] TASK = c0000002760e20c0[5] 'ksoftirqd/1' THREAD: c0000002763c0000 CPU: 1
-[    1.269046] GPR00: 0000000000000004 c0000002763c3850 c0000000004f9088 c000000276027d00 
-[    1.269051] GPR04: c0000002763b6980 0000000000000000 c000000000457278 c000000000457278 
-[    1.269055] GPR08: c0000002760e2290 0000000000000000 c00000000051c500 c0000002763b6080 
-[    1.269060] GPR12: 0000000048000084 c00000000051c500 0000000000000000 0000000000000000 
-[    1.269064] GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
-[    1.269068] GPR20: 0000000000000000 0000000000000000 0000000000000000 0000000000000001 
-[    1.269073] GPR24: c0000002760e20b0 c0000002760e2228 0000000000000000 c000000276027d00 
-[    1.269077] GPR28: 0000000000000000 c0000002763b6980 c00000000049c9b8 0000000000000000 
-[    1.269086] NIP [c0000000000d9b4c] .kmem_cache_free+0x1b8/0x244
-[    1.269090] LR [c0000000000511fc] .__cleanup_sighand+0x44/0x5c
-[    1.269092] Call Trace:
-[    1.269095] [c0000002763c3850] [c00000000049abe8] 0xc00000000049abe8 (unreliable)
-[    1.269099] [c0000002763c3900] [c0000000000511fc] .__cleanup_sighand+0x44/0x5c
-[    1.269104] [c0000002763c3980] [c000000000057244] .release_task+0x2dc/0x400
-[    1.269108] [c0000002763c3a20] [c000000000057b14] .do_exit+0x7ac/0x858
-[    1.269112] [c0000002763c3af0] [c000000000020414] .die+0x1c8/0x1cc
-[    1.269117] [c0000002763c3b90] [c000000000027f4c] .bad_page_fault+0xb8/0xd4
-[    1.269122] [c0000002763c3c10] [c000000000005318] handle_page_fault+0x3c/0x5c
-[    1.269128] --- Exception: 300 at .tasklet_kill_immediate+0x38/0xb8
-[    1.269130]     LR = .kthread+0x78/0xc4
-[    1.269133] [c0000002763c3f00] [c00000000006ee1c] .kthread+0x40/0xc4 (unreliable)
-[    1.269138] [c0000002763c3f90] [c0000000000227a8] .kernel_thread+0x54/0x70
-[    1.269141] Instruction dump:
-[    1.269142] 4800016d e97d0168 880d01dc 2fa00000 41be0010 7c0004ac 38000000 980d01dc 
-[    1.269148] 7c2004ac 38000000 900b0040 48000050 <817f0000> 801f0004 7f8b0040 409c001c 
-[    1.269155] ---[ end trace 31fd0ba7d8756001 ]---
-[    1.269157] Fixing recursive fault but reboot is needed!
--- 
-Thanks & Regards,
-Kamalesh Babulal,
-Linux Technology Center,
-IBM, ISTL.
+If you're following the protocol, it doesn't even matter if a bad guy
+("untrusted user"?) gets root on the client--they still can't gain
+inappropriate access to the file server.  OTOH, if my security plan is
+simply to not allow root access to untrusted users, history says I'm
+going to lose.
+
+  -Dan
+
+-----Original Message-----
+From: Trond Myklebust [mailto:trond.myklebust@fys.uio.no] 
+Sent: Tuesday, December 30, 2008 3:18 PM
+To: Muntz, Daniel
+Cc: Andrew Morton; Stephen Rothwell; Bernd Schubert;
+nfsv4@linux-nfs.org; linux-kernel@vger.kernel.org; steved@redhat.com;
+dhowells@redhat.com; linux-next@vger.kernel.org;
+linux-fsdevel@vger.kernel.org; rwheeler@redhat.com
+Subject: RE: Pull request for FS-Cache, including NFS patches
+
+On Tue, 2008-12-30 at 15:00 -0800, Muntz, Daniel wrote:
+> Yes, and if you have a single user on the machine at a time (with 
+> cache flushed inbetween, kernel refreshed), root can read /dev/kmem, 
+> swap, intercept traffic and read cachefs data to its heart's 
+> content--hence, those requirements.
+
+Unless you _are_ root and can check every executable, after presumably
+rebooting into your own trusted kernel, then those requirements won't
+mean squat. If you're that paranoid, then you will presumably also be
+using a cryptfs-encrypted partition for cachefs, which you unmount when
+you're not logged in.
+
+That said, most cluster environments will tend to put most of their
+security resources into keeping untrusted users out altogether. The
+client nodes tend to be a homogeneous lot with presumably only a trusted
+few sysadmins...
+
+Trond
+
+> -----Original Message-----
+> From: Trond Myklebust [mailto:trond.myklebust@fys.uio.no]
+> Sent: Tuesday, December 30, 2008 2:36 PM
+> To: Muntz, Daniel
+> Cc: Andrew Morton; Stephen Rothwell; Bernd Schubert; 
+> nfsv4@linux-nfs.org; linux-kernel@vger.kernel.org; steved@redhat.com; 
+> dhowells@redhat.com; linux-next@vger.kernel.org; 
+> linux-fsdevel@vger.kernel.org; rwheeler@redhat.com
+> Subject: RE: Pull request for FS-Cache, including NFS patches
+> 
+> On Tue, 2008-12-30 at 14:15 -0800, Muntz, Daniel wrote:
+> > >> As for security, look at what MIT had to do to prevent local disk
+
+> > >> caching from breaking the security guarantees of AFS.
+> > >
+> > >See what David has added to the LSM code to provide the same 
+> > >guarantees
+> > for cachefs...
+> > >
+> > >Trond
+> > 
+> > Unless it (at least) leverages TPM, the issues I had in mind can't 
+> > really be addressed in code.  One requirement is to prevent a local 
+> > root user from accessing fs information without appropriate
+> permissions.
+> > This leads to unwieldly requirements such as allowing only one user 
+> > on
+> 
+> > a machine at a time, blowing away the cache on logout, validating 
+> > (e.g.,
+> > refreshing) the kernel on each boot, etc.  Sure, some applications 
+> > won't care, but you're also potentially opening holes that users may
+
+> > not consider.
+> 
+> You can't prevent a local root user from accessing cached data: that's
+
+> true with or without cachefs. root can typically access the data using
+
+> /dev/kmem, swap, intercepting tty traffic, spoofing user creds,...
+> If root can't be trusted, then find another machine.
+> 
+> The worry is rather that privileged daemons may be tricked into 
+> revealing said data to unprivileged users, or that unprivileged users 
+> may attempt to read data from files to which they have no rights using
+
+> the cachefs itself. That is a problem that is addressable by means of 
+> LSM, and is what David has attempted to solve.
+> 
+>   Trond
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe 
+> linux-kernel" in the body of a message to majordomo@vger.kernel.org 
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
