@@ -1,44 +1,55 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the rr_cpumask tree
-Date: Fri, 2 Jan 2009 16:17:40 +1030
-Message-ID: <200901021617.40995.rusty@rustcorp.com.au>
+Date: Fri, 2 Jan 2009 17:21:39 +1100
+Message-ID: <20090102172139.8ed9f906.sfr@canb.auug.org.au>
 References: <20090102133557.0750cdbe.sfr@canb.auug.org.au>
+	<200901021617.40995.rusty@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__2_Jan_2009_17_21_39_+1100_dO1f5C5Izo1jZ.H9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:36198 "EHLO ozlabs.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37347 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750979AbZABFvI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 2 Jan 2009 00:51:08 -0500
-In-Reply-To: <20090102133557.0750cdbe.sfr@canb.auug.org.au>
-Content-Disposition: inline
+	id S1750979AbZABGVr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 2 Jan 2009 01:21:47 -0500
+In-Reply-To: <200901021617.40995.rusty@rustcorp.com.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Rusty Russell <rusty@rustcorp.com.au>
 Cc: linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>, Ingo Molnar <mingo@elte.hu>
 
-On Friday 02 January 2009 13:05:57 Stephen Rothwell wrote:
-> Hi Rusty,
-> 
-> Today's linux-next merge of the rr_cpumask tree got a conflict in
-> arch/x86/kernel/io_apic.c between commit
-> 22f65d31b25a320a5246592160bcb102d2791c45 ("x86: Update io_apic.c to use
-> new cpumask API") from the cpus4096 tree and commit
-> 2ca1a615835d9f4990f42102ab1f2ef434e7e89c ("Merge branch 'master' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6") (or
-> something - I suspect git has failed me a little here)
+--Signature=_Fri__2_Jan_2009_17_21_39_+1100_dO1f5C5Izo1jZ.H9
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, I've had several 'git blame' pointing to merges from Ingo's tree.
-And they tend to be n-way merges, so tracing it down is too hard.
+Hi Rusty,
 
-The cpus4096 tree is supposed to have already merged the cpumask tree,
-so this should not have happened.
+On Fri, 2 Jan 2009 16:17:40 +1030 Rusty Russell <rusty@rustcorp.com.au> wro=
+te:
+>
+> On Friday 02 January 2009 13:05:57 Stephen Rothwell wrote:
+> Yes, I've had several 'git blame' pointing to merges from Ingo's tree.
+> And they tend to be n-way merges, so tracing it down is too hard.
 
-> I have dropped the rr_cpumask tree for today and also the rr tree that
-> depends on it.
+If you are in the middle of a merge operations with conflicts, the "gitk
+--merge" is generally useful.
 
-OK I will remove this dependency for the moment.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Rusty.
+--Signature=_Fri__2_Jan_2009_17_21_39_+1100_dO1f5C5Izo1jZ.H9
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEUEARECAAYFAkldsnMACgkQjjKRsyhoI8w9WQCXYiP0AAFJipTElcyBsClZoUN1
+0wCgvMVmc/lPJVrP61fEm5YOZJHprb8=
+=XX46
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__2_Jan_2009_17_21_39_+1100_dO1f5C5Izo1jZ.H9--
