@@ -1,57 +1,49 @@
 From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: ftrace tree build failure
-Date: Fri, 2 Jan 2009 12:16:39 +0100
-Message-ID: <20090102111639.GB20172@elte.hu>
-References: <20090102200754.3cd3661c.sfr@canb.auug.org.au> <20090102091456.GB30018@elte.hu> <20090102212242.13f9007e.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the rr_cpumask tree
+Date: Fri, 2 Jan 2009 13:52:54 +0100
+Message-ID: <20090102125254.GA23562@elte.hu>
+References: <20090102133557.0750cdbe.sfr@canb.auug.org.au> <20090102095906.GI1975@elte.hu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:38990 "EHLO mx2.mail.elte.hu"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:59103 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757516AbZABLQu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 2 Jan 2009 06:16:50 -0500
+	id S1757514AbZABMxO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 2 Jan 2009 07:53:14 -0500
 Content-Disposition: inline
-In-Reply-To: <20090102212242.13f9007e.sfr@canb.auug.org.au>
+In-Reply-To: <20090102095906.GI1975@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>
 
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+* Ingo Molnar <mingo@elte.hu> wrote:
 
-> Hi Ingo,
 > 
-> On Fri, 2 Jan 2009 10:14:56 +0100 Ingo Molnar <mingo@elte.hu> wrote:
-> >
-> > this has been fixed already a few days ago (if you google for the build 
-> > failure string it will send you straight to the fix patch) - i just didnt 
-> > push it out to the -next branches yet during the hollidays. (did that now)
+> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
-> Thanks.
-> 
-> > Generally if you see a problem with our trees you can check whether an 
-> > issue is still present in tip/master:
+> > Hi Rusty,
 > > 
-> >   http://people.redhat.com/mingo/tip.git/README
+> > Today's linux-next merge of the rr_cpumask tree got a conflict in
+> > arch/x86/kernel/io_apic.c between commit
+> > 22f65d31b25a320a5246592160bcb102d2791c45 ("x86: Update io_apic.c to use
+> > new cpumask API") from the cpus4096 tree and commit
+> > 2ca1a615835d9f4990f42102ab1f2ef434e7e89c ("Merge branch 'master' of
+> > git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6") (or
+> > something - I suspect git has failed me a little here) from the
+> > rr_cpumask tree.
+> > 
+> > It is a bit of a train wreck :-)
+> > 
+> > I have dropped the rr_cpumask tree for today and also the rr tree that 
+> > depends on it.
 > 
-> I'll try to remember ...
-> 
-> [I wish you had stopped there]
-> 
-> > before duplicating fixing effort and reporting it as a genuine issue - 
-> 
-> It broke a linux-next build - just how genuine does an issue have to be?
+> hm, i'll work with Rusty on fixing that - you should really not be 
+> seeing conflicts on that level.
 
-as genuine i mean 'new, unknown issue' - not an issue that has been 
-reported to lkml already by testers and has been fixed already.
-
-The thing is, i wouldnt have said that had you not said:
-
-> > [...] A bit more care, please.
-
-i can do without such suggestions in the merge window really - it looked 
-rather condescending to me. A lkml search or a trivial google for the 
-build failure pattern would have given you a working patch.
+ok, i think i got it all sorted out - there will be a new cpus4096 tree 
+later today (if it passes the tests) that should merge cleanly with 
+Rusty's latest.
 
 	Ingo
