@@ -1,27 +1,37 @@
-From: Alasdair G Kergon <agk@redhat.com>
-Subject: Re: linux-next: manual merge of the device-mapper tree
-Date: Fri, 2 Jan 2009 13:17:46 +0000
-Message-ID: <20090102131746.GB11064@agk.fab.redhat.com>
-References: <20081215115823.dc3029d5.sfr@canb.auug.org.au> <20081231112249.4a0b68b2.sfr@canb.auug.org.au> <20081231012754.GC11060@agk.fab.redhat.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for January 2
+Date: Fri, 2 Jan 2009 15:08:34 +0100
+Message-ID: <200901021508.34847.rjw@sisk.pl>
+References: <20090102203303.f314a99a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:56218 "EHLO mx2.redhat.com"
+Received: from ogre.sisk.pl ([217.79.144.158]:41567 "EHLO ogre.sisk.pl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756187AbZABNSJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 2 Jan 2009 08:18:09 -0500
+	id S1754760AbZABOIN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 2 Jan 2009 09:08:13 -0500
+In-Reply-To: <20090102203303.f314a99a.sfr@canb.auug.org.au>
 Content-Disposition: inline
-In-Reply-To: <20081231012754.GC11060@agk.fab.redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Kiyoshi Ueda <k-ueda@ct.jp.nec.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg KH <greg@kroah.com>
 
-On Wed, Dec 31, 2008 at 01:27:54AM +0000, Alasdair G Kergon wrote:
-> Ta - I'll sort it when I rebase after the Xmas/New Year break.
+On Friday 02 January 2009, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20081231:
+> 
+> Removed tree:
+> 	boot-params (became 2.6.30 material)
+> 
+> Dropped trees (temporarily):
+> 	driver-core (build problem)
 
-Rebased.
+Can you please tell me what exactly the build problem with the driver-core tree
+is?  Maybe I can fix it.
 
-Alasdair
--- 
-agk@redhat.com
+Thanks,
+Rafael
