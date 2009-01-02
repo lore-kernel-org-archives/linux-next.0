@@ -1,42 +1,37 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the rr_cpumask tree
-Date: Fri, 2 Jan 2009 10:59:06 +0100
-Message-ID: <20090102095906.GI1975@elte.hu>
-References: <20090102133557.0750cdbe.sfr@canb.auug.org.au>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: [BUILD-FAILURE] next-20081230 - S390 - tape drive fails to
+	build with !CONFIG_BLOCK
+Date: Fri, 2 Jan 2009 11:01:59 +0100
+Message-ID: <20090102100159.GA4730@osiris.boeblingen.de.ibm.com>
+References: <20081231033039.f203b59c.sfr@canb.auug.org.au> <20081231112132.GA4268@linux.vnet.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:56252 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756048AbZABJ7Z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 2 Jan 2009 04:59:25 -0500
+Received: from mtagate3.uk.ibm.com ([195.212.29.136]:34618 "EHLO
+	mtagate3.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755541AbZABKCD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Jan 2009 05:02:03 -0500
 Content-Disposition: inline
-In-Reply-To: <20090102133557.0750cdbe.sfr@canb.auug.org.au>
+In-Reply-To: <20081231112132.GA4268@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>
+To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org, schwidefsky@de.ibm.com
 
-
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi Rusty,
+On Wed, Dec 31, 2008 at 04:51:32PM +0530, Kamalesh Babulal wrote:
+> 	next-20081230 randconfig build fails on S390, with CONFIG_BLOCK=n
 > 
-> Today's linux-next merge of the rr_cpumask tree got a conflict in
-> arch/x86/kernel/io_apic.c between commit
-> 22f65d31b25a320a5246592160bcb102d2791c45 ("x86: Update io_apic.c to use
-> new cpumask API") from the cpus4096 tree and commit
-> 2ca1a615835d9f4990f42102ab1f2ef434e7e89c ("Merge branch 'master' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6") (or
-> something - I suspect git has failed me a little here) from the
-> rr_cpumask tree.
+>  Adding the dependency of CONFIG_BLOCK to CONFIG_S390_TAPE_BLOCK
 > 
-> It is a bit of a train wreck :-)
+> Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com
+>
+> --- a/drivers/s390/char/Kconfig
+> +++ b/drivers/s390/char/Kconfig
+> @@ -100,7 +100,7 @@ comment "S/390 tape interface support"
 > 
-> I have dropped the rr_cpumask tree for today and also the rr tree that 
-> depends on it.
+>  config S390_TAPE_BLOCK
+>  	bool "Support for tape block devices"
+> -	depends on S390_TAPE
+> +	depends on S390_TAPE && BLOCK
 
-hm, i'll work with Rusty on fixing that - you should really not be seeing 
-conflicts on that level.
-
-	Ingo
+Thank you, added it to our patch queue.
