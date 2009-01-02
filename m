@@ -1,51 +1,89 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [BUG] next-20081231 - S390x kernel panics while bootup at
-	init_sched_build_groups()
-Date: Fri, 2 Jan 2009 11:04:33 +0100
-Message-ID: <20090102100433.GB4730@osiris.boeblingen.de.ibm.com>
-References: <20090101003258.eaa44700.sfr@canb.auug.org.au> <20081231160329.GC4268@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: ftrace tree build failure
+Date: Fri, 2 Jan 2009 21:22:42 +1100
+Message-ID: <20090102212242.13f9007e.sfr@canb.auug.org.au>
+References: <20090102200754.3cd3661c.sfr@canb.auug.org.au>
+	<20090102091456.GB30018@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__2_Jan_2009_21_22_42_+1100_ScmC2gvuZAT4k1oL"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate7.de.ibm.com ([195.212.29.156]:60656 "EHLO
-	mtagate7.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757381AbZABKEg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Jan 2009 05:04:36 -0500
-Content-Disposition: inline
-In-Reply-To: <20081231160329.GC4268@linux.vnet.ibm.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35089 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754006AbZABKWz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 2 Jan 2009 05:22:55 -0500
+In-Reply-To: <20090102091456.GB30018@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org, schwidefsky@de.ibm.com
+To: Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org
 
-On Wed, Dec 31, 2008 at 09:33:29PM +0530, Kamalesh Babulal wrote:
-> 	next-2001231 kernel panic's on S390x box, while boot up
-> cpu: 4 configured CPUs, 0 standby CPUs
-> cpu: Processor 0 started, address 2, identification 20AB8A
-> cpu: Processor 1 started, address 0, identification 00AB8A
-> cpu: Processor 2 started, address 1, identification 10AB8A
-> cpu: Processor 3 started, address 3, identification 30AB8A
-> Brought up 4 CPUs
-> Unable to handle kernel pointer dereference at virtual kernel address=
- 0000000100
-> 3fa000
-> Oops: 003b =C3=9D#1=C2=A8 SMP
-> Modules linked in:
-> CPU: 0 Not tainted 2.6.28-next-20081231-autotest #1
-> Process swapper (pid: 1, task: 000000003fe80000, ksp: 000000003fe8ba7=
-8)
-> Krnl PSW : 0704000180000000 0000000000035632 (init_sched_build_groups=
-+0xae/0x4a4
-> )
->            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:0 CC:0 PM:0 EA:3
-> Krnl GPRS: 00000000003c27b0 00000001003fa278 0000000000000000 0000000=
-0003c2508
->            0000000000000000 000000000026f818 0000000000000000 0000000=
-000000000
->            0000000000000000 000000003fe8be50 00000000ffffffff 0000000=
-03fe8bcf0
-> Krnl Code: 0000000000035626: a7290000           lghi    00: HCPGSP262=
-9I The virt
+--Signature=_Fri__2_Jan_2009_21_22_42_+1100_ScmC2gvuZAT4k1oL
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Seems to be fixed with linux-next from 2nd of January.
+Hi Ingo,
+
+On Fri, 2 Jan 2009 10:14:56 +0100 Ingo Molnar <mingo@elte.hu> wrote:
+>
+> this has been fixed already a few days ago (if you google for the build=20
+> failure string it will send you straight to the fix patch) - i just didnt=
+=20
+> push it out to the -next branches yet during the hollidays. (did that now)
+
+Thanks.
+
+> Generally if you see a problem with our trees you can check whether an=20
+> issue is still present in tip/master:
+>=20
+>   http://people.redhat.com/mingo/tip.git/README
+
+I'll try to remember ...
+
+[I wish you had stopped there]
+
+> before duplicating fixing effort and reporting it as a genuine issue -=20
+
+It broke a linux-next build - just how genuine does an issue have to be?
+Even if I knew you had already fixed it, I would still have reported it
+(although saying where I got the fix from) so that others know why I have
+had to apply a patch.
+
+> especially in a busy timeframe like the merge window when the _next_ merg=
+e=20
+> window is the least of our worries.
+
+During the merge window, linux-next is not concerned with the _next_
+merge window (as my previous reminder to people spelt out), but very much
+with the current merge window.  What you don't seem to realise is that
+others use linux-next during the merge window to do integration testing
+after fixing up their trees to cope with stuff that Linus has already
+merged (in order - as much as possible - to not break Linus' tree).  So
+when you break the linux-next tree, you make life harder for them.
+
+So, how much of your time would have been "wasted" remembering to put
+that fix into the linux-next branch compared to my time and the time of
+others?
+
+And don't bother responding (especially privately) I don't need the
+aggravation.  If you feel a need to reply coming on, just delete this
+email instead and pretend I didn't write it.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__2_Jan_2009_21_22_42_+1100_ScmC2gvuZAT4k1oL
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkld6vIACgkQjjKRsyhoI8wLagCgrV6fv8jiAdoK3gLbjbgKMu65
+mW4An3o1T4dWu5q0WLX1DzooynH7a9wk
+=kgTO
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__2_Jan_2009_21_22_42_+1100_ScmC2gvuZAT4k1oL--
