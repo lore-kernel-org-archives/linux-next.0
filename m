@@ -1,40 +1,56 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: Tree for January 2
-Date: Fri, 2 Jan 2009 09:52:51 -0800
-Message-ID: <20090102175251.GA6030@kroah.com>
-References: <20090102203303.f314a99a.sfr@canb.auug.org.au> <200901021508.34847.rjw@sisk.pl>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] 9p: fix RDMA dependency
+Date: Fri, 02 Jan 2009 10:18:42 -0800
+Message-ID: <495E5A82.9000603@oracle.com>
+References: <20090102203303.f314a99a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:33136 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1757389AbZABRyJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 2 Jan 2009 12:54:09 -0500
-Content-Disposition: inline
-In-Reply-To: <200901021508.34847.rjw@sisk.pl>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:33449 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757715AbZABSTd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Jan 2009 13:19:33 -0500
+In-Reply-To: <20090102203303.f314a99a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Eric Van Hensbergen <ericvh@gmail.com>, Roland Dreier <rolandd@cisco.com>
 
-On Fri, Jan 02, 2009 at 03:08:34PM +0100, Rafael J. Wysocki wrote:
-> On Friday 02 January 2009, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20081231:
-> > 
-> > Removed tree:
-> > 	boot-params (became 2.6.30 material)
-> > 
-> > Dropped trees (temporarily):
-> > 	driver-core (build problem)
-> 
-> Can you please tell me what exactly the build problem with the driver-core tree
-> is?  Maybe I can fix it.
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Sorry about that, I've now fixed it, and pushed it up to kernel.org.
-But I think I missed the pull time for this release of linux-next.
+NET_9P_RDMA uses Infiniband RDMA, which is controlled by the
+INFINIBAND_ADDR_TRANS kconfig symbol, so fix NET_9P so that it builds
+cleanly.
 
-thanks,
+Found by inspection (suspicion) and then forced via kconfig.
 
-greg k-h
+ERROR: "rdma_destroy_id" [net/9p/9pnet_rdma.ko] undefined!
+ERROR: "rdma_connect" [net/9p/9pnet_rdma.ko] undefined!
+ERROR: "rdma_create_id" [net/9p/9pnet_rdma.ko] undefined!
+ERROR: "rdma_create_qp" [net/9p/9pnet_rdma.ko] undefined!
+ERROR: "rdma_resolve_route" [net/9p/9pnet_rdma.ko] undefined!
+ERROR: "rdma_disconnect" [net/9p/9pnet_rdma.ko] undefined!
+ERROR: "rdma_resolve_addr" [net/9p/9pnet_rdma.ko] undefined!
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+cc:      Eric Van Hensbergen <ericvh@gmail.com>
+cc:      Roland Dreier <rolandd@cisco.com>
+---
+ net/9p/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20090102.orig/net/9p/Kconfig
++++ linux-next-20090102/net/9p/Kconfig
+@@ -23,7 +23,7 @@ config NET_9P_VIRTIO
+ 	  guest partitions and a host partition.
+ 
+ config NET_9P_RDMA
+-	depends on INET && INFINIBAND && EXPERIMENTAL
++	depends on INET && INFINIBAND_ADDR_TRANS && EXPERIMENTAL
+ 	tristate "9P RDMA Transport (Experimental)"
+ 	help
+ 	  This builds support for an RDMA transport.
+
+-- 
+~Randy
