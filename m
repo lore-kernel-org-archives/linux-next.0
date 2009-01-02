@@ -1,49 +1,27 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the rr_cpumask tree
-Date: Fri, 2 Jan 2009 13:52:54 +0100
-Message-ID: <20090102125254.GA23562@elte.hu>
-References: <20090102133557.0750cdbe.sfr@canb.auug.org.au> <20090102095906.GI1975@elte.hu>
+From: Alasdair G Kergon <agk@redhat.com>
+Subject: Re: linux-next: manual merge of the device-mapper tree
+Date: Fri, 2 Jan 2009 13:17:46 +0000
+Message-ID: <20090102131746.GB11064@agk.fab.redhat.com>
+References: <20081215115823.dc3029d5.sfr@canb.auug.org.au> <20081231112249.4a0b68b2.sfr@canb.auug.org.au> <20081231012754.GC11060@agk.fab.redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:59103 "EHLO mx2.mail.elte.hu"
+Received: from mx2.redhat.com ([66.187.237.31]:56218 "EHLO mx2.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757514AbZABMxO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 2 Jan 2009 07:53:14 -0500
+	id S1756187AbZABNSJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 2 Jan 2009 08:18:09 -0500
 Content-Disposition: inline
-In-Reply-To: <20090102095906.GI1975@elte.hu>
+In-Reply-To: <20081231012754.GC11060@agk.fab.redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>
+Cc: linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Kiyoshi Ueda <k-ueda@ct.jp.nec.com>
 
+On Wed, Dec 31, 2008 at 01:27:54AM +0000, Alasdair G Kergon wrote:
+> Ta - I'll sort it when I rebase after the Xmas/New Year break.
 
-* Ingo Molnar <mingo@elte.hu> wrote:
+Rebased.
 
-> 
-> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > Hi Rusty,
-> > 
-> > Today's linux-next merge of the rr_cpumask tree got a conflict in
-> > arch/x86/kernel/io_apic.c between commit
-> > 22f65d31b25a320a5246592160bcb102d2791c45 ("x86: Update io_apic.c to use
-> > new cpumask API") from the cpus4096 tree and commit
-> > 2ca1a615835d9f4990f42102ab1f2ef434e7e89c ("Merge branch 'master' of
-> > git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6") (or
-> > something - I suspect git has failed me a little here) from the
-> > rr_cpumask tree.
-> > 
-> > It is a bit of a train wreck :-)
-> > 
-> > I have dropped the rr_cpumask tree for today and also the rr tree that 
-> > depends on it.
-> 
-> hm, i'll work with Rusty on fixing that - you should really not be 
-> seeing conflicts on that level.
-
-ok, i think i got it all sorted out - there will be a new cpus4096 tree 
-later today (if it passes the tests) that should merge cleanly with 
-Rusty's latest.
-
-	Ingo
+Alasdair
+-- 
+agk@redhat.com
