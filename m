@@ -1,28 +1,49 @@
-From: Avi Kivity <avi@redhat.com>
-Subject: Re: linux-next: kvm tree build failure
-Date: Sun, 04 Jan 2009 13:08:06 +0200
-Message-ID: <49609896.201@redhat.com>
-References: <20081223002514.6fbcfe4f.sfr@canb.auug.org.au>	<20081229161750.e2197bad.sfr@canb.auug.org.au> <20090102115354.46fc59e0.sfr@canb.auug.org.au>
+From: "Leon Woestenberg" <leon.woestenberg@gmail.com>
+Subject: Re: [PATCH V2 00/16] Squashfs: compressed read-only filesystem
+Date: Sun, 4 Jan 2009 20:04:49 +0100
+Message-ID: <c384c5ea0901041104m31363264qd17d0181865c276@mail.gmail.com>
+References: <E1Kv0C3-0006GU-ES@dylan>
+	 <20081028192919.94def38b.akpm@linux-foundation.org>
+	 <49606B7C.7050403@lougher.demon.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:33288 "EHLO mx2.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751225AbZADLIR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 4 Jan 2009 06:08:17 -0500
-In-Reply-To: <20090102115354.46fc59e0.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Avi Kivity <avi@redhat.com>, linux-next@vger.kernel.org, Jan Kiszka <jan.kiszka@siemens.com>, Hollis Blanchard <hollisb@us.ibm.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1760447AbZADTFT@vger.kernel.org>
+In-Reply-To: <49606B7C.7050403@lougher.demon.co.uk>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: Phillip Lougher <phillip@lougher.demon.co.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-embedded@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, tim.bird@am.sony.com, linux-next@vger.kernel.org, sfr@canb.auug.org.au
+List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell wrote:
-> And again.  Can you please find some fix for this so that the kvm tree
-> can get some integration testing ...
->   
+Hello,
 
-Hollis, help!
+On Sun, Jan 4, 2009 at 8:55 AM, Phillip Lougher
+<phillip@lougher.demon.co.uk> wrote:
+>> - what are the limitations of squashfs (please add this to the
+>>  changelog of patch #1 or something).  Does it support nfsd? (yes, it
+>>  does!)  xatrs and acls?  File size limits, entries-per-directory,
+>>  etc, etc?
+>
+> Xattrs and acls are not supported, this is a todo.
+> Filesize limits are in theory 2^64.  In practice about 2 TiB.
+>
+...
+>
+> Ok.  I'll re-spin the patches against 2.6.28 tomorrow (Sunday), and I'll
+> prepare a tree for linux-next.
+>
 
+For use cases such as embedded firmware, the limitations are
+non-interesting, and the compression savings are very interesting.
+Especially where the resulting filesystem has to creep through slow
+wires such as half duplex serial links etc.
+
+Have been using squashfs 2.2 up to 3.4 without problems for years, for
+distribution of Linux based firmwares into embedded devices.
+
+Many thanks for your continued efforts on mainlining squashfs,
+
+Regards,
 -- 
-error compiling committee.c: too many arguments to function
+Leon
