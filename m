@@ -1,40 +1,34 @@
-From: "Jaswinder Singh Rajput" <jaswinderlinux@gmail.com>
-Subject: Re: [PATCH -net-next 3/4] firmware: convert tg3 driver to request_firmware()
-Date: Mon, 5 Jan 2009 20:36:47 +0530
-Message-ID: <3f9a31f40901050706r3d01fbfen351c1728b5a9095b@mail.gmail.com>
-References: <1230626497.24796.26.camel@jaswinder.satnam>
-	 <49620AFE.6040409@hartkopp.net>
-	 <3f9a31f40901050612v700d2542r1e3e400bf0fe3d33@mail.gmail.com>
-	 <49622011.4080203@hartkopp.net>
+From: Christoph Lameter <cl@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the rr tree
+Date: Mon, 5 Jan 2009 09:29:28 -0600 (CST)
+Message-ID: <Pine.LNX.4.64.0901050915180.13193@quilx.com>
+References: <20090105143239.08b1a060.sfr@canb.auug.org.au>
+ <200901051727.11403.rusty@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <49622011.4080203@hartkopp.net>
-Content-Disposition: inline
-Sender: netdev-owner@vger.kernel.org
-To: Oliver Hartkopp <oliver@hartkopp.net>
-Cc: David Woodhouse <dwmw2@infradead.org>, Jaswinder Singh Rajput <jaswinder@infradead.org>, davem@redhat.com, jgarzik@redhat.com, netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, mchan@broadcom.com, Alan Cox <alan@lxorguk.ukuu.org.uk>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from nlpi053.sbcis.sbc.com ([207.115.36.82]:34883 "EHLO
+	nlpi053.prodigy.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752011AbZAEP3x (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Jan 2009 10:29:53 -0500
+In-Reply-To: <200901051727.11403.rusty@rustcorp.com.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>, Ingo Molnar <mingo@elte.hu>
 
-On Mon, Jan 5, 2009 at 8:28 PM, Oliver Hartkopp <oliver@hartkopp.net> wrote:
->
-> The firmware, right?!
->
-> When compiling tg3 as module the request_firmware() worked fine, as the fs
-> is available then.
->
-> Now i went back to compiling tg3 as built-in driver and i also defined
-> CONFIG_FIRMWARE_IN_KERNEL which is also working properly. Thanks for the
-> advise.
->
+On Mon, 5 Jan 2009, Rusty Russell wrote:
 
-Yes, Good.
+> 3) We do still need RELOC_HIDE: it's for the compiler, not us.  It
+>    can otherwise make assumptions about pointers remaining within objects.
 
-> Btw. the locking issue is still there:
+Never heard about that one. If the compiler would make the assumption that
+pointers stay within a struct then the processor could hold data from
+another per cpu section in registers while writing to the per cpu variable
+of that per cpu section right?
 
-David Miller and Jeff are right person to answer this question.
+But doesnt GCC invalidate all object pointers to a certain type of struct
+if one field is modified?
 
-Thanks,
---
-JSR
+And how will this work in cases where the pointer value is converted to
+unsigned long?
