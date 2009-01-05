@@ -1,50 +1,63 @@
-From: "Jeff Kirsher" <jeffrey.t.kirsher@intel.com>
-Subject: Re: [PATCH -net-next 1/4] firmware: convert e100
-	driver to request_firmware()
-Date: Sun, 4 Jan 2009 18:20:24 -0800
-Message-ID: <9929d2390901041820h4cf51e2h3612108c516b6869@mail.gmail.com>
-References: <1230626401.24796.22.camel@jaswinder.satnam>
-	<9929d2390812301433pae01ea4g5bfdef6d4d4c7a9c@mail.gmail.com>
-	<20090104.160611.252248503.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ext4 tree
+Date: Mon, 5 Jan 2009 13:49:06 +1100
+Message-ID: <20090105134906.32129cb8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <e1000-devel-bounces@lists.sourceforge.net>
-In-Reply-To: <20090104.160611.252248503.davem@davemloft.net>
-Content-Disposition: inline
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/e1000-devel>,
-	<mailto:e1000-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=e1000-devel>
-List-Post: <mailto:e1000-devel@lists.sourceforge.net>
-List-Help: <mailto:e1000-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/e1000-devel>,
-	<mailto:e1000-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: e1000-devel-bounces@lists.sourceforge.net
-To: David Miller <davem@davemloft.net>
-Cc: linux.nics@intel.com, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, jaswinder@infradead.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46841 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753468AbZAECtQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 4 Jan 2009 21:49:16 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Theodore Tso <tytso@MIT.EDU>
+Cc: linux-next@vger.kernel.org, Frank Mayhar <fmayhar@google.com>, Al Viro <viro@zeniv.linux.org.uk>
 
-On Sun, Jan 4, 2009 at 4:06 PM, David Miller <davem@davemloft.net> wrote:
-> From: "Jeff Kirsher" <jeffrey.t.kirsher@intel.com>
-> Date: Tue, 30 Dec 2008 14:33:36 -0800
->
->> Please hold off on committing, until we have had ample time to do some
->> regression testing.  While this patch may have been in linux-next,
->> this is the first we have seen of it.
->>
->> I am concerned that IPMI traffic will be adversely affected by this patch.
->
-> Status please?
-> --
->
+Hi Ted,
 
-The only testing left to do is to make sure that ICH devices still
-work and to make sure the IPMI traffic is not affected by this patch.
-All other testing looks good.  I am sorry that I have been slow to
-give status, the holiday's have put a strain on available resources.
+Today's linux-next merge of the ext4 tree got a conflict in
+fs/ext4/ialloc.c between commit 6b38e842bb832a3dbeb17e382404aef3c40ac5f9
+("nfsd race fixes: ext4") from Linus' tree and commit
+3cbc16fb3066dabb66eddf192d9e657a14a7ad20 ("ext4: Allow ext4 to run
+without a journal") from the ext4 tree.
+
+Really just context changes. I fixed it up (see below) and can carry the
+fix for now.  You should fix this by merging with Linus' tree (or get
+Linus to do it).
 
 -- 
 Cheers,
-Jeff
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-------------------------------------------------------------------------------
+diff --cc fs/ext4/ialloc.c
+index 6e60528,3bcf197..0000000
+--- a/fs/ext4/ialloc.c
++++ b/fs/ext4/ialloc.c
+@@@ -825,11 -890,8 +890,11 @@@ got
+  
+  	ext4_set_inode_flags(inode);
+  	if (IS_DIRSYNC(inode))
+- 		handle->h_sync = 1;
++ 		ext4_handle_sync(handle);
+ -	insert_inode_hash(inode);
+ +	if (insert_inode_locked(inode) < 0) {
+ +		err = -EINVAL;
+ +		goto fail_drop;
+ +	}
+  	spin_lock(&sbi->s_next_gen_lock);
+  	inode->i_generation = sbi->s_next_generation++;
+  	spin_unlock(&sbi->s_next_gen_lock);
+@@@ -884,9 -948,8 +951,9 @@@ fail_drop
+  	DQUOT_DROP(inode);
+  	inode->i_flags |= S_NOQUOTA;
+  	inode->i_nlink = 0;
+ +	unlock_new_inode(inode);
+  	iput(inode);
+- 	brelse(bitmap_bh);
++ 	brelse(inode_bitmap_bh);
+  	return ERR_PTR(err);
+  }
+  
