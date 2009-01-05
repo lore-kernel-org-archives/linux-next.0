@@ -1,44 +1,55 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH -net-next 1/4] firmware: convert e100 driver to
- request_firmware()
-Date: Sun, 04 Jan 2009 21:34:02 -0800 (PST)
-Message-ID: <20090104.213402.12464178.davem@davemloft.net>
-References: <9929d2390812301433pae01ea4g5bfdef6d4d4c7a9c@mail.gmail.com>
-	<20090104.160611.252248503.davem@davemloft.net>
-	<9929d2390901041820h4cf51e2h3612108c516b6869@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: usb tree build failure
+Date: Mon, 5 Jan 2009 16:55:57 +1100
+Message-ID: <20090105165557.48be47bd.sfr@canb.auug.org.au>
+References: <20081222113335.667c2d01.sfr@canb.auug.org.au>
+	<200812230226.29519.inaky@linux.intel.com>
+	<20081223171726.GB4043@kroah.com>
+	<200812231707.25796.inaky@linux.intel.com>
+	<20090105043439.GA4442@kroah.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__5_Jan_2009_16_55_57_+1100_XxkdfN4D49A6bF4w"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:47270
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1750841AbZAEFd6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Jan 2009 00:33:58 -0500
-In-Reply-To: <9929d2390901041820h4cf51e2h3612108c516b6869@mail.gmail.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44695 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753594AbZAEF4J (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 5 Jan 2009 00:56:09 -0500
+In-Reply-To: <20090105043439.GA4442@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: jeffrey.t.kirsher@intel.com
-Cc: jaswinder@infradead.org, linux.nics@intel.com, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Inaky Perez-Gonzalez <inaky@linux.intel.com>, Sam Ravnborg <sam@ravnborg.org>, linux-next@vger.kernel.org
 
-From: "Jeff Kirsher" <jeffrey.t.kirsher@intel.com>
-Date: Sun, 4 Jan 2009 18:20:24 -0800
+--Signature=_Mon__5_Jan_2009_16_55_57_+1100_XxkdfN4D49A6bF4w
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Sun, Jan 4, 2009 at 4:06 PM, David Miller <davem@davemloft.net> wrote:
-> > From: "Jeff Kirsher" <jeffrey.t.kirsher@intel.com>
-> > Date: Tue, 30 Dec 2008 14:33:36 -0800
-> >
-> >> Please hold off on committing, until we have had ample time to do some
-> >> regression testing.  While this patch may have been in linux-next,
-> >> this is the first we have seen of it.
-> >>
-> >> I am concerned that IPMI traffic will be adversely affected by this patch.
-> >
-> > Status please?
-> > --
-> 
-> The only testing left to do is to make sure that ICH devices still
-> work and to make sure the IPMI traffic is not affected by this patch.
-> All other testing looks good.  I am sorry that I have been slow to
-> give status, the holiday's have put a strain on available resources.
+Hi Greg,
 
-Ok, thanks for the update.
+On Sun, 4 Jan 2009 20:34:39 -0800 Greg KH <greg@kroah.com> wrote:
+>
+> Thanks, I've now replaced these in my tree and pushed it on out.
+
+So the usb and staging trees will reappear tomorrow - I had to drop them
+today, of course.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__5_Jan_2009_16_55_57_+1100_XxkdfN4D49A6bF4w
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAklhoO0ACgkQjjKRsyhoI8zsFACeO3E7sDUQcurraWXzXFg0J+he
+bVIAoIYqRr01VsauZxD1A+CFWd19X1Pu
+=15ig
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__5_Jan_2009_16_55_57_+1100_XxkdfN4D49A6bF4w--
