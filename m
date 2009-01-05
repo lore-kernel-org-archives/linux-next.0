@@ -1,49 +1,44 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree
-Date: Sun, 4 Jan 2009 20:36:46 -0800
-Message-ID: <20090105043646.GB16341@kroah.com>
-References: <20081204104418.97f848b4.sfr@canb.auug.org.au> <20081204042154.GA18027@kroah.com> <20090105102800.c73bed11.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH -net-next 1/4] firmware: convert e100 driver to
+ request_firmware()
+Date: Sun, 04 Jan 2009 21:34:02 -0800 (PST)
+Message-ID: <20090104.213402.12464178.davem@davemloft.net>
+References: <9929d2390812301433pae01ea4g5bfdef6d4d4c7a9c@mail.gmail.com>
+	<20090104.160611.252248503.davem@davemloft.net>
+	<9929d2390901041820h4cf51e2h3612108c516b6869@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:40654 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752315AbZAEEh5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 4 Jan 2009 23:37:57 -0500
-Content-Disposition: inline
-In-Reply-To: <20090105102800.c73bed11.sfr@canb.auug.org.au>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:47270
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1750841AbZAEFd6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Jan 2009 00:33:58 -0500
+In-Reply-To: <9929d2390901041820h4cf51e2h3612108c516b6869@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, Kumar Gala <galak@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@ozlabs.org
+To: jeffrey.t.kirsher@intel.com
+Cc: jaswinder@infradead.org, linux.nics@intel.com, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-On Mon, Jan 05, 2009 at 10:28:00AM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> On Wed, 3 Dec 2008 20:21:54 -0800 Greg KH <greg@kroah.com> wrote:
+From: "Jeff Kirsher" <jeffrey.t.kirsher@intel.com>
+Date: Sun, 4 Jan 2009 18:20:24 -0800
+
+> On Sun, Jan 4, 2009 at 4:06 PM, David Miller <davem@davemloft.net> wrote:
+> > From: "Jeff Kirsher" <jeffrey.t.kirsher@intel.com>
+> > Date: Tue, 30 Dec 2008 14:33:36 -0800
 > >
-> > On Thu, Dec 04, 2008 at 10:44:18AM +1100, Stephen Rothwell wrote:
-> > > 
-> > > Today's linux-next merge of the driver-core tree got a conflict in
-> > > arch/powerpc/platforms/85xx/mpc85xx_mds.c between commit
-> > > 24a99596f7465274a8e65ddd29a7d9028969b9f9 ("powerpc/85xx: Fix compile
-> > > warnings in mpc85xx_mds.c") from the galak tree and commit
-> > > f58f23751464d095f9942304bc5f6072b79a2cc3 ("powerpc: struct device -
-> > > replace bus_id with dev_name(), dev_set_name()") from the driver-core
-> > > tree.
-> > > 
-> > > I fixed it up (see below) and can carry the fix as necessary.
-> > > 
-> > > Paul, maybe you should apply the patch from the driver-core tree as it
-> > > was cc'd to you and all its prerequisites are upstream.
-> > 
-> > Yes, Paul, please apply the patch, and let me know.  It will make things
-> > much easier in the end for everyone involved.
+> >> Please hold off on committing, until we have had ample time to do some
+> >> regression testing.  While this patch may have been in linux-next,
+> >> this is the first we have seen of it.
+> >>
+> >> I am concerned that IPMI traffic will be adversely affected by this patch.
+> >
+> > Status please?
+> > --
 > 
-> It looks like this has been applied to the powerpc tree and is now in
-> Linus' tree.
+> The only testing left to do is to make sure that ICH devices still
+> work and to make sure the IPMI traffic is not affected by this patch.
+> All other testing looks good.  I am sorry that I have been slow to
+> give status, the holiday's have put a strain on available resources.
 
-Thanks for letting me know, I'll drop it from my tree when I sync up
-with Linus's tree tomorrow.
-
-greg k-h
+Ok, thanks for the update.
