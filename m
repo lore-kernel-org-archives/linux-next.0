@@ -1,51 +1,46 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: Tree for January 5 (multimedia #2)
-Date: Tue, 6 Jan 2009 09:39:10 -0200
-Message-ID: <20090106093910.1bdd3611@pedra.chehab.org>
-References: <20090105173517.deeff918.sfr@canb.auug.org.au>
-	<20090105120657.f5edf279.randy.dunlap@oracle.com>
+From: Mike Travis <travis@sgi.com>
+Subject: Re: linux-next: manual merge of the rr tree
+Date: Tue, 06 Jan 2009 05:13:28 -0800
+Message-ID: <496358F8.30308@sgi.com>
+References: <20090105143239.08b1a060.sfr@canb.auug.org.au> <200901051727.11403.rusty@rustcorp.com.au> <20090105124745.GC29758@elte.hu> <200901061921.49131.rusty@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:58372 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750775AbZAFLjl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Jan 2009 06:39:41 -0500
-In-Reply-To: <20090105120657.f5edf279.randy.dunlap@oracle.com>
+Received: from relay3.sgi.com ([192.48.171.31]:33817 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751594AbZAFNNb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 Jan 2009 08:13:31 -0500
+In-Reply-To: <200901061921.49131.rusty@rustcorp.com.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Christoph Lameter <cl@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
 
-On Mon, 5 Jan 2009 12:06:57 -0800
-Randy Dunlap <randy.dunlap@oracle.com> wrote:
+Rusty Russell wrote:
+> On Monday 05 January 2009 23:17:45 Ingo Molnar wrote:
+>> That would allow Mike, Christoph and you to work this out cleanly from 
+>> scratch. It would also solve your merge conflict.
+>>
+>> Does that sound like a good solution?
+> 
+> Sure, but it won't make this window.  I guess since those patches don't
+> do anything but lay groundwork it's not critical, but annoying they've
+> lain fallow so long.
+> 
+> I'm happy to put them with the cpualloc patches, since they're related
+> and going to conflict, but I still want to see if Mike has the rest of them?
 
-> On Mon, 5 Jan 2009 17:35:17 +1100 Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > This tree will not build a powerpc ppc4xx_defconfig due to a kvm problem.
-> > 
-> > Changes since 20090102:
-> 
-> With CONFIG_INPUT=n and
-> CONFIG_DVB_DM1105=m
-> CONFIG_DVB_FIREDTV=m:
-> 
-> ERROR: "input_event" [drivers/media/dvb/firesat/firedtv.ko] undefined!
-> ERROR: "input_register_device" [drivers/media/dvb/firesat/firedtv.ko] undefined!
-> ERROR: "input_free_device" [drivers/media/dvb/firesat/firedtv.ko] undefined!
-> ERROR: "input_unregister_device" [drivers/media/dvb/firesat/firedtv.ko] undefined!
-> ERROR: "input_allocate_device" [drivers/media/dvb/firesat/firedtv.ko] undefined!
-> ERROR: "input_event" [drivers/media/dvb/dm1105/dm1105.ko] undefined!
-> ERROR: "input_free_device" [drivers/media/dvb/dm1105/dm1105.ko] undefined!
-> ERROR: "input_register_device" [drivers/media/dvb/dm1105/dm1105.ko] undefined!
-> ERROR: "input_allocate_device" [drivers/media/dvb/dm1105/dm1105.ko] undefined!
-> ERROR: "input_unregister_device" [drivers/media/dvb/dm1105/dm1105.ko] undefined!
-> 
-Also fixed by the same patch for the previous report. It were just a matter to
-make DVB_DM1105 dependent of INPUT.
+I do.  And really, as soon as the cpus4096 is safely set for 2.6.29 I can
+devote much more time on it.
 
-Cheers,
-Mauro
+Thanks,
+Mike
+
+> 
+> Thanks,
+> Rusty.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-next" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
