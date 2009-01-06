@@ -1,48 +1,57 @@
-From: Ingo Molnar <mingo@elte.hu>
+From: Mike Travis <travis@sgi.com>
 Subject: Re: linux-next: manual merge of the rr tree
-Date: Tue, 6 Jan 2009 14:26:21 +0100
-Message-ID: <20090106132621.GB16807@elte.hu>
-References: <20090105143239.08b1a060.sfr@canb.auug.org.au> <200901051911.52923.rusty@rustcorp.com.au> <20090106144640.4f358eef.sfr@canb.auug.org.au>
+Date: Tue, 06 Jan 2009 06:21:20 -0800
+Message-ID: <496368E0.8000801@sgi.com>
+References: <20090105143239.08b1a060.sfr@canb.auug.org.au> <200901051727.11403.rusty@rustcorp.com.au> <20090105124745.GC29758@elte.hu> <200901061921.49131.rusty@rustcorp.com.au> <496358F8.30308@sgi.com> <20090106131908.GB15228@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:49223 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751769AbZAFN0f (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 6 Jan 2009 08:26:35 -0500
-Content-Disposition: inline
-In-Reply-To: <20090106144640.4f358eef.sfr@canb.auug.org.au>
+Received: from relay2.sgi.com ([192.48.179.30]:54034 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751904AbZAFOVY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 Jan 2009 09:21:24 -0500
+In-Reply-To: <20090106131908.GB15228@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>, Christoph Lameter <clameter@sgi.com>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Christoph Lameter <cl@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Jack Steiner <steiner@sgi.com>, Andrew Morton <akpm@linux-foundation.org>
 
-
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi Rusty,
+Ingo Molnar wrote:
+> * Mike Travis <travis@sgi.com> wrote:
 > 
-> On Mon, 5 Jan 2009 19:11:52 +1030 Rusty Russell <rusty@rustcorp.com.au> wrote:
-> >
-> > On Monday 05 January 2009 14:02:39 Stephen Rothwell wrote:
-> > > Similarly with init/main.c, include/linux/percpu.h,
-> > > include/asm-generic/percpu.h and arch/x86/include/asm/percpu.h (though
-> > > against different commits/trees, of course).
-> > 
-> > OK, here's the merge as I did it.  I've also attached a tarball of the files
-> > post-merge.
+>> Rusty Russell wrote:
+>>> On Monday 05 January 2009 23:17:45 Ingo Molnar wrote:
+>>>> That would allow Mike, Christoph and you to work this out cleanly from 
+>>>> scratch. It would also solve your merge conflict.
+>>>>
+>>>> Does that sound like a good solution?
+>>> Sure, but it won't make this window.  I guess since those patches 
+>>> don't do anything but lay groundwork it's not critical, but annoying 
+>>> they've lain fallow so long.
+>>>
+>>> I'm happy to put them with the cpualloc patches, since they're related 
+>>> and going to conflict, but I still want to see if Mike has the rest of 
+>>> them?
+>> I do.  And really, as soon as the cpus4096 is safely set for 2.6.29 I 
+>> can devote much more time on it.
 > 
-> Sorry to put you to all this work, but Ingo has rendered it unneeded by 
-> dropping the other patches.
+> I think the complete elimination of cpumask_t should be the primary 
+> priority - before jumping to any other aspect. If we dont get rid of it it 
+> will stick around forever, like the BKL. It was a nice migration helper 
+> but now it's time to wave goodbye? :)
+> 
+> 	Ingo
 
-Yeah, and dont be afraid to ask for it: i can either zap a full topic, or 
-people can pull from it in the Git space. Merging code in a friendly way 
-is generally far easier than letting complex conflicts happen and stacking 
-trees on each other in a conflicting way.
+I think that's possible for 2.6.30 especially with Rusty's "big hammer"
+patch that removes the definition of cpumask_t.  Of course, as has been
+the delay forever, is dealing with all the arch's.  The current method
+of some via tip, some via linux-next/rr has been somewhat excruciating.
+How about we push the big ones via -mm so we get more complaints early on?
 
-This is generally one of the big advantages of a Git based topical setup - 
-we were able to discard a portion of development history that turned out 
-to go nowhere in its current form - without any collateral damage. (And 
-the history was non-trivial - it went back almost a year.)
+Or some other suggestion?  Once the "big hammer" patch is in, there will
+be massive fallout, and I plan on being on an extended vacation when that
+happens... ;-)
 
-	Ingo
+Thanks,
+Mike
