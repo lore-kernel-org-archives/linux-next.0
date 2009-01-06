@@ -1,49 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mfd tree
-Date: Tue, 6 Jan 2009 16:14:09 +1100
-Message-ID: <20090106161409.da9932a2.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the iommu tree
+Date: Tue, 6 Jan 2009 16:57:30 +1100
+Message-ID: <20090106165730.6c8c80f3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__6_Jan_2009_16_57_30_+1100_LXv=DoEwlYFB+FN_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60339 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52312 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751199AbZAFFOQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 6 Jan 2009 00:14:16 -0500
+	id S1751013AbZAFF5p (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 Jan 2009 00:57:45 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@openedhand.com>
-Cc: linux-next@vger.kernel.org, David Brownell <dbrownell@users.sourceforge.net>, Greg KH <greg@kroah.com>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, Jesper Juhl <jj@chaosbits.net>, Becky Bruce <beckyb@kernel.crashing.org>, Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>
 
-Hi Samuel,
+--Signature=_Tue__6_Jan_2009_16_57_30_+1100_LXv=DoEwlYFB+FN_
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the mfd tree got a conflict in
-drivers/i2c/chips/Makefile between commit
-a234ae259954121886f7f589a9cf1915d6dfab88 ("USB: move isp1301_omap to
-drivers/usb/otg") from the usb tree and commits
-87c13493e6a59c0da55c2824f0205f9ef941b760 ("mfd: move
-drivers/i2c/chips/tps65010.c to drivers/mfd") and
-88e75cc347f66bc20e3c2b920431fc07253d69be ("mfd: move
-drivers/i2c/chips/menelaus.c to drivers/mfd") from the mfd tree.
+Hi Ingo,
 
-Again, just adjacent removals.  I fixed it up (see below) and can carry
-the fix as necessary.
--- 
+Today's linux-next merge of the iommu tree got a conflict in
+lib/swiotlb.c between commit 52942b6b16c6ebb25f4dd4df0208d840ba0cbc5c
+("swiotlb: Don't include linux/swiotlb.h twice in lib/swiotlb.c") from
+the tip-core tree and commit fb05a37929e0cd99016b4f5e5a5ef077fb10a947
+("swiotlb: add support for systems with highmem") from the iommu tree.
+
+Just trivial overlapping add/removal of header includes.  I fixed it up
+and can carry the fix as necessary.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/i2c/chips/Makefile
-index aa7552d,8b95f41..0000000
---- a/drivers/i2c/chips/Makefile
-+++ b/drivers/i2c/chips/Makefile
-@@@ -18,8 -18,7 +18,6 @@@ obj-$(CONFIG_SENSORS_PCA9539)	+= pca953
-  obj-$(CONFIG_SENSORS_PCF8574)	+= pcf8574.o
-  obj-$(CONFIG_PCF8575)		+= pcf8575.o
-  obj-$(CONFIG_SENSORS_PCF8591)	+= pcf8591.o
-- obj-$(CONFIG_TPS65010)		+= tps65010.o
-- obj-$(CONFIG_MENELAUS)		+= menelaus.o
- -obj-$(CONFIG_ISP1301_OMAP)	+= isp1301_omap.o
-  obj-$(CONFIG_SENSORS_TSL2550)	+= tsl2550.o
-  obj-$(CONFIG_MCU_MPC8349EMITX)	+= mcu_mpc8349emitx.o
-  
+--Signature=_Tue__6_Jan_2009_16_57_30_+1100_LXv=DoEwlYFB+FN_
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkli8soACgkQjjKRsyhoI8xVkACaA4Wb/Qr55f6jLs4LIU0YYjy0
+APQAoKs5L7U1zYB7BI7xPs8HCTO/AmDU
+=o49i
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__6_Jan_2009_16_57_30_+1100_LXv=DoEwlYFB+FN_--
