@@ -1,39 +1,69 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the mfd tree
-Date: Tue, 6 Jan 2009 09:55:10 -0800
-Message-ID: <20090106175510.GB17805@kroah.com>
-References: <20090106161409.da9932a2.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for January 6 (MTD)
+Date: Tue, 06 Jan 2009 13:16:18 -0800
+Message-ID: <4963CA22.2080200@oracle.com>
+References: <20090106182311.525e4b14.sfr@canb.auug.org.au> <496386DB.8090606@oracle.com> <alpine.LFD.2.00.0901061632590.4300@casper.infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:39001 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1750917AbZAFTLn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 6 Jan 2009 14:11:43 -0500
-Content-Disposition: inline
-In-Reply-To: <20090106161409.da9932a2.sfr@canb.auug.org.au>
+Received: from rcsinet12.oracle.com ([148.87.113.124]:47998 "EHLO
+	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752161AbZAFVQg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Jan 2009 16:16:36 -0500
+In-Reply-To: <alpine.LFD.2.00.0901061632590.4300@casper.infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Samuel Ortiz <sameo@openedhand.com>, linux-next@vger.kernel.org, David Brownell <dbrownell@users.sourceforge.net>
+To: Alexey Korolev <akorolev@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, Vasiliy Leonenko <vasiliy.leonenko@gmail.com>
 
-On Tue, Jan 06, 2009 at 04:14:09PM +1100, Stephen Rothwell wrote:
-> Hi Samuel,
+Alexey Korolev wrote:
+> Hi Randy,
 > 
-> Today's linux-next merge of the mfd tree got a conflict in
-> drivers/i2c/chips/Makefile between commit
-> a234ae259954121886f7f589a9cf1915d6dfab88 ("USB: move isp1301_omap to
-> drivers/usb/otg") from the usb tree and commits
-> 87c13493e6a59c0da55c2824f0205f9ef941b760 ("mfd: move
-> drivers/i2c/chips/tps65010.c to drivers/mfd") and
-> 88e75cc347f66bc20e3c2b920431fc07253d69be ("mfd: move
-> drivers/i2c/chips/menelaus.c to drivers/mfd") from the mfd tree.
+>> # CONFIG_MTD_LPDDR is not set
+>> CONFIG_MTD_QINFO_PROBE=y
+>>
+>> There appears to be too little control/coordination between those
+>> two kconfig symbols.  Surely one of them (MTD_QINFO_PROBE) should
+>> depend on the other (MTD_LPDDR).  And why even build 2 modules
+>> when MTD_QINFO_PROBE is enabled?  Why not combine the code into
+>> one module?
+> Thanks a lot for good finding. Here is a fix for the problem.
 > 
-> Again, just adjacent removals.  I fixed it up (see below) and can carry
-> the fix as necessary.
+> About combining: it is assumed to have one QINFO probing module for several
+> kinds of LPDDR command set drivers. If we combine two modules into
+> one it would make further extension rather hard. So it is better to have
+> two modules.
+> To fix a problem I just added dependency in Kconfig file.
+> This temporary fix which will work until we have just one cmdset module.
+> In near future we will make a fix which parse command set types
+>  and select proper driver according to device type.
+> 
+> Thanks,
+> Alexey
+> 
+> Signed-off-by: Alexey Korolev <akorolev@infradead.org>
 
-Like the other mfd issue, I've now fixed this up in my tree.
+Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-thanks,
+Thanks.
 
-greg k-h
+> ---
+> diff --git a/drivers/mtd/lpddr/Kconfig b/drivers/mtd/lpddr/Kconfig
+> index acd4ea9..5a401d8 100644
+> --- a/drivers/mtd/lpddr/Kconfig
+> +++ b/drivers/mtd/lpddr/Kconfig
+> @@ -12,6 +12,7 @@ config MTD_LPDDR
+>  	  DDR memories, intended for battery-operated systems.
+>  
+>  config MTD_QINFO_PROBE
+> +	depends on MTD_LPDDR
+>  	tristate "Detect flash chips by QINFO probe"
+>  	help
+>  	    Device Information for LPDDR chips is offered through the Overlay
+> 
+> 
+
+
+-- 
+~Randy
