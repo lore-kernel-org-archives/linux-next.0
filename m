@@ -1,46 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree
-Date: Tue, 6 Jan 2009 14:11:41 +1100
-Message-ID: <20090106141141.d102cc2f.sfr@canb.auug.org.au>
+Subject: linux-next: rr tree build failure
+Date: Tue, 6 Jan 2009 14:41:25 +1100
+Message-ID: <20090106144125.69d084b7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__6_Jan_2009_14_41_25_+1100_cl8PPOVhy2NWYY+H"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55484 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40118 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750980AbZAFDLx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 5 Jan 2009 22:11:53 -0500
+	id S1750698AbZAFDlh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 5 Jan 2009 22:41:37 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>, Pekka Enberg <penberg@cs.helsinki.fi>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org
+
+--Signature=_Tue__6_Jan_2009_14_41_25_+1100_cl8PPOVhy2NWYY+H
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Rusty,
 
-Today's linux-next merge of the rr tree got a conflict in init/main.c
-between commit b9ce08c01020eb28bfbfa6faf1c740281c5f418e ("kmemtrace: Core
-implementation") from the ftrace tree and commit
-4289941b45ac95092f80c23d08ee88ccbd7635a3
-("cpualloc:expose-module-percpu-allocator") from the rr tree.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Juts trivial overlapping additions.  I fixed it up (see below) and can
-carry the fix as necessary.  I wasn't actually sure if the order
-matters ...
--- 
+kernel/sched.c:7206: error: 'sched_group_cpus' redeclared as different kind=
+ of symbol
+include/linux/sched.h:822: error: previous definition of 'sched_group_cpus'=
+ was here
+
+Caused by commit efec6469ba966f25081fdf85c3127a171c87435a
+("cpualloc:remove-per_cpu__-prefix").
+
+I have dropped the rr tree for today.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc init/main.c
-index 240e1ef,8a2d82c..0000000
---- a/init/main.c
-+++ b/init/main.c
-@@@ -650,7 -650,7 +658,8 @@@ asmlinkage void __init start_kernel(voi
-  	enable_debug_pagealloc();
-  	cpu_hotplug_init();
-  	kmem_cache_init();
-+ 	percpu_alloc_init();
- +	kmemtrace_init();
-  	debug_objects_mem_init();
-  	idr_init_cache();
-  	setup_per_cpu_pageset();
+--Signature=_Tue__6_Jan_2009_14_41_25_+1100_cl8PPOVhy2NWYY+H
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkli0uUACgkQjjKRsyhoI8x6tQCeKzvvmovH9XfExF1Fdsm3xQth
+ZQAAmwfnkrBbmlm820nPoSrsCpaLqUfZ
+=jx9f
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__6_Jan_2009_14_41_25_+1100_cl8PPOVhy2NWYY+H--
