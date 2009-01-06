@@ -1,33 +1,46 @@
-From: Alasdair G Kergon <agk@redhat.com>
-Subject: Re: strncat() misuse (was: Re: dm_attr_{name,uuid}_show buffer overflow? (was: Re: linux-next: Tree for January 5))
-Date: Tue, 6 Jan 2009 02:16:58 +0000
-Message-ID: <20090106021658.GQ5098@agk.fab.redhat.com>
-References: <20090105173517.deeff918.sfr@canb.auug.org.au> <Pine.LNX.4.64.0901052225400.5451@anakin> <Pine.LNX.4.64.0901052259420.5451@anakin> <20090106012759.GA3512@agk.fab.redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rr tree
+Date: Tue, 6 Jan 2009 14:11:41 +1100
+Message-ID: <20090106141141.d102cc2f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:50810 "EHLO mx2.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55484 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751869AbZAFCRr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 5 Jan 2009 21:17:47 -0500
-Content-Disposition: inline
-In-Reply-To: <20090106012759.GA3512@agk.fab.redhat.com>
+	id S1750980AbZAFDLx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 5 Jan 2009 22:11:53 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Milan Broz <mbroz@redhat.com>, Jaya Kumar <jayakumar.video@gmail.com>, Laurent Pinchart <laurent.pinchart@skynet.be>, Mauro Carvalho Chehab <mchehab@infradead.org>, Gene Sally <Gene.Sally@timesys.com>, Sam Ravnborg <sam@ravnborg.org>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>, Pekka Enberg <penberg@cs.helsinki.fi>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
 
-On Tue, Jan 06, 2009 at 01:27:59AM +0000, Alasdair G Kergon wrote:
-> On Mon, Jan 05, 2009 at 11:18:38PM +0100, Geert Uytterhoeven wrote:
-> > On Mon, 5 Jan 2009, Geert Uytterhoeven wrote:
-> > > On Mon, 5 Jan 2009, Stephen Rothwell wrote:
-> > > |         strncat(buf, "\n", DM_NAME_LEN);
-> > > |         return strnlen(buf, DM_NAME_LEN);
- 
-I've edited the patch to use strcat and strlen.  
+Hi Rusty,
 
-  http://git.kernel.org/?p=linux/kernel/git/agk/linux-2.6-dm.git;a=commit;h=911950f88bfd8a6747a1c6da5c5410641845bc64  
+Today's linux-next merge of the rr tree got a conflict in init/main.c
+between commit b9ce08c01020eb28bfbfa6faf1c740281c5f418e ("kmemtrace: Core
+implementation") from the ftrace tree and commit
+4289941b45ac95092f80c23d08ee88ccbd7635a3
+("cpualloc:expose-module-percpu-allocator") from the rr tree.
 
-Alasdair
+Juts trivial overlapping additions.  I fixed it up (see below) and can
+carry the fix as necessary.  I wasn't actually sure if the order
+matters ...
 -- 
-agk@redhat.com
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+diff --cc init/main.c
+index 240e1ef,8a2d82c..0000000
+--- a/init/main.c
++++ b/init/main.c
+@@@ -650,7 -650,7 +658,8 @@@ asmlinkage void __init start_kernel(voi
+  	enable_debug_pagealloc();
+  	cpu_hotplug_init();
+  	kmem_cache_init();
++ 	percpu_alloc_init();
+ +	kmemtrace_init();
+  	debug_objects_mem_init();
+  	idr_init_cache();
+  	setup_per_cpu_pageset();
