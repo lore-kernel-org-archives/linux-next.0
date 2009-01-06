@@ -1,56 +1,39 @@
-From: Alexey Korolev <akorolev@infradead.org>
-Subject: Re: linux-next: Tree for January 6 (MTD)
-Date: Tue, 6 Jan 2009 17:36:09 +0000 (GMT)
-Message-ID: <alpine.LFD.2.00.0901061632590.4300@casper.infradead.org>
-References: <20090106182311.525e4b14.sfr@canb.auug.org.au> <496386DB.8090606@oracle.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the mfd tree
+Date: Tue, 6 Jan 2009 09:54:44 -0800
+Message-ID: <20090106175444.GA17805@kroah.com>
+References: <20090106161107.a8448d3e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:54879 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751915AbZAFRgV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Jan 2009 12:36:21 -0500
-In-Reply-To: <496386DB.8090606@oracle.com>
+Received: from kroah.org ([198.145.64.141]:38993 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1750907AbZAFTLm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 Jan 2009 14:11:42 -0500
+Content-Disposition: inline
+In-Reply-To: <20090106161107.a8448d3e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, Vasiliy Leonenko <vasiliy.leonenko@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Samuel Ortiz <sameo@openedhand.com>, linux-next@vger.kernel.org, David Brownell <dbrownell@users.sourceforge.net>
 
-Hi Randy,
-
-> # CONFIG_MTD_LPDDR is not set
-> CONFIG_MTD_QINFO_PROBE=y
+On Tue, Jan 06, 2009 at 04:11:07PM +1100, Stephen Rothwell wrote:
+> Hi Samuel,
 > 
-> There appears to be too little control/coordination between those
-> two kconfig symbols.  Surely one of them (MTD_QINFO_PROBE) should
-> depend on the other (MTD_LPDDR).  And why even build 2 modules
-> when MTD_QINFO_PROBE is enabled?  Why not combine the code into
-> one module?
-Thanks a lot for good finding. Here is a fix for the problem.
+> Today's linux-next merge of the mfd tree got a conflict in
+> drivers/i2c/chips/Kconfig between commit
+> a234ae259954121886f7f589a9cf1915d6dfab88 ("USB: move isp1301_omap to
+> drivers/usb/otg") from the usb tree and commit
+> 87c13493e6a59c0da55c2824f0205f9ef941b760 ("mfd: move
+> drivers/i2c/chips/tps65010.c to drivers/mfd") from the mfd tree.
+> 
+> Just context changes (due to adjacent deletions).  I fixed it up (see
+> below) and can carry the fix as necessary.
 
-About combining: it is assumed to have one QINFO probing module for several
-kinds of LPDDR command set drivers. If we combine two modules into
-one it would make further extension rather hard. So it is better to have
-two modules.
-To fix a problem I just added dependency in Kconfig file.
-This temporary fix which will work until we have just one cmdset module.
-In near future we will make a fix which parse command set types
- and select proper driver according to device type.
+Thanks, as the mfd tree looks like it is merged with Linus now, I've
+taken this fix into my tree when I resynced up with Linus's tree an hour
+ago.
 
-Thanks,
-Alexey
+thanks,
 
-Signed-off-by: Alexey Korolev <akorolev@infradead.org>
----
-diff --git a/drivers/mtd/lpddr/Kconfig b/drivers/mtd/lpddr/Kconfig
-index acd4ea9..5a401d8 100644
---- a/drivers/mtd/lpddr/Kconfig
-+++ b/drivers/mtd/lpddr/Kconfig
-@@ -12,6 +12,7 @@ config MTD_LPDDR
- 	  DDR memories, intended for battery-operated systems.
- 
- config MTD_QINFO_PROBE
-+	depends on MTD_LPDDR
- 	tristate "Detect flash chips by QINFO probe"
- 	help
- 	    Device Information for LPDDR chips is offered through the Overlay
+greg k-h
