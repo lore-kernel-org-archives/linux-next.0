@@ -1,37 +1,61 @@
-From: Laurent Pinchart <laurent.pinchart@skynet.be>
-Subject: Re: strncat() misuse (was: Re: dm_attr_{name,uuid}_show buffer overflow? (was: Re: linux-next: Tree for January 5))
-Date: Wed, 7 Jan 2009 15:39:35 +0100
-Message-ID: <200901071539.35810.laurent.pinchart@skynet.be>
-References: <20090105173517.deeff918.sfr@canb.auug.org.au> <Pine.LNX.4.64.0901052225400.5451@anakin> <Pine.LNX.4.64.0901052259420.5451@anakin>
+From: Christoph Lameter <cl@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the rr tree
+Date: Wed, 7 Jan 2009 10:11:12 -0600 (CST)
+Message-ID: <Pine.LNX.4.64.0901070858260.8329@quilx.com>
+References: <20090105143239.08b1a060.sfr@canb.auug.org.au>
+ <200901061134.49369.rusty@rustcorp.com.au> <Pine.LNX.4.64.0901060845001.11819@quilx.com>
+ <200901071317.29141.rusty@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailrelay005.isp.belgacom.be ([195.238.6.171]:11072 "EHLO
-	mailrelay005.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751893AbZAGOji (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Jan 2009 09:39:38 -0500
-In-Reply-To: <Pine.LNX.4.64.0901052259420.5451@anakin>
-Content-Disposition: inline
+Received: from nlpi053.sbcis.sbc.com ([207.115.36.82]:57580 "EHLO
+	nlpi053.prodigy.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751524AbZAGQMk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Jan 2009 11:12:40 -0500
+In-Reply-To: <200901071317.29141.rusty@rustcorp.com.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Milan Broz <mbroz@redhat.com>, Alasdair G Kergon <agk@redhat.com>, Jaya Kumar <jayakumar.video@gmail.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Gene Sally <Gene.Sally@timesys.com>, Sam Ravnborg <sam@ravnborg.org>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>, Ingo Molnar <mingo@elte.hu>, Richard Henderson <rth@twiddle.net>, andi@firstfloor.org
 
-Hi Geert,
+On Wed, 7 Jan 2009, Rusty Russell wrote:
 
-On Monday 05 January 2009, Geert Uytterhoeven wrote:
+> > +   famous:
+> > +	strcpy(s, "xxx"+X) => memcpy(s, "xxx"+X, 4-X) */
+> > +#define reloc_hide(var, off)						\
+> > +  ({ __typeof__(&(var)) __ptr;					\
+> > +    __asm__ ("" : "=g"(__ptr) : "0"((void *)&(var) + (off)));	\
+> > +    *__ptr; })
+> >
+> > I dont get the point here.
 >
-> A quick `git grep strncat' shows a few more misusers of strncat() that may
+> This one example of gcc making assumptions about pointer arithmetic.  It's
+> perfectly reasonable.  It's also unhelpful cases like for per-cpu offsets.
+
+What assumption does GCC make that would cause problems?
+
+> Thus we use this macro to prevent GCC from making such assumptions.
+
+Never seen any ill effect from just using a pointer recast and add.
+
+> We can't audit current and future gcc versions to see what other
+> optimizations might break our code on every arch.  I just documented it,
+> and followed Richard's advice.
 >
-> cause buffer overflows and should be converted to strlcat():
-> | drivers/media/video/uvc/uvc_driver.c:
-> | 	strncat(format->name, buffer[8] & (1 << 7) ? " 60Hz" : " 50Hz",
+> Am I missing a downside?
 
-Thanks for the report. As both the source length is fixed and the destination 
-buffer length known, I'll just replace strncat with strcat.
+GCC cannot optimize the pointer arithmetic with the strange asm code. It
+seems that no one really knows what the exact purpose of RELOC_HIDE is.
 
-Best regards,
+One issue may be that issue of pointer into an object not being valid if
+they are made to point outside of the object?
 
-Laurent Pinchart
+> > Could we clearly document what the point of RELOC_HIDE is?
+>
+> Sorry, I'm not sure I can improve on the current comment:
+>
+> /* This macro obfuscates arithmetic on a variable address so that gcc
+>    shouldn't recognize the original var, and make assumptions about it */
+
+What assumptions? Obviously you still want the linker relocation to
+happen.
