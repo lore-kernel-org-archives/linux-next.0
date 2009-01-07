@@ -1,68 +1,82 @@
-From: Inaky Perez-Gonzalez <inaky@linux.intel.com>
-Subject: [PATCH 2/4] wimax: fix kconfig interactions with rfkill and input
-	layers
-Date: Wed,  7 Jan 2009 11:22:20 -0800
-Message-ID: <f0f7dc5763046cc336ca087a2525c8b52811ddb4.1231355768.git.inaky@linux.intel.com>
-References: <cover.1231355768.git.inaky@linux.intel.com>
-Return-path: <wimax-bounces@linuxwimax.org>
-In-Reply-To: <cover.1231355768.git.inaky@linux.intel.com>
-List-Unsubscribe: <http://www.linuxwimax.org/mailman/listinfo/wimax>,
-	<mailto:wimax-request@linuxwimax.org?subject=unsubscribe>
-List-Archive: <http://lists.moblin.org/pipermail/wimax>
-List-Post: <mailto:wimax@linuxwimax.org>
-List-Help: <mailto:wimax-request@linuxwimax.org?subject=help>
-List-Subscribe: <http://www.linuxwimax.org/mailman/listinfo/wimax>,
-	<mailto:wimax-request@linuxwimax.org?subject=subscribe>
-Sender: wimax-bounces@linuxwimax.org
-Errors-To: wimax-bounces@linuxwimax.org
-To: netdev@vger.kernel.org
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, wimax@linuxwimax.org, greg@kroah.com, LKML <linux-kernel@vger.kernel.org>, linux-wimax@intel.com, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+From: Nico -telmich- Schottelius <nico-linux-20090106@schottelius.org>
+Subject: Suspend issues on all latest kernels!
+Date: Wed, 7 Jan 2009 20:35:59 +0100
+Message-ID: <20090107193559.GA4306@denkbrett.schottelius.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx3.schottelius.org ([77.109.138.221]:44176 "EHLO
+	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755544AbZAGTg3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Jan 2009 14:36:29 -0500
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+Cc: Nico -telmich- Schottelius <nico-linux-20090106@schottelius.org>
 
-WiMAX can work without RFKILL, but it was missing a check to make sure
-RFKILL is not being made a module with wimax compiled into the
-kernel. This caused failed builds in s390, where CONFIG_INPUT is
-always off.
 
-When RFKILL is enabled, the code uses the input layer to report
-hardware switch changes; thus, if RFKILL is enabled, INPUT has to be
-too. It also needs to display some message when INPUT is disabled that
-explains why WiMAX is not selectable.
+--vkogqOf2sHV7VnPd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-(issues found by Randy Dunlap in the linux-next tree).
+Hello!
 
-Signed-off-by: Inaky Perez-Gonzalez <inaky@linux.intel.com>
----
- net/wimax/Kconfig |   14 ++++++++++++++
- 1 files changed, 14 insertions(+), 0 deletions(-)
+Suspend fails on Lenovo X200 with
 
-diff --git a/net/wimax/Kconfig b/net/wimax/Kconfig
-index 0bdbb69..18495cd 100644
---- a/net/wimax/Kconfig
-+++ b/net/wimax/Kconfig
-@@ -1,9 +1,23 @@
- #
- # WiMAX LAN device configuration
- #
-+# Note the ugly 'depends on' on WIMAX: that disallows RFKILL to be a
-+# module if WIMAX is to be linked in. The WiMAX code is done in such a
-+# way that it doesn't require and explicit dependency on RFKILL in
-+# case an embedded system wants to rip it out.
-+#
-+# As well, enablement of the RFKILL code means we need the INPUT layer
-+# support to inject events coming from hw rfkill switches. That
-+# dependency could be killed if input.h provided appropiate means to
-+# work when input is disabled.
-+
-+comment "WiMAX Wireless Broadband support requires CONFIG_INPUT enabled"
-+	depends on INPUT = n && RFKILL != n
- 
- menuconfig WIMAX
- 	tristate "WiMAX Wireless Broadband support"
-+	depends on (y && RFKILL != m) || m
-+	depends on (INPUT && RFKILL != n) || RFKILL = n
- 	help
- 
- 	  Select to configure support for devices that provide
--- 
-1.5.6.5
+  - 2.6.28-next-20090107-ikn
+  - 2.6.28-ikn-06859-gede6f5a
+
+When doing echo mem > /sys/power/state, the
+"Suspending consoles..." message appears, the "moon" is blinking,
+but the system stays in this state (waited 10 minutes) forever.
+
+At least -next is broken for a longer time (see previous posts on
+linux-next).
+
+Now the -wl tree also gained a suspend problem:
+
+With
+
+  - 2.6.28-rc9-wl-ikn-24949-ge98df74
+
+I can suspend (!) and even wake up, but the display is black
+(xorg and console) with some strange drawn columns.
+
+Tha last known working version is
+
+  - 2.6.28-rc9-wl-denkbrett-24896-gf4f5c96
+
+Can somebody fix that so upgrading and testing
+to a newer kernel is possible again?
+
+Sincerly,
+
+Nico
+
+P.S.: -ikn or -denkbrett is just the hostname; kernels are not patched,
+      directly fetched via git.
+
+
+--=20
+Think about Free and Open Source Software (FOSS).
+http://nico.schottelius.org/documentations/foss/the-term-foss/
+
+PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
+
+--vkogqOf2sHV7VnPd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkllBB8ACgkQuL75KpiFGIyKZgCg68V0byVow9+Du0UQRpgRvEh+
+pn8An1PJ7gIZvcD5htDLK8THVQ0f4owL
+=uoFj
+-----END PGP SIGNATURE-----
+
+--vkogqOf2sHV7VnPd--
