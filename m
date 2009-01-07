@@ -1,39 +1,30 @@
-From: Inaky Perez-Gonzalez <inaky@linux.intel.com>
-Subject: Re: linux-next: Tree for January 7 (wimax: more)
-Date: Wed, 7 Jan 2009 10:51:22 -0800
-Message-ID: <200901071051.23010.inaky@linux.intel.com>
-References: <20090107170646.8d44292b.sfr@canb.auug.org.au> <4964EDE6.5090902@oracle.com>
+From: Christoph Lameter <cl@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the rr tree
+Date: Wed, 7 Jan 2009 13:01:06 -0600 (CST)
+Message-ID: <Pine.LNX.4.64.0901071300430.8329@quilx.com>
+References: <20090105143239.08b1a060.sfr@canb.auug.org.au>
+ <200901061134.49369.rusty@rustcorp.com.au> <Pine.LNX.4.64.0901060845001.11819@quilx.com>
+ <200901071317.29141.rusty@rustcorp.com.au> <Pine.LNX.4.64.0901070858260.8329@quilx.com>
+ <20090107172051.GK496@one.firstfloor.org>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.21]:50776 "EHLO
-	orsmga101.jf.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751865AbZAGSvk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Jan 2009 13:51:40 -0500
-In-Reply-To: <4964EDE6.5090902@oracle.com>
-Content-Disposition: inline
+Received: from nlpi053.sbcis.sbc.com ([207.115.36.82]:36268 "EHLO
+	nlpi053.prodigy.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753090AbZAGTBz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Jan 2009 14:01:55 -0500
+In-Reply-To: <20090107172051.GK496@one.firstfloor.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: wimax@linuxwimax.org
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-wimax@intel.com
+To: Andi Kleen <andi@firstfloor.org>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>, Ingo Molnar <mingo@elte.hu>, Richard Henderson <rth@twiddle.net>
 
-On Wednesday 07 January 2009, Randy Dunlap wrote:
-> Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > The powerpc ppc44x_defconfig builds again.
-> >
-> > Changes since 20090106:
->
-> drivers/net/wimax/i2400m/usb.c:403: error: 'struct usb_device' has no
-> member named 'autosuspend_delay' drivers/net/wimax/i2400m/usb.c:404: error:
-> 'struct usb_device' has no member named 'autosuspend_disabled'
-> drivers/net/wimax/i2400m/usb.c:506: error: 'struct usb_device' has no
-> member named 'auto_pm'
+On Wed, 7 Jan 2009, Andi Kleen wrote:
 
-Fix on the way -- need #ifdef CONFIG_PMs in a few parts.
+> The C standard says that arithmetic on pointers in defined objects outside
+> the boundaries of these objects (except for the special case of one beyond
+> the end for arrays) is undefined. The gcc optimizers take advantage
+> of this by assuming that such arithmetic doesn't wrap (and might have other
+> assumptions)
 
--- 
-Inaky
+Ok then we need to say so in a comment around RELOC_HIDE.
