@@ -1,47 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: ftrace tree build failure
-Date: Wed, 7 Jan 2009 11:53:17 +1100
-Message-ID: <20090107115317.77085a13.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: Tree for January 6 (staging/android #2)
+Date: Tue, 6 Jan 2009 16:53:24 -0800
+Message-ID: <20090107005324.GA3606@kroah.com>
+References: <20090106182311.525e4b14.sfr@canb.auug.org.au> <20090106163931.5c275833.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__7_Jan_2009_11_53_17_+1100_1k/7zZSz0TC9Byc7"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44640 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756022AbZAGAxa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 6 Jan 2009 19:53:30 -0500
+Received: from kroah.org ([198.145.64.141]:47519 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1757137AbZAGAyZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 Jan 2009 19:54:25 -0500
+Content-Disposition: inline
+In-Reply-To: <20090106163931.5c275833.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Wed__7_Jan_2009_11_53_17_+1100_1k/7zZSz0TC9Byc7
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jan 06, 2009 at 04:39:31PM -0800, Randy Dunlap wrote:
+> On Tue, 6 Jan 2009 18:23:11 +1100 Stephen Rothwell wrote:
+> 
+> > Hi all,
+> > 
+> > This tree will not build a powerpc ppc4xx_defconfig due to a kvm problem.
+> > 
+> > Changes since 20090105:
+> > 
+> > New tree:
+> > 	squashfs
+> > 
+> > Undropped tree:
+> > 	usb
+> > 	staging
+> 
+> 
+> drivers/staging/android/timed_gpio.c:21:27: error: asm/arch/gpio.h: No such file or directory
 
-Hi all,
+Crap, this is an ARM specific thing :(
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+I'll fix this up after dinner...
 
-init/main.c:653: undefined reference to `kmemtrace_init'
+thanks,
 
-I have cherry-picked the fix from the tip/master tree.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__7_Jan_2009_11_53_17_+1100_1k/7zZSz0TC9Byc7
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEUEARECAAYFAklj/P0ACgkQjjKRsyhoI8yK0QCXUj3v/96ZGVQMrZsLozH5CDC3
-CgCfTVbuMMAZD8f+ccyNHwXtMrZk6fo=
-=xZs/
------END PGP SIGNATURE-----
-
---Signature=_Wed__7_Jan_2009_11_53_17_+1100_1k/7zZSz0TC9Byc7--
+greg k-h
