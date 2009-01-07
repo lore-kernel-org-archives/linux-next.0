@@ -1,82 +1,36 @@
-From: Nico -telmich- Schottelius <nico-linux-20090106@schottelius.org>
-Subject: Suspend issues on all latest kernels!
-Date: Wed, 7 Jan 2009 20:35:59 +0100
-Message-ID: <20090107193559.GA4306@denkbrett.schottelius.org>
+From: Jiri Slaby <jirislaby@gmail.com>
+Subject: Re: Suspend issues on all latest kernels!
+Date: Wed, 07 Jan 2009 21:37:25 +0100
+Message-ID: <49651285.1020302@gmail.com>
+References: <20090107193559.GA4306@denkbrett.schottelius.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
+Content-Type: text/plain; charset=ISO-8859-2
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.schottelius.org ([77.109.138.221]:44176 "EHLO
-	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755544AbZAGTg3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Jan 2009 14:36:29 -0500
-Content-Disposition: inline
+Received: from mail-ew0-f17.google.com ([209.85.219.17]:34162 "EHLO
+	mail-ew0-f17.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757558AbZAGUha (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Jan 2009 15:37:30 -0500
+In-Reply-To: <20090107193559.GA4306@denkbrett.schottelius.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
-Cc: Nico -telmich- Schottelius <nico-linux-20090106@schottelius.org>
+To: Nico -telmich- Schottelius <nico-linux-20090106@schottelius.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
+On 01/07/2009 08:35 PM, Nico -telmich- Schottelius wrote:
+> Hello!
+> 
+> Suspend fails on Lenovo X200 with
+> 
+>   - 2.6.28-next-20090107-ikn
+>   - 2.6.28-ikn-06859-gede6f5a
+> 
+> When doing echo mem > /sys/power/state, the
+> "Suspending consoles..." message appears, the "moon" is blinking,
+> but the system stays in this state (waited 10 minutes) forever.
 
---vkogqOf2sHV7VnPd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Could you test
+http://lkml.org/lkml/2009/1/7/67
+? If it doesn't help, add no_console_suspend on kernel command line and post the
+suspend hang output.
 
-Hello!
-
-Suspend fails on Lenovo X200 with
-
-  - 2.6.28-next-20090107-ikn
-  - 2.6.28-ikn-06859-gede6f5a
-
-When doing echo mem > /sys/power/state, the
-"Suspending consoles..." message appears, the "moon" is blinking,
-but the system stays in this state (waited 10 minutes) forever.
-
-At least -next is broken for a longer time (see previous posts on
-linux-next).
-
-Now the -wl tree also gained a suspend problem:
-
-With
-
-  - 2.6.28-rc9-wl-ikn-24949-ge98df74
-
-I can suspend (!) and even wake up, but the display is black
-(xorg and console) with some strange drawn columns.
-
-Tha last known working version is
-
-  - 2.6.28-rc9-wl-denkbrett-24896-gf4f5c96
-
-Can somebody fix that so upgrading and testing
-to a newer kernel is possible again?
-
-Sincerly,
-
-Nico
-
-P.S.: -ikn or -denkbrett is just the hostname; kernels are not patched,
-      directly fetched via git.
-
-
---=20
-Think about Free and Open Source Software (FOSS).
-http://nico.schottelius.org/documentations/foss/the-term-foss/
-
-PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
-
---vkogqOf2sHV7VnPd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkllBB8ACgkQuL75KpiFGIyKZgCg68V0byVow9+Du0UQRpgRvEh+
-pn8An1PJ7gIZvcD5htDLK8THVQ0f4owL
-=uoFj
------END PGP SIGNATURE-----
-
---vkogqOf2sHV7VnPd--
+Thanks.
