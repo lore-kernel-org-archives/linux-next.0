@@ -1,78 +1,350 @@
-From: "Jeff Kirsher" <jeffrey.t.kirsher@intel.com>
-Subject: Re: [PATCH -net-next 1/4] firmware: convert e100
-	driver to request_firmware()
-Date: Wed, 7 Jan 2009 10:23:44 -0800
-Message-ID: <9929d2390901071023s590f439fre15696786f098b81@mail.gmail.com>
-References: <9929d2390812301433pae01ea4g5bfdef6d4d4c7a9c@mail.gmail.com>
-	<20090104.160611.252248503.davem@davemloft.net>
-	<9929d2390901041820h4cf51e2h3612108c516b6869@mail.gmail.com>
-	<20090104.213402.12464178.davem@davemloft.net>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for January 5 (multimedia #3)
+Date: Wed, 07 Jan 2009 10:34:11 -0800
+Message-ID: <4964F5A3.9020101@oracle.com>
+References: <20090105173517.deeff918.sfr@canb.auug.org.au>	<20090105120927.1f044f59.randy.dunlap@oracle.com> <20090106223612.180e32f5@pedra.chehab.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <e1000-devel-bounces@lists.sourceforge.net>
-In-Reply-To: <20090104.213402.12464178.davem@davemloft.net>
-Content-Disposition: inline
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/e1000-devel>,
-	<mailto:e1000-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=e1000-devel>
-List-Post: <mailto:e1000-devel@lists.sourceforge.net>
-List-Help: <mailto:e1000-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/e1000-devel>,
-	<mailto:e1000-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: e1000-devel-bounces@lists.sourceforge.net
-To: David Miller <davem@davemloft.net>
-Cc: linux.nics@intel.com, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, jaswinder@infradead.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <20090106223612.180e32f5@pedra.chehab.org>
+Sender: linux-media-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Sun, Jan 4, 2009 at 9:34 PM, David Miller <davem@davemloft.net> wrote:
-> From: "Jeff Kirsher" <jeffrey.t.kirsher@intel.com>
-> Date: Sun, 4 Jan 2009 18:20:24 -0800
->
->> On Sun, Jan 4, 2009 at 4:06 PM, David Miller <davem@davemloft.net> wrote:
->> > From: "Jeff Kirsher" <jeffrey.t.kirsher@intel.com>
->> > Date: Tue, 30 Dec 2008 14:33:36 -0800
->> >
->> >> Please hold off on committing, until we have had ample time to do some
->> >> regression testing.  While this patch may have been in linux-next,
->> >> this is the first we have seen of it.
->> >>
->> >> I am concerned that IPMI traffic will be adversely affected by this patch.
->> >
->> > Status please?
->> > --
+Mauro Carvalho Chehab wrote:
+> On Mon, 5 Jan 2009 12:09:27 -0800
+> Randy Dunlap <randy.dunlap@oracle.com> wrote:
+> 
+>> On Mon, 5 Jan 2009 17:35:17 +1100 Stephen Rothwell wrote:
 >>
->> The only testing left to do is to make sure that ICH devices still
->> work and to make sure the IPMI traffic is not affected by this patch.
->> All other testing looks good.  I am sorry that I have been slow to
->> give status, the holiday's have put a strain on available resources.
->
-> Ok, thanks for the update.
-> --
->
+>>> Hi all,
+>>>
+>>> This tree will not build a powerpc ppc4xx_defconfig due to a kvm problem.
+>>>
+>>> Changes since 20090102:
+>>
+>> drivers/built-in.o: In function `cx88_call_i2c_clients':
+>> (.text+0x20af17): undefined reference to `videobuf_dvb_get_frontend'
+>> drivers/built-in.o: In function `cx8802_probe':
+>> cx88-mpeg.c:(.devinit.text+0x268c4): undefined reference to `videobuf_dvb_alloc_frontend'
+>> cx88-mpeg.c:(.devinit.text+0x268ea): undefined reference to `videobuf_dvb_dealloc_frontends'
+> 
+> This one were trickier. Patch enclosed.
+> 
+> Cheers,
+> Mauro
 
-So here is the latest testing update...
+Hi Mauro,
 
-The only testing that we were not able to do was the IPMI testing,
-because of the lack of resources.  All other testing passed.
+After applying this patch, now I get these build errors:
 
-While all other testing passed, I am concerned about not being able to
-test whether or not this change affects the ability to pass IPMI
-traffic.  I am not sure if the "gain" of using request_firmware() out
-weighs the potential risk that IPMI traffic may be broken with this
-patch.  I guess I wondering what the gain is in using the
-request_firmware() function?
+drivers/built-in.o: In function `mpeg_release':
+cx88-blackbird.c:(.text+0x21096d): undefined reference to `cx8802_cancel_buffers'
+cx88-blackbird.c:(.text+0x2109a3): undefined reference to `cx8802_get_device'
+cx88-blackbird.c:(.text+0x2109bd): undefined reference to `cx8802_get_driver'
+drivers/built-in.o: In function `bb_buf_queue':
+cx88-blackbird.c:(.text+0x210a06): undefined reference to `cx8802_buf_queue'
+drivers/built-in.o: In function `bb_buf_prepare':
+cx88-blackbird.c:(.text+0x210a25): undefined reference to `cx8802_buf_prepare'
+drivers/built-in.o: In function `mpeg_open':
+cx88-blackbird.c:(.text+0x210a59): undefined reference to `cx8802_get_device'
+cx88-blackbird.c:(.text+0x210aa2): undefined reference to `cx8802_get_driver'
+drivers/built-in.o: In function `blackbird_init':
+cx88-blackbird.c:(.text+0x210d18): undefined reference to `cx8802_register_driver'
+drivers/built-in.o: In function `blackbird_fini':
+cx88-blackbird.c:(.text+0x210fbc): undefined reference to `cx8802_unregister_driver'
 
->From past experience with IPMI traffic and the e100, the loading of
-the microcode in the correct manner greatly affected whether IPMI
-traffic would pass or not.
+
+> ---
+> 
+> cx88: Fix some Kbuild troubles
+> 
+> As Randy Dunlap <randy.dunlap@oracle.com> reported, cx88 has some compilation issues:
+> 
+> drivers/built-in.o: In function `cx88_call_i2c_clients':
+> (.text+0x20af17): undefined reference to `videobuf_dvb_get_frontend'
+> drivers/built-in.o: In function `cx8802_probe':
+> cx88-mpeg.c:(.devinit.text+0x268c4): undefined reference to `videobuf_dvb_alloc_frontend'
+> cx88-mpeg.c:(.devinit.text+0x268ea): undefined reference to `videobuf_dvb_dealloc_frontends'
+> 
+> With those configs:
+> 
+> CONFIG_VIDEO_CX88=y
+> CONFIG_VIDEO_CX88_BLACKBIRD=y
+> CONFIG_VIDEO_CX88_DVB=m
+> CONFIG_DVB_CORE=m
+> 
+> After carefully examining the code, with the current code, several cx88 drivers
+> (cx8800, cx8802, cx88_dvb and cx88_blackbird) should be compiled as a module,
+> if one of them is marked as such. Just fixing Kconfig could create a very complex
+> set of rules. Also, this hides a problem with the current approach where the dvb
+> functionality weren't confined inside dvb module.
+> 
+> What happens is that:
+> 	- cx88-i2c (part of cx8800) has some special rules if DVB;
+> 	- cx88-mpeg (cx8802 module) has also part of DVB init code;
+> 	- cx88-dvb has the rest of the dvb code;
+> 	- cx88-blackbird can be used with cx88-mpeg, having cx88-dvb or not.
+> 
+> So, instead of doing some tricks at Kconfig and wait for a next breakage,
+> this patch moves the dvb code inside cx88-i2c and cx88-mpeg into cx88-dvb.
+> 
+> Another problem is that cx8802 were being compiled, even without cx88-dvb
+> and cx88-blackbird modules.
+> 
+> While on this code, let's fix also a reported problem:
+> http://www.linuxtv.org/pipermail/linux-dvb/2009-January/031225.html
+> 
+> A solution for the issue were proposed here:
+> http://www.mail-archive.com/linux-media@vger.kernel.org/msg00021.html
+> 
+> Thanks to Randy, Andy, Gregoire and Thomas for helping us to detect
+> and solve the issues.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+> 
+> diff --git a/drivers/media/video/cx88/Kconfig b/drivers/media/video/cx88/Kconfig
+> index b0f8375..69ad968 100644
+> --- a/drivers/media/video/cx88/Kconfig
+> +++ b/drivers/media/video/cx88/Kconfig
+> @@ -69,6 +69,12 @@ config VIDEO_CX88_DVB
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called cx88-dvb.
+>  
+> +config VIDEO_CX88_MPEG
+> +	tristate
+> +	depends on VIDEO_CX88_DVB
+> +	depends on VIDEO_CX88_BLACKBIRD
+> +	default y
+> +
+>  config VIDEO_CX88_VP3054
+>  	tristate "VP-3054 Secondary I2C Bus Support"
+>  	default m
+> diff --git a/drivers/media/video/cx88/Makefile b/drivers/media/video/cx88/Makefile
+> index 6ec30f2..b06b127 100644
+> --- a/drivers/media/video/cx88/Makefile
+> +++ b/drivers/media/video/cx88/Makefile
+> @@ -3,7 +3,8 @@ cx88xx-objs	:= cx88-cards.o cx88-core.o cx88-i2c.o cx88-tvaudio.o \
+>  cx8800-objs	:= cx88-video.o cx88-vbi.o
+>  cx8802-objs	:= cx88-mpeg.o
+>  
+> -obj-$(CONFIG_VIDEO_CX88) += cx88xx.o cx8800.o cx8802.o
+> +obj-$(CONFIG_VIDEO_CX88) += cx88xx.o cx8800.o
+> +obj-$(CONFIG_VIDEO_CX88_MPEG) += cx8802.o
+>  obj-$(CONFIG_VIDEO_CX88_ALSA) += cx88-alsa.o
+>  obj-$(CONFIG_VIDEO_CX88_BLACKBIRD) += cx88-blackbird.o
+>  obj-$(CONFIG_VIDEO_CX88_DVB) += cx88-dvb.o
+> diff --git a/drivers/media/video/cx88/cx88-dvb.c b/drivers/media/video/cx88/cx88-dvb.c
+> index da4dd49..613dfea 100644
+> --- a/drivers/media/video/cx88/cx88-dvb.c
+> +++ b/drivers/media/video/cx88/cx88-dvb.c
+> @@ -138,6 +138,28 @@ static int cx88_dvb_bus_ctrl(struct dvb_frontend* fe, int acquire)
+>  	return ret;
+>  }
+>  
+> +static void cx88_dvb_gate_ctrl(struct cx88_core  *core, int open)
+> +{
+> +	struct videobuf_dvb_frontends *f;
+> +	struct videobuf_dvb_frontend *fe;
+> +
+> +	if (!core->dvbdev)
+> +		return;
+> +
+> +	f = &core->dvbdev->frontends;
+> +
+> +	if (!f)
+> +		return;
+> +
+> +	if (f->gate <= 1) /* undefined or fe0 */
+> +		fe = videobuf_dvb_get_frontend(f, 1);
+> +	else
+> +		fe = videobuf_dvb_get_frontend(f, f->gate);
+> +
+> +	if (fe && fe->dvb.frontend && fe->dvb.frontend->ops.i2c_gate_ctrl)
+> +		fe->dvb.frontend->ops.i2c_gate_ctrl(fe->dvb.frontend, open);
+> +}
+> +
+>  /* ------------------------------------------------------------------ */
+>  
+>  static int dvico_fusionhdtv_demod_init(struct dvb_frontend* fe)
+> @@ -597,12 +619,30 @@ static int dvb_register(struct cx8802_dev *dev)
+>  	struct cx88_core *core = dev->core;
+>  	struct videobuf_dvb_frontend *fe0, *fe1 = NULL;
+>  	int mfe_shared = 0; /* bus not shared by default */
+> +	int i;
+>  
+>  	if (0 != core->i2c_rc) {
+>  		printk(KERN_ERR "%s/2: no i2c-bus available, cannot attach dvb drivers\n", core->name);
+>  		goto frontend_detach;
+>  	}
+>  
+> +	if (!core->board.num_frontends)
+> +		return -EINVAL;
+> +
+> +	mutex_init(&dev->frontends.lock);
+> +	INIT_LIST_HEAD(&dev->frontends.felist);
+> +
+> +	printk(KERN_INFO "%s() allocating %d frontend(s)\n", __func__,
+> +			 core->board.num_frontends);
+> +	for (i = 1; i <= core->board.num_frontends; i++) {
+> +		fe0 = videobuf_dvb_alloc_frontend(&dev->frontends, i);
+> +		if (!fe0) {
+> +			printk(KERN_ERR "%s() failed to alloc\n", __func__);
+> +			videobuf_dvb_dealloc_frontends(&dev->frontends);
+> +			goto frontend_detach;
+> +		}
+> +	}
+> +
+>  	/* Get the first frontend */
+>  	fe0 = videobuf_dvb_get_frontend(&dev->frontends, 1);
+>  	if (!fe0)
+> @@ -611,6 +651,9 @@ static int dvb_register(struct cx8802_dev *dev)
+>  	/* multi-frontend gate control is undefined or defaults to fe0 */
+>  	dev->frontends.gate = 0;
+>  
+> +	/* Sets the gate control callback to be used by i2c command calls */
+> +	core->gate_ctrl = cx88_dvb_gate_ctrl;
+> +
+>  	/* init frontend(s) */
+>  	switch (core->boardnr) {
+>  	case CX88_BOARD_HAUPPAUGE_DVB_T1:
+> @@ -1109,6 +1152,7 @@ static int dvb_register(struct cx8802_dev *dev)
+>  		&dev->pci->dev, adapter_nr, mfe_shared);
+>  
+>  frontend_detach:
+> +	core->gate_ctrl = NULL;
+>  	videobuf_dvb_dealloc_frontends(&dev->frontends);
+>  	return -EINVAL;
+>  }
+> @@ -1270,6 +1314,8 @@ static int cx8802_dvb_remove(struct cx8802_driver *drv)
+>  
+>  	vp3054_i2c_remove(dev);
+>  
+> +	core->gate_ctrl = NULL;
+> +
+>  	return 0;
+>  }
+>  
+> diff --git a/drivers/media/video/cx88/cx88-i2c.c b/drivers/media/video/cx88/cx88-i2c.c
+> index 1ab691d..c0ff230 100644
+> --- a/drivers/media/video/cx88/cx88-i2c.c
+> +++ b/drivers/media/video/cx88/cx88-i2c.c
+> @@ -116,30 +116,16 @@ static int detach_inform(struct i2c_client *client)
+>  
+>  void cx88_call_i2c_clients(struct cx88_core *core, unsigned int cmd, void *arg)
+>  {
+> -#if defined(CONFIG_VIDEO_CX88_DVB) || defined(CONFIG_VIDEO_CX88_DVB_MODULE)
+> -	struct videobuf_dvb_frontends *f = &core->dvbdev->frontends;
+> -	struct videobuf_dvb_frontend *fe = NULL;
+> -#endif
+>  	if (0 != core->i2c_rc)
+>  		return;
+>  
+> -#if defined(CONFIG_VIDEO_CX88_DVB) || defined(CONFIG_VIDEO_CX88_DVB_MODULE)
+> -	if (core->dvbdev && f) {
+> -		if(f->gate <= 1) /* undefined or fe0 */
+> -			fe = videobuf_dvb_get_frontend(f, 1);
+> -		else
+> -			fe = videobuf_dvb_get_frontend(f, f->gate);
+> +	if (core->gate_ctrl)
+> +		core->gate_ctrl(core, 1);
+>  
+> -		if (fe && fe->dvb.frontend && fe->dvb.frontend->ops.i2c_gate_ctrl)
+> -			fe->dvb.frontend->ops.i2c_gate_ctrl(fe->dvb.frontend, 1);
+> +	i2c_clients_command(&core->i2c_adap, cmd, arg);
+>  
+> -		i2c_clients_command(&core->i2c_adap, cmd, arg);
+> -
+> -		if (fe && fe->dvb.frontend && fe->dvb.frontend->ops.i2c_gate_ctrl)
+> -			fe->dvb.frontend->ops.i2c_gate_ctrl(fe->dvb.frontend, 0);
+> -	} else
+> -#endif
+> -		i2c_clients_command(&core->i2c_adap, cmd, arg);
+> +	if (core->gate_ctrl)
+> +		core->gate_ctrl(core, 0);
+>  }
+>  
+>  static const struct i2c_algo_bit_data cx8800_i2c_algo_template = {
+> diff --git a/drivers/media/video/cx88/cx88-mpeg.c b/drivers/media/video/cx88/cx88-mpeg.c
+> index 59164fc..b295b76 100644
+> --- a/drivers/media/video/cx88/cx88-mpeg.c
+> +++ b/drivers/media/video/cx88/cx88-mpeg.c
+> @@ -787,6 +787,9 @@ static int __devinit cx8802_probe(struct pci_dev *pci_dev,
+>  	dev->pci = pci_dev;
+>  	dev->core = core;
+>  
+> +	/* Maintain a reference so cx88-video can query the 8802 device. */
+> +	core->dvbdev = dev;
+> +
+>  	err = cx8802_init_common(dev);
+>  	if (err != 0)
+>  		goto fail_free;
+> @@ -794,32 +797,6 @@ static int __devinit cx8802_probe(struct pci_dev *pci_dev,
+>  	INIT_LIST_HEAD(&dev->drvlist);
+>  	list_add_tail(&dev->devlist,&cx8802_devlist);
+>  
+> -#if defined(CONFIG_VIDEO_CX88_DVB) || defined(CONFIG_VIDEO_CX88_DVB_MODULE)
+> -	mutex_init(&dev->frontends.lock);
+> -	INIT_LIST_HEAD(&dev->frontends.felist);
+> -
+> -	if (core->board.num_frontends) {
+> -		struct videobuf_dvb_frontend *fe;
+> -		int i;
+> -
+> -		printk(KERN_INFO "%s() allocating %d frontend(s)\n", __func__,
+> -			core->board.num_frontends);
+> -		for (i = 1; i <= core->board.num_frontends; i++) {
+> -			fe = videobuf_dvb_alloc_frontend(&dev->frontends, i);
+> -			if(fe == NULL) {
+> -				printk(KERN_ERR "%s() failed to alloc\n",
+> -					__func__);
+> -				videobuf_dvb_dealloc_frontends(&dev->frontends);
+> -				err = -ENOMEM;
+> -				goto fail_free;
+> -			}
+> -		}
+> -	}
+> -#endif
+> -
+> -	/* Maintain a reference so cx88-video can query the 8802 device. */
+> -	core->dvbdev = dev;
+> -
+>  	/* now autoload cx88-dvb or cx88-blackbird */
+>  	request_modules(dev);
+>  	return 0;
+> @@ -827,6 +804,7 @@ static int __devinit cx8802_probe(struct pci_dev *pci_dev,
+>   fail_free:
+>  	kfree(dev);
+>   fail_core:
+> +	core->dvbdev = NULL;
+>  	cx88_core_put(core,pci_dev);
+>  	return err;
+>  }
+> diff --git a/drivers/media/video/cx88/cx88.h b/drivers/media/video/cx88/cx88.h
+> index eb9ce30..60a8b31 100644
+> --- a/drivers/media/video/cx88/cx88.h
+> +++ b/drivers/media/video/cx88/cx88.h
+> @@ -302,6 +302,7 @@ struct cx88_dmaqueue {
+>  	struct btcx_riscmem    stopper;
+>  	u32                    count;
+>  };
+> +struct cx88_core;
+>  
+>  struct cx88_core {
+>  	struct list_head           devlist;
+> @@ -334,7 +335,8 @@ struct cx88_core {
+>  
+>  	/* config info -- dvb */
+>  #if defined(CONFIG_VIDEO_CX88_DVB) || defined(CONFIG_VIDEO_CX88_DVB_MODULE)
+> -	int 			   (*prev_set_voltage)(struct dvb_frontend* fe, fe_sec_voltage_t voltage);
+> +	int 			   (*prev_set_voltage)(struct dvb_frontend *fe, fe_sec_voltage_t voltage);
+> +	void			   (*gate_ctrl)(struct cx88_core  *core, int open);
+>  #endif
+>  
+>  	/* state info */
+
 
 -- 
-Cheers,
-Jeff
-
-------------------------------------------------------------------------------
-Check out the new SourceForge.net Marketplace.
-It is the best place to buy or sell services for
-just about anything Open Source.
-http://p.sf.net/sfu/Xq1LFB
+~Randy
