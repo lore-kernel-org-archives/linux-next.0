@@ -1,51 +1,59 @@
-From: Inaky Perez-Gonzalez <inaky@linux.intel.com>
-Subject: Re: linux-next: Tree for January 6 (wimax errs)
-Date: Wed, 7 Jan 2009 00:09:57 -0800
-Message-ID: <200901070009.57582.inaky@linux.intel.com>
-References: <20090106182311.525e4b14.sfr@canb.auug.org.au> <20090106132321.8a330942.randy.dunlap@oracle.com> <200901061350.02562.inaky.perez-gonzalez@intel.com>
+From: Oliver Hartkopp <oliver@hartkopp.net>
+Subject: Re: [PATCH -net-next 3/4] firmware: convert tg3 driver to	request_firmware()
+Date: Wed, 07 Jan 2009 10:31:23 +0100
+Message-ID: <4964766B.2080105@hartkopp.net>
+References: <1230626497.24796.26.camel@jaswinder.satnam> <49620AFE.6040409@hartkopp.net> <20090105.160112.119906029.davem@davemloft.net> <20090107031724.GA6118@porter.dyn.128.marineau.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.21]:20635 "EHLO
-	orsmga101.jf.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751121AbZAGIKp convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Jan 2009 03:10:45 -0500
-In-Reply-To: <200901061350.02562.inaky.perez-gonzalez@intel.com>
-Content-Disposition: inline
+Received: from mo-p00-ob.rzone.de ([81.169.146.161]:49490 "EHLO
+	mo-p00-ob.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750717AbZAGJb0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Jan 2009 04:31:26 -0500
+In-Reply-To: <20090107031724.GA6118@porter.dyn.128.marineau.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: wimax@linuxwimax.org
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-wimax@intel.com
+To: Michael Marineau <mike@marineau.org>
+Cc: David Miller <davem@davemloft.net>, jaswinder@infradead.org, jgarzik@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, mchan@broadcom.com
 
-On Tuesday 06 January 2009, I=C3=B1aky P=C3=A9rez-Gonz=C3=A1lez wrote:
-> On Tuesday 06 January 2009, Randy Dunlap wrote:
-> > On Tue, 6 Jan 2009 18:23:11 +1100 Stephen Rothwell wrote:
-> > > Hi all,
-> > >
-> > > This tree will not build a powerpc ppc4xx_defconfig due to a kvm
-> > > problem.
-> > >
-> > > Changes since 20090105:
-> >
-> > wimax build fails when CONFIG_INPUT=3Dn:
+Michael Marineau wrote:
+> On Mon, Jan 05, 2009 at 04:01:12PM -0800, David Miller wrote:
+>   
+>> From: Oliver Hartkopp <oliver@hartkopp.net>
+>> Date: Mon, 05 Jan 2009 14:28:30 +0100
+>>
+>>     
+>>> 2. I got this inconsistent lock state, i've not seen before:
+>>>       
+>> I know what causes it.  It's this change:
+>>
+>> commit 22604c866889c4b2e12b73cbf1683bda1b72a313
+>> Author: Michael Marineau <mike@marineau.org>
+>> Date:   Sun Jan 4 17:18:51 2009 -0800
+>>
+>>     net: Fix for initial link state in 2.6.28
+>>
+>> It causes us to now call the linkwatch even trigger code inside of
+>> software interrupt context, but that is illegal because that code path
+>> takes the dev_base_lock rwlock as a writer.
+>>
+>> I'm going to revert, and Michael will need to find a way to fix the
+>> initial link state issue without adding locking problems :-)
+>>     
 >
-> Ops -- my fault -- working on a fix.
->
-> > Also, this warning needs to be fixed:
-> >
-> > linux-next-20090106/net/wimax/id-table.c:133: warning: ISO C90 forb=
-ids
-> > mixed declarations and code
->
-> Will fix too.
+> Ok, here's another try. Rather than find a safer way to sync up the
+> operstate variable with the normal state flags I decided to just nuke
+> operstate entirely, it just duplicated what was already in the state
+> flags for the most part. 
 
-I just submitted a patchset to gregkh that fixes these issues and just=20
-realized I didn't CC you guys:
+Hi Michael,
 
-http://linuxwimax.org/pipermail/wimax/2009-January/000397.html
+i just compiled my current net-2.6 with your new patch and had no 
+problems booting my machine afterwards.
 
-My apologies for missing out,
+Holding the relevant information in one place looks like a good approach 
+to me even though i did not test the functionality in detail.
 
---=20
-Inaky
+Thanks,
+Oliver
