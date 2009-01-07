@@ -1,59 +1,34 @@
-From: Oliver Hartkopp <oliver@hartkopp.net>
-Subject: Re: [PATCH -net-next 3/4] firmware: convert tg3 driver to	request_firmware()
-Date: Wed, 07 Jan 2009 10:31:23 +0100
-Message-ID: <4964766B.2080105@hartkopp.net>
-References: <1230626497.24796.26.camel@jaswinder.satnam> <49620AFE.6040409@hartkopp.net> <20090105.160112.119906029.davem@davemloft.net> <20090107031724.GA6118@porter.dyn.128.marineau.org>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: ftrace tree build failure
+Date: Wed, 7 Jan 2009 10:55:05 +0100
+Message-ID: <20090107095505.GA23386@elte.hu>
+References: <20090107115317.77085a13.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mo-p00-ob.rzone.de ([81.169.146.161]:49490 "EHLO
-	mo-p00-ob.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750717AbZAGJb0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Jan 2009 04:31:26 -0500
-In-Reply-To: <20090107031724.GA6118@porter.dyn.128.marineau.org>
+Received: from mx2.mail.elte.hu ([157.181.151.9]:40498 "EHLO mx2.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751903AbZAGJz0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 7 Jan 2009 04:55:26 -0500
+Content-Disposition: inline
+In-Reply-To: <20090107115317.77085a13.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Marineau <mike@marineau.org>
-Cc: David Miller <davem@davemloft.net>, jaswinder@infradead.org, jgarzik@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, mchan@broadcom.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
 
-Michael Marineau wrote:
-> On Mon, Jan 05, 2009 at 04:01:12PM -0800, David Miller wrote:
->   
->> From: Oliver Hartkopp <oliver@hartkopp.net>
->> Date: Mon, 05 Jan 2009 14:28:30 +0100
->>
->>     
->>> 2. I got this inconsistent lock state, i've not seen before:
->>>       
->> I know what causes it.  It's this change:
->>
->> commit 22604c866889c4b2e12b73cbf1683bda1b72a313
->> Author: Michael Marineau <mike@marineau.org>
->> Date:   Sun Jan 4 17:18:51 2009 -0800
->>
->>     net: Fix for initial link state in 2.6.28
->>
->> It causes us to now call the linkwatch even trigger code inside of
->> software interrupt context, but that is illegal because that code path
->> takes the dev_base_lock rwlock as a writer.
->>
->> I'm going to revert, and Michael will need to find a way to fix the
->> initial link state issue without adding locking problems :-)
->>     
->
-> Ok, here's another try. Rather than find a safer way to sync up the
-> operstate variable with the normal state flags I decided to just nuke
-> operstate entirely, it just duplicated what was already in the state
-> flags for the most part. 
 
-Hi Michael,
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-i just compiled my current net-2.6 with your new patch and had no 
-problems booting my machine afterwards.
+> Hi all,
+> 
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> 
+> init/main.c:653: undefined reference to `kmemtrace_init'
+> 
+> I have cherry-picked the fix from the tip/master tree.
 
-Holding the relevant information in one place looks like a good approach 
-to me even though i did not test the functionality in detail.
+thanks! I've pushed out the latest tracing tree so it should be resolved 
+in your next iteration.
 
-Thanks,
-Oliver
+	Ingo
