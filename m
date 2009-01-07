@@ -1,410 +1,365 @@
-From: Michael Marineau <mike@marineau.org>
-Subject: Re: [PATCH -net-next 3/4] firmware: convert tg3 driver to
-	request_firmware()
-Date: Wed, 7 Jan 2009 18:06:25 -0500
-Message-ID: <20090107230624.GA6894@porter.dyn.128.marineau.org>
-References: <1230626497.24796.26.camel@jaswinder.satnam> <49620AFE.6040409@hartkopp.net> <20090105.160112.119906029.davem@davemloft.net> <20090107031724.GA6118@porter.dyn.128.marineau.org>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+Subject: Re: linux-next: Tree for January 5 (multimedia #3)
+Date: Wed, 7 Jan 2009 21:27:31 -0200
+Message-ID: <20090107212731.6bccd1a0@pedra.chehab.org>
+References: <20090105173517.deeff918.sfr@canb.auug.org.au>
+	<20090105120927.1f044f59.randy.dunlap@oracle.com>
+	<20090106223612.180e32f5@pedra.chehab.org>
+	<4964F5A3.9020101@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from yx-out-2324.google.com ([74.125.44.28]:63593 "EHLO
-	yx-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751848AbZAGXF7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Jan 2009 18:05:59 -0500
-Content-Disposition: inline
-In-Reply-To: <20090107031724.GA6118@porter.dyn.128.marineau.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: oliver@hartkopp.net, jaswinder@infradead.org, jgarzik@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, mchan@broadcom.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <4964F5A3.9020101@oracle.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Jan 06, 2009 at 10:17:24PM -0500, Michael Marineau wrote:
-> On Mon, Jan 05, 2009 at 04:01:12PM -0800, David Miller wrote:
-> > From: Oliver Hartkopp <oliver@hartkopp.net>
-> > Date: Mon, 05 Jan 2009 14:28:30 +0100
-> > 
-> > > 2. I got this inconsistent lock state, i've not seen before:
-> > 
-> > I know what causes it.  It's this change:
-> > 
-> > commit 22604c866889c4b2e12b73cbf1683bda1b72a313
-> > Author: Michael Marineau <mike@marineau.org>
-> > Date:   Sun Jan 4 17:18:51 2009 -0800
-> > 
-> >     net: Fix for initial link state in 2.6.28
-> > 
-> > It causes us to now call the linkwatch even trigger code inside of
-> > software interrupt context, but that is illegal because that code path
-> > takes the dev_base_lock rwlock as a writer.
-> > 
-> > I'm going to revert, and Michael will need to find a way to fix the
-> > initial link state issue without adding locking problems :-)
-> 
-> Ok, here's another try. Rather than find a safer way to sync up the
-> operstate variable with the normal state flags I decided to just nuke
-> operstate entirely, it just duplicated what was already in the state
-> flags for the most part. The patch is a bit large for -stable so I'll
-> submit a different workaround that can go into the 2.6.28 series.
-> 
-> As a side note operstate's sibling link_mode could also be changed to a
-> state flag but it isn't the problem child so I'll leave it alone unless
-> someone thinks that'd be a good change.
-> 
-> Thoughts?
+On Wed, 07 Jan 2009 10:34:11 -0800
+Randy Dunlap <randy.dunlap@oracle.com> wrote:
 
-That patch had a small mistake that broke setting the operstate via
-rtnetlink. The fix is below along with the new changeset.
+> Mauro Carvalho Chehab wrote:
+> > On Mon, 5 Jan 2009 12:09:27 -0800
+> > Randy Dunlap <randy.dunlap@oracle.com> wrote:
+> > 
+> >> On Mon, 5 Jan 2009 17:35:17 +1100 Stephen Rothwell wrote:
+> >>
+> >>> Hi all,
+> >>>
+> >>> This tree will not build a powerpc ppc4xx_defconfig due to a kvm problem.
+> >>>
+> >>> Changes since 20090102:
+> >>
+> >> drivers/built-in.o: In function `cx88_call_i2c_clients':
+> >> (.text+0x20af17): undefined reference to `videobuf_dvb_get_frontend'
+> >> drivers/built-in.o: In function `cx8802_probe':
+> >> cx88-mpeg.c:(.devinit.text+0x268c4): undefined reference to `videobuf_dvb_alloc_frontend'
+> >> cx88-mpeg.c:(.devinit.text+0x268ea): undefined reference to `videobuf_dvb_dealloc_frontends'
+> > 
+> > This one were trickier. Patch enclosed.
+> > 
+> > Cheers,
+> > Mauro
+> 
+> Hi Mauro,
+> 
+> After applying this patch, now I get these build errors:
+> 
+> drivers/built-in.o: In function `mpeg_release':
+> cx88-blackbird.c:(.text+0x21096d): undefined reference to `cx8802_cancel_buffers'
+> cx88-blackbird.c:(.text+0x2109a3): undefined reference to `cx8802_get_device'
+> cx88-blackbird.c:(.text+0x2109bd): undefined reference to `cx8802_get_driver'
+> drivers/built-in.o: In function `bb_buf_queue':
+> cx88-blackbird.c:(.text+0x210a06): undefined reference to `cx8802_buf_queue'
+> drivers/built-in.o: In function `bb_buf_prepare':
+> cx88-blackbird.c:(.text+0x210a25): undefined reference to `cx8802_buf_prepare'
+> drivers/built-in.o: In function `mpeg_open':
+> cx88-blackbird.c:(.text+0x210a59): undefined reference to `cx8802_get_device'
+> cx88-blackbird.c:(.text+0x210aa2): undefined reference to `cx8802_get_driver'
+> drivers/built-in.o: In function `blackbird_init':
+> cx88-blackbird.c:(.text+0x210d18): undefined reference to `cx8802_register_driver'
+> drivers/built-in.o: In function `blackbird_fini':
+> cx88-blackbird.c:(.text+0x210fbc): undefined reference to `cx8802_unregister_driver'
+
+
+Sorry, I sent the wrong version. The correct one is here. Btw, I've committed
+it yesterday on my linux-next tree. It is likely that it were already added upstream.
 
 Cheers,
-Mike
+Mauro.
 
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -527,7 +527,7 @@ static void set_operstate(struct net_device *dev, unsigned char transition)
- {
- 	int oldstate = netif_userspace_dormant(dev);
- 
--	if (!netif_oper_up(dev))
-+	if (!netif_carrier_ok(dev) || netif_dormant(dev))
- 		return;
- 
- 	switch(transition) {
+commit 3adb75fc5c8b2b0401e51067db07992d616c7711
+Author: Mauro Carvalho Chehab <mchehab@redhat.com>
+Date:   Tue Jan 6 16:06:07 2009 -0300
 
+    V4L/DVB (10190): cx88: Fix some Kbuild troubles
+    
+    As Randy Dunlap <randy.dunlap@oracle.com> reported, cx88 has some compilation issues:
+    
+    drivers/built-in.o: In function `cx88_call_i2c_clients':
+    (.text+0x20af17): undefined reference to `videobuf_dvb_get_frontend'
+    drivers/built-in.o: In function `cx8802_probe':
+    cx88-mpeg.c:(.devinit.text+0x268c4): undefined reference to `videobuf_dvb_alloc_frontend'
+    cx88-mpeg.c:(.devinit.text+0x268ea): undefined reference to `videobuf_dvb_dealloc_frontends'
+    
+    With those configs:
+    
+    CONFIG_VIDEO_CX88=y
+    CONFIG_VIDEO_CX88_BLACKBIRD=y
+    CONFIG_VIDEO_CX88_DVB=m
+    CONFIG_DVB_CORE=m
+    
+    After carefully examining the code, with the current code, several cx88 drivers
+    (cx8800, cx8802, cx88_dvb and cx88_blackbird) should be compiled as a module,
+    if one of them is marked as such. Just fixing Kconfig could create a very complex
+    set of rules. Also, this hides a problem with the current approach where the dvb
+    functionality weren't confined inside dvb module.
+    
+    What happens is that:
+    	- cx88-i2c (part of cx8800) has some special rules if DVB;
+    	- cx88-mpeg (cx8802 module) has also part of DVB init code;
+    	- cx88-dvb has the rest of the dvb code;
+    	- cx88-blackbird can be used with cx88-mpeg, having cx88-dvb or not.
+    
+    So, instead of doing some tricks at Kconfig and wait for a next breakage,
+    this patch moves the dvb code inside cx88-i2c and cx88-mpeg into cx88-dvb.
+    
+    Another problem is that cx8802 were being compiled, even without cx88-dvb
+    and cx88-blackbird modules.
+    
+    While on this code, let's fix also a reported problem:
+    http://www.linuxtv.org/pipermail/linux-dvb/2009-January/031225.html
+    
+    A solution for the issue were proposed here:
+    http://www.mail-archive.com/linux-media@vger.kernel.org/msg00021.html
+    
+    Thanks to Randy, Andy, Gregoire and Thomas for helping us to detect
+    and solve the issues.
+    
+    Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
 
-From: Michael Marineau <mike@marineau.org>
-Date: Tue, 6 Jan 2009 00:48:02 -0500
-Subject: [PATCH] Fold net_device.operstate into net_device.state
-
-The variable operstate in the net_device structure typically held
-nothing beyond what was already in the normal state flags (carrier_ok,
-etc). operstate's main purpose is to allow user space to set a network
-interface to a dormant state. Keeping operstate and state in sync is a
-bit awkward so this patch removes operstate and replaces it by using the
-state flags instead. Setting the interface to dormant from user-space is
-now handled by netif_userspace_dormant to parallel the netif_dormant set
-of functions that drivers use.
-
-This resolves a regression that was introduced by commit
-b47300168e770b60ab96c8924854c3 which prevented operstate from being kept
-in sync with state before the device is registered. This caused drivers
-that set things like the carrier state before registering to mis-report
-their initial state, breaking NetworkManager, dhcpcd, etc.
-
-Signed-off-by: Michael Marineau <mike@marineau.org>
----
- drivers/net/macvlan.c     |    2 +-
- include/linux/netdevice.h |   45 +++++++++++++++++++++++++++++++++++++++++----
- net/8021q/vlan.c          |    2 +-
- net/bridge/br_netlink.c   |    3 +--
- net/core/dev.c            |   25 +++++++++++++++++++++++++
- net/core/link_watch.c     |   45 +++++++++------------------------------------
- net/core/net-sysfs.c      |    4 +---
- net/core/rtnetlink.c      |   23 ++++++++---------------
- 8 files changed, 87 insertions(+), 62 deletions(-)
-
-diff --git a/drivers/net/macvlan.c b/drivers/net/macvlan.c
-index 590039c..2ae1d3d 100644
---- a/drivers/net/macvlan.c
-+++ b/drivers/net/macvlan.c
-@@ -394,7 +394,7 @@ static void macvlan_transfer_operstate(struct net_device *dev)
- 	struct macvlan_dev *vlan = netdev_priv(dev);
- 	const struct net_device *lowerdev = vlan->lowerdev;
+diff --git a/drivers/media/video/cx88/Kconfig b/drivers/media/video/cx88/Kconfig
+index b0f8375..2d250a2 100644
+--- a/drivers/media/video/cx88/Kconfig
++++ b/drivers/media/video/cx88/Kconfig
+@@ -69,6 +69,11 @@ config VIDEO_CX88_DVB
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called cx88-dvb.
  
--	if (lowerdev->operstate == IF_OPER_DORMANT)
-+	if (netif_dormant(lowerdev) || netif_userspace_dormant(lowerdev))
- 		netif_dormant_on(dev);
- 	else
- 		netif_dormant_off(dev);
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index e26f549..fdc1c61 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -277,6 +277,7 @@ enum netdev_state_t
- 	__LINK_STATE_NOCARRIER,
- 	__LINK_STATE_LINKWATCH_PENDING,
- 	__LINK_STATE_DORMANT,
-+	__LINK_STATE_USERSPACE_DORMANT,
- };
++config VIDEO_CX88_MPEG
++	tristate
++	depends on VIDEO_CX88_DVB || VIDEO_CX88_BLACKBIRD
++	default y
++
+ config VIDEO_CX88_VP3054
+ 	tristate "VP-3054 Secondary I2C Bus Support"
+ 	default m
+diff --git a/drivers/media/video/cx88/Makefile b/drivers/media/video/cx88/Makefile
+index 6ec30f2..b06b127 100644
+--- a/drivers/media/video/cx88/Makefile
++++ b/drivers/media/video/cx88/Makefile
+@@ -3,7 +3,8 @@ cx88xx-objs	:= cx88-cards.o cx88-core.o cx88-i2c.o cx88-tvaudio.o \
+ cx8800-objs	:= cx88-video.o cx88-vbi.o
+ cx8802-objs	:= cx88-mpeg.o
  
- 
-@@ -582,8 +583,7 @@ struct net_device
-         unsigned short          priv_flags; /* Like 'flags' but invisible to userspace. */
- 	unsigned short		padded;	/* How much padding added by alloc_netdev() */
- 
--	unsigned char		operstate; /* RFC2863 operstate */
--	unsigned char		link_mode; /* mapping policy to operstate */
-+	unsigned char		link_mode; /* control dormant/up transition */
- 
- 	unsigned		mtu;	/* interface MTU value		*/
- 	unsigned short		type;	/* interface hardware type	*/
-@@ -1256,6 +1256,7 @@ extern void		netif_nit_deliver(struct sk_buff *skb);
- extern int		dev_valid_name(const char *name);
- extern int		dev_ioctl(struct net *net, unsigned int cmd, void __user *);
- extern int		dev_ethtool(struct net *net, struct ifreq *);
-+extern unsigned char	dev_get_operstate(const struct net_device *);
- extern unsigned		dev_get_flags(const struct net_device *);
- extern int		dev_change_flags(struct net_device *, unsigned);
- extern int		dev_change_name(struct net_device *, const char *);
-@@ -1366,6 +1367,42 @@ static inline int netif_dormant(const struct net_device *dev)
- 	return test_bit(__LINK_STATE_DORMANT, &dev->state);
+-obj-$(CONFIG_VIDEO_CX88) += cx88xx.o cx8800.o cx8802.o
++obj-$(CONFIG_VIDEO_CX88) += cx88xx.o cx8800.o
++obj-$(CONFIG_VIDEO_CX88_MPEG) += cx8802.o
+ obj-$(CONFIG_VIDEO_CX88_ALSA) += cx88-alsa.o
+ obj-$(CONFIG_VIDEO_CX88_BLACKBIRD) += cx88-blackbird.o
+ obj-$(CONFIG_VIDEO_CX88_DVB) += cx88-dvb.o
+diff --git a/drivers/media/video/cx88/cx88-dvb.c b/drivers/media/video/cx88/cx88-dvb.c
+index da4dd49..613dfea 100644
+--- a/drivers/media/video/cx88/cx88-dvb.c
++++ b/drivers/media/video/cx88/cx88-dvb.c
+@@ -138,6 +138,28 @@ static int cx88_dvb_bus_ctrl(struct dvb_frontend* fe, int acquire)
+ 	return ret;
  }
  
-+/**
-+ *	netif_userspace_dormant_on - mark device as dormant
-+ *	@dev: network device
-+ *
-+ * Mark device as dormant (as per RFC2863).
-+ *
-+ * User-space may have a device set to dormant until it performs some form
-+ * of authentication or other initialization. This flag is only used for
-+ * interacting with user-space. Drivers should not change this flag.
-+ */
-+static inline void netif_userspace_dormant_on(struct net_device *dev)
++static void cx88_dvb_gate_ctrl(struct cx88_core  *core, int open)
 +{
-+	set_bit(__LINK_STATE_USERSPACE_DORMANT, &dev->state);
-+}
++	struct videobuf_dvb_frontends *f;
++	struct videobuf_dvb_frontend *fe;
 +
-+/**
-+ *	netif_userspace_dormant_off - set device as not dormant.
-+ *	@dev: network device
-+ *
-+ * User-space has marked the device is not dormant.
-+ */
-+static inline void netif_userspace_dormant_off(struct net_device *dev)
-+{
-+	clear_bit(__LINK_STATE_USERSPACE_DORMANT, &dev->state);
-+}
-+
-+/**
-+ *	netif_dormant - test if a device is dormant
-+ *	@dev: network device
-+ *
-+ * Check if device is marked as dormant by user-space.
-+ */
-+static inline int netif_userspace_dormant(const struct net_device *dev)
-+{
-+	return test_bit(__LINK_STATE_USERSPACE_DORMANT, &dev->state);
-+}
- 
- /**
-  *	netif_oper_up - test if device is operational
-@@ -1374,8 +1411,8 @@ static inline int netif_dormant(const struct net_device *dev)
-  * Check if carrier is operational
-  */
- static inline int netif_oper_up(const struct net_device *dev) {
--	return (dev->operstate == IF_OPER_UP ||
--		dev->operstate == IF_OPER_UNKNOWN /* backward compat */);
-+	return (netif_carrier_ok(dev) && !netif_dormant(dev) &&
-+			!netif_userspace_dormant(dev));
- }
- 
- /**
-diff --git a/net/8021q/vlan.c b/net/8021q/vlan.c
-index f0e335a..5ddcfa8 100644
---- a/net/8021q/vlan.c
-+++ b/net/8021q/vlan.c
-@@ -189,7 +189,7 @@ static void vlan_transfer_operstate(const struct net_device *dev,
- 	 * of real device, also must allow supplicant running
- 	 * on VLAN device
- 	 */
--	if (dev->operstate == IF_OPER_DORMANT)
-+	if (netif_dormant(dev) || netif_userspace_dormant(dev))
- 		netif_dormant_on(vlandev);
- 	else
- 		netif_dormant_off(vlandev);
-diff --git a/net/bridge/br_netlink.c b/net/bridge/br_netlink.c
-index ba7be19..6c3b90b 100644
---- a/net/bridge/br_netlink.c
-+++ b/net/bridge/br_netlink.c
-@@ -39,7 +39,6 @@ static int br_fill_ifinfo(struct sk_buff *skb, const struct net_bridge_port *por
- 	const struct net_device *dev = port->dev;
- 	struct ifinfomsg *hdr;
- 	struct nlmsghdr *nlh;
--	u8 operstate = netif_running(dev) ? dev->operstate : IF_OPER_DOWN;
- 
- 	pr_debug("br_fill_info event %d port %s master %s\n",
- 		 event, dev->name, br->dev->name);
-@@ -59,7 +58,7 @@ static int br_fill_ifinfo(struct sk_buff *skb, const struct net_bridge_port *por
- 	NLA_PUT_STRING(skb, IFLA_IFNAME, dev->name);
- 	NLA_PUT_U32(skb, IFLA_MASTER, br->dev->ifindex);
- 	NLA_PUT_U32(skb, IFLA_MTU, dev->mtu);
--	NLA_PUT_U8(skb, IFLA_OPERSTATE, operstate);
-+	NLA_PUT_U8(skb, IFLA_OPERSTATE, dev_get_operstate(dev));
- 
- 	if (dev->addr_len)
- 		NLA_PUT(skb, IFLA_ADDRESS, dev->addr_len, dev->dev_addr);
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 9174c77..e328b2c 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -3341,6 +3341,30 @@ static void dev_addr_discard(struct net_device *dev)
- }
- 
- /**
-+ *	dev_get_operstate - get the state to report to userspace
-+ *	@dev: device
-+ *
-+ *	Get the current interface state, as per RFC2863.
-+ *	See Documentation/networking/operstates.txt
-+ */
-+unsigned char dev_get_operstate(const struct net_device *dev)
-+{
-+	if (netif_running(dev)) {
-+		if (!netif_carrier_ok(dev))
-+			if (dev->ifindex != dev->iflink)
-+				return IF_OPER_LOWERLAYERDOWN;
-+			else
-+				return IF_OPER_DOWN;
-+		else if (netif_dormant(dev) || netif_userspace_dormant(dev))
-+			return IF_OPER_DORMANT;
-+		else
-+			return IF_OPER_UP;
-+	}
-+	else
-+		return IF_OPER_DOWN;
-+}
-+
-+/**
-  *	dev_get_flags - get flags reported to userspace
-  *	@dev: device
-  *
-@@ -4958,6 +4982,7 @@ EXPORT_SYMBOL(unregister_netdevice);
- EXPORT_SYMBOL(unregister_netdevice_notifier);
- EXPORT_SYMBOL(net_enable_timestamp);
- EXPORT_SYMBOL(net_disable_timestamp);
-+EXPORT_SYMBOL(dev_get_operstate);
- EXPORT_SYMBOL(dev_get_flags);
- 
- #if defined(CONFIG_BRIDGE) || defined(CONFIG_BRIDGE_MODULE)
-diff --git a/net/core/link_watch.c b/net/core/link_watch.c
-index bf8f7af..89fa3b8 100644
---- a/net/core/link_watch.c
-+++ b/net/core/link_watch.c
-@@ -38,42 +38,14 @@ static DECLARE_DELAYED_WORK(linkwatch_work, linkwatch_event);
- static struct net_device *lweventlist;
- static DEFINE_SPINLOCK(lweventlist_lock);
- 
--static unsigned char default_operstate(const struct net_device *dev)
-+/* Set the user-space dormant flag if link_mode calls for it so that
-+ * the correct operstate is reported. */
-+static void set_default_operstate(struct net_device *dev)
- {
--	if (!netif_carrier_ok(dev))
--		return (dev->ifindex != dev->iflink ?
--			IF_OPER_LOWERLAYERDOWN : IF_OPER_DOWN);
--
--	if (netif_dormant(dev))
--		return IF_OPER_DORMANT;
--
--	return IF_OPER_UP;
--}
--
--
--static void rfc2863_policy(struct net_device *dev)
--{
--	unsigned char operstate = default_operstate(dev);
--
--	if (operstate == dev->operstate)
--		return;
--
--	write_lock_bh(&dev_base_lock);
--
--	switch(dev->link_mode) {
--	case IF_LINK_MODE_DORMANT:
--		if (operstate == IF_OPER_UP)
--			operstate = IF_OPER_DORMANT;
--		break;
--
--	case IF_LINK_MODE_DEFAULT:
--	default:
--		break;
--	}
--
--	dev->operstate = operstate;
--
--	write_unlock_bh(&dev_base_lock);
-+	if (dev->link_mode == IF_LINK_MODE_DORMANT && netif_oper_up(dev))
-+		netif_userspace_dormant_on(dev);
-+	else
-+		netif_userspace_dormant_off(dev);
- }
- 
- 
-@@ -178,7 +150,8 @@ static void __linkwatch_run_queue(int urgent_only)
- 		 */
- 		clear_bit(__LINK_STATE_LINKWATCH_PENDING, &dev->state);
- 
--		rfc2863_policy(dev);
-+		set_default_operstate(dev);
-+
- 		if (dev->flags & IFF_UP) {
- 			if (netif_carrier_ok(dev))
- 				dev_activate(dev);
-diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-index 92d6b94..ea90f43 100644
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -156,9 +156,7 @@ static ssize_t show_operstate(struct device *dev,
- 	unsigned char operstate;
- 
- 	read_lock(&dev_base_lock);
--	operstate = netdev->operstate;
--	if (!netif_running(netdev))
--		operstate = IF_OPER_DOWN;
-+	operstate = dev_get_operstate(netdev);
- 	read_unlock(&dev_base_lock);
- 
- 	if (operstate >= ARRAY_SIZE(operstates))
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index 4dfb6b4..e8a317d 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -525,29 +525,23 @@ EXPORT_SYMBOL_GPL(rtnl_put_cacheinfo);
- 
- static void set_operstate(struct net_device *dev, unsigned char transition)
- {
--	unsigned char operstate = dev->operstate;
-+	int oldstate = netif_userspace_dormant(dev);
-+
-+	if (!netif_carrier_ok(dev) || netif_dormant(dev))
++	if (!core->dvbdev)
 +		return;
++
++	f = &core->dvbdev->frontends;
++
++	if (!f)
++		return;
++
++	if (f->gate <= 1) /* undefined or fe0 */
++		fe = videobuf_dvb_get_frontend(f, 1);
++	else
++		fe = videobuf_dvb_get_frontend(f, f->gate);
++
++	if (fe && fe->dvb.frontend && fe->dvb.frontend->ops.i2c_gate_ctrl)
++		fe->dvb.frontend->ops.i2c_gate_ctrl(fe->dvb.frontend, open);
++}
++
+ /* ------------------------------------------------------------------ */
  
- 	switch(transition) {
- 	case IF_OPER_UP:
--		if ((operstate == IF_OPER_DORMANT ||
--		     operstate == IF_OPER_UNKNOWN) &&
--		    !netif_dormant(dev))
--			operstate = IF_OPER_UP;
-+		netif_userspace_dormant_off(dev);
- 		break;
+ static int dvico_fusionhdtv_demod_init(struct dvb_frontend* fe)
+@@ -597,12 +619,30 @@ static int dvb_register(struct cx8802_dev *dev)
+ 	struct cx88_core *core = dev->core;
+ 	struct videobuf_dvb_frontend *fe0, *fe1 = NULL;
+ 	int mfe_shared = 0; /* bus not shared by default */
++	int i;
  
- 	case IF_OPER_DORMANT:
--		if (operstate == IF_OPER_UP ||
--		    operstate == IF_OPER_UNKNOWN)
--			operstate = IF_OPER_DORMANT;
-+		netif_userspace_dormant_on(dev);
- 		break;
+ 	if (0 != core->i2c_rc) {
+ 		printk(KERN_ERR "%s/2: no i2c-bus available, cannot attach dvb drivers\n", core->name);
+ 		goto frontend_detach;
  	}
  
--	if (dev->operstate != operstate) {
--		write_lock_bh(&dev_base_lock);
--		dev->operstate = operstate;
--		write_unlock_bh(&dev_base_lock);
-+	if (oldstate != netif_userspace_dormant(dev))
- 		netdev_state_change(dev);
--	}
++	if (!core->board.num_frontends)
++		return -EINVAL;
++
++	mutex_init(&dev->frontends.lock);
++	INIT_LIST_HEAD(&dev->frontends.felist);
++
++	printk(KERN_INFO "%s() allocating %d frontend(s)\n", __func__,
++			 core->board.num_frontends);
++	for (i = 1; i <= core->board.num_frontends; i++) {
++		fe0 = videobuf_dvb_alloc_frontend(&dev->frontends, i);
++		if (!fe0) {
++			printk(KERN_ERR "%s() failed to alloc\n", __func__);
++			videobuf_dvb_dealloc_frontends(&dev->frontends);
++			goto frontend_detach;
++		}
++	}
++
+ 	/* Get the first frontend */
+ 	fe0 = videobuf_dvb_get_frontend(&dev->frontends, 1);
+ 	if (!fe0)
+@@ -611,6 +651,9 @@ static int dvb_register(struct cx8802_dev *dev)
+ 	/* multi-frontend gate control is undefined or defaults to fe0 */
+ 	dev->frontends.gate = 0;
+ 
++	/* Sets the gate control callback to be used by i2c command calls */
++	core->gate_ctrl = cx88_dvb_gate_ctrl;
++
+ 	/* init frontend(s) */
+ 	switch (core->boardnr) {
+ 	case CX88_BOARD_HAUPPAUGE_DVB_T1:
+@@ -1109,6 +1152,7 @@ static int dvb_register(struct cx8802_dev *dev)
+ 		&dev->pci->dev, adapter_nr, mfe_shared);
+ 
+ frontend_detach:
++	core->gate_ctrl = NULL;
+ 	videobuf_dvb_dealloc_frontends(&dev->frontends);
+ 	return -EINVAL;
+ }
+@@ -1270,6 +1314,8 @@ static int cx8802_dvb_remove(struct cx8802_driver *drv)
+ 
+ 	vp3054_i2c_remove(dev);
+ 
++	core->gate_ctrl = NULL;
++
+ 	return 0;
  }
  
- static void copy_rtnl_link_stats(struct rtnl_link_stats *a,
-@@ -626,8 +620,7 @@ static int rtnl_fill_ifinfo(struct sk_buff *skb, struct net_device *dev,
+diff --git a/drivers/media/video/cx88/cx88-i2c.c b/drivers/media/video/cx88/cx88-i2c.c
+index 1ab691d..c0ff230 100644
+--- a/drivers/media/video/cx88/cx88-i2c.c
++++ b/drivers/media/video/cx88/cx88-i2c.c
+@@ -116,30 +116,16 @@ static int detach_inform(struct i2c_client *client)
  
- 	NLA_PUT_STRING(skb, IFLA_IFNAME, dev->name);
- 	NLA_PUT_U32(skb, IFLA_TXQLEN, dev->tx_queue_len);
--	NLA_PUT_U8(skb, IFLA_OPERSTATE,
--		   netif_running(dev) ? dev->operstate : IF_OPER_DOWN);
-+	NLA_PUT_U8(skb, IFLA_OPERSTATE, dev_get_operstate(dev));
- 	NLA_PUT_U8(skb, IFLA_LINKMODE, dev->link_mode);
- 	NLA_PUT_U32(skb, IFLA_MTU, dev->mtu);
+ void cx88_call_i2c_clients(struct cx88_core *core, unsigned int cmd, void *arg)
+ {
+-#if defined(CONFIG_VIDEO_CX88_DVB) || defined(CONFIG_VIDEO_CX88_DVB_MODULE)
+-	struct videobuf_dvb_frontends *f = &core->dvbdev->frontends;
+-	struct videobuf_dvb_frontend *fe = NULL;
+-#endif
+ 	if (0 != core->i2c_rc)
+ 		return;
  
--- 
-1.6.0.4
+-#if defined(CONFIG_VIDEO_CX88_DVB) || defined(CONFIG_VIDEO_CX88_DVB_MODULE)
+-	if (core->dvbdev && f) {
+-		if(f->gate <= 1) /* undefined or fe0 */
+-			fe = videobuf_dvb_get_frontend(f, 1);
+-		else
+-			fe = videobuf_dvb_get_frontend(f, f->gate);
++	if (core->gate_ctrl)
++		core->gate_ctrl(core, 1);
+ 
+-		if (fe && fe->dvb.frontend && fe->dvb.frontend->ops.i2c_gate_ctrl)
+-			fe->dvb.frontend->ops.i2c_gate_ctrl(fe->dvb.frontend, 1);
++	i2c_clients_command(&core->i2c_adap, cmd, arg);
+ 
+-		i2c_clients_command(&core->i2c_adap, cmd, arg);
+-
+-		if (fe && fe->dvb.frontend && fe->dvb.frontend->ops.i2c_gate_ctrl)
+-			fe->dvb.frontend->ops.i2c_gate_ctrl(fe->dvb.frontend, 0);
+-	} else
+-#endif
+-		i2c_clients_command(&core->i2c_adap, cmd, arg);
++	if (core->gate_ctrl)
++		core->gate_ctrl(core, 0);
+ }
+ 
+ static const struct i2c_algo_bit_data cx8800_i2c_algo_template = {
+diff --git a/drivers/media/video/cx88/cx88-mpeg.c b/drivers/media/video/cx88/cx88-mpeg.c
+index 59164fc..b295b76 100644
+--- a/drivers/media/video/cx88/cx88-mpeg.c
++++ b/drivers/media/video/cx88/cx88-mpeg.c
+@@ -787,6 +787,9 @@ static int __devinit cx8802_probe(struct pci_dev *pci_dev,
+ 	dev->pci = pci_dev;
+ 	dev->core = core;
+ 
++	/* Maintain a reference so cx88-video can query the 8802 device. */
++	core->dvbdev = dev;
++
+ 	err = cx8802_init_common(dev);
+ 	if (err != 0)
+ 		goto fail_free;
+@@ -794,32 +797,6 @@ static int __devinit cx8802_probe(struct pci_dev *pci_dev,
+ 	INIT_LIST_HEAD(&dev->drvlist);
+ 	list_add_tail(&dev->devlist,&cx8802_devlist);
+ 
+-#if defined(CONFIG_VIDEO_CX88_DVB) || defined(CONFIG_VIDEO_CX88_DVB_MODULE)
+-	mutex_init(&dev->frontends.lock);
+-	INIT_LIST_HEAD(&dev->frontends.felist);
+-
+-	if (core->board.num_frontends) {
+-		struct videobuf_dvb_frontend *fe;
+-		int i;
+-
+-		printk(KERN_INFO "%s() allocating %d frontend(s)\n", __func__,
+-			core->board.num_frontends);
+-		for (i = 1; i <= core->board.num_frontends; i++) {
+-			fe = videobuf_dvb_alloc_frontend(&dev->frontends, i);
+-			if(fe == NULL) {
+-				printk(KERN_ERR "%s() failed to alloc\n",
+-					__func__);
+-				videobuf_dvb_dealloc_frontends(&dev->frontends);
+-				err = -ENOMEM;
+-				goto fail_free;
+-			}
+-		}
+-	}
+-#endif
+-
+-	/* Maintain a reference so cx88-video can query the 8802 device. */
+-	core->dvbdev = dev;
+-
+ 	/* now autoload cx88-dvb or cx88-blackbird */
+ 	request_modules(dev);
+ 	return 0;
+@@ -827,6 +804,7 @@ static int __devinit cx8802_probe(struct pci_dev *pci_dev,
+  fail_free:
+ 	kfree(dev);
+  fail_core:
++	core->dvbdev = NULL;
+ 	cx88_core_put(core,pci_dev);
+ 	return err;
+ }
+diff --git a/drivers/media/video/cx88/cx88.h b/drivers/media/video/cx88/cx88.h
+index eb9ce30..60a8b31 100644
+--- a/drivers/media/video/cx88/cx88.h
++++ b/drivers/media/video/cx88/cx88.h
+@@ -302,6 +302,7 @@ struct cx88_dmaqueue {
+ 	struct btcx_riscmem    stopper;
+ 	u32                    count;
+ };
++struct cx88_core;
+ 
+ struct cx88_core {
+ 	struct list_head           devlist;
+@@ -334,7 +335,8 @@ struct cx88_core {
+ 
+ 	/* config info -- dvb */
+ #if defined(CONFIG_VIDEO_CX88_DVB) || defined(CONFIG_VIDEO_CX88_DVB_MODULE)
+-	int 			   (*prev_set_voltage)(struct dvb_frontend* fe, fe_sec_voltage_t voltage);
++	int 			   (*prev_set_voltage)(struct dvb_frontend *fe, fe_sec_voltage_t voltage);
++	void			   (*gate_ctrl)(struct cx88_core  *core, int open);
+ #endif
+ 
+ 	/* state info */
+
+
+
+
+Cheers,
+Mauro
