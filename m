@@ -1,50 +1,52 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH -net-next 1/4] firmware: convert e100 driver to
- request_firmware()
-Date: Wed, 07 Jan 2009 12:39:54 -0800 (PST)
-Message-ID: <20090107.123954.257436361.davem@davemloft.net>
-References: <9929d2390901041820h4cf51e2h3612108c516b6869@mail.gmail.com>
-	<20090104.213402.12464178.davem@davemloft.net>
-	<9929d2390901071023s590f439fre15696786f098b81@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: ftrace tree build failure
+Date: Thu, 8 Jan 2009 08:20:45 +1100
+Message-ID: <20090108082045.f31100b3.sfr@canb.auug.org.au>
+References: <20090107115317.77085a13.sfr@canb.auug.org.au>
+	<20090107095505.GA23386@elte.hu>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__8_Jan_2009_08_20_45_+1100_UrQU0DbSxnDjZO1y"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:43808
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1752931AbZAGUjw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Jan 2009 15:39:52 -0500
-In-Reply-To: <9929d2390901071023s590f439fre15696786f098b81@mail.gmail.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48095 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752029AbZAGVU6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 7 Jan 2009 16:20:58 -0500
+In-Reply-To: <20090107095505.GA23386@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: jeffrey.t.kirsher@intel.com
-Cc: jaswinder@infradead.org, e1000-devel@lists.sourceforge.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
 
-From: "Jeff Kirsher" <jeffrey.t.kirsher@intel.com>
-Date: Wed, 7 Jan 2009 10:23:44 -0800
+--Signature=_Thu__8_Jan_2009_08_20_45_+1100_UrQU0DbSxnDjZO1y
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> The only testing that we were not able to do was the IPMI testing,
-> because of the lack of resources.  All other testing passed.
-> 
-> While all other testing passed, I am concerned about not being able to
-> test whether or not this change affects the ability to pass IPMI
-> traffic.  I am not sure if the "gain" of using request_firmware() out
-> weighs the potential risk that IPMI traffic may be broken with this
-> patch.  I guess I wondering what the gain is in using the
-> request_firmware() function?
-> 
-> >From past experience with IPMI traffic and the e100, the loading of
-> the microcode in the correct manner greatly affected whether IPMI
-> traffic would pass or not.
+Hi Ingo,
 
-Jeff, I've lost all of my patience.
+On Wed, 7 Jan 2009 10:55:05 +0100 Ingo Molnar <mingo@elte.hu> wrote:
+>
+> thanks! I've pushed out the latest tracing tree so it should be resolved=
+=20
+> in your next iteration.
 
-All drivers are being converted this way.  I fought against doing it
-to tg3 for various reasons, but the tide worked against me and I
-accepted that.
+Thanks.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-We can't hold this patch up forever for a potential problem that you
-don't have the resources to even test for more than a week.
+--Signature=_Thu__8_Jan_2009_08_20_45_+1100_UrQU0DbSxnDjZO1y
+Content-Type: application/pgp-signature
 
-I'm therefore adding this patch, and we'll fix or revert if the
-"possible" IPMI problems do surface.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkllHK0ACgkQjjKRsyhoI8z8BACgryN86ESDVdAiIDgwYBljYqqu
+Kx4AnAg85stBqLr4euGn3SuHH40NEEcu
+=jTtC
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__8_Jan_2009_08_20_45_+1100_UrQU0DbSxnDjZO1y--
