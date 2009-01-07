@@ -1,53 +1,59 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: manual merge of the rr tree
-Date: Wed, 7 Jan 2009 13:17:28 +1030
-Message-ID: <200901071317.29141.rusty@rustcorp.com.au>
-References: <20090105143239.08b1a060.sfr@canb.auug.org.au> <200901061134.49369.rusty@rustcorp.com.au> <Pine.LNX.4.64.0901060845001.11819@quilx.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: rr tree build failure
+Date: Wed, 7 Jan 2009 14:04:37 +1100
+Message-ID: <20090107140437.fd4dce14.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__7_Jan_2009_14_04_37_+1100_RVZqwI++SbzvC1UY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:48273 "EHLO ozlabs.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43405 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755428AbZAGCre (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 6 Jan 2009 21:47:34 -0500
-In-Reply-To: <Pine.LNX.4.64.0901060845001.11819@quilx.com>
-Content-Disposition: inline
+	id S1751121AbZAGDEq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 Jan 2009 22:04:46 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Lameter <cl@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>, Ingo Molnar <mingo@elte.hu>, Richard Henderson <rth@twiddle.net>, andi@firstfloor.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org
 
-On Wednesday 07 January 2009 01:35:57 Christoph Lameter wrote:
-> +/* This macro obfuscates arithmetic on a variable address so that gcc
-> +   shouldn't recognize it. This prevents optimizations such as the
-> +   famous:
-> +	strcpy(s, "xxx"+X) => memcpy(s, "xxx"+X, 4-X) */
-> +#define reloc_hide(var, off)						\
-> +  ({ __typeof__(&(var)) __ptr;					\
-> +    __asm__ ("" : "=g"(__ptr) : "0"((void *)&(var) + (off)));	\
-> +    *__ptr; })
-> 
-> I dont get the point here.
+--Signature=_Wed__7_Jan_2009_14_04_37_+1100_RVZqwI++SbzvC1UY
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This one example of gcc making assumptions about pointer arithmetic.  It's
-perfectly reasonable.  It's also unhelpful cases like for per-cpu offsets.
+Hi Rusty,
 
-Thus we use this macro to prevent GCC from making such assumptions.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-We can't audit current and future gcc versions to see what other
-optimizations might break our code on every arch.  I just documented it,
-and followed Richard's advice.
+arch/x86/kernel/dumpstack_64.c: In function 'in_exception_stack':
+arch/x86/kernel/dumpstack_64.c:43: error: 'orig_ist' undeclared (first use =
+in this function)
+arch/x86/kernel/dumpstack_64.c:43: warning: type defaults to 'int' in decla=
+ration of 'type name'
+arch/x86/kernel/dumpstack_64.c:43: warning: type defaults to 'int' in decla=
+ration of 'type name'
+arch/x86/kernel/dumpstack_64.c:43: warning: cast to pointer from integer of=
+ different size
+arch/x86/kernel/dumpstack_64.c:43: error: request for member 'ist' in somet=
+hing not a structure or union
 
-Am I missing a downside?
+per_cpu() strikes again :-(
 
-> Could we clearly document what the point of RELOC_HIDE is?
-
-Sorry, I'm not sure I can improve on the current comment:
-
-/* This macro obfuscates arithmetic on a variable address so that gcc
-   shouldn't recognize the original var, and make assumptions about it */
-
+I have dropped the rr tree again.
+--=20
 Cheers,
-Rusty.
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__7_Jan_2009_14_04_37_+1100_RVZqwI++SbzvC1UY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAklkG8UACgkQjjKRsyhoI8wwPgCgvXe6nzSsedRaaDYwlf82AFfO
+OOYAnAsWSWG1q8bqSAeYvdHE3Ohq+pAi
+=JCbd
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__7_Jan_2009_14_04_37_+1100_RVZqwI++SbzvC1UY--
