@@ -1,64 +1,57 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH 0/4] wimax: Kbuild / rfkill-build / PM fixes (v3)
-Date: Wed, 07 Jan 2009 16:10:53 -0800
-Message-ID: <4965448D.7000607@oracle.com>
-References: <cover.1231355768.git.inaky@linux.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: ocfs2 tree build failure
+Date: Thu, 8 Jan 2009 13:01:58 +1100
+Message-ID: <20090108130158.d222ceea.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__8_Jan_2009_13_01_58_+1100_REV9OL/e2lmhS_ff"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet12.oracle.com ([148.87.113.124]:41356 "EHLO
-	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752454AbZAHALJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Jan 2009 19:11:09 -0500
-In-Reply-To: <cover.1231355768.git.inaky@linux.intel.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46355 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757330AbZAHCCS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 7 Jan 2009 21:02:18 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Inaky Perez-Gonzalez <inaky@linux.intel.com>
-Cc: netdev@vger.kernel.org, wimax@linuxwimax.org, greg@kroah.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-wimax@intel.com
+To: Mark Fasheh <mfasheh@suse.com>
+Cc: linux-next@vger.kernel.org, Sunil Mushran <sunil.mushran@oracle.com>
 
-Inaky Perez-Gonzalez wrote:
-> These four patches fix build issues reported by Randy Dunlap on the
-> linux-next tree for Jan 6 and Jan 7:
->=20
-> http://lkml.org/lkml/2009/1/6/340
-> http://lkml.org/lkml/2009/1/7/360
->=20
-> The issue fixed by patch #3 wasn't reported on the emails but was
-> uncovered while discussing the fixes.
->=20
-> This applies to the wimax tree kept in gregkh's repository:
->=20
-> http://kernel.org/pub/linux/kernel/people/gregkh/gregkh-2.6/gregkh-04=
--usb/
+--Signature=_Thu__8_Jan_2009_13_01_58_+1100_REV9OL/e2lmhS_ff
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ack.  They all work for me.  Thanks.
+Hi Mark,
 
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-> Changes in v3
->=20
-> - Add patch #4, wrapping access to power-saving members of the struct
->   usb_device in #ifdef CONFIG_PM.=20
->=20
-> Changes in v2
->=20
-> - fixed silly one-char typo #ifndef CONFIG_BUG vs #ifdef CONFIG_BUG
->   reported by Ilpo J=C3=A4rvinen=20
->=20
-> Inaky Perez-Gonzalez (4):
->   wimax: fix '#ifndef CONFIG_BUG' layout to avoid warning
->   wimax: fix kconfig interactions with rfkill and input layers
->   wimax: testing for rfkill support should also test for
->     CONFIG_RFKILL_MODULE
->   i2400m/usb: wrap USB power saving in #ifdef CONFIG_PM
->=20
->  drivers/net/wimax/i2400m/usb.c |    6 ++++++
->  net/wimax/Kconfig              |   14 ++++++++++++++
->  net/wimax/id-table.c           |    8 +++++---
->  net/wimax/op-rfkill.c          |    2 +-
->  4 files changed, 26 insertions(+), 4 deletions(-)
->=20
+fs/ocfs2/super.c: In function 'ocfs2_osb_dump':
+fs/ocfs2/super.c:256: error: dereferencing pointer to incomplete type
+fs/ocfs2/super.c:256: error: dereferencing pointer to incomplete type
+fs/ocfs2/super.c:256: error: dereferencing pointer to incomplete type
+fs/ocfs2/super.c:259: error: dereferencing pointer to incomplete type
+fs/ocfs2/super.c:261: error: dereferencing pointer to incomplete type
 
+Caused by commit 796868c27387ba9bbad6b9c6b770ed34e2809a73 ("ocfs2: Expose
+the file system state via debugfs") since (despite being declared in
+fs/ocfs2/ocfs2.h) the struct ocfs2_recovery_map definition is not exposed
+beyond fs/ocfs2/journal.c.
 
+I have dropped the ocfs2 tree for today.
 --=20
-~Randy
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__8_Jan_2009_13_01_58_+1100_REV9OL/e2lmhS_ff
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkllXpYACgkQjjKRsyhoI8xvCACcCyEeEa6T3+xU8L1JE7g2RHU0
+FvAAnjniqGqgeM3fizdqqYm42ICptw9o
+=Tvxv
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__8_Jan_2009_13_01_58_+1100_REV9OL/e2lmhS_ff--
