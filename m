@@ -1,125 +1,64 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for January 5 (multimedia #3)
-Date: Wed, 07 Jan 2009 15:36:44 -0800
-Message-ID: <49653C8C.7050908@oracle.com>
-References: <20090105173517.deeff918.sfr@canb.auug.org.au>	<20090105120927.1f044f59.randy.dunlap@oracle.com>	<20090106223612.180e32f5@pedra.chehab.org>	<4964F5A3.9020101@oracle.com> <20090107212731.6bccd1a0@pedra.chehab.org>
+Subject: Re: [PATCH 0/4] wimax: Kbuild / rfkill-build / PM fixes (v3)
+Date: Wed, 07 Jan 2009 16:10:53 -0800
+Message-ID: <4965448D.7000607@oracle.com>
+References: <cover.1231355768.git.inaky@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet13.oracle.com ([148.87.113.125]:16991 "EHLO
-	rgminet13.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751312AbZAGXg6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Jan 2009 18:36:58 -0500
-In-Reply-To: <20090107212731.6bccd1a0@pedra.chehab.org>
+Received: from rcsinet12.oracle.com ([148.87.113.124]:41356 "EHLO
+	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752454AbZAHALJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Jan 2009 19:11:09 -0500
+In-Reply-To: <cover.1231355768.git.inaky@linux.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Inaky Perez-Gonzalez <inaky@linux.intel.com>
+Cc: netdev@vger.kernel.org, wimax@linuxwimax.org, greg@kroah.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-wimax@intel.com
 
-Mauro Carvalho Chehab wrote:
-> On Wed, 07 Jan 2009 10:34:11 -0800
-> Randy Dunlap <randy.dunlap@oracle.com> wrote:
-> 
->> Mauro Carvalho Chehab wrote:
->>> On Mon, 5 Jan 2009 12:09:27 -0800
->>> Randy Dunlap <randy.dunlap@oracle.com> wrote:
->>>
->>>> On Mon, 5 Jan 2009 17:35:17 +1100 Stephen Rothwell wrote:
->>>>
->>>>> Hi all,
->>>>>
->>>>> This tree will not build a powerpc ppc4xx_defconfig due to a kvm problem.
->>>>>
->>>>> Changes since 20090102:
->>>> drivers/built-in.o: In function `cx88_call_i2c_clients':
->>>> (.text+0x20af17): undefined reference to `videobuf_dvb_get_frontend'
->>>> drivers/built-in.o: In function `cx8802_probe':
->>>> cx88-mpeg.c:(.devinit.text+0x268c4): undefined reference to `videobuf_dvb_alloc_frontend'
->>>> cx88-mpeg.c:(.devinit.text+0x268ea): undefined reference to `videobuf_dvb_dealloc_frontends'
->>> This one were trickier. Patch enclosed.
->>>
->>> Cheers,
->>> Mauro
->> Hi Mauro,
->>
->> After applying this patch, now I get these build errors:
->>
->> drivers/built-in.o: In function `mpeg_release':
->> cx88-blackbird.c:(.text+0x21096d): undefined reference to `cx8802_cancel_buffers'
->> cx88-blackbird.c:(.text+0x2109a3): undefined reference to `cx8802_get_device'
->> cx88-blackbird.c:(.text+0x2109bd): undefined reference to `cx8802_get_driver'
->> drivers/built-in.o: In function `bb_buf_queue':
->> cx88-blackbird.c:(.text+0x210a06): undefined reference to `cx8802_buf_queue'
->> drivers/built-in.o: In function `bb_buf_prepare':
->> cx88-blackbird.c:(.text+0x210a25): undefined reference to `cx8802_buf_prepare'
->> drivers/built-in.o: In function `mpeg_open':
->> cx88-blackbird.c:(.text+0x210a59): undefined reference to `cx8802_get_device'
->> cx88-blackbird.c:(.text+0x210aa2): undefined reference to `cx8802_get_driver'
->> drivers/built-in.o: In function `blackbird_init':
->> cx88-blackbird.c:(.text+0x210d18): undefined reference to `cx8802_register_driver'
->> drivers/built-in.o: In function `blackbird_fini':
->> cx88-blackbird.c:(.text+0x210fbc): undefined reference to `cx8802_unregister_driver'
-> 
-> 
-> Sorry, I sent the wrong version. The correct one is here. Btw, I've committed
-> it yesterday on my linux-next tree. It is likely that it were already added upstream.
+Inaky Perez-Gonzalez wrote:
+> These four patches fix build issues reported by Randy Dunlap on the
+> linux-next tree for Jan 6 and Jan 7:
+>=20
+> http://lkml.org/lkml/2009/1/6/340
+> http://lkml.org/lkml/2009/1/7/360
+>=20
+> The issue fixed by patch #3 wasn't reported on the emails but was
+> uncovered while discussing the fixes.
+>=20
+> This applies to the wimax tree kept in gregkh's repository:
+>=20
+> http://kernel.org/pub/linux/kernel/people/gregkh/gregkh-2.6/gregkh-04=
+-usb/
 
-Ack, that builds cleanly.  Thanks.
-
-> Cheers,
-> Mauro.
-> 
-> commit 3adb75fc5c8b2b0401e51067db07992d616c7711
-> Author: Mauro Carvalho Chehab <mchehab@redhat.com>
-> Date:   Tue Jan 6 16:06:07 2009 -0300
-> 
->     V4L/DVB (10190): cx88: Fix some Kbuild troubles
->     
->     As Randy Dunlap <randy.dunlap@oracle.com> reported, cx88 has some compilation issues:
->     
->     drivers/built-in.o: In function `cx88_call_i2c_clients':
->     (.text+0x20af17): undefined reference to `videobuf_dvb_get_frontend'
->     drivers/built-in.o: In function `cx8802_probe':
->     cx88-mpeg.c:(.devinit.text+0x268c4): undefined reference to `videobuf_dvb_alloc_frontend'
->     cx88-mpeg.c:(.devinit.text+0x268ea): undefined reference to `videobuf_dvb_dealloc_frontends'
->     
->     With those configs:
->     
->     CONFIG_VIDEO_CX88=y
->     CONFIG_VIDEO_CX88_BLACKBIRD=y
->     CONFIG_VIDEO_CX88_DVB=m
->     CONFIG_DVB_CORE=m
->     
->     After carefully examining the code, with the current code, several cx88 drivers
->     (cx8800, cx8802, cx88_dvb and cx88_blackbird) should be compiled as a module,
->     if one of them is marked as such. Just fixing Kconfig could create a very complex
->     set of rules. Also, this hides a problem with the current approach where the dvb
->     functionality weren't confined inside dvb module.
->     
->     What happens is that:
->     	- cx88-i2c (part of cx8800) has some special rules if DVB;
->     	- cx88-mpeg (cx8802 module) has also part of DVB init code;
->     	- cx88-dvb has the rest of the dvb code;
->     	- cx88-blackbird can be used with cx88-mpeg, having cx88-dvb or not.
->     
->     So, instead of doing some tricks at Kconfig and wait for a next breakage,
->     this patch moves the dvb code inside cx88-i2c and cx88-mpeg into cx88-dvb.
->     
->     Another problem is that cx8802 were being compiled, even without cx88-dvb
->     and cx88-blackbird modules.
->     
->     While on this code, let's fix also a reported problem:
->     http://www.linuxtv.org/pipermail/linux-dvb/2009-January/031225.html
->     
->     A solution for the issue were proposed here:
->     http://www.mail-archive.com/linux-media@vger.kernel.org/msg00021.html
->     
->     Thanks to Randy, Andy, Gregoire and Thomas for helping us to detect
->     and solve the issues.
->     
->     Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+Ack.  They all work for me.  Thanks.
 
 
--- 
+> Changes in v3
+>=20
+> - Add patch #4, wrapping access to power-saving members of the struct
+>   usb_device in #ifdef CONFIG_PM.=20
+>=20
+> Changes in v2
+>=20
+> - fixed silly one-char typo #ifndef CONFIG_BUG vs #ifdef CONFIG_BUG
+>   reported by Ilpo J=C3=A4rvinen=20
+>=20
+> Inaky Perez-Gonzalez (4):
+>   wimax: fix '#ifndef CONFIG_BUG' layout to avoid warning
+>   wimax: fix kconfig interactions with rfkill and input layers
+>   wimax: testing for rfkill support should also test for
+>     CONFIG_RFKILL_MODULE
+>   i2400m/usb: wrap USB power saving in #ifdef CONFIG_PM
+>=20
+>  drivers/net/wimax/i2400m/usb.c |    6 ++++++
+>  net/wimax/Kconfig              |   14 ++++++++++++++
+>  net/wimax/id-table.c           |    8 +++++---
+>  net/wimax/op-rfkill.c          |    2 +-
+>  4 files changed, 26 insertions(+), 4 deletions(-)
+>=20
+
+
+--=20
 ~Randy
