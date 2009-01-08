@@ -1,42 +1,49 @@
-From: Sunil Mushran <sunil.mushran@oracle.com>
-Subject: Re: linux-next: ocfs2 tree build failure
-Date: Wed, 07 Jan 2009 18:14:45 -0800
-Message-ID: <49656195.2070001@oracle.com>
-References: <20090108130158.d222ceea.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the nommu tree
+Date: Thu, 8 Jan 2009 15:30:09 +1100
+Message-ID: <20090108153009.96d9d01a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__8_Jan_2009_15_30_09_+1100_4zr9kI7ncI/XeFvI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:18180 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751470AbZAHCPG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Jan 2009 21:15:06 -0500
-In-Reply-To: <20090108130158.d222ceea.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:59798 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752690AbZAHEad (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 7 Jan 2009 23:30:33 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Fasheh <mfasheh@suse.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: David Howells <dhowells@redhat.com>
+Cc: linux-next@vger.kernel.org, Matt Mackall <mpm@selenic.com>
 
-http://oss.oracle.com/pipermail/ocfs2-devel/2008-December/003552.html
+--Signature=_Thu__8_Jan_2009_15_30_09_+1100_4zr9kI7ncI/XeFvI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This needs to be added.
+Hi David,
 
-Stephen Rothwell wrote:
-> Hi Mark,
->
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
->
-> fs/ocfs2/super.c: In function 'ocfs2_osb_dump':
-> fs/ocfs2/super.c:256: error: dereferencing pointer to incomplete type
-> fs/ocfs2/super.c:256: error: dereferencing pointer to incomplete type
-> fs/ocfs2/super.c:256: error: dereferencing pointer to incomplete type
-> fs/ocfs2/super.c:259: error: dereferencing pointer to incomplete type
-> fs/ocfs2/super.c:261: error: dereferencing pointer to incomplete type
->
-> Caused by commit 796868c27387ba9bbad6b9c6b770ed34e2809a73 ("ocfs2: Expose
-> the file system state via debugfs") since (despite being declared in
-> fs/ocfs2/ocfs2.h) the struct ocfs2_recovery_map definition is not exposed
-> beyond fs/ocfs2/journal.c.
->
-> I have dropped the ocfs2 tree for today.
->   
+Today's linux-next merge of the nommu tree got a conflict in
+mm/tiny-shmem.c between commit 853ac43ab194f5051b27a55060215d696dc9480d
+("shmem: unify regular and tiny shmem") from Linus' tree and commit
+d10f9907ba3626261f45dbb498867f441f06c486 ("shmem: remove unused
+shmem_get_unmapped_area") from the nommu tree.
+
+The former removed the file and so have I.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__8_Jan_2009_15_30_09_+1100_4zr9kI7ncI/XeFvI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkllgVEACgkQjjKRsyhoI8xyBACfTRU0g48CwxdzZTDS+07y09Vf
+YkMAoKwqSXKB0Wl3AutoQn/7j/KkeoVy
+=YOh6
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__8_Jan_2009_15_30_09_+1100_4zr9kI7ncI/XeFvI--
