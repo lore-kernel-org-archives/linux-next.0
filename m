@@ -1,49 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: rr tree build warning
-Date: Thu, 8 Jan 2009 15:54:46 +1100
-Message-ID: <20090108155446.c4cd1aa8.sfr@canb.auug.org.au>
+Subject: linux-next: build failure
+Date: Thu, 8 Jan 2009 16:20:07 +1100
+Message-ID: <20090108162007.e77ca43e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__8_Jan_2009_15_54_46_+1100_9/mLuPBpbbQ2jZJu"
+ boundary="Signature=_Thu__8_Jan_2009_16_20_07_+1100_hF1lN.Nu8TgJIZ+w"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49620 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:54406 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753509AbZAHEy5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 7 Jan 2009 23:54:57 -0500
+	id S1750821AbZAHFUV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 8 Jan 2009 00:20:21 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
+To: "David S. Miller" <davem@davemloft.net>
 Cc: linux-next@vger.kernel.org
 
---Signature=_Thu__8_Jan_2009_15_54_46_+1100_9/mLuPBpbbQ2jZJu
+--Signature=_Thu__8_Jan_2009_16_20_07_+1100_hF1lN.Nu8TgJIZ+w
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi Dave,
 
-Today's linux-next build (powerpc allnoconfig) produced this new warning:
+Today's linux-next build (sparc64 defconfig) failed like this:
 
-kernel/workqueue.c: In function 'current_is_keventd':
-kernel/workqueue.c:742: warning: unused variable 'cpu'
+drivers/base/topology.c: In function 'show_physical_package_id':
+drivers/base/topology.c:103: error: implicit declaration of function 'cpu_d=
+ata'
+drivers/base/topology.c:103: error: request for member 'proc_id' in somethi=
+ng not a structure or union
+drivers/base/topology.c: In function 'show_core_id':
+drivers/base/topology.c:106: error: request for member 'core_id' in somethi=
+ng not a structure or union
 
-A UP config interacting with per_cpu_ptr()?
-
+I cherry-picked the fix out of Linus' tree.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__8_Jan_2009_15_54_46_+1100_9/mLuPBpbbQ2jZJu
+--Signature=_Thu__8_Jan_2009_16_20_07_+1100_hF1lN.Nu8TgJIZ+w
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkllhxYACgkQjjKRsyhoI8xAkACfTYDJjHQ0oKitxjL/zOoDzkJr
-c7MAn17HEQfnxTT58EvPsHG9u2TAC/Oy
-=t2rA
+iEYEARECAAYFAklljQcACgkQjjKRsyhoI8yL+wCgndvVOpcrVnocGcPmHZPE5fOW
+s+oAoJrFUYVDfQrVoTj+qxD49MGodMqw
+=RgW7
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__8_Jan_2009_15_54_46_+1100_9/mLuPBpbbQ2jZJu--
+--Signature=_Thu__8_Jan_2009_16_20_07_+1100_hF1lN.Nu8TgJIZ+w--
