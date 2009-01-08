@@ -1,27 +1,52 @@
-From: David Howells <dhowells@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the nommu tree
-Date: Thu, 08 Jan 2009 12:46:29 +0000
-Message-ID: <28278.1231418789@redhat.com>
+Date: Fri, 9 Jan 2009 00:06:33 +1100
+Message-ID: <20090109000633.1216408d.sfr@canb.auug.org.au>
 References: <20090108153009.96d9d01a.sfr@canb.auug.org.au>
+	<28278.1231418789@redhat.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__9_Jan_2009_00_06_33_+1100_I+KSqhJh+i0/X/PQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:46073 "EHLO mx2.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52332 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752105AbZAHMqm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 8 Jan 2009 07:46:42 -0500
-In-Reply-To: <20090108153009.96d9d01a.sfr@canb.auug.org.au>
+	id S1754570AbZAHNGz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 8 Jan 2009 08:06:55 -0500
+In-Reply-To: <28278.1231418789@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: dhowells@redhat.com, linux-next@vger.kernel.org, Matt Mackall <mpm@selenic.com>
+To: David Howells <dhowells@redhat.com>
+Cc: linux-next@vger.kernel.org, Matt Mackall <mpm@selenic.com>
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Signature=_Fri__9_Jan_2009_00_06_33_+1100_I+KSqhJh+i0/X/PQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Today's linux-next merge of the nommu tree got a conflict in
-> mm/tiny-shmem.c between commit 853ac43ab194f5051b27a55060215d696dc9480d
-> ("shmem: unify regular and tiny shmem") from Linus' tree and commit
-> d10f9907ba3626261f45dbb498867f441f06c486 ("shmem: remove unused
-> shmem_get_unmapped_area") from the nommu tree.
+Hi David,
 
-I've updated the nommu tree.
+On Thu, 08 Jan 2009 12:46:29 +0000 David Howells <dhowells@redhat.com> wrot=
+e:
+>
+> I've updated the nommu tree.
 
-David
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__9_Jan_2009_00_06_33_+1100_I+KSqhJh+i0/X/PQ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkll+lkACgkQjjKRsyhoI8wVdQCgr1wZF8ezg6LKylMkAm+bcJTO
+RM4AoK+/cVzbU2+VfP9mRfDJ/10cPn4v
+=U9jr
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__9_Jan_2009_00_06_33_+1100_I+KSqhJh+i0/X/PQ--
