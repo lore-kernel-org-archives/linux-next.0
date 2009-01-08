@@ -1,62 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: rr tree build warnings
-Date: Thu, 8 Jan 2009 17:44:41 +1100
-Message-ID: <20090108174441.c5fc9371.sfr@canb.auug.org.au>
+From: Matt Mackall <mpm@selenic.com>
+Subject: Re: linux-next: manual merge of the nommu tree
+Date: Thu, 08 Jan 2009 01:20:02 -0600
+Message-ID: <1231399203.3178.277.camel@calx>
+References: <20090108153009.96d9d01a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__8_Jan_2009_17_44_41_+1100_wEHo0Rqx4oIG71J9"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33156 "EHLO smtps.tip.net.au"
+Received: from waste.org ([66.93.16.53]:50556 "EHLO waste.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751584AbZAHGox (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 8 Jan 2009 01:44:53 -0500
+	id S1751627AbZAHHUr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 8 Jan 2009 02:20:47 -0500
+In-Reply-To: <20090108153009.96d9d01a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Howells <dhowells@redhat.com>, linux-next@vger.kernel.org, Hugh Dickins <hugh@veritas.com>
 
---Signature=_Thu__8_Jan_2009_17_44_41_+1100_wEHo0Rqx4oIG71J9
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 2009-01-08 at 15:30 +1100, Stephen Rothwell wrote:
+> Hi David,
+> 
+> Today's linux-next merge of the nommu tree got a conflict in
+> mm/tiny-shmem.c between commit 853ac43ab194f5051b27a55060215d696dc9480d
+> ("shmem: unify regular and tiny shmem") from Linus' tree and commit
+> d10f9907ba3626261f45dbb498867f441f06c486 ("shmem: remove unused
+> shmem_get_unmapped_area") from the nommu tree.
 
-Hi Rusty,
+Thanks for cleaning this up, but this probably shouldn't have happened.
+I wrote the remove patch first, then wrote the unify patch on top of it
+and sent them both off, numbered, to Hugh. Not sure how or why they went
+through different trees.
 
-Today's linux-next build (sparc32 defconfig) produced these new warnings
-(I think they are down to the rr tree:
-
-kernel/workqueue.c: In function 'current_is_keventd':
-kernel/workqueue.c:742: warning: unused variable 'cpu'
-
-That I have reported before.
-
-mm/slab.c: In function 'start_cpu_timer':
-mm/slab.c:865: warning: initialization from incompatible pointer type
-mm/slab.c: At top level:
-mm/slab.c:686: warning: 'reap_work' defined but not used
-
-Not sure about that one.
-
-net/xfrm/xfrm_ipcomp.c: In function 'ipcomp_decompress':
-net/xfrm/xfrm_ipcomp.c:48: warning: unused variable 'cpu'
-net/xfrm/xfrm_ipcomp.c: In function 'ipcomp_compress':
-net/xfrm/xfrm_ipcomp.c:142: warning: unused variable 'cpu'
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__8_Jan_2009_17_44_41_+1100_wEHo0Rqx4oIG71J9
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklloNkACgkQjjKRsyhoI8zESQCcDjyyN/HEKjCSuJslXfGeJ7OZ
-becAnjOhQ6XOLv/kzVRM8T3wx1aR5UaX
-=zMTB
------END PGP SIGNATURE-----
-
---Signature=_Thu__8_Jan_2009_17_44_41_+1100_wEHo0Rqx4oIG71J9--
+-- 
+Mathematics is the supreme nostalgia of our time.
