@@ -1,34 +1,43 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: Tree for January 8 (multimedia/cx88)
-Date: Thu, 8 Jan 2009 18:14:32 -0200
-Message-ID: <20090108181432.3ab1ea9d@pedra.chehab.org>
-References: <20090108171730.19a41e14.sfr@canb.auug.org.au>
-	<49663B74.6010707@oracle.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the rr tree
+Date: Thu, 8 Jan 2009 12:50:31 -0800
+Message-ID: <20090108125031.5d27e069.akpm@linux-foundation.org>
+References: <20090105143239.08b1a060.sfr@canb.auug.org.au>
+	<200901061134.49369.rusty@rustcorp.com.au>
+	<Pine.LNX.4.64.0901060845001.11819@quilx.com>
+	<200901071317.29141.rusty@rustcorp.com.au>
+	<Pine.LNX.4.64.0901070858260.8329@quilx.com>
+	<20090107172051.GK496@one.firstfloor.org>
+	<Pine.LNX.4.64.0901071300430.8329@quilx.com>
+	<20090108204835.GI496@one.firstfloor.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:35021 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1762640AbZAHUPF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Jan 2009 15:15:05 -0500
-In-Reply-To: <49663B74.6010707@oracle.com>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:50543 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752389AbZAHUur (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Jan 2009 15:50:47 -0500
+In-Reply-To: <20090108204835.GI496@one.firstfloor.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org
+Cc: cl@linux-foundation.org, andi@firstfloor.org, rusty@rustcorp.com.au, sfr@canb.auug.org.au, linux-next@vger.kernel.org, travis@sgi.com, mingo@elte.hu, rth@twiddle.net
 
-On Thu, 08 Jan 2009 09:44:20 -0800
-Randy Dunlap <randy.dunlap@oracle.com> wrote:
+On Thu, 8 Jan 2009 21:48:35 +0100
+Andi Kleen <andi@firstfloor.org> wrote:
 
-> 
-> linux-next-20090108/drivers/media/video/cx88/cx88-i2c.c: In function 'cx88_call_i2c_clients':
-> linux-next-20090108/drivers/media/video/cx88/cx88-i2c.c:122: error: 'struct cx88_core' has no member named 'gate_ctrl'
-> linux-next-20090108/drivers/media/video/cx88/cx88-i2c.c:123: error: 'struct cx88_core' has no member named 'gate_ctrl'
-> linux-next-20090108/drivers/media/video/cx88/cx88-i2c.c:127: error: 'struct cx88_core' has no member named 'gate_ctrl'
-> linux-next-20090108/drivers/media/video/cx88/cx88-i2c.c:128: error: 'struct cx88_core' has no member named 'gate_ctrl'
+> +/*
+> + * This macro obfuscates arithmetic on a variable address so that gcc
+> + * shouldn't recognize the original var, and make assumptions about it.
+> + *
+> + * This is needed because the C standard makes it undefined to do
+> + * pointer arithmetic on "objects" outside their boundaries and the
+> + * gcc optimizers assume this is the case. In particular they
+> + * assume such arithmetic does not wrap.
+> + *
+> + * A miscompilation has been observed because of this on PPC.
+> + * To work around it we hide the relationship of the pointer and the object
+> + * using this macro.
+> + *
 
-Grrr... a small trivial bug... Anyway, trival to fix also.
-
-Cheers,
-Mauro
+wow, thanks.  I always wondered.
