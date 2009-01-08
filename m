@@ -1,52 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the nommu tree
-Date: Fri, 9 Jan 2009 00:06:33 +1100
-Message-ID: <20090109000633.1216408d.sfr@canb.auug.org.au>
-References: <20090108153009.96d9d01a.sfr@canb.auug.org.au>
-	<28278.1231418789@redhat.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for January 8 (percpu)
+Date: Thu, 08 Jan 2009 09:23:55 -0800
+Message-ID: <496636AB.9000903@oracle.com>
+References: <20090108171730.19a41e14.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__9_Jan_2009_00_06_33_+1100_I+KSqhJh+i0/X/PQ"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52332 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754570AbZAHNGz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 8 Jan 2009 08:06:55 -0500
-In-Reply-To: <28278.1231418789@redhat.com>
+Received: from rcsinet13.oracle.com ([148.87.113.125]:43190 "EHLO
+	rgminet13.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751599AbZAHRYI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Jan 2009 12:24:08 -0500
+In-Reply-To: <20090108171730.19a41e14.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: linux-next@vger.kernel.org, Matt Mackall <mpm@selenic.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Fri__9_Jan_2009_00_06_33_+1100_I+KSqhJh+i0/X/PQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20090107:
+> 
+> Undropped tree:
+> 	rr
+> 
+> Dropped trees (temporarily):
+> 	ocfs2 (build problem)
+> 	cpu_alloc (build problem)
 
-Hi David,
 
-On Thu, 08 Jan 2009 12:46:29 +0000 David Howells <dhowells@redhat.com> wrot=
-e:
->
-> I've updated the nommu tree.
+When CONFIG_SMP=n, both arch/x86/include/asm/percpu.h and
+include/asm-generic/percpu.h define both of
+read_percpu_ptr() and read_percpu_var().
 
-Thanks.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+build-r8079.out:linux-next-20090108/include/asm-generic/percpu.h:124:1: warning: "read_percpu_ptr" redefined
+build-r8079.out:linux-next-20090108/arch/x86/include/asm/percpu.h:107:1: warning: this is the location of the previous definition
+build-r8079.out:linux-next-20090108/include/asm-generic/percpu.h:120:1: warning: "read_percpu_var" redefined
+build-r8079.out:linux-next-20090108/arch/x86/include/asm/percpu.h:106:1: warning: this is the location of the previous definition
 
---Signature=_Fri__9_Jan_2009_00_06_33_+1100_I+KSqhJh+i0/X/PQ
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkll+lkACgkQjjKRsyhoI8wVdQCgr1wZF8ezg6LKylMkAm+bcJTO
-RM4AoK+/cVzbU2+VfP9mRfDJ/10cPn4v
-=U9jr
------END PGP SIGNATURE-----
-
---Signature=_Fri__9_Jan_2009_00_06_33_+1100_I+KSqhJh+i0/X/PQ--
+-- 
+~Randy
