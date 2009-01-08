@@ -1,57 +1,82 @@
-From: Christoph Lameter <cl@linux-foundation.org>
-Subject: Re: linux-next: manual merge of the rr tree
-Date: Thu, 8 Jan 2009 16:21:32 -0600 (CST)
-Message-ID: <Pine.LNX.4.64.0901081539360.14124@quilx.com>
-References: <20090105143239.08b1a060.sfr@canb.auug.org.au>
- <200901061134.49369.rusty@rustcorp.com.au> <Pine.LNX.4.64.0901060845001.11819@quilx.com>
- <200901071317.29141.rusty@rustcorp.com.au> <Pine.LNX.4.64.0901070858260.8329@quilx.com>
- <20090107172051.GK496@one.firstfloor.org> <Pine.LNX.4.64.0901071300430.8329@quilx.com>
- <20090108204835.GI496@one.firstfloor.org> <Pine.LNX.4.64.0901081514360.13768@quilx.com>
- <20090108214908.GJ496@one.firstfloor.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for January 8 (percpu)
+Date: Fri, 9 Jan 2009 09:23:22 +1100
+Message-ID: <20090109092322.fd43b3b6.sfr@canb.auug.org.au>
+References: <20090108171730.19a41e14.sfr@canb.auug.org.au>
+	<496636AB.9000903@oracle.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__9_Jan_2009_09_23_22_+1100_Yh5tKqj5SN8LCorI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nlpi053.sbcis.sbc.com ([207.115.36.82]:41077 "EHLO
-	nlpi053.prodigy.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754290AbZAHWWT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Jan 2009 17:22:19 -0500
-In-Reply-To: <20090108214908.GJ496@one.firstfloor.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35830 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752011AbZAHWXe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 8 Jan 2009 17:23:34 -0500
+In-Reply-To: <496636AB.9000903@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andi Kleen <andi@firstfloor.org>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>, Ingo Molnar <mingo@elte.hu>, Richard Henderson <rth@twiddle.net>, akpm@linux-foundation.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>
 
-On Thu, 8 Jan 2009, Andi Kleen wrote:
+--Signature=_Fri__9_Jan_2009_09_23_22_+1100_Yh5tKqj5SN8LCorI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Thu, Jan 08, 2009 at 03:15:48PM -0600, Christoph Lameter wrote:
-> > This also then means that RELOC_HIDE can simply be pointer arithmetic on
-> > non PPC, right?
+(Forward to Rusty)
+
+On Thu, 08 Jan 2009 09:23:55 -0800 Randy Dunlap <randy.dunlap@oracle.com> w=
+rote:
 >
-> No, the C standard and the gcc optimizer are the same on all architectures.
+> Stephen Rothwell wrote:
+> > Hi all,
+> >=20
+> > Changes since 20090107:
+> >=20
+> > Undropped tree:
+> > 	rr
+> >=20
+> > Dropped trees (temporarily):
+> > 	ocfs2 (build problem)
+> > 	cpu_alloc (build problem)
+>=20
+>=20
+> When CONFIG_SMP=3Dn, both arch/x86/include/asm/percpu.h and
+> include/asm-generic/percpu.h define both of
+> read_percpu_ptr() and read_percpu_var().
+>=20
+>=20
+> build-r8079.out:linux-next-20090108/include/asm-generic/percpu.h:124:1: w=
+arning: "read_percpu_ptr" redefined
+> build-r8079.out:linux-next-20090108/arch/x86/include/asm/percpu.h:107:1: =
+warning: this is the location of the previous definition
+> build-r8079.out:linux-next-20090108/include/asm-generic/percpu.h:120:1: w=
+arning: "read_percpu_var" redefined
+> build-r8079.out:linux-next-20090108/arch/x86/include/asm/percpu.h:106:1: =
+warning: this is the location of the previous definition
+>=20
+>=20
+>=20
+> --=20
+> ~Randy
+>=20
 
-The wrapping is okay on platforms that use straight 2 complement without
-additional tricks in high bits. Some platforms do not wrap.
 
-No need to stop the cc optimizer from optimizing pointer addition there.
-The C compiler can generate more effective code if we do not go through
-this asm segment. See how RELOC_HIDE is defined for the icc and
-in include/linux/gcc.h.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Also: Would it not be better to rename RELOC_HIDE. To
-ADD_POINTER_OFFSET_BEYOND_OBJECT_BOUNDARY or so?
+--Signature=_Fri__9_Jan_2009_09_23_22_+1100_Yh5tKqj5SN8LCorI
+Content-Type: application/pgp-signature
 
-What are the following uses of RELOC_HIDE to add a zero offset. Certainly
-they have nothing to do with wrapping.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-arch/mips/include/asm/page.h:#define __pa_symbol(x)
-__pa(RELOC_HIDE((unsigned long)(x), 0))
-arch/sh/include/asm/system.h:   struct pt_regs *regs = RELOC_HIDE(&__regs,
-0);  \
-arch/x86/include/asm/page_32.h:#define __phys_reloc_hide(x)
-RELOC_HIDE((x), 0)
+iEYEARECAAYFAklmfNoACgkQjjKRsyhoI8yH6ACeJM+3wDXiHGkPodUJfnLSdXk7
+xwkAoLg+thAsDdcavPHEtGLV0578nN+r
+=rK6C
+-----END PGP SIGNATURE-----
 
-Guess we assume that GCC is passing some magic with a pointer that is
-not lost when casting it?
-
-What kind of magical properties are these? Address invalidation is messed
-up in gcc and just icc does it right?
+--Signature=_Fri__9_Jan_2009_09_23_22_+1100_Yh5tKqj5SN8LCorI--
