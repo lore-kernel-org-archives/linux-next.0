@@ -1,53 +1,72 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the rr tree
-Date: Fri, 09 Jan 2009 14:54:19 -0800 (PST)
-Message-ID: <20090109.145419.168966701.davem@davemloft.net>
-References: <Pine.LNX.4.64.0901081539360.14124@quilx.com>
-	<20090108.142510.263686170.davem@davemloft.net>
-	<Pine.LNX.4.64.0901090836530.32079@quilx.com>
+From: Nathan Lynch <ntl@pobox.com>
+Subject: [PATCH] cacheinfo: rename cache_dir per-cpu variable
+Date: Fri, 9 Jan 2009 17:12:44 -0600
+Message-ID: <20090109231244.GA6850@localdomain>
+References: <20090109125327.351b7f65.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:49804
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1757343AbZAIWyS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Jan 2009 17:54:18 -0500
-In-Reply-To: <Pine.LNX.4.64.0901090836530.32079@quilx.com>
+Received: from a-sasl-fastnet.sasl.smtp.pobox.com ([207.106.133.19]:62586 "EHLO
+	sasl.smtp.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757964AbZAIXMv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Jan 2009 18:12:51 -0500
+Content-Disposition: inline
+In-Reply-To: <20090109125327.351b7f65.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: cl@linux-foundation.org
-Cc: andi@firstfloor.org, rusty@rustcorp.com.au, sfr@canb.auug.org.au, linux-next@vger.kernel.org, travis@sgi.com, mingo@elte.hu, rth@twiddle.net, akpm@linux-foundation.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, ppc-dev <linuxppc-dev@ozlabs.org>
 
-From: Christoph Lameter <cl@linux-foundation.org>
-Date: Fri, 9 Jan 2009 08:42:09 -0600 (CST)
+The per_cpu__ prefix on DECLARE_PER_CPU'd variables is going away;
+rename cache_dir to cache_dir_pcpu.
 
-> On Thu, 8 Jan 2009, David Miller wrote:
-> 
-> > Otherwise, if overflow is possible, tranforming an array index
-> > comparison into a pointer comparison is no longer legal.
-> 
-> This means that access to an object immediately before or after would wrap
-> around. If the object is not near 0 or near the end of the address space
-> then such a thing cannot occur. We have the ZERO page at address 0 so the
-> lower end is taken care and usually there are also special uses for very
-> high addresses.
+Signed-off-by: Nathan Lynch <ntl@pobox.com>
+---
+ arch/powerpc/kernel/cacheinfo.c |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
 
-GCC, or any compiler, cannot know about such invariants.
-What it does know is that it can always transform
-comparisons between "i" and "max_i" into comparisons
-between '&array[i]' and '&array[max_i]'
+Not sure which route this should go, I assume either Rusty or Ben will
+take it?
 
-> The wrapping is mainly an issue if the percpu area is linked to very high
-> addresses but later the per cpu areas for the individual processors are
-> allocated on relatively low addresses. The address calculation of the
-> location of a percpu address for a particular cpu then occurs by
-> adding an offset that will wrap around zero. This is fine on x86.
 
-Anyways, the original reason for the RELOC_HIDE business is that GCC
-would do common subexpression elimination on the address computation.
-The percpu stuff was a calculation using a symbol address as some kind
-of base, and GCC took liberties with that (which were legal given
-the amount of information we (weren't) giving to it).
-
-I honestly forget the exact details, I'm sure Rusty could explain...
+diff --git a/arch/powerpc/kernel/cacheinfo.c b/arch/powerpc/kernel/cacheinfo.c
+index b33f041..bb37b1d 100644
+--- a/arch/powerpc/kernel/cacheinfo.c
++++ b/arch/powerpc/kernel/cacheinfo.c
+@@ -113,7 +113,7 @@ struct cache {
+ 	struct cache *next_local;      /* next cache of >= level */
+ };
+ 
+-static DEFINE_PER_CPU(struct cache_dir *, cache_dir);
++static DEFINE_PER_CPU(struct cache_dir *, cache_dir_pcpu);
+ 
+ /* traversal/modification of this list occurs only at cpu hotplug time;
+  * access is serialized by cpu hotplug locking
+@@ -468,9 +468,9 @@ static struct cache_dir *__cpuinit cacheinfo_create_cache_dir(unsigned int cpu_i
+ 
+ 	cache_dir->kobj = kobj;
+ 
+-	WARN_ON_ONCE(per_cpu(cache_dir, cpu_id) != NULL);
++	WARN_ON_ONCE(per_cpu(cache_dir_pcpu, cpu_id) != NULL);
+ 
+-	per_cpu(cache_dir, cpu_id) = cache_dir;
++	per_cpu(cache_dir_pcpu, cpu_id) = cache_dir;
+ 
+ 	return cache_dir;
+ err:
+@@ -820,13 +820,13 @@ void cacheinfo_cpu_offline(unsigned int cpu_id)
+ 
+ 	/* Prevent userspace from seeing inconsistent state - remove
+ 	 * the sysfs hierarchy first */
+-	cache_dir = per_cpu(cache_dir, cpu_id);
++	cache_dir = per_cpu(cache_dir_pcpu, cpu_id);
+ 
+ 	/* careful, sysfs population may have failed */
+ 	if (cache_dir)
+ 		remove_cache_dir(cache_dir);
+ 
+-	per_cpu(cache_dir, cpu_id) = NULL;
++	per_cpu(cache_dir_pcpu, cpu_id) = NULL;
+ 
+ 	/* clear the CPU's bit in its cache chain, possibly freeing
+ 	 * cache objects */
