@@ -1,72 +1,47 @@
-From: Nathan Lynch <ntl@pobox.com>
-Subject: [PATCH] cacheinfo: rename cache_dir per-cpu variable
-Date: Fri, 9 Jan 2009 17:12:44 -0600
-Message-ID: <20090109231244.GA6850@localdomain>
-References: <20090109125327.351b7f65.sfr@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: Tree for January 8 (percpu)
+Date: Sat, 10 Jan 2009 16:48:31 +1030
+Message-ID: <200901101648.32757.rusty@rustcorp.com.au>
+References: <20090108171730.19a41e14.sfr@canb.auug.org.au> <496636AB.9000903@oracle.com> <20090109092322.fd43b3b6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from a-sasl-fastnet.sasl.smtp.pobox.com ([207.106.133.19]:62586 "EHLO
-	sasl.smtp.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757964AbZAIXMv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Jan 2009 18:12:51 -0500
+Received: from ozlabs.org ([203.10.76.45]:58574 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752936AbZAJGSr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 10 Jan 2009 01:18:47 -0500
+In-Reply-To: <20090109092322.fd43b3b6.sfr@canb.auug.org.au>
 Content-Disposition: inline
-In-Reply-To: <20090109125327.351b7f65.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, ppc-dev <linuxppc-dev@ozlabs.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>
 
-The per_cpu__ prefix on DECLARE_PER_CPU'd variables is going away;
-rename cache_dir to cache_dir_pcpu.
+On Friday 09 January 2009 08:53:22 Stephen Rothwell wrote:
+> (Forward to Rusty)
+> 
+> On Thu, 08 Jan 2009 09:23:55 -0800 Randy Dunlap <randy.dunlap@oracle.com> wrote:
+> >
+> > Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > Changes since 20090107:
+> > > 
+> > > Undropped tree:
+> > > 	rr
+> > > 
+> > > Dropped trees (temporarily):
+> > > 	ocfs2 (build problem)
+> > > 	cpu_alloc (build problem)
+> > 
+> > 
+> > When CONFIG_SMP=n, both arch/x86/include/asm/percpu.h and
+> > include/asm-generic/percpu.h define both of
+> > read_percpu_ptr() and read_percpu_var().
 
-Signed-off-by: Nathan Lynch <ntl@pobox.com>
----
- arch/powerpc/kernel/cacheinfo.c |   10 +++++-----
- 1 files changed, 5 insertions(+), 5 deletions(-)
+Erk... this header is a bit of a mess of 64bit/32bit UP/SMP defines.
 
-Not sure which route this should go, I assume either Rusty or Ben will
-take it?
-
-
-diff --git a/arch/powerpc/kernel/cacheinfo.c b/arch/powerpc/kernel/cacheinfo.c
-index b33f041..bb37b1d 100644
---- a/arch/powerpc/kernel/cacheinfo.c
-+++ b/arch/powerpc/kernel/cacheinfo.c
-@@ -113,7 +113,7 @@ struct cache {
- 	struct cache *next_local;      /* next cache of >= level */
- };
- 
--static DEFINE_PER_CPU(struct cache_dir *, cache_dir);
-+static DEFINE_PER_CPU(struct cache_dir *, cache_dir_pcpu);
- 
- /* traversal/modification of this list occurs only at cpu hotplug time;
-  * access is serialized by cpu hotplug locking
-@@ -468,9 +468,9 @@ static struct cache_dir *__cpuinit cacheinfo_create_cache_dir(unsigned int cpu_i
- 
- 	cache_dir->kobj = kobj;
- 
--	WARN_ON_ONCE(per_cpu(cache_dir, cpu_id) != NULL);
-+	WARN_ON_ONCE(per_cpu(cache_dir_pcpu, cpu_id) != NULL);
- 
--	per_cpu(cache_dir, cpu_id) = cache_dir;
-+	per_cpu(cache_dir_pcpu, cpu_id) = cache_dir;
- 
- 	return cache_dir;
- err:
-@@ -820,13 +820,13 @@ void cacheinfo_cpu_offline(unsigned int cpu_id)
- 
- 	/* Prevent userspace from seeing inconsistent state - remove
- 	 * the sysfs hierarchy first */
--	cache_dir = per_cpu(cache_dir, cpu_id);
-+	cache_dir = per_cpu(cache_dir_pcpu, cpu_id);
- 
- 	/* careful, sysfs population may have failed */
- 	if (cache_dir)
- 		remove_cache_dir(cache_dir);
- 
--	per_cpu(cache_dir, cpu_id) = NULL;
-+	per_cpu(cache_dir_pcpu, cpu_id) = NULL;
- 
- 	/* clear the CPU's bit in its cache chain, possibly freeing
- 	 * cache objects */
+I've thwacked it harder, thanks!
+Rusty.
