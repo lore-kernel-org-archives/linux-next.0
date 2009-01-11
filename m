@@ -1,30 +1,72 @@
-From: Simon Holm =?ISO-8859-1?Q?Th=F8gersen?= <odie@cs.aau.dk>
-Subject: Re: [PATCH -next] jbd2: fix printk format warning
-Date: Sun, 11 Jan 2009 20:20:45 +0100
-Message-ID: <1231701645.17759.35.camel@odie.local>
-References: <20090105173517.deeff918.sfr@canb.auug.org.au>
-	 <20090105121158.94d990c3.randy.dunlap@oracle.com>
-	 <1231699973.17759.22.camel@odie.local>  <496A4361.5040807@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: origin tree build failure
+Date: Mon, 12 Jan 2009 10:48:37 +1100
+Message-ID: <20090112104837.69feedec.sfr__41365.0517970838$1231717857$gmane$org@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__12_Jan_2009_10_48_37_+1100_XIVE0LGEI43ZezO6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.cs.aau.dk ([130.225.194.6]:37054 "EHLO smtp.cs.aau.dk"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47010 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751618AbZAKTT0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 11 Jan 2009 14:19:26 -0500
-In-Reply-To: <496A4361.5040807@oracle.com>
+	id S1751958AbZAKXsw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 11 Jan 2009 18:48:52 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ext4@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, Mike Travis <travis@sgi.com>, Ingo Molnar <mingo@elte.hu>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org
 
-s=C3=B8n, 11 01 2009 kl. 11:07 -0800, skrev Randy Dunlap:
-> ok, where did you send it?  I don't see it...
+--Signature=_Mon__12_Jan_2009_10_48_37_+1100_XIVE0LGEI43ZezO6
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It had a wrong recipient address so it never made it. I've sent it agai=
-n
-and verified that it made it this time.
+Hi Linus,
 
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-Simon
+arch/powerpc/platforms/pasemi/cpufreq.c: In function 'pas_cpufreq_cpu_init':
+arch/powerpc/platforms/pasemi/cpufreq.c:216: error: incompatible types in a=
+ssignment
+arch/powerpc/platforms/powermac/cpufreq_64.c: In function 'g5_cpufreq_cpu_i=
+nit':
+arch/powerpc/platforms/powermac/cpufreq_64.c:365: error: incompatible types=
+ in assignment
+arch/powerpc/platforms/cell/cbe_cpufreq.c: In function 'cbe_cpufreq_cpu_ini=
+t':
+arch/powerpc/platforms/cell/cbe_cpufreq.c:121: error: incompatible types in=
+ assignment
+
+Caused by commit 835481d9bcd65720b473db6b38746a74a3964218 ("cpumask:
+convert struct cpufreq_policy to cpumask_var_t") which missed updating
+all the powerpc (at least) cpufreq drivers.
+
+Reverting that one commit required fixups, so I reverted merge commit
+4e9b1c184cadbece3694603de5f880b6e35bd7a7 ("Merge branch 'cpus4096-for-linus'
+of git://git.kernel.org/pub/scm/linux/kernel/git/tip/linux-2.6-tip")
+instead.
+
+I am hoping that this will be fixed soon and that revert doesn't
+propagate more pain through today's linux-next.
+
+This branch was last committed to in the tip tree on Jan 7 (the patch
+above was committed on Jan 6) but was never propagated to linux-next
+before being merged into your tree yesterday.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__12_Jan_2009_10_48_37_+1100_XIVE0LGEI43ZezO6
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAklqhVUACgkQjjKRsyhoI8wnagCeJqHvFLMK409R5XLtEldF0dBY
+aRcAnij8+jRXEfuQjByOla7llQ/pCSd+
+=ZPEf
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__12_Jan_2009_10_48_37_+1100_XIVE0LGEI43ZezO6--
