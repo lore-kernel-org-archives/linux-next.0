@@ -1,28 +1,16 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: origin tree build failure
 Date: Mon, 12 Jan 2009 10:48:37 +1100
-Message-ID: <20090112104837.69feedec.sfr__2425.13827183775$1231717863$gmane$org@canb.auug.org.au>
+Message-ID: <20090112104837.69feedec.sfr__46648.168078582$1231717880$gmane$org@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1667946722=="
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org>
-List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
-List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
-List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
-Mime-version: 1.0
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike@ozlabs.org, "David S. Miller" <davem@davemloft.net>, Rusty Russell <rusty@rustcorp.com.au>, LKML <linux-kernel@vger.kernel.org>, Travis <travis@sgi.com>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
-List-Id: linux-next.vger.kernel.org
-
---===============1667946722==
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
  boundary="Signature=_Mon__12_Jan_2009_10_48_37_+1100_XIVE0LGEI43ZezO6"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753660AbZAKXtK@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, Mike Travis <travis@sgi.com>, Ingo Molnar <mingo@elte.hu>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org
+List-Id: linux-next.vger.kernel.org
 
 --Signature=_Mon__12_Jan_2009_10_48_37_+1100_XIVE0LGEI43ZezO6
 Content-Type: text/plain; charset=US-ASCII
@@ -78,15 +66,3 @@ aRcAnij8+jRXEfuQjByOla7llQ/pCSd+
 -----END PGP SIGNATURE-----
 
 --Signature=_Mon__12_Jan_2009_10_48_37_+1100_XIVE0LGEI43ZezO6--
-
---===============1667946722==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Linuxppc-dev mailing list
-Linuxppc-dev@ozlabs.org
-https://ozlabs.org/mailman/listinfo/linuxppc-dev
---===============1667946722==--
