@@ -1,97 +1,53 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: [PATCH] powerpc: Fix cpufreq drivers after cpufreq core changes
-Date: Mon, 12 Jan 2009 11:22:01 +1100
-Message-ID: <1231719721.22571.9.camel__41681.297394871$1231719948$gmane$org@pasglop>
-References: <20090112104837.69feedec.sfr@canb.auug.org.au>
-	<1231719015.22571.4.camel@pasglop>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: mfd tree build failure
+Date: Mon, 12 Jan 2009 14:03:18 +1100
+Message-ID: <20090112140318.e25cd2bf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org>
-In-Reply-To: <1231719015.22571.4.camel@pasglop>
-List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
-List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
-List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "David S. Miller" <davem@davemloft.net>, arndb <arndb@arndb.de>, Rusty Russell <rusty@rustcorp.com.au>, LKML <linux-kernel@vger.kernel.org>, Mike Travis <travis@sgi.com>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Olof Johansson <olof@lixom.net>, Ingo Molnar <mingo@elte.hu>, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__12_Jan_2009_14_03_18_+1100_rW4bk+NaDScErpLh"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36695 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751645AbZALDD2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 11 Jan 2009 22:03:28 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Samuel Ortiz <sameo@openedhand.com>
+Cc: linux-next@vger.kernel.org, Balaji Rao <balajirrao@openmoko.org>
 
-This updates the cpufreq drivers in arch/powerpc so they build again
-after the core cpufreq changes that broke them in commit
-in835481d9bcd65720b473db6b38746a74a3964218.
+--Signature=_Mon__12_Jan_2009_14_03_18_+1100_rW4bk+NaDScErpLh
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
----
+Hi Samuel,
 
-Tested on a G5. Olof, Arnd, any chance you can test the cell and pasemi
-drivers still work ?
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Linus, you can probably merge this now to fix the build problems.
+ERROR: "__set_irq_handler" [drivers/mfd/pcf50633-core.ko] undefined!
+ERROR: "handle_level_irq" [drivers/mfd/pcf50633-core.ko] undefined!
 
-diff --git a/arch/powerpc/platforms/cell/cbe_cpufreq.c b/arch/powerpc/platforms/cell/cbe_cpufreq.c
-index ec7c8f4..e6506cd 100644
---- a/arch/powerpc/platforms/cell/cbe_cpufreq.c
-+++ b/arch/powerpc/platforms/cell/cbe_cpufreq.c
-@@ -118,7 +118,7 @@ static int cbe_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	policy->cur = cbe_freqs[cur_pmode].frequency;
- 
- #ifdef CONFIG_SMP
--	policy->cpus = per_cpu(cpu_sibling_map, policy->cpu);
-+	cpumask_copy(policy->cpus, &per_cpu(cpu_sibling_map, policy->cpu));
- #endif
- 
- 	cpufreq_frequency_table_get_attr(cbe_freqs, policy->cpu);
-diff --git a/arch/powerpc/platforms/cell/cpufreq_spudemand.c b/arch/powerpc/platforms/cell/cpufreq_spudemand.c
-index a3c6c01..968c1c0 100644
---- a/arch/powerpc/platforms/cell/cpufreq_spudemand.c
-+++ b/arch/powerpc/platforms/cell/cpufreq_spudemand.c
-@@ -110,7 +110,7 @@ static int spu_gov_govern(struct cpufreq_policy *policy, unsigned int event)
- 		}
- 
- 		/* initialize spu_gov_info for all affected cpus */
--		for_each_cpu_mask(i, policy->cpus) {
-+		for_each_cpu(i, policy->cpus) {
- 			affected_info = &per_cpu(spu_gov_info, i);
- 			affected_info->policy = policy;
- 		}
-@@ -127,7 +127,7 @@ static int spu_gov_govern(struct cpufreq_policy *policy, unsigned int event)
- 		spu_gov_cancel_work(info);
- 
- 		/* clean spu_gov_info for all affected cpus */
--		for_each_cpu_mask (i, policy->cpus) {
-+		for_each_cpu (i, policy->cpus) {
- 			info = &per_cpu(spu_gov_info, i);
- 			info->policy = NULL;
- 		}
-diff --git a/arch/powerpc/platforms/pasemi/cpufreq.c b/arch/powerpc/platforms/pasemi/cpufreq.c
-index 86db47c..be2527a 100644
---- a/arch/powerpc/platforms/pasemi/cpufreq.c
-+++ b/arch/powerpc/platforms/pasemi/cpufreq.c
-@@ -213,7 +213,7 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	pr_debug("current astate is at %d\n",cur_astate);
- 
- 	policy->cur = pas_freqs[cur_astate].frequency;
--	policy->cpus = cpu_online_map;
-+	cpumask_copy(policy->cpus, &cpu_online_map);
- 
- 	ppc_proc_freq = policy->cur * 1000ul;
- 
-diff --git a/arch/powerpc/platforms/powermac/cpufreq_64.c b/arch/powerpc/platforms/powermac/cpufreq_64.c
-index 4dfb4bc..beb3833 100644
---- a/arch/powerpc/platforms/powermac/cpufreq_64.c
-+++ b/arch/powerpc/platforms/powermac/cpufreq_64.c
-@@ -362,7 +362,7 @@ static int g5_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	/* secondary CPUs are tied to the primary one by the
- 	 * cpufreq core if in the secondary policy we tell it that
- 	 * it actually must be one policy together with all others. */
--	policy->cpus = cpu_online_map;
-+	cpumask_copy(policy->cpus, &cpu_online_map);
- 	cpufreq_frequency_table_get_attr(g5_cpu_freqs, policy->cpu);
- 
- 	return cpufreq_frequency_table_cpuinfo(policy,
+Immediate cause is clearly commit
+f52046b14b1e1a8a02ae48d0c69d39c5e204644f ("mfd: PCF50633 core driver")
+which introduces this code.  The above functions don't appear to be
+exported to modules.
+
+I have dropped the mfd tree for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__12_Jan_2009_14_03_18_+1100_rW4bk+NaDScErpLh
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAklqsvYACgkQjjKRsyhoI8x7DgCgl4f5o+fGVcSghrN6TAq8k7Wp
+T18An0xBVU9ArMXMshl7tVVVc/Hm2Y8+
+=e4Nf
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__12_Jan_2009_14_03_18_+1100_rW4bk+NaDScErpLh--
