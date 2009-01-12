@@ -1,22 +1,18 @@
 From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Subject: [PATCH] powerpc: Fix cpufreq drivers after cpufreq core changes
 Date: Mon, 12 Jan 2009 11:22:01 +1100
-Message-ID: <1231719721.22571.9.camel__5542.06963065571$1231719909$gmane$org@pasglop>
+Message-ID: <1231719721.22571.9.camel__5785.8488093645$1231719938$gmane$org@pasglop>
 References: <20090112104837.69feedec.sfr@canb.auug.org.au>
 	 <1231719015.22571.4.camel@pasglop>
 Mime-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:56706 "EHLO gate.crashing.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750905AbZALAXe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 11 Jan 2009 19:23:34 -0500
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752911AbZALAXr@vger.kernel.org>
 In-Reply-To: <1231719015.22571.4.camel@pasglop>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, Mike Travis <travis@sgi.com>, Ingo Molnar <mingo@elte.hu>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org, Olof Johansson <olof@lixom.net>, arndb <arndb@arndb.de>
+List-Id: linux-next.vger.kernel.org
 
 This updates the cpufreq drivers in arch/powerpc so they build again
 after the core cpufreq changes that broke them in commit
