@@ -1,40 +1,45 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for January 12 (cifs vs. staging)
-Date: Mon, 12 Jan 2009 10:19:10 -0800
-Message-ID: <496B899E.7060605@oracle.com>
+Subject: [PATCH -next] libfc: needs CRC32
+Date: Mon, 12 Jan 2009 10:50:58 -0800
+Message-ID: <496B9112.8070908@oracle.com>
 References: <20090112154539.4857f533.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet11.oracle.com ([148.87.113.123]:58677 "EHLO
-	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752680AbZALST7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Jan 2009 13:19:59 -0500
+Return-path: <linux-scsi-owner@vger.kernel.org>
 In-Reply-To: <20090112154539.4857f533.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-scsi-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sfrench@samba.org, Greg KH <gregkh@suse.de>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>, James Bottomley <James.Bottomley@HansenPartnership.com>, Andrew Morton <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell wrote:
-> Hi all,
-> 
-> Some people took me at my word and so we have the 2.6.30 code starting to
-> trickle in already.
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
+libfc uses crc32 functions, so cause it to be built
+via select:
 
+drivers/built-in.o: In function `fc_frame_crc_check':
+(.text+0x75dae): undefined reference to `crc32_le'
+drivers/built-in.o: In function `fc_fcp_recv':
+fc_fcp.c:(.text+0x7b919): undefined reference to `crc32_le'
+fc_fcp.c:(.text+0x7b9d5): undefined reference to `crc32_le'
+fc_fcp.c:(.text+0x7ba54): undefined reference to `crc32_le'
 
-When CIFS is built-in (=y) and staging/rt28[67]0 =y, there are multiple
-definitions of:
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/scsi/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
-build-r8250.out:(.text+0x1d8ad0): multiple definition of `MD5Init'
-build-r8250.out:(.text+0x1dbb30): multiple definition of `MD5Update'
-build-r8250.out:(.text+0x1db9b0): multiple definition of `MD5Final'
-
-all of which need to have more unique identifiers for their global
-symbols (e.g., rt28_md5_init, cifs_md5_init, foo, blah, bar).
-
+--- linux-next-20090112.orig/drivers/scsi/Kconfig
++++ linux-next-20090112/drivers/scsi/Kconfig
+@@ -608,6 +608,7 @@ config SCSI_FLASHPOINT
+ config LIBFC
+ 	tristate "LibFC module"
+ 	select SCSI_FC_ATTRS
++	select CRC32
+ 	---help---
+ 	  Fibre Channel library module
+ 
 
 -- 
 ~Randy
