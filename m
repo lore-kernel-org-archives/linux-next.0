@@ -1,66 +1,36 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: origin tree build failure
-Date: Mon, 12 Jan 2009 11:44:02 +0100
-Message-ID: <20090112104402.GD10405__14199.8569401496$1231757198$gmane$org@elte.hu>
-References: <20090112104837.69feedec.sfr@canb.auug.org.au>
-	<1231719015.22571.4.camel@pasglop> <20090112090552.GD26750@elte.hu>
-	<1231753791.8959.7.camel@localhost>
+From: Richard Purdie <rpurdie@linux.intel.com>
+Subject: Re: linux-next: drm tree build failure
+Date: Mon, 12 Jan 2009 17:13:19 +0000
+Message-ID: <1231780399.12963.47.camel@dax.rpnet.com>
+References: <20090112141249.f9d72f6c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org>
-Content-Disposition: inline
-In-Reply-To: <1231753791.8959.7.camel@localhost>
-List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
-List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
-List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org
-To: Michael Ellerman <michael@ellerman.id.au>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Rusty Russell <rusty@rustcorp.com.au>, LKML <linux-kernel@vger.kernel.org>, Mike Travis <travis@sgi.com>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga09.intel.com ([134.134.136.24]:50327 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752744AbZALRMw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 12 Jan 2009 12:12:52 -0500
+In-Reply-To: <20090112141249.f9d72f6c.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org
 
-
-* Michael Ellerman <michael@ellerman.id.au> wrote:
-
-> On Mon, 2009-01-12 at 10:05 +0100, Ingo Molnar wrote:
-> > * Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
-> > 
-> > > On Mon, 2009-01-12 at 10:48 +1100, Stephen Rothwell wrote:
-> > > > Hi Linus,
-> > > > 
-> > > > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> > > > 
-> > > > arch/powerpc/platforms/pasemi/cpufreq.c: In function 'pas_cpufreq_cpu_init':
-> > > > arch/powerpc/platforms/pasemi/cpufreq.c:216: error: incompatible types in assignment
-> > > > arch/powerpc/platforms/powermac/cpufreq_64.c: In function 'g5_cpufreq_cpu_init':
-> > > > arch/powerpc/platforms/powermac/cpufreq_64.c:365: error: incompatible types in assignment
-> > > > arch/powerpc/platforms/cell/cbe_cpufreq.c: In function 'cbe_cpufreq_cpu_init':
-> > > > arch/powerpc/platforms/cell/cbe_cpufreq.c:121: error: incompatible types in assignment
-> > > > 
-> > > > Caused by commit 835481d9bcd65720b473db6b38746a74a3964218 ("cpumask:
-> > > > convert struct cpufreq_policy to cpumask_var_t") which missed updating
-> > > > all the powerpc (at least) cpufreq drivers.
-> > > 
-> > > Yeah, it only updates x86 it seems ... 
-> > 
-> > Yeah - and that build bug was stupid too - when touching a generic file 
-> > that is called include/linux/cpufreq.h and changing a key data field one 
-> > should at minimum get the idea that it's generic for a reason and should 
-> > start grepping the tree ...
-> > 
-> > It slipped through because it didnt get caught in build tests because 
-> > cpufreq isnt enabled in the powerpc defconfig.
+On Mon, 2009-01-12 at 14:12 +1100, Stephen Rothwell wrote:
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
 > 
-> Which defconfig?
->
-> powerpc(master) $ git grep CPU_FREQ=y arch/powerpc/configs/ppc64_defconfig
-> arch/powerpc/configs/ppc64_defconfig:CONFIG_CPU_FREQ=y
+> drivers/gpu/drm/i915/i915_dma.c: In function 'i915_initialize':
+> drivers/gpu/drm/i915/i915_dma.c:183: error: 'drm_i915_init_t' has no member named 'sarea_priv'
+> 
+> Immediate cause is commit 21edb2690395e7a5281d0d5b5b8a9362491c9879
+> ("drm/i915: setup sarea properly in master_priv").
+> 
+> I have dropped the drm tree for today.
 
-ah, indeed - you are right.
+I've also mentioned to this to Dave and there is a fixed version of that
+patch in his inbox.
 
-	Ingo
+Cheers,
+
+Richard
