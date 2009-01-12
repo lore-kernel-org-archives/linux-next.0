@@ -1,24 +1,35 @@
-From: David Howells <dhowells@redhat.com>
-Subject: FS-Cache fixes for IA64 export and AFS linkage
-Date: Sat, 17 Jan 2009 06:00:44 +0000
-Message-ID: <16871.1232172044@redhat.com>
-Return-path: <linux-ia64-owner@vger.kernel.org>
-Sender: linux-ia64-owner@vger.kernel.org
-To: Trond Myklebust <Trond.Myklebust@netapp.com>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
-Cc: dhowells@redhat.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>, linux-ia64 <linux-ia64@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>, Kyle McMartin <kyle@mcmartin.ca>, Tony Luck <tony.luck@intel.com>
-List-Id: linux-next.vger.kernel.org
+From: Greg KH <gregkh@suse.de>
+Subject: Re: linux-next: Tree for January 12 (cifs vs. staging)
+Date: Mon, 12 Jan 2009 11:32:18 -0800
+Message-ID: <20090112193218.GA7751@suse.de>
+References: <20090112154539.4857f533.sfr@canb.auug.org.au> <496B899E.7060605@oracle.com> <524f69650901121058g73c8022eif1d1bcca5c0e01fa@mail.gmail.com> <20090112191330.GC7111@suse.de> <524f69650901121123i1765dc3fye3ce636c91dd25bd@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ns1.suse.de ([195.135.220.2]:50087 "EHLO mx1.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752426AbZALTdk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 12 Jan 2009 14:33:40 -0500
+Content-Disposition: inline
+In-Reply-To: <524f69650901121123i1765dc3fye3ce636c91dd25bd@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Steve French <smfrench@gmail.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sfrench@samba.org
 
 
-I've dropped the patch to export copy_page() for IA64 from my patchset and
-updated the AFS patch so that it no longer produces link errors if
-CONFIG_AFS_FS=y and CONFIG_FSCACHE=m but CONFIG_AFS_FSCACHE=n.
+A: No.
+Q: Should I include quotations after my reply?
 
-These patches are now available as:
+On Mon, Jan 12, 2009 at 01:23:07PM -0600, Steve French wrote:
+> Is there some magic compile option alternative (other than renaming
+> the function, which may be ok, since others probably don't depend on
+> it)?  MD5Init is used outside fs/cifs/md5.c so can't be static
 
-	http://people.redhat.com/~dhowells/fscache/patches/nfs+fscache-44.tar.bz2
+No, you should rename it to cifs_md5init to show that it is only for the
+cifs module to use.  Try not to polute the global namespace with generic
+function names.
 
-and I've updated my GIT tree for Trond to pull:
+thanks,
 
-	http://git.kernel.org/?p=linux/kernel/git/dhowells/linux-2.6-nfs-fscache.git;a=shortlog
-
-David
+greg k-h
