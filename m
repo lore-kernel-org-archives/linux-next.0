@@ -1,65 +1,57 @@
 From: "Steve French" <smfrench@gmail.com>
 Subject: Re: linux-next: Tree for January 12 (cifs vs. staging)
-Date: Mon, 12 Jan 2009 14:40:21 -0600
-Message-ID: <524f69650901121240v7bd019a8scc4a41823d308725@mail.gmail.com>
+Date: Mon, 12 Jan 2009 15:07:48 -0600
+Message-ID: <524f69650901121307v67047946yed2c56efaaa839a1@mail.gmail.com>
 References: <20090112154539.4857f533.sfr@canb.auug.org.au>
 	 <496B899E.7060605@oracle.com>
 	 <524f69650901121058g73c8022eif1d1bcca5c0e01fa@mail.gmail.com>
 	 <20090112191330.GC7111@suse.de>
-	 <524f69650901121123i1765dc3fye3ce636c91dd25bd@mail.gmail.com>
-	 <20090112193218.GA7751@suse.de>
-	 <524f69650901121213l76dd4b6ap831d6da16876422f@mail.gmail.com>
-	 <20090112202136.GA8854@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nf-out-0910.google.com ([64.233.182.190]:24009 "EHLO
-	nf-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751778AbZALUkY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Jan 2009 15:40:24 -0500
-In-Reply-To: <20090112202136.GA8854@suse.de>
+Received: from mail-ew0-f17.google.com ([209.85.219.17]:60002 "EHLO
+	mail-ew0-f17.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752332AbZALVHu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Jan 2009 16:07:50 -0500
+In-Reply-To: <20090112191330.GC7111@suse.de>
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <gregkh@suse.de>
 Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sfrench@samba.org
 
-On Mon, Jan 12, 2009 at 2:21 PM, Greg KH <gregkh@suse.de> wrote:
-> On Mon, Jan 12, 2009 at 02:13:29PM -0600, Steve French wrote:
->> On Mon, Jan 12, 2009 at 1:32 PM, Greg KH <gregkh@suse.de> wrote:
->> > On Mon, Jan 12, 2009 at 01:23:07PM -0600, Steve French wrote:
->> >> Is there some magic compile option alternative (other than renaming
->> >> the function, which may be ok, since others probably don't depend on
->> >> it)?  MD5Init is used outside fs/cifs/md5.c so can't be static
->> >
->> > No, you should rename it to cifs_md5init to show that it is only for the
->> > cifs module to use.  Try not to polute the global namespace with generic
->> > function names.
->>
->> Looks like cifs has the following related functions which I can rename
->> if that makes it easier:
->> 001a2e9 R_386_PC32        MD5Final
->> 0001a302 R_386_PC32        MD5Update
->> 0001a38c R_386_PC32        MD5Init
->> 0001a39f R_386_PC32        MD5Update
+On Mon, Jan 12, 2009 at 1:13 PM, Greg KH <gregkh@suse.de> wrote:
+> On Mon, Jan 12, 2009 at 12:58:42PM -0600, Steve French wrote:
+>> There is not just the cifs md5 one (which has been around a long
+>> time), but an md5_init (static) in crypto and the new one in rt.  The
+>> addition of the new one (rt md5_init) causes the build problem.   It
+>> would be nice if we could use the same md5 routines though ... last
+>> time we checked the crypto one was not well suited for calculating
+>> signatures as a network fs would do though.
 >
-> That would make life easier for you as well :)
->
->> Any others that I missed ...
->
-> Not that I see at the moment, but you might want to look at all of your
-> global symbol names to make sure they start with "cifs_".
+> I'll fix up the staging rt drivers to not do this, but cifs shouldn't be
+> declaring such functions as globals either :)
 
-I had gone through the cifs.ko module's namespace a few times years
-ago to make sure that most of the names were unlikely to cause
-problems, but it is a moving target (functions get added and static
-ones get moved etc. over time), and keeping functions names reasonably
-short but still descriptive can be helpful (as long as they are likely
-to be unique).   Looking at it now, the vast majority have something
-smb/cifs specific in the function name (e.g. cifs or SMB or less
-commonly: lanman or trans2 or ntlm etc. which are also likely to be
-unique)
+I have changed the names of cifs's md5 functions in the cifs-2.6.git tree
+
+diff --git a/fs/cifs/md5.h b/fs/cifs/md5.h
+index f7d4f41..6fba8cb 100644
+--- a/fs/cifs/md5.h
++++ b/fs/cifs/md5.h
+@@ -20,10 +20,10 @@ struct HMACMD5Context {
+ };
+ #endif				/* _HMAC_MD5_H */
+
+-void MD5Init(struct MD5Context *context);
+-void MD5Update(struct MD5Context *context, unsigned char const *buf,
++void cifs_MD5_init(struct MD5Context *context);
++void cifs_MD5_update(struct MD5Context *context, unsigned char const *buf,
+ 			unsigned len);
+-void MD5Final(unsigned char digest[16], struct MD5Context *context);
++void cifs_MD5_final(unsigned char digest[16], struct MD5Context *context);
+
+
 
 
 -- 
