@@ -1,30 +1,40 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] powerpc: Fix cpufreq drivers after cpufreq core changes
-Date: Mon, 12 Jan 2009 11:44:38 -0600
-Message-ID: <20090112174438.GA19318__4972.05015640265$1231782777$gmane$org@lixom.net>
-References: <20090112104837.69feedec.sfr@canb.auug.org.au> <1231719015.22571.4.camel@pasglop> <1231719721.22571.9.camel@pasglop>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for January 12 (cifs vs. staging)
+Date: Mon, 12 Jan 2009 10:19:10 -0800
+Message-ID: <496B899E.7060605@oracle.com>
+References: <20090112154539.4857f533.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755818AbZALRvK@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1231719721.22571.9.camel@pasglop>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, Mike Travis <travis@sgi.com>, Ingo Molnar <mingo@elte.hu>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org, arndb <arndb@arndb.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:58677 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752680AbZALST7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Jan 2009 13:19:59 -0500
+In-Reply-To: <20090112154539.4857f533.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sfrench@samba.org, Greg KH <gregkh@suse.de>
 
-On Mon, Jan 12, 2009 at 11:22:01AM +1100, Benjamin Herrenschmidt wrote:
-> This updates the cpufreq drivers in arch/powerpc so they build again
-> after the core cpufreq changes that broke them in commit
-> in835481d9bcd65720b473db6b38746a74a3964218.
+Stephen Rothwell wrote:
+> Hi all,
 > 
-> Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> ---
-> 
-> Tested on a G5. Olof, Arnd, any chance you can test the cell and pasemi
-> drivers still work ?
-
-Tested fine on pasemi.
+> Some people took me at my word and so we have the 2.6.30 code starting to
+> trickle in already.
 
 
--Olof
+
+When CIFS is built-in (=y) and staging/rt28[67]0 =y, there are multiple
+definitions of:
+
+build-r8250.out:(.text+0x1d8ad0): multiple definition of `MD5Init'
+build-r8250.out:(.text+0x1dbb30): multiple definition of `MD5Update'
+build-r8250.out:(.text+0x1db9b0): multiple definition of `MD5Final'
+
+all of which need to have more unique identifiers for their global
+symbols (e.g., rt28_md5_init, cifs_md5_init, foo, blah, bar).
+
+
+-- 
+~Randy
