@@ -1,23 +1,19 @@
 From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Subject: Re: [PATCH] powerpc: Fix cpufreq drivers after cpufreq core changes
 Date: Tue, 13 Jan 2009 08:45:36 +1100
-Message-ID: <1231796736.22571.34.camel__34498.9247424111$1231796989$gmane$org@pasglop>
+Message-ID: <1231796736.22571.34.camel__5362.45258194885$1231797009$gmane$org@pasglop>
 References: <20090112104837.69feedec.sfr@canb.auug.org.au>
 	 <1231719015.22571.4.camel@pasglop> <1231719721.22571.9.camel@pasglop>
 	 <20090112083412.GB19701@elte.hu>
 Mime-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:43481 "EHLO gate.crashing.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757040AbZALVrT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 12 Jan 2009 16:47:19 -0500
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757886AbZALVrs@vger.kernel.org>
 In-Reply-To: <20090112083412.GB19701@elte.hu>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Ingo Molnar <mingo@elte.hu>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, Mike Travis <travis@sgi.com>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org, Olof Johansson <olof@lixom.net>, arndb <arndb@arndb.de>
+List-Id: linux-next.vger.kernel.org
 
 On Mon, 2009-01-12 at 09:34 +0100, Ingo Molnar wrote:
 > * Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
