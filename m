@@ -1,35 +1,107 @@
-From: Greg KH <gregkh@suse.de>
+From: "Steve French" <smfrench@gmail.com>
 Subject: Re: linux-next: Tree for January 12 (cifs vs. staging)
-Date: Mon, 12 Jan 2009 11:32:18 -0800
-Message-ID: <20090112193218.GA7751@suse.de>
-References: <20090112154539.4857f533.sfr@canb.auug.org.au> <496B899E.7060605@oracle.com> <524f69650901121058g73c8022eif1d1bcca5c0e01fa@mail.gmail.com> <20090112191330.GC7111@suse.de> <524f69650901121123i1765dc3fye3ce636c91dd25bd@mail.gmail.com>
+Date: Mon, 12 Jan 2009 13:35:45 -0600
+Message-ID: <524f69650901121135m2fb6f12eqc64ebe3c7be11a0d@mail.gmail.com>
+References: <20090112154539.4857f533.sfr@canb.auug.org.au>
+	 <496B899E.7060605@oracle.com>
+	 <524f69650901121058g73c8022eif1d1bcca5c0e01fa@mail.gmail.com>
+	 <1231787958.6383.18.camel@norville.austin.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ns1.suse.de ([195.135.220.2]:50087 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752426AbZALTdk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 12 Jan 2009 14:33:40 -0500
+Received: from ey-out-2122.google.com ([74.125.78.25]:46905 "EHLO
+	ey-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752235AbZALTfr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Jan 2009 14:35:47 -0500
+In-Reply-To: <1231787958.6383.18.camel@norville.austin.ibm.com>
 Content-Disposition: inline
-In-Reply-To: <524f69650901121123i1765dc3fye3ce636c91dd25bd@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steve French <smfrench@gmail.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sfrench@samba.org
+To: Dave Kleikamp <shaggy@linux.vnet.ibm.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sfrench@samba.org, Greg KH <gregkh@suse.de>
+
+md5 support of course belongs in crypto/md5.c in a perfect world
+
+The fs/cifs/md5.c code (and cifs/md4.c for that matter) is very
+generic md5 code, nothing much cifs specific although it would be
+worth looking at whether there are endian issues.
+
+CIFS uses md5 in two places, calculating an hmac in fs/cifs/md5.c and
+then in calculating packet signatures on SMB/CIFS packets.  CIFS usage
+of md5 is really simple (see below), basically we run MD5 on an
+SMB/CIFS packet passing in the length (and the key) to calculate a 20
+byte signature (which is sent to the server on requests, and we
+calculate the expected signature to verify that responses from the
+server have not been tampered with).   When we last checked on this
+with the crypto guys, it would take a lot more code to do this using
+the common crypto routines since they were setup to handle more
+complex use cases.
+
+static int cifs_calculate_signature(const struct smb_hdr *cifs_pdu,
+                                    const struct mac_key *key, char *signature)
+{
+        struct  MD5Context context;
+...
+        MD5Init(&context);
+        MD5Update(&context, (char *)&key->data, key->len);
+        MD5Update(&context, cifs_pdu->Protocol /* beginning of packet
+*/, cifs_pdu->smb_buf_length);
+        MD5Final(signature, &context);
+        return 0;
+}
 
 
-A: No.
-Q: Should I include quotations after my reply?
+On Mon, Jan 12, 2009 at 1:19 PM, Dave Kleikamp
+<shaggy@linux.vnet.ibm.com> wrote:
+> On Mon, 2009-01-12 at 12:58 -0600, Steve French wrote:
+>> There is not just the cifs md5 one (which has been around a long
+>> time), but an md5_init (static) in crypto and the new one in rt.  The
+>> addition of the new one (rt md5_init) causes the build problem.   It
+>> would be nice if we could use the same md5 routines though ... last
+>> time we checked the crypto one was not well suited for calculating
+>> signatures as a network fs would do though.
+>
+> Is that due to the byte-swapping?  Can the cifs and rt* drivers use the
+> same code.  rt28[67]0/common/md5.c are identical files.  In fact those
+> "common" directories should probably be combined into a single truly
+> common directory.
+>
+>> On Mon, Jan 12, 2009 at 12:19 PM, Randy Dunlap <randy.dunlap@oracle.com> wrote:
+>> > Stephen Rothwell wrote:
+>> >> Hi all,
+>> >>
+>> >> Some people took me at my word and so we have the 2.6.30 code starting to
+>> >> trickle in already.
+>> >
+>> >
+>> >
+>> > When CIFS is built-in (=y) and staging/rt28[67]0 =y, there are multiple
+>> > definitions of:
+>> >
+>> > build-r8250.out:(.text+0x1d8ad0): multiple definition of `MD5Init'
+>> > build-r8250.out:(.text+0x1dbb30): multiple definition of `MD5Update'
+>> > build-r8250.out:(.text+0x1db9b0): multiple definition of `MD5Final'
+>> >
+>> > all of which need to have more unique identifiers for their global
+>> > symbols (e.g., rt28_md5_init, cifs_md5_init, foo, blah, bar).
+>> >
+>> >
+>> > --
+>> > ~Randy
+>> >
+>>
+>>
+>>
+> --
+> David Kleikamp
+> IBM Linux Technology Center
+>
+>
 
-On Mon, Jan 12, 2009 at 01:23:07PM -0600, Steve French wrote:
-> Is there some magic compile option alternative (other than renaming
-> the function, which may be ok, since others probably don't depend on
-> it)?  MD5Init is used outside fs/cifs/md5.c so can't be static
 
-No, you should rename it to cifs_md5init to show that it is only for the
-cifs module to use.  Try not to polute the global namespace with generic
-function names.
 
-thanks,
+-- 
+Thanks,
 
-greg k-h
+Steve
