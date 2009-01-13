@@ -1,39 +1,40 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: [PATCH] next-20090113 - scsi_debug fails with
-	CONFIG_CRC_T10DIF=n
-Date: Tue, 13 Jan 2009 11:51:24 -0600
-Message-ID: <1231869084.4519.22.camel@localhost.localdomain>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for January 13 (gfs2 build error)
+Date: Tue, 13 Jan 2009 13:31:40 -0800
+Message-ID: <496D083C.3060109@oracle.com>
 References: <20090113175145.cdfa9c6a.sfr@canb.auug.org.au>
-	 <20090113130215.GD2364@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <20090113130215.GD2364@linux.vnet.ibm.com>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from acsinet12.oracle.com ([141.146.126.234]:51079 "EHLO
+	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753614AbZAMVcJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Jan 2009 16:32:09 -0500
+In-Reply-To: <20090113175145.cdfa9c6a.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, swhiteho@redhat.com, cluster-devel@redhat.com
 
-On Tue, 2009-01-13 at 18:32 +0530, Kamalesh Babulal wrote:
-> Hi Stephen,
+Stephen Rothwell wrote:
+> Hi all,
 > 
->     next-20090113 kernel randconfig fails with
+> Today, I merged the updates to Linus' and the powerpc trees that happened
+> during the day.
 > 
-> ERROR: "crc_t10dif" [drivers/scsi/scsi_debug.ko] undefined!
-> make[1]: *** [__modpost] Error 1
-> 
-> Impact: Fix the dependency of scsi_debug on crc-t10dif library
-> 
-> scsi_debug calls the functions exported by crc-t10dif library,
-> adding dependency to select CONFIG_CRC_T10DIF
-> 
-> Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-
-Already spotted by randy:
-
-http://git.kernel.org/?p=linux/kernel/git/jejb/scsi-misc-2.6.git;a=commit;h=37b1261d045f0b0be09fa1d51efac726385da105
-
-James
+> Changes since 20090112:
 
 
+When CONFIG_FILE_LOCKING=n, this construct:
+
+	.setlease	= generic_setlease,
+
+refers to a macro, not a function, so the address of it
+fails with:
+
+fs/gfs2/ops_file.c:746: error: 'generic_
+setlease' undeclared here (not in a function)
+
+-- 
+~Randy
