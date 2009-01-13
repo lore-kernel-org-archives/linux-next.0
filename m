@@ -1,49 +1,51 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [PATCH] powerpc: Fix cpufreq drivers after cpufreq core changes
-Date: Tue, 13 Jan 2009 08:45:36 +1100
-Message-ID: <1231796736.22571.34.camel__24666.5585706525$1231797013$gmane$org@pasglop>
-References: <20090112104837.69feedec.sfr@canb.auug.org.au>
-	<1231719015.22571.4.camel@pasglop> <1231719721.22571.9.camel@pasglop>
-	<20090112083412.GB19701@elte.hu>
+From: "Love, Robert W" <robert.w.love@intel.com>
+Subject: RE: [PATCH -next] libfc: needs CRC32
+Date: Mon, 12 Jan 2009 17:05:00 -0700
+Message-ID: <273D38FBE7C6FE46A1689FCD014A0B8B28A124F4@azsmsx505.amr.corp.intel.com>
+References: <20090112154539.4857f533.sfr@canb.auug.org.au>
+ <496B9112.8070908@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org>
-In-Reply-To: <20090112083412.GB19701@elte.hu>
-List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
-List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
-List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, arndb <arndb@arndb.de>, Rusty Russell <rusty@rustcorp.com.au>, LKML <linux-kernel@vger.kernel.org>, Mike Travis <travis@sgi.com>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Olof Johansson <olof@lixom.net>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <496B9112.8070908@oracle.com>
+Content-Language: en-US
+Sender: linux-scsi-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>, James Bottomley <James.Bottomley@HansenPartnership.com>, Andrew Morton <akpm@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 2009-01-12 at 09:34 +0100, Ingo Molnar wrote:
-> * Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
+Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> > This updates the cpufreq drivers in arch/powerpc so they build again
-> > after the core cpufreq changes that broke them in commit
-> > in835481d9bcd65720b473db6b38746a74a3964218.
-> > 
-> > Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> > ---
-> > 
-> > Tested on a G5. Olof, Arnd, any chance you can test the cell and pasemi
-> > drivers still work ?
-> > 
-> > Linus, you can probably merge this now to fix the build problems.
+> libfc uses crc32 functions, so cause it to be built
+> via select:
 > 
-> Thanks Ben!
+> drivers/built-in.o: In function `fc_frame_crc_check':
+> (.text+0x75dae): undefined reference to `crc32_le'
+> drivers/built-in.o: In function `fc_fcp_recv':
+> fc_fcp.c:(.text+0x7b919): undefined reference to `crc32_le'
+> fc_fcp.c:(.text+0x7b9d5): undefined reference to `crc32_le'
+> fc_fcp.c:(.text+0x7ba54): undefined reference to `crc32_le'
 > 
-> The powerpc defconfig built fine - you might wan to turn on cpufreq in the 
-> powerpc defconfig so that cross-build tests can catch problems like this.
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Acked-by: Robert Love <robert.w.love@intel.com>
 
-Hrm... which config are you using ? ppc64_defconfig has them all on.
+> ---
+>  drivers/scsi/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20090112.orig/drivers/scsi/Kconfig
+> +++ linux-next-20090112/drivers/scsi/Kconfig
+> @@ -608,6 +608,7 @@ config SCSI_FLASHPOINT
+>  config LIBFC
+>  	tristate "LibFC module"
+>  	select SCSI_FC_ATTRS
+> +	select CRC32
+>  	---help---
+>  	  Fibre Channel library module
+> 
+> 
+> --
+> ~Randy
 
-Cheers,
-Ben.
