@@ -1,47 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: unable to fetch nfs or nfsd trees
-Date: Thu, 15 Jan 2009 10:30:28 +1100
-Message-ID: <20090115103028.44016344.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__15_Jan_2009_10_30_28_+1100_I_efPu/.e5=xeC.H"
+From: Trond Myklebust <trond.myklebust@fys.uio.no>
+Subject: Re: linux-next: unable to fetch nfs or nfsd trees
+Date: Wed, 14 Jan 2009 18:47:00 -0500
+Message-ID: <71D410C3-693C-452D-A620-98C6EFEFF3E6@fys.uio.no>
+References: <20090115103028.44016344.sfr@canb.auug.org.au>
+Mime-Version: 1.0 (iPhone Mail 5G77)
+Content-Type: text/plain;
+	charset=us-ascii;
+	format=flowed;
+	delsp=yes
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46977 "EHLO smtps.tip.net.au"
+Received: from mail-out2.uio.no ([129.240.10.58]:41016 "EHLO mail-out2.uio.no"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755291AbZANXak (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 14 Jan 2009 18:30:40 -0500
+	id S1757295AbZANXrT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 14 Jan 2009 18:47:19 -0500
+In-Reply-To: <20090115103028.44016344.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <trond.myklebust@fys.uio.no>, "J. Bruce Fields" <bfields@fieldses.org>
-Cc: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "J. Bruce Fields" <bfields@fieldses.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
---Signature=_Thu__15_Jan_2009_10_30_28_+1100_I_efPu/.e5=xeC.H
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On 14 Jan 2009, at 18:30, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-I was unable to fetch the nfs or nfsd trees this morning due to this:
+> Hi all,
+>
+> I was unable to fetch the nfs or nfsd trees this morning due to this:
+>
+> git.linux-nfs.org[0: 141.211.133.37]: errno=Connection timed out
+>
+> I will use what have fetch
 
-git.linux-nfs.org[0: 141.211.133.37]: errno=3DConnection timed out
+Sorry about that. It may be a few days until Linux-nfs.org is back  
+online: the entire network at the U of Michigan CITI (which hosts  
+linux-nfs) is down while they clean up a hacked server.
 
-I will use what have fetch previously.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__15_Jan_2009_10_30_28_+1100_I_efPu/.e5=xeC.H
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkludZQACgkQjjKRsyhoI8zUdQCfYBZP2BAdhUOkeQ2lCNnjOQU6
-uuoAn1V8LCwu8lvVk/VST0DZ+iX3J8Do
-=4rfs
------END PGP SIGNATURE-----
-
---Signature=_Thu__15_Jan_2009_10_30_28_+1100_I_efPu/.e5=xeC.H--
+Again, apologies....
+     Trond
