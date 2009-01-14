@@ -1,22 +1,18 @@
 From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 Subject: [BUILD-FAILURE] next-20090114 - powerpc - drivers/leds/leds-gpio.c
 Date: Wed, 14 Jan 2009 23:18:41 +0530
-Message-ID: <20090114174841.GA4796__22168.5551842258$1231955837$gmane$org@linux.vnet.ibm.com>
+Message-ID: <20090114174841.GA4796__44029.7075234868$1231955854$gmane$org@linux.vnet.ibm.com>
 References: <20090114165002.3bbe49d7.sfr@canb.auug.org.au>
 Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from E23SMTP02.au.ibm.com ([202.81.18.163]:44667 "EHLO
-	e23smtp02.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752183AbZANRzV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Jan 2009 12:55:21 -0500
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754845AbZANRzm@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <20090114165002.3bbe49d7.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@ozlabs.org, tpiepho@freescale.com, grant.likely@secretlab.ca, smaclennan@pikatech.com
+List-Id: linux-next.vger.kernel.org
 
 Hi Stephen,
 
