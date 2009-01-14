@@ -1,41 +1,78 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: [BUILD-FAILURE] next-20090114 - drivers/staging/meilhaus
-Date: Wed, 14 Jan 2009 10:50:29 -0800
-Message-ID: <20090114185029.GA29674@suse.de>
-References: <20090114165002.3bbe49d7.sfr@canb.auug.org.au> <20090114180024.GB4796@linux.vnet.ibm.com> <20090114180403.GA16974@suse.de> <496E2AEE.3060709@oracle.com>
+From: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Subject: Re: linux-next: Tree for January 14 (multimedia/firesat-rc)
+Date: Wed, 14 Jan 2009 23:01:35 +0100 (CET)
+Message-ID: <tkrat.2f847580e17dc214@s5r6.in-berlin.de>
+References: <20090114165002.3bbe49d7.sfr@canb.auug.org.au>
+ <496E1F84.7040605@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755645AbZANSvz@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <496E2AEE.3060709@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN; CHARSET=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from einhorn.in-berlin.de ([192.109.42.8]:58345 "EHLO
+	einhorn.in-berlin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754124AbZANWCB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Jan 2009 17:02:01 -0500
+In-Reply-To: <496E1F84.7040605@oracle.com>
+Content-Disposition: INLINE
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>
 
-On Wed, Jan 14, 2009 at 10:11:58AM -0800, Randy Dunlap wrote:
-> Greg KH wrote:
-> > On Wed, Jan 14, 2009 at 11:30:24PM +0530, Kamalesh Babulal wrote:
-> >> Hi Stephen,
-> >>
-> >> 	next-20090114 randconfig build on x86_64 machine fails,
-> >>
-> >>   LD      drivers/staging/meilhaus/built-in.o
-> >> drivers/staging/meilhaus/me1600.o: In function `cleanup_module':
-> >> (.exit.text+0x0): multiple definition of `cleanup_module'
-> >> drivers/staging/meilhaus/memain.o:memain.c:(.exit.text+0x0): first defined here
-> > 
-> > Yeah, a lot of these staging drivers can't handle being built into the
-> > kernel.
-> > 
-> > At first glance, I don't see a way to prevent this, is there some
-> > Kconfig option I can use to say, "this can only be a module or disabled,
-> > not build statically"?
+Randy Dunlap wrote:
+> drivers/built-in.o: In function `input_report_key':
+> firesat-rc.c:(.text+0x776f3): undefined reference to `input_event'
+> drivers/built-in.o: In function `firesat_register_rc':
+> (.text+0x777af): undefined reference to `input_allocate_device'
+> drivers/built-in.o: In function `firesat_register_rc':
+> (.text+0x7781c): undefined reference to `input_register_device'
+> drivers/built-in.o: In function `firesat_register_rc':
+> (.text+0x77834): undefined reference to `input_free_device'
+> drivers/built-in.o: In function `firesat_unregister_rc':
+> (.text+0x7779d): undefined reference to `input_unregister_device'
 > 
-> 	depends on m
+> config attached.
+...
+> # Input device support
+> #
+> # CONFIG_INPUT is not set
 
-Doh, it's even documented!
+Thanks.  firesat a.k.a. firedtv lives currently in linux1394-2.6.git.
 
-Thanks, I'll go fix that all up.
 
-greg k-h
+From: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Subject: firedtv: add missing dependency on CONFIG_INPUT
+
+Fix build error \
+Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
+
+Perhaps we should make the remote control part of firedtv modular so
+that the driver can be built without input support.  But it's not very
+likely that anybody would have use for such a constellation.
+
+Signed-off-by: Stefan Richter <stefanr@s5r6.in-berlin.de>
+---
+
+I need to fold it into "DVB: add firesat driver" before I submit the
+driver for mainline merge.
+
+ drivers/media/dvb/firesat/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: linux/drivers/media/dvb/firesat/Kconfig
+===================================================================
+--- linux.orig/drivers/media/dvb/firesat/Kconfig
++++ linux/drivers/media/dvb/firesat/Kconfig
+@@ -1,6 +1,6 @@
+ config DVB_FIREDTV
+ 	tristate "FireDTV (FireWire attached DVB receivers)"
+-	depends on DVB_CORE && IEEE1394
++	depends on DVB_CORE && IEEE1394 && INPUT
+ 	help
+ 	  Support for DVB receivers from Digital Everywhere, known as FireDTV
+ 	  and FloppyDTV, which are connected via IEEE 1394 (FireWire).
+
+
+-- 
+Stefan Richter
+-=====-==--= ---= -===-
+http://arcgraph.de/sr/
