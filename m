@@ -1,27 +1,22 @@
 From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 Subject: [BUILD-FAILURE] next-20090114 - powerpc - drivers/leds/leds-gpio.c
 Date: Wed, 14 Jan 2009 23:18:41 +0530
-Message-ID: <20090114174841.GA4796__26166.8110885241$1231955689$gmane$org@linux.vnet.ibm.com>
+Message-ID: <20090114174841.GA4796__22168.5551842258$1231955837$gmane$org@linux.vnet.ibm.com>
 References: <20090114165002.3bbe49d7.sfr@canb.auug.org.au>
 Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org>
+Content-Type: text/plain; charset=iso-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from E23SMTP02.au.ibm.com ([202.81.18.163]:44667 "EHLO
+	e23smtp02.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752183AbZANRzV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Jan 2009 12:55:21 -0500
 Content-Disposition: inline
 In-Reply-To: <20090114165002.3bbe49d7.sfr@canb.auug.org.au>
-List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
-List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
-List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@ozlabs.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, smaclennan@pikatech.com, tpiepho@freescale.com
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@ozlabs.org, tpiepho@freescale.com, grant.likely@secretlab.ca, smaclennan@pikatech.com
 
 Hi Stephen,
 
