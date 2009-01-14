@@ -1,78 +1,53 @@
-From: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Subject: Re: linux-next: Tree for January 14 (multimedia/firesat-rc)
-Date: Wed, 14 Jan 2009 23:01:56 +0100 (CET)
-Message-ID: <tkrat.7108b22625373d2e@s5r6.in-berlin.de>
-References: <20090114165002.3bbe49d7.sfr@canb.auug.org.au>
- <496E1F84.7040605@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: quota tree build failure
+Date: Thu, 15 Jan 2009 09:23:26 +1100
+Message-ID: <20090115092326.42408bc7.sfr@canb.auug.org.au>
+References: <20090114121551.2dc725f9.sfr@canb.auug.org.au>
+	<20090114141851.GD19950@duck.suse.cz>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; CHARSET=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__15_Jan_2009_09_23_26_+1100_d5lIS_xFnzLWcdCW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from einhorn.in-berlin.de ([192.109.42.8]:58353 "EHLO
-	einhorn.in-berlin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757509AbZANWCP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Jan 2009 17:02:15 -0500
-In-Reply-To: <496E1F84.7040605@oracle.com>
-Content-Disposition: INLINE
+Received: from chilli.pcug.org.au ([203.10.76.44]:52121 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752049AbZANWXg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 14 Jan 2009 17:23:36 -0500
+In-Reply-To: <20090114141851.GD19950@duck.suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-next@vger.kernel.org
 
-Randy Dunlap wrote:
-> drivers/built-in.o: In function `input_report_key':
-> firesat-rc.c:(.text+0x776f3): undefined reference to `input_event'
-> drivers/built-in.o: In function `firesat_register_rc':
-> (.text+0x777af): undefined reference to `input_allocate_device'
-> drivers/built-in.o: In function `firesat_register_rc':
-> (.text+0x7781c): undefined reference to `input_register_device'
-> drivers/built-in.o: In function `firesat_register_rc':
-> (.text+0x77834): undefined reference to `input_free_device'
-> drivers/built-in.o: In function `firesat_unregister_rc':
-> (.text+0x7779d): undefined reference to `input_unregister_device'
-> 
-> config attached.
-...
-> # Input device support
-> #
-> # CONFIG_INPUT is not set
+--Signature=_Thu__15_Jan_2009_09_23_26_+1100_d5lIS_xFnzLWcdCW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks.  firesat a.k.a. firedtv lives currently in linux1394-2.6.git.
+Hi Jan,
 
+On Wed, 14 Jan 2009 15:18:51 +0100 Jan Kara <jack@suse.cz> wrote:
+>
+>   OK, thanks for letting me know. OCFS2 hasn't yet merged the correspondi=
+ng patch. I've
+> removed the patch from my for_next branch for now.
 
-From: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Subject: firedtv: add missing dependency on CONFIG_INPUT
+OK, thanks.
 
-Fix build error \
-Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Perhaps we should make the remote control part of firedtv modular so
-that the driver can be built without input support.  But it's not very
-likely that anybody would have use for such a constellation.
+--Signature=_Thu__15_Jan_2009_09_23_26_+1100_d5lIS_xFnzLWcdCW
+Content-Type: application/pgp-signature
 
-Signed-off-by: Stefan Richter <stefanr@s5r6.in-berlin.de>
----
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-I need to fold it into "DVB: add firesat driver" before I submit the
-driver for mainline merge.
+iEYEARECAAYFAkluZd4ACgkQjjKRsyhoI8w9QQCfcZaw/AhXnvsFz/Q9qXw+oZSP
+vcAAnjLvHgRv2aHozEsEKHXCVZ7VJ0Mt
+=yzDj
+-----END PGP SIGNATURE-----
 
- drivers/media/dvb/firesat/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-Index: linux/drivers/media/dvb/firesat/Kconfig
-===================================================================
---- linux.orig/drivers/media/dvb/firesat/Kconfig
-+++ linux/drivers/media/dvb/firesat/Kconfig
-@@ -1,6 +1,6 @@
- config DVB_FIREDTV
- 	tristate "FireDTV (FireWire attached DVB receivers)"
--	depends on DVB_CORE && IEEE1394
-+	depends on DVB_CORE && IEEE1394 && INPUT
- 	help
- 	  Support for DVB receivers from Digital Everywhere, known as FireDTV
- 	  and FloppyDTV, which are connected via IEEE 1394 (FireWire).
-
-
--- 
-Stefan Richter
--=====-==--= ---= -===-
-http://arcgraph.de/sr/
+--Signature=_Thu__15_Jan_2009_09_23_26_+1100_d5lIS_xFnzLWcdCW--
