@@ -1,80 +1,92 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the kmemleak tree
-Date: Thu, 15 Jan 2009 16:26:53 +1100
-Message-ID: <20090115162653.033c1351.sfr@canb.auug.org.au>
+Date: Thu, 15 Jan 2009 16:27:08 +1100
+Message-ID: <20090115162708.74cd1428.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41313 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41330 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751159AbZAOF1A (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 15 Jan 2009 00:27:00 -0500
+	id S1751505AbZAOF1K (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 Jan 2009 00:27:10 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, Christoph Lameter <cl@linux-foundation.org>, Pekka Enberg <penberg@cs.helsinki.fi>, Vegard Nossum <vegard.nossum@gmail.com>, Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, Pekka Enberg <penberg@cs.helsinki.fi>, Vegard Nossum <vegard.nossum@gmail.com>, Ingo Molnar <mingo@elte.hu>
 
 Hi Catalin,
 
-Today's linux-next merge of the kmemleak tree got a conflict in mm/slub.c
-between commit 18fd427debcf37c06917b55295df682fd05fee76 ("slub: add hooks
+Today's linux-next merge of the kmemleak tree got a conflict in mm/slab.c
+between commit 30532cb3c49a2a9fed94127aab26003c52398a51 ("slab: add hooks
 for kmemcheck") from the kmemcheck tree and commit
-64ea489328c2f450fb4dca49b9a33d1b2ddf0248 ("kmemleak: Add the slub memory
+26e73e5a681dc8268bd3fbcb3c26f4ac9fdc8433 ("kmemleak: Add the slab memory
 allocation/freeing hooks") from the kmemleak tree.
 
-Just simple overlapping additions.  I fixed it up (see below) and can
-carry the fix as necessary.
+I fixed it up (see below) and can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc mm/slub.c
-index 3f6953d,13543f5..0000000
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@@ -16,9 -16,9 +16,10 @@@
-  #include <linux/slab.h>
-  #include <linux/proc_fs.h>
-  #include <linux/seq_file.h>
- +#include <trace/kmemtrace.h>
-  #include <linux/cpu.h>
-  #include <linux/cpuset.h>
-+ #include <linux/kmemleak.h>
-  #include <linux/mempolicy.h>
-  #include <linux/ctype.h>
-  #include <linux/debugobjects.h>
-@@@ -143,10 -142,10 +144,10 @@@
-   * Set of flags that will prevent slab merging
-   */
-  #define SLUB_NEVER_MERGE (SLAB_RED_ZONE | SLAB_POISON | SLAB_STORE_USER | \
-- 		SLAB_TRACE | SLAB_DESTROY_BY_RCU)
-+ 		SLAB_TRACE | SLAB_DESTROY_BY_RCU | SLAB_NOLEAKTRACE)
+diff --cc mm/slab.c
+index dffbac3,8e7c952..0000000
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@@ -179,13 -178,13 +180,13 @@@
+  			 SLAB_STORE_USER | \
+  			 SLAB_RECLAIM_ACCOUNT | SLAB_PANIC | \
+  			 SLAB_DESTROY_BY_RCU | SLAB_MEM_SPREAD | \
+- 			 SLAB_DEBUG_OBJECTS | SLAB_NOTRACK)
+ -			 SLAB_DEBUG_OBJECTS | SLAB_NOLEAKTRACE)
+++			 SLAB_DEBUG_OBJECTS | SLAB_NOTRACK | SLAB_NOLEAKTRACE)
+  #else
+  # define CREATE_MASK	(SLAB_HWCACHE_ALIGN | \
+  			 SLAB_CACHE_DMA | \
+  			 SLAB_RECLAIM_ACCOUNT | SLAB_PANIC | \
+  			 SLAB_DESTROY_BY_RCU | SLAB_MEM_SPREAD | \
+- 			 SLAB_DEBUG_OBJECTS | SLAB_NOTRACK)
+ -			 SLAB_DEBUG_OBJECTS | SLAB_NOLEAKTRACE)
+++			 SLAB_DEBUG_OBJECTS | SLAB_NOTRACK | SLAB_NOLEAKTRACE)
+  #endif
   
-  #define SLUB_MERGE_SAME (SLAB_DEBUG_FREE | SLAB_RECLAIM_ACCOUNT | \
- -		SLAB_CACHE_DMA)
- +		SLAB_CACHE_DMA | SLAB_NOTRACK)
+  /*
+@@@ -3285,10 -3372,9 +3308,12 @@@ __cache_alloc_node(struct kmem_cache *c
+    out:
+  	local_irq_restore(save_flags);
+  	ptr = cache_alloc_debugcheck_after(cachep, flags, ptr, caller);
++ 	kmemleak_alloc_recursive(ptr, obj_size(cachep), 1, cachep->flags,
++ 				 flags);
   
-  #ifndef ARCH_KMALLOC_MINALIGN
-  #define ARCH_KMALLOC_MINALIGN __alignof__(unsigned long long)
-@@@ -1630,7 -1619,7 +1631,8 @@@ static __always_inline void *slab_alloc
-  	if (unlikely((gfpflags & __GFP_ZERO) && object))
-  		memset(object, 0, objsize);
+ +	if (likely(ptr))
+ +		kmemcheck_slab_alloc(cachep, flags, ptr, obj_size(cachep));
+ +
+  	if (unlikely((flags & __GFP_ZERO) && ptr))
+  		memset(ptr, 0, obj_size(cachep));
   
- +	kmemcheck_slab_alloc(s, gfpflags, object, c->objsize);
-+ 	kmemleak_alloc_recursive(object, objsize, 1, s->flags, gfpflags);
-  	return object;
-  }
+@@@ -3341,11 -3427,10 +3366,13 @@@ __cache_alloc(struct kmem_cache *cachep
+  	objp = __do_cache_alloc(cachep, flags);
+  	local_irq_restore(save_flags);
+  	objp = cache_alloc_debugcheck_after(cachep, flags, objp, caller);
++ 	kmemleak_alloc_recursive(objp, obj_size(cachep), 1, cachep->flags,
++ 				 flags);
+  	prefetchw(objp);
   
-@@@ -1761,9 -1722,9 +1763,10 @@@ static __always_inline void slab_free(s
-  	struct kmem_cache_cpu *c;
-  	unsigned long flags;
+ +	if (likely(objp))
+ +		kmemcheck_slab_alloc(cachep, flags, objp, obj_size(cachep));
+ +
+  	if (unlikely((flags & __GFP_ZERO) && objp))
+  		memset(objp, 0, obj_size(cachep));
   
-+ 	kmemleak_free_recursive(x, s->flags);
-  	local_irq_save(flags);
-  	c = get_cpu_slab(s, smp_processor_id());
- +	kmemcheck_slab_free(s, object, c->objsize);
-  	debug_check_no_locks_freed(object, c->objsize);
-  	if (!(s->flags & SLAB_DEBUG_OBJECTS))
-  		debug_check_no_obj_freed(object, s->objsize);
+@@@ -3459,10 -3544,9 +3486,11 @@@ static inline void __cache_free(struct 
+  	struct array_cache *ac = cpu_cache_get(cachep);
+  
+  	check_irq_off();
++ 	kmemleak_free_recursive(objp, cachep->flags);
+  	objp = cache_free_debugcheck(cachep, objp, __builtin_return_address(0));
+  
+ +	kmemcheck_slab_free(cachep, objp, obj_size(cachep));
+ +
+  	/*
+  	 * Skip calling cache_free_alien() when the platform is not numa.
+  	 * This will avoid cache misses that happen while accessing slabp (which
