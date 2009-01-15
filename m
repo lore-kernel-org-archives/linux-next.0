@@ -1,42 +1,34 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [BUILD_FAILURE] next-20090115 - s390x - mm/kmemleak.c
-Date: Thu, 15 Jan 2009 17:00:38 +0000
-Message-ID: <1232038838.32016.73.camel@pc1117.cambridge.arm.com>
-References: <20090115170415.3edc1df6.sfr@canb.auug.org.au>
-	 <20090115103504.GA5178@linux.vnet.ibm.com>
-	 <20090115112001.GC5093@osiris.boeblingen.de.ibm.com>
-	 <1232020540.32016.19.camel@pc1117.cambridge.arm.com>
-	 <20090115120526.GD5093@osiris.boeblingen.de.ibm.com>
+From: Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>
+Subject: Re: linux-next: manual merge of the kmemleak tree
+Date: Thu, 15 Jan 2009 19:49:21 +0200
+Message-ID: <20090115174921.GA5314@localhost>
+References: <20090115162717.de2b3a3c.sfr@canb.auug.org.au> <20090115102950.GA5201@localhost> <1232021097.32016.25.camel@pc1117.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([193.131.176.58]:63699 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754264AbZAORAv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 15 Jan 2009 12:00:51 -0500
-In-Reply-To: <20090115120526.GD5093@osiris.boeblingen.de.ibm.com>
+Received: from mail-ew0-f17.google.com ([209.85.219.17]:33984 "EHLO
+	mail-ew0-f17.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755496AbZAORs7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Jan 2009 12:48:59 -0500
+Received: by ewy10 with SMTP id 10so1424066ewy.13
+        for <linux-next@vger.kernel.org>; Thu, 15 Jan 2009 09:48:56 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1232021097.32016.25.camel@pc1117.cambridge.arm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org, schwidefsky@de.ibm.com, penberg@cs.helsinki.fi
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Pekka Enberg <penberg@cs.helsinki.fi>
 
-On Thu, 2009-01-15 at 13:05 +0100, Heiko Carstens wrote:
-> Btw. you have
-> 
-> /*
->  * Stop the automatic memory scanning thread. This function must be called
->  * with the kmemleak_mutex held.
->  */
-> void stop_scan_thread(void)
-> {
-> ...
-> 
-> but call the function unlocked from kmemleak_write. Looks like a bug ;)
+On Thu, Jan 15, 2009 at 12:04:57PM +0000, Catalin Marinas wrote:
+> The only issue is that kmemleak would need to register the callbacks
+> before the slab allocator is initialised (otherwise it may miss some
+> allocations). So it would need a 3-stage initialisation - pre-slab,
+> post-slab and late_initcall.
 
-kmemleak_write() is called with the kmemleak_mutex acquired in the
-kmemleak_open() function (and released in kmemleak_release()).
+Sure, that is not a problem, as kmemtrace needn't be compiled in for
+the tracepoints to work. As long as they're defined in some header and
+included, you can register multiple probes from all over the kernel.
+This also means you won't have to interact with kmemtrace code.
 
--- 
-Catalin
+
+	Eduard
