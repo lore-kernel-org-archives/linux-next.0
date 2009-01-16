@@ -1,249 +1,64 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for January 16
-Date: Fri, 16 Jan 2009 17:17:01 +1100
-Message-ID: <20090116171701.0b52a570.sfr@canb.auug.org.au>
+From: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: linux-next: tree build failure
+Date: Fri, 16 Jan 2009 08:25:49 +0100
+Message-ID: <1232090749.8870.85.camel@laptop>
+References: <20090116163745.93f4e075.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__16_Jan_2009_17_17_01_+1100_Z1ds8kK=YRIL018V"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34724 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756168AbZAPGRH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 16 Jan 2009 01:17:07 -0500
+Received: from casper.infradead.org ([85.118.1.10]:55980 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756946AbZAPH0H (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 16 Jan 2009 02:26:07 -0500
+In-Reply-To: <20090116163745.93f4e075.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
 
---Signature=_Fri__16_Jan_2009_17_17_01_+1100_Z1ds8kK=YRIL018V
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 2009-01-16 at 16:37 +1100, Stephen Rothwell wrote:
+> Hi ,
+> 
+> Today's linux-next build (powerpc allnoconfig) failed like this:
+> 
+> In file included from kernel/sched.c:1703:
+> kernel/sched_fair.c: In function 'adaptive_gran':
+> kernel/sched_fair.c:1324: error: 'struct sched_entity' has no member named 'avg_wakeup'
+> 
+> Caused by commit e52fb7c097238d34f4d8e2a596f8a3f85b0c0565
+> ("sched: prefer wakers") from the sched tree.
+> 
+> kernel/sched.c: In function 'enqueue_task':
+> kernel/sched.c:1752: error: 'struct sched_entity' has no member named 'start_runtime'
+> kernel/sched.c: In function 'dequeue_task':
+> kernel/sched.c:1767: error: 'struct sched_entity' has no member named 'avg_wakeup'
+> kernel/sched.c: In function 'try_to_wake_up':
+> kernel/sched.c:2409: error: 'struct sched_entity' has no member named 'start_runtime'
+> kernel/sched.c:2410: error: 'struct sched_entity' has no member named 'avg_wakeup'
+> kernel/sched.c: In function '__sched_fork':
+> kernel/sched.c:2454: error: 'struct sched_entity' has no member named 'start_runtime'
+> kernel/sched.c:2455: error: 'struct sched_entity' has no member named 'avg_wakeup'
+> 
+> Caused by commit 831451ac4e44d3a20b581ce726ef1d1144373f7d ("sched:
+> introduce avg_wakeup") from the sched tree.
+> 
+> These members depend on CONFIG_SCHEDSTATS.
 
-Hi all,
+That smells like a bad merge somewhere, I just checked -tip and it looks
+like so:
 
-Changes since 20090115:
+struct sched_entity {
+	...
+        u64                     avg_overlap;
 
-Dropped trees (temporarily):
-	sched (build problems)
-	cris (complex conflicts)
-	nfs (build problems)
-	cpu_alloc (build problem)
-	audit (difficult conflicts)
+        u64                     start_runtime;
+        u64                     avg_wakeup;
 
-The cpus4096 tree lost its 3 conflicts.
+        u64                     nr_migrations;
 
-The sched tree gained build problems and was reverted.
-
-The cris tree gained 2 difficult conflicts against Linus' tree and was
-dropped.
-
-The nfs tree had two reported build problems and was dropped.
-
-The ocfs2 tree gained a conflict against the quota tree.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig,
-ppc44x_defconfig and allyesconfig (minus CONFIG_PROFILE_ALL_BRANCHES) and
-i386, sparc and sparc64 defconfig.
-
-Below is a summary of the state of the merge.
-
-We are up to 132 trees (counting Linus' and 18 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Applying: linux-next: mfd tree build failure
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging dwmw2/master
-Merging arm/devel
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-CONFLICT (delete/modify): arch/cris/include/arch-v32/arch/byteorder.h delet=
-ed in HEAD and modified in cris/for-next. Version cris/for-next of arch/cri=
-s/include/arch-v32/arch/byteorder.h left in tree.
-CONFLICT (content): Merge conflict in arch/cris/include/asm/byteorder.h
-$ git reset --hard
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging mips/mips-for-linux-next
-Merging parisc/master
-Merging powerpc/next
-Merging 4xx/next
-Merging galak/next
-Merging pxa/for-next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging x86/auto-x86-next
-Merging xtensa/master
-Merging quilt/driver-core
-Merging quilt/usb
-Merging tip-core/auto-core-next
-Merging cpus4096/auto-cpus4096-next
-Merging ftrace/auto-ftrace-next
-Merging genirq/auto-genirq-next
-Merging safe-poison-pointers/auto-safe-poison-pointers-next
-Merging sched/auto-sched-next
-Merging stackprotector/auto-stackprotector-next
-Merging timers/auto-timers-next
-CONFLICT (content): Merge conflict in kernel/time/tick-common.c
-Merging pci/linux-next
-Merging quilt/device-mapper
-Merging hid/for-next
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging quota/for_next
-Merging jfs/next
-Merging kbuild/master
-Merging quilt/ide
-Merging libata/NEXT
-Merging nfs/linux-next
-$ git reset --hard HEAD^
-Merging xfs/master
-Merging infiniband/for-next
-Merging acpi/test
-Merging nfsd/nfsd-next
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/master
-Merging dlm/next
-Merging scsi/master
-Merging ocfs2/linux-next
-CONFLICT (content): Merge conflict in fs/dquot.c
-Merging ext4/next
-Merging async_tx/next
-Merging udf/for_next
-Merging net/master
-Merging mtd/master
-Merging wireless/master
-Merging crypto/master
-Merging vfs/for-next
-Merging sound/for-next
-Merging cpufreq/next
-Merging v9fs/for-next
-Merging quilt/rr
-Merging cifs/master
-Merging mmc/next
-Merging gfs2/master
-Merging input/next
-Merging bkl-removal/bkl-removal
-Merging ubifs/linux-next
-Merging lsm/for-next
-Merging block/for-next
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging kmemcheck/auto-kmemcheck-next
-CONFLICT (content): Merge conflict in MAINTAINERS
-CONFLICT (content): Merge conflict in kernel/fork.c
-Merging generic-ipi/auto-generic-ipi-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging quilt/ttydev
-Merging agp/agp-next
-Merging oprofile/auto-oprofile-next
-Merging fastboot/auto-fastboot-next
-Merging sparseirq/auto-sparseirq-next
-Merging iommu/auto-iommu-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging proc/proc
-Merging bdev/master
-Merging dwmw2-iommu/master
-CONFLICT (content): Merge conflict in drivers/pci/intel-iommu.c
-CONFLICT (content): Merge conflict in include/linux/dma_remapping.h
-Merging cputime/cputime
-Merging osd/linux-next
-Merging fatfs/master
-Merging fuse/for-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging squashfs/master
-Merging omap/for-next
-Merging kmemleak/kmemleak
-CONFLICT (content): Merge conflict in include/linux/slab.h
-CONFLICT (content): Merge conflict in init/main.c
-CONFLICT (content): Merge conflict in mm/slab.c
-CONFLICT (content): Merge conflict in mm/slob.c
-CONFLICT (content): Merge conflict in mm/slub.c
-Merging quilt/staging
-Merging scsi-post-merge/master
-Created commit b9d4b1e: Revert "Merge commit 'sched/auto-sched-next'"
-
---Signature=_Fri__16_Jan_2009_17_17_01_+1100_Z1ds8kK=YRIL018V
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklwJl0ACgkQjjKRsyhoI8wuEgCeInOY+XUN87N12mY6X0g8drYb
-cicAn3Xq2SiJLH8W48GytpsPBKU8pO97
-=MqJ8
------END PGP SIGNATURE-----
-
---Signature=_Fri__16_Jan_2009_17_17_01_+1100_Z1ds8kK=YRIL018V--
+#ifdef CONFIG_SCHEDSTATS
+        u64                     wait_start;
+        u64                     wait_max;
+	...
+};
