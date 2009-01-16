@@ -1,121 +1,99 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
 Subject: Re: linux-next: tree build failure
-Date: Fri, 16 Jan 2009 22:53:42 +1100
-Message-ID: <20090116225342.83891680.sfr@canb.auug.org.au>
-References: <20090116163745.93f4e075.sfr@canb.auug.org.au>
-	<20090116105324.GA13765@elte.hu>
+Date: Fri, 16 Jan 2009 13:32:09 +0100
+Message-ID: <20090116123209.GA5421@elte.hu>
+References: <20090116163745.93f4e075.sfr@canb.auug.org.au> <20090116105324.GA13765@elte.hu> <20090116225342.83891680.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__16_Jan_2009_22_53_42_+1100__/QV9+IMeQ2bkv.W"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47919 "EHLO smtps.tip.net.au"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:58544 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1762481AbZAPLx4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 16 Jan 2009 06:53:56 -0500
-In-Reply-To: <20090116105324.GA13765@elte.hu>
+	id S1756364AbZAPMcX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 16 Jan 2009 07:32:23 -0500
+Content-Disposition: inline
+In-Reply-To: <20090116225342.83891680.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>
 
---Signature=_Fri__16_Jan_2009_22_53_42_+1100__/QV9+IMeQ2bkv.W
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Ingo,
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-On Fri, 16 Jan 2009 11:53:24 +0100 Ingo Molnar <mingo@elte.hu> wrote:
->
-> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->=20
-> > Today's linux-next build (powerpc allnoconfig) failed like this:
-> >=20
-> > In file included from kernel/sched.c:1703:
-> > kernel/sched_fair.c: In function 'adaptive_gran':
-> > kernel/sched_fair.c:1324: error: 'struct sched_entity' has no member na=
-med 'avg_wakeup'
-> >=20
-> > Caused by commit e52fb7c097238d34f4d8e2a596f8a3f85b0c0565
-> > ("sched: prefer wakers") from the sched tree.
->=20
-> that commit builds just fine on x86 and on powerpc as well.
+> Hi Ingo,
+> 
+> On Fri, 16 Jan 2009 11:53:24 +0100 Ingo Molnar <mingo@elte.hu> wrote:
+> >
+> > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > 
+> > > Today's linux-next build (powerpc allnoconfig) failed like this:
+> > > 
+> > > In file included from kernel/sched.c:1703:
+> > > kernel/sched_fair.c: In function 'adaptive_gran':
+> > > kernel/sched_fair.c:1324: error: 'struct sched_entity' has no member named 'avg_wakeup'
+> > > 
+> > > Caused by commit e52fb7c097238d34f4d8e2a596f8a3f85b0c0565
+> > > ("sched: prefer wakers") from the sched tree.
+> > 
+> > that commit builds just fine on x86 and on powerpc as well.
+> 
+> The build was an allnoconfig build, so CONFIG_SCHEDSTATS was not set.
 
-The build was an allnoconfig build, so CONFIG_SCHEDSTATS was not set.
+ah, i see. So there's nothing powerpc-specific about this, it fails on x86 
+allnoconfig just as much? Is this because you test powerpc as the first 
+architecture in the linux-next builds?
 
-> Also, at commit e52fb7c097238d34f4d8e2a596f8a3f85b0c0565 there's no=20
-> 'sched_entity' use on line 1324 of kernel/sched_fair.c. Could you tell me=
-=20
-> the exact commit ID you got the build failure under?
+I think i see where the mismerge comes from: you dont have the 
+perfcounters tree in linux-next which masked this interim stage. I've 
+fixed this via the commit below.
 
-Commit b88402a67e74222061d2f24aef90ee58d2a3f080 "Merge commit
-'kmemleak/kmemleak'" (what you get if you remove the last two commits
-form today's linux-next).
+	Ingo
 
-At that point, kernel/sched_fair.c contains (from line 1320):
+-------------------->
+>From 34cb61359b503d7aff6447acb037a5efd6ce93b2 Mon Sep 17 00:00:00 2001
+From: Ingo Molnar <mingo@elte.hu>
+Date: Fri, 16 Jan 2009 13:36:06 +0100
+Subject: [PATCH] sched: fix !CONFIG_SCHEDSTATS build failure
 
-static unsigned long
-adaptive_gran(struct sched_entity *curr, struct sched_entity *se)
-{
-	u64 this_run =3D curr->sum_exec_runtime - curr->prev_sum_exec_runtime;
-	u64 expected_wakeup =3D 2*se->avg_wakeup * cfs_rq_of(se)->nr_running;
-	u64 gran =3D 0;
+Stephen Rothwell reported this linux-next build failure with !CONFIG_SCHEDSTATS:
 
-	if (this_run < expected_wakeup)
-		gran =3D expected_wakeup - this_run;
+| In file included from kernel/sched.c:1703:
+| kernel/sched_fair.c: In function 'adaptive_gran':
+| kernel/sched_fair.c:1324: error: 'struct sched_entity' has no member named 'avg_wakeup'
 
-	return min_t(s64, gran, sysctl_sched_wakeup_granularity);
-}
+The start_runtime and avg_wakeup metrics are now not just for statistics,
+but also for scheduling - so they always need to be available. (Also
+move out the nr_migrations fields - for future perfcounters usage.)
 
-That function was added by commit
-e52fb7c097238d34f4d8e2a596f8a3f85b0c0565.  Also, at that commit, stuct
-sched_entity (in sched.h) looks like this:
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+---
+ include/linux/sched.h |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-struct sched_entity {
-	.
-	.
-
-	u64			last_wakeup;
-	u64			avg_overlap;
-
-#ifdef CONFIG_SCHEDSTATS
-	u64			wait_start;
-	u64			wait_max;
-	.
-	.
-
-	u64			start_runtime;
-	u64			avg_wakeup;
-
-	.
-	.
-	u64			nr_wakeups_passive;
-	u64			nr_wakeups_idle;
-#endif
-
-	.
-	.
-};
-
-The two fields "start_runtime" and "avg_wakeup" were added by the
-previous commit 831451ac4e44d3a20b581ce726ef1d1144373f7d "sched:
-introduce avg_wakeup" but according to Peter's email, they were added in
-the wrong place.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__16_Jan_2009_22_53_42_+1100__/QV9+IMeQ2bkv.W
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklwdUYACgkQjjKRsyhoI8xcUACfaZ7TEXQdLudX5tm/uq3YERcb
-uv0AoLtA82IvmTCKXnJpiWIdg034LiAL
-=d/px
------END PGP SIGNATURE-----
-
---Signature=_Fri__16_Jan_2009_22_53_42_+1100__/QV9+IMeQ2bkv.W--
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index daf4e07..5d56b54 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1031,6 +1031,10 @@ struct sched_entity {
+ 	u64			last_wakeup;
+ 	u64			avg_overlap;
+ 
++	u64			start_runtime;
++	u64			avg_wakeup;
++	u64			nr_migrations;
++
+ #ifdef CONFIG_SCHEDSTATS
+ 	u64			wait_start;
+ 	u64			wait_max;
+@@ -1046,10 +1050,6 @@ struct sched_entity {
+ 	u64			exec_max;
+ 	u64			slice_max;
+ 
+-	u64			start_runtime;
+-	u64			avg_wakeup;
+-
+-	u64			nr_migrations;
+ 	u64			nr_migrations_cold;
+ 	u64			nr_failed_migrations_affine;
+ 	u64			nr_failed_migrations_running;
