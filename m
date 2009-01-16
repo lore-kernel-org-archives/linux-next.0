@@ -1,8 +1,8 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
 Subject: Re: linux-next: build problem with nfs tree (Was: Re:
  [mmotm][PATCH] fix ia64 build error)
-Date: Sat, 17 Jan 2009 09:49:03 +1100
-Message-ID: <20090117094903.bc0c646d.sfr@canb.auug.org.au>
+Date: Fri, 16 Jan 2009 14:51:56 -0800
+Message-ID: <20090116145156.ebbea173.akpm@linux-foundation.org>
 References: <20090115200315.EBE3.KOSAKI.MOTOHIRO@jp.fujitsu.com>
 	<20090115093514.f3f6b8ff.akpm@linux-foundation.org>
 	<20090116124949.7828a559.sfr@canb.auug.org.au>
@@ -12,52 +12,46 @@ References: <20090115200315.EBE3.KOSAKI.MOTOHIRO@jp.fujitsu.com>
 	<20090116141557.0a3eaaac.akpm@linux-foundation.org>
 	<20090117094008.5a0ce562.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__17_Jan_2009_09_49_03_+1100_ijlhoFp_NJgNDsij"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48397 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753895AbZAPWtJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 16 Jan 2009 17:49:09 -0500
-In-Reply-To: <20090117094008.5a0ce562.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, prarit@redhat.com, dhowells@redhat.com, kosaki.motohiro@jp.fujitsu.com, linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org, sam@ravnborg.org, kyle@mcmartin.ca, tony.luck@intel.com, trond.myklebust@fys.uio.no
-
---Signature=_Sat__17_Jan_2009_09_49_03_+1100_ijlhoFp_NJgNDsij
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-ia64-owner@vger.kernel.org>
+In-Reply-To: <20090117094008.5a0ce562.sfr@canb.auug.org.au>
+Sender: linux-ia64-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, prarit@redhat.com, dhowells@redhat.com, kosaki.motohiro@jp.fujitsu.com, linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org, sam@ravnborg.org, kyle@mcmartin.ca, tony.luck@intel.com, trond.myklebust@fys.uio.no
+List-Id: linux-next.vger.kernel.org
 
-Hi Andrew,
+On Sat, 17 Jan 2009 09:40:08 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-On Sat, 17 Jan 2009 09:40:08 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> > y:/usr/src/git26> who-committed.sh 2c3fb6b1b1a43ca089032e6523207f6687c9=
-62c1
->=20
+> Hi Andrew,
+> 
+> On Fri, 16 Jan 2009 14:15:57 -0800 Andrew Morton <akpm@linux-foundation.org> wrote:
+> >
+> > y:/usr/src/git26> git-checkout linux-next
+> > Switched to branch "linux-next"
+> > y:/usr/src/git26> who-committed.sh ba9a5918
+> 
+> Well that commit is from 2.6.23-rc1:
+> 
+> commit ba9a5918c86762fa7fae353c635bb6ed5221dfb8
+> Author: Douglas Thompson <dougthompson@xmission.com>
+> Date:   Thu Jul 19 01:50:32 2007 -0700
+> 
+>     drivers/edac: add to maintainers new info
+> 
+> before linux-next even existed.  My script only works for things in
+> linux-next but not in Linus' tree ...
+> 
+> > y:/usr/src/git26> who-committed.sh 2c3fb6b1b1a43ca089032e6523207f6687c962c1
+> 
 > And that is one I committed myself because Linus' tree is broken.
 
-It also appears as commit d992c8403a72c4067587a32a7736bcc2af6c408f in the
-mfd tree but has not made it into Linus' tree yet.
+Oh, OK, sorry, drat.  Two hastily and poorly chosen test cases.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+> I'll see if I can do better.  What do you actually want to do?
 
---Signature=_Sat__17_Jan_2009_09_49_03_+1100_ijlhoFp_NJgNDsij
-Content-Type: application/pgp-signature
+y:/usr/src/git26> who-committed.sh bcff57c25287216221d0ff82080ac37bb081969e
+ide
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklxDt8ACgkQjjKRsyhoI8xXqgCfcCHoLndb77ZH9yDTM71Z7IDh
-6hoAoJ6H6uWGeBc1kMAXEdo80VUD/Lty
-=gsda
------END PGP SIGNATURE-----
-
---Signature=_Sat__17_Jan_2009_09_49_03_+1100_ijlhoFp_NJgNDsij--
+That ;)
