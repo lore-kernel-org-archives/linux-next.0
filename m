@@ -1,73 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build problem with nfs tree (Was: Re:
- [mmotm][PATCH] fix ia64 build error)
-Date: Fri, 16 Jan 2009 15:34:17 +1100
-Message-ID: <20090116153417.891297ca.sfr@canb.auug.org.au>
-References: <20090115200315.EBE3.KOSAKI.MOTOHIRO@jp.fujitsu.com>
-	<20090115093514.f3f6b8ff.akpm@linux-foundation.org>
-	<20090116124949.7828a559.sfr@canb.auug.org.au>
-	<20090115175917.8e0ae536.akpm@linux-foundation.org>
-	<20090116134930.68e783aa.sfr@canb.auug.org.au>
+Subject: linux-next: tree build failure
+Date: Fri, 16 Jan 2009 16:37:45 +1100
+Message-ID: <20090116163745.93f4e075.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__16_Jan_2009_16_37_45_+1100_24.cQDyVkWFa4nnh"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34224 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751399AbZAPFh7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 16 Jan 2009 00:37:59 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>
+
+--Signature=_Fri__16_Jan_2009_16_37_45_+1100_24.cQDyVkWFa4nnh
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-ia64-owner@vger.kernel.org>
-In-Reply-To: <20090116134930.68e783aa.sfr@canb.auug.org.au>
-Sender: linux-ia64-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>, David Howells <dhowells@redhat.com>, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>, LKML <linux-kernel@vger.kernel.org>, linux-ia64 <linux-ia64@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>, Kyle McMartin <kyle@mcmartin.ca>, Tony Luck <tony.luck@intel.com>, Trond Myklebust <trond.myklebust@fys.uio.no>
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi ,
 
-On Fri, 16 Jan 2009 13:49:30 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> On Thu, 15 Jan 2009 17:59:17 -0800 Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> > I do most of my gitting across a DSL connection.  It makes GUIs
-> > painful.
-> 
-> Yeah, I will think on it ...
+Today's linux-next build (powerpc allnoconfig) failed like this:
 
-With the help of Paul Mackerras, I have come up with the shell script
-below.  You run it with the commit id, the tag of the tree you care
-about (e.g. next-20080115)(it defaults to the current top of tree) and
-the name of the branch the represents Linus' tree (default to
-origin/master).  It will spit out the (or a) tree that contains the
-commit you asked about.
+In file included from kernel/sched.c:1703:
+kernel/sched_fair.c: In function 'adaptive_gran':
+kernel/sched_fair.c:1324: error: 'struct sched_entity' has no member named =
+'avg_wakeup'
 
--------------------------------------------------------------------------
-#!/bin/bash
+Caused by commit e52fb7c097238d34f4d8e2a596f8a3f85b0c0565
+("sched: prefer wakers") from the sched tree.
 
-commit=$1
-[ "$commit" ] || {
-	echo "$0: <commit id> [<top tag> [<linus branch>]]" 1>&2
-	exit 1
-}
+kernel/sched.c: In function 'enqueue_task':
+kernel/sched.c:1752: error: 'struct sched_entity' has no member named 'star=
+t_runtime'
+kernel/sched.c: In function 'dequeue_task':
+kernel/sched.c:1767: error: 'struct sched_entity' has no member named 'avg_=
+wakeup'
+kernel/sched.c: In function 'try_to_wake_up':
+kernel/sched.c:2409: error: 'struct sched_entity' has no member named 'star=
+t_runtime'
+kernel/sched.c:2410: error: 'struct sched_entity' has no member named 'avg_=
+wakeup'
+kernel/sched.c: In function '__sched_fork':
+kernel/sched.c:2454: error: 'struct sched_entity' has no member named 'star=
+t_runtime'
+kernel/sched.c:2455: error: 'struct sched_entity' has no member named 'avg_=
+wakeup'
 
-top=$2
-[ "$top" ] || top=HEAD
+Caused by commit 831451ac4e44d3a20b581ce726ef1d1144373f7d ("sched:
+introduce avg_wakeup") from the sched tree.
 
-linus=$3
-[ "$linus" ] || linus=origin/master
+These members depend on CONFIG_SCHEDSTATS.
 
-base=$(git merge-base "$linus" "$top")
-
-git log --first-parent --pretty='format:%H %P' "$base".."$top" |
-while read m p1 p2
-do
-	[ "$p2" ] || continue
-	git rev-list $base..$p2 | grep -q "$commit" || continue
-	branch=$(git show $m | sed -n "s/[ 	]*Merge .* '\([^']*\)'/\1/p")
-	tree=${branch%%/*}
-	[ "$tree" = "quilt" ] && tree=${branch##*/}
-	echo "$tree"
-	break
-done
-
-exit 0
-----------------------------------------------------------------------------
--- 
+I have reverted the sched tree for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__16_Jan_2009_16_37_45_+1100_24.cQDyVkWFa4nnh
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAklwHSkACgkQjjKRsyhoI8yTMwCghmd4w83cgUNic29aD5PBHGJF
+uqEAmwditBCQK/704/oTvquvHtugjGXd
+=2dvF
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__16_Jan_2009_16_37_45_+1100_24.cQDyVkWFa4nnh--
