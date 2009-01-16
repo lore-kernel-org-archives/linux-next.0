@@ -1,67 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build problem with nfs tree (Was: Re:
- [mmotm][PATCH] fix ia64 build error)
-Date: Fri, 16 Jan 2009 13:49:30 +1100
-Message-ID: <20090116134930.68e783aa.sfr@canb.auug.org.au>
-References: <20090115200315.EBE3.KOSAKI.MOTOHIRO@jp.fujitsu.com>
-	<20090115093514.f3f6b8ff.akpm@linux-foundation.org>
-	<20090116124949.7828a559.sfr@canb.auug.org.au>
-	<20090115175917.8e0ae536.akpm@linux-foundation.org>
+From: Harvey Harrison <harvey.harrison@gmail.com>
+Subject: Re: linux-next: manual merge of the cris tree
+Date: Thu, 15 Jan 2009 18:51:24 -0800
+Message-ID: <1232074284.5786.0.camel@brick>
+References: <20090116111127.3fc8dbd9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__16_Jan_2009_13_49_30_+1100_x5ylrawB2nGGw4h2"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40484 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754059AbZAPCti (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 15 Jan 2009 21:49:38 -0500
-In-Reply-To: <20090115175917.8e0ae536.akpm@linux-foundation.org>
+Received: from wf-out-1314.google.com ([209.85.200.171]:38748 "EHLO
+	wf-out-1314.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754456AbZAPCv1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Jan 2009 21:51:27 -0500
+Received: by wf-out-1314.google.com with SMTP id 27so1628219wfd.4
+        for <linux-next@vger.kernel.org>; Thu, 15 Jan 2009 18:51:26 -0800 (PST)
+In-Reply-To: <20090116111127.3fc8dbd9.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>, David Howells <dhowells@redhat.com>, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>, LKML <linux-kernel@vger.kernel.org>, linux-ia64 <linux-ia64@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>, Kyle McMartin <kyle@mcmartin.ca>, Tony Luck <tony.luck@intel.com>, Trond Myklebust <trond.myklebust@fys.uio.no>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jesper Nilsson <jesper.nilsson@axis.com>, linux-next@vger.kernel.org
 
---Signature=_Fri__16_Jan_2009_13_49_30_+1100_x5ylrawB2nGGw4h2
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 2009-01-16 at 11:11 +1100, Stephen Rothwell wrote:
+> Hi Jesper,
+> 
+> Today's linux-next merge of the cris tree got a conflict in
+> arch/cris/include/arch-v32/arch/byteorder.h between commit
+> aa0effbd1c0269ce7dd13be8dbf13e6b04f30ebd ("cris: introduce asm/swab.h")
+> from Linus' tree and commit 0db42c6b23ce26b05b235dbe2e0aa096db194e33
+> ("cris: use the new byteorder headers") from the cris tree.
+> 
+> There was also conflicts in arch/cris/include/asm/byteorder.h.
+> 
+> I have dropped the cris tree for today.  You should do a merge with
+> Linus' tree and fix these conflicts.
 
-Hi Andrew,
+Linus wanted a slightly different approach for the byteorder headers,
+so the patch in the cris tree is now outdated.  Please drop it.
 
-On Thu, 15 Jan 2009 17:59:17 -0800 Andrew Morton <akpm@linux-foundation.org=
-> wrote:
->
-> I do most of my gitting across a DSL connection.  It makes GUIs
-> painful.
 
-Yeah, I will think on it ...
-
-> > I have dropped the nfs tree from linux-next for today.
->=20
-> Just for this buglet?  That sounds a bit savage.
-
-There was another problem with the fscache code as well.  Also, this was
-reported the day before yesterday and got no response.  Also, the other
-patch that added EXPORT_SYMBOL(copy_page) "recently" was from
-December, *2007* ... Also, this is 2.6.30 material and they have a long
-time to fix it.
-
-Also, it is much easier on me :-)
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__16_Jan_2009_13_49_30_+1100_x5ylrawB2nGGw4h2
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAklv9boACgkQjjKRsyhoI8wmTQCfbN1E8/S1qFd07V3Qkk/zY6bn
-tw4AoKnbdYGSA1MSIvTNc/Ug3fb2Utrl
-=Q7Zq
------END PGP SIGNATURE-----
-
---Signature=_Fri__16_Jan_2009_13_49_30_+1100_x5ylrawB2nGGw4h2--
+Harvey
