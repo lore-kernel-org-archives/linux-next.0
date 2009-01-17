@@ -1,57 +1,46 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: build problem with nfs tree (Was: Re:
- [mmotm][PATCH] fix ia64 build error)
-Date: Fri, 16 Jan 2009 14:51:56 -0800
-Message-ID: <20090116145156.ebbea173.akpm@linux-foundation.org>
-References: <20090115200315.EBE3.KOSAKI.MOTOHIRO@jp.fujitsu.com>
-	<20090115093514.f3f6b8ff.akpm@linux-foundation.org>
-	<20090116124949.7828a559.sfr@canb.auug.org.au>
-	<20090115175917.8e0ae536.akpm@linux-foundation.org>
-	<20090116134930.68e783aa.sfr@canb.auug.org.au>
-	<20090116153417.891297ca.sfr@canb.auug.org.au>
-	<20090116141557.0a3eaaac.akpm@linux-foundation.org>
-	<20090117094008.5a0ce562.sfr@canb.auug.org.au>
+From: Jesper Nilsson <Jesper.Nilsson@axis.com>
+Subject: Re: linux-next: manual merge of the cris tree
+Date: Sat, 17 Jan 2009 02:00:28 +0100
+Message-ID: <20090117010028.GO19262@axis.com>
+References: <20090116111127.3fc8dbd9.sfr@canb.auug.org.au> <1232074284.5786.0.camel@brick>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-ia64-owner@vger.kernel.org>
-In-Reply-To: <20090117094008.5a0ce562.sfr@canb.auug.org.au>
-Sender: linux-ia64-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, prarit@redhat.com, dhowells@redhat.com, kosaki.motohiro@jp.fujitsu.com, linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org, sam@ravnborg.org, kyle@mcmartin.ca, tony.luck@intel.com, trond.myklebust@fys.uio.no
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from krynn.se.axis.com ([193.13.178.10]:32975 "EHLO
+	krynn.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755307AbZAQBfl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 16 Jan 2009 20:35:41 -0500
+Content-Disposition: inline
+In-Reply-To: <1232074284.5786.0.camel@brick>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Harvey Harrison <harvey.harrison@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On Sat, 17 Jan 2009 09:40:08 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Fri, Jan 16, 2009 at 03:51:24AM +0100, Harvey Harrison wrote:
+> On Fri, 2009-01-16 at 11:11 +1100, Stephen Rothwell wrote:
+> > Hi Jesper,
+> > 
+> > Today's linux-next merge of the cris tree got a conflict in
+> > arch/cris/include/arch-v32/arch/byteorder.h between commit
+> > aa0effbd1c0269ce7dd13be8dbf13e6b04f30ebd ("cris: introduce asm/swab.h")
+> > from Linus' tree and commit 0db42c6b23ce26b05b235dbe2e0aa096db194e33
+> > ("cris: use the new byteorder headers") from the cris tree.
+> > 
+> > There was also conflicts in arch/cris/include/asm/byteorder.h.
+> > 
+> > I have dropped the cris tree for today.  You should do a merge with
+> > Linus' tree and fix these conflicts.
+> 
+> Linus wanted a slightly different approach for the byteorder headers,
+> so the patch in the cris tree is now outdated.  Please drop it.
 
-> Hi Andrew,
-> 
-> On Fri, 16 Jan 2009 14:15:57 -0800 Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> > y:/usr/src/git26> git-checkout linux-next
-> > Switched to branch "linux-next"
-> > y:/usr/src/git26> who-committed.sh ba9a5918
-> 
-> Well that commit is from 2.6.23-rc1:
-> 
-> commit ba9a5918c86762fa7fae353c635bb6ed5221dfb8
-> Author: Douglas Thompson <dougthompson@xmission.com>
-> Date:   Thu Jul 19 01:50:32 2007 -0700
-> 
->     drivers/edac: add to maintainers new info
-> 
-> before linux-next even existed.  My script only works for things in
-> linux-next but not in Linus' tree ...
-> 
-> > y:/usr/src/git26> who-committed.sh 2c3fb6b1b1a43ca089032e6523207f6687c962c1
-> 
-> And that is one I committed myself because Linus' tree is broken.
+Ok, I've dropped it. Thanks for the heads up.
 
-Oh, OK, sorry, drat.  Two hastily and poorly chosen test cases.
+> Cheers,
+> 
+> Harvey
 
-> I'll see if I can do better.  What do you actually want to do?
-
-y:/usr/src/git26> who-committed.sh bcff57c25287216221d0ff82080ac37bb081969e
-ide
-
-That ;)
+/^JN - Jesper Nilsson
+-- 
+               Jesper Nilsson -- jesper.nilsson@axis.com
