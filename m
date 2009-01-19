@@ -1,41 +1,51 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: linux-next: Tree for January 19 (DST)
-Date: Mon, 19 Jan 2009 10:57:04 -0800
-Message-ID: <20090119185704.GA6407@suse.de>
-References: <20090119172732.e772d8ea.sfr@canb.auug.org.au> <4974C288.7030301@oracle.com> <20090119183046.GA28947@ioremap.net> <4974CAD2.8050500@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: unable to fetch device-mapper quilt series
+Date: Tue, 20 Jan 2009 10:03:20 +1100
+Message-ID: <20090120100320.302bea89.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__20_Jan_2009_10_03_20_+1100_4pRwnpEEOc8Y6Rcu"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:52629 "EHLO mx2.suse.de"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37330 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752148AbZASS7q (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 19 Jan 2009 13:59:46 -0500
-Content-Disposition: inline
-In-Reply-To: <4974CAD2.8050500@oracle.com>
+	id S1751925AbZASXDl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 19 Jan 2009 18:03:41 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Evgeniy Polyakov <zbr@ioremap.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Alasdair G Kergon <agk@redhat.com>
+Cc: linux-next@vger.kernel.org
 
-On Mon, Jan 19, 2009 at 10:47:46AM -0800, Randy Dunlap wrote:
-> Evgeniy Polyakov wrote:
-> > Hi Randy.
-> > 
-> > On Mon, Jan 19, 2009 at 10:12:24AM -0800, Randy Dunlap (randy.dunlap@oracle.com) wrote:
-> >>> There will be no build results for today's linux-next as our build server
-> >>> has failed.
-> >>>
-> >>> Changes since 20090116:
-> >>
-> >> DST build fails when CONFIG_BLOCK=n:
-> > 
-> > DST should depend on block and block device, in the original patch its
-> > kconfig entry was in the BLK_DEV menu, so this dependency was satisfied
-> > automatically. Should attached patch be pushed into drivers/staging?
-> 
-> Yes, thanks.
-> Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+--Signature=_Tue__20_Jan_2009_10_03_20_+1100_4pRwnpEEOc8Y6Rcu
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, I'll queue it up for inclusion in my tree tomorrow.
+Hi Alasdair,
 
-greg k-h
+This morning I got this error while fetching device-mapper quilt tree
+from master.kernel.org:
+
+rsync: link_stat "/pub/linux/kernel/people/agk/patches/2.6/editing/series" =
+failed: No such file or directory (2)
+
+And, indeed, that directory is empty.  I will use what I have previously
+fetched.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__20_Jan_2009_10_03_20_+1100_4pRwnpEEOc8Y6Rcu
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkl1BrgACgkQjjKRsyhoI8yWswCfU8vsbVuH84xMJTyYVwi2m0bu
+OyQAn2/CmMNaL1+O8HdKZkpKB0ldJfET
+=ky0M
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__20_Jan_2009_10_03_20_+1100_4pRwnpEEOc8Y6Rcu--
