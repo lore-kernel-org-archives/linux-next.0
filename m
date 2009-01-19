@@ -1,66 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: FS-Cache fixes for IA64 export and AFS linkage
-Date: Mon, 19 Jan 2009 10:45:39 +1100
-Message-ID: <20090119104539.06511073.sfr@canb.auug.org.au>
-References: <16871.1232172044@redhat.com>
-	<4973BB3F.8090702@oracle.com>
+Subject: linux-next: manual merge of the stackprotector tree
+Date: Mon, 19 Jan 2009 11:51:59 +1100
+Message-ID: <20090119115159.4437cd09.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__19_Jan_2009_10_45_39_+1100_EweFNL.4s5Fs_cLD"
+ boundary="Signature=_Mon__19_Jan_2009_11_51_59_+1100_=58oAq3o0wZX8Fcu"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50351 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34169 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752652AbZARXpv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 18 Jan 2009 18:45:51 -0500
-In-Reply-To: <4973BB3F.8090702@oracle.com>
+	id S1755366AbZASAwJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 18 Jan 2009 19:52:09 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: David Howells <dhowells@redhat.com>, Trond Myklebust <Trond.Myklebust@netapp.com>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>, linux-ia64 <linux-ia64@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>, Kyle McMartin <kyle@mcmartin.ca>, Tony Luck <tony.luck@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Mon__19_Jan_2009_10_45_39_+1100_EweFNL.4s5Fs_cLD
+--Signature=_Mon__19_Jan_2009_11_51_59_+1100_=58oAq3o0wZX8Fcu
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, 18 Jan 2009 15:29:03 -0800 Randy Dunlap <randy.dunlap@oracle.com> w=
-rote:
->
-> David Howells wrote:
-> > I've dropped the patch to export copy_page() for IA64 from my patchset =
-and
-> > updated the AFS patch so that it no longer produces link errors if
-> > CONFIG_AFS_FS=3Dy and CONFIG_FSCACHE=3Dm but CONFIG_AFS_FSCACHE=3Dn.
-> >=20
-> > These patches are now available as:
-> >=20
-> > 	http://people.redhat.com/~dhowells/fscache/patches/nfs+fscache-44.tar.=
-bz2
-> >=20
-> > and I've updated my GIT tree for Trond to pull:
-> >=20
-> > 	http://git.kernel.org/?p=3Dlinux/kernel/git/dhowells/linux-2.6-nfs-fsc=
-ache.git;a=3Dshortlog
->=20
-> Ack.  Builds for me.  Thanks.
+Hi all,
 
-And it will be in today's linux-next, since Trond has merged it.
+Today's linux-next merge of the stackprotector tree got conflicts in
+arch/x86/include/asm/pda.h and arch/x86/include/asm/system.h against the
+tip-core tree.
 
+It looks like extensive changes have been made that have not been
+propagated to the stackprotector tree yet, so I will drop it for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__19_Jan_2009_10_45_39_+1100_EweFNL.4s5Fs_cLD
+--Signature=_Mon__19_Jan_2009_11_51_59_+1100_=58oAq3o0wZX8Fcu
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAklzvyMACgkQjjKRsyhoI8y26QCgkuxCvkhMKtQA1OqDO2qrhVWF
-PakAoLerLyMvqVAFewwreTcIdg+fuu85
-=Emze
+iEYEARECAAYFAklzzq8ACgkQjjKRsyhoI8xc0gCgsYsvJXnj3bw6Zjrn+HN/QCBn
+fxYAmwXhBbFj3RAT8Hezwh4oJWRasDgY
+=7FLe
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__19_Jan_2009_10_45_39_+1100_EweFNL.4s5Fs_cLD--
+--Signature=_Mon__19_Jan_2009_11_51_59_+1100_=58oAq3o0wZX8Fcu--
