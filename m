@@ -1,57 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: hid tree build failure
-Date: Mon, 19 Jan 2009 12:33:19 +1100
-Message-ID: <20090119123319.a079edbd.sfr@canb.auug.org.au>
+Subject: linux-next: quota tree build failure
+Date: Mon, 19 Jan 2009 13:01:47 +1100
+Message-ID: <20090119130147.b2d85e49.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__19_Jan_2009_12_33_19_+1100_Ntnz23yYG/b_48iY"
+ boundary="Signature=_Mon__19_Jan_2009_13_01_47_+1100_2PIKu1gDqAy.3L2J"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40997 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41617 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755945AbZASBd2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 18 Jan 2009 20:33:28 -0500
+	id S1756915AbZASCB4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 18 Jan 2009 21:01:56 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jikos@jikos.cz>
-Cc: linux-next@vger.kernel.org, Oliver Neukum <oliver@neukum.org>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Mon__19_Jan_2009_12_33_19_+1100_Ntnz23yYG/b_48iY
+--Signature=_Mon__19_Jan_2009_13_01_47_+1100_2PIKu1gDqAy.3L2J
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hi Jan,
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-drivers/hid/usbhid/hid-core.c: In function 'hid_suspend':
-drivers/hid/usbhid/hid-core.c:1220: error: 'struct usb_device' has no membe=
-r named 'auto_pm'
-drivers/hid/usbhid/hid-core.c:1245: error: 'struct usb_device' has no membe=
-r named 'auto_pm'
-drivers/hid/usbhid/hid-core.c:1258: error: 'struct usb_device' has no membe=
-r named 'auto_pm'
+fs/ocfs2/quota_global.c: In function 'ocfs2_dquot_initialize':
+fs/ocfs2/quota_global.c:858: error: implicit declaration of function 'dquot=
+_is_cached'
+fs/ocfs2/quota_global.c: In function 'ocfs2_dquot_drop':
+fs/ocfs2/quota_global.c:962: error: implicit declaration of function 'dquot=
+_drop_locked'
 
-The immediate cause is commit ae14e83aaa975a732ed46dcc9a080172a60f08a6
-("HID: autosuspend support for USB HID").  The above config does not have
-CONFIG_PM set and auto_pm is only defined for CONFIG_PM.
+Immediate cause is commit cc33412fb1f11613e20f9dfc2919a77ecd63fbc4
+("quota: Improve locking").  If you are going to remove an API, you need
+to fix up the callers.
 
-I have dropped the hid tree for today.
+I have dropped the quota tree for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__19_Jan_2009_12_33_19_+1100_Ntnz23yYG/b_48iY
+--Signature=_Mon__19_Jan_2009_13_01_47_+1100_2PIKu1gDqAy.3L2J
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAklz2F8ACgkQjjKRsyhoI8yUXwCglqzi7mlp9zgU0gdiWNUbxInF
-QJIAn1kQJf/0tc++0IoVBWNn0wuBNJrF
-=/fDS
+iEYEARECAAYFAklz3wsACgkQjjKRsyhoI8wMEACgvh2YF2sVyYK8cD3+UJb/u8B+
+YTgAmwdNk/cBoMozCc3ociycBVUGJSee
+=3qH5
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__19_Jan_2009_12_33_19_+1100_Ntnz23yYG/b_48iY--
+--Signature=_Mon__19_Jan_2009_13_01_47_+1100_2PIKu1gDqAy.3L2J--
