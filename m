@@ -1,42 +1,52 @@
-From: Dave Jones <davej@redhat.com>
-Subject: Re: linux-next: cpufreq tree build failure
-Date: Tue, 20 Jan 2009 00:30:22 -0500
-Message-ID: <20090120053022.GB31797@redhat.com>
-References: <20090120135059.6841cdc8.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: crypto tree build failure
+Date: Tue, 20 Jan 2009 16:44:09 +1100
+Message-ID: <20090120164409.7196bd6e.sfr@canb.auug.org.au>
+References: <20090120133043.29efee3f.sfr@canb.auug.org.au>
+	<20090120052141.GA19696@gondor.apana.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__20_Jan_2009_16_44_09_+1100_QvXOTHGhBAtIl8tS"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:46531 "EHLO mx2.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:42059 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750769AbZATFa0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 20 Jan 2009 00:30:26 -0500
-Content-Disposition: inline
-In-Reply-To: <20090120135059.6841cdc8.sfr@canb.auug.org.au>
+	id S1750935AbZATFoS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 20 Jan 2009 00:44:18 -0500
+In-Reply-To: <20090120052141.GA19696@gondor.apana.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-next@vger.kernel.org, Huang Ying <ying.huang@intel.com>
 
-On Tue, Jan 20, 2009 at 01:50:59PM +1100, Stephen Rothwell wrote:
- > Hi Dave,
- > 
- > Today's linux-next build (x86_64 allmodconfig) failed like this:
- > 
- > arch/x86/kernel/cpu/cpufreq/powernow-k8.c: In function 'powernow_k8_cpu_init_acpi':
- > arch/x86/kernel/cpu/cpufreq/powernow-k8.c:836: error: 'space_id' undeclared (first use in this function)
- > 
- > Immediate cause is commit 77a33c31a78c6cd11395c8b554152be684110e94
- > ("[CPUFREQ] checkpatch cleanups for powernow-k8") which clearly wasn't
- > build tested.
+--Signature=_Tue__20_Jan_2009_16_44_09_+1100_QvXOTHGhBAtIl8tS
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-wtf, I dropped a hunk somehow.
+Hi Herbert,
 
- > I have dropped the cpufreq tree for today.
- 
-I regenerated the tree with the missing line.
-Thanks for catching this.
+On Tue, 20 Jan 2009 16:21:41 +1100 Herbert Xu <herbert@gondor.apana.org.au>=
+ wrote:
+>
+> Sorry for the screw up.  It shold be fixed now.
 
-	Dave
+Thanks.
 
--- 
-http://www.codemonkey.org.uk
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__20_Jan_2009_16_44_09_+1100_QvXOTHGhBAtIl8tS
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkl1ZKkACgkQjjKRsyhoI8w8kgCfe63QcvANP8mWEkbcyQz3wkv0
+KjMAoJhtYxtIaQD7AUWKWvcpqDaYpkp5
+=+7Mr
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__20_Jan_2009_16_44_09_+1100_QvXOTHGhBAtIl8tS--
