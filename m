@@ -1,39 +1,40 @@
 From: Dave Jones <davej@redhat.com>
-Subject: Re: linux-next: manual merge of the cpufreq tree with the cpus4096
-	tree
-Date: Tue, 20 Jan 2009 00:25:54 -0500
-Message-ID: <20090120052554.GA31797@redhat.com>
-References: <20090120134713.1fd5fd3a.sfr@canb.auug.org.au>
+Subject: Re: linux-next: cpufreq tree build failure
+Date: Tue, 20 Jan 2009 00:30:22 -0500
+Message-ID: <20090120053022.GB31797@redhat.com>
+References: <20090120135059.6841cdc8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:44200 "EHLO mx2.redhat.com"
+Received: from mx2.redhat.com ([66.187.237.31]:46531 "EHLO mx2.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750819AbZATF03 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 20 Jan 2009 00:26:29 -0500
+	id S1750769AbZATFa0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 20 Jan 2009 00:30:26 -0500
 Content-Disposition: inline
-In-Reply-To: <20090120134713.1fd5fd3a.sfr@canb.auug.org.au>
+In-Reply-To: <20090120135059.6841cdc8.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org
 
-On Tue, Jan 20, 2009 at 01:47:13PM +1100, Stephen Rothwell wrote:
+On Tue, Jan 20, 2009 at 01:50:59PM +1100, Stephen Rothwell wrote:
  > Hi Dave,
  > 
- > Today's linux-next merge of the cpufreq tree got a conflict in
- > arch/x86/kernel/cpu/cpufreq/acpi-cpufreq.c between commit
- > 5cd7376200be7b8bab085557ff5876b04bd84191 ("fix: crash: IP:
- > __bitmap_intersects+0x48/0x73") from the cpus4096 tree and commit
- > 6fc619dc092a0a159cf5fb46afa52f2f8128b1d4 ("[CPUFREQ] checkpatch cleanups
- > for acpi-cpufreq") from the cpufreq tree.
+ > Today's linux-next build (x86_64 allmodconfig) failed like this:
  > 
- > Just changing context.  I fixed it up (see below) and can carry the fix
- > as necessary.
+ > arch/x86/kernel/cpu/cpufreq/powernow-k8.c: In function 'powernow_k8_cpu_init_acpi':
+ > arch/x86/kernel/cpu/cpufreq/powernow-k8.c:836: error: 'space_id' undeclared (first use in this function)
+ > 
+ > Immediate cause is commit 77a33c31a78c6cd11395c8b554152be684110e94
+ > ("[CPUFREQ] checkpatch cleanups for powernow-k8") which clearly wasn't
+ > build tested.
+
+wtf, I dropped a hunk somehow.
+
+ > I have dropped the cpufreq tree for today.
  
-Yep, looks sane.
-I can't wait for this cpumask stuff to be over with, it's been a
-pain in the ass for merge collisions.
+I regenerated the tree with the missing line.
+Thanks for catching this.
 
 	Dave
 
