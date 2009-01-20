@@ -1,58 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: crypto tree build failure
-Date: Tue, 20 Jan 2009 13:30:43 +1100
-Message-ID: <20090120133043.29efee3f.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the cpufreq tree with the cpus4096 tree
+Date: Tue, 20 Jan 2009 13:47:13 +1100
+Message-ID: <20090120134713.1fd5fd3a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__20_Jan_2009_13_30_43_+1100_b_xxx8NxZ_5huk4Y"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51123 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56978 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752210AbZATCa4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 19 Jan 2009 21:30:56 -0500
+	id S1752526AbZATCrV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 19 Jan 2009 21:47:21 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-next@vger.kernel.org, Huang Ying <ying.huang@intel.com>
+To: Dave Jones <davej@redhat.com>
+Cc: linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
 
---Signature=_Tue__20_Jan_2009_13_30_43_+1100_b_xxx8NxZ_5huk4Y
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Dave,
 
-Hi Herbert,
+Today's linux-next merge of the cpufreq tree got a conflict in
+arch/x86/kernel/cpu/cpufreq/acpi-cpufreq.c between commit
+5cd7376200be7b8bab085557ff5876b04bd84191 ("fix: crash: IP:
+__bitmap_intersects+0x48/0x73") from the cpus4096 tree and commit
+6fc619dc092a0a159cf5fb46afa52f2f8128b1d4 ("[CPUFREQ] checkpatch cleanups
+for acpi-cpufreq") from the cpufreq tree.
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
-
-arch/x86/crypto/aesni-intel_glue.c:22:21: error: asm/aes.h: No such file or=
- directory
-arch/x86/crypto/aesni-intel_glue.c: In function 'aes_encrypt':
-arch/x86/crypto/aesni-intel_glue.c:98: error: implicit declaration of funct=
-ion 'crypto_aes_encrypt_x86'
-arch/x86/crypto/aesni-intel_glue.c: In function 'aes_decrypt':
-arch/x86/crypto/aesni-intel_glue.c:111: error: implicit declaration of func=
-tion 'crypto_aes_decrypt_x86'
-
-Immediate cause is commit 9afc33f2f32204a779ef6c96728a034bcf4df29f
-("crypto: aes-ni - Add support to Intel AES-NI instructions for x86_64
-platform").
-
-I have dropped the crypto tree for today.
---=20
+Just changing context.  I fixed it up (see below) and can carry the fix
+as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__20_Jan_2009_13_30_43_+1100_b_xxx8NxZ_5huk4Y
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkl1N1MACgkQjjKRsyhoI8wBZACeKssBntxWv5DW+K+xeROSpems
-mXkAn0rVi4MpSqIw1o9Lfp0ik+RWcPFO
-=s5Wm
------END PGP SIGNATURE-----
-
---Signature=_Tue__20_Jan_2009_13_30_43_+1100_b_xxx8NxZ_5huk4Y--
+diff --cc arch/x86/kernel/cpu/cpufreq/acpi-cpufreq.c
+index 0192767,cba5c6b..0000000
+--- a/arch/x86/kernel/cpu/cpufreq/acpi-cpufreq.c
++++ b/arch/x86/kernel/cpu/cpufreq/acpi-cpufreq.c
+@@@ -138,15 -140,13 +140,13 @@@ struct io_addr 
+  	u8 bit_width;
+  };
+  
+- typedef union {
+- 	struct msr_addr msr;
+- 	struct io_addr io;
+- } drv_addr_union;
+- 
+  struct drv_cmd {
+  	unsigned int type;
+ -	cpumask_var_t mask;
+ +	const struct cpumask *mask;
+- 	drv_addr_union addr;
++ 	union {
++ 		struct msr_addr msr;
++ 		struct io_addr io;
++ 	} addr;
+  	u32 val;
+  };
+  
