@@ -1,57 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the proc tree with the security-testing
- tree
-Date: Tue, 20 Jan 2009 16:05:27 +1100
-Message-ID: <20090120160527.197dc58a.sfr@canb.auug.org.au>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: crypto tree build failure
+Date: Tue, 20 Jan 2009 16:21:41 +1100
+Message-ID: <20090120052141.GA19696@gondor.apana.org.au>
+References: <20090120133043.29efee3f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50055 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750712AbZATFFd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 20 Jan 2009 00:05:33 -0500
+Received: from rhun.apana.org.au ([64.62.148.172]:42078 "EHLO
+	arnor.apana.org.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750902AbZATFVq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Jan 2009 00:21:46 -0500
+Content-Disposition: inline
+In-Reply-To: <20090120133043.29efee3f.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: linux-next@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, "David P. Quigley" <dpquigl@tycho.nsa.gov>, James Morris <jmorris@namei.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Huang Ying <ying.huang@intel.com>
 
-Hi Alexey,
+On Tue, Jan 20, 2009 at 01:30:43PM +1100, Stephen Rothwell wrote:
+> 
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> 
+> arch/x86/crypto/aesni-intel_glue.c:22:21: error: asm/aes.h: No such file or directory
+> arch/x86/crypto/aesni-intel_glue.c: In function 'aes_encrypt':
+> arch/x86/crypto/aesni-intel_glue.c:98: error: implicit declaration of function 'crypto_aes_encrypt_x86'
+> arch/x86/crypto/aesni-intel_glue.c: In function 'aes_decrypt':
+> arch/x86/crypto/aesni-intel_glue.c:111: error: implicit declaration of function 'crypto_aes_decrypt_x86'
+> 
+> Immediate cause is commit 9afc33f2f32204a779ef6c96728a034bcf4df29f
+> ("crypto: aes-ni - Add support to Intel AES-NI instructions for x86_64
+> platform").
+> 
+> I have dropped the crypto tree for today.
 
-Today's linux-next merge of the proc tree got a conflict in
-security/selinux/hooks.c between commit
-0d90a7ec48c704025307b129413bc62451b20ab3 ("SELinux: Condense super block
-security structure flags and cleanup necessary code") from the
-security-testing tree and commit c0f23e402155f510dd27d05b4f8d3c0a967dbf69
-("proc 3/6: make /proc/net it's own filesystem") from the proc tree.
+Sorry for the screw up.  It shold be fixed now.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
-
-P.S. James, your email address in the SOB line and committer info of that
-securty-testing commit is not very useful ...
+Thanks,
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
-diff --cc security/selinux/hooks.c
-index 3bb4942,38c88e1..0000000
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@@ -714,11 -698,12 +714,12 @@@ static int selinux_set_mnt_opts(struct 
-  		goto out;
-  	}
-  
-- 	if (strcmp(sb->s_type->name, "proc") == 0)
-+ 	/* "proc", "proc/net" */
-+ 	if (strncmp(sb->s_type->name, "proc", 4) == 0)
- -		sbsec->proc = 1;
- +		sbsec->flags |= SE_SBPROC;
-  
-  	/* Determine the labeling behavior to use for this filesystem type. */
- -	rc = security_fs_use(sbsec->proc ? "proc" : sb->s_type->name, &sbsec->behavior, &sbsec->sid);
- +	rc = security_fs_use((sbsec->flags & SE_SBPROC) ? "proc" : sb->s_type->name, &sbsec->behavior, &sbsec->sid);
-  	if (rc) {
-  		printk(KERN_WARNING "%s: security_fs_use(%s) returned %d\n",
-  		       __func__, sb->s_type->name, rc);
+Visit Openswan at http://www.openswan.org/
+Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
