@@ -1,47 +1,108 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: [PATCH] sysrq: include interrupt.h instead of irq.h
-Date: Wed, 21 Jan 2009 14:49:18 +0100
-Message-ID: <1232545758.31303.2.camel@osiris.boeblingen.de.ibm.com>
-References: <20090121150249.a87aca09.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1759437AbZAUNu4@vger.kernel.org>
-In-Reply-To: <20090121150249.a87aca09.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Mike Travis <travis@sgi.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
-List-Id: linux-next.vger.kernel.org
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: [PATCH] regulator: Hoist struct regulator_dev out of core to fix notifiers
+Date: Wed, 21 Jan 2009 14:08:40 +0000
+Message-ID: <1232546920-14915-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:38038 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1753282AbZAUOIm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 21 Jan 2009 09:08:42 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@cam.ac.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Commit 872ed3fe176833f7d43748eb88010da4bbd2f983 caused regulator drivers
+to take the struct regulator_dev lock themselves which requires that the
+struct be visible to them. Band aid this by making the struct visible.
 
-With "cpumask: update irq_desc to use cpumask_var_t" in linux-next
-we get this compile bug on s390:
-
-  CC      drivers/char/sysrq.o
-In file included from drivers/char/sysrq.c:38:
-include/linux/irq.h: In function 'init_alloc_desc_masks':
-include/linux/irq.h:442: error: dereferencing pointer to incomplete type
-
-drivers/char/sysrq.c should include interrupt.h instead of irq.h.
-
-Cc: Mike Travis <travis@sgi.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
 ---
- drivers/char/sysrq.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/core.c         |   27 ---------------------------
+ include/linux/regulator/driver.h |   32 ++++++++++++++++++++++++++++++++
+ 2 files changed, 32 insertions(+), 27 deletions(-)
 
-Index: linux-next/drivers/char/sysrq.c
-===================================================================
---- linux-next.orig/drivers/char/sysrq.c
-+++ linux-next/drivers/char/sysrq.c
-@@ -35,7 +35,7 @@
- #include <linux/vt_kern.h>
- #include <linux/workqueue.h>
- #include <linux/kexec.h>
--#include <linux/irq.h>
-+#include <linux/interrupt.h>
- #include <linux/hrtimer.h>
- #include <linux/oom.h>
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index f17362a..0ed13c2 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -30,33 +30,6 @@ static LIST_HEAD(regulator_list);
+ static LIST_HEAD(regulator_map_list);
  
+ /*
+- * struct regulator_dev
+- *
+- * Voltage / Current regulator class device. One for each regulator.
+- */
+-struct regulator_dev {
+-	struct regulator_desc *desc;
+-	int use_count;
+-
+-	/* lists we belong to */
+-	struct list_head list; /* list of all regulators */
+-	struct list_head slist; /* list of supplied regulators */
+-
+-	/* lists we own */
+-	struct list_head consumer_list; /* consumers we supply */
+-	struct list_head supply_list; /* regulators we supply */
+-
+-	struct blocking_notifier_head notifier;
+-	struct mutex mutex; /* consumer lock */
+-	struct module *owner;
+-	struct device dev;
+-	struct regulation_constraints *constraints;
+-	struct regulator_dev *supply;	/* for tree */
+-
+-	void *reg_data;		/* regulator_dev data */
+-};
+-
+-/*
+  * struct regulator_map
+  *
+  * Used to provide symbolic supply names to devices.
+diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
+index 2254ad9..c263e36 100644
+--- a/include/linux/regulator/driver.h
++++ b/include/linux/regulator/driver.h
+@@ -137,6 +137,38 @@ struct regulator_desc {
+ 	struct module *owner;
+ };
+ 
++/*
++ * struct regulator_dev
++ *
++ * Voltage / Current regulator class device. One for each
++ * regulator.
++ *
++ * This should *not* be used directly by anything except the regulator
++ * core and notification injection (which should take the mutex and do
++ * no other direct access).
++ */
++struct regulator_dev {
++	struct regulator_desc *desc;
++	int use_count;
++
++	/* lists we belong to */
++	struct list_head list; /* list of all regulators */
++	struct list_head slist; /* list of supplied regulators */
++
++	/* lists we own */
++	struct list_head consumer_list; /* consumers we supply */
++	struct list_head supply_list; /* regulators we supply */
++
++	struct blocking_notifier_head notifier;
++	struct mutex mutex; /* consumer lock */
++	struct module *owner;
++	struct device dev;
++	struct regulation_constraints *constraints;
++	struct regulator_dev *supply;	/* for tree */
++
++	void *reg_data;		/* regulator_dev data */
++};
++
+ struct regulator_dev *regulator_register(struct regulator_desc *regulator_desc,
+ 	struct device *dev, struct regulator_init_data *init_data,
+ 	void *driver_data);
+-- 
+1.5.6.5
