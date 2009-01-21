@@ -1,32 +1,56 @@
-From: Liam Girdwood <lrg@slimlogic.co.uk>
-Subject: Re: [PATCH] regulator: Hoist struct regulator_dev out of core to
- fix notifiers
-Date: Wed, 21 Jan 2009 14:57:43 +0000
-Message-ID: <1232549863.16911.350.camel@vega.slimlogic.co.uk>
-References: <1232546920-14915-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+From: Mike Travis <travis@sgi.com>
+Subject: Re: [PATCH] sysrq: include interrupt.h instead of irq.h
+Date: Wed, 21 Jan 2009 08:50:03 -0800
+Message-ID: <4977523B.6000507@sgi.com>
+References: <20090121150249.a87aca09.sfr@canb.auug.org.au> <1232545758.31303.2.camel@osiris.boeblingen.de.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756189AbZAUO55@vger.kernel.org>
-In-Reply-To: <1232546920-14915-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@cam.ac.uk>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from relay3.sgi.com ([192.48.171.31]:52335 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1750880AbZAUQuG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 21 Jan 2009 11:50:06 -0500
+In-Reply-To: <1232545758.31303.2.camel@osiris.boeblingen.de.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-On Wed, 2009-01-21 at 14:08 +0000, Mark Brown wrote:
-> Commit 872ed3fe176833f7d43748eb88010da4bbd2f983 caused regulator drivers
-> to take the struct regulator_dev lock themselves which requires that the
-> struct be visible to them. Band aid this by making the struct visible.
+Thanks for catching this Heiko!
+Mike
+
+Heiko Carstens wrote:
+> From: Heiko Carstens <heiko.carstens@de.ibm.com>
 > 
-> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> With "cpumask: update irq_desc to use cpumask_var_t" in linux-next
+> we get this compile bug on s390:
+> 
+>   CC      drivers/char/sysrq.o
+> In file included from drivers/char/sysrq.c:38:
+> include/linux/irq.h: In function 'init_alloc_desc_masks':
+> include/linux/irq.h:442: error: dereferencing pointer to incomplete type
+> 
+> drivers/char/sysrq.c should include interrupt.h instead of irq.h.
+> 
+> Cc: Mike Travis <travis@sgi.com>
+> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+> Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
 > ---
->  drivers/regulator/core.c         |   27 ---------------------------
->  include/linux/regulator/driver.h |   32 ++++++++++++++++++++++++++++++++
->  2 files changed, 32 insertions(+), 27 deletions(-)
-
-Applied and fixed.
-
-Thanks
-
-Liam
+>  drivers/char/sysrq.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Index: linux-next/drivers/char/sysrq.c
+> ===================================================================
+> --- linux-next.orig/drivers/char/sysrq.c
+> +++ linux-next/drivers/char/sysrq.c
+> @@ -35,7 +35,7 @@
+>  #include <linux/vt_kern.h>
+>  #include <linux/workqueue.h>
+>  #include <linux/kexec.h>
+> -#include <linux/irq.h>
+> +#include <linux/interrupt.h>
+>  #include <linux/hrtimer.h>
+>  #include <linux/oom.h>
+>  
+> 
