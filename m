@@ -1,63 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] regulator: Hoist struct regulator_dev out of core to
- fix notifiers
-Date: Thu, 22 Jan 2009 08:52:53 +1100
-Message-ID: <20090122085253.fc2782d9.sfr@canb.auug.org.au>
-References: <1232546920-14915-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-	<1232549863.16911.350.camel@vega.slimlogic.co.uk>
+Subject: linux-next: manual merge of the i2c tree with the pxa tree
+Date: Thu, 22 Jan 2009 11:24:42 +1100
+Message-ID: <20090122112442.1c99650e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__22_Jan_2009_08_52_53_+1100_T8c4U2Qa7okdHpVM"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44636 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34943 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1749667AbZAUVxA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 Jan 2009 16:53:00 -0500
-In-Reply-To: <1232549863.16911.350.camel@vega.slimlogic.co.uk>
+	id S1754412AbZAVAYq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 21 Jan 2009 19:24:46 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@cam.ac.uk>
+To: Jean Delvare <khali@linux-fr.org>
+Cc: linux-next@vger.kernel.org, Philipp Zabel <philipp.zabel@gmail.com>, Eric Miao <eric.miao@marvell.com>
 
---Signature=_Thu__22_Jan_2009_08_52_53_+1100_T8c4U2Qa7okdHpVM
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Jean,
 
-On Wed, 21 Jan 2009 14:57:43 +0000 Liam Girdwood <lrg@slimlogic.co.uk> wrot=
-e:
->
-> On Wed, 2009-01-21 at 14:08 +0000, Mark Brown wrote:
-> > Commit 872ed3fe176833f7d43748eb88010da4bbd2f983 caused regulator drivers
-> > to take the struct regulator_dev lock themselves which requires that the
-> > struct be visible to them. Band aid this by making the struct visible.
-> >=20
-> > Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> > ---
-> >  drivers/regulator/core.c         |   27 ---------------------------
-> >  include/linux/regulator/driver.h |   32 ++++++++++++++++++++++++++++++=
-++
-> >  2 files changed, 32 insertions(+), 27 deletions(-)
->=20
-> Applied and fixed.
+Today's linux-next merge of the i2c tree got a conflict in
+arch/arm/configs/magician_defconfig between commit
+b25a386b9c68ed23c3b2656f44b523e61480218b ("[ARM] pxa/magician: Update
+defconfig") from the pxa tree and commit
+4f1889016ff7e12fe429ba072be215cbac63e0e0 ("eeprom: More consistent symbol
+names") from the i2c tree.
 
-Thanks.
-
---=20
+Just changed context, nothing important.  I fixed it up (see below) and
+can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__22_Jan_2009_08_52_53_+1100_T8c4U2Qa7okdHpVM
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkl3mTUACgkQjjKRsyhoI8zUcgCgpYayZZlzenQlqxcAlIZDFk7e
-/aMAnRlPbK1kC0Sxdn8CZO49YLfjkxNW
-=dZXF
------END PGP SIGNATURE-----
-
---Signature=_Thu__22_Jan_2009_08_52_53_+1100_T8c4U2Qa7okdHpVM--
+diff --cc arch/arm/configs/magician_defconfig
+index dde50df,73ba62b..0000000
+--- a/arch/arm/configs/magician_defconfig
++++ b/arch/arm/configs/magician_defconfig
+@@@ -747,11 -675,11 +747,11 @@@ CONFIG_I2C_PXA=
+  #
+  # Miscellaneous I2C Chip support
+  #
+ -# CONFIG_SENSORS_DS1337 is not set
+ -# CONFIG_SENSORS_DS1374 is not set
+  # CONFIG_DS1682 is not set
+ +# CONFIG_AT24 is not set
+- # CONFIG_SENSORS_EEPROM is not set
++ # CONFIG_EEPROM_LEGACY is not set
+  # CONFIG_SENSORS_PCF8574 is not set
+ +# CONFIG_PCF8575 is not set
+  # CONFIG_SENSORS_PCA9539 is not set
+  # CONFIG_SENSORS_PCF8591 is not set
+  # CONFIG_SENSORS_MAX6875 is not set
