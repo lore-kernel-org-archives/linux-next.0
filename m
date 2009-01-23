@@ -1,64 +1,38 @@
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-Subject: Re: linux-next: proc tree build failure
-Date: Fri, 23 Jan 2009 23:26:24 +0300
-Message-ID: <20090123202624.GH8491@localhost>
-References: <20090123171515.a0af4f8b.sfr@canb.auug.org.au> <20090123070955.GA8491@localhost> <20090123184147.GA3340@x200.localdomain> <20090123192607.GF8491@localhost> <20090123194109.GG8491@localhost>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for January 23 (kvm)
+Date: Fri, 23 Jan 2009 12:34:24 -0800
+Message-ID: <497A29D0.2010307@oracle.com>
+References: <20090123184826.f2c91472.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f20.google.com ([209.85.219.20]:55666 "EHLO
-	mail-ew0-f20.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752186AbZAWU0Y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Jan 2009 15:26:24 -0500
-Received: by ewy13 with SMTP id 13so3984085ewy.13
-        for <linux-next@vger.kernel.org>; Fri, 23 Jan 2009 12:26:22 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <20090123194109.GG8491@localhost>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, "Eric W. Biederman" <ebiederm@xmi>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756702AbZAWUfU@vger.kernel.org>
+In-Reply-To: <20090123184826.f2c91472.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, avi@redhat.com
+List-Id: linux-next.vger.kernel.org
 
-[Cyrill Gorcunov - Fri, Jan 23, 2009 at 10:41:09PM +0300]
-| [Cyrill Gorcunov - Fri, Jan 23, 2009 at 10:26:07PM +0300]
-| | [Alexey Dobriyan - Fri, Jan 23, 2009 at 09:48:37PM +0300]
-| | ...
-| | | > Hi Stephen,
-| | | > 
-| | | > thanks for catching this. Until I miss something --
-| | | > s_fs_info for /proc is struct pid_namespace* right?
-| | | > So maybe_get_net will convert it to net*, which is
-| | | > not right I guess. On the other hand -- and PDE, and
-| | | > PDE_NET is defined in proc_fs.h regardless if CONIG_PROC_FS
-| | | > is turned on/off. Confused...
-| | | > 
-| | | > (to be fair -- this maybe_get_net(PDE_NET(PDE(inode))) is
-| | | >  taken from proc_net.c:get_proc_net, but to eliminate #ifdef
-| | | >  I reimplemented it, which is not good too -- maybe I've been
-| | | >  to put get_proc_net into some header, Eric?)
-| | | 
-| | | PDE_NET here is bogus. you should use seq_open_net/seq_release_net.
-| | | See how other code does this, plenty of examples.
-| | | 
-| | 
-| | The question is not in examples, I saw that code.
-| | There is some problem with seq_open_net/seq_release_net --
-| | I don't need additional private data for sequential files,
-| | all I need is just a pointer (ie -- seq_file.private) which
-| | is already allocated for seq_file structure itself. So
-| | Alexey, why should I use seq_open_net then and ask for
-| | additional memory which I don't need? (side note:
-| | actually get_net/put_net is really needed here indeed).
-| | 
-| | 		- Cyrill -
-| 
-| On the other hand - Alexey could we 'teach' seq_open_net/seq_release_net
-| to handle 0 private size? So then I could be able to set
-| seq_file.private to NULL
-| and call seq_release_net without problems?
-| 
-| 		- Cyrill -
+Stephen Rothwell wrote:
+> Hi all,
+> 
+> News:  I will be on leave next week, so there will probably be no
+> linux-next release until Feb 2.
+> 
+> Changes since 20090122:
 
-But if the only right way to play with this is to use seq_open/release_net
-then I will change the PPPoX code. Alexey?
 
-		- Cyrill -
+kvm changes cause this build error on i386:
+
+when kvm is built as module:
+ERROR: "__moddi3" [arch/x86/kvm/kvm.ko] undefined!
+
+or when kvm is built into the kernel image:
+lapic.c:(.text+0x19276): undefined reference to `__moddi3'
+
+
+I guess it's this line:
+	ns = ktime_to_ns(remaining) % apic->timer.period;
+
+-- 
+~Randy
