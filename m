@@ -1,66 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip-core tree with the x86 tree
-Date: Fri, 23 Jan 2009 11:54:50 +1100
-Message-ID: <20090123115450.49885458.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the sound tree with the pxa tree
+Date: Fri, 23 Jan 2009 14:01:30 +1100
+Message-ID: <20090123140130.eba111dd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42086 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60224 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753422AbZAWAyy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 22 Jan 2009 19:54:54 -0500
+	id S1752077AbZAWDBf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 Jan 2009 22:01:35 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org, Leonardo Potenza <lpotenza@inwind.it>, Tejun Heo <tj@kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, Eric Miao <eric.miao@marvell.com>, Ian Molton <ian@mnementh.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-Hi all,
+Hi Takashi,
 
-Today's linux-next merge of the tip-core tree got a conflict in
-arch/x86/kernel/setup_percpu.c between commit
-c7f8562a51c2e5dcc1a00a2bdd232b9965ff960d ("x86: fix section mismatch
-warnings in kernel/setup_percpu.c") from the x86 tree and commit
-1a51e3a0aed18767cf2762e95456ecfeb0bca5e6 ("x86: fold pda into percpu area
-on SMP") from the tip-core tree.
+Today's linux-next merge of the sound tree got a conflict in
+sound/soc/pxa/e800_wm9712.c between commit
+f638d6ae54b5dc1bbffaa1dd94cb288d989670af ("[ARM] pxa: remove unnecessary
+#include of pxa-regs.h and hardware.h") from the pxa tree and commit 0465c7aa6fbab89de820442aed449ceb8d9145a6 ("ASoC: machine driver for
+Toshiba e800") from the sound tree.
 
-The latter just moves code that the former modifies.  I fixed it up (see
-below) and can carry the fix as necessary.
+Just overlapping context changes.  I fixed it up (see below) and can
+carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/x86/kernel/setup_percpu.c
-index e4c32e1,90b8e15..0000000
---- a/arch/x86/kernel/setup_percpu.c
-+++ b/arch/x86/kernel/setup_percpu.c
-@@@ -51,7 -77,26 +77,26 @@@ static void __init setup_node_to_cpumas
-  static inline void setup_node_to_cpumask_map(void) { }
-  #endif
+diff --cc sound/soc/pxa/e800_wm9712.c
+index ac294c7,78a1770..0000000
+--- a/sound/soc/pxa/e800_wm9712.c
++++ b/sound/soc/pxa/e800_wm9712.c
+@@@ -20,8 -18,12 +18,10 @@@
+  #include <sound/soc.h>
+  #include <sound/soc-dapm.h>
   
-- #if defined(CONFIG_HAVE_SETUP_PER_CPU_AREA) && defined(CONFIG_X86_SMP)
-+ #ifdef CONFIG_X86_64
+- #include <asm/mach-types.h>
+ -#include <mach/pxa-regs.h>
+ -#include <mach/hardware.h>
+  #include <mach/audio.h>
++ #include <mach/eseries-gpio.h>
 + 
-+ /* correctly size the local cpu masks */
- -static void setup_cpu_local_masks(void)
-++static void __init setup_cpu_local_masks(void)
-+ {
-+ 	alloc_bootmem_cpumask_var(&cpu_initialized_mask);
-+ 	alloc_bootmem_cpumask_var(&cpu_callin_mask);
-+ 	alloc_bootmem_cpumask_var(&cpu_callout_mask);
-+ 	alloc_bootmem_cpumask_var(&cpu_sibling_setup_mask);
-+ }
-+ 
-+ #else /* CONFIG_X86_32 */
-+ 
-+ static inline void setup_cpu_local_masks(void)
-+ {
-+ }
-+ 
-+ #endif /* CONFIG_X86_32 */
-+ 
-+ #ifdef CONFIG_HAVE_SETUP_PER_CPU_AREA
-  /*
-   * Copy data used in early init routines from the initial arrays to the
-   * per cpu data areas.  These arrays then become expendable and the
++ #include <asm/mach-types.h>
+  
+  #include "../codecs/wm9712.h"
+  #include "pxa2xx-pcm.h"
