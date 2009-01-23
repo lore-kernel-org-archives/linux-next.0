@@ -1,37 +1,66 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: net tree build failure
-Date: Fri, 23 Jan 2009 00:13:37 -0800 (PST)
-Message-ID: <20090123.001337.179440063.davem@davemloft.net>
-References: <20090123182847.718fdb85.sfr@canb.auug.org.au>
-	<20090122.235612.256786187.davem@davemloft.net>
-	<20090123190103.1420c62f.sfr@canb.auug.org.au>
+From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
+Subject: Rebooting at boot: linux-next: Tree for January 22
+Date: Fri, 23 Jan 2009 10:54:46 +0100
+Message-ID: <20090123095446.GB4436@denkbrett.schottelius.org>
+References: <20090122180543.1ab0baa6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FkmkrVfFsRoUs1wW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:40776
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1752149AbZAWINf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 23 Jan 2009 03:13:35 -0500
-In-Reply-To: <20090123190103.1420c62f.sfr@canb.auug.org.au>
+Received: from mx3.schottelius.org ([77.109.138.221]:33100 "EHLO
+	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755463AbZAWJys (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Jan 2009 04:54:48 -0500
+Content-Disposition: inline
+In-Reply-To: <20090122180543.1ab0baa6.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, shemminger@linux-foundation.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 23 Jan 2009 19:01:03 +1100
 
-> On Thu, 22 Jan 2009 23:56:12 -0800 (PST) David Miller <davem@davemloft.net> wrote:
-> >
-> > Does this patch fix it? I can't see any other way to end up
-> > with a multiple definition like that.
-> 
-> It confused me as well (one of the defintions is in the bss and one in
-> ro-data).  I will give your patch a try later tonight.
+--FkmkrVfFsRoUs1wW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ok, if one was in the BSS then very likely my patch will fix
-things.
+Hello!
 
-Look forward to your test results :)
+Stephen Rothwell [Thu, Jan 22, 2009 at 06:05:43PM +1100]:
+> Hi all,
+>=20
+> Changes since 20090121:
+
+This kernel instantly reboots after being booted on the x200.
+With 20090121 it booted, but suspend is still broken.
+
+I'm back on 2.6.28-rc9-wl-denkbrett-24896-gf4f5c96, which almost
+always suspends and wakes up: After some days of suspend/wakeup
+this kernel also freezes.
+
+I suspect there's more than one bug in the suspend code.
+
+Sincerly,
+
+Nico
+
+--=20
+Think about Free and Open Source Software (FOSS).
+http://nico.schottelius.org/documentations/foss/the-term-foss/
+
+PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
+
+--FkmkrVfFsRoUs1wW
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkl5k+YACgkQuL75KpiFGIwkWACdFCr3OmjmUKvN0FzMpPd2GEDz
+4wMAoI/uSEGnD8eQd2Z8/+MxgQQBCi6V
+=8LZg
+-----END PGP SIGNATURE-----
+
+--FkmkrVfFsRoUs1wW--
