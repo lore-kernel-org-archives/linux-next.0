@@ -1,68 +1,35 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: manual merge of the sound tree with the pxa tree
-Date: Fri, 23 Jan 2009 11:31:24 +0000
-Message-ID: <20090123113124.GA17303@rakim.wolfsonmicro.main>
-References: <20090123140130.eba111dd.sfr@canb.auug.org.au> <49793496.2010908@mnementh.co.uk>
+From: Pekka Enberg <penberg@cs.helsinki.fi>
+Subject: Re: linux-next: manual merge of the kmemcheck tree with the x86
+	tree
+Date: Fri, 23 Jan 2009 16:21:54 +0200
+Message-ID: <1232720514.6094.61.camel@penberg-laptop>
+References: <20090123154409.e3d1cd1d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:41962 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1755378AbZAWLb0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 23 Jan 2009 06:31:26 -0500
-Content-Disposition: inline
-In-Reply-To: <49793496.2010908@mnementh.co.uk>
+Received: from courier.cs.helsinki.fi ([128.214.9.1]:53708 "EHLO
+	mail.cs.helsinki.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756367AbZAWOV5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Jan 2009 09:21:57 -0500
+In-Reply-To: <20090123154409.e3d1cd1d.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ian Molton <ian@mnementh.co.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Takashi Iwai <tiwai@suse.de>, linux-next@vger.kernel.org, Eric Miao <eric.miao@marvell.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Vegard Nossum <vegard.nossum@gmail.com>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, Nick Piggin <npiggin@suse.de>
 
-On Fri, Jan 23, 2009 at 03:08:06AM +0000, Ian Molton wrote:
-> Stephen Rothwell wrote:
+Hi Stephen,
 
->> Just overlapping context changes.  I fixed it up (see below) and can
->> carry the fix as necessary.
+On Fri, 2009-01-23 at 15:44 +1100, Stephen Rothwell wrote:
+> Today's linux-next merge of the kmemcheck tree got a conflict in
+> arch/x86/mm/fault.c between commit do_page_fault ("x86: optimise x86's
+> do_page_fault (C entry point for the page fault path)") from the x86 tree
+> and commit 787ecfaa503dc63ff1831ddc74b15dad49bace1d ("x86: add hooks for
+> kmemcheck") from the kmemcheck tree.
+> 
+> I fixed it up (see below) but it is worth a check.  I can carry the fix
+> as necessary.
 
-> Looks good. If it needs acking, then
+Looks good to me. Vegard?
 
-> Acked-by: Ian Molton <ian@mnementh.co.uk>
-
-Stephen's fix didn't apply directly to the ASoC tree so I've applied the
-slightly different fix below which merges cleanly with the PXA commit
-for me:
-
->From c91cf25ebfbf3a5b336cbaa46646d37dd3d33127 Mon Sep 17 00:00:00 2001
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date: Fri, 23 Jan 2009 11:23:32 +0000
-Subject: [PATCH] ASoC: Fix merge with PXA tree
-
-Fix a merge issue caused by context overlap.
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
----
- sound/soc/pxa/e800_wm9712.c |    5 +----
- 1 files changed, 1 insertions(+), 4 deletions(-)
-
-diff --git a/sound/soc/pxa/e800_wm9712.c b/sound/soc/pxa/e800_wm9712.c
-index 78a1770..bc019cd 100644
---- a/sound/soc/pxa/e800_wm9712.c
-+++ b/sound/soc/pxa/e800_wm9712.c
-@@ -18,13 +18,10 @@
- #include <sound/soc.h>
- #include <sound/soc-dapm.h>
- 
--#include <mach/pxa-regs.h>
--#include <mach/hardware.h>
-+#include <asm/mach-types.h>
- #include <mach/audio.h>
- #include <mach/eseries-gpio.h>
- 
--#include <asm/mach-types.h>
--
- #include "../codecs/wm9712.h"
- #include "pxa2xx-pcm.h"
- #include "pxa2xx-ac97.h"
--- 
-1.5.6.5
+		Pekka
