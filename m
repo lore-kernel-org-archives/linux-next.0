@@ -1,38 +1,45 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for January 23 (kvm)
-Date: Fri, 23 Jan 2009 12:34:24 -0800
-Message-ID: <497A29D0.2010307@oracle.com>
+Subject: [PATCH] kmemtrace: fix printk format warnings
+Date: Fri, 23 Jan 2009 13:03:37 -0800
+Message-ID: <497A30A9.60200@oracle.com>
 References: <20090123184826.f2c91472.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756702AbZAWUfU@vger.kernel.org>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756978AbZAWVEW@vger.kernel.org>
 In-Reply-To: <20090123184826.f2c91472.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, avi@redhat.com
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell wrote:
-> Hi all,
-> 
-> News:  I will be on leave next week, so there will probably be no
-> linux-next release until Feb 2.
-> 
-> Changes since 20090122:
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
+Fix kmemtrace printk warnings:
 
-kvm changes cause this build error on i386:
+kernel/trace/kmemtrace.c:142: warning: format '%4ld' expects type 'long int', but argument 3 has type 'size_t'
+kernel/trace/kmemtrace.c:147: warning: format '%4ld' expects type 'long int', but argument 3 has type 'size_t'
 
-when kvm is built as module:
-ERROR: "__moddi3" [arch/x86/kvm/kvm.ko] undefined!
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+cc:      Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>
+---
+ kernel/trace/kmemtrace.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-or when kvm is built into the kernel image:
-lapic.c:(.text+0x19276): undefined reference to `__moddi3'
-
-
-I guess it's this line:
-	ns = ktime_to_ns(remaining) % apic->timer.period;
-
--- 
-~Randy
+--- linux-next-20090123.orig/kernel/trace/kmemtrace.c
++++ linux-next-20090123/kernel/trace/kmemtrace.c
+@@ -139,12 +139,12 @@ kmemtrace_print_alloc_compress(struct tr
+ 		return TRACE_TYPE_PARTIAL_LINE;
+ 
+ 	/* Requested */
+-	ret = trace_seq_printf(s, "%4ld   ", entry->bytes_req);
++	ret = trace_seq_printf(s, "%4zd   ", entry->bytes_req);
+ 	if (!ret)
+ 		return TRACE_TYPE_PARTIAL_LINE;
+ 
+ 	/* Allocated */
+-	ret = trace_seq_printf(s, "%4ld   ", entry->bytes_alloc);
++	ret = trace_seq_printf(s, "%4zd   ", entry->bytes_alloc);
+ 	if (!ret)
+ 		return TRACE_TYPE_PARTIAL_LINE;
+ 
