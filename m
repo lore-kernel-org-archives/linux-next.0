@@ -1,77 +1,68 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: net tree build failure
-Date: Fri, 23 Jan 2009 21:50:57 +1100
-Message-ID: <20090123215057.f5512e43.sfr@canb.auug.org.au>
-References: <20090123182847.718fdb85.sfr@canb.auug.org.au>
-	<20090122.235612.256786187.davem@davemloft.net>
-	<20090123190103.1420c62f.sfr@canb.auug.org.au>
-	<20090123.001337.179440063.davem@davemloft.net>
-	<20090123212128.16cd5698.sfr@canb.auug.org.au>
-	<20090123213927.61beb5b3.sfr@canb.auug.org.au>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: manual merge of the sound tree with the pxa tree
+Date: Fri, 23 Jan 2009 11:31:24 +0000
+Message-ID: <20090123113124.GA17303@rakim.wolfsonmicro.main>
+References: <20090123140130.eba111dd.sfr@canb.auug.org.au> <49793496.2010908@mnementh.co.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__23_Jan_2009_21_50_57_+1100_bs9+gFy3ul7PPncE"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37982 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753420AbZAWKvD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 23 Jan 2009 05:51:03 -0500
-In-Reply-To: <20090123213927.61beb5b3.sfr@canb.auug.org.au>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:41962 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1755378AbZAWLb0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 23 Jan 2009 06:31:26 -0500
+Content-Disposition: inline
+In-Reply-To: <49793496.2010908@mnementh.co.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, shemminger@linux-foundation.org
+To: Ian Molton <ian@mnementh.co.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Takashi Iwai <tiwai@suse.de>, linux-next@vger.kernel.org, Eric Miao <eric.miao@marvell.com>
 
---Signature=_Fri__23_Jan_2009_21_50_57_+1100_bs9+gFy3ul7PPncE
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jan 23, 2009 at 03:08:06AM +0000, Ian Molton wrote:
+> Stephen Rothwell wrote:
 
-On Fri, 23 Jan 2009 21:39:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Hi again,
->=20
-> On Fri, 23 Jan 2009 21:21:28 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > So, this could be a compiler bug?
->=20
-> We pass -fno-common to gcc which seems to cause the (non-extern) const
-> variable to end up in the bss.
+>> Just overlapping context changes.  I fixed it up (see below) and can
+>> carry the fix as necessary.
 
-       -fno-common
-           In C, allocate even uninitialized global variables in the data
-           section of the object file, rather than generating them as common
-           blocks.  This has the effect that if the same variable is declar=
-ed
-           (without "extern") in two different compilations, you will get an
-           error when you link them.  The only reason this might be useful =
-is
-           if you wish to verify that the program will work on other systems
-           which always work this way.
+> Looks good. If it needs acking, then
 
-I don't know why we use this, but it seems to basically make using
-"extern" on variables in header files compulsory.  But it seems to be
-moving the variable from *COM* to .bss rather than to .{ro}data as I would
-expect from the description above.
+> Acked-by: Ian Molton <ian@mnementh.co.uk>
 
-Oh, well, easy to work around.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Stephen's fix didn't apply directly to the ASoC tree so I've applied the
+slightly different fix below which merges cleanly with the PXA commit
+for me:
 
---Signature=_Fri__23_Jan_2009_21_50_57_+1100_bs9+gFy3ul7PPncE
-Content-Type: application/pgp-signature
+>From c91cf25ebfbf3a5b336cbaa46646d37dd3d33127 Mon Sep 17 00:00:00 2001
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Date: Fri, 23 Jan 2009 11:23:32 +0000
+Subject: [PATCH] ASoC: Fix merge with PXA tree
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Fix a merge issue caused by context overlap.
 
-iEYEARECAAYFAkl5oREACgkQjjKRsyhoI8yMIACghOc2oq7rTU0a2T6UVQ2WHl6w
-GDIAoL2YEVv3D2i8XJwC2ucM6XRcFpQQ
-=95s+
------END PGP SIGNATURE-----
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+---
+ sound/soc/pxa/e800_wm9712.c |    5 +----
+ 1 files changed, 1 insertions(+), 4 deletions(-)
 
---Signature=_Fri__23_Jan_2009_21_50_57_+1100_bs9+gFy3ul7PPncE--
+diff --git a/sound/soc/pxa/e800_wm9712.c b/sound/soc/pxa/e800_wm9712.c
+index 78a1770..bc019cd 100644
+--- a/sound/soc/pxa/e800_wm9712.c
++++ b/sound/soc/pxa/e800_wm9712.c
+@@ -18,13 +18,10 @@
+ #include <sound/soc.h>
+ #include <sound/soc-dapm.h>
+ 
+-#include <mach/pxa-regs.h>
+-#include <mach/hardware.h>
++#include <asm/mach-types.h>
+ #include <mach/audio.h>
+ #include <mach/eseries-gpio.h>
+ 
+-#include <asm/mach-types.h>
+-
+ #include "../codecs/wm9712.h"
+ #include "pxa2xx-pcm.h"
+ #include "pxa2xx-ac97.h"
+-- 
+1.5.6.5
