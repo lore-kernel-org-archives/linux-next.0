@@ -1,52 +1,81 @@
-From: Kay Sievers <kay.sievers@vrfy.org>
-Subject: Re: linux-next: driver-core tree build failure
-Date: Mon, 26 Jan 2009 13:19:42 +0100
-Message-ID: <ac3eb2510901260419v66c329e6rbe16fca4752fa688@mail.gmail.com>
-References: <20090126115044.0b2e3936.sfr@canb.auug.org.au>
-	 <20090126011007.GA24070@kroah.com>
+From: Mike Travis <travis@sgi.com>
+Subject: Re: [PATCH] sysrq: include interrupt.h instead of irq.h
+Date: Mon, 26 Jan 2009 07:00:29 -0800
+Message-ID: <497DD00D.4030802@sgi.com>
+References: <20090121150249.a87aca09.sfr@canb.auug.org.au>	<1232545758.31303.2.camel@osiris.boeblingen.de.ibm.com>	<4977523B.6000507@sgi.com> <20090126131614.4ad29c15@osiris.boeblingen.de.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nf-out-0910.google.com ([64.233.182.189]:24103 "EHLO
-	nf-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751305AbZAZMTn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Jan 2009 07:19:43 -0500
-Received: by nf-out-0910.google.com with SMTP id d3so1010454nfc.21
-        for <linux-next@vger.kernel.org>; Mon, 26 Jan 2009 04:19:42 -0800 (PST)
-In-Reply-To: <20090126011007.GA24070@kroah.com>
+Received: from relay1.sgi.com ([192.48.179.29]:56347 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751422AbZAZPAe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 Jan 2009 10:00:34 -0500
+In-Reply-To: <20090126131614.4ad29c15@osiris.boeblingen.de.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Heiko Carstens <heiko.carstens@de.ibm.com>, Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-On Mon, Jan 26, 2009 at 02:10, Greg KH <greg@kroah.com> wrote:
-> On Mon, Jan 26, 2009 at 11:50:44AM +1100, Stephen Rothwell wrote:
+Hi Ingo,
 
->> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
->>
->> arch/powerpc/platforms/ps3/system-bus.c: In function 'ps3_system_bus_probe':
->> arch/powerpc/platforms/ps3/system-bus.c:379: error: 'struct device' has no member named 'bus_id'
->> arch/powerpc/platforms/ps3/system-bus.c: In function 'ps3_system_bus_remove':
->> arch/powerpc/platforms/ps3/system-bus.c:401: error: 'struct device' has no member named 'bus_id'
->>
->> Caused by commit aab0d375e01d8c16e7e5b9bd915dfaa0a815418f ("powerpc:
->> struct device - replace bus_id with dev_name(), dev_set_name()") not
->> being thorough enough before commit
->> 73babb2d89a71d2110b65aab658e6309748827c2 ("driver core: get rid of struct
->> device's bus_id string array") was applied.
->>
->> I have reverted the latter commit.
->
-> Gotta love the ps3 platform code, there is about 3 different fields
-> called "bus_id" in that file :(
-
-Yeah, that's "fun", especially if you don't have the environment to
-compile it. :)
-
-> Anyway, here's a patch that should fix this, Kay, look sane?
-
-Looks fine, yes.
+Here's Heiko's patch in my 'urgent-for-ingo' branch. 
 
 Thanks,
-Kay
+Mike
+
+The following changes since commit c3c467d0aabdbb53863e8722be898770d438c140:
+  Ingo Molnar (1):
+        fix: crash: IP: __bitmap_intersects+0x48/0x73
+
+are available in the git repository at:
+
+  ssh://master.kernel.org/pub/scm/linux/kernel/git/travis/linux-2.6-cpus4096-for-ingo.git urgent-for-ingo
+
+Heiko Carstens (1):
+      sysrq: include interrupt.h instead of irq.h
+
+ drivers/char/sysrq.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+Heiko Carstens wrote:
+> On Wed, 21 Jan 2009 08:50:03 -0800
+> Mike Travis <travis@sgi.com> wrote:
+> 
+>> Thanks for catching this Heiko!
+>> Mike
+> 
+> Erm... it still breaks. Are you going to add the patch to your tree?
+> 
+>> Heiko Carstens wrote:
+>>> From: Heiko Carstens <heiko.carstens@de.ibm.com>
+>>>
+>>> With "cpumask: update irq_desc to use cpumask_var_t" in linux-next
+>>> we get this compile bug on s390:
+>>>
+>>>   CC      drivers/char/sysrq.o
+>>> In file included from drivers/char/sysrq.c:38:
+>>> include/linux/irq.h: In function 'init_alloc_desc_masks':
+>>> include/linux/irq.h:442: error: dereferencing pointer to incomplete type
+>>>
+>>> drivers/char/sysrq.c should include interrupt.h instead of irq.h.
+>>>
+>>> Cc: Mike Travis <travis@sgi.com>
+>>> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+>>> Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+>>> ---
+>>>  drivers/char/sysrq.c |    2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> Index: linux-next/drivers/char/sysrq.c
+>>> ===================================================================
+>>> --- linux-next.orig/drivers/char/sysrq.c
+>>> +++ linux-next/drivers/char/sysrq.c
+>>> @@ -35,7 +35,7 @@
+>>>  #include <linux/vt_kern.h>
+>>>  #include <linux/workqueue.h>
+>>>  #include <linux/kexec.h>
+>>> -#include <linux/irq.h>
+>>> +#include <linux/interrupt.h>
+>>>  #include <linux/hrtimer.h>
+>>>  #include <linux/oom.h>
