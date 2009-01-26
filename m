@@ -1,56 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: net tree build failure
-Date: Mon, 26 Jan 2009 19:31:26 +1100
-Message-ID: <20090126193126.9f4bb227.sfr@canb.auug.org.au>
-References: <20090126135307.e4630fc7.sfr@canb.auug.org.au>
-	<20090125.204623.137022547.davem@davemloft.net>
-	<20090126161523.3be36393.sfr@canb.auug.org.au>
-	<20090125.211755.242252297.davem@davemloft.net>
+From: Pekka Enberg <penberg@cs.helsinki.fi>
+Subject: Re: linux-next: manual merge of the slab tree with the ftace tree
+Date: Mon, 26 Jan 2009 10:36:51 +0200
+Message-ID: <1232959011.21504.0.camel@penberg-laptop>
+References: <20090126153131.8a6dcf9a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__26_Jan_2009_19_31_26_+1100_T5=6hCL9dK1UEq=K"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38943 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750861AbZAZIbd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 Jan 2009 03:31:33 -0500
-In-Reply-To: <20090125.211755.242252297.davem@davemloft.net>
+Received: from courier.cs.helsinki.fi ([128.214.9.1]:50005 "EHLO
+	mail.cs.helsinki.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750861AbZAZIgy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Jan 2009 03:36:54 -0500
+In-Reply-To: <20090126153131.8a6dcf9a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, shemminger@linux-foundation.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
 
---Signature=_Mon__26_Jan_2009_19_31_26_+1100_T5=6hCL9dK1UEq=K
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi Dave,
+On Mon, 2009-01-26 at 15:31 +1100, Stephen Rothwell wrote:
+> Today's linux-next merge of the slab tree got conflicts in
+> include/linux/slub_def.h and mm/slub.c between commit
+> 5b882be4e00e53a44f47ad7eb997cac2938848bf ("kmemtrace: SLUB hooks") from
+> the ftrace tree and commit 97a4871761e735b6f1acd3bc7c3bac30dae3eab9
+> ("SLUB: revert direct page allocator pass through") from the slab tree.
+> 
+> I fixed them up (see below, worth a check) and can carry the fix as
+> necessary.
 
-On Sun, 25 Jan 2009 21:17:55 -0800 (PST) David Miller <davem@davemloft.net>=
- wrote:
->
-> Ahh, I see.  Can you possibly give this a try before I
-> push it out?
+Yup, looks good to me. The kmalloc_large() function is dropped by the
+page allocator pass-through revert in linux-next. Thanks!
 
-My x86_64 allmodconfig now builds (with the two net commits restored and
-your patch applied).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__26_Jan_2009_19_31_26_+1100_T5=6hCL9dK1UEq=K
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkl9dN4ACgkQjjKRsyhoI8ziKACfVJNSb/sPVWY0qD6avFqwY7mb
-3CcAnRdTzsOY/DFw/rzKeXo4OmBQV1r/
-=TRqU
------END PGP SIGNATURE-----
-
---Signature=_Mon__26_Jan_2009_19_31_26_+1100_T5=6hCL9dK1UEq=K--
+		Pekka
