@@ -1,46 +1,51 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH] sysrq: include interrupt.h instead of irq.h
-Date: Mon, 26 Jan 2009 16:05:18 +0100
-Message-ID: <20090126150518.GD9128@elte.hu>
-References: <20090121150249.a87aca09.sfr@canb.auug.org.au> <1232545758.31303.2.camel@osiris.boeblingen.de.ibm.com> <4977523B.6000507@sgi.com> <20090126131614.4ad29c15@osiris.boeblingen.de.ibm.com> <497DD00D.4030802@sgi.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: driver-core tree build failure
+Date: Mon, 26 Jan 2009 09:40:09 -0800
+Message-ID: <20090126174009.GA26697@kroah.com>
+References: <20090126115044.0b2e3936.sfr@canb.auug.org.au> <20090126011007.GA24070@kroah.com> <ac3eb2510901260419v66c329e6rbe16fca4752fa688@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:34815 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751515AbZAZPHE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 Jan 2009 10:07:04 -0500
+Received: from kroah.org ([198.145.64.141]:46684 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751715AbZAZRle (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 Jan 2009 12:41:34 -0500
 Content-Disposition: inline
-In-Reply-To: <497DD00D.4030802@sgi.com>
+In-Reply-To: <ac3eb2510901260419v66c329e6rbe16fca4752fa688@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Travis <travis@sgi.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+To: Kay Sievers <kay.sievers@vrfy.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
+On Mon, Jan 26, 2009 at 01:19:42PM +0100, Kay Sievers wrote:
+> On Mon, Jan 26, 2009 at 02:10, Greg KH <greg@kroah.com> wrote:
+> > On Mon, Jan 26, 2009 at 11:50:44AM +1100, Stephen Rothwell wrote:
+> 
+> >> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> >>
+> >> arch/powerpc/platforms/ps3/system-bus.c: In function 'ps3_system_bus_probe':
+> >> arch/powerpc/platforms/ps3/system-bus.c:379: error: 'struct device' has no member named 'bus_id'
+> >> arch/powerpc/platforms/ps3/system-bus.c: In function 'ps3_system_bus_remove':
+> >> arch/powerpc/platforms/ps3/system-bus.c:401: error: 'struct device' has no member named 'bus_id'
+> >>
+> >> Caused by commit aab0d375e01d8c16e7e5b9bd915dfaa0a815418f ("powerpc:
+> >> struct device - replace bus_id with dev_name(), dev_set_name()") not
+> >> being thorough enough before commit
+> >> 73babb2d89a71d2110b65aab658e6309748827c2 ("driver core: get rid of struct
+> >> device's bus_id string array") was applied.
+> >>
+> >> I have reverted the latter commit.
+> >
+> > Gotta love the ps3 platform code, there is about 3 different fields
+> > called "bus_id" in that file :(
+> 
+> Yeah, that's "fun", especially if you don't have the environment to
+> compile it. :)
+> 
+> > Anyway, here's a patch that should fix this, Kay, look sane?
+> 
+> Looks fine, yes.
 
-* Mike Travis <travis@sgi.com> wrote:
+Thanks, I've queued it up and sent it to the ps3 maintainer for review.
 
-> Hi Ingo,
-> 
-> Here's Heiko's patch in my 'urgent-for-ingo' branch. 
-> 
-> Thanks,
-> Mike
-> 
-> The following changes since commit c3c467d0aabdbb53863e8722be898770d438c140:
->   Ingo Molnar (1):
->         fix: crash: IP: __bitmap_intersects+0x48/0x73
-> 
-> are available in the git repository at:
-> 
->   ssh://master.kernel.org/pub/scm/linux/kernel/git/travis/linux-2.6-cpus4096-for-ingo.git urgent-for-ingo
-> 
-> Heiko Carstens (1):
->       sysrq: include interrupt.h instead of irq.h
-> 
->  drivers/char/sysrq.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-
-Pulled into tip/cpus4096, thanks guys!
-
-	Ingo
+greg k-h
