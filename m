@@ -1,104 +1,59 @@
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-Subject: [PATCH] net: pppoe - stop using proc internals
-Date: Sun, 25 Jan 2009 15:02:43 +0300
-Message-ID: <20090125120243.GA29167@localhost>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: driver-core tree build failure
+Date: Mon, 26 Jan 2009 11:50:44 +1100
+Message-ID: <20090126115044.0b2e3936.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__26_Jan_2009_11_50_44_+1100_AP.lJ9++Y.VaAdfe"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ik-out-1112.google.com ([66.249.90.179]:44041 "EHLO
-	ik-out-1112.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752912AbZAYMCq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 25 Jan 2009 07:02:46 -0500
-Content-Disposition: inline
+Received: from chilli.pcug.org.au ([203.10.76.44]:36425 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750786AbZAZAuy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 25 Jan 2009 19:50:54 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>, LiNext <linux-next@vger.kernel.org>
-Cc: David Miller <davem@davemloft.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Michal Ostrowski <mostrows@earthlink.net>, NKML <netdev@vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>
 
-Alexey Dobriyan pointed that using PDE_NET outside the
-proc code is plain bogus (thanks Alexey!). Fix it.
+--Signature=_Mon__26_Jan_2009_11_50_44_+1100_AP.lJ9++Y.VaAdfe
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Cyrill Gorcunov <gorcunov@openvz.org>
-CC: Alexey Dobriyan <adobriyan@gmail.com>
-CC: Michal Ostrowski <mostrows@earthlink.net>
----
+Hi Greg,
 
-Hope I didn't miss anything. Compile tested.
-Please review.
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
- drivers/net/pppoe.c |   34 ++++++----------------------------
- 1 file changed, 6 insertions(+), 28 deletions(-)
+arch/powerpc/platforms/ps3/system-bus.c: In function 'ps3_system_bus_probe':
+arch/powerpc/platforms/ps3/system-bus.c:379: error: 'struct device' has no =
+member named 'bus_id'
+arch/powerpc/platforms/ps3/system-bus.c: In function 'ps3_system_bus_remove=
+':
+arch/powerpc/platforms/ps3/system-bus.c:401: error: 'struct device' has no =
+member named 'bus_id'
 
-Index: linux-2.6.git/drivers/net/pppoe.c
-===================================================================
---- linux-2.6.git.orig/drivers/net/pppoe.c
-+++ linux-2.6.git/drivers/net/pppoe.c
-@@ -1041,7 +1041,7 @@ out:
- static void *pppoe_seq_start(struct seq_file *seq, loff_t *pos)
- 	__acquires(pn->hash_lock)
- {
--	struct pppoe_net *pn = pppoe_pernet(seq->private);
-+	struct pppoe_net *pn = pppoe_pernet(seq_file_net(seq));
- 	loff_t l = *pos;
- 
- 	read_lock_bh(&pn->hash_lock);
-@@ -1050,7 +1050,7 @@ static void *pppoe_seq_start(struct seq_
- 
- static void *pppoe_seq_next(struct seq_file *seq, void *v, loff_t *pos)
- {
--	struct pppoe_net *pn = pppoe_pernet(seq->private);
-+	struct pppoe_net *pn = pppoe_pernet(seq_file_net(seq));
- 	struct pppox_sock *po;
- 
- 	++*pos;
-@@ -1078,7 +1078,7 @@ out:
- static void pppoe_seq_stop(struct seq_file *seq, void *v)
- 	__releases(pn->hash_lock)
- {
--	struct pppoe_net *pn = pppoe_pernet(seq->private);
-+	struct pppoe_net *pn = pppoe_pernet(seq_file_net(seq));
- 	read_unlock_bh(&pn->hash_lock);
- }
- 
-@@ -1091,30 +1091,8 @@ static struct seq_operations pppoe_seq_o
- 
- static int pppoe_seq_open(struct inode *inode, struct file *file)
- {
--	struct seq_file *m;
--	struct net *net;
--	int err;
--
--	err = seq_open(file, &pppoe_seq_ops);
--	if (err)
--		return err;
--
--	m = file->private_data;
--	net = maybe_get_net(PDE_NET(PDE(inode)));
--	BUG_ON(!net);
--	m->private = net;
--
--	return err;
--}
--
--static int pppoe_seq_release(struct inode *inode, struct file *file)
--{
--	struct seq_file *m;
--
--	m = file->private_data;
--	put_net((struct net*)m->private);
--
--	return seq_release(inode, file);
-+	return seq_open_net(inode, file, &pppoe_seq_ops,
-+			sizeof(struct seq_net_private));
- }
- 
- static const struct file_operations pppoe_seq_fops = {
-@@ -1122,7 +1100,7 @@ static const struct file_operations pppo
- 	.open		= pppoe_seq_open,
- 	.read		= seq_read,
- 	.llseek		= seq_lseek,
--	.release	= pppoe_seq_release,
-+	.release	= seq_release_net,
- };
- 
- #endif /* CONFIG_PROC_FS */
+Caused by commit aab0d375e01d8c16e7e5b9bd915dfaa0a815418f ("powerpc:
+struct device - replace bus_id with dev_name(), dev_set_name()") not
+being thorough enough before commit
+73babb2d89a71d2110b65aab658e6309748827c2 ("driver core: get rid of struct
+device's bus_id string array") was applied.
+
+I have reverted the latter commit.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__26_Jan_2009_11_50_44_+1100_AP.lJ9++Y.VaAdfe
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkl9COQACgkQjjKRsyhoI8y2KQCggeW9YQbDO0IcLwQ2wUPE35C5
+AS8AoLZfKikkz3vgiP8zNBnVp5MJSwIE
+=lFoB
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__26_Jan_2009_11_50_44_+1100_AP.lJ9++Y.VaAdfe--
