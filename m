@@ -1,51 +1,36 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: driver-core tree build failure
-Date: Mon, 26 Jan 2009 09:40:09 -0800
-Message-ID: <20090126174009.GA26697@kroah.com>
-References: <20090126115044.0b2e3936.sfr@canb.auug.org.au> <20090126011007.GA24070@kroah.com> <ac3eb2510901260419v66c329e6rbe16fca4752fa688@mail.gmail.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: net tree build failure
+Date: Mon, 26 Jan 2009 11:40:46 -0800 (PST)
+Message-ID: <20090126.114046.09948740.davem@davemloft.net>
+References: <20090126161523.3be36393.sfr@canb.auug.org.au>
+	<20090125.211755.242252297.davem@davemloft.net>
+	<20090126193126.9f4bb227.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:46684 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751715AbZAZRle (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 Jan 2009 12:41:34 -0500
-Content-Disposition: inline
-In-Reply-To: <ac3eb2510901260419v66c329e6rbe16fca4752fa688@mail.gmail.com>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:39943
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1752370AbZAZTko (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 Jan 2009 14:40:44 -0500
+In-Reply-To: <20090126193126.9f4bb227.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kay Sievers <kay.sievers@vrfy.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: linux-next@vger.kernel.org, shemminger@linux-foundation.org
 
-On Mon, Jan 26, 2009 at 01:19:42PM +0100, Kay Sievers wrote:
-> On Mon, Jan 26, 2009 at 02:10, Greg KH <greg@kroah.com> wrote:
-> > On Mon, Jan 26, 2009 at 11:50:44AM +1100, Stephen Rothwell wrote:
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 26 Jan 2009 19:31:26 +1100
+
+> Hi Dave,
 > 
-> >> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> >>
-> >> arch/powerpc/platforms/ps3/system-bus.c: In function 'ps3_system_bus_probe':
-> >> arch/powerpc/platforms/ps3/system-bus.c:379: error: 'struct device' has no member named 'bus_id'
-> >> arch/powerpc/platforms/ps3/system-bus.c: In function 'ps3_system_bus_remove':
-> >> arch/powerpc/platforms/ps3/system-bus.c:401: error: 'struct device' has no member named 'bus_id'
-> >>
-> >> Caused by commit aab0d375e01d8c16e7e5b9bd915dfaa0a815418f ("powerpc:
-> >> struct device - replace bus_id with dev_name(), dev_set_name()") not
-> >> being thorough enough before commit
-> >> 73babb2d89a71d2110b65aab658e6309748827c2 ("driver core: get rid of struct
-> >> device's bus_id string array") was applied.
-> >>
-> >> I have reverted the latter commit.
+> On Sun, 25 Jan 2009 21:17:55 -0800 (PST) David Miller <davem@davemloft.net> wrote:
 > >
-> > Gotta love the ps3 platform code, there is about 3 different fields
-> > called "bus_id" in that file :(
+> > Ahh, I see.  Can you possibly give this a try before I
+> > push it out?
 > 
-> Yeah, that's "fun", especially if you don't have the environment to
-> compile it. :)
-> 
-> > Anyway, here's a patch that should fix this, Kay, look sane?
-> 
-> Looks fine, yes.
+> My x86_64 allmodconfig now builds (with the two net commits restored and
+> your patch applied).
 
-Thanks, I've queued it up and sent it to the ps3 maintainer for review.
-
-greg k-h
+Thanks so much for testing.
