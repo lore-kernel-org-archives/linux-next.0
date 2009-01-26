@@ -1,35 +1,61 @@
-From: Pekka Enberg <penberg@cs.helsinki.fi>
-Subject: Re: linux-next: manual merge of the slab tree with the ftace tree
-Date: Mon, 26 Jan 2009 10:36:51 +0200
-Message-ID: <1232959011.21504.0.camel@penberg-laptop>
-References: <20090126153131.8a6dcf9a.sfr@canb.auug.org.au>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: [PATCH] sysrq: include interrupt.h instead of irq.h
+Date: Mon, 26 Jan 2009 13:16:14 +0100
+Message-ID: <20090126131614.4ad29c15@osiris.boeblingen.de.ibm.com>
+References: <20090121150249.a87aca09.sfr@canb.auug.org.au>
+	<1232545758.31303.2.camel@osiris.boeblingen.de.ibm.com>
+	<4977523B.6000507@sgi.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from courier.cs.helsinki.fi ([128.214.9.1]:50005 "EHLO
-	mail.cs.helsinki.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750861AbZAZIgy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Jan 2009 03:36:54 -0500
-In-Reply-To: <20090126153131.8a6dcf9a.sfr@canb.auug.org.au>
+Received: from mtagate3.de.ibm.com ([195.212.29.152]:36323 "EHLO
+	mtagate3.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750768AbZAZMQU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Jan 2009 07:16:20 -0500
+In-Reply-To: <4977523B.6000507@sgi.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+To: Mike Travis <travis@sgi.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-Hi Stephen,
+On Wed, 21 Jan 2009 08:50:03 -0800
+Mike Travis <travis@sgi.com> wrote:
 
-On Mon, 2009-01-26 at 15:31 +1100, Stephen Rothwell wrote:
-> Today's linux-next merge of the slab tree got conflicts in
-> include/linux/slub_def.h and mm/slub.c between commit
-> 5b882be4e00e53a44f47ad7eb997cac2938848bf ("kmemtrace: SLUB hooks") from
-> the ftrace tree and commit 97a4871761e735b6f1acd3bc7c3bac30dae3eab9
-> ("SLUB: revert direct page allocator pass through") from the slab tree.
-> 
-> I fixed them up (see below, worth a check) and can carry the fix as
-> necessary.
+> Thanks for catching this Heiko!
+> Mike
 
-Yup, looks good to me. The kmalloc_large() function is dropped by the
-page allocator pass-through revert in linux-next. Thanks!
+Erm... it still breaks. Are you going to add the patch to your tree?
 
-		Pekka
+> Heiko Carstens wrote:
+> > From: Heiko Carstens <heiko.carstens@de.ibm.com>
+> > 
+> > With "cpumask: update irq_desc to use cpumask_var_t" in linux-next
+> > we get this compile bug on s390:
+> > 
+> >   CC      drivers/char/sysrq.o
+> > In file included from drivers/char/sysrq.c:38:
+> > include/linux/irq.h: In function 'init_alloc_desc_masks':
+> > include/linux/irq.h:442: error: dereferencing pointer to incomplete type
+> > 
+> > drivers/char/sysrq.c should include interrupt.h instead of irq.h.
+> > 
+> > Cc: Mike Travis <travis@sgi.com>
+> > Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+> > Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+> > ---
+> >  drivers/char/sysrq.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > Index: linux-next/drivers/char/sysrq.c
+> > ===================================================================
+> > --- linux-next.orig/drivers/char/sysrq.c
+> > +++ linux-next/drivers/char/sysrq.c
+> > @@ -35,7 +35,7 @@
+> >  #include <linux/vt_kern.h>
+> >  #include <linux/workqueue.h>
+> >  #include <linux/kexec.h>
+> > -#include <linux/irq.h>
+> > +#include <linux/interrupt.h>
+> >  #include <linux/hrtimer.h>
+> >  #include <linux/oom.h>
