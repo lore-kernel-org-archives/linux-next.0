@@ -1,27 +1,33 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: new xfs git tree
-Date: Mon, 26 Jan 2009 22:41:30 -0800
-Message-ID: <20090126224130.53949fda.akpm@linux-foundation.org>
-References: <20090119011601.GA14708@infradead.org>
+From: Pavel Machek <pavel@suse.cz>
+Subject: Re: X200 suspend issue / linux-next: Tree for January 21
+Date: Tue, 27 Jan 2009 15:05:58 +0100
+Message-ID: <20090127140558.GA24950@elf.ucw.cz>
+References: <20090121150249.a87aca09.sfr@canb.auug.org.au> <20090121144420.GA20617@denkbrett.schottelius.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:36194 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751678AbZA0GmI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 Jan 2009 01:42:08 -0500
-In-Reply-To: <20090119011601.GA14708@infradead.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:32816 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751328AbZA0OGH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Jan 2009 09:06:07 -0500
+Content-Disposition: inline
+In-Reply-To: <20090121144420.GA20617@denkbrett.schottelius.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: xfs@oss.sgi.com, linux-next@vger.kernel.org
+To: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Sun, 18 Jan 2009 20:16:01 -0500 Christoph Hellwig <hch@infradead.org> wrote:
+On Wed 2009-01-21 15:44:20, Nico -telmich- Schottelius wrote:
+> Hello!
+> 
+> News: The system freezes for almost a second and wakes up again!
+> 
+> At least no crash this time!
 
-> git://git.kernel.org/pub/scm/fs/xfs/xfs.git has all the fixes the
-> have been peer-reviewed by the usual crowd, but still waiting for
-> a "maintainer" to respond..
+Good.
 
-Should we include that in linux-next?
+Maybe the suspends-then-autoresumes exists in 2.6.29-rc2, too...? Can
+you try disabling CONFIG_USB?
+								Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
