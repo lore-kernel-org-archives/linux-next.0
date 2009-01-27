@@ -1,36 +1,37 @@
 From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: net tree build failure
-Date: Mon, 26 Jan 2009 11:40:46 -0800 (PST)
-Message-ID: <20090126.114046.09948740.davem@davemloft.net>
-References: <20090126161523.3be36393.sfr@canb.auug.org.au>
-	<20090125.211755.242252297.davem@davemloft.net>
-	<20090126193126.9f4bb227.sfr@canb.auug.org.au>
+Subject: Re: [PATCH] pppol2tp: stop using proc internals
+Date: Mon, 26 Jan 2009 21:10:29 -0800 (PST)
+Message-ID: <20090126.211029.116617007.davem@davemloft.net>
+References: <20090123070955.GA8491@localhost>
+	<20090124220048.GA5753@x200.localdomain>
+	<20090125084718.GC8203@localhost>
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:39943
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:48775
 	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1752370AbZAZTko (ORCPT
+	by vger.kernel.org with ESMTP id S1751052AbZA0FKb (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 Jan 2009 14:40:44 -0500
-In-Reply-To: <20090126193126.9f4bb227.sfr@canb.auug.org.au>
+	Tue, 27 Jan 2009 00:10:31 -0500
+In-Reply-To: <20090125084718.GC8203@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, shemminger@linux-foundation.org
+To: gorcunov@gmail.com
+Cc: adobriyan@gmail.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, ebiederm@xmission.com
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 26 Jan 2009 19:31:26 +1100
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+Date: Sun, 25 Jan 2009 11:47:18 +0300
 
-> Hi Dave,
-> 
-> On Sun, 25 Jan 2009 21:17:55 -0800 (PST) David Miller <davem@davemloft.net> wrote:
-> >
-> > Ahh, I see.  Can you possibly give this a try before I
-> > push it out?
-> 
-> My x86_64 allmodconfig now builds (with the two net commits restored and
-> your patch applied).
+> [Alexey Dobriyan - Sun, Jan 25, 2009 at 01:00:48AM +0300]
+> | [PATCH] pppol2tp: stop using proc internals
+> | 
+> | PDE_NET usage in driver code is a sign and, indeed, switching
+> | to seq_open_net/seq_release_net saves code and fixes bogus things, like
+> | user triggerabble BUG_ON(!net) after maybe_get_net, and NULLifying ->private.
+> | 
+> | Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+ ...
+> Thanks a lot Alexey! I'll fix PPPoE too.
 
-Thanks so much for testing.
+Applied, thanks everyone.
