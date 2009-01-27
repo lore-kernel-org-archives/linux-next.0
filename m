@@ -1,29 +1,27 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH] net: pppoe - stop using proc internals
-Date: Mon, 26 Jan 2009 21:11:11 -0800 (PST)
-Message-ID: <20090126.211111.122432985.davem@davemloft.net>
-References: <20090125120243.GA29167@localhost>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: new xfs git tree
+Date: Mon, 26 Jan 2009 22:41:30 -0800
+Message-ID: <20090126224130.53949fda.akpm@linux-foundation.org>
+References: <20090119011601.GA14708@infradead.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:48780
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1750898AbZA0FLN (ORCPT
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:36194 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751678AbZA0GmI (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 Jan 2009 00:11:13 -0500
-In-Reply-To: <20090125120243.GA29167@localhost>
+	Tue, 27 Jan 2009 01:42:08 -0500
+In-Reply-To: <20090119011601.GA14708@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: gorcunov@gmail.com
-Cc: adobriyan@gmail.com, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mostrows@earthlink.net, netdev@vger.kernel.org
+To: Christoph Hellwig <hch@infradead.org>
+Cc: xfs@oss.sgi.com, linux-next@vger.kernel.org
 
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-Date: Sun, 25 Jan 2009 15:02:43 +0300
+On Sun, 18 Jan 2009 20:16:01 -0500 Christoph Hellwig <hch@infradead.org> wrote:
 
-> Alexey Dobriyan pointed that using PDE_NET outside the
-> proc code is plain bogus (thanks Alexey!). Fix it.
-> 
-> Signed-off-by: Cyrill Gorcunov <gorcunov@openvz.org>
+> git://git.kernel.org/pub/scm/fs/xfs/xfs.git has all the fixes the
+> have been peer-reviewed by the usual crowd, but still waiting for
+> a "maintainer" to respond..
 
-Applied, thanks Cyrill.
+Should we include that in linux-next?
