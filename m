@@ -1,22 +1,47 @@
-From: Aristeu Rozanski <aris@ruivo.org>
-Subject: Re: X200 suspend issue / linux-next: Tree for January 21
-Date: Tue, 27 Jan 2009 11:15:43 -0500
-Message-ID: <20090127161543.GA17749@cathedrallabs.org>
-References: <20090121150249.a87aca09.sfr@canb.auug.org.au> <20090121144420.GA20617@denkbrett.schottelius.org> <20090127140558.GA24950@elf.ucw.cz> <200901271632.00026.rjw@sisk.pl>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: Tree for January 23 (kvm)
+Date: Wed, 28 Jan 2009 01:51:49 -0800
+Message-ID: <20090128015149.791e10dd.akpm@linux-foundation.org>
+References: <20090123184826.f2c91472.sfr@canb.auug.org.au>
+	<497A29D0.2010307@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756212AbZA0Qop@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <200901271632.00026.rjw@sisk.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Pavel Machek <pavel@suse.cz>, Nico -telmich- Schottelius <nico-linux-next@schottelius.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:36860 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750995AbZA1Jx5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 Jan 2009 04:53:57 -0500
+In-Reply-To: <497A29D0.2010307@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, avi@redhat.com, Marcelo Tosatti <mtosatti@redhat.com>, Alexander Graf <agraf@suse.de>
 
-> That would be http://bugzilla.kernel.org/show_bug.cgi?id=12399 , I think.
-I tried the attached patch with the current Linus' git tree and it fixes the
-issue to me.
-Thanks!
+On Fri, 23 Jan 2009 12:34:24 -0800 Randy Dunlap <randy.dunlap@oracle.com> wrote:
 
--- 
-Aristeu
+> Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > News:  I will be on leave next week, so there will probably be no
+> > linux-next release until Feb 2.
+> > 
+> > Changes since 20090122:
+> 
+> 
+> kvm changes cause this build error on i386:
+> 
+> when kvm is built as module:
+> ERROR: "__moddi3" [arch/x86/kvm/kvm.ko] undefined!
+> 
+> or when kvm is built into the kernel image:
+> lapic.c:(.text+0x19276): undefined reference to `__moddi3'
+> 
+> 
+> I guess it's this line:
+> 	ns = ktime_to_ns(remaining) % apic->timer.period;
+> 
+
+dammit, I just spent N minutes hunting down the same thing in
+the Jan 26 linux-next :(
