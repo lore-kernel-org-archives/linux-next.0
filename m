@@ -1,37 +1,52 @@
-From: Felix Blyakher <felixb@sgi.com>
-Subject: Re: new xfs git tree
-Date: Thu, 29 Jan 2009 15:14:03 -0600
-Message-ID: <73D2B71C-8674-4C16-BCEE-AF8F88720ABF@sgi.com>
-References: <20090119011601.GA14708@infradead.org> <20090126224130.53949fda.akpm@linux-foundation.org>
-Mime-Version: 1.0 (Apple Message framework v926)
-Content-Type: text/plain; charset=US-ASCII; format=flowed; delsp=yes
-Content-Transfer-Encoding: 7bit
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next:  kernel-doc quilte serie import failure
+Date: Mon, 2 Feb 2009 09:48:01 +1100
+Message-ID: <20090202094801.c0a61634.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__2_Feb_2009_09_48_01_+1100_v479xppmwMfDrLFw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay3.sgi.com ([192.48.171.31]:58370 "EHLO relay.sgi.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752629AbZA2VOG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 29 Jan 2009 16:14:06 -0500
-In-Reply-To: <20090126224130.53949fda.akpm@linux-foundation.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:54298 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753206AbZBAWsI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 Feb 2009 17:48:08 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-next@vger.kernel.org, xfs@oss.sgi.com
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: linux-next@vger.kernel.org
 
+--Signature=_Mon__2_Feb_2009_09_48_01_+1100_v479xppmwMfDrLFw
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Jan 27, 2009, at 12:41 AM, Andrew Morton wrote:
+Hi Randy,
 
-> On Sun, 18 Jan 2009 20:16:01 -0500 Christoph Hellwig <hch@infradead.org 
-> > wrote:
->
->> git://git.kernel.org/pub/scm/fs/xfs/xfs.git has all the fixes the
->> have been peer-reviewed by the usual crowd, but still waiting for
->> a "maintainer" to respond..
->
-> Should we include that in linux-next?
+Today's linux-next import of the kernel-doc quilt series failed like this:
 
-As a new maintainer, I confirm that  official xfs repository
-git://oss.sgi.com/oss/git/xfs/xfs was synced with kernel.org
-repo at one point and is being updated with the new patches
-on a regular basis. AFAIK, it's up-to-date now.
+Importing kernel-doc based on 2.6.29-rc2-next-20090126
+fatal: Needed a single revision
+Unknown BASE
 
-Felix
+Trees imported into linux-next cannot be based on linux-next itself (or
+we would end up merging in old versions of other trees).  I have dropped
+the kernel-doc tree for today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__2_Feb_2009_09_48_01_+1100_v479xppmwMfDrLFw
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkmGJqEACgkQjjKRsyhoI8yD3wCgtXz2k1iULHK0B+rxN90C2moR
+Gf0An2f3yPB5OIlnAiEf/T9zdUl8eUTm
+=dWMB
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__2_Feb_2009_09_48_01_+1100_v479xppmwMfDrLFw--
