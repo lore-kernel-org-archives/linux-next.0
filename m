@@ -1,52 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with the cpufreq tree
-Date: Mon, 2 Feb 2009 15:00:41 +1100
-Message-ID: <20090202150041.a4c37123.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the driver-core tree with the
+	parisc tree
+Date: Sun, 1 Feb 2009 20:41:44 -0800
+Message-ID: <20090202044144.GA12243@kroah.com>
+References: <20090202111112.731a6816.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__2_Feb_2009_15_00_41_+1100_zNE._u7U/jRbKYKi"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42884 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753655AbZBBEAt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 Feb 2009 23:00:49 -0500
+Received: from kroah.org ([198.145.64.141]:53445 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753465AbZBBEnm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 Feb 2009 23:43:42 -0500
+Content-Disposition: inline
+In-Reply-To: <20090202111112.731a6816.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, Dave Jones <davej@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, James Bottomley <James.Bottomley@HansenPartnership.com>, Kyle McMartin <kyle@mcmartin.ca>, linux-parisc@vger.kernel.org
 
---Signature=_Mon__2_Feb_2009_15_00_41_+1100_zNE._u7U/jRbKYKi
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Feb 02, 2009 at 11:11:12AM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the driver-core tree got conflicts in
+> drivers/char/agp/parisc-agp.c, drivers/parisc/gsc.c and
+> drivers/parisc/sba_iommu.c between commit
+> a130bf34da4b64d7b289e2358530ef5d4ab27efd ("parisc: remove klist
+> iterators") from the parisc tree and commit
+> 135bd8a5aeed90af407aeeede9587ee99c5606b2 ("parisc: don't touch driver
+> core internals") from the driver-core tree.
+> 
+> These two commits seem to be trying to do similar things.  I have used
+> the versions from the parisc tree.  Greg, I guess you need to check to
+> see if you agree and if so, then just remove the driver-core tree patch.
 
-Hi Rusty,
+Yes, the parisc version is fine.
 
-Today's linux-next merge of the rr tree got a conflict in
-arch/x86/kernel/cpu/cpufreq/powernow-k8.c between commit
-8ad2aedc2129f4e791dc7e2e89eabdcb2145d16c ("[CPUFREQ] checkpatch cleanups
-for powernow-k8") from the cpufreq tree and commit
-d58128cd5c204e6f9d2e1910f160064c15b5f19d
-("cpumask:partial-revert-powernow-k8") from the rr tree.
+> James, Kyle, the one thing I took from Greg's patch was the removal of
+> the include of linux/klist.h from drivers/char/agp/parisc-agp.c.
 
-Just simple overlapping changes.  I fixed it up (used the conflicting
-part from the rr tree change) and can carry the fix as necessary.
+That would be good as well.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+I'll fix up my tree tomorrow.
 
---Signature=_Mon__2_Feb_2009_15_00_41_+1100_zNE._u7U/jRbKYKi
-Content-Type: application/pgp-signature
+thanks,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkmGb+kACgkQjjKRsyhoI8wXyQCeO0qjXrHgaEJZuP54P+OKaa8H
-ahwAn3I8RFFvL+0waPDi8YJ7vbpSadRD
-=hInm
------END PGP SIGNATURE-----
-
---Signature=_Mon__2_Feb_2009_15_00_41_+1100_zNE._u7U/jRbKYKi--
+greg k-h
