@@ -1,103 +1,48 @@
-From: Mandeep Singh Baines <msb@google.com>
-Subject: Re: next-20090202: task kmemleak:763 blocked for more than 120 seconds.
-Date: Mon, 2 Feb 2009 13:57:40 -0800
-Message-ID: <20090202215740.GA26550@google.com>
-References: <a4423d670902020327x61a1d9dehb1642b25ec7f82f1@mail.gmail.com> <tnxiqns28mm.fsf@pc1117.cambridge.arm.com> <c62985530902020715u73407d4dqe14c340de310c866@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: s390 tree fetch failure
+Date: Tue, 3 Feb 2009 09:09:27 +1100
+Message-ID: <20090203090927.01e28d75.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__3_Feb_2009_09_09_27_+1100_N/Nqcb_t33RdTe8p"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp-out.google.com ([216.239.33.17]:14348 "EHLO
-	smtp-out.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753569AbZBBV5z (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Feb 2009 16:57:55 -0500
-Content-Disposition: inline
-In-Reply-To: <c62985530902020715u73407d4dqe14c340de310c866@mail.gmail.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56497 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752649AbZBBWJe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Feb 2009 17:09:34 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Alexander Beregalov <a.beregalov@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: linux-next@vger.kernel.org
 
-=46r=E9d=E9ric Weisbecker (fweisbec@gmail.com) wrote:
-> 2009/2/2 Catalin Marinas <catalin.marinas@arm.com>:
-> > Alexander Beregalov <a.beregalov@gmail.com> wrote:
-> >> It seems it is blocked forever.
-> >
-> > Scanning the full memory may take a lot of time, depending on the
-> > amount of RAM and the number of objects allocated. It is not unlike=
-ly
-> > to take more than 120 seconds on some loaded systems. However, it
-> > should call schedule() periodically to let other tasks run. Is your
-> > system unresponsive during this?
-> >
-> >> [ 1704.619898] INFO: task kmemleak:763 blocked for more than 120 s=
-econds.
-> >> [ 1704.697951] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-> >> disables this message.
-> >> [ 1704.791613] kmemleak      D 0000000000000001  6008   763      2
-> > [...]
-> >> [ 1706.246334] no locks held by kmemleak/763.
-> >
-> > It looks like the kmemleak thread is in the TASK_UNINTERUPTIBLE sta=
-te.
-> > This happens when it calls schedule_timeout_uninterruptible() to sl=
-eep
-> > between scans. It probably took more than 120 to scan the memory an=
-d
-> > hence the report.
-> >
-> > It doesn't look like a problem, only that the watchdog thread check=
-s
-> > for uninterruptible tasks. I can try to make it sleep with
-> > TASK_INTERRUPTIBLE to avoid the message.
-> >
-> > Thanks.
-> >
-> > --
-> > Catalin
-> > --
->=20
->=20
-> Hi,
->=20
-> May be it would be better to make the softlockup detector hooking int=
-o
-> schedule_timeout()
-> (ie by using a tracepoint) to check if a thread chose to sleep more
-> than hung_task_timeout_secs
-> intentionally in a TASK_UNINTERRUPTIBLE state.
->=20
-> Fixing it into kmemleak would not solve the problem in other tasks
-> which do similar sleeps...
->=20
+--Signature=_Tue__3_Feb_2009_09_09_27_+1100_N/Nqcb_t33RdTe8p
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The hung_task timeout is now 480 seconds because of sys_sync:
+Hi Martin, Heiko,
 
-http://git.kernel.org/?p=3Dlinux/kernel/git/torvalds/linux-2.6.git;a=3D=
-commitdiff;h=3Dfb822db465bd9fd4208eef1af4490539b236c54e
+Today's linux-next fetch of the s390 tree failed like this:
 
-But are there are really any other tasks which call
-schedule_timeout_uninterruptibl() for with a timeout >480 seconds?
+fatal: Unable to look up git390.osdl.marist.edu (port 9418) (Name or servic=
+e not known)
 
-Right now kmemleak appears to be the only exception. (A quick grep didn=
-'t turn
-anything up.) And it is trivial to change kmemleak to use INTERRUPTIBLE=
-=2E
-Might even be a nice feature. You could stop it faster that way.
+I will use what I fetched yesterday.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-I suspect cases where long UNINTERRUPTIBLE sleeps is the right solution=
- are
-extremely rare. Since kmemleak can be modified, maybe hold off on ignor=
-ing
-schedule_timeout_uninterruptible(). Not exempting schedule_timeout_unin=
-ter*
-reduces code sprawl and discourages long UNINTERRUPTIBLE sleeps.
+--Signature=_Tue__3_Feb_2009_09_09_27_+1100_N/Nqcb_t33RdTe8p
+Content-Type: application/pgp-signature
 
-> Mandeep, if you agree I can try something? Or perhaps you prefer to d=
-o
-> it yourself. As you wish.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-Nah, don't wait for me. If you have a useful patch, just send it;) I'm
-actually not the maintainer of hung_task, mingo@elte.hu is, but I am mo=
-re than
-happy to review patches.
+iEYEARECAAYFAkmHbxcACgkQjjKRsyhoI8xvgwCfUBica1n9Teqc39DOJ0QY+WG6
+VikAnRuknXRalMHRCh4/+36u/oLRv/iV
+=x1Al
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__3_Feb_2009_09_09_27_+1100_N/Nqcb_t33RdTe8p--
