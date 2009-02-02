@@ -1,98 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kmemleak tree with the slab tree
-Date: Mon, 2 Feb 2009 18:53:57 +1100
-Message-ID: <20090202185357.fcef7681.sfr@canb.auug.org.au>
+Subject: linux-next: build failure
+Date: Mon, 2 Feb 2009 20:02:54 +1100
+Message-ID: <20090202200254.b89614d8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37713 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36451 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751198AbZBBHyE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Feb 2009 02:54:04 -0500
+	id S1751502AbZBBJC6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Feb 2009 04:02:58 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, Nick Piggin <npiggin@suse.de>, Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>
+To: "David S. Miller" <davem@davemloft.net>, Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>
 
-Hi Catalin,
+Hi Dave, Ingo,
 
-Today's linux-next merge of the kmemleak tree got a conflict in
-lib/Kconfig.debug between commit 32efb35b328d0e87fa5358239c54c889226cc6e7
-("SLQB slab allocator (try 2)") from the slab tree and commits
-de190b3e003e07f501a3e6fc67a997b66c144bcb ("kmemleak: Enable the building
-of the memory leak detector") and
-6b9fe2865daff5d4e6d272addc03768b4ffcec36 ("kmemleak: Simple testing
-module for kmemleak") from the kmemleak tree.
+Today's linux-next build (sparc64 defconfig) failed like this:
 
-Just overlapping additions. I fixed it up (see below) and can carry the
-fix as necessary.
+arch/sparc/kernel/nmi.c: In function 'perfctr_irq':
+arch/sparc/kernel/nmi.c:97: error: 'struct kernel_stat' has no member named 'irqs'
+
+Probably caused by commit e5553a6d04421eec326a629571d696e8e745a0e4
+("sparc64: Implement NMI watchdog on capable cpus") from the
+sparc-current tree interacting with commit
+d7e51e66899f95dabc89b4d4c6674a6e50fa37fc ("sparseirq: make some func to
+be used with genirq") from the sparseirq tree.
+
+I have temporarily applied the patch below.  I don't know if it is
+correct (but it fixes the build).  If it is, it should be applicable to
+the sparc-current tree as the needed interface exists in Linus' current
+tree.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc lib/Kconfig.debug
-index da4d89a,612ed9c..0000000
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@@ -336,26 -298,39 +336,59 @@@ config SLUB_STAT
-  	  out which slabs are relevant to a particular load.
-  	  Try running: slabinfo -DA
-  
- +config SLQB_DEBUG
- +	default y
- +	bool "Enable SLQB debugging support"
- +	depends on SLQB
- +
- +config SLQB_DEBUG_ON
- +	default n
- +	bool "SLQB debugging on by default"
- +	depends on SLQB_DEBUG
- +
- +config SLQB_SYSFS
- +	bool "Create SYSFS entries for slab caches"
- +	default n
- +	depends on SLQB
- +
- +config SLQB_STATS
- +	bool "Enable SLQB performance statistics"
- +	default n
- +	depends on SLQB_SYSFS
- +
-+ config DEBUG_KMEMLEAK
-+ 	bool "Kernel memory leak detector"
-+ 	default n
-+ 	depends on EXPERIMENTAL && (X86 || ARM)
-+ 	select DEBUG_SLAB if SLAB
-+ 	select SLUB_DEBUG if SLUB
-+ 	select DEBUG_FS if SYSFS
-+ 	select STACKTRACE if STACKTRACE_SUPPORT
-+ 	select KALLSYMS
-+ 	help
-+ 	  Say Y here if you want to enable the memory leak
-+ 	  detector. The memory allocation/freeing is traced in a way
-+ 	  similar to the Boehm's conservative garbage collector, the
-+ 	  difference being that the orphan objects are not freed but
-+ 	  only shown in /sys/kernel/debug/kmemleak. Enabling this
-+ 	  feature will introduce an overhead to memory
-+ 	  allocations. See Documentation/kmemleak.txt for more
-+ 	  details.
-+ 
-+ 	  In order to access the kmemleak file, debugfs needs to be
-+ 	  mounted (usually at /sys/kernel/debug).
-+ 
-+ config DEBUG_KMEMLEAK_TEST
-+ 	tristate "Simple test for the kernel memory leak detector"
-+ 	default n
-+ 	depends on DEBUG_KMEMLEAK
-+ 	help
-+ 	  Say Y or M here to build a test for the kernel memory leak
-+ 	  detector. This option enables a module that explicitly leaks
-+ 	  memory.
-+ 
-+ 	  If unsure, say N.
-+ 
-  config DEBUG_PREEMPT
-  	bool "Debug preemptible kernel"
-  	depends on DEBUG_KERNEL && PREEMPT && (TRACE_IRQFLAGS_SUPPORT || PPC64)
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 2 Feb 2009 20:00:15 +1100
+Subject: [PATCH] sparc: fixup for sparseirq changes
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/sparc/kernel/nmi.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/sparc/kernel/nmi.c b/arch/sparc/kernel/nmi.c
+index ffc6900..09f088e 100644
+--- a/arch/sparc/kernel/nmi.c
++++ b/arch/sparc/kernel/nmi.c
+@@ -94,7 +94,7 @@ notrace __kprobes void perfctr_irq(int irq, struct pt_regs *regs)
+ 		       pt_regs_trap_type(regs), SIGINT) == NOTIFY_STOP)
+ 		touched = 1;
+ 
+-	sum = kstat_cpu(cpu).irqs[0];
++	sum = kstat_irqs_cpu(0, cpu);
+ 	if (__get_cpu_var(nmi_touch)) {
+ 		__get_cpu_var(nmi_touch) = 0;
+ 		touched = 1;
+-- 
+1.6.0.5
