@@ -1,56 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: s390 tree fetch failure
-Date: Tue, 3 Feb 2009 09:17:59 +1100
-Message-ID: <20090203091759.490f4cac.sfr@canb.auug.org.au>
-References: <20090203090927.01e28d75.sfr@canb.auug.org.au>
+Subject: Re: linux-next:  ide quilt series import failure
+Date: Tue, 3 Feb 2009 09:36:55 +1100
+Message-ID: <20090203093655.09b33506.sfr@canb.auug.org.au>
+References: <20090202094815.ffb1f4de.sfr@canb.auug.org.au>
+	<200902021930.31599.bzolnier@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__3_Feb_2009_09_17_59_+1100_7KGG14ilKQqGDlSQ"
+ boundary="Signature=_Tue__3_Feb_2009_09_36_55_+1100_f+G4uxYhiBZjzNBx"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52378 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57727 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752770AbZBBWSE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Feb 2009 17:18:04 -0500
-In-Reply-To: <20090203090927.01e28d75.sfr@canb.auug.org.au>
+	id S1752919AbZBBWhA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Feb 2009 17:37:00 -0500
+In-Reply-To: <200902021930.31599.bzolnier@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: linux-next@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: linux-next@vger.kernel.org, Borislav Petkov <petkovbb@googlemail.com>
 
---Signature=_Tue__3_Feb_2009_09_17_59_+1100_7KGG14ilKQqGDlSQ
+--Signature=_Tue__3_Feb_2009_09_36_55_+1100_f+G4uxYhiBZjzNBx
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Martin,
+Hi Bart,
 
-On Tue, 3 Feb 2009 09:09:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
+On Mon, 2 Feb 2009 19:30:31 +0100 Bartlomiej Zolnierkiewicz <bzolnier@gmail=
+.com> wrote:
 >
-> Today's linux-next fetch of the s390 tree failed like this:
->=20
-> fatal: Unable to look up git390.osdl.marist.edu (port 9418) (Name or serv=
-ice not known)
->=20
-> I will use what I fetched yesterday.
+> Fixed.  [ For some reason I had leftover include/asm-m68k/ here... ]
 
-The same is true of the cputime tree.
+Yeah, that has happened to a few people as we move the headers around.
+
+Thanks.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__3_Feb_2009_09_17_59_+1100_7KGG14ilKQqGDlSQ
+--Signature=_Tue__3_Feb_2009_09_36_55_+1100_f+G4uxYhiBZjzNBx
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkmHcRcACgkQjjKRsyhoI8yTbACgie3Yw26SU3Bs250Yw2yzSaT+
-9NEAn28jb7HurCzk0TPNfJNWs87FWjqo
-=ziSp
+iEYEARECAAYFAkmHdYcACgkQjjKRsyhoI8xURQCfZX3aHL3glJvjRaF1nclMfICs
+fp4AoLVVEcQi1N6yKWPWR7eM0P71WyNO
+=3eUf
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__3_Feb_2009_09_17_59_+1100_7KGG14ilKQqGDlSQ--
+--Signature=_Tue__3_Feb_2009_09_36_55_+1100_f+G4uxYhiBZjzNBx--
