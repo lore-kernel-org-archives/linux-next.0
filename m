@@ -1,41 +1,63 @@
-From: Yinghai Lu <yinghai@kernel.org>
-Subject: Re: linux-next: build failure
-Date: Mon, 02 Feb 2009 11:43:12 -0800
-Message-ID: <49874CD0.4000104@kernel.org>
-References: <20090202200254.b89614d8.sfr@canb.auug.org.au>
+From: reinette chatre <reinette.chatre-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: linux-next: Tree for February 2 (iwlwifi)
+Date: Mon, 02 Feb 2009 12:45:23 -0800
+Message-ID: <1233607523.2411.174.camel@rc-desk>
+References: <20090202201637.28896d2f.sfr@canb.auug.org.au>
+	 <20090202103401.a189e8e0.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:58517 "EHLO hera.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752956AbZBBTnn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Feb 2009 14:43:43 -0500
-In-Reply-To: <20090202200254.b89614d8.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20090202103401.a189e8e0.randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell wrote:
-> Hi Dave, Ingo,
+On Mon, 2009-02-02 at 10:34 -0800, Randy Dunlap wrote:
+> On Mon, 2 Feb 2009 20:16:37 +1100 Stephen Rothwell wrote:
 > 
-> Today's linux-next build (sparc64 defconfig) failed like this:
+> > Hi all,
+> >
+> > Changes since 20090126:
 > 
-> arch/sparc/kernel/nmi.c: In function 'perfctr_irq':
-> arch/sparc/kernel/nmi.c:97: error: 'struct kernel_stat' has no member named 'irqs'
 > 
-> Probably caused by commit e5553a6d04421eec326a629571d696e8e745a0e4
-> ("sparc64: Implement NMI watchdog on capable cpus") from the
-> sparc-current tree interacting with commit
-> d7e51e66899f95dabc89b4d4c6674a6e50fa37fc ("sparseirq: make some func to
-> be used with genirq") from the sparseirq tree.
+> a.  optional drivers such as iwlwifi should not default to 'y':
 > 
-> I have temporarily applied the patch below.  I don't know if it is
-> correct (but it fixes the build).  If it is, it should be applicable to
-> the sparc-current tree as the needed interface exists in Linus' current
-> tree.
+> config IWLWIFI
+>         bool "Intel Wireless Wifi"
+>         depends on PCI && MAC80211 && WLAN_80211 && EXPERIMENTAL
+>         default y
 
-that is right fix.
+will fix.
 
-YH
+> 
+> b.  Are there cases where IWLCORE is not needed?  I.e., why is it
+> even a kconfig option?
+
+indeed ... now that 3945 depends on IWLCORE also we could replace
+IWLWIFI with it because IWLWIFI is not used in code ... we will have to
+see if this is possible.
+
+> 
+> 
+> c.  The attached config causes beaucoup build errors with:
+> CONFIG_IWLWIFI=y
+> # CONFIG_IWLCORE is not set
+> # CONFIG_IWLAGN is not set
+> CONFIG_IWL3945=y
+> # CONFIG_IWL3945_SPECTRUM_MEASUREMENT is not set
+> CONFIG_IWL3945_LEDS=y
+
+3945 is being ported to iwlwifi and we neglected to change Kconfig to
+reflect this. We will fix it.
+
+Thank you very much for this report.
+
+Reinette
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
