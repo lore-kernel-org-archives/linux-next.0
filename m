@@ -1,54 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the driver-core tree with the parisc
- tree
-Date: Mon, 2 Feb 2009 11:11:12 +1100
-Message-ID: <20090202111112.731a6816.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip-core tree with Linus' tree
+Date: Mon, 2 Feb 2009 11:46:27 +1100
+Message-ID: <20090202114627.76f70d7d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__2_Feb_2009_11_11_12_+1100_pcXEMcFbV884Psp3"
-Return-path: <linux-parisc-owner@vger.kernel.org>
-Sender: linux-parisc-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, James Bottomley <James.Bottomley@HansenPartnership.com>, Kyle McMartin <kyle@mcmartin.ca>, linux-parisc@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Mon__2_Feb_2009_11_11_12_+1100_pcXEMcFbV884Psp3
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:47203 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752192AbZBBAqk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 Feb 2009 19:46:40 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, David Daney <ddaney@caviumnetworks.com>, Yinghai Lu <yinghai@kernel.org>, Mike Travis <travis@sgi.com>
 
-Hi Greg,
+Hi all,
 
-Today's linux-next merge of the driver-core tree got conflicts in
-drivers/char/agp/parisc-agp.c, drivers/parisc/gsc.c and
-drivers/parisc/sba_iommu.c between commit
-a130bf34da4b64d7b289e2358530ef5d4ab27efd ("parisc: remove klist
-iterators") from the parisc tree and commit
-135bd8a5aeed90af407aeeede9587ee99c5606b2 ("parisc: don't touch driver
-core internals") from the driver-core tree.
+Today's linux-next merge of the tip-core tree got a conflict in
+kernel/irq/handle.c between commit
+97179fd46da7ddedd18e95388130ed3e06c5a0c7 ("cpumask fallout: Initialize
+irq_default_affinity earlier") from Linus' tree and commits
+9594949b060efe86ecaa1a66839232a3b9800bc9 ("irq: change references from
+NR_IRQS to nr_irqs") and 4a046d1754ee6ebb6f399696805ed61ea0444d4c ("x86:
+arch_probe_nr_irqs") from the tip-core tree.
 
-These two commits seem to be trying to do similar things.  I have used
-the versions from the parisc tree.  Greg, I guess you need to check to
-see if you agree and if so, then just remove the driver-core tree patch.
-
-James, Kyle, the one thing I took from Greg's patch was the removal of
-the include of linux/klist.h from drivers/char/agp/parisc-agp.c.
-
---=20
+Just overlapping additions.  I fixed it up as done in tip/master (see
+below) and can carry the fix for a while.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__2_Feb_2009_11_11_12_+1100_pcXEMcFbV884Psp3
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkmGOiAACgkQjjKRsyhoI8y+ZQCgmGPHKUWwqOS4PTvxlBZ2lQas
-mIIAoKYG7R55xEjY0whVYY57v6UddUCu
-=NxWT
------END PGP SIGNATURE-----
-
---Signature=_Mon__2_Feb_2009_11_11_12_+1100_pcXEMcFbV884Psp3--
+diff --cc kernel/irq/handle.c
+index 3aba8d1,375d68c..0000000
+--- a/kernel/irq/handle.c
++++ b/kernel/irq/handle.c
+@@@ -146,8 -133,10 +145,12 @@@ int __init early_irq_init(void
+  	int legacy_count;
+  	int i;
+  
+ +	init_irq_default_affinity();
+ +
++ 	 /* initialize nr_irqs based on nr_cpu_ids */
++ 	arch_probe_nr_irqs();
++ 	printk(KERN_INFO "NR_IRQS:%d nr_irqs:%d\n", NR_IRQS, nr_irqs);
++ 
+  	desc = irq_desc_legacy;
+  	legacy_count = ARRAY_SIZE(irq_desc_legacy);
+  
+@@@ -233,8 -229,8 +243,10 @@@ int __init early_irq_init(void
+  	int count;
+  	int i;
+  
+ +	init_irq_default_affinity();
+ +
++ 	printk(KERN_INFO "NR_IRQS:%d\n", NR_IRQS);
++ 
+  	desc = irq_desc;
+  	count = ARRAY_SIZE(irq_desc);
+  
