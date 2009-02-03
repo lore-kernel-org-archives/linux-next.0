@@ -1,56 +1,60 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
+From: Catalin Marinas <catalin.marinas@arm.com>
 Subject: Re: next-20090202: task kmemleak:763 blocked for more than 120
 	seconds.
-Date: Tue, 3 Feb 2009 14:57:30 +0300
-Message-ID: <a4423d670902030357k773e686dk5162b6c63a562e71@mail.gmail.com>
+Date: Tue, 03 Feb 2009 12:31:44 +0000
+Message-ID: <1233664304.1568.39.camel@pc1117.cambridge.arm.com>
 References: <a4423d670902020327x61a1d9dehb1642b25ec7f82f1@mail.gmail.com>
 	 <tnxiqns28mm.fsf@pc1117.cambridge.arm.com>
+	 <c62985530902020715u73407d4dqe14c340de310c866@mail.gmail.com>
+	 <20090202215740.GA26550@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f21.google.com ([209.85.219.21]:50023 "EHLO
-	mail-ew0-f21.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750845AbZBCL5c (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Feb 2009 06:57:32 -0500
-In-Reply-To: <tnxiqns28mm.fsf@pc1117.cambridge.arm.com>
+Received: from cam-admin0.cambridge.arm.com ([193.131.176.58]:54150 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752853AbZBCMbw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Feb 2009 07:31:52 -0500
+In-Reply-To: <20090202215740.GA26550@google.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Mandeep Singh Baines <msb@google.com>
+Cc: =?ISO-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>, Alexander Beregalov <a.beregalov@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-2009/2/2 Catalin Marinas <catalin.marinas@arm.com>:
-> Alexander Beregalov <a.beregalov@gmail.com> wrote:
->> It seems it is blocked forever.
->
-> Scanning the full memory may take a lot of time, depending on the
-> amount of RAM and the number of objects allocated. It is not unlikely
-> to take more than 120 seconds on some loaded systems. However, it
-> should call schedule() periodically to let other tasks run. Is your
-> system unresponsive during this?
-No, it is responsible.
-kmemleak proccess is not running all the time, but it is counted for
-the loadavg value.
-And it produceses lockdep message every 180 sec.
->
->> [ 1704.619898] INFO: task kmemleak:763 blocked for more than 120 seconds.
->> [ 1704.697951] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
->> disables this message.
->> [ 1704.791613] kmemleak      D 0000000000000001  6008   763      2
-> [...]
->> [ 1706.246334] no locks held by kmemleak/763.
->
-> It looks like the kmemleak thread is in the TASK_UNINTERUPTIBLE state.
-> This happens when it calls schedule_timeout_uninterruptible() to sleep
-> between scans. It probably took more than 120 to scan the memory and
-> hence the report.
->
-> It doesn't look like a problem, only that the watchdog thread checks
-> for uninterruptible tasks. I can try to make it sleep with
-> TASK_INTERRUPTIBLE to avoid the message.
->
-> Thanks.
->
-> --
-> Catalin
->
+On Mon, 2009-02-02 at 13:57 -0800, Mandeep Singh Baines wrote:
+> The hung_task timeout is now 480 seconds because of sys_sync:
+> 
+> http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commitdiff;h=fb822db465bd9fd4208eef1af4490539b236c54e
+> 
+> But are there are really any other tasks which call
+> schedule_timeout_uninterruptibl() for with a timeout >480 seconds?
+> 
+> Right now kmemleak appears to be the only exception. (A quick grep didn't turn
+> anything up.) And it is trivial to change kmemleak to use INTERRUPTIBLE.
+> Might even be a nice feature. You could stop it faster that way.
+
+I changed the code as below as it makes more sense:
+
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -1044,6 +1044,7 @@ static int kmemleak_scan_thread(void *arg)
+ 
+ 	while (!kthread_should_stop()) {
+ 		struct kmemleak_object *object;
++		signed long timeout = jiffies_scan_wait;
+ 
+ 		mutex_lock(&scan_mutex);
+ 
+@@ -1069,7 +1070,8 @@ static int kmemleak_scan_thread(void *arg)
+ 
+ 		mutex_unlock(&scan_mutex);
+ 		/* wait before the next scan */
+-		schedule_timeout_uninterruptible(jiffies_scan_wait);
++		while (timeout && !kthread_should_stop())
++			timeout = schedule_timeout_interruptible(timeout);
+ 	}
+ 
+ 	pr_info("kmemleak: Automatic memory scanning thread ended\n");
+
+-- 
+Catalin
