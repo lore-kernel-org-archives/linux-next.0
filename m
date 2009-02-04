@@ -1,79 +1,54 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: next-20090202: task kmemleak:763 blocked for more than 120
-	seconds.
-Date: Tue, 3 Feb 2009 21:52:06 +0100
-Message-ID: <20090203205204.GC6344@nowhere>
-References: <a4423d670902020327x61a1d9dehb1642b25ec7f82f1@mail.gmail.com> <tnxiqns28mm.fsf@pc1117.cambridge.arm.com> <c62985530902020715u73407d4dqe14c340de310c866@mail.gmail.com> <20090202215740.GA26550@google.com> <20090203004141.GA22718@nowhere> <1233665314.1568.46.camel@pc1117.cambridge.arm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: drm tree build failure
+Date: Wed, 4 Feb 2009 16:33:18 +1100
+Message-ID: <20090204163318.0ebba7e1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__4_Feb_2009_16_33_18_+1100_ZKw9u.2+NP_NbS+I"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f31.google.com ([209.85.219.31]:40127 "EHLO
-	mail-ew0-f31.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751075AbZBCUwR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Feb 2009 15:52:17 -0500
-Content-Disposition: inline
-In-Reply-To: <1233665314.1568.46.camel@pc1117.cambridge.arm.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60915 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750886AbZBDFd0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 4 Feb 2009 00:33:26 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Mandeep Singh Baines <msb@google.com>, Alexander Beregalov <a.beregalov@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, =?UTF-8?B?IktyaXN0aWFuIEjDuGdzYmVyZyI=?= <krh@redhat.com>
 
-On Tue, Feb 03, 2009 at 12:48:34PM +0000, Catalin Marinas wrote:
-> On Tue, 2009-02-03 at 01:41 +0100, Frederic Weisbecker wrote:
-> > Right. BTW, I wonder how it behaves in case of suspend to disk.
-> > But changing the state to TASK_INTERRUPTIBLE wouldn't change it in this case since the
-> > signals are only sent to userpace threads to freeze them.
+--Signature=_Wed__4_Feb_2009_16_33_18_+1100_ZKw9u.2+NP_NbS+I
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Dave,
 
-I made a mistake here. Only kernel threads in TASK_INTERRUPTIBLE are woken up
-while hibernation.
-Yes, if you want kmemleak to be freezable, that's the right state.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
- 
-> > Kernel threads try to freeze by themselves.
-> > 
-> > But for such very long schedule_timeout, will the hibernation wait for kmemleak
-> > to wake up and then try_to_freeze() before suspend to disk?
-> 
-> I haven't added anything to kmemleak for this. Does something like below
-> look feasible?
-> 
-> --- a/mm/kmemleak.c
-> +++ b/mm/kmemleak.c
-> @@ -88,6 +88,7 @@
->  #include <linux/errno.h>
->  #include <linux/uaccess.h>
->  #include <linux/string.h>
-> +#include <linux/freezer.h>
->  
->  #include <asm/sections.h>
->  #include <asm/processor.h>
-> @@ -1070,8 +1071,11 @@ static int kmemleak_scan_thread(void *arg)
->  
->  		mutex_unlock(&scan_mutex);
->  		/* wait before the next scan */
-> -		while (timeout && !kthread_should_stop())
-> +		while (timeout && !kthread_should_stop()) {
-> +			if (try_to_freeze())
-> +				break;
->  			timeout = schedule_timeout_interruptible(timeout);
-> +		}
->  	}
+drivers/gpu/drm/radeon/radeon_drv.c:98: error: unknown field 'dri_library_n=
+ame' specified in initializer
+drivers/gpu/drm/radeon/radeon_drv.c:98: warning: initialization from incomp=
+atible pointer type
 
+Caused by commit 9a6c3df9d95d4986b55a6de951310aaf9e3c9546 ("drm: Drop
+unused and broken dri_library_name sysfs attribute").  Grep is your
+friend ...
 
-That looks good, but you have to set kmemleak thread as freezable before
-by calling set_freezable() in the beggining of your thread.
+I have dropped the drm tree for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Note that requiring kmemleak to be freezable looks only relevant if it does
-some memory allocations (hibernation needs some memory and prefer that there
-are not too much parallel memory allocations.)
+--Signature=_Wed__4_Feb_2009_16_33_18_+1100_ZKw9u.2+NP_NbS+I
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
->  
->  	pr_info("kmemleak: Automatic memory scanning thread ended\n");
-> 
-> Thanks.
-> 
-> -- 
-> Catalin
-> 
+iEYEARECAAYFAkmJKJ4ACgkQjjKRsyhoI8xczACfX1FYJT33AfdZme2x3IiXfRWX
+0nQAoL6zj+o+gTeLoUdrRO7481qgdj56
+=CrkT
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__4_Feb_2009_16_33_18_+1100_ZKw9u.2+NP_NbS+I--
