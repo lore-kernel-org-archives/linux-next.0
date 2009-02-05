@@ -1,121 +1,69 @@
-From: Thomas Renninger <trenn@suse.de>
-Subject: Re: [tip:core/printk] printk: introduce printk_once()
-Date: Thu, 5 Feb 2009 15:12:10 +0100
-Message-ID: <200902051512.11140.trenn@suse.de>
-References: <1233829109-23358-1-git-send-email-trenn@suse.de> <20090205124234.GD8799@elte.hu> <20090205130420.GA10525@elte.hu>
+From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
+Subject: X200: not resuming, cryptswap fails (was: linux-next: Tree for
+	February 5)
+Date: Thu, 5 Feb 2009 16:52:03 +0100
+Message-ID: <20090205155203.GA4549@denkbrett.schottelius.org>
+References: <20090205191658.41161afc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:39471 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751863AbZBEOMR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 5 Feb 2009 09:12:17 -0500
-In-Reply-To: <20090205130420.GA10525@elte.hu>
+Received: from mx3.schottelius.org ([77.109.138.221]:59147 "EHLO
+	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752120AbZBEPwF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Feb 2009 10:52:05 -0500
 Content-Disposition: inline
+In-Reply-To: <20090205191658.41161afc.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: davej@redhat.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, cpufreq@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Thursday 05 February 2009 14:04:20 Ingo Molnar wrote:
-> 
-> * Ingo Molnar <mingo@elte.hu> wrote:
-> 
-> > printk_once() would be nice indeed - it's a frequent construct.
-> 
-> Something like the patch below?
-Yes, nice.
-Sorry, I can't test it right now, I really have to do something else.
-I can give it a test in some hours or tomorrow.
 
-I'd also wait a week with the WARN_ONCE cleanup until this is
-in linux-next and then fix it up correctly just "once" :)
+--cNdxnHkX5QqsyA0e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-powernow-k8 printing a backtrace in linux-next in broken BIOS case
-for a week or two shouldn't be an issue.
+Stephen Rothwell [Thu, Feb 05, 2009 at 07:16:58PM +1100]:
+> Hi all,
+>=20
+> Changes since 20090204:
 
-No need to answer, just tell me if this does not work out.
+20090205 on Lenovo X200:
 
-Thanks for your suggestions,
+  - on bootup the cryptsetup call for my home works, for
+    swap not anymore (hangs, but can be canceled via ctrl-c;
+    saw that in previously, beginning with next-20090122;
+    standard Debian randomkey swap via cryptsetup)
+  - suspend works; resume not: the moon is still seen,
+    the fans start working, screen is black, network not
+    up again -> no ping/ssh possible.
 
-   Thomas
- 
-> 	Ingo
-> 
-> ---------------->
-> Author:     Ingo Molnar <mingo@elte.hu>
-> AuthorDate: Thu, 5 Feb 2009 13:45:43 +0100
-> Commit:     Ingo Molnar <mingo@elte.hu>
-> CommitDate: Thu, 5 Feb 2009 13:52:29 +0100
-> 
-> printk: introduce printk_once()
-> 
-> This pattern shows up frequently in the kernel:
-> 
->   static int once = 1;
->   ...
-> 
-> 		if (once) {
-> 			once = 0;
-> 			printk(KERN_ERR "message\n");
-> 		}
->   ...
-> 
-> So add a printk_once() helper macro that reduces this to a single line
-> of:
-> 
-> 		printk_once(KERN_ERR "message\n");
-> 
-> It works analogously to WARN_ONCE() & friends. (We use a macro not
-> an inline because vararg expansion in inlines looks awkward and the
-> macro is simple enough.)
-> 
-> Signed-off-by: Ingo Molnar <mingo@elte.hu>
-> 
-> 
-> ---
->  include/linux/kernel.h |   17 +++++++++++++++++
->  1 files changed, 17 insertions(+), 0 deletions(-)
-> 
-> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-> index 343df9e..3c183d9 100644
-> --- a/include/linux/kernel.h
-> +++ b/include/linux/kernel.h
-> @@ -242,6 +242,19 @@ extern struct ratelimit_state printk_ratelimit_state;
->  extern int printk_ratelimit(void);
->  extern bool printk_timed_ratelimit(unsigned long *caller_jiffies,
->  				   unsigned int interval_msec);
-> +
-> +/*
-> + * Print a one-time message (analogous to WARN_ONCE() et al):
-> + */
-> +#define printk_once(x...) ({			\
-> +	static int __print_once = 1;		\
-> +						\
-> +	if (__print_once) {			\
-> +		__print_once = 0;		\
-> +		printk(x);			\
-> +	}					\
-> +})
-> +
->  #else
->  static inline int vprintk(const char *s, va_list args)
->  	__attribute__ ((format (printf, 1, 0)));
-> @@ -253,6 +266,10 @@ static inline int printk_ratelimit(void) { return 0; }
->  static inline bool printk_timed_ratelimit(unsigned long *caller_jiffies, \
->  					  unsigned int interval_msec)	\
->  		{ return false; }
-> +
-> +/* No effect, but we still get type checking even in the !PRINTK case: */
-> +#define printk_once(x...) printk(x)
-> +
->  #endif
->  
->  extern int printk_needs_cpu(int cpu);
-> --
-> To unsubscribe from this list: send the line "unsubscribe cpufreq" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Back on 2.6.28-rc9-wl-denkbrett-24896-gf4f5c96, last working
+version on X200.
+
+Sincerly,
+
+Nico
+
+--=20
+Think about Free and Open Source Software (FOSS).
+http://nico.schottelius.org/documentations/foss/the-term-foss/
+
+PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
+
+--cNdxnHkX5QqsyA0e
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkmLCyIACgkQuL75KpiFGIxgRgCdE0SVJxnM9a3dkStOgYF2GMwD
+5pQAoMYUJegvOJTzGSmbaVaXYWu/5MZk
+=lre1
+-----END PGP SIGNATURE-----
+
+--cNdxnHkX5QqsyA0e--
