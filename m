@@ -1,50 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the  tree
-Date: Thu, 5 Feb 2009 14:00:04 +1100
-Message-ID: <20090205140004.7cd9f1bd.sfr@canb.auug.org.au>
+From: Neil Brown <neilb@suse.de>
+Subject: Re: linux-next: md/md-current tree fetch failure
+Date: Thu, 5 Feb 2009 14:34:54 +1100
+Message-ID: <18826.24158.795863.160905@notabene.brown>
+References: <20090205091313.91afdcb1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__5_Feb_2009_14_00_04_+1100_J8uKNVZps0xe/xTd"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43529 "EHLO smtps.tip.net.au"
+Received: from cantor2.suse.de ([195.135.220.15]:56809 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752836AbZBEDAL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 4 Feb 2009 22:00:11 -0500
+	id S1751668AbZBEDe5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 4 Feb 2009 22:34:57 -0500
+In-Reply-To: message from Stephen Rothwell on Thursday February 5
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Helmut Schaa <helmut.schaa@googlemail.com>, "John W. Linville" <linville@tuxdriver.com>, Reinette Chatre <reinette.chatre@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Thu__5_Feb_2009_14_00_04_+1100_J8uKNVZps0xe/xTd
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thursday February 5, sfr@canb.auug.org.au wrote:
+> Hi Neil,
+> 
+> Today's linux-next fetch of the md and md-current trees failed like this:
+> 
+> neil.brown.name[0: 220.233.11.133]: errno=Connection timed out
+> fatal: unable to connect a socket (Connection timed out)
+> 
+> I will use yesterday's trees.
 
-Hi Dave,
+Thanks.
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/net/wireless/iwlwifi/iwl3945-base.c between commit
-c4e061ace75513aee227090486cc46dec7810c00 ("iwlwifi: save PCI state before
-suspend, restore after resume") from the wireless-current tree and commit
-2663516d8fb896430bf42dce41b3e2f141d63bd5 ("iwl3945: report killswitch
-changes even if the interface is down") from the net and wireless trees.
+It seems Optus had some authentication problems with some of their
+ADSL2 lines this morning.
 
-Again, the former is just a subset of the latter.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__5_Feb_2009_14_00_04_+1100_J8uKNVZps0xe/xTd
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkmKVjQACgkQjjKRsyhoI8xiXQCgnZhJQ0qGsY3D+l3Kram2sUzi
-F3gAn15QZr46zwqBWAeoZVg/Ywwt2IWm
-=UMxI
------END PGP SIGNATURE-----
-
---Signature=_Thu__5_Feb_2009_14_00_04_+1100_J8uKNVZps0xe/xTd--
+NeilBrown
