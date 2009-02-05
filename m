@@ -1,46 +1,54 @@
-From: Dave Jones <davej@redhat.com>
-Subject: Re: linux-next: cpufreq tree build failure
-Date: Thu, 5 Feb 2009 16:34:51 -0500
-Message-ID: <20090205213451.GA14664@redhat.com>
-References: <20090205185420.38214a06.sfr@canb.auug.org.au> <200902051047.56609.trenn@suse.de> <20090205174536.GA6358@redhat.com> <200902052157.45344.trenn@suse.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the trivial tree with the  tree
+Date: Fri, 6 Feb 2009 09:23:28 +1100
+Message-ID: <20090206092328.da02122c.sfr@canb.auug.org.au>
+References: <20090204175905.09624475.sfr@canb.auug.org.au>
+	<alpine.LNX.1.10.0902051358270.11630@jikos.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__6_Feb_2009_09_23_28_+1100_3d.P5S5kdTY8.Q9J"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:52179 "EHLO mx2.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47475 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754402AbZBEVfA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 5 Feb 2009 16:35:00 -0500
-Content-Disposition: inline
-In-Reply-To: <200902052157.45344.trenn@suse.de>
+	id S1752743AbZBEWXj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Feb 2009 17:23:39 -0500
+In-Reply-To: <alpine.LNX.1.10.0902051358270.11630@jikos.suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Renninger <trenn@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, Nick Andrew <nick@nick-andrew.net>, Tejun Heo <tj@kernel.org>, Jeff Garzik <jgarzik@redhat.com>
 
-On Thu, Feb 05, 2009 at 09:57:44PM +0100, Thomas Renninger wrote:
+--Signature=_Fri__6_Feb_2009_09_23_28_+1100_3d.P5S5kdTY8.Q9J
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- > > I added the 'static's directly to the patches, and regenerated the tree
- > > on kernel.org
- > > For other stuff, unless it's a build-fix, send an incremental diff ?
- > Yes, will do so.
- > But if possible, I'd like to wait for Ingo's
- > printk_once function popping up in linux-next.
- > How frequently are linux-next patches pulled back into the cpufreq tree?
+Hi Jiri,
 
-There's no regular schedule. It typically happens if a) they get merged into
-Linus tree, and b) I rebase the cpufreq tree (which I try to avoid where possible,
-I try to only do it to get around a build failure, or if there's massive
-conflicts with something else that got merged).
+On Thu, 5 Feb 2009 13:59:40 +0100 (CET) Jiri Kosina <jkosina@suse.cz> wrote:
+>
+> Thanks. As the libata patch is apparently now in Linus' tree, I have now=
+=20
+> resolved this conflict in my tree, so you should be able to drop this=20
+> fixup in the next round of linux-next merging.
 
- > Anyway, I am going to look at your tree in a week or two and send
- > something then. It's only about a cleaned up message in broken BIOS case,
- > that should not hurt in linux-next for a while.
+Thanks.
 
-Sounds good to me.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Thanks,
+--Signature=_Fri__6_Feb_2009_09_23_28_+1100_3d.P5S5kdTY8.Q9J
+Content-Type: application/pgp-signature
 
-	Dave
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
--- 
-http://www.codemonkey.org.uk
+iEYEARECAAYFAkmLZuAACgkQjjKRsyhoI8w1mQCgqi5/KPjhRc18wxcnV+69jVrU
+8u8An0RJDfwnF+rSR/uXTnUarq8nj0OK
+=hNUy
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__6_Feb_2009_09_23_28_+1100_3d.P5S5kdTY8.Q9J--
