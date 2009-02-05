@@ -1,40 +1,56 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: acpi tree build failure
-Date: Wed, 4 Feb 2009 21:00:56 -0800
-Message-ID: <20090205050056.GA7651@kroah.com>
-References: <20090202132254.456b7725.sfr@canb.auug.org.au> <20090205131340.edc6e6a8.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: quota tree build warning
+Date: Thu, 5 Feb 2009 17:28:23 +1100
+Message-ID: <20090205172823.e6b203bf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__5_Feb_2009_17_28_23_+1100_85njE_seaCGJVsyz"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:34377 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752963AbZBEFju (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 5 Feb 2009 00:39:50 -0500
-Content-Disposition: inline
-In-Reply-To: <20090205131340.edc6e6a8.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:45494 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752240AbZBEG2d (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Feb 2009 01:28:33 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, Matthew Garrett <mjg59@srcf.ucam.org>, Kay Sievers <kay.sievers@vrfy.org>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-next@vger.kernel.org, Mingming Cao <cmm@us.ibm.com>, Theodore Ts'o <tytso@mit.edu>
 
-On Thu, Feb 05, 2009 at 01:13:40PM +1100, Stephen Rothwell wrote:
-> Greg, Len,
-> 
-> On Mon, 2 Feb 2009 13:22:54 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > drivers/platform/x86/oqo-wmi.c: In function 'oqo_kine_init':
-> > drivers/platform/x86/oqo-wmi.c:595: error: 'struct device' has no member named 'bus_id'
-> > 
-> > Caused by commit 03919980ad590ad5c5c181d1bd7d58513ad170bc ("platform/x86:
-> > Add oqo-wmi driver for model 2 OQO backlight and rfkill control")
-> > interacting with commit c44c8304353aa6da82cbf98040c6a9c254e68e1c ("driver
-> > core: get rid of struct device's bus_id string array") from the
-> > driver-core tree.
-> 
-> Still getting this (of course).  Can you guys come up with a fix, please?
+--Signature=_Thu__5_Feb_2009_17_28_23_+1100_85njE_seaCGJVsyz
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Len, you have the patch from Kay, what do you want to do with it?
+Hi Jan,
 
-thanks,
+Today's linux-next build (x86_64 allmodconfig) produced this warning:
 
-greg k-h
+fs/ext4/super.c:949: warning: initialization from incompatible pointer type
+
+The line is this:
+
+        .get_reserved_space =3D ext4_get_reserved_space,
+
+Where ext4_get_reserved_space() returns unsigned long long, but the
+get_reserved_space prototype returns a qsize_t (which is long long).
+
+Introduced by commit dafa34c7ba30012a7cacffb98e978e5edb74457f ("ext4: quota
+reservation for delayed allocation").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__5_Feb_2009_17_28_23_+1100_85njE_seaCGJVsyz
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkmKhwcACgkQjjKRsyhoI8z2LQCggGEo2HcdaCa1cF8xNUzyKrJO
+U08AnjfM+SnunYl4ejNew2QT9iBc2gy5
+=ncEO
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__5_Feb_2009_17_28_23_+1100_85njE_seaCGJVsyz--
