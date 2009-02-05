@@ -1,17 +1,17 @@
 From: Thomas Renninger <trenn@suse.de>
 Subject: Re: [PATCH 1/2] CPUFREQ: powernow-k8: Forgot to use printk instead of WARN_ONCE in last patch
-Date: Thu, 5 Feb 2009 13:09:59 +0100
-Message-ID: <200902051310.00426.trenn@suse.de>
+Date: Thu, 5 Feb 2009 13:27:15 +0100
+Message-ID: <200902051327.16852.trenn@suse.de>
 References: <1233829109-23358-1-git-send-email-trenn@suse.de> <1233829109-23358-2-git-send-email-trenn@suse.de> <20090205120203.GA8799@elte.hu>
 Mime-Version: 1.0
 Content-Type: text/plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:38177 "EHLO mx2.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:38674 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753036AbZBEMKE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 5 Feb 2009 07:10:04 -0500
+	id S1753332AbZBEM1T (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Feb 2009 07:27:19 -0500
 In-Reply-To: <20090205120203.GA8799@elte.hu>
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
@@ -54,17 +54,30 @@ cpufreq_policy *pol)
 > 
 > hm, why the open-coded WARN_ONCE? (which print_once flag + the printk in 
 > essence is)
+Looking at WARN() again:
+#ifndef __WARN
+#ifndef __ASSEMBLY__
+extern void warn_slowpath(const char *file, const int line,
+                const char *fmt, ...) __attribute__((format(printf, 3, 4)));
+#define WANT_WARN_ON_SLOWPATH
+#endif
+#define __WARN()                warn_slowpath(__FILE__, __LINE__, NULL)
+#define __WARN_printf(arg...)   warn_slowpath(__FILE__, __LINE__, arg)
+#else
+#define __WARN_printf(arg...)   do { printk(arg); __WARN(); } while (0)
+#endif
+
+WARN_ONCE does throw a backtrace (warn_slowpath does) or I missed
+something...
+Thus WARN_ONCE makes a big difference to printk_once() (which does not
+exist? but would be neat...) and prints out the backtrace, right?
+
+Thanks,
+
+     Thomas
+
 > 
 > So please use WARN_ONCE(), and indent it all one tab to the left which will 
 > solve at least part of that ugly 6-line split up thing. And if it's a 
 > WARN_ONCE() then kerneloops.org will pick it up too.
-No.
-This happens if your BIOS is older than your CPU and you then miss cpufreq.
-This often happens on very new machines/CPUs. It could also happen that you
-have to wait a month or so until your vendor offers a new BIOS.
-
-We want to tell the user that it's not the kernel's fault, but we better do
-not spit out a huge backtrace, which is worthless anyway as it's the BIOS
-which is broken.
-
-     Thomas
+> 
