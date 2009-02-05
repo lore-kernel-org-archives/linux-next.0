@@ -1,95 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with the cpufreq tree
-Date: Thu, 5 Feb 2009 15:18:30 +1100
-Message-ID: <20090205151830.03e5153a.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: acpi tree build failure
+Date: Wed, 4 Feb 2009 21:00:56 -0800
+Message-ID: <20090205050056.GA7651@kroah.com>
+References: <20090202132254.456b7725.sfr@canb.auug.org.au> <20090205131340.edc6e6a8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45041 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751252AbZBEESg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 4 Feb 2009 23:18:36 -0500
+Received: from kroah.org ([198.145.64.141]:34377 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752963AbZBEFju (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Feb 2009 00:39:50 -0500
+Content-Disposition: inline
+In-Reply-To: <20090205131340.edc6e6a8.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, Thomas Renninger <trenn@suse.de>, Dave Jones <davej@redhat.com>, Mark Langsdorf <mark.langsdorf@amd.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, Matthew Garrett <mjg59@srcf.ucam.org>, Kay Sievers <kay.sievers@vrfy.org>
 
-Hi Rusty,
+On Thu, Feb 05, 2009 at 01:13:40PM +1100, Stephen Rothwell wrote:
+> Greg, Len,
+> 
+> On Mon, 2 Feb 2009 13:22:54 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > drivers/platform/x86/oqo-wmi.c: In function 'oqo_kine_init':
+> > drivers/platform/x86/oqo-wmi.c:595: error: 'struct device' has no member named 'bus_id'
+> > 
+> > Caused by commit 03919980ad590ad5c5c181d1bd7d58513ad170bc ("platform/x86:
+> > Add oqo-wmi driver for model 2 OQO backlight and rfkill control")
+> > interacting with commit c44c8304353aa6da82cbf98040c6a9c254e68e1c ("driver
+> > core: get rid of struct device's bus_id string array") from the
+> > driver-core tree.
+> 
+> Still getting this (of course).  Can you guys come up with a fix, please?
 
-Today's linux-next merge of the rr tree got a conflict in
-arch/x86/kernel/cpu/cpufreq/powernow-k8.c between various commits from
-the cpufreq-current and cpufreq trees and commit
-35bed9c465bcf6e9e797cba9c54bab263e07be31
-("cpumask:partial-revert-powernow-k8") from the rr tree.
+Len, you have the patch from Kay, what do you want to do with it?
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+thanks,
 
-diff --cc arch/x86/kernel/cpu/cpufreq/powernow-k8.c
-index 83515f16,8b99478..0000000
---- a/arch/x86/kernel/cpu/cpufreq/powernow-k8.c
-+++ b/arch/x86/kernel/cpu/cpufreq/powernow-k8.c
-@@@ -1242,38 -1148,34 +1241,42 @@@ static int __cpuinit powernowk8_cpu_ini
-  		 * an UP version, and is deprecated by AMD.
-  		 */
-  		if (num_online_cpus() != 1) {
- -#ifndef CONFIG_ACPI_PROCESSOR
- -			printk(KERN_ERR PFX "ACPI Processor support is required "
- -			       "for SMP systems but is absent. Please load the "
- -			       "ACPI Processor module before starting this "
- -			       "driver.\n");
- -#else
- -			printk(KERN_ERR FW_BUG PFX "Your BIOS does not provide"
- -			       " ACPI _PSS objects in a way that Linux "
- -			       "understands. Please report this to the Linux "
- -			       "ACPI maintainers and complain to your BIOS "
- -			       "vendor.\n");
- -#endif
- +			/*
- +			 * Replace this one with print_once as soon as such a
- +			 * thing gets introduced
- +			 */
- +			if (!print_once) {
- +				WARN_ONCE(1, KERN_ERR FW_BUG PFX "Your BIOS "
- +					  "does not provide ACPI _PSS objects "
- +					  "in a way that Linux understands. "
- +					  "Please report this to the Linux ACPI"
- +					  " maintainers and complain to your "
- +					  "BIOS vendor.\n");
- +				print_once++;
- +			}
-- 			goto err_out;
-+ 			kfree(data);
-+ 			return -ENODEV;
-  		}
-  		if (pol->cpu != 0) {
-  			printk(KERN_ERR FW_BUG PFX "No ACPI _PSS objects for "
-  			       "CPU other than CPU0. Complain to your BIOS "
-  			       "vendor.\n");
-- 			goto err_out;
-+ 			kfree(data);
-+ 			return -ENODEV;
-  		}
-  		rc = find_psb_table(data);
-- 		if (rc)
-- 			goto err_out;
-+ 		if (rc) {
-+ 			kfree(data);
-+ 			return -ENODEV;
-+ 		}
- -	}
- +
- +		/* Take a crude guess here.
- +		 * That guess was in microseconds, so multiply with 1000 */
- +		pol->cpuinfo.transition_latency = (
- +			 ((data->rvo + 8) * data->vstable * VST_UNITS_20US) +
- +			 ((1 << data->irt) * 30)) * 1000;
- +	} else /* ACPI _PSS objects available */
- +		pol->cpuinfo.transition_latency = get_transition_latency(data);
-  
-  	/* only run on specific CPU from here on */
-  	oldmask = current->cpus_allowed;
+greg k-h
