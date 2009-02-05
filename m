@@ -1,12 +1,12 @@
 From: Thomas Renninger <trenn@suse.de>
-Subject: [PATCH 1/2] CPUFREQ: powernow-k8: Forgot to use printk instead of WARN_ONCE in last patch
-Date: Thu,  5 Feb 2009 11:18:28 +0100
-Message-ID: <1233829109-23358-2-git-send-email-trenn@suse.de>
+Subject: [PATCH 2/2] CPUFREQ: Use static or it won't compile if conservative and ondemand are set =y
+Date: Thu,  5 Feb 2009 11:18:29 +0100
+Message-ID: <1233829109-23358-3-git-send-email-trenn@suse.de>
 References: <1233829109-23358-1-git-send-email-trenn@suse.de>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ns2.suse.de ([195.135.220.15]:35514 "EHLO mx2.suse.de"
+Received: from mail.suse.de ([195.135.220.2]:33072 "EHLO mx1.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752329AbZBEKSa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	id S1753919AbZBEKSa (ORCPT <rfc822;linux-next@vger.kernel.org>);
 	Thu, 5 Feb 2009 05:18:30 -0500
 In-Reply-To: <1233829109-23358-1-git-send-email-trenn@suse.de>
 Sender: linux-next-owner@vger.kernel.org
@@ -16,31 +16,35 @@ Cc: Thomas Renninger <trenn@suse.de>
 
 Signed-off-by: Thomas Renninger <trenn@suse.de>
 ---
- arch/x86/kernel/cpu/cpufreq/powernow-k8.c |   12 ++++++------
- 1 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/cpufreq/cpufreq_conservative.c |    2 +-
+ drivers/cpufreq/cpufreq_ondemand.c     |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/cpufreq/powernow-k8.c b/arch/x86/kernel/cpu/cpufreq/powernow-k8.c
-index 83515f1..5aa832f 100644
---- a/arch/x86/kernel/cpu/cpufreq/powernow-k8.c
-+++ b/arch/x86/kernel/cpu/cpufreq/powernow-k8.c
-@@ -1247,12 +1247,12 @@ static int __cpuinit powernowk8_cpu_init(struct cpufreq_policy *pol)
- 			 * thing gets introduced
- 			 */
- 			if (!print_once) {
--				WARN_ONCE(1, KERN_ERR FW_BUG PFX "Your BIOS "
--					  "does not provide ACPI _PSS objects "
--					  "in a way that Linux understands. "
--					  "Please report this to the Linux ACPI"
--					  " maintainers and complain to your "
--					  "BIOS vendor.\n");
-+				printk(KERN_ERR FW_BUG PFX "Your BIOS "
-+				       "does not provide ACPI _PSS objects "
-+				       "in a way that Linux understands. "
-+				       "Please report this to the Linux ACPI"
-+				       " maintainers and complain to your "
-+				       "BIOS vendor.\n");
- 				print_once++;
- 			}
- 			goto err_out;
+diff --git a/drivers/cpufreq/cpufreq_conservative.c b/drivers/cpufreq/cpufreq_conservative.c
+index 3aa99e6..8d541c6 100644
+--- a/drivers/cpufreq/cpufreq_conservative.c
++++ b/drivers/cpufreq/cpufreq_conservative.c
+@@ -60,7 +60,7 @@ static unsigned int def_sampling_rate;
+  *   - MIN_STAT_SAMPLING_RATE
+  * To avoid that userspace shoots itself.
+ */
+-unsigned int minimum_sampling_rate(void)
++static unsigned int minimum_sampling_rate(void)
+ {
+ 	return max(def_sampling_rate / 10, MIN_STAT_SAMPLING_RATE);
+ }
+diff --git a/drivers/cpufreq/cpufreq_ondemand.c b/drivers/cpufreq/cpufreq_ondemand.c
+index 3220749..338f428 100644
+--- a/drivers/cpufreq/cpufreq_ondemand.c
++++ b/drivers/cpufreq/cpufreq_ondemand.c
+@@ -58,7 +58,7 @@ static unsigned int def_sampling_rate;
+  *   - MIN_STAT_SAMPLING_RATE
+  * To avoid that userspace shoots itself.
+ */
+-unsigned int minimum_sampling_rate(void)
++static unsigned int minimum_sampling_rate(void)
+ {
+ 	return max(def_sampling_rate / 10, MIN_STAT_SAMPLING_RATE);
+ }
 -- 
 1.6.0.2
