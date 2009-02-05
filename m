@@ -1,33 +1,51 @@
-From: Li Zefan <lizf@cn.fujitsu.com>
-Subject: Re: linux-next: Tree for February 3 (can't boot)
-Date: Thu, 05 Feb 2009 10:43:49 +0800
-Message-ID: <498A5265.9020107@cn.fujitsu.com>
-References: <20090203173616.ef3dec8a.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the  tree
+Date: Thu, 5 Feb 2009 13:55:11 +1100
+Message-ID: <20090205135511.71fbd3f6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=GB2312
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__5_Feb_2009_13_55_11_+1100_DNk0JUwT4KX4qR+o"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cn.fujitsu.com ([222.73.24.84]:63544 "EHLO song.cn.fujitsu.com"
-	rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org with ESMTP
-	id S1756271AbZBECob (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 4 Feb 2009 21:44:31 -0500
-In-Reply-To: <20090203173616.ef3dec8a.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48897 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752103AbZBECzU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 4 Feb 2009 21:55:20 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, Reinette Chatre <reinette.chatre@intel.com>, "John W. Linville" <linville@tuxdriver.com>, Helmut Schaa <helmut.schaa@googlemail.com>
 
-Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20090202:
-> 
+--Signature=_Thu__5_Feb_2009_13_55_11_+1100_DNk0JUwT4KX4qR+o
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I can't boot up linux-next-20090203. When booting, The box reset itself
-immediately, before I can see anything.
+Hi Dave,
 
-I was not using pure linux-next. I was using mm tree, but it failed to
-boot, so I did "quilt pop linux-next.patch", and there were still some
-bug-fix patches before linux-next.patch.
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/wireless/iwlwifi/iwl-agn.c between commit
+c4e061ace75513aee227090486cc46dec7810c00 ("iwlwifi: save PCI state before
+suspend, restore after resume") from the wireless-current tree and
+commit 6cd0b1cb872b3bf9fc5de4536404206ab74bafdd ("iwlagn: fix hw-rfkill
+while the interface is down") from the net and wireless trees.
 
-Haven't tried 20090204.
+The former just appears to be a subset of the latter.  I fixed it up and
+can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__5_Feb_2009_13_55_11_+1100_DNk0JUwT4KX4qR+o
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkmKVQ8ACgkQjjKRsyhoI8ym+wCeJlKchCD4nAP2rc4P0Bk2a5fs
+6MAAoIT84b+YMxz5uinRz+rjjSKLcjoF
+=8v8U
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__5_Feb_2009_13_55_11_+1100_DNk0JUwT4KX4qR+o--
