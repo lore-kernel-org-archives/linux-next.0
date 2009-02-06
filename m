@@ -1,26 +1,20 @@
 From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] revert headers_check fix: ia64, fpu.h
-Date: Fri, 6 Feb 2009 15:49:17 +0000
-Message-ID: <20090206154917.GE13758@n2100.arm.linux.org.uk>
-References: <20090206164546.6291.KOSAKI.MOTOHIRO@jp.fujitsu.com> <3f9a31f40902060053x18dacf58u40c739ab89f13860@mail.gmail.com> <20090206180957.6294.KOSAKI.MOTOHIRO@jp.fujitsu.com> <20090206145556.GH18368@elte.hu> <1233934141.3209.20.camel@localhost.localdomain> <20090206153315.GD13758@n2100.arm.linux.org.uk> <20090206154539.GP18368@elte.hu>
+Subject: Re: [linux-next][PATCH] revert headers_check fix: ia64, fpu.h
+Date: Fri, 6 Feb 2009 15:55:12 +0000
+Message-ID: <20090206155512.GF13758@n2100.arm.linux.org.uk>
+References: <20090206164546.6291.KOSAKI.MOTOHIRO@jp.fujitsu.com> <3f9a31f40902060053x18dacf58u40c739ab89f13860@mail.gmail.com> <20090206180957.6294.KOSAKI.MOTOHIRO@jp.fujitsu.com> <20090206145556.GH18368@elte.hu> <1233934141.3209.20.camel@localhost.localdomain> <20090206153315.GD13758@n2100.arm.linux.org.uk> <1233935328.3209.30.camel@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:42607 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754230AbZBFPxM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Feb 2009 10:53:12 -0500
+Return-path: <linux-ia64-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20090206154539.GP18368@elte.hu>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Jaswinder Singh Rajput <jaswinder@kernel.org>, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>, Jaswinder Singh Rajput <jaswinderlinux@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Sam Ravnborg <sam@ravnborg.org>, Andrew Morton <akpm@linux-foundation.org>, hskinnemoen@atmel.com, cooloney@kernel.org, tony.luck@intel.com, ralf@linux-mips.org, dhowells@redhat.com, matthew@wil.cx, chris@zankel.net, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-ia64 <linux-ia64@vger.kernel.org>
+In-Reply-To: <1233935328.3209.30.camel@localhost.localdomain>
+Sender: linux-ia64-owner@vger.kernel.org
+To: Jaswinder Singh Rajput <jaswinder@kernel.org>
+Cc: Ingo Molnar <mingo@elte.hu>, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>, Jaswinder Singh Rajput <jaswinderlinux@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Sam Ravnborg <sam@ravnborg.org>, Andrew Morton <akpm@linux-foundation.org>, hskinnemoen@atmel.com, cooloney@kernel.org, tony.luck@intel.com, ralf@linux-mips.org, dhowells@redhat.com, matthew@wil.cx, chris@zankel.net, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-ia64 <linux-ia64@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Feb 06, 2009 at 04:45:39PM +0100, Ingo Molnar wrote:
-> 
-> * Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
-> 
+On Fri, Feb 06, 2009 at 09:18:48PM +0530, Jaswinder Singh Rajput wrote:
+> On Fri, 2009-02-06 at 15:33 +0000, Russell King - ARM Linux wrote:
 > > On Fri, Feb 06, 2009 at 08:59:01PM +0530, Jaswinder Singh Rajput wrote:
 > > > Jaswinder Singh Rajput (2):
 > > >       Neither asm/types.h nor linux/types.h is required for arch/ia64/include/asm/fpu.h
@@ -28,12 +22,41 @@ On Fri, Feb 06, 2009 at 04:45:39PM +0100, Ingo Molnar wrote:
 > > 
 > > I continue to disagree with the need for the second patch.
 > 
-> But have not replied to my mail about that so far.
+> Like Ingo suggested:
+> 
+> On Fri, 2009-02-06 at 15:58 +0100, Ingo Molnar wrote:
+> >  Well types.h easily gets included in other files though, which might be 
+> > partially suited for assembly - and have !__ASSEMBLY__ portions that rely on 
+> > a types.h include.
+> > 
+> > So making this file an invariant in .S files does not sound like a bad idea 
+> > to me. Is there any downside?
+> > 
+> 
+> We cannot see any downside of this patch.
+> 
+> But we can see upside of this patch is:
+> 1. No need to protect linux/types.h with #ifndef __ASSEMBLY__ in many
+> files
+> 2. So we trying to replace multiple #ifndef __ASSEMBLY__ with one.
 
-Sigh.  No I didn't - because I also got a reply from Jaswinder and
-covered all points in _that_ reply.
+The point is:
 
-Would you like me to re-send my reply so that you can appear in the To:
-header?
+1. If the parent include needs to include linux/types.h to get at C
+   types _and_ the include file needs to also be included by assembly
+   code, it itself needs to have #ifndef __ASSEMBLY__ to protect those
+   uses from the assembly code.
 
-Stop making this discussion stupidly obtuse.
+   In that case, the linux/types.h include should be contained within
+   the #ifndef __ASSEMBLY__ .. #endif block along with all C only
+   parts of the header file.
+
+2. if it doesn't need C types from linux/types.h, then that header has
+   no business including linux/types.h, and the include should be
+   eliminated to save the already dirbolically slow compiler from
+   having to read and parse that file, and more importantly allowing
+   it to eliminate linux/types.h from the build dependencies.
+
+Yes, you can wrap linux/types.h with that ifndef, and yes it will fix
+any problems, but I view it as a hack rather than fixing the real problem
+which is lazyness by code writers to get their include dependencies right.
