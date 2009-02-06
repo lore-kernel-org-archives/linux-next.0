@@ -1,37 +1,74 @@
-From: Chris Mason <chris.mason@oracle.com>
-Subject: Re: next-20090206: kernel BUG at mm/slub.c:1132
-Date: Fri, 06 Feb 2009 10:37:10 -0500
-Message-ID: <1233934630.17551.1.camel@think.oraclecorp.com>
-References: <a4423d670902060710m4919f6d6p1ffae13859c891be@mail.gmail.com>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH] revert headers_check fix: ia64, fpu.h
+Date: Fri, 6 Feb 2009 16:45:39 +0100
+Message-ID: <20090206154539.GP18368@elte.hu>
+References: <20090206164546.6291.KOSAKI.MOTOHIRO@jp.fujitsu.com> <3f9a31f40902060053x18dacf58u40c739ab89f13860@mail.gmail.com> <20090206180957.6294.KOSAKI.MOTOHIRO@jp.fujitsu.com> <20090206145556.GH18368@elte.hu> <1233934141.3209.20.camel@localhost.localdomain> <20090206153315.GD13758@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <a4423d670902060710m4919f6d6p1ffae13859c891be@mail.gmail.com>
-Sender: owner-linux-mm@kvack.org
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-btrfs@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx3.mail.elte.hu ([157.181.1.138]:42940 "EHLO mx3.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751766AbZBFPqJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 6 Feb 2009 10:46:09 -0500
+Content-Disposition: inline
+In-Reply-To: <20090206153315.GD13758@n2100.arm.linux.org.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Jaswinder Singh Rajput <jaswinder@kernel.org>, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>, Jaswinder Singh Rajput <jaswinderlinux@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Sam Ravnborg <sam@ravnborg.org>, Andrew Morton <akpm@linux-foundation.org>, hskinnemoen@atmel.com, cooloney@kernel.org, tony.luck@intel.com, ralf@linux-mips.org, dhowells@redhat.com, matthew@wil.cx, chris@zankel.net, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-ia64 <linux-ia64@vger.kernel.org>
 
-On Fri, 2009-02-06 at 18:10 +0300, Alexander Beregalov wrote:
-> Hi
+
+* Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
+
+> On Fri, Feb 06, 2009 at 08:59:01PM +0530, Jaswinder Singh Rajput wrote:
+> > On Fri, 2009-02-06 at 15:55 +0100, Ingo Molnar wrote:
+> > > * KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com> wrote:
+> > > 
+> > > > > > Index: b/arch/ia64/include/asm/fpu.h
+> > > > > > ===================================================================
+> > > > > > --- a/arch/ia64/include/asm/fpu.h
+> > > > > > +++ b/arch/ia64/include/asm/fpu.h
+> > > > > > @@ -6,7 +6,7 @@
+> > > > > >  *     David Mosberger-Tang <davidm@hpl.hp.com>
+> > > > > >  */
+> > > > > >
+> > > > > > -#include <linux/types.h>
+> > > > > > +#include <asm/types.h>
+> > > > > >
+> > > > > 
+> > > > > No , we do not even need asm/types.h
+> > > > > 
+> > > > > Subject: [PATCH] Neither asm/types.h nor linux/types.h is not required
+> > > > > for arch/ia64/include/asm/fpu.h
+> > > > > 
+> > > > > Signed-off-by: Jaswinder Singh Rajput <jaswinderrajput@gmail.com>
+> > > > 
+> > > > ok. I confirmed.
+> > > > 	Tested-by: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
+> > > > 	Reviewed-by: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
+> > > 
+> > > Thanks.
+> > > 
+> > > Jaswinder, mind adding these tags to the commit and sending a pull request 
+> > > with all fixes?
+> > 
+> > The following changes since commit 0b86a4e34d885e734a4c4e46293376f3f1c639eb:
+> >   Ingo Molnar (1):
+> >         Merge branch 'core/header-fixes' of git://git.kernel.org/.../jaswinder/linux-2.6-tip into core/header-fixes
+> > 
+> > are available in the git repository at:
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/jaswinder/linux-2.6-tip.git core/header-fixes
+> > 
+> > Jaswinder Singh Rajput (2):
+> >       Neither asm/types.h nor linux/types.h is required for arch/ia64/include/asm/fpu.h
+> >       make linux/types.h as assembly safe
 > 
-> I run dbench on btrfs, which is on file on xfs
-> 
-> btrfs: disabling barriers on dev /dev/loop/0
-> ------------[ cut here ]------------
-> kernel BUG at mm/slub.c:1132!
-> invalid opcode: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC
-> last sysfs file: /sys/kernel/uevent_seqnum
+> I continue to disagree with the need for the second patch.
 
-Btrfs hammers on slab caches quite a lot, can you reproduce this without
-loop or without btrfs?
+But have not replied to my mail about that so far.
 
--chris
+Why is it wrong to make types.h an assembly-invariant? It is positively 
+helpful for mixed-mode headers and has no downsides whatsoever.
 
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+	Ingo
