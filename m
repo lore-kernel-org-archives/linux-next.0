@@ -1,60 +1,34 @@
-From: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-Subject: Re: [linux-next][PATCH] revert headers_check fix: ia64, fpu.h
-Date: Fri,  6 Feb 2009 18:11:15 +0900 (JST)
-Message-ID: <20090206180957.6294.KOSAKI.MOTOHIRO@jp.fujitsu.com>
-References: <20090206164546.6291.KOSAKI.MOTOHIRO@jp.fujitsu.com> <3f9a31f40902060053x18dacf58u40c739ab89f13860@mail.gmail.com>
+From: Andreas Schwab <schwab@suse.de>
+Subject: Re: [PATCH/RFC] m68k: atari - Rename "mfp" to "st_mfp"
+Date: Fri, 06 Feb 2009 11:37:29 +0100
+Message-ID: <jeiqnnvok6.fsf@sykes.suse.de>
+References: <Pine.LNX.4.64.0902052159220.16817@anakin>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757835AbZBFJLm@vger.kernel.org>
-In-Reply-To: <3f9a31f40902060053x18dacf58u40c739ab89f13860@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaswinder Singh Rajput <jaswinderlinux@gmail.com>
-Cc: kosaki.motohiro@jp.fujitsu.com, Jaswinder Singh Rajput <jaswinder@kernel.org>, Ingo Molnar <mingo@elte.hu>, Linus Torvalds <torvalds@linux-foundation.org>, Sam Ravnborg <sam@ravnborg.org>, Andrew Morton <akpm@linux-foundation.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, hskinnemoen@atmel.com, cooloney@kernel.org, tony.luck@intel.com, ralf@linux-mips.org, dhowells@redhat.com, matthew@wil.cx, chris@zankel.net, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-ia64 <linux-ia64@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.suse.de ([195.135.220.15]:42942 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753580AbZBFKhb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 6 Feb 2009 05:37:31 -0500
+In-Reply-To: <Pine.LNX.4.64.0902052159220.16817@anakin> (Geert Uytterhoeven's
+	message of "Thu, 5 Feb 2009 22:07:08 +0100 (CET)")
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux/m68k <linux-m68k@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-> > Index: b/arch/ia64/include/asm/fpu.h
-> > ===================================================================
-> > --- a/arch/ia64/include/asm/fpu.h
-> > +++ b/arch/ia64/include/asm/fpu.h
-> > @@ -6,7 +6,7 @@
-> >  *     David Mosberger-Tang <davidm@hpl.hp.com>
-> >  */
-> >
-> > -#include <linux/types.h>
-> > +#include <asm/types.h>
-> >
-> 
-> No , we do not even need asm/types.h
-> 
-> Subject: [PATCH] Neither asm/types.h nor linux/types.h is not required
-> for arch/ia64/include/asm/fpu.h
-> 
-> Signed-off-by: Jaswinder Singh Rajput <jaswinderrajput@gmail.com>
+Geert Uytterhoeven <geert@linux-m68k.org> writes:
 
-ok. I confirmed.
-	Tested-by: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-	Reviewed-by: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
+> Atari guys: If I'm not mistaken, the first MFP is the ST-MFP?
 
-thanks.
+Right.
 
+Andreas.
 
-> ---
->  arch/ia64/include/asm/fpu.h |    2 --
->  1 files changed, 0 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/ia64/include/asm/fpu.h b/arch/ia64/include/asm/fpu.h
-> index b6395ad..0c26157 100644
-> --- a/arch/ia64/include/asm/fpu.h
-> +++ b/arch/ia64/include/asm/fpu.h
-> @@ -6,8 +6,6 @@
->   *     David Mosberger-Tang <davidm@hpl.hp.com>
->   */
-> 
-> -#include <linux/types.h>
-> -
->  /* floating point status register: */
->  #define FPSR_TRAP_VD   (1 << 0)        /* invalid op trap disabled */
->  #define FPSR_TRAP_DD   (1 << 1)        /* denormal trap disabled */
-> -- 
-> 1.6.1.1
+--=20
+Andreas Schwab, SuSE Labs, schwab@suse.de
+SuSE Linux Products GmbH, Maxfeldstra=DFe 5, 90409 N=FCrnberg, Germany
+PGP key fingerprint =3D 58CA 54C7 6D53 942B 1756  01D3 44D5 214B 8276 4=
+ED5
+"And now for something completely different."
