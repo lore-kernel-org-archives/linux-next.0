@@ -1,52 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: ide tree build failure
-Date: Fri, 6 Feb 2009 14:35:31 +1100
-Message-ID: <20090206143531.bd0c748b.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the security-testing tree with Linus'
+ tree
+Date: Fri, 6 Feb 2009 18:23:37 +1100
+Message-ID: <20090206182337.6673aabc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__6_Feb_2009_14_35_31_+1100_JySEsPHEuq1jkf6S"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50010 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40921 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752231AbZBFDfh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 5 Feb 2009 22:35:37 -0500
+	id S1751491AbZBFHXk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 6 Feb 2009 02:23:40 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Cc: linux-next@vger.kernel.org
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>, Mimi Zohar <zohar@linux.vnet.ibm.com>
 
---Signature=_Fri__6_Feb_2009_14_35_31_+1100_JySEsPHEuq1jkf6S
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi James,
 
-Hi Bart,
+Today's linux-next merge of the security-testing tree got a conflict in
+fs/namei.c between commit cb23beb55100171646e69e248fb45f10db6e99a4 ("kill
+vfs_permission") from Linus' tree and commit
+6146f0d5e47ca4047ffded0fb79b6c25359b386c ("integrity: IMA hooks") from
+the security-testing tree.
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-
-drivers/ide/scc_pata.c: In function 'scc_tf_load':
-drivers/ide/scc_pata.c:675: error: 'IDE_TFLAG_FLAGGED' undeclared (first us=
-e in this function)
-
-Caused by commit 0b6008f9f765b9988b3f86c5fe74cd9873d34c61 ("ide: add
-"flagged" taskfile flags to struct ide_taskfile").
-
-I have dropped the ide tree for today.
---=20
+Just a context change.  I fixed it up (see below) and can carry the fix
+for a while.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__6_Feb_2009_14_35_31_+1100_JySEsPHEuq1jkf6S
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkmLsAMACgkQjjKRsyhoI8z+IACeO8qwex2Wy7Vn+hFRVTV63g30
-wdUAnRccpYSLyHDykExuOj/psnQ9+6+f
-=3X79
------END PGP SIGNATURE-----
-
---Signature=_Fri__6_Feb_2009_14_35_31_+1100_JySEsPHEuq1jkf6S--
+diff --cc fs/namei.c
+index bbc15c2,734f2b5..0000000
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@@ -848,8 -860,9 +849,10 @@@ static int __link_path_walk(const char 
+  		nd->flags |= LOOKUP_CONTINUE;
+  		err = exec_permission_lite(inode);
+  		if (err == -EAGAIN)
+ -			err = vfs_permission(nd, MAY_EXEC);
+ +			err = inode_permission(nd->path.dentry->d_inode,
+ +					       MAY_EXEC);
++ 		if (!err)
++ 			err = ima_path_check(&nd->path, MAY_EXEC);
+   		if (err)
+  			break;
+  
+@@@ -1506,9 -1525,14 +1509,14 @@@ int may_open(struct path *path, int acc
+  		flag &= ~O_TRUNC;
+  	}
+  
+ -	error = vfs_permission(nd, acc_mode);
+ +	error = inode_permission(inode, acc_mode);
+  	if (error)
+  		return error;
++ 
++ 	error = ima_path_check(&nd->path,
++ 			       acc_mode & (MAY_READ | MAY_WRITE | MAY_EXEC));
++ 	if (error)
++ 		return error;
+  	/*
+  	 * An append-only file must be opened in append mode for writing.
+  	 */
