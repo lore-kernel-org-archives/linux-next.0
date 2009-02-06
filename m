@@ -1,28 +1,51 @@
-From: Siemens Award Team <info@lely.co.uk>
-Subject: Siemens BONANZA
-Date: Fri,  6 Feb 2009 04:31:20 +0200 (IST)
-Message-ID: <20090206043120.FPG05601__24888.9523944401$1233887605$gmane$org@mas26.bezeqint.net>
-Reply-To: agt_bwilliams02@live.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pci tree with the pci-current tree
+Date: Fri, 6 Feb 2009 13:50:41 +1100
+Message-ID: <20090206135041.fd7a8e7e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__6_Feb_2009_13_50_41_+1100_0OTgCXK9StTGcirF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from omr3.bezeqint.net ([192.115.104.13]:37897 "EHLO
-	omr3.bezeqint.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753175AbZBFCba convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Feb 2009 21:31:30 -0500
+Received: from chilli.pcug.org.au ([203.10.76.44]:60077 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750885AbZBFCus (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Feb 2009 21:50:48 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>
 
-Your Email ID Has been awarded the sum of =A3750,000.00 GBP in=20
-our Recent Siemens BONANZA for this year.get back to this=20
-office with your details via (agt_bwilliams02@live.com)=20
+--Signature=_Fri__6_Feb_2009_13_50_41_+1100_0OTgCXK9StTGcirF
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Name:
-Country:
-Sex:
-Age:
-Address:
+Hi Jesse,
 
-Mrs Mercy Bill
-(Information Officer)
+Today's linux-next merge of the pci tree got a conflict in
+drivers/pci/pcie/portdrv_pci.c between commit
+27be54a65c89c4b4aa9b25fc6fba31ffd01a08ca ("PCI: PCIe portdrv: Simplify
+suspend and resume") from the pci-current tree and commit
+120d3f44dd4c7a16ac71f26d4ff44ad7498cb81a ("PCI: PCIe portdrv: Implement
+pm object") from the pci tree.
+
+I fixed it up (I used the pci tree version) and assume it will be fixed in
+the pci tree soon.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__6_Feb_2009_13_50_41_+1100_0OTgCXK9StTGcirF
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkmLpYEACgkQjjKRsyhoI8zLLgCeNrakeLMvvOF5lZvEHPOq9BVx
+TPoAoI2/8BOeVqbwCDI6TWof6Kk8Vnox
+=MCzZ
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__6_Feb_2009_13_50_41_+1100_0OTgCXK9StTGcirF--
