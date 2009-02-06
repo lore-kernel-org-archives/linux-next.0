@@ -1,48 +1,33 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH] revert headers_check fix: ia64, fpu.h
-Date: Fri, 6 Feb 2009 17:01:00 +0100
-Message-ID: <20090206160100.GS18368@elte.hu>
-References: <20090206164546.6291.KOSAKI.MOTOHIRO@jp.fujitsu.com> <3f9a31f40902060053x18dacf58u40c739ab89f13860@mail.gmail.com> <20090206180957.6294.KOSAKI.MOTOHIRO@jp.fujitsu.com> <20090206145556.GH18368@elte.hu> <1233934141.3209.20.camel@localhost.localdomain> <20090206153315.GD13758@n2100.arm.linux.org.uk> <20090206154539.GP18368@elte.hu> <20090206154917.GE13758@n2100.arm.linux.org.uk>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: next-20090202: task kmemleak:763 blocked for more than
+	120seconds.
+Date: Fri, 06 Feb 2009 16:02:58 +0000
+Message-ID: <1233936178.10555.16.camel@pc1117.cambridge.arm.com>
+References: <20090203205204.GC6344@nowhere>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:58646 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750831AbZBFQB3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 6 Feb 2009 11:01:29 -0500
-Content-Disposition: inline
-In-Reply-To: <20090206154917.GE13758@n2100.arm.linux.org.uk>
+Received: from cam-admin0.cambridge.arm.com ([193.131.176.58]:43678 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752376AbZBFQDJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Feb 2009 11:03:09 -0500
+In-Reply-To: <20090203205204.GC6344@nowhere>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Jaswinder Singh Rajput <jaswinder@kernel.org>, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>, Jaswinder Singh Rajput <jaswinderlinux@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Sam Ravnborg <sam@ravnborg.org>, Andrew Morton <akpm@linux-foundation.org>, hskinnemoen@atmel.com, cooloney@kernel.org, tony.luck@intel.com, ralf@linux-mips.org, dhowells@redhat.com, matthew@wil.cx, chris@zankel.net, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-ia64 <linux-ia64@vger.kernel.org>
+To: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Mandeep Singh Baines <msb@google.com>, Alexander Beregalov <a.beregalov@gmail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
+On Tue, 2009-02-03 at 20:52 +0000, Frederic Weisbecker wrote:
+> Note that requiring kmemleak to be freezable looks only relevant if it does
+> some memory allocations (hibernation needs some memory and prefer that there
+> are not too much parallel memory allocations.)
 
-* Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
+OK. In this case, there is no need for the kmemleak thread to be
+freezable. It only scans the memory periodically but doesn't allocate
+any itself.
 
-> On Fri, Feb 06, 2009 at 04:45:39PM +0100, Ingo Molnar wrote:
-> > 
-> > * Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
-> > 
-> > > On Fri, Feb 06, 2009 at 08:59:01PM +0530, Jaswinder Singh Rajput wrote:
-> > > > Jaswinder Singh Rajput (2):
-> > > >       Neither asm/types.h nor linux/types.h is required for arch/ia64/include/asm/fpu.h
-> > > >       make linux/types.h as assembly safe
-> > > 
-> > > I continue to disagree with the need for the second patch.
-> > 
-> > But have not replied to my mail about that so far.
-> 
-> Sigh.  No I didn't - because I also got a reply from Jaswinder and
-> covered all points in _that_ reply.
-> 
-> Would you like me to re-send my reply so that you can appear in the To:
-> header?
-> 
-> Stop making this discussion stupidly obtuse.
+Thanks.
 
-I am not making anything stupidly obtuse, your reply to Jaswinder was in a 
-different (but related) portion of the thread, that i have not read yet at 
-that point. I have read it now and have replied.
-
-	Ingo
+-- 
+Catalin
