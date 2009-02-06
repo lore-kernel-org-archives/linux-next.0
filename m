@@ -1,43 +1,88 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: linux-next: security-testing tree build failure
-Date: Fri, 6 Feb 2009 19:14:11 +1100 (EST)
-Message-ID: <alpine.LRH.1.10.0902061912240.16725@tundra.namei.org>
-References: <20090206182831.c18a56a0.sfr@canb.auug.org.au>
+From: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
+Subject: [linux-next][PATCH] revert headers_check fix: ia64, fpu.h
+Date: Fri,  6 Feb 2009 17:19:00 +0900 (JST)
+Message-ID: <20090206164546.6291.KOSAKI.MOTOHIRO@jp.fujitsu.com>
+References: <1233385816.17794.16.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tundra.namei.org ([65.99.196.166]:3400 "EHLO tundra.namei.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752675AbZBFIO0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 6 Feb 2009 03:14:26 -0500
-In-Reply-To: <20090206182831.c18a56a0.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>, Mimi Zohar <zohar@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-ia64-owner@vger.kernel.org>
+In-Reply-To: <1233385816.17794.16.camel@localhost.localdomain>
+Sender: linux-ia64-owner@vger.kernel.org
+To: Jaswinder Singh Rajput <jaswinder@kernel.org>
+Cc: kosaki.motohiro@jp.fujitsu.com, Ingo Molnar <mingo@elte.hu>, Linus Torvalds <torvalds@linux-foundation.org>, Sam Ravnborg <sam@ravnborg.org>, Andrew Morton <akpm@linux-foundation.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, hskinnemoen@atmel.com, cooloney@kernel.org, tony.luck@intel.com, ralf@linux-mips.org, dhowells@redhat.com, matthew@wil.cx, chris@zankel.net, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-ia64 <linux-ia64@vger.kernel.org>Tony Luck <tony.luck@intel.com>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 6 Feb 2009, Stephen Rothwell wrote:
+> diff --git a/arch/ia64/include/asm/fpu.h b/arch/ia64/include/asm/fpu.h
+> index 3859558..b6395ad 100644
+> --- a/arch/ia64/include/asm/fpu.h
+> +++ b/arch/ia64/include/asm/fpu.h
+> @@ -6,7 +6,7 @@
+>   *	David Mosberger-Tang <davidm@hpl.hp.com>
+>   */
+>  
+> -#include <asm/types.h>
+> +#include <linux/types.h>
 
-> Hi James,
-> 
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> 
-> fs/namei.c: In function 'may_open':
-> fs/namei.c:1516: error: 'nd' undeclared (first use in this function)
-> 
-> Caused by commit 6146f0d5e47ca4047ffded0fb79b6c25359b386c ("integrity:
-> IMA hooks").
-> 
-> The "nd" parameter to may_open() was removed in commit
-> 3fb64190aa3c23c10e6e9fd0124ac030115c99bf ("pass a struct path * to
-> may_open") before 2.6.29-rc1.
-> 
-> I have dropped the security-testing tree for today.
+this change break ia64 build perfectly.
+this patch seems don't tested at all.
 
-This was also fixed before I pushed my tree out (can you re-pull the 
-security-testing tree at ~11am your time if you get a conflict?  chances 
-are I've fixed it by then).
+Ingo, I hope you ask patch author how to test posted patch ;-)
 
--- 
-James Morris
-<jmorris@namei.org>
+==
+Subject: [PATCH] revert headers_check fix: ia64, fpu.h
+
+commit fa9ea6c7abd94482ecd84e130676b6a1b3e61c2c break ia64 build perfectly.
+it because ia64 has following include file dependency.
+
+entry.S
+ -> asm/processor.h
+    -> asm/ptrace.h
+       -> asm/fpu.h
+
+Then, above commit introduce below dependency.
+
+entry.S
+ -> asm/processor.h
+    -> asm/ptrace.h
+       -> asm/fpu.h
+          -> linux/types.h
+             -> linux/posix_types.h
+                -> linux/stddef.h
+
+Then, assembler can't intepret following statement in stddef.h
+
+enum {
+        false   = 0,
+        true    = 1
+};
+
+
+Therefore, >100 line tons error was outputed.
+
+
+Signed-off-by: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
+Cc: Jaswinder Singh Rajput <jaswinder@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next <linux-next@vger.kernel.org>
+Cc: linux-ia64 <linux-ia64@vger.kernel.org>
+Cc: Tony Luck <tony.luck@intel.com>
+---
+ arch/ia64/include/asm/fpu.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: b/arch/ia64/include/asm/fpu.h
+===================================================================
+--- a/arch/ia64/include/asm/fpu.h
++++ b/arch/ia64/include/asm/fpu.h
+@@ -6,7 +6,7 @@
+  *	David Mosberger-Tang <davidm@hpl.hp.com>
+  */
+ 
+-#include <linux/types.h>
++#include <asm/types.h>
+ 
+ /* floating point status register: */
+ #define FPSR_TRAP_VD	(1 << 0)	/* invalid op trap disabled */
+
+
