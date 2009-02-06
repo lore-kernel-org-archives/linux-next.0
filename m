@@ -1,39 +1,22 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: manual merge of the pci tree with the pci-current tree
-Date: Fri, 6 Feb 2009 09:09:31 -0800
-Message-ID: <200902060909.32549.jbarnes@virtuousgeek.org>
-References: <20090206135041.fd7a8e7e.sfr@canb.auug.org.au>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [linux-next][PATCH] revert headers_check fix: ia64, fpu.h
+Date: Fri, 6 Feb 2009 17:22:07 +0000
+Message-ID: <20090206172207.GL13758@n2100.arm.linux.org.uk>
+References: <20090206145556.GH18368@elte.hu> <1233934141.3209.20.camel@localhost.localdomain> <20090206153315.GD13758@n2100.arm.linux.org.uk> <1233935328.3209.30.camel@localhost.localdomain> <20090206155512.GF13758@n2100.arm.linux.org.uk> <20090206161229.GA8256@elte.hu> <20090206162352.GI13758@n2100.arm.linux.org.uk> <20090206163314.GA11216@elte.hu> <20090206163857.GJ13758@n2100.arm.linux.org.uk> <20090206171400.GA14818@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from outbound-mail-127.bluehost.com ([67.222.38.27]:44487 "HELO
-	outbound-mail-127.bluehost.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1752893AbZBFRQO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Feb 2009 12:16:14 -0500
-In-Reply-To: <20090206135041.fd7a8e7e.sfr@canb.auug.org.au>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-ia64-owner@vger.kernel.org>
 Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>
+In-Reply-To: <20090206171400.GA14818@elte.hu>
+Sender: linux-ia64-owner@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Jaswinder Singh Rajput <jaswinder@kernel.org>, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>, Jaswinder Singh Rajput <jaswinderlinux@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Sam Ravnborg <sam@ravnborg.org>, Andrew Morton <akpm@linux-foundation.org>, hskinnemoen@atmel.com, cooloney@kernel.org, tony.luck@intel.com, ralf@linux-mips.org, dhowells@redhat.com, matthew@wil.cx, chris@zankel.net, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-ia64 <linux-ia64@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Thursday, February 5, 2009 6:50 pm Stephen Rothwell wrote:
-> Hi Jesse,
->
-> Today's linux-next merge of the pci tree got a conflict in
-> drivers/pci/pcie/portdrv_pci.c between commit
-> 27be54a65c89c4b4aa9b25fc6fba31ffd01a08ca ("PCI: PCIe portdrv: Simplify
-> suspend and resume") from the pci-current tree and commit
-> 120d3f44dd4c7a16ac71f26d4ff44ad7498cb81a ("PCI: PCIe portdrv: Implement
-> pm object") from the pci tree.
->
-> I fixed it up (I used the pci tree version) and assume it will be fixed in
-> the pci tree soon.
+On Fri, Feb 06, 2009 at 06:14:00PM +0100, Ingo Molnar wrote:
+> I take this that you kind of agree that that removing ugly #ifdefs spread 
+> out is an upside. You failed to point out any downsides - you just seem to 
+> claim that you can live without the upsides. That is fine.
 
-Oops yeah, thanks for bringing this up.  I didn't rebase my linux-next branch 
-on top of my for-linus branch with the last set of changes...  Will do.
-
--- 
-Jesse Barnes, Intel Open Source Technology Center
+I'm sorry, I thought I pointed them out in my previous emails.  Clearly
+you didn't read those emails in spite of replying to them.
