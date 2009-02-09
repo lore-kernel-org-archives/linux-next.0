@@ -1,54 +1,39 @@
 From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: Re: next-20090206: deadlock on ext4
-Date: Mon, 9 Feb 2009 15:01:13 +0300
-Message-ID: <a4423d670902090401k716d054eo25640aa2207beca7@mail.gmail.com>
-References: <a4423d670902060935y59e540beta417144935416560@mail.gmail.com>
-	 <498C7671.1050309@redhat.com>
-	 <a4423d670902061004i424817e1vd699a61e335f010a@mail.gmail.com>
-	 <498C9876.3060208@redhat.com>
+Subject: Re: next-20090206: kernel BUG at mm/slub.c:1132
+Date: Mon, 9 Feb 2009 16:44:20 +0300
+Message-ID: <a4423d670902090544g7b7dbe9aj415141c46d1fc95f@mail.gmail.com>
+References: <a4423d670902060710m4919f6d6p1ffae13859c891be@mail.gmail.com>
+	 <1233934630.17551.1.camel@think.oraclecorp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f26.google.com ([209.85.219.26]:40265 "EHLO
-	mail-ew0-f26.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752306AbZBIMBP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Feb 2009 07:01:15 -0500
-In-Reply-To: <498C9876.3060208@redhat.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Eric Sandeen <sandeen@redhat.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <1233934630.17551.1.camel@think.oraclecorp.com>
+Sender: owner-linux-mm@kvack.org
+To: Chris Mason <chris.mason@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-btrfs@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-2009/2/6 Eric Sandeen <sandeen@redhat.com>:
-> Alexander Beregalov wrote:
->> 2009/2/6 Eric Sandeen <sandeen@redhat.com>:
->>> Alexander Beregalov wrote:
->>>> Hi
->>>>
->>>> I run dbench on ext4 on loop device.
->>>>
->>>> EXT4-fs: barriers enabled
->>>> kjournald2 starting: pid 2420, dev loop0:8, commit interval 5 seconds
->>>> EXT4 FS on loop0, internal journal on loop0:8
->>>> EXT4-fs: delayed allocation enabled
->>>> EXT4-fs: file extents enabled
->>>> EXT4-fs: mballoc enabled
->>>> EXT4-fs: mounted filesystem loop0 with ordered data mode
->>>> JBD: barrier-based sync failed on loop0:8 - disabling barriers
->>>>
->>>> INFO: task pdflush:2339 blocked for more than 120 seconds.
->>> Looks a lot like a bug I filed:
->>>
->>> http://bugzilla.kernel.org/show_bug.cgi?id=12579
->>>
->>> but I'm having trouble reproducing it, now.  I'll try dbench!
->> Yes, I can reproduce it easy with dbench.
+2009/2/6 Chris Mason <chris.mason@oracle.com>:
+> On Fri, 2009-02-06 at 18:10 +0300, Alexander Beregalov wrote:
+>> Hi
+>>
+>> I run dbench on btrfs, which is on file on xfs
+>>
+>> btrfs: disabling barriers on dev /dev/loop/0
+>> ------------[ cut here ]------------
+>> kernel BUG at mm/slub.c:1132!
+>> invalid opcode: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC
+>> last sysfs file: /sys/kernel/uevent_seqnum
 >
-> Do you only hit it on loopback?  What is the filesystem hosting the loop
-> file?
+> Btrfs hammers on slab caches quite a lot, can you reproduce this without
+> loop or without btrfs?
+Hi Chris
 
-I have reproduced it with 2.6.29-rc4.
-Loop file was on XFS.
-I can not reproduce it on ext4 on raw device.
-Let me know if I can do anything else to help resolving it.
+No, I can not reproduce it without loop.
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
