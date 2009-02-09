@@ -1,36 +1,33 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [PATCH -next] alpha: fix link error re stacktrace
-Date: Tue, 10 Feb 2009 00:38:36 +0300
-Message-ID: <20090209213836.GA9492@x200.localdomain>
-References: <20090209193908.1a448944.sfr@canb.auug.org.au>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: linux-next: quota tree build failure
+Date: Mon, 9 Feb 2009 22:36:35 +0100
+Message-ID: <20090209213635.GA10838@duck.suse.cz>
+References: <20090206141806.fdbd5cc3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fg-out-1718.google.com ([72.14.220.155]:11052 "EHLO
-	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754186AbZBIVc3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Feb 2009 16:32:29 -0500
-Received: by fg-out-1718.google.com with SMTP id 16so1156152fgg.17
-        for <linux-next@vger.kernel.org>; Mon, 09 Feb 2009 13:32:27 -0800 (PST)
+Received: from styx.suse.cz ([82.119.242.94]:42798 "EHLO mail.suse.cz"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1755885AbZBIVgh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 Feb 2009 16:36:37 -0500
 Content-Disposition: inline
-In-Reply-To: <20090209193908.1a448944.sfr@canb.auug.org.au>
+In-Reply-To: <20090206141806.fdbd5cc3.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, mingo@elte.hu
-Cc: linux-next@vger.kernel.org, acme@redhat.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-Please, fold this into 32c0bd9624115041cfec31c0436995418083090a
-"blktrace: the ftrace interface needs CONFIG_TRACING"
-to fix link error on alpha (which doesn't implenent stacktrace support)
+  Hi Stephen,
 
---- a/block/Kconfig
-+++ b/block/Kconfig
-@@ -51,7 +51,7 @@ config BLK_DEV_IO_TRACE
- 	select DEBUG_FS
- 	select TRACEPOINTS
- 	select TRACING
--	select STACKTRACE
-+	select STACKTRACE if STACKTRACE_SUPPORT
- 	help
- 	  Say Y here if you want to be able to trace the block layer actions
- 	  on a given queue. Tracing allows you to see any traffic happening
+On Fri 06-02-09 14:18:06, Stephen Rothwell wrote:
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> 
+> fs/nfsd/vfs.c: In function 'nfsd_setattr':
+> fs/nfsd/vfs.c:359: error: implicit declaration of function 'DQUOT_INIT'
+> 
+> Caused by commit 74d9386bc58d5f8b5bcee051e04e7123cd9cac88 ("quota: Remove
+> uppercase aliases for quota functions").  Seems you missed at least one
+> of the users.
+  Thanks for the pointer. Fixed.
+
+									Honza
