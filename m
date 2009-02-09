@@ -1,33 +1,84 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: linux-next: quota tree build failure
-Date: Mon, 9 Feb 2009 22:36:35 +0100
-Message-ID: <20090209213635.GA10838@duck.suse.cz>
-References: <20090206141806.fdbd5cc3.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for February 9 (ide-dma)
+Date: Mon, 09 Feb 2009 13:50:20 -0800
+Message-ID: <4990A51C.1090607@oracle.com>
+References: <20090209193908.1a448944.sfr@canb.auug.org.au> <499064CC.1030907@oracle.com> <200902091956.54226.bzolnier@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from styx.suse.cz ([82.119.242.94]:42798 "EHLO mail.suse.cz"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1755885AbZBIVgh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 Feb 2009 16:36:37 -0500
-Content-Disposition: inline
-In-Reply-To: <20090206141806.fdbd5cc3.sfr@canb.auug.org.au>
+Received: from rcsinet13.oracle.com ([148.87.113.125]:24685 "EHLO
+	rgminet13.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752297AbZBIVuM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Feb 2009 16:50:12 -0500
+In-Reply-To: <200902091956.54226.bzolnier@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org
 
-  Hi Stephen,
-
-On Fri 06-02-09 14:18:06, Stephen Rothwell wrote:
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+Bartlomiej Zolnierkiewicz wrote:
+> On Monday 09 February 2009, Randy Dunlap wrote:
+>> Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> [I accidentally deleted the merge and quilt-import logs today :-( - I
+>>> wonder if any would have noticed :-).  The merge summary still appears
+>>> below.]
+>>>
+>>> Changes since 20090206:
+>>>
+>>> New tree:
+>>> 	aoe
+>>>
+>>> Undropped trees:
+>>> 	ide
+>>
+>> When CONFIG_BLK_DEV_IDEDMA=n:
+>>
+>> drivers/ide/ide-taskfile.c:104: error: implicit declaration of function 'ide_build_sglist'
 > 
-> fs/nfsd/vfs.c: In function 'nfsd_setattr':
-> fs/nfsd/vfs.c:359: error: implicit declaration of function 'DQUOT_INIT'
-> 
-> Caused by commit 74d9386bc58d5f8b5bcee051e04e7123cd9cac88 ("quota: Remove
-> uppercase aliases for quota functions").  Seems you missed at least one
-> of the users.
-  Thanks for the pointer. Fixed.
+> Thanks.  Should be fixed with new revision of the guilty patch
+> (fix part is in <linux/ide.h> chunk):
 
-									Honza
+Ack.  That works.  Thanks.
+
+> From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+> Subject: [PATCH] ide: call ide_build_sglist() prior to ->dma_setup (v2)
+> 
+> * Re-map sg table if needed in ide_build_sglist().
+> 
+> * Move ide_build_sglist() call from ->dma_setup to its users.
+> 
+> * Un-export ide_build_sglist().
+> 
+> v2:
+> * Build fix for CONFIG_BLK_DEV_IDEDMA=n (noticed by Randy Dunlap).
+> 
+> There should be no functional changes caused by this patch.
+> 
+> Cc: Randy Dunlap <randy.dunlap@oracle.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+
+
+> Index: b/include/linux/ide.h
+> ===================================================================
+> --- a/include/linux/ide.h
+> +++ b/include/linux/ide.h
+> @@ -1474,6 +1474,8 @@ static inline int ide_set_dma(ide_drive_
+>  static inline void ide_check_dma_crc(ide_drive_t *drive) { ; }
+>  static inline ide_startstop_t ide_dma_timeout_retry(ide_drive_t *drive, int error) { return ide_stopped; }
+>  static inline void ide_release_dma_engine(ide_hwif_t *hwif) { ; }
+> +static inline int ide_build_sglist(ide_drive_t *drive,
+> +				   struct request *rq) { return 0; }
+>  #endif /* CONFIG_BLK_DEV_IDEDMA */
+>  
+>  #ifdef CONFIG_BLK_DEV_IDEACPI
+> 
+> 
+> 
+> 
+
+
+-- 
+~Randy
