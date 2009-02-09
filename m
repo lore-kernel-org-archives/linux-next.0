@@ -1,54 +1,50 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: acpi tree build failure
-Date: Fri, 6 Feb 2009 21:32:47 -0800
-Message-ID: <20090207053247.GA14918@kroah.com>
-References: <20090202132254.456b7725.sfr@canb.auug.org.au> <20090205131340.edc6e6a8.sfr@canb.auug.org.au> <20090205050056.GA7651@kroah.com> <alpine.LFD.2.00.0902062303090.26256@localhost.localdomain>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip-core tree with the x86 tree
+Date: Mon, 9 Feb 2009 11:24:53 +1100
+Message-ID: <20090209112453.7bb773f5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__9_Feb_2009_11_24_53_+1100_P23+BMsN3ED_mt1s"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:58139 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1754002AbZBGFit (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 7 Feb 2009 00:38:49 -0500
-Content-Disposition: inline
-In-Reply-To: <alpine.LFD.2.00.0902062303090.26256@localhost.localdomain>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46998 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754061AbZBIAZD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 8 Feb 2009 19:25:03 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Matthew Garrett <mjg59@srcf.ucam.org>, Kay Sievers <kay.sievers@vrfy.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Cyrill Gorcunov <gorcunov@gmail.com>, Jaswinder Singh Rajput <jaswinderrajput@gmail.com>
 
-On Fri, Feb 06, 2009 at 11:06:28PM -0500, Len Brown wrote:
-> 
-> On Wed, 4 Feb 2009, Greg KH wrote:
-> 
-> > On Thu, Feb 05, 2009 at 01:13:40PM +1100, Stephen Rothwell wrote:
-> > > Greg, Len,
-> > > 
-> > > On Mon, 2 Feb 2009 13:22:54 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > >
-> > > > drivers/platform/x86/oqo-wmi.c: In function 'oqo_kine_init':
-> > > > drivers/platform/x86/oqo-wmi.c:595: error: 'struct device' has no member named 'bus_id'
-> > > > 
-> > > > Caused by commit 03919980ad590ad5c5c181d1bd7d58513ad170bc ("platform/x86:
-> > > > Add oqo-wmi driver for model 2 OQO backlight and rfkill control")
-> > > > interacting with commit c44c8304353aa6da82cbf98040c6a9c254e68e1c ("driver
-> > > > core: get rid of struct device's bus_id string array") from the
-> > > > driver-core tree.
-> > > 
-> > > Still getting this (of course).  Can you guys come up with a fix, please?
-> > 
-> > Len, you have the patch from Kay, what do you want to do with it?
-> 
-> I don't recall a patch from Kay specifically for OQO.
-> OQO is sitting in my tree to get exposure while it waits for
-> a few updates from Matthew.
+--Signature=_Mon__9_Feb_2009_11_24_53_+1100_P23+BMsN3ED_mt1s
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ah, sorry, I was confused with the other acpi bus_id patch.
+Hi all,
 
-> I think it can be restored with this 1 liner, which I can apply to it.
+Today's linux-next merge of the tip-core tree got a trivial conflict in
+arch/x86/include/asm/setup.h between commit
+dbca1df48e89d8aa59254fdc10ef16c16e73d94e ("x86: headers cleanup -
+setup.h") from the x86 tree and commit
+15c554439faedfa490389b31db893dc764245e88 ("headers_check fix: x86,
+setup.h") from the tip-core tree.
 
-Yes, your patch looks fine.
+I fixed it up as in tip/master.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-thanks,
+--Signature=_Mon__9_Feb_2009_11_24_53_+1100_P23+BMsN3ED_mt1s
+Content-Type: application/pgp-signature
 
-greg k-h
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkmPd9UACgkQjjKRsyhoI8zcZQCghTUBz0b2JyBwWHRuuDrrRceS
+99EAn2b1g4qX4ZHiR+WAtduO7okaK1Jc
+=XoeK
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__9_Feb_2009_11_24_53_+1100_P23+BMsN3ED_mt1s--
