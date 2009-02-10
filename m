@@ -1,69 +1,48 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH -next] alpha: fix link error re stacktrace
-Date: Mon, 9 Feb 2009 23:39:45 +0100
-Message-ID: <20090209223945.GA11841@elte.hu>
-References: <20090209193908.1a448944.sfr@canb.auug.org.au> <20090209213836.GA9492@x200.localdomain>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the sound tree with the pxa tree
+Date: Tue, 10 Feb 2009 14:22:30 +1100
+Message-ID: <20090210142230.07fdfe43.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:53963 "EHLO mx3.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52427 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752491AbZBIWj5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 Feb 2009 17:39:57 -0500
-Content-Disposition: inline
-In-Reply-To: <20090209213836.GA9492@x200.localdomain>
+	id S1751933AbZBJDWf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 Feb 2009 22:22:35 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, acme@redhat.com
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, Philipp Zabel <philipp.zabel@gmail.com>, Eric Miao <eric.miao@marvell.com>
 
+Hi Takashi,
 
-* Alexey Dobriyan <adobriyan@gmail.com> wrote:
+Today's linux-next merge of the sound tree got a conflict in
+sound/soc/pxa/pxa2xx-i2s.c between commit
+69e2a881351e31e936e3a75f8efff768f0edb2be ("[ARM] pxa: move DMA registers
+definitions into <mach/dma.h>") from the pxa tree and commit
+44dd2b9168350b82a671ce71666b99208ab2d973 ("ASoC: pxa2xx-i2s: remove I2S
+pin setup") from the sound tree.
 
-> Please, fold this into 32c0bd9624115041cfec31c0436995418083090a
-> "blktrace: the ftrace interface needs CONFIG_TRACING"
-> to fix link error on alpha (which doesn't implenent stacktrace support)
-> 
-> --- a/block/Kconfig
-> +++ b/block/Kconfig
-> @@ -51,7 +51,7 @@ config BLK_DEV_IO_TRACE
->  	select DEBUG_FS
->  	select TRACEPOINTS
->  	select TRACING
-> -	select STACKTRACE
-> +	select STACKTRACE if STACKTRACE_SUPPORT
->  	help
->  	  Say Y here if you want to be able to trace the block layer actions
->  	  on a given queue. Tracing allows you to see any traffic happening
+Just simple context change. I fiex it up (see below) and can carry the
+fix as necessary.
 
-This didnt apply to the latest tracing tree due to other, interacting changes - i 
-have applied the commit below - thanks Alexey!
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-	Ingo
-
------------------>
->From 510223da040cb7a7d6f524b12eeed03b3845aea1 Mon Sep 17 00:00:00 2001
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Tue, 10 Feb 2009 00:38:36 +0300
-Subject: [PATCH] alpha: fix link error re stacktrace
-
-Fix link error on alpha (which doesn't implenent stacktrace support).
-
-Signed-off-by: Ingo Molnar <mingo@elte.hu>
----
- kernel/trace/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index 3a33128..79be773 100644
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -310,7 +310,7 @@ config BLK_DEV_IO_TRACE
- 	select DEBUG_FS
- 	select TRACEPOINTS
- 	select TRACING
--	select STACKTRACE
-+	select STACKTRACE if STACKTRACE_SUPPORT
- 	help
- 	  Say Y here if you want to be able to trace the block layer actions
- 	  on a given queue. Tracing allows you to see any traffic happening
+diff --cc sound/soc/pxa/pxa2xx-i2s.c
+index 223de89,83b59d7..0000000
+--- a/sound/soc/pxa/pxa2xx-i2s.c
++++ b/sound/soc/pxa/pxa2xx-i2s.c
+@@@ -24,8 -24,7 +24,7 @@@
+  #include <sound/pxa2xx-lib.h>
+  
+  #include <mach/hardware.h>
+ -#include <mach/pxa-regs.h>
+ +#include <mach/dma.h>
+- #include <mach/pxa2xx-gpio.h>
+  #include <mach/audio.h>
+  
+  #include "pxa2xx-pcm.h"
