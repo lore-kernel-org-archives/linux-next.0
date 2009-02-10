@@ -1,45 +1,58 @@
-From: Eric Miao <ymiao3@marvell.com>
-Subject: RE: linux-next: manual merge of the sound tree with the pxa tree
-Date: Mon, 9 Feb 2009 19:35:07 -0800
-Message-ID: <F71A24FDAED97E4CB6D3A8E8A97D5C544138A8DA@SC-VEXCH1.marvell.com>
-References: <20090210142230.07fdfe43.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Tue, 10 Feb 2009 17:22:08 +1100
+Message-ID: <20090210172208.84d8b7dc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from host2.marvell.com ([65.219.4.2]:47927 "EHLO maili.marvell.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752196AbZBJDfL convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Feb 2009 22:35:11 -0500
-In-Reply-To: <20090210142230.07fdfe43.sfr@canb.auug.org.au>
-Content-Language: en-US
+Received: from chilli.pcug.org.au ([203.10.76.44]:54092 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751221AbZBJGWQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Feb 2009 01:22:16 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Takashi Iwai <tiwai@suse.de>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Philipp Zabel <philipp.zabel@gmail.com>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-> Just simple context change. I fiex it up (see below) and can carry the
-> fix as necessary.
+Hi Dave,
 
-Yes, this is correct. Thanks Stephen.
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/drm_memory.c between commit
+9b8d5a124f133fe9a75397d20b874844a2e3d7e9 ("drm/radeon: fix ioremap
+conflict with AGP mappings") from Linus' tree and commit
+b16d90f80a3707fff2d13627076362272a466849 ("drm: Split drm_map and
+drm_local_map") from the drm tree.
 
->
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
->
-> diff --cc sound/soc/pxa/pxa2xx-i2s.c
-> index 223de89,83b59d7..0000000
-> --- a/sound/soc/pxa/pxa2xx-i2s.c
-> +++ b/sound/soc/pxa/pxa2xx-i2s.c
-> @@@ -24,8 -24,7 +24,7 @@@
->   #include <sound/pxa2xx-lib.h>
->
->   #include <mach/hardware.h>
->  -#include <mach/pxa-regs.h>
->  +#include <mach/dma.h>
-> - #include <mach/pxa2xx-gpio.h>
->   #include <mach/audio.h>
->
->   #include "pxa2xx-pcm.h"
+Just a context change.  I fixed it up (see below) and can carry the fix
+for a while.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+diff --cc drivers/gpu/drm/drm_memory.c
+index bcc869b,1132d16..0000000
+--- a/drivers/gpu/drm/drm_memory.c
++++ b/drivers/gpu/drm/drm_memory.c
+@@@ -169,17 -169,12 +169,17 @@@ void drm_core_ioremap(struct drm_local_
+  }
+  EXPORT_SYMBOL(drm_core_ioremap);
+  
+- void drm_core_ioremap_wc(struct drm_map *map, struct drm_device *dev)
++ void drm_core_ioremap_wc(struct drm_local_map *map, struct drm_device *dev)
+  {
+ -	map->handle = ioremap_wc(map->offset, map->size);
+ +	if (drm_core_has_AGP(dev) &&
+ +	    dev->agp && dev->agp->cant_use_aperture && map->type == _DRM_AGP)
+ +		map->handle = agp_remap(map->offset, map->size, dev);
+ +	else
+ +		map->handle = ioremap_wc(map->offset, map->size);
+  }
+  EXPORT_SYMBOL(drm_core_ioremap_wc);
+ +
+- void drm_core_ioremapfree(struct drm_map *map, struct drm_device *dev)
++ void drm_core_ioremapfree(struct drm_local_map *map, struct drm_device *dev)
+  {
+  	if (!map->handle || !map->size)
+  		return;
