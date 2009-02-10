@@ -1,52 +1,61 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the trivial tree with the quota
- tree
-Date: Tue, 10 Feb 2009 10:42:17 +0100 (CET)
-Message-ID: <alpine.LNX.1.10.0902101039520.11630@jikos.suse.cz>
-References: <20090210183438.2099164f.sfr@canb.auug.org.au>
+From: "Sachin P. Sant" <sachinp@in.ibm.com>
+Subject: Re: next Feb 10: mm/slqb build break
+Date: Tue, 10 Feb 2009 15:24:47 +0530
+Message-ID: <49914EE7.7030205@in.ibm.com>
+References: <20090210194121.80256b72.sfr@canb.auug.org.au> <49914790.6050008@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from styx.suse.cz ([82.119.242.94]:52150 "EHLO mail.suse.cz"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751128AbZBJJmU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Feb 2009 04:42:20 -0500
-In-Reply-To: <20090210183438.2099164f.sfr@canb.auug.org.au>
+Received: from e23smtp06.au.ibm.com ([202.81.31.148]:50755 "EHLO
+	e23smtp06.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752027AbZBJJyw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Feb 2009 04:54:52 -0500
+In-Reply-To: <49914790.6050008@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Jan Kara <jack@suse.cz>
-Cc: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, npiggin@suse.de
 
-On Tue, 10 Feb 2009, Stephen Rothwell wrote:
+Sachin P. Sant wrote:
+> Hi Stephen,
+>
+> Todays next randconfig build on powerpc fails with
+>
+>  CC      mm/slqb.o
+> mm/slqb.c: In function __slab_free:
+> mm/slqb.c:1648: error: implicit declaration of function 
+> slab_free_to_remote
+> mm/slqb.c: In function kmem_cache_open:
+> mm/slqb.c:2174: error: implicit declaration of function 
+> kmem_cache_dyn_array_free
+> mm/slqb.c:2175: warning: label error_cpu_array defined but not used
+> mm/slqb.c: In function kmem_cache_destroy:
+> mm/slqb.c:2294: error: implicit declaration of function 
+> claim_remote_free_list
+> mm/slqb.c: In function kmem_cache_reap_percpu:
+> mm/slqb.c:2547: error: implicit declaration of function 
+> flush_remote_free_cache
+> mm/slqb.c: In function kmem_cache_init:
+> mm/slqb.c:2783: error: per_cpu__kmem_cpu_nodes undeclared (first use 
+> in this function)
+> mm/slqb.c:2783: error: (Each undeclared identifier is reported only once
+> mm/slqb.c:2783: error: for each function it appears in.)
+> mm/slqb.c:2784: error: kmem_cpu_cache undeclared (first use in this 
+> function)
+> make[1]: *** [mm/slqb.o] Error 1
+> make: *** [mm] Error 2
+CONFIG_SMP is not set hence the failure.
 
-> Today's linux-next merge of the trivial tree got a conflict in fs/Kconfig
-> between commit c417122fec0f6b10a6c338c84180c6b9e06601c8 ("quota: Move
-> quota files into separate directory") from the quota tree and commit
-> 8310459012b926e121b3546bfed833910dd6f3ef ("trivial: fix typos/grammar
-> errors in Kconfig texts") from the trivial tree.
-
-Thanks for notification Stephen. I have dropped the conflicting hunk from 
-my tree now. Jan, could you please take the patch below through your tree? 
+Thanks
+-Sachin
 
 
+-- 
 
-From: Matt LaPlante <kernel1@cyberdogtech.com>
-Subject: trivial: fix typos/grammar errors in fs/Kconfig
-
-Signed-off-by: Matt LaPlante <kernel1@cyberdogtech.com>
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 93945dd..951b310 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -87,7 +87,7 @@ config PRINT_QUOTA_WARNING
- 	  Note that this behavior is currently deprecated and may go away in
- 	  future. Please use notification via netlink socket instead.
- 
--# Generic support for tree structured quota files. Seleted when needed.
-+# Generic support for tree structured quota files. Selected when needed.
- config QUOTA_TREE
- 	 tristate
- 
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
