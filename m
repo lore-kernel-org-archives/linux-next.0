@@ -1,41 +1,60 @@
-From: "Sachin P. Sant" <sachinp@in.ibm.com>
-Subject: Next Feb 10 : build/break arch/s390kernel.irq.o
-Date: Tue, 10 Feb 2009 16:00:20 +0530
-Message-ID: <4991573C.8000609@in.ibm.com>
-References: <20090210194121.80256b72.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the sound tree with the pxa tree
+Date: Tue, 10 Feb 2009 21:36:03 +1100
+Message-ID: <20090210213603.e4673f18.sfr@canb.auug.org.au>
+References: <20090210142230.07fdfe43.sfr@canb.auug.org.au>
+	<F71A24FDAED97E4CB6D3A8E8A97D5C544138A8DA@SC-VEXCH1.marvell.com>
+	<s5h8woehdnp.wl%tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__10_Feb_2009_21_36_03_+1100_l6v8L0HpdMG+YOD_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp09.in.ibm.com ([59.145.155.9]:59195 "EHLO
-	e28smtp09.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752728AbZBJKaZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Feb 2009 05:30:25 -0500
-In-Reply-To: <20090210194121.80256b72.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:38685 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752736AbZBJKgL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Feb 2009 05:36:11 -0500
+In-Reply-To: <s5h8woehdnp.wl%tiwai@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, Mel Gorman <mel@csn.ul.ie>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Eric Miao <ymiao3@marvell.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Philipp Zabel <philipp.zabel@gmail.com>
 
-randconfig build on s390 fails with
+--Signature=_Tue__10_Feb_2009_21_36_03_+1100_l6v8L0HpdMG+YOD_
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  CC      arch/s390/kernel/irq.o
-arch/s390/kernel/irq.c:99: error: redefinition of init_irq_proc
-include/linux/interrupt.h:475: error: previous definition of init_irq_proc was here
-make[1]: *** [arch/s390/kernel/irq.o] Error 1
-make: *** [arch/s390/kernel] Error 2
+Hi Takashi, Eric,
 
-CONFIG_PROC_FS is not set. Probably introduced by commit
-("Declare init_irq_proc before we use it.")
+On Tue, 10 Feb 2009 09:58:02 +0100 Takashi Iwai <tiwai@suse.de> wrote:
+>
+> At Mon, 9 Feb 2009 19:35:07 -0800,
+> Eric Miao wrote:
+> >=20
+> > > Just simple context change. I fiex it up (see below) and can carry the
+> > > fix as necessary.
+> >=20
+> > Yes, this is correct. Thanks Stephen.
+>=20
+> Confirmed to build fine with cross platform now.
 
-Thanks
--Sachin
+Thanks to both of you for confirmation.
 
--- 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+--Signature=_Tue__10_Feb_2009_21_36_03_+1100_l6v8L0HpdMG+YOD_
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkmRWJMACgkQjjKRsyhoI8wEiQCfZ6pUARzI0bnyfyL0ayMgb96a
+k5wAoJsZqENOHA7uBQ4mw+OkHgnBD+KZ
+=w0/t
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__10_Feb_2009_21_36_03_+1100_l6v8L0HpdMG+YOD_--
