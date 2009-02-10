@@ -1,44 +1,62 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH] oqo: depends on INPUT_POLLDEV
-Date: Tue, 10 Feb 2009 09:53:19 -0800
-Message-ID: <20090210095319.b1848fd2.randy.dunlap@oracle.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:33076 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753795AbZBJRxL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Feb 2009 12:53:11 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: lkml <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, Matthew Garrett <mjg59@srcf.ucam.org>
+From: Steve Wise <swise@opengridcomputing.com>
+Subject: [ofa-general] [PATCH 2.6.30] RDMA/cxgb3: Remove modulo math.
+Date: Tue, 10 Feb 2009 12:44:48 -0600
+Message-ID: <20090210184448.22891.31130.stgit@dell3.ogc.int>
+Content-Type: text/plain; charset=utf-8; format=fixed
+Content-Transfer-Encoding: quoted-printable
+Return-path: <general-bounces@lists.openfabrics.org>
+List-Unsubscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
+	<mailto:general-request@lists.openfabrics.org?subject=unsubscribe>
+List-Archive: <http://lists.openfabrics.org/pipermail/general>
+List-Post: <mailto:general@lists.openfabrics.org>
+List-Help: <mailto:general-request@lists.openfabrics.org?subject=help>
+List-Subscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
+	<mailto:general-request@lists.openfabrics.org?subject=subscribe>
+Sender: general-bounces@lists.openfabrics.org
+Errors-To: general-bounces@lists.openfabrics.org
+To: rdreier@cisco.com
+Cc: randy.dunlap@oracle.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, general@lists.openfabrics.org
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+From: Steve Wise <swise@opengridcomputing.com>
 
-oqo driver uses polled input functions, so make it depend
-on INPUT_POLLDEV.
+Removes the need for special u64 math on i386 systems.
 
-ERROR: "input_register_polled_device" [drivers/platform/x86/oqo-wmi.ko] undefined!
-ERROR: "input_allocate_polled_device" [drivers/platform/x86/oqo-wmi.ko] undefined!
-ERROR: "input_free_polled_device" [drivers/platform/x86/oqo-wmi.ko] undefined!
-ERROR: "input_unregister_polled_device" [drivers/platform/x86/oqo-wmi.ko] undefined!
+Fixes i386 build break in linux-next introduced by=20
+commit 1e27e8cee0698259ccb1fe6abeaf4b48969c0945.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-cc:	Matthew Garrett <mjg59@srcf.ucam.org>
+Signed-off-by: Steve Wise <swise@opengridcomputing.com>
 ---
- drivers/platform/x86/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- linux-next-20090210.orig/drivers/platform/x86/Kconfig
-+++ linux-next-20090210/drivers/platform/x86/Kconfig
-@@ -137,7 +137,7 @@ config MSI_LAPTOP
- config OQO_WMI
-        tristate "OQO WMI extras"
-        depends on ACPI_WMI
--       depends on INPUT
-+       depends on INPUT && INPUT_POLLDEV
-        depends on RFKILL
-        depends on BACKLIGHT_CLASS_DEVICE
-        help
+ drivers/infiniband/hw/cxgb3/iwch_qp.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/infiniband/hw/cxgb3/iwch_qp.c b/drivers/infiniband/h=
+w/cxgb3/iwch_qp.c
+index 2cf6f13..5bb299a 100644
+--- a/drivers/infiniband/hw/cxgb3/iwch_qp.c
++++ b/drivers/infiniband/hw/cxgb3/iwch_qp.c
+@@ -232,8 +232,8 @@ static int iwch_sgl2pbl_map(struct iwch_dev *rhp, str=
+uct ib_sge *sg_list,
+ 			return -EINVAL;
+ 		}
+ 		offset =3D sg_list[i].addr - mhp->attr.va_fbo;
+-		offset +=3D ((u64) mhp->attr.va_fbo) %
+-		          (1UL << (12 + mhp->attr.page_size));
++		offset +=3D mhp->attr.va_fbo &
++			  ((1UL << (12 + mhp->attr.page_size)) - 1);
+ 		pbl_addr[i] =3D ((mhp->attr.pbl_addr -
+ 			        rhp->rdev.rnic_info.pbl_base) >> 3) +
+ 			      (offset >> (12 + mhp->attr.page_size));
+@@ -263,8 +263,8 @@ static int build_rdma_recv(struct iwch_qp *qhp, union=
+ t3_wr *wqe,
+ 		wqe->recv.sgl[i].len =3D cpu_to_be32(wr->sg_list[i].length);
+=20
+ 		/* to in the WQE =3D=3D the offset into the page */
+-		wqe->recv.sgl[i].to =3D cpu_to_be64(((u32) wr->sg_list[i].addr) %
+-				(1UL << (12 + page_size[i])));
++		wqe->recv.sgl[i].to =3D cpu_to_be64(((u64) wr->sg_list[i].addr) &
++				((1UL << (12 + page_size[i]))-1));
+=20
+ 		/* pbl_addr is the adapters address in the PBL */
+ 		wqe->recv.pbl_addr[i] =3D cpu_to_be32(pbl_addr[i]);
