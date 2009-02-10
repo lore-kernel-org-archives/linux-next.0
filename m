@@ -1,40 +1,71 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] SGI IA64 UV: fix ia64 build error in the linux-next
- tree
-Date: Tue, 10 Feb 2009 13:25:55 -0800
-Message-ID: <20090210132555.be1c1462.akpm@linux-foundation.org>
-References: <20090209162520.GA4882@sgi.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for February 10 (security/audit/ima)
+Date: Wed, 11 Feb 2009 09:40:50 +1100
+Message-ID: <20090211094050.47c4828d.sfr@canb.auug.org.au>
+References: <20090210194121.80256b72.sfr@canb.auug.org.au>
+	<4991DBA0.1000008@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__11_Feb_2009_09_40_50_+1100_Molc438UIbYsgJVG"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:38415 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755647AbZBJV0b (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Feb 2009 16:26:31 -0500
-In-Reply-To: <20090209162520.GA4882@sgi.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:45367 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755674AbZBJWlD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Feb 2009 17:41:03 -0500
+In-Reply-To: <4991DBA0.1000008@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dean Nelson <dcn@sgi.com>
-Cc: tony.luck@intel.com, mingo@elte.hu, linux-ia64@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, James Morris <jmorris@namei.org>, Mimi Zohar <zohar@us.ibm.com>, Al Viro <viro@ZenIV.linux.org.uk>
 
-On Mon, 9 Feb 2009 10:25:20 -0600
-Dean Nelson <dcn@sgi.com> wrote:
+--Signature=_Wed__11_Feb_2009_09_40_50_+1100_Molc438UIbYsgJVG
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Fix the ia64 build error that occurs in the linux-next tree by introducing
-> an ia64 version of uv.h.  Additionally, clean up the usage of is_uv_system().
+Hi Randy,
 
-Would I be correct in believing that this repairs (and should be folded
-into)
+On Tue, 10 Feb 2009 11:55:12 -0800 Randy Dunlap <randy.dunlap@oracle.com> w=
+rote:
+>
+> Stephen Rothwell wrote:
+> >=20
+> > Dropped trees (temporarily):
+> > 	audit (difficult conflicts)
+>=20
+> Maybe this is fixed by the dropped audit tree?
 
-  commit 5b221278d61e3907a5e4104a844b63bc8bb3d43a
-  Author: Ingo Molnar <mingo@elte.hu>
-  Date:   Wed Jan 21 11:30:07 2009 +0100
+The audit tree is Al Viro's (cc'd).  But I *think* everything in it has
+been applied upstream.
 
-      x86: uv cleanup, build fix #2
+> linux-next-20090210/security/integrity/ima/ima_policy.c:111: error: impli=
+cit declaration of function 'security_audit_rule_match'
+> linux-next-20090210/security/integrity/ima/ima_policy.c:230: error: impli=
+cit declaration of function 'security_audit_rule_init'
+>=20
+> when
+> CONFIG_SECURITY=3Dy
+> CONFIG_AUDIT=3Dn
+> CONFIG_IMA=3Dy
+> CONFIG_IMA_AUDIT=3Dy
 
-?
+This looks more like a security subsystem than audit to me?
 
-(it looks like 5b221278d61e3907a5e4104a844b63bc8bb3d43a should be
-folded into something else, too.  What hath we wrought?)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__11_Feb_2009_09_40_50_+1100_Molc438UIbYsgJVG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkmSAnIACgkQjjKRsyhoI8yqxwCfcMvbQCBSoSy0ZTRO9E7AJyTL
+zkwAn1/2ndYUtMuZOctxvz/AoedjlyoN
+=HWxH
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__11_Feb_2009_09_40_50_+1100_Molc438UIbYsgJVG--
