@@ -1,64 +1,36 @@
-From: Robin Holt <holt@sgi.com>
+From: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
 Subject: Re: [PATCH 2/2] don't compile SGI XP/GRU on ia64_generic
-Date: Tue, 10 Feb 2009 06:51:57 -0600
-Message-ID: <20090210125157.GT8577@sgi.com>
-References: <20090210162821.6FC1.KOSAKI.MOTOHIRO@jp.fujitsu.com> <20090210210110.7001.KOSAKI.MOTOHIRO@jp.fujitsu.com>
+Date: Tue, 10 Feb 2009 21:54:51 +0900 (JST)
+Message-ID: <20090210215338.700A.KOSAKI.MOTOHIRO@jp.fujitsu.com>
+References: <20090210210110.7001.KOSAKI.MOTOHIRO@jp.fujitsu.com> <20090210125157.GT8577@sgi.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay2.sgi.com ([192.48.179.30]:59664 "EHLO relay.sgi.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1753503AbZBJMv6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Feb 2009 07:51:58 -0500
-Content-Disposition: inline
-In-Reply-To: <20090210210110.7001.KOSAKI.MOTOHIRO@jp.fujitsu.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-Cc: Jack Steiner <steiner@sgi.com>, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-ia64 <linux-ia64@vger.kernel.org>, Tony Luck <tony.luck@intel.com>, Dean Nelson <dcn@sgi.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-ia64-owner@vger.kernel.org>
+In-Reply-To: <20090210125157.GT8577@sgi.com>
+Sender: linux-ia64-owner@vger.kernel.org
+To: Robin Holt <holt@sgi.com>
+Cc: kosaki.motohiro@jp.fujitsu.com, Jack Steiner <steiner@sgi.com>, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-ia64 <linux-ia64@vger.kernel.org>, Tony Luck <tony.luck@intel.com>, Dean Nelson <dcn@sgi.com>
+List-Id: linux-next.vger.kernel.org
 
-Dean Nelson submitted a patch yesterday to make this work.
+> Dean Nelson submitted a patch yesterday to make this work.
+> 
+> Robin
 
-Robin
+Thanks!
+I'm happy a lot.
 
 
-On Tue, Feb 10, 2009 at 09:03:40PM +0900, KOSAKI Motohiro wrote:
-> Subject: [PATCH] ia64: don't compile SGI-XP on ia64 generic.
-> Impact: fix build error
-> 
-> Currently sgi-xp driver depend on "uv.h" header file.
-> but only x86 have "uv.h" header.
-> 
-> Then, ia64 hit following build error.
-> 
->   In file included from drivers/misc/sgi-xp/xp_main.c:19:
->   drivers/misc/sgi-xp/xp.h:18:23: error: asm/uv/uv.h: No such file or directory
->   make[3]: *** [drivers/misc/sgi-xp/xp_main.o] Error 1
->   make[2]: *** [drivers/misc/sgi-xp] Error 2
-> 
-> Cc: Jack Steiner <steiner@sgi.com>
-> Cc: Dean Nelson <dcn@sgi.com>
-> Signed-off-by: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-> ---
->  drivers/misc/Kconfig |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> Index: b/drivers/misc/Kconfig
-> ===================================================================
-> --- a/drivers/misc/Kconfig
-> +++ b/drivers/misc/Kconfig
-> @@ -162,7 +162,7 @@ config ENCLOSURE_SERVICES
->  config SGI_XP
->  	tristate "Support communication between SGI SSIs"
->  	depends on NET
-> -	depends on (IA64_GENERIC || IA64_SGI_SN2 || IA64_SGI_UV || X86_UV) && SMP
-> +	depends on (IA64_SGI_SN2 || IA64_SGI_UV || X86_UV) && SMP
->  	select IA64_UNCACHED_ALLOCATOR if IA64_GENERIC || IA64_SGI_SN2
->  	select GENERIC_ALLOCATOR if IA64_GENERIC || IA64_SGI_SN2
->  	select SGI_GRU if (IA64_SGI_UV || X86_UV) && SMP
 > 
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-ia64" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> On Tue, Feb 10, 2009 at 09:03:40PM +0900, KOSAKI Motohiro wrote:
+> > Subject: [PATCH] ia64: don't compile SGI-XP on ia64 generic.
+> > Impact: fix build error
+> > 
+> > Currently sgi-xp driver depend on "uv.h" header file.
+> > but only x86 have "uv.h" header.
+> > 
+> > Then, ia64 hit following build error.
+
+
+
