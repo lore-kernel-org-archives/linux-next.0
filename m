@@ -1,56 +1,64 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the trivial tree with the quota
- tree
-Date: Tue, 10 Feb 2009 22:09:44 +1100
-Message-ID: <20090210220944.1237741b.sfr@canb.auug.org.au>
-References: <20090210183438.2099164f.sfr@canb.auug.org.au>
-	<alpine.LNX.1.10.0902101039520.11630@jikos.suse.cz>
+From: "Sachin P. Sant" <sachinp@in.ibm.com>
+Subject: [Patch] [s390] Fix init irq proc build break.
+Date: Tue, 10 Feb 2009 16:45:15 +0530
+Message-ID: <499161C3.2070407@in.ibm.com>
+References: <20090210194121.80256b72.sfr@canb.auug.org.au> <4991573C.8000609@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__10_Feb_2009_22_09_44_+1100_mPe7Iq00+nwtnzE4"
+Content-Type: multipart/mixed;
+ boundary="------------080908080101070106080007"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44130 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750793AbZBJLJu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Feb 2009 06:09:50 -0500
-In-Reply-To: <alpine.LNX.1.10.0902101039520.11630@jikos.suse.cz>
+Received: from e23smtp05.au.ibm.com ([202.81.31.147]:50781 "EHLO
+	e23smtp05.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750904AbZBJLPX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Feb 2009 06:15:23 -0500
+In-Reply-To: <4991573C.8000609@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: Jan Kara <jack@suse.cz>, linux-next@vger.kernel.org
+To: linux-s390@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, Mel Gorman <mel@csn.ul.ie>
 
---Signature=_Tue__10_Feb_2009_22_09_44_+1100_mPe7Iq00+nwtnzE4
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is a multi-part message in MIME format.
+--------------080908080101070106080007
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Jiri,
+* Embed init_irq_proc(s390) within CONFIG_PROC_FS to fix a build break.
 
-On Tue, 10 Feb 2009 10:42:17 +0100 (CET) Jiri Kosina <jkosina@suse.cz> wrot=
-e:
->
-> Thanks for notification Stephen. I have dropped the conflicting hunk from=
-=20
-> my tree now. Jan, could you please take the patch below through your tree=
-?=20
+Signed-off-by : Sachin Sant <sachinp@in.ibm.com>
+---
 
-Thanks.
+Thanks
+-Sachin
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__10_Feb_2009_22_09_44_+1100_mPe7Iq00+nwtnzE4
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+--------------080908080101070106080007
+Content-Type: text/x-patch;
+ name="fix-init-irq-proc-build-break-on-s390.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="fix-init-irq-proc-build-break-on-s390.patch"
 
-iEYEARECAAYFAkmRYHgACgkQjjKRsyhoI8yTBQCfdjl+nLp7T0PFsWoaf5PNZ6CE
-hhYAmwWzNU+MR0dl36OaMe/NnftLy9KW
-=YCtL
------END PGP SIGNATURE-----
+* Embed init_irq_proc(s390) within CONFIG_PROC_FS to fix a build break.
 
---Signature=_Tue__10_Feb_2009_22_09_44_+1100_mPe7Iq00+nwtnzE4--
+Signed-off-by : Sachin Sant <sachinp@in.ibm.com>
+---
+
+diff -Naurp a/arch/s390/kernel/irq.c b/arch/s390/kernel/irq.c
+--- a/arch/s390/kernel/irq.c	2009-02-10 18:30:01.000000000 +0530
++++ b/arch/s390/kernel/irq.c	2009-02-10 19:01:44.000000000 +0530
+@@ -95,6 +95,7 @@ asmlinkage void do_softirq(void)
+ 	local_irq_restore(flags);
+ }
+ 
++#ifdef CONFIG_PROC_FS
+ void init_irq_proc(void)
+ {
+ 	struct proc_dir_entry *root_irq_dir;
+@@ -102,3 +103,4 @@ void init_irq_proc(void)
+ 	root_irq_dir = proc_mkdir("irq", NULL);
+ 	create_prof_cpu_mask(root_irq_dir);
+ }
++#endif
+
+--------------080908080101070106080007--
