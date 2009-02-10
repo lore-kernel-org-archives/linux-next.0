@@ -1,51 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the quota tree
-Date: Tue, 10 Feb 2009 18:34:38 +1100
-Message-ID: <20090210183438.2099164f.sfr@canb.auug.org.au>
+From: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
+Subject: [PATCH] don't compile SGI XP/GRU on ia64_generic
+Date: Tue, 10 Feb 2009 16:35:46 +0900 (JST)
+Message-ID: <20090210162821.6FC1.KOSAKI.MOTOHIRO@jp.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__10_Feb_2009_18_34_38_+1100_64jii8oDs+fuIubj"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43388 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750772AbZBJHep (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Feb 2009 02:34:45 -0500
+Received: from fgwmail5.fujitsu.co.jp ([192.51.44.35]:38201 "EHLO
+	fgwmail5.fujitsu.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750790AbZBJHft (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Feb 2009 02:35:49 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, Jan Kara <jack@suse.cz>
+To: LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-ia64 <linux-ia64@vger.kernel.org>, Tony Luck <tony.luck@intel.com>, Jack Steiner <steiner@sgi.com>
+Cc: kosaki.motohiro@jp.fujitsu.com
 
---Signature=_Tue__10_Feb_2009_18_34_38_+1100_64jii8oDs+fuIubj
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Impact: fix build error
 
-Hi Jiri,
+Currently sgi-xp driver depend on "uv.h" header file.
+but only x86 have "uv.h" header.
 
-Today's linux-next merge of the trivial tree got a conflict in fs/Kconfig
-between commit c417122fec0f6b10a6c338c84180c6b9e06601c8 ("quota: Move
-quota files into separate directory") from the quota tree and commit
-8310459012b926e121b3546bfed833910dd6f3ef ("trivial: fix typos/grammar
-errors in Kconfig texts") from the trivial tree.
+Then, ia64 hit following build error.
 
-I have just dropped the trivial tree's updates.  Jiri, please separate
-out the fs/Kconfig part of that trivial tree commit above and sent it to
-Jan.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+  In file included from drivers/misc/sgi-gru/grufile.c:39:
+  drivers/misc/sgi-gru/gru.h:22:23: error: asm/uv/uv.h: No such file or directory
 
---Signature=_Tue__10_Feb_2009_18_34_38_+1100_64jii8oDs+fuIubj
-Content-Type: application/pgp-signature
+Cc: Jack Steiner <steiner@sgi.com>
+Signed-off-by: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+---
+ drivers/misc/Kconfig |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-iEYEARECAAYFAkmRLg4ACgkQjjKRsyhoI8xRawCgnXCILeU/zh7OnH86NdTW5YKB
-2nQAniWRLdeKFFOk1WCOi71oZF8SKYv2
-=pwER
------END PGP SIGNATURE-----
-
---Signature=_Tue__10_Feb_2009_18_34_38_+1100_64jii8oDs+fuIubj--
+Index: b/drivers/misc/Kconfig
+===================================================================
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -165,7 +165,7 @@ config SGI_XP
+ 	depends on (IA64_GENERIC || IA64_SGI_SN2 || IA64_SGI_UV || X86_UV) && SMP
+ 	select IA64_UNCACHED_ALLOCATOR if IA64_GENERIC || IA64_SGI_SN2
+ 	select GENERIC_ALLOCATOR if IA64_GENERIC || IA64_SGI_SN2
+-	select SGI_GRU if (IA64_GENERIC || IA64_SGI_UV || X86_64) && SMP
++	select SGI_GRU if (IA64_SGI_UV || X86_UV) && SMP
+ 	---help---
+ 	  An SGI machine can be divided into multiple Single System
+ 	  Images which act independently of each other and have
+@@ -189,7 +189,7 @@ config HP_ILO
+ 
+ config SGI_GRU
+ 	tristate "SGI GRU driver"
+-	depends on (X86_UV || IA64_SGI_UV || IA64_GENERIC) && SMP
++	depends on (X86_UV || IA64_SGI_UV) && SMP
+ 	default n
+ 	select MMU_NOTIFIER
+ 	---help---
