@@ -1,63 +1,35 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: next-20090211: BUG: MAX_LOCKDEP_SUBCLASSES too low!
-Date: Wed, 11 Feb 2009 13:26:41 +0100
-Message-ID: <1234355201.23438.134.camel@twins>
-References: <a4423d670902110414r72f14c1eq850cda59533bd9db@mail.gmail.com>
-	 <1234355010.23438.132.camel@twins>  <1234355070.23438.133.camel@twins>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH] SGI IA64 UV: fix ia64 build error in the linux-next
+	tree
+Date: Wed, 11 Feb 2009 13:32:49 +0100
+Message-ID: <20090211123249.GE16535@elte.hu>
+References: <20090209162520.GA4882@sgi.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:40083 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754892AbZBKMYt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Feb 2009 07:24:49 -0500
-In-Reply-To: <1234355070.23438.133.camel@twins>
+Received: from mx3.mail.elte.hu ([157.181.1.138]:46791 "EHLO mx3.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754781AbZBKMc7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Feb 2009 07:32:59 -0500
+Content-Disposition: inline
+In-Reply-To: <20090209162520.GA4882@sgi.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>
+To: Dean Nelson <dcn@sgi.com>
+Cc: Tony Luck <tony.luck@intel.com>, Andrew Morton <akpm@linux-foundation.org>, linux-ia64 <linux-ia64@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, 2009-02-11 at 13:24 +0100, Peter Zijlstra wrote:
-> On Wed, 2009-02-11 at 13:23 +0100, Peter Zijlstra wrote:
-> > On Wed, 2009-02-11 at 15:14 +0300, Alexander Beregalov wrote:
-> > > Hi
-> > > 
-> > > Full dmesg is attached.
-> > > 
-> > > Lock dependency validator: Copyright (c) 2006 Red Hat, Inc., Ingo Molnar
-> > > .... MAX_LOCKDEP_SUBCLASSES:  8
-> > > .... MAX_LOCK_DEPTH:          48
-> > > .... MAX_LOCKDEP_KEYS:        8191
-> > > .... CLASSHASH_SIZE:          4096
-> > > .... MAX_LOCKDEP_ENTRIES:     8192
-> > > .... MAX_LOCKDEP_CHAINS:      16384
-> > > .... CHAINHASH_SIZE:          8192
-> > >  memory used by lock dependency info: 4351 kB
-> > >  per task-struct memory footprint: 2688 bytes
-> > > <..>
-> > > BUG: MAX_LOCKDEP_SUBCLASSES too low!
-> > > turning off the locking correctness validator.
-> > 
-> > Is this an allyesconfig or something other massive bloated?
+
+* Dean Nelson <dcn@sgi.com> wrote:
+
+> Fix the ia64 build error that occurs in the linux-next tree by introducing
+> an ia64 version of uv.h.  Additionally, clean up the usage of is_uv_system().
 > 
-> Sorry, not playing attention, its SUB classes.. let me look at that,
-> that smells like a rotten annotation.
+> Signed-off-by: Dean Nelson <dcn@sgi.com>
+> Signed-off-by: Jack Steiner <steiner@sgi.com>
 
-Could you run with the below patch, so that we can see where this
-happens?
+Applied, thanks Dean!
 
+Tony, since this breakage is an accidental side-effect of the x86 tree (that
+has to be fixed there), mind if we carry it there?
 
----
-diff --git a/kernel/lockdep.c b/kernel/lockdep.c
-index 06b0c35..4fe272c 100644
---- a/kernel/lockdep.c
-+++ b/kernel/lockdep.c
-@@ -2542,6 +2542,7 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
- 		debug_locks_off();
- 		printk("BUG: MAX_LOCKDEP_SUBCLASSES too low!\n");
- 		printk("turning off the locking correctness validator.\n");
-+		dump_stack();
- 		return 0;
- 	}
- 
+	Ingo
