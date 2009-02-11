@@ -1,43 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net tree with the net-current
- tree
-Date: Sat, 14 Feb 2009 23:12:37 -0800 (PST)
-Message-ID: <20090214.231237.266040656.davem@davemloft.net>
-References: <20090212134604.5ce2fe53.sfr@canb.auug.org.au>
+From: Steve Wise <swise@opengridcomputing.com>
+Subject: Re: [ofa-general] [PATCH 2.6.30] RDMA/cxgb3: Remove modulo math.
+Date: Tue, 10 Feb 2009 19:03:52 -0600
+Message-ID: <499223F8.1010204__23334.9969414578$1234721274$gmane$org@opengridcomputing.com>
+References: <20090210184448.22891.31130.stgit@dell3.ogc.int> <adamyctajv8.fsf@cisco.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:43690
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1751237AbZBOHMn (ORCPT
+Received: from smtp.opengridcomputing.com ([209.198.142.2]:57782 "EHLO
+	smtp.opengridcomputing.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752103AbZBKBD5 (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Sun, 15 Feb 2009 02:12:43 -0500
-In-Reply-To: <20090212134604.5ce2fe53.sfr@canb.auug.org.au>
+	Tue, 10 Feb 2009 20:03:57 -0500
+In-Reply-To: <adamyctajv8.fsf@cisco.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, reinette.chatre@intel.com, linville@tuxdriver.com
+To: Roland Dreier <rdreier@cisco.com>
+Cc: randy.dunlap@oracle.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, general@lists.openfabrics.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 12 Feb 2009 13:46:04 +1100
-
-> Hi David,
-> 
-> Today's linux-next merge of the net tree got conflicts in
-> drivers/net/wireless/iwlwifi/iwl-agn.c and
-> drivers/net/wireless/iwlwifi/iwl3945-base.c between commit
-> 89c581b3fb2986e303f1299e6458e3e9b115fa3f ("iwlwifi: fix suspend/resume
-> and its usage of pci saved state") from the net-current tree and commits
-> from the net tree.
-> 
-> I assume this is what John was referring to when he said:
-> 
-> > The iwlwifi patch corrects a problem (introduced by the previous iwlwifi
-> > fix) that disables the iwlwifi devices after suspend/resume.  It will
-> > conflict with what is already in -next -- just take the hunks that are
-> > already in -next and ignore the hunks introduced here.
-> 
-> So I took that advise.
-
-I'm clearing up this merge issue right now, thanks!
+Roland Dreier wrote:
+> I'll roll this into the offending patch (that is in -next).
+>
+> But:
+>
+>  > -		wqe->recv.sgl[i].to = cpu_to_be64(((u32) wr->sg_list[i].addr) %
+>  > -				(1UL << (12 + page_size[i])));
+>  > +		wqe->recv.sgl[i].to = cpu_to_be64(((u64) wr->sg_list[i].addr) &
+>  > +				((1UL << (12 + page_size[i]))-1));
+>
+> Is this required?  Strength reduction optimization should do this
+> automatically (and the code has been there for quite a while, so
+> obviously it isn't causing problems)
+>
+>  - R.
+>   
+Ok.
