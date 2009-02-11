@@ -1,46 +1,34 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH] SGI IA64 UV: fix ia64 build error in the linux-next tree
-Date: Wed, 11 Feb 2009 21:25:12 +0100
-Message-ID: <20090211202512.GB8283@elte.hu>
-References: <20090209162520.GA4882@sgi.com> <20090210132555.be1c1462.akpm@linux-foundation.org> <20090211150103.GA15814@sgi.com> <20090211150536.GE10525@elte.hu> <57C9024A16AD2D4C97DC78E552063EA361689D7D@orsmsx505.amr.corp.intel.com>
+From: David Miller <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
+Subject: Re: pull request: wireless-2.6 2009-02-11
+Date: Wed, 11 Feb 2009 13:58:01 -0800 (PST)
+Message-ID: <20090211.135801.242440425.davem@davemloft.net>
+References: <20090211191212.GA7033@tuxdriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-ia64-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <57C9024A16AD2D4C97DC78E552063EA361689D7D@orsmsx505.amr.corp.intel.com>
-Sender: linux-ia64-owner@vger.kernel.org
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Dean Nelson <dcn@sgi.com>, Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, linux-ia64 <linux-ia64@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20090211191212.GA7033-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org
+Cc: linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-next.vger.kernel.org
 
+From: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
+Date: Wed, 11 Feb 2009 14:12:12 -0500
 
-* Luck, Tony <tony.luck@intel.com> wrote:
-
-> > What question was that? Folding back across that distance is not possible
-> > in a Git workflow. I do regular cross-builds - the build bug did not trigger
-> > with the ia64 defconfig.
+> Here are a few more intended for 2.6.29.  The ath5k one is already in
+> -next, but it turns-out to affect 2.6.29 as well.  The two zd1211rw ones
+> are one-liners that enable new hardware for that driver.
 > 
-> I'm confused by this, as it definitely triggered for me.  Perhaps
-> my build scripts do things a bit differently.  Essentially I do:
+> The iwlwifi patch corrects a problem (introduced by the previous iwlwifi
+> fix) that disables the iwlwifi devices after suspend/resume.  It will
+> conflict with what is already in -next -- just take the hunks that are
+> already in -next and ignore the hunks introduced here.
 > 
->         $ for c in `ls arch/ia64/configs`
->         > do
->         >       cp arch/ia64/configs/$i .config
->         >       yes '' | make oldconfig
->         >       make
->         > done
-> 
-> Which takes the default answer for any new questions that crop
-> up.  This enabled the GRU driver in the case of the generic_defconfig,
-> and so the build failed because of the lack of asm/uv.h
+> Please let me know if there are problems!
 
-hm, my build scripts do (in essence):
-
- make mrproper
- make ARCH=ia64 defconfig
-
-hm, GRU is enabled as a module. I generally build the =y items, i.e. the
-vmlinux. There's around 20 thousand modules enabled in various defconfigs,
-that's a _lot_ of time to build.
-
-	Ingo
+Pulled, thanks a lot John.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
