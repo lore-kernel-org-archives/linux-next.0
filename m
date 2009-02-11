@@ -1,23 +1,21 @@
-From: Dean Nelson <dcn@sgi.com>
-Subject: Re: [PATCH] SGI IA64 UV: fix ia64 build error in the linux-next	tree
-Date: Wed, 11 Feb 2009 13:33:19 -0600
-Message-ID: <20090211193319.GA21987@sgi.com>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH] SGI IA64 UV: fix ia64 build error in the linux-next tree
+Date: Wed, 11 Feb 2009 21:25:12 +0100
+Message-ID: <20090211202512.GB8283@elte.hu>
 References: <20090209162520.GA4882@sgi.com> <20090210132555.be1c1462.akpm@linux-foundation.org> <20090211150103.GA15814@sgi.com> <20090211150536.GE10525@elte.hu> <57C9024A16AD2D4C97DC78E552063EA361689D7D@orsmsx505.amr.corp.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay1.sgi.com ([192.48.179.29]:34309 "EHLO relay.sgi.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1756106AbZBKTdV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Feb 2009 14:33:21 -0500
+Return-path: <linux-ia64-owner@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <57C9024A16AD2D4C97DC78E552063EA361689D7D@orsmsx505.amr.corp.intel.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-ia64-owner@vger.kernel.org
 To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Ingo Molnar <mingo@elte.hu>, Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, linux-ia64 <linux-ia64@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Cc: Dean Nelson <dcn@sgi.com>, Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, linux-ia64 <linux-ia64@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Feb 11, 2009 at 10:58:19AM -0800, Luck, Tony wrote:
+
+* Luck, Tony <tony.luck@intel.com> wrote:
+
 > > What question was that? Folding back across that distance is not possible
 > > in a Git workflow. I do regular cross-builds - the build bug did not trigger
 > > with the ia64 defconfig.
@@ -36,5 +34,13 @@ On Wed, Feb 11, 2009 at 10:58:19AM -0800, Luck, Tony wrote:
 > up.  This enabled the GRU driver in the case of the generic_defconfig,
 > and so the build failed because of the lack of asm/uv.h
 
-It always triggers for me as well. I also use generic_defconfig and
-request the default for any NEW questions.
+hm, my build scripts do (in essence):
+
+ make mrproper
+ make ARCH=ia64 defconfig
+
+hm, GRU is enabled as a module. I generally build the =y items, i.e. the
+vmlinux. There's around 20 thousand modules enabled in various defconfigs,
+that's a _lot_ of time to build.
+
+	Ingo
