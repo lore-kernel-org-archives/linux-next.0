@@ -1,33 +1,46 @@
-From: Roland Dreier <rdreier@cisco.com>
+From: Steve Wise <swise@opengridcomputing.com>
 Subject: Re: [ofa-general] [PATCH 2.6.30] RDMA/cxgb3: Remove modulo math.
-Date: Wed, 11 Feb 2009 10:12:09 -0800
-Message-ID: <adatz70972e.fsf@cisco.com>
-References: <20090210184448.22891.31130.stgit@dell3.ogc.int>
-	<adamyctajv8.fsf@cisco.com> <4992F26A.4030800@opengridcomputing.com>
+Date: Wed, 11 Feb 2009 12:32:47 -0600
+Message-ID: <499319CF.6050204@opengridcomputing.com>
+References: <20090210184448.22891.31130.stgit@dell3.ogc.int>	<adamyctajv8.fsf@cisco.com> <4992F26A.4030800@opengridcomputing.com> <adatz70972e.fsf@cisco.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <general-bounces@lists.openfabrics.org>
-In-Reply-To: <4992F26A.4030800@opengridcomputing.com> (Steve Wise's message of
-	"Wed, 11 Feb 2009 09:44:42 -0600")
-List-Unsubscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
-	<mailto:general-request@lists.openfabrics.org?subject=unsubscribe>
-List-Archive: <http://lists.openfabrics.org/pipermail/general>
-List-Post: <mailto:general@lists.openfabrics.org>
-List-Help: <mailto:general-request@lists.openfabrics.org?subject=help>
-List-Subscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
-	<mailto:general-request@lists.openfabrics.org?subject=subscribe>
-Sender: general-bounces@lists.openfabrics.org
-Errors-To: general-bounces@lists.openfabrics.org
-To: Steve Wise <swise@opengridcomputing.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp.opengridcomputing.com ([209.198.142.2]:49717 "EHLO
+	smtp.opengridcomputing.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751833AbZBKScl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Feb 2009 13:32:41 -0500
+In-Reply-To: <adatz70972e.fsf@cisco.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Roland Dreier <rdreier@cisco.com>
 Cc: randy.dunlap@oracle.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, general@lists.openfabrics.org
-List-Id: linux-next.vger.kernel.org
 
- > Note that wr->sg_list[i].addr was being cast to a u32.  That was wrong.
+Roland Dreier wrote:
+>  > Note that wr->sg_list[i].addr was being cast to a u32.  That was wrong.
+>
+> Is it possible for the page to be bigger than 4GB?  If so then yes you
+> might be chopping off high-order bits or something.
+>   
+Yes it is possible.
 
-Is it possible for the page to be bigger than 4GB?  If so then yes you
-might be chopping off high-order bits or something.
+A MR can be created with an iov_base of say 0xffffffff00000000.
 
-Anyway please send me this change as a separate patch with a changelog
-explaining that you're avoiding the div etc.... I don't want to roll it
-in with the other unrelated fix (which changes code that was never
-upstream anyway).
+Then any sge.addr entries would be the iob_base + any offset.
+
+> Anyway please send me this change as a separate patch with a changelog
+> explaining that you're avoiding the div etc.... I don't want to roll it
+> in with the other unrelated fix (which changes code that was never
+> upstream anyway).
+>   
+
+will do. 
+
+So you are handling the offset patch that will make it u64 and remove 
+the mod usage, correct?
+
+I will post a new patch with just this send change.
+
+Steve.
