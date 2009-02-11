@@ -1,61 +1,37 @@
-From: Mimi Zohar <zohar@us.ibm.com>
-Subject: Re: linux-next: Tree for February 10 (security/audit/ima)
-Date: Tue, 10 Feb 2009 19:30:24 -0500
-Message-ID: <OFF3345B15.9471295A-ON8525755A.00024CFE-8525755A.0002C8E8@us.ibm.com>
-References: <20090210194121.80256b72.sfr@canb.auug.org.au>	<4991DBA0.1000008@oracle.com> <20090211094050.47c4828d.sfr@canb.auug.org.au>
+From: Roland Dreier <rdreier@cisco.com>
+Subject: Re: [ofa-general] [PATCH 2.6.30] RDMA/cxgb3: Remove modulo math.
+Date: Tue, 10 Feb 2009 16:38:03 -0800
+Message-ID: <adamyctajv8.fsf@cisco.com>
+References: <20090210184448.22891.31130.stgit@dell3.ogc.int>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e7.ny.us.ibm.com ([32.97.182.137]:58997 "EHLO e7.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756450AbZBKAa1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Feb 2009 19:30:27 -0500
-In-Reply-To: <20090211094050.47c4828d.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: James Morris <jmorris@namei.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>, Al Viro <viro@ZenIV.linux.org.uk>, Mimi Zohar <zohar@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <general-bounces@lists.openfabrics.org>
+In-Reply-To: <20090210184448.22891.31130.stgit@dell3.ogc.int> (Steve Wise's
+	message of "Tue, 10 Feb 2009 12:44:48 -0600")
+List-Unsubscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
+	<mailto:general-request@lists.openfabrics.org?subject=unsubscribe>
+List-Archive: <http://lists.openfabrics.org/pipermail/general>
+List-Post: <mailto:general@lists.openfabrics.org>
+List-Help: <mailto:general-request@lists.openfabrics.org?subject=help>
+List-Subscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
+	<mailto:general-request@lists.openfabrics.org?subject=subscribe>
+Sender: general-bounces@lists.openfabrics.org
+Errors-To: general-bounces@lists.openfabrics.org
+To: Steve Wise <swise@opengridcomputing.com>
+Cc: randy.dunlap@oracle.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, general@lists.openfabrics.org
+List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote on 02/10/2009 05:40:50 PM:
+I'll roll this into the offending patch (that is in -next).
 
-> Hi Randy,
-> 
-> On Tue, 10 Feb 2009 11:55:12 -0800 Randy Dunlap 
-<randy.dunlap@oracle.com> wrote:
-> >
-> > Stephen Rothwell wrote:
-> > > 
-> > > Dropped trees (temporarily):
-> > >    audit (difficult conflicts)
-> > 
-> > Maybe this is fixed by the dropped audit tree?
-> 
-> The audit tree is Al Viro's (cc'd).  But I *think* everything in it has
-> been applied upstream.
-> 
-> > linux-next-20090210/security/integrity/ima/ima_policy.c:111: error: 
-implicit
-> declaration of function 'security_audit_rule_match'
-> > linux-next-20090210/security/integrity/ima/ima_policy.c:230: error: 
-implicit
-> declaration of function 'security_audit_rule_init'
-> > 
-> > when
-> > CONFIG_SECURITY=y
-> > CONFIG_AUDIT=n
-> > CONFIG_IMA=y
-> > CONFIG_IMA_AUDIT=y
-> 
-> This looks more like a security subsystem than audit to me?
+But:
 
-These are the IMA Kconfig rules:
-CONFIG_IMA=y
-CONFIG_IMA_MEASURE_PCR_IDX=10
-CONFIG_IMA_AUDIT=y
-CONFIG_IMA_LSM_RULES=y
+ > -		wqe->recv.sgl[i].to = cpu_to_be64(((u32) wr->sg_list[i].addr) %
+ > -				(1UL << (12 + page_size[i])));
+ > +		wqe->recv.sgl[i].to = cpu_to_be64(((u64) wr->sg_list[i].addr) &
+ > +				((1UL << (12 + page_size[i]))-1));
 
-CONFIG_IMA_LSM_RULES requires the audit subsystem.  The default
-measurement policy is not defined terms of the LSM extended
-attributes, and thus is not required.
+Is this required?  Strength reduction optimization should do this
+automatically (and the code has been there for quite a while, so
+obviously it isn't causing problems)
 
-Mimi
+ - R.
