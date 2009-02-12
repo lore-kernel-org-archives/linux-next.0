@@ -1,49 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kmemcheck tree with the  tree
-Date: Thu, 12 Feb 2009 16:38:25 +1100
-Message-ID: <20090212163825.ec7bcdd0.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__12_Feb_2009_16_38_25_+1100_g9QguF7=UYzb/8ak"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36887 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750774AbZBLFig (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Feb 2009 00:38:36 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Vegard Nossum <vegard.nossum@gmail.com>, Pekka Enberg <penberg@cs.helsinki.fi>, Ingo Molnar <mingo@elte.hu>
-Cc: linux-next@vger.kernel.org, Jeremy Fitzhardinge <jeremy@goop.org>
+From: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+Subject: [PATCH] ext4: Initialize list properly
+Date: Thu, 12 Feb 2009 12:35:31 +0530
+Message-ID: <1234422331-32766-1-git-send-email-aneesh.kumar@linux.vnet.ibm.com>
+References: <a4423d670902100906q36e7f36fo53ba2060f5644303@mail.gmail.com>
+Return-path: <linux-ext4-owner@vger.kernel.org>
+In-Reply-To: <a4423d670902100906q36e7f36fo53ba2060f5644303@mail.gmail.com>
+Sender: linux-ext4-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, tytso@mit.edu
+Cc: linux-ext4@vger.kernel.org, linux-next@vger.kernel.org, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__12_Feb_2009_16_38_25_+1100_g9QguF7=UYzb/8ak
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We need to initialize the list_head properly before we add
+them to the any list. Otherwise with list debug on we get
+list corruption warnings.
 
-Hi all,
+Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
 
-Today's linux-next merge of the kmemcheck tree got conflicts in
-arch/x86/include/asm/pgtable_32.h arch/x86/include/asm/pgtable_64.h
-between the unification commits in the x86 tree and commit
-5faef0d73631a368f375a5b852e7149f44542670 ("Merge commit 'v2.6.28-rc2'
-into kmemcheck") from the kmemcheck tree.
+---
+ fs/ext4/mballoc.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
 
-I used the resolution from tip/master.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__12_Feb_2009_16_38_25_+1100_g9QguF7=UYzb/8ak
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkmTtdEACgkQjjKRsyhoI8xBHwCeMgs0gBtmLIyAM+yjTDVLmxjy
-Fu8AnReR1uwyn5Te35S0GDjksg2Kt/ut
-=JX32
------END PGP SIGNATURE-----
-
---Signature=_Thu__12_Feb_2009_16_38_25_+1100_g9QguF7=UYzb/8ak--
+diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+index deba54f..0e9155a 100644
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -3693,6 +3693,8 @@ ext4_mb_new_inode_pa(struct ext4_allocation_context *ac)
+ 	pa->pa_free = pa->pa_len;
+ 	atomic_set(&pa->pa_count, 1);
+ 	spin_lock_init(&pa->pa_lock);
++	INIT_LIST_HEAD(&pa->pa_inode_list);
++	INIT_LIST_HEAD(&pa->pa_group_list);
+ 	pa->pa_deleted = 0;
+ 	pa->pa_linear = 0;
+ 
+@@ -3755,6 +3757,7 @@ ext4_mb_new_group_pa(struct ext4_allocation_context *ac)
+ 	atomic_set(&pa->pa_count, 1);
+ 	spin_lock_init(&pa->pa_lock);
+ 	INIT_LIST_HEAD(&pa->pa_inode_list);
++	INIT_LIST_HEAD(&pa->pa_group_list);
+ 	pa->pa_deleted = 0;
+ 	pa->pa_linear = 1;
+ 
+-- 
+tg: (b578f3f..) fix_list_corruption (depends on: master)
