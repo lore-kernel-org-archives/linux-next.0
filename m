@@ -1,56 +1,38 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: [PATCH -next] security/audit/ima: fix build error
-Date: Fri, 13 Feb 2009 09:31:04 +1100 (EST)
-Message-ID: <alpine.LRH.1.10.0902130930460.24108@tundra.namei.org>
-References: <20090210194121.80256b72.sfr@canb.auug.org.au> <4991DBA0.1000008@oracle.com> <20090211094050.47c4828d.sfr@canb.auug.org.au> <OFF3345B15.9471295A-ON8525755A.00024CFE-8525755A.0002C8E8@us.ibm.com> <20090212095414.733dd248.randy.dunlap@oracle.com>
+From: Theodore Tso <tytso@mit.edu>
+Subject: Re: [PATCH] ext4: Initialize list properly
+Date: Thu, 12 Feb 2009 17:00:37 -0500
+Message-ID: <20090212220037.GG6922@mini-me.lan>
+References: <a4423d670902100906q36e7f36fo53ba2060f5644303@mail.gmail.com> <1234422331-32766-1-git-send-email-aneesh.kumar@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tundra.namei.org ([65.99.196.166]:2781 "EHLO tundra.namei.org"
+Received: from THUNK.ORG ([69.25.196.29]:41671 "EHLO thunker.thunk.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752632AbZBLWbx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Feb 2009 17:31:53 -0500
-In-Reply-To: <20090212095414.733dd248.randy.dunlap@oracle.com>
+	id S1750742AbZBLXmj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Feb 2009 18:42:39 -0500
+Content-Disposition: inline
+In-Reply-To: <1234422331-32766-1-git-send-email-aneesh.kumar@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Mimi Zohar <zohar@us.ibm.com>, akpm <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>, Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-next@vger.kernel.org
 
-On Thu, 12 Feb 2009, Randy Dunlap wrote:
-
-> From: Randy Dunlap <randy.dunlap@oracle.com>
+On Thu, Feb 12, 2009 at 12:35:31PM +0530, Aneesh Kumar K.V wrote:
+> We need to initialize the list_head properly before we add
+> them to the any list. Otherwise with list debug on we get
+> list corruption warnings.
 > 
-> IMA_LSM_RULES requires AUDIT.  This is automatic if SECURITY_SELINUX=y
-> but not when SECURITY_SMACK=y (and SECURITY_SELINUX=n), so make the
-> dependency explicit.  This fixes the following build error:
-> 
-> security/integrity/ima/ima_policy.c:111:error: implicit declaration of function 'security_audit_rule_match'
-> security/integrity/ima/ima_policy.c:230:error: implicit declaration of function 'security_audit_rule_init'
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
 
-Applied to 
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/security-testing-2.6#next
+Added to the ext4 patch queue with a slight adjustment in the patch
+commit for readability issues:
 
+   When creating a new ext4_prealloc_space structure, we have to
+   initialize its list_head pointers before we add them to any prealloc
+   lists.  Otherwise, with list debug enabled, we will get list
+   corruption warnings.
 
-> ---
->  security/integrity/ima/Kconfig |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> --- linux-next-20090212.orig/security/integrity/ima/Kconfig
-> +++ linux-next-20090212/security/integrity/ima/Kconfig
-> @@ -49,7 +49,7 @@ config IMA_AUDIT
->  
->  config IMA_LSM_RULES
->  	bool
-> -	depends on IMA && (SECURITY_SELINUX || SECURITY_SMACK)
-> +	depends on IMA && AUDIT && (SECURITY_SELINUX || SECURITY_SMACK)
->  	default y
->  	help
-> -	  Disabling this option will disregard LSM based policy rules
-> +	  Disabling this option will disregard LSM based policy rules.
-> 
+   Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+   Signed-off-by: "Theodore Ts'o" <tytso@mit.edu>
 
--- 
-James Morris
-<jmorris@namei.org>
+						- Ted
