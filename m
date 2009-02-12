@@ -1,52 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: wireless tree build failure
-Date: Fri, 13 Feb 2009 09:07:37 +1100
-Message-ID: <20090213090737.1df51427.sfr@canb.auug.org.au>
-References: <20090212193517.3f393726.sfr@canb.auug.org.au>
-	<20090212161639.GA4091@tuxdriver.com>
+From: James Morris <jmorris@namei.org>
+Subject: Re: [PATCH -next] security/audit/ima: fix build error
+Date: Fri, 13 Feb 2009 09:31:04 +1100 (EST)
+Message-ID: <alpine.LRH.1.10.0902130930460.24108@tundra.namei.org>
+References: <20090210194121.80256b72.sfr@canb.auug.org.au> <4991DBA0.1000008@oracle.com> <20090211094050.47c4828d.sfr@canb.auug.org.au> <OFF3345B15.9471295A-ON8525755A.00024CFE-8525755A.0002C8E8@us.ibm.com> <20090212095414.733dd248.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__13_Feb_2009_09_07_37_+1100_fE+lRdENkQWktznR"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60421 "EHLO smtps.tip.net.au"
+Received: from tundra.namei.org ([65.99.196.166]:2781 "EHLO tundra.namei.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753113AbZBLWHo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Feb 2009 17:07:44 -0500
-In-Reply-To: <20090212161639.GA4091@tuxdriver.com>
+	id S1752632AbZBLWbx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Feb 2009 17:31:53 -0500
+In-Reply-To: <20090212095414.733dd248.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, David Kilroy <kilroyd@googlemail.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Mimi Zohar <zohar@us.ibm.com>, akpm <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>, Mimi Zohar <zohar@linux.vnet.ibm.com>
 
---Signature=_Fri__13_Feb_2009_09_07_37_+1100_fE+lRdENkQWktznR
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 12 Feb 2009, Randy Dunlap wrote:
 
-Hi John,
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> IMA_LSM_RULES requires AUDIT.  This is automatic if SECURITY_SELINUX=y
+> but not when SECURITY_SMACK=y (and SECURITY_SELINUX=n), so make the
+> dependency explicit.  This fixes the following build error:
+> 
+> security/integrity/ima/ima_policy.c:111:error: implicit declaration of function 'security_audit_rule_match'
+> security/integrity/ima/ima_policy.c:230:error: implicit declaration of function 'security_audit_rule_init'
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-On Thu, 12 Feb 2009 11:16:40 -0500 "John W. Linville" <linville@tuxdriver.c=
-om> wrote:
->
-> I'll fix this up with a patch like below...
+Applied to 
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/security-testing-2.6#next
 
-Thanks.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+> ---
+>  security/integrity/ima/Kconfig |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> --- linux-next-20090212.orig/security/integrity/ima/Kconfig
+> +++ linux-next-20090212/security/integrity/ima/Kconfig
+> @@ -49,7 +49,7 @@ config IMA_AUDIT
+>  
+>  config IMA_LSM_RULES
+>  	bool
+> -	depends on IMA && (SECURITY_SELINUX || SECURITY_SMACK)
+> +	depends on IMA && AUDIT && (SECURITY_SELINUX || SECURITY_SMACK)
+>  	default y
+>  	help
+> -	  Disabling this option will disregard LSM based policy rules
+> +	  Disabling this option will disregard LSM based policy rules.
+> 
 
---Signature=_Fri__13_Feb_2009_09_07_37_+1100_fE+lRdENkQWktznR
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkmUnakACgkQjjKRsyhoI8yu2ACfdU48XQqMI+0uu+uMk5tdeVOa
-dWcAnj+DjK0CLVB0bPaJlZiqQTc4v8fq
-=82LJ
------END PGP SIGNATURE-----
-
---Signature=_Fri__13_Feb_2009_09_07_37_+1100_fE+lRdENkQWktznR--
+-- 
+James Morris
+<jmorris@namei.org>
