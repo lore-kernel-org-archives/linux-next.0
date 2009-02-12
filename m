@@ -1,37 +1,57 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: next Feb 10: mm/slqb build break
-Date: Wed, 11 Feb 2009 17:47:33 -0800 (PST)
-Message-ID: <20090211.174733.163367216.davem@davemloft.net>
-References: <49914EE7.7030205@in.ibm.com>
-	<84144f020902100353x4074f342ne4d61483074a06b7@mail.gmail.com>
-	<20090212014503.GD30043@wotan.suse.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the net-current tree
+Date: Thu, 12 Feb 2009 13:46:04 +1100
+Message-ID: <20090212134604.5ce2fe53.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__12_Feb_2009_13_46_04_+1100_Qa07PNmoA/TkzC_Q"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:48072
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1758244AbZBLBrk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Feb 2009 20:47:40 -0500
-In-Reply-To: <20090212014503.GD30043@wotan.suse.de>
+Received: from chilli.pcug.org.au ([203.10.76.44]:45050 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755620AbZBLCqS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Feb 2009 21:46:18 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: npiggin@suse.de
-Cc: penberg@cs.helsinki.fi, sachinp@in.ibm.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, Reinette Chatre <reinette.chatre@intel.com>, "John W. Linville" <linville@tuxdriver.com>
 
-From: Nick Piggin <npiggin@suse.de>
-Date: Thu, 12 Feb 2009 02:45:03 +0100
+--Signature=_Thu__12_Feb_2009_13_46_04_+1100_Qa07PNmoA/TkzC_Q
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Tue, Feb 10, 2009 at 01:53:51PM +0200, Pekka Enberg wrote:
-> > Actually, that's not the root cause here. You seem to have CONFIG_SMP
-> > disabled but CONFIG_NUMA enabled. That's not possible on x86 which
-> > makes me think it's a ppc kconfig bug. Hmm?
-> 
-> If it is really a valid config, then we should be able to make
-> slqb build with it...
+Hi David,
 
-FWIW I only allow NUMA with SMP on sparc64, just like x86.
+Today's linux-next merge of the net tree got conflicts in
+drivers/net/wireless/iwlwifi/iwl-agn.c and
+drivers/net/wireless/iwlwifi/iwl3945-base.c between commit
+89c581b3fb2986e303f1299e6458e3e9b115fa3f ("iwlwifi: fix suspend/resume
+and its usage of pci saved state") from the net-current tree and commits
+from the net tree.
 
-Although it seems IA64, like powerpc, does not have this restriction.
-Hmmm...
+I assume this is what John was referring to when he said:
+
+> The iwlwifi patch corrects a problem (introduced by the previous iwlwifi
+> fix) that disables the iwlwifi devices after suspend/resume.  It will
+> conflict with what is already in -next -- just take the hunks that are
+> already in -next and ignore the hunks introduced here.
+
+So I took that advise.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__12_Feb_2009_13_46_04_+1100_Qa07PNmoA/TkzC_Q
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkmTjWwACgkQjjKRsyhoI8y5jQCbBxfKqBjKfCJZ2urtQbWd4R1d
+VygAmwZtsvDtOlU1FliVkD7Tvnq4IyR/
+=eJdJ
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__12_Feb_2009_13_46_04_+1100_Qa07PNmoA/TkzC_Q--
