@@ -1,105 +1,70 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH -next] security/audit/ima: fix build error
-Date: Thu, 12 Feb 2009 10:30:04 -0800
-Message-ID: <49946AAC.4070107@oracle.com>
-References: <20090210194121.80256b72.sfr@canb.auug.org.au>	 <4991DBA0.1000008@oracle.com>	 <20090211094050.47c4828d.sfr@canb.auug.org.au>	 <OFF3345B15.9471295A-ON8525755A.00024CFE-8525755A.0002C8E8@us.ibm.com>	 <20090212095414.733dd248.randy.dunlap@oracle.com> <1234463058.3104.7.camel@localhost.localdomain>
+Subject: [PATCH -next] x86_32: fix printk formats
+Date: Thu, 12 Feb 2009 10:43:04 -0800
+Message-ID: <49946DB8.9030801@oracle.com>
+References: <20090212194408.ff7489c1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:19572 "EHLO
+Received: from acsinet12.oracle.com ([141.146.126.234]:23345 "EHLO
 	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755237AbZBLSbF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Feb 2009 13:31:05 -0500
-In-Reply-To: <1234463058.3104.7.camel@localhost.localdomain>
+	with ESMTP id S1756076AbZBLSnG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Feb 2009 13:43:06 -0500
+In-Reply-To: <20090212194408.ff7489c1.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Mimi Zohar <zohar@us.ibm.com>, akpm <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, James Morris <jmorris@namei.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org
 
-Mimi Zohar wrote:
-> On Thu, 2009-02-12 at 09:54 -0800, Randy Dunlap wrote:
->> On Tue, 10 Feb 2009 19:30:24 -0500 Mimi Zohar wrote:
->>
->>> Stephen Rothwell <sfr@canb.auug.org.au> wrote on 02/10/2009 05:40:50 PM:
->>>
->>>> Hi Randy,
->>>>
->>>> On Tue, 10 Feb 2009 11:55:12 -0800 Randy Dunlap 
->>> <randy.dunlap@oracle.com> wrote:
->>>>> Stephen Rothwell wrote:
->>>>>> Dropped trees (temporarily):
->>>>>>    audit (difficult conflicts)
->>>>> Maybe this is fixed by the dropped audit tree?
->>>> The audit tree is Al Viro's (cc'd).  But I *think* everything in it has
->>>> been applied upstream.
->>>>
->>>>> linux-next-20090210/security/integrity/ima/ima_policy.c:111: error: 
->>> implicit
->>>> declaration of function 'security_audit_rule_match'
->>>>> linux-next-20090210/security/integrity/ima/ima_policy.c:230: error: 
->>> implicit
->>>> declaration of function 'security_audit_rule_init'
->>>>> when
->>>>> CONFIG_SECURITY=y
->>>>> CONFIG_AUDIT=n
->>>>> CONFIG_IMA=y
->>>>> CONFIG_IMA_AUDIT=y
->>>> This looks more like a security subsystem than audit to me?
->>> These are the IMA Kconfig rules:
->>> CONFIG_IMA=y
->>> CONFIG_IMA_MEASURE_PCR_IDX=10
->>> CONFIG_IMA_AUDIT=y
->>> CONFIG_IMA_LSM_RULES=y
->>>
->>> CONFIG_IMA_LSM_RULES requires the audit subsystem.  The default
->>   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->>> measurement policy is not defined terms of the LSM extended
->>> attributes, and thus is not required.
->>
->> This config still fails to build in linux-next-20090212.  And the ^^^
->> statement above may be correct, but it's not enforced in Kconfig, so let's
->> do that, OK?
-> 
-> The patch looks good to me, but looking at the code,
-> http://git.kernel.org/?p=linux/kernel/git/sfr/linux-next.git;a=blob_plain;f=mm/shmem.c;hb=168b70b72a78f289046823d810c29376e211a6de
-> it doesn't look like the previous patch was applied.
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Which previous patch?  The one for ima & SHMEM=n?
-Yes, that build combination still fails also.
+Fix printk format warnings and also change 2 %ld to %lu for unsigned long
+variables.
 
-James...?
+arch/x86/mm/init_32.c:727: warning: format '%u' expects type 'unsigned int', but argument 2 has type 'long unsigned int'
+arch/x86/mm/init_32.c:735: warning: format '%u' expects type 'unsigned int', but argument 2 has type 'long unsigned int'
 
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ arch/x86/mm/init_32.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
->> From: Randy Dunlap <randy.dunlap@oracle.com>
->>
->> IMA_LSM_RULES requires AUDIT.  This is automatic if SECURITY_SELINUX=y
->> but not when SECURITY_SMACK=y (and SECURITY_SELINUX=n), so make the
->> dependency explicit.  This fixes the following build error:
->>
->> security/integrity/ima/ima_policy.c:111:error: implicit declaration of function 'security_audit_rule_match'
->> security/integrity/ima/ima_policy.c:230:error: implicit declaration of function 'security_audit_rule_init'
->>
->> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Acked-by: Mimi Zohar <zohar@us.ibm.com>
-> 
->> ---
->>  security/integrity/ima/Kconfig |    4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> --- linux-next-20090212.orig/security/integrity/ima/Kconfig
->> +++ linux-next-20090212/security/integrity/ima/Kconfig
->> @@ -49,7 +49,7 @@ config IMA_AUDIT
->>
->>  config IMA_LSM_RULES
->>  	bool
->> -	depends on IMA && (SECURITY_SELINUX || SECURITY_SMACK)
->> +	depends on IMA && AUDIT && (SECURITY_SELINUX || SECURITY_SMACK)
->>  	default y
->>  	help
->> -	  Disabling this option will disregard LSM based policy rules
->> +	  Disabling this option will disregard LSM based policy rules.
-
-
--- 
-~Randy
+--- linux-next-20090212.orig/arch/x86/mm/init_32.c
++++ linux-next-20090212/arch/x86/mm/init_32.c
+@@ -721,7 +721,7 @@ void __init find_low_pfn_range(void)
+ 			highmem_pages = 0;
+ #ifdef CONFIG_HIGHMEM
+ 		if (highmem_pages >= max_pfn) {
+-			printk(KERN_ERR "highmem size specified (%uMB) is "
++			printk(KERN_ERR "highmem size specified (%luMB) is "
+ 				"bigger than pages available (%luMB)!.\n",
+ 				pages_to_mb(highmem_pages),
+ 				pages_to_mb(max_pfn));
+@@ -730,7 +730,7 @@ void __init find_low_pfn_range(void)
+ 		if (highmem_pages) {
+ 			if (max_low_pfn - highmem_pages <
+ 			    64*1024*1024/PAGE_SIZE){
+-				printk(KERN_ERR "highmem size %uMB results in "
++				printk(KERN_ERR "highmem size %luMB results in "
+ 				"smaller than 64MB lowmem, ignoring it.\n"
+ 					, pages_to_mb(highmem_pages));
+ 				highmem_pages = 0;
+@@ -755,7 +755,7 @@ void __init initmem_init(unsigned long s
+ 		highstart_pfn = max_low_pfn;
+ 	memory_present(0, 0, highend_pfn);
+ 	e820_register_active_regions(0, 0, highend_pfn);
+-	printk(KERN_NOTICE "%ldMB HIGHMEM available.\n",
++	printk(KERN_NOTICE "%luMB HIGHMEM available.\n",
+ 		pages_to_mb(highend_pfn - highstart_pfn));
+ 	num_physpages = highend_pfn;
+ 	high_memory = (void *) __va(highstart_pfn * PAGE_SIZE - 1) + 1;
+@@ -768,7 +768,7 @@ void __init initmem_init(unsigned long s
+ #ifdef CONFIG_FLATMEM
+ 	max_mapnr = num_physpages;
+ #endif
+-	printk(KERN_NOTICE "%ldMB LOWMEM available.\n",
++	printk(KERN_NOTICE "%luMB LOWMEM available.\n",
+ 			pages_to_mb(max_low_pfn));
+ 
+ 	setup_bootmem_allocator();
