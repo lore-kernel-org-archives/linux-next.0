@@ -1,29 +1,43 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for February 12 (ide)
-Date: Thu, 12 Feb 2009 08:44:16 -0800
-Message-ID: <499451E0.6060004@oracle.com>
+Subject: [PATCH] wireless: fix for CONFIG_NL80211=n
+Date: Thu, 12 Feb 2009 09:38:32 -0800
+Message-ID: <49945E98.70002@oracle.com>
 References: <20090212194408.ff7489c1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-ide-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:56039 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751899AbZBLRi0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Feb 2009 12:38:26 -0500
 In-Reply-To: <20090212194408.ff7489c1.sfr@canb.auug.org.au>
-Sender: linux-ide-owner@vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linville@tuxdriver.com" <linville@tuxdriver.com>
 
-Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20090211:
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
+Add empty function for case of CONFIG_NL80211=n:
 
-When
-# CONFIG_BLK_DEV_IDEDMA is not set
+net/wireless/scan.c:35: error: implicit declaration of function 'nl80211_send_scan_aborted'
 
-linux-next-20090212/drivers/ide/ide-taskfile.c:108: error: 'ide_dma_intr' undeclared (first use in this function)
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ net/wireless/nl80211.h |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-
--- 
-~Randy
+--- linux-next-20090212.orig/net/wireless/nl80211.h
++++ linux-next-20090212/net/wireless/nl80211.h
+@@ -27,6 +27,10 @@ static inline void
+ nl80211_send_scan_done(struct cfg80211_registered_device *rdev,
+ 		       struct net_device *netdev)
+ {}
++static inline void nl80211_send_scan_aborted(
++					struct cfg80211_registered_device *rdev,
++					struct net_device *netdev)
++{}
+ #endif /* CONFIG_NL80211 */
+ 
+ #endif /* __NET_WIRELESS_NL80211_H */
