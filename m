@@ -1,37 +1,58 @@
-From: reinette chatre <reinette.chatre@intel.com>
-Subject: Re: [ipw3945-devel] X200: Resume and iwlwifi on
-	2.6.29-rc4-ikn-00001-gd5b5623
-Date: Thu, 12 Feb 2009 11:48:40 -0800
-Message-ID: <1234468120.30608.30.camel@rc-desk>
-References: <20090209093507.GA27678@denkbrett.schottelius.org>
-	 <20090210070147.GA4684@denkbrett.schottelius.org>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: linux-next test scripts
+Date: Thu, 12 Feb 2009 21:20:37 +0100
+Message-ID: <20090212202036.GA31203@pengutronix.de>
+References: <20090206142022.GA5430@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1760186AbZBLTpB@vger.kernel.org>
-In-Reply-To: <20090210070147.GA4684@denkbrett.schottelius.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nico Schottelius <nico-linux-20090209@schottelius.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "ipw3945-devel@lists.sourceforge.net" <ipw3945-devel@lists.sourceforge.net>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:60987 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759111AbZBLUh1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Feb 2009 15:37:27 -0500
+Content-Disposition: inline
+In-Reply-To: <20090206142022.GA5430@pengutronix.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-On Mon, 2009-02-09 at 23:01 -0800, Nico Schottelius wrote:
-> Good morning!
-> 
-> Summary on the X200:
-> - First resume after suspend takes 20 seconds
-> - Further resumes work fine
-> - wlan works *before* first suspend and wakeup
-> - after that the same happens as on 2.6.29-rc3-ikn-00697-gae1a25d:
->   the device refuses to come up with the message
->   "iwlagn: Could not load the INST uCode section" and
->   "iwlagn: Unable to set up bootstrap uCode: -110"
+Hello,
 
-Sorry that I missed responding to your email in all the messages
-regarding this problem. A patch was recently sent to address it - could
-you please try with
-http://marc.info/?l=linux-wireless&m=123429595818495&w=2 ?
+On Fri, Feb 06, 2009 at 03:20:22PM +0100, Uwe Kleine-K=F6nig wrote:
+> I plan to setup something similar to linux-next for the Pengutronix t=
+est
+> lab to build a tree that contains the work of all our developers for
+> daily testing.
+>=20
+> It would be really great if I could take a look into your scripts to
+> manage linux-next.  I tried searching the web for them, but without
+> success.
+>=20
+> Are the scripts somewhere available without being found by me?  If ye=
+s,
+> where are they, if not, do you can publish them somewhere?
+After some more search I found the script by James Bottomley[1].
 
-Thanks
+Still I'd like to know if you put some work in that script or even
+created your own to prevent duplication of work.
 
-Reinette
+If you care that I don't just use your script without contributing back=
+,
+I intend to use it among others for our (public) mxc tree at
+git://git.pengutronix.de/git/imx/linux-2.6.git which gets much interest
+in the arm-linux community and you can be sure that you will benefit
+from our changes to your script.
+
+Best regards
+Uwe
+
+[1] http://article.gmane.org/gmane.linux.kernel/626055/
+
+--=20
+Pengutronix e.K.                              | Uwe Kleine-K=F6nig     =
+       |
+Industrial Linux Solutions                    | http://www.pengutronix.=
+de/  |
