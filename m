@@ -1,58 +1,52 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: linux-next test scripts
-Date: Thu, 12 Feb 2009 21:20:37 +0100
-Message-ID: <20090212202036.GA31203@pengutronix.de>
-References: <20090206142022.GA5430@pengutronix.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: wireless tree build failure
+Date: Fri, 13 Feb 2009 09:07:37 +1100
+Message-ID: <20090213090737.1df51427.sfr@canb.auug.org.au>
+References: <20090212193517.3f393726.sfr@canb.auug.org.au>
+	<20090212161639.GA4091@tuxdriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__13_Feb_2009_09_07_37_+1100_fE+lRdENkQWktznR"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:60987 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759111AbZBLUh1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Feb 2009 15:37:27 -0500
-Content-Disposition: inline
-In-Reply-To: <20090206142022.GA5430@pengutronix.de>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60421 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753113AbZBLWHo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Feb 2009 17:07:44 -0500
+In-Reply-To: <20090212161639.GA4091@tuxdriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, David Kilroy <kilroyd@googlemail.com>
 
-Hello,
+--Signature=_Fri__13_Feb_2009_09_07_37_+1100_fE+lRdENkQWktznR
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 06, 2009 at 03:20:22PM +0100, Uwe Kleine-K=F6nig wrote:
-> I plan to setup something similar to linux-next for the Pengutronix t=
-est
-> lab to build a tree that contains the work of all our developers for
-> daily testing.
->=20
-> It would be really great if I could take a look into your scripts to
-> manage linux-next.  I tried searching the web for them, but without
-> success.
->=20
-> Are the scripts somewhere available without being found by me?  If ye=
-s,
-> where are they, if not, do you can publish them somewhere?
-After some more search I found the script by James Bottomley[1].
+Hi John,
 
-Still I'd like to know if you put some work in that script or even
-created your own to prevent duplication of work.
+On Thu, 12 Feb 2009 11:16:40 -0500 "John W. Linville" <linville@tuxdriver.c=
+om> wrote:
+>
+> I'll fix this up with a patch like below...
 
-If you care that I don't just use your script without contributing back=
-,
-I intend to use it among others for our (public) mxc tree at
-git://git.pengutronix.de/git/imx/linux-2.6.git which gets much interest
-in the arm-linux community and you can be sure that you will benefit
-from our changes to your script.
-
-Best regards
-Uwe
-
-[1] http://article.gmane.org/gmane.linux.kernel/626055/
+Thanks.
 
 --=20
-Pengutronix e.K.                              | Uwe Kleine-K=F6nig     =
-       |
-Industrial Linux Solutions                    | http://www.pengutronix.=
-de/  |
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__13_Feb_2009_09_07_37_+1100_fE+lRdENkQWktznR
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkmUnakACgkQjjKRsyhoI8yu2ACfdU48XQqMI+0uu+uMk5tdeVOa
+dWcAnj+DjK0CLVB0bPaJlZiqQTc4v8fq
+=82LJ
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__13_Feb_2009_09_07_37_+1100_fE+lRdENkQWktznR--
