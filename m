@@ -1,26 +1,35 @@
-From: Frank Seidel <fseidel@suse.de>
-Subject: Re: [PATCH next 2/2] pohmelfs: fix printk format warnings
-Date: Fri, 13 Feb 2009 14:29:54 +0100
-Message-ID: <499575D2.3000708@suse.de>
-References: <20090213125944.GB7003@orion> <20090213131400.GF23879@ioremap.net>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: [Patch] [S390]  Fix appldata build break with !NET
+Date: Fri, 13 Feb 2009 14:43:36 +0100
+Message-ID: <20090213144336.69a45d32@osiris.boeblingen.de.ibm.com>
+References: <20090213175526.d0590862.sfr@canb.auug.org.au>
+	<49954589.9060604@in.ibm.com>
+	<49955945.2080809@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ns.suse.de ([195.135.220.2]:37573 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751616AbZBMNfP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 13 Feb 2009 08:35:15 -0500
-In-Reply-To: <20090213131400.GF23879@ioremap.net>
+Received: from mtagate2.uk.ibm.com ([194.196.100.162]:41548 "EHLO
+	mtagate2.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753911AbZBMNnm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Feb 2009 08:43:42 -0500
+In-Reply-To: <49955945.2080809@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Evgeniy Polyakov <zbr@ioremap.net>
-Cc: Alexander Beregalov <a.beregalov@gmail.com>, gregkh@suse.de, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Sachin P. Sant" <sachinp@in.ibm.com>
+Cc: schwidefsky@de.ibm.com, linux-kernel <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org, Mel Gorman <mel@csn.ul.ie>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-Evgeniy Polyakov wrote:
-> Doesn't size_t have %zu format?
+On Fri, 13 Feb 2009 16:58:05 +0530
+"Sachin P. Sant" <sachinp@in.ibm.com> wrote:
 
-That's right. So that would be even more accurate.
+> With CONFIG_NET not set appldata build breaks on s390.
+> 
+> arch/s390/appldata/built-in.o: In function appldata_get_net_sum_data:
+> appldata_net_sum.c:(.text+0x2684): undefined reference to dev_get_stats
+> appldata_net_sum.c:(.text+0x2688): undefined reference to init_net
+> appldata_net_sum.c:(.text+0x268c): undefined reference to init_net
+> appldata_net_sum.c:(.text+0x2694): undefined reference to dev_base_lock
+> 
+> The following patch fixes the issue for me.
 
-Thanks,
-Frank
+Added to our patch queue. Thanks, Sachin!
