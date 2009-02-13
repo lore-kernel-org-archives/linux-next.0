@@ -1,86 +1,73 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: linux-next: wireless tree build failure
-Date: Fri, 13 Feb 2009 13:24:56 -0500
-Message-ID: <20090213182456.GA3581@tuxdriver.com>
-References: <20090212193517.3f393726.sfr@canb.auug.org.au> <20090212161639.GA4091@tuxdriver.com> <4995BADE.60700@gmail.com>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: next Feb 13 drivers/scsi/aha1542.ko build break
+Date: Fri, 13 Feb 2009 12:52:44 -0600
+Message-ID: <1234551164.3252.20.camel@localhost.localdomain>
+References: <20090213175526.d0590862.sfr@canb.auug.org.au>
+	 <49955D00.2020707@in.ibm.com>  <4995BA4B.9050209@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:55903 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752466AbZBMSay (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Feb 2009 13:30:54 -0500
-Content-Disposition: inline
-In-Reply-To: <4995BADE.60700@gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dave <kilroyd@googlemail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <4995BA4B.9050209@oracle.com>
+Sender: linux-scsi-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: "Sachin P. Sant" <sachinp@in.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi <linux-scsi@vger.kernel.org>, jgsf@goop.org
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Feb 13, 2009 at 06:24:30PM +0000, Dave wrote:
-> John W. Linville wrote:
-> > On Thu, Feb 12, 2009 at 07:35:17PM +1100, Stephen Rothwell wrote:
-> >> Today's linux-next build (powerpc allyesconfig) failed like this:
-> >>
-> >> net/built-in.o: In function `michael_mic':
-> >> (.opd+0x3ba78): multiple definition of `michael_mic'
-> >> drivers/built-in.o:(.opd+0x552a8): first defined here
-> >> net/built-in.o: In function `michael_mic':
-> >> net/mac80211/michael.c:58: multiple definition of `.michael_mic'
-> >> drivers/built-in.o:drivers/net/wireless/orinoco/mic.c:49: first defined here
-> >>
-> >> Immediate cause is commit 84875201dd1150dc2c16780b944fe501d588ffba
-> >> ("orinoco: Move MIC helpers into new file").
+On Fri, 2009-02-13 at 10:22 -0800, Randy Dunlap wrote:
+> Sachin P. Sant wrote:
+> > Feb 13 next x86 allmodconfig build breaks with
 > > 
-> > I'll fix this up with a patch like below...
+> > ERROR: "__udivdi3" [drivers/scsi/aha1542.ko] undefined!
 > > 
-> > John
+> > .config attached.
 > 
-> I guess it only worked for me because I'm building modules.
 > 
-> Anyway, the fix needs to be slightly different:
+> I'm seeing that also.  I think that it's this line in aha1542.c:
 > 
-> > diff --git a/drivers/net/wireless/orinoco/mic.c b/drivers/net/wireless/orinoco/mic.c
-> > index c39d9ea..8cdac75 100644
-> > --- a/drivers/net/wireless/orinoco/mic.c
-> > +++ b/drivers/net/wireless/orinoco/mic.c
-> > @@ -16,18 +16,18 @@
-> >  /********************************************************************/
-> >  int orinoco_mic_init(struct orinoco_private *priv)
-> >  {
-> > -	priv->tx_tfm_mic = crypto_alloc_hash("michael_mic", 0, 0);
-> > +	priv->tx_tfm_mic = crypto_alloc_hash("orinoco_mic", 0, 0);
+> 495:		mbo = (scsi2int(mb[mbi].ccbptr) - (SCSI_BUF_PA(&ccb[0]))) / sizeof(struct ccb);
 > 
-> That wants to remain as michael_mic, so we get the right crypto alg.
+> since I can comment out the "/ sizeof(struct ccb)" and the driver builds successfully.
 > 
-> >  	if (IS_ERR(priv->tx_tfm_mic)) {
-> >  		printk(KERN_DEBUG "orinoco_mic_init: could not allocate "
-> > -		       "crypto API michael_mic\n");
-> > +		       "crypto API orinoco_mic\n");
-> 
-> Since we're referring to the crypto alg, I suggest this stay the same.
-> 
-> >  		priv->tx_tfm_mic = NULL;
-> >  		return -ENOMEM;
-> >  	}
-> >  
-> > -	priv->rx_tfm_mic = crypto_alloc_hash("michael_mic", 0, 0);
-> > +	priv->rx_tfm_mic = crypto_alloc_hash("orinoco_mic", 0, 0);
-> 
-> Ditto 1.
-> 
-> >  	if (IS_ERR(priv->rx_tfm_mic)) {
-> >  		printk(KERN_DEBUG "orinoco_mic_init: could not allocate "
-> > -		       "crypto API michael_mic\n");
-> > +		       "crypto API orinoco_mic\n");
-> 
-> Ditto 2.
-> 
-> The rest is fine.
+> This may need a patch to use one of the div() macros (?).
 
-Right, Johannes already scolded me.  Sloppy search-n-replace... :-)
+It shouldn't ... the two inputs should be longs and the sizeof should be
+dividing by a constant size_t.  __udivdi3 is used for 64 bit division on
+a 32 bit platform, so where's it getting the idea that something in the
+division is 64 bit?
 
-John
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
+The culprit looks to be
+
+commit 976e8f677e42757e5586ea04a9ac8bb8ddaa037e
+Author: Jeremy Fitzhardinge <jeremy@goop.org>
+Date:   Fri Feb 6 13:29:44 2009 -0800
+
+    x86: asm/io.h: unify virt_to_phys/phys_to_virt
+
+Because it changed the return of virt_to_phys from long to phys_addr_t
+which is unsigned long long on a PAE platform, which this is.
+
+So, I could suggest a fix below since isa addresses may never be above
+32 bits, but I think this issue has more ramifications for the other
+legacy users of virt_to_phys.
+
+James
+
+---
+
+diff --git a/arch/x86/include/asm/io.h b/arch/x86/include/asm/io.h
+index e5a2ab4..4f8e820 100644
+--- a/arch/x86/include/asm/io.h
++++ b/arch/x86/include/asm/io.h
+@@ -125,7 +125,7 @@ static inline void *phys_to_virt(phys_addr_t address)
+ /*
+  * ISA I/O bus memory addresses are 1:1 with the physical address.
+  */
+-#define isa_virt_to_bus virt_to_phys
++#define isa_virt_to_bus (unsigned long)virt_to_phys
+ #define isa_page_to_bus page_to_phys
+ #define isa_bus_to_virt phys_to_virt
+ 
+
+
+
