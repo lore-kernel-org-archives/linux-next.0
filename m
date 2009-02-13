@@ -1,54 +1,38 @@
-From: Jaswinder Singh Rajput <jaswinderlinux@gmail.com>
-Subject: Re: [PATCH -next] x86_32: fix printk formats
-Date: Fri, 13 Feb 2009 22:19:26 +0530
-Message-ID: <3f9a31f40902130849k7d9efb50v48a600aa16f41811@mail.gmail.com>
-References: <20090212194408.ff7489c1.sfr@canb.auug.org.au>
-	 <49946DB8.9030801@oracle.com> <20090213082556.GB4606@elte.hu>
-	 <4995A20A.2060802@oracle.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: next Feb 13 drivers/scsi/aha1542.ko build break
+Date: Fri, 13 Feb 2009 10:22:03 -0800
+Message-ID: <4995BA4B.9050209@oracle.com>
+References: <20090213175526.d0590862.sfr@canb.auug.org.au> <49955D00.2020707@in.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wa-out-1112.google.com ([209.85.146.178]:17467 "EHLO
-	wa-out-1112.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752226AbZBMQt2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Feb 2009 11:49:28 -0500
-In-Reply-To: <4995A20A.2060802@oracle.com>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:23892 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751753AbZBMSVp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Feb 2009 13:21:45 -0500
+In-Reply-To: <49955D00.2020707@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org
+To: "Sachin P. Sant" <sachinp@in.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi <linux-scsi@vger.kernel.org>
 
-On Fri, Feb 13, 2009 at 10:08 PM, Randy Dunlap <randy.dunlap@oracle.com> wrote:
-> Ingo Molnar wrote:
->> * Randy Dunlap <randy.dunlap@oracle.com> wrote:
->>
->>> From: Randy Dunlap <randy.dunlap@oracle.com>
->>>
->>> Fix printk format warnings and also change 2 %ld to %lu for unsigned long
->>> variables.
->>>
->>> arch/x86/mm/init_32.c:727: warning: format '%u' expects type 'unsigned int', but argument 2 has type 'long unsigned int'
->>> arch/x86/mm/init_32.c:735: warning: format '%u' expects type 'unsigned int', but argument 2 has type 'long unsigned int'
->>>
->>> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
->>> ---
->>>  arch/x86/mm/init_32.c |    8 ++++----
->>>  1 file changed, 4 insertions(+), 4 deletions(-)
->>
->> Already fixed in the x86 tree, but thanks.
->
-> OK, but this still shows up in linux-next of 20090213.
-> Did the fix just miss the today's pull or is there a git #branch issue
-> or what?
->
+Sachin P. Sant wrote:
+> Feb 13 next x86 allmodconfig build breaks with
+> 
+> ERROR: "__udivdi3" [drivers/scsi/aha1542.ko] undefined!
+> 
+> .config attached.
 
-Ahh, because I fixed for :
- arch/x86/mm/init_32.c:696: warning: format '%u' expects type
-'unsigned int', but
 
-This part was remaining.
+I'm seeing that also.  I think that it's this line in aha1542.c:
 
-Thanks Randy,
---
-JSR
+495:		mbo = (scsi2int(mb[mbi].ccbptr) - (SCSI_BUF_PA(&ccb[0]))) / sizeof(struct ccb);
+
+since I can comment out the "/ sizeof(struct ccb)" and the driver builds successfully.
+
+This may need a patch to use one of the div() macros (?).
+
+
+-- 
+~Randy
