@@ -1,30 +1,43 @@
 From: Evgeniy Polyakov <zbr@ioremap.net>
-Subject: Re: [PATCH next 2/2] pohmelfs: fix printk format warnings
-Date: Fri, 13 Feb 2009 17:42:09 +0300
-Message-ID: <20090213144209.GB28569@ioremap.net>
-References: <20090213125944.GB7003@orion> <20090213131400.GF23879@ioremap.net> <a4423d670902130637h8a7addfgd1ddb8fb590dc507@mail.gmail.com>
+Subject: Re: [PATCH next] Stagging: pohmelfs/net.c: include vmalloc.h
+Date: Fri, 13 Feb 2009 17:42:34 +0300
+Message-ID: <20090213144234.GC28569@ioremap.net>
+References: <20090213143532.GA7266@orion>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from matrixpower.ru ([195.178.208.66]:36356 "EHLO tservice.net.ru"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753038AbZBMOmN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 13 Feb 2009 09:42:13 -0500
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1761326AbZBMOmv@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <a4423d670902130637h8a7addfgd1ddb8fb590dc507@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+In-Reply-To: <20090213143532.GA7266@orion>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Alexander Beregalov <a.beregalov@gmail.com>
 Cc: gregkh@suse.de, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Feb 13, 2009 at 05:37:28PM +0300, Alexander Beregalov (a.beregalov@gmail.com) wrote:
-> > Doesn't size_t have %zu format?
-> Hi
+On Fri, Feb 13, 2009 at 05:35:32PM +0300, Alexander Beregalov (a.beregalov@gmail.com) wrote:
+> on Sparc64:
+> drivers/staging/pohmelfs/net.c:33: error: implicit declaration of function 'vmalloc'
+> drivers/staging/pohmelfs/net.c:42: error: implicit declaration of function 'vfree'
 > 
-> Thanks for the tip, may I rewrite the patch?
+> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
 
-Sure :)
-Thank you.
+Thanks a lot Alexander!
+
+> ---
+> 
+>  drivers/staging/pohmelfs/net.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/staging/pohmelfs/net.c b/drivers/staging/pohmelfs/net.c
+> index d161237..c9b8540 100644
+> --- a/drivers/staging/pohmelfs/net.c
+> +++ b/drivers/staging/pohmelfs/net.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/poll.h>
+>  #include <linux/swap.h>
+>  #include <linux/syscalls.h>
+> +#include <linux/vmalloc.h>
+> 
+>  #include "netfs.h"
 
 -- 
 	Evgeniy Polyakov
