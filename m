@@ -1,38 +1,62 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH -next] x86_32: fix printk formats
-Date: Fri, 13 Feb 2009 09:25:56 +0100
-Message-ID: <20090213082556.GB4606@elte.hu>
-References: <20090212194408.ff7489c1.sfr@canb.auug.org.au> <49946DB8.9030801@oracle.com>
+From: Nico Schottelius <nico-linux-20090209@schottelius.org>
+Subject: Re: [ipw3945-devel] X200: Resume and iwlwifi on
+	2.6.29-rc4-ikn-00001-gd5b5623
+Date: Fri, 13 Feb 2009 10:36:29 +0100
+Message-ID: <20090213093629.GB10175@denkbrett.schottelius.org>
+References: <20090209093507.GA27678@denkbrett.schottelius.org> <20090210070147.GA4684@denkbrett.schottelius.org> <1234468120.30608.30.camel@rc-desk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="rS8CxjVDS/+yyDmU"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:60389 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751465AbZBMI0Y (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 13 Feb 2009 03:26:24 -0500
+Received: from mx3.schottelius.org ([77.109.138.221]:50611 "EHLO
+	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750711AbZBMJgb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Feb 2009 04:36:31 -0500
 Content-Disposition: inline
-In-Reply-To: <49946DB8.9030801@oracle.com>
+In-Reply-To: <1234468120.30608.30.camel@rc-desk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org
+To: reinette chatre <reinette.chatre@intel.com>
+Cc: Nico Schottelius <nico-linux-20090209@schottelius.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "ipw3945-devel@lists.sourceforge.net" <ipw3945-devel@lists.sourceforge.net>
 
 
-* Randy Dunlap <randy.dunlap@oracle.com> wrote:
+--rS8CxjVDS/+yyDmU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Fix printk format warnings and also change 2 %ld to %lu for unsigned long
-> variables.
-> 
-> arch/x86/mm/init_32.c:727: warning: format '%u' expects type 'unsigned int', but argument 2 has type 'long unsigned int'
-> arch/x86/mm/init_32.c:735: warning: format '%u' expects type 'unsigned int', but argument 2 has type 'long unsigned int'
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> ---
->  arch/x86/mm/init_32.c |    8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+reinette chatre [Thu, Feb 12, 2009 at 11:48:40AM -0800]:
+> Sorry that I missed responding to your email in all the messages
+> regarding this problem. A patch was recently sent to address it - could
+> you please try with
+> http://marc.info/?l=3Dlinux-wireless&m=3D123429595818495&w=3D2 ?
 
-Already fixed in the x86 tree, but thanks.
+I just booted 2.6.29-rc4-ikn-00211-g37bed90, which contains
+that commit, but has broken brightness. I'll test it with
+the next version the brightness is working again, currently
+local usage of the notebook is not possible :-/
 
-	Ingo
+Sincerly,
+
+Nico
+
+--=20
+Think about Free and Open Source Software (FOSS).
+http://nico.schottelius.org/documentations/foss/the-term-foss/
+
+PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
+
+--rS8CxjVDS/+yyDmU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkmVPx0ACgkQuL75KpiFGIzhxACgxkG766FFWxAdk2CEqoqQCEgS
+xqwAnihVAzhvLGnJk36xZgmVNkRhfZ8e
+=JW7P
+-----END PGP SIGNATURE-----
+
+--rS8CxjVDS/+yyDmU--
