@@ -1,35 +1,33 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [Patch] [S390]  Fix appldata build break with !NET
-Date: Fri, 13 Feb 2009 14:43:36 +0100
-Message-ID: <20090213144336.69a45d32@osiris.boeblingen.de.ibm.com>
-References: <20090213175526.d0590862.sfr@canb.auug.org.au>
-	<49954589.9060604@in.ibm.com>
-	<49955945.2080809@in.ibm.com>
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: [PATCH next] Stagging: pohmelfs/net.c: include vmalloc.h
+Date: Fri, 13 Feb 2009 17:35:32 +0300
+Message-ID: <20090213143532.GA7266@orion>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate2.uk.ibm.com ([194.196.100.162]:41548 "EHLO
-	mtagate2.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753911AbZBMNnm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Feb 2009 08:43:42 -0500
-In-Reply-To: <49955945.2080809@in.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Sachin P. Sant" <sachinp@in.ibm.com>
-Cc: schwidefsky@de.ibm.com, linux-kernel <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org, Mel Gorman <mel@csn.ul.ie>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757040AbZBMOfy@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: zbr@ioremap.net, gregkh@suse.de, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 13 Feb 2009 16:58:05 +0530
-"Sachin P. Sant" <sachinp@in.ibm.com> wrote:
+on Sparc64:
+drivers/staging/pohmelfs/net.c:33: error: implicit declaration of function 'vmalloc'
+drivers/staging/pohmelfs/net.c:42: error: implicit declaration of function 'vfree'
 
-> With CONFIG_NET not set appldata build breaks on s390.
-> 
-> arch/s390/appldata/built-in.o: In function appldata_get_net_sum_data:
-> appldata_net_sum.c:(.text+0x2684): undefined reference to dev_get_stats
-> appldata_net_sum.c:(.text+0x2688): undefined reference to init_net
-> appldata_net_sum.c:(.text+0x268c): undefined reference to init_net
-> appldata_net_sum.c:(.text+0x2694): undefined reference to dev_base_lock
-> 
-> The following patch fixes the issue for me.
+Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+---
 
-Added to our patch queue. Thanks, Sachin!
+ drivers/staging/pohmelfs/net.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/staging/pohmelfs/net.c b/drivers/staging/pohmelfs/net.c
+index d161237..c9b8540 100644
+--- a/drivers/staging/pohmelfs/net.c
++++ b/drivers/staging/pohmelfs/net.c
+@@ -22,6 +22,7 @@
+ #include <linux/poll.h>
+ #include <linux/swap.h>
+ #include <linux/syscalls.h>
++#include <linux/vmalloc.h>
+
+ #include "netfs.h"
