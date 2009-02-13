@@ -1,33 +1,35 @@
 From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: [PATCH next] Stagging: pohmelfs/net.c: include vmalloc.h
-Date: Fri, 13 Feb 2009 17:35:32 +0300
-Message-ID: <20090213143532.GA7266@orion>
+Subject: Re: [PATCH next 2/2] pohmelfs: fix printk format warnings
+Date: Fri, 13 Feb 2009 17:37:28 +0300
+Message-ID: <a4423d670902130637h8a7addfgd1ddb8fb590dc507@mail.gmail.com>
+References: <20090213125944.GB7003@orion> <20090213131400.GF23879@ioremap.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757040AbZBMOfy@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: zbr@ioremap.net, gregkh@suse.de, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ew0-f21.google.com ([209.85.219.21]:41957 "EHLO
+	mail-ew0-f21.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756706AbZBMOhb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Feb 2009 09:37:31 -0500
+In-Reply-To: <20090213131400.GF23879@ioremap.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Evgeniy Polyakov <zbr@ioremap.net>
+Cc: gregkh@suse.de, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-on Sparc64:
-drivers/staging/pohmelfs/net.c:33: error: implicit declaration of function 'vmalloc'
-drivers/staging/pohmelfs/net.c:42: error: implicit declaration of function 'vfree'
+2009/2/13 Evgeniy Polyakov <zbr@ioremap.net>:
+> Hi Alexander.
+>
+> On Fri, Feb 13, 2009 at 03:59:44PM +0300, Alexander Beregalov (a.beregalov@gmail.com) wrote:
+>> drivers/staging/pohmelfs/inode.c:917: warning: format '%u' expects type 'unsigned int', but argument 4 has type 'size_t'
+>> drivers/staging/pohmelfs/inode.c:1036: warning: format '%u' expects type 'unsigned int', but argument 7 has type 'size_t'
+>> drivers/staging/pohmelfs/trans.c:164: warning: format '%u' expects type 'unsigned int', but argument 5 has type '__kernel_size_t'
+>> drivers/staging/pohmelfs/trans.c:170: warning: format '%u' expects type 'unsigned int', but argument 7 has type '__kernel_size_t'
+>> drivers/staging/pohmelfs/trans.c:517: warning: format '%u' expects type 'unsigned int', but argument 6 has type '__kernel_size_t'
+>> drivers/staging/pohmelfs/trans.c:600: warning: format '%u' expects type 'unsigned int', but argument 6 has type '__kernel_size_t'
+>> drivers/staging/pohmelfs/trans.c:610: warning: format '%u' expects type 'unsigned int', but argument 7 has type '__kernel_size_t'
+>
+> Doesn't size_t have %zu format?
+Hi
 
-Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
----
-
- drivers/staging/pohmelfs/net.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/staging/pohmelfs/net.c b/drivers/staging/pohmelfs/net.c
-index d161237..c9b8540 100644
---- a/drivers/staging/pohmelfs/net.c
-+++ b/drivers/staging/pohmelfs/net.c
-@@ -22,6 +22,7 @@
- #include <linux/poll.h>
- #include <linux/swap.h>
- #include <linux/syscalls.h>
-+#include <linux/vmalloc.h>
-
- #include "netfs.h"
+Thanks for the tip, may I rewrite the patch?
