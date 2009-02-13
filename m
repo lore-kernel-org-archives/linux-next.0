@@ -1,67 +1,118 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: next Feb 13 drivers/scsi/aha1542.ko build break
-Date: Fri, 13 Feb 2009 21:03:47 +0100
-Message-ID: <20090213200347.GA27367@elte.hu>
-References: <20090213175526.d0590862.sfr@canb.auug.org.au> <49955D00.2020707@in.ibm.com> <4995BA4B.9050209@oracle.com> <1234551164.3252.20.camel@localhost.localdomain>
+From: Eric Sandeen <sandeen@redhat.com>
+Subject: Re: next-20090206: deadlock on ext4
+Date: Fri, 13 Feb 2009 16:21:50 -0600
+Message-ID: <4995F27E.3070401@redhat.com>
+References: <a4423d670902060935y59e540beta417144935416560@mail.gmail.com>	 <498C7671.1050309@redhat.com>	 <a4423d670902061004i424817e1vd699a61e335f010a@mail.gmail.com>	 <498C9876.3060208@redhat.com> <a4423d670902090401k716d054eo25640aa2207beca7@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-scsi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1234551164.3252.20.camel@localhost.localdomain>
-Sender: linux-scsi-owner@vger.kernel.org
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, "Sachin P. Sant" <sachinp@in.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi <linux-scsi@vger.kernel.org>, Jeremy Fitzhardinge <jeremy@goop.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.redhat.com ([66.187.237.31]:50887 "EHLO mx2.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1761813AbZBMWVz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 13 Feb 2009 17:21:55 -0500
+In-Reply-To: <a4423d670902090401k716d054eo25640aa2207beca7@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
+Alexander Beregalov wrote:
 
-* James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+> I have reproduced it with 2.6.29-rc4.
+> Loop file was on XFS.
+> I can not reproduce it on ext4 on raw device.
+> Let me know if I can do anything else to help resolving it.
+>   
+Can you try this patch from Aneesh?  Works for me...
 
-> On Fri, 2009-02-13 at 10:22 -0800, Randy Dunlap wrote:
-> > Sachin P. Sant wrote:
-> > > Feb 13 next x86 allmodconfig build breaks with
-> > > 
-> > > ERROR: "__udivdi3" [drivers/scsi/aha1542.ko] undefined!
-> > > 
-> > > .config attached.
-> > 
-> > 
-> > I'm seeing that also.  I think that it's this line in aha1542.c:
-> > 
-> > 495:		mbo = (scsi2int(mb[mbi].ccbptr) - (SCSI_BUF_PA(&ccb[0]))) / sizeof(struct ccb);
-> > 
-> > since I can comment out the "/ sizeof(struct ccb)" and the driver builds successfully.
-> > 
-> > This may need a patch to use one of the div() macros (?).
-> 
-> It shouldn't ... the two inputs should be longs and the sizeof should be
-> dividing by a constant size_t.  __udivdi3 is used for 64 bit division on
-> a 32 bit platform, so where's it getting the idea that something in the
-> division is 64 bit?
-> 
-> The culprit looks to be
-> 
-> commit 976e8f677e42757e5586ea04a9ac8bb8ddaa037e
-> Author: Jeremy Fitzhardinge <jeremy@goop.org>
-> Date:   Fri Feb 6 13:29:44 2009 -0800
-> 
->     x86: asm/io.h: unify virt_to_phys/phys_to_virt
-> 
-> Because it changed the return of virt_to_phys from long to phys_addr_t
-> which is unsigned long long on a PAE platform, which this is.
-> 
-> So, I could suggest a fix below since isa addresses may never be above
-> 32 bits, but I think this issue has more ramifications for the other
-> legacy users of virt_to_phys.
+Thanks,
+-Eric
 
-Applied your fix to tip:x86/headers, thanks!
+From: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+Subject: [PATCH] ext4: Don't use the range_cylic mode implemented by
+write_cache_pages
 
-If something non-deep-legacy uses an ugly construct like this:
+With delayed allocation we lock the page in write_cache_pages and 
+try to build an in memory extent of contiguous blocks. This is 
+needed so that we can get a large contiguous blocks request. Now 
+with range_cyclic mode in write_cache_pages if we have not done an 
+I/O we loop back to 0 index and try to write the page.  That would 
+imply we will attempt to take page lock of lower index page holding
+the page lock of higher index page. This can cause a dead lock with
+other writeback thread.
 
-> > 495:		mbo = (scsi2int(mb[mbi].ccbptr) - (SCSI_BUF_PA(&ccb[0]))) / sizeof(struct ccb);
+Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+Reviewed-by: Eric Sandeen <sandeen@redhat.com>
+Tested-by: Eric Sandeen <sandeen@redhat.com>
+---
+ fs/ext4/inode.c |   20 ++++++++++++++++++--
+ 1 files changed, 18 insertions(+), 2 deletions(-)
 
-The right fix will be to remove that division from that code ...
-
-I wouldnt dare to touch the aha1542 driver though. OTOH, build testing
-only came up with the aha1542 case so we should be good.
-
-	Ingo
+Index: linux-2.6.28.x86_64/fs/ext4/inode.c
+===================================================================
+--- linux-2.6.28.x86_64.orig/fs/ext4/inode.c
++++ linux-2.6.28.x86_64/fs/ext4/inode.c
+@@ -2437,6 +2437,7 @@ static int ext4_da_writepages(struct add
+ 	int no_nrwrite_index_update;
+ 	int pages_written = 0;
+ 	long pages_skipped;
++       int range_cyclic = 0, cycled = 1, io_done = 0;
+ 	int needed_blocks, ret = 0, nr_to_writebump = 0;
+ 	struct ext4_sb_info *sbi = EXT4_SB(mapping->host->i_sb);
+ 
+@@ -2488,9 +2489,14 @@ static int ext4_da_writepages(struct add
+ 	if (wbc->range_start == 0 && wbc->range_end == LLONG_MAX)
+ 		range_whole = 1;
+ 
+-	if (wbc->range_cyclic)
++       if (wbc->range_cyclic) {
+ 		index = mapping->writeback_index;
+-	else
++	       wbc->range_start = index << PAGE_CACHE_SHIFT;
++	       wbc->range_end  = LLONG_MAX;
++	       wbc->range_cyclic = 0;
++	       range_cyclic = 1;
++	       cycled = 0;
++       } else
+ 		index = wbc->range_start >> PAGE_CACHE_SHIFT;
+ 
+ 	mpd.wbc = wbc;
+@@ -2504,6 +2510,7 @@ static int ext4_da_writepages(struct add
+ 	wbc->no_nrwrite_index_update = 1;
+ 	pages_skipped = wbc->pages_skipped;
+ 
++retry:
+ 	while (!ret && wbc->nr_to_write > 0) {
+ 
+ 		/*
+@@ -2546,6 +2553,7 @@ static int ext4_da_writepages(struct add
+ 			pages_written += mpd.pages_written;
+ 			wbc->pages_skipped = pages_skipped;
+ 			ret = 0;
++		       io_done = 1;
+ 		} else if (wbc->nr_to_write)
+ 			/*
+ 			 * There is no more writeout needed
+@@ -2554,6 +2562,13 @@ static int ext4_da_writepages(struct add
+ 			 */
+ 			break;
+ 	}
++       if (!io_done && !cycled) {
++	       cycled = 1;
++	       index = 0;
++	       wbc->range_start = index << PAGE_CACHE_SHIFT;
++	       wbc->range_end  = mapping->writeback_index - 1;
++	       goto retry;
++       }
+ 	if (pages_skipped != wbc->pages_skipped)
+ 		printk(KERN_EMERG "This should not happen leaving %s "
+ 				"with nr_to_write = %ld ret = %d\n",
+@@ -2561,6 +2576,7 @@ static int ext4_da_writepages(struct add
+ 
+ 	/* Update index */
+ 	index += pages_written;
++       wbc->range_cyclic = range_cyclic;
+ 	if (wbc->range_cyclic || (range_whole && wbc->nr_to_write > 0))
+ 		/*
+ 		 * set the writeback_index so that range_cyclic
