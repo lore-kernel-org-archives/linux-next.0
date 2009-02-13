@@ -1,26 +1,44 @@
-From: Frank Seidel <frank@f-seidel.de>
-Subject: Re: [PATCH next] Staging: pohmelfs: fix printk format warnings v2
-Date: Fri, 13 Feb 2009 16:16:27 +0100
-Message-ID: <49958ECB.8060001@f-seidel.de>
-References: <20090213145330.GA7321@orion>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH -next] x86_32: fix printk formats
+Date: Fri, 13 Feb 2009 08:38:34 -0800
+Message-ID: <4995A20A.2060802@oracle.com>
+References: <20090212194408.ff7489c1.sfr@canb.auug.org.au> <49946DB8.9030801@oracle.com> <20090213082556.GB4606@elte.hu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1760137AbZBMPWH@vger.kernel.org>
-In-Reply-To: <20090213145330.GA7321@orion>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: zbr@ioremap.net, gregkh@suse.de, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from acsinet11.oracle.com ([141.146.126.233]:47406 "EHLO
+	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757675AbZBMQip (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Feb 2009 11:38:45 -0500
+In-Reply-To: <20090213082556.GB4606@elte.hu>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org
 
-Alexander Beregalov schrieb:
-> drivers/staging/pohmelfs/inode.c:917: warning: format '%u' expects type 'unsigned int', but argument 4 has type 'size_t'
-> drivers/staging/pohmelfs/inode.c:1036: warning: format '%u' expects type 'unsigned int', but argument 7 has type 'size_t'
-> drivers/staging/pohmelfs/trans.c:164: warning: format '%u' expects type 'unsigned int', but argument 5 has type '__kernel_size_t'
-> drivers/staging/pohmelfs/trans.c:170: warning: format '%u' expects type 'unsigned int', but argument 7 has type '__kernel_size_t'
-> drivers/staging/pohmelfs/trans.c:517: warning: format '%u' expects type 'unsigned int', but argument 6 has type '__kernel_size_t'
-> drivers/staging/pohmelfs/trans.c:600: warning: format '%u' expects type 'unsigned int', but argument 6 has type '__kernel_size_t'
-> drivers/staging/pohmelfs/trans.c:610: warning: format '%u' expects type 'unsigned int', but argument 7 has type '__kernel_size_t'
+Ingo Molnar wrote:
+> * Randy Dunlap <randy.dunlap@oracle.com> wrote:
 > 
-> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
-Signed-off-by: Frank Seidel <frank@f-seidel.de>
+>> From: Randy Dunlap <randy.dunlap@oracle.com>
+>>
+>> Fix printk format warnings and also change 2 %ld to %lu for unsigned long
+>> variables.
+>>
+>> arch/x86/mm/init_32.c:727: warning: format '%u' expects type 'unsigned int', but argument 2 has type 'long unsigned int'
+>> arch/x86/mm/init_32.c:735: warning: format '%u' expects type 'unsigned int', but argument 2 has type 'long unsigned int'
+>>
+>> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+>> ---
+>>  arch/x86/mm/init_32.c |    8 ++++----
+>>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> Already fixed in the x86 tree, but thanks.
+
+OK, but this still shows up in linux-next of 20090213.
+Did the fix just miss the today's pull or is there a git #branch issue
+or what?
+
+Thanks,
+-- 
+~Randy
