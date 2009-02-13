@@ -1,49 +1,42 @@
-From: Joe Eykholt <jeykholt@cisco.com>
-Subject: Re: next Feb 13 drivers/scsi/aha1542.ko build break
-Date: Fri, 13 Feb 2009 11:13:50 -0800
-Message-ID: <4995C66E.1000800@cisco.com>
-References: <20090213175526.d0590862.sfr@canb.auug.org.au> <49955D00.2020707@in.ibm.com> <4995BA4B.9050209@oracle.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] usb: fix ehci printk formats
+Date: Fri, 13 Feb 2009 11:22:06 -0800
+Message-ID: <4995C85E.9040001@oracle.com>
+References: <20090213175526.d0590862.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <4995BA4B.9050209@oracle.com>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: "Sachin P. Sant" <sachinp@in.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi <linux-scsi@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet13.oracle.com ([148.87.113.125]:25415 "EHLO
+	rgminet13.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751326AbZBMTWV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Feb 2009 14:22:21 -0500
+In-Reply-To: <20090213175526.d0590862.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg KH <greg@kroah.com>, linux-usb <linux-usb@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
-Randy Dunlap wrote:
-> Sachin P. Sant wrote:
->> Feb 13 next x86 allmodconfig build breaks with
->>
->> ERROR: "__udivdi3" [drivers/scsi/aha1542.ko] undefined!
->>
->> .config attached.
-> 
-> 
-> I'm seeing that also.  I think that it's this line in aha1542.c:
-> 
-> 495:		mbo = (scsi2int(mb[mbi].ccbptr) - (SCSI_BUF_PA(&ccb[0]))) / sizeof(struct ccb);
-> 
-> since I can comment out the "/ sizeof(struct ccb)" and the driver builds successfully.
-> 
-> This may need a patch to use one of the div() macros (?).
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-In the above case, this problem might not occur if sizeof(struct ccb) happened to
-be a power of 2, since the compiler generates a shift in that case.
-Then later someone could increase the size of the struct and introduce this problem.
+Fix ehci printk formats:
 
-The kernel infrastructure should fix that without requiring the driver to change.
-Drivers ought to be allowed to divide.
+drivers/usb/host/ehci-q.c:351: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
+drivers/usb/host/ehci-q.c:351: warning: format '%d' expects type 'int', but argument 5 has type 'size_t'
 
-I've also seen this in another driver that divided a u64 by a constant.
-I noticed that linux/math64.h provides div_u64(), but it seems awkward to call
-that when the compiler generates a call to __udivdi3 (apparently).
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/usb/host/ehci-q.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Can't we just provide __udivdi3, since gcc generates that call?
-Otherwise, problems like this will continue to crop up.
-
-	Joe
-
-
+--- linux-next-20090213.orig/drivers/usb/host/ehci-q.c
++++ linux-next-20090213/drivers/usb/host/ehci-q.c
+@@ -349,7 +349,7 @@ qh_completions (struct ehci_hcd *ehci, s
+ 						--qh->xacterrs > 0 &&
+ 						!urb->unlinked) {
+ 					ehci_dbg(ehci,
+-	"detected XactErr len %d/%d retry %d\n",
++	"detected XactErr len %zu/%zu retry %d\n",
+ 	qtd->length - QTD_LENGTH(token), qtd->length,
+ 	QH_XACTERR_MAX - qh->xacterrs);
+ 
