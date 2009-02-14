@@ -1,118 +1,99 @@
-From: Eric Sandeen <sandeen@redhat.com>
-Subject: Re: next-20090206: deadlock on ext4
-Date: Fri, 13 Feb 2009 16:21:50 -0600
-Message-ID: <4995F27E.3070401@redhat.com>
-References: <a4423d670902060935y59e540beta417144935416560@mail.gmail.com>	 <498C7671.1050309@redhat.com>	 <a4423d670902061004i424817e1vd699a61e335f010a@mail.gmail.com>	 <498C9876.3060208@redhat.com> <a4423d670902090401k716d054eo25640aa2207beca7@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: arm tree build failure
+Date: Sat, 14 Feb 2009 15:27:55 +1100
+Message-ID: <20090214152755.6f672b37.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__14_Feb_2009_15_27_55_+1100_4F4aA4SxWmqK21I5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:50887 "EHLO mx2.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56912 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1761813AbZBMWVz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 13 Feb 2009 17:21:55 -0500
-In-Reply-To: <a4423d670902090401k716d054eo25640aa2207beca7@mail.gmail.com>
+	id S1751337AbZBNE2F (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 13 Feb 2009 23:28:05 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>
 
-Alexander Beregalov wrote:
+--Signature=_Sat__14_Feb_2009_15_27_55_+1100_4F4aA4SxWmqK21I5
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> I have reproduced it with 2.6.29-rc4.
-> Loop file was on XFS.
-> I can not reproduce it on ext4 on raw device.
-> Let me know if I can do anything else to help resolving it.
->   
-Can you try this patch from Aneesh?  Works for me...
+Hi Russell,
 
-Thanks,
--Eric
+Today's linux-next build (arm versatile_defconfig and many other configs)
+failed like this:
 
-From: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
-Subject: [PATCH] ext4: Don't use the range_cylic mode implemented by
-write_cache_pages
+  AS      usr/initramfs_data.o
+arch/arm/include/asm/unwind.h: Assembler messages:
+arch/arm/include/asm/unwind.h:68: Error: Bad macro parameter list
+arch/arm/include/asm/unwind.h: Assembler messages:
+arch/arm/include/asm/unwind.h:68: Error: arch/arm/kernel/entry-common.S:26:=
+ Error: bad instruction `unwind .fnstart'
+arch/arm/kernel/entry-common.S:27: Error: Bad macro parameter listbad instr=
+uction `unwind .cantunwind'
+arch/arm/kernel/entry-common.S:44: Error: bad instruction `unwind .fnend'
+arch/arm/kernel/entry-armv.S:158: Error: bad instruction `unwind .fnstart'
+arch/arm/kernel/entry-armv.S:158: Error: bad instruction `unwind .save{r0-p=
+c}'
+arch/arm/kernel/entry-armv.S:202: Error: bad instruction `unwind .fnend'
+arch/arm/kernel/entry-armv.S:207: Error: bad instruction `unwind .fnstart'
+arch/arm/kernel/entry-armv.S:207: Error: bad instruction `unwind .save{r0-p=
+c}'
+arch/arm/kernel/entry-armv.S:235: Error: bad instruction `unwind .fnend'
+arch/arm/kernel/entry-armv.S:258: Error: bad instruction `unwind .fnstart'
+arch/arm/kernel/entry-armv.S:258: Error: bad instruction `unwind .save{r0-p=
+c}'
+arch/arm/kernel/entry-armv.S:286: Error: bad instruction `unwind .fnend'
+arch/arm/kernel/entry-armv.S:291: Error: bad instruction `unwind .fnstart'
+arch/arm/kernel/entry-armv.S:291: Error: bad instruction `unwind .save{r0-p=
+c}'
+arch/arm/kernel/entry-armv.S:329: Error: bad instruction `unwind .fnend'
+arch/arm/kernel/entry-armv.S:405: Error: bad instruction `unwind .fnstart'
+arch/arm/kernel/entry-armv.S:405: Error: bad instruction `unwind .cantunwin=
+d'
+arch/arm/kernel/entry-armv.S:432: Error: bad instruction `unwind .fnend'
+arch/arm/kernel/entry-armv.S:437: Error: bad instruction `unwind .fnstart'
+arch/arm/kernel/entry-armv.S:437: Error: bad instruction `unwind .cantunwin=
+d'
+arch/arm/kernel/entry-armv.S:463: Error: bad instruction `unwind .fnend'
+arch/arm/kernel/entry-armv.S:470: Error: bad instruction `unwind .fnstart'
+arch/arm/kernel/entry-armv.S:470: Error: bad instruction `unwind .cantunwin=
+d'
+arch/arm/kernel/entry-armv.S:498: Error: bad instruction `unwind .fnend'
+arch/arm/kernel/entry-armv.S:673: Error: bad instruction `unwind .fnstart'
+arch/arm/kernel/entry-armv.S:673: Error: bad instruction `unwind .cantunwin=
+d'
+arch/arm/kernel/entry-armv.S:686: Error: bad instruction `unwind .fnend'
+arch/arm/kernel/entry-armv.S:692: Error: bad instruction `unwind .fnstart'
+arch/arm/kernel/entry-armv.S:693: Error: bad instruction `unwind .cantunwin=
+d'
+arch/arm/kernel/entry-armv.S:697: Error: bad instruction `unwind .fnend'
+arch/arm/kernel/entry-armv.S:707: Error: bad instruction `unwind .fnstart'
+arch/arm/kernel/entry-armv.S:708: Error: bad instruction `unwind .cantunwin=
+d'
+arch/arm/kernel/entry-armv.S:738: Error: bad instruction `unwind .fnend'
 
-With delayed allocation we lock the page in write_cache_pages and 
-try to build an in memory extent of contiguous blocks. This is 
-needed so that we can get a large contiguous blocks request. Now 
-with range_cyclic mode in write_cache_pages if we have not done an 
-I/O we loop back to 0 index and try to write the page.  That would 
-imply we will attempt to take page lock of lower index page holding
-the page lock of higher index page. This can cause a dead lock with
-other writeback thread.
+Presumably caused by commit 7e4e372df35c93e8f2693fd37010cec05c57ff47
+("[ARM] 5383/1: unwind: Add core support for ARM stack unwinding").
 
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
-Reviewed-by: Eric Sandeen <sandeen@redhat.com>
-Tested-by: Eric Sandeen <sandeen@redhat.com>
----
- fs/ext4/inode.c |   20 ++++++++++++++++++--
- 1 files changed, 18 insertions(+), 2 deletions(-)
+Does this require a particular binutils version?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Index: linux-2.6.28.x86_64/fs/ext4/inode.c
-===================================================================
---- linux-2.6.28.x86_64.orig/fs/ext4/inode.c
-+++ linux-2.6.28.x86_64/fs/ext4/inode.c
-@@ -2437,6 +2437,7 @@ static int ext4_da_writepages(struct add
- 	int no_nrwrite_index_update;
- 	int pages_written = 0;
- 	long pages_skipped;
-+       int range_cyclic = 0, cycled = 1, io_done = 0;
- 	int needed_blocks, ret = 0, nr_to_writebump = 0;
- 	struct ext4_sb_info *sbi = EXT4_SB(mapping->host->i_sb);
- 
-@@ -2488,9 +2489,14 @@ static int ext4_da_writepages(struct add
- 	if (wbc->range_start == 0 && wbc->range_end == LLONG_MAX)
- 		range_whole = 1;
- 
--	if (wbc->range_cyclic)
-+       if (wbc->range_cyclic) {
- 		index = mapping->writeback_index;
--	else
-+	       wbc->range_start = index << PAGE_CACHE_SHIFT;
-+	       wbc->range_end  = LLONG_MAX;
-+	       wbc->range_cyclic = 0;
-+	       range_cyclic = 1;
-+	       cycled = 0;
-+       } else
- 		index = wbc->range_start >> PAGE_CACHE_SHIFT;
- 
- 	mpd.wbc = wbc;
-@@ -2504,6 +2510,7 @@ static int ext4_da_writepages(struct add
- 	wbc->no_nrwrite_index_update = 1;
- 	pages_skipped = wbc->pages_skipped;
- 
-+retry:
- 	while (!ret && wbc->nr_to_write > 0) {
- 
- 		/*
-@@ -2546,6 +2553,7 @@ static int ext4_da_writepages(struct add
- 			pages_written += mpd.pages_written;
- 			wbc->pages_skipped = pages_skipped;
- 			ret = 0;
-+		       io_done = 1;
- 		} else if (wbc->nr_to_write)
- 			/*
- 			 * There is no more writeout needed
-@@ -2554,6 +2562,13 @@ static int ext4_da_writepages(struct add
- 			 */
- 			break;
- 	}
-+       if (!io_done && !cycled) {
-+	       cycled = 1;
-+	       index = 0;
-+	       wbc->range_start = index << PAGE_CACHE_SHIFT;
-+	       wbc->range_end  = mapping->writeback_index - 1;
-+	       goto retry;
-+       }
- 	if (pages_skipped != wbc->pages_skipped)
- 		printk(KERN_EMERG "This should not happen leaving %s "
- 				"with nr_to_write = %ld ret = %d\n",
-@@ -2561,6 +2576,7 @@ static int ext4_da_writepages(struct add
- 
- 	/* Update index */
- 	index += pages_written;
-+       wbc->range_cyclic = range_cyclic;
- 	if (wbc->range_cyclic || (range_whole && wbc->nr_to_write > 0))
- 		/*
- 		 * set the writeback_index so that range_cyclic
+--Signature=_Sat__14_Feb_2009_15_27_55_+1100_4F4aA4SxWmqK21I5
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkmWSEsACgkQjjKRsyhoI8xrSwCdGCLfNYTnxuluT0sAilKmB2AO
+Q+UAoKQZWiJej49aBgYmnpDpNRzJ0De6
+=6Drh
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__14_Feb_2009_15_27_55_+1100_4F4aA4SxWmqK21I5--
