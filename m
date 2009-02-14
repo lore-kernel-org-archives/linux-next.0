@@ -1,99 +1,111 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: arm tree build failure
-Date: Sat, 14 Feb 2009 15:27:55 +1100
-Message-ID: <20090214152755.6f672b37.sfr@canb.auug.org.au>
+From: Evgeniy Polyakov <zbr@ioremap.net>
+Subject: Re: [PATCH next] Staging: pohmelfs: fix printk format warnings v2
+Date: Sat, 14 Feb 2009 13:25:46 +0300
+Message-ID: <20090214102546.GA29771@ioremap.net>
+References: <20090213145330.GA7321@orion>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__14_Feb_2009_15_27_55_+1100_4F4aA4SxWmqK21I5"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56912 "EHLO smtps.tip.net.au"
+Received: from genesysrack.ru ([195.178.208.66]:49347 "EHLO tservice.net.ru"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751337AbZBNE2F (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 13 Feb 2009 23:28:05 -0500
+	id S1750898AbZBNKZ5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 14 Feb 2009 05:25:57 -0500
+Content-Disposition: inline
+In-Reply-To: <20090213145330.GA7321@orion>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: gregkh@suse.de, frank@f-seidel.de, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Sat__14_Feb_2009_15_27_55_+1100_4F4aA4SxWmqK21I5
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Feb 13, 2009 at 05:53:30PM +0300, Alexander Beregalov (a.beregalov@gmail.com) wrote:
+> drivers/staging/pohmelfs/inode.c:917: warning: format '%u' expects type 'unsigned int', but argument 4 has type 'size_t'
+> drivers/staging/pohmelfs/inode.c:1036: warning: format '%u' expects type 'unsigned int', but argument 7 has type 'size_t'
+> drivers/staging/pohmelfs/trans.c:164: warning: format '%u' expects type 'unsigned int', but argument 5 has type '__kernel_size_t'
+> drivers/staging/pohmelfs/trans.c:170: warning: format '%u' expects type 'unsigned int', but argument 7 has type '__kernel_size_t'
+> drivers/staging/pohmelfs/trans.c:517: warning: format '%u' expects type 'unsigned int', but argument 6 has type '__kernel_size_t'
+> drivers/staging/pohmelfs/trans.c:600: warning: format '%u' expects type 'unsigned int', but argument 6 has type '__kernel_size_t'
+> drivers/staging/pohmelfs/trans.c:610: warning: format '%u' expects type 'unsigned int', but argument 7 has type '__kernel_size_t'
+> 
+> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
 
-Hi Russell,
+Looks good, thanks a lot Alexander.
 
-Today's linux-next build (arm versatile_defconfig and many other configs)
-failed like this:
+> ---
+> 
+>  drivers/staging/pohmelfs/inode.c |    4 ++--
+>  drivers/staging/pohmelfs/trans.c |   10 +++++-----
+>  2 files changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/staging/pohmelfs/inode.c b/drivers/staging/pohmelfs/inode.c
+> index 0980c3c..fdce752 100644
+> --- a/drivers/staging/pohmelfs/inode.c
+> +++ b/drivers/staging/pohmelfs/inode.c
+> @@ -914,7 +914,7 @@ ssize_t pohmelfs_write(struct file *file, const char __user *buf,
+>  	kiocb.ki_pos = pos;
+>  	kiocb.ki_left = len;
+>  
+> -	dprintk("%s: len: %u, pos: %llu.\n", __func__, len, pos);
+> +	dprintk("%s: len: %zu, pos: %llu.\n", __func__, len, pos);
+>  
+>  	mutex_lock(&inode->i_mutex);
+>  	ret = pohmelfs_data_lock(pi, pos, len, POHMELFS_WRITE_LOCK);
+> @@ -1033,7 +1033,7 @@ static int pohmelfs_send_xattr_req(struct pohmelfs_inode *pi, u64 id, u64 start,
+>  	struct netfs_cmd *cmd;
+>  	void *data;
+>  
+> -	dprintk("%s: id: %llu, start: %llu, name: '%s', attrsize: %u, cmd: %d.\n",
+> +	dprintk("%s: id: %llu, start: %llu, name: '%s', attrsize: %zu, cmd: %d.\n",
+>  			__func__, id, start, name, attrsize, command);
+>  
+>  	path_len = pohmelfs_path_length(pi);
+> diff --git a/drivers/staging/pohmelfs/trans.c b/drivers/staging/pohmelfs/trans.c
+> index 92054bd..bcb5942 100644
+> --- a/drivers/staging/pohmelfs/trans.c
+> +++ b/drivers/staging/pohmelfs/trans.c
+> @@ -160,14 +160,14 @@ int netfs_trans_send(struct netfs_trans *t, struct netfs_state *st)
+>  
+>  	err = kernel_sendmsg(st->socket, &msg, (struct kvec *)msg.msg_iov, 1, t->iovec.iov_len);
+>  	if (err <= 0) {
+> -		printk("%s: failed to send contig transaction: t: %p, gen: %u, size: %u, err: %d.\n",
+> +		printk("%s: failed to send contig transaction: t: %p, gen: %u, size: %zu, err: %d.\n",
+>  				__func__, t, t->gen, t->iovec.iov_len, err);
+>  		if (err == 0)
+>  			err = -ECONNRESET;
+>  		goto err_out_unlock_return;
+>  	}
+>  
+> -	dprintk("%s: sent %s transaction: t: %p, gen: %u, size: %u, page_num: %u.\n",
+> +	dprintk("%s: sent %s transaction: t: %p, gen: %u, size: %zu, page_num: %u.\n",
+>  			__func__, (t->page_num)?"partial":"full",
+>  			t, t->gen, t->iovec.iov_len, t->page_num);
+>  
+> @@ -514,7 +514,7 @@ int netfs_trans_finish(struct netfs_trans *t, struct pohmelfs_sb *psb)
+>  		cmd->csize = psb->crypto_attached_size;
+>  	}
+>  
+> -	dprintk("%s: t: %u, size: %u, iov_len: %u, attached_size: %u, attached_pages: %u.\n",
+> +	dprintk("%s: t: %u, size: %u, iov_len: %zu, attached_size: %u, attached_pages: %u.\n",
+>  			__func__, t->gen, cmd->size, t->iovec.iov_len, t->attached_size, t->attached_pages);
+>  	err = pohmelfs_trans_crypt(t, psb);
+>  	if (err) {
+> @@ -597,7 +597,7 @@ void *netfs_trans_add(struct netfs_trans *t, unsigned int size)
+>  	}
+>  
+>  	if (io->iov_len + size > t->total_size) {
+> -		dprintk("%s: too big size t: %p, gen: %u, iov_len: %u, size: %u, total: %u.\n",
+> +		dprintk("%s: too big size t: %p, gen: %u, iov_len: %zu, size: %u, total: %u.\n",
+>  				__func__, t, t->gen, io->iov_len, size, t->total_size);
+>  		ptr = ERR_PTR(-E2BIG);
+>  		goto out;
+> @@ -607,7 +607,7 @@ void *netfs_trans_add(struct netfs_trans *t, unsigned int size)
+>  	io->iov_len += size;
+>  
+>  out:
+> -	dprintk("%s: t: %p, gen: %u, size: %u, total: %u.\n",
+> +	dprintk("%s: t: %p, gen: %u, size: %u, total: %zu.\n",
+>  		__func__, t, t->gen, size, io->iov_len);
+>  	return ptr;
+>  }
 
-  AS      usr/initramfs_data.o
-arch/arm/include/asm/unwind.h: Assembler messages:
-arch/arm/include/asm/unwind.h:68: Error: Bad macro parameter list
-arch/arm/include/asm/unwind.h: Assembler messages:
-arch/arm/include/asm/unwind.h:68: Error: arch/arm/kernel/entry-common.S:26:=
- Error: bad instruction `unwind .fnstart'
-arch/arm/kernel/entry-common.S:27: Error: Bad macro parameter listbad instr=
-uction `unwind .cantunwind'
-arch/arm/kernel/entry-common.S:44: Error: bad instruction `unwind .fnend'
-arch/arm/kernel/entry-armv.S:158: Error: bad instruction `unwind .fnstart'
-arch/arm/kernel/entry-armv.S:158: Error: bad instruction `unwind .save{r0-p=
-c}'
-arch/arm/kernel/entry-armv.S:202: Error: bad instruction `unwind .fnend'
-arch/arm/kernel/entry-armv.S:207: Error: bad instruction `unwind .fnstart'
-arch/arm/kernel/entry-armv.S:207: Error: bad instruction `unwind .save{r0-p=
-c}'
-arch/arm/kernel/entry-armv.S:235: Error: bad instruction `unwind .fnend'
-arch/arm/kernel/entry-armv.S:258: Error: bad instruction `unwind .fnstart'
-arch/arm/kernel/entry-armv.S:258: Error: bad instruction `unwind .save{r0-p=
-c}'
-arch/arm/kernel/entry-armv.S:286: Error: bad instruction `unwind .fnend'
-arch/arm/kernel/entry-armv.S:291: Error: bad instruction `unwind .fnstart'
-arch/arm/kernel/entry-armv.S:291: Error: bad instruction `unwind .save{r0-p=
-c}'
-arch/arm/kernel/entry-armv.S:329: Error: bad instruction `unwind .fnend'
-arch/arm/kernel/entry-armv.S:405: Error: bad instruction `unwind .fnstart'
-arch/arm/kernel/entry-armv.S:405: Error: bad instruction `unwind .cantunwin=
-d'
-arch/arm/kernel/entry-armv.S:432: Error: bad instruction `unwind .fnend'
-arch/arm/kernel/entry-armv.S:437: Error: bad instruction `unwind .fnstart'
-arch/arm/kernel/entry-armv.S:437: Error: bad instruction `unwind .cantunwin=
-d'
-arch/arm/kernel/entry-armv.S:463: Error: bad instruction `unwind .fnend'
-arch/arm/kernel/entry-armv.S:470: Error: bad instruction `unwind .fnstart'
-arch/arm/kernel/entry-armv.S:470: Error: bad instruction `unwind .cantunwin=
-d'
-arch/arm/kernel/entry-armv.S:498: Error: bad instruction `unwind .fnend'
-arch/arm/kernel/entry-armv.S:673: Error: bad instruction `unwind .fnstart'
-arch/arm/kernel/entry-armv.S:673: Error: bad instruction `unwind .cantunwin=
-d'
-arch/arm/kernel/entry-armv.S:686: Error: bad instruction `unwind .fnend'
-arch/arm/kernel/entry-armv.S:692: Error: bad instruction `unwind .fnstart'
-arch/arm/kernel/entry-armv.S:693: Error: bad instruction `unwind .cantunwin=
-d'
-arch/arm/kernel/entry-armv.S:697: Error: bad instruction `unwind .fnend'
-arch/arm/kernel/entry-armv.S:707: Error: bad instruction `unwind .fnstart'
-arch/arm/kernel/entry-armv.S:708: Error: bad instruction `unwind .cantunwin=
-d'
-arch/arm/kernel/entry-armv.S:738: Error: bad instruction `unwind .fnend'
-
-Presumably caused by commit 7e4e372df35c93e8f2693fd37010cec05c57ff47
-("[ARM] 5383/1: unwind: Add core support for ARM stack unwinding").
-
-Does this require a particular binutils version?
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Sat__14_Feb_2009_15_27_55_+1100_4F4aA4SxWmqK21I5
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkmWSEsACgkQjjKRsyhoI8xrSwCdGCLfNYTnxuluT0sAilKmB2AO
-Q+UAoKQZWiJej49aBgYmnpDpNRzJ0De6
-=6Drh
------END PGP SIGNATURE-----
-
---Signature=_Sat__14_Feb_2009_15_27_55_+1100_4F4aA4SxWmqK21I5--
+-- 
+	Evgeniy Polyakov
