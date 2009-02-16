@@ -1,66 +1,86 @@
-From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Subject: Re: next Feb 16 build break [usb/host/fhci-*]
-Date: Mon, 16 Feb 2009 21:13:10 +1100
-Message-ID: <20090216211310.5513de1a.sfr@canb.auug.org.au>
-References: <20090216172016.f1d159a7.sfr@canb.auug.org.au>
-	<499929CB.2030004@in.ibm.com>
+From: "Sachin P. Sant" <sachinp@in.ibm.com>
+Subject: [Patch - Next] [USB/FHCI] use dev_name() in place of bus_id.
+Date: Mon, 16 Feb 2009 19:10:11 +0530
+Message-ID: <49996CBB.7040007@in.ibm.com>
+References: <20090216172016.f1d159a7.sfr@canb.auug.org.au> <499929CB.2030004@in.ibm.com> <20090216211310.5513de1a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__16_Feb_2009_21_13_10_+1100_TqEd_u.lQ=vsPHs1"
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <499929CB.2030004-xthvdsQ13ZrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Sachin P. Sant" <sachinp-xthvdsQ13ZrQT0dZR+AlfA@public.gmane.org>
-Cc: Kay Sievers <kay.sievers-tD+1rO4QERM@public.gmane.org>, Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, avorontsov-hkdhdckH98+B+jHODAdFcQ@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/mixed;
+ boundary="------------070300090804010904080502"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e23smtp09.au.ibm.com ([202.81.31.142]:50025 "EHLO
+	e23smtp09.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751596AbZBPNkV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Feb 2009 08:40:21 -0500
+In-Reply-To: <20090216211310.5513de1a.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-usb@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Kay Sievers <kay.sievers@vrfy.org>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, avorontsov@ru.mvista.com
 
---Signature=_Mon__16_Feb_2009_21_13_10_+1100_TqEd_u.lQ=vsPHs1
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is a multi-part message in MIME format.
+--------------070300090804010904080502
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Sachin,
+Replace references to bus_id with dev_name() to fix fhci driver build break.
 
-On Mon, 16 Feb 2009 14:24:35 +0530 "Sachin P. Sant" <sachinp-xthvdsQ13ZrQT0dZR+AlfA@public.gmane.org> wr=
-ote:
->
-> Feb 16 next tree randconfig build fails with
->=20
-> drivers/usb/host/fhci-hcd.c: In function =E2=80=98of_fhci_probe=E2=80=99:
-> drivers/usb/host/fhci-hcd.c:586: error: =E2=80=98struct device=E2=80=99 h=
-as no member named =E2=80=98bus_id=E2=80=99
-> drivers/usb/host/fhci-hcd.c:653: error: =E2=80=98struct device=E2=80=99 h=
-as no member named =E2=80=98bus_id=E2=80=99
->=20
-> drivers/usb/host/fhci-dbg.c: In function =E2=80=98fhci_dfs_create=E2=80=
-=99:
-> drivers/usb/host/fhci-dbg.c:111: error: =E2=80=98struct device=E2=80=99 h=
-as no member named =E2=80=98bus_id=E2=80=99
+drivers/usb/host/fhci-hcd.c:586: error: struct device has no member named bus_id
+drivers/usb/host/fhci-hcd.c:653: error: struct device has no member named bus_id
+drivers/usb/host/fhci-dbg.c:111: error: struct device has no member named bus_id
 
-That would be the driver-core removing bus_id from struct device.  cc's add=
-ed.
+Signed-off-by: Sachin Sant <sachinp@in.ibm.com>
+---
 
-fhci-hcd appeared between 2.6.29-rc2 and rc3.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__16_Feb_2009_21_13_10_+1100_TqEd_u.lQ=vsPHs1
-Content-Type: application/pgp-signature
+--------------070300090804010904080502
+Content-Type: text/x-patch;
+ name="use_dev_name_instead_of_bus_id_for_fhci.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="use_dev_name_instead_of_bus_id_for_fhci.patch"
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Replace references to bus_id with dev_name() to fix fhci driver build break.
 
-iEYEARECAAYFAkmZPDYACgkQjjKRsyhoI8xBIQCeNJrwIAuqISX0YJ/BoldOq4r1
-yVAAn1Qs2FK31zyGV6jsFYprIr7jNoB2
-=bsbL
------END PGP SIGNATURE-----
+drivers/usb/host/fhci-hcd.c:586: error: struct device has no member named bus_id
+drivers/usb/host/fhci-hcd.c:653: error: struct device has no member named bus_id
+drivers/usb/host/fhci-dbg.c:111: error: struct device has no member named bus_id
 
---Signature=_Mon__16_Feb_2009_21_13_10_+1100_TqEd_u.lQ=vsPHs1--
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Sachin Sant <sachinp@in.ibm.com>
+---
+
+diff -Naurp a/drivers/usb/host/fhci-dbg.c b/drivers/usb/host/fhci-dbg.c
+--- a/drivers/usb/host/fhci-dbg.c	2009-02-14 05:01:30.000000000 +0530
++++ b/drivers/usb/host/fhci-dbg.c	2009-02-16 18:19:25.000000000 +0530
+@@ -108,7 +108,7 @@ void fhci_dfs_create(struct fhci_hcd *fh
+ {
+ 	struct device *dev = fhci_to_hcd(fhci)->self.controller;
+ 
+-	fhci->dfs_root = debugfs_create_dir(dev->bus_id, NULL);
++	fhci->dfs_root = debugfs_create_dir(dev_name(dev), NULL);
+ 	if (!fhci->dfs_root) {
+ 		WARN_ON(1);
+ 		return;
+diff -Naurp a/drivers/usb/host/fhci-hcd.c b/drivers/usb/host/fhci-hcd.c
+--- a/drivers/usb/host/fhci-hcd.c	2009-02-14 05:01:30.000000000 +0530
++++ b/drivers/usb/host/fhci-hcd.c	2009-02-16 18:19:00.000000000 +0530
+@@ -583,7 +583,7 @@ static int __devinit of_fhci_probe(struc
+ 	if (sprop && strcmp(sprop, "host"))
+ 		return -ENODEV;
+ 
+-	hcd = usb_create_hcd(&fhci_driver, dev, dev->bus_id);
++	hcd = usb_create_hcd(&fhci_driver, dev, dev_name(dev));
+ 	if (!hcd) {
+ 		dev_err(dev, "could not create hcd\n");
+ 		return -ENOMEM;
+@@ -650,7 +650,7 @@ static int __devinit of_fhci_probe(struc
+ 			}
+ 		}
+ 
+-		ret = gpio_request(gpio, dev->bus_id);
++		ret = gpio_request(gpio, dev_name(dev));
+ 		if (ret) {
+ 			dev_err(dev, "failed to request gpio %d", i);
+ 			goto err_gpios;
+
+--------------070300090804010904080502--
