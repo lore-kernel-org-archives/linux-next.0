@@ -1,50 +1,74 @@
-From: Russell King <rmk@arm.linux.org.uk>
-Subject: Re: linux-next: manual merge of the arm tree with the arm-current tree
-Date: Mon, 16 Feb 2009 00:29:22 +0000
-Message-ID: <20090216002922.GB1929@flint.arm.linux.org.uk>
-References: <20090216103947.12d84612.sfr@canb.auug.org.au> <4998B0EC.5020302@bluewatersys.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kernel-doc tree with the ftrace
+ tree
+Date: Mon, 16 Feb 2009 11:42:23 +1100
+Message-ID: <20090216114223.818b16f5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:45212 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754254AbZBPA35 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 15 Feb 2009 19:29:57 -0500
-Content-Disposition: inline
-In-Reply-To: <4998B0EC.5020302@bluewatersys.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46570 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752087AbZBPAma (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 15 Feb 2009 19:42:30 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ryan Mallon <ryan@bluewatersys.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Andrew Victor <linux@maxim.org.za>, Marc Pignat <marc.pignat@hevs.ch>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: linux-next@vger.kernel.org, Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Pekka Enberg <penberg@cs.helsinki.fi>
 
-On Mon, Feb 16, 2009 at 01:18:52PM +1300, Ryan Mallon wrote:
-> Stephen Rothwell wrote:
-> > Hi Russell,
-> > 
-> > Today's linux-next merge of the arm tree got a conflict in
-> > arch/arm/mach-at91/gpio.c between commit
-> > 2b768b6cdbcf7fa0761e6c35c6ea288297582c43 ("[ARM] 5391/1: AT91: Enable
-> > GPIO clocks earlier") from the arm-current tree and commit
-> > f373e8c0639f1720d2d0fe414990f504e113c2ba ("[ARM] 5373/2: Add gpiolib
-> > support to AT91") from the arm tree.
-> > 
-> > Overlapping changes.  I fixed it up as below (which may not be correct,
-> > so needs checking) and can carry the fix for a while.
-> 
-> The fix looks okay. Stupid question: What is the easiest/best way for me
-> to apply the same fix into my tree to replicate the merge? My tree has
-> some additional stuff in it to support the custom AT91 board I am using.
-> I tried downloading the patch 5391/1 from the patch system and using
-> git-apply, but there doesn't seem to be a way to force it into a merge
-> like you can with git-am (and I can't find that patch on the mailing
-> list). If I can figure out how to do this, I'll test the code to make
-> sure it is still okay.
+Hi Randy,
 
-Probably the easiest solution is to wait for Linus to return (Tuesday?)
-and then for me to push my master branch to Linus.  Once that's happened,
-get 5391 rebased on top of your patch.  Or something like that.
+Today's linux-next merge of the kernel-doc tree got a conflict in
+Documentation/kernel-parameters.txt between commit
+b9ce08c01020eb28bfbfa6faf1c740281c5f418e ("kmemtrace: Core
+implementation") from the ftrace tree and commit
+f7e346e78be0c021495e9e21a0261903177aaecc ("docum-kernprms-alpha3") from
+the kernel-doc tree.
 
+I fixed it up (see below) and can carry the fix as necessary.
 -- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+diff --cc Documentation/kernel-parameters.txt
+index 6d52acf,0725b91..0000000
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@@ -1049,27 -995,15 +999,24 @@@ and is between 256 and 4096 characters
+  			use the HighMem zone if it exists, and the Normal
+  			zone if it does not.
+  
++ 	kgdboc=		[HW] kgdb over consoles.
++ 			Requires a tty driver that supports console polling.
++ 			(only serial suported for now)
++ 			Format: <serial_device>[,baud]
++ 
++ 	kmac=		[MIPS] korina ethernet MAC address.
++ 			Configure the RouterBoard 532 series on-chip
++ 			Ethernet adapter MAC address.
++ 
+ +	kmemtrace.enable=	[KNL,KMEMTRACE] Format: { yes | no }
+ +				Controls whether kmemtrace is enabled
+ +				at boot-time.
+ +
+ +	kmemtrace.subbufs=n	[KNL,KMEMTRACE] Overrides the number of
+ +			subbufs kmemtrace's relay channel has. Set this
+ +			higher than default (KMEMTRACE_N_SUBBUFS in code) if
+ +			you experience buffer overruns.
+ +
+- 	movablecore=nn[KMG]	[KNL,X86-32,IA-64,PPC,X86-64] This parameter
+- 			is similar to kernelcore except it specifies the
+- 			amount of memory used for migratable allocations.
+- 			If both kernelcore and movablecore is specified,
+- 			then kernelcore will be at *least* the specified
+- 			value but may be more. If movablecore on its own
+- 			is specified, the administrator must be careful
+- 			that the amount of memory usable for all allocations
+- 			is not too small.
+- 
+- 	keepinitrd	[HW,ARM]
+- 
+  	kstack=N	[X86-32,X86-64] Print N words from the kernel stack
+  			in oops dumps.
+  
