@@ -1,53 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the stackprotector tree with the
- x86 tree
-Date: Tue, 17 Feb 2009 22:49:01 +1100
-Message-ID: <20090217224901.2aeb62d9.sfr@canb.auug.org.au>
-References: <20090217123435.8929e3dd.sfr@canb.auug.org.au>
-	<20090217105839.GE6602@elte.hu>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: rr tree build error
+Date: Tue, 17 Feb 2009 22:34:14 +1030
+Message-ID: <200902172234.14660.rusty@rustcorp.com.au>
+References: <20090217161252.ef44979c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__17_Feb_2009_22_49_01_+1100_.sG2n9KnXjOTRV4."
+Content-Type: text/plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55714 "EHLO smtps.tip.net.au"
+Received: from ozlabs.org ([203.10.76.45]:35919 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750886AbZBQLtK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Feb 2009 06:49:10 -0500
-In-Reply-To: <20090217105839.GE6602@elte.hu>
+	id S1751241AbZBQMEU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Feb 2009 07:04:20 -0500
+In-Reply-To: <20090217161252.ef44979c.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Anders Kaseorg <andersk@mit.edu>, Jeff Arnold <jbarnold@mit.edu>, Tim Abbott <tabbott@mit.edu>
 
---Signature=_Tue__17_Feb_2009_22_49_01_+1100_.sG2n9KnXjOTRV4.
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tuesday 17 February 2009 15:42:52 Stephen Rothwell wrote:
+> Hi Rusty,
+> 
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> 
+> In file included from kernel/kallsyms.c:15:
+> include/linux/kallsyms.h:22: warning: 'struct module' declared inside parameter list
 
-Hi Ingo,
+Thanks, this does not happen on x86, I guess some weird include tangle.
 
-On Tue, 17 Feb 2009 11:58:39 +0100 Ingo Molnar <mingo@elte.hu> wrote:
->
-> ok - i also eliminated the conflict so interaction should go=20
-> away in the next integration.
+Fix is simple (declare struct module), I've done it now.
 
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__17_Feb_2009_22_49_01_+1100_.sG2n9KnXjOTRV4.
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkmapC0ACgkQjjKRsyhoI8yu+ACgukG2npy1SXT6smhS8wufu0cZ
-HpYAnjsPJQtd0EJ/0bh0kDsdjdYG6Y9P
-=P/tb
------END PGP SIGNATURE-----
-
---Signature=_Tue__17_Feb_2009_22_49_01_+1100_.sG2n9KnXjOTRV4.--
+Thanks,
+Rusty.
