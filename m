@@ -1,69 +1,83 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with the hid tree
-Date: Tue, 17 Feb 2009 16:11:51 +1100
-Message-ID: <20090217161151.0f6e64ef.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rr tree with the ftrace tree
+Date: Tue, 17 Feb 2009 16:12:45 +1100
+Message-ID: <20090217161245.42fc6bfa.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55172 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55193 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751024AbZBQFL4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Feb 2009 00:11:56 -0500
+	id S1751098AbZBQFMw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Feb 2009 00:12:52 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, Oliver Neukum <oliver@neukum.org>, Jiri Kosina <jikos@jikos.cz>, Arjan van de Ven <arjan@linux.intel.com>
+Cc: linux-next@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
 
 Hi Rusty,
 
-Today's linux-next merge of the rr tree got a conflict in
-drivers/hid/hid-core.c between commit
-8390887fae55be9c06e3f064464d2bc8e908b8df ("HID: autosuspend support for
-USB HID") from the hid tree and commit
-c7b902168e6b06e91033bfaf71ca0174ad66c6aa ("use the new
-request_module_nowait() in the hid driver") from the rr tree.
+Today's linux-next merge of the rr tree got a conflict in kernel/module.c
+between commit 3861a17bcc0af815f684c6178bc9ec2d790c350e
+("tracing/function-graph-tracer: drop the kernel_text_address check")
+from the ftrace tree and commit 820936d2f463760545e8ef2ae2cd09d92605c69e
+("module:module_address") from the rr tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+I fixed it up (see below) and can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/hid/hid-core.c
-index feaeb61,d51331f..0000000
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@@ -1813,31 -1812,6 +1813,22 @@@ void hid_unregister_driver(struct hid_d
+diff --cc kernel/module.c
+index a687023,b6864a9..0000000
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@@ -2708,29 -2726,31 +2721,31 @@@ const struct exception_table_entry *sea
   }
-  EXPORT_SYMBOL_GPL(hid_unregister_driver);
   
-- #ifdef CONFIG_HID_COMPAT
-- static void hid_compat_load(struct work_struct *ws)
-- {
-- 	request_module("hid-dummy");
-- }
-- static DECLARE_WORK(hid_compat_work, hid_compat_load);
-- static struct workqueue_struct *hid_compat_wq;
-- #endif
-- 
- +int hid_check_keys_pressed(struct hid_device *hid)
- +{
- +	struct hid_input *hidinput;
- +	int i;
- +
- +	list_for_each_entry(hidinput, &hid->inputs, list) {
- +		for (i = 0; i < BITS_TO_LONGS(KEY_MAX); i++)
- +			if (hidinput->input->key[i])
- +				return 1;
- +	}
- +
- +	return 0;
- +}
- +
- +EXPORT_SYMBOL_GPL(hid_check_keys_pressed);
- +
-  static int __init hid_init(void)
+  /*
+-  * Is this a valid module address?
++  * is_module_address - is this address inside a module?
++  * @addr: the address to check.
++  *
++  * See is_module_text_address() if you simply want to see if the address
++  * is code (not data).
+   */
+- int is_module_address(unsigned long addr)
++ bool is_module_address(unsigned long addr)
   {
-  	int ret;
+- 	struct module *mod;
++ 	bool ret;
+  
+  	preempt_disable();
+- 
+- 	list_for_each_entry_rcu(mod, &modules, list) {
+- 		if (within_module_core(addr, mod)) {
+- 			preempt_enable();
+- 			return 1;
+- 		}
+- 	}
+- 
++ 	ret = __module_address(addr) != NULL;
+  	preempt_enable();
+  
+- 	return 0;
++ 	return ret;
+  }
+  
+- 
+- /* Is this a valid kernel address? */
+- struct module *__module_text_address(unsigned long addr)
++ /*
++  * __module_address - get the module which contains an address.
++  * @addr: the address.
++  *
++  * Must be called with preempt disabled or module mutex held so that
++  * module doesn't get freed during this.
++  */
+ -__notrace_funcgraph struct module *__module_address(unsigned long addr)
+++struct module *__module_address(unsigned long addr)
+  {
+  	struct module *mod;
+  
