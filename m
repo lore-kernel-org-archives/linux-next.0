@@ -1,36 +1,37 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the stackprotector tree with the
-	x86 tree
-Date: Tue, 17 Feb 2009 11:58:39 +0100
-Message-ID: <20090217105839.GE6602@elte.hu>
-References: <20090217123435.8929e3dd.sfr@canb.auug.org.au>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: manual merge of the rr tree with the hid tree
+Date: Tue, 17 Feb 2009 12:30:40 +0100 (CET)
+Message-ID: <alpine.LRH.1.10.0902171228490.780@twin.jikos.cz>
+References: <20090217161151.0f6e64ef.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:51496 "EHLO mx3.mail.elte.hu"
+Received: from cantor2.suse.de ([195.135.220.15]:51083 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750886AbZBQK6r (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Feb 2009 05:58:47 -0500
-Content-Disposition: inline
-In-Reply-To: <20090217123435.8929e3dd.sfr@canb.auug.org.au>
+	id S1751296AbZBQLar (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Feb 2009 06:30:47 -0500
+In-Reply-To: <20090217161151.0f6e64ef.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
+Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, Oliver Neukum <oliver@neukum.org>, Arjan van de Ven <arjan@linux.intel.com>
 
+On Tue, 17 Feb 2009, Stephen Rothwell wrote:
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Today's linux-next merge of the rr tree got a conflict in
+> drivers/hid/hid-core.c between commit
+> 8390887fae55be9c06e3f064464d2bc8e908b8df ("HID: autosuspend support for
+> USB HID") from the hid tree and commit
+> c7b902168e6b06e91033bfaf71ca0174ad66c6aa ("use the new
+> request_module_nowait() in the hid driver") from the rr tree.
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
 
-> Hi all,
-> 
-> Today's linux-next merge of the stackprotector tree got a conflict in
-> arch/x86/kernel/setup_percpu.c between various commits from the x86 tree
-> and commit 18e7651254221ad0d3cf993cce742858c4521c55 ("manual merge of
-> stackprotector") from the stackprotector tree.
-> 
-> I just used the version of this file from tip/master.
+Yes, please do carry the fix, thanks a lot. It doesn't make a lot of sense 
+if I take the patch from Rusty into my tree, as the changes depend on 
+other patches in Rusty's tree.
 
-ok - i also eliminated the conflict so interaction should go 
-away in the next integration.
+Thanks,
 
-	Ingo
+-- 
+Jiri Kosina
