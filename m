@@ -1,55 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the trivial tree with the v4l-dvb
- tree
-Date: Tue, 17 Feb 2009 23:24:41 +1100
-Message-ID: <20090217232441.aa2ab65b.sfr@canb.auug.org.au>
-References: <20090217192831.c22ad27b.sfr@canb.auug.org.au>
-	<alpine.LNX.1.10.0902171234180.18110@jikos.suse.cz>
+Subject: Re: linux-next: rr tree build error
+Date: Tue, 17 Feb 2009 23:27:59 +1100
+Message-ID: <20090217232759.0558654f.sfr@canb.auug.org.au>
+References: <20090217161252.ef44979c.sfr@canb.auug.org.au>
+	<200902172234.14660.rusty@rustcorp.com.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__17_Feb_2009_23_24_41_+1100_.pu7U6iGOn/KC_Ev"
+ boundary="Signature=_Tue__17_Feb_2009_23_27_59_+1100_dEYw/li/e0ViQRX0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58694 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55243 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751403AbZBQMYv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Feb 2009 07:24:51 -0500
-In-Reply-To: <alpine.LNX.1.10.0902171234180.18110@jikos.suse.cz>
+	id S1751340AbZBQM2G (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Feb 2009 07:28:06 -0500
+In-Reply-To: <200902172234.14660.rusty@rustcorp.com.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, Jean-Francois Moine <moinejf@free.fr>, Mauro Carvalho Chehab <mchehab@redhat.com>, Tobias Klauser <tklauser@distanz.ch>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, Anders Kaseorg <andersk@mit.edu>, Jeff Arnold <jbarnold@mit.edu>, Tim Abbott <tabbott@mit.edu>
 
---Signature=_Tue__17_Feb_2009_23_24_41_+1100_.pu7U6iGOn/KC_Ev
+--Signature=_Tue__17_Feb_2009_23_27_59_+1100_dEYw/li/e0ViQRX0
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hi Rusty,
 
-On Tue, 17 Feb 2009 12:35:16 +0100 (CET) Jiri Kosina <jkosina@suse.cz> wrot=
-e:
+On Tue, 17 Feb 2009 22:34:14 +1030 Rusty Russell <rusty@rustcorp.com.au> wr=
+ote:
 >
-> yes, in fact I have pinged linux-media and other parties about that=20
-> yesterday [1]. When Mauro confirms that he picked it up, I will drop it=20
-> from trivial tree.
+> Thanks, this does not happen on x86, I guess some weird include tangle.
+>=20
+> Fix is simple (declare struct module), I've done it now.
 
-Excellent, thanks.
+Thanks.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__17_Feb_2009_23_24_41_+1100_.pu7U6iGOn/KC_Ev
+--Signature=_Tue__17_Feb_2009_23_27_59_+1100_dEYw/li/e0ViQRX0
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkmarIkACgkQjjKRsyhoI8xx8gCgq98SOGNVpu0+U/yjVUMx0h+D
-jAEAnjyg6POpORPPdmJ8WEQLmGF0n+rh
-=lwzN
+iEYEARECAAYFAkmarU8ACgkQjjKRsyhoI8z3kACgnWJXemZLDcwcWmp5CmEYCnSe
+1vIAnRyQQiUtVFCt2DFnJwgktwP6ZUyH
+=O2Wl
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__17_Feb_2009_23_24_41_+1100_.pu7U6iGOn/KC_Ev--
+--Signature=_Tue__17_Feb_2009_23_27_59_+1100_dEYw/li/e0ViQRX0--
