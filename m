@@ -1,44 +1,50 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] staging/phison: fix kconfig for clean build
-Date: Mon, 16 Feb 2009 08:46:16 -0800
-Message-ID: <49999858.6000604@oracle.com>
-References: <20090216172016.f1d159a7.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ftrace tree with the x86 tree
+Date: Tue, 17 Feb 2009 11:42:02 +1100
+Message-ID: <20090217114202.54584bdc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet13.oracle.com ([148.87.113.125]:40621 "EHLO
-	rgminet13.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751123AbZBPQqd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Feb 2009 11:46:33 -0500
-In-Reply-To: <20090216172016.f1d159a7.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:53698 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751252AbZBQAmI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Feb 2009 19:42:08 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg KH <gregkh@suse.de>, Andrew Morton <akpm@linux-foundation.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Steven Rostedt <srostedt@redhat.com>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+Hi all,
 
-phison is an ATA driver, not a classic IDE driver, so fix the Kconfig file
-so that it will build.
+Today's linux-next merge of the ftrace tree got a conflict in
+arch/x86/Kconfig between commits e0ec9483dbe8f534e0f3ef413f9eba9a5ff78050
+("x86/Voyager: remove KVM Kconfig quirk") and
+49793b0341a802cf5ee4179e837a2eb20f12c9fe ("x86/Voyager: remove KGDB
+Kconfig quirk") from the x86 tree and commit
+9a5fd902273d01170fd033691bd70b142baa7309 ("ftrace: change function graph
+tracer to use new in_nmi") from the ftrace tree.
 
-drivers/staging/phison/phison.c:43: error: implicit declaration of function 'ATA_BMDMA_SHT'
-drivers/staging/phison/phison.c:43: error: initializer element is not constant
-drivers/staging/phison/phison.c:43: error: (near initialization for 'phison_sht.module')
-drivers/staging/phison/phison.c:47: error: 'ata_bmdma_port_ops' undeclared here (not in a function)
-drivers/staging/phison/phison.c:65: error: implicit declaration of function 'ata_pci_sff_init_one'
+Just context changes.  I fixed it up as in tip/master (see below) and can
+carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/staging/phison/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20090216.orig/drivers/staging/phison/Kconfig
-+++ linux-next-20090216/drivers/staging/phison/Kconfig
-@@ -1,5 +1,5 @@
- config IDE_PHISON
- 	tristate "PCIE ATA PS5000 IDE support"
--	depends on IDE
-+	depends on ATA && ATA_SFF
- 	---help---
- 	  This is an experimental driver for PS5000 IDE driver.
+diff --cc arch/x86/Kconfig
+index 1042d69,8fc9a84..0000000
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@@ -34,8 -34,9 +34,9 @@@ config X8
+  	select HAVE_FUNCTION_TRACER
+  	select HAVE_FUNCTION_GRAPH_TRACER
+  	select HAVE_FUNCTION_TRACE_MCOUNT_TEST
++ 	select HAVE_FTRACE_NMI_ENTER if DYNAMIC_FTRACE
+ -	select HAVE_KVM if ((X86_32 && !X86_VOYAGER && !X86_VISWS && !X86_NUMAQ) || X86_64)
+ -	select HAVE_ARCH_KGDB if !X86_VOYAGER
+ +	select HAVE_KVM
+ +	select HAVE_ARCH_KGDB
+  	select HAVE_ARCH_TRACEHOOK
+  	select HAVE_GENERIC_DMA_COHERENT if X86_32
+  	select HAVE_EFFICIENT_UNALIGNED_ACCESS
