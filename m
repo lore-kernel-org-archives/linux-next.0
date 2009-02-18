@@ -1,99 +1,45 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for February 12 (ide)
-Date: Wed, 18 Feb 2009 09:17:28 -0800
-Message-ID: <499C42A8.7060003@oracle.com>
-References: <20090212194408.ff7489c1.sfr@canb.auug.org.au> <499451E0.6060004@oracle.com> <200902171519.27031.bzolnier@gmail.com>
+Subject: [PATCH] module: fix build for CONFIG_SYSFS=n
+Date: Wed, 18 Feb 2009 10:02:29 -0800
+Message-ID: <499C4D35.9000104@oracle.com>
+References: <20090218191640.0b023029.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet12.oracle.com ([148.87.113.124]:28386 "EHLO
+Received: from rcsinet12.oracle.com ([148.87.113.124]:26099 "EHLO
 	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753280AbZBRRQ6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Feb 2009 12:16:58 -0500
-In-Reply-To: <200902171519.27031.bzolnier@gmail.com>
+	with ESMTP id S1753456AbZBRSB7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Feb 2009 13:01:59 -0500
+In-Reply-To: <20090218191640.0b023029.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org, Sergei Shtylyov <sshtylyov@ru.mvista.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>
 
-Bartlomiej Zolnierkiewicz wrote:
-> On Thursday 12 February 2009, Randy Dunlap wrote:
->> Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20090211:
->>
->> When
->> # CONFIG_BLK_DEV_IDEDMA is not set
->>
->> linux-next-20090212/drivers/ide/ide-taskfile.c:108: error: 'ide_dma_intr' undeclared (first use in this function)
-> 
-> Thanks for spotting this, I fixed it in the revised patch:
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Hi Bart,
+Fix this build error when CONFIG_SYSFS=n:
 
-Have you pushed this patch yet?
+kernel/built-in.o: In function `free_module':
+module.c:(.text+0x4f8a2): undefined reference to `destroy_params'
 
-linux-next (20090218) is still getting this IDE build error.
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+cc: Rusty Russell <rusty@rustcorp.com.au>
+---
+ kernel/module.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-Thanks.
-
-> From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-> Subject: [PATCH] ide: add ->dma_timer_expiry method and remove ->dma_exec_cmd one (v2)
-> 
-> * Rename dma_timer_expiry() to ide_dma_sff_timer_expiry() and export it.
-> 
-> * Add ->dma_timer_expiry method and use it to set hwif->expiry for
->   ATA_PROT_DMA protocol in do_rw_taskfile().
-> 
-> * Initialize ->dma_timer_expiry to ide_dma_sff_timer_expiry() for SFF hosts.
-> 
-> * Move setting hwif->expiry from ide_execute_command() to its users and drop
->   'expiry' argument.
-> 
-> * Use ide_execute_command() instead of ->dma_exec_cmd in do_rw_taskfile().
-> 
-> * Remove ->dma_exec_cmd method and its implementations.
-> 
-> * Unexport ide_execute_command() and ide_dma_intr().
-> 
-> v2:
-> * Fix CONFIG_BLK_DEV_IDEDMA=n build (noticed by Randy Dunlap).
-> 
-> * Fix *dma_expiry naming (suggested by Sergei Shtylyov).
-> 
-> There should be no functional changes caused by this patch.
-> 
-> Cc: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc: Sergei Shtylyov <sshtylyov@ru.mvista.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-> ---
->  drivers/ide/alim15x3.c     |    2 +-
->  drivers/ide/au1xxx-ide.c   |    8 --------
->  drivers/ide/cmd64x.c       |    6 +++---
->  drivers/ide/cs5536.c       |    2 +-
->  drivers/ide/hpt366.c       |    6 +++---
->  drivers/ide/icside.c       |    7 -------
->  drivers/ide/ide-atapi.c    |    3 ++-
->  drivers/ide/ide-dma-sff.c  |   15 ++++-----------
->  drivers/ide/ide-dma.c      |    1 -
->  drivers/ide/ide-iops.c     |    6 +-----
->  drivers/ide/ide-taskfile.c |    6 ++++--
->  drivers/ide/it821x.c       |    2 +-
->  drivers/ide/ns87415.c      |    2 +-
->  drivers/ide/pdc202xx_old.c |    4 ++--
->  drivers/ide/pmac.c         |    8 --------
->  drivers/ide/sc1200.c       |    2 +-
->  drivers/ide/scc_pata.c     |    2 +-
->  drivers/ide/siimage.c      |    2 +-
->  drivers/ide/sl82c105.c     |    2 +-
->  drivers/ide/tc86c001.c     |    2 +-
->  drivers/ide/trm290.c       |    6 ------
->  drivers/ide/tx4939ide.c    |    2 +-
->  include/linux/ide.h        |    8 ++++----
->  23 files changed, 33 insertions(+), 71 deletions(-)
-
-
--- 
-~Randy
+--- linux-next-20090218.orig/kernel/module.c
++++ linux-next-20090218/kernel/module.c
+@@ -1464,8 +1464,10 @@ static void free_module(struct module *m
+ 	/* Module unload stuff */
+ 	module_unload_free(mod);
+ 
++#ifdef CONFIG_SYSFS
+ 	/* Free any allocated parameters. */
+ 	destroy_params(mod->kp, mod->num_kp);
++#endif
+ 
+ 	/* release any pointers to mcount in this module */
+ 	ftrace_release(mod->module_core, mod->core_size);
