@@ -1,57 +1,99 @@
-From: Mike Frysinger <vapier.adi@gmail.com>
-Subject: Re: [s390] next Feb 18: defconfig build break
-Date: Wed, 18 Feb 2009 12:10:59 -0500
-Message-ID: <8bd0f97a0902180910wafd35ceo47aeb9f3cc6733f3@mail.gmail.com>
-References: <20090218191640.0b023029.sfr@canb.auug.org.au>
-	 <499BE300.5090405@in.ibm.com>
-	 <20090218224541.fe6e0355.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for February 12 (ide)
+Date: Wed, 18 Feb 2009 09:17:28 -0800
+Message-ID: <499C42A8.7060003@oracle.com>
+References: <20090212194408.ff7489c1.sfr@canb.auug.org.au> <499451E0.6060004@oracle.com> <200902171519.27031.bzolnier@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gx0-f222.google.com ([209.85.217.222]:42081 "EHLO
-	mail-gx0-f222.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751877AbZBRRLB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Feb 2009 12:11:01 -0500
-In-Reply-To: <20090218224541.fe6e0355.sfr@canb.auug.org.au>
+Received: from rcsinet12.oracle.com ([148.87.113.124]:28386 "EHLO
+	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753280AbZBRRQ6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Feb 2009 12:16:58 -0500
+In-Reply-To: <200902171519.27031.bzolnier@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Sachin P. Sant" <sachinp@in.ibm.com>, Rusty Russell <rusty@rustcorp.com.au>, linux-s390@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org, Sergei Shtylyov <sshtylyov@ru.mvista.com>
 
-On Wed, Feb 18, 2009 at 06:45, Stephen Rothwell wrote:
-> On Wed, 18 Feb 2009 15:59:20 +0530 "Sachin P. Sant" wrote:
->> Next Feb 18 defconfig build on s390 fails with following error.
+Bartlomiej Zolnierkiewicz wrote:
+> On Thursday 12 February 2009, Randy Dunlap wrote:
+>> Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> Changes since 20090211:
 >>
->>   CC      arch/s390/lib/string.o
->> In file included from include/linux/bitmap.h:8,
->>                  from include/linux/cpumask.h:142,
->>                  from include/linux/smp.h:12,
->>                  from /usr/local/autobench/var/tmp/build/linux/arch/s390/include/asm/spinlock.h:14,
->>                  from include/linux/spinlock.h:88,
->>                  from include/linux/seqlock.h:29,
->>                  from include/linux/time.h:8,
->>                  from include/linux/stat.h:60,
->>                  from include/linux/module.h:10,
->>                  from arch/s390/lib/string.c:13:
->> include/linux/string.h: In function 'strstarts':
->> include/linux/string.h:124: error: implicit declaration of function 'strlen'
->> include/linux/string.h:124: warning: incompatible implicit declaration of built-in function 'strlen'
->> make[1]: *** [arch/s390/lib/string.o] Error 1
->> make: *** [arch/s390/lib] Error 2
->
-> That would be a side effect of commit 43a47c6ca0e0b5479ae316e188a28b7e625d41e5 ("misc:strstarts") from the rr tree.  Rusty cc'd.
+>> When
+>> # CONFIG_BLK_DEV_IDEDMA is not set
+>>
+>> linux-next-20090212/drivers/ide/ide-taskfile.c:108: error: 'ide_dma_intr' undeclared (first use in this function)
+> 
+> Thanks for spotting this, I fixed it in the revised patch:
 
-breaks all Blackfin ports as well:
-In file included from include/linux/bitmap.h:9,
-                 from include/linux/nodemask.h:90,
-                 from include/linux/mmzone.h:17,
-                 from include/linux/gfp.h:5,
-                 from include/linux/kmod.h:23,
-                 from include/linux/module.h:14,
-                 from arch/blackfin/lib/strncmp.c:14:
-include/linux/string.h: In function 'strstarts':
-include/linux/string.h:124: error: implicit declaration of function 'strncmp'
-make[1]: *** [arch/blackfin/lib/strncmp.o] Error 1
-make: *** [arch/blackfin/lib] Error 2
--mike
+Hi Bart,
+
+Have you pushed this patch yet?
+
+linux-next (20090218) is still getting this IDE build error.
+
+Thanks.
+
+> From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+> Subject: [PATCH] ide: add ->dma_timer_expiry method and remove ->dma_exec_cmd one (v2)
+> 
+> * Rename dma_timer_expiry() to ide_dma_sff_timer_expiry() and export it.
+> 
+> * Add ->dma_timer_expiry method and use it to set hwif->expiry for
+>   ATA_PROT_DMA protocol in do_rw_taskfile().
+> 
+> * Initialize ->dma_timer_expiry to ide_dma_sff_timer_expiry() for SFF hosts.
+> 
+> * Move setting hwif->expiry from ide_execute_command() to its users and drop
+>   'expiry' argument.
+> 
+> * Use ide_execute_command() instead of ->dma_exec_cmd in do_rw_taskfile().
+> 
+> * Remove ->dma_exec_cmd method and its implementations.
+> 
+> * Unexport ide_execute_command() and ide_dma_intr().
+> 
+> v2:
+> * Fix CONFIG_BLK_DEV_IDEDMA=n build (noticed by Randy Dunlap).
+> 
+> * Fix *dma_expiry naming (suggested by Sergei Shtylyov).
+> 
+> There should be no functional changes caused by this patch.
+> 
+> Cc: Randy Dunlap <randy.dunlap@oracle.com>
+> Cc: Sergei Shtylyov <sshtylyov@ru.mvista.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+> ---
+>  drivers/ide/alim15x3.c     |    2 +-
+>  drivers/ide/au1xxx-ide.c   |    8 --------
+>  drivers/ide/cmd64x.c       |    6 +++---
+>  drivers/ide/cs5536.c       |    2 +-
+>  drivers/ide/hpt366.c       |    6 +++---
+>  drivers/ide/icside.c       |    7 -------
+>  drivers/ide/ide-atapi.c    |    3 ++-
+>  drivers/ide/ide-dma-sff.c  |   15 ++++-----------
+>  drivers/ide/ide-dma.c      |    1 -
+>  drivers/ide/ide-iops.c     |    6 +-----
+>  drivers/ide/ide-taskfile.c |    6 ++++--
+>  drivers/ide/it821x.c       |    2 +-
+>  drivers/ide/ns87415.c      |    2 +-
+>  drivers/ide/pdc202xx_old.c |    4 ++--
+>  drivers/ide/pmac.c         |    8 --------
+>  drivers/ide/sc1200.c       |    2 +-
+>  drivers/ide/scc_pata.c     |    2 +-
+>  drivers/ide/siimage.c      |    2 +-
+>  drivers/ide/sl82c105.c     |    2 +-
+>  drivers/ide/tc86c001.c     |    2 +-
+>  drivers/ide/trm290.c       |    6 ------
+>  drivers/ide/tx4939ide.c    |    2 +-
+>  include/linux/ide.h        |    8 ++++----
+>  23 files changed, 33 insertions(+), 71 deletions(-)
+
+
+-- 
+~Randy
