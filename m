@@ -1,47 +1,60 @@
-From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Subject: Re: linux-next: Tree for February 12 (ide)
-Date: Wed, 18 Feb 2009 19:58:18 +0100
-Message-ID: <200902181958.18733.bzolnier@gmail.com>
-References: <20090212194408.ff7489c1.sfr@canb.auug.org.au> <200902171519.27031.bzolnier@gmail.com> <499C42A8.7060003@oracle.com>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH v2] module: fix build for CONFIG_SYSFS=n
+Date: Wed, 18 Feb 2009 20:15:29 +0100
+Message-ID: <20090218191529.GC8889@elte.hu>
+References: <20090218191640.0b023029.sfr@canb.auug.org.au> <499C4D35.9000104@oracle.com> <20090218180932.GC19995@elte.hu> <499C54E8.7060004@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fg-out-1718.google.com ([72.14.220.158]:29180 "EHLO
-	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752714AbZBRTF1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Feb 2009 14:05:27 -0500
-In-Reply-To: <499C42A8.7060003@oracle.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756504AbZBRTPx@vger.kernel.org>
 Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+In-Reply-To: <499C54E8.7060004@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org, Sergei Shtylyov <sshtylyov@ru.mvista.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>
+List-Id: linux-next.vger.kernel.org
 
-On Wednesday 18 February 2009, Randy Dunlap wrote:
-> Bartlomiej Zolnierkiewicz wrote:
-> > On Thursday 12 February 2009, Randy Dunlap wrote:
-> >> Stephen Rothwell wrote:
-> >>> Hi all,
-> >>>
-> >>> Changes since 20090211:
-> >>
-> >> When
-> >> # CONFIG_BLK_DEV_IDEDMA is not set
-> >>
-> >> linux-next-20090212/drivers/ide/ide-taskfile.c:108: error: 'ide_dma_intr' undeclared (first use in this function)
-> > 
-> > Thanks for spotting this, I fixed it in the revised patch:
-> 
-> Hi Bart,
-> 
-> Have you pushed this patch yet?
-> 
-> linux-next (20090218) is still getting this IDE build error.
 
-I got caught by some other things yesterday so this was pushed
-out today.  Sorry about confusion/delay.
+* Randy Dunlap <randy.dunlap@oracle.com> wrote:
 
-Thanks,
-Bart
+> > Is destroy_params() dependent on SYSFS? If yes then it would be 
+> 
+> Yes.
+> 
+> > far cleaner if there was a NOP destroy_params() inline for the 
+> > !SYSFS case.
+> 
+> 
+> 
+> 
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> Fix this build error when CONFIG_SYSFS=n:
+> 
+> kernel/built-in.o: In function `free_module':
+> module.c:(.text+0x4f8a2): undefined reference to `destroy_params'
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> cc: Rusty Russell <rusty@rustcorp.com.au>
+> ---
+>  kernel/params.c |    6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> --- linux-next-20090218.orig/kernel/params.c
+> +++ linux-next-20090218/kernel/params.c
+> @@ -761,6 +761,12 @@ static int __init param_sysfs_init(void)
+>  }
+>  subsys_initcall(param_sysfs_init);
+>  
+> +#else	/* !CONFIG_SYSFS */
+> +
+> +inline void destroy_params(const struct kernel_param *params, unsigned num)
+> +{
+> +}
+> +
+>  #endif /* CONFIG_SYSFS */
+
+thanks!
+
+Acked-by: Ingo Molnar <mingo@elte.hu>
+
+	Ingo
