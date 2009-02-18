@@ -1,73 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [s390] next Feb 18: defconfig build break
-Date: Wed, 18 Feb 2009 22:45:41 +1100
-Message-ID: <20090218224541.fe6e0355.sfr@canb.auug.org.au>
-References: <20090218191640.0b023029.sfr@canb.auug.org.au>
-	<499BE300.5090405@in.ibm.com>
+From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Subject: Re: linux-next: USB mouse won't work after resume.
+Date: Wed, 18 Feb 2009 11:51:29 -0500 (EST)
+Message-ID: <Pine.LNX.4.44L0.0902181150370.17341-100000@iolanthe.rowland.org>
+References: <200902172142.57302.oliver@neukum.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__18_Feb_2009_22_45_41_+1100_kRpz=/9NwJbJjCX5"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53073 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751404AbZBRLpw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 Feb 2009 06:45:52 -0500
-In-Reply-To: <499BE300.5090405@in.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Sachin P. Sant" <sachinp@in.ibm.com>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-s390@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
+Content-Type: TEXT/PLAIN; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <200902172142.57302.oliver-GvhC2dPhHPQdnm+yROfE0A@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Oliver Neukum <oliver-GvhC2dPhHPQdnm+yROfE0A@public.gmane.org>
+Cc: Laurent Riffard <laurent.riffard-GANU6spQydw@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__18_Feb_2009_22_45_41_+1100_kRpz=/9NwJbJjCX5
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 17 Feb 2009, Oliver Neukum wrote:
 
-Hi Sachin,
-
-On Wed, 18 Feb 2009 15:59:20 +0530 "Sachin P. Sant" <sachinp@in.ibm.com> wr=
-ote:
->
-> Next Feb 18 defconfig build on s390 fails with following error.
+> Am Tuesday 17 February 2009 14:37:04 schrieb Laurent Riffard:
+> > Le 17.02.2009 11:35, Oliver Neukum a =C3=A9crit :
+> > > Am Tuesday 17 February 2009 10:55:57 schrieb Laurent Riffard:
+> > >> My USB mouse won't work after suspend to disk and resume. I must=
+ unload and reload the ohci_hcd module to get it back.
+> > >=20
+> > > Please recompile your kernel with CONFIG_USB_DEBUG and
+> > > send me your dmesg.
+> > >=20
+> > > 	Regards
+> > > 		Oliver
+> > >=20
+> >=20
+> > Here is it:
+> >=20
 >=20
->   CC      arch/s390/lib/string.o
-> In file included from include/linux/bitmap.h:8,
->                  from include/linux/cpumask.h:142,
->                  from include/linux/smp.h:12,
->                  from /usr/local/autobench/var/tmp/build/linux/arch/s390/=
-include/asm/spinlock.h:14,
->                  from include/linux/spinlock.h:88,
->                  from include/linux/seqlock.h:29,
->                  from include/linux/time.h:8,
->                  from include/linux/stat.h:60,
->                  from include/linux/module.h:10,
->                  from arch/s390/lib/string.c:13:
-> include/linux/string.h: In function 'strstarts':
-> include/linux/string.h:124: error: implicit declaration of function 'strl=
-en'
-> include/linux/string.h:124: warning: incompatible implicit declaration of=
- built-in function 'strlen'
-> make[1]: *** [arch/s390/lib/string.o] Error 1
-> make: *** [arch/s390/lib] Error 2
+> Please try the attached patch.
 
-That would be a side effect of commit 43a47c6ca0e0b5479ae316e188a28b7e625d4=
-1e5 ("misc:strstarts") from the rr tree.  Rusty cc'd.
+By the way, have you tested to see if the post_reset method needs an=20
+equivalent change?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Alan Stern
 
---Signature=_Wed__18_Feb_2009_22_45_41_+1100_kRpz=/9NwJbJjCX5
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkmb9OYACgkQjjKRsyhoI8wSdACgmbvoEX84JVRouyp8V7FTgUyk
-2QAAnRFApYlwwuo6OdMthzmigXBnPFxr
-=GUlX
------END PGP SIGNATURE-----
-
---Signature=_Wed__18_Feb_2009_22_45_41_+1100_kRpz=/9NwJbJjCX5--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
