@@ -1,41 +1,49 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: Re: next-20090206: deadlock on ext4
-Date: Wed, 18 Feb 2009 12:56:33 +0300
-Message-ID: <a4423d670902180156yd293319na51f91c6651e076c@mail.gmail.com>
-References: <a4423d670902060935y59e540beta417144935416560@mail.gmail.com>
-	 <498C7671.1050309@redhat.com>
-	 <a4423d670902061004i424817e1vd699a61e335f010a@mail.gmail.com>
-	 <498C9876.3060208@redhat.com>
-	 <a4423d670902090401k716d054eo25640aa2207beca7@mail.gmail.com>
-	 <4995F27E.3070401@redhat.com>
+From: "Sachin P. Sant" <sachinp@in.ibm.com>
+Subject: [s390] next Feb 18: defconfig build break
+Date: Wed, 18 Feb 2009 15:59:20 +0530
+Message-ID: <499BE300.5090405@in.ibm.com>
+References: <20090218191640.0b023029.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nf-out-0910.google.com ([64.233.182.184]:20758 "EHLO
-	nf-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751145AbZBRJ4f (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Feb 2009 04:56:35 -0500
-In-Reply-To: <4995F27E.3070401@redhat.com>
+Received: from e23smtp07.au.ibm.com ([202.81.31.140]:41846 "EHLO
+	e23smtp07.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751242AbZBRK3g (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Feb 2009 05:29:36 -0500
+In-Reply-To: <20090218191640.0b023029.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Eric Sandeen <sandeen@redhat.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-s390@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
 
-2009/2/14 Eric Sandeen <sandeen@redhat.com>:
-> Alexander Beregalov wrote:
->
->> I have reproduced it with 2.6.29-rc4.
->> Loop file was on XFS.
->> I can not reproduce it on ext4 on raw device.
->> Let me know if I can do anything else to help resolving it.
->>
-> Can you try this patch from Aneesh?  Works for me...
->
+Next Feb 18 defconfig build on s390 fails with following error.
 
-Yes, it works, I can not reproduce the bug on
-2.6.29-rc5-00122-g5955c7a which contains 2acf2c261b82
-"ext4: Implement range_cyclic in ext4_da_writepages instead of
-write_cache_pages"
+  CC      arch/s390/lib/string.o
+In file included from include/linux/bitmap.h:8,
+                 from include/linux/cpumask.h:142,
+                 from include/linux/smp.h:12,
+                 from /usr/local/autobench/var/tmp/build/linux/arch/s390/include/asm/spinlock.h:14,
+                 from include/linux/spinlock.h:88,
+                 from include/linux/seqlock.h:29,
+                 from include/linux/time.h:8,
+                 from include/linux/stat.h:60,
+                 from include/linux/module.h:10,
+                 from arch/s390/lib/string.c:13:
+include/linux/string.h: In function 'strstarts':
+include/linux/string.h:124: error: implicit declaration of function 'strlen'
+include/linux/string.h:124: warning: incompatible implicit declaration of built-in function 'strlen'
+make[1]: *** [arch/s390/lib/string.o] Error 1
+make: *** [arch/s390/lib] Error 2
 
 Thanks
+-Sachin
+
+-- 
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
