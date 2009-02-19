@@ -1,60 +1,112 @@
 From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: [PATCH v2] module: fix build for CONFIG_SYSFS=n
-Date: Thu, 19 Feb 2009 21:20:59 +1030
-Message-ID: <200902192120.59634.rusty@rustcorp.com.au>
-References: <20090218191640.0b023029.sfr@canb.auug.org.au> <499C54E8.7060004@oracle.com> <20090218191529.GC8889@elte.hu>
+Subject: Re: [s390] next Feb 18: defconfig build break
+Date: Thu, 19 Feb 2009 22:10:09 +1030
+Message-ID: <200902192210.10368.rusty@rustcorp.com.au>
+References: <20090218191640.0b023029.sfr@canb.auug.org.au> <200902190929.42044.rusty@rustcorp.com.au> <8bd0f97a0902181755y5a5f6760s6e266c87906e6dca@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:60447 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:48870 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750984AbZBSKvH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 Feb 2009 05:51:07 -0500
-In-Reply-To: <20090218191529.GC8889@elte.hu>
+	id S1751619AbZBSLkR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 Feb 2009 06:40:17 -0500
+In-Reply-To: <8bd0f97a0902181755y5a5f6760s6e266c87906e6dca@mail.gmail.com>
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Mike Frysinger <vapier.adi@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "Sachin P. Sant" <sachinp@in.ibm.com>, linux-s390@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
 
-On Thursday 19 February 2009 05:45:29 Ingo Molnar wrote:
+On Thursday 19 February 2009 12:25:13 Mike Frysinger wrote:
+> > +char *strncpy(char *dest, const char *src, size_t n);
+> >  #define strncpy __inline_strncpy
+> >  #include <asm/string.h>
+> >  #undef strncpy
 > 
-> * Randy Dunlap <randy.dunlap@oracle.com> wrote:
-> 
-> > > Is destroy_params() dependent on SYSFS? If yes then it would be 
-> > 
-> > Yes.
-> > 
-> > > far cleaner if there was a NOP destroy_params() inline for the 
-> > > !SYSFS case.
-...
-> > From: Randy Dunlap <randy.dunlap@oracle.com>
-> > 
-> > Fix this build error when CONFIG_SYSFS=n:
+> size_t is not a builtin type so there needs to be a linux/types.h
+> include right above these two prototypes.  then things build up fine
+> for me.
 
-Thanks for the find Randy.  I chose to put it in the header.  People who turn
-off SYSFS probably appreciate a few bytes saved:
+OK, this time for sure!
 
-diff --git a/include/linux/moduleparam.h b/include/linux/moduleparam.h
---- a/include/linux/moduleparam.h
-+++ b/include/linux/moduleparam.h
-@@ -139,7 +139,14 @@ extern int parse_args(const char *name,
- 		      int (*unknown)(char *param, char *val));
+
+blackfin: allow usage of string functions in linux/string.h
+
+In introducing a trivial "strstarts()" function in linux/string.h, we
+hit the following error on blackfin:
+
+file included from include/linux/bitmap.h:9,
+                 from include/linux/nodemask.h:90,
+                 from include/linux/mmzone.h:17,
+                 from include/linux/gfp.h:5,
+                 from include/linux/kmod.h:23,
+                 from include/linux/module.h:14,
+                 from arch/blackfin/lib/strncmp.c:14:
+include/linux/string.h: In function 'strstarts':
+include/linux/string.h:124: error: implicit declaration of function 'strncmp'
+
+Because when including asm/string.h from arch/blackfin/lib/strncmp.c,
+we don't declare the string op we are about to define, and
+linux/string.h barfs.
+
+The fix is to declare the function whose definition we steal via the
+#define trick.  I do this for all of them, so this won't bite us in
+future.
+
+Reported-by: linux-next
+Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
+---
+ arch/blackfin/lib/strcmp.c  |    1 +
+ arch/blackfin/lib/strcpy.c  |    1 +
+ arch/blackfin/lib/strncmp.c |    1 +
+ arch/blackfin/lib/strncpy.c |    1 +
+ 4 files changed, 4 insertions(+)
+
+diff --git a/arch/blackfin/lib/strcmp.c b/arch/blackfin/lib/strcmp.c
+--- a/arch/blackfin/lib/strcmp.c
++++ b/arch/blackfin/lib/strcmp.c
+@@ -6,6 +6,7 @@
+  * Licensed under the GPL-2 or later.
+  */
  
- /* Called by module remove. */
-+#ifdef CONFIG_SYSFS
- extern void destroy_params(const struct kernel_param *params, unsigned num);
-+#else
-+static inline void destroy_params(const struct kernel_param *params,
-+				  unsigned num)
-+{
-+}
-+#endif /* !CONFIG_SYSFS */
++int strcmp(const char *dest, const char *src);
+ #define strcmp __inline_strcmp
+ #include <asm/string.h>
+ #undef strcmp
+diff --git a/arch/blackfin/lib/strcpy.c b/arch/blackfin/lib/strcpy.c
+--- a/arch/blackfin/lib/strcpy.c
++++ b/arch/blackfin/lib/strcpy.c
+@@ -6,6 +6,7 @@
+  * Licensed under the GPL-2 or later.
+  */
  
- /* All the helper functions */
- /* The macros to do compile-time type checking stolen from Jakub
-
-Cheers,
-Rusty.
++char *strcpy(char *dest, const char *src);
+ #define strcpy __inline_strcpy
+ #include <asm/string.h>
+ #undef strcpy
+diff --git a/arch/blackfin/lib/strncmp.c b/arch/blackfin/lib/strncmp.c
+--- a/arch/blackfin/lib/strncmp.c
++++ b/arch/blackfin/lib/strncmp.c
+@@ -6,6 +6,8 @@
+  * Licensed under the GPL-2 or later.
+  */
+ 
++#include <linux/types.h>
++int strncmp(const char *cs, const char *ct, size_t count);
+ #define strncmp __inline_strncmp
+ #include <asm/string.h>
+ #undef strncmp
+diff --git a/arch/blackfin/lib/strncpy.c b/arch/blackfin/lib/strncpy.c
+--- a/arch/blackfin/lib/strncpy.c
++++ b/arch/blackfin/lib/strncpy.c
+@@ -6,6 +6,8 @@
+  * Licensed under the GPL-2 or later.
+  */
+ 
++#include <linux/types.h>
++char *strncpy(char *dest, const char *src, size_t n);
+ #define strncpy __inline_strncpy
+ #include <asm/string.h>
+ #undef strncpy
