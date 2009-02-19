@@ -1,49 +1,50 @@
-From: "Sachin P. Sant" <sachinp@in.ibm.com>
-Subject: Re: [s390] next Feb 18: defconfig build break
-Date: Thu, 19 Feb 2009 10:50:44 +0530
-Message-ID: <499CEC2C.1060406@in.ibm.com>
-References: <20090218191640.0b023029.sfr@canb.auug.org.au> <20090218224541.fe6e0355.sfr@canb.auug.org.au> <8bd0f97a0902180910wafd35ceo47aeb9f3cc6733f3@mail.gmail.com> <200902190913.27653.rusty@rustcorp.com.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the wireless-current
+ tree
+Date: Thu, 19 Feb 2009 16:23:16 +1100
+Message-ID: <20090219162316.b866a74d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp02.au.ibm.com ([202.81.31.144]:33589 "EHLO
-	e23smtp02.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750918AbZBSFUw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Feb 2009 00:20:52 -0500
-In-Reply-To: <200902190913.27653.rusty@rustcorp.com.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:40140 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751163AbZBSFXU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 Feb 2009 00:23:20 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: Mike Frysinger <vapier.adi@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-s390@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, Christian Lamparter <chunkeey@web.de>, "John W. Linville" <linville@tuxdriver.com>, Roel Kluin <roel.kluin@gmail.com>
 
-Rusty Russell wrote:
-> On Thursday 19 February 2009 03:40:59 Mike Frysinger wrote:
->   
->> On Wed, Feb 18, 2009 at 06:45, Stephen Rothwell wrote:
->>     
->>> That would be a side effect of commit 43a47c6ca0e0b5479ae316e188a28b7e625d41e5 ("misc:strstarts") from the rr tree.  Rusty cc'd.
->>>       
->> breaks all Blackfin ports as well:
->>     
->
-> My first reaction was WTF?  My second was, how did our string code become
-> such a catastrophe?
->
-> Sorry, I had no idea what a mess I was wading into.
->
-> Here's the s390 fix:
->   
-Thanks Rusty. That fixes the issue.
+Hi David,
 
-Regards
--Sachin
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/wireless/p54/p54common.c between commit
+9de1643b4d59b416568bae04dbf67a374360765b ("p54: misplaced parentheses")
+from the wireless-current tree and commit
+51eed9923d98477e7f7473edd60d876d1cecc8c5 ("p54: implement FIF_OTHER_BSS
+filter setting") from the net tree.
 
+I fixed it up as suggested in John's merge test (see below) and can carry
+the fix for a while.
 -- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+diff --cc drivers/net/wireless/p54/p54common.c
+index 530daee,45c2e7a..0000000
+--- a/drivers/net/wireless/p54/p54common.c
++++ b/drivers/net/wireless/p54/p54common.c
+@@@ -1932,8 -2211,9 +2211,9 @@@ static void p54_configure_filter(struc
+  	struct p54_common *priv = dev->priv;
+  
+  	*total_flags &= FIF_PROMISC_IN_BSS |
++ 			FIF_OTHER_BSS |
+ -			(*total_flags & FIF_PROMISC_IN_BSS) ?
+ -				FIF_FCSFAIL : 0;
+ +			(*total_flags & FIF_PROMISC_IN_BSS ?
+ +				FIF_FCSFAIL : 0);
+  
+  	priv->filter_flags = *total_flags;
+  
