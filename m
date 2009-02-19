@@ -1,50 +1,60 @@
-From: Russell King <rmk+lkml@arm.linux.org.uk>
-Subject: Re: [s390] next Feb 18: defconfig build break
-Date: Thu, 19 Feb 2009 09:51:50 +0000
-Message-ID: <20090219095150.GA5808@flint.arm.linux.org.uk>
-References: <20090218191640.0b023029.sfr@canb.auug.org.au> <20090218224541.fe6e0355.sfr@canb.auug.org.au> <8bd0f97a0902180910wafd35ceo47aeb9f3cc6733f3@mail.gmail.com> <200902191045.25878.rusty@rustcorp.com.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: [PATCH v2] module: fix build for CONFIG_SYSFS=n
+Date: Thu, 19 Feb 2009 21:20:59 +1030
+Message-ID: <200902192120.59634.rusty@rustcorp.com.au>
+References: <20090218191640.0b023029.sfr@canb.auug.org.au> <499C54E8.7060004@oracle.com> <20090218191529.GC8889@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:45898 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754047AbZBSJwe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Feb 2009 04:52:34 -0500
+Received: from ozlabs.org ([203.10.76.45]:60447 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750984AbZBSKvH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 Feb 2009 05:51:07 -0500
+In-Reply-To: <20090218191529.GC8889@elte.hu>
 Content-Disposition: inline
-In-Reply-To: <200902191045.25878.rusty@rustcorp.com.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: Mike Frysinger <vapier.adi@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "Sachin P. Sant" <sachinp@in.ibm.com>, linux-s390@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Thu, Feb 19, 2009 at 10:45:25AM +1030, Rusty Russell wrote:
-> Subject: arm: allow usage of string functions in linux/string.h
+On Thursday 19 February 2009 05:45:29 Ingo Molnar wrote:
 > 
-> In introducing a trivial "strstarts()" function in linux/string.h, we
-> hit:
+> * Randy Dunlap <randy.dunlap@oracle.com> wrote:
 > 
-> 	arch/arm/boot/compressed/misc.o: In function `strstarts':
-> 	misc.c:(.text+0x368): undefined reference to `strlen'
-> 	misc.c:(.text+0x378): undefined reference to `strncmp'
-> 
-> This is because of "CFLAGS_misc.o := -Dstatic=" in the Makefile.
-> "static inline strstarts(...)" becomes non-inline, and refers to the
-> other string ops.
-> 
-> The simplest workaround is to include asm/string.h.  This makes sense
-> anyway, since lib/string.c won't be linked against this so we can't
-> use those functions anyway.
-> 
-> Compile tested here.
-> 
-> Reported-by: linux-next
-> Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
+> > > Is destroy_params() dependent on SYSFS? If yes then it would be 
+> > 
+> > Yes.
+> > 
+> > > far cleaner if there was a NOP destroy_params() inline for the 
+> > > !SYSFS case.
+...
+> > From: Randy Dunlap <randy.dunlap@oracle.com>
+> > 
+> > Fix this build error when CONFIG_SYSFS=n:
 
-Acked-by: Russell King <rmk+kernel@arm.linux.org.uk>
+Thanks for the find Randy.  I chose to put it in the header.  People who turn
+off SYSFS probably appreciate a few bytes saved:
 
-I guess this should go in with the change which caused the breakage.
+diff --git a/include/linux/moduleparam.h b/include/linux/moduleparam.h
+--- a/include/linux/moduleparam.h
++++ b/include/linux/moduleparam.h
+@@ -139,7 +139,14 @@ extern int parse_args(const char *name,
+ 		      int (*unknown)(char *param, char *val));
+ 
+ /* Called by module remove. */
++#ifdef CONFIG_SYSFS
+ extern void destroy_params(const struct kernel_param *params, unsigned num);
++#else
++static inline void destroy_params(const struct kernel_param *params,
++				  unsigned num)
++{
++}
++#endif /* !CONFIG_SYSFS */
+ 
+ /* All the helper functions */
+ /* The macros to do compile-time type checking stolen from Jakub
 
--- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+Cheers,
+Rusty.
