@@ -1,57 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: coming conflicts between wireless-2.6 and wireless-next-2.6
-Date: Thu, 19 Feb 2009 16:01:16 +1100
-Message-ID: <20090219160116.22acc43c.sfr@canb.auug.org.au>
-References: <20090218030246.GA551@tuxdriver.com>
+From: "Sachin P. Sant" <sachinp@in.ibm.com>
+Subject: Re: [s390] next Feb 18: defconfig build break
+Date: Thu, 19 Feb 2009 10:50:44 +0530
+Message-ID: <499CEC2C.1060406@in.ibm.com>
+References: <20090218191640.0b023029.sfr@canb.auug.org.au> <20090218224541.fe6e0355.sfr@canb.auug.org.au> <8bd0f97a0902180910wafd35ceo47aeb9f3cc6733f3@mail.gmail.com> <200902190913.27653.rusty@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__19_Feb_2009_16_01_16_+1100_0Xd6GDZhI6suJlqn"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47660 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752660AbZBSFBW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 Feb 2009 00:01:22 -0500
-In-Reply-To: <20090218030246.GA551@tuxdriver.com>
+Received: from e23smtp02.au.ibm.com ([202.81.31.144]:33589 "EHLO
+	e23smtp02.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750918AbZBSFUw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Feb 2009 00:20:52 -0500
+In-Reply-To: <200902190913.27653.rusty@rustcorp.com.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Mike Frysinger <vapier.adi@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-s390@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
 
---Signature=_Thu__19_Feb_2009_16_01_16_+1100_0Xd6GDZhI6suJlqn
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi John,
-
-On Tue, 17 Feb 2009 22:02:46 -0500 "John W. Linville" <linville@tuxdriver.c=
-om> wrote:
+Rusty Russell wrote:
+> On Thursday 19 February 2009 03:40:59 Mike Frysinger wrote:
+>   
+>> On Wed, Feb 18, 2009 at 06:45, Stephen Rothwell wrote:
+>>     
+>>> That would be a side effect of commit 43a47c6ca0e0b5479ae316e188a28b7e625d41e5 ("misc:strstarts") from the rr tree.  Rusty cc'd.
+>>>       
+>> breaks all Blackfin ports as well:
+>>     
 >
-> There are several conflicts in the latest rounds of the wireless trees.
-> Most of them are simple.  One of them involves transporting some
-> changes from "orinoco: do not resgister NULL pm_notifier function"
-> between drivers/net/orinoco/orinoco.c (which no longer exists in -next)
-> over to drivers/net/orinoco/main.c.
->=20
-> I have an example 'merge-test' branch in wireless-next-2.6 to show
-> how I think the conflicts should be resolved -- enjoy! :-)
+> My first reaction was WTF?  My second was, how did our string code become
+> such a catastrophe?
+>
+> Sorry, I had no idea what a mess I was wading into.
+>
+> Here's the s390 fix:
+>   
+Thanks Rusty. That fixes the issue.
 
-Thanks for the heads up and your merge-test branch.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Regards
+-Sachin
 
---Signature=_Thu__19_Feb_2009_16_01_16_+1100_0Xd6GDZhI6suJlqn
-Content-Type: application/pgp-signature
+-- 
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkmc55wACgkQjjKRsyhoI8w0zQCeLq4NCohBk1DeHavEyDsyEWUA
-opkAnAkB5oLvXbuaTWnJf0kAStxdruBp
-=aLvV
------END PGP SIGNATURE-----
-
---Signature=_Thu__19_Feb_2009_16_01_16_+1100_0Xd6GDZhI6suJlqn--
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
