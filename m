@@ -1,49 +1,33 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] eeepc: needs to depend on INPUT
-Date: Thu, 19 Feb 2009 09:16:32 -0800
-Message-ID: <499D93F0.2090803@oracle.com>
+From: Corentin Chary <corentin.chary@gmail.com>
+Subject: Re: [PATCH -next] eeepc: needs to depend on INPUT
+Date: Thu, 19 Feb 2009 19:12:15 +0100
+Message-ID: <71cd59b00902191012k764bab32n85f54fc049e35035@mail.gmail.com>
 References: <20090220002832.cad00fcd.sfr@canb.auug.org.au>
+	 <499D93F0.2090803@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757017AbZBSRQW@vger.kernel.org>
-In-Reply-To: <20090220002832.cad00fcd.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Corentin Chary <corentincj@iksaif.net>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bw0-f161.google.com ([209.85.218.161]:62029 "EHLO
+	mail-bw0-f161.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756410AbZBSSMS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Feb 2009 13:12:18 -0500
+In-Reply-To: <499D93F0.2090803@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Thu, Feb 19, 2009 at 6:16 PM, Randy Dunlap <randy.dunlap@oracle.com> wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+>
+> EEEPC_LAPTOP needs to depend on INPUT to fix build errors that
+> can happen when EEEPC_LAPTOP=y and INPUT=m:
 
-EEEPC_LAPTOP needs to depend on INPUT to fix build errors that
-can happen when EEEPC_LAPTOP=y and INPUT=m:
+There is already a patch sent to linux-acpi and Len Brown.
 
-drivers/built-in.o: In function `eeepc_hotk_add':
-eeepc-laptop.c:(.text+0x14f403): undefined reference to `input_allocate_device'
-eeepc-laptop.c:(.text+0x14f7a4): undefined reference to `input_register_device'
-eeepc-laptop.c:(.text+0x14f7c8): undefined reference to `input_free_device'
-drivers/built-in.o: In function `eeepc_input_exit':
-eeepc-laptop.c:(.text+0x14f9d7): undefined reference to `input_unregister_device'
-drivers/built-in.o: In function `eeepc_hotk_notify':
-eeepc-laptop.c:(.text+0x14faf6): undefined reference to `input_event'
-eeepc-laptop.c:(.text+0x14fb0c): undefined reference to `input_event'
-eeepc-laptop.c:(.text+0x14fb32): undefined reference to `input_event'
-eeepc-laptop.c:(.text+0x14fb48): undefined reference to `input_event'
+http://patchwork.kernel.org/patch/7354/
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-cc: Corentin Chary <corentincj@iksaif.net>
----
- drivers/platform/x86/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20090219.orig/drivers/platform/x86/Kconfig
-+++ linux-next-20090219/drivers/platform/x86/Kconfig
-@@ -313,7 +313,7 @@ config INTEL_MENLOW
- 
- config EEEPC_LAPTOP
- 	tristate "Eee PC Hotkey Driver (EXPERIMENTAL)"
--	depends on ACPI
-+	depends on ACPI && INPUT
- 	depends on EXPERIMENTAL
- 	select BACKLIGHT_CLASS_DEVICE
- 	select HWMON
+-- 
+Corentin Chary
+http://xf.iksaif.net
