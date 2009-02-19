@@ -1,66 +1,57 @@
-From: Mike Frysinger <vapier.adi@gmail.com>
-Subject: Re: [s390] next Feb 18: defconfig build break
-Date: Wed, 18 Feb 2009 20:55:13 -0500
-Message-ID: <8bd0f97a0902181755y5a5f6760s6e266c87906e6dca@mail.gmail.com>
-References: <20090218191640.0b023029.sfr@canb.auug.org.au>
-	 <20090218224541.fe6e0355.sfr@canb.auug.org.au>
-	 <8bd0f97a0902180910wafd35ceo47aeb9f3cc6733f3@mail.gmail.com>
-	 <200902190929.42044.rusty@rustcorp.com.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: coming conflicts between wireless-2.6 and wireless-next-2.6
+Date: Thu, 19 Feb 2009 16:01:16 +1100
+Message-ID: <20090219160116.22acc43c.sfr@canb.auug.org.au>
+References: <20090218030246.GA551@tuxdriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1758166AbZBSBz2@vger.kernel.org>
-In-Reply-To: <200902190929.42044.rusty@rustcorp.com.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "Sachin P. Sant" <sachinp@in.ibm.com>, linux-s390@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__19_Feb_2009_16_01_16_+1100_0Xd6GDZhI6suJlqn"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:47660 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752660AbZBSFBW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 Feb 2009 00:01:22 -0500
+In-Reply-To: <20090218030246.GA551@tuxdriver.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org
 
-On Wed, Feb 18, 2009 at 17:59, Rusty Russell wrote:
-> On Thursday 19 February 2009 03:40:59 Mike Frysinger wrote:
->> breaks all Blackfin ports as well:
->> In file included from include/linux/bitmap.h:9,
->>                  from include/linux/nodemask.h:90,
->>                  from include/linux/mmzone.h:17,
->>                  from include/linux/gfp.h:5,
->>                  from include/linux/kmod.h:23,
->>                  from include/linux/module.h:14,
->>                  from arch/blackfin/lib/strncmp.c:14:
->> include/linux/string.h: In function 'strstarts':
->> include/linux/string.h:124: error: implicit declaration of function 'strncmp'
->> make[1]: *** [arch/blackfin/lib/strncmp.o] Error 1
->> make: *** [arch/blackfin/lib] Error 2
+--Signature=_Thu__19_Feb_2009_16_01_16_+1100_0Xd6GDZhI6suJlqn
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi John,
+
+On Tue, 17 Feb 2009 22:02:46 -0500 "John W. Linville" <linville@tuxdriver.c=
+om> wrote:
 >
->   I don't have a blackfin cross compiler, but I think this is the right
-> fix:
+> There are several conflicts in the latest rounds of the wireless trees.
+> Most of them are simple.  One of them involves transporting some
+> changes from "orinoco: do not resgister NULL pm_notifier function"
+> between drivers/net/orinoco/orinoco.c (which no longer exists in -next)
+> over to drivers/net/orinoco/main.c.
+>=20
+> I have an example 'merge-test' branch in wireless-next-2.6 to show
+> how I think the conflicts should be resolved -- enjoy! :-)
 
-np ... fix is almost correct :)
+Thanks for the heads up and your merge-test branch.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-> --- a/arch/blackfin/lib/strncmp.c
-> +++ b/arch/blackfin/lib/strncmp.c
-> @@ -6,6 +6,7 @@
->  * Licensed under the GPL-2 or later.
->  */
->
-> +int strncmp(const char *cs, const char *ct, size_t count);
->  #define strncmp __inline_strncmp
->  #include <asm/string.h>
->  #undef strncmp
-> diff --git a/arch/blackfin/lib/strncpy.c b/arch/blackfin/lib/strncpy.c
-> --- a/arch/blackfin/lib/strncpy.c
-> +++ b/arch/blackfin/lib/strncpy.c
-> @@ -6,6 +6,7 @@
->  * Licensed under the GPL-2 or later.
->  */
->
-> +char *strncpy(char *dest, const char *src, size_t n);
->  #define strncpy __inline_strncpy
->  #include <asm/string.h>
->  #undef strncpy
+--Signature=_Thu__19_Feb_2009_16_01_16_+1100_0Xd6GDZhI6suJlqn
+Content-Type: application/pgp-signature
 
-size_t is not a builtin type so there needs to be a linux/types.h
-include right above these two prototypes.  then things build up fine
-for me.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-thanks!
--mike
+iEYEARECAAYFAkmc55wACgkQjjKRsyhoI8w0zQCeLq4NCohBk1DeHavEyDsyEWUA
+opkAnAkB5oLvXbuaTWnJf0kAStxdruBp
+=aLvV
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__19_Feb_2009_16_01_16_+1100_0Xd6GDZhI6suJlqn--
