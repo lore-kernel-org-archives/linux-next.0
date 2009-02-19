@@ -1,65 +1,64 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: next-20090219: IMA: kernel BUG at include/linux/scatterlist.h:65
-Date: Thu, 19 Feb 2009 17:51:12 +0300
-Message-ID: <a4423d670902190651t71638aaepbc2ba49b9b6a25c6@mail.gmail.com>
+From: Mike Frysinger <vapier.adi@gmail.com>
+Subject: Re: [s390] next Feb 18: defconfig build break
+Date: Thu, 19 Feb 2009 12:14:52 -0500
+Message-ID: <8bd0f97a0902190914q65a2af6ag537269b563a4607d@mail.gmail.com>
+References: <20090218191640.0b023029.sfr@canb.auug.org.au>
+	 <200902190929.42044.rusty@rustcorp.com.au>
+	 <8bd0f97a0902181755y5a5f6760s6e266c87906e6dca@mail.gmail.com>
+	 <200902192210.10368.rusty@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f21.google.com ([209.85.219.21]:43835 "EHLO
-	mail-ew0-f21.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750948AbZBSOvO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Feb 2009 09:51:14 -0500
+Received: from yw-out-2324.google.com ([74.125.46.31]:44657 "EHLO
+	yw-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752206AbZBSROx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Feb 2009 12:14:53 -0500
+In-Reply-To: <200902192210.10368.rusty@rustcorp.com.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: zohar@us.ibm.com, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "Sachin P. Sant" <sachinp@in.ibm.com>, linux-s390@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
 
-Hi
+On Thu, Feb 19, 2009 at 06:40, Rusty Russell wrote:
+> On Thursday 19 February 2009 12:25:13 Mike Frysinger wrote:
+>> > +char *strncpy(char *dest, const char *src, size_t n);
+>> >  #define strncpy __inline_strncpy
+>> >  #include <asm/string.h>
+>> >  #undef strncpy
+>>
+>> size_t is not a builtin type so there needs to be a linux/types.h
+>> include right above these two prototypes.  then things build up fine
+>> for me.
+>
+> OK, this time for sure!
+>
+>
+> blackfin: allow usage of string functions in linux/string.h
+>
+> In introducing a trivial "strstarts()" function in linux/string.h, we
+> hit the following error on blackfin:
+>
+> file included from include/linux/bitmap.h:9,
+>                 from include/linux/nodemask.h:90,
+>                 from include/linux/mmzone.h:17,
+>                 from include/linux/gfp.h:5,
+>                 from include/linux/kmod.h:23,
+>                 from include/linux/module.h:14,
+>                 from arch/blackfin/lib/strncmp.c:14:
+> include/linux/string.h: In function 'strstarts':
+> include/linux/string.h:124: error: implicit declaration of function 'strncmp'
+>
+> Because when including asm/string.h from arch/blackfin/lib/strncmp.c,
+> we don't declare the string op we are about to define, and
+> linux/string.h barfs.
+>
+> The fix is to declare the function whose definition we steal via the
+> #define trick.  I do this for all of them, so this won't bite us in
+> future.
+>
+> Reported-by: linux-next
+> Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
 
- kernel BUG at include/linux/scatterlist.h:65!
- invalid opcode: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC
- last sysfs file:
- CPU 2
- Modules linked in:
- Pid: 1, comm: swapper Not tainted 2.6.29-rc5-next-20090219 #5 PowerEdge 1950
- RIP: 0010:[<ffffffff8045ec70>]  [<ffffffff8045ec70>] ima_calc_hash+0xc0/0x160
- RSP: 0018:ffff88007f46bc40  EFLAGS: 00010286
- RAX: ffffe200032c45e8 RBX: 00000000fffffff4 RCX: 0000000087654321
- RDX: 0000000000000002 RSI: 0000000000000001 RDI: ffff88007cf71048
- RBP: ffff88007f46bcd0 R08: 0000000000000000 R09: 0000000000000163
- R10: ffff88007f4707a8 R11: 0000000000000000 R12: ffff88007cf71048
- R13: 0000000000001000 R14: 0000000000000000 R15: 0000000000009d98
- FS:  0000000000000000(0000) GS:ffff8800051ac000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0018 ES: 0018 CR0: 000000008005003b
- CR2: 0000000000000000 CR3: 0000000000201000 CR4: 00000000000006e0
- DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
- DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
- Process swapper (pid: 1, threadinfo ffff88007f46a000, task ffff88007f470000)
- Stack:
-  ffffffff8045e49e 0000004800000246 ffff88007cfbc3b8 ffff88007c853980
-  ffffffff8045e49e 0000000000000002 ffff88007cfbc440 ffff88007cfbc418
-  2222222222222222 2222222222222222 ffff88007d878b88 2222222200000000
- Call Trace:
-  [<ffffffff8045e49e>] ? process_measurement+0x9e/0x110
-  [<ffffffff8045e49e>] ? process_measurement+0x9e/0x110
-  [<ffffffff8045ed6f>] ima_collect_measurement+0x5f/0x70
-  [<ffffffff8045e4e7>] process_measurement+0xe7/0x110
-  [<ffffffff8045e531>] ima_bprm_check+0x21/0x30
-  [<ffffffff802d0246>] search_binary_handler+0x26/0x320
-  [<ffffffff802d0792>] do_execve+0x252/0x2c0
-  [<ffffffff802099c9>] sys_execve+0x49/0x80
-  [<ffffffff8020ccd8>] kernel_execve+0x68/0xd0
-  [<ffffffff80209232>] ? init_post+0xb2/0x1b0
-  [<ffffffff8020cc5a>] ? child_rip+0xa/0x20
-  [<ffffffff80235ec9>] ? finish_task_switch+0x89/0x110
-  [<ffffffff80656006>] ? _spin_unlock_irq+0x36/0x60
-  [<ffffffff8020c640>] ? restore_args+0x0/0x30
-  [<ffffffff8020cc50>] ? child_rip+0x0/0x20
- Code: 89 e7 e8 d4 c6 dc ff 48 b9 00 00 00 00 00 e2 ff ff 48 c1 e8
- 0c 48 8b 55 98 48 6b c0 68 48 01 c8 b9 21 43 65 87 48 39 4d 90 74 30 <0f> 0b eb
- fe 4c 89 e7 44 89 eb e8 f1 66 e6 ff 48 8b 7d c0 48 89
- RIP  [<ffffffff8045ec70>] ima_calc_hash+0xc0/0x160
-  RSP <ffff88007f46bc40>
- ---[ end trace 0003b39833c42ede ]---
-<..>
-Kernel panic - not syncing: Attempted to kill init!
+Tested-by: Mike Frysinger <vapier@gentoo.org>
+-mike
