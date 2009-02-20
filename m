@@ -1,52 +1,45 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: [s390] next Feb 18: defconfig build break
-Date: Fri, 20 Feb 2009 11:23:39 +0100
-Message-ID: <20090220112339.7fd84556@de.ibm.com>
-References: <20090218191640.0b023029.sfr@canb.auug.org.au>
-	<20090218224541.fe6e0355.sfr@canb.auug.org.au>
-	<8bd0f97a0902180910wafd35ceo47aeb9f3cc6733f3@mail.gmail.com>
-	<200902190913.27653.rusty@rustcorp.com.au>
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: Re: [PATCH] integrity: ima scatterlist bug fix
+Date: Fri, 20 Feb 2009 13:51:41 +0300
+Message-ID: <a4423d670902200251l6087d8afu88409bf4e2e6cb4e@mail.gmail.com>
+References: <1235096630-3099-1-git-send-email-zohar@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate4.de.ibm.com ([195.212.29.153]:36412 "EHLO
-	mtagate4.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753845AbZBTKXt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Feb 2009 05:23:49 -0500
-In-Reply-To: <200902190913.27653.rusty@rustcorp.com.au>
+Received: from ey-out-2122.google.com ([74.125.78.27]:2576 "EHLO
+	ey-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751536AbZBTKvn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Feb 2009 05:51:43 -0500
+In-Reply-To: <1235096630-3099-1-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: Mike Frysinger <vapier.adi@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "Sachin P. Sant" <sachinp@in.ibm.com>, linux-s390@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, heiko.carstens@de.ibm.com
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, David Safford <safford@watson.ibm.com>, LKML <linux-kernel@vger.kernel.org>, Mimi Zohar <zohar@us.ibm.com>
 
-Hi Rusty,
-
-On Thu, 19 Feb 2009 09:13:26 +1030
-Rusty Russell <rusty@rustcorp.com.au> wrote:
-
-> Here's the s390 fix:
-> 
-> Subject: s390: allow usage of string functions in linux/string.h
-
-Thanks for the fix.
- 
-> Because when including asm/string.h from arch/s390/lib/string.c we
-> don't declare the string ops we are about to define, and
-> linux/string.h barfs.
-> 
-> The fix is to declare them in this IN_ARCH_STRING_C case, but in
-> general I wonder if there's a neater fix.
-
-The out-of-line version of the string functions in
-arch/s390/lib/string.c needs EXPORT_SYMBOL and other stuff. To fix the
-problem without the seperate out-of-line prototypes would required to
-avoid the inclusing of linux/string.h. Which would be fragile if
-possible at all. So I think your patch is the best way to deal with the
-problem.
-
--- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
+2009/2/20 Mimi Zohar <zohar@linux.vnet.ibm.com>:
+> Based on Alexander Beregalov's post http://lkml.org/lkml/2009/2/19/198
+>
+> - replaced sg_set_buf() with sg_init_one()
+>
+>  kernel BUG at include/linux/scatterlist.h:65!
+>  invalid opcode: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC
+>  last sysfs file:
+>  CPU 2
+>  Modules linked in:
+>  Pid: 1, comm: swapper Not tainted 2.6.29-rc5-next-20090219 #5 PowerEdge 1950
+>  RIP: 0010:[<ffffffff8045ec70>]  [<ffffffff8045ec70>] ima_calc_hash+0xc0/0x160
+>  RSP: 0018:ffff88007f46bc40  EFLAGS: 00010286
+>  RAX: ffffe200032c45e8 RBX: 00000000fffffff4 RCX: 0000000087654321
+>  RDX: 0000000000000002 RSI: 0000000000000001 RDI: ffff88007cf71048
+>  RBP: ffff88007f46bcd0 R08: 0000000000000000 R09: 0000000000000163
+>  R10: ffff88007f4707a8 R11: 0000000000000000 R12: ffff88007cf71048
+>  R13: 0000000000001000 R14: 0000000000000000 R15: 0000000000009d98
+>  FS:  0000000000000000(0000) GS:ffff8800051ac000(0000) knlGS:0000000000000000
+>  CS:  0010 DS: 0018 ES: 0018 CR0: 000000008005003b
+>  CR2: 0000000000000000 CR3: 0000000000201000 CR4: 00000000000006e0
+>  DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>  DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+>
+> Signed-off-by: Mimi Zohar <zohar@us.ibm.com>
+Tested-by: Alexander Beregalov <a.beregalov@gmail.com>
