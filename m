@@ -1,89 +1,48 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: next-20090220: XFS, IMA: BUG: sleeping function called from invalid
-	context at mm/slub.c:1613
-Date: Fri, 20 Feb 2009 14:00:21 +0300
-Message-ID: <a4423d670902200300n1d1bfdeeg6daca4b32989c9d3@mail.gmail.com>
+From: Pekka Enberg <penberg@cs.helsinki.fi>
+Subject: Re: linux-next: manual merge of the slab tree with the ftrace tree
+Date: Fri, 20 Feb 2009 13:12:41 +0200
+Message-ID: <1235128361.29813.32.camel@penberg-laptop>
+References: <20090220165728.7f2cec61.sfr@canb.auug.org.au>
+	 <20090220195911.3bff30fb.sfr@canb.auug.org.au>
+	 <20090220093734.GI24555@elte.hu> <1235122897.29813.28.camel@penberg-laptop>
+	 <20090220095355.GL24555@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f21.google.com ([209.85.219.21]:35019 "EHLO
-	mail-ew0-f21.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751194AbZBTLAX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Feb 2009 06:00:23 -0500
+Received: from courier.cs.helsinki.fi ([128.214.9.1]:56462 "EHLO
+	mail.cs.helsinki.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751279AbZBTLMo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Feb 2009 06:12:44 -0500
+In-Reply-To: <20090220095355.GL24555@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, xfs@oss.sgi.com, Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
 
-Hi
+Hi Ingo,
 
-I have applied the following patch from Mimi Zohar
-http://marc.info/?l=linux-next&m=123509665514552
+On Fri, 2009-02-20 at 10:53 +0100, Ingo Molnar wrote:
+> > Is it a big problem, though? We could do the 
+> > s/PAGE_SIZE/SLUB_MAX_SIZE/g rename as a separate preparational 
+> > patch (without any of the functional changes) and see if Linus 
+> > merges it to mainline...
+> 
+> Linus does not have to merge the changes - it's enough if both 
+> you and me merge it, then there will be no conflicts if the two 
+> trees are combined - Git will sort it all out.
+> 
+> Could you prepare such a patch please, merge it into a separate 
+> (and append-only) branch your tree and then send me a pull 
+> request after a bit of testing so i can merge it into the 
+> tracing tree?
 
-That is why it is dirty.
-The kernel can not boot without it when IMA is enabled.
+Aye, aye, cap'n:
 
+  git pull git://git.kernel.org/pub/scm/linux/kernel/git/penberg/slab-2.6.git for-ingo
 
-BUG: sleeping function called from invalid context at mm/slub.c:1613
-in_atomic(): 1, irqs_disabled(): 0, pid: 1514, name: mkdir
-3 locks held by mkdir/1514:
- #0:  (&type->i_mutex_dir_key#2/1){+.+.+.}, at: [<ffffffff802d3460>]
-lookup_create+0x30/0xd0
- #1:  (&(&ip->i_lock)->mr_lock/1){+.+.+.}, at: [<ffffffff803ca77f>]
-xfs_ilock+0xdf/0x120
- #2:  (&pag->pag_ici_lock){++++.+}, at: [<ffffffff803caed6>]
-xfs_iget+0x156/0x650
-Pid: 1514, comm: mkdir Not tainted 2.6.29-rc5-next-20090220-dirty #1
-Call Trace:
- [<ffffffff8026ad33>] ? __debug_show_held_locks+0x13/0x30
- [<ffffffff80234fe5>] __might_sleep+0x105/0x140
- [<ffffffff802c6191>] kmem_cache_alloc+0xd1/0x100
- [<ffffffff8045fb29>] ima_iint_insert+0x49/0xf0
- [<ffffffff8045fbed>] ima_inode_alloc+0x1d/0x30
- [<ffffffff802dfa5f>] inode_init_always+0xaf/0x250
- [<ffffffff803caf86>] xfs_iget+0x206/0x650
- [<ffffffff803eb8e8>] xfs_trans_iget+0x208/0x250
- [<ffffffff803ce571>] xfs_ialloc+0xc1/0x700
- [<ffffffff803ec6f9>] xfs_dir_ialloc+0xa9/0x340
- [<ffffffff8025e009>] ? down_write_nested+0x79/0x90
- [<ffffffff803ef0c1>] xfs_create+0x3e1/0x690
- [<ffffffff803fb813>] xfs_vn_mknod+0x63/0xf0
- [<ffffffff803fb8ae>] xfs_vn_mkdir+0xe/0x10
- [<ffffffff802d487c>] vfs_mkdir+0x8c/0xd0
- [<ffffffff802d6a56>] sys_mkdirat+0x106/0x120
- [<ffffffff8020bc0c>] ? sysret_check+0x27/0x62
- [<ffffffff8026c79d>] ? trace_hardirqs_on_caller+0x17d/0x1e0
- [<ffffffff802d6a83>] sys_mkdir+0x13/0x20
- [<ffffffff8020bbdb>] system_call_fastpath+0x16/0x1b
-BUG: sleeping function called from invalid context at mm/slub.c:1613
-in_atomic(): 1, irqs_disabled(): 0, pid: 1514, name: mkdir
-3 locks held by mkdir/1514:
- #0:  (&type->i_mutex_dir_key#2/1){+.+.+.}, at: [<ffffffff802d3460>]
-lookup_create+0x30/0xd0
- #1:  (&(&ip->i_lock)->mr_lock/1){+.+.+.}, at: [<ffffffff803ca77f>]
-xfs_ilock+0xdf/0x120
- #2:  (&pag->pag_ici_lock){++++.+}, at: [<ffffffff803caed6>]
-xfs_iget+0x156/0x650
-Pid: 1514, comm: mkdir Not tainted 2.6.29-rc5-next-20090220-dirty #1
-Call Trace:
- [<ffffffff8026ad33>] ? __debug_show_held_locks+0x13/0x30
- [<ffffffff80234fe5>] __might_sleep+0x105/0x140
- [<ffffffff802c6191>] kmem_cache_alloc+0xd1/0x100
- [<ffffffff8048131a>] radix_tree_preload+0x6a/0xf0
- [<ffffffff8045fb3b>] ima_iint_insert+0x5b/0xf0
- [<ffffffff8045fbed>] ima_inode_alloc+0x1d/0x30
- [<ffffffff802dfa5f>] inode_init_always+0xaf/0x250
- [<ffffffff803caf86>] xfs_iget+0x206/0x650
- [<ffffffff803eb8e8>] xfs_trans_iget+0x208/0x250
- [<ffffffff803ce571>] xfs_ialloc+0xc1/0x700
- [<ffffffff803ec6f9>] xfs_dir_ialloc+0xa9/0x340
- [<ffffffff8025e009>] ? down_write_nested+0x79/0x90
- [<ffffffff803ef0c1>] xfs_create+0x3e1/0x690
- [<ffffffff803fb813>] xfs_vn_mknod+0x63/0xf0
- [<ffffffff803fb8ae>] xfs_vn_mkdir+0xe/0x10
- [<ffffffff802d487c>] vfs_mkdir+0x8c/0xd0
- [<ffffffff802d6a56>] sys_mkdirat+0x106/0x120
- [<ffffffff8020bc0c>] ? sysret_check+0x27/0x62
- [<ffffffff8026c79d>] ? trace_hardirqs_on_caller+0x17d/0x1e0
- [<ffffffff802d6a83>] sys_mkdir+0x13/0x20
- [<ffffffff8020bbdb>] system_call_fastpath+0x16/0x1b
+the commit is here in case someone wants to take a look at it:
+
+http://git.kernel.org/?p=linux/kernel/git/penberg/slab-2.6.git;a=commitdiff;h=fe1200b63d158b28eef6d4de1e5b5f99c681ba2f
+
+			Pekka
