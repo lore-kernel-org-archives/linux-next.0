@@ -1,89 +1,83 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: next-20090220: XFS: inconsistent lock state
-Date: Fri, 20 Feb 2009 20:52:59 +0300
-Message-ID: <a4423d670902200952v5dc2fd91w3b54ab1db51a7fe2@mail.gmail.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: next-20090220: XFS, IMA: BUG: sleeping function called from
+ invalid  context at mm/slub.c:1613
+Date: Fri, 20 Feb 2009 12:22:42 -0800
+Message-ID: <20090220122242.b36a778f.akpm@linux-foundation.org>
+References: <a4423d670902200300n1d1bfdeeg6daca4b32989c9d3@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ey-out-2122.google.com ([74.125.78.24]:37127 "EHLO
-	ey-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755398AbZBTRxC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Feb 2009 12:53:02 -0500
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:50016 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752147AbZBTUYG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 Feb 2009 15:24:06 -0500
+In-Reply-To: <a4423d670902200300n1d1bfdeeg6daca4b32989c9d3@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, xfs@oss.sgi.com
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, xfs@oss.sgi.com, zohar@linux.vnet.ibm.com
 
-Hi
+On Fri, 20 Feb 2009 14:00:21 +0300
+Alexander Beregalov <a.beregalov@gmail.com> wrote:
 
-[ INFO: inconsistent lock state ]
-2.6.29-rc5-next-20090220 #2
----------------------------------
-inconsistent {RECLAIM_FS-ON-W} -> {IN-RECLAIM_FS-R} usage.
-kswapd0/324 [HC0[0]:SC0[0]:HE1:SE1] takes:
- (&(&ip->i_lock)->mr_lock){+++++?}, at: [<ffffffff803ca60a>]
-xfs_ilock+0xaa/0x120
-{RECLAIM_FS-ON-W} state was registered at:
-  [<ffffffff8026c469>] mark_held_locks+0x69/0x90
-  [<ffffffff8026c4d1>] lockdep_trace_alloc+0x41/0xb0
-  [<ffffffff802c609d>] kmem_cache_alloc+0x2d/0x100
-  [<ffffffff8047f0ea>] radix_tree_preload+0x6a/0xf0
-  [<ffffffff803cb01b>] xfs_iget+0x3db/0x650
-  [<ffffffff803eb7a8>] xfs_trans_iget+0x208/0x250
-  [<ffffffff803ce431>] xfs_ialloc+0xc1/0x700
-  [<ffffffff803ec5b9>] xfs_dir_ialloc+0xa9/0x340
-  [<ffffffff803eef81>] xfs_create+0x3e1/0x690
-  [<ffffffff803fb6d3>] xfs_vn_mknod+0x63/0xf0
-  [<ffffffff803fb76e>] xfs_vn_mkdir+0xe/0x10
-  [<ffffffff802d47fc>] vfs_mkdir+0x8c/0xd0
-  [<ffffffff802d6966>] sys_mkdirat+0x106/0x120
-  [<ffffffff802d6993>] sys_mkdir+0x13/0x20
-  [<ffffffff8020bbdb>] system_call_fastpath+0x16/0x1b
-  [<ffffffffffffffff>] 0xffffffffffffffff
-irq event stamp: 240653
-hardirqs last  enabled at (240653): [<ffffffff80282ae4>]
-__rcu_read_unlock+0xa4/0xc0
-hardirqs last disabled at (240652): [<ffffffff80282a99>]
-__rcu_read_unlock+0x59/0xc0
-softirqs last  enabled at (233948): [<ffffffff80248199>]
-__do_softirq+0x139/0x150
-softirqs last disabled at (233943): [<ffffffff8020cd5c>] call_softirq+0x1c/0x30
+> Hi
+> 
+> I have applied the following patch from Mimi Zohar
+> http://marc.info/?l=linux-next&m=123509665514552
+> 
+> That is why it is dirty.
+> The kernel can not boot without it when IMA is enabled.
+> 
+> 
+> BUG: sleeping function called from invalid context at mm/slub.c:1613
+> in_atomic(): 1, irqs_disabled(): 0, pid: 1514, name: mkdir
+> 3 locks held by mkdir/1514:
+>  #0:  (&type->i_mutex_dir_key#2/1){+.+.+.}, at: [<ffffffff802d3460>]
+> lookup_create+0x30/0xd0
+>  #1:  (&(&ip->i_lock)->mr_lock/1){+.+.+.}, at: [<ffffffff803ca77f>]
+> xfs_ilock+0xdf/0x120
+>  #2:  (&pag->pag_ici_lock){++++.+}, at: [<ffffffff803caed6>]
+> xfs_iget+0x156/0x650
+> Pid: 1514, comm: mkdir Not tainted 2.6.29-rc5-next-20090220-dirty #1
+> Call Trace:
+>  [<ffffffff8026ad33>] ? __debug_show_held_locks+0x13/0x30
+>  [<ffffffff80234fe5>] __might_sleep+0x105/0x140
+>  [<ffffffff802c6191>] kmem_cache_alloc+0xd1/0x100
+>  [<ffffffff8045fb29>] ima_iint_insert+0x49/0xf0
+>  [<ffffffff8045fbed>] ima_inode_alloc+0x1d/0x30
+>  [<ffffffff802dfa5f>] inode_init_always+0xaf/0x250
+>  [<ffffffff803caf86>] xfs_iget+0x206/0x650
+>  [<ffffffff803eb8e8>] xfs_trans_iget+0x208/0x250
+>  [<ffffffff803ce571>] xfs_ialloc+0xc1/0x700
+>  [<ffffffff803ec6f9>] xfs_dir_ialloc+0xa9/0x340
+>  [<ffffffff8025e009>] ? down_write_nested+0x79/0x90
+>  [<ffffffff803ef0c1>] xfs_create+0x3e1/0x690
+>  [<ffffffff803fb813>] xfs_vn_mknod+0x63/0xf0
+>  [<ffffffff803fb8ae>] xfs_vn_mkdir+0xe/0x10
+>  [<ffffffff802d487c>] vfs_mkdir+0x8c/0xd0
+>  [<ffffffff802d6a56>] sys_mkdirat+0x106/0x120
+>  [<ffffffff8020bc0c>] ? sysret_check+0x27/0x62
+>  [<ffffffff8026c79d>] ? trace_hardirqs_on_caller+0x17d/0x1e0
+>  [<ffffffff802d6a83>] sys_mkdir+0x13/0x20
+>  [<ffffffff8020bbdb>] system_call_fastpath+0x16/0x1b
+> BUG: sleeping function called from invalid context at mm/slub.c:1613
 
-other info that might help us debug this:
-2 locks held by kswapd0/324:
- #0:  (shrinker_rwsem){++++..}, at: [<ffffffff802a3e92>] shrink_slab+0x32/0x1c0
- #1:  (iprune_mutex){+.+.-.}, at: [<ffffffff802df2c4>]
-shrink_icache_memory+0x84/0x2a0
+Please do not be tempted to switch ima_iint_insert() to use GFP_ATOMIC
+to "fix" this.
 
-stack backtrace:
-Pid: 324, comm: kswapd0 Not tainted 2.6.29-rc5-next-20090220 #2
-Call Trace:
- [<ffffffff8026b37d>] print_usage_bug+0x17d/0x190
- [<ffffffff8026c2cd>] mark_lock+0x31d/0x450
- [<ffffffff8026b4f0>] ? check_usage_forwards+0x0/0xc0
- [<ffffffff8026d4ed>] __lock_acquire+0x40d/0x12a0
- [<ffffffff8026e411>] lock_acquire+0x91/0xc0
- [<ffffffff803ca60a>] ? xfs_ilock+0xaa/0x120
- [<ffffffff8025e0a0>] down_read_nested+0x50/0x90
- [<ffffffff803ca60a>] ? xfs_ilock+0xaa/0x120
- [<ffffffff803ca60a>] xfs_ilock+0xaa/0x120
- [<ffffffff803ef394>] xfs_free_eofblocks+0x84/0x280
- [<ffffffff8026d3ac>] ? __lock_acquire+0x2cc/0x12a0
- [<ffffffff803efe1e>] xfs_inactive+0xee/0x540
- [<ffffffff803fd417>] xfs_fs_clear_inode+0x67/0x70
- [<ffffffff802deefa>] clear_inode+0x9a/0x120
- [<ffffffff802df160>] dispose_list+0x30/0x110
- [<ffffffff802df488>] shrink_icache_memory+0x248/0x2a0
- [<ffffffff802a3fbc>] shrink_slab+0x15c/0x1c0
- [<ffffffff802a5f3a>] kswapd+0x56a/0x6b0
- [<ffffffff80235f36>] ? finish_task_switch+0x46/0x110
- [<ffffffff802a33a0>] ? isolate_pages_global+0x0/0x270
- [<ffffffff80259d20>] ? autoremove_wake_function+0x0/0x40
- [<ffffffff802a59d0>] ? kswapd+0x0/0x6b0
- [<ffffffff80259836>] kthread+0x56/0x90
- [<ffffffff8020cc5a>] child_rip+0xa/0x20
- [<ffffffff80235f79>] ? finish_task_switch+0x89/0x110
- [<ffffffff80654516>] ? _spin_unlock_irq+0x36/0x60
- [<ffffffff8020c640>] ? restore_args+0x0/0x30
- [<ffffffff802597e0>] ? kthread+0x0/0x90
- [<ffffffff8020cc50>] ? child_rip+0x0/0x20
+Arguably, ima_iint_insert() should requite that the caller pass in the
+gfp_t rather than assuming that GFP_KERNEL can be used.  But that is
+not a suitable fix for this bug.
+
+We may need to make that change to ima_iint_insert() anyway, as there's
+a good chance that callers will require GFP_NOFS.
+
+
+But to fix this bug, xfs needs to stop calling inode_init_always()
+under read_lock().  Because inode_alloc_security() also can sleep (see
+new_inode_smack()).
+
+Also, ima_iint_insert() does a radix_tree_lookup() without holding
+ima_iint_lock, which appears to be a bug.
