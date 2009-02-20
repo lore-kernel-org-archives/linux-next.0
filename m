@@ -1,58 +1,90 @@
-From: Mimi Zohar <zohar@us.ibm.com>
-Subject: Re: next-20090219: IMA: kernel BUG at include/linux/scatterlist.h:65
-Date: Thu, 19 Feb 2009 22:59:42 -0500
-Message-ID: <OFB35A95E1.5680E4C1-ON85257563.000DA64A-85257563.0015F211@us.ibm.com>
-References: <a4423d670902190651t71638aaepbc2ba49b9b6a25c6@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the slab tree with the ftrace tree
+Date: Fri, 20 Feb 2009 16:57:28 +1100
+Message-ID: <20090220165728.7f2cec61.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e2.ny.us.ibm.com ([32.97.182.142]:37500 "EHLO e2.ny.us.ibm.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60259 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751676AbZBTD7o (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 Feb 2009 22:59:44 -0500
-In-Reply-To: <a4423d670902190651t71638aaepbc2ba49b9b6a25c6@mail.gmail.com>
+	id S1751504AbZBTF5f (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 Feb 2009 00:57:35 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, James Morris <jmorris@namei.org>, David Safford <safford@watson.ibm.com>
+To: Christoph Lameter <cl@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>, Pekka Enberg <penberg@cs.helsinki.fi>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
 
-Alexander Beregalov <a.beregalov@gmail.com> wrote on 02/19/2009 09:51:12 
-AM:
+Hi all,
 
-> Hi
-> 
->  kernel BUG at include/linux/scatterlist.h:65!
->  invalid opcode: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC
->  last sysfs file:
->  CPU 2
->  Modules linked in:
->  Pid: 1, comm: swapper Not tainted 2.6.29-rc5-next-20090219 #5 PowerEdge 
-1950
->  RIP: 0010:[<ffffffff8045ec70>]  [<ffffffff8045ec70>] 
-ima_calc_hash+0xc0/0x160
->  RSP: 0018:ffff88007f46bc40  EFLAGS: 00010286
->  RAX: ffffe200032c45e8 RBX: 00000000fffffff4 RCX: 0000000087654321
->  RDX: 0000000000000002 RSI: 0000000000000001 RDI: ffff88007cf71048
->  RBP: ffff88007f46bcd0 R08: 0000000000000000 R09: 0000000000000163
->  R10: ffff88007f4707a8 R11: 0000000000000000 R12: ffff88007cf71048
->  R13: 0000000000001000 R14: 0000000000000000 R15: 0000000000009d98
->  FS:  0000000000000000(0000) GS:ffff8800051ac000(0000) 
-knlGS:0000000000000000
->  CS:  0010 DS: 0018 ES: 0018 CR0: 000000008005003b
->  CR2: 0000000000000000 CR3: 0000000000201000 CR4: 00000000000006e0
->  DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->  DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
->  Process swapper (pid: 1, threadinfo ffff88007f46a000, task 
-ffff88007f470000)
->  Stack:
->   ffffffff8045e49e 0000004800000246 ffff88007cfbc3b8 ffff88007c853980
->   ffffffff8045e49e 0000000000000002 ffff88007cfbc440 ffff88007cfbc418
->   2222222222222222 2222222222222222 ffff88007d878b88 2222222200000000
->  Call Trace:
->   [<ffffffff8045e49e>] ? process_measurement+0x9e/0x110
->   [<ffffffff8045e49e>] ? process_measurement+0x9e/0x110
+Today's linux-next merge of the slab tree got a conflict in mm/slub.c
+between commit 5b882be4e00e53a44f47ad7eb997cac2938848bf ("kmemtrace: SLUB
+hooks") from the ftrace tree and commit
+8573e12414365585bfd601dc8c093b3efbef8854 ("SLUB: Do not pass 8k objects
+through to the page allocator") from the slab tree.
 
-The patch I posted on linux-next resolves this bug
-(http://marc.info/?l=linux-next&m=123509665514552&w=2).
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Mimi Zohar
+diff --cc mm/slub.c
+index e6bf32f,23115bd..0000000
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@@ -2689,9 -2661,8 +2693,9 @@@ static struct kmem_cache *get_slab(size
+  void *__kmalloc(size_t size, gfp_t flags)
+  {
+  	struct kmem_cache *s;
+ +	void *ret;
+  
+- 	if (unlikely(size > PAGE_SIZE))
++ 	if (unlikely(size > SLUB_MAX_SIZE))
+  		return kmalloc_large(size, flags);
+  
+  	s = get_slab(size, flags);
+@@@ -2723,18 -2689,9 +2727,19 @@@ static void *kmalloc_large_node(size_t 
+  void *__kmalloc_node(size_t size, gfp_t flags, int node)
+  {
+  	struct kmem_cache *s;
+ +	void *ret;
+  
+ -	if (unlikely(size > SLUB_MAX_SIZE))
+ -		return kmalloc_large_node(size, flags, node);
+++	if (unlikely(size > SLUB_MAX_SIZE)) {
+ +	if (unlikely(size > PAGE_SIZE)) {
+ +		ret = kmalloc_large_node(size, flags, node);
+ +
+ +		kmemtrace_mark_alloc_node(KMEMTRACE_TYPE_KMALLOC,
+ +					  _RET_IP_, ret,
+ +					  size, PAGE_SIZE << get_order(size),
+ +					  flags, node);
+ +
+ +		return ret;
+ +	}
+  
+  	s = get_slab(size, flags);
+  
+@@@ -3276,9 -3225,8 +3281,9 @@@ static struct notifier_block __cpuinitd
+  void *__kmalloc_track_caller(size_t size, gfp_t gfpflags, unsigned long caller)
+  {
+  	struct kmem_cache *s;
+ +	void *ret;
+  
+- 	if (unlikely(size > PAGE_SIZE))
++ 	if (unlikely(size > SLUB_MAX_SIZE))
+  		return kmalloc_large(size, gfpflags);
+  
+  	s = get_slab(size, gfpflags);
+@@@ -3299,9 -3241,8 +3304,9 @@@ void *__kmalloc_node_track_caller(size_
+  					int node, unsigned long caller)
+  {
+  	struct kmem_cache *s;
+ +	void *ret;
+  
+- 	if (unlikely(size > PAGE_SIZE))
++ 	if (unlikely(size > SLUB_MAX_SIZE))
+  		return kmalloc_large_node(size, gfpflags, node);
+  
+  	s = get_slab(size, gfpflags);
