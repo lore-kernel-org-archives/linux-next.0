@@ -1,44 +1,41 @@
-From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Subject: Re: linux-next: Tree for February 20
-Date: Fri, 20 Feb 2009 17:32:06 +0100
-Message-ID: <200902201732.06203.bzolnier@gmail.com>
-References: <20090220201224.3f32ae24.sfr@canb.auug.org.au>
+From: Matthew Garrett <mjg59@srcf.ucam.org>
+Subject: Re: [PATCH] oqo: depends on INPUT_POLLDEV
+Date: Fri, 20 Feb 2009 16:36:51 +0000
+Message-ID: <20090220163651.GA698@srcf.ucam.org>
+References: <20090220083007.7bd0a153.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f161.google.com ([209.85.218.161]:65213 "EHLO
-	mail-bw0-f161.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751752AbZBTQaa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Feb 2009 11:30:30 -0500
-In-Reply-To: <20090220201224.3f32ae24.sfr@canb.auug.org.au>
+Received: from cavan.codon.org.uk ([93.93.128.6]:49580 "EHLO
+	vavatch.codon.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752926AbZBTQgz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Feb 2009 11:36:55 -0500
 Content-Disposition: inline
+In-Reply-To: <20090220083007.7bd0a153.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, lenb@kernel.org
 
-On Friday 20 February 2009, Stephen Rothwell wrote:
-> Hi all,
+On Fri, Feb 20, 2009 at 08:30:07AM -0800, Randy Dunlap wrote:
+
+> From: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> Changes since 20090219:
+> oqo driver uses polled input functions, so make it depend
+> on INPUT_POLLDEV.
+> 
+> ERROR: "input_register_polled_device" [drivers/platform/x86/oqo-wmi.ko] undefined!
+> ERROR: "input_allocate_polled_device" [drivers/platform/x86/oqo-wmi.ko] undefined!
+> ERROR: "input_free_polled_device" [drivers/platform/x86/oqo-wmi.ko] undefined!
+> ERROR: "input_unregister_polled_device" [drivers/platform/x86/oqo-wmi.ko] undefined!
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> cc:	Matthew Garrett <mjg59@srcf.ucam.org>
 
-I've just noticed stall patch version in ide tree so if you're
-using ide this patch is also necessary (fixes hang on boot):
+Acked-by: Matthew Garrett <mjg@redhat.com>
 
---- linux-next/drivers/ide/ide-iops.c	2009-02-20 18:00:28.000000000 +0100
-+++ linux-2.6.git/drivers/ide/ide-iops.c	2009-02-19 18:31:04.000000000 +0100
-@@ -468,9 +468,9 @@
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&hwif->lock, flags);
--	if ((drive->atapi_flags & IDE_AFLAG_DRQ_INTERRUPT) &&
--	    (cmd->protocol == ATAPI_PROT_DMA ||
--	     cmd->protocol == ATAPI_PROT_PIO))
-+	if ((cmd->protocol != ATAPI_PROT_DMA &&
-+	     cmd->protocol != ATAPI_PROT_PIO) ||
-+	    (drive->atapi_flags & IDE_AFLAG_DRQ_INTERRUPT))
- 		__ide_set_handler(drive, handler, timeout);
- 	hwif->tp_ops->exec_command(hwif, cmd->tf.command);
- 	/*
+I've got a cleaned up version of this written now - I'll push it to Len 
+later today.
+
+-- 
+Matthew Garrett | mjg59@srcf.ucam.org
