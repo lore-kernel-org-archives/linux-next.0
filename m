@@ -1,68 +1,52 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the slab tree with the ftrace tree
-Date: Fri, 20 Feb 2009 10:53:55 +0100
-Message-ID: <20090220095355.GL24555@elte.hu>
-References: <20090220165728.7f2cec61.sfr@canb.auug.org.au> <20090220195911.3bff30fb.sfr@canb.auug.org.au> <20090220093734.GI24555@elte.hu> <1235122897.29813.28.camel@penberg-laptop>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: Re: [s390] next Feb 18: defconfig build break
+Date: Fri, 20 Feb 2009 11:23:39 +0100
+Message-ID: <20090220112339.7fd84556@de.ibm.com>
+References: <20090218191640.0b023029.sfr@canb.auug.org.au>
+	<20090218224541.fe6e0355.sfr@canb.auug.org.au>
+	<8bd0f97a0902180910wafd35ceo47aeb9f3cc6733f3@mail.gmail.com>
+	<200902190913.27653.rusty@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:60820 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751838AbZBTJyL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 20 Feb 2009 04:54:11 -0500
-Content-Disposition: inline
-In-Reply-To: <1235122897.29813.28.camel@penberg-laptop>
+Received: from mtagate4.de.ibm.com ([195.212.29.153]:36412 "EHLO
+	mtagate4.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753845AbZBTKXt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Feb 2009 05:23:49 -0500
+In-Reply-To: <200902190913.27653.rusty@rustcorp.com.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pekka Enberg <penberg@cs.helsinki.fi>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Mike Frysinger <vapier.adi@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "Sachin P. Sant" <sachinp@in.ibm.com>, linux-s390@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, heiko.carstens@de.ibm.com
 
+Hi Rusty,
 
-* Pekka Enberg <penberg@cs.helsinki.fi> wrote:
+On Thu, 19 Feb 2009 09:13:26 +1030
+Rusty Russell <rusty@rustcorp.com.au> wrote:
 
-> Hi Ingo,
+> Here's the s390 fix:
 > 
-> On Fri, 2009-02-20 at 10:37 +0100, Ingo Molnar wrote:
-> > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > 
-> > > Hi all,
-> > > 
-> > > On Fri, 20 Feb 2009 16:57:28 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > >
-> > > > @@@ -2723,18 -2689,9 +2727,19 @@@ static void *kmalloc_large_node(size_t 
-> > > >   void *__kmalloc_node(size_t size, gfp_t flags, int node)
-> > > >   {
-> > > >   	struct kmem_cache *s;
-> > > >  +	void *ret;
-> > > >   
-> > > >  -	if (unlikely(size > SLUB_MAX_SIZE))
-> > > >  -		return kmalloc_large_node(size, flags, node);
-> > > > ++	if (unlikely(size > SLUB_MAX_SIZE)) {
-> > > >  +	if (unlikely(size > PAGE_SIZE)) {
-> > > 
-> > > Except I screwed that up.  I meant to delete the last line 
-> > > above.  I will add a patch to the end of linux-next for today.
-> > 
-> > Hm, i'd love to eliminate the conflict, but it would either mean 
-> > us to pull the slab tree into the tracing tree, or the other way 
-> > around - and both have quite many items queued up to make this 
-> > impractical.
+> Subject: s390: allow usage of string functions in linux/string.h
+
+Thanks for the fix.
+ 
+> Because when including asm/string.h from arch/s390/lib/string.c we
+> don't declare the string ops we are about to define, and
+> linux/string.h barfs.
 > 
-> Is it a big problem, though? We could do the 
-> s/PAGE_SIZE/SLUB_MAX_SIZE/g rename as a separate preparational 
-> patch (without any of the functional changes) and see if Linus 
-> merges it to mainline...
+> The fix is to declare them in this IN_ARCH_STRING_C case, but in
+> general I wonder if there's a neater fix.
 
-Linus does not have to merge the changes - it's enough if both 
-you and me merge it, then there will be no conflicts if the two 
-trees are combined - Git will sort it all out.
+The out-of-line version of the string functions in
+arch/s390/lib/string.c needs EXPORT_SYMBOL and other stuff. To fix the
+problem without the seperate out-of-line prototypes would required to
+avoid the inclusing of linux/string.h. Which would be fragile if
+possible at all. So I think your patch is the best way to deal with the
+problem.
 
-Could you prepare such a patch please, merge it into a separate 
-(and append-only) branch your tree and then send me a pull 
-request after a bit of testing so i can merge it into the 
-tracing tree?
+-- 
+blue skies,
+   Martin.
 
-The only constraint is that this commit should never be rebased 
-after that point - but neither of us will do that.
-
-	Ingo
+"Reality continues to ruin my life." - Calvin.
