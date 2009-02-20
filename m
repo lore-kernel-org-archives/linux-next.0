@@ -1,41 +1,51 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-Subject: Re: [PATCH] oqo: depends on INPUT_POLLDEV
-Date: Fri, 20 Feb 2009 16:36:51 +0000
-Message-ID: <20090220163651.GA698@srcf.ucam.org>
-References: <20090220083007.7bd0a153.randy.dunlap@oracle.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH] mimio: depends on INPUT
+Date: Fri, 20 Feb 2009 08:48:18 -0800
+Message-ID: <499EDED2.2030102@oracle.com>
+References: <20090220201224.3f32ae24.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cavan.codon.org.uk ([93.93.128.6]:49580 "EHLO
-	vavatch.codon.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752926AbZBTQgz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Feb 2009 11:36:55 -0500
-Content-Disposition: inline
-In-Reply-To: <20090220083007.7bd0a153.randy.dunlap@oracle.com>
+Received: from acsinet12.oracle.com ([141.146.126.234]:30079 "EHLO
+	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753116AbZBTQrj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Feb 2009 11:47:39 -0500
+In-Reply-To: <20090220201224.3f32ae24.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, lenb@kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg KH <gregkh@suse.de>, mwilder@cs.nmsu.edu
 
-On Fri, Feb 20, 2009 at 08:30:07AM -0800, Randy Dunlap wrote:
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> oqo driver uses polled input functions, so make it depend
-> on INPUT_POLLDEV.
-> 
-> ERROR: "input_register_polled_device" [drivers/platform/x86/oqo-wmi.ko] undefined!
-> ERROR: "input_allocate_polled_device" [drivers/platform/x86/oqo-wmi.ko] undefined!
-> ERROR: "input_free_polled_device" [drivers/platform/x86/oqo-wmi.ko] undefined!
-> ERROR: "input_unregister_polled_device" [drivers/platform/x86/oqo-wmi.ko] undefined!
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> cc:	Matthew Garrett <mjg59@srcf.ucam.org>
+mimio driver uses input_* functions so it needs to depend on INPUT.
 
-Acked-by: Matthew Garrett <mjg@redhat.com>
+mimio.c:(.text+0x2526c9): undefined reference to `input_unregister_device'
+mimio.c:(.text+0x2526da): undefined reference to `input_close_device'
+mimio.c:(.text+0x252725): undefined reference to `input_free_device'
+mimio.c:(.text+0x2528f1): undefined reference to `input_event'
+mimio.c:(.text+0x252904): undefined reference to `input_event'
+mimio.c:(.text+0x252921): undefined reference to `input_event'
+mimio.c:(.text+0x252b3e): undefined reference to `input_event'
+mimio.c:(.text+0x252b51): undefined reference to `input_event'
+drivers/built-in.o:mimio.c:(.text+0x252bbd): more undefined references to `input_event' follow
+mimio.c:(.text+0x252e42): undefined reference to `input_allocate_device'
+mimio.c:(.text+0x2530ef): undefined reference to `input_register_device'
 
-I've got a cleaned up version of this written now - I'll push it to Len 
-later today.
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+cc: mwilder@cs.nmsu.edu
+---
+ drivers/staging/mimio/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
+--- linux-next-20090220.orig/drivers/staging/mimio/Kconfig
++++ linux-next-20090220/drivers/staging/mimio/Kconfig
+@@ -1,6 +1,6 @@
+ config INPUT_MIMIO
+ 	tristate "Mimio Xi interactive whiteboard support"
+-	depends on USB
++	depends on USB && INPUT
+ 	default N
+ 	help
+ 	  Say Y here if you want to use a Mimio Xi interactive
