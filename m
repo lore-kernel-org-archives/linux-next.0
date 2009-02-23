@@ -1,38 +1,25 @@
-From: Richard Kennedy <richard@rsk.demon.co.uk>
-Subject: staging/wlan-ng: please revert commit 2ba4564cd from
- linux-next-20090220
-Date: Sun, 22 Feb 2009 11:42:15 +0000
-Message-ID: <1235302935.2840.13.camel@localhost.localdomain>
+From: "Stephen Rothwell" <sfr@canb.auug.org.au>
+Subject: linux-next: no release today (20090223)
+Date: Mon, 23 Feb 2009 15:16:13 +1100 (EST)
+Message-ID: <77343c2a2e62292875dcd6c55e2e852e.squirrel@bilbo.ozlabs.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from anchor-post-1.mail.demon.net ([195.173.77.132]:37166 "EHLO
-	anchor-post-1.mail.demon.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753471AbZBVLmR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sun, 22 Feb 2009 06:42:17 -0500
+Received: from bilbo.ozlabs.org ([203.10.76.25]:54220 "EHLO bilbo.ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751356AbZBWEZA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 22 Feb 2009 23:25:00 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: jmm@debian.org
-Cc: linux-next@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-Hi guys,
-this commit removes the do_ioctl function from p80211netdev.c which we
-need as it's the only way to load the firmware right now!
+Hi all,
 
-can you revert it please ?
+Due to my hard disk dying, there will be no release today.  Hopefully
+normal service will resume tomorrow.
 
-full commit details :-
-commit 2ba4564cd29a502e79fae505c175470ace22b287
-Author: Moritz Muehlenhoff <jmm@debian.org>
-Date:   Wed Feb 18 19:50:08 2009 +0100
-
-    Staging: wlan-ng: Remove more dead code from p80211netdev.c
-
-
-BTW it would be a lot easier if these patches were posted to a list
-somewhere so we could see what you are trying to do.
-
-thanks
-Richard
+-- 
+Cheers,
+Stephen Rothwell
