@@ -1,51 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: cpufreq tree build failure
-Date: Tue, 24 Feb 2009 17:21:12 +1100
-Message-ID: <20090224172112.727b4043.sfr@canb.auug.org.au>
+Subject: linux-next: cifs tree build failure
+Date: Tue, 24 Feb 2009 17:56:49 +1100
+Message-ID: <20090224175649.1bcc74cc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__24_Feb_2009_17_21_12_+1100_ZNUPdy9c6nuT+ppZ"
+ boundary="Signature=_Tue__24_Feb_2009_17_56_49_+1100_9m4cK.mQnznCc2dk"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59611 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56252 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751411AbZBXGVh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 24 Feb 2009 01:21:37 -0500
+	id S1756155AbZBXG47 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Feb 2009 01:56:59 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Jones <davej@redhat.com>
-Cc: linux-next@vger.kernel.org, Matthias-Christian Ott <ott@mirix.org>, Dominik Brodowski <linux@brodo.de>
+To: Steve French <smfrench@gmail.com>, linux-cifs-client@lists.samba.org
+Cc: linux-next@vger.kernel.org
 
---Signature=_Tue__24_Feb_2009_17_21_12_+1100_ZNUPdy9c6nuT+ppZ
+--Signature=_Tue__24_Feb_2009_17_56_49_+1100_9m4cK.mQnznCc2dk
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Steve,
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-ERROR: "recalibrate_cpu_khz" [arch/x86/kernel/cpu/cpufreq/p4-clockmod.ko] u=
-ndefined!
+fs/cifs/file.c: In function 'cifs_fsync':
+fs/cifs/file.c:1587: error: 'cifs_sb' undeclared (first use in this functio=
+n)
 
-Caused by commit f20b61aa18b99d91c2a08f8863409bb8002d87fb ("[CPUFREQ] p4-cl=
-ockmod reports wrong frequency").
+Probably caused by commit cdff0d69360ad3b87e4ac019caa73c657cfe9c76
+("[CIFS] Add new nostrictsync cifs mount option to avoid slow SMB flush").
 
-I have dropped the cpufreq tree for today.
+I have dropped the cifs tree for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Signature=_Tue__24_Feb_2009_17_21_12_+1100_ZNUPdy9c6nuT+ppZ
+--Signature=_Tue__24_Feb_2009_17_56_49_+1100_9m4cK.mQnznCc2dk
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkmjkdgACgkQjjKRsyhoI8wrggCdEgLYxWiQ9uMh/V14UAU5qqeU
-7dEAmQHL6RxRiRZcV9iSsSP9kFcdANL1
-=Ogi4
+iEYEARECAAYFAkmjmjEACgkQjjKRsyhoI8xOUgCeK/srj/r8GrTk6d0mpQo2qZ7y
+FgwAn2l4ofEUcZoIAI5HJakBr2p1j4OS
+=Vkzf
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__24_Feb_2009_17_21_12_+1100_ZNUPdy9c6nuT+ppZ--
+--Signature=_Tue__24_Feb_2009_17_56_49_+1100_9m4cK.mQnznCc2dk--
