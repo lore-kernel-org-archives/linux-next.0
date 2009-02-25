@@ -1,47 +1,44 @@
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: Re: next-20090220: XFS, IMA: BUG: sleeping function called from
-	invalid  context at mm/slub.c:1613
-Date: Tue, 24 Feb 2009 17:39:14 -0500
-Message-ID: <1235515154.2953.14.camel@localhost.localdomain>
-References: <a4423d670902200300n1d1bfdeeg6daca4b32989c9d3@mail.gmail.com>
-	 <20090220122242.b36a778f.akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ext4 tree with the  tree
+Date: Wed, 25 Feb 2009 12:52:54 +1100
+Message-ID: <20090225125254.6e94f404.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e33.co.us.ibm.com ([32.97.110.151]:51527 "EHLO
-	e33.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760894AbZBXWjS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Feb 2009 17:39:18 -0500
-In-Reply-To: <20090220122242.b36a778f.akpm@linux-foundation.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:54025 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751856AbZBYBxE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Feb 2009 20:53:04 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Beregalov <a.beregalov@gmail.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, xfs@oss.sgi.com
+To: Theodore Tso <tytso@MIT.EDU>
+Cc: linux-next@vger.kernel.org, Mingming Cao <cmm@us.ibm.com>, Jan Kara <jack@suse.cz>
 
-On Fri, 2009-02-20 at 12:22 -0800, Andrew Morton wrote:
+Hi Ted,
 
-> But to fix this bug, xfs needs to stop calling inode_init_always()
-> under read_lock().  Because inode_alloc_security() also can sleep (see
-> new_inode_smack()).
+Today's linux-next merge of the ext4 tree got a conflict in
+fs/ext4/ext4.h between commit 7c989bb2f1b18268968ce44c603f18a9854b1b85
+("ext4: quota reservation for delayed allocation") from the quota tree
+and commit eafffefbb8cc3db4acebb75014091b473c60007d ("ext4: add
+EXT4_IOC_ALLOC_DA_BLKS ioctl") from the ext4 tree.
 
-Yes, even without IMA enabled, with SELINUX, PREEMPT, and DEBUG_PREEMPT
-enabled, I'm seeing the problem:
+Just overlapping additions. I fixed it up (see below) and can carry the
+fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Feb 24 17:37:52 iicu10 kernel: BUG: sleeping function called from invalid context at mm/slub.c:1613
-Feb 24 17:37:52 iicu10 kernel: in_atomic(): 1, irqs_disabled(): 0, pid: 3209, name: vi
-Feb 24 17:37:52 iicu10 kernel: Pid: 3209, comm: vi Tainted: P           2.6.29-rc6-next-20090224 #5
-Feb 24 17:37:52 iicu10 kernel: Call Trace:
-Feb 24 17:37:52 iicu10 kernel: [<ffffffff8103d2c1>] __might_sleep+0x120/0x122
-Feb 24 17:37:52 iicu10 kernel: [<ffffffff810c9a96>] kmem_cache_alloc+0x32/0xd1
-Feb 24 17:37:52 iicu10 kernel: [<ffffffff811563ca>] selinux_inode_alloc_security+0x39/0x90
-Feb 24 17:37:52 iicu10 kernel: [<ffffffff8114ef12>] security_inode_alloc+0x1c/0x1e
-Feb 24 17:37:52 iicu10 kernel: [<ffffffff810e15b3>] inode_init_always+0xc3/0x1dc
-Feb 24 17:37:52 iicu10 kernel: [<ffffffffa0031a34>] xfs_iget+0x14e/0x49e [xfs]
-Feb 24 17:37:52 iicu10 kernel: [<ffffffffa00462c2>] xfs_trans_iget+0xa6/0xd4 [xfs]
-Feb 24 17:37:52 iicu10 kernel: [<ffffffffa003463c>] xfs_ialloc+0x96/0x517 [xfs]
-Feb 24 17:37:52 iicu10 kernel: [<ffffffff8118b5e2>] ? _raw_spin_lock+0x6c/0x112
-Feb 24 17:37:52 iicu10 kernel: [<ffffffff8118b5e2>] ? _raw_spin_lock+0x6c/0x112
-Feb 24 17:37:52 iicu10 kernel: [<ffffffffa0046bb1>] xfs_dir_ialloc+0x73/0x26a [x
-
-Mimi Zohar
+diff --cc fs/ext4/ext4.h
+index 6083bb3,09626d3..0000000
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@@ -1099,7 -1097,7 +1098,8 @@@ extern int ext4_chunk_trans_blocks(stru
+  extern int ext4_block_truncate_page(handle_t *handle,
+  		struct address_space *mapping, loff_t from);
+  extern int ext4_page_mkwrite(struct vm_area_struct *vma, struct page *page);
+ +extern qsize_t ext4_get_reserved_space(struct inode *inode);
++ extern int ext4_alloc_da_blocks(struct inode *inode);
+  
+  /* ioctl.c */
+  extern long ext4_ioctl(struct file *, unsigned int, unsigned long);
