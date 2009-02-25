@@ -1,29 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: Tree for February 24 (netdev/hp-plus build error)
-Date: Wed, 25 Feb 2009 00:12:03 -0800 (PST)
-Message-ID: <20090225.001203.123398134.davem@davemloft.net>
-References: <20090224212949.0dacb59f.sfr@canb.auug.org.au>
-	<49A4248F.6090202@oracle.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: linux-next: manual merge of the ext4 tree with the  tree
+Date: Wed, 25 Feb 2009 10:43:59 +0100
+Message-ID: <20090225094359.GA27960@duck.suse.cz>
+References: <20090225125254.6e94f404.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:42571
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1753569AbZBYIMW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Feb 2009 03:12:22 -0500
-In-Reply-To: <49A4248F.6090202@oracle.com>
+Received: from cantor2.suse.de ([195.135.220.15]:54490 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752457AbZBYJoH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Feb 2009 04:44:07 -0500
+Content-Disposition: inline
+In-Reply-To: <20090225125254.6e94f404.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: randy.dunlap@oracle.com
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, shemminger@vyatta.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Theodore Tso <tytso@MIT.EDU>, linux-next@vger.kernel.org, Mingming Cao <cmm@us.ibm.com>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Date: Tue, 24 Feb 2009 08:47:11 -0800
-
-> ERROR: "__alloc_ei_netdev" [drivers/net/hp-plus.ko] undefined!
+On Wed 25-02-09 12:52:54, Stephen Rothwell wrote:
+> Today's linux-next merge of the ext4 tree got a conflict in
+> fs/ext4/ext4.h between commit 7c989bb2f1b18268968ce44c603f18a9854b1b85
+> ("ext4: quota reservation for delayed allocation") from the quota tree
+> and commit eafffefbb8cc3db4acebb75014091b473c60007d ("ext4: add
+> EXT4_IOC_ALLOC_DA_BLKS ioctl") from the ext4 tree.
 > 
-> config attached.
+> Just overlapping additions. I fixed it up (see below) and can carry the
+> fix as necessary.
+  Thanks.
 
-Grumble... I'll take a look, thanks.
+									Honza
+-- 
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
