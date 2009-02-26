@@ -1,32 +1,49 @@
-From: Theodore Tso <tytso@mit.edu>
-Subject: Re: linux-next: manual merge of the ext4 tree with the  tree
-Date: Thu, 26 Feb 2009 09:08:27 -0500
-Message-ID: <20090226140827.GD7227@mit.edu>
-References: <20090225125254.6e94f404.sfr@canb.auug.org.au> <20090226060345.GC7227@mit.edu> <20090226193649.8b240669.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [Staging/p9auth] Feb 26 Next: build failure
+Date: Thu, 26 Feb 2009 07:53:55 -0800
+Message-ID: <20090226155355.GA22194@kroah.com>
+References: <20090226193022.adb78235.sfr@canb.auug.org.au> <49A67892.8060006@in.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from thunk.org ([69.25.196.29]:36771 "EHLO thunker.thunk.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752149AbZBZOIe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Feb 2009 09:08:34 -0500
+Received: from kroah.org ([198.145.64.141]:43672 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1754341AbZBZP4L (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Feb 2009 10:56:11 -0500
 Content-Disposition: inline
-In-Reply-To: <20090226193649.8b240669.sfr@canb.auug.org.au>
+In-Reply-To: <49A67892.8060006@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Mingming Cao <cmm@us.ibm.com>, Jan Kara <jack@suse.cz>
+To: "Sachin P. Sant" <sachinp@in.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, ashwin.ganti@gmail.com
 
-On Thu, Feb 26, 2009 at 07:36:49PM +1100, Stephen Rothwell wrote:
-> Hi Ted,
-> 
-> On Thu, 26 Feb 2009 01:03:45 -0500 Theodore Tso <tytso@mit.edu> wrote:
-> >
-> > Thanks, I've moved up the function declaration to avoid the need for a
-> > manual fixup.
-> 
-> Thanks.
+On Thu, Feb 26, 2009 at 04:40:10PM +0530, Sachin P. Sant wrote:
+> Feb 26 Next tree randconfig build fails with
+>
+> drivers/staging/p9auth/p9auth.c: In function cap_write:
+> drivers/staging/p9auth/p9auth.c:249: error: implicit declaration of 
+> function current_uid
+> drivers/staging/p9auth/p9auth.c:261: error: implicit declaration of 
+> function prepare_creds
+> drivers/staging/p9auth/p9auth.c:261: warning: assignment makes pointer from 
+> integer without a cast
+> drivers/staging/p9auth/p9auth.c:266: error: dereferencing pointer to 
+> incomplete type
+> drivers/staging/p9auth/p9auth.c:267: error: dereferencing pointer to 
+> incomplete type
+> drivers/staging/p9auth/p9auth.c:268: error: implicit declaration of 
+> function commit_creds
+> make[3]: *** [drivers/staging/p9auth/p9auth.o] Error 1
 
-np!  Saves work for you, and it saves work for Linus.  :-)
+Wierd, I thought cred.h would be pulled in with the current include
+files.
 
-     	   	    	     	- Ted
+With this .config, if you add:
+	#include <linux/cred.h>
+to drivers/staging/p9auth/p9auth.c does it solve the build error?
+
+I'll go add it just to be safe :)
+
+thanks,
+
+greg k-h
