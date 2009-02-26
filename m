@@ -1,14 +1,14 @@
 From: Greg KH <greg@kroah.com>
 Subject: Re: [Staging/p9auth] Feb 26 Next: build failure
-Date: Thu, 26 Feb 2009 09:35:31 -0800
-Message-ID: <20090226173531.GB23465@kroah.com>
+Date: Thu, 26 Feb 2009 09:42:43 -0800
+Message-ID: <20090226174243.GC23465@kroah.com>
 References: <20090226193022.adb78235.sfr@canb.auug.org.au> <49A67892.8060006@in.ibm.com> <20090226155355.GA22194@kroah.com> <49A6CA74.7000809@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:42874 "EHLO coco.kroah.org"
+Received: from kroah.org ([198.145.64.141]:42882 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751900AbZBZRq0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	id S1751783AbZBZRq0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
 	Thu, 26 Feb 2009 12:46:26 -0500
 Content-Disposition: inline
 In-Reply-To: <49A6CA74.7000809@oracle.com>
@@ -42,9 +42,7 @@ On Thu, Feb 26, 2009 at 08:59:32AM -0800, Randy Dunlap wrote:
 > 
 > Even if it were, that's not what we want.  We want explicit #includes
 > for macros or structs etc. that are used in a source file.
-
-I agree, sorry, I didn't mean to assume otherwise.
-
+> 
 > > With this .config, if you add:
 > > 	#include <linux/cred.h>
 > > to drivers/staging/p9auth/p9auth.c does it solve the build error?
@@ -53,7 +51,7 @@ I agree, sorry, I didn't mean to assume otherwise.
 > 
 > It needs both cred.h and sched.h in my testing.
 
-Ok, I'll go add both.
+Now done, it will show up in tomorrow's -next tree.
 
 thanks,
 
