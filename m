@@ -1,50 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with Linus' tree
-Date: Thu, 26 Feb 2009 13:48:59 +1100
-Message-ID: <20090226134859.402ed4df.sfr@canb.auug.org.au>
+Subject: linux-next: sound tree build failure
+Date: Thu, 26 Feb 2009 14:07:46 +1100
+Message-ID: <20090226140746.234c1357.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__26_Feb_2009_14_07_46_+1100_jq.njYKSz4DoTfkc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40952 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33457 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751629AbZBZCtK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Feb 2009 21:49:10 -0500
+	id S1754394AbZBZDH4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Feb 2009 22:07:56 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>, David Woodhouse <David.Woodhouse@intel.com>, Bhavesh Davda <bhavesh@vmware.com>, Chris Wright <chrisw@sous-sol.org>, Tomas Winkler <tomas.winkler@intel.com>, Samuel Ortiz <samuel.ortiz@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, "John W. Linville" <linville@tuxdriver.com>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-Hi David,
+--Signature=_Thu__26_Feb_2009_14_07_46_+1100_jq.njYKSz4DoTfkc
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/net/wireless/iwlwifi/iwl-tx.c between commit
-6aa03ab06978e97b3e0720f83280d7841051916b ("Fix iwlan DMA mapping
-direction") from Linus' tree and commit
-7aaa1d79e3a2d573ac469744506f17b1c9386840 ("iwlwifi: Add TFD library
-operations") from the net tree.
+Hi Takashi,
 
-The latter moved some code that the former modified.  I fixed it up (see
-below) and can carry it for a while.
--- 
+Today's linux-next build (x86_64 allmodconfig) failed like this:
+
+sound/soc/codecs/wm8753.c: In function 'wm8753_probe':
+sound/soc/codecs/wm8753.c:1577: error: implicit declaration of function 'wm=
+8753_add_controls'
+
+Probably introduced by commit c2bac1606a937d4700f8fdd8e051a4c49593c41b
+("ASoC: Convert WM8753 to register via normal device probe").
+
+I have dropped the sound tree for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/net/wireless/iwlwifi/iwl-tx.c
-index ab13ff2,ae04c20..0000000
---- a/drivers/net/wireless/iwlwifi/iwl-tx.c
-+++ b/drivers/net/wireless/iwlwifi/iwl-tx.c
-diff --git a/drivers/net/wireless/iwlwifi/iwl-agn.c b/drivers/net/wireless/iwlwifi/iwl-agn.c
-index 397577c..e9729f4 100644
---- a/drivers/net/wireless/iwlwifi/iwl-agn.c
-+++ b/drivers/net/wireless/iwlwifi/iwl-agn.c
-@@ -444,7 +444,7 @@ void iwl_hw_txq_free_tfd(struct iwl_priv *priv, struct iwl_tx_queue *txq)
- 		pci_unmap_single(dev,
- 				pci_unmap_addr(&txq->cmd[index]->meta, mapping),
- 				pci_unmap_len(&txq->cmd[index]->meta, len),
--				PCI_DMA_TODEVICE);
-+				PCI_DMA_BIDIRECTIONAL);
- 
- 	/* Unmap chunks, if any. */
- 	for (i = 1; i < num_tbs; i++) {
+--Signature=_Thu__26_Feb_2009_14_07_46_+1100_jq.njYKSz4DoTfkc
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkmmB4IACgkQjjKRsyhoI8wNvACcDL6OBC4r8gMD9hrXgYQz4TYR
+8gUAn0sI9FBfa+zGqiyMztmGlheqn35y
+=+HcE
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__26_Feb_2009_14_07_46_+1100_jq.njYKSz4DoTfkc--
