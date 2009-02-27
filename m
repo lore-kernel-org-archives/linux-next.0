@@ -1,57 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: wireless tree build failure
-Date: Fri, 27 Feb 2009 13:44:11 +1100
-Message-ID: <20090227134411.54e99731.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH] net: fix hp-plus build error
+Date: Thu, 26 Feb 2009 20:22:03 -0800
+Message-ID: <49A76A6B.7020709@oracle.com>
+References: <20090224212949.0dacb59f.sfr@canb.auug.org.au> <49A4248F.6090202@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__27_Feb_2009_13_44_11_+1100_zwSnkNQZpgtJhwvI"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54738 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752095AbZB0CoT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Feb 2009 21:44:19 -0500
+Received: from rcsinet12.oracle.com ([148.87.113.124]:23207 "EHLO
+	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753618AbZB0EWk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Feb 2009 23:22:40 -0500
+In-Reply-To: <49A4248F.6090202@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, Kalle Valo <kalle.valo@iki.fi>, Kay Sievers <kay.sievers@vrfy.org>, Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, David Miller <davem@davemloft.net>, Stephen Hemminger <shemminger@vyatta.com>, akpm <akpm@linux-foundation.org>
 
---Signature=_Fri__27_Feb_2009_13_44_11_+1100_zwSnkNQZpgtJhwvI
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Hi John,
+hp-plus needs to call __alloc_eip_netdev() instead of
+__alloc_ei_netdev() since it is linked with 8390p.o.
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+Fixes this build error:
+ERROR: "__alloc_ei_netdev" [drivers/net/hp-plus.ko] undefined!
 
-drivers/net/wireless/at76c50x-usb.c: In function 'at76_init_new_device':
-drivers/net/wireless/at76c50x-usb.c:2271: error: 'struct device' has no mem=
-ber named 'bus_id'
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/net/hp-plus.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Caused by commit 26b9886dbb1e6930a8a5df9dcf64d8dacb80597b ("at76c50x-usb:
-add driver") from the wireless tree interacting with commit
-d3592c7c13d14e410ffbf0e86dcd7abb3a23077f ("driver core: get rid of struct
-device's bus_id string array") from the driver-core tree.
-
-This can be fixed by using dev_name() which is already available in
-Linus' tree.
-
-I have dropped the wireless tree for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__27_Feb_2009_13_44_11_+1100_zwSnkNQZpgtJhwvI
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkmnU3sACgkQjjKRsyhoI8xTDwCcDuIYMrBXI5gK8jJmWU4ywki+
-LPQAn3cDC/NF+tQ8W2wJiwQFXp3OxIQa
-=sMKs
------END PGP SIGNATURE-----
-
---Signature=_Fri__27_Feb_2009_13_44_11_+1100_zwSnkNQZpgtJhwvI--
+--- mmotm-2009-0226-1658.orig/drivers/net/hp-plus.c
++++ mmotm-2009-0226-1658/drivers/net/hp-plus.c
+@@ -467,7 +467,7 @@ init_module(void)
+ 			if (this_dev != 0) break; /* only autoprobe 1st one */
+ 			printk(KERN_NOTICE "hp-plus.c: Presently autoprobing (not recommended) for a single card.\n");
+ 		}
+-		dev = alloc_ei_netdev();
++		dev = alloc_eip_netdev();
+ 		if (!dev)
+ 			break;
+ 		dev->irq = irq[this_dev];
