@@ -1,29 +1,37 @@
-From: Andy Grover <andy.grover@oracle.com>
-Subject: Re: linux-next: net tree build failure
-Date: Mon, 02 Mar 2009 08:38:01 -0800
-Message-ID: <49AC0B69.7060608@oracle.com>
-References: <20090302180514.9b07c7d9.sfr@canb.auug.org.au> <20090302.014958.31955182.davem@davemloft.net>
+From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Subject: Re: linux-next: Tree for March 2 (wireless/b43)
+Date: Mon, 02 Mar 2009 08:56:11 -0800
+Message-ID: <49AC0FAB.6000604@oracle.com>
+References: <20090302182217.90ca3356.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet12.oracle.com ([148.87.113.124]:31807 "EHLO
-	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754338AbZCBQiX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Mar 2009 11:38:23 -0500
-In-Reply-To: <20090302.014958.31955182.davem@davemloft.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20090302182217.90ca3356.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Michael Buesch <mb-fseUSCV1ubazQB+pC5nmwQ@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-David Miller wrote:
-> I've fixed this up as follows:
+Stephen Rothwell wrote:
+> Hi all,
 > 
-> rds: Fix build on powerpc.
+> Changes since 20090227:
+> 
+> Undropped trees:
+> 	wireless
 
-> +#include <asm-generic/bitops/le.h>
+when CONFIG_SSB_DRIVER_PCICORE=n:
 
-Thanks.
+        if ((bus->bustype == SSB_BUSTYPE_PCI) &&
+            (bus->pcicore.dev->id.revision <= 10))
+                hf |= B43_HF_PCISCW; /* PCI slow clock workaround. */
 
-Regards -- Andy
+==>
+drivers/net/wireless/b43/main.c:4182: error: 'struct ssb_pcicore' has no member named 'dev'
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
