@@ -1,52 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the firmware tree with the  tree
-Date: Mon, 2 Mar 2009 14:11:06 +1100
-Message-ID: <20090302141106.7e14b17d.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the firmware tree with the tree
+Date: Sun, 01 Mar 2009 20:29:49 -0800 (PST)
+Message-ID: <20090301.202949.176544427.davem@davemloft.net>
+References: <20090302141103.d1c369d0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54724 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752497AbZCBDLL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 Mar 2009 22:11:11 -0500
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:33434
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1753821AbZCBEaI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 1 Mar 2009 23:30:08 -0500
+In-Reply-To: <20090302141103.d1c369d0.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: linux-next@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>, "David S. Miller" <davem@davemloft.net>, Takashi Iwai <tiwai@suse.de>
+To: sfr@canb.auug.org.au
+Cc: dwmw2@infradead.org, linux-next@vger.kernel.org, ben@decadent.org.uk
 
-Hi David,
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 2 Mar 2009 14:11:03 +1100
 
-Today's linux-next merge of the firmware tree got a conflict in
-firmware/Makefile between commit 06e1f9ffa023c030bc87491e75f625f5da4e7d97
-("tehuti: Use request_firmware()") from the net tree and commit
-f2fd247da0abaa330c39922aa1f6729eff051f73 ("ALSA: wavefront - Always use 
-request_firmware()") from the firmware tree.
+> Today's linux-next merge of the firmware tree got conflicts in
+> firmware/WHENCE between commits 06e1f9ffa023c030bc87491e75f625f5da4e7d97
+> ("tehuti: Use request_firmware()") and
+> b775a750c3afacbfac884537d466d34d50b1023b ("typhoon: Use request_firmware
+> ()") from the net tree and various commits from the firmware tree.
+> 
+> Just overlapping additions.  I fixed it up (see below) and can carry the
+> fix as necessary.
 
-Just overlapping additions.  I fixed it up (see below) and can carry the
-fix as necessary.
-
-David, is there any chance that (some of) these changes could be
-distributed to their respective maintainers?
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
-diff --cc firmware/Makefile
-index aa2e02d,bf8445e..0000000
---- a/firmware/Makefile
-+++ b/firmware/Makefile
-@@@ -49,10 -55,9 +55,11 @@@ fw-shipped-$(CONFIG_SND_SB16_CSP) += sb
-  				     sb16/ima_adpcm_capture.csp
-  fw-shipped-$(CONFIG_SND_YMFPCI) += yamaha/ds1_ctrl.fw yamaha/ds1_dsp.fw \
-  				   yamaha/ds1e_ctrl.fw
-+ fw-shipped-$(CONFIG_SND_WAVEFRONT) += yamaha/yss225_registers.bin
- +fw-shipped-$(CONFIG_TEHUTI) += tehuti/bdx.bin
-  fw-shipped-$(CONFIG_TIGON3) += tigon/tg3.bin tigon/tg3_tso.bin \
-  			       tigon/tg3_tso5.bin
- +fw-shipped-$(CONFIG_TYPHOON) += 3com/typhoon.bin
-  fw-shipped-$(CONFIG_USB_DABUSB) += dabusb/firmware.fw dabusb/bitstream.bin
-  fw-shipped-$(CONFIG_USB_EMI26) += emi26/loader.fw emi26/firmware.fw \
-  				  emi26/bitstream.fw
+Yeah, I think you'll need to carry this one.
