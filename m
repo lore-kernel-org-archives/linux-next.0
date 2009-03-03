@@ -1,23 +1,24 @@
-From: Eric Sandeen <sandeen@sandeen.net>
+From: Felix Blyakher <felixb@sgi.com>
 Subject: Re: next-20090220: XFS: inconsistent lock state
-Date: Tue, 03 Mar 2009 10:00:01 -0600
-Message-ID: <49AD5401.30803@sandeen.net>
+Date: Tue, 3 Mar 2009 10:45:28 -0600
+Message-ID: <B793B976-694B-423B-AAF2-9A622696CC88@sgi.com>
 References: <a4423d670902200952v5dc2fd91w3b54ab1db51a7fe2@mail.gmail.com> <20090224200740.GA9266@infradead.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Mime-Version: 1.0 (Apple Message framework v926)
+Content-Type: text/plain; charset=US-ASCII; format=flowed; delsp=yes
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:50306 "EHLO mx2.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751127AbZCCQAP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 3 Mar 2009 11:00:15 -0500
+Received: from relay1.sgi.com ([192.48.179.29]:47360 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751295AbZCCQpd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 3 Mar 2009 11:45:33 -0500
 In-Reply-To: <20090224200740.GA9266@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Christoph Hellwig <hch@infradead.org>
 Cc: Alexander Beregalov <a.beregalov@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, xfs@oss.sgi.com
 
-Christoph Hellwig wrote:
+On Feb 24, 2009, at 2:07 PM, Christoph Hellwig wrote:
+
 > On Fri, Feb 20, 2009 at 08:52:59PM +0300, Alexander Beregalov wrote:
 >> Hi
 >>
@@ -26,33 +27,24 @@ Christoph Hellwig wrote:
 >> ---------------------------------
 >> inconsistent {RECLAIM_FS-ON-W} -> {IN-RECLAIM_FS-R} usage.
 >> kswapd0/324 [HC0[0]:SC0[0]:HE1:SE1] takes:
->>  (&(&ip->i_lock)->mr_lock){+++++?}, at: [<ffffffff803ca60a>]
+>> (&(&ip->i_lock)->mr_lock){+++++?}, at: [<ffffffff803ca60a>]
 >> xfs_ilock+0xaa/0x120
 >> {RECLAIM_FS-ON-W} state was registered at:
-> 
+>
 > That's a false positive.  While the ilock can be taken in reclaim the
 > allocation here is done before the inode is added to the inode cache.
-> 
+>
 > The patch below should help avoiding the warning:
-
-Seems ok to me.  I hate to see the BUG() added but I guess in this case
-something truly bizarre would have to happen for the ilock to fail on
-this inode.
-
-on irc you sugggested ASSERT(0); instead of BUG(); I might prefer that
-but either way:
-
-Reviewed-by: Eric Sandeen <sandeen@sandeen.net>
-
-> 
+>
+>
 > Index: xfs/fs/xfs/xfs_iget.c
 > ===================================================================
 > --- xfs.orig/fs/xfs/xfs_iget.c	2009-02-24 20:56:00.716027739 +0100
 > +++ xfs/fs/xfs/xfs_iget.c	2009-02-24 20:56:46.089031360 +0100
 > @@ -246,9 +246,6 @@ xfs_iget_cache_miss(
->  		goto out_destroy;
+> 		goto out_destroy;
 >  	}
->  
+>
 > -	if (lock_flags)
 > -		xfs_ilock(ip, lock_flags);
 > -
@@ -61,23 +53,36 @@ Reviewed-by: Eric Sandeen <sandeen@sandeen.net>
 >  	 * write spinlock. Note that we cannot sleep inside the preload
 > @@ -259,6 +256,15 @@ xfs_iget_cache_miss(
 >  		goto out_unlock;
->  	}
->  
+
+Since we removed call to xfs_ilock() above, this should change
+to 'goto out_destroy;'
+Otherwise, seems goot to me.
+
+Reviewed-by: Felix Blyakher <felixb@sgi.com>
+
+
+>
+> 	}
+>
 > +	/*
-> +	 * Because the inode hasn't been added to the radix-tree yet it can't
-> +	 * be found by another thread, so we can do the non-sleeping lock here.
+> +	 * Because the inode hasn't been added to the radix-tree yet it  
+> can't
+> +	 * be found by another thread, so we can do the non-sleeping lock  
+> here.
 > +	 */
 > +	if (lock_flags) {
 > +		if (!xfs_ilock_nowait(ip, lock_flags))
 > +			BUG();
+
+>
 > +	}
 > +
->  	mask = ~(((XFS_INODE_CLUSTER_SIZE(mp) >> mp->m_sb.sb_inodelog)) - 1);
->  	first_index = agino & mask;
->  	write_lock(&pag->pag_ici_lock);
-> 
-> _______________________________________________
-> xfs mailing list
-> xfs@oss.sgi.com
-> http://oss.sgi.com/mailman/listinfo/xfs
-> 
+> 	mask = ~(((XFS_INODE_CLUSTER_SIZE(mp) >> mp->m_sb.sb_inodelog)) - 1);
+> 	first_index = agino & mask;
+> 	write_lock(&pag->pag_ici_lock);
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux- 
+> kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
