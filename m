@@ -1,56 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for March 3 (cpufreq)
-Date: Wed, 4 Mar 2009 09:43:50 +1100
-Message-ID: <20090304094350.f18f2925.sfr@canb.auug.org.au>
-References: <20090303182633.4ad7831b.sfr@canb.auug.org.au>
-	<49AD5F03.2050409@oracle.com>
+Subject: linux-next: manual merge of the net tree with the  tree
+Date: Wed, 4 Mar 2009 13:03:43 +1100
+Message-ID: <20090304130343.e677eb88.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__4_Mar_2009_09_43_50_+1100_JoLmaP3x1GG_/ZMd"
+ boundary="Signature=_Wed__4_Mar_2009_13_03_43_+1100_+orunKHjl8RwsheB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54209 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47700 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754459AbZCCWoH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 3 Mar 2009 17:44:07 -0500
-In-Reply-To: <49AD5F03.2050409@oracle.com>
+	id S1752695AbZCDCDw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 3 Mar 2009 21:03:52 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Bob Moore <robert.moore@intel.com>, Len Brown <len.brown@intel.com>, Lin Ming <ming.m.lin@intel.com>
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, Xose Vazquez Perez <xose.vazquez@gmail.com>, "John W. Linville" <linville@tuxdriver.com>, Ivo van Doorn <ivdoorn@gmail.com>
 
---Signature=_Wed__4_Mar_2009_09_43_50_+1100_JoLmaP3x1GG_/ZMd
+--Signature=_Wed__4_Mar_2009_13_03_43_+1100_+orunKHjl8RwsheB
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Randy,
+Hi David,
 
-On Tue, 03 Mar 2009 08:46:59 -0800 Randy Dunlap <randy.dunlap@oracle.com> w=
-rote:
->
-> arch/x86/kernel/cpu/cpufreq/longhaul.c:308: error: implicit declaration o=
-f function 'acpi_set_register'
->=20
-> I can't find any such function in the linux-next tree.
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/wireless/rt2x00/rt73usb.c between commit
+98a2103b0e9725ce5b3dcecd8dfcae977e6938ed ("rt2x00 : more devices to
+rt73usb.c") from the wireless-current tree and various commits from the
+net tree.
 
-Looks like this is due to commit bcf80648ccbb7524acb457aef7feb4bc83a9ba14
-("ACPICA: Rename ACPI bit register access functions") from the acpi tree.
-
+I used the version of the file from the wireless tree merge-test branch
+(thanks John).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__4_Mar_2009_09_43_50_+1100_JoLmaP3x1GG_/ZMd
+--Signature=_Wed__4_Mar_2009_13_03_43_+1100_+orunKHjl8RwsheB
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkmtsqYACgkQjjKRsyhoI8zOUwCfW5i3r/v6dcuZEGXklLUV2mGA
-7zsAn1J/+CmehdJ4VPM3Bk163aaKDgpY
-=My1Q
+iEYEARECAAYFAkmt4X8ACgkQjjKRsyhoI8ybqQCgt9hl6uzmfmy4Hq3LNtHDzi/r
+0zAAn1FMvzfPpfpHrqY8jT2rw2srprzA
+=TFeO
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__4_Mar_2009_09_43_50_+1100_JoLmaP3x1GG_/ZMd--
+--Signature=_Wed__4_Mar_2009_13_03_43_+1100_+orunKHjl8RwsheB--
