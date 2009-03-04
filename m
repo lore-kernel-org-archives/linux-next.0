@@ -1,44 +1,44 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] media/dm1105: uses ir_* functions, select VIDEO_IR
-Date: Wed, 04 Mar 2009 08:57:04 -0800
-Message-ID: <49AEB2E0.1030503@oracle.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: Tree for March 4
+Date: Wed, 4 Mar 2009 22:57:32 +0100
+Message-ID: <10f740e80903041357w7314dc0ar1781f13fbe8afc5c@mail.gmail.com>
 References: <20090304180630.047dac29.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:50672 "EHLO
-	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752361AbZCDQ43 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Mar 2009 11:56:29 -0500
+Received: from mail-fx0-f176.google.com ([209.85.220.176]:59085 "EHLO
+	mail-fx0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750896AbZCDV5g convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Mar 2009 16:57:36 -0500
 In-Reply-To: <20090304180630.047dac29.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+Hi Stephen,
 
-dm1105 uses the ir_*() functions, so it needs to select VIDEO_IR
-to avoid build errors:
+On Wed, Mar 4, 2009 at 08:06, Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+> Status of my local build tests will be at
+> http://kisskb.ellerman.id.au/linux-next . =C2=A0If maintainers want t=
+o give
 
-dm1105.c:(.text+0x26b7ac): undefined reference to `ir_input_keydown'
-dm1105.c:(.text+0x26b7bc): undefined reference to `ir_input_nokey'
-(.devinit.text+0x29982): undefined reference to `ir_codes_dm1105_nec'
-(.devinit.text+0x2998a): undefined reference to `ir_input_init'
+It seems http://kisskb.ellerman.id.au/linux-next and
+http://kisskb.ellerman.id.au/kisskb/matrix/
+are not being updated? The most recent results are dated March 1.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/media/dvb/dm1105/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+Gr{oetje,eeting}s,
 
---- linux-next-20090304.orig/drivers/media/dvb/dm1105/Kconfig
-+++ linux-next-20090304/drivers/media/dvb/dm1105/Kconfig
-@@ -8,6 +8,7 @@ config DVB_DM1105
- 	select DVB_STB6000 if !DVB_FE_CUSTOMISE
- 	select DVB_CX24116 if !DVB_FE_CUSTOMISE
- 	select DVB_SI21XX if !DVB_FE_CUSTOMISE
-+	select VIDEO_IR
- 	help
- 	  Support for cards based on the SDMC DM1105 PCI chip like
- 	  DvbWorld 2002
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+							    -- Linus Torvalds
