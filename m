@@ -1,44 +1,54 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Tree for March 4
-Date: Wed, 4 Mar 2009 22:57:32 +0100
-Message-ID: <10f740e80903041357w7314dc0ar1781f13fbe8afc5c@mail.gmail.com>
+Date: Thu, 5 Mar 2009 09:44:52 +1100
+Message-ID: <20090305094452.0e544eee.sfr@canb.auug.org.au>
 References: <20090304180630.047dac29.sfr@canb.auug.org.au>
+	<10f740e80903041357w7314dc0ar1781f13fbe8afc5c@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__5_Mar_2009_09_44_52_+1100_TDhMrfFDJWjJ7aDC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f176.google.com ([209.85.220.176]:59085 "EHLO
-	mail-fx0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750896AbZCDV5g convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Mar 2009 16:57:36 -0500
-In-Reply-To: <20090304180630.047dac29.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43836 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751137AbZCDWpD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 4 Mar 2009 17:45:03 -0500
+In-Reply-To: <10f740e80903041357w7314dc0ar1781f13fbe8afc5c@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi Stephen,
+--Signature=_Thu__5_Mar_2009_09_44_52_+1100_TDhMrfFDJWjJ7aDC
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 4, 2009 at 08:06, Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
-> Status of my local build tests will be at
-> http://kisskb.ellerman.id.au/linux-next . =C2=A0If maintainers want t=
-o give
+Hi Geert,
 
-It seems http://kisskb.ellerman.id.au/linux-next and
-http://kisskb.ellerman.id.au/kisskb/matrix/
-are not being updated? The most recent results are dated March 1.
+On Wed, 4 Mar 2009 22:57:32 +0100 Geert Uytterhoeven <geert@linux-m68k.org>=
+ wrote:
+>
+> It seems http://kisskb.ellerman.id.au/linux-next and
+> http://kisskb.ellerman.id.au/kisskb/matrix/
+> are not being updated? The most recent results are dated March 1.
 
-Gr{oetje,eeting}s,
+Thanks for the heads up, I will check it out.
 
-						Geert
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
+--Signature=_Thu__5_Mar_2009_09_44_52_+1100_TDhMrfFDJWjJ7aDC
+Content-Type: application/pgp-signature
 
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-							    -- Linus Torvalds
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkmvBGQACgkQjjKRsyhoI8zIKACeNfP+KgCr/GFgIEiAN9luunia
+we4AnjE59xgKHDWXD4tUXSyrA2vqSNOw
+=YM4O
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__5_Mar_2009_09_44_52_+1100_TDhMrfFDJWjJ7aDC--
