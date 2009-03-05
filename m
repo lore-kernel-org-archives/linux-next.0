@@ -1,50 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with the x86/cpus4096 trees
-Date: Thu, 5 Mar 2009 14:59:43 +1100
-Message-ID: <20090305145943.145b3ad9.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the slab tree with Linus' tree
+Date: Thu, 5 Mar 2009 16:18:16 +1100
+Message-ID: <20090305161816.ca8ac8e4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__5_Mar_2009_14_59_43_+1100_THoNF84=2S1c9RPR"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33388 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50023 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753304AbZCEEYn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 4 Mar 2009 23:24:43 -0500
+	id S1750919AbZCEFS0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Mar 2009 00:18:26 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+To: Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, Nick Piggin <npiggin@suse.de>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 
---Signature=_Thu__5_Mar_2009_14_59_43_+1100_THoNF84=2S1c9RPR
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Rusty,
+Today's linux-next merge of the slab tree got a conflict in
+include/linux/rcupdate.h between commit
+a682604838763981613e42015cd0e39f2989d6bb ("rcu: Teach RCU that idle task
+is not quiscent state at boot") from Linus' tree and commit
+32efb35b328d0e87fa5358239c54c889226cc6e7 ("SLQB slab allocator (try 2)")
+from the slab tree.
 
-Today's linux-next merge of the rr tree got a conflict in
-drivers/firmware/dcdbas.c between commit
-c90e785be2fd9dfaef1f030d0314e44052553736 ("cpumask: use cpumask_var_t in
-dcdbas.c") from the x86 and cpus4096 trees and commit
-d4e7753fce670a269f55d4b7cafe9d3e77d7d26f (misc:work_on_cpu-dcdbas"") from
-the rr tree.
-
-It appears that the former patch is effectively replaced by the latter.
---=20
+Just a context change.  I fixed it up (see below) and can carry the fix
+as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__5_Mar_2009_14_59_43_+1100_THoNF84=2S1c9RPR
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkmvTi8ACgkQjjKRsyhoI8zR7gCfepvZne2BpW+M75GBA81i2+7g
-/NUAoItWebbhlpYjjD30xnl8I9sqCcS7
-=QhSS
------END PGP SIGNATURE-----
-
---Signature=_Thu__5_Mar_2009_14_59_43_+1100_THoNF84=2S1c9RPR--
+diff --cc include/linux/rcupdate.h
+index 528343e,e2917ee..0000000
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@@ -42,19 -43,6 +43,9 @@@
+  #include <linux/lockdep.h>
+  #include <linux/completion.h>
+  
+- /**
+-  * struct rcu_head - callback structure for use with RCU
+-  * @next: next update requests in a list
+-  * @func: actual update function to call after the grace period.
+-  */
+- struct rcu_head {
+- 	struct rcu_head *next;
+- 	void (*func)(struct rcu_head *head);
+- };
+- 
+ +/* Internal to kernel, but needed by rcupreempt.h. */
+ +extern int rcu_scheduler_active;
+ +
+  #if defined(CONFIG_CLASSIC_RCU)
+  #include <linux/rcuclassic.h>
+  #elif defined(CONFIG_TREE_RCU)
