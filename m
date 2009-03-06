@@ -1,48 +1,49 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the cpufreq tree with the x86 tree
-Date: Fri, 6 Mar 2009 15:26:19 +1100
-Message-ID: <20090306152619.f919772e.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rr tree with the blackfin and x86
+ trees
+Date: Fri, 6 Mar 2009 15:37:59 +1100
+Message-ID: <20090306153759.c8c6b470.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__6_Mar_2009_15_37_59_+1100_y2YEonX=.hSlBG8O"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56774 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49150 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753344AbZCFE0Z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 5 Mar 2009 23:26:25 -0500
+	id S1753652AbZCFEiG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Mar 2009 23:38:06 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Jones <davej@redhat.com>
-Cc: linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Matthias-Christian Ott <ott@mirix.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, Bryan Wu <cooloney.lkml@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
 
-Hi Dave,
+--Signature=_Fri__6_Mar_2009_15_37_59_+1100_y2YEonX=.hSlBG8O
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the cpufreq tree got a conflict in
-arch/x86/include/asm/timer.h between commit
-8e6dafd6c741cd4679b4de3c5d9698851e4fa59c ("x86: refactor x86_quirks
-support") from the x86 tree and commit
-199785eac892a1fa1b71cc22bec58e8b156d9311 ("[CPUFREQ] p4-clockmod reports
-wrong frequency") from the cpufreq tree.
+Hi Rusty,
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
+Today's linux-next merge of the rr tree added conflicts in
+arch/blackfin/kernel/ipipe.c and arch/x86/mach-voyager/setup.c.  I didn't
+bother to work out exactly what is conflicting because I dropped the rr
+tree due to the build failures that I assume are still present from
+yesterday.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/x86/include/asm/timer.h
-index a81195e,4f5c247..0000000
---- a/arch/x86/include/asm/timer.h
-+++ b/arch/x86/include/asm/timer.h
-@@@ -12,9 -11,8 +12,9 @@@ unsigned long native_calibrate_tsc(void
-  
-  #ifdef CONFIG_X86_32
-  extern int timer_ack;
-- extern int recalibrate_cpu_khz(void);
- -#endif
- +extern irqreturn_t timer_interrupt(int irq, void *dev_id);
- +#endif /* CONFIG_X86_32 */
-+ extern int recalibrate_cpu_khz(void);
-  
-  extern int no_timer_check;
-  
+--Signature=_Fri__6_Mar_2009_15_37_59_+1100_y2YEonX=.hSlBG8O
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkmwqKcACgkQjjKRsyhoI8zlpgCgm/4oAX/aY/eL8eCO7lQGwSdG
+o/sAnA9jUQh/iqIWm6W86Ye4v5Nmn3ea
+=bcDN
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__6_Mar_2009_15_37_59_+1100_y2YEonX=.hSlBG8O--
