@@ -1,38 +1,49 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: manual merge of the kernel-doc tree with the tracing
- and timers trees
-Date: Thu, 05 Mar 2009 19:12:48 -0800
-Message-ID: <49B094B0.20606@oracle.com>
-References: <20090306132104.16a0af9d.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ieee1394 tree with the  tree
+Date: Fri, 6 Mar 2009 14:20:32 +1100
+Message-ID: <20090306142032.0442213d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__6_Mar_2009_14_20_32_+1100_Mak6lVlLSHegzrij"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet13.oracle.com ([148.87.113.125]:49762 "EHLO
-	rgminet13.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751529AbZCFDLq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Mar 2009 22:11:46 -0500
-In-Reply-To: <20090306132104.16a0af9d.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:40736 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755309AbZCFDUy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Mar 2009 22:20:54 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Pekka Enberg <penberg@cs.helsinki.fi>
+To: Stefan Richter <stefanr@s5r6.in-berlin.de>, linux1394-devel@lists.sourceforge.net
+Cc: linux-next@vger.kernel.org
 
-Stephen Rothwell wrote:
-> Hi Randy,
-> 
-> Today's linux-next merge of the kernel-doc tree got a conflict in
-> Documentation/kernel-parameters.txt between commits
-> b9ce08c01020eb28bfbfa6faf1c740281c5f418e ("kmemtrace: Core
-> implementation") fron the tracing tree and
-> b98103a5597b87211a1c74077b06faeac554bedc ("x86: hpet: print HPET
-> registers during setup (if hpet=verbose is used)") from the timers tree
-> and commit 8e141e0b33e2fd17540881a1ead5103dd229bf81
-> ("docum-kernprms-alpha3") from the kernel-doc tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.
+--Signature=_Fri__6_Mar_2009_14_20_32_+1100_Mak6lVlLSHegzrij
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sounds good.  Thanks.
+Hi all,
 
--- 
-~Randy
+Today's linux-next merge of the ieee1394 tree got a conflict in
+drivers/media/dvb/firewire/firedtv-avc.c between commit
+154907957f9391b1af997b57507b16c018cc4995 ("firedtv: massive refactoring")
+from Linus' tree and commit 0435392b2594edeba33b2173326e73fdcd67bd50
+("DVB: firedtv: fix printk format mismatch") from the ieee1394 tree.
+
+I used the latter version.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__6_Mar_2009_14_20_32_+1100_Mak6lVlLSHegzrij
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkmwloAACgkQjjKRsyhoI8xKIQCeLlN8px4GszGifg3VWbaw1pKE
+MV4An2z6k/2RyXFuruoQpf+sUD4TVMda
+=jfc6
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__6_Mar_2009_14_20_32_+1100_Mak6lVlLSHegzrij--
