@@ -1,75 +1,56 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the kmemcheck tree with the
-	tracing tree
-Date: Fri, 6 Mar 2009 11:27:09 +0100
-Message-ID: <20090306102709.GB31042@elte.hu>
-References: <20090306172721.40347f41.sfr@canb.auug.org.au> <19f34abd0903060014p4895f169vc6759b672aa399aa@mail.gmail.com>
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: linux-next: manual merge of the tracing tree with the tip-core
+	tree
+Date: Fri, 6 Mar 2009 11:41:58 +0100
+Message-ID: <20090306104156.GA5988@nowhere>
+References: <20090306121740.0dc19811.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:44942 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751055AbZCFK1T (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 6 Mar 2009 05:27:19 -0500
+Received: from mail-ew0-f177.google.com ([209.85.219.177]:33048 "EHLO
+	mail-ew0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751001AbZCFKmF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Mar 2009 05:42:05 -0500
+Received: by ewy25 with SMTP id 25so170501ewy.37
+        for <linux-next@vger.kernel.org>; Fri, 06 Mar 2009 02:42:01 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <19f34abd0903060014p4895f169vc6759b672aa399aa@mail.gmail.com>
+In-Reply-To: <20090306121740.0dc19811.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vegard Nossum <vegard.nossum@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Pekka Enberg <penberg@cs.helsinki.fi>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>
 
+On Fri, Mar 06, 2009 at 12:17:40PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the tracing tree got a conflict in
+> block/blktrace.c between commit 313e458f81ec3852106c5a83830fe0d4f405a71a
+> ("alloc_percpu: add align argument to __alloc_percpu") from the tip-core
+> tree and commit 2db270a80b8f2238e536876cfb3987af02684df8
+> ("tracing/blktrace: move the tracing file to kernel/trace") from the
+> tracing tree.
+> 
+> I applied the block/blktrace.c part of the former commit to
+> kernel/trace/blktrace.c (see below) and can carry this fix as necessary.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
+> 
+> diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
+> index e39679a..d24a10b 100644
+> --- a/kernel/trace/blktrace.c
+> +++ b/kernel/trace/blktrace.c
+> @@ -423,7 +423,7 @@ int do_blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
+>  	if (!bt->sequence)
+>  		goto err;
+>  
+> -	bt->msg_data = __alloc_percpu(BLK_TN_MAX_MSG);
+> +	bt->msg_data = __alloc_percpu(BLK_TN_MAX_MSG, __alignof__(char));
+>  	if (!bt->msg_data)
+>  		goto err;
+>  
 
-* Vegard Nossum <vegard.nossum@gmail.com> wrote:
+Hi,
 
-> 2009/3/6 Stephen Rothwell <sfr@canb.auug.org.au>:
-> > Hi all,
-> >
-> > Today's linux-next merge of the kmemcheck tree got a conflict in
-> > kernel/trace/ring_buffer.c between commit
-> > a81bd80a0b0a405dc0483e2c428332d69da2c79f ("ring-buffer: use generic
-> > version of in_nmi") from the tracing tree and commit
-> > 9b7ff384ee76ced9638ab236db588a6f13916336 ("trace: annotate bitfield=
-s in
-> > struct ring_buffer_event") from the kmemcheck tree.
-> >
-> > Just simple overlapping additions. =A0I fixed it up (see below) and=
- can
-> > carry the fix as necessary.
-> > --
-> > Cheers,
-> > Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.au=
-ug.org.au
-> > http://www.canb.auug.org.au/~sfr/
-> >
-> > diff --cc kernel/trace/ring_buffer.c
-> > index f747364,b1f2f60..0000000
-> > --- a/kernel/trace/ring_buffer.c
-> > +++ b/kernel/trace/ring_buffer.c
-> > @@@ -9,7 -7,7 +9,8 @@@
-> > =A0#include <linux/spinlock.h>
-> > =A0#include <linux/debugfs.h>
-> > =A0#include <linux/uaccess.h>
-> > =A0+#include <linux/hardirq.h>
-> > + #include <linux/kmemcheck.h>
-> > =A0#include <linux/module.h>
-> > =A0#include <linux/percpu.h>
-> > =A0#include <linux/mutex.h>
-> >
->=20
-> Isn't it amazing how we both managed to put our new include in=20
-> exactly the same spot? :-D
-
-Yeah - i tend to shuffle patches and order include file sections=20
-of headers to reduce it - but most of the time it doesnt matter=20
-as fixing such a conflict is about 2 seconds.
-
-> Anyway, thanks for fixing these up, it looks good to me!
-
-I suspect it's the same resolution like what i did in tip:master=20
-a few days ago or so? I dont send out notifications about=20
-trivial conflicts, only about non-trivial conflicts that i'm=20
-unsure about. That's rare - when i see a non-trivial conflict i=20
-work on eliminating it.
-
-	Ingo
+It looks like this problem is solved on tip/master.
