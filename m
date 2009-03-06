@@ -1,50 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kmemcheck tree with the x86 tree
-Date: Fri, 6 Mar 2009 17:24:06 +1100
-Message-ID: <20090306172406.0560bac3.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kmemcheck tree with the tracing
+ tree
+Date: Fri, 6 Mar 2009 17:27:21 +1100
+Message-ID: <20090306172721.40347f41.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__6_Mar_2009_17_24_06_+1100_KlvdVkGwpjQMLi+h"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58914 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38873 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750937AbZCFGYS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 6 Mar 2009 01:24:18 -0500
+	id S1751199AbZCFG1Z (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 6 Mar 2009 01:27:25 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Vegard Nossum <vegard.nossum@gmail.com>, Pekka Enberg <penberg@cs.helsinki.fi>, Ingo Molnar <mingo@elte.hu>
 Cc: linux-next@vger.kernel.org
 
---Signature=_Fri__6_Mar_2009_17_24_06_+1100_KlvdVkGwpjQMLi+h
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
 Hi all,
 
 Today's linux-next merge of the kmemcheck tree got a conflict in
-arch/x86/mm/init_64.c between commit
-f765090a2617b8d9cb73b71e0aa850c29460d8be ("x86: move init_memory_mapping
-() to common mm/init.c") from the x86 tree and
-commit760932c8607b736504a134ed6feec25e90e089ac  ("kmemcheck: (finally)
-use 4k pages for identity mapping") from the kmemcheck tree.
+kernel/trace/ring_buffer.c between commit
+a81bd80a0b0a405dc0483e2c428332d69da2c79f ("ring-buffer: use generic
+version of in_nmi") from the tracing tree and commit
+9b7ff384ee76ced9638ab236db588a6f13916336 ("trace: annotate bitfields in
+struct ring_buffer_event") from the kmemcheck tree.
 
-I fixed it up as in the tip/master branch.
---=20
+Just simple overlapping additions.  I fixed it up (see below) and can
+carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__6_Mar_2009_17_24_06_+1100_KlvdVkGwpjQMLi+h
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEUEARECAAYFAkmwwYYACgkQjjKRsyhoI8wALQCgm5Isec09j9fj4Vs7XHcT22qq
-NYIAmKexdI6G6jWqYVeedjYNhOt99Jk=
-=yxNa
------END PGP SIGNATURE-----
-
---Signature=_Fri__6_Mar_2009_17_24_06_+1100_KlvdVkGwpjQMLi+h--
+diff --cc kernel/trace/ring_buffer.c
+index f747364,b1f2f60..0000000
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@@ -9,7 -7,7 +9,8 @@@
+  #include <linux/spinlock.h>
+  #include <linux/debugfs.h>
+  #include <linux/uaccess.h>
+ +#include <linux/hardirq.h>
++ #include <linux/kmemcheck.h>
+  #include <linux/module.h>
+  #include <linux/percpu.h>
+  #include <linux/mutex.h>
