@@ -1,62 +1,28 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] dvb/frontends: fix duplicate 'debug' symbol
-Date: Fri, 06 Mar 2009 13:24:46 -0800
-Message-ID: <49B1949E.2000300@oracle.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH -next] dvb/frontends: fix duplicate 'debug' symbol
+Date: Fri, 6 Mar 2009 15:59:58 -0800
+Message-ID: <20090306155958.11b4a186.akpm@linux-foundation.org>
 References: <20090306191311.697e7b97.sfr@canb.auug.org.au>
+	<49B1949E.2000300@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20090306191311.697e7b97.sfr@canb.auug.org.au>
-Sender: linux-media-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:53175 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754594AbZCGAAy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Mar 2009 19:00:54 -0500
+In-Reply-To: <49B1949E.2000300@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, mchehab@infradead.org, Ingo Molnar <mingo@elte.hu>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Fri, 06 Mar 2009 13:24:46 -0800
+Randy Dunlap <randy.dunlap@oracle.com> wrote:
 
-Fix dvb frontend debug variable to be static, to avoid linker
-errors:
+> It would also be Good if arch/x86/kernel/entry_32.S didn't have a
+> non-static 'debug' symbol.  OTOH, it helps catch things like this one.
 
-drivers/built-in.o:(.data+0xf4b0): multiple definition of `debug'
-arch/x86/kernel/built-in.o:(.kprobes.text+0x90): first defined here
-ld: Warning: size of symbol `debug' changed from 85 in arch/x86/kernel/built-in.o to 4 in drivers/built-in.o
-
-It would also be Good if arch/x86/kernel/entry_32.S didn't have a
-non-static 'debug' symbol.  OTOH, it helps catch things like this one.
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/media/dvb/frontends/stv0900_core.c |    4 ++--
- drivers/media/dvb/frontends/stv0900_priv.h |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
---- linux-next-20090306.orig/drivers/media/dvb/frontends/stv0900_core.c
-+++ linux-next-20090306/drivers/media/dvb/frontends/stv0900_core.c
-@@ -34,8 +34,8 @@
- #include "stv0900_priv.h"
- #include "stv0900_init.h"
- 
--int debug = 1;
--module_param(debug, int, 0644);
-+static int stvdebug = 1;
-+module_param_named(debug, stvdebug, int, 0644);
- 
- /* internal params node */
- struct stv0900_inode {
---- linux-next-20090306.orig/drivers/media/dvb/frontends/stv0900_priv.h
-+++ linux-next-20090306/drivers/media/dvb/frontends/stv0900_priv.h
-@@ -62,11 +62,11 @@
- 
- #define dmd_choose(a, b)	(demod = STV0900_DEMOD_2 ? b : a))
- 
--extern int debug;
-+static int stvdebug;
- 
- #define dprintk(args...) \
- 	do { \
--		if (debug) \
-+		if (stvdebug) \
- 			printk(KERN_DEBUG args); \
- 	} while (0)
- 
+heh, yes, it's a feature.  We should put it in init/main.c, along with
+100-odd other dont-do-that-dopey symbols.
