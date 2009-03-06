@@ -1,46 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tracing tree with the tip-core tree
-Date: Fri, 6 Mar 2009 12:17:40 +1100
-Message-ID: <20090306121740.0dc19811.sfr@canb.auug.org.au>
+Subject: linux-next: v4l-dvb tree build warnings
+Date: Fri, 6 Mar 2009 14:01:15 +1100
+Message-ID: <20090306140115.4e605f19.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__6_Mar_2009_14_01_15_+1100_62TfpR_KlsUC+1eJ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50509 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45904 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751464AbZCFCj4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 5 Mar 2009 21:39:56 -0500
+	id S1752024AbZCFDB3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Mar 2009 22:01:29 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, Frederic Weisbecker <fweisbec@gmail.com>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, "Igor M. Liplianin" <liplianin@netup.ru>
 
-Hi all,
+--Signature=_Fri__6_Mar_2009_14_01_15_+1100_62TfpR_KlsUC+1eJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the tracing tree got a conflict in
-block/blktrace.c between commit 313e458f81ec3852106c5a83830fe0d4f405a71a
-("alloc_percpu: add align argument to __alloc_percpu") from the tip-core
-tree and commit 2db270a80b8f2238e536876cfb3987af02684df8
-("tracing/blktrace: move the tracing file to kernel/trace") from the
-tracing tree.
+Hi Mauro,
 
-I applied the block/blktrace.c part of the former commit to
-kernel/trace/blktrace.c (see below) and can carry this fix as necessary.
--- 
+Today's linux-next build (x86_64 allmodconfig) produced these warnings:
+
+drivers/media/dvb/frontends/stv0900_core.c: In function 'find_inode':
+drivers/media/dvb/frontends/stv0900_core.c:65: warning: cast from pointer t=
+o integer of different size
+drivers/media/dvb/frontends/stv0900_core.c:67: warning: cast from pointer t=
+o integer of different size
+drivers/media/dvb/frontends/stv0900_core.c:71: warning: cast from pointer t=
+o integer of different size
+drivers/media/dvb/frontends/stv0900_core.c:73: warning: cast from pointer t=
+o integer of different size
+drivers/media/dvb/frontends/stv0900_core.c: In function 'stv0900_search':
+drivers/media/dvb/frontends/stv0900_core.c:1495: warning: cast from pointer=
+ to integer of different size
+drivers/media/dvb/frontends/stv0900_core.c: In function 'stv0900_read_statu=
+s':
+drivers/media/dvb/frontends/stv0900_core.c:1610: warning: cast from pointer=
+ to integer of different size
+drivers/media/dvb/frontends/stv0900_core.c: In function 'stv0900_attach':
+drivers/media/dvb/frontends/stv0900_core.c:1923: warning: cast from pointer=
+ to integer of different size
+
+Introduced by commit 85b3706579bfb73d7691488ed0e84c38773742aa ("V4L/DVB
+(10803): Add core code for ST STV0900 dual demodulator").  Why not use %p
+to print pointers?
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-index e39679a..d24a10b 100644
---- a/kernel/trace/blktrace.c
-+++ b/kernel/trace/blktrace.c
-@@ -423,7 +423,7 @@ int do_blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
- 	if (!bt->sequence)
- 		goto err;
- 
--	bt->msg_data = __alloc_percpu(BLK_TN_MAX_MSG);
-+	bt->msg_data = __alloc_percpu(BLK_TN_MAX_MSG, __alignof__(char));
- 	if (!bt->msg_data)
- 		goto err;
- 
+--Signature=_Fri__6_Mar_2009_14_01_15_+1100_62TfpR_KlsUC+1eJ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkmwkfsACgkQjjKRsyhoI8xYHQCfVW37M/CvsqgMhA/fSUjV7Vtj
+Rf8An2BNKguSop64nRFjF7QqJDgFY+Z5
+=mfkk
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__6_Mar_2009_14_01_15_+1100_62TfpR_KlsUC+1eJ--
