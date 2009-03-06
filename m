@@ -1,46 +1,59 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tracing tree with the cpus4096 tree
-Date: Fri, 6 Mar 2009 12:04:42 +1100
-Message-ID: <20090306120442.8b0cc445.sfr@canb.auug.org.au>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+Subject: Re: linux-next: v4l-dvb tree build failure
+Date: Thu, 5 Mar 2009 22:15:14 -0300
+Message-ID: <20090305221514.66f308ff@pedra.chehab.org>
+References: <20090305113550.4369fe92.sfr@canb.auug.org.au>
+	<20090305185150.69d8aff9@pedra.chehab.org>
+	<20090306110548.9ef01100.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41093 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753289AbZCFBEq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 5 Mar 2009 20:04:46 -0500
+Received: from bombadil.infradead.org ([18.85.46.34]:57095 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751780AbZCFBPr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Mar 2009 20:15:47 -0500
+In-Reply-To: <20090306110548.9ef01100.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org, Mike Travis <travis@sgi.com>, Jason Baron <jbaron@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, "Igor M. Liplianin" <liplianin@netup.ru>
 
-Hi all,
+On Fri, 6 Mar 2009 11:05:48 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Today's linux-next merge of the tracing tree got a conflict in
-kernel/irq/handle.c between commit
-0fa0ebbf15addc1be8f73325d809c8547a9de304 ("irq: allocate irq_desc_ptrs
-array based on nr_irqs") from the cpus4096 tree and commit
-af39241b90a345556b8884adff87096afe71b050 ("tracing, genirq: add irq enter
-and exit trace events") from the tracing tree.
+> Hi Mauro,
+> 
+> On Thu, 5 Mar 2009 18:51:50 -0300 Mauro Carvalho Chehab <mchehab@infradead.org> wrote:
+> >
+> > Fixed.
+> 
+> Thanks.
+> 
+> > From time to time, I got an weird message like this when updating my remote
+> > repository:
+> > 
+> > $ git --git-dir /home/v4l/tokernel/bare/linux-next.git push -f origin
+> > Counting objects: 194, done.
+> > Compressing objects: 100% (70/70), done.
+> > Writing objects: 100% (93/93), 14.19 KiB, done.
+> > Total 93 (delta 82), reused 24 (delta 23)
+> > warning: updating the currently checked out branch; this may cause confusion,
+> > as the index and working tree do not reflect changes that are now in HEAD.
+> > To ssh://master.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-next.git
+> > 
+> > What's more weird is that I never touch directly
+> > on /home/v4l/tokernel/bare/linux-next.git, since this is just a local bare
+> > tree. My procedure is to update the patches on a work tree, then push it to the
+> > bare repository and then to kernel.org.
+> 
+> Is there some reason that you repo on kernel.org is not bare as well?
 
-Just overlapping additions. I fixed it up (see below) and can carry the
-fix as necessary.
--- 
+It is bare... 
+
+Hmm... at config, it were marked with bare = false, not sure why.
+Anyway, I manually Fixed config. It seemed to solve the issue.
+
+Thanks!
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
-diff --cc kernel/irq/handle.c
-index f51eaee,4709a7c..0000000
---- a/kernel/irq/handle.c
-+++ b/kernel/irq/handle.c
-@@@ -17,7 -17,7 +17,8 @@@
-  #include <linux/kernel_stat.h>
-  #include <linux/rculist.h>
-  #include <linux/hash.h>
- +#include <linux/bootmem.h>
-+ #include <trace/irq.h>
-  
-  #include "internals.h"
-  
+Mauro
