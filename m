@@ -1,59 +1,94 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: v4l-dvb tree build failure
-Date: Thu, 5 Mar 2009 22:15:14 -0300
-Message-ID: <20090305221514.66f308ff@pedra.chehab.org>
-References: <20090305113550.4369fe92.sfr@canb.auug.org.au>
-	<20090305185150.69d8aff9@pedra.chehab.org>
-	<20090306110548.9ef01100.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kernel-doc tree with the tracing
+ and timers trees
+Date: Fri, 6 Mar 2009 13:21:04 +1100
+Message-ID: <20090306132104.16a0af9d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:57095 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751780AbZCFBPr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Mar 2009 20:15:47 -0500
-In-Reply-To: <20090306110548.9ef01100.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37680 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751258AbZCFCVK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Mar 2009 21:21:10 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, "Igor M. Liplianin" <liplianin@netup.ru>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: linux-next@vger.kernel.org, Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Pekka Enberg <penberg@cs.helsinki.fi>
 
-On Fri, 6 Mar 2009 11:05:48 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Randy,
 
-> Hi Mauro,
-> 
-> On Thu, 5 Mar 2009 18:51:50 -0300 Mauro Carvalho Chehab <mchehab@infradead.org> wrote:
-> >
-> > Fixed.
-> 
-> Thanks.
-> 
-> > From time to time, I got an weird message like this when updating my remote
-> > repository:
-> > 
-> > $ git --git-dir /home/v4l/tokernel/bare/linux-next.git push -f origin
-> > Counting objects: 194, done.
-> > Compressing objects: 100% (70/70), done.
-> > Writing objects: 100% (93/93), 14.19 KiB, done.
-> > Total 93 (delta 82), reused 24 (delta 23)
-> > warning: updating the currently checked out branch; this may cause confusion,
-> > as the index and working tree do not reflect changes that are now in HEAD.
-> > To ssh://master.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-next.git
-> > 
-> > What's more weird is that I never touch directly
-> > on /home/v4l/tokernel/bare/linux-next.git, since this is just a local bare
-> > tree. My procedure is to update the patches on a work tree, then push it to the
-> > bare repository and then to kernel.org.
-> 
-> Is there some reason that you repo on kernel.org is not bare as well?
+Today's linux-next merge of the kernel-doc tree got a conflict in
+Documentation/kernel-parameters.txt between commits
+b9ce08c01020eb28bfbfa6faf1c740281c5f418e ("kmemtrace: Core
+implementation") fron the tracing tree and
+b98103a5597b87211a1c74077b06faeac554bedc ("x86: hpet: print HPET
+registers during setup (if hpet=verbose is used)") from the timers tree
+and commit 8e141e0b33e2fd17540881a1ead5103dd229bf81
+("docum-kernprms-alpha3") from the kernel-doc tree.
 
-It is bare... 
-
-Hmm... at config, it were marked with bare = false, not sure why.
-Anyway, I manually Fixed config. It seemed to solve the issue.
-
-Thanks!
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
-Mauro
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+diff --cc Documentation/kernel-parameters.txt
+index 2475fb1,0725b91..0000000
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@@ -814,6 -764,14 +768,16 @@@ and is between 256 and 4096 characters
+  	hisax=		[HW,ISDN]
+  			See Documentation/isdn/README.HiSax.
+  
++ 	hlt		[BUGS=ARM,SH]
++ 
++ 	hpet=		[X86-32,HPET] option to control HPET usage
+ -			Format: { enable (default) | disable | force }
+++			Format: { enable (default) | disable | force |
+++				verbose }
++ 			disable: disable HPET and use PIT instead
++ 			force: allow force enabled of undocumented chips (ICH4,
++ 			VIA, nVidia)
+++			verbose: show contents of HPET registers during setup
++ 
+  	hugepages=	[HW,X86-32,IA-64] HugeTLB pages to allocate at boot.
+  	hugepagesz=	[HW,IA-64,PPC,X86-64] The size of the HugeTLB pages.
+  			On x86-64 and powerpc, this option can be specified
+@@@ -1056,27 -995,15 +1006,24 @@@
+  			use the HighMem zone if it exists, and the Normal
+  			zone if it does not.
+  
++ 	kgdboc=		[HW] kgdb over consoles.
++ 			Requires a tty driver that supports console polling.
++ 			(only serial suported for now)
++ 			Format: <serial_device>[,baud]
++ 
++ 	kmac=		[MIPS] korina ethernet MAC address.
++ 			Configure the RouterBoard 532 series on-chip
++ 			Ethernet adapter MAC address.
++ 
+ +	kmemtrace.enable=	[KNL,KMEMTRACE] Format: { yes | no }
+ +				Controls whether kmemtrace is enabled
+ +				at boot-time.
+ +
+ +	kmemtrace.subbufs=n	[KNL,KMEMTRACE] Overrides the number of
+ +			subbufs kmemtrace's relay channel has. Set this
+ +			higher than default (KMEMTRACE_N_SUBBUFS in code) if
+ +			you experience buffer overruns.
+ +
+- 	movablecore=nn[KMG]	[KNL,X86-32,IA-64,PPC,X86-64] This parameter
+- 			is similar to kernelcore except it specifies the
+- 			amount of memory used for migratable allocations.
+- 			If both kernelcore and movablecore is specified,
+- 			then kernelcore will be at *least* the specified
+- 			value but may be more. If movablecore on its own
+- 			is specified, the administrator must be careful
+- 			that the amount of memory usable for all allocations
+- 			is not too small.
+- 
+- 	keepinitrd	[HW,ARM]
+- 
+  	kstack=N	[X86-32,X86-64] Print N words from the kernel stack
+  			in oops dumps.
+  
