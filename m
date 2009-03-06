@@ -1,36 +1,32 @@
-From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Subject: Re: linux-next: Tree for March 6 (ath9k)
-Date: Fri, 06 Mar 2009 11:01:52 -0800
-Message-ID: <49B17320.8010000@oracle.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: Tree for March 6
+Date: Fri, 6 Mar 2009 11:24:50 -0800
+Message-ID: <20090306112450.12901a19.akpm@linux-foundation.org>
 References: <20090306191311.697e7b97.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20090306191311.697e7b97.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:52631 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751149AbZCFTZW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Mar 2009 14:25:22 -0500
+In-Reply-To: <20090306191311.697e7b97.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>
 
-Stephen Rothwell wrote:
-> Hi all,
-> 
-> Linus' release of -rc7 seems to have stirred people up a bit ...
-> 
-> Changes since 20090305:
+On Fri, 6 Mar 2009 19:13:11 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
+> Dropped trees (temporary):
+> 	rr (build problem)
 
-when CONFIG_RFKILL=n, ath9k/virtual.c causes:
+It's quite irritating and somewhat risky when this happens.  It means
+that I have to teporarily drop or rework patches to fix things up. 
+Then the patch needs to be undropped or unreworked when the offending
+tree gets restored.
 
-(.text+0x224e83): undefined reference to `ath_radio_disable'
-(.text+0x224e8b): undefined reference to `ath_radio_enable'
-
-
-
--- 
-~Randy
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Is it possible to just drop back to the previous day's version when
+something gets screwed up?
