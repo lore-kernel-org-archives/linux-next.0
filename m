@@ -1,46 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the kmemleak tree with the tip-core
  tree
-Date: Fri, 6 Mar 2009 18:17:04 +1100
-Message-ID: <20090306181704.f78b2a32.sfr@canb.auug.org.au>
+Date: Fri, 6 Mar 2009 18:19:31 +1100
+Message-ID: <20090306181931.4cdcc127.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51208 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51256 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751345AbZCFHRJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 6 Mar 2009 02:17:09 -0500
+	id S1751421AbZCFHTf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 6 Mar 2009 02:19:35 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org
 
 Hi Catalin,
 
 Today's linux-next merge of the kmemleak tree got a conflict in
-kernel/module.c between commit fbf59bc9d74d1fb30b8e0630743aff2806eafcea
-("percpu: implement new dynamic percpu allocator") from the tip-core tree
-and commit 6649b74fa7cb64421fce4f3cd4c40b3aa6f3208d ("kmemleak: Add
-modules support") from the kmemleak tree.
+mm/vmalloc.c between commit f0aa6617903648077dffe5cfcf7c4458f4610fa7
+("vmalloc: implement vm_area_register_early()") from the tip-core tree
+and commit 27e72e01c414e46d39dc87024fa48092d93b77c5 ("kmemleak: Add the
+vmalloc memory allocation/freeing hooks") from the kmemleak tree.
 
-Juts overlapping additions.  I fixed it up (see below) and can carry the
+Just overlapping additions.  I fixed it up (see below) and can carry the
 fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc kernel/module.c
-index 6e7621d,92b60e7..0000000
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@@ -51,7 -51,7 +51,8 @@@
-  #include <linux/tracepoint.h>
-  #include <linux/ftrace.h>
-  #include <linux/async.h>
- +#include <linux/percpu.h>
+diff --cc mm/vmalloc.c
+index af58324,40b9040..0000000
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@@ -24,7 -24,7 +24,8 @@@
+  #include <linux/radix-tree.h>
+  #include <linux/rcupdate.h>
+  #include <linux/bootmem.h>
+ +#include <linux/pfn.h>
 + #include <linux/kmemleak.h>
   
-  #if 0
-  #define DEBUGP printk
+  #include <asm/atomic.h>
+  #include <asm/uaccess.h>
