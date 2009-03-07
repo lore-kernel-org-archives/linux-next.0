@@ -1,29 +1,52 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH -next] dvb/frontends: fix duplicate 'debug' symbol
-Date: Fri, 06 Mar 2009 16:05:02 -0800
-Message-ID: <49B1BA2E.8000406@oracle.com>
-References: <20090306191311.697e7b97.sfr@canb.auug.org.au>	<49B1949E.2000300@oracle.com> <20090306155958.11b4a186.akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the ieee1394 tree with the  tree
+Date: Sat, 7 Mar 2009 11:39:40 +1100
+Message-ID: <20090307113940.83237840.sfr@canb.auug.org.au>
+References: <20090306142032.0442213d.sfr@canb.auug.org.au>
+	<49B0D5F6.7000106@s5r6.in-berlin.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20090306155958.11b4a186.akpm@linux-foundation.org>
-Sender: linux-media-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, mchehab@infradead.org, Ingo Molnar <mingo@elte.hu>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__7_Mar_2009_11_39_40_+1100_7y2B9pXMRWLEiKML"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:53322 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753462AbZCGAjs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 6 Mar 2009 19:39:48 -0500
+In-Reply-To: <49B0D5F6.7000106@s5r6.in-berlin.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Cc: linux1394-devel@lists.sourceforge.net, linux-next@vger.kernel.org
 
-Andrew Morton wrote:
-> On Fri, 06 Mar 2009 13:24:46 -0800
-> Randy Dunlap <randy.dunlap@oracle.com> wrote:
-> 
->> It would also be Good if arch/x86/kernel/entry_32.S didn't have a
->> non-static 'debug' symbol.  OTOH, it helps catch things like this one.
-> 
-> heh, yes, it's a feature.  We should put it in init/main.c, along with
-> 100-odd other dont-do-that-dopey symbols.
+--Signature=_Sat__7_Mar_2009_11_39_40_+1100_7y2B9pXMRWLEiKML
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-hm, I think I'll leave that patch for you or Ingo. ;)
+Hi Stefan,
 
--- 
-~Randy
+On Fri, 06 Mar 2009 08:51:18 +0100 Stefan Richter <stefanr@s5r6.in-berlin.d=
+e> wrote:
+>
+> Thanks.  I pushed this conflict resolution into linux1394-2.6.git too now.
+
+Thanks, every bit helps.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Sat__7_Mar_2009_11_39_40_+1100_7y2B9pXMRWLEiKML
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkmxwkwACgkQjjKRsyhoI8xerwCePYobfN7KwOx+JCLO8ajEsmVV
+XqkAnAjYwe35BBFER8yn7/+yDyTw81EQ
+=YSUw
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__7_Mar_2009_11_39_40_+1100_7y2B9pXMRWLEiKML--
