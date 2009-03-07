@@ -1,52 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the ieee1394 tree with the  tree
-Date: Sat, 7 Mar 2009 11:39:40 +1100
-Message-ID: <20090307113940.83237840.sfr@canb.auug.org.au>
-References: <20090306142032.0442213d.sfr@canb.auug.org.au>
-	<49B0D5F6.7000106@s5r6.in-berlin.de>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: manual merge of the rr tree with the blackfin and x86 trees
+Date: Sat, 7 Mar 2009 11:41:53 +1030
+Message-ID: <200903071141.54753.rusty@rustcorp.com.au>
+References: <20090306153759.c8c6b470.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__7_Mar_2009_11_39_40_+1100_7y2B9pXMRWLEiKML"
+Content-Type: text/plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53322 "EHLO smtps.tip.net.au"
+Received: from ozlabs.org ([203.10.76.45]:56791 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753462AbZCGAjs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 6 Mar 2009 19:39:48 -0500
-In-Reply-To: <49B0D5F6.7000106@s5r6.in-berlin.de>
+	id S1754709AbZCGBMA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 6 Mar 2009 20:12:00 -0500
+In-Reply-To: <20090306153759.c8c6b470.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Cc: linux1394-devel@lists.sourceforge.net, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Bryan Wu <cooloney.lkml@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
 
---Signature=_Sat__7_Mar_2009_11_39_40_+1100_7y2B9pXMRWLEiKML
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Friday 06 March 2009 15:07:59 Stephen Rothwell wrote:
+> Hi Rusty,
+> 
+> Today's linux-next merge of the rr tree added conflicts in
+> arch/blackfin/kernel/ipipe.c and arch/x86/mach-voyager/setup.c.  I didn't
+> bother to work out exactly what is conflicting because I dropped the rr
+> tree due to the build failures that I assume are still present from
+> yesterday.
 
-Hi Stefan,
+Good call.  Arabella didn't quite sleep long enough for me to get the fixes
+out yesterday.
 
-On Fri, 06 Mar 2009 08:51:18 +0100 Stefan Richter <stefanr@s5r6.in-berlin.d=
-e> wrote:
->
-> Thanks.  I pushed this conflict resolution into linux1394-2.6.git too now.
+I've moved the arch/blackfin/kernel/ipipe.c patch out of linux-next until I've
+sorted this.
 
-Thanks, every bit helps.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Sat__7_Mar_2009_11_39_40_+1100_7y2B9pXMRWLEiKML
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkmxwkwACgkQjjKRsyhoI8xerwCePYobfN7KwOx+JCLO8ajEsmVV
-XqkAnAjYwe35BBFER8yn7/+yDyTw81EQ
-=YSUw
------END PGP SIGNATURE-----
-
---Signature=_Sat__7_Mar_2009_11_39_40_+1100_7y2B9pXMRWLEiKML--
+Thanks,
+Rusty.
