@@ -1,44 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: no release for March 9
-Date: Mon, 9 Mar 2009 18:58:38 +1100
-Message-ID: <20090309185838.75eca0e0.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__9_Mar_2009_18_58_38_+1100_zrIq7Ckdz+sv.88n"
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+Subject: [RFC 1/4] net: sysctl_net - use net_eq to compare nets
+Date: Mon, 09 Mar 2009 21:16:29 +0300
+Message-ID: <20090309182731.621869188@gmail.com>
+References: <20090309181628.109019157@gmail.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37252 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751192AbZCIH6r (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 Mar 2009 03:58:47 -0400
+Received: from ti-out-0910.google.com ([209.85.142.189]:9772 "EHLO
+	ti-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751575AbZCIS1Y (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Mar 2009 14:27:24 -0400
+Content-Disposition: inline; filename=net-sysctl-net-use-net_eq
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: davem@davemloft.net, kaber@trash.net
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, xemul@openvz.org, adobriyan@gmail.com, Cyrill Gorcunov <gorcunov@openvz.org>
 
---Signature=_Mon__9_Mar_2009_18_58_38_+1100_zrIq7Ckdz+sv.88n
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Cyrill Gorcunov <gorcunov@openvz.org>
+---
 
-Hi all,
+Btw, wouldn't be better to have a special macro/inline
+to check if net is init_net? Something like is_init_net()
 
-It was a public holiday here today, so no release.
+ net/sysctl_net.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__9_Mar_2009_18_58_38_+1100_zrIq7Ckdz+sv.88n
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkm0zC4ACgkQjjKRsyhoI8zplwCfUUkE8zfTJG1WHVS6vP5dd4AB
-kgYAoLFHY7Dt5ta2rkG2Xg9BM57TOLIF
-=nW+G
------END PGP SIGNATURE-----
-
---Signature=_Mon__9_Mar_2009_18_58_38_+1100_zrIq7Ckdz+sv.88n--
+Index: linux-2.6.git/net/sysctl_net.c
+===================================================================
+--- linux-2.6.git.orig/net/sysctl_net.c
++++ linux-2.6.git/net/sysctl_net.c
+@@ -61,7 +61,7 @@ static struct ctl_table_root net_sysctl_
+ static int net_ctl_ro_header_perms(struct ctl_table_root *root,
+ 		struct nsproxy *namespaces, struct ctl_table *table)
+ {
+-	if (namespaces->net_ns == &init_net)
++	if (net_eq(namespaces->net_ns, &init_net))
+ 		return table->mode;
+ 	else
+ 		return table->mode & ~0222;
