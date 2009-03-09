@@ -1,38 +1,44 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: manual merge of the rr tree with the blackfin and x86 trees
-Date: Sat, 7 Mar 2009 11:41:53 +1030
-Message-ID: <200903071141.54753.rusty@rustcorp.com.au>
-References: <20090306153759.c8c6b470.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: no release for March 9
+Date: Mon, 9 Mar 2009 18:58:38 +1100
+Message-ID: <20090309185838.75eca0e0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__9_Mar_2009_18_58_38_+1100_zrIq7Ckdz+sv.88n"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:56791 "EHLO ozlabs.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37252 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754709AbZCGBMA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 6 Mar 2009 20:12:00 -0500
-In-Reply-To: <20090306153759.c8c6b470.sfr@canb.auug.org.au>
-Content-Disposition: inline
+	id S1751192AbZCIH6r (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 Mar 2009 03:58:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Bryan Wu <cooloney.lkml@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On Friday 06 March 2009 15:07:59 Stephen Rothwell wrote:
-> Hi Rusty,
-> 
-> Today's linux-next merge of the rr tree added conflicts in
-> arch/blackfin/kernel/ipipe.c and arch/x86/mach-voyager/setup.c.  I didn't
-> bother to work out exactly what is conflicting because I dropped the rr
-> tree due to the build failures that I assume are still present from
-> yesterday.
+--Signature=_Mon__9_Mar_2009_18_58_38_+1100_zrIq7Ckdz+sv.88n
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Good call.  Arabella didn't quite sleep long enough for me to get the fixes
-out yesterday.
+Hi all,
 
-I've moved the arch/blackfin/kernel/ipipe.c patch out of linux-next until I've
-sorted this.
+It was a public holiday here today, so no release.
 
-Thanks,
-Rusty.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__9_Mar_2009_18_58_38_+1100_zrIq7Ckdz+sv.88n
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkm0zC4ACgkQjjKRsyhoI8zplwCfUUkE8zfTJG1WHVS6vP5dd4AB
+kgYAoLFHY7Dt5ta2rkG2Xg9BM57TOLIF
+=nW+G
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__9_Mar_2009_18_58_38_+1100_zrIq7Ckdz+sv.88n--
