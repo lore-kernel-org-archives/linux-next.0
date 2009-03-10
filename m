@@ -1,64 +1,55 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: Tree for March 10 (m68k/tlbflush.h)
-Date: Tue, 10 Mar 2009 21:07:25 +0100
-Message-ID: <10f740e80903101307v70000e0cm61e261050411a715@mail.gmail.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for March 10 (crypto & NLATTR)
+Date: Tue, 10 Mar 2009 13:08:31 -0700
+Message-ID: <49B6C8BF.8010105@oracle.com>
+References: <20090310195534.8f8f3c7a.sfr@canb.auug.org.au>	 <49B6B821.5050302@oracle.com> <10f740e80903101256v2cfe08a8g410c297e019d8693@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757614AbZCJUHs@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Ungerer <gerg@snapgear.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <10f740e80903101256v2cfe08a8g410c297e019d8693@mail.gmail.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, herbert@gondor.apana.org.au, David Miller <davem@davemloft.net>, linux-crypto@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi Greg,
+Geert Uytterhoeven wrote:
+> On Tue, Mar 10, 2009 at 19:57, Randy Dunlap <randy.dunlap@oracle.com> wrote:
+>> Stephen Rothwell wrote:
+>>> Changes since 20090306:
+>>>
+>>>
+>>> The driver-core tree gained a build failure due to a conflict with the
+>>> crypto tree.  I have applied a patch to the crypto tree for today.
+>> I had several (4 of 50) randconfig builds fail with:
+>>
+>> lib/built-in.o: In function `__nla_reserve_nohdr':
+>> (.text+0xd08d): undefined reference to `skb_put'
+>> lib/built-in.o: In function `__nla_reserve':
+>> (.text+0xd121): undefined reference to `skb_put'
+>> lib/built-in.o: In function `nla_append':
+>> (.text+0xd493): undefined reference to `skb_put'
+>>
+>> which happens with CONFIG_NET=n, CONFIG_CRYPTO=y, CONFIG_CRYPTO_ZLIB=[my].
+>>
+>> CRYPTO_ZLIB selects NLATTR, but obviously the build of nlattr.c fails
+>> when CONFIG_NET=n.  Should CRYPTO_ZLIB depend on NET?
+>> Please don't say that CRYPTO_ZLIB should select NET.
+> 
+> Bummer, my fault (commit e9cc8bddaea3944fabfebb968bc88d603239beed,
+> netlink: Move netlink attribute parsing support to lib).
+> 
+> Obviously I was only worried about crypto/zlib.c needing nlattr.c
+> without pulling in the whole networking code, not about nlattr.c
+> itself needing networking functionality. But still, how could I have
+> missed this compile failure?
+> 
+> Does it sound sane to protect the routines that do call skb_put() by
+> #ifdef CONFIG_NET?
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/180587/
-| arch/m68k/kernel/traps.c:274: error: implicit declaration of
-function '__flush_tlb040_one'
+I'll have to let David or Herbert answer that.  From my quick look
+at the code, I don't see much use for nlattr.c when CONFIG_NET
+is not enabled.
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/180591/
-| mm/vmalloc.c:555: error: implicit declaration of function
-'flush_tlb_kernel_range'
-
-Caused by:
-
-| commit 7fa69761ea82752b97502383f7f2d3fdfa509115
-| Author: Greg Ungerer <gerg@uclinux.org>
-| Date:   Tue Feb 17 14:40:47 2009 +1000
-|
-|     m68k: merge the mmu and non-mmu versions of tlbflush.h
-|
-|     Simple merge of the mmu and non-mmu versions of tlbflush.h
-|
-|     Signed-off-by: Greg Ungerer <gerg@uclinux.org>
-
-Seems like you merged the wrong way:
-
-| diff --git a/arch/m68k/include/asm/tlbflush.h
-b/arch/m68k/include/asm/tlbflush.h
-| index b6f93b3..79050d0 100644
-| --- a/arch/m68k/include/asm/tlbflush.h
-| +++ b/arch/m68k/include/asm/tlbflush.h
-| @@ -1,5 +1,267 @@
-| -#ifdef __uClinux__
-| -#include "tlbflush_no.h"
-| +#ifndef _M68K_TLBFLUSH_H
-| +#define _M68K_TLBFLUSH_H
-| +
-| +#ifndef CONFIG_MMU
-    ^^^^^
-    ifdef
-
-| +#ifndef CONFIG_SUN3
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+-- 
+~Randy
