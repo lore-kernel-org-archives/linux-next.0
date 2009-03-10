@@ -1,43 +1,53 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: input tree build failure
-Date: Mon, 9 Mar 2009 22:02:51 -0700
-Message-ID: <20090310050250.GB18546@dtor-d630.eng.vmware.com>
+Date: Tue, 10 Mar 2009 16:14:16 +1100
+Message-ID: <20090310161416.f20c7533.sfr@canb.auug.org.au>
 References: <20090310154919.31f45de6.sfr@canb.auug.org.au>
+	<20090310050250.GB18546@dtor-d630.eng.vmware.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__10_Mar_2009_16_14_16_+1100_llJKj8H0Hs8LvBOs"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qy0-f122.google.com ([209.85.221.122]:46222 "EHLO
-	mail-qy0-f122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751575AbZCJFDA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Mar 2009 01:03:00 -0400
-Received: by qyk28 with SMTP id 28so1500303qyk.33
-        for <linux-next@vger.kernel.org>; Mon, 09 Mar 2009 22:02:57 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20090310154919.31f45de6.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51993 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754832AbZCJFOX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Mar 2009 01:14:23 -0400
+In-Reply-To: <20090310050250.GB18546@dtor-d630.eng.vmware.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: linux-next@vger.kernel.org, Henrik Rydberg <rydberg@euromail.se>
 
-Hi Stephen,
+--Signature=_Tue__10_Mar_2009_16_14_16_+1100_llJKj8H0Hs8LvBOs
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 10, 2009 at 03:49:19PM +1100, Stephen Rothwell wrote:
-> Hi Dmitry,
-> 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
-> 
-> drivers/input/mouse/bcm5974.c: In function 'report_tp_state':
-> drivers/input/mouse/bcm5974.c:301: error: 'raw_n' undeclared (first use in this function)
-> drivers/input/mouse/bcm5974.c:341: error: 'ibt' undeclared (first use in this function)
-> 
-> Caused by commit d86c56b75718295025be895a0f7a157298c84491 ("Input:
-> bcm5974 - augment debug information").
-> 
-> I have merged the version of the input tree from next-20090306 instead of
-> today's.
+Hi Dmitry,
 
-I just noticed the failure and rebuilt the tree without that patch as
-it was dependent upon another bcm change. Sorry about that.
+On Mon, 9 Mar 2009 22:02:51 -0700 Dmitry Torokhov <dmitry.torokhov@gmail.co=
+m> wrote:
+>
+> I just noticed the failure and rebuilt the tree without that patch as
+> it was dependent upon another bcm change. Sorry about that.
 
--- 
-Dmitry
+OK, thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__10_Mar_2009_16_14_16_+1100_llJKj8H0Hs8LvBOs
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkm19ygACgkQjjKRsyhoI8xZMACfSIqJXhjdFV6cuq8PV8fWllLq
+xrgAn2lGM1/78JaOMtjwnj9cLlhHOPtP
+=l4VM
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__10_Mar_2009_16_14_16_+1100_llJKj8H0Hs8LvBOs--
