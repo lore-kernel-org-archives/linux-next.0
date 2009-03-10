@@ -1,52 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sound tree with the arm tree
-Date: Tue, 10 Mar 2009 14:45:28 +1100
-Message-ID: <20090310144528.0fa208dd.sfr@canb.auug.org.au>
+Subject: linux-next: input tree build failure
+Date: Tue, 10 Mar 2009 15:49:19 +1100
+Message-ID: <20090310154919.31f45de6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__10_Mar_2009_15_49_19_+1100_pmCmpg9vEsaSaOUR"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56341 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44928 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752044AbZCJDpe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 Mar 2009 23:45:34 -0400
+	id S1751466AbZCJEtd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Mar 2009 00:49:33 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-next@vger.kernel.org, Ben Dooks <ben@simtec.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Alexander Schulz <alex@shark-linux.de>, Russell King <rmk@arm.linux.org.uk>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, Henrik Rydberg <rydberg@euromail.se>
 
-Hi Takashi,
+--Signature=_Tue__10_Mar_2009_15_49_19_+1100_pmCmpg9vEsaSaOUR
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the sound tree got a conflict in
-arch/arm/mach-shark/include/mach/io.h between commit
-eab184c2362567f2b2e951b7bd0e0d353a7e5091 ("[ARM] 5363/1: Shark cleanup
-and new defconfig") from the arm tree and commit
-8150bc886be5ce3cc301a2baca1fcf2cf7bd7f39 ("S3C24XX: Move and update IIS
-headers") from the sound tree.
+Hi Dmitry,
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
+Today's linux-next build (x86_64 allmodconfig) failed like this:
+
+drivers/input/mouse/bcm5974.c: In function 'report_tp_state':
+drivers/input/mouse/bcm5974.c:301: error: 'raw_n' undeclared (first use in =
+this function)
+drivers/input/mouse/bcm5974.c:341: error: 'ibt' undeclared (first use in th=
+is function)
+
+Caused by commit d86c56b75718295025be895a0f7a157298c84491 ("Input:
+bcm5974 - augment debug information").
+
+I have merged the version of the input tree from next-20090306 instead of
+today's.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/mach-shark/include/mach/io.h
-index 9ccbcec,8ca7d7f..0000000
---- a/arch/arm/mach-shark/include/mach/io.h
-+++ b/arch/arm/mach-shark/include/mach/io.h
-@@@ -11,10 -11,10 +11,10 @@@
-  #ifndef __ASM_ARM_ARCH_IO_H
-  #define __ASM_ARM_ARCH_IO_H
-  
- -#define PCIO_BASE	0xe0000000
- -#define IO_SPACE_LIMIT	0xffffffff
- +#define IO_SPACE_LIMIT 0xffffffff
-  
-- #define __io(a)                 ((void __iomem *)(0xe0000000 + (a)))
- -#define __io(a)		__typesafe_io(PCIO_BASE + (a))
- -#define __mem_pci(addr)	(addr)
-++#define __io(a)		__typesafe_io(0xe0000000 + (a))
- +
- +#define __mem_pci(addr) (addr)
-  
-  #endif
+--Signature=_Tue__10_Mar_2009_15_49_19_+1100_pmCmpg9vEsaSaOUR
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkm18U8ACgkQjjKRsyhoI8zvUQCdErU/2y8POs7SWNmVOYORsfG3
+shcAn14xJVVh5Zd13xisVyxLOj680sOa
+=68+V
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__10_Mar_2009_15_49_19_+1100_pmCmpg9vEsaSaOUR--
