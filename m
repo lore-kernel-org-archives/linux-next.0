@@ -1,42 +1,42 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for March 10 (crypto & NLATTR)
-Date: Tue, 10 Mar 2009 11:57:37 -0700
-Message-ID: <49B6B821.5050302@oracle.com>
+Subject: [PATCH -next] staging/p9auth: fix dependency/build error
+Date: Tue, 10 Mar 2009 11:59:36 -0700
+Message-ID: <49B6B898.6010902@oracle.com>
 References: <20090310195534.8f8f3c7a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:51371 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752551AbZCJS5y (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Mar 2009 14:57:54 -0400
 In-Reply-To: <20090310195534.8f8f3c7a.sfr@canb.auug.org.au>
-Sender: linux-crypto-owner@vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, herbert@gondor.apana.org.au, David Miller <davem@davemloft.net>, linux-crypto@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg KH <gregkh@suse.de>
 
-Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20090306:
-> 
-> 
-> The driver-core tree gained a build failure due to a conflict with the
-> crypto tree.  I have applied a patch to the crypto tree for today.
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-I had several (4 of 50) randconfig builds fail with:
+Fix p9auth dependency/build failure.  It needs to depend on
+CRYPTO.
 
-lib/built-in.o: In function `__nla_reserve_nohdr':
-(.text+0xd08d): undefined reference to `skb_put'
-lib/built-in.o: In function `__nla_reserve':
-(.text+0xd121): undefined reference to `skb_put'
-lib/built-in.o: In function `nla_append':
-(.text+0xd493): undefined reference to `skb_put'
+p9auth.c:(.text+0x107297): undefined reference to `crypto_alloc_base'
+p9auth.c:(.text+0x1073d4): undefined reference to `crypto_destroy_tfm'
 
-which happens with CONFIG_NET=n, CONFIG_CRYPTO=y, CONFIG_CRYPTO_ZLIB=[my].
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/staging/p9auth/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
-CRYPTO_ZLIB selects NLATTR, but obviously the build of nlattr.c fails
-when CONFIG_NET=n.  Should CRYPTO_ZLIB depend on NET?
-Please don't say that CRYPTO_ZLIB should select NET.
-
-
--- 
-~Randy
+--- linux-next-20090310.orig/drivers/staging/p9auth/Kconfig
++++ linux-next-20090310/drivers/staging/p9auth/Kconfig
+@@ -1,6 +1,7 @@
+ config PLAN9AUTH
+ 	tristate "Plan 9 style capability device implementation"
+ 	default n
++	depends on CRYPTO
+ 	help
+ 	  This module implements the Plan 9 style capability device.
+ 
