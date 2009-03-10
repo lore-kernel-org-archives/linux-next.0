@@ -1,71 +1,126 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: Tree for March 10 (crypto & NLATTR)
-Date: Tue, 10 Mar 2009 20:56:59 +0100
-Message-ID: <10f740e80903101256v2cfe08a8g410c297e019d8693@mail.gmail.com>
-References: <20090310195534.8f8f3c7a.sfr@canb.auug.org.au>
-	 <49B6B821.5050302@oracle.com>
+From: Jason Baron <jbaron@redhat.com>
+Subject: Re: linux-next: driver-core tree build failure
+Date: Tue, 10 Mar 2009 16:02:00 -0400
+Message-ID: <20090310200200.GB3091@redhat.com>
+References: <20090310192440.949884a1.sfr@canb.auug.org.au> <alpine.LRH.2.00.0903101423200.25436@vixen.sonytel.be> <20090310145311.6bf9d9e9@skybase> <alpine.LRH.2.00.0903101626450.25436@vixen.sonytel.be> <20090310170841.2257de86@skybase>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from yw-out-2324.google.com ([74.125.46.30]:10329 "EHLO
-	yw-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756635AbZCJT5C convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Mar 2009 15:57:02 -0400
-In-Reply-To: <49B6B821.5050302@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, herbert@gondor.apana.org.au, David Miller <davem@davemloft.net>, linux-crypto@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756864AbZCJUF0@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20090310170841.2257de86@skybase>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Greg Banks <gnb@sgi.com>, Herbert Xu <herbert@gondor.apana.org.au>, Linux Kernel Development <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Mar 10, 2009 at 19:57, Randy Dunlap <randy.dunlap@oracle.com> w=
-rote:
-> Stephen Rothwell wrote:
->> Changes since 20090306:
->>
->>
->> The driver-core tree gained a build failure due to a conflict with t=
-he
->> crypto tree. =C2=A0I have applied a patch to the crypto tree for tod=
-ay.
->
-> I had several (4 of 50) randconfig builds fail with:
->
-> lib/built-in.o: In function `__nla_reserve_nohdr':
-> (.text+0xd08d): undefined reference to `skb_put'
-> lib/built-in.o: In function `__nla_reserve':
-> (.text+0xd121): undefined reference to `skb_put'
-> lib/built-in.o: In function `nla_append':
-> (.text+0xd493): undefined reference to `skb_put'
->
-> which happens with CONFIG_NET=3Dn, CONFIG_CRYPTO=3Dy, CONFIG_CRYPTO_Z=
-LIB=3D[my].
->
-> CRYPTO_ZLIB selects NLATTR, but obviously the build of nlattr.c fails
-> when CONFIG_NET=3Dn. =C2=A0Should CRYPTO_ZLIB depend on NET?
-> Please don't say that CRYPTO_ZLIB should select NET.
+On Tue, Mar 10, 2009 at 05:08:41PM +0100, Martin Schwidefsky wrote:
+> On Tue, 10 Mar 2009 16:29:50 +0100 (CET)
+> Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com> wrote:
+> 
+> > > The same could be done with the problematic pr_fmt definition:
+> > > 
+> > > #define pr_fmt(fmt)     __func__ ": " fmt
+> > 
+> > No, that also doesn't work:
+> > 
+> > | crypto/zlib.c:150: error: expected '}' before string constant
+> > | crypto/zlib.c:150: error: expected ')' before '__func__'
+> > | crypto/zlib.c:162: error: expected '}' before string constant
+> > | crypto/zlib.c:162: error: expected ')' before '__func__'
+> > | crypto/zlib.c:166: error: expected '}' before string constant
+> > | crypto/zlib.c:166: error: expected ')' before '__func__'
+> > | crypto/zlib.c:170: error: expected '}' before string constant
+> > | crypto/zlib.c:170: error: expected ')' before '__func__'
+> > 
+> > > > BTW, Martin: Is `#define pr_fmt(fmt)     "%s: " fmt, __func__' a valid and
+> > > > intended usage of your pr_fmt() infrastructure?
+> > > 
+> > > The indended use is a simple prefix to the format string. To paste an
+> > > additional parameter is an interesting use of the pr_fmt macro ..
+> > 
+> > Bummer, I was so happy I could do things like
+> > 
+> > | #define pr_fmt(fmt)	"%s:%u: " fmt, __func__, __LINE__
+> 
+> Actually that seem like a nice thing to have. With the upstream version of
+> dynamic_pr_debug this works, there the format string is used only on a printk.
+> git commit 25b67b75587d43ff3f09ad88c03c70a38372d95d introduces the code
+> that pastes the format string to the _ddebug structure.
+> 
 
-Bummer, my fault (commit e9cc8bddaea3944fabfebb968bc88d603239beed,
-netlink: Move netlink attribute parsing support to lib).
+hmmm...yeah, some macro magic in include/linux/dynamic_debug.h converts
+the 'fmt' arg into a series of strings. It doesn't look as pretty in the
+dynamic debug control file:
 
-Obviously I was only worried about crypto/zlib.c needing nlattr.c
-without pulling in the whole networking code, not about nlattr.c
-itself needing networking functionality. But still, how could I have
-missed this compile failure?
+crypto/zlib.c:333 [zlib]zlib_decompress_final - "\042%s: \042
+\042avail_in %u, avail_out %u (consumed %u, produced %u)\n\042,
+__func__"
 
-Does it sound sane to protect the routines that do call skb_put() by
-#ifdef CONFIG_NET?
+with all those '\042' there, which are the '"' characters, but we
+probably could live with it.
 
-Gr{oetje,eeting}s,
+patch below.
 
-						Geert
+thanks,
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
+-Jason
 
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-							    -- Linus Torvalds
+
+
+Signed-off-by: Jason Baron <jbaron@redhat.com>
+
+
+diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
+index 07781aa..16cf212 100644
+--- a/include/linux/dynamic_debug.h
++++ b/include/linux/dynamic_debug.h
+@@ -50,28 +50,30 @@ extern int ddebug_remove_module(char *mod_name);
+ 					__ret = 1;			     \
+ 	__ret; })
+ 
+-#define dynamic_pr_debug(fmt, ...) do {					\
+-	static struct _ddebug descriptor				\
+-	__used								\
+-	__attribute__((section("__verbose"), aligned(8))) =		\
+-	{ KBUILD_MODNAME, __func__, __FILE__, fmt, DEBUG_HASH,	\
+-		DEBUG_HASH2, __LINE__, _DPRINTK_FLAGS_DEFAULT };	\
+-	if (__dynamic_dbg_enabled(descriptor))				\
+-		printk(KERN_DEBUG KBUILD_MODNAME ":" fmt,		\
+-				##__VA_ARGS__);				\
++#define STRINGIFY(args...) #args
++
++#define dynamic_pr_debug(fmt, ...) do {					  \
++	static struct _ddebug descriptor				  \
++	__used								  \
++	__attribute__((section("__verbose"), aligned(8))) =		  \
++	{ KBUILD_MODNAME, __func__, __FILE__, STRINGIFY(fmt), DEBUG_HASH, \
++		DEBUG_HASH2, __LINE__, _DPRINTK_FLAGS_DEFAULT };	  \
++	if (__dynamic_dbg_enabled(descriptor))				  \
++		printk(KERN_DEBUG KBUILD_MODNAME ":" fmt,		  \
++				##__VA_ARGS__);				  \
+ 	} while (0)
+ 
+ 
+-#define dynamic_dev_dbg(dev, fmt, ...) do {				\
+-	static struct _ddebug descriptor				\
+-	__used								\
+-	__attribute__((section("__verbose"), aligned(8))) =		\
+-	{ KBUILD_MODNAME, __func__, __FILE__, fmt, DEBUG_HASH,	\
+-		DEBUG_HASH2, __LINE__, _DPRINTK_FLAGS_DEFAULT };	\
+-	if (__dynamic_dbg_enabled(descriptor))				\
+-			dev_printk(KERN_DEBUG, dev,			\
+-					KBUILD_MODNAME ": " fmt,	\
+-					##__VA_ARGS__);			\
++#define dynamic_dev_dbg(dev, fmt, ...) do {				  \
++	static struct _ddebug descriptor				  \
++	__used								  \
++	__attribute__((section("__verbose"), aligned(8))) =		  \
++	{ KBUILD_MODNAME, __func__, __FILE__, STRINGIFY(fmt), DEBUG_HASH, \
++		DEBUG_HASH2, __LINE__, _DPRINTK_FLAGS_DEFAULT };	  \
++	if (__dynamic_dbg_enabled(descriptor))				  \
++			dev_printk(KERN_DEBUG, dev,			  \
++					KBUILD_MODNAME ": " fmt,	  \
++					##__VA_ARGS__);			  \
+ 	} while (0)
+ 
+ #else
