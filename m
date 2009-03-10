@@ -1,69 +1,54 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: next-20090310: ext4 hangs
-Date: Tue, 10 Mar 2009 15:17:51 +0300
-Message-ID: <a4423d670903100517y42f342d4pd73c4c36f5c64dd7@mail.gmail.com>
+From: Daniel Lezcano <daniel.lezcano@free.fr>
+Subject: Re: [RFC 2/4] net: netfilter conntrack - add per-net functionality
+ 	for DCCP protocol
+Date: Tue, 10 Mar 2009 13:43:45 +0100
+Message-ID: <49B66081.7010702@free.fr>
+References: <20090309181628.109019157@gmail.com>	 <20090309182731.762563452@gmail.com> <49B63EA6.2060802@free.fr>	 <49B6420B.4080309@free.fr>	 <aa79d98a0903100359x5cba797fu9611823b91c64b42@mail.gmail.com>	 <49B65076.6090003@openvz.org> <aa79d98a0903100451r6179ca61l3573cd8ae6e171b7@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nf-out-0910.google.com ([64.233.182.187]:11597 "EHLO
-	nf-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753020AbZCJMRy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Mar 2009 08:17:54 -0400
+Received: from mtagate1.uk.ibm.com ([194.196.100.161]:42553 "EHLO
+	mtagate1.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752227AbZCJMno (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Mar 2009 08:43:44 -0400
+In-Reply-To: <aa79d98a0903100451r6179ca61l3573cd8ae6e171b7@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Cyrill Gorcunov <gorcunov@gmail.com>
+Cc: Pavel Emelyanov <xemul@openvz.org>, davem@davemloft.net, kaber@trash.net, netdev@vger.kernel.org, linux-next@vger.kernel.org, adobriyan@gmail.com, Cyrill Gorcunov <gorcunov@openvz.org>
 
-Hi
+Cyrill Gorcunov wrote:
+> On Tue, Mar 10, 2009 at 2:35 PM, Pavel Emelyanov <xemul@openvz.org> wrote:
+> ...
+>   
+>>>>>>   static int __init nf_conntrack_proto_dccp_init(void)
+>>>>>>  {
+>>>>>>     int err;
+>>>>>>  -    err = nf_conntrack_l4proto_register(&dccp_proto4);
+>>>>>> +    err = register_pernet_gen_device(&dccp_net_id, &dccp_net_ops);
+>>>>>>
+>>>>>>             
+>>>> [ cut ]
+>>>>         
+>>>>> Shouldn't it be register_pernet_gen_subsys ?
+>>>>>           
+>>> No, I believe. By using  register_pernet_gen_device I'm allowed to
+>>> not modify 'struct net' and friends and keep all I need in my own
+>>> pointer retrieved thru per-net gen-device id I've registered.
+>>>       
+>> I believe Daniel means, that we need the register_xxx_get_subsys call
+>> for subsystems, rather than devices, that will behave according to the
+>> generic net pointers.
+>>
+>> Daniel, am I right with this suggestion?
+>>
+>>     
+Correct, otherwise that can lead to a kernel panic if you receive a 
+packet while the namespace is exiting.
+> ...
+> Ah, yes, just checked register_pernet_gen_subsys -- it's what I need. Thanks!
+>   
+You are welcome :)
 
-It is similar to http://lkml.org/lkml/2009/2/6/304,
-http://bugzilla.kernel.org/show_bug.cgi?id=12579
-
-
-I run dbench on ext4 on loop on ext3 on sparc.
-The kernel is 2.6.29-rc7-next-20090310
-e2fsprogs -1.41.4
-
-ioctl32(mkfs.ext4:1668): Unknown cmd fd(3) cmd(40041272){t:12;sz:4}
-arg(ffb2ce60) on /testfs
-ioctl32(mkfs.ext4:1668): Unknown cmd fd(3) cmd(20001260){t:12;sz:0}
-arg(ffb2ce6c) on /testfs
-ioctl32(mkfs.ext4:1668): Unknown cmd fd(3) cmd(401c0204){t:02;sz:28}
-arg(ffb2ce44) on /testfs
-ioctl32(mkfs.ext4:1668): Unknown cmd fd(3) cmd(20001268){t:12;sz:0}
-arg(ffb2d564) on /testfs
-ioctl32(mkfs.ext4:1668): Unknown cmd fd(3) cmd(2000125e){t:12;sz:0}
-arg(ffb2ce6c) on /testfs
-EXT4-fs: barriers enabled
-EXT4 FS on loop0, internal journal on loop0:8
-EXT4-fs: delayed allocation enabled
-EXT4-fs: file extents enabled
-EXT4-fs: mballoc enabled
-EXT4-fs: mounted filesystem loop0 with ordered data mode
-kjournald2 starting: pid 1672, dev loop0:8, commit interval 5 seconds
-JBD: barrier-based sync failed on loop0:8 - disabling barriers
-INFO: task kjournald2:1672 blocked for more than 120 seconds.
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-kjournald2    D 0000000000557a0c     0  1672      2
-Call Trace:
- [0000000000768bcc] schedule+0x18/0x40
- [0000000000557a0c] jbd2_journal_commit_transaction+0x208/0x1718
- [000000000055d758] kjournald2+0x14c/0x318
- [0000000000465d34] kthread+0x48/0x7c
- [000000000042b364] kernel_thread+0x3c/0x54
- [0000000000465c88] kthreadd+0xc8/0x12c
-INFO: lockdep is turned off.
-INFO: task dbench:1674 blocked for more than 120 seconds.
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-dbench        D 000000000055716c     0  1674   1673
-Call Trace:
- [0000000000768bcc] schedule+0x18/0x40
- [000000000055716c] start_this_handle+0x374/0x508
- [0000000000557500] jbd2_journal_start+0xbc/0x11c
- [000000000053a438] ext4_journal_start_sb+0x5c/0x84
- [000000000052a9b8] ext4_dirty_inode+0xd4/0xf0
- [00000000004d1a14] __mark_inode_dirty+0x2c/0x188
- [00000000004c7714] touch_atime+0x160/0x178
- [00000000004c2a3c] vfs_readdir+0x88/0xb0
- [00000000004eab90] compat_sys_getdents+0x3c/0x8c
- [0000000000406154] linux_sparc_syscall32+0x34/0x40
+  -- Daniel
