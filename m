@@ -1,38 +1,51 @@
-From: "NeilBrown" <neilb@suse.de>
-Subject: Re: linux-next: manual merge of the md tree with the  tree
-Date: Tue, 10 Mar 2009 17:40:20 +1100 (EST)
-Message-ID: <ad338337833c61261ca27f348033e83d.squirrel@neil.brown.name>
-References: <20090310163302.874a669c.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: md tree build failure
+Date: Tue, 10 Mar 2009 17:48:46 +1100
+Message-ID: <20090310174846.507b748a.sfr@canb.auug.org.au>
+References: <20090310164750.affe762c.sfr@canb.auug.org.au>
+	<d7e2f37be5a29b90440a7a4780327b0f.squirrel@neil.brown.name>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__10_Mar_2009_17_48_46_+1100_7YJqQGEdEXDSv+zX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:38875 "EHLO mx2.suse.de"
+Received: from chilli.pcug.org.au ([203.10.76.44]:46727 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751992AbZCJGk2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Mar 2009 02:40:28 -0400
-In-Reply-To: <20090310163302.874a669c.sfr@canb.auug.org.au>
+	id S1751992AbZCJGsw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Mar 2009 02:48:52 -0400
+In-Reply-To: <d7e2f37be5a29b90440a7a4780327b0f.squirrel@neil.brown.name>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Johannes Weiner <jw@emlix.com>, Dan Williams <dan.j.williams@intel.com>
+To: NeilBrown <neilb@suse.de>
+Cc: linux-next@vger.kernel.org
 
-On Tue, March 10, 2009 4:33 pm, Stephen Rothwell wrote:
-> Hi Neil,
+--Signature=_Tue__10_Mar_2009_17_48_46_+1100_7YJqQGEdEXDSv+zX
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Neil,
+
+On Tue, 10 Mar 2009 17:38:19 +1100 (EST) "NeilBrown" <neilb@suse.de> wrote:
 >
-> Today's linux-next merge of the md tree got a conflict in
-> include/linux/dmaengine.h between commit
-> 1d93e52eb48df986a3c4d5ad8a520bf1f6837367 ("dmaengine: update kerneldoc")
-> from Linus' tree and commit a23742cb3c1ca5d412dea09de452c9d173b80afd
-> ("async_tx: add support for asynchronous GF multiplication") from the md
-> tree.
->
-> I fixed it up (see below) and can carry the fix for a while.
+> I've fixed this now so you should get more happiness next time.
 
-Thanks.
-I've resolved this i my tree so you don't need to carry the fix any
-further.
-I suspect Dan will give an updates set of async-raid6 patches some time
-in the next few days....
+OK, thanks.
 
-NeilBrown
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__10_Mar_2009_17_48_46_+1100_7YJqQGEdEXDSv+zX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkm2DU4ACgkQjjKRsyhoI8xw/QCgkd0N/2rTSBCVzb3lXHvK6BBc
+LXEAoIoAgys53+x3dPPX0e4Lhff/iS5g
+=5KgU
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__10_Mar_2009_17_48_46_+1100_7YJqQGEdEXDSv+zX--
