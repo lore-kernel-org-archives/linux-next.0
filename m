@@ -1,54 +1,32 @@
-From: Daniel Lezcano <daniel.lezcano@free.fr>
-Subject: Re: [RFC 2/4] net: netfilter conntrack - add per-net functionality
- 	for DCCP protocol
-Date: Tue, 10 Mar 2009 13:43:45 +0100
-Message-ID: <49B66081.7010702@free.fr>
-References: <20090309181628.109019157@gmail.com>	 <20090309182731.762563452@gmail.com> <49B63EA6.2060802@free.fr>	 <49B6420B.4080309@free.fr>	 <aa79d98a0903100359x5cba797fu9611823b91c64b42@mail.gmail.com>	 <49B65076.6090003@openvz.org> <aa79d98a0903100451r6179ca61l3573cd8ae6e171b7@mail.gmail.com>
+From: Theodore Tso <tytso@mit.edu>
+Subject: Re: next-20090310: ext4 hangs
+Date: Tue, 10 Mar 2009 08:46:58 -0400
+Message-ID: <20090310124658.GE8840@mit.edu>
+References: <a4423d670903100517y42f342d4pd73c4c36f5c64dd7@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate1.uk.ibm.com ([194.196.100.161]:42553 "EHLO
-	mtagate1.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752227AbZCJMno (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Mar 2009 08:43:44 -0400
-In-Reply-To: <aa79d98a0903100451r6179ca61l3573cd8ae6e171b7@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Cyrill Gorcunov <gorcunov@gmail.com>
-Cc: Pavel Emelyanov <xemul@openvz.org>, davem@davemloft.net, kaber@trash.net, netdev@vger.kernel.org, linux-next@vger.kernel.org, adobriyan@gmail.com, Cyrill Gorcunov <gorcunov@openvz.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754558AbZCJMrV@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <a4423d670903100517y42f342d4pd73c4c36f5c64dd7@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Cyrill Gorcunov wrote:
-> On Tue, Mar 10, 2009 at 2:35 PM, Pavel Emelyanov <xemul@openvz.org> wrote:
-> ...
->   
->>>>>>   static int __init nf_conntrack_proto_dccp_init(void)
->>>>>>  {
->>>>>>     int err;
->>>>>>  -    err = nf_conntrack_l4proto_register(&dccp_proto4);
->>>>>> +    err = register_pernet_gen_device(&dccp_net_id, &dccp_net_ops);
->>>>>>
->>>>>>             
->>>> [ cut ]
->>>>         
->>>>> Shouldn't it be register_pernet_gen_subsys ?
->>>>>           
->>> No, I believe. By using  register_pernet_gen_device I'm allowed to
->>> not modify 'struct net' and friends and keep all I need in my own
->>> pointer retrieved thru per-net gen-device id I've registered.
->>>       
->> I believe Daniel means, that we need the register_xxx_get_subsys call
->> for subsystems, rather than devices, that will behave according to the
->> generic net pointers.
->>
->> Daniel, am I right with this suggestion?
->>
->>     
-Correct, otherwise that can lead to a kernel panic if you receive a 
-packet while the namespace is exiting.
-> ...
-> Ah, yes, just checked register_pernet_gen_subsys -- it's what I need. Thanks!
->   
-You are welcome :)
+On Tue, Mar 10, 2009 at 03:17:51PM +0300, Alexander Beregalov wrote:
+> Hi
+> 
+> It is similar to http://lkml.org/lkml/2009/2/6/304,
+> http://bugzilla.kernel.org/show_bug.cgi?id=12579
+> 
+> I run dbench on ext4 on loop on ext3 on sparc.
+> The kernel is 2.6.29-rc7-next-20090310
+> e2fsprogs -1.41.4
 
-  -- Daniel
+Thanks for reporting this; does it show up on stock 2.6.29-rc7?  And
+any chance you can enable LOCKDEP?  Finally, how many CPU's do you
+have on your machine?
+
+Thanks again,
+
+						- Ted
