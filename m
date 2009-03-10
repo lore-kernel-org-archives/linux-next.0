@@ -1,43 +1,45 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: Re: next-20090310: ext4 hangs
-Date: Tue, 10 Mar 2009 15:54:30 +0300
-Message-ID: <a4423d670903100554w32fa7ad0n771b4351b2434382@mail.gmail.com>
-References: <a4423d670903100517y42f342d4pd73c4c36f5c64dd7@mail.gmail.com>
-	 <20090310124658.GE8840@mit.edu>
+From: Daniel Lezcano <daniel.lezcano@free.fr>
+Subject: Re: [RFC 2/4] net: netfilter conntrack - add per-net functionality
+ for DCCP protocol
+Date: Tue, 10 Mar 2009 14:02:52 +0100
+Message-ID: <49B664FC.4070103@free.fr>
+References: <20090309181628.109019157@gmail.com>	<20090309182731.762563452@gmail.com>	<49B63EA6.2060802@free.fr> <20090310.042537.49464370.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f177.google.com ([209.85.219.177]:42947 "EHLO
-	mail-ew0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752114AbZCJMye convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Mar 2009 08:54:34 -0400
-In-Reply-To: <20090310124658.GE8840@mit.edu>
+Received: from mtagate6.de.ibm.com ([195.212.29.155]:36412 "EHLO
+	mtagate6.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755099AbZCJNDy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Mar 2009 09:03:54 -0400
+In-Reply-To: <20090310.042537.49464370.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Tso <tytso@mit.edu>, Alexander Beregalov <a.beregalov@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-ext4@vger.kernel.org, LKML <linux-kernel@vg>
+To: David Miller <davem@davemloft.net>
+Cc: gorcunov@gmail.com, kaber@trash.net, netdev@vger.kernel.org, linux-next@vger.kernel.org, xemul@openvz.org, adobriyan@gmail.com, gorcunov@openvz.org
 
-2009/3/10 Theodore Tso <tytso@mit.edu>:
-> On Tue, Mar 10, 2009 at 03:17:51PM +0300, Alexander Beregalov wrote:
->> Hi
->>
->> It is similar to http://lkml.org/lkml/2009/2/6/304,
->> http://bugzilla.kernel.org/show_bug.cgi?id=3D12579
->>
->> I run dbench on ext4 on loop on ext3 on sparc.
->> The kernel is 2.6.29-rc7-next-20090310
->> e2fsprogs -1.41.4
+David Miller wrote:
+> From: Daniel Lezcano <daniel.lezcano@free.fr>
+> Date: Tue, 10 Mar 2009 11:19:18 +0100
 >
-> Thanks for reporting this; does it show up on stock 2.6.29-rc7? =C2=A0=
-And
-> any chance you can enable LOCKDEP? =C2=A0Finally, how many CPU's do y=
-ou
-> have on your machine?
+>   
+>>>  static int __init nf_conntrack_proto_dccp_init(void)
+>>>  {
+>>>  	int err;
+>>>  -	err = nf_conntrack_l4proto_register(&dccp_proto4);
+>>> +	err = register_pernet_gen_device(&dccp_net_id, &dccp_net_ops);
+>>>   
+>>>       
+>> Shouldn't it be register_pernet_gen_subsys ?
+>>     
+>
+> Do I really have to carefully and meticuliously scan down
+> hundreds and hundreds of irrelevant quoted patch text just
+> to see what bit you're commenting on?
+>
+> Please, just provide the necessary context of the patch for
+> your comments, don't quote the whole thing :-(
+>   
+Sorry, I will do that in the future.
 
-I will try it with current -git.
-LOCkDEP is enabled already.
-CONFIG_LOCKDEP_SUPPORT=3Dy
-CONFIG_LOCKDEP=3Dy
-CONFIG_DEBUG_LOCKDEP=3Dy
-
-It is UP system.
+  -- Daniel
