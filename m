@@ -1,26 +1,64 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: manual merge of the sound tree with the arm tree
-Date: Tue, 10 Mar 2009 20:04:37 +0000
-Message-ID: <20090310200437.GA6959@opensource.wolfsonmicro.com>
-References: <20090310144528.0fa208dd.sfr@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: Tree for March 10 (m68k/tlbflush.h)
+Date: Tue, 10 Mar 2009 21:07:25 +0100
+Message-ID: <10f740e80903101307v70000e0cm61e261050411a715@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:52791 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752539AbZCJUEm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Mar 2009 16:04:42 -0400
-Content-Disposition: inline
-In-Reply-To: <20090310144528.0fa208dd.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Takashi Iwai <tiwai@suse.de>, linux-next@vger.kernel.org, Ben Dooks <ben@simtec.co.uk>, Alexander Schulz <alex@shark-linux.de>, Russell King <rmk@arm.linux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757614AbZCJUHs@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg Ungerer <gerg@snapgear.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Mar 10, 2009 at 02:45:28PM +1100, Stephen Rothwell wrote:
+Hi Greg,
 
-> I fixed it up (see below) and can carry the fix as necessary.
+http://kisskb.ellerman.id.au/kisskb/buildresult/180587/
+| arch/m68k/kernel/traps.c:274: error: implicit declaration of
+function '__flush_tlb040_one'
 
-I've pushed a patch which should do the equivalent thing to Takashi, it
-should hopefully show up in -next soon via his tree.
+http://kisskb.ellerman.id.au/kisskb/buildresult/180591/
+| mm/vmalloc.c:555: error: implicit declaration of function
+'flush_tlb_kernel_range'
+
+Caused by:
+
+| commit 7fa69761ea82752b97502383f7f2d3fdfa509115
+| Author: Greg Ungerer <gerg@uclinux.org>
+| Date:   Tue Feb 17 14:40:47 2009 +1000
+|
+|     m68k: merge the mmu and non-mmu versions of tlbflush.h
+|
+|     Simple merge of the mmu and non-mmu versions of tlbflush.h
+|
+|     Signed-off-by: Greg Ungerer <gerg@uclinux.org>
+
+Seems like you merged the wrong way:
+
+| diff --git a/arch/m68k/include/asm/tlbflush.h
+b/arch/m68k/include/asm/tlbflush.h
+| index b6f93b3..79050d0 100644
+| --- a/arch/m68k/include/asm/tlbflush.h
+| +++ b/arch/m68k/include/asm/tlbflush.h
+| @@ -1,5 +1,267 @@
+| -#ifdef __uClinux__
+| -#include "tlbflush_no.h"
+| +#ifndef _M68K_TLBFLUSH_H
+| +#define _M68K_TLBFLUSH_H
+| +
+| +#ifndef CONFIG_MMU
+    ^^^^^
+    ifdef
+
+| +#ifndef CONFIG_SUN3
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
