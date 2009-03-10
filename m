@@ -1,66 +1,56 @@
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-Subject: Re: [RFC 2/4] net: netfilter conntrack - add per-net functionality
-	for DCCP protocol
-Date: Tue, 10 Mar 2009 13:59:56 +0300
-Message-ID: <aa79d98a0903100359x5cba797fu9611823b91c64b42@mail.gmail.com>
-References: <20090309181628.109019157@gmail.com>
-	 <20090309182731.762563452@gmail.com> <49B63EA6.2060802@free.fr>
-	 <49B6420B.4080309@free.fr>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for March 10
+Date: Tue, 10 Mar 2009 22:07:51 +1100
+Message-ID: <20090310220751.bd25139f.sfr@canb.auug.org.au>
+References: <20090310195534.8f8f3c7a.sfr@canb.auug.org.au>
+	<20090310093324.GA26779@infomag.iguana.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__10_Mar_2009_22_07_51_+1100_O/Sq0+HKh5M3.mGz"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fg-out-1718.google.com ([72.14.220.152]:47151 "EHLO
-	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754023AbZCJLAA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Mar 2009 07:00:00 -0400
-In-Reply-To: <49B6420B.4080309@free.fr>
+Received: from chilli.pcug.org.au ([203.10.76.44]:54898 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751691AbZCJLH5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Mar 2009 07:07:57 -0400
+In-Reply-To: <20090310093324.GA26779@infomag.iguana.be>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Lezcano <daniel.lezcano@free.fr>
-Cc: davem@davemloft.net, kaber@trash.net, netdev@vger.kernel.org, linux-next@vger.kernel.org, xemul@openvz.org, adobriyan@gmail.com, Cyrill Gorcunov <gorcunov@openvz.org>
+To: Wim Van Sebroeck <wim@iguana.be>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, Mar 10, 2009 at 1:33 PM, Daniel Lezcano <daniel.lezcano@free.fr> wrote:
-> Daniel Lezcano wrote:
->>
->> Cyrill Gorcunov wrote:
->>>
->>> Module specific data moved into per-net site and being allocated/freed
->>> during net namespace creation/deletion.
->>>
->>> Signed-off-by: Cyrill Gorcunov <gorcunov@openvz.org>
->>> ---
->>>  net/netfilter/nf_conntrack_proto_dccp.c |  148
->>> ++++++++++++++++++++++++--------
->>>  1 file changed, 111 insertions(+), 37 deletions(-)
->>>
->>>
->>>   static int __init nf_conntrack_proto_dccp_init(void)
->>>  {
->>>     int err;
->>>  -    err = nf_conntrack_l4proto_register(&dccp_proto4);
->>> +    err = register_pernet_gen_device(&dccp_net_id, &dccp_net_ops);
->>>
->
-> [ cut ]
->>
->> Shouldn't it be register_pernet_gen_subsys ?
+--Signature=_Tue__10_Mar_2009_22_07_51_+1100_O/Sq0+HKh5M3.mGz
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-No, I believe. By using  register_pernet_gen_device I'm allowed to
-not modify 'struct net' and friends and keep all I need in my own
-pointer retrieved thru per-net gen-device id I've registered.
+Hi Wim,
 
+On Tue, 10 Mar 2009 10:33:24 +0100 Wim Van Sebroeck <wim@iguana.be> wrote:
 >
-> If you use register_pernet_gen_device, your subsystem will be deleted before
-> the network devices and potentially you can receive a packet even if your
-> subsystem is already freed.
->
-> Eric did a fix for tcp and icmp a few weeks ago. I thing its explanation is
-> better than mine :)
-> it is the commit 6eb0777228f31932fc941eafe8b08848466630a1 for net-2.6
->
-> Thanks.
->  -- Daniel
->
+> > Merging watchdog/master
+> > CONFLICT (content): Merge conflict in drivers/watchdog/orion5x_wdt.c
+> > CONFLICT (content): Merge conflict in drivers/watchdog/rc32434_wdt.c
+>=20
+> I redid the linux-2.6-watchdog-next tree. Should be fixed next time.
 
-Thanks a lot Daniel, will check!
+Thanks.  I could see that they were just continuations of patches that
+went into Linus' tree, so was not worried about them.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__10_Mar_2009_22_07_51_+1100_O/Sq0+HKh5M3.mGz
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkm2SgcACgkQjjKRsyhoI8xQ7wCfeqYn8VBaRO4GRD0dIn8vciDz
+fQIAoJoC4rHXMIW6wvTdf9Y4wRi2ppke
+=nSEn
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__10_Mar_2009_22_07_51_+1100_O/Sq0+HKh5M3.mGz--
