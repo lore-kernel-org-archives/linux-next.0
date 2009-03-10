@@ -1,30 +1,40 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: Re: next-20090310: ext4 hangs
-Date: Tue, 10 Mar 2009 17:18:55 +0300
-Message-ID: <a4423d670903100718w1a532143he767782ae598d0fb@mail.gmail.com>
-References: <a4423d670903100517y42f342d4pd73c4c36f5c64dd7@mail.gmail.com>
-	 <20090310124658.GE8840@mit.edu>
+From: Paul Moore <paul.moore@hp.com>
+Subject: Re: linux-next: manual merge of the lblnet tree with Linus' tree
+Date: Tue, 10 Mar 2009 11:00:36 -0400
+Message-ID: <200903101100.36903.paul.moore@hp.com>
+References: <20090310171334.bd6d51fb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-ext4-owner@vger.kernel.org>
-In-Reply-To: <20090310124658.GE8840@mit.edu>
-Sender: linux-ext4-owner@vger.kernel.org
-To: Theodore Tso <tytso@mit.edu>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from g5t0007.atlanta.hp.com ([15.192.0.44]:31754 "EHLO
+	g5t0007.atlanta.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751770AbZCJPBK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Mar 2009 11:01:10 -0400
+In-Reply-To: <20090310171334.bd6d51fb.sfr@canb.auug.org.au>
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Dave Jones <davej@redhat.com>, Matthew Garrett <mjg@redhat.com>
 
-2009/3/10 Theodore Tso <tytso@mit.edu>:
-> On Tue, Mar 10, 2009 at 03:17:51PM +0300, Alexander Beregalov wrote:
->> Hi
->>
->> It is similar to http://lkml.org/lkml/2009/2/6/304,
->> http://bugzilla.kernel.org/show_bug.cgi?id=12579
->>
->> I run dbench on ext4 on loop on ext3 on sparc.
->> The kernel is 2.6.29-rc7-next-20090310
->> e2fsprogs -1.41.4
+On Tuesday 10 March 2009 02:13:34 am Stephen Rothwell wrote:
+> Hi Paul,
 >
-> Thanks for reporting this; does it show up on stock 2.6.29-rc7?
-No, I can not reproduce it.
-It is a slow system, I would not like to bisect it, only if it is the
-last possibility.
+> Today's linux-next merge of the lblnet tree got a conflict in
+> Documentation/feature-removal-schedule.txt between commit
+> 753b7aea8e4611433c13ac157f944d8b4bf42482 ("[CPUFREQ] Add p4-clockmod
+> sysfs-ui removal to feature-removal schedule") from Linus' tree and
+> commit 4c7098cc3b1ccf2930bfb866e108e6cd10f4b2f3 ("selinux: Remove the
+> "compat_net" compatibility code") from the lblnet tree.
+>
+> Just overlapping additions/removal.  I fixed it up (see below) and can
+> carry the fix for a while.
+
+Thanks Stephen, I just updated the lblnet tree so there should be no conflict 
+here come tomorrow.
+
+-- 
+paul moore
+linux @ hp
