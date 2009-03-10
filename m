@@ -1,56 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for March 10
-Date: Tue, 10 Mar 2009 22:07:51 +1100
-Message-ID: <20090310220751.bd25139f.sfr@canb.auug.org.au>
-References: <20090310195534.8f8f3c7a.sfr@canb.auug.org.au>
-	<20090310093324.GA26779@infomag.iguana.be>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [RFC 2/4] net: netfilter conntrack - add per-net functionality
+ for DCCP protocol
+Date: Tue, 10 Mar 2009 04:25:37 -0700 (PDT)
+Message-ID: <20090310.042537.49464370.davem@davemloft.net>
+References: <20090309181628.109019157@gmail.com>
+	<20090309182731.762563452@gmail.com>
+	<49B63EA6.2060802@free.fr>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__10_Mar_2009_22_07_51_+1100_O/Sq0+HKh5M3.mGz"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54898 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751691AbZCJLH5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Mar 2009 07:07:57 -0400
-In-Reply-To: <20090310093324.GA26779@infomag.iguana.be>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:56863
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1754057AbZCJLZv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Mar 2009 07:25:51 -0400
+In-Reply-To: <49B63EA6.2060802@free.fr>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: daniel.lezcano@free.fr
+Cc: gorcunov@gmail.com, kaber@trash.net, netdev@vger.kernel.org, linux-next@vger.kernel.org, xemul@openvz.org, adobriyan@gmail.com, gorcunov@openvz.org
 
---Signature=_Tue__10_Mar_2009_22_07_51_+1100_O/Sq0+HKh5M3.mGz
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Daniel Lezcano <daniel.lezcano@free.fr>
+Date: Tue, 10 Mar 2009 11:19:18 +0100
 
-Hi Wim,
+> >  static int __init nf_conntrack_proto_dccp_init(void)
+> >  {
+> >  	int err;
+> >  -	err = nf_conntrack_l4proto_register(&dccp_proto4);
+> > +	err = register_pernet_gen_device(&dccp_net_id, &dccp_net_ops);
+> >   
+> 
+> Shouldn't it be register_pernet_gen_subsys ?
 
-On Tue, 10 Mar 2009 10:33:24 +0100 Wim Van Sebroeck <wim@iguana.be> wrote:
->
-> > Merging watchdog/master
-> > CONFLICT (content): Merge conflict in drivers/watchdog/orion5x_wdt.c
-> > CONFLICT (content): Merge conflict in drivers/watchdog/rc32434_wdt.c
->=20
-> I redid the linux-2.6-watchdog-next tree. Should be fixed next time.
+Do I really have to carefully and meticuliously scan down
+hundreds and hundreds of irrelevant quoted patch text just
+to see what bit you're commenting on?
 
-Thanks.  I could see that they were just continuations of patches that
-went into Linus' tree, so was not worried about them.
+Please, just provide the necessary context of the patch for
+your comments, don't quote the whole thing :-(
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__10_Mar_2009_22_07_51_+1100_O/Sq0+HKh5M3.mGz
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkm2SgcACgkQjjKRsyhoI8xQ7wCfeqYn8VBaRO4GRD0dIn8vciDz
-fQIAoJoC4rHXMIW6wvTdf9Y4wRi2ppke
-=nSEn
------END PGP SIGNATURE-----
-
---Signature=_Tue__10_Mar_2009_22_07_51_+1100_O/Sq0+HKh5M3.mGz--
+Thanks.
