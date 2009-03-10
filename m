@@ -1,38 +1,38 @@
 From: "NeilBrown" <neilb@suse.de>
-Subject: Re: linux-next: md tree build failure
-Date: Tue, 10 Mar 2009 17:38:19 +1100 (EST)
-Message-ID: <d7e2f37be5a29b90440a7a4780327b0f.squirrel@neil.brown.name>
-References: <20090310164750.affe762c.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the md tree with the  tree
+Date: Tue, 10 Mar 2009 17:40:20 +1100 (EST)
+Message-ID: <ad338337833c61261ca27f348033e83d.squirrel@neil.brown.name>
+References: <20090310163302.874a669c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:38854 "EHLO mx2.suse.de"
+Received: from cantor2.suse.de ([195.135.220.15]:38875 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751881AbZCJGi2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Mar 2009 02:38:28 -0400
-In-Reply-To: <20090310164750.affe762c.sfr@canb.auug.org.au>
+	id S1751992AbZCJGk2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Mar 2009 02:40:28 -0400
+In-Reply-To: <20090310163302.874a669c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+Cc: linux-next@vger.kernel.org, Johannes Weiner <jw@emlix.com>, Dan Williams <dan.j.williams@intel.com>
 
-On Tue, March 10, 2009 4:47 pm, Stephen Rothwell wrote:
+On Tue, March 10, 2009 4:33 pm, Stephen Rothwell wrote:
 > Hi Neil,
 >
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> Today's linux-next merge of the md tree got a conflict in
+> include/linux/dmaengine.h between commit
+> 1d93e52eb48df986a3c4d5ad8a520bf1f6837367 ("dmaengine: update kerneldoc")
+> from Linus' tree and commit a23742cb3c1ca5d412dea09de452c9d173b80afd
+> ("async_tx: add support for asynchronous GF multiplication") from the md
+> tree.
 >
-> drivers/md/raid10.c: In function 'sync_request':
-> drivers/md/raid10.c:1753: error: implicit declaration of function
-> 'msleep_interruptible'
->
-> Caused by commit 10d4564a71c58e89ddee656eb6cb0fecf5ac4b3c ("md: move lots
-> of #include lines out of .h files and into .c").
->
-> I have merged the version of the md tree fomr next-20090306 instead of
-> today's.
+> I fixed it up (see below) and can carry the fix for a while.
 
 Thanks.
-I've fixed this now so you should get more happiness next time.
+I've resolved this i my tree so you don't need to carry the fix any
+further.
+I suspect Dan will give an updates set of async-raid6 patches some time
+in the next few days....
 
 NeilBrown
