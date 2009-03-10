@@ -1,64 +1,54 @@
-From: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-Subject: Re: linux-next: tracing tree build failure
-Date: Tue, 10 Mar 2009 11:16:37 +0900 (JST)
-Message-ID: <20090310111435.A486.A69D9226@jp.fujitsu.com>
-References: <20090310115509.328da465.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: xfs tree build failure
+Date: Tue, 10 Mar 2009 13:45:47 +1100
+Message-ID: <20090310134547.e5d1d9ee.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__10_Mar_2009_13_45_47_+1100_vGk340DGPWOWXAwU"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fgwmail7.fujitsu.co.jp ([192.51.44.37]:55211 "EHLO
-	fgwmail7.fujitsu.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752046AbZCJCQo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Mar 2009 22:16:44 -0400
-Received: from m3.gw.fujitsu.co.jp ([10.0.50.73])
-	by fgwmail7.fujitsu.co.jp (Fujitsu Gateway) with ESMTP id n2A2GdBm018986
-	for <linux-next@vger.kernel.org> (envelope-from kosaki.motohiro@jp.fujitsu.com);
-	Tue, 10 Mar 2009 11:16:42 +0900
-Received: from smail (m3 [127.0.0.1])
-	by outgoing.m3.gw.fujitsu.co.jp (Postfix) with ESMTP id 9307845DD7D
-	for <linux-next@vger.kernel.org>; Tue, 10 Mar 2009 11:16:39 +0900 (JST)
-Received: from s3.gw.fujitsu.co.jp (s3.gw.fujitsu.co.jp [10.0.50.93])
-	by m3.gw.fujitsu.co.jp (Postfix) with ESMTP id 6E6EC45DD78
-	for <linux-next@vger.kernel.org>; Tue, 10 Mar 2009 11:16:39 +0900 (JST)
-Received: from s3.gw.fujitsu.co.jp (localhost.localdomain [127.0.0.1])
-	by s3.gw.fujitsu.co.jp (Postfix) with ESMTP id 48E551DB8042
-	for <linux-next@vger.kernel.org>; Tue, 10 Mar 2009 11:16:39 +0900 (JST)
-Received: from m107.s.css.fujitsu.com (m107.s.css.fujitsu.com [10.249.87.107])
-	by s3.gw.fujitsu.co.jp (Postfix) with ESMTP id 05BB41DB8043
-	for <linux-next@vger.kernel.org>; Tue, 10 Mar 2009 11:16:39 +0900 (JST)
-In-Reply-To: <20090310115509.328da465.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46586 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751386AbZCJCpz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 Mar 2009 22:45:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: kosaki.motohiro@jp.fujitsu.com, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Tejun Heo <tj@kernel.org>
+To: David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
+Cc: linux-next@vger.kernel.org
 
-Hi Stephen,
+--Signature=_Tue__10_Mar_2009_13_45_47_+1100_vGk340DGPWOWXAwU
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi all,
-> 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
-> 
-> kernel/trace/trace_functions_graph.c: In function 'graph_trace_close':
-> kernel/trace/trace_functions_graph.c:836: error: implicit declaration of function 'percpu_free'
-> 
-> The direct cause is commit 422d3c7a577b15e1384c9d4e72a9540896b685fa
-> ("tracing: current tip/master can't enable ftrace") from the tracing tree
-> which exposed an interaction between commit
-> f2a8205c4ef1af917d175c36a4097ae5587791c8 ("percpu: kill percpu_alloc()
-> and friends") from the tip-core tree and commit
-> 9005f3ebebfcfe9ccd731d16c468907a35ac1f9a ("tracing/function-graph-tracer:
-> various fixes and features") from the tracing tree.
-> 
-> I have reverted commit 422d3c7a577b15e1384c9d4e72a9540896b685fa for
-> today.  (As a side note, that commit has no Signed-off-by ...)
+Hi David,
 
-I checked latest -tip tree and I found Ingo fixed this issue by following commit.
-Could you please try to pull latest tip tree?
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
+In file included from fs/xfs/support/debug.c:21:
+fs/xfs/xfs_error.h:137: error: expected declaration specifiers or '...' bef=
+ore 'xfs_mount_t'
+fs/xfs/xfs_error.h:138: error: expected ')' before '*' token
 
-commit 56bc29b4b8e188275f52cd5270bcf54f22cfc92b
-Author: Ingo Molnar <mingo@elte.hu>
-Date:   Thu Mar 5 22:04:39 2009 +0100
+Immediate cause is commit 7bf446f8b581cef434f5ff05e8a791563bc09b7f ("xfs:
+include header files for prototypes").
 
-    merge conflict resolutions
+I have merged the version of the xfs tree from next-20090306 instead of
+today's.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__10_Mar_2009_13_45_47_+1100_vGk340DGPWOWXAwU
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkm11FsACgkQjjKRsyhoI8wtbQCfco4khnWcx4yq611kbzcr58jH
+oRcAnj9dFHqV5O1HprN45MtSwEmYgOLl
+=O2+B
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__10_Mar_2009_13_45_47_+1100_vGk340DGPWOWXAwU--
