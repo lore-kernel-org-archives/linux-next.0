@@ -1,171 +1,69 @@
 From: Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>
-Subject: Re: linux-next: Tree for March 10 (crypto & NLATTR)
-Date: Wed, 11 Mar 2009 13:25:09 +0100 (CET)
-Message-ID: <alpine.LRH.2.00.0903111324400.1040@vixen.sonytel.be>
-References: <49B6B821.5050302@oracle.com> <10f740e80903101256v2cfe08a8g410c297e019d8693@mail.gmail.com> <49B6C8BF.8010105@oracle.com> <20090310.131700.40129006.davem@davemloft.net> <20090311010705.GA17260@gondor.apana.org.au>
+Subject: Re: linux-next: block/proc tree build failure
+Date: Wed, 11 Mar 2009 13:28:57 +0100 (CET)
+Message-ID: <alpine.LRH.2.00.0903111328340.1040@vixen.sonytel.be>
+References: <20090311224418.f1a7cb5f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=ISO-8859-15
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from vervifontaine.sonytel.be ([80.88.33.193]:56803 "EHLO
+Received: from vervifontaine.sonytel.be ([80.88.33.193]:56888 "EHLO
 	vervifontaine.sonycom.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1755140AbZCKMZM (ORCPT
+	by vger.kernel.org with ESMTP id S1751395AbZCKM27 (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Mar 2009 08:25:12 -0400
-In-Reply-To: <20090311010705.GA17260@gondor.apana.org.au>
+	Wed, 11 Mar 2009 08:28:59 -0400
+In-Reply-To: <20090311224418.f1a7cb5f.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: David Miller <davem@davemloft.net>, randy.dunlap@oracle.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jens Axboe <jens.axboe@oracle.com>, Alexey Dobriyan <adobriyan@gmail.com>, linux-next@vger.kernel.org, Geoff Levand <geoffrey.levand@am.sony.com>
 
-On Wed, 11 Mar 2009, Herbert Xu wrote:
-> On Tue, Mar 10, 2009 at 01:17:00PM -0700, David Miller wrote:
-> > From: Randy Dunlap <randy.dunlap@oracle.com>
-> > Date: Tue, 10 Mar 2009 13:08:31 -0700
-> >=20
-> > > I'll have to let David or Herbert answer that.  From my quick loo=
-k
-> > > at the code, I don't see much use for nlattr.c when CONFIG_NET
-> > > is not enabled.
-> >=20
-> > We want to use the netlink attribute parsers even in non-networking
-> > code, that's what he's trying to do here.
+On Wed, 11 Mar 2009, Stephen Rothwell wrote:
+> Today's linux-next build (powerpc allyesconfig) failed like this:
 >=20
-> OK the nlattr construction code really wants to depend on NET
-> because they're skb-oriented.  We could either move them back
-> or just wrap them in ifdef CONFIG_NET.
+> drivers/block/ps3vram.c: In function 'ps3vram_proc_init':
+> drivers/block/ps3vram.c:555: error: 'struct proc_dir_entry' has no me=
+mber named 'owner'
 >=20
-> I think the latter is probably the simplest.
+> Caused by the interaction of commit
+> ce12b152a2e5c0f831853180e84f3ba6e3fee4a1 ("ps3/block: Replace mtd/ps3=
+vram
+> by block/ps3vram") from the block tree with commit
+> 773c363c5607e8713efe49e1df11317dfa8f48fc ("proc 2/2: remove struct
+> proc_dir_entry::owner") from the proc tree.
 >=20
-> How does this patch look? And Randy, does it fix the problem for
-> you?
+> I have applied the following patch that I will add as a merge fixup f=
+or
+> the proc tree tomorrow and apply as long as necessary.
+> --=20
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
 >=20
-> nlattr: Fix build error with NET off
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 11 Mar 2009 22:22:04 +1100
+> Subject: [PATCH] proc: remove a new user of proc_dir_entry::owner
 >=20
-> We moved the netlink attribute support from net to lib in order
-> for it to be available for general consumption.  However, parts
-> of the code (the bits that we don't need :) really depends on
-> NET because the target object is sk_buff.
->=20
-> This patch fixes this by wrapping them in CONFIG_NET.
->=20
-> Some EXPORTs have been moved to make this work.
->=20
-> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-Thanks for taking care of this!
+Acked-by: Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>
 
-Tested-by: Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>
-
-> diff --git a/lib/nlattr.c b/lib/nlattr.c
-> index 56c3ce7..80009a2 100644
-> --- a/lib/nlattr.c
-> +++ b/lib/nlattr.c
-> @@ -281,6 +281,7 @@ int nla_strcmp(const struct nlattr *nla, const ch=
-ar *str)
->  	return d;
+> ---
+>  drivers/block/ps3vram.c |    1 -
+>  1 files changed, 0 insertions(+), 1 deletions(-)
+>=20
+> diff --git a/drivers/block/ps3vram.c b/drivers/block/ps3vram.c
+> index 393ed67..23fc853 100644
+> --- a/drivers/block/ps3vram.c
+> +++ b/drivers/block/ps3vram.c
+> @@ -552,7 +552,6 @@ static void __devinit ps3vram_proc_init(struct ps=
+3_system_bus_device *dev)
+>  		return;
+>  	}
+> =20
+> -	pde->owner =3D THIS_MODULE;
+>  	pde->data =3D priv;
 >  }
-> =20
-> +#ifdef CONFIG_NET
->  /**
->   * __nla_reserve - reserve room for attribute on the skb
->   * @skb: socket buffer to reserve room on
-> @@ -305,6 +306,7 @@ struct nlattr *__nla_reserve(struct sk_buff *skb,=
- int attrtype, int attrlen)
-> =20
->  	return nla;
->  }
-> +EXPORT_SYMBOL(__nla_reserve);
-> =20
->  /**
->   * __nla_reserve_nohdr - reserve room for attribute without header
-> @@ -325,6 +327,7 @@ void *__nla_reserve_nohdr(struct sk_buff *skb, in=
-t attrlen)
-> =20
->  	return start;
->  }
-> +EXPORT_SYMBOL(__nla_reserve_nohdr);
-> =20
->  /**
->   * nla_reserve - reserve room for attribute on the skb
-> @@ -345,6 +348,7 @@ struct nlattr *nla_reserve(struct sk_buff *skb, i=
-nt attrtype, int attrlen)
-> =20
->  	return __nla_reserve(skb, attrtype, attrlen);
->  }
-> +EXPORT_SYMBOL(nla_reserve);
-> =20
->  /**
->   * nla_reserve_nohdr - reserve room for attribute without header
-> @@ -363,6 +367,7 @@ void *nla_reserve_nohdr(struct sk_buff *skb, int =
-attrlen)
-> =20
->  	return __nla_reserve_nohdr(skb, attrlen);
->  }
-> +EXPORT_SYMBOL(nla_reserve_nohdr);
-> =20
->  /**
->   * __nla_put - Add a netlink attribute to a socket buffer
-> @@ -382,6 +387,7 @@ void __nla_put(struct sk_buff *skb, int attrtype,=
- int attrlen,
->  	nla =3D __nla_reserve(skb, attrtype, attrlen);
->  	memcpy(nla_data(nla), data, attrlen);
->  }
-> +EXPORT_SYMBOL(__nla_put);
-> =20
->  /**
->   * __nla_put_nohdr - Add a netlink attribute without header
-> @@ -399,6 +405,7 @@ void __nla_put_nohdr(struct sk_buff *skb, int att=
-rlen, const void *data)
->  	start =3D __nla_reserve_nohdr(skb, attrlen);
->  	memcpy(start, data, attrlen);
->  }
-> +EXPORT_SYMBOL(__nla_put_nohdr);
-> =20
->  /**
->   * nla_put - Add a netlink attribute to a socket buffer
-> @@ -418,6 +425,7 @@ int nla_put(struct sk_buff *skb, int attrtype, in=
-t attrlen, const void *data)
->  	__nla_put(skb, attrtype, attrlen, data);
->  	return 0;
->  }
-> +EXPORT_SYMBOL(nla_put);
-> =20
->  /**
->   * nla_put_nohdr - Add a netlink attribute without header
-> @@ -436,6 +444,7 @@ int nla_put_nohdr(struct sk_buff *skb, int attrle=
-n, const void *data)
->  	__nla_put_nohdr(skb, attrlen, data);
->  	return 0;
->  }
-> +EXPORT_SYMBOL(nla_put_nohdr);
-> =20
->  /**
->   * nla_append - Add a netlink attribute without header or padding
-> @@ -454,20 +463,13 @@ int nla_append(struct sk_buff *skb, int attrlen=
-, const void *data)
->  	memcpy(skb_put(skb, attrlen), data, attrlen);
->  	return 0;
->  }
-> +EXPORT_SYMBOL(nla_append);
-> +#endif
-> =20
->  EXPORT_SYMBOL(nla_validate);
->  EXPORT_SYMBOL(nla_parse);
->  EXPORT_SYMBOL(nla_find);
->  EXPORT_SYMBOL(nla_strlcpy);
-> -EXPORT_SYMBOL(__nla_reserve);
-> -EXPORT_SYMBOL(__nla_reserve_nohdr);
-> -EXPORT_SYMBOL(nla_reserve);
-> -EXPORT_SYMBOL(nla_reserve_nohdr);
-> -EXPORT_SYMBOL(__nla_put);
-> -EXPORT_SYMBOL(__nla_put_nohdr);
-> -EXPORT_SYMBOL(nla_put);
-> -EXPORT_SYMBOL(nla_put_nohdr);
->  EXPORT_SYMBOL(nla_memcpy);
->  EXPORT_SYMBOL(nla_memcmp);
->  EXPORT_SYMBOL(nla_strcmp);
-> -EXPORT_SYMBOL(nla_append);
 
 With kind regards,
 
