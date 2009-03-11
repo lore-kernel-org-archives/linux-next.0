@@ -1,142 +1,74 @@
-From: Ming Lei <tom.leiming@gmail.com>
-Subject: Re: linux-next: NCR_700_detect warnings
-Date: Wed, 11 Mar 2009 09:59:09 +0800
-Message-ID: <d82e647a0903101859p1cc2adf6s375b389907a31b82@mail.gmail.com>
-References: <Pine.LNX.4.64.0903102139150.20676@anakin>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: driver-core tree build failure
+Date: Tue, 10 Mar 2009 20:30:11 -0700
+Message-ID: <20090311033011.GA28527@kroah.com>
+References: <20090310192440.949884a1.sfr@canb.auug.org.au> <alpine.LRH.2.00.0903101423200.25436@vixen.sonytel.be> <20090310145311.6bf9d9e9@skybase> <alpine.LRH.2.00.0903101626450.25436@vixen.sonytel.be> <20090310170841.2257de86@skybase> <20090310200200.GB3091@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.64.0903102139150.20676@anakin>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, David Brownell <dbrownell@users.sourceforge.net>, linux-next@vger.kernel.org, Linux Kernel Development <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org, Linux/m68k <linux-m68k@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from kroah.org ([198.145.64.141]:35775 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753589AbZCKDcY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Mar 2009 23:32:24 -0400
+Content-Disposition: inline
+In-Reply-To: <20090310200200.GB3091@redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jason Baron <jbaron@redhat.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Greg Banks <gnb@sgi.com>, Herbert Xu <herbert@gondor.apana.org.au>, Linux Kernel Development <linux-kernel@vger.kernel.org>
 
-2009/3/11 Geert Uytterhoeven <geert@linux-m68k.org>:
-> commit 76afea5b078d36ec080a75c29ff5a3fbc5774fee
-> Author: Ming Lei <tom.leiming@gmail.com>
-> Date: =A0 Fri Feb 6 23:40:12 2009 +0800
->
-> =A0 =A0platform driver: fix incorrect use of 'platform_bus_type' with=
- 'struct devic
->
-> =A0 =A0This patch fixes the bug reported in
-> =A0 =A0 =A0 =A0http://bugzilla.kernel.org/show_bug.cgi?id=3D11681.
->
-> =A0 =A0"Lots of device drivers register a 'struct device_driver' with
-> =A0 =A0the '.bus' member set to '&platform_bus_type'. This is wrong,
-> =A0 =A0since the platform_bus functions expect the 'struct device_dri=
-ver'
-> =A0 =A0to be wrapped up in a 'struct platform_driver' which provides
-> =A0 =A0some additional callbacks (like suspend_late, resume_early).
-> =A0 =A0The effect may be that platform_suspend_late() uses bogus data
-> =A0 =A0outside the device_driver struct as a pointer pointer to the
-> =A0 =A0device driver's suspend_late() function or other hard to
-> =A0 =A0reproduce failures."(Lothar Wassmann)
->
-> =A0 =A0Signed-off-by: Ming Lei <tom.leiming@gmail.com>
-> =A0 =A0Acked-by: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-> =A0 =A0Acked-by: David Brownell <dbrownell@users.sourceforge.net>
-> =A0 =A0Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
->
-> This introduced the following warnings on m68k, as `dev' is now a
-> `struct platform_device *' instead of a `struct device *':
->
-> | drivers/scsi/a4000t.c:64: warning: passing argument 3 of 'NCR_700_d=
-etect' from incompatible pointer type
-> | drivers/scsi/mvme16x_scsi.c:67: warning: passing argument 3 of 'NCR=
-_700_detect' from incompatible pointer type
-> | drivers/scsi/bvme6000_scsi.c:61: warning: passing argument 3 of 'NC=
-R_700_detect' from incompatible pointer type
->
-> I think the below is missing (untested on real hardware)?
+On Tue, Mar 10, 2009 at 04:02:00PM -0400, Jason Baron wrote:
+> On Tue, Mar 10, 2009 at 05:08:41PM +0100, Martin Schwidefsky wrote:
+> > On Tue, 10 Mar 2009 16:29:50 +0100 (CET)
+> > Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com> wrote:
+> > 
+> > > > The same could be done with the problematic pr_fmt definition:
+> > > > 
+> > > > #define pr_fmt(fmt)     __func__ ": " fmt
+> > > 
+> > > No, that also doesn't work:
+> > > 
+> > > | crypto/zlib.c:150: error: expected '}' before string constant
+> > > | crypto/zlib.c:150: error: expected ')' before '__func__'
+> > > | crypto/zlib.c:162: error: expected '}' before string constant
+> > > | crypto/zlib.c:162: error: expected ')' before '__func__'
+> > > | crypto/zlib.c:166: error: expected '}' before string constant
+> > > | crypto/zlib.c:166: error: expected ')' before '__func__'
+> > > | crypto/zlib.c:170: error: expected '}' before string constant
+> > > | crypto/zlib.c:170: error: expected ')' before '__func__'
+> > > 
+> > > > > BTW, Martin: Is `#define pr_fmt(fmt)     "%s: " fmt, __func__' a valid and
+> > > > > intended usage of your pr_fmt() infrastructure?
+> > > > 
+> > > > The indended use is a simple prefix to the format string. To paste an
+> > > > additional parameter is an interesting use of the pr_fmt macro ..
+> > > 
+> > > Bummer, I was so happy I could do things like
+> > > 
+> > > | #define pr_fmt(fmt)	"%s:%u: " fmt, __func__, __LINE__
+> > 
+> > Actually that seem like a nice thing to have. With the upstream version of
+> > dynamic_pr_debug this works, there the format string is used only on a printk.
+> > git commit 25b67b75587d43ff3f09ad88c03c70a38372d95d introduces the code
+> > that pastes the format string to the _ddebug structure.
+> > 
+> 
+> hmmm...yeah, some macro magic in include/linux/dynamic_debug.h converts
+> the 'fmt' arg into a series of strings. It doesn't look as pretty in the
+> dynamic debug control file:
+> 
+> crypto/zlib.c:333 [zlib]zlib_decompress_final - "\042%s: \042
+> \042avail_in %u, avail_out %u (consumed %u, produced %u)\n\042,
+> __func__"
+> 
+> with all those '\042' there, which are the '"' characters, but we
+> probably could live with it.
+> 
+> patch below.
 
-Yes, you are correct. It is really missed.
-Thanks!
+Can you resend this with a description of what the patch does so I can
+apply it?
 
->
-> diff --git a/drivers/scsi/a4000t.c b/drivers/scsi/a4000t.c
-> index 6d25aca..61af3d9 100644
-> --- a/drivers/scsi/a4000t.c
-> +++ b/drivers/scsi/a4000t.c
-> @@ -61,7 +61,8 @@ static int __devinit a4000t_probe(struct platform_d=
-evice *dev)
-> =A0 =A0 =A0 =A0hostdata->dcntl_extra =3D EA_710;
->
-> =A0 =A0 =A0 =A0/* and register the chip */
-> - =A0 =A0 =A0 host =3D NCR_700_detect(&a4000t_scsi_driver_template, h=
-ostdata, dev);
-> + =A0 =A0 =A0 host =3D NCR_700_detect(&a4000t_scsi_driver_template, h=
-ostdata,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 &dev->dev);
-> =A0 =A0 =A0 =A0if (!host) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "a4000t-scsi: No host =
-detected; "
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0"board=
- configuration problem?\n");
-> diff --git a/drivers/scsi/bvme6000_scsi.c b/drivers/scsi/bvme6000_scs=
-i.c
-> index 9e9a82b..5799cb5 100644
-> --- a/drivers/scsi/bvme6000_scsi.c
-> +++ b/drivers/scsi/bvme6000_scsi.c
-> @@ -58,7 +58,8 @@ bvme6000_probe(struct platform_device *dev)
-> =A0 =A0 =A0 =A0hostdata->ctest7_extra =3D CTEST7_TT1;
->
-> =A0 =A0 =A0 =A0/* and register the chip */
-> - =A0 =A0 =A0 host =3D NCR_700_detect(&bvme6000_scsi_driver_template,=
- hostdata, dev);
-> + =A0 =A0 =A0 host =3D NCR_700_detect(&bvme6000_scsi_driver_template,=
- hostdata,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 &dev->dev);
-> =A0 =A0 =A0 =A0if (!host) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "bvme6000-scsi: No hos=
-t detected; "
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0"board=
- configuration problem?\n");
-> diff --git a/drivers/scsi/mvme16x_scsi.c b/drivers/scsi/mvme16x_scsi.=
-c
-> index 7794fc1..b5fbfd6 100644
-> --- a/drivers/scsi/mvme16x_scsi.c
-> +++ b/drivers/scsi/mvme16x_scsi.c
-> @@ -64,7 +64,8 @@ mvme16x_probe(struct platform_device *dev)
-> =A0 =A0 =A0 =A0hostdata->ctest7_extra =3D CTEST7_TT1;
->
-> =A0 =A0 =A0 =A0/* and register the chip */
-> - =A0 =A0 =A0 host =3D NCR_700_detect(&mvme16x_scsi_driver_template, =
-hostdata, dev);
-> + =A0 =A0 =A0 host =3D NCR_700_detect(&mvme16x_scsi_driver_template, =
-hostdata,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 &dev->dev);
-> =A0 =A0 =A0 =A0if (!host) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "mvme16x-scsi: No host=
- detected; "
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0"board=
- configuration problem?\n");
->
-> Gr{oetje,eeting}s,
->
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linu=
-x-m68k.org
->
-> In personal conversations with technical people, I call myself a hack=
-er. But
-> when I'm talking to journalists I just say "programmer" or something =
-like that.
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0-- Linus Torvalds
->
+thanks,
 
-
-
---=20
-Lei Ming
---
-To unsubscribe from this list: send the line "unsubscribe linux-scsi" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+greg k-h
