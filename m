@@ -1,30 +1,42 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: manual merge of the sound tree with the arm tree
-Date: Wed, 11 Mar 2009 22:32:10 +0000
-Message-ID: <20090311223209.GA11708@opensource.wolfsonmicro.com>
-References: <20090310144528.0fa208dd.sfr@canb.auug.org.au> <20090311085254.GA30970@flint.arm.linux.org.uk> <s5h63igifin.wl%tiwai@suse.de> <20090311094126.GA4619@flint.arm.linux.org.uk> <s5hzlfsgywo.wl%tiwai@suse.de> <20090311104049.GA14668@flint.arm.linux.org.uk> <20090311112443.GA7939@rakim.wolfsonmicro.main> <s5hr614nq7w.wl%tiwai@suse.de>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: linux-next: xfs tree build failure
+Date: Thu, 12 Mar 2009 09:52:12 +1100
+Message-ID: <20090311225212.GN26138@disturbed>
+References: <20090310134547.e5d1d9ee.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:60639 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753470AbZCKWcN (ORCPT
+Received: from ipmail04.adl2.internode.on.net ([203.16.214.57]:44731 "EHLO
+	ipmail04.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751730AbZCKW5a (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Mar 2009 18:32:13 -0400
+	Wed, 11 Mar 2009 18:57:30 -0400
 Content-Disposition: inline
-In-Reply-To: <s5hr614nq7w.wl%tiwai@suse.de>
+In-Reply-To: <20090310134547.e5d1d9ee.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Russell King <rmk@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Ben Dooks <ben@simtec.co.uk>, Alexander Schulz <alex@shark-linux.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: xfs-masters@oss.sgi.com, linux-next@vger.kernel.org
 
-On Wed, Mar 11, 2009 at 02:28:35PM +0100, Takashi Iwai wrote:
-> Mark Brown wrote:
+On Tue, Mar 10, 2009 at 01:45:47PM +1100, Stephen Rothwell wrote:
+> Hi David,
+> 
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> 
+> In file included from fs/xfs/support/debug.c:21:
+> fs/xfs/xfs_error.h:137: error: expected declaration specifiers or '...' before 'xfs_mount_t'
+> fs/xfs/xfs_error.h:138: error: expected ')' before '*' token
+> 
+> Immediate cause is commit 7bf446f8b581cef434f5ff05e8a791563bc09b7f ("xfs:
+> include header files for prototypes").
 
-> > Takashi, here's an initial revert of the two hunks I mentioned
-> > previously - I've not checked the other two hunks yet.
+Obviously nobody built this on a CONFIG_XFS_DEBUG=y kernel before
+pushing it. Moving the xfs_error.h include down below all the other
+includes (i.e after xfs_mount.h) will fix the problem....
 
-> OK, pulled that now.
+Cheers,
 
-I've just sent a further patch to Takashi reverting the other two hunks
-I identified in my earlier mail.
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
