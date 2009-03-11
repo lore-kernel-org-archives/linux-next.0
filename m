@@ -1,62 +1,62 @@
-From: Nico Schottelius <nico-linux-20090311@schottelius.org>
-Subject: Re: X200 suspend status on -wl and -next
-Date: Wed, 11 Mar 2009 09:52:29 +0100
-Message-ID: <20090311085229.GB4495@denkbrett.schottelius.org>
-References: <20090311073030.GA5284@denkbrett.schottelius.org> <200903110946.23280.rjw@sisk.pl>
+From: Russell King <rmk@arm.linux.org.uk>
+Subject: Re: linux-next: manual merge of the sound tree with the arm tree
+Date: Wed, 11 Mar 2009 08:52:54 +0000
+Message-ID: <20090311085254.GA30970@flint.arm.linux.org.uk>
+References: <20090310144528.0fa208dd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="GPJrCs/72TxItFYR"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.schottelius.org ([77.109.138.221]:48998 "EHLO
-	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752563AbZCKIwc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Mar 2009 04:52:32 -0400
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:36652 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751567AbZCKIyG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Mar 2009 04:54:06 -0400
 Content-Disposition: inline
-In-Reply-To: <200903110946.23280.rjw@sisk.pl>
+In-Reply-To: <20090310144528.0fa208dd.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Nico Schottelius <nico-linux-20090311@schottelius.org>, LKML <linux-kernel@vger.kernel.org>, ipw3945-devel@lists.sourceforge.net, Linux Next Mailing List <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Takashi Iwai <tiwai@suse.de>, linux-next@vger.kernel.org, Ben Dooks <ben@simtec.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Alexander Schulz <alex@shark-linux.de>
 
+On Tue, Mar 10, 2009 at 02:45:28PM +1100, Stephen Rothwell wrote:
+> Hi Takashi,
+> 
+> Today's linux-next merge of the sound tree got a conflict in
+> arch/arm/mach-shark/include/mach/io.h between commit
+> eab184c2362567f2b2e951b7bd0e0d353a7e5091 ("[ARM] 5363/1: Shark cleanup
+> and new defconfig") from the arm tree and commit
+> 8150bc886be5ce3cc301a2baca1fcf2cf7bd7f39 ("S3C24XX: Move and update IIS
+> headers") from the sound tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
 
---GPJrCs/72TxItFYR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+NAK to this patch.
 
-Rafael J. Wysocki [Wed, Mar 11, 2009 at 09:46:22AM +0100]:
-> On Wednesday 11 March 2009, Nico Schottelius wrote:
-> > Good morning!
-> >=20
-> > vmlinuz-2.6.29-rc7-wl-ikn-32831-g98c5597:
->=20
-> Does -wl stand for 'wireless'?
+The greater concern is WTF are cleanup patches for the ARM architecture
+going via the sound tree.  Especially patches which I have concerns about.
 
-Yep:
+> --- a/arch/arm/mach-shark/include/mach/io.h
+> +++ b/arch/arm/mach-shark/include/mach/io.h
+> @@@ -11,10 -11,10 +11,10 @@@
+>   #ifndef __ASM_ARM_ARCH_IO_H
+>   #define __ASM_ARM_ARCH_IO_H
+>   
+>  -#define PCIO_BASE	0xe0000000
+>  -#define IO_SPACE_LIMIT	0xffffffff
+>  +#define IO_SPACE_LIMIT 0xffffffff
+>   
+> - #define __io(a)                 ((void __iomem *)(0xe0000000 + (a)))
+>  -#define __io(a)		__typesafe_io(PCIO_BASE + (a))
+>  -#define __mem_pci(addr)	(addr)
+> ++#define __io(a)		__typesafe_io(0xe0000000 + (a))
 
-ikn% grep url .git/config=20
-  url =3D git://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/iwlwifi-2.6=
-=2Egit
+Do not use __typesafe_io() with the addition here without first ensuring
+that you've investigated whether it causes the compiler to mis-optimise
+the code.
 
-Nico
+Takashi - please remove all such patches from the sound tree.  They
+should not be in there.
 
---=20
-Think about Free and Open Source Software (FOSS).
-http://nico.schottelius.org/documentations/foss/the-term-foss/
-
-PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
-
---GPJrCs/72TxItFYR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkm3e80ACgkQuL75KpiFGIxTMgCdFYrgt1Sdv6Eu+RgHV5zYmE8D
-LigAnjqBSWFa/u500mXrIEHoxZjLh5/K
-=P8y9
------END PGP SIGNATURE-----
-
---GPJrCs/72TxItFYR--
+-- 
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
