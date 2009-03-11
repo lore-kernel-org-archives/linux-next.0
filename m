@@ -1,104 +1,100 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] scsi/m68k: Kill NCR_700_detect() warnings
-Date: Wed, 11 Mar 2009 09:23:52 +0100 (CET)
-Message-ID: <Pine.LNX.4.64.0903110923240.14743@anakin>
+From: Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>
+Subject: Re: linux-next: driver-core tree build failure
+Date: Wed, 11 Mar 2009 09:33:45 +0100 (CET)
+Message-ID: <alpine.LRH.2.00.0903110930120.314@vixen.sonytel.be>
+References: <20090310192440.949884a1.sfr@canb.auug.org.au> <alpine.LRH.2.00.0903101423200.25436@vixen.sonytel.be> <20090310145311.6bf9d9e9@skybase> <alpine.LRH.2.00.0903101626450.25436@vixen.sonytel.be> <20090310170841.2257de86@skybase>
+ <20090310200200.GB3091@redhat.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: TEXT/PLAIN; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from brigitte.telenet-ops.be ([195.130.137.66]:38842 "EHLO
-	brigitte.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751077AbZCKIX5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Mar 2009 04:23:57 -0400
+Received: from vervifontaine.sonytel.be ([80.88.33.193]:51800 "EHLO
+	vervifontaine.sonycom.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1750947AbZCKIds (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Mar 2009 04:33:48 -0400
+In-Reply-To: <20090310200200.GB3091@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg Kroah-Hartman <gregkh@suse.de>
-Cc: linux-next@vger.kernel.org
+To: Jason Baron <jbaron@redhat.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Greg Banks <gnb@sgi.com>, Herbert Xu <herbert@gondor.apana.org.au>, Linux Kernel Development <linux-kernel@vger.kernel.org>
 
-commit 76afea5b078d36ec080a75c29ff5a3fbc5774fee
-Author: Ming Lei <tom.leiming@gmail.com>
-Date:   Fri Feb 6 23:40:12 2009 +0800
+On Tue, 10 Mar 2009, Jason Baron wrote:
+> On Tue, Mar 10, 2009 at 05:08:41PM +0100, Martin Schwidefsky wrote:
+> > On Tue, 10 Mar 2009 16:29:50 +0100 (CET)
+> > Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com> wrote:
+> >=20
+> > > > The same could be done with the problematic pr_fmt definition:
+> > > >=20
+> > > > #define pr_fmt(fmt)     __func__ ": " fmt
+> > >=20
+> > > No, that also doesn't work:
+> > >=20
+> > > | crypto/zlib.c:150: error: expected '}' before string constant
+> > > | crypto/zlib.c:150: error: expected ')' before '__func__'
+> > > | crypto/zlib.c:162: error: expected '}' before string constant
+> > > | crypto/zlib.c:162: error: expected ')' before '__func__'
+> > > | crypto/zlib.c:166: error: expected '}' before string constant
+> > > | crypto/zlib.c:166: error: expected ')' before '__func__'
+> > > | crypto/zlib.c:170: error: expected '}' before string constant
+> > > | crypto/zlib.c:170: error: expected ')' before '__func__'
+> > >=20
+> > > > > BTW, Martin: Is `#define pr_fmt(fmt)     "%s: " fmt, __func__=
+' a valid and
+> > > > > intended usage of your pr_fmt() infrastructure?
+> > > >=20
+> > > > The indended use is a simple prefix to the format string. To pa=
+ste an
+> > > > additional parameter is an interesting use of the pr_fmt macro =
+=2E.
+> > >=20
+> > > Bummer, I was so happy I could do things like
+> > >=20
+> > > | #define pr_fmt(fmt)	"%s:%u: " fmt, __func__, __LINE__
+> >=20
+> > Actually that seem like a nice thing to have. With the upstream ver=
+sion of
+> > dynamic_pr_debug this works, there the format string is used only o=
+n a printk.
+> > git commit 25b67b75587d43ff3f09ad88c03c70a38372d95d introduces the =
+code
+> > that pastes the format string to the _ddebug structure.
+> >=20
+>=20
+> hmmm...yeah, some macro magic in include/linux/dynamic_debug.h conver=
+ts
+> the 'fmt' arg into a series of strings. It doesn't look as pretty in =
+the
+> dynamic debug control file:
+>=20
+> crypto/zlib.c:333 [zlib]zlib_decompress_final - "\042%s: \042
+> \042avail_in %u, avail_out %u (consumed %u, produced %u)\n\042,
+> __func__"
+>=20
+> with all those '\042' there, which are the '"' characters, but we
+> probably could live with it.
 
-    platform driver: fix incorrect use of 'platform_bus_type' with 'struct devic
-    
-    This patch fixes the bug reported in
-        http://bugzilla.kernel.org/show_bug.cgi?id=11681.
-    
-    "Lots of device drivers register a 'struct device_driver' with
-    the '.bus' member set to '&platform_bus_type'. This is wrong,
-    since the platform_bus functions expect the 'struct device_driver'
-    to be wrapped up in a 'struct platform_driver' which provides
-    some additional callbacks (like suspend_late, resume_early).
-    The effect may be that platform_suspend_late() uses bogus data
-    outside the device_driver struct as a pointer pointer to the
-    device driver's suspend_late() function or other hard to
-    reproduce failures."(Lothar Wassmann)
-    
-    Signed-off-by: Ming Lei <tom.leiming@gmail.com>
-    Acked-by: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-    Acked-by: David Brownell <dbrownell@users.sourceforge.net>
-    Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+Ugh, not only that, it also contains the __func__.
 
-This introduced the following warnings on m68k, as `dev' is now a
-`struct platform_device *' instead of a `struct device *':
+BTW, why do you store this string? The only thing you can do with it la=
+ter is
+to print it verbatim (without % format parameter expansion), as it has
+swallowed the first parameter (__func__), but still contains the %s.
 
-| drivers/scsi/a4000t.c:64: warning: passing argument 3 of 'NCR_700_detect' from incompatible pointer type
-| drivers/scsi/mvme16x_scsi.c:67: warning: passing argument 3 of 'NCR_700_detect' from incompatible pointer type
-| drivers/scsi/bvme6000_scsi.c:61: warning: passing argument 3 of 'NCR_700_detect' from incompatible pointer type
+With kind regards,
 
-I think the below is missing (untested on real hardware).
+Geert Uytterhoeven
+Software Architect
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Sony Techsoft Centre Europe
+The Corporate Village =B7 Da Vincilaan 7-D1 =B7 B-1935 Zaventem =B7 Bel=
+gium
 
-diff --git a/drivers/scsi/a4000t.c b/drivers/scsi/a4000t.c
-index 6d25aca..61af3d9 100644
---- a/drivers/scsi/a4000t.c
-+++ b/drivers/scsi/a4000t.c
-@@ -61,7 +61,8 @@ static int __devinit a4000t_probe(struct platform_device *dev)
- 	hostdata->dcntl_extra = EA_710;
- 
- 	/* and register the chip */
--	host = NCR_700_detect(&a4000t_scsi_driver_template, hostdata, dev);
-+	host = NCR_700_detect(&a4000t_scsi_driver_template, hostdata,
-+			      &dev->dev);
- 	if (!host) {
- 		printk(KERN_ERR "a4000t-scsi: No host detected; "
- 				"board configuration problem?\n");
-diff --git a/drivers/scsi/bvme6000_scsi.c b/drivers/scsi/bvme6000_scsi.c
-index 9e9a82b..5799cb5 100644
---- a/drivers/scsi/bvme6000_scsi.c
-+++ b/drivers/scsi/bvme6000_scsi.c
-@@ -58,7 +58,8 @@ bvme6000_probe(struct platform_device *dev)
- 	hostdata->ctest7_extra = CTEST7_TT1;
- 
- 	/* and register the chip */
--	host = NCR_700_detect(&bvme6000_scsi_driver_template, hostdata, dev);
-+	host = NCR_700_detect(&bvme6000_scsi_driver_template, hostdata,
-+			      &dev->dev);
- 	if (!host) {
- 		printk(KERN_ERR "bvme6000-scsi: No host detected; "
- 				"board configuration problem?\n");
-diff --git a/drivers/scsi/mvme16x_scsi.c b/drivers/scsi/mvme16x_scsi.c
-index 7794fc1..b5fbfd6 100644
---- a/drivers/scsi/mvme16x_scsi.c
-+++ b/drivers/scsi/mvme16x_scsi.c
-@@ -64,7 +64,8 @@ mvme16x_probe(struct platform_device *dev)
- 	hostdata->ctest7_extra = CTEST7_TT1;
- 
- 	/* and register the chip */
--	host = NCR_700_detect(&mvme16x_scsi_driver_template, hostdata, dev);
-+	host = NCR_700_detect(&mvme16x_scsi_driver_template, hostdata,
-+			      &dev->dev);
- 	if (!host) {
- 		printk(KERN_ERR "mvme16x-scsi: No host detected; "
- 				"board configuration problem?\n");
+Phone:    +32 (0)2 700 8453
+=46ax:      +32 (0)2 700 8622
+E-mail:   Geert.Uytterhoeven@sonycom.com
+Internet: http://www.sony-europe.com/
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+A division of Sony Europe (Belgium) N.V.
+VAT BE 0413.825.160 =B7 RPR Brussels
+=46ortis =B7 BIC GEBABEBB =B7 IBAN BE41293037680010
