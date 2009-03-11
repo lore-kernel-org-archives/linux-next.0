@@ -1,154 +1,142 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: Tree for March 10 (crypto & NLATTR)
-Date: Wed, 11 Mar 2009 09:07:05 +0800
-Message-ID: <20090311010705.GA17260@gondor.apana.org.au>
-References: <49B6B821.5050302@oracle.com> <10f740e80903101256v2cfe08a8g410c297e019d8693@mail.gmail.com> <49B6C8BF.8010105@oracle.com> <20090310.131700.40129006.davem@davemloft.net>
+From: Ming Lei <tom.leiming@gmail.com>
+Subject: Re: linux-next: NCR_700_detect warnings
+Date: Wed, 11 Mar 2009 09:59:09 +0800
+Message-ID: <d82e647a0903101859p1cc2adf6s375b389907a31b82@mail.gmail.com>
+References: <Pine.LNX.4.64.0903102139150.20676@anakin>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-crypto-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20090310.131700.40129006.davem@davemloft.net>
-Sender: linux-crypto-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: randy.dunlap@oracle.com, geert@linux-m68k.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.64.0903102139150.20676@anakin>
+Sender: linux-scsi-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, David Brownell <dbrownell@users.sourceforge.net>, linux-next@vger.kernel.org, Linux Kernel Development <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org, Linux/m68k <linux-m68k@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Mar 10, 2009 at 01:17:00PM -0700, David Miller wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> Date: Tue, 10 Mar 2009 13:08:31 -0700
-> 
-> > I'll have to let David or Herbert answer that.  From my quick look
-> > at the code, I don't see much use for nlattr.c when CONFIG_NET
-> > is not enabled.
-> 
-> We want to use the netlink attribute parsers even in non-networking
-> code, that's what he's trying to do here.
+2009/3/11 Geert Uytterhoeven <geert@linux-m68k.org>:
+> commit 76afea5b078d36ec080a75c29ff5a3fbc5774fee
+> Author: Ming Lei <tom.leiming@gmail.com>
+> Date: =A0 Fri Feb 6 23:40:12 2009 +0800
+>
+> =A0 =A0platform driver: fix incorrect use of 'platform_bus_type' with=
+ 'struct devic
+>
+> =A0 =A0This patch fixes the bug reported in
+> =A0 =A0 =A0 =A0http://bugzilla.kernel.org/show_bug.cgi?id=3D11681.
+>
+> =A0 =A0"Lots of device drivers register a 'struct device_driver' with
+> =A0 =A0the '.bus' member set to '&platform_bus_type'. This is wrong,
+> =A0 =A0since the platform_bus functions expect the 'struct device_dri=
+ver'
+> =A0 =A0to be wrapped up in a 'struct platform_driver' which provides
+> =A0 =A0some additional callbacks (like suspend_late, resume_early).
+> =A0 =A0The effect may be that platform_suspend_late() uses bogus data
+> =A0 =A0outside the device_driver struct as a pointer pointer to the
+> =A0 =A0device driver's suspend_late() function or other hard to
+> =A0 =A0reproduce failures."(Lothar Wassmann)
+>
+> =A0 =A0Signed-off-by: Ming Lei <tom.leiming@gmail.com>
+> =A0 =A0Acked-by: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+> =A0 =A0Acked-by: David Brownell <dbrownell@users.sourceforge.net>
+> =A0 =A0Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+>
+> This introduced the following warnings on m68k, as `dev' is now a
+> `struct platform_device *' instead of a `struct device *':
+>
+> | drivers/scsi/a4000t.c:64: warning: passing argument 3 of 'NCR_700_d=
+etect' from incompatible pointer type
+> | drivers/scsi/mvme16x_scsi.c:67: warning: passing argument 3 of 'NCR=
+_700_detect' from incompatible pointer type
+> | drivers/scsi/bvme6000_scsi.c:61: warning: passing argument 3 of 'NC=
+R_700_detect' from incompatible pointer type
+>
+> I think the below is missing (untested on real hardware)?
 
-OK the nlattr construction code really wants to depend on NET
-because they're skb-oriented.  We could either move them back
-or just wrap them in ifdef CONFIG_NET.
+Yes, you are correct. It is really missed.
+Thanks!
 
-I think the latter is probably the simplest.
+>
+> diff --git a/drivers/scsi/a4000t.c b/drivers/scsi/a4000t.c
+> index 6d25aca..61af3d9 100644
+> --- a/drivers/scsi/a4000t.c
+> +++ b/drivers/scsi/a4000t.c
+> @@ -61,7 +61,8 @@ static int __devinit a4000t_probe(struct platform_d=
+evice *dev)
+> =A0 =A0 =A0 =A0hostdata->dcntl_extra =3D EA_710;
+>
+> =A0 =A0 =A0 =A0/* and register the chip */
+> - =A0 =A0 =A0 host =3D NCR_700_detect(&a4000t_scsi_driver_template, h=
+ostdata, dev);
+> + =A0 =A0 =A0 host =3D NCR_700_detect(&a4000t_scsi_driver_template, h=
+ostdata,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 &dev->dev);
+> =A0 =A0 =A0 =A0if (!host) {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "a4000t-scsi: No host =
+detected; "
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0"board=
+ configuration problem?\n");
+> diff --git a/drivers/scsi/bvme6000_scsi.c b/drivers/scsi/bvme6000_scs=
+i.c
+> index 9e9a82b..5799cb5 100644
+> --- a/drivers/scsi/bvme6000_scsi.c
+> +++ b/drivers/scsi/bvme6000_scsi.c
+> @@ -58,7 +58,8 @@ bvme6000_probe(struct platform_device *dev)
+> =A0 =A0 =A0 =A0hostdata->ctest7_extra =3D CTEST7_TT1;
+>
+> =A0 =A0 =A0 =A0/* and register the chip */
+> - =A0 =A0 =A0 host =3D NCR_700_detect(&bvme6000_scsi_driver_template,=
+ hostdata, dev);
+> + =A0 =A0 =A0 host =3D NCR_700_detect(&bvme6000_scsi_driver_template,=
+ hostdata,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 &dev->dev);
+> =A0 =A0 =A0 =A0if (!host) {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "bvme6000-scsi: No hos=
+t detected; "
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0"board=
+ configuration problem?\n");
+> diff --git a/drivers/scsi/mvme16x_scsi.c b/drivers/scsi/mvme16x_scsi.=
+c
+> index 7794fc1..b5fbfd6 100644
+> --- a/drivers/scsi/mvme16x_scsi.c
+> +++ b/drivers/scsi/mvme16x_scsi.c
+> @@ -64,7 +64,8 @@ mvme16x_probe(struct platform_device *dev)
+> =A0 =A0 =A0 =A0hostdata->ctest7_extra =3D CTEST7_TT1;
+>
+> =A0 =A0 =A0 =A0/* and register the chip */
+> - =A0 =A0 =A0 host =3D NCR_700_detect(&mvme16x_scsi_driver_template, =
+hostdata, dev);
+> + =A0 =A0 =A0 host =3D NCR_700_detect(&mvme16x_scsi_driver_template, =
+hostdata,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 &dev->dev);
+> =A0 =A0 =A0 =A0if (!host) {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "mvme16x-scsi: No host=
+ detected; "
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0"board=
+ configuration problem?\n");
+>
+> Gr{oetje,eeting}s,
+>
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linu=
+x-m68k.org
+>
+> In personal conversations with technical people, I call myself a hack=
+er. But
+> when I'm talking to journalists I just say "programmer" or something =
+like that.
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0-- Linus Torvalds
+>
 
-How does this patch look? And Randy, does it fix the problem for
-you?
 
-nlattr: Fix build error with NET off
 
-We moved the netlink attribute support from net to lib in order
-for it to be available for general consumption.  However, parts
-of the code (the bits that we don't need :) really depends on
-NET because the target object is sk_buff.
-
-This patch fixes this by wrapping them in CONFIG_NET.
-
-Some EXPORTs have been moved to make this work.
-
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-
-diff --git a/lib/nlattr.c b/lib/nlattr.c
-index 56c3ce7..80009a2 100644
---- a/lib/nlattr.c
-+++ b/lib/nlattr.c
-@@ -281,6 +281,7 @@ int nla_strcmp(const struct nlattr *nla, const char *str)
- 	return d;
- }
- 
-+#ifdef CONFIG_NET
- /**
-  * __nla_reserve - reserve room for attribute on the skb
-  * @skb: socket buffer to reserve room on
-@@ -305,6 +306,7 @@ struct nlattr *__nla_reserve(struct sk_buff *skb, int attrtype, int attrlen)
- 
- 	return nla;
- }
-+EXPORT_SYMBOL(__nla_reserve);
- 
- /**
-  * __nla_reserve_nohdr - reserve room for attribute without header
-@@ -325,6 +327,7 @@ void *__nla_reserve_nohdr(struct sk_buff *skb, int attrlen)
- 
- 	return start;
- }
-+EXPORT_SYMBOL(__nla_reserve_nohdr);
- 
- /**
-  * nla_reserve - reserve room for attribute on the skb
-@@ -345,6 +348,7 @@ struct nlattr *nla_reserve(struct sk_buff *skb, int attrtype, int attrlen)
- 
- 	return __nla_reserve(skb, attrtype, attrlen);
- }
-+EXPORT_SYMBOL(nla_reserve);
- 
- /**
-  * nla_reserve_nohdr - reserve room for attribute without header
-@@ -363,6 +367,7 @@ void *nla_reserve_nohdr(struct sk_buff *skb, int attrlen)
- 
- 	return __nla_reserve_nohdr(skb, attrlen);
- }
-+EXPORT_SYMBOL(nla_reserve_nohdr);
- 
- /**
-  * __nla_put - Add a netlink attribute to a socket buffer
-@@ -382,6 +387,7 @@ void __nla_put(struct sk_buff *skb, int attrtype, int attrlen,
- 	nla = __nla_reserve(skb, attrtype, attrlen);
- 	memcpy(nla_data(nla), data, attrlen);
- }
-+EXPORT_SYMBOL(__nla_put);
- 
- /**
-  * __nla_put_nohdr - Add a netlink attribute without header
-@@ -399,6 +405,7 @@ void __nla_put_nohdr(struct sk_buff *skb, int attrlen, const void *data)
- 	start = __nla_reserve_nohdr(skb, attrlen);
- 	memcpy(start, data, attrlen);
- }
-+EXPORT_SYMBOL(__nla_put_nohdr);
- 
- /**
-  * nla_put - Add a netlink attribute to a socket buffer
-@@ -418,6 +425,7 @@ int nla_put(struct sk_buff *skb, int attrtype, int attrlen, const void *data)
- 	__nla_put(skb, attrtype, attrlen, data);
- 	return 0;
- }
-+EXPORT_SYMBOL(nla_put);
- 
- /**
-  * nla_put_nohdr - Add a netlink attribute without header
-@@ -436,6 +444,7 @@ int nla_put_nohdr(struct sk_buff *skb, int attrlen, const void *data)
- 	__nla_put_nohdr(skb, attrlen, data);
- 	return 0;
- }
-+EXPORT_SYMBOL(nla_put_nohdr);
- 
- /**
-  * nla_append - Add a netlink attribute without header or padding
-@@ -454,20 +463,13 @@ int nla_append(struct sk_buff *skb, int attrlen, const void *data)
- 	memcpy(skb_put(skb, attrlen), data, attrlen);
- 	return 0;
- }
-+EXPORT_SYMBOL(nla_append);
-+#endif
- 
- EXPORT_SYMBOL(nla_validate);
- EXPORT_SYMBOL(nla_parse);
- EXPORT_SYMBOL(nla_find);
- EXPORT_SYMBOL(nla_strlcpy);
--EXPORT_SYMBOL(__nla_reserve);
--EXPORT_SYMBOL(__nla_reserve_nohdr);
--EXPORT_SYMBOL(nla_reserve);
--EXPORT_SYMBOL(nla_reserve_nohdr);
--EXPORT_SYMBOL(__nla_put);
--EXPORT_SYMBOL(__nla_put_nohdr);
--EXPORT_SYMBOL(nla_put);
--EXPORT_SYMBOL(nla_put_nohdr);
- EXPORT_SYMBOL(nla_memcpy);
- EXPORT_SYMBOL(nla_memcmp);
- EXPORT_SYMBOL(nla_strcmp);
--EXPORT_SYMBOL(nla_append);
-
-Thanks,
--- 
-Visit Openswan at http://www.openswan.org/
-Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+--=20
+Lei Ming
+--
+To unsubscribe from this list: send the line "unsubscribe linux-scsi" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
