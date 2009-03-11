@@ -1,100 +1,34 @@
-From: Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>
-Subject: Re: linux-next: driver-core tree build failure
-Date: Wed, 11 Mar 2009 09:33:45 +0100 (CET)
-Message-ID: <alpine.LRH.2.00.0903110930120.314@vixen.sonytel.be>
-References: <20090310192440.949884a1.sfr@canb.auug.org.au> <alpine.LRH.2.00.0903101423200.25436@vixen.sonytel.be> <20090310145311.6bf9d9e9@skybase> <alpine.LRH.2.00.0903101626450.25436@vixen.sonytel.be> <20090310170841.2257de86@skybase>
- <20090310200200.GB3091@redhat.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: X200 suspend status on -wl and -next
+Date: Wed, 11 Mar 2009 09:46:22 +0100
+Message-ID: <200903110946.23280.rjw@sisk.pl>
+References: <20090311073030.GA5284@denkbrett.schottelius.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain;
+  charset="iso-8859-2"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from vervifontaine.sonytel.be ([80.88.33.193]:51800 "EHLO
-	vervifontaine.sonycom.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1750947AbZCKIds (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Mar 2009 04:33:48 -0400
-In-Reply-To: <20090310200200.GB3091@redhat.com>
+Received: from ogre.sisk.pl ([217.79.144.158]:48658 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753889AbZCKIqk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Mar 2009 04:46:40 -0400
+In-Reply-To: <20090311073030.GA5284@denkbrett.schottelius.org>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Baron <jbaron@redhat.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Greg Banks <gnb@sgi.com>, Herbert Xu <herbert@gondor.apana.org.au>, Linux Kernel Development <linux-kernel@vger.kernel.org>
+To: Nico Schottelius <nico-linux-20090311@schottelius.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, ipw3945-devel@lists.sourceforge.net, Linux Next Mailing List <linux-next@vger.kernel.org>
 
-On Tue, 10 Mar 2009, Jason Baron wrote:
-> On Tue, Mar 10, 2009 at 05:08:41PM +0100, Martin Schwidefsky wrote:
-> > On Tue, 10 Mar 2009 16:29:50 +0100 (CET)
-> > Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com> wrote:
-> >=20
-> > > > The same could be done with the problematic pr_fmt definition:
-> > > >=20
-> > > > #define pr_fmt(fmt)     __func__ ": " fmt
-> > >=20
-> > > No, that also doesn't work:
-> > >=20
-> > > | crypto/zlib.c:150: error: expected '}' before string constant
-> > > | crypto/zlib.c:150: error: expected ')' before '__func__'
-> > > | crypto/zlib.c:162: error: expected '}' before string constant
-> > > | crypto/zlib.c:162: error: expected ')' before '__func__'
-> > > | crypto/zlib.c:166: error: expected '}' before string constant
-> > > | crypto/zlib.c:166: error: expected ')' before '__func__'
-> > > | crypto/zlib.c:170: error: expected '}' before string constant
-> > > | crypto/zlib.c:170: error: expected ')' before '__func__'
-> > >=20
-> > > > > BTW, Martin: Is `#define pr_fmt(fmt)     "%s: " fmt, __func__=
-' a valid and
-> > > > > intended usage of your pr_fmt() infrastructure?
-> > > >=20
-> > > > The indended use is a simple prefix to the format string. To pa=
-ste an
-> > > > additional parameter is an interesting use of the pr_fmt macro =
-=2E.
-> > >=20
-> > > Bummer, I was so happy I could do things like
-> > >=20
-> > > | #define pr_fmt(fmt)	"%s:%u: " fmt, __func__, __LINE__
-> >=20
-> > Actually that seem like a nice thing to have. With the upstream ver=
-sion of
-> > dynamic_pr_debug this works, there the format string is used only o=
-n a printk.
-> > git commit 25b67b75587d43ff3f09ad88c03c70a38372d95d introduces the =
-code
-> > that pastes the format string to the _ddebug structure.
-> >=20
->=20
-> hmmm...yeah, some macro magic in include/linux/dynamic_debug.h conver=
-ts
-> the 'fmt' arg into a series of strings. It doesn't look as pretty in =
-the
-> dynamic debug control file:
->=20
-> crypto/zlib.c:333 [zlib]zlib_decompress_final - "\042%s: \042
-> \042avail_in %u, avail_out %u (consumed %u, produced %u)\n\042,
-> __func__"
->=20
-> with all those '\042' there, which are the '"' characters, but we
-> probably could live with it.
+On Wednesday 11 March 2009, Nico Schottelius wrote:
+> Good morning!
+> 
+> vmlinuz-2.6.29-rc7-wl-ikn-32831-g98c5597:
 
-Ugh, not only that, it also contains the __func__.
+Does -wl stand for 'wireless'?
 
-BTW, why do you store this string? The only thing you can do with it la=
-ter is
-to print it verbatim (without % format parameter expansion), as it has
-swallowed the first parameter (__func__), but still contains the %s.
+>   resume and suspend works once, after that the attached
+>   dmesg output is printed and no further suspend is possible
+> 2.6.29-rc7-next-20090306-ikn:
+>   seems to work fine so far, even adjusting the brightness works
 
-With kind regards,
-
-Geert Uytterhoeven
-Software Architect
-
-Sony Techsoft Centre Europe
-The Corporate Village =B7 Da Vincilaan 7-D1 =B7 B-1935 Zaventem =B7 Bel=
-gium
-
-Phone:    +32 (0)2 700 8453
-=46ax:      +32 (0)2 700 8622
-E-mail:   Geert.Uytterhoeven@sonycom.com
-Internet: http://www.sony-europe.com/
-
-A division of Sony Europe (Belgium) N.V.
-VAT BE 0413.825.160 =B7 RPR Brussels
-=46ortis =B7 BIC GEBABEBB =B7 IBAN BE41293037680010
+Rafael
