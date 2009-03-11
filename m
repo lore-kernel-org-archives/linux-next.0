@@ -1,51 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: md tree build failure
-Date: Wed, 11 Mar 2009 16:27:18 +1100
-Message-ID: <20090311162718.36292b71.sfr@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: [GIT PATCH tj-percpu] percpu: fix spurious alignment WARN in legacy
+ SMP percpu allocator
+Date: Wed, 11 Mar 2009 14:53:41 +0900
+Message-ID: <49B751E5.1060305@kernel.org>
+References: <20090310195534.8f8f3c7a.sfr@canb.auug.org.au> <49B67552.5070307@in.ibm.com> <49B73B15.3040101@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__11_Mar_2009_16_27_18_+1100_h7ntFzvaxECXHMBn"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51144 "EHLO smtps.tip.net.au"
+Received: from hera.kernel.org ([140.211.167.34]:40142 "EHLO hera.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751293AbZCKF10 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Mar 2009 01:27:26 -0400
+	id S1751515AbZCKFx3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Mar 2009 01:53:29 -0400
+In-Reply-To: <49B73B15.3040101@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Neil Brown <neilb@suse.de>
-Cc: linux-next@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>
+To: "Sachin P. Sant" <sachinp@in.ibm.com>
+Cc: linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linuxppc-dev@ozlabs.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Wed__11_Mar_2009_16_27_18_+1100_h7ntFzvaxECXHMBn
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Impact: remove spurious WARN on legacy SMP percpu allocator
 
-Hi Neil,
+Commit f2a8205c4ef1af917d175c36a4097ae5587791c8 incorrectly added too
+tight WARN_ON_ONCE() on alignments for UP and legacy SMP percpu
+allocator.  Commit e317603694bfd17b28a40de9d65e1a4ec12f816e fixed it
+for UP but legacy SMP allocator was forgotten.  Fix it.
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Sachin P. Sant <sachinp@in.ibm.com>
+---
 
-ERROR: "raid6_empty_zero_page" [drivers/md/raid456.ko] undefined!
-ERROR: "raid6_empty_zero_page" [crypto/async_tx/async_pq.ko] undefined!
+Oops, that was a stupid omission.  This patch should fix it.  Ingo,
+please pull from the following git vector to receive the first first
+four patches from the use-dynamic-percpu-allocator-by-default patchset
+(without the actual conversion which can disrupt archs) + this patch.
+I moved the actual conversion patch into #tj-percpu-exp branch, so the
+pull should be safe.
 
-Maybe caused by commit 4739d067d35c26093f4ba29a716ce9d60c36dc53
-("md/raid5: move raid6 data processing to raid6_pq.ko")?
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/misc.git tj-percpu
 
-I have merged the version of the md tree from next-20090306 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Thanks.
 
---Signature=_Wed__11_Mar_2009_16_27_18_+1100_h7ntFzvaxECXHMBn
-Content-Type: application/pgp-signature
+ mm/allocpercpu.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkm3S7YACgkQjjKRsyhoI8w6mQCghPgiYFTkr7aaJV3pNO8KF2Ew
-3KAAn14m1s8y4CeFCnnNKbHS6VdSldmW
-=tOdH
------END PGP SIGNATURE-----
-
---Signature=_Wed__11_Mar_2009_16_27_18_+1100_h7ntFzvaxECXHMBn--
+diff --git a/mm/allocpercpu.c b/mm/allocpercpu.c
+index 3653c57..1882923 100644
+--- a/mm/allocpercpu.c
++++ b/mm/allocpercpu.c
+@@ -120,7 +120,7 @@ void *__alloc_percpu(size_t size, size_t align)
+ 	 * on it.  Larger alignment should only be used for module
+ 	 * percpu sections on SMP for which this path isn't used.
+ 	 */
+-	WARN_ON_ONCE(align > __alignof__(unsigned long long));
++	WARN_ON_ONCE(align > SMP_CACHE_BYTES);
+ 
+ 	if (unlikely(!pdata))
+ 		return NULL;
+-- 
+1.6.0.2
