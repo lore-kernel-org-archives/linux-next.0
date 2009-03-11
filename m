@@ -1,129 +1,56 @@
-From: Greg Banks <gnb@sgi.com>
-Subject: Re: linux-next: driver-core tree build failure
-Date: Wed, 11 Mar 2009 21:07:28 +1100
-Message-ID: <49B78D60.2070402@sgi.com>
-References: <20090310192440.949884a1.sfr@canb.auug.org.au> <alpine.LRH.2.00.0903101423200.25436@vixen.sonytel.be> <20090310145311.6bf9d9e9@skybase> <alpine.LRH.2.00.0903101626450.25436@vixen.sonytel.be> <20090310170841.2257de86@skybase> <20090310200200.GB3091@redhat.com>
+From: Russell King <rmk@arm.linux.org.uk>
+Subject: Re: linux-next: manual merge of the sound tree with the arm tree
+Date: Wed, 11 Mar 2009 10:40:49 +0000
+Message-ID: <20090311104049.GA14668@flint.arm.linux.org.uk>
+References: <20090310144528.0fa208dd.sfr@canb.auug.org.au> <20090311085254.GA30970@flint.arm.linux.org.uk> <s5h63igifin.wl%tiwai@suse.de> <20090311094126.GA4619@flint.arm.linux.org.uk> <s5hzlfsgywo.wl%tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755684AbZCKKDu@vger.kernel.org>
-In-Reply-To: <20090310200200.GB3091@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jason Baron <jbaron@redhat.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, Linux Kernel Development <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:54621 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755125AbZCKKlz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Mar 2009 06:41:55 -0400
+Content-Disposition: inline
+In-Reply-To: <s5hzlfsgywo.wl%tiwai@suse.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Ben Dooks <ben@simtec.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Alexander Schulz <alex@shark-linux.de>
 
-Jason Baron wrote:
-> On Tue, Mar 10, 2009 at 05:08:41PM +0100, Martin Schwidefsky wrote:
->   
->> On Tue, 10 Mar 2009 16:29:50 +0100 (CET)
->> Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com> wrote:
->>
->>     
->>>> The same could be done with the problematic pr_fmt definition:
->>>>
->>>> #define pr_fmt(fmt)     __func__ ": " fmt
->>>>         
->>> No, that also doesn't work:
->>>
->>> | crypto/zlib.c:150: error: expected '}' before string constant
->>> | crypto/zlib.c:150: error: expected ')' before '__func__'
->>> | crypto/zlib.c:162: error: expected '}' before string constant
->>> | crypto/zlib.c:162: error: expected ')' before '__func__'
->>> | crypto/zlib.c:166: error: expected '}' before string constant
->>> | crypto/zlib.c:166: error: expected ')' before '__func__'
->>> | crypto/zlib.c:170: error: expected '}' before string constant
->>> | crypto/zlib.c:170: error: expected ')' before '__func__'
->>>
->>>       
->>>>> BTW, Martin: Is `#define pr_fmt(fmt)     "%s: " fmt, __func__' a valid and
->>>>> intended usage of your pr_fmt() infrastructure?
->>>>>           
->>>> The indended use is a simple prefix to the format string. To paste an
->>>> additional parameter is an interesting use of the pr_fmt macro ..
->>>>         
->>> Bummer, I was so happy I could do things like
->>>
->>> | #define pr_fmt(fmt)	"%s:%u: " fmt, __func__, __LINE__
->>>       
->> Actually that seem like a nice thing to have. With the upstream version of
->> dynamic_pr_debug this works, there the format string is used only on a printk.
->> git commit 25b67b75587d43ff3f09ad88c03c70a38372d95d introduces the code
->> that pastes the format string to the _ddebug structure.
->>
->>     
->
-> hmmm...yeah, some macro magic in include/linux/dynamic_debug.h converts
-> the 'fmt' arg into a series of strings. It doesn't look as pretty in the
-> dynamic debug control file:
->
-> crypto/zlib.c:333 [zlib]zlib_decompress_final - "\042%s: \042
-> \042avail_in %u, avail_out %u (consumed %u, produced %u)\n\042,
-> __func__"
->
-> with all those '\042' there, which are the '"' characters, but we
-> probably could live with it.
->
-> patch below.
->
->   
+On Wed, Mar 11, 2009 at 11:02:47AM +0100, Takashi Iwai wrote:
+> At Wed, 11 Mar 2009 09:41:27 +0000, Russell King wrote:
+> > Why do I want to pull stuff that I consider broken into my tree?  Please
+> > get rid of the use of __typesafe_io in the shark io.h header in your tree
+> > or drop these patches entirely and ask the submitter to fix (whatever's
+> > easier for you.)
+> 
+> It's not too big issue to revert the changes, but it'd be better to
+> fix the spot as Mark suggested.  The continuous GIT tree history makes
+> the life of others easier a lot.
 
-I think this patch does the same thing more cleanly.
+Continuous git tree history is something that can be achieved if you're
+either at the top of the submission tree, or if you're extremely good
+at reviewing patches and throwing out anything which might be the
+slightest bit controversial until such things have been agreed.
 
-When CONFIG_DYNAMIC_DEBUG is enabled, allow callers of pr_debug()
-to provide their own definition of pr_fmt() even if that definition
-uses tricks like
+The issue here is that an inappropriate tree has accepted unreviewed
+and questionable ARM specific changes as part of a different set of
+patches.  That's partly the fault of the submitter for mixing up the
+patch set with irrelevant changes for the tree to which he's submitting
+his changes.
 
-#define pr_fmt(fmt) "%s:" fmt, __func__
+There used to be a mantra with the kernel community: one patch to make
+one logical change.  That's very much the issue here - it sounds like
+there was one patch making several changes, some of which were relevent
+to the ALSA tree and others which weren't.
 
-Signed-off-by: Greg Banks <gnb@sgi.com>
----
-
- include/linux/dynamic_debug.h |    4 ++--
- include/linux/kernel.h        |    3 ++-
- 2 files changed, 4 insertions(+), 3 deletions(-)
-
-Index: linux-git/include/linux/dynamic_debug.h
-===================================================================
---- linux-git.orig/include/linux/dynamic_debug.h
-+++ linux-git/include/linux/dynamic_debug.h
-@@ -57,7 +57,7 @@ extern int ddebug_remove_module(char *mo
- 	{ KBUILD_MODNAME, __func__, __FILE__, fmt, DEBUG_HASH,	\
- 		DEBUG_HASH2, __LINE__, _DPRINTK_FLAGS_DEFAULT };	\
- 	if (__dynamic_dbg_enabled(descriptor))				\
--		printk(KERN_DEBUG KBUILD_MODNAME ":" fmt,		\
-+		printk(KERN_DEBUG KBUILD_MODNAME ":" pr_fmt(fmt),	\
- 				##__VA_ARGS__);				\
- 	} while (0)
- 
-@@ -70,7 +70,7 @@ extern int ddebug_remove_module(char *mo
- 		DEBUG_HASH2, __LINE__, _DPRINTK_FLAGS_DEFAULT };	\
- 	if (__dynamic_dbg_enabled(descriptor))				\
- 			dev_printk(KERN_DEBUG, dev,			\
--					KBUILD_MODNAME ": " fmt,	\
-+					KBUILD_MODNAME ": " pr_fmt(fmt),\
- 					##__VA_ARGS__);			\
- 	} while (0)
- 
-Index: linux-git/include/linux/kernel.h
-===================================================================
---- linux-git.orig/include/linux/kernel.h
-+++ linux-git/include/linux/kernel.h
-@@ -359,8 +359,9 @@ static inline char *pack_hex_byte(char *
- #define pr_debug(fmt, ...) \
- 	printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
- #elif defined(CONFIG_DYNAMIC_DEBUG)
-+/* dynamic_pr_debug() uses pr_fmt() internally so we don't need it here */
- #define pr_debug(fmt, ...) do { \
--	dynamic_pr_debug(pr_fmt(fmt), ##__VA_ARGS__); \
-+	dynamic_pr_debug(fmt, ##__VA_ARGS__); \
- 	} while (0)
- #else
- #define pr_debug(fmt, ...) \
-
-
+But, at the end of the day, these things have to be fixed one way or
+other, whether that be by removing the offending commits, by reverting
+the patches, or patching the specific bad changes back to how they
+originally were.  I really don't mind which option is taken, just so
+long as the final outcome is the right one.
 
 -- 
-Greg Banks, P.Engineer, SGI Australian Software Group.
-the brightly coloured sporks of revolution.
-I don't speak for SGI.
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
