@@ -1,42 +1,39 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
+From: Greg KH <gregkh@suse.de>
 Subject: Re: linux-next: Tree for March 11 (staging/multimedia)
-Date: Wed, 11 Mar 2009 11:21:52 -0700
-Message-ID: <49B80140.5000304@oracle.com>
-References: <20090311225913.51589223.sfr@canb.auug.org.au> <49B7F107.7030303@oracle.com> <20090311181153.GA11088@suse.de>
+Date: Wed, 11 Mar 2009 11:24:11 -0700
+Message-ID: <20090311182411.GA6501@suse.de>
+References: <20090311225913.51589223.sfr@canb.auug.org.au> <49B7F107.7030303@oracle.com> <20090311181153.GA11088@suse.de> <49B80140.5000304@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet12.oracle.com ([148.87.113.124]:43093 "EHLO
-	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753594AbZCKSUI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Mar 2009 14:20:08 -0400
-In-Reply-To: <20090311181153.GA11088@suse.de>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <gregkh@suse.de>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-media-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <49B80140.5000304@oracle.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Greg KH wrote:
-> On Wed, Mar 11, 2009 at 10:12:39AM -0700, Randy Dunlap wrote:
->> Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20090310:
->>
->> drivers/staging/go7007/go7007-v4l2.c:1830: error: 'VID_TYPE_CAPTURE' undeclared here (not in a function)
+On Wed, Mar 11, 2009 at 11:21:52AM -0700, Randy Dunlap wrote:
+> Greg KH wrote:
+> > On Wed, Mar 11, 2009 at 10:12:39AM -0700, Randy Dunlap wrote:
+> >> Stephen Rothwell wrote:
+> >>> Hi all,
+> >>>
+> >>> Changes since 20090310:
+> >>
+> >> drivers/staging/go7007/go7007-v4l2.c:1830: error: 'VID_TYPE_CAPTURE' undeclared here (not in a function)
+> > 
+> > Odd, nothing has changed in this driver, is this a v4l api change?
 > 
-> Odd, nothing has changed in this driver, is this a v4l api change?
+> I don't know if the vl4 API changed, but this error has been around
+> for some time now.  Just because it's just now being reported is one
+> change.  Surely other people build these drivers.  ???
 
-I don't know if the vl4 API changed, but this error has been around
-for some time now.  Just because it's just now being reported is one
-change.  Surely other people build these drivers.  ???
+I do, and don't seem to get this error.
 
+Ah, it's a CONFIG_VIDEO_V4L1_COMPAT issue.  I'll see what needs to do to
+fix this up.
 
-I do know that other video drivers (with one exception) don't set:
-	.vfl_type	= VID_TYPE_CAPTURE,
-at all, so maybe it's not needed (?).
+thanks,
 
-
--- 
-~Randy
+greg k-h
