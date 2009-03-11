@@ -1,61 +1,63 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: linux-next: Tree for March 11 (staging/multimedia)
-Date: Wed, 11 Mar 2009 19:27:50 +0100
-Message-ID: <200903111927.51015.hverkuil@xs4all.nl>
-References: <20090311225913.51589223.sfr@canb.auug.org.au> <20090311181153.GA11088@suse.de> <49B80140.5000304@oracle.com>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: linux-next: Tree for March 6 (ath9k)
+Date: Wed, 11 Mar 2009 14:19:36 -0400
+Message-ID: <20090311181935.GD8761@tuxdriver.com>
+References: <20090306191311.697e7b97.sfr@canb.auug.org.au> <49B17320.8010000@oracle.com> <49B17B12.3050200@openwrt.org> <49B17C4E.3000004@oracle.com> <20090306194045.GE3712@tuxdriver.com> <49B7F2B0.1000702@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp-vbr6.xs4all.nl ([194.109.24.26]:1860 "EHLO
-	smtp-vbr6.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751428AbZCKS16 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Mar 2009 14:27:58 -0400
-In-Reply-To: <49B80140.5000304@oracle.com>
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:33233 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753745AbZCKSad (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Mar 2009 14:30:33 -0400
 Content-Disposition: inline
+In-Reply-To: <49B7F2B0.1000702@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Greg KH <gregkh@suse.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org
+Cc: Gabor Juhos <juhosg@openwrt.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
 
-On Wednesday 11 March 2009 19:21:52 Randy Dunlap wrote:
-> Greg KH wrote:
-> > On Wed, Mar 11, 2009 at 10:12:39AM -0700, Randy Dunlap wrote:
-> >> Stephen Rothwell wrote:
-> >>> Hi all,
+On Wed, Mar 11, 2009 at 10:19:44AM -0700, Randy Dunlap wrote:
+> John W. Linville wrote:
+> > On Fri, Mar 06, 2009 at 11:41:02AM -0800, Randy Dunlap wrote:
+> >> Gabor Juhos wrote:
+> >>> Randy Dunlap =EDrta:
+> >>>> Stephen Rothwell wrote:
+> >>>>> Hi all,
+> >>>>>
+> >>>>> Linus' release of -rc7 seems to have stirred people up a bit ..=
+=2E
+> >>>>>
+> >>>>> Changes since 20090305:
+> >>>> when CONFIG_RFKILL=3Dn, ath9k/virtual.c causes:
+> >>>>
+> >>>> (.text+0x224e83): undefined reference to `ath_radio_disable'
+> >>>> (.text+0x224e8b): undefined reference to `ath_radio_enable'
+> >>>>
+> >>>>
+> >>> Hi,
 > >>>
-> >>> Changes since 20090310:
-> >>
-> >> drivers/staging/go7007/go7007-v4l2.c:1830: error: 'VID_TYPE_CAPTURE'
-> >> undeclared here (not in a function)
-> >
-> > Odd, nothing has changed in this driver, is this a v4l api change?
->
-> I don't know if the vl4 API changed, but this error has been around
-> for some time now.  Just because it's just now being reported is one
-> change.  Surely other people build these drivers.  ???
->
->
-> I do know that other video drivers (with one exception) don't set:
-> 	.vfl_type	= VID_TYPE_CAPTURE,
-> at all, so maybe it's not needed (?).
+> >>> I have submitted a patch for this already:
+> >>> http://marc.info/?l=3Dlinux-wireless&m=3D123633468314970&w=3D2
+> >>>
+> >>> Should I send it to somewhere else as well?
+> >> It hasn't propagated into the linux-next merging yet...
+> >=20
+> > He just sent it today (or overnight).  I'll get it into wireless-ne=
+xt.
+> >=20
+> > John
+> >=20
+> > P.S.  I'm starting to think that RFKILL should just be mandatory...
+>=20
+>=20
+> This build error still happens in linux-next-20090311.
 
-That's correct, this assignment isn't needed. The error appears now since 
-VID_TYPE_CAPTURE has been made inaccessible for V4L2 drivers. Only old V4L1 
-drivers can use it.
+That fix is in wireless-next-2.6 as of yesterday.  I guess it was a
+little too late for yesterday's linux-next build -- sorry!
 
-This change was very recent and before that it compiled fine. Although even 
-then that code was wrong (but harmless).
-
-Just remove that line and it will compile fine again. Although unless 
-someone will take this driver to the next level it will probably break 
-again once the old autoprobing i2c API is removed (and that's slated for 
-2.6.30 if all goes well).
-
-Regards,
-
-	Hans
-
--- 
-Hans Verkuil - video4linux developer - sponsored by TANDBERG
+John
+--=20
+John W. Linville		Someday the world will need a hero, and you
+linville@tuxdriver.com			might be all we have.  Be ready.
