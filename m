@@ -1,22 +1,22 @@
 From: Tejun Heo <tj@kernel.org>
-Subject: [GIT PATCH tj-percpu] percpu: fix spurious alignment WARN in legacy
- SMP percpu allocator
-Date: Wed, 11 Mar 2009 14:53:41 +0900
-Message-ID: <49B751E5.1060305@kernel.org>
+Subject: [RESEND GIT PATCH tj-percpu] percpu: fix spurious alignment WARN
+ in legacy SMP percpu allocator
+Date: Wed, 11 Mar 2009 14:54:29 +0900
+Message-ID: <49B75215.5010707@kernel.org>
 References: <20090310195534.8f8f3c7a.sfr@canb.auug.org.au> <49B67552.5070307@in.ibm.com> <49B73B15.3040101@in.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:40142 "EHLO hera.kernel.org"
+Received: from hera.kernel.org ([140.211.167.34]:40171 "EHLO hera.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751515AbZCKFx3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Mar 2009 01:53:29 -0400
+	id S1751469AbZCKFyW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Mar 2009 01:54:22 -0400
 In-Reply-To: <49B73B15.3040101@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: "Sachin P. Sant" <sachinp@in.ibm.com>
-Cc: linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linuxppc-dev@ozlabs.org, LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linuxppc-dev@ozlabs.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>
 
 Impact: remove spurious WARN on legacy SMP percpu allocator
 
@@ -28,6 +28,7 @@ for UP but legacy SMP allocator was forgotten.  Fix it.
 Signed-off-by: Tejun Heo <tj@kernel.org>
 Reported-by: Sachin P. Sant <sachinp@in.ibm.com>
 ---
+(RESEND: cc'ing Ingo. :-)
 
 Oops, that was a stupid omission.  This patch should fix it.  Ingo,
 please pull from the following git vector to receive the first first
