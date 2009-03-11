@@ -1,242 +1,158 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: Re: next-20090310: ext4 hangs
-Date: Wed, 11 Mar 2009 19:07:26 +0300
-Message-ID: <a4423d670903110907o7041f4eof92278835aa0c71c@mail.gmail.com>
-References: <a4423d670903100517y42f342d4pd73c4c36f5c64dd7@mail.gmail.com>
-	 <20090310124658.GE8840@mit.edu>
-	 <a4423d670903100718w1a532143he767782ae598d0fb@mail.gmail.com>
-	 <20090310154745.GF23075@mit.edu>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for March 10 (crypto & NLATTR)
+Date: Wed, 11 Mar 2009 09:55:35 -0700
+Message-ID: <49B7ED07.6000609@oracle.com>
+References: <49B6B821.5050302@oracle.com> <10f740e80903101256v2cfe08a8g410c297e019d8693@mail.gmail.com> <49B6C8BF.8010105@oracle.com> <20090310.131700.40129006.davem@davemloft.net> <20090311010705.GA17260@gondor.apana.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-ext4-owner@vger.kernel.org>
-In-Reply-To: <20090310154745.GF23075@mit.edu>
-Sender: linux-ext4-owner@vger.kernel.org
-To: Theodore Tso <tytso@mit.edu>, Alexander Beregalov <a.beregalov@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-ext4@vger.kernel.org, LKML <linux-kernel@vg>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <20090311010705.GA17260@gondor.apana.org.au>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: David Miller <davem@davemloft.net>, geert@linux-m68k.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-2009/3/10 Theodore Tso <tytso@mit.edu>:
-> On Tue, Mar 10, 2009 at 05:18:55PM +0300, Alexander Beregalov wrote:
->> > Thanks for reporting this; does it show up on stock 2.6.29-rc7?
->> No, I can not reproduce it.
->> It is a slow system, I would not like to bisect it, only if it is th=
-e
->> last possibility.
->
-> Just to be clear; you weren't able to reproduce it on stock 2.6.29-rc=
-7
-> ---- does it reproduce easily on linux-next?
-Right.
-But now I am not sure 2.6.29-rc7 is not affected, I will try to
-reproduce it again.
+Herbert Xu wrote:
+> On Tue, Mar 10, 2009 at 01:17:00PM -0700, David Miller wrote:
+>> From: Randy Dunlap <randy.dunlap@oracle.com>
+>> Date: Tue, 10 Mar 2009 13:08:31 -0700
+>>
+>>> I'll have to let David or Herbert answer that.  From my quick look
+>>> at the code, I don't see much use for nlattr.c when CONFIG_NET
+>>> is not enabled.
+>> We want to use the netlink attribute parsers even in non-networking
+>> code, that's what he's trying to do here.
+> 
+> OK the nlattr construction code really wants to depend on NET
+> because they're skb-oriented.  We could either move them back
+> or just wrap them in ifdef CONFIG_NET.
+> 
+> I think the latter is probably the simplest.
+> 
+> How does this patch look? And Randy, does it fix the problem for
+> you?
+> 
+> nlattr: Fix build error with NET off
+> 
+> We moved the netlink attribute support from net to lib in order
+> for it to be available for general consumption.  However, parts
+> of the code (the bits that we don't need :) really depends on
+> NET because the target object is sk_buff.
+> 
+> This patch fixes this by wrapping them in CONFIG_NET.
+> 
+> Some EXPORTs have been moved to make this work.
+> 
+> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
->
-> Next question --- does the system hang completely, or just the dbench
-> process (and probably any process that tries touching the filesystem
-System is responsible.
-> that's hung up)? =C2=A0Do you have a serial console, or someone of
-> recording all of the dumps coming from sysrq-t? =C2=A0The two stack t=
-races
-I can read dmesg.
-> you gave weren't the ones causing the problem, but rather the ones
-> waiting for the journal lock.
+Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+Tested-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-SysRq : Show State
+Thanks.
 
-<..>
-
-kjournald2    D 0000000000557a0c     0  1547      2
-Call Trace:
- [0000000000768bcc] schedule+0x18/0x40
- [0000000000557a0c] jbd2_journal_commit_transaction+0x208/0x1718
- [000000000055d758] kjournald2+0x14c/0x318
- [0000000000465d34] kthread+0x48/0x7c
- [000000000042b364] kernel_thread+0x3c/0x54
- [0000000000465c88] kthreadd+0xc8/0x12c
-pdflush       D 000000000055716c     0  2021      2
-Call Trace:
- [0000000000768bcc] schedule+0x18/0x40
- [000000000055716c] start_this_handle+0x374/0x508
- [0000000000557500] jbd2_journal_start+0xbc/0x11c
- [000000000053a438] ext4_journal_start_sb+0x5c/0x84
- [000000000052dd84] ext4_da_writepages+0x1a8/0x404
- [0000000000490ec0] do_writepages+0x40/0x78
- [00000000004d0ff8] __writeback_single_inode+0x198/0x330
- [00000000004d15d8] generic_sync_sb_inodes+0x238/0x3c4
- [00000000004d1984] writeback_inodes+0xb0/0x114
- [00000000004915c0] background_writeout+0xc8/0x114
- [0000000000492004] pdflush+0x128/0x1e0
- [0000000000465d34] kthread+0x48/0x7c
- [000000000042b364] kernel_thread+0x3c/0x54
- [0000000000465c88] kthreadd+0xc8/0x12c
-dbench        D 000000000055716c     0  2024      1
-Call Trace:
- [0000000000768bcc] schedule+0x18/0x40
- [000000000055716c] start_this_handle+0x374/0x508
- [0000000000557500] jbd2_journal_start+0xbc/0x11c
- [000000000053a438] ext4_journal_start_sb+0x5c/0x84
- [000000000052a9b8] ext4_dirty_inode+0xd4/0xf0
- [00000000004d1a14] __mark_inode_dirty+0x2c/0x188
- [00000000004c7714] touch_atime+0x160/0x178
- [00000000004c2a3c] vfs_readdir+0x88/0xb0
- [00000000004eab90] compat_sys_getdents+0x3c/0x8c
- [0000000000406154] linux_sparc_syscall32+0x34/0x40
-dbench        D 000000000055716c     0  2025      1
-Call Trace:
- [0000000000768bcc] schedule+0x18/0x40
- [000000000055716c] start_this_handle+0x374/0x508
- [0000000000557500] jbd2_journal_start+0xbc/0x11c
- [000000000053a438] ext4_journal_start_sb+0x5c/0x84
- [000000000052a9b8] ext4_dirty_inode+0xd4/0xf0
- [00000000004d1a14] __mark_inode_dirty+0x2c/0x188
- [00000000004c7714] touch_atime+0x160/0x178
- [00000000004c2a3c] vfs_readdir+0x88/0xb0
- [00000000004eab90] compat_sys_getdents+0x3c/0x8c
- [0000000000406154] linux_sparc_syscall32+0x34/0x40
-dbench        D 000000000055716c     0  2026      1
-Call Trace:
- [0000000000768bcc] schedule+0x18/0x40
- [000000000055716c] start_this_handle+0x374/0x508
- [0000000000557500] jbd2_journal_start+0xbc/0x11c
- [000000000053a438] ext4_journal_start_sb+0x5c/0x84
- [000000000052a9b8] ext4_dirty_inode+0xd4/0xf0
- [00000000004d1a14] __mark_inode_dirty+0x2c/0x188
- [00000000004c7714] touch_atime+0x160/0x178
- [000000000048b56c] generic_file_aio_read+0x578/0x620
- [00000000004b5254] do_sync_read+0x90/0xe0
- [00000000004b5c40] vfs_read+0x7c/0x11c
- [00000000004b5d30] SyS_pread64+0x50/0x7c
- [000000000043f778] sys32_pread64+0x20/0x34
- [0000000000406154] linux_sparc_syscall32+0x34/0x40
-dbench        D 000000000055716c     0  2027      1
-Call Trace:
- [0000000000768bcc] schedule+0x18/0x40
- [000000000055716c] start_this_handle+0x374/0x508
- [0000000000557500] jbd2_journal_start+0xbc/0x11c
- [000000000053a438] ext4_journal_start_sb+0x5c/0x84
- [000000000052a9b8] ext4_dirty_inode+0xd4/0xf0
- [00000000004d1a14] __mark_inode_dirty+0x2c/0x188
- [00000000004c757c] file_update_time+0xe0/0x118
- [000000000048aef4] __generic_file_aio_write_nolock+0x280/0x380
- [000000000048b930] generic_file_aio_write+0x58/0xc8
- [0000000000526274] ext4_file_write+0xa8/0x15c
- [00000000004b5174] do_sync_write+0x90/0xe0
- [00000000004b5a40] vfs_write+0x7c/0x11c
- [00000000004b5b30] SyS_pwrite64+0x50/0x7c
- [000000000043f744] sys32_pwrite64+0x20/0x34
- [0000000000406154] linux_sparc_syscall32+0x34/0x40
-dbench        D 000000000055716c     0  2028      1
-Call Trace:
- [0000000000768bcc] schedule+0x18/0x40
- [000000000055716c] start_this_handle+0x374/0x508
- [0000000000557500] jbd2_journal_start+0xbc/0x11c
- [000000000053a438] ext4_journal_start_sb+0x5c/0x84
- [000000000052b958] ext4_da_write_begin+0x98/0x1a0
- [000000000048a8dc] generic_file_buffered_write+0xe4/0x2b8
- [000000000048afd0] __generic_file_aio_write_nolock+0x35c/0x380
- [000000000048b930] generic_file_aio_write+0x58/0xc8
- [0000000000526274] ext4_file_write+0xa8/0x15c
- [00000000004b5174] do_sync_write+0x90/0xe0
- [00000000004b5a40] vfs_write+0x7c/0x11c
- [00000000004b5b30] SyS_pwrite64+0x50/0x7c
- [000000000043f744] sys32_pwrite64+0x20/0x34
- [0000000000406154] linux_sparc_syscall32+0x34/0x40
-dbench        D 000000000055c010     0  2029      1
-Call Trace:
- [0000000000768bcc] schedule+0x18/0x40
- [000000000055c010] jbd2_journal_release_jbd_inode+0x94/0xd8
- [0000000000535bb4] ext4_clear_inode+0x2c/0x3c
- [00000000004c7b1c] clear_inode+0xac/0x124
- [0000000000527e48] ext4_free_inode+0x7c/0x3d4
- [000000000052f884] ext4_delete_inode+0x218/0x29c
- [00000000004c86b4] generic_delete_inode+0x8c/0x124
- [00000000004c876c] generic_drop_inode+0x20/0x19c
- [00000000004c77a4] iput+0x78/0x88
- [00000000004c0200] do_unlinkat+0xf8/0x154
- [00000000004c0270] SyS_unlink+0x14/0x24
- [0000000000406154] linux_sparc_syscall32+0x34/0x40
-dbench        D 000000000055cf84     0  2030      1
-Call Trace:
- [0000000000768bcc] schedule+0x18/0x40
- [000000000055cf84] jbd2_log_wait_commit+0x144/0x1a8
- [0000000000555cdc] jbd2_journal_stop+0x32c/0x37c
- [0000000000557594] jbd2_journal_force_commit+0x34/0x48
- [0000000000536d14] ext4_force_commit+0x30/0x50
- [00000000005296b8] ext4_write_inode+0x80/0xa0
- [00000000004d1044] __writeback_single_inode+0x1e4/0x330
- [00000000004d11b0] sync_inode+0x20/0x40
- [00000000005263ec] ext4_sync_file+0xc4/0x118
- [00000000004d46f0] vfs_fsync+0x6c/0xa0
- [00000000004d474c] do_fsync+0x28/0x44
- [00000000004d47a4] SyS_fsync+0x14/0x28
- [0000000000406154] linux_sparc_syscall32+0x34/0x40
-dbench        D 000000000055716c     0  2031      1
-Call Trace:
- [0000000000768bcc] schedule+0x18/0x40
- [000000000055716c] start_this_handle+0x374/0x508
- [0000000000557500] jbd2_journal_start+0xbc/0x11c
- [000000000053a438] ext4_journal_start_sb+0x5c/0x84
- [000000000052b958] ext4_da_write_begin+0x98/0x1a0
- [000000000048a8dc] generic_file_buffered_write+0xe4/0x2b8
- [000000000048afd0] __generic_file_aio_write_nolock+0x35c/0x380
- [000000000048b930] generic_file_aio_write+0x58/0xc8
- [0000000000526274] ext4_file_write+0xa8/0x15c
- [00000000004b5174] do_sync_write+0x90/0xe0
- [00000000004b5a40] vfs_write+0x7c/0x11c
- [00000000004b5b30] SyS_pwrite64+0x50/0x7c
- [000000000043f744] sys32_pwrite64+0x20/0x34
- [0000000000406154] linux_sparc_syscall32+0x34/0x40
-dbench        D 000000000055716c     0  2032      1
-Call Trace:
- [0000000000768bcc] schedule+0x18/0x40
- [000000000055716c] start_this_handle+0x374/0x508
- [0000000000557500] jbd2_journal_start+0xbc/0x11c
- [000000000053a438] ext4_journal_start_sb+0x5c/0x84
- [000000000052a9b8] ext4_dirty_inode+0xd4/0xf0
- [00000000004d1a14] __mark_inode_dirty+0x2c/0x188
- [00000000004c7714] touch_atime+0x160/0x178
- [00000000004c2a3c] vfs_readdir+0x88/0xb0
- [00000000004eab90] compat_sys_getdents+0x3c/0x8c
- [0000000000406154] linux_sparc_syscall32+0x34/0x40
-dbench        D 000000000055716c     0  2033      1
-Call Trace:
- [0000000000768bcc] schedule+0x18/0x40
- [000000000055716c] start_this_handle+0x374/0x508
- [0000000000557500] jbd2_journal_start+0xbc/0x11c
- [000000000053a438] ext4_journal_start_sb+0x5c/0x84
- [000000000052a9b8] ext4_dirty_inode+0xd4/0xf0
- [00000000004d1a14] __mark_inode_dirty+0x2c/0x188
- [00000000004c7714] touch_atime+0x160/0x178
- [000000000048b56c] generic_file_aio_read+0x578/0x620
- [00000000004b5254] do_sync_read+0x90/0xe0
- [00000000004b5c40] vfs_read+0x7c/0x11c
- [00000000004b5d30] SyS_pread64+0x50/0x7c
- [000000000043f778] sys32_pread64+0x20/0x34
- [0000000000406154] linux_sparc_syscall32+0x34/0x40
+> diff --git a/lib/nlattr.c b/lib/nlattr.c
+> index 56c3ce7..80009a2 100644
+> --- a/lib/nlattr.c
+> +++ b/lib/nlattr.c
+> @@ -281,6 +281,7 @@ int nla_strcmp(const struct nlattr *nla, const char *str)
+>  	return d;
+>  }
+>  
+> +#ifdef CONFIG_NET
+>  /**
+>   * __nla_reserve - reserve room for attribute on the skb
+>   * @skb: socket buffer to reserve room on
+> @@ -305,6 +306,7 @@ struct nlattr *__nla_reserve(struct sk_buff *skb, int attrtype, int attrlen)
+>  
+>  	return nla;
+>  }
+> +EXPORT_SYMBOL(__nla_reserve);
+>  
+>  /**
+>   * __nla_reserve_nohdr - reserve room for attribute without header
+> @@ -325,6 +327,7 @@ void *__nla_reserve_nohdr(struct sk_buff *skb, int attrlen)
+>  
+>  	return start;
+>  }
+> +EXPORT_SYMBOL(__nla_reserve_nohdr);
+>  
+>  /**
+>   * nla_reserve - reserve room for attribute on the skb
+> @@ -345,6 +348,7 @@ struct nlattr *nla_reserve(struct sk_buff *skb, int attrtype, int attrlen)
+>  
+>  	return __nla_reserve(skb, attrtype, attrlen);
+>  }
+> +EXPORT_SYMBOL(nla_reserve);
+>  
+>  /**
+>   * nla_reserve_nohdr - reserve room for attribute without header
+> @@ -363,6 +367,7 @@ void *nla_reserve_nohdr(struct sk_buff *skb, int attrlen)
+>  
+>  	return __nla_reserve_nohdr(skb, attrlen);
+>  }
+> +EXPORT_SYMBOL(nla_reserve_nohdr);
+>  
+>  /**
+>   * __nla_put - Add a netlink attribute to a socket buffer
+> @@ -382,6 +387,7 @@ void __nla_put(struct sk_buff *skb, int attrtype, int attrlen,
+>  	nla = __nla_reserve(skb, attrtype, attrlen);
+>  	memcpy(nla_data(nla), data, attrlen);
+>  }
+> +EXPORT_SYMBOL(__nla_put);
+>  
+>  /**
+>   * __nla_put_nohdr - Add a netlink attribute without header
+> @@ -399,6 +405,7 @@ void __nla_put_nohdr(struct sk_buff *skb, int attrlen, const void *data)
+>  	start = __nla_reserve_nohdr(skb, attrlen);
+>  	memcpy(start, data, attrlen);
+>  }
+> +EXPORT_SYMBOL(__nla_put_nohdr);
+>  
+>  /**
+>   * nla_put - Add a netlink attribute to a socket buffer
+> @@ -418,6 +425,7 @@ int nla_put(struct sk_buff *skb, int attrtype, int attrlen, const void *data)
+>  	__nla_put(skb, attrtype, attrlen, data);
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL(nla_put);
+>  
+>  /**
+>   * nla_put_nohdr - Add a netlink attribute without header
+> @@ -436,6 +444,7 @@ int nla_put_nohdr(struct sk_buff *skb, int attrlen, const void *data)
+>  	__nla_put_nohdr(skb, attrlen, data);
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL(nla_put_nohdr);
+>  
+>  /**
+>   * nla_append - Add a netlink attribute without header or padding
+> @@ -454,20 +463,13 @@ int nla_append(struct sk_buff *skb, int attrlen, const void *data)
+>  	memcpy(skb_put(skb, attrlen), data, attrlen);
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL(nla_append);
+> +#endif
+>  
+>  EXPORT_SYMBOL(nla_validate);
+>  EXPORT_SYMBOL(nla_parse);
+>  EXPORT_SYMBOL(nla_find);
+>  EXPORT_SYMBOL(nla_strlcpy);
+> -EXPORT_SYMBOL(__nla_reserve);
+> -EXPORT_SYMBOL(__nla_reserve_nohdr);
+> -EXPORT_SYMBOL(nla_reserve);
+> -EXPORT_SYMBOL(nla_reserve_nohdr);
+> -EXPORT_SYMBOL(__nla_put);
+> -EXPORT_SYMBOL(__nla_put_nohdr);
+> -EXPORT_SYMBOL(nla_put);
+> -EXPORT_SYMBOL(nla_put_nohdr);
+>  EXPORT_SYMBOL(nla_memcpy);
+>  EXPORT_SYMBOL(nla_memcmp);
+>  EXPORT_SYMBOL(nla_strcmp);
+> -EXPORT_SYMBOL(nla_append);
+> 
+> Thanks,
 
 
->
-> I don't think is related to BZ #12579, although some of the symptoms
-> look superficially the same.
->
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0- Ted
->
-> P.S. =C2=A0What are your dbench parameters, and how big is your files=
-ystem,
-> so I can try to reproduce it on my side? =C2=A0And how long do you
-> typically need to run before this triggers? =C2=A0Thanks!
-
-It is 2G filesystem, I run
-`dbench -c /usr/share/dbench/client.txt 10` or 5 clients.
-
-Yesterday it happened when I run it for the first time, but today I
-run it 10 times before I got the deadlock.
-
-So, I think I need to try it on 2.6.29-rc7 again.
---
-To unsubscribe from this list: send the line "unsubscribe linux-ext4" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+~Randy
