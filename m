@@ -1,44 +1,78 @@
-From: "Sachin P. Sant" <sachinp@in.ibm.com>
-Subject: Re: [RESEND GIT PATCH tj-percpu] percpu: fix spurious alignment WARN
- in legacy SMP percpu allocator
-Date: Wed, 11 Mar 2009 12:18:14 +0530
-Message-ID: <49B75EAE.4080708@in.ibm.com>
-References: <20090310195534.8f8f3c7a.sfr@canb.auug.org.au> <49B67552.5070307@in.ibm.com> <49B73B15.3040101@in.ibm.com> <49B75215.5010707@kernel.org>
+From: Greg Ungerer <gerg@snapgear.com>
+Subject: Re: linux-next: Tree for March 10 (m68k/tlbflush.h)
+Date: Wed, 11 Mar 2009 16:55:22 +1000
+Message-ID: <49B7605A.7000604@snapgear.com>
+References: <10f740e80903101307v70000e0cm61e261050411a715@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp07.in.ibm.com ([59.145.155.7]:49414 "EHLO
-	e28smtp07.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751120AbZCKGsU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Mar 2009 02:48:20 -0400
-In-Reply-To: <49B75215.5010707@kernel.org>
+Received: from rex.securecomputing.com ([203.24.151.4]:48643 "EHLO
+	cyberguard.com.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751700AbZCKGz3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Mar 2009 02:55:29 -0400
+In-Reply-To: <10f740e80903101307v70000e0cm61e261050411a715@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Tejun Heo wrote:
-> Impact: remove spurious WARN on legacy SMP percpu allocator
->
-> Commit f2a8205c4ef1af917d175c36a4097ae5587791c8 incorrectly added too
-> tight WARN_ON_ONCE() on alignments for UP and legacy SMP percpu
-> allocator.  Commit e317603694bfd17b28a40de9d65e1a4ec12f816e fixed it
-> for UP but legacy SMP allocator was forgotten.  Fix it.
->
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Reported-by: Sachin P. Sant <sachinp@in.ibm.com>
-> ---
-Thanks. The patch fixes the warning.
+Hi Geert,
 
-Tested-by : Sachin Sant <sachinp@in.ibm.com>
+Geert Uytterhoeven wrote:
+> Hi Greg,
+> 
+> http://kisskb.ellerman.id.au/kisskb/buildresult/180587/
+> | arch/m68k/kernel/traps.c:274: error: implicit declaration of
+> function '__flush_tlb040_one'
+> 
+> http://kisskb.ellerman.id.au/kisskb/buildresult/180591/
+> | mm/vmalloc.c:555: error: implicit declaration of function
+> 'flush_tlb_kernel_range'
+> 
+> Caused by:
+> 
+> | commit 7fa69761ea82752b97502383f7f2d3fdfa509115
+> | Author: Greg Ungerer <gerg@uclinux.org>
+> | Date:   Tue Feb 17 14:40:47 2009 +1000
+> |
+> |     m68k: merge the mmu and non-mmu versions of tlbflush.h
+> |
+> |     Simple merge of the mmu and non-mmu versions of tlbflush.h
+> |
+> |     Signed-off-by: Greg Ungerer <gerg@uclinux.org>
+> 
+> Seems like you merged the wrong way:
+> 
+> | diff --git a/arch/m68k/include/asm/tlbflush.h
+> b/arch/m68k/include/asm/tlbflush.h
+> | index b6f93b3..79050d0 100644
+> | --- a/arch/m68k/include/asm/tlbflush.h
+> | +++ b/arch/m68k/include/asm/tlbflush.h
+> | @@ -1,5 +1,267 @@
+> | -#ifdef __uClinux__
+> | -#include "tlbflush_no.h"
+> | +#ifndef _M68K_TLBFLUSH_H
+> | +#define _M68K_TLBFLUSH_H
+> | +
+> | +#ifndef CONFIG_MMU
+>     ^^^^^
+>     ifdef
+> 
+> | +#ifndef CONFIG_SUN3
+
+Yep, your absolutely right. Oddly enough it didn't stop non-mmu
+builds from compiling or working...
+
+I have fixed that patch, and pushed it into the m68knommu git
+tree (for-next branch).
+
+Thanks
+Greg
 
 
--- 
-
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+------------------------------------------------------------------------
+Greg Ungerer  --  Principal Engineer        EMAIL:     gerg@snapgear.com
+SnapGear, a McAfee Company                  PHONE:       +61 7 3435 2888
+825 Stanley St,                             FAX:         +61 7 3891 3630
+Woolloongabba, QLD, 4102, Australia         WEB: http://www.SnapGear.com
