@@ -1,317 +1,186 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for March 11
-Date: Wed, 11 Mar 2009 22:59:13 +1100
-Message-ID: <20090311225913.51589223.sfr@canb.auug.org.au>
+From: Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>
+Subject: Re: linux-next: Tree for March 10 (crypto & NLATTR)
+Date: Wed, 11 Mar 2009 13:25:09 +0100 (CET)
+Message-ID: <alpine.LRH.2.00.0903111324400.1040@vixen.sonytel.be>
+References: <49B6B821.5050302@oracle.com> <10f740e80903101256v2cfe08a8g410c297e019d8693@mail.gmail.com> <49B6C8BF.8010105@oracle.com> <20090310.131700.40129006.davem@davemloft.net> <20090311010705.GA17260@gondor.apana.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__11_Mar_2009_22_59_13_+1100_sMiUz.E8tMo=1T5_"
+Content-Type: TEXT/PLAIN; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55452 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754479AbZCKL7X (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Mar 2009 07:59:23 -0400
+Received: from vervifontaine.sonytel.be ([80.88.33.193]:56803 "EHLO
+	vervifontaine.sonycom.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1755140AbZCKMZM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Mar 2009 08:25:12 -0400
+In-Reply-To: <20090311010705.GA17260@gondor.apana.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: David Miller <davem@davemloft.net>, randy.dunlap@oracle.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
 
---Signature=_Wed__11_Mar_2009_22_59_13_+1100_sMiUz.E8tMo=1T5_
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 11 Mar 2009, Herbert Xu wrote:
+> On Tue, Mar 10, 2009 at 01:17:00PM -0700, David Miller wrote:
+> > From: Randy Dunlap <randy.dunlap@oracle.com>
+> > Date: Tue, 10 Mar 2009 13:08:31 -0700
+> >=20
+> > > I'll have to let David or Herbert answer that.  From my quick loo=
+k
+> > > at the code, I don't see much use for nlattr.c when CONFIG_NET
+> > > is not enabled.
+> >=20
+> > We want to use the netlink attribute parsers even in non-networking
+> > code, that's what he's trying to do here.
+>=20
+> OK the nlattr construction code really wants to depend on NET
+> because they're skb-oriented.  We could either move them back
+> or just wrap them in ifdef CONFIG_NET.
+>=20
+> I think the latter is probably the simplest.
+>=20
+> How does this patch look? And Randy, does it fix the problem for
+> you?
+>=20
+> nlattr: Fix build error with NET off
+>=20
+> We moved the netlink attribute support from net to lib in order
+> for it to be available for general consumption.  However, parts
+> of the code (the bits that we don't need :) really depends on
+> NET because the target object is sk_buff.
+>=20
+> This patch fixes this by wrapping them in CONFIG_NET.
+>=20
+> Some EXPORTs have been moved to make this work.
+>=20
+> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
-Hi all,
+Thanks for taking care of this!
 
-Changes since 20090310:
+Tested-by: Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>
 
-The xfs tree still has a build failure and so is still the version from
-next-20090306.
+> diff --git a/lib/nlattr.c b/lib/nlattr.c
+> index 56c3ce7..80009a2 100644
+> --- a/lib/nlattr.c
+> +++ b/lib/nlattr.c
+> @@ -281,6 +281,7 @@ int nla_strcmp(const struct nlattr *nla, const ch=
+ar *str)
+>  	return d;
+>  }
+> =20
+> +#ifdef CONFIG_NET
+>  /**
+>   * __nla_reserve - reserve room for attribute on the skb
+>   * @skb: socket buffer to reserve room on
+> @@ -305,6 +306,7 @@ struct nlattr *__nla_reserve(struct sk_buff *skb,=
+ int attrtype, int attrlen)
+> =20
+>  	return nla;
+>  }
+> +EXPORT_SYMBOL(__nla_reserve);
+> =20
+>  /**
+>   * __nla_reserve_nohdr - reserve room for attribute without header
+> @@ -325,6 +327,7 @@ void *__nla_reserve_nohdr(struct sk_buff *skb, in=
+t attrlen)
+> =20
+>  	return start;
+>  }
+> +EXPORT_SYMBOL(__nla_reserve_nohdr);
+> =20
+>  /**
+>   * nla_reserve - reserve room for attribute on the skb
+> @@ -345,6 +348,7 @@ struct nlattr *nla_reserve(struct sk_buff *skb, i=
+nt attrtype, int attrlen)
+> =20
+>  	return __nla_reserve(skb, attrtype, attrlen);
+>  }
+> +EXPORT_SYMBOL(nla_reserve);
+> =20
+>  /**
+>   * nla_reserve_nohdr - reserve room for attribute without header
+> @@ -363,6 +367,7 @@ void *nla_reserve_nohdr(struct sk_buff *skb, int =
+attrlen)
+> =20
+>  	return __nla_reserve_nohdr(skb, attrlen);
+>  }
+> +EXPORT_SYMBOL(nla_reserve_nohdr);
+> =20
+>  /**
+>   * __nla_put - Add a netlink attribute to a socket buffer
+> @@ -382,6 +387,7 @@ void __nla_put(struct sk_buff *skb, int attrtype,=
+ int attrlen,
+>  	nla =3D __nla_reserve(skb, attrtype, attrlen);
+>  	memcpy(nla_data(nla), data, attrlen);
+>  }
+> +EXPORT_SYMBOL(__nla_put);
+> =20
+>  /**
+>   * __nla_put_nohdr - Add a netlink attribute without header
+> @@ -399,6 +405,7 @@ void __nla_put_nohdr(struct sk_buff *skb, int att=
+rlen, const void *data)
+>  	start =3D __nla_reserve_nohdr(skb, attrlen);
+>  	memcpy(start, data, attrlen);
+>  }
+> +EXPORT_SYMBOL(__nla_put_nohdr);
+> =20
+>  /**
+>   * nla_put - Add a netlink attribute to a socket buffer
+> @@ -418,6 +425,7 @@ int nla_put(struct sk_buff *skb, int attrtype, in=
+t attrlen, const void *data)
+>  	__nla_put(skb, attrtype, attrlen, data);
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL(nla_put);
+> =20
+>  /**
+>   * nla_put_nohdr - Add a netlink attribute without header
+> @@ -436,6 +444,7 @@ int nla_put_nohdr(struct sk_buff *skb, int attrle=
+n, const void *data)
+>  	__nla_put_nohdr(skb, attrlen, data);
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL(nla_put_nohdr);
+> =20
+>  /**
+>   * nla_append - Add a netlink attribute without header or padding
+> @@ -454,20 +463,13 @@ int nla_append(struct sk_buff *skb, int attrlen=
+, const void *data)
+>  	memcpy(skb_put(skb, attrlen), data, attrlen);
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL(nla_append);
+> +#endif
+> =20
+>  EXPORT_SYMBOL(nla_validate);
+>  EXPORT_SYMBOL(nla_parse);
+>  EXPORT_SYMBOL(nla_find);
+>  EXPORT_SYMBOL(nla_strlcpy);
+> -EXPORT_SYMBOL(__nla_reserve);
+> -EXPORT_SYMBOL(__nla_reserve_nohdr);
+> -EXPORT_SYMBOL(nla_reserve);
+> -EXPORT_SYMBOL(nla_reserve_nohdr);
+> -EXPORT_SYMBOL(__nla_put);
+> -EXPORT_SYMBOL(__nla_put_nohdr);
+> -EXPORT_SYMBOL(nla_put);
+> -EXPORT_SYMBOL(nla_put_nohdr);
+>  EXPORT_SYMBOL(nla_memcpy);
+>  EXPORT_SYMBOL(nla_memcmp);
+>  EXPORT_SYMBOL(nla_strcmp);
+> -EXPORT_SYMBOL(nla_append);
 
-The net tee lost its 2 conficts.
+With kind regards,
 
-The input tree lost its build failure.
+Geert Uytterhoeven
+Software Architect
 
-The md tree lost its conflict and build failure, but gained another build
-failure, so I used the tree from next-20090306.
+Sony Techsoft Centre Europe
+The Corporate Village =B7 Da Vincilaan 7-D1 =B7 B-1935 Zaventem =B7 Bel=
+gium
 
-The lblnet tree lost its conflict.
+Phone:    +32 (0)2 700 8453
+=46ax:      +32 (0)2 700 8622
+E-mail:   Geert.Uytterhoeven@sonycom.com
+Internet: http://www.sony-europe.com/
 
-The watchdog tree lost its 2 conflicts.
-
-The proc tree removed an struct element used by a new driver in the block
-tree so I have applied a merge fixup patch.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES) and i386, sparc and sparc64 defconfig.
-These builds also have CONFIG_ENABLE_WARN_DEPRECATED,
-CONFIG_ENABLE_MUST_CHECK and CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 133 trees (counting Linus' and 18 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging dwmw2/master
-Merging arm/devel
-CONFLICT (content): Merge conflict in arch/arm/mach-at91/gpio.c
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging mips/mips-for-linux-next
-Merging parisc/master
-Merging powerpc/next
-Merging 4xx/next
-Merging galak/next
-Merging pxa/for-next
-CONFLICT (rename/modify): Merge conflict in arch/arm/plat-pxa/dma.c
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging x86/auto-x86-next
-CONFLICT (content): Merge conflict in arch/powerpc/include/asm/elf.h
-Merging xtensa/master
-Merging tip-core/auto-core-next
-CONFLICT (content): Merge conflict in lib/Kconfig.debug
-Merging cpus4096/auto-cpus4096-next
-Merging tracing/auto-tracing-next
-CONFLICT (content): Merge conflict in arch/x86/Kconfig
-CONFLICT (delete/modify): block/blktrace.c deleted in tracing/auto-tracing-=
-next and modified in HEAD. Version HEAD of block/blktrace.c left in tree.
-CONFLICT (content): Merge conflict in kernel/irq/handle.c
-$ git rm -f block/blktrace.c
-Applying: tracing: blktrace merge fix
-Applying: trace: percpu fixup
-Merging genirq/auto-genirq-next
-CONFLICT (content): Merge conflict in kernel/irq/handle.c
-Merging safe-poison-pointers/auto-safe-poison-pointers-next
-Merging sched/auto-sched-next
-CONFLICT (content): Merge conflict in lib/Makefile
-Merging stackprotector/auto-stackprotector-next
-Merging timers/auto-timers-next
-Merging pci/linux-next
-CONFLICT (content): Merge conflict in drivers/pci/pcie/portdrv_pci.c
-Merging quilt/device-mapper
-Merging hid/for-next
-Merging quilt/i2c
-CONFLICT (content): Merge conflict in drivers/i2c/busses/i2c-mpc.c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-CONFLICT (content): Merge conflict in Documentation/kernel-parameters.txt
-Merging v4l-dvb/master
-Merging quota/for_next
-Merging jfs/next
-Merging kbuild/master
-Merging quilt/ide
-Merging libata/NEXT
-Merging nfs/linux-next
-Merging xfs/master
-$ git reset --hard HEAD^
-Merging xfs/master from next-20090306
-Merging infiniband/for-next
-Merging acpi/test
-Merging nfsd/nfsd-next
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/master
-Merging dlm/next
-Merging scsi/master
-Merging ocfs2/linux-next
-Merging ext4/next
-CONFLICT (content): Merge conflict in fs/ext4/inode.c
-Merging async_tx/next
-Merging udf/for_next
-Merging net/master
-Merging wireless/master
-Merging mtd/master
-Merging crypto/master
-Merging vfs/for-next
-Merging sound/for-next
-CONFLICT (content): Merge conflict in arch/arm/mach-shark/include/mach/io.h
-CONFLICT (content): Merge conflict in sound/soc/pxa/pxa2xx-i2s.c
-Merging cpufreq/next
-CONFLICT (content): Merge conflict in arch/x86/include/asm/timer.h
-Merging v9fs/for-next
-CONFLICT (content): Merge conflict in net/9p/protocol.c
-Merging quilt/rr
-CONFLICT (content): Merge conflict in arch/powerpc/kernel/irq.c
-CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/cpufreq/powernow-=
-k8.c
-CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/cpufreq/speedstep=
--ich.c
-CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/cpufreq/speedstep=
--lib.c
-CONFLICT (delete/modify): arch/x86/mach-default/setup.c deleted in HEAD and=
- modified in quilt/rr. Version quilt/rr of arch/x86/mach-default/setup.c le=
-ft in tree.
-CONFLICT (delete/modify): arch/x86/mach-voyager/setup.c deleted in HEAD and=
- modified in quilt/rr. Version quilt/rr of arch/x86/mach-voyager/setup.c le=
-ft in tree.
-CONFLICT (content): Merge conflict in drivers/firmware/dcdbas.c
-CONFLICT (content): Merge conflict in drivers/hid/hid-core.c
-CONFLICT (content): Merge conflict in drivers/media/video/saa7134/saa7134-c=
-ore.c
-CONFLICT (content): Merge conflict in drivers/media/video/saa7134/saa7134.h
-CONFLICT (content): Merge conflict in drivers/net/virtio_net.c
-CONFLICT (content): Merge conflict in kernel/module.c
-$ git rm -f arch/x86/mach-default/setup.c
-$ git rm -f arch/x86/mach-voyager/setup.c
-Applying: rr: x86 irqaction merge fixup
-Merging cifs/master
-Merging mmc/next
-Merging gfs2/master
-Merging input/next
-Merging bkl-removal/bkl-removal
-Merging ubifs/linux-next
-Merging lsm/for-next
-Merging block/for-next
-Merging embedded/master
-Merging firmware/master
-CONFLICT (content): Merge conflict in firmware/Makefile
-CONFLICT (content): Merge conflict in firmware/WHENCE
-CONFLICT (content): Merge conflict in sound/isa/Kconfig
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-CONFLICT (content): Merge conflict in include/linux/rcupdate.h
-CONFLICT (content): Merge conflict in include/linux/slub_def.h
-CONFLICT (content): Merge conflict in mm/slob.c
-CONFLICT (content): Merge conflict in mm/slub.c
-Merging uclinux/for-next
-Merging md/for-next
-$ git reset --hard HEAD^
-Merging next-20090306/md
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-CONFLICT (content): Merge conflict in drivers/gpu/drm/drm_proc.c
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging quilt/ttydev
-Merging agp/agp-next
-Merging kmemcheck/auto-kmemcheck-next
-CONFLICT (content): Merge conflict in MAINTAINERS
-CONFLICT (content): Merge conflict in arch/x86/Kconfig
-CONFLICT (content): Merge conflict in arch/x86/mm/init_32.c
-CONFLICT (content): Merge conflict in arch/x86/mm/init_64.c
-CONFLICT (content): Merge conflict in kernel/trace/ring_buffer.c
-CONFLICT (content): Merge conflict in mm/Makefile
-Applying: kmemcheck: arcgh/x86/mm/init.c merge fix
-Merging generic-ipi/auto-generic-ipi-next
-Merging oprofile/auto-oprofile-next
-Merging fastboot/auto-fastboot-next
-Merging sparseirq/auto-sparseirq-next
-Merging iommu/auto-iommu-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging proc/proc
-CONFLICT (content): Merge conflict in security/selinux/hooks.c
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-CONFLICT (add/add): Merge conflict in drivers/scsi/osd/osd_initiator.c
-Merging fatfs/master
-Merging fuse/for-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging squashfs/master
-Merging omap/for-next
-Merging quilt/aoe
-Merging kmemleak/kmemleak
-CONFLICT (content): Merge conflict in Documentation/kernel-parameters.txt
-CONFLICT (content): Merge conflict in MAINTAINERS
-CONFLICT (content): Merge conflict in include/linux/percpu.h
-CONFLICT (content): Merge conflict in include/linux/slab.h
-CONFLICT (content): Merge conflict in init/main.c
-CONFLICT (content): Merge conflict in kernel/module.c
-CONFLICT (content): Merge conflict in lib/Kconfig.debug
-CONFLICT (content): Merge conflict in mm/slab.c
-CONFLICT (content): Merge conflict in mm/slob.c
-CONFLICT (content): Merge conflict in mm/slub.c
-CONFLICT (content): Merge conflict in mm/vmalloc.c
-Merging quilt/driver-core
-CONFLICT (content): Merge conflict in drivers/media/video/v4l2-device.c
-CONFLICT (content): Merge conflict in drivers/net/wimax/i2400m/usb-notif.c
-CONFLICT (content): Merge conflict in drivers/sh/maple/maple.c
-Applying: acpi: update thermal for bus_id removal
-Applying: crypto: remove pr_fmt for now
-Merging quilt/usb
-Merging quilt/staging
-Merging scsi-post-merge/master
-Applying: proc: remove a new user of proc_dir_entry::owner
-
---Signature=_Wed__11_Mar_2009_22_59_13_+1100_sMiUz.E8tMo=1T5_
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkm3p5EACgkQjjKRsyhoI8yDRwCfYG1lutIeDLvccDGFKb3VopbO
-mtMAn2XvMK7Gg2cOFkefREYpkjrFF9am
-=s+1k
------END PGP SIGNATURE-----
-
---Signature=_Wed__11_Mar_2009_22_59_13_+1100_sMiUz.E8tMo=1T5_--
+A division of Sony Europe (Belgium) N.V.
+VAT BE 0413.825.160 =B7 RPR Brussels
+=46ortis =B7 BIC GEBABEBB =B7 IBAN BE41293037680010
