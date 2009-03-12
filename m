@@ -1,61 +1,63 @@
-From: Nico Schottelius <nico-linux-configs@schottelius.org>
-Subject: Collection of working and tested kernel configurations
-Date: Thu, 12 Mar 2009 13:07:46 +0100
-Message-ID: <20090312120745.GA30728@denkbrett.schottelius.org>
+From: Michael Ellerman <michael@ellerman.id.au>
+Subject: Re: Next 12 : arch/powerpc/sysdev/axonram build failure
+Date: Thu, 12 Mar 2009 23:16:27 +1100
+Message-ID: <1236860187.12893.5.camel@localhost>
+References: <20090312171154.11c6ec31.sfr@canb.auug.org.au>
+	<49B8C7FA.8090805@in.ibm.com>
+Reply-To: michael@ellerman.id.au
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.schottelius.org ([77.109.138.221]:45481 "EHLO
-	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752383AbZCLMHt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Mar 2009 08:07:49 -0400
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: announce@l.schottelius.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org>
+In-Reply-To: <49B8C7FA.8090805@in.ibm.com>
+List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
+List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
+List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org
+List-Id: linux-next.vger.kernel.org
 
-
---yrj/dFKFPuw6o+aM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hello!
-
-As I'm testing many different kernel versions in the last time,
-I collected all the configurations, so somebody else with an X200
-or T60 can just grab a working configuration.
-
-If you also have a long list of working configurations or want to
-share your config, just update against the following git repo:
-
-  http://git.schottelius.org/configs/linux/
-  git://git.schottelius.org/configs/linux/
-  http://git.schottelius.org/?p=3Dconfigs/linux;a=3Dsummary
-
-Sincerly,
-
-Nico
-
---=20
-Think about Free and Open Source Software (FOSS).
-http://nico.schottelius.org/documentations/foss/the-term-foss/
-
-PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
-
---yrj/dFKFPuw6o+aM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkm4+xEACgkQuL75KpiFGIxHBQCfVyPYlZfxJf0j9VyN8SepAi/t
-amEAn0vHtH/NfmhyCUtezQ9ektE0/oxQ
-=0F4R
------END PGP SIGNATURE-----
-
---yrj/dFKFPuw6o+aM--
+T24gVGh1LCAyMDA5LTAzLTEyIGF0IDEzOjU5ICswNTMwLCBTYWNoaW4gU2FudCB3cm90ZToKPiBI
+aSBTdGVwaGVuLAo+IAo+IFRvZGF5J3MgbmV4dCByYW5kY29uZmlnIGJ1aWxkIG9uIHBvd2VycGMg
+ZmFpbHMgd2l0aAo+IAo+ICAgQ0MgW01dICBhcmNoL3Bvd2VycGMvc3lzZGV2L2F4b25yYW0ubwo+
+IGFyY2gvcG93ZXJwYy9zeXNkZXYvYXhvbnJhbS5jOjEwODogd2FybmluZzog4oCYc3RydWN0IHJl
+cXVlc3RfcXVldWXigJkgZGVjbGFyZWQgaW5zaWRlIHBhcmFtZXRlciBsaXN0Cj4gYXJjaC9wb3dl
+cnBjL3N5c2Rldi9heG9ucmFtLmM6MTA4OiB3YXJuaW5nOiBpdHMgc2NvcGUgaXMgb25seSB0aGlz
+IGRlZmluaXRpb24gb3IgZGVjbGFyYXRpb24sIHdoaWNoIGlzIHByb2JhYmx5IG5vdCB3aGF0IHlv
+dSB3YW50Cj4gYXJjaC9wb3dlcnBjL3N5c2Rldi9heG9ucmFtLmM6IEluIGZ1bmN0aW9uIOKAmGF4
+b25fcmFtX21ha2VfcmVxdWVzdOKAmToKPHNuaXA+Cj4gYXJjaC9wb3dlcnBjL3N5c2Rldi9heG9u
+cmFtLmM6Mjg5OiBlcnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24g4oCYdW5y
+ZWdpc3Rlcl9ibGtkZXbigJkKPiBhcmNoL3Bvd2VycGMvc3lzZGV2L2F4b25yYW0uYzoyODk6IGVy
+cm9yOiBkZXJlZmVyZW5jaW5nIHBvaW50ZXIgdG8gaW5jb21wbGV0ZSB0eXBlCj4gYXJjaC9wb3dl
+cnBjL3N5c2Rldi9heG9ucmFtLmM6MjkwOiBlcnJvcjogZGVyZWZlcmVuY2luZyBwb2ludGVyIHRv
+IGluY29tcGxldGUgdHlwZQo+IGFyY2gvcG93ZXJwYy9zeXNkZXYvYXhvbnJhbS5jOjI5MTogZXJy
+b3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uIOKAmGRlbF9nZW5kaXNr4oCZCj4g
+YXJjaC9wb3dlcnBjL3N5c2Rldi9heG9ucmFtLmM6IEluIGZ1bmN0aW9uIOKAmGF4b25fcmFtX2lu
+aXTigJk6Cj4gYXJjaC9wb3dlcnBjL3N5c2Rldi9heG9ucmFtLmM6MzQ1OiBlcnJvcjogaW1wbGlj
+aXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24g4oCYcmVnaXN0ZXJfYmxrZGV24oCZCj4gbWFrZVsx
+XTogKioqIFthcmNoL3Bvd2VycGMvc3lzZGV2L2F4b25yYW0ub10gRXJyb3IgMQo+IG1ha2U6ICoq
+KiBbYXJjaC9wb3dlcnBjL3N5c2Rldl0gRXJyb3IgMgo+IAo+IENPTkZJR19CTE9DSyBpcyBub3Qg
+c2V0LgoKU28gaG93IGFib3V0IHRoaXM6Cgo+RnJvbSA3MzI1YWVhODI0NGFjODNkOThjZGU3YTUw
+OWVjOGFiNTk5NGNkYjBlIE1vbiBTZXAgMTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBNaWNoYWVsIEVs
+bGVybWFuIDxtaWNoYWVsQGVsbGVybWFuLmlkLmF1PgpEYXRlOiBUaHUsIDEyIE1hciAyMDA5IDIz
+OjE0OjU4ICsxMTAwClN1YmplY3Q6IFtQQVRDSF0gcG93ZXJwYy9jZWxsOiBheG9ucmFtIGRlcGVu
+ZHMgb24gQkxPQ0sKClNpZ25lZC1vZmYtYnk6IE1pY2hhZWwgRWxsZXJtYW4gPG1pY2hhZWxAZWxs
+ZXJtYW4uaWQuYXU+Ci0tLQogYXJjaC9wb3dlcnBjL3BsYXRmb3Jtcy9LY29uZmlnIHwgICAgMiAr
+LQogMSBmaWxlcyBjaGFuZ2VkLCAxIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb25zKC0pCgpkaWZm
+IC0tZ2l0IGEvYXJjaC9wb3dlcnBjL3BsYXRmb3Jtcy9LY29uZmlnIGIvYXJjaC9wb3dlcnBjL3Bs
+YXRmb3Jtcy9LY29uZmlnCmluZGV4IGI0YWIzNzIuLjNmYjA4NTEgMTAwNjQ0Ci0tLSBhL2FyY2gv
+cG93ZXJwYy9wbGF0Zm9ybXMvS2NvbmZpZworKysgYi9hcmNoL3Bvd2VycGMvcGxhdGZvcm1zL0tj
+b25maWcKQEAgLTI2Niw3ICsyNjYsNyBAQCBjb25maWcgQ1BNMgogCiBjb25maWcgQVhPTl9SQU0K
+IAl0cmlzdGF0ZSAiQXhvbiBERFIyIG1lbW9yeSBkZXZpY2UgZHJpdmVyIgotCWRlcGVuZHMgb24g
+UFBDX0lCTV9DRUxMX0JMQURFCisJZGVwZW5kcyBvbiBQUENfSUJNX0NFTExfQkxBREUgJiYgQkxP
+Q0sKIAlkZWZhdWx0IG0KIAloZWxwCiAJICBJdCByZWdpc3RlcnMgb25lIGJsb2NrIGRldmljZSBw
+ZXIgQXhvbidzIEREUjIgbWVtb3J5IGJhbmsgZm91bmQKLS0gCjEuNi4xLjIKCgoKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXhwcGMtZGV2IG1haWxp
+bmcgbGlzdApMaW51eHBwYy1kZXZAb3psYWJzLm9yZwpodHRwczovL296bGFicy5vcmcvbWFpbG1h
+bi9saXN0aW5mby9saW51eHBwYy1kZXY=
