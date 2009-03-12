@@ -1,59 +1,61 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the ttydev tree with the
- usb.current tree
-Date: Thu, 12 Mar 2009 22:02:34 +1100
-Message-ID: <20090312220234.e709c243.sfr@canb.auug.org.au>
-References: <20090312150455.e5ab0a56.sfr@canb.auug.org.au>
-	<20090312094434.4caaa695@lxorguk.ukuu.org.uk>
+From: Nico Schottelius <nico-linux-configs@schottelius.org>
+Subject: Collection of working and tested kernel configurations
+Date: Thu, 12 Mar 2009 13:07:46 +0100
+Message-ID: <20090312120745.GA30728@denkbrett.schottelius.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__12_Mar_2009_22_02_34_+1100_pBs9NU95R6EVFcjy"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59337 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752710AbZCLLCn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Mar 2009 07:02:43 -0400
-In-Reply-To: <20090312094434.4caaa695@lxorguk.ukuu.org.uk>
+Received: from mx3.schottelius.org ([77.109.138.221]:45481 "EHLO
+	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752383AbZCLMHt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Mar 2009 08:07:49 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Axel Wachtler <axel.wachtler@atmel.com>, Michael Hennerich <michael.hennerich@analog.com>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: announce@l.schottelius.org
 
---Signature=_Thu__12_Mar_2009_22_02_34_+1100_pBs9NU95R6EVFcjy
-Content-Type: text/plain; charset=US-ASCII
+
+--yrj/dFKFPuw6o+aM
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Alan,
+Hello!
 
-On Thu, 12 Mar 2009 09:44:34 +0000 Alan Cox <alan@lxorguk.ukuu.org.uk> wrot=
-e:
->
-> > Today's linux-next merge of the ttydev tree got conflicts in
-> > drivers/usb/serial/ftdi_sio.c and drivers/usb/serial/ftdi_sio.h.  It
-> > looks like the same two patches have been applied to the ttydev
-> > (tty-ftdi-gnice, tty-ftdi-dresdenelec) and the usb.current (USB: serial:
->=20
-> These are USB identifier updates to a USB driver that's also a tty
-> driver. I'll drop them in favour of GregKH's tree carring them.
+As I'm testing many different kernel versions in the last time,
+I collected all the configurations, so somebody else with an X200
+or T60 can just grab a working configuration.
 
-OK, thanks.
+If you also have a long list of working configurations or want to
+share your config, just update against the following git repo:
+
+  http://git.schottelius.org/configs/linux/
+  git://git.schottelius.org/configs/linux/
+  http://git.schottelius.org/?p=3Dconfigs/linux;a=3Dsummary
+
+Sincerly,
+
+Nico
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Think about Free and Open Source Software (FOSS).
+http://nico.schottelius.org/documentations/foss/the-term-foss/
 
---Signature=_Thu__12_Mar_2009_22_02_34_+1100_pBs9NU95R6EVFcjy
-Content-Type: application/pgp-signature
+PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
+
+--yrj/dFKFPuw6o+aM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkm468oACgkQjjKRsyhoI8wJWwCfeuKVgrvFRCbkfqQHGbFQ+9LN
-TW8An2JZOkERNq8GreOOSONLfiQGEEdd
-=h063
+iEYEARECAAYFAkm4+xEACgkQuL75KpiFGIxHBQCfVyPYlZfxJf0j9VyN8SepAi/t
+amEAn0vHtH/NfmhyCUtezQ9ektE0/oxQ
+=0F4R
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__12_Mar_2009_22_02_34_+1100_pBs9NU95R6EVFcjy--
+--yrj/dFKFPuw6o+aM--
