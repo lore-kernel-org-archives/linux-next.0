@@ -1,52 +1,44 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Re: Next 12 : arch/powerpc/sysdev/axonram build failure
-Date: Thu, 12 Mar 2009 18:31:23 +0530
-Message-ID: <49B907A3.1030506@in.ibm.com>
-References: <20090312171154.11c6ec31.sfr@canb.auug.org.au> <49B8C7FA.8090805@in.ibm.com> <1236860187.12893.5.camel@localhost>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: m68k: kernel/up.c:16: error: dereferencing pointer to incomplete type
+Date: Thu, 12 Mar 2009 14:08:57 +0100
+Message-ID: <10f740e80903120608v314be360u30911fa003ab5ebc@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp02.au.ibm.com ([202.81.31.144]:48660 "EHLO
-	e23smtp02.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752114AbZCLNBb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Mar 2009 09:01:31 -0400
-Received: from d23relay02.au.ibm.com (d23relay02.au.ibm.com [202.81.31.244])
-	by e23smtp02.au.ibm.com (8.13.1/8.13.1) with ESMTP id n2CD0ADH010562
-	for <linux-next@vger.kernel.org>; Fri, 13 Mar 2009 00:00:10 +1100
-Received: from d23av03.au.ibm.com (d23av03.au.ibm.com [9.190.234.97])
-	by d23relay02.au.ibm.com (8.13.8/8.13.8/NCO v9.2) with ESMTP id n2CD1jYN790644
-	for <linux-next@vger.kernel.org>; Fri, 13 Mar 2009 00:01:45 +1100
-Received: from d23av03.au.ibm.com (loopback [127.0.0.1])
-	by d23av03.au.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id n2CD1Rk3016371
-	for <linux-next@vger.kernel.org>; Fri, 13 Mar 2009 00:01:27 +1100
-In-Reply-To: <1236860187.12893.5.camel@localhost>
+Received: from mail-fx0-f176.google.com ([209.85.220.176]:33180 "EHLO
+	mail-fx0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754075AbZCLNJA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Mar 2009 09:09:00 -0400
+Received: by fxm24 with SMTP id 24so380500fxm.37
+        for <linux-next@vger.kernel.org>; Thu, 12 Mar 2009 06:08:57 -0700 (PDT)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: michael@ellerman.id.au
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-m68k@lists.linux-m68k.org
 
-Michael Ellerman wrote:
-> So how about this:
->
-> >From 7325aea8244ac83d98cde7a509ec8ab5994cdb0e Mon Sep 17 00:00:00 2001
-> From: Michael Ellerman <michael@ellerman.id.au>
-> Date: Thu, 12 Mar 2009 23:14:58 +1100
-> Subject: [PATCH] powerpc/cell: axonram depends on BLOCK
->
-> Signed-off-by: Michael Ellerman <michael@ellerman.id.au>
-> ---
->  
-Yup that works. Thanks.
+Hi Stephen,
 
-Regards
--Sachin
+I can't seem to reproduce the compile failure of kernel/up.c on m68k,
+as shown on
+http://kisskb.ellerman.id.au/kisskb/buildresult/186066/:
 
--- 
+| kernel/up.c:16: error: dereferencing pointer to incomplete type
 
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+I am using the exact same version (ebdcc81c71937b30e09110c02a1e8a21fa770b6f).
+I'm using a different compiler, though (gcc 4.1.2).
+
+If it is reproducible, can you please send me kernel/up.i?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
