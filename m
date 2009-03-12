@@ -1,63 +1,143 @@
-From: Michael Ellerman <michael@ellerman.id.au>
-Subject: Re: Next 12 : arch/powerpc/sysdev/axonram build failure
-Date: Thu, 12 Mar 2009 23:16:27 +1100
-Message-ID: <1236860187.12893.5.camel@localhost>
-References: <20090312171154.11c6ec31.sfr@canb.auug.org.au>
-	<49B8C7FA.8090805@in.ibm.com>
-Reply-To: michael@ellerman.id.au
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: 2.6.29-rc7: ext4 hangs on sparc (was: next-20090310: ext4 hangs)
+Date: Thu, 12 Mar 2009 15:35:41 +0300
+Message-ID: <a4423d670903120535v339a1e43x64cf018f07ee0b6b@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org>
-In-Reply-To: <49B8C7FA.8090805@in.ibm.com>
-List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
-List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
-List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ey-out-2122.google.com ([74.125.78.25]:65331 "EHLO
+	ey-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751597AbZCLMfo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Mar 2009 08:35:44 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Theodore Tso <tytso@mit.edu>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk>
 
-T24gVGh1LCAyMDA5LTAzLTEyIGF0IDEzOjU5ICswNTMwLCBTYWNoaW4gU2FudCB3cm90ZToKPiBI
-aSBTdGVwaGVuLAo+IAo+IFRvZGF5J3MgbmV4dCByYW5kY29uZmlnIGJ1aWxkIG9uIHBvd2VycGMg
-ZmFpbHMgd2l0aAo+IAo+ICAgQ0MgW01dICBhcmNoL3Bvd2VycGMvc3lzZGV2L2F4b25yYW0ubwo+
-IGFyY2gvcG93ZXJwYy9zeXNkZXYvYXhvbnJhbS5jOjEwODogd2FybmluZzog4oCYc3RydWN0IHJl
-cXVlc3RfcXVldWXigJkgZGVjbGFyZWQgaW5zaWRlIHBhcmFtZXRlciBsaXN0Cj4gYXJjaC9wb3dl
-cnBjL3N5c2Rldi9heG9ucmFtLmM6MTA4OiB3YXJuaW5nOiBpdHMgc2NvcGUgaXMgb25seSB0aGlz
-IGRlZmluaXRpb24gb3IgZGVjbGFyYXRpb24sIHdoaWNoIGlzIHByb2JhYmx5IG5vdCB3aGF0IHlv
-dSB3YW50Cj4gYXJjaC9wb3dlcnBjL3N5c2Rldi9heG9ucmFtLmM6IEluIGZ1bmN0aW9uIOKAmGF4
-b25fcmFtX21ha2VfcmVxdWVzdOKAmToKPHNuaXA+Cj4gYXJjaC9wb3dlcnBjL3N5c2Rldi9heG9u
-cmFtLmM6Mjg5OiBlcnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24g4oCYdW5y
-ZWdpc3Rlcl9ibGtkZXbigJkKPiBhcmNoL3Bvd2VycGMvc3lzZGV2L2F4b25yYW0uYzoyODk6IGVy
-cm9yOiBkZXJlZmVyZW5jaW5nIHBvaW50ZXIgdG8gaW5jb21wbGV0ZSB0eXBlCj4gYXJjaC9wb3dl
-cnBjL3N5c2Rldi9heG9ucmFtLmM6MjkwOiBlcnJvcjogZGVyZWZlcmVuY2luZyBwb2ludGVyIHRv
-IGluY29tcGxldGUgdHlwZQo+IGFyY2gvcG93ZXJwYy9zeXNkZXYvYXhvbnJhbS5jOjI5MTogZXJy
-b3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uIOKAmGRlbF9nZW5kaXNr4oCZCj4g
-YXJjaC9wb3dlcnBjL3N5c2Rldi9heG9ucmFtLmM6IEluIGZ1bmN0aW9uIOKAmGF4b25fcmFtX2lu
-aXTigJk6Cj4gYXJjaC9wb3dlcnBjL3N5c2Rldi9heG9ucmFtLmM6MzQ1OiBlcnJvcjogaW1wbGlj
-aXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24g4oCYcmVnaXN0ZXJfYmxrZGV24oCZCj4gbWFrZVsx
-XTogKioqIFthcmNoL3Bvd2VycGMvc3lzZGV2L2F4b25yYW0ub10gRXJyb3IgMQo+IG1ha2U6ICoq
-KiBbYXJjaC9wb3dlcnBjL3N5c2Rldl0gRXJyb3IgMgo+IAo+IENPTkZJR19CTE9DSyBpcyBub3Qg
-c2V0LgoKU28gaG93IGFib3V0IHRoaXM6Cgo+RnJvbSA3MzI1YWVhODI0NGFjODNkOThjZGU3YTUw
-OWVjOGFiNTk5NGNkYjBlIE1vbiBTZXAgMTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBNaWNoYWVsIEVs
-bGVybWFuIDxtaWNoYWVsQGVsbGVybWFuLmlkLmF1PgpEYXRlOiBUaHUsIDEyIE1hciAyMDA5IDIz
-OjE0OjU4ICsxMTAwClN1YmplY3Q6IFtQQVRDSF0gcG93ZXJwYy9jZWxsOiBheG9ucmFtIGRlcGVu
-ZHMgb24gQkxPQ0sKClNpZ25lZC1vZmYtYnk6IE1pY2hhZWwgRWxsZXJtYW4gPG1pY2hhZWxAZWxs
-ZXJtYW4uaWQuYXU+Ci0tLQogYXJjaC9wb3dlcnBjL3BsYXRmb3Jtcy9LY29uZmlnIHwgICAgMiAr
-LQogMSBmaWxlcyBjaGFuZ2VkLCAxIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb25zKC0pCgpkaWZm
-IC0tZ2l0IGEvYXJjaC9wb3dlcnBjL3BsYXRmb3Jtcy9LY29uZmlnIGIvYXJjaC9wb3dlcnBjL3Bs
-YXRmb3Jtcy9LY29uZmlnCmluZGV4IGI0YWIzNzIuLjNmYjA4NTEgMTAwNjQ0Ci0tLSBhL2FyY2gv
-cG93ZXJwYy9wbGF0Zm9ybXMvS2NvbmZpZworKysgYi9hcmNoL3Bvd2VycGMvcGxhdGZvcm1zL0tj
-b25maWcKQEAgLTI2Niw3ICsyNjYsNyBAQCBjb25maWcgQ1BNMgogCiBjb25maWcgQVhPTl9SQU0K
-IAl0cmlzdGF0ZSAiQXhvbiBERFIyIG1lbW9yeSBkZXZpY2UgZHJpdmVyIgotCWRlcGVuZHMgb24g
-UFBDX0lCTV9DRUxMX0JMQURFCisJZGVwZW5kcyBvbiBQUENfSUJNX0NFTExfQkxBREUgJiYgQkxP
-Q0sKIAlkZWZhdWx0IG0KIAloZWxwCiAJICBJdCByZWdpc3RlcnMgb25lIGJsb2NrIGRldmljZSBw
-ZXIgQXhvbidzIEREUjIgbWVtb3J5IGJhbmsgZm91bmQKLS0gCjEuNi4xLjIKCgoKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXhwcGMtZGV2IG1haWxp
-bmcgbGlzdApMaW51eHBwYy1kZXZAb3psYWJzLm9yZwpodHRwczovL296bGFicy5vcmcvbWFpbG1h
-bi9saXN0aW5mby9saW51eHBwYy1kZXY=
+2009/3/11 Alexander Beregalov <a.beregalov@gmail.com>:
+> 2009/3/10 Theodore Tso <tytso@mit.edu>:
+>> On Tue, Mar 10, 2009 at 05:18:55PM +0300, Alexander Beregalov wrote:
+>>> > Thanks for reporting this; does it show up on stock 2.6.29-rc7?
+>>> No, I can not reproduce it.
+>>> It is a slow system, I would not like to bisect it, only if it is the
+>>> last possibility.
+>>
+>> Just to be clear; you weren't able to reproduce it on stock 2.6.29-rc7
+>> ---- does it reproduce easily on linux-next?
+> Right.
+> But now I am not sure 2.6.29-rc7 is not affected, I will try to
+> reproduce it again.
+
+No! I run dbench many times for few hours and was able to reproduce it
+on 2.6.29-rc7-00166-g16b71fd.
+
+Rafael: ext4 hangs on sparc with 2.6.29-rc7. Still can not reproduce
+it on x86_64.
+
+
+Theodore, stacktraces look different, but it seems it is the same
+problem, isn't it?
+
+kjournald2    D 000000000055c3c8     0  1558      2
+Call Trace:
+ [000000000055668c] jbd2_journal_commit_transaction+0x208/0x1718
+ [000000000055c3c8] kjournald2+0x13c/0x308
+ [0000000000465a94] kthread+0x48/0x7c
+ [000000000042b37c] kernel_thread+0x3c/0x54
+ [00000000004659a4] kthreadd+0xe8/0x190
+dbench        D 0000000000554938     0  1796      1
+Call Trace:
+ [000000000055bc04] jbd2_log_wait_commit+0x144/0x1a8
+ [0000000000554938] jbd2_journal_stop+0x32c/0x37c
+ [0000000000556210] jbd2_journal_force_commit+0x34/0x4c
+ [0000000000535ba4] ext4_force_commit+0x30/0x50
+ [0000000000528644] ext4_write_inode+0x80/0xa0
+ [00000000004d0808] __writeback_single_inode+0x1e4/0x330
+ [00000000004d0974] sync_inode+0x20/0x40
+ [0000000000525674] ext4_sync_file+0xc4/0x118
+ [00000000004d3eac] vfs_fsync+0x6c/0xa0
+ [00000000004d3f08] do_fsync+0x28/0x44
+ [00000000004d3f60] SyS_fsync+0x14/0x28
+ [0000000000406154] linux_sparc_syscall32+0x34/0x40
+dbench        D 0000000000554938     0  1797      1
+Call Trace:
+ [000000000055bc04] jbd2_log_wait_commit+0x144/0x1a8
+ [0000000000554938] jbd2_journal_stop+0x32c/0x37c
+ [0000000000556210] jbd2_journal_force_commit+0x34/0x4c
+ [0000000000535ba4] ext4_force_commit+0x30/0x50
+ [0000000000528644] ext4_write_inode+0x80/0xa0
+ [00000000004d0808] __writeback_single_inode+0x1e4/0x330
+ [00000000004d0974] sync_inode+0x20/0x40
+ [0000000000525674] ext4_sync_file+0xc4/0x118
+ [00000000004d3eac] vfs_fsync+0x6c/0xa0
+ [00000000004d3f08] do_fsync+0x28/0x44
+ [00000000004d3f60] SyS_fsync+0x14/0x28
+ [0000000000406154] linux_sparc_syscall32+0x34/0x40
+dbench        D 000000000055617c     0  1798      1
+Call Trace:
+ [0000000000555de8] start_this_handle+0x394/0x528
+ [000000000055617c] jbd2_journal_start+0xbc/0x11c
+ [00000000005391d8] ext4_journal_start_sb+0x5c/0x84
+ [0000000000533328] ext4_unlink+0x2c/0x290
+ [00000000004bd8f8] vfs_unlink+0x70/0xc8
+ [00000000004bf984] do_unlinkat+0xc4/0x154
+ [00000000004bfa28] SyS_unlink+0x14/0x24
+ [0000000000406154] linux_sparc_syscall32+0x34/0x40
+dbench        D 0000000000554938     0  1799      1
+Call Trace:
+ [000000000055bc04] jbd2_log_wait_commit+0x144/0x1a8
+ [0000000000554938] jbd2_journal_stop+0x32c/0x37c
+ [0000000000556210] jbd2_journal_force_commit+0x34/0x4c
+ [0000000000535ba4] ext4_force_commit+0x30/0x50
+ [0000000000528644] ext4_write_inode+0x80/0xa0
+ [00000000004d0808] __writeback_single_inode+0x1e4/0x330
+ [00000000004d0974] sync_inode+0x20/0x40
+ [0000000000525674] ext4_sync_file+0xc4/0x118
+ [00000000004d3eac] vfs_fsync+0x6c/0xa0
+ [00000000004d3f08] do_fsync+0x28/0x44
+ [00000000004d3f60] SyS_fsync+0x14/0x28
+ [0000000000406154] linux_sparc_syscall32+0x34/0x40
+
+dbench        D 000000000055617c     0  1800      1
+Call Trace:
+ [0000000000555de8] start_this_handle+0x394/0x528
+ [000000000055617c] jbd2_journal_start+0xbc/0x11c
+ [00000000005391d8] ext4_journal_start_sb+0x5c/0x84
+ [0000000000529924] ext4_dirty_inode+0xd4/0xf0
+ [00000000004d11d8] __mark_inode_dirty+0x2c/0x188
+ [00000000004c6ec4] touch_atime+0x160/0x178
+ [00000000004c21ec] vfs_readdir+0x88/0xb0
+ [00000000004ea294] compat_sys_getdents+0x3c/0x8c
+ [0000000000406154] linux_sparc_syscall32+0x34/0x40
+pdflush       D 000000000055617c     0  1815      2
+Call Trace:
+ [0000000000555de8] start_this_handle+0x394/0x528
+ [000000000055617c] jbd2_journal_start+0xbc/0x11c
+ [00000000005391d8] ext4_journal_start_sb+0x5c/0x84
+ [000000000052b7c8] ext4_da_writepages+0x1ac/0x408
+ [0000000000490874] do_writepages+0x40/0x78
+ [00000000004d07bc] __writeback_single_inode+0x198/0x330
+ [00000000004d0d9c] generic_sync_sb_inodes+0x238/0x3c4
+ [00000000004d1148] writeback_inodes+0xb0/0x114
+ [0000000000490a70] wb_kupdate+0xdc/0x168
+ [00000000004919b4] pdflush+0x128/0x1e0
+ [0000000000465a94] kthread+0x48/0x7c
+ [000000000042b37c] kernel_thread+0x3c/0x54
+ [00000000004659a4] kthreadd+0xe8/0x190
+pdflush       D 00000000005349b0     0  1818      2
+Call Trace:
+ [000000000055ac90] jbd2_journal_release_jbd_inode+0x94/0xd8
+ [00000000005349b0] ext4_clear_inode+0x2c/0x3c
+ [00000000004c72cc] clear_inode+0xac/0x124
+ [0000000000526e2c] ext4_free_inode+0x7c/0x3c0
+ [000000000052e758] ext4_delete_inode+0x218/0x29c
+ [00000000004c7e64] generic_delete_inode+0x8c/0x124
+ [00000000004c7f1c] generic_drop_inode+0x20/0x19c
+ [00000000004c6f54] iput+0x78/0x88
+ [00000000004d0e00] generic_sync_sb_inodes+0x29c/0x3c4
+ [00000000004d1148] writeback_inodes+0xb0/0x114
+ [0000000000490f74] background_writeout+0xc8/0x114
+ [00000000004919b4] pdflush+0x128/0x1e0
+ [0000000000465a94] kthread+0x48/0x7c
+ [000000000042b37c] kernel_thread+0x3c/0x54
+ [00000000004659a4] kthreadd+0xe8/0x190
