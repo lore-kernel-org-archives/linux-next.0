@@ -1,33 +1,53 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: Re: linux-next: block/proc tree build failure
-Date: Thu, 12 Mar 2009 02:30:26 +0300
-Message-ID: <20090311233026.GA2134@x200.localdomain>
-References: <20090311224418.f1a7cb5f.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: nfs tree build failure
+Date: Thu, 12 Mar 2009 11:26:05 +1100
+Message-ID: <20090312112605.d22546b6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__12_Mar_2009_11_26_05_+1100_+vuH1IV8Lx5yWS=Y"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fg-out-1718.google.com ([72.14.220.153]:10939 "EHLO
-	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750807AbZCKXX2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Mar 2009 19:23:28 -0400
-Received: by fg-out-1718.google.com with SMTP id 16so58798fgg.17
-        for <linux-next@vger.kernel.org>; Wed, 11 Mar 2009 16:23:24 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20090311224418.f1a7cb5f.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49627 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752674AbZCLA0P (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Mar 2009 20:26:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>
-Cc: Jens Axboe <jens.axboe@oracle.com>, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, Ian Dall <ian@beware.dropbear.id.au>
 
-On Wed, Mar 11, 2009 at 10:44:18PM +1100, Stephen Rothwell wrote:
-> --- a/drivers/block/ps3vram.c
-> +++ b/drivers/block/ps3vram.c
-> @@ -552,7 +552,6 @@ static void __devinit ps3vram_proc_init(struct ps3_system_bus_device *dev)
->  		return;
->  	}
->  
-> -	pde->owner = THIS_MODULE;
->  	pde->data = priv;
+--Signature=_Thu__12_Mar_2009_11_26_05_+1100_+vuH1IV8Lx5yWS=Y
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Geert, driver should use proc_create_data() as well, and ->owner wasn't
-necessary in the first place.
+Hi Trond,
+
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+
+fs/built-in.o: In function `.nfs_get_client':
+client.c:(.text+0x115010): undefined reference to `.__ipv6_addr_type'
+
+# CONFIG_IPV6 is not set
+
+Probably caused by commit d7371c41b0cda782256b1df759df4e8d4724584c ("Bug
+11061, NFS mounts dropped").
+
+I have used the nfs tree from next-20090311 instead of today's.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__12_Mar_2009_11_26_05_+1100_+vuH1IV8Lx5yWS=Y
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkm4Vp0ACgkQjjKRsyhoI8yr4QCgvQ9zTCTIqk+xWj/vKM1LI2hG
+nJgAmwQJrDHmVB74Ufh0GnelcxVz9h0g
+=+kgO
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__12_Mar_2009_11_26_05_+1100_+vuH1IV8Lx5yWS=Y--
