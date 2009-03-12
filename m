@@ -1,93 +1,66 @@
-From: Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>
-Subject: Re: linux-next: block/proc tree build failure
-Date: Thu, 12 Mar 2009 14:21:22 +0100 (CET)
-Message-ID: <alpine.LRH.2.00.0903121421040.25257@vixen.sonytel.be>
-References: <20090311224418.f1a7cb5f.sfr@canb.auug.org.au> <20090311233026.GA2134@x200.localdomain>
+From: Nico -telmich- Schottelius
+	<nico-linux-ipw3945-devel@schottelius.org>
+Subject: Re: [ipw3945-devel] X200 suspend status on -wl and -next
+Date: Thu, 12 Mar 2009 15:20:03 +0100
+Message-ID: <20090312142003.GF30728@denkbrett.schottelius.org>
+References: <20090311073030.GA5284@denkbrett.schottelius.org> <200903110946.23280.rjw@sisk.pl> <20090311085229.GB4495@denkbrett.schottelius.org> <20090311184407.GG8761@tuxdriver.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yRA+Bmk8aPhU85Qt"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from vervifontaine.sonytel.be ([80.88.33.193]:51735 "EHLO
-	vervifontaine.sonycom.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1755442AbZCLNV0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Mar 2009 09:21:26 -0400
-In-Reply-To: <20090311233026.GA2134@x200.localdomain>
+Received: from mx3.schottelius.org ([77.109.138.221]:41301 "EHLO
+	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756115AbZCLOUI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Mar 2009 10:20:08 -0400
+Content-Disposition: inline
+In-Reply-To: <20090311184407.GG8761@tuxdriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Jens Axboe <jens.axboe@oracle.com>, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: Nico Schottelius <nico-linux-20090311@schottelius.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, LKML <linux-kernel@vger.kernel.org>, ipw3945-devel@lists.sourceforge.net, Linux Next Mailing List <linux-next@vger.kernel.org>
 
-On Thu, 12 Mar 2009, Alexey Dobriyan wrote:
-> On Wed, Mar 11, 2009 at 10:44:18PM +1100, Stephen Rothwell wrote:
-> > --- a/drivers/block/ps3vram.c
-> > +++ b/drivers/block/ps3vram.c
-> > @@ -552,7 +552,6 @@ static void __devinit ps3vram_proc_init(struct =
-ps3_system_bus_device *dev)
-> >  		return;
-> >  	}
-> > =20
-> > -	pde->owner =3D THIS_MODULE;
-> >  	pde->data =3D priv;
+
+--yRA+Bmk8aPhU85Qt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+John W. Linville [Wed, Mar 11, 2009 at 02:44:07PM -0400]:
+> Any chance you'd like to try wireless-testing to help to isolate
+> possible sources of this problem?
 >=20
-> Geert, driver should use proc_create_data() as well, and ->owner wasn=
-'t
-> necessary in the first place.
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-testing.=
+git
 
-Thanks! So here's a replacement patch:
+v2.6.29-rc7-17155-g2f7ab92 looks good (as in: wlan works after several
+suspends and resumes). But it seems you do not add the full kernel version:
 
-commit 077f72d323360f112aaf41a75307dc2a284176a7
-Author: Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>
-Date:   Thu Mar 12 14:19:12 2009 +0100
+sgnx20002:/home/nico/wireless-testing# git describe
+v2.6.29-rc7-17155-g2f7ab92
+sgnx20002:/home/nico/wireless-testing# uname -r
+2.6.29-rc7-wl-ikn
 
-    ps3vram: Use proc_create_data() instead of proc_create()
-   =20
-    Use proc_create_data() to avoid race conditions, and kill the unnec=
-essary
-    setting of ->owner (this field is already gone in linux-next)
-   =20
-    Reported-by: Alexey Dobriyan <adobriyan@gmail.com>
-    Signed-off-by: Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>
+Which is the kernel built some seconds before.
 
-diff --git a/drivers/block/ps3vram.c b/drivers/block/ps3vram.c
-index 271f137..6e73868 100644
---- a/drivers/block/ps3vram.c
-+++ b/drivers/block/ps3vram.c
-@@ -546,14 +546,10 @@ static void __devinit ps3vram_proc_init(struct ps=
-3_system_bus_device *dev)
- 	struct ps3vram_priv *priv =3D dev->core.driver_data;
- 	struct proc_dir_entry *pde;
-=20
--	pde =3D proc_create(DEVICE_NAME, 0444, NULL, &ps3vram_proc_fops);
--	if (!pde) {
-+	pde =3D proc_create_data(DEVICE_NAME, 0444, NULL, &ps3vram_proc_fops,
-+			       priv);
-+	if (!pde)
- 		dev_warn(&dev->core, "failed to create /proc entry\n");
--		return;
--	}
--
--	pde->owner =3D THIS_MODULE;
--	pde->data =3D priv;
- }
-=20
- static int ps3vram_make_request(struct request_queue *q, struct bio *b=
-io)
+Nico
 
-With kind regards,
+--=20
+Think about Free and Open Source Software (FOSS).
+http://nico.schottelius.org/documentations/foss/the-term-foss/
 
-Geert Uytterhoeven
-Software Architect
+PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
 
-Sony Techsoft Centre Europe
-The Corporate Village =B7 Da Vincilaan 7-D1 =B7 B-1935 Zaventem =B7 Bel=
-gium
+--yRA+Bmk8aPhU85Qt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
 
-Phone:    +32 (0)2 700 8453
-=46ax:      +32 (0)2 700 8622
-E-mail:   Geert.Uytterhoeven@sonycom.com
-Internet: http://www.sony-europe.com/
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-A division of Sony Europe (Belgium) N.V.
-VAT BE 0413.825.160 =B7 RPR Brussels
-=46ortis =B7 BIC GEBABEBB =B7 IBAN BE41293037680010
+iEYEARECAAYFAkm5GhMACgkQuL75KpiFGIxfSACgh6+5GybEho7oWUSBE9262NG7
+a8AAoI0IizZyJoHIp4K9B5gQQa76PYeX
+=yGb1
+-----END PGP SIGNATURE-----
+
+--yRA+Bmk8aPhU85Qt--
