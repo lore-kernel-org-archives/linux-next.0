@@ -1,167 +1,113 @@
-From: Trond Myklebust <trond.myklebust@fys.uio.no>
-Subject: Re: linux-next: nfs tree build failure
-Date: Thu, 12 Mar 2009 14:54:32 -0400
-Message-ID: <1236884072.7179.37.camel@heimdal.trondhjem.org>
-References: <20090312112605.d22546b6.sfr@canb.auug.org.au>
+From: Rob Landley <rob@landley.net>
+Subject: Re: make headers_install broken for ARCH=m68k in 2.6.29-rc7.
+Date: Thu, 12 Mar 2009 15:03:36 -0500
+Message-ID: <200903121503.37195.rob@landley.net>
+References: <200903120437.03837.rob@landley.net> <20090312095854.GA9398@uranus.ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-out2.uio.no ([129.240.10.58]:60340 "EHLO mail-out2.uio.no"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751587AbZCLSym (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Mar 2009 14:54:42 -0400
-In-Reply-To: <20090312112605.d22546b6.sfr@canb.auug.org.au>
+Received: from static-71-162-243-5.phlapa.fios.verizon.net ([71.162.243.5]:37499
+	"EHLO grelber.thyrsus.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750843AbZCLUDl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Mar 2009 16:03:41 -0400
+In-Reply-To: <20090312095854.GA9398@uranus.ravnborg.org>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Ian Dall <ian@beware.dropbear.id.au>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: linux-kernel@vger.kernel.org, dwmw2@infradead.org, linux-next@vger.kernel.org
 
-On Thu, 2009-03-12 at 11:26 +1100, Stephen Rothwell wrote:
-> Hi Trond,
-> 
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> 
-> fs/built-in.o: In function `.nfs_get_client':
-> client.c:(.text+0x115010): undefined reference to `.__ipv6_addr_type'
-> 
-> # CONFIG_IPV6 is not set
-> 
-> Probably caused by commit d7371c41b0cda782256b1df759df4e8d4724584c ("Bug
-> 11061, NFS mounts dropped").
-> 
-> I have used the nfs tree from next-20090311 instead of today's.
+On Thursday 12 March 2009 04:58:54 Sam Ravnborg wrote:
+> On Thu, Mar 12, 2009 at 04:37:03AM -0500, Rob Landley wrote:
+> > So I'm doing this:
+> >
+> > make ARCH=m68k headers_install INSTALL_HDR_PATH=walrus
+> >
+> > And it doesn't install unistd_mm.h which is included from asm/unistd.h. 
+> > (The file is there in arch/m68k/include/asm/unistd_mm.h, it just doesn't
+> > get installed.  So any code that #includes <asm/unistd.h> results in a
+> > file not found error for the other one, which is essentially just a
+> > wrapper.)
+> >
+> > I don't understand what the code's currently doing here well enough to
+> > fix it, specifically where does this file list come from?  The file
+> > arch/m68k/include/asm/Kbuild is adding "cachectl.h" to header-y, but
+> > there are 31 files getting installed from that directory and only one in
+> > there.
+>
+> Kbuild contains the following:
+>
+> include include/asm-generic/Kbuild.asm
+> header-y += cachectl.h
+>
+> And if you look up the content of "include/asm-generic/Kbuild.asm"
 
-Should be fixed in today's tree. I appended the following patch:
------------------------------------------------------------------
-From: Trond Myklebust <Trond.Myklebust@netapp.com>
-Subject: NFS: Fix the fix to Bugzilla #11061, when IPv6 isn't defined...
+Ah, I was grepping for header-y and this is full of unifdef-y, so I didn't 
+look too closely at this file.  (I did glance at it, but the first thing I saw 
+was "errno.h" and there's an errno.h in the include/asm-generic directory, so 
+I thought it was describing itself.  I presume it tries the arch one first and 
+falls back to asm-generic if it's not there?)
 
-Stephen Rothwell reports:
+> you will realize that this is a list of all the "always to be exported
+> headers" from any arch - so the list is consolidated in asm-generic.
+>
+> The fix for m68k is to eiter:
+> 1) unify unistd.h so we get rid of the _no.h and _mm.h variants
+> 2) or add the _no.h and _mm.h files to Kbuild.
+>
+> I recall that someone already did 1) and this is pending in m68k.git.
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+I hope this patch can be cherry picked so 2.6.29 doesn't ship broken for m68k.
 
-fs/built-in.o: In function `.nfs_get_client':
-client.c:(.text+0x115010): undefined reference to `.__ipv6_addr_type'
+> You could look in -next - I think it is fixed there.
 
-Fix by moving the IPV6 specific parts of commit
-d7371c41b0cda782256b1df759df4e8d4724584c ("Bug 11061, NFS mounts dropped")
-into the '#ifdef IPV6..." section.
+Is there any way to download that as a tarball?  No mention of it on the main 
+kernel.org page.  I checked 
+http://www.kernel.org/pub/linux/kernel/testing/
+http://www.kernel.org/pub/linux/kernel/v2.6/snapshots/ 
+http://www.kernel.org/pub/linux/kernel/v2.6/testing/
+and a few other places.  No dice.
 
-Also fix up a couple of formatting issues.
+Googling for "linux-next" finds a blog entry and a few links to discussion on 
+kernel trap, but no link to where to _get_ it in any of those...
 
-Signed-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>
----
+Googling for "linux-next tarball" finds... http://lkml.org/lkml/2008/2/21/449 
+which has a dead link.  And by the third google hit we're into discussion of 
+the 2.4.18 kernel and hppa platform.  Not promising.
 
- fs/nfs/client.c |   68 ++++++++++++++++++++++++++++++++-----------------------
- 1 files changed, 39 insertions(+), 29 deletions(-)
+Seems kind of silly to let git grind away downloading hundreds of megabytes of 
+history that'll just get wiped (especially since that tree gets regenerated 
+nightly), but oh well.  Assuming that kernel development is git-centric enough 
+that a tarball version of a regenerated nightly resource just never seemed 
+important, said git repository would be on git.kernel.org, but where...
+linux/kernel/git/eranian/linux-next.git isn't it...
+linux/kernel/git/mchehab/linux-next.git isn't it...
+Ah, linux/kernel/git/sfr/linux-next.git is the one I'm looking for.  Now where 
+was the magic incantation to translate from the web url to a git url...  Ah, 
+at the top of the page.
 
+time git clone \
+  git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
 
-diff --git a/fs/nfs/client.c b/fs/nfs/client.c
-index 06654b8..574158a 100644
---- a/fs/nfs/client.c
-+++ b/fs/nfs/client.c
-@@ -255,6 +255,32 @@ static int nfs_sockaddr_match_ipaddr(const struct sockaddr *sa1,
- 	}
- 	return 0;
- }
-+
-+/*
-+ * Test if two ip6 socket addresses refer to the same socket by
-+ * comparing relevant fields. The padding bytes specifically, are not
-+ * compared. sin6_flowinfo is not compared because it only affects QoS
-+ * and sin6_scope_id is only compared if the address is "link local"
-+ * because "link local" addresses need only be unique to a specific
-+ * link. Conversely, ordinary unicast addresses might have different
-+ * sin6_scope_id.
-+ *
-+ * The caller should ensure both socket addresses are AF_INET6.
-+ */
-+static int nfs_sockaddr_cmp_ip6(const struct sockaddr *sa1,
-+				const struct sockaddr *sa2)
-+{
-+	const struct sockaddr_in6 *saddr1 = (const struct sockaddr_in6 *)sa1;
-+	const struct sockaddr_in6 *saddr2 = (const struct sockaddr_in6 *)sa2;
-+
-+	if (!ipv6_addr_equal(&saddr1->sin6_addr,
-+			     &saddr1->sin6_addr))
-+		return 0;
-+	if (ipv6_addr_scope(&saddr1->sin6_addr) == IPV6_ADDR_SCOPE_LINKLOCAL &&
-+	    saddr1->sin6_scope_id != saddr2->sin6_scope_id)
-+		return 0;
-+	return saddr1->sin6_port == saddr2->sin6_port;
-+}
- #else
- static int nfs_sockaddr_match_ipaddr4(const struct sockaddr_in *sa1,
- 				 const struct sockaddr_in *sa2)
-@@ -270,6 +296,12 @@ static int nfs_sockaddr_match_ipaddr(const struct sockaddr *sa1,
- 	return nfs_sockaddr_match_ipaddr4((const struct sockaddr_in *)sa1,
- 			(const struct sockaddr_in *)sa2);
- }
-+
-+static int nfs_sockaddr_cmp_ip6(const struct sockaddr * sa1,
-+				const struct sockaddr * sa2)
-+{
-+	return 0;
-+}
- #endif
- 
- /*
-@@ -279,38 +311,18 @@ static int nfs_sockaddr_match_ipaddr(const struct sockaddr *sa1,
-  *
-  * The caller should ensure both socket addresses are AF_INET.
-  */
--static int nfs_sockaddr_cmp_ip4(const struct sockaddr_in * saddr1,
--				const struct sockaddr_in * saddr2)
-+static int nfs_sockaddr_cmp_ip4(const struct sockaddr *sa1,
-+				const struct sockaddr *sa2)
- {
-+	const struct sockaddr_in *saddr1 = (const struct sockaddr_in *)sa1;
-+	const struct sockaddr_in *saddr2 = (const struct sockaddr_in *)sa2;
-+
- 	if (saddr1->sin_addr.s_addr != saddr2->sin_addr.s_addr)
- 		return 0;
- 	return saddr1->sin_port == saddr2->sin_port;
- }
- 
- /*
-- * Test if two ip6 socket addresses refer to the same socket by
-- * comparing relevant fields. The padding bytes specifically, are not
-- * compared. sin6_flowinfo is not compared because it only affects QoS
-- * and sin6_scope_id is only compared if the address is "link local"
-- * because "link local" addresses need only be unique to a specific
-- * link. Conversely, ordinary unicast addresses might have different
-- * sin6_scope_id.
-- *
-- * The caller should ensure both socket addresses are AF_INET6.
-- */
--static int nfs_sockaddr_cmp_ip6 (const struct sockaddr_in6 * saddr1,
--				 const struct sockaddr_in6 * saddr2)
--{
--	if (!ipv6_addr_equal(&saddr1->sin6_addr,
--			     &saddr1->sin6_addr))
--		return 0;
--	if (ipv6_addr_scope(&saddr1->sin6_addr) == IPV6_ADDR_SCOPE_LINKLOCAL &&
--	    saddr1->sin6_scope_id != saddr2->sin6_scope_id)
--		return 0;
--	return saddr1->sin6_port == saddr2->sin6_port;
--}
--
--/*
-  * Test if two socket addresses represent the same actual socket,
-  * by comparing (only) relevant fields.
-  */
-@@ -322,11 +334,9 @@ static int nfs_sockaddr_cmp(const struct sockaddr *sa1,
- 
- 	switch (sa1->sa_family) {
- 	case AF_INET:
--		return nfs_sockaddr_cmp_ip4((const struct sockaddr_in *) sa1,
--					    (const struct sockaddr_in *) sa2);
-+		return nfs_sockaddr_cmp_ip4(sa1, sa2);
- 	case AF_INET6:
--		return nfs_sockaddr_cmp_ip6((const struct sockaddr_in6 *) sa1,
--					    (const struct sockaddr_in6 *) sa2);
-+		return nfs_sockaddr_cmp_ip6(sa1, sa2);
- 	}
- 	return 0;
- }
+Wander off to read the big long http://lkml.org/lkml/2008/2/11/512 thread 
+google pulled up earlier, wander back when bored, the download is at 43% 
+averaging about 350k/second...  Go read some more...
+
+Am I doing something wrong here?  Other people can't possibly find this A) 
+this tedious, B) this undocumented.
+
+And it finished:
+> real	22m38.058s
+> user	2m27.257s
+> sys	0m34.258s
+
+And, yes, I can confirm the m68k include/asm/unistd.h from linux-next actually 
+has contents, thanks to commit 646652bded41f4c3bd375b4e03a25b42da93f40b
+
+Anyway, here's hoping the fix makes it into 2.6.29.
+
+> 	Sam
+
+Rob
