@@ -1,43 +1,55 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: make headers_install broken for ARCH=m68k in 2.6.29-rc7.
-Date: Thu, 12 Mar 2009 22:02:16 +0100
-Message-ID: <20090312210216.GB14205@uranus.ravnborg.org>
-References: <200903120437.03837.rob@landley.net> <20090312095854.GA9398@uranus.ravnborg.org> <200903121503.37195.rob@landley.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: nfs tree build failure
+Date: Fri, 13 Mar 2009 09:07:58 +1100
+Message-ID: <20090313090759.e6507916.sfr@canb.auug.org.au>
+References: <20090312112605.d22546b6.sfr@canb.auug.org.au>
+	<1236884072.7179.37.camel@heimdal.trondhjem.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__13_Mar_2009_09_07_59_+1100_u_fcuqYhIC.=dGq6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pfepb.post.tele.dk ([195.41.46.236]:34953 "EHLO
-	pfepb.post.tele.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751700AbZCLVAT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Mar 2009 17:00:19 -0400
-Content-Disposition: inline
-In-Reply-To: <200903121503.37195.rob@landley.net>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48729 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755435AbZCLWIG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Mar 2009 18:08:06 -0400
+In-Reply-To: <1236884072.7179.37.camel@heimdal.trondhjem.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rob Landley <rob@landley.net>
-Cc: linux-kernel@vger.kernel.org, dwmw2@infradead.org, linux-next@vger.kernel.org, geert@linux-m68k.org
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, Ian Dall <ian@beware.dropbear.id.au>
 
-> 
-> And, yes, I can confirm the m68k include/asm/unistd.h from linux-next actually 
-> has contents, thanks to commit 646652bded41f4c3bd375b4e03a25b42da93f40b
-> 
-> Anyway, here's hoping the fix makes it into 2.6.29.
+--Signature=_Fri__13_Mar_2009_09_07_59_+1100_u_fcuqYhIC.=dGq6
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Why not telling the m68k maintainer that you think it should go into 2.6.29?
+Hi Trond,
 
-As it stand now we will ikely see another mail from you "I already said so"
-when we ship it broken but you did not care to tell relevant people.
+On Thu, 12 Mar 2009 14:54:32 -0400 Trond Myklebust <trond.myklebust@fys.uio=
+.no> wrote:
+>
+> Should be fixed in today's tree. I appended the following patch:
+> -----------------------------------------------------------------
+> From: Trond Myklebust <Trond.Myklebust@netapp.com>
+> Subject: NFS: Fix the fix to Bugzilla #11061, when IPv6 isn't defined...
 
-grep -C 5 -i m68k MAINTAINES revelas this:
-M68K ARCHITECTURE
-P:      Geert Uytterhoeven
-M:      geert@linux-m68k.org
-P:      Roman Zippel
-M:      zippel@linux-m68k.org
-L:      linux-m68k@lists.linux-m68k.org
-W:      http://www.linux-m68k.org/
-W:      http://linux-m68k-cvs.ubb.ca/
-S:      Maintained
+Thanks.
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-	Sam
+--Signature=_Fri__13_Mar_2009_09_07_59_+1100_u_fcuqYhIC.=dGq6
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkm5h78ACgkQjjKRsyhoI8y5uACbB5gN/h15d6EgQGTVu6iGUB4f
+1C8AnjZIs2I9xwPnRt+fjT4ZI/08pIcC
+=Y79Q
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__13_Mar_2009_09_07_59_+1100_u_fcuqYhIC.=dGq6--
