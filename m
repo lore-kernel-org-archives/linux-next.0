@@ -1,55 +1,167 @@
-From: reinette chatre <reinette.chatre@intel.com>
-Subject: Re: [ipw3945-devel] X200 suspend status on -wl and -next
-Date: Thu, 12 Mar 2009 11:47:13 -0700
-Message-ID: <1236883633.13699.31.camel@rc-desk>
-References: <20090311073030.GA5284@denkbrett.schottelius.org>
-	 <200903110946.23280.rjw@sisk.pl>
-	 <20090311085229.GB4495@denkbrett.schottelius.org>
-	 <20090311184407.GG8761@tuxdriver.com>
-	 <20090312142003.GF30728@denkbrett.schottelius.org>
-	 <20090312173042.GD3410@tuxdriver.com>  <1236882742.13699.28.camel@rc-desk>
+From: Trond Myklebust <trond.myklebust@fys.uio.no>
+Subject: Re: linux-next: nfs tree build failure
+Date: Thu, 12 Mar 2009 14:54:32 -0400
+Message-ID: <1236884072.7179.37.camel@heimdal.trondhjem.org>
+References: <20090312112605.d22546b6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:18792 "EHLO mga02.intel.com"
+Received: from mail-out2.uio.no ([129.240.10.58]:60340 "EHLO mail-out2.uio.no"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752683AbZCLSmK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Mar 2009 14:42:10 -0400
-In-Reply-To: <1236882742.13699.28.camel@rc-desk>
+	id S1751587AbZCLSym (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Mar 2009 14:54:42 -0400
+In-Reply-To: <20090312112605.d22546b6.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: Nico Schottelius <nico-linux-20090311@schottelius.org>, LKML <linux-kernel@vger.kernel.org>, "ipw3945-devel@lists.sourceforge.net" <ipw3945-devel@lists.sourceforge.net>, "Rafael J. Wysocki" <rjw@sisk.pl>, Linux Next Mailing List <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Ian Dall <ian@beware.dropbear.id.au>
 
-On Thu, 2009-03-12 at 11:32 -0700, Chatre, Reinette wrote:
-> On Thu, 2009-03-12 at 10:30 -0700, John W. Linville wrote:
-> > On Thu, Mar 12, 2009 at 03:20:03PM +0100, Nico -telmich- Schottelius wrote:
-> > > John W. Linville [Wed, Mar 11, 2009 at 02:44:07PM -0400]:
-> > > > Any chance you'd like to try wireless-testing to help to isolate
-> > > > possible sources of this problem?
-> > > > 
-> > > > 	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-testing.git
-> > > 
-> > > v2.6.29-rc7-17155-g2f7ab92 looks good (as in: wlan works after several
-> > > suspends and resumes). But it seems you do not add the full kernel version:
-> > > 
-> > > sgnx20002:/home/nico/wireless-testing# git describe
-> > > v2.6.29-rc7-17155-g2f7ab92
-> > > sgnx20002:/home/nico/wireless-testing# uname -r
-> > > 2.6.29-rc7-wl-ikn
-> > > 
-> > > Which is the kernel built some seconds before.
-> > 
-> > I don't know where you get the -ikn bits from, presumably from the
-> > iwlwifi project.  Given what you said above, it would seem you are
-> > getting your suspend/resume problems from them as well... :-(
+On Thu, 2009-03-12 at 11:26 +1100, Stephen Rothwell wrote:
+> Hi Trond,
 > 
-> In our repo we do not add anything to the value of localversion. 
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> 
+> fs/built-in.o: In function `.nfs_get_client':
+> client.c:(.text+0x115010): undefined reference to `.__ipv6_addr_type'
+> 
+> # CONFIG_IPV6 is not set
+> 
+> Probably caused by commit d7371c41b0cda782256b1df759df4e8d4724584c ("Bug
+> 11061, NFS mounts dropped").
+> 
+> I have used the nfs tree from next-20090311 instead of today's.
 
-I have to clarify ... iwlwifi-2.6 does not add anything to localversion
-that is already there from the wireless-testing repository. So,
-iwlwifi-2.6 kernels will have identical name as wireless-testing
-kernels.
+Should be fixed in today's tree. I appended the following patch:
+-----------------------------------------------------------------
+From: Trond Myklebust <Trond.Myklebust@netapp.com>
+Subject: NFS: Fix the fix to Bugzilla #11061, when IPv6 isn't defined...
 
-Reinette
+Stephen Rothwell reports:
+
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+
+fs/built-in.o: In function `.nfs_get_client':
+client.c:(.text+0x115010): undefined reference to `.__ipv6_addr_type'
+
+Fix by moving the IPV6 specific parts of commit
+d7371c41b0cda782256b1df759df4e8d4724584c ("Bug 11061, NFS mounts dropped")
+into the '#ifdef IPV6..." section.
+
+Also fix up a couple of formatting issues.
+
+Signed-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>
+---
+
+ fs/nfs/client.c |   68 ++++++++++++++++++++++++++++++++-----------------------
+ 1 files changed, 39 insertions(+), 29 deletions(-)
+
+
+diff --git a/fs/nfs/client.c b/fs/nfs/client.c
+index 06654b8..574158a 100644
+--- a/fs/nfs/client.c
++++ b/fs/nfs/client.c
+@@ -255,6 +255,32 @@ static int nfs_sockaddr_match_ipaddr(const struct sockaddr *sa1,
+ 	}
+ 	return 0;
+ }
++
++/*
++ * Test if two ip6 socket addresses refer to the same socket by
++ * comparing relevant fields. The padding bytes specifically, are not
++ * compared. sin6_flowinfo is not compared because it only affects QoS
++ * and sin6_scope_id is only compared if the address is "link local"
++ * because "link local" addresses need only be unique to a specific
++ * link. Conversely, ordinary unicast addresses might have different
++ * sin6_scope_id.
++ *
++ * The caller should ensure both socket addresses are AF_INET6.
++ */
++static int nfs_sockaddr_cmp_ip6(const struct sockaddr *sa1,
++				const struct sockaddr *sa2)
++{
++	const struct sockaddr_in6 *saddr1 = (const struct sockaddr_in6 *)sa1;
++	const struct sockaddr_in6 *saddr2 = (const struct sockaddr_in6 *)sa2;
++
++	if (!ipv6_addr_equal(&saddr1->sin6_addr,
++			     &saddr1->sin6_addr))
++		return 0;
++	if (ipv6_addr_scope(&saddr1->sin6_addr) == IPV6_ADDR_SCOPE_LINKLOCAL &&
++	    saddr1->sin6_scope_id != saddr2->sin6_scope_id)
++		return 0;
++	return saddr1->sin6_port == saddr2->sin6_port;
++}
+ #else
+ static int nfs_sockaddr_match_ipaddr4(const struct sockaddr_in *sa1,
+ 				 const struct sockaddr_in *sa2)
+@@ -270,6 +296,12 @@ static int nfs_sockaddr_match_ipaddr(const struct sockaddr *sa1,
+ 	return nfs_sockaddr_match_ipaddr4((const struct sockaddr_in *)sa1,
+ 			(const struct sockaddr_in *)sa2);
+ }
++
++static int nfs_sockaddr_cmp_ip6(const struct sockaddr * sa1,
++				const struct sockaddr * sa2)
++{
++	return 0;
++}
+ #endif
+ 
+ /*
+@@ -279,38 +311,18 @@ static int nfs_sockaddr_match_ipaddr(const struct sockaddr *sa1,
+  *
+  * The caller should ensure both socket addresses are AF_INET.
+  */
+-static int nfs_sockaddr_cmp_ip4(const struct sockaddr_in * saddr1,
+-				const struct sockaddr_in * saddr2)
++static int nfs_sockaddr_cmp_ip4(const struct sockaddr *sa1,
++				const struct sockaddr *sa2)
+ {
++	const struct sockaddr_in *saddr1 = (const struct sockaddr_in *)sa1;
++	const struct sockaddr_in *saddr2 = (const struct sockaddr_in *)sa2;
++
+ 	if (saddr1->sin_addr.s_addr != saddr2->sin_addr.s_addr)
+ 		return 0;
+ 	return saddr1->sin_port == saddr2->sin_port;
+ }
+ 
+ /*
+- * Test if two ip6 socket addresses refer to the same socket by
+- * comparing relevant fields. The padding bytes specifically, are not
+- * compared. sin6_flowinfo is not compared because it only affects QoS
+- * and sin6_scope_id is only compared if the address is "link local"
+- * because "link local" addresses need only be unique to a specific
+- * link. Conversely, ordinary unicast addresses might have different
+- * sin6_scope_id.
+- *
+- * The caller should ensure both socket addresses are AF_INET6.
+- */
+-static int nfs_sockaddr_cmp_ip6 (const struct sockaddr_in6 * saddr1,
+-				 const struct sockaddr_in6 * saddr2)
+-{
+-	if (!ipv6_addr_equal(&saddr1->sin6_addr,
+-			     &saddr1->sin6_addr))
+-		return 0;
+-	if (ipv6_addr_scope(&saddr1->sin6_addr) == IPV6_ADDR_SCOPE_LINKLOCAL &&
+-	    saddr1->sin6_scope_id != saddr2->sin6_scope_id)
+-		return 0;
+-	return saddr1->sin6_port == saddr2->sin6_port;
+-}
+-
+-/*
+  * Test if two socket addresses represent the same actual socket,
+  * by comparing (only) relevant fields.
+  */
+@@ -322,11 +334,9 @@ static int nfs_sockaddr_cmp(const struct sockaddr *sa1,
+ 
+ 	switch (sa1->sa_family) {
+ 	case AF_INET:
+-		return nfs_sockaddr_cmp_ip4((const struct sockaddr_in *) sa1,
+-					    (const struct sockaddr_in *) sa2);
++		return nfs_sockaddr_cmp_ip4(sa1, sa2);
+ 	case AF_INET6:
+-		return nfs_sockaddr_cmp_ip6((const struct sockaddr_in6 *) sa1,
+-					    (const struct sockaddr_in6 *) sa2);
++		return nfs_sockaddr_cmp_ip6(sa1, sa2);
+ 	}
+ 	return 0;
+ }
