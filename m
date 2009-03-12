@@ -1,60 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the  tree
-Date: Thu, 12 Mar 2009 15:43:27 +1100
-Message-ID: <20090312154327.70d7271b.sfr@canb.auug.org.au>
+Subject: linux-next:  tree build warning
+Date: Thu, 12 Mar 2009 16:48:00 +1100
+Message-ID: <20090312164800.f3e28bd9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__12_Mar_2009_16_48_00_+1100_5NVn3BUjJl19mCBM"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54217 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60554 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751785AbZCLEnc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Mar 2009 00:43:32 -0400
+	id S1750991AbZCLFsM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Mar 2009 01:48:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>, Matt LaPlante <kernel1@cyberdogtech.com>
+To: Nick Piggin <npiggin@suse.de>
+Cc: linux-next@vger.kernel.org, Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>
 
-Hi Jiri,
+--Signature=_Thu__12_Mar_2009_16_48_00_+1100_5NVn3BUjJl19mCBM
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the trivial tree got a conflict in
-init/Kconfig between commit b943c460ff8556a193b28e2145b513f8b978e869
-("menu: fix embedded menu snafu") from Linus' tree and commit
-2622b54dff6e30d114828648e96777739b764063 ("trivial: fix typos/grammar
-errors in Kconfig texts") from the trivial tree.
+Hi Nick,
 
-The former moved the text that the latter modified.  I fixed it up (see
-below) and carry it for a while.
--- 
+Today's linux-next build (powerpc allnoconfig) produced this warning:
+
+mm/slqb.c:3122: warning: 'gather_stats' defined but not used
+
+$ grep SLQB .config
+CONFIG_SLQB=3Dy
+# CONFIG_SLQB_DEBUG is not set
+# CONFIG_SLQB_SYSFS is not set
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc init/Kconfig
-index 68c23f3,12b1343..0000000
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@@ -945,21 -897,9 +945,21 @@@ config SLUB_DEBU
-  	  SLUB sysfs support. /sys/slab will not exist and there will be
-  	  no support for cache validation etc.
-  
- +config COMPAT_BRK
- +	bool "Disable heap randomization"
- +	default y
- +	help
- +	  Randomizing heap placement makes heap exploits harder, but it
- +	  also breaks ancient binaries (including anything libc5 based).
- +	  This option changes the bootup default to heap randomization
-- 	  disabled, and can be overriden runtime by setting
-++	  disabled, and can be overridden at runtime by setting
- +	  /proc/sys/kernel/randomize_va_space to 2.
- +
- +	  On non-ancient distros (post-2000 ones) N is usually a safe choice.
- +
-  choice
-  	prompt "Choose SLAB allocator"
- -	default SLUB
- +	default SLQB
-  	help
-  	   This option allows to select a slab allocator.
-  
+--Signature=_Thu__12_Mar_2009_16_48_00_+1100_5NVn3BUjJl19mCBM
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkm4ohAACgkQjjKRsyhoI8yUMQCfSkeXBk0bv/+ArMkSMaxVleny
+KVYAoIZxUs9IQ9g7rqNEAalJg399Ri5X
+=/l0j
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__12_Mar_2009_16_48_00_+1100_5NVn3BUjJl19mCBM--
