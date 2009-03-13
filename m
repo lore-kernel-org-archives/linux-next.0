@@ -1,42 +1,77 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: net-current/net tree build failure
-Date: Fri, 13 Mar 2009 10:23:35 -0700 (PDT)
-Message-ID: <20090313.102335.132685232.davem@davemloft.net>
-References: <20090313131655.33117fb9.sfr@canb.auug.org.au>
+From: reinette chatre <reinette.chatre@intel.com>
+Subject: Re: [ipw3945-devel] X200 suspend status on -wl and -next
+Date: Fri, 13 Mar 2009 11:01:06 -0700
+Message-ID: <1236967266.31798.14.camel@rc-desk>
+References: <20090311073030.GA5284@denkbrett.schottelius.org>
+	 <200903110946.23280.rjw@sisk.pl>
+	 <20090311085229.GB4495@denkbrett.schottelius.org>
+	 <20090311184407.GG8761@tuxdriver.com>
+	 <20090312142003.GF30728@denkbrett.schottelius.org>
+	 <20090312173042.GD3410@tuxdriver.com> <1236882742.13699.28.camel@rc-desk>
+	 <20090313080030.GB3246@denkbrett.schottelius.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:54884
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1756535AbZCMRXt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 13 Mar 2009 13:23:49 -0400
-In-Reply-To: <20090313131655.33117fb9.sfr@canb.auug.org.au>
+Received: from mga01.intel.com ([192.55.52.88]:35672 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750852AbZCMR4B (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 13 Mar 2009 13:56:01 -0400
+In-Reply-To: <20090313080030.GB3246@denkbrett.schottelius.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, bhutchings@solarflare.com, yanok@emcraft.com
+To: Nico -telmich- Schottelius <nico-linux-ipw3945-devel@schottelius.org>
+Cc: "John W. Linville" <linville@tuxdriver.com>, Nico Schottelius <nico-linux-20090311@schottelius.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, LKML <linux-kernel@vger.kernel.org>, "ipw3945-devel@lists.sourceforge.net" <ipw3945-devel@lists.sourceforge.net>, Linux Next Mailing List <linux-next@vger.kernel.org>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 13 Mar 2009 13:16:55 +1100
+On Fri, 2009-03-13 at 01:00 -0700, Nico -telmich- Schottelius wrote:
+> reinette chatre [Thu, Mar 12, 2009 at 11:32:22AM -0700]:
+> > On Thu, 2009-03-12 at 10:30 -0700, John W. Linville wrote:
+> > > On Thu, Mar 12, 2009 at 03:20:03PM +0100, Nico -telmich- Schottelius wrote:
+> > > > John W. Linville [Wed, Mar 11, 2009 at 02:44:07PM -0400]:
+> > > > > Any chance you'd like to try wireless-testing to help to isolate
+> > > > > possible sources of this problem?
+> > > > > 
+> > > > > 	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-testing.git
+> > > > 
+> > > > v2.6.29-rc7-17155-g2f7ab92 looks good (as in: wlan works after several
+> > > > suspends and resumes). But it seems you do not add the full kernel version:
+> > > > 
+> > > > sgnx20002:/home/nico/wireless-testing# git describe
+> > > > v2.6.29-rc7-17155-g2f7ab92
+> > > > sgnx20002:/home/nico/wireless-testing# uname -r
+> > > > 2.6.29-rc7-wl-ikn
+> > > > 
+> > > > Which is the kernel built some seconds before.
+> > > 
+> > > I don't know where you get the -ikn bits from, presumably from the
+> > > iwlwifi project.  Given what you said above, it would seem you are
+> > > getting your suspend/resume problems from them as well... :-(
+> > 
+> > In our repo we do not add anything to the value of localversion. We also
+> > track wireless-testing _very_ closely so the differences are at most a
+> > handful of patches. Could you please send me commit id of iwlwifi-2.6
+> > repo that fails as well as the commit id of wireless-testing repo that
+> > succeeds?
+> 
+> As I did before in this thread:
+> 
+>   vmlinuz-2.6.29-rc7-wl-ikn-32831-g98c5597 from iwlwifi-2.6: fails
+>   2.6.29-rc7-wl-ikn or v2.6.29-rc7-17155-g2f7ab92 from wireless-testing: works
 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
-> 
-> drivers/net/dnet.c: In function 'dnet_poll':
-> drivers/net/dnet.c:411: error: implicit declaration of function 'netif_rx_complete'
-> drivers/net/dnet.c: In function 'dnet_interrupt':
-> drivers/net/dnet.c:510: error: implicit declaration of function 'netif_rx_schedule_prep'
-> drivers/net/dnet.c:519: error: implicit declaration of function '__netif_rx_schedule'
-> 
-> Caused by commit 4796417417a62e2ae83d92cb92e1ecf9ec67b5f5 ("dnet: Dave
-> DNET ethernet controller driver (updated)") from the net-current tree
-> interacting with commit 288379f050284087578b77e04f040b57db3db3f8 ("net:
-> Remove redundant NAPI functions") from the net tree.
-> 
-> So for today, I have reverted the net-current commit and commit
-> 2c5849ea38fdad477d72dcf1c8c4842db4b33aae ("dnet: Fix warnings on 64-bit")
-> that depended on it.
+I am sorry that I missed this information in the thread.
 
-This should be fixed now thanks to Ilya's patch which is now in
-net-2.6, thanks!
+> 
+> Btw, I'm running 2.6.29-rc7-next-20090306-ikn currently, which also looks good.
+
+Your wireless-testing repository tested is much newer than the
+iwlwifi-2.6 one ... new patches for our driver is in your
+wireless-testing repo but not in iwlwifi-2.6. So, in your testing
+wireless-testing contains more up to date iwlwifi code than the
+iwlwifi-2.6 repo.
+
+Could you please test with today's versions of the two repos? There is a
+one small patch difference.
+
+Thank you
+
+Reinette
