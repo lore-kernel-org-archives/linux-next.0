@@ -1,53 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: import of ide quilt series failed
-Date: Fri, 13 Mar 2009 11:00:25 +1100
-Message-ID: <20090313110025.74ed4c5a.sfr@canb.auug.org.au>
-References: <20090313093048.c61dd9f4.sfr@canb.auug.org.au>
-	<200903122341.56771.bzolnier@gmail.com>
-	<20090313102803.6820051e.sfr@canb.auug.org.au>
+Subject: linux-next: nfs tree build warnings
+Date: Fri, 13 Mar 2009 11:42:46 +1100
+Message-ID: <20090313114246.15838b02.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__13_Mar_2009_11_00_25_+1100_HDBLsm5bcnClr.cx"
+ boundary="Signature=_Fri__13_Mar_2009_11_42_46_+1100__9x+2lqly7L+q7EF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43000 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52025 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755660AbZCMAAi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Mar 2009 20:00:38 -0400
-In-Reply-To: <20090313102803.6820051e.sfr@canb.auug.org.au>
+	id S1752948AbZCMAmy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Mar 2009 20:42:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Cc: linux-next@vger.kernel.org
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, Tom Talpey <tmtalpey@gmail.com>
 
---Signature=_Fri__13_Mar_2009_11_00_25_+1100_HDBLsm5bcnClr.cx
+--Signature=_Fri__13_Mar_2009_11_42_46_+1100__9x+2lqly7L+q7EF
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bart,
+Hi Trond,
 
-On Fri, 13 Mar 2009 10:28:03 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> I will refetch and see if it works.
+Today's linux-next build (/powerpc ppc64_defconfig) produced these warnings:
 
-That fixed it.
+net/sunrpc/xprtrdma/svc_rdma_sendto.c: In function 'map_xdr':
+net/sunrpc/xprtrdma/svc_rdma_sendto.c:237: warning: format '%zd' expects ty=
+pe 'signed size_t', but argument 4 has type 'unsigned int'
+net/sunrpc/xprtrdma/svc_rdma_sendto.c:237: warning: format '%zd' expects ty=
+pe 'signed size_t', but argument 5 has type 'unsigned int'
+net/sunrpc/xprtrdma/svc_rdma_sendto.c:237: warning: format '%d' expects typ=
+e 'int', but argument 6 has type 'size_t'
+net/sunrpc/xprtrdma/svc_rdma_sendto.c:237: warning: format '%d' expects typ=
+e 'int', but argument 7 has type 'size_t'
+
+Caused by commit b1e1e158779f1d99c2cc18e466f6bf9099fc0853 ("SVCRDMA:
+remove faulty assertions in rpc/rdma chunk validation").
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__13_Mar_2009_11_00_25_+1100_HDBLsm5bcnClr.cx
+--Signature=_Fri__13_Mar_2009_11_42_46_+1100__9x+2lqly7L+q7EF
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkm5ohkACgkQjjKRsyhoI8zNdwCgmLTUD0lVRcVfdF406wsHEl1r
-oY0AnirJTHvxUxN0CmDn3WIeLUM9Z7NB
-=Yuxj
+iEYEARECAAYFAkm5rAYACgkQjjKRsyhoI8wUIwCfWjsQv1xiEOSF7MkDB51v8BNC
+QI4AoJfzkr6lMsbu43vu3dGtIEgR/+hK
+=Wbeg
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__13_Mar_2009_11_00_25_+1100_HDBLsm5bcnClr.cx--
+--Signature=_Fri__13_Mar_2009_11_42_46_+1100__9x+2lqly7L+q7EF--
