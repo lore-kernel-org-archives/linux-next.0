@@ -1,61 +1,70 @@
-From: Nico Schottelius <nico-linux-20090311@schottelius.org>
+From: Nico -telmich- Schottelius
+	<nico-linux-ipw3945-devel@schottelius.org>
 Subject: Re: [ipw3945-devel] X200 suspend status on -wl and -next
-Date: Fri, 13 Mar 2009 08:48:49 +0100
-Message-ID: <20090313074849.GI30728@denkbrett.schottelius.org>
-References: <20090311073030.GA5284@denkbrett.schottelius.org> <200903110946.23280.rjw@sisk.pl> <20090311085229.GB4495@denkbrett.schottelius.org> <20090311184407.GG8761@tuxdriver.com> <20090312142003.GF30728@denkbrett.schottelius.org> <20090312173042.GD3410@tuxdriver.com> <1236882742.13699.28.camel@rc-desk> <1236883633.13699.31.camel@rc-desk>
+Date: Fri, 13 Mar 2009 09:00:30 +0100
+Message-ID: <20090313080030.GB3246@denkbrett.schottelius.org>
+References: <20090311073030.GA5284@denkbrett.schottelius.org> <200903110946.23280.rjw@sisk.pl> <20090311085229.GB4495@denkbrett.schottelius.org> <20090311184407.GG8761@tuxdriver.com> <20090312142003.GF30728@denkbrett.schottelius.org> <20090312173042.GD3410@tuxdriver.com> <1236882742.13699.28.camel@rc-desk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+PbGPm1eXpwOoWkI"
+	protocol="application/pgp-signature"; boundary="7ZAtKRhVyVSsbBD2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.schottelius.org ([77.109.138.221]:47939 "EHLO
+Received: from mx3.schottelius.org ([77.109.138.221]:54830 "EHLO
 	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750970AbZCMHsw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Mar 2009 03:48:52 -0400
+	with ESMTP id S1751396AbZCMIAh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Mar 2009 04:00:37 -0400
 Content-Disposition: inline
-In-Reply-To: <1236883633.13699.31.camel@rc-desk>
+In-Reply-To: <1236882742.13699.28.camel@rc-desk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: reinette chatre <reinette.chatre@intel.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, Nico Schottelius <nico-linux-20090311@schottelius.org>, LKML <linux-kernel@vger.kernel.org>, "ipw3945-devel@lists.sourceforge.net" <ipw3945-devel@lists.sourceforge.net>, "Rafael J. Wysocki" <rjw@sisk.pl>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: "John W. Linville" <linville@tuxdriver.com>, Nico Schottelius <nico-linux-20090311@schottelius.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, LKML <linux-kernel@vger.kernel.org>, "ipw3945-devel@lists.sourceforge.net" <ipw3945-devel@lists.sourceforge.net>, Linux Next Mailing List <linux-next@vger.kernel.org>
 
 
---+PbGPm1eXpwOoWkI
+--7ZAtKRhVyVSsbBD2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Happy Friday morning everybody,
-
-reinette chatre [Thu, Mar 12, 2009 at 11:47:13AM -0700]:
-> On Thu, 2009-03-12 at 11:32 -0700, Chatre, Reinette wrote:
-> > On Thu, 2009-03-12 at 10:30 -0700, John W. Linville wrote:
-> > > On Thu, Mar 12, 2009 at 03:20:03PM +0100, Nico -telmich- Schottelius =
-wrote:
-> > > > John W. Linville [Wed, Mar 11, 2009 at 02:44:07PM -0400]:
-> > > > > Any chance you'd like to try wireless-testing to help to isolate
-> > > > > possible sources of this problem?
-> > > > >=20
-> > > > > 	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-=
-testing.git
+reinette chatre [Thu, Mar 12, 2009 at 11:32:22AM -0700]:
+> On Thu, 2009-03-12 at 10:30 -0700, John W. Linville wrote:
+> > On Thu, Mar 12, 2009 at 03:20:03PM +0100, Nico -telmich- Schottelius wr=
+ote:
+> > > John W. Linville [Wed, Mar 11, 2009 at 02:44:07PM -0400]:
+> > > > Any chance you'd like to try wireless-testing to help to isolate
+> > > > possible sources of this problem?
 > > > >=20
-> > > > v2.6.29-rc7-17155-g2f7ab92 looks good (as in: wlan works after seve=
-ral
-> > > > suspends and resumes). But it seems you do not add the full kernel =
-version:
-> > > >=20
-> > > > sgnx20002:/home/nico/wireless-testing# git describe
-> > > > v2.6.29-rc7-17155-g2f7ab92
-> > > > sgnx20002:/home/nico/wireless-testing# uname -r
-> > > > 2.6.29-rc7-wl-ikn
-> > > >=20
-> > > > Which is the kernel built some seconds before.
+> > > > 	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-te=
+sting.git
 > > >=20
-> > > I don't know where you get the -ikn bits from, presumably from the
-> > > iwlwifi project.  Given what you said above, it would seem you are
-> > > getting your suspend/resume problems from them as well... :-(
+> > > v2.6.29-rc7-17155-g2f7ab92 looks good (as in: wlan works after several
+> > > suspends and resumes). But it seems you do not add the full kernel ve=
+rsion:
+> > >=20
+> > > sgnx20002:/home/nico/wireless-testing# git describe
+> > > v2.6.29-rc7-17155-g2f7ab92
+> > > sgnx20002:/home/nico/wireless-testing# uname -r
+> > > 2.6.29-rc7-wl-ikn
+> > >=20
+> > > Which is the kernel built some seconds before.
+> >=20
+> > I don't know where you get the -ikn bits from, presumably from the
+> > iwlwifi project.  Given what you said above, it would seem you are
+> > getting your suspend/resume problems from them as well... :-(
+>=20
+> In our repo we do not add anything to the value of localversion. We also
+> track wireless-testing _very_ closely so the differences are at most a
+> handful of patches. Could you please send me commit id of iwlwifi-2.6
+> repo that fails as well as the commit id of wireless-testing repo that
+> succeeds?
 
--ikn is a suffix used for the x200 by me (hostname). It is appended, because
-I've several different machines / configurations, but does not add any patch
+As I did before in this thread:
+
+  vmlinuz-2.6.29-rc7-wl-ikn-32831-g98c5597 from iwlwifi-2.6: fails
+  2.6.29-rc7-wl-ikn or v2.6.29-rc7-17155-g2f7ab92 from wireless-testing: wo=
+rks
+
+Btw, I'm running 2.6.29-rc7-next-20090306-ikn currently, which also looks g=
+ood.
 
 Nico
 
@@ -65,7 +74,7 @@ http://nico.schottelius.org/documentations/foss/the-term-foss/
 
 PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
 
---+PbGPm1eXpwOoWkI
+--7ZAtKRhVyVSsbBD2
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 Content-Disposition: inline
@@ -73,9 +82,9 @@ Content-Disposition: inline
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkm6D+EACgkQuL75KpiFGIzGGgCfaNnq0ledUZX99XOWA3kApdFw
-VF8AoIHH6SvozwM1tVVsh2nOf7lsn/ri
-=l39I
+iEYEARECAAYFAkm6Ep4ACgkQuL75KpiFGIz6HACgpGIlmyHXzPijjJVvzCSLV6BE
+9goAnjDuscb8O1cyXVoouoP/q6vhVfuk
+=Aoie
 -----END PGP SIGNATURE-----
 
---+PbGPm1eXpwOoWkI--
+--7ZAtKRhVyVSsbBD2--
