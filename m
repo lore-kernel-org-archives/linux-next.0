@@ -1,106 +1,81 @@
-From: Greg Ungerer <gerg@snapgear.com>
-Subject: Re: make headers_install broken for ARCH=m68k in 2.6.29-rc7.
-Date: Fri, 13 Mar 2009 17:04:57 +1000
-Message-ID: <49BA0599.6070206@snapgear.com>
-References: <200903120437.03837.rob@landley.net> <20090312210216.GB14205@uranus.ravnborg.org> <10f740e80903121540i30fdaddr600ce21f4159530a@mail.gmail.com> <200903122225.04560.rob@landley.net>
+From: Nico Schottelius <nico-linux-20090311@schottelius.org>
+Subject: Re: [ipw3945-devel] X200 suspend status on -wl and -next
+Date: Fri, 13 Mar 2009 08:48:49 +0100
+Message-ID: <20090313074849.GI30728@denkbrett.schottelius.org>
+References: <20090311073030.GA5284@denkbrett.schottelius.org> <200903110946.23280.rjw@sisk.pl> <20090311085229.GB4495@denkbrett.schottelius.org> <20090311184407.GG8761@tuxdriver.com> <20090312142003.GF30728@denkbrett.schottelius.org> <20090312173042.GD3410@tuxdriver.com> <1236882742.13699.28.camel@rc-desk> <1236883633.13699.31.camel@rc-desk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+PbGPm1eXpwOoWkI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rex.securecomputing.com ([203.24.151.4]:55359 "EHLO
-	cyberguard.com.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750761AbZCMHFC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Mar 2009 03:05:02 -0400
-In-Reply-To: <200903122225.04560.rob@landley.net>
+Received: from mx3.schottelius.org ([77.109.138.221]:47939 "EHLO
+	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750970AbZCMHsw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Mar 2009 03:48:52 -0400
+Content-Disposition: inline
+In-Reply-To: <1236883633.13699.31.camel@rc-desk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rob Landley <rob@landley.net>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org, dwmw2@infradead.org, linux-next@vger.kernel.org
+To: reinette chatre <reinette.chatre@intel.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, Nico Schottelius <nico-linux-20090311@schottelius.org>, LKML <linux-kernel@vger.kernel.org>, "ipw3945-devel@lists.sourceforge.net" <ipw3945-devel@lists.sourceforge.net>, "Rafael J. Wysocki" <rjw@sisk.pl>, Linux Next Mailing List <linux-next@vger.kernel.org>
 
 
-Rob Landley wrote:
-> On Thursday 12 March 2009 17:40:02 Geert Uytterhoeven wrote:
->> On Thu, Mar 12, 2009 at 22:02, Sam Ravnborg <sam@ravnborg.org> wrote:
->>>> And, yes, I can confirm the m68k include/asm/unistd.h from linux-next
->>>> actually has contents, thanks to commit
->>>> 646652bded41f4c3bd375b4e03a25b42da93f40b
->>>>
->>>> Anyway, here's hoping the fix makes it into 2.6.29.
->>> Why not telling the m68k maintainer that you think it should go into
->>> 2.6.29?
-> 
-> I contacted the headers_install maintainer about a headers_install problem, 
-> and was pointed to an existing fix upstream.  This seemed to imply awareness 
-> of the problem?
-> 
-> Happy to follow up more, wasn't aware it was required...
-> 
->> There are a few more:
->>
->> param.h:#include "param_no.h"
->> param.h:#include "param_mm.h"
->> ptrace.h:#include "ptrace_no.h"
->> ptrace.h:#include "ptrace_mm.h"
->> setup.h:#include "setup_no.h"
->> setup.h:#include "setup_mm.h"
->> sigcontext.h:#include "sigcontext_no.h"
->> sigcontext.h:#include "sigcontext_mm.h"
->> siginfo.h:#include "siginfo_no.h"
->> siginfo.h:#include "siginfo_mm.h"
->> signal.h:#include "signal_no.h"
->> signal.h:#include "signal_mm.h"
->> swab.h:#include "swab_no.h"
->> swab.h:#include "swab_mm.h"
->>
->> Rob, do these also causes problems?
->> Some (not all) of them are fixed in linux-next.
-> 
-> I'm trying to build uClibc against the new headers.  I just got around to 
-> extracting the patch to fix that one file and testing it in my build system, 
-> and this time it broke with:
-> 
->   build/cross-compiler-m68k/include/asm/param.h:4:22: error: param_mm.h: No
->   such file or directory
-> 
-> So yeah, it's still unhappy.  Dunno how many of these are still needed to 
-> build the cross compiler, and then who knows what other packages need to 
-> build.  Presumably all of it.
-> 
-> Keep in mind I still haven't found an emulator for m68k that actually boots a 
-> linux kernel, so my m68k support is purely theoretical.  (I poked at mess and 
-> uae a bit today, but they don't do the "qemu -kernel" thing I'm using for the 
-> other targets, and qemu itself only seems to support coldfire and not a full-
-> blown m68k.)  I'm following up on this because it's a regression.  Under 
-> 2.6.28 the m68k target was building a kernel and root filesystem, but I don't 
-> have hardware to run it and have never been able to test it, so isn't really 
-> very useful for me.  It's really just there so that if qemu grows the rest of 
-> m68k support (patches have been submitted but not merged), I'll be ready.
-> 
-> P.S.  If you're bored and want to try my test build for yourself:
-> 
->   wget http://impactlinux.com/hg/firmware/archive/tip.tar.bz2
->   tar xvjf tip.tar.bz2
->   cd firmware-*
->   USE_UNSTABLE=linux ./build.sh m68k
-> 
-> Without the USE_UNSTABLE=linux it uses 2.6.28 and builds to completion, with 
-> it the build uses 2.6.29-rc7 (or whatever URL's listed as the UNSTABLE= value 
-> for linux in download.sh) and it breaks trying to add uClibc to the cross 
-> compiler.
-> 
-> But then anything that actually _uses_ the "make headers_install" output to 
-> build stuff against should notice pretty quickly whether or not it #includes 
-> missing files.
+--+PbGPm1eXpwOoWkI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I pretty quick time I can fix up the last couple on the above list.
-But do we want to put all that change into 2.6.29-rc at this point?
+Happy Friday morning everybody,
 
-Regards
-Greg
+reinette chatre [Thu, Mar 12, 2009 at 11:47:13AM -0700]:
+> On Thu, 2009-03-12 at 11:32 -0700, Chatre, Reinette wrote:
+> > On Thu, 2009-03-12 at 10:30 -0700, John W. Linville wrote:
+> > > On Thu, Mar 12, 2009 at 03:20:03PM +0100, Nico -telmich- Schottelius =
+wrote:
+> > > > John W. Linville [Wed, Mar 11, 2009 at 02:44:07PM -0400]:
+> > > > > Any chance you'd like to try wireless-testing to help to isolate
+> > > > > possible sources of this problem?
+> > > > >=20
+> > > > > 	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-=
+testing.git
+> > > >=20
+> > > > v2.6.29-rc7-17155-g2f7ab92 looks good (as in: wlan works after seve=
+ral
+> > > > suspends and resumes). But it seems you do not add the full kernel =
+version:
+> > > >=20
+> > > > sgnx20002:/home/nico/wireless-testing# git describe
+> > > > v2.6.29-rc7-17155-g2f7ab92
+> > > > sgnx20002:/home/nico/wireless-testing# uname -r
+> > > > 2.6.29-rc7-wl-ikn
+> > > >=20
+> > > > Which is the kernel built some seconds before.
+> > >=20
+> > > I don't know where you get the -ikn bits from, presumably from the
+> > > iwlwifi project.  Given what you said above, it would seem you are
+> > > getting your suspend/resume problems from them as well... :-(
 
+-ikn is a suffix used for the x200 by me (hostname). It is appended, because
+I've several different machines / configurations, but does not add any patch
 
-------------------------------------------------------------------------
-Greg Ungerer  --  Principal Engineer        EMAIL:     gerg@snapgear.com
-SnapGear, a McAfee Company                  PHONE:       +61 7 3435 2888
-825 Stanley St,                             FAX:         +61 7 3891 3630
-Woolloongabba, QLD, 4102, Australia         WEB: http://www.SnapGear.com
+Nico
+
+--=20
+Think about Free and Open Source Software (FOSS).
+http://nico.schottelius.org/documentations/foss/the-term-foss/
+
+PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
+
+--+PbGPm1eXpwOoWkI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkm6D+EACgkQuL75KpiFGIzGGgCfaNnq0ledUZX99XOWA3kApdFw
+VF8AoIHH6SvozwM1tVVsh2nOf7lsn/ri
+=l39I
+-----END PGP SIGNATURE-----
+
+--+PbGPm1eXpwOoWkI--
