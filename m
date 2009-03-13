@@ -1,53 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: md tree build failure
-Date: Fri, 13 Mar 2009 13:21:00 +1100
-Message-ID: <20090313132100.ef9e7a31.sfr@canb.auug.org.au>
-References: <20090311162718.36292b71.sfr@canb.auug.org.au>
-	<18873.44231.864323.344008@notabene.brown>
+Subject: Re: m68k: kernel/up.c:16: error: dereferencing pointer to
+ incomplete type
+Date: Fri, 13 Mar 2009 14:20:33 +1100
+Message-ID: <20090313142033.d69d9d2e.sfr@canb.auug.org.au>
+References: <10f740e80903120608v314be360u30911fa003ab5ebc@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__13_Mar_2009_13_21_00_+1100_c_MwALAcQ0tIUYcG"
+ boundary="Signature=_Fri__13_Mar_2009_14_20_33_+1100_Yt3vwrjjHNWEpdTS"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47582 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40177 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752172AbZCMCVI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Mar 2009 22:21:08 -0400
-In-Reply-To: <18873.44231.864323.344008@notabene.brown>
+	id S1757728AbZCMDUq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Mar 2009 23:20:46 -0400
+In-Reply-To: <10f740e80903120608v314be360u30911fa003ab5ebc@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Neil Brown <neilb@suse.de>
-Cc: linux-next@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-next@vger.kernel.org, linux-m68k@lists.linux-m68k.org, michael@ellerman.id.au
 
---Signature=_Fri__13_Mar_2009_13_21_00_+1100_c_MwALAcQ0tIUYcG
+--Signature=_Fri__13_Mar_2009_14_20_33_+1100_Yt3vwrjjHNWEpdTS
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Neil,
+Hi Geert,
 
-On Fri, 13 Mar 2009 11:45:59 +1100 Neil Brown <neilb@suse.de> wrote:
+On Thu, 12 Mar 2009 14:08:57 +0100 Geert Uytterhoeven <geert@linux-m68k.org=
+> wrote:
 >
-> I've export raid6_empty_zero_page.  I think that is the correct fix.
-> So Monday should be a winner :-)
+> I can't seem to reproduce the compile failure of kernel/up.c on m68k,
+> as shown on
+> http://kisskb.ellerman.id.au/kisskb/buildresult/186066/:
+>=20
+> | kernel/up.c:16: error: dereferencing pointer to incomplete type
 
-Thanks.  And you got in under the wire, so hopefully today will be a
-winner.
+When kisskb gets an error in building a kernel, it tries to bisect the
+problem starting from a known good kernel.  The above error occurs
+during the bisection process not when building the original kernel.  I
+guess we need to be a bit more careful when reporting the errors.  Sorry
+about that.
+
+It was actually building commit
+"[ad33ea3a8d2ec324dc0f46b6ae404d824d2b349b] bnx2x: Missing mask when
+calculating flow control", I think.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__13_Mar_2009_13_21_00_+1100_c_MwALAcQ0tIUYcG
+--Signature=_Fri__13_Mar_2009_14_20_33_+1100_Yt3vwrjjHNWEpdTS
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkm5wwwACgkQjjKRsyhoI8zeLQCeOW1b72bl6bmr3r7VYuQRyPze
-rKkAnAztypsbUNjFJqrYqIW/VeqAcy/n
-=sjBk
+iEYEARECAAYFAkm50QEACgkQjjKRsyhoI8xMagCguZru8KMKipN45xXgIkxFHGtw
+k9QAnRyYOjPCG9QwohO4YXVVVnvEP2kV
+=EeCD
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__13_Mar_2009_13_21_00_+1100_c_MwALAcQ0tIUYcG--
+--Signature=_Fri__13_Mar_2009_14_20_33_+1100_Yt3vwrjjHNWEpdTS--
