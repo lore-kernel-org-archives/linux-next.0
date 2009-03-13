@@ -1,69 +1,65 @@
-From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
-Subject: Re: linux-next test scripts
-Date: Fri, 13 Mar 2009 09:03:48 +0100
-Message-ID: <20090313080348.GC3246@denkbrett.schottelius.org>
-References: <20090206142022.GA5430@pengutronix.de> <20090212202036.GA31203@pengutronix.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: m68k: kernel/up.c:16: error: dereferencing pointer to incomplete
+	type
+Date: Fri, 13 Mar 2009 08:59:31 +0100
+Message-ID: <10f740e80903130059h7c6b9b3bpe2a204eba15c37b6@mail.gmail.com>
+References: <10f740e80903120608v314be360u30911fa003ab5ebc@mail.gmail.com>
+	 <20090313142033.d69d9d2e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="z4+8/lEcDcG5Ke9S"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.schottelius.org ([77.109.138.221]:39778 "EHLO
-	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751019AbZCMIDu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Mar 2009 04:03:50 -0400
-Content-Disposition: inline
-In-Reply-To: <20090212202036.GA31203@pengutronix.de>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-m68k-owner@vger.kernel.org>
+In-Reply-To: <20090313142033.d69d9d2e.sfr@canb.auug.org.au>
+Sender: linux-m68k-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-m68k@vger.kernel.org, michael@ellerman.id.au
+List-Id: linux-next.vger.kernel.org
 
+Hi Stephe,
 
---z4+8/lEcDcG5Ke9S
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Mar 13, 2009 at 04:20, Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+> On Thu, 12 Mar 2009 14:08:57 +0100 Geert Uytterhoeven <geert@linux-m6=
+8k.org> wrote:
+>>
+>> I can't seem to reproduce the compile failure of kernel/up.c on m68k=
+,
+>> as shown on
+>> http://kisskb.ellerman.id.au/kisskb/buildresult/186066/:
+>>
+>> | kernel/up.c:16: error: dereferencing pointer to incomplete type
+>
+> When kisskb gets an error in building a kernel, it tries to bisect th=
+e
+> problem starting from a known good kernel. =C2=A0The above error occu=
+rs
+> during the bisection process not when building the original kernel. =C2=
+=A0I
+> guess we need to be a bit more careful when reporting the errors. =C2=
+=A0Sorry
+> about that.
 
-Uwe Kleine-K=F6nig [Thu, Feb 12, 2009 at 09:20:37PM +0100]:
-> Hello,
->=20
-> On Fri, Feb 06, 2009 at 03:20:22PM +0100, Uwe Kleine-K=F6nig wrote:
-> > I plan to setup something similar to linux-next for the Pengutronix test
-> > lab to build a tree that contains the work of all our developers for
-> > daily testing.
-> >=20
-> > It would be really great if I could take a look into your scripts to
-> > manage linux-next.  I tried searching the web for them, but without
-> > success.
-> >=20
-> > Are the scripts somewhere available without being found by me?  If yes,
-> > where are they, if not, do you can publish them somewhere?
-> After some more search I found the script by James Bottomley[1].
+Ah, that explains it, thanks!
 
-I'm also maintaining some smaller scripts for maintaining all the
-kernel testing / building / installation stuff:
+I had also just noticed kernel/up.o was compiled twice, and the first
+one succeeded.
+Now I understand why...
 
-http://git.schottelius.org/?p=3Dnsbin;a=3Dtree;f=3Dlinux;hb=3DHEAD
+Gr{oetje,eeting}s,
 
-Nico
+						Geert
 
---=20
-Think about Free and Open Source Software (FOSS).
-http://nico.schottelius.org/documentations/foss/the-term-foss/
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
 
-PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
-
---z4+8/lEcDcG5Ke9S
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkm6E2QACgkQuL75KpiFGIzgXwCeLy81kn9BRuraYKZQBC4m2QDT
-VaUAnjxjrMBIpqXuO0xGTC7CITp6kQHu
-=Jv5E
------END PGP SIGNATURE-----
-
---z4+8/lEcDcG5Ke9S--
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+							    -- Linus Torvalds
+--
+To unsubscribe from this list: send the line "unsubscribe linux-m68k" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
