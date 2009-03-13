@@ -1,73 +1,59 @@
-From: Michael Ellerman <michael@ellerman.id.au>
-Subject: Re: m68k: kernel/up.c:16: error: dereferencing pointer to
- incomplete type
-Date: Fri, 13 Mar 2009 21:18:20 +1100
-Message-ID: <1236939500.11012.1.camel@localhost>
-References: <10f740e80903120608v314be360u30911fa003ab5ebc@mail.gmail.com>
-	 <20090313142033.d69d9d2e.sfr@canb.auug.org.au>
-Reply-To: michael@ellerman.id.au
+From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
+Subject: Kernel panic on linux-nextMarch 12
+Date: Fri, 13 Mar 2009 11:35:44 +0100
+Message-ID: <20090313103544.GB30900@denkbrett.schottelius.org>
+References: <20090312171154.11c6ec31.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-FqRXnL4imdIu6mPHI218"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tsOsTdHNUZQcU9Ye"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:40043 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751625AbZCMKSY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 13 Mar 2009 06:18:24 -0400
-In-Reply-To: <20090313142033.d69d9d2e.sfr@canb.auug.org.au>
+Received: from mx3.schottelius.org ([77.109.138.221]:43349 "EHLO
+	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751850AbZCMKfs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Mar 2009 06:35:48 -0400
+Content-Disposition: inline
+In-Reply-To: <20090312171154.11c6ec31.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-next@vger.kernel.org, linux-m68k@lists.linux-m68k.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 
---=-FqRXnL4imdIu6mPHI218
-Content-Type: text/plain
+--tsOsTdHNUZQcU9Ye
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2009-03-13 at 14:20 +1100, Stephen Rothwell wrote:
-> Hi Geert,
->=20
-> On Thu, 12 Mar 2009 14:08:57 +0100 Geert Uytterhoeven <geert@linux-m68k.o=
-rg> wrote:
-> >
-> > I can't seem to reproduce the compile failure of kernel/up.c on m68k,
-> > as shown on
-> > http://kisskb.ellerman.id.au/kisskb/buildresult/186066/:
-> >=20
-> > | kernel/up.c:16: error: dereferencing pointer to incomplete type
->=20
-> When kisskb gets an error in building a kernel, it tries to bisect the
-> problem starting from a known good kernel.  The above error occurs
-> during the bisection process not when building the original kernel.  I
-> guess we need to be a bit more careful when reporting the errors.  Sorry
-> about that.
+Hello!
 
-Yeah sorry that is confusing.
+On my x200 some acpi stuff seems to kernel panic the notebook.
 
-Should be fixed now.
+Screenshot (4.1MiB) can be found at
 
-cheers
+http://home.schottelius.org/~nico/unix/linux/kernel/next-20090312-x200-kern=
+el-panic.jpeg
+
+Sincerly,
+
+Nico
 
 --=20
-Michael Ellerman
-OzLabs, IBM Australia Development Lab
+Think about Free and Open Source Software (FOSS).
+http://nico.schottelius.org/documentations/foss/the-term-foss/
 
-wwweb: http://michael.ellerman.id.au
-phone: +61 2 6212 1183 (tie line 70 21183)
+PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
 
-We do not inherit the earth from our ancestors,
-we borrow it from our children. - S.M.A.R.T Person
-
---=-FqRXnL4imdIu6mPHI218
+--tsOsTdHNUZQcU9Ye
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+Content-Description: Digital signature
+Content-Disposition: inline
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEABECAAYFAkm6MusACgkQdSjSd0sB4dLKpQCcDFqcv/G/LtZ8GmY8huWW9c+1
-4mkAnjB7AIDKWzjEHSmc8F91YRQuLP2e
-=gX5W
+iEYEARECAAYFAkm6NwAACgkQuL75KpiFGIw/KQCdFbNJhlFLVLhttzzgWWFJb8hJ
+VkIAn30W6uggQpvJXGr2gEHRH8ajH+bC
+=S3VR
 -----END PGP SIGNATURE-----
 
---=-FqRXnL4imdIu6mPHI218--
+--tsOsTdHNUZQcU9Ye--
