@@ -1,96 +1,58 @@
-From: Rob Landley <rob@landley.net>
-Subject: Re: make headers_install broken for ARCH=m68k in 2.6.29-rc7.
-Date: Thu, 12 Mar 2009 22:25:03 -0500
-Message-ID: <200903122225.04560.rob@landley.net>
-References: <200903120437.03837.rob@landley.net> <20090312210216.GB14205@uranus.ravnborg.org> <10f740e80903121540i30fdaddr600ce21f4159530a@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: lblnet tree build warnings
+Date: Fri, 13 Mar 2009 16:32:52 +1100
+Message-ID: <20090313163252.6333812e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__13_Mar_2009_16_32_52_+1100_1jr/ueKjCnIplKHH"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from static-71-162-243-5.phlapa.fios.verizon.net ([71.162.243.5]:38881
-	"EHLO grelber.thyrsus.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751260AbZCMDZJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Mar 2009 23:25:09 -0400
-In-Reply-To: <10f740e80903121540i30fdaddr600ce21f4159530a@mail.gmail.com>
-Content-Disposition: inline
+Received: from chilli.pcug.org.au ([203.10.76.44]:59044 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753064AbZCMFdH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 13 Mar 2009 01:33:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Sam Ravnborg <sam@ravnborg.org>, Greg Ungerer <gerg@snapgear.com>, linux-kernel@vger.kernel.org, dwmw2@infradead.org, linux-next@vger.kernel.org
+To: Paul Moore <paul.moore@hp.com>
+Cc: linux-next@vger.kernel.org
 
-On Thursday 12 March 2009 17:40:02 Geert Uytterhoeven wrote:
-> On Thu, Mar 12, 2009 at 22:02, Sam Ravnborg <sam@ravnborg.org> wrote:
-> >> And, yes, I can confirm the m68k include/asm/unistd.h from linux-next
-> >> actually has contents, thanks to commit
-> >> 646652bded41f4c3bd375b4e03a25b42da93f40b
-> >>
-> >> Anyway, here's hoping the fix makes it into 2.6.29.
-> >
-> > Why not telling the m68k maintainer that you think it should go into
-> > 2.6.29?
+--Signature=_Fri__13_Mar_2009_16_32_52_+1100_1jr/ueKjCnIplKHH
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I contacted the headers_install maintainer about a headers_install problem, 
-and was pointed to an existing fix upstream.  This seemed to imply awareness 
-of the problem?
+Hi Paul,
 
-Happy to follow up more, wasn't aware it was required...
+Today's linux-next build (powerpc ppc64_defconfig) produced these
+warnings:
 
-> There are a few more:
->
-> param.h:#include "param_no.h"
-> param.h:#include "param_mm.h"
-> ptrace.h:#include "ptrace_no.h"
-> ptrace.h:#include "ptrace_mm.h"
-> setup.h:#include "setup_no.h"
-> setup.h:#include "setup_mm.h"
-> sigcontext.h:#include "sigcontext_no.h"
-> sigcontext.h:#include "sigcontext_mm.h"
-> siginfo.h:#include "siginfo_no.h"
-> siginfo.h:#include "siginfo_mm.h"
-> signal.h:#include "signal_no.h"
-> signal.h:#include "signal_mm.h"
-> swab.h:#include "swab_no.h"
-> swab.h:#include "swab_mm.h"
->
-> Rob, do these also causes problems?
-> Some (not all) of them are fixed in linux-next.
+In file included from net/ipv4/ip_options.c:26:
+include/net/cipso_ipv4.h: In function 'cipso_v4_req_delattr':
+include/net/cipso_ipv4.h:264: warning: 'return' with a value, in function r=
+eturning void
+In file included from net/ipv4/sysctl_net_ipv4.c:22:
+include/net/cipso_ipv4.h: In function 'cipso_v4_req_delattr':
+include/net/cipso_ipv4.h:264: warning: 'return' with a value, in function r=
+eturning void
 
-I'm trying to build uClibc against the new headers.  I just got around to 
-extracting the patch to fix that one file and testing it in my build system, 
-and this time it broke with:
+Caused by commit d584c27edca286826e9145a3158f03e3bc81a6c0 ("netlabel:
+Label incoming TCP connections correctly in SELinux").  (BTW, that commit
+has no Signed-off-by.)
 
-  build/cross-compiler-m68k/include/asm/param.h:4:22: error: param_mm.h: No
-  such file or directory
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-So yeah, it's still unhappy.  Dunno how many of these are still needed to 
-build the cross compiler, and then who knows what other packages need to 
-build.  Presumably all of it.
+--Signature=_Fri__13_Mar_2009_16_32_52_+1100_1jr/ueKjCnIplKHH
+Content-Type: application/pgp-signature
 
-Keep in mind I still haven't found an emulator for m68k that actually boots a 
-linux kernel, so my m68k support is purely theoretical.  (I poked at mess and 
-uae a bit today, but they don't do the "qemu -kernel" thing I'm using for the 
-other targets, and qemu itself only seems to support coldfire and not a full-
-blown m68k.)  I'm following up on this because it's a regression.  Under 
-2.6.28 the m68k target was building a kernel and root filesystem, but I don't 
-have hardware to run it and have never been able to test it, so isn't really 
-very useful for me.  It's really just there so that if qemu grows the rest of 
-m68k support (patches have been submitted but not merged), I'll be ready.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-P.S.  If you're bored and want to try my test build for yourself:
+iEYEARECAAYFAkm58AQACgkQjjKRsyhoI8zrmwCeL3opY9uaePBoX1WUMcw0yjoD
+G8AAoIka8FqxUFuJZqqwtZu0Vz34dqX2
+=PAgx
+-----END PGP SIGNATURE-----
 
-  wget http://impactlinux.com/hg/firmware/archive/tip.tar.bz2
-  tar xvjf tip.tar.bz2
-  cd firmware-*
-  USE_UNSTABLE=linux ./build.sh m68k
-
-Without the USE_UNSTABLE=linux it uses 2.6.28 and builds to completion, with 
-it the build uses 2.6.29-rc7 (or whatever URL's listed as the UNSTABLE= value 
-for linux in download.sh) and it breaks trying to add uClibc to the cross 
-compiler.
-
-But then anything that actually _uses_ the "make headers_install" output to 
-build stuff against should notice pretty quickly whether or not it #includes 
-missing files.
-
-Rob
+--Signature=_Fri__13_Mar_2009_16_32_52_+1100_1jr/ueKjCnIplKHH--
