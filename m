@@ -1,104 +1,59 @@
-From: Sam Ravnborg <sam@ravnborg.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 Subject: Re: make headers_install broken for ARCH=m68k in 2.6.29-rc7.
-Date: Fri, 13 Mar 2009 09:25:55 +0100
-Message-ID: <20090313082555.GA19045@uranus.ravnborg.org>
-References: <200903120437.03837.rob@landley.net> <20090312210216.GB14205@uranus.ravnborg.org> <10f740e80903121540i30fdaddr600ce21f4159530a@mail.gmail.com> <200903122225.04560.rob@landley.net> <49BA0599.6070206@snapgear.com>
+Date: Fri, 13 Mar 2009 09:25:15 +0100
+Message-ID: <10f740e80903130125u39abf6c2h2a61f6bb18e7500e@mail.gmail.com>
+References: <200903120437.03837.rob@landley.net>
+	 <20090312210216.GB14205@uranus.ravnborg.org>
+	 <10f740e80903121540i30fdaddr600ce21f4159530a@mail.gmail.com>
+	 <200903122225.04560.rob@landley.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pfepa.post.tele.dk ([195.41.46.235]:41111 "EHLO
-	pfepa.post.tele.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753996AbZCMIX6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Mar 2009 04:23:58 -0400
-Content-Disposition: inline
-In-Reply-To: <49BA0599.6070206@snapgear.com>
+Received: from mail-bw0-f175.google.com ([209.85.218.175]:51473 "EHLO
+	mail-bw0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752714AbZCMIZV convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Mar 2009 04:25:21 -0400
+In-Reply-To: <200903122225.04560.rob@landley.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg Ungerer <gerg@snapgear.com>
-Cc: Rob Landley <rob@landley.net>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, dwmw2@infradead.org, linux-next@vger.kernel.org
+To: Rob Landley <rob@landley.net>
+Cc: Sam Ravnborg <sam@ravnborg.org>, Greg Ungerer <gerg@snapgear.com>, linux-kernel@vger.kernel.org, dwmw2@infradead.org, linux-next@vger.kernel.org
 
-On Fri, Mar 13, 2009 at 05:04:57PM +1000, Greg Ungerer wrote:
-> 
-> Rob Landley wrote:
-> >On Thursday 12 March 2009 17:40:02 Geert Uytterhoeven wrote:
-> >>On Thu, Mar 12, 2009 at 22:02, Sam Ravnborg <sam@ravnborg.org> wrote:
-> >>>>And, yes, I can confirm the m68k include/asm/unistd.h from linux-next
-> >>>>actually has contents, thanks to commit
-> >>>>646652bded41f4c3bd375b4e03a25b42da93f40b
-> >>>>
-> >>>>Anyway, here's hoping the fix makes it into 2.6.29.
-> >>>Why not telling the m68k maintainer that you think it should go into
-> >>>2.6.29?
-> >
-> >I contacted the headers_install maintainer about a headers_install 
-> >problem, and was pointed to an existing fix upstream.  This seemed to 
-> >imply awareness of the problem?
-> >
-> >Happy to follow up more, wasn't aware it was required...
-> >
-> >>There are a few more:
-> >>
-> >>param.h:#include "param_no.h"
-> >>param.h:#include "param_mm.h"
-> >>ptrace.h:#include "ptrace_no.h"
-> >>ptrace.h:#include "ptrace_mm.h"
-> >>setup.h:#include "setup_no.h"
-> >>setup.h:#include "setup_mm.h"
-> >>sigcontext.h:#include "sigcontext_no.h"
-> >>sigcontext.h:#include "sigcontext_mm.h"
-> >>siginfo.h:#include "siginfo_no.h"
-> >>siginfo.h:#include "siginfo_mm.h"
-> >>signal.h:#include "signal_no.h"
-> >>signal.h:#include "signal_mm.h"
-> >>swab.h:#include "swab_no.h"
-> >>swab.h:#include "swab_mm.h"
-> >>
-> >>Rob, do these also causes problems?
-> >>Some (not all) of them are fixed in linux-next.
-> >
-> >I'm trying to build uClibc against the new headers.  I just got around to 
-> >extracting the patch to fix that one file and testing it in my build 
-> >system, and this time it broke with:
-> >
-> >  build/cross-compiler-m68k/include/asm/param.h:4:22: error: param_mm.h: No
-> >  such file or directory
-> >
-> >So yeah, it's still unhappy.  Dunno how many of these are still needed to 
-> >build the cross compiler, and then who knows what other packages need to 
-> >build.  Presumably all of it.
-> >
-> >Keep in mind I still haven't found an emulator for m68k that actually 
-> >boots a linux kernel, so my m68k support is purely theoretical.  (I poked 
-> >at mess and uae a bit today, but they don't do the "qemu -kernel" thing 
-> >I'm using for the other targets, and qemu itself only seems to support 
-> >coldfire and not a full-
-> >blown m68k.)  I'm following up on this because it's a regression.  Under 
-> >2.6.28 the m68k target was building a kernel and root filesystem, but I 
-> >don't have hardware to run it and have never been able to test it, so 
-> >isn't really very useful for me.  It's really just there so that if qemu 
-> >grows the rest of m68k support (patches have been submitted but not 
-> >merged), I'll be ready.
-> >
-> >P.S.  If you're bored and want to try my test build for yourself:
-> >
-> >  wget http://impactlinux.com/hg/firmware/archive/tip.tar.bz2
-> >  tar xvjf tip.tar.bz2
-> >  cd firmware-*
-> >  USE_UNSTABLE=linux ./build.sh m68k
-> >
-> >Without the USE_UNSTABLE=linux it uses 2.6.28 and builds to completion, 
-> >with it the build uses 2.6.29-rc7 (or whatever URL's listed as the 
-> >UNSTABLE= value for linux in download.sh) and it breaks trying to add 
-> >uClibc to the cross compiler.
-> >
-> >But then anything that actually _uses_ the "make headers_install" output 
-> >to build stuff against should notice pretty quickly whether or not it 
-> >#includes missing files.
-> 
-> I pretty quick time I can fix up the last couple on the above list.
-> But do we want to put all that change into 2.6.29-rc at this point?
+On Fri, Mar 13, 2009 at 04:25, Rob Landley <rob@landley.net> wrote:
+> Keep in mind I still haven't found an emulator for m68k that actually=
+ boots a
+> linux kernel, so my m68k support is purely theoretical. =C2=A0(I poke=
+d at mess and
+> uae a bit today, but they don't do the "qemu -kernel" thing I'm using=
+ for the
+> other targets, and qemu itself only seems to support coldfire and not=
+ a full-
+> blown m68k.) =C2=A0I'm following up on this because it's a regression=
+=2E =C2=A0Under
+> 2.6.28 the m68k target was building a kernel and root filesystem, but=
+ I don't
+> have hardware to run it and have never been able to test it, so isn't=
+ really
+> very useful for me. =C2=A0It's really just there so that if qemu grow=
+s the rest of
+> m68k support (patches have been submitted but not merged), I'll be re=
+ady.
 
-In general we do not want to have headers_check broken in mainline,
-so if this is what is required to fix it then yes.
+An atari_defconfig kernel (at least the one from Linus-yesterday) boots=
+ fine on
+aranym (http://aranym.org).
 
-	Sam
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+							    -- Linus Torvalds
