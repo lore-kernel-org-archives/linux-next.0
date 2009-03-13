@@ -1,139 +1,57 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: make headers_install broken for ARCH=m68k in 2.6.29-rc7.
-Date: Fri, 13 Mar 2009 13:14:32 +0100
-Message-ID: <10f740e80903130514k194fbdackd373d2951a9f76ba@mail.gmail.com>
-References: <200903120437.03837.rob@landley.net>
-	 <20090312210216.GB14205@uranus.ravnborg.org>
-	 <10f740e80903121540i30fdaddr600ce21f4159530a@mail.gmail.com>
-	 <200903122225.04560.rob@landley.net> <49BA0599.6070206@snapgear.com>
-	 <20090313082555.GA19045@uranus.ravnborg.org>
-	 <10f740e80903130133r130b8713v690437f0f38eb0b8@mail.gmail.com>
-	 <20090313085930.GA19274@uranus.ravnborg.org>
-	 <49BA3B05.9020906@snapgear.com>
+From: Paul Moore <paul.moore@hp.com>
+Subject: Re: linux-next: lblnet tree build warnings
+Date: Fri, 13 Mar 2009 12:09:15 -0400
+Message-ID: <200903131209.15880.paul.moore@hp.com>
+References: <20090313163252.6333812e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-m68k-owner@vger.kernel.org>
-In-Reply-To: <49BA3B05.9020906@snapgear.com>
-Sender: linux-m68k-owner@vger.kernel.org
-To: Greg Ungerer <gerg@snapgear.com>
-Cc: Sam Ravnborg <sam@ravnborg.org>, Rob Landley <rob@landley.net>, linux-kernel@vger.kernel.org, dwmw2@infradead.org, linux-next@vger.kernel.org, linux-m68k@lists.linux-m68k.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from g5t0009.atlanta.hp.com ([15.192.0.46]:32687 "EHLO
+	g5t0009.atlanta.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751650AbZCMQJW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Mar 2009 12:09:22 -0400
+In-Reply-To: <20090313163252.6333812e.sfr@canb.auug.org.au>
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-On Fri, Mar 13, 2009 at 11:52, Greg Ungerer <gerg@snapgear.com> wrote:
-> Sam Ravnborg wrote:
->> On Fri, Mar 13, 2009 at 09:33:18AM +0100, Geert Uytterhoeven wrote:
->>> On Fri, Mar 13, 2009 at 09:25, Sam Ravnborg <sam@ravnborg.org> wrot=
-e:
->>>> On Fri, Mar 13, 2009 at 05:04:57PM +1000, Greg Ungerer wrote:
->>>>> I pretty quick time I can fix up the last couple on the above lis=
-t.
->>>>> But do we want to put all that change into 2.6.29-rc at this poin=
-t?
->>>>
->>>> In general we do not want to have headers_check broken in mainline=
-,
->>>
->>> headers_check is not broken, headers_install is.
->>>
->>> Hmm, in some sense headers_check _is_ broken, as it doesn't notice
->>> headers_install
->>> installs headers that refer to other headers that are not installed=
-=2E..
->>
->> This is what scripts/headers_check are supposed to do - strange.
->>
->>> Greg, I had a quick look at your signcontext.h and signal.h merge, =
-and
->>> the MMU
->>> part seems to be OK.
->>>
->>> However, some of the installed headers still have checks for CONFIG=
-_MMU:
->>>
->>> param.h:#ifdef CONFIG_MMU
->>> sigcontext.h:#ifndef CONFIG_MMU
->>> sigcontext.h:#ifdef CONFIG_MMU
->>> siginfo.h:#ifdef CONFIG_MMU
->>> siginfo.h:#ifdef CONFIG_MMU
->>> siginfo.h:#endif /* CONFIG_MMU */
->>> swab.h:#elif defined(CONFIG_MMU)
->>>
->>> so these have to be added to the generic unifdef-y list (is that
->>> include/asm-generic/Kbuild.asm?).
+On Friday 13 March 2009 01:32:52 am Stephen Rothwell wrote:
+> Hi Paul,
 >
-> Hmmm, yes your right.
+> Today's linux-next build (powerpc ppc64_defconfig) produced these
+> warnings:
 >
->
->> include/asm-generic/Kbuild.asm impacts all architectures so be caref=
-ull
->> there.
->> It looks like some updates to arch/m68k/include/asm/Kbuild is needed=
-,
->> and not the generic list of files to export.
->>
->> Also use og CONFIG_MMU suprises me.
->> We used #ifdef __uClinux__ in the non-merged headers to avoid use
->> of a CONFIG_* symbol that is not valid outside the kernel namespace.
->> So if param.h in m68k uses CONFIG_MMU it is broken.
->
-> I have been trying to use CONFIG_MMU wherever possible (so for non-
-> exported headers), since that matches what is actually in the code
-> proper. I am concerned at the longer term use of __uClinux__ for
-> distinguishing MMU and non-MMU. I plan on switching to use a normal
-> m68k toolchain soon. And it won't define __uClinux__ on its own.
-> (I already do this on ARM for example - same toolchain on both
-> MMU an non-MMU).
->
-> What I have done so far is or the most part a very simple merge
-> of the files. I know there is room for some improvements in quite a
-> few of these files.
->
-> The use of CONFIG_MMU in swab.h (is this actually exported to user
-> space?) is not actually for code that is MMU or non-MMU. It is
-> actually architecture specific. Most ColdFire parts don't have the
-> "rolw" instruction. The condition test can be better. Geert, any
-> ideas on what is more appropriate here?
+> In file included from net/ipv4/ip_options.c:26:
+> include/net/cipso_ipv4.h: In function 'cipso_v4_req_delattr':
+> include/net/cipso_ipv4.h:264: warning: 'return' with a value, in function
+> returning void In file included from net/ipv4/sysctl_net_ipv4.c:22:
+> include/net/cipso_ipv4.h: In function 'cipso_v4_req_delattr':
+> include/net/cipso_ipv4.h:264: warning: 'return' with a value, in function
+> returning void
 
-The `rolw' variant is already protected by `#if defined
-(__mcfisaaplus__) || defined (__mcfisac__)',
-so I think you can replace the `#elif defined(CONFIG_MMU)' by a plain `=
-#else'.
-Or are there cases where you don't want to have __arch_swab32 at all?
+Thanks, those should now be fixed.
 
-> I can switch back to using __uClinux__ on siginfo.h and sigcontext.h.
-> If I am not mistaken we can't change these structures without breakin=
-g
-> backwards compatibility? =C2=A0The sigcontext change is particularly =
-ugly :-(
+> Caused by commit d584c27edca286826e9145a3158f03e3bc81a6c0 ("netlabel:
+> Label incoming TCP connections correctly in SELinux").  (BTW, that commit
+> has no Signed-off-by.)
 
-Copying the signal experts on linux-m68k...
+Yes, there are two or three patches in the lblnet-2.6_next tree that do not 
+currently have sign-offs.  These patches are still undergoing review (RFC 
+patches) and I'm not yet comfortable seeing these patches hit mainline and I 
+found leaving off a sign-off is about the only reliable way to prevent patches 
+from being merged.
 
-> Similarly for param.h, it looks like a switch back to using
-> __uClinux__ for now is the only option.
->
-> Now after these fixups should I create a git branch with these header
-> merges in for inclusion into 2.6.29-rc? =C2=A0To fix the regression w=
-e
-> only need to do the handful of files that Rob listed, right?
+I've included these RFC patches in the lblnet-2.6_next tree as a way to try 
+and determine any merge difficulties with other upcoming work in advance as I 
+do expect the patches to be signed-off for the 2.6.30 window.  If that goes 
+against the current -next policy let me know and I'll remove them.
 
-Yes.
+Thanks.
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-							    -- Linus Torvalds
---
-To unsubscribe from this list: send the line "unsubscribe linux-m68k" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+paul moore
+linux @ hp
