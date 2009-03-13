@@ -1,72 +1,73 @@
-From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
-Subject: Re: linux-next test scripts
-Date: Fri, 13 Mar 2009 10:46:50 +0100
-Message-ID: <20090313094650.GA30900@denkbrett.schottelius.org>
-References: <20090206142022.GA5430@pengutronix.de> <20090212202036.GA31203@pengutronix.de> <20090313080348.GC3246@denkbrett.schottelius.org> <20090313083701.GB15754@pengutronix.de>
+From: Michael Ellerman <michael@ellerman.id.au>
+Subject: Re: m68k: kernel/up.c:16: error: dereferencing pointer to
+ incomplete type
+Date: Fri, 13 Mar 2009 21:18:20 +1100
+Message-ID: <1236939500.11012.1.camel@localhost>
+References: <10f740e80903120608v314be360u30911fa003ab5ebc@mail.gmail.com>
+	 <20090313142033.d69d9d2e.sfr@canb.auug.org.au>
+Reply-To: michael@ellerman.id.au
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-FqRXnL4imdIu6mPHI218"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.schottelius.org ([77.109.138.221]:47459 "EHLO
-	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758368AbZCMJqz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Mar 2009 05:46:55 -0400
-Content-Disposition: inline
-In-Reply-To: <20090313083701.GB15754@pengutronix.de>
+Received: from ozlabs.org ([203.10.76.45]:40043 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751625AbZCMKSY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 13 Mar 2009 06:18:24 -0400
+In-Reply-To: <20090313142033.d69d9d2e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-next@vger.kernel.org, linux-m68k@lists.linux-m68k.org
 
 
---3MwIy2ne0vdjdPXF
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+--=-FqRXnL4imdIu6mPHI218
+Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-Uwe Kleine-K=F6nig [Fri, Mar 13, 2009 at 09:37:01AM +0100]:
-> > > > Are the scripts somewhere available without being found by me?  If =
-yes,
-> > > > where are they, if not, do you can publish them somewhere?
-> > > After some more search I found the script by James Bottomley[1].
+On Fri, 2009-03-13 at 14:20 +1100, Stephen Rothwell wrote:
+> Hi Geert,
+>=20
+> On Thu, 12 Mar 2009 14:08:57 +0100 Geert Uytterhoeven <geert@linux-m68k.o=
+rg> wrote:
+> >
+> > I can't seem to reproduce the compile failure of kernel/up.c on m68k,
+> > as shown on
+> > http://kisskb.ellerman.id.au/kisskb/buildresult/186066/:
 > >=20
-> > I'm also maintaining some smaller scripts for maintaining all the
-> > kernel testing / building / installation stuff:
-> >=20
-> > http://git.schottelius.org/?p=3Dnsbin;a=3Dtree;f=3Dlinux;hb=3DHEAD
-> Thanks, but I think it doesn't include what I'm looking for.  You only
-> seem to build bleeding edge (in next-build.sh) but you don't merge
-> different trees before.
+> > | kernel/up.c:16: error: dereferencing pointer to incomplete type
+>=20
+> When kisskb gets an error in building a kernel, it tries to bisect the
+> problem starting from a known good kernel.  The above error occurs
+> during the bisection process not when building the original kernel.  I
+> guess we need to be a bit more careful when reporting the errors.  Sorry
+> about that.
 
-Well, that is something to be written, but also just a loop similar to
+Yeah sorry that is confusing.
 
-> BTW, I don't see the reason for linux/fetch-branches.sh, why not rely on
-> git remote udpate?
+Should be fixed now.
 
-that one here. I think I wrote it that way, to use the loop for merging
-later.
-
-But you are totally right: git remote update is the much simpler way here.
-
-Nico
+cheers
 
 --=20
-Think about Free and Open Source Software (FOSS).
-http://nico.schottelius.org/documentations/foss/the-term-foss/
+Michael Ellerman
+OzLabs, IBM Australia Development Lab
 
-PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
+wwweb: http://michael.ellerman.id.au
+phone: +61 2 6212 1183 (tie line 70 21183)
 
---3MwIy2ne0vdjdPXF
+We do not inherit the earth from our ancestors,
+we borrow it from our children. - S.M.A.R.T Person
+
+--=-FqRXnL4imdIu6mPHI218
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
+Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkm6K4oACgkQuL75KpiFGIwlQACgy7GqVbCt5zXEwzmaj8uo3ad2
-VFIAoJwW07KY8r/iZ72gM0YLEUPG//LD
-=pxAo
+iEYEABECAAYFAkm6MusACgkQdSjSd0sB4dLKpQCcDFqcv/G/LtZ8GmY8huWW9c+1
+4mkAnjB7AIDKWzjEHSmc8F91YRQuLP2e
+=gX5W
 -----END PGP SIGNATURE-----
 
---3MwIy2ne0vdjdPXF--
+--=-FqRXnL4imdIu6mPHI218--
