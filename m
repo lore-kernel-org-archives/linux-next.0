@@ -1,82 +1,123 @@
-From: reinette chatre <reinette.chatre@intel.com>
-Subject: Re: [ipw3945-devel] X200 suspend status on -wl and -next
-Date: Fri, 13 Mar 2009 16:47:37 -0700
-Message-ID: <1236988057.31798.174.camel@rc-desk>
-References: <20090311073030.GA5284@denkbrett.schottelius.org>
-	 <200903110946.23280.rjw@sisk.pl>
-	 <20090311085229.GB4495@denkbrett.schottelius.org>
-	 <20090311184407.GG8761@tuxdriver.com>
-	 <20090312142003.GF30728@denkbrett.schottelius.org>
-	 <20090312173042.GD3410@tuxdriver.com>	<1236882742.13699.28.camel@rc-desk>
-	 <20090313080030.GB3246@denkbrett.schottelius.org>
-	 <1236967266.31798.14.camel@rc-desk>
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Subject: Re: linux-next: Tree for March 12 (tty)
+Date: Sat, 14 Mar 2009 14:11:49 +0100
+Message-ID: <200903141411.50185.bzolnier@gmail.com>
+References: <20090312171154.11c6ec31.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:60700 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751982AbZCMXmb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 13 Mar 2009 19:42:31 -0400
-In-Reply-To: <1236967266.31798.14.camel@rc-desk>
+Received: from mail-bw0-f175.google.com ([209.85.218.175]:37496 "EHLO
+	mail-bw0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751648AbZCNNNk convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 14 Mar 2009 09:13:40 -0400
+In-Reply-To: <20090312171154.11c6ec31.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nico -telmich- Schottelius <nico-linux-ipw3945-devel@schottelius.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Nico Schottelius <nico-linux-20090311@schottelius.org>, "ipw3945-devel@lists.sourceforge.net" <ipw3945-devel@lists.sourceforge.net>, "Rafael J. Wysocki" <rjw@sisk.pl>, Linux Next Mailing List <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, 2009-03-13 at 11:01 -0700, Chatre, Reinette wrote:
-> On Fri, 2009-03-13 at 01:00 -0700, Nico -telmich- Schottelius wrote:
-> > reinette chatre [Thu, Mar 12, 2009 at 11:32:22AM -0700]:
-> > > On Thu, 2009-03-12 at 10:30 -0700, John W. Linville wrote:
-> > > > On Thu, Mar 12, 2009 at 03:20:03PM +0100, Nico -telmich- Schottelius wrote:
-> > > > > John W. Linville [Wed, Mar 11, 2009 at 02:44:07PM -0400]:
-> > > > > > Any chance you'd like to try wireless-testing to help to isolate
-> > > > > > possible sources of this problem?
-> > > > > > 
-> > > > > > 	git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless-testing.git
-> > > > > 
-> > > > > v2.6.29-rc7-17155-g2f7ab92 looks good (as in: wlan works after several
-> > > > > suspends and resumes). But it seems you do not add the full kernel version:
-> > > > > 
-> > > > > sgnx20002:/home/nico/wireless-testing# git describe
-> > > > > v2.6.29-rc7-17155-g2f7ab92
-> > > > > sgnx20002:/home/nico/wireless-testing# uname -r
-> > > > > 2.6.29-rc7-wl-ikn
-> > > > > 
-> > > > > Which is the kernel built some seconds before.
-> > > > 
-> > > > I don't know where you get the -ikn bits from, presumably from the
-> > > > iwlwifi project.  Given what you said above, it would seem you are
-> > > > getting your suspend/resume problems from them as well... :-(
-> > > 
-> > > In our repo we do not add anything to the value of localversion. We also
-> > > track wireless-testing _very_ closely so the differences are at most a
-> > > handful of patches. Could you please send me commit id of iwlwifi-2.6
-> > > repo that fails as well as the commit id of wireless-testing repo that
-> > > succeeds?
-> > 
-> > As I did before in this thread:
-> > 
-> >   vmlinuz-2.6.29-rc7-wl-ikn-32831-g98c5597 from iwlwifi-2.6: fails
-> >   2.6.29-rc7-wl-ikn or v2.6.29-rc7-17155-g2f7ab92 from wireless-testing: works
-> 
-> I am sorry that I missed this information in the thread.
-> 
-> > 
-> > Btw, I'm running 2.6.29-rc7-next-20090306-ikn currently, which also looks good.
-> 
-> Your wireless-testing repository tested is much newer than the
-> iwlwifi-2.6 one ... new patches for our driver is in your
-> wireless-testing repo but not in iwlwifi-2.6. So, in your testing
-> wireless-testing contains more up to date iwlwifi code than the
-> iwlwifi-2.6 repo.
-> 
-> Could you please test with today's versions of the two repos? There is a
-> one small patch difference.
 
-The difference is not just one patch anymore ... could you please run
-your test with yesterday's version of the two repositories?
+Hi,
 
-Thank you very much
+On Thursday 12 March 2009, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20090311:
 
-Reinette
+It fails to boot here (both with QEMU and the real hardware):
+
+...
+Warning: unable to open an initial console.
+Kernel panic - not syncing: Attempted to kill init!
+...
+
+I bisected the problem to:
+
+>From 31f8326f981117fc548d292656fa8dbed28bc42b Mon Sep 17 00:00:00 2001
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Date: Thu, 12 Mar 2009 10:00:15 +1100
+Subject: [PATCH] tty-fix-mismatch-in-lookup-han
+
+The lookup methods return NULL or a pointer. The caller expects an ERR_PTR.
+It seems to make sense to just use NULL and return -ENODEV here as it keeps
+the code simple and clean and the way it always used to work (effectively)
+before the restructure
+
+Problem noticed by Jiri Slaby.
+
+Signed-off-by: Alan Cox <alan@lxorguk.ukuu.org.uk>
+---
+ drivers/char/tty_io.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/char/tty_io.c b/drivers/char/tty_io.c
+index bc84e12..0cc0c60 100644
+--- a/drivers/char/tty_io.c
++++ b/drivers/char/tty_io.c
+@@ -1817,9 +1817,9 @@ got_driver:
+ 		/* check whether we're reopening an existing tty */
+ 		tty = tty_driver_lookup_tty(driver, inode, index);
+ 
+-		if (IS_ERR(tty)) {
++		if (tty == NULL) {
+ 			mutex_unlock(&tty_mutex);
+-			return PTR_ERR(tty);
++			return -ENODEV;
+ 		}
+ 	}
+ 
+-- 
+
+It seems that fixing IS_ERR() check uncovered some underlying problem
+since we are later checking for tty == NULL in __tty_open().
+
+The following patch fixes the issue for me (Alan, feel free to merge
+it back into your tty-fix-mismatch-in-lookup-han patch or replace by
+a more complete __tty_open() reorganization):
+
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Subject: [PATCH] tty: fix __tty_open()
+
+On tty_driver_lookup_tty() failure __tty_open() should continue
+instead of returning an error, fix it.
+
+Also update tty_driver_lookup_tty() documentation while at it.
+
+Signed-off-by: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+---
+ drivers/char/tty_io.c |   10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
+
+Index: b/drivers/char/tty_io.c
+===================================================================
+--- a/drivers/char/tty_io.c
++++ b/drivers/char/tty_io.c
+@@ -1205,7 +1205,7 @@ static void tty_line_name(struct tty_dri
+  *	@driver: the driver for the tty
+  *	@idx:	 the minor number
+  *
+- *	Return the tty, if found or ERR_PTR() otherwise.
++ *	Return the tty, if found or NULL otherwise.
+  *
+  *	Locking: tty_mutex must be held. If tty is found, the mutex must
+  *	be held until the 'fast-open' is also done. Will change once we
+@@ -1813,16 +1813,10 @@ retry_open:
+ 		return -ENODEV;
+ 	}
+ got_driver:
+-	if (!tty) {
++	if (!tty)
+ 		/* check whether we're reopening an existing tty */
+ 		tty = tty_driver_lookup_tty(driver, inode, index);
+ 
+-		if (tty == NULL) {
+-			mutex_unlock(&tty_mutex);
+-			return -ENODEV;
+-		}
+-	}
+-
+ 	if (tty) {
+ 		retval = tty_reopen(tty);
+ 		if (retval)
