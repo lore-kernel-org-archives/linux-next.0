@@ -1,53 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: net-current/net tree build failure
-Date: Sun, 15 Mar 2009 22:30:23 +1100
-Message-ID: <20090315223023.58ad97a4.sfr@canb.auug.org.au>
-References: <20090313131655.33117fb9.sfr@canb.auug.org.au>
-	<20090313.102335.132685232.davem@davemloft.net>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: linux-next: xfs tree build failure
+Date: Sun, 15 Mar 2009 23:18:26 +1100
+Message-ID: <20090315121826.GA25955@disturbed>
+References: <20090310134547.e5d1d9ee.sfr@canb.auug.org.au> <20090312120441.b9839805.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sun__15_Mar_2009_22_30_23_+1100_r1Q6jSmQLCnw1AMr"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38286 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753284AbZCOLae (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 15 Mar 2009 07:30:34 -0400
-In-Reply-To: <20090313.102335.132685232.davem@davemloft.net>
+Received: from ipmail05.adl2.internode.on.net ([203.16.214.145]:9584 "EHLO
+	ipmail05.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754411AbZCOMSc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Sun, 15 Mar 2009 08:18:32 -0400
+Content-Disposition: inline
+In-Reply-To: <20090312120441.b9839805.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, bhutchings@solarflare.com, yanok@emcraft.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: xfs-masters@oss.sgi.com, linux-next@vger.kernel.org
 
---Signature=_Sun__15_Mar_2009_22_30_23_+1100_r1Q6jSmQLCnw1AMr
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Mar 12, 2009 at 12:04:41PM +1100, Stephen Rothwell wrote:
+> Hi David,
+> 
+> On Tue, 10 Mar 2009 13:45:47 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Today's linux-next build (x86_64 allmodconfig) failed like this:
+> > 
+> > In file included from fs/xfs/support/debug.c:21:
+> > fs/xfs/xfs_error.h:137: error: expected declaration specifiers or '...' before 'xfs_mount_t'
+> > fs/xfs/xfs_error.h:138: error: expected ')' before '*' token
+> 
+> This is still happening.
 
-Hi Dave,
+Yes, there is a reviewed patch that doesn't appear to have been
+checked into the tree yet....
 
-On Fri, 13 Mar 2009 10:23:35 -0700 (PDT) David Miller <davem@davemloft.net>=
- wrote:
->
-> This should be fixed now thanks to Ilya's patch which is now in
-> net-2.6, thanks!
-
-Excellent, thanks.
-
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Sun__15_Mar_2009_22_30_23_+1100_r1Q6jSmQLCnw1AMr
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkm85s8ACgkQjjKRsyhoI8yoEgCbBhNddGVWUsVY/kG4uiy29ozQ
-ZZwAoJMXgG5QZz9eA/126Vf4gMn+TwHO
-=lVfB
------END PGP SIGNATURE-----
-
---Signature=_Sun__15_Mar_2009_22_30_23_+1100_r1Q6jSmQLCnw1AMr--
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
