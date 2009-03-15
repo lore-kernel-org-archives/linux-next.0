@@ -1,44 +1,53 @@
-From: Felix Blyakher <felixb@sgi.com>
-Subject: Re: [xfs-masters] linux-next: xfs tree build failure
-Date: Sun, 15 Mar 2009 08:33:46 -0500
-Message-ID: <0F2D1207-4AC7-4FB7-9E74-8D8BA1379279@sgi.com>
-References: <20090310134547.e5d1d9ee.sfr@canb.auug.org.au> <20090312120441.b9839805.sfr@canb.auug.org.au> <20090315121826.GA25955@disturbed>
-Mime-Version: 1.0 (Apple Message framework v930.3)
-Content-Type: text/plain; charset=US-ASCII; format=flowed; delsp=yes
-Content-Transfer-Encoding: 7bit
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for March 12 (tty)
+Date: Mon, 16 Mar 2009 00:42:40 +1100
+Message-ID: <20090316004240.568cdd42.sfr@canb.auug.org.au>
+References: <20090312171154.11c6ec31.sfr@canb.auug.org.au>
+	<200903141411.50185.bzolnier@gmail.com>
+	<20090314165424.46f7dd56@lxorguk.ukuu.org.uk>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__16_Mar_2009_00_42_40_+1100_OsgV/_fY_jL_BR+B"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay3.sgi.com ([192.48.171.31]:47492 "EHLO relay.sgi.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751512AbZCONdy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 15 Mar 2009 09:33:54 -0400
-In-Reply-To: <20090315121826.GA25955@disturbed>
+Received: from chilli.pcug.org.au ([203.10.76.44]:42273 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751512AbZCONms (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 15 Mar 2009 09:42:48 -0400
+In-Reply-To: <20090314165424.46f7dd56@lxorguk.ukuu.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
+--Signature=_Mon__16_Mar_2009_00_42_40_+1100_OsgV/_fY_jL_BR+B
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mar 15, 2009, at 7:18 AM, Dave Chinner wrote:
+Hi Alan,
 
-> On Thu, Mar 12, 2009 at 12:04:41PM +1100, Stephen Rothwell wrote:
->> Hi David,
->>
->> On Tue, 10 Mar 2009 13:45:47 +1100 Stephen Rothwell <sfr@canb.auug.org.au 
->> > wrote:
->>>
->>> Today's linux-next build (x86_64 allmodconfig) failed like this:
->>>
->>> In file included from fs/xfs/support/debug.c:21:
->>> fs/xfs/xfs_error.h:137: error: expected declaration specifiers or  
->>> '...' before 'xfs_mount_t'
->>> fs/xfs/xfs_error.h:138: error: expected ')' before '*' token
->>
->> This is still happening.
+On Sat, 14 Mar 2009 16:54:24 +0000 Alan Cox <alan@lxorguk.ukuu.org.uk> wrot=
+e:
 >
-> Yes, there is a reviewed patch that doesn't appear to have been
-> checked into the tree yet....
+> Stephen: I've dropped this patch out and pushed a revised tree as well so
+> it doesn't block other folks.
 
-Checked in now.
-Thanks for reporting it.
+Thanks.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Felix
+--Signature=_Mon__16_Mar_2009_00_42_40_+1100_OsgV/_fY_jL_BR+B
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkm9BdAACgkQjjKRsyhoI8xb8ACgpeNL/GDDHzrsLhkavJHsZp6D
+A/sAn317e8oEykL8FOYRyFiy6oWo5ehE
+=HlPZ
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__16_Mar_2009_00_42_40_+1100_OsgV/_fY_jL_BR+B--
