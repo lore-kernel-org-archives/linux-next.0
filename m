@@ -1,53 +1,103 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [xfs-masters] linux-next: xfs tree build failure
-Date: Mon, 16 Mar 2009 01:07:14 +1100
-Message-ID: <20090316010714.3680256d.sfr@canb.auug.org.au>
-References: <20090310134547.e5d1d9ee.sfr@canb.auug.org.au>
-	<20090312120441.b9839805.sfr@canb.auug.org.au>
-	<20090315121826.GA25955@disturbed>
-	<0F2D1207-4AC7-4FB7-9E74-8D8BA1379279@sgi.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: New linux-next tree suspend-2.6
+Date: Sun, 15 Mar 2009 17:54:36 +0100
+Message-ID: <200903151754.37147.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__16_Mar_2009_01_07_14_+1100_l.AICBqPh.c36/5T"
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38758 "EHLO smtps.tip.net.au"
+Received: from ogre.sisk.pl ([217.79.144.158]:43843 "EHLO ogre.sisk.pl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750761AbZCOOHW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 15 Mar 2009 10:07:22 -0400
-In-Reply-To: <0F2D1207-4AC7-4FB7-9E74-8D8BA1379279@sgi.com>
+	id S1753162AbZCOQyr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 15 Mar 2009 12:54:47 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Felix Blyakher <felixb@sgi.com>
-Cc: Dave Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, Jesse Barnes <jbarnes@virtuousgeek.org>
 
---Signature=_Mon__16_Mar_2009_01_07_14_+1100_l.AICBqPh.c36/5T
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi all,
+Here's a new tree for linux-next:
 
-On Sun, 15 Mar 2009 08:33:46 -0500 Felix Blyakher <felixb@sgi.com> wrote:
->
-> Checked in now.
+git://git.kernel.org/pub/scm/linux/kernel/git/rafael/suspend-2.6.git linux-next
 
-Great, thanks.
+It is based on the Linus' current tree, but I can rebase it on top of anything
+else if that helps.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Unfortunately, it has two merge conflict that I'm not sure how to resolve.
 
---Signature=_Mon__16_Mar_2009_01_07_14_+1100_l.AICBqPh.c36/5T
-Content-Type: application/pgp-signature
+The first one is with the linux-next branch of pci-2.6 and it may be resolved
+by applying the appended patch on top of pci-2.6/linux-next before
+merging suspend-2.6/linux-next.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+The second one is with the x86 tree (I think) in drivers/xen/manage.c, but this
+one is trivial.
 
-iEYEARECAAYFAkm9C5IACgkQjjKRsyhoI8zs5gCgrPICdQpiQIAcUEDXO/i6w3yr
-Tj4AoJo0TkKc+PYdFZr6oDoECRBM1C4C
-=s1qQ
------END PGP SIGNATURE-----
+Thanks,
+Rafael
 
---Signature=_Mon__16_Mar_2009_01_07_14_+1100_l.AICBqPh.c36/5T--
+---
+Revert 'PCI PM: Consistently use variable name "error" for pm call return values'
+
+This is needed to resolve a merge conflict between the linux-next
+branch of the pci-2.6 tree and the linux-next branch of the
+suspend-2.6 tree.
+---
+ drivers/pci/pci-driver.c |   20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+Index: linux-next/drivers/pci/pci-driver.c
+===================================================================
+--- linux-next.orig/drivers/pci/pci-driver.c
++++ linux-next/drivers/pci/pci-driver.c
+@@ -351,17 +351,17 @@ static int pci_legacy_suspend(struct dev
+ {
+ 	struct pci_dev * pci_dev = to_pci_dev(dev);
+ 	struct pci_driver * drv = pci_dev->driver;
+-	int error = 0;
++	int i = 0;
+ 
+ 	if (drv && drv->suspend) {
+ 		pci_power_t prev = pci_dev->current_state;
+ 
+ 		pci_dev->state_saved = false;
+ 
+-		error = drv->suspend(pci_dev, state);
+-		suspend_report_result(drv->suspend, error);
+-		if (error)
+-			return error;
++		i = drv->suspend(pci_dev, state);
++		suspend_report_result(drv->suspend, i);
++		if (i)
++			return i;
+ 
+ 		if (pci_dev->state_saved)
+ 			goto Fixup;
+@@ -384,20 +384,20 @@ static int pci_legacy_suspend(struct dev
+  Fixup:
+ 	pci_fixup_device(pci_fixup_suspend, pci_dev);
+ 
+-	return error;
++	return i;
+ }
+ 
+ static int pci_legacy_suspend_late(struct device *dev, pm_message_t state)
+ {
+ 	struct pci_dev * pci_dev = to_pci_dev(dev);
+ 	struct pci_driver * drv = pci_dev->driver;
+-	int error = 0;
++	int i = 0;
+ 
+ 	if (drv && drv->suspend_late) {
+-		error = drv->suspend_late(pci_dev, state);
+-		suspend_report_result(drv->suspend_late, error);
++		i = drv->suspend_late(pci_dev, state);
++		suspend_report_result(drv->suspend_late, i);
+ 	}
+-	return error;
++	return i;
+ }
+ 
+ static int pci_legacy_resume_early(struct device *dev)
