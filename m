@@ -1,70 +1,38 @@
-From: Trond Myklebust <Trond.Myklebust@netapp.com>
-Subject: Re: [PATCH next-20090316] sunrpc: fix build breakage
-Date: Mon, 16 Mar 2009 09:04:40 -0400
-Message-ID: <1237208680.7229.14.camel@heimdal.trondhjem.org>
-References: <20090316125140.GA3095@orion>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: scsi tree build failure
+Date: Mon, 16 Mar 2009 08:22:22 -0500
+Message-ID: <1237209742.3257.33.camel@localhost.localdomain>
+References: <20090316213945.e33f3427.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.netapp.com ([216.240.18.37]:5122 "EHLO mx2.netapp.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753609AbZCPNEo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Mar 2009 09:04:44 -0400
-In-Reply-To: <20090316125140.GA3095@orion>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-nfs@vger.kernel.org
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <20090316213945.e33f3427.sfr@canb.auug.org.au>
+Sender: linux-scsi-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Eric Moore <eric.moore@lsi.com>, peter Bogdanovic <pbog@us.ibm.com>, linux-scsi <linux-scsi@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 2009-03-16 at 15:51 +0300, Alexander Beregalov wrote:
-> net/sunrpc/clnt.c: In function 'call_bind_status':
-> net/sunrpc/clnt.c:994: error: 'struct rpc_task' has no member named
-> 'tk_pid'
-> net/sunrpc/clnt.c: In function 'call_connect_status':
-> net/sunrpc/clnt.c:1051: error: 'struct rpc_task' has no member named
-> 'tk_pid'
+On Mon, 2009-03-16 at 21:39 +1100, Stephen Rothwell wrote:
+> Hi James,
 > 
-> rpc_task has tk_pid if RPC_DEBUG is defined.
+> Today's linux-next build (powerpc allyesconfig) failed like this:
 > 
-> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
-> ---
+> drivers/message/built-in.o:(.data.rel+0x88): multiple definition of `ioc_list'
+> drivers/scsi/built-in.o:(.data.rel+0x2760): first defined here
 > 
->  net/sunrpc/clnt.c |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
+> Caused by commit 635374e7eb110e80d9918b8611198edd56a32975 ("[SCSI]
+> mpt2sas v00.100.11.15").  ioc_list is not a good choice for a global
+> name.  The other definition is in drivers/message/fusion/mptbase.c.
 > 
-> diff --git a/net/sunrpc/clnt.c b/net/sunrpc/clnt.c
-> index efd0c7b..68cb91a 100644
-> --- a/net/sunrpc/clnt.c
-> +++ b/net/sunrpc/clnt.c
-> @@ -990,7 +990,7 @@ call_bind_status(struct rpc_task *task)
->  		return;
->  	default:
->  		if (net_ratelimit())
-> -			printk("RPC: %5u unrecognized rpcbind error (%d)\n",
-> +			dprintk("RPC: %5u unrecognized rpcbind error (%d)\n",
->  					task->tk_pid, -task->tk_status);
->  	}
->  
-> @@ -1047,7 +1047,7 @@ call_connect_status(struct rpc_task *task)
->  		break;
->  	default:
->  		if (net_ratelimit())
-> -			printk("RPC: %5u unrecognized connect error (%d)\n",
-> +			dprintk("RPC: %5u unrecognized connect error (%d)\n",
->  					task->tk_pid, status);
->  		rpc_exit(task, -EIO);
->  	}
+> I have reverted that commit for today.
 
-No, that's not right. The intention is to always report errors that are
-fatal and are due to unforeseen circumstances. Your patch means that
-those reports are suppressed entirely when RPC_DEBUG is undefined.
+Eric,
 
-Trond
--- 
-Trond Myklebust
-Linux NFS client maintainer
+Vould we get this one sorted out before the merge window opens? ... the
+simple fix seems to be to rename ioc_list in mpt2sas ... and track down
+any more global symbols with unfortunate names.
 
-NetApp
-Trond.Myklebust@netapp.com
-www.netapp.com
+James
+
+
