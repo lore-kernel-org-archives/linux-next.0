@@ -1,84 +1,191 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: next-20090316: Inotify: inconsistent lock state
-Date: Mon, 16 Mar 2009 15:34:24 +0300
-Message-ID: <a4423d670903160534s3a6775d4w2c2892bfd166d61a@mail.gmail.com>
+From: Greg Ungerer <gerg@snapgear.com>
+Subject: Re: make headers_install broken for ARCH=m68k in 2.6.29-rc7.
+Date: Mon, 16 Mar 2009 22:40:19 +1000
+Message-ID: <49BE48B3.6060108@snapgear.com>
+References: <200903120437.03837.rob@landley.net>	 <20090312210216.GB14205@uranus.ravnborg.org>	 <10f740e80903121540i30fdaddr600ce21f4159530a@mail.gmail.com>	 <200903122225.04560.rob@landley.net> <49BA0599.6070206@snapgear.com>	 <20090313082555.GA19045@uranus.ravnborg.org>	 <10f740e80903130133r130b8713v690437f0f38eb0b8@mail.gmail.com>	 <20090313085930.GA19274@uranus.ravnborg.org>	 <49BA3B05.9020906@snapgear.com> <10f740e80903130514k194fbdackd373d2951a9f76ba@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f177.google.com ([209.85.219.177]:37292 "EHLO
-	mail-ew0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752094AbZCPMe1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Mar 2009 08:34:27 -0400
+Received: from rex.securecomputing.com ([203.24.151.4]:39214 "EHLO
+	cyberguard.com.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752482AbZCPMkY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Mar 2009 08:40:24 -0400
+In-Reply-To: <10f740e80903130514k194fbdackd373d2951a9f76ba@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, john@johnmccutchan.com, rlove@rlove.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sam Ravnborg <sam@ravnborg.org>, Rob Landley <rob@landley.net>, linux-kernel@vger.kernel.org, dwmw2@infradead.org, linux-next@vger.kernel.org, linux-m68k@lists.linux-m68k.org
 
-Hi
+Geert Uytterhoeven wrote:
+> On Fri, Mar 13, 2009 at 11:52, Greg Ungerer <gerg@snapgear.com> wrote:
+>> Sam Ravnborg wrote:
+>>> On Fri, Mar 13, 2009 at 09:33:18AM +0100, Geert Uytterhoeven wrote:
+>>>> On Fri, Mar 13, 2009 at 09:25, Sam Ravnborg <sam@ravnborg.org> wrote:
+>>>>> On Fri, Mar 13, 2009 at 05:04:57PM +1000, Greg Ungerer wrote:
+>>>>>> I pretty quick time I can fix up the last couple on the above list.
+>>>>>> But do we want to put all that change into 2.6.29-rc at this point?
+>>>>> In general we do not want to have headers_check broken in mainline,
+>>>> headers_check is not broken, headers_install is.
+>>>>
+>>>> Hmm, in some sense headers_check _is_ broken, as it doesn't notice
+>>>> headers_install
+>>>> installs headers that refer to other headers that are not installed...
+>>> This is what scripts/headers_check are supposed to do - strange.
+>>>
+>>>> Greg, I had a quick look at your signcontext.h and signal.h merge, and
+>>>> the MMU
+>>>> part seems to be OK.
+>>>>
+>>>> However, some of the installed headers still have checks for CONFIG_MMU:
+>>>>
+>>>> param.h:#ifdef CONFIG_MMU
+>>>> sigcontext.h:#ifndef CONFIG_MMU
+>>>> sigcontext.h:#ifdef CONFIG_MMU
+>>>> siginfo.h:#ifdef CONFIG_MMU
+>>>> siginfo.h:#ifdef CONFIG_MMU
+>>>> siginfo.h:#endif /* CONFIG_MMU */
+>>>> swab.h:#elif defined(CONFIG_MMU)
+>>>>
+>>>> so these have to be added to the generic unifdef-y list (is that
+>>>> include/asm-generic/Kbuild.asm?).
+>> Hmmm, yes your right.
+>>
+>>
+>>> include/asm-generic/Kbuild.asm impacts all architectures so be carefull
+>>> there.
+>>> It looks like some updates to arch/m68k/include/asm/Kbuild is needed,
+>>> and not the generic list of files to export.
+>>>
+>>> Also use og CONFIG_MMU suprises me.
+>>> We used #ifdef __uClinux__ in the non-merged headers to avoid use
+>>> of a CONFIG_* symbol that is not valid outside the kernel namespace.
+>>> So if param.h in m68k uses CONFIG_MMU it is broken.
+>> I have been trying to use CONFIG_MMU wherever possible (so for non-
+>> exported headers), since that matches what is actually in the code
+>> proper. I am concerned at the longer term use of __uClinux__ for
+>> distinguishing MMU and non-MMU. I plan on switching to use a normal
+>> m68k toolchain soon. And it won't define __uClinux__ on its own.
+>> (I already do this on ARM for example - same toolchain on both
+>> MMU an non-MMU).
+>>
+>> What I have done so far is or the most part a very simple merge
+>> of the files. I know there is room for some improvements in quite a
+>> few of these files.
+>>
+>> The use of CONFIG_MMU in swab.h (is this actually exported to user
+>> space?) is not actually for code that is MMU or non-MMU. It is
+>> actually architecture specific. Most ColdFire parts don't have the
+>> "rolw" instruction. The condition test can be better. Geert, any
+>> ideas on what is more appropriate here?
+> 
+> The `rolw' variant is already protected by `#if defined
+> (__mcfisaaplus__) || defined (__mcfisac__)',
+> so I think you can replace the `#elif defined(CONFIG_MMU)' by a plain `#else'.
+> Or are there cases where you don't want to have __arch_swab32 at all?
 
-[ INFO: inconsistent lock state ]
-2.6.29-rc8-next-20090316 #5
----------------------------------
-inconsistent {RECLAIM_FS-ON-W} -> {IN-RECLAIM_FS-W} usage.
-kswapd0/318 [HC0[0]:SC0[0]:HE1:SE1] takes:
- (&inode->inotify_mutex){+.+.?.}, at: [<ffffffff802eb7f0>]
-inotify_inode_is_dead+0x30/0xb0
-{RECLAIM_FS-ON-W} state was registered at:
-  [<ffffffff8026df29>] mark_held_locks+0x69/0x90
-  [<ffffffff8026df91>] lockdep_trace_alloc+0x41/0xb0
-  [<ffffffff802b6b56>] __kmalloc+0x46/0x150
-  [<ffffffff802ec697>] kernel_event+0x97/0x130
-  [<ffffffff802ec7d7>] inotify_dev_queue_event+0xa7/0x1b0
-  [<ffffffff802eb6de>] inotify_inode_queue_event+0xbe/0x100
-  [<ffffffff802c5a35>] vfs_mkdir+0xb5/0xd0
-  [<ffffffff802c7d46>] sys_mkdirat+0x106/0x120
-  [<ffffffff802c7d73>] sys_mkdir+0x13/0x20
-  [<ffffffff8020b61b>] system_call_fastpath+0x16/0x1b
-  [<ffffffffffffffff>] 0xffffffffffffffff
-irq event stamp: 93167
-hardirqs last  enabled at (93167): [<ffffffff8062e345>]
-_spin_unlock_irqrestore+0x65/0x80
-hardirqs last disabled at (93166): [<ffffffff80283de2>] call_rcu+0x32/0x90
-softirqs last  enabled at (87738): [<ffffffff80249d49>] __do_softirq+0x139/0x150
-softirqs last disabled at (87733): [<ffffffff8020c7bc>] call_softirq+0x1c/0x30
+Not all ColdFire fit into '(__mcfisaaplus__) || defined (__mcfisac__)'
+so #else won't be good enough. Though I suspect it is true that the
+older m68k varients (68328, etc) can do "rolw" - or I am I mistaken on
+that?
 
-other info that might help us debug this:
-2 locks held by kswapd0/318:
- #0:  (shrinker_rwsem){++++..}, at: [<ffffffff80294452>] shrink_slab+0x32/0x1c0
- #1:  (&type->s_umount_key#19){++++..}, at: [<ffffffff802cd32f>]
-shrink_dcache_memory+0x11f/0x1e0
 
-stack backtrace:
-Pid: 318, comm: kswapd0 Not tainted 2.6.29-rc8-next-20090316 #5
-Call Trace:
- [<ffffffff8026ce6d>] print_usage_bug+0x17d/0x190
- [<ffffffff8026ddd2>] mark_lock+0x332/0x420
- [<ffffffff8026cfe0>] ? check_usage_forwards+0x0/0xc0
- [<ffffffff8026ef7d>] __lock_acquire+0x3fd/0x1290
- [<ffffffff8026fea1>] lock_acquire+0x91/0xc0
- [<ffffffff802eb7f0>] ? inotify_inode_is_dead+0x30/0xb0
- [<ffffffff8062bcd9>] __mutex_lock_common+0x59/0x4d0
- [<ffffffff802eb7f0>] ? inotify_inode_is_dead+0x30/0xb0
- [<ffffffff8026ee4a>] ? __lock_acquire+0x2ca/0x1290
- [<ffffffff802eb7f0>] ? inotify_inode_is_dead+0x30/0xb0
- [<ffffffff8026b05a>] ? get_lock_stats+0x2a/0x60
- [<ffffffff8062c22a>] mutex_lock_nested+0x3a/0x50
- [<ffffffff802eb7f0>] inotify_inode_is_dead+0x30/0xb0
- [<ffffffff802ccd3c>] dentry_iput+0xbc/0xe0
- [<ffffffff802cce4e>] d_kill+0x2e/0x60
- [<ffffffff802cd10a>] __shrink_dcache_sb+0x28a/0x390
- [<ffffffff802cd36a>] shrink_dcache_memory+0x15a/0x1e0
- [<ffffffff8029457c>] shrink_slab+0x15c/0x1c0
- [<ffffffff8029652a>] kswapd+0x56a/0x6b0
- [<ffffffff80238326>] ? finish_task_switch+0x46/0x110
- [<ffffffff80293960>] ? isolate_pages_global+0x0/0x270
- [<ffffffff8025b7a0>] ? autoremove_wake_function+0x0/0x40
- [<ffffffff8026e2ad>] ? trace_hardirqs_on+0xd/0x10
- [<ffffffff8062e322>] ? _spin_unlock_irqrestore+0x42/0x80
- [<ffffffff80295fc0>] ? kswapd+0x0/0x6b0
- [<ffffffff80295fc0>] ? kswapd+0x0/0x6b0
- [<ffffffff8025b3c6>] kthread+0x56/0x90
- [<ffffffff8020c6ba>] child_rip+0xa/0x20
- [<ffffffff8020c080>] ? restore_args+0x0/0x30
- [<ffffffff8025b370>] ? kthread+0x0/0x90
- [<ffffffff8020c6b0>] ? child_rip+0x0/0x20
+>> I can switch back to using __uClinux__ on siginfo.h and sigcontext.h.
+>> If I am not mistaken we can't change these structures without breaking
+>> backwards compatibility?  The sigcontext change is particularly ugly :-(
+> 
+> Copying the signal experts on linux-m68k...
+> 
+>> Similarly for param.h, it looks like a switch back to using
+>> __uClinux__ for now is the only option.
+>>
+>> Now after these fixups should I create a git branch with these header
+>> merges in for inclusion into 2.6.29-rc?  To fix the regression we
+>> only need to do the handful of files that Rob listed, right?
+> 
+> Yes.
+
+Ok, I have created a git branch for this as:
+
+The following changes since commit 5bee17f18b595937e6beafeee5197868a3f74a06:
+   Kyle McMartin (1):
+         parisc: sba_iommu: fix build bug when CONFIG_PARISC_AGP=y
+
+are available in the git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/gerg/m68knommu.git 
+fix-includes
+
+Greg Ungerer (8):
+       m68k: merge the non-MMU and MMU versions of param.h
+       m68k: merge the non-MMU and MMU versions of swab.h
+       m68k: merge the non-MMU and MMU versions of sigcontext.h
+       m68k: merge the non-MMU and MMU versions of siginfo.h
+       m68k: use MMU version of setup.h for both MMU and non-MMU
+       m68k: merge the non-MMU and MMU versions of ptrace.h
+       m68k: merge the non-MMU and MMU versions of signal.h
+       m68k: use the MMU version of unistd.h for all m68k platforms
+
+  arch/m68k/include/asm/param.h         |   25 ++-
+  arch/m68k/include/asm/param_mm.h      |   22 --
+  arch/m68k/include/asm/param_no.h      |   22 --
+  arch/m68k/include/asm/ptrace.h        |   88 ++++++++-
+  arch/m68k/include/asm/ptrace_mm.h     |   80 -------
+  arch/m68k/include/asm/ptrace_no.h     |   87 --------
+  arch/m68k/include/asm/setup.h         |  377 
+++++++++++++++++++++++++++++++++-
+  arch/m68k/include/asm/setup_mm.h      |  376 
+--------------------------------
+  arch/m68k/include/asm/setup_no.h      |   10 -
+  arch/m68k/include/asm/sigcontext.h    |   25 ++-
+  arch/m68k/include/asm/sigcontext_mm.h |   19 --
+  arch/m68k/include/asm/sigcontext_no.h |   17 --
+  arch/m68k/include/asm/siginfo.h       |   95 ++++++++-
+  arch/m68k/include/asm/siginfo_mm.h    |   92 --------
+  arch/m68k/include/asm/siginfo_no.h    |    6 -
+  arch/m68k/include/asm/signal.h        |  216 ++++++++++++++++++-
+  arch/m68k/include/asm/signal_mm.h     |  206 ------------------
+  arch/m68k/include/asm/signal_no.h     |  159 --------------
+  arch/m68k/include/asm/swab.h          |   30 +++-
+  arch/m68k/include/asm/swab_mm.h       |   16 --
+  arch/m68k/include/asm/swab_no.h       |   24 --
+  arch/m68k/include/asm/unistd.h        |  377 
+++++++++++++++++++++++++++++++++-
+  arch/m68k/include/asm/unistd_mm.h     |  372 
+--------------------------------
+  arch/m68k/include/asm/unistd_no.h     |  372 
+--------------------------------
+  24 files changed, 1206 insertions(+), 1907 deletions(-)
+  delete mode 100644 arch/m68k/include/asm/param_mm.h
+  delete mode 100644 arch/m68k/include/asm/param_no.h
+  delete mode 100644 arch/m68k/include/asm/ptrace_mm.h
+  delete mode 100644 arch/m68k/include/asm/ptrace_no.h
+  delete mode 100644 arch/m68k/include/asm/setup_mm.h
+  delete mode 100644 arch/m68k/include/asm/setup_no.h
+  delete mode 100644 arch/m68k/include/asm/sigcontext_mm.h
+  delete mode 100644 arch/m68k/include/asm/sigcontext_no.h
+  delete mode 100644 arch/m68k/include/asm/siginfo_mm.h
+  delete mode 100644 arch/m68k/include/asm/siginfo_no.h
+  delete mode 100644 arch/m68k/include/asm/signal_mm.h
+  delete mode 100644 arch/m68k/include/asm/signal_no.h
+  delete mode 100644 arch/m68k/include/asm/swab_mm.h
+  delete mode 100644 arch/m68k/include/asm/swab_no.h
+  delete mode 100644 arch/m68k/include/asm/unistd_mm.h
+  delete mode 100644 arch/m68k/include/asm/unistd_no.h
+
+
+I have only patched those files that I saw mentioned in the previous
+emails in this thread.
+
+Geert, can you check an m68k build?
+Rob, can you check that you can build what you used to be able to?
+
+Regards
+Greg
+
+
+------------------------------------------------------------------------
+Greg Ungerer  --  Principal Engineer        EMAIL:     gerg@snapgear.com
+SnapGear, a McAfee Company                  PHONE:       +61 7 3435 2888
+825 Stanley St,                             FAX:         +61 7 3891 3630
+Woolloongabba, QLD, 4102, Australia         WEB: http://www.SnapGear.com
