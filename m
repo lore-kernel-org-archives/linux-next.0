@@ -1,51 +1,50 @@
-From: Russell King <rmk@arm.linux.org.uk>
-Subject: Re: linux-next: manual merge of the async_tx tree with the arm tree
-Date: Mon, 16 Mar 2009 22:28:22 +0000
-Message-ID: <20090316222822.GA12334@flint.arm.linux.org.uk>
-References: <20090316151054.b518091c.sfr@canb.auug.org.au> <1237241887.27945.13.camel@dwillia2-linux.ch.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: rr quilt series import failure
+Date: Tue, 17 Mar 2009 09:59:24 +1100
+Message-ID: <20090317095924.656f7e05.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__17_Mar_2009_09_59_24_+1100_WkvNVvttOw_Pf6wD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:57830 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751484AbZCPW2o (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Mar 2009 18:28:44 -0400
-Content-Disposition: inline
-In-Reply-To: <1237241887.27945.13.camel@dwillia2-linux.ch.intel.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48748 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751918AbZCPW7b (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Mar 2009 18:59:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Guennadi Liakhovetski <lg@denx.de>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org
 
-On Mon, Mar 16, 2009 at 03:18:07PM -0700, Dan Williams wrote:
-> On Sun, 2009-03-15 at 21:10 -0700, Stephen Rothwell wrote:
-> > Hi Dan, Russell,
-> > 
-> > Today's linux-next merge of the async_tx tree got a conflict in
-> > drivers/video/mx3fb.c between commit
-> > 9eb2eb8c40ffd30da322648c4415bae0288eb167 ("MX31 clkdev support") from the
-> > arm tree and commits 1febd91acff907152e61eb5ad0a82dd8d7db21c6 ("Revert
-> > "i.MX31: framebuffer driver"") and
-> > 6e1588cbd88590273300403648aef70e6bdaf5af ("i.MX31: framebuffer driver")
-> > from the async_tx tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary).
-> > --
-> > Cheers,
-> > Stephen Rothwell                    sfr@canb.auug.org.au
-> > http://www.canb.auug.org.au/~sfr/
-> 
-> Thanks Stephen!
-> 
-> Russell, if you are merging other changes for this driver it makes sense
-> for the tabs-to-space fix to go in through your tree as well.  If you
-> agree please pull from:
-> 
->  git://git.kernel.org/pub/scm/linux/kernel/git/djbw/async_tx.git imx-fb-fix
+--Signature=_Tue__17_Mar_2009_09_59_24_+1100_WkvNVvttOw_Pf6wD
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Pulled.
+Hi Rusty,
 
--- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+Today's linux-next import of the rr quilt series failed like this:
+
+cpumask:smp_call_function-in-powerpc-sysfs.patch
+error: patch failed: arch/powerpc/kernel/sysfs.c:135
+error: arch/powerpc/kernel/sysfs.c: patch does not apply
+
+I will use yesterday's tree (with its warnings :-().
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__17_Mar_2009_09_59_24_+1100_WkvNVvttOw_Pf6wD
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkm+2cwACgkQjjKRsyhoI8xREACgqqoWM04Gn/FFL6567oZxirIQ
+rLMAn0W2u7e/B4HL8xi3EWEaVsHgLUdk
+=blBy
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__17_Mar_2009_09_59_24_+1100_WkvNVvttOw_Pf6wD--
