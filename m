@@ -1,50 +1,49 @@
-From: Dhananjay Phadke <dhananjay@netxen.com>
-Subject: RE: linux-next: net tree build warnings
-Date: Sun, 15 Mar 2009 23:05:51 -0700
-Message-ID: <9FB481EF4C70734186A21A64437F637C02A10E5663@nxexch.unminc.com>
-References: <20090316170310.80afbeba.sfr@canb.auug.org.au>
+From: "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>
+Subject: RE: linux-next: manual merge of the net tree with the net-current
+ tree
+Date: Sun, 15 Mar 2009 23:41:04 -0700
+Message-ID: <A78C6259B11833419567082E2DC0C256C3D52894@orsmsx508.amr.corp.intel.com>
+References: <20090316160501.6b20c544.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nxgate.netxen.com ([38.99.60.130]:8141 "EHLO nxexch.unminc.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751274AbZCPGMX convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Mar 2009 02:12:23 -0400
-In-Reply-To: <20090316170310.80afbeba.sfr@canb.auug.org.au>
+Received: from mga09.intel.com ([134.134.136.24]:15679 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751419AbZCPGlI convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Mar 2009 02:41:08 -0400
+In-Reply-To: <20090316160501.6b20c544.sfr@canb.auug.org.au>
 Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, "David S. Miller" <davem@davemloft.net>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "Duyck, Alexander H" <alexander.h.duyck@intel.com>
 
-This has been introduced before 567c6c4e2b92f4b86, I'll post a fix (needs a little work).
+>-----Original Message-----
+>From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+>Sent: Sunday, March 15, 2009 10:05 PM
+>To: David Miller
+>Cc: linux-next@vger.kernel.org; Duyck, Alexander H; Kirsher, Jeffrey T
+>Subject: linux-next: manual merge of the net tree with the net-current tree
+>
+>Hi David,
+>
+>Today's linux-next merge of the net tree got a conflict in
+>drivers/net/igb/igb_main.c between commit
+>682337fe062e939578d933c74157ae9a36baa4ce ("igb: remove ASPM L0s
+>workaround") from the net-current tree and commits
+>aed5dec370e294233d647251ce1e5f74d70b09c9 ("igb: remove check for needing
+>an io port") and 450c87c8d28aeaf83889389ceeb01457c1a6f3e9 ("igb: remove
+>redundant count set and err_hw_init") from the net tree.
+>
+>I fixed it up (see below) and can carry the fix as necessary.
+>--
+>Cheers,
+>Stephen Rothwell                    sfr@canb.auug.org.au
+>http://www.canb.auug.org.au/~sfr/
+>
 
-Thanks,
--Dhananjay
-________________________________________
-From: Stephen Rothwell [sfr@canb.auug.org.au]
-Sent: Sunday, March 15, 2009 11:03 PM
-To: David S. Miller
-Cc: linux-next@vger.kernel.org; Dhananjay Phadke
-Subject: linux-next: net tree build warnings
+Ack, the fix.  I figured this might happen.
 
-Hi Dave,
-
-Today's (and for a while) linux-next build (x86_64 allmodconfig) produced
-these warnings:
-
-drivers/net/netxen/netxen_nic_hw.c: In function 'netxen_load_firmware':
-drivers/net/netxen/netxen_nic_hw.c:1146: warning: comparison with string literal results in unspecified behavior
-drivers/net/netxen/netxen_nic_hw.c:1146: warning: comparison with string literal results in unspecified behavior
-drivers/net/netxen/netxen_nic_hw.c:1146: warning: comparison with string literal results in unspecified behavior
-drivers/net/netxen/netxen_nic_hw.c:1159: warning: comparison with string literal results in unspecified behavior
-drivers/net/netxen/netxen_nic_hw.c:1159: warning: comparison with string literal results in unspecified behavior
-drivers/net/netxen/netxen_nic_hw.c:1159: warning: comparison with string literal results in unspecified behavior
-
-Introduced by commit 567c6c4e2b92f4b8632b043f9395b216b7e7c3ce ("netxen:
-firmware download improvements").
---
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Jeff
