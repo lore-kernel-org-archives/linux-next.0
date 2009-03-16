@@ -1,52 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the suspend tree with the cpus4096 tree
-Date: Mon, 16 Mar 2009 20:00:05 +1100
-Message-ID: <20090316200005.2a98d95b.sfr@canb.auug.org.au>
+Subject: Re: New linux-next tree suspend-2.6
+Date: Mon, 16 Mar 2009 20:05:57 +1100
+Message-ID: <20090316200557.3542847a.sfr@canb.auug.org.au>
+References: <200903151754.37147.rjw@sisk.pl>
+	<20090316131647.48d632fb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__16_Mar_2009_20_05_57_+1100_fOhj1L/sDKRdZMCJ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49742 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58457 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760589AbZCPJAL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Mar 2009 05:00:11 -0400
+	id S1752109AbZCPJGF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Mar 2009 05:06:05 -0400
+In-Reply-To: <20090316131647.48d632fb.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, Mike Travis <travis@sgi.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, Jesse Barnes <jbarnes@virtuousgeek.org>
+
+--Signature=_Mon__16_Mar_2009_20_05_57_+1100_fOhj1L/sDKRdZMCJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Rafael,
 
-Today's linux-next merge of the suspend tree got a conflict in
-drivers/xen/manage.c between commit
-f7df8ed164996cd2c6aca9674388be6ef78d8b37 ("cpumask: convert misc driver
-functions") from the cpus4096 tree and commit
-73263bc09332c5c8de7c60cb76b5b24e2da66b42 ("PM: Rework handling of
-interrupts during suspend-resume") from the suspend tree.
+On Mon, 16 Mar 2009 13:16:47 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> I notice that your resolution is to revert a patch from the pci tree.  As
+> an alternative, you could apply the pci tree patch to your tree.
 
-I fixed it up (see below) and can carry the fix as necessary.  As you
-said, it is trivial.
--- 
+Which I now see is exactly what you did.  This makes the resolution for
+me very easy as I just need to use your version of the changes.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/xen/manage.c
-index 3ccd348,2f1d082..0000000
---- a/drivers/xen/manage.c
-+++ b/drivers/xen/manage.c
-@@@ -108,7 -101,13 +101,13 @@@ static void do_suspend(void
-  	/* XXX use normal device tree? */
-  	xenbus_suspend();
-  
-+ 	err = device_power_down(PMSG_SUSPEND);
-+ 	if (err) {
-+ 		printk(KERN_ERR "device_power_down failed: %d\n", err);
-+ 		goto resume_devices;
-+ 	}
-+ 
- -	err = stop_machine(xen_suspend, &cancelled, &cpumask_of_cpu(0));
- +	err = stop_machine(xen_suspend, &cancelled, cpumask_of(0));
-  	if (err) {
-  		printk(KERN_ERR "failed to start xen_suspend: %d\n", err);
-  		goto out;
+--Signature=_Mon__16_Mar_2009_20_05_57_+1100_fOhj1L/sDKRdZMCJ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkm+FnUACgkQjjKRsyhoI8yWawCfQDrMFIhL68ZQpLyNmoz1bAbc
+RGcAn25MJpbYCj3KMvDboFzh/vrH6uIg
+=ZVUJ
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__16_Mar_2009_20_05_57_+1100_fOhj1L/sDKRdZMCJ--
