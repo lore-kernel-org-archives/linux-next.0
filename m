@@ -1,98 +1,81 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the net-current tree
-Date: Mon, 16 Mar 2009 16:05:01 +1100
-Message-ID: <20090316160501.6b20c544.sfr@canb.auug.org.au>
+Subject: Re: linux-next: acpi tree build failure
+Date: Mon, 16 Mar 2009 16:10:37 +1100
+Message-ID: <20090316161037.85cea549.sfr@canb.auug.org.au>
+References: <20090224153742.08562389.sfr@canb.auug.org.au>
+	<20090303124717.f8a65db8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54588 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:39369 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750956AbZCPFFG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Mar 2009 01:05:06 -0400
+	id S1750716AbZCPFKm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Mar 2009 01:10:42 -0400
+In-Reply-To: <20090303124717.f8a65db8.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Alexander Duyck <alexander.h.duyck@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, Greg KH <greg@kroah.com>, Kay Sievers <kay.sievers@vrfy.org>, Matthew Garrett <mjg59@srcf.ucam.org>
 
-Hi David,
+Hi Len,
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/net/igb/igb_main.c between commit
-682337fe062e939578d933c74157ae9a36baa4ce ("igb: remove ASPM L0s
-workaround") from the net-current tree and commits
-aed5dec370e294233d647251ce1e5f74d70b09c9 ("igb: remove check for needing
-an io port") and 450c87c8d28aeaf83889389ceeb01457c1a6f3e9 ("igb: remove
-redundant count set and err_hw_init") from the net tree.
+On Tue, 3 Mar 2009 12:47:17 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> On Tue, 24 Feb 2009 15:37:42 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Today's linux-next build (x86_64 allmodconfig) failed like this:
+> > 
+> > drivers/acpi/thermal.c: In function 'thermal_notify':
+> > drivers/acpi/thermal.c:768: error: 'struct device' has no member named 'bus_id'
+> > 
+> > Caused by commit b1569e99c795bf83b4ddf41c4f1c42761ab7f75e ("ACPI: move
+> > thermal trip handling to generic thermal layer") interacting with commit
+> > d4a078fca590911cdf87a8eaffee1b6e643c2558 ("driver core: get rid of struct
+> > device's bus_id string array").
+> > 
+> > I have dropped the acpi tree for today.
+> 
+> Since this hasn't bee fixed yet, I have applied the following patch as a
+> merge fixup.  Please apply it (or something like it) to the acpi tree.
 
-I fixed it up (see below) and can carry the fix as necessary.
+Can something be done about this, please?  The last change I have in the
+acpi tree in linux-next is from Feb 26.
+
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 3 Mar 2009 12:41:46 +1100
+> Subject: [PATCH] acpi: update thermal for bus_id removal
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/acpi/thermal.c |    3 ++-
+>  1 files changed, 2 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
+> index 0ec48d2..6b95997 100644
+> --- a/drivers/acpi/thermal.c
+> +++ b/drivers/acpi/thermal.c
+> @@ -41,6 +41,7 @@
+>  #include <linux/kmod.h>
+>  #include <linux/seq_file.h>
+>  #include <linux/reboot.h>
+> +#include <linux/device.h>
+>  #include <asm/uaccess.h>
+>  #include <linux/thermal.h>
+>  #include <acpi/acpi_bus.h>
+> @@ -765,7 +766,7 @@ static int thermal_notify(struct thermal_zone_device *thermal, int trip,
+>  
+>  	acpi_bus_generate_proc_event(tz->device, type, 1);
+>  	acpi_bus_generate_netlink_event(tz->device->pnp.device_class,
+> -					tz->device->dev.bus_id, type, 1);
+> +					dev_name(&tz->device->dev), type, 1);
+>  
+>  	if (trip_type == THERMAL_TRIP_CRITICAL && nocrt)
+>  		return 1;
+> -- 
+> 1.6.1.3
+
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
-diff --cc drivers/net/igb/igb_main.c
-index 9dd13ad,7124f59..0000000
---- a/drivers/net/igb/igb_main.c
-+++ b/drivers/net/igb/igb_main.c
-@@@ -1023,23 -1128,15 +1128,14 @@@ static int __devinit igb_probe(struct p
-  	struct net_device *netdev;
-  	struct igb_adapter *adapter;
-  	struct e1000_hw *hw;
- -	struct pci_dev *us_dev;
-  	const struct e1000_info *ei = igb_info_tbl[ent->driver_data];
-  	unsigned long mmio_start, mmio_len;
-- 	int i, err, pci_using_dac;
- -	int err, pci_using_dac, pos;
- -	u16 eeprom_data = 0, state = 0;
-++	int err, pci_using_dac;
- +	u16 eeprom_data = 0;
-  	u16 eeprom_apme_mask = IGB_EEPROM_APME;
-  	u32 part_num;
-- 	int bars, need_ioport;
-  
-- 	/* do not allocate ioport bars when not needed */
-- 	need_ioport = igb_is_need_ioport(pdev);
-- 	if (need_ioport) {
-- 		bars = pci_select_bars(pdev, IORESOURCE_MEM | IORESOURCE_IO);
-- 		err = pci_enable_device(pdev);
-- 	} else {
-- 		bars = pci_select_bars(pdev, IORESOURCE_MEM);
-- 		err = pci_enable_device_mem(pdev);
-- 	}
-+ 	err = pci_enable_device_mem(pdev);
-  	if (err)
-  		return err;
-  
-@@@ -1061,7 -1158,30 +1157,9 @@@
-  		}
-  	}
-  
-- 	err = pci_request_selected_regions(pdev, bars, igb_driver_name);
- -	/* 82575 requires that the pci-e link partner disable the L0s state */
- -	switch (pdev->device) {
- -	case E1000_DEV_ID_82575EB_COPPER:
- -	case E1000_DEV_ID_82575EB_FIBER_SERDES:
- -	case E1000_DEV_ID_82575GB_QUAD_COPPER:
- -		us_dev = pdev->bus->self;
- -		pos = pci_find_capability(us_dev, PCI_CAP_ID_EXP);
- -		if (pos) {
- -			pci_read_config_word(us_dev, pos + PCI_EXP_LNKCTL,
- -			                     &state);
- -			state &= ~PCIE_LINK_STATE_L0S;
- -			pci_write_config_word(us_dev, pos + PCI_EXP_LNKCTL,
- -			                      state);
- -			dev_info(&pdev->dev,
- -				 "Disabling ASPM L0s upstream switch port %s\n",
- -				 pci_name(us_dev));
- -		}
- -	default:
- -		break;
- -	}
- -
-+ 	err = pci_request_selected_regions(pdev, pci_select_bars(pdev,
-+ 	                                   IORESOURCE_MEM),
-+ 	                                   igb_driver_name);
-  	if (err)
-  		goto err_pci_reg;
-  
