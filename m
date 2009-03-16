@@ -1,81 +1,192 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: acpi tree build failure
-Date: Mon, 16 Mar 2009 16:10:37 +1100
-Message-ID: <20090316161037.85cea549.sfr@canb.auug.org.au>
-References: <20090224153742.08562389.sfr@canb.auug.org.au>
-	<20090303124717.f8a65db8.sfr@canb.auug.org.au>
+Subject: linux-next: rr tree build warnings
+Date: Mon, 16 Mar 2009 16:47:10 +1100
+Message-ID: <20090316164710.e0a9974a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__16_Mar_2009_16_47_10_+1100_CsfaKbBgBgwoG.=5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39369 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59929 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750716AbZCPFKm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Mar 2009 01:10:42 -0400
-In-Reply-To: <20090303124717.f8a65db8.sfr@canb.auug.org.au>
+	id S1751314AbZCPFrU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Mar 2009 01:47:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: linux-next@vger.kernel.org, Greg KH <greg@kroah.com>, Kay Sievers <kay.sievers@vrfy.org>, Matthew Garrett <mjg59@srcf.ucam.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org
 
-Hi Len,
+--Signature=_Mon__16_Mar_2009_16_47_10_+1100_CsfaKbBgBgwoG.=5
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 3 Mar 2009 12:47:17 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> On Tue, 24 Feb 2009 15:37:42 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Today's linux-next build (x86_64 allmodconfig) failed like this:
-> > 
-> > drivers/acpi/thermal.c: In function 'thermal_notify':
-> > drivers/acpi/thermal.c:768: error: 'struct device' has no member named 'bus_id'
-> > 
-> > Caused by commit b1569e99c795bf83b4ddf41c4f1c42761ab7f75e ("ACPI: move
-> > thermal trip handling to generic thermal layer") interacting with commit
-> > d4a078fca590911cdf87a8eaffee1b6e643c2558 ("driver core: get rid of struct
-> > device's bus_id string array").
-> > 
-> > I have dropped the acpi tree for today.
-> 
-> Since this hasn't bee fixed yet, I have applied the following patch as a
-> merge fixup.  Please apply it (or something like it) to the acpi tree.
+Hi Rusty,
 
-Can something be done about this, please?  The last change I have in the
-acpi tree in linux-next is from Feb 26.
+Today's linux-next build (powerpc ppc64_defconfig) produced these
+warnings:
 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 3 Mar 2009 12:41:46 +1100
-> Subject: [PATCH] acpi: update thermal for bus_id removal
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/acpi/thermal.c |    3 ++-
->  1 files changed, 2 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
-> index 0ec48d2..6b95997 100644
-> --- a/drivers/acpi/thermal.c
-> +++ b/drivers/acpi/thermal.c
-> @@ -41,6 +41,7 @@
->  #include <linux/kmod.h>
->  #include <linux/seq_file.h>
->  #include <linux/reboot.h>
-> +#include <linux/device.h>
->  #include <asm/uaccess.h>
->  #include <linux/thermal.h>
->  #include <acpi/acpi_bus.h>
-> @@ -765,7 +766,7 @@ static int thermal_notify(struct thermal_zone_device *thermal, int trip,
->  
->  	acpi_bus_generate_proc_event(tz->device, type, 1);
->  	acpi_bus_generate_netlink_event(tz->device->pnp.device_class,
-> -					tz->device->dev.bus_id, type, 1);
-> +					dev_name(&tz->device->dev), type, 1);
->  
->  	if (trip_type == THERMAL_TRIP_CRITICAL && nocrt)
->  		return 1;
-> -- 
-> 1.6.1.3
+arch/powerpc/kernel/sysfs.c: In function 'store_mmcr0':
+arch/powerpc/kernel/sysfs.c:187: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_mmcr1':
+arch/powerpc/kernel/sysfs.c:188: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_pmc1':
+arch/powerpc/kernel/sysfs.c:189: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_pmc2':
+arch/powerpc/kernel/sysfs.c:190: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_pmc3':
+arch/powerpc/kernel/sysfs.c:191: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_pmc4':
+arch/powerpc/kernel/sysfs.c:192: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_pmc5':
+arch/powerpc/kernel/sysfs.c:193: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_pmc6':
+arch/powerpc/kernel/sysfs.c:194: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_pmc7':
+arch/powerpc/kernel/sysfs.c:201: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_pmc8':
+arch/powerpc/kernel/sysfs.c:202: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_mmcra':
+arch/powerpc/kernel/sysfs.c:204: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_purr':
+arch/powerpc/kernel/sysfs.c:205: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_spurr':
+arch/powerpc/kernel/sysfs.c:206: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_dscr':
+arch/powerpc/kernel/sysfs.c:207: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_pa6t_pmc0':
+arch/powerpc/kernel/sysfs.c:216: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_pa6t_pmc1':
+arch/powerpc/kernel/sysfs.c:217: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_pa6t_pmc2':
+arch/powerpc/kernel/sysfs.c:218: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_pa6t_pmc3':
+arch/powerpc/kernel/sysfs.c:219: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_pa6t_pmc4':
+arch/powerpc/kernel/sysfs.c:220: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_pa6t_pmc5':
+arch/powerpc/kernel/sysfs.c:221: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_hid0':
+arch/powerpc/kernel/sysfs.c:223: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_hid1':
+arch/powerpc/kernel/sysfs.c:224: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_hid4':
+arch/powerpc/kernel/sysfs.c:225: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_hid5':
+arch/powerpc/kernel/sysfs.c:226: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_ima0':
+arch/powerpc/kernel/sysfs.c:227: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_ima1':
+arch/powerpc/kernel/sysfs.c:228: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_ima2':
+arch/powerpc/kernel/sysfs.c:229: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_ima3':
+arch/powerpc/kernel/sysfs.c:230: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_ima4':
+arch/powerpc/kernel/sysfs.c:231: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_ima5':
+arch/powerpc/kernel/sysfs.c:232: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_ima6':
+arch/powerpc/kernel/sysfs.c:233: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_ima7':
+arch/powerpc/kernel/sysfs.c:234: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_ima8':
+arch/powerpc/kernel/sysfs.c:235: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_ima9':
+arch/powerpc/kernel/sysfs.c:236: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_imaat':
+arch/powerpc/kernel/sysfs.c:237: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_btcr':
+arch/powerpc/kernel/sysfs.c:238: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_pccr':
+arch/powerpc/kernel/sysfs.c:239: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_rpccr':
+arch/powerpc/kernel/sysfs.c:240: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_der':
+arch/powerpc/kernel/sysfs.c:241: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_mer':
+arch/powerpc/kernel/sysfs.c:242: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_ber':
+arch/powerpc/kernel/sysfs.c:243: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_ier':
+arch/powerpc/kernel/sysfs.c:244: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_sier':
+arch/powerpc/kernel/sysfs.c:245: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_siar':
+arch/powerpc/kernel/sysfs.c:246: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_tsr0':
+arch/powerpc/kernel/sysfs.c:247: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_tsr1':
+arch/powerpc/kernel/sysfs.c:248: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_tsr2':
+arch/powerpc/kernel/sysfs.c:249: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
+arch/powerpc/kernel/sysfs.c: In function 'store_tsr3':
+arch/powerpc/kernel/sysfs.c:250: warning: passing argument 2 of 'smp_call_f=
+unction_single' from incompatible pointer type
 
--- 
+Caused by commit 971fa46b1a83d63d3610009e44ba5cab039df611
+("cpumask:smp_call_function-in-powerpc-sysfs).
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__16_Mar_2009_16_47_10_+1100_CsfaKbBgBgwoG.=5
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkm9594ACgkQjjKRsyhoI8zNvACeKXpVzQGE63WY7U0f/7Vlmnro
+CTAAn3tEhJ6s396gZeuqMKKb0/+gfOB5
+=SFxE
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__16_Mar_2009_16_47_10_+1100_CsfaKbBgBgwoG.=5--
