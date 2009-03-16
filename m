@@ -1,54 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: New linux-next tree suspend-2.6
-Date: Mon, 16 Mar 2009 20:05:57 +1100
-Message-ID: <20090316200557.3542847a.sfr@canb.auug.org.au>
-References: <200903151754.37147.rjw@sisk.pl>
-	<20090316131647.48d632fb.sfr@canb.auug.org.au>
+Subject: linux-next: suspend tree build failure
+Date: Mon, 16 Mar 2009 20:13:19 +1100
+Message-ID: <20090316201319.cbde6e4f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__16_Mar_2009_20_05_57_+1100_fOhj1L/sDKRdZMCJ"
+ boundary="Signature=_Mon__16_Mar_2009_20_13_19_+1100_4ylhoPZm_OVFN0P."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58457 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:42768 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752109AbZCPJGF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Mar 2009 05:06:05 -0400
-In-Reply-To: <20090316131647.48d632fb.sfr@canb.auug.org.au>
+	id S1752933AbZCPJN0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Mar 2009 05:13:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Mon__16_Mar_2009_20_05_57_+1100_fOhj1L/sDKRdZMCJ
+--Signature=_Mon__16_Mar_2009_20_13_19_+1100_4ylhoPZm_OVFN0P.
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Rafael,
 
-On Mon, 16 Mar 2009 13:16:47 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> I notice that your resolution is to revert a patch from the pci tree.  As
-> an alternative, you could apply the pci tree patch to your tree.
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-Which I now see is exactly what you did.  This makes the resolution for
-me very easy as I just need to use your version of the changes.
+drivers/built-in.o: In function `.sysdev_suspend':
+(.text+0x92170): undefined reference to `.check_wakeup_irqs'
 
+check_wakeup_irqs is defined in kernel/irq/pm.c which is only built when
+CONFIG_PM_SLEEP is set (which it isn't for this build). The call to
+check_wakeup_irqs was added to sysdev_suspend in commit
+73263bc09332c5c8de7c60cb76b5b24e2da66b42 ("PM: Rework handling of
+interrupts during suspend-resume").
+
+I have dropped the suspend tree temporarily for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__16_Mar_2009_20_05_57_+1100_fOhj1L/sDKRdZMCJ
+--Signature=_Mon__16_Mar_2009_20_13_19_+1100_4ylhoPZm_OVFN0P.
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkm+FnUACgkQjjKRsyhoI8yWawCfQDrMFIhL68ZQpLyNmoz1bAbc
-RGcAn25MJpbYCj3KMvDboFzh/vrH6uIg
-=ZVUJ
+iEYEARECAAYFAkm+GC8ACgkQjjKRsyhoI8yRVQCaAsO7bJnvA/FCU+Zcr8s3NInZ
+ykkAnRfJl3abch37A+RPgXZY80kMVdWF
+=/VC7
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__16_Mar_2009_20_05_57_+1100_fOhj1L/sDKRdZMCJ--
+--Signature=_Mon__16_Mar_2009_20_13_19_+1100_4ylhoPZm_OVFN0P.--
