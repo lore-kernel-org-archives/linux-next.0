@@ -1,60 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH] powerpc/cell: fix unused variable warning in interrupt.c
-Date: Mon, 16 Mar 2009 18:52:56 +1100
-Message-ID: <20090316185256.4a160374.sfr@canb.auug.org.au>
-References: <20090202174817.dd4a26f0.sfr@canb.auug.org.au>
+Subject: linux-next:  tree build warning
+Date: Mon, 16 Mar 2009 19:14:34 +1100
+Message-ID: <20090316191434.47e98665.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__16_Mar_2009_19_14_34_+1100_8rYaeMDFY_xEY6O0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56704 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37744 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751656AbZCPHxA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Mar 2009 03:53:00 -0400
-In-Reply-To: <20090202174817.dd4a26f0.sfr@canb.auug.org.au>
+	id S1753573AbZCPIOm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Mar 2009 04:14:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: linux-next@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, LKML <linux-kernel@vger.kernel.org>, ppc-dev <linuxppc-dev@ozlabs.org>
+To: Neil Brown <neilb@suse.de>
+Cc: linux-next@vger.kernel.org
 
+--Signature=_Mon__16_Mar_2009_19_14_34_+1100_8rYaeMDFY_xEY6O0
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-arch/powerpc/platforms/cell/interrupt.c: In function 'handle_iic_irq':
-arch/powerpc/platforms/cell/interrupt.c:240: warning: unused variable 'cpu'
+Hi Neil,
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/powerpc/platforms/cell/interrupt.c |    2 --
- 1 files changed, 0 insertions(+), 2 deletions(-)
+Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
 
-On Mon, 2 Feb 2009 17:48:17 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
-> 
-> arch/powerpc/platforms/cell/interrupt.c: In function 'handle_iic_irq':
-> arch/powerpc/platforms/cell/interrupt.c:240: warning: unused variable 'cpu'
-> 
-> Caused by commit dee4102a9a5882b4f7d5cc165ba29e8cc63cf92e ("sparseirq:
-> use kstat_irqs_cpu instead").
+drivers/md/raid5.c: In function 'ops_run_compute6_1':
+drivers/md/raid5.c:737: warning: 'target' may be used uninitialized in this=
+ function
 
-This patch is relative to next-20090312 and updates the sparseirq tree.
+Introduced by commit 5b3de0be4eb1545f4425118620cf065e703fa731 ("raid6 bug
+fixes").
 
-diff --git a/arch/powerpc/platforms/cell/interrupt.c b/arch/powerpc/platforms/cell/interrupt.c
-index 1f0d774..882e470 100644
---- a/arch/powerpc/platforms/cell/interrupt.c
-+++ b/arch/powerpc/platforms/cell/interrupt.c
-@@ -237,8 +237,6 @@ extern int noirqdebug;
- 
- static void handle_iic_irq(unsigned int irq, struct irq_desc *desc)
- {
--	const unsigned int cpu = smp_processor_id();
--
- 	spin_lock(&desc->lock);
- 
- 	desc->status &= ~(IRQ_REPLAY | IRQ_WAITING);
--- 
-1.6.2
-
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__16_Mar_2009_19_14_34_+1100_8rYaeMDFY_xEY6O0
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkm+CmoACgkQjjKRsyhoI8wU8gCfb9xtdzXjDdV8DVrc4U0YPtry
+YWUAoIZ40+4hSvjS+6QDplzEz03bDMLH
+=8gEk
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__16_Mar_2009_19_14_34_+1100_8rYaeMDFY_xEY6O0--
