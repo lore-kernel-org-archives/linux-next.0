@@ -1,54 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the net tree with the net-current
- tree
-Date: Mon, 16 Mar 2009 19:19:19 +1100
-Message-ID: <20090316191919.c965d9ea.sfr@canb.auug.org.au>
-References: <20090316160501.6b20c544.sfr@canb.auug.org.au>
-	<A78C6259B11833419567082E2DC0C256C3D52894@orsmsx508.amr.corp.intel.com>
+Subject: linux-next: manual merge of the suspend tree with the cpus4096 tree
+Date: Mon, 16 Mar 2009 20:00:05 +1100
+Message-ID: <20090316200005.2a98d95b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__16_Mar_2009_19_19_19_+1100_Oe/GB_g3XsijG=HP"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57996 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49742 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752183AbZCPIT0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Mar 2009 04:19:26 -0400
-In-Reply-To: <A78C6259B11833419567082E2DC0C256C3D52894@orsmsx508.amr.corp.intel.com>
+	id S1760589AbZCPJAL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Mar 2009 05:00:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>
-Cc: David Miller <davem@davemloft.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "Duyck, Alexander H" <alexander.h.duyck@intel.com>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-next@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, Mike Travis <travis@sgi.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
 
---Signature=_Mon__16_Mar_2009_19_19_19_+1100_Oe/GB_g3XsijG=HP
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Rafael,
 
-Hi Jeff,
+Today's linux-next merge of the suspend tree got a conflict in
+drivers/xen/manage.c between commit
+f7df8ed164996cd2c6aca9674388be6ef78d8b37 ("cpumask: convert misc driver
+functions") from the cpus4096 tree and commit
+73263bc09332c5c8de7c60cb76b5b24e2da66b42 ("PM: Rework handling of
+interrupts during suspend-resume") from the suspend tree.
 
-On Sun, 15 Mar 2009 23:41:04 -0700 "Kirsher, Jeffrey T" <jeffrey.t.kirsher@=
-intel.com> wrote:
->
-> Ack, the fix.  I figured this might happen.
-
-Thanks for the confirmation.  I assume it will go away in a couple of
-days when Dave merges the net-current tree after Linus' takes it.
-
---=20
+I fixed it up (see below) and can carry the fix as necessary.  As you
+said, it is trivial.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__16_Mar_2009_19_19_19_+1100_Oe/GB_g3XsijG=HP
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkm+C4cACgkQjjKRsyhoI8yKJACeNJCrioCPWqvz5gfuQf6+K0vw
-oLwAn1g7pGlBFvN3NGZh39S/m87f1497
-=RmnX
------END PGP SIGNATURE-----
-
---Signature=_Mon__16_Mar_2009_19_19_19_+1100_Oe/GB_g3XsijG=HP--
+diff --cc drivers/xen/manage.c
+index 3ccd348,2f1d082..0000000
+--- a/drivers/xen/manage.c
++++ b/drivers/xen/manage.c
+@@@ -108,7 -101,13 +101,13 @@@ static void do_suspend(void
+  	/* XXX use normal device tree? */
+  	xenbus_suspend();
+  
++ 	err = device_power_down(PMSG_SUSPEND);
++ 	if (err) {
++ 		printk(KERN_ERR "device_power_down failed: %d\n", err);
++ 		goto resume_devices;
++ 	}
++ 
+ -	err = stop_machine(xen_suspend, &cancelled, &cpumask_of_cpu(0));
+ +	err = stop_machine(xen_suspend, &cancelled, cpumask_of(0));
+  	if (err) {
+  		printk(KERN_ERR "failed to start xen_suspend: %d\n", err);
+  		goto out;
