@@ -1,49 +1,60 @@
-From: "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>
-Subject: RE: linux-next: manual merge of the net tree with the net-current
- tree
-Date: Sun, 15 Mar 2009 23:41:04 -0700
-Message-ID: <A78C6259B11833419567082E2DC0C256C3D52894@orsmsx508.amr.corp.intel.com>
-References: <20090316160501.6b20c544.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH] powerpc/cell: fix unused variable warning in interrupt.c
+Date: Mon, 16 Mar 2009 18:52:56 +1100
+Message-ID: <20090316185256.4a160374.sfr@canb.auug.org.au>
+References: <20090202174817.dd4a26f0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:15679 "EHLO mga09.intel.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56704 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751419AbZCPGlI convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Mar 2009 02:41:08 -0400
-In-Reply-To: <20090316160501.6b20c544.sfr@canb.auug.org.au>
-Content-Language: en-US
+	id S1751656AbZCPHxA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Mar 2009 03:53:00 -0400
+In-Reply-To: <20090202174817.dd4a26f0.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "Duyck, Alexander H" <alexander.h.duyck@intel.com>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, LKML <linux-kernel@vger.kernel.org>, ppc-dev <linuxppc-dev@ozlabs.org>
 
->-----Original Message-----
->From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
->Sent: Sunday, March 15, 2009 10:05 PM
->To: David Miller
->Cc: linux-next@vger.kernel.org; Duyck, Alexander H; Kirsher, Jeffrey T
->Subject: linux-next: manual merge of the net tree with the net-current tree
->
->Hi David,
->
->Today's linux-next merge of the net tree got a conflict in
->drivers/net/igb/igb_main.c between commit
->682337fe062e939578d933c74157ae9a36baa4ce ("igb: remove ASPM L0s
->workaround") from the net-current tree and commits
->aed5dec370e294233d647251ce1e5f74d70b09c9 ("igb: remove check for needing
->an io port") and 450c87c8d28aeaf83889389ceeb01457c1a6f3e9 ("igb: remove
->redundant count set and err_hw_init") from the net tree.
->
->I fixed it up (see below) and can carry the fix as necessary.
->--
->Cheers,
->Stephen Rothwell                    sfr@canb.auug.org.au
->http://www.canb.auug.org.au/~sfr/
->
 
-Ack, the fix.  I figured this might happen.
+arch/powerpc/platforms/cell/interrupt.c: In function 'handle_iic_irq':
+arch/powerpc/platforms/cell/interrupt.c:240: warning: unused variable 'cpu'
 
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/platforms/cell/interrupt.c |    2 --
+ 1 files changed, 0 insertions(+), 2 deletions(-)
+
+On Mon, 2 Feb 2009 17:48:17 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
+> 
+> arch/powerpc/platforms/cell/interrupt.c: In function 'handle_iic_irq':
+> arch/powerpc/platforms/cell/interrupt.c:240: warning: unused variable 'cpu'
+> 
+> Caused by commit dee4102a9a5882b4f7d5cc165ba29e8cc63cf92e ("sparseirq:
+> use kstat_irqs_cpu instead").
+
+This patch is relative to next-20090312 and updates the sparseirq tree.
+
+diff --git a/arch/powerpc/platforms/cell/interrupt.c b/arch/powerpc/platforms/cell/interrupt.c
+index 1f0d774..882e470 100644
+--- a/arch/powerpc/platforms/cell/interrupt.c
++++ b/arch/powerpc/platforms/cell/interrupt.c
+@@ -237,8 +237,6 @@ extern int noirqdebug;
+ 
+ static void handle_iic_irq(unsigned int irq, struct irq_desc *desc)
+ {
+-	const unsigned int cpu = smp_processor_id();
+-
+ 	spin_lock(&desc->lock);
+ 
+ 	desc->status &= ~(IRQ_REPLAY | IRQ_WAITING);
+-- 
+1.6.2
+
+-- 
 Cheers,
-Jeff
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
