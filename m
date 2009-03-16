@@ -1,58 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the bkl-removal tree with Linus' tree
-Date: Mon, 16 Mar 2009 17:07:24 +1100
-Message-ID: <20090316170724.1251cce9.sfr@canb.auug.org.au>
+From: Dhananjay Phadke <dhananjay@netxen.com>
+Subject: RE: linux-next: net tree build warnings
+Date: Sun, 15 Mar 2009 23:05:51 -0700
+Message-ID: <9FB481EF4C70734186A21A64437F637C02A10E5663@nxexch.unminc.com>
+References: <20090316170310.80afbeba.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54719 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750995AbZCPGH2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Mar 2009 02:07:28 -0400
+Received: from nxgate.netxen.com ([38.99.60.130]:8141 "EHLO nxexch.unminc.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751274AbZCPGMX convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Mar 2009 02:12:23 -0400
+In-Reply-To: <20090316170310.80afbeba.sfr@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-next@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, "David S. Miller" <davem@davemloft.net>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-Hi Jonathan,
+This has been introduced before 567c6c4e2b92f4b86, I'll post a fix (needs a little work).
 
-Today's linux-next merge of the bkl-removal tree got a conflict in
-fs/pipe.c between commit e5bc49ba7439b9726006d031d440cba96819f0f8
-("pipe_rdwr_fasync: fix the error handling to prevent the leak/crash")
-from Linus' tree and commit 5c7eec1a9b90b18837a45cccb7fe3c182dce57d0
-("Rationalize fasync return values") from the bkl-removal tree.
+Thanks,
+-Dhananjay
+________________________________________
+From: Stephen Rothwell [sfr@canb.auug.org.au]
+Sent: Sunday, March 15, 2009 11:03 PM
+To: David S. Miller
+Cc: linux-next@vger.kernel.org; Dhananjay Phadke
+Subject: linux-next: net tree build warnings
 
-I fixed it up (see below) and can carry the fix for a while.
--- 
+Hi Dave,
+
+Today's (and for a while) linux-next build (x86_64 allmodconfig) produced
+these warnings:
+
+drivers/net/netxen/netxen_nic_hw.c: In function 'netxen_load_firmware':
+drivers/net/netxen/netxen_nic_hw.c:1146: warning: comparison with string literal results in unspecified behavior
+drivers/net/netxen/netxen_nic_hw.c:1146: warning: comparison with string literal results in unspecified behavior
+drivers/net/netxen/netxen_nic_hw.c:1146: warning: comparison with string literal results in unspecified behavior
+drivers/net/netxen/netxen_nic_hw.c:1159: warning: comparison with string literal results in unspecified behavior
+drivers/net/netxen/netxen_nic_hw.c:1159: warning: comparison with string literal results in unspecified behavior
+drivers/net/netxen/netxen_nic_hw.c:1159: warning: comparison with string literal results in unspecified behavior
+
+Introduced by commit 567c6c4e2b92f4b8632b043f9395b216b7e7c3ce ("netxen:
+firmware download improvements").
+--
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
-diff --cc fs/pipe.c
-index 14f502b,900de67..0000000
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@@ -699,18 -693,13 +693,14 @@@ pipe_rdwr_fasync(int fd, struct file *f
-  	int retval;
-  
-  	mutex_lock(&inode->i_mutex);
- -
-  	retval = fasync_helper(fd, filp, on, &pipe->fasync_readers);
- -	if (retval >= 0)
- +	if (retval >= 0) {
-  		retval = fasync_helper(fd, filp, on, &pipe->fasync_writers);
- -
- +		if (retval < 0) /* this can happen only if on == T */
- +			fasync_helper(-1, filp, 0, &pipe->fasync_readers);
- +	}
-  	mutex_unlock(&inode->i_mutex);
-- 
-- 	if (retval < 0)
-- 		return retval;
-- 
-- 	return 0;
-+ 	return retval;
-  }
-  
-  
