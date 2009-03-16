@@ -1,35 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: nfsd tree build warning
-Date: Tue, 17 Mar 2009 10:05:49 +1100
-Message-ID: <20090317100549.00e54de0.sfr@canb.auug.org.au>
-References: <20090316165121.3ebaf449.sfr@canb.auug.org.au>
-	<20090316134245.GB8598@fieldses.org>
+Subject: Re: linux-next: suspend tree build failure
+Date: Tue, 17 Mar 2009 10:09:10 +1100
+Message-ID: <20090317100910.d19000de.sfr@canb.auug.org.au>
+References: <20090316201319.cbde6e4f.sfr@canb.auug.org.au>
+	<200903162307.57323.rjw@sisk.pl>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__17_Mar_2009_10_05_49_+1100_kW4WOLFuEFsyH7Vo"
+ boundary="Signature=_Tue__17_Mar_2009_10_09_10_+1100_d.SKxGZUSsHw9UDz"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50961 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33654 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753048AbZCPXFz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Mar 2009 19:05:55 -0400
-In-Reply-To: <20090316134245.GB8598@fieldses.org>
+	id S1753067AbZCPXJQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Mar 2009 19:09:16 -0400
+In-Reply-To: <200903162307.57323.rjw@sisk.pl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "J. Bruce Fields" <bfields@fieldses.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
 Cc: linux-next@vger.kernel.org
 
---Signature=_Tue__17_Mar_2009_10_05_49_+1100_kW4WOLFuEFsyH7Vo
+--Signature=_Tue__17_Mar_2009_10_09_10_+1100_d.SKxGZUSsHw9UDz
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bruce,
+Hi Rafael,
 
-On Mon, 16 Mar 2009 09:42:45 -0400 "J. Bruce Fields" <bfields@fieldses.org>=
- wrote:
+On Mon, 16 Mar 2009 23:07:56 +0100 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
 >
-> That should be fixed now, thanks.--b.
+> Fixed, rebased on top of Linus' current.
 
 Thanks.
 
@@ -38,15 +37,15 @@ Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__17_Mar_2009_10_05_49_+1100_kW4WOLFuEFsyH7Vo
+--Signature=_Tue__17_Mar_2009_10_09_10_+1100_d.SKxGZUSsHw9UDz
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkm+200ACgkQjjKRsyhoI8xxNgCcCfXVThi9DYJMTaXf5CNmhSj1
-DJIAn1h9V4Cd1Z/r1Eeam8igjLu52tA9
-=1BOm
+iEYEARECAAYFAkm+3BYACgkQjjKRsyhoI8wtzQCgqQacEJyro4OQFB18J2DGhjdF
+n1IAoKlrfLR9q9ldmwABAnpZD6jopJwL
+=IT9n
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__17_Mar_2009_10_05_49_+1100_kW4WOLFuEFsyH7Vo--
+--Signature=_Tue__17_Mar_2009_10_09_10_+1100_d.SKxGZUSsHw9UDz--
