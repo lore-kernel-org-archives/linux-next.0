@@ -1,54 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: suspend tree build failure
-Date: Mon, 16 Mar 2009 20:13:19 +1100
-Message-ID: <20090316201319.cbde6e4f.sfr@canb.auug.org.au>
+Subject: linux-next: driver-core tree build failure
+Date: Mon, 16 Mar 2009 20:47:03 +1100
+Message-ID: <20090316204703.f2f354f9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__16_Mar_2009_20_13_19_+1100_4ylhoPZm_OVFN0P."
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42768 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57827 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752933AbZCPJN0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Mar 2009 05:13:26 -0400
+	id S1758570AbZCPJrG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Mar 2009 05:47:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
---Signature=_Mon__16_Mar_2009_20_13_19_+1100_4ylhoPZm_OVFN0P.
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Greg,
 
-Hi Rafael,
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+drivers/net/dnet.c: In function 'dnet_mii_probe':
+drivers/net/dnet.c:283: error: 'struct device' has no member named 'bus_id'
+drivers/net/dnet.c:287: error: 'struct device' has no member named 'bus_id'
+drivers/net/dnet.c: In function 'dnet_probe':
+drivers/net/dnet.c:928: error: 'struct device' has no member named 'bus_id'
 
-drivers/built-in.o: In function `.sysdev_suspend':
-(.text+0x92170): undefined reference to `.check_wakeup_irqs'
+Another new driver (in net-current) that needs conversion for then bus_id
+removal.  I applied the patch below for today.
 
-check_wakeup_irqs is defined in kernel/irq/pm.c which is only built when
-CONFIG_PM_SLEEP is set (which it isn't for this build). The call to
-check_wakeup_irqs was added to sysdev_suspend in commit
-73263bc09332c5c8de7c60cb76b5b24e2da66b42 ("PM: Rework handling of
-interrupts during suspend-resume").
+Dave, this could apply to net-current (or net after you merge
+net-current) or Greg could put it in driver-core after net-current gets
+merged into Linus' tree.
 
-I have dropped the suspend tree temporarily for today.
---=20
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__16_Mar_2009_20_13_19_+1100_4ylhoPZm_OVFN0P.
-Content-Type: application/pgp-signature
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 16 Mar 2009 20:37:10 +1100
+Subject: [PATCH] net: update dnet.c for bus_id removal
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/dnet.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-iEYEARECAAYFAkm+GC8ACgkQjjKRsyhoI8yRVQCaAsO7bJnvA/FCU+Zcr8s3NInZ
-ykkAnRfJl3abch37A+RPgXZY80kMVdWF
-=/VC7
------END PGP SIGNATURE-----
-
---Signature=_Mon__16_Mar_2009_20_13_19_+1100_4ylhoPZm_OVFN0P.--
+diff --git a/drivers/net/dnet.c b/drivers/net/dnet.c
+index 5c347f7..1b40632 100644
+--- a/drivers/net/dnet.c
++++ b/drivers/net/dnet.c
+@@ -280,11 +280,11 @@ static int dnet_mii_probe(struct net_device *dev)
+ 
+ 	/* attach the mac to the phy */
+ 	if (bp->capabilities & DNET_HAS_RMII) {
+-		phydev = phy_connect(dev, phydev->dev.bus_id,
++		phydev = phy_connect(dev, dev_name(&phydev->dev),
+ 				     &dnet_handle_link_change, 0,
+ 				     PHY_INTERFACE_MODE_RMII);
+ 	} else {
+-		phydev = phy_connect(dev, phydev->dev.bus_id,
++		phydev = phy_connect(dev, dev_name(&phydev->dev),
+ 				     &dnet_handle_link_change, 0,
+ 				     PHY_INTERFACE_MODE_MII);
+ 	}
+@@ -927,7 +927,7 @@ static int __devinit dnet_probe(struct platform_device *pdev)
+ 	phydev = bp->phy_dev;
+ 	dev_info(&pdev->dev, "attached PHY driver [%s] "
+ 	       "(mii_bus:phy_addr=%s, irq=%d)\n",
+-	       phydev->drv->name, phydev->dev.bus_id, phydev->irq);
++	       phydev->drv->name, dev_name(&phydev->dev), phydev->irq);
+ 
+ 	return 0;
+ 
+-- 
+1.6.2
