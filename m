@@ -1,69 +1,24 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Microblaze arch merging
-Date: Tue, 17 Mar 2009 23:26:52 +1100
-Message-ID: <20090317232652.8fe9dc30.sfr@canb.auug.org.au>
-References: <49BF66EA.9030101@petalogix.com>
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: next-20090317: ia64/kvm build fails
+Date: Tue, 17 Mar 2009 18:27:47 +0300
+Message-ID: <a4423d670903170827k5bba62fbi68f987582b091214@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__17_Mar_2009_23_26_52_+1100_40MP9NSbUau766cZ"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56695 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755511AbZCQM1D (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Mar 2009 08:27:03 -0400
-In-Reply-To: <49BF66EA.9030101@petalogix.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: michal.simek@petalogix.com
-Cc: linux-next@vger.kernel.org, lkml <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <kvm-owner@vger.kernel.org>
+Sender: kvm-owner@vger.kernel.org
+To: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, kvm-ia64@vger.kernel.org, Gleb Natapov <gleb@redhat.com>, Marcelo Tosatti <mtosatti@redhat.com>, kvm@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__17_Mar_2009_23_26_52_+1100_40MP9NSbUau766cZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi
 
-Hi Michal,
+randconfig build on ia64 fails like this
 
-On Tue, 17 Mar 2009 10:01:30 +0100 Michal Simek <michal.simek@petalogix.com=
-> wrote:
->
-> We have ready git server for pushing too.
-> What is the best way for you? Code based on current linus-head on based
-> on linux-next?
+  CC [M]  arch/ia64/kvm/../../../virt/kvm/irq_comm.o
+arch/ia64/kvm/../../../virt/kvm/irq_comm.c: In function
+'kvm_irq_delivery_to_apic':
+arch/ia64/kvm/../../../virt/kvm/irq_comm.c:53: error: 'APIC_DM_LOWEST'
+undeclared (first use in this function)
 
-All trees included in linux-next should be based on Linus' tree (unless
-there is a good reason for a dependency on another tree).
-
-What I tell everyone: all patches/commits in the tree/series must
-have been:
-
-	posted to a relevant mailing list
-	reviewed
-	unit tested
-	destined for the next merge window (or the current release)
-
-*before* they are included.  The linux-next tree is for integration
-testing and to lower the impact of conflicts between subsystems in the
-next merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__17_Mar_2009_23_26_52_+1100_40MP9NSbUau766cZ
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkm/lwwACgkQjjKRsyhoI8xjvwCfevYdKr2ChJXCDrWZU/iesOnh
-an0AoIJTAJ1MBrQRJp2i7pz8vGFIUe1k
-=0mtc
------END PGP SIGNATURE-----
-
---Signature=_Tue__17_Mar_2009_23_26_52_+1100_40MP9NSbUau766cZ--
+Introduced in
+654ae3513 "KVM: APIC: get rid of deliver_bitmask"
