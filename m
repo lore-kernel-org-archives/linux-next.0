@@ -1,25 +1,37 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: Re: [PATCH next] slob: fix build problem
-Date: Tue, 17 Mar 2009 11:27:49 +0300
-Message-ID: <a4423d670903170127gb874569x544115958be1e7db@mail.gmail.com>
-References: <20090317082549.GA5127@orion>
+From: Michal Simek <michal.simek@petalogix.com>
+Subject: Microblaze arch merging
+Date: Tue, 17 Mar 2009 10:01:30 +0100
+Message-ID: <49BF66EA.9030101@petalogix.com>
+Reply-To: michal.simek@petalogix.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20090317082549.GA5127@orion>
-Sender: owner-linux-mm@kvack.org
-To: Nick Piggin <npiggin@suse.de>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Return-path: <linux-arch-owner@vger.kernel.org>
+Sender: linux-arch-owner@vger.kernel.org
+To: linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, lkml <linux-arch@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-2009/3/17 Alexander Beregalov <a.beregalov@gmail.com>:
-> mm/slob.c: In function '__kmalloc_node':
-> mm/slob.c:480: error: 'flags' undeclared (first use in this function)
+Hi Stephen and others,
 
-Oh, I see yesterday discussion, sorry.
+I am preparing first pack for Microblaze CPU (If you want to review I
+can send bunch of patches very soon).
+This pack was reviewed in past on LKML and of course I have done some
+changes there and move to latest kernel code.
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Could you tell me what the right way is for adding to Microblaze code to
+linux-next for testing and merging?
+I don't expect that microblaze code break any other arch because all the
+code is in arch/microblaze folder + some minor changes in
+Kconfig for drivers.
+
+We have ready git server for pushing too.
+What is the best way for you? Code based on current linus-head on based
+on linux-next?
+
+Thanks,
+Michal
+
+-- 
+Michal Simek, Ing. (M.Eng)
+PetaLogix - Linux Solutions for a Reconfigurable World
+w: www.petalogix.com p: +61-7-30090663,+42-0-721842854 f: +61-7-30090663
