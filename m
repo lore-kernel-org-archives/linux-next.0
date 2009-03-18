@@ -1,70 +1,61 @@
-From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH next-20090316] sunrpc: fix build breakage
-Date: Wed, 18 Mar 2009 08:56:28 -0700
-Message-ID: <20090318085628.36eea73c.randy.dunlap@oracle.com>
-References: <20090316125140.GA3095@orion>
-	<1237208680.7229.14.camel@heimdal.trondhjem.org>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: Tree for March 11 (tracing)
+Date: Wed, 18 Mar 2009 17:06:21 +0100
+Message-ID: <20090318160621.GA21331@elte.hu>
+References: <20090311225913.51589223.sfr@canb.auug.org.au> <49B7F691.5000305@oracle.com> <49B93584.3020302@oracle.com> <1236875181.11290.1.camel@localhost.localdomain> <20090318084651.3dbf01e3.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1237208680.7229.14.camel-rJ7iovZKK19ZJLDQqaL3InhyD016LWXt@public.gmane.org>
-Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Trond Myklebust <Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>
-Cc: Alexander Beregalov <a.beregalov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx3.mail.elte.hu ([157.181.1.138]:38934 "EHLO mx3.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752937AbZCRQGm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 Mar 2009 12:06:42 -0400
+Content-Disposition: inline
+In-Reply-To: <20090318084651.3dbf01e3.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Steven Rostedt <srostedt@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>
 
-On Mon, 16 Mar 2009 09:04:40 -0400 Trond Myklebust wrote:
 
-> On Mon, 2009-03-16 at 15:51 +0300, Alexander Beregalov wrote:
-> > net/sunrpc/clnt.c: In function 'call_bind_status':
-> > net/sunrpc/clnt.c:994: error: 'struct rpc_task' has no member named
-> > 'tk_pid'
-> > net/sunrpc/clnt.c: In function 'call_connect_status':
-> > net/sunrpc/clnt.c:1051: error: 'struct rpc_task' has no member named
-> > 'tk_pid'
-> > 
-> > rpc_task has tk_pid if RPC_DEBUG is defined.
-> > 
-> > Signed-off-by: Alexander Beregalov <a.beregalov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > ---
-> > 
-> >  net/sunrpc/clnt.c |    4 ++--
-> >  1 files changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/net/sunrpc/clnt.c b/net/sunrpc/clnt.c
-> > index efd0c7b..68cb91a 100644
-> > --- a/net/sunrpc/clnt.c
-> > +++ b/net/sunrpc/clnt.c
-> > @@ -990,7 +990,7 @@ call_bind_status(struct rpc_task *task)
-> >  		return;
-> >  	default:
-> >  		if (net_ratelimit())
-> > -			printk("RPC: %5u unrecognized rpcbind error (%d)\n",
-> > +			dprintk("RPC: %5u unrecognized rpcbind error (%d)\n",
-> >  					task->tk_pid, -task->tk_status);
-> >  	}
-> >  
-> > @@ -1047,7 +1047,7 @@ call_connect_status(struct rpc_task *task)
-> >  		break;
-> >  	default:
-> >  		if (net_ratelimit())
-> > -			printk("RPC: %5u unrecognized connect error (%d)\n",
-> > +			dprintk("RPC: %5u unrecognized connect error (%d)\n",
-> >  					task->tk_pid, status);
-> >  		rpc_exit(task, -EIO);
-> >  	}
+* Randy Dunlap <randy.dunlap@oracle.com> wrote:
+
+> On Thu, 12 Mar 2009 12:26:21 -0400 Steven Rostedt wrote:
 > 
-> No, that's not right. The intention is to always report errors that are
-> fatal and are due to unforeseen circumstances. Your patch means that
-> those reports are suppressed entirely when RPC_DEBUG is undefined.
+> > 
+> > On Thu, 2009-03-12 at 09:17 -0700, Randy Dunlap wrote:
+> > > [adding cc:s]
+> > > 
+> > > [same report for March 12]
+> > > 
+> > > Randy Dunlap wrote:
+> > > > Stephen Rothwell wrote:
+> > > >> Hi all,
+> > > >>
+> > > >> Changes since 20090310:
+> > > > 
+> > > > 
+> > > > Building on i386 generates a ton of printk format warnings:
+> > > > 
+> > > > kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 5 has type 'unsigned int'
+> > > > kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 6 has type 'unsigned int'
+> > > > kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 9 has type 'unsigned int'
+> > > > kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 10 has type 'unsigned int'
+> > > > kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 13 has type 'unsigned int'
+> > > > kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 14 has type 'unsigned int'
+> > > > kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 17 has type 'unsigned int'
+> > > > kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 18 has type 'unsigned int'
+> > > > kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 21 has type 'unsigned int'
+> > > > kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 22 has type 'unsigned int'
+> > > > 
+> > 
+> > I believe this is corrected in Ingo's tip tree. I changed %lu to %zu to
+> > handle the "sizeof()" case. The fix was suggested by Andrew Morton.
+> 
+> 
+> This build warning is still around (20090318).
+> Is the fix not in some branch that is imported into linux-next or what?
 
+be patient.
 
-nevertheless, the build breakage is still around in linux-next 20090318...
-
----
-~Randy
---
-To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	Ingo
