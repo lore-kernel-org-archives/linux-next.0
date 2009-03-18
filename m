@@ -1,38 +1,49 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: Re: next-20090318: sunhme does not transmit packets
-Date: Wed, 18 Mar 2009 19:58:40 +0300
-Message-ID: <a4423d670903180958j4847717eh99a41534633dd314@mail.gmail.com>
-References: <a4423d670903180734w7270a4f3qa2af3981b969436c@mail.gmail.com>
+From: Rob Landley <rob@landley.net>
+Subject: Re: make headers_install broken for ARCH=m68k in 2.6.29-rc7.
+Date: Wed, 18 Mar 2009 13:12:00 -0500
+Message-ID: <200903181312.02047.rob@landley.net>
+References: <200903120437.03837.rob@landley.net> <200903172304.00157.rob@landley.net> <49C087F3.3080507@snapgear.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <a4423d670903180734w7270a4f3qa2af3981b969436c@mail.gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>, Netdev <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from static-71-162-243-5.phlapa.fios.verizon.net ([71.162.243.5]:56504
+	"EHLO grelber.thyrsus.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757842AbZCRSMI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Mar 2009 14:12:08 -0400
+In-Reply-To: <49C087F3.3080507@snapgear.com>
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg Ungerer <gerg@snapgear.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org, dwmw2@infradead.org, linux-next@vger.kernel.org, linux-m68k@lists.linux-m68k.org
 
-2009/3/18 Alexander Beregalov <a.beregalov@gmail.com>:
-> Hi
+On Wednesday 18 March 2009 00:34:43 Greg Ungerer wrote:
+> Hi Rob,
 >
-> Ultra 10 can boot, it receives DHCP answer, ssh works, but few minutes
-> after machine becomes unresponsible by net at all.
-> It does not respond even on ARP requests.
+> Rob Landley wrote:
+> > On Monday 16 March 2009 18:10:45 Greg Ungerer wrote:
+> >>>>    git://git.kernel.org/pub/scm/linux/kernel/git/gerg/m68knommu.git
+> >>>> fix-includes
+...
+> > What _should_ I have done?
 >
-> On Sparc host I see that `TX packets` does not grow, but RX grows.
-> The state of the interface is
-> UP BROADCAST RUNNING MULTICAST
+> The git clone you have done will just get the master branch,
+> and put it in a directory named fix-includes.
 >
-> There is no relevant kernel messages in dmesg.
+> Which is ok, but you still won't have the "fix-includes" branch.
+> Do this after the clone:
 >
-> next-20090317 worked fine.
->
->
-> Let me know if I can help.
->
+>    git pull
+> git://git.kernel.org/pub/scm/linux/kernel/git/gerg/m68knommu.git
+> fix-includes
 
-I have reproduced it on next-20090318 for the second time, but still
-do not know how.
-next-20090317 might be affected.
+Ah, that did something interesting...  And the resulting headers built in 
+uClibc.  (Works for me!)
 
-Now both packet counters grow, but tcpdump cannot capture any packet.
+confirmed-uClibc-builds-with-it-by: Rob Landley <rob@landley.net>
+
+Thanks,
+
+Rob
