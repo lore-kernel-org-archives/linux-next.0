@@ -1,41 +1,61 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: Next March 18: [staging/net ??] build break
-Date: Wed, 18 Mar 2009 08:27:15 -0700
-Message-ID: <20090318152715.GB8655@kroah.com>
-References: <20090318173830.7ea03dfb.sfr@canb.auug.org.au> <49C0D3BF.8060908@in.ibm.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for March 11 (tracing)
+Date: Wed, 18 Mar 2009 08:46:51 -0700
+Message-ID: <20090318084651.3dbf01e3.randy.dunlap@oracle.com>
+References: <20090311225913.51589223.sfr@canb.auug.org.au>
+	<49B7F691.5000305@oracle.com>
+	<49B93584.3020302@oracle.com>
+	<1236875181.11290.1.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:50220 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752088AbZCRPaD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 Mar 2009 11:30:03 -0400
-Content-Disposition: inline
-In-Reply-To: <49C0D3BF.8060908@in.ibm.com>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:54008 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752040AbZCRPpW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Mar 2009 11:45:22 -0400
+In-Reply-To: <1236875181.11290.1.camel@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, davem@davemloft.net
+To: Steven Rostedt <srostedt@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>, Ingo Molnar <mingo@elte.hu>
 
-On Wed, Mar 18, 2009 at 04:28:07PM +0530, Sachin Sant wrote:
-> Today's Next randconfig build fails with
->
-> drivers/staging/built-in.o: In function .ieee80211_xmit:
-> (.text+0x69460): multiple definition of .ieee80211_xmit
-> drivers/net/built-in.o:(.text+0x2557e0): first defined here
-> ld: Warning: size of symbol .ieee80211_xmit changed from 3688 in 
-> drivers/net/built-in.o to 2880 in drivers/staging/built-in.o
-> drivers/staging/built-in.o: In function ieee80211_xmit:
-> (.opd+0x2ff0): multiple definition of ieee80211_xmit
-> drivers/net/built-in.o:(.opd+0xe980): first defined here
-> make[1]: *** [drivers/built-in.o] Error 1
+On Thu, 12 Mar 2009 12:26:21 -0400 Steven Rostedt wrote:
 
-Known issue, don't build all the staging wireless drivers into the
-kernel tree, you will get conflicting symbols like this.
+> 
+> On Thu, 2009-03-12 at 09:17 -0700, Randy Dunlap wrote:
+> > [adding cc:s]
+> > 
+> > [same report for March 12]
+> > 
+> > Randy Dunlap wrote:
+> > > Stephen Rothwell wrote:
+> > >> Hi all,
+> > >>
+> > >> Changes since 20090310:
+> > > 
+> > > 
+> > > Building on i386 generates a ton of printk format warnings:
+> > > 
+> > > kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 5 has type 'unsigned int'
+> > > kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 6 has type 'unsigned int'
+> > > kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 9 has type 'unsigned int'
+> > > kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 10 has type 'unsigned int'
+> > > kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 13 has type 'unsigned int'
+> > > kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 14 has type 'unsigned int'
+> > > kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 17 has type 'unsigned int'
+> > > kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 18 has type 'unsigned int'
+> > > kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 21 has type 'unsigned int'
+> > > kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 22 has type 'unsigned int'
+> > > 
+> 
+> I believe this is corrected in Ingo's tip tree. I changed %lu to %zu to
+> handle the "sizeof()" case. The fix was suggested by Andrew Morton.
 
-People are working on this, but it's much lower priority as it isn't a
-real use case.
 
-thanks,
+This build warning is still around (20090318).
+Is the fix not in some branch that is imported into linux-next or what?
 
-greg k-h
+Thanks,
+---
+~Randy
