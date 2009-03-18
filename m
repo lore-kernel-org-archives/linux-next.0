@@ -1,37 +1,54 @@
-From: Gleb Natapov <gleb@redhat.com>
-Subject: Re: next-20090317: ia64/kvm build fails
-Date: Tue, 17 Mar 2009 17:56:31 +0200
-Message-ID: <20090317155631.GB1754@redhat.com>
-References: <a4423d670903170827k5bba62fbi68f987582b091214@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: acpi tree build failure
+Date: Wed, 18 Mar 2009 11:57:13 +1100
+Message-ID: <20090318115713.bafedc37.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__18_Mar_2009_11_57_13_+1100_vO7hP2zt9d6y4KSt"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([66.187.233.31]:44043 "EHLO mx1.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:42023 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755749AbZCQQAV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Mar 2009 12:00:21 -0400
-Content-Disposition: inline
-In-Reply-To: <a4423d670903170827k5bba62fbi68f987582b091214@mail.gmail.com>
+	id S1752479AbZCRA5i (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Mar 2009 20:57:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, kvm-ia64@vger.kernel.org, Marcelo Tosatti <mtosatti@redhat.com>, kvm@vger.kernel.org
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, Bob Moore <robert.moore@intel.com>, Lin Ming <ming.m.lin@intel.com>, linux-acpi@vger.kernel.org
 
-On Tue, Mar 17, 2009 at 06:27:47PM +0300, Alexander Beregalov wrote:
-> Hi
-> 
-> randconfig build on ia64 fails like this
-> 
->   CC [M]  arch/ia64/kvm/../../../virt/kvm/irq_comm.o
-> arch/ia64/kvm/../../../virt/kvm/irq_comm.c: In function
-> 'kvm_irq_delivery_to_apic':
-> arch/ia64/kvm/../../../virt/kvm/irq_comm.c:53: error: 'APIC_DM_LOWEST'
-> undeclared (first use in this function)
-> 
-> Introduced in
-> 654ae3513 "KVM: APIC: get rid of deliver_bitmask"
-The fix was submitted, but not yet applied:
-http://marc.info/?l=kvm&m=123676776311933&w=4
+--Signature=_Wed__18_Mar_2009_11_57_13_+1100_vO7hP2zt9d6y4KSt
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---
-			Gleb.
+Hi Len,
+
+Today's (and several previous day's) linux-next build (i386 allmodconfig)
+failed like this:
+
+arch/x86/kernel/cpu/cpufreq/longhaul.c: In function 'longhaul_setstate':
+arch/x86/kernel/cpu/cpufreq/longhaul.c:308: error: implicit declaration of =
+function 'acpi_set_register'
+
+(http://kisskb.ellerman.id.au/kisskb/target/421/)
+
+Caused by commit e2f34512879026beb26827c14b1d1e67c07f2858 ("ACPICA:
+Rename ACPI bit register access functions").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__18_Mar_2009_11_57_13_+1100_vO7hP2zt9d6y4KSt
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknARukACgkQjjKRsyhoI8z28gCfTi0EsT3DCFtpmxhN8p5ZeWJ/
+aNgAoK9TRgWOE2bMjlQOyQUs45oupT1O
+=BNZb
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__18_Mar_2009_11_57_13_+1100_vO7hP2zt9d6y4KSt--
