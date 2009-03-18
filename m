@@ -1,93 +1,99 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
+From: Ingo Molnar <mingo@elte.hu>
 Subject: Re: linux-next: Tree for March 11 (tracing)
-Date: Wed, 18 Mar 2009 09:44:14 -0700
-Message-ID: <49C124DE.9090001@oracle.com>
-References: <20090311225913.51589223.sfr@canb.auug.org.au> <49B7F691.5000305@oracle.com> <49B93584.3020302@oracle.com> <1236875181.11290.1.camel@localhost.localdomain> <20090318084651.3dbf01e3.randy.dunlap@oracle.com> <20090318160621.GA21331@elte.hu> <49C11DB4.3070500@oracle.com> <20090318163228.GD21331@elte.hu>
+Date: Wed, 18 Mar 2009 17:49:26 +0100
+Message-ID: <20090318164926.GC31315@elte.hu>
+References: <20090311225913.51589223.sfr@canb.auug.org.au> <49B7F691.5000305@oracle.com> <49B93584.3020302@oracle.com> <1236875181.11290.1.camel@localhost.localdomain> <20090318084651.3dbf01e3.randy.dunlap@oracle.com> <20090318160621.GA21331@elte.hu> <49C11DB4.3070500@oracle.com> <20090318163228.GD21331@elte.hu> <49C124DE.9090001@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:62085 "EHLO
-	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752640AbZCRQqc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Mar 2009 12:46:32 -0400
-In-Reply-To: <20090318163228.GD21331@elte.hu>
+Received: from mx3.mail.elte.hu ([157.181.1.138]:48296 "EHLO mx3.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758672AbZCRQtq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 Mar 2009 12:49:46 -0400
+Content-Disposition: inline
+In-Reply-To: <49C124DE.9090001@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
+To: Randy Dunlap <randy.dunlap@oracle.com>
 Cc: Steven Rostedt <srostedt@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>
 
-Ingo Molnar wrote:
-> * Randy Dunlap <randy.dunlap@oracle.com> wrote:
-> 
->> Ingo Molnar wrote:
->>> * Randy Dunlap <randy.dunlap@oracle.com> wrote:
->>>
->>>> On Thu, 12 Mar 2009 12:26:21 -0400 Steven Rostedt wrote:
->>>>
->>>>> On Thu, 2009-03-12 at 09:17 -0700, Randy Dunlap wrote:
->>>>>> [adding cc:s]
->>>>>>
->>>>>> [same report for March 12]
->>>>>>
->>>>>> Randy Dunlap wrote:
->>>>>>> Stephen Rothwell wrote:
->>>>>>>> Hi all,
->>>>>>>>
->>>>>>>> Changes since 20090310:
->>>>>>> Building on i386 generates a ton of printk format warnings:
->>>>>>>
->>>>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 5 has type 'unsigned int'
->>>>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 6 has type 'unsigned int'
->>>>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 9 has type 'unsigned int'
->>>>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 10 has type 'unsigned int'
->>>>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 13 has type 'unsigned int'
->>>>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 14 has type 'unsigned int'
->>>>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 17 has type 'unsigned int'
->>>>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 18 has type 'unsigned int'
->>>>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 21 has type 'unsigned int'
->>>>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 22 has type 'unsigned int'
->>>>>>>
->>>>> I believe this is corrected in Ingo's tip tree. I changed %lu to %zu to
->>>>> handle the "sizeof()" case. The fix was suggested by Andrew Morton.
->>>> This build warning is still around (20090318).
->>>> Is the fix not in some branch that is imported into linux-next or what?
->>> be patient.
->>>
->>> 	Ingo
->> I think that 7 days is being patient for a simple build fix.
-> 
-> s/build fix/harmless build warning fix
 
-180+ lines of noise in a build log.
+* Randy Dunlap <randy.dunlap@oracle.com> wrote:
 
-> If you are interested in having a resolution you can git-merge the 
-> latest development tree yourself and you can get rid of that 
-> warning.
+> Ingo Molnar wrote:
+> > * Randy Dunlap <randy.dunlap@oracle.com> wrote:
+> > 
+> >> Ingo Molnar wrote:
+> >>> * Randy Dunlap <randy.dunlap@oracle.com> wrote:
+> >>>
+> >>>> On Thu, 12 Mar 2009 12:26:21 -0400 Steven Rostedt wrote:
+> >>>>
+> >>>>> On Thu, 2009-03-12 at 09:17 -0700, Randy Dunlap wrote:
+> >>>>>> [adding cc:s]
+> >>>>>>
+> >>>>>> [same report for March 12]
+> >>>>>>
+> >>>>>> Randy Dunlap wrote:
+> >>>>>>> Stephen Rothwell wrote:
+> >>>>>>>> Hi all,
+> >>>>>>>>
+> >>>>>>>> Changes since 20090310:
+> >>>>>>> Building on i386 generates a ton of printk format warnings:
+> >>>>>>>
+> >>>>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 5 has type 'unsigned int'
+> >>>>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 6 has type 'unsigned int'
+> >>>>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 9 has type 'unsigned int'
+> >>>>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 10 has type 'unsigned int'
+> >>>>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 13 has type 'unsigned int'
+> >>>>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 14 has type 'unsigned int'
+> >>>>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 17 has type 'unsigned int'
+> >>>>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 18 has type 'unsigned int'
+> >>>>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 21 has type 'unsigned int'
+> >>>>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 22 has type 'unsigned int'
+> >>>>>>>
+> >>>>> I believe this is corrected in Ingo's tip tree. I changed %lu to %zu to
+> >>>>> handle the "sizeof()" case. The fix was suggested by Andrew Morton.
+> >>>> This build warning is still around (20090318).
+> >>>> Is the fix not in some branch that is imported into linux-next or what?
+> >>> be patient.
+> >>>
+> >>> 	Ingo
+> >> I think that 7 days is being patient for a simple build fix.
+> > 
+> > s/build fix/harmless build warning fix
 > 
-> Of course that way you'd expose yourself to even fresher code, 
-> potentially with much more serious breakages.
+> 180+ lines of noise in a build log.
 > 
-> It's a balance of freshness versus stability, and that balance is 
-> kept by maintainers.
+> > If you are interested in having a resolution you can git-merge the 
+> > latest development tree yourself and you can get rid of that 
+> > warning.
+> > 
+> > Of course that way you'd expose yourself to even fresher code, 
+> > potentially with much more serious breakages.
+> > 
+> > It's a balance of freshness versus stability, and that balance is 
+> > kept by maintainers.
+> > 
+> > If you want the latest development code - go engage with the 
+> > development trees directly.
+> > 
+> > If you want something that is relatively new (i.e. 1-2 weeks fresh) 
+> > but works on the range of systems we test, use what you get in 
+> > linux-next.
+> > 
+> > It's your choice which one you pick.
+> > 
+> > But you cannot have both.
+> > 
+> > If you genuinely think you can have it both, by all means i 
+> > encourage you to try it - it's all open source so you can run your 
+> > own tree. Just please dont feel entitled to demand it from others.
 > 
-> If you want the latest development code - go engage with the 
-> development trees directly.
-> 
-> If you want something that is relatively new (i.e. 1-2 weeks fresh) 
-> but works on the range of systems we test, use what you get in 
-> linux-next.
-> 
-> It's your choice which one you pick.
-> 
-> But you cannot have both.
-> 
-> If you genuinely think you can have it both, by all means i 
-> encourage you to try it - it's all open source so you can run your 
-> own tree. Just please dont feel entitled to demand it from others.
+> Thanks for the explanation.  That's what I tried to ask for
+> to begin with.  I guess that I have a language problem.
 
-Thanks for the explanation.  That's what I tried to ask for
-to begin with.  I guess that I have a language problem.
+Note, six hours ago i reintegrated all the auto-next branches so 
+this warning should be gone in the next linux-next iteration - they 
+are now traded for brand new bugs ;-)
 
--- 
-~Randy
+	Ingo
