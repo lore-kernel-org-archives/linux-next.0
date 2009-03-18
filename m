@@ -1,91 +1,36 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: Tree for March 11 (tracing)
-Date: Wed, 18 Mar 2009 17:32:28 +0100
-Message-ID: <20090318163228.GD21331@elte.hu>
-References: <20090311225913.51589223.sfr@canb.auug.org.au> <49B7F691.5000305@oracle.com> <49B93584.3020302@oracle.com> <1236875181.11290.1.camel@localhost.localdomain> <20090318084651.3dbf01e3.randy.dunlap@oracle.com> <20090318160621.GA21331@elte.hu> <49C11DB4.3070500@oracle.com>
+From: Greg KH <gregkh@suse.de>
+Subject: Re: linux-next: Tree for March 18 (staging/comedi)
+Date: Wed, 18 Mar 2009 09:33:19 -0700
+Message-ID: <20090318163319.GA9706@suse.de>
+References: <20090318173830.7ea03dfb.sfr@canb.auug.org.au> <49C121C7.1040903@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:36200 "EHLO mx3.mail.elte.hu"
+Received: from mx2.suse.de ([195.135.220.15]:55045 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752945AbZCRQck (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 Mar 2009 12:32:40 -0400
+	id S1757969AbZCRQfv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 Mar 2009 12:35:51 -0400
 Content-Disposition: inline
-In-Reply-To: <49C11DB4.3070500@oracle.com>
+In-Reply-To: <49C121C7.1040903@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Steven Rostedt <srostedt@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-
-* Randy Dunlap <randy.dunlap@oracle.com> wrote:
-
-> Ingo Molnar wrote:
-> > * Randy Dunlap <randy.dunlap@oracle.com> wrote:
+On Wed, Mar 18, 2009 at 09:31:03AM -0700, Randy Dunlap wrote:
+> Stephen Rothwell wrote:
+> > Hi all,
 > > 
-> >> On Thu, 12 Mar 2009 12:26:21 -0400 Steven Rostedt wrote:
-> >>
-> >>> On Thu, 2009-03-12 at 09:17 -0700, Randy Dunlap wrote:
-> >>>> [adding cc:s]
-> >>>>
-> >>>> [same report for March 12]
-> >>>>
-> >>>> Randy Dunlap wrote:
-> >>>>> Stephen Rothwell wrote:
-> >>>>>> Hi all,
-> >>>>>>
-> >>>>>> Changes since 20090310:
-> >>>>>
-> >>>>> Building on i386 generates a ton of printk format warnings:
-> >>>>>
-> >>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 5 has type 'unsigned int'
-> >>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 6 has type 'unsigned int'
-> >>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 9 has type 'unsigned int'
-> >>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 10 has type 'unsigned int'
-> >>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 13 has type 'unsigned int'
-> >>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 14 has type 'unsigned int'
-> >>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 17 has type 'unsigned int'
-> >>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 18 has type 'unsigned int'
-> >>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 21 has type 'unsigned int'
-> >>>>> kernel/trace/trace_events.c:470: warning: format '%lu' expects type 'long unsigned int', but argument 22 has type 'unsigned int'
-> >>>>>
-> >>> I believe this is corrected in Ingo's tip tree. I changed %lu to %zu to
-> >>> handle the "sizeof()" case. The fix was suggested by Andrew Morton.
-> >>
-> >> This build warning is still around (20090318).
-> >> Is the fix not in some branch that is imported into linux-next or what?
-> > 
-> > be patient.
-> > 
-> > 	Ingo
+> > Changes since 20090317:
 > 
-> I think that 7 days is being patient for a simple build fix.
+> 
+> drivers/staging/comedi/comedi_compat32.c: In function 'compat_chaninfo':
+> drivers/staging/comedi/comedi_compat32.c:135: error: dereferencing pointer to incomplete type
 
-s/build fix/harmless build warning fix
+<snip>
 
-If you are interested in having a resolution you can git-merge the 
-latest development tree yourself and you can get rid of that 
-warning.
+Ick, sorry about that, I'll fix it up for tomorrows -next release.
 
-Of course that way you'd expose yourself to even fresher code, 
-potentially with much more serious breakages.
+thanks,
 
-It's a balance of freshness versus stability, and that balance is 
-kept by maintainers.
-
-If you want the latest development code - go engage with the 
-development trees directly.
-
-If you want something that is relatively new (i.e. 1-2 weeks fresh) 
-but works on the range of systems we test, use what you get in 
-linux-next.
-
-It's your choice which one you pick.
-
-But you cannot have both.
-
-If you genuinely think you can have it both, by all means i 
-encourage you to try it - it's all open source so you can run your 
-own tree. Just please dont feel entitled to demand it from others.
-
-	Ingo
+greg "forgot to build last night on x86-64" k-h
