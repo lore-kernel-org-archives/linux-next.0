@@ -1,56 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: acpi tree build failure
-Date: Wed, 18 Mar 2009 14:27:38 +1100
-Message-ID: <20090318142738.ae6eda7e.sfr@canb.auug.org.au>
-References: <20090318115713.bafedc37.sfr@canb.auug.org.au>
-	<1237338541.29562.5.camel@minggr>
+From: Rob Landley <rob@landley.net>
+Subject: Re: make headers_install broken for ARCH=m68k in 2.6.29-rc7.
+Date: Tue, 17 Mar 2009 23:03:58 -0500
+Message-ID: <200903172304.00157.rob@landley.net>
+References: <200903120437.03837.rob@landley.net> <200903161521.00036.rob@landley.net> <49BEDC75.1080704@snapgear.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__18_Mar_2009_14_27_38_+1100_fQ56=2bvcZ9xbEeE"
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <1237338541.29562.5.camel@minggr>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Lin Ming <ming.m.lin@intel.com>
-Cc: Len Brown <lenb@kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "Moore, Robert" <robert.moore@intel.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-m68k-owner@vger.kernel.org>
+In-Reply-To: <49BEDC75.1080704@snapgear.com>
+Content-Disposition: inline
+Sender: linux-m68k-owner@vger.kernel.org
+To: Greg Ungerer <gerg@snapgear.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org, dwmw2@infradead.org, linux-next@vger.kernel.org, linux-m68k@lists.linux-m68k.org
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__18_Mar_2009_14_27_38_+1100_fQ56=2bvcZ9xbEeE
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Monday 16 March 2009 18:10:45 Greg Ungerer wrote:
+> >>    git://git.kernel.org/pub/scm/linux/kernel/git/gerg/m68knommu.git
+> >> fix-includes
+...
+> Did you get the "fix-includes" branch?
 
-Hi Lin,
+Quite possibly not.  (I'm not a git person.)
 
-On Wed, 18 Mar 2009 09:09:01 +0800 Lin Ming <ming.m.lin@intel.com> wrote:
->
-> Please try below patch,
->=20
->=20
->     ACPI: cpufreq: use new bit register access function
->    =20
->     Signed-off-by: Lin Ming <ming.m.lin@intel.com>
+I did a "git clone git://blah fix-includes" of the branch you gave a URL to, 
+checked for tags and saw nothing particularly interesting, did a log -v and 
+exported an archive of the most recent commit, and built it.
 
-That fixes the build problem - I tested it on top of just today's acpi
-test branch (which is what goes into linux-next).  I don't have the
-hardware ...
+(Just tried it again with the same result.)
 
-Compile-tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+What _should_ I have done?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__18_Mar_2009_14_27_38_+1100_fQ56=2bvcZ9xbEeE
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAknAaioACgkQjjKRsyhoI8zvfACcCFm02pUQv97qwVVUF+1cXLyf
-Y1AAnRUA7YfKIxnHP0y7+a55mMKPkGa6
-=+Btf
------END PGP SIGNATURE-----
-
---Signature=_Wed__18_Mar_2009_14_27_38_+1100_fQ56=2bvcZ9xbEeE--
+Rob
