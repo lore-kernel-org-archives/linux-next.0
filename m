@@ -1,63 +1,41 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: make headers_install broken for ARCH=m68k in 2.6.29-rc7.
-Date: Thu, 19 Mar 2009 08:59:45 +0100
-Message-ID: <10f740e80903190059qae0629bs8658cad8f3ad8761@mail.gmail.com>
-References: <200903120437.03837.rob@landley.net>
-	 <200903172304.00157.rob@landley.net> <49C087F3.3080507@snapgear.com>
-	 <200903181312.02047.rob@landley.net>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the iommu tree with the kernel-doc
+	tree
+Date: Thu, 19 Mar 2009 09:02:44 +0100
+Message-ID: <20090319080244.GA4595@elte.hu>
+References: <20090319185732.b8cc98a8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-m68k-owner@vger.kernel.org>
-In-Reply-To: <200903181312.02047.rob@landley.net>
-Sender: linux-m68k-owner@vger.kernel.org
-To: Rob Landley <rob@landley.net>
-Cc: Greg Ungerer <gerg@snapgear.com>, Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org, dwmw2@infradead.org, linux-next@vger.kernel.org, linux-m68k@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.mail.elte.hu ([157.181.151.9]:45368 "EHLO mx2.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750900AbZCSIDG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 Mar 2009 04:03:06 -0400
+Content-Disposition: inline
+In-Reply-To: <20090319185732.b8cc98a8.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Joerg Roedel <joerg.roedel@amd.com>, Randy Dunlap <randy.dunlap@oracle.com>
 
-On Wed, Mar 18, 2009 at 19:12, Rob Landley <rob@landley.net> wrote:
-> On Wednesday 18 March 2009 00:34:43 Greg Ungerer wrote:
->> Rob Landley wrote:
->> > On Monday 16 March 2009 18:10:45 Greg Ungerer wrote:
->> >>>> =C2=A0 =C2=A0git://git.kernel.org/pub/scm/linux/kernel/git/gerg=
-/m68knommu.git
->> >>>> fix-includes
-> ...
->> > What _should_ I have done?
->>
->> The git clone you have done will just get the master branch,
->> and put it in a directory named fix-includes.
->>
->> Which is ok, but you still won't have the "fix-includes" branch.
->> Do this after the clone:
->>
->> =C2=A0 =C2=A0git pull
->> git://git.kernel.org/pub/scm/linux/kernel/git/gerg/m68knommu.git
->> fix-includes
->
-> Ah, that did something interesting... =C2=A0And the resulting headers=
- built in
-> uClibc. =C2=A0(Works for me!)
->
-> confirmed-uClibc-builds-with-it-by: Rob Landley <rob@landley.net>
 
-Does it boot on ARAnyM? ;-)
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Gr{oetje,eeting}s,
+> Hi Ingo,
+> 
+> Today's linux-next merge of the iommu tree got a conflict in
+> Documentation/kernel-parameters.txt between commit
+> 8e141e0b33e2fd17540881a1ead5103dd229bf81 ("docum-kernprms-alpha3") from
+> the kernel-doc tree and commit 59d3daafa17265f01149df8eab3fb69b9b42cb2e
+> ("dma-debug: add kernel command line parameters") from the iommu tree.
 
-						Geert
+a sidenote for Randy, the commit title looks weird:
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
+  From 8e141e0b33e2fd17540881a1ead5103dd229bf81 Mon Sep 17 00:00:00 2001
+  From: Randy Dunlap <randy.dunlap@oracle.com>
+  Date: Tue, 24 Feb 2009 11:11:44 +1100
+  Subject: [PATCH] docum-kernprms-alpha3
 
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-							    -- Linus Torvalds
---
-To unsubscribe from this list: send the line "unsubscribe linux-m68k" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+this is not really acceptable for upstream.
+
+	Ingo
