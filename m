@@ -1,41 +1,55 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: Tree for March 19 (staging/psb)
-Date: Thu, 19 Mar 2009 11:51:40 -0700
-Message-ID: <20090319185140.GB20608@kroah.com>
-References: <20090319221024.5e2ad6e5.sfr@canb.auug.org.au> <49C27BBC.8070908@oracle.com>
+From: Michael Buesch <mb@bu3sch.de>
+Subject: Re: linux-next: Tree for March 19 (wireless/p54)
+Date: Thu, 19 Mar 2009 19:55:00 +0100
+Message-ID: <200903191955.00718.mb@bu3sch.de>
+References: <20090319221024.5e2ad6e5.sfr@canb.auug.org.au> <200903191850.17825.mb@bu3sch.de> <49C293CC.6020009@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:51427 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1755017AbZCSSxR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 Mar 2009 14:53:17 -0400
+Received: from bu3sch.de ([62.75.166.246]:53802 "EHLO vs166246.vserver.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750933AbZCSS4o (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 Mar 2009 14:56:44 -0400
+In-Reply-To: <49C293CC.6020009@oracle.com>
 Content-Disposition: inline
-In-Reply-To: <49C27BBC.8070908@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg KH <gregkh@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
 
-On Thu, Mar 19, 2009 at 10:07:08AM -0700, Randy Dunlap wrote:
-> Stephen Rothwell wrote:
-> > Hi all,
+On Thursday 19 March 2009 19:49:48 Randy Dunlap wrote:
+> Michael Buesch wrote:
+> > On Thursday 19 March 2009 18:28:30 Randy Dunlap wrote:
+> >> Stephen Rothwell wrote:
+> >>> Hi all,
+> >>>
+> >>> Changes since 20090318:
+> >>
+> >> ERROR: "led_classdev_register" [drivers/net/wireless/p54/p54common.ko] undefined!
+> >> ERROR: "led_classdev_unregister" [drivers/net/wireless/p54/p54common.ko] undefined!
+> >>
+> >> One possible option (fix) is to have CONFIG_MAC80211_LEDS also select
+> >> LEDS_CLASS (that would build the missing functions).
 > > 
-> > Changes since 20090318:
+> > Does p54 select CONFIG_MAC80211_LEDS? If that's the case, I think it should
 > 
-> 
-> drivers/staging/psb/drm_os_linux.h:54: error: conflicting types for 'irqreturn_t'
-> include/linux/irqreturn.h:14: error: previous declaration of 'irqreturn_t' was here
+>   No, it doesn't.  p54common.c just has a large block of code that is
+> surrounded by
+> #ifdef CONFIG_MAC80211_LEDS
+> ...
+> #endif
 
-This one will be fixed tomorrow as I've pushed a new version of the
-driver out that doesn't contain a new copy of the drm core.
+Yeah. I do think that it'd be wrong for mac80211 to select LEDS_CLASS.
+mac80211 implements the triggers and the lowlevel drivers implement the LED class device.
+So mac80211 does not depend on LEDS_CLASS at all.
 
-> drivers/staging/psb/intel_reg.h:785:1: warning: "set_page_address" redefined
-> include/linux/mm.h:622:1: warning: this is the location of the previous definition
-> make[4]: *** [drivers/staging/psb/psb_drv.o] Error 1
+So p54 should probably introduce an automagic config option like b43 does, or it should do
+something (ugly) like this:
 
-Odd, I'll try to find this one.
-
-thanks,
-
-greg k-h
+#if defined(CONFIG_MAC80211_LEDS) && (defined(CONFIG_LEDS_CLASS) || defined(CONFIG_LEDS_CLASS_MODULE))
+...
+#endif
+-- 
+Greetings, Michael.
