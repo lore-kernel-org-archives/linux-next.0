@@ -1,48 +1,54 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: m68k ICE on drivers/net/wimax/i2400m/fw.c
-Date: Thu, 19 Mar 2009 14:02:55 +0100 (CET)
-Message-ID: <Pine.LNX.4.64.0903191359130.7092@anakin>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Next March 19: drivers/comedi build break.
+Date: Thu, 19 Mar 2009 18:50:10 +0530
+Message-ID: <49C2468A.1040504@in.ibm.com>
+References: <20090319221024.5e2ad6e5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-m68k-owner@vger.kernel.org>
-Sender: linux-m68k-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Linux/m68k <linux-m68k@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=windows-1252;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e23smtp01.au.ibm.com ([202.81.31.143]:39060 "EHLO
+	e23smtp01.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753856AbZCSNUQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Mar 2009 09:20:16 -0400
+In-Reply-To: <20090319221024.5e2ad6e5.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-	Hi Stephen,
+Next 19 randconfig build fails with :
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/225979/
-| drivers/net/wimax/i2400m/fw.c:892: internal compiler error: in splice_child_die, at dwarf2out.c:5347
-| distcc[11452] ERROR: compile drivers/net/wimax/i2400m/fw.c on sprygo/32 failed
+  CC [M]  drivers/staging/comedi/comedi_fops.o
+In file included from drivers/staging/comedi/comedidev.h:38,
+                 from drivers/staging/comedi/comedi_fops.c:45:
+drivers/staging/comedi/interrupt.h:25: error: conflicting types for =91=
+irqreturn_t=92
+include/linux/irqreturn.h:14: error: previous declaration of =91irqretu=
+rn_t=92 was here
+In file included from drivers/staging/comedi/comedidev.h:38,
+                 from drivers/staging/comedi/comedi_fops.c:45:
+drivers/staging/comedi/interrupt.h:28:1: warning: "IRQ_RETVAL" redefine=
+d
+In file included from include/linux/interrupt.h:10,
+                 from drivers/staging/comedi/interrupt.h:22,
+                 from drivers/staging/comedi/comedidev.h:38,
+                 from drivers/staging/comedi/comedi_fops.c:45:
+include/linux/irqreturn.h:15:1: warning: this is the location of the pr=
+evious definition
+make[3]: *** [drivers/staging/comedi/comedi_fops.o] Error 1
 
-If upgrading your m68k-unknown-linux-gnu-gcc (GCC) 4.0.2 is not an option (my
-4.1.2 20061115 (prerelease) (Debian 4.1.1-21) has no problems with this file),
-does the patch below help?
+Probably because of the irqreturn_t related changes.
 
-diff --git a/drivers/net/wimax/i2400m/Makefile b/drivers/net/wimax/i2400m/Makefile
-index 5d9e018..048e8dd 100644
---- a/drivers/net/wimax/i2400m/Makefile
-+++ b/drivers/net/wimax/i2400m/Makefile
-@@ -28,3 +28,7 @@ i2400m-sdio-y := 		\
- 	sdio-tx.o   		\
- 	sdio-fw.o	 	\
- 	sdio-rx.o
-+
-+ifeq ($(ARCH),m68k)
-+CFLAGS_fw.o	+= -O1
-+endif
+Thanks
+-Sachin
 
-Note that you cannot lower the optimization level to -O0, because of
-BUILD_BUG_ON().
+--=20
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
