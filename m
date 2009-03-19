@@ -1,46 +1,40 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH next-20090319] wireless/p54: P54_SPI should depend on
- GENERIC_HARDIRQS
-Date: Thu, 19 Mar 2009 13:33:52 +0100 (CET)
-Message-ID: <Pine.LNX.4.64.0903191331001.5130@anakin>
+Subject: m68k ICE on drivers/net/wimax/i2400m/fw.c
+Date: Thu, 19 Mar 2009 14:02:55 +0100 (CET)
+Message-ID: <Pine.LNX.4.64.0903191359130.7092@anakin>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from juliette.telenet-ops.be ([195.130.137.74]:49611 "EHLO
-	juliette.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752610AbZCSMd5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Mar 2009 08:33:57 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Christian Lamparter <chunkeey@web.de>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, Linux Kernel Development <linux-kernel@vger.kernel.org>
+Return-path: <linux-m68k-owner@vger.kernel.org>
+Sender: linux-m68k-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Linux/m68k <linux-m68k@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-m68k allmodconfig:
-| drivers/net/wireless/p54/p54spi.c: In function 'p54spi_probe':
-| drivers/net/wireless/p54/p54spi.c:675: error: implicit declaration of function
-| 'set_irq_type'
-| make[4]: *** [drivers/net/wireless/p54/p54spi.o] Error 1
+	Hi Stephen,
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
- drivers/net/wireless/p54/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+http://kisskb.ellerman.id.au/kisskb/buildresult/225979/
+| drivers/net/wimax/i2400m/fw.c:892: internal compiler error: in splice_child_die, at dwarf2out.c:5347
+| distcc[11452] ERROR: compile drivers/net/wimax/i2400m/fw.c on sprygo/32 failed
 
-diff --git a/drivers/net/wireless/p54/Kconfig b/drivers/net/wireless/p54/Kconfig
-index cfc5f41..0e344ac 100644
---- a/drivers/net/wireless/p54/Kconfig
-+++ b/drivers/net/wireless/p54/Kconfig
-@@ -64,7 +64,7 @@ config P54_PCI
- 
- config P54_SPI
- 	tristate "Prism54 SPI (stlc45xx) support"
--	depends on P54_COMMON && SPI_MASTER
-+	depends on P54_COMMON && SPI_MASTER && GENERIC_HARDIRQS
- 	---help---
- 	  This driver is for stlc4550 or stlc4560 based wireless chips.
- 	  This driver is experimental, untested and will probably only work on
--- 
-1.6.2
+If upgrading your m68k-unknown-linux-gnu-gcc (GCC) 4.0.2 is not an option (my
+4.1.2 20061115 (prerelease) (Debian 4.1.1-21) has no problems with this file),
+does the patch below help?
+
+diff --git a/drivers/net/wimax/i2400m/Makefile b/drivers/net/wimax/i2400m/Makefile
+index 5d9e018..048e8dd 100644
+--- a/drivers/net/wimax/i2400m/Makefile
++++ b/drivers/net/wimax/i2400m/Makefile
+@@ -28,3 +28,7 @@ i2400m-sdio-y := 		\
+ 	sdio-tx.o   		\
+ 	sdio-fw.o	 	\
+ 	sdio-rx.o
++
++ifeq ($(ARCH),m68k)
++CFLAGS_fw.o	+= -O1
++endif
+
+Note that you cannot lower the optimization level to -O0, because of
+BUILD_BUG_ON().
 
 Gr{oetje,eeting}s,
 
