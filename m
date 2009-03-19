@@ -1,105 +1,85 @@
-From: Greg Ungerer <gerg@snapgear.com>
-Subject: [git pull] m68k fix user exported includes
-Date: Thu, 19 Mar 2009 10:28:57 +1000
-Message-ID: <200903190028.n2J0Sv7h002641@localhost.localdomain>
-Return-path: <linux-m68k-owner@vger.kernel.org>
-Sender: linux-m68k-owner@vger.kernel.org
-To: torvalds@linux-foundation.org
-Cc: dwmw2@infradead.org, geert@linux-m68k.org, gerg@uclinux.org, linux-kernel@vger.kernel.org, linux-m68k@vger.kernel.org, linux-next@vger.kernel.org, rob@landley.net, sam@ravnborg.org
-List-Id: linux-next.vger.kernel.org
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the cpus4096 tree with the x86 tree
+Date: Thu, 19 Mar 2009 12:17:06 +1100
+Message-ID: <20090319121706.008c1f06.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37526 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751383AbZCSBRM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 Mar 2009 21:17:12 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, Jan Beulich <jbeulich@novell.com>, Jaswinder Singh Rajput <jaswinder@kernel.org>
 
+Hi all,
 
-Linus,
+Today's linux-next merge of the cpus4096 tree got a conflict in
+arch/x86/kernel/cpu/common.c between commits
+9766cdbcb260389669e9679b2aa87c11832f479f ("x86: cpu/common.c cleanups")
+and 02dde8b45c5460794b9052d7c12939fe3eb63c2c ("x86: move various CPU
+initialization objects into .cpuinit.rodata") from the x86 tree and
+commit 3f76a183de8ad3aeb7425f3d9685bb6003abd1a5 ("x86: unify
+cpu_callin_mask/cpu_callout_mask/cpu_initialized_mask/cpu_sibling_setup_mask")
+from the cpus4096 tree.
 
-The merge of the m68knommu and m68k includes broke "headers_install"
-for these arches. For files with differences on each of m68k and m68knommu
-a simple include of either varient was done for many of the user exported
-headers. But the specific files that are included are not exported by
-"headers_install".
+I fixed it up (see below - which looks like how tip/master fixed it) and
+can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-The problem results in errors like:
-
-  build/cross-compiler-m68k/include/asm/param.h:4:22: error: param_mm.h: No
-  such file or directory
-
-when building user space libraries.
-
-Files known to be affected are:
-
-  param.h ptrace.h setup.h sigcontext.h siginfo.h signal.h swab.h unistd.h
-
-All of these cases only have minor differences for each of the m68k and
-m68knommu varient. The best solution is to merge back into a single file
-for these cases (which was always the longer term intention anyway).
-
-Geert Uytterhoeven has checked m68k builds are still ok with this.
-Rob Landley has confirmed uClibc now builds (for m68k) with this.
-I have checked m68knommu builds are still ok.
-
-Please pull to get a fix for this regresion.
-
-Thanks
-Greg
-
-
-
-The following changes since commit 5bee17f18b595937e6beafeee5197868a3f74a06:
-  Kyle McMartin (1):
-        parisc: sba_iommu: fix build bug when CONFIG_PARISC_AGP=y
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/gerg/m68knommu.git fix-includes
-
-Greg Ungerer (8):
-      m68k: merge the non-MMU and MMU versions of param.h
-      m68k: merge the non-MMU and MMU versions of swab.h
-      m68k: merge the non-MMU and MMU versions of sigcontext.h
-      m68k: use MMU version of setup.h for both MMU and non-MMU
-      m68k: merge the non-MMU and MMU versions of ptrace.h
-      m68k: merge the non-MMU and MMU versions of signal.h
-      m68k: use the MMU version of unistd.h for all m68k platforms
-      m68k: merge the non-MMU and MMU versions of siginfo.h
-
- arch/m68k/include/asm/param.h         |   25 ++-
- arch/m68k/include/asm/param_mm.h      |   22 --
- arch/m68k/include/asm/param_no.h      |   22 --
- arch/m68k/include/asm/ptrace.h        |   88 ++++++++-
- arch/m68k/include/asm/ptrace_mm.h     |   80 -------
- arch/m68k/include/asm/ptrace_no.h     |   87 --------
- arch/m68k/include/asm/setup.h         |  377 ++++++++++++++++++++++++++++++++-
- arch/m68k/include/asm/setup_mm.h      |  376 --------------------------------
- arch/m68k/include/asm/setup_no.h      |   10 -
- arch/m68k/include/asm/sigcontext.h    |   25 ++-
- arch/m68k/include/asm/sigcontext_mm.h |   19 --
- arch/m68k/include/asm/sigcontext_no.h |   17 --
- arch/m68k/include/asm/siginfo.h       |   98 +++++++++-
- arch/m68k/include/asm/siginfo_mm.h    |   92 --------
- arch/m68k/include/asm/siginfo_no.h    |    6 -
- arch/m68k/include/asm/signal.h        |  216 ++++++++++++++++++-
- arch/m68k/include/asm/signal_mm.h     |  206 ------------------
- arch/m68k/include/asm/signal_no.h     |  159 --------------
- arch/m68k/include/asm/swab.h          |   30 +++-
- arch/m68k/include/asm/swab_mm.h       |   16 --
- arch/m68k/include/asm/swab_no.h       |   24 --
- arch/m68k/include/asm/unistd.h        |  377 ++++++++++++++++++++++++++++++++-
- arch/m68k/include/asm/unistd_mm.h     |  372 --------------------------------
- arch/m68k/include/asm/unistd_no.h     |  372 --------------------------------
- 24 files changed, 1209 insertions(+), 1907 deletions(-)
- delete mode 100644 arch/m68k/include/asm/param_mm.h
- delete mode 100644 arch/m68k/include/asm/param_no.h
- delete mode 100644 arch/m68k/include/asm/ptrace_mm.h
- delete mode 100644 arch/m68k/include/asm/ptrace_no.h
- delete mode 100644 arch/m68k/include/asm/setup_mm.h
- delete mode 100644 arch/m68k/include/asm/setup_no.h
- delete mode 100644 arch/m68k/include/asm/sigcontext_mm.h
- delete mode 100644 arch/m68k/include/asm/sigcontext_no.h
- delete mode 100644 arch/m68k/include/asm/siginfo_mm.h
- delete mode 100644 arch/m68k/include/asm/siginfo_no.h
- delete mode 100644 arch/m68k/include/asm/signal_mm.h
- delete mode 100644 arch/m68k/include/asm/signal_no.h
- delete mode 100644 arch/m68k/include/asm/swab_mm.h
- delete mode 100644 arch/m68k/include/asm/swab_no.h
- delete mode 100644 arch/m68k/include/asm/unistd_mm.h
- delete mode 100644 arch/m68k/include/asm/unistd_no.h
-
+diff --cc arch/x86/kernel/cpu/common.c
+index e2962cc,d7dd3c2..0000000
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@@ -39,14 -29,22 +39,12 @@@
+  #include <asm/uv/uv.h>
+  #endif
+  
+ -#include <asm/pgtable.h>
+ -#include <asm/processor.h>
+ -#include <asm/desc.h>
+ -#include <asm/atomic.h>
+ -#include <asm/proto.h>
+ -#include <asm/sections.h>
+ -#include <asm/setup.h>
+ -#include <asm/hypervisor.h>
+ -#include <asm/stackprotector.h>
+ -
+  #include "cpu.h"
+  
+- #ifdef CONFIG_X86_64
+- 
+  /* all of these masks are initialized in setup_cpu_local_masks() */
+ -cpumask_var_t cpu_callin_mask;
+ -cpumask_var_t cpu_callout_mask;
+  cpumask_var_t cpu_initialized_mask;
+ +cpumask_var_t cpu_callout_mask;
+ +cpumask_var_t cpu_callin_mask;
+  
+  /* representing cpus for which sibling maps can be computed */
+  cpumask_var_t cpu_sibling_setup_mask;
+@@@ -60,17 -58,7 +58,7 @@@ void __init setup_cpu_local_masks(void
+  	alloc_bootmem_cpumask_var(&cpu_sibling_setup_mask);
+  }
+  
+- #else /* CONFIG_X86_32 */
+- 
+- cpumask_t cpu_sibling_setup_map;
+- cpumask_t cpu_callout_map;
+- cpumask_t cpu_initialized;
+- cpumask_t cpu_callin_map;
+- 
+- #endif /* CONFIG_X86_32 */
+- 
+- 
+ -static struct cpu_dev *this_cpu __cpuinitdata;
+ +static const struct cpu_dev *this_cpu __cpuinitdata;
+  
+  DEFINE_PER_CPU_PAGE_ALIGNED(struct gdt_page, gdt_page) = { .gdt = {
+  #ifdef CONFIG_X86_64
