@@ -1,34 +1,49 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the  tree
-Date: Thu, 19 Mar 2009 08:53:31 -0700
-Message-ID: <20090319155331.GA26076@kroah.com>
-References: <20090319211247.5976c505.sfr@canb.auug.org.au> <20090319153245.GA13963@kroah.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: manual merge of the iommu tree with the kernel-doc
+ tree
+Date: Thu, 19 Mar 2009 09:14:44 -0700
+Message-ID: <49C26F74.7000003@oracle.com>
+References: <20090319185732.b8cc98a8.sfr@canb.auug.org.au> <20090319080244.GA4595@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:56952 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1750900AbZCSPzn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 Mar 2009 11:55:43 -0400
-Content-Disposition: inline
-In-Reply-To: <20090319153245.GA13963@kroah.com>
+Received: from acsinet11.oracle.com ([141.146.126.233]:38969 "EHLO
+	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753458AbZCSQMu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Mar 2009 12:12:50 -0400
+In-Reply-To: <20090319080244.GA4595@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Joerg Roedel <joerg.roedel@amd.com>
 
-On Thu, Mar 19, 2009 at 08:32:45AM -0700, Greg KH wrote:
-> On Thu, Mar 19, 2009 at 09:12:47PM +1100, Stephen Rothwell wrote:
-> > Hi Greg,
-> > 
-> > Today's linux-next merge of the staging tree got conflicts due to the
-> > removal of the benet driver from staging in Linus' tree.
+Ingo Molnar wrote:
+> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
-> Yes, sorry, Linus took that patch and I didn't have a chance to update
-> my tree yet.  Give me an hour or so to get it merged up properly.
+>> Hi Ingo,
+>>
+>> Today's linux-next merge of the iommu tree got a conflict in
+>> Documentation/kernel-parameters.txt between commit
+>> 8e141e0b33e2fd17540881a1ead5103dd229bf81 ("docum-kernprms-alpha3") from
+>> the kernel-doc tree and commit 59d3daafa17265f01149df8eab3fb69b9b42cb2e
+>> ("dma-debug: add kernel command line parameters") from the iommu tree.
+> 
+> a sidenote for Randy, the commit title looks weird:
+> 
+>   From 8e141e0b33e2fd17540881a1ead5103dd229bf81 Mon Sep 17 00:00:00 2001
+>   From: Randy Dunlap <randy.dunlap@oracle.com>
+>   Date: Tue, 24 Feb 2009 11:11:44 +1100
+>   Subject: [PATCH] docum-kernprms-alpha3
+> 
+> this is not really acceptable for upstream.
 
-Now merged up properly and pushed out.
+Yes, I agree.
 
-thanks,
+Stephen, that's just the filename (with .patch) from the quilt
+series file, right?  I could expand the filename... are there
+any other options here?
 
-greg k-h
+Thanks.
+-- 
+~Randy
