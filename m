@@ -1,53 +1,50 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: Re: next-20090318: sunhme does not transmit packets
-Date: Thu, 19 Mar 2009 11:16:20 +0300
-Message-ID: <a4423d670903190116p157b2ebfl69d270e0576c6d9a@mail.gmail.com>
-References: <a4423d670903180734w7270a4f3qa2af3981b969436c@mail.gmail.com>
-	 <a4423d670903180958j4847717eh99a41534633dd314@mail.gmail.com>
-	 <20090318.234451.38898787.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the iommu tree with the
+ kmemcheck/x86 trees
+Date: Thu, 19 Mar 2009 19:39:03 +1100
+Message-ID: <20090319193903.eb51e389.sfr@canb.auug.org.au>
+References: <20090319190653.540eab18.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__19_Mar_2009_19_39_03_+1100_Ysl5kUTj79uXyum6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nf-out-0910.google.com ([64.233.182.187]:37248 "EHLO
-	nf-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752139AbZCSIQY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Mar 2009 04:16:24 -0400
-In-Reply-To: <20090318.234451.38898787.davem@davemloft.net>
+Received: from chilli.pcug.org.au ([203.10.76.44]:40385 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753177AbZCSIjL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 Mar 2009 04:39:11 -0400
+In-Reply-To: <20090319190653.540eab18.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-next@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Pekka Enberg <penberg@cs.helsinki.fi>, Vegard Nossum <vegard.nossum@gmail.com>
 
-2009/3/19 David Miller <davem@davemloft.net>:
-> From: Alexander Beregalov <a.beregalov@gmail.com>
-> Date: Wed, 18 Mar 2009 19:58:40 +0300
->
->> 2009/3/18 Alexander Beregalov <a.beregalov@gmail.com>:
->> > Hi
->> >
->> > Ultra 10 can boot, it receives DHCP answer, ssh works, but few minutes
->> > after machine becomes unresponsible by net at all.
->> > It does not respond even on ARP requests.
->> >
->> > On Sparc host I see that `TX packets` does not grow, but RX grows.
->> > The state of the interface is
->> > UP BROADCAST RUNNING MULTICAST
->> >
->> > There is no relevant kernel messages in dmesg.
->> >
->> > next-20090317 worked fine.
->> >
->> >
->> > Let me know if I can help.
->> >
->>
->> I have reproduced it on next-20090318 for the second time, but still
->> do not know how.
->> next-20090317 might be affected.
->>
->> Now both packet counters grow, but tcpdump cannot capture any packet.
->
-> Does the current vanilla kernel work fine?
+--Signature=_Thu__19_Mar_2009_19_39_03_+1100_Ysl5kUTj79uXyum6
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes. The problem happens only with -next tree.
+On Thu, 19 Mar 2009 19:06:53 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> I fixed it up (see below) and can carry the fix as necessary.
+
+This is, of course how it was fixed in tip/master as well.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__19_Mar_2009_19_39_03_+1100_Ysl5kUTj79uXyum6
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknCBKcACgkQjjKRsyhoI8wxeACglLzMLN2DsIWOipFle5tB/w+C
+AMoAnjxxciY0rgFvbeCJTiHirWKW7hK+
+=r3vQ
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__19_Mar_2009_19_39_03_+1100_Ysl5kUTj79uXyum6--
