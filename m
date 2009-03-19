@@ -1,34 +1,45 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the iommu tree with the
-	kmemcheck/x86 trees
-Date: Thu, 19 Mar 2009 09:43:43 +0100
-Message-ID: <20090319084343.GA9038@elte.hu>
-References: <20090319190653.540eab18.sfr@canb.auug.org.au> <20090319193903.eb51e389.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the  tree
+Date: Thu, 19 Mar 2009 21:12:47 +1100
+Message-ID: <20090319211247.5976c505.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__19_Mar_2009_21_12_47_+1100_vM4CSG4EcKnDQmp9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:35496 "EHLO mx3.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51952 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752477AbZCSInv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 Mar 2009 04:43:51 -0400
-Content-Disposition: inline
-In-Reply-To: <20090319193903.eb51e389.sfr@canb.auug.org.au>
+	id S1751633AbZCSKMz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 Mar 2009 06:12:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Pekka Enberg <penberg@cs.helsinki.fi>, Vegard Nossum <vegard.nossum@gmail.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org
 
+--Signature=_Thu__19_Mar_2009_21_12_47_+1100_vM4CSG4EcKnDQmp9
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Greg,
 
-> On Thu, 19 Mar 2009 19:06:53 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > I fixed it up (see below) and can carry the fix as necessary.
-> 
-> This is, of course how it was fixed in tip/master as well.
+Today's linux-next merge of the staging tree got conflicts due to the
+removal of the benet driver from staging in Linus' tree.
 
-yeah. This file is a common source of conflicts - eventually we will 
-sort those kconfig variables alphabetically to reduce the chance of 
-interaction.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-	Ingo
+--Signature=_Thu__19_Mar_2009_21_12_47_+1100_vM4CSG4EcKnDQmp9
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknCGp8ACgkQjjKRsyhoI8wUgwCfWdsokza90Ey3KMyUcgPJFt+r
+pV8AoJG7DsD1qwg3fL4eG5zGLA8sePXp
+=Vasa
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__19_Mar_2009_21_12_47_+1100_vM4CSG4EcKnDQmp9--
