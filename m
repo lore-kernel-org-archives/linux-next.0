@@ -1,52 +1,54 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for March 19 (wireless/p54)
-Date: Thu, 19 Mar 2009 11:49:48 -0700
-Message-ID: <49C293CC.6020009@oracle.com>
-References: <20090319221024.5e2ad6e5.sfr@canb.auug.org.au> <49C280BE.8090106@oracle.com> <200903191850.17825.mb@bu3sch.de>
+From: Greg KH <greg@kroah.com>
+Subject: Re: Next March 19: drivers/comedi build break.
+Date: Thu, 19 Mar 2009 11:51:00 -0700
+Message-ID: <20090319185100.GA20608@kroah.com>
+References: <20090319221024.5e2ad6e5.sfr@canb.auug.org.au> <49C2468A.1040504@in.ibm.com> <20090319153327.GB13963@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:55697 "EHLO
-	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756453AbZCSSsM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Mar 2009 14:48:12 -0400
-In-Reply-To: <200903191850.17825.mb@bu3sch.de>
+Received: from kroah.org ([198.145.64.141]:51423 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753698AbZCSSxQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 Mar 2009 14:53:16 -0400
+Content-Disposition: inline
+In-Reply-To: <20090319153327.GB13963@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Buesch <mb@bu3sch.de>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Michael Buesch wrote:
-> On Thursday 19 March 2009 18:28:30 Randy Dunlap wrote:
->> Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20090318:
->>
->> ERROR: "led_classdev_register" [drivers/net/wireless/p54/p54common.ko] undefined!
->> ERROR: "led_classdev_unregister" [drivers/net/wireless/p54/p54common.ko] undefined!
->>
->> One possible option (fix) is to have CONFIG_MAC80211_LEDS also select
->> LEDS_CLASS (that would build the missing functions).
-> 
-> Does p54 select CONFIG_MAC80211_LEDS? If that's the case, I think it should
+On Thu, Mar 19, 2009 at 08:33:27AM -0700, Greg KH wrote:
+> On Thu, Mar 19, 2009 at 06:50:10PM +0530, Sachin Sant wrote:
+> > Next 19 randconfig build fails with :
+> >
+> >  CC [M]  drivers/staging/comedi/comedi_fops.o
+> > In file included from drivers/staging/comedi/comedidev.h:38,
+> >                 from drivers/staging/comedi/comedi_fops.c:45:
+> > drivers/staging/comedi/interrupt.h:25: error: conflicting types for=
+=20
+> > =E2=80=98irqreturn_t=E2=80=99
+> > include/linux/irqreturn.h:14: error: previous declaration of=20
+> > =E2=80=98irqreturn_t=E2=80=99 was here
+> > In file included from drivers/staging/comedi/comedidev.h:38,
+> >                 from drivers/staging/comedi/comedi_fops.c:45:
+> > drivers/staging/comedi/interrupt.h:28:1: warning: "IRQ_RETVAL" rede=
+fined
+> > In file included from include/linux/interrupt.h:10,
+> >                 from drivers/staging/comedi/interrupt.h:22,
+> >                 from drivers/staging/comedi/comedidev.h:38,
+> >                 from drivers/staging/comedi/comedi_fops.c:45:
+> > include/linux/irqreturn.h:15:1: warning: this is the location of th=
+e=20
+> > previous definition
+> > make[3]: *** [drivers/staging/comedi/comedi_fops.o] Error 1
+> >
+> > Probably because of the irqreturn_t related changes.
+>=20
+> Ah, I wasn't aware of them, I'll go dig and fix this up...
 
-  No, it doesn't.  p54common.c just has a large block of code that is
-surrounded by
-#ifdef CONFIG_MAC80211_LEDS
-...
-#endif
+Now fixed.
 
-so we could argue that it's just purely a p54 bug.
+thanks,
 
-> probably do it the other way around. p54 should build its LED code if CONFIG_MAC80211_LEDS
-> is available. Otherwise it should not.
-> 
-> This way you don't enter the SELECT dependency hell and still have automagic configuration.
-> 
-> Take a look at b43 for an example.
-
-
--- 
-~Randy
+greg k-h
