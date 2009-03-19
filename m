@@ -1,52 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kmemcheck tree with the x86 tree
-Date: Thu, 19 Mar 2009 18:49:46 +1100
-Message-ID: <20090319184946.de4d75f5.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the iommu tree with the kernel-doc tree
+Date: Thu, 19 Mar 2009 18:57:32 +1100
+Message-ID: <20090319185732.b8cc98a8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__19_Mar_2009_18_49_46_+1100_hYgWCn9/Ej9kfuBa"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38274 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48600 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752560AbZCSHtz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 Mar 2009 03:49:55 -0400
+	id S1751165AbZCSH5g (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 Mar 2009 03:57:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vegard Nossum <vegard.nossum@gmail.com>, Pekka Enberg <penberg@cs.helsinki.fi>, Ingo Molnar <mingo@elte.hu>
-Cc: linux-next@vger.kernel.org, Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>, Yinghai Lu <yinghai@kernel.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, Joerg Roedel <joerg.roedel@amd.com>, Randy Dunlap <randy.dunlap@oracle.com>
 
---Signature=_Thu__19_Mar_2009_18_49_46_+1100_hYgWCn9/Ej9kfuBa
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Ingo,
 
-Hi all,
+Today's linux-next merge of the iommu tree got a conflict in
+Documentation/kernel-parameters.txt between commit
+8e141e0b33e2fd17540881a1ead5103dd229bf81 ("docum-kernprms-alpha3") from
+the kernel-doc tree and commit 59d3daafa17265f01149df8eab3fb69b9b42cb2e
+("dma-debug: add kernel command line parameters") from the iommu tree.
 
-Today's linux-next merge of the kmemcheck tree got a conflict in
-arch/x86/kernel/head_32.S between commits
-2bd2753ff46346543ab92e80df9d96366e21baa5 ("x86: put initial_pg_tables
-into .bss") and c090f532db3ab5b7be503f8ac84b0d33a18646c6 ("x86-32: make
-sure we map enough to fit linear map pagetables") from the x86 tree and
-commit a7fff94fffaa0cecb923d6c1bb9b7691f608b49a ("Revert "kmemcheck: use
-set_memory_4k() instead of disabling PSE"") from the kmemcheck tree.
-
-I fixed it up (by using the version from the x86 tree - which is also
-what is done in tip/master) and can carry the fix as necessary.
---=20
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__19_Mar_2009_18_49_46_+1100_hYgWCn9/Ej9kfuBa
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAknB+RoACgkQjjKRsyhoI8yI9QCfbA0WucgFsq3QAfu1o2aLrgFe
-6awAniNzXuh17RsFitC+XO2z/HLEH5Mi
-=VTaD
------END PGP SIGNATURE-----
-
---Signature=_Thu__19_Mar_2009_18_49_46_+1100_hYgWCn9/Ej9kfuBa--
+diff --cc Documentation/kernel-parameters.txt
+index 114e162,0fa3c05..0000000
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@@ -608,12 -684,8 +608,22 @@@ and is between 256 and 4096 characters
+  			MTRR settings.  This parameter disables that behavior,
+  			possibly causing your machine to run very slowly.
+  
+ +	disable_timer_pin_1 [i386,x86-64]
+ +			Disable PIN 1 of APIC timer
+ +			Can be useful to work around chipset bugs.
+ +
+  	dmasound=	[HW,OSS] Sound subsystem buffers
+  
+++	dma_debug=off	If the kernel is compiled with DMA_API_DEBUG support
+++			this option disables the debugging code at boot.
+++
+++	dma_debug_entries=<number>
+++			This option allows to tune the number of preallocated
+++			entries for DMA-API debugging code. One entry is
+++			required per DMA-API allocation. Use this if the
+++			DMA-API debugging code disables itself because the
+++			architectural default is too low.
+++
+  	dscc4.setup=	[NET]
+  
+  	dtc3181e=	[HW,SCSI]
