@@ -1,52 +1,54 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: cpus4096 tree build failure
-Date: Thu, 19 Mar 2009 12:53:42 +0100
-Message-ID: <20090319115342.GA22905@elte.hu>
-References: <20090319215300.1833d28e.sfr@canb.auug.org.au>
-	<200903192137.15209.rusty@rustcorp.com.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH next-20090319] wireless/p54: P54_SPI should depend on
+ GENERIC_HARDIRQS
+Date: Thu, 19 Mar 2009 13:33:52 +0100 (CET)
+Message-ID: <Pine.LNX.4.64.0903191331001.5130@anakin>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org>
-Content-Disposition: inline
-In-Reply-To: <200903192137.15209.rusty@rustcorp.com.au>
-List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
-List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
-List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: ppc-dev <linuxppc-dev@ozlabs.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from juliette.telenet-ops.be ([195.130.137.74]:49611 "EHLO
+	juliette.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752610AbZCSMd5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Mar 2009 08:33:57 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Christian Lamparter <chunkeey@web.de>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, Linux Kernel Development <linux-kernel@vger.kernel.org>
 
+m68k allmodconfig:
+| drivers/net/wireless/p54/p54spi.c: In function 'p54spi_probe':
+| drivers/net/wireless/p54/p54spi.c:675: error: implicit declaration of function
+| 'set_irq_type'
+| make[4]: *** [drivers/net/wireless/p54/p54spi.o] Error 1
 
-* Rusty Russell <rusty@rustcorp.com.au> wrote:
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ drivers/net/wireless/p54/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-> On Thursday 19 March 2009 21:23:00 Stephen Rothwell wrote:
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Thu, 19 Mar 2009 21:35:24 +1100
-> > Subject: [PATCH] powerpc: mmzone.h needs cpumask_t to be defined
-> > 
-> > Commit 082edb7bf443eb8eda15b482d16ad9dd8137ad24 ("numa,cpumask: move
-> > numa_node_id default implementation to topology.h") removed the include
-> > of linux/topology.h from linux/mmzone.h which exposed this lack.
-> > 
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> 
-> Acked-by: Rusty Russell <rusty@rustcorp.com.au>
-> 
-> Ingo, please apply.
-> 
-> Apparently sparc is similarly broken :(
+diff --git a/drivers/net/wireless/p54/Kconfig b/drivers/net/wireless/p54/Kconfig
+index cfc5f41..0e344ac 100644
+--- a/drivers/net/wireless/p54/Kconfig
++++ b/drivers/net/wireless/p54/Kconfig
+@@ -64,7 +64,7 @@ config P54_PCI
+ 
+ config P54_SPI
+ 	tristate "Prism54 SPI (stlc45xx) support"
+-	depends on P54_COMMON && SPI_MASTER
++	depends on P54_COMMON && SPI_MASTER && GENERIC_HARDIRQS
+ 	---help---
+ 	  This driver is for stlc4550 or stlc4560 based wireless chips.
+ 	  This driver is experimental, untested and will probably only work on
+-- 
+1.6.2
 
-I've applied it.
+Gr{oetje,eeting}s,
 
-( I cannot push it to the auto-cpus4096-next branch yet because you
-  broke the scheduler as well (boot crash) so the topic is marked
-  broken. )
+						Geert
 
-	Ingo
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
