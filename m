@@ -1,56 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the staging tree with the  tree
-Date: Fri, 20 Mar 2009 08:42:01 +1100
-Message-ID: <20090320084201.c1a5cfde.sfr@canb.auug.org.au>
-References: <20090319211247.5976c505.sfr@canb.auug.org.au>
-	<20090319153245.GA13963@kroah.com>
-	<20090319155331.GA26076@kroah.com>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+Subject: Re: linux-next: Tree for March 19 (media/video/au0828)
+Date: Thu, 19 Mar 2009 19:28:46 -0300
+Message-ID: <20090319192846.30dceaa2@pedra.chehab.org>
+References: <20090319221024.5e2ad6e5.sfr@canb.auug.org.au>
+	<49C278D8.5010809@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__20_Mar_2009_08_42_01_+1100_sQ=Gqa=F/6THdt11"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56582 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754188AbZCSVmJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 Mar 2009 17:42:09 -0400
-In-Reply-To: <20090319155331.GA26076@kroah.com>
+Received: from bombadil.infradead.org ([18.85.46.34]:36793 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761761AbZCSW3V (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Mar 2009 18:29:21 -0400
+In-Reply-To: <49C278D8.5010809@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org
 
---Signature=_Fri__20_Mar_2009_08_42_01_+1100_sQ=Gqa=F/6THdt11
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 19 Mar 2009 09:54:48 -0700
+Randy Dunlap <randy.dunlap@oracle.com> wrote:
 
-Hi Greg,
+> Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20090318:
+> 
+> 
+> when ADV_DEBUG=n:
+> 
+> 
+> drivers/media/video/au0828/au0828-video.c:1438: error: 'const struct v4l2_subdev_core_ops' has no member named 'g_register'
+> drivers/media/video/au0828/au0828-video.c:1453: error: 'const struct v4l2_subdev_core_ops' has no member named 's_register'
 
-On Thu, 19 Mar 2009 08:53:31 -0700 Greg KH <greg@kroah.com> wrote:
->
-> > Yes, sorry, Linus took that patch and I didn't have a chance to update
-> > my tree yet.  Give me an hour or so to get it merged up properly.
+Fixed, thanks!
 
-Hey, not really a problem, I was just letting you know.
-
-> Now merged up properly and pushed out.
-
-Thanks.
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__20_Mar_2009_08_42_01_+1100_sQ=Gqa=F/6THdt11
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAknCvCkACgkQjjKRsyhoI8zuywCdF3N5lBhKBnV7/AkrYoS/8CND
-IwEAnjdDQK+a0Q86gMSXsSAPdIk3gjWM
-=MDyF
------END PGP SIGNATURE-----
-
---Signature=_Fri__20_Mar_2009_08_42_01_+1100_sQ=Gqa=F/6THdt11--
+Mauro
