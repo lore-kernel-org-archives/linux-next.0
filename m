@@ -1,91 +1,153 @@
-From: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
-Subject: Re: linux-next: sh build failure
-Date: Fri, 20 Mar 2009 14:24:13 -0400
-Message-ID: <20090320182413.GB1847@Krystal>
-References: <20090320110602.86351a91.sfr@canb.auug.org.au>
+From: Christian Lamparter <chunkeey-S0/GAf8tV78@public.gmane.org>
+Subject: [PATCH] p54: fix SoftLED compile dependencies
+Date: Sat, 21 Mar 2009 00:57:46 +0100
+Message-ID: <200903210057.47067.chunkeey@web.de>
+References: <20090319221024.5e2ad6e5.sfr@canb.auug.org.au> <49C293CC.6020009@oracle.com> <200903191955.00718.mb@bu3sch.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=_Krystal-2666-1237573453-0001-2"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from toq9-srv.bellnexxia.net ([209.226.175.116]:53719 "EHLO
-	toq9-srv.bellnexxia.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754258AbZCTTK3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Mar 2009 15:10:29 -0400
-Received: from toip3.srvr.bell.ca ([209.226.175.86])
-          by tomts5-srv.bellnexxia.net
-          (InterMail vM.5.01.06.13 201-253-122-130-113-20050324) with ESMTP
-          id <20090320182431.NCTZ1582.tomts5-srv.bellnexxia.net@toip3.srvr.bell.ca>
-          for <linux-next@vger.kernel.org>; Fri, 20 Mar 2009 14:24:31 -0400
-Content-Disposition: inline
-In-Reply-To: <20090320110602.86351a91.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>
-Cc: Paul Mundt <lethal@linux-sh.org>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
-
-This is a MIME-formatted message.  If you see this text it means that your
-E-mail software does not support MIME-formatted messages.
-
---=_Krystal-2666-1237573453-0001-2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-* Stephen Rothwell (sfr@canb.auug.org.au) wrote:
-> Hi Paul,
->=20
-> Yesterday's linux-next build of sh allmodconfig failed like this:
->=20
-> kernel/built-in.o: In function `disable_all_kprobes':
-> kernel/kprobes.c:1382: undefined reference to `text_mutex'
-> kernel/built-in.o: In function `__unregister_kprobe_top':
-> kernel/kprobes.c:773: undefined reference to `text_mutex'
-> kernel/built-in.o: In function `register_kprobe':
-> kernel/kprobes.c:724: undefined reference to `text_mutex'
->=20
-> Introduced by commit 4460fdad85becd569f11501ad5b91814814335ff ("tracing,
-> Text Edit Lock - kprobes architecture independent support") from the
-> tracing tree.  text_mutex is defined in mm/memory.c which is only built
-> if CONFIG_MMU is defined, which is not true for sh allmodconfig.
-
-Hrm, so we should move the text_mutex in a obj-y file. It's not clear to
-me which of mm/Makefile would be the best choice :
-
-obj-y                   :=3D bootmem.o filemap.o mempool.o oom_kill.o fadvi=
-se.o \
-                           maccess.o page_alloc.o page-writeback.o pdflush.=
-o \
-                           readahead.o swap.o truncate.o vmscan.o shmem.o \
-                           prio_tree.o util.o mmzone.o vmstat.o backing-dev=
-=2Eo \
-                           page_isolation.o mm_init.o $(mmu-y)
-
-Or maybe we add a new file, or put this in kernel/*.c. Suggestions ?
-
-Mathieu
-
-> --=20
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
-
-
-
---=20
-Mathieu Desnoyers
-OpenPGP key fingerprint: 8CD5 52C3 8E3C 4140 715F  BA06 3F25 A8FE 3BAE 9A68
-
---=_Krystal-2666-1237573453-0001-2
-Content-Type: application/pgp-signature; name="signature.asc"
+Content-Type: text/plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Content-Description: Digital signature
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <200903191955.00718.mb-fseUSCV1ubazQB+pC5nmwQ@public.gmane.org>
 Content-Disposition: inline
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Michael Buesch <mb-fseUSCV1ubazQB+pC5nmwQ@public.gmane.org>
+Cc: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+This patch fixes a compile problem when the MAC80211_LEDS
+triggers are enabled but not LED class itself. 
+(which is sort of pointless, but anyway...)
 
-iD8DBQFJw99NPyWo/juummgRAt77AJsGlAkRTKfmo4pGUS0MBBWz1kHPbQCgkY70
-VuiJLRgf4eK6WXxDReDICp4=
-=4H3J
------END PGP SIGNATURE-----
+Signed-off-by: Christian Lamparter <chunkeey-S0/GAf8tV78@public.gmane.org>
+---
+mb, thank you for the tips!
 
---=_Krystal-2666-1237573453-0001-2--
+Randy Dunlap can you please give this patch a try?
+
+John, do you know where the patch form 
+Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org> went?
+---
+diff --git a/drivers/net/wireless/p54/Kconfig b/drivers/net/wireless/p54/Kconfig
+index 0e344ac..ee1aaca 100644
+--- a/drivers/net/wireless/p54/Kconfig
++++ b/drivers/net/wireless/p54/Kconfig
+@@ -1,9 +1,10 @@
+ config P54_COMMON
+ 	tristate "Softmac Prism54 support"
+-	depends on MAC80211 && WLAN_80211 && FW_LOADER && EXPERIMENTAL
++	depends on MAC80211 && WLAN_80211 && EXPERIMENTAL
++	select FW_LOADER
+ 	---help---
+-	  This is common code for isl38xx based cards.
+-	  This module does nothing by itself - the USB/PCI frontends
++	  This is common code for isl38xx/stlc45xx based modules.
++	  This module does nothing by itself - the USB/PCI/SPI frontends
+ 	  also need to be enabled in order to support any devices.
+ 
+ 	  These devices require softmac firmware which can be found at
+@@ -17,31 +18,6 @@ config P54_USB
+ 	select CRC32
+ 	---help---
+ 	  This driver is for USB isl38xx based wireless cards.
+-	  These are USB based adapters found in devices such as:
+-
+-	  3COM 3CRWE254G72
+-	  SMC 2862W-G
+-	  Accton 802.11g WN4501 USB
+-	  Siemens Gigaset USB
+-	  Netgear WG121
+-	  Netgear WG111
+-	  Medion 40900, Roper Europe
+-	  Shuttle PN15, Airvast WM168g, IOGear GWU513
+-	  Linksys WUSB54G
+-	  Linksys WUSB54G Portable
+-	  DLink DWL-G120 Spinnaker
+-	  DLink DWL-G122
+-	  Belkin F5D7050 ver 1000
+-	  Cohiba Proto board
+-	  SMC 2862W-G version 2
+-	  U.S. Robotics U5 802.11g Adapter
+-	  FUJITSU E-5400 USB D1700
+-	  Sagem XG703A
+-	  DLink DWL-G120 Cohiba
+-	  Spinnaker Proto board
+-	  Linksys WUSB54AG
+-	  Inventel UR054G
+-	  Spinnaker DUT
+ 
+ 	  These devices require softmac firmware which can be found at
+ 	  http://prism54.org/
+@@ -71,3 +47,8 @@ config P54_SPI
+ 	  Nokia's N800/N810 Portable Internet Tablet.
+ 
+ 	  If you choose to build a module, it'll be called p54spi.
++
++config P54_LEDS
++	bool
++	depends on P54_COMMON && MAC80211_LEDS && (LEDS_CLASS = y || LEDS_CLASS = P54_COMMON)
++	default y
+diff --git a/drivers/net/wireless/p54/p54common.c b/drivers/net/wireless/p54/p54common.c
+index 0a98983..0c1b057 100644
+--- a/drivers/net/wireless/p54/p54common.c
++++ b/drivers/net/wireless/p54/p54common.c
+@@ -21,9 +21,9 @@
+ #include <linux/etherdevice.h>
+ 
+ #include <net/mac80211.h>
+-#ifdef CONFIG_MAC80211_LEDS
++#ifdef CONFIG_P54_LEDS
+ #include <linux/leds.h>
+-#endif /* CONFIG_MAC80211_LEDS */
++#endif /* CONFIG_P54_LEDS */
+ 
+ #include "p54.h"
+ #include "p54common.h"
+@@ -2420,7 +2420,7 @@ static int p54_set_key(struct ieee80211_hw *dev, enum set_key_cmd cmd,
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_MAC80211_LEDS
++#ifdef CONFIG_P54_LEDS
+ static void p54_led_brightness_set(struct led_classdev *led_dev,
+ 				   enum led_brightness brightness)
+ {
+@@ -2508,7 +2508,7 @@ static void p54_unregister_leds(struct ieee80211_hw *dev)
+ 	if (priv->assoc_led.registered)
+ 		led_classdev_unregister(&priv->assoc_led.led_dev);
+ }
+-#endif /* CONFIG_MAC80211_LEDS */
++#endif /* CONFIG_P54_LEDS */
+ 
+ static const struct ieee80211_ops p54_ops = {
+ 	.tx			= p54_tx,
+@@ -2592,11 +2592,11 @@ int p54_register_common(struct ieee80211_hw *dev, struct device *pdev)
+ 		return err;
+ 	}
+ 
+-	#ifdef CONFIG_MAC80211_LEDS
++#ifdef CONFIG_P54_LEDS
+ 	err = p54_init_leds(dev);
+ 	if (err)
+ 		return err;
+-	#endif /* CONFIG_MAC80211_LEDS */
++#endif /* CONFIG_P54_LEDS */
+ 
+ 	dev_info(pdev, "is registered as '%s'\n", wiphy_name(dev->wiphy));
+ 	return 0;
+@@ -2610,9 +2610,9 @@ void p54_free_common(struct ieee80211_hw *dev)
+ 	kfree(priv->output_limit);
+ 	kfree(priv->curve_data);
+ 
+-	#ifdef CONFIG_MAC80211_LEDS
++#ifdef CONFIG_P54_LEDS
+ 	p54_unregister_leds(dev);
+-	#endif /* CONFIG_MAC80211_LEDS */
++#endif /* CONFIG_P54_LEDS */
+ }
+ EXPORT_SYMBOL_GPL(p54_free_common);
+ 
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
