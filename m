@@ -1,48 +1,36 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: linux-next: Tree for March 20 - dnet build break on s390
-Date: Fri, 20 Mar 2009 10:14:01 +0100
-Message-ID: <20090320101401.6ea261ea@osiris.boeblingen.de.ibm.com>
-References: <20090320162800.24b0ad93.sfr@canb.auug.org.au>
+From: Wim Van Sebroeck <wim@iguana.be>
+Subject: Re: linux-next: manual merge of the watchdog tree with the arm tree
+Date: Fri, 20 Mar 2009 10:15:51 +0100
+Message-ID: <20090320091551.GB6160@infomag.iguana.be>
+References: <20090320135849.8f71cdbc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate4.uk.ibm.com ([195.212.29.137]:56802 "EHLO
-	mtagate4.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752448AbZCTJOK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Mar 2009 05:14:10 -0400
-In-Reply-To: <20090320162800.24b0ad93.sfr@canb.auug.org.au>
+Received: from mailrelay003.isp.belgacom.be ([195.238.6.53]:11706 "EHLO
+	mailrelay003.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754393AbZCTJPy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 Mar 2009 05:15:54 -0400
+Content-Disposition: inline
+In-Reply-To: <20090320135849.8f71cdbc.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Ilya Yanok <yanok@emcraft.com>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Wim Van Sebroeck <wim@iguana.be>, linux-next@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
-dnet: Dave DNET breaks an allyesconfig build on s390:
+Hi Stephen,
 
-  CC      drivers/net/dnet.o
-drivers/net/dnet.c: In function 'dnet_readw_mac':
-drivers/net/dnet.c:36: error: implicit declaration of function 'writel'
-drivers/net/dnet.c:43: error: implicit declaration of function 'readl'
-drivers/net/dnet.c: In function 'dnet_probe':
-drivers/net/dnet.c:873: error: implicit declaration of function 'ioremap'
-drivers/net/dnet.c:873: warning: assignment makes pointer from integer without a cast
-drivers/net/dnet.c:939: error: implicit declaration of function 'iounmap'
+> Today's linux-next merge of the watchdog tree got a conflict in
+> drivers/watchdog/omap_wdt.c between commit
+> 39a80c7f379e1c1d3e63b204b8353b7381d0a3d5 ("[ARM] omap: watchdog: convert
+> clocks to match by devid and conid") from the arm tree and commit
+> 47efb2337f6f450c995712762c0bcf6ce073171f ("[WATCHDOG] More coding-style
+> and trivial clean-up") from the watchdog tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
----
- drivers/net/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I redid the tree so that that commit doesn't add the omap part again.
+So should be fixed tomorrow.
 
-Index: linux-next/drivers/net/Kconfig
-===================================================================
---- linux-next.orig/drivers/net/Kconfig
-+++ linux-next/drivers/net/Kconfig
-@@ -1042,7 +1042,7 @@ config NI65
- 
- config DNET
- 	tristate "Dave ethernet support (DNET)"
--	depends on NET_ETHERNET
-+	depends on NET_ETHERNET && HAS_IOMEM
- 	select PHYLIB
- 	help
- 	  The Dave ethernet interface (DNET) is found on Qong Board FPGA.
+Kind regards,
+Wim.
