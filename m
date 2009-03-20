@@ -1,67 +1,73 @@
-From: Mark McLoughlin <markmc@redhat.com>
-Subject: Re: linux-next: manual merge of the net tree with the tree
-Date: Fri, 20 Mar 2009 08:24:37 +0000
-Message-ID: <1237537477.4938.60.camel@blaa>
-References: <20090320113242.bfe7fe62.sfr@canb.auug.org.au>
-	 <1295ed070903192138y23ef0a67mf0e38d96cad54dc0@mail.gmail.com>
-Reply-To: Mark McLoughlin <markmc@redhat.com>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: linux-next: s390 build failure
+Date: Fri, 20 Mar 2009 09:24:10 +0100
+Message-ID: <20090320092410.30d2bac3@osiris.boeblingen.de.ibm.com>
+References: <20090320104208.0cb4b2b5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:41401 "EHLO mx2.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753549AbZCTIY6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 20 Mar 2009 04:24:58 -0400
-In-Reply-To: <1295ed070903192138y23ef0a67mf0e38d96cad54dc0@mail.gmail.com>
+Received: from mtagate6.uk.ibm.com ([195.212.29.139]:53777 "EHLO
+	mtagate6.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754771AbZCTIZU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Mar 2009 04:25:20 -0400
+Received: from d06nrmr1407.portsmouth.uk.ibm.com (d06nrmr1407.portsmouth.uk.ibm.com [9.149.38.185])
+	by mtagate6.uk.ibm.com (8.14.3/8.13.8) with ESMTP id n2K8ODwK480876
+	for <linux-next@vger.kernel.org>; Fri, 20 Mar 2009 08:24:13 GMT
+Received: from d06av04.portsmouth.uk.ibm.com (d06av04.portsmouth.uk.ibm.com [9.149.37.216])
+	by d06nrmr1407.portsmouth.uk.ibm.com (8.13.8/8.13.8/NCO v9.2) with ESMTP id n2K8ODwM3481722
+	for <linux-next@vger.kernel.org>; Fri, 20 Mar 2009 08:24:13 GMT
+Received: from d06av04.portsmouth.uk.ibm.com (loopback [127.0.0.1])
+	by d06av04.portsmouth.uk.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id n2K8OBeZ007415
+	for <linux-next@vger.kernel.org>; Fri, 20 Mar 2009 08:24:13 GMT
+In-Reply-To: <20090320104208.0cb4b2b5.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pantelis Koukousoulas <pktoss@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
 
-Hi Pantelis,
-
-On Fri, 2009-03-20 at 06:38 +0200, Pantelis Koukousoulas wrote:
-> On Fri, Mar 20, 2009 at 2:32 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi David,
-> >
-> > Today's linux-next merge of the net tree got a conflict in
-> > drivers/net/virtio_net.c between commit
-> > 4783256ef92f5aecd6d54693b16386f2a0021c2a ("virtio_net: Make virtio_net
-> > support carrier detection") from the net-current tree and commit
-> > 9f4d26d0f3016cf8813977d624751b94465fa317 ("virtio_net: add link status
-> > handling") from the net tree.
-> >
-> > I think that the latter patch means that the former is not needed, so I
-> > used the version from the net tree.
-> > --
-> > Cheers,
-> > Stephen Rothwell                    sfr@canb.auug.org.au
-> > http://www.canb.auug.org.au/~sfr/
-> >
+On Fri, 20 Mar 2009 10:42:08 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> The linux-next build for s390 allnoconfig failed like this:
 > 
-> Hi,
+> In file included from arch/s390/include/asm/tlb.h:29,
+>                  from arch/s390/mm/pgtable.c:25:
+> arch/s390/include/asm/smp.h:95: error: redefinition of 'smp_send_stop'
+> include/linux/smp.h:125: error: previous definition of 'smp_send_stop' was here
 > 
-> The correct merge is so that the conflicting part becomes like this:
-> 
-> +       /* If we have no carrier info, the answer is "always on". */
->        vi->status = VIRTIO_NET_S_LINK_UP;
-> +       netif_carrier_on(vi->dev);
-> 
-> I.e., you need to keep this netif_carrier_on(vi->dev) to maintain
-> useful behavior
-> for current/older versions of qemu that don't support link handling (because
-> in this case VIRTIO_NET_S_LINK_UP will not cause netif_carrier_on to
-> be called).
+> Caused by commit d1dedb52acd98bd5e13e1ff4c4d045d58bbd16fe ("panic, smp:
+> provide smp_send_stop() wrapper on UP too") from the tip-core tree.
 
-(Sorry, I missed the original discussion while on vacation)
+Ingo, could you pick up the patch below?
 
-The merge resolution looks fine ... although netif_carrier_on() isn't
-really needed (it's the default) and, also, it's unusual to add a
-comment in a merge resolution.
 
-Probably best for davem to merge net-2.6 into net-next-2.6 in order to
-sort it out.
+Subject: [PATCH] s390: remove arch specific smp_send_stop
 
-Cheers,
-Mark.
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+
+Remove arch specific smp_send_stop for !CONFIG_SMP since it conflicts
+with a new generic version.
+
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+---
+ arch/s390/include/asm/smp.h |    6 ------
+ 1 file changed, 6 deletions(-)
+
+Index: linux-next/arch/s390/include/asm/smp.h
+===================================================================
+--- linux-next.orig/arch/s390/include/asm/smp.h
++++ linux-next/arch/s390/include/asm/smp.h
+@@ -92,12 +92,6 @@ extern void arch_send_call_function_ipi(
+ #endif
+ 
+ #ifndef CONFIG_SMP
+-static inline void smp_send_stop(void)
+-{
+-	/* Disable all interrupts/machine checks */
+-	__load_psw_mask(psw_kernel_bits & ~PSW_MASK_MCHECK);
+-}
+-
+ #define hard_smp_processor_id()		0
+ #define smp_cpu_not_running(cpu)	1
+ #endif
