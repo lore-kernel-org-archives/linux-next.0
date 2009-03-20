@@ -1,55 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: sh build failure
-Date: Fri, 20 Mar 2009 11:06:02 +1100
-Message-ID: <20090320110602.86351a91.sfr@canb.auug.org.au>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+Subject: Re: linux-next: Tree for March 19 (media/au8522)
+Date: Thu, 19 Mar 2009 21:06:33 -0300
+Message-ID: <20090319210633.6911eba1@pedra.chehab.org>
+References: <20090319221024.5e2ad6e5.sfr@canb.auug.org.au>
+	<49C27CC2.6070803@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__20_Mar_2009_11_06_02_+1100_OgNDYmku6cyG1qP_"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56313 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751708AbZCTAGJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 Mar 2009 20:06:09 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Mundt <lethal@linux-sh.org>
-Cc: linux-next@vger.kernel.org, Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-
---Signature=_Fri__20_Mar_2009_11_06_02_+1100_OgNDYmku6cyG1qP_
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <49C27CC2.6070803@oracle.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, Devin Heitmueller <devin.heitmueller@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Paul,
+On Thu, 19 Mar 2009 10:11:30 -0700
+Randy Dunlap <randy.dunlap@oracle.com> wrote:
 
-Yesterday's linux-next build of sh allmodconfig failed like this:
+> Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20090318:
+> 
+> 
+> au8522_decoder.c:(.text+0x199898): undefined reference to `v4l2_ctrl_query_fill'
+> au8522_decoder.c:(.text+0x1998b3): undefined reference to `v4l2_ctrl_query_fill'
+> au8522_decoder.c:(.text+0x199944): undefined reference to `v4l2_device_unregister_subdev'
+> au8522_decoder.c:(.text+0x19997c): undefined reference to `v4l2_chip_ident_i2c_client'
+> au8522_decoder.c:(.text+0x199f1e): undefined reference to `v4l2_i2c_subdev_init'
+> 
+Thanks! This were due to the fact that au8522 is now dependent on V4L2, since
+the same chip is used for both DVB frontand and Analog demodulation.
 
-kernel/built-in.o: In function `disable_all_kprobes':
-kernel/kprobes.c:1382: undefined reference to `text_mutex'
-kernel/built-in.o: In function `__unregister_kprobe_top':
-kernel/kprobes.c:773: undefined reference to `text_mutex'
-kernel/built-in.o: In function `register_kprobe':
-kernel/kprobes.c:724: undefined reference to `text_mutex'
+Devin,
 
-Introduced by commit 4460fdad85becd569f11501ad5b91814814335ff ("tracing,
-Text Edit Lock - kprobes architecture independent support") from the
-tracing tree.  text_mutex is defined in mm/memory.c which is only built
-if CONFIG_MMU is defined, which is not true for sh allmodconfig.
---=20
+IMO, you have a bad design here: You should try to have a core module with the
+common parts, and separate modules for the analog and the DVB parts of the chip.
+
+Anyway, for now, I just added the required dependencies at the Kconfig.
+
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Mauro
 
---Signature=_Fri__20_Mar_2009_11_06_02_+1100_OgNDYmku6cyG1qP_
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAknC3eoACgkQjjKRsyhoI8zxhQCeKToiCXTYT3uLTQ5gwMBTtEos
-nlIAnAi/kkwyCneUiXUSL99D/arGEY3D
-=W6rZ
------END PGP SIGNATURE-----
-
---Signature=_Fri__20_Mar_2009_11_06_02_+1100_OgNDYmku6cyG1qP_--
+PS.: I'll be updating the linux-next patches later, after adding some other
+stuff. So, you'll probably see the fix for those reported issues merged only
+tomorrow.
