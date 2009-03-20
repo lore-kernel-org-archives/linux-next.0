@@ -1,139 +1,91 @@
-From: Ingo Molnar <mingo@elte.hu>
+From: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
 Subject: Re: linux-next: sh build failure
-Date: Fri, 20 Mar 2009 19:34:32 +0100
-Message-ID: <20090320183432.GD31629@elte.hu>
-References: <20090320110602.86351a91.sfr@canb.auug.org.au> <20090320182413.GB1847@Krystal>
+Date: Fri, 20 Mar 2009 14:24:13 -0400
+Message-ID: <20090320182413.GB1847@Krystal>
+References: <20090320110602.86351a91.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1; protocol="application/pgp-signature"; boundary="=_Krystal-2666-1237573453-0001-2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:47819 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756335AbZCTSer (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 20 Mar 2009 14:34:47 -0400
+Received: from toq9-srv.bellnexxia.net ([209.226.175.116]:53719 "EHLO
+	toq9-srv.bellnexxia.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754258AbZCTTK3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Mar 2009 15:10:29 -0400
+Received: from toip3.srvr.bell.ca ([209.226.175.86])
+          by tomts5-srv.bellnexxia.net
+          (InterMail vM.5.01.06.13 201-253-122-130-113-20050324) with ESMTP
+          id <20090320182431.NCTZ1582.tomts5-srv.bellnexxia.net@toip3.srvr.bell.ca>
+          for <linux-next@vger.kernel.org>; Fri, 20 Mar 2009 14:24:31 -0400
 Content-Disposition: inline
-In-Reply-To: <20090320182413.GB1847@Krystal>
+In-Reply-To: <20090320110602.86351a91.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Paul Mundt <lethal@linux-sh.org>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>
+Cc: Paul Mundt <lethal@linux-sh.org>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+
+This is a MIME-formatted message.  If you see this text it means that your
+E-mail software does not support MIME-formatted messages.
+
+--=_Krystal-2666-1237573453-0001-2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+* Stephen Rothwell (sfr@canb.auug.org.au) wrote:
+> Hi Paul,
+>=20
+> Yesterday's linux-next build of sh allmodconfig failed like this:
+>=20
+> kernel/built-in.o: In function `disable_all_kprobes':
+> kernel/kprobes.c:1382: undefined reference to `text_mutex'
+> kernel/built-in.o: In function `__unregister_kprobe_top':
+> kernel/kprobes.c:773: undefined reference to `text_mutex'
+> kernel/built-in.o: In function `register_kprobe':
+> kernel/kprobes.c:724: undefined reference to `text_mutex'
+>=20
+> Introduced by commit 4460fdad85becd569f11501ad5b91814814335ff ("tracing,
+> Text Edit Lock - kprobes architecture independent support") from the
+> tracing tree.  text_mutex is defined in mm/memory.c which is only built
+> if CONFIG_MMU is defined, which is not true for sh allmodconfig.
+
+Hrm, so we should move the text_mutex in a obj-y file. It's not clear to
+me which of mm/Makefile would be the best choice :
+
+obj-y                   :=3D bootmem.o filemap.o mempool.o oom_kill.o fadvi=
+se.o \
+                           maccess.o page_alloc.o page-writeback.o pdflush.=
+o \
+                           readahead.o swap.o truncate.o vmscan.o shmem.o \
+                           prio_tree.o util.o mmzone.o vmstat.o backing-dev=
+=2Eo \
+                           page_isolation.o mm_init.o $(mmu-y)
+
+Or maybe we add a new file, or put this in kernel/*.c. Suggestions ?
+
+Mathieu
+
+> --=20
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
 
 
-* Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca> wrote:
 
-> * Stephen Rothwell (sfr@canb.auug.org.au) wrote:
-> > Hi Paul,
-> > 
-> > Yesterday's linux-next build of sh allmodconfig failed like this:
-> > 
-> > kernel/built-in.o: In function `disable_all_kprobes':
-> > kernel/kprobes.c:1382: undefined reference to `text_mutex'
-> > kernel/built-in.o: In function `__unregister_kprobe_top':
-> > kernel/kprobes.c:773: undefined reference to `text_mutex'
-> > kernel/built-in.o: In function `register_kprobe':
-> > kernel/kprobes.c:724: undefined reference to `text_mutex'
-> > 
-> > Introduced by commit 4460fdad85becd569f11501ad5b91814814335ff ("tracing,
-> > Text Edit Lock - kprobes architecture independent support") from the
-> > tracing tree.  text_mutex is defined in mm/memory.c which is only built
-> > if CONFIG_MMU is defined, which is not true for sh allmodconfig.
-> 
-> Hrm, so we should move the text_mutex in a obj-y file. It's not clear to
-> me which of mm/Makefile would be the best choice :
-> 
-> obj-y                   := bootmem.o filemap.o mempool.o oom_kill.o fadvise.o \
->                            maccess.o page_alloc.o page-writeback.o pdflush.o \
->                            readahead.o swap.o truncate.o vmscan.o shmem.o \
->                            prio_tree.o util.o mmzone.o vmstat.o backing-dev.o \
->                            page_isolation.o mm_init.o $(mmu-y)
-> 
-> Or maybe we add a new file, or put this in kernel/*.c. Suggestions ?
+--=20
+Mathieu Desnoyers
+OpenPGP key fingerprint: 8CD5 52C3 8E3C 4140 715F  BA06 3F25 A8FE 3BAE 9A68
 
-i already fixed it earlier today via the commit below.
+--=_Krystal-2666-1237573453-0001-2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Transfer-Encoding: 7bit
+Content-Description: Digital signature
+Content-Disposition: inline
 
-(the commit notification did not go out to the thread because lkml 
-was not Cc:-ed.)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-	Ingo
+iD8DBQFJw99NPyWo/juummgRAt77AJsGlAkRTKfmo4pGUS0MBBWz1kHPbQCgkY70
+VuiJLRgf4eK6WXxDReDICp4=
+=4H3J
+-----END PGP SIGNATURE-----
 
--------------------->
->From 505f2b970b2269ce4cb669b3ff4f6479d379cec2 Mon Sep 17 00:00:00 2001
-From: Ingo Molnar <mingo@elte.hu>
-Date: Fri, 20 Mar 2009 11:05:04 +0100
-Subject: [PATCH] tracing, Text Edit Lock - kprobes architecture independent support, nommu fix
-
-Impact: build fix on SH !CONFIG_MMU
-
-Stephen Rothwell reported this linux-next build failure on the SH
-architecture:
-
-  kernel/built-in.o: In function `disable_all_kprobes':
-  kernel/kprobes.c:1382: undefined reference to `text_mutex'
-  [...]
-
-And observed:
-
-| Introduced by commit 4460fdad85becd569f11501ad5b91814814335ff ("tracing,
-| Text Edit Lock - kprobes architecture independent support") from the
-| tracing tree.  text_mutex is defined in mm/memory.c which is only built
-| if CONFIG_MMU is defined, which is not true for sh allmodconfig.
-
-Move this lock to kernel/extable.c (which is already home to various
-kernel text related routines), which file is always built-in.
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Mundt <lethal@linux-sh.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@polymtl.ca>
-LKML-Reference: <20090320110602.86351a91.sfr@canb.auug.org.au>
-Signed-off-by: Ingo Molnar <mingo@elte.hu>
----
- kernel/extable.c |   14 ++++++++++++--
- mm/memory.c      |    8 --------
- 2 files changed, 12 insertions(+), 10 deletions(-)
-
-diff --git a/kernel/extable.c b/kernel/extable.c
-index 0df6253..25d39b0 100644
---- a/kernel/extable.c
-+++ b/kernel/extable.c
-@@ -15,11 +15,21 @@
-     along with this program; if not, write to the Free Software
-     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
-+#include <linux/ftrace.h>
- #include <linux/module.h>
-+#include <linux/mutex.h>
- #include <linux/init.h>
--#include <linux/ftrace.h>
--#include <asm/uaccess.h>
-+
- #include <asm/sections.h>
-+#include <asm/uaccess.h>
-+
-+/*
-+ * mutex protecting text section modification (dynamic code patching).
-+ * some users need to sleep (allocating memory...) while they hold this lock.
-+ *
-+ * NOT exported to modules - patching kernel text is a really delicate matter.
-+ */
-+DEFINE_MUTEX(text_mutex);
- 
- extern struct exception_table_entry __start___ex_table[];
- extern struct exception_table_entry __stop___ex_table[];
-diff --git a/mm/memory.c b/mm/memory.c
-index 05fab3b..dfc9e4e 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -101,14 +101,6 @@ int randomize_va_space __read_mostly =
- 					2;
- #endif
- 
--/*
-- * mutex protecting text section modification (dynamic code patching).
-- * some users need to sleep (allocating memory...) while they hold this lock.
-- *
-- * NOT exported to modules - patching kernel text is a really delicate matter.
-- */
--DEFINE_MUTEX(text_mutex);
--
- static int __init disable_randmaps(char *s)
- {
- 	randomize_va_space = 0;
+--=_Krystal-2666-1237573453-0001-2--
