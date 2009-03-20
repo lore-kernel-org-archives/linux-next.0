@@ -1,52 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the watchdog tree with the arm tree
-Date: Fri, 20 Mar 2009 20:24:21 +1100
-Message-ID: <20090320202421.bd2c4289.sfr@canb.auug.org.au>
-References: <20090320135849.8f71cdbc.sfr@canb.auug.org.au>
-	<20090320091551.GB6160@infomag.iguana.be>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net tree with the tree
+Date: Fri, 20 Mar 2009 02:28:28 -0700 (PDT)
+Message-ID: <20090320.022828.118487369.davem@davemloft.net>
+References: <20090320113242.bfe7fe62.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__20_Mar_2009_20_24_21_+1100_zv+tckJiOZpJL5hb"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45891 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756021AbZCTJYc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 20 Mar 2009 05:24:32 -0400
-In-Reply-To: <20090320091551.GB6160@infomag.iguana.be>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:32922
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1753524AbZCTJ2m (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 Mar 2009 05:28:42 -0400
+In-Reply-To: <20090320113242.bfe7fe62.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: linux-next@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+To: sfr@canb.auug.org.au
+Cc: linux-next@vger.kernel.org, markmc@redhat.com, rusty@rustcorp.com.au, pktoss@gmail.com
 
---Signature=_Fri__20_Mar_2009_20_24_21_+1100_zv+tckJiOZpJL5hb
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 20 Mar 2009 11:32:42 +1100
 
-Hi Wim,
+> Hi David,
+> 
+> Today's linux-next merge of the net tree got a conflict in
+> drivers/net/virtio_net.c between commit
+> 4783256ef92f5aecd6d54693b16386f2a0021c2a ("virtio_net: Make virtio_net
+> support carrier detection") from the net-current tree and commit
+> 9f4d26d0f3016cf8813977d624751b94465fa317 ("virtio_net: add link status
+> handling") from the net tree.
+> 
+> I think that the latter patch means that the former is not needed, so I
+> used the version from the net tree.
 
-On Fri, 20 Mar 2009 10:15:51 +0100 Wim Van Sebroeck <wim@iguana.be> wrote:
->
-> I redid the tree so that that commit doesn't add the omap part again.
-> So should be fixed tomorrow.
-
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__20_Mar_2009_20_24_21_+1100_zv+tckJiOZpJL5hb
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAknDYMYACgkQjjKRsyhoI8xFGACfcImIKVTELvjEoWcwbFuNLxdy
-yuAAoKM4xTG00lOf9ByOA5OdNlm4TiiC
-=98iQ
------END PGP SIGNATURE-----
-
---Signature=_Fri__20_Mar_2009_20_24_21_+1100_zv+tckJiOZpJL5hb--
+I've taken care of this merge conflict, thanks Stephen.
