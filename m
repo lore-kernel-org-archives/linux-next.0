@@ -1,55 +1,51 @@
-From: Pantelis Koukousoulas <pktoss@gmail.com>
-Subject: Re: linux-next: manual merge of the net tree with the tree
-Date: Fri, 20 Mar 2009 06:38:05 +0200
-Message-ID: <1295ed070903192138y23ef0a67mf0e38d96cad54dc0@mail.gmail.com>
-References: <20090320113242.bfe7fe62.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the drm tree
+Date: Fri, 20 Mar 2009 15:38:26 +1100
+Message-ID: <20090320153826.e6f1d760.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f165.google.com ([209.85.219.165]:43437 "EHLO
-	mail-ew0-f165.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752082AbZCTEiI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Mar 2009 00:38:08 -0400
-Received: by ewy9 with SMTP id 9so610739ewy.37
-        for <linux-next@vger.kernel.org>; Thu, 19 Mar 2009 21:38:05 -0700 (PDT)
-In-Reply-To: <20090320113242.bfe7fe62.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39501 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751103AbZCTEic (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 Mar 2009 00:38:32 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Mark McLoughlin <markmc@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, Thomas Hellstrom <thellstrom@vmware.com>, Richard Purdie <rpurdie@linux.intel.com>, Ben Gamari <bgamari@gmail.com>, Eric Anholt <eric@anholt.net>, Dave Airlie <airlied@linux.ie>
 
-On Fri, Mar 20, 2009 at 2:32 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi David,
->
-> Today's linux-next merge of the net tree got a conflict in
-> drivers/net/virtio_net.c between commit
-> 4783256ef92f5aecd6d54693b16386f2a0021c2a ("virtio_net: Make virtio_net
-> support carrier detection") from the net-current tree and commit
-> 9f4d26d0f3016cf8813977d624751b94465fa317 ("virtio_net: add link status
-> handling") from the net tree.
->
-> I think that the latter patch means that the former is not needed, so I
-> used the version from the net tree.
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
->
+Hi Greg,
 
-Hi,
+Today's linux-next merge of the staging tree got a conflict in
+drivers/gpu/drm/Makefile between commit
+955b12def42e83287c1bdb1411d99451753c1391 ("drm: Convert proc files to
+seq_file and introduce debugfs") from the drm tree and commit
+69a914df73e04807248f21b6738dab9cf9e3c094 ("drm: Add a tracker for global
+objects") from the staging tree.
 
-The correct merge is so that the conflicting part becomes like this:
+Just trivial overlapping additions.  I fixed it up (see below) and can
+carry the fix as necessary.
 
-+       /* If we have no carrier info, the answer is "always on". */
-       vi->status = VIRTIO_NET_S_LINK_UP;
-+       netif_carrier_on(vi->dev);
+However, I do need to wonder why changes to drivers/gpu are appearing in
+the staging tree - I assumed that its updates would be restricted to the
+drivers/staging directory (as much as possible).
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-I.e., you need to keep this netif_carrier_on(vi->dev) to maintain
-useful behavior
-for current/older versions of qemu that don't support link handling (because
-in this case VIRTIO_NET_S_LINK_UP will not cause netif_carrier_on to
-be called).
-
-Thanks,
-Pantelis
+diff --cc drivers/gpu/drm/Makefile
+index 4ec5061,9186cfd..0000000
+--- a/drivers/gpu/drm/Makefile
++++ b/drivers/gpu/drm/Makefile
+@@@ -11,7 -11,7 +11,7 @@@ drm-y       :=	drm_auth.o drm_bufs.o dr
+  		drm_agpsupport.o drm_scatter.o ati_pcigart.o drm_pci.o \
+  		drm_sysfs.o drm_hashtab.o drm_sman.o drm_mm.o \
+  		drm_crtc.o drm_crtc_helper.o drm_modes.o drm_edid.o \
+- 		drm_info.o drm_debugfs.o
+ -		drm_global.o
+++		drm_info.o drm_debugfs.o drm_global.o
+  
+  drm-$(CONFIG_COMPAT) += drm_ioc32.o
+  
