@@ -1,58 +1,33 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH] Staging: comedi: Fix an other build problem
-Date: Fri, 20 Mar 2009 21:36:57 -0700
-Message-ID: <20090321043657.GC482@kroah.com>
-References: <1237567072-30463-1-git-send-email-abogani@texware.it>
+Subject: Re: [PATCH] Staging: psb: fix build problem
+Date: Fri, 20 Mar 2009 21:44:02 -0700
+Message-ID: <20090321044402.GA31734@kroah.com>
+References: <20090320113522.GA26267@orion>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:40413 "EHLO coco.kroah.org"
+Received: from kroah.org ([198.145.64.141]:46700 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1750882AbZCUEj3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 21 Mar 2009 00:39:29 -0400
+	id S1751343AbZCUEqq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 21 Mar 2009 00:46:46 -0400
 Content-Disposition: inline
-In-Reply-To: <1237567072-30463-1-git-send-email-abogani@texware.it>
+In-Reply-To: <20090320113522.GA26267@orion>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alessio Igor Bogani <abogani@texware.it>
-Cc: Linux-next <linux-next@vger.kernel.org>
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: gregkh@suse.de, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-On Fri, Mar 20, 2009 at 05:37:52PM +0100, Alessio Igor Bogani wrote:
-> [...]
->  CC [M]  drivers/staging/comedi/comedi_compat32.o
->  drivers/staging/comedi/comedi_compat32.c: In function =E2=80=98raw_i=
-octl=E2=80=99:
->  drivers/staging/comedi/comedi_compat32.c:451: error: =E2=80=98comedi=
-32_chaninfo=E2=80=99 undeclared (first use in this function)
->  drivers/staging/comedi/comedi_compat32.c:451: error: (Each undeclare=
-d identifier is reported only once
->  drivers/staging/comedi/comedi_compat32.c:451: error: for each functi=
-on it appears in.)
->  drivers/staging/comedi/comedi_compat32.c:454: error: expected expres=
-sion before =E2=80=98)=E2=80=99 token
->  drivers/staging/comedi/comedi_compat32.c:454: error: expected expres=
-sion before =E2=80=98)=E2=80=99 token
->  drivers/staging/comedi/comedi_compat32.c:457: error: expected expres=
-sion before =E2=80=98)=E2=80=99 token
->  drivers/staging/comedi/comedi_compat32.c:457: error: expected expres=
-sion before =E2=80=98)=E2=80=99 token
->  drivers/staging/comedi/comedi_compat32.c:460: error: expected expres=
-sion before =E2=80=98)=E2=80=99 token
->  drivers/staging/comedi/comedi_compat32.c:460: error: expected expres=
-sion before =E2=80=98)=E2=80=99 token
->  drivers/staging/comedi/comedi_compat32.c:463: error: expected expres=
-sion before =E2=80=98)=E2=80=99 token
->  drivers/staging/comedi/comedi_compat32.c:463: error: expected expres=
-sion before =E2=80=98)=E2=80=99 token
->  drivers/staging/comedi/comedi_compat32.c:466: error: expected expres=
-sion before =E2=80=98)=E2=80=99 token
->  drivers/staging/comedi/comedi_compat32.c:466: error: expected expres=
-sion before =E2=80=98)=E2=80=99 token
->  [...]
+On Fri, Mar 20, 2009 at 02:35:22PM +0300, Alexander Beregalov wrote:
+> drivers/staging/psb/psb_drv.c:1372: error: 'struct drm_minor' has no member named 'dev_root'
+> drivers/staging/psb/psb_drv.c:1374: error: 'struct drm_minor' has no member named 'dev_root'
+> drivers/staging/psb/psb_drv.c:1394: error: unknown field 'dri_library_name' specified in initializ
+> drivers/staging/psb/ttm/ttm_pat_compat.h:40: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'pgprot_ttm_x86_wc'
+> 
+> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
 
-Ah, sorry, I just fixed this before I saw your patch (based on Randy's
-previous complaint.)
+Thanks for the patch.  I'll keep it around, but for now, I've dropped
+the psb driver from the staging tree.  It needs to be reworked in a
+different way.
 
 thanks,
 
