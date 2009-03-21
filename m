@@ -1,24 +1,22 @@
-From: Larry Finger <Larry.Finger-tQ5ms3gMjBLk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: [PATCH] p54: fix SoftLED compile dependencies
-Date: Sat, 21 Mar 2009 10:26:09 -0500
-Message-ID: <49C50711.9060206@lwfinger.net>
-References: <20090319221024.5e2ad6e5.sfr@canb.auug.org.au>	<200903210057.47067.chunkeey@web.de> <87eiwre61a.fsf@litku.valot.fi>	<200903211322.01654.chunkeey@web.de> <873ad7dpru.fsf@litku.valot.fi>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH] dnet: DNET should depend on HAS_IOMEM
+Date: Sat, 21 Mar 2009 16:58:56 -0700 (PDT)
+Message-ID: <20090321.165856.73811215.davem@davemloft.net>
+References: <20090320101401.6ea261ea@osiris.boeblingen.de.ibm.com>
+	<1237547185-20088-1-git-send-email-yanok@emcraft.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <873ad7dpru.fsf-4yk3W8r0N7SEazanehQPrg@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kalle Valo <kalle.valo-X3B1VOXEql0@public.gmane.org>
-Cc: Christian Lamparter <chunkeey-S0/GAf8tV78@public.gmane.org>, Michael Buesch <mb-fseUSCV1ubazQB+pC5nmwQ@public.gmane.org>, Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <1237547185-20088-1-git-send-email-yanok@emcraft.com>
+Sender: netdev-owner@vger.kernel.org
+To: yanok@emcraft.com
+Cc: heiko.carstens@de.ibm.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Kalle Valo wrote:
-> 
-> In my opinion wireless.kernel.org is better place for the list.
+From: Ilya Yanok <yanok@emcraft.com>
+Date: Fri, 20 Mar 2009 14:06:25 +0300
 
-I agree as it is available to a much wider audience.
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Signed-off-by: Ilya Yanok <yanok@emcraft.com>
+
+Applied, thanks.
