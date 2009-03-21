@@ -1,58 +1,69 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: linux-next: Tree for March 20 - crypto crash on s390
-Date: Sat, 21 Mar 2009 11:56:29 +0100
-Message-ID: <20090321115629.6e911679@osiris.boeblingen.de.ibm.com>
-References: <20090320162800.24b0ad93.sfr@canb.auug.org.au>
-	<20090320135912.53147d76@osiris.boeblingen.de.ibm.com>
-	<20090321062605.GA14046@gondor.apana.org.au>
+From: Christian Lamparter <chunkeey@web.de>
+Subject: Re: [PATCH] p54: fix SoftLED compile dependencies
+Date: Sat, 21 Mar 2009 13:22:01 +0100
+Message-ID: <200903211322.01654.chunkeey@web.de>
+References: <20090319221024.5e2ad6e5.sfr@canb.auug.org.au> <200903210057.47067.chunkeey@web.de> <87eiwre61a.fsf@litku.valot.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate2.de.ibm.com ([195.212.17.162]:45336 "EHLO
-	mtagate2.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751532AbZCUK4e (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 21 Mar 2009 06:56:34 -0400
-In-Reply-To: <20090321062605.GA14046@gondor.apana.org.au>
+Received: from fmmailgate03.web.de ([217.72.192.234]:47144 "EHLO
+	fmmailgate03.web.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751428AbZCUMWG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 21 Mar 2009 08:22:06 -0400
+In-Reply-To: <87eiwre61a.fsf@litku.valot.fi>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jan Glauber <jang@linux.vnet.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+To: Kalle Valo <kalle.valo@iki.fi>
+Cc: Michael Buesch <mb@bu3sch.de>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 
-On Sat, 21 Mar 2009 14:26:05 +0800
-Herbert Xu <herbert@gondor.apana.org.au> wrote:
+On Saturday 21 March 2009 07:36:33 Kalle Valo wrote:
+> Christian Lamparter <chunkeey@web.de> writes:
+> 
+> > This patch fixes a compile problem when the MAC80211_LEDS
+> > triggers are enabled but not LED class itself. 
+> > (which is sort of pointless, but anyway...)
+> 
+> [...]
+> 
+> > @@ -17,31 +18,6 @@ config P54_USB
+> >  	select CRC32
+> >  	---help---
+> >  	  This driver is for USB isl38xx based wireless cards.
+> > -	  These are USB based adapters found in devices such as:
+> > -
+> > -	  3COM 3CRWE254G72
+> > -	  SMC 2862W-G
+> > -	  Accton 802.11g WN4501 USB
+> > -	  Siemens Gigaset USB
+> > -	  Netgear WG121
+> > -	  Netgear WG111
+> > -	  Medion 40900, Roper Europe
+> > -	  Shuttle PN15, Airvast WM168g, IOGear GWU513
+> > -	  Linksys WUSB54G
+> > -	  Linksys WUSB54G Portable
+> > -	  DLink DWL-G120 Spinnaker
+> > -	  DLink DWL-G122
+> > -	  Belkin F5D7050 ver 1000
+> > -	  Cohiba Proto board
+> > -	  SMC 2862W-G version 2
+> > -	  U.S. Robotics U5 802.11g Adapter
+> > -	  FUJITSU E-5400 USB D1700
+> > -	  Sagem XG703A
+> > -	  DLink DWL-G120 Cohiba
+> > -	  Spinnaker Proto board
+> > -	  Linksys WUSB54AG
+> > -	  Inventel UR054G
+> > -	  Spinnaker DUT
+> 
+> This change wasn't mentioned in the commit log. Did this get included
+> by accident?
+> 
+heh true... should I add them back? after all this list hasn't changed in years
+and we have a much nicer one on http://www.prism54.org/
+( http://wireless.kernel.org/en/users/Drivers/p54/devices )
 
-> On Fri, Mar 20, 2009 at 01:59:12PM +0100, Heiko Carstens wrote:
-> >
-> > gets called with an shash_desc where
-> > 
-> > bsize = crypto_shash_blocksize(desc->tfm);
-> > 
-> > results in bsize with zero.
-> 
-> Oops, this patch should fix it.
-> 
-> commit b24c94a0d65282dc466339390472d7539e1706c2
-> Author: Herbert Xu <herbert@gondor.apana.org.au>
-> Date:   Sat Mar 21 14:25:19 2009 +0800
-> 
->     crypto: sha512-s390 - Add missing block size
->     
->     I missed the block size when converting sha512-s390 to shash.
->     
->     Reported-by: Heiko Carstens <heiko.carstens@de.ibm.com>
->     Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-> 
-> diff --git a/arch/s390/crypto/sha512_s390.c b/arch/s390/crypto/sha512_s390.c
-> index 420acf4..37b4236 100644
-> --- a/arch/s390/crypto/sha512_s390.c
-> +++ b/arch/s390/crypto/sha512_s390.c
-> @@ -84,6 +84,7 @@ static struct shash_alg sha384_alg = {
->  		.cra_driver_name=	"sha384-s390",
->  		.cra_priority	=	CRYPT_S390_PRIORITY,
->  		.cra_flags	=	CRYPTO_ALG_TYPE_SHASH,
-> +		.cra_blocksize	=	SHA512_BLOCK_SIZE,
-
-Yes, it does fix it. Thanks!
-
-Tested-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Regards,
+	Chr
