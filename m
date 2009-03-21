@@ -1,63 +1,38 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH] Staging: comedi: Fix build problem
-Date: Fri, 20 Mar 2009 21:36:34 -0700
-Message-ID: <20090321043634.GB482@kroah.com>
-References: <1237567010-30354-1-git-send-email-abogani@texware.it>
+Subject: Re: linux-next: Tree for March 18 (staging/comedi)
+Date: Fri, 20 Mar 2009 21:36:12 -0700
+Message-ID: <20090321043612.GA482@kroah.com>
+References: <20090318173830.7ea03dfb.sfr@canb.auug.org.au> <49C121C7.1040903@oracle.com> <20090318163319.GA9706@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:40412 "EHLO coco.kroah.org"
+Received: from kroah.org ([198.145.64.141]:40408 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1750706AbZCUEj3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	id S1750912AbZCUEj3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
 	Sat, 21 Mar 2009 00:39:29 -0400
 Content-Disposition: inline
-In-Reply-To: <1237567010-30354-1-git-send-email-abogani@texware.it>
+In-Reply-To: <20090318163319.GA9706@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alessio Igor Bogani <abogani@texware.it>
-Cc: Linux-next <linux-next@vger.kernel.org>
+To: Greg KH <gregkh@suse.de>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, Mar 20, 2009 at 05:36:50PM +0100, Alessio Igor Bogani wrote:
-> [...]
->  CC [M]  drivers/staging/comedi/comedi_compat32.o
->  drivers/staging/comedi/comedi_compat32.c: In function =E2=80=98compa=
-t_chaninfo=E2=80=99:
->  drivers/staging/comedi/comedi_compat32.c:135: error: dereferencing p=
-ointer to incomplete type
->  drivers/staging/comedi/comedi_compat32.c:139: error: dereferencing p=
-ointer to incomplete type
->  drivers/staging/comedi/comedi_compat32.c:145: error: dereferencing p=
-ointer to incomplete type
->  drivers/staging/comedi/comedi_compat32.c:145: error: dereferencing p=
-ointer to incomplete type
->  drivers/staging/comedi/comedi_compat32.c:145: warning: type defaults=
- to =E2=80=98int=E2=80=99 in declaration of =E2=80=98type name=E2=80=99
->  drivers/staging/comedi/comedi_compat32.c:145: error: dereferencing p=
-ointer to incomplete type
->  drivers/staging/comedi/comedi_compat32.c:145: error: dereferencing p=
-ointer to incomplete type
->  drivers/staging/comedi/comedi_compat32.c:145: warning: type defaults=
- to =E2=80=98int=E2=80=99 in declaration of =E2=80=98type name=E2=80=99
->  drivers/staging/comedi/comedi_compat32.c:145: error: dereferencing p=
-ointer to incomplete type
->  drivers/staging/comedi/comedi_compat32.c:145: error: dereferencing p=
-ointer to incomplete type
->  drivers/staging/comedi/comedi_compat32.c:145: warning: type defaults=
- to =E2=80=98int=E2=80=99 in declaration of =E2=80=98type name=E2=80=99
->  drivers/staging/comedi/comedi_compat32.c:145: error: dereferencing p=
-ointer to incomplete type
->  drivers/staging/comedi/comedi_compat32.c:145: error: dereferencing p=
-ointer to incomplete type
->  [...]
->=20
-> Signed-off-by: Alessio Igor Bogani <abogani@texware.it>
-> ---
->  drivers/staging/comedi/comedi.h      |    4 ++--
->  drivers/staging/comedi/comedi_fops.c |    8 ++++----
->  2 files changed, 6 insertions(+), 6 deletions(-)
+On Wed, Mar 18, 2009 at 09:33:19AM -0700, Greg KH wrote:
+> On Wed, Mar 18, 2009 at 09:31:03AM -0700, Randy Dunlap wrote:
+> > Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > Changes since 20090317:
+> > 
+> > 
+> > drivers/staging/comedi/comedi_compat32.c: In function 'compat_chaninfo':
+> > drivers/staging/comedi/comedi_compat32.c:135: error: dereferencing pointer to incomplete type
+> 
+> <snip>
+> 
+> Ick, sorry about that, I'll fix it up for tomorrows -next release.
 
-Hm, I just fixed this in a cleaner way, and copied you on that patch.
+Now fixed.
 
 thanks,
 
