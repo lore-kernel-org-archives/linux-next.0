@@ -1,37 +1,58 @@
-From: Alexander Clouter <alex@digriz.org.uk>
-Subject: Re: linux-next: Tree for March 20 - timeriomem build break on s390
-Date: Sat, 21 Mar 2009 10:38:17 +0000
-Message-ID: <20090321103817.GL22563@woodchuck>
-References: <20090320162800.24b0ad93.sfr@canb.auug.org.au> <20090320100901.45ce2e6f@osiris.boeblingen.de.ibm.com> <20090321061922.GA13990@gondor.apana.org.au>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: linux-next: Tree for March 20 - crypto crash on s390
+Date: Sat, 21 Mar 2009 11:56:29 +0100
+Message-ID: <20090321115629.6e911679@osiris.boeblingen.de.ibm.com>
+References: <20090320162800.24b0ad93.sfr@canb.auug.org.au>
+	<20090320135912.53147d76@osiris.boeblingen.de.ibm.com>
+	<20090321062605.GA14046@gondor.apana.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753890AbZCUKie@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20090321061922.GA13990@gondor.apana.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mtagate2.de.ibm.com ([195.212.17.162]:45336 "EHLO
+	mtagate2.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751532AbZCUK4e (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 21 Mar 2009 06:56:34 -0400
+In-Reply-To: <20090321062605.GA14046@gondor.apana.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jan Glauber <jang@linux.vnet.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-Hi,
+On Sat, 21 Mar 2009 14:26:05 +0800
+Herbert Xu <herbert@gondor.apana.org.au> wrote:
 
-* Herbert Xu <herbert@gondor.apana.org.au> [2009-03-21 14:19:22+0800]:
-> 
-> On Fri, Mar 20, 2009 at 10:09:01AM +0100, Heiko Carstens wrote:
-> > 'hwrng: timeriomem' breaks an allyesconfig build on s390:
+> On Fri, Mar 20, 2009 at 01:59:12PM +0100, Heiko Carstens wrote:
+> >
+> > gets called with an shash_desc where
 > > 
-> >   CC      drivers/char/hw_random/timeriomem-rng.o
-> > drivers/char/hw_random/timeriomem-rng.c: In function 'timeriomem_rng_data_read':
-> > drivers/char/hw_random/timeriomem-rng.c:60: error: implicit declaration of function 'readl'
+> > bsize = crypto_shash_blocksize(desc->tfm);
 > > 
-> > Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+> > results in bsize with zero.
 > 
-> Patch applied.  Thanks Heiko!
->
-Yes, thanks for catching this.
+> Oops, this patch should fix it.
+> 
+> commit b24c94a0d65282dc466339390472d7539e1706c2
+> Author: Herbert Xu <herbert@gondor.apana.org.au>
+> Date:   Sat Mar 21 14:25:19 2009 +0800
+> 
+>     crypto: sha512-s390 - Add missing block size
+>     
+>     I missed the block size when converting sha512-s390 to shash.
+>     
+>     Reported-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+>     Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+> 
+> diff --git a/arch/s390/crypto/sha512_s390.c b/arch/s390/crypto/sha512_s390.c
+> index 420acf4..37b4236 100644
+> --- a/arch/s390/crypto/sha512_s390.c
+> +++ b/arch/s390/crypto/sha512_s390.c
+> @@ -84,6 +84,7 @@ static struct shash_alg sha384_alg = {
+>  		.cra_driver_name=	"sha384-s390",
+>  		.cra_priority	=	CRYPT_S390_PRIORITY,
+>  		.cra_flags	=	CRYPTO_ALG_TYPE_SHASH,
+> +		.cra_blocksize	=	SHA512_BLOCK_SIZE,
 
-Cheers
+Yes, it does fix it. Thanks!
 
--- 
-Alexander Clouter
-.sigmonster says: Don't kiss an elephant on the lips today.
+Tested-by: Heiko Carstens <heiko.carstens@de.ibm.com>
