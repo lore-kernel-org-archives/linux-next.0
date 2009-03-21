@@ -1,63 +1,37 @@
-From: Kalle Valo <kalle.valo@iki.fi>
-Subject: Re: [PATCH] p54: fix SoftLED compile dependencies
-Date: Sat, 21 Mar 2009 08:36:33 +0200
-Message-ID: <87eiwre61a.fsf@litku.valot.fi>
-References: <20090319221024.5e2ad6e5.sfr@canb.auug.org.au>
-	<49C293CC.6020009@oracle.com> <200903191955.00718.mb@bu3sch.de>
-	<200903210057.47067.chunkeey@web.de>
+From: Alexander Clouter <alex@digriz.org.uk>
+Subject: Re: linux-next: Tree for March 20 - timeriomem build break on s390
+Date: Sat, 21 Mar 2009 10:38:17 +0000
+Message-ID: <20090321103817.GL22563@woodchuck>
+References: <20090320162800.24b0ad93.sfr@canb.auug.org.au> <20090320100901.45ce2e6f@osiris.boeblingen.de.ibm.com> <20090321061922.GA13990@gondor.apana.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f158.google.com ([209.85.220.158]:38184 "EHLO
-	mail-fx0-f158.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752410AbZCUGgj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 21 Mar 2009 02:36:39 -0400
-In-Reply-To: <200903210057.47067.chunkeey@web.de> (Christian Lamparter's message of "Sat\, 21 Mar 2009 00\:57\:46 +0100")
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Christian Lamparter <chunkeey@web.de>
-Cc: Michael Buesch <mb@bu3sch.de>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "John W. Linville" <linville@tuxdriver.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753890AbZCUKie@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20090321061922.GA13990@gondor.apana.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Christian Lamparter <chunkeey@web.de> writes:
+Hi,
 
-> This patch fixes a compile problem when the MAC80211_LEDS
-> triggers are enabled but not LED class itself. 
-> (which is sort of pointless, but anyway...)
+* Herbert Xu <herbert@gondor.apana.org.au> [2009-03-21 14:19:22+0800]:
+> 
+> On Fri, Mar 20, 2009 at 10:09:01AM +0100, Heiko Carstens wrote:
+> > 'hwrng: timeriomem' breaks an allyesconfig build on s390:
+> > 
+> >   CC      drivers/char/hw_random/timeriomem-rng.o
+> > drivers/char/hw_random/timeriomem-rng.c: In function 'timeriomem_rng_data_read':
+> > drivers/char/hw_random/timeriomem-rng.c:60: error: implicit declaration of function 'readl'
+> > 
+> > Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+> 
+> Patch applied.  Thanks Heiko!
+>
+Yes, thanks for catching this.
 
-[...]
-
-> @@ -17,31 +18,6 @@ config P54_USB
->  	select CRC32
->  	---help---
->  	  This driver is for USB isl38xx based wireless cards.
-> -	  These are USB based adapters found in devices such as:
-> -
-> -	  3COM 3CRWE254G72
-> -	  SMC 2862W-G
-> -	  Accton 802.11g WN4501 USB
-> -	  Siemens Gigaset USB
-> -	  Netgear WG121
-> -	  Netgear WG111
-> -	  Medion 40900, Roper Europe
-> -	  Shuttle PN15, Airvast WM168g, IOGear GWU513
-> -	  Linksys WUSB54G
-> -	  Linksys WUSB54G Portable
-> -	  DLink DWL-G120 Spinnaker
-> -	  DLink DWL-G122
-> -	  Belkin F5D7050 ver 1000
-> -	  Cohiba Proto board
-> -	  SMC 2862W-G version 2
-> -	  U.S. Robotics U5 802.11g Adapter
-> -	  FUJITSU E-5400 USB D1700
-> -	  Sagem XG703A
-> -	  DLink DWL-G120 Cohiba
-> -	  Spinnaker Proto board
-> -	  Linksys WUSB54AG
-> -	  Inventel UR054G
-> -	  Spinnaker DUT
-
-This change wasn't mentioned in the commit log. Did this get included
-by accident?
+Cheers
 
 -- 
-Kalle Valo
+Alexander Clouter
+.sigmonster says: Don't kiss an elephant on the lips today.
