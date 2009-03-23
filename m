@@ -1,47 +1,92 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net tree with the infiniband
- tree
-Date: Mon, 23 Mar 2009 12:28:43 -0700 (PDT)
-Message-ID: <20090323.122843.11697107.davem@davemloft.net>
-References: <20090323145001.6615d77b.sfr@canb.auug.org.au>
-	<20090322.211720.220979862.davem@davemloft.net>
-	<adavdq0w60d.fsf@cisco.com>
+From: Janne Grunau <j@jannau.net>
+Subject: Re: linux-next: Tree for March 23 (media/video/hdpvr)
+Date: Mon, 23 Mar 2009 21:49:40 +0100
+Message-ID: <20090323204940.GA5079@aniel>
+References: <20090323205454.d0cbf721.sfr@canb.auug.org.au> <49C7D965.5080202@oracle.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:57336
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1755480AbZCWT24 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 Mar 2009 15:28:56 -0400
-In-Reply-To: <adavdq0w60d.fsf@cisco.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: rdreier@cisco.com
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, shemminger@vyatta.com, rolandd@cisco.com
+Content-Type: multipart/mixed; boundary="SUOF0GtieIMvvwua"
+Return-path: <linux-media-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <49C7D965.5080202@oracle.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-From: Roland Dreier <rdreier@cisco.com>
-Date: Mon, 23 Mar 2009 09:36:34 -0700
 
-> > Today's linux-next merge of the net tree got a conflict in
-> > drivers/infiniband/ulp/ipoib/ipoib_main.c between commit
-> > 574d30e9fd416037fc85bcbb148074214aee50e1 ("IPoIB: Convert to
-> > net_device_ops") from the infiniband tree and commit
-> > fe8114e8e1d15ba07ddcaebc4741957a1546f307 ("infiniband: convert ipoib to
-> > net_device_ops") from the net tree.
+--SUOF0GtieIMvvwua
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi,
+
+On Mon, Mar 23, 2009 at 11:48:05AM -0700, Randy Dunlap wrote:
+> Stephen Rothwell wrote:
 > > 
-> > Again different versions of the same change.  I used the net tree version.
+> > Changes since 20090320:
 > 
-> I'll drop the netdev-ops topic branch from my tree and assume that
-> Stephen's newer patches are the right ones.  Not sure why Stephen sent
-> two different versions to two different trees but oh well...
+> > The v4l-dvb tree gained a build failure for which I have reverted 3 commits.
+> 
+> drivers/built-in.o: In function `hdpvr_disconnect':
+> hdpvr-core.c:(.text+0xf3894): undefined reference to `i2c_del_adapter'
+> drivers/built-in.o: In function `hdpvr_register_i2c_adapter':
+> (.text+0xf4145): undefined reference to `i2c_add_adapter'
+> 
+> 
+> CONFIG_I2C is not enabled.
 
-I think because he works purely againt net-next-2.6 and he really
-wanted to add the config option without risk of breaking allmodconfig
-on x86.
+following patch should fix that.
 
-That's only possible if all the netdev_ops conversions go into
-net-next-2.6 as I explained.
+Janne
 
-Anyways, thanks Roland, I appreciate you helping us resolve this.
+ps: Mauro, I'll send a pull request shortly
+
+--SUOF0GtieIMvvwua
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline; filename="hdpvr_without_i2c.diff"
+
+make hdpvr build without CONFIG_I2C
+
+Signed-off-by: Janne Grunau <j@jannau.net>
+---
+diff --git a/drivers/media/video/hdpvr/Makefile b/drivers/media/video/hdpvr/Makefile
+index 79ad2e1..145163b 100644
+--- a/drivers/media/video/hdpvr/Makefile
++++ b/drivers/media/video/hdpvr/Makefile
+@@ -1,4 +1,6 @@
+-hdpvr-objs	:= hdpvr-control.o hdpvr-core.o hdpvr-i2c.o hdpvr-video.o
++hdpvr-objs := hdpvr-control.o hdpvr-core.o hdpvr-video.o
++
++hdpvr-$(CONFIG_I2C) += hdpvr-i2c.o
+ 
+ obj-$(CONFIG_VIDEO_HDPVR) += hdpvr.o
+ 
+diff --git a/drivers/media/video/hdpvr/hdpvr-core.c b/drivers/media/video/hdpvr/hdpvr-core.c
+index e7300b5..dadb2e7 100644
+--- a/drivers/media/video/hdpvr/hdpvr-core.c
++++ b/drivers/media/video/hdpvr/hdpvr-core.c
+@@ -21,6 +21,7 @@
+ #include <linux/usb.h>
+ #include <linux/mutex.h>
+ #include <linux/i2c.h>
++#include <linux/autoconf.h>
+ 
+ #include <linux/videodev2.h>
+ #include <media/v4l2-dev.h>
+@@ -389,12 +390,14 @@ static void hdpvr_disconnect(struct usb_interface *interface)
+ 	mutex_unlock(&dev->io_mutex);
+ 
+ 	/* deregister I2C adapter */
++#ifdef CONFIG_I2C
+ 	mutex_lock(&dev->i2c_mutex);
+ 	if (dev->i2c_adapter)
+ 		i2c_del_adapter(dev->i2c_adapter);
+ 	kfree(dev->i2c_adapter);
+ 	dev->i2c_adapter = NULL;
+ 	mutex_unlock(&dev->i2c_mutex);
++#endif /* CONFIG_I2C */
+ 
+ 	atomic_dec(&dev_nr);
+ 
+
+--SUOF0GtieIMvvwua--
