@@ -1,41 +1,43 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for March 23 (media/video/hdpvr)
-Date: Mon, 23 Mar 2009 13:37:22 -0700
-Message-ID: <49C7F302.6030004@oracle.com>
-References: <20090323205454.d0cbf721.sfr@canb.auug.org.au> <49C7D965.5080202@oracle.com> <20090323204940.GA5079@aniel>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+Subject: Re: linux-next:  tree build failure
+Date: Mon, 23 Mar 2009 19:27:09 -0300
+Message-ID: <20090323192709.3b3eb070@pedra.chehab.org>
+References: <20090323203810.14776298.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20090323204940.GA5079@aniel>
-Sender: linux-media-owner@vger.kernel.org
-To: Janne Grunau <j@jannau.net>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bombadil.infradead.org ([18.85.46.34]:46776 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756692AbZCWW1I (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Mar 2009 18:27:08 -0400
+In-Reply-To: <20090323203810.14776298.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
 
-Janne Grunau wrote:
-> Hi,
+On Mon, 23 Mar 2009 20:38:10 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi Mauro,
 > 
-> On Mon, Mar 23, 2009 at 11:48:05AM -0700, Randy Dunlap wrote:
->> Stephen Rothwell wrote:
->>> Changes since 20090320:
->>> The v4l-dvb tree gained a build failure for which I have reverted 3 commits.
->> drivers/built-in.o: In function `hdpvr_disconnect':
->> hdpvr-core.c:(.text+0xf3894): undefined reference to `i2c_del_adapter'
->> drivers/built-in.o: In function `hdpvr_register_i2c_adapter':
->> (.text+0xf4145): undefined reference to `i2c_add_adapter'
->>
->>
->> CONFIG_I2C is not enabled.
+> Today's linux-next build (powerpc allyesconfig) failed like this:
 > 
-> following patch should fix that.
-
-Ack.  Thanks.
-
-> Janne
+> drivers/media/video/ov7670.c: In function 'ov7670_write':
+> drivers/media/video/ov7670.c:433: error: implicit declaration of function 'msleep'
 > 
-> ps: Mauro, I'll send a pull request shortly
+> Caused by commit c69a6f8d071763141e774893c71e09ded722f05d ("V4L/DVB
+> (11113): ov7670: convert to v4l2_subdev") which removed the include of
+> linux/delay.h ...
+> 
+> I have reverted that commit (and the two dependent commits
+> b7db06380e43161560a0eb2cc5fe891c23994b35 ("V4L/DVB (11116): ov7670:
+> cleanup and remove legacy code") and
+> 2134b61009c102142e5140ab156d1cd99e0f6362 ("V4L/DVB (11117): ov7670: add
+> support to get/set registers")) for today.
+> 
+Thanks. I just fold the fix at c69a6f8d071763 to avoid bisect troubles.
 
-
--- 
-~Randy
+Cheers,
+Mauro
