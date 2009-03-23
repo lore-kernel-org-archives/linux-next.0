@@ -1,75 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: driver-core tree build failure
-Date: Sun, 22 Mar 2009 23:22:37 +1100
-Message-ID: <20090322232237.1db2e976.sfr@canb.auug.org.au>
-References: <20090316204703.f2f354f9.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm tree with the arm-current tree
+Date: Mon, 23 Mar 2009 11:06:29 +1100
+Message-ID: <20090323110629.664e18d1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46930 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55197 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751966AbZCVMWm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 22 Mar 2009 08:22:42 -0400
-In-Reply-To: <20090316204703.f2f354f9.sfr@canb.auug.org.au>
+	id S1751972AbZCWAGe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 22 Mar 2009 20:06:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, "David S. Miller" <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, netdev@vger.kernel.org
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Daniel Silverstone <dsilvers@simtec.co.uk>
 
-Hi Greg, Dave,
+Hi Russell,
 
-On Mon, 16 Mar 2009 20:47:03 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Dave, this could apply to net-current (or net after you merge
-> net-current) or Greg could put it in driver-core after net-current gets
-> merged into Linus' tree.
+Today's linux-next merge of the arm tree got conflictS in
+arch/arm/include/asm/elf.h and arch/arm/kernel/module.c between commit
+4731f8b66dd34ebf0e67ca6ba9162b0e509bec06 ("[ARM] 5428/1: Module
+relocation update for R_ARM_V4BX") from the arm-current tree and commit
+2e1926e7b5d39eb31880152d636e8d8d011888cb ("[ARM] 5384/1: unwind: Add
+stack unwinding support for loadable modules") from the arm tree.
 
-The dnet driver is now upstream, so can one of you add this to your tree,
-please?  Apologies if I missed it.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 16 Mar 2009 20:37:10 +1100
-Subject: [PATCH] net: update dnet.c for bus_id removal
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/dnet.c |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/dnet.c b/drivers/net/dnet.c
-index 5c347f7..1b40632 100644
---- a/drivers/net/dnet.c
-+++ b/drivers/net/dnet.c
-@@ -280,11 +280,11 @@ static int dnet_mii_probe(struct net_device *dev)
- 
- 	/* attach the mac to the phy */
- 	if (bp->capabilities & DNET_HAS_RMII) {
--		phydev = phy_connect(dev, phydev->dev.bus_id,
-+		phydev = phy_connect(dev, dev_name(&phydev->dev),
- 				     &dnet_handle_link_change, 0,
- 				     PHY_INTERFACE_MODE_RMII);
- 	} else {
--		phydev = phy_connect(dev, phydev->dev.bus_id,
-+		phydev = phy_connect(dev, dev_name(&phydev->dev),
- 				     &dnet_handle_link_change, 0,
- 				     PHY_INTERFACE_MODE_MII);
- 	}
-@@ -927,7 +927,7 @@ static int __devinit dnet_probe(struct platform_device *pdev)
- 	phydev = bp->phy_dev;
- 	dev_info(&pdev->dev, "attached PHY driver [%s] "
- 	       "(mii_bus:phy_addr=%s, irq=%d)\n",
--	       phydev->drv->name, phydev->dev.bus_id, phydev->irq);
-+	       phydev->drv->name, dev_name(&phydev->dev), phydev->irq);
- 
- 	return 0;
- 
--- 
-1.6.2
-
-
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+diff --cc arch/arm/include/asm/elf.h
+index ce3b36e,def8eac..0000000
+--- a/arch/arm/include/asm/elf.h
++++ b/arch/arm/include/asm/elf.h
+@@@ -50,7 -50,7 +50,8 @@@ typedef struct user_fp elf_fpregset_t
+  #define R_ARM_ABS32	2
+  #define R_ARM_CALL	28
+  #define R_ARM_JUMP24	29
+ +#define R_ARM_V4BX	40
++ #define R_ARM_PREL31	42
+  
+  /*
+   * These are used to set parameters in the core dumps.
+diff --cc arch/arm/kernel/module.c
+index 9f509fd,13dbd5b..0000000
+--- a/arch/arm/kernel/module.c
++++ b/arch/arm/kernel/module.c
+@@@ -132,15 -155,11 +155,20 @@@ apply_relocate(Elf32_Shdr *sechdrs, con
+  			*(u32 *)loc |= offset & 0x00ffffff;
+  			break;
+  
+ +	       case R_ARM_V4BX:
+ +		       /* Preserve Rm and the condition code. Alter
+ +			* other bits to re-code instruction as
+ +			* MOV PC,Rm.
+ +			*/
+ +		       *(u32 *)loc &= 0xf000000f;
+ +		       *(u32 *)loc |= 0x01a0f000;
+ +		       break;
+ +
++ 		case R_ARM_PREL31:
++ 			offset = *(u32 *)loc + sym->st_value - loc;
++ 			*(u32 *)loc = offset & 0x7fffffff;
++ 			break;
++ 
+  		default:
+  			printk(KERN_ERR "%s: unknown relocation: %u\n",
+  			       module->name, ELF32_R_TYPE(rel->r_info));
