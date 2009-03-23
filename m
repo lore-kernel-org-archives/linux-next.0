@@ -1,42 +1,41 @@
-From: Janne Grunau <j@jannau.net>
+From: Randy Dunlap <randy.dunlap@oracle.com>
 Subject: Re: linux-next: Tree for March 23 (media/video/hdpvr)
-Date: Mon, 23 Mar 2009 22:19:43 +0100
-Message-ID: <20090323211943.GC5079@aniel>
-References: <20090323205454.d0cbf721.sfr@canb.auug.org.au> <49C7D965.5080202@oracle.com> <20090323204940.GA5079@aniel> <200903232204.15457.hverkuil@xs4all.nl>
+Date: Mon, 23 Mar 2009 13:37:22 -0700
+Message-ID: <49C7F302.6030004@oracle.com>
+References: <20090323205454.d0cbf721.sfr@canb.auug.org.au> <49C7D965.5080202@oracle.com> <20090323204940.GA5079@aniel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <200903232204.15457.hverkuil@xs4all.nl>
+In-Reply-To: <20090323204940.GA5079@aniel>
 Sender: linux-media-owner@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
+To: Janne Grunau <j@jannau.net>
 Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Mar 23, 2009 at 10:04:15PM +0100, Hans Verkuil wrote:
-> On Monday 23 March 2009 21:49:40 Janne Grunau wrote:
-> > 
-> > diff --git a/drivers/media/video/hdpvr/hdpvr-core.c
-> > b/drivers/media/video/hdpvr/hdpvr-core.c index e7300b5..dadb2e7 100644
-> > --- a/drivers/media/video/hdpvr/hdpvr-core.c
-> > +++ b/drivers/media/video/hdpvr/hdpvr-core.c
-> > @@ -21,6 +21,7 @@
-> >  #include <linux/usb.h>
-> >  #include <linux/mutex.h>
-> >  #include <linux/i2c.h>
-> > +#include <linux/autoconf.h>
-> >
-> >  #include <linux/videodev2.h>
-> >  #include <media/v4l2-dev.h>
+Janne Grunau wrote:
+> Hi,
 > 
-> Don't include autoconf.h! It's preloaded for you already and shouldn't be
-> included manually. Esp. since the v4l-dvb tree creates and preloads a custom
-> version. Loading it manually will overwrite that.
+> On Mon, Mar 23, 2009 at 11:48:05AM -0700, Randy Dunlap wrote:
+>> Stephen Rothwell wrote:
+>>> Changes since 20090320:
+>>> The v4l-dvb tree gained a build failure for which I have reverted 3 commits.
+>> drivers/built-in.o: In function `hdpvr_disconnect':
+>> hdpvr-core.c:(.text+0xf3894): undefined reference to `i2c_del_adapter'
+>> drivers/built-in.o: In function `hdpvr_register_i2c_adapter':
+>> (.text+0xf4145): undefined reference to `i2c_add_adapter'
+>>
+>>
+>> CONFIG_I2C is not enabled.
 > 
-> Other than that it's fine.
+> following patch should fix that.
 
-Thanks Hans,
+Ack.  Thanks.
 
-fixed in the patch sent to Mauro.
+> Janne
+> 
+> ps: Mauro, I'll send a pull request shortly
 
-Janne
+
+-- 
+~Randy
