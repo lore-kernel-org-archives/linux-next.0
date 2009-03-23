@@ -1,90 +1,160 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pci tree with the genirq tree
-Date: Mon, 23 Mar 2009 11:58:34 +1100
-Message-ID: <20090323115834.b7d82abc.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH] p54: fix SoftLED compile dependencies
+Date: Sun, 22 Mar 2009 18:00:41 -0700
+Message-ID: <49C6DF39.1020509@oracle.com>
+References: <20090319221024.5e2ad6e5.sfr@canb.auug.org.au> <49C293CC.6020009@oracle.com> <200903191955.00718.mb@bu3sch.de> <200903210057.47067.chunkeey@web.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56541 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756844AbZCWA6j (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 22 Mar 2009 20:58:39 -0400
+Received: from rcsinet11.oracle.com ([148.87.113.123]:28053 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753608AbZCWA7E (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 22 Mar 2009 20:59:04 -0400
+In-Reply-To: <200903210057.47067.chunkeey@web.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: linux-next@vger.kernel.org, Alex Chiang <achiang@hp.com>, Thomas Gleixner <tglx@linutronix.de>
+To: Christian Lamparter <chunkeey@web.de>
+Cc: Michael Buesch <mb@bu3sch.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "John W. Linville" <linville@tuxdriver.com>
 
-Hi Jesse,
+Christian Lamparter wrote:
+> This patch fixes a compile problem when the MAC80211_LEDS
+> triggers are enabled but not LED class itself. 
+> (which is sort of pointless, but anyway...)
+> 
+> Signed-off-by: Christian Lamparter <chunkeey@web.de>
+> ---
+> mb, thank you for the tips!
+> 
+> Randy Dunlap can you please give this patch a try?
 
-Today's linux-next merge of the pci tree got a conflict in
-Documentation/feature-removal-schedule.txt between commits
-0e57aa11abb15b70db53d1f95ae70b3c980ac885 ("genirq: deprecate __do_IRQ")
-and cb065c06b6cc615a58860d619d7fa7952cd6a18b ("genirq: deprecate obsolete
-typedefs and defines") from the genirq tree and commit
-f110ca489c9b7cf3f6c9656e383e787f3aee217f ("PCI Hotplug: schedule fakephp
-for feature removal") from the pci tree.
+Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-Just overlapping additions.  I fixed it up (see below) and can carry the
-fix as necessary.
+Thanks.
+
+> John, do you know where the patch form 
+> Geert Uytterhoeven <geert@linux-m68k.org> went?
+> ---
+> diff --git a/drivers/net/wireless/p54/Kconfig b/drivers/net/wireless/p54/Kconfig
+> index 0e344ac..ee1aaca 100644
+> --- a/drivers/net/wireless/p54/Kconfig
+> +++ b/drivers/net/wireless/p54/Kconfig
+> @@ -1,9 +1,10 @@
+>  config P54_COMMON
+>  	tristate "Softmac Prism54 support"
+> -	depends on MAC80211 && WLAN_80211 && FW_LOADER && EXPERIMENTAL
+> +	depends on MAC80211 && WLAN_80211 && EXPERIMENTAL
+> +	select FW_LOADER
+>  	---help---
+> -	  This is common code for isl38xx based cards.
+> -	  This module does nothing by itself - the USB/PCI frontends
+> +	  This is common code for isl38xx/stlc45xx based modules.
+> +	  This module does nothing by itself - the USB/PCI/SPI frontends
+>  	  also need to be enabled in order to support any devices.
+>  
+>  	  These devices require softmac firmware which can be found at
+> @@ -17,31 +18,6 @@ config P54_USB
+>  	select CRC32
+>  	---help---
+>  	  This driver is for USB isl38xx based wireless cards.
+> -	  These are USB based adapters found in devices such as:
+> -
+> -	  3COM 3CRWE254G72
+> -	  SMC 2862W-G
+> -	  Accton 802.11g WN4501 USB
+> -	  Siemens Gigaset USB
+> -	  Netgear WG121
+> -	  Netgear WG111
+> -	  Medion 40900, Roper Europe
+> -	  Shuttle PN15, Airvast WM168g, IOGear GWU513
+> -	  Linksys WUSB54G
+> -	  Linksys WUSB54G Portable
+> -	  DLink DWL-G120 Spinnaker
+> -	  DLink DWL-G122
+> -	  Belkin F5D7050 ver 1000
+> -	  Cohiba Proto board
+> -	  SMC 2862W-G version 2
+> -	  U.S. Robotics U5 802.11g Adapter
+> -	  FUJITSU E-5400 USB D1700
+> -	  Sagem XG703A
+> -	  DLink DWL-G120 Cohiba
+> -	  Spinnaker Proto board
+> -	  Linksys WUSB54AG
+> -	  Inventel UR054G
+> -	  Spinnaker DUT
+>  
+>  	  These devices require softmac firmware which can be found at
+>  	  http://prism54.org/
+> @@ -71,3 +47,8 @@ config P54_SPI
+>  	  Nokia's N800/N810 Portable Internet Tablet.
+>  
+>  	  If you choose to build a module, it'll be called p54spi.
+> +
+> +config P54_LEDS
+> +	bool
+> +	depends on P54_COMMON && MAC80211_LEDS && (LEDS_CLASS = y || LEDS_CLASS = P54_COMMON)
+> +	default y
+> diff --git a/drivers/net/wireless/p54/p54common.c b/drivers/net/wireless/p54/p54common.c
+> index 0a98983..0c1b057 100644
+> --- a/drivers/net/wireless/p54/p54common.c
+> +++ b/drivers/net/wireless/p54/p54common.c
+> @@ -21,9 +21,9 @@
+>  #include <linux/etherdevice.h>
+>  
+>  #include <net/mac80211.h>
+> -#ifdef CONFIG_MAC80211_LEDS
+> +#ifdef CONFIG_P54_LEDS
+>  #include <linux/leds.h>
+> -#endif /* CONFIG_MAC80211_LEDS */
+> +#endif /* CONFIG_P54_LEDS */
+>  
+>  #include "p54.h"
+>  #include "p54common.h"
+> @@ -2420,7 +2420,7 @@ static int p54_set_key(struct ieee80211_hw *dev, enum set_key_cmd cmd,
+>  	return 0;
+>  }
+>  
+> -#ifdef CONFIG_MAC80211_LEDS
+> +#ifdef CONFIG_P54_LEDS
+>  static void p54_led_brightness_set(struct led_classdev *led_dev,
+>  				   enum led_brightness brightness)
+>  {
+> @@ -2508,7 +2508,7 @@ static void p54_unregister_leds(struct ieee80211_hw *dev)
+>  	if (priv->assoc_led.registered)
+>  		led_classdev_unregister(&priv->assoc_led.led_dev);
+>  }
+> -#endif /* CONFIG_MAC80211_LEDS */
+> +#endif /* CONFIG_P54_LEDS */
+>  
+>  static const struct ieee80211_ops p54_ops = {
+>  	.tx			= p54_tx,
+> @@ -2592,11 +2592,11 @@ int p54_register_common(struct ieee80211_hw *dev, struct device *pdev)
+>  		return err;
+>  	}
+>  
+> -	#ifdef CONFIG_MAC80211_LEDS
+> +#ifdef CONFIG_P54_LEDS
+>  	err = p54_init_leds(dev);
+>  	if (err)
+>  		return err;
+> -	#endif /* CONFIG_MAC80211_LEDS */
+> +#endif /* CONFIG_P54_LEDS */
+>  
+>  	dev_info(pdev, "is registered as '%s'\n", wiphy_name(dev->wiphy));
+>  	return 0;
+> @@ -2610,9 +2610,9 @@ void p54_free_common(struct ieee80211_hw *dev)
+>  	kfree(priv->output_limit);
+>  	kfree(priv->curve_data);
+>  
+> -	#ifdef CONFIG_MAC80211_LEDS
+> +#ifdef CONFIG_P54_LEDS
+>  	p54_unregister_leds(dev);
+> -	#endif /* CONFIG_MAC80211_LEDS */
+> +#endif /* CONFIG_P54_LEDS */
+>  }
+>  EXPORT_SYMBOL_GPL(p54_free_common);
+>  
+
+
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
-diff --cc Documentation/feature-removal-schedule.txt
-index 9aa1dda,8851eea..0000000
---- a/Documentation/feature-removal-schedule.txt
-+++ b/Documentation/feature-removal-schedule.txt
-@@@ -345,19 -346,34 +346,51 @@@ Why:	See commits 129f8ae9b1b5be94517da7
-  	cause the thermal throttling not to happen at the right time.
-  Who:	Dave Jones <davej@redhat.com>, Matthew Garrett <mjg@redhat.com>
-  
- +-----------------------------
- +
- +What:	__do_IRQ all in one fits nothing interrupt handler
- +When:	2.6.32
- +Why:	__do_IRQ was kept for easy migration to the type flow handlers.
- +	More than two years of migration time is enough.
- +Who:	Thomas Gleixner <tglx@linutronix.de>
- +
- +-----------------------------
- +
- +What:	obsolete generic irq defines and typedefs
- +When:	2.6.30
- +Why:	The defines and typedefs (hw_interrupt_type, no_irq_type, irq_desc_t)
- +	have been kept around for migration reasons. After more than two years
- +	it's time to remove them finally
- +Who:	Thomas Gleixner <tglx@linutronix.de>
-++
-+ ---------------------------
-+ 
-+ What:	fakephp and associated sysfs files in /sys/bus/pci/slots/
-+ When:	2011
-+ Why:	In 2.6.27, the semantics of /sys/bus/pci/slots was redefined to
-+ 	represent a machine's physical PCI slots. The change in semantics
-+ 	had userspace implications, as the hotplug core no longer allowed
-+ 	drivers to create multiple sysfs files per physical slot (required
-+ 	for multi-function devices, e.g.). fakephp was seen as a developer's
-+ 	tool only, and its interface changed. Too late, we learned that
-+ 	there were some users of the fakephp interface.
-+ 
-+ 	In 2.6.30, the original fakephp interface was restored. At the same
-+ 	time, the PCI core gained the ability that fakephp provided, namely
-+ 	function-level hot-remove and hot-add.
-+ 
-+ 	Since the PCI core now provides the same functionality, exposed in:
-+ 
-+ 		/sys/bus/pci/rescan
-+ 		/sys/bus/pci/devices/.../remove
-+ 		/sys/bus/pci/devices/.../rescan
-+ 
-+ 	there is no functional reason to maintain fakephp as well.
-+ 
-+ 	We will keep the existing module so that 'modprobe fakephp' will
-+ 	present the old /sys/bus/pci/slots/... interface for compatibility,
-+ 	but users are urged to migrate their applications to the API above.
-+ 
-+ 	After a reasonable transition period, we will remove the legacy
-+ 	fakephp interface.
-+ Who:	Alex Chiang <achiang@hp.com>
+~Randy
