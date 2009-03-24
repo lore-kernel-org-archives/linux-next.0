@@ -1,14 +1,14 @@
 From: Alessio Igor Bogani <abogani@texware.it>
-Subject: [PATCH] Staging: rt3070: replace __FUNCTION__ usages
-Date: Tue, 24 Mar 2009 19:30:26 +0100
-Message-ID: <1237919426-12891-1-git-send-email-abogani@texware.it>
+Subject: [PATCH] Staging: comedi: replace __FUNCTION__ usages
+Date: Tue, 24 Mar 2009 19:30:57 +0100
+Message-ID: <1237919457-12941-1-git-send-email-abogani@texware.it>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f158.google.com ([209.85.220.158]:36083 "EHLO
-	mail-fx0-f158.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756333AbZCXSai (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Mar 2009 14:30:38 -0400
-Received: by fxm2 with SMTP id 2so2411163fxm.37
-        for <linux-next@vger.kernel.org>; Tue, 24 Mar 2009 11:30:35 -0700 (PDT)
+Received: from fg-out-1718.google.com ([72.14.220.158]:63189 "EHLO
+	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757195AbZCXSbH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Mar 2009 14:31:07 -0400
+Received: by fg-out-1718.google.com with SMTP id e12so724024fga.17
+        for <linux-next@vger.kernel.org>; Tue, 24 Mar 2009 11:31:04 -0700 (PDT)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg Kroah-Hartman <gregkh@suse.de>
@@ -18,976 +18,284 @@ __FUNCTION__ is gcc-specific, use __func__
 
 Signed-off-by: Alessio Igor Bogani <abogani@texware.it>
 ---
- drivers/staging/rt3070/2870_main_dev.c         |    6 ++--
- drivers/staging/rt3070/common/2870_rtmp_init.c |    4 +-
- drivers/staging/rt3070/common/ba_action.c      |   18 +++++-----
- drivers/staging/rt3070/common/cmm_data.c       |    2 +-
- drivers/staging/rt3070/common/cmm_info.c       |    2 +-
- drivers/staging/rt3070/common/dfs.c            |    4 +-
- drivers/staging/rt3070/common/rtmp_init.c      |   18 +++++-----
- drivers/staging/rt3070/common/rtusb_bulk.c     |    2 +-
- drivers/staging/rt3070/common/spectrum.c       |   44 ++++++++++++------------
- drivers/staging/rt3070/rt_ate.c                |   32 +++++++++---------
- drivers/staging/rt3070/rt_linux.c              |   18 +++++-----
- drivers/staging/rt3070/rt_linux.h              |    2 +-
- drivers/staging/rt3070/rt_profile.c            |   12 +++---
- drivers/staging/rt3070/rtmp_def.h              |    2 +-
- drivers/staging/rt3070/sta_ioctl.c             |   42 +++++++++++-----------
- 15 files changed, 104 insertions(+), 104 deletions(-)
+ drivers/staging/comedi/drivers/ni_660x.c       |    6 +++---
+ drivers/staging/comedi/drivers/ni_mio_common.c |   24 ++++++++++++------------
+ drivers/staging/comedi/drivers/ni_pcimio.c     |   10 +++++-----
+ drivers/staging/comedi/drivers/ni_stc.h        |   14 +++++++-------
+ drivers/staging/comedi/drivers/ni_tio.c        |    2 +-
+ 5 files changed, 28 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/staging/rt3070/2870_main_dev.c b/drivers/staging/rt3070/2870_main_dev.c
-index 401ddb0..a52cda5 100644
---- a/drivers/staging/rt3070/2870_main_dev.c
-+++ b/drivers/staging/rt3070/2870_main_dev.c
-@@ -269,7 +269,7 @@ INT MlmeThread(
- 	 * This is important in preemption kernels, which transfer the flow
- 	 * of execution immediately upon a complete().
- 	 */
--	DBGPRINT(RT_DEBUG_TRACE,( "<---%s\n",__FUNCTION__));
-+	DBGPRINT(RT_DEBUG_TRACE,( "<---%s\n",__func__));
- 
- 	pObj->MLMEThr_pid = NULL;
- 
-@@ -471,7 +471,7 @@ INT TimerQThread(
- 	 * This is important in preemption kernels, which transfer the flow
- 	 * of execution immediately upon a complete().
- 	 */
--	DBGPRINT(RT_DEBUG_TRACE,( "<---%s\n",__FUNCTION__));
-+	DBGPRINT(RT_DEBUG_TRACE,( "<---%s\n",__func__));
- 
- 	pObj->TimerQThr_pid = NULL;
- 
-@@ -1267,7 +1267,7 @@ BOOLEAN RT28XXProbePostConfig(
- 
- 	if (!(pAd->BulkInEpAddr && pAd->BulkOutEpAddr[0]))
- 	{
--		printk("%s: Could not find both bulk-in and bulk-out endpoints\n", __FUNCTION__);
-+		printk("%s: Could not find both bulk-in and bulk-out endpoints\n", __func__);
- 		return FALSE;
+diff --git a/drivers/staging/comedi/drivers/ni_660x.c b/drivers/staging/comedi/drivers/ni_660x.c
+index 2a3c130..723fa9c 100644
+--- a/drivers/staging/comedi/drivers/ni_660x.c
++++ b/drivers/staging/comedi/drivers/ni_660x.c
+@@ -694,7 +694,7 @@ static NI_660x_Register ni_gpct_to_660x_register(enum ni_gpct_register reg)
+ 		break;
+ 	default:
+ 		rt_printk("%s: unhandled register 0x%x in switch.\n",
+-			__FUNCTION__, reg);
++			__func__, reg);
+ 		BUG();
+ 		return 0;
+ 		break;
+@@ -718,7 +718,7 @@ static inline void ni_660x_write_register(struct comedi_device * dev,
+ 		break;
+ 	default:
+ 		rt_printk("%s: %s: bug! unhandled case (reg=0x%x) in switch.\n",
+-			__FILE__, __FUNCTION__, reg);
++			__FILE__, __func__, reg);
+ 		BUG();
+ 		break;
  	}
- 
-diff --git a/drivers/staging/rt3070/common/2870_rtmp_init.c b/drivers/staging/rt3070/common/2870_rtmp_init.c
-index fdf8dc1..953ef54 100644
---- a/drivers/staging/rt3070/common/2870_rtmp_init.c
-+++ b/drivers/staging/rt3070/common/2870_rtmp_init.c
-@@ -1075,7 +1075,7 @@ PNDIS_PACKET GetPacketFromRxRing(
- 	if (pRxWI->MPDUtotalByteCount > ThisFrameLen)
- 	{
- 		DBGPRINT(RT_DEBUG_ERROR, ("%s():pRxWIMPDUtotalByteCount(%d) large than RxDMALen(%ld)\n",
--									__FUNCTION__, pRxWI->MPDUtotalByteCount, ThisFrameLen));
-+									__func__, pRxWI->MPDUtotalByteCount, ThisFrameLen));
- 		goto label_null;
+@@ -740,7 +740,7 @@ static inline unsigned ni_660x_read_register(struct comedi_device * dev,
+ 		break;
+ 	default:
+ 		rt_printk("%s: %s: bug! unhandled case (reg=0x%x) in switch.\n",
+-			__FILE__, __FUNCTION__, reg);
++			__FILE__, __func__, reg);
+ 		BUG();
+ 		break;
  	}
- #ifdef RT_BIG_ENDIAN
-@@ -1086,7 +1086,7 @@ PNDIS_PACKET GetPacketFromRxRing(
- 	pSkb = dev_alloc_skb(ThisFrameLen);
- 	if (pSkb == NULL)
- 	{
--		DBGPRINT(RT_DEBUG_ERROR,("%s():Cannot Allocate sk buffer for this Bulk-In buffer!\n", __FUNCTION__));
-+		DBGPRINT(RT_DEBUG_ERROR,("%s():Cannot Allocate sk buffer for this Bulk-In buffer!\n", __func__));
- 		goto label_null;
+diff --git a/drivers/staging/comedi/drivers/ni_mio_common.c b/drivers/staging/comedi/drivers/ni_mio_common.c
+index 542bd0d..abff5ad 100644
+--- a/drivers/staging/comedi/drivers/ni_mio_common.c
++++ b/drivers/staging/comedi/drivers/ni_mio_common.c
+@@ -397,7 +397,7 @@ static inline void ni_set_bitfield(struct comedi_device * dev, int reg,
+ 		break;
+ 	default:
+ 		rt_printk("Warning %s() called with invalid register\n",
+-			__FUNCTION__);
++			__func__);
+ 		rt_printk("reg is %d\n", reg);
+ 		break;
  	}
- 
-diff --git a/drivers/staging/rt3070/common/ba_action.c b/drivers/staging/rt3070/common/ba_action.c
-index 17e1f87..43b5ac1 100644
---- a/drivers/staging/rt3070/common/ba_action.c
-+++ b/drivers/staging/rt3070/common/ba_action.c
-@@ -592,7 +592,7 @@ VOID BAOriSessionAdd(
- 
- 		pBAEntry->ORIBATimer.TimerValue = 0;	//pFrame->TimeOutValue;
- 
--		DBGPRINT(RT_DEBUG_TRACE,("%s : TXBAbitmap = %x, BAWinSize = %d, TimeOut = %ld\n", __FUNCTION__, pEntry->TXBAbitmap,
-+		DBGPRINT(RT_DEBUG_TRACE,("%s : TXBAbitmap = %x, BAWinSize = %d, TimeOut = %ld\n", __func__, pEntry->TXBAbitmap,
- 								 pBAEntry->BAWinSize, pBAEntry->ORIBATimer.TimerValue));
- 
- 		// SEND BAR ;
-@@ -666,7 +666,7 @@ BOOLEAN BARecSessionAdd(
- 		ba_refresh_reordering_mpdus(pAd, pBAEntry);
- 	}
- 
--	DBGPRINT(RT_DEBUG_TRACE,("%s(%ld): Idx = %d, BAWinSize(req %d) = %d\n", __FUNCTION__, pAd->BATable.numAsRecipient, Idx,
-+	DBGPRINT(RT_DEBUG_TRACE,("%s(%ld): Idx = %d, BAWinSize(req %d) = %d\n", __func__, pAd->BATable.numAsRecipient, Idx,
- 							 pFrame->BaParm.BufSize, BAWinSize));
- 
- 	// Start fill in parameters.
-@@ -904,7 +904,7 @@ VOID BAOriSessionTearDown(
- 		return;
- 	}
- 
--	DBGPRINT(RT_DEBUG_TRACE,("%s===>Wcid=%d.TID=%d \n", __FUNCTION__, Wcid, TID));
-+	DBGPRINT(RT_DEBUG_TRACE,("%s===>Wcid=%d.TID=%d \n", __func__, Wcid, TID));
- 
- 	pBAEntry = &pAd->BATable.BAOriEntry[Idx];
- 	DBGPRINT(RT_DEBUG_TRACE,("\t===>Idx = %ld, Wcid=%d.TID=%d, ORI_BA_Status = %d \n", Idx, Wcid, TID, pBAEntry->ORI_BA_Status));
-@@ -963,7 +963,7 @@ VOID BARecSessionTearDown(
- 	if (Idx == 0)
- 		return;
- 
--	DBGPRINT(RT_DEBUG_TRACE,("%s===>Wcid=%d.TID=%d \n", __FUNCTION__, Wcid, TID));
-+	DBGPRINT(RT_DEBUG_TRACE,("%s===>Wcid=%d.TID=%d \n", __func__, Wcid, TID));
- 
- 
- 	pBAEntry = &pAd->BATable.BARecEntry[Idx];
-@@ -1180,7 +1180,7 @@ VOID PeerAddBAReqAction(
- 	PULONG      ptemp;
- 	PMAC_TABLE_ENTRY	pMacEntry;
- 
--	DBGPRINT(RT_DEBUG_TRACE, ("%s ==> (Wcid = %d)\n", __FUNCTION__, Elem->Wcid));
-+	DBGPRINT(RT_DEBUG_TRACE, ("%s ==> (Wcid = %d)\n", __func__, Elem->Wcid));
- 
- 	//hex_dump("AddBAReq", Elem->Msg, Elem->MsgLen);
- 
-@@ -1259,7 +1259,7 @@ VOID PeerAddBAReqAction(
- 	MiniportMMRequest(pAd, QID_AC_BE, pOutBuffer, FrameLen);
- 	MlmeFreeMemory(pAd, pOutBuffer);
- 
--	DBGPRINT(RT_DEBUG_TRACE, ("%s(%d): TID(%d), BufSize(%d) <== \n", __FUNCTION__, Elem->Wcid, ADDframe.BaParm.TID,
-+	DBGPRINT(RT_DEBUG_TRACE, ("%s(%d): TID(%d), BufSize(%d) <== \n", __func__, Elem->Wcid, ADDframe.BaParm.TID,
- 							  ADDframe.BaParm.BufSize));
- }
- 
-@@ -1278,7 +1278,7 @@ VOID PeerAddBARspAction(
- 	if (Elem->Wcid >= MAX_LEN_OF_MAC_TABLE)
- 		return;
- 
--	DBGPRINT(RT_DEBUG_TRACE, ("%s ==> Wcid(%d)\n", __FUNCTION__, Elem->Wcid));
-+	DBGPRINT(RT_DEBUG_TRACE, ("%s ==> Wcid(%d)\n", __func__, Elem->Wcid));
- 
- 	//hex_dump("PeerAddBARspAction()", Elem->Msg, Elem->MsgLen);
- 
-@@ -1319,7 +1319,7 @@ VOID PeerDelBAAction(
- 	//PUCHAR				pOutBuffer = NULL;
- 	PFRAME_DELBA_REQ    pDelFrame = NULL;
- 
--	DBGPRINT(RT_DEBUG_TRACE,("%s ==>\n", __FUNCTION__));
-+	DBGPRINT(RT_DEBUG_TRACE,("%s ==>\n", __func__));
- 	//DELBA Request from unknown peer, ignore this.
- 	if (PeerDelBAActionSanity(pAd, Elem->Wcid, Elem->Msg, Elem->MsgLen))
- 	{
-@@ -1356,7 +1356,7 @@ BOOLEAN CntlEnqueueForRecv(
- 
- 	TID = (UCHAR)pFrame->BARControl.TID;
- 
--	DBGPRINT(RT_DEBUG_TRACE, ("%s(): BAR-Wcid(%ld), Tid (%d)\n", __FUNCTION__, Wcid, TID));
-+	DBGPRINT(RT_DEBUG_TRACE, ("%s(): BAR-Wcid(%ld), Tid (%d)\n", __func__, Wcid, TID));
- 	//hex_dump("BAR", (PCHAR) pFrame, MsgLen);
- 	// Do nothing if the driver is starting halt state.
- 	// This might happen when timer already been fired before cancel timer with mlmehalt
-diff --git a/drivers/staging/rt3070/common/cmm_data.c b/drivers/staging/rt3070/common/cmm_data.c
-index 85f92b9..bb76968 100644
---- a/drivers/staging/rt3070/common/cmm_data.c
-+++ b/drivers/staging/rt3070/common/cmm_data.c
-@@ -2114,7 +2114,7 @@ BOOLEAN MacTableDeleteEntry(
- 		}
- 		else
- 		{
--			printk("\n%s: Impossible Wcid = %d !!!!!\n", __FUNCTION__, wcid);
-+			printk("\n%s: Impossible Wcid = %d !!!!!\n", __func__, wcid);
- 		}
- 	}
- 
-diff --git a/drivers/staging/rt3070/common/cmm_info.c b/drivers/staging/rt3070/common/cmm_info.c
-index 54cb1a3..c5492c7 100644
---- a/drivers/staging/rt3070/common/cmm_info.c
-+++ b/drivers/staging/rt3070/common/cmm_info.c
-@@ -2011,7 +2011,7 @@ VOID RTMPIoctlGetMacTable(
- 	wrq->u.data.length = sizeof(RT_802_11_MAC_TABLE);
- 	if (copy_to_user(wrq->u.data.pointer, &MacTab, wrq->u.data.length))
- 	{
--		DBGPRINT(RT_DEBUG_TRACE, ("%s: copy_to_user() fail\n", __FUNCTION__));
-+		DBGPRINT(RT_DEBUG_TRACE, ("%s: copy_to_user() fail\n", __func__));
- 	}
- 
- 	msg = (CHAR *) kmalloc(sizeof(CHAR)*(MAX_LEN_OF_MAC_TABLE*MAC_LINE_LEN), MEM_ALLOC_FLAG);
-diff --git a/drivers/staging/rt3070/common/dfs.c b/drivers/staging/rt3070/common/dfs.c
-index 28d6014..0ae223b 100644
---- a/drivers/staging/rt3070/common/dfs.c
-+++ b/drivers/staging/rt3070/common/dfs.c
-@@ -416,7 +416,7 @@ INT Set_ChMovingTime_Proc(
- 
- 	pAd->CommonCfg.RadarDetect.ChMovingTime = Value;
- 
--	DBGPRINT(RT_DEBUG_TRACE, ("%s:: %d\n", __FUNCTION__,
-+	DBGPRINT(RT_DEBUG_TRACE, ("%s:: %d\n", __func__,
- 		pAd->CommonCfg.RadarDetect.ChMovingTime));
- 
- 	return TRUE;
-@@ -432,7 +432,7 @@ INT Set_LongPulseRadarTh_Proc(
- 
- 	pAd->CommonCfg.RadarDetect.LongPulseRadarTh = Value;
- 
--	DBGPRINT(RT_DEBUG_TRACE, ("%s:: %d\n", __FUNCTION__,
-+	DBGPRINT(RT_DEBUG_TRACE, ("%s:: %d\n", __func__,
- 		pAd->CommonCfg.RadarDetect.LongPulseRadarTh));
- 
- 	return TRUE;
-diff --git a/drivers/staging/rt3070/common/rtmp_init.c b/drivers/staging/rt3070/common/rtmp_init.c
-index 4503f6c..78a3561 100644
---- a/drivers/staging/rt3070/common/rtmp_init.c
-+++ b/drivers/staging/rt3070/common/rtmp_init.c
-@@ -2930,7 +2930,7 @@ NDIS_STATUS NICLoadFirmware(
- #ifdef BIN_IN_FILE
- #define NICLF_DEFAULT_USE()	\
- 	flg_default_firm_use = TRUE; \
--	printk("%s - Use default firmware!\n", __FUNCTION__);
-+	printk("%s - Use default firmware!\n", __func__);
- 
- 	NDIS_STATUS		Status = NDIS_STATUS_SUCCESS;
- 	PUCHAR			src;
-@@ -2945,7 +2945,7 @@ NDIS_STATUS NICLoadFirmware(
- 	BOOLEAN			flg_default_firm_use = FALSE;
- 
- 
--	DBGPRINT(RT_DEBUG_TRACE, ("===> %s\n", __FUNCTION__));
-+	DBGPRINT(RT_DEBUG_TRACE, ("===> %s\n", __func__));
- 
- 	/* init */
- 	pFirmwareImage = NULL;
-@@ -2968,7 +2968,7 @@ NDIS_STATUS NICLoadFirmware(
-     if (pFirmwareImage == NULL)
- 	{
- 		/* allocate fail, use default firmware array in firmware.h */
--		printk("%s - Allocate memory fail!\n", __FUNCTION__);
-+		printk("%s - Allocate memory fail!\n", __func__);
- 		NICLF_DEFAULT_USE();
-     }
- 	else
-@@ -2989,7 +2989,7 @@ NDIS_STATUS NICLoadFirmware(
- 			if (IS_ERR(srcf))
- 			{
- 				printk("%s - Error %ld opening %s\n",
--					   __FUNCTION__, -PTR_ERR(srcf), src);
-+					   __func__, -PTR_ERR(srcf), src);
- 				NICLF_DEFAULT_USE();
- 				break;
- 			} /* End of if */
-@@ -2997,7 +2997,7 @@ NDIS_STATUS NICLoadFirmware(
- 			/* the object must have a read method */
- 			if ((srcf->f_op == NULL) || (srcf->f_op->read == NULL))
- 			{
--				printk("%s - %s does not have a write method\n", __FUNCTION__, src);
-+				printk("%s - %s does not have a write method\n", __func__, src);
- 				NICLF_DEFAULT_USE();
- 				break;
- 			} /* End of if */
-@@ -3011,7 +3011,7 @@ NDIS_STATUS NICLoadFirmware(
- 			if (FileLength != MAX_FIRMWARE_IMAGE_SIZE)
- 			{
- 				printk("%s: error file length (=%d) in RT2860AP.BIN\n",
--					   __FUNCTION__, FileLength);
-+					   __func__, FileLength);
- 				NICLF_DEFAULT_USE();
- 				break;
- 			}
-@@ -3034,7 +3034,7 @@ NDIS_STATUS NICLoadFirmware(
- 					/* CRC fail */
- 					printk("%s: CRC = 0x%02x 0x%02x "
- 						   "error, should be 0x%02x 0x%02x\n",
--						   __FUNCTION__,
-+						   __func__,
- 						   pFirmwareImage[MAX_FIRMWARE_IMAGE_SIZE-2],
- 						   pFirmwareImage[MAX_FIRMWARE_IMAGE_SIZE-1],
- 						   (UCHAR)(crc>>8), (UCHAR)(crc));
-@@ -3053,7 +3053,7 @@ NDIS_STATUS NICLoadFirmware(
- 											((FIRMWARE_MAJOR_VERSION << 8) +
- 									  	 	 FIRMWARE_MINOR_VERSION))
- 					{
--						printk("%s: firmware version too old!\n", __FUNCTION__);
-+						printk("%s: firmware version too old!\n", __func__);
- 						NICLF_DEFAULT_USE();
- 						break;
- 					} /* End of if */
-@@ -3188,7 +3188,7 @@ NDIS_STATUS NICLoadFirmware(
- 	} /* End of if */
- 
-     DBGPRINT(RT_DEBUG_TRACE,
--			 ("<=== %s (status=%d)\n", __FUNCTION__, Status));
-+			 ("<=== %s (status=%d)\n", __func__, Status));
-     return Status;
- } /* End of NICLoadFirmware */
- 
-diff --git a/drivers/staging/rt3070/common/rtusb_bulk.c b/drivers/staging/rt3070/common/rtusb_bulk.c
-index 1a05703..36706ff 100644
---- a/drivers/staging/rt3070/common/rtusb_bulk.c
-+++ b/drivers/staging/rt3070/common/rtusb_bulk.c
-@@ -409,7 +409,7 @@ VOID	RTUSBBulkOutDataPacket(
- 		{
- 		if (pTxInfo->QSEL != FIFO_EDCA)
- 		{
--			printk("%s(): ====> pTxInfo->QueueSel(%d)!= FIFO_EDCA!!!!\n", __FUNCTION__, pTxInfo->QSEL);
-+			printk("%s(): ====> pTxInfo->QueueSel(%d)!= FIFO_EDCA!!!!\n", __func__, pTxInfo->QSEL);
- 			printk("\tCWPos=%ld, NBPos=%ld, ENBPos=%ld, bCopy=%d!\n", pHTTXContext->CurWritePosition, pHTTXContext->NextBulkOutPosition, pHTTXContext->ENextBulkOutPosition, pHTTXContext->bCopySavePad);
- 			hex_dump("Wrong QSel Pkt:", (PUCHAR)&pWirelessPkt[TmpBulkEndPos], (pHTTXContext->CurWritePosition - pHTTXContext->NextBulkOutPosition));
- 		}
-diff --git a/drivers/staging/rt3070/common/spectrum.c b/drivers/staging/rt3070/common/spectrum.c
-index da57b12..e72de7f 100644
---- a/drivers/staging/rt3070/common/spectrum.c
-+++ b/drivers/staging/rt3070/common/spectrum.c
-@@ -48,7 +48,7 @@ VOID MeasureReqTabInit(
- 	if (pAd->CommonCfg.pMeasureReqTab)
- 		NdisZeroMemory(pAd->CommonCfg.pMeasureReqTab, sizeof(MEASURE_REQ_TAB));
- 	else
--		DBGPRINT(RT_DEBUG_ERROR, ("%s Fail to alloc memory for pAd->CommonCfg.pMeasureReqTab.\n", __FUNCTION__));
-+		DBGPRINT(RT_DEBUG_ERROR, ("%s Fail to alloc memory for pAd->CommonCfg.pMeasureReqTab.\n", __func__));
- 
- 	return;
- }
-@@ -76,7 +76,7 @@ static PMEASURE_REQ_ENTRY MeasureReqLookUp(
- 
- 	if (pTab == NULL)
- 	{
--		DBGPRINT(RT_DEBUG_ERROR, ("%s: pMeasureReqTab doesn't exist.\n", __FUNCTION__));
-+		DBGPRINT(RT_DEBUG_ERROR, ("%s: pMeasureReqTab doesn't exist.\n", __func__));
- 		return NULL;
- 	}
- 
-@@ -113,7 +113,7 @@ static PMEASURE_REQ_ENTRY MeasureReqInsert(
- 
- 	if(pTab == NULL)
- 	{
--		DBGPRINT(RT_DEBUG_ERROR, ("%s: pMeasureReqTab doesn't exist.\n", __FUNCTION__));
-+		DBGPRINT(RT_DEBUG_ERROR, ("%s: pMeasureReqTab doesn't exist.\n", __func__));
- 		return NULL;
- 	}
- 
-@@ -174,7 +174,7 @@ static PMEASURE_REQ_ENTRY MeasureReqInsert(
- 		else
- 		{
- 			pEntry = NULL;
--			DBGPRINT(RT_DEBUG_ERROR, ("%s: pMeasureReqTab tab full.\n", __FUNCTION__));
-+			DBGPRINT(RT_DEBUG_ERROR, ("%s: pMeasureReqTab tab full.\n", __func__));
- 		}
- 
- 		// add this Neighbor entry into HASH table
-@@ -209,7 +209,7 @@ static VOID MeasureReqDelete(
- 
- 	if(pTab == NULL)
- 	{
--		DBGPRINT(RT_DEBUG_ERROR, ("%s: pMeasureReqTab doesn't exist.\n", __FUNCTION__));
-+		DBGPRINT(RT_DEBUG_ERROR, ("%s: pMeasureReqTab doesn't exist.\n", __func__));
- 		return;
- 	}
- 
-@@ -266,7 +266,7 @@ VOID TpcReqTabInit(
- 	if (pAd->CommonCfg.pTpcReqTab)
- 		NdisZeroMemory(pAd->CommonCfg.pTpcReqTab, sizeof(TPC_REQ_TAB));
- 	else
--		DBGPRINT(RT_DEBUG_ERROR, ("%s Fail to alloc memory for pAd->CommonCfg.pTpcReqTab.\n", __FUNCTION__));
-+		DBGPRINT(RT_DEBUG_ERROR, ("%s Fail to alloc memory for pAd->CommonCfg.pTpcReqTab.\n", __func__));
- 
- 	return;
- }
-@@ -294,7 +294,7 @@ static PTPC_REQ_ENTRY TpcReqLookUp(
- 
- 	if (pTab == NULL)
- 	{
--		DBGPRINT(RT_DEBUG_ERROR, ("%s: pTpcReqTab doesn't exist.\n", __FUNCTION__));
-+		DBGPRINT(RT_DEBUG_ERROR, ("%s: pTpcReqTab doesn't exist.\n", __func__));
- 		return NULL;
- 	}
- 
-@@ -332,7 +332,7 @@ static PTPC_REQ_ENTRY TpcReqInsert(
- 
- 	if(pTab == NULL)
- 	{
--		DBGPRINT(RT_DEBUG_ERROR, ("%s: pTpcReqTab doesn't exist.\n", __FUNCTION__));
-+		DBGPRINT(RT_DEBUG_ERROR, ("%s: pTpcReqTab doesn't exist.\n", __func__));
- 		return NULL;
- 	}
- 
-@@ -393,7 +393,7 @@ static PTPC_REQ_ENTRY TpcReqInsert(
- 		else
- 		{
- 			pEntry = NULL;
--			DBGPRINT(RT_DEBUG_ERROR, ("%s: pTpcReqTab tab full.\n", __FUNCTION__));
-+			DBGPRINT(RT_DEBUG_ERROR, ("%s: pTpcReqTab tab full.\n", __func__));
- 		}
- 
- 		// add this Neighbor entry into HASH table
-@@ -428,7 +428,7 @@ static VOID TpcReqDelete(
- 
- 	if(pTab == NULL)
- 	{
--		DBGPRINT(RT_DEBUG_ERROR, ("%s: pTpcReqTab doesn't exist.\n", __FUNCTION__));
-+		DBGPRINT(RT_DEBUG_ERROR, ("%s: pTpcReqTab doesn't exist.\n", __func__));
- 		return;
- 	}
- 
-@@ -781,7 +781,7 @@ VOID EnqueueMeasurementReq(
- 	NStatus = MlmeAllocateMemory(pAd, (PVOID)&pOutBuffer);  //Get an unused nonpaged memory
- 	if(NStatus != NDIS_STATUS_SUCCESS)
- 	{
--		DBGPRINT(RT_DEBUG_TRACE, ("%s() allocate memory failed \n", __FUNCTION__));
-+		DBGPRINT(RT_DEBUG_TRACE, ("%s() allocate memory failed \n", __func__));
- 		return;
- 	}
- 	NdisMoveMemory(pOutBuffer, (PCHAR)&ActHdr, sizeof(HEADER_802_11));
-@@ -843,7 +843,7 @@ VOID EnqueueMeasurementRep(
- 	NStatus = MlmeAllocateMemory(pAd, (PVOID)&pOutBuffer);  //Get an unused nonpaged memory
- 	if(NStatus != NDIS_STATUS_SUCCESS)
- 	{
--		DBGPRINT(RT_DEBUG_TRACE, ("%s() allocate memory failed \n", __FUNCTION__));
-+		DBGPRINT(RT_DEBUG_TRACE, ("%s() allocate memory failed \n", __func__));
- 		return;
- 	}
- 	NdisMoveMemory(pOutBuffer, (PCHAR)&ActHdr, sizeof(HEADER_802_11));
-@@ -897,7 +897,7 @@ VOID EnqueueTPCReq(
- 	NStatus = MlmeAllocateMemory(pAd, (PVOID)&pOutBuffer);  //Get an unused nonpaged memory
- 	if(NStatus != NDIS_STATUS_SUCCESS)
- 	{
--		DBGPRINT(RT_DEBUG_TRACE, ("%s() allocate memory failed \n", __FUNCTION__));
-+		DBGPRINT(RT_DEBUG_TRACE, ("%s() allocate memory failed \n", __func__));
- 		return;
- 	}
- 	NdisMoveMemory(pOutBuffer, (PCHAR)&ActHdr, sizeof(HEADER_802_11));
-@@ -949,7 +949,7 @@ VOID EnqueueTPCRep(
- 	NStatus = MlmeAllocateMemory(pAd, (PVOID)&pOutBuffer);  //Get an unused nonpaged memory
- 	if(NStatus != NDIS_STATUS_SUCCESS)
- 	{
--		DBGPRINT(RT_DEBUG_TRACE, ("%s() allocate memory failed \n", __FUNCTION__));
-+		DBGPRINT(RT_DEBUG_TRACE, ("%s() allocate memory failed \n", __func__));
- 		return;
- 	}
- 	NdisMoveMemory(pOutBuffer, (PCHAR)&ActHdr, sizeof(HEADER_802_11));
-@@ -1002,7 +1002,7 @@ VOID EnqueueChSwAnn(
- 	NStatus = MlmeAllocateMemory(pAd, (PVOID)&pOutBuffer);  //Get an unused nonpaged memory
- 	if(NStatus != NDIS_STATUS_SUCCESS)
- 	{
--		DBGPRINT(RT_DEBUG_TRACE, ("%s() allocate memory failed \n", __FUNCTION__));
-+		DBGPRINT(RT_DEBUG_TRACE, ("%s() allocate memory failed \n", __func__));
- 		return;
- 	}
- 	NdisMoveMemory(pOutBuffer, (PCHAR)&ActHdr, sizeof(HEADER_802_11));
-@@ -1595,7 +1595,7 @@ static VOID PeerMeasureReportAction(
- 
- 	if ((pMeasureReportInfo = kmalloc(sizeof(MEASURE_RPI_REPORT), GFP_ATOMIC)) == NULL)
- 	{
--		DBGPRINT(RT_DEBUG_ERROR, ("%s unable to alloc memory for measure report buffer (size=%d).\n", __FUNCTION__, sizeof(MEASURE_RPI_REPORT)));
-+		DBGPRINT(RT_DEBUG_ERROR, ("%s unable to alloc memory for measure report buffer (size=%d).\n", __func__, sizeof(MEASURE_RPI_REPORT)));
- 		return;
- 	}
- 
-@@ -1704,7 +1704,7 @@ static VOID PeerTpcRepAction(
- 		{
- 			TpcReqDelete(pAd, pEntry->DialogToken);
- 			DBGPRINT(RT_DEBUG_TRACE, ("%s: DialogToken=%x, TxPwr=%d, LinkMargin=%d\n",
--				__FUNCTION__, DialogToken, TpcRepInfo.TxPwr, TpcRepInfo.LinkMargin));
-+				__func__, DialogToken, TpcRepInfo.TxPwr, TpcRepInfo.LinkMargin));
- 		}
- 	}
- 
-@@ -1820,7 +1820,7 @@ INT Set_MeasureReq_Proc(
- 				MeasureReqType = simple_strtol(thisChar, 0, 16);
- 				if (MeasureReqType > 3)
- 				{
--					DBGPRINT(RT_DEBUG_ERROR, ("%s: unknow MeasureReqType(%d)\n", __FUNCTION__, MeasureReqType));
-+					DBGPRINT(RT_DEBUG_ERROR, ("%s: unknow MeasureReqType(%d)\n", __func__, MeasureReqType));
- 					return TRUE;
- 				}
- 				break;
-@@ -1832,10 +1832,10 @@ INT Set_MeasureReq_Proc(
- 		ArgIdx++;
- 	}
- 
--	DBGPRINT(RT_DEBUG_TRACE, ("%s::Aid = %d, MeasureReqType=%d MeasureCh=%d\n", __FUNCTION__, Aid, MeasureReqType, MeasureCh));
-+	DBGPRINT(RT_DEBUG_TRACE, ("%s::Aid = %d, MeasureReqType=%d MeasureCh=%d\n", __func__, Aid, MeasureReqType, MeasureCh));
- 	if (!VALID_WCID(Aid))
- 	{
--		DBGPRINT(RT_DEBUG_ERROR, ("%s: unknow sta of Aid(%d)\n", __FUNCTION__, Aid));
-+		DBGPRINT(RT_DEBUG_ERROR, ("%s: unknow sta of Aid(%d)\n", __func__, Aid));
- 		return TRUE;
- 	}
- 
-@@ -1860,10 +1860,10 @@ INT Set_TpcReq_Proc(
- 
- 	Aid = simple_strtol(arg, 0, 16);
- 
--	DBGPRINT(RT_DEBUG_TRACE, ("%s::Aid = %d\n", __FUNCTION__, Aid));
-+	DBGPRINT(RT_DEBUG_TRACE, ("%s::Aid = %d\n", __func__, Aid));
- 	if (!VALID_WCID(Aid))
- 	{
--		DBGPRINT(RT_DEBUG_ERROR, ("%s: unknow sta of Aid(%d)\n", __FUNCTION__, Aid));
-+		DBGPRINT(RT_DEBUG_ERROR, ("%s: unknow sta of Aid(%d)\n", __func__, Aid));
- 		return TRUE;
- 	}
- 
-diff --git a/drivers/staging/rt3070/rt_ate.c b/drivers/staging/rt3070/rt_ate.c
-index 9238d96..245792f 100644
---- a/drivers/staging/rt3070/rt_ate.c
-+++ b/drivers/staging/rt3070/rt_ate.c
-@@ -326,7 +326,7 @@ static INT ATETxPwrHandler(
- 				Bbp94 = BBPR94_DEFAULT;
- 			}
- 
--			ATEDBGPRINT(RT_DEBUG_TRACE, ("%s (TxPower=%d, R=%ld, BBP_R94=%d)\n", __FUNCTION__, TxPower, R, Bbp94));
-+			ATEDBGPRINT(RT_DEBUG_TRACE, ("%s (TxPower=%d, R=%ld, BBP_R94=%d)\n", __func__, TxPower, R, Bbp94));
- 		}
- 		else// 5.5 GHz
- 		{
-@@ -353,7 +353,7 @@ static INT ATETxPwrHandler(
- 				R = (ULONG) TxPower;
- 			}
- 
--			ATEDBGPRINT(RT_DEBUG_TRACE, ("%s (TxPower=%d, R=%lu)\n", __FUNCTION__, TxPower, R));
-+			ATEDBGPRINT(RT_DEBUG_TRACE, ("%s (TxPower=%d, R=%lu)\n", __func__, TxPower, R));
- 		}
- //2008/09/10:KH adds to support 3070 ATE TX Power tunning real time<--
- #ifdef RT30xx
-@@ -364,7 +364,7 @@ static INT ATETxPwrHandler(
- 					RT30xxReadRFRegister(pAd, RF_R12, (PUCHAR)&RFValue);
- 					RFValue = (RFValue & 0xE0) | TxPower;
- 					RT30xxWriteRFRegister(pAd, RF_R12, (UCHAR)RFValue);
--					ATEDBGPRINT(RT_DEBUG_TRACE, ("3070 or 2070:%s (TxPower=%d, RFValue=%x)\n", __FUNCTION__, TxPower, RFValue));
-+					ATEDBGPRINT(RT_DEBUG_TRACE, ("3070 or 2070:%s (TxPower=%d, RFValue=%x)\n", __func__, TxPower, RFValue));
- 
- 		}
- 		else
-@@ -481,7 +481,7 @@ static INT ATETxPwrHandler(
- 		Bbp94 = BBPR94_DEFAULT;
- 	}
- 
--	ATEDBGPRINT(RT_DEBUG_TRACE, ("%s (TxPower=%d, R3=%ld, BBP_R94=%d)\n", __FUNCTION__, TxPower, R, Bbp94));
-+	ATEDBGPRINT(RT_DEBUG_TRACE, ("%s (TxPower=%d, R3=%ld, BBP_R94=%d)\n", __func__, TxPower, R, Bbp94));
- 
- 		if (pAd->ate.Channel <= 14)
- 		{
-@@ -2458,7 +2458,7 @@ INT Set_ATE_Load_E2P_Proc(
- 	UINT32			FileLength = 0;
- 	UINT32 			value = simple_strtol(arg, 0, 10);
- 
--	ATEDBGPRINT(RT_DEBUG_ERROR, ("===> %s (value=%d)\n\n", __FUNCTION__, value));
-+	ATEDBGPRINT(RT_DEBUG_ERROR, ("===> %s (value=%d)\n\n", __func__, value));
- 
- 	if (value > 0)
- 	{
-@@ -2482,14 +2482,14 @@ INT Set_ATE_Load_E2P_Proc(
- 
- 			if (IS_ERR(srcf))
- 			{
--				ate_print("%s - Error %ld opening %s\n", __FUNCTION__, -PTR_ERR(srcf), src);
-+				ate_print("%s - Error %ld opening %s\n", __func__, -PTR_ERR(srcf), src);
- 				break;
- 			}
- 
- 			/* the object must have a read method */
- 			if ((srcf->f_op == NULL) || (srcf->f_op->read == NULL))
- 			{
--				ate_print("%s - %s does not have a read method\n", __FUNCTION__, src);
-+				ate_print("%s - %s does not have a read method\n", __func__, src);
- 				break;
- 			}
- 
-@@ -2502,7 +2502,7 @@ INT Set_ATE_Load_E2P_Proc(
- 			if (FileLength != EEPROM_SIZE)
- 			{
- 				ate_print("%s: error file length (=%d) in e2p.bin\n",
--					   __FUNCTION__, FileLength);
-+					   __func__, FileLength);
- 				break;
- 			}
- 			else
-@@ -2534,7 +2534,7 @@ INT Set_ATE_Load_E2P_Proc(
- 		current->fsuid = orgfsuid;
- 		current->fsgid = orgfsgid;
- 	}
--    ATEDBGPRINT(RT_DEBUG_ERROR, ("<=== %s (ret=%d)\n", __FUNCTION__, ret));
-+    ATEDBGPRINT(RT_DEBUG_ERROR, ("<=== %s (ret=%d)\n", __func__, ret));
- 
-     return ret;
- 
-@@ -2547,12 +2547,12 @@ INT Set_ATE_Load_E2P_Proc(
- 	USHORT 			WriteEEPROM[(EEPROM_SIZE/2)];
- 	struct iwreq	*wrq = (struct iwreq *)arg;
- 
--	ATEDBGPRINT(RT_DEBUG_TRACE, ("===> %s (wrq->u.data.length = %d)\n\n", __FUNCTION__, wrq->u.data.length));
-+	ATEDBGPRINT(RT_DEBUG_TRACE, ("===> %s (wrq->u.data.length = %d)\n\n", __func__, wrq->u.data.length));
- 
- 	if (wrq->u.data.length != EEPROM_SIZE)
- 	{
- 		ate_print("%s: error length (=%d) from host\n",
--			   __FUNCTION__, wrq->u.data.length);
-+			   __func__, wrq->u.data.length);
- 		return FALSE;
- 	}
- 	else/* (wrq->u.data.length == EEPROM_SIZE) */
-@@ -2571,7 +2571,7 @@ INT Set_ATE_Load_E2P_Proc(
- 		} while(FALSE);
- 		}
- 
--    ATEDBGPRINT(RT_DEBUG_TRACE, ("<=== %s\n", __FUNCTION__));
-+    ATEDBGPRINT(RT_DEBUG_TRACE, ("<=== %s\n", __func__));
- 
-     return TRUE;
- 
-@@ -4344,7 +4344,7 @@ VOID RtmpDoAte(
- 
- 	Command_Id = ntohs(pRaCfg->command_id);
- 
--	ATEDBGPRINT(RT_DEBUG_TRACE,("\n%s: Command_Id = 0x%04x !\n", __FUNCTION__, Command_Id));
-+	ATEDBGPRINT(RT_DEBUG_TRACE,("\n%s: Command_Id = 0x%04x !\n", __func__, Command_Id));
- 
- 	switch (Command_Id)
- 	{
-@@ -6350,7 +6350,7 @@ BOOLEAN SyncTxRxConfig(PRTMP_ADAPTER pAd, USHORT offset, UCHAR value)
- 					pAd->ate.TxAntennaSel = 2;
- 		            break;
- 		        default:
--		            DBGPRINT(RT_DEBUG_TRACE, ("%s -- Sth. wrong!  : return FALSE; \n", __FUNCTION__));
-+		            DBGPRINT(RT_DEBUG_TRACE, ("%s -- Sth. wrong!  : return FALSE; \n", __func__));
- 		            return FALSE;
- 		    }
- 			break;/* case BBP_R1 */
-@@ -6388,13 +6388,13 @@ BOOLEAN SyncTxRxConfig(PRTMP_ADAPTER pAd, USHORT offset, UCHAR value)
- 					pAd->ate.RxAntennaSel = 3;
- 		            break;
- 		        default:
--		            DBGPRINT(RT_DEBUG_ERROR, ("%s -- Impossible!  : return FALSE; \n", __FUNCTION__));
-+		            DBGPRINT(RT_DEBUG_ERROR, ("%s -- Impossible!  : return FALSE; \n", __func__));
- 		            return FALSE;
- 		    }
- 			break;/* case BBP_R3 */
- 
-         default:
--            DBGPRINT(RT_DEBUG_ERROR, ("%s -- Sth. wrong!  : return FALSE; \n", __FUNCTION__));
-+            DBGPRINT(RT_DEBUG_ERROR, ("%s -- Sth. wrong!  : return FALSE; \n", __func__));
-             return FALSE;
- 
- 	}
-diff --git a/drivers/staging/rt3070/rt_linux.c b/drivers/staging/rt3070/rt_linux.c
-index bf33853..4aeafb2 100644
---- a/drivers/staging/rt3070/rt_linux.c
-+++ b/drivers/staging/rt3070/rt_linux.c
-@@ -408,7 +408,7 @@ NDIS_STATUS RTMPAllocateNdisPacket(
-  	skb_put(GET_OS_PKT_TYPE(pPacket), HeaderLen+DataLen);
- 
- 	RTMP_SET_PACKET_SOURCE(pPacket, PKTSRC_NDIS);
--//	printk("%s : pPacket = %p, len = %d\n", __FUNCTION__, pPacket, GET_OS_PKT_LEN(pPacket));
-+//	printk("%s : pPacket = %p, len = %d\n", __func__, pPacket, GET_OS_PKT_LEN(pPacket));
- 	*ppPacket = pPacket;
- 	return NDIS_STATUS_SUCCESS;
- }
-@@ -782,13 +782,13 @@ VOID RTMPSendWirelessEvent(
- 
- 	if (event_table_len == 0)
- 	{
--		DBGPRINT(RT_DEBUG_ERROR, ("%s : The type(%0x02x) is not valid.\n", __FUNCTION__, type));
-+		DBGPRINT(RT_DEBUG_ERROR, ("%s : The type(%0x02x) is not valid.\n", __func__, type));
- 		return;
- 	}
- 
- 	if (event >= event_table_len)
- 	{
--		DBGPRINT(RT_DEBUG_ERROR, ("%s : The event(%0x02x) is not valid.\n", __FUNCTION__, event));
-+		DBGPRINT(RT_DEBUG_ERROR, ("%s : The event(%0x02x) is not valid.\n", __func__, event));
- 		return;
- 	}
- 
-@@ -826,14 +826,14 @@ VOID RTMPSendWirelessEvent(
- 		//send wireless event
- 	    wireless_send_event(pAd->net_dev, IWEVCUSTOM, &wrqu, pBuf);
- 
--		//DBGPRINT(RT_DEBUG_TRACE, ("%s : %s\n", __FUNCTION__, pBuf));
-+		//DBGPRINT(RT_DEBUG_TRACE, ("%s : %s\n", __func__, pBuf));
- 
- 		kfree(pBuf);
- 	}
- 	else
--		DBGPRINT(RT_DEBUG_ERROR, ("%s : Can't allocate memory for wireless event.\n", __FUNCTION__));
-+		DBGPRINT(RT_DEBUG_ERROR, ("%s : Can't allocate memory for wireless event.\n", __func__));
- #else
--	DBGPRINT(RT_DEBUG_ERROR, ("%s : The Wireless Extension MUST be v15 or newer.\n", __FUNCTION__));
-+	DBGPRINT(RT_DEBUG_ERROR, ("%s : The Wireless Extension MUST be v15 or newer.\n", __func__));
- #endif  /* WIRELESS_EXT >= 15 */
- }
- 
-@@ -857,13 +857,13 @@ void send_monitor_packets(
-     ASSERT(pRxBlk->pRxPacket);
-     if (pRxBlk->DataSize < 10)
-     {
--        DBGPRINT(RT_DEBUG_ERROR, ("%s : Size is too small! (%d)\n", __FUNCTION__, pRxBlk->DataSize));
-+        DBGPRINT(RT_DEBUG_ERROR, ("%s : Size is too small! (%d)\n", __func__, pRxBlk->DataSize));
- 		goto err_free_sk_buff;
-     }
- 
-     if (pRxBlk->DataSize + sizeof(wlan_ng_prism2_header) > RX_BUFFER_AGGRESIZE)
-     {
--        DBGPRINT(RT_DEBUG_ERROR, ("%s : Size is too large! (%d)\n", __FUNCTION__, pRxBlk->DataSize + sizeof(wlan_ng_prism2_header)));
-+        DBGPRINT(RT_DEBUG_ERROR, ("%s : Size is too large! (%d)\n", __func__, pRxBlk->DataSize + sizeof(wlan_ng_prism2_header)));
- 		goto err_free_sk_buff;
-     }
- 
-@@ -919,7 +919,7 @@ void send_monitor_packets(
- 
-     if (skb_headroom(pOSPkt) < (sizeof(wlan_ng_prism2_header)+ header_len)) {
-         if (pskb_expand_head(pOSPkt, (sizeof(wlan_ng_prism2_header) + header_len), 0, GFP_ATOMIC)) {
--	        DBGPRINT(RT_DEBUG_ERROR, ("%s : Reallocate header size of sk_buff fail!\n", __FUNCTION__));
-+	        DBGPRINT(RT_DEBUG_ERROR, ("%s : Reallocate header size of sk_buff fail!\n", __func__));
- 			goto err_free_sk_buff;
- 	    } //end if
-     } //end if
-diff --git a/drivers/staging/rt3070/rt_linux.h b/drivers/staging/rt3070/rt_linux.h
-index 0540d02..f76f45c 100644
---- a/drivers/staging/rt3070/rt_linux.h
-+++ b/drivers/staging/rt3070/rt_linux.h
-@@ -124,7 +124,7 @@ typedef int (*HARD_START_XMIT_FUNC)(struct sk_buff *skb, struct net_device *net_
- #define RT_MOD_INC_USE_COUNT() \
- 	if (!try_module_get(THIS_MODULE)) \
- 	{ \
--		DBGPRINT(RT_DEBUG_ERROR, ("%s: cannot reserve module\n", __FUNCTION__)); \
-+		DBGPRINT(RT_DEBUG_ERROR, ("%s: cannot reserve module\n", __func__)); \
- 		return -1; \
- 	}
- 
-diff --git a/drivers/staging/rt3070/rt_profile.c b/drivers/staging/rt3070/rt_profile.c
-index 6eda27e..167bdb1 100644
---- a/drivers/staging/rt3070/rt_profile.c
-+++ b/drivers/staging/rt3070/rt_profile.c
-@@ -1024,7 +1024,7 @@ NDIS_STATUS	RTMPReadParametersHook(
- 								pAd->MlmeAux.SsidLen = pAd->CommonCfg.SsidLen;
- 								NdisZeroMemory(pAd->MlmeAux.Ssid, NDIS_802_11_LENGTH_SSID);
- 								NdisMoveMemory(pAd->MlmeAux.Ssid, tmpbuf, pAd->MlmeAux.SsidLen);
--								DBGPRINT(RT_DEBUG_TRACE, ("%s::(SSID=%s)\n", __FUNCTION__, tmpbuf));
-+								DBGPRINT(RT_DEBUG_TRACE, ("%s::(SSID=%s)\n", __func__, tmpbuf));
- 							}
- 						}
- 					}
-@@ -1043,7 +1043,7 @@ NDIS_STATUS	RTMPReadParametersHook(
- 								pAd->StaCfg.BssType = BSS_INFRA;
- 							// Reset Ralink supplicant to not use, it will be set to start when UI set PMK key
- 							pAd->StaCfg.WpaState = SS_NOTUSE;
--							DBGPRINT(RT_DEBUG_TRACE, ("%s::(NetworkType=%d)\n", __FUNCTION__, pAd->StaCfg.BssType));
-+							DBGPRINT(RT_DEBUG_TRACE, ("%s::(NetworkType=%d)\n", __func__, pAd->StaCfg.BssType));
- 						}
- 					}
- #endif // CONFIG_STA_SUPPORT //
-@@ -1341,7 +1341,7 @@ NDIS_STATUS	RTMPReadParametersHook(
- 
- 				                        pAd->StaCfg.PortSecured = WPA_802_1X_PORT_NOT_SECURED;
- 
--							DBGPRINT(RT_DEBUG_TRACE, ("%s::(EncrypType=%d)\n", __FUNCTION__, pAd->StaCfg.WepStatus));
-+							DBGPRINT(RT_DEBUG_TRACE, ("%s::(EncrypType=%d)\n", __func__, pAd->StaCfg.WepStatus));
- 						}
- #endif // CONFIG_STA_SUPPORT //
- 					}
-@@ -1368,7 +1368,7 @@ NDIS_STATUS	RTMPReadParametersHook(
- 							pAd->StaCfg.bMixCipher 		= FALSE;
- 
- 							//RTMPMakeRSNIE(pAd, pAd->StaCfg.AuthMode, pAd->StaCfg.WepStatus, 0);
--							DBGPRINT(RT_DEBUG_TRACE, ("%s::(EncrypType=%d)\n", __FUNCTION__, pAd->StaCfg.WepStatus));
-+							DBGPRINT(RT_DEBUG_TRACE, ("%s::(EncrypType=%d)\n", __func__, pAd->StaCfg.WepStatus));
- 						}
- #endif // CONFIG_STA_SUPPORT //
- 					}
-@@ -1405,7 +1405,7 @@ NDIS_STATUS	RTMPReadParametersHook(
- 							else
- 							{
- 								err = 1;
--								DBGPRINT(RT_DEBUG_ERROR, ("%s::(WPAPSK key-string required 8 ~ 64 characters!)\n", __FUNCTION__));
-+								DBGPRINT(RT_DEBUG_ERROR, ("%s::(WPAPSK key-string required 8 ~ 64 characters!)\n", __func__));
- 							}
- 
- 							if (err == 0)
-@@ -1436,7 +1436,7 @@ NDIS_STATUS	RTMPReadParametersHook(
- 									pAd->StaCfg.WpaState = SS_NOTUSE;
- 								}
- 
--								DBGPRINT(RT_DEBUG_TRACE, ("%s::(WPAPSK=%s)\n", __FUNCTION__, tmpbuf));
-+								DBGPRINT(RT_DEBUG_TRACE, ("%s::(WPAPSK=%s)\n", __func__, tmpbuf));
- 							}
- 						}
- 					}
-diff --git a/drivers/staging/rt3070/rtmp_def.h b/drivers/staging/rt3070/rtmp_def.h
-index 2599f7c..7baef9b 100644
---- a/drivers/staging/rt3070/rtmp_def.h
-+++ b/drivers/staging/rt3070/rtmp_def.h
-@@ -356,7 +356,7 @@
- /* sanity check for apidx */
- #define MBSS_MR_APIDX_SANITY_CHECK(apidx) \
-     { if (apidx > MAX_MBSSID_NUM) { \
--          printk("%s> Error! apidx = %d > MAX_MBSSID_NUM!\n", __FUNCTION__, apidx); \
-+          printk("%s> Error! apidx = %d > MAX_MBSSID_NUM!\n", __func__, apidx); \
- 	  apidx = MAIN_MBSSID; } }
- 
- #define VALID_WCID(_wcid)	((_wcid) > 0 && (_wcid) < MAX_LEN_OF_MAC_TABLE )
-diff --git a/drivers/staging/rt3070/sta_ioctl.c b/drivers/staging/rt3070/sta_ioctl.c
-index 0794548..30446a3 100644
---- a/drivers/staging/rt3070/sta_ioctl.c
-+++ b/drivers/staging/rt3070/sta_ioctl.c
-@@ -2151,7 +2151,7 @@ rt_private_show(struct net_device *dev, struct iw_request_info *info,
- 			}
+@@ -2845,7 +2845,7 @@ static int ni_m_series_ao_config_chanlist(struct comedi_device * dev,
  			break;
-         default:
--            DBGPRINT(RT_DEBUG_TRACE, ("%s - unknow subcmd = %d\n", __FUNCTION__, subcmd));
-+            DBGPRINT(RT_DEBUG_TRACE, ("%s - unknow subcmd = %d\n", __func__, subcmd));
-             break;
-     }
- 
-@@ -2170,7 +2170,7 @@ int rt_ioctl_siwmlme(struct net_device *dev,
- 	MLME_DISASSOC_REQ_STRUCT	DisAssocReq;
- 	MLME_DEAUTH_REQ_STRUCT      DeAuthReq;
- 
--	DBGPRINT(RT_DEBUG_TRACE, ("====> %s\n", __FUNCTION__));
-+	DBGPRINT(RT_DEBUG_TRACE, ("====> %s\n", __func__));
- 
- 	if (pMlme == NULL)
- 		return -EINVAL;
-@@ -2179,7 +2179,7 @@ int rt_ioctl_siwmlme(struct net_device *dev,
- 	{
- #ifdef IW_MLME_DEAUTH
- 		case IW_MLME_DEAUTH:
--			DBGPRINT(RT_DEBUG_TRACE, ("====> %s - IW_MLME_DEAUTH\n", __FUNCTION__));
-+			DBGPRINT(RT_DEBUG_TRACE, ("====> %s - IW_MLME_DEAUTH\n", __func__));
- 			COPY_MAC_ADDR(DeAuthReq.Addr, pAd->CommonCfg.Bssid);
- 			DeAuthReq.Reason = pMlme->reason_code;
- 			MsgElem.MsgLen = sizeof(MLME_DEAUTH_REQ_STRUCT);
-@@ -2194,7 +2194,7 @@ int rt_ioctl_siwmlme(struct net_device *dev,
- #endif // IW_MLME_DEAUTH //
- #ifdef IW_MLME_DISASSOC
- 		case IW_MLME_DISASSOC:
--			DBGPRINT(RT_DEBUG_TRACE, ("====> %s - IW_MLME_DISASSOC\n", __FUNCTION__));
-+			DBGPRINT(RT_DEBUG_TRACE, ("====> %s - IW_MLME_DISASSOC\n", __func__));
- 			COPY_MAC_ADDR(DisAssocReq.Addr, pAd->CommonCfg.Bssid);
- 			DisAssocReq.Reason =  pMlme->reason_code;
- 
-@@ -2208,7 +2208,7 @@ int rt_ioctl_siwmlme(struct net_device *dev,
- 			break;
- #endif // IW_MLME_DISASSOC //
  		default:
--			DBGPRINT(RT_DEBUG_TRACE, ("====> %s - Unknow Command\n", __FUNCTION__));
-+			DBGPRINT(RT_DEBUG_TRACE, ("====> %s - Unknow Command\n", __func__));
+ 			rt_printk("%s: bug! unhandled ao reference voltage\n",
+-				__FUNCTION__);
++				__func__);
  			break;
- 	}
- 
-@@ -2241,7 +2241,7 @@ int rt_ioctl_siwauth(struct net_device *dev,
-             else if (param->value == IW_AUTH_WPA_VERSION_WPA2)
-                 pAdapter->StaCfg.AuthMode = Ndis802_11AuthModeWPA2PSK;
- 
--            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_WPA_VERSION - param->value = %d!\n", __FUNCTION__, param->value));
-+            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_WPA_VERSION - param->value = %d!\n", __func__, param->value));
-             break;
-     	case IW_AUTH_CIPHER_PAIRWISE:
-             if (param->value == IW_AUTH_CIPHER_NONE)
-@@ -2272,7 +2272,7 @@ int rt_ioctl_siwauth(struct net_device *dev,
-                 pAdapter->StaCfg.OrigWepStatus = pAdapter->StaCfg.WepStatus;
-                 pAdapter->StaCfg.PairCipher = Ndis802_11Encryption3Enabled;
-             }
--            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_CIPHER_PAIRWISE - param->value = %d!\n", __FUNCTION__, param->value));
-+            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_CIPHER_PAIRWISE - param->value = %d!\n", __func__, param->value));
-             break;
-     	case IW_AUTH_CIPHER_GROUP:
-             if (param->value == IW_AUTH_CIPHER_NONE)
-@@ -2292,7 +2292,7 @@ int rt_ioctl_siwauth(struct net_device *dev,
-             {
-                 pAdapter->StaCfg.GroupCipher = Ndis802_11Encryption3Enabled;
-             }
--            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_CIPHER_GROUP - param->value = %d!\n", __FUNCTION__, param->value));
-+            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_CIPHER_GROUP - param->value = %d!\n", __func__, param->value));
-             break;
-     	case IW_AUTH_KEY_MGMT:
-             if (param->value == IW_AUTH_KEY_MGMT_802_1X)
-@@ -2322,7 +2322,7 @@ int rt_ioctl_siwauth(struct net_device *dev,
-                 //pAdapter->StaCfg.PortSecured = WPA_802_1X_PORT_SECURED;
- 				STA_PORT_SECURED(pAdapter);
-             }
--            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_KEY_MGMT - param->value = %d!\n", __FUNCTION__, param->value));
-+            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_KEY_MGMT - param->value = %d!\n", __func__, param->value));
-             break;
-     	case IW_AUTH_RX_UNENCRYPTED_EAPOL:
-             break;
-@@ -2335,7 +2335,7 @@ int rt_ioctl_siwauth(struct net_device *dev,
-                 pAdapter->StaCfg.PairCipher = Ndis802_11WEPDisabled;
-         	    pAdapter->StaCfg.GroupCipher = Ndis802_11WEPDisabled;
-             }*/
--            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_PRIVACY_INVOKED - param->value = %d!\n", __FUNCTION__, param->value));
-+            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_PRIVACY_INVOKED - param->value = %d!\n", __func__, param->value));
-     		break;
-     	case IW_AUTH_DROP_UNENCRYPTED:
-             if (param->value != 0)
-@@ -2345,7 +2345,7 @@ int rt_ioctl_siwauth(struct net_device *dev,
-                 //pAdapter->StaCfg.PortSecured = WPA_802_1X_PORT_SECURED;
- 				STA_PORT_SECURED(pAdapter);
- 			}
--            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_WPA_VERSION - param->value = %d!\n", __FUNCTION__, param->value));
-+            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_WPA_VERSION - param->value = %d!\n", __func__, param->value));
-     		break;
-     	case IW_AUTH_80211_AUTH_ALG:
- 			if (param->value & IW_AUTH_ALG_SHARED_KEY)
-@@ -2358,10 +2358,10 @@ int rt_ioctl_siwauth(struct net_device *dev,
- 			}
-             else
- 				return -EINVAL;
--            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_80211_AUTH_ALG - param->value = %d!\n", __FUNCTION__, param->value));
-+            DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_80211_AUTH_ALG - param->value = %d!\n", __func__, param->value));
+ 		}
+ 		switch (krange->max + krange->min) {
+@@ -2857,7 +2857,7 @@ static int ni_m_series_ao_config_chanlist(struct comedi_device * dev,
  			break;
-     	case IW_AUTH_WPA_ENABLED:
--    		DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_WPA_ENABLED - Driver supports WPA!(param->value = %d)\n", __FUNCTION__, param->value));
-+			DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_AUTH_WPA_ENABLED - Driver supports WPA!(param->value = %d)\n", __func__, param->value));
-     		break;
-     	default:
-     		return -EOPNOTSUPP;
-@@ -2469,7 +2469,7 @@ int rt_ioctl_siwencodeext(struct net_device *dev,
- 		pAdapter->SharedKey[BSS0][keyIdx].CipherAlg = CIPHER_NONE;
- 		AsicRemoveSharedKeyEntry(pAdapter, 0, (UCHAR)keyIdx);
-         NdisZeroMemory(&pAdapter->SharedKey[BSS0][keyIdx], sizeof(CIPHER_KEY));
--        DBGPRINT(RT_DEBUG_TRACE, ("%s::Remove all keys!(encoding->flags = %x)\n", __FUNCTION__, encoding->flags));
-+        DBGPRINT(RT_DEBUG_TRACE, ("%s::Remove all keys!(encoding->flags = %x)\n", __func__, encoding->flags));
-     }
- 					else
-     {
-@@ -2481,15 +2481,15 @@ int rt_ioctl_siwencodeext(struct net_device *dev,
-         if (ext->ext_flags & IW_ENCODE_EXT_SET_TX_KEY)
-         {
-             pAdapter->StaCfg.DefaultKeyId = keyIdx;
--            DBGPRINT(RT_DEBUG_TRACE, ("%s::DefaultKeyId = %d\n", __FUNCTION__, pAdapter->StaCfg.DefaultKeyId));
-+            DBGPRINT(RT_DEBUG_TRACE, ("%s::DefaultKeyId = %d\n", __func__, pAdapter->StaCfg.DefaultKeyId));
-         }
- 
-         switch (alg) {
-     		case IW_ENCODE_ALG_NONE:
--                DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_ENCODE_ALG_NONE\n", __FUNCTION__));
-+                DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_ENCODE_ALG_NONE\n", __func__));
-     			break;
-     		case IW_ENCODE_ALG_WEP:
--                DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_ENCODE_ALG_WEP - ext->key_len = %d, keyIdx = %d\n", __FUNCTION__, ext->key_len, keyIdx));
-+                DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_ENCODE_ALG_WEP - ext->key_len = %d, keyIdx = %d\n", __func__, ext->key_len, keyIdx));
-     			if (ext->key_len == MAX_WEP_KEY_SIZE)
-                 {
-         			pAdapter->SharedKey[BSS0][keyIdx].KeyLen = MAX_WEP_KEY_SIZE;
-@@ -2507,7 +2507,7 @@ int rt_ioctl_siwencodeext(struct net_device *dev,
- 			    NdisMoveMemory(pAdapter->SharedKey[BSS0][keyIdx].Key, ext->key, ext->key_len);
-     			break;
-             case IW_ENCODE_ALG_TKIP:
--                DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_ENCODE_ALG_TKIP - keyIdx = %d, ext->key_len = %d\n", __FUNCTION__, keyIdx, ext->key_len));
-+                DBGPRINT(RT_DEBUG_TRACE, ("%s::IW_ENCODE_ALG_TKIP - keyIdx = %d, ext->key_len = %d\n", __func__, keyIdx, ext->key_len));
-                 if (ext->key_len == 32)
-                 {
-                     if (ext->ext_flags & IW_ENCODE_EXT_SET_TX_KEY)
-@@ -6712,7 +6712,7 @@ next:
- 		file_w = filp_open(fileName, O_WRONLY|O_CREAT, 0);
- 		if (IS_ERR(file_w))
- 		{
--			DBGPRINT(RT_DEBUG_TRACE, ("-->2) %s: Error %ld opening %s\n", __FUNCTION__, -PTR_ERR(file_w), fileName));
-+			DBGPRINT(RT_DEBUG_TRACE, ("-->2) %s: Error %ld opening %s\n", __func__, -PTR_ERR(file_w), fileName));
+ 		default:
+ 			rt_printk("%s: bug! unhandled ao offset voltage\n",
+-				__FUNCTION__);
++				__func__);
+ 			break;
  		}
- 		else
- 		{
-@@ -6908,7 +6908,7 @@ next:
- 		file_w = filp_open(fileName, O_WRONLY|O_CREAT, 0);
- 		if (IS_ERR(file_w))
- 		{
--			DBGPRINT(RT_DEBUG_TRACE, ("-->2) %s: Error %ld opening %s\n", __FUNCTION__, -PTR_ERR(file_w), fileName));
-+			DBGPRINT(RT_DEBUG_TRACE, ("-->2) %s: Error %ld opening %s\n", __func__, -PTR_ERR(file_w), fileName));
- 		}
- 		else
- 		{
-@@ -7101,7 +7101,7 @@ next:
- 		wrq->u.data.length = strlen(msg);
- 		if (copy_to_user(wrq->u.data.pointer, msg, wrq->u.data.length))
- 		{
--			DBGPRINT(RT_DEBUG_TRACE, ("%s: copy_to_user() fail\n", __FUNCTION__));
-+			DBGPRINT(RT_DEBUG_TRACE, ("%s: copy_to_user() fail\n", __func__));
- 		}
+ 		if (timed)
+@@ -4100,7 +4100,7 @@ static unsigned ni_gpct_to_stc_register(enum ni_gpct_register reg)
+ 		break;
+ 	default:
+ 		rt_printk("%s: unhandled register 0x%x in switch.\n",
+-			__FUNCTION__, reg);
++			__func__, reg);
+ 		BUG();
+ 		return 0;
+ 		break;
+@@ -5225,7 +5225,7 @@ static unsigned ni_old_get_pfi_routing(struct comedi_device * dev, unsigned chan
+ 		return NI_PFI_OUTPUT_G_GATE0;
+ 		break;
+ 	default:
+-		rt_printk("%s: bug, unhandled case in switch.\n", __FUNCTION__);
++		rt_printk("%s: bug, unhandled case in switch.\n", __func__);
+ 		break;
  	}
- 	else
+ 	return 0;
+@@ -5390,7 +5390,7 @@ static int ni_mseries_get_pll_parameters(unsigned reference_period_ns,
+ 	}
+ 	if (best_period_picosec == 0) {
+ 		rt_printk("%s: bug, failed to find pll parameters\n",
+-			__FUNCTION__);
++			__func__);
+ 		return -EIO;
+ 	}
+ 	*freq_divider = best_div;
+@@ -5426,7 +5426,7 @@ static int ni_mseries_set_pll_master_clock(struct comedi_device * dev, unsigned
+ 	if (period_ns < min_period_ns || period_ns > max_period_ns) {
+ 		rt_printk
+ 			("%s: you must specify an input clock frequency between %i and %i nanosec "
+-			"for the phased-lock loop.\n", __FUNCTION__,
++			"for the phased-lock loop.\n", __func__,
+ 			min_period_ns, max_period_ns);
+ 		return -EINVAL;
+ 	}
+@@ -5498,7 +5498,7 @@ static int ni_mseries_set_pll_master_clock(struct comedi_device * dev, unsigned
+ 	if (i == timeout) {
+ 		rt_printk
+ 			("%s: timed out waiting for PLL to lock to reference clock source %i with period %i ns.\n",
+-			__FUNCTION__, source, period_ns);
++			__func__, source, period_ns);
+ 		return -ETIMEDOUT;
+ 	}
+ 	return 3;
+@@ -5535,7 +5535,7 @@ static int ni_set_master_clock(struct comedi_device * dev, unsigned source,
+ 				if (period_ns == 0) {
+ 					rt_printk
+ 						("%s: we don't handle an unspecified clock period correctly yet, returning error.\n",
+-						__FUNCTION__);
++						__func__);
+ 					return -EINVAL;
+ 				} else {
+ 					devpriv->clock_ns = period_ns;
+@@ -5558,7 +5558,7 @@ static int ni_valid_rtsi_output_source(struct comedi_device * dev, unsigned chan
+ 			else {
+ 				rt_printk
+ 					("%s: invalid source for channel=%i, channel %i is always the RTSI clock for pre-m-series boards.\n",
+-					__FUNCTION__, chan,
++					__func__, chan,
+ 					old_RTSI_clock_channel);
+ 				return 0;
+ 			}
+@@ -5621,7 +5621,7 @@ static unsigned ni_get_rtsi_routing(struct comedi_device * dev, unsigned chan)
+ 	} else {
+ 		if (chan == old_RTSI_clock_channel)
+ 			return NI_RTSI_OUTPUT_RTSI_OSC;
+-		rt_printk("%s: bug! should never get here?\n", __FUNCTION__);
++		rt_printk("%s: bug! should never get here?\n", __func__);
+ 		return 0;
+ 	}
+ }
+@@ -5716,7 +5716,7 @@ static int cs5529_wait_for_idle(struct comedi_device * dev)
+ 	}
+ //printk("looped %i times waiting for idle\n", i);
+ 	if (i == timeout) {
+-		rt_printk("%s: %s: timeout\n", __FILE__, __FUNCTION__);
++		rt_printk("%s: %s: timeout\n", __FILE__, __func__);
+ 		return -ETIME;
+ 	}
+ 	return 0;
+diff --git a/drivers/staging/comedi/drivers/ni_pcimio.c b/drivers/staging/comedi/drivers/ni_pcimio.c
+index 3a2aba7..d11beb6 100644
+--- a/drivers/staging/comedi/drivers/ni_pcimio.c
++++ b/drivers/staging/comedi/drivers/ni_pcimio.c
+@@ -1350,7 +1350,7 @@ static void m_series_stc_writew(struct comedi_device * dev, uint16_t data, int r
+ 	case DIO_Control_Register:
+ 		rt_printk
+ 			("%s: FIXME: register 0x%x does not map cleanly on to m-series boards.\n",
+-			__FUNCTION__, reg);
++			__func__, reg);
+ 		return;
+ 		break;
+ 	case G_Autoincrement_Register(0):
+@@ -1411,7 +1411,7 @@ static void m_series_stc_writew(struct comedi_device * dev, uint16_t data, int r
+ 		   and M_Offset_SCXI_Serial_Data_Out (8 bit) */
+ 	default:
+ 		rt_printk("%s: bug! unhandled register=0x%x in switch.\n",
+-			__FUNCTION__, reg);
++			__func__, reg);
+ 		BUG();
+ 		return;
+ 		break;
+@@ -1446,7 +1446,7 @@ static uint16_t m_series_stc_readw(struct comedi_device * dev, int reg)
+ 		break;
+ 	default:
+ 		rt_printk("%s: bug! unhandled register=0x%x in switch.\n",
+-			__FUNCTION__, reg);
++			__func__, reg);
+ 		BUG();
+ 		return 0;
+ 		break;
+@@ -1487,7 +1487,7 @@ static void m_series_stc_writel(struct comedi_device * dev, uint32_t data, int r
+ 		break;
+ 	default:
+ 		rt_printk("%s: bug! unhandled register=0x%x in switch.\n",
+-			__FUNCTION__, reg);
++			__func__, reg);
+ 		BUG();
+ 		return;
+ 		break;
+@@ -1513,7 +1513,7 @@ static uint32_t m_series_stc_readl(struct comedi_device * dev, int reg)
+ 		break;
+ 	default:
+ 		rt_printk("%s: bug! unhandled register=0x%x in switch.\n",
+-			__FUNCTION__, reg);
++			__func__, reg);
+ 		BUG();
+ 		return 0;
+ 		break;
+diff --git a/drivers/staging/comedi/drivers/ni_stc.h b/drivers/staging/comedi/drivers/ni_stc.h
+index 1ebf521..509a2da 100644
+--- a/drivers/staging/comedi/drivers/ni_stc.h
++++ b/drivers/staging/comedi/drivers/ni_stc.h
+@@ -339,7 +339,7 @@ static inline unsigned RTSI_Output_Bit(unsigned channel, int is_mseries)
+ 		max_channel = 6;
+ 	}
+ 	if (channel > max_channel) {
+-		rt_printk("%s: bug, invalid RTSI_channel=%i\n", __FUNCTION__,
++		rt_printk("%s: bug, invalid RTSI_channel=%i\n", __func__,
+ 			channel);
+ 		return 0;
+ 	}
+@@ -1085,7 +1085,7 @@ static inline int M_Offset_Static_AI_Control(int i)
+ 		0x263,
+ 	};
+ 	if (((unsigned)i) >= sizeof(offset) / sizeof(offset[0])) {
+-		rt_printk("%s: invalid channel=%i\n", __FUNCTION__, i);
++		rt_printk("%s: invalid channel=%i\n", __func__, i);
+ 		return offset[0];
+ 	}
+ 	return offset[i];
+@@ -1099,7 +1099,7 @@ static inline int M_Offset_AO_Reference_Attenuation(int channel)
+ 		0x267
+ 	};
+ 	if (((unsigned)channel) >= sizeof(offset) / sizeof(offset[0])) {
+-		rt_printk("%s: invalid channel=%i\n", __FUNCTION__, channel);
++		rt_printk("%s: invalid channel=%i\n", __func__, channel);
+ 		return offset[0];
+ 	}
+ 	return offset[channel];
+@@ -1108,7 +1108,7 @@ static inline unsigned M_Offset_PFI_Output_Select(unsigned n)
+ {
+ 	if (n < 1 || n > NUM_PFI_OUTPUT_SELECT_REGS) {
+ 		rt_printk("%s: invalid pfi output select register=%i\n",
+-			__FUNCTION__, n);
++			__func__, n);
+ 		return M_Offset_PFI_Output_Select_1;
+ 	}
+ 	return M_Offset_PFI_Output_Select_1 + (n - 1) * 2;
+@@ -1162,7 +1162,7 @@ static inline unsigned MSeries_PLL_In_Source_Select_RTSI_Bits(unsigned
+ 	RTSI_channel)
+ {
+ 	if (RTSI_channel > 7) {
+-		rt_printk("%s: bug, invalid RTSI_channel=%i\n", __FUNCTION__,
++		rt_printk("%s: bug, invalid RTSI_channel=%i\n", __func__,
+ 			RTSI_channel);
+ 		return 0;
+ 	}
+@@ -1183,7 +1183,7 @@ static inline unsigned MSeries_PLL_Divisor_Bits(unsigned divisor)
+ {
+ 	static const unsigned max_divisor = 0x10;
+ 	if (divisor < 1 || divisor > max_divisor) {
+-		rt_printk("%s: bug, invalid divisor=%i\n", __FUNCTION__,
++		rt_printk("%s: bug, invalid divisor=%i\n", __func__,
+ 			divisor);
+ 		return 0;
+ 	}
+@@ -1193,7 +1193,7 @@ static inline unsigned MSeries_PLL_Multiplier_Bits(unsigned multiplier)
+ {
+ 	static const unsigned max_multiplier = 0x100;
+ 	if (multiplier < 1 || multiplier > max_multiplier) {
+-		rt_printk("%s: bug, invalid multiplier=%i\n", __FUNCTION__,
++		rt_printk("%s: bug, invalid multiplier=%i\n", __func__,
+ 			multiplier);
+ 		return 0;
+ 	}
+diff --git a/drivers/staging/comedi/drivers/ni_tio.c b/drivers/staging/comedi/drivers/ni_tio.c
+index 05a9575..f22fb43 100644
+--- a/drivers/staging/comedi/drivers/ni_tio.c
++++ b/drivers/staging/comedi/drivers/ni_tio.c
+@@ -1273,7 +1273,7 @@ static int ni_tio_set_other_src(struct ni_gpct *counter, unsigned index,
+ 		counter_dev->regs[abz_reg] &= ~mask;
+ 		counter_dev->regs[abz_reg] |= (source << shift) & mask;
+ 		write_register(counter, counter_dev->regs[abz_reg], abz_reg);
+-//              rt_printk("%s %x %d %d\n", __FUNCTION__, counter_dev->regs[abz_reg], index, source);
++//              rt_printk("%s %x %d %d\n", __func__, counter_dev->regs[abz_reg], index, source);
+ 		return 0;
+ 	}
+ 	return -EINVAL;
 -- 
 1.6.0.4
