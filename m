@@ -1,33 +1,57 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: next-20090318: sunhme does not transmit packets
-Date: Tue, 24 Mar 2009 13:23:55 -0700 (PDT)
-Message-ID: <20090324.132355.234010341.davem@davemloft.net>
-References: <a4423d670903240432m1a4e8e08x9c97a0947d89800a@mail.gmail.com>
-	<a4423d670903240846j252a825cy1e8a50b5ac3a11ef@mail.gmail.com>
-	<a4423d670903240850w223cdb74k7165ffd70cd7b357@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Invalid module format: Re: linux-next: Tree for March 24
+Date: Wed, 25 Mar 2009 09:41:59 +1100
+Message-ID: <20090325094159.8dad1d49.sfr@canb.auug.org.au>
+References: <20090324183024.59260457.sfr@canb.auug.org.au>
+	<20090324170215.GB5495@denkbrett.schottelius.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <a4423d670903240850w223cdb74k7165ffd70cd7b357@mail.gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: a.beregalov@gmail.com
-Cc: roel.kluin@gmail.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-next@vger.kernel.org, kernel-testers@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__25_Mar_2009_09_41_59_+1100_Y+mtD0Rt+/qMpnk3"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:54097 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751298AbZCXWmJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Mar 2009 18:42:09 -0400
+In-Reply-To: <20090324170215.GB5495@denkbrett.schottelius.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Date: Tue, 24 Mar 2009 18:50:55 +0300
+--Signature=_Wed__25_Mar_2009_09_41_59_+1100_Y+mtD0Rt+/qMpnk3
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 2009/3/24 Alexander Beregalov <a.beregalov@gmail.com>:
-> > e4a389a9b5c892446b5de2038bdc0cca8703c615 is first bad commit
-> 
-> No, it is wrong, sorry.
-> I will do more tests tomorrow.
+Hi Nico,
 
-I bet it is the problem we are discussing here:
+On Tue, 24 Mar 2009 18:02:15 +0100 Nico -telmich- Schottelius <nico-linux-n=
+ext@schottelius.org> wrote:
+>
+>=20
+> My system does not bootup, as I cannot load the crypto modules,
+> because it says
+>=20
+>   Invalid module format
 
-	http://marc.info/?l=linux-kernel&m=123789980524715&w=2
+Architecture? config? any other boot messages? Is it just the crypto
+modules?
 
-Herbert has posted two patches to try and fix this issue,
-you can try the second one to see if it solves your bug
-too.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__25_Mar_2009_09_41_59_+1100_Y+mtD0Rt+/qMpnk3
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknJYbgACgkQjjKRsyhoI8yD7gCeNXt52rfyf4UbazQRnzLVGtsr
+DMwAoIjLBUgcuq+Z4oAPfg2sdP9UxWme
+=zuXw
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__25_Mar_2009_09_41_59_+1100_Y+mtD0Rt+/qMpnk3--
