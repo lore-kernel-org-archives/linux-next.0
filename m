@@ -1,44 +1,60 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: Re: next-20090318: sunhme does not transmit packets
-Date: Tue, 24 Mar 2009 18:50:55 +0300
-Message-ID: <a4423d670903240850w223cdb74k7165ffd70cd7b357@mail.gmail.com>
-References: <a4423d670903180958j4847717eh99a41534633dd314@mail.gmail.com>
-	 <20090318.234451.38898787.davem@davemloft.net>
-	 <a4423d670903190116p157b2ebfl69d270e0576c6d9a@mail.gmail.com>
-	 <20090322.215110.261185328.davem@davemloft.net>
-	 <a4423d670903240432m1a4e8e08x9c97a0947d89800a@mail.gmail.com>
-	 <a4423d670903240846j252a825cy1e8a50b5ac3a11ef@mail.gmail.com>
+From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
+Subject: Invalid module format: Re: linux-next: Tree for March 24
+Date: Tue, 24 Mar 2009 18:02:15 +0100
+Message-ID: <20090324170215.GB5495@denkbrett.schottelius.org>
+References: <20090324183024.59260457.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <a4423d670903240846j252a825cy1e8a50b5ac3a11ef@mail.gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Roel Kluin <roel.kluin@gmail.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-next@vger.kernel.org, Kernel Testers List <kernel-testers@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="oLBj+sq0vYjzfsbl"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx3.schottelius.org ([77.109.138.221]:46484 "EHLO
+	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761344AbZCXRCT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Mar 2009 13:02:19 -0400
+Content-Disposition: inline
+In-Reply-To: <20090324183024.59260457.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-2009/3/24 Alexander Beregalov <a.beregalov@gmail.com>:
-> 2009/3/24 Alexander Beregalov <a.beregalov@gmail.com>:
->>>> 2009/3/19 David Miller <davem@davemloft.net>:
->>>> > Does the current vanilla kernel work fine?
->>>>
->>>> Yes. The problem happens only with -next tree.
->>>
->>> I have one of my ultra10s up and will try to reproduce and diagnose
->>> this locally.
->>
->> Hi David
->>
->> 2.6.29 also does not work.
->>
->> The guilty patch should be between 2.6.29-rc8 and final 2.6.29
->>
->> even more narrow - 59fcbdd..v2.6.29
->>
->> I can try to bisect.
->
-> e4a389a9b5c892446b5de2038bdc0cca8703c615 is first bad commit
 
-No, it is wrong, sorry.
-I will do more tests tomorrow.
+--oLBj+sq0vYjzfsbl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+Stephen Rothwell [Tue, Mar 24, 2009 at 06:30:24PM +1100]:
+> Hi all,
+>=20
+> Changes since 20090323:
+
+My system does not bootup, as I cannot load the crypto modules,
+because it says
+
+  Invalid module format
+
+Nico
+
+
+--=20
+Think about Free and Open Source Software (FOSS).
+http://nico.schottelius.org/documentations/foss/the-term-foss/
+
+PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
+
+--oLBj+sq0vYjzfsbl
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknJEhYACgkQuL75KpiFGIyHyQCeJfaY90kJcrPTI0xUXpKNWKCr
+MbwAoNMrMpAZdGT84w+zIioJu0dGBBZw
+=m+V8
+-----END PGP SIGNATURE-----
+
+--oLBj+sq0vYjzfsbl--
