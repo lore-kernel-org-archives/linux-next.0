@@ -1,48 +1,52 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: next-20090310: ext4 hangs
-Date: Thu, 26 Mar 2009 01:25:55 +0100
-Message-ID: <20090326002554.GD11024@duck.suse.cz>
-References: <20090325151516.GB14881@atrey.karlin.mff.cuni.cz> <a4423d670903250818n512b1c67ja1b38db6d09ac7c@mail.gmail.com> <20090325152234.GN23439@duck.suse.cz> <a4423d670903250829w5e9304a7rce24f4220379620f@mail.gmail.com> <20090325161556.GP23439@duck.suse.cz> <a4423d670903251007r72058ca8m28275c1433ab2706@mail.gmail.com> <20090325194316.GQ23439@duck.suse.cz> <a4423d670903251538p3a7c180br1bcfe08c4f044c15@mail.gmail.com> <20090326000035.GB11024@duck.suse.cz> <49CAC982.4050507@gaisler.com>
+From: Piet Delaney <piet.delaney@tensilica.com>
+Subject: [XTENSA] - Updated 2.6.27-smp with changes needed for SMP stabilization
+ and New Xtensa V3 MMU
+Date: Wed, 25 Mar 2009 16:59:52 -0700
+Message-ID: <49CAC578.5000208@tensilica.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <sparclinux-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <49CAC982.4050507@gaisler.com>
-Sender: sparclinux-owner@vger.kernel.org
-To: Jiri Gaisler <jiri@gaisler.com>
-Cc: Alexander Beregalov <a.beregalov@gmail.com>, Theodore Tso <tytso@mit.edu>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sparclinux@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from hq2.tensilica.com ([65.205.227.30]:5442 "EHLO
+	maia.hq.tensilica.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751070AbZCZAwx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Mar 2009 20:52:53 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-xtensa@linux-xtensa.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Chris Zankel <chris@zankel.net>, Marc Gauthier <marc@tensilica.com>
+Cc: Johannes Weiner <jw@emlix.com>, =?ISO-8859-1?Q?Daniel_Gl=F6ckner?= <dg@emlix.com>, Oskar Schirmer <os@emlix.com>, Piet Delaney <piet.delaney@tensilica.com>, piet.delaney@gmail.com
 
-On Thu 26-03-09 01:17:06, Jiri Gaisler wrote:
-> Jan Kara wrote:
-> >   Hi,
-> > 
-> >   thanks for the updated disassembly.
-> > 
-> >>   55bab0:       82 10 60 01     or  %g1, 1, %g1
-> >>                 spin_unlock(&journal->j_list_lock);
-> >>   55bab4:       40 06 4b 20     call  6ee734 <_spin_unlock>
-> >>   55bab8:       c2 24 e0 28     st  %g1, [ %l3 + 0x28 ]
-> >   OK, so it really seems that:
-> >   jinode->i_flags |= JI_COMMIT_RUNNING;
-> >   spin_unlock(&journal->j_list_lock);
-> > 
-> >   has been compiled to
-> >   ld [ %l3 + 0x28 ], %g1
-> >   or  %g1, 1, %g1
-> >   call  6ee734 <_spin_unlock>
-> >   st  %g1, [ %l3 + 0x28 ]
-> > 
-> >   Which seems like a bug in the compiler or in the way implement compiler
-> > barriers in spin_unlock() on UP sparc. Or is there some sparc magic by which
-> > this is correct code? Any clever sparc guy?
-> > 
-> Looks fine to me - the store is made in the branch delay slot
-> of the call, so it will occur before the first instruction at
-> the call target address executes.
-  Thanks for explanation. I knew sparc had some surprising features like
-this ;).
-								Honza
--- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+I updated 2.6.27-SMP at http://linux-xtensa.org/ with changes needed to stabilize
+SMP. This work was started by Chris Zankel. Joe Taylor integrated Chris's changes
+and started stabilizing them for the caches without alias problems. I finished the
+SMP stabilization, including systems with cache alias problems. Marc Gauthier and
+I have fixed and improved the exception processing and added support for the
+Tensilica's new V3 MMU (currently in pre-alpha testing). We have made the context
+of an exception is now visible on the stack, similar to other architectures.
+
+This kernel has been tested with our latest buildroot changes and is much more
+stable. We do seem to experience problems after about a week of LTP testing. I've
+added gdb macros to display the back-traces of the linux tasks to root-cause this problem.
+These macros are provided in the new Xtnesa Documentation directory. I've started KGDB
+integration but need to use ISS simulations to root cause the problems showing up in
+it's early startup self-check.
+
+I'd appreciate hearing feedback on these changes in preparation for integration with
+the mainstream kernel. I'm currently merging with the git repository provided by the
+developers at Emlix and hope to have it running and posted to http://linux-xtensa.org
+shortly as well as a linux-next repo worthy of being pulled by Chris.
+
+I've just updated my xtensa-2.6.27-smp git repository on hera.
+
+     git://git.kernel.org/pub/scm/linux/kernel/git/piet/xtensa-2.6.27-smp.git
+
+it should be available on the git server shortly.
+
+
+At Tensilica it's available at:
+
+     git://git.linux-xtensa.org/git/kernel/xtensa-2.6.27-smp
+
+I've upgraded our latest changes to master now that's it's vary stable.
+
+-piet
