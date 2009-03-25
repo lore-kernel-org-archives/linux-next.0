@@ -1,40 +1,41 @@
 From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Next March 25: net/netfilter/xt_LED build failure.
-Date: Wed, 25 Mar 2009 17:04:15 +0530
-Message-ID: <49CA16B7.9090703@in.ibm.com>
+Subject: Next March 25: staging/epl build break.
+Date: Wed, 25 Mar 2009 17:13:21 +0530
+Message-ID: <49CA18D9.6080302@in.ibm.com>
 References: <20090325191229.0e17eaf6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/mixed;
- boundary="------------050704020508040709020309"
+ boundary="------------080404040801030401080306"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp02.in.ibm.com ([59.145.155.2]:45616 "EHLO
-	e28smtp02.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754804AbZCYLhF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Mar 2009 07:37:05 -0400
+Received: from e28smtp05.in.ibm.com ([59.145.155.5]:36700 "EHLO
+	e28smtp05.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760274AbZCYLn3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Mar 2009 07:43:29 -0400
 In-Reply-To: <20090325191229.0e17eaf6.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: netdev <netdev@vger.kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg KH <greg@kroah.com>
 
 This is a multi-part message in MIME format.
---------------050704020508040709020309
+--------------080404040801030401080306
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Today's next randconfig build on x86 failed with following error.
+Today's next x86 randconfig build failed with
 
-net/netfilter/xt_LED.c:40: error: field netfilter_led_trigger has incomplete type
-net/netfilter/xt_LED.c: In function led_timeout_callback:
-net/netfilter/xt_LED.c:78: warning: unused variable ledinternal
-net/netfilter/xt_LED.c: In function led_tg_check:
-net/netfilter/xt_LED.c:102: error: implicit declaration of function led_trigger_register
-net/netfilter/xt_LED.c: In function led_tg_destroy:
-net/netfilter/xt_LED.c:135: error: implicit declaration of function led_trigger_unregister
+drivers/staging/epl/VirtualEthernetLinux.c: In function VEthAddInstance:
+drivers/staging/epl/VirtualEthernetLinux.c:302: error: struct net_device has no member named open
+drivers/staging/epl/VirtualEthernetLinux.c:303: error: struct net_device has no member named stop
+drivers/staging/epl/VirtualEthernetLinux.c:304: error: struct net_device has no member named get_stats
+drivers/staging/epl/VirtualEthernetLinux.c:305: error: struct net_device has no member named hard_start_xmit
+drivers/staging/epl/VirtualEthernetLinux.c:306: error: struct net_device has no member named tx_timeout
 
-CONFIG_LED_TRIGGER is not set.
+.config attached.
 
-complete .config attached.
+Thanks
+-Sachin
+
 
 -- 
 
@@ -46,12 +47,12 @@ Bangalore, India
 ---------------------------------
 
 
---------------050704020508040709020309
+--------------080404040801030401080306
 Content-Type: text/plain;
- name="config_next25_xt_LED"
+ name="config_next25_randconfig"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline;
- filename="config_next25_xt_LED"
+ filename="config_next25_randconfig"
 
 #
 # Automatically generated make config: don't edit
@@ -2639,4 +2640,4 @@ CONFIG_CHECK_SIGNATURE=y
 CONFIG_CPUMASK_OFFSTACK=y
 CONFIG_NLATTR=y
 
---------------050704020508040709020309--
+--------------080404040801030401080306--
