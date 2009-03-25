@@ -1,312 +1,195 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for March 25
-Date: Wed, 25 Mar 2009 19:12:29 +1100
-Message-ID: <20090325191229.0e17eaf6.sfr@canb.auug.org.au>
+Subject: linux-next: some stats
+Date: Wed, 25 Mar 2009 19:35:17 +1100
+Message-ID: <20090325193517.b5b3b324.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__25_Mar_2009_19_12_29_+1100_63SWM+AqX+.X0nKl"
+ boundary="Signature=_Wed__25_Mar_2009_19_35_17_+1100_mvTWlynROv9IU=IN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38252 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36108 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751610AbZCYIMo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Mar 2009 04:12:44 -0400
+	id S1753195AbZCYIf0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Mar 2009 04:35:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org
 
---Signature=_Wed__25_Mar_2009_19_12_29_+1100_63SWM+AqX+.X0nKl
+--Signature=_Wed__25_Mar_2009_19_35_17_+1100_mvTWlynROv9IU=IN
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Changes since 20090324:
+With the merge window opening, I though people might like to see some
+figures from the linux-next tree (or not :-)).
 
-The pci tree is still the version from next-20090320 due to a build
-failure.
+"git diff -C" summaries:
 
-The arm tree inherited a conflict from the sound tree.
+[As a comparison, the equivalent for v2.6.28..v2.6.29-rc1 was
+ 8487 files changed, 970279 insertions(+), 237481 deletions(-)]
 
-The tip-core tree gained a conflict against the x86 tree.
+next-20090305 (just after -rc7):
+ 4670 files changed, 563138 insertions(+), 207605 deletions(-)
+[staging tree contribution:
+ 886 files changed, 268746 insertions(+), 56558 deletions(-)]
 
-The cpus4096 tree gained a conflict against the x86 tree.
+next-20090316 (just after -rc8):
+ 5840 files changed, 673579 insertions(+), 265602 deletions(-)
+[staging tree contribution:
+ 1010 files changed, 270367 insertions(+), 61819 deletions(-)]
 
-The net tree lost a conflict but gained 2 more against the tip-core tree.
+next-20090324 (just after 2.6.29):
+ 6601 files changed, 711689 insertions(+), 295978 deletions(-)
+[staging tree contribution:
+ 1059 files changed, 246467 insertions(+), 73673 deletions(-)]
 
-The rr tree gained a conflict againsr the powerpc tree.
+Commit number summaries:
+[This is non-merge commits per tree relative to all the preceding trees
+(and Linus' tree).  I also don't count commits for which "git patch-id"
+matches.  Even so, the first column of numbers is high for some trees due
+to the way they have submitted to Linus' tree in the past.
 
-The block tree lost its 3 conflicts.
+I have left out the "current" trees that only contain bug fixes for the
+current release.]
 
-----------------------------------------------------------------------------
+Tree              commits in   change since    change since
+               next-20090324   next-20090316   next-20090305
+                                 (-rc8)          (-rc7)
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
+arm                      274       +118            +209
+avr32                      2         +0              +0
+blackfin                   0         +0              +0
+cris                       0         +0              +0
+ia64                       5         +5              +5
+m68k                       6         +0              +0
+m68knommu                 35         -7              +2
+mips                       0         +0              +0
+parisc                     0         +0              +0
+powerpc                  144        +28             +50
+4xx                        0         +0              +0
+galak                      0         -3              -4
+pxa                       28        +16              -3
+s390                      66         +4             +17
+sh                        96        +30             +60
+sparc                      0         +0              +0
+x86                      870       +115            +365
+xtensa                     0         +0              +0
+tip-core                 124        +23             +82
+cpus4096                  37        +33             +34
+tracing                  324        +90            +155
+genirq                    30        +10             +13
+safe-poison-pointers       4         +0              +0
+sched                     32         +7             +13
+stackprotector             0         +0              +0
+timers                    23         +0             +20
+pci                       40         +6              +6
+device-mapper             22        +14             +17
+hid                       14         +2              +5
+i2c                       18         +2              +3
+jdelvare-hwmon            11         +0              +0
+kernel-doc                 1         +0              +0
+v4l-dvb                  579        +84            +211
+quota                     27         +0              +0
+jfs                        5         +0              +0
+kbuild                     0         +0              +0
+ide                      177        +12             +17
+libata                    19         +0              +0
+nfs                       79         +0             +36
+xfs                       32         +7              +8
+infiniband                29         +0              +4
+acpi                      55        -10             -10
+nfsd                      38         +6             +11
+ieee1394                 109         +9             +15
+ubi                        1         +0              +0
+kvm                      548        +12             +29
+dlm                        7         +0              +0
+scsi                     119         +2             +71
+ocfs2                     33         +0             +13
+ext4                      26         -1              +4
+async_tx                   0         -2             -14
+udf                       15         +1              +4
+net                     1648       +248            +412
+wireless                  85        +19             +62
+mtd                       27        +27             +27
+crypto                    29         +2              +9
+vfs                        0         +0              +0
+sound                    448        +40            +134
+cpufreq                   35         +0              +1
+v9fs                       0         +0              +0
+rr                       102         +4              +2
+cifs                      12         +2              +2
+mmc                       40        +30             +38
+gfs2                      18         +0              +2
+input                     21         +0              +8
+bkl-removal                4         +0              +0
+ubifs                     12         +6             +10
+lsm                        0         +0              +0
+block                      7         -1              +7
+embedded                   0         +0              +0
+firmware                   7         +0              +0
+pcmcia                     0         +0              +0
+battery                    3         +0              +0
+leds                      10         +0              +0
+backlight                  5         +0              +0
+kgdb                       4         +0              +3
+slab                      15         +2              +2
+uclinux                    0         +0              +0
+md                        37        -20             +14
+mfd                       12         +1              +2
+hdlc                       0         +0              +0
+drm                       45         +1             +11
+voltage                   31         +3              +8
+security-testing          71         +0              +3
+lblnet                     5         +0              +4
+ttydev                    28         +7             +23
+agp                        0         +0              +0
+generic-ipi                0         +0              +0
+oprofile                   0         +0              +0
+fastboot                   0         +0              +0
+sparseirq                  1         +1              +1
+iommu                     22        +20             -12
+uwb                        0         +0              +0
+watchdog                  18         +7              +2
+proc                      12         +1              +1
+bdev                       0         +0              +0
+dwmw2-iommu                0         +0              +0
+cputime                    0         +0              +0
+osd                        8         +0              +0
+fatfs                      0         +0              +0
+fuse                       0         +0              +0
+jc_docs                    1         +0              +0
+nommu                      0         +0              +0
+trivial                   27         +4              +5
+audit                      0         +0              +0
+squashfs                   0         +0              +0
+omap                      35         +7             +12
+aoe                        0         +0              +0
+kmemleak                  14         +0              +0
+suspend                   11         +1             +11
+driver-core               53         +3              +9
+usb                       92        +11             +27
+staging                  705       +284            +302
+scsi-post-merge            0         +0              +0
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES) and i386, sparc and sparc64 defconfig.
-These builds also have CONFIG_ENABLE_WARN_DEPRECATED,
-CONFIG_ENABLE_MUST_CHECK and CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 133 trees (counting Linus' and 18 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+Totals                  7864      +1323           +2590
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging dwmw2/master
-Merging arm/devel
-CONFLICT (content): Merge conflict in arch/arm/include/asm/elf.h
-CONFLICT (content): Merge conflict in arch/arm/kernel/module.c
-CONFLICT (content): Merge conflict in sound/soc/pxa/pxa2xx-i2s.c
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging mips/mips-for-linux-next
-Merging parisc/master
-Merging powerpc/next
-Merging 4xx/next
-Merging galak/next
-Merging pxa/for-next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging x86/auto-x86-next
-CONFLICT (content): Merge conflict in arch/powerpc/include/asm/elf.h
-Merging xtensa/master
-Merging tip-core/auto-core-next
-CONFLICT (content): Merge conflict in arch/x86/kernel/pci-nommu.c
-CONFLICT (content): Merge conflict in lib/Kconfig.debug
-Merging cpus4096/auto-cpus4096-next
-CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/common.c
-CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/intel_cacheinfo.c
-Merging tracing/auto-tracing-next
-Merging genirq/auto-genirq-next
-CONFLICT (content): Merge conflict in kernel/irq/handle.c
-Merging safe-poison-pointers/auto-safe-poison-pointers-next
-Merging sched/auto-sched-next
-CONFLICT (content): Merge conflict in lib/Makefile
-Merging stackprotector/auto-stackprotector-next
-Merging timers/auto-timers-next
-Merging pci/linux-next
-CONFLICT (content): Merge conflict in Documentation/feature-removal-schedul=
-e.txt
-$ git reset --hard HEAD^
-Merging next-20090320/pci
-Merging quilt/device-mapper
-Merging hid/for-next
-Merging quilt/i2c
-CONFLICT (content): Merge conflict in drivers/i2c/busses/i2c-mpc.c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-CONFLICT (content): Merge conflict in Documentation/kernel-parameters.txt
-Merging v4l-dvb/master
-Merging quota/for_next
-Merging jfs/next
-Merging kbuild/master
-Merging quilt/ide
-CONFLICT (content): Merge conflict in drivers/ide/ide-dma.c
-CONFLICT (content): Merge conflict in drivers/ide/ide-floppy.c
-CONFLICT (content): Merge conflict in include/linux/ide.h
-Merging libata/NEXT
-Merging nfs/linux-next
-Merging xfs/master
-Merging infiniband/for-next
-Merging acpi/test
-Merging nfsd/nfsd-next
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/master
-Merging dlm/next
-Merging scsi/master
-Merging ocfs2/linux-next
-Merging ext4/next
-CONFLICT (content): Merge conflict in fs/ext4/inode.c
-Merging async_tx/next
-Merging udf/for_next
-Merging net/master
-CONFLICT (content): Merge conflict in drivers/infiniband/hw/nes/nes_nic.c
-CONFLICT (content): Merge conflict in include/linux/netfilter/xt_limit.h
-CONFLICT (content): Merge conflict in include/linux/netfilter/xt_statistic.h
-Applying: net: tracing interface fixup
-Merging wireless/master
-Merging mtd/master
-CONFLICT (content): Merge conflict in drivers/mtd/maps/Makefile
-Merging crypto/master
-Merging vfs/for-next
-Merging sound/for-next
-Merging cpufreq/next
-CONFLICT (content): Merge conflict in arch/x86/include/asm/timer.h
-Merging v9fs/for-next
-CONFLICT (content): Merge conflict in net/9p/protocol.c
-Merging quilt/rr
-CONFLICT (content): Merge conflict in arch/powerpc/kernel/irq.c
-CONFLICT (content): Merge conflict in arch/powerpc/kernel/sysfs.c
-CONFLICT (content): Merge conflict in arch/x86/include/asm/topology.h
-CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/cpufreq/powernow-=
-k8.c
-CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/cpufreq/speedstep=
--ich.c
-CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/cpufreq/speedstep=
--lib.c
-CONFLICT (content): Merge conflict in arch/x86/lguest/boot.c
-CONFLICT (delete/modify): arch/x86/mach-default/setup.c deleted in HEAD and=
- modified in quilt/rr. Version quilt/rr of arch/x86/mach-default/setup.c le=
-ft in tree.
-CONFLICT (delete/modify): arch/x86/mach-voyager/setup.c deleted in HEAD and=
- modified in quilt/rr. Version quilt/rr of arch/x86/mach-voyager/setup.c le=
-ft in tree.
-CONFLICT (content): Merge conflict in drivers/firmware/dcdbas.c
-CONFLICT (content): Merge conflict in drivers/hid/hid-core.c
-CONFLICT (content): Merge conflict in drivers/media/video/saa7134/saa7134-c=
-ore.c
-CONFLICT (content): Merge conflict in drivers/media/video/saa7134/saa7134.h
-CONFLICT (content): Merge conflict in drivers/net/virtio_net.c
-CONFLICT (content): Merge conflict in kernel/module.c
-$ git rm -f arch/x86/mach-default/setup.c
-$ git rm -f arch/x86/mach-voyager/setup.c
-Applying: rr: x86 irqaction merge fixup
-Merging cifs/master
-Merging mmc/next
-Merging gfs2/master
-Merging input/next
-Merging bkl-removal/bkl-removal
-Merging ubifs/linux-next
-Merging lsm/for-next
-Merging block/for-next
-Merging embedded/master
-Merging firmware/master
-CONFLICT (content): Merge conflict in firmware/Makefile
-CONFLICT (content): Merge conflict in firmware/WHENCE
-CONFLICT (content): Merge conflict in sound/isa/Kconfig
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-CONFLICT (content): Merge conflict in include/linux/rcupdate.h
-CONFLICT (content): Merge conflict in include/linux/slub_def.h
-CONFLICT (content): Merge conflict in mm/slob.c
-CONFLICT (content): Merge conflict in mm/slub.c
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-CONFLICT (content): Merge conflict in drivers/gpu/drm/drm_proc.c
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging quilt/ttydev
-Merging agp/agp-next
-Merging generic-ipi/auto-generic-ipi-next
-Merging oprofile/auto-oprofile-next
-Merging fastboot/auto-fastboot-next
-Merging sparseirq/auto-sparseirq-next
-Merging iommu/auto-iommu-next
-CONFLICT (content): Merge conflict in Documentation/kernel-parameters.txt
-CONFLICT (content): Merge conflict in arch/x86/Kconfig
-CONFLICT (content): Merge conflict in lib/Makefile
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging proc/proc
-CONFLICT (content): Merge conflict in security/selinux/hooks.c
-Applying: proc: remove a new user of proc_dir_entry::owner
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging fatfs/master
-Merging fuse/for-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging squashfs/master
-Merging omap/for-next
-Merging quilt/aoe
-Merging kmemleak/kmemleak
-CONFLICT (content): Merge conflict in Documentation/kernel-parameters.txt
-CONFLICT (content): Merge conflict in MAINTAINERS
-CONFLICT (content): Merge conflict in include/linux/percpu.h
-CONFLICT (content): Merge conflict in init/main.c
-CONFLICT (content): Merge conflict in kernel/module.c
-CONFLICT (content): Merge conflict in lib/Kconfig.debug
-CONFLICT (content): Merge conflict in mm/slob.c
-CONFLICT (content): Merge conflict in mm/vmalloc.c
-Merging suspend/linux-next
-CONFLICT (content): Merge conflict in drivers/xen/manage.c
-Merging quilt/driver-core
-CONFLICT (content): Merge conflict in drivers/media/video/v4l2-device.c
-CONFLICT (content): Merge conflict in drivers/net/wimax/i2400m/usb-notif.c
-CONFLICT (content): Merge conflict in drivers/sh/maple/maple.c
-Applying: acpi: update thermal for bus_id removal
-Merging quilt/usb
-Merging quilt/staging
-Merging scsi-post-merge/master
-
---Signature=_Wed__25_Mar_2009_19_12_29_+1100_63SWM+AqX+.X0nKl
+--Signature=_Wed__25_Mar_2009_19_35_17_+1100_mvTWlynROv9IU=IN
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAknJ520ACgkQjjKRsyhoI8wI4gCgvnzHh9DPX7Y/izMypUbb4YDH
-5vkAoLzbeLjOFcxdMCusKnO/4YBw7LnZ
-=P3ZN
+iEYEARECAAYFAknJ7MYACgkQjjKRsyhoI8xzhgCdE+ueJgBBafIxqAACJFXQCFJG
+uFoAn2BBIUnAsR4TyQ6WQvfAvNh37EN6
+=lRYu
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__25_Mar_2009_19_12_29_+1100_63SWM+AqX+.X0nKl--
+--Signature=_Wed__25_Mar_2009_19_35_17_+1100_mvTWlynROv9IU=IN--
