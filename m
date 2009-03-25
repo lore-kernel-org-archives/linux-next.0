@@ -1,75 +1,37 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: pci tree build failure
-Date: Wed, 25 Mar 2009 08:55:50 -0700
-Message-ID: <20090325085550.3788540b@hobbes.virtuouswap>
-References: <20090323124948.fed84e3a.sfr@canb.auug.org.au>
-	<20090325122121.225a0ccb.sfr@canb.auug.org.au>
-	<20090324183800.6ba50715@hobbes.virtuouswap>
-	<20090325144117.9c54ae5a.sfr@canb.auug.org.au>
-	<20090325043001.GF20264@linux.intel.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: Next March 25: staging/epl build break.
+Date: Wed, 25 Mar 2009 09:04:00 -0700
+Message-ID: <49CA55F0.9030203@oracle.com>
+References: <20090325191229.0e17eaf6.sfr@canb.auug.org.au> <49CA18D9.6080302@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from outbound-mail-302.bluehost.com ([67.222.53.9]:35367 "HELO
-	outbound-mail-302.bluehost.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1760364AbZCYQEW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Mar 2009 12:04:22 -0400
-In-Reply-To: <20090325043001.GF20264@linux.intel.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Matthew Wilcox <willy@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <49CA18D9.6080302@in.ibm.com>
+Sender: netdev-owner@vger.kernel.org
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg KH <greg@kroah.com>, netdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 24 Mar 2009 21:30:01 -0700
-Matthew Wilcox <willy@linux.intel.com> wrote:
+Sachin Sant wrote:
+> Today's next x86 randconfig build failed with
+> 
+> drivers/staging/epl/VirtualEthernetLinux.c: In function VEthAddInstance:
+> drivers/staging/epl/VirtualEthernetLinux.c:302: error: struct net_device
+> has no member named open
+> drivers/staging/epl/VirtualEthernetLinux.c:303: error: struct net_device
+> has no member named stop
+> drivers/staging/epl/VirtualEthernetLinux.c:304: error: struct net_device
+> has no member named get_stats
+> drivers/staging/epl/VirtualEthernetLinux.c:305: error: struct net_device
+> has no member named hard_start_xmit
+> drivers/staging/epl/VirtualEthernetLinux.c:306: error: struct net_device
+> has no member named tx_timeout
 
-> On Wed, Mar 25, 2009 at 02:41:17PM +1100, Stephen Rothwell wrote:
-> > Hi Jesse,
-> > 
-> > On Tue, 24 Mar 2009 18:38:00 -0700 Jesse Barnes
-> > <jbarnes@virtuousgeek.org> wrote:
-> > >
-> > > On Wed, 25 Mar 2009 12:21:21 +1100
-> > > Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > 
-> > > > On Mon, 23 Mar 2009 12:49:48 +1100 Stephen Rothwell
-> > > > <sfr@canb.auug.org.au> wrote:
-> > > > >
-> > > > > Today's linux-next build (powerpc ppc64_defconfig) failed
-> > > > > like this:
-> > > > > 
-> > > > > arch/powerpc/kernel/msi.c: In function
-> > > > > 'arch_msi_check_device': arch/powerpc/kernel/msi.c:23: error:
-> > > > > 'PCI_CAP_ID_MSI' undeclared (first use in this function)
-> > > > > 
-> > > > > Caused by commit 1c8d7b0a562da06d3ebe83f01b1ed553205d1ae4
-> > > > > ("PCI MSI: Add support for multiple MSI").  PCI_CAP_ID_MSI is
-> > > > > defined in linux/pci_regs.h which is included by linux/pci.h,
-> > > > > but neither is included by arch/powerpc/kernel/msi.c.
-> > > > > 
-> > > > > I have used the version of the pci tree from next-20090320 for
-> > > > > today.
-> > > > 
-> > > > This is still happening ...
-> 
-> I just got back from a long weekend ...
-> 
-> > > Does this fix it?  Some header file changes must be to blame...
-> > 
-> > Yeah, that patch fixes it, but so does just reverting the commit
-> > above, so I guess that powerpc file did not need any of the pci.h
-> > infrastructure before.
-> > 
-> > Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> 
-> I guess not.  I didn't compile-test it (I don't have a powerpc machine
-> or cross-compiler).  Seems odd, given that the whole purpose of the
-> file is to implement PCI MSI ... oh well.
 
-Ok fix pushed.  Yeah it does seem weird.  This file clearly uses PCI
-defines...
+There are lots of build errors similar to this, in appletalk, irda,
+tokenring, etc etc...
+
 
 -- 
-Jesse Barnes, Intel Open Source Technology Center
+~Randy
