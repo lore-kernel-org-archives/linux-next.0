@@ -1,102 +1,88 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH] benet: use do_div() for 64 bit divide
-Date: Thu, 26 Mar 2009 13:10:11 -0700
-Message-ID: <49CBE123.5030204@oracle.com>
-References: <20090326190130.54fc6fde.sfr@canb.auug.org.au>	<49CBA351.2000007@oracle.com> <20090326123005.34acd9fe@s6510>
+Subject: [PATCH -next] exofs: fix printk format warnings
+Date: Thu, 26 Mar 2009 14:44:30 -0700
+Message-ID: <49CBF73E.2010808@oracle.com>
+References: <20090326190130.54fc6fde.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet13.oracle.com ([148.87.113.125]:41071 "EHLO
-	rgminet13.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751118AbZCZULH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Mar 2009 16:11:07 -0400
-In-Reply-To: <20090326123005.34acd9fe@s6510>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Hemminger <shemminger@vyatta.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Sathya Perla <sathyap@serverengines.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, netdev@vger.kernel.org, linux-drivers@serverengines.com
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <20090326190130.54fc6fde.sfr@canb.auug.org.au>
+Sender: linux-scsi-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>, Boaz Harrosh <bharrosh@panasas.com>
+List-Id: linux-next.vger.kernel.org
 
-Stephen Hemminger wrote:
-> The benet driver is doing a 64 bit divide, which is not supported in Linux kernel
-> on 32 bit architectures. The correct way to do this is to use do_div().
-> Compile tested on i386 only.
-> 
-> Signed-off-by: Stephen Hemminger <shemminger@vyatta.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com> # and Tested-by: (built)
+Fix exofs printk format warnings:
 
-Thanks.
+fs/exofs/inode.c:184: warning: format '%zx' expects type 'size_t', but argument 6 has type 'long unsigned int'
+fs/exofs/inode.c:291: warning: format '%zx' expects type 'size_t', but argument 6 has type 'long unsigned int'
+fs/exofs/inode.c:373: warning: format '%zx' expects type 'size_t', but argument 7 has type 'long unsigned int'
+fs/exofs/inode.c:461: warning: format '%zx' expects type 'size_t', but argument 6 has type 'long unsigned int'
+fs/exofs/inode.c:534: warning: format '%zx' expects type 'size_t', but argument 7 has type 'long unsigned int'
+fs/exofs/inode.c:610: warning: format '%zx' expects type 'size_t', but argument 5 has type 'long unsigned int'
 
-> --- a/drivers/net/benet/be_main.c	2009-03-25 15:31:35.000000000 -0700
-> +++ b/drivers/net/benet/be_main.c	2009-03-26 12:28:21.645388379 -0700
-> @@ -16,6 +16,7 @@
->   */
->  
->  #include "be.h"
-> +#include <asm/div64.h>
->  
->  MODULE_VERSION(DRV_VER);
->  MODULE_DEVICE_TABLE(pci, be_dev_ids);
-> @@ -290,6 +291,17 @@ static struct net_device_stats *be_get_s
->  	return &adapter->stats.net_stats;
->  }
->  
-> +static u32 be_calc_rate(u64 bytes, unsigned long ticks)
-> +{
-> +	u64 rate = bytes;
-> +
-> +	do_div(rate, ticks / HZ);
-> +	rate <<= 3;			/* bytes/sec -> bits/sec */
-> +	do_div(rate, 1000000ul);	/* MB/Sec */
-> +
-> +	return rate;
-> +}
-> +
->  static void be_tx_rate_update(struct be_adapter *adapter)
->  {
->  	struct be_drvr_stats *stats = drvr_stats(adapter);
-> @@ -303,11 +315,9 @@ static void be_tx_rate_update(struct be_
->  
->  	/* Update tx rate once in two seconds */
->  	if ((now - stats->be_tx_jiffies) > 2 * HZ) {
-> -		u32 r;
-> -		r = (stats->be_tx_bytes - stats->be_tx_bytes_prev) /
-> -			((now - stats->be_tx_jiffies) / HZ);
-> -		r = r / 1000000;			/* M bytes/s */
-> -		stats->be_tx_rate = r * 8;	/* M bits/s */
-> +		stats->be_tx_rate = be_calc_rate(stats->be_tx_bytes
-> +						  - stats->be_tx_bytes_prev,
-> +						 now - stats->be_tx_jiffies);
->  		stats->be_tx_jiffies = now;
->  		stats->be_tx_bytes_prev = stats->be_tx_bytes;
->  	}
-> @@ -599,7 +609,6 @@ static void be_rx_rate_update(struct be_
->  {
->  	struct be_drvr_stats *stats = drvr_stats(adapter);
->  	ulong now = jiffies;
-> -	u32 rate;
->  
->  	/* Wrapped around */
->  	if (time_before(now, stats->be_rx_jiffies)) {
-> @@ -610,11 +619,10 @@ static void be_rx_rate_update(struct be_
->  	/* Update the rate once in two seconds */
->  	if ((now - stats->be_rx_jiffies) < 2 * HZ)
->  		return;
-> -
-> -	rate = (stats->be_rx_bytes - stats->be_rx_bytes_prev) /
-> -		((now - stats->be_rx_jiffies) / HZ);
-> -	rate = rate / 1000000;	/* MB/Sec */
-> -	stats->be_rx_rate = rate * 8; 	/* Mega Bits/Sec */
-> +
-> +	stats->be_rx_rate = be_calc_rate(stats->be_rx_bytes
-> +					  - stats->be_rx_bytes_prev,
-> +					 now - stats->be_rx_jiffies);
->  	stats->be_rx_jiffies = now;
->  	stats->be_rx_bytes_prev = stats->be_rx_bytes;
->  }
-> 
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+cc: Boaz Harrosh <bharrosh@panasas.com>
+---
+ fs/exofs/inode.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-
--- 
-~Randy
+--- linux-next-20090325.orig/fs/exofs/inode.c
++++ linux-next-20090325/fs/exofs/inode.c
+@@ -182,7 +182,7 @@ static int __readpages_done(struct osd_r
+ 		good_bytes = pcol->length - resid;
+ 
+ 	EXOFS_DBGMSG("readpages_done(%ld) good_bytes=%llx"
+-		     " length=%zx nr_pages=%u\n",
++		     " length=%lx nr_pages=%u\n",
+ 		     pcol->inode->i_ino, _LLU(good_bytes), pcol->length,
+ 		     pcol->nr_pages);
+ 
+@@ -288,7 +288,7 @@ static int read_exec(struct page_collect
+ 
+ 	atomic_inc(&pcol->sbi->s_curr_pending);
+ 
+-	EXOFS_DBGMSG("read_exec obj=%llx start=%llx length=%zx\n",
++	EXOFS_DBGMSG("read_exec obj=%llx start=%llx length=%lx\n",
+ 		  obj.id, _LLU(i_start), pcol->length);
+ 
+ 	/* pages ownership was passed to pcol_copy */
+@@ -371,7 +371,7 @@ try_again:
+ 	ret = pcol_add_page(pcol, page, len);
+ 	if (ret) {
+ 		EXOFS_DBGMSG("Failed pcol_add_page pages[i]=%p "
+-			  "len=%zx nr_pages=%u length=%zx\n",
++			  "len=%zx nr_pages=%u length=%lx\n",
+ 			  page, len, pcol->nr_pages, pcol->length);
+ 
+ 		/* split the request, and start again with current page */
+@@ -459,7 +459,7 @@ static void writepages_done(struct osd_r
+ 		good_bytes = pcol->length - resid;
+ 
+ 	EXOFS_DBGMSG("writepages_done(%lx) good_bytes=%llx"
+-		     " length=%zx nr_pages=%u\n",
++		     " length=%lx nr_pages=%u\n",
+ 		     pcol->inode->i_ino, _LLU(good_bytes), pcol->length,
+ 		     pcol->nr_pages);
+ 
+@@ -531,7 +531,7 @@ static int write_exec(struct page_collec
+ 	}
+ 
+ 	atomic_inc(&pcol->sbi->s_curr_pending);
+-	EXOFS_DBGMSG("write_exec(%lx, %lx) start=%llx length=%zx\n",
++	EXOFS_DBGMSG("write_exec(%lx, %lx) start=%llx length=%lx\n",
+ 		  pcol->inode->i_ino, pcol->pg_first, _LLU(i_start),
+ 		  pcol->length);
+ 	/* pages ownership was passed to pcol_copy */
+@@ -608,7 +608,7 @@ try_again:
+ 	ret = pcol_add_page(pcol, page, len);
+ 	if (unlikely(ret)) {
+ 		EXOFS_DBGMSG("Failed pcol_add_page "
+-			     "nr_pages=%u total_length=%zx\n",
++			     "nr_pages=%u total_length=%lx\n",
+ 			     pcol->nr_pages, pcol->length);
+ 
+ 		/* split the request, next loop will start again */
