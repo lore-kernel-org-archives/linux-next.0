@@ -1,56 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Next March 26: s390 allnoconfig build failure still exists
-Date: Fri, 27 Mar 2009 08:57:48 +1100
-Message-ID: <20090327085748.5422e4bc.sfr@canb.auug.org.au>
-References: <20090326190130.54fc6fde.sfr@canb.auug.org.au>
-	<49CB5165.4060401@in.ibm.com>
+Subject: Re: linux-next: net tree build warnings
+Date: Fri, 27 Mar 2009 09:01:28 +1100
+Message-ID: <20090327090128.37883155.sfr@canb.auug.org.au>
+References: <20090326173713.ee63b803.sfr@canb.auug.org.au>
+	<1238053819.13879.4.camel@ice-age>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__27_Mar_2009_08_57_48_+1100_f9OTUaIp8hy3H/Va"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52034 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932396AbZCZV55 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Mar 2009 17:57:57 -0400
-In-Reply-To: <49CB5165.4060401@in.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, heiko.carstens@de.ibm.com
+ boundary="Signature=_Fri__27_Mar_2009_09_01_28_+1100_e0Tk2WUSm18TweUc"
+Return-path: <netfilter-devel-owner@vger.kernel.org>
+In-Reply-To: <1238053819.13879.4.camel@ice-age>
+Sender: netfilter-devel-owner@vger.kernel.org
+To: Eric Leblond <eric@inl.fr>
+Cc: "David S. Miller" <davem@davemloft.net>, linux-next@vger.kernel.org, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__27_Mar_2009_08_57_48_+1100_f9OTUaIp8hy3H/Va
+--Signature=_Fri__27_Mar_2009_09_01_28_+1100_e0Tk2WUSm18TweUc
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sachin,
+Hi Eric,
 
-On Thu, 26 Mar 2009 15:26:53 +0530 Sachin Sant <sachinp@in.ibm.com> wrote:
+On Thu, 26 Mar 2009 08:50:19 +0100 Eric Leblond <eric@inl.fr> wrote:
 >
-> I still see the following s390 allnoconfig build failure
-> with today's next (and previous trees as well ).
+> Thanks a lot for pointing this. I stupidely forgot to build this module
+> during my testing.
 >=20
-> arch/s390/include/asm/smp.h:96: error: redefinition of smp_send_stop
-> include/linux/smp.h:125: error: previous definition of smp_send_stop was =
-here
+> I've made the necessary modifications and a patch fixing this will
+> follow this mail.
 
-There will be a fix for this in today's linux-next.
+Thanks.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__27_Mar_2009_08_57_48_+1100_f9OTUaIp8hy3H/Va
+--Signature=_Fri__27_Mar_2009_09_01_28_+1100_e0Tk2WUSm18TweUc
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAknL+lwACgkQjjKRsyhoI8xUZgCfYUfOZTaSzNOQsBc+qa+eDq3m
-BnkAn0KT2rfYJQLujCApks7DluEfGH0p
-=sFtS
+iEYEARECAAYFAknL+zgACgkQjjKRsyhoI8y/QQCeJPlZYtcCE9ZOcVm5JhnaYWTB
+aY4AoI8b9HECjc3Jp+LIkDk2p3l+5X70
+=SNCz
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__27_Mar_2009_08_57_48_+1100_f9OTUaIp8hy3H/Va--
+--Signature=_Fri__27_Mar_2009_09_01_28_+1100_e0Tk2WUSm18TweUc--
