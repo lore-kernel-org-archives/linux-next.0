@@ -1,67 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the dwmw2-iommu tree with the iommu
- tree
-Date: Thu, 26 Mar 2009 17:35:02 +1100
-Message-ID: <20090326173502.6bddc56d.sfr@canb.auug.org.au>
+Subject: linux-next: net tree build warnings
+Date: Thu, 26 Mar 2009 17:37:13 +1100
+Message-ID: <20090326173713.ee63b803.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__26_Mar_2009_17_37_13_+1100_Xs6g7L5kXt1iz6/d"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56740 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56787 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751770AbZCZGfI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Mar 2009 02:35:08 -0400
+	id S1751770AbZCZGhW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Mar 2009 02:37:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@elte.hu>
-Cc: linux-next@vger.kernel.org, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, Eric Leblond <eric@inl.fr>, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org
 
-Hi David, Ingo,
+--Signature=_Thu__26_Mar_2009_17_37_13_+1100_Xs6g7L5kXt1iz6/d
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the dwmw2-iommu tree got a conflict in
-drivers/pci/intel-iommu.c between commits
-160c1d8e40866edfeae7d68816b7005d70acf391 ("x86, ia64: convert to use
-generic dma_map_ops struct") and d7ab5c46ae2743079a40bb4060e510418c0842b4
-("intel-iommu: make dma mapping functions static") from the iommu tree
-and commit 4cf2e75d0bec15d945972b005056c4a8731b82cf ("intel-iommu: Enable
-DMAR on 32-bit kernel") from the dwmw2-iommu tree.
+Hi Dave,
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
+Today's linux-next build (x86_64 allmodconfig) produced these warnings:
+
+net/bridge/netfilter/ebt_log.c: In function 'ebt_log_init':
+net/bridge/netfilter/ebt_log.c:230: warning: passing argument 2 of 'nf_log_=
+register' discards qualifiers from pointer target type
+net/bridge/netfilter/ebt_log.c: In function 'ebt_log_fini':
+net/bridge/netfilter/ebt_log.c:236: warning: passing argument 1 of 'nf_log_=
+unregister' discards qualifiers from pointer target type
+net/bridge/netfilter/ebt_ulog.c: In function 'ebt_ulog_init':
+net/bridge/netfilter/ebt_ulog.c:317: warning: passing argument 2 of 'nf_log=
+_register' discards qualifiers from pointer target type
+net/bridge/netfilter/ebt_ulog.c: In function 'ebt_ulog_fini':
+net/bridge/netfilter/ebt_ulog.c:327: warning: passing argument 1 of 'nf_log=
+_unregister' discards qualifiers from pointer target type
+
+Caused by commit ca735b3aaa945626ba65a3e51145bfe4ecd9e222 ("netfilter:
+use a linked list of loggers") which removed const from the "struct
+nf_logger *" arguments.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/pci/intel-iommu.c
-index 9dbd506,002c8b9..0000000
---- a/drivers/pci/intel-iommu.c
-+++ b/drivers/pci/intel-iommu.c
-@@@ -2282,11 -2471,8 +2320,9 @@@ static void intel_free_coherent(struct 
-  	free_pages((unsigned long)vaddr, order);
-  }
-  
-- #define SG_ENT_VIRT_ADDRESS(sg)	(sg_virt((sg)))
-- 
- -void intel_unmap_sg(struct device *hwdev, struct scatterlist *sglist,
- -		    int nelems, int dir)
- +static void intel_unmap_sg(struct device *hwdev, struct scatterlist *sglist,
- +			   int nelems, enum dma_data_direction dir,
- +			   struct dma_attrs *attrs)
-  {
-  	int i;
-  	struct pci_dev *pdev = to_pci_dev(hwdev);
-@@@ -2343,10 -2529,10 +2379,10 @@@ static int intel_nontranslate_map_sg(st
-  	return nelems;
-  }
-  
- -int intel_map_sg(struct device *hwdev, struct scatterlist *sglist, int nelems,
- -		 int dir)
- +static int intel_map_sg(struct device *hwdev, struct scatterlist *sglist, int nelems,
- +			enum dma_data_direction dir, struct dma_attrs *attrs)
-  {
-- 	void *addr;
-+ 	phys_addr_t addr;
-  	int i;
-  	struct pci_dev *pdev = to_pci_dev(hwdev);
-  	struct dmar_domain *domain;
+--Signature=_Thu__26_Mar_2009_17_37_13_+1100_Xs6g7L5kXt1iz6/d
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknLIpkACgkQjjKRsyhoI8zjBACeJzmmlyx8/wHkQCT7WYNixVLu
+mzUAoL3LrzT8sZfz7f1WdnRsJDIO+4B5
+=x1jM
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__26_Mar_2009_17_37_13_+1100_Xs6g7L5kXt1iz6/d--
