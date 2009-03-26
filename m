@@ -1,49 +1,43 @@
-From: Patrick McHardy <kaber@trash.net>
-Subject: Re: linux-next: net tree build warnings
-Date: Thu, 26 Mar 2009 14:17:53 +0100
-Message-ID: <49CB8081.6050709@trash.net>
-References: <20090326173713.ee63b803.sfr@canb.auug.org.au> <1238053819.13879.4.camel@ice-age>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: Next March 25: Boot failure on powerpc [recursive locking
+	detected]
+Date: Thu, 26 Mar 2009 08:50:03 -0500
+Message-ID: <1238075403.3342.1.camel@localhost.localdomain>
+References: <20090325191229.0e17eaf6.sfr@canb.auug.org.au>
+	 <49CA3BF4.3050801@in.ibm.com>  <49CB2200.50703@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <netfilter-devel-owner@vger.kernel.org>
-In-Reply-To: <1238053819.13879.4.camel@ice-age>
-Sender: netfilter-devel-owner@vger.kernel.org
-To: Eric Leblond <eric@inl.fr>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "David S. Miller" <davem@davemloft.net>, linux-next@vger.kernel.org, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <49CB2200.50703@in.ibm.com>
+Sender: linux-scsi-owner@vger.kernel.org
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: linuxppc-dev@ozlabs.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 List-Id: linux-next.vger.kernel.org
 
-Eric Leblond wrote:
-> Hi Stephen,
->=20
-> Le jeudi 26 mars 2009 =E0 17:37 +1100, Stephen Rothwell a =E9crit :
->> Hi Dave,
->>
->> Today's linux-next build (x86_64 allmodconfig) produced these warnin=
-gs:
->>
->> net/bridge/netfilter/ebt_log.c: In function 'ebt_log_init':
->> net/bridge/netfilter/ebt_log.c:230: warning: passing argument 2 of '=
-nf_log_register' discards qualifiers from pointer target type
->> net/bridge/netfilter/ebt_log.c: In function 'ebt_log_fini':
->> net/bridge/netfilter/ebt_log.c:236: warning: passing argument 1 of '=
-nf_log_unregister' discards qualifiers from pointer target type
->> net/bridge/netfilter/ebt_ulog.c: In function 'ebt_ulog_init':
->> net/bridge/netfilter/ebt_ulog.c:317: warning: passing argument 2 of =
-'nf_log_register' discards qualifiers from pointer target type
->> net/bridge/netfilter/ebt_ulog.c: In function 'ebt_ulog_fini':
->> net/bridge/netfilter/ebt_ulog.c:327: warning: passing argument 1 of =
-'nf_log_unregister' discards qualifiers from pointer target type
->=20
-> Thanks a lot for pointing this. I stupidely forgot to build this modu=
-le
-> during my testing.
+On Thu, 2009-03-26 at 12:04 +0530, Sachin Sant wrote:
+> Sachin Sant wrote:
+> > Today's next failed to boot on a powerpc box
+> > (Power6 blade IBM,7998-61X) with following recursive locking message.
+> >
+> > =============================================
+> > [ INFO: possible recursive locking detected ]
+> > 2.6.29-next-20090325 #1
+> After bisecting the failure seems to be because of the following
+> patch from James ( block: move SCSI timeout check into block )
+> 
+> http://patchwork.kernel.org/patch/8017/
+> 
+> If i back out the above mentioned patch, the machine boots fine
+> without any problems.
 
-Same here, I seem to have accidentally disabled bridging in my test
-builds, sorry.
---
-To unsubscribe from this list: send the line "unsubscribe netfilter-dev=
-el" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yes, that patch already got dropped for other reasons:
+
+http://marc.info/?t=123740773700002
+
+I'm going to see if I can redo it in a better way, since moving this
+type of timeout checking from scsi to block is a useful generalisation.
+
+James
+
+
