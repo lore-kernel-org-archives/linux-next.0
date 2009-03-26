@@ -1,52 +1,61 @@
-From: Jiri Gaisler <jiri@gaisler.com>
-Subject: Re: next-20090310: ext4 hangs
-Date: Thu, 26 Mar 2009 01:17:06 +0100
-Message-ID: <49CAC982.4050507@gaisler.com>
-References: <a4423d670903110907o7041f4eof92278835aa0c71c@mail.gmail.com> <20090325151122.GA14881@atrey.karlin.mff.cuni.cz> <20090325151516.GB14881@atrey.karlin.mff.cuni.cz> <a4423d670903250818n512b1c67ja1b38db6d09ac7c@mail.gmail.com> <20090325152234.GN23439@duck.suse.cz> <a4423d670903250829w5e9304a7rce24f4220379620f@mail.gmail.com> <20090325161556.GP23439@duck.suse.cz> <a4423d670903251007r72058ca8m28275c1433ab2706@mail.gmail.com> <20090325194316.GQ23439@duck.suse.cz> <a4423d670903251538p3a7c180br1bcfe08c4f044c15@mail.gmail.com> <20090326000035.GB11024@duck.suse.cz>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: pci tree build failure
+Date: Thu, 26 Mar 2009 15:54:46 +1100
+Message-ID: <20090326155446.26c7a4de.sfr@canb.auug.org.au>
+References: <20090323124948.fed84e3a.sfr@canb.auug.org.au>
+	<20090325122121.225a0ccb.sfr@canb.auug.org.au>
+	<20090324183800.6ba50715@hobbes.virtuouswap>
+	<20090325144117.9c54ae5a.sfr@canb.auug.org.au>
+	<20090325043001.GF20264@linux.intel.com>
+	<20090325085550.3788540b@hobbes.virtuouswap>
+	<20090326140531.cde0be37.sfr@canb.auug.org.au>
+	<20090325203711.5c8a6bc9@hobbes.virtuouswap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__26_Mar_2009_15_54_46_+1100_8btMEpqZn8E9yhxT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail168c2.megamailservers.com ([69.49.111.68]:56768 "EHLO
-	mail168c2.megamailservers.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751061AbZCZEly (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Mar 2009 00:41:54 -0400
-In-Reply-To: <20090326000035.GB11024@duck.suse.cz>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41766 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751789AbZCZEyy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Mar 2009 00:54:54 -0400
+In-Reply-To: <20090325203711.5c8a6bc9@hobbes.virtuouswap>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Alexander Beregalov <a.beregalov@gmail.com>, Theodore Tso <tytso@mit.edu>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sparclinux@vger.kernel.org
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: Matthew Wilcox <willy@linux.intel.com>, linux-next@vger.kernel.org
 
+--Signature=_Thu__26_Mar_2009_15_54_46_+1100_8btMEpqZn8E9yhxT
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Jesse,
 
-Jan Kara wrote:
->   Hi,
-> 
->   thanks for the updated disassembly.
-> 
->>   55bab0:       82 10 60 01     or  %g1, 1, %g1
->>                 spin_unlock(&journal->j_list_lock);
->>   55bab4:       40 06 4b 20     call  6ee734 <_spin_unlock>
->>   55bab8:       c2 24 e0 28     st  %g1, [ %l3 + 0x28 ]
->   OK, so it really seems that:
->   jinode->i_flags |= JI_COMMIT_RUNNING;
->   spin_unlock(&journal->j_list_lock);
-> 
->   has been compiled to
->   ld [ %l3 + 0x28 ], %g1
->   or  %g1, 1, %g1
->   call  6ee734 <_spin_unlock>
->   st  %g1, [ %l3 + 0x28 ]
-> 
->   Which seems like a bug in the compiler or in the way implement compiler
-> barriers in spin_unlock() on UP sparc. Or is there some sparc magic by which
-> this is correct code? Any clever sparc guy?
-> 
-> 									Honza
+On Wed, 25 Mar 2009 20:37:11 -0700 Jesse Barnes <jbarnes@virtuousgeek.org> =
+wrote:
+>
+> Looked liked it used the PCI MSI capability ID offset though?  In that
+> case it would really want at least pci_regs.h, but pci.h seems a little
+> more complete in this case.
 
+The patch that broke the build added that usage ... and introduced the
+need for pci_regs.g to be included (or pci.h , as you say).
 
-Looks fine to me - the store is made in the branch delay slot
-of the call, so it will occur before the first instruction at
-the call target address executes.
-Jiri.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__26_Mar_2009_15_54_46_+1100_8btMEpqZn8E9yhxT
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknLCpYACgkQjjKRsyhoI8yd9ACdErRjA85MYh8jsjju5HuL2GRE
+tEgAn3TEUfIRuAY5vhXX1L7rayZyy3ei
+=sUbF
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__26_Mar_2009_15_54_46_+1100_8btMEpqZn8E9yhxT--
