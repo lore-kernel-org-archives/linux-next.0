@@ -1,48 +1,63 @@
-From: Masami Hiramatsu <mhiramat@redhat.com>
-Subject: Re: linux-next: tracing tree build failure
-Date: Wed, 25 Mar 2009 21:37:19 -0400
-Message-ID: <49CADC4F.2030002@redhat.com>
-References: <20090326121459.197d346a.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: pci tree build failure
+Date: Thu, 26 Mar 2009 14:05:31 +1100
+Message-ID: <20090326140531.cde0be37.sfr@canb.auug.org.au>
+References: <20090323124948.fed84e3a.sfr@canb.auug.org.au>
+	<20090325122121.225a0ccb.sfr@canb.auug.org.au>
+	<20090324183800.6ba50715@hobbes.virtuouswap>
+	<20090325144117.9c54ae5a.sfr@canb.auug.org.au>
+	<20090325043001.GF20264@linux.intel.com>
+	<20090325085550.3788540b@hobbes.virtuouswap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-2022-JP
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__26_Mar_2009_14_05_31_+1100_wZbHPN/aGvW2DWT6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:47463 "EHLO mx2.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58955 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752799AbZCZBhC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Mar 2009 21:37:02 -0400
-In-Reply-To: <20090326121459.197d346a.sfr@canb.auug.org.au>
+	id S1756018AbZCZDFl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Mar 2009 23:05:41 -0400
+In-Reply-To: <20090325085550.3788540b@hobbes.virtuouswap>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: Matthew Wilcox <willy@linux.intel.com>, linux-next@vger.kernel.org
 
-Hi Stephen,
+--Signature=_Thu__26_Mar_2009_14_05_31_+1100_wZbHPN/aGvW2DWT6
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
-> 
-> arch/x86/kernel/kprobes.c: In function 'trampoline_handler':
-> arch/x86/kernel/kprobes.c:697: error: 'struct pt_regs' has no member named 'gs'
-> 
-> Caused by commit b9dad0d2955db059cd92c81c37ddcbef0abc8bf8 ("x86:
-> kretprobe-booster interrupt emulation code fix").  64bit appears to not
-> have a gs in its pt_regs.
+Hi Jesse,
 
-Oh, that was fixed on linux-2.6-tip tree...
+On Wed, 25 Mar 2009 08:55:50 -0700 Jesse Barnes <jbarnes@virtuousgeek.org> =
+wrote:
+>
+> Ok fix pushed.  Yeah it does seem weird.  This file clearly uses PCI
+> defines...
 
-http://git.kernel.org/?p=linux/kernel/git/x86/linux-2.6-tip.git;a=commit;h=fee039a1d05c6e0f71b0fe270d847742a02d56c4
+Thanks.
 
-> 
-> I have used the version of this tree that was in next-20090325 for today.
+Actually all that file required was a "forward" declaration of "struct
+pci_dev".  It was not accessing the pci_dev in any way, just passing
+pointers to them on to other routines.  I guess it got such a declaration
+indirectly.
 
--- 
-Masami Hiramatsu
+/me likes to understand ...
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Software Engineer
-Hitachi Computer Products (America) Inc.
-Software Solutions Division
+--Signature=_Thu__26_Mar_2009_14_05_31_+1100_wZbHPN/aGvW2DWT6
+Content-Type: application/pgp-signature
 
-e-mail: mhiramat@redhat.com
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknK8PsACgkQjjKRsyhoI8yNywCfWzE1/rbH5tqdNt5lv5VeWErK
+STMAoKKGV4j2t2mVNAZgN5VqNe2zGzYI
+=G6dw
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__26_Mar_2009_14_05_31_+1100_wZbHPN/aGvW2DWT6--
