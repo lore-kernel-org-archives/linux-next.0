@@ -1,43 +1,38 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: Next March 25: Boot failure on powerpc [recursive locking
-	detected]
-Date: Thu, 26 Mar 2009 08:50:03 -0500
-Message-ID: <1238075403.3342.1.camel@localhost.localdomain>
-References: <20090325191229.0e17eaf6.sfr@canb.auug.org.au>
-	 <49CA3BF4.3050801@in.ibm.com>  <49CB2200.50703@in.ibm.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for March 26 (benet)
+Date: Thu, 26 Mar 2009 08:46:25 -0700
+Message-ID: <49CBA351.2000007@oracle.com>
+References: <20090326190130.54fc6fde.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <49CB2200.50703@in.ibm.com>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: linuxppc-dev@ozlabs.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet12.oracle.com ([148.87.113.124]:28412 "EHLO
+	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753777AbZCZPrF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Mar 2009 11:47:05 -0400
+In-Reply-To: <20090326190130.54fc6fde.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, linux-drivers@serverengines.com
 
-On Thu, 2009-03-26 at 12:04 +0530, Sachin Sant wrote:
-> Sachin Sant wrote:
-> > Today's next failed to boot on a powerpc box
-> > (Power6 blade IBM,7998-61X) with following recursive locking message.
-> >
-> > =============================================
-> > [ INFO: possible recursive locking detected ]
-> > 2.6.29-next-20090325 #1
-> After bisecting the failure seems to be because of the following
-> patch from James ( block: move SCSI timeout check into block )
+Stephen Rothwell wrote:
+> Hi all,
 > 
-> http://patchwork.kernel.org/patch/8017/
-> 
-> If i back out the above mentioned patch, the machine boots fine
-> without any problems.
-
-Yes, that patch already got dropped for other reasons:
-
-http://marc.info/?t=123740773700002
-
-I'm going to see if I can redo it in a better way, since moving this
-type of timeout checking from scsi to block is a useful generalisation.
-
-James
+> Changes since 20090325:
 
 
+on i386 build:
+
+drivers/built-in.o: In function `be_worker':
+be_main.c:(.text+0x827c7): undefined reference to `__udivdi3'
+be_main.c:(.text+0x8286c): undefined reference to `__udivdi3'
+
+
+Probably one of the called functions (that contains
+division) is inlined.
+
+
+-- 
+~Randy
