@@ -1,88 +1,56 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] exofs: fix printk format warnings
-Date: Thu, 26 Mar 2009 14:44:30 -0700
-Message-ID: <49CBF73E.2010808@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Next March 26: s390 allnoconfig build failure still exists
+Date: Fri, 27 Mar 2009 08:57:48 +1100
+Message-ID: <20090327085748.5422e4bc.sfr@canb.auug.org.au>
 References: <20090326190130.54fc6fde.sfr@canb.auug.org.au>
+	<49CB5165.4060401@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <20090326190130.54fc6fde.sfr@canb.auug.org.au>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>, Boaz Harrosh <bharrosh@panasas.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__27_Mar_2009_08_57_48_+1100_f9OTUaIp8hy3H/Va"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:52034 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932396AbZCZV55 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Mar 2009 17:57:57 -0400
+In-Reply-To: <49CB5165.4060401@in.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, heiko.carstens@de.ibm.com
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+--Signature=_Fri__27_Mar_2009_08_57_48_+1100_f9OTUaIp8hy3H/Va
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix exofs printk format warnings:
+Hi Sachin,
 
-fs/exofs/inode.c:184: warning: format '%zx' expects type 'size_t', but argument 6 has type 'long unsigned int'
-fs/exofs/inode.c:291: warning: format '%zx' expects type 'size_t', but argument 6 has type 'long unsigned int'
-fs/exofs/inode.c:373: warning: format '%zx' expects type 'size_t', but argument 7 has type 'long unsigned int'
-fs/exofs/inode.c:461: warning: format '%zx' expects type 'size_t', but argument 6 has type 'long unsigned int'
-fs/exofs/inode.c:534: warning: format '%zx' expects type 'size_t', but argument 7 has type 'long unsigned int'
-fs/exofs/inode.c:610: warning: format '%zx' expects type 'size_t', but argument 5 has type 'long unsigned int'
+On Thu, 26 Mar 2009 15:26:53 +0530 Sachin Sant <sachinp@in.ibm.com> wrote:
+>
+> I still see the following s390 allnoconfig build failure
+> with today's next (and previous trees as well ).
+>=20
+> arch/s390/include/asm/smp.h:96: error: redefinition of smp_send_stop
+> include/linux/smp.h:125: error: previous definition of smp_send_stop was =
+here
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-cc: Boaz Harrosh <bharrosh@panasas.com>
----
- fs/exofs/inode.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+There will be a fix for this in today's linux-next.
 
---- linux-next-20090325.orig/fs/exofs/inode.c
-+++ linux-next-20090325/fs/exofs/inode.c
-@@ -182,7 +182,7 @@ static int __readpages_done(struct osd_r
- 		good_bytes = pcol->length - resid;
- 
- 	EXOFS_DBGMSG("readpages_done(%ld) good_bytes=%llx"
--		     " length=%zx nr_pages=%u\n",
-+		     " length=%lx nr_pages=%u\n",
- 		     pcol->inode->i_ino, _LLU(good_bytes), pcol->length,
- 		     pcol->nr_pages);
- 
-@@ -288,7 +288,7 @@ static int read_exec(struct page_collect
- 
- 	atomic_inc(&pcol->sbi->s_curr_pending);
- 
--	EXOFS_DBGMSG("read_exec obj=%llx start=%llx length=%zx\n",
-+	EXOFS_DBGMSG("read_exec obj=%llx start=%llx length=%lx\n",
- 		  obj.id, _LLU(i_start), pcol->length);
- 
- 	/* pages ownership was passed to pcol_copy */
-@@ -371,7 +371,7 @@ try_again:
- 	ret = pcol_add_page(pcol, page, len);
- 	if (ret) {
- 		EXOFS_DBGMSG("Failed pcol_add_page pages[i]=%p "
--			  "len=%zx nr_pages=%u length=%zx\n",
-+			  "len=%zx nr_pages=%u length=%lx\n",
- 			  page, len, pcol->nr_pages, pcol->length);
- 
- 		/* split the request, and start again with current page */
-@@ -459,7 +459,7 @@ static void writepages_done(struct osd_r
- 		good_bytes = pcol->length - resid;
- 
- 	EXOFS_DBGMSG("writepages_done(%lx) good_bytes=%llx"
--		     " length=%zx nr_pages=%u\n",
-+		     " length=%lx nr_pages=%u\n",
- 		     pcol->inode->i_ino, _LLU(good_bytes), pcol->length,
- 		     pcol->nr_pages);
- 
-@@ -531,7 +531,7 @@ static int write_exec(struct page_collec
- 	}
- 
- 	atomic_inc(&pcol->sbi->s_curr_pending);
--	EXOFS_DBGMSG("write_exec(%lx, %lx) start=%llx length=%zx\n",
-+	EXOFS_DBGMSG("write_exec(%lx, %lx) start=%llx length=%lx\n",
- 		  pcol->inode->i_ino, pcol->pg_first, _LLU(i_start),
- 		  pcol->length);
- 	/* pages ownership was passed to pcol_copy */
-@@ -608,7 +608,7 @@ try_again:
- 	ret = pcol_add_page(pcol, page, len);
- 	if (unlikely(ret)) {
- 		EXOFS_DBGMSG("Failed pcol_add_page "
--			     "nr_pages=%u total_length=%zx\n",
-+			     "nr_pages=%u total_length=%lx\n",
- 			     pcol->nr_pages, pcol->length);
- 
- 		/* split the request, next loop will start again */
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__27_Mar_2009_08_57_48_+1100_f9OTUaIp8hy3H/Va
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknL+lwACgkQjjKRsyhoI8xUZgCfYUfOZTaSzNOQsBc+qa+eDq3m
+BnkAn0KT2rfYJQLujCApks7DluEfGH0p
+=sFtS
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__27_Mar_2009_08_57_48_+1100_f9OTUaIp8hy3H/Va--
