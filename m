@@ -1,52 +1,53 @@
-From: Piet Delaney <piet.delaney@tensilica.com>
-Subject: [XTENSA] - Updated 2.6.27-smp with changes needed for SMP stabilization
- and New Xtensa V3 MMU
-Date: Wed, 25 Mar 2009 16:59:52 -0700
-Message-ID: <49CAC578.5000208@tensilica.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: tracing tree build failure
+Date: Thu, 26 Mar 2009 12:14:59 +1100
+Message-ID: <20090326121459.197d346a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__26_Mar_2009_12_14_59_+1100_IETNJoh_FalgLtq/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hq2.tensilica.com ([65.205.227.30]:5442 "EHLO
-	maia.hq.tensilica.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751070AbZCZAwx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Mar 2009 20:52:53 -0400
+Received: from chilli.pcug.org.au ([203.10.76.44]:60785 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752280AbZCZBPM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Mar 2009 21:15:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-xtensa@linux-xtensa.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Chris Zankel <chris@zankel.net>, Marc Gauthier <marc@tensilica.com>
-Cc: Johannes Weiner <jw@emlix.com>, =?ISO-8859-1?Q?Daniel_Gl=F6ckner?= <dg@emlix.com>, Oskar Schirmer <os@emlix.com>, Piet Delaney <piet.delaney@tensilica.com>, piet.delaney@gmail.com
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Masami Hiramatsu <mhiramat@redhat.com>
 
-I updated 2.6.27-SMP at http://linux-xtensa.org/ with changes needed to stabilize
-SMP. This work was started by Chris Zankel. Joe Taylor integrated Chris's changes
-and started stabilizing them for the caches without alias problems. I finished the
-SMP stabilization, including systems with cache alias problems. Marc Gauthier and
-I have fixed and improved the exception processing and added support for the
-Tensilica's new V3 MMU (currently in pre-alpha testing). We have made the context
-of an exception is now visible on the stack, similar to other architectures.
+--Signature=_Thu__26_Mar_2009_12_14_59_+1100_IETNJoh_FalgLtq/
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This kernel has been tested with our latest buildroot changes and is much more
-stable. We do seem to experience problems after about a week of LTP testing. I've
-added gdb macros to display the back-traces of the linux tasks to root-cause this problem.
-These macros are provided in the new Xtnesa Documentation directory. I've started KGDB
-integration but need to use ISS simulations to root cause the problems showing up in
-it's early startup self-check.
+Hi all,
 
-I'd appreciate hearing feedback on these changes in preparation for integration with
-the mainstream kernel. I'm currently merging with the git repository provided by the
-developers at Emlix and hope to have it running and posted to http://linux-xtensa.org
-shortly as well as a linux-next repo worthy of being pulled by Chris.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-I've just updated my xtensa-2.6.27-smp git repository on hera.
+arch/x86/kernel/kprobes.c: In function 'trampoline_handler':
+arch/x86/kernel/kprobes.c:697: error: 'struct pt_regs' has no member named =
+'gs'
 
-     git://git.kernel.org/pub/scm/linux/kernel/git/piet/xtensa-2.6.27-smp.git
+Caused by commit b9dad0d2955db059cd92c81c37ddcbef0abc8bf8 ("x86:
+kretprobe-booster interrupt emulation code fix").  64bit appears to not
+have a gs in its pt_regs.
 
-it should be available on the git server shortly.
+I have used the version of this tree that was in next-20090325 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+--Signature=_Thu__26_Mar_2009_12_14_59_+1100_IETNJoh_FalgLtq/
+Content-Type: application/pgp-signature
 
-At Tensilica it's available at:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-     git://git.linux-xtensa.org/git/kernel/xtensa-2.6.27-smp
+iEYEARECAAYFAknK1xMACgkQjjKRsyhoI8wnMQCfRO0cahJCFWeAsg74BwTdKARV
+p3YAn2/L2AJePM5j+SIQnrTLaVXxNhP5
+=BXLX
+-----END PGP SIGNATURE-----
 
-I've upgraded our latest changes to master now that's it's vary stable.
-
--piet
+--Signature=_Thu__26_Mar_2009_12_14_59_+1100_IETNJoh_FalgLtq/--
