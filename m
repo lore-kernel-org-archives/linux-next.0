@@ -1,52 +1,66 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: tracing tree build failure
-Date: Thu, 26 Mar 2009 19:04:08 +1100
-Message-ID: <20090326190408.c4c0d177.sfr@canb.auug.org.au>
-References: <20090326121459.197d346a.sfr@canb.auug.org.au>
-	<49CADC4F.2030002@redhat.com>
-	<20090326075410.GA31669@elte.hu>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] m68k: irq_node.handler() should return irqreturn_t
+Date: Thu, 26 Mar 2009 09:54:37 +0100 (CET)
+Message-ID: <Pine.LNX.4.64.0903260953180.21047@anakin>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__26_Mar_2009_19_04_08_+1100__MKVEo9.y29akNcG"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53295 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753229AbZCZIEQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Mar 2009 04:04:16 -0400
-In-Reply-To: <20090326075410.GA31669@elte.hu>
+Received: from gerard.telenet-ops.be ([195.130.132.48]:60685 "EHLO
+	gerard.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750863AbZCZIym (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Mar 2009 04:54:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Masami Hiramatsu <mhiramat@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linux/m68k <linux-m68k@vger.kernel.org>, Linux Kernel Development <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
---Signature=_Thu__26_Mar_2009_19_04_08_+1100__MKVEo9.y29akNcG
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+commit b5dc7840b3ebe9c7967dd8ba73db957767009ff9 ("m68k: introduce irq
+controller") reverted the return type of struct irq_node.handler() from
+irqreturn_t to int. Change it back to irqreturn_t, else it will give a
+compiler warning when irqreturn_t is turned into an enum in the near future:
 
-Hi Ingo,
+| arch/m68k/kernel/ints.c:231: warning: assignment from incompatible pointer type
 
-On Thu, 26 Mar 2009 08:54:10 +0100 Ingo Molnar <mingo@elte.hu> wrote:
->
-> I have pushed out a new tree for linux-next, to pick up this fix.
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+We already hit the warning in linux-next, which has commit
+bedd30d986a05e32dc3eab874e4b9ed8a38058bb ("genirq: make irqreturn_t an enum")
 
-Thanks.
+ arch/m68k/include/asm/irq_mm.h |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+diff --git a/arch/m68k/include/asm/irq_mm.h b/arch/m68k/include/asm/irq_mm.h
+index 226bfc0..0cab42c 100644
+--- a/arch/m68k/include/asm/irq_mm.h
++++ b/arch/m68k/include/asm/irq_mm.h
+@@ -3,6 +3,7 @@
+ 
+ #include <linux/linkage.h>
+ #include <linux/hardirq.h>
++#include <linux/irqreturn.h>
+ #include <linux/spinlock_types.h>
+ 
+ /*
+@@ -80,7 +81,7 @@ struct pt_regs;
+  * interrupt source (if it supports chaining).
+  */
+ typedef struct irq_node {
+-	int		(*handler)(int, void *);
++	irqreturn_t	(*handler)(int, void *);
+ 	void		*dev_id;
+ 	struct irq_node *next;
+ 	unsigned long	flags;
+-- 
+1.6.2
 
---Signature=_Thu__26_Mar_2009_19_04_08_+1100__MKVEo9.y29akNcG
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Gr{oetje,eeting}s,
 
-iEYEARECAAYFAknLNvgACgkQjjKRsyhoI8xykwCfZ65XiYvRQ0DQ+E6OfjEprDEd
-YbQAn3O7pa4PnvlhLyxvl0UYyIntFC9g
-=xELA
------END PGP SIGNATURE-----
+						Geert
 
---Signature=_Thu__26_Mar_2009_19_04_08_+1100__MKVEo9.y29akNcG--
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
