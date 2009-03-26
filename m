@@ -1,51 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: net tree build warnings
-Date: Fri, 27 Mar 2009 09:01:28 +1100
-Message-ID: <20090327090128.37883155.sfr@canb.auug.org.au>
-References: <20090326173713.ee63b803.sfr@canb.auug.org.au>
-	<1238053819.13879.4.camel@ice-age>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: linux-next: driver-core tree build failure
+Date: Thu, 26 Mar 2009 16:00:50 -0700
+Message-ID: <20090326160050.350edcd3@hobbes>
+References: <20090326183433.75a895c7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__27_Mar_2009_09_01_28_+1100_e0Tk2WUSm18TweUc"
-Return-path: <netfilter-devel-owner@vger.kernel.org>
-In-Reply-To: <1238053819.13879.4.camel@ice-age>
-Sender: netfilter-devel-owner@vger.kernel.org
-To: Eric Leblond <eric@inl.fr>
-Cc: "David S. Miller" <davem@davemloft.net>, linux-next@vger.kernel.org, Patrick McHardy <kaber@trash.net>, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Fri__27_Mar_2009_09_01_28_+1100_e0Tk2WUSm18TweUc
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from outbound-mail-117.bluehost.com ([69.89.22.17]:40376 "HELO
+	outbound-mail-117.bluehost.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1754514AbZCZXHe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Mar 2009 19:07:34 -0400
+In-Reply-To: <20090326183433.75a895c7.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Trent Piepho <xyzzy@speakeasy.org>, Kay Sievers <kay.sievers@vrfy.org>
 
-Hi Eric,
+On Thu, 26 Mar 2009 18:34:33 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-On Thu, 26 Mar 2009 08:50:19 +0100 Eric Leblond <eric@inl.fr> wrote:
->
-> Thanks a lot for pointing this. I stupidely forgot to build this module
-> during my testing.
->=20
-> I've made the necessary modifications and a patch fixing this will
-> follow this mail.
+> Hi Greg, Jesse,
+> 
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> 
+> drivers/pci/hotplug/fakephp.c: In function 'legacy_add_slot':
+> drivers/pci/hotplug/fakephp.c:91: error: 'struct device' has no
+> member named 'bus_id'
+> 
+> Caused by commit 83dbf66f04b96e65c6c18436c16d40f9cf8630aa ("PCI
+> Hotplug: restore fakephp interface with complete reimplementation")
+> from the pci tree which added another use of bus_id. (Commit
+> c32e967b935450c5178ebeaabb9ed889b14ed197 ("driver core: get rid of
+> struct device's bus_id string array") removes bus_id.)
+> 
+> I applied the batch below.  Jesse, this is suitable for the pci tree
+> as the dev_name() interface already exists in Linus' tree.
 
-Thanks.
+Applied, thanks.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__27_Mar_2009_09_01_28_+1100_e0Tk2WUSm18TweUc
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAknL+zgACgkQjjKRsyhoI8y/QQCeJPlZYtcCE9ZOcVm5JhnaYWTB
-aY4AoI8b9HECjc3Jp+LIkDk2p3l+5X70
-=SNCz
------END PGP SIGNATURE-----
-
---Signature=_Fri__27_Mar_2009_09_01_28_+1100_e0Tk2WUSm18TweUc--
+-- 
+Jesse Barnes, Intel Open Source Technology Center
