@@ -1,34 +1,49 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: Next March 26: s390 allnoconfig build failure still exists
-Date: Thu, 26 Mar 2009 11:12:23 +0100
-Message-ID: <20090326111223.3a8ad942@osiris.boeblingen.de.ibm.com>
-References: <20090326190130.54fc6fde.sfr@canb.auug.org.au>
-	<49CB5165.4060401@in.ibm.com>
+From: Patrick McHardy <kaber@trash.net>
+Subject: Re: linux-next: net tree build warnings
+Date: Thu, 26 Mar 2009 14:17:53 +0100
+Message-ID: <49CB8081.6050709@trash.net>
+References: <20090326173713.ee63b803.sfr@canb.auug.org.au> <1238053819.13879.4.camel@ice-age>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate1.de.ibm.com ([195.212.17.161]:60242 "EHLO
-	mtagate1.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751212AbZCZKM1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Mar 2009 06:12:27 -0400
-In-Reply-To: <49CB5165.4060401@in.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>, Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-15;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <netfilter-devel-owner@vger.kernel.org>
+In-Reply-To: <1238053819.13879.4.camel@ice-age>
+Sender: netfilter-devel-owner@vger.kernel.org
+To: Eric Leblond <eric@inl.fr>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "David S. Miller" <davem@davemloft.net>, linux-next@vger.kernel.org, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 26 Mar 2009 15:26:53 +0530
-Sachin Sant <sachinp@in.ibm.com> wrote:
+Eric Leblond wrote:
+> Hi Stephen,
+>=20
+> Le jeudi 26 mars 2009 =E0 17:37 +1100, Stephen Rothwell a =E9crit :
+>> Hi Dave,
+>>
+>> Today's linux-next build (x86_64 allmodconfig) produced these warnin=
+gs:
+>>
+>> net/bridge/netfilter/ebt_log.c: In function 'ebt_log_init':
+>> net/bridge/netfilter/ebt_log.c:230: warning: passing argument 2 of '=
+nf_log_register' discards qualifiers from pointer target type
+>> net/bridge/netfilter/ebt_log.c: In function 'ebt_log_fini':
+>> net/bridge/netfilter/ebt_log.c:236: warning: passing argument 1 of '=
+nf_log_unregister' discards qualifiers from pointer target type
+>> net/bridge/netfilter/ebt_ulog.c: In function 'ebt_ulog_init':
+>> net/bridge/netfilter/ebt_ulog.c:317: warning: passing argument 2 of =
+'nf_log_register' discards qualifiers from pointer target type
+>> net/bridge/netfilter/ebt_ulog.c: In function 'ebt_ulog_fini':
+>> net/bridge/netfilter/ebt_ulog.c:327: warning: passing argument 1 of =
+'nf_log_unregister' discards qualifiers from pointer target type
+>=20
+> Thanks a lot for pointing this. I stupidely forgot to build this modu=
+le
+> during my testing.
 
-> I still see the following s390 allnoconfig build failure
-> with today's next (and previous trees as well ).
-> 
-> arch/s390/include/asm/smp.h:96: error: redefinition of smp_send_stop
-> include/linux/smp.h:125: error: previous definition of smp_send_stop was here
-
-In theory it should have been fixed, since I sent a patch and Ingo applied it:
-
-http://lkml.org/lkml/2009/3/20/74
-
-For some reason it doesn't show up in linux-next.
+Same here, I seem to have accidentally disabled bridging in my test
+builds, sorry.
+--
+To unsubscribe from this list: send the line "unsubscribe netfilter-dev=
+el" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
