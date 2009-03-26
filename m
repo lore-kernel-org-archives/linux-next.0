@@ -1,53 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: tracing tree build failure
-Date: Thu, 26 Mar 2009 12:14:59 +1100
-Message-ID: <20090326121459.197d346a.sfr@canb.auug.org.au>
+From: Masami Hiramatsu <mhiramat@redhat.com>
+Subject: Re: linux-next: tracing tree build failure
+Date: Wed, 25 Mar 2009 21:37:19 -0400
+Message-ID: <49CADC4F.2030002@redhat.com>
+References: <20090326121459.197d346a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__26_Mar_2009_12_14_59_+1100_IETNJoh_FalgLtq/"
+Content-Type: text/plain; charset=ISO-2022-JP
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60785 "EHLO smtps.tip.net.au"
+Received: from mx2.redhat.com ([66.187.237.31]:47463 "EHLO mx2.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752280AbZCZBPM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Mar 2009 21:15:12 -0400
+	id S1752799AbZCZBhC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Mar 2009 21:37:02 -0400
+In-Reply-To: <20090326121459.197d346a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org, Masami Hiramatsu <mhiramat@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
 
---Signature=_Thu__26_Mar_2009_12_14_59_+1100_IETNJoh_FalgLtq/
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi all,
+Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> 
+> arch/x86/kernel/kprobes.c: In function 'trampoline_handler':
+> arch/x86/kernel/kprobes.c:697: error: 'struct pt_regs' has no member named 'gs'
+> 
+> Caused by commit b9dad0d2955db059cd92c81c37ddcbef0abc8bf8 ("x86:
+> kretprobe-booster interrupt emulation code fix").  64bit appears to not
+> have a gs in its pt_regs.
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+Oh, that was fixed on linux-2.6-tip tree...
 
-arch/x86/kernel/kprobes.c: In function 'trampoline_handler':
-arch/x86/kernel/kprobes.c:697: error: 'struct pt_regs' has no member named =
-'gs'
+http://git.kernel.org/?p=linux/kernel/git/x86/linux-2.6-tip.git;a=commit;h=fee039a1d05c6e0f71b0fe270d847742a02d56c4
 
-Caused by commit b9dad0d2955db059cd92c81c37ddcbef0abc8bf8 ("x86:
-kretprobe-booster interrupt emulation code fix").  64bit appears to not
-have a gs in its pt_regs.
+> 
+> I have used the version of this tree that was in next-20090325 for today.
 
-I have used the version of this tree that was in next-20090325 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+-- 
+Masami Hiramatsu
 
---Signature=_Thu__26_Mar_2009_12_14_59_+1100_IETNJoh_FalgLtq/
-Content-Type: application/pgp-signature
+Software Engineer
+Hitachi Computer Products (America) Inc.
+Software Solutions Division
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAknK1xMACgkQjjKRsyhoI8wnMQCfRO0cahJCFWeAsg74BwTdKARV
-p3YAn2/L2AJePM5j+SIQnrTLaVXxNhP5
-=BXLX
------END PGP SIGNATURE-----
-
---Signature=_Thu__26_Mar_2009_12_14_59_+1100_IETNJoh_FalgLtq/--
+e-mail: mhiramat@redhat.com
