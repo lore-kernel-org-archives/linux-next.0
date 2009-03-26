@@ -1,83 +1,93 @@
-From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
-Subject: Re: Invalid module format: Re: linux-next: Tree for March 24
-Date: Thu, 26 Mar 2009 18:18:57 +0100
-Message-ID: <20090326171857.GF6496@denkbrett.schottelius.org>
-References: <20090324183024.59260457.sfr@canb.auug.org.au> <20090324170215.GB5495@denkbrett.schottelius.org> <20090325094159.8dad1d49.sfr@canb.auug.org.au>
+From: Stephen Hemminger <shemminger@vyatta.com>
+Subject: [PATCH] benet: use do_div() for 64 bit divide
+Date: Thu, 26 Mar 2009 12:30:05 -0700
+Message-ID: <20090326123005.34acd9fe@s6510>
+References: <20090326190130.54fc6fde.sfr@canb.auug.org.au>
+	<49CBA351.2000007@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="S5HS5MvDw4DmbRmb"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.schottelius.org ([77.109.138.221]:43392 "EHLO
-	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753585AbZCZRTB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Mar 2009 13:19:01 -0400
-Content-Disposition: inline
-In-Reply-To: <20090325094159.8dad1d49.sfr@canb.auug.org.au>
+Received: from mail.vyatta.com ([76.74.103.46]:34825 "EHLO mail.vyatta.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932507AbZCZTa7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Mar 2009 15:30:59 -0400
+In-Reply-To: <49CBA351.2000007@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>, "David S. Miller" <davem@davemloft.net>, Sathya Perla <sathyap@serverengines.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, netdev@vger.kernel.org, linux-drivers@serverengines.com
 
+The benet driver is doing a 64 bit divide, which is not supported in Linux kernel
+on 32 bit architectures. The correct way to do this is to use do_div().
+Compile tested on i386 only.
 
---S5HS5MvDw4DmbRmb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Stephen Hemminger <shemminger@vyatta.com>
 
-Stephen Rothwell [Wed, Mar 25, 2009 at 09:41:59AM +1100]:
-> Hi Nico,
->=20
-> On Tue, 24 Mar 2009 18:02:15 +0100 Nico -telmich- Schottelius <nico-linux=
--next@schottelius.org> wrote:
-> >
-> >=20
-> > My system does not bootup, as I cannot load the crypto modules,
-> > because it says
-> >=20
-> >   Invalid module format
->=20
-> Architecture?
-
-amd64
-
-> config?
-
-http://git.schottelius.org/?p=3Dconfigs/linux;a=3Dblob;f=3Dlenovo/x200/next=
--20090324;h=3D5eba35aca92d2f244831efea7c20c2e1e3cccda6;hb=3D325f152e27f4872=
-0763e0ad3e99b69049ab90116
-
-> any other boot messages?
-
-sure, normal, until it tries to access my hd
-
-> Is it just the crypto modules?
-
-Cannot check, as it does not bootup. But I did not see
-any other before.
-
-Sincerly,
-
-Nico
-
-
-
---=20
-Think about Free and Open Source Software (FOSS).
-http://nico.schottelius.org/documentations/foss/the-term-foss/
-
-PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
-
---S5HS5MvDw4DmbRmb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAknLuQEACgkQuL75KpiFGIxPYQCfWM5w9qGXsftH9meEC3R137PG
-8UUAoOmQCrwb45w8u8mw1sQxm2wXXP42
-=SP7B
------END PGP SIGNATURE-----
-
---S5HS5MvDw4DmbRmb--
+--- a/drivers/net/benet/be_main.c	2009-03-25 15:31:35.000000000 -0700
++++ b/drivers/net/benet/be_main.c	2009-03-26 12:28:21.645388379 -0700
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include "be.h"
++#include <asm/div64.h>
+ 
+ MODULE_VERSION(DRV_VER);
+ MODULE_DEVICE_TABLE(pci, be_dev_ids);
+@@ -290,6 +291,17 @@ static struct net_device_stats *be_get_s
+ 	return &adapter->stats.net_stats;
+ }
+ 
++static u32 be_calc_rate(u64 bytes, unsigned long ticks)
++{
++	u64 rate = bytes;
++
++	do_div(rate, ticks / HZ);
++	rate <<= 3;			/* bytes/sec -> bits/sec */
++	do_div(rate, 1000000ul);	/* MB/Sec */
++
++	return rate;
++}
++
+ static void be_tx_rate_update(struct be_adapter *adapter)
+ {
+ 	struct be_drvr_stats *stats = drvr_stats(adapter);
+@@ -303,11 +315,9 @@ static void be_tx_rate_update(struct be_
+ 
+ 	/* Update tx rate once in two seconds */
+ 	if ((now - stats->be_tx_jiffies) > 2 * HZ) {
+-		u32 r;
+-		r = (stats->be_tx_bytes - stats->be_tx_bytes_prev) /
+-			((now - stats->be_tx_jiffies) / HZ);
+-		r = r / 1000000;			/* M bytes/s */
+-		stats->be_tx_rate = r * 8;	/* M bits/s */
++		stats->be_tx_rate = be_calc_rate(stats->be_tx_bytes
++						  - stats->be_tx_bytes_prev,
++						 now - stats->be_tx_jiffies);
+ 		stats->be_tx_jiffies = now;
+ 		stats->be_tx_bytes_prev = stats->be_tx_bytes;
+ 	}
+@@ -599,7 +609,6 @@ static void be_rx_rate_update(struct be_
+ {
+ 	struct be_drvr_stats *stats = drvr_stats(adapter);
+ 	ulong now = jiffies;
+-	u32 rate;
+ 
+ 	/* Wrapped around */
+ 	if (time_before(now, stats->be_rx_jiffies)) {
+@@ -610,11 +619,10 @@ static void be_rx_rate_update(struct be_
+ 	/* Update the rate once in two seconds */
+ 	if ((now - stats->be_rx_jiffies) < 2 * HZ)
+ 		return;
+-
+-	rate = (stats->be_rx_bytes - stats->be_rx_bytes_prev) /
+-		((now - stats->be_rx_jiffies) / HZ);
+-	rate = rate / 1000000;	/* MB/Sec */
+-	stats->be_rx_rate = rate * 8; 	/* Mega Bits/Sec */
++
++	stats->be_rx_rate = be_calc_rate(stats->be_rx_bytes
++					  - stats->be_rx_bytes_prev,
++					 now - stats->be_rx_jiffies);
+ 	stats->be_rx_jiffies = now;
+ 	stats->be_rx_bytes_prev = stats->be_rx_bytes;
+ }
