@@ -1,48 +1,59 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Next March 27 : s390 defconfig build failure
-Date: Fri, 27 Mar 2009 19:27:04 +0530
-Message-ID: <49CCDB30.7010203@in.ibm.com>
-References: <20090327231924.4e4168c5.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: v4l-dvb tree build failure
+Date: Sat, 28 Mar 2009 01:03:08 +1100
+Message-ID: <20090328010308.9c41e94e.sfr@canb.auug.org.au>
+References: <20090327114035.d039243a.sfr@canb.auug.org.au>
+	<20090327082859.6127990a@pedra.chehab.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__28_Mar_2009_01_03_08_+1100_5XoMiaMuqN+ogbES"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp02.au.ibm.com ([202.81.31.144]:41599 "EHLO
-	e23smtp02.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752131AbZC0N5J (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Mar 2009 09:57:09 -0400
-In-Reply-To: <20090327231924.4e4168c5.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44029 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752373AbZC0ODS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 27 Mar 2009 10:03:18 -0400
+In-Reply-To: <20090327082859.6127990a@pedra.chehab.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-s390@vger.kernel.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, heiko.carstens@de.ibm.com
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, Mike Isely <isely@pobox.com>
 
-Today's Next defconfig s390 build failed with
+--Signature=_Sat__28_Mar_2009_01_03_08_+1100_5XoMiaMuqN+ogbES
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-arch/s390/hypfs/hypfs_diag.c: In function diag204_free_buffer:
-arch/s390/hypfs/hypfs_diag.c:364: error: implicit declaration of function free_pages
-arch/s390/hypfs/hypfs_diag.c: In function diag204_alloc_rbuf:
-arch/s390/hypfs/hypfs_diag.c:384: error: implicit declaration of function __get_free_pages
-arch/s390/hypfs/hypfs_diag.c:384: error: GFP_KERNEL undeclared (first use in this function)
-arch/s390/hypfs/hypfs_diag.c:384: error: (Each undeclared identifier is reported only once
-arch/s390/hypfs/hypfs_diag.c:384: error: for each function it appears in.)
-arch/s390/hypfs/hypfs_diag.c:384: warning: cast to pointer from integer of different size
-arch/s390/hypfs/hypfs_diag.c: In function diag224_get_name_table:
-arch/s390/hypfs/hypfs_diag.c:503: error: implicit declaration of function kmalloc
-arch/s390/hypfs/hypfs_diag.c:503: error: GFP_KERNEL undeclared (first use in this function)
-arch/s390/hypfs/hypfs_diag.c:503: error: GFP_DMA undeclared (first use in this function)
-arch/s390/hypfs/hypfs_diag.c:503: warning: assignment makes pointer from integer without a cast
-arch/s390/hypfs/hypfs_diag.c:507: error: implicit declaration of function kfree
+Hi Mauro,
 
-Thanks
--Sachin
+On Fri, 27 Mar 2009 08:28:59 -0300 Mauro Carvalho Chehab <mchehab@infradead=
+.org> wrote:
+>
 
+> This was fixed by this patch:
+> 	http://patchwork.kernel.org/patch/14545/
+>=20
+> What's weird is that, after noticing it, I folded this patch together wit=
+h the
+> original one. Maybe I forgot to push it or I've pushed after your pull.
+> Probably you won't have problem on today's build.
 
--- 
+Thanks.
 
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Sat__28_Mar_2009_01_03_08_+1100_5XoMiaMuqN+ogbES
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknM3JwACgkQjjKRsyhoI8wFkACePPaUiD4ZhVc7a2M8bTY2jN2u
+aCEAn2tTdFooDTIwbiOdm2P0UDK73H9w
+=Yo4i
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__28_Mar_2009_01_03_08_+1100_5XoMiaMuqN+ogbES--
