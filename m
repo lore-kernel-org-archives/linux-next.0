@@ -1,59 +1,68 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: tracing/powerpc tree build failure
-Date: Sat, 28 Mar 2009 01:21:17 +1100
-Message-ID: <20090328012117.4669e153.sfr@canb.auug.org.au>
-References: <20090327230834.93d0221d.sfr@canb.auug.org.au>
-	<1238158131.22033.10.camel@localhost.localdomain>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: Next March 27 : s390 defconfig build failure
+Date: Fri, 27 Mar 2009 15:40:27 +0100
+Message-ID: <20090327154027.55afeb02@osiris.boeblingen.de.ibm.com>
+References: <20090327231924.4e4168c5.sfr@canb.auug.org.au>
+	<49CCDB30.7010203@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__28_Mar_2009_01_21_17_+1100_cZk=LqB1Ghvdy/83"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39506 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752811AbZC0OV2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 27 Mar 2009 10:21:28 -0400
-In-Reply-To: <1238158131.22033.10.camel@localhost.localdomain>
+Received: from mtagate4.uk.ibm.com ([195.212.29.137]:63893 "EHLO
+	mtagate4.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754803AbZC0Okc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Mar 2009 10:40:32 -0400
+In-Reply-To: <49CCDB30.7010203@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <srostedt@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org
+To: Sachin Sant <sachinp@in.ibm.com>, Ingo Molnar <mingo@elte.hu>
+Cc: linux-s390@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>
 
---Signature=_Sat__28_Mar_2009_01_21_17_+1100_cZk=LqB1Ghvdy/83
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 27 Mar 2009 19:27:04 +0530
+Sachin Sant <sachinp@in.ibm.com> wrote:
 
-Hi Steve,
+> Today's Next defconfig s390 build failed with
+> 
+> arch/s390/hypfs/hypfs_diag.c: In function diag204_free_buffer:
+> arch/s390/hypfs/hypfs_diag.c:364: error: implicit declaration of function free_pages
+> arch/s390/hypfs/hypfs_diag.c: In function diag204_alloc_rbuf:
+> arch/s390/hypfs/hypfs_diag.c:384: error: implicit declaration of function __get_free_pages
+> arch/s390/hypfs/hypfs_diag.c:384: error: GFP_KERNEL undeclared (first use in this function)
 
-On Fri, 27 Mar 2009 08:48:51 -0400 Steven Rostedt <srostedt@redhat.com> wro=
-te:
->
-> I knew this was going to break, but I needed to wait till powerpc merged
-> with tip before I could make the change.
+Thanks for reporting. Ingo, could you pick up the patch below please?
 
-Yeah, a bit of a pain but we can live with it for a while.
+Subject: [PATCH] s390/hypfs: fix build breakage
 
-> This is exactly what I would have done.
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
 
-Thanks for the confirmation.  I guess I will keep applying this until one
-tree or the other hits mainline at which point it can be fixed in the
-other tree.
+Fix build breakage below which probably was introduced with
+("rcu: don't include unnecessary headers, allow kmemtrace w/ tracepoints").
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+  CC      arch/s390/hypfs/hypfs_diag.o
+arch/s390/hypfs/hypfs_diag.c: In function 'diag204_free_buffer':
+arch/s390/hypfs/hypfs_diag.c:364: error: implicit declaration of function 'free_pages'
+arch/s390/hypfs/hypfs_diag.c: In function 'diag204_alloc_rbuf':
+arch/s390/hypfs/hypfs_diag.c:384: error: implicit declaration of function '__get_free_pages'
+arch/s390/hypfs/hypfs_diag.c:384: error: 'GFP_KERNEL' undeclared (first use in this function)
+arch/s390/hypfs/hypfs_diag.c:384: error: (Each undeclared identifier is reported only once
+arch/s390/hypfs/hypfs_diag.c:384: error: for each function it appears in.)
 
---Signature=_Sat__28_Mar_2009_01_21_17_+1100_cZk=LqB1Ghvdy/83
-Content-Type: application/pgp-signature
+Reported-by: Sachin Sant <sachinp@in.ibm.com>
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+---
+ arch/s390/hypfs/hypfs_diag.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAknM4N4ACgkQjjKRsyhoI8zyXwCgt0zjiyV2mtMCeoFDhoCxnz2t
-oIwAnRz2e3ORvJleGZStSfpIDUecj6EQ
-=l+wa
------END PGP SIGNATURE-----
-
---Signature=_Sat__28_Mar_2009_01_21_17_+1100_cZk=LqB1Ghvdy/83--
+Index: linux-next/arch/s390/hypfs/hypfs_diag.c
+===================================================================
+--- linux-next.orig/arch/s390/hypfs/hypfs_diag.c
++++ linux-next/arch/s390/hypfs/hypfs_diag.c
+@@ -12,6 +12,8 @@
+ 
+ #include <linux/types.h>
+ #include <linux/errno.h>
++#include <linux/gfp.h>
++#include <linux/slab.h>
+ #include <linux/string.h>
+ #include <linux/vmalloc.h>
+ #include <asm/ebcdic.h>
