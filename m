@@ -1,91 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the lblnet tree with the
- security-testing tree
-Date: Fri, 27 Mar 2009 16:19:57 +1100
-Message-ID: <20090327161957.2bb234d4.sfr@canb.auug.org.au>
+Subject: Re: Next March 25: Boot failure on powerpc [recursive locking
+ detected]
+Date: Fri, 27 Mar 2009 16:56:24 +1100
+Message-ID: <20090327165624.47a29945.sfr@canb.auug.org.au>
+References: <20090325191229.0e17eaf6.sfr@canb.auug.org.au>
+	<49CA3BF4.3050801@in.ibm.com>
+	<49CB2200.50703@in.ibm.com>
+	<1238075403.3342.1.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__27_Mar_2009_16_56_24_+1100_cOldlwHN2s6RDN+i"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33489 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36499 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755001AbZC0FUF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 27 Mar 2009 01:20:05 -0400
+	id S1751102AbZC0F4m (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 27 Mar 2009 01:56:42 -0400
+In-Reply-To: <1238075403.3342.1.camel@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Moore <paul.moore@hp.com>, James Morris <jmorris@namei.org>
-Cc: linux-next@vger.kernel.org, Etienne Basset <etienne.basset@numericable.fr>
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, Sachin Sant <sachinp@in.ibm.com>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-Hi Paul, James,
+--Signature=_Fri__27_Mar_2009_16_56_24_+1100_cOldlwHN2s6RDN+i
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the lblnet tree got a conflict in
-security/smack/smack_lsm.c between commit
-7198e2eeb44b3fe7cc97f997824002da47a9c644 ("smack: convert smack to
-standard linux lists") from the security-testing tree and commits
-c5b5a2a5e23a0056c76b2084ae2001e55816778a ("netlabel: Cleanup the
-Smack/NetLabel code to fix incoming TCP connections") and
-174531a7a4f47f47dd706985d3d5e489fec87ab2 ("smack: Add a new '-CIPSO'
-option to the network address label configuration") from the lblnet tree.
+Hi all,
 
-I fixed it up (see below - I am not entirely sure it is correct) and can
-carry the fix as necessary.
--- 
+On Thu, 26 Mar 2009 08:50:03 -0500 James Bottomley <James.Bottomley@HansenP=
+artnership.com> wrote:
+>
+> On Thu, 2009-03-26 at 12:04 +0530, Sachin Sant wrote:
+> > Sachin Sant wrote:
+> > > Today's next failed to boot on a powerpc box
+> > > (Power6 blade IBM,7998-61X) with following recursive locking message.
+> > >
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > [ INFO: possible recursive locking detected ]
+> > > 2.6.29-next-20090325 #1
+> > After bisecting the failure seems to be because of the following
+> > patch from James ( block: move SCSI timeout check into block )
+> >=20
+> > http://patchwork.kernel.org/patch/8017/
+> >=20
+> > If i back out the above mentioned patch, the machine boots fine
+> > without any problems.
+>=20
+> Yes, that patch already got dropped for other reasons:
+>=20
+> http://marc.info/?t=3D123740773700002
+>=20
+> I'm going to see if I can redo it in a better way, since moving this
+> type of timeout checking from scsi to block is a useful generalisation.
+
+I will revert it from next-20090327 as well as it is still in the
+for-next branch of the block tree.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-diff --cc security/smack/smack_lsm.c
-index fd20d15,4f1838b..0000000
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@@ -1295,6 -1302,42 +1300,48 @@@ static void smack_sk_free_security(stru
-  }
-  
-  /**
-+ * smack_host_label - check host based restrictions
-+ * @sip: the object end
-+ *
-+ * looks for host based access restrictions
-+ *
-+ * This version will only be appropriate for really small
-+ * sets of single label hosts.
-+ *
-+ * Returns the label of the far end or NULL if it's not special.
-+ */
-+ static char *smack_host_label(struct sockaddr_in *sip)
-+ {
-+ 	struct smk_netlbladdr *snp;
-+ 	struct in_addr *siap = &sip->sin_addr;
-+ 
-+ 	if (siap->s_addr == 0)
-+ 		return NULL;
-+ 
- -	for (snp = smack_netlbladdrs; snp != NULL; snp = snp->smk_next)
-++	rcu_read_lock();
-++	list_for_each_entry_rcu(snp, &smk_netlbladdr_list, list) {
-+ 		/*
-+ 		 * we break after finding the first match because
-+ 		 * the list is sorted from longest to shortest mask
-+ 		 * so we have found the most specific match
-+ 		 */
-+ 		if ((&snp->smk_host.sin_addr)->s_addr  ==
-+ 			(siap->s_addr & (&snp->smk_mask)->s_addr)) {
-+ 			/* we have found the special CIPSO option */
- -			if (snp->smk_label == smack_cipso_option)
-++			if (snp->smk_label == smack_cipso_option) {
-++				rcu_read_unlock();
-+ 				return NULL;
-++			}
-+ 
-++			rcu_read_unlock();
-+ 			return snp->smk_label;
-+ 		}
-++	}
-++	rcu_read_unlock();
-+ 	return NULL;
-+ }
-+ 
-+ /**
-   * smack_set_catset - convert a capset to netlabel mls categories
-   * @catset: the Smack categories
-   * @sap: where to put the netlabel categories
+--Signature=_Fri__27_Mar_2009_16_56_24_+1100_cOldlwHN2s6RDN+i
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknMaokACgkQjjKRsyhoI8wU/ACfVogt2CorBOZeNDRe9Q+V8h7d
+vJkAoKTDmMySZdADARicPv1iJc1tAyD4
+=FSQo
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__27_Mar_2009_16_56_24_+1100_cOldlwHN2s6RDN+i--
