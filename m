@@ -1,92 +1,48 @@
-From: Steven Rostedt <srostedt@redhat.com>
-Subject: Re: linux-next: tracing/powerpc tree build failure
-Date: Fri, 27 Mar 2009 08:48:51 -0400
-Message-ID: <1238158131.22033.10.camel@localhost.localdomain>
-References: <20090327230834.93d0221d.sfr@canb.auug.org.au>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Next March 27 : s390 defconfig build failure
+Date: Fri, 27 Mar 2009 19:27:04 +0530
+Message-ID: <49CCDB30.7010203@in.ibm.com>
+References: <20090327231924.4e4168c5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org>
-In-Reply-To: <20090327230834.93d0221d.sfr@canb.auug.org.au>
-List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
-List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
-List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e23smtp02.au.ibm.com ([202.81.31.144]:41599 "EHLO
+	e23smtp02.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752131AbZC0N5J (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Mar 2009 09:57:09 -0400
+In-Reply-To: <20090327231924.4e4168c5.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-s390@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, heiko.carstens@de.ibm.com
+
+Today's Next defconfig s390 build failed with
+
+arch/s390/hypfs/hypfs_diag.c: In function diag204_free_buffer:
+arch/s390/hypfs/hypfs_diag.c:364: error: implicit declaration of function free_pages
+arch/s390/hypfs/hypfs_diag.c: In function diag204_alloc_rbuf:
+arch/s390/hypfs/hypfs_diag.c:384: error: implicit declaration of function __get_free_pages
+arch/s390/hypfs/hypfs_diag.c:384: error: GFP_KERNEL undeclared (first use in this function)
+arch/s390/hypfs/hypfs_diag.c:384: error: (Each undeclared identifier is reported only once
+arch/s390/hypfs/hypfs_diag.c:384: error: for each function it appears in.)
+arch/s390/hypfs/hypfs_diag.c:384: warning: cast to pointer from integer of different size
+arch/s390/hypfs/hypfs_diag.c: In function diag224_get_name_table:
+arch/s390/hypfs/hypfs_diag.c:503: error: implicit declaration of function kmalloc
+arch/s390/hypfs/hypfs_diag.c:503: error: GFP_KERNEL undeclared (first use in this function)
+arch/s390/hypfs/hypfs_diag.c:503: error: GFP_DMA undeclared (first use in this function)
+arch/s390/hypfs/hypfs_diag.c:503: warning: assignment makes pointer from integer without a cast
+arch/s390/hypfs/hypfs_diag.c:507: error: implicit declaration of function kfree
+
+Thanks
+-Sachin
 
 
-On Fri, 2009-03-27 at 23:08 +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next build (powerpc allyesconfig) failed like this:
-> 
-> arch/powerpc/kernel/ftrace.c: In function 'prepare_ftrace_return':
-> arch/powerpc/kernel/ftrace.c:612: warning: passing argument 3 of 'ftrace_push_return_trace' makes pointer from integer without a cast
-> arch/powerpc/kernel/ftrace.c:612: error: too many arguments to function 'ftrace_push_return_trace'
-> 
-> Caused by commit 5d1a03dc541dc6672e60e57249ed22f40654ca47
-> ("function-graph: moved the timestamp from arch to generic code") from
-> the tracing tree which (removed an argument from
-> ftrace_push_return_trace()) interacting with commit
-> 6794c78243bfda020ab184d6d578944f8e90d26c ("powerpc64: port of the
-> function graph tracer") from the powerpc tree.
-> 
-> I added the following patch and can carry it as necessary.
+-- 
 
-Thanks Stephen!!!
-
-I knew this was going to break, but I needed to wait till powerpc merged
-with tip before I could make the change.
-
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 27 Mar 2009 22:47:58 +1100
-> Subject: [PATCH] tracing: fixup for ftrace_push_return_trace API change
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/powerpc/kernel/ftrace.c |    6 +-----
->  1 files changed, 1 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/powerpc/kernel/ftrace.c b/arch/powerpc/kernel/ftrace.c
-> index 5b5d16b..5455943 100644
-> --- a/arch/powerpc/kernel/ftrace.c
-> +++ b/arch/powerpc/kernel/ftrace.c
-> @@ -557,7 +557,6 @@ extern void mod_return_to_handler(void);
->  void prepare_ftrace_return(unsigned long *parent, unsigned long self_addr)
->  {
->  	unsigned long old;
-> -	unsigned long long calltime;
->  	int faulted;
->  	struct ftrace_graph_ent trace;
->  	unsigned long return_hooker = (unsigned long)&return_to_handler;
-> @@ -606,10 +605,7 @@ void prepare_ftrace_return(unsigned long *parent, unsigned long self_addr)
->  		return;
->  	}
->  
-> -	calltime = cpu_clock(raw_smp_processor_id());
-> -
-> -	if (ftrace_push_return_trace(old, calltime,
-> -				self_addr, &trace.depth) == -EBUSY) {
-> +	if (ftrace_push_return_trace(old, self_addr, &trace.depth) == -EBUSY) {
-
-This is exactly what I would have done.
-
-Acked-by: Steven Rostedt <srostedt@redhat.com>
-
--- Steve
-
->  		*parent = old;
->  		return;
->  	}
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
