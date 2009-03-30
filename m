@@ -1,72 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: net tree build failure
-Date: Mon, 30 Mar 2009 12:15:11 +1100
-Message-ID: <20090330121511.05f9cd8b.sfr@canb.auug.org.au>
+Date: Mon, 30 Mar 2009 12:50:35 +1100
+Message-ID: <20090330125035.93103d28.sfr@canb.auug.org.au>
 References: <20090319154617.12fed283.sfr@canb.auug.org.au>
+	<20090330121511.05f9cd8b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__30_Mar_2009_12_50_35_+1100_Dp/L=r3EM/_c+hcP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60505 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41893 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751137AbZC3BPQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 29 Mar 2009 21:15:16 -0400
-In-Reply-To: <20090319154617.12fed283.sfr@canb.auug.org.au>
+	id S1754600AbZC3Bun (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 29 Mar 2009 21:50:43 -0400
+In-Reply-To: <20090330121511.05f9cd8b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
 Cc: linux-next@vger.kernel.org, Steven Rostedt <srostedt@redhat.com>, Neil Horman <nhorman@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>
 
-Hi all,
+--Signature=_Mon__30_Mar_2009_12_50_35_+1100_Dp/L=r3EM/_c+hcP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 19 Mar 2009 15:46:17 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Mon, 30 Mar 2009 12:15:11 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> 
-> In file included from net/core/skbuff.c:69:
-> include/trace/skb.h:4: error: expected ')' before '(' token
-> include/trace/skb.h:4: error: expected ')' before '(' token
-> include/trace/skb.h:4: warning: function declaration isn't a prototype
-> include/trace/skb.h: In function 'register_trace_kfree_skb':
-> include/trace/skb.h:4: error: 'probe' undeclared (first use in this function)
-> include/trace/skb.h:4: error: (Each undeclared identifier is reported only once
-> include/trace/skb.h:4: error: for each function it appears in.)
-> include/trace/skb.h: At top level:
-> include/trace/skb.h:4: error: expected ')' before '(' token
-> include/trace/skb.h:4: warning: function declaration isn't a prototype
-> include/trace/skb.h: In function 'unregister_trace_kfree_skb':
-> include/trace/skb.h:4: error: 'probe' undeclared (first use in this function)
-> net/core/skbuff.c: In function 'kfree_skb':
-> net/core/skbuff.c:446: error: implicit declaration of function 'trace_kfree_skb'
-> 
-> Caused by commit 2939b0469d04ba9ac791aca9a81625d7eb50662b ("tracing:
-> replace TP<var> with TP_<var>") from the tracing tree interacting with
-> commit 4893d39e865b2897bf9fcd329697d37032d853a1 ("Network Drop Monitor:
-> Add trace declaration for skb frees") from the net tree.
-> 
-> I added the merge fixup below and can carry it as necessary.
+> This patch should now be applicable to the tracing tree.
 
-This patch should now be applicable to the tracing tree.
+After merging with Linus' tree, of course.
 
-diff --git a/include/trace/skb.h b/include/trace/skb.h
-index 3aa8646..d9679c2 100644
---- a/include/trace/skb.h
-+++ b/include/trace/skb.h
-@@ -2,7 +2,7 @@
- #define _TRACE_SKB_H_
- 
- DECLARE_TRACE(kfree_skb,
--	TPPROTO(struct sk_buff *skb, void *location),
--	TPARGS(skb, location));
-+	TP_PROTO(struct sk_buff *skb, void *location),
-+	TP_ARGS(skb, location));
- 
- #endif
--- 
-1.6.2.1
-
-
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__30_Mar_2009_12_50_35_+1100_Dp/L=r3EM/_c+hcP
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknQJWsACgkQjjKRsyhoI8xlYwCgutYNNXqZZ2Vxy2FkytJYgBnB
+EnMAn1B/oHYTDH1d7UCWG2xXNbwqaiCL
+=eeg2
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__30_Mar_2009_12_50_35_+1100_Dp/L=r3EM/_c+hcP--
