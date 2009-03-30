@@ -1,60 +1,101 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: proc tree build failure
-Date: Mon, 30 Mar 2009 17:43:53 +1100
-Message-ID: <20090330174353.14a3f3d4.sfr@canb.auug.org.au>
+From: Boaz Harrosh <bharrosh@panasas.com>
+Subject: Re: [PATCH -next] exofs: fix printk format warnings
+Date: Mon, 30 Mar 2009 11:14:03 +0300
+Message-ID: <49D07F4B.8060203@panasas.com>
+References: <20090326190130.54fc6fde.sfr@canb.auug.org.au> <49CBF73E.2010808@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59072 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753202AbZC3Gn6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Mar 2009 02:43:58 -0400
+Received: from gw-ca.panasas.com ([209.116.51.66]:1560 "EHLO
+	laguna.int.panasas.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752202AbZC3IRN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Mar 2009 04:17:13 -0400
+In-Reply-To: <49CBF73E.2010808@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: linux-next@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>, Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>
 
-Hi Alexey,
+On 03/26/2009 11:44 PM, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> Fix exofs printk format warnings:
+> 
+> fs/exofs/inode.c:184: warning: format '%zx' expects type 'size_t', but argument 6 has type 'long unsigned int'
+> fs/exofs/inode.c:291: warning: format '%zx' expects type 'size_t', but argument 6 has type 'long unsigned int'
+> fs/exofs/inode.c:373: warning: format '%zx' expects type 'size_t', but argument 7 has type 'long unsigned int'
+> fs/exofs/inode.c:461: warning: format '%zx' expects type 'size_t', but argument 6 has type 'long unsigned int'
+> fs/exofs/inode.c:534: warning: format '%zx' expects type 'size_t', but argument 7 has type 'long unsigned int'
+> fs/exofs/inode.c:610: warning: format '%zx' expects type 'size_t', but argument 5 has type 'long unsigned int'
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> cc: Boaz Harrosh <bharrosh@panasas.com>
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+Thanks, much obliged.
 
-fs/proc/proc_net.c: In function 'proc_net_get_sb':
-fs/proc/proc_net.c:296: error: void value not ignored as it ought to be
+Applied, it will be pushed to linux-next and for-linus branches as part of the
+2.6.30 patchset. (Later today)
 
-Caused by commit 39bc389a04412aa199d8abec6582be33d57d1344 ("proc 3/6:
-make /proc/net it's own filesystem") interacting with commit
-a3ec947c85ec339884b30ef6a08133e9311fdae1 ("vfs: simple_set_mnt() should
-return void") from Linus' tree.
+Boaz
 
-I applied the following patch and can carry it for a while.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 30 Mar 2009 17:41:54 +1100
-Subject: [PATCH] proc: update proc_net.c for simple_set_mnt API change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/proc/proc_net.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
-
-diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
-index 32dd84f..1e31e5d 100644
---- a/fs/proc/proc_net.c
-+++ b/fs/proc/proc_net.c
-@@ -293,7 +293,8 @@ static int proc_net_get_sb(struct file_system_type *fs_type,
- 		sb->s_flags |= MS_ACTIVE;
- 	}
- 
--	return simple_set_mnt(mnt, sb);
-+	simple_set_mnt(mnt, sb);
-+	return 0;
- }
- 
- static struct file_system_type proc_net_fs_type = {
--- 
-1.6.2.1
+> ---
+>  fs/exofs/inode.c |   12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> --- linux-next-20090325.orig/fs/exofs/inode.c
+> +++ linux-next-20090325/fs/exofs/inode.c
+> @@ -182,7 +182,7 @@ static int __readpages_done(struct osd_r
+>  		good_bytes = pcol->length - resid;
+>  
+>  	EXOFS_DBGMSG("readpages_done(%ld) good_bytes=%llx"
+> -		     " length=%zx nr_pages=%u\n",
+> +		     " length=%lx nr_pages=%u\n",
+>  		     pcol->inode->i_ino, _LLU(good_bytes), pcol->length,
+>  		     pcol->nr_pages);
+>  
+> @@ -288,7 +288,7 @@ static int read_exec(struct page_collect
+>  
+>  	atomic_inc(&pcol->sbi->s_curr_pending);
+>  
+> -	EXOFS_DBGMSG("read_exec obj=%llx start=%llx length=%zx\n",
+> +	EXOFS_DBGMSG("read_exec obj=%llx start=%llx length=%lx\n",
+>  		  obj.id, _LLU(i_start), pcol->length);
+>  
+>  	/* pages ownership was passed to pcol_copy */
+> @@ -371,7 +371,7 @@ try_again:
+>  	ret = pcol_add_page(pcol, page, len);
+>  	if (ret) {
+>  		EXOFS_DBGMSG("Failed pcol_add_page pages[i]=%p "
+> -			  "len=%zx nr_pages=%u length=%zx\n",
+> +			  "len=%zx nr_pages=%u length=%lx\n",
+>  			  page, len, pcol->nr_pages, pcol->length);
+>  
+>  		/* split the request, and start again with current page */
+> @@ -459,7 +459,7 @@ static void writepages_done(struct osd_r
+>  		good_bytes = pcol->length - resid;
+>  
+>  	EXOFS_DBGMSG("writepages_done(%lx) good_bytes=%llx"
+> -		     " length=%zx nr_pages=%u\n",
+> +		     " length=%lx nr_pages=%u\n",
+>  		     pcol->inode->i_ino, _LLU(good_bytes), pcol->length,
+>  		     pcol->nr_pages);
+>  
+> @@ -531,7 +531,7 @@ static int write_exec(struct page_collec
+>  	}
+>  
+>  	atomic_inc(&pcol->sbi->s_curr_pending);
+> -	EXOFS_DBGMSG("write_exec(%lx, %lx) start=%llx length=%zx\n",
+> +	EXOFS_DBGMSG("write_exec(%lx, %lx) start=%llx length=%lx\n",
+>  		  pcol->inode->i_ino, pcol->pg_first, _LLU(i_start),
+>  		  pcol->length);
+>  	/* pages ownership was passed to pcol_copy */
+> @@ -608,7 +608,7 @@ try_again:
+>  	ret = pcol_add_page(pcol, page, len);
+>  	if (unlikely(ret)) {
+>  		EXOFS_DBGMSG("Failed pcol_add_page "
+> -			     "nr_pages=%u total_length=%zx\n",
+> +			     "nr_pages=%u total_length=%lx\n",
+>  			     pcol->nr_pages, pcol->length);
+>  
+>  		/* split the request, next loop will start again */
