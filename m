@@ -1,59 +1,44 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Re: Next March 27 : s390 defconfig build failure
-Date: Mon, 30 Mar 2009 15:21:37 +0530
-Message-ID: <49D09629.2010706@in.ibm.com>
-References: <20090327231924.4e4168c5.sfr@canb.auug.org.au> <49CCDB30.7010203@in.ibm.com> <20090327154027.55afeb02@osiris.boeblingen.de.ibm.com>
+From: Patrick McHardy <kaber@trash.net>
+Subject: Re: linux-next: Tree for March 27 (netfilter build error)
+Date: Mon, 30 Mar 2009 14:00:54 +0200
+Message-ID: <49D0B476.2000607@trash.net>
+References: <20090329064704.GA7255@localhost>	<20090328.234739.26481917.davem@davemloft.net>	<49CF62A2.6050803@netfilter.org> <20090329.134614.198823811.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-15; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp09.au.ibm.com ([202.81.31.142]:37164 "EHLO
-	e23smtp09.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752429AbZC3Jvp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Mar 2009 05:51:45 -0400
-In-Reply-To: <20090327154027.55afeb02@osiris.boeblingen.de.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Ingo Molnar <mingo@elte.hu>, linux-s390@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20090329.134614.198823811.davem@davemloft.net>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: pablo@netfilter.org, gorcunov@gmail.com, randy.dunlap@oracle.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Heiko Carstens wrote:
-> Thanks for reporting. Ingo, could you pick up the patch below please?
->
-> Subject: [PATCH] s390/hypfs: fix build breakage
->
-> From: Heiko Carstens <heiko.carstens@de.ibm.com>
->
-> Fix build breakage below which probably was introduced with
-> ("rcu: don't include unnecessary headers, allow kmemtrace w/ tracepoints").
->
->   CC      arch/s390/hypfs/hypfs_diag.o
-> arch/s390/hypfs/hypfs_diag.c: In function 'diag204_free_buffer':
-> arch/s390/hypfs/hypfs_diag.c:364: error: implicit declaration of function 'free_pages'
-> arch/s390/hypfs/hypfs_diag.c: In function 'diag204_alloc_rbuf':
-> arch/s390/hypfs/hypfs_diag.c:384: error: implicit declaration of function '__get_free_pages'
-> arch/s390/hypfs/hypfs_diag.c:384: error: 'GFP_KERNEL' undeclared (first use in this function)
-> arch/s390/hypfs/hypfs_diag.c:384: error: (Each undeclared identifier is reported only once
-> arch/s390/hypfs/hypfs_diag.c:384: error: for each function it appears in.)
->
-> Reported-by: Sachin Sant <sachinp@in.ibm.com>
-> Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-> ---
->   
-Today's next tree also has this build failure and the above mentioned
-patch fixes the issue.
+David Miller wrote:
+> From: Pablo Neira Ayuso <pablo@netfilter.org>
+> Date: Sun, 29 Mar 2009 13:59:30 +0200
+> 
+>> David Miller wrote:
+>>> From: Cyrill Gorcunov <gorcunov@gmail.com>
+>>> Date: Sun, 29 Mar 2009 10:47:04 +0400
+>>>
+>>>> [Randy Dunlap - Sat, Mar 28, 2009 at 09:26:42PM -0700]
+>>>> ... 
+>>>> | works_for_me.  Thanks.
+>>>> | but missing S-O-B.
+>>>> | 
+>>>> | Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+>>>> ...
+>>>>
+>>>> Thanks for testing Randy. So if nobody will complain
+>>>> here is a solid version of the patch. Though I would like
+>>>> if Pablo or Patrick confirm its correctness. Thanks!
+>>> I'll apply this once Patrick or Pablo have a look at it.
+>> I think that the patch attached is better since it removes the overhead
+>> of the IPv6 dependency, which is indeed too much for the use of one
+>> function. Thanks.
+> 
+> I think it's a lot better too, applied, thanks!
 
-Tested-by : Sachin Sant <sachinp@in.ibm.com>
-
-Thanks
--Sachin
+No objections from my side, thanks :)
 
 
--- 
-
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
