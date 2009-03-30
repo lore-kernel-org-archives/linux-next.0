@@ -1,61 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: origin tree build failure
-Date: Mon, 30 Mar 2009 11:55:41 +1100
-Message-ID: <20090330115541.eb051c80.sfr@canb.auug.org.au>
+Subject: Re: linux-next: net tree build failure
+Date: Mon, 30 Mar 2009 12:15:11 +1100
+Message-ID: <20090330121511.05f9cd8b.sfr@canb.auug.org.au>
+References: <20090319154617.12fed283.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47970 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60505 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753631AbZC3Azs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 29 Mar 2009 20:55:48 -0400
+	id S1751137AbZC3BPQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 29 Mar 2009 21:15:16 -0400
+In-Reply-To: <20090319154617.12fed283.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Steven Rostedt <srostedt@redhat.com>, Neil Horman <nhorman@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>
 
 Hi all,
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+On Thu, 19 Mar 2009 15:46:17 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> 
+> In file included from net/core/skbuff.c:69:
+> include/trace/skb.h:4: error: expected ')' before '(' token
+> include/trace/skb.h:4: error: expected ')' before '(' token
+> include/trace/skb.h:4: warning: function declaration isn't a prototype
+> include/trace/skb.h: In function 'register_trace_kfree_skb':
+> include/trace/skb.h:4: error: 'probe' undeclared (first use in this function)
+> include/trace/skb.h:4: error: (Each undeclared identifier is reported only once
+> include/trace/skb.h:4: error: for each function it appears in.)
+> include/trace/skb.h: At top level:
+> include/trace/skb.h:4: error: expected ')' before '(' token
+> include/trace/skb.h:4: warning: function declaration isn't a prototype
+> include/trace/skb.h: In function 'unregister_trace_kfree_skb':
+> include/trace/skb.h:4: error: 'probe' undeclared (first use in this function)
+> net/core/skbuff.c: In function 'kfree_skb':
+> net/core/skbuff.c:446: error: implicit declaration of function 'trace_kfree_skb'
+> 
+> Caused by commit 2939b0469d04ba9ac791aca9a81625d7eb50662b ("tracing:
+> replace TP<var> with TP_<var>") from the tracing tree interacting with
+> commit 4893d39e865b2897bf9fcd329697d37032d853a1 ("Network Drop Monitor:
+> Add trace declaration for skb frees") from the net tree.
+> 
+> I added the merge fixup below and can carry it as necessary.
 
-arch/x86/kernel/cpu/cpufreq/p4-clockmod.c: In function 'cpufreq_p4_cpu_init':
-arch/x86/kernel/cpu/cpufreq/p4-clockmod.c:232: error: implicit declaration of function 'recalibrate_cpu_khz'
+This patch should now be applicable to the tracing tree.
 
-Caused by a mismerge or arch/x86/include/asm/timer.h in
-6e15cf04860074ad032e88c306bea656bbdd0f22 ("Merge branch 'core/percpu'
-into percpu-cpumask-x86-for-linus-2") which then propogated back into
-Linus' tree.
+diff --git a/include/trace/skb.h b/include/trace/skb.h
+index 3aa8646..d9679c2 100644
+--- a/include/trace/skb.h
++++ b/include/trace/skb.h
+@@ -2,7 +2,7 @@
+ #define _TRACE_SKB_H_
+ 
+ DECLARE_TRACE(kfree_skb,
+-	TPPROTO(struct sk_buff *skb, void *location),
+-	TPARGS(skb, location));
++	TP_PROTO(struct sk_buff *skb, void *location),
++	TP_ARGS(skb, location));
+ 
+ #endif
+-- 
+1.6.2.1
 
-I applied the following patch.
+
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 30 Mar 2009 11:10:27 +1100
-Subject: [PATCH] x86: fix mismerge in arch/x86/include/asm/timer.h
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/x86/include/asm/timer.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/arch/x86/include/asm/timer.h b/arch/x86/include/asm/timer.h
-index a81195e..bd37ed4 100644
---- a/arch/x86/include/asm/timer.h
-+++ b/arch/x86/include/asm/timer.h
-@@ -12,9 +12,9 @@ unsigned long native_calibrate_tsc(void);
- 
- #ifdef CONFIG_X86_32
- extern int timer_ack;
--extern int recalibrate_cpu_khz(void);
- extern irqreturn_t timer_interrupt(int irq, void *dev_id);
- #endif /* CONFIG_X86_32 */
-+extern int recalibrate_cpu_khz(void);
- 
- extern int no_timer_check;
- 
--- 
-1.6.2.1
