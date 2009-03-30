@@ -1,49 +1,70 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH -next] exofs: fix printk format warnings
-Date: Mon, 30 Mar 2009 18:15:30 +0200
-Message-ID: <10f740e80903300915n7eba3a51hd20ede39c76a9421@mail.gmail.com>
-References: <20090326190130.54fc6fde.sfr@canb.auug.org.au>
-	 <49CBF73E.2010808@oracle.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for March 30
+Date: Mon, 30 Mar 2009 20:37:06 +0200
+Message-ID: <200903302037.06373.rjw@sisk.pl>
+References: <20090330200145.8d0da09b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain;
+  charset="iso-8859-2"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <49CBF73E.2010808@oracle.com>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>, Boaz Harrosh <bharrosh@panasas.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ogre.sisk.pl ([217.79.144.158]:39821 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752216AbZC3ShT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Mar 2009 14:37:19 -0400
+In-Reply-To: <20090330200145.8d0da09b.sfr@canb.auug.org.au>
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-On Thu, Mar 26, 2009 at 23:44, Randy Dunlap <randy.dunlap@oracle.com> wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
->
-> Fix exofs printk format warnings:
->
-> fs/exofs/inode.c:184: warning: format '%zx' expects type 'size_t', but argument 6 has type 'long unsigned int'
-> fs/exofs/inode.c:291: warning: format '%zx' expects type 'size_t', but argument 6 has type 'long unsigned int'
-> fs/exofs/inode.c:373: warning: format '%zx' expects type 'size_t', but argument 7 has type 'long unsigned int'
-> fs/exofs/inode.c:461: warning: format '%zx' expects type 'size_t', but argument 6 has type 'long unsigned int'
-> fs/exofs/inode.c:534: warning: format '%zx' expects type 'size_t', but argument 7 has type 'long unsigned int'
-> fs/exofs/inode.c:610: warning: format '%zx' expects type 'size_t', but argument 5 has type 'long unsigned
+On Monday 30 March 2009, Stephen Rothwell wrote:
+> Hi all,
 
-It also wouldn't hurt to
-  - kill EXOFS_DBGMSG()
-  - s/EXOFS_DBGMSG/pr_debug/g
-  - #define pr_fmt(fmt) "%s: " fmt, __func__
+Hi Stephen,
 
-That way we always get printf()-style warning checking, even if
-CONFIG_EXOFS_DEBUG
-is not enabled.
+> Changes since 20090327:
+> 
+> Various conflicts have moved around due to some trees being merged into
+> Linus' tree.
+> 
+> Linus' tree gained a build failure for which I applied a patch.
+> 
+> The arm tree lost its three conflicts.
+> 
+> The tracing tree inherited a build failure from the net tree.
+> 
+> The genirq tree lost its conflict.
+> 
+> The sched tree lost its conflict.
+> 
+> The v4l-dvb tree lost its build failure.
+> 
+> The acpi tree gained a conflict against Linus' tree but lost its build
+> failure.
+> 
+> The ext4 tree lost its conflict.
+> 
+> The net tree lost all its conflicts.
+> 
+> The rr tree lost 8 conflicts.
+> 
+> The slab tree lost all its conflicts.
+> 
+> The drm tree lost its conflict.
+> 
+> The lblnet tree lost its conflicts.
+> 
+> The proc tree gained a build failure due to a new commit in Linus' tree -
+> I applied a patch.
+> 
+> The suspend tree lost its conflict.
 
-Similar for EXOFS_ERR() -> pr_err()
+For your information, I have created for-linus branch in the suspend tree.
+Currently, it is identical to the linux-next branch, but in future the Linus'
+tree will be periodically merged into the for-linus branch and the linux-next
+branch will be rebased on top of it.
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Thanks,
+Rafael
