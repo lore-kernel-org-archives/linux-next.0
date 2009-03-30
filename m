@@ -1,64 +1,44 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCHSET 0/8 version 4] exofs for kernel 2.6.30
-Date: Mon, 30 Mar 2009 14:22:00 -0700
-Message-ID: <20090330142200.af4b497c.akpm@linux-foundation.org>
-References: <49C1331D.1080805@panasas.com>
+From: Russ Anderson <rja@sgi.com>
+Subject: [patch bugfix] UV system table in bios accessed after unmap
+Date: Mon, 30 Mar 2009 17:52:40 -0500
+Message-ID: <20090330225240.GA22776@sgi.com>
+Reply-To: Russ Anderson <rja@sgi.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <49C1331D.1080805@panasas.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Boaz Harrosh <bharrosh@panasas.com>
-Cc: avishay@gmail.com, jeff@garzik.org, linux-fsdevel@vger.kernel.org, osd-dev@open-osd.org, zbr@ioremap.net, James.Bottomley@HansenPartnership.com, linux-kernel@vger.kernel.org, fujita.tomonori@lab.ntt.co.jp, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from relay2.sgi.com ([192.48.179.30]:46147 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751869AbZC3Wwn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Mar 2009 18:52:43 -0400
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
+Cc: Russ Anderson <rja@sgi.com>
 
-On Wed, 18 Mar 2009 19:45:01 +0200
-Boaz Harrosh <bharrosh@panasas.com> wrote:
+Use the copy of UV system table in kernel memory, not the one in
+bios after unmapping.
 
-> What's new since last iteration:
-> 
-> * I completely re-wrote the [PATCH 4/8] exofs: address_space_operations
->   in which we actually write/read to/from osd-storage. The difference is
->   that now we try to accumulate as many contiguous pages as possible and
->   send them as one large request. As opposed to writing each page at a
->   time, in the previous patchset.
-> 
-> * [PATCH 5/8] exofs: dir_inode and directory operations received lots
->   of love thanks to Evgeniy Polyakov's grate comments.
-> 
-> exofs is a file system that uses an OSD device as it's back store.
-> 
-> OSD is a new T10 command set that views storage devices not as a large/flat
-> array of sectors but as a container of objects, each having a length, quota,
-> time attributes and more. Each object is addressed by a 64bit ID, and is
-> contained in a 64bit ID partition. Each object has associated attributes
-> attached to it, which are integral part of the object and provide metadata about
-> the object. The standard defines some common obligatory attributes, but user
-> attributes can be added as needed.
-> 
-> Here is the list of patches
-> [PATCH 1/8] exofs: Kbuild, Headers and osd utils
-> [PATCH 2/8] exofs: file and file_inode operations
-> [PATCH 3/8] exofs: symlink_inode and fast_symlink_inode operations
-> [PATCH 4/8] exofs: address_space_operations
-> [PATCH 5/8] exofs: dir_inode and directory operations
-> [PATCH 6/8] exofs: super_operations and file_system_type
-> [PATCH 7/8] exofs: Documentation
-> [PATCH 8/8] fs: Add exofs to Kernel build
+Signed-off-by: Russ Anderson <rja@sgi.com>
 
-Are all the prerequisites for exofs now in mainline?
+---
+ arch/x86/kernel/bios_uv.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> This patchset is also available on:
->   git-clone git://git.open-osd.org/linux-open-osd.git linux-next
-> or on the web at:
->   http://git.open-osd.org/gitweb.cgi?p=linux-open-osd.git;a=shortlog;h=refs/heads/linux-next
-
-Well I could merge them, but given that you have a git tree, a more
-convenient path would be for us to include your tree in linux-next and
-then you ask Linus to pull it directly when the time comes.
-
-I'm unsure when that time will come.  Who has reviewed this work and
-what was the result?
-
-
+Index: linux-next/arch/x86/kernel/bios_uv.c
+===================================================================
+--- linux-next.orig/arch/x86/kernel/bios_uv.c	2009-03-30 17:39:26.622178261 -0500
++++ linux-next/arch/x86/kernel/bios_uv.c	2009-03-30 17:44:12.703957062 -0500
+@@ -182,7 +182,8 @@ void uv_bios_init(void)
+ 	memcpy(&uv_systab, tab, sizeof(struct uv_systab));
+ 	iounmap(tab);
+ 
+-	printk(KERN_INFO "EFI UV System Table Revision %d\n", tab->revision);
++	printk(KERN_INFO "EFI UV System Table Revision %d\n",
++					uv_systab.revision);
+ }
+ #else	/* !CONFIG_EFI */
+ 
+-- 
+Russ Anderson, OS RAS/Partitioning Project Lead  
+SGI - Silicon Graphics Inc          rja@sgi.com
