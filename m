@@ -1,51 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: ext4 tree build warning
-Date: Mon, 30 Mar 2009 15:48:55 +1100
-Message-ID: <20090330154855.fa132bf8.sfr@canb.auug.org.au>
+Subject: linux-next: proc tree build failure
+Date: Mon, 30 Mar 2009 17:43:53 +1100
+Message-ID: <20090330174353.14a3f3d4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__30_Mar_2009_15_48_55_+1100_jpjQ.ENvKf2ajaDo"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37338 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59072 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751020AbZC3EtG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Mar 2009 00:49:06 -0400
+	id S1753202AbZC3Gn6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Mar 2009 02:43:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Tso <tytso@MIT.EDU>
-Cc: linux-next@vger.kernel.org, Thiemo Nagel <thiemo.nagel@ph.tum.de>
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: linux-next@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>, Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Mon__30_Mar_2009_15_48_55_+1100_jpjQ.ENvKf2ajaDo
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Alexey,
 
-Hi Ted,
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
+fs/proc/proc_net.c: In function 'proc_net_get_sb':
+fs/proc/proc_net.c:296: error: void value not ignored as it ought to be
 
-fs/ext4/inode.c: In function '__ext4_check_blockref':
-fs/ext4/inode.c:385: warning: format '%u' expects type 'unsigned int', but =
-argument 7 has type 'long int'
+Caused by commit 39bc389a04412aa199d8abec6582be33d57d1344 ("proc 3/6:
+make /proc/net it's own filesystem") interacting with commit
+a3ec947c85ec339884b30ef6a08133e9311fdae1 ("vfs: simple_set_mnt() should
+return void") from Linus' tree.
 
-Introduced by commit 768df0e2c1d53ee0384e3021e2f1c90882804548 ("ext4: add
-checks of block references for non-extent inodes").
-
---=20
+I applied the following patch and can carry it for a while.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__30_Mar_2009_15_48_55_+1100_jpjQ.ENvKf2ajaDo
-Content-Type: application/pgp-signature
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 30 Mar 2009 17:41:54 +1100
+Subject: [PATCH] proc: update proc_net.c for simple_set_mnt API change
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/proc/proc_net.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
-iEYEARECAAYFAknQTzcACgkQjjKRsyhoI8yydACfXb8nqMFjtYUfPMX06SzNT8lY
-2RAAoIAE83fHTjcaqXM5gI/U/TpVmql1
-=nQWY
------END PGP SIGNATURE-----
-
---Signature=_Mon__30_Mar_2009_15_48_55_+1100_jpjQ.ENvKf2ajaDo--
+diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
+index 32dd84f..1e31e5d 100644
+--- a/fs/proc/proc_net.c
++++ b/fs/proc/proc_net.c
+@@ -293,7 +293,8 @@ static int proc_net_get_sb(struct file_system_type *fs_type,
+ 		sb->s_flags |= MS_ACTIVE;
+ 	}
+ 
+-	return simple_set_mnt(mnt, sb);
++	simple_set_mnt(mnt, sb);
++	return 0;
+ }
+ 
+ static struct file_system_type proc_net_fs_type = {
+-- 
+1.6.2.1
