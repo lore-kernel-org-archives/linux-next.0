@@ -1,70 +1,64 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: Tree for March 30
-Date: Mon, 30 Mar 2009 20:37:06 +0200
-Message-ID: <200903302037.06373.rjw@sisk.pl>
-References: <20090330200145.8d0da09b.sfr@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCHSET 0/8 version 4] exofs for kernel 2.6.30
+Date: Mon, 30 Mar 2009 14:22:00 -0700
+Message-ID: <20090330142200.af4b497c.akpm@linux-foundation.org>
+References: <49C1331D.1080805@panasas.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-2"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:39821 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752216AbZC3ShT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Mar 2009 14:37:19 -0400
-In-Reply-To: <20090330200145.8d0da09b.sfr@canb.auug.org.au>
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <49C1331D.1080805@panasas.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Boaz Harrosh <bharrosh@panasas.com>
+Cc: avishay@gmail.com, jeff@garzik.org, linux-fsdevel@vger.kernel.org, osd-dev@open-osd.org, zbr@ioremap.net, James.Bottomley@HansenPartnership.com, linux-kernel@vger.kernel.org, fujita.tomonori@lab.ntt.co.jp, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Monday 30 March 2009, Stephen Rothwell wrote:
-> Hi all,
+On Wed, 18 Mar 2009 19:45:01 +0200
+Boaz Harrosh <bharrosh@panasas.com> wrote:
 
-Hi Stephen,
+> What's new since last iteration:
+> 
+> * I completely re-wrote the [PATCH 4/8] exofs: address_space_operations
+>   in which we actually write/read to/from osd-storage. The difference is
+>   that now we try to accumulate as many contiguous pages as possible and
+>   send them as one large request. As opposed to writing each page at a
+>   time, in the previous patchset.
+> 
+> * [PATCH 5/8] exofs: dir_inode and directory operations received lots
+>   of love thanks to Evgeniy Polyakov's grate comments.
+> 
+> exofs is a file system that uses an OSD device as it's back store.
+> 
+> OSD is a new T10 command set that views storage devices not as a large/flat
+> array of sectors but as a container of objects, each having a length, quota,
+> time attributes and more. Each object is addressed by a 64bit ID, and is
+> contained in a 64bit ID partition. Each object has associated attributes
+> attached to it, which are integral part of the object and provide metadata about
+> the object. The standard defines some common obligatory attributes, but user
+> attributes can be added as needed.
+> 
+> Here is the list of patches
+> [PATCH 1/8] exofs: Kbuild, Headers and osd utils
+> [PATCH 2/8] exofs: file and file_inode operations
+> [PATCH 3/8] exofs: symlink_inode and fast_symlink_inode operations
+> [PATCH 4/8] exofs: address_space_operations
+> [PATCH 5/8] exofs: dir_inode and directory operations
+> [PATCH 6/8] exofs: super_operations and file_system_type
+> [PATCH 7/8] exofs: Documentation
+> [PATCH 8/8] fs: Add exofs to Kernel build
 
-> Changes since 20090327:
-> 
-> Various conflicts have moved around due to some trees being merged into
-> Linus' tree.
-> 
-> Linus' tree gained a build failure for which I applied a patch.
-> 
-> The arm tree lost its three conflicts.
-> 
-> The tracing tree inherited a build failure from the net tree.
-> 
-> The genirq tree lost its conflict.
-> 
-> The sched tree lost its conflict.
-> 
-> The v4l-dvb tree lost its build failure.
-> 
-> The acpi tree gained a conflict against Linus' tree but lost its build
-> failure.
-> 
-> The ext4 tree lost its conflict.
-> 
-> The net tree lost all its conflicts.
-> 
-> The rr tree lost 8 conflicts.
-> 
-> The slab tree lost all its conflicts.
-> 
-> The drm tree lost its conflict.
-> 
-> The lblnet tree lost its conflicts.
-> 
-> The proc tree gained a build failure due to a new commit in Linus' tree -
-> I applied a patch.
-> 
-> The suspend tree lost its conflict.
+Are all the prerequisites for exofs now in mainline?
 
-For your information, I have created for-linus branch in the suspend tree.
-Currently, it is identical to the linux-next branch, but in future the Linus'
-tree will be periodically merged into the for-linus branch and the linux-next
-branch will be rebased on top of it.
+> This patchset is also available on:
+>   git-clone git://git.open-osd.org/linux-open-osd.git linux-next
+> or on the web at:
+>   http://git.open-osd.org/gitweb.cgi?p=linux-open-osd.git;a=shortlog;h=refs/heads/linux-next
 
-Thanks,
-Rafael
+Well I could merge them, but given that you have a git tree, a more
+convenient path would be for us to include your tree in linux-next and
+then you ask Linus to pull it directly when the time comes.
+
+I'm unsure when that time will come.  Who has reviewed this work and
+what was the result?
+
+
