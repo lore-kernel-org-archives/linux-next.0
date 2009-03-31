@@ -1,51 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with the cpus4096 tree
-Date: Tue, 31 Mar 2009 13:39:53 +1100
-Message-ID: <20090331133953.73d33570.sfr@canb.auug.org.au>
+Subject: Re: [PATCHSET 0/8 version 4] exofs for kernel 2.6.30
+Date: Tue, 31 Mar 2009 14:01:24 +1100
+Message-ID: <20090331140124.a21da743.sfr@canb.auug.org.au>
+References: <49C1331D.1080805@panasas.com>
+	<20090330142200.af4b497c.akpm@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__31_Mar_2009_13_39_53_+1100_AYQT1IJ3Aa7R3cpL"
+ boundary="Signature=_Tue__31_Mar_2009_14_01_24_+1100_O+4Ko2zyoDDMMU3N"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57033 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43195 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753185AbZCaCkF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Mar 2009 22:40:05 -0400
+	id S1760984AbZCaDBe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Mar 2009 23:01:34 -0400
+In-Reply-To: <20090330142200.af4b497c.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Robert Richter <robert.richter@amd.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Boaz Harrosh <bharrosh@panasas.com>, avishay@gmail.com, jeff@garzik.org, linux-fsdevel@vger.kernel.org, osd-dev@open-osd.org, zbr@ioremap.net, James.Bottomley@HansenPartnership.com, linux-kernel@vger.kernel.org, fujita.tomonori@lab.ntt.co.jp, linux-next@vger.kernel.org
 
---Signature=_Tue__31_Mar_2009_13_39_53_+1100_AYQT1IJ3Aa7R3cpL
+--Signature=_Tue__31_Mar_2009_14_01_24_+1100_O+4Ko2zyoDDMMU3N
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+On Mon, 30 Mar 2009 14:22:00 -0700 Andrew Morton <akpm@linux-foundation.org=
+> wrote:
+>
+> > This patchset is also available on:
+> >   git-clone git://git.open-osd.org/linux-open-osd.git linux-next
+> > or on the web at:
+> >   http://git.open-osd.org/gitweb.cgi?p=3Dlinux-open-osd.git;a=3Dshortlo=
+g;h=3Drefs/heads/linux-next
+>=20
+> Well I could merge them, but given that you have a git tree, a more
+> convenient path would be for us to include your tree in linux-next and
+> then you ask Linus to pull it directly when the time comes.
 
-Today's linux-next merge of the rr tree got a conflict in
-drivers/oprofile/buffer_sync.c between commit
-4c50d9ea9ca9e46b65aeffed3e0d6f54ff38c8d4 ("cpumask: modifiy oprofile
-initialization") from the cpus4096 tree and commit
-d6d66104b6a06bc0bb541ac59aff59fad46ad466 ("oprofile: Thou shalt not call
-__exit functions from __init functions") from the rr tree.
+$ git cat-file -p next-20090330:Next/Trees | grep osd
+osd		git	git://git.open-osd.org/linux-open-osd.git#linux-next
 
-The former just removed the code that the latter was modifying, so I used
-the former version.
+i.e. its in there.  Those particular patches have been in linux-next
+since next-20090326 and presumably have been built by the
+all{yes,mod}config builds I do.
+
+> I'm unsure when that time will come.  Who has reviewed this work and
+> what was the result?
+
+That is a good question.  The other is "Is this destined for 2.6.30?"
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__31_Mar_2009_13_39_53_+1100_AYQT1IJ3Aa7R3cpL
+--Signature=_Tue__31_Mar_2009_14_01_24_+1100_O+4Ko2zyoDDMMU3N
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAknRgnkACgkQjjKRsyhoI8z36gCeOSGtANKvKJ+NF1/X0mwMeOyO
-QFkAnRUhjdtHMcpwwzWPDStT9IFDuTvd
-=rzCk
+iEYEARECAAYFAknRh4QACgkQjjKRsyhoI8xDgwCglNFmLN5P9morMjPPbqBcpfRa
+ymgAoLGhL7eNAm+DTUDYOnqOsSA2l2hz
+=PKgw
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__31_Mar_2009_13_39_53_+1100_AYQT1IJ3Aa7R3cpL--
+--Signature=_Tue__31_Mar_2009_14_01_24_+1100_O+4Ko2zyoDDMMU3N--
