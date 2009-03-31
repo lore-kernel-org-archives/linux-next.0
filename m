@@ -1,39 +1,31 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: [PATCH] sony-laptop should depend on RFKILL
-Date: Wed, 1 Apr 2009 02:34:07 +0400
-Message-ID: <20090331223407.GA10676@orion>
+From: Matthew Garrett <mjg59@srcf.ucam.org>
+Subject: Re: [PATCH] sony-laptop should depend on RFKILL
+Date: Tue, 31 Mar 2009 23:35:55 +0100
+Message-ID: <20090331223555.GA31066@srcf.ucam.org>
+References: <20090331223407.GA10676@orion>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f169.google.com ([209.85.218.169]:53948 "EHLO
-	mail-bw0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755420AbZCaWeQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 31 Mar 2009 18:34:16 -0400
+Received: from cavan.codon.org.uk ([93.93.128.6]:37049 "EHLO
+	vavatch.codon.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757393AbZCaWgC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 31 Mar 2009 18:36:02 -0400
 Content-Disposition: inline
+In-Reply-To: <20090331223407.GA10676@orion>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matthew Garrett <mjg@redhat.com>, Mattia Dongili <malattia@linux.it>, Len Brown <len.brown@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: Mattia Dongili <malattia@linux.it>, Len Brown <len.brown@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fixes this build error when RFKILL is not set:
+On Wed, Apr 01, 2009 at 02:34:07AM +0400, Alexander Beregalov wrote:
+> Fixes this build error when RFKILL is not set:
+> 
+> drivers/platform/x86/sony-laptop.c:1050: undefined reference to `rfkill_unregister'
+> and so on..
+> 
+> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
 
-drivers/platform/x86/sony-laptop.c:1050: undefined reference to `rfkill_unregister'
-and so on..
+Acked-by: Matthew Garrett <mjg@redhat.com>
 
-Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
----
-
- drivers/platform/x86/Kconfig |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 3608081..36b1628 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -165,6 +165,7 @@ config SONY_LAPTOP
- 	depends on ACPI
- 	select BACKLIGHT_CLASS_DEVICE
- 	depends on INPUT
-+	depends on RFKILL
- 	  ---help---
- 	  This mini-driver drives the SNC and SPIC devices present in the ACPI
- 	  BIOS of the Sony Vaio laptops.
+-- 
+Matthew Garrett | mjg59@srcf.ucam.org
