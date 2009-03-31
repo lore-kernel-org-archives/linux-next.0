@@ -1,47 +1,29 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: reminder about contents
-Date: Tue, 31 Mar 2009 17:47:20 +1100
-Message-ID: <20090331174720.6dd74448.sfr@canb.auug.org.au>
+From: Evgeniy Polyakov <zbr@ioremap.net>
+Subject: Re: [PATCHSET 0/8 version 4] exofs for kernel 2.6.30
+Date: Tue, 31 Mar 2009 11:13:26 +0400
+Message-ID: <20090331071326.GA5072@ioremap.net>
+References: <49C1331D.1080805@panasas.com> <20090330142200.af4b497c.akpm@linux-foundation.org> <20090331140124.a21da743.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__31_Mar_2009_17_47_20_+1100_gvfETyBl+MB3+oFI"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58894 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755137AbZCaGra (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 31 Mar 2009 02:47:30 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: linux-next@vger.kernel.org
-
---Signature=_Tue__31_Mar_2009_17_47_20_+1100_gvfETyBl+MB3+oFI
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20090331140124.a21da743.sfr@canb.auug.org.au>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Boaz Harrosh <bharrosh@panasas.com>, avishay@gmail.com, jeff@garzik.org, linux-fsdevel@vger.kernel.org, osd-dev@open-osd.org, James.Bottomley@HansenPartnership.com, linux-kernel@vger.kernel.org, fujita.tomonori@lab.ntt.co.jp, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi.
 
-Just a reminder that I don't want any 2.6.31 material in linux-next until
-after 2.6.30-rc1 is released.
+On Tue, Mar 31, 2009 at 02:01:24PM +1100, Stephen Rothwell (sfr@canb.auug.org.au) wrote:
+> > I'm unsure when that time will come.  Who has reviewed this work and
+> > what was the result?
+> 
+> That is a good question.  The other is "Is this destined for 2.6.30?"
 
-Thanks for your cooperation.
+There was a lengthy discussion in scsi list.
+I made another review of the previous revision and we talked a bit about
+ducumented features/bugs for the current one.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__31_Mar_2009_17_47_20_+1100_gvfETyBl+MB3+oFI
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAknRvHgACgkQjjKRsyhoI8waSgCggSm7w5RiOfcH0tuqi5lel25u
-JOQAn0CM4SF21rPp8No3wiUS3yIzKpBp
-=W9Zj
------END PGP SIGNATURE-----
-
---Signature=_Tue__31_Mar_2009_17_47_20_+1100_gvfETyBl+MB3+oFI--
+-- 
+	Evgeniy Polyakov
