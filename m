@@ -1,14 +1,17 @@
 From: Alessio Igor Bogani <abogani@texware.it>
-Subject: [PATCH] Staging: sxg: replace __FUNCTION__ usages
-Date: Tue, 31 Mar 2009 21:40:50 +0200
-Message-ID: <1238528453-13251-1-git-send-email-abogani@texware.it>
+Subject: [PATCH] Staging: comedi: replace __FUNCTION__ usages
+Date: Tue, 31 Mar 2009 21:40:52 +0200
+Message-ID: <1238528453-13251-3-git-send-email-abogani@texware.it>
+References: <1238528453-13251-1-git-send-email-abogani@texware.it>
+ <1238528453-13251-2-git-send-email-abogani@texware.it>
 Return-path: <linux-next-owner@vger.kernel.org>
 Received: from mail-fx0-f158.google.com ([209.85.220.158]:58258 "EHLO
 	mail-fx0-f158.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751636AbZCaTlF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 31 Mar 2009 15:41:05 -0400
-Received: by fxm2 with SMTP id 2so2605355fxm.37
-        for <linux-next@vger.kernel.org>; Tue, 31 Mar 2009 12:41:01 -0700 (PDT)
+	with ESMTP id S1753121AbZCaTlI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 31 Mar 2009 15:41:08 -0400
+Received: by mail-fx0-f158.google.com with SMTP id 2so2605355fxm.37
+        for <linux-next@vger.kernel.org>; Tue, 31 Mar 2009 12:41:06 -0700 (PDT)
+In-Reply-To: <1238528453-13251-2-git-send-email-abogani@texware.it>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg Kroah-Hartman <gregkh@suse.de>
@@ -18,185 +21,284 @@ __FUNCTION__ is gcc-specific, use __func__
 
 Signed-off-by: Alessio Igor Bogani <abogani@texware.it>
 ---
- drivers/staging/sxg/sxg.c         |   38 ++++++++++++++++++------------------
- drivers/staging/sxg/sxg_ethtool.c |    2 +-
- 2 files changed, 20 insertions(+), 20 deletions(-)
+ drivers/staging/comedi/drivers/ni_660x.c       |    6 +++---
+ drivers/staging/comedi/drivers/ni_mio_common.c |   24 ++++++++++++------------
+ drivers/staging/comedi/drivers/ni_pcimio.c     |   10 +++++-----
+ drivers/staging/comedi/drivers/ni_stc.h        |   14 +++++++-------
+ drivers/staging/comedi/drivers/ni_tio.c        |    2 +-
+ 5 files changed, 28 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/staging/sxg/sxg.c b/drivers/staging/sxg/sxg.c
-index 0050a02..ddf750d 100644
---- a/drivers/staging/sxg/sxg.c
-+++ b/drivers/staging/sxg/sxg.c
-@@ -350,7 +350,7 @@ void sxg_remove_msix_isr(struct adapter_t *adapter)
- 	for(i=0; i< adapter->nr_msix_entries;i++)
- 	{
- 		vector = adapter->msi_entries[i].vector;
--		DBG_ERROR("%s : Freeing IRQ vector#%d\n",__FUNCTION__,vector);
-+		DBG_ERROR("%s : Freeing IRQ vector#%d\n",__func__,vector);
- 		free_irq(vector,netdev);
- 	}
- }
-@@ -847,7 +847,7 @@ static inline int sxg_read_config(struct adapter_t *adapter)
-  		 * Get out of here
-  		 */
- 		printk(KERN_ERR"%s : Could not allocate memory for reading \
--				 EEPROM\n", __FUNCTION__);
-+				 EEPROM\n", __func__);
- 		return -ENOMEM;
- 	}
- 
-@@ -882,7 +882,7 @@ static inline int sxg_read_config(struct adapter_t *adapter)
- 	case SXG_CFG_LOAD_ERROR:
- 	default:	/* Fix default handler later */
- 		printk(KERN_WARNING"%s  : We could not read the config \
--			word. Status = %ld\n", __FUNCTION__, status);
-+			word. Status = %ld\n", __func__, status);
+diff --git a/drivers/staging/comedi/drivers/ni_660x.c b/drivers/staging/comedi/drivers/ni_660x.c
+index 14e35ba..3388fac 100644
+--- a/drivers/staging/comedi/drivers/ni_660x.c
++++ b/drivers/staging/comedi/drivers/ni_660x.c
+@@ -694,7 +694,7 @@ static enum NI_660x_Register ni_gpct_to_660x_register(enum ni_gpct_register reg)
+ 		break;
+ 	default:
+ 		rt_printk("%s: unhandled register 0x%x in switch.\n",
+-			__FUNCTION__, reg);
++			__func__, reg);
+ 		BUG();
+ 		return 0;
+ 		break;
+@@ -718,7 +718,7 @@ static inline void ni_660x_write_register(struct comedi_device * dev,
+ 		break;
+ 	default:
+ 		rt_printk("%s: %s: bug! unhandled case (reg=0x%x) in switch.\n",
+-			__FILE__, __FUNCTION__, reg);
++			__FILE__, __func__, reg);
+ 		BUG();
  		break;
  	}
- 	pci_free_consistent(adapter->pcidev, sizeof(struct sw_cfg_data), data,
-@@ -975,7 +975,7 @@ static int sxg_entry_probe(struct pci_dev *pcidev,
- 		adapter->asictype = SAHARA_REV_B;
- 	} else {
- 		ASSERT(0);
--		DBG_ERROR("%s Unexpected revision ID %x\n", __FUNCTION__, revision_id);
-+		DBG_ERROR("%s Unexpected revision ID %x\n", __func__, revision_id);
- 		goto err_out_exit_sxg_probe;
+@@ -740,7 +740,7 @@ static inline unsigned ni_660x_read_register(struct comedi_device * dev,
+ 		break;
+ 	default:
+ 		rt_printk("%s: %s: bug! unhandled case (reg=0x%x) in switch.\n",
+-			__FILE__, __FUNCTION__, reg);
++			__FILE__, __func__, reg);
+ 		BUG();
+ 		break;
  	}
- 	adapter->netdev = netdev;
-@@ -1164,9 +1164,9 @@ static int sxg_entry_probe(struct pci_dev *pcidev,
- 		  smp_processor_id());
- 
- 	pci_disable_device(pcidev);
--        DBG_ERROR("sxg: %s deallocate device\n", __FUNCTION__);
-+        DBG_ERROR("sxg: %s deallocate device\n", __func__);
-         kfree(netdev);
--	printk("Exit %s, Sxg driver loading failed..\n", __FUNCTION__);
-+	printk("Exit %s, Sxg driver loading failed..\n", __func__);
- 
- 	return -ENODEV;
- }
-@@ -2179,10 +2179,10 @@ static int sxg_entry_open(struct net_device *dev)
- 	/*
- 	 * The microcode expects it to be downloaded on every open.
- 	 */
--	DBG_ERROR("sxg: %s ENTER sxg_download_microcode\n", __FUNCTION__);
-+	DBG_ERROR("sxg: %s ENTER sxg_download_microcode\n", __func__);
- 	if (sxg_download_microcode(adapter, SXG_UCODE_SYSTEM)) {
- 		DBG_ERROR("sxg: %s ENTER sxg_adapter_set_hwaddr\n",
+diff --git a/drivers/staging/comedi/drivers/ni_mio_common.c b/drivers/staging/comedi/drivers/ni_mio_common.c
+index 542bd0d..abff5ad 100644
+--- a/drivers/staging/comedi/drivers/ni_mio_common.c
++++ b/drivers/staging/comedi/drivers/ni_mio_common.c
+@@ -397,7 +397,7 @@ static inline void ni_set_bitfield(struct comedi_device * dev, int reg,
+ 		break;
+ 	default:
+ 		rt_printk("Warning %s() called with invalid register\n",
+-			__FUNCTION__);
++			__func__);
+ 		rt_printk("reg is %d\n", reg);
+ 		break;
+ 	}
+@@ -2845,7 +2845,7 @@ static int ni_m_series_ao_config_chanlist(struct comedi_device * dev,
+ 			break;
+ 		default:
+ 			rt_printk("%s: bug! unhandled ao reference voltage\n",
 -				__FUNCTION__);
 +				__func__);
- 		sxg_read_config(adapter);
- 	} else {
- 		adapter->state = ADAPT_FAIL;
-@@ -2293,14 +2293,14 @@ static void __devexit sxg_entry_remove(struct pci_dev *pcidev)
-         mmio_start = pci_resource_start(pcidev, 0);
-         mmio_len = pci_resource_len(pcidev, 0);
- 
--        DBG_ERROR("sxg: %s rel_region(0) start[%x] len[%x]\n", __FUNCTION__,
-+        DBG_ERROR("sxg: %s rel_region(0) start[%x] len[%x]\n", __func__,
-                   mmio_start, mmio_len);
-         release_mem_region(mmio_start, mmio_len);
- 
-         mmio_start = pci_resource_start(pcidev, 2);
-         mmio_len = pci_resource_len(pcidev, 2);
- 
--        DBG_ERROR("sxg: %s rel_region(2) start[%x] len[%x]\n", __FUNCTION__,
-+        DBG_ERROR("sxg: %s rel_region(2) start[%x] len[%x]\n", __func__,
-                   mmio_start, mmio_len);
-         release_mem_region(mmio_start, mmio_len);
- 
-@@ -2386,7 +2386,7 @@ static int sxg_entry_halt(struct net_device *dev)
- 	atomic_set(&adapter->pending_allocations, 0);
- 	adapter->intrregistered = 0;
- 	sxg_remove_isr(adapter);
--	DBG_ERROR("sxg: %s (%s) EXIT\n", __FUNCTION__, dev->name);
-+	DBG_ERROR("sxg: %s (%s) EXIT\n", __func__, dev->name);
- 	return (STATUS_SUCCESS);
- }
- 
-@@ -2440,7 +2440,7 @@ static int sxg_send_packets(struct sk_buff *skb, struct net_device *dev)
- 	u32 status = STATUS_SUCCESS;
- 
- 	/*
--	 * DBG_ERROR("sxg: %s ENTER sxg_send_packets skb[%p]\n", __FUNCTION__,
-+	 * DBG_ERROR("sxg: %s ENTER sxg_send_packets skb[%p]\n", __func__,
- 	 *	  skb);
- 	 */
- 
-@@ -3364,7 +3364,7 @@ static int sxg_read_mdio_reg(struct adapter_t *adapter,
- 
- 	SXG_TRACE(TRACE_SXG, SxgTraceBuffer, TRACE_NOISY, "WrtMDIO",
- 		  adapter, 0, 0, 0);
--	DBG_ERROR("ENTER %s\n", __FUNCTION__);
-+	DBG_ERROR("ENTER %s\n", __func__);
- 
- 	/* Ensure values don't exceed field width */
- 	DevAddr &= 0x001F;	/* 5-bit field */
-@@ -3400,7 +3400,7 @@ static int sxg_read_mdio_reg(struct adapter_t *adapter,
- 		udelay(100);	/* Timeout in 100us units */
- 		READ_REG(HwRegs->MacAmiimIndicator, ValueRead);
- 		if (--Timeout == 0) {
--            DBG_ERROR("EXIT %s with STATUS_FAILURE 1\n", __FUNCTION__);
-+            DBG_ERROR("EXIT %s with STATUS_FAILURE 1\n", __func__);
- 
- 			return (STATUS_FAILURE);
+ 			break;
  		}
-@@ -3421,7 +3421,7 @@ static int sxg_read_mdio_reg(struct adapter_t *adapter,
- 		udelay(100);	/* Timeout in 100us units */
- 		READ_REG(HwRegs->MacAmiimIndicator, ValueRead);
- 		if (--Timeout == 0) {
--            DBG_ERROR("EXIT %s with STATUS_FAILURE 2\n", __FUNCTION__);
-+            DBG_ERROR("EXIT %s with STATUS_FAILURE 2\n", __func__);
- 
- 			return (STATUS_FAILURE);
+ 		switch (krange->max + krange->min) {
+@@ -2857,7 +2857,7 @@ static int ni_m_series_ao_config_chanlist(struct comedi_device * dev,
+ 			break;
+ 		default:
+ 			rt_printk("%s: bug! unhandled ao offset voltage\n",
+-				__FUNCTION__);
++				__func__);
+ 			break;
  		}
-@@ -3431,7 +3431,7 @@ static int sxg_read_mdio_reg(struct adapter_t *adapter,
- 	READ_REG(HwRegs->MacAmiimField, *pValue);
- 	*pValue &= 0xFFFF;	/* data is in the lower 16 bits */
- 
--	DBG_ERROR("EXIT %s\n", __FUNCTION__);
-+	DBG_ERROR("EXIT %s\n", __func__);
- 
- 	return (STATUS_SUCCESS);
- }
-@@ -3504,7 +3504,7 @@ static void sxg_mcast_set_mask(struct adapter_t *adapter)
- {
- 	struct sxg_ucode_regs *sxg_regs = adapter->UcodeRegs;
- 
--	DBG_ERROR("%s ENTER (%s) MacFilter[%x] mask[%llx]\n", __FUNCTION__,
-+	DBG_ERROR("%s ENTER (%s) MacFilter[%x] mask[%llx]\n", __func__,
- 		  adapter->netdev->name, (unsigned int)adapter->MacFilter,
- 		  adapter->MulticastMask);
- 
-@@ -4014,7 +4014,7 @@ static int sxg_adapter_set_hwaddr(struct adapter_t *adapter)
- 	 *  sxg_dbg_macaddrs(adapter);
- 	 */
- 	/* DBG_ERROR ("%s AFTER copying from config.macinfo into currmacaddr\n",
--	 *	   		__FUNCTION__);
-+	 *	   		__func__);
- 	 */
- 
- 	/* sxg_dbg_macaddrs(adapter); */
-@@ -4025,7 +4025,7 @@ static int sxg_adapter_set_hwaddr(struct adapter_t *adapter)
- 		printk("sxg: Dev is Null\n");
+ 		if (timed)
+@@ -4100,7 +4100,7 @@ static unsigned ni_gpct_to_stc_register(enum ni_gpct_register reg)
+ 		break;
+ 	default:
+ 		rt_printk("%s: unhandled register 0x%x in switch.\n",
+-			__FUNCTION__, reg);
++			__func__, reg);
+ 		BUG();
+ 		return 0;
+ 		break;
+@@ -5225,7 +5225,7 @@ static unsigned ni_old_get_pfi_routing(struct comedi_device * dev, unsigned chan
+ 		return NI_PFI_OUTPUT_G_GATE0;
+ 		break;
+ 	default:
+-		rt_printk("%s: bug, unhandled case in switch.\n", __FUNCTION__);
++		rt_printk("%s: bug, unhandled case in switch.\n", __func__);
+ 		break;
  	}
- 
--        DBG_ERROR("%s ENTER (%s)\n", __FUNCTION__, adapter->netdev->name);
-+        DBG_ERROR("%s ENTER (%s)\n", __func__, adapter->netdev->name);
- 
-         if (netif_running(dev)) {
-                 return -EBUSY;
-diff --git a/drivers/staging/sxg/sxg_ethtool.c b/drivers/staging/sxg/sxg_ethtool.c
-index 97f765d..ad89cb8 100644
---- a/drivers/staging/sxg/sxg_ethtool.c
-+++ b/drivers/staging/sxg/sxg_ethtool.c
-@@ -278,7 +278,7 @@ static int sxg_nic_get_eeprom(struct net_device *netdev,
-                  * Get out of here
-                  */
-                 printk(KERN_ERR"%s : Could not allocate memory for reading \
--                                EEPROM\n", __FUNCTION__);
-+                                EEPROM\n", __func__);
-                 return -ENOMEM;
-         }
- 
+ 	return 0;
+@@ -5390,7 +5390,7 @@ static int ni_mseries_get_pll_parameters(unsigned reference_period_ns,
+ 	}
+ 	if (best_period_picosec == 0) {
+ 		rt_printk("%s: bug, failed to find pll parameters\n",
+-			__FUNCTION__);
++			__func__);
+ 		return -EIO;
+ 	}
+ 	*freq_divider = best_div;
+@@ -5426,7 +5426,7 @@ static int ni_mseries_set_pll_master_clock(struct comedi_device * dev, unsigned
+ 	if (period_ns < min_period_ns || period_ns > max_period_ns) {
+ 		rt_printk
+ 			("%s: you must specify an input clock frequency between %i and %i nanosec "
+-			"for the phased-lock loop.\n", __FUNCTION__,
++			"for the phased-lock loop.\n", __func__,
+ 			min_period_ns, max_period_ns);
+ 		return -EINVAL;
+ 	}
+@@ -5498,7 +5498,7 @@ static int ni_mseries_set_pll_master_clock(struct comedi_device * dev, unsigned
+ 	if (i == timeout) {
+ 		rt_printk
+ 			("%s: timed out waiting for PLL to lock to reference clock source %i with period %i ns.\n",
+-			__FUNCTION__, source, period_ns);
++			__func__, source, period_ns);
+ 		return -ETIMEDOUT;
+ 	}
+ 	return 3;
+@@ -5535,7 +5535,7 @@ static int ni_set_master_clock(struct comedi_device * dev, unsigned source,
+ 				if (period_ns == 0) {
+ 					rt_printk
+ 						("%s: we don't handle an unspecified clock period correctly yet, returning error.\n",
+-						__FUNCTION__);
++						__func__);
+ 					return -EINVAL;
+ 				} else {
+ 					devpriv->clock_ns = period_ns;
+@@ -5558,7 +5558,7 @@ static int ni_valid_rtsi_output_source(struct comedi_device * dev, unsigned chan
+ 			else {
+ 				rt_printk
+ 					("%s: invalid source for channel=%i, channel %i is always the RTSI clock for pre-m-series boards.\n",
+-					__FUNCTION__, chan,
++					__func__, chan,
+ 					old_RTSI_clock_channel);
+ 				return 0;
+ 			}
+@@ -5621,7 +5621,7 @@ static unsigned ni_get_rtsi_routing(struct comedi_device * dev, unsigned chan)
+ 	} else {
+ 		if (chan == old_RTSI_clock_channel)
+ 			return NI_RTSI_OUTPUT_RTSI_OSC;
+-		rt_printk("%s: bug! should never get here?\n", __FUNCTION__);
++		rt_printk("%s: bug! should never get here?\n", __func__);
+ 		return 0;
+ 	}
+ }
+@@ -5716,7 +5716,7 @@ static int cs5529_wait_for_idle(struct comedi_device * dev)
+ 	}
+ //printk("looped %i times waiting for idle\n", i);
+ 	if (i == timeout) {
+-		rt_printk("%s: %s: timeout\n", __FILE__, __FUNCTION__);
++		rt_printk("%s: %s: timeout\n", __FILE__, __func__);
+ 		return -ETIME;
+ 	}
+ 	return 0;
+diff --git a/drivers/staging/comedi/drivers/ni_pcimio.c b/drivers/staging/comedi/drivers/ni_pcimio.c
+index 3a2aba7..d11beb6 100644
+--- a/drivers/staging/comedi/drivers/ni_pcimio.c
++++ b/drivers/staging/comedi/drivers/ni_pcimio.c
+@@ -1350,7 +1350,7 @@ static void m_series_stc_writew(struct comedi_device * dev, uint16_t data, int r
+ 	case DIO_Control_Register:
+ 		rt_printk
+ 			("%s: FIXME: register 0x%x does not map cleanly on to m-series boards.\n",
+-			__FUNCTION__, reg);
++			__func__, reg);
+ 		return;
+ 		break;
+ 	case G_Autoincrement_Register(0):
+@@ -1411,7 +1411,7 @@ static void m_series_stc_writew(struct comedi_device * dev, uint16_t data, int r
+ 		   and M_Offset_SCXI_Serial_Data_Out (8 bit) */
+ 	default:
+ 		rt_printk("%s: bug! unhandled register=0x%x in switch.\n",
+-			__FUNCTION__, reg);
++			__func__, reg);
+ 		BUG();
+ 		return;
+ 		break;
+@@ -1446,7 +1446,7 @@ static uint16_t m_series_stc_readw(struct comedi_device * dev, int reg)
+ 		break;
+ 	default:
+ 		rt_printk("%s: bug! unhandled register=0x%x in switch.\n",
+-			__FUNCTION__, reg);
++			__func__, reg);
+ 		BUG();
+ 		return 0;
+ 		break;
+@@ -1487,7 +1487,7 @@ static void m_series_stc_writel(struct comedi_device * dev, uint32_t data, int r
+ 		break;
+ 	default:
+ 		rt_printk("%s: bug! unhandled register=0x%x in switch.\n",
+-			__FUNCTION__, reg);
++			__func__, reg);
+ 		BUG();
+ 		return;
+ 		break;
+@@ -1513,7 +1513,7 @@ static uint32_t m_series_stc_readl(struct comedi_device * dev, int reg)
+ 		break;
+ 	default:
+ 		rt_printk("%s: bug! unhandled register=0x%x in switch.\n",
+-			__FUNCTION__, reg);
++			__func__, reg);
+ 		BUG();
+ 		return 0;
+ 		break;
+diff --git a/drivers/staging/comedi/drivers/ni_stc.h b/drivers/staging/comedi/drivers/ni_stc.h
+index 1ebf521..509a2da 100644
+--- a/drivers/staging/comedi/drivers/ni_stc.h
++++ b/drivers/staging/comedi/drivers/ni_stc.h
+@@ -339,7 +339,7 @@ static inline unsigned RTSI_Output_Bit(unsigned channel, int is_mseries)
+ 		max_channel = 6;
+ 	}
+ 	if (channel > max_channel) {
+-		rt_printk("%s: bug, invalid RTSI_channel=%i\n", __FUNCTION__,
++		rt_printk("%s: bug, invalid RTSI_channel=%i\n", __func__,
+ 			channel);
+ 		return 0;
+ 	}
+@@ -1085,7 +1085,7 @@ static inline int M_Offset_Static_AI_Control(int i)
+ 		0x263,
+ 	};
+ 	if (((unsigned)i) >= sizeof(offset) / sizeof(offset[0])) {
+-		rt_printk("%s: invalid channel=%i\n", __FUNCTION__, i);
++		rt_printk("%s: invalid channel=%i\n", __func__, i);
+ 		return offset[0];
+ 	}
+ 	return offset[i];
+@@ -1099,7 +1099,7 @@ static inline int M_Offset_AO_Reference_Attenuation(int channel)
+ 		0x267
+ 	};
+ 	if (((unsigned)channel) >= sizeof(offset) / sizeof(offset[0])) {
+-		rt_printk("%s: invalid channel=%i\n", __FUNCTION__, channel);
++		rt_printk("%s: invalid channel=%i\n", __func__, channel);
+ 		return offset[0];
+ 	}
+ 	return offset[channel];
+@@ -1108,7 +1108,7 @@ static inline unsigned M_Offset_PFI_Output_Select(unsigned n)
+ {
+ 	if (n < 1 || n > NUM_PFI_OUTPUT_SELECT_REGS) {
+ 		rt_printk("%s: invalid pfi output select register=%i\n",
+-			__FUNCTION__, n);
++			__func__, n);
+ 		return M_Offset_PFI_Output_Select_1;
+ 	}
+ 	return M_Offset_PFI_Output_Select_1 + (n - 1) * 2;
+@@ -1162,7 +1162,7 @@ static inline unsigned MSeries_PLL_In_Source_Select_RTSI_Bits(unsigned
+ 	RTSI_channel)
+ {
+ 	if (RTSI_channel > 7) {
+-		rt_printk("%s: bug, invalid RTSI_channel=%i\n", __FUNCTION__,
++		rt_printk("%s: bug, invalid RTSI_channel=%i\n", __func__,
+ 			RTSI_channel);
+ 		return 0;
+ 	}
+@@ -1183,7 +1183,7 @@ static inline unsigned MSeries_PLL_Divisor_Bits(unsigned divisor)
+ {
+ 	static const unsigned max_divisor = 0x10;
+ 	if (divisor < 1 || divisor > max_divisor) {
+-		rt_printk("%s: bug, invalid divisor=%i\n", __FUNCTION__,
++		rt_printk("%s: bug, invalid divisor=%i\n", __func__,
+ 			divisor);
+ 		return 0;
+ 	}
+@@ -1193,7 +1193,7 @@ static inline unsigned MSeries_PLL_Multiplier_Bits(unsigned multiplier)
+ {
+ 	static const unsigned max_multiplier = 0x100;
+ 	if (multiplier < 1 || multiplier > max_multiplier) {
+-		rt_printk("%s: bug, invalid multiplier=%i\n", __FUNCTION__,
++		rt_printk("%s: bug, invalid multiplier=%i\n", __func__,
+ 			multiplier);
+ 		return 0;
+ 	}
+diff --git a/drivers/staging/comedi/drivers/ni_tio.c b/drivers/staging/comedi/drivers/ni_tio.c
+index 05a9575..f22fb43 100644
+--- a/drivers/staging/comedi/drivers/ni_tio.c
++++ b/drivers/staging/comedi/drivers/ni_tio.c
+@@ -1273,7 +1273,7 @@ static int ni_tio_set_other_src(struct ni_gpct *counter, unsigned index,
+ 		counter_dev->regs[abz_reg] &= ~mask;
+ 		counter_dev->regs[abz_reg] |= (source << shift) & mask;
+ 		write_register(counter, counter_dev->regs[abz_reg], abz_reg);
+-//              rt_printk("%s %x %d %d\n", __FUNCTION__, counter_dev->regs[abz_reg], index, source);
++//              rt_printk("%s %x %d %d\n", __func__, counter_dev->regs[abz_reg], index, source);
+ 		return 0;
+ 	}
+ 	return -EINVAL;
 -- 
 1.6.0.4
