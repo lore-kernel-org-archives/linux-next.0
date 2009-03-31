@@ -1,68 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCHSET 0/8 version 4] exofs for kernel 2.6.30
-Date: Tue, 31 Mar 2009 14:01:24 +1100
-Message-ID: <20090331140124.a21da743.sfr@canb.auug.org.au>
-References: <49C1331D.1080805@panasas.com>
-	<20090330142200.af4b497c.akpm@linux-foundation.org>
+Subject: linux-next:  tree build warning
+Date: Tue, 31 Mar 2009 16:22:34 +1100
+Message-ID: <20090331162234.1780e0a4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__31_Mar_2009_14_01_24_+1100_O+4Ko2zyoDDMMU3N"
+ boundary="Signature=_Tue__31_Mar_2009_16_22_34_+1100_f0tKrSHFVB4C5ew5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43195 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45503 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760984AbZCaDBe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Mar 2009 23:01:34 -0400
-In-Reply-To: <20090330142200.af4b497c.akpm@linux-foundation.org>
+	id S1750901AbZCaFWo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 31 Mar 2009 01:22:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Boaz Harrosh <bharrosh@panasas.com>, avishay@gmail.com, jeff@garzik.org, linux-fsdevel@vger.kernel.org, osd-dev@open-osd.org, zbr@ioremap.net, James.Bottomley@HansenPartnership.com, linux-kernel@vger.kernel.org, fujita.tomonori@lab.ntt.co.jp, linux-next@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Tue__31_Mar_2009_14_01_24_+1100_O+4Ko2zyoDDMMU3N
+--Signature=_Tue__31_Mar_2009_16_22_34_+1100_f0tKrSHFVB4C5ew5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 30 Mar 2009 14:22:00 -0700 Andrew Morton <akpm@linux-foundation.org=
-> wrote:
->
-> > This patchset is also available on:
-> >   git-clone git://git.open-osd.org/linux-open-osd.git linux-next
-> > or on the web at:
-> >   http://git.open-osd.org/gitweb.cgi?p=3Dlinux-open-osd.git;a=3Dshortlo=
-g;h=3Drefs/heads/linux-next
->=20
-> Well I could merge them, but given that you have a git tree, a more
-> convenient path would be for us to include your tree in linux-next and
-> then you ask Linus to pull it directly when the time comes.
+Hi Rusty,
 
-$ git cat-file -p next-20090330:Next/Trees | grep osd
-osd		git	git://git.open-osd.org/linux-open-osd.git#linux-next
+Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
 
-i.e. its in there.  Those particular patches have been in linux-next
-since next-20090326 and presumably have been built by the
-all{yes,mod}config builds I do.
+mm/allocpercpu.c: In function 'free_percpu':
+mm/allocpercpu.c:146: warning: passing argument 2 of '__percpu_depopulate_m=
+ask' discards qualifiers from pointer target type
 
-> I'm unsure when that time will come.  Who has reviewed this work and
-> what was the result?
+Caused by commit c36dd4785de7e87979e0c27aa53dff116ddf37c5
+("cpumask:core-use-new-functions").
 
-That is a good question.  The other is "Is this destined for 2.6.30?"
-
+The "cpumask_t *" argument to __percpu_depopulate_mask() could be marked
+"const".
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__31_Mar_2009_14_01_24_+1100_O+4Ko2zyoDDMMU3N
+--Signature=_Tue__31_Mar_2009_16_22_34_+1100_f0tKrSHFVB4C5ew5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAknRh4QACgkQjjKRsyhoI8xDgwCglNFmLN5P9morMjPPbqBcpfRa
-ymgAoLGhL7eNAm+DTUDYOnqOsSA2l2hz
-=PKgw
+iEYEARECAAYFAknRqJoACgkQjjKRsyhoI8wuPgCdETAHyVRBXy/eCJnVZzFMIFDz
+t94An1pJfMJL7HEvRN8tOr9hLwxyRj9C
+=lgj3
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__31_Mar_2009_14_01_24_+1100_O+4Ko2zyoDDMMU3N--
+--Signature=_Tue__31_Mar_2009_16_22_34_+1100_f0tKrSHFVB4C5ew5--
