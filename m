@@ -1,44 +1,38 @@
-From: Russ Anderson <rja@sgi.com>
-Subject: [patch bugfix] UV system table in bios accessed after unmap
-Date: Mon, 30 Mar 2009 17:52:40 -0500
-Message-ID: <20090330225240.GA22776@sgi.com>
-Reply-To: Russ Anderson <rja@sgi.com>
+From: Mike Frysinger <vapier.adi@gmail.com>
+Subject: Re: linux-next: Tree for March 30 (Blackfin string failures again)
+Date: Mon, 30 Mar 2009 20:26:40 -0400
+Message-ID: <8bd0f97a0903301726j536da9aciaf9eb5e9a7afff5@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay2.sgi.com ([192.48.179.30]:46147 "EHLO relay.sgi.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751869AbZC3Wwn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Mar 2009 18:52:43 -0400
-Content-Disposition: inline
+Received: from mail-gx0-f160.google.com ([209.85.217.160]:63607 "EHLO
+	mail-gx0-f160.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760332AbZCaA0n (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Mar 2009 20:26:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
-Cc: Russ Anderson <rja@sgi.com>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Use the copy of UV system table in kernel memory, not the one in
-bios after unmapping.
+On Mon, Mar 30, 2009 at 05:01, Stephen Rothwell wrote:
+> The rr tree lost 8 conflicts.
 
-Signed-off-by: Russ Anderson <rja@sgi.com>
+was the Blackfin changes related to the string updates lost or
+something ?  the March 30 tree brought in these failures again ...
 
----
- arch/x86/kernel/bios_uv.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-Index: linux-next/arch/x86/kernel/bios_uv.c
-===================================================================
---- linux-next.orig/arch/x86/kernel/bios_uv.c	2009-03-30 17:39:26.622178261 -0500
-+++ linux-next/arch/x86/kernel/bios_uv.c	2009-03-30 17:44:12.703957062 -0500
-@@ -182,7 +182,8 @@ void uv_bios_init(void)
- 	memcpy(&uv_systab, tab, sizeof(struct uv_systab));
- 	iounmap(tab);
- 
--	printk(KERN_INFO "EFI UV System Table Revision %d\n", tab->revision);
-+	printk(KERN_INFO "EFI UV System Table Revision %d\n",
-+					uv_systab.revision);
- }
- #else	/* !CONFIG_EFI */
- 
--- 
-Russ Anderson, OS RAS/Partitioning Project Lead  
-SGI - Silicon Graphics Inc          rja@sgi.com
+In file included from include/linux/bitmap.h:9,
+                 from include/linux/nodemask.h:90,
+                 from include/linux/mmzone.h:17,
+                 from include/linux/gfp.h:5,
+                 from include/linux/kmod.h:23,
+                 from include/linux/module.h:14,
+                 from arch/blackfin/lib/strncmp.c:14:
+include/linux/string.h: In function 'strstarts':
+include/linux/string.h:131: error: implicit declaration of function 'strncmp'
+make[1]: *** [arch/blackfin/lib/strncmp.o] Error 1
+make: *** [arch/blackfin/lib] Error 2
+Last committer:
+cc11ee1: Stephen Rothwell <sfr@...>
+Merge branch 'quilt/rr'
+-mike
