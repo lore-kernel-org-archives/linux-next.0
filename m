@@ -1,72 +1,52 @@
-From: Thiemo Nagel <thiemo.nagel@ph.tum.de>
-Subject: Re: [PATCH v2] ext4: add checks of block references for non-extent
- inodes
-Date: Tue, 31 Mar 2009 10:41:27 +0200
-Message-ID: <49D1D737.9080105@ph.tum.de>
-References: <49B94396.2020800@ph.tum.de> <49C3A51C.1030201@ph.tum.de>
+From: Robert Richter <robert.richter@amd.com>
+Subject: Re: linux-next: manual merge of the rr tree with the cpus4096 tree
+Date: Tue, 31 Mar 2009 11:42:31 +0200
+Message-ID: <20090331094230.GK7030@erda.amd.com>
+References: <20090331133953.73d33570.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------050607010509040606020502"
-Return-path: <linux-ext4-owner@vger.kernel.org>
-In-Reply-To: <49C3A51C.1030201@ph.tum.de>
-Sender: linux-ext4-owner@vger.kernel.org
-To: Theodore Ts'o <tytso@mit.edu>, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, sfr@canb.auug.org.au
-Cc: Ext4 Developers List <linux-ext4@vger.kernel.org>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from wa4ehsobe005.messaging.microsoft.com ([216.32.181.15]:51686
+	"EHLO WA4EHSOBE006.bigfish.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751099AbZCaJmr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 31 Mar 2009 05:42:47 -0400
+Content-Disposition: inline
+In-Reply-To: <20090331133953.73d33570.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
 
-This is a multi-part message in MIME format.
---------------050607010509040606020502
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+On 31.03.09 13:39:53, Stephen Rothwell wrote:
+> Hi Rusty,
+> 
+> Today's linux-next merge of the rr tree got a conflict in
+> drivers/oprofile/buffer_sync.c between commit
+> 4c50d9ea9ca9e46b65aeffed3e0d6f54ff38c8d4 ("cpumask: modifiy oprofile
+> initialization") from the cpus4096 tree and commit
+> d6d66104b6a06bc0bb541ac59aff59fad46ad466 ("oprofile: Thou shalt not call
+> __exit functions from __init functions") from the rr tree.
+> 
+> The former just removed the code that the latter was modifying, so I used
+> the former version.
 
-Dear Ted, Aneesh, Stephen,
+Rusty,
 
-thanks a lot for your comments and fixes!  The attached patch (applied 
-on-top) should fix the
-* buffer head leak spotted by Aneesh
-* warning reported by Stephen
+please revert d6d66104b6a06bc0bb541ac59aff59fad46ad466. The
+tip/cpus4096 branch has been pulled incompletely. Patch
+4c50d9ea9ca9e46b65aeffed3e0d6f54ff38c8d4 fixes the section mismatch.
 
-Kind regards,
+Ingo,
 
-Signed-off-by: Thiemo Nagel <thiemo.nagel@ph.tum.de>
+will you send a pull request for tip/cpus4096? Otherwise the patch
+should be added to the urgent branch or so.
 
+Thanks,
 
+-Robert
 
-
---------------050607010509040606020502
-Content-Type: text/x-patch;
- name="fixup-blockref-checks.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="fixup-blockref-checks.patch"
-
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 9ab845e..69715e5 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -380,9 +380,9 @@ static int __ext4_check_blockref(const char *function, struct inode *inode,
- 		if (unlikely(*bref >= maxblocks)) {
- 			ext4_error(inode->i_sb, function,
- 				   "block reference %u >= max (%u) "
--				   "in inode #%lu, offset=%u",
-+				   "in inode #%lu, offset=%i",
- 				   *bref, maxblocks,
--				   inode->i_ino, bref-p);
-+				   inode->i_ino, (int)(bref-p));
-  			return -EIO;
-  		}
- 		bref++;
-@@ -453,8 +453,10 @@ static Indirect *ext4_get_branch(struct inode *inode, int depth,
- 				goto failure;
- 			}
- 			/* validate block references */
--			if (ext4_check_indirect_blockref(inode, bh))
-+			if (ext4_check_indirect_blockref(inode, bh)) {
-+				put_bh(bh);
- 				goto failure;
-+			}
- 		}
- 		
- 		add_chain(++p, bh, (__le32 *)bh->b_data + *++offsets);
-
---------------050607010509040606020502--
+-- 
+Advanced Micro Devices, Inc.
+Operating System Research Center
+email: robert.richter@amd.com
