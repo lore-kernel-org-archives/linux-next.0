@@ -1,50 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tracing tree with the parisc tree
-Date: Wed, 1 Apr 2009 11:37:40 +1100
-Message-ID: <20090401113740.7f425e02.sfr@canb.auug.org.au>
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: [PATCH] cx231xx: fix wrong usage of select in kconfig
+Date: Wed, 1 Apr 2009 06:03:27 +0400
+Message-ID: <20090401020327.GA6808@orion>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__1_Apr_2009_11_37_40_+1100_Qpuk0GGD391hgbeu"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35374 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751246AbZDAAhv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 31 Mar 2009 20:37:51 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org, Helge Deller <deller@gmx.de>, Kyle McMartin <kyle@mcmartin.ca>, linux-parisc@vger.kernel.org, Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>, Steven Rostedt <srostedt@redhat.com>
-
---Signature=_Wed__1_Apr_2009_11_37_40_+1100_Qpuk0GGD391hgbeu
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-media-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sender: linux-media-owner@vger.kernel.org
+To: linux-next@vger.kernel.org, mchehab@infradead.org, linux-media@vger.kernel.org, srinivasa.deevi@conexant.com
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+VIDEO_CX231XX_ALSA depends on SND && SND_PCM,
+but if we select it from VIDEO_CX231XX entry
+it does not automatically select SND_PCM.
+It causes build error:
+ERROR: "snd_pcm_period_elapsed" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
 
-Today's linux-next merge of the tracing tree got a conflict in
-arch/parisc/include/asm/ftrace.h between commit
-d75f054a2cf0614ff63d534ff21ca8eaab41e713 ("parisc: add ftrace (function
-and graph tracer) functionality") from the parisc tree and commit
-c79a61f55773d2519fd0525bf58385f7d20752d3 ("tracing: make CALLER_ADDRx
-overwriteable") from the tracing tree.
+Documentation/kbuild/kconfig-language.txt:
+Note:
+        select should be used with care. select will force
+        a symbol to a value without visiting the dependencies.
+        By abusing select you are able to select a symbol FOO even
+        if FOO depends on BAR that is not set.
 
-The former adds a non-trivial version of the file, so I used that.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+---
 
---Signature=_Wed__1_Apr_2009_11_37_40_+1100_Qpuk0GGD391hgbeu
-Content-Type: application/pgp-signature
+ drivers/media/video/cx231xx/Kconfig |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAknSt1QACgkQjjKRsyhoI8ztqwCfdI8+in8ae4f97wMWbPh8cNjY
-YtwAnAtQdbpXi5e+tsgF+4laoLJqNGlu
-=jvfC
------END PGP SIGNATURE-----
-
---Signature=_Wed__1_Apr_2009_11_37_40_+1100_Qpuk0GGD391hgbeu--
+diff --git a/drivers/media/video/cx231xx/Kconfig b/drivers/media/video/cx231xx/Kconfig
+index 9115654..85ae751 100644
+--- a/drivers/media/video/cx231xx/Kconfig
++++ b/drivers/media/video/cx231xx/Kconfig
+@@ -6,7 +6,6 @@ config VIDEO_CX231XX
+        select VIDEO_IR
+        select VIDEOBUF_VMALLOC
+        select VIDEO_CX25840
+-       select VIDEO_CX231XX_ALSA
+ 
+ 	---help---
+ 	  This is a video4linux driver for Conexant 231xx USB based TV cards.
