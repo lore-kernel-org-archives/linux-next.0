@@ -1,33 +1,35 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: tracing/powerpc tree build failure
-Date: Wed, 1 Apr 2009 14:51:48 +0200
-Message-ID: <20090401125148.GL12966@elte.hu>
-References: <20090327230834.93d0221d.sfr@canb.auug.org.au> <1238158131.22033.10.camel@localhost.localdomain> <20090331165430.383fe51d.sfr@canb.auug.org.au>
+From: Mattia Dongili <malattia@linux.it>
+Subject: Re: [PATCH] sony-laptop should depend on RFKILL
+Date: Wed, 1 Apr 2009 21:59:17 +0900
+Message-ID: <20090401125917.GC9650@kamineko.org>
+References: <20090331223407.GA10676@orion> <20090331223555.GA31066@srcf.ucam.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:54369 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752400AbZDAMwK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 1 Apr 2009 08:52:10 -0400
+Received: from static-220-247-10-204.b-man.svips.gol.ne.jp ([220.247.10.204]:58063
+	"EHLO smtp.kamineko.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757616AbZDAM7U (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Apr 2009 08:59:20 -0400
 Content-Disposition: inline
-In-Reply-To: <20090331165430.383fe51d.sfr@canb.auug.org.au>
+In-Reply-To: <20090331223555.GA31066@srcf.ucam.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Steven Rostedt <srostedt@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: Alexander Beregalov <a.beregalov@gmail.com>, Len Brown <len.brown@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi all,
+On Tue, Mar 31, 2009 at 11:35:55PM +0100, Matthew Garrett wrote:
+> On Wed, Apr 01, 2009 at 02:34:07AM +0400, Alexander Beregalov wrote:
+> > Fixes this build error when RFKILL is not set:
+> > 
+> > drivers/platform/x86/sony-laptop.c:1050: undefined reference to `rfkill_unregister'
+> > and so on..
+> > 
+> > Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
 > 
-> This patch is now applicable to the tracing tree after merging 
-> with Linus' tree.
+> Acked-by: Matthew Garrett <mjg@redhat.com>
 
-Thanks, that's useful info.
-
-There's the skb tracepoints related merge fixlet needed too. 
-Anything else in this context you are aware of?
-
-	Ingo
+Thanks, applied and forwarding it to Len now with other fixes for
+2.6.30.
+-- 
+mattia
+:wq!
