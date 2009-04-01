@@ -1,31 +1,50 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-Subject: Re: [PATCH] sony-laptop should depend on RFKILL
-Date: Tue, 31 Mar 2009 23:35:55 +0100
-Message-ID: <20090331223555.GA31066@srcf.ucam.org>
-References: <20090331223407.GA10676@orion>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tracing tree with the parisc tree
+Date: Wed, 1 Apr 2009 11:37:40 +1100
+Message-ID: <20090401113740.7f425e02.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__1_Apr_2009_11_37_40_+1100_Qpuk0GGD391hgbeu"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cavan.codon.org.uk ([93.93.128.6]:37049 "EHLO
-	vavatch.codon.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757393AbZCaWgC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 31 Mar 2009 18:36:02 -0400
-Content-Disposition: inline
-In-Reply-To: <20090331223407.GA10676@orion>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35374 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751246AbZDAAhv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 31 Mar 2009 20:37:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: Mattia Dongili <malattia@linux.it>, Len Brown <len.brown@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Helge Deller <deller@gmx.de>, Kyle McMartin <kyle@mcmartin.ca>, linux-parisc@vger.kernel.org, Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>, Steven Rostedt <srostedt@redhat.com>
 
-On Wed, Apr 01, 2009 at 02:34:07AM +0400, Alexander Beregalov wrote:
-> Fixes this build error when RFKILL is not set:
-> 
-> drivers/platform/x86/sony-laptop.c:1050: undefined reference to `rfkill_unregister'
-> and so on..
-> 
-> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+--Signature=_Wed__1_Apr_2009_11_37_40_+1100_Qpuk0GGD391hgbeu
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Matthew Garrett <mjg@redhat.com>
+Hi all,
 
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
+Today's linux-next merge of the tracing tree got a conflict in
+arch/parisc/include/asm/ftrace.h between commit
+d75f054a2cf0614ff63d534ff21ca8eaab41e713 ("parisc: add ftrace (function
+and graph tracer) functionality") from the parisc tree and commit
+c79a61f55773d2519fd0525bf58385f7d20752d3 ("tracing: make CALLER_ADDRx
+overwriteable") from the tracing tree.
+
+The former adds a non-trivial version of the file, so I used that.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__1_Apr_2009_11_37_40_+1100_Qpuk0GGD391hgbeu
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknSt1QACgkQjjKRsyhoI8ztqwCfdI8+in8ae4f97wMWbPh8cNjY
+YtwAnAtQdbpXi5e+tsgF+4laoLJqNGlu
+=jvfC
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__1_Apr_2009_11_37_40_+1100_Qpuk0GGD391hgbeu--
