@@ -1,44 +1,53 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: linux-next: manual merge of the tracing tree with the parisc
-	tree
-Date: Wed, 1 Apr 2009 08:54:35 +0200
-Message-ID: <20090401065435.GA9208@pengutronix.de>
-References: <20090401113740.7f425e02.sfr@canb.auug.org.au>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: linux-next: Tree for March 30: [BUG] kmemleak page fault
+Date: Wed, 01 Apr 2009 10:30:08 +0100
+Message-ID: <1238578208.14550.4.camel@pc1117.cambridge.arm.com>
+References: <20090330200145.8d0da09b.sfr@canb.auug.org.au>
+	 <20090330122437.GA4784@traven>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:44073 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757442AbZDAGzI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Apr 2009 02:55:08 -0400
-Content-Disposition: inline
-In-Reply-To: <20090401113740.7f425e02.sfr@canb.auug.org.au>
+Received: from cam-admin0.cambridge.arm.com ([193.131.176.58]:49376 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752599AbZDAJa6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Apr 2009 05:30:58 -0400
+In-Reply-To: <20090330122437.GA4784@traven>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Helge Deller <deller@gmx.de>, Kyle McMartin <kyle@mcmartin.ca>, linux-parisc@vger.kernel.org, Steven Rostedt <srostedt@redhat.com>
+To: Matthias Kaehlcke <matthias@kaehlcke.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi Steven,
+On Mon, 2009-03-30 at 14:24 +0200, Matthias Kaehlcke wrote:
+> linux-next 20090330 causes the following page fault on an edb9302
+> (ARM) like board:
+> 
+> # Unable to handle kernel paging request at virtual address 00535447
+> pgd = c56b0000
+> [00535447] *pgd=00000000
+> Internal error: Oops: 3 [#1] PREEMPT
+> Modules linked in:
+> CPU: 0    Not tainted  (2.6.29-next-20090330 #6)
+> PC is at kmemleak_scan+0x158/0x3ac
+> LR is at find_and_get_object+0xe0/0x104
+> pc : [<c00aa5cc>]    lr : [<c00a99d8>]    psr: 00000013
+> sp : c55bff78  ip : c55bff28  fp : c55bffa4
+> r10: c0322718  r9 : c035fa6c  r8 : c035f048
+> r7 : c035f044  r6 : 00005800  r5 : 00004981  r4 : 00093020
+> r3 : 00535443  r2 : 414f4c5f  r1 : 00000001  r0 : c0400020
+> Flags: nzcv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
+> Control: 0000717f  Table: 0567c000  DAC: 00000017
+> Process kmemleak (pid: 343, stack limit = 0xc55be268)
+[...]
+> the fault is reproducible and happens some seconds after having
+> finished the boot process. please tell me if you need more information
+> (like the .config, ...) in order to track this down
 
-On Wed, Apr 01, 2009 at 11:37:40AM +1100, Stephen Rothwell wrote:
-> Today's linux-next merge of the tracing tree got a conflict in
-> arch/parisc/include/asm/ftrace.h between commit
-> d75f054a2cf0614ff63d534ff21ca8eaab41e713 ("parisc: add ftrace (functi=
-on
-> and graph tracer) functionality") from the parisc tree and commit
-> c79a61f55773d2519fd0525bf58385f7d20752d3 ("tracing: make CALLER_ADDRx
-> overwriteable") from the tracing tree.
-Whatever you have done---I didn't check---as long as
-arch/parisc/include/asm/ftrace.h exists, it's OK for
-c79a61f55773d2519fd0525bf58385f7d20752d3.
+Yes, the .config would be useful. I'm mainly interested in which slab
+allocator you are using. I'm testing kmemleak mainly on ARM and haven't
+seen any issues.
 
-Best regards and thanks
-Uwe
+Thanks.
 
---=20
-Pengutronix e.K.                              | Uwe Kleine-K=F6nig     =
-       |
-Industrial Linux Solutions                    | http://www.pengutronix.=
-de/  |
+-- 
+Catalin
