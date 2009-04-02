@@ -1,31 +1,42 @@
-From: Kyle McMartin <kyle@mcmartin.ca>
-Subject: Re: linux-next: manual merge of the tracing tree with the parisc
-	tree
-Date: Thu, 2 Apr 2009 11:22:15 -0400
-Message-ID: <20090402152215.GB14159@bombadil.infradead.org>
-References: <20090401113740.7f425e02.sfr@canb.auug.org.au> <20090401175033.GE1443@bombadil.infradead.org> <20090402223205.e4ab7b5e.sfr@canb.auug.org.au> <1238680483.3383.7.camel@mulgrave.int.hansenpartnership.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH] x86: fix build error when CONFIG_K8_NB=n
+Date: Thu, 02 Apr 2009 08:29:41 -0700
+Message-ID: <49D4D9E5.2060705@oracle.com>
+References: <20090402170432.9bc4fbf8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:39575 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758212AbZDBPWh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Apr 2009 11:22:37 -0400
-Content-Disposition: inline
-In-Reply-To: <1238680483.3383.7.camel@mulgrave.int.hansenpartnership.com>
+Received: from rcsinet13.oracle.com ([148.87.113.125]:48801 "EHLO
+	rgminet13.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750991AbZDBPbD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Apr 2009 11:31:03 -0400
+In-Reply-To: <20090402170432.9bc4fbf8.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Kyle McMartin <kyle@mcmartin.ca>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org, Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>, Steven Rostedt <srostedt@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, x86@kernel.org
 
-On Thu, Apr 02, 2009 at 01:54:43PM +0000, James Bottomley wrote:
-> Actually, the traditional way for a multi branch tree (something like
-> Jens' Block tree) which contains all manner of branches, some of which
-> are experimental and shouldn't be in linux-next, is to have a next
-> branch into which you manually merge all branches that should be
-> included.
-> 
-> James
-> 
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Heh, that makes sense. Occam's Razor, I guess.
+Fix build error when CONFIG_K8_NB=n:
+
+arch/x86/mm/built-in.o:(.bss+0x5c0): multiple definition of `k8_northbridges'
+arch/x86/kernel/built-in.o:(.bss+0x18c8): first defined here
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ arch/x86/include/asm/k8.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20090402.orig/arch/x86/include/asm/k8.h
++++ linux-next-20090402/arch/x86/include/asm/k8.h
+@@ -9,7 +9,7 @@ extern int early_is_k8_nb(u32 value);
+ #ifdef CONFIG_K8_NB
+ extern struct pci_dev **k8_northbridges;
+ #else
+-struct pci_dev **k8_northbridges;
++static struct pci_dev **k8_northbridges;
+ #endif
+ extern int num_k8_northbridges;
+ extern int cache_k8_northbridges(void);
