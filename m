@@ -1,64 +1,85 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH] x86: fix build error when CONFIG_K8_NB=n
-Date: Thu, 2 Apr 2009 18:44:39 +0200
-Message-ID: <20090402164439.GA7385@elte.hu>
-References: <20090402170432.9bc4fbf8.sfr@canb.auug.org.au> <49D4D9E5.2060705@oracle.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] build fix for generic debug pagealloc
+Date: Thu, 2 Apr 2009 09:45:22 -0700
+Message-ID: <20090402094522.b29004c8.akpm@linux-foundation.org>
+References: <a4423d670904020421k7395e11dwe70d4223cb817e0a@mail.gmail.com>
+	<20090402163145.GA28728@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:33651 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750825AbZDBQpE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 2 Apr 2009 12:45:04 -0400
-Content-Disposition: inline
-In-Reply-To: <49D4D9E5.2060705@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>, "H. Peter Anvin" <hpa@zytor.com>, Andreas Herrmann <andreas.herrmann3@amd.com>, Mark Langsdorf <mark.langsdorf@amd.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, x86@kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <20090402163145.GA28728@localhost.localdomain>
+Sender: linux-arch-owner@vger.kernel.org
+To: Akinobu Mita <akinobu.mita@gmail.com>
+Cc: Alexander Beregalov <a.beregalov@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-arch@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
+List-Id: linux-next.vger.kernel.org
 
+On Fri, 3 Apr 2009 01:31:52 +0900 Akinobu Mita <akinobu.mita@gmail.com> wrote:
 
-* Randy Dunlap <randy.dunlap@oracle.com> wrote:
-
-> From: Randy Dunlap <randy.dunlap@oracle.com>
+> > mm/debug-pagealloc.c: In function 'set_page_poison':
+> > mm/debug-pagealloc.c:8: error: 'struct page' has no member named 'debug_flags'
+> > mm/debug-pagealloc.c: In function 'clear_page_poison':
+> > mm/debug-pagealloc.c:13: error: 'struct page' has no member named 'debug_flags'
+> > mm/debug-pagealloc.c: In function 'page_poison':
+> > mm/debug-pagealloc.c:18: error: 'struct page' has no member named 'debug_flags'
+> > mm/debug-pagealloc.c: At top level:
+> > mm/debug-pagealloc.c:120: error: redefinition of 'kernel_map_pages'
+> > include/linux/mm.h:1278: error: previous definition of
+> > 'kernel_map_pages' was here
+> > mm/debug-pagealloc.c: In function 'kernel_map_pages':
+> > mm/debug-pagealloc.c:122: error: 'debug_pagealloc_enabled' undeclared
+> > (first use in this function)
 > 
-> Fix build error when CONFIG_K8_NB=n:
+> This patch fixes build failure with generic debug pagealloc:
 > 
-> arch/x86/mm/built-in.o:(.bss+0x5c0): multiple definition of `k8_northbridges'
-> arch/x86/kernel/built-in.o:(.bss+0x18c8): first defined here
+>  - debug_flags should be in struct page
+>  - define DEBUG_PAGEALLOC config option for all architectures
+>
+> ...
+>
+>  	bool "Debug access to per_cpu maps"
+>  	depends on DEBUG_KERNEL
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index ddadb4d..0e80e26 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -95,6 +95,9 @@ struct page {
+>  	void *virtual;			/* Kernel virtual address (NULL if
+>  					   not kmapped, ie. highmem) */
+>  #endif /* WANT_PAGE_VIRTUAL */
+> +#ifdef CONFIG_WANT_PAGE_DEBUG_FLAGS
+> +	unsigned long debug_flags;	/* Use atomic bitops on this */
+> +#endif
+>  };
+>  
+>  /*
+> @@ -175,9 +178,6 @@ struct vm_area_struct {
+>  #ifdef CONFIG_NUMA
+>  	struct mempolicy *vm_policy;	/* NUMA policy for the VMA */
+>  #endif
+> -#ifdef CONFIG_WANT_PAGE_DEBUG_FLAGS
+> -	unsigned long debug_flags;	/* Use atomic bitops on this */
+> -#endif
+>  };
 
-Thanks for the report, this is a known bug.
+dammit.
 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> ---
->  arch/x86/include/asm/k8.h |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --- linux-next-20090402.orig/arch/x86/include/asm/k8.h
-> +++ linux-next-20090402/arch/x86/include/asm/k8.h
-> @@ -9,7 +9,7 @@ extern int early_is_k8_nb(u32 value);
->  #ifdef CONFIG_K8_NB
->  extern struct pci_dev **k8_northbridges;
->  #else
-> -struct pci_dev **k8_northbridges;
-> +static struct pci_dev **k8_northbridges;
+>  struct core_thread {
+> diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
+> index c8d62d4..bb01e29 100644
+> --- a/mm/Kconfig.debug
+> +++ b/mm/Kconfig.debug
+> @@ -1,3 +1,12 @@
+> +config DEBUG_PAGEALLOC
+> +	bool "Debug page memory allocations"
+> +	depends on DEBUG_KERNEL && ARCH_SUPPORTS_DEBUG_PAGEALLOC
+> +	depends on !HIBERNATION || !PPC && !SPARC
+> +	---help---
+> +	  Unmap pages from the kernel linear mapping after free_pages().
+> +	  This results in a large slowdown, but helps to find certain types
+> +	  of memory corruptions.
+> +
 
-This might fix the build but the change does something rather 
-broken: there's now a new 'k8_northbridges' local variable array in 
-each file that includes k8.h - that's wrong. We dont put static 
-locals into include files that get included into several .c files, 
-ever.
-
-The real fix would be to not export k8_northbridges[] from k8.c, but 
-to introduce a node_to_k8_northbridge() helper that returns a struct 
-pci_dev. In the !CONFIG_K8_NB case this would be an inlne in k8.h 
-that always returns NULL.
-
-Anyway - just today i mailed about this this topic to Mark and 
-Andreas about this build breakage (i have triggered it too), so 
-there should be a resolution soon, either in form of a fix or in 
-form of a revert.
-
-Thanks,
-
-	Ingo
+I guess this is why it wasn't discovered in my compile testing.  It's
+quite regrettable that `make allmodconfig' didn't enable the feature. 
+That's what allmodconfig is for.
