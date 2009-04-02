@@ -1,53 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the tracing tree with the parisc
- tree
-Date: Thu, 2 Apr 2009 22:32:05 +1100
-Message-ID: <20090402223205.e4ab7b5e.sfr@canb.auug.org.au>
-References: <20090401113740.7f425e02.sfr@canb.auug.org.au>
-	<20090401175033.GE1443@bombadil.infradead.org>
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: [PATCH] Staging: pohmelfs: should include fs_struct.h
+Date: Thu, 2 Apr 2009 15:37:10 +0400
+Message-ID: <a4423d670904020437q446f7c62xa209822f10573c28@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__2_Apr_2009_22_32_05_+1100_2NUtc5aSpAuDlQ3X"
-Return-path: <linux-parisc-owner@vger.kernel.org>
-In-Reply-To: <20090401175033.GE1443@bombadil.infradead.org>
-Sender: linux-parisc-owner@vger.kernel.org
-To: Kyle McMartin <kyle@mcmartin.ca>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org, Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>, Steven Rostedt <srostedt@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ew0-f165.google.com ([209.85.219.165]:41345 "EHLO
+	mail-ew0-f165.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755162AbZDBLhN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Apr 2009 07:37:13 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Evgeniy Polyakov <zbr@ioremap.net>, Greg Kroah-Hartman <gregkh@suse.de>, LKML <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
---Signature=_Thu__2_Apr_2009_22_32_05_+1100_2NUtc5aSpAuDlQ3X
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+drivers/staging/pohmelfs/path_entry.c: In function
+'pohmelfs_construct_path_string':
+drivers/staging/pohmelfs/path_entry.c:48: error: dereferencing pointer
+to incomplete type
+drivers/staging/pohmelfs/path_entry.c:49: error: dereferencing pointer
+to incomplete type
+drivers/staging/pohmelfs/path_entry.c:50: error: dereferencing pointer
+to incomplete type
+drivers/staging/pohmelfs/path_entry.c: In function 'pohmelfs_path_length':
+drivers/staging/pohmelfs/path_entry.c:95: error: dereferencing pointer
+to incomplete type
+drivers/staging/pohmelfs/path_entry.c:96: error: dereferencing pointer
+to incomplete type
+drivers/staging/pohmelfs/path_entry.c:97: error: dereferencing pointer
+to incomplete type
 
-Hi Kyle,
+Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+---
 
-On Wed, 1 Apr 2009 13:50:34 -0400 Kyle McMartin <kyle@mcmartin.ca> wrote:
->
-> What's the optimal way to sort out multiple branches in this tree?
-> Apparently Andrew is cross with me because the rtc-parisc branch didn't
-> get picked up... Should I put a list of branches in my kernel.org
-> public_html or something?
+ drivers/staging/pohmelfs/path_entry.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-I am not quite sure what you are getting at.  If you have multiple trees
-(or branches in a tree), I can merge them separately into linux-next -
-just tell me what they are.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__2_Apr_2009_22_32_05_+1100_2NUtc5aSpAuDlQ3X
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAknUojUACgkQjjKRsyhoI8zwHgCfTdTu/1h6PlIRXB8+pM2yZBzK
-abIAnjcaTyZitVf5k+FUUMScxEF4TqXN
-=1KP7
------END PGP SIGNATURE-----
-
---Signature=_Thu__2_Apr_2009_22_32_05_+1100_2NUtc5aSpAuDlQ3X--
+diff --git a/drivers/staging/pohmelfs/path_entry.c
+b/drivers/staging/pohmelfs/path_entry.c
+index 9270e54..3bad888 100644
+--- a/drivers/staging/pohmelfs/path_entry.c
++++ b/drivers/staging/pohmelfs/path_entry.c
+@@ -17,7 +17,7 @@
+ #include <linux/slab.h>
+ #include <linux/fs.h>
+ #include <linux/ktime.h>
+-#include <linux/fs.h>
++#include <linux/fs_struct.h>
+ #include <linux/pagemap.h>
+ #include <linux/writeback.h>
+ #include <linux/mount.h>
