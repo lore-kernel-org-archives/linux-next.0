@@ -1,85 +1,76 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] build fix for generic debug pagealloc
-Date: Thu, 2 Apr 2009 09:45:22 -0700
-Message-ID: <20090402094522.b29004c8.akpm@linux-foundation.org>
-References: <a4423d670904020421k7395e11dwe70d4223cb817e0a@mail.gmail.com>
-	<20090402163145.GA28728@localhost.localdomain>
+From: Robert Love <robert.w.love@intel.com>
+Subject: Re: linux-next: scsi tree build failure
+Date: Thu, 02 Apr 2009 10:19:38 -0700
+Message-ID: <1238692778.15031.56.camel@fritz>
+References: <20090402164927.97958f84.sfr@canb.auug.org.au>
+	 <1238682141.3383.11.camel@mulgrave.int.hansenpartnership.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <20090402163145.GA28728@localhost.localdomain>
-Sender: linux-arch-owner@vger.kernel.org
-To: Akinobu Mita <akinobu.mita@gmail.com>
-Cc: Alexander Beregalov <a.beregalov@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-arch@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:45513 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932562AbZDBRTm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 2 Apr 2009 13:19:42 -0400
+In-Reply-To: <1238682141.3383.11.camel@mulgrave.int.hansenpartnership.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "Dev, Vasu" <vasu.dev@intel.com>, linux-scsi <linux-scsi@vger.kernel.org>
 
-On Fri, 3 Apr 2009 01:31:52 +0900 Akinobu Mita <akinobu.mita@gmail.com> wrote:
+On Thu, 2009-04-02 at 07:22 -0700, James Bottomley wrote:
+> cc: linux-scsi added
+> 
+> On Thu, 2009-04-02 at 16:49 +1100, Stephen Rothwell wrote:
+> > Hi James,
+> > 
+> > Today's linux-next build (powerpc allyesconfig) failed like this:
+> > 
+> > drivers/scsi/fcoe/fcoe.c:982: error: __ksymtab_fcoe_fc_crc causes a section type conflict
+> > drivers/scsi/fcoe/fcoe.c:982: error: __ksymtab_fcoe_fc_crc causes a section type conflict
+> > 
+> > Reverting commit 0c3cb56ec3321b23e9826cccf822470717be6e08 ("[SCSI] fcoe:
+> > cleans up libfcoe.h and adds fcoe.h for fcoe module") makes the error go
+> > away.  I have no idea why - the only clue is that the only global
+> > declaration of fcoe_fc_crc() is removed by that commit.
+> > 
+> > Using a different compiler version (4.1.2) also fixed the problem.
+> 
+> Yes, that would be why I didn't see the issue.
+> 
+I built using gcc version 4.3.2 (on x86_64) and didn't see this either.
 
-> > mm/debug-pagealloc.c: In function 'set_page_poison':
-> > mm/debug-pagealloc.c:8: error: 'struct page' has no member named 'debug_flags'
-> > mm/debug-pagealloc.c: In function 'clear_page_poison':
-> > mm/debug-pagealloc.c:13: error: 'struct page' has no member named 'debug_flags'
-> > mm/debug-pagealloc.c: In function 'page_poison':
-> > mm/debug-pagealloc.c:18: error: 'struct page' has no member named 'debug_flags'
-> > mm/debug-pagealloc.c: At top level:
-> > mm/debug-pagealloc.c:120: error: redefinition of 'kernel_map_pages'
-> > include/linux/mm.h:1278: error: previous definition of
-> > 'kernel_map_pages' was here
-> > mm/debug-pagealloc.c: In function 'kernel_map_pages':
-> > mm/debug-pagealloc.c:122: error: 'debug_pagealloc_enabled' undeclared
-> > (first use in this function)
+> > I also had to revert commits 60390544fcc212e0657cf1eea639691d09651943
+> > ("[SCSI] fcoe, libfc: fix double fcoe_softc memory alloc") and
+> > ba070644bff4390c965e99b1997f2cbec4157b46 ("[SCSI] fcoe, libfcoe: Add
+> > support for FIP. FCoE discovery and keep-alive") since they followed the
+> > one above.
+> > 
+> > I wonder if that function even needs to be exported as it is only used
+> > withing the one file.
 > 
-> This patch fixes build failure with generic debug pagealloc:
+> I think it's because the above commit removes the external declaration
+> of fcoe_fc_crc ... so now we have an export symbol with no header
+> defining it.  I think the correct patch is just not to export the
+> symbol.
 > 
->  - debug_flags should be in struct page
->  - define DEBUG_PAGEALLOC config option for all architectures
->
-> ...
->
->  	bool "Debug access to per_cpu maps"
->  	depends on DEBUG_KERNEL
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index ddadb4d..0e80e26 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -95,6 +95,9 @@ struct page {
->  	void *virtual;			/* Kernel virtual address (NULL if
->  					   not kmapped, ie. highmem) */
->  #endif /* WANT_PAGE_VIRTUAL */
-> +#ifdef CONFIG_WANT_PAGE_DEBUG_FLAGS
-> +	unsigned long debug_flags;	/* Use atomic bitops on this */
-> +#endif
->  };
+> James
+> 
+> ---
+> 
+> diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
+> index 5cdda6e..94e1e31 100644
+> --- a/drivers/scsi/fcoe/fcoe.c
+> +++ b/drivers/scsi/fcoe/fcoe.c
+> @@ -979,7 +979,6 @@ u32 fcoe_fc_crc(struct fc_frame *fp)
+>  	}
+>  	return crc;
+>  }
+> -EXPORT_SYMBOL_GPL(fcoe_fc_crc);
 >  
->  /*
-> @@ -175,9 +178,6 @@ struct vm_area_struct {
->  #ifdef CONFIG_NUMA
->  	struct mempolicy *vm_policy;	/* NUMA policy for the VMA */
->  #endif
-> -#ifdef CONFIG_WANT_PAGE_DEBUG_FLAGS
-> -	unsigned long debug_flags;	/* Use atomic bitops on this */
-> -#endif
->  };
-
-dammit.
-
->  struct core_thread {
-> diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
-> index c8d62d4..bb01e29 100644
-> --- a/mm/Kconfig.debug
-> +++ b/mm/Kconfig.debug
-> @@ -1,3 +1,12 @@
-> +config DEBUG_PAGEALLOC
-> +	bool "Debug page memory allocations"
-> +	depends on DEBUG_KERNEL && ARCH_SUPPORTS_DEBUG_PAGEALLOC
-> +	depends on !HIBERNATION || !PPC && !SPARC
-> +	---help---
-> +	  Unmap pages from the kernel linear mapping after free_pages().
-> +	  This results in a large slowdown, but helps to find certain types
-> +	  of memory corruptions.
-> +
-
-I guess this is why it wasn't discovered in my compile testing.  It's
-quite regrettable that `make allmodconfig' didn't enable the feature. 
-That's what allmodconfig is for.
+>  /**
+>   * fcoe_xmit() - FCoE frame transmit function
+> 
+> 
+How can we resolve this? Should we provide an updated patch without this
+line or a new patch to remove the line?
