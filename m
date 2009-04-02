@@ -1,52 +1,41 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: [PATCH] Staging: pohmelfs: should include fs_struct.h
-Date: Thu, 2 Apr 2009 15:37:10 +0400
-Message-ID: <a4423d670904020437q446f7c62xa209822f10573c28@mail.gmail.com>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: manual merge of the tracing tree with the parisc
+	tree
+Date: Thu, 02 Apr 2009 13:54:43 +0000
+Message-ID: <1238680483.3383.7.camel@mulgrave.int.hansenpartnership.com>
+References: <20090401113740.7f425e02.sfr@canb.auug.org.au>
+	 <20090401175033.GE1443@bombadil.infradead.org>
+	 <20090402223205.e4ab7b5e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f165.google.com ([209.85.219.165]:41345 "EHLO
-	mail-ew0-f165.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755162AbZDBLhN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Apr 2009 07:37:13 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Evgeniy Polyakov <zbr@ioremap.net>, Greg Kroah-Hartman <gregkh@suse.de>, LKML <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Return-path: <linux-parisc-owner@vger.kernel.org>
+In-Reply-To: <20090402223205.e4ab7b5e.sfr@canb.auug.org.au>
+Sender: linux-parisc-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Kyle McMartin <kyle@mcmartin.ca>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org, Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>, Steven Rostedt <srostedt@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-drivers/staging/pohmelfs/path_entry.c: In function
-'pohmelfs_construct_path_string':
-drivers/staging/pohmelfs/path_entry.c:48: error: dereferencing pointer
-to incomplete type
-drivers/staging/pohmelfs/path_entry.c:49: error: dereferencing pointer
-to incomplete type
-drivers/staging/pohmelfs/path_entry.c:50: error: dereferencing pointer
-to incomplete type
-drivers/staging/pohmelfs/path_entry.c: In function 'pohmelfs_path_length':
-drivers/staging/pohmelfs/path_entry.c:95: error: dereferencing pointer
-to incomplete type
-drivers/staging/pohmelfs/path_entry.c:96: error: dereferencing pointer
-to incomplete type
-drivers/staging/pohmelfs/path_entry.c:97: error: dereferencing pointer
-to incomplete type
+On Thu, 2009-04-02 at 22:32 +1100, Stephen Rothwell wrote:
+> Hi Kyle,
+> 
+> On Wed, 1 Apr 2009 13:50:34 -0400 Kyle McMartin <kyle@mcmartin.ca> wrote:
+> >
+> > What's the optimal way to sort out multiple branches in this tree?
+> > Apparently Andrew is cross with me because the rtc-parisc branch didn't
+> > get picked up... Should I put a list of branches in my kernel.org
+> > public_html or something?
+> 
+> I am not quite sure what you are getting at.  If you have multiple trees
+> (or branches in a tree), I can merge them separately into linux-next -
+> just tell me what they are.
 
-Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
----
+Actually, the traditional way for a multi branch tree (something like
+Jens' Block tree) which contains all manner of branches, some of which
+are experimental and shouldn't be in linux-next, is to have a next
+branch into which you manually merge all branches that should be
+included.
 
- drivers/staging/pohmelfs/path_entry.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+James
 
-diff --git a/drivers/staging/pohmelfs/path_entry.c
-b/drivers/staging/pohmelfs/path_entry.c
-index 9270e54..3bad888 100644
---- a/drivers/staging/pohmelfs/path_entry.c
-+++ b/drivers/staging/pohmelfs/path_entry.c
-@@ -17,7 +17,7 @@
- #include <linux/slab.h>
- #include <linux/fs.h>
- #include <linux/ktime.h>
--#include <linux/fs.h>
-+#include <linux/fs_struct.h>
- #include <linux/pagemap.h>
- #include <linux/writeback.h>
- #include <linux/mount.h>
+
