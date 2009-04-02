@@ -1,76 +1,61 @@
-From: Robert Love <robert.w.love@intel.com>
-Subject: Re: linux-next: scsi tree build failure
-Date: Thu, 02 Apr 2009 10:19:38 -0700
-Message-ID: <1238692778.15031.56.camel@fritz>
-References: <20090402164927.97958f84.sfr@canb.auug.org.au>
-	 <1238682141.3383.11.camel@mulgrave.int.hansenpartnership.com>
+From: Matthias Kaehlcke <matthias@kaehlcke.net>
+Subject: Re: linux-next: Tree for March 30: [BUG] kmemleak page fault
+Date: Thu, 2 Apr 2009 19:21:56 +0200
+Message-ID: <20090402172156.GD14253@traven>
+References: <20090330200145.8d0da09b.sfr@canb.auug.org.au> <20090330122437.GA4784@traven> <1238578208.14550.4.camel@pc1117.cambridge.arm.com> <20090401095207.GH8877@traven> <1238688515.28457.120.camel@pc1117.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:45513 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932562AbZDBRTm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 2 Apr 2009 13:19:42 -0400
-In-Reply-To: <1238682141.3383.11.camel@mulgrave.int.hansenpartnership.com>
+Received: from mailbox-us-s-12.mailhostingserver.com ([75.125.101.9]:59416
+	"EHLO mailbox-us-s-12.mailhostingserver.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756648AbZDBRWG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Apr 2009 13:22:06 -0400
+Content-Disposition: inline
+In-Reply-To: <1238688515.28457.120.camel@pc1117.cambridge.arm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "Dev, Vasu" <vasu.dev@intel.com>, linux-scsi <linux-scsi@vger.kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Thu, 2009-04-02 at 07:22 -0700, James Bottomley wrote:
-> cc: linux-scsi added
-> 
-> On Thu, 2009-04-02 at 16:49 +1100, Stephen Rothwell wrote:
-> > Hi James,
-> > 
-> > Today's linux-next build (powerpc allyesconfig) failed like this:
-> > 
-> > drivers/scsi/fcoe/fcoe.c:982: error: __ksymtab_fcoe_fc_crc causes a section type conflict
-> > drivers/scsi/fcoe/fcoe.c:982: error: __ksymtab_fcoe_fc_crc causes a section type conflict
-> > 
-> > Reverting commit 0c3cb56ec3321b23e9826cccf822470717be6e08 ("[SCSI] fcoe:
-> > cleans up libfcoe.h and adds fcoe.h for fcoe module") makes the error go
-> > away.  I have no idea why - the only clue is that the only global
-> > declaration of fcoe_fc_crc() is removed by that commit.
-> > 
-> > Using a different compiler version (4.1.2) also fixed the problem.
-> 
-> Yes, that would be why I didn't see the issue.
-> 
-I built using gcc version 4.3.2 (on x86_64) and didn't see this either.
+El Thu, Apr 02, 2009 at 05:08:35PM +0100 Catalin Marinas ha dit:
 
-> > I also had to revert commits 60390544fcc212e0657cf1eea639691d09651943
-> > ("[SCSI] fcoe, libfc: fix double fcoe_softc memory alloc") and
-> > ba070644bff4390c965e99b1997f2cbec4157b46 ("[SCSI] fcoe, libfcoe: Add
-> > support for FIP. FCoE discovery and keep-alive") since they followed the
-> > one above.
+> On Wed, 2009-04-01 at 11:52 +0200, Matthias Kaehlcke wrote:
+> > El Wed, Apr 01, 2009 at 10:30:08AM +0100 Catalin Marinas ha dit:
 > > 
-> > I wonder if that function even needs to be exported as it is only used
-> > withing the one file.
+> > > On Mon, 2009-03-30 at 14:24 +0200, Matthias Kaehlcke wrote:
+> > > > linux-next 20090330 causes the following page fault on an edb9302
+> > > > (ARM) like board:
+> > > [...]
+> > > > the fault is reproducible and happens some seconds after having
+> > > > finished the boot process. please tell me if you need more information
+> > > > (like the .config, ...) in order to track this down
+> > > 
+> > > Yes, the .config would be useful. I'm mainly interested in which slab
+> > > allocator you are using. I'm testing kmemleak mainly on ARM and haven't
+> > > seen any issues.
+> > 
+> > attached is the .config for linux-next 20090401, which should be
+> > roughly the same than the 20090330 one.
+> > 
+> > some hours ago i booted the board with 20090401 and the page fault
+> > didn't happen
 > 
-> I think it's because the above commit removes the external declaration
-> of fcoe_fc_crc ... so now we have an export symbol with no header
-> defining it.  I think the correct patch is just not to export the
-> symbol.
-> 
-> James
-> 
-> ---
-> 
-> diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
-> index 5cdda6e..94e1e31 100644
-> --- a/drivers/scsi/fcoe/fcoe.c
-> +++ b/drivers/scsi/fcoe/fcoe.c
-> @@ -979,7 +979,6 @@ u32 fcoe_fc_crc(struct fc_frame *fp)
->  	}
->  	return crc;
->  }
-> -EXPORT_SYMBOL_GPL(fcoe_fc_crc);
->  
->  /**
->   * fcoe_xmit() - FCoE frame transmit function
-> 
-> 
-How can we resolve this? Should we provide an updated patch without this
-line or a new patch to remove the line?
+> Do you still get this fault with the latest linux-next? I can't
+> reproduce it on my ARM platform (I tried it with the latest mainline
+> kernel as well).
+
+still haven't tried with 20090402, but with 20090401 i didn't get the
+fault
+ 
+-- 
+Matthias Kaehlcke
+Embedded Linux Engineer
+Barcelona
+
+  Control over the use of one's ideas really constitutes control over other
+  people's lives; and it is usually used to make their lives more difficult.
+                          (Richard Stallman)
+                                                                 .''`.
+    using free software / Debian GNU/Linux | http://debian.org  : :'  :
+                                                                `. `'`
+gpg --keyserver pgp.mit.edu --recv-keys 47D8E5D4                  `-
