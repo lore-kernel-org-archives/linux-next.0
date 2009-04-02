@@ -1,48 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: failed to fetch proc tree
-Date: Fri, 3 Apr 2009 10:16:36 +1100
-Message-ID: <20090403101636.9898fe36.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH] Staging: pohmelfs: should include fs_struct.h
+Date: Thu, 2 Apr 2009 16:32:26 -0700
+Message-ID: <20090402233226.GA18563@kroah.com>
+References: <a4423d670904020437q446f7c62xa209822f10573c28@mail.gmail.com> <20090402211754.GA7479@ioremap.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__3_Apr_2009_10_16_36_+1100_L=x0Jmr2fpUlQ.A_"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52834 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757192AbZDBXQr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 2 Apr 2009 19:16:47 -0400
+Received: from kroah.org ([198.145.64.141]:48712 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1755875AbZDBXlY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 2 Apr 2009 19:41:24 -0400
+Content-Disposition: inline
+In-Reply-To: <20090402211754.GA7479@ioremap.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: linux-next@vger.kernel.org
+To: Evgeniy Polyakov <zbr@ioremap.net>
+Cc: Alexander Beregalov <a.beregalov@gmail.com>, Greg Kroah-Hartman <gregkh@suse.de>, LKML <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
---Signature=_Fri__3_Apr_2009_10_16_36_+1100_L=x0Jmr2fpUlQ.A_
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Apr 03, 2009 at 01:17:54AM +0400, Evgeniy Polyakov wrote:
+> Hi Alexander.
+> 
+> On Thu, Apr 02, 2009 at 03:37:10PM +0400, Alexander Beregalov (a.beregalov@gmail.com) wrote:
+> > drivers/staging/pohmelfs/path_entry.c: In function
+> > 'pohmelfs_construct_path_string':
+> > drivers/staging/pohmelfs/path_entry.c:48: error: dereferencing pointer
+> > to incomplete type
+> > drivers/staging/pohmelfs/path_entry.c:49: error: dereferencing pointer
+> > to incomplete type
+> > drivers/staging/pohmelfs/path_entry.c:50: error: dereferencing pointer
+> > to incomplete type
+> > drivers/staging/pohmelfs/path_entry.c: In function 'pohmelfs_path_length':
+> > drivers/staging/pohmelfs/path_entry.c:95: error: dereferencing pointer
+> > to incomplete type
+> > drivers/staging/pohmelfs/path_entry.c:96: error: dereferencing pointer
+> > to incomplete type
+> > drivers/staging/pohmelfs/path_entry.c:97: error: dereferencing pointer
+> > to incomplete type
+> > 
+> > Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+> 
+> Looks good. Ack.
+> Greg please queue it for inclusion.
 
-Hi Alexey,
+Will do.  Give me a few days to catch up, was away for a week...
 
-Today I got this error while fetching the proc tree:
+thanks,
 
-$ git fetch proc
-fatal: Couldn't find remote ref refs/heads/proc
-
-I will use what I fetched yesterday.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__3_Apr_2009_10_16_36_+1100_L=x0Jmr2fpUlQ.A_
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAknVR1QACgkQjjKRsyhoI8yPHgCglYCmYL4hyn0sr3lxRwVDa1UR
-JSEAoIaIokV4ZjC86RZPa87bvkTvIKAz
-=9y04
------END PGP SIGNATURE-----
-
---Signature=_Fri__3_Apr_2009_10_16_36_+1100_L=x0Jmr2fpUlQ.A_--
+greg k-h
