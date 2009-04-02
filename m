@@ -1,84 +1,51 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: linux-next: scsi tree build failure
-Date: Thu, 02 Apr 2009 18:23:42 +0000
-Message-ID: <1238696622.13399.11.camel@mulgrave.int.hansenpartnership.com>
-References: <20090402164927.97958f84.sfr@canb.auug.org.au>
-	 <1238682141.3383.11.camel@mulgrave.int.hansenpartnership.com>
-	 <1238692778.15031.56.camel@fritz>
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: Re: next-20090310: ext4 hangs
+Date: Thu, 2 Apr 2009 22:50:59 +0400
+Message-ID: <a4423d670904021150p5fcd1f82wefa68c839b2869a1@mail.gmail.com>
+References: <20090325151516.GB14881@atrey.karlin.mff.cuni.cz>
+	 <20090325152234.GN23439@duck.suse.cz>
+	 <a4423d670903250829w5e9304a7rce24f4220379620f@mail.gmail.com>
+	 <20090325161556.GP23439@duck.suse.cz>
+	 <a4423d670903251007r72058ca8m28275c1433ab2706@mail.gmail.com>
+	 <20090325194316.GQ23439@duck.suse.cz>
+	 <a4423d670903251538p3a7c180br1bcfe08c4f044c15@mail.gmail.com>
+	 <20090331100150.GF11808@duck.suse.cz>
+	 <a4423d670903310307i7acd31f0r4836beae14cfb92d@mail.gmail.com>
+	 <20090331123307.GG11808@duck.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:54869 "EHLO
-	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S933708AbZDBSXr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Apr 2009 14:23:47 -0400
-In-Reply-To: <1238692778.15031.56.camel@fritz>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Robert Love <robert.w.love@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "Dev, Vasu" <vasu.dev@intel.com>, linux-scsi <linux-scsi@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-ext4-owner@vger.kernel.org>
+In-Reply-To: <20090331123307.GG11808@duck.suse.cz>
+Sender: linux-ext4-owner@vger.kernel.org
+To: Jan Kara <jack@suse.cz>
+Cc: Theodore Tso <tytso@mit.edu>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sparclinux@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 2009-04-02 at 10:19 -0700, Robert Love wrote:
-> On Thu, 2009-04-02 at 07:22 -0700, James Bottomley wrote:
-> > cc: linux-scsi added
-> > 
-> > On Thu, 2009-04-02 at 16:49 +1100, Stephen Rothwell wrote:
-> > > Hi James,
-> > > 
-> > > Today's linux-next build (powerpc allyesconfig) failed like this:
-> > > 
-> > > drivers/scsi/fcoe/fcoe.c:982: error: __ksymtab_fcoe_fc_crc causes a section type conflict
-> > > drivers/scsi/fcoe/fcoe.c:982: error: __ksymtab_fcoe_fc_crc causes a section type conflict
-> > > 
-> > > Reverting commit 0c3cb56ec3321b23e9826cccf822470717be6e08 ("[SCSI] fcoe:
-> > > cleans up libfcoe.h and adds fcoe.h for fcoe module") makes the error go
-> > > away.  I have no idea why - the only clue is that the only global
-> > > declaration of fcoe_fc_crc() is removed by that commit.
-> > > 
-> > > Using a different compiler version (4.1.2) also fixed the problem.
-> > 
-> > Yes, that would be why I didn't see the issue.
-> > 
-> I built using gcc version 4.3.2 (on x86_64) and didn't see this either.
-> 
-> > > I also had to revert commits 60390544fcc212e0657cf1eea639691d09651943
-> > > ("[SCSI] fcoe, libfc: fix double fcoe_softc memory alloc") and
-> > > ba070644bff4390c965e99b1997f2cbec4157b46 ("[SCSI] fcoe, libfcoe: Add
-> > > support for FIP. FCoE discovery and keep-alive") since they followed the
-> > > one above.
-> > > 
-> > > I wonder if that function even needs to be exported as it is only used
-> > > withing the one file.
-> > 
-> > I think it's because the above commit removes the external declaration
-> > of fcoe_fc_crc ... so now we have an export symbol with no header
-> > defining it.  I think the correct patch is just not to export the
-> > symbol.
-> > 
-> > James
-> > 
-> > ---
-> > 
-> > diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
-> > index 5cdda6e..94e1e31 100644
-> > --- a/drivers/scsi/fcoe/fcoe.c
-> > +++ b/drivers/scsi/fcoe/fcoe.c
-> > @@ -979,7 +979,6 @@ u32 fcoe_fc_crc(struct fc_frame *fp)
-> >  	}
-> >  	return crc;
-> >  }
-> > -EXPORT_SYMBOL_GPL(fcoe_fc_crc);
-> >  
-> >  /**
-> >   * fcoe_xmit() - FCoE frame transmit function
-> > 
-> > 
-> How can we resolve this? Should we provide an updated patch without this
-> line or a new patch to remove the line?
+>> > =C2=A0I'm helpless here. I don't see how we can miss a wakeup (plu=
+s you seem to
+>> > be the only one reporting the bug). Could you please compile and t=
+est the kernel
+>> > with the attached patch? It will print to kernel log when we go to=
+ sleep
+>> > waiting for inode commit and when we send wakeups etc. When you hi=
+t the
+>> > deadlock, please send me your kernel log. It should help with debu=
+gging why do
+>> > we miss the wakeup. Thanks.
+>>
+>> Which patch?
+> =C2=A0Ups. Forgot to attach ;).
 
-Right at the moment, I need someone to verify that this is the fix,
-since I don't have a complaining compiler myself.  If it's this simple,
-I can adjust the patch accordingly.
+Cannot reproduce it on current 2.6.29-git. Strange.
+It should already have all ext4/jbd2 patches from next-20090310,
+but anyway it happened with 2.6.29-rc8 also.
+I ran dbench in cycle on two indentical hosts for more than 24 hours
+with no hang tasks.
 
-James
+I will try 2.6.29.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-ext4" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
