@@ -1,31 +1,53 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: next-0402: build fails at mm/debug-pagealloc.c
-Date: Thu, 2 Apr 2009 15:21:25 +0400
-Message-ID: <a4423d670904020421k7395e11dwe70d4223cb817e0a@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tracing tree with the parisc
+ tree
+Date: Thu, 2 Apr 2009 22:32:05 +1100
+Message-ID: <20090402223205.e4ab7b5e.sfr@canb.auug.org.au>
+References: <20090401113740.7f425e02.sfr@canb.auug.org.au>
+	<20090401175033.GE1443@bombadil.infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f165.google.com ([209.85.219.165]:35507 "EHLO
-	mail-ew0-f165.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935984AbZDBLV3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Apr 2009 07:21:29 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Akinobu Mita <akinobu.mita@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-arch@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__2_Apr_2009_22_32_05_+1100_2NUtc5aSpAuDlQ3X"
+Return-path: <linux-parisc-owner@vger.kernel.org>
+In-Reply-To: <20090401175033.GE1443@bombadil.infradead.org>
+Sender: linux-parisc-owner@vger.kernel.org
+To: Kyle McMartin <kyle@mcmartin.ca>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org, Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>, Steven Rostedt <srostedt@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-mm/debug-pagealloc.c: In function 'set_page_poison':
-mm/debug-pagealloc.c:8: error: 'struct page' has no member named 'debug_flags'
-mm/debug-pagealloc.c: In function 'clear_page_poison':
-mm/debug-pagealloc.c:13: error: 'struct page' has no member named 'debug_flags'
-mm/debug-pagealloc.c: In function 'page_poison':
-mm/debug-pagealloc.c:18: error: 'struct page' has no member named 'debug_flags'
-mm/debug-pagealloc.c: At top level:
-mm/debug-pagealloc.c:120: error: redefinition of 'kernel_map_pages'
-include/linux/mm.h:1278: error: previous definition of
-'kernel_map_pages' was here
-mm/debug-pagealloc.c: In function 'kernel_map_pages':
-mm/debug-pagealloc.c:122: error: 'debug_pagealloc_enabled' undeclared
-(first use in this function)
+--Signature=_Thu__2_Apr_2009_22_32_05_+1100_2NUtc5aSpAuDlQ3X
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Should debug_flags really be in vm_area_struct instead of `struct page` ?
+Hi Kyle,
+
+On Wed, 1 Apr 2009 13:50:34 -0400 Kyle McMartin <kyle@mcmartin.ca> wrote:
+>
+> What's the optimal way to sort out multiple branches in this tree?
+> Apparently Andrew is cross with me because the rtc-parisc branch didn't
+> get picked up... Should I put a list of branches in my kernel.org
+> public_html or something?
+
+I am not quite sure what you are getting at.  If you have multiple trees
+(or branches in a tree), I can merge them separately into linux-next -
+just tell me what they are.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__2_Apr_2009_22_32_05_+1100_2NUtc5aSpAuDlQ3X
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknUojUACgkQjjKRsyhoI8zwHgCfTdTu/1h6PlIRXB8+pM2yZBzK
+abIAnjcaTyZitVf5k+FUUMScxEF4TqXN
+=1KP7
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__2_Apr_2009_22_32_05_+1100_2NUtc5aSpAuDlQ3X--
