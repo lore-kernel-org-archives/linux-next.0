@@ -1,52 +1,47 @@
-From: "Ramkrishna Vepa" <Ramkrishna.Vepa@neterion.com>
-Subject: RE: [PATCH] vxge: should include tcp.h
-Date: Fri, 3 Apr 2009 13:43:28 -0400
-Message-ID: <78C9135A3D2ECE4B8162EBDCE82CAD77051BF551@nekter>
-References: <a4423d670904030234l3734ad45t49009e8ede2e1d2d@mail.gmail.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH] build fix for generic debug pagealloc
+Date: Fri, 3 Apr 2009 22:38:53 +0200
+Message-ID: <200904032238.55438.rjw@sisk.pl>
+References: <a4423d670904020421k7395e11dwe70d4223cb817e0a@mail.gmail.com> <20090402094522.b29004c8.akpm@linux-foundation.org> <20090403164450.GC3047@elte.hu>
 Mime-Version: 1.0
 Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <netdev-owner@vger.kernel.org>
-Content-class: urn:content-classes:message
-In-Reply-To: <a4423d670904030234l3734ad45t49009e8ede2e1d2d@mail.gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: Alexander Beregalov <a.beregalov@gmail.com>, linux-next@vger.kernel.org, Netdev <netdev@vger.kernel.org>, David Miller <davem@davemloft.net>
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <20090403164450.GC3047@elte.hu>
+Content-Disposition: inline
+Sender: linux-arch-owner@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Akinobu Mita <akinobu.mita@gmail.com>, Alexander Beregalov <a.beregalov@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-arch@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
 List-Id: linux-next.vger.kernel.org
 
-Please accept. We had CONFIG_IPV6 enabled and so did not see this error.
+On Friday 03 April 2009, Ingo Molnar wrote:
+> 
+> * Andrew Morton <akpm@linux-foundation.org> wrote:
+> 
+> > > +config DEBUG_PAGEALLOC
+> > > +	bool "Debug page memory allocations"
+> > > +	depends on DEBUG_KERNEL && ARCH_SUPPORTS_DEBUG_PAGEALLOC
+> > > +	depends on !HIBERNATION || !PPC && !SPARC
+> > > +	---help---
+> > > +	  Unmap pages from the kernel linear mapping after free_pages().
+> > > +	  This results in a large slowdown, but helps to find certain types
+> > > +	  of memory corruptions.
+> > > +
+> > 
+> > I guess this is why it wasn't discovered in my compile testing.  
+> > It's quite regrettable that `make allmodconfig' didn't enable the 
+> > feature. That's what allmodconfig is for.
+> 
+> Hm, i _do_ remember some hibernation magic fix from Rafael, in the 
+> area of debugalloc. Many months ago.
+> 
+> Rafael, is it supposed to work? If yes, i think we should unblock 
+> it.
+
+Yes, it is, at least on x86.
+
+ISTR using DEBUG_PAGEALLOC with hibernation quite some time ago already.
 
 Thanks,
-Ram
-> -----Original Message-----
-> From: Alexander Beregalov [mailto:a.beregalov@gmail.com]
-> Sent: Friday, April 03, 2009 2:35 AM
-> To: linux-next@vger.kernel.org; Netdev; David Miller; Ramkrishna Vepa
-> Subject: [PATCH] vxge: should include tcp.h
-> 
-> Fix this build error:
-> 
-> drivers/net/vxge/vxge-main.c: In function 'vxge_get_vpath_no':
-> drivers/net/vxge/vxge-main.c:695: error: dereferencing pointer to
-> incomplete type
-> ...
-> 
-> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
-> ---
-> 
->  drivers/net/vxge/vxge-main.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/net/vxge/vxge-main.c
-b/drivers/net/vxge/vxge-main.c
-> index 61ef161..b7f08f3 100644
-> --- a/drivers/net/vxge/vxge-main.c
-> +++ b/drivers/net/vxge/vxge-main.c
-> @@ -43,6 +43,7 @@
-> 
->  #include <linux/if_vlan.h>
->  #include <linux/pci.h>
-> +#include <linux/tcp.h>
->  #include <net/ip.h>
->  #include <linux/netdevice.h>
->  #include <linux/etherdevice.h>
+Rafael
