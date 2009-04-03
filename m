@@ -1,53 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: cifs tree build failure
-Date: Fri, 3 Apr 2009 13:07:31 +1100
-Message-ID: <20090403130731.6e117eb1.sfr@canb.auug.org.au>
+Subject: Re: linux-next: scsi tree build failure
+Date: Fri, 3 Apr 2009 13:37:13 +1100
+Message-ID: <20090403133713.c7040072.sfr@canb.auug.org.au>
+References: <20090402164927.97958f84.sfr@canb.auug.org.au>
+	<1238682141.3383.11.camel@mulgrave.int.hansenpartnership.com>
+	<1238692778.15031.56.camel@fritz>
+	<1238696622.13399.11.camel@mulgrave.int.hansenpartnership.com>
+	<20090403112602.fa3010c8.sfr@canb.auug.org.au>
+	<1238721400.13399.23.camel@mulgrave.int.hansenpartnership.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__3_Apr_2009_13_07_31_+1100_S5c.T.XqQPfANsN7"
+ boundary="Signature=_Fri__3_Apr_2009_13_37_13_+1100_+Qz6JQEghADsiIBq"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44356 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47715 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750825AbZDCCHm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 2 Apr 2009 22:07:42 -0400
+	id S1750926AbZDCChX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 2 Apr 2009 22:37:23 -0400
+In-Reply-To: <1238721400.13399.23.camel@mulgrave.int.hansenpartnership.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steve French <smfrench@gmail.com>, linux-cifs-client@lists.samba.org
-Cc: linux-next@vger.kernel.org, Igor Mammedov <niallain@gmail.com>, Jeff Layton <jlayton@redhat.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Robert Love <robert.w.love@intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "Dev, Vasu" <vasu.dev@intel.com>, linux-scsi <linux-scsi@vger.kernel.org>
 
---Signature=_Fri__3_Apr_2009_13_07_31_+1100_S5c.T.XqQPfANsN7
+--Signature=_Fri__3_Apr_2009_13_37_13_+1100_+Qz6JQEghADsiIBq
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Steve,
+Hi James,
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+On Fri, 03 Apr 2009 01:16:40 +0000 James Bottomley <James.Bottomley@HansenP=
+artnership.com> wrote:
+>
+> I fixed up the patch in my tree, so you should not need this next time
+> around.
 
-fs/cifs/connect.c: In function 'cifs_mount':
-fs/cifs/connect.c:2545: error: 'struct cifs_sb_info' has no member named 'm=
-ountdata'
+Great, thanks.
 
-Caused by commit da9e1ebdf6fc4630329afcad11855113ad6023b6 ("Remote DFS
-root support").  I will use the cifs tree form next-20090402 (which
-really just drops that one commit).
-
-Presumably CONFIG_CIFS_DFS_UPCALL is not defined in my config.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__3_Apr_2009_13_07_31_+1100_S5c.T.XqQPfANsN7
+--Signature=_Fri__3_Apr_2009_13_37_13_+1100_+Qz6JQEghADsiIBq
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAknVb2MACgkQjjKRsyhoI8wSMwCfQiWqFzq0WoNFs715C15IEuAW
-C6UAnjQqZMluPf+GVfGciz7Rjb02QmRe
-=tQ0R
+iEYEARECAAYFAknVdlkACgkQjjKRsyhoI8waRQCeKV1Y4ukiZjA/E0ofkB8UVbbS
++tMAn1yhewK4bw5pF1yZdm26JvQOQmL4
+=mC58
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__3_Apr_2009_13_07_31_+1100_S5c.T.XqQPfANsN7--
+--Signature=_Fri__3_Apr_2009_13_37_13_+1100_+Qz6JQEghADsiIBq--
