@@ -1,73 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: vfs tree build failure
-Date: Fri, 3 Apr 2009 15:43:42 +1100
-Message-ID: <20090403154342.b2d72cf6.sfr@canb.auug.org.au>
-References: <20090402131211.32420d4a.sfr@canb.auug.org.au>
+Date: Fri, 3 Apr 2009 15:44:44 +1100
+Message-ID: <20090403154444.576902c0.sfr@canb.auug.org.au>
+References: <20090402125206.69a0cba0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50417 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34276 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754922AbZDCEns (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 3 Apr 2009 00:43:48 -0400
-In-Reply-To: <20090402131211.32420d4a.sfr@canb.auug.org.au>
+	id S1751590AbZDCEou (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 3 Apr 2009 00:44:50 -0400
+In-Reply-To: <20090402125206.69a0cba0.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Howells <dhowells@redhat.com>, Trond Myklebust <trond.myklebust@fys.uio.no>
+To: Trond Myklebust <Trond.Myklebust@netapp.com>
 Cc: linux-next@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>
 
-Hi David, Trond,
+Hi Trond,
 
 The vfs patch has now gone into Linus' tree ...
 
-On Thu, 2 Apr 2009 13:12:11 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Thu, 2 Apr 2009 12:52:06 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 > 
-> fs/cachefiles/cf-daemon.c: In function 'cachefiles_daemon_cull':
-> fs/cachefiles/cf-daemon.c:576: error: dereferencing pointer to incomplete type
-> fs/cachefiles/cf-daemon.c:577: error: dereferencing pointer to incomplete type
-> fs/cachefiles/cf-daemon.c:578: error: dereferencing pointer to incomplete type
-> fs/cachefiles/cf-daemon.c: In function 'cachefiles_daemon_inuse':
-> fs/cachefiles/cf-daemon.c:652: error: dereferencing pointer to incomplete type
-> fs/cachefiles/cf-daemon.c:653: error: dereferencing pointer to incomplete type
-> fs/cachefiles/cf-daemon.c:654: error: dereferencing pointer to incomplete type
+> fs/namei.c: In function 'vfs_remote_path_lookup':
+> fs/namei.c:1192: error: implicit declaration of function 'put_fs_struct'
 > 
-> Caused by commit 96a16ef5cd64d79f9706b9dccdb180d248c46866 ("CacheFiles: A
-> cache that backs onto a mounted filesystem") (from the nfs tree)
-> interacting with commit 5ad4e53bd5406ee214ddc5a41f03f779b8b2d526 ("Get
-> rid of indirect include of fs_struct.h") (from the vfs tree).
+> Caused by commit 498052bba55ecaff58db6a1436b0e25bfd75a7ff ("New
+> locking/refcounting for fs_struct") (from the vfs tree) interacting with
+> commit afc83ab4217a4b31cabdadd174bc3ea10b9fcb9d ("VFS: Add a VFS helper
+> function vfs_remote_path_lookup()") (from the nfs tree).
 > 
-> I applied the following merge fixup patch.
-> 
-> David, Trond, this should be applicable to the nfs tree already.
+> I applied the patch below as a merge fixup.  Please check it.
 > -- 
 > Cheers,
 > Stephen Rothwell                    sfr@canb.auug.org.au
 > http://www.canb.auug.org.au/~sfr/
 > 
 > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 2 Apr 2009 13:06:20 +1100
-> Subject: [PATCH] nfs: fixup for fallout from cleaning up includes of fs_struct.h
+> Date: Thu, 2 Apr 2009 12:48:24 +1100
+> Subject: [PATCH] vfs: merge fix for put_fs_struct/free_fs_struct change
 > 
 > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 > ---
->  fs/cachefiles/cf-daemon.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
+>  fs/namei.c |    6 +++---
+>  1 files changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/fs/cachefiles/cf-daemon.c b/fs/cachefiles/cf-daemon.c
-> index 6aa6e65..b285632 100644
-> --- a/fs/cachefiles/cf-daemon.c
-> +++ b/fs/cachefiles/cf-daemon.c
-> @@ -21,6 +21,7 @@
->  #include <linux/mount.h>
->  #include <linux/statfs.h>
->  #include <linux/ctype.h>
-> +#include <linux/fs_struct.h>
->  #include "cf-internal.h"
+> diff --git a/fs/namei.c b/fs/namei.c
+> index f9656be..09680d8 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1153,7 +1153,7 @@ int vfs_remote_path_lookup(struct dentry *dentry,
 >  
->  static int cachefiles_daemon_open(struct inode *, struct file *);
+>  	new_mnt_ns = create_private_mnt_ns(mnt, new_fs);
+>  	if (new_mnt_ns == NULL)
+> -		goto out_put_fs_struct;
+> +		goto out_free_fs_struct;
+>  
+>  	/* Create a private copy of current->nsproxy */
+>  	new_nsproxy = unshare_current_nsproxy();
+> @@ -1188,8 +1188,8 @@ int vfs_remote_path_lookup(struct dentry *dentry,
+>  out_put_mnt_ns:
+>  	put_mnt_ns(new_mnt_ns);
+>  
+> -out_put_fs_struct:
+> -	put_fs_struct(new_fs);
+> +out_free_fs_struct:
+> +	free_fs_struct(new_fs);
+>  out_err:
+>  	return error;
+>  }
 > -- 
 > 1.6.2.1
 > 
