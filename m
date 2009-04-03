@@ -1,61 +1,53 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: linux-next: scsi tree build failure
-Date: Fri, 03 Apr 2009 01:16:40 +0000
-Message-ID: <1238721400.13399.23.camel@mulgrave.int.hansenpartnership.com>
-References: <20090402164927.97958f84.sfr@canb.auug.org.au>
-	 <1238682141.3383.11.camel@mulgrave.int.hansenpartnership.com>
-	 <1238692778.15031.56.camel@fritz>
-	 <1238696622.13399.11.camel@mulgrave.int.hansenpartnership.com>
-	 <20090403112602.fa3010c8.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: cifs tree build failure
+Date: Fri, 3 Apr 2009 13:07:31 +1100
+Message-ID: <20090403130731.6e117eb1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__3_Apr_2009_13_07_31_+1100_S5c.T.XqQPfANsN7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:50665 "EHLO
-	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755581AbZDCBRH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Apr 2009 21:17:07 -0400
-In-Reply-To: <20090403112602.fa3010c8.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44356 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750825AbZDCCHm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 2 Apr 2009 22:07:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Robert Love <robert.w.love@intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "Dev, Vasu" <vasu.dev@intel.com>, linux-scsi <linux-scsi@vger.kernel.org>
+To: Steve French <smfrench@gmail.com>, linux-cifs-client@lists.samba.org
+Cc: linux-next@vger.kernel.org, Igor Mammedov <niallain@gmail.com>, Jeff Layton <jlayton@redhat.com>
 
-On Fri, 2009-04-03 at 11:26 +1100, Stephen Rothwell wrote:
-> Hi James,
-> 
-> On Thu, 02 Apr 2009 18:23:42 +0000 James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
-> >
-> > On Thu, 2009-04-02 at 10:19 -0700, Robert Love wrote:
-> > >
-> > > I built using gcc version 4.3.2 (on x86_64) and didn't see this either.
-> 
-> It may be powerpc specific, I guess.
-> 
-> > > > diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
-> > > > index 5cdda6e..94e1e31 100644
-> > > > --- a/drivers/scsi/fcoe/fcoe.c
-> > > > +++ b/drivers/scsi/fcoe/fcoe.c
-> > > > @@ -979,7 +979,6 @@ u32 fcoe_fc_crc(struct fc_frame *fp)
-> > > >  	}
-> > > >  	return crc;
-> > > >  }
-> > > > -EXPORT_SYMBOL_GPL(fcoe_fc_crc);
-> > > >  
-> > > >  /**
-> > > >   * fcoe_xmit() - FCoE frame transmit function
-> > > > 
-> > > > 
-> > Right at the moment, I need someone to verify that this is the fix,
-> > since I don't have a complaining compiler myself.  If it's this simple,
-> > I can adjust the patch accordingly.
-> 
-> This fixes it for me.  I will apply that patch to linux-next for today
-> (instead of the reverts I did yesterday).
+--Signature=_Fri__3_Apr_2009_13_07_31_+1100_S5c.T.XqQPfANsN7
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Perfect, thanks!
+Hi Steve,
 
-I fixed up the patch in my tree, so you should not need this next time
-around.
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-James
+fs/cifs/connect.c: In function 'cifs_mount':
+fs/cifs/connect.c:2545: error: 'struct cifs_sb_info' has no member named 'm=
+ountdata'
+
+Caused by commit da9e1ebdf6fc4630329afcad11855113ad6023b6 ("Remote DFS
+root support").  I will use the cifs tree form next-20090402 (which
+really just drops that one commit).
+
+Presumably CONFIG_CIFS_DFS_UPCALL is not defined in my config.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__3_Apr_2009_13_07_31_+1100_S5c.T.XqQPfANsN7
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknVb2MACgkQjjKRsyhoI8wSMwCfQiWqFzq0WoNFs715C15IEuAW
+C6UAnjQqZMluPf+GVfGciz7Rjb02QmRe
+=tQ0R
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__3_Apr_2009_13_07_31_+1100_S5c.T.XqQPfANsN7--
