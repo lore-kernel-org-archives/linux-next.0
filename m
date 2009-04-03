@@ -1,39 +1,49 @@
 From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH] build fix for generic debug pagealloc
-Date: Fri, 3 Apr 2009 18:44:50 +0200
-Message-ID: <20090403164450.GC3047@elte.hu>
-References: <a4423d670904020421k7395e11dwe70d4223cb817e0a@mail.gmail.com> <20090402163145.GA28728@localhost.localdomain> <20090402094522.b29004c8.akpm@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the rr tree with the cpus4096 tree
+Date: Fri, 3 Apr 2009 19:23:47 +0200
+Message-ID: <20090403172347.GM19982@elte.hu>
+References: <20090331133953.73d33570.sfr@canb.auug.org.au> <20090331094230.GK7030@erda.amd.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S934928AbZDCQrG@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx3.mail.elte.hu ([157.181.1.138]:43055 "EHLO mx3.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752674AbZDCRYN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 3 Apr 2009 13:24:13 -0400
 Content-Disposition: inline
-In-Reply-To: <20090402094522.b29004c8.akpm@linux-foundation.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Akinobu Mita <akinobu.mita@gmail.com>, Alexander Beregalov <a.beregalov@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-arch@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20090331094230.GK7030@erda.amd.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Robert Richter <robert.richter@amd.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
 
 
-* Andrew Morton <akpm@linux-foundation.org> wrote:
+* Robert Richter <robert.richter@amd.com> wrote:
 
-> > +config DEBUG_PAGEALLOC
-> > +	bool "Debug page memory allocations"
-> > +	depends on DEBUG_KERNEL && ARCH_SUPPORTS_DEBUG_PAGEALLOC
-> > +	depends on !HIBERNATION || !PPC && !SPARC
-> > +	---help---
-> > +	  Unmap pages from the kernel linear mapping after free_pages().
-> > +	  This results in a large slowdown, but helps to find certain types
-> > +	  of memory corruptions.
-> > +
+> On 31.03.09 13:39:53, Stephen Rothwell wrote:
+> > Hi Rusty,
+> > 
+> > Today's linux-next merge of the rr tree got a conflict in
+> > drivers/oprofile/buffer_sync.c between commit
+> > 4c50d9ea9ca9e46b65aeffed3e0d6f54ff38c8d4 ("cpumask: modifiy oprofile
+> > initialization") from the cpus4096 tree and commit
+> > d6d66104b6a06bc0bb541ac59aff59fad46ad466 ("oprofile: Thou shalt not call
+> > __exit functions from __init functions") from the rr tree.
+> > 
+> > The former just removed the code that the latter was modifying, so I used
+> > the former version.
 > 
-> I guess this is why it wasn't discovered in my compile testing.  
-> It's quite regrettable that `make allmodconfig' didn't enable the 
-> feature. That's what allmodconfig is for.
+> Rusty,
+> 
+> please revert d6d66104b6a06bc0bb541ac59aff59fad46ad466. The
+> tip/cpus4096 branch has been pulled incompletely. Patch
+> 4c50d9ea9ca9e46b65aeffed3e0d6f54ff38c8d4 fixes the section mismatch.
+> 
+> Ingo,
+> 
+> will you send a pull request for tip/cpus4096? Otherwise the patch
+> should be added to the urgent branch or so.
 
-Hm, i _do_ remember some hibernation magic fix from Rafael, in the 
-area of debugalloc. Many months ago.
-
-Rafael, is it supposed to work? If yes, i think we should unblock 
-it.
+It's going via Rusty this cycle - the main cpumask magician! :-)
 
 	Ingo
