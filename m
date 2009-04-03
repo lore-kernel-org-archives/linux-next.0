@@ -1,15 +1,15 @@
 From: Russ Anderson <rja@sgi.com>
-Subject: [patch bugfix] x86: prevent /sys/firmware/sgi_uv from being created on non-uv systems
-Date: Fri, 3 Apr 2009 17:09:13 -0500
-Message-ID: <20090403220913.GA21667@sgi.com>
+Subject: [patch bugfix (take 2)] x86: prevent /sys/firmware/sgi_uv from being created on non-uv systems
+Date: Fri, 3 Apr 2009 17:24:23 -0500
+Message-ID: <20090403222423.GA28546@sgi.com>
 Reply-To: Russ Anderson <rja@sgi.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay1.sgi.com ([192.48.179.29]:47813 "EHLO relay.sgi.com"
+Received: from relay2.sgi.com ([192.48.179.30]:60641 "EHLO relay.sgi.com"
 	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1753495AbZDCWJR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 3 Apr 2009 18:09:17 -0400
+	id S1752969AbZDCWY0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 3 Apr 2009 18:24:26 -0400
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
@@ -21,18 +21,21 @@ Cc: Russ Anderson <rja@sgi.com>
 Signed-off-by: Russ Anderson <rja@sgi.com>
 
 ---
+The previous patch was an old version.  
+
+
  arch/x86/kernel/uv_sysfs.c |    4 ++++
  1 file changed, 4 insertions(+)
 
 Index: linux/arch/x86/kernel/uv_sysfs.c
 ===================================================================
---- linux.orig/arch/x86/kernel/uv_sysfs.c	2009-04-03 17:02:45.000000000 -0500
-+++ linux/arch/x86/kernel/uv_sysfs.c	2009-04-03 17:02:49.000000000 -0500
+--- linux.orig/arch/x86/kernel/uv_sysfs.c	2009-04-03 17:16:57.000000000 -0500
++++ linux/arch/x86/kernel/uv_sysfs.c	2009-04-03 17:17:25.000000000 -0500
 @@ -21,6 +21,7 @@
  
  #include <linux/sysdev.h>
  #include <asm/uv/bios.h>
-+#include <asm/genapic.h>
++#include <asm/uv/uv.h>
  
  struct kobject *sgi_uv_kobj;
  
