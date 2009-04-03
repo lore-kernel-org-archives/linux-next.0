@@ -1,49 +1,52 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the rr tree with the cpus4096 tree
-Date: Fri, 3 Apr 2009 19:23:47 +0200
-Message-ID: <20090403172347.GM19982@elte.hu>
-References: <20090331133953.73d33570.sfr@canb.auug.org.au> <20090331094230.GK7030@erda.amd.com>
+From: "Ramkrishna Vepa" <Ramkrishna.Vepa@neterion.com>
+Subject: RE: [PATCH] vxge: should include tcp.h
+Date: Fri, 3 Apr 2009 13:43:28 -0400
+Message-ID: <78C9135A3D2ECE4B8162EBDCE82CAD77051BF551@nekter>
+References: <a4423d670904030234l3734ad45t49009e8ede2e1d2d@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:43055 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752674AbZDCRYN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 3 Apr 2009 13:24:13 -0400
-Content-Disposition: inline
-In-Reply-To: <20090331094230.GK7030@erda.amd.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Robert Richter <robert.richter@amd.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <netdev-owner@vger.kernel.org>
+Content-class: urn:content-classes:message
+In-Reply-To: <a4423d670904030234l3734ad45t49009e8ede2e1d2d@mail.gmail.com>
+Sender: netdev-owner@vger.kernel.org
+To: Alexander Beregalov <a.beregalov@gmail.com>, linux-next@vger.kernel.org, Netdev <netdev@vger.kernel.org>, David Miller <davem@davemloft.net>
+List-Id: linux-next.vger.kernel.org
 
+Please accept. We had CONFIG_IPV6 enabled and so did not see this error.
 
-* Robert Richter <robert.richter@amd.com> wrote:
-
-> On 31.03.09 13:39:53, Stephen Rothwell wrote:
-> > Hi Rusty,
-> > 
-> > Today's linux-next merge of the rr tree got a conflict in
-> > drivers/oprofile/buffer_sync.c between commit
-> > 4c50d9ea9ca9e46b65aeffed3e0d6f54ff38c8d4 ("cpumask: modifiy oprofile
-> > initialization") from the cpus4096 tree and commit
-> > d6d66104b6a06bc0bb541ac59aff59fad46ad466 ("oprofile: Thou shalt not call
-> > __exit functions from __init functions") from the rr tree.
-> > 
-> > The former just removed the code that the latter was modifying, so I used
-> > the former version.
+Thanks,
+Ram
+> -----Original Message-----
+> From: Alexander Beregalov [mailto:a.beregalov@gmail.com]
+> Sent: Friday, April 03, 2009 2:35 AM
+> To: linux-next@vger.kernel.org; Netdev; David Miller; Ramkrishna Vepa
+> Subject: [PATCH] vxge: should include tcp.h
 > 
-> Rusty,
+> Fix this build error:
 > 
-> please revert d6d66104b6a06bc0bb541ac59aff59fad46ad466. The
-> tip/cpus4096 branch has been pulled incompletely. Patch
-> 4c50d9ea9ca9e46b65aeffed3e0d6f54ff38c8d4 fixes the section mismatch.
+> drivers/net/vxge/vxge-main.c: In function 'vxge_get_vpath_no':
+> drivers/net/vxge/vxge-main.c:695: error: dereferencing pointer to
+> incomplete type
+> ...
 > 
-> Ingo,
+> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+> ---
 > 
-> will you send a pull request for tip/cpus4096? Otherwise the patch
-> should be added to the urgent branch or so.
-
-It's going via Rusty this cycle - the main cpumask magician! :-)
-
-	Ingo
+>  drivers/net/vxge/vxge-main.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/net/vxge/vxge-main.c
+b/drivers/net/vxge/vxge-main.c
+> index 61ef161..b7f08f3 100644
+> --- a/drivers/net/vxge/vxge-main.c
+> +++ b/drivers/net/vxge/vxge-main.c
+> @@ -43,6 +43,7 @@
+> 
+>  #include <linux/if_vlan.h>
+>  #include <linux/pci.h>
+> +#include <linux/tcp.h>
+>  #include <net/ip.h>
+>  #include <linux/netdevice.h>
+>  #include <linux/etherdevice.h>
