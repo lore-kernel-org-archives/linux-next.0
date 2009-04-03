@@ -1,47 +1,51 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH] build fix for generic debug pagealloc
-Date: Fri, 3 Apr 2009 22:38:53 +0200
-Message-ID: <200904032238.55438.rjw@sisk.pl>
-References: <a4423d670904020421k7395e11dwe70d4223cb817e0a@mail.gmail.com> <20090402094522.b29004c8.akpm@linux-foundation.org> <20090403164450.GC3047@elte.hu>
+From: Russ Anderson <rja@sgi.com>
+Subject: [patch bugfix] x86: prevent /sys/firmware/sgi_uv from being created on non-uv systems
+Date: Fri, 3 Apr 2009 17:09:13 -0500
+Message-ID: <20090403220913.GA21667@sgi.com>
+Reply-To: Russ Anderson <rja@sgi.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <20090403164450.GC3047@elte.hu>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from relay1.sgi.com ([192.48.179.29]:47813 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753495AbZDCWJR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 3 Apr 2009 18:09:17 -0400
 Content-Disposition: inline
-Sender: linux-arch-owner@vger.kernel.org
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Akinobu Mita <akinobu.mita@gmail.com>, Alexander Beregalov <a.beregalov@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-arch@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
+Cc: Russ Anderson <rja@sgi.com>
 
-On Friday 03 April 2009, Ingo Molnar wrote:
-> 
-> * Andrew Morton <akpm@linux-foundation.org> wrote:
-> 
-> > > +config DEBUG_PAGEALLOC
-> > > +	bool "Debug page memory allocations"
-> > > +	depends on DEBUG_KERNEL && ARCH_SUPPORTS_DEBUG_PAGEALLOC
-> > > +	depends on !HIBERNATION || !PPC && !SPARC
-> > > +	---help---
-> > > +	  Unmap pages from the kernel linear mapping after free_pages().
-> > > +	  This results in a large slowdown, but helps to find certain types
-> > > +	  of memory corruptions.
-> > > +
-> > 
-> > I guess this is why it wasn't discovered in my compile testing.  
-> > It's quite regrettable that `make allmodconfig' didn't enable the 
-> > feature. That's what allmodconfig is for.
-> 
-> Hm, i _do_ remember some hibernation magic fix from Rafael, in the 
-> area of debugalloc. Many months ago.
-> 
-> Rafael, is it supposed to work? If yes, i think we should unblock 
-> it.
+/sys/firmware/sgi_uv should only be created on uv systems.
 
-Yes, it is, at least on x86.
+Signed-off-by: Russ Anderson <rja@sgi.com>
 
-ISTR using DEBUG_PAGEALLOC with hibernation quite some time ago already.
+---
+ arch/x86/kernel/uv_sysfs.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-Thanks,
-Rafael
+Index: linux/arch/x86/kernel/uv_sysfs.c
+===================================================================
+--- linux.orig/arch/x86/kernel/uv_sysfs.c	2009-04-03 17:02:45.000000000 -0500
++++ linux/arch/x86/kernel/uv_sysfs.c	2009-04-03 17:02:49.000000000 -0500
+@@ -21,6 +21,7 @@
+ 
+ #include <linux/sysdev.h>
+ #include <asm/uv/bios.h>
++#include <asm/genapic.h>
+ 
+ struct kobject *sgi_uv_kobj;
+ 
+@@ -46,6 +47,9 @@ static struct kobj_attribute coherence_i
+ static int __init sgi_uv_sysfs_init(void)
+ {
+ 	unsigned long ret;
++
++	if (!is_uv_system())
++		return -ENODEV;
+ 
+ 	if (!sgi_uv_kobj)
+ 		sgi_uv_kobj = kobject_create_and_add("sgi_uv", firmware_kobj);
+-- 
+Russ Anderson, OS RAS/Partitioning Project Lead  
+SGI - Silicon Graphics Inc          rja@sgi.com
