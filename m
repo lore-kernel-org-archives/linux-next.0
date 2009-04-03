@@ -1,49 +1,77 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH] Staging: pohmelfs: should include fs_struct.h
-Date: Thu, 2 Apr 2009 16:32:26 -0700
-Message-ID: <20090402233226.GA18563@kroah.com>
-References: <a4423d670904020437q446f7c62xa209822f10573c28@mail.gmail.com> <20090402211754.GA7479@ioremap.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: scsi tree build failure
+Date: Fri, 3 Apr 2009 11:26:02 +1100
+Message-ID: <20090403112602.fa3010c8.sfr@canb.auug.org.au>
+References: <20090402164927.97958f84.sfr@canb.auug.org.au>
+	<1238682141.3383.11.camel@mulgrave.int.hansenpartnership.com>
+	<1238692778.15031.56.camel@fritz>
+	<1238696622.13399.11.camel@mulgrave.int.hansenpartnership.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__3_Apr_2009_11_26_02_+1100_PHOPr34U9s=VW=0h"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:48712 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1755875AbZDBXlY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 2 Apr 2009 19:41:24 -0400
-Content-Disposition: inline
-In-Reply-To: <20090402211754.GA7479@ioremap.net>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46114 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753633AbZDCA0K (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 2 Apr 2009 20:26:10 -0400
+In-Reply-To: <1238696622.13399.11.camel@mulgrave.int.hansenpartnership.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Evgeniy Polyakov <zbr@ioremap.net>
-Cc: Alexander Beregalov <a.beregalov@gmail.com>, Greg Kroah-Hartman <gregkh@suse.de>, LKML <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Robert Love <robert.w.love@intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "Dev, Vasu" <vasu.dev@intel.com>, linux-scsi <linux-scsi@vger.kernel.org>
 
-On Fri, Apr 03, 2009 at 01:17:54AM +0400, Evgeniy Polyakov wrote:
-> Hi Alexander.
-> 
-> On Thu, Apr 02, 2009 at 03:37:10PM +0400, Alexander Beregalov (a.beregalov@gmail.com) wrote:
-> > drivers/staging/pohmelfs/path_entry.c: In function
-> > 'pohmelfs_construct_path_string':
-> > drivers/staging/pohmelfs/path_entry.c:48: error: dereferencing pointer
-> > to incomplete type
-> > drivers/staging/pohmelfs/path_entry.c:49: error: dereferencing pointer
-> > to incomplete type
-> > drivers/staging/pohmelfs/path_entry.c:50: error: dereferencing pointer
-> > to incomplete type
-> > drivers/staging/pohmelfs/path_entry.c: In function 'pohmelfs_path_length':
-> > drivers/staging/pohmelfs/path_entry.c:95: error: dereferencing pointer
-> > to incomplete type
-> > drivers/staging/pohmelfs/path_entry.c:96: error: dereferencing pointer
-> > to incomplete type
-> > drivers/staging/pohmelfs/path_entry.c:97: error: dereferencing pointer
-> > to incomplete type
-> > 
-> > Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
-> 
-> Looks good. Ack.
-> Greg please queue it for inclusion.
+--Signature=_Fri__3_Apr_2009_11_26_02_+1100_PHOPr34U9s=VW=0h
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Will do.  Give me a few days to catch up, was away for a week...
+Hi James,
 
-thanks,
+On Thu, 02 Apr 2009 18:23:42 +0000 James Bottomley <James.Bottomley@HansenP=
+artnership.com> wrote:
+>
+> On Thu, 2009-04-02 at 10:19 -0700, Robert Love wrote:
+> >
+> > I built using gcc version 4.3.2 (on x86_64) and didn't see this either.
 
-greg k-h
+It may be powerpc specific, I guess.
+
+> > > diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
+> > > index 5cdda6e..94e1e31 100644
+> > > --- a/drivers/scsi/fcoe/fcoe.c
+> > > +++ b/drivers/scsi/fcoe/fcoe.c
+> > > @@ -979,7 +979,6 @@ u32 fcoe_fc_crc(struct fc_frame *fp)
+> > >  	}
+> > >  	return crc;
+> > >  }
+> > > -EXPORT_SYMBOL_GPL(fcoe_fc_crc);
+> > > =20
+> > >  /**
+> > >   * fcoe_xmit() - FCoE frame transmit function
+> > >=20
+> > >=20
+> Right at the moment, I need someone to verify that this is the fix,
+> since I don't have a complaining compiler myself.  If it's this simple,
+> I can adjust the patch accordingly.
+
+This fixes it for me.  I will apply that patch to linux-next for today
+(instead of the reverts I did yesterday).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__3_Apr_2009_11_26_02_+1100_PHOPr34U9s=VW=0h
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknVV5oACgkQjjKRsyhoI8z/RACgjt5Or6luGEVmZ9yt49NBrg49
+bFIAoJhiFOOGrkmyus7A9N9f9Q67d5Jd
+=AKGi
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__3_Apr_2009_11_26_02_+1100_PHOPr34U9s=VW=0h--
