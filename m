@@ -1,54 +1,62 @@
-From: Russ Anderson <rja@sgi.com>
-Subject: [patch bugfix (take 2)] x86: prevent /sys/firmware/sgi_uv from being created on non-uv systems
-Date: Fri, 3 Apr 2009 17:24:23 -0500
-Message-ID: <20090403222423.GA28546@sgi.com>
-Reply-To: Russ Anderson <rja@sgi.com>
+From: Piet Delaney <piet.delaney@tensilica.com>
+Subject: Re: [patch 0/8] xtensa: s6000 & s6105 - Git Repo Pulled; will try
+ to merge early next week and get back to ya.
+Date: Sat, 04 Apr 2009 04:01:23 -0700
+Message-ID: <49D73E03.9040702@tensilica.com>
+References: <20090319155621.GA8299@emlix.com> <49C36D94.9010809@tensilica.com> <20090322185756.GA11319@emlix.com> <49CA1EDD.1060806@tensilica.com> <20090325124749.GA15248@emlix.com> <49CA310C.6060504@gmail.com> <20090325153533.GA18835@emlix.com> <49CA8661.40804@gmail.com> <20090326120745.GA23541@emlix.com> <49CBE5B9.9020405@tensilica.com> <20090327141226.GA26597@emlix.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay2.sgi.com ([192.48.179.30]:60641 "EHLO relay.sgi.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752969AbZDCWY0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 3 Apr 2009 18:24:26 -0400
-Content-Disposition: inline
+Received: from hq2.tensilica.com ([65.205.227.30]:11210 "EHLO
+	maia.hq.tensilica.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1754496AbZDDLDW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 4 Apr 2009 07:03:22 -0400
+In-Reply-To: <20090327141226.GA26597@emlix.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
-Cc: Russ Anderson <rja@sgi.com>
+To: Johannes Weiner <jw@emlix.com>, Marc Gauthier <marc@tensilica.com>, Chris Zankel <chris@zankel.net>
+Cc: Piet Delaney <piet.delaney@gmail.com>, Piet Delaney <pdelaney@tensilica.com>, Cord Seele <cs@emlix.com>, Oskar Schirmer <os@emlix.com>, Daniel Gloeckner <dg@emlix.com>, Piet Delaney <piet@tensilica.com>, Maxim Grigoriev <maxim@tensilica.com>, Dan Nicolaescu <dann@tensilica.com>, Bill Huffman <huffman@tensilica.com>, Ross Morley <ross@tensilica.com>, Chris Jones <cjones@tensilica.com>, linux-xtensa@linux-xtensa.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dror Maydan <maydan@tensilica.com>
 
-/sys/firmware/sgi_uv should only be created on uv systems.
+Johannes Weiner wrote:
 
-Signed-off-by: Russ Anderson <rja@sgi.com>
+>> What's you proposal?
+> 
+> Sounds terrific.  I wish you had told us this plan before, that would
+> have saved us quite some discussion ;)
+> 
+> So please let us know where to find the merged tree when it's ready.
+> We will test it on our S6000 board and look over your work.
 
----
-The previous patch was an old version.  
+I resolved the problems with the merge this evening and posted a
+copy here and at kernel.org:
+
+     git+ssh://git.linux-xtensa.org/git/kernel/xtensa-2.6.29-smp
+
+     git://git.kernel.org/pub/scm/linux/kernel/git/piet/xtensa-2.6.29-smp.git
+
+I have two SMP FPGA systems testing the merge, one with cache aliasing, the other
+without. Both have been up now running NTP as a stress test for about two hours
+without any problems. Earlier this evening I did have one problem when it was just
+sitting idle; looked like a problem I had before and fixed.
+
+I had one problem I've not worked around for now. In vmlinux.lds.in.S you added a
+#include of <platform/hardware.h> put this causes compile problems for the LX60
+platform. You added it to define KERNELOFFSET where as I was bringing it from
+asm/core.h which caused less problems. <platform/hardware.h> seems reasonable,
+haven't got a clean solution for the asm macro problem yet for LX60 platform.
+
+Could you try this on your S6000 boards and look over our work. I'll
+try using xt-gdb and ocd with the Stretch board. I likely have a few
+minor tweaks in the Kconfig for _S6000 for selecting optimal defaults.
 
 
- arch/x86/kernel/uv_sysfs.c |    4 ++++
- 1 file changed, 4 insertions(+)
+-piet
 
-Index: linux/arch/x86/kernel/uv_sysfs.c
-===================================================================
---- linux.orig/arch/x86/kernel/uv_sysfs.c	2009-04-03 17:16:57.000000000 -0500
-+++ linux/arch/x86/kernel/uv_sysfs.c	2009-04-03 17:17:25.000000000 -0500
-@@ -21,6 +21,7 @@
- 
- #include <linux/sysdev.h>
- #include <asm/uv/bios.h>
-+#include <asm/uv/uv.h>
- 
- struct kobject *sgi_uv_kobj;
- 
-@@ -46,6 +47,9 @@ static struct kobj_attribute coherence_i
- static int __init sgi_uv_sysfs_init(void)
- {
- 	unsigned long ret;
-+
-+	if (!is_uv_system())
-+		return -ENODEV;
- 
- 	if (!sgi_uv_kobj)
- 		sgi_uv_kobj = kobject_create_and_add("sgi_uv", firmware_kobj);
--- 
-Russ Anderson, OS RAS/Partitioning Project Lead  
-SGI - Silicon Graphics Inc          rja@sgi.com
+
+
+
+
+
+
+	
