@@ -1,62 +1,66 @@
-From: Piet Delaney <piet.delaney@tensilica.com>
-Subject: Re: [patch 0/8] xtensa: s6000 & s6105 - Git Repo Pulled; will try
- to merge early next week and get back to ya.
-Date: Sat, 04 Apr 2009 04:01:23 -0700
-Message-ID: <49D73E03.9040702@tensilica.com>
-References: <20090319155621.GA8299@emlix.com> <49C36D94.9010809@tensilica.com> <20090322185756.GA11319@emlix.com> <49CA1EDD.1060806@tensilica.com> <20090325124749.GA15248@emlix.com> <49CA310C.6060504@gmail.com> <20090325153533.GA18835@emlix.com> <49CA8661.40804@gmail.com> <20090326120745.GA23541@emlix.com> <49CBE5B9.9020405@tensilica.com> <20090327141226.GA26597@emlix.com>
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: Re: next-20090310: ext4 hangs
+Date: Sun, 5 Apr 2009 01:09:31 +0400
+Message-ID: <a4423d670904041409i271c8abbyf5b74d656eeb363f@mail.gmail.com>
+References: <20090325151516.GB14881@atrey.karlin.mff.cuni.cz>
+	 <a4423d670903250829w5e9304a7rce24f4220379620f@mail.gmail.com>
+	 <20090325161556.GP23439@duck.suse.cz>
+	 <a4423d670903251007r72058ca8m28275c1433ab2706@mail.gmail.com>
+	 <20090325194316.GQ23439@duck.suse.cz>
+	 <a4423d670903251538p3a7c180br1bcfe08c4f044c15@mail.gmail.com>
+	 <20090331100150.GF11808@duck.suse.cz>
+	 <a4423d670903310307i7acd31f0r4836beae14cfb92d@mail.gmail.com>
+	 <20090331123307.GG11808@duck.suse.cz>
+	 <a4423d670904021150p5fcd1f82wefa68c839b2869a1@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hq2.tensilica.com ([65.205.227.30]:11210 "EHLO
-	maia.hq.tensilica.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1754496AbZDDLDW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 4 Apr 2009 07:03:22 -0400
-In-Reply-To: <20090327141226.GA26597@emlix.com>
+Received: from mail-ew0-f165.google.com ([209.85.219.165]:56496 "EHLO
+	mail-ew0-f165.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750801AbZDDVJe convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 4 Apr 2009 17:09:34 -0400
+In-Reply-To: <a4423d670904021150p5fcd1f82wefa68c839b2869a1@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Johannes Weiner <jw@emlix.com>, Marc Gauthier <marc@tensilica.com>, Chris Zankel <chris@zankel.net>
-Cc: Piet Delaney <piet.delaney@gmail.com>, Piet Delaney <pdelaney@tensilica.com>, Cord Seele <cs@emlix.com>, Oskar Schirmer <os@emlix.com>, Daniel Gloeckner <dg@emlix.com>, Piet Delaney <piet@tensilica.com>, Maxim Grigoriev <maxim@tensilica.com>, Dan Nicolaescu <dann@tensilica.com>, Bill Huffman <huffman@tensilica.com>, Ross Morley <ross@tensilica.com>, Chris Jones <cjones@tensilica.com>, linux-xtensa@linux-xtensa.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dror Maydan <maydan@tensilica.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Theodore Tso <tytso@mit.edu>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sparclinux@vger.kernel.org
 
-Johannes Weiner wrote:
+2009/4/2 Alexander Beregalov <a.beregalov@gmail.com>:
+>>> > =C2=A0I'm helpless here. I don't see how we can miss a wakeup (pl=
+us you seem to
+>>> > be the only one reporting the bug). Could you please compile and =
+test the kernel
+>>> > with the attached patch? It will print to kernel log when we go t=
+o sleep
+>>> > waiting for inode commit and when we send wakeups etc. When you h=
+it the
+>>> > deadlock, please send me your kernel log. It should help with deb=
+ugging why do
+>>> > we miss the wakeup. Thanks.
+>>>
+>>> Which patch?
+>> =C2=A0Ups. Forgot to attach ;).
+>
+> Cannot reproduce it on current 2.6.29-git. Strange.
+> It should already have all ext4/jbd2 patches from next-20090310,
+> but anyway it happened with 2.6.29-rc8 also.
+> I ran dbench in cycle on two indentical hosts for more than 24 hours
+> with no hang tasks.
+>
+> I will try 2.6.29.
 
->> What's you proposal?
-> 
-> Sounds terrific.  I wish you had told us this plan before, that would
-> have saved us quite some discussion ;)
-> 
-> So please let us know where to find the merged tree when it's ready.
-> We will test it on our S6000 board and look over your work.
+I cannot reproduce it with vanilla v2.6.29.
+It seems the problem has gone.
+Thanks Jan.
 
-I resolved the problems with the merge this evening and posted a
-copy here and at kernel.org:
-
-     git+ssh://git.linux-xtensa.org/git/kernel/xtensa-2.6.29-smp
-
-     git://git.kernel.org/pub/scm/linux/kernel/git/piet/xtensa-2.6.29-smp.git
-
-I have two SMP FPGA systems testing the merge, one with cache aliasing, the other
-without. Both have been up now running NTP as a stress test for about two hours
-without any problems. Earlier this evening I did have one problem when it was just
-sitting idle; looked like a problem I had before and fixed.
-
-I had one problem I've not worked around for now. In vmlinux.lds.in.S you added a
-#include of <platform/hardware.h> put this causes compile problems for the LX60
-platform. You added it to define KERNELOFFSET where as I was bringing it from
-asm/core.h which caused less problems. <platform/hardware.h> seems reasonable,
-haven't got a clean solution for the asm macro problem yet for LX60 platform.
-
-Could you try this on your S6000 boards and look over our work. I'll
-try using xt-gdb and ocd with the Stretch board. I likely have a few
-minor tweaks in the Kconfig for _S6000 for selecting optimal defaults.
-
-
--piet
-
-
-
-
-
-
-
-	
+The patch output:
+[133886.375874] JBD2: Waiting for ino 1062
+[133886.376372] JBD2: Waking up sleeper on ino 1062
+[133886.376824] JBD2: Woken on ino 1062
+[134611.108451] JBD2: Waiting for ino 1102
+[134611.108903] JBD2: Waking up sleeper on ino 1102
+[134611.109787] JBD2: Woken on ino 1102
+[134611.132912] JBD2: Waiting for ino 1074
+[134611.133311] JBD2: Waking up sleeper on ino 1074
+[134611.133707] JBD2: Woken on ino 1074
