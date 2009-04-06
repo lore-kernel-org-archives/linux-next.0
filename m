@@ -1,50 +1,40 @@
 From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: [PATCH next] module.c: fix build breakage when !MODULE_UNLOAD
-Date: Mon, 6 Apr 2009 17:14:44 +0400
-Message-ID: <20090406131444.GA3928@orion>
+Subject: [PATCH next] dmar: fix build
+Date: Mon, 6 Apr 2009 19:40:01 +0400
+Message-ID: <a4423d670904060840u5a144502t2b5dcf2773c00d11@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wa-out-1112.google.com ([209.85.146.179]:34700 "EHLO
-	wa-out-1112.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754995AbZDFNPA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Apr 2009 09:15:00 -0400
-Content-Disposition: inline
+Received: from mail-ew0-f165.google.com ([209.85.219.165]:39635 "EHLO
+	mail-ew0-f165.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758888AbZDFPkE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Apr 2009 11:40:04 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kees.cook@canonical.com, serue@us.ibm.com, jmorris@namei.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "H. Peter Anvin" <hpa@linux.intel.com>
 
-Fix this build error when CONFIG_MODULE_UNLOAD is not set:
-kernel/module.c: In function 'sys_init_module':
-kernel/module.c:2401: error: 'modules_disabled' undeclared
+Fix this build error:
+drivers/pci/dmar.c:47: error: expected '=', ',', ';', 'asm' or
+'__attribute__' before 'dmar_tbl_size'
+
+Should include acpi.h
 
 Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
 ---
 
- kernel/module.c |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/pci/dmar.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/kernel/module.c b/kernel/module.c
-index 274ab43..5fb0ece 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -73,6 +73,9 @@ DEFINE_MUTEX(module_mutex);
- EXPORT_SYMBOL_GPL(module_mutex);
- static LIST_HEAD(modules);
- 
-+/* Block module loading/unloading? */
-+int modules_disabled = 0;
-+
- /* Waiting for a module to finish initializing? */
- static DECLARE_WAIT_QUEUE_HEAD(module_wq);
- 
-@@ -782,9 +785,6 @@ static void wait_for_zero_refcount(struct module *mod)
- 	mutex_lock(&module_mutex);
- }
- 
--/* Block module loading/unloading? */
--int modules_disabled = 0;
--
- SYSCALL_DEFINE2(delete_module, const char __user *, name_user,
- 		unsigned int, flags)
- {
+diff --git a/drivers/pci/dmar.c b/drivers/pci/dmar.c
+index 25a00ce..b725a5f 100644
+--- a/drivers/pci/dmar.c
++++ b/drivers/pci/dmar.c
+@@ -33,6 +33,7 @@
+ #include <linux/timer.h>
+ #include <linux/irq.h>
+ #include <linux/interrupt.h>
++#include <acpi/acpi.h>
+
+ #undef PREFIX
+ #define PREFIX "DMAR:"
