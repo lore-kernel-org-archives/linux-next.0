@@ -1,47 +1,84 @@
-From: "J. Bruce Fields" <bfields-uC3wQj2KruNg9hUCZPvPmw@public.gmane.org>
-Subject: Re: next-20090406: nfsd build fails
-Date: Mon, 6 Apr 2009 13:11:46 -0400
-Message-ID: <20090406171146.GA32436@fieldses.org>
-References: <a4423d670904060027y44550d99g2cb40ce415dbb048@mail.gmail.com> <49D9C308.6020500@panasas.com>
+From: Lee Schermerhorn <Lee.Schermerhorn@hp.com>
+Subject: [BUG?] linux-next/mmotm:  boot hang on HP ia64 servers
+Date: Mon, 06 Apr 2009 13:55:42 -0400
+Message-ID: <1239040542.14812.210.camel@lts-notebook>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <49D9C308.6020500-C4P08NqkoRlBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Benny Halevy <bhalevy-C4P08NqkoRlBDgjK7y7TUQ@public.gmane.org>
-Cc: Alexander Beregalov <a.beregalov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, andros-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, pNFS Mailing List <pnfs-6DNke4IJHB0gsBAKwltoeQ@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from g5t0006.atlanta.hp.com ([15.192.0.43]:5808 "EHLO
+	g5t0006.atlanta.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752172AbZDFRzs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Apr 2009 13:55:48 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Clark Williams <williams@redhat.com>
+Cc: linux-next@vger.kernel.org, Bob Picco <bob.picco@hp.com>, Bjorn Helgaas <bjorn.helgaas@hp.com>
 
-On Mon, Apr 06, 2009 at 11:53:28AM +0300, Benny Halevy wrote:
-> On Apr. 06, 2009, 10:27 +0300, Alexander Beregalov <a.beregalov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> > Hi
-> > 
-> > fs/nfsd/nfssvc.c: In function 'set_max_drc':
-> > fs/nfsd/nfssvc.c:240: error: 'NFSD_DRC_SIZE_SHIFT' undeclared
-> > 
-> > CONFIG_NFSD_V4 is not set
-> 
-> Hi Alexander,
-> 
-> Thanks for reporting this!
-> 
-> Andy, Bruce: please see attached 2 patches fixing compile/link errors
-> with DRC under !defined(CONFIG_NFSD_V4):
-> 
-> [PATCH 1/2] SQUASHEM: nfsd41: define NFSD_DRC_SIZE_SHIFT in set_max_drc
-> [PATCH 2/2] SQUASHME: nfsd41: define nfsd4_set_statp as noop for !CONFIG_NFSD_V4
+Apparently caused by:  commit c5b01e769cee440772d6a8cd1c71c0acf37451fc
+-- "disallow SERIAL_8250_PNP with SERIAL_8250_CONSOLE".
 
-Thanks, applied.
+I haven't been able to boot the mmotm tree on one of my test servers for
+weeks now, but have been too busy with other things to investigate.  On
+these servers, this serial line connects the main server to the
+"management processor" which is accessed via the network.  The console
+shows up as ttyS0 in the booted kernel.
 
-Committing on top (not squashing) since I'd rather not rewrite history
-on a branch I've already sent a pull request for.
+Symptom of the hang was this message on the console:
 
-(In fact, I'll try to stop rebasing those for-next branches at all this
-time around.)
+	turn off boot console uart8250
 
---b.
---
-To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+and then nothing.  I don't recall seeing that message on any kernel that
+booted successfully.  But I tend to boot with "debug" and have lots of
+hardware to report, so it might have gotten lost.
+
+I thought maybe the system would continue to come up "blind" [or should
+that be "mute"?], but seems it never did.  I also hoped that the problem
+would "go away" in later mmotms but, again, no luck :).
+
+Finally got a change to look in detail at linux-next in mmotm 03/23 [and
+04/05], and noticed the commit above.  Comparing configs for kernels
+that booted [!mmotm] and those that did, I saw that
+"CONFIG_SERIAL_8250_PNP=y" was missing from the ones that don't boot.
+
+Today, I reverted this patch from the latest [04/05] mmotm, added back
+that config line and it now boots.
+
+The patch description indicates "hard to fix issues" when both
+SERIAL_8250_CONSOLE and SERIAL_8250_PNP are both set.  However, we can't
+seem to boot with out both.
+
+For what it's worth, I've included the patch that reverts the
+[problematic portion of the] commit.
+
+Regards,
+Lee
+
+P.S.,  Bjorn says "I told you so" :)
+
+==============================
+
+HP sxX000 ia64 servers hang during boot unless SERIAL_8250_PNP is configured.
+
+This patch reverts the patch that prevents both SERIAL_8250_CONSOLE and 
+SERIAL_8250_PNP from being configured at the same time.  Not sure this is the
+right thing to do.
+
+Signed-off-by: Lee Schermerhorn <lee.schermerhorn@hp.com>
+
+ drivers/serial/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: linux-2.6.29-mmotm-090405-2145/drivers/serial/Kconfig
+===================================================================
+--- linux-2.6.29-mmotm-090405-2145.orig/drivers/serial/Kconfig	2009-04-06 13:09:54.000000000 -0400
++++ linux-2.6.29-mmotm-090405-2145/drivers/serial/Kconfig	2009-04-06 13:09:55.000000000 -0400
+@@ -91,7 +91,7 @@ config SERIAL_8250_PCI
+ 
+ config SERIAL_8250_PNP
+ 	tristate "8250/16550 PNP device support" if EMBEDDED
+-	depends on SERIAL_8250 && PNP && ! SERIAL_8250_CONSOLE
++	depends on SERIAL_8250 && PNP
+ 	default SERIAL_8250
+ 	help
+ 	  This builds standard PNP serial support. You may be able to
