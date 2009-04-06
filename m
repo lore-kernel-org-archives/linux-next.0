@@ -1,64 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH] percpu: __percpu_depopulate_mask can take a const mask
-Date: Mon, 6 Apr 2009 15:08:29 +1000
-Message-ID: <20090406150829.4cc5c024.sfr@canb.auug.org.au>
-References: <20090331162234.1780e0a4.sfr@canb.auug.org.au>
+Subject: linux-next: cifs tree build warnings
+Date: Mon, 6 Apr 2009 15:14:57 +1000
+Message-ID: <20090406151457.e73250a3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__6_Apr_2009_15_14_57_+1000_Evcw5bcBJrt4Y++2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49826 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:42357 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750787AbZDFFIf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 6 Apr 2009 01:08:35 -0400
-In-Reply-To: <20090331162234.1780e0a4.sfr@canb.auug.org.au>
+	id S1751067AbZDFFPI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Apr 2009 01:15:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
+To: Steve French <smfrench@gmail.com>, linux-cifs-client@lists.samba.org
+Cc: linux-next@vger.kernel.org
 
-This eliminates a compiler warning:
+--Signature=_Mon__6_Apr_2009_15_14_57_+1000_Evcw5bcBJrt4Y++2
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-mm/allocpercpu.c: In function 'free_percpu':
-mm/allocpercpu.c:146: warning: passing argument 2 of '__percpu_depopulate_mask' discards qualifiers from pointer target type
+Hi Steve,
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- mm/allocpercpu.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Today's linux-next build (powerpc ppc64_defconfig) produces these new
+warnings:
 
-On Tue, 31 Mar 2009 16:22:34 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
-> 
-> mm/allocpercpu.c: In function 'free_percpu':
-> mm/allocpercpu.c:146: warning: passing argument 2 of '__percpu_depopulate_mask' discards qualifiers from pointer target type
-> 
-> Caused by commit c36dd4785de7e87979e0c27aa53dff116ddf37c5
-> ("cpumask:core-use-new-functions").
-> 
-> The "cpumask_t *" argument to __percpu_depopulate_mask() could be marked
-> "const".
+fs/cifs/connect.c: In function 'cifs_mount':
+fs/cifs/connect.c:2280: warning: label 'try_mount_again' defined but not us=
+ed
+fs/cifs/connect.c:2276: warning: unused variable 'num_referrals'
+fs/cifs/connect.c:2275: warning: unused variable 'referrals'
+fs/cifs/connect.c: At top level:
+fs/cifs/connect.c:2239: warning: 'build_unc_path_to_root' defined but not u=
+sed
 
-The above commit is now in mainline.
+Caused by commit 924cb95aad14c2f2726547938bf44bbce91a2f3e ("[CIFS] Fix
+build break from recent DFS patch when DFS support not enabled").
 
-diff --git a/mm/allocpercpu.c b/mm/allocpercpu.c
-index 139d5b7..dfdee6a 100644
---- a/mm/allocpercpu.c
-+++ b/mm/allocpercpu.c
-@@ -31,7 +31,7 @@ static void percpu_depopulate(void *__pdata, int cpu)
-  * @__pdata: per-cpu data to depopulate
-  * @mask: depopulate per-cpu data for cpu's selected through mask bits
-  */
--static void __percpu_depopulate_mask(void *__pdata, cpumask_t *mask)
-+static void __percpu_depopulate_mask(void *__pdata, const cpumask_t *mask)
- {
- 	int cpu;
- 	for_each_cpu_mask_nr(cpu, *mask)
--- 
-1.6.2.1
-
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__6_Apr_2009_15_14_57_+1000_Evcw5bcBJrt4Y++2
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknZj9EACgkQjjKRsyhoI8xN8gCgvLbP5nRTd2u7f06Kgy96k13E
+nwAAni6Qx01KSsgA+KQgb36SYHbwGA+H
+=ogYg
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__6_Apr_2009_15_14_57_+1000_Evcw5bcBJrt4Y++2--
