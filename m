@@ -1,57 +1,86 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: cifs tree build warnings
-Date: Mon, 6 Apr 2009 15:14:57 +1000
-Message-ID: <20090406151457.e73250a3.sfr@canb.auug.org.au>
+Subject: linux-next: nfs tree build failures
+Date: Mon, 6 Apr 2009 16:29:05 +1000
+Message-ID: <20090406162905.7d2d7037.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__6_Apr_2009_15_14_57_+1000_Evcw5bcBJrt4Y++2"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42357 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55439 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751067AbZDFFPI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 6 Apr 2009 01:15:08 -0400
+	id S1753486AbZDFG3L (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Apr 2009 02:29:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steve French <smfrench@gmail.com>, linux-cifs-client@lists.samba.org
-Cc: linux-next@vger.kernel.org
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, Benny Halevy <bhalevy@panasas.com>, Andy Adamson <andros@netapp.com>, "J. Bruce Fields" <bfields@fieldses.org>
 
---Signature=_Mon__6_Apr_2009_15_14_57_+1000_Evcw5bcBJrt4Y++2
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Trond,
 
-Hi Steve,
+Today's linux-next build (powerpc ppc44x_config) failed like this:
 
-Today's linux-next build (powerpc ppc64_defconfig) produces these new
-warnings:
+fs/nfs/client.c: In function 'nfs_match_client':
+fs/nfs/client.c:444: error: 'struct nfs_client' has no member named 'cl_minorversion'
 
-fs/cifs/connect.c: In function 'cifs_mount':
-fs/cifs/connect.c:2280: warning: label 'try_mount_again' defined but not us=
-ed
-fs/cifs/connect.c:2276: warning: unused variable 'num_referrals'
-fs/cifs/connect.c:2275: warning: unused variable 'referrals'
-fs/cifs/connect.c: At top level:
-fs/cifs/connect.c:2239: warning: 'build_unc_path_to_root' defined but not u=
-sed
+Caused by commit 10d5a514705f0687cfbb6a080c3562b857e340fe ("nfs41: Use
+mount minorversion option").  The existence of cl_minorversion is
+controlled by CONFIG_NFS_V4 but the reference is not.
 
-Caused by commit 924cb95aad14c2f2726547938bf44bbce91a2f3e ("[CIFS] Fix
-build break from recent DFS patch when DFS support not enabled").
+I added the small patch below for today.
 
---=20
+The same build gets this warning as well:
+
+fs/nfs/client.c:554: warning: 'nfs4_session_set_rwsize' defined but not used
+
+and then fails like this:
+
+fs/built-in.o: In function `nfs_readpage_result_full':
+read.c:(.text+0x70d24): undefined reference to `nfs4_restart_rpc'
+fs/built-in.o: In function `nfs_readpage_result_partial':
+read.c:(.text+0x70e3c): undefined reference to `nfs4_restart_rpc'
+fs/built-in.o: In function `nfs_async_unlink_done':
+unlink.c:(.text+0x71af0): undefined reference to `nfs4_restart_rpc'
+fs/built-in.o: In function `nfs_writeback_done':
+(.text+0x72c00): undefined reference to `nfs4_restart_rpc'
+
+Caused by commit c105a9f16f11aaa9fcb9f75f8342b89c5d9665cf ("nfs41: use
+rpc prepare call state for session reset") which I have reverted for
+today.
+
+Trond, is all this NFS v4.1 stuff that turned up yesterday really 2.6.30
+material?  If not, it should be removed from linux-next until after
+2.6.30-rc1 is released.  (and clearly better tested ...)
+
+Bruce, I guess the same question applies to the nfsd tree as well.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__6_Apr_2009_15_14_57_+1000_Evcw5bcBJrt4Y++2
-Content-Type: application/pgp-signature
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 6 Apr 2009 15:45:06 +1000
+Subject: [PATCH] nfs: build fix for client.c
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/nfs/client.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-iEYEARECAAYFAknZj9EACgkQjjKRsyhoI8xN8gCgvLbP5nRTd2u7f06Kgy96k13E
-nwAAni6Qx01KSsgA+KQgb36SYHbwGA+H
-=ogYg
------END PGP SIGNATURE-----
-
---Signature=_Mon__6_Apr_2009_15_14_57_+1000_Evcw5bcBJrt4Y++2--
+diff --git a/fs/nfs/client.c b/fs/nfs/client.c
+index 82ddca9..75329d3 100644
+--- a/fs/nfs/client.c
++++ b/fs/nfs/client.c
+@@ -440,9 +440,11 @@ static struct nfs_client *nfs_match_client(const struct nfs_client_initdata *dat
+ 
+ 		if (clp->cl_proto != data->proto)
+ 			continue;
++#ifdef CONFIG_NFS_V4
+ 		/* Match nfsv4 minorversion */
+ 		if (clp->cl_minorversion != data->minorversion)
+ 			continue;
++#endif
+ 		/* Match the full socket address */
+ 		if (!nfs_sockaddr_cmp(sap, clap))
+ 			continue;
+-- 
+1.6.2.1
