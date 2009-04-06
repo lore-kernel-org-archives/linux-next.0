@@ -1,53 +1,47 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: Re: Next April 6 : x86 allmodconfig failure [drivers/pci]
-Date: Mon, 6 Apr 2009 20:06:21 +0400
-Message-ID: <a4423d670904060906l339a987bm8cb0543d309ecac3@mail.gmail.com>
-References: <20090406164555.e1232116.sfr@canb.auug.org.au>
-	 <49D9CF13.60202@in.ibm.com>
+From: "J. Bruce Fields" <bfields-uC3wQj2KruNg9hUCZPvPmw@public.gmane.org>
+Subject: Re: next-20090406: nfsd build fails
+Date: Mon, 6 Apr 2009 13:11:46 -0400
+Message-ID: <20090406171146.GA32436@fieldses.org>
+References: <a4423d670904060027y44550d99g2cb40ce415dbb048@mail.gmail.com> <49D9C308.6020500@panasas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f165.google.com ([209.85.219.165]:54407 "EHLO
-	mail-ew0-f165.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750903AbZDFQGZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Apr 2009 12:06:25 -0400
-In-Reply-To: <49D9CF13.60202@in.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>, David Woodhouse <david.woodhouse@intel.com>, Ingo Molnar <mingo@elte.hu>
-Cc: LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <49D9C308.6020500-C4P08NqkoRlBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Benny Halevy <bhalevy-C4P08NqkoRlBDgjK7y7TUQ@public.gmane.org>
+Cc: Alexander Beregalov <a.beregalov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, andros-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, pNFS Mailing List <pnfs-6DNke4IJHB0gsBAKwltoeQ@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-2009/4/6 Sachin Sant <sachinp@in.ibm.com>:
-> Today's next tree allmodconfig build on x86 failed with
->
-> drivers/pci/intel-iommu.c:2636:35: error: macro "if" passed 2 arguments, but
-> takes just 1
-> drivers/pci/intel-iommu.c: In function init_iommu_hw:
-> drivers/pci/intel-iommu.c:2636: error: expected ( before { token
-> drivers/pci/intel-iommu.c:2637: error: ______r undeclared (first use in this
-> function)
-> drivers/pci/intel-iommu.c:2637: error: (Each undeclared identifier is
-> reported only once
-> drivers/pci/intel-iommu.c:2637: error: for each function it appears in.)
-> drivers/pci/intel-iommu.c:2640:35: error: macro "if" passed 2 arguments, but
-> takes just 1
-> drivers/pci/intel-iommu.c:2640: error: expected ( before { token
->
-> and many more of such errors. Similar errors with intr_remapping.c
->
-> drivers/pci/intr_remapping.c:679:28: error: macro "if" passed 2 arguments,
-> but takes just 1
-> drivers/pci/intr_remapping.c: In function disable_intr_remapping:
-> drivers/pci/intr_remapping.c:679: error: expected ( before { token
-> drivers/pci/intr_remapping.c:693:28: error: macro "if" passed 2 arguments,
-> but takes just 1
-> ......
+On Mon, Apr 06, 2009 at 11:53:28AM +0300, Benny Halevy wrote:
+> On Apr. 06, 2009, 10:27 +0300, Alexander Beregalov <a.beregalov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> > Hi
+> > 
+> > fs/nfsd/nfssvc.c: In function 'set_max_drc':
+> > fs/nfsd/nfssvc.c:240: error: 'NFSD_DRC_SIZE_SHIFT' undeclared
+> > 
+> > CONFIG_NFSD_V4 is not set
+> 
+> Hi Alexander,
+> 
+> Thanks for reporting this!
+> 
+> Andy, Bruce: please see attached 2 patches fixing compile/link errors
+> with DRC under !defined(CONFIG_NFSD_V4):
+> 
+> [PATCH 1/2] SQUASHEM: nfsd41: define NFSD_DRC_SIZE_SHIFT in set_max_drc
+> [PATCH 2/2] SQUASHME: nfsd41: define nfsd4_set_statp as noop for !CONFIG_NFSD_V4
 
-CC'ed David and Ingo.
+Thanks, applied.
 
-commit 8f912ba4d
+Committing on top (not squashing) since I'd rather not rewrite history
+on a branch I've already sent a pull request for.
 
-if (i=drhd->iommu, 0)
+(In fact, I'll try to stop rebasing those for-next branches at all this
+time around.)
 
-looks strange
+--b.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
