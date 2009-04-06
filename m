@@ -1,67 +1,51 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: next-20090310: ext4 hangs
-Date: Mon, 6 Apr 2009 11:20:42 +0200
-Message-ID: <20090406092042.GA31189@duck.suse.cz>
-References: <a4423d670903250829w5e9304a7rce24f4220379620f@mail.gmail.com> <20090325161556.GP23439@duck.suse.cz> <a4423d670903251007r72058ca8m28275c1433ab2706@mail.gmail.com> <20090325194316.GQ23439@duck.suse.cz> <a4423d670903251538p3a7c180br1bcfe08c4f044c15@mail.gmail.com> <20090331100150.GF11808@duck.suse.cz> <a4423d670903310307i7acd31f0r4836beae14cfb92d@mail.gmail.com> <20090331123307.GG11808@duck.suse.cz> <a4423d670904021150p5fcd1f82wefa68c839b2869a1@mail.gmail.com> <a4423d670904041409i271c8abbyf5b74d656eeb363f@mail.gmail.com>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Next April 6 : x86 allmodconfig failure [drivers/pci]
+Date: Mon, 06 Apr 2009 15:14:51 +0530
+Message-ID: <49D9CF13.60202@in.ibm.com>
+References: <20090406164555.e1232116.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:33422 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755683AbZDFJUq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 6 Apr 2009 05:20:46 -0400
-Content-Disposition: inline
-In-Reply-To: <a4423d670904041409i271c8abbyf5b74d656eeb363f@mail.gmail.com>
+Received: from e28smtp05.in.ibm.com ([59.145.155.5]:59580 "EHLO
+	e28smtp05.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755236AbZDFJoz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Apr 2009 05:44:55 -0400
+In-Reply-To: <20090406164555.e1232116.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: Theodore Tso <tytso@mit.edu>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sparclinux@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-On Sun 05-04-09 01:09:31, Alexander Beregalov wrote:
-> 2009/4/2 Alexander Beregalov <a.beregalov@gmail.com>:
-> >>> > =A0I'm helpless here. I don't see how we can miss a wakeup (plu=
-s you seem to
-> >>> > be the only one reporting the bug). Could you please compile an=
-d test the kernel
-> >>> > with the attached patch? It will print to kernel log when we go=
- to sleep
-> >>> > waiting for inode commit and when we send wakeups etc. When you=
- hit the
-> >>> > deadlock, please send me your kernel log. It should help with d=
-ebugging why do
-> >>> > we miss the wakeup. Thanks.
-> >>>
-> >>> Which patch?
-> >> =A0Ups. Forgot to attach ;).
-> >
-> > Cannot reproduce it on current 2.6.29-git. Strange.
-> > It should already have all ext4/jbd2 patches from next-20090310,
-> > but anyway it happened with 2.6.29-rc8 also.
-> > I ran dbench in cycle on two indentical hosts for more than 24 hour=
-s
-> > with no hang tasks.
-> >
-> > I will try 2.6.29.
->=20
-> I cannot reproduce it with vanilla v2.6.29.
-> It seems the problem has gone.
-> Thanks Jan.
-  Thanks for testing. I'm glad we have one mystery less ;).
-=20
-> The patch output:
-> [133886.375874] JBD2: Waiting for ino 1062
-> [133886.376372] JBD2: Waking up sleeper on ino 1062
-> [133886.376824] JBD2: Woken on ino 1062
-> [134611.108451] JBD2: Waiting for ino 1102
-> [134611.108903] JBD2: Waking up sleeper on ino 1102
-> [134611.109787] JBD2: Woken on ino 1102
-> [134611.132912] JBD2: Waiting for ino 1074
-> [134611.133311] JBD2: Waking up sleeper on ino 1074
-> [134611.133707] JBD2: Woken on ino 1074
-  Yes, this is how it should always look...
+Today's next tree allmodconfig build on x86 failed with
 
-									Honza
---=20
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+drivers/pci/intel-iommu.c:2636:35: error: macro "if" passed 2 arguments, but takes just 1
+drivers/pci/intel-iommu.c: In function init_iommu_hw:
+drivers/pci/intel-iommu.c:2636: error: expected ( before { token
+drivers/pci/intel-iommu.c:2637: error: ______r undeclared (first use in this function)
+drivers/pci/intel-iommu.c:2637: error: (Each undeclared identifier is reported only once
+drivers/pci/intel-iommu.c:2637: error: for each function it appears in.)
+drivers/pci/intel-iommu.c:2640:35: error: macro "if" passed 2 arguments, but takes just 1
+drivers/pci/intel-iommu.c:2640: error: expected ( before { token
+
+and many more of such errors. Similar errors with intr_remapping.c
+
+drivers/pci/intr_remapping.c:679:28: error: macro "if" passed 2 arguments, but takes just 1
+drivers/pci/intr_remapping.c: In function disable_intr_remapping:
+drivers/pci/intr_remapping.c:679: error: expected ( before { token
+drivers/pci/intr_remapping.c:693:28: error: macro "if" passed 2 arguments, but takes just 1
+......
+
+Thanks
+-Sachin
+
+
+
+-- 
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
