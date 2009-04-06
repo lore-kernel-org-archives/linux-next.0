@@ -1,84 +1,97 @@
-From: Lee Schermerhorn <Lee.Schermerhorn@hp.com>
-Subject: [BUG?] linux-next/mmotm:  boot hang on HP ia64 servers
-Date: Mon, 06 Apr 2009 13:55:42 -0400
-Message-ID: <1239040542.14812.210.camel@lts-notebook>
+From: Trond Myklebust <trond.myklebust@fys.uio.no>
+Subject: Re: linux-next: nfs tree build failures
+Date: Mon, 06 Apr 2009 16:34:25 -0700
+Message-ID: <1239060865.6196.2.camel@heimdal.trondhjem.org>
+References: <20090406162905.7d2d7037.sfr@canb.auug.org.au>
+	 <49D9B2B9.5010401@panasas.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from g5t0006.atlanta.hp.com ([15.192.0.43]:5808 "EHLO
-	g5t0006.atlanta.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752172AbZDFRzs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Apr 2009 13:55:48 -0400
+Received: from mail-out2.uio.no ([129.240.10.58]:60076 "EHLO mail-out2.uio.no"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751232AbZDFXen (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Apr 2009 19:34:43 -0400
+In-Reply-To: <49D9B2B9.5010401@panasas.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Clark Williams <williams@redhat.com>
-Cc: linux-next@vger.kernel.org, Bob Picco <bob.picco@hp.com>, Bjorn Helgaas <bjorn.helgaas@hp.com>
+To: Benny Halevy <bhalevy@panasas.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Andy Adamson <andros@netapp.com>, "J. Bruce Fields" <bfields@fieldses.org>, NFS list <linux-nfs@vger.kernel.org>, pNFS Mailing List <pnfs@linux-nfs.org>
 
-Apparently caused by:  commit c5b01e769cee440772d6a8cd1c71c0acf37451fc
--- "disallow SERIAL_8250_PNP with SERIAL_8250_CONSOLE".
+On Mon, 2009-04-06 at 10:43 +0300, Benny Halevy wrote:
+> On Apr. 06, 2009, 9:29 +0300, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi Trond,
+> > 
+> > Today's linux-next build (powerpc ppc44x_config) failed like this:
+> > 
+> > fs/nfs/client.c: In function 'nfs_match_client':
+> > fs/nfs/client.c:444: error: 'struct nfs_client' has no member named 'cl_minorversion'
+> > 
+> > Caused by commit 10d5a514705f0687cfbb6a080c3562b857e340fe ("nfs41: Use
+> > mount minorversion option").  The existence of cl_minorversion is
+> > controlled by CONFIG_NFS_V4 but the reference is not.
+> 
+> 
+> Stephan,
+> 
+> First, thanks! I apologize for introducing this.
+> This was caused by a late fix to Trond's review comment which
+> apparently was under-tested, as you mentioned.
+> 
+> > 
+> > I added the small patch below for today.
+> 
+> Based on Trond's review comment:
+> http://linux-nfs.org/pipermail/pnfs/2009-March/006938.html
+> 
+> We'd actually want to keep cl_minorversion's usage in the clear
+> and rather move its definition out of the #ifdef.
+> 
+> Please see PATCH 1/3 in reply to this message.
+> 
+> > 
+> > The same build gets this warning as well:
+> > 
+> > fs/nfs/client.c:554: warning: 'nfs4_session_set_rwsize' defined but not used
+> 
+> This one needs to go under CONFIG_NFS_V4.
+> See PATCH 2/2
+> 
+> > 
+> > and then fails like this:
+> > 
+> > fs/built-in.o: In function `nfs_readpage_result_full':
+> > read.c:(.text+0x70d24): undefined reference to `nfs4_restart_rpc'
+> > fs/built-in.o: In function `nfs_readpage_result_partial':
+> > read.c:(.text+0x70e3c): undefined reference to `nfs4_restart_rpc'
+> > fs/built-in.o: In function `nfs_async_unlink_done':
+> > unlink.c:(.text+0x71af0): undefined reference to `nfs4_restart_rpc'
+> > fs/built-in.o: In function `nfs_writeback_done':
+> > (.text+0x72c00): undefined reference to `nfs4_restart_rpc'
+> > 
+> > Caused by commit c105a9f16f11aaa9fcb9f75f8342b89c5d9665cf ("nfs41: use
+> > rpc prepare call state for session reset") which I have reverted for
+> > today.
+> 
+> See PATCH 3/3 that inlines nfs4_restart_rpc's definition.
+> 
+> Benny
 
-I haven't been able to boot the mmotm tree on one of my test servers for
-weeks now, but have been too busy with other things to investigate.  On
-these servers, this serial line connects the main server to the
-"management processor" which is accessed via the network.  The console
-shows up as ttyS0 in the booted kernel.
+All squashed into the relevant original patches.
 
-Symptom of the hang was this message on the console:
+> > 
+> > Trond, is all this NFS v4.1 stuff that turned up yesterday really 2.6.30
+> > material?  If not, it should be removed from linux-next until after
+> > 2.6.30-rc1 is released.  (and clearly better tested ...)
+> > 
+> > Bruce, I guess the same question applies to the nfsd tree as well.
 
-	turn off boot console uart8250
+This is code that isn't supposed to significantly affect the existing
+NFS tree unless CONFIG_NFS_V4_1 is set. Since the corresponding NFSd
+code has been merged into 2.6.30, it would be nice to have the client
+code too so that people can start testing, and so that development can
+continue in the mainline tree instead of in the smoky backrooms of the
+linux-nfs.org git trees.
 
-and then nothing.  I don't recall seeing that message on any kernel that
-booted successfully.  But I tend to boot with "debug" and have lots of
-hardware to report, so it might have gotten lost.
-
-I thought maybe the system would continue to come up "blind" [or should
-that be "mute"?], but seems it never did.  I also hoped that the problem
-would "go away" in later mmotms but, again, no luck :).
-
-Finally got a change to look in detail at linux-next in mmotm 03/23 [and
-04/05], and noticed the commit above.  Comparing configs for kernels
-that booted [!mmotm] and those that did, I saw that
-"CONFIG_SERIAL_8250_PNP=y" was missing from the ones that don't boot.
-
-Today, I reverted this patch from the latest [04/05] mmotm, added back
-that config line and it now boots.
-
-The patch description indicates "hard to fix issues" when both
-SERIAL_8250_CONSOLE and SERIAL_8250_PNP are both set.  However, we can't
-seem to boot with out both.
-
-For what it's worth, I've included the patch that reverts the
-[problematic portion of the] commit.
-
-Regards,
-Lee
-
-P.S.,  Bjorn says "I told you so" :)
-
-==============================
-
-HP sxX000 ia64 servers hang during boot unless SERIAL_8250_PNP is configured.
-
-This patch reverts the patch that prevents both SERIAL_8250_CONSOLE and 
-SERIAL_8250_PNP from being configured at the same time.  Not sure this is the
-right thing to do.
-
-Signed-off-by: Lee Schermerhorn <lee.schermerhorn@hp.com>
-
- drivers/serial/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-Index: linux-2.6.29-mmotm-090405-2145/drivers/serial/Kconfig
-===================================================================
---- linux-2.6.29-mmotm-090405-2145.orig/drivers/serial/Kconfig	2009-04-06 13:09:54.000000000 -0400
-+++ linux-2.6.29-mmotm-090405-2145/drivers/serial/Kconfig	2009-04-06 13:09:55.000000000 -0400
-@@ -91,7 +91,7 @@ config SERIAL_8250_PCI
- 
- config SERIAL_8250_PNP
- 	tristate "8250/16550 PNP device support" if EMBEDDED
--	depends on SERIAL_8250 && PNP && ! SERIAL_8250_CONSOLE
-+	depends on SERIAL_8250 && PNP
- 	default SERIAL_8250
- 	help
- 	  This builds standard PNP serial support. You may be able to
+Cheers
+  Trond
