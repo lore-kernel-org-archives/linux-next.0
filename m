@@ -1,39 +1,49 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: Re: [PATCH next] pci: fix build error with !PCIE_ECRC
-Date: Tue, 7 Apr 2009 18:41:28 +0400
-Message-ID: <a4423d670904070741h23ce6d10pf775b67c25f9899d@mail.gmail.com>
-References: <20090407123707.GA18687@orion>
-	 <20090407143248.GA21727@parisc-linux.org>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] cx231xx: fix SND dependency build error
+Date: Tue, 07 Apr 2009 08:59:29 -0700
+Message-ID: <49DB7861.5050606@oracle.com>
+References: <20090407140717.a7f0b07c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20090407143248.GA21727@parisc-linux.org>
-Sender: linux-pci-owner@vger.kernel.org
-To: Matthew Wilcox <matthew@wil.cx>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, andrew.patterson@hp.com, jbarnes@virtuousgeek.org, linux-pci@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from acsinet12.oracle.com ([141.146.126.234]:34897 "EHLO
+	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757701AbZDGP7i (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Apr 2009 11:59:38 -0400
+In-Reply-To: <20090407140717.a7f0b07c.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>
 
-2009/4/7 Matthew Wilcox <matthew@wil.cx>:
-> On Tue, Apr 07, 2009 at 04:37:08PM +0400, Alexander Beregalov wrote:
->> Fix this build error:
->> drivers/built-in.o: In function `pci_init_capabilities':
->> drivers/pci/probe.c:989: undefined reference to `pcie_set_ecrc_check=
-ing'
->> drivers/built-in.o: In function `pci_setup':
->> drivers/pci/pci.c:2547: undefined reference to `pcie_ecrc_get_policy=
-'
->
->> =C2=A0config PCIE_ECRC
->> =C2=A0 =C2=A0 =C2=A0 bool "PCI Express ECRC support"
->> - =C2=A0 =C2=A0 depends on PCI
->> + =C2=A0 =C2=A0 depends on PCI && PCIEPORTBUS
->
-> How does this part of the patch relate to the above description?
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Right, I agree. This should be another patch "PCIE_ECRC should depend o=
-n PCIE"
+Don't select VIDEO_CX231XX_ALSA when SND is not enabled since selecting it
+won't cause SND to be enabled.
 
-When I found this problem PCIE_ECRC was set, but was not be built in.
-My problem needs both patches to be fixed, I will send them few hours l=
-ater.
+ERROR: "snd_pcm_period_elapsed" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
+ERROR: "snd_card_create" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
+ERROR: "snd_pcm_hw_constraint_integer" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
+ERROR: "snd_pcm_set_ops" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
+ERROR: "snd_pcm_lib_ioctl" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
+ERROR: "snd_card_free" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
+ERROR: "snd_card_register" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
+ERROR: "snd_pcm_new" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/media/video/cx231xx/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20090407.orig/drivers/media/video/cx231xx/Kconfig
++++ linux-next-20090407/drivers/media/video/cx231xx/Kconfig
+@@ -6,7 +6,7 @@ config VIDEO_CX231XX
+        select VIDEO_IR
+        select VIDEOBUF_VMALLOC
+        select VIDEO_CX25840
+-       select VIDEO_CX231XX_ALSA
++       select VIDEO_CX231XX_ALSA if SND
+ 
+ 	---help---
+ 	  This is a video4linux driver for Conexant 231xx USB based TV cards.
