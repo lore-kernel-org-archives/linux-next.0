@@ -1,53 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: v4l-dvb tree build failure
-Date: Tue, 7 Apr 2009 14:47:45 +1000
-Message-ID: <20090407144745.ee229baa.sfr@canb.auug.org.au>
-References: <20090407105832.d2590e6e.sfr@canb.auug.org.au>
-	<20090406222055.26ee6a34@pedra.chehab.org>
+From: Jike Song <albcamus@gmail.com>
+Subject: Re: Next April 6 : x86 allmodconfig failure [drivers/pci]
+Date: Tue, 7 Apr 2009 13:27:42 +0800
+Message-ID: <df9815e70904062227u2ee2214do56ce0b86207c52@mail.gmail.com>
+References: <20090406164555.e1232116.sfr@canb.auug.org.au>
+	 <49D9CF13.60202@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__7_Apr_2009_14_47_45_+1000_QT60ZRiqNLb81K8/"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48267 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751799AbZDGErz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 7 Apr 2009 00:47:55 -0400
-In-Reply-To: <20090406222055.26ee6a34@pedra.chehab.org>
+Received: from ti-out-0910.google.com ([209.85.142.186]:22942 "EHLO
+	ti-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755930AbZDGF1q (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Apr 2009 01:27:46 -0400
+In-Reply-To: <49D9CF13.60202@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
---Signature=_Tue__7_Apr_2009_14_47_45_+1000_QT60ZRiqNLb81K8/
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Mauro,
-
-On Mon, 6 Apr 2009 22:20:55 -0300 Mauro Carvalho Chehab <mchehab@infradead.=
-org> wrote:
+On Mon, Apr 6, 2009 at 5:44 PM, Sachin Sant <sachinp@in.ibm.com> wrote:
+> Today's next tree allmodconfig build on x86 failed with
 >
-> I suspect that you've pulled from my tree a few hours ago, before I fix a=
- merge
-> conflict. This were already fixed.=20
+> drivers/pci/intel-iommu.c:2636:35: error: macro "if" passed 2 arguments, but
+> takes just 1
+> drivers/pci/intel-iommu.c: In function init_iommu_hw:
+> drivers/pci/intel-iommu.c:2636: error: expected ( before { token
+> drivers/pci/intel-iommu.c:2637: error: ______r undeclared (first use in this
+> function)
+> drivers/pci/intel-iommu.c:2637: error: (Each undeclared identifier is
+> reported only once
+> drivers/pci/intel-iommu.c:2637: error: for each function it appears in.)
+> drivers/pci/intel-iommu.c:2640:35: error: macro "if" passed 2 arguments, but
+> takes just 1
+> drivers/pci/intel-iommu.c:2640: error: expected ( before { token
+>
+> and many more of such errors. Similar errors with intr_remapping.c
+>
+> drivers/pci/intr_remapping.c:679:28: error: macro "if" passed 2 arguments,
+> but takes just 1
+> drivers/pci/intr_remapping.c: In function disable_intr_remapping:
+> drivers/pci/intr_remapping.c:679: error: expected ( before { token
+> drivers/pci/intr_remapping.c:693:28: error: macro "if" passed 2 arguments,
+> but takes just 1
+> ......
+>
+> Thanks
+> -Sachin
 
-Indeed.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Also happens on linux-next?  This happens on Linus tree: v2.6.29-9854-gd508afb
 
---Signature=_Tue__7_Apr_2009_14_47_45_+1000_QT60ZRiqNLb81K8/
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkna2vEACgkQjjKRsyhoI8wrSQCfbXfmQvf6hy7xGpYK2rJYTdqD
-FwYAoLUlpCTew+Q90oxpMeCkEb55P5t5
-=2VyJ
------END PGP SIGNATURE-----
-
---Signature=_Tue__7_Apr_2009_14_47_45_+1000_QT60ZRiqNLb81K8/--
+-- 
+Thanks,
+Jike
