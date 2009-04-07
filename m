@@ -1,36 +1,53 @@
-From: James Morris <jmorris@selinuxproject.org>
-Subject: Re: Invalid module format
-Date: Mon, 6 Apr 2009 20:14:16 -0700 (PDT)
-Message-ID: <alpine.LRH.2.00.0904062013440.21264@taiga.selinuxproject.org>
-References: <20090401164450.f8192631.sfr@canb.auug.org.au> <20090401150928.GA5886@denkbrett.schottelius.org> <20090402123223.f31370cd.sfr@canb.auug.org.au> <49D9E5E5.9080505@googlemail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: v4l-dvb tree build failure
+Date: Tue, 7 Apr 2009 14:47:45 +1000
+Message-ID: <20090407144745.ee229baa.sfr@canb.auug.org.au>
+References: <20090407105832.d2590e6e.sfr@canb.auug.org.au>
+	<20090406222055.26ee6a34@pedra.chehab.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__7_Apr_2009_14_47_45_+1000_QT60ZRiqNLb81K8/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from taiga.selinuxproject.org ([71.6.217.77]:40137 "EHLO
-	taiga.selinuxproject.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751045AbZDGEcw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Apr 2009 00:32:52 -0400
-In-Reply-To: <49D9E5E5.9080505@googlemail.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48267 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751799AbZDGErz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 7 Apr 2009 00:47:55 -0400
+In-Reply-To: <20090406222055.26ee6a34@pedra.chehab.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Gabriel C <nix.or.die@googlemail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Nico -telmich- Schottelius <nico-linux-next@schottelius.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
 
-On Mon, 6 Apr 2009, Gabriel C wrote:
+--Signature=_Tue__7_Apr_2009_14_47_45_+1000_QT60ZRiqNLb81K8/
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Mauro,
+
+On Mon, 6 Apr 2009 22:20:55 -0300 Mauro Carvalho Chehab <mchehab@infradead.=
+org> wrote:
 >
-> Now it does , CONFIG_MODVERSIONS is broken in Linus tree too.
->
-> I reverted this commit :
->
-> http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commitdiff;h=9cb610d8e35fe3ec95a2fe2030b02f85aeea83c1
->
-> and after that modules loading seems to work again here.
+> I suspect that you've pulled from my tree a few hours ago, before I fix a=
+ merge
+> conflict. This were already fixed.=20
 
-I've been seeing the same problem, and the above fix works for me too.
+Indeed.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+--Signature=_Tue__7_Apr_2009_14_47_45_+1000_QT60ZRiqNLb81K8/
+Content-Type: application/pgp-signature
 
-- James
--- 
-James Morris
-<jmorris@selinuxproject.org>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkna2vEACgkQjjKRsyhoI8wrSQCfbXfmQvf6hy7xGpYK2rJYTdqD
+FwYAoLUlpCTew+Q90oxpMeCkEb55P5t5
+=2VyJ
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__7_Apr_2009_14_47_45_+1000_QT60ZRiqNLb81K8/--
