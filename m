@@ -1,56 +1,32 @@
-From: Jike Song <albcamus@gmail.com>
-Subject: Re: Next April 6 : x86 allmodconfig failure [drivers/pci]
-Date: Tue, 7 Apr 2009 13:27:42 +0800
-Message-ID: <df9815e70904062227u2ee2214do56ce0b86207c52@mail.gmail.com>
-References: <20090406164555.e1232116.sfr@canb.auug.org.au>
-	 <49D9CF13.60202@in.ibm.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next:  tree build failure
+Date: Tue, 7 Apr 2009 11:00:27 +0100
+Message-ID: <20090407100027.GB20499@rakim.wolfsonmicro.main>
+References: <20090407134135.dc4e0e46.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ti-out-0910.google.com ([209.85.142.186]:22942 "EHLO
-	ti-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755930AbZDGF1q (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Apr 2009 01:27:46 -0400
-In-Reply-To: <49D9CF13.60202@in.ibm.com>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:44463 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1750977AbZDGKAa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Apr 2009 06:00:30 -0400
+Content-Disposition: inline
+In-Reply-To: <20090407134135.dc4e0e46.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@nokia.com>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
-On Mon, Apr 6, 2009 at 5:44 PM, Sachin Sant <sachinp@in.ibm.com> wrote:
-> Today's next tree allmodconfig build on x86 failed with
->
-> drivers/pci/intel-iommu.c:2636:35: error: macro "if" passed 2 arguments, but
-> takes just 1
-> drivers/pci/intel-iommu.c: In function init_iommu_hw:
-> drivers/pci/intel-iommu.c:2636: error: expected ( before { token
-> drivers/pci/intel-iommu.c:2637: error: ______r undeclared (first use in this
-> function)
-> drivers/pci/intel-iommu.c:2637: error: (Each undeclared identifier is
-> reported only once
-> drivers/pci/intel-iommu.c:2637: error: for each function it appears in.)
-> drivers/pci/intel-iommu.c:2640:35: error: macro "if" passed 2 arguments, but
-> takes just 1
-> drivers/pci/intel-iommu.c:2640: error: expected ( before { token
->
-> and many more of such errors. Similar errors with intr_remapping.c
->
-> drivers/pci/intr_remapping.c:679:28: error: macro "if" passed 2 arguments,
-> but takes just 1
-> drivers/pci/intr_remapping.c: In function disable_intr_remapping:
-> drivers/pci/intr_remapping.c:679: error: expected ( before { token
-> drivers/pci/intr_remapping.c:693:28: error: macro "if" passed 2 arguments,
-> but takes just 1
-> ......
->
-> Thanks
-> -Sachin
+The following changes since commit 5c15a6869a75000fecea61e9985f4753311ec534:
+  Anton Vorontsov (1):
+        ASoC: fsl_dma: Pass the proper device for dma mapping routines
 
-Also happens on linux-next?  This happens on Linus tree: v2.6.29-9854-gd508afb
+are available in the git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound-2.6.git for-2.6.30
 
+Peter Ujfalusi (1):
+      ASoC: TWL4030: Compillation error fix
 
--- 
-Thanks,
-Jike
+ sound/soc/codecs/twl4030.c |   10 ++++++----
+ 1 files changed, 6 insertions(+), 4 deletions(-)
