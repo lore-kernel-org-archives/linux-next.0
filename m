@@ -1,97 +1,62 @@
-From: Trond Myklebust <trond.myklebust@fys.uio.no>
-Subject: Re: linux-next: nfs tree build failures
-Date: Mon, 06 Apr 2009 16:34:25 -0700
-Message-ID: <1239060865.6196.2.camel@heimdal.trondhjem.org>
-References: <20090406162905.7d2d7037.sfr@canb.auug.org.au>
-	 <49D9B2B9.5010401@panasas.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: v4l-dvb tree build failure
+Date: Tue, 7 Apr 2009 10:58:32 +1000
+Message-ID: <20090407105832.d2590e6e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__7_Apr_2009_10_58_32_+1000_oQq++/cfi6t.C4kA"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-out2.uio.no ([129.240.10.58]:60076 "EHLO mail-out2.uio.no"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47735 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751232AbZDFXen (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 6 Apr 2009 19:34:43 -0400
-In-Reply-To: <49D9B2B9.5010401@panasas.com>
+	id S1751937AbZDGA6w (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Apr 2009 20:58:52 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benny Halevy <bhalevy@panasas.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Andy Adamson <andros@netapp.com>, "J. Bruce Fields" <bfields@fieldses.org>, NFS list <linux-nfs@vger.kernel.org>, pNFS Mailing List <pnfs@linux-nfs.org>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
 
-On Mon, 2009-04-06 at 10:43 +0300, Benny Halevy wrote:
-> On Apr. 06, 2009, 9:29 +0300, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi Trond,
-> > 
-> > Today's linux-next build (powerpc ppc44x_config) failed like this:
-> > 
-> > fs/nfs/client.c: In function 'nfs_match_client':
-> > fs/nfs/client.c:444: error: 'struct nfs_client' has no member named 'cl_minorversion'
-> > 
-> > Caused by commit 10d5a514705f0687cfbb6a080c3562b857e340fe ("nfs41: Use
-> > mount minorversion option").  The existence of cl_minorversion is
-> > controlled by CONFIG_NFS_V4 but the reference is not.
-> 
-> 
-> Stephan,
-> 
-> First, thanks! I apologize for introducing this.
-> This was caused by a late fix to Trond's review comment which
-> apparently was under-tested, as you mentioned.
-> 
-> > 
-> > I added the small patch below for today.
-> 
-> Based on Trond's review comment:
-> http://linux-nfs.org/pipermail/pnfs/2009-March/006938.html
-> 
-> We'd actually want to keep cl_minorversion's usage in the clear
-> and rather move its definition out of the #ifdef.
-> 
-> Please see PATCH 1/3 in reply to this message.
-> 
-> > 
-> > The same build gets this warning as well:
-> > 
-> > fs/nfs/client.c:554: warning: 'nfs4_session_set_rwsize' defined but not used
-> 
-> This one needs to go under CONFIG_NFS_V4.
-> See PATCH 2/2
-> 
-> > 
-> > and then fails like this:
-> > 
-> > fs/built-in.o: In function `nfs_readpage_result_full':
-> > read.c:(.text+0x70d24): undefined reference to `nfs4_restart_rpc'
-> > fs/built-in.o: In function `nfs_readpage_result_partial':
-> > read.c:(.text+0x70e3c): undefined reference to `nfs4_restart_rpc'
-> > fs/built-in.o: In function `nfs_async_unlink_done':
-> > unlink.c:(.text+0x71af0): undefined reference to `nfs4_restart_rpc'
-> > fs/built-in.o: In function `nfs_writeback_done':
-> > (.text+0x72c00): undefined reference to `nfs4_restart_rpc'
-> > 
-> > Caused by commit c105a9f16f11aaa9fcb9f75f8342b89c5d9665cf ("nfs41: use
-> > rpc prepare call state for session reset") which I have reverted for
-> > today.
-> 
-> See PATCH 3/3 that inlines nfs4_restart_rpc's definition.
-> 
-> Benny
+--Signature=_Tue__7_Apr_2009_10_58_32_+1000_oQq++/cfi6t.C4kA
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-All squashed into the relevant original patches.
+Hi Mauro,
 
-> > 
-> > Trond, is all this NFS v4.1 stuff that turned up yesterday really 2.6.30
-> > material?  If not, it should be removed from linux-next until after
-> > 2.6.30-rc1 is released.  (and clearly better tested ...)
-> > 
-> > Bruce, I guess the same question applies to the nfsd tree as well.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-This is code that isn't supposed to significantly affect the existing
-NFS tree unless CONFIG_NFS_V4_1 is set. Since the corresponding NFSd
-code has been merged into 2.6.30, it would be nice to have the client
-code too so that people can start testing, and so that development can
-continue in the mainline tree instead of in the smoky backrooms of the
-linux-nfs.org git trees.
+drivers/media/video/v4l2-common.c: In function 'v4l2_i2c_new_probed_subdev_=
+addr':
+drivers/media/video/v4l2-common.c:874: warning: passing argument 1 of 'v4l2=
+_i2c_new_probed_subdev' from incompatible pointer type
+drivers/media/video/v4l2-common.c:874: warning: passing argument 2 of 'v4l2=
+_i2c_new_probed_subdev' from incompatible pointer type
+drivers/media/video/v4l2-common.c:874: warning: passing argument 4 of 'v4l2=
+_i2c_new_probed_subdev' from incompatible pointer type
+drivers/media/video/v4l2-common.c:874: error: too many arguments to functio=
+n 'v4l2_i2c_new_probed_subdev'
 
-Cheers
-  Trond
+Caused by commit b97a45dfbd99a414a1af8e7224ab12d6ccbe3789 ("V4L/DVB
+(11374): v4l2-common: add v4l2_i2c_new_probed_subdev_addr").
+
+This was clearly never even built ...
+
+I have used the v4l-dvb tree fomr next-20090406 for today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__7_Apr_2009_10_58_32_+1000_oQq++/cfi6t.C4kA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknapTgACgkQjjKRsyhoI8y88QCfc8PqIDtF7Co0wBOAzDXZQf45
+5S8AnRKCCXxRfr6dGLhoOMPfeIW/xax9
+=2rLS
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__7_Apr_2009_10_58_32_+1000_oQq++/cfi6t.C4kA--
