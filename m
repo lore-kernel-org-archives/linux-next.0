@@ -1,81 +1,76 @@
-From: "William A. (Andy) Adamson" <androsadamson@gmail.com>
-Subject: Re: [pnfs] next-20090406: nfsd build fails
-Date: Tue, 7 Apr 2009 16:05:44 -0400
-Message-ID: <89c397150904071305y2581a171qa45e4e78fe8ea3aa@mail.gmail.com>
-References: <a4423d670904060027y44550d99g2cb40ce415dbb048@mail.gmail.com>
-	 <49D9C308.6020500@panasas.com> <20090406171146.GA32436@fieldses.org>
-	 <49DBA132.5000703@panasas.com>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: [PATCH next] pci: fix build error with !PCIE_ECRC
+Date: Tue, 7 Apr 2009 14:52:08 -0700
+Message-ID: <20090407145208.56c25214@hobbes>
+References: <20090407123707.GA18687@orion>
+	<1239125629.19984.196.camel@grinch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from yx-out-2324.google.com ([74.125.44.30]:2255 "EHLO
-	yx-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754191AbZDGUFp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Apr 2009 16:05:45 -0400
-In-Reply-To: <49DBA132.5000703@panasas.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Benny Halevy <bhalevy@panasas.com>
-Cc: "J. Bruce Fields" <bfields@fieldses.org>, Trond Myklebust <Trond.Myklebust@netapp.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-nfs@vger.kernel.org, pNFS Mailing List <pnfs@linux-nfs.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1239125629.19984.196.camel@grinch>
+Sender: linux-pci-owner@vger.kernel.org
+To: Andrew Patterson <andrew.patterson@hp.com>
+Cc: Alexander Beregalov <a.beregalov@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Apr 7, 2009 at 2:53 PM, Benny Halevy <bhalevy@panasas.com> wrote:
-> On Apr. 06, 2009, 20:11 +0300, "J. Bruce Fields" <bfields@fieldses.org> wrote:
->> On Mon, Apr 06, 2009 at 11:53:28AM +0300, Benny Halevy wrote:
->>> On Apr. 06, 2009, 10:27 +0300, Alexander Beregalov <a.beregalov@gmail.com> wrote:
->>>> Hi
->>>>
->>>> fs/nfsd/nfssvc.c: In function 'set_max_drc':
->>>> fs/nfsd/nfssvc.c:240: error: 'NFSD_DRC_SIZE_SHIFT' undeclared
->>>>
->>>> CONFIG_NFSD_V4 is not set
->>> Hi Alexander,
->>>
->>> Thanks for reporting this!
->>>
->>> Andy, Bruce: please see attached 2 patches fixing compile/link errors
->>> with DRC under !defined(CONFIG_NFSD_V4):
->>>
->>> [PATCH 1/2] SQUASHEM: nfsd41: define NFSD_DRC_SIZE_SHIFT in set_max_drc
->>> [PATCH 2/2] SQUASHME: nfsd41: define nfsd4_set_statp as noop for !CONFIG_NFSD_V4
->>
->> Thanks, applied.
->>
->> Committing on top (not squashing) since I'd rather not rewrite history
->> on a branch I've already sent a pull request for.
->
-> Cool. Thanks!
-> I wasn't aware that you already sent a pull request already...
-> I got it from mainline now and I'm rebasing and testing
-> the rest of our stuff on top of it.
->
->>
->> (In fact, I'll try to stop rebasing those for-next branches at all this
->> time around.)
->
-> I'm with you on that.
->
-> For 2.6.31, I'd like to send easy-to-swallow patch sets
-> that we can review and agree upon well ahead of the merge window
-> (i.e. start, e.g. with the backchannel stuff shortly after 2.6.30-rc1
-> is cut) and once we're in agreement on it we can put it in linux-next
-> to be visible to others and get some soak time.
+On Tue, 07 Apr 2009 17:33:49 +0000
+Andrew Patterson <andrew.patterson@hp.com> wrote:
 
-This sounds good to me. I'm continuing with Bruce's review comments WRT the DRC.
+> On Tue, 2009-04-07 at 16:37 +0400, Alexander Beregalov wrote:
+> > Fix this build error:
+> > drivers/built-in.o: In function `pci_init_capabilities':
+> > drivers/pci/probe.c:989: undefined reference to
+> > `pcie_set_ecrc_checking' drivers/built-in.o: In function
+> > `pci_setup': drivers/pci/pci.c:2547: undefined reference to
+> > `pcie_ecrc_get_policy'
+> > 
+> > Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+> > ---
+> > 
+> >  drivers/pci/pci.c        |    2 ++
+> >  drivers/pci/pcie/Kconfig |    2 +-
+> >  drivers/pci/probe.c      |    2 ++
+> >  3 files changed, 5 insertions(+), 1 deletions(-)
+> > 
+> > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> > index f61b2cf..f1c393e 100644
+> > --- a/drivers/pci/pci.c
+> > +++ b/drivers/pci/pci.c
+> > @@ -2543,8 +2543,10 @@ static int __init pci_setup(char *str)
+> >  			} else if (!strncmp(str,
+> > "resource_alignment=", 19)) { pci_set_resource_alignment_param(str
+> > + 19, strlen(str + 19));
+> > +#ifdef CONFIG_PCIE_ECRC
+> >  			} else if (!strncmp(str, "ecrc=", 5)) {
+> >  				pcie_ecrc_get_policy(str + 5);
+> > +#endif
+> >  			} else {
+> >  				printk(KERN_ERR "PCI: Unknown
+> > option `%s'\n", str);
+> > diff --git a/drivers/pci/pcie/Kconfig b/drivers/pci/pcie/Kconfig
+> > index a79e52b..9d0e727 100644
+> > --- a/drivers/pci/pcie/Kconfig
+> > +++ b/drivers/pci/pcie/Kconfig
+> > @@ -52,7 +52,7 @@ config PCIEASPM_DEBUG
+> >  #
+> >  config PCIE_ECRC
+> >  	bool "PCI Express ECRC support"
+> > -	depends on PCI
+> > +	depends on PCI && PCIEPORTBUS
+> 
+> We really only need this.  There are empty functions in
+> include/linux/pci.h to handle the case where PCIE_ECRC is not defined.
+> The problem is that the code in drivers/pci/pcie is only compiled if
+> PCIEPORTBUS is defined.  This feature does not depend on any
+> PCIEPORTBUS code. So either ecrc.c needs to be moved to drivers/pci
+> or we need to not assume that drivers/pci/pcie is only for the
+> portbus driver.
+> 
 
-> This will also
-> be a good time to freeze it, so it won't be rebased, unless something
-> important enough requires that.  How does that sound?
->
-> I think that the same strategy should work for the client side too.
-> Trond what do you think?
->
-> Benny
->
->>
->> --b.
-> _______________________________________________
-> pNFS mailing list
-> pNFS@linux-nfs.org
-> http://linux-nfs.org/cgi-bin/mailman/listinfo/pnfs
->
+Btw I dropped this patch back out in light of Kenji-san's comments, so
+I expect any subsequent version to include a fix for the build issue.
+
+Thanks,
+-- 
+Jesse Barnes, Intel Open Source Technology Center
