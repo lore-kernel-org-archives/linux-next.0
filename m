@@ -1,35 +1,51 @@
-From: Alan Modra <amodra@bigpond.net.au>
-Subject: Re: linux-next: build failure
-Date: Wed, 8 Apr 2009 14:42:03 +0930
-Message-ID: <20090408051202.GA27796@bubble.grove.modra.org>
-References: <20090408140407.14dc5242.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH] build fix for generic debug pagealloc
+Date: Wed, 8 Apr 2009 15:05:10 +0200
+Message-ID: <20090408130510.GM18581@elte.hu>
+References: <a4423d670904020421k7395e11dwe70d4223cb817e0a@mail.gmail.com> <20090402094522.b29004c8.akpm@linux-foundation.org> <20090403164450.GC3047@elte.hu> <200904032238.55438.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-arch-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20090408140407.14dc5242.sfr@canb.auug.org.au>
-List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
-List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
-List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org
+In-Reply-To: <200904032238.55438.rjw@sisk.pl>
+Sender: linux-arch-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Akinobu Mita <akinobu.mita@gmail.com>, Alexander Beregalov <a.beregalov@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-arch@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Apr 08, 2009 at 02:04:07PM +1000, Stephen Rothwell wrote:
->   LD      vmlinux.o
-> powerpc-linux-ld: TOC section size exceeds 64k
 
-I'm starting to sound like a cracked record, but I'll say it again:
-ld -r does not merely package together object files, it transforms
-them.   Try using thin archives instead.
+* Rafael J. Wysocki <rjw@sisk.pl> wrote:
 
--- 
-Alan Modra
-Australia Development Lab, IBM
+> On Friday 03 April 2009, Ingo Molnar wrote:
+> > 
+> > * Andrew Morton <akpm@linux-foundation.org> wrote:
+> > 
+> > > > +config DEBUG_PAGEALLOC
+> > > > +	bool "Debug page memory allocations"
+> > > > +	depends on DEBUG_KERNEL && ARCH_SUPPORTS_DEBUG_PAGEALLOC
+> > > > +	depends on !HIBERNATION || !PPC && !SPARC
+> > > > +	---help---
+> > > > +	  Unmap pages from the kernel linear mapping after free_pages().
+> > > > +	  This results in a large slowdown, but helps to find certain types
+> > > > +	  of memory corruptions.
+> > > > +
+> > > 
+> > > I guess this is why it wasn't discovered in my compile testing.  
+> > > It's quite regrettable that `make allmodconfig' didn't enable the 
+> > > feature. That's what allmodconfig is for.
+> > 
+> > Hm, i _do_ remember some hibernation magic fix from Rafael, in the 
+> > area of debugalloc. Many months ago.
+> > 
+> > Rafael, is it supposed to work? If yes, i think we should unblock 
+> > it.
+> 
+> Yes, it is, at least on x86.
+> 
+> ISTR using DEBUG_PAGEALLOC with hibernation quite some time ago 
+> already.
+
+Could you please send a patch to Andrew then to remove the above 
+dependency?
+
+	Ingo
