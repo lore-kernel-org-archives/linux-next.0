@@ -1,48 +1,29 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure
-Date: Wed, 8 Apr 2009 14:04:07 +1000
-Message-ID: <20090408140407.14dc5242.sfr@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: Next April 7 : x86 allmodconfig failure [kernel/module.c]
+Date: Wed, 8 Apr 2009 13:41:22 +0930
+Message-ID: <200904081341.23208.rusty@rustcorp.com.au>
+References: <1239103297.5300.24.camel@subratamodak.linux.ibm.com> <1239103411.5300.26.camel@subratamodak.linux.ibm.com> <a4423d670904070425y1d38579dv34ba8681c77e43e4@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__8_Apr_2009_14_04_07_+1000_fApaZDf86MUiO_70"
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40698 "EHLO smtps.tip.net.au"
+Received: from ozlabs.org ([203.10.76.45]:58282 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750725AbZDHEER (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 8 Apr 2009 00:04:17 -0400
+	id S1750776AbZDHEL1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 8 Apr 2009 00:11:27 -0400
+In-Reply-To: <a4423d670904070425y1d38579dv34ba8681c77e43e4@mail.gmail.com>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>
-Cc: linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org, amodra@bigpond.net.au
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: subrata@linux.vnet.ibm.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Sachin P Sant <sachinp@linux.vnet.ibm.com>, Kees Cook <kees@ubuntu.com>, James Morris <jmorris@namei.org>
 
---Signature=_Wed__8_Apr_2009_14_04_07_+1000_fApaZDf86MUiO_70
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tuesday 07 April 2009 20:55:05 Alexander Beregalov wrote:
+> Patch is already sent
+> http://patchwork.kernel.org/patch/16535/
 
-Hi all,
+But why have I never seen this patch in the first place?
 
-Today's linux-next build (powerpc allyesconfig) failed like this:
-
-  LD      vmlinux.o
-powerpc-linux-ld: TOC section size exceeds 64k
-
-I will think about (and appreciate suggestions on) how to fix this ...
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__8_Apr_2009_14_04_07_+1000_fApaZDf86MUiO_70
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkncIjcACgkQjjKRsyhoI8w6NQCfVtfU/oL6L0UFvH7TzsgnzXvz
-3MgAoKdHOOGiDuh4Fxg2hyHpTPNWFLx2
-=CFy6
------END PGP SIGNATURE-----
-
---Signature=_Wed__8_Apr_2009_14_04_07_+1000_fApaZDf86MUiO_70--
+James, do you want me to take it?
+Rusty.
