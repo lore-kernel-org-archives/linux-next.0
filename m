@@ -1,53 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: origin tree build failure
-Date: Wed, 8 Apr 2009 13:28:03 +1000
-Message-ID: <20090408132803.ba6f347a.sfr@canb.auug.org.au>
+Subject: linux-next: build failure
+Date: Wed, 8 Apr 2009 14:04:07 +1000
+Message-ID: <20090408140407.14dc5242.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__8_Apr_2009_13_28_03_+1000_FbxT/PoWtspeIL0e"
+ boundary="Signature=_Wed__8_Apr_2009_14_04_07_+1000_fApaZDf86MUiO_70"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45238 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40698 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752646AbZDHD2K (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 7 Apr 2009 23:28:10 -0400
+	id S1750725AbZDHEER (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 8 Apr 2009 00:04:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, Alan Cox <alan@lxorguk.ukuu.org.uk>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>
+Cc: linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org, amodra@bigpond.net.au
 
---Signature=_Wed__8_Apr_2009_13_28_03_+1000_FbxT/PoWtspeIL0e
+--Signature=_Wed__8_Apr_2009_14_04_07_+1000_fApaZDf86MUiO_70
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hi all,
 
 Today's linux-next build (powerpc allyesconfig) failed like this:
 
-arch/powerpc/include/asm/parport.h: In function 'parport_pc_find_nonpci_por=
-ts':
-arch/powerpc/include/asm/parport.h:32: error: too few arguments to function=
- 'parport_pc_probe_port'
+  LD      vmlinux.o
+powerpc-linux-ld: TOC section size exceeds 64k
 
-Caused by commit 51dcdfec6a274afc1c6fce180d582add9ff512c0 ("parport: Use
-the PCI IRQ if offered").
-
-I have reverted that commit for today.
+I will think about (and appreciate suggestions on) how to fix this ...
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__8_Apr_2009_13_28_03_+1000_FbxT/PoWtspeIL0e
+--Signature=_Wed__8_Apr_2009_14_04_07_+1000_fApaZDf86MUiO_70
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkncGcMACgkQjjKRsyhoI8wQRwCeOJkbHWOk1QLTc6oOAbYQwRB8
-rY0An1FW5NHE3RrHSA/eYGaXZpzgwkCS
-=dayp
+iEYEARECAAYFAkncIjcACgkQjjKRsyhoI8w6NQCfVtfU/oL6L0UFvH7TzsgnzXvz
+3MgAoKdHOOGiDuh4Fxg2hyHpTPNWFLx2
+=CFy6
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__8_Apr_2009_13_28_03_+1000_FbxT/PoWtspeIL0e--
+--Signature=_Wed__8_Apr_2009_14_04_07_+1000_fApaZDf86MUiO_70--
