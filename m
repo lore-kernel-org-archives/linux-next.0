@@ -1,51 +1,50 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH] build fix for generic debug pagealloc
-Date: Wed, 8 Apr 2009 15:05:10 +0200
-Message-ID: <20090408130510.GM18581@elte.hu>
-References: <a4423d670904020421k7395e11dwe70d4223cb817e0a@mail.gmail.com> <20090402094522.b29004c8.akpm@linux-foundation.org> <20090403164450.GC3047@elte.hu> <200904032238.55438.rjw@sisk.pl>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: block tree build failure
+Date: Thu, 9 Apr 2009 13:37:16 +1000
+Message-ID: <20090409133716.12af28e6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arch-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__9_Apr_2009_13_37_16_+1000_Hj8d/iNOJPrnlJN4"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:42853 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754620AbZDIDhY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 8 Apr 2009 23:37:24 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: linux-next@vger.kernel.org
+
+--Signature=_Thu__9_Apr_2009_13_37_16_+1000_Hj8d/iNOJPrnlJN4
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <200904032238.55438.rjw@sisk.pl>
-Sender: linux-arch-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Akinobu Mita <akinobu.mita@gmail.com>, Alexander Beregalov <a.beregalov@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-arch@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
+Hi Jens,
 
-* Rafael J. Wysocki <rjw@sisk.pl> wrote:
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-> On Friday 03 April 2009, Ingo Molnar wrote:
-> > 
-> > * Andrew Morton <akpm@linux-foundation.org> wrote:
-> > 
-> > > > +config DEBUG_PAGEALLOC
-> > > > +	bool "Debug page memory allocations"
-> > > > +	depends on DEBUG_KERNEL && ARCH_SUPPORTS_DEBUG_PAGEALLOC
-> > > > +	depends on !HIBERNATION || !PPC && !SPARC
-> > > > +	---help---
-> > > > +	  Unmap pages from the kernel linear mapping after free_pages().
-> > > > +	  This results in a large slowdown, but helps to find certain types
-> > > > +	  of memory corruptions.
-> > > > +
-> > > 
-> > > I guess this is why it wasn't discovered in my compile testing.  
-> > > It's quite regrettable that `make allmodconfig' didn't enable the 
-> > > feature. That's what allmodconfig is for.
-> > 
-> > Hm, i _do_ remember some hibernation magic fix from Rafael, in the 
-> > area of debugalloc. Many months ago.
-> > 
-> > Rafael, is it supposed to work? If yes, i think we should unblock 
-> > it.
-> 
-> Yes, it is, at least on x86.
-> 
-> ISTR using DEBUG_PAGEALLOC with hibernation quite some time ago 
-> already.
+usr/include/linux/fs.h:11: included file 'linux/rwtypes.h' is not exported
+make[4]: *** [usr/include/linux/.check] Error 1
 
-Could you please send a patch to Andrew then to remove the above 
-dependency?
+Caused by commit 93fe0305df9344f57edfa0444f8764b34ea74f9b ("Document and
+move the various READ/WRITE types") which I have reverted for today.
 
-	Ingo
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__9_Apr_2009_13_37_16_+1000_Hj8d/iNOJPrnlJN4
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkndbWwACgkQjjKRsyhoI8welACfYO5MIP502w1xUziUDwlDVJNt
+ZLEAn2hTbPDwjwx59c8jrXKO4FkCkdWa
+=1nIe
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__9_Apr_2009_13_37_16_+1000_Hj8d/iNOJPrnlJN4--
