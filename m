@@ -1,67 +1,82 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Subject: [PATCH -next] modules: Fix up build when CONFIG_MODULE_UNLOAD=n.
-Date: Fri, 10 Apr 2009 00:49:44 +0900
-Message-ID: <20090409154944.GC7789@linux-sh.org>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: next-20090406: nfsd build fails
+Date: Thu, 9 Apr 2009 12:12:06 -0400
+Message-ID: <20090409161206.GE32589@fieldses.org>
+References: <a4423d670904060027y44550d99g2cb40ce415dbb048@mail.gmail.com> <49D9C308.6020500@panasas.com> <20090406171146.GA32436@fieldses.org> <49DBA132.5000703@panasas.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 124x34x33x190.ap124.ftth.ucom.ne.jp ([124.34.33.190]:60947 "EHLO
-	master.linux-sh.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935861AbZDIPyc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Apr 2009 11:54:32 -0400
-Received: from localhost (unknown [127.0.0.1])
-	by master.linux-sh.org (Postfix) with ESMTP id 04E5F63754
-	for <linux-next@vger.kernel.org>; Thu,  9 Apr 2009 15:49:45 +0000 (UTC)
-Received: from master.linux-sh.org ([127.0.0.1])
-	by localhost (master.linux-sh.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 6ekSuafXr+zv for <linux-next@vger.kernel.org>;
-	Fri, 10 Apr 2009 00:49:44 +0900 (JST)
+Received: from mail.fieldses.org ([141.211.133.115]:39158 "EHLO
+	pickle.fieldses.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756976AbZDIQMN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Apr 2009 12:12:13 -0400
 Content-Disposition: inline
+In-Reply-To: <49DBA132.5000703@panasas.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+To: Benny Halevy <bhalevy@panasas.com>
+Cc: Trond Myklebust <Trond.Myklebust@netapp.com>, Alexander Beregalov <a.beregalov@gmail.com>, andros@netapp.com, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-nfs@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, pNFS Mailing List <pnfs@linux-nfs.org>
 
-Commit 3d43321b7015387cfebbe26436d0e9d299162ea1 ("modules: sysctl to
-block module loading") introduces a modules_disabled variable that is
-only defined if CONFIG_MODULE_UNLOAD is enabled, despite being used in
-other places. This moves it up and fixes up the build.
+On Tue, Apr 07, 2009 at 09:53:38PM +0300, Benny Halevy wrote:
+> On Apr. 06, 2009, 20:11 +0300, "J. Bruce Fields" <bfields@fieldses.org> wrote:
+> > On Mon, Apr 06, 2009 at 11:53:28AM +0300, Benny Halevy wrote:
+> >> On Apr. 06, 2009, 10:27 +0300, Alexander Beregalov <a.beregalov@gmail.com> wrote:
+> >>> Hi
+> >>>
+> >>> fs/nfsd/nfssvc.c: In function 'set_max_drc':
+> >>> fs/nfsd/nfssvc.c:240: error: 'NFSD_DRC_SIZE_SHIFT' undeclared
+> >>>
+> >>> CONFIG_NFSD_V4 is not set
+> >> Hi Alexander,
+> >>
+> >> Thanks for reporting this!
+> >>
+> >> Andy, Bruce: please see attached 2 patches fixing compile/link errors
+> >> with DRC under !defined(CONFIG_NFSD_V4):
+> >>
+> >> [PATCH 1/2] SQUASHEM: nfsd41: define NFSD_DRC_SIZE_SHIFT in set_max_drc
+> >> [PATCH 2/2] SQUASHME: nfsd41: define nfsd4_set_statp as noop for !CONFIG_NFSD_V4
+> > 
+> > Thanks, applied.
+> > 
+> > Committing on top (not squashing) since I'd rather not rewrite history
+> > on a branch I've already sent a pull request for.
+> 
+> Cool. Thanks!
+> I wasn't aware that you already sent a pull request already...
+> I got it from mainline now and I'm rebasing and testing
+> the rest of our stuff on top of it.
+> 
+> > 
+> > (In fact, I'll try to stop rebasing those for-next branches at all this
+> > time around.)
+> 
+> I'm with you on that.
+> 
+> For 2.6.31, I'd like to send easy-to-swallow patch sets
+> that we can review and agree upon well ahead of the merge window
+> (i.e. start, e.g. with the backchannel stuff shortly after 2.6.30-rc1
+> is cut) and once we're in agreement on it we can put it in linux-next
+> to be visible to others and get some soak time.  This will also
+> be a good time to freeze it, so it won't be rebased,
 
-  CC      kernel/module.o
-kernel/module.c: In function 'sys_init_module':
-kernel/module.c:2401: error: 'modules_disabled' undeclared (first use in this function)
-kernel/module.c:2401: error: (Each undeclared identifier is reported only once
-kernel/module.c:2401: error: for each function it appears in.)
-make[1]: *** [kernel/module.o] Error 1
-make: *** [kernel/module.o] Error 2
+Note that it's OK to rebase things in -next; so it doesn't have to be
+frozen till it goes into one of our trees.  (And I've tried once or
+twice to maintain the discpline of not rebasing stuff in my tree and
+have failed....  I'll make a better effort this time.)
 
-Signed-off-by: Paul Mundt <lethal@linux-sh.org>
+> unless something
+> important enough requires that.  How does that sound?
 
----
+Sounds fine.  If you send in things as they're ready, I'll try to turn
+them around a little faster (within a few days or a week anyway).
 
- kernel/module.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+--b.
 
-diff --git a/kernel/module.c b/kernel/module.c
-index 274ab43..5fb0ece 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -73,6 +73,9 @@ DEFINE_MUTEX(module_mutex);
- EXPORT_SYMBOL_GPL(module_mutex);
- static LIST_HEAD(modules);
- 
-+/* Block module loading/unloading? */
-+int modules_disabled = 0;
-+
- /* Waiting for a module to finish initializing? */
- static DECLARE_WAIT_QUEUE_HEAD(module_wq);
- 
-@@ -782,9 +785,6 @@ static void wait_for_zero_refcount(struct module *mod)
- 	mutex_lock(&module_mutex);
- }
- 
--/* Block module loading/unloading? */
--int modules_disabled = 0;
--
- SYSCALL_DEFINE2(delete_module, const char __user *, name_user,
- 		unsigned int, flags)
- {
+> I think that the same strategy should work for the client side too.
+> Trond what do you think?
+> 
+> Benny
+> 
+> > 
+> > --b.
