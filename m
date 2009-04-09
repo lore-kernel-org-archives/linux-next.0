@@ -1,34 +1,25 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: Next April 9 : x86 allmodconfig media/video/cx88 build break
-Date: Thu, 9 Apr 2009 07:28:54 -0300
-Message-ID: <20090409072854.3ed8a3bd@pedra.chehab.org>
-References: <20090409163305.8c7a0371.sfr@canb.auug.org.au>
-	<49DDC93B.8020106@in.ibm.com>
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: next-0409: kvm-ia64 build failure when !MODULES
+Date: Thu, 9 Apr 2009 17:05:10 +0400
+Message-ID: <a4423d670904090605w2f26970o37b2493e9bbf2630@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <49DDC93B.8020106@in.ibm.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: linux-media@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ew0-f165.google.com ([209.85.219.165]:56344 "EHLO
+	mail-ew0-f165.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933759AbZDINFM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Apr 2009 09:05:12 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "kvm-ia64@vger.kernel.org" <kvm-ia64@vger.kernel.org>
 
-On Thu, 09 Apr 2009 15:38:59 +0530
-Sachin Sant <sachinp@in.ibm.com> wrote:
+Hi
 
-> Today's Next tree allmodconfig build on x86 failed with
-> 
-> ERROR: __divdi3 [drivers/media/video/cx88/cx88xx.ko] undefined!
-> 
-> Thanks
-> -Sachin
-> 
-Hi Sachin,
+arch/ia64/kvm/kvm-ia64.c: In function 'kvm_patch_vmm':
+arch/ia64/kvm/kvm-ia64.c:1686: error: dereferencing pointer to incomplete type
+arch/ia64/kvm/kvm-ia64.c: In function 'kvm_relocate_vmm':
+arch/ia64/kvm/kvm-ia64.c:1718: error: dereferencing pointer to incomplete type
+arch/ia64/kvm/kvm-ia64.c:1719: error: dereferencing pointer to incomplete type
 
-Thanks for warning about this. This error happens only with some gcc versions.
-Yet, I'm adding a patch to use do_div() to avoid such troubles. It should be
-there for today's linux-next.
-
-Cheers,
-Mauro
+# CONFIG_MODULES is not set
