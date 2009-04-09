@@ -1,83 +1,52 @@
-From: Subrata Modak <subrata@linux.vnet.ibm.com>
-Subject: Re: [PATCH] fs_enet: convert to netdev_ops
-Date: Thu, 09 Apr 2009 20:19:48 +0530
-Message-ID: <1239288588.5188.77.camel@subratamodak.linux.ibm.com>
-References: <20090409144652.GA4012@orion>
-Reply-To: subrata@linux.vnet.ibm.com
+From: Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>
+Subject: Re: [BUILD FAILURE 05] Next April 9 : PPC64 randconfig
+ [drivers/net/wan/wanxlfw.inc]
+Date: Thu, 9 Apr 2009 16:51:35 +0200 (CEST)
+Message-ID: <alpine.LRH.2.00.0904091650060.4839@vixen.sonytel.be>
+References: <1239285152.5188.66.camel@subratamodak.linux.ibm.com> <1239285437.5188.68.camel@subratamodak.linux.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20090409144652.GA4012@orion>
-Sender: netdev-owner@vger.kernel.org
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: netdev@vger.kernel.org, David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, sachinp <sachinp@linux.vnet.ibm.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from vervifontaine.sonytel.be ([80.88.33.193]:55942 "EHLO
+	pophost.sonytel.be" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1756637AbZDIOvh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Apr 2009 10:51:37 -0400
+In-Reply-To: <1239285437.5188.68.camel@subratamodak.linux.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Subrata Modak <subrata@linux.vnet.ibm.com>
+Cc: Linuxppc-dev <Linuxppc-dev@ozlabs.org>, sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-net@vger.kernel.org
 
-On Thu, 2009-04-09 at 18:46 +0400, Alexander Beregalov wrote:
-> Reported-by: Subrata Modak <subrata@linux.vnet.ibm.com>
-> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+On Thu, 9 Apr 2009, Subrata Modak wrote:
+> Observed the following error:
+>=20
+> BLD FW  drivers/net/wan/wanxlfw.inc
+> /bin/sh: as68k: command not found
+> make[3]: *** [drivers/net/wan/wanxlfw.inc] Error 127
+> make[2]: *** [drivers/net/wan] Error 2
+> make[1]: *** [drivers/net] Error 2
+> make: *** [drivers] Error 2
 
-Thanks. Adding Sachin in Cc:
+Yeah, if you enable CONFIG_WANXL_BUILD_FIRMWARE without
+CONFIG_PREVENT_FIRMWARE_BUILD (the trick for allmodconfig?), you need t=
+he
+appropriate tools installed...
 
-Regards--
-Subrata
+With kind regards,
 
-> ---
-> 
-> 
->  drivers/net/fs_enet/fs_enet-main.c |   27 +++++++++++++++++----------
->  1 files changed, 17 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/net/fs_enet/fs_enet-main.c b/drivers/net/fs_enet/fs_enet-main.c
-> index b037ce9..a9cbc31 100644
-> --- a/drivers/net/fs_enet/fs_enet-main.c
-> +++ b/drivers/net/fs_enet/fs_enet-main.c
-> @@ -1019,6 +1019,22 @@ out_put_phy:
->  #define IS_FEC(match) 0
->  #endif
-> 
-> +static const struct net_device_ops fs_enet_netdev_ops = {
-> +	.ndo_open		= fs_enet_open,
-> +	.ndo_stop		= fs_enet_close,
-> +	.ndo_get_stats		= fs_enet_get_stats,
-> +	.ndo_start_xmit		= fs_enet_start_xmit,
-> +	.ndo_tx_timeout		= fs_timeout,
-> +	.ndo_set_multicast_list	= fs_set_multicast_list,
-> +	.ndo_do_ioctl		= fs_ioctl,
-> +	.ndo_validate_addr	= eth_validate_addr,
-> +	.ndo_set_mac_address	= eth_mac_addr,
-> +	.ndo_change_mtu		= eth_change_mtu,
-> +#ifdef CONFIG_NET_POLL_CONTROLLER
-> +	.ndo_poll_controller	= fs_enet_netpoll,
-> +#endif
-> +};
-> +
->  static int __devinit fs_enet_probe(struct of_device *ofdev,
->                                     const struct of_device_id *match)
->  {
-> @@ -1093,22 +1109,13 @@ static int __devinit fs_enet_probe(struct of_device *ofdev,
->  	fep->tx_ring = fpi->tx_ring;
->  	fep->rx_ring = fpi->rx_ring;
-> 
-> -	ndev->open = fs_enet_open;
-> -	ndev->hard_start_xmit = fs_enet_start_xmit;
-> -	ndev->tx_timeout = fs_timeout;
-> +	ndev->netdev_ops = &fs_enet_netdev_ops;
->  	ndev->watchdog_timeo = 2 * HZ;
-> -	ndev->stop = fs_enet_close;
-> -	ndev->get_stats = fs_enet_get_stats;
-> -	ndev->set_multicast_list = fs_set_multicast_list;
-> -#ifdef CONFIG_NET_POLL_CONTROLLER
-> -	ndev->poll_controller = fs_enet_netpoll;
-> -#endif
->  	if (fpi->use_napi)
->  		netif_napi_add(ndev, &fep->napi, fs_enet_rx_napi,
->  		               fpi->napi_weight);
-> 
->  	ndev->ethtool_ops = &fs_ethtool_ops;
-> -	ndev->do_ioctl = fs_ioctl;
-> 
->  	init_timer(&fep->phy_timer_list);
-> 
+Geert Uytterhoeven
+Software Architect
 
+Sony Techsoft Centre Europe
+The Corporate Village =B7 Da Vincilaan 7-D1 =B7 B-1935 Zaventem =B7 Bel=
+gium
+
+Phone:    +32 (0)2 700 8453
+=46ax:      +32 (0)2 700 8622
+E-mail:   Geert.Uytterhoeven@sonycom.com
+Internet: http://www.sony-europe.com/
+
+A division of Sony Europe (Belgium) N.V.
+VAT BE 0413.825.160 =B7 RPR Brussels
+=46ortis =B7 BIC GEBABEBB =B7 IBAN BE41293037680010
