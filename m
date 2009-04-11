@@ -1,34 +1,26 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: Tree for April 9
-Date: Fri, 10 Apr 2009 23:11:58 -0700
-Message-ID: <20090410231158.33b85dc1.akpm@linux-foundation.org>
-References: <20090409163305.8c7a0371.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH] fs_enet: convert to netdev_ops
+Date: Sat, 11 Apr 2009 02:44:13 -0700 (PDT)
+Message-ID: <20090411.024413.11298313.davem@davemloft.net>
+References: <20090409144652.GA4012@orion>
+	<1239288588.5188.77.camel@subratamodak.linux.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:34021 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754655AbZDKGQp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sat, 11 Apr 2009 02:16:45 -0400
-In-Reply-To: <20090409163305.8c7a0371.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Marton Balint <cus@fazekas.hu>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <1239288588.5188.77.camel@subratamodak.linux.ibm.com>
+Sender: netdev-owner@vger.kernel.org
+To: subrata@linux.vnet.ibm.com
+Cc: a.beregalov@gmail.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, Linuxppc-dev@ozlabs.org, sachinp@linux.vnet.ibm.com
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 9 Apr 2009 16:33:05 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+From: Subrata Modak <subrata@linux.vnet.ibm.com>
+Date: Thu, 09 Apr 2009 20:19:48 +0530
 
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+> On Thu, 2009-04-09 at 18:46 +0400, Alexander Beregalov wrote:
+>> Reported-by: Subrata Modak <subrata@linux.vnet.ibm.com>
+>> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+> 
+> Thanks. Adding Sachin in Cc:
 
-It has a link failure with i386 allmodconfig due to missing __divdi3.
-
-It's due to this statement in drivers/media/video/cx88/cx88-dsp.c's
-int_goertzel():
-
-        return (u32)(((s64)s_prev2*s_prev2 + (s64)s_prev*s_prev -
-                      (s64)coeff*s_prev2*s_prev/32768)/N/N);
-
-that gem will need to be converted to use div64() or similar, please.
+I've applied this patch.
