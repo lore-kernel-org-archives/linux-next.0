@@ -1,33 +1,43 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [BUILD FAILURE 04] Next April 9 : PPC64 randconfig
- [drivers/net/ibm_newemac/core.c]
-Date: Sat, 11 Apr 2009 02:44:36 -0700 (PDT)
-Message-ID: <20090411.024436.40931952.davem@davemloft.net>
-References: <BE92FB74-1784-414B-B27F-8329185EB3AE@kernel.crashing.org>
-	<20090409143112.GA7538@yoda.jdub.homelinux.org>
-	<20090410015614.GA5781@orion>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+Subject: Re: linux-next: Tree for April 9
+Date: Sat, 11 Apr 2009 08:09:53 -0300
+Message-ID: <20090411080953.0c22cf4e@pedra.chehab.org>
+References: <20090409163305.8c7a0371.sfr@canb.auug.org.au>
+	<20090410231158.33b85dc1.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:51752
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1756461AbZDKJoq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sat, 11 Apr 2009 05:44:46 -0400
-In-Reply-To: <20090410015614.GA5781@orion>
+Received: from bombadil.infradead.org ([18.85.46.34]:56045 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752500AbZDKLKR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 11 Apr 2009 07:10:17 -0400
+In-Reply-To: <20090410231158.33b85dc1.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: a.beregalov@gmail.com
-Cc: netdev@vger.kernel.org, jwboyer@linux.vnet.ibm.com, galak@kernel.crashing.org, subrata@linux.vnet.ibm.com, Linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-net@vger.kernel.org, greg@kroah.com, sachinp@linux.vnet.ibm.com, sfr@canb.auug.org.au
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Marton Balint <cus@fazekas.hu>, linux-media@vger.kernel.org
 
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Date: Fri, 10 Apr 2009 05:56:14 +0400
+On Fri, 10 Apr 2009 23:11:58 -0700
+Andrew Morton <akpm@linux-foundation.org> wrote:
 
-> Subject: [PATCH] ibm_newemac: convert to netdev_ops
+> On Thu, 9 Apr 2009 16:33:05 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
+> > I have created today's linux-next tree at
+> > git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
 > 
-> Reported-by: Subrata Modak <subrata@linux.vnet.ibm.com>
-> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+> It has a link failure with i386 allmodconfig due to missing __divdi3.
+> 
+> It's due to this statement in drivers/media/video/cx88/cx88-dsp.c's
+> int_goertzel():
+> 
+>         return (u32)(((s64)s_prev2*s_prev2 + (s64)s_prev*s_prev -
+>                       (s64)coeff*s_prev2*s_prev/32768)/N/N);
+> 
+> that gem will need to be converted to use div64() or similar, please.
 
-Applied.
+Updated to use do_div().
+
+
+Cheers,
+Mauro
