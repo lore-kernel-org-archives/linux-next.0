@@ -1,46 +1,42 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Subject: Re: linux-next: firmware tree build failure
-Date: Tue, 14 Apr 2009 13:25:06 +0100
-Message-ID: <1239711906.3342.229.camel@macbook.infradead.org>
-References: <20090414141254.70ddc8ce.sfr@canb.auug.org.au>
+From: Russell King <rmk@arm.linux.org.uk>
+Subject: Re: linux-next: arm tree build failure
+Date: Tue, 14 Apr 2009 18:09:13 +0100
+Message-ID: <20090414170913.GA6903@flint.arm.linux.org.uk>
+References: <20090414174814.ab274d04.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:46961 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753985AbZDNM2T (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Apr 2009 08:28:19 -0400
-In-Reply-To: <20090414141254.70ddc8ce.sfr@canb.auug.org.au>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:33751 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750839AbZDNRJb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Apr 2009 13:09:31 -0400
+Content-Disposition: inline
+In-Reply-To: <20090414174814.ab274d04.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org
 
-On Tue, 2009-04-14 at 14:12 +1000, Stephen Rothwell wrote: 
-> Hi Dave,
+On Tue, Apr 14, 2009 at 05:48:14PM +1000, Stephen Rothwell wrote:
+> Today's linux-next build (arm em_x270_defconfig) failed like this:
 > 
-> Today's linux-next build (sparc64 defconfig) failed like this:
-> 
-> drivers/base/firmware_class.c: In function 'firmware_loading_store':
-> drivers/base/firmware_class.c:173: error: 'PAGE_KERNEL_RO' undeclared (first use in this function)
-> 
-> Caused by commit 0bb1338d4467c143987560f841130292c124074c ("firmware:
-> speed up request_firmware()").  PAGE_KERNEL_RO appears to not be defined
-> for several architectures.
-> 
-> I have reverted that commit for today.
+> arch/arm/kernel/sys_oabi-compat.c: In function 'sys_oabi_epoll_wait':
+> arch/arm/kernel/sys_oabi-compat.c:288: error: implicit declaration of function 'kmalloc'
+> arch/arm/kernel/sys_oabi-compat.c:288: error: 'GFP_KERNEL' undeclared (first use in this function)
+> arch/arm/kernel/sys_oabi-compat.c:288: warning: assignment makes pointer from integer without a cast
+> arch/arm/kernel/sys_oabi-compat.c:301: error: implicit declaration of function 'kfree'
+> arch/arm/kernel/sys_oabi-compat.c: In function 'sys_oabi_semtimedop':
+> arch/arm/kernel/sys_oabi-compat.c:324: error: 'GFP_KERNEL' undeclared (first use in this function)
+> arch/arm/kernel/sys_oabi-compat.c:324: warning: assignment makes pointer from integer without a cast
 
-Ah, thanks. The fix for lack of PAGE_KERNEL_EXEC in vmalloc.c seems to
-be:
+It'll take me a while to resolve anything; I've effectively been away since
+the 7th, so I've piles of email to read through.  I do notice that other
+people have fixes, but the question is what caused this to occur (and
+therefore is the fix the right one.)
 
-#ifndef PAGE_KERNEL_EXEC
-# define PAGE_KERNEL_EXEC PAGE_KERNEL
-#endif
-
-I think I'll do the equivalent for PAGE_KERNEL_RO, and at least we'll be
-mapping the firmware images as read-only on _some_ architectures.
+Expect something within a week.
 
 -- 
-David Woodhouse                            Open Source Technology Centre
-David.Woodhouse@intel.com                              Intel Corporation
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
