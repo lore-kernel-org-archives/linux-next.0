@@ -1,100 +1,72 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: [PATCH] lockdep: warn about lockdep disabling after kernel taint,
-	fix
-Date: Tue, 14 Apr 2009 11:15:38 +0200
-Message-ID: <20090414091538.GI27003@elte.hu>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: linux-next: origin tree build failure
+Date: Tue, 14 Apr 2009 11:20:34 +0200
+Message-ID: <20090414112034.568aa3f8@osiris.boeblingen.de.ibm.com>
 References: <20090414144317.026498df.sfr@canb.auug.org.au>
+	<20090414.015727.173707436.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:56451 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751167AbZDNJQA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Apr 2009 05:16:00 -0400
-Content-Disposition: inline
-In-Reply-To: <20090414144317.026498df.sfr@canb.auug.org.au>
+Received: from mtagate8.uk.ibm.com ([195.212.29.141]:52292 "EHLO
+	mtagate8.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751269AbZDNJUi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Apr 2009 05:20:38 -0400
+In-Reply-To: <20090414.015727.173707436.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>
+To: David Miller <davem@davemloft.net>
+Cc: sfr@canb.auug.org.au, torvalds@linux-foundation.org, linux-next@vger.kernel.org, fweisbec@gmail.com, linux-kernel@vger.kernel.org, mingo@elte.hu, Martin Schwidefsky <schwidefsky@de.ibm.com>
 
+On Tue, 14 Apr 2009 01:57:27 -0700 (PDT)
+David Miller <davem@davemloft.net> wrote:
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi all,
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 14 Apr 2009 14:43:17 +1000
 > 
-> Today's linux-next build (sparc defconfig) failed like this:
+> > Dave, arch/sparc/include/asm/atomic_32.h should really include
+> > asm/system.h since xchg is used in there.
 > 
-> In file included from kernel/panic.c:12:
-> include/linux/debug_locks.h: In function '__debug_locks_off':
-> include/linux/debug_locks.h:15: error: implicit declaration of function 'xchg'
+> That's true.
 > 
-> Caused by commit 9eeba6138cefc0435695463ddadb0d95e0a6bcd2 ("lockdep: warn
-> about lockdep disabling after kernel taint").  xchg is defined in
-> asm/system.h on sparc. It looks like asm/atomic.h on 64bit sparc includes
-> asm/system.h, but not on 32bit.
+> But atomic.h is not the proper place to obtain xchg() from, which is
+> asm/system.h, and that's what debug_locks.h needs to include if it
+> needs to use xchg().
 > 
-> Dave, arch/sparc/include/asm/atomic_32.h should really include
-> asm/system.h since xchg is used in there.
-> 
-> I have applied the following patch for today.
+> This is why the s390 build broke in precisely the same way.
 
-I dont think Sparc is at fault here - system.h is where we 
-historically provided xchg() from. Then as atomic.h was introduced 
-and extended, some architectures (x86 amongst them) gradually 
-migrated their definition of xchg() into atomic.h and related helper 
-headers. (while still making it available for system.h)
+Due to header include dependencies we can't include asm/system.h from
+asm/atomic.h. So David's solution seems to be the right way.
+How about this:
 
-This opened up the path for someone eventually only including 
-asm/atomic.h from generic code and breaking the architectures that 
-only provide it via system.h. So i've queued up the fix below - this 
-should address the problem on Sparc and s390.
+Subject: [PATCH] Fix xchg build breakage on s390.
 
-So moving it to atomic.h does make sense - but that's no excuse for 
-breaking the build. Sorry about this!
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
 
-	Ingo
+In file included from kernel/panic.c:11:
+include/linux/debug_locks.h: In function '__debug_locks_off':
+include/linux/debug_locks.h:15: error: implicit declaration of function 'xchg'
 
-------------->
->From f99a7c31f427f8f783c7b1379755f91b59acaf72 Mon Sep 17 00:00:00 2001
-From: Ingo Molnar <mingo@elte.hu>
-Date: Tue, 14 Apr 2009 11:03:12 +0200
-Subject: [PATCH] lockdep: warn about lockdep disabling after kernel taint, fix
+Caused by 9eeba6138cefc0435695463ddadb0d95e0a6bcd2
+"lockdep: warn about lockdep disabling after kernel taint"
 
-Impact: build fix
-
-Stephen Rothwell reported that the Sparc build broke:
-
- In file included from kernel/panic.c:12:
- include/linux/debug_locks.h: In function '__debug_locks_off':
- include/linux/debug_locks.h:15: error: implicit declaration of function 'xchg'
-
-due to:
-
- 9eeba61: lockdep: warn about lockdep disabling after kernel taint
-
-There is some inconsistency between architectures about where exactly
-xchg() is defined. Most have it in system.h but also in atomic.h (which
-is arguably the more logical point for it). Some, such as Sparc only
-have it in asm/system.h and not available via asm/atomic.h.
-
-Use the widest set of headers in debug_locks.h and also include asm/system.h.
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Acked-by: Frederic Weisbecker <fweisbec@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@elte.hu>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Reported-by: Sachin Sant <sachinp@in.ibm.com>
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
 ---
- include/linux/debug_locks.h |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/include/linux/debug_locks.h b/include/linux/debug_locks.h
-index 493dedb..29b3ce3 100644
---- a/include/linux/debug_locks.h
-+++ b/include/linux/debug_locks.h
-@@ -3,6 +3,7 @@
+ include/linux/debug_locks.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: linux-2.6/include/linux/debug_locks.h
+===================================================================
+--- linux-2.6.orig/include/linux/debug_locks.h
++++ linux-2.6/include/linux/debug_locks.h
+@@ -2,7 +2,7 @@
+ #define __LINUX_DEBUG_LOCKING_H
  
  #include <linux/kernel.h>
- #include <asm/atomic.h>
+-#include <asm/atomic.h>
 +#include <asm/system.h>
  
  struct task_struct;
