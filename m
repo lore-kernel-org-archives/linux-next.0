@@ -1,58 +1,31 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: arm tree build failure
-Date: Tue, 14 Apr 2009 17:48:14 +1000
-Message-ID: <20090414174814.ab274d04.sfr@canb.auug.org.au>
+From: Paul Mundt <lethal@linux-sh.org>
+Subject: Re: [PATCH -next] modules: Fix up build when CONFIG_MODULE_UNLOAD=n.
+Date: Tue, 14 Apr 2009 16:46:02 +0900
+Message-ID: <20090414074602.GA29360@linux-sh.org>
+References: <20090409154944.GC7789@linux-sh.org> <20090414062647.GA28905@linux-sh.org> <20090414172718.0ad4572c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__14_Apr_2009_17_48_14_+1000_M2mwXbBVBDtofgpJ"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33426 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751744AbZDNHs3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Apr 2009 03:48:29 -0400
+Received: from 124x34x33x190.ap124.ftth.ucom.ne.jp ([124.34.33.190]:38415 "EHLO
+	master.linux-sh.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752011AbZDNHu5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Apr 2009 03:50:57 -0400
+Content-Disposition: inline
+In-Reply-To: <20090414172718.0ad4572c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, Kees Cook <kees@ubuntu.com>, Rusty Russell <rusty@rustcorp.com.au>
 
---Signature=_Tue__14_Apr_2009_17_48_14_+1000_M2mwXbBVBDtofgpJ
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Russell,
-
-Today's linux-next build (arm em_x270_defconfig) failed like this:
-
-arch/arm/kernel/sys_oabi-compat.c: In function 'sys_oabi_epoll_wait':
-arch/arm/kernel/sys_oabi-compat.c:288: error: implicit declaration of funct=
-ion 'kmalloc'
-arch/arm/kernel/sys_oabi-compat.c:288: error: 'GFP_KERNEL' undeclared (firs=
-t use in this function)
-arch/arm/kernel/sys_oabi-compat.c:288: warning: assignment makes pointer fr=
-om integer without a cast
-arch/arm/kernel/sys_oabi-compat.c:301: error: implicit declaration of funct=
-ion 'kfree'
-arch/arm/kernel/sys_oabi-compat.c: In function 'sys_oabi_semtimedop':
-arch/arm/kernel/sys_oabi-compat.c:324: error: 'GFP_KERNEL' undeclared (firs=
-t use in this function)
-arch/arm/kernel/sys_oabi-compat.c:324: warning: assignment makes pointer fr=
-om integer without a cast
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__14_Apr_2009_17_48_14_+1000_M2mwXbBVBDtofgpJ
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAknkP74ACgkQjjKRsyhoI8wuDgCfSI14MbgWQHhsm58Lyns91TF5
-HpMAmwSFfTIs9ZwAV5ECFJGDp89xgOtf
-=Ujec
------END PGP SIGNATURE-----
-
---Signature=_Tue__14_Apr_2009_17_48_14_+1000_M2mwXbBVBDtofgpJ--
+On Tue, Apr 14, 2009 at 05:27:18PM +1000, Stephen Rothwell wrote:
+> On Tue, 14 Apr 2009 15:26:47 +0900 Paul Mundt <lethal@linux-sh.org> wrote:
+> >
+> > This is still broken in today's -next..
+> 
+> James, can we have this fixed, please?
+> 
+> Paul, it would have been helpful if you had cc'd the Author and Committer
+> of the bad commit (or if I had done so ...)
+> 
+Oh, I thought I had, I guess I was a bit too hasty with the the send button..
+sorry about that!
