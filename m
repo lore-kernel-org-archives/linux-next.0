@@ -1,73 +1,63 @@
 From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: linux-next: origin tree build failure
-Date: Tue, 14 Apr 2009 11:20:34 +0200
-Message-ID: <20090414112034.568aa3f8@osiris.boeblingen.de.ibm.com>
+Subject: Re: [PATCH] lockdep: warn about lockdep disabling after kernel
+ taint, fix
+Date: Tue, 14 Apr 2009 11:23:03 +0200
+Message-ID: <20090414112303.22f7b2ac@osiris.boeblingen.de.ibm.com>
 References: <20090414144317.026498df.sfr@canb.auug.org.au>
-	<20090414.015727.173707436.davem@davemloft.net>
+	<20090414091538.GI27003@elte.hu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate8.uk.ibm.com ([195.212.29.141]:52292 "EHLO
-	mtagate8.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751269AbZDNJUi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Apr 2009 05:20:38 -0400
-In-Reply-To: <20090414.015727.173707436.davem@davemloft.net>
+Received: from mtagate1.de.ibm.com ([195.212.17.161]:36632 "EHLO
+	mtagate1.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751035AbZDNJXH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Apr 2009 05:23:07 -0400
+In-Reply-To: <20090414091538.GI27003@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, torvalds@linux-foundation.org, linux-next@vger.kernel.org, fweisbec@gmail.com, linux-kernel@vger.kernel.org, mingo@elte.hu, Martin Schwidefsky <schwidefsky@de.ibm.com>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>
 
-On Tue, 14 Apr 2009 01:57:27 -0700 (PDT)
-David Miller <davem@davemloft.net> wrote:
-
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 14 Apr 2009 14:43:17 +1000
+On Tue, 14 Apr 2009 11:15:38 +0200
+Ingo Molnar <mingo@elte.hu> wrote:
+> Subject: [PATCH] lockdep: warn about lockdep disabling after kernel taint, fix
 > 
-> > Dave, arch/sparc/include/asm/atomic_32.h should really include
-> > asm/system.h since xchg is used in there.
+> Impact: build fix
 > 
-> That's true.
+> Stephen Rothwell reported that the Sparc build broke:
 > 
-> But atomic.h is not the proper place to obtain xchg() from, which is
-> asm/system.h, and that's what debug_locks.h needs to include if it
-> needs to use xchg().
+>  In file included from kernel/panic.c:12:
+>  include/linux/debug_locks.h: In function '__debug_locks_off':
+>  include/linux/debug_locks.h:15: error: implicit declaration of function 'xchg'
 > 
-> This is why the s390 build broke in precisely the same way.
+> due to:
+> 
+>  9eeba61: lockdep: warn about lockdep disabling after kernel taint
+> 
+> There is some inconsistency between architectures about where exactly
+> xchg() is defined. Most have it in system.h but also in atomic.h (which
+> is arguably the more logical point for it). Some, such as Sparc only
+> have it in asm/system.h and not available via asm/atomic.h.
+> 
+> Use the widest set of headers in debug_locks.h and also include asm/system.h.
+> 
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Acked-by: Frederic Weisbecker <fweisbec@gmail.com>
+> Signed-off-by: Ingo Molnar <mingo@elte.hu>
+> ---
+>  include/linux/debug_locks.h |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/include/linux/debug_locks.h b/include/linux/debug_locks.h
+> index 493dedb..29b3ce3 100644
+> --- a/include/linux/debug_locks.h
+> +++ b/include/linux/debug_locks.h
+> @@ -3,6 +3,7 @@
+> 
+>  #include <linux/kernel.h>
+>  #include <asm/atomic.h>
+> +#include <asm/system.h>
 
-Due to header include dependencies we can't include asm/system.h from
-asm/atomic.h. So David's solution seems to be the right way.
-How about this:
-
-Subject: [PATCH] Fix xchg build breakage on s390.
-
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-
-In file included from kernel/panic.c:11:
-include/linux/debug_locks.h: In function '__debug_locks_off':
-include/linux/debug_locks.h:15: error: implicit declaration of function 'xchg'
-
-Caused by 9eeba6138cefc0435695463ddadb0d95e0a6bcd2
-"lockdep: warn about lockdep disabling after kernel taint"
-
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Reported-by: Sachin Sant <sachinp@in.ibm.com>
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
----
-
- include/linux/debug_locks.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-Index: linux-2.6/include/linux/debug_locks.h
-===================================================================
---- linux-2.6.orig/include/linux/debug_locks.h
-+++ linux-2.6/include/linux/debug_locks.h
-@@ -2,7 +2,7 @@
- #define __LINUX_DEBUG_LOCKING_H
- 
- #include <linux/kernel.h>
--#include <asm/atomic.h>
-+#include <asm/system.h>
- 
- struct task_struct;
- 
+Ah, ok. Please ignore my other mail from a few seconds ago ;)
+This fixes the s390 build break. Thanks!
