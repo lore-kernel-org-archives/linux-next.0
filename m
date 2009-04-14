@@ -1,53 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: firmware tree build failure
-Date: Tue, 14 Apr 2009 14:12:54 +1000
-Message-ID: <20090414141254.70ddc8ce.sfr@canb.auug.org.au>
+Subject: linux-next: origin tree build failure
+Date: Tue, 14 Apr 2009 14:43:17 +1000
+Message-ID: <20090414144317.026498df.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__14_Apr_2009_14_12_54_+1000_D0VUkWUQ2tsoa1TM"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38027 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55613 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750699AbZDNENI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Apr 2009 00:13:08 -0400
+	id S1750847AbZDNEnk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Apr 2009 00:43:40 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: linux-next@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+To: Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Ingo Molnar <mingo@elte.hu>
 
---Signature=_Tue__14_Apr_2009_14_12_54_+1000_D0VUkWUQ2tsoa1TM
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Dave,
+Today's linux-next build (sparc defconfig) failed like this:
 
-Today's linux-next build (sparc64 defconfig) failed like this:
+In file included from kernel/panic.c:12:
+include/linux/debug_locks.h: In function '__debug_locks_off':
+include/linux/debug_locks.h:15: error: implicit declaration of function 'xchg'
 
-drivers/base/firmware_class.c: In function 'firmware_loading_store':
-drivers/base/firmware_class.c:173: error: 'PAGE_KERNEL_RO' undeclared (firs=
-t use in this function)
+Caused by commit 9eeba6138cefc0435695463ddadb0d95e0a6bcd2 ("lockdep: warn
+about lockdep disabling after kernel taint").  xchg is defined in
+asm/system.h on sparc. It looks like asm/atomic.h on 64bit sparc includes
+asm/system.h, but not on 32bit.
 
-Caused by commit 0bb1338d4467c143987560f841130292c124074c ("firmware:
-speed up request_firmware()").  PAGE_KERNEL_RO appears to not be defined
-for several architectures.
+Dave, arch/sparc/include/asm/atomic_32.h should really include
+asm/system.h since xchg is used in there.
 
-I have reverted that commit for today.
---=20
+I have applied the following patch for today.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__14_Apr_2009_14_12_54_+1000_D0VUkWUQ2tsoa1TM
-Content-Type: application/pgp-signature
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 14 Apr 2009 14:27:09 +1000
+Subject: [PATCH] sparc: asm/atomic.h on 32bit should include asm/system.h for xchg
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/sparc/include/asm/atomic_32.h |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-iEYEARECAAYFAknkDUYACgkQjjKRsyhoI8zYUACguYuKN/jE3LUVMzXfGX4z5FIk
-J00AnjZQIgoNRb2rh+OhnoMN3jl0vKLu
-=azKT
------END PGP SIGNATURE-----
-
---Signature=_Tue__14_Apr_2009_14_12_54_+1000_D0VUkWUQ2tsoa1TM--
+diff --git a/arch/sparc/include/asm/atomic_32.h b/arch/sparc/include/asm/atomic_32.h
+index ce46597..bb91b12 100644
+--- a/arch/sparc/include/asm/atomic_32.h
++++ b/arch/sparc/include/asm/atomic_32.h
+@@ -15,6 +15,8 @@
+ 
+ #ifdef __KERNEL__
+ 
++#include <asm/system.h>
++
+ #define ATOMIC_INIT(i)  { (i) }
+ 
+ extern int __atomic_add_return(int, atomic_t *);
+-- 
+1.6.2.1
