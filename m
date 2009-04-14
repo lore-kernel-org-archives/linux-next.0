@@ -1,32 +1,26 @@
-From: Anton Vorontsov <avorontsov@ru.mvista.com>
-Subject: Re: [BUILD FAILURE 11/12] Next April 14 : PPC64 randconfig
-	[drivers/spi/mpc52xx_psc_spi.c]
-Date: Wed, 15 Apr 2009 01:27:24 +0400
-Message-ID: <20090414212724.GA12371@oksana.dev.rtsoft.ru>
-References: <1239733836.5344.83.camel@subratamodak.linux.ibm.com> <fa686aa40904141142s3717812ep293973fefce8853d@mail.gmail.com>
-Reply-To: avorontsov@ru.mvista.com
+From: David Miller <davem@davemloft.net>
+Subject: Re: [BUILD FAILURE 06/12] Next April 14 : PPC64 randconfig
+ [drivers/net/ehea/ehea_main.c]
+Date: Tue, 14 Apr 2009 15:18:19 -0700 (PDT)
+Message-ID: <20090414.151819.88596256.davem@davemloft.net>
+References: <1239733747.5344.78.camel@subratamodak.linux.ibm.com>
+	<20090414183938.GA17134@orion>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from [213.79.90.228] ([213.79.90.228]:5823 "EHLO
-	buildserver.ru.mvista.com" rhost-flags-FAIL-FAIL-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751630AbZDNV1b (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Apr 2009 17:27:31 -0400
-Content-Disposition: inline
-In-Reply-To: <fa686aa40904141142s3717812ep293973fefce8853d@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: subrata@linux.vnet.ibm.com, sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, David Brownell <dbrownell@users.sourceforge.net>, Greg KH <greg@kroah.com>, linux-kernel <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, linux-next <linux-next@vger.kernel.org>, Paul Mackerras <paulus@samba.org>, Alexander Beregalov <a.beregalov@gmail.com>
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20090414183938.GA17134@orion>
+Sender: netdev-owner@vger.kernel.org
+To: a.beregalov@gmail.com
+Cc: netdev@vger.kernel.org, subrata@linux.vnet.ibm.com, Linuxppc-dev@ozlabs.org, greg@kroah.com, raisch@de.ibm.com, themann@de.ibm.com, tklein@de.ibm.com, julia@diku.dk, jgarzik@pobox.com, mel@skynet.ie, sfr@canb.auug.org.au, linux-next@vger.kernel.org, sachinp@linux.vnet.ibm.com, linux-kernel@vger.kernel.org, rjw@sisk.pl, linux-net@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Apr 14, 2009 at 12:42:47PM -0600, Grant Likely wrote:
-> Thanks Subrata.  I'll look into this.
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Date: Tue, 14 Apr 2009 22:39:38 +0400
 
-Whoops. That's my fault, I didn't expect that anyone other
-than spi_mpc83xx is using fsl_spi_platform_data. :-/
+> ehea: Fix incomplete conversion to net_device_ops
+> 
+> Reported-by: Subrata Modak <subrata@linux.vnet.ibm.com>
+> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
 
--- 
-Anton Vorontsov
-email: cbouatmailru@gmail.com
-irc://irc.freenode.net/bd2
+Applied, thanks Alexander.
