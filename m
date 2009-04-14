@@ -1,26 +1,34 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [BUILD FAILURE 06/12] Next April 14 : PPC64 randconfig
- [drivers/net/ehea/ehea_main.c]
-Date: Tue, 14 Apr 2009 15:18:19 -0700 (PDT)
-Message-ID: <20090414.151819.88596256.davem@davemloft.net>
-References: <1239733747.5344.78.camel@subratamodak.linux.ibm.com>
-	<20090414183938.GA17134@orion>
+From: James Morris <jmorris@namei.org>
+Subject: Re: [PATCH -next] modules: Fix up build when
+ CONFIG_MODULE_UNLOAD=n.
+Date: Wed, 15 Apr 2009 08:19:59 +1000 (EST)
+Message-ID: <alpine.LRH.2.00.0904150819460.12563@tundra.namei.org>
+References: <20090409154944.GC7789@linux-sh.org> <20090414062647.GA28905@linux-sh.org> <20090414172718.0ad4572c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20090414183938.GA17134@orion>
-Sender: netdev-owner@vger.kernel.org
-To: a.beregalov@gmail.com
-Cc: netdev@vger.kernel.org, subrata@linux.vnet.ibm.com, Linuxppc-dev@ozlabs.org, greg@kroah.com, raisch@de.ibm.com, themann@de.ibm.com, tklein@de.ibm.com, julia@diku.dk, jgarzik@pobox.com, mel@skynet.ie, sfr@canb.auug.org.au, linux-next@vger.kernel.org, sachinp@linux.vnet.ibm.com, linux-kernel@vger.kernel.org, rjw@sisk.pl, linux-net@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from tundra.namei.org ([65.99.196.166]:4167 "EHLO tundra.namei.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751669AbZDNWU0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Apr 2009 18:20:26 -0400
+In-Reply-To: <20090414172718.0ad4572c.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>, Kees Cook <kees@ubuntu.com>, Rusty Russell <rusty@rustcorp.com.au>
 
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Date: Tue, 14 Apr 2009 22:39:38 +0400
+On Tue, 14 Apr 2009, Stephen Rothwell wrote:
 
-> ehea: Fix incomplete conversion to net_device_ops
+> On Tue, 14 Apr 2009 15:26:47 +0900 Paul Mundt <lethal@linux-sh.org> wrote:
+> >
+> > This is still broken in today's -next..
 > 
-> Reported-by: Subrata Modak <subrata@linux.vnet.ibm.com>
-> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+> James, can we have this fixed, please?
 
-Applied, thanks Alexander.
+Applied to 
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/security-testing-2.6#next
+
+
+-- 
+James Morris
+<jmorris@namei.org>
