@@ -1,63 +1,56 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [PATCH] lockdep: warn about lockdep disabling after kernel
- taint, fix
-Date: Tue, 14 Apr 2009 11:23:03 +0200
-Message-ID: <20090414112303.22f7b2ac@osiris.boeblingen.de.ibm.com>
-References: <20090414144317.026498df.sfr@canb.auug.org.au>
-	<20090414091538.GI27003@elte.hu>
+From: Matthias Kaehlcke <matthias@kaehlcke.net>
+Subject: Re: linux-next: Tree for April 14: CONFIG_OABI_COMPAT build failure
+Date: Tue, 14 Apr 2009 11:53:54 +0200
+Message-ID: <20090414095354.GB15516@traven>
+References: <20090414160809.e92d9d3e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate1.de.ibm.com ([195.212.17.161]:36632 "EHLO
-	mtagate1.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751035AbZDNJXH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Apr 2009 05:23:07 -0400
-In-Reply-To: <20090414091538.GI27003@elte.hu>
+Received: from mailbox-us-s-12.mailhostingserver.com ([75.125.101.9]:37557
+	"EHLO mailbox-us-s-12.mailhostingserver.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751305AbZDNJyA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Apr 2009 05:54:00 -0400
+Content-Disposition: inline
+In-Reply-To: <20090414160809.e92d9d3e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux@arm.linux.org.uk
 
-On Tue, 14 Apr 2009 11:15:38 +0200
-Ingo Molnar <mingo@elte.hu> wrote:
-> Subject: [PATCH] lockdep: warn about lockdep disabling after kernel taint, fix
-> 
-> Impact: build fix
-> 
-> Stephen Rothwell reported that the Sparc build broke:
-> 
->  In file included from kernel/panic.c:12:
->  include/linux/debug_locks.h: In function '__debug_locks_off':
->  include/linux/debug_locks.h:15: error: implicit declaration of function 'xchg'
-> 
-> due to:
-> 
->  9eeba61: lockdep: warn about lockdep disabling after kernel taint
-> 
-> There is some inconsistency between architectures about where exactly
-> xchg() is defined. Most have it in system.h but also in atomic.h (which
-> is arguably the more logical point for it). Some, such as Sparc only
-> have it in asm/system.h and not available via asm/atomic.h.
-> 
-> Use the widest set of headers in debug_locks.h and also include asm/system.h.
-> 
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Acked-by: Frederic Weisbecker <fweisbec@gmail.com>
-> Signed-off-by: Ingo Molnar <mingo@elte.hu>
-> ---
->  include/linux/debug_locks.h |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/include/linux/debug_locks.h b/include/linux/debug_locks.h
-> index 493dedb..29b3ce3 100644
-> --- a/include/linux/debug_locks.h
-> +++ b/include/linux/debug_locks.h
-> @@ -3,6 +3,7 @@
-> 
->  #include <linux/kernel.h>
->  #include <asm/atomic.h>
-> +#include <asm/system.h>
+building of next-20090414 fails for ARM with CONFIG_OABI_COMPAT:
 
-Ah, ok. Please ignore my other mail from a few seconds ago ;)
-This fixes the s390 build break. Thanks!
+arch/arm/kernel/sys_oabi-compat.c: In function 'sys_oabi_epoll_wait':
+arch/arm/kernel/sys_oabi-compat.c:288: error: implicit declaration of
+function 'kmalloc'
+arch/arm/kernel/sys_oabi-compat.c:288: error: 'GFP_KERNEL' undeclared
+(first use in this function)
+arch/arm/kernel/sys_oabi-compat.c:288: error: (Each undeclared
+identifier is reported only once
+arch/arm/kernel/sys_oabi-compat.c:288: error: for each function it
+appears in.)
+arch/arm/kernel/sys_oabi-compat.c:288: warning: assignment makes
+pointer from integer without a cast
+arch/arm/kernel/sys_oabi-compat.c:301: error: implicit declaration of
+function 'kfree'
+arch/arm/kernel/sys_oabi-compat.c: In function 'sys_oabi_semtimedop':
+arch/arm/kernel/sys_oabi-compat.c:324: error: 'GFP_KERNEL' undeclared
+(first use in this function)
+arch/arm/kernel/sys_oabi-compat.c:324: warning: assignment makes
+pointer from integer without a cast
+make[1]: *** [arch/arm/kernel/sys_oabi-compat.o] Error 1
+make: *** [arch/arm/kernel] Error 2
+
+-- 
+Matthias Kaehlcke
+Embedded Linux Engineer
+Barcelona
+
+                Don't walk behind me, I may not lead
+             Don't walk in front of me, I may not follow
+                Just walk beside me and be my friend
+                          (Albert Camus)
+                                                                 .''`.
+    using free software / Debian GNU/Linux | http://debian.org  : :'  :
+                                                                `. `'`
+gpg --keyserver pgp.mit.edu --recv-keys 47D8E5D4                  `-
