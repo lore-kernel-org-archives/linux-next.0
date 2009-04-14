@@ -1,51 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] lockdep: warn about lockdep disabling after kernel
- taint, fix
-Date: Tue, 14 Apr 2009 20:29:37 +1000
-Message-ID: <20090414202937.b3af431f.sfr@canb.auug.org.au>
-References: <20090414144317.026498df.sfr@canb.auug.org.au>
-	<20090414091538.GI27003@elte.hu>
+From: David Woodhouse <dwmw2@infradead.org>
+Subject: Re: linux-next: firmware tree build failure
+Date: Tue, 14 Apr 2009 13:25:06 +0100
+Message-ID: <1239711906.3342.229.camel@macbook.infradead.org>
+References: <20090414141254.70ddc8ce.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__14_Apr_2009_20_29_37_+1000_Vp=oirx6LNFRkris"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754950AbZDNK34@vger.kernel.org>
-In-Reply-To: <20090414091538.GI27003@elte.hu>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bombadil.infradead.org ([18.85.46.34]:46961 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753985AbZDNM2T (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Apr 2009 08:28:19 -0400
+In-Reply-To: <20090414141254.70ddc8ce.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
---Signature=_Tue__14_Apr_2009_20_29_37_+1000_Vp=oirx6LNFRkris
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2009-04-14 at 14:12 +1000, Stephen Rothwell wrote: 
+> Hi Dave,
+> 
+> Today's linux-next build (sparc64 defconfig) failed like this:
+> 
+> drivers/base/firmware_class.c: In function 'firmware_loading_store':
+> drivers/base/firmware_class.c:173: error: 'PAGE_KERNEL_RO' undeclared (first use in this function)
+> 
+> Caused by commit 0bb1338d4467c143987560f841130292c124074c ("firmware:
+> speed up request_firmware()").  PAGE_KERNEL_RO appears to not be defined
+> for several architectures.
+> 
+> I have reverted that commit for today.
 
-Hi Ingo,
+Ah, thanks. The fix for lack of PAGE_KERNEL_EXEC in vmalloc.c seems to
+be:
 
-On Tue, 14 Apr 2009 11:15:38 +0200 Ingo Molnar <mingo@elte.hu> wrote:
->
-> This opened up the path for someone eventually only including=20
-> asm/atomic.h from generic code and breaking the architectures that=20
-> only provide it via system.h. So i've queued up the fix below - this=20
-> should address the problem on Sparc and s390.
+#ifndef PAGE_KERNEL_EXEC
+# define PAGE_KERNEL_EXEC PAGE_KERNEL
+#endif
 
-Thanks.
+I think I'll do the equivalent for PAGE_KERNEL_RO, and at least we'll be
+mapping the firmware images as read-only on _some_ architectures.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__14_Apr_2009_20_29_37_+1000_Vp=oirx6LNFRkris
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAknkZZEACgkQjjKRsyhoI8wskgCghiF0uovgeY5ZRxHxwALFHynd
-d80An36LDimcBloHzJMZcsp+da0BbJF6
-=4TAL
------END PGP SIGNATURE-----
-
---Signature=_Tue__14_Apr_2009_20_29_37_+1000_Vp=oirx6LNFRkris--
+-- 
+David Woodhouse                            Open Source Technology Centre
+David.Woodhouse@intel.com                              Intel Corporation
