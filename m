@@ -1,57 +1,39 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: Re: [BUILD FAILURE 04/04] Next April 14 : x86_64 randconfig
-	[drivers/media/video/cx231xx/cx231xx-alsa.ko]
-Date: Tue, 14 Apr 2009 22:43:13 +0400
-Message-ID: <a4423d670904141143i164e7350me0598c2b820422ab@mail.gmail.com>
-References: <1239733669.5344.72.camel@subratamodak.linux.ibm.com>
+From: reinette chatre <reinette.chatre@intel.com>
+Subject: Re: [Ipw2100-admin] [BUILD FAILURE 04/12] Next April 14 : PPC64
+ randconfig [drivers/staging/built-in.o]
+Date: Tue, 14 Apr 2009 11:59:55 -0700
+Message-ID: <1239735595.15115.60.camel@rc-desk>
+References: <1239733717.5344.76.camel@subratamodak.linux.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f165.google.com ([209.85.219.165]:48648 "EHLO
-	mail-ew0-f165.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758762AbZDNSnQ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Apr 2009 14:43:16 -0400
-In-Reply-To: <1239733669.5344.72.camel@subratamodak.linux.ibm.com>
+Received: from mga02.intel.com ([134.134.136.20]:30586 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756537AbZDNSyA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Apr 2009 14:54:00 -0400
+In-Reply-To: <1239733717.5344.76.camel@subratamodak.linux.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: subrata@linux.vnet.ibm.com
-Cc: Ingo Molnar <mingo@elte.hu>, Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, sachinp <sachinp@linux.vnet.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-media@vger.kernel.org
+To: "subrata@linux.vnet.ibm.com" <subrata@linux.vnet.ibm.com>
+Cc: "James P. Ketrenos" <ipw2100-admin@linux.intel.com>, Andrea Merello <andreamrl@tiscali.it>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Greg KH <greg@kroah.com>, sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-next <linux-next@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>
 
-2009/4/14 Subrata Modak <subrata@linux.vnet.ibm.com>:
+Hi Subrata,
+
+On Tue, 2009-04-14 at 11:28 -0700, Subrata Modak wrote:
 > Observed the following build error:
 > ---
-> Kernel: arch/x86/boot/bzImage is ready =C2=A0(#1)
-> =C2=A0Building modules, stage 2.
-> =C2=A0MODPOST 578 modules
-> ERROR:
-> "snd_pcm_period_elapsed" [drivers/media/video/cx231xx/cx231xx-alsa.ko=
-]
-> undefined!
-> ERROR: "snd_card_create" [drivers/media/video/cx231xx/cx231xx-alsa.ko=
-]
-> undefined!
-> ERROR:
-> "snd_pcm_hw_constraint_integer" [drivers/media/video/cx231xx/cx231xx-=
-alsa.ko] undefined!
-> ERROR:
-> "snd_pcm_link_rwlock" [drivers/media/video/cx231xx/cx231xx-alsa.ko]
-> undefined!
-> ERROR: "snd_pcm_set_ops" [drivers/media/video/cx231xx/cx231xx-alsa.ko=
-]
-> undefined!
-> ERROR: "snd_pcm_lib_ioctl" [drivers/media/video/cx231xx/cx231xx-alsa.=
-ko]
-> undefined!
-> ERROR: "snd_card_free" [drivers/media/video/cx231xx/cx231xx-alsa.ko]
-> undefined!
-> ERROR: "snd_card_register" [drivers/media/video/cx231xx/cx231xx-alsa.=
-ko]
-> undefined!
-> ERROR: "snd_pcm_new" [drivers/media/video/cx231xx/cx231xx-alsa.ko]
-> undefined!
-> make[1]: *** [__modpost] Error 1
-> make: *** [modules] Error 2
-> ---
+> LD      drivers/built-in.o
+> drivers/staging/built-in.o: In function `ieee80211_xmit':
+> drivers/staging/rtl8187se/ieee80211/ieee80211_tx.c:528: multiple
+> definition of `ieee80211_xmit'
+> drivers/net/built-in.o:drivers/net/wireless/ipw2x00/libipw_tx.c:256:
+> first defined here
+> make[1]: *** [drivers/built-in.o] Error 1
+> make: *** [drivers] Error 2
 
-It is the same problem as #02.
+Looks like the rtl8187se driver started with a copy of ipw2x00's
+library. Errors like this can thus be expected and should be addressed
+by rtl8187se as they are the ones who made the copy.
+
+Reinette
