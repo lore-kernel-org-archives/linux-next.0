@@ -1,40 +1,48 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Next 14: s390x defconfig build failure
-Date: Tue, 14 Apr 2009 14:10:53 +0530
-Message-ID: <49E44C15.4050208@in.ibm.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: Next 14: s390x defconfig build failure
+Date: Tue, 14 Apr 2009 01:55:51 -0700 (PDT)
+Message-ID: <20090414.015551.220726058.davem@davemloft.net>
 References: <20090414160809.e92d9d3e.sfr@canb.auug.org.au>
+	<49E44C15.4050208@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp02.in.ibm.com ([59.145.155.2]:39505 "EHLO
-	e28smtp02.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750746AbZDNIk6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Apr 2009 04:40:58 -0400
-In-Reply-To: <20090414160809.e92d9d3e.sfr@canb.auug.org.au>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:36012
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1751035AbZDNI4A (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Apr 2009 04:56:00 -0400
+In-Reply-To: <49E44C15.4050208@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, fweisbec@gmail.com, linux-s390@vger.kernel.org
+To: sachinp@in.ibm.com
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, fweisbec@gmail.com, linux-s390@vger.kernel.org
 
-Today's next tree build (defconfig s390x ) failed with following
-error.
+From: Sachin Sant <sachinp@in.ibm.com>
+Date: Tue, 14 Apr 2009 14:10:53 +0530
 
-In file included from kernel/panic.c:11:
-include/linux/debug_locks.h: In function __debug_locks_off:
-include/linux/debug_locks.h:15: error: implicit declaration of function xchg
+> Today's next tree build (defconfig s390x ) failed with following
+> error.
+> 
+> In file included from kernel/panic.c:11:
+> include/linux/debug_locks.h: In function __debug_locks_off:
+> include/linux/debug_locks.h:15: error: implicit declaration of
+> function xchg
+> 
+> Probably because of commit 9eeba6138cefc0435695463ddadb0d95e0a6bcd2.
 
-Probably because of commit 9eeba6138cefc0435695463ddadb0d95e0a6bcd2.
+I see that Stephen fixed this by adding a asm/system.h include
+to asm/atomic.h on sparc.
 
-Thanks
--Sachin
+I don't agree with this, and now we have yet another platform
+broken in the same way.
 
+If debug_locks.h needs xchg() I think it should include asm/system.h
+which was always the traditional location from which to include that
+declaration.
 
--- 
+It is even the case on x86.
 
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+We get it via asm/atomic.h by accident on x86 and other platforms, not
+because that's the canonical location from which to get xchg().
