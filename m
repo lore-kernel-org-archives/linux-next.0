@@ -1,51 +1,38 @@
 From: Subrata Modak <subrata@linux.vnet.ibm.com>
-Subject: [BUILD FAILURE 02/04] Next April 14 : x86 randconfig
-	[drivers/built-in.o cx231xx-audio.c]
-Date: Tue, 14 Apr 2009 23:57:21 +0530
-Message-ID: <1239733641.5344.70.camel@subratamodak.linux.ibm.com>
+Subject: [BUILD FAILURE 03/04] Next April 14 : x86 randconfig
+	[sound/oss/sequencer.c]
+Date: Tue, 14 Apr 2009 23:57:33 +0530
+Message-ID: <1239733654.5344.71.camel@subratamodak.linux.ibm.com>
 Reply-To: subrata@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
-To: Ingo Molnar <mingo@elte.hu>, srinivasa.deevi@conexant.com, Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, sachinp <sachinp@linux.vnet.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Mauro Carvalho Chehab <mchehab@redhat.com>, linux-media@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e8.ny.us.ibm.com ([32.97.182.138]:36818 "EHLO e8.ny.us.ibm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758542AbZDNS1m (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Apr 2009 14:27:42 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>, Hannu Savolainen <hannu@voxware.pp.fi>, Takashi Iwai <tiwai@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, sachinp <sachinp@linux.vnet.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
 
 Observed the following build error:
 ---
-LD      .tmp_vmlinux1
-drivers/built-in.o: In function `cx231xx_audio_fini':
-cx231xx-audio.c:(.text+0x1eec59): undefined reference to `snd_card_free'
-drivers/built-in.o: In function `cx231xx_audio_isocirq':
-cx231xx-audio.c:(.text+0x1eeecc): undefined reference to
-`snd_pcm_link_rwlock'
-cx231xx-audio.c:(.text+0x1eef59): undefined reference to
-`snd_pcm_link_rwlock'
-cx231xx-audio.c:(.text+0x1eef8e): undefined reference to
-`snd_pcm_period_elapsed'
-drivers/built-in.o: In function `snd_cx231xx_capture_open':
-cx231xx-audio.c:(.text+0x1ef338): undefined reference to
-`snd_pcm_hw_constraint_integer'
-drivers/built-in.o: In function `cx231xx_audio_init':
-cx231xx-audio.c:(.text+0x1ef476): undefined reference to
-`snd_card_create'
-cx231xx-audio.c:(.text+0x1ef4c3): undefined reference to `snd_pcm_new'
-cx231xx-audio.c:(.text+0x1ef4fa): undefined reference to
-`snd_pcm_set_ops'
-cx231xx-audio.c:(.text+0x1ef555): undefined reference to
-`snd_card_register'
-cx231xx-audio.c:(.text+0x1ef577): undefined reference to `snd_card_free'
-drivers/built-in.o:(.data+0x24354): undefined reference to
-`snd_pcm_lib_ioctl'
-make: *** [.tmp_vmlinux1] Error 1
+CC [M]  sound/oss/sequencer.o
+sound/oss/sequencer.c: In function =E2=80=98sequencer_ioctl=E2=80=99:
+sound/oss/sequencer.c:1325: warning: =E2=80=98err=E2=80=99 may be used =
+uninitialized in
+this function
+  CC [M]  sound/oss/sound_timer.o
+  CC [M]  sound/oss/sys_timer.o
+  LD [M]  sound/oss/sound.o
+  CC [M]  sound/oss/aedsp16.o
+make[2]: *** No rule to make target `/etc/sound/dsp001.ld', needed by
+`sound/oss/pss_boot.h'.  Stop.
+make[1]: *** [sound/oss] Error 2
+make: *** [sound] Error 2
 ---
-
-Patch was already provided. Still to get into this tree:
-http://lkml.org/lkml/2009/4/7/400,
 
 Regards--
 Subrata
-
-
