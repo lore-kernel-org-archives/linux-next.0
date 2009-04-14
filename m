@@ -1,53 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: cifs tree build failure
-Date: Tue, 14 Apr 2009 11:41:53 +1000
-Message-ID: <20090414114153.00467d45.sfr@canb.auug.org.au>
+Subject: Re: linux-next: block tree build failure
+Date: Tue, 14 Apr 2009 12:35:02 +1000
+Message-ID: <20090414123502.766da661.sfr@canb.auug.org.au>
+References: <20090409133716.12af28e6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__14_Apr_2009_11_41_53_+1000_5+k1G62G46oF9wUC"
+ boundary="Signature=_Tue__14_Apr_2009_12_35_02_+1000_pAq7zJb4YUGi8kMB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38431 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38968 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751697AbZDNBmJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Apr 2009 21:42:09 -0400
+	id S1751463AbZDNCfJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Apr 2009 22:35:09 -0400
+In-Reply-To: <20090409133716.12af28e6.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steve French <smfrench@gmail.com>, linux-cifs-client@lists.samba.org
-Cc: linux-next@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Shirish Pargaonkar <shirishp@us.ibm.com>
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Tue__14_Apr_2009_11_41_53_+1000_5+k1G62G46oF9wUC
+--Signature=_Tue__14_Apr_2009_12_35_02_+1000_pAq7zJb4YUGi8kMB
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Steve,
+Hi Jens,
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+On Thu, 9 Apr 2009 13:37:16 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+>=20
+> usr/include/linux/fs.h:11: included file 'linux/rwtypes.h' is not exported
+> make[4]: *** [usr/include/linux/.check] Error 1
+>=20
+> Caused by commit 93fe0305df9344f57edfa0444f8764b34ea74f9b ("Document and
+> move the various READ/WRITE types") which I have reverted for today.
 
-fs/cifs/dir.c: In function 'cifs_lookup':
-fs/cifs/dir.c:664: error: dereferencing pointer to incomplete type
+This is still there, so today I have used the block tree from
+next-20090408.
 
-Caused by commit 84c63ad9195b37b3de43427c11471a763c3993cc ("[CIFS] Add
-support for posix open during lookup") from the cifs tree (probably an
-interaction with commit 5ad4e53bd5406ee214ddc5a41f03f779b8b2d526 ("Get
-rid of indirect include of fs_struct.h") - now in Linus' tree).
-
-I have used the cifs tree from next-20090409 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__14_Apr_2009_11_41_53_+1000_5+k1G62G46oF9wUC
+--Signature=_Tue__14_Apr_2009_12_35_02_+1000_pAq7zJb4YUGi8kMB
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAknj6eEACgkQjjKRsyhoI8w04QCeK0Vi05G7xYQjvP8xYEhLC9W/
-AMQAoKbMuIcWhvAvWRlsGCGq4ZTnMHJb
-=Gu+Y
+iEYEARECAAYFAknj9lYACgkQjjKRsyhoI8xdmwCfUxzzECSIdcLP4TM/lAvAbjnn
+04sAoKZkZvkvHG6Mrmhqk4GNEXckKEzO
+=nHKa
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__14_Apr_2009_11_41_53_+1000_5+k1G62G46oF9wUC--
+--Signature=_Tue__14_Apr_2009_12_35_02_+1000_pAq7zJb4YUGi8kMB--
