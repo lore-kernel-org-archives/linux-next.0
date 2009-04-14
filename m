@@ -1,60 +1,52 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: Re: [BUILD FAILURE 06/12] Next April 14 : PPC64 randconfig
-	[drivers/net/ehea/ehea_main.c]
-Date: Tue, 14 Apr 2009 22:39:38 +0400
-Message-ID: <20090414183938.GA17134@orion>
-References: <1239733747.5344.78.camel@subratamodak.linux.ibm.com>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [BUILD FAILURE 11/12] Next April 14 : PPC64 randconfig
+	[drivers/spi/mpc52xx_psc_spi.c]
+Date: Tue, 14 Apr 2009 12:42:47 -0600
+Message-ID: <fa686aa40904141142s3717812ep293973fefce8853d@mail.gmail.com>
+References: <1239733836.5344.83.camel@subratamodak.linux.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <netdev-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1239733747.5344.78.camel@subratamodak.linux.ibm.com>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Subrata Modak <subrata@linux.vnet.ibm.com>
-Cc: Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Greg KH <greg@kroah.com>, Christoph Raisch <raisch@de.ibm.com>, Jan-Bernd Themann <themann@de.ibm.com>, Thomas Klein <tklein@de.ibm.com>, Julia Lawall <julia@diku.dk>, Jeff Garzik <jgarzik@pobox.com>, Mel Gorman <mel@skynet.ie>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, sachinp <sachinp@linux.vnet.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-net <linux-net@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rv-out-0506.google.com ([209.85.198.225]:14142 "EHLO
+	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751446AbZDNSnC convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Apr 2009 14:43:02 -0400
+In-Reply-To: <1239733836.5344.83.camel@subratamodak.linux.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: subrata@linux.vnet.ibm.com
+Cc: Linuxppc-dev <Linuxppc-dev@ozlabs.org>, David Brownell <dbrownell@users.sourceforge.net>, Paul Mackerras <paulus@samba.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Kumar Gala <galak@kernel.crashing.org>, Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, sachinp <sachinp@linux.vnet.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
 
-On Tue, Apr 14, 2009 at 11:59:07PM +0530, Subrata Modak wrote:
+Thanks Subrata.  I'll look into this.
+
+g.
+
+On Tue, Apr 14, 2009 at 12:30 PM, Subrata Modak
+<subrata@linux.vnet.ibm.com> wrote:
 > Observed the following build error:
-> CC      drivers/net/ehea/ehea_main.o
-> drivers/net/ehea/ehea_main.c: In function ???ehea_setup_single_port???:
-> drivers/net/ehea/ehea_main.c:3145: error: ???struct net_device??? has no
-> member named ???tx_timeout???
+> ---
+> CC =A0 =A0 =A0drivers/spi/mpc52xx_psc_spi.o
+> drivers/spi/mpc52xx_psc_spi.c: In function =91mpc52xx_psc_spi_do_prob=
+e=92:
+> drivers/spi/mpc52xx_psc_spi.c:398: error: =91struct fsl_spi_platform_=
+data=92
+> has no member named =91activate_cs=92
+> drivers/spi/mpc52xx_psc_spi.c:399: error: =91struct fsl_spi_platform_=
+data=92
+> has no member named =91deactivate_cs=92
+> make[2]: *** [drivers/spi/mpc52xx_psc_spi.o] Error 1
+> make[1]: *** [drivers/spi] Error 2
+> make: *** [drivers] Error 2
+> ---
+>
+> Regards--
+> Subrata
+>
+>
 
->From 56142fa2ed992aeee3f2635990ac37807379a310 Mon Sep 17 00:00:00 2001
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Date: Tue, 14 Apr 2009 22:35:32 +0400
-Subject: [PATCH] ehea: Fix incomplete conversion to net_device_ops
 
 
-Reported-by: Subrata Modak <subrata@linux.vnet.ibm.com>
-Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
----
- drivers/net/ehea/ehea_main.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ehea/ehea_main.c b/drivers/net/ehea/ehea_main.c
-index ac0c5b4..604c844 100644
---- a/drivers/net/ehea/ehea_main.c
-+++ b/drivers/net/ehea/ehea_main.c
-@@ -3080,7 +3080,8 @@ static const struct net_device_ops ehea_netdev_ops = {
- 	.ndo_change_mtu		= ehea_change_mtu,
- 	.ndo_vlan_rx_register	= ehea_vlan_rx_register,
- 	.ndo_vlan_rx_add_vid	= ehea_vlan_rx_add_vid,
--	.ndo_vlan_rx_kill_vid	= ehea_vlan_rx_kill_vid
-+	.ndo_vlan_rx_kill_vid	= ehea_vlan_rx_kill_vid,
-+	.ndo_tx_timeout		= ehea_tx_watchdog,
- };
- 
- struct ehea_port *ehea_setup_single_port(struct ehea_adapter *adapter,
-@@ -3142,7 +3143,6 @@ struct ehea_port *ehea_setup_single_port(struct ehea_adapter *adapter,
- 		      | NETIF_F_HIGHDMA | NETIF_F_IP_CSUM | NETIF_F_HW_VLAN_TX
- 		      | NETIF_F_HW_VLAN_RX | NETIF_F_HW_VLAN_FILTER
- 		      | NETIF_F_LLTX;
--	dev->tx_timeout = &ehea_tx_watchdog;
- 	dev->watchdog_timeo = EHEA_WATCH_DOG_TIMEOUT;
- 
- 	INIT_WORK(&port->reset_task, ehea_reset_port);
--- 
-1.6.2.3
-
+--=20
+Grant Likely, B.Sc., P.Eng.
+Secret Lab Technologies Ltd.
