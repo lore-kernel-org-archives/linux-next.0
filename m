@@ -1,60 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Steve French <smfrench@gmail.com>
 Subject: Re: linux-next: cifs tree build failure
-Date: Wed, 15 Apr 2009 12:59:40 +1000
-Message-ID: <20090415125940.98f40db3.sfr@canb.auug.org.au>
+Date: Tue, 14 Apr 2009 22:10:48 -0500
+Message-ID: <524f69650904142010i2403cba8m41a9c159455a4937@mail.gmail.com>
 References: <20090414114153.00467d45.sfr@canb.auug.org.au>
+	 <20090415125940.98f40db3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__15_Apr_2009_12_59_40_+1000_NPKPIkAIS0/8256h"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49427 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756105AbZDOC7u (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Apr 2009 22:59:50 -0400
-In-Reply-To: <20090414114153.00467d45.sfr@canb.auug.org.au>
+Received: from yx-out-2324.google.com ([74.125.44.29]:8663 "EHLO
+	yx-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753604AbZDODKu convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Apr 2009 23:10:50 -0400
+Received: by yx-out-2324.google.com with SMTP id 31so2971101yxl.1
+        for <linux-next@vger.kernel.org>; Tue, 14 Apr 2009 20:10:48 -0700 (PDT)
+In-Reply-To: <20090415125940.98f40db3.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steve French <smfrench@gmail.com>, linux-cifs-client@lists.samba.org
-Cc: linux-next@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Shirish Pargaonkar <shirishp@us.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-cifs-client@lists.samba.org, linux-next@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Shirish Pargaonkar <shirishp@us.ibm.com>, =?ISO-8859-1?Q?G=FCnter_Kukkukk?= <linux@kukkukk.com>
 
---Signature=_Wed__15_Apr_2009_12_59_40_+1000_NPKPIkAIS0/8256h
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+fixed in cifs-2.6.git
 
-Hi Steve,
-
-On Tue, 14 Apr 2009 11:41:53 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On Tue, Apr 14, 2009 at 9:59 PM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi Steve,
 >
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
->=20
-> fs/cifs/dir.c: In function 'cifs_lookup':
-> fs/cifs/dir.c:664: error: dereferencing pointer to incomplete type
->=20
-> Caused by commit 84c63ad9195b37b3de43427c11471a763c3993cc ("[CIFS] Add
-> support for posix open during lookup") from the cifs tree (probably an
-> interaction with commit 5ad4e53bd5406ee214ddc5a41f03f779b8b2d526 ("Get
-> rid of indirect include of fs_struct.h") - now in Linus' tree).
->=20
-> I have used the cifs tree from next-20090409 for today.
+> On Tue, 14 Apr 2009 11:41:53 +1000 Stephen Rothwell <sfr@canb.auug.or=
+g.au> wrote:
+>>
+>> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+>>
+>> fs/cifs/dir.c: In function 'cifs_lookup':
+>> fs/cifs/dir.c:664: error: dereferencing pointer to incomplete type
+>>
+>> Caused by commit 84c63ad9195b37b3de43427c11471a763c3993cc ("[CIFS] A=
+dd
+>> support for posix open during lookup") from the cifs tree (probably =
+an
+>> interaction with commit 5ad4e53bd5406ee214ddc5a41f03f779b8b2d526 ("G=
+et
+>> rid of indirect include of fs_struct.h") - now in Linus' tree).
+>>
+>> I have used the cifs tree from next-20090409 for today.
+>
+> Still there.
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
+> http://www.canb.auug.org.au/~sfr/
+>
 
-Still there.
+
+
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Thanks,
 
---Signature=_Wed__15_Apr_2009_12_59_40_+1000_NPKPIkAIS0/8256h
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAknlTZwACgkQjjKRsyhoI8zLMgCfZUar8ec3F7MQMA+QK99GBTat
-UlcAn1hpY5es9/rCRE+RC2IPlRZYpdS6
-=nsjZ
------END PGP SIGNATURE-----
-
---Signature=_Wed__15_Apr_2009_12_59_40_+1000_NPKPIkAIS0/8256h--
+Steve
