@@ -1,35 +1,43 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: Tree for April 14
-Date: Tue, 14 Apr 2009 22:07:25 -0700
-Message-ID: <20090415050725.GA3462@kroah.com>
-References: <20090414160809.e92d9d3e.sfr@canb.auug.org.au> <20090415011512.GF10045@kroah.com> <20090415115201.5ff5db85.sfr@canb.auug.org.au>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Next April 15: s390 allnoconfig build failure
+Date: Wed, 15 Apr 2009 12:13:29 +0530
+Message-ID: <49E58211.6040900@in.ibm.com>
+References: <20090415144745.c4fb5c4b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:48726 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1750814AbZDOFTG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 Apr 2009 01:19:06 -0400
-Content-Disposition: inline
-In-Reply-To: <20090415115201.5ff5db85.sfr@canb.auug.org.au>
+Received: from e28smtp08.in.ibm.com ([59.145.155.8]:46654 "EHLO
+	e28smtp08.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751052AbZDOGne (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Apr 2009 02:43:34 -0400
+In-Reply-To: <20090415144745.c4fb5c4b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-s390@vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Heiko Carstens <heiko.carstens@de.ibm.com>
 
-On Wed, Apr 15, 2009 at 11:52:01AM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> On Tue, 14 Apr 2009 18:15:12 -0700 Greg KH <greg@kroah.com> wrote:
-> >
-> > Is linux-next open for 2.6.31 patches yet?  Or is that already happening
-> > and I just missed the email somewhere?
-> 
-> The reminder I send out is that I don't want 2.6.(x+1) stuff until
-> 2.6.x-rc1 is out.  (I wanted to wait for -rc2, but Andrew insisted.)
-> 
-> So, "yes. yes." :-)
+Today's next tree build (s390 allnoconfig) failed with
 
-thanks for the clarification.
+arch/s390/kernel/ipl.c: In function 'stop_run':
+arch/s390/kernel/ipl.c:1461: error: implicit declaration of function 
+'signal_processor'
+arch/s390/kernel/ipl.c:1461: error: 'sigp_stop' undeclared (first use in 
+this function)
+arch/s390/kernel/ipl.c:1461: error: (Each undeclared identifier is 
+reported only once
+arch/s390/kernel/ipl.c:1461: error: for each function it appears in.)
+make[1]: *** [arch/s390/kernel/ipl.o] Error 1
 
-greg k-h
+Thanks
+-Sachin
+
+
+-- 
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
