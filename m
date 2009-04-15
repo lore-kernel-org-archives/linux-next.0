@@ -1,51 +1,45 @@
-From: Jeremy Kerr <jk@ozlabs.org>
-Subject: [PATCH v2] powerpc: pseries/dtl.c should include asm/firmware.h
-Date: Wed, 15 Apr 2009 10:35:55 +1000
-Message-ID: <1239755755.553226.808801509343.1.gpush@pingu>
-References: <<49D3419E.7000005@in.ibm.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [Ipw2100-admin] [BUILD FAILURE 04/12] Next April 14 : PPC64
+	randconfig [drivers/staging/built-in.o]
+Date: Tue, 14 Apr 2009 18:06:45 -0700
+Message-ID: <20090415010645.GA10045@kroah.com>
+References: <1239733717.5344.76.camel@subratamodak.linux.ibm.com> <1239735595.15115.60.camel@rc-desk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bilbo.ozlabs.org ([203.10.76.25]:54140 "EHLO bilbo.ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751823AbZDOAgT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Apr 2009 20:36:19 -0400
-In-Reply-To: <<49D3419E.7000005@in.ibm.com>>
+Received: from kroah.org ([198.145.64.141]:54342 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752709AbZDOBSH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Apr 2009 21:18:07 -0400
+Content-Disposition: inline
+In-Reply-To: <1239735595.15115.60.camel@rc-desk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>
-Cc: Michael Neuling <mikey@neuling.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Sachin Sant <sachinp@in.ibm.com>, Subrata Modak <subrata@linux.vnet.ibm.com>
+To: reinette chatre <reinette.chatre@intel.com>
+Cc: "subrata@linux.vnet.ibm.com" <subrata@linux.vnet.ibm.com>, "James P. Ketrenos" <ipw2100-admin@linux.intel.com>, Andrea Merello <andreamrl@tiscali.it>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-next <linux-next@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>
 
-From: Sachin Sant <sachinp@in.ibm.com>
+On Tue, Apr 14, 2009 at 11:59:55AM -0700, reinette chatre wrote:
+> Hi Subrata,
+> 
+> On Tue, 2009-04-14 at 11:28 -0700, Subrata Modak wrote:
+> > Observed the following build error:
+> > ---
+> > LD      drivers/built-in.o
+> > drivers/staging/built-in.o: In function `ieee80211_xmit':
+> > drivers/staging/rtl8187se/ieee80211/ieee80211_tx.c:528: multiple
+> > definition of `ieee80211_xmit'
+> > drivers/net/built-in.o:drivers/net/wireless/ipw2x00/libipw_tx.c:256:
+> > first defined here
+> > make[1]: *** [drivers/built-in.o] Error 1
+> > make: *** [drivers] Error 2
+> 
+> Looks like the rtl8187se driver started with a copy of ipw2x00's
+> library. Errors like this can thus be expected and should be addressed
+> by rtl8187se as they are the ones who made the copy.
 
-A randconfig build on powerpc failed with:
+Yes, at this point in time, don't build the staging drivers into the
+kernel, it's not advised at all.
 
-dtl.c: In function 'dtl_init':
-dtl.c:238: error: implicit declaration of function 'firmware_has_feature'
-dtl.c:238: error: 'FW_FEATURE_SPLPAR' undeclared (first use in this function)
+thanks,
 
-- We need firmware.h for these definitions.
-
-Signed-off-by: Sachin Sant <sachinp@in.ibm.com>
-Signed-off-by: Jeremy Kerr <jk@ozlabs.org>
-
----
-v2: This time without the non-ascii quotes
-
----
- arch/powerpc/platforms/pseries/dtl.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/powerpc/platforms/pseries/dtl.c b/arch/powerpc/platforms/pseries/dtl.c
-index fafcaa0..ab69925 100644
---- a/arch/powerpc/platforms/pseries/dtl.c
-+++ b/arch/powerpc/platforms/pseries/dtl.c
-@@ -25,6 +25,7 @@
- #include <asm/smp.h>
- #include <asm/system.h>
- #include <asm/uaccess.h>
-+#include <asm/firmware.h>
- 
- #include "plpar_wrappers.h"
- 
+greg k-h
