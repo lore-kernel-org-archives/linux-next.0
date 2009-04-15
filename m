@@ -1,98 +1,57 @@
-From: Michael Ellerman <michael@ellerman.id.au>
-Subject: Re: [BUILD FAILURE 02/12] Next April 14 : PPC64 randconfig
-	[arch/powerpc/kernel/of_platform.c]
-Date: Wed, 15 Apr 2009 11:37:04 +1000
-Message-ID: <1239759424.6552.3.camel@localhost>
-References: <1239733694.5344.74.camel@subratamodak.linux.ibm.com>
-Reply-To: michael@ellerman.id.au
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: sparc-2.6...
+Date: Wed, 15 Apr 2009 11:45:25 +1000
+Message-ID: <20090415114525.3cbc5aa4.sfr@canb.auug.org.au>
+References: <20090414.171432.12251714.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0718353745=="
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org>
-In-Reply-To: <1239733694.5344.74.camel@subratamodak.linux.ibm.com>
-List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
-List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
-List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
-Mime-version: 1.0
-Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
-To: subrata@linux.vnet.ibm.com
-Cc: sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, linux-next <linux-next@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__15_Apr_2009_11_45_25_+1000_NHaWF1e+5z0kT+/a"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:58246 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752428AbZDOBpc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Apr 2009 21:45:32 -0400
+In-Reply-To: <20090414.171432.12251714.davem@davemloft.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org
 
-
---===============0718353745==
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-C56sA11F81bV6PHagl9g"
-
-
---=-C56sA11F81bV6PHagl9g
-Content-Type: text/plain; charset="UTF-8"
+--Signature=_Wed__15_Apr_2009_11_45_25_+1000_NHaWF1e+5z0kT+/a
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2009-04-14 at 23:58 +0530, Subrata Modak wrote:
-> Observed the following build error:
-> ---
-> arch/powerpc/kernel/of_platform.c: In function =E2=80=98of_pci_phb_probe=
-=E2=80=99:
-> arch/powerpc/kernel/of_platform.c:270: error: implicit declaration of
-> function =E2=80=98pci_devs_phb_init_dynamic=E2=80=99
-> arch/powerpc/kernel/of_platform.c:279: error: implicit declaration of
-> function =E2=80=98scan_phb=E2=80=99
-> arch/powerpc/kernel/of_platform.c:295: error: implicit declaration of
-> function =E2=80=98pci_bus_add_devices=E2=80=99
-> make[1]: *** [arch/powerpc/kernel/of_platform.o] Error 1
-> make: *** [arch/powerpc/kernel] Error 2
-> ---
+Hi Dave,
+
+On Tue, 14 Apr 2009 17:14:32 -0700 (PDT) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> Stephen, I had to rebase my sparc-2.6 GIT tree due to a bogus merge I
+> pushed out.
 >=20
-> I saw some discussion(s) happening last year, but could not find out if
-> some fixes are already available:
-> http://www.mail-archive.com/linuxppc-dev@ozlabs.org/msg26215.html,
+> Don't be alarmed when you see this ;-)
 
-It's a different problem.
+Alert, but not alarmed :-)
 
-You have CONFIG_PPC_OF_PLATFORM_PCI=3Dy but CONFIG_PCI=3Dn.
-
-That's because PPC_CELL_NATIVE selects PLATFORM_PCI, without regard to
-whether PCI is enabled.
-
-cheers
+[This is what the previous government here told us about dobbing in
+possible terrorists :-)]
 
 --=20
-Michael Ellerman
-OzLabs, IBM Australia Development Lab
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-wwweb: http://michael.ellerman.id.au
-phone: +61 2 6212 1183 (tie line 70 21183)
-
-We do not inherit the earth from our ancestors,
-we borrow it from our children. - S.M.A.R.T Person
-
---=-C56sA11F81bV6PHagl9g
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+--Signature=_Wed__15_Apr_2009_11_45_25_+1000_NHaWF1e+5z0kT+/a
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEABECAAYFAknlOkAACgkQdSjSd0sB4dKdvwCeNza0BCxAlZpKDjbrB+WWjZsZ
-+YcAnRH6DrWI+DhUvfBcj1N3kggIlsfj
-=tj4p
+iEYEARECAAYFAknlPDUACgkQjjKRsyhoI8zm6wCgvZ1P8kgXuSVGw82255jE1xch
+9AoAoL0Xc1Ci4JYcTpS/RIfzd/OSXTLA
+=wHDa
 -----END PGP SIGNATURE-----
 
---=-C56sA11F81bV6PHagl9g--
-
-
---===============0718353745==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Linuxppc-dev mailing list
-Linuxppc-dev@ozlabs.org
-https://ozlabs.org/mailman/listinfo/linuxppc-dev
---===============0718353745==--
+--Signature=_Wed__15_Apr_2009_11_45_25_+1000_NHaWF1e+5z0kT+/a--
