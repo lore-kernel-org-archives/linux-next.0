@@ -1,68 +1,98 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH -next] modules: Fix up build when
- CONFIG_MODULE_UNLOAD=n.
-Date: Wed, 15 Apr 2009 11:28:29 +1000
-Message-ID: <20090415112829.1125b9bf.sfr@canb.auug.org.au>
-References: <20090409154944.GC7789@linux-sh.org>
-	<20090414062647.GA28905@linux-sh.org>
-	<20090414172718.0ad4572c.sfr@canb.auug.org.au>
-	<alpine.LRH.2.00.0904150819460.12563@tundra.namei.org>
+From: Michael Ellerman <michael@ellerman.id.au>
+Subject: Re: [BUILD FAILURE 02/12] Next April 14 : PPC64 randconfig
+	[arch/powerpc/kernel/of_platform.c]
+Date: Wed, 15 Apr 2009 11:37:04 +1000
+Message-ID: <1239759424.6552.3.camel@localhost>
+References: <1239733694.5344.74.camel@subratamodak.linux.ibm.com>
+Reply-To: michael@ellerman.id.au
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__15_Apr_2009_11_28_29_+1000_c/5yQzCObD3isbn4"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51848 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751300AbZDOB2l (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Apr 2009 21:28:41 -0400
-In-Reply-To: <alpine.LRH.2.00.0904150819460.12563@tundra.namei.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: linux-next@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>, Kees Cook <kees@ubuntu.com>, Rusty Russell <rusty@rustcorp.com.au>
+Content-Type: multipart/mixed; boundary="===============0718353745=="
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org>
+In-Reply-To: <1239733694.5344.74.camel@subratamodak.linux.ibm.com>
+List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
+List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
+List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
+Mime-version: 1.0
+Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
+To: subrata@linux.vnet.ibm.com
+Cc: sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, linux-next <linux-next@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__15_Apr_2009_11_28_29_+1000_c/5yQzCObD3isbn4
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
+
+--===============0718353745==
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-C56sA11F81bV6PHagl9g"
+
+
+--=-C56sA11F81bV6PHagl9g
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi James,
-
-On Wed, 15 Apr 2009 08:19:59 +1000 (EST) James Morris <jmorris@namei.org> w=
-rote:
->
-> On Tue, 14 Apr 2009, Stephen Rothwell wrote:
+On Tue, 2009-04-14 at 23:58 +0530, Subrata Modak wrote:
+> Observed the following build error:
+> ---
+> arch/powerpc/kernel/of_platform.c: In function =E2=80=98of_pci_phb_probe=
+=E2=80=99:
+> arch/powerpc/kernel/of_platform.c:270: error: implicit declaration of
+> function =E2=80=98pci_devs_phb_init_dynamic=E2=80=99
+> arch/powerpc/kernel/of_platform.c:279: error: implicit declaration of
+> function =E2=80=98scan_phb=E2=80=99
+> arch/powerpc/kernel/of_platform.c:295: error: implicit declaration of
+> function =E2=80=98pci_bus_add_devices=E2=80=99
+> make[1]: *** [arch/powerpc/kernel/of_platform.o] Error 1
+> make: *** [arch/powerpc/kernel] Error 2
+> ---
 >=20
-> > On Tue, 14 Apr 2009 15:26:47 +0900 Paul Mundt <lethal@linux-sh.org> wro=
-te:
-> > >
-> > > This is still broken in today's -next..
-> >=20
-> > James, can we have this fixed, please?
->=20
-> Applied to=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/security-testing-2.=
-6#next
+> I saw some discussion(s) happening last year, but could not find out if
+> some fixes are already available:
+> http://www.mail-archive.com/linuxppc-dev@ozlabs.org/msg26215.html,
 
-Thanks.
+It's a different problem.
 
-Unfortunately, you applied it with me as the author instead of Paul ...
+You have CONFIG_PPC_OF_PLATFORM_PCI=3Dy but CONFIG_PCI=3Dn.
+
+That's because PPC_CELL_NATIVE selects PLATFORM_PCI, without regard to
+whether PCI is enabled.
+
+cheers
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Michael Ellerman
+OzLabs, IBM Australia Development Lab
 
---Signature=_Wed__15_Apr_2009_11_28_29_+1000_c/5yQzCObD3isbn4
-Content-Type: application/pgp-signature
+wwweb: http://michael.ellerman.id.au
+phone: +61 2 6212 1183 (tie line 70 21183)
+
+We do not inherit the earth from our ancestors,
+we borrow it from our children. - S.M.A.R.T Person
+
+--=-C56sA11F81bV6PHagl9g
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAknlOD0ACgkQjjKRsyhoI8zyUgCgkCJ9/PtZQuyan/GB5QYsqk8b
-z/UAn3j+4y0sIq1Gynbf0rp1nP10yrw9
-=grtM
+iEYEABECAAYFAknlOkAACgkQdSjSd0sB4dKdvwCeNza0BCxAlZpKDjbrB+WWjZsZ
++YcAnRH6DrWI+DhUvfBcj1N3kggIlsfj
+=tj4p
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__15_Apr_2009_11_28_29_+1000_c/5yQzCObD3isbn4--
+--=-C56sA11F81bV6PHagl9g--
+
+
+--===============0718353745==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linuxppc-dev mailing list
+Linuxppc-dev@ozlabs.org
+https://ozlabs.org/mailman/listinfo/linuxppc-dev
+--===============0718353745==--
