@@ -1,57 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: sparc-2.6...
-Date: Wed, 15 Apr 2009 11:45:25 +1000
-Message-ID: <20090415114525.3cbc5aa4.sfr@canb.auug.org.au>
-References: <20090414.171432.12251714.davem@davemloft.net>
+Subject: Re: linux-next: Tree for April 14
+Date: Wed, 15 Apr 2009 11:52:01 +1000
+Message-ID: <20090415115201.5ff5db85.sfr@canb.auug.org.au>
+References: <20090414160809.e92d9d3e.sfr@canb.auug.org.au>
+	<20090415011512.GF10045@kroah.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__15_Apr_2009_11_45_25_+1000_NHaWF1e+5z0kT+/a"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58246 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752428AbZDOBpc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Apr 2009 21:45:32 -0400
-In-Reply-To: <20090414.171432.12251714.davem@davemloft.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org
+ boundary="Signature=_Wed__15_Apr_2009_11_52_01_+1000_D=7RYfTOnBcOhMAM"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1758019AbZDOBwY@vger.kernel.org>
+In-Reply-To: <20090415011512.GF10045@kroah.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__15_Apr_2009_11_45_25_+1000_NHaWF1e+5z0kT+/a
+--Signature=_Wed__15_Apr_2009_11_52_01_+1000_D=7RYfTOnBcOhMAM
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Greg,
 
-On Tue, 14 Apr 2009 17:14:32 -0700 (PDT) David Miller <davem@davemloft.net>=
- wrote:
+On Tue, 14 Apr 2009 18:15:12 -0700 Greg KH <greg@kroah.com> wrote:
 >
-> Stephen, I had to rebase my sparc-2.6 GIT tree due to a bogus merge I
-> pushed out.
->=20
-> Don't be alarmed when you see this ;-)
+> Is linux-next open for 2.6.31 patches yet?  Or is that already happening
+> and I just missed the email somewhere?
 
-Alert, but not alarmed :-)
+The reminder I send out is that I don't want 2.6.(x+1) stuff until
+2.6.x-rc1 is out.  (I wanted to wait for -rc2, but Andrew insisted.)
 
-[This is what the previous government here told us about dobbing in
-possible terrorists :-)]
+So, "yes. yes." :-)
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__15_Apr_2009_11_45_25_+1000_NHaWF1e+5z0kT+/a
+--Signature=_Wed__15_Apr_2009_11_52_01_+1000_D=7RYfTOnBcOhMAM
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAknlPDUACgkQjjKRsyhoI8zm6wCgvZ1P8kgXuSVGw82255jE1xch
-9AoAoL0Xc1Ci4JYcTpS/RIfzd/OSXTLA
-=wHDa
+iEYEARECAAYFAknlPcEACgkQjjKRsyhoI8wVlQCcCoqMbyjkdD4K1zFK05Yz+lEO
+IqEAn09jDzdJbG4LeBLeZ14Exnl4aynm
+=fauW
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__15_Apr_2009_11_45_25_+1000_NHaWF1e+5z0kT+/a--
+--Signature=_Wed__15_Apr_2009_11_52_01_+1000_D=7RYfTOnBcOhMAM--
