@@ -1,58 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with Linus' tree
-Date: Thu, 16 Apr 2009 12:19:32 +1000
-Message-ID: <20090416121932.ed354c47.sfr@canb.auug.org.au>
+From: Paul Mundt <lethal@linux-sh.org>
+Subject: [PATCH -next] lib: Move find_last_bit.o to obj-y to enable use by modules.
+Date: Thu, 16 Apr 2009 12:07:04 +0900
+Message-ID: <20090416030704.GH16961@linux-sh.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__16_Apr_2009_12_19_32_+1000_7KcYTGSazXdPd+Up"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54378 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755412AbZDPCTj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 Apr 2009 22:19:39 -0400
+Received: from 124x34x33x190.ap124.ftth.ucom.ne.jp ([124.34.33.190]:37482 "EHLO
+	master.linux-sh.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751212AbZDPDME (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Apr 2009 23:12:04 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
+To: linux-next@vger.kernel.org
+Cc: Benny Halevy <bhalevy@panasas.com>, Andy Adamson <andros@netapp.com>, Trond Myklebust <Trond.Myklebust@netapp.com>
 
---Signature=_Thu__16_Apr_2009_12_19_32_+1000_7KcYTGSazXdPd+Up
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Caught with the sh allmodconfig:
 
-Hi Rusty,
+	ERROR: "find_last_bit" [fs/nfs/nfs.ko] undefined!
+	make[2]: *** [__modpost] Error 1
+	make[1]: *** [modules] Error 2
+	make: *** [sub-make] Error 2
 
-Today's linux-next merge of the rr tree got a conflict in
-arch/x86/kernel/cpu/cpufreq/acpi-cpufreq.c between various commits from
-Linus' tree and commit cf2fb1659cb6d1269487f3c9870f045b95e5e3a2 ("use
-smp_call_function_single() in
-arch/x86/kernel/cpu/cpufreq/acpi-cpufreq.c") from the rr tree.
+find_last_bit.o is currently built with lib-y, which ends up breaking
+the nfs module build after the ("nfs41: free slot") commit. Move it
+to obj-y so the EXPORT_SYMBOL() actually has some effect.
 
-I used the version from Linus' tree.  The only doubt in my mind is that
-the test of the return from smp_call_function_single in
-get_measured_perf is inverted between the two trees. i.e.
+Signed-off-by: Paul Mundt <lethal@linux-sh.org>
+Cc: Benny Halevy <bhalevy@panasas.com>
+Cc: Andy Adamson <andros@netapp.com>
+Cc: Trond Myklebust <Trond.Myklebust@netapp.com>
 
-	if (smp_...
+---
 
-vs
-
-	if (!smp_...
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__16_Apr_2009_12_19_32_+1000_7KcYTGSazXdPd+Up
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAknmlbQACgkQjjKRsyhoI8yUXQCeNmoeqSBaRXWFOBkY21ew2sMg
-KgEAn36uaC4k5c6RdQMsm9R32OaGZm1H
-=NkyO
------END PGP SIGNATURE-----
-
---Signature=_Thu__16_Apr_2009_12_19_32_+1000_7KcYTGSazXdPd+Up--
+diff --git a/lib/Makefile b/lib/Makefile
+index d6edd67..33a40e4 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -38,7 +38,7 @@ lib-$(CONFIG_RWSEM_GENERIC_SPINLOCK) += rwsem-spinlock.o
+ lib-$(CONFIG_RWSEM_XCHGADD_ALGORITHM) += rwsem.o
+ lib-$(CONFIG_GENERIC_FIND_FIRST_BIT) += find_next_bit.o
+ lib-$(CONFIG_GENERIC_FIND_NEXT_BIT) += find_next_bit.o
+-lib-$(CONFIG_GENERIC_FIND_LAST_BIT) += find_last_bit.o
++obj-$(CONFIG_GENERIC_FIND_LAST_BIT) += find_last_bit.o
+ obj-$(CONFIG_GENERIC_HWEIGHT) += hweight.o
+ obj-$(CONFIG_LOCK_KERNEL) += kernel_lock.o
+ obj-$(CONFIG_DEBUG_PREEMPT) += smp_processor_id.o
