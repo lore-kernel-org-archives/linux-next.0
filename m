@@ -1,68 +1,34 @@
-From: Benny Halevy <bhalevy@panasas.com>
-Subject: Re: [PATCH -next] lib: Move find_last_bit.o to obj-y to enable use
- by modules.
-Date: Thu, 16 Apr 2009 11:11:02 +0300
-Message-ID: <49E6E816.8010709@panasas.com>
-References: <20090416030704.GH16961@linux-sh.org>
+From: Geoff Levand <geoffrey.levand@am.sony.com>
+Subject: Re: [BUILD FAILURE 03/12] Next April 14 : PPC64
+	randconfig	[arch/powerpc/platforms/ps3/setup.c]
+Date: Thu, 16 Apr 2009 12:32:44 -0700
+Message-ID: <49E787DC.2050800@am.sony.com>
+References: <1239733704.5344.75.camel@subratamodak.linux.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gw-ca.panasas.com ([209.116.51.66]:15376 "EHLO
-	laguna.int.panasas.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751137AbZDPIMV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Apr 2009 04:12:21 -0400
-In-Reply-To: <20090416030704.GH16961@linux-sh.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Mundt <lethal@linux-sh.org>, Trond Myklebust <Trond.Myklebust@netapp.com>
-Cc: linux-next@vger.kernel.org, Andy Adamson <andros@netapp.com>, Fredric Isaman <iisaman@citi.umich.edu>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org>
+In-Reply-To: <1239733704.5344.75.camel@subratamodak.linux.ibm.com>
+List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
+List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
+List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
+To: subrata@linux.vnet.ibm.com
+Cc: sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, linux-next <linux-next@vger.kernel.org>, Paul Mackerras <paulus@samba.org>, Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>, Alexander Beregalov <a.beregalov@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Apr. 16, 2009, 6:07 +0300, Paul Mundt <lethal@linux-sh.org> wrote:
-> Caught with the sh allmodconfig:
-> 
-> 	ERROR: "find_last_bit" [fs/nfs/nfs.ko] undefined!
-> 	make[2]: *** [__modpost] Error 1
-> 	make[1]: *** [modules] Error 2
-> 	make: *** [sub-make] Error 2
-> 
-> find_last_bit.o is currently built with lib-y, which ends up breaking
-> the nfs module build after the ("nfs41: free slot") commit. Move it
-> to obj-y so the EXPORT_SYMBOL() actually has some effect.
-> 
-> Signed-off-by: Paul Mundt <lethal@linux-sh.org>
-> Cc: Benny Halevy <bhalevy@panasas.com>
-
-ACK. and thanks!
-
-FYI, Fred's original patch can be found here:
-http://patchwork.kernel.org/patch/14572/
-
-It is also queued in the linux-pnfs tree:
-http://git.linux-nfs.org/?p=bhalevy/linux-pnfs.git;a=commitdiff;h=1e3a7552d9de2ba101b76deed99605f0145fc4d5
-but I haven't submitted it to Trond since I expected
-it to get upstream (and to -next) via linux-kbuild.
-
-Trond, would you like to pull this change to your nfsv41 branch?
-(should appear before "nfs41: free slot" as Paul noticed)
-
-Benny
-
-> Cc: Andy Adamson <andros@netapp.com>
-> Cc: Trond Myklebust <Trond.Myklebust@netapp.com>
-> 
-> ---
-> 
-> diff --git a/lib/Makefile b/lib/Makefile
-> index d6edd67..33a40e4 100644
-> --- a/lib/Makefile
-> +++ b/lib/Makefile
-> @@ -38,7 +38,7 @@ lib-$(CONFIG_RWSEM_GENERIC_SPINLOCK) += rwsem-spinlock.o
->  lib-$(CONFIG_RWSEM_XCHGADD_ALGORITHM) += rwsem.o
->  lib-$(CONFIG_GENERIC_FIND_FIRST_BIT) += find_next_bit.o
->  lib-$(CONFIG_GENERIC_FIND_NEXT_BIT) += find_next_bit.o
-> -lib-$(CONFIG_GENERIC_FIND_LAST_BIT) += find_last_bit.o
-> +obj-$(CONFIG_GENERIC_FIND_LAST_BIT) += find_last_bit.o
->  obj-$(CONFIG_GENERIC_HWEIGHT) += hweight.o
->  obj-$(CONFIG_LOCK_KERNEL) += kernel_lock.o
->  obj-$(CONFIG_DEBUG_PREEMPT) += smp_processor_id.o
+T24gMDQvMTQvMjAwOSAxMToyOCBBTSwgU3VicmF0YSBNb2RhayB3cm90ZToKPiBPYnNlcnZlZCB0
+aGUgZm9sbG93aW5nIGJ1aWxkIGVycm9yOgo+IC0tLQo+IGFyY2gvcG93ZXJwYy9wbGF0Zm9ybXMv
+cHMzL3NldHVwLmM6NDk6IGVycm9yOiByZWRlZmluaXRpb24gb2YKPiDigJhzbXBfc2VuZF9zdG9w
+4oCZCj4gaW5jbHVkZS9saW51eC9zbXAuaDoxMjU6IGVycm9yOiBwcmV2aW91cyBkZWZpbml0aW9u
+IG9mIOKAmHNtcF9zZW5kX3N0b3DigJkKPiB3YXMgaGVyZQoKSGkgU3VicmF0YSwKClRoYW5rcyBm
+b3IgdGhlIHJlcG9ydC4gIEkgc3VibWl0dGVkIGEgZml4IHRvIHRoZSBwb3dlcnBjIE1MOgoKIGh0
+dHA6Ly9wYXRjaHdvcmsub3psYWJzLm9yZy9wYXRjaC8yNjA4NC8KCi1HZW9mZgoKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXhwcGMtZGV2IG1haWxp
+bmcgbGlzdApMaW51eHBwYy1kZXZAb3psYWJzLm9yZwpodHRwczovL296bGFicy5vcmcvbWFpbG1h
+bi9saXN0aW5mby9saW51eHBwYy1kZXY=
