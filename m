@@ -1,46 +1,44 @@
-From: Subrata Modak <subrata@linux.vnet.ibm.com>
-Subject: Re: [BUILD FAILURE 03/12] Next April 14 : PPC64
-	randconfig	[arch/powerpc/platforms/ps3/setup.c]
-Date: Fri, 17 Apr 2009 11:17:18 +0530
-Message-ID: <1239947239.4875.6.camel@subratamodak.linux.ibm.com>
-References: <1239733704.5344.75.camel@subratamodak.linux.ibm.com>
-	 <49E787DC.2050800@am.sony.com>
-Reply-To: subrata@linux.vnet.ibm.com
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Next April 17: x86 allmodconfig drivers/ata failure
+Date: Fri, 17 Apr 2009 12:16:02 +0530
+Message-ID: <49E825AA.8000506@in.ibm.com>
+References: <20090417120002.c47a686d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252;
+	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e2.ny.us.ibm.com ([32.97.182.142]:52291 "EHLO e2.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751056AbZDQFrZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 17 Apr 2009 01:47:25 -0400
-In-Reply-To: <49E787DC.2050800@am.sony.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Geoff Levand <geoffrey.levand@am.sony.com>
-Cc: Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>, Paul Mackerras <paulus@samba.org>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, sachinp <sachinp@linux.vnet.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <20090417120002.c47a686d.sfr@canb.auug.org.au>
+Sender: linux-ide-owner@vger.kernel.org
+To: linux-kernel <linux-kernel@vger.kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-ide@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 2009-04-16 at 12:32 -0700, Geoff Levand wrote:
-> On 04/14/2009 11:28 AM, Subrata Modak wrote:
-> > Observed the following build error:
-> > ---
-> > arch/powerpc/platforms/ps3/setup.c:49: error: redefinition of
-> > =E2=80=98smp_send_stop=E2=80=99
-> > include/linux/smp.h:125: error: previous definition of =E2=80=98smp=
-_send_stop=E2=80=99
-> > was here
->=20
-> Hi Subrata,
->=20
-> Thanks for the report.  I submitted a fix to the powerpc ML:
->=20
->  http://patchwork.ozlabs.org/patch/26084/
+Today's next allmodconfig (x86) build failed with
 
-Thanks Geoff.
+drivers/ata/pata_legacy.c: In function =91pdc_data_xfer_vlb=92:
+drivers/ata/pata_legacy.c:289: error: =91ap=92 undeclared (first use in=
+ this=20
+function)
+drivers/ata/pata_legacy.c:289: error: (Each undeclared identifier is=20
+reported only once
+drivers/ata/pata_legacy.c:289: error: for each function it appears in.)
+drivers/ata/pata_legacy.c: At top level:
+drivers/ata/pata_legacy.c:869: error: =91ATA_PFLAG_PIO32_CHANGE=92=20
+undeclared here (not in a
++function)
+make[2]: *** [drivers/ata/pata_legacy.o] Error 1
+make[1]: *** [drivers/ata] Error 2
 
-Regards--
-Subrata
+Thanks
+-Sachin
 
->=20
-> -Geoff
->=20
+--=20
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
+
