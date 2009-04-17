@@ -1,44 +1,38 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Next April 17: x86 allmodconfig drivers/ata failure
-Date: Fri, 17 Apr 2009 12:16:02 +0530
-Message-ID: <49E825AA.8000506@in.ibm.com>
-References: <20090417120002.c47a686d.sfr@canb.auug.org.au>
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: [PATCH] musb: fix build when !CONFIG_PM
+Date: Fri, 17 Apr 2009 15:19:14 +0400
+Message-ID: <20090417111914.GA31310@orion>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <20090417120002.c47a686d.sfr@canb.auug.org.au>
-Sender: linux-ide-owner@vger.kernel.org
-To: linux-kernel <linux-kernel@vger.kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-ide@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from wa-out-1112.google.com ([209.85.146.177]:39103 "EHLO
+	wa-out-1112.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756705AbZDQLT1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Apr 2009 07:19:27 -0400
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: gregkh@suse.de, linux-next@vger.kernel.org, linux-usb@vger.kernel.org
 
-Today's next allmodconfig (x86) build failed with
+Fix this build error when CONFIG_PM is not set:
+drivers/usb/musb/musb_core.c:2232: error: 'musb_resume_early' undeclared here
 
-drivers/ata/pata_legacy.c: In function =91pdc_data_xfer_vlb=92:
-drivers/ata/pata_legacy.c:289: error: =91ap=92 undeclared (first use in=
- this=20
-function)
-drivers/ata/pata_legacy.c:289: error: (Each undeclared identifier is=20
-reported only once
-drivers/ata/pata_legacy.c:289: error: for each function it appears in.)
-drivers/ata/pata_legacy.c: At top level:
-drivers/ata/pata_legacy.c:869: error: =91ATA_PFLAG_PIO32_CHANGE=92=20
-undeclared here (not in a
-+function)
-make[2]: *** [drivers/ata/pata_legacy.o] Error 1
-make[1]: *** [drivers/ata] Error 2
+Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+---
 
-Thanks
--Sachin
+ drivers/usb/musb/musb_core.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
---=20
-
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
-
+diff --git a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
+index bc0eb1c..554a414 100644
+--- a/drivers/usb/musb/musb_core.c
++++ b/drivers/usb/musb/musb_core.c
+@@ -2217,7 +2217,7 @@ static int musb_resume_early(struct platform_device *pdev)
+ 
+ #else
+ #define	musb_suspend	NULL
+-#define	musb_resume	NULL
++#define	musb_resume_early	NULL
+ #endif
+ 
+ static struct platform_driver musb_driver = {
