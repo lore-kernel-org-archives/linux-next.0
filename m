@@ -1,38 +1,45 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: [PATCH] musb: fix build when !CONFIG_PM
-Date: Fri, 17 Apr 2009 15:19:14 +0400
-Message-ID: <20090417111914.GA31310@orion>
+From: Geoff Levand <geoffrey.levand@am.sony.com>
+Subject: [patch] powerpc/pasemi: Fix no SMP build error
+Date: Fri, 17 Apr 2009 09:36:37 -0700
+Message-ID: <49E8B015.7060808@am.sony.com>
+References: <1239285094.5188.65.camel@subratamodak.linux.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wa-out-1112.google.com ([209.85.146.177]:39103 "EHLO
-	wa-out-1112.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756705AbZDQLT1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Apr 2009 07:19:27 -0400
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: gregkh@suse.de, linux-next@vger.kernel.org, linux-usb@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1761273AbZDQQg7@vger.kernel.org>
+In-Reply-To: <1239285094.5188.65.camel@subratamodak.linux.ibm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Mackerras <paulus@samba.org>
+Cc: subrata@linux.vnet.ibm.com, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+List-Id: linux-next.vger.kernel.org
 
-Fix this build error when CONFIG_PM is not set:
-drivers/usb/musb/musb_core.c:2232: error: 'musb_resume_early' undeclared here
+A non-SMP version of smp_send_stop() is now included in smp.h.
+Remove the unneeded def in the pasemi setup.c.
 
-Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+=46ixes build errors like these when CONFIG_SMP=3Dn:
+
+  arch/powerpc/platforms/pasemi/setup.c:48: error: redefinition of =E2=80=
+=98smp_send_stop=E2=80=99
+  include/linux/smp.h:125: error: previous definition of 'smp_send_stop=
+' was here
+
+Reported-by: subrata@linux.vnet.ibm.com
+Signed-off-by: Geoff Levand <geoffrey.levand@am.sony.com>
 ---
 
- drivers/usb/musb/musb_core.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
-index bc0eb1c..554a414 100644
---- a/drivers/usb/musb/musb_core.c
-+++ b/drivers/usb/musb/musb_core.c
-@@ -2217,7 +2217,7 @@ static int musb_resume_early(struct platform_device *pdev)
- 
- #else
- #define	musb_suspend	NULL
--#define	musb_resume	NULL
-+#define	musb_resume_early	NULL
- #endif
- 
- static struct platform_driver musb_driver = {
+diff --git a/arch/powerpc/platforms/pasemi/setup.c b/arch/powerpc/platf=
+orms/pasemi/setup.c
+index c64fb5b..153051e 100644
+--- a/arch/powerpc/platforms/pasemi/setup.c
++++ b/arch/powerpc/platforms/pasemi/setup.c
+@@ -44,10 +44,6 @@
+=20
+ #include "pasemi.h"
+=20
+-#if !defined(CONFIG_SMP)
+-static void smp_send_stop(void) {}
+-#endif
+-
+ /* SDC reset register, must be pre-mapped at reset time */
+ static void __iomem *reset_reg;
+=20
