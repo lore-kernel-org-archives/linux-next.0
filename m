@@ -1,39 +1,53 @@
-From: Greg KH <greg@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: usb series import failure
-Date: Sun, 19 Apr 2009 22:14:09 -0700
-Message-ID: <20090420051409.GA6254@kroah.com>
+Date: Mon, 20 Apr 2009 15:40:42 +1000
+Message-ID: <20090420154042.3a7a47d0.sfr@canb.auug.org.au>
 References: <20090420102137.ae71f973.sfr@canb.auug.org.au>
+	<20090420051409.GA6254@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__20_Apr_2009_15_40_42_+1000_Gc3XR9HgGoJ/5Fl/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:51112 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1753185AbZDTFZs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 20 Apr 2009 01:25:48 -0400
-Content-Disposition: inline
-In-Reply-To: <20090420102137.ae71f973.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56392 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753097AbZDTFks (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 20 Apr 2009 01:40:48 -0400
+In-Reply-To: <20090420051409.GA6254@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>
 Cc: linux-next@vger.kernel.org
 
-On Mon, Apr 20, 2009 at 10:21:37AM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's import of the usb quilt series failed like this:
-> 
-> $ git quiltimport --author Greg KH <greg@kroah.com> --patches ../quilt/usb
-> musb_gadget-fix-unhandled-endpoint-0-irqs.patch
-> musb_gadget-suppress-parasitic-tx-interrupts-with-cppi.patch
-> error: patch failed: drivers/usb/musb/musb_gadget.c:349
-> error: drivers/usb/musb/musb_gadget.c: patch does not apply
-> 
-> I assume there have been some changes in the upstream tree to cause this
-> since that series hasn't changed since Friday.  I will have to drop the
-> usb tree for today (and the staging tree that depends on it).
+--Signature=_Mon__20_Apr_2009_15_40_42_+1000_Gc3XR9HgGoJ/5Fl/
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry, it was my fault, I messed up pushing my tree to kernel.org.  It
-should all be resolved for your tree tomorrow.  Thanks for letting me
-know, and again, sorry for the mistake.
+Hi Greg,
 
-greg k-h
+On Sun, 19 Apr 2009 22:14:09 -0700 Greg KH <greg@kroah.com> wrote:
+>
+> Sorry, it was my fault, I messed up pushing my tree to kernel.org.  It
+> should all be resolved for your tree tomorrow.  Thanks for letting me
+> know, and again, sorry for the mistake.
+
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__20_Apr_2009_15_40_42_+1000_Gc3XR9HgGoJ/5Fl/
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknsCtoACgkQjjKRsyhoI8zTmACguUF8jtjm/qdcZSpOXtecW1fO
+uYoAn0BkMKkgXfHxnyIoqPmUHXJAuYCe
+=uSva
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__20_Apr_2009_15_40_42_+1000_Gc3XR9HgGoJ/5Fl/--
