@@ -1,60 +1,65 @@
-From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
-Subject: Re: linux-next: Tree for April 20
-Date: Mon, 20 Apr 2009 12:29:48 +0200
-Message-ID: <20090420102948.GA4912@ikn.schottelius.org>
-References: <20090420141011.66e826ba.sfr@canb.auug.org.au>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+Subject: Re: [PATCH -next] cx231xx: fix SND dependency build error
+Date: Mon, 20 Apr 2009 16:44:49 -0300
+Message-ID: <20090420164449.34942436@pedra.chehab.org>
+References: <20090407140717.a7f0b07c.sfr@canb.auug.org.au>
+	<49DB7861.5050606@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.schottelius.org ([77.109.138.221]:34445 "EHLO
-	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754238AbZDTK3y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Apr 2009 06:29:54 -0400
-Content-Disposition: inline
-In-Reply-To: <20090420141011.66e826ba.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <49DB7861.5050606@oracle.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+On Tue, 07 Apr 2009 08:59:29 -0700
+Randy Dunlap <randy.dunlap@oracle.com> wrote:
+
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> Don't select VIDEO_CX231XX_ALSA when SND is not enabled since selecting it
+> won't cause SND to be enabled.
+
+Sorry for being late with this issue. I was fixing some upstream scripts, and
+we had a few holydays.
+
+The better is just to trop the select for -alsa module. I have already a fix on
+my tree. I'll push it later today to my linux-next git repository.
+> 
+> ERROR: "snd_pcm_period_elapsed" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
+> ERROR: "snd_card_create" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
+> ERROR: "snd_pcm_hw_constraint_integer" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
+> ERROR: "snd_pcm_set_ops" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
+> ERROR: "snd_pcm_lib_ioctl" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
+> ERROR: "snd_card_free" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
+> ERROR: "snd_card_register" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
+> ERROR: "snd_pcm_new" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> ---
+>  drivers/media/video/cx231xx/Kconfig |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> --- linux-next-20090407.orig/drivers/media/video/cx231xx/Kconfig
+> +++ linux-next-20090407/drivers/media/video/cx231xx/Kconfig
+> @@ -6,7 +6,7 @@ config VIDEO_CX231XX
+>         select VIDEO_IR
+>         select VIDEOBUF_VMALLOC
+>         select VIDEO_CX25840
+> -       select VIDEO_CX231XX_ALSA
+> +       select VIDEO_CX231XX_ALSA if SND
+>  
+>  	---help---
+>  	  This is a video4linux driver for Conexant 231xx USB based TV cards.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 
---vtzGhvizbBRQ85DL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Stephen Rothwell [Mon, Apr 20, 2009 at 02:10:11PM +1000]:
-> Hi all,
->=20
-> Changes since 20090417:
 
-I can boot!!! Incredible!!!</euphorism>
-
-[12:29] ikn:~% uname -r
-2.6.30-rc2-next-20090420
-
-No clue why, but it works.
-
-Nico
-
---=20
-Think about Free and Open Source Software (FOSS).
-http://nico.schottelius.org/documentations/foss/the-term-foss/
-
-PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
-
---vtzGhvizbBRQ85DL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAknsTpwACgkQuL75KpiFGIwu1gCeMcdg1Eqovp5Z+Emsh4lzlQBG
-BL4AnjVkqwHGDeHpua6E5rlIL8nKU6zX
-=tY40
------END PGP SIGNATURE-----
-
---vtzGhvizbBRQ85DL--
+Cheers,
+Mauro
