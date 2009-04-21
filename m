@@ -1,78 +1,48 @@
-From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Subject: Re: [BUILD FAILURE 05/12] Next April 21 : PPC64 randconfig [drivers/macintosh/mediabay.o]
-Date: Tue, 21 Apr 2009 21:04:14 +0200
-Message-ID: <200904212104.14665.bzolnier@gmail.com>
-References: <1240339875.9110.137.camel@subratamodak.linux.ibm.com>
+From: David Brownell <david-b-yBeKhBN/0LDR7s880joybQ@public.gmane.org>
+Subject: Re: [BUILD FAILURE 11/12] Next April 21 : PPC64 randconfig [drivers/usb/host/ohci-hcd.o]
+Date: Tue, 21 Apr 2009 12:03:36 -0700
+Message-ID: <200904211203.36969.david-b@pacbell.net>
+References: <1240340081.9110.144.camel@subratamodak.linux.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f158.google.com ([209.85.220.158]:39522 "EHLO
-	mail-fx0-f158.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752074AbZDUTAx convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Apr 2009 15:00:53 -0400
-In-Reply-To: <1240339875.9110.137.camel@subratamodak.linux.ibm.com>
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1240340081.9110.144.camel-NRFfyExJdYpgXGGE5LP+UZlqa2bBAFbm0E9HWUfgJXw@public.gmane.org>
 Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: subrata@linux.vnet.ibm.com
-Cc: Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Paul Mackerras <paulus@samba.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Stefan Bader <stefan.bader@canonical.com>, Marcelo Tosatti <marcelo@conectiva.com.br>, Adrian Bunk <bunk@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, sachinp <sachinp@linux.vnet.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: subrata-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linuxppc-dev <Linuxppc-dev-mnsaURCQ41sdnm+yROfE0A@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, sachinp <sachinp-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexander Beregalov <a.beregalov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tuesday 21 April 2009 20:51:15 Subrata Modak wrote:
-> Reported this earlier on 14th April:
-> http://lkml.org/lkml/2009/4/14/490,
->=20
-> Is there a solution available ?
+On Tuesday 21 April 2009, Subrata Modak wrote:
+> Observing this for the first time:
+> 
+> CC      drivers/usb/host/ohci-hcd.o
+> In file included from drivers/usb/host/ohci-hcd.c:1060:
+> drivers/usb/host/ohci-ppc-of.c:242:2: error: #error "No endianess
 
-Perfect timing.  I was just going through overdue reports.
+Hmm, scripts/get_maintainer.pl doesn't report
+the PPC folk who maintain that file and its
+kbuild infrastructure.
 
-> CC      drivers/macintosh/mediabay.o
-> In file included from drivers/macintosh/mediabay.c:21:
-> include/linux/ide.h:610: error: field =E2=80=98sense_rq=E2=80=99 has =
-incomplete type
-> make[2]: *** [drivers/macintosh/mediabay.o] Error 1
-> make[1]: *** [drivers/macintosh] Error 2
+Can we have some PPC folk look at (and fix) this?
+
+
+> selected for ppc-of-ohci"
+> make[3]: *** [drivers/usb/host/ohci-hcd.o] Error 1
+> make[2]: *** [drivers/usb/host] Error 2
+> make[1]: *** [drivers/usb] Error 2
 > make: *** [drivers] Error 2
 > ---
+> 
+> Regards--
+> Subrata
+> 
+> 
 
-=46rom: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Subject: [PATCH] mediabay: fix build for CONFIG_BLOCK=3Dn
 
-On Tuesday 14 April 2009 20:31:21 Subrata Modak wrote:
-> Observed the following build error:
-> ---
-> CC      drivers/macintosh/mediabay.o
-> In file included from drivers/macintosh/mediabay.c:21:
-> include/linux/ide.h:605: error: field =E2=80=98request_sense_rq=E2=80=
-=99 has incomplete
-> type
-> make[2]: *** [drivers/macintosh/mediabay.o] Error 1
-> make[1]: *** [drivers/macintosh] Error 2
-> make: *** [drivers] Error 2
-> ---
-
-mediabay shouldn't include <linux/ide.h> unconditionally so
-remove the superfluous include from mediabay.c (<asm/mediabay.h>
-will pull <linux/ide.h> in for CONFIG_BLK_DEV_IDE_PMAC=3Dy).
-
-Reported-by: Subrata Modak <subrata@linux.vnet.ibm.com>
-Cc: Paul Mackerras <paulus@samba.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
----
- drivers/macintosh/mediabay.c |    1 -
- 1 file changed, 1 deletion(-)
-
-Index: b/drivers/macintosh/mediabay.c
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
---- a/drivers/macintosh/mediabay.c
-+++ b/drivers/macintosh/mediabay.c
-@@ -18,7 +18,6 @@
- #include <linux/timer.h>
- #include <linux/stddef.h>
- #include <linux/init.h>
--#include <linux/ide.h>
- #include <linux/kthread.h>
- #include <linux/mutex.h>
- #include <asm/prom.h>
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
