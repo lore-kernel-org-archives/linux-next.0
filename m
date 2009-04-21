@@ -1,53 +1,41 @@
-From: Trond Myklebust <trond.myklebust@fys.uio.no>
-Subject: Re: [BUILD FAILURE 03/04] Next April 21 : x86_64 randconfig
- [fs/nfs/nfs.ko]
-Date: Tue, 21 Apr 2009 13:49:32 -0400
-Message-ID: <1240336172.20441.0.camel@heimdal.trondhjem.org>
-References: <1240332715.9110.39.camel@subratamodak.linux.ibm.com>
-	 <49EE056C.1060605@panasas.com>
+From: Pekka Enberg <penberg@cs.helsinki.fi>
+Subject: Re: linux-next: manual merge of the kmemleak tree
+Date: Tue, 21 Apr 2009 21:02:57 +0300
+Message-ID: <49EE0A51.9010303@cs.helsinki.fi>
+References: <20090115162717.de2b3a3c.sfr@canb.auug.org.au>	 <20090115102950.GA5201@localhost>	 <1232021097.32016.25.camel@pc1117.cambridge.arm.com>	 <20090115174921.GA5314@localhost>	 <1240312442.1369.9.camel@pc1117.cambridge.arm.com> <1240314430.1369.18.camel@pc1117.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753344AbZDURuD@vger.kernel.org>
-In-Reply-To: <49EE056C.1060605@panasas.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Benny Halevy <bhalevy@panasas.com>
-Cc: subrata@linux.vnet.ibm.com, NFS list <linux-nfs@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, sachinp <sachinp@linux.vnet.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>, Ingo Molnar <mingo@elte.hu>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from courier.cs.helsinki.fi ([128.214.9.1]:49871 "EHLO
+	mail.cs.helsinki.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753272AbZDUSHF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Apr 2009 14:07:05 -0400
+In-Reply-To: <1240314430.1369.18.camel@pc1117.cambridge.arm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
 
-On Tue, 2009-04-21 at 20:42 +0300, Benny Halevy wrote:
-> On Apr. 21, 2009, 19:51 +0300, Subrata Modak <subrata@linux.vnet.ibm.com> wrote:
-> > I think i am observing this for the first time in any randconfig builds:
-> > 
-> > BUILD   arch/x86/boot/bzImage
-> > Root device is (8, 3)
-> > Setup is 13020 bytes (padded to 13312 bytes).
-> > System is 5625 kB
-> > CRC a80d60ee
-> > Kernel: arch/x86/boot/bzImage is ready  (#1)
-> >   Building modules, stage 2.
-> >   MODPOST 514 modules
-> > ERROR: "find_last_bit" [fs/nfs/nfs.ko] undefined!
-> > make[1]: *** [__modpost] Error 1
-> > make: *** [modules] Error 2
-> > ---
-> > 
-> > Regards--
-> > Subrata
-> > 
-> 
-> Trond, can you please merge
-> http://git.linux-nfs.org/?p=bhalevy/linux-pnfs.git;a=commitdiff;h=9f32944d1bca79038ef3e9c9a27f11803d093d8e
-> into your nfsv41 and linux-next branches?
-> 
-> I've placed it right before "nfs41: free slot"
-> in git://git.linux-nfs.org/projects/bhalevy/linux-pnfs.git nfs41-for-2.6.31
-> 
-> (see also this thread:
-> http://article.gmane.org/gmane.linux.kernel.next/6951)
+Hi Catalin,
 
-Could we just push that straight into the kernel? It seems like a
-no-brainer...
+Catalin Marinas wrote:
+>> I noticed that the memory allocation tracepoints were merged into
+>> mainline. I'll modify kmemleak to use them and probably add another for
+>> vmalloc.
+> 
+> After a quick look, it turns out not to be so simple. Kmemleak needs to
+> trace all the memory allocations (missing some could cause false
+> positives) and it currently has a static buffer to store the first
+> allocations before kmemleak is fully initialised.
+> 
+> Registering a probe requires memory allocations and therefore it needs
+> to be done after kmem_cache_init(). It means that kmemleak would miss
+> several allocations before it can register the probes. I don't see any
+> solution other than inserting kmemleak_*() calls near the tracing hooks.
+> 
+> Any other suggestion? Thanks.
 
-Cheers
-  Trond
+Yup, sounds like kmemleak hooks should stay there as-is.
+
+			Pekka
