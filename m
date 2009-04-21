@@ -1,44 +1,72 @@
-From: Jesper Nilsson <Jesper.Nilsson@axis.com>
-Subject: Re: linux-next: cris build failure
-Date: Tue, 21 Apr 2009 08:06:23 +0200
-Message-ID: <20090421060623.GP21811@axis.com>
-References: <20090421135843.0993cb89.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: sched tree build warning
+Date: Tue, 21 Apr 2009 08:09:16 +0200
+Message-ID: <20090421060916.GB18771@elte.hu>
+References: <20090421102706.e19240a0.sfr@canb.auug.org.au> <20090421031049.GA4140@in.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from miranda.se.axis.com ([193.13.178.8]:54036 "EHLO
-	miranda.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750811AbZDUGGd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Apr 2009 02:06:33 -0400
+Received: from mx3.mail.elte.hu ([157.181.1.138]:32902 "EHLO mx3.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750811AbZDUGJd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Apr 2009 02:09:33 -0400
 Content-Disposition: inline
-In-Reply-To: <20090421135843.0993cb89.sfr@canb.auug.org.au>
+In-Reply-To: <20090421031049.GA4140@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Gautham R Shenoy <ego@in.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>
 
-On Tue, Apr 21, 2009 at 05:58:43AM +0200, Stephen Rothwell wrote:
-> Hi Jesper, 
+
+* Gautham R Shenoy <ego@in.ibm.com> wrote:
+
+> On Tue, Apr 21, 2009 at 10:27:06AM +1000, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Today's linux-next build (powerpc ppc64_defconfig) produced this new
+> > warning:
+> > 
+> > kernel/sched.c: In function 'find_new_ilb':
+> > kernel/sched.c:4355: warning: passing argument 1 of '__first_cpu' from incompatible pointer type
+> > 
+> > Possibly caused by commit f711f6090a81cbd396b63de90f415d33f563af9b
+> > ("sched: Nominate idle load balancer from a semi-idle package") from the
+> > sched tree.  Should this call to first_cpu be cpumask_first?
 > 
-> Having figured out that I needed a crisv32 compiler (not a cris one) to
-> build the kernel, I now get this error:
+> Yes, it should be cpumask_first. Patch appended.
 > 
->   LD      arch/cris/arch-v32/boot/rescue/rescue.o
-> /bin/sh: gcc-cris: command not found
-> make[3]: *** [arch/cris/arch-v32/boot/rescue/rescue.o] Error 127
+> -->
+> sched: Replace first_cpu() with cpumask_first() in ILB nomination code.
 > 
-> arch/cris/arch-v32/boot/rescue/Makefile has an explicit reference to
-> gcc-cris.  Surely there is some better way specify this.  I created a
-> symlink for gcc-cris to my crisv32 cross compiler and that allowed the
-> kernel to finish building, but that is not a very nice solution.
+> From: Gautham R Shenoy <ego@in.ibm.com>
+> 
+> For !(CONFIG_SCHED_MC || CONFIG_SCHED_SMT), find_new_ilb() nominates the
+> Idle load balancer as the first cpu from the nohz.cpu_mask.
+> 
+> This code uses the older API first_cpu(). Replace it with cpumask_first(),
+> which is the correct API here.
+> 
+> Signed-off-by: Gautham R Shenoy <ego@in.ibm.com>
+> ---
+> 
+>  kernel/sched.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> 
+> diff --git a/kernel/sched.c b/kernel/sched.c
+> index bbf367d..6df8dd5 100644
+> --- a/kernel/sched.c
+> +++ b/kernel/sched.c
+> @@ -4344,7 +4344,7 @@ out_done:
+>  #else /*  (CONFIG_SCHED_MC || CONFIG_SCHED_SMT) */
+>  static inline int find_new_ilb(int call_cpu)
+>  {
+> -	return first_cpu(nohz.cpu_mask);
+> +	return cpumask_first(nohz.cpu_mask);
 
-Yes, you are quite correct. I have been working (albeit slowly)
-at removing all non-standard commands and port specific symlinks,
-and I have a patch that folds the boot code for both v32 and v10
-into the same directory. That patch also removes the gcc-cris usage.
+Given that this is not an onstack cpumask the type mismatch is 
+harmless in effect but obviously needs fixed.
 
-I'll push that out to my for-next branch asap.
+I've applied your fix to tip:sched/core - thanks guys.
 
-/^JN - Jesper Nilsson
--- 
-               Jesper Nilsson -- jesper.nilsson@axis.com
+	Ingo
