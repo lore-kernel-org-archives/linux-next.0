@@ -1,74 +1,38 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: [PATCH 1/2] fs/compat_ioctl: fix build when !BLOCK
-Date: Tue, 21 Apr 2009 09:32:34 +0200
-Message-ID: <20090421073234.GB4593@kernel.dk>
-References: <1240215264-8096-1-git-send-email-a.beregalov@gmail.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net tree with the tree
+Date: Tue, 21 Apr 2009 01:33:23 -0700 (PDT)
+Message-ID: <20090421.013323.108882771.davem@davemloft.net>
+References: <20090421110612.9cf9b6a6.sfr@canb.auug.org.au>
+	<20090421012216.GA12324@gondor.apana.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754394AbZDUHdH@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1240215264-8096-1-git-send-email-a.beregalov@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, alexb <alexb@localhost>
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:41493
+	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1750695AbZDUIdc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Apr 2009 04:33:32 -0400
+In-Reply-To: <20090421012216.GA12324@gondor.apana.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: herbert@gondor.apana.org.au
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, bhutchings@solarflare.com
 
-On Mon, Apr 20 2009, Alexander Beregalov wrote:
-> From: alexb <alexb@localhost.(none)>
-> 
-> In file included from fs/compat_ioctl.c:61:
-> include/linux/loop.h:59: error: field 'lo_bio_list' has incomplete type
-> 
-> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Tue, 21 Apr 2009 09:22:16 +0800
 
-Thanks, applied.
-
-> ---
->  fs/compat_ioctl.c |    7 +++----
->  1 files changed, 3 insertions(+), 4 deletions(-)
+> On Tue, Apr 21, 2009 at 11:06:12AM +1000, Stephen Rothwell wrote:
+>> Hi David,
+>> 
+>> Today's linux-next merge of the net tree got a conflict in net/core/dev.c
+>> between commit 5db8765a86a4cbaf45adaf8c231cf9a6ca2dcfaf ("net: Fix GRO
+>> for multiple page fragments") from the net-current tree and commit
+>> 76620aafd66f0004829764940c5466144969cffc ("gro: New frags interface to
+>> avoid copying shinfo") from the net tree.
+>> 
+>> I used the version from the net tree.
 > 
-> diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-> index 3e87ce4..b83f6bc 100644
-> --- a/fs/compat_ioctl.c
-> +++ b/fs/compat_ioctl.c
-> @@ -58,7 +58,6 @@
->  #include <linux/i2c.h>
->  #include <linux/i2c-dev.h>
->  #include <linux/atalk.h>
-> -#include <linux/loop.h>
->  
->  #include <net/bluetooth/bluetooth.h>
->  #include <net/bluetooth/hci.h>
-> @@ -68,6 +67,7 @@
->  #include <linux/gigaset_dev.h>
->  
->  #ifdef CONFIG_BLOCK
-> +#include <linux/loop.h>
->  #include <scsi/scsi.h>
->  #include <scsi/scsi_ioctl.h>
->  #include <scsi/sg.h>
-> @@ -2660,6 +2660,8 @@ HANDLE_IOCTL(SONET_GETFRAMING, do_atm_ioctl)
->  HANDLE_IOCTL(SONET_GETFRSENSE, do_atm_ioctl)
->  /* block stuff */
->  #ifdef CONFIG_BLOCK
-> +/* loop */
-> +IGNORE_IOCTL(LOOP_CLR_FD)
->  /* Raw devices */
->  HANDLE_IOCTL(RAW_SETBIND, raw_ioctl)
->  HANDLE_IOCTL(RAW_GETBIND, raw_ioctl)
-> @@ -2728,9 +2730,6 @@ HANDLE_IOCTL(LPSETTIMEOUT, lp_timeout_trans)
->  IGNORE_IOCTL(VFAT_IOCTL_READDIR_BOTH32)
->  IGNORE_IOCTL(VFAT_IOCTL_READDIR_SHORT32)
->  
-> -/* loop */
-> -IGNORE_IOCTL(LOOP_CLR_FD)
-> -
->  #ifdef CONFIG_SPARC
->  /* Sparc framebuffers, handled in sbusfb_compat_ioctl() */
->  IGNORE_IOCTL(FBIOGTYPE)
-> -- 
-> 1.6.2.3
-> 
+> I think that's the right one.
 
--- 
-Jens Axboe
+I'm taking care of this merge conflict right now, thanks.
