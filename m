@@ -1,47 +1,53 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: INET_LRO as tristate and use from modules (was: Re: [BUILD FAILURE
-	08/12] Next April 21 : PPC64 randconfig
-	[drivers/net/pasemi_mac_driver.ko])
-Date: Tue, 21 Apr 2009 14:33:19 -0500
-Message-ID: <20090421193319.GB20237@lixom.net>
-References: <1240339984.9110.141.camel@subratamodak.linux.ibm.com>
+From: Scott Wood <scottwood@freescale.com>
+Subject: Re: [BUILD FAILURE 10/12] Next April 21 : PPC64 randconfig	[drivers/mtd/maps/sbc8240.o]
+Date: Tue, 21 Apr 2009 15:00:24 -0500
+Message-ID: <49EE25D8.6040906@freescale.com>
+References: <1240340059.9110.143.camel@subratamodak.linux.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from lixom.net ([66.141.50.11]:39085 "EHLO mail.lixom.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751932AbZDUTav (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Apr 2009 15:30:51 -0400
-Content-Disposition: inline
-In-Reply-To: <1240339984.9110.141.camel@subratamodak.linux.ibm.com>
+Received: from az33egw02.freescale.net ([192.88.158.103]:50330 "EHLO
+	az33egw02.freescale.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751272AbZDUUBu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Apr 2009 16:01:50 -0400
+In-Reply-To: <1240340059.9110.143.camel@subratamodak.linux.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Subrata Modak <subrata@linux.vnet.ibm.com>
-Cc: netdev <netdev@vger.kernel.org>, Geoff Levand <geoffrey.levand@am.sony.com>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, sachinp <sachinp@linux.vnet.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>, themann@de.ibm.com, davem@davemloft.net
+To: subrata@linux.vnet.ibm.com
+Cc: Jim Cromie <jim.cromie@gmail.com>, carolyn.j.smith@exgate.tek.com, Adrian Bunk <bunk@kernel.org>, sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel <linux-kernel@vger.kernel.org>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, linux-next <linux-next@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>
 
-On Wed, Apr 22, 2009 at 12:23:03AM +0530, Subrata Modak wrote:
-> Reported this on 9th April earlier:
-> http://lkml.org/lkml/2009/4/9/276,
-> 
-> I hope the following Patch will solve this problem as well:
-> Geoff Levand <geoffrey.levand@am.sony.com> provided a patch on 17th
-> April.
-> http://lkml.org/lkml/2009/4/17/313,
+Subrata Modak wrote:
+> This is a very old one. Doesn=C2=B4t seem to go away. Reported this e=
+arlier
+> on 14th April:
+> http://lkml.org/lkml/2009/4/14/483,
+>=20
+> CC [M]  drivers/mtd/maps/sbc8240.o
+> drivers/mtd/maps/sbc8240.c:31:1: warning: "DEBUG" redefined
+> In file included from drivers/mtd/maps/sbc8240.c:23:
+> include/linux/mtd/mtd.h:339:1: warning: this is the location of the
+> previous definition
+> drivers/mtd/maps/sbc8240.c: In function =E2=80=98init_sbc8240_mtd=E2=80=
+=99:
+> drivers/mtd/maps/sbc8240.c:172: error: =E2=80=98sbc8240_mtd=E2=80=99 =
+undeclared (first
+> use in this function)
+> drivers/mtd/maps/sbc8240.c:172: error: (Each undeclared identifier is
+> reported only once
+> drivers/mtd/maps/sbc8240.c:172: error: for each function it appears i=
+n.)
+> drivers/mtd/maps/sbc8240.c: In function =E2=80=98cleanup_sbc8240_mtd=E2=
+=80=99:
+> drivers/mtd/maps/sbc8240.c:233: error: =E2=80=98sbc8240_mtd=E2=80=99 =
+undeclared (first
+> use in this function)
 
-No, that's a separate issue.
+This looks like an arch/ppc orphan.  It's not enabled by any defconfig,=
+=20
+and it doesn't look like it does anything that physmap_of can't do.
 
->   MODPOST 338 modules
-> ERROR: ".lro_receive_skb" [drivers/net/pasemi_mac_driver.ko] undefined!
-> ERROR: ".lro_flush_all" [drivers/net/pasemi_mac_driver.ko] undefined!
-> WARNING: modpost: Found 1 section mismatch(es).
-> To see full details build your kernel with:
-> 'make CONFIG_DEBUG_SECTION_MISMATCH=y'
-> make[1]: *** [__modpost] Error 1
-> make: *** [modules] Error 2
+I'd just remove it.
 
-This seems to be a problem with all tristate-capable drivers that use
-LRO (and uses select INET_LRO in their Kconfig): INET_LRO is a tristate
-and can thus be a module. Looks like it needs to be a bool instead?
-
-
--Olof
+-Scott
