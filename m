@@ -1,40 +1,44 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: Re: [BUILD FAILURE 04/04] Next April 21 : x86_64 randconfig
- [drivers/built-in.o]
-Date: Tue, 21 Apr 2009 14:08:47 -0300
-Message-ID: <20090421140847.509f8c59@pedra.chehab.org>
-References: <1240332728.9110.40.camel@subratamodak.linux.ibm.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [patch] powerpc/pasemi: Fix no SMP build error
+Date: Tue, 21 Apr 2009 12:25:02 -0500
+Message-ID: <20090421172502.GA20237@lixom.net>
+References: <1239285094.5188.65.camel@subratamodak.linux.ibm.com>
+	<49E8B015.7060808@am.sony.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1240332728.9110.40.camel@subratamodak.linux.ibm.com>
-Sender: linux-media-owner@vger.kernel.org
-To: subrata@linux.vnet.ibm.com
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, srinivasa.deevi@conexant.com, linux-media@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, sachinp <sachinp@linux.vnet.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org>
+Content-Disposition: inline
+In-Reply-To: <49E8B015.7060808@am.sony.com>
+List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
+List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
+List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
+To: Geoff Levand <geoffrey.levand@am.sony.com>
+Cc: sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel <linux-kernel@vger.kernel.org>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, linux-next <linux-next@vger.kernel.org>, Paul Mackerras <paulus@samba.org>, subrata@linux.vnet.ibm.com
 List-Id: linux-next.vger.kernel.org
 
-
-On Tue, 21 Apr 2009 22:22:08 +0530
-Subrata Modak <subrata@linux.vnet.ibm.com> wrote:
-
-> Observed the following build error. Reported this on 8th and 14th April
-> Next build errors:
+On Fri, Apr 17, 2009 at 09:36:37AM -0700, Geoff Levand wrote:
+> A non-SMP version of smp_send_stop() is now included in smp.h.
+> Remove the unneeded def in the pasemi setup.c.
 > 
-> http://lkml.org/lkml/2009/4/14/473,
+> Fixes build errors like these when CONFIG_SMP=n:
 > 
-> Patch was already provided by Randy on 7th April. This is still to hit
-> the tree:
-> http://lkml.org/lkml/2009/4/7/400,
-> 
+>   arch/powerpc/platforms/pasemi/setup.c:48: error: redefinition of ???smp_send_stop???
+>   include/linux/smp.h:125: error: previous definition of 'smp_send_stop' was here
 
-Probably Stephen picked from my tree before I merge this patch on my linux-next tree:
+Thanks for taking care of this.
 
-http://git.kernel.org/?p=linux/kernel/git/mchehab/linux-next.git;a=commit;h=c4f0ad35d1df1fed5fae477f806aa8daf5545520
+> Reported-by: subrata@linux.vnet.ibm.com
+> Signed-off-by: Geoff Levand <geoffrey.levand@am.sony.com>
 
-This error should disappear on the today's build.
 
--- 
+Acked-by: Olof Johansson <olof@lixom.net>
 
-Cheers,
-Mauro
+
+-Olof
