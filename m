@@ -1,56 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the net tree with the tree
-Date: Tue, 21 Apr 2009 21:08:32 +1000
-Message-ID: <20090421210832.fbfc6a1e.sfr@canb.auug.org.au>
-References: <20090421110612.9cf9b6a6.sfr@canb.auug.org.au>
-	<20090421012216.GA12324@gondor.apana.org.au>
-	<20090421.013323.108882771.davem@davemloft.net>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: linux-next: manual merge of the kmemleak tree
+Date: Tue, 21 Apr 2009 12:14:02 +0100
+Message-ID: <1240312442.1369.9.camel@pc1117.cambridge.arm.com>
+References: <20090115162717.de2b3a3c.sfr@canb.auug.org.au>
+	 <20090115102950.GA5201@localhost>
+	 <1232021097.32016.25.camel@pc1117.cambridge.arm.com>
+	 <20090115174921.GA5314@localhost>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__21_Apr_2009_21_08_32_+1000_hs2AKYxjuPSYQHnI"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58193 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752064AbZDULIm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Apr 2009 07:08:42 -0400
-In-Reply-To: <20090421.013323.108882771.davem@davemloft.net>
+Received: from cam-admin0.cambridge.arm.com ([193.131.176.58]:62908 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752913AbZDULPU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Apr 2009 07:15:20 -0400
+In-Reply-To: <20090115174921.GA5314@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: herbert@gondor.apana.org.au, linux-next@vger.kernel.org, bhutchings@solarflare.com
+To: Eduard - Gabriel Munteanu <eduard.munteanu@linux360.ro>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Pekka Enberg <penberg@cs.helsinki.fi>
 
---Signature=_Tue__21_Apr_2009_21_08_32_+1000_hs2AKYxjuPSYQHnI
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 2009-01-15 at 19:49 +0200, Eduard - Gabriel Munteanu wrote:
+> On Thu, Jan 15, 2009 at 12:04:57PM +0000, Catalin Marinas wrote:
+> > The only issue is that kmemleak would need to register the callbacks
+> > before the slab allocator is initialised (otherwise it may miss some
+> > allocations). So it would need a 3-stage initialisation - pre-slab,
+> > post-slab and late_initcall.
+> 
+> Sure, that is not a problem, as kmemtrace needn't be compiled in for
+> the tracepoints to work. As long as they're defined in some header and
+> included, you can register multiple probes from all over the kernel.
+> This also means you won't have to interact with kmemtrace code.
 
-On Tue, 21 Apr 2009 01:33:23 -0700 (PDT) David Miller <davem@davemloft.net>=
- wrote:
->
-> From: Herbert Xu <herbert@gondor.apana.org.au>
-> Date: Tue, 21 Apr 2009 09:22:16 +0800
->=20
-> > I think that's the right one.
->=20
-> I'm taking care of this merge conflict right now, thanks.
+I noticed that the memory allocation tracepoints were merged into
+mainline. I'll modify kmemleak to use them and probably add another for
+vmalloc.
 
-Thanks to you both.
+Since tracing is available even without KMEMTRACE, does it make sense to
+have kmem_cache_alloc_notrace depend on CONFIG_TRACEPOINTS (or something
+else)?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Thanks.
 
---Signature=_Tue__21_Apr_2009_21_08_32_+1000_hs2AKYxjuPSYQHnI
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkntqTAACgkQjjKRsyhoI8yO0ACeNsmwY30oJk5Hl4TRT/W+2Bbb
-PK4AoLbc8AoQfEPR0NvozRemOfj33CyA
-=v3+Z
------END PGP SIGNATURE-----
-
---Signature=_Tue__21_Apr_2009_21_08_32_+1000_hs2AKYxjuPSYQHnI--
+-- 
+Catalin
