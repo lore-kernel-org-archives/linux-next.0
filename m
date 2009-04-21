@@ -1,40 +1,56 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: [PATCH 1/2] fs/compat_ioctl: fix build when !BLOCK
-Date: Tue, 21 Apr 2009 11:21:34 +0200
-Message-ID: <20090421092133.GG4593@kernel.dk>
-References: <1240215264-8096-1-git-send-email-a.beregalov@gmail.com> <20090421073234.GB4593@kernel.dk> <a4423d670904210134i2aa1b6b9xf9d38792b7302044@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the net tree with the tree
+Date: Tue, 21 Apr 2009 21:08:32 +1000
+Message-ID: <20090421210832.fbfc6a1e.sfr@canb.auug.org.au>
+References: <20090421110612.9cf9b6a6.sfr@canb.auug.org.au>
+	<20090421012216.GA12324@gondor.apana.org.au>
+	<20090421.013323.108882771.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__21_Apr_2009_21_08_32_+1000_hs2AKYxjuPSYQHnI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from brick.kernel.dk ([93.163.65.50]:44631 "EHLO kernel.dk"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58193 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753802AbZDUJVf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Apr 2009 05:21:35 -0400
-Content-Disposition: inline
-In-Reply-To: <a4423d670904210134i2aa1b6b9xf9d38792b7302044@mail.gmail.com>
+	id S1752064AbZDULIm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Apr 2009 07:08:42 -0400
+In-Reply-To: <20090421.013323.108882771.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
+To: David Miller <davem@davemloft.net>
+Cc: herbert@gondor.apana.org.au, linux-next@vger.kernel.org, bhutchings@solarflare.com
 
-On Tue, Apr 21 2009, Alexander Beregalov wrote:
-> 2009/4/21 Jens Axboe <jens.axboe@oracle.com>:
-> > On Mon, Apr 20 2009, Alexander Beregalov wrote:
-> >> From: alexb <alexb@localhost.(none)>
-> >>
-> >> In file included from fs/compat_ioctl.c:61:
-> >> include/linux/loop.h:59: error: field 'lo_bio_list' has incomplete type
-> >>
-> >> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
-> >
-> > Thanks, applied.
-> 
-> Hi Jens
-> 
-> Al has already sent it to Linus.
+--Signature=_Tue__21_Apr_2009_21_08_32_+1000_hs2AKYxjuPSYQHnI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Oh, it's not in current -git. But it's not a problem, I notice those
-kind of things when preparing the push.
+On Tue, 21 Apr 2009 01:33:23 -0700 (PDT) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> From: Herbert Xu <herbert@gondor.apana.org.au>
+> Date: Tue, 21 Apr 2009 09:22:16 +0800
+>=20
+> > I think that's the right one.
+>=20
+> I'm taking care of this merge conflict right now, thanks.
 
--- 
-Jens Axboe
+Thanks to you both.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__21_Apr_2009_21_08_32_+1000_hs2AKYxjuPSYQHnI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkntqTAACgkQjjKRsyhoI8yO0ACeNsmwY30oJk5Hl4TRT/W+2Bbb
+PK4AoLbc8AoQfEPR0NvozRemOfj33CyA
+=v3+Z
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__21_Apr_2009_21_08_32_+1000_hs2AKYxjuPSYQHnI--
