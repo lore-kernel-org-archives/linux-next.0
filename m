@@ -1,65 +1,53 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: [PATCH -next] cx231xx: fix SND dependency build error
-Date: Mon, 20 Apr 2009 16:44:49 -0300
-Message-ID: <20090420164449.34942436@pedra.chehab.org>
-References: <20090407140717.a7f0b07c.sfr@canb.auug.org.au>
-	<49DB7861.5050606@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: sched tree build warning
+Date: Tue, 21 Apr 2009 10:27:06 +1000
+Message-ID: <20090421102706.e19240a0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__21_Apr_2009_10_27_06_+1000_ZNmn3WYjrZD4x0tZ"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:59035 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752211AbZDUA1P (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 20 Apr 2009 20:27:15 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-next@vger.kernel.org, Gautham R Shenoy <ego@in.ibm.com>, Rusty Russell <rusty@rustcorp.com.au>
+
+--Signature=_Tue__21_Apr_2009_10_27_06_+1000_ZNmn3WYjrZD4x0tZ
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <49DB7861.5050606@oracle.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 07 Apr 2009 08:59:29 -0700
-Randy Dunlap <randy.dunlap@oracle.com> wrote:
+Hi all,
 
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Don't select VIDEO_CX231XX_ALSA when SND is not enabled since selecting it
-> won't cause SND to be enabled.
+Today's linux-next build (powerpc ppc64_defconfig) produced this new
+warning:
 
-Sorry for being late with this issue. I was fixing some upstream scripts, and
-we had a few holydays.
+kernel/sched.c: In function 'find_new_ilb':
+kernel/sched.c:4355: warning: passing argument 1 of '__first_cpu' from inco=
+mpatible pointer type
 
-The better is just to trop the select for -alsa module. I have already a fix on
-my tree. I'll push it later today to my linux-next git repository.
-> 
-> ERROR: "snd_pcm_period_elapsed" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
-> ERROR: "snd_card_create" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
-> ERROR: "snd_pcm_hw_constraint_integer" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
-> ERROR: "snd_pcm_set_ops" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
-> ERROR: "snd_pcm_lib_ioctl" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
-> ERROR: "snd_card_free" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
-> ERROR: "snd_card_register" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
-> ERROR: "snd_pcm_new" [drivers/media/video/cx231xx/cx231xx-alsa.ko] undefined!
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> ---
->  drivers/media/video/cx231xx/Kconfig |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --- linux-next-20090407.orig/drivers/media/video/cx231xx/Kconfig
-> +++ linux-next-20090407/drivers/media/video/cx231xx/Kconfig
-> @@ -6,7 +6,7 @@ config VIDEO_CX231XX
->         select VIDEO_IR
->         select VIDEOBUF_VMALLOC
->         select VIDEO_CX25840
-> -       select VIDEO_CX231XX_ALSA
-> +       select VIDEO_CX231XX_ALSA if SND
->  
->  	---help---
->  	  This is a video4linux driver for Conexant 231xx USB based TV cards.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Possibly caused by commit f711f6090a81cbd396b63de90f415d33f563af9b
+("sched: Nominate idle load balancer from a semi-idle package") from the
+sched tree.  Should this call to first_cpu be cpumask_first?
 
-
-
-
+--=20
 Cheers,
-Mauro
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__21_Apr_2009_10_27_06_+1000_ZNmn3WYjrZD4x0tZ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkntEtoACgkQjjKRsyhoI8wl8ACff1n8IOg/kPqc2CNVRbs2HweV
+GAcAoJdBaxXACH8eYi9N4BaJYIjoJh3t
+=AbXe
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__21_Apr_2009_10_27_06_+1000_ZNmn3WYjrZD4x0tZ--
