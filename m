@@ -1,44 +1,52 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [patch] powerpc/pasemi: Fix no SMP build error
-Date: Tue, 21 Apr 2009 12:25:02 -0500
-Message-ID: <20090421172502.GA20237@lixom.net>
-References: <1239285094.5188.65.camel@subratamodak.linux.ibm.com>
-	<49E8B015.7060808@am.sony.com>
+From: Benny Halevy <bhalevy@panasas.com>
+Subject: Re: [BUILD FAILURE 03/04] Next April 21 : x86_64 randconfig	[fs/nfs/nfs.ko]
+Date: Tue, 21 Apr 2009 20:42:04 +0300
+Message-ID: <49EE056C.1060605@panasas.com>
+References: <1240332715.9110.39.camel@subratamodak.linux.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org>
-Content-Disposition: inline
-In-Reply-To: <49E8B015.7060808@am.sony.com>
-List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
-List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
-List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
-To: Geoff Levand <geoffrey.levand@am.sony.com>
-Cc: sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel <linux-kernel@vger.kernel.org>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, linux-next <linux-next@vger.kernel.org>, Paul Mackerras <paulus@samba.org>, subrata@linux.vnet.ibm.com
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from gw-ca.panasas.com ([209.116.51.66]:12509 "EHLO
+	laguna.int.panasas.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753191AbZDURmW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Apr 2009 13:42:22 -0400
+In-Reply-To: <1240332715.9110.39.camel@subratamodak.linux.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: subrata@linux.vnet.ibm.com, NFS list <linux-nfs@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, sachinp <sachinp@linux.vnet.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>, Ingo Molnar <mingo@elte.hu>
 
-On Fri, Apr 17, 2009 at 09:36:37AM -0700, Geoff Levand wrote:
-> A non-SMP version of smp_send_stop() is now included in smp.h.
-> Remove the unneeded def in the pasemi setup.c.
+On Apr. 21, 2009, 19:51 +0300, Subrata Modak <subrata@linux.vnet.ibm.com> wrote:
+> I think i am observing this for the first time in any randconfig builds:
 > 
-> Fixes build errors like these when CONFIG_SMP=n:
+> BUILD   arch/x86/boot/bzImage
+> Root device is (8, 3)
+> Setup is 13020 bytes (padded to 13312 bytes).
+> System is 5625 kB
+> CRC a80d60ee
+> Kernel: arch/x86/boot/bzImage is ready  (#1)
+>   Building modules, stage 2.
+>   MODPOST 514 modules
+> ERROR: "find_last_bit" [fs/nfs/nfs.ko] undefined!
+> make[1]: *** [__modpost] Error 1
+> make: *** [modules] Error 2
+> ---
 > 
->   arch/powerpc/platforms/pasemi/setup.c:48: error: redefinition of ???smp_send_stop???
->   include/linux/smp.h:125: error: previous definition of 'smp_send_stop' was here
+> Regards--
+> Subrata
+> 
 
-Thanks for taking care of this.
+Trond, can you please merge
+http://git.linux-nfs.org/?p=bhalevy/linux-pnfs.git;a=commitdiff;h=9f32944d1bca79038ef3e9c9a27f11803d093d8e
+into your nfsv41 and linux-next branches?
 
-> Reported-by: subrata@linux.vnet.ibm.com
-> Signed-off-by: Geoff Levand <geoffrey.levand@am.sony.com>
+I've placed it right before "nfs41: free slot"
+in git://git.linux-nfs.org/projects/bhalevy/linux-pnfs.git nfs41-for-2.6.31
 
+(see also this thread:
+http://article.gmane.org/gmane.linux.kernel.next/6951)
 
-Acked-by: Olof Johansson <olof@lixom.net>
+Thanks,
 
-
--Olof
+Benny
