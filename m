@@ -1,56 +1,46 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [BUILD FAILURE 11/12] Next April 21 : PPC64 randconfig [drivers/usb/host/ohci-hcd.o]
-Date: Tue, 21 Apr 2009 15:05:53 -0700
-Message-ID: <49EE4341.50701@oracle.com>
-References: <1240340081.9110.144.camel@subratamodak.linux.ibm.com> <200904211203.36969.david-b@pacbell.net> <5A202317-5104-4784-845B-B8C46E0A3C48@kernel.crashing.org>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH] Staging: comedi: Remove useless code
+Date: Tue, 21 Apr 2009 15:11:37 -0700
+Message-ID: <20090421221137.GA10477@kroah.com>
+References: <1237921281-5462-1-git-send-email-abogani@texware.it>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755950AbZDUWFm@vger.kernel.org>
-In-Reply-To: <5A202317-5104-4784-845B-B8C46E0A3C48@kernel.crashing.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kumar Gala <galak@kernel.crashing.org>
-Cc: David Brownell <david-b@pacbell.net>, subrata@linux.vnet.ibm.com, linux-usb@vger.kernel.org, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, sachinp <sachinp@linux.vnet.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from kroah.org ([198.145.64.141]:36032 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1756208AbZDUWb4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Apr 2009 18:31:56 -0400
+Content-Disposition: inline
+In-Reply-To: <1237921281-5462-1-git-send-email-abogani@texware.it>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alessio Igor Bogani <abogani@texware.it>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, LNML <linux-next@vger.kernel.org>
 
-Kumar Gala wrote:
+On Tue, Mar 24, 2009 at 08:01:21PM +0100, Alessio Igor Bogani wrote:
+> Remove all code contained into CONFIG_COMEDI_RTAI, CONFIG_COMEDI_RTL,
+> CONFIG_COMEDI_RTL_V1, CONFIG_COMEDI_FUSION and CONFIG_COMEDI_RT
+> ifdef/endif preprocessor directives. Which all referred to 
+> method called "dual kernel approach" (where both a micro kernel OS
+> and Linux running on same machine and IRQ dispatching is under the
+> control of the first one) for achieve real-time behavior.
 > 
-> On Apr 21, 2009, at 2:03 PM, David Brownell wrote:
+> I take notice that:
 > 
->> On Tuesday 21 April 2009, Subrata Modak wrote:
->>> Observing this for the first time:
->>>
->>> CC      drivers/usb/host/ohci-hcd.o
->>> In file included from drivers/usb/host/ohci-hcd.c:1060:
->>> drivers/usb/host/ohci-ppc-of.c:242:2: error: #error "No endianess
->>
->> Hmm, scripts/get_maintainer.pl doesn't report
->> the PPC folk who maintain that file and its
->> kbuild infrastructure.
->>
->> Can we have some PPC folk look at (and fix) this?
-> 
-> The problem is in the drivers/usb/host/Kconfig:
-> 
-> config USB_OHCI_HCD_PPC_OF_BE
->         bool "Support big endian HC"
->         depends on USB_OHCI_HCD_PPC_OF
->         default y
->         select USB_OHCI_BIG_ENDIAN_DESC
->         select USB_OHCI_BIG_ENDIAN_MMIO
-> 
-> config USB_OHCI_HCD_PPC_OF_LE
->         bool "Support little endian HC"
->         depends on USB_OHCI_HCD_PPC_OF
->         default n
->         select USB_OHCI_LITTLE_ENDIAN
-> 
-> Since its feasible to say 'n' to both we get the compile error.  How do
-> we enforce having at least one set?
+> 1) Those are all completely undocumented.
+> 2) No one express interest in keep those in sync so are unsupported.
+> 3) As far I know, and at least for CONFIG_COMEDI_FUSION, are obsolete
+>    (FUSION was replaced by Xenomai long time ago).
+> 4) Should be  better to let respectively authors make a separate patch
+>    against Linux source and comedi drivers.
+> 5) Removing those should do avoid confusion in Linux kernel developers.
+> 6) Keep those in don't let us chance to break/change the interfaces.
+> 7) Those aren't integrated with Kbuild so are useless in any case.
+> 8) Removing those make the code more simple.
 
-Looks like using "choice" without "optional" would do it.
-See Documentation/kbuild/kconfig-language.txt and various examples
-in Kconfig* files.
+Can you run this by the other comedi developers?  I think that there is
+some useful code in here, I don't want to just dump it all.
 
--- 
-~Randy
+thanks,
+
+greg k-h
