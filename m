@@ -1,39 +1,39 @@
 From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: linux-next: wireless tree build failure
-Date: Wed, 22 Apr 2009 09:06:12 -0400
-Message-ID: <20090422130612.GB3288@tuxdriver.com>
-References: <20090422115738.524272c8.sfr@canb.auug.org.au> <1240390746.17388.64.camel@johannes.local> <20090422230333.e1f7d3db.sfr@canb.auug.org.au>
+Subject: Re: linux-next: wireless-current tree build failure
+Date: Wed, 22 Apr 2009 09:03:56 -0400
+Message-ID: <20090422130356.GA3288@tuxdriver.com>
+References: <20090422151928.d1c5ad6a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:47998 "EHLO
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:47993 "EHLO
 	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752985AbZDVNPz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Apr 2009 09:15:55 -0400
+	with ESMTP id S1752327AbZDVNPw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Apr 2009 09:15:52 -0400
 Content-Disposition: inline
-In-Reply-To: <20090422230333.e1f7d3db.sfr@canb.auug.org.au>
+In-Reply-To: <20090422151928.d1c5ad6a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Johannes Berg <johannes@sipsolutions.net>, linux-next@vger.kernel.org, Matthew Garrett <mjg59@srcf.ucam.org>, Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, Reinette Chatre <reinette.chatre@intel.com>
 
-On Wed, Apr 22, 2009 at 11:03:33PM +1000, Stephen Rothwell wrote:
-> Hi Johannes,
+On Wed, Apr 22, 2009 at 03:19:28PM +1000, Stephen Rothwell wrote:
+> Hi John,
 > 
-> On Wed, 22 Apr 2009 10:59:06 +0200 Johannes Berg <johannes@sipsolutions.net> wrote:
-> >
-> > Fun. Another rfkill problem. It'll get worse -- I have a complete rfkill
-> > rewrite in the pipeline. For this part it's easy, just remove
-> > user_claim_unsupported use from the driver.
-> > 
-> > Any suggestions on how to handle the other merge problems?
+> Today's linux-next build (powerpc allyesconfig) failed like this:
 > 
-> Well, the best way (and I know this is simplistic and maybe difficult) is
-> to introduce the new rewrite alongside the old code and then slowly move
-> the clients of the API over.
+> drivers/net/wireless/iwlwifi/iwl3945-base.c:1415: error: __ksymtab_iwl3945_rx_queue_reset causes a section type conflict
+> 
+> I am pretty sure that this is a compiler bug, so not to worry.  However,
+> as far as I can see, iwl-3945.o (the only user) and iwl3945-base.o are
+> always linked into the same module, so the EXPORT_SYMBOL (which causes
+> the problem) should not be needed.  Correct?
+> 
+> I applied the following patch for today.  This makes the above error go
+> away and my x86_64 allmodconfig still builds.
 
-Maybe we should put user_claim_unsupported back into struct rfkill
-(and deprecate it) for now?
+Seems reasonable.  Reinette, should I just take Stephen's patch?
+Or would you prefer some other solution?
 
 John
 -- 
