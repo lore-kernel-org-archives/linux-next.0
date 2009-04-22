@@ -1,57 +1,43 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [BUILD FAILURE 09/12] Next April 21 : PPC64 randconfig [drivers/staging/comedi/drivers.o]
-Date: Wed, 22 Apr 2009 08:10:35 -0700
-Message-ID: <49EF336B.5070807@oracle.com>
-References: <1240340029.9110.142.camel@subratamodak.linux.ibm.com> <1240358910.6571.6.camel@localhost> <alpine.LRH.2.00.0904220942430.6852@vixen.sonytel.be>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: linux-next: manual merge of the ttydev tree with the usb.current
+ tree
+Date: Wed, 22 Apr 2009 11:50:29 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.0904221142020.3405-100000@iolanthe.rowland.org>
+References: <20090422133821.804bf9d6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755626AbZDVPNZ@vger.kernel.org>
-In-Reply-To: <alpine.LRH.2.00.0904220942430.6852@vixen.sonytel.be>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>
-Cc: Michael Ellerman <michael@ellerman.id.au>, subrata@linux.vnet.ibm.com, sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, "David A. Schleef" <ds@schleef.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, linux-next <linux-next@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from iolanthe.rowland.org ([192.131.102.54]:41644 "HELO
+	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1756485AbZDVPub (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Apr 2009 11:50:31 -0400
+In-Reply-To: <20090422133821.804bf9d6.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, linux-next@vger.kernel.org, Greg KH <greg@kroah.com>
 
-Geert Uytterhoeven wrote:
-> On Wed, 22 Apr 2009, Michael Ellerman wrote:
->> On Wed, 2009-04-22 at 00:23 +0530, Subrata Modak wrote:
->>> Reported this error on 14th April:
->>> http://lkml.org/lkml/2009/4/14/488,
->>>
->>> CC [M]  drivers/staging/comedi/drivers.o=20
->>> drivers/staging/comedi/drivers.c: In function =91comedi_buf_alloc=92=
-:
->>> drivers/staging/comedi/drivers.c:496: error: =91PAGE_KERNEL_NOCACHE=
-=92
->>> undeclared (first use in this function)
->>> drivers/staging/comedi/drivers.c:496: error: (Each undeclared ident=
-ifier
->>> is reported only once
->>> drivers/staging/comedi/drivers.c:496: error: for each function it
->>> appears in.)
->>> make[3]: *** [drivers/staging/comedi/drivers.o] Error 1
->>> make[2]: *** [drivers/staging/comedi] Error 2
->>> make[1]: *** [drivers/staging] Error 2
->>> make: *** [drivers] Error 2
->> Subrata, unless someone says otherwise, please do not send randconfi=
-g
->> failures for drivers in staging - those drivers have bigger problems
->> than randconfig failures.
->=20
-> Indeed, in particular this one http://lkml.org/lkml/2009/3/9/349.
->=20
->> To avoid them, do this:
->>
->> # make randconfig
->> # sed -i -e 's/^\(CONFIG_STAGING\)=3Dy/# \1 is not set/' .config
->                                        ^^^^^^^^^^^^^^^
-> Recently I discovered that `n' actually works, too!
+On Wed, 22 Apr 2009, Stephen Rothwell wrote:
 
-Yes, I've been using =3Dn for quite awhile to disable a config symbol.
+> Hi Alan,
+> 
+> Today's linux-next merge of the ttydev tree got a conflict in
+> drivers/usb/serial/usb-serial.c between commit
+> 098aa19445c918bb8430f9b5cb840b546de570f2 ("USB: serial: fix lifetime and
+> locking problems") from the usb.current tree and commit
+> 1156df675ae541b21dc343912413f201f87a3909 ("tty-usb-use-port") from the
+> ttydev tree.
+> 
+> OK, I can't figure this out easily, so I have used the ttydev version of
+> the file - effectively reverting the usb.current change.
+> 
+> Alan (Cox), when the usb.current change goes into Linus' tree (it is
+> destined for 2.6.30), you will have to fix the conflict.  You could do
+> this now by adding that patch to your series and fixing the mess ... Alan
+> (Stern) you may want to help with this.  I can cope with having the same
+> patch on both sides of the merge (I won't even complain :-)).
 
->> # make oldconfig
+I'll be happy to help, although no doubt Alan Cox is quite capable of 
+resolving the conflicts on his own.
 
-
---=20
-~Randy
+Alan Stern
