@@ -1,50 +1,86 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: linux-next: manual merge of the wireless tree with the
-	wireless-current tree
-Date: Wed, 22 Apr 2009 14:38:03 -0400
-Message-ID: <20090422183803.GH3288@tuxdriver.com>
-References: <20090422113230.8c36e9ed.sfr@canb.auug.org.au> <1240424626.29805.51.camel@rc-desk>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for April 22 (rndis_wlan)
+Date: Wed, 22 Apr 2009 12:06:33 -0700
+Message-ID: <49EF6AB9.3000900@oracle.com>
+References: <20090422154247.dbffd285.sfr@canb.auug.org.au> <49EF4B73.2050702@oracle.com> <20090422172804.GE3288@tuxdriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:47732 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754459AbZDVSpx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Apr 2009 14:45:53 -0400
-Content-Disposition: inline
-In-Reply-To: <1240424626.29805.51.camel@rc-desk>
+Received: from rcsinet12.oracle.com ([148.87.113.124]:24051 "EHLO
+	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756724AbZDVTGA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Apr 2009 15:06:00 -0400
+In-Reply-To: <20090422172804.GE3288@tuxdriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: reinette chatre <reinette.chatre@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Johannes Berg <johannes@sipsolutions.net>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, jussi.kivilinna@mbnet.fi
 
-On Wed, Apr 22, 2009 at 11:23:46AM -0700, reinette chatre wrote:
-> John,
+John W. Linville wrote:
+> On Wed, Apr 22, 2009 at 09:53:07AM -0700, Randy Dunlap wrote:
+>> Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> Changes since 20090421:
+>>>
+>>> For those who care about the order of trees, I have moved the merging of
+>>> all the fs trees together and nearer the start of the process.
+>>>
+>>> This tree will not build a powerpc allyesconfig.
+>>>
+>>> The net tree lost its conflict.
+>>>
+>>> The wireless tree gained a conflict against eahc of the v4l-dvb and
+>>> wireless-current trees and a build failure due to an interaction with the
+>>> acpi tree for which I reverted a commit.
+>> ERROR: "wiphy_free" [drivers/net/wireless/rndis_wlan.ko] undefined!
+>> ERROR: "cfg80211_wext_siwscan" [drivers/net/wireless/rndis_wlan.ko] undefined!
+>> ERROR: "cfg80211_wext_siwmode" [drivers/net/wireless/rndis_wlan.ko] undefined!
+>> ERROR: "__ieee80211_get_channel" [drivers/net/wireless/rndis_wlan.ko] undefined!
+>> ERROR: "wiphy_unregister" [drivers/net/wireless/rndis_wlan.ko] undefined!
+>> ERROR: "cfg80211_inform_bss" [drivers/net/wireless/rndis_wlan.ko] undefined!
+>> ERROR: "wiphy_new" [drivers/net/wireless/rndis_wlan.ko] undefined!
+>> ERROR: "wiphy_register" [drivers/net/wireless/rndis_wlan.ko] undefined!
+>> ERROR: "cfg80211_wext_giwrange" [drivers/net/wireless/rndis_wlan.ko] undefined!
+>> ERROR: "cfg80211_wext_giwmode" [drivers/net/wireless/rndis_wlan.ko] undefined!
+>> ERROR: "cfg80211_wext_giwname" [drivers/net/wireless/rndis_wlan.ko] undefined!
+>> ERROR: "cfg80211_wext_giwscan" [drivers/net/wireless/rndis_wlan.ko] undefined!
+>> ERROR: "cfg80211_scan_done" [drivers/net/wireless/rndis_wlan.ko] undefined!
 > 
-> On Tue, 2009-04-21 at 18:32 -0700, Stephen Rothwell wrote:
-> > Hi John,
-> > 
-> > Today's linux-next merge of the wireless tree got a conflict in
-> > net/mac80211/pm.c between commit 7d42081a271bd8a82f2100524085c4f029e47717
-> > ("mac80211: do not print WARN if config interface") from the
-> > wireless-current tree and commit aa3590f6a8ebc24d38698ffb81fb51e97f03c4f4
-> > ("mac80211: add hardware restart function") from the wireless tree.
-> > 
-> > The latter moved the code (to net/mac80211/util.c:ieee80211_reconfig)
-> > that the former modified.  I just used the version in the wireless tree
-> > and will leave you to fix this up when the merge happens.
+>> # CONFIG_CFG80211 is not set
 > 
-> I have no idea how merges work upstream but there is a version of the
-> "mac80211: do not print WARN if config interface" patch [1] that applies
-> to net/mac80211/util.c:ieee80211_reconfig. Perhaps it will be easiest to
-> apply that patch after "mac80211: add hardware restart function"?
+> No doubt this is the problem...
 
-That doesn't really resolve the conflict.  It is, however, helpful
-as a reference to me for how to resolve it.
+Yes, that builds.  Thanks.
 
-Thanks,
+Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-John
+> ---
+> 
+> From bce85c97aeeb9c34098951e9ef3de425c6830b63 Mon Sep 17 00:00:00 2001
+> From: John W. Linville <linville@tuxdriver.com>
+> Date: Wed, 22 Apr 2009 13:27:08 -0400
+> Subject: [PATCH] rndis_wlan: select CFG80211 in Kconfig
+> 
+> Signed-off-by: John W. Linville <linville@tuxdriver.com>
+> ---
+>  drivers/net/wireless/Kconfig |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/Kconfig b/drivers/net/wireless/Kconfig
+> index 11c2481..2d8434f 100644
+> --- a/drivers/net/wireless/Kconfig
+> +++ b/drivers/net/wireless/Kconfig
+> @@ -337,6 +337,7 @@ config USB_NET_RNDIS_WLAN
+>  	select USB_NET_CDCETHER
+>  	select USB_NET_RNDIS_HOST
+>  	select WIRELESS_EXT
+> +	select CFG80211
+>  	---help---
+>  	  This is a driver for wireless RNDIS devices.
+>  	  These are USB based adapters found in devices such as:
+
+
 -- 
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
+~Randy
