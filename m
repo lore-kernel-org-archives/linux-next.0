@@ -1,59 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ttydev tree with the usb.current
- tree
-Date: Wed, 22 Apr 2009 13:38:21 +1000
-Message-ID: <20090422133821.804bf9d6.sfr@canb.auug.org.au>
+From: Paul Mackerras <paulus@samba.org>
+Subject: Re: [BUILD FAILURE 05/12] Next April 21 : PPC64 randconfig [drivers/macintosh/mediabay.o]
+Date: Wed, 22 Apr 2009 13:59:27 +1000
+Message-ID: <18926.38431.910952.630575@cargo.ozlabs.ibm.com>
+References: <1240339875.9110.137.camel@subratamodak.linux.ibm.com>
+	<200904212104.14665.bzolnier@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__22_Apr_2009_13_38_21_+1000_NYwbvQBsqAcGTDWl"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47885 "EHLO smtps.tip.net.au"
+Received: from bilbo.ozlabs.org ([203.10.76.25]:50191 "EHLO bilbo.ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752300AbZDVDia (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Apr 2009 23:38:30 -0400
+	id S1752665AbZDVD7i (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Apr 2009 23:59:38 -0400
+In-Reply-To: <200904212104.14665.bzolnier@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: linux-next@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Greg KH <greg@kroah.com>
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: subrata@linux.vnet.ibm.com, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Stefan Bader <stefan.bader@canonical.com>, Marcelo Tosatti <marcelo@conectiva.com.br>, Adrian Bunk <bunk@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, sachinp <sachinp@linux.vnet.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>
 
---Signature=_Wed__22_Apr_2009_13_38_21_+1000_NYwbvQBsqAcGTDWl
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Bartlomiej Zolnierkiewicz writes:
 
-Hi Alan,
+> mediabay shouldn't include <linux/ide.h> unconditionally so
+> remove the superfluous include from mediabay.c (<asm/mediabay.h>
+> will pull <linux/ide.h> in for CONFIG_BLK_DEV_IDE_PMAC=y).
 
-Today's linux-next merge of the ttydev tree got a conflict in
-drivers/usb/serial/usb-serial.c between commit
-098aa19445c918bb8430f9b5cb840b546de570f2 ("USB: serial: fix lifetime and
-locking problems") from the usb.current tree and commit
-1156df675ae541b21dc343912413f201f87a3909 ("tty-usb-use-port") from the
-ttydev tree.
+I don't like relying on second-hand imports like that.  I prefer the
+previous patch, that made mediabay depend on CONFIG_BLOCK.
 
-OK, I can't figure this out easily, so I have used the ttydev version of
-the file - effectively reverting the usb.current change.
+BTW, if including <linux/ide.h> causes an error when CONFIG_BLOCK=n,
+then there is a bug in <linux/ide.h>, IMO.
 
-Alan (Cox), when the usb.current change goes into Linus' tree (it is
-destined for 2.6.30), you will have to fix the conflict.  You could do
-this now by adding that patch to your series and fixing the mess ... Alan
-(Stern) you may want to help with this.  I can cope with having the same
-patch on both sides of the merge (I won't even complain :-)).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__22_Apr_2009_13_38_21_+1000_NYwbvQBsqAcGTDWl
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAknukS0ACgkQjjKRsyhoI8wFdQCgtvpxXmGZ3bjMxbBAQ89nhgcD
-HZgAoK4eq8clEGNtdY5WdNGuU3aMhD8Y
-=zRRn
------END PGP SIGNATURE-----
-
---Signature=_Wed__22_Apr_2009_13_38_21_+1000_NYwbvQBsqAcGTDWl--
+Paul.
