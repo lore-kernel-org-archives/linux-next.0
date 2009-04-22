@@ -1,74 +1,41 @@
-From: Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>
-Subject: Re: [BUILD FAILURE 09/12] Next April 21 : PPC64 randconfig
- [drivers/staging/comedi/drivers.o]
-Date: Wed, 22 Apr 2009 09:43:31 +0200 (CEST)
-Message-ID: <alpine.LRH.2.00.0904220942430.6852@vixen.sonytel.be>
-References: <1240340029.9110.142.camel@subratamodak.linux.ibm.com> <1240358910.6571.6.camel@localhost>
+From: Matthias Kaehlcke <matthias@kaehlcke.net>
+Subject: Re: linux-next: Tree for April 22 [BUG] ep93xx_keypad_open:
+	undefined reference to `clk_set_rate'
+Date: Wed, 22 Apr 2009 10:41:04 +0200
+Message-ID: <20090422084104.GB20105@traven>
+References: <20090422154247.dbffd285.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from vervifontaine.sonytel.be ([80.88.33.193]:40296 "EHLO
-	pophost.sonytel.be" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751512AbZDVHnf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Apr 2009 03:43:35 -0400
-In-Reply-To: <1240358910.6571.6.camel@localhost>
+Received: from mailbox-us-s-12.mailhostingserver.com ([75.125.101.9]:52386
+	"EHLO mailbox-us-s-12.mailhostingserver.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751512AbZDVIlI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 Apr 2009 04:41:08 -0400
+Content-Disposition: inline
+In-Reply-To: <20090422154247.dbffd285.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Ellerman <michael@ellerman.id.au>
-Cc: subrata@linux.vnet.ibm.com, sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, "David A. Schleef" <ds@schleef.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, linux-next <linux-next@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>
+To: H Hartley Sweeten <hartleys@visionengravers.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.arm.linux.org.uk
 
-On Wed, 22 Apr 2009, Michael Ellerman wrote:
-> On Wed, 2009-04-22 at 00:23 +0530, Subrata Modak wrote:
-> > Reported this error on 14th April:
-> > http://lkml.org/lkml/2009/4/14/488,
-> >=20
-> > CC [M]  drivers/staging/comedi/drivers.o=20
-> > drivers/staging/comedi/drivers.c: In function =E2=80=98comedi_buf_a=
-lloc=E2=80=99:
-> > drivers/staging/comedi/drivers.c:496: error: =E2=80=98PAGE_KERNEL_N=
-OCACHE=E2=80=99
-> > undeclared (first use in this function)
-> > drivers/staging/comedi/drivers.c:496: error: (Each undeclared ident=
-ifier
-> > is reported only once
-> > drivers/staging/comedi/drivers.c:496: error: for each function it
-> > appears in.)
-> > make[3]: *** [drivers/staging/comedi/drivers.o] Error 1
-> > make[2]: *** [drivers/staging/comedi] Error 2
-> > make[1]: *** [drivers/staging] Error 2
-> > make: *** [drivers] Error 2
->=20
-> Subrata, unless someone says otherwise, please do not send randconfig
-> failures for drivers in staging - those drivers have bigger problems
-> than randconfig failures.
+hi,
 
-Indeed, in particular this one http://lkml.org/lkml/2009/3/9/349.
+the driver for the Cirrus Logic EP93xx keypad matrix relies on the
+function clk_set_rate() which (still) isn't defined for ep93xx:
 
-> To avoid them, do this:
->=20
-> # make randconfig
-> # sed -i -e 's/^\(CONFIG_STAGING\)=3Dy/# \1 is not set/' .config
-                                       ^^^^^^^^^^^^^^^
-Recently I discovered that `n' actually works, too!
+drivers/built-in.o: In function `ep93xx_keypad_open':
+hid-quirks.c:(.text+0x61aa0): undefined reference to `clk_set_rate'
 
-> # make oldconfig
+-- 
+Matthias Kaehlcke
+Embedded Linux Engineer
+Barcelona
 
-With kind regards,
-
-Geert Uytterhoeven
-Software Architect
-Techsoft Centre
-
-Technology and Software Centre Europe
-The Corporate Village =C2=B7 Da Vincilaan 7-D1 =C2=B7 B-1935 Zaventem =C2=
-=B7 Belgium
-
-Phone:    +32 (0)2 700 8453
-=46ax:      +32 (0)2 700 8622
-E-mail:   Geert.Uytterhoeven@sonycom.com
-Internet: http://www.sony-europe.com/
-
-A division of Sony Europe (Belgium) N.V.
-VAT BE 0413.825.160 =C2=B7 RPR Brussels
-=46ortis =C2=B7 BIC GEBABEBB =C2=B7 IBAN BE41293037680010
+              You can't separate peace from freedom because no
+               one can be at peace unless he has his freedom
+                              (Malcolm X)
+                                                                 .''`.
+    using free software / Debian GNU/Linux | http://debian.org  : :'  :
+                                                                `. `'`
+gpg --keyserver pgp.mit.edu --recv-keys 47D8E5D4                  `-
