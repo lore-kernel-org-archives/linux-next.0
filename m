@@ -1,56 +1,59 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [BUILD FAILURE 11/12] Next April 21 : PPC64 randconfig
-	[drivers/usb/host/ohci-hcd.o]
-Date: Tue, 21 Apr 2009 20:00:37 -0700
-Message-ID: <49EE8855.1080306@oracle.com>
-References: <1240340081.9110.144.camel@subratamodak.linux.ibm.com>
-	<5A202317-5104-4784-845B-B8C46E0A3C48@kernel.crashing.org>
-	<49EE4341.50701@oracle.com>
-	<200904211919.38104.david-b@pacbell.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ttydev tree with the usb.current
+ tree
+Date: Wed, 22 Apr 2009 13:38:21 +1000
+Message-ID: <20090422133821.804bf9d6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org>
-In-Reply-To: <200904211919.38104.david-b@pacbell.net>
-List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
-List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
-List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
-To: David Brownell <david-b@pacbell.net>
-Cc: sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, samr <sam@ravnborg.org>, linux-usb@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, linux-next <linux-next@vger.kernel.org>, subrata@linux.vnet.ibm.com, Alexander Beregalov <a.beregalov@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__22_Apr_2009_13_38_21_+1000_NYwbvQBsqAcGTDWl"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:47885 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752300AbZDVDia (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Apr 2009 23:38:30 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: linux-next@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Greg KH <greg@kroah.com>
 
-David Brownell wrote:
-> On Tuesday 21 April 2009, Randy Dunlap wrote:
->>> Since its feasible to say 'n' to both we get the compile error.  How do
->>> we enforce having at least one set?
->> Looks like using "choice" without "optional" would do it.
->> See Documentation/kbuild/kconfig-language.txt and various examples
->> in Kconfig* files.
-> 
-> That won't quite work ... "at least one" includes "two"
-> (i.e. a PCI card in little-endian, a native controller
-> in big-endian).  Real-world systems need such configs,
-> or so I'm told, and that's why their supported.
+--Signature=_Wed__22_Apr_2009_13_38_21_+1000_NYwbvQBsqAcGTDWl
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, I see.
+Hi Alan,
 
-> Is there maybe a way to force Kconfig to just reject
-> such illegal configs -- neither option set -- rather
-> than trying some how to fix it?
+Today's linux-next merge of the ttydev tree got a conflict in
+drivers/usb/serial/usb-serial.c between commit
+098aa19445c918bb8430f9b5cb840b546de570f2 ("USB: serial: fix lifetime and
+locking problems") from the usb.current tree and commit
+1156df675ae541b21dc343912413f201f87a3909 ("tty-usb-use-port") from the
+ttydev tree.
 
-Not that I know of.  cc-ing Sam.
+OK, I can't figure this out easily, so I have used the ttydev version of
+the file - effectively reverting the usb.current change.
 
-> Or maybe ... if neither one is set, have the header
-> force both on, and issue a warning.
+Alan (Cox), when the usb.current change goes into Linus' tree (it is
+destined for 2.6.30), you will have to fix the conflict.  You could do
+this now by adding that patch to your series and fixing the mess ... Alan
+(Stern) you may want to help with this.  I can cope with having the same
+patch on both sides of the merge (I won't even complain :-)).
 
-That should be doable.  We'd prefer to catch it via Kconfig,
-but that doesn't look promising just now.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
--- 
-~Randy
+--Signature=_Wed__22_Apr_2009_13_38_21_+1000_NYwbvQBsqAcGTDWl
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknukS0ACgkQjjKRsyhoI8wFdQCgtvpxXmGZ3bjMxbBAQ89nhgcD
+HZgAoK4eq8clEGNtdY5WdNGuU3aMhD8Y
+=zRRn
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__22_Apr_2009_13_38_21_+1000_NYwbvQBsqAcGTDWl--
