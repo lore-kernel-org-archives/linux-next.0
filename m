@@ -1,52 +1,58 @@
-From: Matthias Kaehlcke <matthias@kaehlcke.net>
-Subject: Re: linux-next: Tree for April 22: kmemleak: unreferenced object
-Date: Wed, 22 Apr 2009 14:49:32 +0200
-Message-ID: <20090422124932.GA26289@traven>
-References: <20090422154247.dbffd285.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: wireless tree build failure
+Date: Wed, 22 Apr 2009 23:03:33 +1000
+Message-ID: <20090422230333.e1f7d3db.sfr@canb.auug.org.au>
+References: <20090422115738.524272c8.sfr@canb.auug.org.au>
+	<1240390746.17388.64.camel@johannes.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__22_Apr_2009_23_03_33_+1000_0/3N+_Z/r_76nbFQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailbox-us-s-12.mailhostingserver.com ([75.125.101.9]:54089
-	"EHLO mailbox-us-s-12.mailhostingserver.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751764AbZDVMth (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 Apr 2009 08:49:37 -0400
-Content-Disposition: inline
-In-Reply-To: <20090422154247.dbffd285.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:33163 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752087AbZDVNDp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 Apr 2009 09:03:45 -0400
+In-Reply-To: <1240390746.17388.64.camel@johannes.local>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: catalin.marinas@arm.com, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, Matthew Garrett <mjg59@srcf.ucam.org>, Len Brown <lenb@kernel.org>
 
-shortly after booting next-20090422 on an ep9301, kmemleak complains
-about an unreferenced object:
+--Signature=_Wed__22_Apr_2009_23_03_33_+1000_0/3N+_Z/r_76nbFQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-kmemleak: unreferenced object 0xc5408610 (size 5):
-  comm "swapper", pid 0, jiffies 4294937323
-  backtrace:
-    [<c00267e0>] save_stack_trace+0x24/0x28
-    [<c00a3db4>] kmemleak_alloc+0x144/0x2cc
-    [<c00a211c>] __kmalloc_node+0x1bc/0x1d4
-    [<c008d730>] kstrdup+0x3c/0x54
-    [<c00bedec>] alloc_vfsmnt+0x9c/0x148
-    [<c00a7c10>] vfs_kern_mount+0x34/0xa8
-    [<c00a7ca4>] kern_mount_data+0x20/0x24
-    [<c0013428>] bdev_cache_init+0x54/0xa0
-    [<c0012c74>] vfs_caches_init+0x104/0x140
-    [<c0008980>] start_kernel+0x244/0x2b8
-    [<00008034>] 0x8034
-    [<ffffffff>] 0xffffffff
+Hi Johannes,
 
--- 
-Matthias Kaehlcke
-Embedded Linux Engineer
-Barcelona
+On Wed, 22 Apr 2009 10:59:06 +0200 Johannes Berg <johannes@sipsolutions.net=
+> wrote:
+>
+> Fun. Another rfkill problem. It'll get worse -- I have a complete rfkill
+> rewrite in the pipeline. For this part it's easy, just remove
+> user_claim_unsupported use from the driver.
+>=20
+> Any suggestions on how to handle the other merge problems?
 
-      In itself, homosexuality is as limiting as heterosexuality: the
-     ideal should be to be capable of loving a woman or a man; either,
-      a human being, without  feeling fear, restraint, or obligation
-                          (Simone de Beauvoir)
-                                                                 .''`.
-    using free software / Debian GNU/Linux | http://debian.org  : :'  :
-                                                                `. `'`
-gpg --keyserver pgp.mit.edu --recv-keys 47D8E5D4                  `-
+Well, the best way (and I know this is simplistic and maybe difficult) is
+to introduce the new rewrite alongside the old code and then slowly move
+the clients of the API over.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__22_Apr_2009_23_03_33_+1000_0/3N+_Z/r_76nbFQ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknvFaUACgkQjjKRsyhoI8w9UACdEVZSVJtThVmYfQLG/vIiNIy4
+VEEAnjA/ogm8vA/p4j5dHGMiVZA2qp5n
+=IdKX
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__22_Apr_2009_23_03_33_+1000_0/3N+_Z/r_76nbFQ--
