@@ -1,33 +1,52 @@
-From: Paul Mackerras <paulus@samba.org>
-Subject: Re: [BUILD FAILURE 05/12] Next April 21 : PPC64 randconfig [drivers/macintosh/mediabay.o]
-Date: Wed, 22 Apr 2009 13:59:27 +1000
-Message-ID: <18926.38431.910952.630575@cargo.ozlabs.ibm.com>
-References: <1240339875.9110.137.camel@subratamodak.linux.ibm.com>
-	<200904212104.14665.bzolnier@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: wireless tree build warning
+Date: Wed, 22 Apr 2009 14:45:37 +1000
+Message-ID: <20090422144537.06937b16.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__22_Apr_2009_14_45_37_+1000_AvmtiDNB89TDX=ut"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bilbo.ozlabs.org ([203.10.76.25]:50191 "EHLO bilbo.ozlabs.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43380 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752665AbZDVD7i (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Apr 2009 23:59:38 -0400
-In-Reply-To: <200904212104.14665.bzolnier@gmail.com>
+	id S1750890AbZDVEps (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 Apr 2009 00:45:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Cc: subrata@linux.vnet.ibm.com, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Stefan Bader <stefan.bader@canonical.com>, Marcelo Tosatti <marcelo@conectiva.com.br>, Adrian Bunk <bunk@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, sachinp <sachinp@linux.vnet.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>
 
-Bartlomiej Zolnierkiewicz writes:
+--Signature=_Wed__22_Apr_2009_14_45_37_+1000_AvmtiDNB89TDX=ut
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> mediabay shouldn't include <linux/ide.h> unconditionally so
-> remove the superfluous include from mediabay.c (<asm/mediabay.h>
-> will pull <linux/ide.h> in for CONFIG_BLK_DEV_IDE_PMAC=y).
+Hi John,
 
-I don't like relying on second-hand imports like that.  I prefer the
-previous patch, that made mediabay depend on CONFIG_BLOCK.
+Today's linux-next build (i386 defconfig) produced these warnings:
 
-BTW, if including <linux/ide.h> causes an error when CONFIG_BLOCK=n,
-then there is a bug in <linux/ide.h>, IMO.
+net/mac80211/mlme.c:1771: warning: left shift count >=3D width of type
+net/mac80211/mlme.c:1772: warning: left shift count >=3D width of type
+net/mac80211/mlme.c:1773: warning: left shift count >=3D width of type
+net/mac80211/mlme.c:1774: warning: left shift count >=3D width of type
+net/mac80211/mlme.c:1775: warning: left shift count >=3D width of type
 
-Paul.
+Caused by commit cf4473dfd0e7dbe173be994fe226f88c48a02dd0 ("mac80211:
+implement beacon filtering in software").
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__22_Apr_2009_14_45_37_+1000_AvmtiDNB89TDX=ut
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknuoPEACgkQjjKRsyhoI8wa6QCfUpVxf59FEwh94OeojUGW72fF
+7PUAoInEiXYmUCsnQ6PsYdv7pVCxBhWE
+=ZgyF
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__22_Apr_2009_14_45_37_+1000_AvmtiDNB89TDX=ut--
