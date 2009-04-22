@@ -1,47 +1,57 @@
-From: Subrata Modak <subrata@linux.vnet.ibm.com>
-Subject: Re: [BUILD FAILURE 04/04] Next April 21 : x86_64 randconfig
-	[drivers/built-in.o]
-Date: Wed, 22 Apr 2009 19:40:18 +0530
-Message-ID: <1240409418.26824.0.camel@subratamodak.linux.ibm.com>
-References: <1240332728.9110.40.camel@subratamodak.linux.ibm.com>
-	 <20090421140847.509f8c59@pedra.chehab.org>
-Reply-To: subrata@linux.vnet.ibm.com
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [BUILD FAILURE 09/12] Next April 21 : PPC64 randconfig [drivers/staging/comedi/drivers.o]
+Date: Wed, 22 Apr 2009 08:10:35 -0700
+Message-ID: <49EF336B.5070807@oracle.com>
+References: <1240340029.9110.142.camel@subratamodak.linux.ibm.com> <1240358910.6571.6.camel@localhost> <alpine.LRH.2.00.0904220942430.6852@vixen.sonytel.be>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e8.ny.us.ibm.com ([32.97.182.138]:43245 "EHLO e8.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750902AbZDVOKh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 Apr 2009 10:10:37 -0400
-In-Reply-To: <20090421140847.509f8c59@pedra.chehab.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, srinivasa.deevi@conexant.com, linux-media@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, sachinp <sachinp@linux.vnet.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755626AbZDVPNZ@vger.kernel.org>
+In-Reply-To: <alpine.LRH.2.00.0904220942430.6852@vixen.sonytel.be>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>
+Cc: Michael Ellerman <michael@ellerman.id.au>, subrata@linux.vnet.ibm.com, sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, "David A. Schleef" <ds@schleef.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, linux-next <linux-next@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 2009-04-21 at 14:08 -0300, Mauro Carvalho Chehab wrote:
-> On Tue, 21 Apr 2009 22:22:08 +0530
-> Subrata Modak <subrata@linux.vnet.ibm.com> wrote:
-> 
-> > Observed the following build error. Reported this on 8th and 14th April
-> > Next build errors:
-> > 
-> > http://lkml.org/lkml/2009/4/14/473,
-> > 
-> > Patch was already provided by Randy on 7th April. This is still to hit
-> > the tree:
-> > http://lkml.org/lkml/2009/4/7/400,
-> > 
-> 
-> Probably Stephen picked from my tree before I merge this patch on my linux-next tree:
-> 
-> http://git.kernel.org/?p=linux/kernel/git/mchehab/linux-next.git;a=commit;h=c4f0ad35d1df1fed5fae477f806aa8daf5545520
-> 
-> This error should disappear on the today's build.
+Geert Uytterhoeven wrote:
+> On Wed, 22 Apr 2009, Michael Ellerman wrote:
+>> On Wed, 2009-04-22 at 00:23 +0530, Subrata Modak wrote:
+>>> Reported this error on 14th April:
+>>> http://lkml.org/lkml/2009/4/14/488,
+>>>
+>>> CC [M]  drivers/staging/comedi/drivers.o=20
+>>> drivers/staging/comedi/drivers.c: In function =91comedi_buf_alloc=92=
+:
+>>> drivers/staging/comedi/drivers.c:496: error: =91PAGE_KERNEL_NOCACHE=
+=92
+>>> undeclared (first use in this function)
+>>> drivers/staging/comedi/drivers.c:496: error: (Each undeclared ident=
+ifier
+>>> is reported only once
+>>> drivers/staging/comedi/drivers.c:496: error: for each function it
+>>> appears in.)
+>>> make[3]: *** [drivers/staging/comedi/drivers.o] Error 1
+>>> make[2]: *** [drivers/staging/comedi] Error 2
+>>> make[1]: *** [drivers/staging] Error 2
+>>> make: *** [drivers] Error 2
+>> Subrata, unless someone says otherwise, please do not send randconfi=
+g
+>> failures for drivers in staging - those drivers have bigger problems
+>> than randconfig failures.
+>=20
+> Indeed, in particular this one http://lkml.org/lkml/2009/3/9/349.
+>=20
+>> To avoid them, do this:
+>>
+>> # make randconfig
+>> # sed -i -e 's/^\(CONFIG_STAGING\)=3Dy/# \1 is not set/' .config
+>                                        ^^^^^^^^^^^^^^^
+> Recently I discovered that `n' actually works, too!
 
-Great. Thanks.
+Yes, I've been using =3Dn for quite awhile to disable a config symbol.
 
---Subrata
+>> # make oldconfig
 
-> 
+
+--=20
+~Randy
