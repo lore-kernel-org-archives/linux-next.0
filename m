@@ -1,32 +1,47 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-Subject: Re: linux-next: wireless tree build failure
-Date: Wed, 22 Apr 2009 14:36:01 +0100
-Message-ID: <20090422133601.GA25039@srcf.ucam.org>
-References: <20090422115738.524272c8.sfr@canb.auug.org.au> <1240390746.17388.64.camel@johannes.local> <20090422230333.e1f7d3db.sfr@canb.auug.org.au> <20090422130612.GB3288@tuxdriver.com> <1240407191.21978.17.camel@johannes.local>
+From: Subrata Modak <subrata@linux.vnet.ibm.com>
+Subject: Re: [BUILD FAILURE 04/04] Next April 21 : x86_64 randconfig
+	[drivers/built-in.o]
+Date: Wed, 22 Apr 2009 19:40:18 +0530
+Message-ID: <1240409418.26824.0.camel@subratamodak.linux.ibm.com>
+References: <1240332728.9110.40.camel@subratamodak.linux.ibm.com>
+	 <20090421140847.509f8c59@pedra.chehab.org>
+Reply-To: subrata@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cavan.codon.org.uk ([93.93.128.6]:53054 "EHLO
-	vavatch.codon.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752551AbZDVNgV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Apr 2009 09:36:21 -0400
-Content-Disposition: inline
-In-Reply-To: <1240407191.21978.17.camel@johannes.local>
+Received: from e8.ny.us.ibm.com ([32.97.182.138]:43245 "EHLO e8.ny.us.ibm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750902AbZDVOKh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 Apr 2009 10:10:37 -0400
+In-Reply-To: <20090421140847.509f8c59@pedra.chehab.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "John W. Linville" <linville@tuxdriver.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Len Brown <lenb@kernel.org>
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, srinivasa.deevi@conexant.com, linux-media@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, sachinp <sachinp@linux.vnet.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>
 
-On Wed, Apr 22, 2009 at 03:33:11PM +0200, Johannes Berg wrote:
-> But that's not the interesting part -- the thing is the rfkill rewrite.
-> I don't know how to handle that w/o breaking all users. I had hoped to
-> finish this very soon to be ready early in .31, but I'm still waiting
-> for Thinkpad and Toshiba conversions (and I forgot who wanted to look at
-> Toshiba), but if new users are being added in other trees then that's a
-> problem.
+On Tue, 2009-04-21 at 14:08 -0300, Mauro Carvalho Chehab wrote:
+> On Tue, 21 Apr 2009 22:22:08 +0530
+> Subrata Modak <subrata@linux.vnet.ibm.com> wrote:
+> 
+> > Observed the following build error. Reported this on 8th and 14th April
+> > Next build errors:
+> > 
+> > http://lkml.org/lkml/2009/4/14/473,
+> > 
+> > Patch was already provided by Randy on 7th April. This is still to hit
+> > the tree:
+> > http://lkml.org/lkml/2009/4/7/400,
+> > 
+> 
+> Probably Stephen picked from my tree before I merge this patch on my linux-next tree:
+> 
+> http://git.kernel.org/?p=linux/kernel/git/mchehab/linux-next.git;a=commit;h=c4f0ad35d1df1fed5fae477f806aa8daf5545520
+> 
+> This error should disappear on the today's build.
 
-oqo-wmi can be ignored for the moment - Len, can you drop it from your 
-tree for now? I'll clean that bit up as well.
+Great. Thanks.
 
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
+--Subrata
+
+> 
