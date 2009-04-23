@@ -1,54 +1,78 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: linux-next: Tree for April 22: kmemleak: unreferenced object
-Date: Thu, 23 Apr 2009 12:01:29 +0100
-Message-ID: <1240484489.20564.32.camel@pc1117.cambridge.arm.com>
-References: <20090422154247.dbffd285.sfr@canb.auug.org.au>
-	 <20090422124932.GA26289@traven>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: upstream tree build warnings
+Date: Thu, 23 Apr 2009 21:55:33 +1000
+Message-ID: <20090423215533.157df0e0.sfr@canb.auug.org.au>
+References: <20090423163847.200f227e.sfr@canb.auug.org.au>
+	<20090423.002403.74400050.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__23_Apr_2009_21_55_33_+1000_fOWTxQK7z=vDnSjf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([193.131.176.58]:34881 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751445AbZDWLCn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Apr 2009 07:02:43 -0400
-In-Reply-To: <20090422124932.GA26289@traven>
+Received: from chilli.pcug.org.au ([203.10.76.44]:54123 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751948AbZDWLzn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 23 Apr 2009 07:55:43 -0400
+In-Reply-To: <20090423.002403.74400050.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matthias Kaehlcke <matthias@kaehlcke.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, alex.williamson@hp.com, rusty@rustcorp.com.au, linux-kernel@vger.kernel.org
 
-On Wed, 2009-04-22 at 14:49 +0200, Matthias Kaehlcke wrote:
-> shortly after booting next-20090422 on an ep9301, kmemleak complains
-> about an unreferenced object:
-> 
-> kmemleak: unreferenced object 0xc5408610 (size 5):
->   comm "swapper", pid 0, jiffies 4294937323
->   backtrace:
->     [<c00267e0>] save_stack_trace+0x24/0x28
->     [<c00a3db4>] kmemleak_alloc+0x144/0x2cc
->     [<c00a211c>] __kmalloc_node+0x1bc/0x1d4
->     [<c008d730>] kstrdup+0x3c/0x54
->     [<c00bedec>] alloc_vfsmnt+0x9c/0x148
->     [<c00a7c10>] vfs_kern_mount+0x34/0xa8
->     [<c00a7ca4>] kern_mount_data+0x20/0x24
->     [<c0013428>] bdev_cache_init+0x54/0xa0
->     [<c0012c74>] vfs_caches_init+0x104/0x140
->     [<c0008980>] start_kernel+0x244/0x2b8
->     [<00008034>] 0x8034
->     [<ffffffff>] 0xffffffff
+--Signature=_Thu__23_Apr_2009_21_55_33_+1000_fOWTxQK7z=vDnSjf
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That's a known leak happening in bdev_cache_init() - the bd_mnt pointer
-is never freed (and people argued that we shouldn't be bothered with
-freeing it). I marked it with kmemleak_ignore() but forgot about the
-block allocated by kstrdup() in alloc_vfsmnt() and referenced from the
-vfsmount structure.
+Hi Dave,
 
-I'll change kmemleak_ignore() to kmemleak_not_leak() so that the
-vfsmount structure is scanned for other referenced objects.
+On Thu, 23 Apr 2009 00:24:03 -0700 (PDT) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 23 Apr 2009 16:38:47 +1000
+>=20
+> > Today's linux-next build (powerpc allyesconfig gcc4.4.0) produced these
+> > warnings:
+> >=20
+> > drivers/net/virtio_net.c: In function 'virnet_vlan_rx_add_vid':
+> > include/linux/scatterlist.h:57: warning: 'sg' is used uninitialized in =
+this function
+> > drivers/net/virtio_net.c:746: note: 'sg' was declared here
+> > drivers/net/virtio_net.c: In function 'virnet_vlan_rx_kill_vid':
+> > include/linux/scatterlist.h:57: warning: 'sg' is used uninitialized in =
+this function
+> > drivers/net/virtio_net.c:758: note: 'sg' was declared here
+> >=20
+> > in each case, sg is uninitialised when its address is passed to
+> > sg_set_buf() which passes it to gs_set_page() which passes it to
+> > sg_assign_page() which dereferences it (to use ->page_link).
+>=20
+> I wonder if this is a side effect of changes that went in via Rusty's
+> tree?  I don't remember touching this driver in a while.
 
-Thanks.
+The callers came in throught commit
+0bde95690d65653e420d04856c5d5783155c747c ("virtio_net: Add support for
+VLAN filtering in the hypervisor") which I assume came in throught the
+net tree (it has you SOB on it). Committed Feb 5, 2009, went into Linus'
+tree before 2.6.30-rc1.
 
--- 
-Catalin
+scatterlist.h hasn't changed since July, 2008.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__23_Apr_2009_21_55_33_+1000_fOWTxQK7z=vDnSjf
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknwVzUACgkQjjKRsyhoI8yLbACfYcVhwNwyGGk3oi8Ul8uu8Wg+
+RH8AnRPTKP5Jb3zM/L0rQ/S+neOXZwWn
+=Rauq
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__23_Apr_2009_21_55_33_+1000_fOWTxQK7z=vDnSjf--
