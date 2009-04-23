@@ -1,73 +1,57 @@
-From: Josh Boyer <jwboyer@linux.vnet.ibm.com>
-Subject: Re: linux-next: upstream tree build failure
-Date: Thu, 23 Apr 2009 06:33:36 -0400
-Message-ID: <20090423103336.GA3825@zod.rchland.ibm.com>
-References: <20090423160656.fac84e3f.sfr@canb.auug.org.au>
+From: Paul Mundt <lethal@linux-sh.org>
+Subject: Re: [PATCH -next] lib: Move find_last_bit.o to obj-y to enable use by modules.
+Date: Thu, 23 Apr 2009 19:29:30 +0900
+Message-ID: <20090423102930.GA24434@linux-sh.org>
+References: <20090416030704.GH16961@linux-sh.org> <49E6E816.8010709@panasas.com> <20090423065006.GB21733@linux-sh.org> <49F03F26.4060103@panasas.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e39.co.us.ibm.com ([32.97.110.160]:45476 "EHLO
-	e39.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757044AbZDWKel (ORCPT
+Received: from 124x34x33x190.ap124.ftth.ucom.ne.jp ([124.34.33.190]:46252 "EHLO
+	master.linux-sh.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757000AbZDWKel (ORCPT
 	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Apr 2009 06:34:41 -0400
 Content-Disposition: inline
-In-Reply-To: <20090423160656.fac84e3f.sfr@canb.auug.org.au>
+In-Reply-To: <49F03F26.4060103@panasas.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Benny Halevy <bhalevy@panasas.com>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, Ingo Molnar <mingo@elte.hu>, Trond Myklebust <Trond.Myklebust@netapp.com>, linux-next@vger.kernel.org, Andy Adamson <andros@netapp.com>, Fredric Isaman <iisaman@citi.umich.edu>, Stephen Rothwell <sfr@canb.auug.org.au>, Alexander Beregalov <a.beregalov@gmail.com>, Subrata Modak <subrata@linux.vnet.ibm.com>, sachinp <sachinp@linux.vnet.ibm.com>
 
-On Thu, Apr 23, 2009 at 04:06:56PM +1000, Stephen Rothwell wrote:
->Hi all,
->
->[I am now using gcc version 4.4.0 ...]
->
->Today's linux-next build (powerpc ppc44x_defconfig) failed like this:
->
->arch/powerpc/mm/tlb_nohash_low.S:206:6: error: #elif with no expression
->
->Previous gcc versions didn't notice this because one of the preceding
->#ifs always evaluated to true.  I have applied the following patch for today.
->
->-- 
->Cheers,
->Stephen Rothwell                    sfr@canb.auug.org.au
->http://www.canb.auug.org.au/~sfr/
->
->From: Stephen Rothwell <sfr@canb.auug.org.au>
->Date: Thu, 23 Apr 2009 16:00:47 +1000
->Subject: [PATCH] powerpc: fix for long standing bug noticed by gcc 4.4.0
->
->Previous gcc versions didn't notice this because one of the preceding
->
->gcc 4.4.0 produced this error:
->
->arch/powerpc/mm/tlb_nohash_low.S:206:6: error: #elif with no expression
->
->Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+On Thu, Apr 23, 2009 at 01:12:54PM +0300, Benny Halevy wrote:
+> On Apr. 23, 2009, 9:50 +0300, Paul Mundt <lethal@linux-sh.org> wrote:
+> > Ok, so we have two different trivial patches for fixing the same thing,
+> > and a week later it is still broken.
+> > 
+> > I realize it is a trivial patch, but it does break builds. If folks
+> > aren't going to take these sorts of things more seriously, then their
+> > tree should be dropped after a grace period (say 2 days or so).
+> > 
+> > Beyond that, it doesn't seem like -next has any sort of coherent policy
+> > for dealing with trivial patches. If the emphasis is on the tree that
+> > introduced the regression to deal with it, then trees need to be
+> > aggressively dropped when these things go unfixed.
+> > 
+> > Having builds broken for a week for an issue that has been spotted and
+> > fixed by several people is simply unacceptable.
+> 
+> Paul, that's a valid point but I don't set these polices.
+> Trond suggested to just commit this to 2.6.30
+> and I asked Rusty's Ack here:
+> http://lkml.org/lkml/2009/4/21/489
+> 
+> Like I said there, I'm not sure who to send this patch to.
+> Ingo?
+> 
+I was under the impression that a tree that caused a build regression
+would be dropped until it had it sorted out, but that seems to be more
+the exception than the rule.
 
-Your changelog got truncated in the first sentence.  No big deal.
+-next is good at finding bugs in build configurations folks haven't
+considered, which should serve as a pretty good platform for getting
+those types of fixes merged quickly, whether it be in to the tree that
+caused the regression or -next directly.
 
-I have a gcc 4.4.0 system as well.  I'll try a bunch of various builds to see
-if it catches anything else.  This fix looks good to me in the meantime.
-
-Acked-by: Josh Boyer <jwboyer@linux.vnet.ibm.com>
-
-josh
-
->---
-> arch/powerpc/mm/tlb_nohash_low.S |    2 +-
-> 1 files changed, 1 insertions(+), 1 deletions(-)
->
->diff --git a/arch/powerpc/mm/tlb_nohash_low.S b/arch/powerpc/mm/tlb_nohash_low.S
->index 45fed36..21e1b9a 100644
->--- a/arch/powerpc/mm/tlb_nohash_low.S
->+++ b/arch/powerpc/mm/tlb_nohash_low.S
->@@ -203,6 +203,6 @@ ALT_MMU_FTR_SECTION_END_IFCLR(MMU_FTR_USE_TLBILX)
-> 	isync
-> 1:	wrtee	r10
-> 	blr
->-#elif
->+#else
-> #error Unsupported processor type !
-> #endif
+Unfortunately it seems like build regressions are more of an afterthought
+than a show stopper. I count at least 3 on the sh builds in the last
+couple weeks that are all averaging a week or longer to unbreak, while
+patches have been available almost immediately.
