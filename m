@@ -1,42 +1,46 @@
-From: Kumar Gala <galak@kernel.crashing.org>
-Subject: Re: [PATCH v2] powerpc: fix for long standing bug noticed by gcc 4.4.0
-Date: Thu, 23 Apr 2009 08:55:12 -0500
-Message-ID: <34687519-FB41-4447-9575-68EB1DC2D3EC@kernel.crashing.org>
-References: <20090423160656.fac84e3f.sfr@canb.auug.org.au> <20090423103336.GA3825@zod.rchland.ibm.com> <20090423225611.d569764c.sfr@canb.auug.org.au>
-Mime-Version: 1.0 (Apple Message framework v930.3)
-Content-Type: text/plain; charset=US-ASCII; format=flowed; delsp=yes
+From: Trond Myklebust <Trond.Myklebust@netapp.com>
+Subject: Re: [PATCH -next] lib: Move find_last_bit.o to obj-y to enable use
+ by modules.
+Date: Thu, 23 Apr 2009 09:59:28 -0400
+Message-ID: <1240495168.11148.12.camel@heimdal.trondhjem.org>
+References: <20090416030704.GH16961@linux-sh.org>
+	 <49E6E816.8010709@panasas.com> <20090423065006.GB21733@linux-sh.org>
+	 <49F03F26.4060103@panasas.com> <20090423102930.GA24434@linux-sh.org>
+	 <1240491589.8240.42.camel@heimdal.trondhjem.org>
+	 <20090423132530.GA26887@linux-sh.org>
+Mime-Version: 1.0
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:54173 "EHLO gate.crashing.org"
+Received: from mx2.netapp.com ([216.240.18.37]:27832 "EHLO mx2.netapp.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751337AbZDWNze (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Apr 2009 09:55:34 -0400
-In-Reply-To: <20090423225611.d569764c.sfr@canb.auug.org.au>
+	id S1753766AbZDWOA7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 23 Apr 2009 10:00:59 -0400
+In-Reply-To: <20090423132530.GA26887@linux-sh.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Josh Boyer <jwboyer@linux.vnet.ibm.com>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Paul Mundt <lethal@linux-sh.org>
+Cc: Benny Halevy <bhalevy@panasas.com>, Rusty Russell <rusty@rustcorp.com.au>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, Andy Adamson <andros@netapp.com>, Fredric Isaman <iisaman@citi.umich.edu>, Stephen Rothwell <sfr@canb.auug.org.au>, Alexander Beregalov <a.beregalov@gmail.com>, Subrata Modak <subrata@linux.vnet.ibm.com>, sachinp <sachinp@linux.vnet.ibm.com>
 
+On Thu, 2009-04-23 at 22:25 +0900, Paul Mundt wrote:
+> > In any case, this patch does not belong in the NFS tree since it touches
+> > generic library code, not NFS code. Benny, if nobody else wants to
+> > shepherd it, then just send it directly to Linus.
+> > 
+> That's a complete cop-out, if there had been no export at all how would
+> you have proceeded? How is this situation any different?
 
-On Apr 23, 2009, at 7:56 AM, Stephen Rothwell wrote:
+Please see Documentation/SubmittingPatches. If we were requesting a new
+kernel feature, I'd go looking for the maintainer and get an ACK or get
+said maintainer to include the patch in their tree.
 
-> Previous gcc versions didn't notice this because one of the preceding
-> #ifs always evaluated to true.
->
-> gcc 4.4.0 produced this error:
->
-> arch/powerpc/mm/tlb_nohash_low.S:206:6: error: #elif with no  
-> expression
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Acked-by: Josh Boyer <jwboyer@linux.vnet.ibm.com>
-> ---
-> arch/powerpc/mm/tlb_nohash_low.S |    2 +-
-> 1 files changed, 1 insertions(+), 1 deletions(-)
->
-> v2: fixed up commit message, added Josh'd Ack.
+As it is, said kernel feature exists, but is broken. The correct thing
+to do is to fix the kernel feature. Sooner, rather than later.
 
-applied to merge.  Picking this up as I'm touching tlb_nohash_low.S w/ 
-another "fix".
+-- 
+Trond Myklebust
+Linux NFS client maintainer
 
-- k
+NetApp
+Trond.Myklebust@netapp.com
+www.netapp.com
