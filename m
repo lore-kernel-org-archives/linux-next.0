@@ -1,58 +1,73 @@
-From: Ken Lewis <kennylewis@gmail.com>
-Subject: Re: April 22 Next : net/rfkill randconfig failure
-Date: Thu, 23 Apr 2009 11:33:13 +0100
-Message-ID: <5a44caba0904230333v88a2a81j3f86cfb46b3ec33c@mail.gmail.com>
-References: <20090422154247.dbffd285.sfr@canb.auug.org.au>
-	 <49EEF38D.8000801@in.ibm.com>
-	 <a4423d670904230254v672798ddtda443e549ef45490@mail.gmail.com>
+From: Josh Boyer <jwboyer@linux.vnet.ibm.com>
+Subject: Re: linux-next: upstream tree build failure
+Date: Thu, 23 Apr 2009 06:33:36 -0400
+Message-ID: <20090423103336.GA3825@zod.rchland.ibm.com>
+References: <20090423160656.fac84e3f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=0016364ee12a3d7e8f046836680d
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <a4423d670904230254v672798ddtda443e549ef45490@mail.gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: Alexander Beregalov <a.beregalov@gmail.com>, Sachin Sant <sachinp@in.ibm.com>, Larry Finger <Larry.Finger@lwfinger.net>, linux-wireless@vger.kernel.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e39.co.us.ibm.com ([32.97.110.160]:45476 "EHLO
+	e39.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757044AbZDWKel (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Apr 2009 06:34:41 -0400
+Content-Disposition: inline
+In-Reply-To: <20090423160656.fac84e3f.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---0016364ee12a3d7e8f046836680d
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-
-2009/4/23 Alexander Beregalov <a.beregalov@gmail.com>:
-> 2009/4/22 Sachin Sant <sachinp@in.ibm.com>:
->> Today's next tree build (x86 randconfig) failed with
->>
->> net/rfkill/rfkill.c: In function 'update_rfkill_state':
->> net/rfkill/rfkill.c:99: error: implicit declaration of function
->> 'rfkill_led_trigger'
->> make[2]: *** [net/rfkill/rfkill.o] Error 1
->>
->> .config attached
->>
+On Thu, Apr 23, 2009 at 04:06:56PM +1000, Stephen Rothwell wrote:
+>Hi all,
 >
-> Add CCs
+>[I am now using gcc version 4.4.0 ...]
+>
+>Today's linux-next build (powerpc ppc44x_defconfig) failed like this:
+>
+>arch/powerpc/mm/tlb_nohash_low.S:206:6: error: #elif with no expression
+>
+>Previous gcc versions didn't notice this because one of the preceding
+>#ifs always evaluated to true.  I have applied the following patch for today.
+>
+>-- 
+>Cheers,
+>Stephen Rothwell                    sfr@canb.auug.org.au
+>http://www.canb.auug.org.au/~sfr/
+>
+>From: Stephen Rothwell <sfr@canb.auug.org.au>
+>Date: Thu, 23 Apr 2009 16:00:47 +1000
+>Subject: [PATCH] powerpc: fix for long standing bug noticed by gcc 4.4.0
+>
+>Previous gcc versions didn't notice this because one of the preceding
+>
+>gcc 4.4.0 produced this error:
+>
+>arch/powerpc/mm/tlb_nohash_low.S:206:6: error: #elif with no expression
+>
+>Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-I'm getting the same issue, but my .config does not include
-CONFIG_RFKILL_LEDS.  I use the attached patch to ensure the functions
-were defined.  Apols for the formatting: first patch atttempt.
+Your changelog got truncated in the first sentence.  No big deal.
 
-Take care.
-Ken.
+I have a gcc 4.4.0 system as well.  I'll try a bunch of various builds to see
+if it catches anything else.  This fix looks good to me in the meantime.
 
---0016364ee12a3d7e8f046836680d
-Content-Type: text/plain; charset=US-ASCII; name="next-20090423-rfkill-diff.txt"
-Content-Disposition: attachment; filename="next-20090423-rfkill-diff.txt"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_ftvbe0q70
+Acked-by: Josh Boyer <jwboyer@linux.vnet.ibm.com>
 
-ZGlmZiAtLWdpdCBhL25ldC9yZmtpbGwvcmZraWxsLmMgYi9uZXQvcmZraWxsL3Jma2lsbC5jCmlu
-ZGV4IDUzNDMwYTcuLmZjZGQ1ZTAgMTAwNjQ0Ci0tLSBhL25ldC9yZmtpbGwvcmZraWxsLmMKKysr
-IGIvbmV0L3Jma2lsbC9yZmtpbGwuYwpAQCAtNzUsNiArNzUsMTIgQEAgc3RhdGljIHZvaWQgcmZr
-aWxsX2xlZF90cmlnZ2VyX2FjdGl2YXRlKHN0cnVjdCBsZWRfY2xhc3NkZXYgKmxlZCkKIAogCXJm
-a2lsbF9sZWRfdHJpZ2dlcihyZmtpbGwsIHJma2lsbC0+c3RhdGUpOwogfQorI2Vsc2UKK3N0YXRp
-YyB2b2lkIHJma2lsbF9sZWRfdHJpZ2dlcihzdHJ1Y3QgcmZraWxsICpyZmtpbGwsCisJCQkgICAg
-ICAgZW51bSByZmtpbGxfc3RhdGUgc3RhdGUpCit7IH0KK3N0YXRpYyB2b2lkIHJma2lsbF9sZWRf
-dHJpZ2dlcl9hY3RpdmF0ZShzdHJ1Y3QgbGVkX2NsYXNzZGV2ICpsZWQpCit7IH0KICNlbmRpZiAv
-KiBDT05GSUdfUkZLSUxMX0xFRFMgKi8KIAogc3RhdGljIHZvaWQgcmZraWxsX3VldmVudChzdHJ1
-Y3QgcmZraWxsICpyZmtpbGwpCg==
---0016364ee12a3d7e8f046836680d--
+josh
+
+>---
+> arch/powerpc/mm/tlb_nohash_low.S |    2 +-
+> 1 files changed, 1 insertions(+), 1 deletions(-)
+>
+>diff --git a/arch/powerpc/mm/tlb_nohash_low.S b/arch/powerpc/mm/tlb_nohash_low.S
+>index 45fed36..21e1b9a 100644
+>--- a/arch/powerpc/mm/tlb_nohash_low.S
+>+++ b/arch/powerpc/mm/tlb_nohash_low.S
+>@@ -203,6 +203,6 @@ ALT_MMU_FTR_SECTION_END_IFCLR(MMU_FTR_USE_TLBILX)
+> 	isync
+> 1:	wrtee	r10
+> 	blr
+>-#elif
+>+#else
+> #error Unsupported processor type !
+> #endif
