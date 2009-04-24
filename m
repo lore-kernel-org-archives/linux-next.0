@@ -1,247 +1,392 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for April 24
-Date: Fri, 24 Apr 2009 15:04:56 +1000
-Message-ID: <20090424150456.ff35e4ea.sfr@canb.auug.org.au>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Next April 24 : BUG: lock held at task exit time!
+Date: Fri, 24 Apr 2009 12:25:41 +0530
+Message-ID: <49F1626D.6080102@in.ibm.com>
+References: <20090424150456.ff35e4ea.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__24_Apr_2009_15_04_56_+1000_Ei+.=PU=XmTyee/k"
+Content-Type: multipart/mixed;
+ boundary="------------010407070305000806030608"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55648 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752280AbZDXFFG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 24 Apr 2009 01:05:06 -0400
+Received: from e23smtp09.au.ibm.com ([202.81.31.142]:58664 "EHLO
+	e23smtp09.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752510AbZDXGzz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Apr 2009 02:55:55 -0400
+In-Reply-To: <20090424150456.ff35e4ea.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@ozlabs.org, Ingo Molnar <mingo@redhat.com>, peterz@infradead.org
 
---Signature=_Fri__24_Apr_2009_15_04_56_+1000_Ei+.=PU=XmTyee/k
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is a multi-part message in MIME format.
+--------------010407070305000806030608
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+While booting today's next tree on a powerpc box [ power 6 blade]
+observed the following :
 
-I have added a tree that contains only simple build fixes for Linus'
-tree.  It currently contains:
+khelper used greatest stack depth: 10176 bytes left
 
-	lib: find_next_bit.o needed by a module only, move it from lib to obj
-	powerpc: fix for long standing bug noticed by gcc 4.4.0
+=====================================
+[ BUG: lock held at task exit time! ]
+-------------------------------------
+khelper/21 is exiting with locks still held!
+2 locks held by khelper/21:
+ #0:  (rcu_read_lock){.+.+.+}, at: [<c0000000001382fc>] 
+.check_unsafe_exec+0x44/0x148
+ #1:  (rcu_read_lock){.+.+.+}, at: [<c000000000138368>] 
+.check_unsafe_exec+0xb0/0x148
 
-This is just an experiment for now and I am not sure if I should push
-these fixes directly to Linus ...
+stack backtrace:
+Call Trace:
+[c000000044483cf0] [c000000000011a54] .show_stack+0x6c/0x16c (unreliable)
+[c000000044483da0] [c00000000009ae14] .debug_check_no_locks_held+0x98/0xb4
+[c000000044483e20] [c000000000073b1c] .do_exit+0x758/0x7b0
+[c000000044483f00] [c0000000000853d8] .____call_usermodehelper+0x170/0x174
+[c000000044483f90] [c00000000002bd8c] .kernel_thread+0x54/0x70
+net_namespace: 2000 bytes
 
-Changes since 20090423:
+Complete dmesg attached. Let me know if you need any other info. I will 
+try yesterday's next
+tree to check if this problem can be recreated.
 
-New tree:
-	fixes
+Thanks
+-Sachin
 
-The acpi tree gained a build failure for which I reverted a commit.
+-- 
 
-----------------------------------------------------------------------------
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES) and i386, sparc and sparc64 defconfig.
-These builds also have CONFIG_ENABLE_WARN_DEPRECATED,
-CONFIG_ENABLE_MUST_CHECK and CONFIG_DEBUG_INFO disabled when necessary.
+--------------010407070305000806030608
+Content-Type: text/plain;
+ name="dmesg_next0424"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="dmesg_next0424"
 
-Below is a summary of the state of the merge.
+Using pSeries machine description
+Page orders: linear mapping = 16, virtual = 16, io = 12, vmemmap = 24
+Using 1TB segments
+Found initrd at 0xc000000003600000:0xc000000003bebc74
+console [udbg0] enabled
+Partition configured for 8 cpus.
+CPU maps initialized for 2 threads per core
+ (thread shift is 1)
+Starting Linux PPC64 #2 SMP Fri Apr 24 11:30:39 IST 2009
+-----------------------------------------------------
+ppc64_pft_size                = 0x19
+physicalMemorySize            = 0x80000000
+htab_hash_mask                = 0x3ffff
+-----------------------------------------------------
+Initializing cgroup subsys cpuset
+Initializing cgroup subsys cpu
+Linux version 2.6.30-rc3-next-20090424 (root@mjs22lp5) (gcc version 4.3.2 [gcc-4_3-branch revision 141291] (SUSE Linux) ) #2 SMP Fri Apr 24 11:30:39 IST 2009
+[boot]0012 Setup Arch
+Node 0 Memory: 0x8000000-0x46000000
+Node 1 Memory: 0x0-0x8000000 0x46000000-0x80000000
+EEH: No capable adapters found
+PPC64 nvram contains 15360 bytes
+Using shared processor idle loop
+Zone PFN ranges:
+  DMA      0x00000000 -> 0x00008000
+  Normal   0x00008000 -> 0x00008000
+Movable zone start PFN for each node
+early_node_map[3] active PFN ranges
+    1: 0x00000000 -> 0x00000800
+    0: 0x00000800 -> 0x00004600
+    1: 0x00004600 -> 0x00008000
+On node 0 totalpages: 15872
+  DMA zone: 22 pages used for memmap
+  DMA zone: 0 pages reserved
+  DMA zone: 15850 pages, LIFO batch:1
+On node 1 totalpages: 16896
+  DMA zone: 44 pages used for memmap
+  DMA zone: 0 pages reserved
+  DMA zone: 16852 pages, LIFO batch:1
+[boot]0015 Setup Done
+Built 2 zonelists in Node order, mobility grouping on.  Total pages: 32702
+Policy zone: DMA
+Kernel command line: root=/dev/sda3 sysrq=1 
+Experimental hierarchical RCU implementation.
+RCU-based detection of stalled CPUs is enabled.
+Experimental hierarchical RCU init done.
+NR_IRQS:512
+[boot]0020 XICS Init
+[boot]0021 XICS Done
+pic: no ISA interrupt controller
+PID hash table entries: 4096 (order: 12, 32768 bytes)
+time_init: decrementer frequency = 512.000000 MHz
+time_init: processor frequency   = 4005.000000 MHz
+clocksource: timebase mult[7d0000] shift[22] registered
+clockevent: decrementer mult[8312] shift[16] cpu[0]
+Console: colour dummy device 80x25
+console handover: boot [udbg0] -> real [hvc0]
+Lock dependency validator: Copyright (c) 2006 Red Hat, Inc., Ingo Molnar
+... MAX_LOCKDEP_SUBCLASSES:  8
+... MAX_LOCK_DEPTH:          48
+... MAX_LOCKDEP_KEYS:        8191
+... CLASSHASH_SIZE:          4096
+... MAX_LOCKDEP_ENTRIES:     8192
+... MAX_LOCKDEP_CHAINS:      16384
+... CHAINHASH_SIZE:          8192
+ memory used by lock dependency info: 4607 kB
+ per task-struct memory footprint: 1920 bytes
+allocated 1310720 bytes of page_cgroup
+please try cgroup_disable=memory option if you don't want
+freeing bootmem node 0
+freeing bootmem node 1
+Memory: 2035200k/2097152k available (8448k kernel code, 67136k reserved, 1216k data, 8988k bss, 448k init)
+ODEBUG: 0 of 0 active objects replaced
+ODEBUG: selftest passed
+Calibrating delay loop... 1021.95 BogoMIPS (lpj=510976)
+Security Framework initialized
+SELinux:  Initializing.
+SELinux:  Starting in permissive mode
+Dentry cache hash table entries: 262144 (order: 5, 2097152 bytes)
+Inode-cache hash table entries: 131072 (order: 4, 1048576 bytes)
+Mount-cache hash table entries: 4096
+Initializing cgroup subsys ns
+Initializing cgroup subsys cpuacct
+Initializing cgroup subsys memory
+Initializing cgroup subsys devices
+Initializing cgroup subsys freezer
+irq: irq 2 on host null mapped to virtual irq 16
+Testing tracer nop: PASSED
+clockevent: decrementer mult[8312] shift[16] cpu[1]
+Processor 1 found.
+clockevent: decrementer mult[8312] shift[16] cpu[2]
+Processor 2 found.
+clockevent: decrementer mult[8312] shift[16] cpu[3]
+Processor 3 found.
+Brought up 4 CPUs
+Node 0 CPUs: 0-3
+Node 1 CPUs:
+CPU0 attaching sched-domain:
+ domain 0: span 0-1 level SIBLING
+  groups: 0 1
+  domain 1: span 0-3 level CPU
+   groups: 0-1 2-3
+   domain 2: span 0-3 level NODE
+    groups: 0-3 (__cpu_power = 2048)
+CPU1 attaching sched-domain:
+ domain 0: span 0-1 level SIBLING
+  groups: 1 0
+  domain 1: span 0-3 level CPU
+   groups: 0-1 2-3
+   domain 2: span 0-3 level NODE
+    groups: 0-3 (__cpu_power = 2048)
+CPU2 attaching sched-domain:
+ domain 0: span 2-3 level SIBLING
+  groups: 2 3
+  domain 1: span 0-3 level CPU
+   groups: 2-3 0-1
+   domain 2: span 0-3 level NODE
+    groups: 0-3 (__cpu_power = 2048)
+CPU3 attaching sched-domain:
+ domain 0: span 2-3 level SIBLING
+  groups: 3 2
+  domain 1: span 0-3 level CPU
+   groups: 2-3 0-1
+   domain 2: span 0-3 level NODE
+    groups: 0-3 (__cpu_power = 2048)
+khelper used greatest stack depth: 10176 bytes left
 
-We are up to 135 trees (counting Linus' and 18 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
+=====================================
+[ BUG: lock held at task exit time! ]
+-------------------------------------
+khelper/21 is exiting with locks still held!
+2 locks held by khelper/21:
+ #0:  (rcu_read_lock){.+.+.+}, at: [<c0000000001382fc>] .check_unsafe_exec+0x44/0x148
+ #1:  (rcu_read_lock){.+.+.+}, at: [<c000000000138368>] .check_unsafe_exec+0xb0/0x148
 
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
+stack backtrace:
+Call Trace:
+[c000000044483cf0] [c000000000011a54] .show_stack+0x6c/0x16c (unreliable)
+[c000000044483da0] [c00000000009ae14] .debug_check_no_locks_held+0x98/0xb4
+[c000000044483e20] [c000000000073b1c] .do_exit+0x758/0x7b0
+[c000000044483f00] [c0000000000853d8] .____call_usermodehelper+0x170/0x174
+[c000000044483f90] [c00000000002bd8c] .kernel_thread+0x54/0x70
+net_namespace: 2000 bytes
+NET: Registered protocol family 16
+IBM eBus Device Driver
+PCI: Probing PCI hardware
+PCI: Probing PCI hardware done
+bio: create slab <bio-0> at 0
+SCSI subsystem initialized
+usbcore: registered new interface driver usbfs
+usbcore: registered new interface driver hub
+usbcore: registered new device driver usb
+NetLabel: Initializing
+NetLabel:  domain hash size = 128
+NetLabel:  protocols = UNLABELED CIPSOv4
+NetLabel:  unlabeled traffic allowed by default
+Failed to register trace events module notifier
+NET: Registered protocol family 2
+IP route cache hash table entries: 16384 (order: 1, 131072 bytes)
+TCP established hash table entries: 65536 (order: 4, 1048576 bytes)
+TCP bind hash table entries: 65536 (order: 5, 3670016 bytes)
+TCP: Hash tables configured (established 65536 bind 65536)
+TCP reno registered
+NET: Registered protocol family 1
+checking if image is initramfs...
+rootfs image is initramfs; unpacking...
+Freeing initrd memory: 6063k freed
+irq: irq 655360 on host null mapped to virtual irq 17
+irq: irq 655362 on host null mapped to virtual irq 18
+IOMMU table initialized, virtual merging enabled
+irq: irq 655364 on host null mapped to virtual irq 19
+irq: irq 655365 on host null mapped to virtual irq 20
+irq: irq 589825 on host null mapped to virtual irq 21
+RTAS daemon started
+audit: initializing netlink socket (disabled)
+type=2000 audit(1240553894.305:1): initialized
+Kprobe smoke test started
+Kprobe smoke test passed successfully
+HugeTLB registered 16 MB page size, pre-allocated 0 pages
+HugeTLB registered 16 GB page size, pre-allocated 0 pages
+VFS: Disk quotas dquot_6.5.2
+Dquot-cache hash table entries: 8192 (order 0, 65536 bytes)
+Btrfs loaded
+msgmni has been set to 3984
+SELinux:  Registering netfilter hooks
+alg: No test for stdrng (krng)
+io scheduler noop registered
+io scheduler anticipatory registered
+io scheduler deadline registered
+io scheduler cfq registered (default)
+pci_hotplug: PCI Hot Plug PCI Core version: 0.5
+rpaphp: RPA HOT Plug PCI Controller Driver version: 0.1
+vio_register_driver: driver hvc_console registering
+HVSI: registered 0 devices
+Linux agpgart interface v0.103
+Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
+brd: module loaded
+Uniform Multi-Platform E-IDE driver
+ide-gd driver 1.18
+vio_register_driver: driver ibmvscsi registering
+ibmvscsi 30000002: SRP_VERSION: 16.a
+scsi0 : IBM POWER Virtual SCSI Adapter 1.5.8
+ibmvscsi 30000002: partner initialization complete
+ibmvscsi 30000002: sent SRP login
+ibmvscsi 30000002: SRP_LOGIN succeeded
+ibmvscsi 30000002: host srp version: 16.a, host partition 06-1C12A (1), OS 3, max io 262144
+scsi 0:0:1:0: Direct-Access     AIX      VDASD            0001 PQ: 0 ANSI: 3
+scsi 0:0:2:0: CD-ROM            AIX      VOPTA                 PQ: 0 ANSI: 4
+ibmvfc: IBM Virtual Fibre Channel Driver version: 1.0.5 (March 19, 2009)
+vio_register_driver: driver ibmvfc registering
+st: Version 20081215, fixed bufsize 32768, s/g segs 256
+Driver 'st' needs updating - please use bus_type methods
+osst :I: Tape driver with OnStream support version 0.99.4
+osst :I: $Id: osst.c,v 1.73 2005/01/01 21:13:34 wriede Exp $
+Driver 'osst' needs updating - please use bus_type methods
+Driver 'sd' needs updating - please use bus_type methods
+Driver 'sr' needs updating - please use bus_type methods
+sr0: scsi-1 drive
+Uniform CD-ROM driver Revision: 3.20
+sd 0:0:1:0: [sda] 33554432 512-byte hardware sectors: (17.1 GB/16.0 GiB)
+sd 0:0:1:0: [sda] Write Protect is off
+sd 0:0:1:0: [sda] Mode Sense: 17 00 00 08
+sd 0:0:1:0: [sda] Cache data unavailable
+sd 0:0:1:0: [sda] Assuming drive cache: write through
+sr 0:0:2:0: Attached scsi CD-ROM sr0
+sd 0:0:1:0: [sda] Cache data unavailable
+sd 0:0:1:0: [sda] Assuming drive cache: write through
+ sda:<5>sd 0:0:1:0: Attached scsi generic sg0 type 0
+sr 0:0:2:0: Attached scsi generic sg1 type 5
+ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
+ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
+uhci_hcd: USB Universal Host Controller Interface driver
+mice: PS/2 mouse device common for all mice
+ sda1 sda2 sda3 sda4 <<6>usbcore: registered new interface driver hiddev
+usbcore: registered new interface driver usbhid
+usbhid: v2.6:USB HID core driver
+TCP bic registered
+Initializing XFRM netlink socket
+NET: Registered protocol family 17
+registered taskstats version 1
+Running tests on trace events:
+Testing event kfree_skb:  sda5 sda6 >
+sd 0:0:1:0: [sda] Attached SCSI disk
+OK
+Testing event kmem_cache_free: OK
+Testing event kfree: OK
+Testing event kmem_cache_alloc_node: OK
+Testing event kmalloc_node: OK
+Testing event kmem_cache_alloc: OK
+Testing event kmalloc: OK
+Testing event irq_handler_exit: OK
+Testing event softirq_exit: OK
+Testing event softirq_entry: OK
+Testing event irq_handler_entry: OK
+Testing event lock_release: OK
+Testing event lock_acquire: OK
+Testing event sched_signal_send: OK
+Testing event sched_process_fork: OK
+Testing event sched_process_wait: OK
+Testing event sched_process_exit: OK
+Testing event sched_process_free: OK
+Testing event sched_migrate_task: OK
+Testing event sched_switch: OK
+Testing event sched_wakeup_new: OK
+Testing event sched_wakeup: OK
+Testing event sched_wait_task: OK
+Testing event sched_kthread_stop_ret: OK
+Testing event sched_kthread_stop: OK
+Running tests on trace event systems:
+Testing event system skb: OK
+Testing event system kmem: OK
+Testing event system irq: OK
+Testing event system lockdep: OK
+Testing event system sched: OK
+Running tests on all trace events:
+Testing all events: OK
+Freeing unused kernel memory: 448k freed
+SysRq : Changing Loglevel
+Loglevel set to 1
+udevd version 128 started
+scsi_id used greatest stack depth: 9104 bytes left
+vol_id used greatest stack depth: 8432 bytes left
+kjournald starting.  Commit interval 5 seconds
+EXT3 FS on sda3, internal journal
+EXT3-fs: mounted filesystem with writeback data mode.
+stty used greatest stack depth: 8096 bytes left
+mount used greatest stack depth: 7504 bytes left
+udevd version 128 started
+drivers/net/ibmveth.c: ibmveth: IBM i/pSeries Virtual Ethernet Driver 1.03
+vio_register_driver: driver ibmveth registering
+IBM eHEA ethernet device driver (Release EHEA_0100)
+irq: irq 590080 on host null mapped to virtual irq 256
+ehea: eth2: Jumbo frames are enabled
+ehea: eth2 -> logical port id #9
+ehea: eth3: Jumbo frames are enabled
+ehea: eth3 -> logical port id #10
+modprobe used greatest stack depth: 7200 bytes left
+Adding 2096320k swap on /dev/sda5.  Priority:-1 extents:1 across:2096320k 
+device-mapper: uevent: version 1.0.3
+device-mapper: ioctl: 4.14.0-ioctl (2008-04-23) initialised: dm-devel@redhat.com
+loop: module loaded
+kjournald starting.  Commit interval 5 seconds
+EXT3 FS on sda2, internal journal
+EXT3-fs: mounted filesystem with writeback data mode.
+kjournald starting.  Commit interval 5 seconds
+EXT3-fs warning: maximal mount count reached, running e2fsck is recommended
+EXT3 FS on sda6, internal journal
+EXT3-fs: mounted filesystem with writeback data mode.
+mv used greatest stack depth: 7008 bytes left
+ehea: eth2: Physical port up
+irq: irq 775 on host null mapped to virtual irq 263
+ehea: External switch port is backup port
+irq: irq 776 on host null mapped to virtual irq 264
+NET: Registered protocol family 10
+lo: Disabled Privacy Extensions
+modprobe used greatest stack depth: 6752 bytes left
+eth2: no IPv6 routers present
+less used greatest stack depth: 6336 bytes left
 
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging dwmw2/master
-Merging arm/devel
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging mips/mips-for-linux-next
-Merging parisc/master
-Merging powerpc/next
-Merging 4xx/next
-Merging galak/next
-Merging pxa/for-next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging x86/auto-x86-next
-Merging xtensa/master
-Merging configfs/linux-next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging v9fs/for-next
-CONFLICT (content): Merge conflict in net/9p/protocol.c
-Merging ubifs/linux-next
-Merging xfs/master
-Merging tip-core/auto-core-next
-Merging cpus4096/auto-cpus4096-next
-Merging tracing/auto-tracing-next
-Merging genirq/auto-genirq-next
-Merging safe-poison-pointers/auto-safe-poison-pointers-next
-Merging sched/auto-sched-next
-Merging stackprotector/auto-stackprotector-next
-Merging timers/auto-timers-next
-Merging pci/linux-next
-Merging quilt/device-mapper
-Merging hid/for-next
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging quota/for_next
-Merging kbuild/master
-Merging ide/for-next
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/master
-Merging dlm/next
-Merging scsi/master
-Merging async_tx/next
-Merging udf/for_next
-Merging net/master
-Merging wireless/master
-CONFLICT (content): Merge conflict in drivers/net/wireless/rndis_wlan.c
-CONFLICT (content): Merge conflict in include/linux/mmc/sdio_ids.h
-CONFLICT (content): Merge conflict in net/mac80211/pm.c
-[master ad362c6] Revert "rfkill: remove user_claim stuff"
-Merging mtd/master
-Merging crypto/master
-Merging vfs/for-next
-Merging sound/for-next
-Merging cpufreq/next
-Merging quilt/rr
-CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/cpufreq/acpi-cpuf=
-req.c
-Merging cifs/master
-Merging mmc/next
-Merging input/next
-Merging bkl-removal/bkl-removal
-Merging lsm/for-next
-Merging block/for-next
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging quilt/ttydev
-CONFLICT (content): Merge conflict in drivers/usb/serial/cypress_m8.c
-CONFLICT (content): Merge conflict in drivers/usb/serial/option.c
-CONFLICT (content): Merge conflict in drivers/usb/serial/sierra.c
-CONFLICT (content): Merge conflict in drivers/usb/serial/usb-serial.c
-Merging agp/agp-next
-Merging generic-ipi/auto-generic-ipi-next
-Merging oprofile/auto-oprofile-next
-Merging fastboot/auto-fastboot-next
-Merging sparseirq/auto-sparseirq-next
-Merging iommu/auto-iommu-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging omap/for-next
-Merging quilt/aoe
-Merging kmemleak/kmemleak
-CONFLICT (content): Merge conflict in lib/Kconfig.debug
-Merging suspend/linux-next
-Merging quilt/driver-core
-Merging quilt/usb
-Merging quilt/staging
-Merging scsi-post-merge/master
-[master 15570ec] Revert "ACPI/i915: build fix"
-
---Signature=_Fri__24_Apr_2009_15_04_56_+1000_Ei+.=PU=XmTyee/k
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAknxSHgACgkQjjKRsyhoI8zaywCghBCi/LzD8y4FQlsZUyl4bGBV
-nmIAmQHu08Y7YTJRlyOSbEjKpofpKv0T
-=Q/+w
------END PGP SIGNATURE-----
-
---Signature=_Fri__24_Apr_2009_15_04_56_+1000_Ei+.=PU=XmTyee/k--
+--------------010407070305000806030608--
