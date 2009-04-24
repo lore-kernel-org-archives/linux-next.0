@@ -1,27 +1,31 @@
-From: Christoph Lameter <cl@linux.com>
-Subject: Re: linux-next: slab tree boot failure
-Date: Fri, 24 Apr 2009 11:13:32 -0400 (EDT)
-Message-ID: <alpine.DEB.1.10.0904241112150.7258@qirst.com>
-References: <20090425005206.943530b6.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Subject: Re: linux-next: Tree for April 24 (p54 build error)
+Date: Fri, 24 Apr 2009 10:56:27 -0700
+Message-ID: <49F1FD4B.2020909@oracle.com>
+References: <20090424150456.ff35e4ea.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.ultrahosting.com ([74.213.174.254]:51819 "EHLO
-	smtp.ultrahosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753295AbZDXPWS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Apr 2009 11:22:18 -0400
-In-Reply-To: <20090425005206.943530b6.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Pekka Enberg <penberg@cs.helsinki.fi>, Nick Piggin <npiggin@suse.de>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20090424150456.ff35e4ea.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-On Sat, 25 Apr 2009, Stephen Rothwell wrote:
 
-> The last few days linux-next trees have failed to boot on one of our
-> PowerPC Power6 servers.  The partial boot log looks like this (full
-> log below):
+drivers/net/wireless/p54/p54.h:193: error: array type has incomplete element type
 
-PowerPc has weird boot requirements like bootstrap from a node != 0 and
-unavailability of node 0. This has always been a challenge for
-bootstrapping any of the slab allocators.
+struct p54_led_dev definition is controlled by
+#ifdef CONFIG_P54_LEDS (is not set)
+
+but the struct declaration is controlled by
+#ifdef CONFIG_MAC80211_LEDS (=y)
+
+
+-- 
+~Randy
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
