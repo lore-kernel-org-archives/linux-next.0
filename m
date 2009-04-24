@@ -1,39 +1,81 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: Next April 24: [S390] allmodconfig build failure (trace/events)
-Date: Fri, 24 Apr 2009 09:25:33 +0200
-Message-ID: <20090424072533.GE24912@elte.hu>
-References: <20090424150456.ff35e4ea.sfr@canb.auug.org.au> <49F16654.8040208@in.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Next April 24 : BUG: lock held at task exit time!
+Date: Fri, 24 Apr 2009 17:55:09 +1000
+Message-ID: <20090424175509.561c96ad.sfr@canb.auug.org.au>
+References: <20090424150456.ff35e4ea.sfr@canb.auug.org.au>
+	<49F1626D.6080102@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__24_Apr_2009_17_55_09_+1000_BzaLvDqRx/gHM5wx"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:42727 "EHLO mx3.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33241 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750886AbZDXHZ7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 24 Apr 2009 03:25:59 -0400
-Content-Disposition: inline
-In-Reply-To: <49F16654.8040208@in.ibm.com>
+	id S1753153AbZDXHzT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 24 Apr 2009 03:55:19 -0400
+In-Reply-To: <49F1626D.6080102@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>, Steven Rostedt <rostedt@goodmis.org>, =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>
-Cc: linux-s390@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Heiko Carstens <heiko.carstens@de.ibm.com>, Ingo Molnar <mingo@redhat.com>
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@ozlabs.org, Ingo Molnar <mingo@redhat.com>, peterz@infradead.org, Hugh Dickins <hugh@veritas.com>, Al Viro <viro@ZenIV.linux.org.uk>, Oleg Nesterov <oleg@redhat.com>
 
+--Signature=_Fri__24_Apr_2009_17_55_09_+1000_BzaLvDqRx/gHM5wx
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Sachin Sant <sachinp@in.ibm.com> wrote:
+Hi Sachin,
 
-> Today's next tree build(s390 allmodconfig) failed with
+On Fri, 24 Apr 2009 12:25:41 +0530 Sachin Sant <sachinp@in.ibm.com> wrote:
 >
-> kernel/built-in.o: In function `trace_softirq_entry'
-> include/trace/events/irq.h:42: undefined reference to  
-> `__tracepoint_softirq_entry'
-> include/trace/events/irq.h:42: undefined reference to  
-> `__tracepoint_softirq_entry'
-> kernel/built-in.o: In function `trace_softirq_exit':
-> include/trace/events/irq.h:48: undefined reference to  
-> `__tracepoint_softirq_exit'
-> include/trace/events/irq.h:48: undefined reference to  
-> `__tracepoint_softirq_exit'
+> While booting today's next tree on a powerpc box [ power 6 blade]
+> observed the following :
+>=20
+> khelper used greatest stack depth: 10176 bytes left
+>=20
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [ BUG: lock held at task exit time! ]
+> -------------------------------------
+> khelper/21 is exiting with locks still held!
+> 2 locks held by khelper/21:
+>  #0:  (rcu_read_lock){.+.+.+}, at: [<c0000000001382fc>]=20
+> .check_unsafe_exec+0x44/0x148
+>  #1:  (rcu_read_lock){.+.+.+}, at: [<c000000000138368>]=20
+> .check_unsafe_exec+0xb0/0x148
+>=20
+> stack backtrace:
+> Call Trace:
+> [c000000044483cf0] [c000000000011a54] .show_stack+0x6c/0x16c (unreliable)
+> [c000000044483da0] [c00000000009ae14] .debug_check_no_locks_held+0x98/0xb4
+> [c000000044483e20] [c000000000073b1c] .do_exit+0x758/0x7b0
+> [c000000044483f00] [c0000000000853d8] .____call_usermodehelper+0x170/0x174
+> [c000000044483f90] [c00000000002bd8c] .kernel_thread+0x54/0x70
+> net_namespace: 2000 bytes
+>=20
+> Complete dmesg attached. Let me know if you need any other info. I will=20
+> try yesterday's next
+> tree to check if this problem can be recreated.
 
-Hm, that's weird - s390 does not build kernel/softirq.o? Hm, it does 
-- softirq.o is an obj-y object.
+Almost certainly commit 874a9e18f25c86dbc199ad32ddd9ca44d25290e8
+("check_unsafe_exec: s/lock_task_sighand/rcu_read_lock/") which has a
+typo (two locks instead of lock/unlock) as pointed out by Hugh Dickins
+(<Pine.LNX.4.64.0904240526080.15735@blonde.anvils> on LKML).
 
-	Ingo
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__24_Apr_2009_17_55_09_+1000_BzaLvDqRx/gHM5wx
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknxcF0ACgkQjjKRsyhoI8xbwQCeOIN6mOp7i/Fzwosg5CC9/UuW
+El8An3/bga4D8EL7FtrPCG+D4VUzvBx2
+=Yo2H
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__24_Apr_2009_17_55_09_+1000_BzaLvDqRx/gHM5wx--
