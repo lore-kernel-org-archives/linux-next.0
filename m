@@ -1,75 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Next April 24 : BUG: lock held at task exit time!
-Date: Sat, 25 Apr 2009 00:11:56 +1000
-Message-ID: <20090425001156.04781613.sfr@canb.auug.org.au>
-References: <20090424150456.ff35e4ea.sfr@canb.auug.org.au>
-	<49F1626D.6080102@in.ibm.com>
-	<20090424175509.561c96ad.sfr@canb.auug.org.au>
-	<Pine.LNX.4.64.0904241249180.20196@blonde.anvils>
-	<20090424140445.GL8633@ZenIV.linux.org.uk>
+From: Alex Williamson <alex.williamson@hp.com>
+Subject: [PATCH] virtio_net: memset scatterlist before using
+Date: Fri, 24 Apr 2009 08:37:03 -0600
+Message-ID: <1240583823.16438.14.camel@lappy>
+References: <20090423163847.200f227e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0095665947=="
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org>
-In-Reply-To: <20090424140445.GL8633@ZenIV.linux.org.uk>
-List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
-List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
-List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
-Mime-version: 1.0
-Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: peterz@infradead.org, LKML <linux-kernel@vger.kernel.org>, Oleg Nesterov <oleg@redhat.com>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, Hugh Dickins <hugh@veritas.com>, Ingo Molnar <mingo@redhat.com>
-List-Id: linux-next.vger.kernel.org
-
---===============0095665947==
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__25_Apr_2009_00_11_56_+1000_20Mo0V88ywKEUH1j"
-
---Signature=_Sat__25_Apr_2009_00_11_56_+1000_20Mo0V88ywKEUH1j
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Al,
-
-On Fri, 24 Apr 2009 15:04:45 +0100 Al Viro <viro@ZenIV.linux.org.uk> wrote:
->
-> Applied, will fold on reorder (since Ingo is asking for what will amount
-> to reorder anyway).
-
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Sat__25_Apr_2009_00_11_56_+1000_20Mo0V88ywKEUH1j
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAknxyKwACgkQjjKRsyhoI8zrOQCeKftgvHyAwioSUsPqttVFONXA
-UnIAnRvQjpbBX6SCdzoTe9QEe18DVpSV
-=EEhI
------END PGP SIGNATURE-----
-
---Signature=_Sat__25_Apr_2009_00_11_56_+1000_20Mo0V88ywKEUH1j--
-
---===============0095665947==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from g5t0006.atlanta.hp.com ([15.192.0.43]:32547 "EHLO
+	g5t0006.atlanta.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752769AbZDXOhH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Apr 2009 10:37:07 -0400
+In-Reply-To: <20090423163847.200f227e.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>, linux-next@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, LKML.netdev@vger.kernel.org
 
-_______________________________________________
-Linuxppc-dev mailing list
-Linuxppc-dev@ozlabs.org
-https://ozlabs.org/mailman/listinfo/linuxppc-dev
---===============0095665947==--
+A powerpc gcc-4.4 build generates the following warnings:
+
+drivers/net/virtio_net.c: In function 'virnet_vlan_rx_add_vid':
+include/linux/scatterlist.h:57: warning: 'sg' is used uninitialized in this function
+drivers/net/virtio_net.c:746: note: 'sg' was declared here
+drivers/net/virtio_net.c: In function 'virnet_vlan_rx_kill_vid':
+include/linux/scatterlist.h:57: warning: 'sg' is used uninitialized in this function
+drivers/net/virtio_net.c:758: note: 'sg' was declared here
+
+We need to clear the scatterlist before using it.  This sg entry will
+get copied into another scatterlist before it's used, so memset it
+rather than using sg_init_table or sg_init_one to avoid a bogus end
+marker.
+
+Signed-off-by: Alex Williamson <alex.williamson@hp.com>
+--
+
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index 0718558..be1a9fe 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -745,6 +745,7 @@ static void virnet_vlan_rx_add_vid(struct net_device *dev, u16 vid)
+ 	struct virtnet_info *vi = netdev_priv(dev);
+ 	struct scatterlist sg;
+ 
++	memset(&sg, 0, sizeof(sg));
+ 	sg_set_buf(&sg, &vid, sizeof(vid));
+ 
+ 	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_VLAN,
+@@ -757,6 +758,7 @@ static void virnet_vlan_rx_kill_vid(struct net_device *dev, u16 vid)
+ 	struct virtnet_info *vi = netdev_priv(dev);
+ 	struct scatterlist sg;
+ 
++	memset(&sg, 0, sizeof(sg));
+ 	sg_set_buf(&sg, &vid, sizeof(vid));
+ 
+ 	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_VLAN,
