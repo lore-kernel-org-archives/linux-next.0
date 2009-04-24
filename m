@@ -1,38 +1,53 @@
-From: Luis Henriques <henrix@sapo.pt>
-Subject: Re: linux-next: genirq tree build warning
-Date: Thu, 23 Apr 2009 18:14:57 +0100
-Message-ID: <20090423171457.GA4220@hades.domain.com>
-References: <20090423161328.c81ecb3e.sfr@canb.auug.org.au> <20090423064809.GB14063@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: acpi tree build failure
+Date: Fri, 24 Apr 2009 14:46:35 +1000
+Message-ID: <20090424144635.9fd42a2e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__24_Apr_2009_14_46_35_+1000_0s+ZV2IDsmb48706"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay4.ptmail.sapo.pt ([212.55.154.24]:45697 "HELO sapo.pt"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
-	id S1752530AbZDWRRx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Apr 2009 13:17:53 -0400
-Content-Disposition: inline
-In-Reply-To: <20090423064809.GB14063@elte.hu>
+Received: from chilli.pcug.org.au ([203.10.76.44]:57277 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752043AbZDXEqp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 24 Apr 2009 00:46:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, Matthew Garrett <mjg59@srcf.ucam.org>
 
-On Thu, Apr 23, 2009 at 08:48:09AM +0200, Ingo Molnar wrote:
-> 
-> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > Hi all,
-> > 
-> > Today's linux-next build (powerpc allyesconfig gcc4.4.0) produced this
-> > warning:
-> > 
-> > kernel/irq/manage.c: In function 'request_threaded_irq':
-> > kernel/irq/manage.c:933: warning: suggest parentheses around operand of '!' or change '&' to '&&' or '!' to '~'
-> > 
-> > Introduced by commit ba71604fad348656071a2a76eef9a67dab85a773 
-> > ("genirq: do not execute DEBUG_SHIRQ when irq setup failed") from 
-> > the genirq tree.
-> 
-> This looks like a real bug - thanks for reporting this.
+--Signature=_Fri__24_Apr_2009_14_46_35_+1000_0s+ZV2IDsmb48706
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yep, mea culpa!
+Hi Len,
+
+Today's linux-next build (i386 defconfig) failed like this:
+
+drivers/built-in.o: In function `acpi_video_bus_put_devices':
+video.c:(.text+0x34319): undefined reference to `video_output_unregister'
+drivers/built-in.o: In function `acpi_video_bus_add':
+video.c:(.text+0x35995): undefined reference to `video_output_register'
+
+Probably caused by commit 4b10fee2ec45eae912c2c81730f4eee82e61a247
+("ACPI/i915: build fix").
+
+I reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__24_Apr_2009_14_46_35_+1000_0s+ZV2IDsmb48706
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAknxRCsACgkQjjKRsyhoI8xNpQCfTLfjw6vqnaYvAIoECWrkEdnM
+wroAnjZrBRccSqX32GwEegwEcH/NESiu
+=0T8r
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__24_Apr_2009_14_46_35_+1000_0s+ZV2IDsmb48706--
