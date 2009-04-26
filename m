@@ -1,50 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for April 24
-Date: Mon, 27 Apr 2009 14:21:24 +1000
-Message-ID: <20090427142124.32ddf4b5.sfr@canb.auug.org.au>
-References: <20090424150456.ff35e4ea.sfr@canb.auug.org.au>
-	<49F45FA4.6020307@panasas.com>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: [PATCH -next] lib: Move find_last_bit.o to obj-y to enable use by modules.
+Date: Sun, 26 Apr 2009 22:19:05 +0930
+Message-ID: <200904262219.07148.rusty@rustcorp.com.au>
+References: <20090416030704.GH16961@linux-sh.org> <20090423141237.GA27102@linux-sh.org> <1240504730.11148.13.camel@heimdal.trondhjem.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__27_Apr_2009_14_21_24_+1000_uUe4fOQLfEGJ292O"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754193AbZD0EVs@vger.kernel.org>
-In-Reply-To: <49F45FA4.6020307@panasas.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Benny Halevy <bhalevy@panasas.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Mon__27_Apr_2009_14_21_24_+1000_uUe4fOQLfEGJ292O
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:44668 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752416AbZDZMtL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 26 Apr 2009 08:49:11 -0400
+In-Reply-To: <1240504730.11148.13.camel@heimdal.trondhjem.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Trond Myklebust <Trond.Myklebust@netapp.com>
+Cc: Paul Mundt <lethal@linux-sh.org>, Benny Halevy <bhalevy@panasas.com>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, Andy Adamson <andros@netapp.com>, Fredric Isaman <iisaman@citi.umich.edu>, Stephen Rothwell <sfr@canb.auug.org.au>, Alexander Beregalov <a.beregalov@gmail.com>, Subrata Modak <subrata@linux.vnet.ibm.com>, sachinp <sachinp@linux.vnet.ibm.com>
 
-Hi Benny,
+On Fri, 24 Apr 2009 02:08:50 am Trond Myklebust wrote:
+> > > On Thu, 2009-04-23 at 22:25 +0900, Paul Mundt wrote:
+> > > > > In any case, this patch does not belong in the NFS tree since it touches
+> > > > > generic library code, not NFS code. Benny, if nobody else wants to
+> > > > > shepherd it, then just send it directly to Linus.
+...
+> > The nfs tree should be dropped on the floor immediately until this issue
+> > is resolved. 
+> 
+> Whatever...
 
-On Sun, 26 Apr 2009 16:20:36 +0300 Benny Halevy <bhalevy@panasas.com> wrote:
->
-> I've already sent this patch directly to Linus (and while at it,
-> correcting its subject)
-> It's committed as a5422a5111811401f7756345e4c237ff06cf6d1e
-> in Linus' tree.
+FWIW Trond, I would have taken the patch and pushed it.  It happens: it's
+not your fault, but it suddenly became your problem.
 
-Thanks.  I have removed it from my fixes tree.
+And Paul: being right doesn't excuse being an asshole.[1]
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__27_Apr_2009_14_21_24_+1000_uUe4fOQLfEGJ292O
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkn1MsQACgkQjjKRsyhoI8zJ9wCeK4mxIbyclbTX7Yv9ehN1+b8j
-GX4An0vhVeo+j5ylVj3b7VDadrzqWtl3
-=zQxM
------END PGP SIGNATURE-----
-
---Signature=_Mon__27_Apr_2009_14_21_24_+1000_uUe4fOQLfEGJ292O--
+Thanks,
+Rusty.
+[1] As this rule applies to this message, I ponder my own failings.
