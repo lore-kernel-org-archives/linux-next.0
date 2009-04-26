@@ -1,30 +1,46 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: comedi: Range_table and range_table_list
-Date: Sun, 26 Apr 2009 19:38:22 -0700
-Message-ID: <20090427023822.GA7060@kroah.com>
-References: <87skjvf5o8.fsf@free.fr>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: upstream tree build warnings
+Date: Sun, 26 Apr 2009 21:53:10 +0930
+Message-ID: <200904262153.10948.rusty@rustcorp.com.au>
+References: <20090423163847.200f227e.sfr@canb.auug.org.au> <20090423.002403.74400050.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:54955 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751790AbZD0CnQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 26 Apr 2009 22:43:16 -0400
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756112AbZDZMX2@vger.kernel.org>
+In-Reply-To: <20090423.002403.74400050.davem@davemloft.net>
 Content-Disposition: inline
-In-Reply-To: <87skjvf5o8.fsf@free.fr>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alexis Berlemont <alexis.berlemont@gmail.com>
-Cc: linux-next@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, alex.williamson@hp.com, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Sun, Apr 26, 2009 at 11:47:51PM +0200, Alexis Berlemont wrote:
-> Hi,
+On Thu, 23 Apr 2009 04:54:03 pm David Miller wrote:
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 23 Apr 2009 16:38:47 +1000
 > 
-> Please, find attached two patches related with the Comedi layer.
+> > Today's linux-next build (powerpc allyesconfig gcc4.4.0) produced these
+> > warnings:
+> > 
+> > drivers/net/virtio_net.c: In function 'virnet_vlan_rx_add_vid':
+> > include/linux/scatterlist.h:57: warning: 'sg' is used uninitialized in this function
+> > drivers/net/virtio_net.c:746: note: 'sg' was declared here
+> > drivers/net/virtio_net.c: In function 'virnet_vlan_rx_kill_vid':
+> > include/linux/scatterlist.h:57: warning: 'sg' is used uninitialized in this function
+> > drivers/net/virtio_net.c:758: note: 'sg' was declared here
+> > 
+> > in each case, sg is uninitialised when its address is passed to
+> > sg_set_buf() which passes it to gs_set_page() which passes it to
+> > sg_assign_page() which dereferences it (to use ->page_link).
+> 
+> I wonder if this is a side effect of changes that went in via Rusty's
+> tree?  I don't remember touching this driver in a while.
 
-Can you resend this, and cc: the comedi developers at the same time so
-that they can evaluate your change to the code?
+AFAICT gcc is right: it should be sg_init_one().
 
-thanks,
+It doesn't currently *matter*, since no virtio add_buf implementation
+does that chained-sg crap (I had a patch once, but it made me barf) and
+so the uninitialized lower three bits are ignored.
 
-greg k-h
+Alex, if you agree, patch welcome...
+Rusty.
