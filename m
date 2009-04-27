@@ -1,43 +1,41 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH -next] lib: Move find_last_bit.o to obj-y to enable use
-	by modules.
-Date: Sun, 26 Apr 2009 18:42:09 +0200
-Message-ID: <20090426164209.GE6236@elte.hu>
-References: <20090416030704.GH16961@linux-sh.org> <20090423141237.GA27102@linux-sh.org> <1240504730.11148.13.camel@heimdal.trondhjem.org> <200904262219.07148.rusty@rustcorp.com.au>
+From: Alexis Berlemont <alexis.berlemont@gmail.com>
+Subject: Re: linux-next: comedi: Range_table and range_table_list
+Date: Mon, 27 Apr 2009 10:37:43 +0200
+Message-ID: <72cf3fb0904270137s4ac40211i8965ef0110fad7dd@mail.gmail.com>
+References: <87skjvf5o8.fsf@free.fr> <20090427023822.GA7060@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:57077 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752703AbZDZQmh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 26 Apr 2009 12:42:37 -0400
-Content-Disposition: inline
-In-Reply-To: <200904262219.07148.rusty@rustcorp.com.au>
+Received: from ey-out-2122.google.com ([74.125.78.26]:42321 "EHLO
+	ey-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752079AbZD0Ihq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Apr 2009 04:37:46 -0400
+Received: by ey-out-2122.google.com with SMTP id 9so525637eyd.37
+        for <linux-next@vger.kernel.org>; Mon, 27 Apr 2009 01:37:43 -0700 (PDT)
+In-Reply-To: <20090427023822.GA7060@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: Trond Myklebust <Trond.Myklebust@netapp.com>, Paul Mundt <lethal@linux-sh.org>, Benny Halevy <bhalevy@panasas.com>, linux-next@vger.kernel.org, Andy Adamson <andros@netapp.com>, Fredric Isaman <iisaman@citi.umich.edu>, Stephen Rothwell <sfr@canb.auug.org.au>, Alexander Beregalov <a.beregalov@gmail.com>, Subrata Modak <subrata@linux.vnet.ibm.com>, sachinp <sachinp@linux.vnet.ibm.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org
 
+Hi,
 
-* Rusty Russell <rusty@rustcorp.com.au> wrote:
+On Mon, Apr 27, 2009 at 4:38 AM, Greg KH <greg@kroah.com> wrote:
+> On Sun, Apr 26, 2009 at 11:47:51PM +0200, Alexis Berlemont wrote:
+>> Hi,
+>>
+>> Please, find attached two patches related with the Comedi layer.
+>
+> Can you resend this, and cc: the comedi developers at the same time so
+> that they can evaluate your change to the code?
 
-> On Fri, 24 Apr 2009 02:08:50 am Trond Myklebust wrote:
-> > > > On Thu, 2009-04-23 at 22:25 +0900, Paul Mundt wrote:
-> > > > > > In any case, this patch does not belong in the NFS tree since it touches
-> > > > > > generic library code, not NFS code. Benny, if nobody else wants to
-> > > > > > shepherd it, then just send it directly to Linus.
-> ...
-> > > The nfs tree should be dropped on the floor immediately until this issue
-> > > is resolved. 
-> > 
-> > Whatever...
-> 
-> FWIW Trond, I would have taken the patch and pushed it.  It 
-> happens: it's not your fault, but it suddenly became your problem.
+I already did so. As a matter of fact, I reached comedi's mailing list
+first. Here is the original thread:
+http://groups.google.com/group/comedi_list/browse_thread/thread/85be8195ddf52896
 
-To double check things: is it clear now who pushes the fix and when? 
-I'm obviously acking it and can push it to Linus if needed.
+Ian Abott told me that the original Comedi CVS tree will not integrate
+such a code change. He suggested me to redirect my mail to linux-next
+as the staging area is supposed to host any "cleanup effort".
 
-Thanks,
-
-	Ingo
+Alexis.
