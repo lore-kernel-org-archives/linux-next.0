@@ -1,86 +1,30 @@
-From: Benny Halevy <bhalevy@panasas.com>
-Subject: Re: linux-next: Tree for April 24
-Date: Sun, 26 Apr 2009 16:20:36 +0300
-Message-ID: <49F45FA4.6020307@panasas.com>
-References: <20090424150456.ff35e4ea.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: comedi: Range_table and range_table_list
+Date: Sun, 26 Apr 2009 19:38:22 -0700
+Message-ID: <20090427023822.GA7060@kroah.com>
+References: <87skjvf5o8.fsf@free.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f158.google.com ([209.85.220.158]:45049 "EHLO
-	mail-fx0-f158.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750845AbZDZNUp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 26 Apr 2009 09:20:45 -0400
-In-Reply-To: <20090424150456.ff35e4ea.sfr@canb.auug.org.au>
+Received: from kroah.org ([198.145.64.141]:54955 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751790AbZD0CnQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 26 Apr 2009 22:43:16 -0400
+Content-Disposition: inline
+In-Reply-To: <87skjvf5o8.fsf@free.fr>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Alexis Berlemont <alexis.berlemont@gmail.com>
+Cc: linux-next@vger.kernel.org
 
-On Apr. 24, 2009, 8:04 +0300, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
+On Sun, Apr 26, 2009 at 11:47:51PM +0200, Alexis Berlemont wrote:
+> Hi,
 > 
-> I have added a tree that contains only simple build fixes for Linus'
-> tree.  It currently contains:
-> 
-> 	lib: find_next_bit.o needed by a module only, move it from lib to obj
+> Please, find attached two patches related with the Comedi layer.
 
-Thanks Stephan!
-I've already sent this patch directly to Linus (and while at it,
-correcting its subject)
-It's committed as a5422a5111811401f7756345e4c237ff06cf6d1e
-in Linus' tree.
+Can you resend this, and cc: the comedi developers at the same time so
+that they can evaluate your change to the code?
 
-Benny
+thanks,
 
-> 	powerpc: fix for long standing bug noticed by gcc 4.4.0
-> 
-> This is just an experiment for now and I am not sure if I should push
-> these fixes directly to Linus ...
-> 
-> Changes since 20090423:
-> 
-> New tree:
-> 	fixes
-> 
-> The acpi tree gained a build failure for which I reverted a commit.
-> 
-> ----------------------------------------------------------------------------
-> 
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-> (patches at
-> http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-> are tracking the linux-next tree using git, you should not use "git pull"
-> to do so as that will try to merge the new linux-next release with the
-> old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-> (see below).
-> 
-> You can see which trees have been included by looking in the Next/Trees
-> file in the source.  There are also quilt-import.log and merge.log files
-> in the Next directory.  Between each merge, the tree was built with
-> a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-> final fixups (if any), it is also built with powerpc allnoconfig (32 and
-> 64 bit), ppc44x_defconfig and allyesconfig (minus
-> CONFIG_PROFILE_ALL_BRANCHES) and i386, sparc and sparc64 defconfig.
-> These builds also have CONFIG_ENABLE_WARN_DEPRECATED,
-> CONFIG_ENABLE_MUST_CHECK and CONFIG_DEBUG_INFO disabled when necessary.
-> 
-> Below is a summary of the state of the merge.
-> 
-> We are up to 135 trees (counting Linus' and 18 trees of patches pending for
-> Linus' tree), more are welcome (even if they are currently empty).
-> Thanks to those who have contributed, and to those who haven't, please do.
-> 
-> Status of my local build tests will be at
-> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-> advice about cross compilers/configs that work, we are always open to add
-> more builds.
-> 
-> Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-> at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-> Dunlap for doing many randconfig builds.
-> 
-> There is a wiki covering stuff to do with linux-next at
-> http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-> 
+greg k-h
