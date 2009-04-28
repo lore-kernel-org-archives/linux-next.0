@@ -1,52 +1,60 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Subject: [PATCH -next] net: rfkill: Fix build for the CONFIG_RFKILL_LEDS=n case.
-Date: Tue, 28 Apr 2009 23:39:42 +0900
-Message-ID: <20090428143942.GA25813@linux-sh.org>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH] lockd: fix FILE_LOCKING=n build error
+Date: Tue, 28 Apr 2009 08:22:50 -0700
+Message-ID: <49F71F4A.3080908@oracle.com>
+References: <20090428165343.2e357d7a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 124x34x33x190.ap124.ftth.ucom.ne.jp ([124.34.33.190]:35541 "EHLO
-	master.linux-sh.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755946AbZD1OpA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Apr 2009 10:45:00 -0400
-Content-Disposition: inline
+Received: from acsinet11.oracle.com ([141.146.126.233]:53075 "EHLO
+	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1762555AbZD1PWv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Apr 2009 11:22:51 -0400
+In-Reply-To: <20090428165343.2e357d7a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>, "John W. Linville" <linville@tuxdriver.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <matthew@wil.cx>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
 
-Commit ("rfkill: Fix broken rfkill LED in 2.6.30-rc1") sprinkles around
-references to rfkill_led_trigger() in the common code, which is only defined
-if CONFIG_RFKILL_LEDS is set:
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-  CC      net/rfkill/rfkill.o
-net/rfkill/rfkill.c: In function 'update_rfkill_state':
-net/rfkill/rfkill.c:99: error: implicit declaration of function 'rfkill_led_trigger'
-make[1]: *** [net/rfkill/rfkill.o] Error 1
-make: *** [net/rfkill/rfkill.o] Error 2
+lockd/svclock.c is missing a header file <linux/fs.h>.
 
-Cc: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: John W. Linville <linville@tuxdriver.com>
-Signed-off-by: Paul Mundt <lethal@linux-sh.org>
+<linux/fs.h> is missing a definition of locks_release_private()
+for the config case of FILE_LOCKING=n, causing a build error:
 
+fs/lockd/svclock.c:330: error: implicit declaration of function 'locks_release_private'
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 ---
+ fs/lockd/svclock.c |    1 +
+ include/linux/fs.h |    4 ++++
+ 2 files changed, 5 insertions(+)
 
- net/rfkill/rfkill.c |    5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/net/rfkill/rfkill.c b/net/rfkill/rfkill.c
-index 53430a7..df96c0c 100644
---- a/net/rfkill/rfkill.c
-+++ b/net/rfkill/rfkill.c
-@@ -75,6 +75,11 @@ static void rfkill_led_trigger_activate(struct led_classdev *led)
+--- linux-next-20090428.orig/fs/lockd/svclock.c
++++ linux-next-20090428/fs/lockd/svclock.c
+@@ -22,6 +22,7 @@
  
- 	rfkill_led_trigger(rfkill, rfkill->state);
+ #include <linux/types.h>
+ #include <linux/errno.h>
++#include <linux/fs.h>
+ #include <linux/kernel.h>
+ #include <linux/sched.h>
+ #include <linux/smp_lock.h>
+--- linux-next-20090428.orig/include/linux/fs.h
++++ linux-next-20090428/include/linux/fs.h
+@@ -1183,6 +1183,10 @@ static inline void locks_remove_flock(st
+ 	return;
  }
-+#else
-+static void rfkill_led_trigger(struct rfkill *rfkill,
-+			       enum rfkill_state state)
+ 
++static inline void locks_release_private(struct file_lock *fl)
 +{
 +}
- #endif /* CONFIG_RFKILL_LEDS */
- 
- static void rfkill_uevent(struct rfkill *rfkill)
++
+ static inline void posix_test_lock(struct file *filp, struct file_lock *fl)
+ {
+ 	return;
+
+-- 
+~Randy
