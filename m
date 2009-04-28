@@ -1,71 +1,80 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
+From: Randy Dunlap <randy.dunlap@oracle.com>
 Subject: Re: [PATCH] lockd: fix FILE_LOCKING=n build error
-Date: Tue, 28 Apr 2009 13:21:37 -0400
-Message-ID: <20090428172137.GA22451@fieldses.org>
-References: <20090428165343.2e357d7a.sfr@canb.auug.org.au> <49F71F4A.3080908@oracle.com>
+Date: Tue, 28 Apr 2009 10:51:22 -0700
+Message-ID: <49F7421A.1090709@oracle.com>
+References: <20090428165343.2e357d7a.sfr@canb.auug.org.au> <49F71F4A.3080908@oracle.com> <20090428172137.GA22451@fieldses.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.fieldses.org ([141.211.133.115]:59415 "EHLO
-	pickle.fieldses.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1762295AbZD1RV7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Apr 2009 13:21:59 -0400
-Content-Disposition: inline
-In-Reply-To: <49F71F4A.3080908@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20090428172137.GA22451@fieldses.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: "J. Bruce Fields" <bfields@fieldses.org>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <matthew@wil.cx>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Apr 28, 2009 at 08:22:50AM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
+J. Bruce Fields wrote:
+> On Tue, Apr 28, 2009 at 08:22:50AM -0700, Randy Dunlap wrote:
+>> From: Randy Dunlap <randy.dunlap@oracle.com>
+>>
+>> lockd/svclock.c is missing a header file <linux/fs.h>.
+>>
+>> <linux/fs.h> is missing a definition of locks_release_private()
+>> for the config case of FILE_LOCKING=n, causing a build error:
+>>
+>> fs/lockd/svclock.c:330: error: implicit declaration of function 'locks_release_private'
 > 
-> lockd/svclock.c is missing a header file <linux/fs.h>.
-> 
-> <linux/fs.h> is missing a definition of locks_release_private()
-> for the config case of FILE_LOCKING=n, causing a build error:
-> 
-> fs/lockd/svclock.c:330: error: implicit declaration of function 'locks_release_private'
+> LOCKD without FILE_LOCKING doesn't really make sense; would it be better
+> to add a config dependency?
 
-LOCKD without FILE_LOCKING doesn't really make sense; would it be better
-to add a config dependency?
 
---b.
+I just tried a patch like the one below instead of the first one,
+but it has build errors too, so more Makefile/Kconfig work is
+needed (by someone who knows what interfaces are needed here):
 
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> ---
->  fs/lockd/svclock.c |    1 +
->  include/linux/fs.h |    4 ++++
->  2 files changed, 5 insertions(+)
-> 
-> --- linux-next-20090428.orig/fs/lockd/svclock.c
-> +++ linux-next-20090428/fs/lockd/svclock.c
-> @@ -22,6 +22,7 @@
->  
->  #include <linux/types.h>
->  #include <linux/errno.h>
-> +#include <linux/fs.h>
->  #include <linux/kernel.h>
->  #include <linux/sched.h>
->  #include <linux/smp_lock.h>
-> --- linux-next-20090428.orig/include/linux/fs.h
-> +++ linux-next-20090428/include/linux/fs.h
-> @@ -1183,6 +1183,10 @@ static inline void locks_remove_flock(st
->  	return;
->  }
->  
-> +static inline void locks_release_private(struct file_lock *fl)
-> +{
-> +}
-> +
->  static inline void posix_test_lock(struct file *filp, struct file_lock *fl)
->  {
->  	return;
-> 
-> -- 
-> ~Randy
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-fsdevel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+fs/built-in.o: In function `nfs_start_lockd':
+client.c:(.text+0xe8848): undefined reference to `nlmclnt_init'
+fs/built-in.o: In function `nfs_destroy_server':
+client.c:(.text+0xe8885): undefined reference to `nlmclnt_done'
+fs/built-in.o: In function `nfs_proc_lock':
+proc.c:(.text+0xf735f): undefined reference to `nlmclnt_proc'
+fs/built-in.o: In function `nfs3_proc_lock':
+nfs3proc.c:(.text+0xfd1df): undefined reference to `nlmclnt_proc'
+
+
+
+
+lockd without FILE_LOCKING doesn't make sense, so make LOCKD and
+LOCKD_V4 depend on FILE_LOCKING.
+---
+ fs/Kconfig     |    2 ++
+ fs/nfs/Kconfig |    2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+--- linux-next-20090428.orig/fs/Kconfig
++++ linux-next-20090428/fs/Kconfig
+@@ -226,10 +226,12 @@ source "fs/nfsd/Kconfig"
+ 
+ config LOCKD
+ 	tristate
++	depends on FILE_LOCKING
+ 
+ config LOCKD_V4
+ 	bool
+ 	depends on NFSD_V3 || NFS_V3
++	depends on FILE_LOCKING
+ 	default y
+ 
+ config EXPORTFS
+--- linux-next-20090428.orig/fs/nfs/Kconfig
++++ linux-next-20090428/fs/nfs/Kconfig
+@@ -1,7 +1,7 @@
+ config NFS_FS
+ 	tristate "NFS client support"
+ 	depends on INET
+-	select LOCKD
++	select LOCKD if FILE_LOCKING
+ 	select SUNRPC
+ 	select NFS_ACL_SUPPORT if NFS_V3_ACL
+ 	help
