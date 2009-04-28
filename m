@@ -1,60 +1,78 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH] lockd: fix FILE_LOCKING=n build error
-Date: Tue, 28 Apr 2009 08:22:50 -0700
-Message-ID: <49F71F4A.3080908@oracle.com>
-References: <20090428165343.2e357d7a.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Felix Blyakher <felixb@sgi.com>
+Subject: Re: [PATCH] lockd: fix FILE_LOCKING=n build error
+Date: Tue, 28 Apr 2009 10:38:08 -0500
+Message-ID: <3C0B014B-1217-4802-88E0-0F3AE5D395B2@sgi.com>
+References: <20090428165343.2e357d7a.sfr@canb.auug.org.au> <49F71F4A.3080908@oracle.com>
+Mime-Version: 1.0 (Apple Message framework v926)
+Content-Type: text/plain; charset=US-ASCII; format=flowed; delsp=yes
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:53075 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1762555AbZD1PWv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Apr 2009 11:22:51 -0400
-In-Reply-To: <20090428165343.2e357d7a.sfr@canb.auug.org.au>
+Received: from relay2.sgi.com ([192.48.179.30]:33552 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1754401AbZD1PiM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Apr 2009 11:38:12 -0400
+In-Reply-To: <49F71F4A.3080908@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <matthew@wil.cx>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <matthew@wil.cx>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
 
-lockd/svclock.c is missing a header file <linux/fs.h>.
+On Apr 28, 2009, at 10:22 AM, Randy Dunlap wrote:
 
-<linux/fs.h> is missing a definition of locks_release_private()
-for the config case of FILE_LOCKING=n, causing a build error:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+>
+> lockd/svclock.c is missing a header file <linux/fs.h>.
+>
+> <linux/fs.h> is missing a definition of locks_release_private()
+> for the config case of FILE_LOCKING=n, causing a build error:
+>
+> fs/lockd/svclock.c:330: error: implicit declaration of function  
+> 'locks_release_private'
+>
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-fs/lockd/svclock.c:330: error: implicit declaration of function 'locks_release_private'
+Heh, I did miss it in my original patch, where I added
+locks_release_private().
+The fix looks good, thanks.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- fs/lockd/svclock.c |    1 +
- include/linux/fs.h |    4 ++++
- 2 files changed, 5 insertions(+)
+Reviewed-by: Felix Blyakher <felixb@sgi.com>
 
---- linux-next-20090428.orig/fs/lockd/svclock.c
-+++ linux-next-20090428/fs/lockd/svclock.c
-@@ -22,6 +22,7 @@
- 
- #include <linux/types.h>
- #include <linux/errno.h>
-+#include <linux/fs.h>
- #include <linux/kernel.h>
- #include <linux/sched.h>
- #include <linux/smp_lock.h>
---- linux-next-20090428.orig/include/linux/fs.h
-+++ linux-next-20090428/include/linux/fs.h
-@@ -1183,6 +1183,10 @@ static inline void locks_remove_flock(st
- 	return;
- }
- 
-+static inline void locks_release_private(struct file_lock *fl)
-+{
-+}
-+
- static inline void posix_test_lock(struct file *filp, struct file_lock *fl)
- {
- 	return;
-
--- 
-~Randy
+>
+> ---
+> fs/lockd/svclock.c |    1 +
+> include/linux/fs.h |    4 ++++
+> 2 files changed, 5 insertions(+)
+>
+> --- linux-next-20090428.orig/fs/lockd/svclock.c
+> +++ linux-next-20090428/fs/lockd/svclock.c
+> @@ -22,6 +22,7 @@
+>
+> #include <linux/types.h>
+> #include <linux/errno.h>
+> +#include <linux/fs.h>
+> #include <linux/kernel.h>
+> #include <linux/sched.h>
+> #include <linux/smp_lock.h>
+> --- linux-next-20090428.orig/include/linux/fs.h
+> +++ linux-next-20090428/include/linux/fs.h
+> @@ -1183,6 +1183,10 @@ static inline void locks_remove_flock(st
+> 	return;
+> }
+>
+> +static inline void locks_release_private(struct file_lock *fl)
+> +{
+> +}
+> +
+> static inline void posix_test_lock(struct file *filp, struct  
+> file_lock *fl)
+> {
+> 	return;
+>
+> -- 
+> ~Randy
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux- 
+> fsdevel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
