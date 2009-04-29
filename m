@@ -1,52 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the wireless-current
- tree
-Date: Wed, 29 Apr 2009 13:51:18 +1000
-Message-ID: <20090429135118.fa02210b.sfr@canb.auug.org.au>
+Subject: linux-next: nfsd tree build warning
+Date: Wed, 29 Apr 2009 13:57:02 +1000
+Message-ID: <20090429135702.943f2bfa.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__29_Apr_2009_13_57_02_+1000_tsQ7z.HXf/A40nkD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49666 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45622 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750887AbZD2DvV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Apr 2009 23:51:21 -0400
+	id S1751604AbZD2D5J (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Apr 2009 23:57:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, "John W. Linville" <linville@tuxdriver.com>
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: linux-next@vger.kernel.org, Bian Naimeng <biannm@cn.fujitsu.com>
 
-Hi David,
+--Signature=_Wed__29_Apr_2009_13_57_02_+1000_tsQ7z.HXf/A40nkD
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/net/wireless/iwlwifi/iwl-scan.c between commit
-74aa9be0ea0ffeb233f45c39f3cf594b68bbbb89 ("iwlwifi: notify on scan
-completion even when shutting down") from the wireless-current tree and
-commit 1ecf9fc1317f8df91eb1d74360f408558d657478 ("iwlwifi: improve scan
-support") from the net tree.
+Hi Bruce,
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
+Today's linux-next build (powerpc ppc64_defconfig) produced this new
+warning:
+
+fs/nfsd/nfs4state.c: In function 'EXPIRED_STATEID':
+fs/nfsd/nfs4state.c:2757: warning: comparison of distinct pointer types lac=
+ks a cast
+
+Caused by commit 78155ed75f470710f2aecb3e75e3d97107ba8374 ("nfsd4:
+distinguish expired from stale stateids").
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/net/wireless/iwlwifi/iwl-scan.c
-index e7c65c4,799f5eb..0000000
---- a/drivers/net/wireless/iwlwifi/iwl-scan.c
-+++ b/drivers/net/wireless/iwlwifi/iwl-scan.c
-@@@ -925,11 -814,12 +814,12 @@@ void iwl_bg_scan_completed(struct work_
-  
-  	IWL_DEBUG_SCAN(priv, "SCAN complete scan\n");
-  
- -	if (test_bit(STATUS_EXIT_PENDING, &priv->status))
- -		return;
- -
-+ 	priv->scan_request = NULL;
-  	ieee80211_scan_completed(priv->hw, false);
-  
- +	if (test_bit(STATUS_EXIT_PENDING, &priv->status))
- +		return;
- +
-  	/* Since setting the TXPOWER may have been deferred while
-  	 * performing the scan, fire one off */
-  	mutex_lock(&priv->mutex);
+--Signature=_Wed__29_Apr_2009_13_57_02_+1000_tsQ7z.HXf/A40nkD
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkn30A8ACgkQjjKRsyhoI8wk9gCghSIcGfFopBunwGXgs6Lu6Pk0
+jSwAoKvzqc8O1vKfprKZAS59vzD/22Oe
+=/zPV
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__29_Apr_2009_13_57_02_+1000_tsQ7z.HXf/A40nkD--
