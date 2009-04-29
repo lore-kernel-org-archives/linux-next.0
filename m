@@ -1,30 +1,82 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: net tree build warnings
-Date: Tue, 28 Apr 2009 23:02:32 -0700 (PDT)
-Message-ID: <20090428.230232.113827653.davem@davemloft.net>
-References: <20090429145921.5bb48c01.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the  ttydevtree
+Date: Wed, 29 Apr 2009 16:22:28 +1000
+Message-ID: <20090429162228.752887ac.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:44017
-	"EHLO sunset.davemloft.net" rhost-flags-OK-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1751481AbZD2GCi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Apr 2009 02:02:38 -0400
-In-Reply-To: <20090429145921.5bb48c01.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:50515 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755521AbZD2GWb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Apr 2009 02:22:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, a.beregalov@gmail.com
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, Elina Pasheva <epasheva@sierrawireless.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 29 Apr 2009 14:59:21 +1000
+Hi Greg,
 
-> Caused by commit 011983048a120e520147361be1067dd82343038e ("vxge: use max()
-> instead of VXGE_HW_SET_LEVEL").
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/serial/sierra.c between commit
+e675a5b8305a4d244273c34698ba411ddcc0f42a ("tty-usb-use-port") from the
+ttydev tree and commit 7b8163621c22ea34636314da663b9cdea50342be ("USB:
+serial: sierra driver debug info visibility improvement") from the usb
+tree.
 
-Maybe that's why the macro was used in the first place :-)
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-We probably have to use something like max_t() here, and to me that's
-worse than the macro it is replacing.
+diff --cc drivers/usb/serial/sierra.c
+index 1319b89,4d02b83..0000000
+--- a/drivers/usb/serial/sierra.c
++++ b/drivers/usb/serial/sierra.c
+@@@ -245,9 -246,8 +245,9 @@@ static int sierra_send_setup(struct usb
+  	struct usb_serial *serial = port->serial;
+  	struct sierra_port_private *portdata;
+  	__u16 interface = 0;
+ +	int val = 0;
+  
+- 	dev_dbg(&port->dev, "%s", __func__);
++ 	dev_dbg(&port->dev, "%s\n", __func__);
+  
+  	portdata = usb_get_serial_port_data(port);
+  
+@@@ -279,9 -297,9 +279,9 @@@
+  static void sierra_set_termios(struct tty_struct *tty,
+  		struct usb_serial_port *port, struct ktermios *old_termios)
+  {
+- 	dev_dbg(&port->dev, "%s", __func__);
++ 	dev_dbg(&port->dev, "%s\n", __func__);
+  	tty_termios_copy_hw(tty->termios, old_termios);
+ -	sierra_send_setup(tty, port);
+ +	sierra_send_setup(port);
+  }
+  
+  static int sierra_tiocmget(struct tty_struct *tty, struct file *file)
+@@@ -604,21 -626,9 +604,21 @@@ static void sierra_dtr_rts(struct usb_s
+  	if (serial->dev) {
+  		mutex_lock(&serial->disc_mutex);
+  		if (!serial->disconnected)
+ -			sierra_send_setup(tty, port);
+ +			sierra_send_setup(port);
+  		mutex_unlock(&serial->disc_mutex);
+ +	}
+ +}
+ +
+ +static void sierra_close(struct usb_serial_port *port)
+ +{
+ +	int i;
+ +	struct usb_serial *serial = port->serial;
+ +	struct sierra_port_private *portdata;
+  
+- 	dev_dbg(&port->dev, "%s", __func__);
+++	dev_dbg(&port->dev, "%s\n", __func__);
+ +	portdata = usb_get_serial_port_data(port);
+ +
+ +	if (serial->dev) {
+  		/* Stop reading/writing urbs */
+  		for (i = 0; i < N_IN_URB; i++)
+  			usb_kill_urb(portdata->in_urbs[i]);
