@@ -1,39 +1,62 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: Next April 24: [S390] allmodconfig build failure
- (trace/events)
-Date: Wed, 29 Apr 2009 08:09:02 -0400 (EDT)
-Message-ID: <alpine.DEB.2.00.0904290808300.8066@gandalf.stny.rr.com>
-References: <20090424150456.ff35e4ea.sfr@canb.auug.org.au> <49F16654.8040208@in.ibm.com> <20090424072533.GE24912@elte.hu> <20090424104108.0f2c0f05@osiris.boeblingen.de.ibm.com> <49F8232B.4090007@in.ibm.com>
- <20090429135139.5fac79b8@osiris.boeblingen.de.ibm.com>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: linux-next: manual merge of the net tree with the
+	wireless-current tree
+Date: Wed, 29 Apr 2009 08:42:55 -0400
+Message-ID: <20090429124255.GD3321@tuxdriver.com>
+References: <20090429135118.fa02210b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1758260AbZD2MJl@vger.kernel.org>
-In-Reply-To: <20090429135139.5fac79b8@osiris.boeblingen.de.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Sachin Sant <sachinp@in.ibm.com>, Ingo Molnar <mingo@elte.hu>, =?ISO-8859-15?Q?Fr=E9d=E9ric_Weisbecker?= <fweisbec@gmail.com>, linux-s390@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:58338 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760762AbZD2NQB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Apr 2009 09:16:01 -0400
+Content-Disposition: inline
+In-Reply-To: <20090429135118.fa02210b.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>
 
+ACK -- this is the proper fix-up.
 
-On Wed, 29 Apr 2009, Heiko Carstens wrote:
+On Wed, Apr 29, 2009 at 01:51:18PM +1000, Stephen Rothwell wrote:
+> Hi David,
 > 
-> Subject: [PATCH] tracing: fix compile error
+> Today's linux-next merge of the net tree got a conflict in
+> drivers/net/wireless/iwlwifi/iwl-scan.c between commit
+> 74aa9be0ea0ffeb233f45c39f3cf594b68bbbb89 ("iwlwifi: notify on scan
+> completion even when shutting down") from the wireless-current tree and
+> commit 1ecf9fc1317f8df91eb1d74360f408558d657478 ("iwlwifi: improve scan
+> support") from the net tree.
 > 
-> From: Heiko Carstens <heiko.carstens@de.ibm.com>
+> I fixed it up (see below) and can carry the fix as necessary.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 > 
-> "tracing: create automated trace defines" causes this compile error on s390:
+> diff --cc drivers/net/wireless/iwlwifi/iwl-scan.c
+> index e7c65c4,799f5eb..0000000
+> --- a/drivers/net/wireless/iwlwifi/iwl-scan.c
+> +++ b/drivers/net/wireless/iwlwifi/iwl-scan.c
+> @@@ -925,11 -814,12 +814,12 @@@ void iwl_bg_scan_completed(struct work_
+>   
+>   	IWL_DEBUG_SCAN(priv, "SCAN complete scan\n");
+>   
+>  -	if (test_bit(STATUS_EXIT_PENDING, &priv->status))
+>  -		return;
+>  -
+> + 	priv->scan_request = NULL;
+>   	ieee80211_scan_completed(priv->hw, false);
+>   
+>  +	if (test_bit(STATUS_EXIT_PENDING, &priv->status))
+>  +		return;
+>  +
+>   	/* Since setting the TXPOWER may have been deferred while
+>   	 * performing the scan, fire one off */
+>   	mutex_lock(&priv->mutex);
 > 
-> kernel/built-in.o: In function `__do_softirq':
-> (.text+0x1c680): undefined reference to `__tracepoint_softirq_entry'
-> 
-> This happens because the definitions of the softirq tracepoints were moved
-> from kernel/softirq.c to kernel/irq/handle.c. Since s390 doesn't support
-> generic hardirqs handle.c doesn't get compiled and the definitions are
-> missing.
-> So move the tracepoints to softirq.c again.
 
-Nice catch!
-
-Acked-by: Steven Rostedt <rostedt@goodmis.org>
-
--- Steve
+-- 
+John W. Linville		Someday the world will need a hero, and you
+linville@tuxdriver.com			might be all we have.  Be ready.
