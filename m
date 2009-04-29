@@ -1,69 +1,52 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Subject: Re: [PATCH v2] lockd: fix FILE_LOCKING=n build error
-Date: Tue, 28 Apr 2009 17:40:43 -0400
-Message-ID: <20090428214043.GM23924@fieldses.org>
-References: <20090428165343.2e357d7a.sfr@canb.auug.org.au> <49F71F4A.3080908@oracle.com> <20090428172137.GA22451@fieldses.org> <49F7421A.1090709@oracle.com> <1240942554.7376.38.camel@heimdal.trondhjem.org> <49F76E8C.3070808@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the wireless-current
+ tree
+Date: Wed, 29 Apr 2009 13:51:18 +1000
+Message-ID: <20090429135118.fa02210b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.fieldses.org ([141.211.133.115]:52615 "EHLO
-	pickle.fieldses.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751816AbZD1VlB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Apr 2009 17:41:01 -0400
-Content-Disposition: inline
-In-Reply-To: <49F76E8C.3070808@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49666 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750887AbZD2DvV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Apr 2009 23:51:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Trond Myklebust <trond.myklebust@fys.uio.no>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <matthew@wil.cx>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, "John W. Linville" <linville@tuxdriver.com>
 
-On Tue, Apr 28, 2009 at 02:01:00PM -0700, Randy Dunlap wrote:
-> Trond Myklebust wrote:
-> > Until someone finds time to go through the code and add in all the
-> > CONFIG_FILE_LOCKING special cases, the above needs to be a 'depends on
-> > INET && FILE_LOCKING'.
-> 
-> That seems to work.  Thanks.
+Hi David,
 
-Looks good to me.--b.
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/wireless/iwlwifi/iwl-scan.c between commit
+74aa9be0ea0ffeb233f45c39f3cf594b68bbbb89 ("iwlwifi: notify on scan
+completion even when shutting down") from the wireless-current tree and
+commit 1ecf9fc1317f8df91eb1d74360f408558d657478 ("iwlwifi: improve scan
+support") from the net tree.
 
-> 
-> 
-> 
-> 
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> lockd without FILE_LOCKING doesn't make sense, so make LOCKD and
-> LOCKD_V4 depend on FILE_LOCKING, and make NFS depend on FILE_LOCKING.
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> ---
->  fs/Kconfig     |    2 ++
->  fs/nfs/Kconfig |    2 +-
->  2 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> --- linux-next-20090428.orig/fs/Kconfig
-> +++ linux-next-20090428/fs/Kconfig
-> @@ -226,10 +226,12 @@ source "fs/nfsd/Kconfig"
->  
->  config LOCKD
->  	tristate
-> +	depends on FILE_LOCKING
->  
->  config LOCKD_V4
->  	bool
->  	depends on NFSD_V3 || NFS_V3
-> +	depends on FILE_LOCKING
->  	default y
->  
->  config EXPORTFS
-> --- linux-next-20090428.orig/fs/nfs/Kconfig
-> +++ linux-next-20090428/fs/nfs/Kconfig
-> @@ -1,6 +1,6 @@
->  config NFS_FS
->  	tristate "NFS client support"
-> -	depends on INET
-> +	depends on INET && FILE_LOCKING
->  	select LOCKD
->  	select SUNRPC
->  	select NFS_ACL_SUPPORT if NFS_V3_ACL
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/wireless/iwlwifi/iwl-scan.c
+index e7c65c4,799f5eb..0000000
+--- a/drivers/net/wireless/iwlwifi/iwl-scan.c
++++ b/drivers/net/wireless/iwlwifi/iwl-scan.c
+@@@ -925,11 -814,12 +814,12 @@@ void iwl_bg_scan_completed(struct work_
+  
+  	IWL_DEBUG_SCAN(priv, "SCAN complete scan\n");
+  
+ -	if (test_bit(STATUS_EXIT_PENDING, &priv->status))
+ -		return;
+ -
++ 	priv->scan_request = NULL;
+  	ieee80211_scan_completed(priv->hw, false);
+  
+ +	if (test_bit(STATUS_EXIT_PENDING, &priv->status))
+ +		return;
+ +
+  	/* Since setting the TXPOWER may have been deferred while
+  	 * performing the scan, fire one off */
+  	mutex_lock(&priv->mutex);
