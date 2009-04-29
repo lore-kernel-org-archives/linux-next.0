@@ -1,48 +1,63 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: origin tree build warnings
-Date: Wed, 29 Apr 2009 00:52:10 -0700
-Message-ID: <20090429005210.3dd9166e.akpm@linux-foundation.org>
-References: <20090429144436.e821c0f1.sfr@canb.auug.org.au>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Re: Next April 24: [S390] allmodconfig build failure (trace/events)
+Date: Wed, 29 Apr 2009 15:21:39 +0530
+Message-ID: <49F8232B.4090007@in.ibm.com>
+References: <20090424150456.ff35e4ea.sfr@canb.auug.org.au> <49F16654.8040208@in.ibm.com> <20090424072533.GE24912@elte.hu> <20090424104108.0f2c0f05@osiris.boeblingen.de.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:55455 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751150AbZD2HzG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Apr 2009 03:55:06 -0400
-In-Reply-To: <20090429144436.e821c0f1.sfr@canb.auug.org.au>
+Received: from e23smtp03.au.ibm.com ([202.81.31.145]:58525 "EHLO
+	e23smtp03.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751638AbZD2Jvj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Apr 2009 05:51:39 -0400
+In-Reply-To: <20090424104108.0f2c0f05@osiris.boeblingen.de.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Tyler Hicks <tyhicks@linux.vnet.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Heiko Carstens <heiko.carstens@de.ibm.com>, Ingo Molnar <mingo@elte.hu>
+Cc: Steven Rostedt <rostedt@goodmis.org>, =?ISO-8859-1?Q?Fr=E9d=E9ric_W?= =?ISO-8859-1?Q?eisbecker?= <fweisbec@gmail.com>, linux-s390@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, 29 Apr 2009 14:44:36 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Heiko Carstens wrote:
+> On Fri, 24 Apr 2009 09:25:33 +0200
+> Ingo Molnar <mingo@elte.hu> wrote:
+>
+>   
+>> * Sachin Sant <sachinp@in.ibm.com> wrote:
+>>
+>>     
+>>> Today's next tree build(s390 allmodconfig) failed with
+>>>
+>>> kernel/built-in.o: In function `trace_softirq_entry'
+>>> include/trace/events/irq.h:42: undefined reference to  
+>>> `'
+>>> include/trace/events/irq.h:42: undefined reference to  
+>>> `__tracepoint_softirq_entry'
+>>> kernel/built-in.o: In function `trace_softirq_exit':
+>>> include/trace/events/irq.h:48: undefined reference to  
+>>> `__tracepoint_softirq_exit'
+>>> include/trace/events/irq.h:48: undefined reference to  
+>>> `__tracepoint_softirq_exit'
+>>>       
+>> Hm, that's weird - s390 does not build kernel/softirq.o? Hm, it does 
+>> - softirq.o is an obj-y object.
+>>     
+>
+> s390 does build kernel/softirq.o. However it's anything but obvious to
+> me how the tracepoint infrastructure works. Too many #ifdefs, #define's
+> and #undefine's...
+>
+> I would expect that struct __tracepoint_softirq_entry somehow gets
+> defined via one of the TRACE_FORMAT macros, no?
+Today's next tree also has this failure. Any solution for this problem ?
 
-> Hi Tyler,
-> 
-> Today's linux-next build (x86_64 allmodconfig) generated these warnings:
-> 
-> fs/ecryptfs/inode.c: In function 'ecryptfs_readlink':
-> fs/ecryptfs/inode.c:670: warning: format '%d' expects type 'int', but argument 3 has type 'size_t'
-> fs/ecryptfs/inode.c:693: warning: comparison of distinct pointer types lacks a cast
-> 
-> Caused by commit 3a6b42cadc112b01daf0525e5fcd90bb333a5bb3 ("eCryptfs:
-> Larger buffer for encrypted symlink targets").
+Thanks
+-Sachin
 
-yup, Randy sent a fix for this today.
+-- 
 
-I merged that patch and put it into my "to be merged into 2.6.30 via
-the ecryptfs tree" pile.
-
-Tyler, if you can't be bothered setting up a git pull for a one-liner
-then feel free to tell me to merge it.
-
-If you don't do that then I tend to end up sitting on the patch for
-rather a while, sending it at the tree maintainer once every couple of
-weeks.  Sometimes I end up sitting on them after the major kernel
-release, after having sent them to the maintainer several times, which
-is all very sad.  Sometimes I'll get bored of sending them at the
-maintainer and I'll just merge them anyway, depending upon how frisky
-I'm feeling.
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
