@@ -1,54 +1,60 @@
-From: Tyler Hicks <tyhicks@linux.vnet.ibm.com>
-Subject: Re: linux-next: origin tree build warnings
-Date: Wed, 29 Apr 2009 10:38:56 -0500
-Message-ID: <49F87490.5090401@linux.vnet.ibm.com>
-References: <20090429144436.e821c0f1.sfr@canb.auug.org.au> <20090429005210.3dd9166e.akpm@linux-foundation.org>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: usb tree build failure
+Date: Wed, 29 Apr 2009 08:16:18 -0700
+Message-ID: <20090429151618.GD16302@kroah.com>
+References: <20090429171752.f70c7de1.sfr@canb.auug.org.au> <20090429141519.GA3112@kroah.com> <20090430010057.d5a98bf9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e3.ny.us.ibm.com ([32.97.182.143]:45813 "EHLO e3.ny.us.ibm.com"
+Received: from kroah.org ([198.145.64.141]:54168 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750918AbZD2PjB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Apr 2009 11:39:01 -0400
-In-Reply-To: <20090429005210.3dd9166e.akpm@linux-foundation.org>
+	id S1755920AbZD2PlB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Apr 2009 11:41:01 -0400
+Content-Disposition: inline
+In-Reply-To: <20090430010057.d5a98bf9.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Sarah Sharp <sarah.a.sharp@linux.intel.com>
 
-Andrew Morton wrote:
-> On Wed, 29 Apr 2009 14:44:36 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Thu, Apr 30, 2009 at 01:00:57AM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
->> Hi Tyler,
->>
->> Today's linux-next build (x86_64 allmodconfig) generated these warnings:
->>
->> fs/ecryptfs/inode.c: In function 'ecryptfs_readlink':
->> fs/ecryptfs/inode.c:670: warning: format '%d' expects type 'int', but argument 3 has type 'size_t'
->> fs/ecryptfs/inode.c:693: warning: comparison of distinct pointer types lacks a cast
->>
->> Caused by commit 3a6b42cadc112b01daf0525e5fcd90bb333a5bb3 ("eCryptfs:
->> Larger buffer for encrypted symlink targets").
+> On Wed, 29 Apr 2009 07:15:19 -0700 Greg KH <greg@kroah.com> wrote:
+> >
+> > They were all posted on the linux-usb mailing list, as they are a new
+> > USB controller (for USB 3.0), so they didn't need to be sent to lkml.
+> > 
+> > But yes, the code does still need work, that is known, but a build
+> > failure wasn't known :)
 > 
-> yup, Randy sent a fix for this today.
+> This is what I tell maintainers of new trees being integrated into
+> linux-next:
 > 
-> I merged that patch and put it into my "to be merged into 2.6.30 via
-> the ecryptfs tree" pile.
+> "all patches/commits in the tree/series must have been:
 > 
-> Tyler, if you can't be bothered setting up a git pull for a one-liner
-> then feel free to tell me to merge it.
-> 
-> If you don't do that then I tend to end up sitting on the patch for
-> rather a while, sending it at the tree maintainer once every couple of
-> weeks.  Sometimes I end up sitting on them after the major kernel
-> release, after having sent them to the maintainer several times, which
-> is all very sad.  Sometimes I'll get bored of sending them at the
-> maintainer and I'll just merge them anyway, depending upon how frisky
-> I'm feeling.
+> 	posted to a relevant mailing list
+> 	reviewed
+> 	unit tested
+> 	destined for the next merge window (or the current release)
 
-Hi Andrew - I see another warning in Stephen's email that should be
-addressed, too.  I'll fix that and set up a git pull containing both
-fixes a little later today.
+All of these are true for this code.
 
-Tyler
+> *before* they are included.  The linux-next tree is for integration
+> testing and to lower the impact of conflicts between subsystems in the
+> next merge window.
+> 
+> Basically, this should be just what you would send to Linus (or ask him
+> to fetch).  It is allowed to be rebased if you deem it necessary."
+
+Yes, thanks, I went on the fact that this code has been shown to work,
+and is self-contained (new driver).  Yes, it will need some work, and
+your build log certainly showed that (I already let Sarah know about the
+build warnings that I had seen).
+
+I had missed the global names that were not unique, and thank you for
+that, I'll go resolve it.
+
+thanks,
+
+greg k-h
