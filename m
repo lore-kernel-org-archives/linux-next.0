@@ -1,84 +1,44 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Re: Next April 28: boot failure on PowerPC with SLQB
-Date: Wed, 29 Apr 2009 21:56:19 +0530
-Message-ID: <49F87FAB.9050408@in.ibm.com>
-References: <20090428165343.2e357d7a.sfr@canb.auug.org.au> <49F6E421.401@in.ibm.com> <84144f020904280422s6a9a277fjc4619c904f37e5ca@mail.gmail.com> <20090429113604.GE3398@wotan.suse.de>
+From: Roland Dreier <rdreier@cisco.com>
+Subject: Re: linux-next: infiniband tree build failure
+Date: Wed, 29 Apr 2009 09:51:47 -0700
+Message-ID: <adatz471jz0.fsf@cisco.com>
+References: <20090429140101.d9c7467c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp06.au.ibm.com ([202.81.31.148]:49398 "EHLO
-	e23smtp06.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752239AbZD2Q0U (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Apr 2009 12:26:20 -0400
-In-Reply-To: <20090429113604.GE3398@wotan.suse.de>
+Received: from sj-iport-5.cisco.com ([171.68.10.87]:32020 "EHLO
+	sj-iport-5.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750963AbZD2Qvs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Apr 2009 12:51:48 -0400
+In-Reply-To: <20090429140101.d9c7467c.sfr@canb.auug.org.au> (Stephen
+	Rothwell's message of "Wed, 29 Apr 2009 14:01:01 +1000")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nick Piggin <npiggin@suse.de>
-Cc: Pekka Enberg <penberg@cs.helsinki.fi>, linuxppc-dev@ozlabs.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Christoph Lameter <cl@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: general@lists.openfabrics.org, linux-next@vger.kernel.org, Stefan Roscher <ossrosch@linux.vnet.ibm.com>
 
-Nick Piggin wrote:
-> Does this help?
-> ---
-With the patch the machine boots past the failure point, but panics
-immediately with the following trace...
+ > Today's linux-next build (powerpc ppc64_defconfig) produced this new
+ > warning:
+ > 
+ > drivers/infiniband/hw/ehca/hcp_phyp.c: In function 'hcp_galpas_ctor':
+ > drivers/infiniband/hw/ehca/hcp_phyp.c:65: warning: assignment makes integer from pointer without a cast
+ > 
+ > Caused by commit 2bd93ed8b59d9bf8b918a0fa04be50482906c16b ("IB/ehca:
+ > Remove unnecessary memory operations for userspace queue pairs").
 
-Unable to handle kernel paging request for data at address 0x00000010
-Faulting instruction address: 0xc0000000007d03ec
-Oops: Kernel access of bad area, sig: 11 [#1]
-SMP NR_CPUS=1024 DEBUG_PAGEALLOC NUMA pSeries
-Modules linked in:
-NIP: c0000000007d03ec LR: c0000000007b0bbc CTR: 0000000000136f8c
-REGS: c000000000a23bd0 TRAP: 0300   Not tainted  (2.6.30-rc3-next-20090429)
-MSR: 8000000000009032 <EE,ME,IR,DR>  CR: 28000084  XER: 00000010
-DAR: 0000000000000010, DSISR: 0000000040000000
-TASK = c000000000955fc0[0] 'swapper' THREAD: c000000000a20000 CPU: 0
-GPR00: 0000000000000001 c000000000a23e50 c000000000a17650 000000000000001f
-GPR04: 0000000000000000 ffffffffffffffff 000000000077a4b9 800000000c9b2cc0
-GPR08: 0000000000000000 0000000000000010 0000000000000000 c00000000095b0f8
-GPR12: 0000000028000082 c000000000af2400 c0000000007f3200 c000000000705c32
-GPR16: 00000000014f3138 0000000000000000 c0000000007f3138 0000000002f1fc90
-GPR20: c0000000007f3150 c000000000725d11 00000000007bb8e4 0000000002f1fc90
-GPR24: 0000000002f1fc90 c0000000007f31f0 0000000000d00000 c000000000b73b10
-GPR28: c0000000007f0440 c00000000095db00 c00000000098d5f0 0000000003c90000
-NIP [c0000000007d03ec] .pidmap_init+0x28/0x88
-LR [c0000000007b0bbc] .start_kernel+0x458/0x51c
-Call Trace:
-[c000000000a23e50] [c000000000a23ee0] init_thread_union+0x3ee0/0x4000 
-(unreliable)
-[c000000000a23ee0] [c0000000007b0bbc] .start_kernel+0x458/0x51c
-[c000000000a23f90] [c0000000000083d8] .start_here_common+0x1c/0x44
-Instruction dump:
-ebc1fff0 4e800020 fbc1fff0 ebc2b1a8 39200010 7c0802a6 fba1ffe8 f8010010
-38000001 ebbe8008 f821ff71 f93d0010 <7d6048a8> 7d6b0378 7d6049ad 40c2fff4
----[ end trace 31fd0ba7d8756001 ]---
-Kernel panic - not syncing: Attempted to kill the idle task!
-Call Trace:
-[c000000000a23820] [c000000000011700] .show_stack+0x6c/0x16c (unreliable)
-[c000000000a238d0] [c000000000561f1c] .panic+0x80/0x1a8
-[c000000000a23960] [c00000000008dfa4] .do_exit+0x98/0x73c
-[c000000000a23a40] [c0000000000293f4] .die+0x280/0x284
-[c000000000a23ae0] [c000000000032700] .bad_page_fault+0xb8/0xd4
-[c000000000a23b60] [c000000000005798] handle_page_fault+0x3c/0x5c
---- Exception: 300 at .pidmap_init+0x28/0x88
-    LR = .start_kernel+0x458/0x51c
-[c000000000a23e50] [c000000000a23ee0] init_thread_union+0x3ee0/0x4000 
-(unreliable)
-[c000000000a23ee0] [c0000000007b0bbc] .start_kernel+0x458/0x51c
-[c000000000a23f90] [c0000000000083d8] .start_here_common+0x1c/0x44
-Rebooting in 180 seconds..
+Thanks for pointing this out.  I rolled the below into the patch in
+question, which should fix this.
 
-The page size is 64K. Config DEBUG_PAGEALLOC is enabled. Let me know
-if i can provide any more information.
-
-Thanks
--Sachin
-
--- 
-
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+diff --git a/drivers/infiniband/hw/ehca/hcp_phyp.c b/drivers/infiniband/hw/ehca/hcp_phyp.c
+index fc3a245..b3e0e72 100644
+--- a/drivers/infiniband/hw/ehca/hcp_phyp.c
++++ b/drivers/infiniband/hw/ehca/hcp_phyp.c
+@@ -62,7 +62,7 @@ int hcp_galpas_ctor(struct h_galpas *galpas, int is_user,
+ 		if (ret)
+ 			return ret;
+ 	} else
+-		galpas->kernel.fw_handle = NULL;
++		galpas->kernel.fw_handle = 0;
+ 
+ 	galpas->user.fw_handle = paddr_user;
+ 
