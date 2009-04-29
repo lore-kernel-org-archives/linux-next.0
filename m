@@ -1,59 +1,47 @@
 From: Greg KH <greg@kroah.com>
 Subject: Re: linux-next: usb tree build failure
-Date: Wed, 29 Apr 2009 08:16:18 -0700
-Message-ID: <20090429151618.GD16302@kroah.com>
-References: <20090429171752.f70c7de1.sfr@canb.auug.org.au> <20090429141519.GA3112@kroah.com> <20090430010057.d5a98bf9.sfr@canb.auug.org.au>
+Date: Wed, 29 Apr 2009 08:37:14 -0700
+Message-ID: <20090429153714.GB22297@kroah.com>
+References: <20090429171752.f70c7de1.sfr@canb.auug.org.au> <49F86FBC.5030802@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:54168 "EHLO coco.kroah.org"
+Received: from kroah.org ([198.145.64.141]:54176 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755920AbZD2PlB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Apr 2009 11:41:01 -0400
+	id S1757497AbZD2PlL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Apr 2009 11:41:11 -0400
 Content-Disposition: inline
-In-Reply-To: <20090430010057.d5a98bf9.sfr@canb.auug.org.au>
+In-Reply-To: <49F86FBC.5030802@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Sarah Sharp <sarah.a.sharp@linux.intel.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Sarah Sharp <sarah.a.sharp@linux.intel.com>
 
-On Thu, Apr 30, 2009 at 01:00:57AM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> On Wed, 29 Apr 2009 07:15:19 -0700 Greg KH <greg@kroah.com> wrote:
-> >
-> > They were all posted on the linux-usb mailing list, as they are a new
-> > USB controller (for USB 3.0), so they didn't need to be sent to lkml.
+On Wed, Apr 29, 2009 at 08:18:20AM -0700, Randy Dunlap wrote:
+> Stephen Rothwell wrote:
+> > Hi Greg,
 > > 
-> > But yes, the code does still need work, that is known, but a build
-> > failure wasn't known :)
+> > Today's linux-next build (powerpc allyesconfig) failed like this:
+> > 
+> > drivers/usb/built-in.o: In function `.handle_event':
+> > (.text+0x67dd0): multiple definition of `.handle_event'
+> > drivers/pcmcia/built-in.o:(.text+0xcfcc): first defined here
+> > drivers/usb/built-in.o: In function `handle_event':
+> > (.opd+0x5bc8): multiple definition of `handle_event'
+> > drivers/pcmcia/built-in.o:(.opd+0xed0): first defined here
 > 
-> This is what I tell maintainers of new trees being integrated into
-> linux-next:
 > 
-> "all patches/commits in the tree/series must have been:
+> There's also this one:
 > 
-> 	posted to a relevant mailing list
-> 	reviewed
-> 	unit tested
-> 	destined for the next merge window (or the current release)
-
-All of these are true for this code.
-
-> *before* they are included.  The linux-next tree is for integration
-> testing and to lower the impact of conflicts between subsystems in the
-> next merge window.
+> drivers/usb/host/xhci-mem.c:46: error: implicit declaration of function 'dma_pool_alloc'
+> drivers/usb/host/xhci-mem.c:69: error: implicit declaration of function 'dma_pool_free'
+> drivers/usb/host/xhci-mem.c:578: error: implicit declaration of function 'dma_pool_destroy'
+> drivers/usb/host/xhci-mem.c:657: error: implicit declaration of function 'dma_pool_create'
 > 
-> Basically, this should be just what you would send to Linus (or ask him
-> to fetch).  It is allowed to be rebased if you deem it necessary."
+> That file needs to
+> #include <linux/dmapool.h>
 
-Yes, thanks, I went on the fact that this code has been shown to work,
-and is self-contained (new driver).  Yes, it will need some work, and
-your build log certainly showed that (I already let Sarah know about the
-build warnings that I had seen).
-
-I had missed the global names that were not unique, and thank you for
-that, I'll go resolve it.
+What arch had this problem?
 
 thanks,
 
