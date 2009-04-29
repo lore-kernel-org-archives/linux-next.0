@@ -1,70 +1,55 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: usb tree build failure
-Date: Thu, 30 Apr 2009 01:00:57 +1000
-Message-ID: <20090430010057.d5a98bf9.sfr@canb.auug.org.au>
-References: <20090429171752.f70c7de1.sfr@canb.auug.org.au>
-	<20090429141519.GA3112@kroah.com>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: linux-next: nfsd tree build warning
+Date: Wed, 29 Apr 2009 11:01:50 -0400
+Message-ID: <20090429150150.GB8604@fieldses.org>
+References: <20090429135702.943f2bfa.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__30_Apr_2009_01_00_57_+1000_9Vs+iZWwtziwVkUS"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49790 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753651AbZD2PBF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Apr 2009 11:01:05 -0400
-In-Reply-To: <20090429141519.GA3112@kroah.com>
+Received: from mail.fieldses.org ([141.211.133.115]:51534 "EHLO
+	pickle.fieldses.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753152AbZD2PBv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Apr 2009 11:01:51 -0400
+Content-Disposition: inline
+In-Reply-To: <20090429135702.943f2bfa.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, Sarah Sharp <sarah.a.sharp@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Bian Naimeng <biannm@cn.fujitsu.com>, nfsv4@linux-nfs.org
 
---Signature=_Thu__30_Apr_2009_01_00_57_+1000_9Vs+iZWwtziwVkUS
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Apr 29, 2009 at 01:57:02PM +1000, Stephen Rothwell wrote:
+> Hi Bruce,
+> 
+> Today's linux-next build (powerpc ppc64_defconfig) produced this new
+> warning:
+> 
+> fs/nfsd/nfs4state.c: In function 'EXPIRED_STATEID':
+> fs/nfsd/nfs4state.c:2757: warning: comparison of distinct pointer types lacks a cast
+> 
+> Caused by commit 78155ed75f470710f2aecb3e75e3d97107ba8374 ("nfsd4:
+> distinguish expired from stale stateids").
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
 
-Hi Greg,
+Probably just needs yet another cast.  Argh; maybe Bian Naimeng's
+after_boot()/before_lease() idea would have been simpler.
 
-On Wed, 29 Apr 2009 07:15:19 -0700 Greg KH <greg@kroah.com> wrote:
->
-> They were all posted on the linux-usb mailing list, as they are a new
-> USB controller (for USB 3.0), so they didn't need to be sent to lkml.
->=20
-> But yes, the code does still need work, that is known, but a build
-> failure wasn't known :)
+--b.
 
-This is what I tell maintainers of new trees being integrated into
-linux-next:
 
-"all patches/commits in the tree/series must have been:
-
-	posted to a relevant mailing list
-	reviewed
-	unit tested
-	destined for the next merge window (or the current release)
-
-*before* they are included.  The linux-next tree is for integration
-testing and to lower the impact of conflicts between subsystems in the
-next merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary."
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__30_Apr_2009_01_00_57_+1000_9Vs+iZWwtziwVkUS
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkn4a6kACgkQjjKRsyhoI8wcjQCguRb1CusLQzP+EXR+sCUqnYCv
-i30AoJu6rXXXHanzJU5FrrXNp0wiOo1i
-=hJJC
------END PGP SIGNATURE-----
-
---Signature=_Thu__30_Apr_2009_01_00_57_+1000_9Vs+iZWwtziwVkUS--
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index 74e822e..d24dd12 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -2754,7 +2754,7 @@ EXPIRED_STATEID(stateid_t *stateid)
+ {
+ 	if (time_before((unsigned long)boot_time,
+ 			((unsigned long)stateid->si_boot)) &&
+-	    time_before((stateid->si_boot + lease_time), get_seconds())) {
++	    time_before((unsigned long)(stateid->si_boot + lease_time), get_seconds())) {
+ 		dprintk("NFSD: expired stateid (%08x/%08x/%08x/%08x)!\n",
+ 			stateid->si_boot, stateid->si_stateownerid,
+ 			stateid->si_fileid, stateid->si_generation);
