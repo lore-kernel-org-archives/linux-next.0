@@ -1,44 +1,53 @@
-From: Roland Dreier <rdreier@cisco.com>
-Subject: Re: linux-next: infiniband tree build failure
-Date: Wed, 29 Apr 2009 09:51:47 -0700
-Message-ID: <adatz471jz0.fsf@cisco.com>
-References: <20090429140101.d9c7467c.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: usb tree build failure
+Date: Wed, 29 Apr 2009 10:44:48 -0700
+Message-ID: <20090429174448.GB29026@kroah.com>
+References: <20090429171752.f70c7de1.sfr@canb.auug.org.au> <49F86FBC.5030802@oracle.com> <20090429153714.GB22297@kroah.com> <49F875EF.8030408@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sj-iport-5.cisco.com ([171.68.10.87]:32020 "EHLO
-	sj-iport-5.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750963AbZD2Qvs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Apr 2009 12:51:48 -0400
-In-Reply-To: <20090429140101.d9c7467c.sfr@canb.auug.org.au> (Stephen
-	Rothwell's message of "Wed, 29 Apr 2009 14:01:01 +1000")
+Received: from kroah.org ([198.145.64.141]:42993 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759823AbZD2Rr6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Apr 2009 13:47:58 -0400
+Content-Disposition: inline
+In-Reply-To: <49F875EF.8030408@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: general@lists.openfabrics.org, linux-next@vger.kernel.org, Stefan Roscher <ossrosch@linux.vnet.ibm.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Sarah Sharp <sarah.a.sharp@linux.intel.com>
 
- > Today's linux-next build (powerpc ppc64_defconfig) produced this new
- > warning:
- > 
- > drivers/infiniband/hw/ehca/hcp_phyp.c: In function 'hcp_galpas_ctor':
- > drivers/infiniband/hw/ehca/hcp_phyp.c:65: warning: assignment makes integer from pointer without a cast
- > 
- > Caused by commit 2bd93ed8b59d9bf8b918a0fa04be50482906c16b ("IB/ehca:
- > Remove unnecessary memory operations for userspace queue pairs").
+On Wed, Apr 29, 2009 at 08:44:47AM -0700, Randy Dunlap wrote:
+> Greg KH wrote:
+> > On Wed, Apr 29, 2009 at 08:18:20AM -0700, Randy Dunlap wrote:
+> >> Stephen Rothwell wrote:
+> >>> Hi Greg,
+> >>>
+> >>> Today's linux-next build (powerpc allyesconfig) failed like this:
+> >>>
+> >>> drivers/usb/built-in.o: In function `.handle_event':
+> >>> (.text+0x67dd0): multiple definition of `.handle_event'
+> >>> drivers/pcmcia/built-in.o:(.text+0xcfcc): first defined here
+> >>> drivers/usb/built-in.o: In function `handle_event':
+> >>> (.opd+0x5bc8): multiple definition of `handle_event'
+> >>> drivers/pcmcia/built-in.o:(.opd+0xed0): first defined here
+> >>
+> >> There's also this one:
+> >>
+> >> drivers/usb/host/xhci-mem.c:46: error: implicit declaration of function 'dma_pool_alloc'
+> >> drivers/usb/host/xhci-mem.c:69: error: implicit declaration of function 'dma_pool_free'
+> >> drivers/usb/host/xhci-mem.c:578: error: implicit declaration of function 'dma_pool_destroy'
+> >> drivers/usb/host/xhci-mem.c:657: error: implicit declaration of function 'dma_pool_create'
+> >>
+> >> That file needs to
+> >> #include <linux/dmapool.h>
+> > 
+> > What arch had this problem?
+> 
+> i386
 
-Thanks for pointing this out.  I rolled the below into the patch in
-question, which should fix this.
+I can't duplicate this here, care to attach a .config?
 
-diff --git a/drivers/infiniband/hw/ehca/hcp_phyp.c b/drivers/infiniband/hw/ehca/hcp_phyp.c
-index fc3a245..b3e0e72 100644
---- a/drivers/infiniband/hw/ehca/hcp_phyp.c
-+++ b/drivers/infiniband/hw/ehca/hcp_phyp.c
-@@ -62,7 +62,7 @@ int hcp_galpas_ctor(struct h_galpas *galpas, int is_user,
- 		if (ret)
- 			return ret;
- 	} else
--		galpas->kernel.fw_handle = NULL;
-+		galpas->kernel.fw_handle = 0;
- 
- 	galpas->user.fw_handle = paddr_user;
- 
+thanks,
+
+greg k-h
