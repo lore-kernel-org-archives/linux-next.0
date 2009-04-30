@@ -1,98 +1,63 @@
-From: Nick Piggin <npiggin@suse.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: Next April 28: boot failure on PowerPC with SLQB
-Date: Thu, 30 Apr 2009 15:05:42 +0200
-Message-ID: <20090430130542.GF6900@wotan.suse.de>
-References: <49F87FAB.9050408@in.ibm.com> <20090430041146.GB23746@wotan.suse.de> <49F938E4.2030703@in.ibm.com> <20090430064127.GF23746@wotan.suse.de> <49F973A0.8070106@in.ibm.com> <20090430103528.GA6900@wotan.suse.de> <1241087884.19252.5.camel@penberg-laptop> <20090430210004.05a61841.sfr@canb.auug.org.au> <20090430111825.GC6900@wotan.suse.de> <1241090429.19252.7.camel@penberg-laptop>
+Date: Fri, 1 May 2009 00:00:33 +1000
+Message-ID: <20090501000033.ecce9ed8.sfr@canb.auug.org.au>
+References: <49F87FAB.9050408@in.ibm.com>
+	<20090430041146.GB23746@wotan.suse.de>
+	<49F938E4.2030703@in.ibm.com>
+	<20090430064127.GF23746@wotan.suse.de>
+	<49F973A0.8070106@in.ibm.com>
+	<20090430103528.GA6900@wotan.suse.de>
+	<1241087884.19252.5.camel@penberg-laptop>
+	<20090430210004.05a61841.sfr@canb.auug.org.au>
+	<20090430111825.GC6900@wotan.suse.de>
+	<1241090429.19252.7.camel@penberg-laptop>
+	<20090430130542.GF6900@wotan.suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__1_May_2009_00_00_33_+1000_b1.w3E9Nx9.XD32p"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:36727 "EHLO mx1.suse.de"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59686 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755468AbZD3NGP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 30 Apr 2009 09:06:15 -0400
-Content-Disposition: inline
-In-Reply-To: <1241090429.19252.7.camel@penberg-laptop>
+	id S1753117AbZD3OAk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Apr 2009 10:00:40 -0400
+In-Reply-To: <20090430130542.GF6900@wotan.suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pekka Enberg <penberg@cs.helsinki.fi>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Sachin Sant <sachinp@in.ibm.com>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Christoph Lameter <cl@linux-foundation.org>
+To: Nick Piggin <npiggin@suse.de>
+Cc: Pekka Enberg <penberg@cs.helsinki.fi>, Sachin Sant <sachinp@in.ibm.com>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Christoph Lameter <cl@linux-foundation.org>
 
-On Thu, Apr 30, 2009 at 02:20:29PM +0300, Pekka Enberg wrote:
-> On Thu, 2009-04-30 at 13:18 +0200, Nick Piggin wrote:
-> > OK thanks. So I think we have 2 problems. One with MAX_ORDER <= 9
-> > that is fixed by the previous patch, and another which is probably
-> > due to having no memory on node 0 which I will take another look
-> > at now.
-> > 
-> > We can merge the previous patch now, though.
-> 
-> Hmm, I'll bet this BUG_ON triggers for Stephen.
-> 
-> diff --git a/mm/slqb.c b/mm/slqb.c
-> index a651843..e4b3859 100644
-> --- a/mm/slqb.c
-> +++ b/mm/slqb.c
-> @@ -1391,6 +1391,7 @@ static noinline void *__slab_alloc_page(struct kmem_cache *s,
->  		struct kmem_cache_node *n;
->  
->  		n = s->node_slab[slqb_page_to_nid(page)];
-> +		BUG_ON(!n);
->  		l = &n->list;
->  		page->list = l;
+--Signature=_Fri__1_May_2009_00_00_33_+1000_b1.w3E9Nx9.XD32p
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hmm, this might do it. The following code now passes some stress testing
-in a userspace harness wheras before it did not (and was obviously wrong).
+Hi Nick,
 
----
-SLQB: fix dumb early allocation cache
+On Thu, 30 Apr 2009 15:05:42 +0200 Nick Piggin <npiggin@suse.de> wrote:
+>
+> Hmm, this might do it. The following code now passes some stress testing
+> in a userspace harness wheras before it did not (and was obviously wrong).
 
-The dumb early allocation cache had a bug where it could allow allocation
-to go past the end of a page, which could cause crashes or random memory
-corruption. Fix this and simplify the logic.
+Indeed that allows it to boot fine.  Thanks.
 
-Signed-off-by: Nick Piggin <npiggin@suse.de>
----
- mm/slqb.c |   19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-Index: linux-2.6/mm/slqb.c
-===================================================================
---- linux-2.6.orig/mm/slqb.c
-+++ linux-2.6/mm/slqb.c
-@@ -2185,8 +2185,11 @@ static void *kmem_cache_dyn_array_alloc(
- {
- 	size_t size = sizeof(void *) * ids;
- 
-+	BUG_ON(!size);
-+
- 	if (unlikely(!slab_is_available())) {
- 		static void *nextmem;
-+		static size_t nextleft;
- 		void *ret;
- 
- 		/*
-@@ -2194,16 +2197,16 @@ static void *kmem_cache_dyn_array_alloc(
- 		 * never get freed by definition so we can do it rather
- 		 * simply.
- 		 */
--		if (!nextmem) {
--			nextmem = alloc_pages_exact(size, GFP_KERNEL);
--			if (!nextmem)
--				return NULL;
-+		if (size > nextleft) {
-+                        nextmem = alloc_pages_exact(size, GFP_KERNEL);
-+                        if (!nextmem)
-+                                return NULL;
-+			nextleft = roundup(size, PAGE_SIZE);
- 		}
-+
- 		ret = nextmem;
--		nextmem = (void *)((unsigned long)ret + size);
--		if ((unsigned long)ret >> PAGE_SHIFT !=
--				(unsigned long)nextmem >> PAGE_SHIFT)
--			nextmem = NULL;
-+		nextleft -= size;
-+		nextmem += size;
- 		memset(ret, 0, size);
- 		return ret;
- 	} else {
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__1_May_2009_00_00_33_+1000_b1.w3E9Nx9.XD32p
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkn5rwEACgkQjjKRsyhoI8woLQCdGwS2GUl8IbCKZM3gzyUPBLpX
+kvQAoJjzbTKu9gu/pWQuzcGIQmqw4eSz
+=DVrA
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__1_May_2009_00_00_33_+1000_b1.w3E9Nx9.XD32p--
