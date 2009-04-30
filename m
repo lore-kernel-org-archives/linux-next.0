@@ -1,85 +1,40 @@
-From: Anton Vorontsov <avorontsov@ru.mvista.com>
-Subject: Re: Next April 28: boot failure on PowerPC with SLQB
-Date: Thu, 30 Apr 2009 18:10:13 +0400
-Message-ID: <20090430141013.GA17480@oksana.dev.rtsoft.ru>
-References: <20090430041146.GB23746@wotan.suse.de> <49F938E4.2030703@in.ibm.com> <20090430064127.GF23746@wotan.suse.de> <49F973A0.8070106@in.ibm.com> <20090430103528.GA6900@wotan.suse.de> <1241087884.19252.5.camel@penberg-laptop> <20090430210004.05a61841.sfr@canb.auug.org.au> <20090430111825.GC6900@wotan.suse.de> <1241090429.19252.7.camel@penberg-laptop> <20090430130542.GF6900@wotan.suse.de>
-Reply-To: avorontsov@ru.mvista.com
+From: Greg KH <gregkh@suse.de>
+Subject: Re: [PATCH -next] wusb: hwa-hc: Drop unused pci_suspend/resume
+	hooks.
+Date: Thu, 30 Apr 2009 08:49:40 -0700
+Message-ID: <20090430154939.GB19977@suse.de>
+References: <20090430084101.GA11696@linux-sh.org> <49F965CA.2050704@csr.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ru.mvista.com ([213.79.90.228]:4179 "EHLO
-	buildserver.ru.mvista.com" rhost-flags-OK-FAIL-OK-FAIL)
-	by vger.kernel.org with ESMTP id S932123AbZD3OMG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 30 Apr 2009 10:12:06 -0400
+Received: from cantor2.suse.de ([195.135.220.15]:54848 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1764272AbZD3P63 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Apr 2009 11:58:29 -0400
 Content-Disposition: inline
-In-Reply-To: <20090430130542.GF6900@wotan.suse.de>
+In-Reply-To: <49F965CA.2050704@csr.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nick Piggin <npiggin@suse.de>
-Cc: Pekka Enberg <penberg@cs.helsinki.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, Christoph Lameter <cl@linux-foundation.org>, linux-kernel <linux-kernel@vger.kernel.org>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org
+To: David Vrabel <david.vrabel@csr.com>
+Cc: Paul Mundt <lethal@linux-sh.org>, linux-next@vger.kernel.org, Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Thu, Apr 30, 2009 at 03:05:42PM +0200, Nick Piggin wrote:
-[...]
-> ---
-> SLQB: fix dumb early allocation cache
+On Thu, Apr 30, 2009 at 09:48:10AM +0100, David Vrabel wrote:
+> Paul Mundt wrote:
+> >   CC      drivers/usb/host/hwa-hc.o
+> > drivers/usb/host/hwa-hc.c:601: warning: initialization from incompatible pointer type
+> > drivers/usb/host/hwa-hc.c:602: warning: initialization from incompatible pointer type
+> > 
+> > The prototype for these changed, so the message itself was dropped. As the only
+> > thing these hooks were doing was printing out the message for debugging, there
+> > is not much point in keeping them around. So, just kill them off.
 > 
-> The dumb early allocation cache had a bug where it could allow allocation
-> to go past the end of a page, which could cause crashes or random memory
-> corruption. Fix this and simplify the logic.
+> Acked-by: David Vrabel <david.vrabel@csr.com>
 > 
-> Signed-off-by: Nick Piggin <npiggin@suse.de>
-> ---
->  mm/slqb.c |   19 +++++++++++--------
->  1 file changed, 11 insertions(+), 8 deletions(-)
-> 
-> Index: linux-2.6/mm/slqb.c
-> ===================================================================
-> --- linux-2.6.orig/mm/slqb.c
-> +++ linux-2.6/mm/slqb.c
-> @@ -2185,8 +2185,11 @@ static void *kmem_cache_dyn_array_alloc(
->  {
->  	size_t size = sizeof(void *) * ids;
->  
-> +	BUG_ON(!size);
-> +
->  	if (unlikely(!slab_is_available())) {
->  		static void *nextmem;
-> +		static size_t nextleft;
->  		void *ret;
->  
->  		/*
-> @@ -2194,16 +2197,16 @@ static void *kmem_cache_dyn_array_alloc(
->  		 * never get freed by definition so we can do it rather
->  		 * simply.
->  		 */
-> -		if (!nextmem) {
-> -			nextmem = alloc_pages_exact(size, GFP_KERNEL);
-> -			if (!nextmem)
-> -				return NULL;
-> +		if (size > nextleft) {
-> +                        nextmem = alloc_pages_exact(size, GFP_KERNEL);
-> +                        if (!nextmem)
-> +                                return NULL;
+> Greg, can you pick this one up, please.
 
-Cosmetic issue: spaces instead of tabs are used on these
-three lines.
+I don't seem to have it in my archive, can you resend it to me with your
+ack?
 
-> +			nextleft = roundup(size, PAGE_SIZE);
->  		}
-> +
->  		ret = nextmem;
-> -		nextmem = (void *)((unsigned long)ret + size);
-> -		if ((unsigned long)ret >> PAGE_SHIFT !=
-> -				(unsigned long)nextmem >> PAGE_SHIFT)
-> -			nextmem = NULL;
-> +		nextleft -= size;
-> +		nextmem += size;
->  		memset(ret, 0, size);
->  		return ret;
->  	} else {
+thanks,
 
--- 
-Anton Vorontsov
-email: cbouatmailru@gmail.com
-irc://irc.freenode.net/bd2
+greg k-h
