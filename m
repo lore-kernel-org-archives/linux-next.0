@@ -1,38 +1,36 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the usb tree with the  ttydevtree
-Date: Wed, 29 Apr 2009 10:52:49 -0700
-Message-ID: <20090429175249.GB29144@kroah.com>
-References: <20090429162228.752887ac.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: net tree build warnings
+Date: Wed, 29 Apr 2009 17:54:13 -0700 (PDT)
+Message-ID: <20090429.175413.81058049.davem@davemloft.net>
+References: <20090429145921.5bb48c01.sfr@canb.auug.org.au>
+	<20090428.230232.113827653.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:46404 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752254AbZD2R6W (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Apr 2009 13:58:22 -0400
-Content-Disposition: inline
-In-Reply-To: <20090429162228.752887ac.sfr@canb.auug.org.au>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:58698
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751465AbZD3AyT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Apr 2009 20:54:19 -0400
+In-Reply-To: <20090428.230232.113827653.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Elina Pasheva <epasheva@sierrawireless.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>
+To: sfr@canb.auug.org.au
+Cc: linux-next@vger.kernel.org, a.beregalov@gmail.com
 
-On Wed, Apr 29, 2009 at 04:22:28PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+From: David Miller <davem@davemloft.net>
+Date: Tue, 28 Apr 2009 23:02:32 -0700 (PDT)
+
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 29 Apr 2009 14:59:21 +1000
 > 
-> Today's linux-next merge of the usb tree got a conflict in
-> drivers/usb/serial/sierra.c between commit
-> e675a5b8305a4d244273c34698ba411ddcc0f42a ("tty-usb-use-port") from the
-> ttydev tree and commit 7b8163621c22ea34636314da663b9cdea50342be ("USB:
-> serial: sierra driver debug info visibility improvement") from the usb
-> tree.
+>> Caused by commit 011983048a120e520147361be1067dd82343038e ("vxge: use max()
+>> instead of VXGE_HW_SET_LEVEL").
 > 
-> I fixed it up (see below) and can carry the fix as necessary.
+> Maybe that's why the macro was used in the first place :-)
+> 
+> We probably have to use something like max_t() here, and to me that's
+> worse than the macro it is replacing.
 
-Looks good to me, thanks.
-
-Alan, are your changes going to be for .30, or are they pending for .31?
-
-thanks,
-
-greg k-h
+Nobody is doing anything about this so I'm simply reverting.
