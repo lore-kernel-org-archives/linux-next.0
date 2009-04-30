@@ -1,82 +1,72 @@
-From: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
-Subject: Re: linux-next: Tree for April 24 (p54 build error) (and pull
-	request: wireless-next-2.6 2009-04-24)
-Date: Thu, 30 Apr 2009 14:30:51 -0400
-Message-ID: <20090430183051.GC9323@tuxdriver.com>
-References: <20090424150456.ff35e4ea.sfr@canb.auug.org.au> <49F1FD4B.2020909@oracle.com> <200904242247.15042.chunkeey@web.de>
+From: Fenghua Yu <fenghua.yu@intel.com>
+Subject: [PATCH] Fix for "undefined iommu_pass_through" compiling error
+Date: Thu, 30 Apr 2009 15:54:30 -0700
+Message-ID: <20090430225430.GA5691@linux-os.sc.intel.com>
+References: <20090430131232.fb51742a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:43944 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756365AbZD3Wyb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Apr 2009 18:54:31 -0400
 Content-Disposition: inline
-In-Reply-To: <200904242247.15042.chunkeey-S0/GAf8tV78@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Christian Lamparter <chunkeey-S0/GAf8tV78@public.gmane.org>
-Cc: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20090430131232.fb51742a.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Woodhouse <dwmw2@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Tony Luck <tony.luck@intel.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, iommu <iommu@lists.linux-foundation.org>
 
-If you want patches to be noticed and applied, it would be most
-helpful if you could submit them in a regular and recognizable way.
+When CONFIG_DMAR is off, linux-next or iomm-2.6.git kernel build complains
+"undefined iommu_pass_through" error.
 
-	http://linux.yyz.us/patch-format.html
+This patch moves iommu_pass_through beyond CONFIG_DMAR and fixes this issue.
 
-John
+Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+Acked-by: Tony Luck <tony.luck@intel.com>
 
-On Fri, Apr 24, 2009 at 10:47:14PM +0200, Christian Lamparter wrote:
-> On Friday 24 April 2009 19:56:27 Randy Dunlap wrote:
-> > 
-> > drivers/net/wireless/p54/p54.h:193: error: array type has incomplete element type
-> > 
-> > struct p54_led_dev definition is controlled by
-> > #ifdef CONFIG_P54_LEDS (is not set)
-> > 
-> > but the struct declaration is controlled by
-> > #ifdef CONFIG_MAC80211_LEDS (=y)
-> > 
-> meh, [p54: more SoftLED updates] broke it
-> ( dce072580e095d1fb7be59a1be30dc0e8307821b )
-> 
-> this also affects "pull request: wireless-next-2.6 2009-04-24"
-> 
-> and the current wireless-testing!
-> 
-> however the patches on the linux-wireless are all fine?!
-> (see: http://osdir.com/ml/linux-wireless/2009-03/msg01240.html )
-> 
-> I guess there was merge conflict with [p54: more SoftLED updates] 
-> and [p54: replace MAC80211_LEDS with P54_LEDS in p54.h] ?
-> 
-> Regards,
-> 	Chr
-> ---
-> In case someone want to fix it manually... here's the undo:
-> ---
-> diff --git a/drivers/net/wireless/p54/p54.h b/drivers/net/wireless/p54/p54.h
-> index 7fda1a9..db3df94 100644
-> --- a/drivers/net/wireless/p54/p54.h
-> +++ b/drivers/net/wireless/p54/p54.h
-> @@ -189,10 +189,10 @@ struct p54_common {
->  	unsigned long *used_rxkeys;
->  
->  	/* LED management */
-> -#ifdef CONFIG_MAC80211_LEDS
-> +#ifdef CONFIG_P54_LEDS
->  	struct p54_led_dev leds[4];
->  	struct delayed_work led_work;
-> -#endif /* CONFIG_MAC80211_LEDS */
-> +#endif /* CONFIG_P54_LEDS */
->  	u16 softled_state;		/* bit field of glowing LEDs */
->  
->  	/* statistics */
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+---
 
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org			might be all we have.  Be ready.
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ arch/ia64/kernel/dma-mapping.c |    2 ++
+ arch/x86/kernel/pci-dma.c      |    2 ++
+ drivers/pci/intel-iommu.c      |    1 -
+ 3 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/arch/ia64/kernel/dma-mapping.c b/arch/ia64/kernel/dma-mapping.c
+index 086a2ae..336ccdc 100644
+--- a/arch/ia64/kernel/dma-mapping.c
++++ b/arch/ia64/kernel/dma-mapping.c
+@@ -3,6 +3,8 @@
+ /* Set this to 1 if there is a HW IOMMU in the system */
+ int iommu_detected __read_mostly;
+ 
++int iommu_pass_through;
++
+ struct dma_map_ops *dma_ops;
+ EXPORT_SYMBOL(dma_ops);
+ 
+diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
+index 8cad0d8..14fddef 100644
+--- a/arch/x86/kernel/pci-dma.c
++++ b/arch/x86/kernel/pci-dma.c
+@@ -32,6 +32,8 @@ int no_iommu __read_mostly;
+ /* Set this to 1 if there is a HW IOMMU in the system */
+ int iommu_detected __read_mostly = 0;
+ 
++int iommu_pass_through;
++
+ dma_addr_t bad_dma_address __read_mostly = 0;
+ EXPORT_SYMBOL(bad_dma_address);
+ 
+diff --git a/drivers/pci/intel-iommu.c b/drivers/pci/intel-iommu.c
+index 1312182..d3edd6a 100644
+--- a/drivers/pci/intel-iommu.c
++++ b/drivers/pci/intel-iommu.c
+@@ -288,7 +288,6 @@ int dmar_disabled = 1;
+ static int __initdata dmar_map_gfx = 1;
+ static int dmar_forcedac;
+ static int intel_iommu_strict;
+-int iommu_pass_through;
+ 
+ #define DUMMY_DEVICE_DOMAIN_INFO ((struct device_domain_info *)(-1))
+ static DEFINE_SPINLOCK(device_domain_lock);
