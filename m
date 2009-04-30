@@ -1,73 +1,74 @@
 From: Paul Mundt <lethal@linux-sh.org>
-Subject: [PATCH -next] usb: xhci depends on PCI.
-Date: Thu, 30 Apr 2009 17:30:02 +0900
-Message-ID: <20090430083002.GA11456@linux-sh.org>
+Subject: [PATCH -next] wusb: hwa-hc: Drop unused pci_suspend/resume hooks.
+Date: Thu, 30 Apr 2009 17:41:02 +0900
+Message-ID: <20090430084101.GA11696@linux-sh.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 124x34x33x190.ap124.ftth.ucom.ne.jp ([124.34.33.190]:50087 "EHLO
+Received: from 124x34x33x190.ap124.ftth.ucom.ne.jp ([124.34.33.190]:43481 "EHLO
 	master.linux-sh.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751329AbZD3IfX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 30 Apr 2009 04:35:23 -0400
+	with ESMTP id S1756086AbZD3IqW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 30 Apr 2009 04:46:22 -0400
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: linux-next@vger.kernel.org
-Cc: Sarah Sharp <sarah.a.sharp@linux.intel.com>, Greg Kroah-Hartman <gregkh@suse.de>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>, David Vrabel <david.vrabel@csr.com>, Greg Kroah-Hartman <gregkh@suse.de>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-While it looks like xhci was written with both PCI and non-PCI in mind,
-apparently only the former has seen any testing. xhci-mem.o can be "fixed"
-with a linux/dmapool.h include, but there are still parts of the code that
-make use of struct pci_dev directly. So, at least more work is needed before
-this can be turned on for non-PCI builds:
+  CC      drivers/usb/host/hwa-hc.o
+drivers/usb/host/hwa-hc.c:601: warning: initialization from incompatible pointer type
+drivers/usb/host/hwa-hc.c:602: warning: initialization from incompatible pointer type
 
-  CC      drivers/usb/host/xhci-mem.o
-drivers/usb/host/xhci-mem.c: In function 'xhci_segment_alloc':
-drivers/usb/host/xhci-mem.c:45: error: implicit declaration of function 'dma_pool_alloc'
-drivers/usb/host/xhci-mem.c:45: warning: assignment makes pointer from integer without a cast
-drivers/usb/host/xhci-mem.c: In function 'xhci_segment_free':
-drivers/usb/host/xhci-mem.c:67: error: implicit declaration of function 'dma_pool_free'
-drivers/usb/host/xhci-mem.c: In function 'xhci_alloc_virt_device':
-drivers/usb/host/xhci-mem.c:239: warning: assignment makes pointer from integer without a cast
-drivers/usb/host/xhci-mem.c:248: warning: assignment makes pointer from integer without a cast
-drivers/usb/host/xhci-mem.c: In function 'xhci_mem_cleanup':
-drivers/usb/host/xhci-mem.c:578: error: implicit declaration of function 'dma_pool_destroy'
-drivers/usb/host/xhci-mem.c: In function 'xhci_mem_init':
-drivers/usb/host/xhci-mem.c:657: error: implicit declaration of function 'dma_pool_create'
-drivers/usb/host/xhci-mem.c:658: warning: assignment makes pointer from integer without a cast
-drivers/usb/host/xhci-mem.c:663: warning: assignment makes pointer from integer without a cast
-make[3]: *** [drivers/usb/host/xhci-mem.o] Error 1
+The prototype for these changed, so the message itself was dropped. As the only
+thing these hooks were doing was printing out the message for debugging, there
+is not much point in keeping them around. So, just kill them off.
 
-  CC      drivers/usb/host/xhci-pci.o
-drivers/usb/host/xhci-pci.c: In function 'xhci_pci_reinit':
-drivers/usb/host/xhci-pci.c:39: error: implicit declaration of function 'pci_set_mwi'
-drivers/usb/host/xhci-pci.c: At top level:
-drivers/usb/host/xhci-pci.c:151: error: 'usb_hcd_pci_probe' undeclared here (not in a function)
-drivers/usb/host/xhci-pci.c:152: error: 'usb_hcd_pci_remove' undeclared here (not in a function)
-drivers/usb/host/xhci-pci.c:155: error: 'usb_hcd_pci_shutdown' undeclared here (not in a function)
-drivers/usb/host/xhci-pci.c:159: warning: function declaration isn't a prototype
-drivers/usb/host/xhci-pci.c:164: warning: function declaration isn't a prototype
-make[3]: *** [drivers/usb/host/xhci-pci.o] Error 1
-
-Cc: Sarah Sharp <sarah.a.sharp@linux.intel.com>
+Cc: Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>
+Cc: David Vrabel <david.vrabel@csr.com>
 Cc: Greg Kroah-Hartman <gregkh@suse.de>
 Signed-off-by: Paul Mundt <lethal@linux-sh.org>
 
 ---
 
- drivers/usb/host/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/host/hwa-hc.c |   21 ---------------------
+ 1 file changed, 21 deletions(-)
 
-diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index 5e2daed..1576a05 100644
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@ -19,7 +19,7 @@ config USB_C67X00_HCD
+diff --git a/drivers/usb/host/hwa-hc.c b/drivers/usb/host/hwa-hc.c
+index cbf30e5..88b0321 100644
+--- a/drivers/usb/host/hwa-hc.c
++++ b/drivers/usb/host/hwa-hc.c
+@@ -172,25 +172,6 @@ error_cluster_id_get:
  
- config USB_XHCI_HCD
- 	tristate "xHCI HCD (USB 3.0) support (EXPERIMENTAL)"
--	depends on USB && EXPERIMENTAL
-+	depends on USB && PCI && EXPERIMENTAL
- 	---help---
- 	  The eXtensible Host Controller Interface (xHCI) is standard for USB 3.0
- 	  "SuperSpeed" host controller hardware.
+ }
+ 
+-static int hwahc_op_suspend(struct usb_hcd *usb_hcd, pm_message_t msg)
+-{
+-	struct wusbhc *wusbhc = usb_hcd_to_wusbhc(usb_hcd);
+-	struct hwahc *hwahc = container_of(wusbhc, struct hwahc, wusbhc);
+-	dev_err(wusbhc->dev, "%s (%p [%p], 0x%lx) UNIMPLEMENTED\n", __func__,
+-		usb_hcd, hwahc, *(unsigned long *) &msg);
+-	return -ENOSYS;
+-}
+-
+-static int hwahc_op_resume(struct usb_hcd *usb_hcd)
+-{
+-	struct wusbhc *wusbhc = usb_hcd_to_wusbhc(usb_hcd);
+-	struct hwahc *hwahc = container_of(wusbhc, struct hwahc, wusbhc);
+-
+-	dev_err(wusbhc->dev, "%s (%p [%p]) UNIMPLEMENTED\n", __func__,
+-		usb_hcd, hwahc);
+-	return -ENOSYS;
+-}
+-
+ /*
+  * No need to abort pipes, as when this is called, all the children
+  * has been disconnected and that has done it [through
+@@ -598,8 +579,6 @@ static struct hc_driver hwahc_hc_driver = {
+ 	.flags = HCD_USB2,		/* FIXME */
+ 	.reset = hwahc_op_reset,
+ 	.start = hwahc_op_start,
+-	.pci_suspend = hwahc_op_suspend,
+-	.pci_resume = hwahc_op_resume,
+ 	.stop = hwahc_op_stop,
+ 	.get_frame_number = hwahc_op_get_frame_number,
+ 	.urb_enqueue = hwahc_op_urb_enqueue,
