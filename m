@@ -1,61 +1,82 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: usb tree build failure
-Date: Thu, 30 Apr 2009 09:27:36 -0700
-Message-ID: <49F9D178.8050706@oracle.com>
-References: <20090429171752.f70c7de1.sfr@canb.auug.org.au> <49F86FBC.5030802@oracle.com> <20090429153714.GB22297@kroah.com> <49F875EF.8030408@oracle.com> <20090429174448.GB29026@kroah.com> <49F8941A.8070504@oracle.com> <20090430161341.GC18495@kroah.com>
+From: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
+Subject: Re: linux-next: Tree for April 24 (p54 build error) (and pull
+	request: wireless-next-2.6 2009-04-24)
+Date: Thu, 30 Apr 2009 14:30:51 -0400
+Message-ID: <20090430183051.GC9323@tuxdriver.com>
+References: <20090424150456.ff35e4ea.sfr@canb.auug.org.au> <49F1FD4B.2020909@oracle.com> <200904242247.15042.chunkeey@web.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:56795 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1764104AbZD3Q0a (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 30 Apr 2009 12:26:30 -0400
-In-Reply-To: <20090430161341.GC18495@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Sarah Sharp <sarah.a.sharp@linux.intel.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <200904242247.15042.chunkeey-S0/GAf8tV78@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Christian Lamparter <chunkeey-S0/GAf8tV78@public.gmane.org>
+Cc: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-Greg KH wrote:
-> On Wed, Apr 29, 2009 at 10:53:30AM -0700, Randy Dunlap wrote:
->> Greg KH wrote:
->>> On Wed, Apr 29, 2009 at 08:44:47AM -0700, Randy Dunlap wrote:
->>>> Greg KH wrote:
->>>>> On Wed, Apr 29, 2009 at 08:18:20AM -0700, Randy Dunlap wrote:
->>>>>> Stephen Rothwell wrote:
->>>>>>> Hi Greg,
->>>>>>>
->>>>>>> Today's linux-next build (powerpc allyesconfig) failed like this:
->>>>>>>
->>>>>>> drivers/usb/built-in.o: In function `.handle_event':
->>>>>>> (.text+0x67dd0): multiple definition of `.handle_event'
->>>>>>> drivers/pcmcia/built-in.o:(.text+0xcfcc): first defined here
->>>>>>> drivers/usb/built-in.o: In function `handle_event':
->>>>>>> (.opd+0x5bc8): multiple definition of `handle_event'
->>>>>>> drivers/pcmcia/built-in.o:(.opd+0xed0): first defined here
->>>>>> There's also this one:
->>>>>>
->>>>>> drivers/usb/host/xhci-mem.c:46: error: implicit declaration of function 'dma_pool_alloc'
->>>>>> drivers/usb/host/xhci-mem.c:69: error: implicit declaration of function 'dma_pool_free'
->>>>>> drivers/usb/host/xhci-mem.c:578: error: implicit declaration of function 'dma_pool_destroy'
->>>>>> drivers/usb/host/xhci-mem.c:657: error: implicit declaration of function 'dma_pool_create'
->>>>>>
->>>>>> That file needs to
->>>>>> #include <linux/dmapool.h>
->>>>> What arch had this problem?
->>>> i386
->>> I can't duplicate this here, care to attach a .config?
->> attached.  But you don't need to be able to duplicate it.
->>
->> The source file obviously uses those interfaces, so it should
->> include that header file.
+If you want patches to be noticed and applied, it would be most
+helpful if you could submit them in a regular and recognizable way.
+
+	http://linux.yyz.us/patch-format.html
+
+John
+
+On Fri, Apr 24, 2009 at 10:47:14PM +0200, Christian Lamparter wrote:
+> On Friday 24 April 2009 19:56:27 Randy Dunlap wrote:
+> > 
+> > drivers/net/wireless/p54/p54.h:193: error: array type has incomplete element type
+> > 
+> > struct p54_led_dev definition is controlled by
+> > #ifdef CONFIG_P54_LEDS (is not set)
+> > 
+> > but the struct declaration is controlled by
+> > #ifdef CONFIG_MAC80211_LEDS (=y)
+> > 
+> meh, [p54: more SoftLED updates] broke it
+> ( dce072580e095d1fb7be59a1be30dc0e8307821b )
 > 
-> Ah, it's a PCI config issue, a Kbuild change will fix this.
-
-So I noticed, but it should still #include the header file since those
-interfaces are used.
-
+> this also affects "pull request: wireless-next-2.6 2009-04-24"
+> 
+> and the current wireless-testing!
+> 
+> however the patches on the linux-wireless are all fine?!
+> (see: http://osdir.com/ml/linux-wireless/2009-03/msg01240.html )
+> 
+> I guess there was merge conflict with [p54: more SoftLED updates] 
+> and [p54: replace MAC80211_LEDS with P54_LEDS in p54.h] ?
+> 
+> Regards,
+> 	Chr
+> ---
+> In case someone want to fix it manually... here's the undo:
+> ---
+> diff --git a/drivers/net/wireless/p54/p54.h b/drivers/net/wireless/p54/p54.h
+> index 7fda1a9..db3df94 100644
+> --- a/drivers/net/wireless/p54/p54.h
+> +++ b/drivers/net/wireless/p54/p54.h
+> @@ -189,10 +189,10 @@ struct p54_common {
+>  	unsigned long *used_rxkeys;
+>  
+>  	/* LED management */
+> -#ifdef CONFIG_MAC80211_LEDS
+> +#ifdef CONFIG_P54_LEDS
+>  	struct p54_led_dev leds[4];
+>  	struct delayed_work led_work;
+> -#endif /* CONFIG_MAC80211_LEDS */
+> +#endif /* CONFIG_P54_LEDS */
+>  	u16 softled_state;		/* bit field of glowing LEDs */
+>  
+>  	/* statistics */
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
 -- 
-~Randy
+John W. Linville		Someday the world will need a hero, and you
+linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org			might be all we have.  Be ready.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
