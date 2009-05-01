@@ -1,77 +1,45 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: galak tree build warning
-Date: Fri, 1 May 2009 10:30:35 +1000
-Message-ID: <20090501103035.3f683ead.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ide tree with Linus' tree
+Date: Fri, 1 May 2009 11:10:07 +1000
+Message-ID: <20090501111007.83f1db68.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2107784919=="
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org>
-List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
-List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
-List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
-Mime-version: 1.0
-Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
-To: Kumar Gala <galak@kernel.crashing.org>
-Cc: ppc-dev <linuxppc-dev@ozlabs.org>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
-
---===============2107784919==
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__1_May_2009_10_30_35_+1000_p7K3QNq2DvXLDoaq"
-
---Signature=_Fri__1_May_2009_10_30_35_+1000_p7K3QNq2DvXLDoaq
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56451 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751943AbZEABKI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Apr 2009 21:10:08 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: linux-next@vger.kernel.org, Borislav Petkov <petkovbb@gmail.com>, Jerome Marchand <jmarchan@redhat.com>, Jens Axboe <jens.axboe@oracle.com>
 
-Hi Kumar,
+Hi Bartlomiej,
 
-Today's linux-next build (powerpc_ppc64_defconfig) produced these
-warnings:
+Today's linux-next merge of the ide tree got a conflict in
+include/linux/blkdev.h between commit
+42dad7647aec49b3ad20dd0cb832b232a6ae514f ("block: simplify I/O stat
+accounting") from Linus' tree and commit
+96c16743973e8c1a7b9c655d10b7973408d6d1dd ("ide-cd: fix REQ_QUIET tests in
+cdrom_decode_status") from the ide tree.
 
-arch/powerpc/platforms/pseries/iommu.c: In function 'pci_dma_bus_setup_pSer=
-ies':
-arch/powerpc/platforms/pseries/iommu.c:391: warning: format '%lx' expects t=
-ype 'long unsigned int', but argument 2 has type 'resource_size_t'
-arch/powerpc/platforms/pseries/iommu.c:417: warning: format '%lx' expects t=
-ype 'long unsigned int', but argument 2 has type 'resource_size_t'
-
-Caused by commit 78665c790a654cc2d509df3bf3971cdb102beac9 ("powerpc: make
-dma_window_* in pci_controller struct avail on 32b").  resource_size_t
-can be 32 or 64 bit depending on platform and config, so it needs to be
-cast to (unsigned long long) when printed.
-
---=20
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__1_May_2009_10_30_35_+1000_p7K3QNq2DvXLDoaq
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkn6QqsACgkQjjKRsyhoI8xrBgCfS6m5TXa4mwh1PuG3k+jroVep
-eDkAn2n9tk3ymkSfRPtbqoDUEHxGR3iG
-=GRCW
------END PGP SIGNATURE-----
-
---Signature=_Fri__1_May_2009_10_30_35_+1000_p7K3QNq2DvXLDoaq--
-
---===============2107784919==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Linuxppc-dev mailing list
-Linuxppc-dev@ozlabs.org
-https://ozlabs.org/mailman/listinfo/linuxppc-dev
---===============2107784919==--
+diff --cc include/linux/blkdev.h
+index 2755d5c,6f841fb..0000000
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@@ -600,7 -598,7 +600,8 @@@ enum 
+  				 blk_failfast_transport(rq) ||	\
+  				 blk_failfast_driver(rq))
+  #define blk_rq_started(rq)	((rq)->cmd_flags & REQ_STARTED)
++ #define blk_rq_quiet(rq)	((rq)->cmd_flags & REQ_QUIET)
+ +#define blk_rq_io_stat(rq)	((rq)->cmd_flags & REQ_IO_STAT)
+  
+  #define blk_account_rq(rq)	(blk_rq_started(rq) && (blk_fs_request(rq) || blk_discard_rq(rq))) 
+  
