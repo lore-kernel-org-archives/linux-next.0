@@ -1,67 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: driver-core tree build warning
-Date: Fri, 1 May 2009 15:21:44 +1000
-Message-ID: <20090501152144.500e619a.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the driver-core tree with the
+	tracing tree
+Date: Thu, 30 Apr 2009 22:22:56 -0700
+Message-ID: <20090501052256.GA18785@kroah.com>
+References: <20090501150115.ce386142.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__1_May_2009_15_21_44_+1000_euLN=A._odtSICqo"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46012 "EHLO smtps.tip.net.au"
+Received: from kroah.org ([198.145.64.141]:54076 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751070AbZEAFVt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 1 May 2009 01:21:49 -0400
+	id S1750908AbZEAFXD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 1 May 2009 01:23:03 -0400
+Content-Disposition: inline
+In-Reply-To: <20090501150115.ce386142.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, Jan Blunck <jblunck@suse.de>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Fri__1_May_2009_15_21_44_+1000_euLN=A._odtSICqo
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, May 01, 2009 at 03:01:15PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the driver-core tree got a conflict in
+> init/main.c between commit 02af61bb50f5d5f0322dbe5ab2a0d75808d25c7b
+> ("tracing, kmemtrace: Separate include/trace/kmemtrace.h to kmemtrace
+> part and tracepoint part") from the tracing tree and commit
+> e6a9527dba81973b8fe7000f42c84b2ffbe98d65 ("driver-core: devtmpfs - driver
+> core maintained /dev tmpfs") from the driver-core tree.
+> 
+> Just simple overlapping additions.  I fixed it up (see below) and can
+> carry the fix as necessary.
 
-Hi Greg,
+Thanks, it's a pretty trivial merge.
 
-Today's linux-next build (x86_64 allmodconfig) produced these warnings:
+> [Aside:  the first I can find of this is the patch submission to LKML
+> within the last day ... so "posted, reviewed, unit tested"?  I assume
+> this has had some discussion somewhere, but Google doesn't know where.]
 
-drivers/net/wireless/ipw2x00/ipw2100.c: In function 'show_cfg':
-drivers/net/wireless/ipw2x00/ipw2100.c:3491: warning: passing argument 1 of=
- 'dev_get_drvdata' from incompatible pointer type
-include/linux/device.h:457: note: expected 'const struct device *' but argu=
-ment is of type 'struct device **'
-drivers/net/wireless/ipw2x00/ipw2100.c: In function 'show_status':
-drivers/net/wireless/ipw2x00/ipw2100.c:3500: warning: passing argument 1 of=
- 'dev_get_drvdata' from incompatible pointer type
-include/linux/device.h:457: note: expected 'const struct device *' but argu=
-ment is of type 'struct device **'
-drivers/net/wireless/ipw2x00/ipw2100.c: In function 'show_capability':
-drivers/net/wireless/ipw2x00/ipw2100.c:3509: warning: passing argument 1 of=
- 'dev_get_drvdata' from incompatible pointer type
-include/linux/device.h:457: note: expected 'const struct device *' but argu=
-ment is of type 'struct device **'
-drivers/net/wireless/ipw2x00/ipw2100.c: In function 'show_rf_kill':
-drivers/net/wireless/ipw2x00/ipw2100.c:4227: warning: passing argument 1 of=
- 'dev_get_drvdata' from incompatible pointer type
-include/linux/device.h:457: note: expected 'const struct device *' but argu=
-ment is of type 'struct device **'
+It was posted today for discussion, which didn't seem to happen.
 
-Introduced by commit 73119f5e60e3b16577e99e2f035039bed0d2dcca ("Wireless:
-remove driver_data direct access of struct device").
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+It has been unit tested a lot in SuSE's kernels with review from our
+kernel developers (hence the 3 signed-off-bys).   We use it to speed up
+booting a lot because we have to use an initramfs (like all distros need
+to for various reasons.)  It aleviates the udev coldplug issues a lot,
+and the embedded developers have been very happy to see this (for some
+reason they only like writing private emails, not to the list, which is
+unfortunate.)
 
---Signature=_Fri__1_May_2009_15_21_44_+1000_euLN=A._odtSICqo
-Content-Type: application/pgp-signature
+thanks,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkn6hugACgkQjjKRsyhoI8yLuQCgmlYPYwARXT6GDx6Y/KRTtN2O
-WdkAn198M+rgYZ4PwVce8elkD2aLt8Zw
-=1NqE
------END PGP SIGNATURE-----
-
---Signature=_Fri__1_May_2009_15_21_44_+1000_euLN=A._odtSICqo--
+greg k-h
