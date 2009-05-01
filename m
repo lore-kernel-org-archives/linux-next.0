@@ -1,72 +1,77 @@
-From: Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH] Fix for "undefined iommu_pass_through" compiling error
-Date: Thu, 30 Apr 2009 15:54:30 -0700
-Message-ID: <20090430225430.GA5691@linux-os.sc.intel.com>
-References: <20090430131232.fb51742a.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: galak tree build warning
+Date: Fri, 1 May 2009 10:30:35 +1000
+Message-ID: <20090501103035.3f683ead.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:43944 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756365AbZD3Wyb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 30 Apr 2009 18:54:31 -0400
+Content-Type: multipart/mixed; boundary="===============2107784919=="
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org>
+List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
+List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
+List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
+Mime-version: 1.0
+Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
+To: Kumar Gala <galak@kernel.crashing.org>
+Cc: ppc-dev <linuxppc-dev@ozlabs.org>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--===============2107784919==
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__1_May_2009_10_30_35_+1000_p7K3QNq2DvXLDoaq"
+
+--Signature=_Fri__1_May_2009_10_30_35_+1000_p7K3QNq2DvXLDoaq
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20090430131232.fb51742a.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Tony Luck <tony.luck@intel.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, iommu <iommu@lists.linux-foundation.org>
+Content-Transfer-Encoding: quoted-printable
 
-When CONFIG_DMAR is off, linux-next or iomm-2.6.git kernel build complains
-"undefined iommu_pass_through" error.
+Hi Kumar,
 
-This patch moves iommu_pass_through beyond CONFIG_DMAR and fixes this issue.
+Today's linux-next build (powerpc_ppc64_defconfig) produced these
+warnings:
 
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
-Acked-by: Tony Luck <tony.luck@intel.com>
+arch/powerpc/platforms/pseries/iommu.c: In function 'pci_dma_bus_setup_pSer=
+ies':
+arch/powerpc/platforms/pseries/iommu.c:391: warning: format '%lx' expects t=
+ype 'long unsigned int', but argument 2 has type 'resource_size_t'
+arch/powerpc/platforms/pseries/iommu.c:417: warning: format '%lx' expects t=
+ype 'long unsigned int', but argument 2 has type 'resource_size_t'
 
----
+Caused by commit 78665c790a654cc2d509df3bf3971cdb102beac9 ("powerpc: make
+dma_window_* in pci_controller struct avail on 32b").  resource_size_t
+can be 32 or 64 bit depending on platform and config, so it needs to be
+cast to (unsigned long long) when printed.
 
- arch/ia64/kernel/dma-mapping.c |    2 ++
- arch/x86/kernel/pci-dma.c      |    2 ++
- drivers/pci/intel-iommu.c      |    1 -
- 3 files changed, 4 insertions(+), 1 deletion(-)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --git a/arch/ia64/kernel/dma-mapping.c b/arch/ia64/kernel/dma-mapping.c
-index 086a2ae..336ccdc 100644
---- a/arch/ia64/kernel/dma-mapping.c
-+++ b/arch/ia64/kernel/dma-mapping.c
-@@ -3,6 +3,8 @@
- /* Set this to 1 if there is a HW IOMMU in the system */
- int iommu_detected __read_mostly;
- 
-+int iommu_pass_through;
-+
- struct dma_map_ops *dma_ops;
- EXPORT_SYMBOL(dma_ops);
- 
-diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
-index 8cad0d8..14fddef 100644
---- a/arch/x86/kernel/pci-dma.c
-+++ b/arch/x86/kernel/pci-dma.c
-@@ -32,6 +32,8 @@ int no_iommu __read_mostly;
- /* Set this to 1 if there is a HW IOMMU in the system */
- int iommu_detected __read_mostly = 0;
- 
-+int iommu_pass_through;
-+
- dma_addr_t bad_dma_address __read_mostly = 0;
- EXPORT_SYMBOL(bad_dma_address);
- 
-diff --git a/drivers/pci/intel-iommu.c b/drivers/pci/intel-iommu.c
-index 1312182..d3edd6a 100644
---- a/drivers/pci/intel-iommu.c
-+++ b/drivers/pci/intel-iommu.c
-@@ -288,7 +288,6 @@ int dmar_disabled = 1;
- static int __initdata dmar_map_gfx = 1;
- static int dmar_forcedac;
- static int intel_iommu_strict;
--int iommu_pass_through;
- 
- #define DUMMY_DEVICE_DOMAIN_INFO ((struct device_domain_info *)(-1))
- static DEFINE_SPINLOCK(device_domain_lock);
+--Signature=_Fri__1_May_2009_10_30_35_+1000_p7K3QNq2DvXLDoaq
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkn6QqsACgkQjjKRsyhoI8xrBgCfS6m5TXa4mwh1PuG3k+jroVep
+eDkAn2n9tk3ymkSfRPtbqoDUEHxGR3iG
+=GRCW
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__1_May_2009_10_30_35_+1000_p7K3QNq2DvXLDoaq--
+
+--===============2107784919==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linuxppc-dev mailing list
+Linuxppc-dev@ozlabs.org
+https://ozlabs.org/mailman/listinfo/linuxppc-dev
+--===============2107784919==--
