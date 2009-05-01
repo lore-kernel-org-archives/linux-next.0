@@ -1,50 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the driver-core tree with the tracing
- tree
-Date: Fri, 1 May 2009 15:01:15 +1000
-Message-ID: <20090501150115.ce386142.sfr@canb.auug.org.au>
+Subject: linux-next: driver-core tree build warning
+Date: Fri, 1 May 2009 15:21:44 +1000
+Message-ID: <20090501152144.500e619a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__1_May_2009_15_21_44_+1000_euLN=A._odtSICqo"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48780 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:46012 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750802AbZEAFBQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 1 May 2009 01:01:16 -0400
+	id S1751070AbZEAFVt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 1 May 2009 01:21:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, Jan Blunck <jblunck@suse.de>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org
+
+--Signature=_Fri__1_May_2009_15_21_44_+1000_euLN=A._odtSICqo
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the driver-core tree got a conflict in
-init/main.c between commit 02af61bb50f5d5f0322dbe5ab2a0d75808d25c7b
-("tracing, kmemtrace: Separate include/trace/kmemtrace.h to kmemtrace
-part and tracepoint part") from the tracing tree and commit
-e6a9527dba81973b8fe7000f42c84b2ffbe98d65 ("driver-core: devtmpfs - driver
-core maintained /dev tmpfs") from the driver-core tree.
+Today's linux-next build (x86_64 allmodconfig) produced these warnings:
 
-Just simple overlapping additions.  I fixed it up (see below) and can
-carry the fix as necessary.
+drivers/net/wireless/ipw2x00/ipw2100.c: In function 'show_cfg':
+drivers/net/wireless/ipw2x00/ipw2100.c:3491: warning: passing argument 1 of=
+ 'dev_get_drvdata' from incompatible pointer type
+include/linux/device.h:457: note: expected 'const struct device *' but argu=
+ment is of type 'struct device **'
+drivers/net/wireless/ipw2x00/ipw2100.c: In function 'show_status':
+drivers/net/wireless/ipw2x00/ipw2100.c:3500: warning: passing argument 1 of=
+ 'dev_get_drvdata' from incompatible pointer type
+include/linux/device.h:457: note: expected 'const struct device *' but argu=
+ment is of type 'struct device **'
+drivers/net/wireless/ipw2x00/ipw2100.c: In function 'show_capability':
+drivers/net/wireless/ipw2x00/ipw2100.c:3509: warning: passing argument 1 of=
+ 'dev_get_drvdata' from incompatible pointer type
+include/linux/device.h:457: note: expected 'const struct device *' but argu=
+ment is of type 'struct device **'
+drivers/net/wireless/ipw2x00/ipw2100.c: In function 'show_rf_kill':
+drivers/net/wireless/ipw2x00/ipw2100.c:4227: warning: passing argument 1 of=
+ 'dev_get_drvdata' from incompatible pointer type
+include/linux/device.h:457: note: expected 'const struct device *' but argu=
+ment is of type 'struct device **'
 
-[Aside:  the first I can find of this is the patch submission to LKML
-within the last day ... so "posted, reviewed, unit tested"?  I assume
-this has had some discussion somewhere, but Google doesn't know where.]
--- 
+Introduced by commit 73119f5e60e3b16577e99e2f035039bed0d2dcca ("Wireless:
+remove driver_data direct access of struct device").
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc init/main.c
-index cc61941,0d36b37..0000000
---- a/init/main.c
-+++ b/init/main.c
-@@@ -65,7 -64,7 +65,8 @@@
-  #include <linux/idr.h>
-  #include <linux/ftrace.h>
-  #include <linux/async.h>
- +#include <linux/kmemtrace.h>
-+ #include <linux/shmem_fs.h>
-  #include <trace/boot.h>
-  
-  #include <asm/io.h>
+--Signature=_Fri__1_May_2009_15_21_44_+1000_euLN=A._odtSICqo
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkn6hugACgkQjjKRsyhoI8yLuQCgmlYPYwARXT6GDx6Y/KRTtN2O
+WdkAn198M+rgYZ4PwVce8elkD2aLt8Zw
+=1NqE
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__1_May_2009_15_21_44_+1000_euLN=A._odtSICqo--
