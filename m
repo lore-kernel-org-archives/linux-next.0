@@ -1,59 +1,55 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: driver-core tree build warning
-Date: Fri, 1 May 2009 17:11:34 +1000
-Message-ID: <20090501171134.f8fa430a.sfr@canb.auug.org.au>
-References: <20090501152144.500e619a.sfr@canb.auug.org.au>
-	<20090501054727.GB19020@kroah.com>
-	<20090501061118.GA19234@kroah.com>
+From: Benny Halevy <bhalevy@panasas.com>
+Subject: Re: linux-next: nfs tree build warning
+Date: Fri, 01 May 2009 15:19:00 +0300
+Message-ID: <49FAE8B4.6020500@panasas.com>
+References: <20090501131545.ca8c314a.sfr@canb.auug.org.au> <1241148155.15476.128.camel@heimdal.trondhjem.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__1_May_2009_17_11_34_+1000_JE8j+fNDRYVdbdiC"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56707 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752099AbZEAHLj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 1 May 2009 03:11:39 -0400
-In-Reply-To: <20090501061118.GA19234@kroah.com>
+Received: from gw-ca.panasas.com ([209.116.51.66]:15127 "EHLO
+	laguna.int.panasas.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753751AbZEAMT6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 1 May 2009 08:19:58 -0400
+In-Reply-To: <1241148155.15476.128.camel@heimdal.trondhjem.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org
+To: Trond Myklebust <trond.myklebust@fys.uio.no>, Andy Adamson <andros@umich.edu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
---Signature=_Fri__1_May_2009_17_11_34_+1000_JE8j+fNDRYVdbdiC
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On May. 01, 2009, 6:22 +0300, Trond Myklebust <trond.myklebust@fys.uio.no> wrote:
+> On Fri, 2009-05-01 at 13:15 +1000, Stephen Rothwell wrote:
+>> Hi Trond,
+>>
+>> Today's linux-next build (x86_64 allmodconfig) produced this warning:
+>>
+>> fs/nfs/nfs4proc.c: In function 'nfs4_proc_exchange_id':
+>> fs/nfs/nfs4proc.c:4279: warning: the frame size of 2288 bytes is larger than 2048 bytes
+>>
+>> Introduced by commit 63a93b4af49220c74757beb17b5617b72d912b6b ("nfs41:
+>> exchange_id operation").  This commit has been around for a while.
+> 
+> Benny, Andy,
+> 
+> Why are we preallocating 1k buffers on the stack for these things?
+> That's an insane amount of free space...
+> 
+> If this is truly a realistic value (which I sincerely doubt), then the
+> right thing to do is to preallocate a page in which to store them.
+> Putting 1k arrays on the stack is just _wrong_.
+> 
+> Trond
+> 
 
-Hi Greg,
+Ouch, struct nfs41_exchange_id_res contains
+	struct server_owner		server_owner;
+	struct server_scope		server_scope;
+each embedding a char [NFS4_OPAQUE_LIMIT] array
+which is 1K in length.
+Not only we should have preallocated these arrays dynamically,
+we actually throw them away.
+Therefore I suggest that until they are put to use
+we should just skip their xdr decoding, like we do
+for the implementation ID.
 
-On Thu, 30 Apr 2009 23:11:18 -0700 Greg KH <greg@kroah.com> wrote:
->
-> On Thu, Apr 30, 2009 at 10:47:27PM -0700, Greg KH wrote:
-> > Ah crap, my bad.  I'll go fix this up, it passed my build tests, I
-> > wonder why this isn't an error, I missed the warning.
-
-I assume it is actually valid C (just not good C :-)).
-
-> I've sent an updated version of the patch that fixes this to John and
-> the wireless mailing list and updated my tree as well.
-
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__1_May_2009_17_11_34_+1000_JE8j+fNDRYVdbdiC
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkn6oKYACgkQjjKRsyhoI8wKNQCfUHPGuqXD1opzCdrWiGZcweJd
-sq0AnjM2yrZmKsX4LjfyEWx4TjB1O8xG
-=5gJR
------END PGP SIGNATURE-----
-
---Signature=_Fri__1_May_2009_17_11_34_+1000_JE8j+fNDRYVdbdiC--
+Benny
