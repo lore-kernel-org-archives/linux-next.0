@@ -1,38 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH] virtio_net: Cleanup command queue scatterlist usage
-Date: Fri, 01 May 2009 15:52:59 -0700 (PDT)
-Message-ID: <20090501.155259.185618790.davem@davemloft.net>
-References: <20090427154925.4771.63651.stgit@debian.lart>
-	<20090501.153301.42015656.davem@davemloft.net>
-	<1241217794.9646.588.camel@2710p.home>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: Tree for May 1 (devtmpfs)
+Date: Fri, 1 May 2009 15:56:16 -0700
+Message-ID: <20090501225616.GA18064@kroah.com>
+References: <20090501163405.973f9088.sfr@canb.auug.org.au> <49FB1521.5050500@oracle.com> <20090501165551.GA1889@puku.stupidest.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <1241217794.9646.588.camel@2710p.home>
-Sender: netdev-owner@vger.kernel.org
-To: alex.williamson@hp.com
-Cc: rusty@rustcorp.com.au, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from kroah.org ([198.145.64.141]:59271 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751907AbZEAXDb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 1 May 2009 19:03:31 -0400
+Content-Disposition: inline
+In-Reply-To: <20090501165551.GA1889@puku.stupidest.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Chris Wedgwood <cw@f00f.org>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Kay Sievers <kay.sievers@vrfy.org>
 
-From: Alex Williamson <alex.williamson@hp.com>
-Date: Fri, 01 May 2009 16:43:14 -0600
-
-> On Fri, 2009-05-01 at 15:33 -0700, David Miller wrote:
->> From: Alex Williamson <alex.williamson@hp.com>
->> Date: Mon, 27 Apr 2009 09:50:03 -0600
->> 
->> > We were avoiding calling sg_init* on scatterlists passed
->> > into virtnet_send_command to prevent extraneous end markers.
->> > This caused build warnings for uninitialized variables.
->> > Cleanup the code to create proper scatterlists.
->> > 
->> > Signed-off-by: Alex Williamson <alex.williamson@hp.com>
->> 
->> This patch does not apply even to Linus's current tree.
+On Fri, May 01, 2009 at 09:55:52AM -0700, Chris Wedgwood wrote:
+> On Fri, May 01, 2009 at 08:28:33AM -0700, Randy Dunlap wrote:
 > 
-> It was against net-next-2.6.git, I'll update it for linux-2.6.git.
-> IIRC, it applied with some fuzz.
+> > drivers/base/devtmpfs.c:41: error: implicit declaration of function 'vfs_mkdir'
+> > drivers/base/devtmpfs.c:46: error: dereferencing pointer to incomplete type
+> 
+> [...]
+> 
+> Why is devtmpfs in linux-next?  My read of the thread so far seems to
+> indicate there is considerable uncertainty that this is necessary or
+> desirable.
 
-Thanks.  I want to apply this to net-2.6 to fix those uninitialed
-scatterlist structure issues.
+As we discussed on irc, I think you no longer object to this, and see
+how it solves a real problem, and can probably help out your initramfs
+tools.
+
+So it should stay in -next for now, and see if any build/use problems
+happen with it.  I've been running it all this week on my machines just
+fine.
+
+thanks,
+
+greg k-h
