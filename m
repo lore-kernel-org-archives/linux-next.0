@@ -1,39 +1,50 @@
-From: Steve French <smfrench@gmail.com>
-Subject: Re: linux-next: cifs tree build warning
-Date: Thu, 30 Apr 2009 23:05:20 -0500
-Message-ID: <524f69650904302105g3e236752g8a2f2fa76552be9f@mail.gmail.com>
-References: <20090501134700.148955dd.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core tree with the tracing
+ tree
+Date: Fri, 1 May 2009 15:01:15 +1000
+Message-ID: <20090501150115.ce386142.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from yw-out-2324.google.com ([74.125.46.29]:60413 "EHLO
-	yw-out-2324.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750734AbZEAEFU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 May 2009 00:05:20 -0400
-Received: by yw-out-2324.google.com with SMTP id 5so1283212ywb.1
-        for <linux-next@vger.kernel.org>; Thu, 30 Apr 2009 21:05:20 -0700 (PDT)
-In-Reply-To: <20090501134700.148955dd.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48780 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750802AbZEAFBQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 1 May 2009 01:01:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-cifs-client@lists.samba.org, linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, Jan Blunck <jblunck@suse.de>, Andrew Morton <akpm@linux-foundation.org>
 
-On Thu, Apr 30, 2009 at 10:47 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Steve,
->
-> Today's linux-next build (x86_64 allmodconfig) produced this warning:
->
-> fs/cifs/connect.c:2609: warning: 'CIFSNTLMSSPNegotiateSessSetup' defined but not used
-> fs/cifs/connect.c:2943: warning: 'CIFSNTLMSSPAuthSessSetup' defined but not used
->
-> Introduced by commit 20418acd6874792359b42c12d159f42f17593f34 ("[CIFS]
-> Remove older session setup implementation") which removed the last users of
+Hi Greg,
 
-These are being rewritten and moved (probably to a new file ntlmssp.c) tomorrow.
+Today's linux-next merge of the driver-core tree got a conflict in
+init/main.c between commit 02af61bb50f5d5f0322dbe5ab2a0d75808d25c7b
+("tracing, kmemtrace: Separate include/trace/kmemtrace.h to kmemtrace
+part and tracepoint part") from the tracing tree and commit
+e6a9527dba81973b8fe7000f42c84b2ffbe98d65 ("driver-core: devtmpfs - driver
+core maintained /dev tmpfs") from the driver-core tree.
 
+Just simple overlapping additions.  I fixed it up (see below) and can
+carry the fix as necessary.
 
+[Aside:  the first I can find of this is the patch submission to LKML
+within the last day ... so "posted, reviewed, unit tested"?  I assume
+this has had some discussion somewhere, but Google doesn't know where.]
 -- 
-Thanks,
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Steve
+diff --cc init/main.c
+index cc61941,0d36b37..0000000
+--- a/init/main.c
++++ b/init/main.c
+@@@ -65,7 -64,7 +65,8 @@@
+  #include <linux/idr.h>
+  #include <linux/ftrace.h>
+  #include <linux/async.h>
+ +#include <linux/kmemtrace.h>
++ #include <linux/shmem_fs.h>
+  #include <trace/boot.h>
+  
+  #include <asm/io.h>
