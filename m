@@ -1,45 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ide tree with Linus' tree
-Date: Fri, 1 May 2009 11:10:07 +1000
-Message-ID: <20090501111007.83f1db68.sfr@canb.auug.org.au>
+Subject: linux-next: nfs tree build warning
+Date: Fri, 1 May 2009 13:15:45 +1000
+Message-ID: <20090501131545.ca8c314a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__1_May_2009_13_15_45_+1000_xfGknlX8p/Q5w3=y"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56451 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59808 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751943AbZEABKI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 30 Apr 2009 21:10:08 -0400
+	id S1753664AbZEADPu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Apr 2009 23:15:50 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Cc: linux-next@vger.kernel.org, Borislav Petkov <petkovbb@gmail.com>, Jerome Marchand <jmarchan@redhat.com>, Jens Axboe <jens.axboe@oracle.com>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, Benny Halevy <bhalevy@panasas.com>, Andy Adamson <andros@umich.edu>
 
-Hi Bartlomiej,
+--Signature=_Fri__1_May_2009_13_15_45_+1000_xfGknlX8p/Q5w3=y
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the ide tree got a conflict in
-include/linux/blkdev.h between commit
-42dad7647aec49b3ad20dd0cb832b232a6ae514f ("block: simplify I/O stat
-accounting") from Linus' tree and commit
-96c16743973e8c1a7b9c655d10b7973408d6d1dd ("ide-cd: fix REQ_QUIET tests in
-cdrom_decode_status") from the ide tree.
+Hi Trond,
 
-Just overlapping additions.  I fixed it up (see below) and can carry the
-fix as necessary.
--- 
+Today's linux-next build (x86_64 allmodconfig) produced this warning:
+
+fs/nfs/nfs4proc.c: In function 'nfs4_proc_exchange_id':
+fs/nfs/nfs4proc.c:4279: warning: the frame size of 2288 bytes is larger tha=
+n 2048 bytes
+
+Introduced by commit 63a93b4af49220c74757beb17b5617b72d912b6b ("nfs41:
+exchange_id operation").  This commit has been around for a while.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc include/linux/blkdev.h
-index 2755d5c,6f841fb..0000000
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@@ -600,7 -598,7 +600,8 @@@ enum 
-  				 blk_failfast_transport(rq) ||	\
-  				 blk_failfast_driver(rq))
-  #define blk_rq_started(rq)	((rq)->cmd_flags & REQ_STARTED)
-+ #define blk_rq_quiet(rq)	((rq)->cmd_flags & REQ_QUIET)
- +#define blk_rq_io_stat(rq)	((rq)->cmd_flags & REQ_IO_STAT)
-  
-  #define blk_account_rq(rq)	(blk_rq_started(rq) && (blk_fs_request(rq) || blk_discard_rq(rq))) 
-  
+--Signature=_Fri__1_May_2009_13_15_45_+1000_xfGknlX8p/Q5w3=y
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkn6aWEACgkQjjKRsyhoI8x4SQCgsyw7BeikmtBgk3E538rwvYpQ
+TEQAoIaVKZlpMjN4COXGos1JXMTb6hUr
+=qGc3
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__1_May_2009_13_15_45_+1000_xfGknlX8p/Q5w3=y--
