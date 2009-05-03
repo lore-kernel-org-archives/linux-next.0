@@ -1,24 +1,45 @@
-From: Joan <salarmy.simcoe@bellnet.ca>
-Subject: Reply to email: jerry.smith33@onlineprocessingdept.co.uk
-Date: Sat, 2 May 2009 8:52:59 -0400
-Message-ID: <20090502125259.GOAS1557.tomts45-srv.bellnexxia.net@toip52-bus.srvr.bell.ca>
-Reply-To: jerry.smith333@btinternet.com
+From: Pekka Enberg <penberg@cs.helsinki.fi>
+Subject: Re: Next April 28: boot failure on PowerPC with SLQB
+Date: Sun, 03 May 2009 14:51:01 +0300
+Message-ID: <1241351461.26995.4.camel@penberg-laptop>
+References: <20090430041146.GB23746@wotan.suse.de>
+	 <49F938E4.2030703@in.ibm.com> <20090430064127.GF23746@wotan.suse.de>
+	 <49F973A0.8070106@in.ibm.com> <20090430103528.GA6900@wotan.suse.de>
+	 <1241087884.19252.5.camel@penberg-laptop>
+	 <20090430210004.05a61841.sfr@canb.auug.org.au>
+	 <20090430111825.GC6900@wotan.suse.de>
+	 <1241090429.19252.7.camel@penberg-laptop>
+	 <20090430130542.GF6900@wotan.suse.de>
+	 <20090430141013.GA17480@oksana.dev.rtsoft.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tomts45-srv.bellnexxia.net ([209.226.175.112]:58977 "EHLO
-	tomts45-srv.bellnexxia.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752608AbZEBMxB convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 2 May 2009 08:53:01 -0400
+Received: from courier.cs.helsinki.fi ([128.214.9.1]:43786 "EHLO
+	mail.cs.helsinki.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753686AbZECLvE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 3 May 2009 07:51:04 -0400
+In-Reply-To: <20090430141013.GA17480@oksana.dev.rtsoft.ru>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: info@lotto.org
+To: avorontsov@ru.mvista.com
+Cc: Nick Piggin <npiggin@suse.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Christoph Lameter <cl@linux-foundation.org>, linux-kernel <linux-kernel@vger.kernel.org>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org
 
-You have just been awarded,the sum of =A3950.000.00 GBP in the Global A=
-ward 2009,send of details to
+On Thu, 2009-04-30 at 18:10 +0400, Anton Vorontsov wrote:
+> > @@ -2194,16 +2197,16 @@ static void *kmem_cache_dyn_array_alloc(
+> >  		 * never get freed by definition so we can do it rather
+> >  		 * simply.
+> >  		 */
+> > -		if (!nextmem) {
+> > -			nextmem = alloc_pages_exact(size, GFP_KERNEL);
+> > -			if (!nextmem)
+> > -				return NULL;
+> > +		if (size > nextleft) {
+> > +                        nextmem = alloc_pages_exact(size, GFP_KERNEL);
+> > +                        if (!nextmem)
+> > +                                return NULL;
+> 
+> Cosmetic issue: spaces instead of tabs are used on these
+> three lines.
 
-Names:........
-Address:......
-Country:......
+I fixed that up. Thanks!
