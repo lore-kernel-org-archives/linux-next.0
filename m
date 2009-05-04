@@ -1,53 +1,247 @@
-From: Kalle Valo <kalle.valo@nokia.com>
-Subject: Re: linux-next: wireless tree build warning
-Date: Mon, 04 May 2009 09:48:49 +0300
-Message-ID: <87y6tdbbxq.fsf@nokia.com>
-References: <20090501133539.5fc53f8a.sfr@canb.auug.org.au>
-	<20090501123339.GA4917@hash.localnet>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Tree for May 4
+Date: Mon, 4 May 2009 17:08:10 +1000
+Message-ID: <20090504170810.64cdceb4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__4_May_2009_17_08_10_+1000_Cv9D5GRa9Z1O50EW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.105.134]:46015 "EHLO
-	mgw-mx09.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753410AbZEDGtx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 May 2009 02:49:53 -0400
-In-Reply-To: <20090501123339.GA4917@hash.localnet> (ext Bob Copeland's message of "Fri\, 1 May 2009 14\:33\:39 +0200")
+Received: from chilli.pcug.org.au ([203.10.76.44]:53380 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753043AbZEDHIN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 4 May 2009 03:08:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: ext Bob Copeland <me@bobcopeland.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "John W. Linville" <linville@tuxdriver.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-ext Bob Copeland <me@bobcopeland.com> writes:
+--Signature=_Mon__4_May_2009_17_08_10_+1000_Cv9D5GRa9Z1O50EW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Fri, May 01, 2009 at 01:35:39PM +1000, Stephen Rothwell wrote:
->> Hi John,
->> 
->> Today's linux-next build (x86_64 allmodconfig) produced these warnings:
->
-> Thanks -- John, this should fix:
->
-> From 2c6ef7ec3a3b46601597615cf9e40b2a0c9f2f72 Mon Sep 17 00:00:00 2001
-> From: Bob Copeland <bob@hash.(none)>
-> Date: Fri, 1 May 2009 08:20:07 -0400
-> Subject: [PATCH] wl12xx: correct printk format warnings
->
-> Fixes warnings:
->   drivers/net/wireless/wl12xx/main.c:87: warning: int format, different
->     type arg (arg 2)
->   drivers/net/wireless/wl12xx/main.c: In function `wl12xx_fetch_nvs':
->   drivers/net/wireless/wl12xx/main.c:125: warning: int format, different
->     type arg (arg 2)
->   drivers/net/wireless/wl12xx/wl1251.c: In function 'wl1251_upload_firmware':
->   drivers/net/wireless/wl12xx/wl1251.c:94: warning: int format, different
->     type arg (arg 2)
->   drivers/net/wireless/wl12xx/wl1251.c:141: warning: int format, different
->     type arg (arg 2)
->
-> Signed-off-by: Bob Copeland <me@bobcopeland.com>
+Hi all,
 
-Thanks.
+Changes since 20090501:
 
-Acked-by: Kalle Valo <kalle.valo@nokia.com>
+Changed tree:
+	the mfd tree changed location
 
--- 
-Kalle Valo
+The ide tree lost its conflict.
+
+The vfs tree gained a conflict against Linus' tree.
+
+The driver-core tree gained a build failure for which I reverted a commit.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+(patches at
+http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES) and i386, sparc and sparc64 defconfig.
+These builds also have CONFIG_ENABLE_WARN_DEPRECATED,
+CONFIG_ENABLE_MUST_CHECK and CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 135 trees (counting Linus' and 18 trees of patches pending for
+Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/master
+Merging quilt/driver-core.current
+Merging quilt/usb.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging dwmw2/master
+Merging arm/devel
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging mips/mips-for-linux-next
+Merging parisc/master
+Merging powerpc/next
+Merging 4xx/next
+Merging galak/next
+Merging pxa/for-next
+Merging s390/features
+Merging sh/master
+Merging sparc/master
+Merging x86/auto-x86-next
+Merging xtensa/master
+Merging configfs/linux-next
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging jfs/next
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging squashfs/master
+Merging v9fs/for-next
+CONFLICT (content): Merge conflict in net/9p/protocol.c
+Merging ubifs/linux-next
+Merging xfs/master
+Merging tip-core/auto-core-next
+Merging cpus4096/auto-cpus4096-next
+Merging tracing/auto-tracing-next
+Merging genirq/auto-genirq-next
+Merging safe-poison-pointers/auto-safe-poison-pointers-next
+Merging sched/auto-sched-next
+Merging stackprotector/auto-stackprotector-next
+Merging timers/auto-timers-next
+Merging pci/linux-next
+Merging quilt/device-mapper
+Merging hid/for-next
+Merging quilt/i2c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+Merging quota/for_next
+Merging kbuild/master
+Merging ide/for-next
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/master
+Merging dlm/next
+Merging scsi/master
+CONFLICT (content): Merge conflict in include/Kbuild
+Merging async_tx/next
+Merging udf/for_next
+Merging net/master
+CONFLICT (content): Merge conflict in include/linux/mmc/sdio_ids.h
+Merging wireless/master
+[master 9867f6c] Revert "rfkill: remove user_claim stuff"
+Merging mtd/master
+Merging crypto/master
+Merging vfs/for-next
+CONFLICT (content): Merge conflict in fs/autofs4/expire.c
+Merging sound/for-next
+Merging cpufreq/next
+Merging quilt/rr
+CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/cpufreq/acpi-cpuf=
+req.c
+Merging cifs/master
+Merging mmc/next
+Merging input/next
+Merging bkl-removal/bkl-removal
+Merging lsm/for-next
+Merging block/for-next
+CONFLICT (content): Merge conflict in drivers/block/hd.c
+CONFLICT (content): Merge conflict in drivers/block/mg_disk.c
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging voltage/for-next
+Merging security-testing/next
+Merging lblnet/master
+Merging quilt/ttydev
+Merging agp/agp-next
+Merging generic-ipi/auto-generic-ipi-next
+Merging oprofile/auto-oprofile-next
+Merging fastboot/auto-fastboot-next
+Merging sparseirq/auto-sparseirq-next
+Merging iommu/auto-iommu-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+CONFLICT (content): Merge conflict in drivers/pci/intel-iommu.c
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+Merging audit/for-next
+Merging omap/for-next
+Merging quilt/aoe
+Merging kmemleak/kmemleak
+CONFLICT (content): Merge conflict in lib/Kconfig.debug
+Merging suspend/linux-next
+Merging quilt/driver-core
+CONFLICT (content): Merge conflict in init/main.c
+[master 703dd2e] Revert "Driver Core: devtmpfs - driver core maintained /de=
+v tmpfs"
+Merging quilt/usb
+CONFLICT (content): Merge conflict in drivers/usb/serial/sierra.c
+Merging quilt/staging
+CONFLICT (content): Merge conflict in drivers/staging/rt2860/common/mlme.c
+CONFLICT (content): Merge conflict in drivers/staging/rt2870/common/mlme.c
+CONFLICT (content): Merge conflict in drivers/staging/rt3070/common/mlme.c
+Merging scsi-post-merge/master
+
+--Signature=_Mon__4_May_2009_17_08_10_+1000_Cv9D5GRa9Z1O50EW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkn+lFoACgkQjjKRsyhoI8y+ugCdFFpKKfZ1LY4ETyFyPOL8Rf3T
+fiEAnRNWmU6OZUVJ9fOCT5i8lixMk9tY
+=wg/s
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__4_May_2009_17_08_10_+1000_Cv9D5GRa9Z1O50EW--
