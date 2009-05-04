@@ -1,54 +1,32 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Subject: Re: [PATCH] max6875: should depend on I2C
-Date: Mon, 4 May 2009 14:55:56 +0200
-Message-ID: <20090504125556.GD3233@pengutronix.de>
-References: <1241430586-31878-1-git-send-email-a.beregalov@gmail.com> <20090504124802.13e56a44@hyperion.delvare>
+From: Kay Sievers <kay.sievers@vrfy.org>
+Subject: Re: linux-next: driver-core tree build failure
+Date: Mon, 4 May 2009 15:00:51 +0200
+Message-ID: <ac3eb2510905040600k6fca3d88tb7f282e1f94df085@mail.gmail.com>
+References: <20090504162542.41b1cb57.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Xm/fll+QQv+hsKip"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:59262 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753010AbZEDMz7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 May 2009 08:55:59 -0400
-Content-Disposition: inline
-In-Reply-To: <20090504124802.13e56a44@hyperion.delvare>
+Received: from mail-bw0-f174.google.com ([209.85.218.174]:60579 "EHLO
+	mail-bw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754591AbZEDNBH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 May 2009 09:01:07 -0400
+Received: by bwz22 with SMTP id 22so370804bwz.37
+        for <linux-next@vger.kernel.org>; Mon, 04 May 2009 06:01:06 -0700 (PDT)
+In-Reply-To: <20090504162542.41b1cb57.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: Alexander Beregalov <a.beregalov@gmail.com>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org
 
+On Mon, May 4, 2009 at 08:25, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+>
+> drivers/hid/usbhid/hiddev.c:965: error: unknown field 'nodename' specified in initializer
+> drivers/hid/usbhid/hiddev.c:965: warning: initialization from incompatible pointer type
 
---Xm/fll+QQv+hsKip
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sorry, that was my fault. I merged a fix wrongly with the original
+patch. I sent an updated patch to Greg.
 
-> Good catch! I've folded this fix into
-> i2c/i2c-chips-move-max6875-to-drivers-misc-eeprom.patch, thanks for
-> reporting.
-
-ACK for the patch.
-
-Haven't noticed that Jean put it into his quilt-stack already. Jean,
-could you also add the ACK from Ben Gardner or shall I resend it (with
-the minor nit removed?)
-
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-
---Xm/fll+QQv+hsKip
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkn+5dwACgkQD27XaX1/VRtHXQCfVkP4csStN2FqI/E5tPwckEyT
-194An2X5DCbT4mo3SjxlvC0Q4l+oi631
-=FBFU
------END PGP SIGNATURE-----
-
---Xm/fll+QQv+hsKip--
+Thanks a lot and sorry for the mess,
+Kay
