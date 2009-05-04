@@ -1,46 +1,49 @@
-From: Pekka Enberg <penberg@cs.helsinki.fi>
-Subject: Re: Next April 28: boot failure on PowerPC with SLQB
-Date: Sun, 03 May 2009 14:51:11 +0300
-Message-ID: <1241351471.26995.5.camel@penberg-laptop>
-References: <49F938E4.2030703@in.ibm.com>
-	 <20090430064127.GF23746@wotan.suse.de> <49F973A0.8070106@in.ibm.com>
-	 <20090430103528.GA6900@wotan.suse.de>
-	 <1241087884.19252.5.camel@penberg-laptop>
-	 <20090430210004.05a61841.sfr@canb.auug.org.au>
-	 <20090430111825.GC6900@wotan.suse.de>
-	 <1241090429.19252.7.camel@penberg-laptop>
-	 <20090430130542.GF6900@wotan.suse.de>
-	 <20090501000033.ecce9ed8.sfr@canb.auug.org.au>
-	 <20090430141029.GG6900@wotan.suse.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with Linus' tree
+Date: Mon, 4 May 2009 13:13:03 +1000
+Message-ID: <20090504131303.11a57799.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from courier.cs.helsinki.fi ([128.214.9.1]:43786 "EHLO
-	mail.cs.helsinki.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756163AbZECLvL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 3 May 2009 07:51:11 -0400
-In-Reply-To: <20090430141029.GG6900@wotan.suse.de>
+Received: from chilli.pcug.org.au ([203.10.76.44]:54536 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751251AbZEDDNG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 3 May 2009 23:13:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nick Piggin <npiggin@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Sachin Sant <sachinp@in.ibm.com>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Christoph Lameter <cl@linux-foundation.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, Ian Kent <raven@themaw.net>
 
-On Thu, 2009-04-30 at 16:10 +0200, Nick Piggin wrote:
-> On Fri, May 01, 2009 at 12:00:33AM +1000, Stephen Rothwell wrote:
-> > Hi Nick,
-> > 
-> > On Thu, 30 Apr 2009 15:05:42 +0200 Nick Piggin <npiggin@suse.de> wrote:
-> > >
-> > > Hmm, this might do it. The following code now passes some stress testing
-> > > in a userspace harness wheras before it did not (and was obviously wrong).
-> > 
-> > Indeed that allows it to boot fine.  Thanks.
-> > 
-> > Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> 
-> Great, thanks for reporting and testing. This one is especially
-> important because it is basically scribbling on random memory
-> :( Pekka, please apply.
+Hi Al,
 
-Applied, thanks!
+Today's linux-next merge of the vfs tree got a conflict in
+fs/autofs4/expire.c between commit
+a8985f3ac503b51c5abf8883fc4fb912e13b955c ("autofs4: fix incorrect return
+in autofs4_mount_busy()") from Linus' tree and commit
+552b170bd50157881fc65d1a58ec73b225a2e9bf ("switch follow_down()") from
+the vfs tree.
+
+Just contextual changes.  I fixed it up (see below) and can carry the
+fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc fs/autofs4/expire.c
+index 3077d8f,f82e42e..0000000
+--- a/fs/autofs4/expire.c
++++ b/fs/autofs4/expire.c
+@@@ -70,10 -70,8 +70,10 @@@ static int autofs4_mount_busy(struct vf
+  		 * Otherwise it's an offset mount and we need to check
+  		 * if we can umount its mount, if there is one.
+  		 */
+- 		if (!d_mountpoint(dentry)) {
+ -		if (!d_mountpoint(path.dentry))
+++		if (!d_mountpoint(path.dentry)) {
+ +			status = 0;
+  			goto done;
+ +		}
+  	}
+  
+  	/* Update the expiry counter if fs is busy */
