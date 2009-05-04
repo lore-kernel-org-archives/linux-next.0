@@ -1,63 +1,53 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: driver-core tree build failure
-Date: Mon, 4 May 2009 16:25:42 +1000
-Message-ID: <20090504162542.41b1cb57.sfr@canb.auug.org.au>
+From: Kalle Valo <kalle.valo@nokia.com>
+Subject: Re: linux-next: wireless tree build warning
+Date: Mon, 04 May 2009 09:48:49 +0300
+Message-ID: <87y6tdbbxq.fsf@nokia.com>
+References: <20090501133539.5fc53f8a.sfr@canb.auug.org.au>
+	<20090501123339.GA4917@hash.localnet>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__4_May_2009_16_25_42_+1000_q8MQ9tD89jc6NSMi"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49445 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751860AbZEDGZs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 4 May 2009 02:25:48 -0400
+Received: from smtp.nokia.com ([192.100.105.134]:46015 "EHLO
+	mgw-mx09.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753410AbZEDGtx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 May 2009 02:49:53 -0400
+In-Reply-To: <20090501123339.GA4917@hash.localnet> (ext Bob Copeland's message of "Fri\, 1 May 2009 14\:33\:39 +0200")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>
+To: ext Bob Copeland <me@bobcopeland.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "John W. Linville" <linville@tuxdriver.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
---Signature=_Mon__4_May_2009_16_25_42_+1000_q8MQ9tD89jc6NSMi
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+ext Bob Copeland <me@bobcopeland.com> writes:
 
-Hi Greg,
+> On Fri, May 01, 2009 at 01:35:39PM +1000, Stephen Rothwell wrote:
+>> Hi John,
+>> 
+>> Today's linux-next build (x86_64 allmodconfig) produced these warnings:
+>
+> Thanks -- John, this should fix:
+>
+> From 2c6ef7ec3a3b46601597615cf9e40b2a0c9f2f72 Mon Sep 17 00:00:00 2001
+> From: Bob Copeland <bob@hash.(none)>
+> Date: Fri, 1 May 2009 08:20:07 -0400
+> Subject: [PATCH] wl12xx: correct printk format warnings
+>
+> Fixes warnings:
+>   drivers/net/wireless/wl12xx/main.c:87: warning: int format, different
+>     type arg (arg 2)
+>   drivers/net/wireless/wl12xx/main.c: In function `wl12xx_fetch_nvs':
+>   drivers/net/wireless/wl12xx/main.c:125: warning: int format, different
+>     type arg (arg 2)
+>   drivers/net/wireless/wl12xx/wl1251.c: In function 'wl1251_upload_firmware':
+>   drivers/net/wireless/wl12xx/wl1251.c:94: warning: int format, different
+>     type arg (arg 2)
+>   drivers/net/wireless/wl12xx/wl1251.c:141: warning: int format, different
+>     type arg (arg 2)
+>
+> Signed-off-by: Bob Copeland <me@bobcopeland.com>
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+Thanks.
 
-drivers/hid/usbhid/hiddev.c:965: error: unknown field 'nodename' specified =
-in initializer
-drivers/hid/usbhid/hiddev.c:965: warning: initialization from incompatible =
-pointer type
+Acked-by: Kalle Valo <kalle.valo@nokia.com>
 
-Caused by commit 5b1e3a40a98ad5a822cb527439cd57dc60a41db9 ("Driver Core:
-devtmpfs - driver core maintained /dev tmpfs").  As far as I can see the
-version of this patch in your quilt series currently has never been
-posted anywhere public ... The diff summaries for the previous and
-current version of this patch are:
-
-- 18 files changed, 484 insertions(+), 5 deletions(-)
-+ 38 files changed, 599 insertions(+), 11 deletions(-)
-
-Which is a pretty big change for something in linux-next.  So, can we
-please remove this patch until it has proper review, been tested and has
-settled down a bit.
-
-I have reverted that patch for today (anything else was harder).
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__4_May_2009_16_25_42_+1000_q8MQ9tD89jc6NSMi
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkn+imcACgkQjjKRsyhoI8zV5QCgoRpL757aW8FjR48jfe5maXnV
-t10AnjS49Tr3fu34rJ+7YGeT/6zQts5/
-=OeKQ
------END PGP SIGNATURE-----
-
---Signature=_Mon__4_May_2009_16_25_42_+1000_q8MQ9tD89jc6NSMi--
+-- 
+Kalle Valo
