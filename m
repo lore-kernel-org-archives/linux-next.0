@@ -1,59 +1,52 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: Re: [PATCH] ar9170: fix build when !CONFIG_PM
-Date: Mon, 4 May 2009 20:51:05 +0400
-Message-ID: <a4423d670905040951s2499539cg7bdd5c4f31b97329@mail.gmail.com>
-References: <1241455585-436-1-git-send-email-a.beregalov@gmail.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for May 4 (staging/comedi)
+Date: Mon, 04 May 2009 11:15:12 -0700
+Message-ID: <49FF30B0.1020907@oracle.com>
+References: <20090504170810.64cdceb4.sfr@canb.auug.org.au> <49FF0EEA.1010605@oracle.com> <20090504161232.GB11723@kroah.com> <49FF1596.2020503@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fk-out-0910.google.com ([209.85.128.186]:2125 "EHLO
-	fk-out-0910.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756299AbZEDQvG convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 May 2009 12:51:06 -0400
-Received: by fk-out-0910.google.com with SMTP id 18so1956275fkq.5
-        for <linux-next@vger.kernel.org>; Mon, 04 May 2009 09:51:05 -0700 (PDT)
-In-Reply-To: <1241455585-436-1-git-send-email-a.beregalov@gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next <linux-next@vger.kernel.org>
-Cc: Alexander Beregalov <a.beregalov@gmail.com>, Christian Lamparter <chunkeey@web.de>, Johannes Berg <johannes@sipsolutions.net>, "John W. Linville" <linville@tuxdriver.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932300AbZEDSNz@vger.kernel.org>
+In-Reply-To: <49FF1596.2020503@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-=46ix wrong Christian's mail-address.
+Randy Dunlap wrote:
+> Greg KH wrote:
+>> On Mon, May 04, 2009 at 08:51:06AM -0700, Randy Dunlap wrote:
+>>> Stephen Rothwell wrote:
+>>>> Hi all,
+>>>>
+>>>> Changes since 20090501:
+>>> build-r4048.out:ERROR: "ni_tio_rinsn" [drivers/staging/comedi/drivers/ni_mio_cs.ko] undefined!
+>>> build-r4048.out:ERROR: "ni_tio_winsn" [drivers/staging/comedi/drivers/ni_mio_cs.ko] undefined!
+>>> build-r4048.out:ERROR: "ni_tio_insn_config" [drivers/staging/comedi/drivers/ni_mio_cs.ko] undefined!
+>>> build-r4048.out:ERROR: "ni_tio_init_counter" [drivers/staging/comedi/drivers/ni_mio_cs.ko] undefined!
+>>> build-r4048.out:ERROR: "ni_gpct_device_construct" [drivers/staging/comedi/drivers/ni_mio_cs.ko] undefined!
+>>> build-r4048.out:ERROR: "ni_gpct_device_destroy" [drivers/staging/comedi/drivers/ni_mio_cs.ko] undefined!
+>>> build-r4048.out:ERROR: "labpc_1200_is_unipolar" [drivers/staging/comedi/drivers/ni_labpc_cs.ko] undefined!
+>>> build-r4048.out:ERROR: "labpc_1200_ai_gain_bits" [drivers/staging/comedi/drivers/ni_labpc_cs.ko] undefined!
+>>> build-r4048.out:ERROR: "range_labpc_1200_ai" [drivers/staging/comedi/drivers/ni_labpc_cs.ko] undefined!
+>>> build-r4048.out:ERROR: "labpc_common_detach" [drivers/staging/comedi/drivers/ni_labpc_cs.ko] undefined!
+>>> build-r4048.out:ERROR: "labpc_common_attach" [drivers/staging/comedi/drivers/ni_labpc_cs.ko] undefined!
+>>> build-r4048.out:ERROR: "das08_cs_boards" [drivers/staging/comedi/drivers/das08_cs.ko] undefined!
+>>> build-r4048.out:ERROR: "das08_common_detach" [drivers/staging/comedi/drivers/das08_cs.ko] undefined!
+>>> build-r4048.out:ERROR: "das08_common_attach" [drivers/staging/comedi/drivers/das08_cs.ko] undefined!
+>>>
+>>>
+>>> config attached.
+>> CONFIG_PCMCIA is allowed to be set without CONFIG_PCI?  That sounds like
+>> the problem there (not to mention pretty much an impossible real-world
+>> combination...)
+> 
+> PCMCIA is (was?) a 16-bit ISA-like bus.
+> That's not PCCard (PCI-like).
 
-2009/5/4 Alexander Beregalov <a.beregalov@gmail.com>:
-> Fix this build error when CONFIG_PM is not set:
-> drivers/net/wireless/ath/ar9170/usb.c: In function 'ar9170_usb_probe'=
-:
-> drivers/net/wireless/ath/ar9170/usb.c:692:
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0error: 'struct usb_device' has no member n=
-amed 'reset_resume'
->
-> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
-> ---
-> =C2=A0drivers/net/wireless/ath/ar9170/usb.c | =C2=A0 =C2=A02 ++
-> =C2=A01 files changed, 2 insertions(+), 0 deletions(-)
->
-> diff --git a/drivers/net/wireless/ath/ar9170/usb.c b/drivers/net/wire=
-less/ath/ar9170/usb.c
-> index d7b562d..d7c13c0 100644
-> --- a/drivers/net/wireless/ath/ar9170/usb.c
-> +++ b/drivers/net/wireless/ath/ar9170/usb.c
-> @@ -689,7 +689,9 @@ static int ar9170_usb_probe(struct usb_interface =
-*intf,
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0aru->common.exec_cmd =3D ar9170_usb_exec_c=
-md;
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0aru->common.callback_cmd =3D ar9170_usb_ca=
-llback_cmd;
->
-> +#ifdef CONFIG_PM
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0udev->reset_resume =3D 1;
-> +#endif
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0err =3D ar9170_usb_reset(aru);
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0if (err)
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0goto err_freeh=
-w;
-> --
-> 1.6.2.3
->
->
+Looks to me like some of those COMEDI_PCMCIA_DRIVERS should depend on
+PCCARD instead of PCMCIA (but not necessarily all of them, although
+that would be the easy fix).
+
+-- 
+~Randy
