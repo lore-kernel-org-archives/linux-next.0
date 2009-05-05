@@ -1,52 +1,67 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for May 4 (staging/comedi)
-Date: Mon, 04 May 2009 11:15:12 -0700
-Message-ID: <49FF30B0.1020907@oracle.com>
-References: <20090504170810.64cdceb4.sfr@canb.auug.org.au> <49FF0EEA.1010605@oracle.com> <20090504161232.GB11723@kroah.com> <49FF1596.2020503@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: kbuild tree build failure
+Date: Tue, 5 May 2009 11:17:12 +1000
+Message-ID: <20090505111712.ae4649b3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932300AbZEDSNz@vger.kernel.org>
-In-Reply-To: <49FF1596.2020503@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__5_May_2009_11_17_12_+1000_BJPJBbsP.xJO0yDp"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36555 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754227AbZEEBRl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 4 May 2009 21:17:41 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: linux-next@vger.kernel.org, Jan Beulich <jbeulich@novell.com>, Steven Whitehouse <swhiteho@redhat.com>
 
-Randy Dunlap wrote:
-> Greg KH wrote:
->> On Mon, May 04, 2009 at 08:51:06AM -0700, Randy Dunlap wrote:
->>> Stephen Rothwell wrote:
->>>> Hi all,
->>>>
->>>> Changes since 20090501:
->>> build-r4048.out:ERROR: "ni_tio_rinsn" [drivers/staging/comedi/drivers/ni_mio_cs.ko] undefined!
->>> build-r4048.out:ERROR: "ni_tio_winsn" [drivers/staging/comedi/drivers/ni_mio_cs.ko] undefined!
->>> build-r4048.out:ERROR: "ni_tio_insn_config" [drivers/staging/comedi/drivers/ni_mio_cs.ko] undefined!
->>> build-r4048.out:ERROR: "ni_tio_init_counter" [drivers/staging/comedi/drivers/ni_mio_cs.ko] undefined!
->>> build-r4048.out:ERROR: "ni_gpct_device_construct" [drivers/staging/comedi/drivers/ni_mio_cs.ko] undefined!
->>> build-r4048.out:ERROR: "ni_gpct_device_destroy" [drivers/staging/comedi/drivers/ni_mio_cs.ko] undefined!
->>> build-r4048.out:ERROR: "labpc_1200_is_unipolar" [drivers/staging/comedi/drivers/ni_labpc_cs.ko] undefined!
->>> build-r4048.out:ERROR: "labpc_1200_ai_gain_bits" [drivers/staging/comedi/drivers/ni_labpc_cs.ko] undefined!
->>> build-r4048.out:ERROR: "range_labpc_1200_ai" [drivers/staging/comedi/drivers/ni_labpc_cs.ko] undefined!
->>> build-r4048.out:ERROR: "labpc_common_detach" [drivers/staging/comedi/drivers/ni_labpc_cs.ko] undefined!
->>> build-r4048.out:ERROR: "labpc_common_attach" [drivers/staging/comedi/drivers/ni_labpc_cs.ko] undefined!
->>> build-r4048.out:ERROR: "das08_cs_boards" [drivers/staging/comedi/drivers/das08_cs.ko] undefined!
->>> build-r4048.out:ERROR: "das08_common_detach" [drivers/staging/comedi/drivers/das08_cs.ko] undefined!
->>> build-r4048.out:ERROR: "das08_common_attach" [drivers/staging/comedi/drivers/das08_cs.ko] undefined!
->>>
->>>
->>> config attached.
->> CONFIG_PCMCIA is allowed to be set without CONFIG_PCI?  That sounds like
->> the problem there (not to mention pretty much an impossible real-world
->> combination...)
-> 
-> PCMCIA is (was?) a 16-bit ISA-like bus.
-> That's not PCCard (PCI-like).
+--Signature=_Tue__5_May_2009_11_17_12_+1000_BJPJBbsP.xJO0yDp
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Looks to me like some of those COMEDI_PCMCIA_DRIVERS should depend on
-PCCARD instead of PCMCIA (but not necessarily all of them, although
-that would be the easy fix).
+Hi Sam,
 
--- 
-~Randy
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+
+fs/nfs/nfsroot.c:400: error: __setup_str_nfs_root_setup causes a section ty=
+pe conflict
+fs/nfs/nfsroot.c:400: error: __setup_str_nfs_root_setup causes a section ty=
+pe conflict
+
+We get these occasionally on powerpc builds - Usually from
+EXPORT_SYMBOLS.  Though I was hoping that using a newer compiler would
+fix that (I am now compiling with gcc 4.4.0).
+
+Direct cause is commit efbe795f5f63b74ed642e196518907355aa94bd7
+("initconst adjustments").
+
+OK, looking at the preprocessor output, I see we have a previous variable
+(static match_table_t __initconst tokens) with __attribute__ ((__section__
+(".init.rodata"))) but it is not const ... (This came from commit
+a447c0932445f92ce6f4c1bd020f62c5097a7842 "vfs: Use const for kernel
+parser table" which changed "tokens" from __initdata to __initconst.  Not
+using "const" seems deliberate, but the changelog does not include enough
+information as to why.)
+
+So, I will revert the above commit for today to allow it to be "improved"
+by also fixing the tokens variable definition above.  Of course there may
+be other places where such mixed definitions exist.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__5_May_2009_11_17_12_+1000_BJPJBbsP.xJO0yDp
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkn/k5gACgkQjjKRsyhoI8wsBgCgqydP2PvG73r1biyCwBx1EezO
+TdcAn2z8N4j9Y3i5ZwWs9oM9hbfJEEIH
+=+k/j
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__5_May_2009_11_17_12_+1000_BJPJBbsP.xJO0yDp--
