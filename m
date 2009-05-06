@@ -1,70 +1,62 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: IO BAR sizing warning
-Date: Wed, 6 May 2009 09:24:18 -0700
-Message-ID: <20090506092418.3fffab6b@hobbes>
+From: "Wilcox, Matthew R" <matthew.r.wilcox@intel.com>
+Subject: RE: linux-next: IO BAR sizing warning
+Date: Wed, 6 May 2009 11:41:12 -0600
+Message-ID: <CAC4B8726E86A142B27A9E9A2F2F1247AB7A8255@rrsmsx505.amr.corp.intel.com>
 References: <20090506143007.c0ef2340.sfr@canb.auug.org.au>
-	<4A013A70.30101@kernel.org>
+	<4A013A70.30101@kernel.org> <20090506092418.3fffab6b@hobbes>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from outbound-mail-32.bluehost.com ([69.89.18.152]:33887 "HELO
-	outbound-mail-32.bluehost.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1752248AbZEFQbA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 May 2009 12:31:00 -0400
-In-Reply-To: <4A013A70.30101@kernel.org>
+Received: from mga03.intel.com ([143.182.124.21]:39648 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751175AbZEFRlO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 6 May 2009 13:41:14 -0400
+In-Reply-To: <20090506092418.3fffab6b@hobbes>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Yinghai Lu <yinghai@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, "Wilcox, Matthew R" <matthew.r.wilcox@intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Jesse Barnes <jbarnes@virtuousgeek.org>, Yinghai Lu <yinghai@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-On Wed, 06 May 2009 00:21:20 -0700
-Yinghai Lu <yinghai@kernel.org> wrote:
-
-> Stephen Rothwell wrote:
-> > Hi Jesse,
-> > 
-> > Today's linux-next build (powerpc ppc64_defconfig) produced this
-> > warning:
-> > 
-> > drivers/pci/probe.c: In function '__pci_read_base':
-> > drivers/pci/probe.c:196: warning: large integer implicitly
-> > truncated to unsigned type
-> > 
-> > Probably introduced by commit
-> > 82160fd142cdf6956a677120426bf5baefcc7cf9 ("PCI/x86: don't assume
-> > prefetchable ranges are 64bit").
-> > 
-> 
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -193,7 +193,7 @@ int __pci_read_base(struct pci_dev *dev, enum
-> pci_bar_type type, res->flags |= pci_calc_resource_flags(l) |
-> IORESOURCE_SIZEALIGN; if (type == pci_bar_io) {
->                         l &= PCI_BASE_ADDRESS_IO_MASK;
-> -                       mask = PCI_BASE_ADDRESS_IO_MASK & 0xffff;
-> +                       mask = PCI_BASE_ADDRESS_IO_MASK &
-> IO_SPACE_LIMIT;
-> 
-> 
-> and
-> 
-> for x86:
-> #define IO_SPACE_LIMIT 0xffff
-> 
-> for powerpc
-> arch/powerpc/include/asm/io.h:#define IO_SPACE_LIMIT ~(0UL)
-> 
-> maybe we need to change back that line...
-
-Yeah that would be easy enough.  Though really it seems like
-IO_SPACE_LIMIT should be applied, with an appropriate cast.  Looks like
-this code has been there for a long time, and maybe there are devices
-that allow the upper 16 bits of their IO BARs to be set even though
-they don't honor them (they should hardwire them to 0 in that case),
-but spec-wise allowing the full size should be fine...
-
-Matthew & Ben, any comments?
-
--- 
-Jesse Barnes, Intel Open Source Technology Center
+SSB0aGluayBQb3dlclBDJ3MgSU9fU1BBQ0VfTElNSVQgaXMgZGVmaW5lZCBpbmNvcnJlY3RseS4N
+Cg0KT24gNjQtYml0LCBpdCdzIGN1cnJlbnRseSBzZXQgdG8gMHhmZmZmJ2ZmZmYnZmZmZidmZmZm
+LiAgVGhpcyBjYW4ndCBwb3NzaWJseSB3b3JrLCB0aGVyZSdzIG5vIHdheSBmb3IgdGhlIFBDSSBi
+dXMgdG8gdHJhbnNtaXQgNjQtYml0IElPLXBvcnQgYWRkcmVzc2VzLiAgSXQgc2hvdWxkIHByb2Jh
+Ymx5IGJlIGRlZmluZWQgdG8NCg0KMHhmZmZmZmZmZlUNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3Nh
+Z2UtLS0tLQ0KPiBGcm9tOiBKZXNzZSBCYXJuZXMgW21haWx0bzpqYmFybmVzQHZpcnR1b3VzZ2Vl
+ay5vcmddDQo+IFNlbnQ6IFdlZG5lc2RheSwgTWF5IDA2LCAyMDA5IDk6MjQgQU0NCj4gVG86IFlp
+bmdoYWkgTHUNCj4gQ2M6IFN0ZXBoZW4gUm90aHdlbGw7IGxpbnV4LW5leHRAdmdlci5rZXJuZWwu
+b3JnOyBXaWxjb3gsIE1hdHRoZXcgUjsNCj4gQmVuamFtaW4gSGVycmVuc2NobWlkdA0KPiBTdWJq
+ZWN0OiBSZTogbGludXgtbmV4dDogSU8gQkFSIHNpemluZyB3YXJuaW5nDQo+IA0KPiBPbiBXZWQs
+IDA2IE1heSAyMDA5IDAwOjIxOjIwIC0wNzAwDQo+IFlpbmdoYWkgTHUgPHlpbmdoYWlAa2VybmVs
+Lm9yZz4gd3JvdGU6DQo+IA0KPiA+IFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6DQo+ID4gPiBIaSBK
+ZXNzZSwNCj4gPiA+DQo+ID4gPiBUb2RheSdzIGxpbnV4LW5leHQgYnVpbGQgKHBvd2VycGMgcHBj
+NjRfZGVmY29uZmlnKSBwcm9kdWNlZCB0aGlzDQo+ID4gPiB3YXJuaW5nOg0KPiA+ID4NCj4gPiA+
+IGRyaXZlcnMvcGNpL3Byb2JlLmM6IEluIGZ1bmN0aW9uICdfX3BjaV9yZWFkX2Jhc2UnOg0KPiA+
+ID4gZHJpdmVycy9wY2kvcHJvYmUuYzoxOTY6IHdhcm5pbmc6IGxhcmdlIGludGVnZXIgaW1wbGlj
+aXRseQ0KPiA+ID4gdHJ1bmNhdGVkIHRvIHVuc2lnbmVkIHR5cGUNCj4gPiA+DQo+ID4gPiBQcm9i
+YWJseSBpbnRyb2R1Y2VkIGJ5IGNvbW1pdA0KPiA+ID4gODIxNjBmZDE0MmNkZjY5NTZhNjc3MTIw
+NDI2YmY1YmFlZmNjN2NmOSAoIlBDSS94ODY6IGRvbid0IGFzc3VtZQ0KPiA+ID4gcHJlZmV0Y2hh
+YmxlIHJhbmdlcyBhcmUgNjRiaXQiKS4NCj4gPiA+DQo+ID4NCj4gPiAtLS0gYS9kcml2ZXJzL3Bj
+aS9wcm9iZS5jDQo+ID4gKysrIGIvZHJpdmVycy9wY2kvcHJvYmUuYw0KPiA+IEBAIC0xOTMsNyAr
+MTkzLDcgQEAgaW50IF9fcGNpX3JlYWRfYmFzZShzdHJ1Y3QgcGNpX2RldiAqZGV2LCBlbnVtDQo+
+ID4gcGNpX2Jhcl90eXBlIHR5cGUsIHJlcy0+ZmxhZ3MgfD0gcGNpX2NhbGNfcmVzb3VyY2VfZmxh
+Z3MobCkgfA0KPiA+IElPUkVTT1VSQ0VfU0laRUFMSUdOOyBpZiAodHlwZSA9PSBwY2lfYmFyX2lv
+KSB7DQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgbCAmPSBQQ0lfQkFTRV9BRERSRVNTX0lP
+X01BU0s7DQo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgbWFzayA9IFBDSV9CQVNFX0FERFJF
+U1NfSU9fTUFTSyAmIDB4ZmZmZjsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBtYXNrID0g
+UENJX0JBU0VfQUREUkVTU19JT19NQVNLICYNCj4gPiBJT19TUEFDRV9MSU1JVDsNCj4gPg0KPiA+
+DQo+ID4gYW5kDQo+ID4NCj4gPiBmb3IgeDg2Og0KPiA+ICNkZWZpbmUgSU9fU1BBQ0VfTElNSVQg
+MHhmZmZmDQo+ID4NCj4gPiBmb3IgcG93ZXJwYw0KPiA+IGFyY2gvcG93ZXJwYy9pbmNsdWRlL2Fz
+bS9pby5oOiNkZWZpbmUgSU9fU1BBQ0VfTElNSVQgfigwVUwpDQo+ID4NCj4gPiBtYXliZSB3ZSBu
+ZWVkIHRvIGNoYW5nZSBiYWNrIHRoYXQgbGluZS4uLg0KPiANCj4gWWVhaCB0aGF0IHdvdWxkIGJl
+IGVhc3kgZW5vdWdoLiAgVGhvdWdoIHJlYWxseSBpdCBzZWVtcyBsaWtlDQo+IElPX1NQQUNFX0xJ
+TUlUIHNob3VsZCBiZSBhcHBsaWVkLCB3aXRoIGFuIGFwcHJvcHJpYXRlIGNhc3QuICBMb29rcyBs
+aWtlDQo+IHRoaXMgY29kZSBoYXMgYmVlbiB0aGVyZSBmb3IgYSBsb25nIHRpbWUsIGFuZCBtYXli
+ZSB0aGVyZSBhcmUgZGV2aWNlcw0KPiB0aGF0IGFsbG93IHRoZSB1cHBlciAxNiBiaXRzIG9mIHRo
+ZWlyIElPIEJBUnMgdG8gYmUgc2V0IGV2ZW4gdGhvdWdoDQo+IHRoZXkgZG9uJ3QgaG9ub3IgdGhl
+bSAodGhleSBzaG91bGQgaGFyZHdpcmUgdGhlbSB0byAwIGluIHRoYXQgY2FzZSksDQo+IGJ1dCBz
+cGVjLXdpc2UgYWxsb3dpbmcgdGhlIGZ1bGwgc2l6ZSBzaG91bGQgYmUgZmluZS4uLg0KPiANCj4g
+TWF0dGhldyAmIEJlbiwgYW55IGNvbW1lbnRzPw0KPiANCj4gLS0NCj4gSmVzc2UgQmFybmVzLCBJ
+bnRlbCBPcGVuIFNvdXJjZSBUZWNobm9sb2d5IENlbnRlcg0K
