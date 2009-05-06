@@ -1,61 +1,81 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: linux-next: manual merge of the i2c tree with the arm-current
- tree
-Date: Wed, 6 May 2009 10:31:38 +0200
-Message-ID: <20090506103138.79525cd0@hyperion.delvare>
-References: <20090506131031.83f1b04d.sfr@canb.auug.org.au>
+From: Trond Myklebust <Trond.Myklebust@netapp.com>
+Subject: Re: [PATCH] nfs: fix build error in nfsroot with initconst
+Date: Wed, 06 May 2009 09:45:43 -0400
+Message-ID: <1241617543.4880.2.camel@heimdal.trondhjem.org>
+References: <20090505111712.ae4649b3.sfr@canb.auug.org.au>
+	 <20090505111114.GA16497@uranus.ravnborg.org>
+	 <20090506133253.43409da9.sfr@canb.auug.org.au>
+	 <20090506044056.GA23277@uranus.ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zone0.gcu-squad.org ([212.85.147.21]:34044 "EHLO
-	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751619AbZEFIbp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 May 2009 04:31:45 -0400
-In-Reply-To: <20090506131031.83f1b04d.sfr@canb.auug.org.au>
+Received: from mx2.netapp.com ([216.240.18.37]:42251 "EHLO mx2.netapp.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754318AbZEFNqO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 6 May 2009 09:46:14 -0400
+In-Reply-To: <20090506044056.GA23277@uranus.ravnborg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Nicolas Pitre <nico@cam.org>, Wolfram Sang <w.sang@pengutronix.de>, Russell King <rmk@arm.linux.org.uk>, LKML <linux-kernel@vger.kernel.org>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Jan Beulich <jbeulich@novell.com>, Steven Whitehouse <swhiteho@redhat.com>
 
-Hi Stephen,
-
-On Wed, 6 May 2009 13:10:31 +1000, Stephen Rothwell wrote:
-> Today's linux-next merge of the i2c tree got a conflict in
-> arch/arm/configs/kirkwood_defconfig arch/arm/configs/mv78xx0_defconfig
-> arch/arm/configs/orion5x_defconfig between various commits from the
-> arm-current tree and commit c637675d24618d8e0afe344096a1ad96986c4f50
-> ("i2c/chips: Move max6875 to drivers/misc/eeprom") from the i2c tree.
+On Wed, 2009-05-06 at 06:40 +0200, Sam Ravnborg wrote:
+> On Wed, May 06, 2009 at 01:32:53PM +1000, Stephen Rothwell wrote:
+> > Hi Sam,
+> > 
+> > On Tue, 5 May 2009 13:11:14 +0200 Sam Ravnborg <sam@ravnborg.org> wrote:
+> > >
+> > > fix build error with latest kbuild adjustments to initconst.
+> > > 
+> > > The commit a447c0932445f92ce6f4c1bd020f62c5097a7842 ("vfs: Use
+> > > const for kernel parser table") changed:
+> > > 
+> > >     static match_table_t __initdata tokens = {
+> > > to
+> > >     static match_table_t __initconst tokens = {
+> > > 
+> > > But the missing const causes popwerpc to fail with latest
+> > > updates to __initconst like this:
+> > > 
+> > > fs/nfs/nfsroot.c:400: error: __setup_str_nfs_root_setup causes a section type conflict
+> > > fs/nfs/nfsroot.c:400: error: __setup_str_nfs_root_setup causes a section type conflict
+> > > 
+> > > The bug is only present with kbuild-next.
+> > > Following patch has been build tested.
+> > > 
+> > > Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> > > Cc: Steven Whitehouse <swhiteho@redhat.com>
+> > > Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> > 
+> > I build tested this with the offending compilers, so
+> > 
+> > Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Acked-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > 
+> > I also build tested with the updates to __initconst as well.
+> > 
+> > > Please apply this either to your -next tree or preferably upstream.
+> > 
+> > If you want to keep the __initconst changes in your tree, then you need
+> > the above in your tree as well ... (preferably before the __initconst
+> > changes).
+> I hope that Trond would pull it into his tree and get it
+> upstream.
 > 
-> The latter patch changes many defconfig files. Please don't do that -
-> especially for those defconfigs that do not select the config options you
-> are changing (which is the vast majority).  This just creates conflicts
-> for no purpose at all.
-
-I don't know exactly how defconfigs are handled, but I can imagine that
-the responsible developer is running "make oldconfig" on the system in
-question from times to times and copying the result back to the
-defconfig file. The purpose of updating defconfig files is to make
-configuration option renames transparent.
-
-I can't see why defconfigs which select the option on question are
-different from defconfigs not selecting it in this respect. In both
-cases, if we don't update the file, a subsequent "make oldconfig" will
-ask about the "new" option.
-
-Or is there a specific procedure to update defconfig files which
-answers "no" to all questions by default?
-
-> It looks like the only defconfigs that may have needed updating are:
+> But if this does not happen within a few days (or Trond says I should do so),
+> I will add it to the kbuild-next.git.
 > 
-> arch/mips/configs/bigsur_defconfig
-> arch/mips/configs/mtx1_defconfig
-> arch/powerpc/configs/ppc6xx_defconfig
-> 
-> I have dropped the changes to all the others (165 of them).  Please
-> update the patch.
+> 	Sam
 
-I have done so, sorry for the trouble.
+
+I've got some stuff from Chuck that I need to send upstream too, so I
+expect to send it in the next couple of days...
 
 -- 
-Jean Delvare
+Trond Myklebust
+Linux NFS client maintainer
+
+NetApp
+Trond.Myklebust@netapp.com
+www.netapp.com
