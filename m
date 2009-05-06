@@ -1,65 +1,31 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: [PATCH] nfs: fix build error in nfsroot with initconst
-Date: Wed, 6 May 2009 06:40:56 +0200
-Message-ID: <20090506044056.GA23277@uranus.ravnborg.org>
-References: <20090505111712.ae4649b3.sfr@canb.auug.org.au> <20090505111114.GA16497@uranus.ravnborg.org> <20090506133253.43409da9.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: unable to fetch quilt series
+Date: Tue, 5 May 2009 22:31:04 -0700
+Message-ID: <20090506053104.GB6239@kroah.com>
+References: <20090506111743.ab84a839.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pfepb.post.tele.dk ([195.41.46.236]:35732 "EHLO
-	pfepb.post.tele.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750702AbZEFEiq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 May 2009 00:38:46 -0400
+Received: from kroah.org ([198.145.64.141]:46913 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752358AbZEFGm3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 6 May 2009 02:42:29 -0400
 Content-Disposition: inline
-In-Reply-To: <20090506133253.43409da9.sfr@canb.auug.org.au>
+In-Reply-To: <20090506111743.ab84a839.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Trond Myklebust <Trond.Myklebust@netapp.com>, linux-next@vger.kernel.org, Jan Beulich <jbeulich@novell.com>, Steven Whitehouse <swhiteho@redhat.com>
+Cc: linux-next@vger.kernel.org
 
-On Wed, May 06, 2009 at 01:32:53PM +1000, Stephen Rothwell wrote:
-> Hi Sam,
+On Wed, May 06, 2009 at 11:17:43AM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> On Tue, 5 May 2009 13:11:14 +0200 Sam Ravnborg <sam@ravnborg.org> wrote:
-> >
-> > fix build error with latest kbuild adjustments to initconst.
-> > 
-> > The commit a447c0932445f92ce6f4c1bd020f62c5097a7842 ("vfs: Use
-> > const for kernel parser table") changed:
-> > 
-> >     static match_table_t __initdata tokens = {
-> > to
-> >     static match_table_t __initconst tokens = {
-> > 
-> > But the missing const causes popwerpc to fail with latest
-> > updates to __initconst like this:
-> > 
-> > fs/nfs/nfsroot.c:400: error: __setup_str_nfs_root_setup causes a section type conflict
-> > fs/nfs/nfsroot.c:400: error: __setup_str_nfs_root_setup causes a section type conflict
-> > 
-> > The bug is only present with kbuild-next.
-> > Following patch has been build tested.
-> > 
-> > Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-> > Cc: Steven Whitehouse <swhiteho@redhat.com>
-> > Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> 
-> I build tested this with the offending compilers, so
-> 
-> Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Acked-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> 
-> I also build tested with the updates to __initconst as well.
-> 
-> > Please apply this either to your -next tree or preferably upstream.
-> 
-> If you want to keep the __initconst changes in your tree, then you need
-> the above in your tree as well ... (preferably before the __initconst
-> changes).
-I hope that Trond would pull it into his tree and get it
-upstream.
+> None of your quilt series are fetchable this morning.  I will use the
+> versions from yesterday (with the devtmpfs patch still removed).
 
-But if this does not happen within a few days (or Trond says I should do so),
-I will add it to the kbuild-next.git.
+Yes, thanks, I'm having some merge issues at the moment, your older
+copies are fine for now.
 
-	Sam
+thanks,
+
+greg k-h
