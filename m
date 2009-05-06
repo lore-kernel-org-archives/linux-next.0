@@ -1,35 +1,70 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: Tree for May 6 (fs/quota)
-Date: Wed, 6 May 2009 17:08:22 +0100
-Message-ID: <20090506160822.GV8633@ZenIV.linux.org.uk>
-References: <20090506172653.2f1bbedd.sfr@canb.auug.org.au> <4A01B54D.90301@oracle.com>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: linux-next: IO BAR sizing warning
+Date: Wed, 6 May 2009 09:24:18 -0700
+Message-ID: <20090506092418.3fffab6b@hobbes>
+References: <20090506143007.c0ef2340.sfr@canb.auug.org.au>
+	<4A013A70.30101@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:44941 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753184AbZEFQI2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 May 2009 12:08:28 -0400
-Content-Disposition: inline
-In-Reply-To: <4A01B54D.90301@oracle.com>
+Received: from outbound-mail-32.bluehost.com ([69.89.18.152]:33887 "HELO
+	outbound-mail-32.bluehost.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1752248AbZEFQbA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 May 2009 12:31:00 -0400
+In-Reply-To: <4A013A70.30101@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>
+To: Yinghai Lu <yinghai@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, "Wilcox, Matthew R" <matthew.r.wilcox@intel.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-On Wed, May 06, 2009 at 09:05:33AM -0700, Randy Dunlap wrote:
+On Wed, 06 May 2009 00:21:20 -0700
+Yinghai Lu <yinghai@kernel.org> wrote:
+
 > Stephen Rothwell wrote:
-> > Hi all,
+> > Hi Jesse,
 > > 
-> > Changes since 20090505:
+> > Today's linux-next build (powerpc ppc64_defconfig) produced this
+> > warning:
+> > 
+> > drivers/pci/probe.c: In function '__pci_read_base':
+> > drivers/pci/probe.c:196: warning: large integer implicitly
+> > truncated to unsigned type
+> > 
+> > Probably introduced by commit
+> > 82160fd142cdf6956a677120426bf5baefcc7cf9 ("PCI/x86: don't assume
+> > prefetchable ranges are 64bit").
+> > 
+> 
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -193,7 +193,7 @@ int __pci_read_base(struct pci_dev *dev, enum
+> pci_bar_type type, res->flags |= pci_calc_resource_flags(l) |
+> IORESOURCE_SIZEALIGN; if (type == pci_bar_io) {
+>                         l &= PCI_BASE_ADDRESS_IO_MASK;
+> -                       mask = PCI_BASE_ADDRESS_IO_MASK & 0xffff;
+> +                       mask = PCI_BASE_ADDRESS_IO_MASK &
+> IO_SPACE_LIMIT;
 > 
 > 
-> When
-> # CONFIG_QUOTA is not set
-> CONFIG_QUOTACTL=y
-> CONFIG_XFS_QUOTA=y
+> and
 > 
-> fs/quota/quota.c:163: error: redefinition of 'sync_quota_sb'
-> include/linux/quotaops.h:338: error: previous definition of 'sync_quota_sb' was here
+> for x86:
+> #define IO_SPACE_LIMIT 0xffff
+> 
+> for powerpc
+> arch/powerpc/include/asm/io.h:#define IO_SPACE_LIMIT ~(0UL)
+> 
+> maybe we need to change back that line...
 
-All fixed in current for-next in vfs tree (3 patches from Alexander Beregalov).
+Yeah that would be easy enough.  Though really it seems like
+IO_SPACE_LIMIT should be applied, with an appropriate cast.  Looks like
+this code has been there for a long time, and maybe there are devices
+that allow the upper 16 bits of their IO BARs to be set even though
+they don't honor them (they should hardwire them to 0 in that case),
+but spec-wise allowing the full size should be fine...
+
+Matthew & Ben, any comments?
+
+-- 
+Jesse Barnes, Intel Open Source Technology Center
