@@ -1,45 +1,60 @@
-From: "Wilcox, Matthew R" <matthew.r.wilcox@intel.com>
-Subject: RE: linux-next: IO BAR sizing warning
-Date: Wed, 6 May 2009 12:03:00 -0600
-Message-ID: <CAC4B8726E86A142B27A9E9A2F2F1247AB7A82A6@rrsmsx505.amr.corp.intel.com>
-References: <20090506143007.c0ef2340.sfr@canb.auug.org.au>
-	<4A013A70.30101@kernel.org>	<20090506092418.3fffab6b@hobbes>
-	<CAC4B8726E86A142B27A9E9A2F2F1247AB7A8255@rrsmsx505.amr.corp.intel.com>
- <20090506110034.3c7d6e67@hobbes>
+From: Russell King <rmk+lkml@arm.linux.org.uk>
+Subject: Re: linux-next: manual merge of the i2c tree with the arm-current
+	tree
+Date: Wed, 6 May 2009 20:01:10 +0100
+Message-ID: <20090506190110.GB6897@flint.arm.linux.org.uk>
+References: <20090506131031.83f1b04d.sfr@canb.auug.org.au> <20090506071547.GA29466@flint.arm.linux.org.uk> <20090506092559.2d9e53cb@hyperion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:28345 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750864AbZEFSDI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 May 2009 14:03:08 -0400
-In-Reply-To: <20090506110034.3c7d6e67@hobbes>
-Content-Language: en-US
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:33441 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751604AbZEFTBf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 May 2009 15:01:35 -0400
+Content-Disposition: inline
+In-Reply-To: <20090506092559.2d9e53cb@hyperion.delvare>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: Yinghai Lu <yinghai@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Jean Delvare <khali@linux-fr.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Nicolas Pitre <nico@cam.org>, Wolfram Sang <w.sang@pengutronix.de>, LKML <linux-kernel@vger.kernel.org>
 
-SWYgeW91J3JlIGdvaW5nIHRvIHNlbmQgZW1haWwgdG8gbXkgZXhjaGFuZ2UgYWNjb3VudCwgeW91
-J2xsIGdldCB0b3AgcG9zdGluZy4gIFNlbmQgZW1haWwgdG8gb25lIG9mIG15IHJlYWwgYWNjb3Vu
-dHMgaWYgeW91IHdhbnQgcHJvcGVyIGVtYWlsIGV0aXF1ZXR0ZS4NCg0KPiAtLS0tLU9yaWdpbmFs
-IE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKZXNzZSBCYXJuZXMgW21haWx0bzpqYmFybmVzQHZpcnR1
-b3VzZ2Vlay5vcmddDQo+IFNlbnQ6IFdlZG5lc2RheSwgTWF5IDA2LCAyMDA5IDExOjAxIEFNDQo+
-IFRvOiBXaWxjb3gsIE1hdHRoZXcgUg0KPiBDYzogWWluZ2hhaSBMdTsgU3RlcGhlbiBSb3Rod2Vs
-bDsgbGludXgtbmV4dEB2Z2VyLmtlcm5lbC5vcmc7IEJlbmphbWluDQo+IEhlcnJlbnNjaG1pZHQN
-Cj4gU3ViamVjdDogUmU6IGxpbnV4LW5leHQ6IElPIEJBUiBzaXppbmcgd2FybmluZw0KPiANCj4g
-T24gV2VkLCA2IE1heSAyMDA5IDExOjQxOjEyIC0wNjAwDQo+ICJXaWxjb3gsIE1hdHRoZXcgUiIg
-PG1hdHRoZXcuci53aWxjb3hAaW50ZWwuY29tPiB3cm90ZToNCj4gDQo+ID4gSSB0aGluayBQb3dl
-clBDJ3MgSU9fU1BBQ0VfTElNSVQgaXMgZGVmaW5lZCBpbmNvcnJlY3RseS4NCj4gPg0KPiA+IE9u
-IDY0LWJpdCwgaXQncyBjdXJyZW50bHkgc2V0IHRvIDB4ZmZmZidmZmZmJ2ZmZmYnZmZmZi4gIFRo
-aXMgY2FuJ3QNCj4gPiBwb3NzaWJseSB3b3JrLCB0aGVyZSdzIG5vIHdheSBmb3IgdGhlIFBDSSBi
-dXMgdG8gdHJhbnNtaXQgNjQtYml0DQo+ID4gSU8tcG9ydCBhZGRyZXNzZXMuICBJdCBzaG91bGQg
-cHJvYmFibHkgYmUgZGVmaW5lZCB0bw0KPiA+DQo+ID4gMHhmZmZmZmZmZlUNCj4gDQo+IFRPUCBQ
-T1NURVIhDQo+IA0KPiBCdXQgeWVhaCBvbiBhIGJ1cyBsZXZlbCBpdCBjbGVhcmx5IG5lZWRzIHRv
-IGJlIGxpbWl0ZWQgdG8gMzIgYml0cywgYnV0DQo+IElTVFIgdGhhdCBzb21lIGFyY2hlcyB1c2Ug
-dGhlIGhpZ2ggcmVzb3VyY2UgYml0cyBmb3IgdHJhY2tpbmcgSS9PDQo+IHJlc291cmNlcyBvbiBh
-IHN5c3RlbXdpZGUgYmFzaXMgKHRvbyBsYXp5IHRvIGxvb2sgYXRtKS4NCj4gDQo+IFNvIGVpdGhl
-ciB3ZSBuZWVkIHRvIHNwbGl0IHRoZSBkZWZpbml0aW9uIGJldHdlZW4gYnVzICYgcmVzb3VyY2Ug
-dXNhZ2UsDQo+IG9yIGFkZCBhIGNhc3QgaGVyZS4uLg0KPiAtLQ0KPiBKZXNzZSBCYXJuZXMsIElu
-dGVsIE9wZW4gU291cmNlIFRlY2hub2xvZ3kgQ2VudGVyDQo=
+On Wed, May 06, 2009 at 09:25:59AM +0200, Jean Delvare wrote:
+> Hi Russell,
+> 
+> On Wed, 6 May 2009 08:15:48 +0100, Russell King wrote:
+> > Since defconfig updates are always going to create lots of noise, and
+> > the files are normally out of date, the *only* sensible way to handle
+> > updates is to have one tree dealing with them per architecture.
+> > 
+> > Spreading them across multiple trees and then expecting merges to sort
+> > out the resulting mess is unreasonable; they just change far too much
+> > when updates happen.  Moreover, defconfig updates should be in their
+> > own separate commit and not combined with other changes.
+> 
+> I fail to see how you can handle configuration option renames
+> gracefully with your proposed model.
+
+That's not the point I'm making.  The point I'm making is about the
+merge issues which is the BIG and I mean BIG as in 1000ft tall
+letters BIG problem with scattering defconfig patches everywhere.
+
+The reality of defconfigs is that they're normally months out of date
+with respect to the current kernel, and are occasionally updated by
+the platform maintainers on an occasional basis (as has happened with
+Nicolas' change which your tree has clashed with.)
+
+I've heard it argued that the only people who should ever touch defconfig
+files are the platform maintainers themselves.  What I'm suggesting is
+one step closer to sanity than that position - having the arch maintainer
+responsible for dealing with all changes to those files, thereby providing
+a centralised point for synchronising and co-ordinating all defconfig
+updates.
+
+If you think you have a better solution (no, throwing them into your own
+I2C tree is NOT a solution - it's a cause of major problems) then please
+state it.
+
+-- 
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
