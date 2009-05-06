@@ -1,62 +1,43 @@
-From: "Wilcox, Matthew R" <matthew.r.wilcox@intel.com>
-Subject: RE: linux-next: IO BAR sizing warning
-Date: Wed, 6 May 2009 11:41:12 -0600
-Message-ID: <CAC4B8726E86A142B27A9E9A2F2F1247AB7A8255@rrsmsx505.amr.corp.intel.com>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: linux-next: IO BAR sizing warning
+Date: Wed, 6 May 2009 11:00:34 -0700
+Message-ID: <20090506110034.3c7d6e67@hobbes>
 References: <20090506143007.c0ef2340.sfr@canb.auug.org.au>
-	<4A013A70.30101@kernel.org> <20090506092418.3fffab6b@hobbes>
+	<4A013A70.30101@kernel.org>
+	<20090506092418.3fffab6b@hobbes>
+	<CAC4B8726E86A142B27A9E9A2F2F1247AB7A8255@rrsmsx505.amr.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:39648 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751175AbZEFRlO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 May 2009 13:41:14 -0400
-In-Reply-To: <20090506092418.3fffab6b@hobbes>
-Content-Language: en-US
+Received: from outbound-mail-14.bluehost.com ([69.89.18.114]:45150 "HELO
+	outbound-mail-14.bluehost.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1754091AbZEFSAh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 May 2009 14:00:37 -0400
+In-Reply-To: <CAC4B8726E86A142B27A9E9A2F2F1247AB7A8255@rrsmsx505.amr.corp.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesse Barnes <jbarnes@virtuousgeek.org>, Yinghai Lu <yinghai@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: "Wilcox, Matthew R" <matthew.r.wilcox@intel.com>
+Cc: Yinghai Lu <yinghai@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-SSB0aGluayBQb3dlclBDJ3MgSU9fU1BBQ0VfTElNSVQgaXMgZGVmaW5lZCBpbmNvcnJlY3RseS4N
-Cg0KT24gNjQtYml0LCBpdCdzIGN1cnJlbnRseSBzZXQgdG8gMHhmZmZmJ2ZmZmYnZmZmZidmZmZm
-LiAgVGhpcyBjYW4ndCBwb3NzaWJseSB3b3JrLCB0aGVyZSdzIG5vIHdheSBmb3IgdGhlIFBDSSBi
-dXMgdG8gdHJhbnNtaXQgNjQtYml0IElPLXBvcnQgYWRkcmVzc2VzLiAgSXQgc2hvdWxkIHByb2Jh
-Ymx5IGJlIGRlZmluZWQgdG8NCg0KMHhmZmZmZmZmZlUNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3Nh
-Z2UtLS0tLQ0KPiBGcm9tOiBKZXNzZSBCYXJuZXMgW21haWx0bzpqYmFybmVzQHZpcnR1b3VzZ2Vl
-ay5vcmddDQo+IFNlbnQ6IFdlZG5lc2RheSwgTWF5IDA2LCAyMDA5IDk6MjQgQU0NCj4gVG86IFlp
-bmdoYWkgTHUNCj4gQ2M6IFN0ZXBoZW4gUm90aHdlbGw7IGxpbnV4LW5leHRAdmdlci5rZXJuZWwu
-b3JnOyBXaWxjb3gsIE1hdHRoZXcgUjsNCj4gQmVuamFtaW4gSGVycmVuc2NobWlkdA0KPiBTdWJq
-ZWN0OiBSZTogbGludXgtbmV4dDogSU8gQkFSIHNpemluZyB3YXJuaW5nDQo+IA0KPiBPbiBXZWQs
-IDA2IE1heSAyMDA5IDAwOjIxOjIwIC0wNzAwDQo+IFlpbmdoYWkgTHUgPHlpbmdoYWlAa2VybmVs
-Lm9yZz4gd3JvdGU6DQo+IA0KPiA+IFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6DQo+ID4gPiBIaSBK
-ZXNzZSwNCj4gPiA+DQo+ID4gPiBUb2RheSdzIGxpbnV4LW5leHQgYnVpbGQgKHBvd2VycGMgcHBj
-NjRfZGVmY29uZmlnKSBwcm9kdWNlZCB0aGlzDQo+ID4gPiB3YXJuaW5nOg0KPiA+ID4NCj4gPiA+
-IGRyaXZlcnMvcGNpL3Byb2JlLmM6IEluIGZ1bmN0aW9uICdfX3BjaV9yZWFkX2Jhc2UnOg0KPiA+
-ID4gZHJpdmVycy9wY2kvcHJvYmUuYzoxOTY6IHdhcm5pbmc6IGxhcmdlIGludGVnZXIgaW1wbGlj
-aXRseQ0KPiA+ID4gdHJ1bmNhdGVkIHRvIHVuc2lnbmVkIHR5cGUNCj4gPiA+DQo+ID4gPiBQcm9i
-YWJseSBpbnRyb2R1Y2VkIGJ5IGNvbW1pdA0KPiA+ID4gODIxNjBmZDE0MmNkZjY5NTZhNjc3MTIw
-NDI2YmY1YmFlZmNjN2NmOSAoIlBDSS94ODY6IGRvbid0IGFzc3VtZQ0KPiA+ID4gcHJlZmV0Y2hh
-YmxlIHJhbmdlcyBhcmUgNjRiaXQiKS4NCj4gPiA+DQo+ID4NCj4gPiAtLS0gYS9kcml2ZXJzL3Bj
-aS9wcm9iZS5jDQo+ID4gKysrIGIvZHJpdmVycy9wY2kvcHJvYmUuYw0KPiA+IEBAIC0xOTMsNyAr
-MTkzLDcgQEAgaW50IF9fcGNpX3JlYWRfYmFzZShzdHJ1Y3QgcGNpX2RldiAqZGV2LCBlbnVtDQo+
-ID4gcGNpX2Jhcl90eXBlIHR5cGUsIHJlcy0+ZmxhZ3MgfD0gcGNpX2NhbGNfcmVzb3VyY2VfZmxh
-Z3MobCkgfA0KPiA+IElPUkVTT1VSQ0VfU0laRUFMSUdOOyBpZiAodHlwZSA9PSBwY2lfYmFyX2lv
-KSB7DQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgbCAmPSBQQ0lfQkFTRV9BRERSRVNTX0lP
-X01BU0s7DQo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgbWFzayA9IFBDSV9CQVNFX0FERFJF
-U1NfSU9fTUFTSyAmIDB4ZmZmZjsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBtYXNrID0g
-UENJX0JBU0VfQUREUkVTU19JT19NQVNLICYNCj4gPiBJT19TUEFDRV9MSU1JVDsNCj4gPg0KPiA+
-DQo+ID4gYW5kDQo+ID4NCj4gPiBmb3IgeDg2Og0KPiA+ICNkZWZpbmUgSU9fU1BBQ0VfTElNSVQg
-MHhmZmZmDQo+ID4NCj4gPiBmb3IgcG93ZXJwYw0KPiA+IGFyY2gvcG93ZXJwYy9pbmNsdWRlL2Fz
-bS9pby5oOiNkZWZpbmUgSU9fU1BBQ0VfTElNSVQgfigwVUwpDQo+ID4NCj4gPiBtYXliZSB3ZSBu
-ZWVkIHRvIGNoYW5nZSBiYWNrIHRoYXQgbGluZS4uLg0KPiANCj4gWWVhaCB0aGF0IHdvdWxkIGJl
-IGVhc3kgZW5vdWdoLiAgVGhvdWdoIHJlYWxseSBpdCBzZWVtcyBsaWtlDQo+IElPX1NQQUNFX0xJ
-TUlUIHNob3VsZCBiZSBhcHBsaWVkLCB3aXRoIGFuIGFwcHJvcHJpYXRlIGNhc3QuICBMb29rcyBs
-aWtlDQo+IHRoaXMgY29kZSBoYXMgYmVlbiB0aGVyZSBmb3IgYSBsb25nIHRpbWUsIGFuZCBtYXli
-ZSB0aGVyZSBhcmUgZGV2aWNlcw0KPiB0aGF0IGFsbG93IHRoZSB1cHBlciAxNiBiaXRzIG9mIHRo
-ZWlyIElPIEJBUnMgdG8gYmUgc2V0IGV2ZW4gdGhvdWdoDQo+IHRoZXkgZG9uJ3QgaG9ub3IgdGhl
-bSAodGhleSBzaG91bGQgaGFyZHdpcmUgdGhlbSB0byAwIGluIHRoYXQgY2FzZSksDQo+IGJ1dCBz
-cGVjLXdpc2UgYWxsb3dpbmcgdGhlIGZ1bGwgc2l6ZSBzaG91bGQgYmUgZmluZS4uLg0KPiANCj4g
-TWF0dGhldyAmIEJlbiwgYW55IGNvbW1lbnRzPw0KPiANCj4gLS0NCj4gSmVzc2UgQmFybmVzLCBJ
-bnRlbCBPcGVuIFNvdXJjZSBUZWNobm9sb2d5IENlbnRlcg0K
+On Wed, 6 May 2009 11:41:12 -0600
+"Wilcox, Matthew R" <matthew.r.wilcox@intel.com> wrote:
+
+> I think PowerPC's IO_SPACE_LIMIT is defined incorrectly.
+> 
+> On 64-bit, it's currently set to 0xffff'ffff'ffff'ffff.  This can't
+> possibly work, there's no way for the PCI bus to transmit 64-bit
+> IO-port addresses.  It should probably be defined to
+> 
+> 0xffffffffU
+
+TOP POSTER!
+
+But yeah on a bus level it clearly needs to be limited to 32 bits, but
+ISTR that some arches use the high resource bits for tracking I/O
+resources on a systemwide basis (too lazy to look atm).
+
+So either we need to split the definition between bus & resource usage,
+or add a cast here...
+-- 
+Jesse Barnes, Intel Open Source Technology Center
