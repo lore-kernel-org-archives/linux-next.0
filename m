@@ -1,18 +1,30 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: next: parport: forgotten semicolon
-Date: Wed, 6 May 2009 18:58:44 +0400
-Message-ID: <a4423d670905060758x32774671o796ae46fbb43997c@mail.gmail.com>
+From: Greg KH <gregkh@suse.de>
+Subject: Re: next: parport: forgotten semicolon
+Date: Wed, 6 May 2009 08:05:08 -0700
+Message-ID: <20090506150508.GA4232@suse.de>
+References: <a4423d670905060758x32774671o796ae46fbb43997c@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1760562AbZEFO7H@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <gregkh@suse.de>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cantor.suse.de ([195.135.220.2]:45257 "EHLO mx1.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757228AbZEFPSE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 6 May 2009 11:18:04 -0400
+Content-Disposition: inline
+In-Reply-To: <a4423d670905060758x32774671o796ae46fbb43997c@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Greg
+On Wed, May 06, 2009 at 06:58:44PM +0400, Alexander Beregalov wrote:
+> Hi Greg
+> 
+> Please fix parport-remove-driver_data-direct-access-of-struct-device.patch
+> 
+> -       struct parport *p = dev_get_drvdata(&dev->dev)
+> +       struct parport *p = dev_get_drvdata(&dev->dev);
 
-Please fix parport-remove-driver_data-direct-access-of-struct-device.patch
+Great eye, thanks, I'll go fix that up.
 
--       struct parport *p = dev_get_drvdata(&dev->dev)
-+       struct parport *p = dev_get_drvdata(&dev->dev);
+greg k-h
