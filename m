@@ -1,42 +1,52 @@
-From: Russell King <rmk+lkml@arm.linux.org.uk>
-Subject: Re: linux-next: manual merge of the i2c tree with the arm-current
-	tree
-Date: Wed, 6 May 2009 08:15:48 +0100
-Message-ID: <20090506071547.GA29466@flint.arm.linux.org.uk>
-References: <20090506131031.83f1b04d.sfr@canb.auug.org.au>
+From: Yinghai Lu <yinghai@kernel.org>
+Subject: Re: linux-next: pci tree build warning
+Date: Wed, 06 May 2009 00:21:20 -0700
+Message-ID: <4A013A70.30101@kernel.org>
+References: <20090506143007.c0ef2340.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:35267 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751020AbZEFHQP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 May 2009 03:16:15 -0400
-Content-Disposition: inline
-In-Reply-To: <20090506131031.83f1b04d.sfr@canb.auug.org.au>
+Received: from hera.kernel.org ([140.211.167.34]:32954 "EHLO hera.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751310AbZEFHVp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 6 May 2009 03:21:45 -0400
+In-Reply-To: <20090506143007.c0ef2340.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jean Delvare <khali@linux-fr.org>, linux-next@vger.kernel.org, Nicolas Pitre <nico@cam.org>, Wolfram Sang <w.sang@pengutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org
 
-On Wed, May 06, 2009 at 01:10:31PM +1000, Stephen Rothwell wrote:
-> Hi Jean,
+Stephen Rothwell wrote:
+> Hi Jesse,
 > 
-> Today's linux-next merge of the i2c tree got a conflict in
-> arch/arm/configs/kirkwood_defconfig arch/arm/configs/mv78xx0_defconfig
-> arch/arm/configs/orion5x_defconfig between various commits from the
-> arm-current tree and commit c637675d24618d8e0afe344096a1ad96986c4f50
-> ("i2c/chips: Move max6875 to drivers/misc/eeprom") from the i2c tree.
+> Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
+> 
+> drivers/pci/probe.c: In function '__pci_read_base':
+> drivers/pci/probe.c:196: warning: large integer implicitly truncated to unsigned type
+> 
+> Probably introduced by commit 82160fd142cdf6956a677120426bf5baefcc7cf9
+> ("PCI/x86: don't assume prefetchable ranges are 64bit").
+> 
 
-Since defconfig updates are always going to create lots of noise, and
-the files are normally out of date, the *only* sensible way to handle
-updates is to have one tree dealing with them per architecture.
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -193,7 +193,7 @@ int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
+                res->flags |= pci_calc_resource_flags(l) | IORESOURCE_SIZEALIGN;
+                if (type == pci_bar_io) {
+                        l &= PCI_BASE_ADDRESS_IO_MASK;
+-                       mask = PCI_BASE_ADDRESS_IO_MASK & 0xffff;
++                       mask = PCI_BASE_ADDRESS_IO_MASK & IO_SPACE_LIMIT;
 
-Spreading them across multiple trees and then expecting merges to sort
-out the resulting mess is unreasonable; they just change far too much
-when updates happen.  Moreover, defconfig updates should be in their
-own separate commit and not combined with other changes.
 
--- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+and
+
+for x86:
+#define IO_SPACE_LIMIT 0xffff
+
+for powerpc
+arch/powerpc/include/asm/io.h:#define IO_SPACE_LIMIT ~(0UL)
+
+maybe we need to change back that line...
+
+YH
