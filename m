@@ -1,31 +1,42 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: unable to fetch quilt series
-Date: Tue, 5 May 2009 22:31:04 -0700
-Message-ID: <20090506053104.GB6239@kroah.com>
-References: <20090506111743.ab84a839.sfr@canb.auug.org.au>
+From: Russell King <rmk+lkml@arm.linux.org.uk>
+Subject: Re: linux-next: manual merge of the i2c tree with the arm-current
+	tree
+Date: Wed, 6 May 2009 08:15:48 +0100
+Message-ID: <20090506071547.GA29466@flint.arm.linux.org.uk>
+References: <20090506131031.83f1b04d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:46913 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752358AbZEFGm3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 May 2009 02:42:29 -0400
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:35267 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751020AbZEFHQP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 May 2009 03:16:15 -0400
 Content-Disposition: inline
-In-Reply-To: <20090506111743.ab84a839.sfr@canb.auug.org.au>
+In-Reply-To: <20090506131031.83f1b04d.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+Cc: Jean Delvare <khali@linux-fr.org>, linux-next@vger.kernel.org, Nicolas Pitre <nico@cam.org>, Wolfram Sang <w.sang@pengutronix.de>, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, May 06, 2009 at 11:17:43AM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On Wed, May 06, 2009 at 01:10:31PM +1000, Stephen Rothwell wrote:
+> Hi Jean,
 > 
-> None of your quilt series are fetchable this morning.  I will use the
-> versions from yesterday (with the devtmpfs patch still removed).
+> Today's linux-next merge of the i2c tree got a conflict in
+> arch/arm/configs/kirkwood_defconfig arch/arm/configs/mv78xx0_defconfig
+> arch/arm/configs/orion5x_defconfig between various commits from the
+> arm-current tree and commit c637675d24618d8e0afe344096a1ad96986c4f50
+> ("i2c/chips: Move max6875 to drivers/misc/eeprom") from the i2c tree.
 
-Yes, thanks, I'm having some merge issues at the moment, your older
-copies are fine for now.
+Since defconfig updates are always going to create lots of noise, and
+the files are normally out of date, the *only* sensible way to handle
+updates is to have one tree dealing with them per architecture.
 
-thanks,
+Spreading them across multiple trees and then expecting merges to sort
+out the resulting mess is unreasonable; they just change far too much
+when updates happen.  Moreover, defconfig updates should be in their
+own separate commit and not combined with other changes.
 
-greg k-h
+-- 
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
