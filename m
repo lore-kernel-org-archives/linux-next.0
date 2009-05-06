@@ -1,44 +1,44 @@
-From: Russell King <rmk+lkml@arm.linux.org.uk>
-Subject: Re: linux-next: manual merge of the i2c tree with the arm-current
-	tree
-Date: Wed, 6 May 2009 20:04:08 +0100
-Message-ID: <20090506190408.GC6897@flint.arm.linux.org.uk>
-References: <20090506131031.83f1b04d.sfr@canb.auug.org.au> <20090506103138.79525cd0@hyperion.delvare>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH next-20090506] wireless: WL12XX should depend on GENERIC_HARDIRQS
+Date: Wed, 6 May 2009 22:35:58 +0200 (CEST)
+Message-ID: <Pine.LNX.4.64.0905062229370.23257@anakin>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:33447 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750868AbZEFTE1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 May 2009 15:04:27 -0400
-Content-Disposition: inline
-In-Reply-To: <20090506103138.79525cd0@hyperion.delvare>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Nicolas Pitre <nico@cam.org>, Wolfram Sang <w.sang@pengutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1760996AbZEFUgY@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kalle Valo <kalle.valo@nokia.com>, Bob Copeland <me@bobcopeland.com>, "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-wireless@vger.kernel.org, Linux Kernel Development <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, May 06, 2009 at 10:31:38AM +0200, Jean Delvare wrote:
-> I don't know exactly how defconfigs are handled, but I can imagine that
-> the responsible developer is running "make oldconfig" on the system in
-> question from times to times and copying the result back to the
-> defconfig file. The purpose of updating defconfig files is to make
-> configuration option renames transparent.
+m68k allmodconfig:
+| drivers/net/wireless/wl12xx/main.c: In function 'wl12xx_probe':
+| drivers/net/wireless/wl12xx/main.c:1273: error: implicit declaration of function 'set_irq_type'
+| make[1]: *** [drivers/net/wireless/wl12xx/main.o] Error 1
 
-The big problem is that everyone 'make oldconfig' is done, the entire
-config file essentially gets re-sorted into some other random order,
-and the changes are massive.
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+http://kisskb.ellerman.id.au/kisskb/buildresult/416697/
 
-If a platform maintainer does this, and the result is committed, and
-some other person has done some small sed-based updates to the defconfigs,
-the result is _total_ chaos.
+diff --git a/drivers/net/wireless/wl12xx/Kconfig b/drivers/net/wireless/wl12xx/Kconfig
+index 20a9633..a82c4cd 100644
+--- a/drivers/net/wireless/wl12xx/Kconfig
++++ b/drivers/net/wireless/wl12xx/Kconfig
+@@ -1,6 +1,6 @@
+ config WL12XX
+ 	tristate "TI wl1251/wl1271 support"
+-	depends on MAC80211 && WLAN_80211 && SPI_MASTER && EXPERIMENTAL
++	depends on MAC80211 && WLAN_80211 && SPI_MASTER && GENERIC_HARDIRQS && EXPERIMENTAL
+ 	select FW_LOADER
+ 	select CRC7
+ 	---help---
 
-That's why I'm arguing for my approach.  That way, platform maintainers
-stand a better chance of seeing what happens to their defconfig files
-and there's a substantially better chance of some coordination of those
-changes (that is if the arch maintainer is doing their job properly.)
+Gr{oetje,eeting}s,
 
--- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
