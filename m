@@ -1,24 +1,18 @@
-From: Joan <hcunningham@rrohio.com>
-Subject: Winner
-Date: Wed, 6 May 2009 9:31:40 -0500
-Message-ID: <7hp5m9$d0qohn__6046.78515014729$1241620367$gmane$org@rrcs-agw-02b.hrndva.rr.com>
-Reply-To: jerry.smith222@btinternet.com
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: next: parport: forgotten semicolon
+Date: Wed, 6 May 2009 18:58:44 +0400
+Message-ID: <a4423d670905060758x32774671o796ae46fbb43997c@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hrndva-commlb.mail.rr.com ([71.74.57.8]:53999 "EHLO
-	hrndva-commlb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757389AbZEFObq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 May 2009 10:31:46 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: info@lotto.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1760562AbZEFO7H@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <gregkh@suse.de>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-=A3950.000.00 GBP has been awarded to you by your Email ID in our LG El=
-ectronics send your details=20
+Hi Greg
 
-Name:.............
-Address:..........
-Country:..........
-Phone No:.........
+Please fix parport-remove-driver_data-direct-access-of-struct-device.patch
+
+-       struct parport *p = dev_get_drvdata(&dev->dev)
++       struct parport *p = dev_get_drvdata(&dev->dev);
