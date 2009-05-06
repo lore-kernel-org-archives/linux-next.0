@@ -1,44 +1,55 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH next-20090506] wireless: WL12XX should depend on GENERIC_HARDIRQS
-Date: Wed, 6 May 2009 22:35:58 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.0905062229370.23257@anakin>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] dm-table: fix printk formats
+Date: Wed, 06 May 2009 14:54:46 -0700
+Message-ID: <4A020726.3020009@oracle.com>
+References: <20090506172653.2f1bbedd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1760996AbZEFUgY@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kalle Valo <kalle.valo@nokia.com>, Bob Copeland <me@bobcopeland.com>, "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-wireless@vger.kernel.org, Linux Kernel Development <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from acsinet11.oracle.com ([141.146.126.233]:64628 "EHLO
+	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754544AbZEFVxZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 May 2009 17:53:25 -0400
+In-Reply-To: <20090506172653.2f1bbedd.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dm-devel@redhat.com
 
-m68k allmodconfig:
-| drivers/net/wireless/wl12xx/main.c: In function 'wl12xx_probe':
-| drivers/net/wireless/wl12xx/main.c:1273: error: implicit declaration of function 'set_irq_type'
-| make[1]: *** [drivers/net/wireless/wl12xx/main.o] Error 1
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Fix printk format warnings:
+
+drivers/md/dm-table.c:408: warning: format '%lu' expects type 'long unsigned int', but argument 3 has type 'sector_t'
+drivers/md/dm-table.c:414: warning: format '%lu' expects type 'long unsigned int', but argument 3 has type 'sector_t'
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: dm-devel@redhat.com
 ---
-http://kisskb.ellerman.id.au/kisskb/buildresult/416697/
+ drivers/md/dm-table.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/wl12xx/Kconfig b/drivers/net/wireless/wl12xx/Kconfig
-index 20a9633..a82c4cd 100644
---- a/drivers/net/wireless/wl12xx/Kconfig
-+++ b/drivers/net/wireless/wl12xx/Kconfig
-@@ -1,6 +1,6 @@
- config WL12XX
- 	tristate "TI wl1251/wl1271 support"
--	depends on MAC80211 && WLAN_80211 && SPI_MASTER && EXPERIMENTAL
-+	depends on MAC80211 && WLAN_80211 && SPI_MASTER && GENERIC_HARDIRQS && EXPERIMENTAL
- 	select FW_LOADER
- 	select CRC7
- 	---help---
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+--- linux-next-20090506.orig/drivers/md/dm-table.c
++++ linux-next-20090506/drivers/md/dm-table.c
+@@ -405,14 +405,16 @@ static int device_area_is_valid(struct d
+ 		return 1;
+ 
+ 	if (start & (hardsect_size_sectors - 1)) {
+-		DMWARN("%s: start=%lu not aligned to h/w sector of %s",
+-		       dm_device_name(ti->table->md), start, bdevname(bdev, b));
++		DMWARN("%s: start=%llu not aligned to h/w sector of %s",
++		       dm_device_name(ti->table->md),
++		       (unsigned long long)start, bdevname(bdev, b));
+ 		return 0;
+ 	}
+ 
+ 	if (len & (hardsect_size_sectors - 1)) {
+-		DMWARN("%s: len=%lu not aligned to h/w sector size %hu of %s",
+-		       dm_device_name(ti->table->md), len,
++		DMWARN("%s: len=%llu not aligned to h/w sector size %hu of %s",
++		       dm_device_name(ti->table->md),
++		       (unsigned long long)len,
+ 		       ti->limits.hardsect_size, bdevname(bdev, b));
+ 		return 0;
+ 	}
