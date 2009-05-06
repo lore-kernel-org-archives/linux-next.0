@@ -1,58 +1,42 @@
 From: Russell King <rmk+lkml@arm.linux.org.uk>
 Subject: Re: linux-next: manual merge of the i2c tree with the arm-current
 	tree
-Date: Wed, 6 May 2009 20:01:10 +0100
-Message-ID: <20090506190110.GB6897@flint.arm.linux.org.uk>
-References: <20090506131031.83f1b04d.sfr@canb.auug.org.au> <20090506071547.GA29466@flint.arm.linux.org.uk> <20090506092559.2d9e53cb@hyperion.delvare>
+Date: Wed, 6 May 2009 20:04:08 +0100
+Message-ID: <20090506190408.GC6897@flint.arm.linux.org.uk>
+References: <20090506131031.83f1b04d.sfr@canb.auug.org.au> <20090506103138.79525cd0@hyperion.delvare>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:33441 "EHLO
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:33447 "EHLO
 	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751604AbZEFTBf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 May 2009 15:01:35 -0400
+	with ESMTP id S1750868AbZEFTE1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 May 2009 15:04:27 -0400
 Content-Disposition: inline
-In-Reply-To: <20090506092559.2d9e53cb@hyperion.delvare>
+In-Reply-To: <20090506103138.79525cd0@hyperion.delvare>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Jean Delvare <khali@linux-fr.org>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Nicolas Pitre <nico@cam.org>, Wolfram Sang <w.sang@pengutronix.de>, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, May 06, 2009 at 09:25:59AM +0200, Jean Delvare wrote:
-> Hi Russell,
-> 
-> On Wed, 6 May 2009 08:15:48 +0100, Russell King wrote:
-> > Since defconfig updates are always going to create lots of noise, and
-> > the files are normally out of date, the *only* sensible way to handle
-> > updates is to have one tree dealing with them per architecture.
-> > 
-> > Spreading them across multiple trees and then expecting merges to sort
-> > out the resulting mess is unreasonable; they just change far too much
-> > when updates happen.  Moreover, defconfig updates should be in their
-> > own separate commit and not combined with other changes.
-> 
-> I fail to see how you can handle configuration option renames
-> gracefully with your proposed model.
+On Wed, May 06, 2009 at 10:31:38AM +0200, Jean Delvare wrote:
+> I don't know exactly how defconfigs are handled, but I can imagine that
+> the responsible developer is running "make oldconfig" on the system in
+> question from times to times and copying the result back to the
+> defconfig file. The purpose of updating defconfig files is to make
+> configuration option renames transparent.
 
-That's not the point I'm making.  The point I'm making is about the
-merge issues which is the BIG and I mean BIG as in 1000ft tall
-letters BIG problem with scattering defconfig patches everywhere.
+The big problem is that everyone 'make oldconfig' is done, the entire
+config file essentially gets re-sorted into some other random order,
+and the changes are massive.
 
-The reality of defconfigs is that they're normally months out of date
-with respect to the current kernel, and are occasionally updated by
-the platform maintainers on an occasional basis (as has happened with
-Nicolas' change which your tree has clashed with.)
+If a platform maintainer does this, and the result is committed, and
+some other person has done some small sed-based updates to the defconfigs,
+the result is _total_ chaos.
 
-I've heard it argued that the only people who should ever touch defconfig
-files are the platform maintainers themselves.  What I'm suggesting is
-one step closer to sanity than that position - having the arch maintainer
-responsible for dealing with all changes to those files, thereby providing
-a centralised point for synchronising and co-ordinating all defconfig
-updates.
-
-If you think you have a better solution (no, throwing them into your own
-I2C tree is NOT a solution - it's a cause of major problems) then please
-state it.
+That's why I'm arguing for my approach.  That way, platform maintainers
+stand a better chance of seeing what happens to their defconfig files
+and there's a substantially better chance of some coordination of those
+changes (that is if the arch maintainer is doing their job properly.)
 
 -- 
 Russell King
