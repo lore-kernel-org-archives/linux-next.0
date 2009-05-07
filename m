@@ -1,54 +1,31 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: sched tree build warning
-Date: Thu, 7 May 2009 11:21:14 +1000
-Message-ID: <20090507112114.d6612ebe.sfr@canb.auug.org.au>
+From: Kalle Valo <kalle.valo@iki.fi>
+Subject: Re: [PATCH next-20090506] wireless: WL12XX should depend on GENERIC_HARDIRQS
+Date: Thu, 07 May 2009 05:19:21 +0300
+Message-ID: <871vr1bqom.fsf@nokia.com>
+References: <Pine.LNX.4.64.0905062229370.23257@anakin>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__7_May_2009_11_21_14_+1000_nWsHlXhN0lh+ptkS"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54260 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752863AbZEGBVT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 May 2009 21:21:19 -0400
+Received: from smtp.nokia.com ([192.100.122.233]:21137 "EHLO
+	mgw-mx06.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752467AbZEGCUa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 May 2009 22:20:30 -0400
+In-Reply-To: <Pine.LNX.4.64.0905062229370.23257@anakin> (ext Geert Uytterhoeven's message of "Wed\, 6 May 2009 22\:35\:58 +0200")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org, David Rientjes <rientjes@google.com>
+To: ext Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Bob Copeland <me@bobcopeland.com>, "John W. Linville" <linville@tuxdriver.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Linux Kernel Development <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
---Signature=_Thu__7_May_2009_11_21_14_+1000_nWsHlXhN0lh+ptkS
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+ext Geert Uytterhoeven <geert@linux-m68k.org> writes:
 
-Hi all,
+> m68k allmodconfig:
+> | drivers/net/wireless/wl12xx/main.c: In function 'wl12xx_probe':
+> | drivers/net/wireless/wl12xx/main.c:1273: error: implicit declaration of function 'set_irq_type'
+> | make[1]: *** [drivers/net/wireless/wl12xx/main.o] Error 1
+>
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
+Acked-by: Kalle Valo <kalle.valo@nokia.com>
 
-kernel/sched.c: In function 'sched_show_task':
-kernel/sched.c:6677: warning: format '%08x' expects type 'unsigned int', bu=
-t argument 5 has type 'long unsigned int'
-
-Introduced by commit 12b5c43486202dd4ff3cfd59a190984a0dd7f6fd ("sched:
-emit thread info flags with stack trace") from the sched tree.
-
-thread_info::flags is "unsigned long" on all architectures except alpha
-(where it is "unsigned int"), ia64 and x86 (where it is "__u32").
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__7_May_2009_11_21_14_+1000_nWsHlXhN0lh+ptkS
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkoCN4oACgkQjjKRsyhoI8wvngCeM32yCItkml3rwDFyR+3rpc+q
-hMEAnArmyQjlTxCeJh4scs/ccoVlKMpp
-=IeXt
------END PGP SIGNATURE-----
-
---Signature=_Thu__7_May_2009_11_21_14_+1000_nWsHlXhN0lh+ptkS--
+-- 
+Kalle Valo
