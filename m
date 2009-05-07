@@ -1,40 +1,71 @@
-From: Ingo Molnar <mingo@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the kmemleak tree with the x86 tree
-Date: Thu, 7 May 2009 13:13:06 +0200
-Message-ID: <20090507111306.GG28398@elte.hu>
-References: <20090507155444.47dd74ea.sfr@canb.auug.org.au> <20090507092310.GA27707@elte.hu> <1241692671.6648.12.camel@pc1117.cambridge.arm.com>
+Date: Thu, 7 May 2009 21:22:41 +1000
+Message-ID: <20090507212241.84664509.sfr@canb.auug.org.au>
+References: <20090507155444.47dd74ea.sfr@canb.auug.org.au>
+	<20090507092310.GA27707@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__7_May_2009_21_22_41_+1000_ugFFc3ljeda+u=wv"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:40967 "EHLO mx2.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58210 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753028AbZEGLNb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 7 May 2009 07:13:31 -0400
-Content-Disposition: inline
-In-Reply-To: <1241692671.6648.12.camel@pc1117.cambridge.arm.com>
+	id S1754480AbZEGLWo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 May 2009 07:22:44 -0400
+In-Reply-To: <20090507092310.GA27707@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Sam Ravnborg <sam@ravnborg.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Sam Ravnborg <sam@ravnborg.org>
 
+--Signature=_Thu__7_May_2009_21_22_41_+1000_ugFFc3ljeda+u=wv
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Catalin Marinas <catalin.marinas@arm.com> wrote:
+Hi Ingo,
 
-> > (it's fine if the kmemleak tree has that commit too [it 
-> > obviously needs it] - so there will still be a conflict - just 
-> > the resolution will be a straightforward 'pick the x86 tree 
-> > side' step.)
-> 
-> There may not be a conflict if the changes are identical (but it 
-> depends on what else is in the x86 tree).
+On Thu, 7 May 2009 11:23:10 +0200 Ingo Molnar <mingo@elte.hu> wrote:
+>
+> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>=20
+> > diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.ld=
+s.S
+> > index 4c85b2e..0bbb2d1 100644
+> > --- a/arch/x86/kernel/vmlinux.lds.S
+> > +++ b/arch/x86/kernel/vmlinux.lds.S
+> > @@ -107,6 +107,7 @@ SECTIONS
+> > =20
+> >  	/* Data */
+> >  	. =3D ALIGN(PAGE_SIZE);
+> > +	_sdata =3D .;			/* Start of data section */
+> >  	.data : AT(ADDR(.data) - LOAD_OFFSET) {
+> >  		DATA_DATA
+> >  		CONSTRUCTORS
+>=20
+> At a quick glance, that line should be moved a line further down, to=20
+> avoid a boot crash of linux-next with CONFIG_RELOCATABLE=3Dy (which=20
+> most distros ship with).
 
-They will conflict, because the x86 tree has these changes in that 
-area:
+Thanks, Sam pointed that out as well. This is, of course, why I publish
+these "fixups" - so that those with more knowledge can correct them.
+I'll correct my fixup for tomorrow.
 
- arch/x86/kernel/vmlinux.lds.S             |  430 ++++++++++-
- arch/x86/kernel/vmlinux_32.lds.S          |  229 ------
- arch/x86/kernel/vmlinux_64.lds.S          |  298 -------
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-spread out in 15 commits.
+--Signature=_Thu__7_May_2009_21_22_41_+1000_ugFFc3ljeda+u=wv
+Content-Type: application/pgp-signature
 
-	Ingo
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkoCxIEACgkQjjKRsyhoI8w3ZwCglRoA8ioFmGu7sin2B8yhIAow
+HlIAoIw/6LaGgjhAFR/EjFvjAlSpZEjh
+=qewv
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__7_May_2009_21_22_41_+1000_ugFFc3ljeda+u=wv--
