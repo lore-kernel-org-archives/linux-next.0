@@ -1,31 +1,52 @@
-From: Kalle Valo <kalle.valo@iki.fi>
-Subject: Re: [PATCH next-20090506] wireless: WL12XX should depend on GENERIC_HARDIRQS
-Date: Thu, 07 May 2009 05:19:21 +0300
-Message-ID: <871vr1bqom.fsf@nokia.com>
-References: <Pine.LNX.4.64.0905062229370.23257@anakin>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: vfs tree build failure
+Date: Thu, 7 May 2009 13:53:33 +1000
+Message-ID: <20090507135333.2871582a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__7_May_2009_13_53_33_+1000_NNvWEF=DVrRbCZg5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.122.233]:21137 "EHLO
-	mgw-mx06.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752467AbZEGCUa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 May 2009 22:20:30 -0400
-In-Reply-To: <Pine.LNX.4.64.0905062229370.23257@anakin> (ext Geert Uytterhoeven's message of "Wed\, 6 May 2009 22\:35\:58 +0200")
+Received: from chilli.pcug.org.au ([203.10.76.44]:43947 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752808AbZEGDyA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 6 May 2009 23:54:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: ext Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Bob Copeland <me@bobcopeland.com>, "John W. Linville" <linville@tuxdriver.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Linux Kernel Development <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 
-ext Geert Uytterhoeven <geert@linux-m68k.org> writes:
+--Signature=_Thu__7_May_2009_13_53_33_+1000_NNvWEF=DVrRbCZg5
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> m68k allmodconfig:
-> | drivers/net/wireless/wl12xx/main.c: In function 'wl12xx_probe':
-> | drivers/net/wireless/wl12xx/main.c:1273: error: implicit declaration of function 'set_irq_type'
-> | make[1]: *** [drivers/net/wireless/wl12xx/main.o] Error 1
->
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Hi Al,
 
-Acked-by: Kalle Valo <kalle.valo@nokia.com>
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
--- 
-Kalle Valo
+fs/cachefiles/interface.c: In function 'cachefiles_sync_cache':
+fs/cachefiles/interface.c:357: error: 'sb' undeclared (first use in this fu=
+nction)
+
+Caused by commit d8f9cc04fdc69bff74a835b2895acb46cd08999b ("enforce
+->sync_fs is only called for rw superblock").
+
+I have used the version of the vfs tree from next-20090506 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__7_May_2009_13_53_33_+1000_NNvWEF=DVrRbCZg5
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkoCWz0ACgkQjjKRsyhoI8y3xwCgjeCTrXlPRSJmYZYVJZPUk3nY
+3lEAniyOgcDHkmvhkFqxiEdbRNONCOu6
+=n0y0
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__7_May_2009_13_53_33_+1000_NNvWEF=DVrRbCZg5--
