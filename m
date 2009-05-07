@@ -1,66 +1,255 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: linux-next: manual merge of the i2c tree with the arm-current
- tree
-Date: Thu, 7 May 2009 08:54:18 +0200
-Message-ID: <20090507085418.3f5206a3@hyperion.delvare>
-References: <20090506131031.83f1b04d.sfr@canb.auug.org.au>
-	<20090506071547.GA29466@flint.arm.linux.org.uk>
-	<20090506092559.2d9e53cb@hyperion.delvare>
-	<20090506190110.GB6897@flint.arm.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Tree for May 7
+Date: Thu, 7 May 2009 17:19:18 +1000
+Message-ID: <20090507171918.4ecdd6fd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__7_May_2009_17_19_18_+1000_Tn=+7sEhsPqZ8BAK"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zone0.gcu-squad.org ([212.85.147.21]:23990 "EHLO
-	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751318AbZEGGyj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 May 2009 02:54:39 -0400
-In-Reply-To: <20090506190110.GB6897@flint.arm.linux.org.uk>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35802 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751015AbZEGHTY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 May 2009 03:19:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk+lkml@arm.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Nicolas Pitre <nico@cam.org>, Wolfram Sang <w.sang@pengutronix.de>, LKML <linux-kernel@vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-Hi Russell,
+--Signature=_Thu__7_May_2009_17_19_18_+1000_Tn=+7sEhsPqZ8BAK
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 6 May 2009 20:01:10 +0100, Russell King wrote:
-> On Wed, May 06, 2009 at 09:25:59AM +0200, Jean Delvare wrote:
-> > On Wed, 6 May 2009 08:15:48 +0100, Russell King wrote:
-> > > Since defconfig updates are always going to create lots of noise, and
-> > > the files are normally out of date, the *only* sensible way to handle
-> > > updates is to have one tree dealing with them per architecture.
-> > > 
-> > > Spreading them across multiple trees and then expecting merges to sort
-> > > out the resulting mess is unreasonable; they just change far too much
-> > > when updates happen.  Moreover, defconfig updates should be in their
-> > > own separate commit and not combined with other changes.
-> > 
-> > I fail to see how you can handle configuration option renames
-> > gracefully with your proposed model.
-> 
-> That's not the point I'm making.  The point I'm making is about the
-> merge issues which is the BIG and I mean BIG as in 1000ft tall
-> letters BIG problem with scattering defconfig patches everywhere.
-> 
-> The reality of defconfigs is that they're normally months out of date
-> with respect to the current kernel, and are occasionally updated by
-> the platform maintainers on an occasional basis (as has happened with
-> Nicolas' change which your tree has clashed with.)
-> 
-> I've heard it argued that the only people who should ever touch defconfig
-> files are the platform maintainers themselves.  What I'm suggesting is
-> one step closer to sanity than that position - having the arch maintainer
-> responsible for dealing with all changes to those files, thereby providing
-> a centralised point for synchronising and co-ordinating all defconfig
-> updates.
-> 
-> If you think you have a better solution (no, throwing them into your own
-> I2C tree is NOT a solution - it's a cause of major problems) then please
-> state it.
+Hi all,
 
-Thanks for the explanation, I understand your point. I was updating the
-defconfigs to make the maintainer's lives easier. If this has the
-opposite effect, I'll just stop doing it, that's less work for me.
+Changes since 20090506:
 
--- 
-Jean Delvare
+The i2c tree lost its conflicts.
+
+The vfs tree gained a build failure so I used the version from
+next-20090506.
+
+The kmemleak tree gained a conflict against the x86 tree.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+(patches at
+http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES) and i386, sparc and sparc64 defconfig.
+These builds also have CONFIG_ENABLE_WARN_DEPRECATED,
+CONFIG_ENABLE_MUST_CHECK and CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 135 trees (counting Linus' and 18 trees of patches pending for
+Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/master
+Merging quilt/driver-core.current
+Merging quilt/usb.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging dwmw2/master
+Merging arm/devel
+CONFLICT (content): Merge conflict in arch/arm/Kconfig
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging mips/mips-for-linux-next
+Merging parisc/master
+Merging powerpc/next
+Merging 4xx/next
+Merging galak/next
+Merging pxa/for-next
+Merging s390/features
+Merging sh/master
+Merging sparc/master
+Merging x86/auto-x86-next
+Merging xtensa/master
+Merging configfs/linux-next
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging jfs/next
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging squashfs/master
+Merging v9fs/for-next
+CONFLICT (content): Merge conflict in net/9p/protocol.c
+Merging ubifs/linux-next
+Merging xfs/master
+Merging tip-core/auto-core-next
+Merging cpus4096/auto-cpus4096-next
+Merging tracing/auto-tracing-next
+Merging genirq/auto-genirq-next
+Merging safe-poison-pointers/auto-safe-poison-pointers-next
+Merging sched/auto-sched-next
+Merging stackprotector/auto-stackprotector-next
+Merging timers/auto-timers-next
+Merging pci/linux-next
+Merging quilt/device-mapper
+Merging hid/for-next
+Merging quilt/i2c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+Merging quota/for_next
+Merging kbuild/master
+[master cd84516] Revert "initconst adjustments"
+Merging ide/for-next
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/master
+Merging dlm/next
+Merging scsi/master
+CONFLICT (content): Merge conflict in include/Kbuild
+Merging async_tx/next
+Merging udf/for_next
+Merging net/master
+CONFLICT (content): Merge conflict in include/linux/mmc/sdio_ids.h
+Merging wireless/master
+[master 5cfea6b] Revert "rfkill: remove user_claim stuff"
+Merging mtd/master
+Merging crypto/master
+Merging vfs/for-next
+$ git reset --hard HEAD^
+Merging refs/next/20090506/vfs
+Merging sound/for-next
+Merging cpufreq/next
+Merging quilt/rr
+CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/cpufreq/acpi-cpuf=
+req.c
+Merging cifs/master
+Merging mmc/next
+Merging input/next
+Merging bkl-removal/bkl-removal
+Merging lsm/for-next
+Merging block/for-next
+CONFLICT (content): Merge conflict in drivers/block/hd.c
+CONFLICT (content): Merge conflict in drivers/block/mg_disk.c
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging voltage/for-next
+Merging security-testing/next
+Merging lblnet/master
+Merging quilt/ttydev
+Merging agp/agp-next
+Merging generic-ipi/auto-generic-ipi-next
+Merging oprofile/auto-oprofile-next
+Merging fastboot/auto-fastboot-next
+Merging sparseirq/auto-sparseirq-next
+Merging iommu/auto-iommu-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+CONFLICT (content): Merge conflict in drivers/pci/intel-iommu.c
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+Merging audit/for-next
+Merging omap/for-next
+Merging quilt/aoe
+Merging kmemleak/kmemleak
+CONFLICT (delete/modify): arch/x86/kernel/vmlinux_32.lds.S deleted in HEAD =
+and modified in kmemleak/kmemleak. Version kmemleak/kmemleak of arch/x86/ke=
+rnel/vmlinux_32.lds.S left in tree.
+CONFLICT (delete/modify): arch/x86/kernel/vmlinux_64.lds.S deleted in HEAD =
+and modified in kmemleak/kmemleak. Version kmemleak/kmemleak of arch/x86/ke=
+rnel/vmlinux_64.lds.S left in tree.
+CONFLICT (content): Merge conflict in lib/Kconfig.debug
+CONFLICT (content): Merge conflict in mm/slob.c
+$ git rm -f arch/x86/kernel/vmlinux_32.lds.S arch/x86/kernel/vmlinux_64.lds=
+.S
+Applying: kmemleak: fixup for x86 vmlinux.ld.S merge
+Merging suspend/linux-next
+Merging quilt/driver-core
+Merging quilt/usb
+CONFLICT (content): Merge conflict in drivers/usb/serial/sierra.c
+Merging quilt/staging
+CONFLICT (content): Merge conflict in drivers/staging/rt2860/common/mlme.c
+CONFLICT (content): Merge conflict in drivers/staging/rt2870/common/mlme.c
+CONFLICT (content): Merge conflict in drivers/staging/rt3070/common/mlme.c
+Merging scsi-post-merge/master
+
+--Signature=_Thu__7_May_2009_17_19_18_+1000_Tn=+7sEhsPqZ8BAK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkoCi3YACgkQjjKRsyhoI8zvkACgmL+89u22IthyJvG2B99O6RCZ
+dXUAniVF4p5/o8nPy0b2Zn++9MjyCX1Q
+=H6Zx
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__7_May_2009_17_19_18_+1000_Tn=+7sEhsPqZ8BAK--
