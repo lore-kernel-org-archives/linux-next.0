@@ -1,45 +1,49 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: manual merge of the vfs tree with the  tree
-Date: Fri, 8 May 2009 18:50:27 +0100
-Message-ID: <20090508175027.GC8633@ZenIV.linux.org.uk>
-References: <20090508144457.c88fc3dc.sfr@canb.auug.org.au> <E1M2QJl-00035r-E2@pomaz-ex.szeredi.hu>
+From: David Miller <davem@davemloft.net>
+Subject: Re: INET_LRO as tristate and use from modules
+Date: Fri, 08 May 2009 12:43:47 -0700 (PDT)
+Message-ID: <20090508.124347.142493836.davem@davemloft.net>
+References: <1240339984.9110.141.camel@subratamodak.linux.ibm.com>
+	<20090421193319.GB20237@lixom.net>
+	<20090422.021218.92737677.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:36969 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751994AbZEHRud (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 8 May 2009 13:50:33 -0400
-Content-Disposition: inline
-In-Reply-To: <E1M2QJl-00035r-E2@pomaz-ex.szeredi.hu>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:58070
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752520AbZEHTnw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 8 May 2009 15:43:52 -0400
+In-Reply-To: <20090422.021218.92737677.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, hch@lst.de, tj@kernel.org
+To: olof@lixom.net
+Cc: subrata@linux.vnet.ibm.com, netdev@vger.kernel.org, geoffrey.levand@am.sony.com, Linuxppc-dev@ozlabs.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, sachinp@linux.vnet.ibm.com, linux-kernel@vger.kernel.org, themann@de.ibm.com
 
-On Fri, May 08, 2009 at 03:40:49PM +0200, Miklos Szeredi wrote:
-> On Fri, 8 May 2009, Stephen Rothwell wrote:
-> > Today's linux-next merge of the vfs tree got a conflict in
-> > fs/fuse/inode.c between commit a325f9b92273d6c64ec56167905b951b9827ec33
-> > ("fuse: update fuse_conn_init() and separate out fuse_conn_kill()") from
-> > the fuse tree and commit 4225d95ddb751e09da0c145b58549da95ba13e3a ("push
-> > BKL down into ->put_super") from the vfs tree.
-> > 
-> > I fixed it up (see below - please check) and can carry the fix as
-> > necessary.
+From: David Miller <davem@davemloft.net>
+Date: Wed, 22 Apr 2009 02:12:18 -0700 (PDT)
+
+> From: Olof Johansson <olof@lixom.net>
+> Date: Tue, 21 Apr 2009 14:33:19 -0500
 > 
-> The fixup looks good.
+>> On Wed, Apr 22, 2009 at 12:23:03AM +0530, Subrata Modak wrote:
+>>>   MODPOST 338 modules
+>>> ERROR: ".lro_receive_skb" [drivers/net/pasemi_mac_driver.ko] undefined!
+>>> ERROR: ".lro_flush_all" [drivers/net/pasemi_mac_driver.ko] undefined!
+>>> WARNING: modpost: Found 1 section mismatch(es).
+>>> To see full details build your kernel with:
+>>> 'make CONFIG_DEBUG_SECTION_MISMATCH=y'
+>>> make[1]: *** [__modpost] Error 1
+>>> make: *** [modules] Error 2
+>> 
+>> This seems to be a problem with all tristate-capable drivers that use
+>> LRO (and uses select INET_LRO in their Kconfig): INET_LRO is a tristate
+>> and can thus be a module. Looks like it needs to be a bool instead?
 > 
-> Al, would it make sense to merge the fuse tree into the vfs tree at
-> some point to fix the conflict permanently?
+> Yes, making this a bool would be the easiest fix.
+> 
+> By why don't we get the same problem for PHYLIB?  It's also
+> tristate and "select"'d by a whole slew of networking drivers.
 
-Hmm...  Doable, of course, but I really wonder if that's the right
-way to deal with this one.  The thing is, looking at the current VFS
-tree I see very few places where FUSE gets called with BKL (essentially,
-->get_sb(), ->remount_fs()) and ->...ioctl()).  ->remount_fs() is absolutely
-locking-agnostic there and ->get_sb(), ->put_super() and ->umount_begin()
-are all serialized per superblock.  And for data structures that are
-not per-superblock FUSE doesn't rely on BKL in any of those, AFAICT.
+I guess nobody has any idea...
 
-If you can ACK that, we could simply leave FUSE out of all the "push
-BKL down into get_sb/umount_begin/put_super/remount_fs" series.
+I'll just make INET_LRO a bool to fix this.
