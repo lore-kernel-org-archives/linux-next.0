@@ -1,108 +1,54 @@
-From: Benny Halevy <bhalevy@panasas.com>
-Subject: [PATCH 5/6] nfs41: refactor decoding of channel attributes
-Date: Thu,  7 May 2009 19:00:54 +0300
-Message-ID: <1241712054-30480-1-git-send-email-bhalevy@panasas.com>
-References: <4A0304C7.2090003@panasas.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: infiniband tree build failure
+Date: Fri, 8 May 2009 11:53:56 +1000
+Message-ID: <20090508115356.b97b8981.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__8_May_2009_11_53_56_+1000_qC5IDm=T5OmYVB1i"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gw-ca.panasas.com ([209.116.51.66]:5000 "EHLO
-	laguna.int.panasas.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1758912AbZEGQBC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 May 2009 12:01:02 -0400
-In-Reply-To: <4A0304C7.2090003@panasas.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:58580 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752175AbZEHByK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 May 2009 21:54:10 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: Andy Adamson <andros@netapp.com>, pnfs@linux-nfs.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Benny Halevy <bhalevy@panasas.com>
+To: Roland Dreier <rdreier@cisco.com>, general@lists.openfabrics.org
+Cc: linux-next@vger.kernel.org, Jack Morgenstein <jackm@dev.mellanox.co.il>
 
-Also, verify ca_rdma_ird value and print a warning if > 1.
+--Signature=_Fri__8_May_2009_11_53_56_+1000_qC5IDm=T5OmYVB1i
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Benny Halevy <bhalevy@panasas.com>
----
- fs/nfs/nfs4xdr.c |   60 +++++++++++++++++++++++++----------------------------
- 1 files changed, 28 insertions(+), 32 deletions(-)
+Hi Roland,
 
-diff --git a/fs/nfs/nfs4xdr.c b/fs/nfs/nfs4xdr.c
-index ea16df2..e4c0209 100644
---- a/fs/nfs/nfs4xdr.c
-+++ b/fs/nfs/nfs4xdr.c
-@@ -4226,12 +4226,35 @@ static int decode_exchange_id(struct xdr_stream *xdr,
- 	return 0;
- }
- 
-+static int decode_chan_attrs(struct xdr_stream *xdr,
-+			     struct nfs4_channel_attrs *attrs)
-+{
-+	__be32 *p;
-+	u32 nr_attrs;
-+
-+	READ_BUF(28);
-+	READ32(attrs->headerpadsz);
-+	READ32(attrs->max_rqst_sz);
-+	READ32(attrs->max_resp_sz);
-+	READ32(attrs->max_resp_sz_cached);
-+	READ32(attrs->max_ops);
-+	READ32(attrs->max_reqs);
-+	READ32(nr_attrs);
-+	if (unlikely(nr_attrs > 1)) {
-+		printk(KERN_WARNING "%s: Invalid rdma channel attrs count %u\n",
-+			__func__, nr_attrs);
-+		return -EINVAL;
-+	}
-+	if (nr_attrs == 1)
-+		READ_BUF(4); /* skip rdma_attrs */
-+	return 0;
-+}
-+
- static int decode_create_session(struct xdr_stream *xdr,
- 				 struct nfs41_create_session_res *res)
- {
- 	__be32 *p;
- 	int status;
--	u32 nr_attrs;
- 	struct nfs_client *clp = res->client;
- 	struct nfs4_session *session = clp->cl_session;
- 
-@@ -4250,37 +4273,10 @@ static int decode_create_session(struct xdr_stream *xdr,
- 	READ32(session->flags);
- 
- 	/* Channel attributes */
--	/* fore channel */
--	READ_BUF(24);
--	READ32(session->fc_attrs.headerpadsz);
--	READ32(session->fc_attrs.max_rqst_sz);
--	READ32(session->fc_attrs.max_resp_sz);
--	READ32(session->fc_attrs.max_resp_sz_cached);
--	READ32(session->fc_attrs.max_ops);
--	READ32(session->fc_attrs.max_reqs);
--	READ_BUF(4);
--	READ32(nr_attrs);
--	if (nr_attrs == 1) {
--		READ_BUF(4);
--		p++; /* skip rdma_attrs */
--	}
--
--	/* back channel */
--	READ_BUF(24);
--	READ32(session->bc_attrs.headerpadsz);
--	READ32(session->bc_attrs.max_rqst_sz);
--	READ32(session->bc_attrs.max_resp_sz);
--	READ32(session->bc_attrs.max_resp_sz_cached);
--	READ32(session->bc_attrs.max_ops);
--	READ32(session->bc_attrs.max_reqs);
--	READ_BUF(4);
--	READ32(nr_attrs);
--	if (nr_attrs == 1) {
--		READ_BUF(4);
--		p++; /* skip rdma_attrs */
--	}
--
--	return 0;
-+	status = decode_chan_attrs(xdr, &session->fc_attrs);
-+	if (!status)
-+		status = decode_chan_attrs(xdr, &session->bc_attrs);
-+	return status;
- }
- 
- static int decode_destroy_session(struct xdr_stream *xdr, void *dummy)
--- 
-1.6.2.1
+Today's linux-next build (x86_64 allmodconfig) failed like this:
+
+drivers/infiniband/hw/mlx4/mr.c: In function 'mlx4_ib_alloc_fast_reg_page_l=
+ist':
+drivers/infiniband/hw/mlx4/mr.c:242: error: label 'err_free_mfrpl' used but=
+ not defined
+
+Caused by commit 88029ff3c862812b81745ae3d6557ede96e2d051 ("IB/mlx4:
+Don't overwrite fast registration page list when posting work request").
+Clearly not build tested :-(
+
+I have used the version of the tree from next-20090507.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__8_May_2009_11_53_56_+1000_qC5IDm=T5OmYVB1i
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkoDkLQACgkQjjKRsyhoI8xG4wCggB1cA1znmnGYVyBMdyf3B8HZ
+RM8AoKQnwaZURd0y6uDF7nGIcvVzmU0J
+=QEJp
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__8_May_2009_11_53_56_+1000_qC5IDm=T5OmYVB1i--
