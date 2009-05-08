@@ -1,32 +1,58 @@
-From: Roland Dreier <rdreier@cisco.com>
-Subject: Re: [ofa-general] linux-next: infiniband tree build failure
-Date: Thu, 07 May 2009 21:36:55 -0700
-Message-ID: <adatz3wqkgo.fsf@cisco.com>
-References: <20090508115356.b97b8981.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the  tree
+Date: Fri, 8 May 2009 14:44:57 +1000
+Message-ID: <20090508144457.c88fc3dc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sj-iport-2.cisco.com ([171.71.176.71]:26152 "EHLO
-	sj-iport-2.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751211AbZEHEgz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 8 May 2009 00:36:55 -0400
-In-Reply-To: <20090508115356.b97b8981.sfr@canb.auug.org.au> (Stephen
-	Rothwell's message of "Fri, 8 May 2009 11:53:56 +1000")
+Received: from chilli.pcug.org.au ([203.10.76.44]:54068 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751209AbZEHEpF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 8 May 2009 00:45:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: general@lists.openfabrics.org, linux-next@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Tejun Heo <tj@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>
 
- > Today's linux-next build (x86_64 allmodconfig) failed like this:
- > 
- > drivers/infiniband/hw/mlx4/mr.c: In function 'mlx4_ib_alloc_fast_reg_page_list':
- > drivers/infiniband/hw/mlx4/mr.c:242: error: label 'err_free_mfrpl' used but not defined
- > 
- > Caused by commit 88029ff3c862812b81745ae3d6557ede96e2d051 ("IB/mlx4:
- > Don't overwrite fast registration page list when posting work request").
- > Clearly not build tested :-(
+Hi Al,
 
-My fault for editing after applying the patch.  Fixed now.
+Today's linux-next merge of the vfs tree got a conflict in
+fs/fuse/inode.c between commit a325f9b92273d6c64ec56167905b951b9827ec33
+("fuse: update fuse_conn_init() and separate out fuse_conn_kill()") from
+the fuse tree and commit 4225d95ddb751e09da0c145b58549da95ba13e3a ("push
+BKL down into ->put_super") from the vfs tree.
 
-Thanks,
-  Roland
+I fixed it up (see below - please check) and can carry the fix as
+necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc fs/fuse/inode.c
+index d8673cc,31a9720..0000000
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@@ -295,17 -297,10 +298,21 @@@ void fuse_conn_kill(struct fuse_conn *f
+  	list_del(&fc->entry);
+  	fuse_ctl_remove_conn(fc);
+  	mutex_unlock(&fuse_mutex);
+ -	bdi_destroy(&fc->bdi);
+ +	fuse_bdi_destroy(fc);
+ +}
+ +EXPORT_SYMBOL_GPL(fuse_conn_kill);
+ +
+ +static void fuse_put_super(struct super_block *sb)
+ +{
+ +	struct fuse_conn *fc = get_fuse_conn_super(sb);
+ +
+++	lock_kernel();
+++
+ +	fuse_send_destroy(fc);
+ +	fuse_conn_kill(fc);
+  	fuse_conn_put(fc);
++ 
++ 	unlock_kernel();
+  }
+  
+  static void convert_fuse_statfs(struct kstatfs *stbuf, struct fuse_kstatfs *attr)
