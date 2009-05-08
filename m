@@ -1,54 +1,91 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: infiniband tree build failure
-Date: Fri, 8 May 2009 11:53:56 +1000
-Message-ID: <20090508115356.b97b8981.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the  tree
+Date: Fri, 8 May 2009 13:23:52 +1000
+Message-ID: <20090508132352.4763ae91.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__8_May_2009_11_53_56_+1000_qC5IDm=T5OmYVB1i"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58580 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58722 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752175AbZEHByK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 7 May 2009 21:54:10 -0400
+	id S1753742AbZEHDXy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 May 2009 23:23:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Roland Dreier <rdreier@cisco.com>, general@lists.openfabrics.org
-Cc: linux-next@vger.kernel.org, Jack Morgenstein <jackm@dev.mellanox.co.il>
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, Eric Dumazet <dada1@cosmosbay.com>, Satoru SATOH <satoru.satoh@gmail.com>
 
---Signature=_Fri__8_May_2009_11_53_56_+1000_qC5IDm=T5OmYVB1i
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi David,
 
-Hi Roland,
+Today's linux-next merge of the net tree got a conflict in
+include/net/tcp.h between commit 0c266898b42fe4e4e2f9edfc9d3474c10f93aa6a
+("tcp: Fix tcp_prequeue() to get correct rto_min value") from Linus' tree
+and commit f5f8d86b231e0489c33542c42afbb14d32411ee8 ("tcp: tcp_prequeue()
+cleanup") from the net tree.
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
-
-drivers/infiniband/hw/mlx4/mr.c: In function 'mlx4_ib_alloc_fast_reg_page_l=
-ist':
-drivers/infiniband/hw/mlx4/mr.c:242: error: label 'err_free_mfrpl' used but=
- not defined
-
-Caused by commit 88029ff3c862812b81745ae3d6557ede96e2d051 ("IB/mlx4:
-Don't overwrite fast registration page list when posting work request").
-Clearly not build tested :-(
-
-I have used the version of the tree from next-20090507.
---=20
+I fixed it up (see below - please check) and can carry the fix for a
+while.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__8_May_2009_11_53_56_+1000_qC5IDm=T5OmYVB1i
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkoDkLQACgkQjjKRsyhoI8xG4wCggB1cA1znmnGYVyBMdyf3B8HZ
-RM8AoKQnwaZURd0y6uDF7nGIcvVzmU0J
-=QEJp
------END PGP SIGNATURE-----
-
---Signature=_Fri__8_May_2009_11_53_56_+1000_qC5IDm=T5OmYVB1i--
+diff --cc include/net/tcp.h
+index 646dbe3,87d210b..0000000
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@@ -889,30 -890,32 +902,32 @@@ static inline int tcp_prequeue(struct s
+  {
+  	struct tcp_sock *tp = tcp_sk(sk);
+  
+- 	if (!sysctl_tcp_low_latency && tp->ucopy.task) {
+- 		__skb_queue_tail(&tp->ucopy.prequeue, skb);
+- 		tp->ucopy.memory += skb->truesize;
+- 		if (tp->ucopy.memory > sk->sk_rcvbuf) {
+- 			struct sk_buff *skb1;
+- 
+- 			BUG_ON(sock_owned_by_user(sk));
+- 
+- 			while ((skb1 = __skb_dequeue(&tp->ucopy.prequeue)) != NULL) {
+- 				sk_backlog_rcv(sk, skb1);
+- 				NET_INC_STATS_BH(sock_net(sk), LINUX_MIB_TCPPREQUEUEDROPPED);
+- 			}
+- 
+- 			tp->ucopy.memory = 0;
+- 		} else if (skb_queue_len(&tp->ucopy.prequeue) == 1) {
+- 			wake_up_interruptible(sk->sk_sleep);
+- 			if (!inet_csk_ack_scheduled(sk))
+- 				inet_csk_reset_xmit_timer(sk, ICSK_TIME_DACK,
+- 						          (3 * tcp_rto_min(sk)) / 4,
+- 							  TCP_RTO_MAX);
++ 	if (sysctl_tcp_low_latency || !tp->ucopy.task)
++ 		return 0;
++ 
++ 	__skb_queue_tail(&tp->ucopy.prequeue, skb);
++ 	tp->ucopy.memory += skb->truesize;
++ 	if (tp->ucopy.memory > sk->sk_rcvbuf) {
++ 		struct sk_buff *skb1;
++ 
++ 		BUG_ON(sock_owned_by_user(sk));
++ 
++ 		while ((skb1 = __skb_dequeue(&tp->ucopy.prequeue)) != NULL) {
++ 			sk_backlog_rcv(sk, skb1);
++ 			NET_INC_STATS_BH(sock_net(sk),
++ 					 LINUX_MIB_TCPPREQUEUEDROPPED);
+  		}
+- 		return 1;
++ 
++ 		tp->ucopy.memory = 0;
++ 	} else if (skb_queue_len(&tp->ucopy.prequeue) == 1) {
++ 		wake_up_interruptible_poll(sk->sk_sleep,
++ 					   POLLIN | POLLRDNORM | POLLRDBAND);
++ 		if (!inet_csk_ack_scheduled(sk))
++ 			inet_csk_reset_xmit_timer(sk, ICSK_TIME_DACK,
+ -						  (3 * TCP_RTO_MIN) / 4,
+++					          (3 * tcp_rto_min(sk)) / 4,
++ 						  TCP_RTO_MAX);
+  	}
+- 	return 0;
++ 	return 1;
+  }
+  
+  
