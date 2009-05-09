@@ -1,58 +1,38 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: driver-core tree build failure
-Date: Sat, 9 May 2009 06:51:35 -0700
-Message-ID: <20090509135135.GA17349@kroah.com>
-References: <20090504162542.41b1cb57.sfr@canb.auug.org.au> <20090509211611.35504c97.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: linux-next: manual merge of the vfs tree with the  tree
+Date: Sat, 09 May 2009 18:58:23 +0200
+Message-ID: <E1M2psV-0005bN-I0@pomaz-ex.szeredi.hu>
+References: <20090508144457.c88fc3dc.sfr@canb.auug.org.au> <E1M2QJl-00035r-E2@pomaz-ex.szeredi.hu> <20090508175027.GC8633@ZenIV.linux.org.uk>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:32824 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753722AbZEINzO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 9 May 2009 09:55:14 -0400
-Content-Disposition: inline
-In-Reply-To: <20090509211611.35504c97.sfr@canb.auug.org.au>
+Received: from fxip-0047f.externet.hu ([88.209.222.127]:58072 "EHLO
+	pomaz-ex.szeredi.hu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751921AbZEIQ6l (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 9 May 2009 12:58:41 -0400
+In-reply-to: <20090508175027.GC8633@ZenIV.linux.org.uk> (message from Al Viro
+	on Fri, 8 May 2009 18:50:27 +0100)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>
+To: viro@ZenIV.linux.org.uk
+Cc: miklos@szeredi.hu, sfr@canb.auug.org.au, linux-next@vger.kernel.org, hch@lst.de, tj@kernel.org
 
-On Sat, May 09, 2009 at 09:16:11PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On Fri, 8 May 2009, Al Viro wrote:
+> > Al, would it make sense to merge the fuse tree into the vfs tree at
+> > some point to fix the conflict permanently?
 > 
-> On Mon, 4 May 2009 16:25:42 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> > 
-> > drivers/hid/usbhid/hiddev.c:965: error: unknown field 'nodename' specified in initializer
-> > drivers/hid/usbhid/hiddev.c:965: warning: initialization from incompatible pointer type
-> > 
-> > Caused by commit 5b1e3a40a98ad5a822cb527439cd57dc60a41db9 ("Driver Core:
-> > devtmpfs - driver core maintained /dev tmpfs").  As far as I can see the
-> > version of this patch in your quilt series currently has never been
-> > posted anywhere public ... The diff summaries for the previous and
-> > current version of this patch are:
-> > 
-> > - 18 files changed, 484 insertions(+), 5 deletions(-)
-> > + 38 files changed, 599 insertions(+), 11 deletions(-)
-> > 
-> > Which is a pretty big change for something in linux-next.  So, can we
-> > please remove this patch until it has proper review, been tested and has
-> > settled down a bit.
-> 
-> OK, so now I have another new version of this patch (split up as many
-> patches) in the driver-core tree (destined for linux-next) which has also
-> not been posted to LKML (which is where I assumed it would be posted).  I
-> think people would like the opportunity to review this stuff.
+> Hmm...  Doable, of course, but I really wonder if that's the right
+> way to deal with this one.  The thing is, looking at the current VFS
+> tree I see very few places where FUSE gets called with BKL (essentially,
+> ->get_sb(), ->remount_fs()) and ->...ioctl()).  ->remount_fs() is absolutely
+> locking-agnostic there and ->get_sb(), ->put_super() and ->umount_begin()
+> are all serialized per superblock.  And for data structures that are
+> not per-superblock FUSE doesn't rely on BKL in any of those, AFAICT.
 
-Yes, it will be sent there, I thought it more important to get my tree
-working again and out there, thinking you were not going to be doing a
-linux-next release over the weekend.
+That's correct.
 
-Was I incorrect in that assumption?
+> If you can ACK that, we could simply leave FUSE out of all the "push
+> BKL down into get_sb/umount_begin/put_super/remount_fs" series.
 
-I'll be sending it in a few hours.
+Okay.
 
-thanks,
-
-greg k-h
+Thanks,
+Miklos
