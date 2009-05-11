@@ -1,58 +1,43 @@
-From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Subject: Re: [PATCH -next] soc_camera: depends on I2C
-Date: Mon, 11 May 2009 19:53:50 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.0905111953300.5399@axis700.grange>
-References: <20090511161442.3e9d9cb9.sfr@canb.auug.org.au> <4A0853FE.6060709@oracle.com>
+From: "J. Bruce Fields" <bfields-uC3wQj2KruNg9hUCZPvPmw@public.gmane.org>
+Subject: Re: next: build fails at fs/lockd/svclock.c
+Date: Mon, 11 May 2009 14:46:00 -0400
+Message-ID: <20090511184600.GD793@fieldses.org>
+References: <a4423d670905040623q48eb552ft3bd107d6aa71d63b@mail.gmail.com> <1241444370.5754.5.camel@heimdal.trondhjem.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756794AbZEKRxz@vger.kernel.org>
-In-Reply-To: <4A0853FE.6060709@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1241444370.5754.5.camel-rJ7iovZKK19ZJLDQqaL3InhyD016LWXt@public.gmane.org>
+Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Trond Myklebust <trond.myklebust-41N18TsMXrtuMpJDpNschA@public.gmane.org>
+Cc: Alexander Beregalov <a.beregalov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Felix Blyakher <felixb-sJ/iWh9BUns@public.gmane.org>, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 11 May 2009, Randy Dunlap wrote:
+On Mon, May 04, 2009 at 09:39:30AM -0400, Trond Myklebust wrote:
+> On Mon, 2009-05-04 at 17:23 +0400, Alexander Beregalov wrote:
+> > Hi
+> > 
+> > Randconfig fails like this
+> > 
+> > fs/lockd/svclock.c: In function 'nlmsvc_freegrantargs':
+> > fs/lockd/svclock.c:330: error: implicit declaration of function
+> > 'locks_release_private'
+> > 
+> > caused by a9e61e25f9d2
+> > (lockd: call locks_release_private to cleanup per-filesystem state)
+> > 
+> > 
+> > # CONFIG_FILE_LOCKING is not set
+> > CONFIG_LOCKD=y
+> > --
+> 
+> See the posting "[PATCH v2] lockd: fix FILE_LOCKING=n build error" by
+> Randy Dunlap last Tuesday.
 
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> soc_camera uses i2c_*() functions and has build errors when CONFIG_I2C=n:
-> 
-> ERROR: "i2c_new_device" [drivers/media/video/soc_camera.ko] undefined!
-> ERROR: "i2c_get_adapter" [drivers/media/video/soc_camera.ko] undefined!
-> ERROR: "i2c_put_adapter" [drivers/media/video/soc_camera.ko] undefined!
-> ERROR: "i2c_unregister_device" [drivers/media/video/soc_camera.ko] undefined!
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+What happened to this--is it in some maintainer's tree now?
 
-Thanks, applied.
-
-Guennadi
-
-> ---
->  drivers/media/video/Kconfig |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --- linux-next-20090511.orig/drivers/media/video/Kconfig
-> +++ linux-next-20090511/drivers/media/video/Kconfig
-> @@ -694,7 +694,7 @@ config VIDEO_CAFE_CCIC
->  
->  config SOC_CAMERA
->  	tristate "SoC camera support"
-> -	depends on VIDEO_V4L2 && HAS_DMA
-> +	depends on VIDEO_V4L2 && HAS_DMA && I2C
->  	select VIDEOBUF_GEN
->  	help
->  	  SoC Camera is a common API to several cameras, not connecting
-> 
-> 
-> -- 
-> ~Randy
-> LPC 2009, Sept. 23-25, Portland, Oregon
-> http://linuxplumbersconf.org/2009/
-> 
-
----
-Guennadi Liakhovetski, Ph.D.
-Freelance Open-Source Software Developer
-http://www.open-technology.de/
+--b.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
