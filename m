@@ -1,47 +1,47 @@
 From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Re: Next May 11 : BUG during scsi initialization
-Date: Mon, 11 May 2009 22:29:51 +0530
-Message-ID: <4A085987.7070706@in.ibm.com>
-References: <20090511161442.3e9d9cb9.sfr@canb.auug.org.au>
-	<4A081002.4050802@in.ibm.com>
-	<20090511115233.GB8112@parisc-linux.org>
-	<4A081437.7000409@in.ibm.com>
-	<20090511122135.GC8112@parisc-linux.org>
-	<4A08502B.9040001@in.ibm.com>
-	<20090511162511.GG8112@parisc-linux.org>
+Subject: Re: [PowerPC] Next May 8 boot failure: OOPS during ibmveth moduleinit
+Date: Mon, 11 May 2009 22:37:09 +0530
+Message-ID: <4A085B3D.5000806@in.ibm.com>
+References: <20090508180251.f53f204e.sfr@canb.auug.org.au>  <4A042B20.4090903@in.ibm.com> <20090508.125722.54378771.davem@davemloft.net> <20090508223332.GA4881@psychotron.englab.brq.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org>
-In-Reply-To: <20090511162511.GG8112@parisc-linux.org>
-List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
-List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
-List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
-To: Matthew Wilcox <matthew@wil.cx>
-Cc: Nick Piggin <npiggin@suse.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-scsi <linux-scsi@vger.kernel.org>, chinang.ma@intel.com, linuxppc-dev@ozlabs.org, Pekka Enberg <penberg@cs.helsinki.fi>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e23smtp07.au.ibm.com ([202.81.31.140]:37925 "EHLO
+	e23smtp07.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751881AbZEKRHN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 11 May 2009 13:07:13 -0400
+In-Reply-To: <20090508223332.GA4881@psychotron.englab.brq.redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jiri Pirko <jpirko@redhat.com>
+Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org, sfr@canb.auug.org.au, netdev@vger.kernel.org
 
-Matthew Wilcox wrote:
-> On Mon, May 11, 2009 at 09:49:55PM +0530, Sachin Sant wrote:
+Jiri Pirko wrote:
+> Fri, May 08, 2009 at 09:57:22PM CEST, davem@davemloft.net wrote:
 >   
->> Yeah so the problem seems to be with SLQB. I was able to boot Next 11 with
->> SLUB on the same machine.
+>> From: Sachin Sant <sachinp@in.ibm.com>
+>> Date: Fri, 08 May 2009 18:22:48 +0530
+>>
+>>     
+>>> Todays Next failed to boot on a Power6 JS22 blade with following oops.
+>>>       
+>> Jiri, I suspect this might be your address list changes.
+>>
+>> Although that's just a guess.  But please take a look.
 >>     
 >
-> Is it 100% reproducable with SLQB?  Our errors were fairly hard to tickle
-> on demand.
+> Hmm, only thing I see might cause the problem would be if calling __hw_addr_add
+> in dev_addr_init fails, then dev->dev_addr would contain zeroes (which looks
+> this is not the case). But in this case the oops would appear earlier (in
+> ibmveth_probe dev_addr memcpy).
 >
+> Will do the patch which checks the result to behave correctly in case of oom
+> but this imho this wouldn't help. Strange, I will dig into this more tomorrow.
 >   
-Yes. I am able to recreate this during every single reboot. I just 
-tested few older next
-releases (May 6th, 7th and 8th)as well and was able to recreate this 
-issue with every release.
+I can recreate this problem with today's Next release as well. Let me 
+know if you want me to try
+out any thing to debug this problem.
 
 Thanks
 -Sachin
