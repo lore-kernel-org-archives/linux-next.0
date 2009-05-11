@@ -1,27 +1,43 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Subject: Re: Next May 11 : BUG during scsi initialization
-Date: Mon, 11 May 2009 10:25:11 -0600
-Message-ID: <20090511162511.GG8112@parisc-linux.org>
-References: <20090511161442.3e9d9cb9.sfr@canb.auug.org.au> <4A081002.4050802@in.ibm.com> <20090511115233.GB8112@parisc-linux.org> <4A081437.7000409@in.ibm.com> <20090511122135.GC8112@parisc-linux.org> <4A08502B.9040001@in.ibm.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] kvm: fix build error: add missing semi-colon
+Date: Mon, 11 May 2009 09:32:38 -0700
+Message-ID: <4A085326.3030707@oracle.com>
+References: <20090511161442.3e9d9cb9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-scsi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4A08502B.9040001@in.ibm.com>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>, linuxppc-dev@ozlabs.org, Pekka Enberg <penberg@cs.helsinki.fi>, Nick Piggin <npiggin@suse.de>, chinang.ma@intel.com
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <kvm-owner@vger.kernel.org>
+In-Reply-To: <20090511161442.3e9d9cb9.sfr@canb.auug.org.au>
+Sender: kvm-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, avi@redhat.com, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, May 11, 2009 at 09:49:55PM +0530, Sachin Sant wrote:
-> Yeah so the problem seems to be with SLQB. I was able to boot Next 11 with
-> SLUB on the same machine.
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Is it 100% reproducable with SLQB?  Our errors were fairly hard to tickle
-on demand.
+Add missing ; to fix build error:
+
+arch/x86/kvm/x86.c:1259: error: expected',' or ';' before 'const'
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ arch/x86/kvm/x86.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20090511.orig/arch/x86/kvm/x86.c
++++ linux-next-20090511/arch/x86/kvm/x86.c
+@@ -1252,7 +1252,7 @@ static void do_cpuid_ent(struct kvm_cpui
+ #ifdef CONFIG_X86_64
+ 	unsigned f_lm = F(LM);
+ #else
+-	unsigned f_lm = 0
++	unsigned f_lm = 0;
+ #endif
+ 
+ 	/* cpuid 1.edx */
+
 
 -- 
-Matthew Wilcox				Intel Open Source Technology Centre
-"Bill, look, we understand that you're interested in selling us this
-operating system, but compare it to ours.  We can't possibly take such
-a retrograde step."
+~Randy
+LPC 2009, Sept. 23-25, Portland, Oregon
+http://linuxplumbersconf.org/2009/
