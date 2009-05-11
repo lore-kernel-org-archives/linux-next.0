@@ -1,55 +1,56 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] v4l2: handle unregister for non-I2C builds
-Date: Mon, 11 May 2009 09:37:41 -0700
-Message-ID: <4A085455.5040108@oracle.com>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Re: Next May 11 : BUG during scsi initialization
+Date: Mon, 11 May 2009 22:29:51 +0530
+Message-ID: <4A085987.7070706@in.ibm.com>
 References: <20090511161442.3e9d9cb9.sfr@canb.auug.org.au>
+	<4A081002.4050802@in.ibm.com>
+	<20090511115233.GB8112@parisc-linux.org>
+	<4A081437.7000409@in.ibm.com>
+	<20090511122135.GC8112@parisc-linux.org>
+	<4A08502B.9040001@in.ibm.com>
+	<20090511162511.GG8112@parisc-linux.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:48959 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752733AbZEKQg7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 May 2009 12:36:59 -0400
-In-Reply-To: <20090511161442.3e9d9cb9.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org>
+In-Reply-To: <20090511162511.GG8112@parisc-linux.org>
+List-Unsubscribe: <https://ozlabs.org/mailman/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@ozlabs.org?subject=unsubscribe>
+List-Archive: <http://ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@ozlabs.org?subject=help>
+List-Subscribe: <https://ozlabs.org/mailman/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@ozlabs.org
+To: Matthew Wilcox <matthew@wil.cx>
+Cc: Nick Piggin <npiggin@suse.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-scsi <linux-scsi@vger.kernel.org>, chinang.ma@intel.com, linuxppc-dev@ozlabs.org, Pekka Enberg <penberg@cs.helsinki.fi>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+Matthew Wilcox wrote:
+> On Mon, May 11, 2009 at 09:49:55PM +0530, Sachin Sant wrote:
+>   
+>> Yeah so the problem seems to be with SLQB. I was able to boot Next 11 with
+>> SLUB on the same machine.
+>>     
+>
+> Is it 100% reproducable with SLQB?  Our errors were fairly hard to tickle
+> on demand.
+>
+>   
+Yes. I am able to recreate this during every single reboot. I just 
+tested few older next
+releases (May 6th, 7th and 8th)as well and was able to recreate this 
+issue with every release.
 
-Build fails when CONFIG_I2C=n, so handle that case in the if block:
-
-drivers/built-in.o: In function `v4l2_device_unregister':
-(.text+0x157821): undefined reference to `i2c_unregister_device'
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/media/video/v4l2-device.c |    2 ++
- 1 file changed, 2 insertions(+)
-
---- linux-next-20090511.orig/drivers/media/video/v4l2-device.c
-+++ linux-next-20090511/drivers/media/video/v4l2-device.c
-@@ -85,6 +85,7 @@ void v4l2_device_unregister(struct v4l2_
- 	/* Unregister subdevs */
- 	list_for_each_entry_safe(sd, next, &v4l2_dev->subdevs, list) {
- 		v4l2_device_unregister_subdev(sd);
-+#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
- 		if (sd->flags & V4L2_SUBDEV_FL_IS_I2C) {
- 			struct i2c_client *client = v4l2_get_subdevdata(sd);
- 
-@@ -95,6 +96,7 @@ void v4l2_device_unregister(struct v4l2_
- 			if (client)
- 				i2c_unregister_device(client);
- 		}
-+#endif
- 	}
- }
- EXPORT_SYMBOL_GPL(v4l2_device_unregister);
-
+Thanks
+-Sachin
 
 -- 
-~Randy
-LPC 2009, Sept. 23-25, Portland, Oregon
-http://linuxplumbersconf.org/2009/
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
