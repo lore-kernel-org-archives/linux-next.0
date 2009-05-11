@@ -1,257 +1,302 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for May 11
-Date: Mon, 11 May 2009 16:14:42 +1000
-Message-ID: <20090511161442.3e9d9cb9.sfr@canb.auug.org.au>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Next May 11 : BUG during scsi initialization
+Date: Mon, 11 May 2009 17:16:10 +0530
+Message-ID: <4A081002.4050802@in.ibm.com>
+References: <20090511161442.3e9d9cb9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__11_May_2009_16_14_42_+1000_pwIp5=sPox/ll8/t"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46163 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751378AbZEKGOz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 11 May 2009 02:14:55 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed;
+ boundary="------------020006040506090205010602"
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <20090511161442.3e9d9cb9.sfr@canb.auug.org.au>
+Sender: linux-scsi-owner@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>, linuxppc-dev@ozlabs.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__11_May_2009_16_14_42_+1000_pwIp5=sPox/ll8/t
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is a multi-part message in MIME format.
+--------------020006040506090205010602
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+Today's Next tree failed to boot on a Power6 box with following BUG :
 
-Changes since 20090508:
+BUG: spinlock bad magic on CPU#1, modprobe/63
+Unable to handle kernel paging request for data at address 0xffffc994838
+Faulting instruction address: 0xc00000000035f5a8
+Oops: Kernel access of bad area, sig: 11 [#1]
+SMP NR_CPUS=1024 DEBUG_PAGEALLOC NUMA pSeries
+Modules linked in: scsi_mod(+)
+NIP: c00000000035f5a8 LR: c00000000035f58c CTR: 0000000000136f8c
+REGS: c0000000c7d03500 TRAP: 0300   Not tainted  (2.6.30-rc5-autotest-next-20090511)
+MSR: 8000000000009032 <EE,ME,IR,DR>  CR: 28222484  XER: 0000000f
+DAR: 00000ffffc994838, DSISR: 0000000040000000
+TASK = c0000000c7cf0a80[63] 'modprobe' THREAD: c0000000c7d00000 CPU: 1
+GPR00: c00000000035f58c c0000000c7d03780 c000000000aaeed8 0000000000000031 
+GPR04: 0000000000000000 00000000585cf4e0 0000000000673580 80000000565a6cc0 
+GPR08: 0000000000000000 c0000000009ebf50 0000000000000000 c0000000009ebf38 
+GPR12: 0000000028222482 c000000000b82600 0000000000000000 0000000000000000 
+GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
+GPR20: 0000000000000018 ffffffffffffffff c0000000009bbe40 0000000000000010 
+GPR24: 0000000000210d00 c0000000c6caff80 c0000000dfc732a0 c000000000f61380 
+GPR28: c0000000007c8350 c0000000008a4280 c000000000a2f928 00000ffffc994550 
+NIP [c00000000035f5a8] .spin_bug+0x90/0xd4
+LR [c00000000035f58c] .spin_bug+0x74/0xd4
+Call Trace:
+[c0000000c7d03780] [c00000000035f58c] .spin_bug+0x74/0xd4 (unreliable)
+[c0000000c7d03810] [c00000000035f890] ._raw_spin_lock+0x48/0x184
+[c0000000c7d038b0] [c0000000005d67d8] ._spin_lock+0x10/0x24
+[c0000000c7d03920] [c00000000013fbdc] .__slab_alloc_page+0x344/0x3cc
+[c0000000c7d039e0] [c000000000141168] .kmem_cache_alloc+0x13c/0x21c
+[c0000000c7d03aa0] [c000000000141b04] .kmem_cache_create+0x294/0x2a8
+[c0000000c7d03b90] [d000000000ea14cc] .scsi_init_queue+0x38/0x170 [scsi_mod]
+[c0000000c7d03c20] [d000000000ea13c8] .init_scsi+0x1c/0xe8 [scsi_mod]
+[c0000000c7d03ca0] [c0000000000092c0] .do_one_initcall+0x80/0x19c
+[c0000000c7d03d90] [c0000000000c0540] .SyS_init_module+0xe0/0x244
+[c0000000c7d03e30] [c000000000008534] syscall_exit+0x0/0x40
+Instruction dump:
+7f84e378 e87e8020 38c604d0 e8e902ea 4827fced 60000000 2fbf0000 80bd0004 
+409e0010 e8de8028 38e0ffff 4800000c <e8ff02ea> 38df04d0 7fa4eb78 811d0008 
+---[ end trace f725820a6fa9dbb7 ]---
+/init: line 21:    63 Segmentation fault      modprobe $file
 
-The infiniband tree lost its build failure.
+I have attached the dmesg log here. Let me know if any other information 
+is required.
 
-The net tree lost a conflict.
+Thanks
+-Sachin
 
-The dwmw2-iommu tree gained a conflict against the x86 tree.
+-- 
 
-----------------------------------------------------------------------------
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES) and i386, sparc and sparc64 defconfig.
-These builds also have CONFIG_ENABLE_WARN_DEPRECATED,
-CONFIG_ENABLE_MUST_CHECK and CONFIG_DEBUG_INFO disabled when necessary.
+--------------020006040506090205010602
+Content-Type: text/plain;
+ name="next11-boot"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="next11-boot"
 
-Below is a summary of the state of the merge.
+Using 007bc904 bytes for initrd buffer
+Please wait, loading kernel...
+Allocated 01100000 bytes for kernel @ 02300000
+   Elf64 kernel loaded...
+Loading ramdisk...
+ramdisk loaded 007bc904 @ 03400000
+OF stdout device is: /vdevice/vty@30000000
+Preparing to boot Linux version 2.6.30-rc5-autotest-next-20090511 (root@mpower6lp5) (gcc version 4.3.2 [gcc-4_3-branch revision 141291] (SUSE Linux) ) #1 SMP Mon May 11 16:01:58 IST 2009
+Calling ibm,client-architecture... done
+command line: root=/dev/sda3 sysrq=1 insmod=sym53c8xx insmod=ipr crashkernel=512M-:256M IDENT=1242039097 
+memory layout at init:
+  alloc_bottom : 0000000003bc0000
+  alloc_top    : 0000000008000000
+  alloc_top_hi : 0000000008000000
+  rmo_top      : 0000000008000000
+  ram_top      : 0000000008000000
+instantiating rtas at 0x00000000074e0000... done
+boot cpu hw idx 0000000000000000
+copying OF device tree...
+Building dt strings...
+Building dt structure...
+Device tree strings 0x0000000003bd0000 -> 0x0000000003bd15c2
+Device tree struct  0x0000000003be0000 -> 0x0000000003c00000
+Calling quiesce...
+returning from prom_init
+Crash kernel location must be 0x2000000
+Reserving 256MB of memory at 32MB for crashkernel (System RAM: 4096MB)
+Phyp-dump disabled at boot time
+Using pSeries machine description
+Using 1TB segments
+Found initrd at 0xc000000003400000:0xc000000003bbc904
+console [udbg0] enabled
+Partition configured for 2 cpus.
+CPU maps initialized for 2 threads per core
+Starting Linux PPC64 #1 SMP Mon May 11 16:01:58 IST 2009
+-----------------------------------------------------
+ppc64_pft_size                = 0x1a
+physicalMemorySize            = 0x100000000
+htab_hash_mask                = 0x7ffff
+-----------------------------------------------------
+Initializing cgroup subsys cpuset
+Initializing cgroup subsys cpu
+Linux version 2.6.30-rc5-autotest-next-20090511 (root@mpower6lp5) (gcc version 4.3.2 [gcc-4_3-branch revision 141291] (SUSE Linux) ) #1 SMP Mon May 11 16:01:58 IST 2009
+[boot]0012 Setup Arch
+EEH: No capable adapters found
+PPC64 nvram contains 15360 bytes
+Zone PFN ranges:
+  DMA      0x00000000 -> 0x00010000
+  Normal   0x00010000 -> 0x00010000
+Movable zone start PFN for each node
+early_node_map[2] active PFN ranges
+    2: 0x00000000 -> 0x0000e000
+    3: 0x0000e000 -> 0x00010000
+Could not find start_pfn for node 0
+[boot]0015 Setup Done
+Built 3 zonelists in Node order, mobility grouping on.  Total pages: 65472
+Policy zone: DMA
+Kernel command line: root=/dev/sda3 sysrq=1 insmod=sym53c8xx insmod=ipr crashkernel=512M-:256M IDENT=1242039097 
+Experimental hierarchical RCU implementation.
+RCU-based detection of stalled CPUs is enabled.
+Experimental hierarchical RCU init done.
+NR_IRQS:512
+[boot]0020 XICS Init
+[boot]0021 XICS Done
+PID hash table entries: 4096 (order: 12, 32768 bytes)
+clocksource: timebase mult[7d0000] shift[22] registered
+Console: colour dummy device 80x25
+console handover: boot [udbg0] -> real [hvc0]
+allocated 2621440 bytes of page_cgroup
+please try cgroup_disable=memory option if you don't want
+freeing bootmem node 2
+freeing bootmem node 3
+Memory: 3881920k/4194304k available (8896k kernel code, 312384k reserved, 2048k data, 4287k bss, 448k init)
+Calibrating delay loop... 1022.36 BogoMIPS (lpj=5111808)
+Security Framework initialized
+SELinux:  Disabled at boot.
+Dentry cache hash table entries: 524288 (order: 6, 4194304 bytes)
+Inode-cache hash table entries: 262144 (order: 5, 2097152 bytes)
+Mount-cache hash table entries: 4096
+Initializing cgroup subsys ns
+Initializing cgroup subsys cpuacct
+Initializing cgroup subsys memory
+Initializing cgroup subsys devices
+Initializing cgroup subsys freezer
+Processor 1 found.
+Brought up 2 CPUs
+net_namespace: 1936 bytes
+NET: Registered protocol family 16
+IBM eBus Device Driver
+PCI: Probing PCI hardware
+bio: create slab <bio-0> at 0
+usbcore: registered new interface driver usbfs
+usbcore: registered new interface driver hub
+usbcore: registered new device driver usb
+Failed to register trace events module notifier
+NET: Registered protocol family 2
+IP route cache hash table entries: 32768 (order: 2, 262144 bytes)
+TCP established hash table entries: 131072 (order: 5, 2097152 bytes)
+TCP bind hash table entries: 65536 (order: 5, 2097152 bytes)
+TCP: Hash tables configured (established 131072 bind 65536)
+TCP reno registered
+NET: Registered protocol family 1
+Unpacking initramfs...
+IOMMU table initialized, virtual merging enabled
+audit: initializing netlink socket (disabled)
+type=2000 audit(1242039145.533:1): initialized
+Kprobe smoke test started
+Kprobe smoke test passed successfully
+HugeTLB registered 16 MB page size, pre-allocated 0 pages
+HugeTLB registered 16 GB page size, pre-allocated 0 pages
+VFS: Disk quotas dquot_6.5.2
+Dquot-cache hash table entries: 8192 (order 0, 65536 bytes)
+Btrfs loaded
+msgmni has been set to 7580
+alg: No test for stdrng (krng)
+Block layer SCSI generic (bsg) driver version 0.4 loaded (major 254)
+io scheduler noop registered
+io scheduler anticipatory registered
+io scheduler deadline registered
+io scheduler cfq registered (default)
+pci_hotplug: PCI Hot Plug PCI Core version: 0.5
+rpaphp: RPA HOT Plug PCI Controller Driver version: 0.1
+Generic RTC Driver v1.07
+Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
+pmac_zilog: 0.6 (Benjamin Herrenschmidt <benh@kernel.crashing.org>)
+input: Macintosh mouse button emulation as /devices/virtual/input/input0
+Uniform Multi-Platform E-IDE driver
+ide-gd driver 1.18
+IBM eHEA ethernet device driver (Release EHEA_0101)
+ehea: eth0: Jumbo frames are disabled
+ehea: eth0 -> logical port id #2
+ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
+ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
+mice: PS/2 mouse device common for all mice
+EDAC MC: Ver: 2.1.0 May 11 2009
+usbcore: registered new interface driver hiddev
+usbcore: registered new interface driver usbhid
+usbhid: v2.6:USB HID core driver
+TCP cubic registered
+NET: Registered protocol family 15
+registered taskstats version 1
+Freeing unused kernel memory: 448k freed
+doing fast boot
+SysRq : Changing Loglevel
+Loglevel set to 1
+BUG: spinlock bad magic on CPU#1, modprobe/63
+Unable to handle kernel paging request for data at address 0xffffc994838
+Faulting instruction address: 0xc00000000035f5a8
+Oops: Kernel access of bad area, sig: 11 [#1]
+SMP NR_CPUS=1024 DEBUG_PAGEALLOC NUMA pSeries
+Modules linked in: scsi_mod(+)
+NIP: c00000000035f5a8 LR: c00000000035f58c CTR: 0000000000136f8c
+REGS: c0000000c7d03500 TRAP: 0300   Not tainted  (2.6.30-rc5-autotest-next-20090511)
+MSR: 8000000000009032 <EE,ME,IR,DR>  CR: 28222484  XER: 0000000f
+DAR: 00000ffffc994838, DSISR: 0000000040000000
+TASK = c0000000c7cf0a80[63] 'modprobe' THREAD: c0000000c7d00000 CPU: 1
+GPR00: c00000000035f58c c0000000c7d03780 c000000000aaeed8 0000000000000031 
+GPR04: 0000000000000000 00000000585cf4e0 0000000000673580 80000000565a6cc0 
+GPR08: 0000000000000000 c0000000009ebf50 0000000000000000 c0000000009ebf38 
+GPR12: 0000000028222482 c000000000b82600 0000000000000000 0000000000000000 
+GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
+GPR20: 0000000000000018 ffffffffffffffff c0000000009bbe40 0000000000000010 
+GPR24: 0000000000210d00 c0000000c6caff80 c0000000dfc732a0 c000000000f61380 
+GPR28: c0000000007c8350 c0000000008a4280 c000000000a2f928 00000ffffc994550 
+NIP [c00000000035f5a8] .spin_bug+0x90/0xd4
+LR [c00000000035f58c] .spin_bug+0x74/0xd4
+Call Trace:
+[c0000000c7d03780] [c00000000035f58c] .spin_bug+0x74/0xd4 (unreliable)
+[c0000000c7d03810] [c00000000035f890] ._raw_spin_lock+0x48/0x184
+[c0000000c7d038b0] [c0000000005d67d8] ._spin_lock+0x10/0x24
+[c0000000c7d03920] [c00000000013fbdc] .__slab_alloc_page+0x344/0x3cc
+[c0000000c7d039e0] [c000000000141168] .kmem_cache_alloc+0x13c/0x21c
+[c0000000c7d03aa0] [c000000000141b04] .kmem_cache_create+0x294/0x2a8
+[c0000000c7d03b90] [d000000000ea14cc] .scsi_init_queue+0x38/0x170 [scsi_mod]
+[c0000000c7d03c20] [d000000000ea13c8] .init_scsi+0x1c/0xe8 [scsi_mod]
+[c0000000c7d03ca0] [c0000000000092c0] .do_one_initcall+0x80/0x19c
+[c0000000c7d03d90] [c0000000000c0540] .SyS_init_module+0xe0/0x244
+[c0000000c7d03e30] [c000000000008534] syscall_exit+0x0/0x40
+Instruction dump:
+7f84e378 e87e8020 38c604d0 e8e902ea 4827fced 60000000 2fbf0000 80bd0004 
+409e0010 e8de8028 38e0ffff 4800000c <e8ff02ea> 38df04d0 7fa4eb78 811d0008 
+---[ end trace f725820a6fa9dbb7 ]---
+/init: line 21:    63 Segmentation fault      modprobe $file
+Creating device nodes with udev
+udevd version 128 started
 
-We are up to 136 trees (counting Linus' and 18 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
 
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
+After the udevadm settle timeout, the events queue contains:
 
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
+632: /devices/vio/30000007
 
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Boot logging started on /dev/hvc0(/dev/console) at Mon May 11 10:52:56 2009
 
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging dwmw2/master
-Merging arm/devel
-CONFLICT (content): Merge conflict in arch/arm/Kconfig
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging mips/mips-for-linux-next
-Merging parisc/master
-Merging powerpc/next
-Merging 4xx/next
-Merging galak/next
-Merging pxa/for-next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging x86/auto-x86-next
-Merging xtensa/master
-Merging configfs/linux-next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging v9fs/for-next
-CONFLICT (content): Merge conflict in net/9p/protocol.c
-Merging ubifs/linux-next
-Merging xfs/master
-Merging tip-core/auto-core-next
-Merging cpus4096/auto-cpus4096-next
-Merging tracing/auto-tracing-next
-Merging genirq/auto-genirq-next
-Merging safe-poison-pointers/auto-safe-poison-pointers-next
-Merging sched/auto-sched-next
-Merging stackprotector/auto-stackprotector-next
-Merging timers/auto-timers-next
-Merging pci/linux-next
-Merging quilt/device-mapper
-Merging hid/for-next
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging quota/for_next
-Merging kbuild/master
-[master 7ed7512] Revert "initconst adjustments"
-Merging ide/for-next
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/master
-Merging dlm/next
-Merging scsi/master
-CONFLICT (content): Merge conflict in include/Kbuild
-Merging async_tx/next
-Merging udf/for_next
-Merging net/master
-CONFLICT (content): Merge conflict in include/linux/mmc/sdio_ids.h
-Merging wireless/master
-[master fbdc23d] Revert "rfkill: remove user_claim stuff"
-Merging mtd/master
-Merging crypto/master
-Merging vfs/for-next
-CONFLICT (content): Merge conflict in fs/fuse/inode.c
-Merging sound/for-next
-Merging cpufreq/next
-Merging quilt/rr
-CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/cpufreq/acpi-cpuf=
-req.c
-Merging cifs/master
-Merging mmc/next
-Merging input/next
-Merging bkl-removal/bkl-removal
-Merging lsm/for-next
-Merging block/for-next
-CONFLICT (content): Merge conflict in drivers/block/hd.c
-CONFLICT (content): Merge conflict in drivers/block/mg_disk.c
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging quilt/ttydev
-Merging agp/agp-next
-Merging generic-ipi/auto-generic-ipi-next
-Merging oprofile/auto-oprofile-next
-Merging fastboot/auto-fastboot-next
-Merging sparseirq/auto-sparseirq-next
-Merging iommu/auto-iommu-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-CONFLICT (content): Merge conflict in drivers/pci/intel-iommu.c
-CONFLICT (content): Merge conflict in drivers/pci/intr_remapping.c
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging omap/for-next
-Merging quilt/aoe
-Merging kmemleak/kmemleak
-CONFLICT (delete/modify): arch/x86/kernel/vmlinux_32.lds.S deleted in HEAD =
-and modified in kmemleak/kmemleak. Version kmemleak/kmemleak of arch/x86/ke=
-rnel/vmlinux_32.lds.S left in tree.
-CONFLICT (delete/modify): arch/x86/kernel/vmlinux_64.lds.S deleted in HEAD =
-and modified in kmemleak/kmemleak. Version kmemleak/kmemleak of arch/x86/ke=
-rnel/vmlinux_64.lds.S left in tree.
-CONFLICT (content): Merge conflict in lib/Kconfig.debug
-CONFLICT (content): Merge conflict in mm/slob.c
-$ git rm -f arch/x86/kernel/vmlinux_32.lds.S arch/x86/kernel/vmlinux_64.lds=
-.S
-Applying: kmemleak: fixup for x86 vmlinux.ld.S merge
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging quilt/driver-core
-CONFLICT (content): Merge conflict in init/main.c
-Merging quilt/usb
-CONFLICT (content): Merge conflict in drivers/usb/serial/sierra.c
-Merging quilt/staging
-CONFLICT (content): Merge conflict in drivers/staging/rt2860/common/mlme.c
-CONFLICT (content): Merge conflict in drivers/staging/rt2870/common/mlme.c
-CONFLICT (content): Merge conflict in drivers/staging/rt2870/rt2870.h
-CONFLICT (content): Merge conflict in drivers/staging/rt3070/common/mlme.c
-Merging scsi-post-merge/master
 
---Signature=_Mon__11_May_2009_16_14_42_+1000_pwIp5=sPox/ll8/t
-Content-Type: application/pgp-signature
+After the udevadm settle timeout, the events queue contains:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+632: /devices/vio/30000007
 
-iEYEARECAAYFAkoHwlIACgkQjjKRsyhoI8yjKQCfYDxK2QAC/BaMQX8G5ZOHaaQT
-4PUAoKZTEX26Al2AgqY7EiFtGwh7++20
-=/0hE
------END PGP SIGNATURE-----
 
---Signature=_Mon__11_May_2009_16_14_42_+1000_pwIp5=sPox/ll8/t--
+
+
+After the udevadm settle timeout, the events queue contains:
+
+632: /devices/vio/30000007
+
+
+
+
+After the udevadm settle timeout, the events queue contains:
+
+632: /devices/vio/30000007
+
+
+Waiting for device /dev/sda3 to appear: ..............................Could not find /dev/sda3.
+Want me to fall back to /dev/sda3? (Y/n) 
+
+
+--------------020006040506090205010602--
