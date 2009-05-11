@@ -1,56 +1,58 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Re: [PowerPC] Next May 8 boot failure: OOPS during ibmveth moduleinit
-Date: Mon, 11 May 2009 22:37:09 +0530
-Message-ID: <4A085B3D.5000806@in.ibm.com>
-References: <20090508180251.f53f204e.sfr@canb.auug.org.au>  <4A042B20.4090903@in.ibm.com> <20090508.125722.54378771.davem@davemloft.net> <20090508223332.GA4881@psychotron.englab.brq.redhat.com>
+From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Subject: Re: [PATCH -next] soc_camera: depends on I2C
+Date: Mon, 11 May 2009 19:53:50 +0200 (CEST)
+Message-ID: <Pine.LNX.4.64.0905111953300.5399@axis700.grange>
+References: <20090511161442.3e9d9cb9.sfr@canb.auug.org.au> <4A0853FE.6060709@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp07.au.ibm.com ([202.81.31.140]:37925 "EHLO
-	e23smtp07.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751881AbZEKRHN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 May 2009 13:07:13 -0400
-In-Reply-To: <20090508223332.GA4881@psychotron.englab.brq.redhat.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jiri Pirko <jpirko@redhat.com>
-Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org, sfr@canb.auug.org.au, netdev@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756794AbZEKRxz@vger.kernel.org>
+In-Reply-To: <4A0853FE.6060709@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>
+List-Id: linux-next.vger.kernel.org
 
-Jiri Pirko wrote:
-> Fri, May 08, 2009 at 09:57:22PM CEST, davem@davemloft.net wrote:
->   
->> From: Sachin Sant <sachinp@in.ibm.com>
->> Date: Fri, 08 May 2009 18:22:48 +0530
->>
->>     
->>> Todays Next failed to boot on a Power6 JS22 blade with following oops.
->>>       
->> Jiri, I suspect this might be your address list changes.
->>
->> Although that's just a guess.  But please take a look.
->>     
->
-> Hmm, only thing I see might cause the problem would be if calling __hw_addr_add
-> in dev_addr_init fails, then dev->dev_addr would contain zeroes (which looks
-> this is not the case). But in this case the oops would appear earlier (in
-> ibmveth_probe dev_addr memcpy).
->
-> Will do the patch which checks the result to behave correctly in case of oom
-> but this imho this wouldn't help. Strange, I will dig into this more tomorrow.
->   
-I can recreate this problem with today's Next release as well. Let me 
-know if you want me to try
-out any thing to debug this problem.
+On Mon, 11 May 2009, Randy Dunlap wrote:
 
-Thanks
--Sachin
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> soc_camera uses i2c_*() functions and has build errors when CONFIG_I2C=n:
+> 
+> ERROR: "i2c_new_device" [drivers/media/video/soc_camera.ko] undefined!
+> ERROR: "i2c_get_adapter" [drivers/media/video/soc_camera.ko] undefined!
+> ERROR: "i2c_put_adapter" [drivers/media/video/soc_camera.ko] undefined!
+> ERROR: "i2c_unregister_device" [drivers/media/video/soc_camera.ko] undefined!
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 
--- 
+Thanks, applied.
 
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+Guennadi
+
+> ---
+>  drivers/media/video/Kconfig |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> --- linux-next-20090511.orig/drivers/media/video/Kconfig
+> +++ linux-next-20090511/drivers/media/video/Kconfig
+> @@ -694,7 +694,7 @@ config VIDEO_CAFE_CCIC
+>  
+>  config SOC_CAMERA
+>  	tristate "SoC camera support"
+> -	depends on VIDEO_V4L2 && HAS_DMA
+> +	depends on VIDEO_V4L2 && HAS_DMA && I2C
+>  	select VIDEOBUF_GEN
+>  	help
+>  	  SoC Camera is a common API to several cameras, not connecting
+> 
+> 
+> -- 
+> ~Randy
+> LPC 2009, Sept. 23-25, Portland, Oregon
+> http://linuxplumbersconf.org/2009/
+> 
+
+---
+Guennadi Liakhovetski, Ph.D.
+Freelance Open-Source Software Developer
+http://www.open-technology.de/
