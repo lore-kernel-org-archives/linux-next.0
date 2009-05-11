@@ -1,40 +1,43 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] kvm: fix build error: add missing semi-colon
-Date: Mon, 11 May 2009 09:32:38 -0700
-Message-ID: <4A085326.3030707@oracle.com>
+Subject: [PATCH -next] soc_camera: depends on I2C
+Date: Mon, 11 May 2009 09:36:14 -0700
+Message-ID: <4A0853FE.6060709@oracle.com>
 References: <20090511161442.3e9d9cb9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <kvm-owner@vger.kernel.org>
+Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <20090511161442.3e9d9cb9.sfr@canb.auug.org.au>
-Sender: kvm-owner@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, avi@redhat.com, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, g.liakhovetski@gmx.de, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>
 List-Id: linux-next.vger.kernel.org
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Add missing ; to fix build error:
+soc_camera uses i2c_*() functions and has build errors when CONFIG_I2C=n:
 
-arch/x86/kvm/x86.c:1259: error: expected',' or ';' before 'const'
+ERROR: "i2c_new_device" [drivers/media/video/soc_camera.ko] undefined!
+ERROR: "i2c_get_adapter" [drivers/media/video/soc_camera.ko] undefined!
+ERROR: "i2c_put_adapter" [drivers/media/video/soc_camera.ko] undefined!
+ERROR: "i2c_unregister_device" [drivers/media/video/soc_camera.ko] undefined!
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 ---
- arch/x86/kvm/x86.c |    2 +-
+ drivers/media/video/Kconfig |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- linux-next-20090511.orig/arch/x86/kvm/x86.c
-+++ linux-next-20090511/arch/x86/kvm/x86.c
-@@ -1252,7 +1252,7 @@ static void do_cpuid_ent(struct kvm_cpui
- #ifdef CONFIG_X86_64
- 	unsigned f_lm = F(LM);
- #else
--	unsigned f_lm = 0
-+	unsigned f_lm = 0;
- #endif
+--- linux-next-20090511.orig/drivers/media/video/Kconfig
++++ linux-next-20090511/drivers/media/video/Kconfig
+@@ -694,7 +694,7 @@ config VIDEO_CAFE_CCIC
  
- 	/* cpuid 1.edx */
+ config SOC_CAMERA
+ 	tristate "SoC camera support"
+-	depends on VIDEO_V4L2 && HAS_DMA
++	depends on VIDEO_V4L2 && HAS_DMA && I2C
+ 	select VIDEOBUF_GEN
+ 	help
+ 	  SoC Camera is a common API to several cameras, not connecting
 
 
 -- 
