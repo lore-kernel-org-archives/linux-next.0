@@ -1,60 +1,57 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: driver-core tree build failure
-Date: Mon, 11 May 2009 21:05:18 -0700
-Message-ID: <20090512040518.GA2407@kroah.com>
-References: <20090512134401.a251bb22.sfr@canb.auug.org.au>
+From: Nick Piggin <npiggin@suse.de>
+Subject: Re: Next May 11 : BUG during scsi initialization
+Date: Tue, 12 May 2009 06:57:16 +0200
+Message-ID: <20090512045716.GC32535@wotan.suse.de>
+References: <20090511161442.3e9d9cb9.sfr@canb.auug.org.au> <4A081002.4050802@in.ibm.com> <20090511115233.GB8112@parisc-linux.org> <4A081437.7000409@in.ibm.com> <20090511122135.GC8112@parisc-linux.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:40174 "EHLO coco.kroah.org"
+Received: from cantor.suse.de ([195.135.220.2]:58204 "EHLO mx1.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750769AbZELEIz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 12 May 2009 00:08:55 -0400
+	id S1750769AbZELE5U (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 May 2009 00:57:20 -0400
 Content-Disposition: inline
-In-Reply-To: <20090512134401.a251bb22.sfr@canb.auug.org.au>
+In-Reply-To: <20090511122135.GC8112@parisc-linux.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, Roel Kluin <roel.kluin@gmail.com>
+To: Matthew Wilcox <matthew@wil.cx>
+Cc: Sachin Sant <sachinp@in.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>, linuxppc-dev@ozlabs.org, Pekka Enberg <penberg@cs.helsinki.fi>
 
-On Tue, May 12, 2009 at 01:44:01PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On Mon, May 11, 2009 at 06:21:35AM -0600, Matthew Wilcox wrote:
+> On Mon, May 11, 2009 at 05:34:07PM +0530, Sachin Sant wrote:
+> > Matthew Wilcox wrote:
+> >> On Mon, May 11, 2009 at 05:16:10PM +0530, Sachin Sant wrote:
+> >>   
+> >>> Today's Next tree failed to boot on a Power6 box with following BUG :
+> >>
+> >> This doesn't actually appear to be a SCSI bug ... it looks like SCSI tried
+> >> to allocate memory and things went wrong in the memory allocator:
+> >>
+> >> [c0000000c7d038b0] [c0000000005d67d8] ._spin_lock+0x10/0x24
+> >> [c0000000c7d03920] [c00000000013fbdc] .__slab_alloc_page+0x344/0x3cc
+> >> [c0000000c7d039e0] [c000000000141168] .kmem_cache_alloc+0x13c/0x21c
+> >> [c0000000c7d03aa0] [c000000000141b04] .kmem_cache_create+0x294/0x2a8
+> >> [c0000000c7d03b90] [d000000000ea14cc] .scsi_init_queue+0x38/0x170 [scsi_mod]
+> >>
+> >> Which memory allocator did you have selected (SLAB, SLUB, SLOB, SLQB)?
+> >>   
+> > Default one. SLQB
+> >
+> > CONFIG_SLQB_ALLOCATOR=y
+> > CONFIG_SLQB=y
+> >
+> > Page size is 64K with Config DEBUG_PAGEALLOC set.
+> >
+> > CONFIG_PPC_HAS_HASH_64K=y
+> > CONFIG_PPC_64K_PAGES=y
+> > CONFIG_DEBUG_PAGEALLOC=y
 > 
-> Today's linux-next build (powerpc_ppc64_defconfig) failed like this:
-> 
-> In file included from arch/powerpc/platforms/ps3/platform.h:28,
->                  from arch/powerpc/platforms/ps3/mm.c:32:
-> arch/powerpc/include/asm/ps3.h: In function 'ps3_system_bus_set_driver_data':
-> arch/powerpc/include/asm/ps3.h:424: error: 'struct device' has no member named 'driver_data'
-> arch/powerpc/include/asm/ps3.h: In function 'ps3_system_bus_get_driver_data':
-> arch/powerpc/include/asm/ps3.h:429: error: 'struct device' has no member named 'driver_data'
-> 
-> Caused (obviously) by commit 9499952d8efc857406365bfc04079ff1e85660ff
-> ("Driver core: move dev_get/set_drvdata to drivers/base/dd.c") which I
-> have reverted.
-> 
-> Grep is your friend ...
+> Hm.  We've seen some similar problems at Intel while doing database
+> performance tests with SLQB.  Any ideas, Nick?
 
-Do you know how many false-positives there currently are for hitting
-driver_data?  It's insane...  I got 'make allmodconfig' working for
-i386, x86-64, and s390, and I thought ps3 as well, sorry about that.
+Hmm, I think (hope) your problems were fixed with the recent memory
+coruption bug fix for SLQB. (if not, let me know)
 
-> Actually there is a patch for this ...
-> http://patchwork.ozlabs.org/patch/27061/ ... also for another ...
-> http://patchwork.ozlabs.org/patch/27062/
-> 
-> Please leave the above commit out of the tree until you have at least
-> fixed all the in tree users.
-
-I thought I had.  This was my way of shaking out the residue as I don't
-have a working ppc cross-compiler anymore :(
-
-I'll add the above two patches (don't know if the second one needs it)
-for tomorrow.
-
-Roel, do you have any other patches doing this that I haven't picked up
-yet?
-
-thanks,
-
-greg k-h
+This one possibly looks like a problem with remote memory allocation
+or memory hotplug or something like that. I'll do a bit of code
+review....
