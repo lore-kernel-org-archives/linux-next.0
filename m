@@ -1,75 +1,57 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: [PATCH] Staging: agnx: switch config_interface to bss_info_changed
-Date: Tue, 12 May 2009 15:23:13 +0400
-Message-ID: <1242127393-4298-1-git-send-email-a.beregalov@gmail.com>
+From: Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: [PATCH] viocd: needs to depend on BLOCK
+Date: Tue, 12 May 2009 13:28:35 +0200
+Message-ID: <20090512112834.GJ4140@kernel.dk>
+References: <1242123655-4104-1-git-send-email-a.beregalov@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rv-out-0506.google.com ([209.85.198.237]:36168 "EHLO
-	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759218AbZELLXY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 May 2009 07:23:24 -0400
+Received: from brick.kernel.dk ([93.163.65.50]:60404 "EHLO kernel.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753738AbZELL2e (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 May 2009 07:28:34 -0400
+Content-Disposition: inline
+In-Reply-To: <1242123655-4104-1-git-send-email-a.beregalov@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: gregkh@suse.de
-Cc: johannes@sipsolutions.net, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Beregalov <a.beregalov@gmail.com>
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: benh@kernel.crashing.org, linux-next@vger.kernel.org
 
-Fix this build error:
-drivers/staging/agnx/pci.c: In function 'agnx_config_interface':
-drivers/staging/agnx/pci.c:315: error: dereferencing pointer to incomplete type
-..
-drivers/staging/agnx/pci.c:424: error: unknown field 'config_interface' specified in initializer
+On Tue, May 12 2009, Alexander Beregalov wrote:
+> Fix this build error when CONFIG_BLOCK is not set:
+> drivers/cdrom/viocd.c: In function 'viocd_blk_open':
+> drivers/cdrom/viocd.c:156: error: dereferencing pointer to incomplete type
+> drivers/cdrom/viocd.c: In function 'viocd_blk_release':
+> drivers/cdrom/viocd.c:162: error: dereferencing pointer to incomplete type
+> drivers/cdrom/viocd.c: In function 'viocd_blk_ioctl':
+> drivers/cdrom/viocd.c:170: error: dereferencing pointer to incomplete type
+> drivers/cdrom/viocd.c: In function 'viocd_blk_media_changed':
+> drivers/cdrom/viocd.c:176: error: dereferencing pointer to incomplete type
+> ...
 
-config_interface was removed in 2d0ddec5b2b
-("mac80211: unify config_interface and bss_info_changed")
+Added to 2.6.30 pending fixes.
 
-Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
----
- drivers/staging/agnx/pci.c |   15 +++++++++------
- 1 files changed, 9 insertions(+), 6 deletions(-)
+> 
+> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+> ---
+>  arch/powerpc/platforms/iseries/Kconfig |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/powerpc/platforms/iseries/Kconfig b/arch/powerpc/platforms/iseries/Kconfig
+> index 647e877..47a20cf 100644
+> --- a/arch/powerpc/platforms/iseries/Kconfig
+> +++ b/arch/powerpc/platforms/iseries/Kconfig
+> @@ -17,6 +17,7 @@ config VIODASD
+>  
+>  config VIOCD
+>  	tristate "iSeries Virtual I/O CD support"
+> +	depends on BLOCK
+>  	select VIOPATH
+>  	help
+>  	  If you are running Linux on an IBM iSeries system and you want to
+> -- 
+> 1.6.3
+> 
 
-diff --git a/drivers/staging/agnx/pci.c b/drivers/staging/agnx/pci.c
-index 61b15fa..0df7d43 100644
---- a/drivers/staging/agnx/pci.c
-+++ b/drivers/staging/agnx/pci.c
-@@ -302,14 +302,18 @@ static int agnx_config(struct ieee80211_hw *dev, u32 changed)
- 	return 0;
- }
- 
--static int agnx_config_interface(struct ieee80211_hw *dev,
--				 struct ieee80211_vif *vif,
--				 struct ieee80211_if_conf *conf)
-+static void agnx_bss_info_changed(struct ieee80211_hw *dev,
-+				  struct ieee80211_vif *vif,
-+				  struct ieee80211_bss_conf *conf,
-+				  u32 changed)
- {
- 	struct agnx_priv *priv = dev->priv;
- 	void __iomem *ctl = priv->ctl;
- 	AGNX_TRACE;
- 
-+	if (!(changed & BSS_CHANGED_BSSID))
-+		return;
-+
- 	spin_lock(&priv->lock);
- 
- 	if (memcmp(conf->bssid, priv->bssid, ETH_ALEN)) {
-@@ -322,8 +326,7 @@ static int agnx_config_interface(struct ieee80211_hw *dev,
- 		agnx_write32(ctl, AGNX_BM_MTSM, 0xff & ~0x1);
- 	}
- 	spin_unlock(&priv->lock);
--	return 0;
--} /* agnx_config_interface */
-+} /* agnx_bss_info_changed */
- 
- 
- static void agnx_configure_filter(struct ieee80211_hw *dev,
-@@ -421,7 +424,7 @@ static struct ieee80211_ops agnx_ops = {
- 	.add_interface		= agnx_add_interface,
- 	.remove_interface	= agnx_remove_interface,
- 	.config			= agnx_config,
--	.config_interface	= agnx_config_interface,
-+	.bss_info_changed	= agnx_bss_info_changed,
- 	.configure_filter	= agnx_configure_filter,
- 	.get_stats		= agnx_get_stats,
- 	.get_tx_stats		= agnx_get_tx_stats,
 -- 
-1.6.3
+Jens Axboe
