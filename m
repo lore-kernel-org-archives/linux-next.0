@@ -1,43 +1,45 @@
-From: "J. Bruce Fields" <bfields-uC3wQj2KruNg9hUCZPvPmw@public.gmane.org>
-Subject: Re: next: build fails at fs/lockd/svclock.c
-Date: Mon, 11 May 2009 14:46:00 -0400
-Message-ID: <20090511184600.GD793@fieldses.org>
-References: <a4423d670905040623q48eb552ft3bd107d6aa71d63b@mail.gmail.com> <1241444370.5754.5.camel@heimdal.trondhjem.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: failed to fetch block tree
+Date: Tue, 12 May 2009 11:45:25 +1000
+Message-ID: <20090512114525.49677b33.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__12_May_2009_11_45_25_+1000_hBZw5glJVqVzrrwG"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55762 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756328AbZELBpa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 May 2009 21:45:30 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: linux-next@vger.kernel.org
+
+--Signature=_Tue__12_May_2009_11_45_25_+1000_hBZw5glJVqVzrrwG
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <1241444370.5754.5.camel-rJ7iovZKK19ZJLDQqaL3InhyD016LWXt@public.gmane.org>
-Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Trond Myklebust <trond.myklebust-41N18TsMXrtuMpJDpNschA@public.gmane.org>
-Cc: Alexander Beregalov <a.beregalov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Felix Blyakher <felixb-sJ/iWh9BUns@public.gmane.org>, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 04, 2009 at 09:39:30AM -0400, Trond Myklebust wrote:
-> On Mon, 2009-05-04 at 17:23 +0400, Alexander Beregalov wrote:
-> > Hi
-> > 
-> > Randconfig fails like this
-> > 
-> > fs/lockd/svclock.c: In function 'nlmsvc_freegrantargs':
-> > fs/lockd/svclock.c:330: error: implicit declaration of function
-> > 'locks_release_private'
-> > 
-> > caused by a9e61e25f9d2
-> > (lockd: call locks_release_private to cleanup per-filesystem state)
-> > 
-> > 
-> > # CONFIG_FILE_LOCKING is not set
-> > CONFIG_LOCKD=y
-> > --
-> 
-> See the posting "[PATCH v2] lockd: fix FILE_LOCKING=n build error" by
-> Randy Dunlap last Tuesday.
+Hi Jens,
 
-What happened to this--is it in some maintainer's tree now?
+I couldn't fetch the block tree this morning (connection timed out) so I
+have used the version from yesterday.
 
---b.
---
-To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__12_May_2009_11_45_25_+1000_hBZw5glJVqVzrrwG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkoI1LUACgkQjjKRsyhoI8zD0wCgqR1IiLGHpXnGIJKDe1f4kl3G
+5RkAoIeKKCfkaALzcExp/tyvoNIDmabU
+=13X9
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__12_May_2009_11_45_25_+1000_hBZw5glJVqVzrrwG--
