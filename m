@@ -1,57 +1,55 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: Re: [PATCH] Staging: agnx: switch config_interface to
-	bss_info_changed
-Date: Wed, 13 May 2009 00:15:21 +0400
-Message-ID: <a4423d670905121315g503f4f0ep6a60e9051a2aeb9d@mail.gmail.com>
-References: <1242127393-4298-1-git-send-email-a.beregalov@gmail.com>
-	 <20090512164448.GJ16247@kroah.com>
-	 <a4423d670905121037i3ea96b01s68367c082802684d@mail.gmail.com>
-	 <20090512190254.GB1957@kroah.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: driver-core tree build failure
+Date: Tue, 12 May 2009 17:13:17 -0700
+Message-ID: <20090513001317.GA15527@kroah.com>
+References: <20090512134401.a251bb22.sfr@canb.auug.org.au> <20090512040518.GA2407@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f158.google.com ([209.85.220.158]:53245 "EHLO
-	mail-fx0-f158.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751690AbZELUPW convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 May 2009 16:15:22 -0400
-In-Reply-To: <20090512190254.GB1957@kroah.com>
+Received: from kroah.org ([198.145.64.141]:51338 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758839AbZEMAQj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 May 2009 20:16:39 -0400
+Content-Disposition: inline
+In-Reply-To: <20090512040518.GA2407@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org
-Cc: gregkh@suse.de, johannes@sipsolutions.net, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Roel Kluin <roel.kluin@gmail.com>
 
-2009/5/12 Greg KH <greg@kroah.com>:
-> On Tue, May 12, 2009 at 09:37:56PM +0400, Alexander Beregalov wrote:
->> 2009/5/12 Greg KH <greg@kroah.com>:
->> > On Tue, May 12, 2009 at 03:23:13PM +0400, Alexander Beregalov wrot=
-e:
->> >> Fix this build error:
->> >> drivers/staging/agnx/pci.c: In function 'agnx_config_interface':
->> >> drivers/staging/agnx/pci.c:315: error: dereferencing pointer to i=
-ncomplete type
->> >> ..
->> >> drivers/staging/agnx/pci.c:424: error: unknown field 'config_inte=
-rface' specified in initializer
->> >>
->> >> config_interface was removed in 2d0ddec5b2b
->> >> ("mac80211: unify config_interface and bss_info_changed")
->> >
->> > I do not see that patch in Linus's tree. =C2=A0Is it in some other=
- tree
->> > (wireless?) and not yet in mainline?
->> Yes, it is in wireless from linux-next.
->> You asked to send patches based on linux-next, right?
->> Should I always mark patches for staging-next tree as [PATCH -next] =
-?
->
-> Hm, yes, -staging patches need to be against -next, but I have to be
-> able to build these somehow on my own without the wireless tree...
->
-> I think something like this might better go through the wireless tree=
- as
-> it depends on changes that happen there. =C2=A0Sound good to you?
-Ok, thanks Greg.
+On Mon, May 11, 2009 at 09:05:18PM -0700, Greg KH wrote:
+> On Tue, May 12, 2009 at 01:44:01PM +1000, Stephen Rothwell wrote:
+> > Hi Greg,
+> > 
+> > Today's linux-next build (powerpc_ppc64_defconfig) failed like this:
+> > 
+> > In file included from arch/powerpc/platforms/ps3/platform.h:28,
+> >                  from arch/powerpc/platforms/ps3/mm.c:32:
+> > arch/powerpc/include/asm/ps3.h: In function 'ps3_system_bus_set_driver_data':
+> > arch/powerpc/include/asm/ps3.h:424: error: 'struct device' has no member named 'driver_data'
+> > arch/powerpc/include/asm/ps3.h: In function 'ps3_system_bus_get_driver_data':
+> > arch/powerpc/include/asm/ps3.h:429: error: 'struct device' has no member named 'driver_data'
+> > 
+> > Caused (obviously) by commit 9499952d8efc857406365bfc04079ff1e85660ff
+> > ("Driver core: move dev_get/set_drvdata to drivers/base/dd.c") which I
+> > have reverted.
+> > 
+> > Grep is your friend ...
+> 
+> Do you know how many false-positives there currently are for hitting
+> driver_data?  It's insane...  I got 'make allmodconfig' working for
+> i386, x86-64, and s390, and I thought ps3 as well, sorry about that.
+> 
+> > Actually there is a patch for this ...
+> > http://patchwork.ozlabs.org/patch/27061/ ... also for another ...
+> > http://patchwork.ozlabs.org/patch/27062/
+> > 
+> > Please leave the above commit out of the tree until you have at least
+> > fixed all the in tree users.
 
-> If so, please send them to the wireless maintainer.
-John, will you apply it?
+I've now dropped the offending patch and will work to fix up the rest of
+these before adding it back.
+
+thanks,
+
+greg k-h
