@@ -1,55 +1,54 @@
-From: Greg KH <greg@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: driver-core tree build failure
-Date: Tue, 12 May 2009 17:13:17 -0700
-Message-ID: <20090513001317.GA15527@kroah.com>
-References: <20090512134401.a251bb22.sfr@canb.auug.org.au> <20090512040518.GA2407@kroah.com>
+Date: Wed, 13 May 2009 11:39:39 +1000
+Message-ID: <20090513113939.430f721d.sfr@canb.auug.org.au>
+References: <20090512134401.a251bb22.sfr@canb.auug.org.au>
+	<20090512040518.GA2407@kroah.com>
+	<20090513001317.GA15527@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__13_May_2009_11_39_39_+1000_+0YL7/USuVB0S4x."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:51338 "EHLO coco.kroah.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34110 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758839AbZEMAQj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 12 May 2009 20:16:39 -0400
-Content-Disposition: inline
-In-Reply-To: <20090512040518.GA2407@kroah.com>
+	id S1752916AbZEMBjp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 May 2009 21:39:45 -0400
+In-Reply-To: <20090513001317.GA15527@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>
 Cc: linux-next@vger.kernel.org, Roel Kluin <roel.kluin@gmail.com>
 
-On Mon, May 11, 2009 at 09:05:18PM -0700, Greg KH wrote:
-> On Tue, May 12, 2009 at 01:44:01PM +1000, Stephen Rothwell wrote:
-> > Hi Greg,
-> > 
-> > Today's linux-next build (powerpc_ppc64_defconfig) failed like this:
-> > 
-> > In file included from arch/powerpc/platforms/ps3/platform.h:28,
-> >                  from arch/powerpc/platforms/ps3/mm.c:32:
-> > arch/powerpc/include/asm/ps3.h: In function 'ps3_system_bus_set_driver_data':
-> > arch/powerpc/include/asm/ps3.h:424: error: 'struct device' has no member named 'driver_data'
-> > arch/powerpc/include/asm/ps3.h: In function 'ps3_system_bus_get_driver_data':
-> > arch/powerpc/include/asm/ps3.h:429: error: 'struct device' has no member named 'driver_data'
-> > 
-> > Caused (obviously) by commit 9499952d8efc857406365bfc04079ff1e85660ff
-> > ("Driver core: move dev_get/set_drvdata to drivers/base/dd.c") which I
-> > have reverted.
-> > 
-> > Grep is your friend ...
-> 
-> Do you know how many false-positives there currently are for hitting
-> driver_data?  It's insane...  I got 'make allmodconfig' working for
-> i386, x86-64, and s390, and I thought ps3 as well, sorry about that.
-> 
-> > Actually there is a patch for this ...
-> > http://patchwork.ozlabs.org/patch/27061/ ... also for another ...
-> > http://patchwork.ozlabs.org/patch/27062/
-> > 
-> > Please leave the above commit out of the tree until you have at least
-> > fixed all the in tree users.
+--Signature=_Wed__13_May_2009_11_39_39_+1000_+0YL7/USuVB0S4x.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I've now dropped the offending patch and will work to fix up the rest of
-these before adding it back.
+Hi Greg,
 
-thanks,
+On Tue, 12 May 2009 17:13:17 -0700 Greg KH <greg@kroah.com> wrote:
+>
+> I've now dropped the offending patch and will work to fix up the rest of
+> these before adding it back.
 
-greg k-h
+Thanks for that.  I have refetched the driver-core and usb trees for
+today's linux-next.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__13_May_2009_11_39_39_+1000_+0YL7/USuVB0S4x.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkoKJNsACgkQjjKRsyhoI8woDQCgo5XwACm5q1H1XAtEC7r1q3Ty
+mJIAnRjxD3IXqD5EMetLlASPdbPbrON4
+=ofQp
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__13_May_2009_11_39_39_+1000_+0YL7/USuVB0S4x.--
