@@ -1,43 +1,38 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: staging fails in next-20090514: drivers/staging/agnx/pci.o
-Date: Thu, 14 May 2009 08:46:57 -0700
-Message-ID: <20090514154657.GA2593@kroah.com>
-References: <20090514164120.200e5fe2.sfr@canb.auug.org.au> <20090514152308.GB5880@ikn.schottelius.org>
+From: David Woodhouse <dwmw2@infradead.org>
+Subject: Re: Next May 13:[drivers/base/firmware*] Bug while booting on x86
+Date: Thu, 14 May 2009 16:54:27 +0100
+Message-ID: <1242316467.3393.14.camel@macbook.infradead.org>
+References: <20090513164832.c8a0de7d.sfr@canb.auug.org.au>
+	 <4A0AC5E6.2010402@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:38397 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752138AbZENPui (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 14 May 2009 11:50:38 -0400
-Content-Disposition: inline
-In-Reply-To: <20090514152308.GB5880@ikn.schottelius.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756474AbZENPyo@vger.kernel.org>
+In-Reply-To: <4A0AC5E6.2010402@in.ibm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, May 14, 2009 at 05:23:08PM +0200, Nico -telmich- Schottelius wr=
-ote:
-> Hehe, just found the staging area today, in which agnx does not want
-> to be compiled:
->=20
->=20
->   CC [M]  drivers/staging/agnx/pci.o
-> drivers/staging/agnx/pci.c:64:3: warning: "/*" within comment
-> drivers/staging/agnx/pci.c:223:2: warning: "/*" within comment
-> drivers/staging/agnx/pci.c:307: warning: =E2=80=98struct ieee80211_if=
-_conf=E2=80=99 declared inside parameter list
-> drivers/staging/agnx/pci.c:307: warning: its scope is only this defin=
-ition or declaration, which is probably not what you want
-> drivers/staging/agnx/pci.c: In function =E2=80=98agnx_config_interfac=
-e=E2=80=99:
-> drivers/staging/agnx/pci.c:315: error: dereferencing pointer to incom=
-plete type
+On Wed, 2009-05-13 at 18:36 +0530, Sachin Sant wrote:
+> BUG: unable to handle kernel NULL pointer dereference at 0000050c
+> IP: [<c0119c5d>] kunmap+0x33/0x59
 
-Known error, due to changes in the wireless tree.  Patches have been
-sent to the wireless developer to help resolve these already.
+Oops. Does this fix it?
 
-thanks,
+--- a/drivers/base/firmware_class.c
++++ b/drivers/base/firmware_class.c
+@@ -328,7 +328,7 @@ firmware_data_write(struct kobject *kobj, struct
+bin_attribute *bin_attr,
+ 
+ 		memcpy(page_data + page_ofs, buffer, page_cnt);
+ 
+-		kunmap(page_data);
++		kunmap(fw_priv->pages[page_nr]);
+ 		buffer += page_cnt;
+ 		offset += page_cnt;
+ 		count -= page_cnt;
 
-greg k-h
+-- 
+David Woodhouse                            Open Source Technology Centre
+David.Woodhouse@intel.com                              Intel Corporation
