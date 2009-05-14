@@ -1,44 +1,43 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Re: Next May 13:[drivers/base/firmware*] Bug while booting on x86
-Date: Thu, 14 May 2009 21:12:25 +0530
-Message-ID: <4A0C3BE1.609@in.ibm.com>
-References: <20090513164832.c8a0de7d.sfr@canb.auug.org.au>  <4A0AC5E6.2010402@in.ibm.com> <4A0BACCA.5050103@in.ibm.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: staging fails in next-20090514: drivers/staging/agnx/pci.o
+Date: Thu, 14 May 2009 08:46:57 -0700
+Message-ID: <20090514154657.GA2593@kroah.com>
+References: <20090514164120.200e5fe2.sfr@canb.auug.org.au> <20090514152308.GB5880@ikn.schottelius.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp07.au.ibm.com ([202.81.31.140]:37497 "EHLO
-	e23smtp07.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752390AbZENPm3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 14 May 2009 11:42:29 -0400
-In-Reply-To: <4A0BACCA.5050103@in.ibm.com>
+Received: from kroah.org ([198.145.64.141]:38397 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752138AbZENPui (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 14 May 2009 11:50:38 -0400
+Content-Disposition: inline
+In-Reply-To: <20090514152308.GB5880@ikn.schottelius.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David.Woodhouse@intel.com
-Cc: LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Sachin Sant wrote:
-> Could be because of the following patch which last changed the
-> code in question.
->
-> firmware: speed up request_firmware()
-> http://patchwork.kernel.org/patch/17531/
->
-> I will try reverting this patch and check if that helps.
-The above mentioned patch seems to be the culprit. If i back out that
-patch, the machine boots fine.
+On Thu, May 14, 2009 at 05:23:08PM +0200, Nico -telmich- Schottelius wr=
+ote:
+> Hehe, just found the staging area today, in which agnx does not want
+> to be compiled:
+>=20
+>=20
+>   CC [M]  drivers/staging/agnx/pci.o
+> drivers/staging/agnx/pci.c:64:3: warning: "/*" within comment
+> drivers/staging/agnx/pci.c:223:2: warning: "/*" within comment
+> drivers/staging/agnx/pci.c:307: warning: =E2=80=98struct ieee80211_if=
+_conf=E2=80=99 declared inside parameter list
+> drivers/staging/agnx/pci.c:307: warning: its scope is only this defin=
+ition or declaration, which is probably not what you want
+> drivers/staging/agnx/pci.c: In function =E2=80=98agnx_config_interfac=
+e=E2=80=99:
+> drivers/staging/agnx/pci.c:315: error: dereferencing pointer to incom=
+plete type
 
-David let me know if i can provide any information to debug this
-issue.
+Known error, due to changes in the wireless tree.  Patches have been
+sent to the wireless developer to help resolve these already.
 
-Thanks
--Sachin
+thanks,
 
--- 
-
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+greg k-h
