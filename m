@@ -1,42 +1,43 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: Re: [PATCH 2/2] Staging: comedi: data.c should include delay.h
-Date: Wed, 13 May 2009 17:23:42 +0400
-Message-ID: <20090513132342.GA16280@orion>
-References: <1242219648-16165-1-git-send-email-a.beregalov@gmail.com> <1242219648-16165-2-git-send-email-a.beregalov@gmail.com>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Re: Next May 13:[drivers/base/firmware*] Bug while booting on x86
+Date: Thu, 14 May 2009 11:01:54 +0530
+Message-ID: <4A0BACCA.5050103@in.ibm.com>
+References: <20090513164832.c8a0de7d.sfr@canb.auug.org.au> <4A0AC5E6.2010402@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rv-out-0506.google.com ([209.85.198.224]:8908 "EHLO
-	rv-out-0506.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753765AbZEMNXw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 13 May 2009 09:23:52 -0400
-Content-Disposition: inline
-In-Reply-To: <1242219648-16165-2-git-send-email-a.beregalov@gmail.com>
+Received: from e28smtp04.in.ibm.com ([59.145.155.4]:40638 "EHLO
+	e28smtp04.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751058AbZENFb6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 14 May 2009 01:31:58 -0400
+In-Reply-To: <4A0AC5E6.2010402@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: gregkh@suse.de
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, David.Woodhouse@intel.com
 
-Fix this build error:
-.../data.c:86: error: implicit declaration of function 'udelay'
+Sachin Sant wrote:
+> Call Trace:
+> [<c02f417c>] ? firmware_data_write+0x1cb/0x211
+> [<c02f3fb1>] ? firmware_data_write+0x0/0x211
+> [<c01e618a>] ? write+0x113/0x14a
+Could be because of the following patch which last changed the
+code in question.
 
-Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
----
+firmware: speed up request_firmware()
+http://patchwork.kernel.org/patch/17531/
 
-This one is better.
+I will try reverting this patch and check if that helps.
 
- drivers/staging/comedi/kcomedilib/data.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+thanks
+-Sachin
 
-diff --git a/drivers/staging/comedi/kcomedilib/data.c b/drivers/staging/comedi/kcomedilib/data.c
-index 3e5fe2c..d808556 100644
---- a/drivers/staging/comedi/kcomedilib/data.c
-+++ b/drivers/staging/comedi/kcomedilib/data.c
-@@ -26,6 +26,7 @@
- #include "../comedidev.h"
- 
- #include <linux/string.h>
-+#include <linux/delay.h>
- 
- int comedi_data_write(void *dev, unsigned int subdev, unsigned int chan,
- 	unsigned int range, unsigned int aref, unsigned int data)
+-- 
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
