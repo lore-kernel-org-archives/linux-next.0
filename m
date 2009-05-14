@@ -1,38 +1,26 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Subject: Re: Next May 13:[drivers/base/firmware*] Bug while booting on x86
-Date: Thu, 14 May 2009 16:54:27 +0100
-Message-ID: <1242316467.3393.14.camel@macbook.infradead.org>
-References: <20090513164832.c8a0de7d.sfr@canb.auug.org.au>
-	 <4A0AC5E6.2010402@in.ibm.com>
+From: The Camelot Group <chesleykinsmen@bellnet.ca>
+Subject: =?iso-8859-1?B?KiqjMSwyMzAsMzEw?= GBP JACKPOT WIN**
+Date: Thu, 14 May 2009 11:56:27 -0400
+Message-ID: <20090514155634.YICE1679.simmts7-srv.bellnexxia.net@simip9-ac.srvr.bell.ca>
+Reply-To: cg_paycenter2009@8u8.hk
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756474AbZENPyo@vger.kernel.org>
-In-Reply-To: <4A0AC5E6.2010402@in.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from simmts7.bellnexxia.net ([206.47.199.165]:36840 "EHLO
+	simmts7-srv.bellnexxia.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753234AbZENP4d convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 14 May 2009 11:56:33 -0400
+Received: from simip9-ac.srvr.bell.ca ([206.47.199.87])
+          by simmts7-srv.bellnexxia.net
+          (InterMail vM.5.01.06.13 201-253-122-130-113-20050324) with ESMTP
+          id <20090514155634.YICE1679.simmts7-srv.bellnexxia.net@simip9-ac.srvr.bell.ca>
+          for <linux-next@vger.kernel.org>; Thu, 14 May 2009 11:56:34 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: info@winner.com
 
-On Wed, 2009-05-13 at 18:36 +0530, Sachin Sant wrote:
-> BUG: unable to handle kernel NULL pointer dereference at 0000050c
-> IP: [<c0119c5d>] kunmap+0x33/0x59
-
-Oops. Does this fix it?
-
---- a/drivers/base/firmware_class.c
-+++ b/drivers/base/firmware_class.c
-@@ -328,7 +328,7 @@ firmware_data_write(struct kobject *kobj, struct
-bin_attribute *bin_attr,
- 
- 		memcpy(page_data + page_ofs, buffer, page_cnt);
- 
--		kunmap(page_data);
-+		kunmap(fw_priv->pages[page_nr]);
- 		buffer += page_cnt;
- 		offset += page_cnt;
- 		count -= page_cnt;
-
--- 
-David Woodhouse                            Open Source Technology Centre
-David.Woodhouse@intel.com                              Intel Corporation
+You were selected for the sum of  =A31,230,310 GBP. Verify this mail im=
+mediately by sending in your information. This will include your name, =
+address, age, phone number etc to : cg_paycenter2009@8u8.hk
