@@ -1,47 +1,60 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: block tree build failure
-Date: Fri, 15 May 2009 12:38:29 +0900
-Message-ID: <4A0CE3B5.8070308@kernel.org>
-References: <20090513140413.b8a3c8d0.sfr@canb.auug.org.au>	 <4A0A9127.90307@kernel.org>	 <1242216433.4728.0.camel@mulgrave.int.hansenpartnership.com>	 <4A0CBB19.8060006@kernel.org> <1242354951.29670.11.camel@mulgrave>	 <4A0CD7D3.3000302@kernel.org> <1242357846.4060.2.camel@mulgrave>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: asm-generic tree build failure
+Date: Fri, 15 May 2009 14:18:53 +1000
+Message-ID: <20090515141853.59d2019b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__15_May_2009_14_18_53_+1000_Za0AQ7XZpY8mhXWc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:52356 "EHLO hera.kernel.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48183 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753985AbZEODin (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 14 May 2009 23:38:43 -0400
-In-Reply-To: <1242357846.4060.2.camel@mulgrave>
+	id S1751152AbZEOETD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 15 May 2009 00:19:03 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <jens.axboe@oracle.com>, linux-next@vger.kernel.org, James Smart <James.Smart@Emulex.Com>, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, Remis Lima Baima <remis.developer@googlemail.com>
 
-Hello, James.
+--Signature=_Fri__15_May_2009_14_18_53_+1000_Za0AQ7XZpY8mhXWc
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-James Bottomley wrote:
->> Ah... poor wording from me.  I meant the one based on merging and
->> monotonic commit accumulation without rebasing.
-> 
-> But that's not really possible here ... the only way to combine the two
-> incompatible trees now while maintaining bisectability is to hide a non
-> trivial patch in the merge point ... that's the worst practice of all.
+Hi Arnd,
 
-With proper commit message, I don't think straight merge would be that
-bad.  The amount of conflicting code isn't that large.  But we're
-talking about two extremes here.  Straight merging at one end and
-keeping temporary tree till the merge into Linus's tree happens.
+Today's linux-next build (powerpc_allnoconfig) failed like this:
 
-The problem with floating the block tree till the final merge is that
-it might make SCSI happy but SCSI isn't the only consumer.  It just
-doesn't scale.
+arch/powerpc/mm/tlb_hash32.c:65: error: expected declaration specifiers or =
+'...' before '(' token
+arch/powerpc/mm/tlb_hash32.c: In function 'flush_tlb_mm':
+arch/powerpc/mm/tlb_hash32.c:66: error: number of arguments doesn't match p=
+rototype
+arch/powerpc/include/asm/tlbflush.h:57: error: prototype declaration
+arch/powerpc/mm/tlb_hash32.c: At top level:
+arch/powerpc/mm/tlb_hash32.c:145: error: redefinition of 'flush_tlb_mm'
+arch/powerpc/mm/tlb_hash32.c:65: note: previous definition of 'flush_tlb_mm=
+' was here
 
-I don't really care about the specific merge order as long as there
-can be a mid synchronization point from which everyone can go on again
-and there are three trees involved and if there's any way to get a
-stable merge point from SCSI, things will work nicely.
+Caused by commit f8089f1f5eaf4925b0925e69cd311d7d1d423e6a ("asm-generic:
+Add missing generic tlb_flush definition").
 
-Thanks.
+I have dropped the asm-generic tree for today (since I have no earlier
+version).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
--- 
-tejun
+--Signature=_Fri__15_May_2009_14_18_53_+1000_Za0AQ7XZpY8mhXWc
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkoM7S0ACgkQjjKRsyhoI8zRXgCgjklaRgb7fWCoCy3bbY9jKpKU
+leUAoKRJa99/qZJydIOARKHj1VQ58Gxr
+=slrW
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__15_May_2009_14_18_53_+1000_Za0AQ7XZpY8mhXWc--
