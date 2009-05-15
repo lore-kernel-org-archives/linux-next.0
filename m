@@ -1,49 +1,46 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Re: Next May 13:[drivers/base/firmware*] Bug while booting on x86
-Date: Fri, 15 May 2009 16:58:31 +0530
-Message-ID: <4A0D51DF.4020108@in.ibm.com>
-References: <20090513164832.c8a0de7d.sfr@canb.auug.org.au>  <4A0AC5E6.2010402@in.ibm.com> <1242316467.3393.14.camel@macbook.infradead.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: asm-generic tree build failure
+Date: Fri, 15 May 2009 14:53:35 +0200
+Message-ID: <200905151453.36277.arnd@arndb.de>
+References: <20090515141853.59d2019b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp09.au.ibm.com ([202.81.31.142]:38656 "EHLO
-	e23smtp09.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751220AbZEOL2d (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 15 May 2009 07:28:33 -0400
-In-Reply-To: <1242316467.3393.14.camel@macbook.infradead.org>
+Received: from moutng.kundenserver.de ([212.227.126.171]:59439 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760556AbZEOMxs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 15 May 2009 08:53:48 -0400
+In-Reply-To: <20090515141853.59d2019b.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Remis Lima Baima <remis.developer@googlemail.com>
 
-David Woodhouse wrote:
-> Oops. Does this fix it?
->
-> --- a/drivers/base/firmware_class.c
-> +++ b/drivers/base/firmware_class.c
-> @@ -328,7 +328,7 @@ firmware_data_write(struct kobject *kobj, struct
-> bin_attribute *bin_attr,
->
->  		memcpy(page_data + page_ofs, buffer, page_cnt);
->
-> -		kunmap(page_data);
-> +		kunmap(fw_priv->pages[page_nr]);
->  		buffer += page_cnt;
->  		offset += page_cnt;
->  		count -= page_cnt;
-Thanks David. This patch fixed the issue.
+On Friday 15 May 2009, Stephen Rothwell wrote:
+> Hi Arnd,
+> 
+> Today's linux-next build (powerpc_allnoconfig) failed like this:
+> 
+> arch/powerpc/mm/tlb_hash32.c:65: error: expected declaration specifiers or '...' before '(' token
+> arch/powerpc/mm/tlb_hash32.c: In function 'flush_tlb_mm':
+> arch/powerpc/mm/tlb_hash32.c:66: error: number of arguments doesn't match prototype
+> arch/powerpc/include/asm/tlbflush.h:57: error: prototype declaration
+> arch/powerpc/mm/tlb_hash32.c: At top level:
+> arch/powerpc/mm/tlb_hash32.c:145: error: redefinition of 'flush_tlb_mm'
+> arch/powerpc/mm/tlb_hash32.c:65: note: previous definition of 'flush_tlb_mm' was here
+> 
+> Caused by commit f8089f1f5eaf4925b0925e69cd311d7d1d423e6a ("asm-generic:
+> Add missing generic tlb_flush definition").
+> 
+> I have dropped the asm-generic tree for today (since I have no earlier
+> version).
 
-Tested-by : Sachin Sant <sachinp@in.ibm.com>
+Thanks for the info. I actually removed the broken commit in the version
+that I sent out, but it must have crept back in during one of my merges.
 
-Thanks
--Sachin
+I pushed out the right version now.
 
--- 
-
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+	Arnd <><
