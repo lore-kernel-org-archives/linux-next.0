@@ -1,54 +1,62 @@
-From: Dan Williams <dcbw@redhat.com>
-Subject: Re: iwlagn broken in next-20090514 and next-20090515
-Date: Mon, 18 May 2009 14:35:20 -0400
-Message-ID: <1242671720.3845.4.camel@localhost.localdomain>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for May 15
+Date: Tue, 19 May 2009 09:36:36 +1000
+Message-ID: <20090519093636.329c4708.sfr@canb.auug.org.au>
 References: <20090515153733.4384db9f.sfr@canb.auug.org.au>
-	 <20090515102621.GA5735@ikn.schottelius.org>
-	 <20090518171505.d30d2f64.sfr@canb.auug.org.au>
-	 <1242662635.32358.523.camel@rc-desk>
-	 <1242663867.27425.1.camel@johannes.local>
-	 <1242669029.3845.0.camel@localhost.localdomain>
-	 <1242670211.29049.10.camel@johannes.local>
+	<20090515130729.GA13026@aftab>
+	<20090518000734.6fd3d652.sfr@canb.auug.org.au>
+	<20090518094822.GB4905@aftab>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__19_May_2009_09_36_36_+1000_+eSWqH0akSo08nj."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:42322 "EHLO mx2.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50495 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751396AbZERSf4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 May 2009 14:35:56 -0400
-In-Reply-To: <1242670211.29049.10.camel@johannes.local>
+	id S1751696AbZERXgl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 May 2009 19:36:41 -0400
+In-Reply-To: <20090518094822.GB4905@aftab>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: reinette chatre <reinette.chatre@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Nico -telmich- Schottelius <nico-linux-next@schottelius.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "John W. Linville" <linville@tuxdriver.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+To: Borislav Petkov <borislav.petkov@amd.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Doug Thompson <dougthompson@xmission.com>
 
-On Mon, 2009-05-18 at 20:10 +0200, Johannes Berg wrote:
-> On Mon, 2009-05-18 at 13:50 -0400, Dan Williams wrote:
-> 
-> > > > > > Also wpa_supplicant is not happy:
-> > > > > > 
-> > > > > > + wpa_supplicant -B -Dwext -iwlan0 -c /home/user/nico/ethz/wlan/wpa_supplicant.conf
-> > > > > > ioctl[SIOCSIWENCODEEXT]: No such file or directory
-> > > > > > ioctl[SIOCSIWENCODEEXT]: No such file or directory
-> > > > > > ioctl[SIOCSIWENCODEEXT]: No such file or directory
-> > > > > > ioctl[SIOCSIWENCODEEXT]: No such file or directory
-> > > > > > 
-> > > > 
-> > > > There were some changes recently to this ioctl, but I am not familiar
-> > > > with details. Johannes will know.
-> > > 
-> > > Yeah, I'm not sure -- this happens when clearing keys. I'll look into
-> > > it, we probably need to accept removing a key that doesn't exist.
-> > 
-> > Why bother (if that's actually the root cause)?  Maybe the supplicant
-> > should be fixed.  Other drivers return ENOENT in this case, so mac80211
-> > certainly isn't out-of-common-spec here now.
-> 
-> I just looked at the code in wpa_supplicant, it doesn't care a bit, just
-> prints the error. Problem is users attribute any other breakage to the
-> error it prints since our behaviour changed...
+--Signature=_Tue__19_May_2009_09_36_36_+1000_+eSWqH0akSo08nj.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I meant "make wpa_supplicant not print anything out on -ENOENT".
+Hi Boris,
 
-Dan
+On Mon, 18 May 2009 11:48:22 +0200 Borislav Petkov <borislav.petkov@amd.com=
+> wrote:
+>
+> It is an EDAC module for AMD k8, Fam10h and Fam11h processors.
+
+OK, so I will call it edac-amd (in case we ever get a generic edac tree).
+
+> > If so, you are not listed as a maintainer of that code (Doug cc'd).
+>=20
+> I'll send a patch to update that later.
+
+Thanks for all the info - I just had no idea where this was coming from.
+
+I will add the tree from today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__19_May_2009_09_36_36_+1000_+eSWqH0akSo08nj.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkoR8QQACgkQjjKRsyhoI8y0WwCgiE+dbDfvztYEqNbJSbVism6Q
+GpMAnRNmSWzUCGiIsjcOUJ59asojy9gr
+=d2hV
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__19_May_2009_09_36_36_+1000_+eSWqH0akSo08nj.--
