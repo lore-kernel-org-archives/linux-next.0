@@ -1,34 +1,63 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: linux-next: manual merge of the block tree with the  tree
-Date: Mon, 18 May 2009 14:42:32 +0200
-Message-ID: <20090518124232.GJ4140@kernel.dk>
-References: <20090518145318.c199842e.sfr@canb.auug.org.au> <20090518062747.GF4140@kernel.dk> <200905182204.54512.rusty@rustcorp.com.au>
+From: reinette chatre <reinette.chatre-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: iwlagn broken in next-20090514 and next-20090515
+Date: Mon, 18 May 2009 09:03:55 -0700
+Message-ID: <1242662635.32358.523.camel@rc-desk>
+References: <20090515153733.4384db9f.sfr@canb.auug.org.au>
+	 <20090515102621.GA5735@ikn.schottelius.org>
+	 <20090518171505.d30d2f64.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from brick.kernel.dk ([93.163.65.50]:59482 "EHLO kernel.dk"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752230AbZERMmb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 May 2009 08:42:31 -0400
-Content-Disposition: inline
-In-Reply-To: <200905182204.54512.rusty@rustcorp.com.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Hannes Reinecke <hare@suse.de>, Tejun Heo <tj@kernel.org>
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20090518171505.d30d2f64.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: Nico -telmich- Schottelius <nico-linux-next-xuaVFQXs+5hIG4jRRZ66WA@public.gmane.org>, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon, May 18 2009, Rusty Russell wrote:
-> On Mon, 18 May 2009 03:57:47 pm Jens Axboe wrote:
-> > On Mon, May 18 2009, Stephen Rothwell wrote:
-> > Rusty, perhaps it would be easier if I took the SG_IO patch through the
-> > block tree?
+On Mon, 2009-05-18 at 00:15 -0700, Stephen Rothwell wrote:
+> Add cc's
 > 
-> Thanks; they're orthogonal to the rest of my changes anyway.
-> 
-> Here are the two patches (first one is a prereq).  I've attached them, or you 
-> can grab them out of linux-next or my patchqueue.
+> On Fri, 15 May 2009 12:26:21 +0200 Nico -telmich- Schottelius <nico-linux-next-xuaVFQXs+5hIG4jRRZ66WA@public.gmane.org> wrote:
+> >
+> > Kernel is not authenticating it against the AP anymore with
+> > messages like:
+> > 
+> > [16907.701634] wlan0: associate with AP 00:03:52:4e:f3:d1
+> > [16907.703669] wlan0: RX AssocResp from 00:03:52:4e:f3:d1 (capab=0x421 status=0 aid=5)
+> > [16907.703672] wlan0: associated
+> > [16907.729958] wlan0: disassociating by local choice (reason=3)
 
-I've massaged them into the block tree now.
+This is usually printed when your user application (wpa_supplicant,
+network manager, etc.) goes down or disassociates.
 
--- 
-Jens Axboe
+> > [16907.852112] wlan0: direct probe to AP 00:03:52:1b:f8:31 try 1
+> > [16908.052086] wlan0: direct probe to AP 00:03:52:1b:f8:31 try 2
+> > [16908.055331] wlan0 direct probe responded
+> > [16908.055335] wlan0: authenticate with AP 00:03:52:1b:f8:31
+> > [16908.256065] wlan0: authenticate with AP 00:03:52:1b:f8:31
+> > [16908.453689] wlan0: authenticate with AP 00:03:52:1b:f8:31
+> > [16908.656037] wlan0: authentication with AP 00:03:52:1b:f8:31 timed out
+
+Don't know what is going on here. Could your AP be out of reach or not
+responding?
+
+> > 
+> > Also wpa_supplicant is not happy:
+> > 
+> > + wpa_supplicant -B -Dwext -iwlan0 -c /home/user/nico/ethz/wlan/wpa_supplicant.conf
+> > ioctl[SIOCSIWENCODEEXT]: No such file or directory
+> > ioctl[SIOCSIWENCODEEXT]: No such file or directory
+> > ioctl[SIOCSIWENCODEEXT]: No such file or directory
+> > ioctl[SIOCSIWENCODEEXT]: No such file or directory
+> > 
+
+There were some changes recently to this ioctl, but I am not familiar
+with details. Johannes will know.
+
+Reinette
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
