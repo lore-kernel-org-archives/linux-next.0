@@ -1,46 +1,25 @@
-From: Dan Williams <dcbw@redhat.com>
-Subject: Re: iwlagn broken in next-20090514 and next-20090515
-Date: Mon, 18 May 2009 13:50:29 -0400
-Message-ID: <1242669029.3845.0.camel@localhost.localdomain>
-References: <20090515153733.4384db9f.sfr@canb.auug.org.au>
-	 <20090515102621.GA5735@ikn.schottelius.org>
-	 <20090518171505.d30d2f64.sfr@canb.auug.org.au>
-	 <1242662635.32358.523.camel@rc-desk>
-	 <1242663867.27425.1.camel@johannes.local>
+From: Amanda <alpinemotorinn@nb.aibn.com>
+Subject: LUCKY...WINNER
+Date: Mon, 18 May 2009 12:57:02 -0400
+Message-ID: <20090518165704.VGTK1756.tomts31-srv.bellnexxia.net@toip34-bus.srvr.bell.ca>
+Reply-To: jerry.smith222@btinternet.com
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:52941 "EHLO mx2.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751274AbZERRvI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 May 2009 13:51:08 -0400
-In-Reply-To: <1242663867.27425.1.camel@johannes.local>
+Received: from toq1.bellnexxia.net ([209.226.175.120]:39827 "EHLO
+	toq1-srv.bellnexxia.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751138AbZERSBV convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 May 2009 14:01:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: reinette chatre <reinette.chatre@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Nico -telmich- Schottelius <nico-linux-next@schottelius.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "John W. Linville" <linville@tuxdriver.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+To: info@winners.org
 
-On Mon, 2009-05-18 at 18:24 +0200, Johannes Berg wrote:
-> On Mon, 2009-05-18 at 09:03 -0700, reinette chatre wrote:
-> 
-> > > > Also wpa_supplicant is not happy:
-> > > > 
-> > > > + wpa_supplicant -B -Dwext -iwlan0 -c /home/user/nico/ethz/wlan/wpa_supplicant.conf
-> > > > ioctl[SIOCSIWENCODEEXT]: No such file or directory
-> > > > ioctl[SIOCSIWENCODEEXT]: No such file or directory
-> > > > ioctl[SIOCSIWENCODEEXT]: No such file or directory
-> > > > ioctl[SIOCSIWENCODEEXT]: No such file or directory
-> > > > 
-> > 
-> > There were some changes recently to this ioctl, but I am not familiar
-> > with details. Johannes will know.
-> 
-> Yeah, I'm not sure -- this happens when clearing keys. I'll look into
-> it, we probably need to accept removing a key that doesn't exist.
+The LG Award Programme.Therefore you have been approve for a lump sum p=
+ayout of (=A3950.000.00 GBP) by your E-ID send your details
 
-Why bother (if that's actually the root cause)?  Maybe the supplicant
-should be fixed.  Other drivers return ENOENT in this case, so mac80211
-certainly isn't out-of-common-spec here now.
-
-Dan
+Name:.......................
+Address:....................
+Country:....................
+Occupation:................
+Phone Number:...............
