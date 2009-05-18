@@ -1,63 +1,73 @@
-From: reinette chatre <reinette.chatre-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+From: Dan Williams <dcbw@redhat.com>
 Subject: Re: iwlagn broken in next-20090514 and next-20090515
-Date: Mon, 18 May 2009 09:03:55 -0700
-Message-ID: <1242662635.32358.523.camel@rc-desk>
+Date: Mon, 18 May 2009 12:16:40 -0400
+Message-ID: <1242663400.6530.18.camel@localhost.localdomain>
 References: <20090515153733.4384db9f.sfr@canb.auug.org.au>
 	 <20090515102621.GA5735@ikn.schottelius.org>
 	 <20090518171505.d30d2f64.sfr@canb.auug.org.au>
+	 <1242662635.32358.523.camel@rc-desk>
 Mime-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20090518171505.d30d2f64.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: Nico -telmich- Schottelius <nico-linux-next-xuaVFQXs+5hIG4jRRZ66WA@public.gmane.org>, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1759298AbZERQTM@vger.kernel.org>
+In-Reply-To: <1242662635.32358.523.camel@rc-desk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: reinette chatre <reinette.chatre@intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Nico -telmich- Schottelius <nico-linux-next@schottelius.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "John W. Linville" <linville@tuxdriver.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, johannes@sipsolutions.net
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 2009-05-18 at 00:15 -0700, Stephen Rothwell wrote:
-> Add cc's
+On Mon, 2009-05-18 at 09:03 -0700, reinette chatre wrote:
+> On Mon, 2009-05-18 at 00:15 -0700, Stephen Rothwell wrote:
+> > Add cc's
+> > 
+> > On Fri, 15 May 2009 12:26:21 +0200 Nico -telmich- Schottelius <nico-linux-next@schottelius.org> wrote:
+> > >
+> > > Kernel is not authenticating it against the AP anymore with
+> > > messages like:
+> > > 
+> > > [16907.701634] wlan0: associate with AP 00:03:52:4e:f3:d1
+> > > [16907.703669] wlan0: RX AssocResp from 00:03:52:4e:f3:d1 (capab=0x421 status=0 aid=5)
+> > > [16907.703672] wlan0: associated
+> > > [16907.729958] wlan0: disassociating by local choice (reason=3)
 > 
-> On Fri, 15 May 2009 12:26:21 +0200 Nico -telmich- Schottelius <nico-linux-next-xuaVFQXs+5hIG4jRRZ66WA@public.gmane.org> wrote:
-> >
-> > Kernel is not authenticating it against the AP anymore with
-> > messages like:
-> > 
-> > [16907.701634] wlan0: associate with AP 00:03:52:4e:f3:d1
-> > [16907.703669] wlan0: RX AssocResp from 00:03:52:4e:f3:d1 (capab=0x421 status=0 aid=5)
-> > [16907.703672] wlan0: associated
-> > [16907.729958] wlan0: disassociating by local choice (reason=3)
+> This is usually printed when your user application (wpa_supplicant,
+> network manager, etc.) goes down or disassociates.
 
-This is usually printed when your user application (wpa_supplicant,
-network manager, etc.) goes down or disassociates.
+Yeah, this is normal and indicates that the supplicant called
+SIOCGIWMLME, which could either be triggered internally by the
+supplicant, or even more likely, because NetworkManager requests that
+the supplicant disconnects nicely before switching networks or taking
+the connection down.
 
-> > [16907.852112] wlan0: direct probe to AP 00:03:52:1b:f8:31 try 1
-> > [16908.052086] wlan0: direct probe to AP 00:03:52:1b:f8:31 try 2
-> > [16908.055331] wlan0 direct probe responded
-> > [16908.055335] wlan0: authenticate with AP 00:03:52:1b:f8:31
-> > [16908.256065] wlan0: authenticate with AP 00:03:52:1b:f8:31
-> > [16908.453689] wlan0: authenticate with AP 00:03:52:1b:f8:31
-> > [16908.656037] wlan0: authentication with AP 00:03:52:1b:f8:31 timed out
+Dan
 
-Don't know what is going on here. Could your AP be out of reach or not
-responding?
-
-> > 
-> > Also wpa_supplicant is not happy:
-> > 
-> > + wpa_supplicant -B -Dwext -iwlan0 -c /home/user/nico/ethz/wlan/wpa_supplicant.conf
-> > ioctl[SIOCSIWENCODEEXT]: No such file or directory
-> > ioctl[SIOCSIWENCODEEXT]: No such file or directory
-> > ioctl[SIOCSIWENCODEEXT]: No such file or directory
-> > ioctl[SIOCSIWENCODEEXT]: No such file or directory
-> > 
-
-There were some changes recently to this ioctl, but I am not familiar
-with details. Johannes will know.
-
-Reinette
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > > [16907.852112] wlan0: direct probe to AP 00:03:52:1b:f8:31 try 1
+> > > [16908.052086] wlan0: direct probe to AP 00:03:52:1b:f8:31 try 2
+> > > [16908.055331] wlan0 direct probe responded
+> > > [16908.055335] wlan0: authenticate with AP 00:03:52:1b:f8:31
+> > > [16908.256065] wlan0: authenticate with AP 00:03:52:1b:f8:31
+> > > [16908.453689] wlan0: authenticate with AP 00:03:52:1b:f8:31
+> > > [16908.656037] wlan0: authentication with AP 00:03:52:1b:f8:31 timed out
+> 
+> Don't know what is going on here. Could your AP be out of reach or not
+> responding?
+> 
+> > > 
+> > > Also wpa_supplicant is not happy:
+> > > 
+> > > + wpa_supplicant -B -Dwext -iwlan0 -c /home/user/nico/ethz/wlan/wpa_supplicant.conf
+> > > ioctl[SIOCSIWENCODEEXT]: No such file or directory
+> > > ioctl[SIOCSIWENCODEEXT]: No such file or directory
+> > > ioctl[SIOCSIWENCODEEXT]: No such file or directory
+> > > ioctl[SIOCSIWENCODEEXT]: No such file or directory
+> > > 
+> 
+> There were some changes recently to this ioctl, but I am not familiar
+> with details. Johannes will know.
+> 
+> Reinette
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
