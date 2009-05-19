@@ -1,36 +1,43 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: staging: cpc-usb: wrong Makefile path
-Date: Tue, 19 May 2009 10:24:27 -0700
-Message-ID: <20090519172427.GB30522@suse.de>
-References: <a4423d670905191009i450545f6le9c49e84c5ce94fd@mail.gmail.com>
+From: Borislav Petkov <borislav.petkov@amd.com>
+Subject: Re: linux-next: edac-amd tree build failure
+Date: Tue, 19 May 2009 19:54:26 +0200
+Message-ID: <20090519175426.GC18874@aftab>
+References: <20090519171839.19702b81.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:35765 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752005AbZESR3W (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 May 2009 13:29:22 -0400
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754919AbZESRyn@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <a4423d670905191009i450545f6le9c49e84c5ce94fd@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <20090519171839.19702b81.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, May 19, 2009 at 09:09:53PM +0400, Alexander Beregalov wrote:
-> diff --git a/drivers/staging/Makefile b/drivers/staging/Makefile
-> index 9492a6f..cc1aac2 100644
-> --- a/drivers/staging/Makefile
-> +++ b/drivers/staging/Makefile
-> @@ -40,4 +40,4 @@ obj-$(CONFIG_PLAN9AUTH)               += p9auth/
->  obj-$(CONFIG_HECI)             += heci/
->  obj-$(CONFIG_LINE6_USB)                += line6/
->  obj-$(CONFIG_USB_SERIAL_QUATECH_ESU100)        += serqt_usb/
-> -obj-$(CONFIG_USB_CPC)          += cpc_usb/
-> +obj-$(CONFIG_USB_CPC)          += cpc-usb/
+Hi Stephen,
 
-Heh, wierd, I wonder how it was working for me when I tested this...
+On Tue, May 19, 2009 at 05:18:39PM +1000, Stephen Rothwell wrote:
+> Hi Boris,
+>=20
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+>=20
+> usr/include/asm/msr.h:5: included file 'asm-x86/cpumask.h' is not exp=
+orted
+>=20
+> Caused by commit 32b946f3cb8b1c5563dc9525fda85049ea26d1ad ("x86: add
+> methods for writing of an MSR on several CPUs").
 
-thanks,
+thanks for reporting, I've added a fix for the build failure and update=
+d
+the #for-next branch for you to pull for the next linux-next release.
 
-greg k-h
+--=20
+Regards/Gruss,
+Boris.
+
+Operating | Advanced Micro Devices GmbH
+  System  | Karl-Hammerschmidt-Str. 34, 85609 Dornach b. M=FCnchen, Ger=
+many
+ Research | Gesch=E4ftsf=FChrer: Thomas M. McCoy, Giuliano Meroni
+  Center  | Sitz: Dornach, Gemeinde Aschheim, Landkreis M=FCnchen
+  (OSRC)  | Registergericht M=FCnchen, HRB Nr. 43632
