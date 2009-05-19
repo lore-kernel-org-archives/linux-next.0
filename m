@@ -1,37 +1,26 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for May 19 (devtmpfs build error)
-Date: Tue, 19 May 2009 08:58:51 -0700
-Message-ID: <20090519085851.3b8386ed.rdunlap@xenotime.net>
-References: <20090519183044.a910aa7a.sfr@canb.auug.org.au>
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: staging: cpc-usb: wrong Makefile path
+Date: Tue, 19 May 2009 21:09:53 +0400
+Message-ID: <a4423d670905191009i450545f6le9c49e84c5ce94fd@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xenotime.net ([72.52.64.118]:46135 "HELO xenotime.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-	id S1752545AbZESP41 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 May 2009 11:56:27 -0400
-Received: from chimera.site ([71.182.83.218]) by xenotime.net for <linux-next@vger.kernel.org>; Tue, 19 May 2009 08:56:26 -0700
-In-Reply-To: <20090519183044.a910aa7a.sfr@canb.auug.org.au>
+Received: from mail-fx0-f158.google.com ([209.85.220.158]:32798 "EHLO
+	mail-fx0-f158.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752392AbZESRJx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 May 2009 13:09:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Kay Sievers <kay.sievers@vrfy.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-next <linux-next@vger.kernel.org>, Greg KH <gregkh@suse.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Tue, 19 May 2009 18:30:44 +1000 Stephen Rothwell wrote:
-
-> Hi all,
-> 
-> Changes since 20090518:
-
-
-when CONFIG_SHMEM=n:
-
-drivers/built-in.o: In function `dev_get_sb':
-devtmpfs.c:(.text+0x13263b): undefined reference to `shmem_fill_super'
-
-
----
-~Randy
-LPC 2009, Sept. 23-25, Portland, Oregon
-http://linuxplumbersconf.org/2009/
+diff --git a/drivers/staging/Makefile b/drivers/staging/Makefile
+index 9492a6f..cc1aac2 100644
+--- a/drivers/staging/Makefile
++++ b/drivers/staging/Makefile
+@@ -40,4 +40,4 @@ obj-$(CONFIG_PLAN9AUTH)               += p9auth/
+ obj-$(CONFIG_HECI)             += heci/
+ obj-$(CONFIG_LINE6_USB)                += line6/
+ obj-$(CONFIG_USB_SERIAL_QUATECH_ESU100)        += serqt_usb/
+-obj-$(CONFIG_USB_CPC)          += cpc_usb/
++obj-$(CONFIG_USB_CPC)          += cpc-usb/
