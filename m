@@ -1,44 +1,52 @@
-From: Corentin Chary <corentin.chary@gmail.com>
-Subject: Re: [PATCH -next] eeepc: fix kconfig selects
-Date: Tue, 19 May 2009 08:04:47 +0200
-Message-ID: <71cd59b00905182304q4077b942o6ac41272e8306d90@mail.gmail.com>
-References: <20090518184225.d5721ac8.sfr@canb.auug.org.au>
-	 <20090518175745.da1f943f.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: edac-amd tree build failure
+Date: Tue, 19 May 2009 17:18:39 +1000
+Message-ID: <20090519171839.19702b81.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__19_May_2009_17_18_39_+1000_jUzYDWIvNtqvfDfU"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f224.google.com ([209.85.219.224]:51627 "EHLO
-	mail-ew0-f224.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752168AbZESGEr convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 19 May 2009 02:04:47 -0400
-In-Reply-To: <20090518175745.da1f943f.randy.dunlap@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:52631 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752538AbZESHSs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 May 2009 03:18:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, lenb@kernel.org
+To: Borislav Petkov <borislav.petkov@amd.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, May 19, 2009 at 2:57 AM, Randy Dunlap <randy.dunlap@oracle.com>=
- wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
->
-> EEEPC_LAPTOP selects HOTPLUG_PCI. =A0This causes failures (build erro=
-r below)
-> when CONFIG_HOTPLUG is not enabled, so additionally select HOTPLUG si=
-nce
-> kconfig 'select' doesn't follow its dependency chain.
-> Also, only select HOTPLUG_PCI if PCI is already enabled.
->
-> drivers/pci/hotplug/fakephp.c:55: error: implicit declaration of func=
-tion 'pci_rescan_bus'
+--Signature=_Tue__19_May_2009_17_18_39_+1000_jUzYDWIvNtqvfDfU
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Corentin Chary <corentincj@iksaif.net>
+Hi Boris,
 
-Pushed into acpi4asus tree.
-Len, please get it for rc7.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Thanks
+usr/include/asm/msr.h:5: included file 'asm-x86/cpumask.h' is not exported
+
+Caused by commit 32b946f3cb8b1c5563dc9525fda85049ea26d1ad ("x86: add
+methods for writing of an MSR on several CPUs").
+
+I have dropped the edac-amd tree for today since I have no previous
+version to go back to.
 
 --=20
-Corentin Chary
-http://xf.iksaif.net - http://uffs.org
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__19_May_2009_17_18_39_+1000_jUzYDWIvNtqvfDfU
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkoSXU8ACgkQjjKRsyhoI8yuGgCfUwvpqm78JNqDBnuzk4ly3YTF
+qGsAmwQ/byUYMbuao8c3+qwhhzS3ZxUB
+=qtoY
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__19_May_2009_17_18_39_+1000_jUzYDWIvNtqvfDfU--
