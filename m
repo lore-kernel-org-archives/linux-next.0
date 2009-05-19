@@ -1,52 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the block tree with the  tree
-Date: Tue, 19 May 2009 10:11:53 +1000
-Message-ID: <20090519101153.ce1980df.sfr@canb.auug.org.au>
-References: <20090518145318.c199842e.sfr@canb.auug.org.au>
-	<20090518062747.GF4140@kernel.dk>
-	<200905182204.54512.rusty@rustcorp.com.au>
-	<20090518124232.GJ4140@kernel.dk>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] eeepc: fix kconfig selects
+Date: Mon, 18 May 2009 17:57:45 -0700
+Message-ID: <20090518175745.da1f943f.randy.dunlap@oracle.com>
+References: <20090518184225.d5721ac8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__19_May_2009_10_11_53_+1000_bG9DVI3aSY3idtpv"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45002 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750930AbZESAL7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 May 2009 20:11:59 -0400
-In-Reply-To: <20090518124232.GJ4140@kernel.dk>
+Received: from rcsinet12.oracle.com ([148.87.113.124]:22068 "EHLO
+	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752324AbZESA4i (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 May 2009 20:56:38 -0400
+In-Reply-To: <20090518184225.d5721ac8.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, Hannes Reinecke <hare@suse.de>, Tejun Heo <tj@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, corentincj@iksaif.net
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, lenb@kernel.org
 
---Signature=_Tue__19_May_2009_10_11_53_+1000_bG9DVI3aSY3idtpv
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-On Mon, 18 May 2009 14:42:32 +0200 Jens Axboe <jens.axboe@oracle.com> wrote:
->
-> I've massaged them into the block tree now.
+EEEPC_LAPTOP selects HOTPLUG_PCI.  This causes failures (build error below)
+when CONFIG_HOTPLUG is not enabled, so additionally select HOTPLUG since
+kconfig 'select' doesn't follow its dependency chain.
+Also, only select HOTPLUG_PCI if PCI is already enabled.
 
-Thanks for that guys.  I noticed that I had the resolution wrong, so this
-is even better. :-)
+drivers/pci/hotplug/fakephp.c:55: error: implicit declaration of function 'pci_rescan_bus'
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/platform/x86/Kconfig |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---Signature=_Tue__19_May_2009_10_11_53_+1000_bG9DVI3aSY3idtpv
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkoR+UkACgkQjjKRsyhoI8x3mgCgmkqJCOGDqMPmSlSiIOCWyjfo
-ZJkAn35oXtIicCNOcwiu7oq/n/QwPF/4
-=m96Q
------END PGP SIGNATURE-----
-
---Signature=_Tue__19_May_2009_10_11_53_+1000_bG9DVI3aSY3idtpv--
+--- linux-next-20090518.orig/drivers/platform/x86/Kconfig
++++ linux-next-20090518/drivers/platform/x86/Kconfig
+@@ -354,7 +354,8 @@ config EEEPC_LAPTOP
+ 	select BACKLIGHT_CLASS_DEVICE
+ 	select HWMON
+ 	select RFKILL
+-	select HOTPLUG_PCI
++	select HOTPLUG
++	select HOTPLUG_PCI if PCI
+ 	---help---
+ 	  This driver supports the Fn-Fx keys on Eee PC laptops.
+ 	  It also adds the ability to switch camera/wlan on/off.
