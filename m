@@ -1,53 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the net tree with Linus' tree
-Date: Tue, 19 May 2009 14:43:06 +1000
-Message-ID: <20090519144306.167c9baf.sfr@canb.auug.org.au>
-References: <20090519133958.31ec120b.sfr@canb.auug.org.au>
-	<20090518.210913.206585156.davem@davemloft.net>
+From: Corentin Chary <corentin.chary@gmail.com>
+Subject: Re: [PATCH -next] eeepc: fix kconfig selects
+Date: Tue, 19 May 2009 08:04:47 +0200
+Message-ID: <71cd59b00905182304q4077b942o6ac41272e8306d90@mail.gmail.com>
+References: <20090518184225.d5721ac8.sfr@canb.auug.org.au>
+	 <20090518175745.da1f943f.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__19_May_2009_14_43_06_+1000_/SMKIWC5j6e9y+5n"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48891 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751713AbZESEnO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 May 2009 00:43:14 -0400
-In-Reply-To: <20090518.210913.206585156.davem@davemloft.net>
+Received: from mail-ew0-f224.google.com ([209.85.219.224]:51627 "EHLO
+	mail-ew0-f224.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752168AbZESGEr convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 May 2009 02:04:47 -0400
+In-Reply-To: <20090518175745.da1f943f.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, vasu.dev@intel.com, jeykholt@cisco.com, robert.w.love@intel.com, James.Bottomley@HansenPartnership.com, christopher.leech@intel.com
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, lenb@kernel.org
 
---Signature=_Tue__19_May_2009_14_43_06_+1000_/SMKIWC5j6e9y+5n
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Dave,
-
-On Mon, 18 May 2009 21:09:13 -0700 (PDT) David Miller <davem@davemloft.net>=
+On Tue, May 19, 2009 at 2:57 AM, Randy Dunlap <randy.dunlap@oracle.com>=
  wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
 >
-> I'll pull net-2.6 into net-next-2.6 and push the result to kernel.org
-> to resolve this.
+> EEEPC_LAPTOP selects HOTPLUG_PCI. =A0This causes failures (build erro=
+r below)
+> when CONFIG_HOTPLUG is not enabled, so additionally select HOTPLUG si=
+nce
+> kconfig 'select' doesn't follow its dependency chain.
+> Also, only select HOTPLUG_PCI if PCI is already enabled.
+>
+> drivers/pci/hotplug/fakephp.c:55: error: implicit declaration of func=
+tion 'pci_rescan_bus'
 
-Thanks.
+Acked-by: Corentin Chary <corentincj@iksaif.net>
+
+Pushed into acpi4asus tree.
+Len, please get it for rc7.
+
+Thanks
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__19_May_2009_14_43_06_+1000_/SMKIWC5j6e9y+5n
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkoSONoACgkQjjKRsyhoI8wMVgCZASr6BJ+qWrEW/9SL3BjOzSpa
-jIsAn3NmZkday9dOWQPLadzRHr/UEuFe
-=rim6
------END PGP SIGNATURE-----
-
---Signature=_Tue__19_May_2009_14_43_06_+1000_/SMKIWC5j6e9y+5n--
+Corentin Chary
+http://xf.iksaif.net - http://uffs.org
