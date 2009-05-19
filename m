@@ -1,45 +1,134 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] eeepc: fix kconfig selects
-Date: Mon, 18 May 2009 17:57:45 -0700
-Message-ID: <20090518175745.da1f943f.randy.dunlap@oracle.com>
-References: <20090518184225.d5721ac8.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with Linus' tree
+Date: Tue, 19 May 2009 13:39:58 +1000
+Message-ID: <20090519133958.31ec120b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet12.oracle.com ([148.87.113.124]:22068 "EHLO
-	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752324AbZESA4i (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 May 2009 20:56:38 -0400
-In-Reply-To: <20090518184225.d5721ac8.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48776 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753235AbZESDkB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 May 2009 23:40:01 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, corentincj@iksaif.net
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, lenb@kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Vasu Dev <vasu.dev@intel.com>, Joe Eykholt <jeykholt@cisco.com>, Robert Love <robert.w.love@intel.com>, James Bottomley <James.Bottomley@HansenPartnership.com>, Chris Leech <christopher.leech@intel.com>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+Hi David,
 
-EEEPC_LAPTOP selects HOTPLUG_PCI.  This causes failures (build error below)
-when CONFIG_HOTPLUG is not enabled, so additionally select HOTPLUG since
-kconfig 'select' doesn't follow its dependency chain.
-Also, only select HOTPLUG_PCI if PCI is already enabled.
+Today's linux-next merge of the net tree got a conflict in
+drivers/scsi/fcoe/fcoe.c between commit
+6401bdcad536cc00589c38e7e1c140d3acc00087 ("[SCSI] fcoe: fip: add
+multicast filter to receive FIP advertisements") from Linus' tree and
+commit 184dd3459bb334d9061b58faed3610d08d6c7ff8 ("fcoe: adds spma mode
+support") from the net tree.
 
-drivers/pci/hotplug/fakephp.c:55: error: implicit declaration of function 'pci_rescan_bus'
+There is another trivial conflict between commit
+dd3fd72e692c8af007f70df4433c0cffe8582d8b ("[SCSI] fcoe: fix spelling
+typos and bad comments") from Linus' tree and commit
+ab6b85c1d7a1bf6c2b27fb542a7b2404e45b7e24 ("fcoe: consolidates netdev
+related config and cleanup for spma mode") from the net tree.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/platform/x86/Kconfig |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Just context changes.  I fixed them up (see below) and can carry them for
+a while.
 
---- linux-next-20090518.orig/drivers/platform/x86/Kconfig
-+++ linux-next-20090518/drivers/platform/x86/Kconfig
-@@ -354,7 +354,8 @@ config EEEPC_LAPTOP
- 	select BACKLIGHT_CLASS_DEVICE
- 	select HWMON
- 	select RFKILL
--	select HOTPLUG_PCI
-+	select HOTPLUG
-+	select HOTPLUG_PCI if PCI
- 	---help---
- 	  This driver supports the Fn-Fx keys on Eee PC laptops.
- 	  It also adds the ability to switch camera/wlan on/off.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/scsi/fcoe/fcoe.c
+index 03e1926,f2d1612..0000000
+--- a/drivers/scsi/fcoe/fcoe.c
++++ b/drivers/scsi/fcoe/fcoe.c
+@@@ -136,8 -136,61 +136,60 @@@ static struct scsi_host_template fcoe_s
+  };
+  
+  /**
++  * fcoe_fip_recv - handle a received FIP frame.
++  * @skb: the receive skb
++  * @dev: associated &net_device
++  * @ptype: the &packet_type structure which was used to register this handler.
++  * @orig_dev: original receive &net_device, in case @dev is a bond.
++  *
++  * Returns: 0 for success
++  */
++ static int fcoe_fip_recv(struct sk_buff *skb, struct net_device *dev,
++ 			 struct packet_type *ptype,
++ 			 struct net_device *orig_dev)
++ {
++ 	struct fcoe_softc *fc;
++ 
++ 	fc = container_of(ptype, struct fcoe_softc, fip_packet_type);
++ 	fcoe_ctlr_recv(&fc->ctlr, skb);
++ 	return 0;
++ }
++ 
++ /**
++  * fcoe_fip_send() - send an Ethernet-encapsulated FIP frame.
++  * @fip: FCoE controller.
++  * @skb: FIP Packet.
++  */
++ static void fcoe_fip_send(struct fcoe_ctlr *fip, struct sk_buff *skb)
++ {
++ 	skb->dev = fcoe_from_ctlr(fip)->real_dev;
++ 	dev_queue_xmit(skb);
++ }
++ 
++ /**
++  * fcoe_update_src_mac() - Update Ethernet MAC filters.
++  * @fip: FCoE controller.
++  * @old: Unicast MAC address to delete if the MAC is non-zero.
++  * @new: Unicast MAC address to add.
++  *
++  * Remove any previously-set unicast MAC filter.
++  * Add secondary FCoE MAC address filter for our OUI.
++  */
++ static void fcoe_update_src_mac(struct fcoe_ctlr *fip, u8 *old, u8 *new)
++ {
++ 	struct fcoe_softc *fc;
++ 
++ 	fc = fcoe_from_ctlr(fip);
++ 	rtnl_lock();
++ 	if (!is_zero_ether_addr(old))
++ 		dev_unicast_delete(fc->real_dev, old, ETH_ALEN);
++ 	dev_unicast_add(fc->real_dev, new, ETH_ALEN);
++ 	rtnl_unlock();
++ }
++ 
++ /**
+   * fcoe_lport_config() - sets up the fc_lport
+   * @lp: ptr to the fc_lport
+ - * @shost: ptr to the parent scsi host
+   *
+   * Returns: 0 for success
+   */
+@@@ -255,7 -349,8 +348,9 @@@ static int fcoe_netdev_config(struct fc
+  	rtnl_lock();
+  	memcpy(flogi_maddr, (u8[6]) FC_FCOE_FLOGI_MAC, ETH_ALEN);
+  	dev_unicast_add(fc->real_dev, flogi_maddr, ETH_ALEN);
+ +	dev_mc_add(fc->real_dev, FIP_ALL_ENODE_MACS, ETH_ALEN, 0);
++ 	if (fc->ctlr.spma)
++ 		dev_unicast_add(fc->real_dev, fc->ctlr.ctl_src_addr, ETH_ALEN);
+  	rtnl_unlock();
+  
+  	/*
+@@@ -370,17 -470,7 +470,7 @@@ static int fcoe_if_destroy(struct net_d
+  	if (lp->emp)
+  		fc_exch_mgr_free(lp->emp);
+  
+- 	/* Delete secondary MAC addresses */
+- 	rtnl_lock();
+- 	memcpy(flogi_maddr, (u8[6]) FC_FCOE_FLOGI_MAC, ETH_ALEN);
+- 	dev_unicast_delete(fc->real_dev, flogi_maddr, ETH_ALEN);
+- 	if (!is_zero_ether_addr(fc->ctlr.data_src_addr))
+- 		dev_unicast_delete(fc->real_dev,
+- 				   fc->ctlr.data_src_addr, ETH_ALEN);
+- 	dev_mc_delete(fc->real_dev, FIP_ALL_ENODE_MACS, ETH_ALEN, 0);
+- 	rtnl_unlock();
+- 
+ -	/* Free the per-CPU revieve threads */
+ +	/* Free the per-CPU receive threads */
+  	fcoe_percpu_clean(lp);
+  
+  	/* Free existing skbs */
