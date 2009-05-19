@@ -1,81 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the ext4 tree
-Date: Tue, 19 May 2009 14:23:06 +1000
-Message-ID: <20090519142306.8476809a.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the net tree with Linus' tree
+Date: Tue, 19 May 2009 14:43:06 +1000
+Message-ID: <20090519144306.167c9baf.sfr@canb.auug.org.au>
+References: <20090519133958.31ec120b.sfr@canb.auug.org.au>
+	<20090518.210913.206585156.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__19_May_2009_14_43_06_+1000_/SMKIWC5j6e9y+5n"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56718 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48891 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750838AbZESEXI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 May 2009 00:23:08 -0400
+	id S1751713AbZESEnO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 May 2009 00:43:14 -0400
+In-Reply-To: <20090518.210913.206585156.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>, Theodore Ts'o <tytso@mit.edu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, vasu.dev@intel.com, jeykholt@cisco.com, robert.w.love@intel.com, James.Bottomley@HansenPartnership.com, christopher.leech@intel.com
 
-Hi Al, Ted,
+--Signature=_Tue__19_May_2009_14_43_06_+1000_/SMKIWC5j6e9y+5n
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the vfs tree got a conflict in
-fs/ext4/super.c between commit cb0765fe4c3db8c9c22f1ed1017cbced2dd68150
-("ext4: Add a comprehensive block validity check to ext4_get_blocks()")
-from the ext4 tree and various commits from the vfs tree.
+Hi Dave,
 
-Just context changes.  I fixed it up (see below - please check as I am
-not sure of the ordering constraints in the first hunk) and can carry the
-fixup as necessary.
--- 
+On Mon, 18 May 2009 21:09:13 -0700 (PDT) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> I'll pull net-2.6 into net-next-2.6 and push the result to kernel.org
+> to resolve this.
+
+Thanks.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc fs/ext4/super.c
-index eca6c05,d789833..0000000
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@@ -568,7 -564,11 +569,12 @@@ static void ext4_put_super(struct super
-  	struct ext4_super_block *es = sbi->s_es;
-  	int i, err;
-  
-+ 	lock_super(sb);
-+ 	lock_kernel();
-+ 	if (sb->s_dirt)
-+ 		ext4_write_super_locked(sb);
-+ 
- +	ext4_release_system_zone(sb);
-  	ext4_mb_release(sb);
-  	ext4_ext_release(sb);
-  	ext4_xattr_put_super(sb);
-@@@ -3322,11 -3268,30 +3325,18 @@@ int ext4_force_commit(struct super_bloc
-  	return ret;
-  }
-  
-- static void ext4_write_super(struct super_block *sb)
- -/*
- - * Ext4 always journals updates to the superblock itself, so we don't
- - * have to propagate any other updates to the superblock on disk at this
- - * point.  (We can probably nuke this function altogether, and remove
- - * any mention to sb->s_dirt in all of fs/ext4; eventual cleanup...)
- - */
-+ static void ext4_write_super_locked(struct super_block *sb)
-  {
- -	if (EXT4_SB(sb)->s_journal) {
- -		if (mutex_trylock(&sb->s_lock) != 0)
- -			BUG();
- -		sb->s_dirt = 0;
- -	} else {
- -		ext4_commit_super(sb, EXT4_SB(sb)->s_es, 1);
- -	}
- +	ext4_commit_super(sb, 1);
-  }
-  
-+ static void ext4_write_super(struct super_block *sb)
-+ {
-+ 	lock_super(sb);
-+ 	ext4_write_super_locked(sb);
-+ 	unlock_super(sb);
-+ }
-+ 
-  static int ext4_sync_fs(struct super_block *sb, int wait)
-  {
-  	int ret = 0;
+--Signature=_Tue__19_May_2009_14_43_06_+1000_/SMKIWC5j6e9y+5n
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkoSONoACgkQjjKRsyhoI8wMVgCZASr6BJ+qWrEW/9SL3BjOzSpa
+jIsAn3NmZkday9dOWQPLadzRHr/UEuFe
+=rim6
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__19_May_2009_14_43_06_+1000_/SMKIWC5j6e9y+5n--
