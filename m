@@ -1,60 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: misc things
-Date: Tue, 19 May 2009 17:46:15 +1000
-Message-ID: <20090519174615.ee6a6881.sfr@canb.auug.org.au>
+From: "Abbott, MG (Michael)" <michael.abbott@diamond.ac.uk>
+Subject: RE: linux-next: cputime tree build warning
+Date: Tue, 19 May 2009 08:39:32 +0100
+Message-ID: <4854F2500EA8C4478A508D2D92973E52046B8498@EXCHANGE25.fed.cclrc.ac.uk>
+References: <20090519173251.86d755c8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__19_May_2009_17_46_15_+1000_4da4Ud3WxixKPPUR"
+Content-Type: text/plain;
+	charset="US-ASCII"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46267 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751520AbZESHqW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 May 2009 03:46:22 -0400
+Received: from engine29-1277-2.icritical.com ([212.57.248.116]:43968 "HELO
+	engine29-1277-2.icritical.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1750888AbZESHqU convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 May 2009 03:46:20 -0400
+Received: from engine29-1277-2.icritical.com ([127.0.0.1])
+ by localhost (engine29-1277-2.icritical.com [127.0.0.1]) (amavisd-new, port 10024)
+ with SMTP id 05052-06 for <linux-next@vger.kernel.org>;
+ Tue, 19 May 2009 08:39:33 +0100 (BST)
+Content-class: urn:content-classes:message
+In-Reply-To: <20090519173251.86d755c8.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__19_May_2009_17_46_15_+1000_4da4Ud3WxixKPPUR
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Today's linux-next build (x86_64 allmodconfig) produced this warning:
+> 
+> fs/proc/uptime.c: In function 'uptime_proc_show':
+> fs/proc/uptime.c:14: warning: unused variable 'len'
+> 
+> Introduced by commit ed7e789abfc433e46524419b7cc51d949552505e 
+> ("[PATCH]
+> Fix idle time field in /proc/uptime") from the cputime tree.
 
-Hi all,
+Ouch.  I do apologise.  The (now) bogus variable len must have been
+preserved when I rebased from 2.6.29.3 to current git, and I guess I
+didn't spot the warning among all the other warnings in the build.
 
-A couple of things:
-
-	it was suggested that my postings about problems (merge
-conflicts/build errors/new warnings) in linux-next be sent to
-linux-kernel.  For now, I am cross posting them to linux-next and
-linux-kernel.  Let me know what you all think.
-
-	being as we are beyond -rc6, I expect all the maintainers are
-busy stabilising their trees in anticipation of the new merge window.
-(/me prepares for a rush of new stuff in linux-next ...)
-
-	its nice to see so many fewer red results in the builds
-(http://kisskb.ellerman.id.au/kisskb/branch/9/).
-
-	maintainers of trees included in linux-next may want to have a
-look and see if some of those trees are still relevant.  Some of them
-have not had any updates since the previous merge window (or earlier).  If
-a tree is defunct (or served it short term purpose), please let me know
-and I will remove it.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Tue__19_May_2009_17_46_15_+1000_4da4Ud3WxixKPPUR
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkoSY8cACgkQjjKRsyhoI8xpkgCfW78jqBsT1uJcrvjmALedQFpX
-tasAniPPcBCKjEFlgT9MCacIeXyOfh4x
-=4x3l
------END PGP SIGNATURE-----
-
---Signature=_Tue__19_May_2009_17_46_15_+1000_4da4Ud3WxixKPPUR--
+--
+I'm very sorry about the junk below generated from this account.
+This e-mail and any attachments may contain confidential, copyright and or privileged material, and are for the use of the intended addressee only. If you are not the intended addressee or an authorised recipient of the addressee please notify us of receipt by returning the e-mail and do not use, copy, retain, distribute or disclose the information in or attached to the e-mail.
+Any opinions expressed within this e-mail are those of the individual and not necessarily of Diamond Light Source Ltd. 
+Diamond Light Source Ltd. cannot guarantee that this e-mail or any attachments are free from viruses and we cannot accept liability for any damage which you may sustain as a result of software viruses which may be transmitted in or with the message.
+Diamond Light Source Limited (company no. 4375679). Registered in England and Wales with its registered office at Diamond House, Harwell Science and Innovation Campus, Didcot, Oxfordshire, OX11 0DE, United Kingdom
+ 
