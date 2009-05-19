@@ -1,71 +1,37 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: [PATCH] Staging: agnx: switch config_interface to
-	bss_info_changed
-Date: Tue, 19 May 2009 10:41:31 -0400
-Message-ID: <20090519144131.GB2691@tuxdriver.com>
-References: <1242127393-4298-1-git-send-email-a.beregalov@gmail.com> <20090512164448.GJ16247@kroah.com> <a4423d670905121037i3ea96b01s68367c082802684d@mail.gmail.com> <20090512190254.GB1957@kroah.com> <a4423d670905121315g503f4f0ep6a60e9051a2aeb9d@mail.gmail.com> <a4423d670905190512x296f6b1cgaa7815fb4f17cac7@mail.gmail.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for May 19 (devtmpfs build error)
+Date: Tue, 19 May 2009 08:58:51 -0700
+Message-ID: <20090519085851.3b8386ed.rdunlap@xenotime.net>
+References: <20090519183044.a910aa7a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:53441 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751905AbZESOpP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 19 May 2009 10:45:15 -0400
-Content-Disposition: inline
-In-Reply-To: <a4423d670905190512x296f6b1cgaa7815fb4f17cac7@mail.gmail.com>
+Received: from xenotime.net ([72.52.64.118]:46135 "HELO xenotime.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+	id S1752545AbZESP41 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 May 2009 11:56:27 -0400
+Received: from chimera.site ([71.182.83.218]) by xenotime.net for <linux-next@vger.kernel.org>; Tue, 19 May 2009 08:56:26 -0700
+In-Reply-To: <20090519183044.a910aa7a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: Greg KH <greg@kroah.com>, linux-wireless@vger.kernel.org, gregkh@suse.de, johannes@sipsolutions.net, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Kay Sievers <kay.sievers@vrfy.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, May 19, 2009 at 04:12:50PM +0400, Alexander Beregalov wrote:
-> 2009/5/13 Alexander Beregalov <a.beregalov@gmail.com>:
-> > 2009/5/12 Greg KH <greg@kroah.com>:
-> >> On Tue, May 12, 2009 at 09:37:56PM +0400, Alexander Beregalov wrot=
-e:
-> >>> 2009/5/12 Greg KH <greg@kroah.com>:
-> >>> > On Tue, May 12, 2009 at 03:23:13PM +0400, Alexander Beregalov w=
-rote:
-> >>> >> Fix this build error:
-> >>> >> drivers/staging/agnx/pci.c: In function 'agnx_config_interface=
-':
-> >>> >> drivers/staging/agnx/pci.c:315: error: dereferencing pointer t=
-o incomplete type
-> >>> >> ..
-> >>> >> drivers/staging/agnx/pci.c:424: error: unknown field 'config_i=
-nterface' specified in initializer
-> >>> >>
-> >>> >> config_interface was removed in 2d0ddec5b2b
-> >>> >> ("mac80211: unify config_interface and bss_info_changed")
-> >>> >
-> >>> > I do not see that patch in Linus's tree. =A0Is it in some other=
- tree
-> >>> > (wireless?) and not yet in mainline?
-> >>> Yes, it is in wireless from linux-next.
-> >>> You asked to send patches based on linux-next, right?
-> >>> Should I always mark patches for staging-next tree as [PATCH -nex=
-t] ?
-> >>
-> >> Hm, yes, -staging patches need to be against -next, but I have to =
-be
-> >> able to build these somehow on my own without the wireless tree...
-> >>
-> >> I think something like this might better go through the wireless t=
-ree as
-> >> it depends on changes that happen there. =A0Sound good to you?
-> > Ok, thanks Greg.
-> >
-> >> If so, please send them to the wireless maintainer.
-> > John, will you apply it?
->=20
-> John?
+On Tue, 19 May 2009 18:30:44 +1000 Stephen Rothwell wrote:
 
-*grumble*
+> Hi all,
+> 
+> Changes since 20090518:
 
-I guess I will...
 
-John
---=20
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
+when CONFIG_SHMEM=n:
+
+drivers/built-in.o: In function `dev_get_sb':
+devtmpfs.c:(.text+0x13263b): undefined reference to `shmem_fill_super'
+
+
+---
+~Randy
+LPC 2009, Sept. 23-25, Portland, Oregon
+http://linuxplumbersconf.org/2009/
