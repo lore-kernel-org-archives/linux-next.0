@@ -1,43 +1,81 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net tree with Linus' tree
-Date: Mon, 18 May 2009 21:09:13 -0700 (PDT)
-Message-ID: <20090518.210913.206585156.davem@davemloft.net>
-References: <20090519133958.31ec120b.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the ext4 tree
+Date: Tue, 19 May 2009 14:23:06 +1000
+Message-ID: <20090519142306.8476809a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:46700
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750734AbZESEJP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 May 2009 00:09:15 -0400
-In-Reply-To: <20090519133958.31ec120b.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56718 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750838AbZESEXI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 May 2009 00:23:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, vasu.dev@intel.com, jeykholt@cisco.com, robert.w.love@intel.com, James.Bottomley@HansenPartnership.com, christopher.leech@intel.com
+To: Al Viro <viro@ZenIV.linux.org.uk>, Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 19 May 2009 13:39:58 +1000
+Hi Al, Ted,
 
-> Today's linux-next merge of the net tree got a conflict in
-> drivers/scsi/fcoe/fcoe.c between commit
-> 6401bdcad536cc00589c38e7e1c140d3acc00087 ("[SCSI] fcoe: fip: add
-> multicast filter to receive FIP advertisements") from Linus' tree and
-> commit 184dd3459bb334d9061b58faed3610d08d6c7ff8 ("fcoe: adds spma mode
-> support") from the net tree.
-> 
-> There is another trivial conflict between commit
-> dd3fd72e692c8af007f70df4433c0cffe8582d8b ("[SCSI] fcoe: fix spelling
-> typos and bad comments") from Linus' tree and commit
-> ab6b85c1d7a1bf6c2b27fb542a7b2404e45b7e24 ("fcoe: consolidates netdev
-> related config and cleanup for spma mode") from the net tree.
-> 
-> Just context changes.  I fixed them up (see below) and can carry them for
-> a while.
+Today's linux-next merge of the vfs tree got a conflict in
+fs/ext4/super.c between commit cb0765fe4c3db8c9c22f1ed1017cbced2dd68150
+("ext4: Add a comprehensive block validity check to ext4_get_blocks()")
+from the ext4 tree and various commits from the vfs tree.
 
-I'll pull net-2.6 into net-next-2.6 and push the result to kernel.org
-to resolve this.
+Just context changes.  I fixed it up (see below - please check as I am
+not sure of the ordering constraints in the first hunk) and can carry the
+fixup as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks!
+diff --cc fs/ext4/super.c
+index eca6c05,d789833..0000000
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@@ -568,7 -564,11 +569,12 @@@ static void ext4_put_super(struct super
+  	struct ext4_super_block *es = sbi->s_es;
+  	int i, err;
+  
++ 	lock_super(sb);
++ 	lock_kernel();
++ 	if (sb->s_dirt)
++ 		ext4_write_super_locked(sb);
++ 
+ +	ext4_release_system_zone(sb);
+  	ext4_mb_release(sb);
+  	ext4_ext_release(sb);
+  	ext4_xattr_put_super(sb);
+@@@ -3322,11 -3268,30 +3325,18 @@@ int ext4_force_commit(struct super_bloc
+  	return ret;
+  }
+  
+- static void ext4_write_super(struct super_block *sb)
+ -/*
+ - * Ext4 always journals updates to the superblock itself, so we don't
+ - * have to propagate any other updates to the superblock on disk at this
+ - * point.  (We can probably nuke this function altogether, and remove
+ - * any mention to sb->s_dirt in all of fs/ext4; eventual cleanup...)
+ - */
++ static void ext4_write_super_locked(struct super_block *sb)
+  {
+ -	if (EXT4_SB(sb)->s_journal) {
+ -		if (mutex_trylock(&sb->s_lock) != 0)
+ -			BUG();
+ -		sb->s_dirt = 0;
+ -	} else {
+ -		ext4_commit_super(sb, EXT4_SB(sb)->s_es, 1);
+ -	}
+ +	ext4_commit_super(sb, 1);
+  }
+  
++ static void ext4_write_super(struct super_block *sb)
++ {
++ 	lock_super(sb);
++ 	ext4_write_super_locked(sb);
++ 	unlock_super(sb);
++ }
++ 
+  static int ext4_sync_fs(struct super_block *sb, int wait)
+  {
+  	int ret = 0;
