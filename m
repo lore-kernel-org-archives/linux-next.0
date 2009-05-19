@@ -1,44 +1,61 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: linux-next: cputime tree build warning
-Date: Tue, 19 May 2009 10:47:00 +0200
-Message-ID: <20090519104700.57770120@skybase>
-References: <20090519173251.86d755c8.sfr@canb.auug.org.au>
-	<4854F2500EA8C4478A508D2D92973E52046B8498@EXCHANGE25.fed.cclrc.ac.uk>
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: Re: [PATCH] Staging: agnx: switch config_interface to
+	bss_info_changed
+Date: Tue, 19 May 2009 16:12:50 +0400
+Message-ID: <a4423d670905190512x296f6b1cgaa7815fb4f17cac7@mail.gmail.com>
+References: <1242127393-4298-1-git-send-email-a.beregalov@gmail.com>
+	 <20090512164448.GJ16247@kroah.com>
+	 <a4423d670905121037i3ea96b01s68367c082802684d@mail.gmail.com>
+	 <20090512190254.GB1957@kroah.com>
+	 <a4423d670905121315g503f4f0ep6a60e9051a2aeb9d@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate5.de.ibm.com ([195.212.29.154]:34583 "EHLO
-	mtagate5.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751804AbZESIrL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 19 May 2009 04:47:11 -0400
-In-Reply-To: <4854F2500EA8C4478A508D2D92973E52046B8498@EXCHANGE25.fed.cclrc.ac.uk>
+Received: from mail-ew0-f224.google.com ([209.85.219.224]:62940 "EHLO
+	mail-ew0-f224.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752713AbZESMMv convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 May 2009 08:12:51 -0400
+In-Reply-To: <a4423d670905121315g503f4f0ep6a60e9051a2aeb9d@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Abbott, MG (Michael)" <michael.abbott@diamond.ac.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>, "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org
+Cc: gregkh@suse.de, johannes@sipsolutions.net, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 19 May 2009 08:39:32 +0100
-"Abbott, MG (Michael)" <michael.abbott@diamond.ac.uk> wrote:
+2009/5/13 Alexander Beregalov <a.beregalov@gmail.com>:
+> 2009/5/12 Greg KH <greg@kroah.com>:
+>> On Tue, May 12, 2009 at 09:37:56PM +0400, Alexander Beregalov wrote:
+>>> 2009/5/12 Greg KH <greg@kroah.com>:
+>>> > On Tue, May 12, 2009 at 03:23:13PM +0400, Alexander Beregalov wro=
+te:
+>>> >> Fix this build error:
+>>> >> drivers/staging/agnx/pci.c: In function 'agnx_config_interface':
+>>> >> drivers/staging/agnx/pci.c:315: error: dereferencing pointer to =
+incomplete type
+>>> >> ..
+>>> >> drivers/staging/agnx/pci.c:424: error: unknown field 'config_int=
+erface' specified in initializer
+>>> >>
+>>> >> config_interface was removed in 2d0ddec5b2b
+>>> >> ("mac80211: unify config_interface and bss_info_changed")
+>>> >
+>>> > I do not see that patch in Linus's tree. =C2=A0Is it in some othe=
+r tree
+>>> > (wireless?) and not yet in mainline?
+>>> Yes, it is in wireless from linux-next.
+>>> You asked to send patches based on linux-next, right?
+>>> Should I always mark patches for staging-next tree as [PATCH -next]=
+ ?
+>>
+>> Hm, yes, -staging patches need to be against -next, but I have to be
+>> able to build these somehow on my own without the wireless tree...
+>>
+>> I think something like this might better go through the wireless tre=
+e as
+>> it depends on changes that happen there. =C2=A0Sound good to you?
+> Ok, thanks Greg.
+>
+>> If so, please send them to the wireless maintainer.
+> John, will you apply it?
 
-> > Today's linux-next build (x86_64 allmodconfig) produced this warning:
-> > 
-> > fs/proc/uptime.c: In function 'uptime_proc_show':
-> > fs/proc/uptime.c:14: warning: unused variable 'len'
-> > 
-> > Introduced by commit ed7e789abfc433e46524419b7cc51d949552505e 
-> > ("[PATCH]
-> > Fix idle time field in /proc/uptime") from the cputime tree.
-> 
-> Ouch.  I do apologise.  The (now) bogus variable len must have been
-> preserved when I rebased from 2.6.29.3 to current git, and I guess I
-> didn't spot the warning among all the other warnings in the build.
- 
-I'll fix the two problems with the patch: 1) remove len, 2) use
-cputime_zero to initialize idletime and update the cputime branch.
-
--- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
+John?
