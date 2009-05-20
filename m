@@ -1,34 +1,29 @@
-From: Kay Sievers <kay.sievers@vrfy.org>
-Subject: Re: linux-next: Tree for May 19 (devtmpfs build error)
-Date: Wed, 20 May 2009 20:56:16 +0200
-Message-ID: <ac3eb2510905201156l43ad44d4l358c7f87159fd82e@mail.gmail.com>
-References: <20090519183044.a910aa7a.sfr@canb.auug.org.au>
-	<20090519085851.3b8386ed.rdunlap@xenotime.net>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: net tree build failure
+Date: Wed, 20 May 2009 12:44:03 -0700 (PDT)
+Message-ID: <20090520.124403.159818618.davem@davemloft.net>
+References: <20090521001928.4bf71911.sfr@canb.auug.org.au>
+	<m1d4a3keqm.fsf@fess.ebiederm.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f158.google.com ([209.85.220.158]:44059 "EHLO
-	mail-fx0-f158.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755483AbZETS4g (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 May 2009 14:56:36 -0400
-In-Reply-To: <20090519085851.3b8386ed.rdunlap@xenotime.net>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:50784
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755477AbZETToF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 May 2009 15:44:05 -0400
+In-Reply-To: <m1d4a3keqm.fsf@fess.ebiederm.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg Kroah-Hartmann <greg@kroah.com>
+To: ebiederm@xmission.com
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, rmk@arm.linux.org.uk, hskinnemoen@atmel.com
 
-On Tue, May 19, 2009 at 17:58, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> On Tue, 19 May 2009 18:30:44 +1000 Stephen Rothwell wrote:
+From: ebiederm@xmission.com (Eric W. Biederman)
+Date: Wed, 20 May 2009 07:53:21 -0700
 
->> Changes since 20090518:
->
-> when CONFIG_SHMEM=n:
->
-> drivers/built-in.o: In function `dev_get_sb':
-> devtmpfs.c:(.text+0x13263b): undefined reference to `shmem_fill_super'
+> Grrr. Some days it feels like all of the good names are already taken.
+> 
+> How does this look for a solution to the name clash?
 
-Needed dependencies added.
-
-Thanks,
-Kay
+Give me a signoff so I can apply this Eric, thanks.
