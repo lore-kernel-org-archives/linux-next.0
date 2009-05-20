@@ -1,82 +1,267 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] nfs: fix build error in nfsroot with initconst
-Date: Wed, 20 May 2009 11:30:15 +1000
-Message-ID: <20090520113015.63334073.sfr@canb.auug.org.au>
-References: <20090505111712.ae4649b3.sfr@canb.auug.org.au>
-	<20090505111114.GA16497@uranus.ravnborg.org>
-	<20090506133253.43409da9.sfr@canb.auug.org.au>
+Subject: linux-next: Tree for May 20
+Date: Wed, 20 May 2009 17:08:07 +1000
+Message-ID: <20090520170807.b75a9d86.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__20_May_2009_11_30_15_+1000_Sk6W85PuRXZm433O"
+ boundary="Signature=_Wed__20_May_2009_17_08_07_+1000__=9.vcIvjO6dP3/h"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35737 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58749 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755035AbZETBaZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 May 2009 21:30:25 -0400
-In-Reply-To: <20090506133253.43409da9.sfr@canb.auug.org.au>
+	id S1752220AbZETHIN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 May 2009 03:08:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <Trond.Myklebust@netapp.com>
-Cc: Sam Ravnborg <sam@ravnborg.org>, linux-next@vger.kernel.org, Jan Beulich <jbeulich@novell.com>, Steven Whitehouse <swhiteho@redhat.com>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Wed__20_May_2009_11_30_15_+1000_Sk6W85PuRXZm433O
+--Signature=_Wed__20_May_2009_17_08_07_+1000__=9.vcIvjO6dP3/h
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Trond,
+Hi all,
 
-On Wed, 6 May 2009 13:32:53 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> On Tue, 5 May 2009 13:11:14 +0200 Sam Ravnborg <sam@ravnborg.org> wrote:
-> >
-> > fix build error with latest kbuild adjustments to initconst.
-> >=20
-> > The commit a447c0932445f92ce6f4c1bd020f62c5097a7842 ("vfs: Use
-> > const for kernel parser table") changed:
-> >=20
-> >     static match_table_t __initdata tokens =3D {
-> > to
-> >     static match_table_t __initconst tokens =3D {
-> >=20
-> > But the missing const causes popwerpc to fail with latest
-> > updates to __initconst like this:
-> >=20
-> > fs/nfs/nfsroot.c:400: error: __setup_str_nfs_root_setup causes a sectio=
-n type conflict
-> > fs/nfs/nfsroot.c:400: error: __setup_str_nfs_root_setup causes a sectio=
-n type conflict
-> >=20
-> > The bug is only present with kbuild-next.
-> > Following patch has been build tested.
-> >=20
-> > Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-> > Cc: Steven Whitehouse <swhiteho@redhat.com>
-> > Cc: Stephen Rothwell <sfr@canb.auug.org.au>
->=20
-> I build tested this with the offending compilers, so
->=20
-> Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Acked-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Changes since 20090519:
 
-Any reason this has not appeared in the nfs (or Linus') tree yet?
+Undropped tree:
+	edac-amd
+
+The net tree lost a conflict.
+
+The block tree had its revert and patch replaced with a merge fix up
+patch.
+
+The edac-amd tree lost its build failure.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+(patches at
+http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES) and i386, sparc and sparc64 defconfig.
+These builds also have CONFIG_ENABLE_WARN_DEPRECATED,
+CONFIG_ENABLE_MUST_CHECK and CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 138 trees (counting Linus' and 18 trees of patches pending for
+Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__20_May_2009_11_30_15_+1000_Sk6W85PuRXZm433O
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/master
+Merging quilt/driver-core.current
+Merging quilt/usb.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging dwmw2/master
+Merging arm/devel
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging mips/mips-for-linux-next
+Merging parisc/master
+Merging powerpc/next
+Merging 4xx/next
+Merging galak/next
+Merging pxa/for-next
+CONFLICT (content): Merge conflict in arch/arm/mach-pxa/viper.c
+Merging s390/features
+Merging sh/master
+Merging sparc/master
+Merging x86/auto-x86-next
+Merging xtensa/master
+Merging configfs/linux-next
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging jfs/next
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging squashfs/master
+Merging v9fs/for-next
+CONFLICT (content): Merge conflict in net/9p/protocol.c
+Merging ubifs/linux-next
+Merging xfs/master
+Merging tip-core/auto-core-next
+Merging cpus4096/auto-cpus4096-next
+Merging tracing/auto-tracing-next
+Merging genirq/auto-genirq-next
+CONFLICT (content): Merge conflict in arch/mips/sibyte/bcm1480/irq.c
+CONFLICT (content): Merge conflict in arch/mips/sibyte/sb1250/irq.c
+Merging safe-poison-pointers/auto-safe-poison-pointers-next
+Merging sched/auto-sched-next
+Merging stackprotector/auto-stackprotector-next
+Merging timers/auto-timers-next
+Merging pci/linux-next
+Merging quilt/device-mapper
+Merging hid/for-next
+Merging quilt/i2c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+Merging quota/for_next
+Merging kbuild/master
+[master b6c6564] Revert "initconst adjustments"
+Merging ide/for-next
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/master
+Merging dlm/next
+Merging scsi/master
+CONFLICT (content): Merge conflict in include/Kbuild
+Merging async_tx/next
+Merging udf/for_next
+Merging net/master
+CONFLICT (content): Merge conflict in include/linux/mmc/sdio_ids.h
+Merging wireless/master
+[master 287b907] Revert "rfkill: remove user_claim stuff"
+Merging mtd/master
+Merging crypto/master
+Merging vfs/for-next
+CONFLICT (content): Merge conflict in fs/ext4/super.c
+CONFLICT (content): Merge conflict in fs/fuse/inode.c
+Merging sound/for-next
+Merging cpufreq/next
+Merging quilt/rr
+Merging cifs/master
+Merging mmc/next
+Merging input/next
+Merging bkl-removal/bkl-removal
+Merging lsm/for-next
+Merging block/for-next
+CONFLICT (content): Merge conflict in drivers/block/hd.c
+CONFLICT (content): Merge conflict in drivers/block/mg_disk.c
+CONFLICT (content): Merge conflict in drivers/ide/ide-atapi.c
+CONFLICT (content): Merge conflict in drivers/ide/ide-cd.c
+CONFLICT (content): Merge conflict in drivers/ide/ide-floppy.c
+CONFLICT (content): Merge conflict in drivers/ide/ide-tape.c
+Applying: "FC Pass Thru support" fixed for block/for-2.6.31 tree
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging voltage/for-next
+Merging security-testing/next
+Merging lblnet/master
+Merging quilt/ttydev
+Merging agp/agp-next
+Merging generic-ipi/auto-generic-ipi-next
+Merging oprofile/auto-oprofile-next
+Merging fastboot/auto-fastboot-next
+Merging sparseirq/auto-sparseirq-next
+Merging iommu/auto-iommu-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+CONFLICT (content): Merge conflict in drivers/pci/intel-iommu.c
+CONFLICT (content): Merge conflict in drivers/pci/intr_remapping.c
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+Merging audit/for-next
+Merging omap/for-next
+Merging quilt/aoe
+Merging kmemleak/kmemleak
+CONFLICT (delete/modify): arch/x86/kernel/vmlinux_32.lds.S deleted in HEAD =
+and modified in kmemleak/kmemleak. Version kmemleak/kmemleak of arch/x86/ke=
+rnel/vmlinux_32.lds.S left in tree.
+CONFLICT (delete/modify): arch/x86/kernel/vmlinux_64.lds.S deleted in HEAD =
+and modified in kmemleak/kmemleak. Version kmemleak/kmemleak of arch/x86/ke=
+rnel/vmlinux_64.lds.S left in tree.
+CONFLICT (content): Merge conflict in lib/Kconfig.debug
+CONFLICT (content): Merge conflict in mm/slob.c
+$ git rm -f arch/x86/kernel/vmlinux_32.lds.S arch/x86/kernel/vmlinux_64.lds=
+.S
+Merging suspend/linux-next
+Merging bluetooth/master
+Merging edac-amd/for-next
+Merging asm-generic/next
+Merging quilt/driver-core
+CONFLICT (content): Merge conflict in init/main.c
+Merging quilt/usb
+CONFLICT (content): Merge conflict in drivers/usb/serial/sierra.c
+Merging quilt/staging
+CONFLICT (content): Merge conflict in drivers/staging/rt2860/common/mlme.c
+CONFLICT (content): Merge conflict in drivers/staging/rt2870/common/mlme.c
+CONFLICT (content): Merge conflict in drivers/staging/rt3070/common/mlme.c
+Merging scsi-post-merge/master
+
+--Signature=_Wed__20_May_2009_17_08_07_+1000__=9.vcIvjO6dP3/h
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkoTXScACgkQjjKRsyhoI8y3KACfYJ9CEPADKW3aBcADdjRSi86E
-1b8AoJZmBs/zpak3lgmchCTVXdjYsO8N
-=VZbw
+iEYEARECAAYFAkoTrFcACgkQjjKRsyhoI8xPqACgl0tAAfhHph/887sh0pZdZFoW
+ju4AoJwU0cbEHWEs+2zd5F08//aBGBXI
+=M34v
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__20_May_2009_11_30_15_+1000_Sk6W85PuRXZm433O--
+--Signature=_Wed__20_May_2009_17_08_07_+1000__=9.vcIvjO6dP3/h--
