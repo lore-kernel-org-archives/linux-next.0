@@ -1,74 +1,51 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: Re: next: x86/msr.h: build fails
-Date: Wed, 20 May 2009 14:14:46 +0400
-Message-ID: <20090520101446.GA16517@orion>
-References: <20090520094141.GA16421@orion>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: sound tree build failure
+Date: Thu, 21 May 2009 00:31:45 +1000
+Message-ID: <20090521003145.7c31808d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__21_May_2009_00_31_45_+1000_Za=GUY/E4HuhNQ57"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wa-out-1112.google.com ([209.85.146.179]:54741 "EHLO
-	wa-out-1112.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755695AbZETKVo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 May 2009 06:21:44 -0400
-Received: by wa-out-1112.google.com with SMTP id j5so79101wah.21
-        for <linux-next@vger.kernel.org>; Wed, 20 May 2009 03:21:45 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20090520094141.GA16421@orion>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43608 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753035AbZETObx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 May 2009 10:31:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Borislav Petkov <borislav.petkov@amd.com>, linux-next@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Wai Yew CHAY <wychay@ctl.creative.com>, Ryan RICHARDS <ryan_richards@creativelabs.com>
 
-On Wed, May 20, 2009 at 01:41:41PM +0400, Alexander Beregalov wrote:
-> Hi Borislav,
-> 
-> What do you think about this fix?
-> I have no idea what value should be for the cpu variable.
+--Signature=_Thu__21_May_2009_00_31_45_+1000_Za=GUY/E4HuhNQ57
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch should be better.
-This is !SMP code, then cpu=0 is ok.
+Hi Takashi,
 
+Today's linux-next build (sparc64 allmodconfig) failed like this:
 
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: [PATCH] x86: msr.h: fix build error
+sound/pci/ctxfi/cthw20k2.c:1217:3: error: #error "Don't support 8k-page!"
 
-Fix this build error:
-.../asm/msr.h: In function 'rdmsr_on_cpus':
-.../asm/msr.h:248: error: request for member 'l' in something not a structure or union
-.../asm/msr.h:248: error: request for member 'h' in something not a structure or union
-.../asm/msr.h:248: error: too few arguments to function 'rdmsr_on_cpu'
-.../asm/msr.h: In function 'wrmsr_on_cpus':
-.../asm/msr.h:253: error: request for member 'l' in something not a structure or union
-.../asm/msr.h:253: error: request for member 'h' in something not a structure or union
-.../asm/msr.h:253: error: too few arguments to function 'wrmsr_on_cpu'
+Caused by commit 8cc72361481f00253f1e468ade5795427386d593 ("ALSA: SB X-Fi
+driver merge").  I assume that this driver needs better Kconfig
+protection.  Maybe test for CONFIG_SPARC64_PAGE_SIZE_8KB or something.
+Does this driver support other pages sizes (16k, 64k, 256k)?
 
-This is !SMP code so `cpu` should be 0.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
----
+--Signature=_Thu__21_May_2009_00_31_45_+1000_Za=GUY/E4HuhNQ57
+Content-Type: application/pgp-signature
 
- arch/x86/include/asm/msr.h |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
-index e49c14e..fa082ba 100644
---- a/arch/x86/include/asm/msr.h
-+++ b/arch/x86/include/asm/msr.h
-@@ -243,14 +243,14 @@ static inline int wrmsr_on_cpu(unsigned int cpu, u32 msr_no, u32 l, u32 h)
- 	return 0;
- }
- static inline int rdmsr_on_cpus(const cpumask_t *m, u32 msr_no,
--				struct msr **msrs)
-+				struct msr *msrs)
- {
--	return rdmsr_on_cpu(msr_no, &(msrs[0].l), &(msrs[0].h));
-+	return rdmsr_on_cpu(0, msr_no, &(msrs[0].l), &(msrs[0].h));
- }
- static inline int wrmsr_on_cpus(const cpumask_t *m, u32 msr_no,
--				struct msr **msrs)
-+				struct msr *msrs)
- {
--	return wrmsr_on_cpu(msr_no, msrs[0].l, msrs[0].h);
-+	return wrmsr_on_cpu(0, msr_no, msrs[0].l, msrs[0].h);
- }
- static inline int rdmsr_safe_on_cpu(unsigned int cpu, u32 msr_no,
- 				    u32 *l, u32 *h)
+iEYEARECAAYFAkoUFFEACgkQjjKRsyhoI8wjuwCfXtauJ9wjqTy74x/A86stPmY/
+L3IAnAz1OQVUrmquQa6MppxVOMqnkH0a
+=GI05
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__21_May_2009_00_31_45_+1000_Za=GUY/E4HuhNQ57--
