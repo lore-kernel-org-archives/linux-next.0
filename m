@@ -1,81 +1,56 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
+From: Borislav Petkov <borislav.petkov@amd.com>
 Subject: Re: linux-next: Tree for May 20 (amd64_edac)
-Date: Wed, 20 May 2009 09:51:56 -0700
-Message-ID: <4A14352C.5020508@oracle.com>
-References: <20090520170807.b75a9d86.sfr@canb.auug.org.au> <4A142CC9.4050904@oracle.com> <20090520164112.GA29913@aftab>
+Date: Wed, 20 May 2009 19:17:54 +0200
+Message-ID: <20090520171754.GB29913@aftab>
+References: <20090520170807.b75a9d86.sfr@canb.auug.org.au> <4A142CC9.4050904@oracle.com> <20090520164112.GA29913@aftab> <4A14352C.5020508@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755574AbZETQtp@vger.kernel.org>
-In-Reply-To: <20090520164112.GA29913@aftab>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Borislav Petkov <borislav.petkov@amd.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dougthompson@xmission.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from va3ehsobe003.messaging.microsoft.com ([216.32.180.13]:27418
+	"EHLO VA3EHSOBE003.bigfish.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1754209AbZETRSC convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 May 2009 13:18:02 -0400
+Content-Disposition: inline
+In-Reply-To: <4A14352C.5020508@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dougthompson@xmission.com
 
-Borislav Petkov wrote:
-> Hi,
-> 
-> On Wed, May 20, 2009 at 09:16:09AM -0700, Randy Dunlap wrote:
->> Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20090519:
->>>
->>> Undropped tree:
->>> 	edac-amd
->>>
->>> The edac-amd tree lost its build failure.
->>
->> When K8_NB is not enabled:
->>
->> drivers/built-in.o: In function `amd64_edac_init':
->> amd64_edac.c:(.init.text+0x254f6): undefined reference to `cache_k8_northbridges'
->> amd64_edac.c:(.init.text+0x25c38): undefined reference to `num_k8_northbridges'
-> 
-> ah, well, one dependency goes another one comes in :(. Thanks, will fix...
-> 
->> Error with EDAC_AMD64 =y or =m.
->> Error on both i386 and on x86_64.
->>
->>
->> Comments on Kconfig for EDAC_AMD64:
->>
->> config EDAC_AMD64
->> 	tristate "AMD64 (Opteron, Athlon64) K8, F10h, F11h"
->> 	depends on EDAC_MM_EDAC && X86 && PCI
->> 	default m
->> 	help
->> 	Support for error detection and correction on the AMD 64
->> 	Families of Memory Controllers (K8, F10h and F11h)
->>
->>
->> Does this actually apply to X86_32 or should the depends be on
->> X86_64 instead of X86?
-> 
-> and since K8_NB depends on X86_64, this answers that question :).
+Hi,
 
-Yes.
+On Wed, May 20, 2009 at 09:51:56AM -0700, Randy Dunlap wrote:
 
->> The default y on EDAC_MM_EDAC and default m on EDAC_AMD64 should
->> be removed.
-> 
-> The reasoning behind those comes from Ingo: people who enable EDAC
-> should get the modules automatically on instead of going through the
-> different entries in the subtree. Which sounds kind of reasonable, no?
-> 
-> See
-> 
-> http://marc.info/?l=linux-kernel&m=124173363813847
-> 
-> for details.
+[..]
 
-Distros don't use defaults or defconfig anyway, and having them
-enabled bloats kernels.  I'm sure that Linus has also expressed
-opinions about enabling options in this way, but I can't find it
-just now.
+> Distros don't use defaults or defconfig anyway, and having them
+> enabled bloats kernels.  I'm sure that Linus has also expressed
+> opinions about enabling options in this way, but I can't find it
+> just now.
 
--- 
-~Randy
-LPC 2009, Sept. 23-25, Portland, Oregon
-http://linuxplumbersconf.org/2009/
+This is one of those situations where you have the pros and the cons
+staring at you. For what is worth, I myself have sent several patches
+removing Kconfig options defaulting to m for hardware which is not even
+present on a two-digit percentage of machines. I was told then, that it
+is defaulting to m so that the code sees some more compiles on differen=
+t
+hardware but we end up automating stuff to turn them off in the .config
+and the whole thing doesn't serve its purpose in the end anyway.
+
+Besides, those who enable EDAC should probably know what they need to
+turn on, in addition to that. Also, the bloating part is not good(tm).
+
+So off it is...
+
+--=20
+Regards/Gruss,
+Boris.
+
+Operating | Advanced Micro Devices GmbH
+  System  | Karl-Hammerschmidt-Str. 34, 85609 Dornach b. M=FCnchen, Ger=
+many
+ Research | Gesch=E4ftsf=FChrer: Thomas M. McCoy, Giuliano Meroni
+  Center  | Sitz: Dornach, Gemeinde Aschheim, Landkreis M=FCnchen
+  (OSRC)  | Registergericht M=FCnchen, HRB Nr. 43632
