@@ -1,82 +1,52 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Subject: Re: linux-next: net tree build failure
-Date: Wed, 20 May 2009 07:53:21 -0700
-Message-ID: <m1d4a3keqm.fsf@fess.ebiederm.org>
-References: <20090521001928.4bf71911.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: sound tree build failure
+Date: Thu, 21 May 2009 00:59:49 +1000
+Message-ID: <20090521005949.a48d8dab.sfr@canb.auug.org.au>
+References: <20090521003145.7c31808d.sfr@canb.auug.org.au>
+	<s5hmy977rxm.wl%tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__21_May_2009_00_59_49_+1000_=e7sPhrHsADhZlux"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out01.mta.xmission.com ([166.70.13.231]:39867 "EHLO
-	out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752412AbZETOx0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 May 2009 10:53:26 -0400
-In-Reply-To: <20090521001928.4bf71911.sfr@canb.auug.org.au> (Stephen Rothwell's message of "Thu\, 21 May 2009 00\:19\:28 +1000")
+Received: from chilli.pcug.org.au ([203.10.76.44]:46771 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751411AbZETO7z (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 May 2009 10:59:55 -0400
+In-Reply-To: <s5hmy977rxm.wl%tiwai@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Haavard Skinnemoen <hskinnemoen@atmel.com>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Wai Yew CHAY <wychay@ctl.creative.com>, Ryan RICHARDS <ryan_richards@creativelabs.com>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+--Signature=_Thu__21_May_2009_00_59_49_+1000_=e7sPhrHsADhZlux
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Dave,
+Hi Takashi,
+
+On Wed, 20 May 2009 16:46:45 +0200 Takashi Iwai <tiwai@suse.de> wrote:
 >
-> Today's linux-next build of at least some av32 and arm configs failed like this:
->
-> arch/avr32/kernel/signal.c:216: error: conflicting types for 'restart_syscall'
-> include/linux/sched.h:2184: error: previous definition of 'restart_syscall' was here
->
-> Caused by commit 690cc3ffe33ac4a2857583c22d4c6244ae11684d ("syscall:
-> Implement a convinience function restart_syscall") from the net tree.
->
-> grep is your friend ...
+> Meanwhile, I'll add Kconfig dependency to x86 so that it won't be
+> built on other architectures (which haven't been tested anyway).
 
-Grrr. Some days it feels like all of the good names are already taken.
+OK, thanks.
 
-How does this look for a solution to the name clash?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+--Signature=_Thu__21_May_2009_00_59_49_+1000_=e7sPhrHsADhZlux
+Content-Type: application/pgp-signature
 
----
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
-index 80b8b5c..88a8f0b 100644
---- a/arch/arm/kernel/signal.c
-+++ b/arch/arm/kernel/signal.c
-@@ -532,7 +532,7 @@ setup_rt_frame(int usig, struct k_sigaction *ka, siginfo_t *info,
- 	return err;
- }
- 
--static inline void restart_syscall(struct pt_regs *regs)
-+static inline void setup_syscall_restart(struct pt_regs *regs)
- {
- 	regs->ARM_r0 = regs->ARM_ORIG_r0;
- 	regs->ARM_pc -= thumb_mode(regs) ? 2 : 4;
-@@ -567,7 +567,7 @@ handle_signal(unsigned long sig, struct k_sigaction *ka,
- 			}
- 			/* fallthrough */
- 		case -ERESTARTNOINTR:
--			restart_syscall(regs);
-+			setup_syscall_restart(regs);
- 		}
- 	}
- 
-diff --git a/arch/avr32/kernel/signal.c b/arch/avr32/kernel/signal.c
-index 803d7be..2722756 100644
---- a/arch/avr32/kernel/signal.c
-+++ b/arch/avr32/kernel/signal.c
-@@ -212,7 +212,7 @@ out:
- 	return err;
- }
- 
--static inline void restart_syscall(struct pt_regs *regs)
-+static inline void setup_syscall_restart(struct pt_regs *regs)
- {
- 	if (regs->r12 == -ERESTART_RESTARTBLOCK)
- 		regs->r8 = __NR_restart_syscall;
-@@ -296,7 +296,7 @@ int do_signal(struct pt_regs *regs, sigset_t *oldset, int syscall)
- 			}
- 			/* fall through */
- 		case -ERESTARTNOINTR:
--			restart_syscall(regs);
-+			setup_syscall_restart(regs);
- 		}
- 	}
+iEYEARECAAYFAkoUGuUACgkQjjKRsyhoI8wz7wCgpgtSxBty+Qat2tk2Y6+cN/1K
+/hYAn2Wvl1+FbXKBF1yjVALdh/rGCzC8
+=K5Ap
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__21_May_2009_00_59_49_+1000_=e7sPhrHsADhZlux--
