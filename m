@@ -1,66 +1,67 @@
-From: Borislav Petkov <borislav.petkov@amd.com>
-Subject: Re: next: x86/msr.h: build fails
-Date: Wed, 20 May 2009 18:06:34 +0200
-Message-ID: <20090520160634.GB27991@aftab>
-References: <20090520094141.GA16421@orion> <20090520101446.GA16517@orion>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for May 20 (amd64_edac)
+Date: Wed, 20 May 2009 09:16:09 -0700
+Message-ID: <4A142CC9.4050904@oracle.com>
+References: <20090520170807.b75a9d86.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from outbound-sin.frontbridge.com ([207.46.51.80]:52011 "EHLO
-	SG2EHSOBE006.bigfish.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752412AbZETQGq convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 May 2009 12:06:46 -0400
-Content-Disposition: inline
-In-Reply-To: <20090520101446.GA16517@orion>
+Received: from rcsinet12.oracle.com ([148.87.113.124]:48526 "EHLO
+	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753063AbZETQNv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 May 2009 12:13:51 -0400
+In-Reply-To: <20090520170807.b75a9d86.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: linux-next@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, borislav.petkov@amd.com, dougthompson@xmission.com
 
-On Wed, May 20, 2009 at 02:14:46PM +0400, Alexander Beregalov wrote:
-> On Wed, May 20, 2009 at 01:41:41PM +0400, Alexander Beregalov wrote:
-> > Hi Borislav,
-> >=20
-> > What do you think about this fix?
-> > I have no idea what value should be for the cpu variable.
->=20
-> This patch should be better.
-> This is !SMP code, then cpu=3D0 is ok.
->=20
->=20
-> From: Alexander Beregalov <a.beregalov@gmail.com>
-> Subject: [PATCH] x86: msr.h: fix build error
->=20
-> Fix this build error:
-> .../asm/msr.h: In function 'rdmsr_on_cpus':
-> .../asm/msr.h:248: error: request for member 'l' in something not a s=
-tructure or union
-> .../asm/msr.h:248: error: request for member 'h' in something not a s=
-tructure or union
-> .../asm/msr.h:248: error: too few arguments to function 'rdmsr_on_cpu=
-'
-> .../asm/msr.h: In function 'wrmsr_on_cpus':
-> .../asm/msr.h:253: error: request for member 'l' in something not a s=
-tructure or union
-> .../asm/msr.h:253: error: request for member 'h' in something not a s=
-tructure or union
-> .../asm/msr.h:253: error: too few arguments to function 'wrmsr_on_cpu=
-'
->=20
-> This is !SMP code so `cpu` should be 0.
->=20
-> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20090519:
+> 
+> Undropped tree:
+> 	edac-amd
+> 
+> The edac-amd tree lost its build failure.
 
-thanks, applied.
 
---=20
-Regards/Gruss,
-Boris.
+When K8_NB is not enabled:
 
-Operating | Advanced Micro Devices GmbH
-  System  | Karl-Hammerschmidt-Str. 34, 85609 Dornach b. M=FCnchen, Ger=
-many
- Research | Gesch=E4ftsf=FChrer: Thomas M. McCoy, Giuliano Meroni
-  Center  | Sitz: Dornach, Gemeinde Aschheim, Landkreis M=FCnchen
-  (OSRC)  | Registergericht M=FCnchen, HRB Nr. 43632
+drivers/built-in.o: In function `amd64_edac_init':
+amd64_edac.c:(.init.text+0x254f6): undefined reference to `cache_k8_northbridges'
+amd64_edac.c:(.init.text+0x25c38): undefined reference to `num_k8_northbridges'
+
+
+Error with EDAC_AMD64 =y or =m.
+Error on both i386 and on x86_64.
+
+
+Comments on Kconfig for EDAC_AMD64:
+
+config EDAC_AMD64
+	tristate "AMD64 (Opteron, Athlon64) K8, F10h, F11h"
+	depends on EDAC_MM_EDAC && X86 && PCI
+	default m
+	help
+	Support for error detection and correction on the AMD 64
+	Families of Memory Controllers (K8, F10h and F11h)
+
+
+Does this actually apply to X86_32 or should the depends be on
+X86_64 instead of X86?
+
+The default y on EDAC_MM_EDAC and default m on EDAC_AMD64 should
+be removed.
+
+The 2 lines of help text should be indented by 2 spaces.
+
+Would be Good to have the amd64_edac maintainer(s) email addresses
+in MAINTAINERS file, please.
+
+-- 
+~Randy
+LPC 2009, Sept. 23-25, Portland, Oregon
+http://linuxplumbersconf.org/2009/
