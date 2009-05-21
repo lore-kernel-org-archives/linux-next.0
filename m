@@ -1,16 +1,21 @@
 From: Gregory Haskins <ghaskins@novell.com>
-Subject: [PATCH v2--refid=<20090521172122.bb12027c.sfr@canb.auug.org.au>] kvm:
-	fix irqfd build failure discovered in linux-next
-Date: Thu, 21 May 2009 09:27:24 -0400
-Message-ID: <20090521132723.8177.20321.stgit@dev.haskins.net>
+Subject: [PATCH v2] kvm: fix irqfd build failure discovered in linux-next
+Date: Thu, 21 May 2009 09:28:18 -0400
+Message-ID: <20090521132817.8218.92948.stgit@dev.haskins.net>
+References: <20090521172122.bb12027c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <kvm-owner@vger.kernel.org>
-Sender: kvm-owner@vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from victor.provo.novell.com ([137.65.250.26]:58142 "EHLO
+	victor.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752563AbZEUN2W (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 May 2009 09:28:22 -0400
+In-Reply-To: <20090521172122.bb12027c.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: avi@redhat.com
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au, kvm@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
 
 Stephen Rothwell noted a build failure in arch != x86 in last nights
 linux-next tree, as noted here:
@@ -116,4 +121,3 @@ index b58837d..de042cb 100644
  	mutex_init(&kvm->lock);
  	kvm_io_bus_init(&kvm->mmio_bus);
  	init_rwsem(&kvm->slots_lock);
-
