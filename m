@@ -1,51 +1,119 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: [PATCH 2/2] Staging: cpc-usb: fix printk format warnings
-Date: Thu, 21 May 2009 15:44:46 +0400
-Message-ID: <1242906286-7066-2-git-send-email-a.beregalov@gmail.com>
-References: <1242906286-7066-1-git-send-email-a.beregalov@gmail.com>
+From: Gregory Haskins <ghaskins@novell.com>
+Subject: [PATCH] kvm: fix irqfd build failure discovered in linux-next
+Date: Thu, 21 May 2009 09:04:26 -0400
+Message-ID: <20090521130426.22997.77787.stgit@dev.haskins.net>
+References: <20090521172122.bb12027c.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f222.google.com ([209.85.218.222]:37485 "EHLO
-	mail-bw0-f222.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752636AbZEULpz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 May 2009 07:45:55 -0400
-In-Reply-To: <1242906286-7066-1-git-send-email-a.beregalov@gmail.com>
+Received: from victor.provo.novell.com ([137.65.250.26]:58461 "EHLO
+	victor.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751629AbZEUNEn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 May 2009 09:04:43 -0400
+In-Reply-To: <20090521172122.bb12027c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: gregkh@suse.de
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Alexander Beregalov <a.beregalov@gmail.com>
+To: avi@redhat.com
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au, kvm@vger.kernel.org
 
-Fix this warnings:
-cpc-usb_drv.c:478: warning: format '%d' expects type 'int',
-	but argument 4 has type 'size_t'
-cpc-usb_drv.c:1034: warning: format '%d' expects type 'int',
-	but argument 3 has type 'long unsigned int'
+Stephen Rothwell noted a build failure in arch != x86 in last nights
+linux-next tree, as noted here:
 
-Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+http://lkml.org/lkml/2009/5/21/32
+
+This patch corrects the build issue by requiring explicit support for
+IRQFD to be defined, and only defining it on x86 (the only arch fully
+supported).  The code itself isnt architecture dependent, but we need
+to add a new file to each makefile, advertise the capability, and
+of course, test that it works for each supported arch.  We will submit
+patches against each relevant arch at a later time to enable support
+there as well.
+
+Signed-off-by: Gregory Haskins <ghaskins@novell.com>
 ---
- drivers/staging/cpc-usb/cpc-usb_drv.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/cpc-usb/cpc-usb_drv.c b/drivers/staging/cpc-usb/cpc-usb_drv.c
-index d337a97..8e312c7 100644
---- a/drivers/staging/cpc-usb/cpc-usb_drv.c
-+++ b/drivers/staging/cpc-usb/cpc-usb_drv.c
-@@ -475,7 +475,7 @@ static ssize_t cpcusb_write(struct file *file, const char *buffer,
- 	unsigned char type = 0;
- 	CPC_MSG_T *info = NULL;
+ arch/x86/kvm/Makefile    |    1 +
+ include/linux/kvm_host.h |   17 +++++++++++++++++
+ virt/kvm/eventfd.c       |    6 ++++++
+ virt/kvm/kvm_main.c      |    2 +-
+ 4 files changed, 25 insertions(+), 1 deletions(-)
+
+diff --git a/arch/x86/kvm/Makefile b/arch/x86/kvm/Makefile
+index 01e3c61..e5ce95e 100644
+--- a/arch/x86/kvm/Makefile
++++ b/arch/x86/kvm/Makefile
+@@ -1,5 +1,6 @@
  
--	dbg("%s - entered minor %d, count = %d, present = %d",
-+	dbg("%s - entered minor %d, count = %zu, present = %d",
- 	    __func__, card->minor, count, card->present);
+ EXTRA_CFLAGS += -Ivirt/kvm -Iarch/x86/kvm
++EXTRA_CFLAGS += -DKVM_HAVE_EVENTFD
  
- 	if (count > sizeof(CPC_MSG_T))
-@@ -1031,7 +1031,7 @@ static int cpcusb_probe(struct usb_interface *interface,
- 		retval = -ENOMEM;
- 		goto error;
- 	}
--	info("Allocated memory for %d messages (%d kbytes)",
-+	info("Allocated memory for %d messages (%lu kbytes)",
- 	     CPC_MSG_BUF_CNT, (sizeof(CPC_MSG_T) * CPC_MSG_BUF_CNT) / 1000);
- 	memset(chan->buf, 0, sizeof(CPC_MSG_T) * CPC_MSG_BUF_CNT);
+ kvm-y			+= $(addprefix ../../../virt/kvm/, kvm_main.o ioapic.o \
+ 				coalesced_mmio.o irq_comm.o eventfd.o)
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 3b6caf5..8600473 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -134,7 +134,9 @@ struct kvm {
+ 	struct list_head vm_list;
+ 	struct kvm_io_bus mmio_bus;
+ 	struct kvm_io_bus pio_bus;
++#ifdef KVM_HAVE_EVENTFD
+ 	struct list_head irqfds;
++#endif
+ 	struct kvm_vm_stat stat;
+ 	struct kvm_arch arch;
+ 	atomic_t users_count;
+@@ -529,7 +531,22 @@ static inline void kvm_free_irq_routing(struct kvm *kvm) {}
  
--- 
-1.6.3.1
+ #endif
+ 
++#ifdef KVM_HAVE_EVENTFD
++
++void kvm_irqfd_init(struct kvm *kvm);
+ int kvm_irqfd(struct kvm *kvm, int fd, int gsi, int flags);
+ void kvm_irqfd_release(struct kvm *kvm);
+ 
++#else
++
++static inline void kvm_irqfd_init(struct kvm *kvm) {}
++static inline int kvm_irqfd(struct kvm *kvm, int fd, int gsi, int flags)
++{
++	return -EINVAL;
++}
++
++static inline void kvm_irqfd_release(struct kvm *kvm) {}
++
++#endif /* KVM_HAVE_EVENTFD */
++
+ #endif
+diff --git a/virt/kvm/eventfd.c b/virt/kvm/eventfd.c
+index 72a282e..c63ff6a 100644
+--- a/virt/kvm/eventfd.c
++++ b/virt/kvm/eventfd.c
+@@ -206,6 +206,12 @@ kvm_deassign_irqfd(struct kvm *kvm, int fd, int gsi)
+ 	return count ? count : -ENOENT;
+ }
+ 
++void
++kvm_irqfd_init(struct kvm *kvm)
++{
++	INIT_LIST_HEAD(&kvm->irqfds);
++}
++
+ int
+ kvm_irqfd(struct kvm *kvm, int fd, int gsi, int flags)
+ {
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index b58837d..de042cb 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -983,7 +983,7 @@ static struct kvm *kvm_create_vm(void)
+ 	atomic_inc(&kvm->mm->mm_count);
+ 	spin_lock_init(&kvm->mmu_lock);
+ 	kvm_io_bus_init(&kvm->pio_bus);
+-	INIT_LIST_HEAD(&kvm->irqfds);
++	kvm_irqfd_init(kvm);
+ 	mutex_init(&kvm->lock);
+ 	kvm_io_bus_init(&kvm->mmio_bus);
+ 	init_rwsem(&kvm->slots_lock);
