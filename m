@@ -1,41 +1,49 @@
-From: Avi Kivity <avi@redhat.com>
-Subject: Re: [PATCH] kvm: fix irqfd build failure discovered in linux-next
-Date: Thu, 21 May 2009 16:29:04 +0300
-Message-ID: <4A155720.7050907@redhat.com>
-References: <20090521172122.bb12027c.sfr@canb.auug.org.au> <20090521130426.22997.77787.stgit@dev.haskins.net> <4A1552B1.3040502@redhat.com> <4A155669.4010506@novell.com>
+From: Gregory Haskins <ghaskins@novell.com>
+Subject: Re: [PATCH v2--refid=<20090521172122.bb12027c.sfr@canb.auug.org.au>]
+ kvm: fix irqfd build failure discovered in linux-next
+Date: Thu, 21 May 2009 09:31:01 -0400
+Message-ID: <4A155795.1080808@novell.com>
+References: <20090521132723.8177.20321.stgit@dev.haskins.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:39462 "EHLO mx2.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752829AbZEUN3K (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 May 2009 09:29:10 -0400
-In-Reply-To: <4A155669.4010506@novell.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Gregory Haskins <ghaskins@novell.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="------------enig26D4387CF9FDBCDAAABC6139"
+Return-path: <kvm-owner@vger.kernel.org>
+In-Reply-To: <20090521132723.8177.20321.stgit@dev.haskins.net>
+Sender: kvm-owner@vger.kernel.org
+To: avi@redhat.com
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au, kvm@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
+--------------enig26D4387CF9FDBCDAAABC6139
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
 Gregory Haskins wrote:
->>>  EXTRA_CFLAGS += -Ivirt/kvm -Iarch/x86/kvm
->>> +EXTRA_CFLAGS += -DKVM_HAVE_EVENTFD
->>>  
->>>   
->>>       
->> The standard idiom for this is to use a Kconfig symbol; see for
->> example HAVE_KVM_IRQCHIP in arch/*/kvm/Kconfig.
->>     
->
-> Ah, I didn't realize I could do this in such a contained manner.  I was
-> afraid of polluting the top level arch/Kconfig, which is why I went this
-> other route.   But I see from your example that this is not the case.  I
-> will make a v2 with this change.
->   
+> Stephen Rothwell noted a build failure in arch !=3D x86 in last nights
+> linux-next tree, as noted here:
+>  =20
 
-Note the situation is not as good as it could be, as you have to 
-replicate the Kconfig for each arch.  One day I'll set up 
-virt/kvm/Kconfig which will set up defaults, so archs can override them.
+Typo on "stg-mail" command line caused the messed up subject above.  Pls
+ignore this mail in favor of the real v2 resend that followed this.
 
--- 
-error compiling committee.c: too many arguments to function
+-Greg
+
+
+
+--------------enig26D4387CF9FDBCDAAABC6139
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG/MacGPG2 v2.0.11 (Darwin)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
+
+iEYEARECAAYFAkoVV5UACgkQlOSOBdgZUxmIcgCeMvkt16nEQid5KvqmIRHUUhaF
+JFAAn2noPlFuRDFyTiBsrdvhBoCVcVqO
+=vRgB
+-----END PGP SIGNATURE-----
+
+--------------enig26D4387CF9FDBCDAAABC6139--
