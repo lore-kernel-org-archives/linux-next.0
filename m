@@ -1,75 +1,34 @@
-From: Gregory Haskins <ghaskins@novell.com>
-Subject: Re: [PATCH v2] kvm: fix irqfd build failure discovered in linux-next
-Date: Thu, 21 May 2009 10:04:24 -0400
-Message-ID: <4A155F68.6010402@novell.com>
-References: <20090521172122.bb12027c.sfr@canb.auug.org.au> <20090521132817.8218.92948.stgit@dev.haskins.net> <4A155C86.7010604@redhat.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net tree with the tree
+Date: Thu, 21 May 2009 15:25:11 -0700 (PDT)
+Message-ID: <20090521.152511.171736740.davem@davemloft.net>
+References: <20090521140610.551574fc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="------------enigBF5A67133507691F654F093A"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from victor.provo.novell.com ([137.65.250.26]:44506 "EHLO
-	victor.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757119AbZEUOEd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 May 2009 10:04:33 -0400
-In-Reply-To: <4A155C86.7010604@redhat.com>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:60943
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754334AbZEUWZN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 21 May 2009 18:25:13 -0400
+In-Reply-To: <20090521140610.551574fc.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au, kvm@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, abhijeet.kolekar@intel.com, linville@tuxdriver.com, reinette.chatre@intel.com
 
-This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
---------------enigBF5A67133507691F654F093A
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 21 May 2009 14:06:10 +1000
 
-Avi Kivity wrote:
-> Gregory Haskins wrote:
->> Stephen Rothwell noted a build failure in arch !=3D x86 in last nights=
+> Today's linux-next merge of the net tree got a conflict in
+> drivers/net/wireless/iwlwifi/iwl-agn.c
+> drivers/net/wireless/iwlwifi/iwl3945-base.c between commit
+> fbc9f97bbf5e1eaee562eba93dc60faaff3f3bfa ("iwlwifi: do not cancel delayed
+> work inside spin_lock_irqsave") from the wireless-current tree and commit
+> 727882d62477ed45d248e8cd6d53cf794537b073 ("iwl3945: use iwl_set_mode in
+> 3945") from the net tree.
+> 
+> I removed iwl{3945,}_set_mode() from and applied the following patch.
 
->> linux-next tree, as noted here:
->>
->> http://lkml.org/lkml/2009/5/21/32
->>
->> This patch corrects the build issue by requiring explicit support for
->> IRQFD to be defined, and only defining it on x86 (the only arch fully
->> supported).  The code itself isnt architecture dependent, but we need
->> to add a new file to each makefile, advertise the capability, and
->> of course, test that it works for each supported arch.  We will submit=
-
->> patches against each relevant arch at a later time to enable support
->> there as well.
->>
->> =20
->> +config HAVE_KVM_EVENTFD
->> +       bool
->> +       default y
->> +
->>  =20
->
-> The build system will complain if it sees a symbol used but not
-> defined; so you have to define it for all four archs.  So I went ahead
-> and did virt/kvm/Kconfig and adapted your patch to use it.
->
->
-
-Cool, thanks!
-
--Greg
-
-
---------------enigBF5A67133507691F654F093A
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG/MacGPG2 v2.0.11 (Darwin)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
-
-iEYEARECAAYFAkoVX2wACgkQlOSOBdgZUxnq1ACbBMqtYGlBiMMLZnVg19u7zHKE
-tkwAn0Yt5JHHiUAsSQHKfP3b0AeGVKdK
-=2FOG
------END PGP SIGNATURE-----
-
---------------enigBF5A67133507691F654F093A--
+I'll sort this out right now, thanks Stephen.
