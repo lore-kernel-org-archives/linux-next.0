@@ -1,38 +1,30 @@
 From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: [PATCH] Staging: comedi: comedidev should include delay.h
-Date: Thu, 21 May 2009 17:06:33 +0400
-Message-ID: <1242911193-30469-1-git-send-email-a.beregalov@gmail.com>
+Subject: Re: [PATCH 2/2] Staging: comedi: data.c should include delay.h
+Date: Thu, 21 May 2009 17:08:28 +0400
+Message-ID: <a4423d670905210608k25a92253j21fc231dd467bff2@mail.gmail.com>
+References: <1242219648-16165-1-git-send-email-a.beregalov@gmail.com>
+	 <1242219648-16165-2-git-send-email-a.beregalov@gmail.com>
+	 <20090513132342.GA16280@orion>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f158.google.com ([209.85.220.158]:53837 "EHLO
+Received: from mail-fx0-f158.google.com ([209.85.220.158]:35926 "EHLO
 	mail-fx0-f158.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750887AbZEUNGp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 May 2009 09:06:45 -0400
+	with ESMTP id S1752319AbZEUNI1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 May 2009 09:08:27 -0400
+In-Reply-To: <20090513132342.GA16280@orion>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: gregkh@suse.de
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Alexander Beregalov <a.beregalov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fix many build errors like this:
-comedi/drivers/adq12b.c:328: error: implicit declaration of function 'udelay'
+2009/5/13 Alexander Beregalov <a.beregalov@gmail.com>:
+> Fix this build error:
+> .../data.c:86: error: implicit declaration of function 'udelay'
+>
+> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+> ---
 
-The same for aio_aio12_8.c, dmm32at.c and others.
-
-Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
----
- drivers/staging/comedi/comedidev.h |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/staging/comedi/comedidev.h b/drivers/staging/comedi/comedidev.h
-index 7a1ccde..3d0e80c 100644
---- a/drivers/staging/comedi/comedidev.h
-+++ b/drivers/staging/comedi/comedidev.h
-@@ -38,6 +38,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/uaccess.h>
- #include <linux/io.h>
-+#include <linux/delay.h>
- 
- #include "comedi.h"
- 
--- 
-1.6.3.1
+Greg,
+Please apply instead my another patch, which includes delay.h in comedidev.h.
