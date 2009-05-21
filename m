@@ -1,47 +1,58 @@
-From: Avi Kivity <avi@redhat.com>
-Subject: Re: [PATCH v2] kvm: fix irqfd build failure discovered in linux-next
-Date: Thu, 21 May 2009 16:52:06 +0300
-Message-ID: <4A155C86.7010604@redhat.com>
-References: <20090521172122.bb12027c.sfr@canb.auug.org.au> <20090521132817.8218.92948.stgit@dev.haskins.net>
+From: Greg KH <gregkh@suse.de>
+Subject: Re: [PATCH] Staging: comedi: comedidev should include delay.h
+Date: Thu, 21 May 2009 06:55:31 -0700
+Message-ID: <20090521135531.GA29375@suse.de>
+References: <1242911193-30469-1-git-send-email-a.beregalov@gmail.com> <alpine.LFD.2.00.0905210907440.3475@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:44306 "EHLO mx2.redhat.com"
+Received: from cantor2.suse.de ([195.135.220.15]:32863 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752792AbZEUNwL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 May 2009 09:52:11 -0400
-In-Reply-To: <20090521132817.8218.92948.stgit@dev.haskins.net>
+	id S1757191AbZEUODB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 21 May 2009 10:03:01 -0400
+Content-Disposition: inline
+In-Reply-To: <alpine.LFD.2.00.0905210907440.3475@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Gregory Haskins <ghaskins@novell.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au, kvm@vger.kernel.org
+To: "Robert P. J. Day" <rpjday@crashcourse.ca>
+Cc: Alexander Beregalov <a.beregalov@gmail.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-Gregory Haskins wrote:
-> Stephen Rothwell noted a build failure in arch != x86 in last nights
-> linux-next tree, as noted here:
->
-> http://lkml.org/lkml/2009/5/21/32
->
-> This patch corrects the build issue by requiring explicit support for
-> IRQFD to be defined, and only defining it on x86 (the only arch fully
-> supported).  The code itself isnt architecture dependent, but we need
-> to add a new file to each makefile, advertise the capability, and
-> of course, test that it works for each supported arch.  We will submit
-> patches against each relevant arch at a later time to enable support
-> there as well.
->
->  
-> +config HAVE_KVM_EVENTFD
-> +       bool
-> +       default y
-> +
->   
+On Thu, May 21, 2009 at 09:09:53AM -0400, Robert P. J. Day wrote:
+> On Thu, 21 May 2009, Alexander Beregalov wrote:
+> 
+> > Fix many build errors like this:
+> > comedi/drivers/adq12b.c:328: error: implicit declaration of function 'udelay'
+> >
+> > The same for aio_aio12_8.c, dmm32at.c and others.
+> >
+> > Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+> > ---
+> >  drivers/staging/comedi/comedidev.h |    1 +
+> >  1 files changed, 1 insertions(+), 0 deletions(-)
+> >
+> > diff --git a/drivers/staging/comedi/comedidev.h b/drivers/staging/comedi/comedidev.h
+> > index 7a1ccde..3d0e80c 100644
+> > --- a/drivers/staging/comedi/comedidev.h
+> > +++ b/drivers/staging/comedi/comedidev.h
+> > @@ -38,6 +38,7 @@
+> >  #include <linux/dma-mapping.h>
+> >  #include <linux/uaccess.h>
+> >  #include <linux/io.h>
+> > +#include <linux/delay.h>
+> >
+> >  #include "comedi.h"
+> 
+>   not sure it's worth noting but the header comedidev.h currently
+> resides in the comedi directory itself, while the source file rt.c
+> contains:
+> 
+> #include <linux/comedidev.h>
+> 
+> which doesn't seem right.
 
-The build system will complain if it sees a symbol used but not defined; 
-so you have to define it for all four archs.  So I went ahead and did 
-virt/kvm/Kconfig and adapted your patch to use it.
+That's correct, and is one reason why rt.c is now gone in the linux-next
+tree :)
 
+thanks,
 
--- 
-error compiling committee.c: too many arguments to function
+greg k-h
