@@ -1,50 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the  tree
-Date: Thu, 21 May 2009 14:06:10 +1000
-Message-ID: <20090521140610.551574fc.sfr@canb.auug.org.au>
+Subject: linux-next: kvm tree build failure
+Date: Thu, 21 May 2009 17:21:22 +1000
+Message-ID: <20090521172122.bb12027c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__21_May_2009_17_21_22_+1000_MEgvJr2jiIFW3JU/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34160 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36248 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750715AbZEUEGS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 May 2009 00:06:18 -0400
+	id S1750794AbZEUHVe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 21 May 2009 03:21:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Abhijeet Kolekar <abhijeet.kolekar@intel.com>, "John W. Linville" <linville@tuxdriver.com>, Reinette Chatre <reinette.chatre@intel.com>
+To: Avi Kivity <avi@qumranet.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gregory Haskins <ghaskins@novell.com>
 
-Hi David,
+--Signature=_Thu__21_May_2009_17_21_22_+1000_MEgvJr2jiIFW3JU/
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/net/wireless/iwlwifi/iwl-agn.c
-drivers/net/wireless/iwlwifi/iwl3945-base.c between commit
-fbc9f97bbf5e1eaee562eba93dc60faaff3f3bfa ("iwlwifi: do not cancel delayed
-work inside spin_lock_irqsave") from the wireless-current tree and commit
-727882d62477ed45d248e8cd6d53cf794537b073 ("iwl3945: use iwl_set_mode in
-3945") from the net tree.
+Hi Avi,
 
-I removed iwl{3945,}_set_mode() from and applied the following patch.
--- 
+Today's linux-next build (powerpc ppc44x_defconfig) failed like this:
+
+arch/powerpc/kvm/built-in.o: In function `kvm_destroy_vm':
+kvm_main.c:(.text+0x2cfc): undefined reference to `kvm_irqfd_release'
+arch/powerpc/kvm/built-in.o: In function `kvm_vm_ioctl':
+kvm_main.c:(.text+0x3230): undefined reference to `kvm_irqfd'
+
+Caused by commit 302471ec2b5b6f74eba06973fb85e4584d20ef1e ("KVM: irqfd")
+which I have reverted for today.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --git a/drivers/net/wireless/iwlwifi/iwl-core.c b/drivers/net/wireless/iwlwifi/iwl-core.c
-index 5393fb3..967343a 100644
---- a/drivers/net/wireless/iwlwifi/iwl-core.c
-+++ b/drivers/net/wireless/iwlwifi/iwl-core.c
-@@ -2437,13 +2437,6 @@ int iwl_set_mode(struct iwl_priv *priv, int mode)
- 	if (!iwl_is_ready_rf(priv))
- 		return -EAGAIN;
- 
--	cancel_delayed_work(&priv->scan_check);
--	if (iwl_scan_cancel_timeout(priv, 100)) {
--		IWL_WARN(priv, "Aborted scan still in progress after 100ms\n");
--		IWL_DEBUG_MAC80211(priv, "leaving - scan abort failed.\n");
--		return -EAGAIN;
--	}
--
- 	iwlcore_commit_rxon(priv);
- 
- 	return 0;
+--Signature=_Thu__21_May_2009_17_21_22_+1000_MEgvJr2jiIFW3JU/
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkoVAPIACgkQjjKRsyhoI8wtkQCguhOmD0/mA2NysSITpeIwrXhr
+4fwAmwWDpnR7gVxd+LghK2MguyNFtYkv
+=f3ui
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__21_May_2009_17_21_22_+1000_MEgvJr2jiIFW3JU/--
