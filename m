@@ -1,39 +1,76 @@
-From: Avi Kivity <avi@redhat.com>
-Subject: Re: linux-next: kvm tree build failure
-Date: Thu, 21 May 2009 13:05:13 +0300
-Message-ID: <4A152759.1050200@redhat.com>
-References: <20090521172122.bb12027c.sfr@canb.auug.org.au> <4A15038B.1090204@redhat.com> <4A15049F.8000707@panasas.com> <4A150515.8030608@redhat.com> <4A150747.3070304@panasas.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: [PATCH 1/2] Staging: cpc-usb: depends on PROC_FS
+Date: Thu, 21 May 2009 15:44:45 +0400
+Message-ID: <1242906286-7066-1-git-send-email-a.beregalov@gmail.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:34360 "EHLO mx2.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752321AbZEUKFf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 May 2009 06:05:35 -0400
-In-Reply-To: <4A150747.3070304@panasas.com>
+Received: from mail-fx0-f158.google.com ([209.85.220.158]:50510 "EHLO
+	mail-fx0-f158.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752321AbZEULpx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 May 2009 07:45:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Boaz Harrosh <bharrosh@panasas.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gregory Haskins <ghaskins@novell.com>
+To: gregkh@suse.de
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Alexander Beregalov <a.beregalov@gmail.com>
 
-Boaz Harrosh wrote:
->> I have userspace to test as well, which needs a ton of cross-compiled 
->> libraries.
->>
->>     
->
-> A cross compiler produces native foreign code. A Native distribution with
-> binary libraries will work just as well.
->
-> Do you mean to set up all the build environment and dependencies?
-> Perhaps get a ready made ppc linux image, mount and chroot into it
-> and build that way.
->
-> If only you had an emulator for ppc?
->   
+Fix this build error when PROC_FS is not enabled:
+cpc-usb_drv.c:61:2: error: #error "PROCFS needed"
+cpc-usb_drv.c:1159: error: implicit declaration of function 'proc_mkdir'
 
-Life's too short for emulators.
+Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+---
+ drivers/staging/cpc-usb/Kconfig       |    2 +-
+ drivers/staging/cpc-usb/cpc-usb_drv.c |    8 +-------
+ drivers/staging/cpc-usb/cpc_int.h     |    4 +---
+ 3 files changed, 3 insertions(+), 11 deletions(-)
 
--- 
-error compiling committee.c: too many arguments to function
+diff --git a/drivers/staging/cpc-usb/Kconfig b/drivers/staging/cpc-usb/Kconfig
+index 00924ce..2be0bc9 100644
+--- a/drivers/staging/cpc-usb/Kconfig
++++ b/drivers/staging/cpc-usb/Kconfig
+@@ -1,4 +1,4 @@
+ config USB_CPC
+ 	tristate "CPC CAN USB driver"
+-	depends on USB
++	depends on USB && PROC_FS
+ 	default n
+diff --git a/drivers/staging/cpc-usb/cpc-usb_drv.c b/drivers/staging/cpc-usb/cpc-usb_drv.c
+index 14aca39..d337a97 100644
+--- a/drivers/staging/cpc-usb/cpc-usb_drv.c
++++ b/drivers/staging/cpc-usb/cpc-usb_drv.c
+@@ -30,9 +30,7 @@
+ 
+ #include <linux/version.h>
+ 
+-#ifdef CONFIG_PROC_FS
+-#   include <linux/proc_fs.h>
+-#endif
++#include <linux/proc_fs.h>
+ 
+ #include "cpc.h"
+ 
+@@ -57,10 +55,6 @@ MODULE_LICENSE("GPL v2");
+ #define USB_CPCUSB_M16C_PRODUCT_ID    0x0888
+ #define USB_CPCUSB_LPC2119_PRODUCT_ID 0x0444
+ 
+-#ifndef CONFIG_PROC_FS
+-#error "PROCFS needed"
+-#endif
+-
+ #define CPC_USB_PROC_DIR     CPC_PROC_DIR "cpc-usb"
+ 
+ static struct proc_dir_entry *procDir;
+diff --git a/drivers/staging/cpc-usb/cpc_int.h b/drivers/staging/cpc-usb/cpc_int.h
+index dfdbed1..a0d60c0 100644
+--- a/drivers/staging/cpc-usb/cpc_int.h
++++ b/drivers/staging/cpc-usb/cpc_int.h
+@@ -15,9 +15,7 @@
+ 
+ #define CPC_MSG_BUF_CNT	1500
+ 
+-#ifdef CONFIG_PROC_FS
+-#   define CPC_PROC_DIR "driver/"
+-#endif
++#define CPC_PROC_DIR "driver/"
+ 
+ #undef dbg
+ #undef err
