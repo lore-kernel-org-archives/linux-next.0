@@ -1,32 +1,55 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net tree with the tree
-Date: Fri, 22 May 2009 01:10:15 -0700 (PDT)
-Message-ID: <20090522.011015.133460723.davem@davemloft.net>
-References: <20090521.152511.171736740.davem@davemloft.net>
-	<20090521.152910.256913910.davem@davemloft.net>
-	<20090522003546.GB2646@tuxdriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: net tree build warning
+Date: Fri, 22 May 2009 18:20:24 +1000
+Message-ID: <20090522182024.cfe48be4.sfr@canb.auug.org.au>
+References: <20090522151642.e79e22ee.sfr@canb.auug.org.au>
+	<20090521.233038.195647453.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__22_May_2009_18_20_24_+1000_qmXu/iGOrEb1uMgG"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:40202
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752508AbZEVIKQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 22 May 2009 04:10:16 -0400
-In-Reply-To: <20090522003546.GB2646@tuxdriver.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:52922 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751475AbZEVIUa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 May 2009 04:20:30 -0400
+In-Reply-To: <20090521.233038.195647453.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linville@tuxdriver.com
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, abhijeet.kolekar@intel.com, reinette.chatre@intel.com
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, nhorman@tuxdriver.com, netdev@vger.kernel.org
 
-From: "John W. Linville" <linville@tuxdriver.com>
-Date: Thu, 21 May 2009 20:35:47 -0400
+--Signature=_Fri__22_May_2009_18_20_24_+1000_qmXu/iGOrEb1uMgG
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> I think what Stephen has done is good for now.  I'll probably post
-> a pull request for wireless-next-2.6 tommorrow.
+Hi Dave,
 
-Ok.
+On Thu, 21 May 2009 23:30:38 -0700 (PDT) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> I just pushed the following to fix this:
+>=20
+> net: Fix arg to trace_napi_poll() in netpoll.
 
-Once I pull that in I'll pull net-2.6 into net-next-2.6 to resolve
-all of the merge issues fully.
+Thanks. I remerged the net tree at the end of linux-next today in case
+anyone was doing any testing over the weekend.=20
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__22_May_2009_18_20_24_+1000_qmXu/iGOrEb1uMgG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkoWYEgACgkQjjKRsyhoI8yzzwCggJcCGwwm6y/uN97ocrSSazmC
+fvEAnR7Bnl/DO72V5yTvZhS3bWOT9kNg
+=XhrU
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__22_May_2009_18_20_24_+1000_qmXu/iGOrEb1uMgG--
