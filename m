@@ -1,54 +1,51 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH -next] v4l2: handle unregister for non-I2C builds
-Date: Fri, 22 May 2009 08:57:08 -0700
-Message-ID: <4A16CB54.9000705@oracle.com>
-References: <20090511161442.3e9d9cb9.sfr@canb.auug.org.au>	<4A085455.5040108@oracle.com>	<20090522054847.GB14059@linux-sh.org> <20090522175554.19465733.sfr@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for May 22 (staging/)
+Date: Fri, 22 May 2009 09:05:46 -0700
+Message-ID: <4A16CD5A.9050806@xenotime.net>
+References: <20090522185110.3f95b03e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet12.oracle.com ([148.87.113.124]:37428 "EHLO
-	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757316AbZEVPyw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 22 May 2009 11:54:52 -0400
-In-Reply-To: <20090522175554.19465733.sfr@canb.auug.org.au>
+Received: from xenotime.net ([72.52.64.118]:57605 "HELO xenotime.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+	id S1752133AbZEVQDO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 May 2009 12:03:14 -0400
+Received: from ::ffff:71.182.83.218 ([71.182.83.218]) by xenotime.net for <linux-next@vger.kernel.org>; Fri, 22 May 2009 09:03:12 -0700
+In-Reply-To: <20090522185110.3f95b03e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Paul Mundt <lethal@linux-sh.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg KH <gregkh@suse.de>
 
 Stephen Rothwell wrote:
-> On Fri, 22 May 2009 14:48:47 +0900 Paul Mundt <lethal@linux-sh.org> wrote:
->> On Mon, May 11, 2009 at 09:37:41AM -0700, Randy Dunlap wrote:
->>> From: Randy Dunlap <randy.dunlap@oracle.com>
->>>
->>> Build fails when CONFIG_I2C=n, so handle that case in the if block:
->>>
->>> drivers/built-in.o: In function `v4l2_device_unregister':
->>> (.text+0x157821): undefined reference to `i2c_unregister_device'
->>>
->>> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
->> This patch still has not been applied as far as I can tell, and builds
->> are still broken as a result, almost 2 weeks after the fact.
+> Hi all,
 > 
-> In fact there has been no updates to the v4l-dvb tree at all since
-> May 11.  Mauro?
-
-I got an 'hg' autocommit message for the patch on May-11, but that's
-all I've seen/heard about it.
-
-I'm really concerned about how slowly patches are merged for
-linux-next trees... and not just for drivers/media/
+> Changes since 20090521:
 
 
-> I have reverted the patch that caused the build breakage ... (commit
-> d5bc7940d39649210f1affac1fa32f253cc45a81 "V4L/DVB (11673): v4l2-device:
-> unregister i2c_clients when unregistering the v4l2_device").
-> 
-> [By the way, an alternative fix might be to just define
-> V4L2_SUBDEV_FL_IS_I2C to be zero if CONFIG_I2C and CONFIG_I2C_MODULE are
-> not defined (gcc should then just elide the offending code).]
+Saw these build warnings on x86_64:
 
+drivers/staging/agnx/pci.c:64:3: warning: "/*" within comment
+drivers/staging/agnx/pci.c:223:2: warning: "/*" within comment
+
+drivers/staging/slicoss/slicoss.c:1875:warning: unused variable 'failure'
+drivers/staging/stlc45xx/stlc45xx.c:2240: warning: 'struct ieee80211_if_conf' declared inside parameter list
+drivers/staging/stlc45xx/stlc45xx.c:2240: warning: its scope is only this definition or declaration, which is probably not what you want
+drivers/staging/stlc45xx/stlc45xx.c:2248: error: dereferencing pointer to incomplete type
+drivers/staging/stlc45xx/stlc45xx.c:2248: error: dereferencing pointer to incomplete type
+drivers/staging/stlc45xx/stlc45xx.c:2360: error: unknown field 'config_interface' specified in initializer
+drivers/staging/stlc45xx/stlc45xx.c:2522: warning: format '%x' expects type 'unsigned int', but argument 3 has type 'long unsigned int'
+drivers/staging/stlc45xx/stlc45xx.c:2524: warning: format '%x' expects type 'unsigned int', but argument 2 has type 'long unsigned int'
+drivers/staging/stlc45xx/stlc45xx.c:2524: warning: format '%x' expects type 'unsigned int', but argument 3 has type 'long unsigned int'
+
+drivers/staging/rt3070/common/../../rt2870/common/../../rt2860/common/spectrum.c:1577: warning: format '%d' expects type 'int', but argument 3 has type 'long unsigned int'
+drivers/staging/rt3070/../rt2870/../rt2860/rt_linux.c:841: warning: format '%d' expects type 'int', but argument 3 has type 'long unsigned int'
+
+
+
+There are also 2 outstanding patches for comedi build failures that need to
+be applied so that more work can be done on comedi....
 
 -- 
 ~Randy
