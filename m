@@ -1,44 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tracing tree with the net tree
-Date: Fri, 22 May 2009 16:15:19 +1000
-Message-ID: <20090522161519.97c8968b.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: net tree build warning
+Date: Thu, 21 May 2009 23:30:38 -0700 (PDT)
+Message-ID: <20090521.233038.195647453.davem@davemloft.net>
+References: <20090522151642.e79e22ee.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756760AbZEVGPj@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Neil Horman <nhorman@tuxdriver.com>, Steven Rostedt <srostedt@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:57163
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750880AbZEVGak (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 May 2009 02:30:40 -0400
+In-Reply-To: <20090522151642.e79e22ee.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sfr@canb.auug.org.au
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, nhorman@tuxdriver.com, netdev@vger.kernel.org
 
-Hi all,
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 22 May 2009 15:16:42 +1000
 
-Today's linux-next merge of the tracing tree got a conflict in
-net/core/drop_monitor.c between commit
-4ea7e38696c7e798c47ebbecadfd392f23f814f9 ("dropmon: add ability to detect
-when hardware dropsrxpackets") from the net tree and commit
-ad8d75fff811a6a230f7f43b05a6483099349533 ("tracing/events: move trace
-point headers into include/trace/events") from the tracing tree.
+> Hi Dave,
+> 
+> Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
+> 
+> net/core/netpoll.c: In function 'poll_one_napi':
+> net/core/netpoll.c:141: warning: passing argument 1 of 'trace_napi_poll' from incompatible pointer type
+> include/trace/napi.h:7: note: expected 'struct napi_struct *' but argument is of type 'struct net_device *'
+> 
+> Introduced by commit 4ea7e38696c7e798c47ebbecadfd392f23f814f9 ("dropmon:
+> add ability to detect when hardware dropsrxpackets").
 
-I fixed it up (see below) and can carry the fix as necessary.  I suspect
-that trace/napi.h should eventually go into trace/events as well.
+I just pushed the following to fix this:
+
+net: Fix arg to trace_napi_poll() in netpoll.
+
+Reproted by Stephen Rothwell.
+
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ net/core/netpoll.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/net/core/netpoll.c b/net/core/netpoll.c
+index 00b14e2..67b4f3e 100644
+--- a/net/core/netpoll.c
++++ b/net/core/netpoll.c
+@@ -138,7 +138,7 @@ static int poll_one_napi(struct netpoll_info *npinfo,
+ 	set_bit(NAPI_STATE_NPSVC, &napi->state);
+ 
+ 	work = napi->poll(napi, budget);
+-	trace_napi_poll(napi->dev);
++	trace_napi_poll(napi);
+ 
+ 	clear_bit(NAPI_STATE_NPSVC, &napi->state);
+ 	atomic_dec(&trapped);
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc net/core/drop_monitor.c
-index a6c2ac2,b75b6ce..0000000
---- a/net/core/drop_monitor.c
-+++ b/net/core/drop_monitor.c
-@@@ -22,10 -22,8 +22,10 @@@
-  #include <linux/timer.h>
-  #include <linux/bitops.h>
-  #include <net/genetlink.h>
- +#include <net/netevent.h>
-  
-- #include <trace/skb.h>
-+ #include <trace/events/skb.h>
- +#include <trace/napi.h>
-  
-  #include <asm/unaligned.h>
-  
+1.6.3
