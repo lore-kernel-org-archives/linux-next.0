@@ -1,52 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: net tree build warning
-Date: Fri, 22 May 2009 15:16:42 +1000
-Message-ID: <20090522151642.e79e22ee.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the security-testing tree with Linus'
+ tree
+Date: Fri, 22 May 2009 15:29:01 +1000
+Message-ID: <20090522152901.2d220889.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__22_May_2009_15_16_42_+1000_TjI_tiSbL0ylo9_I"
+ boundary="Signature=_Fri__22_May_2009_15_29_01_+1000_qVRCPVgmR/E4jeys"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55500 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58882 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751085AbZEVFQx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 22 May 2009 01:16:53 -0400
+	id S1750851AbZEVF3L (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 May 2009 01:29:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Neil Horman <nhorman@tuxdriver.com>, netdev@vger.kernel.org
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>, Al Viro <viro@zeniv.linux.org.uk>
 
---Signature=_Fri__22_May_2009_15_16_42_+1000_TjI_tiSbL0ylo9_I
+--Signature=_Fri__22_May_2009_15_29_01_+1000_qVRCPVgmR/E4jeys
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi James,
 
-Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
+Today's linux-next merge of the security-testing tree got a conflict in
+fs/exec.c between commits a44ddbb6d8a8ffe4e34e417048dfdd8f3dd1de4f ("Make
+open_exec() and sys_uselib() use may_open(), instead of duplicating its
+parts") and 6e8341a11eb21826b7192d0bb88cb5b44900a9af ("Switch open_exec()
+and sys_uselib() to do_open_filp()") from Linus' tree and commit
+b9fc745db833bbf74b4988493b8cd902a84c9415 ("integrity: path_check update")
+from the security-testing tree.
 
-net/core/netpoll.c: In function 'poll_one_napi':
-net/core/netpoll.c:141: warning: passing argument 1 of 'trace_napi_poll' fr=
-om incompatible pointer type
-include/trace/napi.h:7: note: expected 'struct napi_struct *' but argument =
-is of type 'struct net_device *'
-
-Introduced by commit 4ea7e38696c7e798c47ebbecadfd392f23f814f9 ("dropmon:
-add ability to detect when hardware dropsrxpackets").
+I used the version of these conflicts from Linus' tree as I assume that
+the changes to may_open() from the latter patch are sufficient.  Please
+check and let me know (or merge Linus' tree and do the resolution for
+yourself :-)).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__22_May_2009_15_16_42_+1000_TjI_tiSbL0ylo9_I
+--Signature=_Fri__22_May_2009_15_29_01_+1000_qVRCPVgmR/E4jeys
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkoWNToACgkQjjKRsyhoI8yrbwCeNfjaxPytRnyC94uRiaXqXj1+
-wyoAoJ8nQirfAhVzvpAsLUeb+sjnr5wB
-=dtnZ
+iEYEARECAAYFAkoWOB0ACgkQjjKRsyhoI8z0cQCgv1g+E7V4oB/bGST1K6vpM+s6
+EMgAoKebuaZjwjAobYEQA4BDOUt1H/tb
+=nMyZ
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__22_May_2009_15_16_42_+1000_TjI_tiSbL0ylo9_I--
+--Signature=_Fri__22_May_2009_15_29_01_+1000_qVRCPVgmR/E4jeys--
