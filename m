@@ -1,54 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: powerpc tree build warning
-Date: Fri, 22 May 2009 11:28:11 +1000
-Message-ID: <20090522112811.433432e2.sfr@canb.auug.org.au>
+Subject: linux-next: net tree build warning
+Date: Fri, 22 May 2009 15:16:42 +1000
+Message-ID: <20090522151642.e79e22ee.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__22_May_2009_11_28_11_+1000_rfyL2T_Onf7BBDwS"
+ boundary="Signature=_Fri__22_May_2009_15_16_42_+1000_TjI_tiSbL0ylo9_I"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53129 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55500 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751920AbZEVB2P (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 May 2009 21:28:15 -0400
+	id S1751085AbZEVFQx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 May 2009 01:16:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vinay Sridhar <vinay@linux.vnet.ibm.com>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org, Michael Ellerman <michael@ellerman.id.au>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Neil Horman <nhorman@tuxdriver.com>, netdev@vger.kernel.org
 
---Signature=_Fri__22_May_2009_11_28_11_+1000_rfyL2T_Onf7BBDwS
+--Signature=_Fri__22_May_2009_15_16_42_+1000_TjI_tiSbL0ylo9_I
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ben,
+Hi Dave,
 
 Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
 
-arch/powerpc/xmon/xmon.c: In function 'dump_log_buf':
-arch/powerpc/xmon/xmon.c:2133: warning: unused variable 'i'
+net/core/netpoll.c: In function 'poll_one_napi':
+net/core/netpoll.c:141: warning: passing argument 1 of 'trace_napi_poll' fr=
+om incompatible pointer type
+include/trace/napi.h:7: note: expected 'struct napi_struct *' but argument =
+is of type 'struct net_device *'
 
-Introduced by commit f312deb4cd0c88196edf6dab192b7d42514398d6
-("powerpc/xmon: Add dl command to dump contents of __log_buf").
-
-[As an aside, that commit contains this:
-	Signed-off-by: Michael Ellerman <michael at ellerman.id.au>
-but we use real email addresses normally]
-
+Introduced by commit 4ea7e38696c7e798c47ebbecadfd392f23f814f9 ("dropmon:
+add ability to detect when hardware dropsrxpackets").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__22_May_2009_11_28_11_+1000_rfyL2T_Onf7BBDwS
+--Signature=_Fri__22_May_2009_15_16_42_+1000_TjI_tiSbL0ylo9_I
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkoV/6sACgkQjjKRsyhoI8z8AgCfWP+uELrtefAYzlaAQkJlLibO
-RbAAoKbYp02h/fCYq0zDdXcJdSQNch3O
-=Y/5/
+iEYEARECAAYFAkoWNToACgkQjjKRsyhoI8yrbwCeNfjaxPytRnyC94uRiaXqXj1+
+wyoAoJ8nQirfAhVzvpAsLUeb+sjnr5wB
+=dtnZ
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__22_May_2009_11_28_11_+1000_rfyL2T_Onf7BBDwS--
+--Signature=_Fri__22_May_2009_15_16_42_+1000_TjI_tiSbL0ylo9_I--
