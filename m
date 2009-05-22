@@ -1,38 +1,60 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: manual merge of the security-testing tree with
-	Linus' tree
-Date: Fri, 22 May 2009 06:35:42 +0100
-Message-ID: <20090522053542.GY8633@ZenIV.linux.org.uk>
-References: <20090522152901.2d220889.sfr@canb.auug.org.au>
+From: Paul Mundt <lethal@linux-sh.org>
+Subject: Re: [PATCH -next] v4l2: handle unregister for non-I2C builds
+Date: Fri, 22 May 2009 14:48:47 +0900
+Message-ID: <20090522054847.GB14059@linux-sh.org>
+References: <20090511161442.3e9d9cb9.sfr@canb.auug.org.au> <4A085455.5040108@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:43384 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750851AbZEVFft (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 22 May 2009 01:35:49 -0400
+Return-path: <linux-media-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20090522152901.2d220889.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>
+In-Reply-To: <4A085455.5040108@oracle.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, May 22, 2009 at 03:29:01PM +1000, Stephen Rothwell wrote:
-> Hi James,
+On Mon, May 11, 2009 at 09:37:41AM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> Today's linux-next merge of the security-testing tree got a conflict in
-> fs/exec.c between commits a44ddbb6d8a8ffe4e34e417048dfdd8f3dd1de4f ("Make
-> open_exec() and sys_uselib() use may_open(), instead of duplicating its
-> parts") and 6e8341a11eb21826b7192d0bb88cb5b44900a9af ("Switch open_exec()
-> and sys_uselib() to do_open_filp()") from Linus' tree and commit
-> b9fc745db833bbf74b4988493b8cd902a84c9415 ("integrity: path_check update")
-> from the security-testing tree.
+> Build fails when CONFIG_I2C=n, so handle that case in the if block:
 > 
-> I used the version of these conflicts from Linus' tree as I assume that
-> the changes to may_open() from the latter patch are sufficient.  Please
-> check and let me know (or merge Linus' tree and do the resolution for
-> yourself :-)).
+> drivers/built-in.o: In function `v4l2_device_unregister':
+> (.text+0x157821): undefined reference to `i2c_unregister_device'
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-Just drop their changes to sys_uselib() and open_exec() and keep the
-rest of their patch.
+This patch still has not been applied as far as I can tell, and builds
+are still broken as a result, almost 2 weeks after the fact.
+
+> ---
+>  drivers/media/video/v4l2-device.c |    2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> --- linux-next-20090511.orig/drivers/media/video/v4l2-device.c
+> +++ linux-next-20090511/drivers/media/video/v4l2-device.c
+> @@ -85,6 +85,7 @@ void v4l2_device_unregister(struct v4l2_
+>  	/* Unregister subdevs */
+>  	list_for_each_entry_safe(sd, next, &v4l2_dev->subdevs, list) {
+>  		v4l2_device_unregister_subdev(sd);
+> +#if defined(CONFIG_I2C) || defined(CONFIG_I2C_MODULE)
+>  		if (sd->flags & V4L2_SUBDEV_FL_IS_I2C) {
+>  			struct i2c_client *client = v4l2_get_subdevdata(sd);
+>  
+> @@ -95,6 +96,7 @@ void v4l2_device_unregister(struct v4l2_
+>  			if (client)
+>  				i2c_unregister_device(client);
+>  		}
+> +#endif
+>  	}
+>  }
+>  EXPORT_SYMBOL_GPL(v4l2_device_unregister);
+> 
+> 
+> -- 
+> ~Randy
+> LPC 2009, Sept. 23-25, Portland, Oregon
+> http://linuxplumbersconf.org/2009/
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-next" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
