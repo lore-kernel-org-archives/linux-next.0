@@ -1,43 +1,51 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: linux-next: manual merge of the net tree with the tree
-Date: Thu, 21 May 2009 20:33:33 -0400
-Message-ID: <20090522003333.GA2646@tuxdriver.com>
-References: <20090521140610.551574fc.sfr@canb.auug.org.au> <20090521.152511.171736740.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: powerpc tree build warning
+Date: Fri, 22 May 2009 11:11:53 +1000
+Message-ID: <20090522111153.38f7bd1c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__22_May_2009_11_11_53_+1000_Y5oFJdEdanpQ4eJM"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:36868 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752228AbZEVApY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 May 2009 20:45:24 -0400
-Content-Disposition: inline
-In-Reply-To: <20090521.152511.171736740.davem@davemloft.net>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55818 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750797AbZEVBL6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 21 May 2009 21:11:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, abhijeet.kolekar@intel.com, reinette.chatre@intel.com
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org, Jan Blunck <jblunck@suse.de>, Arnd Bergmann <arnd@arndb.de>
 
-On Thu, May 21, 2009 at 03:25:11PM -0700, David Miller wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 21 May 2009 14:06:10 +1000
-> 
-> > Today's linux-next merge of the net tree got a conflict in
-> > drivers/net/wireless/iwlwifi/iwl-agn.c
-> > drivers/net/wireless/iwlwifi/iwl3945-base.c between commit
-> > fbc9f97bbf5e1eaee562eba93dc60faaff3f3bfa ("iwlwifi: do not cancel delayed
-> > work inside spin_lock_irqsave") from the wireless-current tree and commit
-> > 727882d62477ed45d248e8cd6d53cf794537b073 ("iwl3945: use iwl_set_mode in
-> > 3945") from the net tree.
-> > 
-> > I removed iwl{3945,}_set_mode() from and applied the following patch.
-> 
-> I'll sort this out right now, thanks Stephen.
+--Signature=_Fri__22_May_2009_11_11_53_+1000_Y5oFJdEdanpQ4eJM
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-wireless-next-2.6 has a merge-test branch for reference.
+Hi Ben,
 
-Hth!
+Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
 
-John
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
+arch/powerpc/platforms/cell/spufs/inode.c: In function 'spufs_create':
+arch/powerpc/platforms/cell/spufs/inode.c:647: warning: label 'out_dput' de=
+fined but not used
+
+Introduced by commit 45db9240890d9343c934db1fe82d6e68ac2d28da
+("powerpc/spufs: Remove double check for non-negative dentry").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__22_May_2009_11_11_53_+1000_Y5oFJdEdanpQ4eJM
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkoV+9kACgkQjjKRsyhoI8zQcgCeNsNTRVqIIK8BH6uYTvfNIHNM
+AhMAnip/giJgZvtsxLi8m+nT9dEqM6d0
+=l1V7
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__22_May_2009_11_11_53_+1000_Y5oFJdEdanpQ4eJM--
