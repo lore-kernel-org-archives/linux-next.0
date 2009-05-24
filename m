@@ -1,10 +1,10 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
+From: Robert Hancock <hancockrwd@gmail.com>
 Subject: Re: next-20090522: kernel hungs at boot (async, libata/scsi)
-Date: Sun, 24 May 2009 08:23:39 -0500
-Message-ID: <1243171419.2889.4.camel@localhost.localdomain>
+Date: Sun, 24 May 2009 13:22:27 -0600
+Message-ID: <4A199E73.6080105@gmail.com>
 References: <a4423d670905240443q75da19f7k210263fcb81297ae@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-scsi-owner@vger.kernel.org>
 In-Reply-To: <a4423d670905240443q75da19f7k210263fcb81297ae@mail.gmail.com>
@@ -13,7 +13,7 @@ To: Alexander Beregalov <a.beregalov@gmail.com>
 Cc: linux-next <linux-next@vger.kernel.org>, linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Sun, 2009-05-24 at 15:43 +0400, Alexander Beregalov wrote:
+Alexander Beregalov wrote:
 > Hi
 > 
 > Host has pata_amd (ata1,2) and pata_pdc2027x (ata3,4).
@@ -118,22 +118,78 @@ On Sun, 2009-05-24 at 15:43 +0400, Alexander Beregalov wrote:
 >  [<c0103677>] kernel_thread_helper+0x7/0x10
 > 1 lock held by async/0/500:
 >  #0:  (&shost->scan_mutex){+.+...}, at: [<c034d5ae>] __scsi_add_device+0x6e/0xe0
+> INFO: task async/1:502 blocked for more than 120 seconds.
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> async/1       D c0586e00  7488   502      2 0x00000000
+>  f6aeff24 00000046 c014eca4 c0586e00 00000292 f72a2920 f72a2ba4 5b0bdd4d
+>  00000001 00000001 f72a2ba4 f6aeff24 c0144247 f6aeff48 c0586e6c 00000000
+>  f6aeff68 c014456d f6aeff34 f72a2920 c0108981 00000000 00000002 f6aeff48
+> Call Trace:
+>  [<c014eca4>] ? trace_hardirqs_on_caller+0x124/0x180
+>  [<c0144247>] ? lowest_in_progress+0x37/0x70
+>  [<c014456d>] async_synchronize_cookie_domain+0xbd/0x150
+>  [<c0108981>] ? sched_clock+0x21/0x70
+>  [<c014c23d>] ? put_lock_stats+0xd/0x30
+>  [<c013e520>] ? autoremove_wake_function+0x0/0x40
+>  [<c014460d>] async_synchronize_cookie+0xd/0x10
+>  [<c035dad1>] async_port_probe+0xa1/0xc0
+>  [<c0144350>] async_thread+0xd0/0x230
+>  [<c044d12d>] ? schedule+0x37d/0x4c0
+>  [<c014ed0b>] ? trace_hardirqs_on+0xb/0x10
+>  [<c0124ac0>] ? default_wake_function+0x0/0x10
+>  [<c0144280>] ? async_thread+0x0/0x230
+>  [<c013e2a3>] kthread+0x43/0x80
+>  [<c013e260>] ? kthread+0x0/0x80
+>  [<c0103677>] kernel_thread_helper+0x7/0x10
+> no locks held by async/1/502.
+> INFO: task async/2:509 blocked for more than 120 seconds.
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> async/2       D c0586e00  7604   509      2 0x00000000
+>  f72abf24 00000046 c014eca4 c0586e00 00000292 f71cd240 f71cd4c4 71cf4cd4
+>  00000001 00000001 f71cd4c4 f72abf24 c0144247 f72abf48 c0586e6c 00000000
+>  f72abf68 c014456d 00000292 f72abf38 c014ed0b f72abf48 00000003 00000292
+> Call Trace:
+>  [<c014eca4>] ? trace_hardirqs_on_caller+0x124/0x180
+>  [<c0144247>] ? lowest_in_progress+0x37/0x70
+>  [<c014456d>] async_synchronize_cookie_domain+0xbd/0x150
+>  [<c014ed0b>] ? trace_hardirqs_on+0xb/0x10
+>  [<c013e520>] ? autoremove_wake_function+0x0/0x40
+>  [<c014460d>] async_synchronize_cookie+0xd/0x10
+>  [<c035dab5>] async_port_probe+0x85/0xc0
+>  [<c0144350>] async_thread+0xd0/0x230
+>  [<c044d12d>] ? schedule+0x37d/0x4c0
+>  [<c014ed0b>] ? trace_hardirqs_on+0xb/0x10
+>  [<c0124ac0>] ? default_wake_function+0x0/0x10
+>  [<c0144280>] ? async_thread+0x0/0x230
+>  [<c013e2a3>] kthread+0x43/0x80
+>  [<c013e260>] ? kthread+0x0/0x80
+>  [<c0103677>] kernel_thread_helper+0x7/0x10
+> no locks held by async/2/509.
+> INFO: task async/3:511 blocked for more than 120 seconds.
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> async/3       D c0586e00  7604   511      2 0x00000000
+>  f7163f24 00000046 c014eca4 c0586e00 00000292 f70a9490 f70a9714 5b5d68ff
+>  00000001 00000001 f70a9714 f7163f24 c0144247 f7163f48 c0586e6c 00000000
+>  f7163f68 c014456d f7163f34 f70a9490 c0108981 00000000 00000004 f7163f48
+> Call Trace:
+>  [<c014eca4>] ? trace_hardirqs_on_caller+0x124/0x180
+>  [<c0144247>] ? lowest_in_progress+0x37/0x70
+>  [<c014456d>] async_synchronize_cookie_domain+0xbd/0x150
+>  [<c0108981>] ? sched_clock+0x21/0x70
+>  [<c014c23d>] ? put_lock_stats+0xd/0x30
+>  [<c013e520>] ? autoremove_wake_function+0x0/0x40
+>  [<c014460d>] async_synchronize_cookie+0xd/0x10
+>  [<c035dad1>] async_port_probe+0xa1/0xc0
+>  [<c0144350>] async_thread+0xd0/0x230
+>  [<c044d12d>] ? schedule+0x37d/0x4c0
+>  [<c014ed0b>] ? trace_hardirqs_on+0xb/0x10
+>  [<c0124ac0>] ? default_wake_function+0x0/0x10
+>  [<c0144280>] ? async_thread+0x0/0x230
+>  [<c013e2a3>] kthread+0x43/0x80
+>  [<c013e260>] ? kthread+0x0/0x80
+>  [<c0103677>] kernel_thread_helper+0x7/0x10
+> no locks held by async/3/511.
 
-This one's a strange one.  It's entangled in the SCSI async conversion:
-
-commit 2c6dd125bace93f54d53f3e908f50db21733cbc9
-Author: Matthew Wilcox <matthew@wil.cx>
-Date:   Tue Apr 28 13:35:58 2009 -0600
-
-    [SCSI] Convert scsi_scan to use generic async mechanism
-
-I already reverted it for other reasons, so I think reverting it will
-make your problem go away.  However, if your system only has ATA ports
-and no SCSI ones, it shouldn't have got caught here.  The SCSI async
-scan uses a separate run queue, which should be empty and thus it
-shouldn't be waiting here unless there's a problem inside the async
-scanning code.
-
-James
-
-
+Is Alt-SysRq-T functional at this point? It seems like the async threads 
+are stalled waiting for something to complete, but we can't see what 
+that is. Alt-SysRq-T might tell us.
