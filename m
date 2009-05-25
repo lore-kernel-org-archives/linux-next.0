@@ -1,47 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: md tree build failure
-Date: Mon, 25 May 2009 15:33:46 +1000
-Message-ID: <20090525153346.758483fc.sfr@canb.auug.org.au>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: Re: linux-next: block tree build failure
+Date: Mon, 25 May 2009 01:38:26 -0400
+Message-ID: <yq1bpphg2st.fsf@sermon.lab.mkp.net>
+References: <20090525143511.f9e76bdc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36821 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751015AbZEYFdv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 May 2009 01:33:51 -0400
+Received: from rcsinet11.oracle.com ([148.87.113.123]:46717 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751117AbZEYFi7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 May 2009 01:38:59 -0400
+In-Reply-To: <20090525143511.f9e76bdc.sfr@canb.auug.org.au> (Stephen
+	Rothwell's message of "Mon, 25 May 2009 14:35:11 +1000")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Neil Brown <neilb@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, raz ben yehuda <raziebe@gmail.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Jens Axboe <jens.axboe@oracle.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jens Axboe <jens.axboe@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Martin K. Petersen" <martin.petersen@oracle.com>, Mikulas Patocka <mpatocka@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Alasdair G Kergon <agk@redhat.com>
 
-Hi Neil,
+>>>>> "Stephen" == Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+Stephen> Caused by commit 025146e13b63483add912706c101fb0fb6f015cc
+Stephen> ("block: Move queue limits to an embedded struct") from the
+Stephen> block tree interacting with commit
+Stephen> c8f4b88baca86491a6125cf9373a75e04b22ff8b
+Stephen> ("dm-avoid-unsupported-spanning-of-md-stripe-boundaries") from
+Stephen> the device-mapper tree.
 
-drivers/md/raid0.c: In function 'create_strip_zones':
-drivers/md/raid0.c:243: error: 'struct request_queue' has no member named 'hardsect_size'
+Stephen> This is caused by commit
+Stephen> e1defc4ff0cf57aca6c5e3ff99fa503f5943c1f1 ("block: Do away with
+Stephen> the notion of hardsect_size") from the block tree interacting
+Stephen> with commits cc1018ae8a413b595a1f0f822928dd9e81a75e59
+Stephen> ("dm-table-ensure-targets-are-aligned-to-hardsect_size") and
+Stephen> 64b184139ca6cd3d53dc45d7782c8be50b3e0331
+Stephen> ("dm-table-validate-device-hardsect_size") from the
+Stephen> device-mapper tree.
 
-Caused by commit e1defc4ff0cf57aca6c5e3ff99fa503f5943c1f1 ("block: Do
-away with the notion of hardsect_size") from the block tree interacting
-with commit 131e4477401ae76a9cbe8539e4b7819e04cfba36 ("md: raid0: chunk
-size check in raid0_run") from the md tree.
+Bummer. I wasn't aware Alasdair had taken those patches into his DM tree
+yet.  I thought he was waiting for my block layer patches to land.
 
-I applied the following patch.
+The accessor function patch in my patch series was explicitly put in
+place to enable changing the API without affecting users.  And we've
+tried to be careful about staging these patches in the right order
+throughout all the involved trees.
+
+Sorry about the slip-up :|
+
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
-index b8a0747..0bf275d 100644
---- a/drivers/md/raid0.c
-+++ b/drivers/md/raid0.c
-@@ -240,7 +240,7 @@ static int create_strip_zones(mddev_t *mddev)
- 	 * now since we have the hard sector sizes, we can make sure
- 	 * chunk size is a multiple of that sector size
- 	 */
--	if (mddev->chunk_size % mddev->queue->hardsect_size) {
-+	if (mddev->chunk_size % queue_logical_block_size(mddev->queue)) {
- 		printk(KERN_ERR "%s chunk_size of %d not valid\n",
- 		       mdname(mddev),
- 		       mddev->chunk_size);
+Martin K. Petersen	Oracle Linux Engineering
