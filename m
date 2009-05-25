@@ -1,49 +1,63 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: block tree build failure
-Date: Mon, 25 May 2009 01:38:26 -0400
-Message-ID: <yq1bpphg2st.fsf@sermon.lab.mkp.net>
+Date: Mon, 25 May 2009 15:54:26 +1000
+Message-ID: <20090525155426.28331f5f.sfr@canb.auug.org.au>
 References: <20090525143511.f9e76bdc.sfr@canb.auug.org.au>
+	<yq1bpphg2st.fsf@sermon.lab.mkp.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__25_May_2009_15_54_26_+1000_c.eYP148V7JYzF.A"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet11.oracle.com ([148.87.113.123]:46717 "EHLO
-	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751117AbZEYFi7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 May 2009 01:38:59 -0400
-In-Reply-To: <20090525143511.f9e76bdc.sfr@canb.auug.org.au> (Stephen
-	Rothwell's message of "Mon, 25 May 2009 14:35:11 +1000")
+Received: from chilli.pcug.org.au ([203.10.76.44]:34939 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751242AbZEYFyd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 May 2009 01:54:33 -0400
+In-Reply-To: <yq1bpphg2st.fsf@sermon.lab.mkp.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jens Axboe <jens.axboe@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Martin K. Petersen" <martin.petersen@oracle.com>, Mikulas Patocka <mpatocka@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Alasdair G Kergon <agk@redhat.com>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Jens Axboe <jens.axboe@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Alasdair G Kergon <agk@redhat.com>
 
->>>>> "Stephen" == Stephen Rothwell <sfr@canb.auug.org.au> writes:
+--Signature=_Mon__25_May_2009_15_54_26_+1000_c.eYP148V7JYzF.A
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Stephen> Caused by commit 025146e13b63483add912706c101fb0fb6f015cc
-Stephen> ("block: Move queue limits to an embedded struct") from the
-Stephen> block tree interacting with commit
-Stephen> c8f4b88baca86491a6125cf9373a75e04b22ff8b
-Stephen> ("dm-avoid-unsupported-spanning-of-md-stripe-boundaries") from
-Stephen> the device-mapper tree.
+Hi Martin,
 
-Stephen> This is caused by commit
-Stephen> e1defc4ff0cf57aca6c5e3ff99fa503f5943c1f1 ("block: Do away with
-Stephen> the notion of hardsect_size") from the block tree interacting
-Stephen> with commits cc1018ae8a413b595a1f0f822928dd9e81a75e59
-Stephen> ("dm-table-ensure-targets-are-aligned-to-hardsect_size") and
-Stephen> 64b184139ca6cd3d53dc45d7782c8be50b3e0331
-Stephen> ("dm-table-validate-device-hardsect_size") from the
-Stephen> device-mapper tree.
+On Mon, 25 May 2009 01:38:26 -0400 "Martin K. Petersen" <martin.petersen@or=
+acle.com> wrote:
+>
+> The accessor function patch in my patch series was explicitly put in
+> place to enable changing the API without affecting users.  And we've
+> tried to be careful about staging these patches in the right order
+> throughout all the involved trees.
 
-Bummer. I wasn't aware Alasdair had taken those patches into his DM tree
-yet.  I thought he was waiting for my block layer patches to land.
+What you really need is to have the patches that introduce the accessors
+in a tree common to all the possible users of them.  In practise this
+often means Linus' tree - in which case the patches should introduce noop
+versions of the accessors.  If that is possible, Linus is quite happy to
+take those patches after which all the other users can take the
+conversions into their own tree and everyone is happy.  :-)
 
-The accessor function patch in my patch series was explicitly put in
-place to enable changing the API without affecting users.  And we've
-tried to be careful about staging these patches in the right order
-throughout all the involved trees.
+Currently the patches that introduce the accessors only exist in the
+block tree ...
 
-Sorry about the slip-up :|
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+--Signature=_Mon__25_May_2009_15_54_26_+1000_c.eYP148V7JYzF.A
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkoaMpIACgkQjjKRsyhoI8xF4QCgj8sl8pkG8IIMBn7/SjJ9La6U
+xxQAoJOFIFAfPmnXZYFujW1bLRdh17/N
+=kA9b
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__25_May_2009_15_54_26_+1000_c.eYP148V7JYzF.A--
