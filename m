@@ -1,63 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: block tree build failure
-Date: Mon, 25 May 2009 15:54:26 +1000
-Message-ID: <20090525155426.28331f5f.sfr@canb.auug.org.au>
-References: <20090525143511.f9e76bdc.sfr@canb.auug.org.au>
-	<yq1bpphg2st.fsf@sermon.lab.mkp.net>
+From: Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: linux-next: md tree build failure
+Date: Mon, 25 May 2009 08:15:52 +0200
+Message-ID: <20090525061552.GH11363@kernel.dk>
+References: <20090525153346.758483fc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__25_May_2009_15_54_26_+1000_c.eYP148V7JYzF.A"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34939 "EHLO smtps.tip.net.au"
+Received: from brick.kernel.dk ([93.163.65.50]:35279 "EHLO kernel.dk"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751242AbZEYFyd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 May 2009 01:54:33 -0400
-In-Reply-To: <yq1bpphg2st.fsf@sermon.lab.mkp.net>
+	id S1751850AbZEYGPv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 May 2009 02:15:51 -0400
+Content-Disposition: inline
+In-Reply-To: <20090525153346.758483fc.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Jens Axboe <jens.axboe@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Alasdair G Kergon <agk@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Neil Brown <neilb@suse.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, raz ben yehuda <raziebe@gmail.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
 
---Signature=_Mon__25_May_2009_15_54_26_+1000_c.eYP148V7JYzF.A
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, May 25 2009, Stephen Rothwell wrote:
+> Hi Neil,
+> 
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> 
+> drivers/md/raid0.c: In function 'create_strip_zones':
+> drivers/md/raid0.c:243: error: 'struct request_queue' has no member named 'hardsect_size'
+> 
+> Caused by commit e1defc4ff0cf57aca6c5e3ff99fa503f5943c1f1 ("block: Do
+> away with the notion of hardsect_size") from the block tree interacting
+> with commit 131e4477401ae76a9cbe8539e4b7819e04cfba36 ("md: raid0: chunk
+> size check in raid0_run") from the md tree.
 
-Hi Martin,
+Martin, this is starting to look like a disaster :-(
 
-On Mon, 25 May 2009 01:38:26 -0400 "Martin K. Petersen" <martin.petersen@or=
-acle.com> wrote:
->
-> The accessor function patch in my patch series was explicitly put in
-> place to enable changing the API without affecting users.  And we've
-> tried to be careful about staging these patches in the right order
-> throughout all the involved trees.
+> 
+> I applied the following patch.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
+> index b8a0747..0bf275d 100644
+> --- a/drivers/md/raid0.c
+> +++ b/drivers/md/raid0.c
+> @@ -240,7 +240,7 @@ static int create_strip_zones(mddev_t *mddev)
+>  	 * now since we have the hard sector sizes, we can make sure
+>  	 * chunk size is a multiple of that sector size
+>  	 */
+> -	if (mddev->chunk_size % mddev->queue->hardsect_size) {
+> +	if (mddev->chunk_size % queue_logical_block_size(mddev->queue)) {
+>  		printk(KERN_ERR "%s chunk_size of %d not valid\n",
+>  		       mdname(mddev),
+>  		       mddev->chunk_size);
 
-What you really need is to have the patches that introduce the accessors
-in a tree common to all the possible users of them.  In practise this
-often means Linus' tree - in which case the patches should introduce noop
-versions of the accessors.  If that is possible, Linus is quite happy to
-take those patches after which all the other users can take the
-conversions into their own tree and everyone is happy.  :-)
-
-Currently the patches that introduce the accessors only exist in the
-block tree ...
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__25_May_2009_15_54_26_+1000_c.eYP148V7JYzF.A
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkoaMpIACgkQjjKRsyhoI8xF4QCgj8sl8pkG8IIMBn7/SjJ9La6U
-xxQAoJOFIFAfPmnXZYFujW1bLRdh17/N
-=kA9b
------END PGP SIGNATURE-----
-
---Signature=_Mon__25_May_2009_15_54_26_+1000_c.eYP148V7JYzF.A--
+-- 
+Jens Axboe
