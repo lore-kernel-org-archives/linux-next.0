@@ -1,39 +1,68 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: linux-next: manual merge of the x86 tree with Linus' tree
-Date: Mon, 25 May 2009 17:56:33 -0700
-Message-ID: <4A1B3E41.5030003@zytor.com>
-References: <20090526105249.986c4f3c.sfr@canb.auug.org.au>
+From: Zhu Yi <yi.zhu@intel.com>
+Subject: Re: [Ilw] Re: linux-next: Tree for May 25 (iwmc3200wifi)
+Date: Tue, 26 May 2009 10:49:41 +0800
+Message-ID: <1243306181.3623.2.camel@debian>
+References: <20090525185524.63b80cbf.sfr@canb.auug.org.au>
+	 <4A1B2588.7020907@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from terminus.zytor.com ([198.137.202.10]:48061 "EHLO
-	terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752775AbZEZA5C (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 May 2009 20:57:02 -0400
-In-Reply-To: <20090526105249.986c4f3c.sfr@canb.auug.org.au>
+Received: from mga02.intel.com ([134.134.136.20]:57498 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752865AbZEZC5d (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 May 2009 22:57:33 -0400
+In-Reply-To: <4A1B2588.7020907@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "ilw@linux.intel.com" <ilw@linux.intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-Stephen Rothwell wrote:
-> Hi all,
+On Tue, 2009-05-26 at 07:11 +0800, Randy Dunlap wrote:
+> Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20090522:
 > 
-> Today's linux-next merge of the x86 tree got a conflict in
-> arch/x86/boot/memory.c between commit
-> bca23dba760d6705c013f89113c46570378fb626 ("x86, setup: revert ACPI 3 E820
-> extended attributes support") from Linus' tree and commit
-> df7699c56421c0476704f24a43409ac8c505f3d2 ("x86, setup: "glove box" BIOS
-> interrupts in the core boot code") from the x86 tree.
 > 
-> The former removed the code that the latter modified, so I used the
-> former (as is done in -tip).
+> ERROR: "wiphy_free" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_ibss_wext_giwfreq" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "ieee80211_frequency_to_channel" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_inform_bss_frame" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_ibss_wext_siwap" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_wext_siwscan" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "ieee80211_hdrlen" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "ieee80211_channel_to_frequency" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "ieee80211_data_to_8023" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_wext_siwmode" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "__ieee80211_get_channel" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_get_bss" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "wiphy_unregister" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_ibss_wext_giwap" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_ibss_wext_siwfreq" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_wext_giwfrag" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_ibss_joined" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_wext_siwrts" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_put_bss" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "wiphy_new" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "wiphy_register" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_classify8021d" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_wext_giwrange" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "ieee80211_data_from_8023" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_wext_giwmode" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_wext_giwname" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_wext_giwscan" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_wext_giwrts" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_wext_siwfrag" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_scan_done" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_ibss_wext_siwessid" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> ERROR: "cfg80211_ibss_wext_giwessid" [drivers/net/wireless/iwmc3200wifi/iwmc3200wifi.ko] undefined!
+> 
+> 
+> config attached.
 
-tip:x86/setup should contain a proper merge between the two.
+Good catch. iwmc3200wifi Kconfig forgot to select CFG80211. I'll send a
+patch to fix this in linux-wireless.
 
-	-hpa
-
--- 
-H. Peter Anvin, Intel Open Source Technology Center
-I work for Intel.  I don't speak on their behalf.
+Thanks,
+-yi
