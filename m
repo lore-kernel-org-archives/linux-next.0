@@ -1,139 +1,57 @@
-From: reinette chatre <reinette.chatre@intel.com>
-Subject: Re: [ipw3945-devel] iwlagn (5300) broken: 2.6.30-rc7, linux-next
-Date: Tue, 26 May 2009 09:51:50 -0700
-Message-ID: <1243356710.7624.3001.camel@rc-desk>
-References: <20090525072138.GA5568@ikn.schottelius.org>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+Subject: Re: [PATCH -next] v4l2: handle unregister for non-I2C builds
+Date: Tue, 26 May 2009 14:31:10 -0300
+Message-ID: <20090526143110.6c7b2e5a@pedra.chehab.org>
+References: <20090511161442.3e9d9cb9.sfr@canb.auug.org.au>
+	<4A085455.5040108@oracle.com>
+	<20090522054847.GB14059@linux-sh.org>
+	<20090522175554.19465733.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:62909 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751347AbZEZQpC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 May 2009 12:45:02 -0400
-In-Reply-To: <20090525072138.GA5568@ikn.schottelius.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Nico -telmich- Schottelius <nico-linux-ipw3945-devel@schottelius.org>
-Cc: "ipw3945-devel@lists.sourceforge.net" <ipw3945-devel@lists.sourceforge.net>, Linux Next Mailing List <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <20090522175554.19465733.sfr@canb.auug.org.au>
+Sender: linux-media-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Paul Mundt <lethal@linux-sh.org>, Randy Dunlap <randy.dunlap@oracle.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
+List-Id: linux-next.vger.kernel.org
 
-Hi,
+Em Fri, 22 May 2009 17:55:54 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
 
-On Mon, 2009-05-25 at 00:21 -0700, Nico -telmich- Schottelius wrote:
-> Hello!
+> On Fri, 22 May 2009 14:48:47 +0900 Paul Mundt <lethal@linux-sh.org> wrote:
+> >
+> > On Mon, May 11, 2009 at 09:37:41AM -0700, Randy Dunlap wrote:
+> > > From: Randy Dunlap <randy.dunlap@oracle.com>
+> > > 
+> > > Build fails when CONFIG_I2C=n, so handle that case in the if block:
+> > > 
+> > > drivers/built-in.o: In function `v4l2_device_unregister':
+> > > (.text+0x157821): undefined reference to `i2c_unregister_device'
+> > > 
+> > > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> > 
+> > This patch still has not been applied as far as I can tell, and builds
+> > are still broken as a result, almost 2 weeks after the fact.
 > 
-> I cannot authenticate agains any AP with
+> In fact there has been no updates to the v4l-dvb tree at all since
+> May 11.  Mauro?
+
+Sorry, this email were got by a wrong filtering rule here. Only today I
+noticed it.
+
+Anyway, the tree were updated yesterday, with Randy's patch. Sorry for the mess.
 > 
->   - 2.6.30-rc5-next-20090514-05233,
->   - 2.6.30-rc5-next-20090515-05297-g9bbe396,
->   - 2.6.30-rc7
+> I have reverted the patch that caused the build breakage ... (commit
+> d5bc7940d39649210f1affac1fa32f253cc45a81 "V4L/DVB (11673): v4l2-device:
+> unregister i2c_clients when unregistering the v4l2_device").
 > 
-> dmesg, .config for 2.6.30-rc6 are attached.
-> 
-> I'm using wpa_supplicant to try to establish the connection.
-> Sorry for the late report, just switched back to wired lan
-> the last weeks.
-> 
-> Sincerly,
-> 
-> Nico
-
-[...]
-
-> [   11.957125] iwlagn: Intel(R) Wireless WiFi Link AGN driver for Linux, 1.3.27ks
-> [   11.957135] iwlagn: Copyright(c) 2003-2009 Intel Corporation
-> [   11.957312] iwlagn 0000:03:00.0: PCI INT A -> GSI 17 (level, low) -> IRQ 17
-> [   11.957328] iwlagn 0000:03:00.0: setting latency timer to 64
-> [   11.957674] iwlagn 0000:03:00.0: Detected Intel Wireless WiFi Link 5300AGN REV=0x24
-> [   11.977183] iwlagn 0000:03:00.0: Tunable channels: 13 802.11bg, 24 802.11a channels
-> [   11.977301] iwlagn 0000:03:00.0: irq 29 for MSI/MSI-X
-
-[...]
-
-> [  103.061679] iwlagn 0000:03:00.0: firmware: requesting iwlwifi-5000-1.ucode
-> [  103.087303] ip_tables: (C) 2000-2006 Netfilter Core Team
-> [  103.439449] iwlagn 0000:03:00.0: loaded firmware version 5.4.1.16
-> [  103.686328] ADDRCONF(NETDEV_UP): wlan0: link is not ready
-> [  106.716528] wlan0: authenticate with AP 00:03:52:1c:18:71
-> [  106.718503] wlan0: authenticated
-> [  106.718512] wlan0: associate with AP 00:03:52:1c:18:71
-> [  106.916177] wlan0: associate with AP 00:03:52:1c:18:71
-> [  106.918120] wlan0: RX AssocResp from 00:03:52:1c:18:71 (capab=0x421 status=1 aid=0)
-> [  106.918128] wlan0: AP denied association (code=1)
-
-You need to find out why your AP denied the association request. Here it
-may help to run wpa_supplicant in debug mode.
-
-> [  107.116202] wlan0: associate with AP 00:03:52:1c:18:71
-> [  107.118167] wlan0: RX AssocResp from 00:03:52:1c:18:71 (capab=0x421 status=1 aid=0)
-> [  107.118174] wlan0: AP denied association (code=1)
-> [  107.316128] wlan0: association with AP 00:03:52:1c:18:71 timed out
-
-[...]
-
-
-> [  243.192345] iwlagn 0000:03:00.0: PCI INT A disabled
-> [  243.304966] iwlagn: Intel(R) Wireless WiFi Link AGN driver for Linux, 1.3.27ks
-> [  243.304971] iwlagn: Copyright(c) 2003-2009 Intel Corporation
-> [  243.305090] iwlagn 0000:03:00.0: PCI INT A -> GSI 17 (level, low) -> IRQ 17
-> [  243.305122] iwlagn 0000:03:00.0: setting latency timer to 64
-> [  243.305210] iwlagn 0000:03:00.0: Detected Intel Wireless WiFi Link 5300AGN REV=0x24
-> [  243.337281] iwlagn 0000:03:00.0: Tunable channels: 13 802.11bg, 24 802.11a channels
-> [  243.337366] iwlagn 0000:03:00.0: irq 29 for MSI/MSI-X
-> [  243.338184] phy1: Selected rate control algorithm 'iwl-agn-rs'
-> [  245.441513] iwlagn 0000:03:00.0: firmware: requesting iwlwifi-5000-1.ucode
-> [  245.493091] iwlagn 0000:03:00.0: loaded firmware version 5.4.1.16
-> [  245.737314] ADDRCONF(NETDEV_UP): wlan0: link is not ready
-> [  249.867702] wlan0: authenticate with AP 00:03:52:1c:18:71
-> [  249.875512] wlan0: authenticate with AP 00:03:52:4d:bd:c1
-> [  249.878565] wlan0: authenticate with AP 00:03:52:4d:bd:c1
-> [  249.905107] wlan0: authenticated
-> [  249.905116] wlan0: associate with AP 00:03:52:4d:bd:c1
-> [  249.907466] wlan0: RX AssocResp from 00:03:52:4d:bd:c1 (capab=0x421 status=0 aid=2)
-> [  249.907473] wlan0: associated
-> [  249.914879] ADDRCONF(NETDEV_CHANGE): wlan0: link becomes ready
-> [  249.920414] wlan0: disassociating by local choice (reason=3)
-
-This is wpa_supplicant disassociating.
+> [By the way, an alternative fix might be to just define
+> V4L2_SUBDEV_FL_IS_I2C to be zero if CONFIG_I2C and CONFIG_I2C_MODULE are
+> not defined (gcc should then just elide the offending code).]
 
 
 
-> [  249.935823] wlan0: authenticate with AP 00:03:52:1c:18:71
-> [  250.026193] wlan0: authenticate with AP 00:03:52:1c:18:71
-> [  250.030259] wlan0: authenticate with AP 00:03:52:1c:18:71
-> [  250.030313] wlan0: authenticated
-> [  250.030319] wlan0: associate with AP 00:03:52:1c:18:71
-> [  250.054947] wlan0: RX AssocResp from 00:03:52:1c:18:71 (capab=0x421 status=0 aid=1)
-> [  250.054955] wlan0: associated
-> [  250.061078] wlan0: disassociating by local choice (reason=3)
 
-again
-
-> [  250.076398] wlan0: direct probe to AP 00:03:52:1c:12:11 try 1
-> [  250.182475] wlan0: authenticate with AP 00:03:52:1b:f8:31
-> [  250.183507] wlan0: authenticate with AP 00:03:52:1b:f8:31
-> [  250.380163] wlan0: authenticate with AP 00:03:52:1b:f8:31
-> [  250.580141] wlan0: authenticate with AP 00:03:52:1b:f8:31
-> [  250.592714] wlan0: authenticated
-> [  250.592723] wlan0: associate with AP 00:03:52:1b:f8:31
-> [  250.594870] wlan0: RX AssocResp from 00:03:52:1b:f8:31 (capab=0x421 status=0 aid=2)
-> [  250.594878] wlan0: associated
-> [  250.601994] wlan0: disassociating by local choice (reason=3)
-
-... and again
-
-> [  250.707306] wlan0: authenticate with AP 00:03:52:4e:f3:d1
-> [  250.709306] wlan0: authenticated
-> [  250.709313] wlan0: associate with AP 00:03:52:4e:f3:d1
-> [  250.711452] wlan0: RX AssocResp from 00:03:52:4e:f3:d1 (capab=0x421 status=0 aid=3)
-> [  250.711459] wlan0: associated
-> [  250.718720] wlan0: disassociating by local choice (reason=3)
-
-... and again.
-
-[...]
-
-It really seems that runnning wpa_supplicant with debugging will help in
-understanding what is going on in your environment.
-
-Reinette
+Cheers,
+Mauro
