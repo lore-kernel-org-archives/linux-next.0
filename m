@@ -1,292 +1,139 @@
-From: Mike Snitzer <snitzer@redhat.com>
-Subject: [RFC] updated DM table alignment validation patches
-	[Was: Re: linux-next: block tree build failure]
-Date: Tue, 26 May 2009 09:54:02 -0400
-Message-ID: <20090526135402.GA3086@redhat.com>
-References: <20090525143511.f9e76bdc.sfr@canb.auug.org.au>
-	<yq1bpphg2st.fsf@sermon.lab.mkp.net>
-	<20090525155426.28331f5f.sfr@canb.auug.org.au>
-Reply-To: device-mapper development <dm-devel@redhat.com>
+From: reinette chatre <reinette.chatre@intel.com>
+Subject: Re: [ipw3945-devel] iwlagn (5300) broken: 2.6.30-rc7, linux-next
+Date: Tue, 26 May 2009 09:51:50 -0700
+Message-ID: <1243356710.7624.3001.camel@rc-desk>
+References: <20090525072138.GA5568@ikn.schottelius.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="cWoXeonUoKmBZSoM"
-Return-path: <dm-devel-bounces@redhat.com>
-Content-Disposition: inline
-In-Reply-To: <20090525155426.28331f5f.sfr@canb.auug.org.au>
-List-Unsubscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
-	<mailto:dm-devel-request@redhat.com?subject=unsubscribe>
-List-Archive: <https://www.redhat.com/archives/dm-devel>
-List-Post: <mailto:dm-devel@redhat.com>
-List-Help: <mailto:dm-devel-request@redhat.com?subject=help>
-List-Subscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
-	<mailto:dm-devel-request@redhat.com?subject=subscribe>
-Sender: dm-devel-bounces@redhat.com
-Errors-To: dm-devel-bounces@redhat.com
-To: Stephen Rothwell <sfr@canb.auug.org.au>, "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-kernel@vger.kernel.org, dm-devel@redhat.com, linux-next@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>, Jens Axboe <jens.axboe@oracle.com>, Alasdair G Kergon <agk@redhat.com>
-List-Id: linux-next.vger.kernel.org
-
-
---cWoXeonUoKmBZSoM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, May 25 2009 at  1:54am -0400,
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi Martin,
-> 
-> On Mon, 25 May 2009 01:38:26 -0400 "Martin K. Petersen" <martin.petersen@oracle.com> wrote:
-> >
-> > The accessor function patch in my patch series was explicitly put in
-> > place to enable changing the API without affecting users.  And we've
-> > tried to be careful about staging these patches in the right order
-> > throughout all the involved trees.
-> 
-> What you really need is to have the patches that introduce the accessors
-> in a tree common to all the possible users of them.  In practise this
-> often means Linus' tree - in which case the patches should introduce noop
-> versions of the accessors.  If that is possible, Linus is quite happy to
-> take those patches after which all the other users can take the
-> conversions into their own tree and everyone is happy.  :-)
-> 
-> Currently the patches that introduce the accessors only exist in the
-> block tree ...
-
-I've refreshed the DM linux-next patches that were off Martin's radar;
-they are available here (and are also attached):
-
-http://people.redhat.com/msnitzer/patches/dm-topology/dm-table-ensure-targets-are-aligned-to-logical_block_size.patch
-http://people.redhat.com/msnitzer/patches/dm-topology/dm-table-validate-device-logical_block_size.patch
-
-These updated patches still seem useful (as negative checks independent
-of the topology code).
-
-There is more work that is needed in DM and LVM2 userspace in order to
-properly support and utilize the new topology infrastructure.  So I'm
-also taking a much closer look at the needed changes now and should have
-it sorted out in the coming days.
-
-Mike
-
-
-
---cWoXeonUoKmBZSoM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="dm-table-ensure-targets-are-aligned-to-logical_block_size.patch"
-
-From: Mike Snitzer <snitzer@redhat.com>
-
-Ensure I/O is aligned to the logical block size of target devices.
-
-Rename check_device_area() to device_area_is_valid() for clarity and
-establish the device limits including the logical block size prior to
-calling it.
-
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
-Signed-off-by: Alasdair G Kergon <agk@redhat.com>
-
----
- drivers/md/dm-table.c |   54 +++++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 41 insertions(+), 13 deletions(-)
-
-Index: linux-2.6/drivers/md/dm-table.c
-===================================================================
---- linux-2.6.orig/drivers/md/dm-table.c
-+++ linux-2.6/drivers/md/dm-table.c
-@@ -385,15 +385,42 @@ static void close_dev(struct dm_dev_inte
- /*
-  * If possible, this checks an area of a destination device is valid.
-  */
--static int check_device_area(struct dm_dev_internal *dd, sector_t start,
--			     sector_t len)
-+static int device_area_is_valid(struct dm_target *ti, struct block_device *bdev,
-+			     sector_t start, sector_t len)
- {
--	sector_t dev_size = dd->dm_dev.bdev->bd_inode->i_size >> SECTOR_SHIFT;
-+	sector_t dev_size = bdev->bd_inode->i_size >> SECTOR_SHIFT;
-+	unsigned short logical_block_size_sectors =
-+		ti->limits.logical_block_size >> SECTOR_SHIFT;
-+	char b[BDEVNAME_SIZE];
- 
- 	if (!dev_size)
- 		return 1;
- 
--	return ((start < dev_size) && (len <= (dev_size - start)));
-+	if ((start >= dev_size) || (start + len > dev_size)) {
-+		DMWARN("%s: %s too small for target",
-+		       dm_device_name(ti->table->md), bdevname(bdev, b));
-+		return 0;
-+	}
-+
-+	if (logical_block_size_sectors <= 1)
-+		return 1;
-+
-+	if (start & (logical_block_size_sectors - 1)) {
-+		DMWARN("%s: start=%llu not aligned to h/w sector of %s",
-+		       dm_device_name(ti->table->md),
-+		       (unsigned long long)start, bdevname(bdev, b));
-+		return 0;
-+	}
-+
-+	if (len & (logical_block_size_sectors - 1)) {
-+		DMWARN("%s: len=%llu not aligned to h/w sector size %hu of %s",
-+		       dm_device_name(ti->table->md),
-+		       (unsigned long long)len,
-+		       ti->limits.logical_block_size, bdevname(bdev, b));
-+		return 0;
-+	}
-+
-+	return 1;
- }
- 
- /*
-@@ -479,14 +506,7 @@ static int __table_get_device(struct dm_
- 	}
- 	atomic_inc(&dd->count);
- 
--	if (!check_device_area(dd, start, len)) {
--		DMWARN("device %s too small for target", path);
--		dm_put_device(ti, &dd->dm_dev);
--		return -EINVAL;
--	}
--
- 	*result = &dd->dm_dev;
--
- 	return 0;
- }
- 
-@@ -555,8 +575,16 @@ int dm_get_device(struct dm_target *ti, 
- 	int r = __table_get_device(ti->table, ti, path,
- 				   start, len, mode, result);
- 
--	if (!r)
--		dm_set_device_limits(ti, (*result)->bdev);
-+	if (r)
-+		return r;
-+
-+	dm_set_device_limits(ti, (*result)->bdev);
-+
-+	if (!device_area_is_valid(ti, (*result)->bdev, start, len)) {
-+		dm_put_device(ti, *result);
-+		*result = NULL;
-+		return -EINVAL;
-+	}
- 
- 	return r;
- }
-
---cWoXeonUoKmBZSoM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="dm-table-validate-device-logical_block_size.patch"
-
-From: Mike Snitzer <snitzer@redhat.com>
-
-Impose necessary and sufficient conditions on a devices's table such
-that any incoming bio which respects its logical_block_size can be
-processed successfully.
-
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
-Signed-off-by: Alasdair G Kergon <agk@redhat.com>
-
----
- drivers/md/dm-table.c |   69 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 69 insertions(+)
-
-Index: linux-2.6/drivers/md/dm-table.c
-===================================================================
---- linux-2.6.orig/drivers/md/dm-table.c
-+++ linux-2.6/drivers/md/dm-table.c
-@@ -723,6 +723,71 @@ static void check_for_valid_limits(struc
- 		rs->bounce_pfn = -1;
- }
- 
-+/*
-+ * Impose necessary and sufficient conditions on a devices's table such
-+ * that any incoming bio which respects its logical_block_size can be
-+ * processed successfully.  If it falls across the boundary between
-+ * two or more targets, the size of each piece it gets split into must
-+ * be compatible with the logical_block_size of the target processing it.
-+ */
-+static int validate_hardware_logical_block_alignment(struct dm_table *table)
-+{
-+	/*
-+	 * This function uses arithmetic modulo the logical_block_size
-+	 * (in units of 512-byte sectors).
-+	 */
-+	unsigned short device_logical_block_size_sects =
-+		table->limits.logical_block_size >> SECTOR_SHIFT;
-+
-+	/*
-+	 * Offset of the start of the next table entry, mod logical_block_size.
-+	 */
-+	unsigned short next_target_start = 0;
-+
-+	/*
-+	 * Given an aligned bio that extends beyond the end of a
-+	 * target, how many sectors must the next target handle?
-+	 */
-+	unsigned short remaining = 0;
-+
-+	struct dm_target *uninitialized_var(ti);
-+	unsigned i = 0;
-+
-+	/*
-+	 * Check each entry in the table in turn.
-+	 */
-+	while (i < dm_table_get_num_targets(table)) {
-+		ti = dm_table_get_target(table, i++);
-+
-+		/*
-+		 * If the remaining sectors fall entirely within this
-+		 * table entry are they compatible with its logical_block_size?
-+		 */
-+		if (remaining < ti->len &&
-+		    remaining & ((ti->limits.logical_block_size >>
-+				  SECTOR_SHIFT) - 1))
-+			break;	/* Error */
-+
-+		next_target_start =
-+		    (unsigned short) ((next_target_start + ti->len) &
-+				      (device_logical_block_size_sects - 1));
-+		remaining = next_target_start ?
-+		    device_logical_block_size_sects - next_target_start : 0;
-+	}
-+
-+	if (remaining) {
-+		DMWARN("%s: table line %u (start sect %llu len %llu) "
-+		       "not aligned to hardware logical block size %hu",
-+		       dm_device_name(table->md), i,
-+		       (unsigned long long) ti->begin,
-+		       (unsigned long long) ti->len,
-+		       table->limits.logical_block_size);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- int dm_table_add_target(struct dm_table *t, const char *type,
- 			sector_t start, sector_t len, char *params)
- {
-@@ -822,6 +887,10 @@ int dm_table_complete(struct dm_table *t
- 
- 	check_for_valid_limits(&t->limits);
- 
-+	r = validate_hardware_logical_block_alignment(t);
-+	if (r)
-+		return r;
-+
- 	/* how many indexes will the btree have ? */
- 	leaf_nodes = dm_div_up(t->num_targets, KEYS_PER_NODE);
- 	t->depth = 1 + int_log(leaf_nodes, CHILDREN_PER_NODE);
-
---cWoXeonUoKmBZSoM
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:62909 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751347AbZEZQpC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 May 2009 12:45:02 -0400
+In-Reply-To: <20090525072138.GA5568@ikn.schottelius.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Nico -telmich- Schottelius <nico-linux-ipw3945-devel@schottelius.org>
+Cc: "ipw3945-devel@lists.sourceforge.net" <ipw3945-devel@lists.sourceforge.net>, Linux Next Mailing List <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+
+Hi,
+
+On Mon, 2009-05-25 at 00:21 -0700, Nico -telmich- Schottelius wrote:
+> Hello!
+> 
+> I cannot authenticate agains any AP with
+> 
+>   - 2.6.30-rc5-next-20090514-05233,
+>   - 2.6.30-rc5-next-20090515-05297-g9bbe396,
+>   - 2.6.30-rc7
+> 
+> dmesg, .config for 2.6.30-rc6 are attached.
+> 
+> I'm using wpa_supplicant to try to establish the connection.
+> Sorry for the late report, just switched back to wired lan
+> the last weeks.
+> 
+> Sincerly,
+> 
+> Nico
+
+[...]
+
+> [   11.957125] iwlagn: Intel(R) Wireless WiFi Link AGN driver for Linux, 1.3.27ks
+> [   11.957135] iwlagn: Copyright(c) 2003-2009 Intel Corporation
+> [   11.957312] iwlagn 0000:03:00.0: PCI INT A -> GSI 17 (level, low) -> IRQ 17
+> [   11.957328] iwlagn 0000:03:00.0: setting latency timer to 64
+> [   11.957674] iwlagn 0000:03:00.0: Detected Intel Wireless WiFi Link 5300AGN REV=0x24
+> [   11.977183] iwlagn 0000:03:00.0: Tunable channels: 13 802.11bg, 24 802.11a channels
+> [   11.977301] iwlagn 0000:03:00.0: irq 29 for MSI/MSI-X
+
+[...]
+
+> [  103.061679] iwlagn 0000:03:00.0: firmware: requesting iwlwifi-5000-1.ucode
+> [  103.087303] ip_tables: (C) 2000-2006 Netfilter Core Team
+> [  103.439449] iwlagn 0000:03:00.0: loaded firmware version 5.4.1.16
+> [  103.686328] ADDRCONF(NETDEV_UP): wlan0: link is not ready
+> [  106.716528] wlan0: authenticate with AP 00:03:52:1c:18:71
+> [  106.718503] wlan0: authenticated
+> [  106.718512] wlan0: associate with AP 00:03:52:1c:18:71
+> [  106.916177] wlan0: associate with AP 00:03:52:1c:18:71
+> [  106.918120] wlan0: RX AssocResp from 00:03:52:1c:18:71 (capab=0x421 status=1 aid=0)
+> [  106.918128] wlan0: AP denied association (code=1)
+
+You need to find out why your AP denied the association request. Here it
+may help to run wpa_supplicant in debug mode.
+
+> [  107.116202] wlan0: associate with AP 00:03:52:1c:18:71
+> [  107.118167] wlan0: RX AssocResp from 00:03:52:1c:18:71 (capab=0x421 status=1 aid=0)
+> [  107.118174] wlan0: AP denied association (code=1)
+> [  107.316128] wlan0: association with AP 00:03:52:1c:18:71 timed out
+
+[...]
 
 
---cWoXeonUoKmBZSoM--
+> [  243.192345] iwlagn 0000:03:00.0: PCI INT A disabled
+> [  243.304966] iwlagn: Intel(R) Wireless WiFi Link AGN driver for Linux, 1.3.27ks
+> [  243.304971] iwlagn: Copyright(c) 2003-2009 Intel Corporation
+> [  243.305090] iwlagn 0000:03:00.0: PCI INT A -> GSI 17 (level, low) -> IRQ 17
+> [  243.305122] iwlagn 0000:03:00.0: setting latency timer to 64
+> [  243.305210] iwlagn 0000:03:00.0: Detected Intel Wireless WiFi Link 5300AGN REV=0x24
+> [  243.337281] iwlagn 0000:03:00.0: Tunable channels: 13 802.11bg, 24 802.11a channels
+> [  243.337366] iwlagn 0000:03:00.0: irq 29 for MSI/MSI-X
+> [  243.338184] phy1: Selected rate control algorithm 'iwl-agn-rs'
+> [  245.441513] iwlagn 0000:03:00.0: firmware: requesting iwlwifi-5000-1.ucode
+> [  245.493091] iwlagn 0000:03:00.0: loaded firmware version 5.4.1.16
+> [  245.737314] ADDRCONF(NETDEV_UP): wlan0: link is not ready
+> [  249.867702] wlan0: authenticate with AP 00:03:52:1c:18:71
+> [  249.875512] wlan0: authenticate with AP 00:03:52:4d:bd:c1
+> [  249.878565] wlan0: authenticate with AP 00:03:52:4d:bd:c1
+> [  249.905107] wlan0: authenticated
+> [  249.905116] wlan0: associate with AP 00:03:52:4d:bd:c1
+> [  249.907466] wlan0: RX AssocResp from 00:03:52:4d:bd:c1 (capab=0x421 status=0 aid=2)
+> [  249.907473] wlan0: associated
+> [  249.914879] ADDRCONF(NETDEV_CHANGE): wlan0: link becomes ready
+> [  249.920414] wlan0: disassociating by local choice (reason=3)
+
+This is wpa_supplicant disassociating.
+
+
+
+> [  249.935823] wlan0: authenticate with AP 00:03:52:1c:18:71
+> [  250.026193] wlan0: authenticate with AP 00:03:52:1c:18:71
+> [  250.030259] wlan0: authenticate with AP 00:03:52:1c:18:71
+> [  250.030313] wlan0: authenticated
+> [  250.030319] wlan0: associate with AP 00:03:52:1c:18:71
+> [  250.054947] wlan0: RX AssocResp from 00:03:52:1c:18:71 (capab=0x421 status=0 aid=1)
+> [  250.054955] wlan0: associated
+> [  250.061078] wlan0: disassociating by local choice (reason=3)
+
+again
+
+> [  250.076398] wlan0: direct probe to AP 00:03:52:1c:12:11 try 1
+> [  250.182475] wlan0: authenticate with AP 00:03:52:1b:f8:31
+> [  250.183507] wlan0: authenticate with AP 00:03:52:1b:f8:31
+> [  250.380163] wlan0: authenticate with AP 00:03:52:1b:f8:31
+> [  250.580141] wlan0: authenticate with AP 00:03:52:1b:f8:31
+> [  250.592714] wlan0: authenticated
+> [  250.592723] wlan0: associate with AP 00:03:52:1b:f8:31
+> [  250.594870] wlan0: RX AssocResp from 00:03:52:1b:f8:31 (capab=0x421 status=0 aid=2)
+> [  250.594878] wlan0: associated
+> [  250.601994] wlan0: disassociating by local choice (reason=3)
+
+... and again
+
+> [  250.707306] wlan0: authenticate with AP 00:03:52:4e:f3:d1
+> [  250.709306] wlan0: authenticated
+> [  250.709313] wlan0: associate with AP 00:03:52:4e:f3:d1
+> [  250.711452] wlan0: RX AssocResp from 00:03:52:4e:f3:d1 (capab=0x421 status=0 aid=3)
+> [  250.711459] wlan0: associated
+> [  250.718720] wlan0: disassociating by local choice (reason=3)
+
+... and again.
+
+[...]
+
+It really seems that runnning wpa_supplicant with debugging will help in
+understanding what is going on in your environment.
+
+Reinette
