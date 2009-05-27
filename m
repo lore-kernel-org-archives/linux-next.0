@@ -1,44 +1,86 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] i2c: Simplified CONFIG_I2C=n interface.
-Date: Wed, 27 May 2009 13:01:40 +0100
-Message-ID: <20090527120140.GC1970@sirena.org.uk>
-References: <20090527070850.GA11221@linux-sh.org> <20090527091831.26b60d6d@hyperion.delvare>
+From: Michal Simek <michal.simek@petalogix.com>
+Subject: Re: Microblaze merge
+Date: Wed, 27 May 2009 15:06:23 +0200
+Message-ID: <4A1D3ACF.2090206@petalogix.com>
+References: <4A1CEA3C.1050904@petalogix.com> <20090527181022.f69d7036.sfr@canb.auug.org.au>
+Reply-To: michal.simek@petalogix.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20090527091831.26b60d6d@hyperion.delvare>
-Sender: linux-media-owner@vger.kernel.org
-To: Jean Delvare <khali@linux-fr.org>
-Cc: Paul Mundt <lethal@linux-sh.org>, linux-next@vger.kernel.org, linux-media@vger.kernel.org, linux-i2c@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bw0-f222.google.com ([209.85.218.222]:49792 "EHLO
+	mail-bw0-f222.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1763845AbZE0NG0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 27 May 2009 09:06:26 -0400
+Received: by bwz22 with SMTP id 22so4587713bwz.37
+        for <linux-next@vger.kernel.org>; Wed, 27 May 2009 06:06:27 -0700 (PDT)
+In-Reply-To: <20090527181022.f69d7036.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, John Williams <john.williams@petalogix.com>, linux-next@vger.kernel.org
 
-On Wed, May 27, 2009 at 09:18:31AM +0200, Jean Delvare wrote:
+Stephen Rothwell wrote:
+> HI Michal,
+>
+> On Wed, 27 May 2009 09:22:36 +0200 Michal Simek <michal.simek@petalogix.com> wrote:
+>   
+>> Can you please merge my next branch to linux-next?
+>>
+>> The following changes since commit 5805977e63a36ad56594a623f3bd2bebcb7db233:
+>>   Linus Torvalds (1):
+>>         Merge branch 'for-linus' of git://git.kernel.org/.../jbarnes/drm-2.6
+>>
+>> are available in the git repository at:
+>>
+>>   git://git.monstr.eu/linux-2.6-microblaze.git next
+>>     
+>
+> I have added it to the end of the tree for today (you just caught me in
+> time :-)).  Tomorrow it will be moved back with all the other
+> architectures.
+>   
+;-)
 
-> Violent nack. Drivers which optionally use I2C are a minority.
+> What I tell everyone: all patches/commits in the tree/series must
+> have been:
+>
+> 	posted to a relevant mailing list
+>   
+was
+> 	reviewed
+>   
+It was reviewed v1 - v2 contains all reported problems
+> 	unit tested
+>   
+I tested it
+> 	destined for the next merge window (or the current release)
+>   
+it is for next merge open window.
+> *before* they are included.  The linux-next tree is for integration
+> testing and to lower the impact of conflicts between subsystems in the
+> next merge window.
+>   
+I would like to know that Kconfig changes (enabling some drivers) + Arnd
+generic changes
+not caused any problem which I should know about.
+> Basically, this should be just what you would send to Linus (or ask him
+> to fetch).  It is allowed to be rebased if you deem it necessary.
+>   
+next branch is based on my for-linus branch - There are only microblaze
+specific changes in arch/microblaze
+and these changes shouldn't have impact to any subsystem that's why I
+don't expect any problem in it.
 
-It's extremely common for devices like the CODECs and PMICs used in
-embedded systems to have both I2C and SPI interfaces, selectable via a
-pin strap at power on.  It's less common to have the SPI option for
-things like hardware monitoring chips found in PCs but for anything that
-might be I/O bound the high speed interface is a very common option.
+If I am wrong in anything let me know. This is my first "pull request to
+linux-next".
 
-> Designing them in such a way that a single #ifdef CONFIG_I2C will make
-> them work can't be that hard, really. Not to mention that having a
-> dozen stubs in i2c.h in the CONFIG_I2C=n case won't save you much work
-> at the driver level anyway, because you certainly need to run different
-> code paths depending on how the device is connected, and you also have
-> to differentiate between the "I2C support is missing" case and the "I2C
-> device registration failed" case, etc.
+I see the first problem that I should use {GIT PULL] prefix in subject.
 
-For the devices I've dealt with there's very little work at the driver
-level - the various interfaces that can be used each probe using the
-normal device model, set some register read/write operations and
-possibly some other things and then call into the bulk of the driver
-which has all the I/O abstracted away from it.
+Thanks,
+Michal
 
-The error handling is already an issue with the current situation since
-people are just silently building out the I2C support when I2C is not
-enabled.  At the minute the main problem is with people not remembering
-to do the #ifdef (a lot of platforms really need I2C enabled to be
-useful so people never think to do the build without).
+-- 
+Michal Simek, Ing. (M.Eng)
+PetaLogix - Linux Solutions for a Reconfigurable World
+w: www.petalogix.com p: +61-7-30090663,+42-0-721842854 f: +61-7-30090663
