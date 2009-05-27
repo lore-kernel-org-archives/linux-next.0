@@ -1,51 +1,184 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: edac-amd tree build warning
-Date: Wed, 27 May 2009 17:01:19 +1000
-Message-ID: <20090527170119.c1d6b221.sfr@canb.auug.org.au>
+From: Paul Mundt <lethal@linux-sh.org>
+Subject: [PATCH] i2c: Simplified CONFIG_I2C=n interface.
+Date: Wed, 27 May 2009 16:08:50 +0900
+Message-ID: <20090527070850.GA11221@linux-sh.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__27_May_2009_17_01_19_+1000_kIoJ=6n7ckPqLAmO"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42913 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760581AbZE0HBY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 27 May 2009 03:01:24 -0400
+Received: from 124x34x33x190.ap124.ftth.ucom.ne.jp ([124.34.33.190]:37080 "EHLO
+	master.linux-sh.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755701AbZE0HJG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 27 May 2009 03:09:06 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Borislav Petkov <borislav.petkov@amd.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Doug Thompson <dougthompson@xmission.com>
+To: Jean Delvare <khali@linux-fr.org>
+Cc: linux-next@vger.kernel.org, linux-media@vger.kernel.org, linux-i2c@vger.kernel.org
 
---Signature=_Wed__27_May_2009_17_01_19_+1000_kIoJ=6n7ckPqLAmO
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Another day, another module-related failure due to the i2c interface
+being used in code that optionally uses it:
 
-Hi Borislav,
+ERROR: "i2c_new_device" [drivers/media/video/soc_camera.ko] undefined!
+ERROR: "i2c_get_adapter" [drivers/media/video/soc_camera.ko] undefined!
+ERROR: "i2c_put_adapter" [drivers/media/video/soc_camera.ko] undefined!
+ERROR: "i2c_unregister_device" [drivers/media/video/soc_camera.ko] undefined!
+make[2]: *** [__modpost] Error 1
+make[1]: *** [modules] Error 2
+make: *** [sub-make] Error 2
 
-Today's linux-next build (x86_64 allmodconfig) produced this warning:
+In the interest of not continually inserting i2c ifdefs in to every
+driver that supports an optional i2c interface, this provides a stubbed
+set of interfaces for the CONFIG_I2C=n case.
 
-drivers/edac/amd64_edac.c: In function 'f10_get_base_addr_offset':
-drivers/edac/amd64_edac.c:1466: warning: suggest parentheses around operand=
- of '!' or change '&' to '&&' or '!' to '~'
+I've covered the obvious ones that cause the majority of the build
+failures, anything more involved really ought to have its dependencies
+fixed instead.
 
-Introduced by commit c266e41c0ca15d5df65e42d07608fbfb51ff32e3
-("amd64_edac: add F10h-and-later methods-p2").
+Signed-off-by: Paul Mundt <lethal@linux-sh.org>
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+---
 
---Signature=_Wed__27_May_2009_17_01_19_+1000_kIoJ=6n7ckPqLAmO
-Content-Type: application/pgp-signature
+ include/linux/i2c.h |  109 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 109 insertions(+)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkoc5T8ACgkQjjKRsyhoI8zV4QCfXR40BfhxGPF02H66Gku1y8pX
-3DoAoLiRYg+T7ypeZ8scNiDbqjFSftJh
-=+sBt
------END PGP SIGNATURE-----
-
---Signature=_Wed__27_May_2009_17_01_19_+1000_kIoJ=6n7ckPqLAmO--
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index ad25805..ba73cd0 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -277,6 +277,8 @@ struct i2c_board_info {
+ 	.type = dev_type, .addr = (dev_addr)
+ 
+ 
++#ifdef CONFIG_I2C
++
+ /* Add-on boards should register/unregister their devices; e.g. a board
+  * with integrated I2C, a config eeprom, sensors, and a codec that's
+  * used in conjunction with the primary hardware.
+@@ -301,6 +303,33 @@ i2c_new_dummy(struct i2c_adapter *adap, u16 address);
+ 
+ extern void i2c_unregister_device(struct i2c_client *);
+ 
++#else
++
++static inline struct i2c_client *
++i2c_new_device(struct i2c_adapter *adap, struct i2c_board_info const *info)
++{
++	return NULL;
++}
++
++static inline struct i2c_client *
++i2c_new_probed_device(struct i2c_adapter *adap,
++		      struct i2c_board_info *info,
++		      unsigned short const *addr_list)
++{
++	return NULL;
++}
++
++static inline struct i2c_client *
++i2c_new_dummy(struct i2c_adapter *adap, u16 address)
++{
++	return NULL;
++}
++
++static inline void i2c_unregister_device(struct i2c_client *client)
++{
++}
++#endif /* CONFIG_I2C */
++
+ /* Mainboard arch_initcall() code should register all its I2C devices.
+  * This is done at arch_initcall time, before declaring any i2c adapters.
+  * Modules for add-on boards must use other calls.
+@@ -415,6 +444,7 @@ struct i2c_client_address_data {
+ 
+ /* ----- functions exported by i2c.o */
+ 
++#ifdef CONFIG_I2C
+ /* administration...
+  */
+ extern int i2c_add_adapter(struct i2c_adapter *);
+@@ -460,6 +490,85 @@ static inline u32 i2c_get_functionality(struct i2c_adapter *adap)
+ 	return adap->algo->functionality(adap);
+ }
+ 
++#else
++
++static inline int i2c_add_adapter(struct i2c_adapter *adap)
++{
++	return -ENODEV;
++}
++
++static inline int i2c_del_adapter(struct i2c_adapter *adap)
++{
++	return -ENODEV;
++}
++
++static inline int i2c_add_numbered_adapter(struct i2c_adapter *adap)
++{
++	return -ENODEV;
++}
++
++static inline int i2c_register_driver(struct module *module,
++				      struct i2c_driver *driver)
++{
++	return -ENODEV;
++}
++
++static inline void i2c_del_driver(struct i2c_driver *driver)
++{
++}
++
++static inline int i2c_add_driver(struct i2c_driver *driver)
++{
++	return -ENODEV;
++}
++
++static inline int __deprecated i2c_attach_client(struct i2c_client *client)
++{
++	return -EINVAL;
++}
++
++static inline int __deprecated i2c_detach_client(struct i2c_client *client)
++{
++	return -EINVAL;
++}
++
++static inline struct i2c_client *i2c_use_client(struct i2c_client *client)
++{
++	return NULL;
++}
++
++static inline void i2c_release_client(struct i2c_client *client)
++{
++}
++
++static inline void i2c_clients_command(struct i2c_adapter *adap,
++				       unsigned int cmd, void *arg)
++{
++}
++
++static inline int i2c_probe(struct i2c_adapter *adapter,
++		const struct i2c_client_address_data *address_data,
++		int (*found_proc) (struct i2c_adapter *, int, int))
++{
++	return -ENODEV;
++}
++
++static inline struct i2c_adapter *i2c_get_adapter(int id)
++{
++	return NULL;
++}
++
++static inline void i2c_put_adapter(struct i2c_adapter *adap)
++{
++}
++
++/* Return the functionality mask */
++static inline u32 i2c_get_functionality(struct i2c_adapter *adap)
++{
++	return 0;
++}
++#endif /* CONFIG_I2C */
++
+ /* Return 1 if adapter supports everything we need, 0 if not. */
+ static inline int i2c_check_functionality(struct i2c_adapter *adap, u32 func)
+ {
