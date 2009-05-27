@@ -1,84 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the gfs2 tree
-Date: Wed, 27 May 2009 11:52:53 +1000
-Message-ID: <20090527115253.37abd576.sfr@canb.auug.org.au>
+Subject: linux-next: mtd tree build failure
+Date: Wed, 27 May 2009 13:40:40 +1000
+Message-ID: <20090527134040.941b38a7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__27_May_2009_13_40_40_+1000_TQwY8zmJIPAJJXU1"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60281 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40334 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752563AbZE0BxC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 May 2009 21:53:02 -0400
+	id S1755703AbZE0Dkn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 May 2009 23:40:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven Whitehouse <swhiteho@redhat.com>, Christoph Hellwig <hch@infradead.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Al,
+--Signature=_Wed__27_May_2009_13_40_40_+1000_TQwY8zmJIPAJJXU1
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the vfs tree got a conflict in
-fs/gfs2/ops_super.c between commit
-9e6e0a128bca0a151d8d3fbd9459b22fc21cfebb ("GFS2: Merge mount.c and
-ops_super.c into super.c") from the gfs2 tree and commits
-17af8f24a7750ea3d947904f97eb6dfacf9a88aa ("gfs2: remove ->write_super and
-stop maintaining ->s_dirt") and 8123178eb9ca12cde31a95170746e15a79528a62
-("push BKL down into ->put_super") from the vfs tree.
+Hi David,
 
-The former commit removed the file.  I have mechanically applied the
-changes in the latter two commits to fs/gfs2/super.c (see below) and can
-carry this as a merge fix as necessary.
--- 
+Today's linux-next build (x86_64 allmodconfig) failed like this:
+
+drivers/mtd/maps/dilnetpc.c: In function 'init_dnpc':
+drivers/mtd/maps/dilnetpc.c:448: error: 'struct mtd_partition' has no membe=
+r named 'mtdp'
+drivers/mtd/maps/dilnetpc.c:449: error: 'struct mtd_partition' has no membe=
+r named 'mtdp'
+drivers/mtd/maps/dilnetpc.c:450: error: 'struct mtd_partition' has no membe=
+r named 'mtdp'
+drivers/mtd/maps/dilnetpc.c:451: error: 'struct mtd_partition' has no membe=
+r named 'mtdp'
+
+Caused by commit b90cf6681f4f6263920616e7ca2fd09130e4143a ("[MTD] Remove
+option for add_mtd_partitions() to not register partitions.").  The
+comment in that commit even says that it will cause this breakage, so why
+hasn't this been fixed?
+
+I have used the mtd tree from next-20090526 for today. =20
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --git a/fs/gfs2/super.c b/fs/gfs2/super.c
-index 40bcc37..c8930b3 100644
---- a/fs/gfs2/super.c
-+++ b/fs/gfs2/super.c
-@@ -719,6 +719,8 @@ static void gfs2_put_super(struct super_block *sb)
- 	int error;
- 	struct gfs2_jdesc *jd;
- 
-+	lock_kernel();
-+
- 	/*  Unfreeze the filesystem, if we need to  */
- 
- 	mutex_lock(&sdp->sd_freeze_lock);
-@@ -785,17 +787,8 @@ restart:
- 
- 	/*  At this point, we're through participating in the lockspace  */
- 	gfs2_sys_fs_del(sdp);
--}
--
--/**
-- * gfs2_write_super
-- * @sb: the superblock
-- *
-- */
- 
--static void gfs2_write_super(struct super_block *sb)
--{
--	sb->s_dirt = 0;
-+	unlock_kernel();
- }
- 
- /**
-@@ -807,7 +800,6 @@ static void gfs2_write_super(struct super_block *sb)
- 
- static int gfs2_sync_fs(struct super_block *sb, int wait)
- {
--	sb->s_dirt = 0;
- 	if (wait && sb->s_fs_info)
- 		gfs2_log_flush(sb->s_fs_info, NULL);
- 	return 0;
-@@ -1324,7 +1316,6 @@ const struct super_operations gfs2_super_ops = {
- 	.write_inode		= gfs2_write_inode,
- 	.delete_inode		= gfs2_delete_inode,
- 	.put_super		= gfs2_put_super,
--	.write_super		= gfs2_write_super,
- 	.sync_fs		= gfs2_sync_fs,
- 	.freeze_fs 		= gfs2_freeze,
- 	.unfreeze_fs		= gfs2_unfreeze,
--- 
-1.6.3.1
+--Signature=_Wed__27_May_2009_13_40_40_+1000_TQwY8zmJIPAJJXU1
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkoctjgACgkQjjKRsyhoI8xrhwCeNQcOWe68eD43vFswmRpQv8kc
+64EAnAzF3i6fuDFGWD2c5inbD/vRYST5
+=DTfa
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__27_May_2009_13_40_40_+1000_TQwY8zmJIPAJJXU1--
