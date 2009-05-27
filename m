@@ -1,56 +1,84 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Linus' tree build warning
-Date: Wed, 27 May 2009 11:22:46 +1000
-Message-ID: <20090527112246.5c9734ec.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the gfs2 tree
+Date: Wed, 27 May 2009 11:52:53 +1000
+Message-ID: <20090527115253.37abd576.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__27_May_2009_11_22_46_+1000_Yfdqo5le/ySqqMht"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41523 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60281 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753988AbZE0BWv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 May 2009 21:22:51 -0400
+	id S1752563AbZE0BxC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 May 2009 21:53:02 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Neil Brown <neilb@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven Whitehouse <swhiteho@redhat.com>, Christoph Hellwig <hch@infradead.org>
 
---Signature=_Wed__27_May_2009_11_22_46_+1000_Yfdqo5le/ySqqMht
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Al,
 
-Hi Neil,
+Today's linux-next merge of the vfs tree got a conflict in
+fs/gfs2/ops_super.c between commit
+9e6e0a128bca0a151d8d3fbd9459b22fc21cfebb ("GFS2: Merge mount.c and
+ops_super.c into super.c") from the gfs2 tree and commits
+17af8f24a7750ea3d947904f97eb6dfacf9a88aa ("gfs2: remove ->write_super and
+stop maintaining ->s_dirt") and 8123178eb9ca12cde31a95170746e15a79528a62
+("push BKL down into ->put_super") from the vfs tree.
 
-Today's linux-next build (powerpc ppc64_defconfig) produced these
-warnings:
-
-drivers/md/raid5.c: In function 'reshape_request':
-drivers/md/raid5.c:3814: warning: comparison of distinct pointer types lack=
-s a cast
-drivers/md/raid5.c:3819: warning: comparison of distinct pointer types lack=
-s a cast
-drivers/md/raid5.c:3820: warning: comparison of distinct pointer types lack=
-s a cast
-
-Introduced by commit 848b3182365fdf5a05bcd5ed949071cac2c894b3 ("md:
-raid5: avoid sector values going negative when testing reshape progress").
-
---=20
+The former commit removed the file.  I have mechanically applied the
+changes in the latter two commits to fs/gfs2/super.c (see below) and can
+carry this as a merge fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__27_May_2009_11_22_46_+1000_Yfdqo5le/ySqqMht
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkocleYACgkQjjKRsyhoI8wMGQCeMDj8EfEgj4fOB6v7P1956RA0
-BAIAoKALq3hAtrOLmte5c19Wup9kRtcT
-=PU20
------END PGP SIGNATURE-----
-
---Signature=_Wed__27_May_2009_11_22_46_+1000_Yfdqo5le/ySqqMht--
+diff --git a/fs/gfs2/super.c b/fs/gfs2/super.c
+index 40bcc37..c8930b3 100644
+--- a/fs/gfs2/super.c
++++ b/fs/gfs2/super.c
+@@ -719,6 +719,8 @@ static void gfs2_put_super(struct super_block *sb)
+ 	int error;
+ 	struct gfs2_jdesc *jd;
+ 
++	lock_kernel();
++
+ 	/*  Unfreeze the filesystem, if we need to  */
+ 
+ 	mutex_lock(&sdp->sd_freeze_lock);
+@@ -785,17 +787,8 @@ restart:
+ 
+ 	/*  At this point, we're through participating in the lockspace  */
+ 	gfs2_sys_fs_del(sdp);
+-}
+-
+-/**
+- * gfs2_write_super
+- * @sb: the superblock
+- *
+- */
+ 
+-static void gfs2_write_super(struct super_block *sb)
+-{
+-	sb->s_dirt = 0;
++	unlock_kernel();
+ }
+ 
+ /**
+@@ -807,7 +800,6 @@ static void gfs2_write_super(struct super_block *sb)
+ 
+ static int gfs2_sync_fs(struct super_block *sb, int wait)
+ {
+-	sb->s_dirt = 0;
+ 	if (wait && sb->s_fs_info)
+ 		gfs2_log_flush(sb->s_fs_info, NULL);
+ 	return 0;
+@@ -1324,7 +1316,6 @@ const struct super_operations gfs2_super_ops = {
+ 	.write_inode		= gfs2_write_inode,
+ 	.delete_inode		= gfs2_delete_inode,
+ 	.put_super		= gfs2_put_super,
+-	.write_super		= gfs2_write_super,
+ 	.sync_fs		= gfs2_sync_fs,
+ 	.freeze_fs 		= gfs2_freeze,
+ 	.unfreeze_fs		= gfs2_unfreeze,
+-- 
+1.6.3.1
