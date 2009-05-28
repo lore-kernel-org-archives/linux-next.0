@@ -1,162 +1,161 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the timers tree with the sched tree
-Date: Thu, 28 May 2009 13:40:18 +1000
-Message-ID: <20090528134018.2aebb49f.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the omap tree with the arm tree
+Date: Thu, 28 May 2009 14:31:38 +1000
+Message-ID: <20090528143138.2de9ad37.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39758 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753946AbZE1Dk1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 27 May 2009 23:40:27 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arun R Bharadwaj <arun@linux.vnet.ibm.com>, Gautham R Shenoy <ego@in.ibm.com>
+Return-path: <linux-omap-owner@vger.kernel.org>
+Sender: linux-omap-owner@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Santosh Shilimkar <santosh.shilimkar@ti.com>
+List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
-Today's linux-next merge of the timers tree got a conflict in
-kernel/sched.c between commit f711f6090a81cbd396b63de90f415d33f563af9b
-("sched: Nominate idle load balancer from a semi-idle package") from the
-sched tree and commit eea08f32adb3f97553d49a4f79a119833036000a ("timers:
-Logic to move non pinned timers") from the timers tree.
+Today's linux-next merge of the omap tree got a conflict in
+arch/arm/Makefile between commit b4175b89921fefb2f352472fa6dccb0fc4fb37d9
+("[ARM] sort machine- and plat- by CONFIG* name") from the arm tree and
+commit 68394eae0fc4e801fc2ae33055b24a9754669a7b ("ARM: OMAP4: Add support
+for 4430 SDP") from the omap tree.
 
-Just overlapping additions.  I fixed it up (see below) and can carry the
-fix as necessary.
+I fixed it up (see below) and can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc kernel/sched.c
-index 39a24b0,ff23723..0000000
---- a/kernel/sched.c
-+++ b/kernel/sched.c
-@@@ -4296,121 -4244,11 +4296,126 @@@ static struct 
-  	.load_balancer = ATOMIC_INIT(-1),
-  };
+diff --cc arch/arm/Makefile
+index e97c21b,676d10d..0000000
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@@ -99,72 -99,65 +99,73 @@@ CHECKFLAGS	+= -D__arm_
+  #Default value
+  head-y		:= arch/arm/kernel/head$(MMUEXT).o arch/arm/kernel/init_task.o
+  textofs-y	:= 0x00008000
+ -
+ - machine-$(CONFIG_ARCH_RPC)	   := rpc
+ - machine-$(CONFIG_ARCH_EBSA110)	   := ebsa110
+ - machine-$(CONFIG_FOOTBRIDGE)	   := footbridge
+ - machine-$(CONFIG_ARCH_SHARK)	   := shark
+ - machine-$(CONFIG_ARCH_SA1100)	   := sa1100
+ -ifeq ($(CONFIG_ARCH_SA1100),y)
+ +textofs-$(CONFIG_ARCH_CLPS711X) := 0x00028000
+  # SA1111 DMA bug: we don't want the kernel to live in precious DMA-able memory
+ - textofs-$(CONFIG_SA1111)	   := 0x00208000
+ +ifeq ($(CONFIG_ARCH_SA1100),y)
+ +textofs-$(CONFIG_SA1111) := 0x00208000
+  endif
+ - machine-$(CONFIG_ARCH_PXA)	   := pxa
+ - machine-$(CONFIG_ARCH_MMP)	   := mmp
+ -    plat-$(CONFIG_PLAT_PXA)	   := pxa
+ - machine-$(CONFIG_ARCH_L7200)	   := l7200
+ - machine-$(CONFIG_ARCH_INTEGRATOR) := integrator
+ - machine-$(CONFIG_ARCH_GEMINI)     := gemini
+ - textofs-$(CONFIG_ARCH_CLPS711X)   := 0x00028000
+ - machine-$(CONFIG_ARCH_CLPS711X)   := clps711x
+ - machine-$(CONFIG_ARCH_IOP32X)	   := iop32x
+ - machine-$(CONFIG_ARCH_IOP33X)	   := iop33x
+ - machine-$(CONFIG_ARCH_IOP13XX)	   := iop13xx
+ -    plat-$(CONFIG_PLAT_IOP)	   := iop
+ - machine-$(CONFIG_ARCH_IXP4XX)	   := ixp4xx
+ - machine-$(CONFIG_ARCH_IXP2000)    := ixp2000
+ - machine-$(CONFIG_ARCH_IXP23XX)    := ixp23xx
+ - machine-$(CONFIG_ARCH_OMAP1)	   := omap1
+ - machine-$(CONFIG_ARCH_OMAP2)	   := omap2
+ - machine-$(CONFIG_ARCH_OMAP3)	   := omap2
+ - machine-$(CONFIG_ARCH_OMAP4)	   := omap2
+ -    plat-$(CONFIG_ARCH_OMAP)	   := omap
+ - machine-$(CONFIG_ARCH_S3C2410)	   := s3c2410 s3c2400 s3c2412 s3c2440 s3c2442 s3c2443
+ - machine-$(CONFIG_ARCH_S3C24A0)	   := s3c24a0
+ -    plat-$(CONFIG_PLAT_S3C24XX)	   := s3c24xx s3c
+ - machine-$(CONFIG_ARCH_S3C64XX)	   := s3c6400 s3c6410
+ -    plat-$(CONFIG_PLAT_S3C64XX)	   := s3c64xx s3c
+ - machine-$(CONFIG_ARCH_LH7A40X)	   := lh7a40x
+ - machine-$(CONFIG_ARCH_VERSATILE)  := versatile
+ - machine-$(CONFIG_ARCH_IMX)	   := imx
+ - machine-$(CONFIG_ARCH_H720X)	   := h720x
+ - machine-$(CONFIG_ARCH_AAEC2000)   := aaec2000
+ - machine-$(CONFIG_ARCH_REALVIEW)   := realview
+ - machine-$(CONFIG_ARCH_AT91)	   := at91
+ - machine-$(CONFIG_ARCH_EP93XX)	   := ep93xx
+ - machine-$(CONFIG_ARCH_PNX4008)	   := pnx4008
+ - machine-$(CONFIG_ARCH_NETX)	   := netx
+ - machine-$(CONFIG_ARCH_NS9XXX)	   := ns9xxx
+ - machine-$(CONFIG_ARCH_DAVINCI)	   := davinci
+ - machine-$(CONFIG_ARCH_KIRKWOOD)   := kirkwood
+ - machine-$(CONFIG_ARCH_KS8695)     := ks8695
+ -    plat-$(CONFIG_ARCH_MXC)	   := mxc
+ - machine-$(CONFIG_ARCH_MX2)	   := mx2
+ - machine-$(CONFIG_ARCH_MX3)	   := mx3
+ - machine-$(CONFIG_ARCH_MX1)	   := mx1
+ - machine-$(CONFIG_ARCH_ORION5X)	   := orion5x
+ -    plat-$(CONFIG_PLAT_ORION)	   := orion
+ - machine-$(CONFIG_ARCH_MSM)	   := msm
+ - machine-$(CONFIG_ARCH_LOKI)       := loki
+ - machine-$(CONFIG_ARCH_MV78XX0)    := mv78xx0
+ - machine-$(CONFIG_ARCH_W90X900)    := w90x900
+ +
+ +# Machine directory name.  This list is sorted alphanumerically
+ +# by CONFIG_* macro name.
+ +machine-$(CONFIG_ARCH_AAEC2000)		:= aaec2000
+ +machine-$(CONFIG_ARCH_AT91)		:= at91
+ +machine-$(CONFIG_ARCH_CLPS711X)		:= clps711x
+ +machine-$(CONFIG_ARCH_DAVINCI)		:= davinci
+ +machine-$(CONFIG_ARCH_EBSA110)		:= ebsa110
+ +machine-$(CONFIG_ARCH_EP93XX)		:= ep93xx
+ +machine-$(CONFIG_ARCH_GEMINI)		:= gemini
+ +machine-$(CONFIG_ARCH_H720X)		:= h720x
+ +machine-$(CONFIG_ARCH_INTEGRATOR)	:= integrator
+ +machine-$(CONFIG_ARCH_IOP13XX)		:= iop13xx
+ +machine-$(CONFIG_ARCH_IOP32X)		:= iop32x
+ +machine-$(CONFIG_ARCH_IOP33X)		:= iop33x
+ +machine-$(CONFIG_ARCH_IXP2000)		:= ixp2000
+ +machine-$(CONFIG_ARCH_IXP23XX)		:= ixp23xx
+ +machine-$(CONFIG_ARCH_IXP4XX)		:= ixp4xx
+ +machine-$(CONFIG_ARCH_KIRKWOOD)		:= kirkwood
+ +machine-$(CONFIG_ARCH_KS8695)		:= ks8695
+ +machine-$(CONFIG_ARCH_L7200)		:= l7200
+ +machine-$(CONFIG_ARCH_LH7A40X)		:= lh7a40x
+ +machine-$(CONFIG_ARCH_LOKI) 		:= loki
+ +machine-$(CONFIG_ARCH_MMP)		:= mmp
+ +machine-$(CONFIG_ARCH_MSM)		:= msm
+ +machine-$(CONFIG_ARCH_MV78XX0)		:= mv78xx0
+ +machine-$(CONFIG_ARCH_MX1)		:= mx1
+ +machine-$(CONFIG_ARCH_MX2)		:= mx2
+ +machine-$(CONFIG_ARCH_MX3)		:= mx3
+ +machine-$(CONFIG_ARCH_NETX)		:= netx
+ +machine-$(CONFIG_ARCH_NS9XXX)		:= ns9xxx
+ +machine-$(CONFIG_ARCH_OMAP1)		:= omap1
+ +machine-$(CONFIG_ARCH_OMAP2)		:= omap2
+ +machine-$(CONFIG_ARCH_OMAP3)		:= omap2
+++machine-$(CONFIG_ARCH_OMAP4)		:= omap2
+ +machine-$(CONFIG_ARCH_ORION5X)		:= orion5x
+ +machine-$(CONFIG_ARCH_PNX4008)		:= pnx4008
+ +machine-$(CONFIG_ARCH_PXA)		:= pxa
+ +machine-$(CONFIG_ARCH_REALVIEW)		:= realview
+ +machine-$(CONFIG_ARCH_RPC)		:= rpc
+ +machine-$(CONFIG_ARCH_S3C2410)		:= s3c2410 s3c2400 s3c2412 s3c2440 s3c2442 s3c2443
+ +machine-$(CONFIG_ARCH_S3C24A0)		:= s3c24a0
+ +machine-$(CONFIG_ARCH_S3C64XX)		:= s3c6400 s3c6410
+ +machine-$(CONFIG_ARCH_SA1100)		:= sa1100
+ +machine-$(CONFIG_ARCH_SHARK)		:= shark
+ +machine-$(CONFIG_ARCH_STMP378X)		:= stmp378x
+ +machine-$(CONFIG_ARCH_STMP37XX)		:= stmp37xx
+ +machine-$(CONFIG_ARCH_U300)		:= u300
+ +machine-$(CONFIG_ARCH_VERSATILE)	:= versatile
+ +machine-$(CONFIG_ARCH_W90X900)		:= w90x900
+ +machine-$(CONFIG_FOOTBRIDGE)		:= footbridge
+ +
+ +# Platform directory name.  This list is sorted alphanumerically
+ +# by CONFIG_* macro name.
+ +plat-$(CONFIG_ARCH_MXC)		:= mxc
+ +plat-$(CONFIG_ARCH_OMAP)	:= omap
+ +plat-$(CONFIG_PLAT_IOP)		:= iop
+ +plat-$(CONFIG_PLAT_ORION)	:= orion
+ +plat-$(CONFIG_PLAT_PXA)		:= pxa
+ +plat-$(CONFIG_PLAT_S3C24XX)	:= s3c24xx s3c
+ +plat-$(CONFIG_PLAT_S3C64XX)	:= s3c64xx s3c
+ +plat-$(CONFIG_ARCH_STMP3XXX)	:= stmp3xxx
   
- +#if defined(CONFIG_SCHED_MC) || defined(CONFIG_SCHED_SMT)
- +/**
- + * lowest_flag_domain - Return lowest sched_domain containing flag.
- + * @cpu:	The cpu whose lowest level of sched domain is to
- + *		be returned.
- + * @flag:	The flag to check for the lowest sched_domain
- + *		for the given cpu.
- + *
- + * Returns the lowest sched_domain of a cpu which contains the given flag.
- + */
- +static inline struct sched_domain *lowest_flag_domain(int cpu, int flag)
- +{
- +	struct sched_domain *sd;
- +
- +	for_each_domain(cpu, sd)
- +		if (sd && (sd->flags & flag))
- +			break;
- +
- +	return sd;
- +}
- +
- +/**
- + * for_each_flag_domain - Iterates over sched_domains containing the flag.
- + * @cpu:	The cpu whose domains we're iterating over.
- + * @sd:		variable holding the value of the power_savings_sd
- + *		for cpu.
- + * @flag:	The flag to filter the sched_domains to be iterated.
- + *
- + * Iterates over all the scheduler domains for a given cpu that has the 'flag'
- + * set, starting from the lowest sched_domain to the highest.
- + */
- +#define for_each_flag_domain(cpu, sd, flag) \
- +	for (sd = lowest_flag_domain(cpu, flag); \
- +		(sd && (sd->flags & flag)); sd = sd->parent)
- +
- +/**
- + * is_semi_idle_group - Checks if the given sched_group is semi-idle.
- + * @ilb_group:	group to be checked for semi-idleness
- + *
- + * Returns:	1 if the group is semi-idle. 0 otherwise.
- + *
- + * We define a sched_group to be semi idle if it has atleast one idle-CPU
- + * and atleast one non-idle CPU. This helper function checks if the given
- + * sched_group is semi-idle or not.
- + */
- +static inline int is_semi_idle_group(struct sched_group *ilb_group)
- +{
- +	cpumask_and(nohz.ilb_grp_nohz_mask, nohz.cpu_mask,
- +					sched_group_cpus(ilb_group));
- +
- +	/*
- +	 * A sched_group is semi-idle when it has atleast one busy cpu
- +	 * and atleast one idle cpu.
- +	 */
- +	if (cpumask_empty(nohz.ilb_grp_nohz_mask))
- +		return 0;
- +
- +	if (cpumask_equal(nohz.ilb_grp_nohz_mask, sched_group_cpus(ilb_group)))
- +		return 0;
- +
- +	return 1;
- +}
- +/**
- + * find_new_ilb - Finds the optimum idle load balancer for nomination.
- + * @cpu:	The cpu which is nominating a new idle_load_balancer.
- + *
- + * Returns:	Returns the id of the idle load balancer if it exists,
- + *		Else, returns >= nr_cpu_ids.
- + *
- + * This algorithm picks the idle load balancer such that it belongs to a
- + * semi-idle powersavings sched_domain. The idea is to try and avoid
- + * completely idle packages/cores just for the purpose of idle load balancing
- + * when there are other idle cpu's which are better suited for that job.
- + */
- +static int find_new_ilb(int cpu)
- +{
- +	struct sched_domain *sd;
- +	struct sched_group *ilb_group;
- +
- +	/*
- +	 * Have idle load balancer selection from semi-idle packages only
- +	 * when power-aware load balancing is enabled
- +	 */
- +	if (!(sched_smt_power_savings || sched_mc_power_savings))
- +		goto out_done;
- +
- +	/*
- +	 * Optimize for the case when we have no idle CPUs or only one
- +	 * idle CPU. Don't walk the sched_domain hierarchy in such cases
- +	 */
- +	if (cpumask_weight(nohz.cpu_mask) < 2)
- +		goto out_done;
- +
- +	for_each_flag_domain(cpu, sd, SD_POWERSAVINGS_BALANCE) {
- +		ilb_group = sd->groups;
- +
- +		do {
- +			if (is_semi_idle_group(ilb_group))
- +				return cpumask_first(nohz.ilb_grp_nohz_mask);
- +
- +			ilb_group = ilb_group->next;
- +
- +		} while (ilb_group != sd->groups);
- +	}
- +
- +out_done:
- +	return cpumask_first(nohz.cpu_mask);
- +}
- +#else /*  (CONFIG_SCHED_MC || CONFIG_SCHED_SMT) */
- +static inline int find_new_ilb(int call_cpu)
- +{
- +	return cpumask_first(nohz.cpu_mask);
- +}
- +#endif
- +
-+ int get_nohz_load_balancer(void)
-+ {
-+ 	return atomic_read(&nohz.load_balancer);
-+ }
-+ 
-  /*
-   * This routine will try to nominate the ilb (idle load balancing)
-   * owner among the cpus whose ticks are stopped. ilb owner will do the idle
+  ifeq ($(CONFIG_ARCH_EBSA110),y)
+  # This is what happens if you forget the IOCS16 line.
