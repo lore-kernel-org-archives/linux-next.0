@@ -1,44 +1,33 @@
-From: Borislav Petkov <borislav.petkov@amd.com>
-Subject: Re: linux-next: edac-amd tree build warning
-Date: Wed, 27 May 2009 19:12:31 +0200
-Message-ID: <20090527171231.GA31292@aftab>
-References: <20090527170119.c1d6b221.sfr@canb.auug.org.au>
+From: Eric Miao <eric.y.miao@gmail.com>
+Subject: Re: linux-next: pxa tree build failure
+Date: Thu, 28 May 2009 10:36:19 +0800
+Message-ID: <f17812d70905271936x58f424deq583357279d24d78a@mail.gmail.com>
+References: <20090528025406.781cfc0b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tx2ehsobe004.messaging.microsoft.com ([65.55.88.14]:49602 "EHLO
-	TX2EHSOBE007.bigfish.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751182AbZE0RMn convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 27 May 2009 13:12:43 -0400
-Content-Disposition: inline
-In-Reply-To: <20090527170119.c1d6b221.sfr@canb.auug.org.au>
+Received: from mail-qy0-f190.google.com ([209.85.221.190]:53856 "EHLO
+	mail-qy0-f190.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755310AbZE1CgS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 27 May 2009 22:36:18 -0400
+In-Reply-To: <20090528025406.781cfc0b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Doug Thompson <dougthompson@xmission.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomas 'Sleep_Walker' Cech <sleep_walker@suse.cz>, Russell King <rmk@arm.linux.org.uk>
 
-Hi Stephen,
+On Thu, May 28, 2009 at 12:54 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Eric,
+>
+> Today's linux-next build (most of the arm configs) failed like this:
+>
+> arch/arm/mm/mmu.c:839: error: implicit declaration of function 'machine_is_treo680'
+>
+> Caused by commit c81fe1207795c71a6933f84d62ded0946a6af8a4 ("[ARM]
+> pxa/treo680: initial support").
+>
 
-On Wed, May 27, 2009 at 05:01:19PM +1000, Stephen Rothwell wrote:
-> Today's linux-next build (x86_64 allmodconfig) produced this warning:
->=20
-> drivers/edac/amd64_edac.c: In function 'f10_get_base_addr_offset':
-> drivers/edac/amd64_edac.c:1466: warning: suggest parentheses around o=
-perand of '!' or change '&' to '&&' or '!' to '~'
->=20
-> Introduced by commit c266e41c0ca15d5df65e42d07608fbfb51ff32e3
-> ("amd64_edac: add F10h-and-later methods-p2").
-
-Thanks for catching that. Fixed and rebased on latest Linus' tree.
-
---=20
-Regards/Gruss,
-Boris.
-
-Operating | Advanced Micro Devices GmbH
-  System  | Karl-Hammerschmidt-Str. 34, 85609 Dornach b. M=FCnchen, Ger=
-many
- Research | Gesch=E4ftsf=FChrer: Thomas M. McCoy, Giuliano Meroni
-  Center  | Sitz: Dornach, Gemeinde Aschheim, Landkreis M=FCnchen
-  (OSRC)  | Registergericht M=FCnchen, HRB Nr. 43632
+Yeah, that depends on the mach-types being updated, and we are
+still discussing about that. I'll temporarily move that commit off the
+branch, and put it back once ready.
