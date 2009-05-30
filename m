@@ -1,32 +1,34 @@
-From: Vegard Nossum <vegard.nossum@gmail.com>
-Subject: linux-next: kmemcheck tree
-Date: Sat, 30 May 2009 18:02:57 +0200
-Message-ID: <19f34abd0905300902g3e962867sa4fc9dbc40f4c2a2@mail.gmail.com>
+From: Greg KH <gregkh@suse.de>
+Subject: Re: 20090529: sysfs/reiserfs: possible circular locking dependency
+Date: Sat, 30 May 2009 08:56:41 -0700
+Message-ID: <20090530155641.GA11360@suse.de>
+References: <a4423d670905300833v7ed43bd1p22de438bbc4e69ac@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f222.google.com ([209.85.218.222]:50560 "EHLO
-	mail-bw0-f222.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759012AbZE3QC5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 30 May 2009 12:02:57 -0400
-Received: by bwz22 with SMTP id 22so6679132bwz.37
-        for <linux-next@vger.kernel.org>; Sat, 30 May 2009 09:02:57 -0700 (PDT)
+Received: from cantor2.suse.de ([195.135.220.15]:55635 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759423AbZE3QDE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 30 May 2009 12:03:04 -0400
+Content-Disposition: inline
+In-Reply-To: <a4423d670905300833v7ed43bd1p22de438bbc4e69ac@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ingo Molnar <mingo@elte.hu>, Pekka Enberg <penberg@cs.helsinki.fi>, linux-next@vger.kernel.org
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: linux-next <linux-next@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>
 
-Hi,
+On Sat, May 30, 2009 at 07:33:03PM +0400, Alexander Beregalov wrote:
+> Hi
+> 
+> Here is a boot process.
+> 
+> udev: starting version 141
+> [ INFO: possible circular locking dependency detected ]
+> 2.6.30-rc7-next-20090529-06589-g7701864 #6
 
-It seems that we have fixed those syntax errors in the kmemcheck tree
-now, could you please add kmemcheck back into the mix?
+Is this a new thing?  I have not changed any sysfs code in -next in a
+while.  Has there been any reiserfs changes?
 
-(I am not sure if perhaps it would be better to wait until the 2.6.30
-comes out, as I don't think we'll make it for that one, and it would
-only complicate things unnecessarily? Well, it's up to you :-))
+thanks,
 
-Thanks,
-
-
-Vegard
+greg k-h
