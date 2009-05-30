@@ -1,44 +1,87 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: 20090529: sysfs/reiserfs: possible circular locking dependency
-Date: Sat, 30 May 2009 18:14:20 +0200
-Message-ID: <20090530161418.GC5969@nowhere>
-References: <a4423d670905300833v7ed43bd1p22de438bbc4e69ac@mail.gmail.com> <20090530155641.GA11360@suse.de>
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Subject: Re: linux-next: Tree for May 29 (__rdmsr_on_cpu() OOPS)
+Date: Sat, 30 May 2009 21:37:57 +0200
+Message-ID: <200905302137.57644.bzolnier@gmail.com>
+References: <20090529145018.ff547ea1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f176.google.com ([209.85.219.176]:47166 "EHLO
+Received: from mail-ew0-f176.google.com ([209.85.219.176]:55654 "EHLO
 	mail-ew0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752298AbZE3QOW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 30 May 2009 12:14:22 -0400
-Received: by ewy24 with SMTP id 24so6909679ewy.37
-        for <linux-next@vger.kernel.org>; Sat, 30 May 2009 09:14:22 -0700 (PDT)
+	with ESMTP id S1756167AbZE3Tff (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 30 May 2009 15:35:35 -0400
+In-Reply-To: <20090529145018.ff547ea1.sfr@canb.auug.org.au>
 Content-Disposition: inline
-In-Reply-To: <20090530155641.GA11360@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <gregkh@suse.de>
-Cc: Alexander Beregalov <a.beregalov@gmail.com>, linux-next <linux-next@vger.kernel.org>
-
-On Sat, May 30, 2009 at 08:56:41AM -0700, Greg KH wrote:
-> On Sat, May 30, 2009 at 07:33:03PM +0400, Alexander Beregalov wrote:
-> > Hi
-> > 
-> > Here is a boot process.
-> > 
-> > udev: starting version 141
-> > [ INFO: possible circular locking dependency detected ]
-> > 2.6.30-rc7-next-20090529-06589-g7701864 #6
-> 
-> Is this a new thing?  I have not changed any sysfs code in -next in a
-> while.  Has there been any reiserfs changes?
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Borislav Petkov <borislav.petkov@amd.com>
 
 
-Hm, may be yes. I will have a close look at it.
+next-20090529 oopses in __rdmsr_on_cpu() on my Pentium M laptop.
 
-Thanks.
+.jpg + .config:
+http://www.kernel.org/pub/linux/kernel/people/bart/next-20090529-oops.*
 
+(gdb) l *0xc023410f
+0xc023410f is in __rdmsr_on_cpu (arch/x86/lib/msr.c:25).
+20              if (rv->msrs)
+21                      reg = &rv->msrs[this_cpu - rv->off];
+22              else
+23                      reg = &rv->reg;
+24
+25              rdmsr(rv->msr_no, reg->l, reg->h);
+26      }
+27
+28      static void __wrmsr_on_cpu(void *info)
+29      {
 
-> 
-> thanks,
-> 
-> greg k-h
+Thus the problem seems to be introduced by:
+
+commit 23d19840368b2787d2da97ad0f0f29248503648a
+Author: Borislav Petkov <borislav.petkov@amd.com>
+Date:   Fri May 22 13:52:19 2009 +0200
+
+    x86: MSR: add methods for writing of an MSR on several CPUs
+...
+
+and indeed the following patch fixes it:
+
+[ Borislav, feel free to fold it into the above change or replace by
+  a more complete one if needed (there may be more rv fields needing
+  initialization). ]
+
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Subject: [PATCH] x86: MSR: fix __rdmsr_on_cpu() OOPS
+
+{rd,wr}msr_on_cpu() need to explicitly initalize rv.msrs
+(since rv is allocated on the stack).
+
+Cc: Borislav Petkov <borislav.petkov@amd.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+---
+ arch/x86/lib/msr.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+Index: b/arch/x86/lib/msr.c
+===================================================================
+--- a/arch/x86/lib/msr.c
++++ b/arch/x86/lib/msr.c
+@@ -44,6 +44,7 @@ int rdmsr_on_cpu(unsigned int cpu, u32 m
+ 	int err;
+ 	struct msr_info rv;
+ 
++	rv.msrs   = NULL;
+ 	rv.msr_no = msr_no;
+ 	err = smp_call_function_single(cpu, __rdmsr_on_cpu, &rv, 1);
+ 	*l = rv.reg.l;
+@@ -58,6 +59,7 @@ int wrmsr_on_cpu(unsigned int cpu, u32 m
+ 	int err;
+ 	struct msr_info rv;
+ 
++	rv.msrs   = NULL;
+ 	rv.msr_no = msr_no;
+ 	rv.reg.l = l;
+ 	rv.reg.h = h;
