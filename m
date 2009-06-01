@@ -1,48 +1,71 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: kmemcheck tree
-Date: Mon, 1 Jun 2009 21:53:25 +0200
-Message-ID: <20090601195325.GD29610@elte.hu>
-References: <19f34abd0905300902g3e962867sa4fc9dbc40f4c2a2@mail.gmail.com> <20090531151924.e5b02b93.sfr@canb.auug.org.au> <19f34abd0905311521s66174002n7736e4b058415d3c@mail.gmail.com>
+From: Eric Paris <eparis@parisplace.org>
+Subject: Re: linux-next: Tree for May 29 (__rdmsr_on_cpu() OOPS)
+Date: Mon, 1 Jun 2009 15:55:22 -0400
+Message-ID: <7e0fb38c0906011255o25f2e852r6ba469c8345e8c77@mail.gmail.com>
+References: <20090529145018.ff547ea1.sfr@canb.auug.org.au>
+	 <200905302137.57644.bzolnier@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:41025 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751228AbZFATxe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Jun 2009 15:53:34 -0400
-Content-Disposition: inline
-In-Reply-To: <19f34abd0905311521s66174002n7736e4b058415d3c@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Vegard Nossum <vegard.nossum@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Pekka Enberg <penberg@cs.helsinki.fi>, linux-next@vger.kernel.org
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757130AbZFATzb@vger.kernel.org>
+In-Reply-To: <200905302137.57644.bzolnier@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Borislav Petkov <borislav.petkov@amd.com>
+List-Id: linux-next.vger.kernel.org
 
+On Sat, May 30, 2009 at 3:37 PM, Bartlomiej Zolnierkiewicz
+<bzolnier@gmail.com> wrote:
 
-* Vegard Nossum <vegard.nossum@gmail.com> wrote:
+> [ Borislav, feel free to fold it into the above change or replace by
+> =A0a more complete one if needed (there may be more rv fields needing
+> =A0initialization). ]
+>
+> From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+> Subject: [PATCH] x86: MSR: fix __rdmsr_on_cpu() OOPS
+>
+> {rd,wr}msr_on_cpu() need to explicitly initalize rv.msrs
+> (since rv is allocated on the stack).
+>
+> Cc: Borislav Petkov <borislav.petkov@amd.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
 
-> 2009/5/31 Stephen Rothwell <sfr@canb.auug.org.au>:
-> > Hi Vegard,
-> >
-> > On Sat, 30 May 2009 18:02:57 +0200 Vegard Nossum <vegard.nossum@gma=
-il.com> wrote:
-> >>
-> >> It seems that we have fixed those syntax errors in the kmemcheck t=
-ree
-> >> now, could you please add kmemcheck back into the mix?
-> >
-> > Sure. =A0Do you want me to use the kmemcheck branch or the
-> > auto-kmemcheck-next branch (which hasn't been updated yet)? =A0No d=
-esperate
-> > hurry, I won't be building a linux-next tree until tomorrow morning
-> > (about 18 hours from now).
->=20
-> The one we used before -- auto-kmemcheck-next. And so sorry, I didn't
-> realize this hadn't been updated yet. Ingo?
->=20
-> You can probably wait, then, I think.
+Still broken in 0601, none of my systems will even boot without this pa=
+tch.
 
-it's updated now. As usual there's uptodate conflict resolutions in=20
-tip:master.
+Tested-by: Eric Paris <eparis@redhat.com>
 
-	Ingo
+> ---
+> =A0arch/x86/lib/msr.c | =A0 =A02 ++
+> =A01 file changed, 2 insertions(+)
+>
+> Index: b/arch/x86/lib/msr.c
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- a/arch/x86/lib/msr.c
+> +++ b/arch/x86/lib/msr.c
+> @@ -44,6 +44,7 @@ int rdmsr_on_cpu(unsigned int cpu, u32 m
+> =A0 =A0 =A0 =A0int err;
+> =A0 =A0 =A0 =A0struct msr_info rv;
+>
+> + =A0 =A0 =A0 rv.msrs =A0 =3D NULL;
+> =A0 =A0 =A0 =A0rv.msr_no =3D msr_no;
+> =A0 =A0 =A0 =A0err =3D smp_call_function_single(cpu, __rdmsr_on_cpu, =
+&rv, 1);
+> =A0 =A0 =A0 =A0*l =3D rv.reg.l;
+> @@ -58,6 +59,7 @@ int wrmsr_on_cpu(unsigned int cpu, u32 m
+> =A0 =A0 =A0 =A0int err;
+> =A0 =A0 =A0 =A0struct msr_info rv;
+>
+> + =A0 =A0 =A0 rv.msrs =A0 =3D NULL;
+> =A0 =A0 =A0 =A0rv.msr_no =3D msr_no;
+> =A0 =A0 =A0 =A0rv.reg.l =3D l;
+> =A0 =A0 =A0 =A0rv.reg.h =3D h;
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
+l" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at =A0http://www.tux.org/lkml/
+>
