@@ -1,48 +1,68 @@
-From: "NeilBrown" <neilb@suse.de>
-Subject: Re: linux-next: md tree build failure
-Date: Mon, 1 Jun 2009 15:33:07 +1000 (EST)
-Message-ID: <39efa6d3788eec04b0bc86b02d988c8f.squirrel@neil.brown.name>
-References: <20090525153346.758483fc.sfr@canb.auug.org.au>
-    <20090525061552.GH11363@kernel.dk>
-    <20090601144218.26810ec8.sfr@canb.auug.org.au>
-    <yq163fga654.fsf@sermon.lab.mkp.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kmemcheck tree with the kmemleak
+ tree
+Date: Mon, 1 Jun 2009 17:55:34 +1000
+Message-ID: <20090601175534.7e6e4c12.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:53669 "EHLO mx2.suse.de"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43742 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751246AbZFAFdQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Jun 2009 01:33:16 -0400
-In-Reply-To: <yq163fga654.fsf@sermon.lab.mkp.net>
+	id S1751818AbZFAILF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Jun 2009 04:11:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <jens.axboe@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, raz ben yehuda <raziebe@gmail.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
+To: Vegard Nossum <vegard.nossum@gmail.com>, Pekka Enberg <penberg@cs.helsinki.fi>, Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>
 
-On Mon, June 1, 2009 3:13 pm, Martin K. Petersen wrote:
->>>>>> "Stephen" == Stephen Rothwell <sfr@canb.auug.org.au> writes:
->
->>> > Caused by commit e1defc4ff0cf57aca6c5e3ff99fa503f5943c1f1 ("block:
->>> > Do away with the notion of hardsect_size") from the block tree
->>> > interacting with commit 131e4477401ae76a9cbe8539e4b7819e04cfba36
->>> > ("md: raid0: chunk size check in raid0_run") from the md tree.
->
-> Stephen> So, is anything happening about these?  I still get these (and
-> Stephen> the dm) build failures.
->
-> There's a replacement DM patch kit brewing that will hopefully come your
-> way shortly.  It replaces the patches currently in Alasdair's tree.
-> Mike sent the kit out for review last week and I'm currently testing it.
->
->
-> I don't know what Neil's plans are.  Neil: Do you want to rebase your
-> tree, fix up the conflicting patches or how would you like to handle
-> this?
+Hi all,
 
-I'm happy to rebase on something if you have a tree that doesn't have too
-much more than the changes that are causing conflicts.
-Then I'll fix my patches so they work on that tree.
+Today's linux-next merge of the kmemcheck tree got a conflict in
+mm/slub.c between commit 5247520db9023300947e5b77943bc0719f33d4b9
+("kmemleak: Add the slub memory allocation/freeing hooks") from the
+kmemleak tree and commit 18fd427debcf37c06917b55295df682fd05fee76 ("slub:
+add hooks for kmemcheck") from the kmemcheck tree.
 
-What should I pull??
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-NeilBrown
+diff --cc mm/slub.c
+index 6674a79,4ac5e3e..0000000
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@@ -144,10 -143,10 +145,10 @@@
+   * Set of flags that will prevent slab merging
+   */
+  #define SLUB_NEVER_MERGE (SLAB_RED_ZONE | SLAB_POISON | SLAB_STORE_USER | \
+ -		SLAB_TRACE | SLAB_DESTROY_BY_RCU)
+ +		SLAB_TRACE | SLAB_DESTROY_BY_RCU | SLAB_NOLEAKTRACE)
+  
+  #define SLUB_MERGE_SAME (SLAB_DEBUG_FREE | SLAB_RECLAIM_ACCOUNT | \
+- 		SLAB_CACHE_DMA)
++ 		SLAB_CACHE_DMA | SLAB_NOTRACK)
+  
+  #ifndef ARCH_KMALLOC_MINALIGN
+  #define ARCH_KMALLOC_MINALIGN __alignof__(unsigned long long)
+@@@ -1618,7 -1637,7 +1641,8 @@@ static __always_inline void *slab_alloc
+  	if (unlikely((gfpflags & __GFP_ZERO) && object))
+  		memset(object, 0, objsize);
+  
+ +	kmemleak_alloc_recursive(object, objsize, 1, s->flags, gfpflags);
++ 	kmemcheck_slab_alloc(s, gfpflags, object, c->objsize);
+  	return object;
+  }
+  
+@@@ -1748,9 -1767,9 +1772,10 @@@ static __always_inline void slab_free(s
+  	struct kmem_cache_cpu *c;
+  	unsigned long flags;
+  
+ +	kmemleak_free_recursive(x, s->flags);
+  	local_irq_save(flags);
+  	c = get_cpu_slab(s, smp_processor_id());
++ 	kmemcheck_slab_free(s, object, c->objsize);
+  	debug_check_no_locks_freed(object, c->objsize);
+  	if (!(s->flags & SLAB_DEBUG_OBJECTS))
+  		debug_check_no_obj_freed(object, c->objsize);
