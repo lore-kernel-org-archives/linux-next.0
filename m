@@ -1,72 +1,65 @@
-From: Vegard Nossum <vegard.nossum@gmail.com>
-Subject: Re: linux-next: kmemcheck tree
-Date: Mon, 1 Jun 2009 00:21:58 +0200
-Message-ID: <19f34abd0905311521s66174002n7736e4b058415d3c@mail.gmail.com>
-References: <19f34abd0905300902g3e962867sa4fc9dbc40f4c2a2@mail.gmail.com>
-	 <20090531151924.e5b02b93.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the mtd tree with Linus' tree
+Date: Mon, 1 Jun 2009 14:00:44 +1000
+Message-ID: <20090601140044.4786a99f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f222.google.com ([209.85.218.222]:51773 "EHLO
-	mail-bw0-f222.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752280AbZEaWV6 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 31 May 2009 18:21:58 -0400
-Received: by bwz22 with SMTP id 22so7151546bwz.37
-        for <linux-next@vger.kernel.org>; Sun, 31 May 2009 15:21:59 -0700 (PDT)
-In-Reply-To: <20090531151924.e5b02b93.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48601 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750790AbZFAEAw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Jun 2009 00:00:52 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>
-Cc: Pekka Enberg <penberg@cs.helsinki.fi>, linux-next@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Barinov <vova.barinov@gmail.com>, Lothar Wassmann <LW@KARO-electronics.de>, Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
 
-2009/5/31 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Hi Vegard,
->
-> On Sat, 30 May 2009 18:02:57 +0200 Vegard Nossum <vegard.nossum@gmail=
-=2Ecom> wrote:
->>
->> It seems that we have fixed those syntax errors in the kmemcheck tre=
-e
->> now, could you please add kmemcheck back into the mix?
->
-> Sure. =C2=A0Do you want me to use the kmemcheck branch or the
-> auto-kmemcheck-next branch (which hasn't been updated yet)? =C2=A0No =
-desperate
-> hurry, I won't be building a linux-next tree until tomorrow morning
-> (about 18 hours from now).
+Hi David,
 
-The one we used before -- auto-kmemcheck-next. And so sorry, I didn't
-realize this hadn't been updated yet. Ingo?
+Today's linux-next merge of the mtd tree got a conflict in
+drivers/mtd/nand/mxc_nand.c between commit
+8541c1180a355c4da283fc6b03a92c0233823c1b ("mtd: MXC NAND driver fixes
+(v5)") from Linus' tree and commit
+ccd93854d44710adaa02cecf0ef5f24ab383dd20 ("[MTD] Remove mtd->
+{suspend,resume} calls from board drivers") from the mtd tree.
 
-You can probably wait, then, I think.
+I fixed it up (see below) and can carry the fix for a while.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
->
->> (I am not sure if perhaps it would be better to wait until the 2.6.3=
-0
->> comes out, as I don't think we'll make it for that one, and it would
->> only complicate things unnecessarily? Well, it's up to you :-))
->
-> If you intend for this stuff to be merged in 2.6.31, then it needs to=
- get
-> back into linux-next as soon as possible. =C2=A0A test merge (of the =
-kmemcheck
-> branch) into Friday's linux-next showed several conflicts (hopefully =
-mostly
-> simple) - I will report on these tomorrow.
-
-Yes, I tried it myself too. Nothing very tricky, I guess, for you.
-Just in case, here's what my version ended up looking like:
-
-http://folk.uio.no/vegardno/kmemcheck-next-merge.txt
-
-Thanks,
-
-
-Vegard
-
---=20
-"The animistic metaphor of the bug that maliciously sneaked in while
-the programmer was not looking is intellectually dishonest as it
-disguises that the error is the programmer's own creation."
-	-- E. W. Dijkstra, EWD1036
+diff --cc drivers/mtd/nand/mxc_nand.c
+index 40c2608,65040de..0000000
+--- a/drivers/mtd/nand/mxc_nand.c
++++ b/drivers/mtd/nand/mxc_nand.c
+@@@ -1021,11 -1015,9 +1021,10 @@@ static int mxcnd_suspend(struct platfor
+  	int ret = 0;
+  
+  	DEBUG(MTD_DEBUG_LEVEL0, "MXC_ND : NAND suspend\n");
+ -
+ -	/* Disable the NFC clock */
+ -	clk_disable(nfc_clk);	/* FIXME */
+ +	if (mtd) {
+- 		ret = mtd->suspend(mtd);
+ +		/* Disable the NFC clock */
+ +		clk_disable(host->clk);
+ +	}
+  
+  	return ret;
+  }
+@@@ -1038,12 -1028,8 +1037,11 @@@ static int mxcnd_resume(struct platform
+  	int ret = 0;
+  
+  	DEBUG(MTD_DEBUG_LEVEL0, "MXC_ND : NAND resume\n");
+ -	/* Enable the NFC clock */
+ -	clk_enable(nfc_clk);	/* FIXME */
+ +
+ +	if (mtd) {
+ +		/* Enable the NFC clock */
+ +		clk_enable(host->clk);
+- 		mtd->resume(mtd);
+ +	}
+  
+  	return ret;
+  }
