@@ -1,44 +1,48 @@
 From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the kmemcheck tree with the
-	tracing tree
-Date: Mon, 1 Jun 2009 21:46:24 +0200
-Message-ID: <20090601194624.GA29610@elte.hu>
-References: <20090601175539.67317265.sfr@canb.auug.org.au>
+Subject: Re: linux-next: kmemcheck tree
+Date: Mon, 1 Jun 2009 21:53:25 +0200
+Message-ID: <20090601195325.GD29610@elte.hu>
+References: <19f34abd0905300902g3e962867sa4fc9dbc40f4c2a2@mail.gmail.com> <20090531151924.e5b02b93.sfr@canb.auug.org.au> <19f34abd0905311521s66174002n7736e4b058415d3c@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:44463 "EHLO mx2.mail.elte.hu"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:41025 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752685AbZFATqg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Jun 2009 15:46:36 -0400
+	id S1751228AbZFATxe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Jun 2009 15:53:34 -0400
 Content-Disposition: inline
-In-Reply-To: <20090601175539.67317265.sfr@canb.auug.org.au>
+In-Reply-To: <19f34abd0905311521s66174002n7736e4b058415d3c@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Vegard Nossum <vegard.nossum@gmail.com>, Pekka Enberg <penberg@cs.helsinki.fi>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven Rostedt <srostedt@redhat.com>
+To: Vegard Nossum <vegard.nossum@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Pekka Enberg <penberg@cs.helsinki.fi>, linux-next@vger.kernel.org
 
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+* Vegard Nossum <vegard.nossum@gmail.com> wrote:
 
-> Hi all,
-> 
-> Today's linux-next merge of the kmemcheck tree got a conflict in
-> kernel/trace/ring_buffer.c between commit
-> aa20ae8444fc6c318272c643f856d8d8ad3e198d ("ring-buffer: move big if
-> statement down") from the tracing tree and commits
-> 9b7ff384ee76ced9638ab236db588a6f13916336 ("trace: annotate bitfields in
-> struct ring_buffer_event") and 3467e18b1cf34c7d316af5717e7053ce845d014e
-> ("kmemcheck: make bitfield annotations be valid C") from the kmemcheck
-> tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.
+> 2009/5/31 Stephen Rothwell <sfr@canb.auug.org.au>:
+> > Hi Vegard,
+> >
+> > On Sat, 30 May 2009 18:02:57 +0200 Vegard Nossum <vegard.nossum@gma=
+il.com> wrote:
+> >>
+> >> It seems that we have fixed those syntax errors in the kmemcheck t=
+ree
+> >> now, could you please add kmemcheck back into the mix?
+> >
+> > Sure. =A0Do you want me to use the kmemcheck branch or the
+> > auto-kmemcheck-next branch (which hasn't been updated yet)? =A0No d=
+esperate
+> > hurry, I won't be building a linux-next tree until tomorrow morning
+> > (about 18 hours from now).
+>=20
+> The one we used before -- auto-kmemcheck-next. And so sorry, I didn't
+> realize this hadn't been updated yet. Ingo?
+>=20
+> You can probably wait, then, I think.
 
-Would be nice if you indicated whether you cross-checked it against 
-tip:master, which had most of these conflicts resolved already (for 
-weeks).
-
-( this has relevance for the x86 and tracing tree conflicts - 
-  kmemleak is not in -tip)
+it's updated now. As usual there's uptodate conflict resolutions in=20
+tip:master.
 
 	Ingo
