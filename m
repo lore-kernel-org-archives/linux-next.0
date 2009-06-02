@@ -1,82 +1,73 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: [PATCH] i2c: Simplified CONFIG_I2C=n interface.
-Date: Tue, 2 Jun 2009 09:12:29 +0200
-Message-ID: <20090602091229.0810f54b@hyperion.delvare>
-References: <20090527070850.GA11221@linux-sh.org>
-	<20090527091831.26b60d6d@hyperion.delvare>
-	<20090527120140.GC1970@sirena.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: On Which Branch I Have to Base Patches
+Date: Tue, 2 Jun 2009 17:23:24 +1000
+Message-ID: <20090602172324.b32aecbc.sfr@canb.auug.org.au>
+References: <1243924710.2170.23.camel@system>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__2_Jun_2009_17_23_24_+1000_M.T6_bHaP9c7EJ9U"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34774 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753435AbZFBHX2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Jun 2009 03:23:28 -0400
+In-Reply-To: <1243924710.2170.23.camel@system>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: vibi_sreenivasan@cms.com
+Cc: linux-next@vger.kernel.org
+
+--Signature=_Tue__2_Jun_2009_17_23_24_+1000_M.T6_bHaP9c7EJ9U
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20090527120140.GC1970@sirena.org.uk>
-Sender: linux-media-owner@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Paul Mundt <lethal@linux-sh.org>, linux-next@vger.kernel.org, linux-media@vger.kernel.org, linux-i2c@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mark,
+Hi,
 
-On Wed, 27 May 2009 13:01:40 +0100, Mark Brown wrote:
-> On Wed, May 27, 2009 at 09:18:31AM +0200, Jean Delvare wrote:
-> 
-> > Violent nack. Drivers which optionally use I2C are a minority.
-> 
-> It's extremely common for devices like the CODECs and PMICs used in
-> embedded systems to have both I2C and SPI interfaces, selectable via a
-> pin strap at power on.  It's less common to have the SPI option for
-> things like hardware monitoring chips found in PCs but for anything that
-> might be I/O bound the high speed interface is a very common option.
+On Tue, 02 Jun 2009 12:08:30 +0530 vibi sreenivasan <vibi_sreenivasan@cms.c=
+om> wrote:
+>
+> 	On which branch i have to base patches on
+> 		 linux-next/stable
 
-Can you please point me at a couple of affected drivers?
+This is just the place in Linus' tree that I started from for today's
+version of linux-next (this only ever moves forward).
 
-> > Designing them in such a way that a single #ifdef CONFIG_I2C will make
-> > them work can't be that hard, really. Not to mention that having a
-> > dozen stubs in i2c.h in the CONFIG_I2C=n case won't save you much work
-> > at the driver level anyway, because you certainly need to run different
-> > code paths depending on how the device is connected, and you also have
-> > to differentiate between the "I2C support is missing" case and the "I2C
-> > device registration failed" case, etc.
-> 
-> For the devices I've dealt with there's very little work at the driver
-> level - the various interfaces that can be used each probe using the
-> normal device model, set some register read/write operations and
-> possibly some other things and then call into the bulk of the driver
-> which has all the I/O abstracted away from it.
+> 		 linux-next/master
 
-It might make sense to define stubs for the CONFIG_I2C=n case for a few
-of the i2c API functions, which are called from common driver parts, in
-particular i2c_add/del_driver(), and as a matter of fact we already do
-this for i2c_register_board_info(). But for lower-level functions, this
-sounds wrong. The lower-level functions will only ever be called in
-functions which should be completely discarded if I2C support is
-missing from the kernel, and I would not count on gcc to be smart
-enough to really discard all the code thanks to the i2c API being all
-stubs. Meaning you end up with drivers larger than they should be -
-which is no good for embedded systems.
+This is the complete linux-next tree for today (this is effectively
+rebased every release).
 
-I would really expect all I2C-related code to be in one place of the
-driver (or even in a separate source file) and same for SPI-related
-code. Then surrounding one big block of code with an ifdef doesn't
-sound that difficult to read.
+> 		 linux-next/history
 
-> The error handling is already an issue with the current situation since
-> people are just silently building out the I2C support when I2C is not
-> enabled.  At the minute the main problem is with people not remembering
-> to do the #ifdef (a lot of platforms really need I2C enabled to be
-> useful so people never think to do the build without).
+This is just all the linux-next trees linked together (ignore this - it
+is not a useful kernel tree).
 
-I can't think of a way to solve this, other than what you do today
-(build without I2C support from times to times and fix what needs to
-be.) At least today you have a link breakage that tells you a given
-driver needs to be reviewed for the CONFIG_I2C=n case. If we add stubs
-all around to workaround the link breakage, this means the review never
-happens, so the code might as well build and link but not work properly
-or at least not be optimal. I wouldn't call this progress.
+> 	Where Can i get information on all these branches?
 
-What could be done, OTOH, is to surround all the function declarations
-in <linux/i2c.h> with a simple #ifdef CONFIG_I2C, so that mistakes are
-caught earlier (build time instead of link time.)
+See above.  Also see http://linux.f-seidel.de/linux-next/pmwiki/
 
--- 
-Jean Delvare
+To have a tree included in linux-next it must be based on a tree that is
+not rebased (or if it does rebase you can guarantee that your tree is
+rebased on top of it) that is included in linux-next already.  In
+practise this means "Linus' tree" unless you have dependencies on someone
+else's tree.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__2_Jun_2009_17_23_24_+1000_M.T6_bHaP9c7EJ9U
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkok02wACgkQjjKRsyhoI8ypRACfagBzZ32OWJPojew5/V9Wk2m7
+Gy0An1Vcx+EgNy/lRQzJW/KICUBvrOJl
+=oNf3
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__2_Jun_2009_17_23_24_+1000_M.T6_bHaP9c7EJ9U--
