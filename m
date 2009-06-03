@@ -1,59 +1,47 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: linux-next: Tree for June 3 (rfkill)
-Date: Wed, 03 Jun 2009 19:33:20 +0200
-Message-ID: <1244050400.22105.0.camel@johannes.local>
-References: <20090603190952.2dd0cc70.sfr@canb.auug.org.au>
-	 <4A269539.8020607@oracle.com>  <4A26B0D2.3090207@oracle.com>
+From: Greg KH <gregkh@suse.de>
+Subject: Re: linux-next: Tree for June 3 (driver core)
+Date: Wed, 3 Jun 2009 14:22:06 -0700
+Message-ID: <20090603212206.GA20804@suse.de>
+References: <20090603190952.2dd0cc70.sfr@canb.auug.org.au> <4A269BB2.4050508@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-GeECyou/NqU0JF9rluOW"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xc.sipsolutions.net ([83.246.72.84]:52803 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755628AbZFCRdb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Jun 2009 13:33:31 -0400
-In-Reply-To: <4A26B0D2.3090207@oracle.com>
+Received: from cantor.suse.de ([195.135.220.2]:39217 "EHLO mx1.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756632AbZFCV3L (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Jun 2009 17:29:11 -0400
+Content-Disposition: inline
+In-Reply-To: <4A269BB2.4050508@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, linux-wimax@intel.com, wimax@linuxwimax.org
+To: Randy Dunlap <randy.dunlap@oracle.com>, "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
+On Wed, Jun 03, 2009 at 08:50:10AM -0700, Randy Dunlap wrote:
+> Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Looks like a real rush since -rc7 ...
+> 
+> 
+> drivers/built-in.o: In function `register_mem_sect_under_node':
+> (.text+0x1d305b): undefined reference to `sysfs_create_link_nowarn'
+> 
+> 
+> I can't find this function's implementation when CONFIG_SYSFS=y.
 
---=-GeECyou/NqU0JF9rluOW
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Ah, it looks like this shows up when CONFIG_MEMORY_HOTPLUG_SPARSE is
+set.
 
-On Wed, 2009-06-03 at 10:20 -0700, Randy Dunlap wrote:
+Eric, your patch, "sysfs: Remove now unnecessary error reporting
+suppression." caused this.  Turns out it is still used in the tree, and
+you forgot to remove the function from sysfs.h at the same time.
 
-> Ugh, there are similar errors in the wimax area, which doesn't
-> seem to mention RFKILL in its Kconfig file at all.  :(
+I'm going to drop it, and the other two patches I took from you for
+sysfs, as it doesn't make sense to have them in the tree yet.
 
-Guess it too will have to get a
+Care to rework your series with this fixed?
 
-	depends on RFKILL || !RFKILL
+thanks,
 
-I can take care of it after dinner.
-
-johannes
-
---=-GeECyou/NqU0JF9rluOW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABAgAGBQJKJrPdAAoJEODzc/N7+QmaN/sP/iBHXVPwc/uhbzWEuk4LNvkE
-SJo9RFxFHA4ALCCkCfp9VZL3jtws5BABBdNJxvRN3nUMnQehmANfCAiRtbAOqr3Y
-xsE2nMDmJzZKIKpp4LMQUMN0HMa/PK6S8S5VJlPG/KsPZDzerw22kk/Kf9o8Wdoc
-Juag+qtk8H7alIyyI0JGuatN/szikDdzIvq+BKsKfe3Y6hPRcA/VvF1tl9Wn2l+t
-75BOwYZQyXYPsE0bDgWXkWctau6OHec35RU9afnUFUQTrlRPqs5TzjadVcXHWXvE
-2oaa9B72LBxpHMutSuCsvGELvWf88GXw9VXU4cXoZ9GkhXsW6jSWGyAhsSeACKTH
-KoGVQsgEJi87HkHCH8O9ORneK+1Hcc70R/Z4p3e6/jV9ialByNpoeR+zfcRnlRWA
-WcINYmbGl5Ak4GaAftdJKEqKlimle8MvKtOXxPc5Q1NH6uFj3iivLGJa7F8IAp2x
-/th/exuhe9LcbbxvHV/4c7s3npG1ndfhD94UeTyozmXHszo3FFWnBFMWuZobqtgb
-jSL000TjVaTtU+ZjoUl99ZDq5FIEELnnnCit4MmsdeKwkrZnnuUJAmXqCp/wikv0
-VkkQY01yMIRSEMSzIjK8vtfgzpc/q9EPrCmQ4h/zGpk62KqUiMR4anR2t5l+UQrY
-Se8CSndSgefpfF7+z5XF
-=cJyO
------END PGP SIGNATURE-----
-
---=-GeECyou/NqU0JF9rluOW--
+greg k-h
