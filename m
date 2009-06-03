@@ -1,41 +1,46 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the driver-core tree with the trivial
- tree
-Date: Wed, 3 Jun 2009 10:08:58 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.0906031007510.7457@wotan.suse.de>
-References: <20090603171312.b80e30bb.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the ttydev tree
+Date: Wed, 3 Jun 2009 18:13:45 +1000
+Message-ID: <20090603181345.0e6ae020.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:57903 "EHLO mx2.suse.de"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38204 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755571AbZFCII5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Jun 2009 04:08:57 -0400
-In-Reply-To: <20090603171312.b80e30bb.sfr@canb.auug.org.au>
+	id S1755088AbZFCINv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Jun 2009 04:13:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt LaPlante <kernel1@cyberdogtech.com>, GeunSik Lim <leemgs1@gmail.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@lxorguk.ukuu.org.uk>, Mark Adamson <mark.adamson@ftdichip.com>
 
-On Wed, 3 Jun 2009, Stephen Rothwell wrote:
+Hi Greg,
 
-> Today's linux-next merge of the driver-core tree got a conflict in
-> Documentation/trace/ftrace.txt between commit
-> 9976d9daf91d146724ad9c336f74c60d2195c386 ("trivial: Miscellaneous
-> documentation typo fixes") from the trivial tree and commit
-> b6b8b2b9588b3e09fea0da0e86f6b8bcba827b65 ("debugfs: Fix terminology
-> inconsistency of dir name to mount debugfs filesystem") from the
-> driver-core tree.
-> 
-> The latter removes the text that is patched by the former.  I just used
-> the driver-core version.  I suggest that the part of the trivial tree
-> patch that touches this file be dropped.
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/serial/ftdi_sio.c between commit
+436d74ab8174ba48ad97c3de80c8de6aaff6c931 ("tty-usb-ft232-latency") from
+the ttydev tree and commit ac0ceefdc8cdf4bbe6cdaf6d2175e0dfdbfd6700
+("USB: ftdi_sio: fix hi-speed device packet size calculation") from the
+usb tree.
 
-Correct, the patch in trivial queue got obsoleted by the driver-core one. 
-I have just dropped the version I had.
-
-Thanks,
-
+Overlapping additions.  I fixed it up (see below), but have no idea if
+there are higher level interactions (or the ordering is right) i.e.
+please check this.
 -- 
-Jiri Kosina
-SUSE Labs
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/usb/serial/ftdi_sio.c
+index 59c7501,ec20993..0000000
+--- a/drivers/usb/serial/ftdi_sio.c
++++ b/drivers/usb/serial/ftdi_sio.c
+@@@ -1417,7 -1500,7 +1524,8 @@@ static int ftdi_sio_port_probe(struct u
+  	usb_set_serial_port_data(port, priv);
+  
+  	ftdi_determine_type(port);
+ +	read_latency_timer(port);
++ 	ftdi_set_max_packet_size(port);
+  	create_sysfs_attrs(port);
+  	return 0;
+  }
