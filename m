@@ -1,29 +1,52 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH] Staging: comedi: Add missing includes
-Date: Tue, 2 Jun 2009 14:43:01 -0700
-Message-ID: <20090602214301.GA25921@kroah.com>
-References: <1243434919-10192-1-git-send-email-gerard.lledo@gmail.com> <1243434919-10192-2-git-send-email-gerard.lledo@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with the x86 tree
+Date: Wed, 3 Jun 2009 11:50:58 +1000
+Message-ID: <20090603115058.947305fc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__3_Jun_2009_11_50_58_+1000_6FQXWDxH4CT8tgup"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:35817 "EHLO coco.kroah.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50280 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750780AbZFBWRp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Jun 2009 18:17:45 -0400
-Content-Disposition: inline
-In-Reply-To: <1243434919-10192-2-git-send-email-gerard.lledo@gmail.com>
+	id S1752248AbZFCBvF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Jun 2009 21:51:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Gerard Lledo <gerard.lledo@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-next@vger.kernel.org
+To: Avi Kivity <avi@qumranet.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>, Jan Kiszka <jan.kiszka@siemens.com>
 
-On Wed, May 27, 2009 at 05:35:18PM +0300, Gerard Lledo wrote:
-> Fixes build errors due to missing includes
-> 
-> Signed-off-by: Gerard Lledo <gerard.lledo@gmail.com>
+--Signature=_Wed__3_Jun_2009_11_50_58_+1000_6FQXWDxH4CT8tgup
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This should now be fixed up already.
+Hi Avi,
 
-thanks,
+Today's linux-next merge of the kvm tree got a conflict in
+arch/x86/include/asm/mce.h between commits
+06b851d98266b812b2fa23d007cdf53f41194bbb ("x86, mce: unify, prepare 64bit
+in mce.h") and 01c6680a547a3ee8dd170c269ea8e037b3191b71 ("x86, mce:
+Cleanup MCG definitions") from the x86 tree and commit
+1a6a35a1c82eb3b95719a375da2e3aac2910a1df ("x86: Make MCE defines
+32-bit-safe") from the kvm tree.
 
-greg k-h
+I think the latter is subsumed by the former commits.  I fixed it up (by
+using the version from the x86 tree) and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__3_Jun_2009_11_50_58_+1000_6FQXWDxH4CT8tgup
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkol1wIACgkQjjKRsyhoI8wlzQCgrW+GcfBIJr9ktB+a6jO6Gnjt
+cdQAoJ2DMJbYDQgnBM2soUIcUXBAq3cj
+=muO/
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__3_Jun_2009_11_50_58_+1000_6FQXWDxH4CT8tgup--
