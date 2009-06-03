@@ -1,37 +1,37 @@
-From: Steven Whitehouse <swhiteho@redhat.com>
-Subject: Re: linux-next: gfs2 tree build warning
-Date: Wed, 03 Jun 2009 11:15:36 +0100
-Message-ID: <1244024136.29604.596.camel@localhost.localdomain>
-References: <20090603154031.3652281b.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net tree with Linus' tree
+Date: Wed, 03 Jun 2009 03:33:51 -0700 (PDT)
+Message-ID: <20090603.033351.193935428.davem@davemloft.net>
+References: <20090603122048.f2b7fef2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:37807 "EHLO mx2.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752717AbZFCKPq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Jun 2009 06:15:46 -0400
-In-Reply-To: <20090603154031.3652281b.sfr@canb.auug.org.au>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:44006
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752256AbZFCKdv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Jun 2009 06:33:51 -0400
+In-Reply-To: <20090603122048.f2b7fef2.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Abhijith Das <adas@redhat.com>
+To: sfr@canb.auug.org.au
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, eswierk@aristanetworks.com, aabdulla@nvidia.com
 
-Hi,
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 3 Jun 2009 12:20:48 +1000
 
-On Wed, 2009-06-03 at 15:40 +1000, Stephen Rothwell wrote:
-> Hi Steven,
+> Hi Dave,
 > 
-> Today's linux-next build (x86_64 allmodconfig) produced this warning:
+> Today's linux-next merge of the net tree got a conflict in
+> drivers/net/forcedeth.c between commit
+> 5a9a8e32ebe269c71d8d3e78f9435fe7729f38e9 ("forcedeth: add phy_power_down
+> parameter, leave phy powered up by default (v2)") from Linus' tree and
+> commit 88d7d8b00cdc3117150faab4c4ace6d464b71c22 ("forcedeth: add clock
+> gating feature <resend>") from the net tree.
 > 
-> fs/gfs2/file.c: In function 'gfs2_flock':
-> fs/gfs2/file.c:697: warning: unused variable 'ip'
-> 
-> Introduced by commit a12af1ebe675e85831fde3c4d0908fc3b0908b7a ("GFS2:
-> smbd proccess hangs with flock() call") which removed the last usage of
-> 'ip'.
-> 
+> Just context changing.  I fixed it up (see below) and can carry the fix
+> for a while.
 
-Thanks for letting me know. There is a fix in the -nmw tree now,
+This will be fixed with a push I'll do in a few moments.
 
-Steve.
+Thanks Stephen!
