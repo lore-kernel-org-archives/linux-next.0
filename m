@@ -1,60 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the ttydev tree
-Date: Wed, 3 Jun 2009 18:07:34 +1000
-Message-ID: <20090603180734.f175e04f.sfr@canb.auug.org.au>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: manual merge of the driver-core tree with the trivial
+ tree
+Date: Wed, 3 Jun 2009 10:08:58 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.0906031007510.7457@wotan.suse.de>
+References: <20090603171312.b80e30bb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__3_Jun_2009_18_07_34_+1000_XaoKCrXWgL3zv0Aw"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34506 "EHLO smtps.tip.net.au"
+Received: from cantor2.suse.de ([195.135.220.15]:57903 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756264AbZFCIHk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Jun 2009 04:07:40 -0400
+	id S1755571AbZFCII5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Jun 2009 04:08:57 -0400
+In-Reply-To: <20090603171312.b80e30bb.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Craig Shelley <craig@microtron.org.uk>, Alan Cox <alan@lxorguk.ukuu.org.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt LaPlante <kernel1@cyberdogtech.com>, GeunSik Lim <leemgs1@gmail.com>
 
---Signature=_Wed__3_Jun_2009_18_07_34_+1000_XaoKCrXWgL3zv0Aw
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 3 Jun 2009, Stephen Rothwell wrote:
 
-Hi Greg,
+> Today's linux-next merge of the driver-core tree got a conflict in
+> Documentation/trace/ftrace.txt between commit
+> 9976d9daf91d146724ad9c336f74c60d2195c386 ("trivial: Miscellaneous
+> documentation typo fixes") from the trivial tree and commit
+> b6b8b2b9588b3e09fea0da0e86f6b8bcba827b65 ("debugfs: Fix terminology
+> inconsistency of dir name to mount debugfs filesystem") from the
+> driver-core tree.
+> 
+> The latter removes the text that is patched by the former.  I just used
+> the driver-core version.  I suggest that the part of the trivial tree
+> patch that touches this file be dropped.
 
-Today's linux-next merge of the usb tree got a conflict in
-drivers/usb/serial/cp210x.c between commit
-d6ba273795c1260745197dc93f64c321c80a5ecc ("tty-usb-use-port") from the
-ttydev tree and commit fa9eb42aff8444a67db3136bc405a53882efb14f ("USB:
-CP210X Replace CP2101 with CP210x") from the usb tree.
+Correct, the patch in trivial queue got obsoleted by the driver-core one. 
+I have just dropped the version I had.
 
-This is really just the same three commits being applied to both trees,
-but the ttydev tree has the above commit preceding them.  Maybe Greg you
-should rdop these patches ("USB: CP210X Add device IDs", "USB: CP210X Use
-official request code definitions", and "USB: CP210X Replace CP2101 with
-CP210x") is Craig can verify that they are indeed identical in both trees
-(I know the first two are, but the last is different due to the other
-changes in the ttydev tree).
+Thanks,
 
-As a side issue, the last patch has no SOB from Craig in the ttydev tree.
-
-So, I just used the ttydev tree version on the assumption that my
-reasoning above is correct.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__3_Jun_2009_18_07_34_+1000_XaoKCrXWgL3zv0Aw
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkomL0YACgkQjjKRsyhoI8x/wACfayx/70VqxfJT1CQ1iB57DQh/
-C4UAnAzCiGlDW7yzXRkzdadY3bxe+oIl
-=rQL2
------END PGP SIGNATURE-----
-
---Signature=_Wed__3_Jun_2009_18_07_34_+1000_XaoKCrXWgL3zv0Aw--
+-- 
+Jiri Kosina
+SUSE Labs
