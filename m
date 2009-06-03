@@ -1,52 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm tree with the x86 tree
-Date: Wed, 3 Jun 2009 11:50:58 +1000
-Message-ID: <20090603115058.947305fc.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless tree with the x86 tree
+Date: Wed, 3 Jun 2009 12:15:15 +1000
+Message-ID: <20090603121515.4bd45eec.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__3_Jun_2009_11_50_58_+1000_6FQXWDxH4CT8tgup"
+ boundary="Signature=_Wed__3_Jun_2009_12_15_15_+1000_p1uBGdfDLF48tsnB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50280 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41921 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752248AbZFCBvF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Jun 2009 21:51:05 -0400
+	id S1752831AbZFCCPW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Jun 2009 22:15:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@qumranet.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>, Jan Kiszka <jan.kiszka@siemens.com>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Johannes Berg <johannes@sipsolutions.net>
 
---Signature=_Wed__3_Jun_2009_11_50_58_+1000_6FQXWDxH4CT8tgup
+--Signature=_Wed__3_Jun_2009_12_15_15_+1000_p1uBGdfDLF48tsnB
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Avi,
+Hi John,
 
-Today's linux-next merge of the kvm tree got a conflict in
-arch/x86/include/asm/mce.h between commits
-06b851d98266b812b2fa23d007cdf53f41194bbb ("x86, mce: unify, prepare 64bit
-in mce.h") and 01c6680a547a3ee8dd170c269ea8e037b3191b71 ("x86, mce:
-Cleanup MCG definitions") from the x86 tree and commit
-1a6a35a1c82eb3b95719a375da2e3aac2910a1df ("x86: Make MCE defines
-32-bit-safe") from the kvm tree.
+Today's linux-next merge of the wireless tree got a conflict in
+Documentation/feature-removal-schedule.txt between commit
+45f458e9a8a216b02b76fe61d9e8bc40d659fbe8 ("x86, mce: deprecate old 32bit
+machine check code") from the x86 tree and commit
+0122405503e36bd15077acb571821d459bbd3e85 ("rfkill: create useful
+userspace interface") from the wireless tree.
 
-I think the latter is subsumed by the former commits.  I fixed it up (by
-using the version from the x86 tree) and can carry the fix as necessary.
+Juts overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__3_Jun_2009_11_50_58_+1000_6FQXWDxH4CT8tgup
+diff --cc Documentation/feature-removal-schedule.txt
+index ec9ef5d,edb2f0b..0000000
+--- a/Documentation/feature-removal-schedule.txt
++++ b/Documentation/feature-removal-schedule.txt
+@@@ -438,12 -438,9 +438,19 @@@ Why:	Superseded by tdfxfb. I2C/DDC supp
+  Who:	Jean Delvare <khali@linux-fr.org>
+  	Krzysztof Helt <krzysztof.h1@wp.pl>
+ =20
+ +----------------------------
+ +
+ +What:	CONFIG_X86_OLD_MCE
+ +When:	2.6.32
+ +Why:	Remove the old legacy 32bit machine check code. This has been
+ +	superseded by the newer machine check code from the 64bit port,
+ +	but the old version has been kept around for easier testing. Note this
+ +	doesn't impact the old P5 and WinChip machine check handlers.
+ +Who:	Andi Kleen <andi@firstfloor.org>
+++
++ ---------------------------
++=20
++ What:	CONFIG_RFKILL_INPUT
++ When:	2.6.33
++ Why:	Should be implemented in userspace, policy daemon.
++ Who:	Johannes Berg <johannes@sipsolutions.net>
+
+--Signature=_Wed__3_Jun_2009_12_15_15_+1000_p1uBGdfDLF48tsnB
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkol1wIACgkQjjKRsyhoI8wlzQCgrW+GcfBIJr9ktB+a6jO6Gnjt
-cdQAoJ2DMJbYDQgnBM2soUIcUXBAq3cj
-=muO/
+iEYEARECAAYFAkol3LMACgkQjjKRsyhoI8w6uACeNacK08u+c9i4p5iFr2knq82Z
+BS0AoKr4XTVkNeG8sQn0JIWuQTfHpe1c
+=53I5
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__3_Jun_2009_11_50_58_+1000_6FQXWDxH4CT8tgup--
+--Signature=_Wed__3_Jun_2009_12_15_15_+1000_p1uBGdfDLF48tsnB--
