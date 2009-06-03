@@ -1,37 +1,53 @@
-From: Inaky Perez-Gonzalez <inaky-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: linux-next: Tree for June 3 (rfkill)
-Date: Thu, 4 Jun 2009 06:48:11 +0800
-Message-ID: <200906040648.11839.inaky@linux.intel.com>
-References: <20090603190952.2dd0cc70.sfr@canb.auug.org.au> <4A26B0D2.3090207@oracle.com> <1244050400.22105.0.camel@johannes.local>
+From: Greg KH <gregkh@suse.de>
+Subject: Re: linux-next: Tree for June 3 (staging)
+Date: Wed, 3 Jun 2009 16:11:52 -0700
+Message-ID: <20090603231152.GA18701@suse.de>
+References: <20090603190952.2dd0cc70.sfr@canb.auug.org.au> <4A2695C1.2060104@oracle.com> <20090603152558.GA25725@suse.de> <4A269971.1050004@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1244050400.22105.0.camel-YfaajirXv2244ywRPIzf9A@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:54599 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756028AbZFCXPz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Jun 2009 19:15:55 -0400
 Content-Disposition: inline
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: wimax-BPSAo7wm5JOHVYUYWc+uSQ@public.gmane.org
-Cc: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-wimax-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <4A269971.1050004@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>, Gao Yunpeng <yunpeng.gao@intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Thursday 04 June 2009, Johannes Berg wrote:
-> On Wed, 2009-06-03 at 10:20 -0700, Randy Dunlap wrote:
-> > Ugh, there are similar errors in the wimax area, which doesn't
-> > seem to mention RFKILL in its Kconfig file at all.  :(
->
-> Guess it too will have to get a
->
-> 	depends on RFKILL || !RFKILL
->
-> I can take care of it after dinner.
+On Wed, Jun 03, 2009 at 08:40:33AM -0700, Randy Dunlap wrote:
+> Greg KH wrote:
+> > On Wed, Jun 03, 2009 at 08:24:49AM -0700, Randy Dunlap wrote:
+> >> Stephen Rothwell wrote:
+> >>> Hi all,
+> >>>
+> >>> Looks like a real rush since -rc7 ...
+> >>
+> >> drivers/staging/comedi/drivers/adq12b.c:328: error: implicit declaration of function 'udelay'
+> >>
+> >>
+> >> drivers/staging/mrst_nand/ffsport.c:360:error: 'struct request' has no member named 'sector'
+> >> drivers/staging/mrst_nand/ffsport.c:376:error: 'struct request' has no member named 'sector'
+> >> drivers/staging/mrst_nand/ffsport.c:376:error: 'struct request' has no member named 'current_nr_sectors'
+> >> drivers/staging/mrst_nand/ffsport.c:380:error: 'struct request' has no member named 'sector'
+> >> drivers/staging/mrst_nand/ffsport.c:381:error: 'struct request' has no member named 'current_nr_sectors'
+> >> drivers/staging/mrst_nand/ffsport.c:392:error: 'struct request' has no member named 'current_nr_sectors'
+> >> drivers/staging/mrst_nand/ffsport.c:499:error: implicit declaration of function 'elv_next_request'
+> >> drivers/staging/mrst_nand/ffsport.c:517:error: implicit declaration of function 'end_request'
+> >> drivers/staging/mrst_nand/ffsport.c:738:error: implicit declaration of function 'blk_queue_hardsect_size'
+> > 
+> > Can I get your .config for this?  It works here with a "default" one.
+> 
+> attached (for mrst_nand/ffsport.c build errors)
 
-Ugh...bitten again by Randy's evil autobuilder. Thanks for fixing
-it, Johannes.
+Ah, thanks, figured it out.
 
--- 
-Inaky
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Gao, this looks like a problem in your ffsport.c code.  It isn't up to
+date with the 2.6.30-rc8 kernel tree.  Care to send me a follow-on patch
+to fix this up?
+
+thanks,
+
+greg k-h
