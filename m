@@ -1,75 +1,57 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: linux-next: manual merge of the trivial tree with the wireless
- tree
-Date: Wed, 03 Jun 2009 10:14:11 +0200
-Message-ID: <1244016851.7176.32.camel@johannes.local>
-References: <20090603152247.b52f552e.sfr@canb.auug.org.au>
-	 <alpine.LNX.2.00.0906031006270.7457@wotan.suse.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: ubi tree build failure
+Date: Wed, 3 Jun 2009 18:44:08 +1000
+Message-ID: <20090603184408.49c7fb1f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-/1pc8Y4Y2br3JrY68qCn"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__3_Jun_2009_18_44_08_+1000_X9bWlz+pV.iZHVuF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xc.sipsolutions.net ([83.246.72.84]:52943 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755690AbZFCISJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Jun 2009 04:18:09 -0400
-In-Reply-To: <alpine.LNX.2.00.0906031006270.7457@wotan.suse.de>
+Received: from chilli.pcug.org.au ([203.10.76.44]:58528 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753263AbZFCIoQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Jun 2009 04:44:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt LaPlante <kernel1@cyberdogtech.com>, "John W. Linville" <linville@tuxdriver.com>
+To: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Pervushin <dpervushin@embeddedalley.com>
 
-
---=-/1pc8Y4Y2br3JrY68qCn
-Content-Type: text/plain
+--Signature=_Wed__3_Jun_2009_18_44_08_+1000_X9bWlz+pV.iZHVuF
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2009-06-03 at 10:07 +0200, Jiri Kosina wrote:
-> On Wed, 3 Jun 2009, Stephen Rothwell wrote:
->=20
-> > Today's linux-next merge of the trivial tree got a conflict in=20
-> > Documentation/rfkill.txt between commit=20
-> > c6d660ce29295d344fcdc3654274b4a0aad1a9c8 ("rfkill: rewrite") from the=20
-> > wireless tree and commit 9976d9daf91d146724ad9c336f74c60d2195c386=20
-> > ("trivial: Miscellaneous documentation typo fixes") from the trivial=20
-> > tree.
-> > I just used the version from the wireless tree since it has been
-> > basically rewritten there (except I applied the "transmiter" to
-> > "transmitter" fix - see below).  Maybe the part of the trivial tree pat=
-ch
-> > that affects this file should be dropped.
->=20
-> Hi,
->=20
-> thanks for letting me know. I have dropped the Documentation/rfkill.txt=20
-> hunk completely.=20
->=20
-> Wireless guys, will you please apply the transmiter -> transmitter fix to=
-=20
-> your tree?
+Hi Artem,
 
-Will do.
+Today's linux-next build (powerpc ppc44x_defconfig) failed like this:
 
-johannes
+drivers/mtd/ubi/gluebi.c: In function 'gluebi_get_device':
+drivers/mtd/ubi/gluebi.c:126: error: implicit declaration of function 'IS_E=
+RR'
+drivers/mtd/ubi/gluebi.c:129: error: implicit declaration of function 'PTR_=
+ERR'
 
---=-/1pc8Y4Y2br3JrY68qCn
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+Introduced by commit ec5c514efde253de7f28668c88bbae26d2a293de ("UBI: make
+gluebi a separate module") from the ubi tree.  I guess the conversion
+managed to remove an implicit include of linux/err.h.
+
+I have reverted that commit for today.  I then needed to also revert
+commit 518ceef0c9ca97023e45ae46aedaefa240c690a6 ("UBI: remove built-in
+gluebi") to make it build again.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__3_Jun_2009_18_44_08_+1000_X9bWlz+pV.iZHVuF
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-iQIcBAABAgAGBQJKJjDQAAoJEODzc/N7+QmaGpsP/iLhPdelHXIVEdmSff/I89nu
-aCAhEalv5SYGAqxz7U3CIKE2OCQf5UdBBopFolPCTKBr7lXfBSPX59Lwui3pm2Px
-LaPx4dQT5AeqmdDOu9Z2F4sz9GLubgsHqL9KE2rgm5tnn0yuR5WDxJh0PQ0misAI
-iCpI8ltkVDYVsOvqY6Z6KPHyTYo/YBRZUpS3fpbgPZB+wWmcQ6yGgJPUXfaZNrOE
-lmO5n7k0Az1uYAhLUGnpZHhDBYwDJF+uVDLvInBKm4ShKebVwYMFqMTlZY9+e/rl
-AsKrgXn+LtCkr7MRrtYycm+govwEuJQVqQ81hYeL/WfPkgVWewDBY/N4fXMkp80X
-Z6rctUvQK1nVJu/WsKpoHIosnMizeEhmlh7zzHIu50Vf5ZpqTgc+NbwWrYkBdXjC
-i92Y+1UcWbgo75DIsUmUh7SUKUFJFYEblOLnFzojnSC1eaTzuaat/k7UYsynhjaN
-yvGLPhnoWRpVt5TV7aNdE4AHN84hvKmYjz/+nZHZrrVEQFKkVexDDJtCRX0WoThl
-5VeKtgDnIiT3sFB/heyifc3+Znn2vO1uNZmeJFuXnH3qNfPyhYRPxVj4bo5Z9+yR
-8aKjA9gCLL/Yt/yWRhKaWtBVBA9B2RI8gVFZnRVKVuRh3JJCptMnBkHuDT74mAXS
-42qYcUrwkXsYn8KDW5hW
-=TWWK
+iEYEARECAAYFAkomN9gACgkQjjKRsyhoI8ynJgCfZbCd/q2eVyMAOYxw69FwJbYs
+rnUAoKtqOr/8gYbEx/MqdIeb6jRTJ0ln
+=uqKa
 -----END PGP SIGNATURE-----
 
---=-/1pc8Y4Y2br3JrY68qCn--
+--Signature=_Wed__3_Jun_2009_18_44_08_+1000_X9bWlz+pV.iZHVuF--
