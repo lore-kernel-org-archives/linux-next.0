@@ -1,53 +1,74 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: linux-next: Tree for June 3 (staging)
-Date: Wed, 3 Jun 2009 16:11:52 -0700
-Message-ID: <20090603231152.GA18701@suse.de>
-References: <20090603190952.2dd0cc70.sfr@canb.auug.org.au> <4A2695C1.2060104@oracle.com> <20090603152558.GA25725@suse.de> <4A269971.1050004@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the mips tree with the arm tree
+Date: Thu, 4 Jun 2009 09:50:55 +1000
+Message-ID: <20090604095055.1d1dfb5e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:54599 "EHLO mx2.suse.de"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55933 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756028AbZFCXPz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Jun 2009 19:15:55 -0400
-Content-Disposition: inline
-In-Reply-To: <4A269971.1050004@oracle.com>
+	id S1751783AbZFCXu5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Jun 2009 19:50:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>, Gao Yunpeng <yunpeng.gao@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Carvalho de Assis <acassis@gmail.com>, Atsushi Nemoto <anemo@mba.ocn.ne.jp>, Russell King <rmk@arm.linux.org.uk>
 
-On Wed, Jun 03, 2009 at 08:40:33AM -0700, Randy Dunlap wrote:
-> Greg KH wrote:
-> > On Wed, Jun 03, 2009 at 08:24:49AM -0700, Randy Dunlap wrote:
-> >> Stephen Rothwell wrote:
-> >>> Hi all,
-> >>>
-> >>> Looks like a real rush since -rc7 ...
-> >>
-> >> drivers/staging/comedi/drivers/adq12b.c:328: error: implicit declaration of function 'udelay'
-> >>
-> >>
-> >> drivers/staging/mrst_nand/ffsport.c:360:error: 'struct request' has no member named 'sector'
-> >> drivers/staging/mrst_nand/ffsport.c:376:error: 'struct request' has no member named 'sector'
-> >> drivers/staging/mrst_nand/ffsport.c:376:error: 'struct request' has no member named 'current_nr_sectors'
-> >> drivers/staging/mrst_nand/ffsport.c:380:error: 'struct request' has no member named 'sector'
-> >> drivers/staging/mrst_nand/ffsport.c:381:error: 'struct request' has no member named 'current_nr_sectors'
-> >> drivers/staging/mrst_nand/ffsport.c:392:error: 'struct request' has no member named 'current_nr_sectors'
-> >> drivers/staging/mrst_nand/ffsport.c:499:error: implicit declaration of function 'elv_next_request'
-> >> drivers/staging/mrst_nand/ffsport.c:517:error: implicit declaration of function 'end_request'
-> >> drivers/staging/mrst_nand/ffsport.c:738:error: implicit declaration of function 'blk_queue_hardsect_size'
-> > 
-> > Can I get your .config for this?  It works here with a "default" one.
-> 
-> attached (for mrst_nand/ffsport.c build errors)
+Hi Ralf,
 
-Ah, thanks, figured it out.
+Today's linux-next merge of the mips tree got conflicts in
+drivers/char/hw_random/Kconfig and drivers/char/hw_random/Makefile
+between commit 45001e92d0249a8c4b9f6c3695215652e8e8493d ("i.MX31: Add
+hw-random for RNGA") from the arm tree and commit
+5f2b54f3ee4417d943b98440063a5534503f6d6d ("MIPS: hwrng: Add TX4939 RNG
+driver") from the mips tree.
 
-Gao, this looks like a problem in your ffsport.c code.  It isn't up to
-date with the 2.6.30-rc8 kernel tree.  Care to send me a follow-on patch
-to fix this up?
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-thanks,
-
-greg k-h
+diff --cc drivers/char/hw_random/Kconfig
+index 26c93c7,9d321cc..0000000
+--- a/drivers/char/hw_random/Kconfig
++++ b/drivers/char/hw_random/Kconfig
+@@@ -149,14 -149,15 +149,27 @@@ config HW_RANDOM_VIRTI
+  	  To compile this driver as a module, choose M here: the
+  	  module will be called virtio-rng.  If unsure, say N.
+  
+ +config HW_RANDOM_MXC_RNGA
+ +	tristate "Freescale i.MX RNGA Random Number Generator"
+ +	depends on HW_RANDOM && ARCH_HAS_RNGA
+ +	---help---
+ +	  This driver provides kernel-side support for the Random Number
+ +	  Generator hardware found on Freescale i.MX processors.
+ +
+ +	  To compile this driver as a module, choose M here: the
+ +	  module will be called mxc-rnga.
+ +
+ +	  If unsure, say Y.
+++
++ config HW_RANDOM_TX4939
++ 	tristate "TX4939 Random Number Generator support"
++ 	depends on HW_RANDOM && SOC_TX4939
++ 	default HW_RANDOM
++ 	---help---
++ 	  This driver provides kernel-side support for the Random Number
++ 	  Generator hardware found on TX4939 SoC.
++ 
++ 	  To compile this driver as a module, choose M here: the
++ 	  module will be called tx4939-rng.
++ 
++ 	  If unsure, say Y.
+diff --cc drivers/char/hw_random/Makefile
+index fd1ecd2,936d388..0000000
+--- a/drivers/char/hw_random/Makefile
++++ b/drivers/char/hw_random/Makefile
+@@@ -15,4 -15,4 +15,5 @@@ obj-$(CONFIG_HW_RANDOM_IXP4XX) += ixp4x
+  obj-$(CONFIG_HW_RANDOM_OMAP) += omap-rng.o
+  obj-$(CONFIG_HW_RANDOM_PASEMI) += pasemi-rng.o
+  obj-$(CONFIG_HW_RANDOM_VIRTIO) += virtio-rng.o
+ +obj-$(CONFIG_HW_RANDOM_MXC_RNGA) += mxc-rnga.o
++ obj-$(CONFIG_HW_RANDOM_TX4939) += tx4939-rng.o
