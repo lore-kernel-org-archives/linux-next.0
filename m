@@ -1,138 +1,96 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the ttydev tree
-Date: Wed, 3 Jun 2009 17:55:59 +1000
-Message-ID: <20090603175559.f15753c9.sfr@canb.auug.org.au>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: manual merge of the trivial tree with the wireless
+ tree
+Date: Wed, 3 Jun 2009 10:07:35 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.0906031006270.7457@wotan.suse.de>
+References: <20090603152247.b52f552e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39114 "EHLO smtps.tip.net.au"
+Received: from cantor.suse.de ([195.135.220.2]:44228 "EHLO mx1.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755717AbZFCH4D (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Jun 2009 03:56:03 -0400
+	id S1753458AbZFCIHe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Jun 2009 04:07:34 -0400
+In-Reply-To: <20090603152247.b52f552e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@lxorguk.ukuu.org.uk>, Oliver Neukum <oliver@neukum.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt LaPlante <kernel1@cyberdogtech.com>, Johannes Berg <johannes@sipsolutions.net>, "John W. Linville" <linville@tuxdriver.com>
 
-Hi Greg,
+On Wed, 3 Jun 2009, Stephen Rothwell wrote:
 
-Today's linux-next merge of the usb tree got a conflict in
-drivers/usb/class/cdc-acm.c between commit
-255e62420b88b3788826591a9b2880d3a88ef498 ("tty-usb-acm-clean") from the
-ttydev tree and commit c0c91103ffdc941959e5c7dbcd190d8229ab7922 ("USB:
-support for cdc-acm of single interface devices") from the usb tree.
+> Today's linux-next merge of the trivial tree got a conflict in 
+> Documentation/rfkill.txt between commit 
+> c6d660ce29295d344fcdc3654274b4a0aad1a9c8 ("rfkill: rewrite") from the 
+> wireless tree and commit 9976d9daf91d146724ad9c336f74c60d2195c386 
+> ("trivial: Miscellaneous documentation typo fixes") from the trivial 
+> tree.
+> I just used the version from the wireless tree since it has been
+> basically rewritten there (except I applied the "transmiter" to
+> "transmitter" fix - see below).  Maybe the part of the trivial tree patch
+> that affects this file should be dropped.
 
-I fixed it up (see below) and can carry the fix as necessary.
+Hi,
+
+thanks for letting me know. I have dropped the Documentation/rfkill.txt 
+hunk completely. 
+
+Wireless guys, will you please apply the transmiter -> transmitter fix to 
+your tree?
+
+Thanks.
+
+> --- a/Documentation/rfkill.txt
+> +++ b/Documentation/rfkill.txt
+> @@@ -111,20 -545,31 +111,20 @@@ The following sysfs entries exist for e
+>   	type: Name of the key type ("wlan", "bluetooth", etc).
+>   	state: Current state of the transmitter
+>   		0: RFKILL_STATE_SOFT_BLOCKED
+>  -			transmitter is forced off, but one can override it
+>  -			by a write to the state attribute;
+>  +			transmitter is turned off by software
+>   		1: RFKILL_STATE_UNBLOCKED
+> - 			transmiter is (potentially) active
+>  -			transmitter is NOT forced off, and may operate if
+>  -			all other conditions for such operation are met
+>  -			(such as interface is up and configured, etc);
+> ++			transmitter is (potentially) active
+>   		2: RFKILL_STATE_HARD_BLOCKED
+>   			transmitter is forced off by something outside of
+>  -			the driver's control.  One cannot set a device to
+>  -			this state through writes to the state attribute;
+>  -	claim: 1: Userspace handles events, 0: Kernel handles events
+>  -
+>  -Both the "state" and "claim" entries are also writable. For the "state" entry
+>  -this means that when 1 or 0 is written, the device rfkill state (if not yet in
+>  -the requested state), will be will be toggled accordingly.
+>  -
+>  -For the "claim" entry writing 1 to it means that the kernel no longer handles
+>  -key events even though RFKILL_INPUT input was enabled. When "claim" has been
+>  -set to 0, userspace should make sure that it listens for the input events or
+>  -check the sysfs "state" entry regularly to correctly perform the required tasks
+>  -when the rkfill key is pressed.
+>  -
+>  -A note about input devices and EV_SW events:
+>  -
+>  -In order to know the current state of an input device switch (like
+>  -SW_RFKILL_ALL), you will need to use an IOCTL.  That information is not
+>  -available through sysfs in a generic way at this time, and it is not available
+>  -through the rfkill class AT ALL.
+>  +			the driver's control.
+>  +	claim: 0: Kernel handles events (currently always reads that value)
+>  +
+>  +rfkill devices also issue uevents (with an action of "change"), with the
+>  +following environment variables set:
+>  +
+>  +RFKILL_NAME
+>  +RFKILL_STATE
+>  +RFKILL_TYPE
+>  +
+>  +The contents of these variables corresponds to the "name", "state" and
+>  +"type" sysfs files explained above.
+> 
+
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/usb/class/cdc-acm.c
-index ddeb691,2afff9f..0000000
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@@ -1045,10 -1008,40 +1052,40 @@@ next_desc
-  			return -ENODEV;
-  		}
-  	}
- -	
- +
-  	if (data_interface_num != call_interface_num)
- -		dev_dbg(&intf->dev,"Separate call control interface. That is not fully supported.\n");
- +		dev_dbg(&intf->dev, "Separate call control interface. That is not fully supported.\n");
-  
-+ 	if (control_interface == data_interface) {
-+ 		/* some broken devices designed for windows work this way */
-+ 		dev_warn(&intf->dev,"Control and data interfaces are not separated!\n");
-+ 		combined_interfaces = 1;
-+ 		/* a popular other OS doesn't use it */
-+ 		quirks |= NO_CAP_LINE;
-+ 		if (data_interface->cur_altsetting->desc.bNumEndpoints != 3) {
-+ 			dev_err(&intf->dev, "This needs exactly 3 endpoints\n");
-+ 			return -EINVAL;
-+ 		}
-+ look_for_collapsed_interface:
-+ 		for (i = 0; i < 3; i++) {
-+ 			struct usb_endpoint_descriptor *ep;
-+ 			ep = &data_interface->cur_altsetting->endpoint[i].desc;
-+ 
-+ 			if (usb_endpoint_is_int_in(ep))
-+ 				epctrl = ep;
-+ 			else if (usb_endpoint_is_bulk_out(ep))
-+ 				epwrite = ep;
-+ 			else if (usb_endpoint_is_bulk_in(ep))
-+ 				epread = ep;
-+ 			else
-+ 				return -EINVAL;
-+ 		}
-+ 		if (!epctrl || !epread || !epwrite)
-+ 			return -ENODEV;
-+ 		else
-+ 			goto made_compressed_probe;
-+ 	}
-+ 
-  skip_normal_probe:
-  
-  	/*workaround for switched interfaces */
-@@@ -1068,11 -1059,11 +1105,11 @@@
-  	}
-  
-  	/* Accept probe requests only for the control interface */
-- 	if (intf != control_interface)
-+ 	if (!combined_interfaces && intf != control_interface)
-  		return -ENODEV;
- -	
- +
-- 	if (usb_interface_claimed(data_interface)) { /* valid in this context */
-+ 	if (!combined_interfaces && usb_interface_claimed(data_interface)) { /* valid in this context */
- -		dev_dbg(&intf->dev,"The data interface isn't available\n");
- +		dev_dbg(&intf->dev, "The data interface isn't available\n");
-  		return -EBUSY;
-  	}
-  
-@@@ -1110,8 -1101,8 +1148,9 @@@ made_compressed_probe
-  	}
-  
-  	ctrlsize = le16_to_cpu(epctrl->wMaxPacketSize);
- -	readsize = le16_to_cpu(epread->wMaxPacketSize)* ( quirks == SINGLE_RX_URB ? 1 : 2);
- +	readsize = le16_to_cpu(epread->wMaxPacketSize) *
- +				(quirks == SINGLE_RX_URB ? 1 : 2);
-+ 	acm->combined_interfaces = combined_interfaces;
-  	acm->writesize = le16_to_cpu(epwrite->wMaxPacketSize) * 20;
-  	acm->control = control_interface;
-  	acm->data = data_interface;
-@@@ -1222,10 -1206,10 +1263,11 @@@
-  	}
-  
-  skip_countries:
- -	usb_fill_int_urb(acm->ctrlurb, usb_dev, usb_rcvintpipe(usb_dev, epctrl->bEndpointAddress),
- -			 acm->ctrl_buffer, ctrlsize, acm_ctrl_irq, acm,
- +	usb_fill_int_urb(acm->ctrlurb, usb_dev,
- +			usb_rcvintpipe(usb_dev, epctrl->bEndpointAddress),
- +			acm->ctrl_buffer, ctrlsize, acm_ctrl_irq, acm,
-- 			epctrl->bInterval);
-+ 			 /* works around buggy devices */
-+ 			 epctrl->bInterval ? epctrl->bInterval : 0xff);
-  	acm->ctrlurb->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
-  	acm->ctrlurb->transfer_dma = acm->ctrl_dma;
-  
-@@@ -1308,14 -1291,14 +1350,15 @@@ static void acm_disconnect(struct usb_i
-  	stop_data_traffic(acm);
-  
-  	acm_write_buffers_free(acm);
- -	usb_buffer_free(usb_dev, acm->ctrlsize, acm->ctrl_buffer, acm->ctrl_dma);
- +	usb_buffer_free(usb_dev, acm->ctrlsize, acm->ctrl_buffer,
- +								acm->ctrl_dma);
-  	acm_read_buffers_free(acm);
-  
-- 	usb_driver_release_interface(&acm_driver, intf == acm->control ?
-+ 	if (!acm->combined_interfaces)
-+ 		usb_driver_release_interface(&acm_driver, intf == acm->control ?
-  					acm->data : acm->control);
-  
- -	if (!acm->used) {
- +	if (acm->port.count == 0) {
-  		acm_tty_unregister(acm);
-  		mutex_unlock(&open_mutex);
-  		return;
+Jiri Kosina
+SUSE Labs
