@@ -1,37 +1,67 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with the x86
-	tree
-Date: Wed, 3 Jun 2009 07:59:01 -0700
-Message-ID: <20090603145901.GB30890@kroah.com>
-References: <20090603171830.b2f80b02.sfr@canb.auug.org.au>
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: linux-next: Tree for June 3 (rfkill)
+Date: Wed, 03 Jun 2009 17:29:10 +0200
+Message-ID: <1244042950.4862.10.camel@johannes.local>
+References: <20090603190952.2dd0cc70.sfr@canb.auug.org.au>
+	 <4A269539.8020607@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-QkqTClLmTdUR2xiL+kR+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:39099 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754035AbZFCP1K (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Jun 2009 11:27:10 -0400
-Content-Disposition: inline
-In-Reply-To: <20090603171830.b2f80b02.sfr@canb.auug.org.au>
+Received: from xc.sipsolutions.net ([83.246.72.84]:39794 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755202AbZFCP3R (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Jun 2009 11:29:17 -0400
+In-Reply-To: <4A269539.8020607@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, Jan Blunck <jblunck@suse.de>, Dmitry Adamushko <dmitry.adamushko@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
 
-On Wed, Jun 03, 2009 at 05:18:30PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the driver-core tree got a conflict in
-> arch/x86/kernel/microcode_core.c between commit
-> 871b72dd1e12afc3f024479531d25a9339d2e3f9 ("x86: microcode: use
-> smp_call_function_single instead of set_cpus_allowed, cleanup of
-> synchronization logic") from the x86 tree and commit
-> 3b5f472624ad5b54753388bb3c563a8f308eed88 ("Driver Core: misc: add
-> nodename support for misc devices") from the driver-core tree.
-> 
-> Just white space changes overlapping an addition.  I fixed it up (see
-> below) and can carry the fix as necessary.
 
-Thanks, I'll watch for this when merging with Linus.
+--=-QkqTClLmTdUR2xiL+kR+
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-greg k-h
+On Wed, 2009-06-03 at 08:22 -0700, Randy Dunlap wrote:
+> Stephen Rothwell wrote:
+
+> CFG80211=3Dy
+> MAC80211=3Dy
+> RFKILL=3Dm
+>=20
+> net/built-in.o: In function `cfg80211_netdev_notifier_call':
+> core.c:(.text+0xa678b): undefined reference to `rfkill_blocked'
+> net/built-in.o: In function `cfg80211_dev_free':
+
+Hrm. I thought
+
+config CFG80211
+	tristate "Improved wireless configuration API"
+	depends on RFKILL || !RFKILL
+
+would avoid that. Why doesn't it?
+
+johannes
+
+--=-QkqTClLmTdUR2xiL+kR+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABAgAGBQJKJpbCAAoJEODzc/N7+Qma29UP/31xLzunD84G90EkhPiI2twv
++fhSiLtA/o30bghV3NRKAuq5f+SmoCJzrPvl6uUzZ8RTLrHxKp2Ur5MC2bOqgWm+
+7v7j6uBv/LuHMuNdcXmGQWvzQQbSIckWzeuo2oizaMjxnxB7+FCX4titM34ileFD
+S5HYEEyP9/Y6Tfdmj6Nkvt+9JhXx2U3C5P4jkfzXs7nVZnODoEjkgQxavWQy341V
+bVQdfnCPf8RgbYpopUkb1ovZc8DkUBbkLku8w+eRtSmm0D/pMO9xSla4/lqCMhqU
+f5cc7wL5MnZPvx13hjuP13P+vxC5aKXs+XdH0c1bpasxQ5wWtwmsoF56NJ7Y/mbX
+G19KxOMfANWe/Xer7Hk+tkxQx3Q7BrRPUENFgjSbaBhQoaCuLfET+3CCRx7JS823
+3OplGgu6YLuzvPE/OjFI8yL9pe77251U8y76QP5cmso/IWqaihA/vdELfO69x8S9
+1wr/Me0jTn2zF+/q6Lhs4VE+fB3MRZ+xHt+ue61c9zqKPQmZk6SGENpf4IIxtbA2
+RSJoEhbdMTCRbLcSI9WjZWamCJIuTvwNcGBGcj7BvulTlc4W5NcoXLHpamvlFk3n
+cEFLnwGCv6jgDerv2+2Bv6mxyuch94xZWuGYoZ6mv5QCGjo9PZFOjvSNHn+gaxc3
+j0/RtkqHYxVrxGPTqf8v
+=yF4V
+-----END PGP SIGNATURE-----
+
+--=-QkqTClLmTdUR2xiL+kR+--
