@@ -1,52 +1,314 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: sound tree build failure
-Date: Thu, 4 Jun 2009 17:33:42 +1000
-Message-ID: <20090604173342.b7dbca6d.sfr@canb.auug.org.au>
+Subject: linux-next: Tree for June 4
+Date: Thu, 4 Jun 2009 17:56:57 +1000
+Message-ID: <20090604175657.1565ecba.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__4_Jun_2009_17_33_42_+1000_nM/hM6YCfPUb8B8e"
+ boundary="Signature=_Thu__4_Jun_2009_17_56_57_+1000_mTX0+xm0W7CLVmb0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59565 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56703 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751945AbZFDHdr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 4 Jun 2009 03:33:47 -0400
+	id S1753759AbZFDH47 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 4 Jun 2009 03:56:59 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@nokia.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Thu__4_Jun_2009_17_33_42_+1000_nM/hM6YCfPUb8B8e
+--Signature=_Thu__4_Jun_2009_17_56_57_+1000_mTX0+xm0W7CLVmb0
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Takashi,
+Hi all,
 
-Today's linux-next build (powerpc allyesconfig) failed like this:
+Changes since 20090603:
 
-sound/soc/codecs/twl4030.c: In function 'twl4030_read_reg_cache':
-sound/soc/codecs/twl4030.c:152: error: 'cache' undeclared (first use in thi=
-s function)
+This tree fails to build for powerpc allyesconfig.
 
-Caused by commit 16a30fbb0d3aa4ee829a2dd3d0e314e2b5ae96a9 ("ASoC:
-TWL4030: Use reg_cache in twl4030_init_chip").
+The mips tree gained a conflict against the arm tree.
 
-I reverted that commit for today.
+The net tree lost a conflict.
+
+The mmc tree gained a build failure, so I used the version from
+next-20090603.
+
+The trivial tree lost its conflict.
+
+The sound tree gained a build failure for which I reverted a commit.
+
+The ubi tree lost its build failure.
+
+The driver-core tree lost a conflict.
+
+The usb tree lost a conflict.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+(patches at
+http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES) and i386, sparc and sparc64 defconfig.
+These builds also have CONFIG_ENABLE_WARN_DEPRECATED,
+CONFIG_ENABLE_MUST_CHECK and CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 142 trees (counting Linus' and 19 trees of patches pending for
+Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__4_Jun_2009_17_33_42_+1000_nM/hM6YCfPUb8B8e
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/master
+Merging quilt/driver-core.current
+Merging quilt/usb.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging dwmw2/master
+Merging arm/devel
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging microblaze/next
+Merging mips/mips-for-linux-next
+CONFLICT (content): Merge conflict in drivers/char/hw_random/Kconfig
+CONFLICT (content): Merge conflict in drivers/char/hw_random/Makefile
+Merging parisc/master
+Merging powerpc/next
+Merging 4xx/next
+Merging galak/next
+Merging pxa/for-next
+CONFLICT (content): Merge conflict in arch/arm/mach-pxa/viper.c
+Merging s390/features
+Merging sh/master
+Merging sparc/master
+Merging x86/auto-x86-next
+Merging xtensa/master
+Merging configfs/linux-next
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging jfs/next
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging squashfs/master
+Merging v9fs/for-next
+CONFLICT (content): Merge conflict in net/9p/protocol.c
+Merging ubifs/linux-next
+Merging xfs/master
+Merging reiserfs-bkl/reiserfs/kill-bkl-rc6
+Merging vfs/for-next
+CONFLICT (content): Merge conflict in fs/ext4/super.c
+CONFLICT (content): Merge conflict in fs/fuse/inode.c
+CONFLICT (delete/modify): fs/gfs2/ops_super.c deleted in HEAD and modified =
+in vfs/for-next. Version vfs/for-next of fs/gfs2/ops_super.c left in tree.
+CONFLICT (content): Merge conflict in fs/reiserfs/super.c
+$ git rm -f fs/gfs2/ops_super.c
+Applying: vfs/gfs2: fixup merge for file removal
+Applying: vfs: fix mismerge of fs/reiserfs/xattr.c
+Merging pci/linux-next
+Merging hid/for-next
+Merging quilt/i2c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+Merging quota/for_next
+Merging kbuild/master
+Merging ide/for-next
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/master
+CONFLICT (content): Merge conflict in arch/x86/include/asm/mce.h
+Merging dlm/next
+Merging scsi/master
+Merging async_tx/next
+Merging udf/for_next
+Merging net/master
+CONFLICT (content): Merge conflict in include/linux/mmc/sdio_ids.h
+Merging wireless/master
+CONFLICT (content): Merge conflict in Documentation/feature-removal-schedul=
+e.txt
+CONFLICT (content): Merge conflict in drivers/platform/x86/Kconfig
+CONFLICT (content): Merge conflict in drivers/platform/x86/toshiba_acpi.c
+[master 1982f67] Revert "oqo: select INPUT_POLLDEV"
+[master 8178a24] Revert "x86: oqo: depends on INPUT_POLLDEV"
+[master 0196460] Revert "oqo: dev_set_name()"
+[master ad8cf59] Revert "platform/x86: Add oqo-wmi driver for model 2 OQO b=
+acklight and rfkill control"
+Merging mtd/master
+CONFLICT (content): Merge conflict in drivers/mtd/nand/mxc_nand.c
+Merging crypto/master
+Merging sound/for-next
+Merging cpufreq/next
+Merging quilt/rr
+CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/cpufreq/powernow-=
+k8.c
+Merging cifs/master
+Merging mmc/next
+$ git reset --hard HEAD^
+Merging refs/next/20090603/mmc
+Merging input/next
+Merging bkl-removal/bkl-removal
+Merging lsm/for-next
+Merging block/for-next
+CONFLICT (content): Merge conflict in drivers/ide/ide-atapi.c
+CONFLICT (content): Merge conflict in drivers/ide/ide-cd.c
+CONFLICT (content): Merge conflict in drivers/ide/ide-floppy.c
+CONFLICT (content): Merge conflict in drivers/ide/ide-tape.c
+Merging quilt/device-mapper
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Applying: md: fix fallout from block tree API change
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging voltage/for-next
+Merging security-testing/next
+Merging lblnet/master
+Merging quilt/ttydev
+Merging agp/agp-next
+Merging tip-core/auto-core-next
+Merging cpus4096/auto-cpus4096-next
+Merging tracing/auto-tracing-next
+CONFLICT (content): Merge conflict in block/blk-sysfs.c
+CONFLICT (content): Merge conflict in net/core/drop_monitor.c
+CONFLICT (content): Merge conflict in net/core/net-traces.c
+Merging genirq/auto-genirq-next
+Merging safe-poison-pointers/auto-safe-poison-pointers-next
+Merging sched/auto-sched-next
+Merging stackprotector/auto-stackprotector-next
+Merging timers/auto-timers-next
+CONFLICT (content): Merge conflict in kernel/sched.c
+Merging generic-ipi/auto-generic-ipi-next
+Merging oprofile/auto-oprofile-next
+Merging fastboot/auto-fastboot-next
+Merging sparseirq/auto-sparseirq-next
+Merging iommu/auto-iommu-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+CONFLICT (content): Merge conflict in drivers/pci/intel-iommu.c
+CONFLICT (content): Merge conflict in drivers/pci/intr_remapping.c
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+Merging audit/for-next
+Merging omap/for-next
+Merging quilt/aoe
+Merging kmemleak/kmemleak
+CONFLICT (delete/modify): arch/x86/kernel/vmlinux_32.lds.S deleted in HEAD =
+and modified in kmemleak/kmemleak. Version kmemleak/kmemleak of arch/x86/ke=
+rnel/vmlinux_32.lds.S left in tree.
+CONFLICT (delete/modify): arch/x86/kernel/vmlinux_64.lds.S deleted in HEAD =
+and modified in kmemleak/kmemleak. Version kmemleak/kmemleak of arch/x86/ke=
+rnel/vmlinux_64.lds.S left in tree.
+CONFLICT (content): Merge conflict in lib/Kconfig.debug
+CONFLICT (content): Merge conflict in mm/slob.c
+$ git rm -f arch/x86/kernel/vmlinux_32.lds.S arch/x86/kernel/vmlinux_64.lds=
+.S
+Merging kmemcheck/auto-kmemcheck-next
+CONFLICT (content): Merge conflict in arch/x86/mm/fault.c
+CONFLICT (content): Merge conflict in include/linux/ring_buffer.h
+CONFLICT (content): Merge conflict in include/linux/slab.h
+CONFLICT (content): Merge conflict in kernel/trace/ring_buffer.c
+CONFLICT (content): Merge conflict in mm/Makefile
+CONFLICT (content): Merge conflict in mm/slab.c
+CONFLICT (content): Merge conflict in mm/slub.c
+Merging suspend/linux-next
+Merging bluetooth/master
+Merging edac-amd/for-next
+Merging fsnotify/for-next
+Merging asm-generic/next
+CONFLICT (content): Merge conflict in arch/arm/include/asm/page.h
+Merging quilt/driver-core
+CONFLICT (content): Merge conflict in arch/x86/kernel/microcode_core.c
+CONFLICT (content): Merge conflict in drivers/base/firmware_class.c
+CONFLICT (content): Merge conflict in init/main.c
+Merging quilt/usb
+CONFLICT (content): Merge conflict in drivers/usb/class/cdc-acm.c
+CONFLICT (content): Merge conflict in drivers/usb/serial/ftdi_sio.c
+CONFLICT (content): Merge conflict in drivers/usb/serial/sierra.c
+Merging quilt/staging
+CONFLICT (content): Merge conflict in drivers/staging/rt2860/common/mlme.c
+CONFLICT (content): Merge conflict in drivers/staging/rt2870/common/mlme.c
+CONFLICT (content): Merge conflict in drivers/staging/rt3070/common/mlme.c
+Merging scsi-post-merge/master
+CONFLICT (content): Merge conflict in include/Kbuild
+[master 532d875] Revert "ASoC: TWL4030: Use reg_cache in twl4030_init_chip"
+
+--Signature=_Thu__4_Jun_2009_17_56_57_+1000_mTX0+xm0W7CLVmb0
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkoneNYACgkQjjKRsyhoI8z1pwCeJxEsaK+UqQutm6TUd3tnglse
-hhEAnjF2h1YsUQwPkRNQ7ZUJur+G1M/3
-=2QKO
+iEYEARECAAYFAkonfkkACgkQjjKRsyhoI8w7ngCgrzg5CBtcyYCEs2rP5mJbr+SA
+bWkAoJgyTexTcAjI/xrftcAfsmf5ryFX
+=+5Jq
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__4_Jun_2009_17_33_42_+1000_nM/hM6YCfPUb8B8e--
+--Signature=_Thu__4_Jun_2009_17_56_57_+1000_mTX0+xm0W7CLVmb0--
