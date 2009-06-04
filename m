@@ -1,52 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: mmc tree build failure
-Date: Thu, 4 Jun 2009 12:04:35 +1000
-Message-ID: <20090604120435.bc32b890.sfr@canb.auug.org.au>
+From: Neil Brown <neilb@suse.de>
+Subject: Re: linux-next: md tree build failure
+Date: Thu, 4 Jun 2009 14:06:43 +1000
+Message-ID: <18983.18515.445191.401600@notabene.brown>
+References: <20090525153346.758483fc.sfr@canb.auug.org.au>
+	<20090525061552.GH11363@kernel.dk>
+	<20090601144218.26810ec8.sfr@canb.auug.org.au>
+	<yq163fga654.fsf@sermon.lab.mkp.net>
+	<39efa6d3788eec04b0bc86b02d988c8f.squirrel@neil.brown.name>
+	<yq1prdm6jn1.fsf@sermon.lab.mkp.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__4_Jun_2009_12_04_35_+1000_GGWK8lL6ZkW_1Kdu"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58511 "EHLO smtps.tip.net.au"
+Received: from cantor.suse.de ([195.135.220.2]:45950 "EHLO mx1.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755223AbZFDCEk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Jun 2009 22:04:40 -0400
+	id S1750724AbZFDEGV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 4 Jun 2009 00:06:21 -0400
+In-Reply-To: message from Martin K. Petersen on Wednesday June 3
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pierre Ossman <drzeus-list@drzeus.cx>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?Ik1pY2hhxYIgTWlyb3PFgmF3Ig==?= <mirq-linux@rere.qmqm.pl>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Jens Axboe <jens.axboe@oracle.com>, linux-next@vger.kernel.org
 
---Signature=_Thu__4_Jun_2009_12_04_35_+1000_GGWK8lL6ZkW_1Kdu
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wednesday June 3, martin.petersen@oracle.com wrote:
+> 
+> James often rebases against Jens' tree because there's frequently
+> dependencies between between block and SCSI during the merge.  I suggest
+> you do the same.
 
-Hi Pierre,
+OK, I've just rebased my for-next tree against Jens' for-next, and
+fixed the compile error with this incremental patch
 
-Today's linux-next build (powerpc_ppc64_defconfig) failed like this:
+--- a/drivers/md/raid0.c
++++ b/drivers/md/raid0.c
+@@ -240,7 +240,7 @@ static int create_strip_zones(mddev_t *mddev)
+         * now since we have the hard sector sizes, we can make sure
+         * chunk size is a multiple of that sector size
+         */
+-       if (mddev->chunk_size % mddev->queue->hardsect_size) {
++       if (mddev->chunk_size % queue_logical_block_size(mddev->queue)) {
+                printk(KERN_ERR "%s chunk_size of %d not valid\n",
+                       mdname(mddev),
+                       mddev->chunk_size);
 
-drivers/misc/Kconfig:238: can't open file "drivers/misc/cb710/Kconfig"
 
-Caused by commit f8d1918a2e7adbfdde0efc1a9a22cca3d5c5cae9 ("mmc: Driver
-for CB710/720 memory card reader (MMC part)").
+I assume that is the preferred usage?
 
-I have used the version of the mmc tree from next-20090603 for today.
-
-Please build test what you are submitting to linux-next.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__4_Jun_2009_12_04_35_+1000_GGWK8lL6ZkW_1Kdu
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkonK7MACgkQjjKRsyhoI8ypGwCaAwAw4zjm4lxi2IA2olaA2M60
-Tr0AoJqpq4tWmpoDvJiidB3qx98MZWh8
-=ccfx
------END PGP SIGNATURE-----
-
---Signature=_Thu__4_Jun_2009_12_04_35_+1000_GGWK8lL6ZkW_1Kdu--
+Thanks,
+NeilBrown
