@@ -1,59 +1,52 @@
-From: "Gao, Yunpeng" <yunpeng.gao@intel.com>
-Subject: RE: linux-next: Tree for June 3 (staging)
-Date: Thu, 4 Jun 2009 10:04:37 +0800
-Message-ID: <38D9F46DFF92C54980D2F2C1E8EE313001A457D1D2@pdsmsx503.ccr.corp.intel.com>
-References: <20090603190952.2dd0cc70.sfr@canb.auug.org.au>
- <4A2695C1.2060104@oracle.com> <20090603152558.GA25725@suse.de>
- <4A269971.1050004@oracle.com> <20090603231152.GA18701@suse.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: mmc tree build failure
+Date: Thu, 4 Jun 2009 12:04:35 +1000
+Message-ID: <20090604120435.bc32b890.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__4_Jun_2009_12_04_35_+1000_GGWK8lL6ZkW_1Kdu"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:5870 "EHLO mga01.intel.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58511 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754217AbZFDCDR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Jun 2009 22:03:17 -0400
-In-Reply-To: <20090603231152.GA18701@suse.de>
-Content-Language: en-US
+	id S1755223AbZFDCEk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Jun 2009 22:04:40 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <gregkh@suse.de>, Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Pierre Ossman <drzeus-list@drzeus.cx>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?Ik1pY2hhxYIgTWlyb3PFgmF3Ig==?= <mirq-linux@rere.qmqm.pl>
 
-SGkgR3JlZywNCg0KVGhhbmtzIGZvciB0aGUgcmVtaW5kZXIuIEknbGwgY2hlY2sgdGhlIGNvZGUg
-aW4gMi42LjMwLXJjOCBhbmQgZ2VuZXJhdGUgbmV3IHBhdGNoIHRvIGZpeCB0aGlzIGJ1ZyBhcyBz
-b29uIGFzLiBUaGFua3MuDQoNClJnZHMsDQpZdW5wZW5nDQoNCj4tLS0tLU9yaWdpbmFsIE1lc3Nh
-Z2UtLS0tLQ0KPkZyb206IEdyZWcgS0ggW21haWx0bzpncmVna2hAc3VzZS5kZV0NCj5TZW50OiAy
-MDA5xOo21MI0yNUgNzoxMg0KPlRvOiBSYW5keSBEdW5sYXA7IEdhbywgWXVucGVuZw0KPkNjOiBT
-dGVwaGVuIFJvdGh3ZWxsOyBsaW51eC1uZXh0QHZnZXIua2VybmVsLm9yZzsgTEtNTA0KPlN1Ympl
-Y3Q6IFJlOiBsaW51eC1uZXh0OiBUcmVlIGZvciBKdW5lIDMgKHN0YWdpbmcpDQo+DQo+T24gV2Vk
-LCBKdW4gMDMsIDIwMDkgYXQgMDg6NDA6MzNBTSAtMDcwMCwgUmFuZHkgRHVubGFwIHdyb3RlOg0K
-Pj4gR3JlZyBLSCB3cm90ZToNCj4+ID4gT24gV2VkLCBKdW4gMDMsIDIwMDkgYXQgMDg6MjQ6NDlB
-TSAtMDcwMCwgUmFuZHkgRHVubGFwIHdyb3RlOg0KPj4gPj4gU3RlcGhlbiBSb3Rod2VsbCB3cm90
-ZToNCj4+ID4+PiBIaSBhbGwsDQo+PiA+Pj4NCj4+ID4+PiBMb29rcyBsaWtlIGEgcmVhbCBydXNo
-IHNpbmNlIC1yYzcgLi4uDQo+PiA+Pg0KPj4gPj4gZHJpdmVycy9zdGFnaW5nL2NvbWVkaS9kcml2
-ZXJzL2FkcTEyYi5jOjMyODogZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uDQo+b2YgZnVuY3Rp
-b24gJ3VkZWxheScNCj4+ID4+DQo+PiA+Pg0KPj4gPj4gZHJpdmVycy9zdGFnaW5nL21yc3RfbmFu
-ZC9mZnNwb3J0LmM6MzYwOmVycm9yOiAnc3RydWN0IHJlcXVlc3QnIGhhcyBubw0KPm1lbWJlciBu
-YW1lZCAnc2VjdG9yJw0KPj4gPj4gZHJpdmVycy9zdGFnaW5nL21yc3RfbmFuZC9mZnNwb3J0LmM6
-Mzc2OmVycm9yOiAnc3RydWN0IHJlcXVlc3QnIGhhcyBubw0KPm1lbWJlciBuYW1lZCAnc2VjdG9y
-Jw0KPj4gPj4gZHJpdmVycy9zdGFnaW5nL21yc3RfbmFuZC9mZnNwb3J0LmM6Mzc2OmVycm9yOiAn
-c3RydWN0IHJlcXVlc3QnIGhhcyBubw0KPm1lbWJlciBuYW1lZCAnY3VycmVudF9ucl9zZWN0b3Jz
-Jw0KPj4gPj4gZHJpdmVycy9zdGFnaW5nL21yc3RfbmFuZC9mZnNwb3J0LmM6MzgwOmVycm9yOiAn
-c3RydWN0IHJlcXVlc3QnIGhhcyBubw0KPm1lbWJlciBuYW1lZCAnc2VjdG9yJw0KPj4gPj4gZHJp
-dmVycy9zdGFnaW5nL21yc3RfbmFuZC9mZnNwb3J0LmM6MzgxOmVycm9yOiAnc3RydWN0IHJlcXVl
-c3QnIGhhcyBubw0KPm1lbWJlciBuYW1lZCAnY3VycmVudF9ucl9zZWN0b3JzJw0KPj4gPj4gZHJp
-dmVycy9zdGFnaW5nL21yc3RfbmFuZC9mZnNwb3J0LmM6MzkyOmVycm9yOiAnc3RydWN0IHJlcXVl
-c3QnIGhhcyBubw0KPm1lbWJlciBuYW1lZCAnY3VycmVudF9ucl9zZWN0b3JzJw0KPj4gPj4gZHJp
-dmVycy9zdGFnaW5nL21yc3RfbmFuZC9mZnNwb3J0LmM6NDk5OmVycm9yOiBpbXBsaWNpdCBkZWNs
-YXJhdGlvbiBvZg0KPmZ1bmN0aW9uICdlbHZfbmV4dF9yZXF1ZXN0Jw0KPj4gPj4gZHJpdmVycy9z
-dGFnaW5nL21yc3RfbmFuZC9mZnNwb3J0LmM6NTE3OmVycm9yOiBpbXBsaWNpdCBkZWNsYXJhdGlv
-biBvZg0KPmZ1bmN0aW9uICdlbmRfcmVxdWVzdCcNCj4+ID4+IGRyaXZlcnMvc3RhZ2luZy9tcnN0
-X25hbmQvZmZzcG9ydC5jOjczODplcnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24gb2YNCj5mdW5j
-dGlvbiAnYmxrX3F1ZXVlX2hhcmRzZWN0X3NpemUnDQo+PiA+DQo+PiA+IENhbiBJIGdldCB5b3Vy
-IC5jb25maWcgZm9yIHRoaXM/ICBJdCB3b3JrcyBoZXJlIHdpdGggYSAiZGVmYXVsdCIgb25lLg0K
-Pj4NCj4+IGF0dGFjaGVkIChmb3IgbXJzdF9uYW5kL2Zmc3BvcnQuYyBidWlsZCBlcnJvcnMpDQo+
-DQo+QWgsIHRoYW5rcywgZmlndXJlZCBpdCBvdXQuDQo+DQo+R2FvLCB0aGlzIGxvb2tzIGxpa2Ug
-YSBwcm9ibGVtIGluIHlvdXIgZmZzcG9ydC5jIGNvZGUuICBJdCBpc24ndCB1cCB0bw0KPmRhdGUg
-d2l0aCB0aGUgMi42LjMwLXJjOCBrZXJuZWwgdHJlZS4gIENhcmUgdG8gc2VuZCBtZSBhIGZvbGxv
-dy1vbiBwYXRjaA0KPnRvIGZpeCB0aGlzIHVwPw0KPg0KPnRoYW5rcywNCj4NCj5ncmVnIGstaA0K
+--Signature=_Thu__4_Jun_2009_12_04_35_+1000_GGWK8lL6ZkW_1Kdu
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Pierre,
+
+Today's linux-next build (powerpc_ppc64_defconfig) failed like this:
+
+drivers/misc/Kconfig:238: can't open file "drivers/misc/cb710/Kconfig"
+
+Caused by commit f8d1918a2e7adbfdde0efc1a9a22cca3d5c5cae9 ("mmc: Driver
+for CB710/720 memory card reader (MMC part)").
+
+I have used the version of the mmc tree from next-20090603 for today.
+
+Please build test what you are submitting to linux-next.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__4_Jun_2009_12_04_35_+1000_GGWK8lL6ZkW_1Kdu
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkonK7MACgkQjjKRsyhoI8ypGwCaAwAw4zjm4lxi2IA2olaA2M60
+Tr0AoJqpq4tWmpoDvJiidB3qx98MZWh8
+=ccfx
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__4_Jun_2009_12_04_35_+1000_GGWK8lL6ZkW_1Kdu--
