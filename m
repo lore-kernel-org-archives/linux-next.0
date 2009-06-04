@@ -1,42 +1,71 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: Re: linux-next: md tree build failure
-Date: Thu, 04 Jun 2009 00:17:04 -0400
-Message-ID: <yq1ws7sljjz.fsf@sermon.lab.mkp.net>
-References: <20090525153346.758483fc.sfr@canb.auug.org.au>
-	<20090525061552.GH11363@kernel.dk>
-	<20090601144218.26810ec8.sfr@canb.auug.org.au>
-	<yq163fga654.fsf@sermon.lab.mkp.net>
-	<39efa6d3788eec04b0bc86b02d988c8f.squirrel@neil.brown.name>
-	<yq1prdm6jn1.fsf@sermon.lab.mkp.net>
-	<18983.18515.445191.401600@notabene.brown>
+From: Pierre Ossman <drzeus-list@drzeus.cx>
+Subject: Re: linux-next: mmc tree build failure
+Date: Thu, 4 Jun 2009 07:39:19 +0200
+Message-ID: <20090604073919.6422358d@mjolnir.ossman.eu>
+References: <20090604120435.bc32b890.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=PGP-SHA1; protocol="application/pgp-signature"; boundary="=_freyr.ossman.eu-4523-1244093964-0001-2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:25754 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750724AbZFDER1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Jun 2009 00:17:27 -0400
-In-Reply-To: <18983.18515.445191.401600@notabene.brown> (Neil Brown's message
-	of "Thu, 4 Jun 2009 14:06:43 +1000")
+Received: from 82-117-125-11.tcdsl.calypso.net ([82.117.125.11]:36466 "EHLO
+	smtp.ossman.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750923AbZFDFjY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 4 Jun 2009 01:39:24 -0400
+In-Reply-To: <20090604120435.bc32b890.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Neil Brown <neilb@suse.de>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Jens Axboe <jens.axboe@oracle.com>, linux-next@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,  =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
 
->>>>> "Neil" == Neil Brown <neilb@suse.de> writes:
+This is a MIME-formatted message.  If you see this text it means that your
+E-mail software does not support MIME-formatted messages.
 
-Neil> OK, I've just rebased my for-next tree against Jens' for-next, and
-Neil> fixed the compile error with this incremental patch
+--=_freyr.ossman.eu-4523-1244093964-0001-2
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Excellent - thanks for doing this!
+On Thu, 4 Jun 2009 12:04:35 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
+> Hi Pierre,
+>=20
+> Today's linux-next build (powerpc_ppc64_defconfig) failed like this:
+>=20
+> drivers/misc/Kconfig:238: can't open file "drivers/misc/cb710/Kconfig"
+>=20
+> Caused by commit f8d1918a2e7adbfdde0efc1a9a22cca3d5c5cae9 ("mmc: Driver
+> for CB710/720 memory card reader (MMC part)").
+>=20
+> I have used the version of the mmc tree from next-20090603 for today.
+>=20
+> Please build test what you are submitting to linux-next.
 
-Neil> - if (mddev->chunk_size % mddev->queue->hardsect_size) {
-Neil> + if (mddev->chunk_size % queue_logical_block_size(mddev->queue))
+Sorry, it seems I had some files in my working that weren't properly
+added. :/
 
-Neil> I assume that is the preferred usage?
+Rgds
+--=20
+     -- Pierre Ossman
 
-Yup.
+  Linux kernel, MMC maintainer        http://www.kernel.org
+  rdesktop, core developer          http://www.rdesktop.org
+  TigerVNC, core developer          http://www.tigervnc.org
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+  WARNING: This correspondence is being monitored by the
+  Swedish government. Make sure your server uses encryption
+  for SMTP traffic and consider using PGP for end-to-end
+  encryption.
+
+--=_freyr.ossman.eu-4523-1244093964-0001-2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.11 (GNU/Linux)
+
+iEYEARECAAYFAkonXgoACgkQ7b8eESbyJLjvGwCfRnWg0jgXhqW+CUCDuoQN6RAt
+kCEAnjiVMtQYjbgkcO2tZ0QyILg4oZvA
+=WMnG
+-----END PGP SIGNATURE-----
+
+--=_freyr.ossman.eu-4523-1244093964-0001-2--
