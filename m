@@ -1,66 +1,71 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: [PATCH v3] MFD: PCAP driver
-Date: Fri, 5 Jun 2009 00:54:49 +0200
-Message-ID: <20090604225447.GA4806@sortiz.org>
-References: <1243399356.2263.46.camel@brutus> <10f740e80906030738x3b42de18n189367b28a730c56@mail.gmail.com> <1244074856.4767.26.camel@brutus>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: ubi tree build failure
+Date: Fri, 5 Jun 2009 10:58:42 +1000
+Message-ID: <20090605105842.de948d0b.sfr@canb.auug.org.au>
+References: <20090603184408.49c7fb1f.sfr@canb.auug.org.au>
+	<4A265DF6.3070602@nokia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__5_Jun_2009_10_58_42_+1000_C28lS8+=phlo8GoO"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.89]:6278 "EHLO
-	fmsmga101.fm.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751860AbZFDWwk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Jun 2009 18:52:40 -0400
-Content-Disposition: inline
-In-Reply-To: <1244074856.4767.26.camel@brutus>
+Received: from chilli.pcug.org.au ([203.10.76.44]:45228 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751364AbZFEA6p (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 4 Jun 2009 20:58:45 -0400
+In-Reply-To: <4A265DF6.3070602@nokia.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Ribeiro <drwyrm@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel <linux-kernel@vger.kernel.org>, Harald Welte <laforge@gnumonks.org>, Philipp Zabel <philipp.zabel@gmail.com>, openezx-devel <openezx-devel@lists.openezx.org>, linux-next <linux-next@vger.kernel.org>
+To: Artem.Bityutskiy@nokia.com
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dmitry Pervushin <dpervushin@embeddedalley.com>
 
-Hi Daniel,
+--Signature=_Fri__5_Jun_2009_10_58_42_+1000_C28lS8+=phlo8GoO
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 03, 2009 at 09:20:56PM -0300, Daniel Ribeiro wrote:
-> Em Qua, 2009-06-03 =E0s 16:38 +0200, Geert Uytterhoeven escreveu:=20
-> > > +config EZX_PCAP
-> > > +       bool "PCAP Support"
-> > > +       depends on SPI_MASTER
+Hi Artem,
+
+On Wed, 03 Jun 2009 14:26:46 +0300 Artem Bityutskiy <Artem.Bityutskiy@nokia=
+.com> wrote:
+>
+> Stephen Rothwell wrote:
+> > Today's linux-next build (powerpc ppc44x_defconfig) failed like this:
 > >=20
-> > It also has to depend on GENERIC_HARDIRQS, as it needs set_irq_type=
-():
+> > drivers/mtd/ubi/gluebi.c: In function 'gluebi_get_device':
+> > drivers/mtd/ubi/gluebi.c:126: error: implicit declaration of function '=
+IS_ERR'
+> > drivers/mtd/ubi/gluebi.c:129: error: implicit declaration of function '=
+PTR_ERR'
 >=20
-> Hi Geert, sorry for this. :)
->=20
->=20
->=20
-> Fix EZX_PCAP dependency
->=20
-> Signed-off-by: Daniel Ribeiro <drwyrm@gmail.com>
-Thanks. Pushed to my for-next branch.
-I fixed it on the original patch, to avoid having 2 commits.
+> It is strange that I do not see these errors on my x86_86
 
-Cheers,
-Samuel.
+The above was a build for a 32 bit powerpc platform.  This is an instance
+of a general issue when an API is used without explicitly including the
+header files that define the API.  The needed header file may be included
+by some convoluted path that depends on the architecture being built or
+even the particular configuration.
 
+> Any suggestions what I could do to reproduce the build issues?
+> I'll try at least now to build this on x86 (32-bit).=20
 
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 060ee14..6557d60 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -243,7 +243,7 @@ config PCF50633_GPIO
-> =20
->  config EZX_PCAP
->  	bool "PCAP Support"
-> -	depends on SPI_MASTER
-> +	depends on GENERIC_HARDIRQS && SPI_MASTER
->  	help
->  	  This enables the PCAP ASIC present on EZX Phones. This is
->  	  needed for MMC, TouchScreen, Sound, USB, etc..
->=20
-> --=20
-> Daniel Ribeiro
->=20
+Always directly include the header files for APIs you use ...
 
+I see that this particular problem is now fixed, thanks.
 --=20
-Intel Open Source Technology Centre
-http://oss.intel.com/
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__5_Jun_2009_10_58_42_+1000_C28lS8+=phlo8GoO
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkoobcIACgkQjjKRsyhoI8wQSwCgqpoTK7xf/oZmBv8vm0yorBLB
+vhwAnignMO+1LPpU1xWqwNUAM+Tl7eLp
+=Gg+Y
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__5_Jun_2009_10_58_42_+1000_C28lS8+=phlo8GoO--
