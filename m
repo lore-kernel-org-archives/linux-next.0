@@ -1,62 +1,97 @@
 From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Subject: Re: [BUILD FAILURE 01/04] Next June 04:PPC64 randconfig
-	[drivers/staging/comedi/drivers.o]
-Date: Sat, 06 Jun 2009 09:31:40 +1000
-Message-ID: <1244244700.31984.15.camel@pasglop>
+ [drivers/staging/comedi/drivers.o]
+Date: Sat, 06 Jun 2009 09:32:29 +1000
+Message-ID: <1244244749.31984.16.camel@pasglop>
 References: <20090605182625.24093.7808.sendpatchset@elm3a191.beaverton.ibm.com>
-	<20090605182618.GA11853@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <20090605182618.GA11853@kroah.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-To: Greg KH <greg@kroah.com>
-Cc: Sachin P Sant <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Kernel <linux-kernel@vger.kernel.org>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Linux-Next <linux-next@vger.kernel.org>, Paul Mackerras <paulus@samba.org>, Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Subrata Modak <subrata@linux.vnet.ibm.com>
-List-Id: linux-next.vger.kernel.org
-
-On Fri, 2009-06-05 at 11:26 -0700, Greg KH wrote:
-> Should the comedi layer just not be using PAGE_KERNEL_NOCACHE here?  I
-> can't believe that we need to do something like this in a driver.  What
-> should the proper fix for this be?
-
-Actualy, I think powerpc -had- PAGE_KERNEL_NOCACHE and I removed it ...
-Oh well... My understanding was that the exposed interface isn't that
-but instead pgprot_noncached().
-
-Nowadays we provide these on ppc:
-
-#define pgprot_noncached(prot)    (__pgprot((pgprot_val(prot) & ~_PAGE_CACHE_CTL) | \
-                                            _PAGE_NO_CACHE | _PAGE_GUARDED))
-
-#define pgprot_noncached_wc(prot) (__pgprot((pgprot_val(prot) & ~_PAGE_CACHE_CTL) | \
-                                            _PAGE_NO_CACHE))
-
-#define pgprot_cached(prot)       (__pgprot((pgprot_val(prot) & ~_PAGE_CACHE_CTL) | \
-                                            _PAGE_COHERENT))
-
-#define pgprot_cached_wthru(prot) (__pgprot((pgprot_val(prot) & ~_PAGE_CACHE_CTL) | \
-                                            _PAGE_COHERENT | _PAGE_WRITETHRU))
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from gate.crashing.org ([63.228.1.57]:55244 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752399AbZFEXdZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 5 Jun 2009 19:33:25 -0400
+In-Reply-To: <20090605182625.24093.7808.sendpatchset@elm3a191.beaverton.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Subrata Modak <subrata@linux.vnet.ibm.com>
+Cc: Paul Mackerras <paulus@samba.org>, Greg KH <greg@kroah.com>, Sachin P Sant <sachinp@linux.vnet.ibm.com>, Linux-Kernel <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Geert Uytterhoeven <geert@linux-m68k.org>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Michael Ellerman <michael@ellerman.id.au>
 
 
-Now, of course, expect interesting problems if you use it in vmap, since
-you are mapping struct pages, you are effectively mapping memory.
+> I tried this. But, with some catch. =E2=80=98PAGE_KERNEL_NOCACHE=E2=80=
+=99 seems to be the
+> choice for majority of architectures like frv, m32r, sh, x86, etc, as=
+ Geert
+> mentions below. However, i believe POWERPC defines it as =E2=80=98PAG=
+E_KERNEL_NC=E2=80=98
+> found at arch/powerpc/include/asm/pte-common.h.
+>=20
+> Paul/Banjamin,
+> Can you please confirm this ?
 
-On some platforms, it's absolutely illegal to map memory non-cacheable while
-this memory is mapped cacheable elsewhere and can be fatal. But the pages you
-are mapping here, I suppose, are also part of the linear mapping which is ...
-cacheable.
+Read my reply to Greg. Why the heck are you trying to map memory
+non-cacheable in the first place ?
 
-Why would you need that non-cacheable mapping in the first place ? If it's
-for DMA, it's the wrong interface I believe....
-
-Cheers,
+Cheers
 Ben.
+
+> The below patch fixes the build error.
+>=20
+> Signed-off-by: Subrata Modak <subrata@linux.vnet.ibm.com>
+> ---
+>=20
+> --- linux-2.6.30-rc8/drivers/staging/comedi/drivers.c.orig	2009-06-05=
+ 12:46:35.000000000 -0500
+> +++ linux-2.6.30-rc8/drivers/staging/comedi/drivers.c	2009-06-05 13:0=
+3:31.000000000 -0500
+> @@ -43,9 +43,13 @@
+>  #include <linux/vmalloc.h>
+>  #include <linux/cdev.h>
+>  #include <linux/dma-mapping.h>
+> -
+>  #include <asm/io.h>
+>  #include <asm/system.h>
+> +#ifdef __powerpc64__
+> +#include <asm/pte-common.h>
+> +#else
+> +#include <asm/pgtable.h>
+> +#endif
+> =20
+>  static int postconfig(struct comedi_device *dev);
+>  static int insn_rw_emulate_bits(struct comedi_device *dev, struct co=
+medi_subdevice *s,
+> @@ -492,8 +496,13 @@ int comedi_buf_alloc(struct comedi_devic
+>  		}
+>  		if (i =3D=3D n_pages) {
+>  			async->prealloc_buf =3D
+> +#ifdef __powerpc64__
+> +				vmap(pages, n_pages, VM_MAP,
+> +				PAGE_KERNEL_NC);
+> +#else
+>  				vmap(pages, n_pages, VM_MAP,
+>  				PAGE_KERNEL_NOCACHE);
+> +#endif
+>  		}
+>  		if (pages) {
+>  			vfree(pages);
+>=20
+> ---
+> Regards--
+> Subrata
+>=20
+> > PAGE_KERNEL_NOCACHE is defined on a few architectures only, namely
+> > frv, m32r, mn10300, sh, and x86[*]. On all others, it will fail.
+> >=20
+> > [*] Interestingly, sparc refers to it in one of its include files,
+> > without providing a
+> >     definition, Probably that code is unused.
+> >=20
+> > Gr{oetje,eeting}s,
+> >=20
+> > 						Geert
+> >=20
+> > --
+> > Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@li=
+nux-m68k.org
+> >=20
