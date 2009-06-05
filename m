@@ -1,91 +1,80 @@
-From: Subrata Modak <subrata@linux.vnet.ibm.com>
-Subject: Re: [BUILD FAILURE 02/04] Next June 04:PPC64 randconfig [drivers/usb/host/ohci-hcd.o]
-Date: Fri, 05 Jun 2009 13:26:51 -0500
-Message-ID: <20090605182651.24094.36577.sendpatchset@elm3a191.beaverton.ibm.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [BUILD FAILURE 01/04] Next June 04:PPC64 randconfig
+	[drivers/staging/comedi/drivers.o]
+Date: Fri, 5 Jun 2009 11:26:18 -0700
+Message-ID: <20090605182618.GA11853@kroah.com>
+References: <20090605182625.24093.7808.sendpatchset@elm3a191.beaverton.ibm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e1.ny.us.ibm.com ([32.97.182.141]:41559 "EHLO e1.ny.us.ibm.com"
+Received: from kroah.org ([198.145.64.141]:43855 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752651AbZFES04 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 5 Jun 2009 14:26:56 -0400
+	id S1750876AbZFESpb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 5 Jun 2009 14:45:31 -0400
+Content-Disposition: inline
+In-Reply-To: <20090605182625.24093.7808.sendpatchset@elm3a191.beaverton.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-usb@vger.kernel.org, David Brownell <david-b@pacbell.net>, David Brownell <dbrownell@users.sourceforge.net>, Arnd Bergmann <arnd@arndb.de>
-Cc: Sachin P Sant <sachinp@linux.vnet.ibm.com>, Kumar Gala <galak@kernel.crashing.org>, Linux-Kernel <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>, Linux-Next <linux-next@vger.kernel.org>, Jon Smirl <jonsmirl@gmail.com>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Roman Weissgaerber <weissg@vienna.at>, Stephen Rothwell <sfr@canb.auug.org.au>, Subrata Modak <subrata@linux.vnet.ibm.com>, kernel@wantstofly.org
+To: Subrata Modak <subrata@linux.vnet.ibm.com>
+Cc: Paul Mackerras <paulus@samba.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Sachin P Sant <sachinp@linux.vnet.ibm.com>, Linux-Kernel <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Geert Uytterhoeven <geert@linux-m68k.org>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Michael Ellerman <michael@ellerman.id.au>
 
->On Thu, 2009-06-04 at 10:07 -0400, Jon Smirl wrote:
->On Thu, Jun 4, 2009 at 9:31 AM, Subrata Modak
-> <subrata@linux.vnet.ibm.com> wrote:
-> > CC      drivers/usb/host/ohci-hcd.o
-> > In file included from drivers/usb/host/ohci-hcd.c:1060:
-> > drivers/usb/host/ohci-ppc-of.c:242:2: error: #error "No endianess selected for ppc-of-ohci"
-> > make[3]: *** [drivers/usb/host/ohci-hcd.o] Error 1
-> > make[2]: *** [drivers/usb/host] Error 2
-> > make[1]: *** [drivers/usb] Error 2
-> > make: *** [drivers] Error 2
-> >
-> > I reported this earlier, and there were some discussions:
-> > http://groups.google.co.kr/group/linux.kernel/browse_thread/thread/edff9d5572d3d225
-> 
-> Proposed patch by Arnd should fix this. It has not been merged.
-> http://lkml.org/lkml/2009/4/22/49
+On Fri, Jun 05, 2009 at 01:26:25PM -0500, Subrata Modak wrote:
+> >On Thu, 2009-06-04 at 22:40 +0200, Geert Uytterhoeven wrote:
+> >On Thu, Jun 4, 2009 at 20:07, Greg KH <greg@kroah.com> wrote:
+> > > On Thu, Jun 04, 2009 at 07:01:32PM +0530, Subrata Modak wrote:
+> > >> CC [M]  drivers/staging/comedi/drivers.o
+> > >> drivers/staging/comedi/drivers.c: In function =E2=80=98comedi_bu=
+f_alloc=E2=80=99:
+> > >> drivers/staging/comedi/drivers.c:496: error: =E2=80=98PAGE_KERNE=
+L_NOCACHE=E2=80=99 undeclared (first use in this function)
+> > >> drivers/staging/comedi/drivers.c:496: error: (Each undeclared id=
+entifier is reported only once
+> > >> drivers/staging/comedi/drivers.c:496: error: for each function i=
+t appears in.)
+> > >> make[3]: *** [drivers/staging/comedi/drivers.o] Error 1
+> > >> make[2]: *** [drivers/staging/comedi] Error 2
+> > >> make[1]: *** [drivers/staging] Error 2
+> > >> make: *** [drivers] Error 2
+> > >>
+> > >> Is it still normal to expect this failure ?
+> > >
+> > > No.
+> > >
+> > >> I reported them long back during April:
+> > >> http://www.gossamer-threads.com/lists/linux/kernel/1065227,
+> > >
+> > > Yes, and I took some patches that were supposed to fix this.  I c=
+an't
+> > > duplicate this here, care to send a patch that would fix it?
+>=20
+> I tried this. But, with some catch. =E2=80=98PAGE_KERNEL_NOCACHE=E2=80=
+=99 seems to be the
+> choice for majority of architectures like frv, m32r, sh, x86, etc, as=
+ Geert
+> mentions below. However, i believe POWERPC defines it as =E2=80=98PAG=
+E_KERNEL_NC=E2=80=98
+> found at arch/powerpc/include/asm/pte-common.h.
+>=20
+> Paul/Banjamin,
+> Can you please confirm this ?
+>=20
+> The below patch fixes the build error.
 
-Correct, it fixes the issue. However, since few changes might have gone
-to the Kconfig, the patch does not apply cleanly. Below is the patch, just
-a retake of the earlier one, but on the latest code. 
+Ick, that's a mess.
 
-David,
+> +#ifdef __powerpc64__
+> +				vmap(pages, n_pages, VM_MAP,
+> +				PAGE_KERNEL_NC);
+> +#else
+>  				vmap(pages, n_pages, VM_MAP,
+>  				PAGE_KERNEL_NOCACHE);
+> +#endif
 
-Can you please pickup the following patch ?
+Should the comedi layer just not be using PAGE_KERNEL_NOCACHE here?  I
+can't believe that we need to do something like this in a driver.  What
+should the proper fix for this be?
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>,
-Resent-by: Subrata Modak <subrata@linux.vnet.ibm.com>
----
+thanks,
 
---- linux-2.6.30-rc8/drivers/usb/host/Kconfig.orig	2009-06-05 10:31:30.000000000 -0500
-+++ linux-2.6.30-rc8/drivers/usb/host/Kconfig	2009-06-05 10:37:53.000000000 -0500
-@@ -181,26 +181,26 @@ config USB_OHCI_HCD_PPC_SOC
- 	  Enables support for the USB controller on the MPC52xx or
- 	  STB03xxx processor chip.  If unsure, say Y.
- 
--config USB_OHCI_HCD_PPC_OF
--	bool "OHCI support for PPC USB controller on OF platform bus"
--	depends on USB_OHCI_HCD && PPC_OF
--	default y
--	---help---
--	  Enables support for the USB controller PowerPC present on the
--	  OpenFirmware platform bus.
--
- config USB_OHCI_HCD_PPC_OF_BE
--	bool "Support big endian HC"
--	depends on USB_OHCI_HCD_PPC_OF
--	default y
-+	bool "OHCI support for OF platform bus (big endian)"
-+	depends on USB_OHCI_HCD && PPC_OF
- 	select USB_OHCI_BIG_ENDIAN_DESC
- 	select USB_OHCI_BIG_ENDIAN_MMIO
-+	---help---
-+	Enables support for big-endian USB controllers present on the
-+	OpenFirmware platform bus.
- 
- config USB_OHCI_HCD_PPC_OF_LE
--	bool "Support little endian HC"
--	depends on USB_OHCI_HCD_PPC_OF
--	default n
-+	bool "OHCI support for OF platform bus (little endian)"
-+	depends on USB_OHCI_HCD && PPC_OF
- 	select USB_OHCI_LITTLE_ENDIAN
-+	---help---
-+	Enables support for little-endian USB controllers present on the
-+	OpenFirmware platform bus.
-+
-+	config USB_OHCI_HCD_PPC_OF
-+	bool
-+	default USB_OHCI_HCD_PPC_OF_BE || USB_OHCI_HCD_PPC_OF_LE
- 
- config USB_OHCI_HCD_PCI
- 	bool "OHCI support for PCI-bus USB controllers"
-
----
-Regards--
-Subrata
->
+greg k-h
