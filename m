@@ -1,114 +1,91 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: [PATCH next] errno.h: define ERFKILL
-Date: Fri, 05 Jun 2009 13:30:24 +0200
-Message-ID: <1244201424.2653.3.camel@johannes.local>
-References: <1244196408-12771-1-git-send-email-a.beregalov@gmail.com>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: [Powerpc/SLQB] Next June 06 : BUG during scsi initialization
+Date: Fri, 05 Jun 2009 17:34:56 +0530
+Message-ID: <4A2909E8.6000507@in.ibm.com>
+References: <20090511161442.3e9d9cb9.sfr@canb.auug.org.au> <4A081002.4050802@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-XuF1SHK8P2frEKS5GiHQ"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xc.sipsolutions.net ([83.246.72.84]:44330 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750949AbZFELa3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Jun 2009 07:30:29 -0400
-In-Reply-To: <1244196408-12771-1-git-send-email-a.beregalov@gmail.com>
+Received: from e28smtp06.in.ibm.com ([59.145.155.6]:56262 "EHLO
+	e28smtp06.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750893AbZFEME5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Jun 2009 08:04:57 -0400
+Received: from d28relay02.in.ibm.com (d28relay02.in.ibm.com [9.184.220.59])
+	by e28smtp06.in.ibm.com (8.13.1/8.13.1) with ESMTP id n55C4vqC026463
+	for <linux-next@vger.kernel.org>; Fri, 5 Jun 2009 17:34:57 +0530
+Received: from d28av05.in.ibm.com (d28av05.in.ibm.com [9.184.220.67])
+	by d28relay02.in.ibm.com (8.13.8/8.13.8/NCO v9.2) with ESMTP id n55C4vD4884858
+	for <linux-next@vger.kernel.org>; Fri, 5 Jun 2009 17:34:57 +0530
+Received: from d28av05.in.ibm.com (loopback [127.0.0.1])
+	by d28av05.in.ibm.com (8.13.1/8.13.3) with ESMTP id n55C4usQ006100
+	for <linux-next@vger.kernel.org>; Fri, 5 Jun 2009 22:04:57 +1000
+In-Reply-To: <4A081002.4050802@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: linville@tuxdriver.com, linux-next@vger.kernel.org, davem@davemloft.net, ralf@linux-mips.org, kyle@mcmartin.ca, rth@twiddle.net, ink@jurassic.park.msu.ru
+To: Nick Piggin <npiggin@suse.de>, Pekka Enberg <penberg@cs.helsinki.fi>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org
 
+Sachin Sant wrote:
+> Today's Next tree failed to boot on a Power6 box with following BUG :
+>
+> BUG: spinlock bad magic on CPU#1, modprobe/63
+> Unable to handle kernel paging request for data at address 0xffffc994838
+> Faulting instruction address: 0xc00000000035f5a8
+> Oops: Kernel access of bad area, sig: 11 [#1]
+> SMP NR_CPUS=1024 DEBUG_PAGEALLOC NUMA pSeries
+> Modules linked in: scsi_mod(+)
+> NIP: c00000000035f5a8 LR: c00000000035f58c CTR: 0000000000136f8c
+> REGS: c0000000c7d03500 TRAP: 0300   Not tainted  
+> (2.6.30-rc5-autotest-next-20090511)
+> MSR: 8000000000009032 <EE,ME,IR,DR>  CR: 28222484  XER: 0000000f
+> DAR: 00000ffffc994838, DSISR: 0000000040000000
+> TASK = c0000000c7cf0a80[63] 'modprobe' THREAD: c0000000c7d00000 CPU: 1
+> GPR00: c00000000035f58c c0000000c7d03780 c000000000aaeed8 
+> 0000000000000031 GPR04: 0000000000000000 00000000585cf4e0 
+> 0000000000673580 80000000565a6cc0 GPR08: 0000000000000000 
+> c0000000009ebf50 0000000000000000 c0000000009ebf38 GPR12: 
+> 0000000028222482 c000000000b82600 0000000000000000 0000000000000000 
+> GPR16: 0000000000000000 0000000000000000 0000000000000000 
+> 0000000000000000 GPR20: 0000000000000018 ffffffffffffffff 
+> c0000000009bbe40 0000000000000010 GPR24: 0000000000210d00 
+> c0000000c6caff80 c0000000dfc732a0 c000000000f61380 GPR28: 
+> c0000000007c8350 c0000000008a4280 c000000000a2f928 00000ffffc994550 
+> NIP [c00000000035f5a8] .spin_bug+0x90/0xd4
+> LR [c00000000035f58c] .spin_bug+0x74/0xd4
+> Call Trace:
+> [c0000000c7d03780] [c00000000035f58c] .spin_bug+0x74/0xd4 (unreliable)
+> [c0000000c7d03810] [c00000000035f890] ._raw_spin_lock+0x48/0x184
+> [c0000000c7d038b0] [c0000000005d67d8] ._spin_lock+0x10/0x24
+> [c0000000c7d03920] [c00000000013fbdc] .__slab_alloc_page+0x344/0x3cc
+> [c0000000c7d039e0] [c000000000141168] .kmem_cache_alloc+0x13c/0x21c
+> [c0000000c7d03aa0] [c000000000141b04] .kmem_cache_create+0x294/0x2a8
+> [c0000000c7d03b90] [d000000000ea14cc] .scsi_init_queue+0x38/0x170 
+> [scsi_mod]
+> [c0000000c7d03c20] [d000000000ea13c8] .init_scsi+0x1c/0xe8 [scsi_mod]
+> [c0000000c7d03ca0] [c0000000000092c0] .do_one_initcall+0x80/0x19c
+> [c0000000c7d03d90] [c0000000000c0540] .SyS_init_module+0xe0/0x244
+> [c0000000c7d03e30] [c000000000008534] syscall_exit+0x0/0x40
+> Instruction dump:
+> 7f84e378 e87e8020 38c604d0 e8e902ea 4827fced 60000000 2fbf0000 
+> 80bd0004 409e0010 e8de8028 38e0ffff 4800000c <e8ff02ea> 38df04d0 
+> 7fa4eb78 811d0008 ---[ end trace f725820a6fa9dbb7 ]---
+> /init: line 21:    63 Segmentation fault      modprobe $file
+>
+Nick, Pekka
 
---=-XuF1SHK8P2frEKS5GiHQ
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+I can still recreate this bug on a Power 6 hardware with today's next tree.
+I can recreate this problem at will.
+Let me know if i can help in debugging this problem.
 
-On Fri, 2009-06-05 at 14:06 +0400, Alexander Beregalov wrote:
-> Commit 1f87f7d3 (cfg80211: add rfkill support) added ERFKILL
-> to asm-generic/errno.h, but alpha, mips, parisc and sparc use
-> their own numbering scheme and do not include asm-generic/errno.h.
-> We need to add definition of ERFKILL for them.
+Thanks
+-Sachin
 
-Oh, I wasn't aware of that, thanks.
+-- 
 
-johannes
-
-> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
-> ---
->  arch/alpha/include/asm/errno.h  |    2 ++
->  arch/mips/include/asm/errno.h   |    2 ++
->  arch/parisc/include/asm/errno.h |    1 +
->  arch/sparc/include/asm/errno.h  |    2 ++
->  4 files changed, 7 insertions(+), 0 deletions(-)
->=20
-> diff --git a/arch/alpha/include/asm/errno.h b/arch/alpha/include/asm/errn=
-o.h
-> index 69e2655..98099bd 100644
-> --- a/arch/alpha/include/asm/errno.h
-> +++ b/arch/alpha/include/asm/errno.h
-> @@ -120,4 +120,6 @@
->  #define	EOWNERDEAD	136	/* Owner died */
->  #define	ENOTRECOVERABLE	137	/* State not recoverable */
-> =20
-> +#define	ERFKILL		138	/* Operation not possible due to RF-kill */
-> +
->  #endif
-> diff --git a/arch/mips/include/asm/errno.h b/arch/mips/include/asm/errno.=
-h
-> index 3c0d840..a0efc73 100644
-> --- a/arch/mips/include/asm/errno.h
-> +++ b/arch/mips/include/asm/errno.h
-> @@ -119,6 +119,8 @@
->  #define	EOWNERDEAD	165	/* Owner died */
->  #define	ENOTRECOVERABLE	166	/* State not recoverable */
-> =20
-> +#define	ERFKILL		167	/* Operation not possible due to RF-kill */
-> +
->  #define EDQUOT		1133	/* Quota exceeded */
-> =20
->  #ifdef __KERNEL__
-> diff --git a/arch/parisc/include/asm/errno.h b/arch/parisc/include/asm/er=
-rno.h
-> index e2f3ddc..9992abd 100644
-> --- a/arch/parisc/include/asm/errno.h
-> +++ b/arch/parisc/include/asm/errno.h
-> @@ -120,5 +120,6 @@
->  #define EOWNERDEAD	254	/* Owner died */
->  #define ENOTRECOVERABLE	255	/* State not recoverable */
-> =20
-> +#define	ERFKILL		256	/* Operation not possible due to RF-kill */
-> =20
->  #endif
-> diff --git a/arch/sparc/include/asm/errno.h b/arch/sparc/include/asm/errn=
-o.h
-> index a9ef172..4e2bc49 100644
-> --- a/arch/sparc/include/asm/errno.h
-> +++ b/arch/sparc/include/asm/errno.h
-> @@ -110,4 +110,6 @@
->  #define	EOWNERDEAD	132	/* Owner died */
->  #define	ENOTRECOVERABLE	133	/* State not recoverable */
-> =20
-> +#define	ERFKILL		134	/* Operation not possible due to RF-kill */
-> +
->  #endif
-
---=-XuF1SHK8P2frEKS5GiHQ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABAgAGBQJKKQHMAAoJEODzc/N7+Qmax/AP/Apf5N5y4kLfulp/IGXkhQhc
-dtzT7Jeq3J7cWzJC9K0QGQUsp7jY0HwS9btacy9UD+xxKQ1MkePsft8t0xXZYDFj
-TXGSoDxCJz6LjA+h90E42wifoeqlawV7x+wd0CK55FFMzhBuUVBHuhbV6IYpaCrq
-jVGlM1f+ayhm0n8+zS8a4Ao+j6txNrfnnDTk8LEtR8SV2gwZ1f/JADzqxTAwI5Fc
-5uVBqF47vi2X7sBomX3oGkJqePQJyOFTbJcT9oOOVpZJuC27HiQ8j4IVMIpegj4v
-TAylCbK6kCE/xUa+x7QiIRkrWIXOMIYf+9z96fBMC0shL9QZASNNDNL2JJCwg7N0
-0bVbohjaEF0043mVulM+2sYFYhGqFkVqBSB/YIyRiajH3nB2fWPdpVZbx91eP+5O
-Kj+PcZ0m8OFUJbVocHgM5YUlTFBeGefPwEB4vWeWt/cA80zojy4DZriy9nbpGH1q
-Bs7D32dvZ4bt1rdGSIpjh7F71mEK8VP28ZycxJmkkHAV8TdYabLdamimd9jtyvIC
-1Xi43tafZYwVrhrI3cPnFA1ITcjQNzuvrMlhNx2liEf0Gh9Uj2GNOPnlY0X2oE6e
-JPGyh5X1fA5nlNVm6G2W51Ame4gazoz4Zbfa4PJ9UX/WntOiY0KLkQACxlFL5BIf
-AdKDRMoiB2zq1FISZ17r
-=JTUj
------END PGP SIGNATURE-----
-
---=-XuF1SHK8P2frEKS5GiHQ--
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
