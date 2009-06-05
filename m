@@ -1,24 +1,77 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH] i2c: Don't advertise i2c functions when not available
-Date: Fri, 5 Jun 2009 09:42:26 +0100
-Message-ID: <20090605084226.GA17158@rakim.wolfsonmicro.main>
-References: <20090527070850.GA11221@linux-sh.org> <20090527091831.26b60d6d@hyperion.delvare> <20090527120140.GC1970@sirena.org.uk> <20090602091229.0810f54b@hyperion.delvare> <20090602093431.GA19390@rakim.wolfsonmicro.main> <20090605101330.2f93e9ab@hyperion.delvare>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20090605101330.2f93e9ab-ig7AzVSIIG7kN2dkZ6Wm7A@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Cc: Paul Mundt <lethal-M7jkjyW5wf5g9hUCZPvPmw@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: [PATCH next] errno.h: define ERFKILL
+Date: Fri,  5 Jun 2009 14:06:48 +0400
+Message-ID: <1244196408-12771-1-git-send-email-a.beregalov@gmail.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bw0-f213.google.com ([209.85.218.213]:43988 "EHLO
+	mail-bw0-f213.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752008AbZFELSt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Jun 2009 07:18:49 -0400
+Received: by bwz9 with SMTP id 9so1410667bwz.37
+        for <linux-next@vger.kernel.org>; Fri, 05 Jun 2009 04:18:50 -0700 (PDT)
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: johannes@sipsolutions.net, linville@tuxdriver.com, linux-next@vger.kernel.org
+Cc: davem@davemloft.net, ralf@linux-mips.org, kyle@mcmartin.ca, rth@twiddle.net, ink@jurassic.park.msu.ru, Alexander Beregalov <a.beregalov@gmail.com>
 
-On Fri, Jun 05, 2009 at 10:13:30AM +0200, Jean Delvare wrote:
+Commit 1f87f7d3 (cfg80211: add rfkill support) added ERFKILL
+to asm-generic/errno.h, but alpha, mips, parisc and sparc use
+their own numbering scheme and do not include asm-generic/errno.h.
+We need to add definition of ERFKILL for them.
 
-> Surround i2c function declarations with ifdefs, so that they aren't
-> advertised when i2c-core isn't actually built. That way, drivers using
-> these functions unconditionally will result in an immediate build
-> failure, rather than a late linking failure which is harder to figure
-> out.
+Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+---
+ arch/alpha/include/asm/errno.h  |    2 ++
+ arch/mips/include/asm/errno.h   |    2 ++
+ arch/parisc/include/asm/errno.h |    1 +
+ arch/sparc/include/asm/errno.h  |    2 ++
+ 4 files changed, 7 insertions(+), 0 deletions(-)
 
-Thanks!
+diff --git a/arch/alpha/include/asm/errno.h b/arch/alpha/include/asm/errno.h
+index 69e2655..98099bd 100644
+--- a/arch/alpha/include/asm/errno.h
++++ b/arch/alpha/include/asm/errno.h
+@@ -120,4 +120,6 @@
+ #define	EOWNERDEAD	136	/* Owner died */
+ #define	ENOTRECOVERABLE	137	/* State not recoverable */
+ 
++#define	ERFKILL		138	/* Operation not possible due to RF-kill */
++
+ #endif
+diff --git a/arch/mips/include/asm/errno.h b/arch/mips/include/asm/errno.h
+index 3c0d840..a0efc73 100644
+--- a/arch/mips/include/asm/errno.h
++++ b/arch/mips/include/asm/errno.h
+@@ -119,6 +119,8 @@
+ #define	EOWNERDEAD	165	/* Owner died */
+ #define	ENOTRECOVERABLE	166	/* State not recoverable */
+ 
++#define	ERFKILL		167	/* Operation not possible due to RF-kill */
++
+ #define EDQUOT		1133	/* Quota exceeded */
+ 
+ #ifdef __KERNEL__
+diff --git a/arch/parisc/include/asm/errno.h b/arch/parisc/include/asm/errno.h
+index e2f3ddc..9992abd 100644
+--- a/arch/parisc/include/asm/errno.h
++++ b/arch/parisc/include/asm/errno.h
+@@ -120,5 +120,6 @@
+ #define EOWNERDEAD	254	/* Owner died */
+ #define ENOTRECOVERABLE	255	/* State not recoverable */
+ 
++#define	ERFKILL		256	/* Operation not possible due to RF-kill */
+ 
+ #endif
+diff --git a/arch/sparc/include/asm/errno.h b/arch/sparc/include/asm/errno.h
+index a9ef172..4e2bc49 100644
+--- a/arch/sparc/include/asm/errno.h
++++ b/arch/sparc/include/asm/errno.h
+@@ -110,4 +110,6 @@
+ #define	EOWNERDEAD	132	/* Owner died */
+ #define	ENOTRECOVERABLE	133	/* State not recoverable */
+ 
++#define	ERFKILL		134	/* Operation not possible due to RF-kill */
++
+ #endif
+-- 
+1.6.3.1
