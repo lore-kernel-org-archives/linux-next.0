@@ -1,31 +1,36 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: [PATCH next] errno.h: define ERFKILL
-Date: Fri, 5 Jun 2009 13:17:19 +0100
-Message-ID: <20090605121719.GB26337@linux-mips.org>
-References: <1244196408-12771-1-git-send-email-a.beregalov@gmail.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the usb tree with the ttydev tree
+Date: Fri, 5 Jun 2009 10:42:19 -0700
+Message-ID: <20090605174219.GE6479@kroah.com>
+References: <20090605154118.9e9521f3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from h5.dl5rb.org.uk ([81.2.74.5]:53129 "EHLO h5.dl5rb.org.uk"
+Received: from kroah.org ([198.145.64.141]:48696 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751226AbZFEMdw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 5 Jun 2009 08:33:52 -0400
+	id S1754237AbZFERqe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 5 Jun 2009 13:46:34 -0400
 Content-Disposition: inline
-In-Reply-To: <1244196408-12771-1-git-send-email-a.beregalov@gmail.com>
+In-Reply-To: <20090605154118.9e9521f3.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: johannes@sipsolutions.net, linville@tuxdriver.com, linux-next@vger.kernel.org, davem@davemloft.net, kyle@mcmartin.ca, rth@twiddle.net, ink@jurassic.park.msu.ru
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Alan Cox <alan@lxorguk.ukuu.org.uk>
 
-On Fri, Jun 05, 2009 at 02:06:48PM +0400, Alexander Beregalov wrote:
-
-> Commit 1f87f7d3 (cfg80211: add rfkill support) added ERFKILL
-> to asm-generic/errno.h, but alpha, mips, parisc and sparc use
-> their own numbering scheme and do not include asm-generic/errno.h.
-> We need to add definition of ERFKILL for them.
+On Fri, Jun 05, 2009 at 03:41:18PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+> Today's linux-next merge of the usb tree got a conflict in
+> drivers/usb/serial/kobil_sct.c between commit
+> d6ba273795c1260745197dc93f64c321c80a5ecc ("tty-usb-use-port") from the
+> ttydev tree and commit 8a5870836006ec7dd112082a39e0057b49e5bd91 ("USB:
+> usb-serial: replace shutdown with disconnect, release") from the usb tree.
+> 
+> The latter removed the code (from kobil_shutdown) that the former
+> modified, so I just used the latter.
 
-Acked-by: Ralf Baechle <ralf@linux-mips.org>
+That sounds correct.
 
-  Ralf
+thanks,
+
+greg k-h
