@@ -1,91 +1,31 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: [Powerpc/SLQB] Next June 06 : BUG during scsi initialization
-Date: Fri, 05 Jun 2009 17:34:56 +0530
-Message-ID: <4A2909E8.6000507@in.ibm.com>
-References: <20090511161442.3e9d9cb9.sfr@canb.auug.org.au> <4A081002.4050802@in.ibm.com>
+From: Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [PATCH next] errno.h: define ERFKILL
+Date: Fri, 5 Jun 2009 13:17:19 +0100
+Message-ID: <20090605121719.GB26337@linux-mips.org>
+References: <1244196408-12771-1-git-send-email-a.beregalov@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp06.in.ibm.com ([59.145.155.6]:56262 "EHLO
-	e28smtp06.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750893AbZFEME5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Jun 2009 08:04:57 -0400
-Received: from d28relay02.in.ibm.com (d28relay02.in.ibm.com [9.184.220.59])
-	by e28smtp06.in.ibm.com (8.13.1/8.13.1) with ESMTP id n55C4vqC026463
-	for <linux-next@vger.kernel.org>; Fri, 5 Jun 2009 17:34:57 +0530
-Received: from d28av05.in.ibm.com (d28av05.in.ibm.com [9.184.220.67])
-	by d28relay02.in.ibm.com (8.13.8/8.13.8/NCO v9.2) with ESMTP id n55C4vD4884858
-	for <linux-next@vger.kernel.org>; Fri, 5 Jun 2009 17:34:57 +0530
-Received: from d28av05.in.ibm.com (loopback [127.0.0.1])
-	by d28av05.in.ibm.com (8.13.1/8.13.3) with ESMTP id n55C4usQ006100
-	for <linux-next@vger.kernel.org>; Fri, 5 Jun 2009 22:04:57 +1000
-In-Reply-To: <4A081002.4050802@in.ibm.com>
+Received: from h5.dl5rb.org.uk ([81.2.74.5]:53129 "EHLO h5.dl5rb.org.uk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751226AbZFEMdw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 5 Jun 2009 08:33:52 -0400
+Content-Disposition: inline
+In-Reply-To: <1244196408-12771-1-git-send-email-a.beregalov@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nick Piggin <npiggin@suse.de>, Pekka Enberg <penberg@cs.helsinki.fi>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: johannes@sipsolutions.net, linville@tuxdriver.com, linux-next@vger.kernel.org, davem@davemloft.net, kyle@mcmartin.ca, rth@twiddle.net, ink@jurassic.park.msu.ru
 
-Sachin Sant wrote:
-> Today's Next tree failed to boot on a Power6 box with following BUG :
->
-> BUG: spinlock bad magic on CPU#1, modprobe/63
-> Unable to handle kernel paging request for data at address 0xffffc994838
-> Faulting instruction address: 0xc00000000035f5a8
-> Oops: Kernel access of bad area, sig: 11 [#1]
-> SMP NR_CPUS=1024 DEBUG_PAGEALLOC NUMA pSeries
-> Modules linked in: scsi_mod(+)
-> NIP: c00000000035f5a8 LR: c00000000035f58c CTR: 0000000000136f8c
-> REGS: c0000000c7d03500 TRAP: 0300   Not tainted  
-> (2.6.30-rc5-autotest-next-20090511)
-> MSR: 8000000000009032 <EE,ME,IR,DR>  CR: 28222484  XER: 0000000f
-> DAR: 00000ffffc994838, DSISR: 0000000040000000
-> TASK = c0000000c7cf0a80[63] 'modprobe' THREAD: c0000000c7d00000 CPU: 1
-> GPR00: c00000000035f58c c0000000c7d03780 c000000000aaeed8 
-> 0000000000000031 GPR04: 0000000000000000 00000000585cf4e0 
-> 0000000000673580 80000000565a6cc0 GPR08: 0000000000000000 
-> c0000000009ebf50 0000000000000000 c0000000009ebf38 GPR12: 
-> 0000000028222482 c000000000b82600 0000000000000000 0000000000000000 
-> GPR16: 0000000000000000 0000000000000000 0000000000000000 
-> 0000000000000000 GPR20: 0000000000000018 ffffffffffffffff 
-> c0000000009bbe40 0000000000000010 GPR24: 0000000000210d00 
-> c0000000c6caff80 c0000000dfc732a0 c000000000f61380 GPR28: 
-> c0000000007c8350 c0000000008a4280 c000000000a2f928 00000ffffc994550 
-> NIP [c00000000035f5a8] .spin_bug+0x90/0xd4
-> LR [c00000000035f58c] .spin_bug+0x74/0xd4
-> Call Trace:
-> [c0000000c7d03780] [c00000000035f58c] .spin_bug+0x74/0xd4 (unreliable)
-> [c0000000c7d03810] [c00000000035f890] ._raw_spin_lock+0x48/0x184
-> [c0000000c7d038b0] [c0000000005d67d8] ._spin_lock+0x10/0x24
-> [c0000000c7d03920] [c00000000013fbdc] .__slab_alloc_page+0x344/0x3cc
-> [c0000000c7d039e0] [c000000000141168] .kmem_cache_alloc+0x13c/0x21c
-> [c0000000c7d03aa0] [c000000000141b04] .kmem_cache_create+0x294/0x2a8
-> [c0000000c7d03b90] [d000000000ea14cc] .scsi_init_queue+0x38/0x170 
-> [scsi_mod]
-> [c0000000c7d03c20] [d000000000ea13c8] .init_scsi+0x1c/0xe8 [scsi_mod]
-> [c0000000c7d03ca0] [c0000000000092c0] .do_one_initcall+0x80/0x19c
-> [c0000000c7d03d90] [c0000000000c0540] .SyS_init_module+0xe0/0x244
-> [c0000000c7d03e30] [c000000000008534] syscall_exit+0x0/0x40
-> Instruction dump:
-> 7f84e378 e87e8020 38c604d0 e8e902ea 4827fced 60000000 2fbf0000 
-> 80bd0004 409e0010 e8de8028 38e0ffff 4800000c <e8ff02ea> 38df04d0 
-> 7fa4eb78 811d0008 ---[ end trace f725820a6fa9dbb7 ]---
-> /init: line 21:    63 Segmentation fault      modprobe $file
->
-Nick, Pekka
+On Fri, Jun 05, 2009 at 02:06:48PM +0400, Alexander Beregalov wrote:
 
-I can still recreate this bug on a Power 6 hardware with today's next tree.
-I can recreate this problem at will.
-Let me know if i can help in debugging this problem.
+> Commit 1f87f7d3 (cfg80211: add rfkill support) added ERFKILL
+> to asm-generic/errno.h, but alpha, mips, parisc and sparc use
+> their own numbering scheme and do not include asm-generic/errno.h.
+> We need to add definition of ERFKILL for them.
+> 
+> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
 
-Thanks
--Sachin
+Acked-by: Ralf Baechle <ralf@linux-mips.org>
 
--- 
-
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+  Ralf
