@@ -1,120 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the usb tree with the ttydev tree
-Date: Fri, 5 Jun 2009 15:34:45 +1000
-Message-ID: <20090605153445.291acd58.sfr@canb.auug.org.au>
+Date: Fri, 5 Jun 2009 15:41:18 +1000
+Message-ID: <20090605154118.9e9521f3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__5_Jun_2009_15_41_18_+1000_5rqt.T=DAPeQA37U"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58224 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59714 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750876AbZFEFep (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 5 Jun 2009 01:34:45 -0400
+	id S1750876AbZFEFlT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 5 Jun 2009 01:41:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Craig Shelley <craig@microtron.org.uk>, Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Alan Cox <alan@lxorguk.ukuu.org.uk>
+
+--Signature=_Fri__5_Jun_2009_15_41_18_+1000_5rqt.T=DAPeQA37U
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
 Today's linux-next merge of the usb tree got a conflict in
-drivers/usb/serial/cp210x.c between commit
-7219905ae9bb14e9c8f7a7ab434b70363b904a7c ("cp210x-func-renames") from the
+drivers/usb/serial/kobil_sct.c between commit
+d6ba273795c1260745197dc93f64c321c80a5ecc ("tty-usb-use-port") from the
 ttydev tree and commit 8a5870836006ec7dd112082a39e0057b49e5bd91 ("USB:
 usb-serial: replace shutdown with disconnect, release") from the usb tree.
 
-I love churn!  :-)
-
-I fixed this up (see below) and can carry the fix as necessary.
--- 
+The latter removed the code (from kobil_shutdown) that the former
+modified, so I just used the latter.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/usb/serial/cp210x.c
-index 16a154d,cf5093f..0000000
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@@ -33,24 -33,25 +33,24 @@@
-  /*
-   * Function Prototypes
-   */
- -static int cp2101_open(struct tty_struct *, struct usb_serial_port *,
- +static int cp210x_open(struct tty_struct *, struct usb_serial_port *,
-  							struct file *);
- -static void cp2101_cleanup(struct usb_serial_port *);
- -static void cp2101_close(struct tty_struct *, struct usb_serial_port *,
- -							struct file*);
- -static void cp2101_get_termios(struct tty_struct *,
- +static void cp210x_cleanup(struct usb_serial_port *);
- +static void cp210x_close(struct usb_serial_port *);
- +static void cp210x_get_termios(struct tty_struct *,
-  	struct usb_serial_port *port);
- -static void cp2101_get_termios_port(struct usb_serial_port *port,
- +static void cp210x_get_termios_port(struct usb_serial_port *port,
-  	unsigned int *cflagp, unsigned int *baudp);
- -static void cp2101_set_termios(struct tty_struct *, struct usb_serial_port *,
- +static void cp210x_set_termios(struct tty_struct *, struct usb_serial_port *,
-  							struct ktermios*);
- -static int cp2101_tiocmget(struct tty_struct *, struct file *);
- -static int cp2101_tiocmset(struct tty_struct *, struct file *,
- +static int cp210x_tiocmget(struct tty_struct *, struct file *);
- +static int cp210x_tiocmset(struct tty_struct *, struct file *,
-  		unsigned int, unsigned int);
- -static int cp2101_tiocmset_port(struct usb_serial_port *port, struct file *,
- +static int cp210x_tiocmset_port(struct usb_serial_port *port, struct file *,
-  		unsigned int, unsigned int);
- -static void cp2101_break_ctl(struct tty_struct *, int);
- -static int cp2101_startup(struct usb_serial *);
- -static void cp2101_disconnect(struct usb_serial *);
- +static void cp210x_break_ctl(struct tty_struct *, int);
- +static int cp210x_startup(struct usb_serial *);
-- static void cp210x_shutdown(struct usb_serial *);
-++static void cp210x_disconnect(struct usb_serial *);
-  
-  static int debug;
-  
-@@@ -122,22 -116,22 +122,22 @@@ static struct usb_driver cp210x_driver 
-  	.no_dynamic_id	= 	1,
-  };
-  
- -static struct usb_serial_driver cp2101_device = {
- +static struct usb_serial_driver cp210x_device = {
-  	.driver = {
-  		.owner =	THIS_MODULE,
- -		.name = 	"cp2101",
- +		.name = 	"cp210x",
-  	},
- -	.usb_driver		= &cp2101_driver,
- +	.usb_driver		= &cp210x_driver,
-  	.id_table		= id_table,
-  	.num_ports		= 1,
- -	.open			= cp2101_open,
- -	.close			= cp2101_close,
- -	.break_ctl		= cp2101_break_ctl,
- -	.set_termios		= cp2101_set_termios,
- -	.tiocmget 		= cp2101_tiocmget,
- -	.tiocmset		= cp2101_tiocmset,
- -	.attach			= cp2101_startup,
- -	.disconnect		= cp2101_disconnect,
- +	.open			= cp210x_open,
- +	.close			= cp210x_close,
- +	.break_ctl		= cp210x_break_ctl,
- +	.set_termios		= cp210x_set_termios,
- +	.tiocmget 		= cp210x_tiocmget,
- +	.tiocmset		= cp210x_tiocmset,
- +	.attach			= cp210x_startup,
-- 	.shutdown		= cp210x_shutdown,
-++	.disconnect		= cp210x_disconnect,
-  };
-  
-  /* Config request types */
-@@@ -792,7 -773,7 +792,7 @@@ static int cp210x_startup(struct usb_se
-  	return 0;
-  }
-  
-- static void cp210x_shutdown(struct usb_serial *serial)
- -static void cp2101_disconnect(struct usb_serial *serial)
-++static void cp210x_disconnect(struct usb_serial *serial)
-  {
-  	int i;
-  
+--Signature=_Fri__5_Jun_2009_15_41_18_+1000_5rqt.T=DAPeQA37U
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkoor/4ACgkQjjKRsyhoI8zfVQCgkBYvjTdMqfggvcDiUU7YzC52
+vzoAn0DwD7wUbdBFlIopYVNrPp0OUS7L
+=6K6k
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__5_Jun_2009_15_41_18_+1000_5rqt.T=DAPeQA37U--
