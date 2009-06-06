@@ -1,34 +1,62 @@
-From: David Miller <davem@davemloft.net>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Subject: Re: [BUILD FAILURE 01/04] Next June 04:PPC64 randconfig
- [drivers/staging/comedi/drivers.o]
-Date: Fri, 05 Jun 2009 17:56:56 -0700 (PDT)
-Message-ID: <20090605.175656.95336229.davem@davemloft.net>
+	[drivers/staging/comedi/drivers.o]
+Date: Sat, 06 Jun 2009 14:16:46 +1000
+Message-ID: <1244261806.31984.36.camel@pasglop>
 References: <20090605182625.24093.7808.sendpatchset@elm3a191.beaverton.ibm.com>
 	<1244244749.31984.16.camel@pasglop>
+	<20090605.175656.95336229.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:54420
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752001AbZFFA4y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Jun 2009 20:56:54 -0400
-In-Reply-To: <1244244749.31984.16.camel@pasglop>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: benh@kernel.crashing.org
-Cc: subrata@linux.vnet.ibm.com, sachinp@linux.vnet.ibm.com, sfr@canb.auug.org.au, greg@kroah.com, linux-kernel@vger.kernel.org, Linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, paulus@samba.org, Geert.Uytterhoeven@sonycom.com, geert@linux-m68k.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <20090605.175656.95336229.davem@davemloft.net>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+To: David Miller <davem@davemloft.net>
+Cc: sachinp@linux.vnet.ibm.com, sfr@canb.auug.org.au, greg@kroah.com, linux-kernel@vger.kernel.org, Linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, paulus@samba.org, Geert.Uytterhoeven@sonycom.com, geert@linux-m68k.org, subrata@linux.vnet.ibm.com
+List-Id: linux-next.vger.kernel.org
 
-RnJvbTogQmVuamFtaW4gSGVycmVuc2NobWlkdCA8YmVuaEBrZXJuZWwuY3Jhc2hpbmcub3JnPg0K
-RGF0ZTogU2F0LCAwNiBKdW4gMjAwOSAwOTozMjoyOSArMTAwMA0KDQo+IA0KPj4gSSB0cmllZCB0
-aGlzLiBCdXQsIHdpdGggc29tZSBjYXRjaC4g4oCYUEFHRV9LRVJORUxfTk9DQUNIReKAmSBzZWVt
-cyB0byBiZSB0aGUNCj4+IGNob2ljZSBmb3IgbWFqb3JpdHkgb2YgYXJjaGl0ZWN0dXJlcyBsaWtl
-IGZydiwgbTMyciwgc2gsIHg4NiwgZXRjLCBhcyBHZWVydA0KPj4gbWVudGlvbnMgYmVsb3cuIEhv
-d2V2ZXIsIGkgYmVsaWV2ZSBQT1dFUlBDIGRlZmluZXMgaXQgYXMg4oCYUEFHRV9LRVJORUxfTkPi
-gJgNCj4+IGZvdW5kIGF0IGFyY2gvcG93ZXJwYy9pbmNsdWRlL2FzbS9wdGUtY29tbW9uLmguDQo+
-PiANCj4+IFBhdWwvQmFuamFtaW4sDQo+PiBDYW4geW91IHBsZWFzZSBjb25maXJtIHRoaXMgPw0K
-PiANCj4gUmVhZCBteSByZXBseSB0byBHcmVnLiBXaHkgdGhlIGhlY2sgYXJlIHlvdSB0cnlpbmcg
-dG8gbWFwIG1lbW9yeQ0KPiBub24tY2FjaGVhYmxlIGluIHRoZSBmaXJzdCBwbGFjZSA/DQoNCkkg
-YWdyZWUsIHRoaXMgaXMgZXh0cmVtZWx5IGZpc2h5Lg0KDQpJIGd1ZXNzIHRoZSBpc3N1ZSBpcyB0
-aGF0IHRoZSBkcml2ZXIgd2FudHMgY29uc2lzdGVudCBETUEgbWVtb3J5DQpidXQgd2FudHMgdG8g
-YWxsb2NhdGUgYSBodWdlIGFyZWEgdm1hcCgpIHN0eWxlLg0K
+On Fri, 2009-06-05 at 17:56 -0700, David Miller wrote:
+> > 
+> > Read my reply to Greg. Why the heck are you trying to map memory
+> > non-cacheable in the first place ?
+> 
+> I agree, this is extremely fishy.
+> 
+> I guess the issue is that the driver wants consistent DMA memory
+> but wants to allocate a huge area vmap() style.
+
+That's my guess too, and I suppose we should be able to provide an
+appropriate interface for that... There are two aspects that
+are completely separate here:
+
+ - One is the allocation of the pages themselves which much match
+the various criteria for DMA'bility to the target device (fit the
+DMA mask, etc...)
+
+ - One is the creation of the virtual mapping in kernel space for which
+appropriate pgprot for DMA must be provided.
+
+For the first one, I don't know how legit it would be to allocate the
+pages using dma_alloc_coherent one page at a time and try to figure out
+the struct page * out of it. Sounds fishy and possibly non-portable. So
+appart from using normal GFP and crossing fingers I'm not sure what
+would be the right way to obtain the pages in the first place. Maybe we
+should provide something.
+
+The second could be as simple as having a pgprot_dma_coherent() like we
+have a pgprot_uncached() for example, which would be either uncached or
+cached depending on the consistency of DMA on the platform. But we need
+to run that through things like MIPS which may have additional virtual
+address space requirements.
+
+Cheers,
+Ben.
