@@ -1,32 +1,28 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Request for linux-next inclusion of the voyager tree
-Date: Mon, 08 Jun 2009 11:10:23 -0500
-Message-ID: <1244477423.4079.228.camel@mulgrave.site>
+From: Tony Breeds <tony@bakeyournoodle.com>
+Subject: Re: Request for linux-next inclusion of the voyager tree
+Date: Tue, 9 Jun 2009 09:28:53 +1000
+Message-ID: <20090608232853.GG16602@bilbo.ozlabs.org>
+References: <1244477423.4079.228.camel@mulgrave.site>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:55331 "EHLO
-	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755265AbZFHQKZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Jun 2009 12:10:25 -0400
+Received: from bilbo.ozlabs.org ([203.10.76.25]:60649 "EHLO bilbo.ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751404AbZFHX2v (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Jun 2009 19:28:51 -0400
+Content-Disposition: inline
+In-Reply-To: <1244477423.4079.228.camel@mulgrave.site>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-Could you add this (as a postmerge tree) somewhere after the x86 trees,
-please (it depends on the auto-x86-next branch).
+On Mon, Jun 08, 2009 at 11:10:23AM -0500, James Bottomley wrote:
+> Could you add this (as a postmerge tree) somewhere after the x86 trees,
+> please (it depends on the auto-x86-next branch).
 
-I'll be sending the pull request for it to Linus somewhere in the next
-merge window (probably towards the end) and if he takes it, linux-next
-inclusion for a small number of patches it contains will probably be a
-recurring feature.
+I'm sure I've seen to somewhere before, but can you provide any relevant
+details for building a voyager kernel (defconfig and crosscompile invocations
+is probably all we need.)
 
-The tree is at:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/jejb/voyager-2.6.git#master
-
-Thanks,
-
-James
+Yours Tony
