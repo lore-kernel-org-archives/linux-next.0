@@ -1,73 +1,64 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [BUILD FAILURE 01/04] Next June 04:PPC64 randconfig
-	[drivers/staging/comedi/drivers.o]
-Date: Wed, 10 Jun 2009 08:34:39 +1000
-Message-ID: <1244586879.24481.19.camel@pasglop>
-References: <20090605182625.24093.7808.sendpatchset@elm3a191.beaverton.ibm.com>
-	<1244261806.31984.36.camel@pasglop> <20090606055103.GA9446@kroah.com>
-	<200906060936.22322.fmhess@speakeasy.net>
-	<1244385405.5265.7.camel@subratamodak.linux.ibm.com>
-	<1244519418.5235.2.camel@pasglop>
-	<1244572446.5497.32.camel@subratamodak.linux.ibm.com>
+From: James Morris <jmorris@namei.org>
+Subject: Re: [PATCH -next] nommu: Provide mmap_min_addr definition.
+Date: Wed, 10 Jun 2009 09:25:11 +1000 (EST)
+Message-ID: <alpine.LRH.2.00.0906100924590.17869@tundra.namei.org>
+References: <20090609084856.GA18528@linux-sh.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <1244572446.5497.32.camel@subratamodak.linux.ibm.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-To: subrata@linux.vnet.ibm.com
-Cc: sachinp@linux.vnet.ibm.com, sfr@canb.auug.org.au, fmhess@users.sourceforge.net, Greg KH <greg@kroah.com>, linux-kernel@vger.kernel.org, Linuxppc-dev@ozlabs.org, Ian Abbott <abbotti@mev.co.uk>, linux-next@vger.kernel.org, paulus@samba.org, Geert.Uytterhoeven@sonycom.com, geert@linux-m68k.org, David Miller <davem@davemloft.net>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from tundra.namei.org ([65.99.196.166]:49377 "EHLO tundra.namei.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750810AbZFIXZg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Jun 2009 19:25:36 -0400
+In-Reply-To: <20090609084856.GA18528@linux-sh.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Mundt <lethal@linux-sh.org>
+Cc: Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org
 
+On Tue, 9 Jun 2009, Paul Mundt wrote:
 
-> > In any case, doing PAGE_KERNEL_NOCACHE for DMA memory is incorrect on
-> > many architectures. So at this stage, there's no much option but ifdef I
-> > suspect for now until this is fixed properly.
+> With the "security: use mmap_min_addr indepedently of security models"
+> change, mmap_min_addr is used in common areas, which susbsequently blows
+> up the nommu build. This stubs in the definition in the nommu case as
+> well.
 > 
-> Ok. But, i am not sure whether Greg will agree to this. If, Ok, is the
-> following patch i sent earlier Ok ?
+
+Thanks.
+
+
+Applied to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/security-testing-2.6#next
+
+> Signed-off-by: Paul Mundt <lethal@linux-sh.org>
+> Cc: Christoph Lameter <cl@linux-foundation.org>
+> Cc: James Morris <jmorris@namei.org>
 > 
-> http://lkml.org/lkml/2009/6/5/462,
-
-Not really.
-
-You probably want to use a constant (call it MY_DMA_MAP_PGPROT), and
-in a header, you have a bunch of ifdef's that set it to PAGE_KERNEL,
-PAGE_KERNEL_NOCACHE or PAGE_KERNEL_NC depending on what's needed.
-
-Today, you can pretty much assume that
-
- - x86*, sparc*, ia64*, alpha, ... needs PAGE_KERNEL
- - powerpc needs PAGE_KERNEL if !CONFIG_NOT_COHERENT_CACHE
- - powerpc needs PAGE_KERNEL_NC if CONFIG_NOT_COHERENT_CACHE
- - ARM and MIPS, I think, needs PAGE_KERNEL_NOCACHE
- - ... others I don't know.
-
-Cheers,
-Ben.
-
-> Regards--
-> Subrata
+> --
 > 
-> > 
-> > It does make sense to want to have some memory like that shared between
-> > user space and DMA, though I don't know what the right approach that
-> > works on all archs is at this stage. Worth asking the Alsa guys, I think
-> > they have similar issues :-)
-> > 
-> > But doing double buffering might do the trick fine for now.
-> > 
-> > Cheers,
-> > Ben.
-> > 
-> > 
-> > 
-> > 
+>  mm/nommu.c |    3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/mm/nommu.c b/mm/nommu.c
+> index b571ef7..2fd2ad5 100644
+> --- a/mm/nommu.c
+> +++ b/mm/nommu.c
+> @@ -69,6 +69,9 @@ int sysctl_max_map_count = DEFAULT_MAX_MAP_COUNT;
+>  int sysctl_nr_trim_pages = CONFIG_NOMMU_INITIAL_TRIM_EXCESS;
+>  int heap_stack_gap = 0;
+>  
+> +/* amount of vm to protect from userspace access */
+> +unsigned long mmap_min_addr = CONFIG_DEFAULT_MMAP_MIN_ADDR;
+> +
+>  atomic_long_t mmap_pages_allocated;
+>  
+>  EXPORT_SYMBOL(mem_map);
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-next" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
+-- 
+James Morris
+<jmorris@namei.org>
