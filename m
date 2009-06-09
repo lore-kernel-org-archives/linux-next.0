@@ -1,107 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the scsi tree
-Date: Tue, 9 Jun 2009 13:19:10 +1000
-Message-ID: <20090609131910.3c6e78f2.sfr@canb.auug.org.au>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [BUILD FAILURE 01/04] Next June 04:PPC64 randconfig
+ [drivers/staging/comedi/drivers.o]
+Date: Tue, 09 Jun 2009 13:50:18 +1000
+Message-ID: <1244519418.5235.2.camel@pasglop>
+References: <20090605182625.24093.7808.sendpatchset@elm3a191.beaverton.ibm.com>
+	 <1244261806.31984.36.camel@pasglop> <20090606055103.GA9446@kroah.com>
+	 <200906060936.22322.fmhess@speakeasy.net>
+	 <1244385405.5265.7.camel@subratamodak.linux.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59628 "EHLO smtps.tip.net.au"
+Received: from gate.crashing.org ([63.228.1.57]:58215 "EHLO gate.crashing.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751752AbZFIDTK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Jun 2009 23:19:10 -0400
+	id S1751997AbZFIDvK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Jun 2009 23:51:10 -0400
+In-Reply-To: <1244385405.5265.7.camel@subratamodak.linux.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vasu Dev <vasu.dev@intel.com>, James Bottomley <James.Bottomley@HansenPartnership.com>
+To: subrata@linux.vnet.ibm.com
+Cc: fmhess@users.sourceforge.net, Greg KH <greg@kroah.com>, Ian Abbott <abbotti@mev.co.uk>, David Miller <davem@davemloft.net>, sachinp@linux.vnet.ibm.com, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, Linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, paulus@samba.org, Geert.Uytterhoeven@sonycom.com, geert@linux-m68k.org
 
-Hi David,
+On Sun, 2009-06-07 at 20:06 +0530, Subrata Modak wrote:
+> On Sat, 2009-06-06 at 09:36 -0400, Frank Mori Hess wrote:
+> > On Saturday 06 June 2009, Greg KH wrote:
+> > > Frank and Ian, any thoughts about the vmap call in the
+> > > comedi_buf_alloc() call?  Why is it using PAGE_KERNEL_NOCACHE, and what
+> > > is the prealloc_buf buffer used for?
+> > 
+> > It is a circular buffer used to hold data streaming either to or from a 
+> > board (for example when producing an analog output waveform).  Reads and 
+> > writes to the device files read/write to the circular buffer, plus a few 
+> > drivers do dma directly to/from it.  I personally don't have a problem 
+> > with requiring drivers to have their own dma buffers and making them copy 
+> > data between their private dma buffers and the main circular buffer.  I 
+> > guess the original design wanted to support zero-copy dma.
+> 
+> Great to hear that. How about a patch that solves my build problem on
+> PPC64(the problem seems to be existing for long) ? 
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/scsi/fcoe/fcoe.c between commit
-1047f22108bd9bfedefd3ff014cb56691dfbaa3f ("[SCSI] fcoe: removes
-fcoe_watchdog") from the scsi tree and commit
-ab6b85c1d7a1bf6c2b27fb542a7b2404e45b7e24 ("fcoe: consolidates netdev
-related config and cleanup for spma mode") from the net tree.
+In any case, doing PAGE_KERNEL_NOCACHE for DMA memory is incorrect on
+many architectures. So at this stage, there's no much option but ifdef I
+suspect for now until this is fixed properly.
 
-Just overlapping additions.  I fixed it up (see below) and can carry the
-fix as necessary.
--- 
+It does make sense to want to have some memory like that shared between
+user space and DMA, though I don't know what the right approach that
+works on all archs is at this stage. Worth asking the Alsa guys, I think
+they have similar issues :-)
+
+But doing double buffering might do the trick fine for now.
+
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/scsi/fcoe/fcoe.c
-index e606b48,f791348..0000000
---- a/drivers/scsi/fcoe/fcoe.c
-+++ b/drivers/scsi/fcoe/fcoe.c
-@@@ -167,18 -219,30 +219,42 @@@ static int fcoe_lport_config(struct fc_
-  }
-  
-  /**
- + * fcoe_queue_timer() - fcoe queue timer
- + * @lp: the fc_lport pointer
- + *
- + * Calls fcoe_check_wait_queue on timeout
- + *
- + */
- +static void fcoe_queue_timer(ulong lp)
- +{
- +	fcoe_check_wait_queue((struct fc_lport *)lp, NULL);
- +}
- +
- +/**
-+  * fcoe_netdev_cleanup() - clean up netdev configurations
-+  * @fc: ptr to the fcoe_softc
-+  */
-+ void fcoe_netdev_cleanup(struct fcoe_softc *fc)
-+ {
-+ 	u8 flogi_maddr[ETH_ALEN];
-+ 
-+ 	/* Don't listen for Ethernet packets anymore */
-+ 	dev_remove_pack(&fc->fcoe_packet_type);
-+ 	dev_remove_pack(&fc->fip_packet_type);
-+ 
-+ 	/* Delete secondary MAC addresses */
-+ 	rtnl_lock();
-+ 	memcpy(flogi_maddr, (u8[6]) FC_FCOE_FLOGI_MAC, ETH_ALEN);
-+ 	dev_unicast_delete(fc->real_dev, flogi_maddr);
-+ 	if (!is_zero_ether_addr(fc->ctlr.data_src_addr))
-+ 		dev_unicast_delete(fc->real_dev, fc->ctlr.data_src_addr);
-+ 	if (fc->ctlr.spma)
-+ 		dev_unicast_delete(fc->real_dev, fc->ctlr.ctl_src_addr);
-+ 	dev_mc_delete(fc->real_dev, FIP_ALL_ENODE_MACS, ETH_ALEN, 0);
-+ 	rtnl_unlock();
-+ }
-+ 
-+ /**
-   * fcoe_netdev_config() - Set up netdev for SW FCoE
-   * @lp : ptr to the fc_lport
-   * @netdev : ptr to the associated netdevice struct
-@@@ -248,11 -313,24 +325,25 @@@ static int fcoe_netdev_config(struct fc
-  	}
-  	skb_queue_head_init(&fc->fcoe_pending_queue);
-  	fc->fcoe_pending_queue_active = 0;
- +	setup_timer(&fc->timer, fcoe_queue_timer, (unsigned long)lp);
-  
-+ 	/* look for SAN MAC address, if multiple SAN MACs exist, only
-+ 	 * use the first one for SPMA */
-+ 	rcu_read_lock();
-+ 	for_each_dev_addr(netdev, ha) {
-+ 		if ((ha->type == NETDEV_HW_ADDR_T_SAN) &&
-+ 		    (is_valid_ether_addr(fc->ctlr.ctl_src_addr))) {
-+ 			memcpy(fc->ctlr.ctl_src_addr, ha->addr, ETH_ALEN);
-+ 			fc->ctlr.spma = 1;
-+ 			break;
-+ 		}
-+ 	}
-+ 	rcu_read_unlock();
-+ 
-  	/* setup Source Mac Address */
-- 	memcpy(fc->ctlr.ctl_src_addr, fc->real_dev->dev_addr,
-- 	       fc->real_dev->addr_len);
-+ 	if (!fc->ctlr.spma)
-+ 		memcpy(fc->ctlr.ctl_src_addr, fc->real_dev->dev_addr,
-+ 		       fc->real_dev->addr_len);
-  
-  	wwnn = fcoe_wwn_from_mac(fc->real_dev->dev_addr, 1, 0);
-  	fc_set_wwnn(lp, wwnn);
+Ben.
