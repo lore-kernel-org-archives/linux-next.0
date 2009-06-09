@@ -1,51 +1,70 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: kbuild tree build failure
-Date: Wed, 10 Jun 2009 02:19:59 +1000
-Message-ID: <20090610021959.b7856ea9.sfr@canb.auug.org.au>
-References: <20090609114820.69d23ab3.sfr@canb.auug.org.au>
-	<20090609161512.GB6675@uranus.ravnborg.org>
+From: Subrata Modak <subrata@linux.vnet.ibm.com>
+Subject: Re: [BUILD FAILURE 01/04] Next June 04:PPC64 randconfig
+	[drivers/staging/comedi/drivers.o]
+Date: Wed, 10 Jun 2009 00:04:04 +0530
+Message-ID: <1244572446.5497.32.camel@subratamodak.linux.ibm.com>
+References: <20090605182625.24093.7808.sendpatchset@elm3a191.beaverton.ibm.com>
+	 <1244261806.31984.36.camel@pasglop> <20090606055103.GA9446@kroah.com>
+	 <200906060936.22322.fmhess@speakeasy.net>
+	 <1244385405.5265.7.camel@subratamodak.linux.ibm.com>
+	 <1244519418.5235.2.camel@pasglop>
+Reply-To: subrata@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__10_Jun_2009_02_19_59_+1000_RbBOob8_6TUHqRvF"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45676 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753076AbZFIQUC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Jun 2009 12:20:02 -0400
-In-Reply-To: <20090609161512.GB6675@uranus.ravnborg.org>
+Received: from e32.co.us.ibm.com ([32.97.110.150]:59358 "EHLO
+	e32.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750725AbZFISeX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Jun 2009 14:34:23 -0400
+In-Reply-To: <1244519418.5235.2.camel@pasglop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Greg KH <greg@kroah.com>
+Cc: fmhess@users.sourceforge.net, Ian Abbott <abbotti@mev.co.uk>, David Miller <davem@davemloft.net>, sachinp@linux.vnet.ibm.com, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, Linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, paulus@samba.org, Geert.Uytterhoeven@sonycom.com, geert@linux-m68k.org
 
---Signature=_Wed__10_Jun_2009_02_19_59_+1000_RbBOob8_6TUHqRvF
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2009-06-09 at 13:50 +1000, Benjamin Herrenschmidt wrote:
+> On Sun, 2009-06-07 at 20:06 +0530, Subrata Modak wrote:
+> > On Sat, 2009-06-06 at 09:36 -0400, Frank Mori Hess wrote:
+> > > On Saturday 06 June 2009, Greg KH wrote:
+> > > > Frank and Ian, any thoughts about the vmap call in the
+> > > > comedi_buf_alloc() call?  Why is it using PAGE_KERNEL_NOCACHE, and what
+> > > > is the prealloc_buf buffer used for?
+> > > 
+> > > It is a circular buffer used to hold data streaming either to or from a 
+> > > board (for example when producing an analog output waveform).  Reads and 
+> > > writes to the device files read/write to the circular buffer, plus a few 
+> > > drivers do dma directly to/from it.  I personally don't have a problem 
+> > > with requiring drivers to have their own dma buffers and making them copy 
+> > > data between their private dma buffers and the main circular buffer.  I 
+> > > guess the original design wanted to support zero-copy dma.
+> > 
+> > Great to hear that. How about a patch that solves my build problem on
+> > PPC64(the problem seems to be existing for long) ? 
+> 
+> In any case, doing PAGE_KERNEL_NOCACHE for DMA memory is incorrect on
+> many architectures. So at this stage, there's no much option but ifdef I
+> suspect for now until this is fixed properly.
 
-Hi Sam,
+Ok. But, i am not sure whether Greg will agree to this. If, Ok, is the
+following patch i sent earlier Ok ?
 
-On Tue, 9 Jun 2009 18:15:12 +0200 Sam Ravnborg <sam@ravnborg.org> wrote:
->
-> I will fix when the kids are sleeping (as in a few hours from now).
+http://lkml.org/lkml/2009/6/5/462,
 
-Thanks.  I won't be needing it for about 7 hours.
+Regards--
+Subrata
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__10_Jun_2009_02_19_59_+1000_RbBOob8_6TUHqRvF
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkoui68ACgkQjjKRsyhoI8zzJwCfc7uWg9NsHNyHndq0LK+AsyBO
-LOcAn3nBJVkGEScLnnB9gwoGSRFAMLTL
-=//tP
------END PGP SIGNATURE-----
-
---Signature=_Wed__10_Jun_2009_02_19_59_+1000_RbBOob8_6TUHqRvF--
+> 
+> It does make sense to want to have some memory like that shared between
+> user space and DMA, though I don't know what the right approach that
+> works on all archs is at this stage. Worth asking the Alsa guys, I think
+> they have similar issues :-)
+> 
+> But doing double buffering might do the trick fine for now.
+> 
+> Cheers,
+> Ben.
+> 
+> 
+> 
+> 
