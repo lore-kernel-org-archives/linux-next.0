@@ -1,43 +1,50 @@
-From: Ryusuke Konishi <ryusuke@osrg.net>
-Subject: Re: linux-next: manual merge of the vfs tree with the nilfs tree
-Date: Tue, 09 Jun 2009 14:41:25 +0900 (JST)
-Message-ID: <20090609.144125.88495131.ryusuke@osrg.net>
-References: <20090609111114.2e879a50.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: mtd tree build warning
+Date: Tue, 9 Jun 2009 15:44:49 +1000
+Message-ID: <20090609154449.edb6306a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__9_Jun_2009_15_44_49_+1000_uhgmGJ6eUx2xuiov"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sh.osrg.net ([192.16.179.4]:40538 "EHLO sh.osrg.net"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41704 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752275AbZFIFle (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Jun 2009 01:41:34 -0400
-In-Reply-To: <20090609111114.2e879a50.sfr@canb.auug.org.au>
+	id S1752624AbZFIFov (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Jun 2009 01:44:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au, viro@ZenIV.linux.org.uk
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, konishi.ryusuke@lab.ntt.co.jp
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rohit Hagargundgi <h.rohit@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Hi,
-On Tue, 9 Jun 2009 11:11:14 +1000, Stephen Rothwell wrote:
-> Hi Al,
-> 
-> Today's linux-next merge of the vfs tree got a conflicts in
-> fs/nilfs2/super.c between commits from the nilfs tree and similar commits
-> from the vfs tree.
-> 
-> The vfs and nilfs trees have different versions of the following patches:
-> 
-> nilfs2: get rid of sget use for checking if current mount is present
-> nilfs2: simplify remaining sget() use
-> nilfs2: correct exclusion control in nilfs_remount function
-> 
-> And the vfs tree has further commits that affect this files as well.
-> 
-> For now, I have used the vfs tree version.  Please sort this out.
+--Signature=_Tue__9_Jun_2009_15_44_49_+1000_uhgmGJ6eUx2xuiov
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I've confirmed that the patch series is applied to the vfs tree.
+Hi David,
 
-To avoid the conflict, I will remove them from my nilfs2 tree.
+Today's linux-next build (x86_64 allmodconfig) produced this warning:
 
-Thanks,
-Ryusuke Konishi
+drivers/mtd/onenand/onenand_base.c:3266: warning: 'flexonenand_setup' defin=
+ed but not used
+
+Introduced by commit 5988af2319781bc8e0ce418affec4e09cfa77907 ("mtd:
+Flex-OneNAND support").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__9_Jun_2009_15_44_49_+1000_uhgmGJ6eUx2xuiov
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkot9tEACgkQjjKRsyhoI8yMCwCeJNyo07LqySflA8W5fEp1NhnW
+pCsAn11EC2LLQSvpDqghqbrzAS30oVLm
+=32/q
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__9_Jun_2009_15_44_49_+1000_uhgmGJ6eUx2xuiov--
