@@ -1,50 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: mtd tree build warning
-Date: Tue, 9 Jun 2009 15:44:49 +1000
-Message-ID: <20090609154449.edb6306a.sfr@canb.auug.org.au>
+Subject: linux-next: rr tree build warning
+Date: Tue, 9 Jun 2009 16:26:36 +1000
+Message-ID: <20090609162636.d2351007.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__9_Jun_2009_15_44_49_+1000_uhgmGJ6eUx2xuiov"
+ boundary="Signature=_Tue__9_Jun_2009_16_26_36_+1000_l0t=ZNwp_s48JEsK"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41704 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:39104 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752624AbZFIFov (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Jun 2009 01:44:51 -0400
+	id S1752927AbZFIG0m (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Jun 2009 02:26:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rohit Hagargundgi <h.rohit@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__9_Jun_2009_15_44_49_+1000_uhgmGJ6eUx2xuiov
+--Signature=_Tue__9_Jun_2009_16_26_36_+1000_l0t=ZNwp_s48JEsK
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi David,
+Hi Rusty,
 
 Today's linux-next build (x86_64 allmodconfig) produced this warning:
 
-drivers/mtd/onenand/onenand_base.c:3266: warning: 'flexonenand_setup' defin=
-ed but not used
+arch/x86/kernel/cpu/cpufreq/powernow-k8.c:1287: warning: passing argument 1=
+ of 'check_supported_cpu' makes pointer from integer without a cast
+arch/x86/kernel/cpu/cpufreq/powernow-k8.c:514: note: expected 'void *' but =
+argument is of type 'unsigned int'
 
-Introduced by commit 5988af2319781bc8e0ce418affec4e09cfa77907 ("mtd:
-Flex-OneNAND support").
+Introduced by commit b3594a9ce5fb32533084ec75f1954c93f461591d ("cpumask:
+avoid playing with cpus_allowed in powernow-k8.c").
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__9_Jun_2009_15_44_49_+1000_uhgmGJ6eUx2xuiov
+--Signature=_Tue__9_Jun_2009_16_26_36_+1000_l0t=ZNwp_s48JEsK
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkot9tEACgkQjjKRsyhoI8yMCwCeJNyo07LqySflA8W5fEp1NhnW
-pCsAn11EC2LLQSvpDqghqbrzAS30oVLm
-=32/q
+iEYEARECAAYFAkouAJwACgkQjjKRsyhoI8xtswCgisGQLzpm3dteyCH0HWqDI4ih
+Sp8AnisInaPtPo/+1a1NOsKV2VDUjnLX
+=t4yi
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__9_Jun_2009_15_44_49_+1000_uhgmGJ6eUx2xuiov--
+--Signature=_Tue__9_Jun_2009_16_26_36_+1000_l0t=ZNwp_s48JEsK--
