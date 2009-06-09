@@ -1,37 +1,58 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with the scsi
-	tree
-Date: Tue, 9 Jun 2009 03:18:12 -0700
-Message-ID: <20090609101812.GA27305@kroah.com>
-References: <20090609190415.3bfba32d.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: net tree build warning
+Date: Tue, 9 Jun 2009 20:36:39 +1000
+Message-ID: <20090609203639.96e503fe.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__9_Jun_2009_20_36_39_+1000_UW_IUqx3b1jgqg5P"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:32954 "EHLO coco.kroah.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55538 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760764AbZFIKX1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Jun 2009 06:23:27 -0400
-Content-Disposition: inline
-In-Reply-To: <20090609190415.3bfba32d.sfr@canb.auug.org.au>
+	id S1762891AbZFIKgm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Jun 2009 06:36:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Brian King <brking@linux.vnet.ibm.com>, James Bottomley <James.Bottomley@HansenPartnership.com>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfgang Grandegger <wg@grandegger.com>
 
-On Tue, Jun 09, 2009 at 07:04:15PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the driver-core tree got a conflict in
-> drivers/scsi/ibmvscsi/ibmvscsi.c between commit
-> 126c5cc37e682e7c5ae96754994b1cb50c2d0cb5 ("[SCSI] ibmvscsi: Add support
-> for capabilities MAD") from the scsi tree and commit
-> 1e87031283511c775454ecd57f16a1a2de30aafa ("ibmvscsi: gadget: at91_udc:
-> remove driver_data direct access of struct device") from the driver-core
-> tree.
-> 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+--Signature=_Tue__9_Jun_2009_20_36_39_+1000_UW_IUqx3b1jgqg5P
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The fix looks fine, thanks for doing this.
+Hi Dave,
 
-greg k-h
+Today's linux-next build (powerpc allyesconfig) produced these warnings:
+
+drivers/net/can/sja1000/sja1000_of_platform.c: In function 'sja1000_ofp_pro=
+be':
+drivers/net/can/sja1000/sja1000_of_platform.c:111: warning: format '%#x' ex=
+pects type 'unsigned int', but argument 4 has type 'resource_size_t'
+drivers/net/can/sja1000/sja1000_of_platform.c:111: warning: format '%#x' ex=
+pects type 'unsigned int', but argument 5 has type 'resource_size_t'
+drivers/net/can/sja1000/sja1000_of_platform.c:118: warning: format '%#x' ex=
+pects type 'unsigned int', but argument 4 has type 'resource_size_t'
+drivers/net/can/sja1000/sja1000_of_platform.c:118: warning: format '%#x' ex=
+pects type 'unsigned int', but argument 5 has type 'resource_size_t'
+
+Introduced by commit d1a277c584d0862dbf51991baea947ea5f2ce6bf ("can:
+sja1000: generic OF platform bus driver").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__9_Jun_2009_20_36_39_+1000_UW_IUqx3b1jgqg5P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkouOzcACgkQjjKRsyhoI8yWBwCeOpubycsan27trtgJ80GmbSWM
+u64An3++6hYHH8dRB8LAhFC/+gtpfiAX
+=TIh6
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__9_Jun_2009_20_36_39_+1000_UW_IUqx3b1jgqg5P--
