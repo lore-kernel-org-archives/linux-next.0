@@ -1,54 +1,44 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [BUILD FAILURE 01/04] Next June 04:PPC64 randconfig
- [drivers/staging/comedi/drivers.o]
-Date: Tue, 09 Jun 2009 13:50:18 +1000
-Message-ID: <1244519418.5235.2.camel@pasglop>
-References: <20090605182625.24093.7808.sendpatchset@elm3a191.beaverton.ibm.com>
-	 <1244261806.31984.36.camel@pasglop> <20090606055103.GA9446@kroah.com>
-	 <200906060936.22322.fmhess@speakeasy.net>
-	 <1244385405.5265.7.camel@subratamodak.linux.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rr tree with the  tree
+Date: Tue, 9 Jun 2009 13:56:27 +1000
+Message-ID: <20090609135627.944b1851.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:58215 "EHLO gate.crashing.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50085 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751997AbZFIDvK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Jun 2009 23:51:10 -0400
-In-Reply-To: <1244385405.5265.7.camel@subratamodak.linux.ibm.com>
+	id S1751997AbZFID4b (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Jun 2009 23:56:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: subrata@linux.vnet.ibm.com
-Cc: fmhess@users.sourceforge.net, Greg KH <greg@kroah.com>, Ian Abbott <abbotti@mev.co.uk>, David Miller <davem@davemloft.net>, sachinp@linux.vnet.ibm.com, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, Linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, paulus@samba.org, Geert.Uytterhoeven@sonycom.com, geert@linux-m68k.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>, Yinghai Lu <yinghai@kernel.org>
 
-On Sun, 2009-06-07 at 20:06 +0530, Subrata Modak wrote:
-> On Sat, 2009-06-06 at 09:36 -0400, Frank Mori Hess wrote:
-> > On Saturday 06 June 2009, Greg KH wrote:
-> > > Frank and Ian, any thoughts about the vmap call in the
-> > > comedi_buf_alloc() call?  Why is it using PAGE_KERNEL_NOCACHE, and what
-> > > is the prealloc_buf buffer used for?
-> > 
-> > It is a circular buffer used to hold data streaming either to or from a 
-> > board (for example when producing an analog output waveform).  Reads and 
-> > writes to the device files read/write to the circular buffer, plus a few 
-> > drivers do dma directly to/from it.  I personally don't have a problem 
-> > with requiring drivers to have their own dma buffers and making them copy 
-> > data between their private dma buffers and the main circular buffer.  I 
-> > guess the original design wanted to support zero-copy dma.
-> 
-> Great to hear that. How about a patch that solves my build problem on
-> PPC64(the problem seems to be existing for long) ? 
+Hi Rusty,
 
-In any case, doing PAGE_KERNEL_NOCACHE for DMA memory is incorrect on
-many architectures. So at this stage, there's no much option but ifdef I
-suspect for now until this is fixed properly.
+Today's linux-next merge of the rr tree got a conflict in
+arch/x86/kernel/cpu/mcheck/mce{,_64}.c between commit mce_init_device
+("x86, mce: Rename sysfs variables") from the  tree and commit
+10242805fc2c7f25d63097426def1bb3c8545db9 ("cpumask: alloc zeroed cpumask
+for static cpumask_var_ts") from the rr tree.
 
-It does make sense to want to have some memory like that shared between
-user space and DMA, though I don't know what the right approach that
-works on all archs is at this stage. Worth asking the Alsa guys, I think
-they have similar issues :-)
-
-But doing double buffering might do the trick fine for now.
-
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
-Ben.
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/x86/kernel/cpu/mcheck/mce.c
+index 1d0aa9c,705bc24..0000000
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@@ -1297,7 -1163,7 +1297,7 @@@ static __init int mce_init_device(void
+  	if (!mce_available(&boot_cpu_data))
+  		return -EIO;
+  
+- 	alloc_cpumask_var(&mce_dev_initialized, GFP_KERNEL);
+ -	alloc_cpumask_var(&mce_device_initialized, GFP_KERNEL | __GFP_ZERO);
+++	alloc_cpumask_var(&mce_dev_initialized, GFP_KERNEL | __GFP_ZERO);
+  
+  	err = mce_init_banks();
+  	if (err)
