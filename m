@@ -1,55 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the nilfs tree
-Date: Tue, 9 Jun 2009 11:11:14 +1000
-Message-ID: <20090609111114.2e879a50.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kbuild tree with the x86 tree
+Date: Tue, 9 Jun 2009 11:36:46 +1000
+Message-ID: <20090609113646.975023d0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__9_Jun_2009_11_11_14_+1000_FuzmG_qXgXNQWKwD"
+ boundary="Signature=_Tue__9_Jun_2009_11_36_46_+1000_dbSFb4zWV9.6Z8U0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55581 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35538 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752001AbZFIBLO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Jun 2009 21:11:14 -0400
+	id S1752036AbZFIBgt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Jun 2009 21:36:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Mike Frysinger <vapier@gentoo.org>
 
---Signature=_Tue__9_Jun_2009_11_11_14_+1000_FuzmG_qXgXNQWKwD
+--Signature=_Tue__9_Jun_2009_11_36_46_+1000_dbSFb4zWV9.6Z8U0
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi Sam,
 
-Today's linux-next merge of the vfs tree got a conflicts in
-fs/nilfs2/super.c between commits from the nilfs tree and similar commits
-from the vfs tree.
+Today's linux-next merge of the kbuild tree got a conflict in
+scripts/Makefile.lib between commit
+d3dd3b5a29bb9582957451531fed461628dfc834 ("kbuild: allow compressors
+(gzip, bzip2, lzma) to take multiple inputs") from the x86 tree and
+commit c3434a63db85504449450625f229441c256b6f47 ("kbuild: fix spacing for
+bzip2 commands") from the kbuild tree.
 
-The vfs and nilfs trees have different versions of the following patches:
-
-nilfs2: get rid of sget use for checking if current mount is present
-nilfs2: simplify remaining sget() use
-nilfs2: correct exclusion control in nilfs_remount function
-
-And the vfs tree has further commits that affect this files as well.
-
-For now, I have used the vfs tree version.  Please sort this out.
+I used the version from the x86 tree which, as a side affect, fixed the
+same spacing issue as the kbuild patch.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__9_Jun_2009_11_11_14_+1000_FuzmG_qXgXNQWKwD
+--Signature=_Tue__9_Jun_2009_11_36_46_+1000_dbSFb4zWV9.6Z8U0
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkottrIACgkQjjKRsyhoI8zleQCbBFRDFFhXAAEdaZuTeUrtuHvO
-XP0AoKrZyz+Vo1rwNunGSA8vk+6Hg8Sg
-=tqwG
+iEYEARECAAYFAkotvK4ACgkQjjKRsyhoI8w0jQCfZl+AReI7rZ5+bxn/8rLhKwNv
+7T8An3SrNvdb5ekeQHScF99kaS2qBvZN
+=s9z2
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__9_Jun_2009_11_11_14_+1000_FuzmG_qXgXNQWKwD--
+--Signature=_Tue__9_Jun_2009_11_36_46_+1000_dbSFb4zWV9.6Z8U0--
