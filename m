@@ -1,52 +1,61 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Subject: Re: [PATCH] Bluetooth: depends on RFKILL
-Date: Tue, 09 Jun 2009 17:22:24 +0200
-Message-ID: <1244560944.3068.14.camel@localhost.localdomain>
-References: <1244560060-28112-1-git-send-email-a.beregalov@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: voyager tree build failure
+Date: Wed, 10 Jun 2009 02:06:04 +1000
+Message-ID: <20090610020604.fb2b47f3.sfr@canb.auug.org.au>
+References: <20090609194038.826289f3.sfr@canb.auug.org.au>
+	<1244560718.4137.26.camel@mulgrave.site>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__10_Jun_2009_02_06_04_+1000_E0XsGo.vQ5J_/viI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from senator.holtmann.net ([87.106.208.187]:40412 "EHLO
-	mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751493AbZFIPWY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Jun 2009 11:22:24 -0400
-In-Reply-To: <1244560060-28112-1-git-send-email-a.beregalov@gmail.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:47851 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751764AbZFIQGH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Jun 2009 12:06:07 -0400
+In-Reply-To: <1244560718.4137.26.camel@mulgrave.site>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-bluetooth@vger.kernel.org
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Alexander,
+--Signature=_Wed__10_Jun_2009_02_06_04_+1000_E0XsGo.vQ5J_/viI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Since commit "Bluetooth: Add native RFKILL soft-switch support for all
-> devices" (611b30f74b5) bluetooth depends on RFKILL.
-> 
-> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
-> ---
->  net/bluetooth/Kconfig |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/net/bluetooth/Kconfig b/net/bluetooth/Kconfig
-> index 7725da9..85ec71d 100644
-> --- a/net/bluetooth/Kconfig
-> +++ b/net/bluetooth/Kconfig
-> @@ -3,7 +3,7 @@
->  #
->  
->  menuconfig BT
-> -	depends on NET && !S390
-> +	depends on NET && RFKILL && !S390
->  	tristate "Bluetooth subsystem support"
->  	help
->  	  Bluetooth is low-cost, low-power, short-range wireless technology
+Hi James,
 
-this patch is wrong. I think it just needs an extra
+On Tue, 09 Jun 2009 10:18:38 -0500 James Bottomley <James.Bottomley@HansenP=
+artnership.com> wrote:
+>
+> Thanks for finding this.  The fix looks to be a dummy definition of this
+> function for x86_64.  The final fix (which has been under discussion)
+> will be the elimination of safe_smp_processor_id() altogether.
+>=20
+> I've merged this into the
+>=20
+> [VOYAGER] x86: add {safe,hard}_smp_processor_id to smp_ops
+>=20
+> patch and respun the tree (and built it with an x86-64 cross compiler),
+> so it should be safe to include next time around
 
-	depends on RFKILL || !RFKILL
+Thanks.  We will see how we do (later) in the morning.
 
-It is fine to compile Bluetooth without RFKILL support.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Regards
+--Signature=_Wed__10_Jun_2009_02_06_04_+1000_E0XsGo.vQ5J_/viI
+Content-Type: application/pgp-signature
 
-Marcel
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkouiGwACgkQjjKRsyhoI8z68ACdF2UZ+1EBUACp/4n6YsHBzbV2
+lqUAoKWrfoAg2ri1d5AzkSwEe54+AL8h
+=yXWE
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__10_Jun_2009_02_06_04_+1000_E0XsGo.vQ5J_/viI--
