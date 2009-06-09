@@ -1,55 +1,54 @@
-From: Johannes Berg <johannes@sipsolutions.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: net/wireless tree build failure
-Date: Tue, 09 Jun 2009 15:54:42 +0200
-Message-ID: <1244555682.4672.7.camel@johannes.local>
+Date: Wed, 10 Jun 2009 00:02:06 +1000
+Message-ID: <20090610000206.999e2865.sfr@canb.auug.org.au>
 References: <20090609233357.5d3801a0.sfr@canb.auug.org.au>
+	<1244555682.4672.7.camel@johannes.local>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-SdA5J9/05dd6ih2RCURT"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xc.sipsolutions.net ([83.246.72.84]:39812 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754473AbZFINzU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Jun 2009 09:55:20 -0400
-In-Reply-To: <20090609233357.5d3801a0.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__10_Jun_2009_00_02_06_+1000_QFkjpG_knd4Ilfn0"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1761674AbZFIOCW@vger.kernel.org>
+In-Reply-To: <1244555682.4672.7.camel@johannes.local>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>
 Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+List-Id: linux-next.vger.kernel.org
 
-
---=-SdA5J9/05dd6ih2RCURT
-Content-Type: text/plain
+--Signature=_Wed__10_Jun_2009_00_02_06_+1000_QFkjpG_knd4Ilfn0
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2009-06-09 at 23:33 +1000, Stephen Rothwell wrote:
+Hi Johannes,
 
-> Probably caused by commit 19d337dff95cbf76edd3ad95c0cee2732c3e1ec5
-> ("rfkill: rewrite") which added uses of ERR_PTR to inlines in rfkill.h
-> but did not include linux/err.h.
+On Tue, 09 Jun 2009 15:54:42 +0200 Johannes Berg <johannes@sipsolutions.net=
+> wrote:
+>
+> On Tue, 2009-06-09 at 23:33 +1000, Stephen Rothwell wrote:
+>=20
+> > Probably caused by commit 19d337dff95cbf76edd3ad95c0cee2732c3e1ec5
+> > ("rfkill: rewrite") which added uses of ERR_PTR to inlines in rfkill.h
+> > but did not include linux/err.h.
+>=20
+> Indeed. Something must be including linux/err.h for me, I'll send a fix.
 
-Indeed. Something must be including linux/err.h for me, I'll send a fix.
+Thanks.
 
-johannes
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---=-SdA5J9/05dd6ih2RCURT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+--Signature=_Wed__10_Jun_2009_00_02_06_+1000_QFkjpG_knd4Ilfn0
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-iQIcBAABAgAGBQJKLmmeAAoJEODzc/N7+QmaM4MP/3qNo2XML9s6DgxKHDhEKfGn
-8o1fPOp9VOIVfQF97YZNn/3Wf/nomqx0bgXnd4HJoYtBecuAvHX+7n0oBdc6DJMR
-qLCI1i10bjSO6pY+hN3w2brGArnxXuzX1NddFdxYOwRx6bRD0c9CiVPrUvdyXodR
-2BLwdukU+YSClQvV0oAxnJivNSgUNzOgRfePXyae1F9mLOtdSNrZPFfjcfeGtSL7
-8wmuMpw/XVYwgXewSdGyyninyqGQ7dZSv0gzdCowsszh5Jo+F2eD0qebQ/AKRdTq
-ns66NDiJo60a4D+isSI4rbe3behjD8FSKFeJZzOxLZHkE59/wp/C01QaNVsvHeOl
-J4ua4UjWA7ztw2W3TRJWA/ogGsPthyVyTVL0tedvPXMONqD1Swo4YwyyntlckDJt
-JoGD9EhG7ZaR7EMQ2lI9MGLJZ3Pm7F2FbPCLYiqoq0Dk09Io1bl5ohXry+7OV6i0
-L8hkiYzQsCuqeD2ip4BMy59Q/CHxDeEBSTYQDX98WVQK0/JkMgo/U7YUMPpGIACx
-t0CPCdoVIafKJ4e0OMG6FF91KsKFvzNQTXhxk9qXHak40PzF6Ri+x4iq+LCjrd9P
-Up0tTNjRHl6VWuKc/62nrif7iAQcLK3t338TppqpWHZuW2bLyzZBeQ//zlPeOXni
-IgLam7iLkpZIPIXf5JRz
-=n9H0
+iEYEARECAAYFAkoua14ACgkQjjKRsyhoI8wXHwCfYMsCXgBSTwUgjBHov6+D6TUq
+JjUAoJJxTr/iRL9mY94kaAQCRDin/064
+=kt1y
 -----END PGP SIGNATURE-----
 
---=-SdA5J9/05dd6ih2RCURT--
+--Signature=_Wed__10_Jun_2009_00_02_06_+1000_QFkjpG_knd4Ilfn0--
