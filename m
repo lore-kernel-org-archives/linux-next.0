@@ -1,51 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: ext4 tree build warning
-Date: Tue, 9 Jun 2009 10:54:58 +1000
-Message-ID: <20090609105459.b1ae3575.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the  tree
+Date: Tue, 9 Jun 2009 11:08:15 +1000
+Message-ID: <20090609110815.0abd1de0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__9_Jun_2009_10_54_59_+1000_rC/WP=thR78NI8AE"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41449 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33063 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753095AbZFIAzC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Jun 2009 20:55:02 -0400
+	id S1753931AbZFIBIQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Jun 2009 21:08:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Tso <tytso@MIT.EDU>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, Mike Frysinger <vapier@gentoo.org>
 
---Signature=_Tue__9_Jun_2009_10_54_59_+1000_rC/WP=thR78NI8AE
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Al,
 
-Hi Ted,
+Today's linux-next merge of the vfs tree got a conflict in
+include/linux/magic.h between commit
+81ebac1be35a2c2fe1f4d3810a8e57d315600a32 ("CUSE: implement CUSE -
+Character device in Userspace") from the fuse tree and commit
+5b88aed76b5a1470ec9705c03cf3f0480c018513 ("linux/magic.h: move cramfs
+magic out of cramfs_fs.h") from the vfs tree.
 
-Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
-
-fs/ext4/inode.c: In function 'ext4_ind_get_blocks':
-fs/ext4/inode.c:939: warning: unused variable 'disksize'
-fs/ext4/inode.c:936: warning: unused variable 'ei'
-
-Introduced by commit fb8c2ba20b8530d74239c2420d335df81aa18e13 ("ext4: Get
-rid of EXTEND_DISKSIZE flag of ext4_get_blocks_handle()").
-
---=20
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__9_Jun_2009_10_54_59_+1000_rC/WP=thR78NI8AE
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkotsuMACgkQjjKRsyhoI8yaGACdFXPsR5oBPLlA9NEphxwBu6xK
-7JQAn1V8HEb4Rr/ZqT8aquiuSZ9468BE
-=uDyR
------END PGP SIGNATURE-----
-
---Signature=_Tue__9_Jun_2009_10_54_59_+1000_rC/WP=thR78NI8AE--
+diff --cc include/linux/magic.h
+index 4596c9e,192f980..0000000
+--- a/include/linux/magic.h
++++ b/include/linux/magic.h
+@@@ -3,11 -3,12 +3,13 @@@
+  
+  #define ADFS_SUPER_MAGIC	0xadf5
+  #define AFFS_SUPER_MAGIC	0xadff
+ -#define AFS_SUPER_MAGIC                0x5346414F
+ +#define AFS_SUPER_MAGIC		0x5346414F
+  #define AUTOFS_SUPER_MAGIC	0x0187
+  #define CODA_SUPER_MAGIC	0x73757245
++ #define CRAMFS_MAGIC		0x28cd3d45	/* some random number */
++ #define CRAMFS_MAGIC_WEND	0x453dcd28	/* magic number with the wrong endianess */
+ -#define DEBUGFS_MAGIC          0x64626720
+ +#define CUSE_SUPER_MAGIC	0x43555345
+ +#define DEBUGFS_MAGIC		0x64626720
+  #define SYSFS_MAGIC		0x62656572
+  #define SECURITYFS_MAGIC	0x73636673
+  #define TMPFS_MAGIC		0x01021994
