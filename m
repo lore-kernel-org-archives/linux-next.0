@@ -1,52 +1,91 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: rr tree build warning
-Date: Tue, 9 Jun 2009 16:26:36 +1000
-Message-ID: <20090609162636.d2351007.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with the rr tree
+Date: Tue, 9 Jun 2009 15:09:30 +1000
+Message-ID: <20090609150930.45eb8a32.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__9_Jun_2009_16_26_36_+1000_l0t=ZNwp_s48JEsK"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39104 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:46666 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752927AbZFIG0m (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Jun 2009 02:26:42 -0400
+	id S1755880AbZFIGeT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Jun 2009 02:34:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.de>, john cooper <john.cooper@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
 
---Signature=_Tue__9_Jun_2009_16_26_36_+1000_l0t=ZNwp_s48JEsK
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Jens,
 
-Hi Rusty,
+Today's linux-next merge of the block tree got conflicts in
+drivers/block/virtio_blk.c and include/linux/virtio_blk.h between commit
+a69a9b05d1050c24767d438bbe220157b7ff9250 ("Add serial number support for
+virtio_blk, V4a") from the rr tree and commit
+1cde26f928863d90e9e7c1217880c8450464d305 ("virtio_blk: SG_IO passthru
+support") from the block tree.
 
-Today's linux-next build (x86_64 allmodconfig) produced this warning:
-
-arch/x86/kernel/cpu/cpufreq/powernow-k8.c:1287: warning: passing argument 1=
- of 'check_supported_cpu' makes pointer from integer without a cast
-arch/x86/kernel/cpu/cpufreq/powernow-k8.c:514: note: expected 'void *' but =
-argument is of type 'unsigned int'
-
-Introduced by commit b3594a9ce5fb32533084ec75f1954c93f461591d ("cpumask:
-avoid playing with cpus_allowed in powernow-k8.c").
-
---=20
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__9_Jun_2009_16_26_36_+1000_l0t=ZNwp_s48JEsK
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkouAJwACgkQjjKRsyhoI8xtswCgisGQLzpm3dteyCH0HWqDI4ih
-Sp8AnisInaPtPo/+1a1NOsKV2VDUjnLX
-=t4yi
------END PGP SIGNATURE-----
-
---Signature=_Tue__9_Jun_2009_16_26_36_+1000_l0t=ZNwp_s48JEsK--
+diff --cc drivers/block/virtio_blk.c
+index ad8cb22,c4845b1..0000000
+--- a/drivers/block/virtio_blk.c
++++ b/drivers/block/virtio_blk.c
+@@@ -178,14 -175,16 +203,22 @@@ static int virtblk_ioctl(struct block_d
+  			 unsigned cmd, unsigned long data)
+  {
+  	struct gendisk *disk = bdev->bd_disk;
+ +	void __user *argp = (void __user *)data;
++ 	struct virtio_blk *vblk = disk->private_data;
+  
+ -	/*
+ -	 * Only allow the generic SCSI ioctls if the host can support it.
+ -	 */
+ -	if (!virtio_has_feature(vblk->vdev, VIRTIO_BLK_F_SCSI))
+ -		return -ENOIOCTLCMD;
+ -
+ -	return scsi_cmd_ioctl(disk->queue, disk, mode, cmd,
+ -			      (void __user *)data);
+ +	switch (cmd) {
+ +	case HDIO_GET_IDENTITY:
+ +		return virtblk_identify(disk, argp);
+ +	default:
+++		/*
+++		 * Only allow the generic SCSI ioctls if the host
+++		 * can support it.
+++		 */
+++		if (!virtio_has_feature(vblk->vdev, VIRTIO_BLK_F_SCSI))
+++			return -ENOIOCTLCMD;
+++
+ +		return scsi_cmd_ioctl(disk->queue, disk, mode, cmd, argp);
+ +	}
+  }
+  
+  /* We provide getgeo only to please some old bootloader/partitioning tools */
+@@@ -390,7 -390,7 +424,7 @@@ static struct virtio_device_id id_table
+  static unsigned int features[] = {
+  	VIRTIO_BLK_F_BARRIER, VIRTIO_BLK_F_SEG_MAX, VIRTIO_BLK_F_SIZE_MAX,
+  	VIRTIO_BLK_F_GEOMETRY, VIRTIO_BLK_F_RO, VIRTIO_BLK_F_BLK_SIZE,
+- 	VIRTIO_BLK_F_IDENTIFY
+ -	VIRTIO_BLK_F_SCSI,
+++	VIRTIO_BLK_F_SCSI, VIRTIO_BLK_F_IDENTIFY,
+  };
+  
+  static struct virtio_driver virtio_blk = {
+diff --cc include/linux/virtio_blk.h
+index eb470d5,4dbcbc1..0000000
+--- a/include/linux/virtio_blk.h
++++ b/include/linux/virtio_blk.h
+@@@ -15,9 -15,7 +15,10 @@@
+  #define VIRTIO_BLK_F_GEOMETRY	4	/* Legacy geometry available  */
+  #define VIRTIO_BLK_F_RO		5	/* Disk is read-only */
+  #define VIRTIO_BLK_F_BLK_SIZE	6	/* Block size of disk is available*/
++ #define VIRTIO_BLK_F_SCSI	7	/* Supports scsi command passthru */
+ +#define VIRTIO_BLK_F_IDENTIFY	8	/* ATA IDENTIFY supported */
+ +
+ +#define VIRTIO_BLK_ID_BYTES	(sizeof(__u16[256]))	/* IDENTIFY DATA */
+  
+  struct virtio_blk_config
+  {
