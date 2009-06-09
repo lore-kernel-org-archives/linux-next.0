@@ -1,51 +1,68 @@
-From: Nicolas Pitre <nico@cam.org>
-Subject: Re: linux-next: manual merge of the watchdog tree with the arm tree
-Date: Tue, 09 Jun 2009 09:18:00 -0400 (EDT)
-Message-ID: <alpine.LFD.2.00.0906090913520.31536@xanadu.home>
-References: <20090609163718.ccefad1d.sfr@canb.auug.org.au>
- <20090609123914.GD16090@infomag.iguana.be>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: net/wireless tree build failure
+Date: Tue, 9 Jun 2009 23:33:57 +1000
+Message-ID: <20090609233357.5d3801a0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__9_Jun_2009_23_33_57_+1000_Cp8+li_LyWa4aXcp"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relais.videotron.ca ([24.201.245.36]:54759 "EHLO
-	relais.videotron.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755621AbZFINSH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Jun 2009 09:18:07 -0400
-In-reply-to: <20090609123914.GD16090@infomag.iguana.be>
+Received: from chilli.pcug.org.au ([203.10.76.44]:40171 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753905AbZFINeC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Jun 2009 09:34:02 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@stericsson.com>, Russell King <rmk@arm.linux.org.uk>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, "David S. Miller" <davem@davemloft.net>
 
-On Tue, 9 Jun 2009, Wim Van Sebroeck wrote:
+--Signature=_Tue__9_Jun_2009_23_33_57_+1000_Cp8+li_LyWa4aXcp
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Stephen,
-> 
-> > Today's linux-next merge of the watchdog tree got a conflict in
-> > drivers/watchdog/Makefile between commit
-> > 3b937a7dbddbedd9457b33fcc8fa369c0c229c6e ("[ARM] Orion/Kirkwood: rename
-> > orion5x_wdt to orion_wdt") from the arm tree and commit
-> > e35f878d8313518a20d3c53393d14761dca74624 ("[WATCHDOG] U300 COH 901 327
-> > watchdog driver") from the watchdog tree.
-> 
-> It would have been nice if the orion watchdog rename patch would have been
-> sent to the watchdog maintainer also...
+Hi John, Dave,
 
-The patch has implications touching 2 different ARM subarchitectures 
-outside the driver itself, so I felt it more appropriate for the rename 
-to happen all at once and be carried through the ARM tree.  The driver 
-sees no functional changes.
-But I agree that I could have sent you a note.
+Today's linux-next build (pmac32 defconfig) failed like this:
 
-> > Just context changes.  I fixed it up (see below) and can carry the fix as
-> > necessary.
-> 
-> I'll have a look at the commit and might pull it into the watchdog tree also.
-> That way you shouldn't have any problem with it.
+In file included from drivers/net/wireless/b43/phy_common.h:5,
+                 from drivers/net/wireless/b43/phy_common.c:30:
+include/linux/rfkill.h: In function 'rfkill_alloc':
+include/linux/rfkill.h:279: error: implicit declaration of function 'ERR_PT=
+R'
+include/linux/rfkill.h:279: warning: return makes pointer from integer with=
+out a cast
+include/linux/rfkill.h: In function 'rfkill_register':
+include/linux/rfkill.h:284: warning: comparison between pointer and integer
+In file included from include/linux/dma-mapping.h:6,
+                 from arch/powerpc/include/asm/pci.h:16,
+                 from include/linux/pci.h:1101,
+                 from include/linux/ssb/ssb.h:9,
+                 from drivers/net/wireless/b43/b43.h:9,
+                 from drivers/net/wireless/b43/phy_common.c:35:
+include/linux/err.h: At top level:
+include/linux/err.h:22: error: conflicting types for 'ERR_PTR'
+include/linux/rfkill.h:279: note: previous implicit declaration of 'ERR_PTR=
+' was here
 
-I don't think it'll apply cleanly to the watchdog tree without greater 
-conflicts with the other ARM related changes.
+Probably caused by commit 19d337dff95cbf76edd3ad95c0cee2732c3e1ec5
+("rfkill: rewrite") which added uses of ERR_PTR to inlines in rfkill.h
+but did not include linux/err.h.
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Nicolas
+--Signature=_Tue__9_Jun_2009_23_33_57_+1000_Cp8+li_LyWa4aXcp
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkouZMUACgkQjjKRsyhoI8wP7gCgomUIyx252X51QTy/yTD2osC0
+FXcAnjadNQ7R+ty/A+03PBhOk5HCnY46
+=q72Q
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__9_Jun_2009_23_33_57_+1000_Cp8+li_LyWa4aXcp--
