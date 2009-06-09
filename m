@@ -1,109 +1,91 @@
-From: Subrata Modak <subrata-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
-Subject: Re: [BUILD FAILURE 02/04] Next June 04:PPC64 randconfig
-	[drivers/usb/host/ohci-hcd.o]
-Date: Wed, 10 Jun 2009 00:06:31 +0530
-Message-ID: <1244572592.5497.35.camel@subratamodak.linux.ibm.com>
-References: <20090605182651.24094.36577.sendpatchset@elm3a191.beaverton.ibm.com>
-Reply-To: subrata-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [BUILD FAILURE 01/04] Next June 04:PPC64 randconfig
+	[drivers/staging/comedi/drivers.o]
+Date: Tue, 9 Jun 2009 20:54:54 +0200
+Message-ID: <10f740e80906091154p60babd99t8452696ec7ccc8f3@mail.gmail.com>
+References: <20090605182625.24093.7808.sendpatchset@elm3a191.beaverton.ibm.com>
+	 <1244261806.31984.36.camel@pasglop> <20090606055103.GA9446@kroah.com>
+	 <200906060936.22322.fmhess@speakeasy.net>
+	 <1244385405.5265.7.camel@subratamodak.linux.ibm.com>
+	 <1244519418.5235.2.camel@pasglop>
+	 <1244572446.5497.32.camel@subratamodak.linux.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20090605182651.24094.36577.sendpatchset-yA/sI1izFwLkOmf+N4b0O9FgqiXiwxn+0E9HWUfgJXw@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Brownell <david-b-yBeKhBN/0LDR7s880joybQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: David Brownell <dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, Sachin P Sant <sachinp-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Linux-Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Linux-Next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jon Smirl <jonsmirl-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linuxppc-dev <Linuxppc-dev-mnsaURCQ41sdnm+yROfE0A@public.gmane.org>, Roman Weissgaerber <weissg-TVDPYGuBT+ReoWH0uzbU5w@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, kernel-OLH4Qvv75CYX/NnBR394Jw@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bw0-f213.google.com ([209.85.218.213]:47265 "EHLO
+	mail-bw0-f213.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752386AbZFISyy convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Jun 2009 14:54:54 -0400
+In-Reply-To: <1244572446.5497.32.camel@subratamodak.linux.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: subrata@linux.vnet.ibm.com
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Greg KH <greg@kroah.com>, fmhess@users.sourceforge.net, Ian Abbott <abbotti@mev.co.uk>, David Miller <davem@davemloft.net>, sachinp@linux.vnet.ibm.com, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, Linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, paulus@samba.org, Geert.Uytterhoeven@sonycom.com
 
-On Fri, 2009-06-05 at 13:26 -0500, Subrata Modak wrote:
-> >On Thu, 2009-06-04 at 10:07 -0400, Jon Smirl wrote:
-> >On Thu, Jun 4, 2009 at 9:31 AM, Subrata Modak
-> > <subrata-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org> wrote:
-> > > CC      drivers/usb/host/ohci-hcd.o
-> > > In file included from drivers/usb/host/ohci-hcd.c:1060:
-> > > drivers/usb/host/ohci-ppc-of.c:242:2: error: #error "No endianess selected for ppc-of-ohci"
-> > > make[3]: *** [drivers/usb/host/ohci-hcd.o] Error 1
-> > > make[2]: *** [drivers/usb/host] Error 2
-> > > make[1]: *** [drivers/usb] Error 2
-> > > make: *** [drivers] Error 2
-> > >
-> > > I reported this earlier, and there were some discussions:
-> > > http://groups.google.co.kr/group/linux.kernel/browse_thread/thread/edff9d5572d3d225
-> > 
-> > Proposed patch by Arnd should fix this. It has not been merged.
-> > http://lkml.org/lkml/2009/4/22/49
-> 
-> Correct, it fixes the issue. However, since few changes might have gone
-> to the Kconfig, the patch does not apply cleanly. Below is the patch, just
-> a retake of the earlier one, but on the latest code. 
-> 
-> David,
-> 
-> Can you please pickup the following patch ?
+On Tue, Jun 9, 2009 at 20:34, Subrata Modak<subrata@linux.vnet.ibm.com>=
+ wrote:
+> On Tue, 2009-06-09 at 13:50 +1000, Benjamin Herrenschmidt wrote:
+>> On Sun, 2009-06-07 at 20:06 +0530, Subrata Modak wrote:
+>> > On Sat, 2009-06-06 at 09:36 -0400, Frank Mori Hess wrote:
+>> > > On Saturday 06 June 2009, Greg KH wrote:
+>> > > > Frank and Ian, any thoughts about the vmap call in the
+>> > > > comedi_buf_alloc() call? =C2=A0Why is it using PAGE_KERNEL_NOC=
+ACHE, and what
+>> > > > is the prealloc_buf buffer used for?
+>> > >
+>> > > It is a circular buffer used to hold data streaming either to or=
+ from a
+>> > > board (for example when producing an analog output waveform). =C2=
+=A0Reads and
+>> > > writes to the device files read/write to the circular buffer, pl=
+us a few
+>> > > drivers do dma directly to/from it. =C2=A0I personally don't hav=
+e a problem
+>> > > with requiring drivers to have their own dma buffers and making =
+them copy
+>> > > data between their private dma buffers and the main circular buf=
+fer. =C2=A0I
+>> > > guess the original design wanted to support zero-copy dma.
+>> >
+>> > Great to hear that. How about a patch that solves my build problem=
+ on
+>> > PPC64(the problem seems to be existing for long) ?
+>>
+>> In any case, doing PAGE_KERNEL_NOCACHE for DMA memory is incorrect o=
+n
+>> many architectures. So at this stage, there's no much option but ifd=
+ef I
+>> suspect for now until this is fixed properly.
+>
+> Ok. But, i am not sure whether Greg will agree to this. If, Ok, is th=
+e
+> following patch i sent earlier Ok ?
+>
+> http://lkml.org/lkml/2009/6/5/462,
 
-David,
+Your patch helps powerpc only. Compilation is still broken on most
+other architectures.
 
-Is it you who will be merging this patch. Or, do i need to send it to
-somebody else ?
+>> It does make sense to want to have some memory like that shared betw=
+een
+>> user space and DMA, though I don't know what the right approach that
+>> works on all archs is at this stage. Worth asking the Alsa guys, I t=
+hink
+>> they have similar issues :-)
+>>
+>> But doing double buffering might do the trick fine for now.
 
-Regards--
-Subrata
+Gr{oetje,eeting}s,
 
-> 
-> Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>,
-> Resent-by: Subrata Modak <subrata-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
-> ---
-> 
-> --- linux-2.6.30-rc8/drivers/usb/host/Kconfig.orig	2009-06-05 10:31:30.000000000 -0500
-> +++ linux-2.6.30-rc8/drivers/usb/host/Kconfig	2009-06-05 10:37:53.000000000 -0500
-> @@ -181,26 +181,26 @@ config USB_OHCI_HCD_PPC_SOC
->  	  Enables support for the USB controller on the MPC52xx or
->  	  STB03xxx processor chip.  If unsure, say Y.
-> 
-> -config USB_OHCI_HCD_PPC_OF
-> -	bool "OHCI support for PPC USB controller on OF platform bus"
-> -	depends on USB_OHCI_HCD && PPC_OF
-> -	default y
-> -	---help---
-> -	  Enables support for the USB controller PowerPC present on the
-> -	  OpenFirmware platform bus.
-> -
->  config USB_OHCI_HCD_PPC_OF_BE
-> -	bool "Support big endian HC"
-> -	depends on USB_OHCI_HCD_PPC_OF
-> -	default y
-> +	bool "OHCI support for OF platform bus (big endian)"
-> +	depends on USB_OHCI_HCD && PPC_OF
->  	select USB_OHCI_BIG_ENDIAN_DESC
->  	select USB_OHCI_BIG_ENDIAN_MMIO
-> +	---help---
-> +	Enables support for big-endian USB controllers present on the
-> +	OpenFirmware platform bus.
-> 
->  config USB_OHCI_HCD_PPC_OF_LE
-> -	bool "Support little endian HC"
-> -	depends on USB_OHCI_HCD_PPC_OF
-> -	default n
-> +	bool "OHCI support for OF platform bus (little endian)"
-> +	depends on USB_OHCI_HCD && PPC_OF
->  	select USB_OHCI_LITTLE_ENDIAN
-> +	---help---
-> +	Enables support for little-endian USB controllers present on the
-> +	OpenFirmware platform bus.
-> +
-> +	config USB_OHCI_HCD_PPC_OF
-> +	bool
-> +	default USB_OHCI_HCD_PPC_OF_BE || USB_OHCI_HCD_PPC_OF_LE
-> 
->  config USB_OHCI_HCD_PCI
->  	bool "OHCI support for PCI-bus USB controllers"
-> 
-> ---
-> Regards--
-> Subrata
-> >
+						Geert
 
 --
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+							    -- Linus Torvalds
