@@ -1,68 +1,55 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: Request for linux-next inclusion of the voyager tree
-Date: Tue, 09 Jun 2009 08:49:19 -0500
-Message-ID: <1244555359.4137.10.camel@mulgrave.site>
-References: <1244477423.4079.228.camel@mulgrave.site>
-	 <20090609194515.7a1adebd.sfr@canb.auug.org.au>
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: linux-next: net/wireless tree build failure
+Date: Tue, 09 Jun 2009 15:54:42 +0200
+Message-ID: <1244555682.4672.7.camel@johannes.local>
+References: <20090609233357.5d3801a0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-SdA5J9/05dd6ih2RCURT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:55532 "EHLO
-	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1759849AbZFINtV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Jun 2009 09:49:21 -0400
-In-Reply-To: <20090609194515.7a1adebd.sfr@canb.auug.org.au>
+Received: from xc.sipsolutions.net ([83.246.72.84]:39812 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754473AbZFINzU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Jun 2009 09:55:20 -0400
+In-Reply-To: <20090609233357.5d3801a0.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
-On Tue, 2009-06-09 at 19:45 +1000, Stephen Rothwell wrote:
-> Hi James,
-> 
-> On Mon, 08 Jun 2009 11:10:23 -0500 James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
-> >
-> > Could you add this (as a postmerge tree) somewhere after the x86 trees,
-> > please (it depends on the auto-x86-next branch).
-> > 
-> > I'll be sending the pull request for it to Linus somewhere in the next
-> > merge window (probably towards the end) and if he takes it, linux-next
-> > inclusion for a small number of patches it contains will probably be a
-> > recurring feature.
-> > 
-> > The tree is at:
-> > 
-> > git://git.kernel.org/pub/scm/linux/kernel/git/jejb/voyager-2.6.git#master
-> 
-> I added it near the end for today (but see my other emails for the
-> results).  I will move it up just after the x86 tree tomorrow and hope
-> for better results.
-> 
-> (You have seen the following before, this is just for "form")
-> 
-> What I tell everyone: all patches/commits in the tree/series must
-> have been:
-> 
-> 	posted to a relevant mailing list
-> 	reviewed
-> 	unit tested
-> 	destined for the next merge window (or the current release)
 
-Check on all of those.
+--=-SdA5J9/05dd6ih2RCURT
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> *before* they are included.  The linux-next tree is for integration
-> testing and to lower the impact of conflicts between subsystems in the
-> next merge window.
-> 
-> Basically, this should be just what you would send to Linus (or ask him
-> to fetch).  It is allowed to be rebased if you deem it necessary.
+On Tue, 2009-06-09 at 23:33 +1000, Stephen Rothwell wrote:
 
-Right ... what I really need is wider build testing of the pieces I
-can't check easily here (especially random configuration testing).
+> Probably caused by commit 19d337dff95cbf76edd3ad95c0cee2732c3e1ec5
+> ("rfkill: rewrite") which added uses of ERR_PTR to inlines in rfkill.h
+> but did not include linux/err.h.
 
-I'm just trying to set up a build env for the 64 bit failure now.
+Indeed. Something must be including linux/err.h for me, I'll send a fix.
 
-Thanks,
+johannes
 
-James
+--=-SdA5J9/05dd6ih2RCURT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABAgAGBQJKLmmeAAoJEODzc/N7+QmaM4MP/3qNo2XML9s6DgxKHDhEKfGn
+8o1fPOp9VOIVfQF97YZNn/3Wf/nomqx0bgXnd4HJoYtBecuAvHX+7n0oBdc6DJMR
+qLCI1i10bjSO6pY+hN3w2brGArnxXuzX1NddFdxYOwRx6bRD0c9CiVPrUvdyXodR
+2BLwdukU+YSClQvV0oAxnJivNSgUNzOgRfePXyae1F9mLOtdSNrZPFfjcfeGtSL7
+8wmuMpw/XVYwgXewSdGyyninyqGQ7dZSv0gzdCowsszh5Jo+F2eD0qebQ/AKRdTq
+ns66NDiJo60a4D+isSI4rbe3behjD8FSKFeJZzOxLZHkE59/wp/C01QaNVsvHeOl
+J4ua4UjWA7ztw2W3TRJWA/ogGsPthyVyTVL0tedvPXMONqD1Swo4YwyyntlckDJt
+JoGD9EhG7ZaR7EMQ2lI9MGLJZ3Pm7F2FbPCLYiqoq0Dk09Io1bl5ohXry+7OV6i0
+L8hkiYzQsCuqeD2ip4BMy59Q/CHxDeEBSTYQDX98WVQK0/JkMgo/U7YUMPpGIACx
+t0CPCdoVIafKJ4e0OMG6FF91KsKFvzNQTXhxk9qXHak40PzF6Ri+x4iq+LCjrd9P
+Up0tTNjRHl6VWuKc/62nrif7iAQcLK3t338TppqpWHZuW2bLyzZBeQ//zlPeOXni
+IgLam7iLkpZIPIXf5JRz
+=n9H0
+-----END PGP SIGNATURE-----
+
+--=-SdA5J9/05dd6ih2RCURT--
