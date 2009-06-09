@@ -1,64 +1,53 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: [PATCH -next] nommu: Provide mmap_min_addr definition.
-Date: Wed, 10 Jun 2009 09:25:11 +1000 (EST)
-Message-ID: <alpine.LRH.2.00.0906100924590.17869@tundra.namei.org>
-References: <20090609084856.GA18528@linux-sh.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: kbuild tree build failure
+Date: Wed, 10 Jun 2009 09:27:31 +1000
+Message-ID: <20090610092731.1a75f1c7.sfr@canb.auug.org.au>
+References: <20090609114820.69d23ab3.sfr@canb.auug.org.au>
+	<20090609161512.GB6675@uranus.ravnborg.org>
+	<20090610021959.b7856ea9.sfr@canb.auug.org.au>
+	<20090609210427.GA21727@uranus.ravnborg.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__10_Jun_2009_09_27_31_+1000_7TapdnGuiyJZbLI6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tundra.namei.org ([65.99.196.166]:49377 "EHLO tundra.namei.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47460 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750810AbZFIXZg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Jun 2009 19:25:36 -0400
-In-Reply-To: <20090609084856.GA18528@linux-sh.org>
+	id S1753338AbZFIX1f (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Jun 2009 19:27:35 -0400
+In-Reply-To: <20090609210427.GA21727@uranus.ravnborg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Mundt <lethal@linux-sh.org>
-Cc: Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 9 Jun 2009, Paul Mundt wrote:
+--Signature=_Wed__10_Jun_2009_09_27_31_+1000_7TapdnGuiyJZbLI6
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> With the "security: use mmap_min_addr indepedently of security models"
-> change, mmap_min_addr is used in common areas, which susbsequently blows
-> up the nommu build. This stubs in the definition in the nommu case as
-> well.
-> 
+Hi Sam,
 
-Thanks.
+On Tue, 9 Jun 2009 23:04:27 +0200 Sam Ravnborg <sam@ravnborg.org> wrote:
+>
+> Fixed now (and build tested all changes this time).
 
+Excellent!
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/security-testing-2.6#next
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-> Signed-off-by: Paul Mundt <lethal@linux-sh.org>
-> Cc: Christoph Lameter <cl@linux-foundation.org>
-> Cc: James Morris <jmorris@namei.org>
-> 
-> --
-> 
->  mm/nommu.c |    3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/mm/nommu.c b/mm/nommu.c
-> index b571ef7..2fd2ad5 100644
-> --- a/mm/nommu.c
-> +++ b/mm/nommu.c
-> @@ -69,6 +69,9 @@ int sysctl_max_map_count = DEFAULT_MAX_MAP_COUNT;
->  int sysctl_nr_trim_pages = CONFIG_NOMMU_INITIAL_TRIM_EXCESS;
->  int heap_stack_gap = 0;
->  
-> +/* amount of vm to protect from userspace access */
-> +unsigned long mmap_min_addr = CONFIG_DEFAULT_MMAP_MIN_ADDR;
-> +
->  atomic_long_t mmap_pages_allocated;
->  
->  EXPORT_SYMBOL(mem_map);
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+--Signature=_Wed__10_Jun_2009_09_27_31_+1000_7TapdnGuiyJZbLI6
+Content-Type: application/pgp-signature
 
--- 
-James Morris
-<jmorris@namei.org>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkou7+MACgkQjjKRsyhoI8yyxwCdG8MvAOexhE374rmF5DeRT8Zf
+PIMAnRHfeHDRG4KBh1uDwSCbi8sl5Ij+
+=wNzt
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__10_Jun_2009_09_27_31_+1000_7TapdnGuiyJZbLI6--
