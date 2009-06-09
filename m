@@ -1,68 +1,52 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: linux-next: voyager tree build failure
-Date: Tue, 09 Jun 2009 10:18:38 -0500
-Message-ID: <1244560718.4137.26.camel@mulgrave.site>
-References: <20090609194038.826289f3.sfr@canb.auug.org.au>
+From: Marcel Holtmann <marcel@holtmann.org>
+Subject: Re: [PATCH] Bluetooth: depends on RFKILL
+Date: Tue, 09 Jun 2009 17:22:24 +0200
+Message-ID: <1244560944.3068.14.camel@localhost.localdomain>
+References: <1244560060-28112-1-git-send-email-a.beregalov@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:44655 "EHLO
-	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756299AbZFIPSl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Jun 2009 11:18:41 -0400
-In-Reply-To: <20090609194038.826289f3.sfr@canb.auug.org.au>
+Received: from senator.holtmann.net ([87.106.208.187]:40412 "EHLO
+	mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751493AbZFIPWY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Jun 2009 11:22:24 -0400
+In-Reply-To: <1244560060-28112-1-git-send-email-a.beregalov@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-bluetooth@vger.kernel.org
 
-On Tue, 2009-06-09 at 19:40 +1000, Stephen Rothwell wrote:
-> Hi James,
+Hi Alexander,
+
+> Since commit "Bluetooth: Add native RFKILL soft-switch support for all
+> devices" (611b30f74b5) bluetooth depends on RFKILL.
 > 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+> ---
+>  net/bluetooth/Kconfig |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
 > 
-> arch/x86/xen/smp.c:478: error: 'apic_safe_smp_processor_id' undeclared here (not in a function)
-> arch/x86/kernel/smp.c:219: error: 'apic_safe_smp_processor_id' undeclared here (not in a function)
-> 
-> Caused by commit 6a6df48477c1959b1baa78ecabba72548d362f60 ("[VOYAGER]
-> x86: add {safe,hard}_smp_processor_id to smp_ops").
-> 
-> I have dropped the voyager tree for today.
+> diff --git a/net/bluetooth/Kconfig b/net/bluetooth/Kconfig
+> index 7725da9..85ec71d 100644
+> --- a/net/bluetooth/Kconfig
+> +++ b/net/bluetooth/Kconfig
+> @@ -3,7 +3,7 @@
+>  #
+>  
+>  menuconfig BT
+> -	depends on NET && !S390
+> +	depends on NET && RFKILL && !S390
+>  	tristate "Bluetooth subsystem support"
+>  	help
+>  	  Bluetooth is low-cost, low-power, short-range wireless technology
 
-Thanks for finding this.  The fix looks to be a dummy definition of this
-function for x86_64.  The final fix (which has been under discussion)
-will be the elimination of safe_smp_processor_id() altogether.
+this patch is wrong. I think it just needs an extra
 
-I've merged this into the
+	depends on RFKILL || !RFKILL
 
-[VOYAGER] x86: add {safe,hard}_smp_processor_id to smp_ops
+It is fine to compile Bluetooth without RFKILL support.
 
-patch and respun the tree (and built it with an x86-64 cross compiler),
-so it should be safe to include next time around
+Regards
 
-Thanks,
-
-James
-
----
-
-diff -u b/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
---- b/arch/x86/include/asm/smp.h
-+++ b/arch/x86/include/asm/smp.h
-@@ -177,6 +177,15 @@
- 	ti->cpu;							\
- })
- #define safe_smp_processor_id()		smp_processor_id()
-+/*
-+ * dummy function for smp_ops.safe_smp_processor_id() which is unused
-+ * on x86_64.  This will also break the build if the definition leaks
-+ * outside of the guards in kernel/apic/ipi.c on x86_64
-+ */
-+static inline int apic_safe_smp_processor_id(void)
-+{
-+	return 0;
-+}
- 
- #endif
- 
+Marcel
