@@ -1,53 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: kbuild tree build failure
-Date: Wed, 10 Jun 2009 09:27:31 +1000
-Message-ID: <20090610092731.1a75f1c7.sfr@canb.auug.org.au>
-References: <20090609114820.69d23ab3.sfr@canb.auug.org.au>
-	<20090609161512.GB6675@uranus.ravnborg.org>
-	<20090610021959.b7856ea9.sfr@canb.auug.org.au>
-	<20090609210427.GA21727@uranus.ravnborg.org>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: Request for linux-next inclusion of the voyager tree
+Date: Wed, 10 Jun 2009 00:41:26 +0100
+Message-ID: <20090610004126.491508c9@lxorguk.ukuu.org.uk>
+References: <1244477423.4079.228.camel@mulgrave.site>
+	<20090609202130.GA5291@elte.hu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__10_Jun_2009_09_27_31_+1000_7TapdnGuiyJZbLI6"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47460 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753338AbZFIX1f (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Jun 2009 19:27:35 -0400
-In-Reply-To: <20090609210427.GA21727@uranus.ravnborg.org>
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:49361 "EHLO
+	www.etchedpixels.co.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751230AbZFIXkp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Jun 2009 19:40:45 -0400
+In-Reply-To: <20090609202130.GA5291@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
---Signature=_Wed__10_Jun_2009_09_27_31_+1000_7TapdnGuiyJZbLI6
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> This code has been NAK-ed by the x86 maintainers:
+> 
+>  - Due to the absurd irrelevance of Voyager/x86/Linux hardware
+> 
+>  - Due to the thousands of lines of of code it adds to arch/x86
+>    to support a 486/P5 era piece of hardware
+> 
+>  - and due to its negative track record of:
+> 
+>     v2.6.27.0:   Voyager was broken - it did not even build. (!)
+>     v2.6.28.0:   Voyager was broken - it did not even build. (!)
+>     v2.6.29-rc5: Voyager was broken - it did not even build. (!)
 
-Hi Sam,
+So Ingo you are arguing "It didn't work in some releases so we want to
+make it continue not to work by trying to keep the fixes out" ?
 
-On Tue, 9 Jun 2009 23:04:27 +0200 Sam Ravnborg <sam@ravnborg.org> wrote:
->
-> Fixed now (and build tested all changes this time).
+Sounds pretty dumb to me.
 
-Excellent!
+Getting this in -next has to be a good thing given the fact you and James
+don't agree on it, because thats the one place any merge collisions can
+be fixed and the combined bleeding edge x86 and voyager mods can be seen
+together and refined.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+I don't think ignoring voyager is useful - separating it out more
+probably is. Not-quite-PC hardware is on the way back, and OLPC is just
+the beginning so we *need* the mechanisms to support such platforms.
 
---Signature=_Wed__10_Jun_2009_09_27_31_+1000_7TapdnGuiyJZbLI6
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkou7+MACgkQjjKRsyhoI8yyxwCdG8MvAOexhE374rmF5DeRT8Zf
-PIMAnRHfeHDRG4KBh1uDwSCbi8sl5Ij+
-=wNzt
------END PGP SIGNATURE-----
-
---Signature=_Wed__10_Jun_2009_09_27_31_+1000_7TapdnGuiyJZbLI6--
+Alan
