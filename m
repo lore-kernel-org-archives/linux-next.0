@@ -1,51 +1,45 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the md tree with the  tree
-Date: Wed, 10 Jun 2009 14:38:01 +1000
-Message-ID: <20090610143801.cce5f7cf.sfr@canb.auug.org.au>
+Subject: linux-next: ttydev tree build warning
+Date: Wed, 10 Jun 2009 15:13:03 +1000
+Message-ID: <20090610151303.b7d020b5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__10_Jun_2009_14_38_01_+1000_ab7S=J9ohlqQM/jW"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35817 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751764AbZFJEip (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Jun 2009 00:38:45 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Neil Brown <neilb@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andre Noll <maan@systemlinux.org>
+ boundary="Signature=_Wed__10_Jun_2009_15_13_03_+1000_XZZ0nC2SRRzUOP6M"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756687AbZFJFNb@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__10_Jun_2009_14_38_01_+1000_ab7S=J9ohlqQM/jW
+--Signature=_Wed__10_Jun_2009_15_13_03_+1000_XZZ0nC2SRRzUOP6M
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Neil,
+Hi Alan,
 
-Today's linux-next merge of the md tree got a conflict in
-drivers/md/raid5.c between commit
-0e6e0271a210817e202c8a4bfffbde3e3c0616d1 ("md/raid5: fix bug in reshape
-code when chunk_size decreases") from the md-current tree and commit
-dbf4da18b39fd412a76c3e1b9d7b29c8cc0197fb ("md: convert conf->chunk_size
-and conf->prev_chunk to sectors") from the md tree.
+Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
 
-Overlapping changes.  I used the version from the md-current tree
-(stripe_addr+reshape_sectors) as it appears to be newer.
+drivers/char/tty_ioctl.c: In function 'tty_mode_ioctl':
+drivers/char/tty_ioctl.c:950: warning: unused variable 'ktermx'
+
+Introduced by commit 726c4346f5be00e0e48149ebe81026dcc3c9578e
+("tty-mutex-untangle").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__10_Jun_2009_14_38_01_+1000_ab7S=J9ohlqQM/jW
+--Signature=_Wed__10_Jun_2009_15_13_03_+1000_XZZ0nC2SRRzUOP6M
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkovOKoACgkQjjKRsyhoI8xFxQCdFjPeR0O3B+ucEV1IOlAczdfM
-ftgAn2NPkfil8vVfCUfcEWd7oshGCYfO
-=0qdP
+iEUEARECAAYFAkovQN8ACgkQjjKRsyhoI8x31QCff8jq9d2+AtDqgLIgHi37rByH
+c7kAl0HuW4J6nZvJ+zYxXfNGjohaDwQ=
+=/mkI
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__10_Jun_2009_14_38_01_+1000_ab7S=J9ohlqQM/jW--
+--Signature=_Wed__10_Jun_2009_15_13_03_+1000_XZZ0nC2SRRzUOP6M--
