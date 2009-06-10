@@ -1,45 +1,88 @@
-From: Theodore Tso <tytso@mit.edu>
-Subject: Re: linux-next: next-20090609 hangs in early user mode
-Date: Wed, 10 Jun 2009 12:09:30 -0400
-Message-ID: <20090610160930.GB10240@mit.edu>
-References: <20090610180058.99bd3dda.sfr@canb.auug.org.au> <20090610130054.GR8633@ZenIV.linux.org.uk> <20090610131909.GB6647@mit.edu> <20090610150839.GS8633@ZenIV.linux.org.uk>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: Request for linux-next inclusion of the voyager tree
+Date: Wed, 10 Jun 2009 18:19:14 +0200
+Message-ID: <20090610161914.GA27545@elte.hu>
+References: <1244477423.4079.228.camel@mulgrave.site> <20090609202130.GA5291@elte.hu> <20090610004126.491508c9@lxorguk.ukuu.org.uk> <20090609235647.GE23846@elte.hu> <alpine.LFD.2.01.0906091702580.6847@localhost.localdomain> <20090610003055.GA26492@elte.hu> <20090610010014.GA28345@elte.hu> <1244644726.4109.30.camel@mulgrave.site> <alpine.LFD.2.01.0906100817060.6847@localhost.localdomain> <1244647703.4109.45.camel@mulgrave.site>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from thunk.org ([69.25.196.29]:49238 "EHLO thunker.thunk.org"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:46941 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751697AbZFJQKC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Jun 2009 12:10:02 -0400
+	id S1751329AbZFJQT0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Jun 2009 12:19:26 -0400
 Content-Disposition: inline
-In-Reply-To: <20090610150839.GS8633@ZenIV.linux.org.uk>
+In-Reply-To: <1244647703.4109.45.camel@mulgrave.site>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-On Wed, Jun 10, 2009 at 04:08:39PM +0100, Al Viro wrote:
-> We can, but... it's again a matter of combining things with different
-> locking.  i_flags is protected by i_mutex, so if you put another
-> unsigned short next to it, you'd better make sure that i_mutex
-> is necessary and sufficient for modifying it.
-> 
-> Depending on the target, gcc may turn 16bit read-modify-store into 32bit one,
-> so if you have two 16bit fields next to each other, you can run into
-> 
-> CPU1:                     CPU2:
-> r1 = *(u32 *)p;           r2 = *(u32 *)p;
-> r1 |= 1;                  r2 |= 1 << 16;
-> *(u32 *)p = r1;           *(u32 *)p = r2;
-> 
-> with obvious results.  So we need the same locking for both such fields...
 
-Yelch....  good point.  I'll look and see if there's some other 8 or
-16-bit type to combine it with, but we may have started to hit
-diminishing returns with this this approach to sliming the inode slab
-caches.  I'm beginning to think if I want to make the inodes smaller,
-I'm going to have to create a separate substructure for fields only
-used when a file descriptor is opened on that inode, both in struct
-inode and in struct ext4_inode_info.  (Lifetime management of the
-substructure is going to be non-trivial, though.)
+* James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
 
-					- Ted
+> On Wed, 2009-06-10 at 08:20 -0700, Linus Torvalds wrote:
+> > 
+> > On Wed, 10 Jun 2009, James Bottomley wrote:
+> > > 
+> > > If I go the merge point route, I get a tree with more non trivial merge
+> > > points than commits, so it becomes incredibly difficult for anyone to
+> > > follow what's going on.  I also can no longer use git-email to send my
+> > > patch series anywhere.
+> > 
+> > Why do you need to merge at all?
+> > 
+> > Do you get constant conflicts? If so, _that_ is likely the problem.
+> 
+> Pretty much, yes.  The problem isn't in the voyager code, it's in 
+> the residual subarchitecture clean up.  As the x86 tree evolves, 
+> that's what keeps conflicting mainly because adjacent areas get 
+> altered.  Once that's upstream, the voyager piece should be a 
+> smooth ride.
+
+The problem causing problems with Voyager are long-lived, and it 
+goes well before the time we got rid of subarchitectures and added 
+the x86-quirks mechanism to express "non PC" properties cleanly.
+
+The problem was simply that the old Voyager code had an unreasonably 
+large cross-section to the x86 code originally, under the old 32-bit 
+subarch code concepts. (which, in hindsight, should never have been 
+merged in that form.)
+
+We had this mach-default/mach-voyager splitup and the asm headers 
+were duplicated as well, creating a large, hard to maintain 
+build-time kludge of subarchitecture code. Voyager broke again and 
+again in the past ~2 years because its assumptions were hidden in 
+build-time wrappers and were not visible to developers changing the 
+generic code.
+
+The other key problem was that for a long time you runtime tested 
+Voyager only in late -rc's (i remember an -rc8 Voyager patchset from 
+you - for issues that were introduced months before that point!) - 
+which gave us little oppotunity to do things properly.
+
+The thing is, you are the only Linux person known to us on this 
+planet who has access to the hardware and runs recent Linux on it 
+and thus _can_ test Voyager/Linux, so unless we reduce the cross 
+section to the rest of the code it will frequently 'break' - because 
+no-one can actually test its assumptions.
+
+So unless someone else mails us that they boot recent kernels and 
+care about Voyager, this is basically a one-person show for your 
+sake only. So the requirements are that it 1) must not hurt any 
+other code 2) the introduction must be done so cleanly that everyone 
+else benefits too indirectly, by virtue of an improved 
+infrastructure.
+
+> Once the last piece of the subarchitecture is removed and the 
+> pieces needed to support voyager are in, that should be it. [...]
+
+Ok, let me make this abundantly clear:
+
+We _already_ removed the 32-bit subarchitecture code. We converted 
+summit, numaq and visws over to the x86-quirks mechanism.
+
+So your "once the last piece of the subarchitecture is removed" 
+statement makes no sense. We dont have subarchitecture code left and 
+we are not adding it back.
+
+	Ingo
