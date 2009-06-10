@@ -1,35 +1,22 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: net tree build warning
-Date: Wed, 10 Jun 2009 01:12:52 -0700 (PDT)
-Message-ID: <20090610.011252.246691143.davem@davemloft.net>
-References: <4A2E603E.3040603@grandegger.com>
-	<20090609.173806.193714555.davem@davemloft.net>
-	<4A2F630F.5020602@grandegger.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: linux-next: next-20090609 hangs in early user mode
+Date: Wed, 10 Jun 2009 04:31:39 -0400
+Message-ID: <20090610083139.GA25538@infradead.org>
+References: <20090610180058.99bd3dda.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:50058
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757453AbZFJIMu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Jun 2009 04:12:50 -0400
-In-Reply-To: <4A2F630F.5020602@grandegger.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: wg@grandegger.com
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20090610180058.99bd3dda.sfr@canb.auug.org.au>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-From: Wolfgang Grandegger <wg@grandegger.com>
-Date: Wed, 10 Jun 2009 09:38:55 +0200
+On Wed, Jun 10, 2009 at 06:00:58PM +1000, Stephen Rothwell wrote:
+> The machines are PowerPC64 (so big endian).  It looks to me like we use
+> bitops on i_state - don't our bitops only apply to unsigned longs?
 
-> [PATCH v2] can: sja1000_of_platform: fix build problems with printk format
-> 
-> According to "Documentation/printk-formats.txt", if the type is
-> dependent on a config option for its size, like resource_size_t,
-> we should use a format specifier of its largest possible type and
-> explicitly cast to it.
-> 
-> Signed-off-by: Wolfgang Grandegger <wg@grandegger.com>
+Yes, bitops need unsigned long.  And on most plaforms should give you
+warnings when using them on the wrong type.
 
-Applied, thank you!
