@@ -1,67 +1,45 @@
-From: "Michael Chan" <mchan@broadcom.com>
-Subject: Re: next: CNIC: build fails
-Date: Wed, 10 Jun 2009 08:14:37 -0700
-Message-ID: <C27F8246C663564A84BB7AB343977242178EE78056@IRVEXCHCCR01.corp.ad.broadcom.com>
-References: <1244645749.4109.36.camel@mulgrave.site>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: Request for linux-next inclusion of the voyager tree
+Date: Wed, 10 Jun 2009 08:20:04 -0700 (PDT)
+Message-ID: <alpine.LFD.2.01.0906100817060.6847@localhost.localdomain>
+References: <1244477423.4079.228.camel@mulgrave.site>  <20090609202130.GA5291@elte.hu>  <20090610004126.491508c9@lxorguk.ukuu.org.uk>  <20090609235647.GE23846@elte.hu>  <alpine.LFD.2.01.0906091702580.6847@localhost.localdomain>  <20090610003055.GA26492@elte.hu>
+  <20090610010014.GA28345@elte.hu> <1244644726.4109.30.camel@mulgrave.site>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=us-ascii
-Content-Transfer-Encoding: 8BIT
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mms3.broadcom.com ([216.31.210.19]:1194 "EHLO MMS3.broadcom.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753929AbZFJPOm convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Jun 2009 11:14:42 -0400
-In-Reply-To: <1244645749.4109.36.camel@mulgrave.site>
-Content-Language: en-US
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:48265 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755308AbZFJPUd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Jun 2009 11:20:33 -0400
+In-Reply-To: <1244644726.4109.30.camel@mulgrave.site>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: 'James Bottomley' <James.Bottomley@HansenPartnership.com>, Alexander Beregalov <a.beregalov@gmail.com>
-Cc: linux-next <linux-next@vger.kernel.org>, linux-scsi <linux-scsi@vger.kernel.org>, 'Mike Christie' <michaelc@cs.wisc.edu>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Ingo Molnar <mingo@elte.hu>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-James Bottomley wrote:
 
-> On Wed, 2009-06-10 at 16:56 +0400, Alexander Beregalov wrote:
-> > Hi
-> >
-> > drivers/net/cnic.c: In function 'cnic_start_hw':
-> > drivers/net/cnic.c:2391: error: implicit declaration of
-> function 'pci_dev_get'
-> >
-> > The problem is that kconfig selects CNIC without it dependencies
-> >
-> > config SCSI_BNX2_ISCSI
-> >         tristate "Broadcom NetXtreme II iSCSI support"
-> >         select SCSI_ISCSI_ATTRS
-> >         select CNIC
-> >
-> > config BNX2
-> >         tristate "Broadcom NetXtremeII support"
-> >         depends on PCI
-> >         select CRC32
-> >         select FW_LOADER
-> >
-> > config CNIC
-> >         tristate "Broadcom CNIC support"
-> >         depends on BNX2
-> >         depends on UIO
-> >
-> > $ egrep "CNIC|BNX|_PCI" .config
-> > # CONFIG_PCI is not set
-> > CONFIG_SCSI_BNX2_ISCSI=y
-> > CONFIG_CNIC=y
->
-> OK, so one way to fix this is to make BNX2_ISCSI depend on CNIC rather
-> than select it.
->
-> A better way might be to make CNIC select BNX and UIO and then make
-> BNX2_ISCSI depend on PCI as well.
->
 
-We want BNX2_ISCSI to select CNIC, otherwise the user won't even see
-the BNX2_ISCSI option under SCSI low-level drivers if CNIC is not
-enabled.
+On Wed, 10 Jun 2009, James Bottomley wrote:
+> 
+> If I go the merge point route, I get a tree with more non trivial merge
+> points than commits, so it becomes incredibly difficult for anyone to
+> follow what's going on.  I also can no longer use git-email to send my
+> patch series anywhere.
 
-So I like your second solution.
+Why do you need to merge at all?
 
-Thanks.
+Do you get constant conflicts? If so, _that_ is likely the problem.
+
+The rule should be that you should _never_ need to merge from Ingo or me, 
+and things should be smooth. And if there are too frequent conflicts for 
+that to work, then the rule should be that things get cleaned up so that 
+those conflicts don't happen!
+
+Constant rebasing, or constant merging, is a symptom of something simply 
+not working. It's probably why Ingo is fed up with Voyager in the first 
+place. Can you guys just start telling me what the actual maintenance 
+problem is? Where do you actually step on each others toes? What are the 
+conflicts? Why is Voyager so special?
+
+			Linus
