@@ -1,27 +1,45 @@
-From: Theodore Tso <tytso@mit.edu>
-Subject: Re: linux-next: next-20090609 hangs in early user mode
-Date: Wed, 10 Jun 2009 09:19:09 -0400
-Message-ID: <20090610131909.GB6647@mit.edu>
-References: <20090610180058.99bd3dda.sfr@canb.auug.org.au> <20090610130054.GR8633@ZenIV.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: no 2.6.32 stuff yet
+Date: Wed, 10 Jun 2009 23:23:46 +1000
+Message-ID: <20090610232346.a9f1b3c2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__10_Jun_2009_23_23_46_+1000_qnktWhin=t8ZczZx"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35938 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754990AbZFJNXv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Jun 2009 09:23:51 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org
+
+--Signature=_Wed__10_Jun_2009_23_23_46_+1000_qnktWhin=t8ZczZx
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20090610130054.GR8633@ZenIV.linux.org.uk>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 10, 2009 at 02:00:54PM +0100, Al Viro wrote:
-> 
-> Yes, it's obviously bogus.  Dropped from the tree; I don't think it's
-> really salvagable - even merging into one unsigned long will not be
-> enough, since we will end up with different locking for different bits.
+Hi all,
 
-Oops, sorry, I didn't realize we were using bitops for i_state.  As
-far as I can tell we're not using the bitops functions for i_flags,
-though.  Is that right?  So we can convert i_flags to be a unsigned
-short, but we can't do anything with i_state.
+Please do not submit 2.6.32 material to linux-next until Linus has
+released at least 2.6.31-rc1.
 
-       	      	       		     - Ted
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__10_Jun_2009_23_23_46_+1000_qnktWhin=t8ZczZx
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkovs+IACgkQjjKRsyhoI8w4ZQCfVSS8ECLn9C5j+SWn3R9PU6Oe
+3cUAn0yVhTGiA+hb1VxwvsDF4XJm+VYD
+=lNwY
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__10_Jun_2009_23_23_46_+1000_qnktWhin=t8ZczZx--
