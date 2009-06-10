@@ -1,45 +1,38 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: next: CNIC: build fails
-Date: Wed, 10 Jun 2009 16:56:57 +0400
-Message-ID: <a4423d670906100556t6b193f45l1500f8f7c5cfe80b@mail.gmail.com>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: next-20090609 hangs in early user mode
+Date: Wed, 10 Jun 2009 14:00:54 +0100
+Message-ID: <20090610130054.GR8633@ZenIV.linux.org.uk>
+References: <20090610180058.99bd3dda.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f213.google.com ([209.85.220.213]:48119 "EHLO
-	mail-fx0-f213.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751475AbZFJM45 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Jun 2009 08:56:57 -0400
-Received: by fxm9 with SMTP id 9so735470fxm.37
-        for <linux-next@vger.kernel.org>; Wed, 10 Jun 2009 05:56:58 -0700 (PDT)
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next <linux-next@vger.kernel.org>, mchan@broadcom.com, James.Bottomley@HansenPartnership.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20090610180058.99bd3dda.sfr@canb.auug.org.au>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, linux-fsdevel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi
+On Wed, Jun 10, 2009 at 06:00:58PM +1000, Stephen Rothwell wrote:
 
-drivers/net/cnic.c: In function 'cnic_start_hw':
-drivers/net/cnic.c:2391: error: implicit declaration of function 'pci_dev_get'
+> d4fdcb2068eef29c03d6027aa219fa60171c6b87 is first bad commit
+> commit d4fdcb2068eef29c03d6027aa219fa60171c6b87
+> Author: Theodore Ts'o <tytso@mit.edu>
+> Date:   Thu May 21 16:00:59 2009 -0400
+> 
+>     fs: i_flags and i_state in struct inode only need to be unsigned short
+>     
+>     Currently i_flags and i_state do not need to be an unsigned int and an
+>     unsigned long, respectively.  (We currently use 9 i_flags bits, and 8
+>     i_state bits.)  Changing them to be an unsigned short saves 4 bytes
+>     per inode on an x86 platform, and 8 bytes on an x86_64 platform.
+>     
+>     Signed-off-by: "Theodore Ts'o" <tytso@mit.edu>
+>     Cc: linux-fsdevel@vger.kernel.org
+>     Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-The problem is that kconfig selects CNIC without it dependencies
+*gyah*
 
-config SCSI_BNX2_ISCSI
-        tristate "Broadcom NetXtreme II iSCSI support"
-        select SCSI_ISCSI_ATTRS
-        select CNIC
-
-config BNX2
-        tristate "Broadcom NetXtremeII support"
-        depends on PCI
-        select CRC32
-        select FW_LOADER
-
-config CNIC
-        tristate "Broadcom CNIC support"
-        depends on BNX2
-        depends on UIO
-
-$ egrep "CNIC|BNX|_PCI" .config
-# CONFIG_PCI is not set
-CONFIG_SCSI_BNX2_ISCSI=y
-CONFIG_CNIC=y
+Yes, it's obviously bogus.  Dropped from the tree; I don't think it's
+really salvagable - even merging into one unsigned long will not be
+enough, since we will end up with different locking for different bits.
