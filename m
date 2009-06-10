@@ -1,77 +1,45 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: Request for linux-next inclusion of the voyager tree
-Date: Wed, 10 Jun 2009 16:02:39 +0000
-Message-ID: <1244649759.4109.75.camel@mulgrave.site>
-References: <1244477423.4079.228.camel@mulgrave.site>
-	 <20090609202130.GA5291@elte.hu>
-	 <20090610004126.491508c9@lxorguk.ukuu.org.uk>
-	 <20090609235647.GE23846@elte.hu>
-	 <alpine.LFD.2.01.0906091702580.6847@localhost.localdomain>
-	 <alpine.LFD.2.00.0906101454420.3367@localhost.localdomain>
-	 <alpine.LFD.2.01.0906100821540.6847@localhost.localdomain>
-	 <20090610153954.GA3464@elte.hu>
+From: Theodore Tso <tytso@mit.edu>
+Subject: Re: linux-next: next-20090609 hangs in early user mode
+Date: Wed, 10 Jun 2009 12:09:30 -0400
+Message-ID: <20090610160930.GB10240@mit.edu>
+References: <20090610180058.99bd3dda.sfr@canb.auug.org.au> <20090610130054.GR8633@ZenIV.linux.org.uk> <20090610131909.GB6647@mit.edu> <20090610150839.GS8633@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:45345 "EHLO
-	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754907AbZFJQCl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Jun 2009 12:02:41 -0400
-In-Reply-To: <20090610153954.GA3464@elte.hu>
+Received: from thunk.org ([69.25.196.29]:49238 "EHLO thunker.thunk.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751697AbZFJQKC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Jun 2009 12:10:02 -0400
+Content-Disposition: inline
+In-Reply-To: <20090610150839.GS8633@ZenIV.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Alan Cox <alan@lxorguk.ukuu.org.uk>, "H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org
 
-On Wed, 2009-06-10 at 17:39 +0200, Ingo Molnar wrote:
-> * Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Wed, Jun 10, 2009 at 04:08:39PM +0100, Al Viro wrote:
+> We can, but... it's again a matter of combining things with different
+> locking.  i_flags is protected by i_mutex, so if you put another
+> unsigned short next to it, you'd better make sure that i_mutex
+> is necessary and sufficient for modifying it.
 > 
-> > On Wed, 10 Jun 2009, Thomas Gleixner wrote:
-> > > 
-> > > > Alan is definitely right that we're likely to see more of the "non-PC" 
-> > > > platforms as x86 tries to do embedded.
-> > > 
-> > > I agree, but the way voyager is done is _not_ a good example for the
-> > > embedded x86 folks who will probably start to send in their scoop in
-> > > the foreseable future.
-> > > 
-> > > I'm not fundamentally against bringing Voyager back, but it 
-> > > needs to go through a useful patch submission and review process 
-> > > and not by forcing voyager wreckage into our code base.
-> > 
-> > Ok, thanks. This was exactly the kind of thing I wanted to hear. 
-> > It does sound like the Voyager tree is doing things I myself 
-> > wouldn't approve of as a maintainer, so I can't really say that 
-> > I'm upset by the x86 maintainers then not pulling it.
+> Depending on the target, gcc may turn 16bit read-modify-store into 32bit one,
+> so if you have two 16bit fields next to each other, you can run into
 > 
-> I also take back the "it's obsolete" and "it didnt even build" 
-> portion of my NAK - that was overboard as Alan and you pointed it 
-> out.
+> CPU1:                     CPU2:
+> r1 = *(u32 *)p;           r2 = *(u32 *)p;
+> r1 |= 1;                  r2 |= 1 << 16;
+> *(u32 *)p = r1;           *(u32 *)p = r2;
 > 
-> I think we can work out something and a clear(er) platform driver 
-> interface abstraction with a thin cross section to generic x86 code 
-> will be helpful to a lot more than just Voyager.
-> 
-> In fact we have implemented that largely and it went upstream in 
-> 2.6.30, via the massive changes around this bit:
-> 
->   6bda2c8: x86: remove subarchitecture support
-> 
-> This is what _already_ happened to other (ex-)subarchitecture code: 
-> visws, numaq were frequent trouble spots too, and with the 
-> x86-quirks model they basically vanished from our regression lists.
-> 
-> So it's a successful model in practice, and if Voyager is done in a 
-> similar way we wont see many Voyager problems in the future either.
+> with obvious results.  So we need the same locking for both such fields...
 
-OK, so this is an acceptable compromise for me too.
+Yelch....  good point.  I'll look and see if there's some other 8 or
+16-bit type to combine it with, but we may have started to hit
+diminishing returns with this this approach to sliming the inode slab
+caches.  I'm beginning to think if I want to make the inodes smaller,
+I'm going to have to create a separate substructure for fields only
+used when a file descriptor is opened on that inode, both in struct
+inode and in struct ext4_inode_info.  (Lifetime management of the
+substructure is going to be non-trivial, though.)
 
-What I think now is needed (from me) are three patch sets:
-
-1. The final subarchitecture cleanups
-2. The quirk model/smp ops additions
-3. The voyager put back.
-
-James
+					- Ted
