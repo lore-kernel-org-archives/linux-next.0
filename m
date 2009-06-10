@@ -1,49 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: next-20090609 hangs in early user mode
-Date: Wed, 10 Jun 2009 18:46:07 +1000
-Message-ID: <20090610184607.fd4122ad.sfr@canb.auug.org.au>
-References: <20090610180058.99bd3dda.sfr@canb.auug.org.au>
+Subject: Re: linux-next: kbuild tree build warning
+Date: Wed, 10 Jun 2009 19:22:55 +1000
+Message-ID: <20090610192255.b0dc29e8.sfr@canb.auug.org.au>
+References: <20090610115255.035da856.sfr@canb.auug.org.au>
+	<20090610064723.GA25493@uranus.ravnborg.org>
+	<20090610165504.3047be39.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__10_Jun_2009_18_46_07_+1000_C8rXlukwu8oBVimd"
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20090610180058.99bd3dda.sfr@canb.auug.org.au>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__10_Jun_2009_19_22_55_+1000_U41cm6Z_cSNDoW.P"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:57327 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758573AbZFJJW7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Jun 2009 05:22:59 -0400
+In-Reply-To: <20090610165504.3047be39.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__10_Jun_2009_18_46_07_+1000_C8rXlukwu8oBVimd
+--Signature=_Wed__10_Jun_2009_19_22_55_+1000_U41cm6Z_cSNDoW.P
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 10 Jun 2009 18:00:58 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+Hi Sam,
+
+On Wed, 10 Jun 2009 16:55:04 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
 wrote:
 >
-> commit d4fdcb2068eef29c03d6027aa219fa60171c6b87
-> Author: Theodore Ts'o <tytso@mit.edu>
-> Date:   Thu May 21 16:00:59 2009 -0400
+> On Wed, 10 Jun 2009 08:47:23 +0200 Sam Ravnborg <sam@ravnborg.org> wrote:
+> >
+> > I already fixed this locally but I forgot to do a "git commit --amend" =
+:-)
+> > Will be fixed in next push of kbuild-next.
 >=20
->     fs: i_flags and i_state in struct inode only need to be unsigned short
+> Ah, well.  At least it was only a warning :-)
 
-I will revert that commit from linux-next today.
+One more:
+
+include/asm-generic/vmlinux.lds.h:695:1: warning: "/*" within comment
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__10_Jun_2009_18_46_07_+1000_C8rXlukwu8oBVimd
+--Signature=_Wed__10_Jun_2009_19_22_55_+1000_U41cm6Z_cSNDoW.P
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkovcs8ACgkQjjKRsyhoI8xfggCfTA1KWjV0iVzdaUWa6jh9zDF+
-NmgAn03nSJbwBsoDRjnlSN+2T56DR1Kf
-=y5oc
+iEYEARECAAYFAkove28ACgkQjjKRsyhoI8xP1QCeKjb+IACP+Sn2TCzVa9LDRuS1
+m7IAn39TIgQ3ppgAdQ7tctdFNRh7U+RH
+=FARO
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__10_Jun_2009_18_46_07_+1000_C8rXlukwu8oBVimd--
+--Signature=_Wed__10_Jun_2009_19_22_55_+1000_U41cm6Z_cSNDoW.P--
