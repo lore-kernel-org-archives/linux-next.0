@@ -1,56 +1,44 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: next: CNIC: build fails
-Date: Wed, 10 Jun 2009 14:55:49 +0000
-Message-ID: <1244645749.4109.36.camel@mulgrave.site>
-References: <a4423d670906100556t6b193f45l1500f8f7c5cfe80b@mail.gmail.com>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: next-20090609 hangs in early user mode
+Date: Wed, 10 Jun 2009 16:08:39 +0100
+Message-ID: <20090610150839.GS8633@ZenIV.linux.org.uk>
+References: <20090610180058.99bd3dda.sfr@canb.auug.org.au> <20090610130054.GR8633@ZenIV.linux.org.uk> <20090610131909.GB6647@mit.edu>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:47940 "EHLO
-	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753813AbZFJOzu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Jun 2009 10:55:50 -0400
-In-Reply-To: <a4423d670906100556t6b193f45l1500f8f7c5cfe80b@mail.gmail.com>
+Received: from zeniv.linux.org.uk ([195.92.253.2]:56000 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756259AbZFJPIk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Jun 2009 11:08:40 -0400
+Content-Disposition: inline
+In-Reply-To: <20090610131909.GB6647@mit.edu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: linux-next <linux-next@vger.kernel.org>, mchan@broadcom.com, linux-scsi <linux-scsi@vger.kernel.org>
+To: Theodore Tso <tytso@mit.edu>, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org
 
-On Wed, 2009-06-10 at 16:56 +0400, Alexander Beregalov wrote:
-> Hi
+On Wed, Jun 10, 2009 at 09:19:09AM -0400, Theodore Tso wrote:
+> On Wed, Jun 10, 2009 at 02:00:54PM +0100, Al Viro wrote:
+> > 
+> > Yes, it's obviously bogus.  Dropped from the tree; I don't think it's
+> > really salvagable - even merging into one unsigned long will not be
+> > enough, since we will end up with different locking for different bits.
 > 
-> drivers/net/cnic.c: In function 'cnic_start_hw':
-> drivers/net/cnic.c:2391: error: implicit declaration of function 'pci_dev_get'
-> 
-> The problem is that kconfig selects CNIC without it dependencies
-> 
-> config SCSI_BNX2_ISCSI
->         tristate "Broadcom NetXtreme II iSCSI support"
->         select SCSI_ISCSI_ATTRS
->         select CNIC
-> 
-> config BNX2
->         tristate "Broadcom NetXtremeII support"
->         depends on PCI
->         select CRC32
->         select FW_LOADER
-> 
-> config CNIC
->         tristate "Broadcom CNIC support"
->         depends on BNX2
->         depends on UIO
-> 
-> $ egrep "CNIC|BNX|_PCI" .config
-> # CONFIG_PCI is not set
-> CONFIG_SCSI_BNX2_ISCSI=y
-> CONFIG_CNIC=y
+> Oops, sorry, I didn't realize we were using bitops for i_state.  As
+> far as I can tell we're not using the bitops functions for i_flags,
+> though.  Is that right?  So we can convert i_flags to be a unsigned
+> short, but we can't do anything with i_state.
 
-OK, so one way to fix this is to make BNX2_ISCSI depend on CNIC rather
-than select it.
+We can, but... it's again a matter of combining things with different
+locking.  i_flags is protected by i_mutex, so if you put another
+unsigned short next to it, you'd better make sure that i_mutex
+is necessary and sufficient for modifying it.
 
-A better way might be to make CNIC select BNX and UIO and then make
-BNX2_ISCSI depend on PCI as well.
+Depending on the target, gcc may turn 16bit read-modify-store into 32bit one,
+so if you have two 16bit fields next to each other, you can run into
 
-James
+CPU1:                     CPU2:
+r1 = *(u32 *)p;           r2 = *(u32 *)p;
+r1 |= 1;                  r2 |= 1 << 16;
+*(u32 *)p = r1;           *(u32 *)p = r2;
+
+with obvious results.  So we need the same locking for both such fields...
