@@ -1,77 +1,39 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: Request for linux-next inclusion of the voyager tree
-Date: Wed, 10 Jun 2009 15:28:23 +0000
-Message-ID: <1244647703.4109.45.camel@mulgrave.site>
-References: <1244477423.4079.228.camel@mulgrave.site>
-	 <20090609202130.GA5291@elte.hu>
-	 <20090610004126.491508c9@lxorguk.ukuu.org.uk>
-	 <20090609235647.GE23846@elte.hu>
-	 <alpine.LFD.2.01.0906091702580.6847@localhost.localdomain>
-	 <20090610003055.GA26492@elte.hu> <20090610010014.GA28345@elte.hu>
-	 <1244644726.4109.30.camel@mulgrave.site>
-	 <alpine.LFD.2.01.0906100817060.6847@localhost.localdomain>
+Date: Wed, 10 Jun 2009 08:33:21 -0700 (PDT)
+Message-ID: <alpine.LFD.2.01.0906100831120.6847@localhost.localdomain>
+References: <1244477423.4079.228.camel@mulgrave.site>  <20090609202130.GA5291@elte.hu>  <20090610004126.491508c9@lxorguk.ukuu.org.uk>  <20090609235647.GE23846@elte.hu>  <alpine.LFD.2.01.0906091702580.6847@localhost.localdomain>  <20090610003055.GA26492@elte.hu>
+ <20090610010014.GA28345@elte.hu>  <1244644726.4109.30.camel@mulgrave.site>  <alpine.LFD.2.01.0906100817060.6847@localhost.localdomain> <1244647703.4109.45.camel@mulgrave.site>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:37533 "EHLO
-	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755976AbZFJP22 (ORCPT
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:38466 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753367AbZFJPdq (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Jun 2009 11:28:28 -0400
-In-Reply-To: <alpine.LFD.2.01.0906100817060.6847@localhost.localdomain>
+	Wed, 10 Jun 2009 11:33:46 -0400
+In-Reply-To: <1244647703.4109.45.camel@mulgrave.site>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
 Cc: Ingo Molnar <mingo@elte.hu>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-On Wed, 2009-06-10 at 08:20 -0700, Linus Torvalds wrote:
+
+
+On Wed, 10 Jun 2009, James Bottomley wrote:
 > 
-> On Wed, 10 Jun 2009, James Bottomley wrote:
-> > 
-> > If I go the merge point route, I get a tree with more non trivial merge
-> > points than commits, so it becomes incredibly difficult for anyone to
-> > follow what's going on.  I also can no longer use git-email to send my
-> > patch series anywhere.
-> 
-> Why do you need to merge at all?
-> 
-> Do you get constant conflicts? If so, _that_ is likely the problem.
+> Pretty much, yes.  The problem isn't in the voyager code, it's in the
+> residual subarchitecture clean up.  As the x86 tree evolves, that's what
+> keeps conflicting mainly because adjacent areas get altered.  Once
+> that's upstream, the voyager piece should be a smooth ride.
 
-Pretty much, yes.  The problem isn't in the voyager code, it's in the
-residual subarchitecture clean up.  As the x86 tree evolves, that's what
-keeps conflicting mainly because adjacent areas get altered.  Once
-that's upstream, the voyager piece should be a smooth ride.
+Quite frankly, in that case I think that in order to get Voyager merged, 
+we should just get the subarchitecture code cleaned up _first_.
 
-The other piece that gets conflicts is the fact that voyager needs two
-additions to the quirks and smp ops pointer indirections to cope with
-some of it's unique features ... these have all been over linux-scsi
-several times, with feedback from the affected users.  However, while
-they remain out of tree, there another source of conflict.
+The thing is, I do agree with Ingo that Voyager is not _nearly_ important 
+enough to be rammed through in some ugly manner. And if the plan is to get 
+it all done cleanly in the end anyway, then there is certainly no hurry 
+what-so-ever in getting Voyager merged _before_ it's possible to merge it 
+cleanly.
 
-> The rule should be that you should _never_ need to merge from Ingo or me, 
-> and things should be smooth. And if there are too frequent conflicts for 
-> that to work, then the rule should be that things get cleaned up so that 
-> those conflicts don't happen!
-> 
-> Constant rebasing, or constant merging, is a symptom of something simply 
-> not working. It's probably why Ingo is fed up with Voyager in the first 
-> place. Can you guys just start telling me what the actual maintenance 
-> problem is? Where do you actually step on each others toes? What are the 
-> conflicts? Why is Voyager so special?
-
-Once the last piece of the subarchitecture is removed and the pieces
-needed to support voyager are in, that should be it.
-
-The two additional pieces are:
-
-1. prefill_possible_map initialisation ... voyager boots with a non apic
-config, so it needs to prefill the possible map from its VIC CPU
-registers
-2. indirection of hard_smp_processor_id() ... voyager doesn't have an
-apic, so it has to read a special VIC register instead.
-
-There's also an addition to the boot code to make voyager detection
-dynamic instead of static based on subarchitecture.
-
-James
+			Linus
