@@ -1,98 +1,138 @@
-From: David Brownell <david-b-yBeKhBN/0LDR7s880joybQ@public.gmane.org>
-Subject: Re: [BUILD FAILURE 02/04] Next June 04:PPC64 randconfig [drivers/usb/host/ohci-hcd.o]
-Date: Tue, 9 Jun 2009 17:38:57 -0700
-Message-ID: <200906091738.58154.david-b@pacbell.net>
-References: <20090605182651.24094.36577.sendpatchset@elm3a191.beaverton.ibm.com>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: Request for linux-next inclusion of the voyager tree
+Date: Wed, 10 Jun 2009 03:00:14 +0200
+Message-ID: <20090610010014.GA28345@elte.hu>
+References: <1244477423.4079.228.camel@mulgrave.site> <20090609202130.GA5291@elte.hu> <20090610004126.491508c9@lxorguk.ukuu.org.uk> <20090609235647.GE23846@elte.hu> <alpine.LFD.2.01.0906091702580.6847@localhost.localdomain> <20090610003055.GA26492@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20090605182651.24094.36577.sendpatchset-yA/sI1izFwLkOmf+N4b0O9FgqiXiwxn+0E9HWUfgJXw@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.mail.elte.hu ([157.181.151.9]:52470 "EHLO mx2.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751446AbZFJBAh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Jun 2009 21:00:37 -0400
 Content-Disposition: inline
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Subrata Modak <subrata-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sachin P Sant <sachinp-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Linux-Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Linux-Next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jon Smirl <jonsmirl-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linuxppc-dev <Linuxppc-dev-mnsaURCQ41sdnm+yROfE0A@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, kernel-OLH4Qvv75CYX/NnBR394Jw@public.gmane.org
-List-Id: linux-next.vger.kernel.org
-
-On Friday 05 June 2009, Subrata Modak wrote:
-> Correct, it fixes the issue. However, since few changes might have gone
-> to the Kconfig, the patch does not apply cleanly. Below is the patch, just
-> a retake of the earlier one, but on the latest code. 
-
-And it got mangled a bit along the way.  Plus, the original one
-goofed up Kconfig dependency displays ... both issues fixed in
-this version, against current mainline GIT.
-
-If someone can verify all four PPC/OF/OHCI configs build on
-on PPC64, I'm OK with it.
-
-- Dave
+In-Reply-To: <20090610003055.GA26492@elte.hu>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, James Bottomley <James.Bottomley@HansenPartnership.com>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
 
-========== CUT HERE
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: fix build failure for PPC64 randconfig [usb/ohci]
+* Ingo Molnar <mingo@elte.hu> wrote:
 
-We could just make the USB_OHCI_HCD_PPC_OF option implicit
-and selected only if at least one of USB_OHCI_HCD_PPC_OF_BE
-and USB_OHCI_HCD_PPC_OF_LE are set.
+> See for example what happened in linux-next today: Voyager broke 
+> x86 and didnt even build, and Stephen had to keep it out of 
+> today's linux-next build.
 
-[ dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org: fix patch manglation and dependencies ]
+I also took a look at that tree:
 
-Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Resent-by: Subrata Modak <subrata-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
-Signed-off-by: David Brownell <dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
----
- drivers/usb/host/Kconfig |   29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/jejb/voyager-2.6.git master
 
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@ -180,26 +180,27 @@ config USB_OHCI_HCD_PPC_SOC
- 	  Enables support for the USB controller on the MPC52xx or
- 	  STB03xxx processor chip.  If unsure, say Y.
- 
--config USB_OHCI_HCD_PPC_OF
--	bool "OHCI support for PPC USB controller on OF platform bus"
--	depends on USB_OHCI_HCD && PPC_OF
--	default y
--	---help---
--	  Enables support for the USB controller PowerPC present on the
--	  OpenFirmware platform bus.
--
- config USB_OHCI_HCD_PPC_OF_BE
--	bool "Support big endian HC"
--	depends on USB_OHCI_HCD_PPC_OF
--	default y
-+	bool "OHCI support for OF platform bus (big endian)"
-+	depends on USB_OHCI_HCD && PPC_OF
- 	select USB_OHCI_BIG_ENDIAN_DESC
- 	select USB_OHCI_BIG_ENDIAN_MMIO
-+	---help---
-+	  Enables support for big-endian USB controllers present on the
-+	  OpenFirmware platform bus.
- 
- config USB_OHCI_HCD_PPC_OF_LE
--	bool "Support little endian HC"
--	depends on USB_OHCI_HCD_PPC_OF
--	default n
-+	bool "OHCI support for OF platform bus (little endian)"
-+	depends on USB_OHCI_HCD && PPC_OF
- 	select USB_OHCI_LITTLE_ENDIAN
-+	---help---
-+	  Enables support for little-endian USB controllers present on the
-+	  OpenFirmware platform bus.
-+
-+config USB_OHCI_HCD_PPC_OF
-+	bool
-+	depends on USB_OHCI_HCD && PPC_OF
-+	default USB_OHCI_HCD_PPC_OF_BE || USB_OHCI_HCD_PPC_OF_LE
- 
- config USB_OHCI_HCD_PCI
- 	bool "OHCI support for PCI-bus USB controllers"
+A couple of quick, mostly high-level observations:
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1)
+
+The Voyager bits got rebased _yesterday_. _All_ the commits:
+
+ commit 0ff51d1467af91bca4210b0d09372b6e7ded7524
+ Author:     James Bottomley <James.Bottomley@HansenPartnership.com>
+ AuthorDate: Mon Feb 23 15:02:04 2009 -0600
+ Commit:     James Bottomley <James.Bottomley@HansenPartnership.com>
+ CommitDate: Mon Jun 8 09:49:08 2009 -0500
+
+I told James before that he should _not_ rebase:
+
+   http://lkml.org/lkml/2009/2/1/76
+
+In no uncertain terms. He completely ignored me and he messes up 
+trees that way again. Now i should pull such a damaged tree while 
+all the other x86 contributors we pull from do a thorough job?
+
+( And note that the above link points to _another_ similar incident,
+  where James rebased a tree and broke the build. It is a pattern of 
+  behavior. )
+
+2)
+
+The tree structure is unacceptable:
+
+ a087b5f: [VOYAGER] x86: add prefill_possible_map to x86_quirks
+ f5ef55a: [VOYAGER] x86/mca: make mca_nmi_hook external
+ 55c8430: [VOYAGER] x86: add {safe,hard}_smp_processor_id to smp_ops
+ fd1ab45: Revert "MAINTAINERS - Remove x86/Voyager no longer in tree"
+ 0ff51d1: Revert "x86: remove the Voyager 32-bit subarch"
+
+That is crap. It starts with a huge 'revert' - which of course 
+breaks the tree and needs 16 commits to bring back into action.
+
+It might be OK to _revive_ the source code that way privately - but 
+the history completely incorrectly suggests a 'revert'. We revert 
+buggy commits.
+
+What we want here is a clean submission, and a tidy, well 
+constructed, non-rebased, well-tested Git tree. Or plain email 
+submissions initially, because frankly i shouldnt Git-pull such a 
+messy tree.
+
+3)
+
+The comments. For example the revert:
+
+ From 0ff51d1467af91bca4210b0d09372b6e7ded7524 Mon Sep 17 00:00:00 2001
+ From: James Bottomley <James.Bottomley@HansenPartnership.com>
+ Date: Mon, 23 Feb 2009 15:02:04 -0600
+ Subject: [PATCH] Revert "x86: remove the Voyager 32-bit subarch"
+
+ This reverts commit 965c7ecaf2e2b083d711a01ab33735a4bdeee1a4.
+ ---
+
+That is not how we do reverts! We always give a reason for a revert. 
+
+4)
+
+Small details like standard commit titles in the x86 tree. It 
+shouldnt be:
+
+ [VOYAGER] x86: eliminate subarchitecture file do_timer.h
+
+It should be:
+
+ x86: Voyager: Eliminate subarchitecture file do_timer.h
+
+Note the different order and different capitalization.
+
+5)
+
+And as i requested it in an earier thread, quirky platforms should 
+be supported via a _single_ quirks file.
+
+That makes it easy to handle and makes it easy to ignore as well. 
+It's basically a "weird hardware driver". We have examples of that, 
+for example arch/x86/kernel/visws_quirks.c. Voyager will be larger 
+than that but it's OK - it's not like it will undergo massive 
+development.
+
+Putting it back into arch/x86/mach-voyager/ again reintroduces the 
+subarch directory structure we got rid of.
+
+6)
+
+This ordering of subsequent patches:
+
+5c173bb: [VOYAGER] x86: eliminate subarchitecture file do_timer.h
+18d3288: [VOYAGER] x86: eliminate subarchitecture file entry_arch.h
+42c7289: [VOYAGER] x86: eliminate subarchitecture file setup_arch.h
+
+is totally wrong - it removes something that should not have been 
+put there in the first place.
+
+If then Voyager should be added as a clean series of patches: first 
+the generic patches that introduce infrastructure changes (to 
+x86_quirks and smp_ops, etc.), then a single final patch that adds 
+in the Voyager quirks platform driver.
+
+And we've been through similar excercises multiple times before. 
+
+All in one, this tree is quite poor and needs a lot of work.
+
+	Ingo
