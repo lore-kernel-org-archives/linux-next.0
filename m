@@ -1,52 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: rr tree build failure
-Date: Wed, 10 Jun 2009 18:11:30 +1000
-Message-ID: <20090610181130.284a5a7f.sfr@canb.auug.org.au>
-References: <20090609201205.2894522c.sfr@canb.auug.org.au>
-	<200906101656.48204.rusty@rustcorp.com.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: net tree build warning
+Date: Wed, 10 Jun 2009 01:12:52 -0700 (PDT)
+Message-ID: <20090610.011252.246691143.davem@davemloft.net>
+References: <4A2E603E.3040603@grandegger.com>
+	<20090609.173806.193714555.davem@davemloft.net>
+	<4A2F630F.5020602@grandegger.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__10_Jun_2009_18_11_30_+1000_aHoMu6w9N9Un7t76"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47951 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752349AbZFJILe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Jun 2009 04:11:34 -0400
-In-Reply-To: <200906101656.48204.rusty@rustcorp.com.au>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:50058
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1757453AbZFJIMu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Jun 2009 04:12:50 -0400
+In-Reply-To: <4A2F630F.5020602@grandegger.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: wg@grandegger.com
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__10_Jun_2009_18_11_30_+1000_aHoMu6w9N9Un7t76
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Wolfgang Grandegger <wg@grandegger.com>
+Date: Wed, 10 Jun 2009 09:38:55 +0200
 
-Hi Rusty,
+> [PATCH v2] can: sja1000_of_platform: fix build problems with printk format
+> 
+> According to "Documentation/printk-formats.txt", if the type is
+> dependent on a config option for its size, like resource_size_t,
+> we should use a format specifier of its largest possible type and
+> explicitly cast to it.
+> 
+> Signed-off-by: Wolfgang Grandegger <wg@grandegger.com>
 
-On Wed, 10 Jun 2009 16:56:46 +0930 Rusty Russell <rusty@rustcorp.com.au> wr=
-ote:
->
-> Ah, my bad.  I'll wrap this and test this config too.
-
-Thanks.  I will revert that commit from today's linux-next as well.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__10_Jun_2009_18_11_30_+1000_aHoMu6w9N9Un7t76
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkovarIACgkQjjKRsyhoI8y/yACfTm5DhFrv4AO9Ud0VDHUmSOin
-uMEAniLXodqbR8zxv2f4Iychp6B4k/pz
-=A8cl
------END PGP SIGNATURE-----
-
---Signature=_Wed__10_Jun_2009_18_11_30_+1000_aHoMu6w9N9Un7t76--
+Applied, thank you!
