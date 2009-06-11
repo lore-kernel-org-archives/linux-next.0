@@ -1,70 +1,54 @@
-From: Subrata Modak <subrata@linux.vnet.ibm.com>
-Subject: [PATCH][BUILD FAILURE 03/04] Next June 04:PPC64 randconfig
-	[drivers/net/lance.o]
-Date: Thu, 11 Jun 2009 09:20:46 +0530
-Message-ID: <20090611035046.22125.26641.sendpatchset@subratamodak.linux.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: net tree build warnings
+Date: Thu, 11 Jun 2009 14:55:41 +1000
+Message-ID: <20090611145541.2570a43d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-To: netdev@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>
-Cc: Sachin P Sant <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Kernel <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, Subrata Modak <subrata@linux.vnet.ibm.com>, Balbir Singh <balbir@linux.vnet.ibm.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__11_Jun_2009_14_55_41_+1000_LJC_j=diE6zxirMu"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39088 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751275AbZFKEzs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Jun 2009 00:55:48 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sergey Lapin <slapin@ossfans.org>
 
-Hi Benjamin/Paul,
+--Signature=_Thu__11_Jun_2009_14_55_41_+1000_LJC_j=diE6zxirMu
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->On Thu, 2009-06-04 at 19:02 +0530, Subrata Modak wrote:
->CC      drivers/net/lance.o
-> drivers/net/lance.c: In function 'lance_probe1':
-> drivers/net/lance.c:575: error: implicit declaration of function 'isa_virt_to_bus'
-> drivers/net/lance.c: In function 'lance_rx':
-> drivers/net/lance.c:1197: error: implicit declaration of function 'isa_bus_to_virt'
-> make[2]: *** [drivers/net/lance.o] Error 1
-> make[1]: *** [drivers/net] Error 2
-> make: *** [drivers] Error 2
+Hi Dave,
 
-Reference: http://lkml.org/lkml/2009/6/4/240,
-To fix the following build error:
+Today's linux-next build (x86_64 allmodconfig) produced these warnings:
 
-drivers/net/lance.c: In function 'lance_probe1':
-drivers/net/lance.c:575: error: implicit declaration of function 'isa_virt_to_bus'
-drivers/net/lance.c: In function 'lance_rx':
-drivers/net/lance.c:1197: error: implicit declaration of function 'isa_bus_to_virt'
-make[2]: *** [drivers/net/lance.o] Error 1
-make[1]: *** [drivers/net] Error 2
-make: *** [drivers] Error 2
+net/ieee802154/raw.c: In function 'raw_sendmsg':
+net/ieee802154/raw.c:135: warning: format '%u' expects type 'unsigned int',=
+ but argument 2 has type 'size_t'
+net/ieee802154/dgram.c: In function 'dgram_sendmsg':
+net/ieee802154/dgram.c:251: warning: format '%u' expects type 'unsigned int=
+', but argument 2 has type 'size_t'
 
-I would like to propose the following patch. The prototypes for the functions:
-'isa_virt_to_bus' & 'isa_virt_to_bus' are existing for some archs like the
-mips, x86, parisc, arm & alpha, but, is missing for powerpc. Is it safe to
-introduce the following soultion for powerpc ? It fixes the build problem
-i reported earlier.
+Introduced by commit 9ec7671603573ede31207eb5b0b3e1aa211b2854 ("net: add
+IEEE 802.15.4 socket family implementation").
 
-Signed-off-by: Subrata Modak <subrata@linux.vnet.ibm.com>
----
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---- linux-2.6.30-rc8/arch/powerpc/include/asm/io.h.orig	2009-06-10 21:56:49.000000000 -0500
-+++ linux-2.6.30-rc8/arch/powerpc/include/asm/io.h	2009-06-10 22:21:35.000000000 -0500
-@@ -680,6 +680,9 @@ extern void __iounmap_at(void *ea, unsig
- #define mmio_outsw(addr, src, count)	writesw(addr, src, count)
- #define mmio_outsl(addr, src, count)	writesl(addr, src, count)
- 
-+#define isa_virt_to_bus		virt_to_phys
-+#define isa_bus_to_virt		phys_to_virt
-+
- /**
-  *	virt_to_phys	-	map virtual addresses to physical
-  *	@address: address to remap
+--Signature=_Thu__11_Jun_2009_14_55_41_+1000_LJC_j=diE6zxirMu
+Content-Type: application/pgp-signature
 
----
-Regards--
-Subrata
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkowjk0ACgkQjjKRsyhoI8zGpACfUpW/mT9nbl/1sbC2ockEMvnw
+CjQAn2VRcsLTbeOEU4rvV4i6NymnHXT7
+=9hny
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__11_Jun_2009_14_55_41_+1000_LJC_j=diE6zxirMu--
