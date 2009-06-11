@@ -1,112 +1,31 @@
-From: "Desai, Kashyap" <Kashyap.Desai@lsi.com>
-Subject: RE: linux-next: manual merge of the block tree with the scsi tree
-Date: Thu, 11 Jun 2009 11:53:21 +0530
-Message-ID: <0D1E8821739E724A86F4D16902CE275C141A2C14CA@inbmail01.lsi.com>
-References: <20090610140234.2d008ed1.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: net tree build warnings
+Date: Wed, 10 Jun 2009 23:47:57 -0700 (PDT)
+Message-ID: <20090610.234757.215116002.davem@davemloft.net>
+References: <20090611145541.2570a43d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from exprod7og127.obsmtp.com ([64.18.2.210]:42841 "EHLO
-	exprod7og127.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753885AbZFKGnf convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Jun 2009 02:43:35 -0400
-In-Reply-To: <20090610140234.2d008ed1.sfr@canb.auug.org.au>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <jens.axboe@oracle.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Kashyap@mail2.lsil.com" <Kashyap@mail2.lsil.com>, James Bottomley <James.Bottomley@HansenPartnership.com>, Tejun Heo <tj@kernel.org>
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1759569AbZFKGsL@vger.kernel.org>
+In-Reply-To: <20090611145541.2570a43d.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, slapin@ossfans.org
+List-Id: linux-next.vger.kernel.org
 
-Jens,
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 11 Jun 2009 14:55:41 +1000
 
-I have verified those conflict fixed by Stephen R. It is just context changes. OK to patch it if it is not patched to mainline.
+> Today's linux-next build (x86_64 allmodconfig) produced these warnings:
+> 
+> net/ieee802154/raw.c: In function 'raw_sendmsg':
+> net/ieee802154/raw.c:135: warning: format '%u' expects type 'unsigned int', but argument 2 has type 'size_t'
+> net/ieee802154/dgram.c: In function 'dgram_sendmsg':
+> net/ieee802154/dgram.c:251: warning: format '%u' expects type 'unsigned int', but argument 2 has type 'size_t'
+> 
+> Introduced by commit 9ec7671603573ede31207eb5b0b3e1aa211b2854 ("net: add
+> IEEE 802.15.4 socket family implementation").
 
-- Kashyap
+Similar to what you reported yesterday :-)
 
------Original Message-----
-From: Stephen Rothwell [mailto:sfr@canb.auug.org.au] 
-Sent: Wednesday, June 10, 2009 9:33 AM
-To: Jens Axboe
-Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Kashyap@mail2.lsil.com; Desai, Kashyap; James Bottomley; Tejun Heo
-Subject: linux-next: manual merge of the block tree with the scsi tree
-
-Hi Jens,
-
-Today's linux-next merge of the block tree got a conflict in
-drivers/message/fusion/mptsas.c between commits
-14d0f0b063f5363984dd305a792854f9c23e9e97 ("[SCSI] mpt fusion: Fixing 1078
-data corruption issue for 36GB memory region") and
-2f187862e579f1f5e883188cab6bd867cb60387f ("[SCSI] mpt fusion: Code
-Cleanup patch") from the scsi tree and commit
-b0790410300abaaf4f25f702803beff701baebf1 ("block: cleanup rq->data_len
-usages") from the block tree.
-
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/message/fusion/mptsas.c
-index 14c490a,79f5433..0000000
---- a/drivers/message/fusion/mptsas.c
-+++ b/drivers/message/fusion/mptsas.c
-@@@ -2177,32 -1319,26 +2177,32 @@@ static int mptsas_smp_handler(struct Sc
-  	/* request */
-  	flagsLength = (MPI_SGE_FLAGS_SIMPLE_ELEMENT |
-  		       MPI_SGE_FLAGS_END_OF_BUFFER |
- -		       MPI_SGE_FLAGS_DIRECTION |
- -		       mpt_addr_size()) << MPI_SGE_FLAGS_SHIFT;
- +		       MPI_SGE_FLAGS_DIRECTION)
- +		       << MPI_SGE_FLAGS_SHIFT;
-- 	flagsLength |= (req->data_len - 4);
-+ 	flagsLength |= (blk_rq_bytes(req) - 4);
-  
-  	dma_addr_out = pci_map_single(ioc->pcidev, bio_data(req->bio),
-- 				      req->data_len, PCI_DMA_BIDIRECTIONAL);
-+ 				      blk_rq_bytes(req), PCI_DMA_BIDIRECTIONAL);
-  	if (!dma_addr_out)
-  		goto put_mf;
- -	mpt_add_sge(psge, flagsLength, dma_addr_out);
- -	psge += (sizeof(u32) + sizeof(dma_addr_t));
- +	ioc->add_sge(psge, flagsLength, dma_addr_out);
- +	psge += ioc->SGE_size;
-  
-  	/* response */
- -	flagsLength = MPT_SGE_FLAGS_SSIMPLE_READ;
- +	flagsLength = MPI_SGE_FLAGS_SIMPLE_ELEMENT |
- +		MPI_SGE_FLAGS_SYSTEM_ADDRESS |
- +		MPI_SGE_FLAGS_IOC_TO_HOST |
- +		MPI_SGE_FLAGS_END_OF_BUFFER;
- +
- +	flagsLength = flagsLength << MPI_SGE_FLAGS_SHIFT;
-- 	flagsLength |= rsp->data_len + 4;
-+ 	flagsLength |= blk_rq_bytes(rsp) + 4;
-  	dma_addr_in =  pci_map_single(ioc->pcidev, bio_data(rsp->bio),
-- 				      rsp->data_len, PCI_DMA_BIDIRECTIONAL);
-+ 				      blk_rq_bytes(rsp), PCI_DMA_BIDIRECTIONAL);
-  	if (!dma_addr_in)
-  		goto unmap;
- -	mpt_add_sge(psge, flagsLength, dma_addr_in);
- +	ioc->add_sge(psge, flagsLength, dma_addr_in);
-  
- +	INITIALIZE_MGMT_STATUS(ioc->sas_mgmt.status)
-  	mpt_put_msg_frame(mptsasMgmtCtx, ioc, mf);
-  
-  	timeleft = wait_for_completion_timeout(&ioc->sas_mgmt.done, 10 * HZ);
-@@@ -2221,11 -1357,10 +2221,11 @@@
-  		smprep = (SmpPassthroughReply_t *)ioc->sas_mgmt.reply;
-  		memcpy(req->sense, smprep, sizeof(*smprep));
-  		req->sense_len = sizeof(*smprep);
-- 		req->data_len = 0;
-- 		rsp->data_len -= smprep->ResponseDataLength;
-+ 		req->resid_len = 0;
-+ 		rsp->resid_len -= smprep->ResponseDataLength;
-  	} else {
- -		printk(MYIOC_s_ERR_FMT "%s: smp passthru reply failed to be returned\n",
- +		printk(MYIOC_s_ERR_FMT
- +		    "%s: smp passthru reply failed to be returned\n",
-  		    ioc->name, __func__);
-  		ret = -ENXIO;
-  	}
+I'll get this fixed.
