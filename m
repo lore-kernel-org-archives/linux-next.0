@@ -1,57 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: net tree build warnings
-Date: Thu, 11 Jun 2009 17:20:20 +1000
-Message-ID: <20090611172020.f516bf55.sfr@canb.auug.org.au>
-References: <20090611145541.2570a43d.sfr@canb.auug.org.au>
-	<20090610.234757.215116002.davem@davemloft.net>
+Subject: linux-next: rr tree build failure
+Date: Thu, 11 Jun 2009 19:07:28 +1000
+Message-ID: <20090611190728.510af289.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__11_Jun_2009_17_20_20_+1000_/k_QMg2yQANHIHaQ"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36844 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:39069 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758201AbZFKHU2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 11 Jun 2009 03:20:28 -0400
-In-Reply-To: <20090610.234757.215116002.davem@davemloft.net>
+	id S1751013AbZFKJH1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Jun 2009 05:07:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, slapin@ossfans.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__11_Jun_2009_17_20_20_+1000_/k_QMg2yQANHIHaQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Rusty,
 
-Hi Dave,
+Today's linux-next build (sparc defconfig) failed like this:
 
-On Wed, 10 Jun 2009 23:47:57 -0700 (PDT) David Miller <davem@davemloft.net>=
- wrote:
->
-> Similar to what you reported yesterday :-)
+arch/sparc/mm/extable.c: In function 'trim_init_extable':
+arch/sparc/mm/extable.c:78: error: too few arguments to function 'within_module_init'
 
-I wondered if I had done that - looks like senility is creeping up on
-me. :-(
+Caused by commit 2ac595c3960b80139e895c4e13e851ed6dfd127a ("module: trim
+exception table on init free").
 
-> I'll get this fixed.
+I applied the following patch (because I did not want to have to rebuild
+everything again).
 
-Thanks.
-
---=20
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__11_Jun_2009_17_20_20_+1000_/k_QMg2yQANHIHaQ
-Content-Type: application/pgp-signature
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 11 Jun 2009 18:53:13 +1000
+Subject: [PATCH] rr: fix up for sparc32 extable
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/sparc/mm/extable.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-iEYEARECAAYFAkowsDQACgkQjjKRsyhoI8zCvQCffQP4NmO2+BelpsKWDQD6lTnl
-LNUAmwb3yjcIWJLkeOmkxkSPYthO2TCY
-=Cbgp
------END PGP SIGNATURE-----
-
---Signature=_Thu__11_Jun_2009_17_20_20_+1000_/k_QMg2yQANHIHaQ--
+diff --git a/arch/sparc/mm/extable.c b/arch/sparc/mm/extable.c
+index 6b5c373..a61c349 100644
+--- a/arch/sparc/mm/extable.c
++++ b/arch/sparc/mm/extable.c
+@@ -75,7 +75,7 @@ void trim_init_extable(struct module *m)
+ 	for (i = 0; i < m->num_exentries; i += range ? 2 : 1) {
+ 		range = m->extable[i].fixup == 0;
+ 
+-		if (within_module_init(m->extable[i].insn)) {
++		if (within_module_init(m->extable[i].insn, m)) {
+ 			m->extable[i].fixup = -1;
+ 			if (range)
+ 				m->extable[i+1].fixup = -1;
+-- 
+1.6.3.1
