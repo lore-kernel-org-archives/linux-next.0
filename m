@@ -1,59 +1,55 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: Request for linux-next inclusion of the voyager tree
-Date: Thu, 11 Jun 2009 01:39:39 +0000
-Message-ID: <1244684380.17432.424.camel@mulgrave.site>
-References: <1244477423.4079.228.camel@mulgrave.site>
-	 <20090609202130.GA5291@elte.hu>
-	 <20090610004126.491508c9@lxorguk.ukuu.org.uk>
-	 <20090609235647.GE23846@elte.hu>
-	 <alpine.LFD.2.01.0906091702580.6847@localhost.localdomain>
-	 <alpine.LFD.2.00.0906101454420.3367@localhost.localdomain>
-	 <alpine.LFD.2.01.0906100821540.6847@localhost.localdomain>
-	 <20090610153954.GA3464@elte.hu> <1244649759.4109.75.camel@mulgrave.site>
-	 <20090610165331.GA31096@elte.hu>
-	 <20090611113543.29528bf3.sfr@canb.auug.org.au>
+From: Subrata Modak <subrata@linux.vnet.ibm.com>
+Subject: Re: [PATCH] Re:[BUILD FAILURE 04/04] Next June 04:PPC64 randconfig
+	[drivers/net/ucc_geth.o]
+Date: Thu, 11 Jun 2009 07:26:04 +0530
+Message-ID: <1244685364.6494.14.camel@subratamodak.linux.ibm.com>
+References: <20090610174323.28045.70169.sendpatchset@subratamodak.linux.ibm.com>
+	 <20090611110523.1fd56a41.sfr@canb.auug.org.au>
+Reply-To: subrata@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:33234 "EHLO
-	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1761247AbZFKBjn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Jun 2009 21:39:43 -0400
-In-Reply-To: <20090611113543.29528bf3.sfr@canb.auug.org.au>
+Received: from e1.ny.us.ibm.com ([32.97.182.141]:40974 "EHLO e1.ny.us.ibm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755969AbZFKB4J (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Jun 2009 21:56:09 -0400
+In-Reply-To: <20090611110523.1fd56a41.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ingo Molnar <mingo@elte.hu>, Linus Torvalds <torvalds@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Alan Cox <alan@lxorguk.ukuu.org.uk>, "H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, netdev@vger.kernel.org, Li Yang <leoli@freescale.com>
+Cc: Sachin P Sant <sachinp@linux.vnet.ibm.com>, Linux-Next <linux-next@vger.kernel.org>, Linux-Kernel <linux-kernel@vger.kernel.org>, Balbir Singh <balbir@linux.vnet.ibm.com>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>
 
-On Thu, 2009-06-11 at 11:35 +1000, Stephen Rothwell wrote:
-> On Wed, 10 Jun 2009 18:53:31 +0200 Ingo Molnar <mingo@elte.hu> wrote:
+On Thu, 2009-06-11 at 11:05 +1000, Stephen Rothwell wrote:
+> Hi Subrata,
+>=20
+> On Wed, 10 Jun 2009 23:13:23 +0530 Subrata Modak <subrata@linux.vnet.=
+ibm.com> wrote:
 > >
-> > * James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
-> > > 
-> > > OK, so this is an acceptable compromise for me too.
-> > > 
-> > > What I think now is needed (from me) are three patch sets:
-> > > 
-> > > 1. The final subarchitecture cleanups
-> > > 2. The quirk model/smp ops additions
-> > > 3. The voyager put back.
-> > 
-> > Yes, that looks fine.
-> > 
-> > You can have them in a single series for convenience if you want to 
-> > (it's probably easier for you to test that way) - but 3 separate 
-> > series are fine too, no strong preference either way - as long as 
-> > the internal structure and details follows the ordering and 
-> > parameters we outlined in previous mails.
-> 
-> OK, given this looks like a rewrite of the voyager tree, I will drop it
-> from linux-next for a while.
+> >  	/* Find the TBI PHY.  If it's not there, we don't support SGMII *=
+/
+> > -	ph =3D of_get_property(np, "tbi-handle", NULL);
+> > +	ph =3D (phandle *)of_get_property(np, "tbi-handle", NULL);
+>=20
+> You don't need this cast because of_get_property() returns "void *".
 
-Yes, I think that's the correct thing in the circumstances.
+Stephen,
 
-Thanks for running it through linux-next; it certainly turned up a
-couple of problems I wouldn't have seen otherwise.
+True. But without this gcc complains:
 
-James
+CC [M]  drivers/net/ucc_geth.o
+drivers/net/ucc_geth.c: In function =E2=80=98ucc_geth_probe=E2=80=99:
+drivers/net/ucc_geth.c:3824: warning: assignment discards qualifiers
+from pointer target type
+
+Else gcc just builds fine:
+
+CC [M]  drivers/net/ucc_geth.o
+
+This is an just an extra caution to fix both the build and warning
+regression(s).
+
+Regards--
+Subrata
+
+>=20
