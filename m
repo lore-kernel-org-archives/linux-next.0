@@ -1,49 +1,36 @@
-From: Nathan Lynch <ntl@pobox.com>
-Subject: Re: [PATCH] Re:[BUILD FAILURE 04/04] Next June 04:PPC64 randconfig
- [drivers/net/ucc_geth.o]
-Date: Wed, 10 Jun 2009 21:28:30 -0500
-Message-ID: <m3d49btsfl.fsf@pobox.com>
-References: <20090610174323.28045.70169.sendpatchset@subratamodak.linux.ibm.com>
- <20090611110523.1fd56a41.sfr@canb.auug.org.au>
- <1244685364.6494.14.camel@subratamodak.linux.ibm.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: linux-next: powerpc tree build warning
+Date: Thu, 11 Jun 2009 13:14:04 +1000
+Message-ID: <1244690044.5739.31.camel@pasglop>
+References: <20090611113930.78a42893.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from a-sasl-fastnet.sasl.smtp.pobox.com ([207.106.133.19]:58174 "EHLO
-	sasl.smtp.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752040AbZFKC2m convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Jun 2009 22:28:42 -0400
-In-Reply-To: <1244685364.6494.14.camel@subratamodak.linux.ibm.com> (Subrata
- Modak's message of "Thu\, 11 Jun 2009 07\:26\:04 +0530")
+Received: from gate.crashing.org ([63.228.1.57]:40094 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753018AbZFKDRL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Jun 2009 23:17:11 -0400
+In-Reply-To: <20090611113930.78a42893.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: subrata@linux.vnet.ibm.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, netdev@vger.kernel.org, Li Yang <leoli@freescale.com>, Sachin P Sant <sachinp@linux.vnet.ibm.com>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Linux-Next <linux-next@vger.kernel.org>, Linux-Kernel <linux-kernel@vger.kernel.org>, Balbir Singh <balbir@linux.vnet.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org
 
-Subrata Modak <subrata@linux.vnet.ibm.com> writes:
+On Thu, 2009-06-11 at 11:39 +1000, Stephen Rothwell wrote:
+> Hi Ben,
+> 
+> Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
+> 
+> arch/powerpc/platforms/Kconfig.cputype:60:warning: defaults for choice values not supported
+> 
+> We appear to have CONFIG_PPC_BOOK3S int two places which is confusing
+> Kconfig.
 
-> On Thu, 2009-06-11 at 11:05 +1000, Stephen Rothwell wrote:
->> Hi Subrata,
->>=20
->> On Wed, 10 Jun 2009 23:13:23 +0530 Subrata Modak <subrata@linux.vnet=
-=2Eibm.com> wrote:
->> >
->> >  	/* Find the TBI PHY.  If it's not there, we don't support SGMII =
-*/
->> > -	ph =3D of_get_property(np, "tbi-handle", NULL);
->> > +	ph =3D (phandle *)of_get_property(np, "tbi-handle", NULL);
->>=20
->> You don't need this cast because of_get_property() returns "void *".
->
-> Stephen,
->
-> True. But without this gcc complains:
->
-> CC [M]  drivers/net/ucc_geth.o
-> drivers/net/ucc_geth.c: In function =E2=80=98ucc_geth_probe=E2=80=99:
-> drivers/net/ucc_geth.c:3824: warning: assignment discards qualifiers
-> from pointer target type
+Yes, I see that. One place depends on PPC32 and the other one PPC64, but
+it still seems to be somewhat confused. In any case, it seems to still
+do the right thing, so not a big hurry here, but I'll do a patch that
+does it differently.
 
-ph should be declared const phandle *.  Look at other uses of
-of_get_property.
+Cheers,
+Ben.
