@@ -1,31 +1,57 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: net tree build warnings
-Date: Wed, 10 Jun 2009 23:47:57 -0700 (PDT)
-Message-ID: <20090610.234757.215116002.davem@davemloft.net>
-References: <20090611145541.2570a43d.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1759569AbZFKGsL@vger.kernel.org>
-In-Reply-To: <20090611145541.2570a43d.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, slapin@ossfans.org
-List-Id: linux-next.vger.kernel.org
-
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 11 Jun 2009 14:55:41 +1000
+Subject: Re: linux-next: net tree build warnings
+Date: Thu, 11 Jun 2009 17:20:20 +1000
+Message-ID: <20090611172020.f516bf55.sfr@canb.auug.org.au>
+References: <20090611145541.2570a43d.sfr@canb.auug.org.au>
+	<20090610.234757.215116002.davem@davemloft.net>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__11_Jun_2009_17_20_20_+1000_/k_QMg2yQANHIHaQ"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36844 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758201AbZFKHU2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Jun 2009 03:20:28 -0400
+In-Reply-To: <20090610.234757.215116002.davem@davemloft.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, slapin@ossfans.org
 
-> Today's linux-next build (x86_64 allmodconfig) produced these warnings:
-> 
-> net/ieee802154/raw.c: In function 'raw_sendmsg':
-> net/ieee802154/raw.c:135: warning: format '%u' expects type 'unsigned int', but argument 2 has type 'size_t'
-> net/ieee802154/dgram.c: In function 'dgram_sendmsg':
-> net/ieee802154/dgram.c:251: warning: format '%u' expects type 'unsigned int', but argument 2 has type 'size_t'
-> 
-> Introduced by commit 9ec7671603573ede31207eb5b0b3e1aa211b2854 ("net: add
-> IEEE 802.15.4 socket family implementation").
+--Signature=_Thu__11_Jun_2009_17_20_20_+1000_/k_QMg2yQANHIHaQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Similar to what you reported yesterday :-)
+Hi Dave,
 
-I'll get this fixed.
+On Wed, 10 Jun 2009 23:47:57 -0700 (PDT) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> Similar to what you reported yesterday :-)
+
+I wondered if I had done that - looks like senility is creeping up on
+me. :-(
+
+> I'll get this fixed.
+
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__11_Jun_2009_17_20_20_+1000_/k_QMg2yQANHIHaQ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkowsDQACgkQjjKRsyhoI8zCvQCffQP4NmO2+BelpsKWDQD6lTnl
+LNUAmwb3yjcIWJLkeOmkxkSPYthO2TCY
+=Cbgp
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__11_Jun_2009_17_20_20_+1000_/k_QMg2yQANHIHaQ--
