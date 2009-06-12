@@ -1,80 +1,70 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: rr-latest-cpumask/sparc tree build failure
-Date: Fri, 12 Jun 2009 20:40:10 +0930
-Message-ID: <200906122040.10541.rusty@rustcorp.com.au>
-References: <20090612185102.2d1391e5.sfr@canb.auug.org.au>
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: linux-next: Tree for June 11 (bluetooth/rfkill)
+Date: Fri, 12 Jun 2009 14:12:06 +0200
+Message-ID: <1244808726.29447.11.camel@johannes.local>
+References: <20090611191420.1f4d5e4f.sfr@canb.auug.org.au>
+	 <4A318519.2080708@oracle.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-vE68nYjUDZRxZ0Sn3FzT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:58227 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759569AbZFLLKP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 12 Jun 2009 07:10:15 -0400
-In-Reply-To: <20090612185102.2d1391e5.sfr@canb.auug.org.au>
-Content-Disposition: inline
+Received: from xc.sipsolutions.net ([83.246.72.84]:59585 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751221AbZFLMLe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 12 Jun 2009 08:11:34 -0400
+In-Reply-To: <4A318519.2080708@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, marcel@holtmann.org
 
-On Fri, 12 Jun 2009 06:21:02 pm Stephen Rothwell wrote:
-> Hi Rusty,
->
-> Today's linux-next build (sparc64 defconfig) failed like this:
->
-> arch/sparc/mm/init_64.c: In function 'paging_init':
-> arch/sparc/mm/init_64.c:1802: error: 'CPU_MASK_ALL_PTR' undeclared (first
 
-OK, Dave could you take/fold Stephen's fix then?
+--=-vE68nYjUDZRxZ0Sn3FzT
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-FYI here's the patch explaining why we're CPU_MASK_ALL_PTR -> cpu_all_mask:
+On Thu, 2009-06-11 at 15:28 -0700, Randy Dunlap wrote:
+> Stephen Rothwell wrote:
+> > Hi all,
+> >=20
+> > Changes since 20090610:
+>=20
+>=20
+> CONFIG_RFKILL=3Dm
+> CONFIG_BT=3Dy
+>=20
+> (.text+0xb7bf7): undefined reference to `rfkill_unregister'
+> (.text+0xb7c03): undefined reference to `rfkill_destroy'
+> (.text+0xb962f): undefined reference to `rfkill_blocked'
+> (.text+0xba173): undefined reference to `rfkill_alloc'
+> (.text+0xba187): undefined reference to `rfkill_register'
+> (.text+0xba197): undefined reference to `rfkill_destroy'
 
-Subject: cpumask: remove dangerous CPU_MASK_ALL_PTR
+This one's not my fault :) Marcel did that, the solution as usual is to
+	depends on RFKILL || !RFKILL
 
-(Thanks to Al Viro for reminding me of this, via Ingo)
+:)
 
-CPU_MASK_ALL is the (deprecated) "all bits set" cpumask, defined as so:
+johannes
 
-	#define CPU_MASK_ALL (cpumask_t) { { ... } }
+--=-vE68nYjUDZRxZ0Sn3FzT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
-Taking the address of such a temporary is questionable at best,
-unfortunately 321a8e9d (cpumask: add CPU_MASK_ALL_PTR macro) added
-CPU_MASK_ALL_PTR:
+-----BEGIN PGP SIGNATURE-----
 
-	#define CPU_MASK_ALL_PTR (&CPU_MASK_ALL)
+iQIcBAABAgAGBQJKMkYRAAoJEODzc/N7+QmaLXQP/2c/qpEkO0hJ/jzCAw3rUTZy
+G9qvaoZjoAxRK5Jk21uoTIfjBsi2ed6d0c13SzZOkwjLJp5/b0H5RTyRCUbRzSwT
+GhYls8tkY/rqhtuxBNCOGASklmI0jFpejOIViWD0RsllJ1Q4LlaFbTD02xFHox2+
+F4HIkR+a+x2XWPCjgnWxV9bwnN1fh4Wvt5XpUniYsjIfvmfF1ha0ENdzqkapRA72
+CPmuxGJxQBO2U69TkGmrTtg5XZVqtCQvUs5fP0ygcb6uidqzBjFiI40BUmWMmhek
+5dsqIKcrsuuQwP5G3qCMeLNkr21jsx+WHsxh997qvmPMGNmbfkk0iRoAbxuGY2Ne
+UrouZ6+0HjWiJWZfjG5OPTC079F0IHo8WL6yBYTj9JuQUizlr4xvLKyf9oKot+iw
+20u8I0Gxmp1PgCkGS+t/oNBsSnWwBZFhZ5Jl4jztktDiKnKaOHfQ3oxO5ITD1g9E
+sq7L4A9kjtnwuIx+8Mw8fTNmrrLc4ouDblFdJko2Z2T9bdrP4QrX5ogl434BTfeL
++SC22mslV1XmYjRfXbmuE6yxy7Kz4HbD8cAvhAUYtI+aSUb+lKd1dVZe+HDKp7sm
++3XSJJjB+aPEJPyN8rPNYXJZn49nIptiR+U2bgLv2AMNFFVS3UVeIQCRK9icVMcA
+aql0orFngAKcxer1h+dK
+=XOnr
+-----END PGP SIGNATURE-----
 
-Which formalizes this practice.  One day gcc could bite us over this
-usage (though we seem to have gotten away with it so far).
-
-Now all callers are removed, we kill it.
-
-Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
-Acked-by: Ingo Molnar <mingo@elte.hu>
-Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Mike Travis <travis@sgi.com>
----
- include/linux/cpumask.h |    3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
---- a/include/linux/cpumask.h
-+++ b/include/linux/cpumask.h
-@@ -324,8 +324,6 @@ static inline const struct cpumask *get_
- 	[BITS_TO_LONGS(NR_CPUS)-1] = CPU_MASK_LAST_WORD			\
- } }
- 
--#define CPU_MASK_ALL_PTR	(&CPU_MASK_ALL)
--
- #else
- 
- #define CPU_MASK_ALL							\
-@@ -333,7 +331,6 @@ static inline const struct cpumask *get_
- 
- /* cpu_mask_all is in init/main.c */
- extern cpumask_t cpu_mask_all;
--#define CPU_MASK_ALL_PTR	(&cpu_mask_all)
- 
- #endif
- 
+--=-vE68nYjUDZRxZ0Sn3FzT--
