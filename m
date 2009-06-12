@@ -1,45 +1,49 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: origin tree build failure
-Date: Sat, 13 Jun 2009 00:23:02 +1000
-Message-ID: <1244816582.7172.175.camel@pasglop>
-References: <20090612102427.32582baa.sfr@canb.auug.org.au>
-	 <1244768406.7172.1.camel@pasglop> <20090612092054.GB32052@elte.hu>
-	 <1244799197.7172.106.camel@pasglop> <20090612125335.GH31845@elte.hu>
-	 <1244812224.7172.146.camel@pasglop> <1244813397.7172.156.camel@pasglop>
-	 <20090612134940.GD32105@elte.hu> <1244815574.7172.171.camel@pasglop>
-	 <20090612141118.GK32105@elte.hu>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] v4l: expose function outside of ifdef/endif block
+Date: Fri, 12 Jun 2009 11:47:42 -0700
+Message-ID: <4A32A2CE.40002@oracle.com>
+References: <20090612185601.be53b034.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:57842 "EHLO gate.crashing.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1764146AbZFLOX1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 12 Jun 2009 10:23:27 -0400
-In-Reply-To: <20090612141118.GK32105@elte.hu>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus <torvalds@linux-foundation.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, paulus@samba.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <20090612185601.be53b034.sfr@canb.auug.org.au>
+Sender: linux-media-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 2009-06-12 at 16:11 +0200, Ingo Molnar wrote:
-> > Maybe. But maybe it's representative... so far in this merge 
-> > window, 100% of the powerpc build and runtime breakage upstream 
-> > comes from stuff that didn't get into -next before.
-> 
-> But that's axiomatic, isnt it? linux-next build-tests PowerPC as the 
-> first in the row of tests - so no change that was in linux-next can 
-> ever cause a build failure on PowerPC, right?
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-I'd have to check with Stephen but I think linux-next tests a whole
-bunch of archs each round. Anyway, the idea is, just don't get things
-upstream before the at least had a chance to go through that little bit
-of integration testing .. Is it -that- hard ?
+Move v4l_bound_align_image() outside of an #ifdef CONFIG_I2C block
+so that it is always built.  Fixes a build error:
 
-Oh and before you ask me, yes, I do the same mistakes, and I have been
-caught too merging things at the last minute that ended up broken and
-that could have been caught by -next... I'm just trying to advocate the
-idea that we all try to improve in that area :-)
+vivi.c:(.text+0x48e26): undefined reference to `v4l_bound_align_image'
 
-Cheers,
-Ben.
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/media/video/v4l2-common.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+--- linux-next-20090612.orig/drivers/media/video/v4l2-common.c
++++ linux-next-20090612/drivers/media/video/v4l2-common.c
+@@ -915,6 +915,7 @@ const unsigned short *v4l2_i2c_tuner_add
+ 	return NULL;
+ }
+ EXPORT_SYMBOL_GPL(v4l2_i2c_tuner_addrs);
++#endif
+ 
+ /* Clamp x to be between min and max, aligned to a multiple of 2^align.  min
+  * and max don't have to be aligned, but there must be at least one valid
+@@ -986,5 +987,3 @@ void v4l_bound_align_image(u32 *w, unsig
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(v4l_bound_align_image);
+-
+-#endif
+
+
+-- 
+~Randy
+LPC 2009, Sept. 23-25, Portland, Oregon
+http://linuxplumbersconf.org/2009/
