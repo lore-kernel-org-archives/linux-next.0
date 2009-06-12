@@ -1,57 +1,107 @@
-From: Ingo Molnar <mingo@elte.hu>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Subject: Re: linux-next: origin tree build failure
-Date: Fri, 12 Jun 2009 15:49:40 +0200
-Message-ID: <20090612134940.GD32105@elte.hu>
+Date: Fri, 12 Jun 2009 23:56:16 +1000
+Message-ID: <1244814976.7172.164.camel@pasglop>
 References: <20090612102427.32582baa.sfr@canb.auug.org.au>
-	<1244768406.7172.1.camel@pasglop> <20090612092054.GB32052@elte.hu>
-	<1244799197.7172.106.camel@pasglop>
-	<20090612125335.GH31845@elte.hu>
-	<1244812224.7172.146.camel@pasglop>
-	<1244813397.7172.156.camel@pasglop>
+	 <1244768406.7172.1.camel@pasglop> <20090612092054.GB32052@elte.hu>
+	 <1244799197.7172.106.camel@pasglop> <20090612125335.GH31845@elte.hu>
+	 <1244812224.7172.146.camel@pasglop>  <20090612134428.GC32105@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
-Content-Disposition: inline
-In-Reply-To: <1244813397.7172.156.camel@pasglop>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <a.p.zijlstra@chello.nl>, ppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, paulus@samba.org, Linus <torvalds@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from gate.crashing.org ([63.228.1.57]:49334 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755595AbZFLN46 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 12 Jun 2009 09:56:58 -0400
+In-Reply-To: <20090612134428.GC32105@elte.hu>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus <torvalds@linux-foundation.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, paulus@samba.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>
 
+On Fri, 2009-06-12 at 15:44 +0200, Ingo Molnar wrote:
 
-* Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
-
-> On Fri, 2009-06-12 at 23:10 +1000, Benjamin Herrenschmidt wrote:
-> > On Fri, 2009-06-12 at 14:53 +0200, Ingo Molnar wrote:
+> This is certainly doable for agreeable features - which is the bulk 
+> - and it is being done.
 > 
-> > To some extent, here, the issue is on Linus side and it's up to him (Hey
-> > Linus ! still listening ?) to maybe be more proactive at giving an ack
-> > or nack so that we can get a chance to do that final pass of ironing out
-> > the mechanical bugs before we hit the main tree.
+> But this is a catch-22 for _controversial_ new features - which 
+> perfcounters clearly was, in case you turned off your lkml 
+> subscription ;-)
+
+I didn't :-) My point here is that Linus can make a decision with an
+email -before- merging so that -next gets a chance, at least for a
+couple of days, to do the integration testing once the controversy has
+been sorted by his highness.
+
+> And if you hit that build breakage during bisection you can do:
 > 
-> Let me add a little bit more background to my reasoning here and why I
-> think having this integration testing step is so valuable...
+>    git cherry-pick e14112d
+
+Right, I can, you can, but can random tester who wants to track down
+what his problem is ? I'm not sure...
+
+> Also, you seem to brush off the notion that far more bugs slip 
+> through linux-next than get caught by it.
+
+Less than without linux-next. We aren't perfect and no process will
+solve everything. But this could have been easily avoided.
+
+> So if you think linux-next matters in terms of _regression_ testing, 
+> the numbers dont seem to support that notion. This particular 
+> incident does support that notion though, granted - but it's taken 
+> out of context IMHO:
 > 
-> It all boils down to bisection and having a bisectable tree.
+> In terms of test coverage, at least for our trees, less than 1% of 
+> the bugs we handle get reported in a linux-next context - and most 
+> of the bugs that get reported (against say the scheduler tree) are 
+> related to rare architectures.
 
-I think you are way too concentrated on this particular incident, 
-and you are generalizing it into something that is not so in 
-practice.
+But most obvious bugs will have been caught way before that, which
+leaves the hard to catch ones or the configuration-specific ones. Those
+will pass linux-next, I agree. But that isn't my point and that isn't
+what linux-next will catch.  What is will catch is that kind of really
+simple mechanical problems, such as build breakage for other archs.
 
-Even in this particular case, there's just 3 other commit points in 
-the Git tree between commit 8a1ca8c (the breakage on PowerPC) and 
-e14112d (the fix). We'll have up to 10,000 commits.
+If perfcounters had been 1 or 2 days in -next before being merged, we
+would have avoided that problem and made everybody's bisecting life
+easier.
 
-I bisect on an almost daily basis, and i'm not seeing unreasonable 
-problems.
+> In fact, i checked, there were _zero_ x86 bugs reported against 
+> linux-next and solved against it between v2.6.30-rc1 and v2.6.30:
 
-	Ingo
+No but Stephen caught a bunch of mechanical compile fails due to
+integration problems.
+
+>    git log --grep=next -i v2.6.30-rc1..v2.6.30 arch/x86/
+> 
+> Doing it over the full cycle shows one commit altogether - a Xen 
+> build failure. In fact, i just checked the whole stabilization cycle 
+> for the whole kernel (v2.6.30-rc1..v2.6.30-final), and there were 
+> only 5 linux-next originated patches, most of them build failures.
+> 
+> I did this by looking at all occurances of 'next', in all commit 
+> logs:
+> 
+>    git log --grep=next -i v2.6.30-rc1..v2.6.30
+> 
+> and then manually checking the context of all 'next' matches and 
+> counting the linux-next related commits.
+> 
+> So lets be generous and say that because some people dont put the 
+> bug report originator into the changelog it was four times as many, 
+> 20 - but that's still dwarved by the sheer amount of post-rc1 
+> changes: thousands of changes and hundreds of regressions.
+> 
+> linux-next is mostly useful (to me at least) not for the 
+> cross-builds it does, but in terms of mapping out upcoming conflicts 
+> - which also drives early detection of problematic patches and 
+> problematic conflicts.
+
+Yes, it does. The problem is that it helps -you- that way, but won't
+help -us- vs. that kind of mechanical problems unless -you- also play
+the game and get your stuff in there for a little while before merging
+it :-)
+
+Cheers,
+Ben.
