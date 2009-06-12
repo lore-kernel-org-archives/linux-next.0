@@ -1,83 +1,70 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: origin tree build failure
-Date: Fri, 12 Jun 2009 23:10:24 +1000
-Message-ID: <1244812224.7172.146.camel@pasglop>
-References: <20090612102427.32582baa.sfr@canb.auug.org.au>
-	<1244768406.7172.1.camel@pasglop> <20090612092054.GB32052@elte.hu>
-	<1244799197.7172.106.camel@pasglop>  <20090612125335.GH31845@elte.hu>
+From: Andreas Herrmann <andreas.herrmann3@amd.com>
+Subject: Re: [PATCH] x86: memtest: fix compile warning
+Date: Fri, 12 Jun 2009 15:11:45 +0200
+Message-ID: <20090612131145.GH12431@alberich.amd.com>
+References: <20090611112746.802a24cb.sfr@canb.auug.org.au> <20090611102927.GE12431@alberich.amd.com> <alpine.LFD.2.00.0906111512400.3372@localhost.localdomain> <20090611152658.GF12431@alberich.amd.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <20090612125335.GH31845@elte.hu>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <a.p.zijlstra@chello.nl>, ppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, paulus@samba.org, Linus <torvalds@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from wa4ehsobe002.messaging.microsoft.com ([216.32.181.12]:7222 "EHLO
+	WA4EHSOBE002.bigfish.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1762393AbZFLN2A (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 12 Jun 2009 09:28:00 -0400
+Content-Disposition: inline
+In-Reply-To: <20090611152658.GF12431@alberich.amd.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>
 
-On Fri, 2009-06-12 at 14:53 +0200, Ingo Molnar wrote:
-> * Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
-
-> linux-next has integration testing so that interactions between 
-> maintainer trees are mapped and that architectures that otherwise 
-> few people use get build-tested too (well beyond their practical 
-> relevance, i have to add) - but there's little critical review done 
-> in linux-next. Nor should it be the forum for that, it simply 
-> contains way too much stuff and has a weird history format with 
-> daily rebases that makes review hard and expensive in that form.
-
-I think you are mixing several issues. One is integration testing, one
-is the problem of remote architecture of subsystems testing...
-
-> linux-next should not be second-guessing maintainers and should not 
-> act as an "approval forum" for controversial features, increasing 
-> the (already quite substantial) pressure on maintainers to apply 
-> more crap.
-
-I agree here. That's not the point. The idea is that for things that
--are- approved by their respective maintainers, to get some integration
-testing and ironing of those mechanical bugs so that by the time they
-hit mainstream, they don't break bisection among others.
-
-Yes, next is -not- the place to debate controversial features. That's
-not, I believe, why it was initiated (I may be wrong, Stephen will
-correct me if I am), but the way I see things is that stuff that is
-meant to be merged gets a chance to get some of that integration testing
-against all the other stuff that is also meant to be merged to limit the
-amount of clash and problems once we hit Linus tree.
-
-> And that is true even if it's a new feature that i happen to support 
-> - as in this case - it sure would have been handy to have more 
-> perfcounters test coverage, every little bit of extra testing helps.
-
-That doesn't invalidate my point. We are not talking about whether
-perfcounters is worth merging or not, testing more or not, but strictly,
-imho, about getting a chance (a couple of days at least) to do that
-integration testing and catch the simple issues like the one that
-triggered my initial rant -before- they hit mainline.
-
-To some extent, here, the issue is on Linus side and it's up to him (Hey
-Linus ! still listening ?) to maybe be more proactive at giving an ack
-or nack so that we can get a chance to do that final pass of ironing out
-the mechanical bugs before we hit the main tree.
-
-Cheers,
-Ben.
-
-> If linux-next wants to do that then it should be renamed to 
-> something else and not called linux-next.
+On Thu, Jun 11, 2009 at 05:26:58PM +0200, Andreas Herrmann wrote:
+> On Thu, Jun 11, 2009 at 04:21:41PM +0200, Thomas Gleixner wrote:
+> > On Thu, 11 Jun 2009, Andreas Herrmann wrote:
+> > 
+> > > Commit c9690998ef48ffefeccb91c70a7739eebdea57f9
+> > > (x86: memtest: remove 64-bit division) introduced following compile warning:
+> > > 
+> > >  arch/x86/mm/memtest.c: In function 'memtest':
+> > >  arch/x86/mm/memtest.c:56: warning: comparison of distinct pointer types lacks a cast
+> > >  arch/x86/mm/memtest.c:58: warning: comparison of distinct pointer types lacks a cast
+> > > 
+> > > Signed-off-by: Andreas Herrmann <andreas.herrmann3@amd.com>
+> > > ---
+> > >  arch/x86/mm/memtest.c |    4 ++--
+> > >  1 files changed, 2 insertions(+), 2 deletions(-)
+> > > 
+> > > Sorry.
+> > > Please apply.
+> > 
+> > I applied it already, but zapped it right away, as it is bad style to
+> > do the type casting in the loops. The proper fix is below.
 > 
-> 	Ingo
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+> Doesn't your fix re-introduces the 64-bit division problem with old
+> gcc?  I removed that division with the mentioned commit just forgot to
+> type-cast the pointer.
+
+It doesn't.
+
+> > diff --git a/arch/x86/mm/memtest.c b/arch/x86/mm/memtest.c
+> > index d1c5cef..18d244f 100644
+> > --- a/arch/x86/mm/memtest.c
+> > +++ b/arch/x86/mm/memtest.c
+> > @@ -40,16 +40,14 @@ static void __init reserve_bad_mem(u64 pattern, u64 start_bad, u64 end_bad)
+> >  
+> >  static void __init memtest(u64 pattern, u64 start_phys, u64 size)
+> >  {
+> > -	u64 *p, *end;
+> > -	void *start;
+> > +	u64 *p, *start, *end;
+> >  	u64 start_bad, last_bad;
+> >  	u64 start_phys_aligned;
+> > -	size_t incr;
+> > +	const size_t incr = sizeof(pattern);
+
+The const qualifier made the difference.
+
+
+Thanks,
+
+Andreas
