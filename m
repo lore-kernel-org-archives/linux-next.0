@@ -1,38 +1,51 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: manual merge of the vfs tree with the gfs2 tree
-Date: Fri, 12 Jun 2009 02:19:48 +0100
-Message-ID: <20090612011948.GZ8633@ZenIV.linux.org.uk>
-References: <20090527115253.37abd576.sfr@canb.auug.org.au> <20090612111237.0e5972e9.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: xfs tree build warnings
+Date: Fri, 12 Jun 2009 11:46:41 +1000
+Message-ID: <20090612114641.f93edc8b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__12_Jun_2009_11_46_41_+1000_1VAQyhksXy/CdxBo"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:32875 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756668AbZFLBTq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Jun 2009 21:19:46 -0400
-Content-Disposition: inline
-In-Reply-To: <20090612111237.0e5972e9.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:58897 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751155AbZFLBqs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Jun 2009 21:46:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven Whitehouse <swhiteho@redhat.com>, Christoph Hellwig <hch@infradead.org>
+To: David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 
-On Fri, Jun 12, 2009 at 11:12:37AM +1000, Stephen Rothwell wrote:
-> Hi Al,
-> 
-> On Wed, 27 May 2009 11:52:53 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Today's linux-next merge of the vfs tree got a conflict in
-> > fs/gfs2/ops_super.c between commit
-> > 9e6e0a128bca0a151d8d3fbd9459b22fc21cfebb ("GFS2: Merge mount.c and
-> > ops_super.c into super.c") from the gfs2 tree and commits
-> > 17af8f24a7750ea3d947904f97eb6dfacf9a88aa ("gfs2: remove ->write_super and
-> > stop maintaining ->s_dirt") and 8123178eb9ca12cde31a95170746e15a79528a62
-> > ("push BKL down into ->put_super") from the vfs tree.
-> 
-> This conflict is now against Linus's tree as the gfs2 tree has been
-> merged.
+--Signature=_Fri__12_Jun_2009_11_46_41_+1000_1VAQyhksXy/CdxBo
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I know, properly ported stuff is in updated for-next (basically, a bunch
-of functions moved from ops_super.c to super.c, so changesets needed to
-be updated to touch the latter).
+Hi all,
+
+Today's linux-next build (powerpc ppc64_defconfig) produced these warnings:
+
+fs/xfs/xfs_vnodeops.c: In function 'xfs_create':
+fs/xfs/xfs_vnodeops.c:1418: warning: unused variable 'gdqp'
+fs/xfs/xfs_vnodeops.c:1417: warning: unused variable 'udqp'
+fs/xfs/linux-2.6/xfs_ioctl.c: In function 'xfs_ioctl_setattr':
+fs/xfs/linux-2.6/xfs_ioctl.c:902: warning: unused variable 'gdqp'
+fs/xfs/linux-2.6/xfs_ioctl.c:901: warning: unused variable 'udqp'
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__12_Jun_2009_11_46_41_+1000_1VAQyhksXy/CdxBo
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkoxs4EACgkQjjKRsyhoI8yvCwCgwGKGTRrK6FkU4zxz7Dm6SJ59
+vNcAnja5ry8RwzhhssF+FvpiR5QOmh+1
+=1Nfu
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__12_Jun_2009_11_46_41_+1000_1VAQyhksXy/CdxBo--
