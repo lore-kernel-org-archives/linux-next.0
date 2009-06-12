@@ -1,90 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr-latest-cpumask tree with the arm
+Subject: Re: linux-next: manual merge of the asm-generic tree with Linus'
  tree
-Date: Fri, 12 Jun 2009 18:14:56 +1000
-Message-ID: <20090612181456.f9e61dc8.sfr@canb.auug.org.au>
+Date: Fri, 12 Jun 2009 18:18:02 +1000
+Message-ID: <20090612181802.b7bf4fd6.sfr@canb.auug.org.au>
+References: <20090612164914.e03160af.sfr@canb.auug.org.au>
+	<200906121005.33490.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__12_Jun_2009_18_18_02_+1000_=ROKbhIFDcPv2H=A"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59731 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59824 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932860AbZFLIO4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 12 Jun 2009 04:14:56 -0400
+	id S1755474AbZFLISF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 12 Jun 2009 04:18:05 -0400
+In-Reply-To: <200906121005.33490.arnd@arndb.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Russell King <rmk@arm.linux.org.uk>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>, Ingo Molnar <mingo@elte.hu>
 
-Hi Rusty,
+--Signature=_Fri__12_Jun_2009_18_18_02_+1000_=ROKbhIFDcPv2H=A
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the rr-latest-cpumask tree got a conflict in
-arch/arm/kernel/smp.c between commit
-faa7bc51c11d5bbe440ac04710fd7a3208782000 ("Check whether the TLB
-operations need broadcasting on SMP systems") from the arm tree and
-commit a29a30f4777dc23679cd588912e0a93f5ab777b0
-("cpumask:use-mm_cpumask-arm") from the rr-latest-cpumask tree.
+Hi Arnd,
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
+On Fri, 12 Jun 2009 10:05:32 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Friday 12 June 2009, Stephen Rothwell wrote:
+> > Today's linux-next merge of the asm-generic tree got a conflict in
+> > include/asm-generic/atomic.h between commit
+> > 53e111a730ea8b002d57dd226098c12789993329 ("x86: Fix atomic_long_xchg() =
+on
+> > 64bit") from Linus' tree and commit
+> > 72099ed2719fc5829bd79c6ca9d1783ed026eb37 ("asm-generic: rename atomic.h
+> > to atomic-long.h") from the asm-generic tree.
+> >=20
+> > I applied the fix from the former patch to atomic-long.h
+>=20
+> I pulled Linus' tree into the asm-generic tree now and fixed the two conf=
+licts
+> in the same way you did. I thought about doing a rebase on his tree inste=
+ad,
+> but wasn't sure what works better.
+
+I think what works better is what you are most comfortable with.  Your
+way works fine for me.  Thanks.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/kernel/smp.c
-index de885fd,9a36ed2..0000000
---- a/arch/arm/kernel/smp.c
-+++ b/arch/arm/kernel/smp.c
-@@@ -642,21 -592,17 +642,21 @@@ void flush_tlb_all(void
-  
-  void flush_tlb_mm(struct mm_struct *mm)
-  {
- -	on_each_cpu_mask(ipi_flush_tlb_mm, mm, 1, mm_cpumask(mm));
- +	if (tlb_ops_need_broadcast())
-- 		on_each_cpu_mask(ipi_flush_tlb_mm, mm, 1, &mm->cpu_vm_mask);
-++		on_each_cpu_mask(ipi_flush_tlb_mm, mm, 1, mm_cpumask(mm));
- +	else
- +		local_flush_tlb_mm(mm);
-  }
-  
-  void flush_tlb_page(struct vm_area_struct *vma, unsigned long uaddr)
-  {
- -	struct tlb_args ta;
- -
- -	ta.ta_vma = vma;
- -	ta.ta_start = uaddr;
- -
- -	on_each_cpu_mask(ipi_flush_tlb_page, &ta, 1, mm_cpumask(vma->vm_mm));
- +	if (tlb_ops_need_broadcast()) {
- +		struct tlb_args ta;
- +		ta.ta_vma = vma;
- +		ta.ta_start = uaddr;
-- 		on_each_cpu_mask(ipi_flush_tlb_page, &ta, 1, &vma->vm_mm->cpu_vm_mask);
-++		on_each_cpu_mask(ipi_flush_tlb_page, &ta, 1, mm_cpumask(vma->vm_mm));
- +	} else
- +		local_flush_tlb_page(vma, uaddr);
-  }
-  
-  void flush_tlb_kernel_page(unsigned long kaddr)
-@@@ -672,14 -617,13 +672,14 @@@
-  void flush_tlb_range(struct vm_area_struct *vma,
-                       unsigned long start, unsigned long end)
-  {
- -	struct tlb_args ta;
- -
- -	ta.ta_vma = vma;
- -	ta.ta_start = start;
- -	ta.ta_end = end;
- -
- -	on_each_cpu_mask(ipi_flush_tlb_range, &ta, 1, mm_cpumask(vma->vm_mm));
- +	if (tlb_ops_need_broadcast()) {
- +		struct tlb_args ta;
- +		ta.ta_vma = vma;
- +		ta.ta_start = start;
- +		ta.ta_end = end;
-- 		on_each_cpu_mask(ipi_flush_tlb_range, &ta, 1, &vma->vm_mm->cpu_vm_mask);
-++		on_each_cpu_mask(ipi_flush_tlb_range, &ta, 1, mm_cpumask(vma->vm_mm));
- +	} else
- +		local_flush_tlb_range(vma, start, end);
-  }
-  
-  void flush_tlb_kernel_range(unsigned long start, unsigned long end)
+--Signature=_Fri__12_Jun_2009_18_18_02_+1000_=ROKbhIFDcPv2H=A
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkoyDzoACgkQjjKRsyhoI8ykmACfU1y0Uk4fUN+wuyr3eNiVZR+1
+WwQAoKNCx6x/w0kkUAeknvF70jTWy1Ue
+=0r3V
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__12_Jun_2009_18_18_02_+1000_=ROKbhIFDcPv2H=A--
