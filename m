@@ -1,44 +1,77 @@
-From: Pekka Enberg <penberg@cs.helsinki.fi>
-Subject: Re: [Powerpc/SLQB] Next June 06 : BUG during scsi initialization
-Date: Fri, 12 Jun 2009 11:38:07 +0300
-Message-ID: <1244795887.30512.27.camel@penberg-laptop>
-References: <20090511161442.3e9d9cb9.sfr@canb.auug.org.au>
-	<4A081002.4050802@in.ibm.com> <4A2909E8.6000507@in.ibm.com>
-	<Pine.LNX.4.64.0906071105030.11309@melkki.cs.Helsinki.FI>
-	<4A2D001E.5060802@in.ibm.com> <20090609141903.GE15219@wotan.suse.de>
-	<4A31EB2A.9080003@in.ibm.com> <20090612074213.GA21070@wotan.suse.de>
-	<4A320D12.2050802@in.ibm.com> <20090612082145.GD24044@wotan.suse.de>
-	<1244795139.30512.23.camel@penberg-laptop>
-	<20090612183559.33018f0c.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: rr-latest-cpumask/sparc tree build failure
+Date: Fri, 12 Jun 2009 18:51:02 +1000
+Message-ID: <20090612185102.2d1391e5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <20090612183559.33018f0c.sfr@canb.auug.org.au>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Nick Piggin <npiggin@suse.de>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55200 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753193AbZFLIvB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 12 Jun 2009 04:51:01 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
-On Fri, 2009-06-12 at 18:35 +1000, Stephen Rothwell wrote:
-> Hi Pekka,
-> 
-> On Fri, 12 Jun 2009 11:25:39 +0300 Pekka Enberg <penberg@cs.helsinki.fi> wrote:
-> >
-> > Hmm, SLQB in my for-next branch. Stephen, is slab.git dropped from
-> > linux-next or something?
-> 
-> Yesterday (next-20090611) the slab tree for linux-next had only one
-> commit in it ("SLUB: Out-of-memory diagnostics").  Today (next-20090612)
-> it has quite a lot in it again - including SLQB.
+Hi Rusty,
 
-Ah, ok. I did mess it up for few hours and I guess you picked up then.
-Thanks, Stephen!
+Today's linux-next build (sparc64 defconfig) failed like this:
+
+arch/sparc/mm/init_64.c: In function 'paging_init':
+arch/sparc/mm/init_64.c:1802: error: 'CPU_MASK_ALL_PTR' undeclared (first use in this function)
+arch/sparc/kernel/smp_64.c: In function 'setup_per_cpu_areas':
+arch/sparc/kernel/smp_64.c:1541: error: 'CPU_MASK_ALL_PTR' undeclared (first use in this function)
+
+Caused by commit b46586049330222ccab229a1a1e498e94c5fa5dc
+("cpumask:remove-CPU_MASK_ALL_PTR") from the rr-latest-cpumask tree
+interacting with commits 21bc149d59288fe43d1ba18a59d874ba6a5f1db9
+("sparc64: Make mdesc_fill_in_cpu_data take a cpumask_t pointer") and
+63750a3dc53a87a1f5ca42101ea88578b934ab52 ("sparc64: Defer cpu_data()
+setup until end of per-cpu data initialization") from the sparc tree.
+
+I applied this patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 12 Jun 2009 18:43:54 +1000
+Subject: [PATCH] sparc: replace uses of CPU_MASK_ALL_PTR
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/sparc/kernel/smp_64.c |    2 +-
+ arch/sparc/mm/init_64.c    |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/sparc/kernel/smp_64.c b/arch/sparc/kernel/smp_64.c
+index 1de47d2..f3a83b0 100644
+--- a/arch/sparc/kernel/smp_64.c
++++ b/arch/sparc/kernel/smp_64.c
+@@ -1538,5 +1538,5 @@ void __init setup_per_cpu_areas(void)
+ 
+ 	of_fill_in_cpu_data();
+ 	if (tlb_type == hypervisor)
+-		mdesc_fill_in_cpu_data(CPU_MASK_ALL_PTR);
++		mdesc_fill_in_cpu_data(cpu_all_mask);
+ }
+diff --git a/arch/sparc/mm/init_64.c b/arch/sparc/mm/init_64.c
+index b5a5932..ca92e2f 100644
+--- a/arch/sparc/mm/init_64.c
++++ b/arch/sparc/mm/init_64.c
+@@ -1799,7 +1799,7 @@ void __init paging_init(void)
+ 
+ 	if (tlb_type == hypervisor) {
+ 		sun4v_mdesc_init();
+-		mdesc_populate_present_mask(CPU_MASK_ALL_PTR);
++		mdesc_populate_present_mask(cpu_all_mask);
+ 	}
+ 
+ 	/* Once the OF device tree and MDESC have been setup, we know
+-- 
+1.6.3.1
+
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
