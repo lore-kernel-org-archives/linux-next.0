@@ -1,89 +1,153 @@
-From: Trent Piepho <xyzzy@speakeasy.org>
-Subject: Re: [PATCH -next] v4l: expose function outside of ifdef/endif block
-Date: Fri, 12 Jun 2009 12:31:29 -0700 (PDT)
-Message-ID: <Pine.LNX.4.58.0906121220520.32713@shell2.speakeasy.net>
-References: <20090612185601.be53b034.sfr@canb.auug.org.au> <4A32A2CE.40002@oracle.com>
+From: "Chumbalkar, Nagananda" <Nagananda.Chumbalkar@hp.com>
+Subject: RE: linux-next: manual merge of the rr tree with the
+ cpufreq-current tree
+Date: Fri, 12 Jun 2009 19:45:08 +0000
+Message-ID: <66D9D2F0CDB5C9428E6166B01EC85EE15E025024C1@GVW0676EXC.americas.hpqcorp.net>
+References: <20090612134717.bf81d333.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="289735540-2083449865-1244835089=:32713"
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <4A32A2CE.40002@oracle.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from g1t0027.austin.hp.com ([15.216.28.34]:19850 "EHLO
+	g1t0027.austin.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755596AbZFLTpf convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 12 Jun 2009 15:45:35 -0400
+In-Reply-To: <20090612134717.bf81d333.sfr@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Rusty Russell <rusty@rustcorp.com.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Dave Jones <davej@redhat.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-  Send mail to mime@docserver.cac.washington.edu for more info.
 
---289735540-2083449865-1244835089=:32713
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+> -----Original Message-----
+> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au] 
+> Sent: Thursday, June 11, 2009 10:47 PM
+> To: Rusty Russell
+> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; 
+> Andrew Morton; Chumbalkar, Nagananda; Dave Jones
+> Subject: linux-next: manual merge of the rr tree with the 
+> cpufreq-current tree
+> 
+> Hi Rusty,
+> 
+> Today's linux-next merge of the rr tree got a conflict in
+> arch/x86/kernel/cpu/cpufreq/powernow-k8.c between commits
+> ec50b17b706931fb5d2854893cfa4b3f96f19276 ("[CPUFREQ] reduce scope of
+> ACPI_PSS_BIOS_BUG_MSG[]") and 97f1bb65966b4276581988755238a1b326fce475
+> ("[CPUFREQ] powernow-k8: get drv data for correct CPU") from the
+> cpufreq-current tree and commit fd9641cb9b0cd9296a83242164d53517351b6aaa
+> ("cpumask: avoid playing with cpus_allowed in powernow-k8.c") from the rr
+> tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
 
-On Fri, 12 Jun 2009, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
->
-> Move v4l_bound_align_image() outside of an #ifdef CONFIG_I2C block
-> so that it is always built.  Fixes a build error:
+Hi Stephen, the changes to powernowk8_get() may not work as intended. Please
+see the reason, and also other comments below. FYI, Dave has a request on the
+"cpufreq" list to rebase this patch: 
+http://www.spinics.net/lists/cpufreq/msg00771.html
 
-clamp_align() should be moved as well, since it's only used by
-v4l_bound_align_image().  I'm attaching an alternate version that fixes
-this.  Labeled the endif too.
 
->  drivers/media/video/v4l2-common.c |    3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> --- linux-next-20090612.orig/drivers/media/video/v4l2-common.c
-> +++ linux-next-20090612/drivers/media/video/v4l2-common.c
-> @@ -915,6 +915,7 @@ const unsigned short *v4l2_i2c_tuner_add
->  	return NULL;
->  }
->  EXPORT_SYMBOL_GPL(v4l2_i2c_tuner_addrs);
-> +#endif
->
->  /* Clamp x to be between min and max, aligned to a multiple of 2^align.  min
->   * and max don't have to be aligned, but there must be at least one valid
-> @@ -986,5 +987,3 @@ void v4l_bound_align_image(u32 *w, unsig
->  	}
->  }
->  EXPORT_SYMBOL_GPL(v4l_bound_align_image);
-> -
-> -#endif
---289735540-2083449865-1244835089=:32713
-Content-Type: TEXT/PLAIN; charset=US-ASCII; name="tmp.patch"
-Content-Transfer-Encoding: BASE64
-Content-ID: <Pine.LNX.4.58.0906121231290.32713@shell2.speakeasy.net>
-Content-Description: 
-Content-Disposition: attachment; filename="tmp.patch"
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc arch/x86/kernel/cpu/cpufreq/powernow-k8.c
+> index 20c7b99,0e1f6c4..0000000
+> --- a/arch/x86/kernel/cpu/cpufreq/powernow-k8.c
+> +++ b/arch/x86/kernel/cpu/cpufreq/powernow-k8.c
+> @@@ -1247,14 -1224,41 +1236,40 @@@ static int 
+> powernowk8_verify(struct cpu
+>   	return cpufreq_frequency_table_verify(pol, 
+> data->powernow_table);
+>   }
+>   
+> + struct init_on_cpu {
+> + 	struct powernow_k8_data *data;
+> + 	int rc;
+> + };
+> + 
+> + static void __cpuinit powernowk8_cpu_init_on_cpu(void *_init_on_cpu)
+> + {
+> + 	struct init_on_cpu *init_on_cpu = _init_on_cpu;
+> + 
+> + 	if (pending_bit_stuck()) {
+> + 		printk(KERN_ERR PFX "failing init, change 
+> pending bit set\n");
+> + 		init_on_cpu->rc = -ENODEV;
+> + 		return;
+> + 	}
+> + 
+> + 	if (query_current_values_with_pending_wait(init_on_cpu->data)) {
+> + 		init_on_cpu->rc = -ENODEV;
+> + 		return;
+> + 	}
+> + 
+> + 	if (cpu_family == CPU_OPTERON)
+> + 		fidvid_msr_init();
+> + 
+> + 	init_on_cpu->rc = 0;
+> + }
+> + 
+>   /* per CPU init entry point to the driver */
+>   static int __cpuinit powernowk8_cpu_init(struct cpufreq_policy *pol)
+>   {
+>  +	static const char ACPI_PSS_BIOS_BUG_MSG[] =
+>  +		KERN_ERR FW_BUG PFX "No compatible ACPI _PSS 
+> objects found.\n"
+>  +		KERN_ERR FW_BUG PFX "Try again with latest BIOS.\n";
+>   	struct powernow_k8_data *data;
+> - 	cpumask_t oldmask;
+> + 	struct init_on_cpu init_on_cpu;
+>   	int rc;
+>   
+>   	if (!cpu_online(pol->cpu))
+> @@@ -1383,11 -1372,23 +1383,21 @@@ static int __devexit 
+> powernowk8_cpu_exi
+>   	return 0;
+>   }
+>   
+> + static void query_values_on_cpu(void *_err)
+> + {
+> + 	int *err = _err;
+> + 	struct powernow_k8_data *data = __get_cpu_var(powernow_data);
+> + 
 
-IyBIRyBjaGFuZ2VzZXQgcGF0Y2gNCiMgVXNlciBUcmVudCBQaWVwaG8gPHh5
-enp5QHNwZWFrZWFzeS5vcmc+DQojIERhdGUgMTI0NDgzNDk1OCAyNTIwMA0K
-IyBOb2RlIElEIDIzYmQ2NTE2ZWFmY2MwNmZmYjU5MDA3M2U3NDRjN2UxNzM4
-MmFlZjkNCiMgUGFyZW50ICAwMWZkNGUzYmQxYzBmYjUyY2IxNWFjYmQyMmNh
-N2Y0ODU3MTcwZTZlDQp2NGwyOiBNb3ZlIGJvdW5kaW5nIGNvZGUgb3V0c2lk
-ZSBJMkMgaWZkZWYgYmxvY2sNCg0KRnJvbTogVHJlbnQgUGllcGhvIDx4eXp6
-eUBzcGVha2Vhc3kub3JnPg0KDQpNb3ZlIHY0bF9ib3VuZF9hbGlnbl9pbWFn
-ZSgpIGFuZCBjbGFtcF9hbGlnbigpIG91dHNpZGUgb2YgYW4gaWZkZWYgYmxv
-Y2sNCmZvciBJMkMgcmVsYXRlZCBjb2RlLiAgQ2FuIGNhdXNlIGFuIHVuZGVm
-aW5lZCByZWZlcmVuY2UgdG8NCmB2NGxfYm91bmRfYWxpZ25faW1hZ2UnIGlm
-IEkyQyBpc24ndCBlbmFibGVkLg0KDQpQcmlvcml0eTogaGlnaA0KDQpTaWdu
-ZWQtb2ZmLWJ5OiBUcmVudCBQaWVwaG8gPHh5enp5QHNwZWFrZWFzeS5vcmc+
-DQpSZXBvcnRlZC1ieTogUmFuZHkgRHVubGFwIDxyYW5keS5kdW5sYXBAb3Jh
-Y2xlLmNvbT4NCg0KZGlmZiAtciAwMWZkNGUzYmQxYzAgLXIgMjNiZDY1MTZl
-YWZjIGxpbnV4L2RyaXZlcnMvbWVkaWEvdmlkZW8vdjRsMi1jb21tb24uYw0K
-LS0tIGEvbGludXgvZHJpdmVycy9tZWRpYS92aWRlby92NGwyLWNvbW1vbi5j
-CVRodSBKdW4gMTEgMTU6MzE6MjIgMjAwOSAtMDcwMA0KKysrIGIvbGludXgv
-ZHJpdmVycy9tZWRpYS92aWRlby92NGwyLWNvbW1vbi5jCUZyaSBKdW4gMTIg
-MTI6Mjk6MTggMjAwOSAtMDcwMA0KQEAgLTk5Nyw2ICs5OTcsOCBAQCBjb25z
-dCB1bnNpZ25lZCBzaG9ydCAqdjRsMl9pMmNfdHVuZXJfYWRkDQogfQ0KIEVY
-UE9SVF9TWU1CT0xfR1BMKHY0bDJfaTJjX3R1bmVyX2FkZHJzKTsNCiANCisj
-ZW5kaWYgLyogZGVmaW5lZChDT05GSUdfSTJDKSAqLw0KKw0KIC8qIENsYW1w
-IHggdG8gYmUgYmV0d2VlbiBtaW4gYW5kIG1heCwgYWxpZ25lZCB0byBhIG11
-bHRpcGxlIG9mIDJeYWxpZ24uICBtaW4NCiAgKiBhbmQgbWF4IGRvbid0IGhh
-dmUgdG8gYmUgYWxpZ25lZCwgYnV0IHRoZXJlIG11c3QgYmUgYXQgbGVhc3Qg
-b25lIHZhbGlkDQogICogdmFsdWUuICBFLmcuLCBtaW49MTcsbWF4PTMxLGFs
-aWduPTQgaXMgbm90IGFsbG93ZWQgYXMgdGhlcmUgYXJlIG5vIG11bHRpcGxl
-cw0KQEAgLTEwNjcsNSArMTA2OSwzIEBAIHZvaWQgdjRsX2JvdW5kX2FsaWdu
-X2ltYWdlKHUzMiAqdywgdW5zaWcNCiAJfQ0KIH0NCiBFWFBPUlRfU1lNQk9M
-X0dQTCh2NGxfYm91bmRfYWxpZ25faW1hZ2UpOw0KLQ0KLSNlbmRpZg0K
+"data" has only local scope. So, powernowk8_get() is not using this data.
 
---289735540-2083449865-1244835089=:32713--
+Prior equivalent code used to sanity check "data" before calling the function 
+below. The sanity check was introduced with this commit:
+4211a30349e8d2b724cfb4ce2584604f5e59c299
+
+> + 	*err = query_current_values_with_pending_wait(data);
+> + }
+> + 
+>   static unsigned int powernowk8_get(unsigned int cpu)
+>   {
+>  -	struct powernow_k8_data *data;
+>  +	struct powernow_k8_data *data = per_cpu(powernow_data, cpu);
+
+The above line duplicates what query_values_on_cpu() is now supposed to do on
+the given CPU. 
+
+> - 	cpumask_t oldmask = current->cpus_allowed;
+>   	unsigned int khz = 0;
+> + 	unsigned int first;
+
+The line above seems unnecessary, because smp_call_function_single() should
+be called with "cpu", not "first".
+
+
+> + 	int err;
+> + 
+>  -	first = cpumask_first(cpu_core_mask(cpu));
+>  -	data = per_cpu(powernow_data, first);
+>   
+>   	if (!data)
+>   		return -EINVAL;
+> 
+
+The above is not actually sanity checking "data" from query_values_on_cpu(). 
+
+- naga -
