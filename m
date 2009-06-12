@@ -1,77 +1,58 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: origin tree build failure
-Date: Fri, 12 Jun 2009 11:00:06 +1000
-Message-ID: <1244768406.7172.1.camel@pasglop>
-References: <20090612102427.32582baa.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the vfs tree with the gfs2 tree
+Date: Fri, 12 Jun 2009 11:12:37 +1000
+Message-ID: <20090612111237.0e5972e9.sfr@canb.auug.org.au>
+References: <20090527115253.37abd576.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__12_Jun_2009_11_12_37_+1000_iGH4fq4g7j7bDwex"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:55987 "EHLO gate.crashing.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:39818 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755423AbZFLBBH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 11 Jun 2009 21:01:07 -0400
-In-Reply-To: <20090612102427.32582baa.sfr@canb.auug.org.au>
+	id S1755373AbZFLBMl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Jun 2009 21:12:41 -0400
+In-Reply-To: <20090527115253.37abd576.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus <torvalds@linux-foundation.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, paulus@samba.org, Ingo Molnar <mingo@elte.hu>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven Whitehouse <swhiteho@redhat.com>, Christoph Hellwig <hch@infradead.org>
 
-On Fri, 2009-06-12 at 10:24 +1000, Stephen Rothwell wrote:
+--Signature=_Fri__12_Jun_2009_11_12_37_+1000_iGH4fq4g7j7bDwex
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 12 Jun 2009 10:14:22 +1000
-> Subject: [PATCH] perfcounters: remove powerpc definitions of perf_counter_do_pending
-> 
-> Commit 925d519ab82b6dd7aca9420d809ee83819c08db2 ("perf_counter:
-> unify and fix delayed counter wakeup") added global definitions.
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Hi Al,
 
-Acked-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
----
+On Wed, 27 May 2009 11:52:53 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the vfs tree got a conflict in
+> fs/gfs2/ops_super.c between commit
+> 9e6e0a128bca0a151d8d3fbd9459b22fc21cfebb ("GFS2: Merge mount.c and
+> ops_super.c into super.c") from the gfs2 tree and commits
+> 17af8f24a7750ea3d947904f97eb6dfacf9a88aa ("gfs2: remove ->write_super and
+> stop maintaining ->s_dirt") and 8123178eb9ca12cde31a95170746e15a79528a62
+> ("push BKL down into ->put_super") from the vfs tree.
 
-Linus, please apply. BTW, This is _EXACTLY_ why this should have been in
--next for a few days before being merged :-(
+This conflict is now against Linus's tree as the gfs2 tree has been
+merged.
 
+--=20
 Cheers,
-Ben.
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-> ---
->  arch/powerpc/include/asm/hw_irq.h |    3 ---
->  arch/powerpc/kernel/irq.c         |    1 +
->  2 files changed, 1 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/powerpc/include/asm/hw_irq.h b/arch/powerpc/include/asm/hw_irq.h
-> index 20a44d0..5351237 100644
-> --- a/arch/powerpc/include/asm/hw_irq.h
-> +++ b/arch/powerpc/include/asm/hw_irq.h
-> @@ -156,8 +156,6 @@ static inline void clear_perf_counter_pending(void)
->  		"i" (offsetof(struct paca_struct, perf_counter_pending)));
->  }
->  
-> -extern void perf_counter_do_pending(void);
-> -
->  #else
->  
->  static inline unsigned long test_perf_counter_pending(void)
-> @@ -167,7 +165,6 @@ static inline unsigned long test_perf_counter_pending(void)
->  
->  static inline void set_perf_counter_pending(void) {}
->  static inline void clear_perf_counter_pending(void) {}
-> -static inline void perf_counter_do_pending(void) {}
->  #endif /* CONFIG_PERF_COUNTERS */
->  
->  #endif	/* __KERNEL__ */
-> diff --git a/arch/powerpc/kernel/irq.c b/arch/powerpc/kernel/irq.c
-> index feff792..844d3f8 100644
-> --- a/arch/powerpc/kernel/irq.c
-> +++ b/arch/powerpc/kernel/irq.c
-> @@ -53,6 +53,7 @@
->  #include <linux/bootmem.h>
->  #include <linux/pci.h>
->  #include <linux/debugfs.h>
-> +#include <linux/perf_counter.h>
->  
->  #include <asm/uaccess.h>
->  #include <asm/system.h>
+--Signature=_Fri__12_Jun_2009_11_12_37_+1000_iGH4fq4g7j7bDwex
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkoxq4UACgkQjjKRsyhoI8yR1wCfQt2b/ugh8dxNwLjDHdGl88pJ
+eOQAn0vnx1YmREGPS/7SH+ab/ItlV1Gn
+=I26d
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__12_Jun_2009_11_12_37_+1000_iGH4fq4g7j7bDwex--
