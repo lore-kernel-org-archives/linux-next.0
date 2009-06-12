@@ -1,81 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: origin tree build failure
-Date: Fri, 12 Jun 2009 10:24:27 +1000
-Message-ID: <20090612102427.32582baa.sfr@canb.auug.org.au>
+Date: Fri, 12 Jun 2009 10:46:07 +1000
+Message-ID: <20090612104607.7eaf58dd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__12_Jun_2009_10_46_07_+1000_SE5ME+YAOy1rER_z"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45210 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41847 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753127AbZFLAYa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 11 Jun 2009 20:24:30 -0400
+	id S1751605AbZFLAqO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Jun 2009 20:46:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Linus <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>, paulus@samba.org, Ingo Molnar <mingo@elte.hu>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Ingo Molnar <mingo@elte.hu>
+
+--Signature=_Fri__12_Jun_2009_10_46_07_+1000_SE5ME+YAOy1rER_z
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-include/linux/perf_counter.h:677: error: redefinition of 'perf_counter_do_pending'
-arch/powerpc/include/asm/hw_irq.h:170: note: previous definition of 'perf_counter_do_pending' was here
+mm/built-in.o: In function `kmemleak_scan':
+kmemleak.c:(.text+0x3ad27): undefined reference to `_sdata'
 
-Caused by commit 925d519ab82b6dd7aca9420d809ee83819c08db2 ("perf_counter:
-unify and fix delayed counter wakeup") which added the former definitions
-but forgot the remove the latter.
+Caused by commit 3c7b4e6b8be4c16f1e6e5c558e33b7ff0db2dfaf ("kmemleak: Add
+the base support").  It needs commit
+4504c6d020fc5aec7659bf7746e71b1b904571f8 ("x86: Provide _sdata in the
+vmlinux.lds.S file") from the tip/x86 tree.
 
-I applied the following patch.
--- 
+I cherry-picked that commit for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 12 Jun 2009 10:14:22 +1000
-Subject: [PATCH] perfcounters: remove powerpc definitions of perf_counter_do_pending
+--Signature=_Fri__12_Jun_2009_10_46_07_+1000_SE5ME+YAOy1rER_z
+Content-Type: application/pgp-signature
 
-Commit 925d519ab82b6dd7aca9420d809ee83819c08db2 ("perf_counter:
-unify and fix delayed counter wakeup") added global definitions.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/powerpc/include/asm/hw_irq.h |    3 ---
- arch/powerpc/kernel/irq.c         |    1 +
- 2 files changed, 1 insertions(+), 3 deletions(-)
+iEYEARECAAYFAkoxpU8ACgkQjjKRsyhoI8wySACglsSwGKeYAVMZBJnm56Jsu2Y0
+ojQAoIsSewlD4QTWcU8dYiIpgw9ql1uI
+=EpjN
+-----END PGP SIGNATURE-----
 
-diff --git a/arch/powerpc/include/asm/hw_irq.h b/arch/powerpc/include/asm/hw_irq.h
-index 20a44d0..5351237 100644
---- a/arch/powerpc/include/asm/hw_irq.h
-+++ b/arch/powerpc/include/asm/hw_irq.h
-@@ -156,8 +156,6 @@ static inline void clear_perf_counter_pending(void)
- 		"i" (offsetof(struct paca_struct, perf_counter_pending)));
- }
- 
--extern void perf_counter_do_pending(void);
--
- #else
- 
- static inline unsigned long test_perf_counter_pending(void)
-@@ -167,7 +165,6 @@ static inline unsigned long test_perf_counter_pending(void)
- 
- static inline void set_perf_counter_pending(void) {}
- static inline void clear_perf_counter_pending(void) {}
--static inline void perf_counter_do_pending(void) {}
- #endif /* CONFIG_PERF_COUNTERS */
- 
- #endif	/* __KERNEL__ */
-diff --git a/arch/powerpc/kernel/irq.c b/arch/powerpc/kernel/irq.c
-index feff792..844d3f8 100644
---- a/arch/powerpc/kernel/irq.c
-+++ b/arch/powerpc/kernel/irq.c
-@@ -53,6 +53,7 @@
- #include <linux/bootmem.h>
- #include <linux/pci.h>
- #include <linux/debugfs.h>
-+#include <linux/perf_counter.h>
- 
- #include <asm/uaccess.h>
- #include <asm/system.h>
--- 
-1.6.3.1
+--Signature=_Fri__12_Jun_2009_10_46_07_+1000_SE5ME+YAOy1rER_z--
