@@ -1,70 +1,72 @@
-From: Andreas Herrmann <andreas.herrmann3@amd.com>
-Subject: Re: [PATCH] x86: memtest: fix compile warning
-Date: Fri, 12 Jun 2009 15:11:45 +0200
-Message-ID: <20090612131145.GH12431@alberich.amd.com>
-References: <20090611112746.802a24cb.sfr@canb.auug.org.au> <20090611102927.GE12431@alberich.amd.com> <alpine.LFD.2.00.0906111512400.3372@localhost.localdomain> <20090611152658.GF12431@alberich.amd.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: linux-next: origin tree build failure
+Date: Fri, 12 Jun 2009 23:29:57 +1000
+Message-ID: <1244813397.7172.156.camel@pasglop>
+References: <20090612102427.32582baa.sfr@canb.auug.org.au>
+	<1244768406.7172.1.camel@pasglop> <20090612092054.GB32052@elte.hu>
+	<1244799197.7172.106.camel@pasglop>  <20090612125335.GH31845@elte.hu>
+	<1244812224.7172.146.camel@pasglop>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wa4ehsobe002.messaging.microsoft.com ([216.32.181.12]:7222 "EHLO
-	WA4EHSOBE002.bigfish.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1762393AbZFLN2A (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 12 Jun 2009 09:28:00 -0400
-Content-Disposition: inline
-In-Reply-To: <20090611152658.GF12431@alberich.amd.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <1244812224.7172.146.camel@pasglop>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <a.p.zijlstra@chello.nl>, ppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, paulus@samba.org, Linus <torvalds@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Jun 11, 2009 at 05:26:58PM +0200, Andreas Herrmann wrote:
-> On Thu, Jun 11, 2009 at 04:21:41PM +0200, Thomas Gleixner wrote:
-> > On Thu, 11 Jun 2009, Andreas Herrmann wrote:
-> > 
-> > > Commit c9690998ef48ffefeccb91c70a7739eebdea57f9
-> > > (x86: memtest: remove 64-bit division) introduced following compile warning:
-> > > 
-> > >  arch/x86/mm/memtest.c: In function 'memtest':
-> > >  arch/x86/mm/memtest.c:56: warning: comparison of distinct pointer types lacks a cast
-> > >  arch/x86/mm/memtest.c:58: warning: comparison of distinct pointer types lacks a cast
-> > > 
-> > > Signed-off-by: Andreas Herrmann <andreas.herrmann3@amd.com>
-> > > ---
-> > >  arch/x86/mm/memtest.c |    4 ++--
-> > >  1 files changed, 2 insertions(+), 2 deletions(-)
-> > > 
-> > > Sorry.
-> > > Please apply.
-> > 
-> > I applied it already, but zapped it right away, as it is bad style to
-> > do the type casting in the loops. The proper fix is below.
-> 
-> Doesn't your fix re-introduces the 64-bit division problem with old
-> gcc?  I removed that division with the mentioned commit just forgot to
-> type-cast the pointer.
+On Fri, 2009-06-12 at 23:10 +1000, Benjamin Herrenschmidt wrote:
+> On Fri, 2009-06-12 at 14:53 +0200, Ingo Molnar wrote:
 
-It doesn't.
+> To some extent, here, the issue is on Linus side and it's up to him (Hey
+> Linus ! still listening ?) to maybe be more proactive at giving an ack
+> or nack so that we can get a chance to do that final pass of ironing out
+> the mechanical bugs before we hit the main tree.
 
-> > diff --git a/arch/x86/mm/memtest.c b/arch/x86/mm/memtest.c
-> > index d1c5cef..18d244f 100644
-> > --- a/arch/x86/mm/memtest.c
-> > +++ b/arch/x86/mm/memtest.c
-> > @@ -40,16 +40,14 @@ static void __init reserve_bad_mem(u64 pattern, u64 start_bad, u64 end_bad)
-> >  
-> >  static void __init memtest(u64 pattern, u64 start_phys, u64 size)
-> >  {
-> > -	u64 *p, *end;
-> > -	void *start;
-> > +	u64 *p, *start, *end;
-> >  	u64 start_bad, last_bad;
-> >  	u64 start_phys_aligned;
-> > -	size_t incr;
-> > +	const size_t incr = sizeof(pattern);
+Let me add a little bit more background to my reasoning here and why I
+think having this integration testing step is so valuable...
 
-The const qualifier made the difference.
+It all boils down to bisection and having a bisectable tree.
 
+Yes, I hate bisecting and I'm sure you are the same. It's a major PITA
+and in most cases, I'm better off tracking down the actual bug and then
+finding how it came into being.
 
-Thanks,
+However, what the ability to have a reasonably bisectable tree buys us
+is all those users, testers, good wills, etc... people who do not have
+the knowledge, skill, familiarity with the code etc... to track the bug
+down, to be able to still find out what precise patch brought that pesky
+regression that doesn't happen on anybody else machine, and thus brings
+us some useful material to work with when we cannot reproduce the exact
+same setup on our own machines.
 
-Andreas
+Yes, I and I'm sure you can deal with a bisection breakage caused by a
+minor screweup like the one we are talking about. But our testers often
+can't and will just give up.
+
+It has -nothing- to do with whether the patches are controversial or
+not, it is purely about trying to make sure that things going into linus
+tree had at least a few days of churning by the various involved parties
+to try to get closer to the graal of a fully bisectable tree.
+
+At least that's how I see it.
+
+Now, we may disagree and I'm happy to discuss that more around a beer at
+next KS, and to some extent, what is done is done, and if we screwed up
+with -next vs. perfmon, then so be it and let's learn from our mistakes,
+but I believe it makes a lot of sense to have that staging area that
+helps us making sure that within a merge window with gazillion things
+being merged pretty much at once, we keep this ability for our users and
+testers to track down which individual patch broke something.
+
+Cheers,
+Ben.
