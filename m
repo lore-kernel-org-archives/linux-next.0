@@ -1,70 +1,71 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: linux-next: Tree for June 11 (bluetooth/rfkill)
-Date: Fri, 12 Jun 2009 14:12:06 +0200
-Message-ID: <1244808726.29447.11.camel@johannes.local>
-References: <20090611191420.1f4d5e4f.sfr@canb.auug.org.au>
-	 <4A318519.2080708@oracle.com>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: origin tree build failure
+Date: Fri, 12 Jun 2009 14:53:35 +0200
+Message-ID: <20090612125335.GH31845@elte.hu>
+References: <20090612102427.32582baa.sfr@canb.auug.org.au> <1244768406.7172.1.camel@pasglop> <20090612092054.GB32052@elte.hu> <1244799197.7172.106.camel@pasglop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-vE68nYjUDZRxZ0Sn3FzT"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xc.sipsolutions.net ([83.246.72.84]:59585 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751221AbZFLMLe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 12 Jun 2009 08:11:34 -0400
-In-Reply-To: <4A318519.2080708@oracle.com>
+Received: from mx3.mail.elte.hu ([157.181.1.138]:42147 "EHLO mx3.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751564AbZFLMxx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 12 Jun 2009 08:53:53 -0400
+Content-Disposition: inline
+In-Reply-To: <1244799197.7172.106.camel@pasglop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, marcel@holtmann.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus <torvalds@linux-foundation.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, paulus@samba.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>
 
 
---=-vE68nYjUDZRxZ0Sn3FzT
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+* Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
 
-On Thu, 2009-06-11 at 15:28 -0700, Randy Dunlap wrote:
-> Stephen Rothwell wrote:
-> > Hi all,
-> >=20
-> > Changes since 20090610:
->=20
->=20
-> CONFIG_RFKILL=3Dm
-> CONFIG_BT=3Dy
->=20
-> (.text+0xb7bf7): undefined reference to `rfkill_unregister'
-> (.text+0xb7c03): undefined reference to `rfkill_destroy'
-> (.text+0xb962f): undefined reference to `rfkill_blocked'
-> (.text+0xba173): undefined reference to `rfkill_alloc'
-> (.text+0xba187): undefined reference to `rfkill_register'
-> (.text+0xba197): undefined reference to `rfkill_destroy'
+> > Ah - thanks. The bug was caused by me being a bit too optimistic 
+> > in applying the shiny-new Power7 support patches on the last 
+> > day. (nice CPU btw.)
+> 
+> In that case paulus tells me it's actually Peter screwing up 
+> moving something from the powerpc code to generic :-)
 
-This one's not my fault :) Marcel did that, the solution as usual is to
-	depends on RFKILL || !RFKILL
+Yes, but i committed it and it's my task to make sure that the thing 
+works as a whole so it's my fault still :)
 
-:)
+>  .../...
+> 
+> > Such bugs happen, and they are easy enough to fix. What matters 
+> > arent the 1-2 short-lived bugs that do happen when a new 
+> > combination of trees is created, but the long-lived combination 
+> > bugs and conflicts.
+> 
+> I'm not saying -next would fix world hunger ... but in this case 
+> we have two sets of issues, perfctr and the init ordering change 
+> which both got merged totally bypassing -next... We should at 
+> least -try- to follow the process we've defined, don't you think ?
 
-johannes
+You are trying to define a process that does not exist in that form 
+and which never existed in that form.
 
---=-vE68nYjUDZRxZ0Sn3FzT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+It was never true that new code _MUST_ go via linux-next - and i 
+hope it will never be true.
 
------BEGIN PGP SIGNATURE-----
+linux-next has integration testing so that interactions between 
+maintainer trees are mapped and that architectures that otherwise 
+few people use get build-tested too (well beyond their practical 
+relevance, i have to add) - but there's little critical review done 
+in linux-next. Nor should it be the forum for that, it simply 
+contains way too much stuff and has a weird history format with 
+daily rebases that makes review hard and expensive in that form.
 
-iQIcBAABAgAGBQJKMkYRAAoJEODzc/N7+QmaLXQP/2c/qpEkO0hJ/jzCAw3rUTZy
-G9qvaoZjoAxRK5Jk21uoTIfjBsi2ed6d0c13SzZOkwjLJp5/b0H5RTyRCUbRzSwT
-GhYls8tkY/rqhtuxBNCOGASklmI0jFpejOIViWD0RsllJ1Q4LlaFbTD02xFHox2+
-F4HIkR+a+x2XWPCjgnWxV9bwnN1fh4Wvt5XpUniYsjIfvmfF1ha0ENdzqkapRA72
-CPmuxGJxQBO2U69TkGmrTtg5XZVqtCQvUs5fP0ygcb6uidqzBjFiI40BUmWMmhek
-5dsqIKcrsuuQwP5G3qCMeLNkr21jsx+WHsxh997qvmPMGNmbfkk0iRoAbxuGY2Ne
-UrouZ6+0HjWiJWZfjG5OPTC079F0IHo8WL6yBYTj9JuQUizlr4xvLKyf9oKot+iw
-20u8I0Gxmp1PgCkGS+t/oNBsSnWwBZFhZ5Jl4jztktDiKnKaOHfQ3oxO5ITD1g9E
-sq7L4A9kjtnwuIx+8Mw8fTNmrrLc4ouDblFdJko2Z2T9bdrP4QrX5ogl434BTfeL
-+SC22mslV1XmYjRfXbmuE6yxy7Kz4HbD8cAvhAUYtI+aSUb+lKd1dVZe+HDKp7sm
-+3XSJJjB+aPEJPyN8rPNYXJZn49nIptiR+U2bgLv2AMNFFVS3UVeIQCRK9icVMcA
-aql0orFngAKcxer1h+dK
-=XOnr
------END PGP SIGNATURE-----
+linux-next should not be second-guessing maintainers and should not 
+act as an "approval forum" for controversial features, increasing 
+the (already quite substantial) pressure on maintainers to apply 
+more crap.
 
---=-vE68nYjUDZRxZ0Sn3FzT--
+And that is true even if it's a new feature that i happen to support 
+- as in this case - it sure would have been handy to have more 
+perfcounters test coverage, every little bit of extra testing helps.
+
+If linux-next wants to do that then it should be renamed to 
+something else and not called linux-next.
+
+	Ingo
