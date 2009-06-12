@@ -1,62 +1,49 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: tip tree build failure
-Date: Fri, 12 Jun 2009 16:30:54 +1000
-Message-ID: <20090612163054.96bff723.sfr@canb.auug.org.au>
+Subject: linux-next: input tree build warnings
+Date: Fri, 12 Jun 2009 17:05:36 +1000
+Message-ID: <20090612170536.109df1d8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__12_Jun_2009_16_30_54_+1000_0/PcVxAoTQ5SJpxJ"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56696 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753629AbZFLGbD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 12 Jun 2009 02:31:03 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
+ boundary="Signature=_Fri__12_Jun_2009_17_05_36_+1000_GrzHdYXBG3+fEV.0"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1762024AbZFLHFt@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tero Saarni <tero.saarni@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__12_Jun_2009_16_30_54_+1000_0/PcVxAoTQ5SJpxJ
+--Signature=_Fri__12_Jun_2009_17_05_36_+1000_GrzHdYXBG3+fEV.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Dmitry,
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+Today's linux-next build (x86_64 allmodconfig) produced these warnings:
 
-arch/x86/kernel/irqinit.c: In function 'apic_intr_init':
-arch/x86/kernel/irqinit.c:191: error: 'MCE_SELF_VECTOR' undeclared (first u=
-se in this function)
-arch/x86/kernel/irqinit.c:191: error: 'mce_self_interrupt' undeclared (firs=
-t use in this function)
+drivers/input/evdev.c: In function 'evdev_do_ioctl':
+drivers/input/evdev.c:632: warning: comparison of distinct pointer types la=
+cks a cast
+drivers/input/evdev.c:660: warning: comparison of distinct pointer types la=
+cks a cast
 
-This code was introduced in a merge
-(940010c5a314a7bd9b498593bc6ba1718ac5aec5) in the perfcounters tree that
-is now in Linus' tree.  The CONFIG variable that allows it to be enabled
-was introduced in commit 4efc0670baf4b14bc95502e54a83ccf639146125 ("x86,
-mce: use 64bit machine check code on 32bit") in the tip/x86 tree.
+Introduced by commit 61c7bfcdf5acee06f58b246d6615989134719d19 ("Input:
+synaptics - add support for reporting x/y resolution").
 
-The necessary define and function are introduced in commit
-ccc3c3192ae78dd56dcdf5353fd1a9ef5f9a3e2b ("x86, mce: implement
-bootstrapping for machine check wakeups") in the tip/x86/mce3 (mce4)
-branch which is not included in Linus' tree or tip/auto-latest.
-
-I just commented the code out for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__12_Jun_2009_16_30_54_+1000_0/PcVxAoTQ5SJpxJ
+--Signature=_Fri__12_Jun_2009_17_05_36_+1000_GrzHdYXBG3+fEV.0
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkox9h8ACgkQjjKRsyhoI8yvOACgpCsIMbdhEZxoUsSntQfScxww
-9cUAn0m9sDT+9qKLWE8AwDY6b9J0sb42
-=h2Ae
+iEYEARECAAYFAkox/kAACgkQjjKRsyhoI8xOzACcCJvugscpF3EqCfB1P1EM9+Dw
+M0UAoLfWM5DBE/9TSDnvQJfhRKu3606T
+=RFrJ
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__12_Jun_2009_16_30_54_+1000_0/PcVxAoTQ5SJpxJ--
+--Signature=_Fri__12_Jun_2009_17_05_36_+1000_GrzHdYXBG3+fEV.0--
