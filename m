@@ -1,67 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the asm-generic tree with Linus'
- tree
-Date: Fri, 12 Jun 2009 18:18:02 +1000
-Message-ID: <20090612181802.b7bf4fd6.sfr@canb.auug.org.au>
-References: <20090612164914.e03160af.sfr@canb.auug.org.au>
-	<200906121005.33490.arnd@arndb.de>
+From: Nick Piggin <npiggin@suse.de>
+Subject: Re: [Powerpc/SLQB] Next June 06 : BUG during scsi initialization
+Date: Fri, 12 Jun 2009 10:21:45 +0200
+Message-ID: <20090612082145.GD24044@wotan.suse.de>
+References: <20090511161442.3e9d9cb9.sfr@canb.auug.org.au> <4A081002.4050802@in.ibm.com> <4A2909E8.6000507@in.ibm.com> <Pine.LNX.4.64.0906071105030.11309@melkki.cs.Helsinki.FI> <4A2D001E.5060802@in.ibm.com> <20090609141903.GE15219@wotan.suse.de> <4A31EB2A.9080003@in.ibm.com> <20090612074213.GA21070@wotan.suse.de> <4A320D12.2050802@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__12_Jun_2009_18_18_02_+1000_=ROKbhIFDcPv2H=A"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59824 "EHLO smtps.tip.net.au"
+Received: from cantor.suse.de ([195.135.220.2]:32864 "EHLO mx1.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755474AbZFLISF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 12 Jun 2009 04:18:05 -0400
-In-Reply-To: <200906121005.33490.arnd@arndb.de>
+	id S1760006AbZFLIVn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 12 Jun 2009 04:21:43 -0400
+Content-Disposition: inline
+In-Reply-To: <4A320D12.2050802@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>, Ingo Molnar <mingo@elte.hu>
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: Pekka J Enberg <penberg@cs.helsinki.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org
 
---Signature=_Fri__12_Jun_2009_18_18_02_+1000_=ROKbhIFDcPv2H=A
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jun 12, 2009 at 01:38:50PM +0530, Sachin Sant wrote:
+> Nick Piggin wrote:
+> >>I was able to boot yesterday's next (20090611) on this machine. Not sure
+> >>    
+> >
+> >Still with SLQB? With debug options turned on?
+> >  
+> Ah .. spoke too soon. The kernel was not compiled with SLQB. Sorry
+> about the confusion. I can't seem to select SLQB as the slab
+> allocator.
 
-Hi Arnd,
+It must have been dropped out of -next. You could just try
+a known-bad kernel with my patch applied?
 
-On Fri, 12 Jun 2009 10:05:32 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Friday 12 June 2009, Stephen Rothwell wrote:
-> > Today's linux-next merge of the asm-generic tree got a conflict in
-> > include/asm-generic/atomic.h between commit
-> > 53e111a730ea8b002d57dd226098c12789993329 ("x86: Fix atomic_long_xchg() =
-on
-> > 64bit") from Linus' tree and commit
-> > 72099ed2719fc5829bd79c6ca9d1783ed026eb37 ("asm-generic: rename atomic.h
-> > to atomic-long.h") from the asm-generic tree.
-> >=20
-> > I applied the fix from the former patch to atomic-long.h
->=20
-> I pulled Linus' tree into the asm-generic tree now and fixed the two conf=
-licts
-> in the same way you did. I thought about doing a rebase on his tree inste=
-ad,
-> but wasn't sure what works better.
-
-I think what works better is what you are most comfortable with.  Your
-way works fine for me.  Thanks.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__12_Jun_2009_18_18_02_+1000_=ROKbhIFDcPv2H=A
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkoyDzoACgkQjjKRsyhoI8ykmACfU1y0Uk4fUN+wuyr3eNiVZR+1
-WwQAoKNCx6x/w0kkUAeknvF70jTWy1Ue
-=0r3V
------END PGP SIGNATURE-----
-
---Signature=_Fri__12_Jun_2009_18_18_02_+1000_=ROKbhIFDcPv2H=A--
+Thanks,
+Nick
