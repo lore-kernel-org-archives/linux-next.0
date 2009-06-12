@@ -1,42 +1,45 @@
 From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Subject: Re: linux-next: origin tree build failure
-Date: Sat, 13 Jun 2009 00:19:58 +1000
-Message-ID: <1244816398.7172.172.camel@pasglop>
+Date: Sat, 13 Jun 2009 00:23:02 +1000
+Message-ID: <1244816582.7172.175.camel@pasglop>
 References: <20090612102427.32582baa.sfr@canb.auug.org.au>
 	 <1244768406.7172.1.camel@pasglop> <20090612092054.GB32052@elte.hu>
 	 <1244799197.7172.106.camel@pasglop> <20090612125335.GH31845@elte.hu>
-	 <1244812224.7172.146.camel@pasglop> <20090612134428.GC32105@elte.hu>
-	 <1244814976.7172.164.camel@pasglop>  <20090612140730.GJ32105@elte.hu>
+	 <1244812224.7172.146.camel@pasglop> <1244813397.7172.156.camel@pasglop>
+	 <20090612134940.GD32105@elte.hu> <1244815574.7172.171.camel@pasglop>
+	 <20090612141118.GK32105@elte.hu>
 Mime-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:57812 "EHLO gate.crashing.org"
+Received: from gate.crashing.org ([63.228.1.57]:57842 "EHLO gate.crashing.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753325AbZFLOUc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 12 Jun 2009 10:20:32 -0400
-In-Reply-To: <20090612140730.GJ32105@elte.hu>
+	id S1764146AbZFLOX1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 12 Jun 2009 10:23:27 -0400
+In-Reply-To: <20090612141118.GK32105@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Ingo Molnar <mingo@elte.hu>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus <torvalds@linux-foundation.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, paulus@samba.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>
 
+On Fri, 2009-06-12 at 16:11 +0200, Ingo Molnar wrote:
+> > Maybe. But maybe it's representative... so far in this merge 
+> > window, 100% of the powerpc build and runtime breakage upstream 
+> > comes from stuff that didn't get into -next before.
+> 
+> But that's axiomatic, isnt it? linux-next build-tests PowerPC as the 
+> first in the row of tests - so no change that was in linux-next can 
+> ever cause a build failure on PowerPC, right?
 
-> Uhm, the bug you are making a big deal of would have been found and 
-> fixed by Paulus a few hours after any such mail - and probably by me 
-> too as i do daily cross builds to Power.
-> 
-> So yes, we had a bug, but any extra linux-next hoops would not have 
-> prevented it: i could still have messed up by getting lured by that 
-> nice piece of Power7 hardware enablement patch on the last day ;-)
-> 
-> So the bug was my fault for being too fast-and-loose with that 
-> particular patch, creating a ~5-commits-hop build breakage bisection 
-> window on Power.
-> 
-> Now that i'm sufficiently chastised, can we now move on please? :)
+I'd have to check with Stephen but I think linux-next tests a whole
+bunch of archs each round. Anyway, the idea is, just don't get things
+upstream before the at least had a chance to go through that little bit
+of integration testing .. Is it -that- hard ?
 
-Sure we can :-) My point is, get a break before you merge upstream :-)
+Oh and before you ask me, yes, I do the same mistakes, and I have been
+caught too merging things at the last minute that ended up broken and
+that could have been caught by -next... I'm just trying to advocate the
+idea that we all try to improve in that area :-)
 
 Cheers,
 Ben.
