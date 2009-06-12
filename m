@@ -1,51 +1,80 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: origin tree build failure
-Date: Fri, 12 Jun 2009 19:57:15 +1000
-Message-ID: <1244800635.7172.114.camel@pasglop>
-References: <20090612102427.32582baa.sfr@canb.auug.org.au>
-	 <1244768406.7172.1.camel@pasglop>  <20090612092054.GB32052@elte.hu>
-	 <1244799197.7172.106.camel@pasglop>  <1244799786.6691.1133.camel@laptop>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: rr-latest-cpumask/sparc tree build failure
+Date: Fri, 12 Jun 2009 20:40:10 +0930
+Message-ID: <200906122040.10541.rusty@rustcorp.com.au>
+References: <20090612185102.2d1391e5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:55686 "EHLO gate.crashing.org"
+Received: from ozlabs.org ([203.10.76.45]:58227 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1761718AbZFLJ6E (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 12 Jun 2009 05:58:04 -0400
-In-Reply-To: <1244799786.6691.1133.camel@laptop>
+	id S1759569AbZFLLKP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 12 Jun 2009 07:10:15 -0400
+In-Reply-To: <20090612185102.2d1391e5.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Linus <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, paulus@samba.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org
 
-On Fri, 2009-06-12 at 11:43 +0200, Peter Zijlstra wrote:
-> On Fri, 2009-06-12 at 19:33 +1000, Benjamin Herrenschmidt wrote:
-> > We should at least -try- to follow the
-> > process we've defined, don't you think ?
-> 
-> So you're saying -next should include whole new subsystems even though
-> its not clear they will be merged?
+On Fri, 12 Jun 2009 06:21:02 pm Stephen Rothwell wrote:
+> Hi Rusty,
+>
+> Today's linux-next build (sparc64 defconfig) failed like this:
+>
+> arch/sparc/mm/init_64.c: In function 'paging_init':
+> arch/sparc/mm/init_64.c:1802: error: 'CPU_MASK_ALL_PTR' undeclared (first
 
-Maybe yes. And if there's some debate as to whether it should be merged
-or not, maybe Linus should make the decision, let -next carry it for a
-few days to iron out those problems, and -then- merge it.
+OK, Dave could you take/fold Stephen's fix then?
 
-> That'll invariably create the opposite case where a tree doesn't get
-> pulled and breaks bits due to its absence.
-> 
-> -next does a great job of sorting the existing subsystem trees, but I
-> don't think its Stephens job to decide if things will get merged.
+FYI here's the patch explaining why we're CPU_MASK_ALL_PTR -> cpu_all_mask:
 
-No, it's not, but then, maybe Linus could play the game and -tell- us
-whether he intend to merge or not at least a few days in advance :-)
+Subject: cpumask: remove dangerous CPU_MASK_ALL_PTR
 
-> Therefore when things are in limbo (there was no definite ACK from Linus
-> on perf counters) both inclusion and exclusion from -next can lead to
-> trouble.
+(Thanks to Al Viro for reminding me of this, via Ingo)
 
-Well, Linus did ACK by merging :-) So he should have been able to give
-that ack a few days in advance too..
+CPU_MASK_ALL is the (deprecated) "all bits set" cpumask, defined as so:
 
-Cheers,
-Ben.
+	#define CPU_MASK_ALL (cpumask_t) { { ... } }
+
+Taking the address of such a temporary is questionable at best,
+unfortunately 321a8e9d (cpumask: add CPU_MASK_ALL_PTR macro) added
+CPU_MASK_ALL_PTR:
+
+	#define CPU_MASK_ALL_PTR (&CPU_MASK_ALL)
+
+Which formalizes this practice.  One day gcc could bite us over this
+usage (though we seem to have gotten away with it so far).
+
+Now all callers are removed, we kill it.
+
+Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
+Acked-by: Ingo Molnar <mingo@elte.hu>
+Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Mike Travis <travis@sgi.com>
+---
+ include/linux/cpumask.h |    3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
+--- a/include/linux/cpumask.h
++++ b/include/linux/cpumask.h
+@@ -324,8 +324,6 @@ static inline const struct cpumask *get_
+ 	[BITS_TO_LONGS(NR_CPUS)-1] = CPU_MASK_LAST_WORD			\
+ } }
+ 
+-#define CPU_MASK_ALL_PTR	(&CPU_MASK_ALL)
+-
+ #else
+ 
+ #define CPU_MASK_ALL							\
+@@ -333,7 +331,6 @@ static inline const struct cpumask *get_
+ 
+ /* cpu_mask_all is in init/main.c */
+ extern cpumask_t cpu_mask_all;
+-#define CPU_MASK_ALL_PTR	(&cpu_mask_all)
+ 
+ #endif
+ 
