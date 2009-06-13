@@ -1,57 +1,83 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] ieee802154: fix kconfig bool/tristate muckup
-Date: Fri, 12 Jun 2009 15:59:20 -0700
-Message-ID: <4A32DDC8.7060605@oracle.com>
-References: <20090611191420.1f4d5e4f.sfr@canb.auug.org.au> <4A31869B.3050901@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: origin tree build failure
+Date: Sat, 13 Jun 2009 14:54:51 +1000
+Message-ID: <20090613145451.07430ad0.sfr@canb.auug.org.au>
+References: <20090612102427.32582baa.sfr@canb.auug.org.au>
+	<1244768406.7172.1.camel@pasglop>
+	<20090612092054.GB32052@elte.hu>
+	<1244799197.7172.106.camel@pasglop>
+	<20090612125335.GH31845@elte.hu>
+	<1244812224.7172.146.camel@pasglop>
+	<20090612134428.GC32105@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__13_Jun_2009_14_54_51_+1000_/1X8baDtHHiWIYw."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet12.oracle.com ([148.87.113.124]:38807 "EHLO
-	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751232AbZFLXE3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 12 Jun 2009 19:04:29 -0400
-In-Reply-To: <4A31869B.3050901@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:33665 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751517AbZFMEy7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 13 Jun 2009 00:54:59 -0400
+In-Reply-To: <20090612134428.GC32105@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dbaryshkov@gmail.com, slapin@ossfans.org, linux-zigbee-devel@lists.sourceforge.net, Netdev <netdev@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Linus <torvalds@linux-foundation.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, paulus@samba.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+--Signature=_Sat__13_Jun_2009_14_54_51_+1000_/1X8baDtHHiWIYw.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-menuconfig IEEE802154_DRIVERS is a bool that depends on tristate IEEE802154.
-If the IEEE802154 symbol is 'm', the bool becomes 'y'.
-This allows tristate symbols under IEEE802154_DRIVERS to be configured as
-'y' and cause build problems.
-Changing the menuconfig bool to a tristate fixes this.
+Hi Ingo,
 
-drivers/built-in.o: In function `fake_scan_req':
-fakehard.c:(.text+0x46d625): undefined reference to `ieee802154_nl_scan_confirm'
-drivers/built-in.o: In function `fake_disassoc_req':
-fakehard.c:(.text+0x46d66f): undefined reference to `ieee802154_nl_disassoc_confirm'
-drivers/built-in.o: In function `fake_assoc_req':
-fakehard.c:(.text+0x46d6be): undefined reference to `ieee802154_nl_assoc_confirm'
+On Fri, 12 Jun 2009 15:44:28 +0200 Ingo Molnar <mingo@elte.hu> wrote:
+>
+> In terms of test coverage, at least for our trees, less than 1% of=20
+> the bugs we handle get reported in a linux-next context - and most=20
+> of the bugs that get reported (against say the scheduler tree) are=20
+> related to rare architectures.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: linux-zigbee-devel@lists.sourceforge.net
-Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Cc: Sergey Lapin <slapin@ossfans.org>
----
- drivers/ieee802154/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I expect that most bugs get reported and fixed before code gets to
+linux-next (in fact one of the prerequisites for being in linux-next is
+that code has been tested as well as possible).
 
---- linux-next-20090612.orig/drivers/ieee802154/Kconfig
-+++ linux-next-20090612/drivers/ieee802154/Kconfig
-@@ -1,5 +1,5 @@
- menuconfig IEEE802154_DRIVERS
--	bool "IEEE 802.15.4 drivers"
-+	tristate "IEEE 802.15.4 drivers"
- 	depends on NETDEVICES && IEEE802154
- 	default y
- 	---help---
+> In fact, i checked, there were _zero_ x86 bugs reported against=20
+> linux-next and solved against it between v2.6.30-rc1 and v2.6.30:
+>=20
+>    git log --grep=3Dnext -i v2.6.30-rc1..v2.6.30 arch/x86/
+>=20
+> Doing it over the full cycle shows one commit altogether - a Xen=20
+> build failure. In fact, i just checked the whole stabilization cycle=20
+> for the whole kernel (v2.6.30-rc1..v2.6.30-final), and there were=20
+> only 5 linux-next originated patches, most of them build failures.
 
+Nice set of figures.  For some other context, between April 6 and June 9
+(2.6.30-rc1 to 2.6.30) I sent 50 emails with subjects like "linux-next:
+xxx tree build failure".  What results from those emails?  I sometimes
+don't even hear back.  Almost all of the failures get fixed.
 
--- 
-~Randy
-LPC 2009, Sept. 23-25, Portland, Oregon
-http://linuxplumbersconf.org/2009/
+A lot of these probably also get discovered independently.  I don't
+really care as long as they do get fixed.
+
+One of those failures was a sparc build failure due to a change in the
+tip-core tree (see commit d2de688891909b148efe83a6fc9520a9cd6015f0).
+Another report produced commit 27b19565fe4ca5b0e9d2ae98ce4b81ca728bf445.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Sat__13_Jun_2009_14_54_51_+1000_/1X8baDtHHiWIYw.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkozMRsACgkQjjKRsyhoI8y8tgCcC8NfR2wXQvpqMnNHFnboqJbr
+U/4AnRggiQ30EYELKxNIvJWRXfKSGVnO
+=VQly
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__13_Jun_2009_14_54_51_+1000_/1X8baDtHHiWIYw.--
