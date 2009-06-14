@@ -1,56 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: cpumask changes
-Date: Sun, 14 Jun 2009 16:07:02 +1000
-Message-ID: <20090614160702.3d030b53.sfr@canb.auug.org.au>
-References: <200906112253.41039.rusty@rustcorp.com.au>
-	<20090612004106.f827d078.sfr@canb.auug.org.au>
-	<20090614111058.f808373a.sfr@canb.auug.org.au>
-	<200906141450.18287.rusty@rustcorp.com.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH -next] ieee802154: fix kconfig bool/tristate muckup
+Date: Sat, 13 Jun 2009 23:37:37 -0700 (PDT)
+Message-ID: <20090613.233737.178725457.davem@davemloft.net>
+References: <4A31869B.3050901@oracle.com>
+	<4A32DDC8.7060605@oracle.com>
+	<20090613105753.GB14520@build.ossfans.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sun__14_Jun_2009_16_07_02_+1000_u_=3VKPob2O+yVPa"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38457 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751321AbZFNGHE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 14 Jun 2009 02:07:04 -0400
-In-Reply-To: <200906141450.18287.rusty@rustcorp.com.au>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:46401
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751835AbZFNGhe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Sun, 14 Jun 2009 02:37:34 -0400
+In-Reply-To: <20090613105753.GB14520@build.ossfans.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org
+To: slapin@ossfans.org
+Cc: randy.dunlap@oracle.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dbaryshkov@gmail.com, linux-zigbee-devel@lists.sourceforge.net, netdev@vger.kernel.org, akpm@linux-foundation.org
 
---Signature=_Sun__14_Jun_2009_16_07_02_+1000_u_=3VKPob2O+yVPa
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Sergey Lapin <slapin@ossfans.org>
+Date: Sat, 13 Jun 2009 14:57:54 +0400
 
-Hi Rusty,
+> On Fri, Jun 12, 2009 at 03:59:20PM -0700, Randy Dunlap wrote:
+>> From: Randy Dunlap <randy.dunlap@oracle.com>
+>> 
+>> menuconfig IEEE802154_DRIVERS is a bool that depends on tristate IEEE802154.
+>> If the IEEE802154 symbol is 'm', the bool becomes 'y'.
+>> This allows tristate symbols under IEEE802154_DRIVERS to be configured as
+>> 'y' and cause build problems.
+>> Changing the menuconfig bool to a tristate fixes this.
+>> 
+>> drivers/built-in.o: In function `fake_scan_req':
+>> fakehard.c:(.text+0x46d625): undefined reference to `ieee802154_nl_scan_confirm'
+>> drivers/built-in.o: In function `fake_disassoc_req':
+>> fakehard.c:(.text+0x46d66f): undefined reference to `ieee802154_nl_disassoc_confirm'
+>> drivers/built-in.o: In function `fake_assoc_req':
+>> fakehard.c:(.text+0x46d6be): undefined reference to `ieee802154_nl_assoc_confirm'
+>> 
+>> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+>> Cc: linux-zigbee-devel@lists.sourceforge.net
+>> Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+>> Cc: Sergey Lapin <slapin@ossfans.org>
+> Ackedy-by: Sergey Lapin <slapin@ossfans.org>
 
-On Sun, 14 Jun 2009 14:50:17 +0930 Rusty Russell <rusty@rustcorp.com.au> wr=
-ote:
->
-> I've put it in rr, since almost all that went to Linus.
->=20
-> (Fixed added as linux-next detected).
+It's "Acked-by:" :-)
 
-OK, thanks, I will remove it.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Sun__14_Jun_2009_16_07_02_+1000_u_=3VKPob2O+yVPa
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAko0k4YACgkQjjKRsyhoI8wqCACcDWrfvbxLKD0haSdGOh8Y+NzI
-faEAn2yjiHuF+YhyfgbwtW+govQnZDaY
-=TUGf
------END PGP SIGNATURE-----
-
---Signature=_Sun__14_Jun_2009_16_07_02_+1000_u_=3VKPob2O+yVPa--
+Applied, thanks everyone.
