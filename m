@@ -1,50 +1,66 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH -next] ieee802154: fix kconfig bool/tristate muckup
-Date: Sat, 13 Jun 2009 23:37:37 -0700 (PDT)
-Message-ID: <20090613.233737.178725457.davem@davemloft.net>
-References: <4A31869B.3050901@oracle.com>
-	<4A32DDC8.7060605@oracle.com>
-	<20090613105753.GB14520@build.ossfans.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: kbuild tree build warning
+Date: Mon, 15 Jun 2009 09:06:55 +1000
+Message-ID: <20090615090655.9157bcc1.sfr@canb.auug.org.au>
+References: <20090610115255.035da856.sfr@canb.auug.org.au>
+	<20090610064723.GA25493@uranus.ravnborg.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__15_Jun_2009_09_06_55_+1000_I/vIBg=6KNm1DGpa"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:46401
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751835AbZFNGhe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sun, 14 Jun 2009 02:37:34 -0400
-In-Reply-To: <20090613105753.GB14520@build.ossfans.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44076 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752146AbZFNXHA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 14 Jun 2009 19:07:00 -0400
+In-Reply-To: <20090610064723.GA25493@uranus.ravnborg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: slapin@ossfans.org
-Cc: randy.dunlap@oracle.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dbaryshkov@gmail.com, linux-zigbee-devel@lists.sourceforge.net, netdev@vger.kernel.org, akpm@linux-foundation.org
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
-From: Sergey Lapin <slapin@ossfans.org>
-Date: Sat, 13 Jun 2009 14:57:54 +0400
+--Signature=_Mon__15_Jun_2009_09_06_55_+1000_I/vIBg=6KNm1DGpa
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Fri, Jun 12, 2009 at 03:59:20PM -0700, Randy Dunlap wrote:
->> From: Randy Dunlap <randy.dunlap@oracle.com>
->> 
->> menuconfig IEEE802154_DRIVERS is a bool that depends on tristate IEEE802154.
->> If the IEEE802154 symbol is 'm', the bool becomes 'y'.
->> This allows tristate symbols under IEEE802154_DRIVERS to be configured as
->> 'y' and cause build problems.
->> Changing the menuconfig bool to a tristate fixes this.
->> 
->> drivers/built-in.o: In function `fake_scan_req':
->> fakehard.c:(.text+0x46d625): undefined reference to `ieee802154_nl_scan_confirm'
->> drivers/built-in.o: In function `fake_disassoc_req':
->> fakehard.c:(.text+0x46d66f): undefined reference to `ieee802154_nl_disassoc_confirm'
->> drivers/built-in.o: In function `fake_assoc_req':
->> fakehard.c:(.text+0x46d6be): undefined reference to `ieee802154_nl_assoc_confirm'
->> 
->> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
->> Cc: linux-zigbee-devel@lists.sourceforge.net
->> Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
->> Cc: Sergey Lapin <slapin@ossfans.org>
-> Ackedy-by: Sergey Lapin <slapin@ossfans.org>
+Hi Sam,
 
-It's "Acked-by:" :-)
+On Wed, 10 Jun 2009 08:47:23 +0200 Sam Ravnborg <sam@ravnborg.org> wrote:
+>
+> On Wed, Jun 10, 2009 at 11:52:55AM +1000, Stephen Rothwell wrote:
+> >=20
+> > Today's linux-next build (x86_64 allmodconfig) produced this warning:
+> >=20
+> > In file included from arch/x86/kernel/vmlinux.lds.S:23:
+> > include/asm-generic/vmlinux.lds.h:726:47: warning: backslash-newline at=
+ end of file
+> >=20
+> > Caused by commit ef53dae8658cf0e93d380983824a661067948d87 ("Improve
+> > vmlinux.lds.h support for arch specific linker scripts").
+>=20
+> I already fixed this locally but I forgot to do a "git commit --amend" :-)
+> Will be fixed in next push of kbuild-next.
 
-Applied, thanks everyone.
+Then why didn't it make it into the version that just got into Linus'
+tree?  Also the other I mentioned:
+
+include/asm-generic/vmlinux.lds.h:695:1: warning: "/*" within comment
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__15_Jun_2009_09_06_55_+1000_I/vIBg=6KNm1DGpa
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAko1go8ACgkQjjKRsyhoI8zx/ACff/Up/fMpWmSUyJLu3Ppii7ct
+/e8AoMBtTW5tmizXHeCkWenxuBvZUq6e
+=rB1m
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__15_Jun_2009_09_06_55_+1000_I/vIBg=6KNm1DGpa--
