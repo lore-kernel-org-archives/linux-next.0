@@ -1,68 +1,139 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: rr tree build failure
-Date: Mon, 15 Jun 2009 16:40:22 +1000
-Message-ID: <20090615164022.9b06b579.sfr@canb.auug.org.au>
+From: Subrata Modak <subrata-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
+Subject: Re: [BUILD FAILURE 02/04] Next June 04:PPC64 randconfig
+	[drivers/usb/host/ohci-hcd.o]
+Date: Mon, 15 Jun 2009 12:21:18 +0530
+Message-ID: <1245048679.5239.8.camel@subratamodak.linux.ibm.com>
+References: <20090605182651.24094.36577.sendpatchset@elm3a191.beaverton.ibm.com>
+	 <200906091738.58154.david-b@pacbell.net>
+	 <1244799348.5234.13.camel@subratamodak.linux.ibm.com>
+Reply-To: subrata-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__15_Jun_2009_16_40_22_+1000_zp=SPhLhjkI9+2MH"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45013 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750794AbZFOGkZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Jun 2009 02:40:25 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1244799348.5234.13.camel-NRFfyExJdYpgXGGE5LP+UZlqa2bBAFbm0E9HWUfgJXw@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: David Brownell <david-b-yBeKhBN/0LDR7s880joybQ@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sachin P Sant <sachinp-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Linux-Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Linux-Next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jon Smirl <jonsmirl-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linuxppc-dev <Linuxppc-dev-mnsaURCQ41sdnm+yROfE0A@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, kernel-OLH4Qvv75CYX/NnBR394Jw@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__15_Jun_2009_16_40_22_+1000_zp=SPhLhjkI9+2MH
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 2009-06-12 at 15:05 +0530, Subrata Modak wrote:=20
+> On Tue, 2009-06-09 at 17:38 -0700, David Brownell wrote:
+> > On Friday 05 June 2009, Subrata Modak wrote:
+> > > Correct, it fixes the issue. However, since few changes might hav=
+e gone
+> > > to the Kconfig, the patch does not apply cleanly. Below is the pa=
+tch, just
+> > > a retake of the earlier one, but on the latest code.=20
+> >=20
+> > And it got mangled a bit along the way.  Plus, the original one
+> > goofed up Kconfig dependency displays ... both issues fixed in
+> > this version, against current mainline GIT.
+> >=20
+> > If someone can verify all four PPC/OF/OHCI configs build on
+> > on PPC64, I'm OK with it.
+> >=20
+> > - Dave
+>=20
+> Dave,
+>=20
+> Sorry for being late. The patch fixes the issue on the latest git for
+> PPC64. Infact, the whole drivers/usb/host/ builds just fine:
+>=20
+> linux-2.6 # make drivers/usb/host/
+>   CHK     include/linux/version.h
+>   CHK     include/linux/utsrelease.h
+>   SYMLINK include/asm -> include/asm-powerpc
+>   CALL    scripts/checksyscalls.sh
+>   CC      drivers/usb/host/ohci-hcd.o
+>   CC      drivers/usb/host/pci-quirks.o
+>   CC      drivers/usb/host/uhci-hcd.o
+>   LD      drivers/usb/host/built-in.o
+>   CC [M]  drivers/usb/host/isp116x-hcd.o
+>   CC [M]  drivers/usb/host/u132-hcd.o
+>=20
+> You can check in the patch now.
 
-Hi Rusty,
+Dave,
 
-Today's linux-next build (sparc64 defconfig) failed like this:
+Have you checked in this patch ? Or, does it require some more
+modification/updates from somebody=C2=B4s side ?
 
-arch/sparc/mm/init_64.c: In function 'paging_init':
-arch/sparc/mm/init_64.c:1802: error: 'CPU_MASK_ALL_PTR' undeclared (first u=
-se in this function)
-arch/sparc/kernel/smp_64.c: In function 'setup_per_cpu_areas':
-arch/sparc/kernel/smp_64.c:1541: error: 'CPU_MASK_ALL_PTR' undeclared (firs=
-t use in this function)
+Regards--
+Subrata
 
-Caused by commit 3360ebad15b16eac7b0205595d6fe561716725c5
-("cpumask:remove-CPU_MASK_ALL_PTR") from the rr tree interacting with
-commits 21bc149d59288fe43d1ba18a59d874ba6a5f1db9 ("sparc64: Make
-mdesc_fill_in_cpu_data take a cpumask_t pointer") and
-63750a3dc53a87a1f5ca42101ea88578b934ab52 ("sparc64: Defer cpu_data()
-setup until end of per-cpu data initialization") from the sparc tree.
+>=20
+> Regards--
+> Subrata
+>=20
+> >=20
+> >=20
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D CUT HERE
+> > From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+> > Subject: fix build failure for PPC64 randconfig [usb/ohci]
+> >=20
+> > We could just make the USB_OHCI_HCD_PPC_OF option implicit
+> > and selected only if at least one of USB_OHCI_HCD_PPC_OF_BE
+> > and USB_OHCI_HCD_PPC_OF_LE are set.
+> >=20
+> > [ dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org: fix patch manglation and depende=
+ncies ]
+> >=20
+> > Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+> > Resent-by: Subrata Modak <subrata-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
+> > Signed-off-by: David Brownell <dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+> > ---
+> >  drivers/usb/host/Kconfig |   29 +++++++++++++++--------------
+> >  1 file changed, 15 insertions(+), 14 deletions(-)
+> >=20
+> > --- a/drivers/usb/host/Kconfig
+> > +++ b/drivers/usb/host/Kconfig
+> > @@ -180,26 +180,27 @@ config USB_OHCI_HCD_PPC_SOC
+> >  	  Enables support for the USB controller on the MPC52xx or
+> >  	  STB03xxx processor chip.  If unsure, say Y.
+> >=20
+> > -config USB_OHCI_HCD_PPC_OF
+> > -	bool "OHCI support for PPC USB controller on OF platform bus"
+> > -	depends on USB_OHCI_HCD && PPC_OF
+> > -	default y
+> > -	---help---
+> > -	  Enables support for the USB controller PowerPC present on the
+> > -	  OpenFirmware platform bus.
+> > -
+> >  config USB_OHCI_HCD_PPC_OF_BE
+> > -	bool "Support big endian HC"
+> > -	depends on USB_OHCI_HCD_PPC_OF
+> > -	default y
+> > +	bool "OHCI support for OF platform bus (big endian)"
+> > +	depends on USB_OHCI_HCD && PPC_OF
+> >  	select USB_OHCI_BIG_ENDIAN_DESC
+> >  	select USB_OHCI_BIG_ENDIAN_MMIO
+> > +	---help---
+> > +	  Enables support for big-endian USB controllers present on the
+> > +	  OpenFirmware platform bus.
+> >=20
+> >  config USB_OHCI_HCD_PPC_OF_LE
+> > -	bool "Support little endian HC"
+> > -	depends on USB_OHCI_HCD_PPC_OF
+> > -	default n
+> > +	bool "OHCI support for OF platform bus (little endian)"
+> > +	depends on USB_OHCI_HCD && PPC_OF
+> >  	select USB_OHCI_LITTLE_ENDIAN
+> > +	---help---
+> > +	  Enables support for little-endian USB controllers present on th=
+e
+> > +	  OpenFirmware platform bus.
+> > +
+> > +config USB_OHCI_HCD_PPC_OF
+> > +	bool
+> > +	depends on USB_OHCI_HCD && PPC_OF
+> > +	default USB_OHCI_HCD_PPC_OF_BE || USB_OHCI_HCD_PPC_OF_LE
+> >=20
+> >  config USB_OHCI_HCD_PCI
+> >  	bool "OHCI support for PCI-bus USB controllers"
+> >=20
 
-Rusty, I assume that there is something that Dave can use in the sparc
-tree already instead of CPU_MASK_ALL_PTR (cpu_all_mask?).
-
-I have reverted the rr tree patch for today - after reverting these other
-patches as well:
-
-cpumask:move-obsolete-functions-to-end-of-header
-cpumask:remove-unused-deprecated-functions
-cpumask:remove-cpu_mask_all
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__15_Jun_2009_16_40_22_+1000_zp=SPhLhjkI9+2MH
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAko17NYACgkQjjKRsyhoI8zCPwCggbl8jnlXoDPAsNINMtu6/+ZQ
-UHgAnA8hZfRQoxcSNO2P5ew8v38EAekq
-=SfJ2
------END PGP SIGNATURE-----
-
---Signature=_Mon__15_Jun_2009_16_40_22_+1000_zp=SPhLhjkI9+2MH--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
