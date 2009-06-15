@@ -1,80 +1,104 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: rr tree build failure
-Date: Mon, 15 Jun 2009 20:09:56 +0930
-Message-ID: <200906152009.57309.rusty@rustcorp.com.au>
-References: <20090615164022.9b06b579.sfr@canb.auug.org.au>
+From: Jeff Layton <jlayton@redhat.com>
+Subject: Re: linux-next: cifs tree build failure
+Date: Mon, 15 Jun 2009 06:46:18 -0400
+Message-ID: <20090615064618.120a2337@tlielax.poochiereds.net>
+References: <20090615133222.7405743c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="MP_/y__V6Y3lSu2NR0Dmy=NHMeO"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:46308 "EHLO ozlabs.org"
+Received: from mx2.redhat.com ([66.187.237.31]:60135 "EHLO mx2.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753021AbZFOKj5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Jun 2009 06:39:57 -0400
-In-Reply-To: <20090615164022.9b06b579.sfr@canb.auug.org.au>
-Content-Disposition: inline
+	id S1752053AbZFOKqb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Jun 2009 06:46:31 -0400
+In-Reply-To: <20090615133222.7405743c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Cc: Steve French <smfrench@gmail.com>, linux-cifs-client@lists.samba.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 15 Jun 2009 04:10:22 pm Stephen Rothwell wrote:
-> Hi Rusty,
->
-> Today's linux-next build (sparc64 defconfig) failed like this:
->
-> arch/sparc/mm/init_64.c: In function 'paging_init':
-> arch/sparc/mm/init_64.c:1802: error: 'CPU_MASK_ALL_PTR' undeclared (first
-> use in this function) arch/sparc/kernel/smp_64.c: In function
-> 'setup_per_cpu_areas':
-> arch/sparc/kernel/smp_64.c:1541: error: 'CPU_MASK_ALL_PTR' undeclared
-> (first use in this function)
->
-...
-> Rusty, I assume that there is something that Dave can use in the sparc
-> tree already instead of CPU_MASK_ALL_PTR (cpu_all_mask?).
+--MP_/y__V6Y3lSu2NR0Dmy=NHMeO
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-cpu_all_mask, yes.
+On Mon, 15 Jun 2009 13:32:22 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-I have this great patch someone sent me :)
+> Hi Steve,
+> 
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> 
+> fs/cifs/cifsfs.c: In function 'cifs_show_options':
+> fs/cifs/cifsfs.c:357: error: implicit declaration of function 'cifs_show_address'
+> 
+> Caused by commit 8616e0fc1e27295316f9821a883f0e9fa6f8200f ("cifs: remove
+> unneeded NULL checks from cifs_show_options").
+> 
+> I have used the cifs tree from next-20090612 for today.
+
+My fault. That function gets introduced in a later patch and I had a
+bogus call left in here from when I reorganized the series. This
+patch should fix it and a typo that got silently fixed in a patch that
+hasn't been committed yet.
+
+This patch should fix both. Steve F., let me know if you want me to
+respin the series on top of this patch. Note that there's still a
+harmless compiler warning that gets fixed in a later patch in the
+series.
 
 Thanks,
-Rusty.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 12 Jun 2009 18:43:54 +1000
-Subject: [PATCH] sparc: replace uses of CPU_MASK_ALL_PTR
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/sparc/kernel/smp_64.c |    2 +-
- arch/sparc/mm/init_64.c    |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/sparc/kernel/smp_64.c b/arch/sparc/kernel/smp_64.c
-index 1de47d2..f3a83b0 100644
---- a/arch/sparc/kernel/smp_64.c
-+++ b/arch/sparc/kernel/smp_64.c
-@@ -1538,5 +1538,5 @@ void __init setup_per_cpu_areas(void)
- 
- 	of_fill_in_cpu_data();
- 	if (tlb_type == hypervisor)
--		mdesc_fill_in_cpu_data(CPU_MASK_ALL_PTR);
-+		mdesc_fill_in_cpu_data(cpu_all_mask);
- }
-diff --git a/arch/sparc/mm/init_64.c b/arch/sparc/mm/init_64.c
-index b5a5932..ca92e2f 100644
---- a/arch/sparc/mm/init_64.c
-+++ b/arch/sparc/mm/init_64.c
-@@ -1799,7 +1799,7 @@ void __init paging_init(void)
- 
- 	if (tlb_type == hypervisor) {
- 		sun4v_mdesc_init();
--		mdesc_populate_present_mask(CPU_MASK_ALL_PTR);
-+		mdesc_populate_present_mask(cpu_all_mask);
- 	}
- 
- 	/* Once the OF device tree and MDESC have been setup, we know
 -- 
-1.6.3.1
+Jeff Layton <jlayton@redhat.com>
+
+--MP_/y__V6Y3lSu2NR0Dmy=NHMeO
+Content-Type: text/x-patch
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: attachment;
+ filename=0001-cifs-fix-problems-with-earlier-patches.patch
+
+=46rom c5949e669f4a85c16b3529777f5d550bddea9dd9 Mon Sep 17 00:00:00 2001
+From: Jeff Layton <jlayton@redhat.com>
+Date: Mon, 15 Jun 2009 06:40:23 -0400
+Subject: [PATCH] cifs: fix problems with earlier patches
+
+cifs_show_address hasn't been introduced yet, and fix a typo that was
+silently fixed by a later patch in the series.
+
+Signed-off-by: Jeff Layton <jlayton@redhat.com>
+---
+ fs/cifs/cifsfs.c  |    2 --
+ fs/cifs/netmisc.c |    2 +-
+ 2 files changed, 1 insertions(+), 3 deletions(-)
+
+diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+index 8b31570..4b8ec25 100644
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -354,8 +354,6 @@ cifs_show_options(struct seq_file *s, struct vfsmount *=
+m)
+ 	if (tcon->ses->domainName)
+ 		seq_printf(s, ",domain=3D%s", tcon->ses->domainName);
+=20
+-	cifs_show_address(s, tcon->ses->server);
+-
+ 	seq_printf(s, ",uid=3D%d", cifs_sb->mnt_uid);
+ 	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_OVERR_UID)
+ 		seq_printf(s, ",forceuid");
+diff --git a/fs/cifs/netmisc.c b/fs/cifs/netmisc.c
+index 00e6e35..f9a54da 100644
+--- a/fs/cifs/netmisc.c
++++ b/fs/cifs/netmisc.c
+@@ -166,7 +166,7 @@ int
+ cifs_convert_address(char *src, void *dst)
+ {
+ 	struct sockaddr_in *s4 =3D (struct sockaddr_in *) dst;
+-	struct sockaddr_in6 *s6 =3D (Struct sockaddr_in6 *) dst;
++	struct sockaddr_in6 *s6 =3D (struct sockaddr_in6 *) dst;
+=20
+ 	if (cifs_inet_pton(AF_INET, src, &s4->sin_addr.s_addr)) {
+ 		s4->sin_family =3D AF_INET;
+--=20
+1.6.0.6
+
+
+--MP_/y__V6Y3lSu2NR0Dmy=NHMeO--
