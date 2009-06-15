@@ -1,32 +1,57 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: rr tree build failure
-Date: Mon, 15 Jun 2009 01:52:01 -0700 (PDT)
-Message-ID: <20090615.015201.25929512.davem@davemloft.net>
-References: <20090615164022.9b06b579.sfr@canb.auug.org.au>
-	<20090615172640.32b1243b.sfr@canb.auug.org.au>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH][BUILD FAILURE 03/04] Next June 04:PPC64 randconfig
+	[drivers/net/lance.o]
+Date: Mon, 15 Jun 2009 19:43:01 +1000
+Message-ID: <1245058981.12400.3.camel@pasglop>
+References: <20090611035046.22125.26641.sendpatchset@subratamodak.linux.ibm.com>
+	<1245048698.5239.9.camel@subratamodak.linux.ibm.com>
+	<1245049899.19217.56.camel@pasglop>
+	<1245050509.5239.11.camel@subratamodak.linux.ibm.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:37362
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757450AbZFOIv6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Jun 2009 04:51:58 -0400
-In-Reply-To: <20090615172640.32b1243b.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: rusty@rustcorp.com.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <1245050509.5239.11.camel@subratamodak.linux.ibm.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+To: subrata@linux.vnet.ibm.com
+Cc: Sachin P Sant <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, netdev@vger.kernel.org, Linux-Kernel <linux-kernel@vger.kernel.org>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Linux-Next <linux-next@vger.kernel.org>, Paul Mackerras <paulus@samba.org>, Balbir Singh <balbir@linux.vnet.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 15 Jun 2009 17:26:40 +1000
+On Mon, 2009-06-15 at 12:51 +0530, Subrata Modak wrote:
+> On Mon, 2009-06-15 at 17:11 +1000, Benjamin Herrenschmidt wrote:
+> > On Mon, 2009-06-15 at 12:21 +0530, Subrata Modak wrote:
+> > 
+> > > Benjamin,
+> > > 
+> > > I am not sure whether you liked the following patch to solve the above
+> > > problem. Do, you want me address some other issue(s)/fixes for this ?
+> > 
+> > I suppose ... in fact some old PReP machines can even have ISA slots
+> > iirc, but it's not going to do good with machines that have an iommu...
+> > 
+> > IE. Nobody should use that crap, period.
+> 
+> Great,
+> 
+> Can you please make some changes at drivers/net/Kconfig so that this guy
+> does not build for the PPC64 systems ?
 
-> OK, senility is definitely setting in! :-)  This is the same failure we
-> had on Friday for which I sent a patch ...  Dave, can you apply that to
-> the sparc tree?
+When I said "that crap" I was talking about those interfaces which I
+-hope- are deprecated :-)
 
-Sorry, slipped through the cracks.  Could you please send me
-a fresh copy of that patch?
+I suspect we never really sorted out the issue of DMA mapping for old
+legacy ISA stuff... pci_map_* should work to some extent, though you
+have to pass it the ISA bridge pci_dev.
 
-Thanks!
+Maybe it's time for somebody to start exposing a -proper- abstraction
+accross all platforms for that :-)
+
+Ben.
