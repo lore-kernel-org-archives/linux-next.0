@@ -1,67 +1,37 @@
-From: Steve French <smfrench@gmail.com>
-Subject: Re: linux-next: cifs tree build failure
-Date: Mon, 15 Jun 2009 08:47:12 -0500
-Message-ID: <524f69650906150647y15f4b6e2w3ce2df97064fb95b@mail.gmail.com>
-References: <20090615133222.7405743c.sfr@canb.auug.org.au>
-	<20090615064618.120a2337@tlielax.poochiereds.net>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: tip/perfcounters tree build warning
+Date: Mon, 15 Jun 2009 16:09:16 +0200
+Message-ID: <20090615140916.GA29435@elte.hu>
+References: <20090615165559.66c76c58.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-cifs-client-bounces+glfc-linux-cifs-client=gmane.org@lists.samba.org>
-In-Reply-To: <20090615064618.120a2337@tlielax.poochiereds.net>
-List-Unsubscribe: <https://lists.samba.org/mailman/listinfo/linux-cifs-client>,
-	<mailto:linux-cifs-client-request@lists.samba.org?subject=unsubscribe>
-List-Archive: <http://lists.samba.org/archive/linux-cifs-client>
-List-Post: <mailto:linux-cifs-client@lists.samba.org>
-List-Help: <mailto:linux-cifs-client-request@lists.samba.org?subject=help>
-List-Subscribe: <https://lists.samba.org/mailman/listinfo/linux-cifs-client>,
-	<mailto:linux-cifs-client-request@lists.samba.org?subject=subscribe>
-Sender: linux-cifs-client-bounces+glfc-linux-cifs-client=gmane.org@lists.samba.org
-Errors-To: linux-cifs-client-bounces+glfc-linux-cifs-client=gmane.org@lists.samba.org
-To: Jeff Layton <jlayton@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-cifs-client@lists.samba.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
-
-Jeff,
-I just applied and reviewed your patch 5 (thus modified your patch
-slightly before merging).
-
-https://mail.google.com/mail/?shva=1#search/cifs_show_address/121cfb7757cb8e86
-
-On Mon, Jun 15, 2009 at 5:46 AM, Jeff Layton<jlayton@redhat.com> wrote:
-> On Mon, 15 Jun 2009 13:32:22 +1000
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
->> Hi Steve,
->>
->> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
->>
->> fs/cifs/cifsfs.c: In function 'cifs_show_options':
->> fs/cifs/cifsfs.c:357: error: implicit declaration of function 'cifs_show_address'
->>
->> Caused by commit 8616e0fc1e27295316f9821a883f0e9fa6f8200f ("cifs: remove
->> unneeded NULL checks from cifs_show_options").
->>
->> I have used the cifs tree from next-20090612 for today.
->
-> My fault. That function gets introduced in a later patch and I had a
-> bogus call left in here from when I reorganized the series. This
-> patch should fix it and a typo that got silently fixed in a patch that
-> hasn't been committed yet.
->
-> This patch should fix both. Steve F., let me know if you want me to
-> respin the series on top of this patch. Note that there's still a
-> harmless compiler warning that gets fixed in a later patch in the
-> series.
->
-> Thanks,
-> --
-> Jeff Layton <jlayton@redhat.com>
->
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.mail.elte.hu ([157.181.151.9]:46036 "EHLO mx2.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752413AbZFOOJh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Jun 2009 10:09:37 -0400
+Content-Disposition: inline
+In-Reply-To: <20090615165559.66c76c58.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>
 
 
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
--- 
-Thanks,
+> Hi all,
+> 
+> Today's linux-next build (powerpc allyesconfig) produced this warning:
+> 
+> arch/powerpc/kernel/perf_counter.c: In function 'record_and_restart':
+> arch/powerpc/kernel/perf_counter.c:1016: warning: unused variable 'addr'
+> 
+> Introduced by commit df1a132bf3d3508f863336c80a27806a2ac947e0
+> ("perf_counter: Introduce struct for sample data").
+> 
+> I checked the tip/master branch and this is not fixed there.
 
-Steve
+Thanks Stephen for reporting this!
+
+	Ingo
