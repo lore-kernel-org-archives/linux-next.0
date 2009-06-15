@@ -1,37 +1,48 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: tip/perfcounters tree build warning
-Date: Mon, 15 Jun 2009 16:09:16 +0200
-Message-ID: <20090615140916.GA29435@elte.hu>
-References: <20090615165559.66c76c58.sfr@canb.auug.org.au>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: scsi tree build failure
+Date: Mon, 15 Jun 2009 10:11:47 -0500
+Message-ID: <1245078707.3858.0.camel@mulgrave.site>
+References: <20090615121716.c5bc0655.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:46036 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752413AbZFOOJh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Jun 2009 10:09:37 -0400
-Content-Disposition: inline
-In-Reply-To: <20090615165559.66c76c58.sfr@canb.auug.org.au>
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:39629 "EHLO
+	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752235AbZFOPLu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Jun 2009 11:11:50 -0400
+In-Reply-To: <20090615121716.c5bc0655.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi all,
+On Mon, 2009-06-15 at 12:17 +1000, Stephen Rothwell wrote:
+> Hi James,
 > 
-> Today's linux-next build (powerpc allyesconfig) produced this warning:
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 > 
-> arch/powerpc/kernel/perf_counter.c: In function 'record_and_restart':
-> arch/powerpc/kernel/perf_counter.c:1016: warning: unused variable 'addr'
+> drivers/scsi/ps3rom.c: In function 'ps3rom_interrupt':
+> drivers/scsi/ps3rom.c:302: error: implicit declaration of function 'ps3_system_bus_get_drvdata'
+> drivers/scsi/ps3rom.c:302: warning: assignment makes pointer from integer without a cast
+> drivers/scsi/ps3rom.c: In function 'ps3rom_probe':
+> drivers/scsi/ps3rom.c:390: error: implicit declaration of function 'ps3_system_bus_set_drvdata'
+> drivers/scsi/ps3rom.c: In function 'ps3rom_remove':
+> drivers/scsi/ps3rom.c:421: warning: initialization makes pointer from integer without a cast
 > 
-> Introduced by commit df1a132bf3d3508f863336c80a27806a2ac947e0
-> ("perf_counter: Introduce struct for sample data").
+> Caused by commit 4381bd58427116cd7689831998771ddd58078af9 ("[SCSI]
+> ps3rom: Use ps3_system_bus_[gs]et_drvdata() instead of direct access").
+> This is number 21 in a series and depends on number 19 which is not yet
+> merged.  If you instead Ack this patch, Ben will merge it through the
+> powerpc tree.
 > 
-> I checked the tip/master branch and this is not fixed there.
+> For today, I have used the scsi tree from next-20090612.
 
-Thanks Stephen for reporting this!
+OK, dumped the offending patch, so it should be safe to take scsi-misc
+again.
 
-	Ingo
+I'm so used to merging these type of conversions, I didn't check that it
+was using a ps3 specific wrapper instead of a generic device one.
+
+James
