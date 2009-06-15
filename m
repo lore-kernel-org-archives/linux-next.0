@@ -1,104 +1,79 @@
-From: Jeff Layton <jlayton@redhat.com>
-Subject: Re: linux-next: cifs tree build failure
-Date: Mon, 15 Jun 2009 06:46:18 -0400
-Message-ID: <20090615064618.120a2337@tlielax.poochiereds.net>
-References: <20090615133222.7405743c.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: wireless tree build failure
+Date: Mon, 15 Jun 2009 22:21:07 +1000
+Message-ID: <20090615222107.0b836111.sfr@canb.auug.org.au>
+References: <20090422115738.524272c8.sfr@canb.auug.org.au>
+	<1240390746.17388.64.camel@johannes.local>
+	<20090422230333.e1f7d3db.sfr@canb.auug.org.au>
+	<20090422130612.GB3288@tuxdriver.com>
+	<1240407191.21978.17.camel@johannes.local>
+	<20090422133601.GA25039@srcf.ucam.org>
+	<20090603125202.d507e59f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="MP_/y__V6Y3lSu2NR0Dmy=NHMeO"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__15_Jun_2009_22_21_07_+1000_k.6nL/NRgG5K10pt"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:60135 "EHLO mx2.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34140 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752053AbZFOKqb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Jun 2009 06:46:31 -0400
-In-Reply-To: <20090615133222.7405743c.sfr@canb.auug.org.au>
+	id S1752077AbZFOMVO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Jun 2009 08:21:14 -0400
+In-Reply-To: <20090603125202.d507e59f.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Steve French <smfrench@gmail.com>, linux-cifs-client@lists.samba.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Len Brown <lenb@kernel.org>
+Cc: Johannes Berg <johannes@sipsolutions.net>, "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, Matthew Garrett <mjg59@srcf.ucam.org>, "David S. Miller" <davem@davemloft.net>
 
---MP_/y__V6Y3lSu2NR0Dmy=NHMeO
+--Signature=_Mon__15_Jun_2009_22_21_07_+1000_k.6nL/NRgG5K10pt
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
-
-On Mon, 15 Jun 2009 13:32:22 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi Steve,
-> 
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> 
-> fs/cifs/cifsfs.c: In function 'cifs_show_options':
-> fs/cifs/cifsfs.c:357: error: implicit declaration of function 'cifs_show_address'
-> 
-> Caused by commit 8616e0fc1e27295316f9821a883f0e9fa6f8200f ("cifs: remove
-> unneeded NULL checks from cifs_show_options").
-> 
-> I have used the cifs tree from next-20090612 for today.
-
-My fault. That function gets introduced in a later patch and I had a
-bogus call left in here from when I reorganized the series. This
-patch should fix it and a typo that got silently fixed in a patch that
-hasn't been committed yet.
-
-This patch should fix both. Steve F., let me know if you want me to
-respin the series on top of this patch. Note that there's still a
-harmless compiler warning that gets fixed in a later patch in the
-series.
-
-Thanks,
--- 
-Jeff Layton <jlayton@redhat.com>
-
---MP_/y__V6Y3lSu2NR0Dmy=NHMeO
-Content-Type: text/x-patch
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: attachment;
- filename=0001-cifs-fix-problems-with-earlier-patches.patch
 
-=46rom c5949e669f4a85c16b3529777f5d550bddea9dd9 Mon Sep 17 00:00:00 2001
-From: Jeff Layton <jlayton@redhat.com>
-Date: Mon, 15 Jun 2009 06:40:23 -0400
-Subject: [PATCH] cifs: fix problems with earlier patches
+Hi Len,
 
-cifs_show_address hasn't been introduced yet, and fix a typo that was
-silently fixed by a later patch in the series.
-
-Signed-off-by: Jeff Layton <jlayton@redhat.com>
----
- fs/cifs/cifsfs.c  |    2 --
- fs/cifs/netmisc.c |    2 +-
- 2 files changed, 1 insertions(+), 3 deletions(-)
-
-diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-index 8b31570..4b8ec25 100644
---- a/fs/cifs/cifsfs.c
-+++ b/fs/cifs/cifsfs.c
-@@ -354,8 +354,6 @@ cifs_show_options(struct seq_file *s, struct vfsmount *=
-m)
- 	if (tcon->ses->domainName)
- 		seq_printf(s, ",domain=3D%s", tcon->ses->domainName);
+On Wed, 3 Jun 2009 12:52:02 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> On Wed, 22 Apr 2009 14:36:01 +0100 Matthew Garrett <mjg59@srcf.ucam.org> =
+wrote:
+> >
+> > On Wed, Apr 22, 2009 at 03:33:11PM +0200, Johannes Berg wrote:
+> > > But that's not the interesting part -- the thing is the rfkill rewrit=
+e.
+> > > I don't know how to handle that w/o breaking all users. I had hoped to
+> > > finish this very soon to be ready early in .31, but I'm still waiting
+> > > for Thinkpad and Toshiba conversions (and I forgot who wanted to look=
+ at
+> > > Toshiba), but if new users are being added in other trees then that's=
+ a
+> > > problem.
+> >=20
+> > oqo-wmi can be ignored for the moment - Len, can you drop it from your=
 =20
--	cifs_show_address(s, tcon->ses->server);
--
- 	seq_printf(s, ",uid=3D%d", cifs_sb->mnt_uid);
- 	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_OVERR_UID)
- 		seq_printf(s, ",forceuid");
-diff --git a/fs/cifs/netmisc.c b/fs/cifs/netmisc.c
-index 00e6e35..f9a54da 100644
---- a/fs/cifs/netmisc.c
-+++ b/fs/cifs/netmisc.c
-@@ -166,7 +166,7 @@ int
- cifs_convert_address(char *src, void *dst)
- {
- 	struct sockaddr_in *s4 =3D (struct sockaddr_in *) dst;
--	struct sockaddr_in6 *s6 =3D (Struct sockaddr_in6 *) dst;
-+	struct sockaddr_in6 *s6 =3D (struct sockaddr_in6 *) dst;
-=20
- 	if (cifs_inet_pton(AF_INET, src, &s4->sin_addr.s_addr)) {
- 		s4->sin_family =3D AF_INET;
+> > tree for now? I'll clean that bit up as well.
+>=20
+> So the rfkill rewrite has now hit the wireless tree, so today's build
+> (x86_64_allmodconfig) failure looks like this:
+
+So I have been dropping the oqo-wmi driver since April 22 ... Dave has
+now sent the pull request to Linus for the net tree (which contains the
+wireless tree) so after Linus merges it, the acpi tree will be broken
+when merged with Linus' tree.  Can this be fixed, please?
+
 --=20
-1.6.0.6
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+--Signature=_Mon__15_Jun_2009_22_21_07_+1000_k.6nL/NRgG5K10pt
+Content-Type: application/pgp-signature
 
---MP_/y__V6Y3lSu2NR0Dmy=NHMeO--
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAko2PLMACgkQjjKRsyhoI8xTYACdFoDfN+X2c9PirwRld+CgIe/M
+VaUAn17+kzJLT/gFJqCyv0Ezac3cpdqh
+=aUV0
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__15_Jun_2009_22_21_07_+1000_k.6nL/NRgG5K10pt--
