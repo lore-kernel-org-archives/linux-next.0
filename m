@@ -1,54 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: ide tree build failure
-Date: Mon, 15 Jun 2009 11:34:30 +1000
-Message-ID: <20090615113430.21122e44.sfr@canb.auug.org.au>
+Subject: linux-next: scsi tree build failure
+Date: Mon, 15 Jun 2009 12:17:16 +1000
+Message-ID: <20090615121716.c5bc0655.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__15_Jun_2009_11_34_30_+1000_d0I1JT_cMBc0ciLP"
+ boundary="Signature=_Mon__15_Jun_2009_12_17_16_+1000_qYKp9MXQBIxa8VQ3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52068 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50610 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750832AbZFOBee (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 14 Jun 2009 21:34:34 -0400
+	id S1750998AbZFOCR1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 14 Jun 2009 22:17:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
---Signature=_Mon__15_Jun_2009_11_34_30_+1000_d0I1JT_cMBc0ciLP
+--Signature=_Mon__15_Jun_2009_12_17_16_+1000_qYKp9MXQBIxa8VQ3
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bart,
+Hi James,
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-drivers/ide/ide-tape.c: In function 'idetape_chrdev_open':
-drivers/ide/ide-tape.c:1515: error: implicit declaration of function 'ideta=
-pe_read_position'
+drivers/scsi/ps3rom.c: In function 'ps3rom_interrupt':
+drivers/scsi/ps3rom.c:302: error: implicit declaration of function 'ps3_sys=
+tem_bus_get_drvdata'
+drivers/scsi/ps3rom.c:302: warning: assignment makes pointer from integer w=
+ithout a cast
+drivers/scsi/ps3rom.c: In function 'ps3rom_probe':
+drivers/scsi/ps3rom.c:390: error: implicit declaration of function 'ps3_sys=
+tem_bus_set_drvdata'
+drivers/scsi/ps3rom.c: In function 'ps3rom_remove':
+drivers/scsi/ps3rom.c:421: warning: initialization makes pointer from integ=
+er without a cast
 
-Caused by commit 55ce3a129ea2e8faba4a11bb5dbc305590d1c20c ("ide-tape: fix
-READ POSITION cmd handling") interacting with the later merge
-8dcce4081305d3d1629190edd112e6473c315cbc ("Merge branch
-'bp-remove-pc-buf' into for-next").
+Caused by commit 4381bd58427116cd7689831998771ddd58078af9 ("[SCSI]
+ps3rom: Use ps3_system_bus_[gs]et_drvdata() instead of direct access").
+This is number 21 in a series and depends on number 19 which is not yet
+merged.  If you instead Ack this patch, Ben will merge it through the
+powerpc tree.
 
-I have used the ide tree from next-20090612 for today.
+For today, I have used the scsi tree from next-20090612.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__15_Jun_2009_11_34_30_+1000_d0I1JT_cMBc0ciLP
+--Signature=_Mon__15_Jun_2009_12_17_16_+1000_qYKp9MXQBIxa8VQ3
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAko1pSYACgkQjjKRsyhoI8yD9wCfSZsN8CDe8weESLLFnQFJ/pkH
-YYUAni+krUpzr3WQfgYAY8c1NOe5KYqa
-=mQjJ
+iEYEARECAAYFAko1rywACgkQjjKRsyhoI8yeNQCfTRc8RQwArnlJIBFdZdA9ean+
+1NMAnR/G1/sdLNKDFvjGKfhZRScPakgH
+=BHZl
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__15_Jun_2009_11_34_30_+1000_d0I1JT_cMBc0ciLP--
+--Signature=_Mon__15_Jun_2009_12_17_16_+1000_qYKp9MXQBIxa8VQ3--
