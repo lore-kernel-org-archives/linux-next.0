@@ -1,51 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: tip/perfcounters tree build warning
-Date: Mon, 15 Jun 2009 16:55:59 +1000
-Message-ID: <20090615165559.66c76c58.sfr@canb.auug.org.au>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH][BUILD FAILURE 03/04] Next June 04:PPC64 randconfig
+ [drivers/net/lance.o]
+Date: Mon, 15 Jun 2009 17:11:39 +1000
+Message-ID: <1245049899.19217.56.camel@pasglop>
+References: <20090611035046.22125.26641.sendpatchset@subratamodak.linux.ibm.com>
+	 <1245048698.5239.9.camel@subratamodak.linux.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__15_Jun_2009_16_55_59_+1000_CkY7RBlWTge4lS3o"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60118 "EHLO smtps.tip.net.au"
+Received: from gate.crashing.org ([63.228.1.57]:47076 "EHLO gate.crashing.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751296AbZFOG4L (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Jun 2009 02:56:11 -0400
+	id S1751296AbZFOHL6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Jun 2009 03:11:58 -0400
+In-Reply-To: <1245048698.5239.9.camel@subratamodak.linux.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>
+To: subrata@linux.vnet.ibm.com
+Cc: netdev@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Sachin P Sant <sachinp@linux.vnet.ibm.com>, Linux-Kernel <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Balbir Singh <balbir@linux.vnet.ibm.com>
 
---Signature=_Mon__15_Jun_2009_16_55_59_+1000_CkY7RBlWTge4lS3o
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2009-06-15 at 12:21 +0530, Subrata Modak wrote:
 
-Hi all,
+> Benjamin,
+> 
+> I am not sure whether you liked the following patch to solve the above
+> problem. Do, you want me address some other issue(s)/fixes for this ?
 
-Today's linux-next build (powerpc allyesconfig) produced this warning:
+I suppose ... in fact some old PReP machines can even have ISA slots
+iirc, but it's not going to do good with machines that have an iommu...
 
-arch/powerpc/kernel/perf_counter.c: In function 'record_and_restart':
-arch/powerpc/kernel/perf_counter.c:1016: warning: unused variable 'addr'
+IE. Nobody should use that crap, period.
 
-Introduced by commit df1a132bf3d3508f863336c80a27806a2ac947e0
-("perf_counter: Introduce struct for sample data").
-
-I checked the tip/master branch and this is not fixed there.
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Ben.
 
---Signature=_Mon__15_Jun_2009_16_55_59_+1000_CkY7RBlWTge4lS3o
-Content-Type: application/pgp-signature
+Cheers,
+Ben.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAko18H8ACgkQjjKRsyhoI8yPWwCcDExquSsvDgcdPuvVx8ZZ0L7M
-kiMAnRHjGM+9pORUznv4hkBjvXhl4p7u
-=/6yo
------END PGP SIGNATURE-----
-
---Signature=_Mon__15_Jun_2009_16_55_59_+1000_CkY7RBlWTge4lS3o--
+> Regards--
+> Subrata
+> 
+> > 
+> > --- linux-2.6.30-rc8/arch/powerpc/include/asm/io.h.orig	2009-06-10 21:56:49.000000000 -0500
+> > +++ linux-2.6.30-rc8/arch/powerpc/include/asm/io.h	2009-06-10 22:21:35.000000000 -0500
+> > @@ -680,6 +680,9 @@ extern void __iounmap_at(void *ea, unsig
+> >  #define mmio_outsw(addr, src, count)	writesw(addr, src, count)
+> >  #define mmio_outsl(addr, src, count)	writesl(addr, src, count)
+> > 
+> > +#define isa_virt_to_bus		virt_to_phys
+> > +#define isa_bus_to_virt		phys_to_virt
+> > +
+> >  /**
+> >   *	virt_to_phys	-	map virtual addresses to physical
+> >   *	@address: address to remap
+> > 
+> > ---
+> > Regards--
+> > Subrata
+> > 
