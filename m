@@ -1,48 +1,54 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: linux-next: scsi tree build failure
-Date: Mon, 15 Jun 2009 10:11:47 -0500
-Message-ID: <1245078707.3858.0.camel@mulgrave.site>
-References: <20090615121716.c5bc0655.sfr@canb.auug.org.au>
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Subject: Re: linux-next: ide tree build failure
+Date: Mon, 15 Jun 2009 18:14:12 +0200
+Message-ID: <200906151814.13305.bzolnier@gmail.com>
+References: <20090615113430.21122e44.sfr@canb.auug.org.au> <20090615053514.GA13226@liondog.tnic>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: Text/Plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:39629 "EHLO
-	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752235AbZFOPLu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Jun 2009 11:11:50 -0400
-In-Reply-To: <20090615121716.c5bc0655.sfr@canb.auug.org.au>
+Received: from mail-ew0-f210.google.com ([209.85.219.210]:35402 "EHLO
+	mail-ew0-f210.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760318AbZFOQtZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Jun 2009 12:49:25 -0400
+In-Reply-To: <20090615053514.GA13226@liondog.tnic>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Borislav Petkov <petkovbb@googlemail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 2009-06-15 at 12:17 +1000, Stephen Rothwell wrote:
-> Hi James,
+On Monday 15 June 2009 07:35:14 Borislav Petkov wrote:
+> Hi,
 > 
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> On Mon, Jun 15, 2009 at 11:34:30AM +1000, Stephen Rothwell wrote:
+> > Today's linux-next build (x86_64 allmodconfig) failed like this:
+> > 
+> > drivers/ide/ide-tape.c: In function 'idetape_chrdev_open':
+> > drivers/ide/ide-tape.c:1515: error: implicit declaration of function 'idetape_read_position'
+> > 
+> > Caused by commit 55ce3a129ea2e8faba4a11bb5dbc305590d1c20c ("ide-tape: fix
+> > READ POSITION cmd handling") interacting with the later merge
+> > 8dcce4081305d3d1629190edd112e6473c315cbc ("Merge branch
+> > 'bp-remove-pc-buf' into for-next").
+> > 
+> > I have used the ide tree from next-20090612 for today.
 > 
-> drivers/scsi/ps3rom.c: In function 'ps3rom_interrupt':
-> drivers/scsi/ps3rom.c:302: error: implicit declaration of function 'ps3_system_bus_get_drvdata'
-> drivers/scsi/ps3rom.c:302: warning: assignment makes pointer from integer without a cast
-> drivers/scsi/ps3rom.c: In function 'ps3rom_probe':
-> drivers/scsi/ps3rom.c:390: error: implicit declaration of function 'ps3_system_bus_set_drvdata'
-> drivers/scsi/ps3rom.c: In function 'ps3rom_remove':
-> drivers/scsi/ps3rom.c:421: warning: initialization makes pointer from integer without a cast
+> Ah, the function got renamed in 55ce3a129ea2e8faba4a11bb5dbc305590d1c20c. Here's
+> a fix:
 > 
-> Caused by commit 4381bd58427116cd7689831998771ddd58078af9 ("[SCSI]
-> ps3rom: Use ps3_system_bus_[gs]et_drvdata() instead of direct access").
-> This is number 21 in a series and depends on number 19 which is not yet
-> merged.  If you instead Ack this patch, Ben will merge it through the
-> powerpc tree.
+> ---
+> From: Borislav Petkov <petkovbb@gmail.com>
+> Date: Mon, 15 Jun 2009 07:32:04 +0200
+> Subject: [PATCH] ide-tape: fix build issue
 > 
-> For today, I have used the scsi tree from next-20090612.
+> This fixes
+> 
+> drivers/ide/ide-tape.c: In function `idetape_chrdev_open':
+> drivers/ide/ide-tape.c:1515: error: implicit declaration of function `idetape_read_position'
+> make[1]: *** [drivers/ide/ide-tape.o] Error 1
+> 
+> Signed-off-by: Borislav Petkov <petkovbb@gmail.com>
 
-OK, dumped the offending patch, so it should be safe to take scsi-misc
-again.
-
-I'm so used to merging these type of conversions, I didn't check that it
-was using a ps3 specific wrapper instead of a generic device one.
-
-James
+thanks, applied
