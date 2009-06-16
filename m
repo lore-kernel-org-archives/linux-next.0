@@ -1,48 +1,86 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with the  tree
-Date: Tue, 16 Jun 2009 13:06:32 +1000
-Message-ID: <20090616130632.3c411f5c.sfr@canb.auug.org.au>
+Subject: linux-next: ext4 tree build failure
+Date: Tue, 16 Jun 2009 14:44:13 +1000
+Message-ID: <20090616144413.50e975f9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__16_Jun_2009_14_44_13_+1000_PaggHDtjLOsDsl3S"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50726 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:42443 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752654AbZFPDGb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Jun 2009 23:06:31 -0400
+	id S1750791AbZFPEo2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Jun 2009 00:44:28 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Travis <travis@sgi.com>, "David S. Miller" <davem@davemloft.net>, Li Zefan <lizf@cn.fujitsu.com>
+To: Theodore Tso <tytso@MIT.EDU>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>
 
-Hi Rusty,
+--Signature=_Tue__16_Jun_2009_14_44_13_+1000_PaggHDtjLOsDsl3S
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the rr tree got a conflict in
-drivers/net/sfc/efx.c between commit
-3977d0334b98770b81dfeb248db232c9bb3d3c88 ("sfc: modify allocation error
-message") from Linus' tree and commit
-c735805e707362aa397ad3e78c16c616b3ec7399 ("cpumask: use zalloc_cpumask_var
-() where possible") from the rr tree.
+Hi Ted,
 
-I fixed it up (see below) and can carry the fix for a while.
--- 
+Today's linux-next build (powerpc ppc64_defconfig) failed like this after
+the slab tree was merged:
+
+In file included from fs/jbd2/checkpoint.c:26:
+include/trace/events/jbd2.h:11: error: expected ')' before '(' token
+include/trace/events/jbd2.h:31: error: expected ')' before '(' token
+include/trace/events/jbd2.h:54: error: expected ')' before '(' token
+include/trace/events/jbd2.h:77: error: expected ')' before '(' token
+include/trace/events/jbd2.h:100: error: expected ')' before '(' token
+include/trace/events/jbd2.h:122: error: expected ')' before '(' token
+include/trace/events/jbd2.h:146: error: expected ')' before '(' token
+fs/jbd2/checkpoint.c: In function 'jbd2_log_do_checkpoint':
+fs/jbd2/checkpoint.c:361: error: implicit declaration of function 'trace_jb=
+d2_checkpoint'
+
+It looks like TRACE_EVENT is not defined.
+
+The config differences are:
+CONFIG_SLUB_DEBUG and CONFIG_SLUB change from y to n
+CONFIG_SLQB_ALLOCATOR, CONFIG_SLQB and CONFIG_SLQB_DEBUG become y
+
+The .i files looks very different (the bad one has TRACE_EVENT explictly
+in there, while the other has it expanded).  It appears that some of the
+tracing include files that should have been included explicitly were
+being included implicitly by the slub include files.
+
+So I have reverted commit 75ef2ffeb02c7e1fbe8114f2fddd2e8880397892
+("jbd2: convert instrumentation from markers to tracepoints") for today.
+
+This produced another error:
+
+In file included from include/trace/ftrace.h:262,
+                 from include/trace/define_trace.h:57,
+                 from include/trace/events/ext4.h:720,
+                 from fs/ext4/super.c:51:
+include/trace/events/ext4.h: In function 'ftrace_raw_output_ext4_free_inode=
+':
+include/trace/events/ext4.h:12: error: implicit declaration of function 'jb=
+d2_dev_to_name'
+
+So I also reverted commit a6e130e94db16b324fbf2eeed2b310273625acf7 ("ext4: =
+convert instrumentation from markers to tracepoints") after reverting the d=
+ependent commit 3f9c083c0ffd344da212c9813c3c5ddba1a65936 ("ext4: Fix 64-bit=
+ block type problem on 32-bit platforms") for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/net/sfc/efx.c
-index 343e8da,23ee983..0000000
---- a/drivers/net/sfc/efx.c
-+++ b/drivers/net/sfc/efx.c
-@@@ -884,9 -894,9 +884,9 @@@ static int efx_wanted_rx_queues(void
-  	int count;
-  	int cpu;
-  
-- 	if (unlikely(!alloc_cpumask_var(&core_mask, GFP_KERNEL))) {
- -	if (!zalloc_cpumask_var(&core_mask, GFP_KERNEL)) {
-++	if (unlikely(!zalloc_cpumask_var(&core_mask, GFP_KERNEL))) {
-  		printk(KERN_WARNING
- -		       "efx.c: allocation failure, irq balancing hobbled\n");
- +		       "sfc: RSS disabled due to allocation failure\n");
-  		return 1;
-  	}
-  
+--Signature=_Tue__16_Jun_2009_14_44_13_+1000_PaggHDtjLOsDsl3S
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAko3Ix0ACgkQjjKRsyhoI8zQ0wCgqlaAKPOJnyAZoqikIHQVx9Bg
+9RkAnjWs9Qj9xGofvbjMeBSIygceFjpO
+=wF1a
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__16_Jun_2009_14_44_13_+1000_PaggHDtjLOsDsl3S--
