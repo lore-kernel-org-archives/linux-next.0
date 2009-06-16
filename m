@@ -1,86 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: ext4 tree build failure
-Date: Tue, 16 Jun 2009 14:44:13 +1000
-Message-ID: <20090616144413.50e975f9.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the slab tree
+Date: Tue, 16 Jun 2009 15:46:52 +1000
+Message-ID: <20090616154652.b8adcb9d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__16_Jun_2009_14_44_13_+1000_PaggHDtjLOsDsl3S"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42443 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57054 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750791AbZFPEo2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Jun 2009 00:44:28 -0400
+	id S1752253AbZFPFqz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Jun 2009 01:46:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Tso <tytso@MIT.EDU>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nick Piggin <npiggin@suse.de>, Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>, Vegard Nossum <vegard.nossum@gmail.com>
 
---Signature=_Tue__16_Jun_2009_14_44_13_+1000_PaggHDtjLOsDsl3S
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Ted,
+Today's linux-next merge of the tip tree got a conflict in mm/slub.c
+between commit 964cf35c88f93b4927dbc4e950dfa4d880c7f9d1 ("SLUB: Fix early
+boot GFP_DMA allocations") from the slab tree and commit
+18fd427debcf37c06917b55295df682fd05fee76 ("slub: add hooks for
+kmemcheck") from the tip tree.
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this after
-the slab tree was merged:
-
-In file included from fs/jbd2/checkpoint.c:26:
-include/trace/events/jbd2.h:11: error: expected ')' before '(' token
-include/trace/events/jbd2.h:31: error: expected ')' before '(' token
-include/trace/events/jbd2.h:54: error: expected ')' before '(' token
-include/trace/events/jbd2.h:77: error: expected ')' before '(' token
-include/trace/events/jbd2.h:100: error: expected ')' before '(' token
-include/trace/events/jbd2.h:122: error: expected ')' before '(' token
-include/trace/events/jbd2.h:146: error: expected ')' before '(' token
-fs/jbd2/checkpoint.c: In function 'jbd2_log_do_checkpoint':
-fs/jbd2/checkpoint.c:361: error: implicit declaration of function 'trace_jb=
-d2_checkpoint'
-
-It looks like TRACE_EVENT is not defined.
-
-The config differences are:
-CONFIG_SLUB_DEBUG and CONFIG_SLUB change from y to n
-CONFIG_SLQB_ALLOCATOR, CONFIG_SLQB and CONFIG_SLQB_DEBUG become y
-
-The .i files looks very different (the bad one has TRACE_EVENT explictly
-in there, while the other has it expanded).  It appears that some of the
-tracing include files that should have been included explicitly were
-being included implicitly by the slub include files.
-
-So I have reverted commit 75ef2ffeb02c7e1fbe8114f2fddd2e8880397892
-("jbd2: convert instrumentation from markers to tracepoints") for today.
-
-This produced another error:
-
-In file included from include/trace/ftrace.h:262,
-                 from include/trace/define_trace.h:57,
-                 from include/trace/events/ext4.h:720,
-                 from fs/ext4/super.c:51:
-include/trace/events/ext4.h: In function 'ftrace_raw_output_ext4_free_inode=
-':
-include/trace/events/ext4.h:12: error: implicit declaration of function 'jb=
-d2_dev_to_name'
-
-So I also reverted commit a6e130e94db16b324fbf2eeed2b310273625acf7 ("ext4: =
-convert instrumentation from markers to tracepoints") after reverting the d=
-ependent commit 3f9c083c0ffd344da212c9813c3c5ddba1a65936 ("ext4: Fix 64-bit=
- block type problem on 32-bit platforms") for today.
---=20
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__16_Jun_2009_14_44_13_+1000_PaggHDtjLOsDsl3S
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAko3Ix0ACgkQjjKRsyhoI8zQ0wCgqlaAKPOJnyAZoqikIHQVx9Bg
-9RkAnjWs9Qj9xGofvbjMeBSIygceFjpO
-=wF1a
------END PGP SIGNATURE-----
-
---Signature=_Tue__16_Jun_2009_14_44_13_+1000_PaggHDtjLOsDsl3S--
+diff --cc mm/slub.c
+index 3976098,73fb7d1..0000000
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@@ -2700,18 -2657,10 +2726,18 @@@ static noinline struct kmem_cache *dma_
+  			 (unsigned int)realsize);
+  	s = kmalloc(kmem_size, flags & ~SLUB_DMA);
+  
+ +	/*
+ +	 * Must defer sysfs creation to a workqueue because we don't know
+ +	 * what context we are called from. Before sysfs comes up, we don't
+ +	 * need to do anything because our sysfs initcall will start by
+ +	 * adding all existing slabs to sysfs.
+ +	 */
+- 	slabflags = SLAB_CACHE_DMA;
+++	slabflags = SLAB_CACHE_DMA | SLAB_NOTRACK;
+ +	if (slab_state >= SYSFS)
+ +		slabflags |= __SYSFS_ADD_DEFERRED;
+ +
+  	if (!s || !text || !kmem_cache_open(s, flags, text,
+ -			realsize, ARCH_KMALLOC_MINALIGN,
+ -			SLAB_CACHE_DMA|SLAB_NOTRACK|__SYSFS_ADD_DEFERRED,
+ -			NULL)) {
+ +			realsize, ARCH_KMALLOC_MINALIGN, slabflags, NULL)) {
+  		kfree(s);
+  		kfree(text);
+  		goto unlock_out;
