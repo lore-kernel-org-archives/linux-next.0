@@ -1,40 +1,50 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for June 16 (osd)
-Date: Tue, 16 Jun 2009 09:46:49 -0700
-Message-ID: <4A37CC79.5000907@oracle.com>
+Subject: [PATCH -next] bnx2i/cnic: more kconfig dependencies
+Date: Tue, 16 Jun 2009 10:25:45 -0700
+Message-ID: <4A37D599.5080701@oracle.com>
 References: <20090616165923.8ca4ddcb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet12.oracle.com ([148.87.113.124]:54211 "EHLO
-	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751547AbZFPQuQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Jun 2009 12:50:16 -0400
+Received: from acsinet11.oracle.com ([141.146.126.233]:29712 "EHLO
+	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753299AbZFPR3M (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Jun 2009 13:29:12 -0400
 In-Reply-To: <20090616165923.8ca4ddcb.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>, Boaz Harrosh <bharrosh@panasas.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Michael Chan <mchan@broadcom.com>, linux-scsi@vger.kernel.org, James Bottomley <James.Bottomley@HansenPartnership.com>
 
-Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20090615:
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
+BNX2I selects CNIC, CNIC selects UIO.
+It looks like BNX2I also needs to select UIO.
 
-When
-CONFIG_BLK_DEV_OSD=y
-CONFIG_SCSI_OSD_INITIATOR=y
-# CONFIG_SCSI_OSD_ULD is not set
+BTW, CNIC is under NETDEV_1000, which is not enabled.
+I don't see any need to enable (select) it in this case,
+but I could be wrong(?).  Should BNX2I also select NETDEV_1000?
 
-build fails with
+cnic.c:(.text+0x17990b): undefined reference to `uio_event_notify'
+cnic.c:(.text+0x17a197): undefined reference to `uio_unregister_device'
+cnic.c:(.text+0x17c618): undefined reference to `__uio_register_device'
 
-drivers/built-in.o: In function `class_osdblk_remove':
-osdblk.c:(.text+0x55376): undefined reference to `osduld_put_device'
-drivers/built-in.o: In function `class_osdblk_add':
-osdblk.c:(.text+0x5564d): undefined reference to `osduld_path_lookup'
-osdblk.c:(.text+0x5584d): undefined reference to `osduld_put_device'
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/scsi/bnx2i/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20090616.orig/drivers/scsi/bnx2i/Kconfig
++++ linux-next-20090616/drivers/scsi/bnx2i/Kconfig
+@@ -2,6 +2,7 @@ config SCSI_BNX2_ISCSI
+ 	tristate "Broadcom NetXtreme II iSCSI support"
+ 	select SCSI_ISCSI_ATTRS
+ 	select CNIC
++	select UIO
+ 	depends on PCI
+ 	---help---
+ 	This driver supports iSCSI offload for the Broadcom NetXtreme II
 
 
 -- 
