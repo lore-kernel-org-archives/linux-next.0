@@ -1,62 +1,64 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] eeepc: fix selects (third time)
-Date: Tue, 16 Jun 2009 10:44:58 -0700
-Message-ID: <4A37DA1A.8020800@oracle.com>
+From: "Michael Chan" <mchan@broadcom.com>
+Subject: Re: [PATCH -next] bnx2i/cnic: more kconfig dependencies
+Date: Tue, 16 Jun 2009 10:57:15 -0700
+Message-ID: <1245175036.12000.70.camel@HP1>
 References: <20090616165923.8ca4ddcb.sfr@canb.auug.org.au>
+ <4A37D599.5080701@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:19482 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757995AbZFPRs2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Jun 2009 13:48:28 -0400
-In-Reply-To: <20090616165923.8ca4ddcb.sfr@canb.auug.org.au>
+Received: from mms3.broadcom.com ([216.31.210.19]:1133 "EHLO MMS3.broadcom.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752429AbZFPSE7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Jun 2009 14:04:59 -0400
+In-Reply-To: <4A37D599.5080701@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Corentin Chary <corentincj@iksaif.net>, Len Brown <len.brown@intel.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-
-linux-next still fails with various pci_*() undefined references, like:
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, James Bottomley <James.Bottomley@HansenPartnership.com>
 
 
-ERROR: "pci_scan_slot" [drivers/pci/hotplug/cpqphp.ko] undefined!
-ERROR: "pci_add_new_bus" [drivers/pci/hotplug/cpqphp.ko] undefined!
-and
-drivers/pci/hotplug/fakephp.c:55: error:implicit declaration of function 'pci_rescan_bus'
+On Tue, 2009-06-16 at 10:25 -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> BNX2I selects CNIC, CNIC selects UIO.
+> It looks like BNX2I also needs to select UIO.
+> 
 
-These are due to the eeepc driver's Kconfig selects.  Patch below
-fixes them.
+Yeah, it looks like if A selects B and B selects C, A does not
+automatically select C, so we need to add it explicitly.
 
----
-From: Randy Dunlap <randy.dunlap@oracle.com>
+> BTW, CNIC is under NETDEV_1000, which is not enabled.
+> I don't see any need to enable (select) it in this case,
+> but I could be wrong(?).  Should BNX2I also select NETDEV_1000?
 
-EEEPC_LAPTOP selects HOTPLUG_PCI.  This causes failures (build error below)
-when CONFIG_HOTPLUG is not enabled, so additionally select HOTPLUG since
-kconfig 'select' doesn't follow its dependency chain.
-Also, only select HOTPLUG_PCI if PCI is already enabled.
+No that's not needed assuming we stay with using symbol_get() to resolve
+a bnx2 driver symbol for now.
 
-drivers/pci/hotplug/fakephp.c:55: error: implicit declaration of function 'pci_rescan_bus'
-ERROR: "pci_scan_slot" [drivers/pci/hotplug/pciehp.ko] undefined!
-ERROR: "pci_scan_bridge" [drivers/pci/hotplug/pciehp.ko] undefined!
-ERROR: "pci_scan_slot" [drivers/pci/hotplug/pci_hotplug.ko] undefined!
-ERROR: "pci_add_new_bus" [drivers/pci/hotplug/pci_hotplug.ko] undefined!
+Thanks.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Acked-by: Corentin Chary <corentincj@iksaif.net>
----
- drivers/platform/x86/Kconfig |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Acked-by: Michael Chan <mchan@broadcom.com>
 
---- linux-next-20090604.orig/drivers/platform/x86/Kconfig
-+++ linux-next-20090604/drivers/platform/x86/Kconfig
-@@ -340,7 +340,8 @@ config EEEPC_LAPTOP
- 	depends on RFKILL || RFKILL = n
- 	select BACKLIGHT_CLASS_DEVICE
- 	select HWMON
--	select HOTPLUG_PCI
-+	select HOTPLUG
-+	select HOTPLUG_PCI if PCI
- 	---help---
- 	  This driver supports the Fn-Fx keys on Eee PC laptops.
- 	  It also adds the ability to switch camera/wlan on/off.
+> 
+> cnic.c:(.text+0x17990b): undefined reference to `uio_event_notify'
+> cnic.c:(.text+0x17a197): undefined reference to `uio_unregister_device'
+> cnic.c:(.text+0x17c618): undefined reference to `__uio_register_device'
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> ---
+>  drivers/scsi/bnx2i/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20090616.orig/drivers/scsi/bnx2i/Kconfig
+> +++ linux-next-20090616/drivers/scsi/bnx2i/Kconfig
+> @@ -2,6 +2,7 @@ config SCSI_BNX2_ISCSI
+>  	tristate "Broadcom NetXtreme II iSCSI support"
+>  	select SCSI_ISCSI_ATTRS
+>  	select CNIC
+> +	select UIO
+>  	depends on PCI
+>  	---help---
+>  	This driver supports iSCSI offload for the Broadcom NetXtreme II
+> 
+> 
