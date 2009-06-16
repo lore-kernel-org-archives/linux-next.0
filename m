@@ -1,35 +1,48 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: linux-next: scsi tree build failure
-Date: Mon, 15 Jun 2009 22:24:37 -0400
-Message-ID: <1245119077.3858.51.camel@mulgrave.site>
-References: <20090615121716.c5bc0655.sfr@canb.auug.org.au>
-	 <1245078707.3858.0.camel@mulgrave.site> <1245102000.12400.44.camel@pasglop>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rr tree with the  tree
+Date: Tue, 16 Jun 2009 13:06:32 +1000
+Message-ID: <20090616130632.3c411f5c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:55760 "EHLO
-	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751709AbZFPCZy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Jun 2009 22:25:54 -0400
-In-Reply-To: <1245102000.12400.44.camel@pasglop>
+Received: from chilli.pcug.org.au ([203.10.76.44]:50726 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752654AbZFPDGb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Jun 2009 23:06:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Travis <travis@sgi.com>, "David S. Miller" <davem@davemloft.net>, Li Zefan <lizf@cn.fujitsu.com>
 
-On Tue, 2009-06-16 at 07:40 +1000, Benjamin Herrenschmidt wrote:
-> On Mon, 2009-06-15 at 10:11 -0500, James Bottomley wrote:
-> > OK, dumped the offending patch, so it should be safe to take scsi-misc
-> > again.
-> > 
-> > I'm so used to merging these type of conversions, I didn't check that
-> > it
-> > was using a ps3 specific wrapper instead of a generic device one.
-> 
-> Do I have your Ack to merge the patch via the powerpc tree ?
+Hi Rusty,
 
-Ack
+Today's linux-next merge of the rr tree got a conflict in
+drivers/net/sfc/efx.c between commit
+3977d0334b98770b81dfeb248db232c9bb3d3c88 ("sfc: modify allocation error
+message") from Linus' tree and commit
+c735805e707362aa397ad3e78c16c616b3ec7399 ("cpumask: use zalloc_cpumask_var
+() where possible") from the rr tree.
 
-James
+I fixed it up (see below) and can carry the fix for a while.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/sfc/efx.c
+index 343e8da,23ee983..0000000
+--- a/drivers/net/sfc/efx.c
++++ b/drivers/net/sfc/efx.c
+@@@ -884,9 -894,9 +884,9 @@@ static int efx_wanted_rx_queues(void
+  	int count;
+  	int cpu;
+  
+- 	if (unlikely(!alloc_cpumask_var(&core_mask, GFP_KERNEL))) {
+ -	if (!zalloc_cpumask_var(&core_mask, GFP_KERNEL)) {
+++	if (unlikely(!zalloc_cpumask_var(&core_mask, GFP_KERNEL))) {
+  		printk(KERN_WARNING
+ -		       "efx.c: allocation failure, irq balancing hobbled\n");
+ +		       "sfc: RSS disabled due to allocation failure\n");
+  		return 1;
+  	}
+  
