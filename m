@@ -1,64 +1,37 @@
-From: "Michael Chan" <mchan@broadcom.com>
-Subject: Re: [PATCH -next] bnx2i/cnic: more kconfig dependencies
-Date: Tue, 16 Jun 2009 10:57:15 -0700
-Message-ID: <1245175036.12000.70.camel@HP1>
-References: <20090616165923.8ca4ddcb.sfr@canb.auug.org.au>
- <4A37D599.5080701@oracle.com>
+From: Theodore Tso <tytso@mit.edu>
+Subject: Re: linux-next: ext4 tree build failure
+Date: Tue, 16 Jun 2009 16:30:34 -0400
+Message-ID: <20090616203034.GB14788@mit.edu>
+References: <20090616144413.50e975f9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mms3.broadcom.com ([216.31.210.19]:1133 "EHLO MMS3.broadcom.com"
+Received: from thunk.org ([69.25.196.29]:49523 "EHLO thunker.thunk.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752429AbZFPSE7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Jun 2009 14:04:59 -0400
-In-Reply-To: <4A37D599.5080701@oracle.com>
+	id S1752885AbZFPUak (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Jun 2009 16:30:40 -0400
+Content-Disposition: inline
+In-Reply-To: <20090616144413.50e975f9.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>
 
-
-On Tue, 2009-06-16 at 10:25 -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
+On Tue, Jun 16, 2009 at 02:44:13PM +1000, Stephen Rothwell wrote:
+> Hi Ted,
 > 
-> BNX2I selects CNIC, CNIC selects UIO.
-> It looks like BNX2I also needs to select UIO.
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this after
+> the slab tree was merged:
 > 
+> In file included from fs/jbd2/checkpoint.c:26:
+> include/trace/events/jbd2.h:11: error: expected ')' before '(' token
+> include/trace/events/jbd2.h:31: error: expected ')' before '(' token
 
-Yeah, it looks like if A selects B and B selects C, A does not
-automatically select C, so we need to add it explicitly.
+Hmm... I wonder why the slab tree would be messing with tracing
+include files.
 
-> BTW, CNIC is under NETDEV_1000, which is not enabled.
-> I don't see any need to enable (select) it in this case,
-> but I could be wrong(?).  Should BNX2I also select NETDEV_1000?
+Which slab tree is it?  Is it Pekka's?
 
-No that's not needed assuming we stay with using symbol_get() to resolve
-a bnx2 driver symbol for now.
+      git://git.kernel.org/pub/scm/linux/kernel/git/penberg/slab-2.6.git
 
-Thanks.
-
-Acked-by: Michael Chan <mchan@broadcom.com>
-
-> 
-> cnic.c:(.text+0x17990b): undefined reference to `uio_event_notify'
-> cnic.c:(.text+0x17a197): undefined reference to `uio_unregister_device'
-> cnic.c:(.text+0x17c618): undefined reference to `__uio_register_device'
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> ---
->  drivers/scsi/bnx2i/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> --- linux-next-20090616.orig/drivers/scsi/bnx2i/Kconfig
-> +++ linux-next-20090616/drivers/scsi/bnx2i/Kconfig
-> @@ -2,6 +2,7 @@ config SCSI_BNX2_ISCSI
->  	tristate "Broadcom NetXtreme II iSCSI support"
->  	select SCSI_ISCSI_ATTRS
->  	select CNIC
-> +	select UIO
->  	depends on PCI
->  	---help---
->  	This driver supports iSCSI offload for the Broadcom NetXtreme II
-> 
-> 
+					- Ted
