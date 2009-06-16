@@ -1,54 +1,40 @@
-From: Suresh Jayaraman <sjayaraman@suse.de>
-Subject: [PATCH] cifs: Fix build warning in dns_resolve.c
-Date: Tue, 16 Jun 2009 14:58:18 +0530
-Message-ID: <4A3765B2.10006@suse.de>
+From: Jeff Layton <jlayton@redhat.com>
+Subject: Re: linux-next: cifs tree build warning
+Date: Tue, 16 Jun 2009 06:38:23 -0400
+Message-ID: <20090616063823.688c93c2@tlielax.poochiereds.net>
+References: <20090616160751.4acfdf1d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from victor.provo.novell.com ([137.65.250.26]:41184 "EHLO
-	victor.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756827AbZFPJ2o (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Jun 2009 05:28:44 -0400
+Received: from mx2.redhat.com ([66.187.237.31]:55371 "EHLO mx2.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751866AbZFPKi2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Jun 2009 06:38:28 -0400
+In-Reply-To: <20090616160751.4acfdf1d.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steve French <smfrench@gmail.com>, linux-next@vger.kernel.org, "linux-cifs-client@lists.samba.org" <linux-cifs-client@lists.samba.org>
-Cc: Jeff Layton <jlayton@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Steve French <sfrench@us.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Fix a build warning in dns_resolve.c.
+On Tue, 16 Jun 2009 16:07:51 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-fs/cifs/dns_resolve.c: In function 'is_ip':
-fs/cifs/dns_resolve.c:42: warning: passing argument 1 of 'cifs_convert_address' discards qualifiers from pointer target type
+> Hi Steve,
+> 
+> Today's linux-next build (x86_64 allmodconfig) produced this warning:
+> 
+> fs/cifs/dns_resolve.c: In function 'is_ip':
+> fs/cifs/dns_resolve.c:42: warning: passing argument 1 of 'cifs_convert_address' discards qualifiers from pointer target type
+> fs/cifs/cifsproto.h:77: note: expected 'char *' but argument is of type 'const char *'
+> 
+> Introduced by commit 1e68b2b2756fc3488ecbade5ad5f13302b3aaafc ("cifs: add
+> new routine for converting AF_INET and AF_INET6 addrs").
+> 
 
-Signed-off-by: Suresh Jayaraman <sjayaraman@suse.de>
----
- fs/cifs/cifsproto.h |    2 +-
- fs/cifs/netmisc.c   |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Known problem. The warning is pretty harmless (that variable doesn't
+ever get changed). Once Steve commits the last patch in that series
+the warning will go away.
 
-diff --git a/fs/cifs/cifsproto.h b/fs/cifs/cifsproto.h
-index c419416..53267a3 100644
---- a/fs/cifs/cifsproto.h
-+++ b/fs/cifs/cifsproto.h
-@@ -74,7 +74,7 @@ extern unsigned int smbCalcSize(struct smb_hdr *ptr);
- extern unsigned int smbCalcSize_LE(struct smb_hdr *ptr);
- extern int decode_negTokenInit(unsigned char *security_blob, int length,
- 			enum securityEnum *secType);
--extern int cifs_convert_address(char *src, void *dst);
-+extern int cifs_convert_address(const char *src, void *dst);
- extern int map_smb_to_linux_error(struct smb_hdr *smb, int logErr);
- extern void header_assemble(struct smb_hdr *, char /* command */ ,
- 			    const struct cifsTconInfo *, int /* length of
-diff --git a/fs/cifs/netmisc.c b/fs/cifs/netmisc.c
-index f9a54da..390ef00 100644
---- a/fs/cifs/netmisc.c
-+++ b/fs/cifs/netmisc.c
-@@ -163,7 +163,7 @@ cifs_inet_pton(const int address_family, const char *cp, void *dst)
-  * Returns 0 on failure.
-  */
- int
--cifs_convert_address(char *src, void *dst)
-+cifs_convert_address(const char *src, void *dst)
- {
- 	struct sockaddr_in *s4 = (struct sockaddr_in *) dst;
- 	struct sockaddr_in6 *s6 = (struct sockaddr_in6 *) dst;
+-- 
+Jeff Layton <jlayton@redhat.com>
