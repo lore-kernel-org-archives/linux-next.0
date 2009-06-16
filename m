@@ -1,31 +1,53 @@
-From: Pekka Enberg <penberg@cs.helsinki.fi>
-Subject: Re: linux-next: manual merge of the tip tree with the slab tree
-Date: Tue, 16 Jun 2009 08:48:38 +0300
-Message-ID: <1245131318.3415.1.camel@penberg-laptop>
-References: <20090616154652.b8adcb9d.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: cifs tree build warning
+Date: Tue, 16 Jun 2009 16:07:51 +1000
+Message-ID: <20090616160751.4acfdf1d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__16_Jun_2009_16_07_51_+1000_5x=_1KO7FNrA4GY5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from courier.cs.helsinki.fi ([128.214.9.1]:50552 "EHLO
-	mail.cs.helsinki.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751281AbZFPFsh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Jun 2009 01:48:37 -0400
-In-Reply-To: <20090616154652.b8adcb9d.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35677 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1763809AbZFPGHz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Jun 2009 02:07:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nick Piggin <npiggin@suse.de>, Christoph Lameter <cl@linux-foundation.org>, Vegard Nossum <vegard.nossum@gmail.com>
+To: Steve French <sfrench@us.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Layton <jlayton@redhat.com>
 
-On Tue, 2009-06-16 at 15:46 +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the tip tree got a conflict in mm/slub.c
-> between commit 964cf35c88f93b4927dbc4e950dfa4d880c7f9d1 ("SLUB: Fix early
-> boot GFP_DMA allocations") from the slab tree and commit
-> 18fd427debcf37c06917b55295df682fd05fee76 ("slub: add hooks for
-> kmemcheck") from the tip tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.
+--Signature=_Tue__16_Jun_2009_16_07_51_+1000_5x=_1KO7FNrA4GY5
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Looks good! Thanks.
+Hi Steve,
+
+Today's linux-next build (x86_64 allmodconfig) produced this warning:
+
+fs/cifs/dns_resolve.c: In function 'is_ip':
+fs/cifs/dns_resolve.c:42: warning: passing argument 1 of 'cifs_convert_addr=
+ess' discards qualifiers from pointer target type
+fs/cifs/cifsproto.h:77: note: expected 'char *' but argument is of type 'co=
+nst char *'
+
+Introduced by commit 1e68b2b2756fc3488ecbade5ad5f13302b3aaafc ("cifs: add
+new routine for converting AF_INET and AF_INET6 addrs").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__16_Jun_2009_16_07_51_+1000_5x=_1KO7FNrA4GY5
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAko3NrcACgkQjjKRsyhoI8ya6ACgusfaC4+yUgAFuauJ2mtCopQ6
+r80AoJWHI7nTOp0wKd6B5Av7J5rkeoCY
+=rbdj
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__16_Jun_2009_16_07_51_+1000_5x=_1KO7FNrA4GY5--
