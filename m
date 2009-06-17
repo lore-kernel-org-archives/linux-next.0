@@ -1,89 +1,55 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: Tree for June 17 (pci/slot)
-Date: Wed, 17 Jun 2009 16:10:01 -0700
-Message-ID: <20090617161001.734321be@jbarnes-g45>
-References: <20090617155354.075c60ae.sfr@canb.auug.org.au>
-	<4A39194B.2060200@oracle.com>
-	<20090617163604.GT19977@parisc-linux.org>
-	<20090617102901.6e39aac2@jbarnes-g45>
-	<4A392B48.7060206@oracle.com>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: [PATCH 0/2] Revert and reimplement Add SGMII support to UCC GETH
+Date: Wed, 17 Jun 2009 17:15:58 -0600
+Message-ID: <20090617231306.7051.56146.stgit@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <4A392B48.7060206@oracle.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Matthew Wilcox <matthew@wil.cx>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Alex Chiang <achiang@hp.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-px0-f189.google.com ([209.85.216.189]:65005 "EHLO
+	mail-px0-f189.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755597AbZFQXP7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Jun 2009 19:15:59 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, subrata@linux.vnet.ibm.com, netdev@vger.kernel.org
+Cc: Kumar Gala <galak@kernel.crashing.org>, Li Yang <leoli@freescale.com>, Nathan Lynch <ntl@pobox.com>, Sachin P Sant <sachinp@linux.vnet.ibm.com>, Linux-Next <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org, Balbir Singh <balbir@linux.vnet.ibm.com>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Tony Breeds <tony@bakeyournoodle.com>, michael@ellerman.id.au, Haiying Wang <Haiying.Wang@freescale.com>, davem@davemloft.net
 
-On Wed, 17 Jun 2009 10:43:36 -0700
-Randy Dunlap <randy.dunlap@oracle.com> wrote:
+(REPOST; I messed up an email address first time around and apparently my
+posting got rejected.  If you've already received this message, then
+I apologize for the noise)
 
-> Jesse Barnes wrote:
-> > On Wed, 17 Jun 2009 10:36:04 -0600
-> > Matthew Wilcox <matthew@wil.cx> wrote:
-> > 
-> >> On Wed, Jun 17, 2009 at 09:26:51AM -0700, Randy Dunlap wrote:
-> >>> Stephen Rothwell wrote:
-> >>>> Hi all,
-> >>>>
-> >>>> Changes since 20090616:
-> >>>
-> >>> When CONFIG_SYSFS=n:
-> >>>
-> >>> drivers/pci/slot.c:327: error: 'module_kset' undeclared (first use
-> >>> in this function)
-> >> Is there any point to pci_slot existing without CONFIG_SYSFS?
-> >> I don't see how you can interact with it in any meaningful way.
-> >> Perhaps CONFIG_PCI_SLOT should depend on CONFIG_SYSFS?
-> > 
-> > I've got a code fix queued up, but maybe a Kconfig dependency is the
-> > way to go...
-> 
-> What is the code fix like?
-> The Kconfig fix makes sense to me.
-> 
-> 
-Here's the patch I have (sorry cut & paste):
+Here is a fix for the build failure discovered during the 2.6.31 merge
+window on ucc_geth.c.  I decided to revert and reapply a fixed version
+of the patch to make the new version easier to review and bisect if I
+got the fixup wrong.  I've compile tested both patches, but I do not have
+hardware to run test.
 
-Fix this build error when CONFIG_SYSFS is not set:
-drivers/pci/slot.c: In function 'pci_hp_create_module_link':
-drivers/pci/slot.c:327: error: 'module_kset' undeclared
+Haiying, please confirm that I haven't horribly trashed your hard work
+with my changes.
 
-Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
----
- drivers/pci/slot.c |    9 +++++++++
- 1 files changed, 9 insertions(+), 0 deletions(-)
+For anyone interested, I've also pushed these patches out to the -next-net
+branch of my git tree:
 
-diff --git a/drivers/pci/slot.c b/drivers/pci/slot.c
-index eddb074..dd6c097 100644
---- a/drivers/pci/slot.c
-+++ b/drivers/pci/slot.c
-@@ -308,6 +308,7 @@ void pci_destroy_slot(struct pci_slot *slot)
- EXPORT_SYMBOL_GPL(pci_destroy_slot);
- 
- #if defined(CONFIG_HOTPLUG_PCI) || defined(CONFIG_HOTPLUG_PCI_MODULE)
-+#ifdef CONFIG_SYSFS
- #include <linux/pci_hotplug.h>
- /**
-  * pci_hp_create_link - create symbolic link to the hotplug driver
-module. @@ -344,6 +345,14 @@ void pci_hp_remove_module_link(struct
-pci_slot *pci_slot) sysfs_remove_link(&pci_slot->kobj, "module");
- }
- EXPORT_SYMBOL_GPL(pci_hp_remove_module_link);
-+#else /* CONFIG_SYSFS */
-+
-+inline void pci_hp_create_module_link(struct pci_slot *pci_slot) {}
-+EXPORT_SYMBOL_GPL(pci_hp_create_module_link);
-+
-+inline void pci_hp_remove_module_link(struct pci_slot *pci_slot) {}
-+EXPORT_SYMBOL_GPL(pci_hp_remove_module_link);
-+#endif /* CONFIG_SYSFS */
- #endif
- 
- static int pci_slot_init(void)
+The following changes since commit 65795efbd380a832ae508b04dba8f8e53f0b84d9:
+ Linus Torvalds (1):
+       Merge branch 'next-i2c' of git://aeryn.fluff.org.uk/bjdooks/linux
+
+are available in the git repository at:
+
+ git://git.secretlab.ca/git/linux-2.6 next-net
+
+Grant Likely (1):
+     Revert "net/ucc_geth: Add SGMII support for UEC GETH driver"
+
+Haiying Wang (1):
+     net/ucc_geth: Add SGMII support for UCC GETH driver
+
+ drivers/net/ucc_geth.c |  113 +++++++++++++++++++----------------------------
+ drivers/net/ucc_geth.h |    2 +-
+ 2 files changed, 47 insertions(+), 68 deletions(-)
 
 
--- 
-Jesse Barnes, Intel Open Source Technology Center
+--
+Grant Likely, B.Sc. P.Eng.
+Secret Lab Technologies Ltd.
