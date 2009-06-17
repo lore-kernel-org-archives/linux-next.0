@@ -1,51 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: device-mapper tree build warnings
-Date: Wed, 17 Jun 2009 23:12:11 +1000
-Message-ID: <20090617231211.044e7de5.sfr@canb.auug.org.au>
-References: <20090617130806.c17ec577.sfr@canb.auug.org.au>
-	<20090617123722.GD8912@agk-dp.fab.redhat.com>
+Subject: Re: linux-next: Tree for June 16 (osd)
+Date: Wed, 17 Jun 2009 23:12:50 +1000
+Message-ID: <20090617231250.4aefe5e8.sfr@canb.auug.org.au>
+References: <20090616165923.8ca4ddcb.sfr@canb.auug.org.au>
+	<4A37CC79.5000907@oracle.com>
+	<4A38E55E.7050006@panasas.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__17_Jun_2009_23_12_11_+1000_psKauFw_1Ehmdd_="
+ boundary="Signature=_Wed__17_Jun_2009_23_12_50_+1000_Fs+P4CukLEN/y2=o"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49954 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49972 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750983AbZFQNMN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Jun 2009 09:12:13 -0400
-In-Reply-To: <20090617123722.GD8912@agk-dp.fab.redhat.com>
+	id S1750732AbZFQNMu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Jun 2009 09:12:50 -0400
+In-Reply-To: <4A38E55E.7050006@panasas.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alasdair G Kergon <agk@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>
+To: Boaz Harrosh <bharrosh@panasas.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>
 
---Signature=_Wed__17_Jun_2009_23_12_11_+1000_psKauFw_1Ehmdd_=
+--Signature=_Wed__17_Jun_2009_23_12_50_+1000_Fs+P4CukLEN/y2=o
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Alasdair,
+Hi Boaz,
 
-On Wed, 17 Jun 2009 13:37:22 +0100 Alasdair G Kergon <agk@redhat.com> wrote:
+On Wed, 17 Jun 2009 15:45:18 +0300 Boaz Harrosh <bharrosh@panasas.com> wrot=
+e:
 >
-> Resolved, thanks.
+> Thanks, osdblk has the wrong dependency, I will fix it.
 
-Excellent.
+Thanks.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__17_Jun_2009_23_12_11_+1000_psKauFw_1Ehmdd_=
+--Signature=_Wed__17_Jun_2009_23_12_50_+1000_Fs+P4CukLEN/y2=o
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAko466sACgkQjjKRsyhoI8zlwQCfT1E3IS3QDZ5rJzyncV8SIJ8M
-9NIAn0AnbbiDo5KjzpvSmZ1TfG5OwH6D
-=2B24
+iEYEARECAAYFAko469IACgkQjjKRsyhoI8xAaACdEffmdYO/hPp9gjVA8dEIC4Wa
+XTQAmgLl0hmH6kXq/LaGdpjU1iIyl64x
+=4VW2
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__17_Jun_2009_23_12_11_+1000_psKauFw_1Ehmdd_=--
+--Signature=_Wed__17_Jun_2009_23_12_50_+1000_Fs+P4CukLEN/y2=o--
