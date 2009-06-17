@@ -1,104 +1,72 @@
-From: Subrata Modak <subrata@linux.vnet.ibm.com>
-Subject: [BUILD FAILURE 02/04] Next June 04:PPC64 randconfig
-	[drivers/usb/host/ohci-hcd.o]
-Date: Wed, 17 Jun 2009 18:23:06 +0530
-Message-ID: <1245243186.4870.5.camel@subratamodak.linux.ibm.com>
-References: <20090605182651.24094.36577.sendpatchset@elm3a191.beaverton.ibm.com>
-	<200906091738.58154.david-b@pacbell.net>
-	<1244799348.5234.13.camel@subratamodak.linux.ibm.com>
-	<1245048679.5239.8.camel@subratamodak.linux.ibm.com>
-Reply-To: subrata@linux.vnet.ibm.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: arm build failures
+Date: Wed, 17 Jun 2009 23:08:04 +1000
+Message-ID: <20090617230804.5e353ec9.sfr@canb.auug.org.au>
+References: <20090617162612.703adfd9.sfr@canb.auug.org.au>
+	<tnx3a9ztg14.fsf@pc1117.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <1245048679.5239.8.camel@subratamodak.linux.ibm.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-To: David Brownell <david-b@pacbell.net>
-Cc: Sachin P Sant <sachinp@linux.vnet.ibm.com>, Randy Dunlap <randy.dunlap@oracle.com>, Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-usb@vger.kernel.org, Linux-Kernel <linux-kernel@vger.kernel.org>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Linux-Next <linux-next@vger.kernel.org>, kernel@wantstofly.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__17_Jun_2009_23_08_04_+1000_b+Q_nTnN3K=kJYz8"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44020 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755218AbZFQNII (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Jun 2009 09:08:08 -0400
+In-Reply-To: <tnx3a9ztg14.fsf@pc1117.cambridge.arm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mike Frysinger <vapier.adi@gmail.com>, Sam Ravnborg <sam@ravnborg.org>
 
-T24gTW9uLCAyMDA5LTA2LTE1IGF0IDEyOjIxICswNTMwLCBTdWJyYXRhIE1vZGFrIHdyb3RlOgo+
-IE9uIEZyaSwgMjAwOS0wNi0xMiBhdCAxNTowNSArMDUzMCwgU3VicmF0YSBNb2RhayB3cm90ZTog
-Cj4gPiBPbiBUdWUsIDIwMDktMDYtMDkgYXQgMTc6MzggLTA3MDAsIERhdmlkIEJyb3duZWxsIHdy
-b3RlOgo+ID4gPiBPbiBGcmlkYXkgMDUgSnVuZSAyMDA5LCBTdWJyYXRhIE1vZGFrIHdyb3RlOgo+
-ID4gPiA+IENvcnJlY3QsIGl0IGZpeGVzIHRoZSBpc3N1ZS4gSG93ZXZlciwgc2luY2UgZmV3IGNo
-YW5nZXMgbWlnaHQgaGF2ZSBnb25lCj4gPiA+ID4gdG8gdGhlIEtjb25maWcsIHRoZSBwYXRjaCBk
-b2VzIG5vdCBhcHBseSBjbGVhbmx5LiBCZWxvdyBpcyB0aGUgcGF0Y2gsIGp1c3QKPiA+ID4gPiBh
-IHJldGFrZSBvZiB0aGUgZWFybGllciBvbmUsIGJ1dCBvbiB0aGUgbGF0ZXN0IGNvZGUuIAo+ID4g
-PiAKPiA+ID4gQW5kIGl0IGdvdCBtYW5nbGVkIGEgYml0IGFsb25nIHRoZSB3YXkuICBQbHVzLCB0
-aGUgb3JpZ2luYWwgb25lCj4gPiA+IGdvb2ZlZCB1cCBLY29uZmlnIGRlcGVuZGVuY3kgZGlzcGxh
-eXMgLi4uIGJvdGggaXNzdWVzIGZpeGVkIGluCj4gPiA+IHRoaXMgdmVyc2lvbiwgYWdhaW5zdCBj
-dXJyZW50IG1haW5saW5lIEdJVC4KPiA+ID4gCj4gPiA+IElmIHNvbWVvbmUgY2FuIHZlcmlmeSBh
-bGwgZm91ciBQUEMvT0YvT0hDSSBjb25maWdzIGJ1aWxkIG9uCj4gPiA+IG9uIFBQQzY0LCBJJ20g
-T0sgd2l0aCBpdC4KPiA+ID4gCj4gPiA+IC0gRGF2ZQo+ID4gCj4gPiBEYXZlLAo+ID4gCj4gPiBT
-b3JyeSBmb3IgYmVpbmcgbGF0ZS4gVGhlIHBhdGNoIGZpeGVzIHRoZSBpc3N1ZSBvbiB0aGUgbGF0
-ZXN0IGdpdCBmb3IKPiA+IFBQQzY0LiBJbmZhY3QsIHRoZSB3aG9sZSBkcml2ZXJzL3VzYi9ob3N0
-LyBidWlsZHMganVzdCBmaW5lOgo+ID4gCj4gPiBsaW51eC0yLjYgIyBtYWtlIGRyaXZlcnMvdXNi
-L2hvc3QvCj4gPiAgIENISyAgICAgaW5jbHVkZS9saW51eC92ZXJzaW9uLmgKPiA+ICAgQ0hLICAg
-ICBpbmNsdWRlL2xpbnV4L3V0c3JlbGVhc2UuaAo+ID4gICBTWU1MSU5LIGluY2x1ZGUvYXNtIC0+
-IGluY2x1ZGUvYXNtLXBvd2VycGMKPiA+ICAgQ0FMTCAgICBzY3JpcHRzL2NoZWNrc3lzY2FsbHMu
-c2gKPiA+ICAgQ0MgICAgICBkcml2ZXJzL3VzYi9ob3N0L29oY2ktaGNkLm8KPiA+ICAgQ0MgICAg
-ICBkcml2ZXJzL3VzYi9ob3N0L3BjaS1xdWlya3Mubwo+ID4gICBDQyAgICAgIGRyaXZlcnMvdXNi
-L2hvc3QvdWhjaS1oY2Qubwo+ID4gICBMRCAgICAgIGRyaXZlcnMvdXNiL2hvc3QvYnVpbHQtaW4u
-bwo+ID4gICBDQyBbTV0gIGRyaXZlcnMvdXNiL2hvc3QvaXNwMTE2eC1oY2Qubwo+ID4gICBDQyBb
-TV0gIGRyaXZlcnMvdXNiL2hvc3QvdTEzMi1oY2Qubwo+ID4gCj4gPiBZb3UgY2FuIGNoZWNrIGlu
-IHRoZSBwYXRjaCBub3cuCj4gCj4gRGF2ZSwKPiAKPiBIYXZlIHlvdSBjaGVja2VkIGluIHRoaXMg
-cGF0Y2ggPyBPciwgZG9lcyBpdCByZXF1aXJlIHNvbWUgbW9yZQo+IG1vZGlmaWNhdGlvbi91cGRh
-dGVzIGZyb20gc29tZWJvZHnCtHMgc2lkZSA/Cj4gCgpEYXZlLAoKV291bGQgeW91IGNvbnNpZGVy
-IGNoZWNraW5nIGluIHRoaXMgcGF0Y2ggPwoKUmVnYXJkcy0tClN1YnJhdGEKCj4gUmVnYXJkcy0t
-Cj4gU3VicmF0YQo+IAo+ID4gCj4gPiBSZWdhcmRzLS0KPiA+IFN1YnJhdGEKPiA+IAo+ID4gPiAK
-PiA+ID4gCj4gPiA+ID09PT09PT09PT0gQ1VUIEhFUkUKPiA+ID4gRnJvbTogQXJuZCBCZXJnbWFu
-biA8YXJuZEBhcm5kYi5kZT4KPiA+ID4gU3ViamVjdDogZml4IGJ1aWxkIGZhaWx1cmUgZm9yIFBQ
-QzY0IHJhbmRjb25maWcgW3VzYi9vaGNpXQo+ID4gPiAKPiA+ID4gV2UgY291bGQganVzdCBtYWtl
-IHRoZSBVU0JfT0hDSV9IQ0RfUFBDX09GIG9wdGlvbiBpbXBsaWNpdAo+ID4gPiBhbmQgc2VsZWN0
-ZWQgb25seSBpZiBhdCBsZWFzdCBvbmUgb2YgVVNCX09IQ0lfSENEX1BQQ19PRl9CRQo+ID4gPiBh
-bmQgVVNCX09IQ0lfSENEX1BQQ19PRl9MRSBhcmUgc2V0Lgo+ID4gPiAKPiA+ID4gWyBkYnJvd25l
-bGxAdXNlcnMuc291cmNlZm9yZ2UubmV0OiBmaXggcGF0Y2ggbWFuZ2xhdGlvbiBhbmQgZGVwZW5k
-ZW5jaWVzIF0KPiA+ID4gCj4gPiA+IFNpZ25lZC1vZmYtYnk6IEFybmQgQmVyZ21hbm4gPGFybmRA
-YXJuZGIuZGU+Cj4gPiA+IFJlc2VudC1ieTogU3VicmF0YSBNb2RhayA8c3VicmF0YUBsaW51eC52
-bmV0LmlibS5jb20+Cj4gPiA+IFNpZ25lZC1vZmYtYnk6IERhdmlkIEJyb3duZWxsIDxkYnJvd25l
-bGxAdXNlcnMuc291cmNlZm9yZ2UubmV0Pgo+ID4gPiAtLS0KPiA+ID4gIGRyaXZlcnMvdXNiL2hv
-c3QvS2NvbmZpZyB8ICAgMjkgKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0KPiA+ID4gIDEg
-ZmlsZSBjaGFuZ2VkLCAxNSBpbnNlcnRpb25zKCspLCAxNCBkZWxldGlvbnMoLSkKPiA+ID4gCj4g
-PiA+IC0tLSBhL2RyaXZlcnMvdXNiL2hvc3QvS2NvbmZpZwo+ID4gPiArKysgYi9kcml2ZXJzL3Vz
-Yi9ob3N0L0tjb25maWcKPiA+ID4gQEAgLTE4MCwyNiArMTgwLDI3IEBAIGNvbmZpZyBVU0JfT0hD
-SV9IQ0RfUFBDX1NPQwo+ID4gPiAgCSAgRW5hYmxlcyBzdXBwb3J0IGZvciB0aGUgVVNCIGNvbnRy
-b2xsZXIgb24gdGhlIE1QQzUyeHggb3IKPiA+ID4gIAkgIFNUQjAzeHh4IHByb2Nlc3NvciBjaGlw
-LiAgSWYgdW5zdXJlLCBzYXkgWS4KPiA+ID4gCj4gPiA+IC1jb25maWcgVVNCX09IQ0lfSENEX1BQ
-Q19PRgo+ID4gPiAtCWJvb2wgIk9IQ0kgc3VwcG9ydCBmb3IgUFBDIFVTQiBjb250cm9sbGVyIG9u
-IE9GIHBsYXRmb3JtIGJ1cyIKPiA+ID4gLQlkZXBlbmRzIG9uIFVTQl9PSENJX0hDRCAmJiBQUENf
-T0YKPiA+ID4gLQlkZWZhdWx0IHkKPiA+ID4gLQktLS1oZWxwLS0tCj4gPiA+IC0JICBFbmFibGVz
-IHN1cHBvcnQgZm9yIHRoZSBVU0IgY29udHJvbGxlciBQb3dlclBDIHByZXNlbnQgb24gdGhlCj4g
-PiA+IC0JICBPcGVuRmlybXdhcmUgcGxhdGZvcm0gYnVzLgo+ID4gPiAtCj4gPiA+ICBjb25maWcg
-VVNCX09IQ0lfSENEX1BQQ19PRl9CRQo+ID4gPiAtCWJvb2wgIlN1cHBvcnQgYmlnIGVuZGlhbiBI
-QyIKPiA+ID4gLQlkZXBlbmRzIG9uIFVTQl9PSENJX0hDRF9QUENfT0YKPiA+ID4gLQlkZWZhdWx0
-IHkKPiA+ID4gKwlib29sICJPSENJIHN1cHBvcnQgZm9yIE9GIHBsYXRmb3JtIGJ1cyAoYmlnIGVu
-ZGlhbikiCj4gPiA+ICsJZGVwZW5kcyBvbiBVU0JfT0hDSV9IQ0QgJiYgUFBDX09GCj4gPiA+ICAJ
-c2VsZWN0IFVTQl9PSENJX0JJR19FTkRJQU5fREVTQwo+ID4gPiAgCXNlbGVjdCBVU0JfT0hDSV9C
-SUdfRU5ESUFOX01NSU8KPiA+ID4gKwktLS1oZWxwLS0tCj4gPiA+ICsJICBFbmFibGVzIHN1cHBv
-cnQgZm9yIGJpZy1lbmRpYW4gVVNCIGNvbnRyb2xsZXJzIHByZXNlbnQgb24gdGhlCj4gPiA+ICsJ
-ICBPcGVuRmlybXdhcmUgcGxhdGZvcm0gYnVzLgo+ID4gPiAKPiA+ID4gIGNvbmZpZyBVU0JfT0hD
-SV9IQ0RfUFBDX09GX0xFCj4gPiA+IC0JYm9vbCAiU3VwcG9ydCBsaXR0bGUgZW5kaWFuIEhDIgo+
-ID4gPiAtCWRlcGVuZHMgb24gVVNCX09IQ0lfSENEX1BQQ19PRgo+ID4gPiAtCWRlZmF1bHQgbgo+
-ID4gPiArCWJvb2wgIk9IQ0kgc3VwcG9ydCBmb3IgT0YgcGxhdGZvcm0gYnVzIChsaXR0bGUgZW5k
-aWFuKSIKPiA+ID4gKwlkZXBlbmRzIG9uIFVTQl9PSENJX0hDRCAmJiBQUENfT0YKPiA+ID4gIAlz
-ZWxlY3QgVVNCX09IQ0lfTElUVExFX0VORElBTgo+ID4gPiArCS0tLWhlbHAtLS0KPiA+ID4gKwkg
-IEVuYWJsZXMgc3VwcG9ydCBmb3IgbGl0dGxlLWVuZGlhbiBVU0IgY29udHJvbGxlcnMgcHJlc2Vu
-dCBvbiB0aGUKPiA+ID4gKwkgIE9wZW5GaXJtd2FyZSBwbGF0Zm9ybSBidXMuCj4gPiA+ICsKPiA+
-ID4gK2NvbmZpZyBVU0JfT0hDSV9IQ0RfUFBDX09GCj4gPiA+ICsJYm9vbAo+ID4gPiArCWRlcGVu
-ZHMgb24gVVNCX09IQ0lfSENEICYmIFBQQ19PRgo+ID4gPiArCWRlZmF1bHQgVVNCX09IQ0lfSENE
-X1BQQ19PRl9CRSB8fCBVU0JfT0hDSV9IQ0RfUFBDX09GX0xFCj4gPiA+IAo+ID4gPiAgY29uZmln
-IFVTQl9PSENJX0hDRF9QQ0kKPiA+ID4gIAlib29sICJPSENJIHN1cHBvcnQgZm9yIFBDSS1idXMg
-VVNCIGNvbnRyb2xsZXJzIgo+ID4gPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCkxpbnV4cHBjLWRldiBtYWlsaW5nIGxpc3QKTGludXhwcGMtZGV2QGxp
-c3RzLm96bGFicy5vcmcKaHR0cHM6Ly9saXN0cy5vemxhYnMub3JnL2xpc3RpbmZvL2xpbnV4cHBj
-LWRldg==
+--Signature=_Wed__17_Jun_2009_23_08_04_+1000_b+Q_nTnN3K=kJYz8
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Catalin,
+
+On Wed, 17 Jun 2009 09:34:31 +0100 Catalin Marinas <catalin.marinas@arm.com=
+> wrote:
+>
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Over the past few days, I have started getting some arm configs (at lea=
+st
+> > iop13xx_defconfig and integrator_defconfig, but some others) failing to
+> > build getting this error:
+> >
+> >   SYSMAP  System.map
+> >   SYSMAP  .tmp_System.map
+> > Inconsistent kallsyms data
+> > Try setting CONFIG_KALLSYMS_EXTRA_PASS
+> >
+> > Is this something you have seen?  Could it be my toolchain (I am
+> > currently using gcc 4.4.0 and have not changed it recently)?
+>=20
+> I reported an error with kallsysms on ARM this Monday leading to
+> inconsistent data:
+>=20
+> http://lkml.org/lkml/2009/6/15/233
+>=20
+> Could it be related?
+
+Could be.  I have added the proposed fix patch to my fixes tree until
+Linus or Sam gets around to including it.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__17_Jun_2009_23_08_04_+1000_b+Q_nTnN3K=kJYz8
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAko46rQACgkQjjKRsyhoI8w8LwCeIBr/FjDk4mzfF3hpImX1xBHy
+uy4An1DUZnaqaJLPandxqsnHgw2iSb5T
+=lKcr
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__17_Jun_2009_23_08_04_+1000_b+Q_nTnN3K=kJYz8--
