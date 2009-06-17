@@ -1,32 +1,45 @@
-From: Alasdair G Kergon <agk@redhat.com>
-Subject: Re: linux-next: device-mapper tree build warnings
-Date: Wed, 17 Jun 2009 13:37:22 +0100
-Message-ID: <20090617123722.GD8912@agk-dp.fab.redhat.com>
-References: <20090617130806.c17ec577.sfr@canb.auug.org.au>
+From: Boaz Harrosh <bharrosh@panasas.com>
+Subject: Re: linux-next: Tree for June 16 (osd)
+Date: Wed, 17 Jun 2009 15:45:18 +0300
+Message-ID: <4A38E55E.7050006@panasas.com>
+References: <20090616165923.8ca4ddcb.sfr@canb.auug.org.au> <4A37CC79.5000907@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:60384 "EHLO mx2.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756422AbZFQMh0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Jun 2009 08:37:26 -0400
-Content-Disposition: inline
-In-Reply-To: <20090617130806.c17ec577.sfr@canb.auug.org.au>
+Received: from ip67-152-220-66.z220-152-67.customer.algx.net ([67.152.220.66]:4597
+	"EHLO daytona.int.panasas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751934AbZFQMpV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Jun 2009 08:45:21 -0400
+In-Reply-To: <4A37CC79.5000907@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>
 
-On Wed, Jun 17, 2009 at 01:08:06PM +1000, Stephen Rothwell wrote:
-> Today's linux-next build (x86_64 allmodconfig) produced these warnings:
-> drivers/md/dm-delay.c: In function 'delay_iterate_devices':
-> drivers/md/dm-delay.c:327: warning: passing argument 1 of 'fn' from incompatible pointer type
-> drivers/md/dm-delay.c:327: note: expected 'struct dm_target *' but argument is of type 'struct delay_c *'
-> drivers/md/dm-delay.c:332: warning: passing argument 1 of 'fn' from incompatible pointer type
-> drivers/md/dm-delay.c:332: note: expected 'struct dm_target *' but argument is of type 'struct delay_c *'
-> Introduced by commit ac2152571c038de73be920db171fb438d32bb744
-> ("dm-targets-introduce-iterate-devices-fn").
+On 06/16/2009 07:46 PM, Randy Dunlap wrote:
+> Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Changes since 20090615:
+> 
+> 
+> When
+> CONFIG_BLK_DEV_OSD=y
+> CONFIG_SCSI_OSD_INITIATOR=y
+> # CONFIG_SCSI_OSD_ULD is not set
+> 
+> build fails with
+> 
+> drivers/built-in.o: In function `class_osdblk_remove':
+> osdblk.c:(.text+0x55376): undefined reference to `osduld_put_device'
+> drivers/built-in.o: In function `class_osdblk_add':
+> osdblk.c:(.text+0x5564d): undefined reference to `osduld_path_lookup'
+> osdblk.c:(.text+0x5584d): undefined reference to `osduld_put_device'
+> 
+> 
 
-Resolved, thanks.
+Thanks, osdblk has the wrong dependency, I will fix it.
 
-Alasdair
+Boaz
