@@ -1,45 +1,69 @@
-From: Pekka Enberg <penberg@cs.helsinki.fi>
-Subject: Re: linux-next: ext4 tree build failure
-Date: Wed, 17 Jun 2009 07:16:30 +0300
-Message-ID: <4A386E1E.7080808@cs.helsinki.fi>
-References: <20090616144413.50e975f9.sfr@canb.auug.org.au> <20090616203034.GB14788@mit.edu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: kvm/powerpc tree build failure
+Date: Wed, 17 Jun 2009 15:04:19 +1000
+Message-ID: <20090617150419.e406a69a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from courier.cs.helsinki.fi ([128.214.9.1]:41783 "EHLO
-	mail.cs.helsinki.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750805AbZFQEU7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Jun 2009 00:20:59 -0400
-In-Reply-To: <20090616203034.GB14788@mit.edu>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34096 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932670AbZFQFEY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Jun 2009 01:04:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Tso <tytso@mit.edu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pekka Enberg <penberg@cs.helsinki.fi>, Christoph
+To: Avi Kivity <avi@qumranet.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org
 
-Hi Ted,
+Hi Avi, Ben,
 
-Theodore Tso wrote:
-> On Tue, Jun 16, 2009 at 02:44:13PM +1000, Stephen Rothwell wrote:
->> Hi Ted,
->>
->> Today's linux-next build (powerpc ppc64_defconfig) failed like this after
->> the slab tree was merged:
->>
->> In file included from fs/jbd2/checkpoint.c:26:
->> include/trace/events/jbd2.h:11: error: expected ')' before '(' token
->> include/trace/events/jbd2.h:31: error: expected ')' before '(' token
-> 
-> Hmm... I wonder why the slab tree would be messing with tracing
-> include files.
-> 
-> Which slab tree is it?  Is it Pekka's?
-> 
->       git://git.kernel.org/pub/scm/linux/kernel/git/penberg/slab-2.6.git
+Today's linux-next build (powerpc ppc44x_defconfig) failed like this:
 
-Yup, that's it. I looked at this yesterday but didn't see anything 
-suspicious. I don't think I have any patches that mess with any tracing 
-include files. The only major change there should be the new default 
-SLQB allocator. Perhaps ext4 is simply missing some includes that are 
-pulled by SLUB but not SLQB?
+cc1: warnings being treated as errors
+arch/powerpc/kvm/../../../virt/kvm/kvm_main.c: In function '__kvm_set_memory_region':
+arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:1178: error: integer overflow in expression
 
-			Pekka
+Probably caused by commit ac04527f7947020c5890090b2ac87af4e98d977e ("KVM:
+Disable large pages on misaligned memory slots"). The build fails because
+arch/powerpc is now being built (mostly) with -Werror.
+
+arch/powerpc/include/asm/kvm_host.h:#define KVM_PAGES_PER_HPAGE (1<<31)
+
+this needs to be (1UL << 31) or ((unsigned int)1 << 31).
+
+I applied the following patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 17 Jun 2009 14:57:29 +1000
+Subject: [PATCH] kvm/powerpc: make 32 bit constant unsigned long
+
+KVM_PAGES_PER_HPAGE needs to be unsigned long since its value is 2^31.
+
+Eliminates this compiler warning:
+
+arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:1178: error: integer overflow in expression
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/include/asm/kvm_host.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/kvm_host.h b/arch/powerpc/include/asm/kvm_host.h
+index 3625424..d4caa61 100644
+--- a/arch/powerpc/include/asm/kvm_host.h
++++ b/arch/powerpc/include/asm/kvm_host.h
+@@ -34,7 +34,7 @@
+ #define KVM_COALESCED_MMIO_PAGE_OFFSET 1
+ 
+ /* We don't currently support large pages. */
+-#define KVM_PAGES_PER_HPAGE (1<<31)
++#define KVM_PAGES_PER_HPAGE (1UL << 31)
+ 
+ struct kvm;
+ struct kvm_run;
+-- 
+1.6.3.1
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
