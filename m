@@ -1,36 +1,65 @@
-From: Avi Kivity <avi@redhat.com>
-Subject: Re: linux-next: kvm/powerpc tree build failure
-Date: Wed, 17 Jun 2009 17:04:12 +0300
-Message-ID: <4A38F7DC.3030206@redhat.com>
-References: <20090617150419.e406a69a.sfr@canb.auug.org.au>	<4A38F47F.509@redhat.com> <20090617235546.95aa39a5.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH][SQUASHME] osdblk is dependent on SCSI_OSD_ULD
+Date: Wed, 17 Jun 2009 09:20:28 -0700
+Message-ID: <4A3917CC.1060105@oracle.com>
+References: <20090616165923.8ca4ddcb.sfr@canb.auug.org.au>	<4A37CC79.5000907@oracle.com>	<4A38E55E.7050006@panasas.com> <20090617231250.4aefe5e8.sfr@canb.auug.org.au> <4A38F15C.5050204@panasas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:53094 "EHLO mx2.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755547AbZFQOEX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Jun 2009 10:04:23 -0400
-In-Reply-To: <20090617235546.95aa39a5.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <4A38F15C.5050204@panasas.com>
+Sender: linux-scsi-owner@vger.kernel.org
+To: Boaz Harrosh <bharrosh@panasas.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jeff Garzik <jeff@garzik.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>, open-osd mailing-list <osd-dev@open-osd.org>
+List-Id: linux-next.vger.kernel.org
 
-On 06/17/2009 04:55 PM, Stephen Rothwell wrote:
-> Hi Avi,
->
-> On Wed, 17 Jun 2009 16:49:51 +0300 Avi Kivity<avi@redhat.com>  wrote:
->    
->> Thanks, applied.  For some reason my own build testing didn't fail on this.
->>      
->
-> Thanks.  It could be a different compiler version doesn't complain (I am
-> currently using 4.4.0) and the powerpc tree has a patch to build parts of
-> arch/powerpc with -Werror which makes it stand out a bit :-)
->    
+Boaz Harrosh wrote:
+> I will be squashing the below patch into the osdblk patch and will
+> rebase the "linux-next" branch. (No one is dependent on this branch
+> so there is no reason not too)
+> 
+> ---
+> Stephen Rothwell wrote:
+> When
+> CONFIG_BLK_DEV_OSD=y
+> CONFIG_SCSI_OSD_INITIATOR=y
+> \# CONFIG_SCSI_OSD_ULD is not set
+> 
+> build fails with:
+> drivers/built-in.o: In function `class_osdblk_remove':
+> osdblk.c:(.text+0x55376): undefined reference to `osduld_put_device'
+> drivers/built-in.o: In function `class_osdblk_add':
+> osdblk.c:(.text+0x5564d): undefined reference to `osduld_path_lookup'
+> osdblk.c:(.text+0x5584d): undefined reference to `osduld_put_device'
+> 
+> Fix by setting the proper dependency for this driver
+> 
+> Signed-off-by: Boaz Harrosh <bharrosh@panasas.com>
 
-Ah yes, you did mention it was a warning.
+Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+
+Thanks.
+
+> ---
+>  drivers/block/Kconfig |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/block/Kconfig b/drivers/block/Kconfig
+> index 2f55a4b..1d886e0 100644
+> --- a/drivers/block/Kconfig
+> +++ b/drivers/block/Kconfig
+> @@ -300,7 +300,7 @@ config BLK_DEV_NBD
+>  
+>  config BLK_DEV_OSD
+>  	tristate "OSD object-as-blkdev support"
+> -	depends on SCSI_OSD_INITIATOR
+> +	depends on SCSI_OSD_ULD
+>  	---help---
+>  	  Saying Y or M here will allow the exporting of a single SCSI
+>  	  OSD (object-based storage) object as a Linux block device.
+
 
 -- 
-Do not meddle in the internals of kernels, for they are subtle and quick to panic.
+~Randy
+LPC 2009, Sept. 23-25, Portland, Oregon
+http://linuxplumbersconf.org/2009/
