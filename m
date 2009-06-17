@@ -1,45 +1,107 @@
-From: Boaz Harrosh <bharrosh@panasas.com>
-Subject: Re: linux-next: Tree for June 16 (osd)
-Date: Wed, 17 Jun 2009 15:45:18 +0300
-Message-ID: <4A38E55E.7050006@panasas.com>
-References: <20090616165923.8ca4ddcb.sfr@canb.auug.org.au> <4A37CC79.5000907@oracle.com>
+From: Subrata Modak <subrata@linux.vnet.ibm.com>
+Subject: [PATCH][Resend 2][BUILD FAILURE 04/04] Next June 04:PPC64
+	randconfig [drivers/net/ucc_geth.o]
+Date: Wed, 17 Jun 2009 18:21:37 +0530
+Message-ID: <1245243097.4870.3.camel@subratamodak.linux.ibm.com>
+References: <20090611033705.20842.75501.sendpatchset@subratamodak.linux.ibm.com>
+	 <1245048719.5239.10.camel@subratamodak.linux.ibm.com>
+Reply-To: subrata@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ip67-152-220-66.z220-152-67.customer.algx.net ([67.152.220.66]:4597
-	"EHLO daytona.int.panasas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751934AbZFQMpV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Jun 2009 08:45:21 -0400
-In-Reply-To: <4A37CC79.5000907@oracle.com>
+Received: from e8.ny.us.ibm.com ([32.97.182.138]:39659 "EHLO e8.ny.us.ibm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756942AbZFQMvo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Jun 2009 08:51:44 -0400
+In-Reply-To: <1245048719.5239.10.camel@subratamodak.linux.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>
+To: netdev@vger.kernel.org, Li Yang <leoli@freescale.com>
+Cc: Nathan Lynch <ntl@pobox.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Sachin P Sant <sachinp@linux.vnet.ibm.com>, Linux-Next <linux-next@vger.kernel.org>, Linux-Kernel <linux-kernel@vger.kernel.org>, Balbir Singh <balbir@linux.vnet.ibm.com>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Tony Breeds <tony@bakeyournoodle.com>, michael@ellerman.id.au
 
-On 06/16/2009 07:46 PM, Randy Dunlap wrote:
-> Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20090615:
+On Mon, 2009-06-15 at 12:22 +0530, Subrata Modak wrote:
+> Hi Li/Nathan,
 > 
+> On Thu, 2009-06-11 at 09:07 +0530, Subrata Modak wrote: 
+> > Hi Nathan,
+> > 
+> > >On Wed, 2009-06-10 at 21:28 -0500, Nathan Lynch wrote:
+> > >Subrata Modak <subrata@linux.vnet.ibm.com> writes:
+> > > 
+> > > > On Thu, 2009-06-11 at 11:05 +1000, Stephen Rothwell wrote:
+> > > >> Hi Subrata,
+> > > >> 
+> > > >> On Wed, 10 Jun 2009 23:13:23 +0530 Subrata Modak <subrata@linux.vnet.ibm.com> wrote:
+> > > >> >
+> > > >> >  	/* Find the TBI PHY.  If it's not there, we don't support SGMII */
+> > > >> > -	ph = of_get_property(np, "tbi-handle", NULL);
+> > > >> > +	ph = (phandle *)of_get_property(np, "tbi-handle", NULL);
+> > > >> 
+> > > >> You don't need this cast because of_get_property() returns "void *".
+> > > >
+> > > > Stephen,
+> > > >
+> > > > True. But without this gcc complains:
+> > > >
+> > > > CC [M]  drivers/net/ucc_geth.o
+> > > > drivers/net/ucc_geth.c: In function bucc_geth_probeb:
+> > > > drivers/net/ucc_geth.c:3824: warning: assignment discards qualifiers
+> > > > from pointer target type
+> > > 
+> > > ph should be declared const phandle *.  Look at other uses of
+> > > of_get_property.
+> > >
+> > 
+> > Ok fine. Here is a revised patch again.
+> > 
+> > Subject: [PATCH][Resend 2][BUILD FAILURE 04/04] Next June 04:PPC64 randconfig [drivers/net/ucc_geth.o]
+> > Reference(s):
+> > http://lkml.org/lkml/2009/6/4/241,
+> > http://lkml.org/lkml/2009/6/10/338,
+> > 
+> > Fix the following build error:
+> > 
+> > drivers/net/ucc_geth.c: In function bucc_geth_probeb:
+> > drivers/net/ucc_geth.c:3822: error: 'ph' undeclared (first use in this function)
+> > drivers/net/ucc_geth.c:3822: error: (Each undeclared identifier is reported only once
+> > drivers/net/ucc_geth.c:3822: error: for each function it appears in.)
+> > drivers/net/ucc_geth.c:3832: error: 'mdio' undeclared (first use in this function)
+> > make[2]: *** [drivers/net/ucc_geth.o] Error 1
+> > 
+> > Signed-off-by: Subrata Modak <subrata@linux.vnet.ibm.com>
+> > ---
 > 
-> When
-> CONFIG_BLK_DEV_OSD=y
-> CONFIG_SCSI_OSD_INITIATOR=y
-> # CONFIG_SCSI_OSD_ULD is not set
-> 
-> build fails with
-> 
-> drivers/built-in.o: In function `class_osdblk_remove':
-> osdblk.c:(.text+0x55376): undefined reference to `osduld_put_device'
-> drivers/built-in.o: In function `class_osdblk_add':
-> osdblk.c:(.text+0x5564d): undefined reference to `osduld_path_lookup'
-> osdblk.c:(.text+0x5584d): undefined reference to `osduld_put_device'
-> 
-> 
+> Is there anything else to be done in this patch. If this is OK, can this
+> be applied. I am not sure, but, i find Li Yang as the maintainer for
+> this in linux*/MAINTAINERS file. Kindly let me know if this patch needs
+> to be revisited for some other issue(s).
 
-Thanks, osdblk has the wrong dependency, I will fix it.
+Li,
 
-Boaz
+Any thoughts on this patch ?
+
+Regards--
+Subrata
+
+> 
+> Regards--
+> Subrata
+> 
+> > 
+> > --- linux-2.6.30-rc8/drivers/net/ucc_geth.c.orig	2009-06-10 11:58:39.000000000 -0500
+> > +++ linux-2.6.30-rc8/drivers/net/ucc_geth.c	2009-06-10 22:28:13.000000000 -0500
+> > @@ -3595,6 +3595,8 @@ static const struct net_device_ops ucc_g
+> > 
+> >  static int ucc_geth_probe(struct of_device* ofdev, const struct of_device_id *match)
+> >  {
+> > +	struct device_node *mdio;
+> > +	const phandle *ph;
+> >  	struct device *device = &ofdev->dev;
+> >  	struct device_node *np = ofdev->node;
+> >  	struct net_device *dev = NULL;
+> > 
+> > ---
+> > Regards--
+> > Subrata
+> > 
