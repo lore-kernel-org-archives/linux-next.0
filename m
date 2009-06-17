@@ -1,76 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH][Resend 2][BUILD FAILURE 04/04] Next June 04:PPC64
- randconfig [drivers/net/ucc_geth.o]
-Date: Wed, 17 Jun 2009 23:34:52 +1000
-Message-ID: <20090617233452.03ac78d5.sfr@canb.auug.org.au>
-References: <20090611033705.20842.75501.sendpatchset@subratamodak.linux.ibm.com>
-	<1245048719.5239.10.camel@subratamodak.linux.ibm.com>
-	<1245243097.4870.3.camel@subratamodak.linux.ibm.com>
-	<6E26D0A1-0FE5-4179-9DA8-FDF0E3D417DA@kernel.crashing.org>
-	<20090617232341.c4543ff2.sfr@canb.auug.org.au>
+From: Boaz Harrosh <bharrosh@panasas.com>
+Subject: [PATCH][SQUASHME] osdblk is dependent on SCSI_OSD_ULD
+Date: Wed, 17 Jun 2009 16:36:28 +0300
+Message-ID: <4A38F15C.5050204@panasas.com>
+References: <20090616165923.8ca4ddcb.sfr@canb.auug.org.au>	<4A37CC79.5000907@oracle.com>	<4A38E55E.7050006@panasas.com> <20090617231250.4aefe5e8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51068 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933307AbZFQNeu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Jun 2009 09:34:50 -0400
-In-Reply-To: <20090617232341.c4543ff2.sfr@canb.auug.org.au>
+Received: from ip67-152-220-66.z220-152-67.customer.algx.net ([67.152.220.66]:6676
+	"EHLO daytona.int.panasas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752459AbZFQNg2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Jun 2009 09:36:28 -0400
+In-Reply-To: <20090617231250.4aefe5e8.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kumar Gala <galak@kernel.crashing.org>
-Cc: subrata@linux.vnet.ibm.com, netdev@vger.kernel.org, Li Yang <leoli@freescale.com>, Nathan Lynch <ntl@pobox.com>, Sachin P Sant <sachinp@linux.vnet.ibm.com>, Linux-Next <linux-next@vger.kernel.org>, Linux-Kernel <linux-kernel@vger.kernel.org>, Balbir Singh <balbir@linux.vnet.ibm.com>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Tony Breeds <tony@bakeyournoodle.com>, michael@ellerman.id.au, Haiying Wang <Haiying.Wang@freescale.com>, "David S. Miller" <davem@davemloft.net>, Grant Likely <grant.likely@secretlab.ca>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jeff Garzik <jeff@garzik.org>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>, open-osd mailing-list <osd-dev@open-osd.org>
 
-On Wed, 17 Jun 2009 23:23:41 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Kumar,
-> 
-> On Wed, 17 Jun 2009 08:07:47 -0500 Kumar Gala <galak@kernel.crashing.org> wrote:
-> >
-> > 
-> > I'm confused by the proposed fix as we already have *mdio & *ph  
-> > defined in this function:
-> 
-> Which tree are you looking at?  Linus' tree, and linux-next, do not have
-> those local variables ...
+I will be squashing the below patch into the osdblk patch and will
+rebase the "linux-next" branch. (No one is dependent on this branch
+so there is no reason not too)
 
-Hmmm, commit 0b9da337dca972e7a4144e298ec3adb8f244d4a4 ("net: Rework
-ucc_geth driver to use of_mdio infrastructure") removed the locals along
-with their usages, then commit 047584ce94108012288554a5f84585d792cc7f8f
-("net/ucc_geth: Add SGMII support for UEC GETH driver") added more uses
-without adding the variables back.
+---
+Stephen Rothwell wrote:
+When
+CONFIG_BLK_DEV_OSD=y
+CONFIG_SCSI_OSD_INITIATOR=y
+\# CONFIG_SCSI_OSD_ULD is not set
 
-Here is the patch again:
+build fails with:
+drivers/built-in.o: In function `class_osdblk_remove':
+osdblk.c:(.text+0x55376): undefined reference to `osduld_put_device'
+drivers/built-in.o: In function `class_osdblk_add':
+osdblk.c:(.text+0x5564d): undefined reference to `osduld_path_lookup'
+osdblk.c:(.text+0x5584d): undefined reference to `osduld_put_device'
 
-From: Subrata Modak <subrata@linux.vnet.ibm.com>
-Subject: [PATCH] Fix build error in ucc_geth.c
+Fix by setting the proper dependency for this driver
 
-Fix the following build error:
+Signed-off-by: Boaz Harrosh <bharrosh@panasas.com>
+---
+ drivers/block/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-drivers/net/ucc_geth.c: In function bucc_geth_probeb:
-drivers/net/ucc_geth.c:3822: error: 'ph' undeclared (first use in this function)
-drivers/net/ucc_geth.c:3822: error: (Each undeclared identifier is reported only once
-drivers/net/ucc_geth.c:3822: error: for each function it appears in.)
-drivers/net/ucc_geth.c:3832: error: 'mdio' undeclared (first use in this function)
-make[2]: *** [drivers/net/ucc_geth.o] Error 1
-
-Signed-off-by: Subrata Modak <subrata@linux.vnet.ibm.com>
-
---- linux-2.6.30-rc8/drivers/net/ucc_geth.c.orig	2009-06-10 11:58:39.000000000 -0500
-+++ linux-2.6.30-rc8/drivers/net/ucc_geth.c	2009-06-10 22:28:13.000000000 -0500
-@@ -3595,6 +3595,8 @@ static const struct net_device_ops ucc_g
+diff --git a/drivers/block/Kconfig b/drivers/block/Kconfig
+index 2f55a4b..1d886e0 100644
+--- a/drivers/block/Kconfig
++++ b/drivers/block/Kconfig
+@@ -300,7 +300,7 @@ config BLK_DEV_NBD
  
- static int ucc_geth_probe(struct of_device* ofdev, const struct of_device_id *match)
- {
-+	struct device_node *mdio;
-+	const phandle *ph;
- 	struct device *device = &ofdev->dev;
- 	struct device_node *np = ofdev->node;
- 	struct net_device *dev = NULL;
-
-
+ config BLK_DEV_OSD
+ 	tristate "OSD object-as-blkdev support"
+-	depends on SCSI_OSD_INITIATOR
++	depends on SCSI_OSD_ULD
+ 	---help---
+ 	  Saying Y or M here will allow the exporting of a single SCSI
+ 	  OSD (object-based storage) object as a Linux block device.
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+1.6.2.1
