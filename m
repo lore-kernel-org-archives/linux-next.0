@@ -1,58 +1,52 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: net tree build failure
-Date: Wed, 17 Jun 2009 01:36:58 -0700 (PDT)
-Message-ID: <20090617.013658.58706664.davem@davemloft.net>
-References: <20090617163112.e14e064d.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: [PATCH next] PCI hotplug: fix build when !SYSFS
+Date: Wed, 17 Jun 2009 16:23:17 +0400
+Message-ID: <1245241397-6781-1-git-send-email-a.beregalov@gmail.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:37279
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751068AbZFQIgz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Jun 2009 04:36:55 -0400
-In-Reply-To: <20090617163112.e14e064d.sfr@canb.auug.org.au>
+Received: from mail-fx0-f212.google.com ([209.85.220.212]:33692 "EHLO
+	mail-fx0-f212.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754009AbZFQMbL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Jun 2009 08:31:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kaber@trash.net, geert@linux-m68k.org
+To: jbarnes@virtuousgeek.org, kaneshige.kenji@jp.fujitsu.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Cc: Alexander Beregalov <a.beregalov@gmail.com>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 17 Jun 2009 16:31:12 +1000
+Fix this build error when CONFIG_SYSFS is not set:
+drivers/pci/slot.c: In function 'pci_hp_create_module_link':
+drivers/pci/slot.c:327: error: 'module_kset' undeclared
 
-> Today's linux-next build (m68k defconfig) failed like this:
-> 
-> drivers/net/sonic.c: In function 'sonic_send_packet':
-> drivers/net/sonic.c:227: error: expected ';' before '}' token
-> 
-> Caused by commit 5b548140225c6bbbbd560551dd1048b2c0ce58be ("net: use
-> symbolic values for ndo_start_xmit() return codes") which lost a
-> semicolon in drivers/net/sonic.c.
-
-I just pushed the following fix, thanks!
-
-sonic: Fix build after ndo_start_xmit() changes.
-
-Noticed by Stephen Rothwell.
-
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
 ---
- drivers/net/sonic.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/pci/slot.c |    9 +++++++++
+ 1 files changed, 9 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/net/sonic.c b/drivers/net/sonic.c
-index e4255d8..753a1fb 100644
---- a/drivers/net/sonic.c
-+++ b/drivers/net/sonic.c
-@@ -223,7 +223,7 @@ static int sonic_send_packet(struct sk_buff *skb, struct net_device *dev)
- 	if (!laddr) {
- 		printk(KERN_ERR "%s: failed to map tx DMA buffer.\n", dev->name);
- 		dev_kfree_skb(skb);
--		return NETDEV_TX_BUSY
-+		return NETDEV_TX_BUSY;
- 	}
+diff --git a/drivers/pci/slot.c b/drivers/pci/slot.c
+index eddb074..dd6c097 100644
+--- a/drivers/pci/slot.c
++++ b/drivers/pci/slot.c
+@@ -308,6 +308,7 @@ void pci_destroy_slot(struct pci_slot *slot)
+ EXPORT_SYMBOL_GPL(pci_destroy_slot);
  
- 	sonic_tda_put(dev, entry, SONIC_TD_STATUS, 0);       /* clear status */
+ #if defined(CONFIG_HOTPLUG_PCI) || defined(CONFIG_HOTPLUG_PCI_MODULE)
++#ifdef CONFIG_SYSFS
+ #include <linux/pci_hotplug.h>
+ /**
+  * pci_hp_create_link - create symbolic link to the hotplug driver module.
+@@ -344,6 +345,14 @@ void pci_hp_remove_module_link(struct pci_slot *pci_slot)
+ 	sysfs_remove_link(&pci_slot->kobj, "module");
+ }
+ EXPORT_SYMBOL_GPL(pci_hp_remove_module_link);
++#else /* CONFIG_SYSFS */
++
++inline void pci_hp_create_module_link(struct pci_slot *pci_slot) {}
++EXPORT_SYMBOL_GPL(pci_hp_create_module_link);
++
++inline void pci_hp_remove_module_link(struct pci_slot *pci_slot) {}
++EXPORT_SYMBOL_GPL(pci_hp_remove_module_link);
++#endif /* CONFIG_SYSFS */
+ #endif
+ 
+ static int pci_slot_init(void)
 -- 
-1.6.3.2
+1.6.2.4
