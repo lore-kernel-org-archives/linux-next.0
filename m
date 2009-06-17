@@ -1,93 +1,249 @@
 From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH][Resend 2][BUILD FAILURE 04/04] Next June 04:PPC64
-	randconfig [drivers/net/ucc_geth.o]
-Date: Wed, 17 Jun 2009 14:37:38 -0600
-Message-ID: <fa686aa40906171337n13813d9wddaa03f2e8904f80@mail.gmail.com>
-References: <20090611033705.20842.75501.sendpatchset@subratamodak.linux.ibm.com>
-	<1245048719.5239.10.camel@subratamodak.linux.ibm.com> <1245243097.4870.3.camel@subratamodak.linux.ibm.com>
-	<6E26D0A1-0FE5-4179-9DA8-FDF0E3D417DA@kernel.crashing.org>
-	<20090617232341.c4543ff2.sfr@canb.auug.org.au> <20090617233452.03ac78d5.sfr@canb.auug.org.au>
-	<fa686aa40906171029p4d5b876fm16d0f144b1a19346@mail.gmail.com>
+Subject: [PATCH 1/2] Revert "net/ucc_geth: Add SGMII support for UEC GETH
+	driver"
+Date: Wed, 17 Jun 2009 15:02:58 -0600
+Message-ID: <20090617210257.18394.54561.stgit@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <fa686aa40906171029p4d5b876fm16d0f144b1a19346@mail.gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Kumar Gala <galak@kernel.crashing.org>, subrata@linux.vnet.ibm.com, netdev@vger.kernel.org, Li Yang <leoli@freescale.com>, Nathan Lynch <ntl@pobox.com>, Sachin P Sant <sachinp@linux.vnet.ibm.com>, Linux-Next <linux-next@vger.kernel.org>, Linux-Kernel <linux-kernel@vger.kernel.org>, Balbir Singh <balbir@linux.vnet.ibm.com>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Tony Breeds <tony@bakeyournoodle.com>, michael@ellerman.id.au, Haiying Wang <Haiying.Wang@freescale.com>, "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, subrata@linux.vnet.ibm.com, netdev@vger.kernel.org
+Cc: Sachin P Sant <sachinp@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Linux-Next <linux-next@vger.kernel.org>, Nathan Lynch <ntl@pobox.com>, Haiying Wang <Haiying.Wang@freescale.com>, Li Yang <leoli@freescale.com>, "David S. Miller" <davem@davemloft.net>, Balbir Singh <balbir@linux.vnet.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Jun 17, 2009 at 11:29 AM, Grant Likely<grant.likely@secretlab.c=
-a> wrote:
-> On Wed, Jun 17, 2009 at 7:34 AM, Stephen Rothwell<sfr@canb.auug.org.a=
-u> wrote:
->> On Wed, 17 Jun 2009 23:23:41 +1000 Stephen Rothwell <sfr@canb.auug.o=
-rg.au> wrote:
->>>
->>> Hi Kumar,
->>>
->>> On Wed, 17 Jun 2009 08:07:47 -0500 Kumar Gala <galak@kernel.crashin=
-g.org> wrote:
->>> >
->>> >
->>> > I'm confused by the proposed fix as we already have *mdio & *ph
->>> > defined in this function:
->>>
->>> Which tree are you looking at? =A0Linus' tree, and linux-next, do n=
-ot have
->>> those local variables ...
->>
->> Hmmm, commit 0b9da337dca972e7a4144e298ec3adb8f244d4a4 ("net: Rework
->> ucc_geth driver to use of_mdio infrastructure") removed the locals a=
-long
->> with their usages, then commit 047584ce94108012288554a5f84585d792cc7=
-f8f
->> ("net/ucc_geth: Add SGMII support for UEC GETH driver") added more u=
-ses
->> without adding the variables back.
->>
->> Here is the patch again:
->>
->> From: Subrata Modak <subrata@linux.vnet.ibm.com>
->> Subject: [PATCH] Fix build error in ucc_geth.c
->>
->> Fix the following build error:
->>
->> drivers/net/ucc_geth.c: In function bucc_geth_probeb:
->> drivers/net/ucc_geth.c:3822: error: 'ph' undeclared (first use in th=
-is function)
->> drivers/net/ucc_geth.c:3822: error: (Each undeclared identifier is r=
-eported only once
->> drivers/net/ucc_geth.c:3822: error: for each function it appears in.=
-)
->> drivers/net/ucc_geth.c:3832: error: 'mdio' undeclared (first use in =
-this function)
->> make[2]: *** [drivers/net/ucc_geth.o] Error 1
->>
->> Signed-off-by: Subrata Modak <subrata@linux.vnet.ibm.com>
->>
->> --- linux-2.6.30-rc8/drivers/net/ucc_geth.c.orig =A0 =A0 =A0 =A02009=
--06-10 11:58:39.000000000 -0500
->> +++ linux-2.6.30-rc8/drivers/net/ucc_geth.c =A0 =A0 2009-06-10 22:28=
-:13.000000000 -0500
->> @@ -3595,6 +3595,8 @@ static const struct net_device_ops ucc_g
->>
->> =A0static int ucc_geth_probe(struct of_device* ofdev, const struct o=
-f_device_id *match)
->> =A0{
->> + =A0 =A0 =A0 struct device_node *mdio;
->> + =A0 =A0 =A0 const phandle *ph;
->> =A0 =A0 =A0 =A0struct device *device =3D &ofdev->dev;
->> =A0 =A0 =A0 =A0struct device_node *np =3D ofdev->node;
->> =A0 =A0 =A0 =A0struct net_device *dev =3D NULL;
->
-> Ah, this might not be the right fix then. =A0I'll look.
+From: Grant Likely <grant.likely@secretlab.ca>
 
-Yeah, this is not the right fix.  The SGMII change doesn't mesh well
-with the of_mdio changes and needed some rewriting.  I'm about to post
-a patch (compile tested only) which should make things happy.
+This reverts commit 047584ce94108012288554a5f84585d792cc7f8f.
 
---=20
-Grant Likely, B.Sc., P.Eng.
-Secret Lab Technologies Ltd.
+This patch meshes badly with "net: Rework ucc_geth driver to use
+of_mdio infrastructure" (0b9da337dca972e7a4144e298ec3adb8f244d4a4).
+Since most of the patch needs to be reworked, it is clearer to revert
+the patch and then apply the corrected version
+
+Signed-off-by: Grant Likely <grant.likely@secretlab.ca>
+---
+
+ arch/powerpc/include/asm/qe.h |    2 -
+ drivers/net/ucc_geth.c        |   79 +----------------------------------------
+ drivers/net/ucc_geth.h        |   28 +--------------
+ 3 files changed, 2 insertions(+), 107 deletions(-)
+
+
+diff --git a/arch/powerpc/include/asm/qe.h b/arch/powerpc/include/asm/qe.h
+index 157c5ca..e0faf33 100644
+--- a/arch/powerpc/include/asm/qe.h
++++ b/arch/powerpc/include/asm/qe.h
+@@ -675,8 +675,6 @@ struct ucc_slow_pram {
+ #define UCC_GETH_UPSMR_RMM      0x00001000
+ #define UCC_GETH_UPSMR_CAM      0x00000400
+ #define UCC_GETH_UPSMR_BRO      0x00000200
+-#define UCC_GETH_UPSMR_SMM	0x00000080
+-#define UCC_GETH_UPSMR_SGMM	0x00000020
+ 
+ /* UCC Transmit On Demand Register (UTODR) */
+ #define UCC_SLOW_TOD	0x8000
+diff --git a/drivers/net/ucc_geth.c b/drivers/net/ucc_geth.c
+index e2f2e91..5118993 100644
+--- a/drivers/net/ucc_geth.c
++++ b/drivers/net/ucc_geth.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2006-2009 Freescale Semicondutor, Inc. All rights reserved.
++ * Copyright (C) 2006-2007 Freescale Semicondutor, Inc. All rights reserved.
+  *
+  * Author: Shlomi Gridish <gridish@freescale.com>
+  *	   Li Yang <leoli@freescale.com>
+@@ -65,8 +65,6 @@
+ 
+ static DEFINE_SPINLOCK(ugeth_lock);
+ 
+-static void uec_configure_serdes(struct net_device *dev);
+-
+ static struct {
+ 	u32 msg_enable;
+ } debug = { -1 };
+@@ -1412,9 +1410,6 @@ static int adjust_enet_interface(struct ucc_geth_private *ugeth)
+ 	    (ugeth->phy_interface == PHY_INTERFACE_MODE_RTBI)) {
+ 		upsmr |= UCC_GETH_UPSMR_TBIM;
+ 	}
+-	if ((ugeth->phy_interface == PHY_INTERFACE_MODE_SGMII))
+-		upsmr |= UCC_GETH_UPSMR_SGMM;
+-
+ 	out_be32(&uf_regs->upsmr, upsmr);
+ 
+ 	/* Disable autonegotiation in tbi mode, because by default it
+@@ -1559,9 +1554,6 @@ static int init_phy(struct net_device *dev)
+ 		return -ENODEV;
+ 	}
+ 
+-	if (priv->phy_interface == PHY_INTERFACE_MODE_SGMII)
+-		uec_configure_serdes(dev);
+-
+ 	phydev->supported &= (ADVERTISED_10baseT_Half |
+ 				 ADVERTISED_10baseT_Full |
+ 				 ADVERTISED_100baseT_Half |
+@@ -1577,41 +1569,7 @@ static int init_phy(struct net_device *dev)
+ 	return 0;
+ }
+ 
+-/* Initialize TBI PHY interface for communicating with the
+- * SERDES lynx PHY on the chip.  We communicate with this PHY
+- * through the MDIO bus on each controller, treating it as a
+- * "normal" PHY at the address found in the UTBIPA register.  We assume
+- * that the UTBIPA register is valid.  Either the MDIO bus code will set
+- * it to a value that doesn't conflict with other PHYs on the bus, or the
+- * value doesn't matter, as there are no other PHYs on the bus.
+- */
+-static void uec_configure_serdes(struct net_device *dev)
+-{
+-	struct ucc_geth_private *ugeth = netdev_priv(dev);
+-
+-	if (!ugeth->tbiphy) {
+-		printk(KERN_WARNING "SGMII mode requires that the device "
+-			"tree specify a tbi-handle\n");
+-	return;
+-	}
+-
+-	/*
+-	 * If the link is already up, we must already be ok, and don't need to
+-	 * configure and reset the TBI<->SerDes link.  Maybe U-Boot configured
+-	 * everything for us?  Resetting it takes the link down and requires
+-	 * several seconds for it to come back.
+-	 */
+-	if (phy_read(ugeth->tbiphy, ENET_TBI_MII_SR) & TBISR_LSTATUS)
+-		return;
+-
+-	/* Single clk mode, mii mode off(for serdes communication) */
+-	phy_write(ugeth->tbiphy, ENET_TBI_MII_ANA, TBIANA_SETTINGS);
+ 
+-	phy_write(ugeth->tbiphy, ENET_TBI_MII_TBICON, TBICON_CLK_SELECT);
+-
+-	phy_write(ugeth->tbiphy, ENET_TBI_MII_CR, TBICR_SETTINGS);
+-
+-}
+ 
+ static int ugeth_graceful_stop_tx(struct ucc_geth_private *ugeth)
+ {
+@@ -3573,8 +3531,6 @@ static phy_interface_t to_phy_interface(const char *phy_connection_type)
+ 		return PHY_INTERFACE_MODE_RGMII_RXID;
+ 	if (strcasecmp(phy_connection_type, "rtbi") == 0)
+ 		return PHY_INTERFACE_MODE_RTBI;
+-	if (strcasecmp(phy_connection_type, "sgmii") == 0)
+-		return PHY_INTERFACE_MODE_SGMII;
+ 
+ 	return PHY_INTERFACE_MODE_MII;
+ }
+@@ -3619,7 +3575,6 @@ static int ucc_geth_probe(struct of_device* ofdev, const struct of_device_id *ma
+ 		PHY_INTERFACE_MODE_RMII, PHY_INTERFACE_MODE_RGMII,
+ 		PHY_INTERFACE_MODE_GMII, PHY_INTERFACE_MODE_RGMII,
+ 		PHY_INTERFACE_MODE_TBI, PHY_INTERFACE_MODE_RTBI,
+-		PHY_INTERFACE_MODE_SGMII,
+ 	};
+ 
+ 	ugeth_vdbg("%s: IN", __func__);
+@@ -3735,7 +3690,6 @@ static int ucc_geth_probe(struct of_device* ofdev, const struct of_device_id *ma
+ 		case PHY_INTERFACE_MODE_RGMII_TXID:
+ 		case PHY_INTERFACE_MODE_TBI:
+ 		case PHY_INTERFACE_MODE_RTBI:
+-		case PHY_INTERFACE_MODE_SGMII:
+ 			max_speed = SPEED_1000;
+ 			break;
+ 		default:
+@@ -3818,37 +3772,6 @@ static int ucc_geth_probe(struct of_device* ofdev, const struct of_device_id *ma
+ 	ugeth->ndev = dev;
+ 	ugeth->node = np;
+ 
+-	/* Find the TBI PHY.  If it's not there, we don't support SGMII */
+-	ph = of_get_property(np, "tbi-handle", NULL);
+-	if (ph) {
+-		struct device_node *tbi = of_find_node_by_phandle(*ph);
+-		struct of_device *ofdev;
+-		struct mii_bus *bus;
+-		const unsigned int *id;
+-
+-		if (!tbi)
+-			return 0;
+-
+-		mdio = of_get_parent(tbi);
+-		if (!mdio)
+-			return 0;
+-
+-		ofdev = of_find_device_by_node(mdio);
+-
+-		of_node_put(mdio);
+-
+-		id = of_get_property(tbi, "reg", NULL);
+-		if (!id)
+-			return 0;
+-		of_node_put(tbi);
+-
+-		bus = dev_get_drvdata(&ofdev->dev);
+-		if (!bus)
+-			return 0;
+-
+-		ugeth->tbiphy = bus->phy_map[*id];
+-	}
+-
+ 	return 0;
+ }
+ 
+diff --git a/drivers/net/ucc_geth.h b/drivers/net/ucc_geth.h
+index 5beba4c..8160276 100644
+--- a/drivers/net/ucc_geth.h
++++ b/drivers/net/ucc_geth.h
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) Freescale Semicondutor, Inc. 2006-2009. All rights reserved.
++ * Copyright (C) Freescale Semicondutor, Inc. 2006. All rights reserved.
+  *
+  * Author: Shlomi Gridish <gridish@freescale.com>
+  *
+@@ -193,31 +193,6 @@ struct ucc_geth {
+ #define	ENET_TBI_MII_JD		0x10	/* Jitter diagnostics */
+ #define	ENET_TBI_MII_TBICON	0x11	/* TBI control */
+ 
+-/* TBI MDIO register bit fields*/
+-#define TBISR_LSTATUS          0x0004
+-#define TBICON_CLK_SELECT       0x0020
+-#define TBIANA_ASYMMETRIC_PAUSE 0x0100
+-#define TBIANA_SYMMETRIC_PAUSE  0x0080
+-#define TBIANA_HALF_DUPLEX      0x0040
+-#define TBIANA_FULL_DUPLEX      0x0020
+-#define TBICR_PHY_RESET         0x8000
+-#define TBICR_ANEG_ENABLE       0x1000
+-#define TBICR_RESTART_ANEG      0x0200
+-#define TBICR_FULL_DUPLEX       0x0100
+-#define TBICR_SPEED1_SET        0x0040
+-
+-#define TBIANA_SETTINGS ( \
+-		TBIANA_ASYMMETRIC_PAUSE \
+-		| TBIANA_SYMMETRIC_PAUSE \
+-		| TBIANA_FULL_DUPLEX \
+-		)
+-#define TBICR_SETTINGS ( \
+-		TBICR_PHY_RESET \
+-		| TBICR_ANEG_ENABLE \
+-		| TBICR_FULL_DUPLEX \
+-		| TBICR_SPEED1_SET \
+-		)
+-
+ /* UCC GETH MACCFG1 (MAC Configuration 1 Register) */
+ #define MACCFG1_FLOW_RX                         0x00000020	/* Flow Control
+ 								   Rx */
+@@ -1213,7 +1188,6 @@ struct ucc_geth_private {
+ 
+ 	struct ugeth_mii_info *mii_info;
+ 	struct phy_device *phydev;
+-	struct phy_device *tbiphy;
+ 	phy_interface_t phy_interface;
+ 	int max_speed;
+ 	uint32_t msg_enable;
