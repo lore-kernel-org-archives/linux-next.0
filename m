@@ -1,69 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: kvm/powerpc tree build failure
-Date: Wed, 17 Jun 2009 15:04:19 +1000
-Message-ID: <20090617150419.e406a69a.sfr@canb.auug.org.au>
+Subject: Re: linux-next: ext4 tree build failure
+Date: Wed, 17 Jun 2009 15:46:55 +1000
+Message-ID: <20090617154655.73343a5e.sfr@canb.auug.org.au>
+References: <20090616144413.50e975f9.sfr@canb.auug.org.au>
+	<20090616203034.GB14788@mit.edu>
+	<20090616221147.GC14788@mit.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__17_Jun_2009_15_46_55_+1000_v5cFV8uh8/Pjv4F9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34096 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41454 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932670AbZFQFEY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Jun 2009 01:04:24 -0400
+	id S1752657AbZFQFrM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Jun 2009 01:47:12 -0400
+In-Reply-To: <20090616221147.GC14788@mit.edu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@qumranet.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org
+To: Theodore Tso <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>
 
-Hi Avi, Ben,
+--Signature=_Wed__17_Jun_2009_15_46_55_+1000_v5cFV8uh8/Pjv4F9
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next build (powerpc ppc44x_defconfig) failed like this:
+Hi Ted,
 
-cc1: warnings being treated as errors
-arch/powerpc/kvm/../../../virt/kvm/kvm_main.c: In function '__kvm_set_memory_region':
-arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:1178: error: integer overflow in expression
+On Tue, 16 Jun 2009 18:11:47 -0400 Theodore Tso <tytso@mit.edu> wrote:
+>
+> On Tue, Jun 16, 2009 at 04:30:34PM -0400, Theodore Tso wrote:
+> > On Tue, Jun 16, 2009 at 02:44:13PM +1000, Stephen Rothwell wrote:
+> > > Hi Ted,
+> > >=20
+> > > Today's linux-next build (powerpc ppc64_defconfig) failed like this a=
+fter
+> > > the slab tree was merged:
+> > >=20
+> > > In file included from fs/jbd2/checkpoint.c:26:
+> > > include/trace/events/jbd2.h:11: error: expected ')' before '(' token
+> > > include/trace/events/jbd2.h:31: error: expected ')' before '(' token
+> >=20
+> > Hmm... I wonder why the slab tree would be messing with tracing
+> > include files.
+> >=20
+> > Which slab tree is it?  Is it Pekka's?
+> >=20
+> >       git://git.kernel.org/pub/scm/linux/kernel/git/penberg/slab-2.6.git
+> >=20
+>=20
+> Never mind, I see the problem.   Thanks for pointing it out!
 
-Probably caused by commit ac04527f7947020c5890090b2ac87af4e98d977e ("KVM:
-Disable large pages on misaligned memory slots"). The build fails because
-arch/powerpc is now being built (mostly) with -Werror.
+Because of this, I will use the ext4 tree that was in next-20090615
+(which is actually empty relative to Linus tree) until you can come up
+with a fix.
 
-arch/powerpc/include/asm/kvm_host.h:#define KVM_PAGES_PER_HPAGE (1<<31)
-
-this needs to be (1UL << 31) or ((unsigned int)1 << 31).
-
-I applied the following patch for today.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 17 Jun 2009 14:57:29 +1000
-Subject: [PATCH] kvm/powerpc: make 32 bit constant unsigned long
-
-KVM_PAGES_PER_HPAGE needs to be unsigned long since its value is 2^31.
-
-Eliminates this compiler warning:
-
-arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:1178: error: integer overflow in expression
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/powerpc/include/asm/kvm_host.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/kvm_host.h b/arch/powerpc/include/asm/kvm_host.h
-index 3625424..d4caa61 100644
---- a/arch/powerpc/include/asm/kvm_host.h
-+++ b/arch/powerpc/include/asm/kvm_host.h
-@@ -34,7 +34,7 @@
- #define KVM_COALESCED_MMIO_PAGE_OFFSET 1
- 
- /* We don't currently support large pages. */
--#define KVM_PAGES_PER_HPAGE (1<<31)
-+#define KVM_PAGES_PER_HPAGE (1UL << 31)
- 
- struct kvm;
- struct kvm_run;
--- 
-1.6.3.1
-
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__17_Jun_2009_15_46_55_+1000_v5cFV8uh8/Pjv4F9
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAko4g08ACgkQjjKRsyhoI8zYKwCgiQRtes3ggnw7Z7zzOLaDZe+C
+n2IAoL33I3LmeSABQGH+sFkXfIh/Ob/j
+=C4mv
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__17_Jun_2009_15_46_55_+1000_v5cFV8uh8/Pjv4F9--
