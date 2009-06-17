@@ -1,34 +1,41 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: linux-next: mips tree build failure
-Date: Wed, 17 Jun 2009 08:24:13 +0100
-Message-ID: <20090617072413.GA13467@linux-mips.org>
-References: <20090617163549.84cfc4b6.sfr@canb.auug.org.au>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: linux-next: arm build failures
+Date: Wed, 17 Jun 2009 09:34:31 +0100
+Message-ID: <tnx3a9ztg14.fsf@pc1117.cambridge.arm.com>
+References: <20090617162612.703adfd9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from h5.dl5rb.org.uk ([81.2.74.5]:47237 "EHLO h5.dl5rb.org.uk"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754331AbZFQHYr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Jun 2009 03:24:47 -0400
-Content-Disposition: inline
-In-Reply-To: <20090617163549.84cfc4b6.sfr@canb.auug.org.au>
+Received: from cam-admin0.cambridge.arm.com ([193.131.176.58]:52504 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752772AbZFQIej (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Jun 2009 04:34:39 -0400
+In-Reply-To: <20090617162612.703adfd9.sfr@canb.auug.org.au> (Stephen Rothwell's message of "Wed\, 17 Jun 2009 16\:26\:12 +1000")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Jun 17, 2009 at 04:35:49PM +1000, Stephen Rothwell wrote:
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Over the past few days, I have started getting some arm configs (at least
+> iop13xx_defconfig and integrator_defconfig, but some others) failing to
+> build getting this error:
+>
+>   SYSMAP  System.map
+>   SYSMAP  .tmp_System.map
+> Inconsistent kallsyms data
+> Try setting CONFIG_KALLSYMS_EXTRA_PASS
+>
+> Is this something you have seen?  Could it be my toolchain (I am
+> currently using gcc 4.4.0 and have not changed it recently)?
 
-> Yesterday's linux-next build (mips defconfig) failed like this:
-> 
-> arch/mips/lib/delay.c:54: error: 'us' undeclared (first use in this function)
-> 
-> Caused by commit 5636919b5c909fee54a6ef5226475ecae012ad02 ("MIPS: Outline
-> udelay and fix a few issues") which is now in Linus' tree (sorry I didn't
-> report it earlier).
+I reported an error with kallsysms on ARM this Monday leading to
+inconsistent data:
 
-This is already fixed and will go upstream with my next pull request.
+http://lkml.org/lkml/2009/6/15/233
 
-Thanks for reporting!
+Could it be related?
 
-  Ralf
+-- 
+Catalin
