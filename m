@@ -1,75 +1,126 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: [s390x] Next June 18: boot failure
-Date: Thu, 18 Jun 2009 15:44:47 +0200
-Message-ID: <20090618154447.72e1bdee@skybase>
-References: <20090618145949.d933719a.sfr@canb.auug.org.au>
-	<4A3A335E.1040300@in.ibm.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for June 17 (pci/slot)
+Date: Thu, 18 Jun 2009 08:14:37 -0700
+Message-ID: <4A3A59DD.4070004@oracle.com>
+References: <20090617155354.075c60ae.sfr@canb.auug.org.au> <4A39194B.2060200@oracle.com> <20090617163604.GT19977@parisc-linux.org> <20090617102901.6e39aac2@jbarnes-g45> <4A392B48.7060206@oracle.com> <20090617161001.734321be@jbarnes-g45> <20090618003808.GA29472@ldl.fc.hp.com> <20090618004612.GB29472@ldl.fc.hp.com> <20090618010357.GC29472@ldl.fc.hp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate7.de.ibm.com ([195.212.29.156]:58530 "EHLO
-	mtagate7.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754879AbZFRNot convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 18 Jun 2009 09:44:49 -0400
-In-Reply-To: <4A3A335E.1040300@in.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20090618010357.GC29472@ldl.fc.hp.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Alex Chiang <achiang@hp.com>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, Matthew Wilcox <matthew@wil.cx>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, a.beregalov@gmail.com, lenb@kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 18 Jun 2009 18:00:22 +0530
-Sachin Sant <sachinp@in.ibm.com> wrote:
+Alex Chiang wrote:
+> * Alex Chiang <achiang@hp.com>:
+>> diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
+>> index ba6af16..0be4efd 100644
+>> --- a/drivers/pci/Makefile
+>> +++ b/drivers/pci/Makefile
+>> @@ -2,10 +2,11 @@
+>>  # Makefile for the PCI bus specific drivers.
+>>  #
+>>  
+>> -obj-y		+= access.o bus.o probe.o remove.o pci.o quirks.o slot.o \
+>> -			pci-driver.o search.o pci-sysfs.o rom.o setup-res.o \
+>> +obj-y		+= access.o bus.o probe.o remove.o pci.o quirks.o \
+>> +			pci-driver.o search.o rom.o setup-res.o \
+>>  			irq.o
+>>  obj-$(CONFIG_PROC_FS) += proc.o
+>> +obj-$(CONFIG_SYSFS) += slot.o pci-sysfs.o
+> 
+> Sigh, this won't work because the PCI core blithely assumes we have
+> sysfs:
+> 
+> drivers/built-in.o: In function `pci_bus_add_device':
+> /kio/work/achiang/kernels/linux-2.6/drivers/pci/bus.c:89: undefined reference to `pci_create_sysfs_dev_files'
+> drivers/built-in.o: In function `pci_stop_dev':
+> /kio/work/achiang/kernels/linux-2.6/drivers/pci/remove.c:24: undefined reference to `pci_remove_sysfs_dev_files'
+> 
+> So, here is v3 that actually does build with !CONFIG_SYSFS. It
+> touches a bit more now, but I believe it is still appropriate
+> because neither pci_slot.ko nor any of the drivers in
+> drivers/pci/hotplug/ are useful without sysfs.
+> 
+> From: Alex Chiang <achiang@hp.com>
+> 
+> PCI: drivers/pci/slot.c should depend on CONFIG_SYSFS
+> 
+> There is no way to interact with a physical PCI slot without
+> sysfs, so encode the dependency and prevent this build error:
+> 
+> 	drivers/pci/slot.c: In function 'pci_hp_create_module_link':
+> 	drivers/pci/slot.c:327: error: 'module_kset' undeclared
+> 
+> This patch _should_ make pci-sysfs.o depend on CONFIG_SYSFS too,
+> but we cannot (yet) because the PCI core merrily assumes the
+> existence of sysfs:
+> 
+> 	drivers/built-in.o: In function `pci_bus_add_device':
+> 	drivers/pci/bus.c:89: undefined reference to `pci_create_sysfs_dev_files'
+> 	drivers/built-in.o: In function `pci_stop_dev':
+> 	drivers/pci/remove.c:24: undefined reference to `pci_remove_sysfs_dev_files'
+> 
+> So do the minimal bit for now and figure out how to untangle it
+> later.
+> 
+> Cc: Len Brown <lenb@kernel.org>
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-> Today's Next tree failed to boot on a s390x box.
->=20
-> 00: Booting default (autotest)...
->            00000000002baf7a: a74b0038           aghi    %r4,56
-> Call Trace:
-> (<00000000004afc36>=A8 console_init+0x36/0x50)
->  <0000000000498b86>=A8 start_kernel+0x53e/0x5ec
->  <0000000000012020>=A8 _ehead+0x20/0x80
-> Last Breaking-Event-Address:
->  <00000000002bafd4>=A8 init_section_page_cgroup+0xfc/0x10c
->=20
-> --- end trace 31fd0ba7d8756001 =A8---
-> Kernel panic - not syncing: Attempted to kill the idle task!
-> CPU: 0 Tainted: G      D    2.6.30-autotest-next-20090618 #1
-> Process swapper (pid: 0, task: 0000000000445700, ksp: 000000000049800=
-0)
-> 0000000000000005 0000000000497b10 0000000000000002 0000000000000000
->        0000000000497bb0 0000000000497b28 0000000000497b28 00000000000=
-4a01e
->        00000000002c4d08 0000000000000000 0000000000000000 00000000000=
-0000b
->        0000000000000008 0000000000000000 0000000000497b10 00000000004=
-97b88
->        00000000002c4c90 00000000000163aa 0000000000497b10 00000000004=
-97b60
-> Call Trace:
-> (<000000000001630c>=A8 show_trace+0xdc/0xec)
->  <0000000000048f10>=A8 panic+0x84/0x1c0
->  <000000000004ce3c>=A8 do_exit+0x74/0x6f0
->  <0000000000016862>=A8 die+0x152/0x154
->  <000000000001298c>=A8 do_no_context+0xa0/0xac
->  <00000000000131aa>=A8 do_protection_exception+0x252/0x260
->  <0000000000025fa8>=A8 sysc_return+0x0/0x8
->  <00000000002baf64>=A8 init_section_page_cgroup+0x8c/0x10c
-> (<00000000004afc36>=A8 console_init+0x36/0x50)
->  <0000000000498b86>=A8 start_kernel+0x53e/0x5ec
->  <0000000000012020>=A8 _ehead+0x20/0x80
-> 00: HCPGIR450W CP entered; disabled wait PSW 00020001 80000000 000000=
-00
-> 00020E76
->=20
-> I haven't played with a s390 box before so not sure if this
-> is a new problem or me not compiling the kernel properly.
-> Let me know what other information is required.
+Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
+Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-Boots without problems for me. What is you .config ?
 
---=20
-blue skies,
-   Martin.
+> Fix-suggested-by: Matthew Wilcox <matthew@wil.cx>
+> Signed-off-by: Alex Chiang <achiang@hp.com>
+> ---
+> diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
+> index 431f8b4..7ec7d88 100644
+> --- a/drivers/acpi/Kconfig
+> +++ b/drivers/acpi/Kconfig
+> @@ -266,6 +266,7 @@ config ACPI_DEBUG_FUNC_TRACE
+>  
+>  config ACPI_PCI_SLOT
+>  	tristate "PCI slot detection driver"
+> +	depends on SYSFS
+>  	default n
+>  	help
+>  	  This driver creates entries in /sys/bus/pci/slots/ for all PCI
+> diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
+> index ba6af16..ed32f67 100644
+> --- a/drivers/pci/Makefile
+> +++ b/drivers/pci/Makefile
+> @@ -2,10 +2,11 @@
+>  # Makefile for the PCI bus specific drivers.
+>  #
+>  
+> -obj-y		+= access.o bus.o probe.o remove.o pci.o quirks.o slot.o \
+> +obj-y		+= access.o bus.o probe.o remove.o pci.o quirks.o \
+>  			pci-driver.o search.o pci-sysfs.o rom.o setup-res.o \
+>  			irq.o
+>  obj-$(CONFIG_PROC_FS) += proc.o
+> +obj-$(CONFIG_SYSFS) += slot.o
+>  
+>  # Build PCI Express stuff if needed
+>  obj-$(CONFIG_PCIEPORTBUS) += pcie/
+> diff --git a/drivers/pci/hotplug/Kconfig b/drivers/pci/hotplug/Kconfig
+> index 9aa4fe1..522c360 100644
+> --- a/drivers/pci/hotplug/Kconfig
+> +++ b/drivers/pci/hotplug/Kconfig
+> @@ -4,7 +4,7 @@
+>  
+>  menuconfig HOTPLUG_PCI
+>  	tristate "Support for PCI Hotplug"
+> -	depends on PCI && HOTPLUG
+> +	depends on PCI && HOTPLUG && SYSFS
+>  	---help---
+>  	  Say Y here if you have a motherboard with a PCI Hotplug controller.
+>  	  This allows you to add and remove PCI cards while the machine is
 
-"Reality continues to ruin my life." - Calvin.
+
+-- 
+~Randy
+LPC 2009, Sept. 23-25, Portland, Oregon
+http://linuxplumbersconf.org/2009/
