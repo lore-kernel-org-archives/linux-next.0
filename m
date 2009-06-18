@@ -1,58 +1,95 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: kvm tree build failure
-Date: Thu, 18 Jun 2009 11:11:20 +1000
-Message-ID: <20090618111120.9c226ab7.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless tree with the acpi tree
+Date: Thu, 18 Jun 2009 11:29:04 +1000
+Message-ID: <20090618112904.bc72af37.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__18_Jun_2009_11_11_20_+1000_.b_jVDOvifQx06zF"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58370 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44776 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752558AbZFRBL0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Jun 2009 21:11:26 -0400
+	id S1751306AbZFRB3F (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Jun 2009 21:29:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@qumranet.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Graf <agraf@suse.de>, Jaswinder Singh Rajput <jaswinder@kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Helgaas <bjorn.helgaas@hp.com>, Matthew Garrett <mjg59@srcf.ucam.org>, Len Brown <lenb@kernel.org>, Alan Jenkins <alan-jenkins@tuffmail.co.uk>
 
---Signature=_Thu__18_Jun_2009_11_11_20_+1000_.b_jVDOvifQx06zF
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi John,
 
-Hi Avi,
+Today's linux-next merge of the wireless tree got conflicts in
+drivers/platform/x86/eeepc-laptop.c between commits
+eedd8dca3c0e6c1fcb5cba11321ea9d69917d85b ("eeepc-laptop: Register as a
+pci-hotplug device") and 9f4b0f13e8346a42178d70b5079f46f7f886d13c ("ACPI:
+eeepc-laptop: use .notify method instead of installing handler directly")
+from the acpi tree and commit 372b1630720763fe276bd4ad439fa4799ed2112e
+("eeepc-laptop: read rfkill soft-blocked state on resume") from the
+wireless tree.
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
-
-arch/x86/kvm/svm.c: In function 'svm_set_msr':
-arch/x86/kvm/svm.c:2152: error: 'MSR_K8_HWCR' undeclared (first use in this=
- function)
-
-Caused by commit 6878bf85dfc107cea4660f1167693c15754c1660 ("KVM:
-Implement MSRs used by Hyper-V").  MSR_K8_HWCR was removed by commit
-bf8b9a63c18a1a7777571650de0c9f4fd4368ca0 ("x86: msr-index.h remove
-duplicate MSR C001_0015 declaration") which is now in Linus' tree (it
-entered Linus' tree on Jun 10 via commit
-7dc3ca39cb1e22eedbf1207ff9ac7bf682fc0f6d "Merge branch
-'x86-cleanups-for-linus' of
-git://git.kernel.org/pub/scm/linux/kernel/git/tip/linux-2.6-tip").
-
-I have used the version of the kvm tree from 20090617.
---=20
+I fixed it up (see below - worth checking) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__18_Jun_2009_11_11_20_+1000_.b_jVDOvifQx06zF
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAko5lDgACgkQjjKRsyhoI8xRKwCfTipW++UBrNRwLrTiANUOD4ku
-YucAn3zGTvkK+30TofN6EpKurgkWY4kt
-=r30b
------END PGP SIGNATURE-----
-
---Signature=_Thu__18_Jun_2009_11_11_20_+1000_.b_jVDOvifQx06zF--
+diff --cc drivers/platform/x86/eeepc-laptop.c
+index a469275,8153b3e..0000000
+--- a/drivers/platform/x86/eeepc-laptop.c
++++ b/drivers/platform/x86/eeepc-laptop.c
+@@@ -182,7 -180,7 +182,8 @@@ static struct key_entry eeepc_keymap[] 
+   */
+  static int eeepc_hotk_add(struct acpi_device *device);
+  static int eeepc_hotk_remove(struct acpi_device *device, int type);
+ +static void eeepc_hotk_notify(struct acpi_device *device, u32 event);
++ static int eeepc_hotk_resume(struct acpi_device *device);
+  
+  static const struct acpi_device_id eeepc_device_ids[] = {
+  	{EEEPC_HOTK_HID, 0},
+@@@ -198,7 -195,7 +199,8 @@@ static struct acpi_driver eeepc_hotk_dr
+  	.ops = {
+  		.add = eeepc_hotk_add,
+  		.remove = eeepc_hotk_remove,
+ +		.notify = eeepc_hotk_notify,
++ 		.resume = eeepc_hotk_resume,
+  	},
+  };
+  
+@@@ -526,20 -514,7 +528,20 @@@ static int notify_brn(void
+  	return -1;
+  }
+  
+ +static int eeepc_get_adapter_status(struct hotplug_slot *hotplug_slot,
+ +				    u8 *value)
+ +{
+ +	int val = get_acpi(CM_ASL_WLAN);
+ +
+ +	if (val == 1 || val == 0)
+ +		*value = val;
+ +	else
+ +		return -EINVAL;
+ +
+ +	return 0;
+ +}
+ +
+- static void eeepc_rfkill_notify(acpi_handle handle, u32 event, void *data)
++ static void eeepc_rfkill_hotplug(void)
+  {
+  	struct pci_dev *dev;
+  	struct pci_bus *bus = pci_find_bus(0, 1);
+@@@ -578,7 -550,15 +577,15 @@@
+  	rfkill_set_sw_state(ehotk->eeepc_wlan_rfkill, blocked);
+  }
+  
++ static void eeepc_rfkill_notify(acpi_handle handle, u32 event, void *data)
++ {
++ 	if (event != ACPI_NOTIFY_BUS_CHECK)
++ 		return;
++ 
++ 	eeepc_rfkill_hotplug();
++ }
++ 
+ -static void eeepc_hotk_notify(acpi_handle handle, u32 event, void *data)
+ +static void eeepc_hotk_notify(struct acpi_device *device, u32 event)
+  {
+  	static struct key_entry *key;
+  	u16 count;
