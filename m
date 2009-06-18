@@ -1,214 +1,87 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: [PATCH 2/2] net/ucc_geth: Add SGMII support for UCC GETH driver
-Date: Wed, 17 Jun 2009 17:16:10 -0600
-Message-ID: <20090617231609.7051.57806.stgit@localhost.localdomain>
-References: <20090617231306.7051.56146.stgit@localhost.localdomain>
+From: Alex Chiang <achiang@hp.com>
+Subject: Re: linux-next: Tree for June 17 (pci/slot)
+Date: Wed, 17 Jun 2009 18:38:08 -0600
+Message-ID: <20090618003808.GA29472@ldl.fc.hp.com>
+References: <20090617155354.075c60ae.sfr@canb.auug.org.au> <4A39194B.2060200@oracle.com> <20090617163604.GT19977@parisc-linux.org> <20090617102901.6e39aac2@jbarnes-g45> <4A392B48.7060206@oracle.com> <20090617161001.734321be@jbarnes-g45>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20090617231306.7051.56146.stgit@localhost.localdomain>
-Sender: netdev-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, subrata@linux.vnet.ibm.com, netdev@vger.kernel.org
-Cc: Kumar Gala <galak@kernel.crashing.org>, Li Yang <leoli@freescale.com>, Nathan Lynch <ntl@pobox.com>, Sachin P Sant <sachinp@linux.vnet.ibm.com>, Linux-Next <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org, Balbir Singh <balbir@linux.vnet.ibm.com>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Tony Breeds <tony@bakeyournoodle.com>, michael@ellerman.id.au, Haiying Wang <Haiying.Wang@freescale.com>, davem@davemloft.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20090617161001.734321be@jbarnes-g45>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Matthew Wilcox <matthew@wil.cx>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, a.beregalov@gmail.com
 List-Id: linux-next.vger.kernel.org
 
-From: Haiying Wang <Haiying.Wang@freescale.com>
+* Jesse Barnes <jbarnes@virtuousgeek.org>:
+> On Wed, 17 Jun 2009 10:43:36 -0700
+> Randy Dunlap <randy.dunlap@oracle.com> wrote:
+> 
+> > Jesse Barnes wrote:
+> > > On Wed, 17 Jun 2009 10:36:04 -0600
+> > > Matthew Wilcox <matthew@wil.cx> wrote:
+> > > 
+> > >> On Wed, Jun 17, 2009 at 09:26:51AM -0700, Randy Dunlap wrote:
+> > >>> Stephen Rothwell wrote:
+> > >>>> Hi all,
+> > >>>>
+> > >>>> Changes since 20090616:
+> > >>>
+> > >>> When CONFIG_SYSFS=n:
+> > >>>
+> > >>> drivers/pci/slot.c:327: error: 'module_kset' undeclared (first use
+> > >>> in this function)
+> > >> Is there any point to pci_slot existing without CONFIG_SYSFS?
+> > >> I don't see how you can interact with it in any meaningful way.
+> > >> Perhaps CONFIG_PCI_SLOT should depend on CONFIG_SYSFS?
+> > > 
+> > > I've got a code fix queued up, but maybe a Kconfig dependency is the
+> > > way to go...
+> > 
+> > What is the code fix like?
+> > The Kconfig fix makes sense to me.
+> > 
+> > 
+> Here's the patch I have (sorry cut & paste):
+> 
+> Fix this build error when CONFIG_SYSFS is not set:
+> drivers/pci/slot.c: In function 'pci_hp_create_module_link':
+> drivers/pci/slot.c:327: error: 'module_kset' undeclared
+> 
+> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
 
--- derived from reverted commit 047584ce94108012288554a5f84585d792cc7f8f
--- reworked by Grant Likely to play nice with commit:
-   "net: Rework ucc_geth driver to use of_mdio infrastructure"
-   (0b9da337dca972e7a4144e298ec3adb8f244d4a4)
+I agree with Matthew. You can't do anything useful with the
+functionality in drivers/pci/slot.o unless you have sysfs, so a
+Kconfig dependency is more appropriate.
 
-Signed-off-by: Haiying Wang <Haiying.Wang@freescale.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Grant Likely <grant.likely@secretlab.ca>
+From: Alex Chiang <achiang@hp.com>
+
+PCI: drivers/pci/slot.c should depend on CONFIG_SYSFS
+
+There is no way to interact with a physical PCI slot without
+sysfs, so encode the dependency and prevent this build error:
+
+	drivers/pci/slot.c: In function 'pci_hp_create_module_link':
+	drivers/pci/slot.c:327: error: 'module_kset' undeclared
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Fix-suggested-by: Matthew Wilcox <matthew@wil.cx>
+Signed-off-by: Alex Chiang <achiang@hp.com>
 ---
-
- arch/powerpc/include/asm/qe.h |    2 +
- drivers/net/ucc_geth.c        |   58 ++++++++++++++++++++++++++++++++++++++++-
- drivers/net/ucc_geth.h        |   28 +++++++++++++++++++-
- 3 files changed, 86 insertions(+), 2 deletions(-)
-
-
-diff --git a/arch/powerpc/include/asm/qe.h b/arch/powerpc/include/asm/qe.h
-index e0faf33..157c5ca 100644
---- a/arch/powerpc/include/asm/qe.h
-+++ b/arch/powerpc/include/asm/qe.h
-@@ -675,6 +675,8 @@ struct ucc_slow_pram {
- #define UCC_GETH_UPSMR_RMM      0x00001000
- #define UCC_GETH_UPSMR_CAM      0x00000400
- #define UCC_GETH_UPSMR_BRO      0x00000200
-+#define UCC_GETH_UPSMR_SMM	0x00000080
-+#define UCC_GETH_UPSMR_SGMM	0x00000020
+diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
+index ba6af16..ed32f67 100644
+--- a/drivers/pci/Makefile
++++ b/drivers/pci/Makefile
+@@ -2,10 +2,11 @@
+ # Makefile for the PCI bus specific drivers.
+ #
  
- /* UCC Transmit On Demand Register (UTODR) */
- #define UCC_SLOW_TOD	0x8000
-diff --git a/drivers/net/ucc_geth.c b/drivers/net/ucc_geth.c
-index 5118993..40c6eba 100644
---- a/drivers/net/ucc_geth.c
-+++ b/drivers/net/ucc_geth.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (C) 2006-2007 Freescale Semicondutor, Inc. All rights reserved.
-+ * Copyright (C) 2006-2009 Freescale Semicondutor, Inc. All rights reserved.
-  *
-  * Author: Shlomi Gridish <gridish@freescale.com>
-  *	   Li Yang <leoli@freescale.com>
-@@ -1410,6 +1410,9 @@ static int adjust_enet_interface(struct ucc_geth_private *ugeth)
- 	    (ugeth->phy_interface == PHY_INTERFACE_MODE_RTBI)) {
- 		upsmr |= UCC_GETH_UPSMR_TBIM;
- 	}
-+	if ((ugeth->phy_interface == PHY_INTERFACE_MODE_SGMII))
-+		upsmr |= UCC_GETH_UPSMR_SGMM;
-+
- 	out_be32(&uf_regs->upsmr, upsmr);
+-obj-y		+= access.o bus.o probe.o remove.o pci.o quirks.o slot.o \
++obj-y		+= access.o bus.o probe.o remove.o pci.o quirks.o \
+ 			pci-driver.o search.o pci-sysfs.o rom.o setup-res.o \
+ 			irq.o
+ obj-$(CONFIG_PROC_FS) += proc.o
++obj-$(CONFIG_SYSFS) += slot.o
  
- 	/* Disable autonegotiation in tbi mode, because by default it
-@@ -1531,6 +1534,49 @@ static void adjust_link(struct net_device *dev)
- 	spin_unlock_irqrestore(&ugeth->lock, flags);
- }
- 
-+/* Initialize TBI PHY interface for communicating with the
-+ * SERDES lynx PHY on the chip.  We communicate with this PHY
-+ * through the MDIO bus on each controller, treating it as a
-+ * "normal" PHY at the address found in the UTBIPA register.  We assume
-+ * that the UTBIPA register is valid.  Either the MDIO bus code will set
-+ * it to a value that doesn't conflict with other PHYs on the bus, or the
-+ * value doesn't matter, as there are no other PHYs on the bus.
-+ */
-+static void uec_configure_serdes(struct net_device *dev)
-+{
-+	struct ucc_geth_private *ugeth = netdev_priv(dev);
-+	struct ucc_geth_info *ug_info = ugeth->ug_info;
-+	struct phy_device *tbiphy;
-+
-+	if (!ug_info->tbi_node) {
-+		dev_warn(&dev->dev, "SGMII mode requires that the device "
-+			"tree specify a tbi-handle\n");
-+		return;
-+	}
-+
-+	tbiphy = of_phy_find_device(ug_info->tbi_node);
-+	if (!tbiphy) {
-+		dev_err(&dev->dev, "error: Could not get TBI device\n");
-+		return;
-+	}
-+
-+	/*
-+	 * If the link is already up, we must already be ok, and don't need to
-+	 * configure and reset the TBI<->SerDes link.  Maybe U-Boot configured
-+	 * everything for us?  Resetting it takes the link down and requires
-+	 * several seconds for it to come back.
-+	 */
-+	if (phy_read(tbiphy, ENET_TBI_MII_SR) & TBISR_LSTATUS)
-+		return;
-+
-+	/* Single clk mode, mii mode off(for serdes communication) */
-+	phy_write(tbiphy, ENET_TBI_MII_ANA, TBIANA_SETTINGS);
-+
-+	phy_write(tbiphy, ENET_TBI_MII_TBICON, TBICON_CLK_SELECT);
-+
-+	phy_write(tbiphy, ENET_TBI_MII_CR, TBICR_SETTINGS);
-+}
-+
- /* Configure the PHY for dev.
-  * returns 0 if success.  -1 if failure
-  */
-@@ -1554,6 +1600,9 @@ static int init_phy(struct net_device *dev)
- 		return -ENODEV;
- 	}
- 
-+	if (priv->phy_interface == PHY_INTERFACE_MODE_SGMII)
-+		uec_configure_serdes(dev);
-+
- 	phydev->supported &= (ADVERTISED_10baseT_Half |
- 				 ADVERTISED_10baseT_Full |
- 				 ADVERTISED_100baseT_Half |
-@@ -3531,6 +3580,8 @@ static phy_interface_t to_phy_interface(const char *phy_connection_type)
- 		return PHY_INTERFACE_MODE_RGMII_RXID;
- 	if (strcasecmp(phy_connection_type, "rtbi") == 0)
- 		return PHY_INTERFACE_MODE_RTBI;
-+	if (strcasecmp(phy_connection_type, "sgmii") == 0)
-+		return PHY_INTERFACE_MODE_SGMII;
- 
- 	return PHY_INTERFACE_MODE_MII;
- }
-@@ -3575,6 +3626,7 @@ static int ucc_geth_probe(struct of_device* ofdev, const struct of_device_id *ma
- 		PHY_INTERFACE_MODE_RMII, PHY_INTERFACE_MODE_RGMII,
- 		PHY_INTERFACE_MODE_GMII, PHY_INTERFACE_MODE_RGMII,
- 		PHY_INTERFACE_MODE_TBI, PHY_INTERFACE_MODE_RTBI,
-+		PHY_INTERFACE_MODE_SGMII,
- 	};
- 
- 	ugeth_vdbg("%s: IN", __func__);
-@@ -3666,6 +3718,9 @@ static int ucc_geth_probe(struct of_device* ofdev, const struct of_device_id *ma
- 	}
- 	ug_info->phy_node = phy;
- 
-+	/* Find the TBI PHY node.  If it's not there, we don't support SGMII */
-+	ug_info->tbi_node = of_parse_phandle(np, "tbi-handle", 0);
-+
- 	/* get the phy interface type, or default to MII */
- 	prop = of_get_property(np, "phy-connection-type", NULL);
- 	if (!prop) {
-@@ -3690,6 +3745,7 @@ static int ucc_geth_probe(struct of_device* ofdev, const struct of_device_id *ma
- 		case PHY_INTERFACE_MODE_RGMII_TXID:
- 		case PHY_INTERFACE_MODE_TBI:
- 		case PHY_INTERFACE_MODE_RTBI:
-+		case PHY_INTERFACE_MODE_SGMII:
- 			max_speed = SPEED_1000;
- 			break;
- 		default:
-diff --git a/drivers/net/ucc_geth.h b/drivers/net/ucc_geth.h
-index 8160276..195ab26 100644
---- a/drivers/net/ucc_geth.h
-+++ b/drivers/net/ucc_geth.h
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (C) Freescale Semicondutor, Inc. 2006. All rights reserved.
-+ * Copyright (C) Freescale Semicondutor, Inc. 2006-2009. All rights reserved.
-  *
-  * Author: Shlomi Gridish <gridish@freescale.com>
-  *
-@@ -193,6 +193,31 @@ struct ucc_geth {
- #define	ENET_TBI_MII_JD		0x10	/* Jitter diagnostics */
- #define	ENET_TBI_MII_TBICON	0x11	/* TBI control */
- 
-+/* TBI MDIO register bit fields*/
-+#define TBISR_LSTATUS          0x0004
-+#define TBICON_CLK_SELECT       0x0020
-+#define TBIANA_ASYMMETRIC_PAUSE 0x0100
-+#define TBIANA_SYMMETRIC_PAUSE  0x0080
-+#define TBIANA_HALF_DUPLEX      0x0040
-+#define TBIANA_FULL_DUPLEX      0x0020
-+#define TBICR_PHY_RESET         0x8000
-+#define TBICR_ANEG_ENABLE       0x1000
-+#define TBICR_RESTART_ANEG      0x0200
-+#define TBICR_FULL_DUPLEX       0x0100
-+#define TBICR_SPEED1_SET        0x0040
-+
-+#define TBIANA_SETTINGS ( \
-+		TBIANA_ASYMMETRIC_PAUSE \
-+		| TBIANA_SYMMETRIC_PAUSE \
-+		| TBIANA_FULL_DUPLEX \
-+		)
-+#define TBICR_SETTINGS ( \
-+		TBICR_PHY_RESET \
-+		| TBICR_ANEG_ENABLE \
-+		| TBICR_FULL_DUPLEX \
-+		| TBICR_SPEED1_SET \
-+		)
-+
- /* UCC GETH MACCFG1 (MAC Configuration 1 Register) */
- #define MACCFG1_FLOW_RX                         0x00000020	/* Flow Control
- 								   Rx */
-@@ -1100,6 +1125,7 @@ struct ucc_geth_info {
- 	u16 pausePeriod;
- 	u16 extensionField;
- 	struct device_node *phy_node;
-+	struct device_node *tbi_node;
- 	u8 weightfactor[NUM_TX_QUEUES];
- 	u8 interruptcoalescingmaxvalue[NUM_RX_QUEUES];
- 	u8 l2qt[UCC_GETH_VLAN_PRIORITY_MAX];
-
+ # Build PCI Express stuff if needed
+ obj-$(CONFIG_PCIEPORTBUS) += pcie/
