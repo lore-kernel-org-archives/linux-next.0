@@ -1,38 +1,73 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH 0/2] Revert and reimplement Add SGMII support to UCC
- GETH
-Date: Wed, 17 Jun 2009 18:53:38 -0700 (PDT)
-Message-ID: <20090617.185338.20860763.davem@davemloft.net>
-References: <20090617231306.7051.56146.stgit@localhost.localdomain>
+From: Jaswinder Singh Rajput <jaswinder@kernel.org>
+Subject: Re: linux-next: kvm tree build failure
+Date: Thu, 18 Jun 2009 09:55:57 +0530
+Message-ID: <1245299157.2871.1.camel@ht.satnam>
+References: <20090618111120.9c226ab7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:51079
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752131AbZFRBxe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Jun 2009 21:53:34 -0400
-In-Reply-To: <20090617231306.7051.56146.stgit@localhost.localdomain>
+Received: from hera.kernel.org ([140.211.167.34]:33010 "EHLO hera.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750760AbZFREZP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 18 Jun 2009 00:25:15 -0400
+In-Reply-To: <20090618111120.9c226ab7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: grant.likely@secretlab.ca
-Cc: sfr@canb.auug.org.au, subrata@linux.vnet.ibm.com, netdev@vger.kernel.org, galak@kernel.crashing.org, leoli@freescale.com, ntl@pobox.com, sachinp@linux.vnet.ibm.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, balbir@linux.vnet.ibm.com, Linuxppc-dev@ozlabs.org, tony@bakeyournoodle.com, michael@ellerman.id.au, Haiying.Wang@freescale.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Avi Kivity <avi@qumranet.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Graf <agraf@suse.de>
 
-From: Grant Likely <grant.likely@secretlab.ca>
-Date: Wed, 17 Jun 2009 17:15:58 -0600
+Hello Stephen,
 
-> (REPOST; I messed up an email address first time around and apparently my
-> posting got rejected.  If you've already received this message, then
-> I apologize for the noise)
+On Thu, 2009-06-18 at 11:11 +1000, Stephen Rothwell wrote:
+> Hi Avi,
 > 
-> Here is a fix for the build failure discovered during the 2.6.31 merge
-> window on ucc_geth.c.  I decided to revert and reapply a fixed version
-> of the patch to make the new version easier to review and bisect if I
-> got the fixup wrong.  I've compile tested both patches, but I do not have
-> hardware to run test.
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
 > 
-> Haiying, please confirm that I haven't horribly trashed your hard work
-> with my changes.
+> arch/x86/kvm/svm.c: In function 'svm_set_msr':
+> arch/x86/kvm/svm.c:2152: error: 'MSR_K8_HWCR' undeclared (first use in this function)
+> 
+> Caused by commit 6878bf85dfc107cea4660f1167693c15754c1660 ("KVM:
+> Implement MSRs used by Hyper-V").  MSR_K8_HWCR was removed by commit
+> bf8b9a63c18a1a7777571650de0c9f4fd4368ca0 ("x86: msr-index.h remove
+> duplicate MSR C001_0015 declaration") which is now in Linus' tree (it
+> entered Linus' tree on Jun 10 via commit
+> 7dc3ca39cb1e22eedbf1207ff9ac7bf682fc0f6d "Merge branch
+> 'x86-cleanups-for-linus' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/linux-2.6-tip").
+> 
+> I have used the version of the kvm tree from 20090617.
 
-I've applied these to net-next-2.6, thanks!
+Can you try this patch :
+
+[PATCH] KVM: use MSR_K7_HWCR for MSRC001_0015 Hardware Configuration Register (HWCR)
+
+MSR_K8_MSR is removed as it is duplicating MSRC001_0015 Hardware
+Configuration Register (HWCR), which is already defined as MSR_K7_HWCR
+
+Fix x86_64 allmodconfig :
+
+arch/x86/kvm/svm.c: In function 'svm_set_msr':
+arch/x86/kvm/svm.c:2152: error: 'MSR_K8_HWCR' undeclared (first use in this function)
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Jaswinder Singh Rajput <jaswinderrajput@gmail.com>
+---
+ arch/x86/kvm/svm.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index c283201..481010c 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -2149,7 +2149,7 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, unsigned ecx, u64 data)
+ 		break;
+ 	case MSR_VM_CR:
+ 	case MSR_VM_IGNNE:
+-	case MSR_K8_HWCR:
++	case MSR_K7_HWCR:
+ 		pr_unimpl(vcpu, "unimplemented wrmsr: 0x%x data 0x%llx\n", ecx, data);
+ 		break;
+ 	default:
+-- 
+1.6.0.6
