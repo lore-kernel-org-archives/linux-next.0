@@ -1,118 +1,58 @@
-From: Alex Chiang <achiang@hp.com>
-Subject: Re: linux-next: Tree for June 17 (pci/slot)
-Date: Wed, 17 Jun 2009 19:03:57 -0600
-Message-ID: <20090618010357.GC29472@ldl.fc.hp.com>
-References: <20090617155354.075c60ae.sfr@canb.auug.org.au> <4A39194B.2060200@oracle.com> <20090617163604.GT19977@parisc-linux.org> <20090617102901.6e39aac2@jbarnes-g45> <4A392B48.7060206@oracle.com> <20090617161001.734321be@jbarnes-g45> <20090618003808.GA29472@ldl.fc.hp.com> <20090618004612.GB29472@ldl.fc.hp.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: kvm tree build failure
+Date: Thu, 18 Jun 2009 11:11:20 +1000
+Message-ID: <20090618111120.9c226ab7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__18_Jun_2009_11_11_20_+1000_.b_jVDOvifQx06zF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from g4t0015.houston.hp.com ([15.201.24.18]:9837 "EHLO
-	g4t0015.houston.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753002AbZFRBD4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Jun 2009 21:03:56 -0400
-Content-Disposition: inline
-In-Reply-To: <20090618004612.GB29472@ldl.fc.hp.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:58370 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752558AbZFRBL0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Jun 2009 21:11:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Matthew Wilcox <matthew@wil.cx>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, a.beregalov@gmail.com, lenb@kernel.org
+To: Avi Kivity <avi@qumranet.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Graf <agraf@suse.de>, Jaswinder Singh Rajput <jaswinder@kernel.org>
 
-* Alex Chiang <achiang@hp.com>:
-> diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
-> index ba6af16..0be4efd 100644
-> --- a/drivers/pci/Makefile
-> +++ b/drivers/pci/Makefile
-> @@ -2,10 +2,11 @@
->  # Makefile for the PCI bus specific drivers.
->  #
->  
-> -obj-y		+= access.o bus.o probe.o remove.o pci.o quirks.o slot.o \
-> -			pci-driver.o search.o pci-sysfs.o rom.o setup-res.o \
-> +obj-y		+= access.o bus.o probe.o remove.o pci.o quirks.o \
-> +			pci-driver.o search.o rom.o setup-res.o \
->  			irq.o
->  obj-$(CONFIG_PROC_FS) += proc.o
-> +obj-$(CONFIG_SYSFS) += slot.o pci-sysfs.o
+--Signature=_Thu__18_Jun_2009_11_11_20_+1000_.b_jVDOvifQx06zF
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sigh, this won't work because the PCI core blithely assumes we have
-sysfs:
+Hi Avi,
 
-drivers/built-in.o: In function `pci_bus_add_device':
-/kio/work/achiang/kernels/linux-2.6/drivers/pci/bus.c:89: undefined reference to `pci_create_sysfs_dev_files'
-drivers/built-in.o: In function `pci_stop_dev':
-/kio/work/achiang/kernels/linux-2.6/drivers/pci/remove.c:24: undefined reference to `pci_remove_sysfs_dev_files'
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-So, here is v3 that actually does build with !CONFIG_SYSFS. It
-touches a bit more now, but I believe it is still appropriate
-because neither pci_slot.ko nor any of the drivers in
-drivers/pci/hotplug/ are useful without sysfs.
+arch/x86/kvm/svm.c: In function 'svm_set_msr':
+arch/x86/kvm/svm.c:2152: error: 'MSR_K8_HWCR' undeclared (first use in this=
+ function)
 
-From: Alex Chiang <achiang@hp.com>
+Caused by commit 6878bf85dfc107cea4660f1167693c15754c1660 ("KVM:
+Implement MSRs used by Hyper-V").  MSR_K8_HWCR was removed by commit
+bf8b9a63c18a1a7777571650de0c9f4fd4368ca0 ("x86: msr-index.h remove
+duplicate MSR C001_0015 declaration") which is now in Linus' tree (it
+entered Linus' tree on Jun 10 via commit
+7dc3ca39cb1e22eedbf1207ff9ac7bf682fc0f6d "Merge branch
+'x86-cleanups-for-linus' of
+git://git.kernel.org/pub/scm/linux/kernel/git/tip/linux-2.6-tip").
 
-PCI: drivers/pci/slot.c should depend on CONFIG_SYSFS
+I have used the version of the kvm tree from 20090617.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-There is no way to interact with a physical PCI slot without
-sysfs, so encode the dependency and prevent this build error:
+--Signature=_Thu__18_Jun_2009_11_11_20_+1000_.b_jVDOvifQx06zF
+Content-Type: application/pgp-signature
 
-	drivers/pci/slot.c: In function 'pci_hp_create_module_link':
-	drivers/pci/slot.c:327: error: 'module_kset' undeclared
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-This patch _should_ make pci-sysfs.o depend on CONFIG_SYSFS too,
-but we cannot (yet) because the PCI core merrily assumes the
-existence of sysfs:
+iEYEARECAAYFAko5lDgACgkQjjKRsyhoI8xRKwCfTipW++UBrNRwLrTiANUOD4ku
+YucAn3zGTvkK+30TofN6EpKurgkWY4kt
+=r30b
+-----END PGP SIGNATURE-----
 
-	drivers/built-in.o: In function `pci_bus_add_device':
-	drivers/pci/bus.c:89: undefined reference to `pci_create_sysfs_dev_files'
-	drivers/built-in.o: In function `pci_stop_dev':
-	drivers/pci/remove.c:24: undefined reference to `pci_remove_sysfs_dev_files'
-
-So do the minimal bit for now and figure out how to untangle it
-later.
-
-Cc: Len Brown <lenb@kernel.org>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Fix-suggested-by: Matthew Wilcox <matthew@wil.cx>
-Signed-off-by: Alex Chiang <achiang@hp.com>
----
-diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
-index 431f8b4..7ec7d88 100644
---- a/drivers/acpi/Kconfig
-+++ b/drivers/acpi/Kconfig
-@@ -266,6 +266,7 @@ config ACPI_DEBUG_FUNC_TRACE
- 
- config ACPI_PCI_SLOT
- 	tristate "PCI slot detection driver"
-+	depends on SYSFS
- 	default n
- 	help
- 	  This driver creates entries in /sys/bus/pci/slots/ for all PCI
-diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
-index ba6af16..ed32f67 100644
---- a/drivers/pci/Makefile
-+++ b/drivers/pci/Makefile
-@@ -2,10 +2,11 @@
- # Makefile for the PCI bus specific drivers.
- #
- 
--obj-y		+= access.o bus.o probe.o remove.o pci.o quirks.o slot.o \
-+obj-y		+= access.o bus.o probe.o remove.o pci.o quirks.o \
- 			pci-driver.o search.o pci-sysfs.o rom.o setup-res.o \
- 			irq.o
- obj-$(CONFIG_PROC_FS) += proc.o
-+obj-$(CONFIG_SYSFS) += slot.o
- 
- # Build PCI Express stuff if needed
- obj-$(CONFIG_PCIEPORTBUS) += pcie/
-diff --git a/drivers/pci/hotplug/Kconfig b/drivers/pci/hotplug/Kconfig
-index 9aa4fe1..522c360 100644
---- a/drivers/pci/hotplug/Kconfig
-+++ b/drivers/pci/hotplug/Kconfig
-@@ -4,7 +4,7 @@
- 
- menuconfig HOTPLUG_PCI
- 	tristate "Support for PCI Hotplug"
--	depends on PCI && HOTPLUG
-+	depends on PCI && HOTPLUG && SYSFS
- 	---help---
- 	  Say Y here if you have a motherboard with a PCI Hotplug controller.
- 	  This allows you to add and remove PCI cards while the machine is
+--Signature=_Thu__18_Jun_2009_11_11_20_+1000_.b_jVDOvifQx06zF--
