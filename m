@@ -1,63 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for June 18
-Date: Thu, 18 Jun 2009 16:47:15 +1000
-Message-ID: <20090618164715.f16bb01c.sfr@canb.auug.org.au>
-References: <20090618145949.d933719a.sfr@canb.auug.org.au>
-	<alpine.LFD.2.00.0906180141130.8921@localhost.localdomain>
+From: Avi Kivity <avi@redhat.com>
+Subject: Re: linux-next: kvm tree build failure
+Date: Thu, 18 Jun 2009 12:49:08 +0300
+Message-ID: <4A3A0D94.4000803@redhat.com>
+References: <20090618111120.9c226ab7.sfr@canb.auug.org.au> <1245299157.2871.1.camel@ht.satnam>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__18_Jun_2009_16_47_15_+1000_6Pwdb07YZsFWLn7n"
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <alpine.LFD.2.00.0906180141130.8921@localhost.localdomain>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Len Brown <lenb@kernel.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.redhat.com ([66.187.237.31]:55159 "EHLO mx2.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752358AbZFRJto (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 18 Jun 2009 05:49:44 -0400
+In-Reply-To: <1245299157.2871.1.camel@ht.satnam>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jaswinder Singh Rajput <jaswinder@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Graf <agraf@suse.de>
 
---Signature=_Thu__18_Jun_2009_16_47_15_+1000_6Pwdb07YZsFWLn7n
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Len,
-
-On Thu, 18 Jun 2009 01:47:06 -0400 (EDT) Len Brown <lenb@kernel.org> wrote:
+On 06/18/2009 07:25 AM, Jaswinder Singh Rajput wrote:
+> [PATCH] KVM: use MSR_K7_HWCR for MSRC001_0015 Hardware Configuration Register (HWCR)
 >
-> > Merging acpi/test
-> > CONFLICT (content): Merge conflict in drivers/platform/x86/Kconfig
-> > CONFLICT (content): Merge conflict in drivers/platform/x86/toshiba_acpi=
-.c
->=20
-> Okay, I've dropped the toshiba_acpi branch from test, pending a refresh
->=20
-> > [master 28e994e] Revert "Merge branch 'oqo-wmi-EXPECT-REFRESH' into tes=
-t"
->=20
-> Okay, I've dropped the oqo branch from test, pending a refresh
->=20
-> > CONFLICT (content): Merge conflict in drivers/platform/x86/eeepc-laptop=
-.c
->=20
-> As I've sync'd my test tree with Linus' tree in preparation for
-> a merge, it seems that I need a refreshed eeepc-laptop branch too:-(
+> MSR_K8_MSR is removed as it is duplicating MSRC001_0015 Hardware
+> Configuration Register (HWCR), which is already defined as MSR_K7_HWCR
+>
+> Fix x86_64 allmodconfig :
+>
+> arch/x86/kvm/svm.c: In function 'svm_set_msr':
+> arch/x86/kvm/svm.c:2152: error: 'MSR_K8_HWCR' undeclared (first use in this function)
+>
+>    
 
-Thanks for all that.
+Applied, thanks.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__18_Jun_2009_16_47_15_+1000_6Pwdb07YZsFWLn7n
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAko54vMACgkQjjKRsyhoI8yWowCggAs8RJdgKYUk4kNAeLCes1g3
-18IAnjZ25HDB0lcwBh1ZpOU0YJ/AIO26
-=NACl
------END PGP SIGNATURE-----
-
---Signature=_Thu__18_Jun_2009_16_47_15_+1000_6Pwdb07YZsFWLn7n--
+-- 
+error compiling committee.c: too many arguments to function
