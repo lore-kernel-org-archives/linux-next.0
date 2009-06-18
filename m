@@ -1,36 +1,87 @@
 From: Jesse Barnes <jesse.barnes@intel.com>
-Subject: Re: [PATCH next] PCI hotplug: fix build when !SYSFS
-Date: Thu, 18 Jun 2009 12:57:33 -0700
-Message-ID: <20090618125733.254ffa0d@jbarnes-g45>
-References: <1245241397-6781-1-git-send-email-a.beregalov@gmail.com>
+Subject: Re: linux-next: Tree for June 17 (pci/slot)
+Date: Thu, 18 Jun 2009 14:04:18 -0700
+Message-ID: <20090618140418.2e078701@jbarnes-g45>
+References: <20090617155354.075c60ae.sfr@canb.auug.org.au>
+	<4A39194B.2060200@oracle.com>
+	<20090617163604.GT19977@parisc-linux.org>
+	<20090617102901.6e39aac2@jbarnes-g45>
+	<4A392B48.7060206@oracle.com>
+	<20090617161001.734321be@jbarnes-g45>
+	<20090618003808.GA29472@ldl.fc.hp.com>
+	<20090618004612.GB29472@ldl.fc.hp.com>
+	<20090618010357.GC29472@ldl.fc.hp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:11769 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750956AbZFRT5e (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 18 Jun 2009 15:57:34 -0400
-In-Reply-To: <1245241397-6781-1-git-send-email-a.beregalov@gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-Cc: kaneshige.kenji@jp.fujitsu.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Alexander Beregalov <a.beregalov@gmail.com>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20090618010357.GC29472@ldl.fc.hp.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Alex Chiang <achiang@hp.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Matthew Wilcox <matthew@wil.cx>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, a.beregalov@gmail.com, lenb@kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 17 Jun 2009 16:23:17 +0400
-Alexander Beregalov <a.beregalov@gmail.com> wrote:
+On Wed, 17 Jun 2009 19:03:57 -0600
+Alex Chiang <achiang@hp.com> wrote:
 
-> Fix this build error when CONFIG_SYSFS is not set:
-> drivers/pci/slot.c: In function 'pci_hp_create_module_link':
-> drivers/pci/slot.c:327: error: 'module_kset' undeclared
+> * Alex Chiang <achiang@hp.com>:
+> > diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
+> > index ba6af16..0be4efd 100644
+> > --- a/drivers/pci/Makefile
+> > +++ b/drivers/pci/Makefile
+> > @@ -2,10 +2,11 @@
+> >  # Makefile for the PCI bus specific drivers.
+> >  #
+> >  
+> > -obj-y		+= access.o bus.o probe.o remove.o pci.o
+> > quirks.o slot.o \
+> > -			pci-driver.o search.o pci-sysfs.o rom.o
+> > setup-res.o \ +obj-y		+= access.o bus.o probe.o
+> > remove.o pci.o quirks.o \
+> > +			pci-driver.o search.o rom.o setup-res.o \
+> >  			irq.o
+> >  obj-$(CONFIG_PROC_FS) += proc.o
+> > +obj-$(CONFIG_SYSFS) += slot.o pci-sysfs.o
 > 
-> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
-> ---
->  drivers/pci/slot.c |    9 +++++++++
->  1 files changed, 9 insertions(+), 0 deletions(-)
+> Sigh, this won't work because the PCI core blithely assumes we have
+> sysfs:
+> 
+> drivers/built-in.o: In function `pci_bus_add_device':
+> /kio/work/achiang/kernels/linux-2.6/drivers/pci/bus.c:89: undefined
+> reference to `pci_create_sysfs_dev_files' drivers/built-in.o: In
+> function
+> `pci_stop_dev': /kio/work/achiang/kernels/linux-2.6/drivers/pci/remove.c:24:
+> undefined reference to `pci_remove_sysfs_dev_files'
+> 
+> So, here is v3 that actually does build with !CONFIG_SYSFS. It
+> touches a bit more now, but I believe it is still appropriate
+> because neither pci_slot.ko nor any of the drivers in
+> drivers/pci/hotplug/ are useful without sysfs.
+> 
+> From: Alex Chiang <achiang@hp.com>
+> 
+> PCI: drivers/pci/slot.c should depend on CONFIG_SYSFS
+> 
+> There is no way to interact with a physical PCI slot without
+> sysfs, so encode the dependency and prevent this build error:
+> 
+> 	drivers/pci/slot.c: In function 'pci_hp_create_module_link':
+> 	drivers/pci/slot.c:327: error: 'module_kset' undeclared
+> 
+> This patch _should_ make pci-sysfs.o depend on CONFIG_SYSFS too,
+> but we cannot (yet) because the PCI core merrily assumes the
+> existence of sysfs:
+> 
+> 	drivers/built-in.o: In function `pci_bus_add_device':
+> 	drivers/pci/bus.c:89: undefined reference to
+> `pci_create_sysfs_dev_files' drivers/built-in.o: In function
+> `pci_stop_dev': drivers/pci/remove.c:24: undefined reference to
+> `pci_remove_sysfs_dev_files'
+> 
+> So do the minimal bit for now and figure out how to untangle it
+> later.
 
-Thanks Alexander, but this one has been obsoleted by the one from Alex
-Chiang, which describes the dependencies in Kconfig instead...
+Applied, thanks.
 
-Thanks,
 -- 
 Jesse Barnes, Intel Open Source Technology Center
