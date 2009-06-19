@@ -1,51 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: import of i2c series failed
-Date: Fri, 19 Jun 2009 10:10:20 +1000
-Message-ID: <20090619101020.9b1f5054.sfr@canb.auug.org.au>
+Subject: linux-next: origin tree build warning
+Date: Fri, 19 Jun 2009 10:27:31 +1000
+Message-ID: <20090619102731.691bd67d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__19_Jun_2009_10_10_20_+1000_K2I80XSOrqU4KLzd"
+ boundary="Signature=_Fri__19_Jun_2009_10_27_31_+1000_8Evc_buSnXkhkfEk"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53453 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48686 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750910AbZFSAKW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 18 Jun 2009 20:10:22 -0400
+	id S1751502AbZFSA1b (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 18 Jun 2009 20:27:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__19_Jun_2009_10_10_20_+1000_K2I80XSOrqU4KLzd
+--Signature=_Fri__19_Jun_2009_10_27_31_+1000_8Evc_buSnXkhkfEk
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jean,
+Hi Ted,
 
-I got this error import the i2c quilt series:
+Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
 
-i2c-core-07-limit-locking.patch
-error: patch failed: drivers/i2c/i2c-core.c:418
-error: drivers/i2c/i2c-core.c: patch does not apply
+In file included from include/trace/ftrace.h:262,
+                 from include/trace/define_trace.h:57,
+                 from include/trace/events/ext4.h:720,
+                 from fs/ext4/super.c:51:
+include/trace/events/ext4.h: In function 'ftrace_raw_output_ext4_free_inode=
+':
+include/trace/events/ext4.h:12: warning: format '%llu' expects type 'long l=
+ong unsigned int', but argument 8 has type 'blkcnt_t'
 
-I noticed that the BASE changed from 3.6.30-git11 yesterday to just
-2.6.30 today, so I tried again against 2.6.30-git11 and it all applied.
+Introduced by commit 9bffad1ed2a003a355ed1b42424a0ae3575275ed ("ext4:
+convert instrumentation from markers to tracepoints") now in Linus' tree.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__19_Jun_2009_10_10_20_+1000_K2I80XSOrqU4KLzd
+--Signature=_Fri__19_Jun_2009_10_27_31_+1000_8Evc_buSnXkhkfEk
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAko612wACgkQjjKRsyhoI8w14QCeLYSwDGTQV9K4gyJ9UplnQIcA
-87gAn3xBfdrW0ePXAyVYqSu0f8G9QAuv
-=cM+0
+iEYEARECAAYFAko623MACgkQjjKRsyhoI8z+9gCbBtiVr+ipQy9qye2hvHXET5io
+aKcAoJqsMNJ4KesNo0ovQHwv3M4bI4Y1
+=9oSX
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__19_Jun_2009_10_10_20_+1000_K2I80XSOrqU4KLzd--
+--Signature=_Fri__19_Jun_2009_10_27_31_+1000_8Evc_buSnXkhkfEk--
