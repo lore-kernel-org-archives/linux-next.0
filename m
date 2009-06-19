@@ -1,57 +1,135 @@
-From: Nico -telmich- Schottelius <nico-linux-next@schottelius.org>
-Subject: Re: linux-next: Tree for June 19
-Date: Fri, 19 Jun 2009 15:44:37 +0200
-Message-ID: <20090619134437.GA10571@ikn.schottelius.org>
-References: <20090619172622.05adb236.sfr@canb.auug.org.au>
+From: Russell King <rmk+lkml@arm.linux.org.uk>
+Subject: Re: linux-next: arm build failures
+Date: Fri, 19 Jun 2009 16:13:21 +0100
+Message-ID: <20090619151321.GA6223@flint.arm.linux.org.uk>
+References: <20090617162612.703adfd9.sfr@canb.auug.org.au> <tnx3a9ztg14.fsf@pc1117.cambridge.arm.com> <20090617230804.5e353ec9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bg08WKrSYDhXBjb5"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.schottelius.org ([77.109.138.221]:36309 "EHLO
-	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752267AbZFSNpq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Jun 2009 09:45:46 -0400
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:58566 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751498AbZFSPOi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Jun 2009 11:14:38 -0400
 Content-Disposition: inline
-In-Reply-To: <20090619172622.05adb236.sfr@canb.auug.org.au>
+In-Reply-To: <20090617230804.5e353ec9.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Sam Ravnborg <sam@ravnborg.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mike Frysinger <vapier.adi@gmail.com>
 
+On Wed, Jun 17, 2009 at 11:08:04PM +1000, Stephen Rothwell wrote:
+> Hi Catalin,
+> 
+> On Wed, 17 Jun 2009 09:34:31 +0100 Catalin Marinas <catalin.marinas@arm.com> wrote:
+> >
+> > Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > > Over the past few days, I have started getting some arm configs (at least
+> > > iop13xx_defconfig and integrator_defconfig, but some others) failing to
+> > > build getting this error:
+> > >
+> > >   SYSMAP  System.map
+> > >   SYSMAP  .tmp_System.map
+> > > Inconsistent kallsyms data
+> > > Try setting CONFIG_KALLSYMS_EXTRA_PASS
+> > >
+> > > Is this something you have seen?  Could it be my toolchain (I am
+> > > currently using gcc 4.4.0 and have not changed it recently)?
+> > 
+> > I reported an error with kallsysms on ARM this Monday leading to
+> > inconsistent data:
+> > 
+> > http://lkml.org/lkml/2009/6/15/233
+> > 
+> > Could it be related?
+> 
+> Could be.  I have added the proposed fix patch to my fixes tree until
+> Linus or Sam gets around to including it.
 
---bg08WKrSYDhXBjb5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No, I don't think it's got anything to do with it.  It's the kallsyms
+generator that's getting confused.
 
-Stephen Rothwell [Fri, Jun 19, 2009 at 05:26:22PM +1000]:
-> Hi all,
->=20
-> Changes since 20090618:
+What's happening is that we're ending up with differences between the
+symbolic information generated for .tmp_vmlinux2 and vmlinux:
 
-This one stops my boot process, when trying to startup
-uml-utilities. 2.6.30-07040-g0732f87 (linus) works.
+ c024c638 t svc_pool_stats_seq_ops
+ c024c648 t rpc_proc_fops
+ c024c6b0 T kallsyms_addresses
+-c024ea10 T kallsyms_num_syms
+-c024ea20 T kallsyms_names
+-c0253990 T kallsyms_markers
+-c02539c0 T kallsyms_token_table
+-c0253d70 T kallsyms_token_index
++c024ea00 T kallsyms_num_syms
++c024ea10 T kallsyms_names
++c0253970 T kallsyms_markers
++c02539a0 T kallsyms_token_table
++c0253d50 T kallsyms_token_index
+ c027b000 r __pci_fixup_PCI_VENDOR_ID_VIA0x324equirk_via_cx700_pci_parking_caching
+ c027b000 R __start_pci_fixups_early
+ c027b000 R __start_rodata
 
-amd64, config attached.
+>From what I can tell, what happens is the following:
 
-Nico
+- link kernel into .tmp_vmlinux1 - thereby containing only weak references
+  to the kallsyms data
 
---=20
-Currently moving *.schottelius.org to http://www.nico.schottelius.org/ ...
+- generate .tmp_kallsyms1.S and assemble it
+- link kernel plus .tmp_kallsyms1.o into .tmp_vmlinux2.  This now contains
+  kallsyms data, but based upon the kernel without any such data.  The
+  symbolic addresses are therefore all wrong.
 
-PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
+- generate .tmp_kallsyms2.S and assemble it
+- link kernel plus .tmp_kallsyms2.o into vmlinux.  This contains the kallsyms
+  data, but in theory the only difference is that the addresses should now
+  be correct.
 
---bg08WKrSYDhXBjb5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
+Now, what seems to be happening in this case is that for .tmp_vmlinux1,
+_etext != _data - in other words, the ". = ALIGN(THREAD_SIZE);" statement
+is having to do something:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+c02880c4 R __stop___param
+c0289000 R __end_rodata
+c0289000 A _etext
+c028a000 A __data_loc
+c028a000 D _data
+c028a000 D _sdata
+c028a000 D init_thread_union
 
-iEYEARECAAYFAko7lkUACgkQuL75KpiFGIyO0ACfQYyAOuq5jQoLHUcp2Ok0JvDF
-1IUAn0jgvcO2PrNoRL6FnTITh2ffQEYt
-=pQT1
------END PGP SIGNATURE-----
+However, for .tmp_vmlinux2, _etext == _data:
 
---bg08WKrSYDhXBjb5--
+c028f0c4 R __stop___param
+c0290000 A __data_loc
+c0290000 R __end_rodata
+c0290000 D _data
+c0290000 A _etext
+c0290000 D _sdata
+c0290000 D init_thread_union
+
+I think the significance of this is the sorting algorithm in kallsyms.c,
+and therefore the way the symbolic information gets compressed.  This
+causes the tables produced in .tmp_kallsyms1.S and .tmp_kallsyms2.S to
+be rather different - particularly size-wise - we can see that
+kallsyms_addresses has shrunk by 16 bytes.  (Note that kallsyms_num_syms
+is aligned to 8 bytes, so it could be 12 bytes... see the next data point
+below.)
+
+It also appears that 3 symbols disappeared between .tmp_kallsyms1.S and
+.tmp_kallsyms2.S - get the diff of 'arm-linux-nm -n' output between
+.tmp_vmlinux1 and .tmp_vmlinux2 shows no fewer symbols.  If that
+translates to 3 fewer addresses in the kallsyms_addresses table,
+that'd explain why its shrunk.
+
+The question is... what are these three magically disappearing symbols
+and why have they disappeared?  Are they related to the reshuffling
+of _etext and __end_rodata vs _data?
+
+I've tried seeing if there's a change to our vmlinux.lds.S file that's
+caused this, but my only solution which so far has worked is to add a
+". += 4;" after "_etext = .;" to force separation of _data from _etext.
+I'm not sure wasting 8K in this way is going to please many people
+though, so I wouldn't call it a solution.
+
+-- 
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
