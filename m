@@ -1,87 +1,53 @@
-From: Jon Masters <jonathan@jonmasters.org>
-Subject: [Fwd: [PULL] hardware latency detector]
-Date: Thu, 18 Jun 2009 21:27:11 -0400
-Message-ID: <1245374831.14766.19.camel@localhost.localdomain>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: nfs tree build warning
+Date: Fri, 19 Jun 2009 12:00:30 +1000
+Message-ID: <20090619120030.1e4ff961.sfr@canb.auug.org.au>
+References: <20090619105022.4dc10679.sfr@canb.auug.org.au>
+	<1245373752.8756.59.camel@heimdal.trondhjem.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-ySjVfcKaW0J9BwWuVkzk"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__19_Jun_2009_12_00_30_+1000_mLYZ_popJSu.V1ev"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from dallas.jonmasters.org ([72.29.103.172]:52739 "EHLO
-	dallas.jonmasters.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751075AbZFSB13 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 18 Jun 2009 21:27:29 -0400
-Received: from localhost ([127.0.0.1])
-	by dallas.jonmasters.org with esmtpsa (TLS-1.0:DHE_RSA_AES_256_CBC_SHA1:32)
-	(Exim 4.60)
-	(envelope-from <jonathan@jonmasters.org>)
-	id 1MHStA-0006kZ-IC
-	for linux-next@vger.kernel.org; Fri, 19 Jun 2009 01:27:32 +0000
+Received: from chilli.pcug.org.au ([203.10.76.44]:49361 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752693AbZFSCAd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 18 Jun 2009 22:00:33 -0400
+In-Reply-To: <1245373752.8756.59.camel@heimdal.trondhjem.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Sager <sager@netapp.com>
 
-
---=-ySjVfcKaW0J9BwWuVkzk
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-
-Stephen,
-
-I've posted this for merge, but plan to continue developing against the
-"master" branch of this tree and then push to "for-linus" before
-posting. Perhaps you'd like to add either branch to linux-next.
-
-Jon.
-
-
---=-ySjVfcKaW0J9BwWuVkzk
+--Signature=_Fri__19_Jun_2009_12_00_30_+1000_mLYZ_popJSu.V1ev
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-Content-Description: Forwarded message - [PULL] hardware latency detector
-Content-Type: message/rfc822
+Content-Transfer-Encoding: quoted-printable
 
-Return-path: <jcm@jonmasters.org>
-Envelope-to: jcm@jonmasters.org
-Delivery-date: Fri, 19 Jun 2009 01:21:43 +0000
-Received: from localhost ([127.0.0.1] helo=tonnant) by
- dallas.jonmasters.org with esmtps (TLS-1.0:DHE_RSA_AES_256_CBC_SHA1:32)
- (Exim 4.60) (envelope-from <jcm@jonmasters.org>) id 1MHSnC-0006ig-NV; Fri,
- 19 Jun 2009 01:21:22 +0000
-Received: from jcm by tonnant with local (Exim 4.69) (envelope-from
- <jcm@jonmasters.org>) id 1MHSnC-0006bC-OW; Thu, 18 Jun 2009 21:21:22 -0400
-Date: Thu, 18 Jun 2009 21:21:22 -0400
-To: mingo@elte.hu, tglx@linutronix.de, williams@redhat.com, jcm@redhat.com, jcm@jonmasters.org, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
-Subject: [PULL] hardware latency detector
-User-Agent: Heirloom mailx 12.4 7/29/08
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Message-Id: <E1MHSnC-0006bC-OW@tonnant>
-From: Jon Masters <jcm@jonmasters.org>
-X-SA-Do-Not-Run: Yes
-X-SA-Exim-Connect-IP: 127.0.0.1
-X-SA-Exim-Mail-From: jcm@jonmasters.org
-X-SA-Exim-Scanned: No (on dallas.jonmasters.org); SAEximRunCond expanded to
- false
-Content-Transfer-Encoding: 7bit
+Hi Trond,
 
-Linus,
+On Thu, 18 Jun 2009 18:09:12 -0700 Trond Myklebust <trond.myklebust@fys.uio=
+.no> wrote:
+>
+> That's my fault: it was due to inattention during the merge of the
+> nfsv41 tree with the mainline NFS changes. I'll fix...
 
-Please pull "hwlat", the hardware latency detector for 2.6.31.
+Thanks.
 
-Patches can be pulled from:
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jcm/linux-2.6-hwlat.git for-linus
+--Signature=_Fri__19_Jun_2009_12_00_30_+1000_mLYZ_popJSu.V1ev
+Content-Type: application/pgp-signature
 
-Jon Masters (2):
-      hwlat_detector: A system hardware latency detector
-      hwlat_detector: include linux/delay.h in hwlat_detector
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
- Documentation/hwlat_detector.txt |   64 ++
- MAINTAINERS                      |    9 +
- drivers/misc/Kconfig             |   28 +
- drivers/misc/Makefile            |    1 +
- drivers/misc/hwlat_detector.c    | 1208 ++++++++++++++++++++++++++++++++++++++
- 5 files changed, 1310 insertions(+), 0 deletions(-)
- create mode 100644 Documentation/hwlat_detector.txt
- create mode 100644 drivers/misc/hwlat_detector.c
+iEYEARECAAYFAko68T4ACgkQjjKRsyhoI8yTXACglEv5qxbd+SKyCwCuHMinjVdo
+EvUAoJIR5U4p2NSpUFyAooxxcQaJsM9w
+=oLRb
+-----END PGP SIGNATURE-----
 
-
---=-ySjVfcKaW0J9BwWuVkzk--
+--Signature=_Fri__19_Jun_2009_12_00_30_+1000_mLYZ_popJSu.V1ev--
