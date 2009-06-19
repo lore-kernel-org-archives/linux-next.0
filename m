@@ -1,135 +1,65 @@
-From: Russell King <rmk+lkml@arm.linux.org.uk>
-Subject: Re: linux-next: arm build failures
-Date: Fri, 19 Jun 2009 16:13:21 +0100
-Message-ID: <20090619151321.GA6223@flint.arm.linux.org.uk>
-References: <20090617162612.703adfd9.sfr@canb.auug.org.au> <tnx3a9ztg14.fsf@pc1117.cambridge.arm.com> <20090617230804.5e353ec9.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] dm: dm-log-userspace depends on NET
+Date: Fri, 19 Jun 2009 10:38:21 -0700
+Message-ID: <4A3BCD0D.3010801@oracle.com>
+References: <20090619172622.05adb236.sfr@canb.auug.org.au>
+Reply-To: device-mapper development <dm-devel@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:58566 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751498AbZFSPOi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Jun 2009 11:14:38 -0400
-Content-Disposition: inline
-In-Reply-To: <20090617230804.5e353ec9.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Sam Ravnborg <sam@ravnborg.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mike Frysinger <vapier.adi@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <dm-devel-bounces@redhat.com>
+In-Reply-To: <20090619172622.05adb236.sfr@canb.auug.org.au>
+List-Unsubscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
+	<mailto:dm-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/dm-devel>
+List-Post: <mailto:dm-devel@redhat.com>
+List-Help: <mailto:dm-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/dm-devel>,
+	<mailto:dm-devel-request@redhat.com?subject=subscribe>
+Sender: dm-devel-bounces@redhat.com
+Errors-To: dm-devel-bounces@redhat.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: dm-devel@redhat.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Jun 17, 2009 at 11:08:04PM +1000, Stephen Rothwell wrote:
-> Hi Catalin,
-> 
-> On Wed, 17 Jun 2009 09:34:31 +0100 Catalin Marinas <catalin.marinas@arm.com> wrote:
-> >
-> > Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > Over the past few days, I have started getting some arm configs (at least
-> > > iop13xx_defconfig and integrator_defconfig, but some others) failing to
-> > > build getting this error:
-> > >
-> > >   SYSMAP  System.map
-> > >   SYSMAP  .tmp_System.map
-> > > Inconsistent kallsyms data
-> > > Try setting CONFIG_KALLSYMS_EXTRA_PASS
-> > >
-> > > Is this something you have seen?  Could it be my toolchain (I am
-> > > currently using gcc 4.4.0 and have not changed it recently)?
-> > 
-> > I reported an error with kallsysms on ARM this Monday leading to
-> > inconsistent data:
-> > 
-> > http://lkml.org/lkml/2009/6/15/233
-> > 
-> > Could it be related?
-> 
-> Could be.  I have added the proposed fix patch to my fixes tree until
-> Linus or Sam gets around to including it.
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-No, I don't think it's got anything to do with it.  It's the kallsyms
-generator that's getting confused.
+DM_LOG_USERSPACE selects CONNECTOR, but when NET is not enabled, this is
+useless and the build fails, so make DM_LOG_USERSPACE depend on NET.
 
-What's happening is that we're ending up with differences between the
-symbolic information generated for .tmp_vmlinux2 and vmlinux:
+ERROR: "netlink_has_listeners" [drivers/connector/cn.ko] undefined!
+ERROR: "proc_net_fops_create" [drivers/connector/cn.ko] undefined!
+ERROR: "netlink_kernel_create" [drivers/connector/cn.ko] undefined!
+ERROR: "proc_net_remove" [drivers/connector/cn.ko] undefined!
+ERROR: "netlink_kernel_release" [drivers/connector/cn.ko] undefined!
+ERROR: "init_net" [drivers/connector/cn.ko] undefined!
+ERROR: "__alloc_skb" [drivers/connector/cn.ko] undefined!
+ERROR: "netlink_broadcast" [drivers/connector/cn.ko] undefined!
+ERROR: "kfree_skb" [drivers/connector/cn.ko] undefined!
+ERROR: "skb_put" [drivers/connector/cn.ko] undefined!
 
- c024c638 t svc_pool_stats_seq_ops
- c024c648 t rpc_proc_fops
- c024c6b0 T kallsyms_addresses
--c024ea10 T kallsyms_num_syms
--c024ea20 T kallsyms_names
--c0253990 T kallsyms_markers
--c02539c0 T kallsyms_token_table
--c0253d70 T kallsyms_token_index
-+c024ea00 T kallsyms_num_syms
-+c024ea10 T kallsyms_names
-+c0253970 T kallsyms_markers
-+c02539a0 T kallsyms_token_table
-+c0253d50 T kallsyms_token_index
- c027b000 r __pci_fixup_PCI_VENDOR_ID_VIA0x324equirk_via_cx700_pci_parking_caching
- c027b000 R __start_pci_fixups_early
- c027b000 R __start_rodata
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Jonathan Brassow <dm-devel@redhat.com>
+Cc: dm-devel@redhat.com
+---
+ drivers/md/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->From what I can tell, what happens is the following:
+--- linux-next-20090619.orig/drivers/md/Kconfig
++++ linux-next-20090619/drivers/md/Kconfig
+@@ -233,7 +233,7 @@ config DM_MIRROR
+ 
+ config DM_LOG_USERSPACE
+ 	tristate "Mirror userspace logging (EXPERIMENTAL)"
+-	depends on DM_MIRROR && EXPERIMENTAL
++	depends on DM_MIRROR && EXPERIMENTAL && NET
+ 	select CONNECTOR
+ 	---help---
+ 	  The userspace logging module provides a mechanism for
 
-- link kernel into .tmp_vmlinux1 - thereby containing only weak references
-  to the kallsyms data
 
-- generate .tmp_kallsyms1.S and assemble it
-- link kernel plus .tmp_kallsyms1.o into .tmp_vmlinux2.  This now contains
-  kallsyms data, but based upon the kernel without any such data.  The
-  symbolic addresses are therefore all wrong.
-
-- generate .tmp_kallsyms2.S and assemble it
-- link kernel plus .tmp_kallsyms2.o into vmlinux.  This contains the kallsyms
-  data, but in theory the only difference is that the addresses should now
-  be correct.
-
-Now, what seems to be happening in this case is that for .tmp_vmlinux1,
-_etext != _data - in other words, the ". = ALIGN(THREAD_SIZE);" statement
-is having to do something:
-
-c02880c4 R __stop___param
-c0289000 R __end_rodata
-c0289000 A _etext
-c028a000 A __data_loc
-c028a000 D _data
-c028a000 D _sdata
-c028a000 D init_thread_union
-
-However, for .tmp_vmlinux2, _etext == _data:
-
-c028f0c4 R __stop___param
-c0290000 A __data_loc
-c0290000 R __end_rodata
-c0290000 D _data
-c0290000 A _etext
-c0290000 D _sdata
-c0290000 D init_thread_union
-
-I think the significance of this is the sorting algorithm in kallsyms.c,
-and therefore the way the symbolic information gets compressed.  This
-causes the tables produced in .tmp_kallsyms1.S and .tmp_kallsyms2.S to
-be rather different - particularly size-wise - we can see that
-kallsyms_addresses has shrunk by 16 bytes.  (Note that kallsyms_num_syms
-is aligned to 8 bytes, so it could be 12 bytes... see the next data point
-below.)
-
-It also appears that 3 symbols disappeared between .tmp_kallsyms1.S and
-.tmp_kallsyms2.S - get the diff of 'arm-linux-nm -n' output between
-.tmp_vmlinux1 and .tmp_vmlinux2 shows no fewer symbols.  If that
-translates to 3 fewer addresses in the kallsyms_addresses table,
-that'd explain why its shrunk.
-
-The question is... what are these three magically disappearing symbols
-and why have they disappeared?  Are they related to the reshuffling
-of _etext and __end_rodata vs _data?
-
-I've tried seeing if there's a change to our vmlinux.lds.S file that's
-caused this, but my only solution which so far has worked is to add a
-". += 4;" after "_etext = .;" to force separation of _data from _etext.
-I'm not sure wasting 8K in this way is going to please many people
-though, so I wouldn't call it a solution.
 
 -- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+~Randy
+LPC 2009, Sept. 23-25, Portland, Oregon
+http://linuxplumbersconf.org/2009/
