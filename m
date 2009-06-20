@@ -1,70 +1,68 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: input tree build warnings
-Date: Sat, 20 Jun 2009 17:17:43 +1000
-Message-ID: <20090620171743.1ef11ef2.sfr@canb.auug.org.au>
-References: <20090612170536.109df1d8.sfr@canb.auug.org.au>
-	<1244843690.3224.10.camel@hp>
-	<20090620060559.GA7710@dtor-d630.eng.vmware.com>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: [PATCH] Kallsyms problems (was: Re: linux-next: arm build failures)
+Date: Sat, 20 Jun 2009 14:41:52 +0200
+Message-ID: <20090620124152.GI32531@uranus.ravnborg.org>
+References: <20090617162612.703adfd9.sfr@canb.auug.org.au> <tnx3a9ztg14.fsf@pc1117.cambridge.arm.com> <20090617230804.5e353ec9.sfr@canb.auug.org.au> <20090619151321.GA6223@flint.arm.linux.org.uk> <20090620155440.a7dfb2d4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__20_Jun_2009_17_17_43_+1000_h8.j4nJjPRh73ODE"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43321 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750843AbZFTHRq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 20 Jun 2009 03:17:46 -0400
-In-Reply-To: <20090620060559.GA7710@dtor-d630.eng.vmware.com>
+Received: from pfepb.post.tele.dk ([195.41.46.236]:40047 "EHLO
+	pfepb.post.tele.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752763AbZFTMjd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 20 Jun 2009 08:39:33 -0400
+Content-Disposition: inline
+In-Reply-To: <20090620155440.a7dfb2d4.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Tero Saarni <tero.saarni@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Russell King <rmk+lkml@arm.linux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mike Frysinger <vapier.adi@gmail.com>, "David S. Miller" <davem@davemloft.net>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
 
---Signature=_Sat__20_Jun_2009_17_17_43_+1000_h8.j4nJjPRh73ODE
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sat, Jun 20, 2009 at 03:54:40PM +1000, Stephen Rothwell wrote:
+> Hi Russell,
+> 
+> On Fri, 19 Jun 2009 16:13:21 +0100 Russell King <rmk+lkml@arm.linux.org.uk> wrote:
+> >
+> > On Wed, Jun 17, 2009 at 11:08:04PM +1000, Stephen Rothwell wrote:
+> > > 
+> > > On Wed, 17 Jun 2009 09:34:31 +0100 Catalin Marinas <catalin.marinas@arm.com> wrote:
+> > > >
+> > > > Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > > > > Over the past few days, I have started getting some arm configs (at least
+> > > > > iop13xx_defconfig and integrator_defconfig, but some others) failing to
+> > > > > build getting this error:
+> > > > >
+> > > > >   SYSMAP  System.map
+> > > > >   SYSMAP  .tmp_System.map
+> > > > > Inconsistent kallsyms data
+> > > > > Try setting CONFIG_KALLSYMS_EXTRA_PASS
+> > > > >
+> > > > > Is this something you have seen?  Could it be my toolchain (I am
+> > > > > currently using gcc 4.4.0 and have not changed it recently)?
+> > > > 
+> > > > I reported an error with kallsysms on ARM this Monday leading to
+> > > > inconsistent data:
+> > > > 
+> > > > http://lkml.org/lkml/2009/6/15/233
+> > > > 
+> > > > Could it be related?
+> > > 
+> > > Could be.  I have added the proposed fix patch to my fixes tree until
+> > > Linus or Sam gets around to including it.
+> > 
+> > No, I don't think it's got anything to do with it.  It's the kallsyms
+> > generator that's getting confused.
+> > 
+> > What's happening is that we're ending up with differences between the
+> > symbolic information generated for .tmp_vmlinux2 and vmlinux:
+> 
+> I do wonder if the above could be the root cause, though.  Since I added
+> the added the fix mentioned above to linux-next, my arm builds have not
+> failed do to this problem.  Or maybe this "fix" just works around another
+> problem?
+> 
+> In any case, it would be nice if the fix (repeated below) could be sent
+> to Linus by someone (it also fixes a problem that Dave Miller is seeing).
 
-Hi Dmitry, Tero,
+Just sent it. Overloaded with day-time stuff (again).
 
-On Fri, 19 Jun 2009 23:06:09 -0700 Dmitry Torokhov <dmitry.torokhov@gmail.c=
-om> wrote:
->
-> On Sat, Jun 13, 2009 at 12:54:50AM +0300, Tero Saarni wrote:
-> > On Fri, 2009-06-12 at 17:05 +1000, Stephen Rothwell wrote:
-> > > Hi Dmitry,
-> > >=20
-> > > Today's linux-next build (x86_64 allmodconfig) produced these warning=
-s:
-> > >=20
-> > > drivers/input/evdev.c: In function 'evdev_do_ioctl':
-> > > drivers/input/evdev.c:632: warning: comparison of distinct pointer ty=
-pes lacks a cast
-> > > drivers/input/evdev.c:660: warning: comparison of distinct pointer ty=
-pes lacks a cast
-> > >=20
-> > > Introduced by commit 61c7bfcdf5acee06f58b246d6615989134719d19 ("Input:
-> > > synaptics - add support for reporting x/y resolution").
-> >=20
-> > My mistake, thanks for the heads up!
->=20
-> I folded it into the original patch.
-
-Thanks.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Sat__20_Jun_2009_17_17_43_+1000_h8.j4nJjPRh73ODE
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAko8jRcACgkQjjKRsyhoI8wgowCfVJaBzljsRyQZsSmV38VZ50Mh
-BwsAn0v4/hp5ZirmRpHfqM67Eren6ccS
-=8Iaa
------END PGP SIGNATURE-----
-
---Signature=_Sat__20_Jun_2009_17_17_43_+1000_h8.j4nJjPRh73ODE--
+	Sam
