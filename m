@@ -1,76 +1,56 @@
-From: Len Brown <lenb@kernel.org>
-Subject: Re: linux-next: Tree for June 19
-Date: Sat, 20 Jun 2009 14:27:59 -0400 (EDT)
-Message-ID: <alpine.LFD.2.00.0906201415400.4083@localhost.localdomain>
-References: <20090619172622.05adb236.sfr@canb.auug.org.au>
- <alpine.LFD.2.00.0906200012200.4325@localhost.localdomain>
- <20090620150433.4e038676.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] Kallsyms problems (was: Re: linux-next: arm build
+ failures)
+Date: Sun, 21 Jun 2009 09:58:55 +1000
+Message-ID: <20090621095855.3462fc23.sfr@canb.auug.org.au>
+References: <20090617162612.703adfd9.sfr@canb.auug.org.au>
+	<tnx3a9ztg14.fsf@pc1117.cambridge.arm.com>
+	<20090617230804.5e353ec9.sfr@canb.auug.org.au>
+	<20090619151321.GA6223@flint.arm.linux.org.uk>
+	<20090620155440.a7dfb2d4.sfr@canb.auug.org.au>
+	<20090620124152.GI32531@uranus.ravnborg.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sun__21_Jun_2009_09_58_55_+1000_1VcHkt2ftF.wKNgl"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from vms173001pub.verizon.net ([206.46.173.1]:35223 "EHLO
-	vms173001pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753727AbZFTS2b (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 20 Jun 2009 14:28:31 -0400
-In-reply-to: <20090620150433.4e038676.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35496 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751629AbZFTX67 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 20 Jun 2009 19:58:59 -0400
+In-Reply-To: <20090620124152.GI32531@uranus.ravnborg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sfi-devel@simplefirmware.org
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Russell King <rmk+lkml@arm.linux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mike Frysinger <vapier.adi@gmail.com>, "David S. Miller" <davem@davemloft.net>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
 
-> On Sat, 20 Jun 2009 00:16:49 -0400 (EDT) Len Brown <lenb@kernel.org> wrote:
-> >
-> > Please add the Simple Firmware Interface "sfi-test" branch to linux-next:
-> > 
-> > git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux-sfi-2.6.git sfi-test
-> 
-> Is this 2.6.31 or 32 material?
+--Signature=_Sun__21_Jun_2009_09_58_55_+1000_1VcHkt2ftF.wKNgl
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-yes:-)
+Hi Sam,
 
-Most that is in in sfi-test at this moment I hope to catch .31.
-There will be much more in .32 -- mostly things that depend on
-the first batch...
+On Sat, 20 Jun 2009 14:41:52 +0200 Sam Ravnborg <sam@ravnborg.org> wrote:
+>
+> Just sent it. Overloaded with day-time stuff (again).
 
-> > A description of the project is on the SFI home page: http://simplefirmware.org/
-> > 
-> > Note: like ACPI's test branch, this branch will be occasionally re-based
-> > as the patches in it evolve.
-> 
-> That's fine.
-> 
-> Should I put just you as the contact, or add the mailing list as well?
+Thanks.
 
-The mailing list is fine (on cc), and I'm on that.
-It is redundant to send to both.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-> What I tell everyone: all patches/commits in the tree/series must
-> have been:
-> 
-> 	posted to a relevant mailing list
-> 	reviewed
-> 	unit tested
-> 	destined for the next merge window (or the current release)
-> 
-> *before* they are included.  The linux-next tree is for integration
-> testing and to lower the impact of conflicts between subsystems in the
-> next merge window.
-> 
-> Basically, this should be just what you would send to Linus (or ask him
-> to fetch).  It is allowed to be rebased if you deem it necessary.
+--Signature=_Sun__21_Jun_2009_09_58_55_+1000_1VcHkt2ftF.wKNgl
+Content-Type: application/pgp-signature
 
-The patches are tested on the pre-release platform that
-makes use of them.  There have been several internal reviews
-and re-writes, but since we just got permission to release the
-patches last week, they've not been publically vetted yet.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-The content is quite close to what I plan to propose for upstream,
-but the format is not.  I'll be re-factoring the series into
-"clean history" and senting them to LKML on Sunday night.
+iEYEARECAAYFAko9d78ACgkQjjKRsyhoI8xx0QCfV3uIBqoNZMNxDZZuH3NTtShp
+i7oAn2y4Dfrgwe/66FD4ST+Q3MDeYfow
+=xWRO
+-----END PGP SIGNATURE-----
 
-I don't expect much comment on the generic part,
-but will want x86 maintainers to buy into the
-parts that touch their architecture.
-
-thanks,
--Len Brown, Intel Open Source Technology Center
+--Signature=_Sun__21_Jun_2009_09_58_55_+1000_1VcHkt2ftF.wKNgl--
