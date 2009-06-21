@@ -1,56 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] Kallsyms problems (was: Re: linux-next: arm build
- failures)
-Date: Sun, 21 Jun 2009 09:58:55 +1000
-Message-ID: <20090621095855.3462fc23.sfr@canb.auug.org.au>
-References: <20090617162612.703adfd9.sfr@canb.auug.org.au>
-	<tnx3a9ztg14.fsf@pc1117.cambridge.arm.com>
-	<20090617230804.5e353ec9.sfr@canb.auug.org.au>
-	<20090619151321.GA6223@flint.arm.linux.org.uk>
-	<20090620155440.a7dfb2d4.sfr@canb.auug.org.au>
-	<20090620124152.GI32531@uranus.ravnborg.org>
+From: Jon Masters <jonathan@jonmasters.org>
+Subject: Re: [Fwd: [PULL] hardware latency detector]
+Date: Sat, 20 Jun 2009 23:41:21 -0400
+Message-ID: <1245555681.3265.4062.camel@perihelion.bos.jonmasters.org>
+References: <1245374831.14766.19.camel@localhost.localdomain>
+	 <20090620083127.dbf3103e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sun__21_Jun_2009_09_58_55_+1000_1VcHkt2ftF.wKNgl"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35496 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751629AbZFTX67 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 20 Jun 2009 19:58:59 -0400
-In-Reply-To: <20090620124152.GI32531@uranus.ravnborg.org>
+Received: from dallas.jonmasters.org ([72.29.103.172]:34003 "EHLO
+	dallas.jonmasters.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751382AbZFUDlV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 20 Jun 2009 23:41:21 -0400
+In-Reply-To: <20090620083127.dbf3103e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Russell King <rmk+lkml@arm.linux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mike Frysinger <vapier.adi@gmail.com>, "David S. Miller" <davem@davemloft.net>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Sun__21_Jun_2009_09_58_55_+1000_1VcHkt2ftF.wKNgl
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sat, 2009-06-20 at 08:31 +1000, Stephen Rothwell wrote:
+> Hi Jon,
+> 
+> On Thu, 18 Jun 2009 21:27:11 -0400 Jon Masters <jonathan@jonmasters.org> wrote:
+> >
+> > I've posted this for merge, but plan to continue developing against the
+> > "master" branch of this tree and then push to "for-linus" before
+> > posting. Perhaps you'd like to add either branch to linux-next.
+> 
+> I'll add your for-linus branch to linux-next on Monday (the next tree I
+> will create).
 
-Hi Sam,
+Yeah, I figured all the following bits about the rules - thanks for
+that! I created the for-linus branch for precisely those reasons :)
 
-On Sat, 20 Jun 2009 14:41:52 +0200 Sam Ravnborg <sam@ravnborg.org> wrote:
->
-> Just sent it. Overloaded with day-time stuff (again).
+Jon.
 
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Sun__21_Jun_2009_09_58_55_+1000_1VcHkt2ftF.wKNgl
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAko9d78ACgkQjjKRsyhoI8xx0QCfV3uIBqoNZMNxDZZuH3NTtShp
-i7oAn2y4Dfrgwe/66FD4ST+Q3MDeYfow
-=xWRO
------END PGP SIGNATURE-----
-
---Signature=_Sun__21_Jun_2009_09_58_55_+1000_1VcHkt2ftF.wKNgl--
+P.S. You do an amazing job and we are very grateful to you for it. I
+especially enjoy tracking your tree for my podcast, which forces me to
+keep up with exactly what is in it at any moment.
