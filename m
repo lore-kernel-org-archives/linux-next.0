@@ -1,89 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for June 19
-Date: Mon, 22 Jun 2009 01:54:27 +1000
-Message-ID: <20090622015427.c749a0d9.sfr@canb.auug.org.au>
-References: <20090619172622.05adb236.sfr@canb.auug.org.au>
-	<alpine.LFD.2.00.0906200012200.4325@localhost.localdomain>
-	<20090620150433.4e038676.sfr@canb.auug.org.au>
-	<alpine.LFD.2.00.0906201415400.4083@localhost.localdomain>
+Subject: [ofa-general] linux-next: origin tree build warning
+Date: Mon, 22 Jun 2009 11:01:13 +1000
+Message-ID: <20090622110113.7cd89382.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__22_Jun_2009_01_54_27_+1000_uK3yB0fj3S/2fR0z"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43551 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751424AbZFUPyc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 21 Jun 2009 11:54:32 -0400
-In-Reply-To: <alpine.LFD.2.00.0906201415400.4083@localhost.localdomain>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sfi-devel@simplefirmware.org, x86@kernel.org
+Content-Type: multipart/mixed; boundary="===============0351405470=="
+Return-path: <general-bounces@lists.openfabrics.org>
+List-Unsubscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
+	<mailto:general-request@lists.openfabrics.org?subject=unsubscribe>
+List-Archive: <http://lists.openfabrics.org/pipermail/general>
+List-Post: <mailto:general@lists.openfabrics.org>
+List-Help: <mailto:general-request@lists.openfabrics.org?subject=help>
+List-Subscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
+	<mailto:general-request@lists.openfabrics.org?subject=subscribe>
+Mime-version: 1.0
+Sender: general-bounces@lists.openfabrics.org
+Errors-To: general-bounces@lists.openfabrics.org
+To: Roland Dreier <rdreier@cisco.com>, general@lists.openfabrics.org
+Cc: Tomonori <fujita.tomonori@lab.ntt.co.jp>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, FUJITA@lists.openfabrics.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__22_Jun_2009_01_54_27_+1000_uK3yB0fj3S/2fR0z
+--===============0351405470==
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+	micalg="PGP-SHA1";
+	boundary="Signature=_Mon__22_Jun_2009_11_01_13_+1000_m_cRvG2f5/ugGLE5"
+
+--Signature=_Mon__22_Jun_2009_11_01_13_+1000_m_cRvG2f5/ugGLE5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Len,
+Hi all,
 
-On Sat, 20 Jun 2009 14:27:59 -0400 (EDT) Len Brown <lenb@kernel.org> wrote:
->
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >=20
-> > Is this 2.6.31 or 32 material?
->=20
-> yes:-)
->=20
-> Most that is in in sfi-test at this moment I hope to catch .31.
-> There will be much more in .32 -- mostly things that depend on
-> the first batch...
+Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
 
-OK, so then don't add any (more) .32 material into that branch until
-after Linus' releases 31-rc1, please.
+drivers/infiniband/hw/mthca/mthca_mr.c: In function 'mthca_arbel_write_mtt_=
+seg':
+drivers/infiniband/hw/mthca/mthca_mr.c:358: warning: 'dma_sync_single' is d=
+eprecated (declared at /scratch/sfr/next/include/linux/dma-mapping.h:113)
+drivers/infiniband/hw/mthca/mthca_mr.c: In function 'mthca_arbel_map_phys_f=
+mr':
+drivers/infiniband/hw/mthca/mthca_mr.c:810: warning: 'dma_sync_single' is d=
+eprecated (declared at /scratch/sfr/next/include/linux/dma-mapping.h:113)
 
-> > Should I put just you as the contact, or add the mailing list as well?
->=20
-> The mailing list is fine (on cc), and I'm on that.
-> It is redundant to send to both.
-
-Then please ensure that I can post to that list (I don't want to
-subscribe obviously).
-
-> > Basically, this should be just what you would send to Linus (or ask him
-> > to fetch).  It is allowed to be rebased if you deem it necessary.
->=20
-> The patches are tested on the pre-release platform that
-> makes use of them.  There have been several internal reviews
-> and re-writes, but since we just got permission to release the
-> patches last week, they've not been publically vetted yet.
->=20
-> The content is quite close to what I plan to propose for upstream,
-> but the format is not.  I'll be re-factoring the series into
-> "clean history" and senting them to LKML on Sunday night.
->=20
-> I don't expect much comment on the generic part,
-> but will want x86 maintainers to buy into the
-> parts that touch their architecture.
-
-OK, then I think I need to hear from the x86 maintainers, at least,
-before we include this.
+Introduced by commit dbe6f1869188b6e04e38aa861dd198befb08bcd7
+("dma-mapping: mark dma_sync_single and dma_sync_sg as deprecated").
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__22_Jun_2009_01_54_27_+1000_uK3yB0fj3S/2fR0z
+--Signature=_Mon__22_Jun_2009_11_01_13_+1000_m_cRvG2f5/ugGLE5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAko+V7MACgkQjjKRsyhoI8y4FwCcDpNw+ZeN0NZJAmuifd+9WB5W
-FdkAoLqQAWjbZzE6jenESGJf40kDZdZT
-=1Z66
+iEYEARECAAYFAko+19kACgkQjjKRsyhoI8wCjgCgqPi+OiUfCupcAR+molNU1oD9
+I7cAmwb50Y98KUDhBW8IHC5fB+fOv/At
+=Q10J
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__22_Jun_2009_01_54_27_+1000_uK3yB0fj3S/2fR0z--
+--Signature=_Mon__22_Jun_2009_11_01_13_+1000_m_cRvG2f5/ugGLE5--
+
+--===============0351405470==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============0351405470==--
