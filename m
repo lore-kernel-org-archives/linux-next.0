@@ -1,225 +1,67 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net/wireless tree with the acpi
- tree
-Date: Mon, 22 Jun 2009 13:29:06 +1000
-Message-ID: <20090622132906.6dc5b08c.sfr@canb.auug.org.au>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: [s390x] Next June 18: boot failure
+Date: Mon, 22 Jun 2009 09:27:05 +0200
+Message-ID: <20090622072705.GA4940@osiris.boeblingen.de.ibm.com>
+References: <20090618145949.d933719a.sfr@canb.auug.org.au> <4A3A335E.1040300@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46649 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751636AbZFVD3I (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 21 Jun 2009 23:29:08 -0400
+Received: from mtagate8.de.ibm.com ([195.212.29.157]:45754 "EHLO
+	mtagate8.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750872AbZFVH1s (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Jun 2009 03:27:48 -0400
+Content-Disposition: inline
+In-Reply-To: <4A3A335E.1040300@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Corentin Chary <corentincj@iksaif.net>, Len Brown <lenb@kernel.org>, Alan Jenkins <alan-jenkins@tuffmail.co.uk>, "David S. Miller" <davem@davemloft.net>
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-s390@vger.kernel.org
 
-Hi John,
+On Thu, Jun 18, 2009 at 06:00:22PM +0530, Sachin Sant wrote:
+> Today's Next tree failed to boot on a s390x box.
+>
+> 00: Booting default (autotest)...
+>           00000000002baf7a: a74b0038           aghi    %r4,56
+> Call Trace:
+> (<00000000004afc36>=A8 console_init+0x36/0x50)
+> <0000000000498b86>=A8 start_kernel+0x53e/0x5ec
+> <0000000000012020>=A8 _ehead+0x20/0x80
+> Last Breaking-Event-Address:
+> <00000000002bafd4>=A8 init_section_page_cgroup+0xfc/0x10c
+>
+> --- end trace 31fd0ba7d8756001 =A8---
+> Kernel panic - not syncing: Attempted to kill the idle task!
+> CPU: 0 Tainted: G      D    2.6.30-autotest-next-20090618 #1
+> Process swapper (pid: 0, task: 0000000000445700, ksp: 000000000049800=
+0)
+> 0000000000000005 0000000000497b10 0000000000000002 0000000000000000
+>       0000000000497bb0 0000000000497b28 0000000000497b28 000000000004=
+a01e
+>       00000000002c4d08 0000000000000000 0000000000000000 000000000000=
+000b
+>       0000000000000008 0000000000000000 0000000000497b10 000000000049=
+7b88
+>       00000000002c4c90 00000000000163aa 0000000000497b10 000000000049=
+7b60
+> Call Trace:
+> (<000000000001630c>=A8 show_trace+0xdc/0xec)
+> <0000000000048f10>=A8 panic+0x84/0x1c0
+> <000000000004ce3c>=A8 do_exit+0x74/0x6f0
+> <0000000000016862>=A8 die+0x152/0x154
+> <000000000001298c>=A8 do_no_context+0xa0/0xac
+> <00000000000131aa>=A8 do_protection_exception+0x252/0x260
+> <0000000000025fa8>=A8 sysc_return+0x0/0x8
+> <00000000002baf64>=A8 init_section_page_cgroup+0x8c/0x10c
+> (<00000000004afc36>=A8 console_init+0x36/0x50)
+> <0000000000498b86>=A8 start_kernel+0x53e/0x5ec
+> <0000000000012020>=A8 _ehead+0x20/0x80
+> 00: HCPGIR450W CP entered; disabled wait PSW 00020001 80000000 000000=
+00
+> 00020E76
+>
+> I haven't played with a s390 box before so not sure if this
+> is a new problem or me not compiling the kernel properly.
+> Let me know what other information is required.
 
-Today's linux-next merge of the wireless tree got a conflict in
-drivers/platform/x86/eeepc-laptop.c between commit
-bd134968b9c14d3631e9e33599b27cef0e4d884e ("eeepc-laptop: rfkill
-refactoring") from the acpi tree and commit
-96e9cfeb9692b0bc6e03f9b6f9cb3c67a40b76d1 ("eeepc-laptop: read rfkill
-soft-blocked state on resume") from the wireless tree.
-
-The former changed the names of some structure entries that the latter
-used.  I fixed it up (see below) and can carry the fix for a while.
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/platform/x86/eeepc-laptop.c
-index 67ad360,8153b3e..0000000
---- a/drivers/platform/x86/eeepc-laptop.c
-+++ b/drivers/platform/x86/eeepc-laptop.c
-@@@ -191,7 -180,7 +191,8 @@@ static struct key_entry eeepc_keymap[] 
-   */
-  static int eeepc_hotk_add(struct acpi_device *device);
-  static int eeepc_hotk_remove(struct acpi_device *device, int type);
- +static void eeepc_hotk_notify(struct acpi_device *device, u32 event);
-+ static int eeepc_hotk_resume(struct acpi_device *device);
-  
-  static const struct acpi_device_id eeepc_device_ids[] = {
-  	{EEEPC_HOTK_HID, 0},
-@@@ -207,7 -195,7 +208,8 @@@ static struct acpi_driver eeepc_hotk_dr
-  	.ops = {
-  		.add = eeepc_hotk_add,
-  		.remove = eeepc_hotk_remove,
- +		.notify = eeepc_hotk_notify,
-+ 		.resume = eeepc_hotk_resume,
-  	},
-  };
-  
-@@@ -645,30 -514,14 +647,27 @@@ static int notify_brn(void
-  	return -1;
-  }
-  
- +static int eeepc_get_adapter_status(struct hotplug_slot *hotplug_slot,
- +				    u8 *value)
- +{
- +	int val = get_acpi(CM_ASL_WLAN);
- +
- +	if (val == 1 || val == 0)
- +		*value = val;
- +	else
- +		return -EINVAL;
- +
- +	return 0;
- +}
- +
-- static void eeepc_rfkill_notify(acpi_handle handle, u32 event, void *data)
-+ static void eeepc_rfkill_hotplug(void)
-  {
-  	struct pci_dev *dev;
-  	struct pci_bus *bus = pci_find_bus(0, 1);
-  	bool blocked;
-  
-- 	if (event != ACPI_NOTIFY_BUS_CHECK)
-- 		return;
-- 
-  	if (!bus) {
- -		printk(EEEPC_WARNING "Unable to find PCI bus 1?\n");
- +		pr_warning("Unable to find PCI bus 1?\n");
-  		return;
-  	}
-  
-@@@ -694,10 -547,18 +693,18 @@@
-  		}
-  	}
-  
- -	rfkill_set_sw_state(ehotk->eeepc_wlan_rfkill, blocked);
- +	rfkill_set_sw_state(ehotk->wlan_rfkill, blocked);
-  }
-  
-+ static void eeepc_rfkill_notify(acpi_handle handle, u32 event, void *data)
-+ {
-+ 	if (event != ACPI_NOTIFY_BUS_CHECK)
-+ 		return;
-+ 
-+ 	eeepc_rfkill_hotplug();
-+ }
-+ 
- -static void eeepc_hotk_notify(acpi_handle handle, u32 event, void *data)
- +static void eeepc_hotk_notify(struct acpi_device *device, u32 event)
-  {
-  	static struct key_entry *key;
-  	u16 count;
-@@@ -869,6 -741,33 +876,33 @@@ static int eeepc_hotk_remove(struct acp
-  	return 0;
-  }
-  
-+ static int eeepc_hotk_resume(struct acpi_device *device)
-+ {
- -	if (ehotk->eeepc_wlan_rfkill) {
-++	if (ehotk->wlan_rfkill) {
-+ 		bool wlan;
-+ 
-+ 		/* Workaround - it seems that _PTS disables the wireless
-+ 		   without notification or changing the value read by WLAN.
-+ 		   Normally this is fine because the correct value is restored
-+ 		   from the non-volatile storage on resume, but we need to do
-+ 		   it ourself if case suspend is aborted, or we lose wireless.
-+ 		 */
-+ 		wlan = get_acpi(CM_ASL_WLAN);
-+ 		set_acpi(CM_ASL_WLAN, wlan);
-+ 
- -		rfkill_set_sw_state(ehotk->eeepc_wlan_rfkill,
-++		rfkill_set_sw_state(ehotk->wlan_rfkill,
-+ 				    wlan != 1);
-+ 
-+ 		eeepc_rfkill_hotplug();
-+ 	}
-+ 
- -	if (ehotk->eeepc_bluetooth_rfkill)
- -		rfkill_set_sw_state(ehotk->eeepc_bluetooth_rfkill,
-++	if (ehotk->bluetooth_rfkill)
-++		rfkill_set_sw_state(ehotk->bluetooth_rfkill,
-+ 				    get_acpi(CM_ASL_BLUETOOTH) != 1);
-+ 
-+ 	return 0;
-+ }
-+ 
-  /*
-   * Hwmon
-   */
-@@@ -1029,75 -922,6 +1063,75 @@@ static void __exit eeepc_laptop_exit(vo
-  	platform_driver_unregister(&platform_driver);
-  }
-  
- +static int eeepc_new_rfkill(struct rfkill **rfkill,
- +			    const char *name, struct device *dev,
- +			    enum rfkill_type type, int cm)
- +{
- +	int result;
- +
- +	result = get_acpi(cm);
- +	if (result < 0)
- +		return result;
- +
- +	*rfkill = rfkill_alloc(name, dev, type,
- +			       &eeepc_rfkill_ops, (void *)(unsigned long)cm);
- +
- +	if (!*rfkill)
- +		return -EINVAL;
- +
-- 	rfkill_set_sw_state(*rfkill, get_acpi(cm) != 1);
-++	rfkill_init_sw_state(*rfkill, get_acpi(cm) != 1);
- +	result = rfkill_register(*rfkill);
- +	if (result) {
- +		rfkill_destroy(*rfkill);
- +		*rfkill = NULL;
- +		return result;
- +	}
- +	return 0;
- +}
- +
- +
- +static int eeepc_rfkill_init(struct device *dev)
- +{
- +	int result = 0;
- +
- +	eeepc_register_rfkill_notifier("\\_SB.PCI0.P0P6");
- +	eeepc_register_rfkill_notifier("\\_SB.PCI0.P0P7");
- +
- +	result = eeepc_new_rfkill(&ehotk->wlan_rfkill,
- +				  "eeepc-wlan", dev,
- +				  RFKILL_TYPE_WLAN, CM_ASL_WLAN);
- +
- +	if (result && result != -ENODEV)
- +		goto exit;
- +
- +	result = eeepc_new_rfkill(&ehotk->bluetooth_rfkill,
- +				  "eeepc-bluetooth", dev,
- +				  RFKILL_TYPE_BLUETOOTH, CM_ASL_BLUETOOTH);
- +
- +	if (result && result != -ENODEV)
- +		goto exit;
- +
- +	result = eeepc_new_rfkill(&ehotk->wwan3g_rfkill,
- +				  "eeepc-wwan3g", dev,
- +				  RFKILL_TYPE_WWAN, CM_ASL_3G);
- +
- +	if (result && result != -ENODEV)
- +		goto exit;
- +
- +	result = eeepc_setup_pci_hotplug();
- +	/*
- +	 * If we get -EBUSY then something else is handling the PCI hotplug -
- +	 * don't fail in this case
- +	 */
- +	if (result == -EBUSY)
- +		result = 0;
- +
- +exit:
- +	if (result && result != -ENODEV)
- +		eeepc_rfkill_exit();
- +	return result;
- +}
- +
-  static int eeepc_backlight_init(struct device *dev)
-  {
-  	struct backlight_device *bd;
+Could you try using SLAB/SLUB instead of SLQB?
