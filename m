@@ -1,35 +1,43 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Re: [s390x] Next June 18: boot failure
-Date: Mon, 22 Jun 2009 14:35:29 +0530
-Message-ID: <4A3F4959.1000202@in.ibm.com>
-References: <20090618145949.d933719a.sfr@canb.auug.org.au> <4A3A335E.1040300@in.ibm.com> <20090622072705.GA4940@osiris.boeblingen.de.ibm.com>
+From: Pekka Enberg <penberg@cs.helsinki.fi>
+Subject: Re: linux-next: slab tree build failure
+Date: Mon, 22 Jun 2009 12:09:02 +0300
+Message-ID: <1245661742.18751.32.camel@penberg-laptop>
+References: <20090619141626.a60bba01.sfr@canb.auug.org.au>
+	 <1245408008.16880.9.camel@pasglop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp04.in.ibm.com ([59.145.155.4]:37677 "EHLO
-	e28smtp04.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751002AbZFVJFp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Jun 2009 05:05:45 -0400
-In-Reply-To: <20090622072705.GA4940@osiris.boeblingen.de.ibm.com>
+Received: from courier.cs.helsinki.fi ([128.214.9.1]:33661 "EHLO
+	mail.cs.helsinki.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754820AbZFVJJC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Jun 2009 05:09:02 -0400
+In-Reply-To: <1245408008.16880.9.camel@pasglop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-s390@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Heiko Carstens wrote:
-> Could you try using SLAB/SLUB instead of SLQB?
->   
-With SLUB the machine boots fine.
+On Fri, 2009-06-19 at 20:40 +1000, Benjamin Herrenschmidt wrote:
+> On Fri, 2009-06-19 at 14:16 +1000, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> > 
+> > mm/slqb.c:75: error: 'SLAB_GFP_BOOT_MASK' undeclared here (not in a function)
+> > 
+> > Caused by commit df548b0bbaf2d4d16ce52d2f5ccdc1cfded70e06 ("SLQB: Fix
+> > early boot allocations") from the slab tree interacting with commit
+> > dcce284a259373f9e5570f2e33f79eca84fcf565 ("mm: Extend gfp masking to the
+> > page allocator") that entered Linus' tree today.
+> > 
+> > I have applied this patch for today:
+> 
+> The right fix is to remove slab_gfp_mask from slqb.c and use
+> the global gfp_allowed_mask instead.
 
-Thanks
--Sachin
+This should be fixed now in slab.git. Something in SQLB is still
+enabling interrupts during early boot but I don't have the time to look
+at it in more detail right now.
 
--- 
-
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+			Pekka
