@@ -1,73 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for June 22
-Date: Mon, 22 Jun 2009 18:26:00 +1000
-Message-ID: <20090622182600.129da88e.sfr@canb.auug.org.au>
-References: <20090622181920.496d160e.sfr@canb.auug.org.au>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Re: [s390x] Next June 18: boot failure
+Date: Mon, 22 Jun 2009 14:35:29 +0530
+Message-ID: <4A3F4959.1000202@in.ibm.com>
+References: <20090618145949.d933719a.sfr@canb.auug.org.au> <4A3A335E.1040300@in.ibm.com> <20090622072705.GA4940@osiris.boeblingen.de.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__22_Jun_2009_18_26_00_+1000_oVLT.JfXL_OIVNxd"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51754 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752995AbZFVI0D (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 22 Jun 2009 04:26:03 -0400
-In-Reply-To: <20090622181920.496d160e.sfr@canb.auug.org.au>
+Received: from e28smtp04.in.ibm.com ([59.145.155.4]:37677 "EHLO
+	e28smtp04.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751002AbZFVJFp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Jun 2009 05:05:45 -0400
+In-Reply-To: <20090622072705.GA4940@osiris.boeblingen.de.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-s390@vger.kernel.org
 
---Signature=_Mon__22_Jun_2009_18_26_00_+1000_oVLT.JfXL_OIVNxd
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Heiko Carstens wrote:
+> Could you try using SLAB/SLUB instead of SLQB?
+>   
+With SLUB the machine boots fine.
 
-On Mon, 22 Jun 2009 18:19:20 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Changes since 20090619:
+Thanks
+-Sachin
 
-The current "git diff --stat -M stable..HEAD^" ends like this:
+-- 
 
-	835 files changed, 46602 insertions(+), 14044 deletions(-)
-
-So, we must be nearly there. :-)
-
-$ git diff --dirstat -M stable..HEAD^
-   3.8% Documentation/
-   4.9% arch/arm/configs/
-   6.6% arch/arm/
-   4.3% arch/m68k/include/asm/
-   3.0% arch/x86/kvm/
-   3.3% arch/x86/
-   3.6% arch/
-   4.6% drivers/firewire/
-   5.2% drivers/md/
-   3.5% drivers/misc/
-   4.7% drivers/mtd/
-   4.0% drivers/pci/hotplug/
-   3.2% drivers/pci/pcie/
-   4.2% drivers/watchdog/
-  14.9% drivers/
-   7.1% fs/
-   4.1% include/linux/
-   9.5% mm/
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__22_Jun_2009_18_26_00_+1000_oVLT.JfXL_OIVNxd
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAko/QBgACgkQjjKRsyhoI8yE1ACeM0lp3apJHUp/8PjhZRYe8Bhu
-eY0An3Fv1eH0FV3YmdM2KFGiror380kM
-=mBD+
------END PGP SIGNATURE-----
-
---Signature=_Mon__22_Jun_2009_18_26_00_+1000_oVLT.JfXL_OIVNxd--
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
