@@ -1,43 +1,55 @@
-From: Pekka Enberg <penberg@cs.helsinki.fi>
-Subject: Re: linux-next: slab tree build failure
-Date: Mon, 22 Jun 2009 12:09:02 +0300
-Message-ID: <1245661742.18751.32.camel@penberg-laptop>
-References: <20090619141626.a60bba01.sfr@canb.auug.org.au>
-	 <1245408008.16880.9.camel@pasglop>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] hwlat: depends on RING_BUFFER (build fix)
+Date: Mon, 22 Jun 2009 08:51:53 -0700
+Message-ID: <4A3FA899.3040402@oracle.com>
+References: <20090622181920.496d160e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=ISO-8859-5
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from courier.cs.helsinki.fi ([128.214.9.1]:33661 "EHLO
-	mail.cs.helsinki.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754820AbZFVJJC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Jun 2009 05:09:02 -0400
-In-Reply-To: <1245408008.16880.9.camel@pasglop>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:27934 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754325AbZFVPwu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Jun 2009 11:52:50 -0400
+In-Reply-To: <20090622181920.496d160e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jon Masters <jcm@jonmasters.org>, Andrew Morton <akpm@linux-foundation.org>
 
-On Fri, 2009-06-19 at 20:40 +1000, Benjamin Herrenschmidt wrote:
-> On Fri, 2009-06-19 at 14:16 +1000, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> > 
-> > mm/slqb.c:75: error: 'SLAB_GFP_BOOT_MASK' undeclared here (not in a function)
-> > 
-> > Caused by commit df548b0bbaf2d4d16ce52d2f5ccdc1cfded70e06 ("SLQB: Fix
-> > early boot allocations") from the slab tree interacting with commit
-> > dcce284a259373f9e5570f2e33f79eca84fcf565 ("mm: Extend gfp masking to the
-> > page allocator") that entered Linus' tree today.
-> > 
-> > I have applied this patch for today:
-> 
-> The right fix is to remove slab_gfp_mask from slqb.c and use
-> the global gfp_allowed_mask instead.
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-This should be fixed now in slab.git. Something in SQLB is still
-enabling interrupts during early boot but I don't have the time to look
-at it in more detail right now.
+hwlat_detector build fails because it uses ring_buffer interfaces
+without depending on RING_BUFFER.
 
-			Pekka
+hwlat_detector.c:(.text+0x8d906): undefined reference to `ring_buffer_reset'
+hwlat_detector.c:(.text+0x8d98c): undefined reference to `ring_buffer_free'
+hwlat_detector.c:(.text+0x8dd16): undefined reference to `__ring_buffer_alloc'
+hwlat_detector.c:(.text+0x8df15): undefined reference to `ring_buffer_free'
+hwlat_detector.c:(.text+0x8e100): undefined reference to `ring_buffer_write'
+hwlat_detector.c:(.text+0x8e239): undefined reference to `ring_buffer_consume'
+hwlat_detector.c:(.text+0x8e2ac): undefined reference to `ring_buffer_event_data'
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Jon Masters <jcm@jonmasters.org>
+---
+ drivers/misc/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20090622.orig/drivers/misc/Kconfig
++++ linux-next-20090622/drivers/misc/Kconfig
+@@ -79,6 +79,7 @@ config IBM_ASM
+ config HWLAT_DETECTOR
+ 	tristate "Testing module to detect hardware-induced latencies"
+ 	depends on DEBUG_FS
++	depends on RING_BUFFER
+ 	default m
+ 	---help---
+ 	  A simple hardware latency detector. Use this module to detect
+
+
+
+-- 
+~Randy
+LPC 2009, Sept. 23-25, Portland, Oregon
+http://linuxplumbersconf.org/2009/
