@@ -1,30 +1,50 @@
-From: Jon Masters <jonathan@jonmasters.org>
-Subject: Re: [PATCH -next] hwlat: depends on RING_BUFFER (build fix)
-Date: Mon, 22 Jun 2009 17:14:11 -0400
-Message-ID: <1245705251.15044.32.camel@localhost.localdomain>
-References: <20090622181920.496d160e.sfr@canb.auug.org.au>
-	 <4A3FA899.3040402@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: origin tree build warning
+Date: Tue, 23 Jun 2009 10:36:04 +1000
+Message-ID: <20090623103604.9d60b2d8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__23_Jun_2009_10_36_04_+1000_d1BnpUbfX/b4lTX."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from dallas.jonmasters.org ([72.29.103.172]:59054 "EHLO
-	dallas.jonmasters.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752128AbZFVVOM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Jun 2009 17:14:12 -0400
-In-Reply-To: <4A3FA899.3040402@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:50450 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751912AbZFWAgJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Jun 2009 20:36:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jon Masters <jcm@jonmasters.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Linus Walleij <linus.ml.walleij@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>
 
-On Mon, 2009-06-22 at 08:51 -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> hwlat_detector build fails because it uses ring_buffer interfaces
-> without depending on RING_BUFFER.
+--Signature=_Tue__23_Jun_2009_10_36_04_+1000_d1BnpUbfX/b4lTX.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks randy, I'll pull that in to my for-linus tree. Hope to see you in
-Montreal/Portland ;)
+Hi Linus,
 
-Jon.
+Today's linux-next build (x86_64 allmodconfig) produced this warning:
+
+drivers/mfd/ab3100-core.c:563: warning: initialization from incompatible po=
+inter type
+
+Introduced by commit 14fa56917d73d823538151b0429d98211fa439c1 ("mfd: add
+U300 AB3100 core support").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__23_Jun_2009_10_36_04_+1000_d1BnpUbfX/b4lTX.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkpAI3QACgkQjjKRsyhoI8zI7ACgmaDOEX9rNXXC+vVQGwBPaVMq
+458An0FWTiU5v9WMBXHsVcKbIn2RMVCC
+=sNsS
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__23_Jun_2009_10_36_04_+1000_d1BnpUbfX/b4lTX.--
