@@ -1,59 +1,78 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for June 23
-Date: Tue, 23 Jun 2009 16:07:25 +1000
-Message-ID: <20090623160725.e6c7f733.sfr@canb.auug.org.au>
-References: <20090623153357.61f4a9a2.sfr@canb.auug.org.au>
+From: Roland Dreier <rdreier@cisco.com>
+Subject: Re: [ofa-general] Re: linux-next: origin tree build warning
+Date: Mon, 22 Jun 2009 23:10:17 -0700
+Message-ID: <adatz27pjjq.fsf@cisco.com>
+References: <20090622110113.7cd89382.sfr@canb.auug.org.au>
+	<20090622121054K.fujita.tomonori@lab.ntt.co.jp>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__23_Jun_2009_16_07_25_+1000_A93vZt7q/MdJ/v_G"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44525 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751576AbZFWGH2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Jun 2009 02:07:28 -0400
-In-Reply-To: <20090623153357.61f4a9a2.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <general-bounces@lists.openfabrics.org>
+In-Reply-To: <20090622121054K.fujita.tomonori@lab.ntt.co.jp> (FUJITA
+	Tomonori's message of "Mon, 22 Jun 2009 12:11:12 +0900")
+List-Unsubscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
+	<mailto:general-request@lists.openfabrics.org?subject=unsubscribe>
+List-Archive: <http://lists.openfabrics.org/pipermail/general>
+List-Post: <mailto:general@lists.openfabrics.org>
+List-Help: <mailto:general-request@lists.openfabrics.org?subject=help>
+List-Subscribe: <http://lists.openfabrics.org/cgi-bin/mailman/listinfo/general>,
+	<mailto:general-request@lists.openfabrics.org?subject=subscribe>
+Sender: general-bounces@lists.openfabrics.org
+Errors-To: general-bounces@lists.openfabrics.org
+To: FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, general@lists.openfabrics.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__23_Jun_2009_16_07_25_+1000_A93vZt7q/MdJ/v_G
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks, I queued up:
 
-$ git diff --shortstat -M stable..HEAD^
- 556 files changed, 27596 insertions(+), 7123 deletions(-)
-$ git diff --dirstat -M stable..HEAD^
-   3.8% Documentation/vm/
-   4.8% arch/x86/kvm/
-   5.4% arch/x86/
-   3.4% drivers/acpi/
-   7.5% drivers/firewire/
-   8.5% drivers/md/
-   5.8% drivers/misc/
-   4.3% drivers/scsi/
-   6.9% drivers/watchdog/
-  15.3% drivers/
-   3.4% fs/
-   6.1% include/linux/
-  15.5% mm/
+commit 99987bea474ceca8ec6fb05f81d7d188634cdffd
+Author: Roland Dreier <rolandd@cisco.com>
+Date:   Mon Jun 22 23:04:13 2009 -0700
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+    IB/mthca: Replace dma_sync_single() use with proper functions
+    
+    dma_sync_single() is deprecated now, and the use in mthca is wrong:
+    there should be a dma_sync_single_for_cpu() before touching the memory
+    from the CPU, and a dma_sync_single_for_device() afterwards.  Fix
+    this, prompted by a kick in the pants from a patch from FUJITA
+    Tomonori <fujita.tomonori@lab.ntt.co.jp>.
+    
+    Signed-off-by: Roland Dreier <rolandd@cisco.com>
 
---Signature=_Tue__23_Jun_2009_16_07_25_+1000_A93vZt7q/MdJ/v_G
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkpAcR0ACgkQjjKRsyhoI8xVRACfZHjN+rYWip5bsuehrQZb8d61
-T4sAn2pNInrGv/iJppeRuwr8voef5LD6
-=L9kg
------END PGP SIGNATURE-----
-
---Signature=_Tue__23_Jun_2009_16_07_25_+1000_A93vZt7q/MdJ/v_G--
+diff --git a/drivers/infiniband/hw/mthca/mthca_mr.c b/drivers/infiniband/hw/mthca/mthca_mr.c
+index d606edf..065b208 100644
+--- a/drivers/infiniband/hw/mthca/mthca_mr.c
++++ b/drivers/infiniband/hw/mthca/mthca_mr.c
+@@ -352,10 +352,14 @@ static void mthca_arbel_write_mtt_seg(struct mthca_dev *dev,
+ 
+ 	BUG_ON(!mtts);
+ 
++	dma_sync_single_for_cpu(&dev->pdev->dev, dma_handle,
++				list_len * sizeof (u64), DMA_TO_DEVICE);
++
+ 	for (i = 0; i < list_len; ++i)
+ 		mtts[i] = cpu_to_be64(buffer_list[i] | MTHCA_MTT_FLAG_PRESENT);
+ 
+-	dma_sync_single(&dev->pdev->dev, dma_handle, list_len * sizeof (u64), DMA_TO_DEVICE);
++	dma_sync_single_for_device(&dev->pdev->dev, dma_handle,
++				   list_len * sizeof (u64), DMA_TO_DEVICE);
+ }
+ 
+ int mthca_write_mtt(struct mthca_dev *dev, struct mthca_mtt *mtt,
+@@ -803,12 +807,15 @@ int mthca_arbel_map_phys_fmr(struct ib_fmr *ibfmr, u64 *page_list,
+ 
+ 	wmb();
+ 
++	dma_sync_single_for_cpu(&dev->pdev->dev, fmr->mem.arbel.dma_handle,
++				list_len * sizeof(u64), DMA_TO_DEVICE);
++
+ 	for (i = 0; i < list_len; ++i)
+ 		fmr->mem.arbel.mtts[i] = cpu_to_be64(page_list[i] |
+ 						     MTHCA_MTT_FLAG_PRESENT);
+ 
+-	dma_sync_single(&dev->pdev->dev, fmr->mem.arbel.dma_handle,
+-			list_len * sizeof(u64), DMA_TO_DEVICE);
++	dma_sync_single_for_device(&dev->pdev->dev, fmr->mem.arbel.dma_handle,
++				   list_len * sizeof(u64), DMA_TO_DEVICE);
+ 
+ 	fmr->mem.arbel.mpt->key    = cpu_to_be32(key);
+ 	fmr->mem.arbel.mpt->lkey   = cpu_to_be32(key);
