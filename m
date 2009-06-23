@@ -1,50 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: rr tree build failure
-Date: Tue, 23 Jun 2009 16:14:16 +1000
-Message-ID: <20090623161416.072b43ba.sfr@canb.auug.org.au>
+Subject: linux-next: origin tree build failure
+Date: Tue, 23 Jun 2009 16:22:23 +1000
+Message-ID: <20090623162223.55b9880c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__23_Jun_2009_16_14_16_+1000_vT1CKCZHo2Anuj.I"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1758179AbZFWGO2@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Tue__23_Jun_2009_16_22_23_+1000_pR/qoTxm.Cyayvwo"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:54098 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750986AbZFWGW1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Jun 2009 02:22:27 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Andy Green <andy@warmcat.com>, Ben Dooks <ben-linux@fluff.org>, Michel Pollet <buserror@gmail.com>
 
---Signature=_Tue__23_Jun_2009_16_14_16_+1000_vT1CKCZHo2Anuj.I
+--Signature=_Tue__23_Jun_2009_16_22_23_+1000_pR/qoTxm.Cyayvwo
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi Russell,
 
-Today's linux-next build (arm realview-smp_defconfig) failed like this:
+Today's linux-next build (arm s3c2410_defconfig) failed like this:
 
-arch/arm/kernel/smp.c: In function 'flush_tlb_mm':
-arch/arm/kernel/smp.c:646: error: lvalue required as unary '&' operand
-arch/arm/kernel/smp.c: In function 'flush_tlb_page':
-arch/arm/kernel/smp.c:657: error: lvalue required as unary '&' operand
-arch/arm/kernel/smp.c: In function 'flush_tlb_range':
-arch/arm/kernel/smp.c:680: error: lvalue required as unary '&' operand
+arch/arm/mach-s3c2410/mach-smdk2410.c:94: error: 's3c_device_iis' undeclare=
+d here (not in a function)
+arch/arm/mach-s3c2410/mach-h1940.c:189: error: 's3c_device_iis' undeclared =
+here (not in a function)
+arch/arm/mach-s3c2440/mach-rx3715.c:183: error: 's3c_device_iis' undeclared=
+ here (not in a function)
+arch/arm/mach-s3c2412/mach-smdk2413.c:111: error: 's3c_device_iis' undeclar=
+ed here (not in a function)
+arch/arm/mach-s3c2440/mach-smdk2440.c:157: error: 's3c_device_iis' undeclar=
+ed here (not in a function)
+arch/arm/mach-s3c2412/mach-vstms.c:127: error: 's3c_device_iis' undeclared =
+here (not in a function)
+rch/arm/mach-s3c2440/mach-nexcoder.c:113: error: 's3c_device_iis' undeclare=
+d here (not in a function)
 
-Caused by commit e97df8b735e20500a1d6a3743bef153869c472d3
-("cpumask:use-mm_cpumask-arm").
+Probably caused by commit 52da219e9664e537a745877b0efa7cf2b1ff2996
+("[ARM] S3C64XX: Provide device for IIS ports");
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__23_Jun_2009_16_14_16_+1000_vT1CKCZHo2Anuj.I
+--Signature=_Tue__23_Jun_2009_16_22_23_+1000_pR/qoTxm.Cyayvwo
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkpAcrgACgkQjjKRsyhoI8yMYQCgjh9MIJMnk85dL8fFP/u2Z6xj
-a9wAn2SLPGZTKDjhxkO/Jt4PcmcWz8qY
-=3k7E
+iEYEARECAAYFAkpAdJ8ACgkQjjKRsyhoI8wdPwCfWmOY156tr97XeOx08OZYKsEG
+Qp8AoLkX+WyGIEC8bVJPmvDkrMgYAHFr
+=0JaO
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__23_Jun_2009_16_14_16_+1000_vT1CKCZHo2Anuj.I--
+--Signature=_Tue__23_Jun_2009_16_22_23_+1000_pR/qoTxm.Cyayvwo--
