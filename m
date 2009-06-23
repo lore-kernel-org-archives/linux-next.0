@@ -1,98 +1,247 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for June 22
-Date: Tue, 23 Jun 2009 11:48:20 +1000
-Message-ID: <20090623114820.991120dc.sfr@canb.auug.org.au>
-References: <20090622181920.496d160e.sfr@canb.auug.org.au>
-	<20090622182600.129da88e.sfr@canb.auug.org.au>
-	<4A3FBE13.9050201@leemhuis.info>
+Subject: linux-next: Tree for June 23
+Date: Tue, 23 Jun 2009 15:33:57 +1000
+Message-ID: <20090623153357.61f4a9a2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__23_Jun_2009_11_48_20_+1000_LmMFCOcKVBdwRgI/"
+ boundary="Signature=_Tue__23_Jun_2009_15_33_57_+1000_cTKzXOppjkStO+1s"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45525 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36319 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751464AbZFWBs1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 22 Jun 2009 21:48:27 -0400
-In-Reply-To: <4A3FBE13.9050201@leemhuis.info>
+	id S1752206AbZFWFot (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Jun 2009 01:44:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thorsten Leemhuis <fedora@leemhuis.info>
-Cc: linux-next@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Tue__23_Jun_2009_11_48_20_+1000_LmMFCOcKVBdwRgI/
+--Signature=_Tue__23_Jun_2009_15_33_57_+1000_cTKzXOppjkStO+1s
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Thorsten,
+Hi all,
 
-On Mon, 22 Jun 2009 19:23:31 +0200 Thorsten Leemhuis <fedora@leemhuis.info>=
- wrote:
->
-> On 22.06.2009 10:26, Stephen Rothwell wrote:
-> > On Mon, 22 Jun 2009 18:19:20 +1000 Stephen Rothwell <sfr@canb.auug.org.=
-au> wrote:
-> >>
-> >> Changes since 20090619:
-> >=20
-> > The current "git diff --stat -M stable..HEAD^" ends like this:
->=20
-> Side note: above command doesn't work here (Fedora 11, git version 1.6.2.=
-2):
->=20
-> $ git diff --stat -M 'stable..HEAD^'
-> fatal: ambiguous argument 'stable..HEAD^': unknown revision or path not
-> in the working tree.
-> Use '--' to separate paths from revisions
->=20
-> This command OTOH...
-> $ git diff --stat -M 'origin/stable..origin/HEAD^'
-> ...seems to work just fine and gives the result your posted:
+Changes since 20090622:
 
-That is because the "stable" and "HEAD" refs (branches) are local for me
-since linux-next is my tree.  They are remote for you since you fetched
-them, so their names are different.
+My fixes tree contains this one commit:
 
-> Is it possible somehow to export the individual patches that are
-> currently in linux-next? I tried
->=20
->  git format-patch -M -o ../tmp 'origin/stable..origin/HEAD^'
->=20
-> but that resulted in 3269 files with commits/patches that sum up to
-> 38 MByte. Some of those patches (seems 1919 alone from the KVM tree...)
-> are quite old. The first one for example is
-> 0001-KVM-mmu-add-missing-dirty-page-tracking-cases.patch :
+	fbdev: work around old compiler bug (this works around a bug in
+old compilers).
 
-The kvm tree is actually a bit of a pain and I am considering what to do
-about it.  The tree I am currently fetching into linux-next contains all
-the history of their development (at least back a considerable time).
-When they decide to send things to Linus, they seem to rebase a subset of
-their current patches onto another branch that is based on Linus' tree
-and then ask him to pull that.  So the commits in Linus' tree never have
-the same SAH1s as the ones in the linux-next tree and in many cases, they
-don't even have the same patch-ids as they have been rebased.
+This tree fails to build for powerpc allyesconfig.
 
-You can extract the commits in each tree by using the SHA1s in the
-Next/SHA1s file.  So, for example, in yesterday's tree the SHA1 for the
-net tree was 6be832529a8129c9d90a1d3a78c5d503a710b6fc, so the commits are
-origin/stable..6be832529a8129c9d90a1d3a78c5d503a710b6fc.  This doesn't
-work for the kvm tree (see above).
+The slab tree lost its conflict and build failure.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+(patches at
+http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES) and i386, sparc and sparc64 defconfig.
+These builds also have CONFIG_ENABLE_WARN_DEPRECATED,
+CONFIG_ENABLE_MUST_CHECK and CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 130 trees (counting Linus' and 19 trees of patches pending for
+Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__23_Jun_2009_11_48_20_+1000_LmMFCOcKVBdwRgI/
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/master
+Merging quilt/driver-core.current
+Merging quilt/usb.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging dwmw2/master
+Merging arm/devel
+Merging davinci/for-next
+Merging pxa/for-next
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging microblaze/next
+CONFLICT (content): Merge conflict in arch/x86/mm/fault.c
+CONFLICT (content): Merge conflict in drivers/input/evdev.c
+CONFLICT (content): Merge conflict in drivers/platform/x86/eeepc-laptop.c
+CONFLICT (content): Merge conflict in drivers/staging/Kconfig
+CONFLICT (content): Merge conflict in drivers/staging/Makefile
+CONFLICT (add/add): Merge conflict in drivers/staging/serqt_usb2/serqt_usb2=
+.c
+CONFLICT (content): Merge conflict in include/linux/rfkill.h
+$ git reset --hard HEAD^
+Merging refs/next/20090619/microblaze
+Merging mips/mips-for-linux-next
+CONFLICT (add/add): Merge conflict in arch/mips/cavium-octeon/executive/cvm=
+x-helper-errata.c
+CONFLICT (content): Merge conflict in arch/mips/mm/tlbex.c
+CONFLICT (content): Merge conflict in arch/mips/sibyte/swarm/setup.c
+CONFLICT (content): Merge conflict in drivers/char/hw_random/Kconfig
+CONFLICT (content): Merge conflict in drivers/char/hw_random/Makefile
+Merging parisc/master
+Merging powerpc/next
+Merging 4xx/next
+Merging galak/next
+Merging s390/features
+Merging sh/master
+Merging sparc/master
+Merging xtensa/master
+Merging cifs/master
+Merging configfs/linux-next
+CONFLICT (content): Merge conflict in fs/configfs/dir.c
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging jfs/next
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging squashfs/master
+Merging v9fs/for-next
+CONFLICT (content): Merge conflict in net/9p/protocol.c
+Merging ubifs/linux-next
+Merging xfs/master
+Merging reiserfs-bkl/reiserfs/kill-bkl-rc6
+CONFLICT (content): Merge conflict in fs/reiserfs/super.c
+Merging vfs/for-next
+Merging pci/linux-next
+Merging hid/for-next
+Merging quilt/i2c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+Merging quota/for_next
+Merging kbuild/master
+Merging ide/master
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+CONFLICT (content): Merge conflict in drivers/platform/x86/eeepc-laptop.c
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/master
+Merging dlm/next
+Merging scsi/master
+Merging async_tx/next
+Merging udf/for_next
+Merging net/master
+Merging wireless/master
+Merging mtd/master
+Merging crypto/master
+Merging sound/for-next
+Merging cpufreq/next
+Merging quilt/rr
+Merging mmc/next
+Merging input/next
+Merging bkl-removal/bkl-removal
+Merging lsm/for-next
+Merging block/for-next
+Merging quilt/device-mapper
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging voltage/for-next
+Merging security-testing/next
+Merging lblnet/master
+Merging quilt/ttydev
+Merging agp/agp-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+CONFLICT (content): Merge conflict in drivers/pci/intel-iommu.c
+CONFLICT (content): Merge conflict in drivers/pci/intr_remapping.c
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+Merging audit/for-next
+Merging omap/for-next
+Merging quilt/aoe
+Merging suspend/linux-next
+Merging bluetooth/master
+Merging edac-amd/for-next
+Merging fsnotify/for-next
+Merging irda/for-next
+Merging hwlat/for-linus
+Merging tip/auto-latest
+CONFLICT (content): Merge conflict in arch/x86/mm/fault.c
+Merging asm-generic/next
+Merging quilt/driver-core
+Merging quilt/usb
+Merging quilt/staging
+Merging scsi-post-merge/master
+
+--Signature=_Tue__23_Jun_2009_15_33_57_+1000_cTKzXOppjkStO+1s
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkpANGQACgkQjjKRsyhoI8wJPACgpxv9NFmm1F/p77Dn9pRRWxD9
-+7YAoK6aqIcYHkSvcfFmucBpQBTIgBP3
-=jPi/
+iEYEARECAAYFAkpAaUUACgkQjjKRsyhoI8yNdQCdH0qqvDje0yr7PXdUyb2JAWCg
+g0UAnRw8XbRE60wTrHtv6uWBjg9zMu0+
+=8jiP
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__23_Jun_2009_11_48_20_+1000_LmMFCOcKVBdwRgI/--
+--Signature=_Tue__23_Jun_2009_15_33_57_+1000_cTKzXOppjkStO+1s--
