@@ -1,48 +1,52 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: [PATCH] wm97xx_batery: replace driver_data with dev_get_drvdata()
-Date: Tue, 23 Jun 2009 17:50:06 +0400
-Message-ID: <1245765006-10863-1-git-send-email-a.beregalov@gmail.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: driver-core tree build failure
+Date: Tue, 23 Jun 2009 08:29:16 -0700
+Message-ID: <20090623152916.GA27467@kroah.com>
+References: <20090623160100.ab086e63.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fg-out-1718.google.com ([72.14.220.155]:33060 "EHLO
-	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753847AbZFWNuQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Jun 2009 09:50:16 -0400
-Received: by fg-out-1718.google.com with SMTP id e12so116650fga.17
-        for <linux-next@vger.kernel.org>; Tue, 23 Jun 2009 06:50:19 -0700 (PDT)
+Received: from kroah.org ([198.145.64.141]:42553 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1760837AbZFWPlN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Jun 2009 11:41:13 -0400
+Content-Disposition: inline
+In-Reply-To: <20090623160100.ab086e63.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, rmk+kernel@arm.linux.org.uk
-Cc: gregkh@suse.de, Alexander Beregalov <a.beregalov@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
-See commit 53d8ba57 (Driver core: move dev_get/set_drvdata to
-drivers/base/dd.c)
-Fix build.
+On Tue, Jun 23, 2009 at 04:01:00PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next build (arm omap_osk_5912_defconfig) failed like this:
+> 
+> drivers/video/omap/omapfb_main.c: In function 'omapfb_show_caps_num':
+> drivers/video/omap/omapfb_main.c:1253: error: 'struct device' has no member named 'driver_data'
+> drivers/video/omap/omapfb_main.c: In function 'omapfb_show_caps_text':
+> drivers/video/omap/omapfb_main.c:1273: error: 'struct device' has no member named 'driver_data'
+> drivers/video/omap/omapfb_main.c: In function 'omapfb_show_panel_name':
+> drivers/video/omap/omapfb_main.c:1320: error: 'struct device' has no member named 'driver_data'
+> drivers/video/omap/omapfb_main.c: In function 'omapfb_show_bklight_level':
+> drivers/video/omap/omapfb_main.c:1329: error: 'struct device' has no member named 'driver_data'
+> drivers/video/omap/omapfb_main.c: In function 'omapfb_store_bklight_level':
+> drivers/video/omap/omapfb_main.c:1344: error: 'struct device' has no member named 'driver_data'
+> drivers/video/omap/omapfb_main.c: In function 'omapfb_show_bklight_max':
+> drivers/video/omap/omapfb_main.c:1363: error: 'struct device' has no member named 'driver_data'
+> drivers/video/omap/omapfb_main.c: In function 'omapfb_show_ctrl_name':
+> drivers/video/omap/omapfb_main.c:1396: error: 'struct device' has no member named 'driver_data'
+> 
+> Caused by commit 53d8ba57f16029a47ed5df9840ab6c3f9abd3727 ("Driver core:
+> move dev_get/set_drvdata to drivers/base/dd.c") from the driver-core tree.
+> 
+> I see more grepping in your future :-)
 
-Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
----
- drivers/power/wm97xx_battery.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+Heh, thanks, I got i386, x86-64, and ppc64 working properly this time
+around, but new things keep slipping in :)
 
-diff --git a/drivers/power/wm97xx_battery.c b/drivers/power/wm97xx_battery.c
-index 8bde921..b787335 100644
---- a/drivers/power/wm97xx_battery.c
-+++ b/drivers/power/wm97xx_battery.c
-@@ -33,14 +33,14 @@ static enum power_supply_property *prop;
- 
- static unsigned long wm97xx_read_bat(struct power_supply *bat_ps)
- {
--	return wm97xx_read_aux_adc(bat_ps->dev->parent->driver_data,
-+	return wm97xx_read_aux_adc(dev_get_drvdata(bat_ps->dev->parent),
- 					pdata->batt_aux) * pdata->batt_mult /
- 					pdata->batt_div;
- }
- 
- static unsigned long wm97xx_read_temp(struct power_supply *bat_ps)
- {
--	return wm97xx_read_aux_adc(bat_ps->dev->parent->driver_data,
-+	return wm97xx_read_aux_adc(dev_get_drvdata(bat_ps->dev->parent),
- 					pdata->temp_aux) * pdata->temp_mult /
- 					pdata->temp_div;
- }
--- 
-1.6.3.1
+I'll go resolve these as well.
+
+thanks,
+
+greg k-h
