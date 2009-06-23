@@ -1,62 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: origin tree build failure
-Date: Tue, 23 Jun 2009 16:22:23 +1000
-Message-ID: <20090623162223.55b9880c.sfr@canb.auug.org.au>
+From: Len Brown <lenb@kernel.org>
+Subject: Re: linux-next: Tree for June 19
+Date: Tue, 23 Jun 2009 02:34:07 -0400 (EDT)
+Message-ID: <alpine.LFD.2.00.0906230227250.5879@localhost.localdomain>
+References: <20090619172622.05adb236.sfr@canb.auug.org.au>
+ <alpine.LFD.2.00.0906200012200.4325@localhost.localdomain>
+ <20090620150433.4e038676.sfr@canb.auug.org.au>
+ <alpine.LFD.2.00.0906201415400.4083@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__23_Jun_2009_16_22_23_+1000_pR/qoTxm.Cyayvwo"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54098 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750986AbZFWGW1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Jun 2009 02:22:27 -0400
+Received: from vms173013pub.verizon.net ([206.46.173.13]:49329 "EHLO
+	vms173013pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751698AbZFWHem (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Jun 2009 03:34:42 -0400
+In-reply-to: <alpine.LFD.2.00.0906201415400.4083@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Andy Green <andy@warmcat.com>, Ben Dooks <ben-linux@fluff.org>, Michel Pollet <buserror@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sfi-devel@simplefirmware.org
 
---Signature=_Tue__23_Jun_2009_16_22_23_+1000_pR/qoTxm.Cyayvwo
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>>> git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux-sfi-2.6.git sfi-test
 
-Hi Russell,
+>>> A description of the project is on the SFI home page: 
+>>> http://simplefirmware.org/
 
-Today's linux-next build (arm s3c2410_defconfig) failed like this:
+>> Is this 2.6.31 or 32 material?
 
-arch/arm/mach-s3c2410/mach-smdk2410.c:94: error: 's3c_device_iis' undeclare=
-d here (not in a function)
-arch/arm/mach-s3c2410/mach-h1940.c:189: error: 's3c_device_iis' undeclared =
-here (not in a function)
-arch/arm/mach-s3c2440/mach-rx3715.c:183: error: 's3c_device_iis' undeclared=
- here (not in a function)
-arch/arm/mach-s3c2412/mach-smdk2413.c:111: error: 's3c_device_iis' undeclar=
-ed here (not in a function)
-arch/arm/mach-s3c2440/mach-smdk2440.c:157: error: 's3c_device_iis' undeclar=
-ed here (not in a function)
-arch/arm/mach-s3c2412/mach-vstms.c:127: error: 's3c_device_iis' undeclared =
-here (not in a function)
-rch/arm/mach-s3c2440/mach-nexcoder.c:113: error: 's3c_device_iis' undeclare=
-d here (not in a function)
+Hi Stephen,
 
-Probably caused by commit 52da219e9664e537a745877b0efa7cf2b1ff2996
-("[ARM] S3C64XX: Provide device for IIS ports");
+On second though, I'll wait for 2.6.32 merge window to push upstream.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+So go ahead and delay pulling sfi-test until after 2.6.31-rc1 is declared.
 
---Signature=_Tue__23_Jun_2009_16_22_23_+1000_pR/qoTxm.Cyayvwo
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkpAdJ8ACgkQjjKRsyhoI8wdPwCfWmOY156tr97XeOx08OZYKsEG
-Qp8AoLkX+WyGIEC8bVJPmvDkrMgYAHFr
-=0JaO
------END PGP SIGNATURE-----
-
---Signature=_Tue__23_Jun_2009_16_22_23_+1000_pR/qoTxm.Cyayvwo--
+thanks,
+-Len Brown, Intel Open Source Technology Center
