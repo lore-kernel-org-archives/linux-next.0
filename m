@@ -1,61 +1,67 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Jens Axboe <jens.axboe@oracle.com>
 Subject: Re: Main things left in linux-next
-Date: Wed, 24 Jun 2009 17:46:57 +1000
-Message-ID: <20090624174657.c325f500.sfr@canb.auug.org.au>
-References: <20090624164617.b7c49974.sfr@canb.auug.org.au>
-	<20090624172735.9b500674.sfr@canb.auug.org.au>
-	<84144f020906240040ycf40bd6q20af82907315adc2@mail.gmail.com>
+Date: Wed, 24 Jun 2009 09:48:01 +0200
+Message-ID: <20090624074801.GH31415@kernel.dk>
+References: <20090624164617.b7c49974.sfr@canb.auug.org.au> <20090624172735.9b500674.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__24_Jun_2009_17_46_57_+1000_NPnVhYRY/GFckm9g"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40608 "EHLO smtps.tip.net.au"
+Received: from brick.kernel.dk ([93.163.65.50]:49526 "EHLO kernel.dk"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751344AbZFXHrB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 24 Jun 2009 03:47:01 -0400
-In-Reply-To: <84144f020906240040ycf40bd6q20af82907315adc2@mail.gmail.com>
+	id S1753783AbZFXHr7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 24 Jun 2009 03:47:59 -0400
+Content-Disposition: inline
+In-Reply-To: <20090624172735.9b500674.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pekka Enberg <penberg@cs.helsinki.fi>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Christoph Lameter <cl@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>, Nick Piggin <npiggin@suse.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Joel Becker <Joel.Becker@oracle.com>, =?iso-8859-1?B?IkZy6WTpcmljIFdlaXNiZWNrZXIi?= <fweisbec@gmail.com>, Len Brown <lenb@kernel.org>, Avi Kivity <avi@qumranet.com>, Rusty Russell <rusty@rustcorp.com.au>, Alasdair G Kergon <agk@redhat.com>, Anton Vorontsov <avorontsov@ru.mvista.com>, Richard Purdie <rpurdie@rpsys.net>, Boaz Harrosh <bharrosh@panasas.com>, Jon Masters <jonathan@jonmasters.org>, Greg KH <greg@kroah.com>
 
---Signature=_Wed__24_Jun_2009_17_46_57_+1000_NPnVhYRY/GFckm9g
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jun 24 2009, Stephen Rothwell wrote:
+> Hi All,
+> 
+> $ git diff --shortstat -M stable..HEAD^
+>  587 files changed, 27313 insertions(+), 12317 deletions(-)
+> 
+> We seem to be going backwards :-( Yesterday's was:
+>  556 files changed, 27596 insertions(+), 7123 deletions(-)
+> 
+> $ git diff --dirstat -M stable..HEAD^
+>    4.9% Documentation/powerpc/dts-bindings/
+>    5.1% Documentation/powerpc/
+>    3.0% Documentation/vm/
+>    3.9% arch/sparc/
+>    3.9% arch/x86/kvm/
+>    4.4% arch/x86/
+>    6.9% drivers/md/
+>    4.7% drivers/misc/
+>    9.8% drivers/staging/et131x/
+>    4.3% drivers/staging/
+>    6.6% drivers/usb/otg/
+>   14.5% drivers/
+>    5.5% include/linux/
+>   12.6% mm/
+> 
+> The main obvious things left are:
+> 
+> SLQB from the slab tree
+> an m68k update
+> an ocfs2 update
+> the reiserfs kill-the-bkl effort
+> an acpi update
+> a kvm update
+> some more cpumask work from the rr tree
+> the writeback changes form the block tree
+> a device-mapper update
+> a battery tree update
+> a leds tree update
+> osdblk from the osd tree
+> the new hwlat tree
+> devtmpfs from the driver-core tree (hmmm?)
+> 
+> Please do not shoot the messenger. :-)
 
-Hi Pekka,
+The writeback changes will be sitting there until .32 :-)
 
-On Wed, 24 Jun 2009 10:40:48 +0300 Pekka Enberg <penberg@cs.helsinki.fi> wr=
-ote:
->
-> 2009/6/24 Stephen Rothwell <sfr@canb.auug.org.au>:
-> > The main obvious things left are:
-> >
-> > SLQB from the slab tree
->=20
-> This didn't make it to 2.6.31. Do you want me to drop it until -rc1 is ou=
-t?
-
-At this point, it hardly matters as I suspect -rc1 will be in the next
-day or so.  Probably better to keep things stable for Andrew, so leave it
-in, I guess.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__24_Jun_2009_17_46_57_+1000_NPnVhYRY/GFckm9g
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkpB2fEACgkQjjKRsyhoI8zYRwCgtM1Fx0m+JYshCKl1fWkN/VJH
-9SkAniWTHqACLp+bJNslefow0ASCIoUN
-=vxAV
------END PGP SIGNATURE-----
-
---Signature=_Wed__24_Jun_2009_17_46_57_+1000_NPnVhYRY/GFckm9g--
+-- 
+Jens Axboe
