@@ -1,55 +1,50 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: driver-core tree build failure
-Date: Tue, 23 Jun 2009 09:28:21 -0700
-Message-ID: <20090623162821.GA8482@kroah.com>
-References: <20090623160100.ab086e63.sfr@canb.auug.org.au> <20090623152916.GA27467@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rr tree with Linus' tree
+Date: Wed, 24 Jun 2009 13:08:58 +1000
+Message-ID: <20090624130858.25ee5c73.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__24_Jun_2009_13_08_58_+1000_Q1Odf/6tVh5NFK.Z"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:53077 "EHLO coco.kroah.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53124 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751316AbZFWQcd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Jun 2009 12:32:33 -0400
-Content-Disposition: inline
-In-Reply-To: <20090623152916.GA27467@kroah.com>
+	id S1751220AbZFXDJF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Jun 2009 23:09:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lai Jiangshan <laijs@cn.fujitsu.com>
 
-On Tue, Jun 23, 2009 at 08:29:16AM -0700, Greg KH wrote:
-> On Tue, Jun 23, 2009 at 04:01:00PM +1000, Stephen Rothwell wrote:
-> > Hi Greg,
-> > 
-> > Today's linux-next build (arm omap_osk_5912_defconfig) failed like this:
-> > 
-> > drivers/video/omap/omapfb_main.c: In function 'omapfb_show_caps_num':
-> > drivers/video/omap/omapfb_main.c:1253: error: 'struct device' has no member named 'driver_data'
-> > drivers/video/omap/omapfb_main.c: In function 'omapfb_show_caps_text':
-> > drivers/video/omap/omapfb_main.c:1273: error: 'struct device' has no member named 'driver_data'
-> > drivers/video/omap/omapfb_main.c: In function 'omapfb_show_panel_name':
-> > drivers/video/omap/omapfb_main.c:1320: error: 'struct device' has no member named 'driver_data'
-> > drivers/video/omap/omapfb_main.c: In function 'omapfb_show_bklight_level':
-> > drivers/video/omap/omapfb_main.c:1329: error: 'struct device' has no member named 'driver_data'
-> > drivers/video/omap/omapfb_main.c: In function 'omapfb_store_bklight_level':
-> > drivers/video/omap/omapfb_main.c:1344: error: 'struct device' has no member named 'driver_data'
-> > drivers/video/omap/omapfb_main.c: In function 'omapfb_show_bklight_max':
-> > drivers/video/omap/omapfb_main.c:1363: error: 'struct device' has no member named 'driver_data'
-> > drivers/video/omap/omapfb_main.c: In function 'omapfb_show_ctrl_name':
-> > drivers/video/omap/omapfb_main.c:1396: error: 'struct device' has no member named 'driver_data'
-> > 
-> > Caused by commit 53d8ba57f16029a47ed5df9840ab6c3f9abd3727 ("Driver core:
-> > move dev_get/set_drvdata to drivers/base/dd.c") from the driver-core tree.
-> > 
-> > I see more grepping in your future :-)
-> 
-> Heh, thanks, I got i386, x86-64, and ppc64 working properly this time
-> around, but new things keep slipping in :)
-> 
-> I'll go resolve these as well.
+--Signature=_Wed__24_Jun_2009_13_08_58_+1000_Q1Odf/6tVh5NFK.Z
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Now fixed and pushed out.
+Hi Rusty,
 
-thanks,
+Today's linux-next merge of the rr tree got a conflict in kernel/cpu.c
+between commit 31950eb66ff47c946fd9c65c2f8c94b6b7ba13fc ("mm/init:
+cpu_hotplug_init() must be initialized before SLAB") from Linus' tree and
+commit 7ad613eb4d867245f0964e395e6087ae7f126b95 ("cpuhotplug: remove
+cpu_hotplug_init()") from the rr tree.
 
-greg k-h
+It looks like they are trying to do the same thing ... I used the version
+from Linus' tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__24_Jun_2009_13_08_58_+1000_Q1Odf/6tVh5NFK.Z
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkpBmMoACgkQjjKRsyhoI8wAjACgumzKUgpESdMlEWK5+OYOTF4C
+2dYAnjjAAUYXv6lDQgOR1Av2quYfHChi
+=60Pt
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__24_Jun_2009_13_08_58_+1000_Q1Odf/6tVh5NFK.Z--
