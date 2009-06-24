@@ -1,84 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Main things left in linux-next
-Date: Wed, 24 Jun 2009 17:27:35 +1000
-Message-ID: <20090624172735.9b500674.sfr@canb.auug.org.au>
+From: Pekka Enberg <penberg@cs.helsinki.fi>
+Subject: Re: Main things left in linux-next
+Date: Wed, 24 Jun 2009 10:40:48 +0300
+Message-ID: <84144f020906240040ycf40bd6q20af82907315adc2@mail.gmail.com>
 References: <20090624164617.b7c49974.sfr@canb.auug.org.au>
+	 <20090624172735.9b500674.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__24_Jun_2009_17_27_35_+1000_xyVrSPE3ISmiD_1y"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55574 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751042AbZFXH1y (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 24 Jun 2009 03:27:54 -0400
-In-Reply-To: <20090624164617.b7c49974.sfr@canb.auug.org.au>
+Received: from mail-fx0-f213.google.com ([209.85.220.213]:33776 "EHLO
+	mail-fx0-f213.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752250AbZFXHks (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Jun 2009 03:40:48 -0400
+In-Reply-To: <20090624172735.9b500674.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Joel Becker <Joel.Becker@oracle.com>, =?UTF-8?B?IkZyw6lkw6lyaWMgV2Vpc2Jl?= =?UTF-8?B?Y2tlciI=?= <fweisbec@gmail.com>, Len Brown <lenb@kernel.org>, Avi Kivity <avi@qumranet.com>, Rusty Russell <rusty@rustcorp.com.au>, Jens Axboe <jens.axboe@oracle.com>, Alasdair G Kergon <agk@redhat.com>, Anton Vorontsov <avorontsov@ru.mvista.com>, Richard Purdie <rpurdie@rpsys.net>, Boaz Harrosh <bharrosh@panasas.com>, Jon Masters <jonathan@jonmasters.org>, Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Christoph Lameter <cl@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>, Nick Piggin <npiggin@suse.de>
 
---Signature=_Wed__24_Jun_2009_17_27_35_+1000_xyVrSPE3ISmiD_1y
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi All,
+[ I'm trimming the cc list a bit. ]
 
-$ git diff --shortstat -M stable..HEAD^
- 587 files changed, 27313 insertions(+), 12317 deletions(-)
+2009/6/24 Stephen Rothwell <sfr@canb.auug.org.au>:
+> The main obvious things left are:
+>
+> SLQB from the slab tree
 
-We seem to be going backwards :-( Yesterday's was:
- 556 files changed, 27596 insertions(+), 7123 deletions(-)
+This didn't make it to 2.6.31. Do you want me to drop it until -rc1 is out?
 
-$ git diff --dirstat -M stable..HEAD^
-   4.9% Documentation/powerpc/dts-bindings/
-   5.1% Documentation/powerpc/
-   3.0% Documentation/vm/
-   3.9% arch/sparc/
-   3.9% arch/x86/kvm/
-   4.4% arch/x86/
-   6.9% drivers/md/
-   4.7% drivers/misc/
-   9.8% drivers/staging/et131x/
-   4.3% drivers/staging/
-   6.6% drivers/usb/otg/
-  14.5% drivers/
-   5.5% include/linux/
-  12.6% mm/
-
-The main obvious things left are:
-
-SLQB from the slab tree
-an m68k update
-an ocfs2 update
-the reiserfs kill-the-bkl effort
-an acpi update
-a kvm update
-some more cpumask work from the rr tree
-the writeback changes form the block tree
-a device-mapper update
-a battery tree update
-a leds tree update
-osdblk from the osd tree
-the new hwlat tree
-devtmpfs from the driver-core tree (hmmm?)
-
-Please do not shoot the messenger. :-)
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__24_Jun_2009_17_27_35_+1000_xyVrSPE3ISmiD_1y
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkpB1WcACgkQjjKRsyhoI8x4dgCfZw7Uzp5f6BlAH/jepn+aiQ6Y
-VMcAn1NNwsV+J6J7vRqEd25OI1xZ0SMk
-=cOOS
------END PGP SIGNATURE-----
-
---Signature=_Wed__24_Jun_2009_17_27_35_+1000_xyVrSPE3ISmiD_1y--
+                                        Pekka
