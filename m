@@ -1,82 +1,55 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: Main things left in linux-next
-Date: Wed, 24 Jun 2009 18:35:22 +0200
-Message-ID: <20090624163521.GA5996@nowhere>
-References: <20090624164617.b7c49974.sfr@canb.auug.org.au> <20090624172735.9b500674.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: origin tree build failure
+Date: Thu, 25 Jun 2009 11:13:44 +1000
+Message-ID: <20090625111344.35febd82.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__25_Jun_2009_11_13_44_+1000_d/xe=HKojjtr4JTg"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f210.google.com ([209.85.219.210]:45961 "EHLO
-	mail-ew0-f210.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751548AbZFXQfZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Jun 2009 12:35:25 -0400
-Content-Disposition: inline
-In-Reply-To: <20090624172735.9b500674.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51301 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750859AbZFYBNt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 24 Jun 2009 21:13:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Joel Becker <Joel.Becker@oracle.com>, Len Brown <lenb@kernel.org>, Avi Kivity <avi@qumranet.com>, Rusty Russell <rusty@rustcorp.com.au>, Jens Axboe <jens.axboe@oracle.com>, Alasdair G Kergon <agk@redhat.com>, Anton Vorontsov <avorontsov@ru.mvista.com>, Richard Purdie <rpurdie@rpsys.net>, Boaz Harrosh <bharrosh@panasas.com>, Jon Masters <jonathan@jonmasters.org>, Greg KH <greg@kroah.com>
+To: Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>, Andrew Morton <akpm@linux-foundation.org>, Ben Dooks <ben-linux@fluff.org>
 
-On Wed, Jun 24, 2009 at 05:27:35PM +1000, Stephen Rothwell wrote:
-> Hi All,
-> 
-> $ git diff --shortstat -M stable..HEAD^
->  587 files changed, 27313 insertions(+), 12317 deletions(-)
-> 
-> We seem to be going backwards :-( Yesterday's was:
->  556 files changed, 27596 insertions(+), 7123 deletions(-)
-> 
-> $ git diff --dirstat -M stable..HEAD^
->    4.9% Documentation/powerpc/dts-bindings/
->    5.1% Documentation/powerpc/
->    3.0% Documentation/vm/
->    3.9% arch/sparc/
->    3.9% arch/x86/kvm/
->    4.4% arch/x86/
->    6.9% drivers/md/
->    4.7% drivers/misc/
->    9.8% drivers/staging/et131x/
->    4.3% drivers/staging/
->    6.6% drivers/usb/otg/
->   14.5% drivers/
->    5.5% include/linux/
->   12.6% mm/
-> 
-> The main obvious things left are:
-> 
-> SLQB from the slab tree
-> an m68k update
-> an ocfs2 update
-> the reiserfs kill-the-bkl effort
+--Signature=_Thu__25_Jun_2009_11_13_44_+1000_d/xe=HKojjtr4JTg
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Linus,
 
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Yeah, this one is not enough ready. I have yet
-some cases in which performances are a bit less than
-with the bkl, for example with only one thread writer.
+ERROR: "clk_enable" [drivers/i2c/busses/i2c-designware.ko] undefined!
+ERROR: "clk_disable" [drivers/i2c/busses/i2c-designware.ko] undefined!
+ERROR: "clk_put" [drivers/i2c/busses/i2c-designware.ko] undefined!
+ERROR: "clk_get_rate" [drivers/i2c/busses/i2c-designware.ko] undefined!
+ERROR: "clk_get" [drivers/i2c/busses/i2c-designware.ko] undefined!
 
-So there is still a bit of work, I plan it for .32
-You can remove it from next since it is based on a .30-rc
-release. I will soon provide a rebased tree once -rc1 is released.
+Caused by commit 1ab52cf910bbbee92861227e6ed77c56b1dc233c ("i2c: driver
+for the Synopsys DesignWare I2C controller") from Linus' tree which I
+have reverted for today.
 
+This, again, never saw the light of day in linux-next ...
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Thanks.
+--Signature=_Thu__25_Jun_2009_11_13_44_+1000_d/xe=HKojjtr4JTg
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
+iEYEARECAAYFAkpCz0gACgkQjjKRsyhoI8wCmgCgtpJKuo02/HS5p4EtXoC8vtwT
+oHMAmgIlC0stldJq9dkqglQRJgKkuxSt
+=aKdR
+-----END PGP SIGNATURE-----
 
-> an acpi update
-> a kvm update
-> some more cpumask work from the rr tree
-> the writeback changes form the block tree
-> a device-mapper update
-> a battery tree update
-> a leds tree update
-> osdblk from the osd tree
-> the new hwlat tree
-> devtmpfs from the driver-core tree (hmmm?)
-> 
-> Please do not shoot the messenger. :-)
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
+--Signature=_Thu__25_Jun_2009_11_13_44_+1000_d/xe=HKojjtr4JTg--
