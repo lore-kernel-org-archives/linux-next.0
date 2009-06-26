@@ -1,110 +1,51 @@
-From: Neil Brown <neilb@suse.de>
-Subject: Re: linux-next: block tree build failure
-Date: Fri, 26 Jun 2009 15:49:39 +1000
-Message-ID: <19012.24947.650584.93908@notabene.brown>
-References: <20090626125331.89c689f2.sfr@canb.auug.org.au>
-	<f236aae1aa8ea7c4f3700dbca2f3ae14.squirrel@neil.brown.name>
-	<20090626043937.GJ31415@kernel.dk>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: hid tree build failure
+Date: Fri, 26 Jun 2009 10:53:24 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.0906261052350.18021@wotan.suse.de>
+References: <20090626153100.de647d08.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:34987 "EHLO mx2.suse.de"
+Received: from cantor.suse.de ([195.135.220.2]:52097 "EHLO mx1.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751034AbZFZFtF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 26 Jun 2009 01:49:05 -0400
-In-Reply-To: message from Jens Axboe on Friday June 26
+	id S1754082AbZFZIxV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 26 Jun 2009 04:53:21 -0400
+In-Reply-To: <20090626153100.de647d08.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Friday June 26, jens.axboe@oracle.com wrote:
-> On Fri, Jun 26 2009, NeilBrown wrote:
-> > On Fri, June 26, 2009 12:53 pm, Stephen Rothwell wrote:
-> > > Hi Jens,
-> > >
-> > > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> > >
-> > > block/blk-core.c: In function '__make_request':
-> > > block/blk-core.c:1179: error: expected ';' before 'return'
-> > >
-> > > Caused by commit 6cf2a6c8d01514e86a8d38e4eeed402378b635dc ("Restore
-> > > barrier support for md and probably other virtual devices") which I have
-> > > reverted for today.
-> > 
-> > Arg, that's my fault - sorry.
-> > 
-> > +               bio_endio(bio, -EOPNOTSUPP)
-> > +                       return 0;
-> > 
-> > should of course be
-> > 
-> > +               bio_endio(bio, -EOPNOTSUPP);
-> > +               return 0;
+On Fri, 26 Jun 2009, Stephen Rothwell wrote:
+
+> Today's linux-next build (sparc32 defconfig) failed like this:
 > 
-> I was certain I ran it through a compile cycle, sorry about that
-> Stephen. And Neil sending uncompiled patches, very uncool. Did you even
-> test it? I've pulled it for now.
+> drivers/hid/hid-core.c:862:34: error: macro "hid_dump_input" passed 3 arguments, but takes just 2
+> drivers/hid/hid-core.c: In function 'hid_process_event':
+> drivers/hid/hid-core.c:862: error: 'hid_dump_input' undeclared (first use in this function)
+> drivers/hid/hid-core.c:862: error: (Each undeclared identifier is reported only once
+> drivers/hid/hid-core.c:862: error: for each function it appears in.)
+> drivers/hid/hid-core.c:984:68: error: macro "hid_dump_input" passed 3 arguments, but takes just 2
+> drivers/hid/hid-core.c: In function 'hid_set_field':
+> drivers/hid/hid-core.c:984: error: 'hid_dump_input' undeclared (first use in this function)
+> drivers/hid/hid-core.c: In function 'hid_input_report':
+> drivers/hid/hid-core.c:1090: error: 'HID_DEBUG_BUFSIZE' undeclared (first use in this function)
+> 
+> Caused by commit cd667ce24796700e1a0e6e7528efc61c96ff832e ("HID: use
+> debugfs for events/reports dumping") which modified the prototype for
+> hid_dump_input, but not the !CONFIG_DEBUG_FS version.  It also added
+> HID_DEBUG_BUFSIZE when CONFIG_DEBUG_FS, but used it otherwise.
+> 
+> I have reverted that commit for today (along with commit
+> a635f9dd83f3382577f4544a96df12356e951a40 ("HID: use debugfs for report
+> dumping descriptor") which doesn't build without the other one).
 
-I tested this time.
-Without the patch a 'mount -o journal=1 /dev/md0 /mnt'
-followed by writing to /mnt/something produces
+Hi Stephen,
 
-Jun 26 15:34:18 dell kernel: JBD: barrier-based sync failed on md0 - disabling barriers
+should be now fixed in the branch you pull into -next.
 
-in the kernel logs.
-With the patch, it doesn't.
+Thanks,
 
-Comment updated slightly too.
-
-NeilBrown
-
-Author: NeilBrown <neilb@suse.de>
-Date:   Fri Jun 26 15:41:35 2009 +1000
-
-Restore barrier support for md and probably other virtual devices.
-
-The next_ordered flag is only meaningful for devices that use __make_request.
-So move the test against next_ordered out of generic code and in to
-__make_request
-
-Since this test was added, barriers have not worked on md or any
-devices that don't use __make_request and so don't bother to set
-next_ordered.  (dm explicitly sets something other than
-QUEUE_ORDERED_NONE since
-  commit 99360b4c18f7675b50d283301d46d755affe75fd
-but notes in the comments that it is otherwise meaningless).
-
-Cc: Ken Milmore <ken.milmore@googlemail.com>
-Cc: stable@kernel.org
-Signed-off-by: NeilBrown <neilb@suse.de>
-
-diff --git a/block/blk-core.c b/block/blk-core.c
-index b06cf5c..2283116 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -1172,6 +1172,11 @@ static int __make_request(struct request_queue *q, struct bio *bio)
- 	const int unplug = bio_unplug(bio);
- 	int rw_flags;
- 
-+	if (bio_barrier(bio) && bio_has_data(bio) &&
-+	    (q->next_ordered == QUEUE_ORDERED_NONE)) {
-+		bio_endio(bio, -EOPNOTSUPP);
-+		return 0;
-+	}
- 	/*
- 	 * low level driver can indicate that it wants pages above a
- 	 * certain limit bounced to low memory (ie for highmem, or even
-@@ -1472,11 +1477,6 @@ static inline void __generic_make_request(struct bio *bio)
- 			err = -EOPNOTSUPP;
- 			goto end_io;
- 		}
--		if (bio_barrier(bio) && bio_has_data(bio) &&
--		    (q->next_ordered == QUEUE_ORDERED_NONE)) {
--			err = -EOPNOTSUPP;
--			goto end_io;
--		}
- 
- 		ret = q->make_request_fn(q, bio);
- 	} while (ret);
+-- 
+Jiri Kosina
+SUSE Labs
