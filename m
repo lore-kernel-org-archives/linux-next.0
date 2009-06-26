@@ -1,55 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH linux-next] kvm/powerpc: fix kvm build tree failure
-Date: Fri, 26 Jun 2009 15:23:47 +1000
-Message-ID: <20090626152347.f87cfa4f.sfr@canb.auug.org.au>
+Subject: linux-next: hid tree build failure
+Date: Fri, 26 Jun 2009 15:31:00 +1000
+Message-ID: <20090626153100.de647d08.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__26_Jun_2009_15_31_00_+1000_rOc.ENEUxaYezNms"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47717 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35594 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751288AbZFZFXr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 26 Jun 2009 01:23:47 -0400
+	id S1752912AbZFZFbG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 26 Jun 2009 01:31:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@qumranet.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IkNocmlzdGlhbiBCb3JudHLDpGdlciI=?= <christian@borntraeger.net>
+To: Jiri Kosina <jikos@jikos.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Today's linux-next build (powerpc ppc44x_defconfig) failed like this:
+--Signature=_Fri__26_Jun_2009_15_31_00_+1000_rOc.ENEUxaYezNms
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In file included from include/trace/events/kvm.h:57,
-                 from arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:63:
-include/trace/define_trace.h:53:43: error: trace/events/TRACE_SYSTEM.h: No such file or directory
+Hi Jiri,
 
-Caused by commit faa113b7c65c44ed94ac06f6bae2259290040856 ("KVM:
-Protect irq tracing with KVM_HAVE_IOAPIC and KVM_HAVE_PIT").
+Today's linux-next build (sparc32 defconfig) failed like this:
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/trace/events/kvm.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+drivers/hid/hid-core.c:862:34: error: macro "hid_dump_input" passed 3 argum=
+ents, but takes just 2
+drivers/hid/hid-core.c: In function 'hid_process_event':
+drivers/hid/hid-core.c:862: error: 'hid_dump_input' undeclared (first use i=
+n this function)
+drivers/hid/hid-core.c:862: error: (Each undeclared identifier is reported =
+only once
+drivers/hid/hid-core.c:862: error: for each function it appears in.)
+drivers/hid/hid-core.c:984:68: error: macro "hid_dump_input" passed 3 argum=
+ents, but takes just 2
+drivers/hid/hid-core.c: In function 'hid_set_field':
+drivers/hid/hid-core.c:984: error: 'hid_dump_input' undeclared (first use i=
+n this function)
+drivers/hid/hid-core.c: In function 'hid_input_report':
+drivers/hid/hid-core.c:1090: error: 'HID_DEBUG_BUFSIZE' undeclared (first u=
+se in this function)
 
-diff --git a/include/trace/events/kvm.h b/include/trace/events/kvm.h
-index dff68b3..5e69489 100644
---- a/include/trace/events/kvm.h
-+++ b/include/trace/events/kvm.h
-@@ -3,11 +3,11 @@
- 
- #include <linux/tracepoint.h>
- 
--#if defined(__KVM_HAVE_IOAPIC) && defined(__KVM_HAVE_PIT)
- #undef TRACE_SYSTEM
- #define TRACE_SYSTEM kvm
- #define TRACE_INCLUDE_FILE kvm
- 
-+#if defined(__KVM_HAVE_IOAPIC) && defined(__KVM_HAVE_PIT)
- TRACE_EVENT(kvm_set_irq,
- 	TP_PROTO(unsigned int gsi),
- 	TP_ARGS(gsi),
--- 
-1.6.3.1
+Caused by commit cd667ce24796700e1a0e6e7528efc61c96ff832e ("HID: use
+debugfs for events/reports dumping") which modified the prototype for
+hid_dump_input, but not the !CONFIG_DEBUG_FS version.  It also added
+HID_DEBUG_BUFSIZE when CONFIG_DEBUG_FS, but used it otherwise.
 
--- 
+I have reverted that commit for today (along with commit
+a635f9dd83f3382577f4544a96df12356e951a40 ("HID: use debugfs for report
+dumping descriptor") which doesn't build without the other one).
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__26_Jun_2009_15_31_00_+1000_rOc.ENEUxaYezNms
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkpEXRQACgkQjjKRsyhoI8zJKQCgtLAYQTqNkOoTARRi1RiXqWdi
+GN4AoKUlsqQG/5AEF2P+aijwqKgkZRg6
+=YnSZ
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__26_Jun_2009_15_31_00_+1000_rOc.ENEUxaYezNms--
