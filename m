@@ -1,55 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the ttydev tree
-Date: Fri, 26 Jun 2009 13:58:35 +1000
-Message-ID: <20090626135835.f60b2968.sfr@canb.auug.org.au>
+From: "NeilBrown" <neilb@suse.de>
+Subject: Re: linux-next: block tree build failure
+Date: Fri, 26 Jun 2009 14:34:37 +1000 (EST)
+Message-ID: <f236aae1aa8ea7c4f3700dbca2f3ae14.squirrel@neil.brown.name>
+References: <20090626125331.89c689f2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__26_Jun_2009_13_58_35_+1000_lXJFZ/pRt9iqvNG8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48650 "EHLO smtps.tip.net.au"
+Received: from cantor.suse.de ([195.135.220.2]:47796 "EHLO mx1.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751522AbZFZD6m (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Jun 2009 23:58:42 -0400
+	id S1750892AbZFZEeo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 26 Jun 2009 00:34:44 -0400
+In-Reply-To: <20090626125331.89c689f2.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jaswinder Singh Rajput <jaswinder@kernel.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Arnd Bergmann <arnd@arndb.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jens Axboe <jens.axboe@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__26_Jun_2009_13_58_35_+1000_lXJFZ/pRt9iqvNG8
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, June 26, 2009 12:53 pm, Stephen Rothwell wrote:
+> Hi Jens,
+>
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+>
+> block/blk-core.c: In function '__make_request':
+> block/blk-core.c:1179: error: expected ';' before 'return'
+>
+> Caused by commit 6cf2a6c8d01514e86a8d38e4eeed402378b635dc ("Restore
+> barrier support for md and probably other virtual devices") which I have
+> reverted for today.
 
-Hi all,
+Arg, that's my fault - sorry.
 
-Today's linux-next merge of the tip tree got a conflict in
-arch/x86/include/asm/termios.h between commit
-9d5eecbefea1142a640bb01426fa6e332a5a9e54 ("tty-x86-termios-clean") from
-the ttydev tree and commits 69d5ffdaad7b77b97229b55c36afb20e5bebd29e
-("x86: convert termios.h to the asm-generic version") and
-73a2d096fdf23aa841f7595d114a11ec85a85e4d ("x86: remove all now-duplicate
-header files") from the tip tree.
++               bio_endio(bio, -EOPNOTSUPP)
++                       return 0;
 
-I just used the version from the tip tree as the ttydev changes are
-trivial.  Alan, I think you might as well just drop that patch as the tip
-tree is rewriting that file completely (converting it to use the
-asm-generic version).
+should of course be
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
++               bio_endio(bio, -EOPNOTSUPP);
++               return 0;
 
---Signature=_Fri__26_Jun_2009_13_58_35_+1000_lXJFZ/pRt9iqvNG8
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkpER2sACgkQjjKRsyhoI8zggQCgpIhDcHw5jxD4PN+9eq52dXhc
-Rz8An20N6XfXywEVdF9GsXP8qokHDW1m
-=hpg8
------END PGP SIGNATURE-----
-
---Signature=_Fri__26_Jun_2009_13_58_35_+1000_lXJFZ/pRt9iqvNG8--
+NeilBrown
