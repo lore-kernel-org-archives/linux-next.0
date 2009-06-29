@@ -1,49 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with Linus' tree
-Date: Mon, 29 Jun 2009 13:43:46 +1000
-Message-ID: <20090629134346.62f043c0.sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for June 19
+Date: Mon, 29 Jun 2009 15:25:16 +1000
+Message-ID: <20090629152516.d00197be.sfr@canb.auug.org.au>
+References: <20090619172622.05adb236.sfr@canb.auug.org.au>
+	<alpine.LFD.2.00.0906200012200.4325@localhost.localdomain>
+	<20090620150433.4e038676.sfr@canb.auug.org.au>
+	<alpine.LFD.2.00.0906201415400.4083@localhost.localdomain>
+	<20090622015427.c749a0d9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__29_Jun_2009_15_25_16_+1000_2.gtu/hRJ8pW2Cd9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54904 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:32818 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751763AbZF2Dns (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 28 Jun 2009 23:43:48 -0400
+	id S1751105AbZF2FZi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Jun 2009 01:25:38 -0400
+In-Reply-To: <20090622015427.c749a0d9.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mike Travis <travis@sgi.com>
+To: x86@kernel.org
+Cc: Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sfi-devel@simplefirmware.org
 
-Hi Rusty,
+--Signature=_Mon__29_Jun_2009_15_25_16_+1000_2.gtu/hRJ8pW2Cd9
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the rr tree got a conflict in
-arch/powerpc/platforms/powermac/setup.c between commit
-7ccbe504b5ee766d33211a507189a06f3079b29b ("powerpc/pmac: Fix issues with
-PowerMac "PowerSurge" SMP") from Linus' tree and commit
-67e33aa4710019a5ee52979f7a9c6458729ab2ab
-("cpumask:use-cpumap-accessors-powerpc") from the rr tree.
+Hi All,
 
-The code modified by the latter was moved to
-arch/powerpc/platforms/powermac/smp.c by the former, so I applied the
-latter change to this other file (see below).
+On Mon, 22 Jun 2009 01:54:27 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> OK, then I think I need to hear from the x86 maintainers, at least,
+> before we include this.
 
-There is another use of cpu_set in this file as well (which I did not
-change).
--- 
+Ping?
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --git a/arch/powerpc/platforms/powermac/smp.c b/arch/powerpc/platforms/powermac/smp.c
-index 6d4da7b..da12c48 100644
---- a/arch/powerpc/platforms/powermac/smp.c
-+++ b/arch/powerpc/platforms/powermac/smp.c
-@@ -952,7 +952,7 @@ void __init pmac_setup_smp(void)
- 		int cpu;
- 
- 		for (cpu = 1; cpu < 4 && cpu < NR_CPUS; ++cpu)
--			cpu_set(cpu, cpu_possible_map);
-+			set_cpu_possible(cpu, true);
- 		smp_ops = &psurge_smp_ops;
- 	}
- #endif /* CONFIG_PPC32 */
+--Signature=_Mon__29_Jun_2009_15_25_16_+1000_2.gtu/hRJ8pW2Cd9
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkpIUD0ACgkQjjKRsyhoI8zrxQCfZujkzUnOH9mt1HCe33XpRAMe
+lLUAn1ATH8ZdOhJlk2I8rr35ryswAZUs
+=YOnk
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__29_Jun_2009_15_25_16_+1000_2.gtu/hRJ8pW2Cd9--
