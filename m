@@ -1,56 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for June 19
-Date: Mon, 29 Jun 2009 15:25:16 +1000
-Message-ID: <20090629152516.d00197be.sfr@canb.auug.org.au>
-References: <20090619172622.05adb236.sfr@canb.auug.org.au>
-	<alpine.LFD.2.00.0906200012200.4325@localhost.localdomain>
-	<20090620150433.4e038676.sfr@canb.auug.org.au>
-	<alpine.LFD.2.00.0906201415400.4083@localhost.localdomain>
-	<20090622015427.c749a0d9.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the percpu tree with Linus' tree
+Date: Mon, 29 Jun 2009 15:33:29 +1000
+Message-ID: <20090629153329.309e0420.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__29_Jun_2009_15_25_16_+1000_2.gtu/hRJ8pW2Cd9"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:32818 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57381 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751105AbZF2FZi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Jun 2009 01:25:38 -0400
-In-Reply-To: <20090622015427.c749a0d9.sfr@canb.auug.org.au>
+	id S1750725AbZF2Fd3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Jun 2009 01:33:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: x86@kernel.org
-Cc: Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sfi-devel@simplefirmware.org
+To: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>
 
---Signature=_Mon__29_Jun_2009_15_25_16_+1000_2.gtu/hRJ8pW2Cd9
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi All,
+Today's linux-next merge of the percpu tree got a conflict in
+arch/mn10300/kernel/vmlinux.lds.S between commit
+2e8b5a09ebf1f98f02c1988a48415e89d4c25168 ("MN10300: Fix the vmlinux
+ldscript") from Linus' tree and commit
+405d967dc70002991f8fc35c20e0d3cbc7614f63 ("linker script: throw
+away .discard section") from the percpu tree.
 
-On Mon, 22 Jun 2009 01:54:27 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> OK, then I think I need to hear from the x86 maintainers, at least,
-> before we include this.
-
-Ping?
-
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix
+for a while.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__29_Jun_2009_15_25_16_+1000_2.gtu/hRJ8pW2Cd9
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkpIUD0ACgkQjjKRsyhoI8zrxQCfZujkzUnOH9mt1HCe33XpRAMe
-lLUAn1ATH8ZdOhJlk2I8rr35ryswAZUs
-=YOnk
------END PGP SIGNATURE-----
-
---Signature=_Mon__29_Jun_2009_15_25_16_+1000_2.gtu/hRJ8pW2Cd9--
+diff --cc arch/mn10300/kernel/vmlinux.lds.S
+index c96ba3d,5d9f2f9..0000000
+--- a/arch/mn10300/kernel/vmlinux.lds.S
++++ b/arch/mn10300/kernel/vmlinux.lds.S
+@@@ -117,7 -145,8 +117,8 @@@ SECTION
+  
+    /* Sections to be discarded */
+    /DISCARD/ : {
+ -	*(.exitcall.exit)
+ +	EXIT_CALL
++ 	*(.discard)
+  	}
+  
+    STABS_DEBUG
