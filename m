@@ -1,326 +1,387 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Re: Next June 29: Boot failure with SLQB on s390
-Date: Tue, 30 Jun 2009 11:03:40 +0530
-Message-ID: <4A49A3B4.5070501@in.ibm.com>
-References: <20090629164851.57263dbc.sfr@canb.auug.org.au> <4A488D08.30307@in.ibm.com> <20090629103123.GC9321@osiris.boeblingen.de.ibm.com> <20090629103943.GA31299@wotan.suse.de>
+From: Subrata Modak <subrata@linux.vnet.ibm.com>
+Subject: [PATCH] Remove 'SBC8240 Wind River' Device Driver Code
+Date: Tue, 30 Jun 2009 11:15:46 +0530
+Message-ID: <1246340746.4819.3.camel@subratamodak.linux.ibm.com>
+References: <20090626142513.10380.20811.sendpatchset@gekko-lp3.ltc.austin.ibm.com>
+Reply-To: subrata@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------020402090504050502030305"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp09.in.ibm.com ([59.145.155.9]:35811 "EHLO
-	e28smtp09.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751099AbZF3Fdo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Jun 2009 01:33:44 -0400
-In-Reply-To: <20090629103943.GA31299@wotan.suse.de>
+Received: from e2.ny.us.ibm.com ([32.97.182.142]:37336 "EHLO e2.ny.us.ibm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751779AbZF3Fqi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 30 Jun 2009 01:46:38 -0400
+In-Reply-To: <20090626142513.10380.20811.sendpatchset@gekko-lp3.ltc.austin.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nick Piggin <npiggin@suse.de>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, Pekka Enberg <penberg@cs.helsinki.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-s390@vger.kernel.org
+To: Scott Wood <scottwood@freescale.com>, David Woodhouse <dwmw2@infradead.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, Alexander Beregalov <a.beregalov@gmail.com>, linux-next <linux-next@vger.kernel.org>, Jim Cromie <jim.cromie@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, carolyn.j.smith@exgate.tek.com, Sachin P Sant <sachinp@linux.vnet.ibm.com>, Balbir Singh <balbir@linux.vnet.ibm.com>, Adrian Bunk <bunk@kernel.org>
 
-This is a multi-part message in MIME format.
---------------020402090504050502030305
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Scott/David,
 
-Nick Piggin wrote:
-> This could I suppose be due to failed allocation where the caller
-> isn't expecting failure (or using SLAB_PANIC).
->
-> Did you manage to test with the prink debugging patch for SLQB that
-> I sent for the power6 boot failure? I don't think I saw a reply from
-> you but maybe I missed it?
->   
-Hi Nick,
+Your say on this patch below ?
 
-Sorry for the delay in getting the debug o/p. Attaching the boot
-log from the Power6 box with the debug patch, although i don't
-see any extra messages .
+Regards--
+Subrata
 
-Thanks
--Sachin
-
-
--- 
-
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
-
-
---------------020402090504050502030305
-Content-Type: text/plain;
- name="boot-log"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="boot-log"
-
-Using 007c5c91 bytes for initrd buffer
-Please wait, loading kernel...
-Allocated 01200000 bytes for kernel @ 02300000
-   Elf64 kernel loaded...
-Loading ramdisk...
-ramdisk loaded 007c5c91 @ 03500000
-OF stdout device is: /vdevice/vty@30000000
-Preparing to boot Linux version 2.6.31-rc1-next-20090629 (root@mpower6lp5) (gcc version 4.3.2 [gcc-4_3-branch revision 141291] (SUSE Linux) ) #1 SMP Tue Jun 30 10:31:38 IST 2009
-Calling ibm,client-architecture... done
-command line: root=/dev/sda3 sysrq=8 insmod=sym53c8xx insmod=ipr crashkernel=512M-:256M loglevel=8 mminit_loglevel=4 
-memory layout at init:
-  alloc_bottom : 0000000003cd0000
-  alloc_top    : 0000000008000000
-  alloc_top_hi : 0000000008000000
-  rmo_top      : 0000000008000000
-  ram_top      : 0000000008000000
-instantiating rtas at 0x00000000074e0000... done
-boot cpu hw idx 0000000000000000
-copying OF device tree...
-Building dt strings...
-Building dt structure...
-Device tree strings 0x0000000003ce0000 -> 0x0000000003ce15c2
-Device tree struct  0x0000000003cf0000 -> 0x0000000003d10000
-Calling quiesce...
-returning from prom_init
-Crash kernel location must be 0x2000000
-Reserving 256MB of memory at 32MB for crashkernel (System RAM: 4096MB)
-Phyp-dump disabled at boot time
-Using pSeries machine description
-Page orders: linear mapping = 16, virtual = 16, io = 12
-Using 1TB segments
-Found initrd at 0xc000000003500000:0xc000000003cc5c91
-console [udbg0] enabled
-Partition configured for 2 cpus.
-CPU maps initialized for 2 threads per core
- (thread shift is 1)
-Starting Linux PPC64 #1 SMP Tue Jun 30 10:31:38 IST 2009
------------------------------------------------------
-ppc64_pft_size                = 0x1a
-physicalMemorySize            = 0x100000000
-htab_hash_mask                = 0x7ffff
------------------------------------------------------
-Initializing cgroup subsys cpuset
-Initializing cgroup subsys cpu
-Linux version 2.6.31-rc1-next-20090629 (root@mpower6lp5) (gcc version 4.3.2 [gcc-4_3-branch revision 141291] (SUSE Linux) ) #1 SMP Tue Jun 30 10:31:38 IST 2009
-[boot]0012 Setup Arch
-mminit::memory_register Entering add_active_range(2, 0x0, 0x800) 0 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0x800, 0x1000) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0x1000, 0x1800) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0x1800, 0x2000) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0x2000, 0x2800) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0x2800, 0x3000) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0x3000, 0x3800) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0x3800, 0x4000) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0x4000, 0x4800) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0x4800, 0x5000) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0x5000, 0x5800) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0x5800, 0x6000) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0x6000, 0x6800) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0x6800, 0x7000) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0x7000, 0x7800) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0x7800, 0x8000) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0x8000, 0x8800) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0x8800, 0x9000) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0x9000, 0x9800) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0x9800, 0xa000) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0xa000, 0xa800) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0xa800, 0xb000) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0xb000, 0xb800) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0xb800, 0xc000) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0xc000, 0xc800) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0xc800, 0xd000) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0xd000, 0xd800) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(2, 0xd800, 0xe000) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(3, 0xe000, 0xe800) 1 entries of 256 used
-mminit::memory_register Entering add_active_range(3, 0xe800, 0xf000) 2 entries of 256 used
-mminit::memory_register Entering add_active_range(3, 0xf000, 0xf800) 2 entries of 256 used
-mminit::memory_register Entering add_active_range(3, 0xf800, 0x10000) 2 entries of 256 used
-Node 0 Memory:
-Node 2 Memory: 0x0-0xe0000000
-Node 3 Memory: 0xe0000000-0x100000000
-EEH: No capable adapters found
-PPC64 nvram contains 15360 bytes
-Using shared processor idle loop
-Zone PFN ranges:
-  DMA      0x00000000 -> 0x00010000
-  Normal   0x00010000 -> 0x00010000
-Movable zone start PFN for each node
-early_node_map[2] active PFN ranges
-    2: 0x00000000 -> 0x0000e000
-    3: 0x0000e000 -> 0x00010000
-mminit::pageflags_layout_widths Section 20 Node 4 Zone 2 Flags 23
-mminit::pageflags_layout_shifts Section 20 Node 4 Zone 2
-mminit::pageflags_layout_offsets Section 44 Node 40 Zone 38
-mminit::pageflags_layout_zoneid Zone ID: 38 -> 44
-mminit::pageflags_layout_usage location: 64 -> 38 unused 38 -> 23 flags 23 -> 0
-Could not find start_pfn for node 0
-On node 0 totalpages: 0
-On node 2 totalpages: 57344
-  DMA zone: 56 pages used for memmap
-  DMA zone: 0 pages reserved
-  DMA zone: 57288 pages, LIFO batch:1
-mminit::memmap_init Initialising map node 2 zone 0 pfns 0 -> 57344
-On node 3 totalpages: 8192
-  DMA zone: 8 pages used for memmap
-  DMA zone: 0 pages reserved
-  DMA zone: 8184 pages, LIFO batch:0
-mminit::memmap_init Initialising map node 3 zone 0 pfns 57344 -> 65536
-[boot]0015 Setup Done
-mminit::zonelist general 2:DMA = 2:DMA 3:DMA 
-mminit::zonelist thisnode 2:DMA = 2:DMA 
-mminit::zonelist general 3:DMA = 3:DMA 2:DMA 
-mminit::zonelist thisnode 3:DMA = 3:DMA 
-Built 3 zonelists in Node order, mobility grouping on.  Total pages: 65472
-Policy zone: DMA
-Kernel command line: root=/dev/sda3 sysrq=8 insmod=sym53c8xx insmod=ipr crashkernel=512M-:256M loglevel=8 mminit_loglevel=4 
-PID hash table entries: 4096 (order: 12, 32768 bytes)
-freeing bootmem node 2
-freeing bootmem node 3
-Memory: 3897728k/4194304k available (9216k kernel code, 296576k reserved, 2112k data, 4289k bss, 512k init)
-Experimental hierarchical RCU implementation.
-RCU-based detection of stalled CPUs is enabled.
-Experimental hierarchical RCU init done.
-NR_IRQS:512
-[boot]0020 XICS Init
-[boot]0021 XICS Done
-pic: no ISA interrupt controller
-time_init: decrementer frequency = 512.000000 MHz
-time_init: processor frequency   = 4704.000000 MHz
-clocksource: timebase mult[7d0000] shift[22] registered
-clockevent: decrementer mult[83126e97] shift[32] cpu[0]
-Console: colour dummy device 80x25
-console handover: boot [udbg0] -> real [hvc0]
-allocated 2621440 bytes of page_cgroup
-please try 'cgroup_disable=memory' option if you don't want memory cgroups
-Security Framework initialized
-SELinux:  Disabled at boot.
-Dentry cache hash table entries: 524288 (order: 6, 4194304 bytes)
-Inode-cache hash table entries: 262144 (order: 5, 2097152 bytes)
-Mount-cache hash table entries: 4096
-Initializing cgroup subsys ns
-Initializing cgroup subsys cpuacct
-Initializing cgroup subsys memory
-Initializing cgroup subsys devices
-Initializing cgroup subsys freezer
-irq: irq 2 on host null mapped to virtual irq 16
-clockevent: decrementer mult[83126e97] shift[32] cpu[1]
-Processor 1 found.
-Brought up 2 CPUs
-Node 0 CPUs: 0-1
-Node 2 CPUs:
-Node 3 CPUs:
-CPU0 attaching sched-domain:
- domain 0: span 0-1 level SIBLING
-  groups: 0 1
-  domain 1: span 0-1 level NODE
-   groups: 0-1
-CPU1 attaching sched-domain:
- domain 0: span 0-1 level SIBLING
-  groups: 1 0
-  domain 1: span 0-1 level NODE
-   groups: 0-1
-NET: Registered protocol family 16
-IBM eBus Device Driver
-POWER6 performance monitor hardware support registered
-PCI: Probing PCI hardware
-PCI: Probing PCI hardware done
-bio: create slab <bio-0> at 0
-usbcore: registered new interface driver usbfs
-usbcore: registered new interface driver hub
-usbcore: registered new device driver usb
-NET: Registered protocol family 2
-IP route cache hash table entries: 32768 (order: 2, 262144 bytes)
-TCP established hash table entries: 131072 (order: 5, 2097152 bytes)
-TCP bind hash table entries: 65536 (order: 5, 2097152 bytes)
-TCP: Hash tables configured (established 131072 bind 65536)
-TCP reno registered
-NET: Registered protocol family 1
-Unpacking initramfs...
-Switched to high resolution mode on CPU 0
-Switched to high resolution mode on CPU 1
-irq: irq 655360 on host null mapped to virtual irq 17
-irq: irq 655367 on host null mapped to virtual irq 18
-IOMMU table initialized, virtual merging enabled
-irq: irq 589825 on host null mapped to virtual irq 19
-RTAS daemon started
-audit: initializing netlink socket (disabled)
-type=2000 audit(1246339143.235:1): initialized
-Kprobe smoke test started
-Kprobe smoke test passed successfully
-HugeTLB registered 16 MB page size, pre-allocated 0 pages
-HugeTLB registered 16 GB page size, pre-allocated 0 pages
-VFS: Disk quotas dquot_6.5.2
-Dquot-cache hash table entries: 8192 (order 0, 65536 bytes)
-Btrfs loaded
-msgmni has been set to 7612
-alg: No test for stdrng (krng)
-Block layer SCSI generic (bsg) driver version 0.4 loaded (major 254)
-io scheduler noop registered
-io scheduler anticipatory registered
-io scheduler deadline registered
-io scheduler cfq registered (default)
-pci_hotplug: PCI Hot Plug PCI Core version: 0.5
-rpaphp: RPA HOT Plug PCI Controller Driver version: 0.1
-vio_register_driver: driver hvc_console registering
-HVSI: registered 0 devices
-Generic RTC Driver v1.07
-Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
-Platform driver 'serial8250' needs updating - please use dev_pm_ops
-pmac_zilog: 0.6 (Benjamin Herrenschmidt <benh@kernel.crashing.org>)
-input: Macintosh mouse button emulation as /devices/virtual/input/input0
-Uniform Multi-Platform E-IDE driver
-ide-gd driver 1.18
-IBM eHEA ethernet device driver (Release EHEA_0101)
-irq: irq 590088 on host null mapped to virtual irq 264
-ehea: eth0: Jumbo frames are disabled
-ehea: eth0 -> logical port id #2
-ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
-ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
-mice: PS/2 mouse device common for all mice
-EDAC MC: Ver: 2.1.0 Jun 30 2009
-usbcore: registered new interface driver hiddev
-usbcore: registered new interface driver usbhid
-usbhid: v2.6:USB HID core driver
-TCP cubic registered
-NET: Registered protocol family 15
-registered taskstats version 1
-Freeing unused kernel memory: 512k freed
-doing fast boot
-SysRq : Changing Loglevel
-Loglevel set to 8
-Unable to handle kernel paging request for data at address 0xc0000000008f4504
-Faulting instruction address: 0xc000000000391094
-Oops: Kernel access of bad area, sig: 11 [#1]
-SMP NR_CPUS=1024 DEBUG_PAGEALLOC NUMA pSeries
-Modules linked in: scsi_mod(+)
-NIP: c000000000391094 LR: c00000000060cd88 CTR: 0000000000000008
-REGS: c0000000c63f3590 TRAP: 0300   Not tainted  (2.6.31-rc1-next-20090629)
-MSR: 8000000000009032 <EE,ME,IR,DR>  CR: 24222428  XER: 20000001
-DAR: c0000000008f4504, DSISR: 0000000040000000
-TASK = c0000000c63e0a80[62] 'modprobe' THREAD: c0000000c63f0000 CPU: 1
-GPR00: c00000000060cd88 c0000000c63f3810 c000000000b0c488 c0000000008f4500 
-GPR04: c0000000ddcd0000 0000000000000001 0000000000000000 c0000000dfff8480 
-GPR08: 0000000000000001 c0000000de000010 0000000000000002 c000000000c681f8 
-GPR12: 0000000024222428 c000000000be2600 0000000000000000 0000000000000000 
-GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
-GPR20: 0000000000000018 ffffffffffffffff 0000000000210d00 0000000000000010 
-GPR24: 0000000000210d00 c0000000dfc60ea0 c000000000fc1580 c0000000008f4500 
-GPR28: c0000000008f4448 c0000000008f4500 c000000000a87bd0 c0000000dfc60e80 
-NIP [c000000000391094] ._raw_spin_lock+0x30/0x184
-LR [c00000000060cd88] ._spin_lock+0x10/0x24
-Call Trace:
-[c0000000c63f38b0] [c00000000060cd88] ._spin_lock+0x10/0x24
-[c0000000c63f3920] [c000000000150030] .__slab_alloc_page+0x390/0x430
-[c0000000c63f39e0] [c0000000001518f0] .kmem_cache_alloc+0x160/0x2bc
-[c0000000c63f3aa0] [c000000000152308] .kmem_cache_create+0x294/0x2a8
-[c0000000c63f3b90] [d000000000eb177c] .scsi_init_queue+0x38/0x170 [scsi_mod]
-[c0000000c63f3c20] [d000000000eb1678] .init_scsi+0x1c/0xe8 [scsi_mod]
-[c0000000c63f3ca0] [c0000000000097a0] .do_one_initcall+0x80/0x19c
-[c0000000c63f3d90] [c0000000000c7a08] .SyS_init_module+0x118/0x28c
-[c0000000c63f3e30] [c000000000008534] syscall_exit+0x0/0x40
-Instruction dump:
-7c0802a6 fba1ffe8 7d800026 7c7d1b78 fbc1fff0 ebc2c268 f8010010 fb61ffd8 
-fb81ffe0 fbe1fff8 91810008 f821ff61 <80030004> 6c09dead 2f894ead 419e000c 
----[ end trace e7d1b9681037bc75 ]---
-
---------------020402090504050502030305--
+On Fri, 2009-06-26 at 09:25 -0500, Subrata Modak wrote:
+> Hi David/Scott,
+> 
+> Today's next tree(20090626) produced the following build error:
+> 
+> CC [M]  drivers/mtd/maps/sbc8240.o
+> drivers/mtd/maps/sbc8240.c:31:1: warning: "DEBUG" redefined
+> In file included from drivers/mtd/maps/sbc8240.c:23:
+> include/linux/mtd/mtd.h:333:1: warning: this is the location of the previous definition
+> drivers/mtd/maps/sbc8240.c: In function 'init_sbc8240_mtd':
+> drivers/mtd/maps/sbc8240.c:172: warning: passing argument 1 of 'simple_map_init' from incompatible pointer type
+> drivers/mtd/maps/sbc8240.c:177: error: 'struct mtd_info' has no member named 'module'
+> make[3]: *** [drivers/mtd/maps/sbc8240.o] Error 1
+> make[2]: *** [drivers/mtd/maps] Error 2
+> make[1]: *** [drivers/mtd] Error 2
+> make: *** [drivers] Error 2
+> 
+> I remember reporting this log back in April, when you suggested in removing it:
+> http://lkml.org/lkml/2009/4/21/476,
+> 
+> >On Tue, 2009-04-21 at 15:00 -0500, Scott Wood wrote:
+> >Subrata Modak wrote:
+> > > This is a very old one. DoesnB4t seem to go away. Reported this earlier
+> > > on 14th April:
+> > > http://lkml.org/lkml/2009/4/14/483,
+> > > 
+> > > CC [M]  drivers/mtd/maps/sbc8240.o
+> > > drivers/mtd/maps/sbc8240.c:31:1: warning: "DEBUG" redefined
+> > > In file included from drivers/mtd/maps/sbc8240.c:23:
+> > > include/linux/mtd/mtd.h:339:1: warning: this is the location of the
+> > > previous definition
+> > > drivers/mtd/maps/sbc8240.c: In function binit_sbc8240_mtdb:
+> > > drivers/mtd/maps/sbc8240.c:172: error: bsbc8240_mtdb undeclared (first
+> > > use in this function)
+> > > drivers/mtd/maps/sbc8240.c:172: error: (Each undeclared identifier is
+> > > reported only once
+> > > drivers/mtd/maps/sbc8240.c:172: error: for each function it appears in.)
+> > > drivers/mtd/maps/sbc8240.c: In function bcleanup_sbc8240_mtdb:
+> > > drivers/mtd/maps/sbc8240.c:233: error: bsbc8240_mtdb undeclared (first
+> > > use in this function)
+> > 
+> > This looks like an arch/ppc orphan.  It's not enabled by any defconfig, 
+> > and it doesn't look like it does anything that physmap_of can't do.
+> > 
+> > I'd just remove it.
+> > 
+> > -Scott
+> 
+> I tried to gather some more info about this driver from the link
+> mentioned in Kconfig:
+> http://www.windriver.com/products/sbc8240/,
+> without much success.
+> 
+> If there are no issues, can you please apply this patch to remove it ?
+> 
+> To: David Woodhouse <dwmw2@infradead.org>,
+> To: Scott Wood <scottwood@freescale.com>,
+> Cc: Jim Cromie <jim.cromie@gmail.com>,
+> Cc: carolyn.j.smith@exgate.tek.com,
+> Cc: Adrian Bunk <bunk@kernel.org>,
+> Cc: Sachin P Sant <sachinp@linux.vnet.ibm.com>,
+> Cc: Balbir Singh <balbir@linux.vnet.ibm.com>,
+> Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+> Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+> Cc: Linuxppc-dev <Linuxppc-dev@ozlabs.org>,
+> Cc: linux-next <linux-next@vger.kernel.org>,
+> Cc: Alexander Beregalov <a.beregalov@gmail.com>
+> 
+> 
+> Signed-off-by: Subrata Modak <subrata@linux.vnet.ibm.com>
+> Tested-on-PPC64-by: Subrata Modak <subrata@linux.vnet.ibm.com>
+> ---
+> 
+> diff -uprN a/drivers/mtd/maps/Kconfig b/drivers/mtd/maps/Kconfig
+> --- a/drivers/mtd/maps/Kconfig	2009-06-26 07:36:23.000000000 -0500
+> +++ b/drivers/mtd/maps/Kconfig	2009-06-26 07:39:34.000000000 -0500
+> @@ -284,13 +284,6 @@ config MTD_L440GX
+> 
+>  	  BE VERY CAREFUL.
+> 
+> -config MTD_SBC8240
+> -	tristate "Flash device on SBC8240"
+> -	depends on MTD_JEDECPROBE && 8260
+> -	help
+> -          Flash access on the SBC8240 board from Wind River.  See
+> -          <http://www.windriver.com/products/sbc8240/>
+> -
+>  config MTD_TQM8XXL
+>  	tristate "CFI Flash device mapped on TQM8XXL"
+>  	depends on MTD_CFI && TQM8xxL
+> diff -uprN a/drivers/mtd/maps/Makefile b/drivers/mtd/maps/Makefile
+> --- a/drivers/mtd/maps/Makefile	2009-06-26 07:36:23.000000000 -0500
+> +++ b/drivers/mtd/maps/Makefile	2009-06-26 07:40:03.000000000 -0500
+> @@ -50,7 +50,6 @@ obj-$(CONFIG_MTD_UCLINUX)	+= uclinux.o
+>  obj-$(CONFIG_MTD_NETtel)	+= nettel.o
+>  obj-$(CONFIG_MTD_SCB2_FLASH)	+= scb2_flash.o
+>  obj-$(CONFIG_MTD_H720X)		+= h720x-flash.o
+> -obj-$(CONFIG_MTD_SBC8240)	+= sbc8240.o
+>  obj-$(CONFIG_MTD_IXP4XX)	+= ixp4xx.o
+>  obj-$(CONFIG_MTD_IXP2000)	+= ixp2000.o
+>  obj-$(CONFIG_MTD_WRSBC8260)	+= wr_sbc82xx_flash.o
+> diff -uprN a/drivers/mtd/maps/sbc8240.c b/drivers/mtd/maps/sbc8240.c
+> --- a/drivers/mtd/maps/sbc8240.c	2009-06-26 07:36:23.000000000 -0500
+> +++ b/drivers/mtd/maps/sbc8240.c	1969-12-31 18:00:00.000000000 -0600
+> @@ -1,250 +0,0 @@
+> -/*
+> - * Handle mapping of the flash memory access routines on the SBC8240 board.
+> - *
+> - * Carolyn Smith, Tektronix, Inc.
+> - *
+> - * This code is GPLed
+> - */
+> -
+> -/*
+> - * The SBC8240 has 2 flash banks.
+> - * Bank 0 is a 512 KiB AMD AM29F040B; 8 x 64 KiB sectors.
+> - * It contains the U-Boot code (7 sectors) and the environment (1 sector).
+> - * Bank 1 is 4 x 1 MiB AMD AM29LV800BT; 15 x 64 KiB sectors, 1 x 32 KiB sector,
+> - * 2 x 8 KiB sectors, 1 x 16 KiB sectors.
+> - * Both parts are JEDEC compatible.
+> - */
+> -
+> -#include <linux/module.h>
+> -#include <linux/types.h>
+> -#include <linux/kernel.h>
+> -#include <asm/io.h>
+> -
+> -#include <linux/mtd/mtd.h>
+> -#include <linux/mtd/map.h>
+> -#include <linux/mtd/cfi.h>
+> -
+> -#ifdef CONFIG_MTD_PARTITIONS
+> -#include <linux/mtd/partitions.h>
+> -#endif
+> -
+> -#define	DEBUG
+> -
+> -#ifdef	DEBUG
+> -# define debugk(fmt,args...)	printk(fmt ,##args)
+> -#else
+> -# define debugk(fmt,args...)
+> -#endif
+> -
+> -
+> -#define WINDOW_ADDR0	0xFFF00000		/* 512 KiB */
+> -#define WINDOW_SIZE0	0x00080000
+> -#define BUSWIDTH0	1
+> -
+> -#define WINDOW_ADDR1	0xFF000000		/* 4 MiB */
+> -#define WINDOW_SIZE1	0x00400000
+> -#define BUSWIDTH1	8
+> -
+> -#define MSG_PREFIX "sbc8240:"	/* prefix for our printk()'s */
+> -#define MTDID	   "sbc8240-%d"	/* for mtdparts= partitioning */
+> -
+> -
+> -static struct map_info sbc8240_map[2] = {
+> -	{
+> -		.name           = "sbc8240 Flash Bank #0",
+> -		.size           = WINDOW_SIZE0,
+> -		.bankwidth       = BUSWIDTH0,
+> -	},
+> -	{
+> -		.name           = "sbc8240 Flash Bank #1",
+> -		.size           = WINDOW_SIZE1,
+> -		.bankwidth       = BUSWIDTH1,
+> -	}
+> -};
+> -
+> -#define NUM_FLASH_BANKS	ARRAY_SIZE(sbc8240_map)
+> -
+> -/*
+> - * The following defines the partition layout of SBC8240 boards.
+> - *
+> - * See include/linux/mtd/partitions.h for definition of the
+> - * mtd_partition structure.
+> - *
+> - * The *_max_flash_size is the maximum possible mapped flash size
+> - * which is not necessarily the actual flash size. It must correspond
+> - * to the value specified in the mapping definition defined by the
+> - * "struct map_desc *_io_desc" for the corresponding machine.
+> - */
+> -
+> -#ifdef CONFIG_MTD_PARTITIONS
+> -
+> -static struct mtd_partition sbc8240_uboot_partitions [] = {
+> -	/* Bank 0 */
+> -	{
+> -		.name =	"U-boot",			/* U-Boot Firmware	*/
+> -		.offset =	0,
+> -		.size =	0x00070000,			/*  7 x 64 KiB sectors 	*/
+> -		.mask_flags = MTD_WRITEABLE,		/*  force read-only	*/
+> -	},
+> -	{
+> -		.name =	"environment",			/* U-Boot environment	*/
+> -		.offset =	0x00070000,
+> -		.size =	0x00010000,			/*  1 x 64 KiB sector	*/
+> -	},
+> -};
+> -
+> -static struct mtd_partition sbc8240_fs_partitions [] = {
+> -	{
+> -		.name =	"jffs",				/* JFFS  filesystem	*/
+> -		.offset =	0,
+> -		.size =	0x003C0000,			/*  4 * 15 * 64KiB	*/
+> -	},
+> -	{
+> -		.name =	"tmp32",
+> -		.offset =	0x003C0000,
+> -		.size =	0x00020000,			/*  4 * 32KiB		*/
+> -	},
+> -	{
+> -		.name =	"tmp8a",
+> -		.offset =	0x003E0000,
+> -		.size =	0x00008000,			/*  4 * 8KiB		*/
+> -	},
+> -	{
+> -		.name =	"tmp8b",
+> -		.offset =	0x003E8000,
+> -		.size =	0x00008000,			/*  4 * 8KiB		*/
+> -	},
+> -	{
+> -		.name =	"tmp16",
+> -		.offset =	0x003F0000,
+> -		.size =	0x00010000,			/*  4 * 16KiB		*/
+> -	}
+> -};
+> -
+> -/* trivial struct to describe partition information */
+> -struct mtd_part_def
+> -{
+> -	int nums;
+> -	unsigned char *type;
+> -	struct mtd_partition* mtd_part;
+> -};
+> -
+> -static struct mtd_info *sbc8240_mtd[NUM_FLASH_BANKS];
+> -static struct mtd_part_def sbc8240_part_banks[NUM_FLASH_BANKS];
+> -
+> -
+> -#endif	/* CONFIG_MTD_PARTITIONS */
+> -
+> -
+> -static int __init init_sbc8240_mtd (void)
+> -{
+> -	static struct _cjs {
+> -		u_long addr;
+> -		u_long size;
+> -	} pt[NUM_FLASH_BANKS] = {
+> -		{
+> -			.addr = WINDOW_ADDR0,
+> -			.size = WINDOW_SIZE0
+> -		},
+> -		{
+> -			.addr = WINDOW_ADDR1,
+> -			.size = WINDOW_SIZE1
+> -		},
+> -	};
+> -
+> -	int devicesfound = 0;
+> -	int i,j;
+> -
+> -	for (i = 0; i < NUM_FLASH_BANKS; i++) {
+> -		printk (KERN_NOTICE MSG_PREFIX
+> -			"Probing 0x%08lx at 0x%08lx\n", pt[i].size, pt[i].addr);
+> -
+> -		sbc8240_map[i].map_priv_1 =
+> -			(unsigned long) ioremap (pt[i].addr, pt[i].size);
+> -		if (!sbc8240_map[i].map_priv_1) {
+> -			printk (MSG_PREFIX "failed to ioremap\n");
+> -			for (j = 0; j < i; j++) {
+> -				iounmap((void *) sbc8240_map[j].map_priv_1);
+> -				sbc8240_map[j].map_priv_1 = 0;
+> -			}
+> -			return -EIO;
+> -		}
+> -		simple_map_init(&sbc8240_mtd[i]);
+> -
+> -		sbc8240_mtd[i] = do_map_probe("jedec_probe", &sbc8240_map[i]);
+> -
+> -		if (sbc8240_mtd[i]) {
+> -			sbc8240_mtd[i]->module = THIS_MODULE;
+> -			devicesfound++;
+> -		} else {
+> -			if (sbc8240_map[i].map_priv_1) {
+> -				iounmap((void *) sbc8240_map[i].map_priv_1);
+> -				sbc8240_map[i].map_priv_1 = 0;
+> -			}
+> -		}
+> -	}
+> -
+> -	if (!devicesfound) {
+> -		printk(KERN_NOTICE MSG_PREFIX
+> -		       "No suppported flash chips found!\n");
+> -		return -ENXIO;
+> -	}
+> -
+> -#ifdef CONFIG_MTD_PARTITIONS
+> -	sbc8240_part_banks[0].mtd_part   = sbc8240_uboot_partitions;
+> -	sbc8240_part_banks[0].type       = "static image";
+> -	sbc8240_part_banks[0].nums       = ARRAY_SIZE(sbc8240_uboot_partitions);
+> -	sbc8240_part_banks[1].mtd_part   = sbc8240_fs_partitions;
+> -	sbc8240_part_banks[1].type       = "static file system";
+> -	sbc8240_part_banks[1].nums       = ARRAY_SIZE(sbc8240_fs_partitions);
+> -
+> -	for (i = 0; i < NUM_FLASH_BANKS; i++) {
+> -
+> -		if (!sbc8240_mtd[i]) continue;
+> -		if (sbc8240_part_banks[i].nums == 0) {
+> -			printk (KERN_NOTICE MSG_PREFIX
+> -				"No partition info available, registering whole device\n");
+> -			add_mtd_device(sbc8240_mtd[i]);
+> -		} else {
+> -			printk (KERN_NOTICE MSG_PREFIX
+> -				"Using %s partition definition\n", sbc8240_part_banks[i].mtd_part->name);
+> -			add_mtd_partitions (sbc8240_mtd[i],
+> -					    sbc8240_part_banks[i].mtd_part,
+> -					    sbc8240_part_banks[i].nums);
+> -		}
+> -	}
+> -#else
+> -	printk(KERN_NOTICE MSG_PREFIX
+> -	       "Registering %d flash banks at once\n", devicesfound);
+> -
+> -	for (i = 0; i < devicesfound; i++) {
+> -		add_mtd_device(sbc8240_mtd[i]);
+> -	}
+> -#endif	/* CONFIG_MTD_PARTITIONS */
+> -
+> -	return devicesfound == 0 ? -ENXIO : 0;
+> -}
+> -
+> -static void __exit cleanup_sbc8240_mtd (void)
+> -{
+> -	int i;
+> -
+> -	for (i = 0; i < NUM_FLASH_BANKS; i++) {
+> -		if (sbc8240_mtd[i]) {
+> -			del_mtd_device (sbc8240_mtd[i]);
+> -			map_destroy (sbc8240_mtd[i]);
+> -		}
+> -		if (sbc8240_map[i].map_priv_1) {
+> -			iounmap ((void *) sbc8240_map[i].map_priv_1);
+> -			sbc8240_map[i].map_priv_1 = 0;
+> -		}
+> -	}
+> -}
+> -
+> -module_init (init_sbc8240_mtd);
+> -module_exit (cleanup_sbc8240_mtd);
+> -
+> -MODULE_LICENSE ("GPL");
+> -MODULE_AUTHOR ("Carolyn Smith <carolyn.smith@tektronix.com>");
+> -MODULE_DESCRIPTION ("MTD map driver for SBC8240 boards");
+> -
+> 
+> ---
+> Regards--
+> Subrata
+> 
