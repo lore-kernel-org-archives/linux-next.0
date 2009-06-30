@@ -1,42 +1,51 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: manual merge of the pci tree with Linus' tree
-Date: Mon, 29 Jun 2009 19:01:35 -0700
-Message-ID: <20090629190135.7ff6a089@jbarnes-g45>
-References: <20090630115638.7bfb8e21.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: pci tree build failure
+Date: Tue, 30 Jun 2009 12:07:27 +1000
+Message-ID: <20090630120727.24450bab.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__30_Jun_2009_12_07_27_+1000_BafRszOHhfXccwBq"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from outbound-mail-139.bluehost.com ([67.222.39.29]:36014 "HELO
-	outbound-mail-139.bluehost.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1752534AbZF3CBf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Jun 2009 22:01:35 -0400
-In-Reply-To: <20090630115638.7bfb8e21.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37704 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751680AbZF3CHa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Jun 2009 22:07:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Wilcox <willy@linux.intel.com>, Alex Chiang <achiang@hp.com>
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Wilcox <willy@linux.intel.com>
 
-On Tue, 30 Jun 2009 11:56:38 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Signature=_Tue__30_Jun_2009_12_07_27_+1000_BafRszOHhfXccwBq
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Jesse,
-> 
-> Today's linux-next merge of the pci tree got conflicts in
-> arch/ia64/include/asm/pci.h, arch/mn10300/include/asm/pci.h and
-> include/asm-generic/pci.h between commit
-> a6c140969b4685f9b9f6773c0760f55ca66d1825 ("Delete
-> pcibios_select_root") from Linus' tree and commit
-> a53cd7419b22c14b5a1e6859a940fb6bfa77963f ("PCI: remove
-> pcibios_scan_all_fns()") from the pci tree.
-> 
-> Just context changes (adjacent removals).  I fixed it up (see below)
-> and can carry the fix for a while.
+Hi Jesse,
 
-Ah ok, thanks.  That'll get fixed up after I send the current for-linus
-bits over and refresh my PCI tree.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Thanks,
--- 
-Jesse Barnes, Intel Open Source Technology Center
+ERROR: "pci_claim_resource" [drivers/pcmcia/yenta_socket.ko] undefined!
+
+Caused by commit 6bb04b65dbff5a5bb01617351dbb0af577084752 ("yenta: Use
+pci_claim_resource").  yenta can be built as a module, but
+pci_claim_resource is not exported ...
+
+I have used the pci tree from next-20090629 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__30_Jun_2009_12_07_27_+1000_BafRszOHhfXccwBq
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkpJc18ACgkQjjKRsyhoI8xSkACdGky5a6WV/6qSok7ttDugdFD2
+OUcAoLtUNjXQRX3DMr6Q7wd47swnZ5v5
+=QJ+B
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__30_Jun_2009_12_07_27_+1000_BafRszOHhfXccwBq--
