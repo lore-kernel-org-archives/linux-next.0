@@ -1,57 +1,53 @@
-From: Eric Paris <eparis@redhat.com>
-Subject: Re: next-20090630: audit/fsnotify build failure
-Date: Tue, 30 Jun 2009 08:31:46 -0400
-Message-ID: <1246365106.754.304.camel@dhcp235-23.rdu.redhat.com>
-References: <a4423d670906300527w42557b9kf5a20e5b527fc1eb@mail.gmail.com>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: linux-next: manual merge of the pci tree with Linus' tree
+Date: Tue, 30 Jun 2009 09:00:38 -0700
+Message-ID: <20090630090038.6c490b7e@jbarnes-g45>
+References: <20090630115638.7bfb8e21.sfr@canb.auug.org.au>
+	<20090629190135.7ff6a089@jbarnes-g45>
+	<20090630021612.GD24061@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:47039 "EHLO mx2.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752134AbZF3Mbq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Jun 2009 08:31:46 -0400
-In-Reply-To: <a4423d670906300527w42557b9kf5a20e5b527fc1eb@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: linux-next <linux-next@vger.kernel.org>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755803AbZF3QAu@vger.kernel.org>
+In-Reply-To: <20090630021612.GD24061@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Matthew Wilcox <willy@linux.intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Chiang <achiang@hp.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 2009-06-30 at 16:27 +0400, Alexander Beregalov wrote:
-> Hi
+On Mon, 29 Jun 2009 19:16:13 -0700
+Matthew Wilcox <willy@linux.intel.com> wrote:
+
+> On Mon, Jun 29, 2009 at 07:01:35PM -0700, Jesse Barnes wrote:
+> > On Tue, 30 Jun 2009 11:56:38 +1000
+> > Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > 
+> > > Hi Jesse,
+> > > 
+> > > Today's linux-next merge of the pci tree got conflicts in
+> > > arch/ia64/include/asm/pci.h, arch/mn10300/include/asm/pci.h and
+> > > include/asm-generic/pci.h between commit
+> > > a6c140969b4685f9b9f6773c0760f55ca66d1825 ("Delete
+> > > pcibios_select_root") from Linus' tree and commit
+> > > a53cd7419b22c14b5a1e6859a940fb6bfa77963f ("PCI: remove
+> > > pcibios_scan_all_fns()") from the pci tree.
+> > > 
+> > > Just context changes (adjacent removals).  I fixed it up (see
+> > > below) and can carry the fix for a while.
+> > 
+> > Ah ok, thanks.  That'll get fixed up after I send the current
+> > for-linus bits over and refresh my PCI tree.
 > 
-> kernel/audit_watch.c: In function 'audit_get_parent':
-> kernel/audit_watch.c:85: error: implicit declaration of function
-> 'fsnotify_get_mark'
-> kernel/audit_watch.c: In function 'audit_put_parent':
-> kernel/audit_watch.c:91: error: implicit declaration of function
-> 'fsnotify_put_mark'
-> kernel/audit_watch.c: In function 'audit_find_parent':
-> kernel/audit_watch.c:104: error: implicit declaration of function
-> 'fsnotify_find_mark_entry'
-> kernel/audit_watch.c:104: warning: assignment makes pointer from
-> integer without a cast
-> kernel/audit_watch.c: In function 'audit_init_parent':
-> kernel/audit_watch.c:161: error: implicit declaration of function
-> 'fsnotify_init_mark'
-> kernel/audit_watch.c:163: error: implicit declaration of function
-> 'fsnotify_add_mark'
-> kernel/audit_watch.c: In function 'audit_remove_parent_watches':
-> kernel/audit_watch.c:354: error: implicit declaration of function
-> 'fsnotify_destroy_mark_by_entry'
-> kernel/audit_watch.c: In function 'audit_watch_should_send_event':
-> kernel/audit_watch.c:513: warning: assignment makes pointer from
-> integer without a cast
-> kernel/audit_watch.c: In function 'audit_watch_init':
-> kernel/audit_watch.c:578: error: implicit declaration of function
-> 'fsnotify_obtain_group'
-> kernel/audit_watch.c:579: warning: assignment makes pointer from
-> integer without a cast
+> I think you need to pull from Linus' tree before you send the bits
+> over -- that's a conflict between Linus' tree and your tree, and you
+> don't want to annoy Linus by making him merge them ;-)
 
-audit now depends on FSNOTIFY.  Will fix for tomorrow.  (and I'll try to
-break audit_watches out to their own config option so you don't have to
-have notification.
+Ah but I don't want to annoy Linus by merging either.  In fact, he's
+stated explicitly several times that I should *not* pull his tree into
+mine, either by rebasing or merging; his position is that pulling an
+old tree from me should be fine, since no one else should have commits
+in the PCI area, or if they do they'll be trivial and he'll fix them
+up.
 
-Sorry for the breakage.
-
--Eric
+-- 
+Jesse Barnes, Intel Open Source Technology Center
