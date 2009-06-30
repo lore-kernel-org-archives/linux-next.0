@@ -1,63 +1,134 @@
 From: Nick Piggin <npiggin@suse.de>
 Subject: Re: Next June 29: Boot failure with SLQB on s390
-Date: Tue, 30 Jun 2009 10:34:10 +0200
-Message-ID: <20090630083410.GA1114@wotan.suse.de>
-References: <20090629164851.57263dbc.sfr@canb.auug.org.au> <4A488D08.30307@in.ibm.com> <20090629103123.GC9321@osiris.boeblingen.de.ibm.com> <20090629103943.GA31299@wotan.suse.de> <4A49A3B4.5070501@in.ibm.com>
+Date: Tue, 30 Jun 2009 11:06:31 +0200
+Message-ID: <20090630090631.GB1114@wotan.suse.de>
+References: <20090629164851.57263dbc.sfr@canb.auug.org.au> <4A488D08.30307@in.ibm.com> <20090629103123.GC9321@osiris.boeblingen.de.ibm.com> <20090629103943.GA31299@wotan.suse.de> <20090629115038.GD9321@osiris.boeblingen.de.ibm.com> <20090629115835.GA2308@wotan.suse.de> <20090629141234.GF9321@osiris.boeblingen.de.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:51869 "EHLO mx1.suse.de"
+Received: from cantor2.suse.de ([195.135.220.15]:60546 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750937AbZF3IjQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Jun 2009 04:39:16 -0400
+	id S1752796AbZF3JG3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 30 Jun 2009 05:06:29 -0400
 Content-Disposition: inline
-In-Reply-To: <4A49A3B4.5070501@in.ibm.com>
+In-Reply-To: <20090629141234.GF9321@osiris.boeblingen.de.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, Pekka Enberg <penberg@cs.helsinki.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-s390@vger.kernel.org
+To: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Sachin Sant <sachinp@in.ibm.com>, Pekka Enberg <penberg@cs.helsinki.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-s390@vger.kernel.org
 
-If you are not seeing any extra messages from the patch, then it
-could be that you are seeing ZERO_SIZE_PTR or similar errors as
-well. I will ask if you can try the patch I sent in the other
-thread.
+On Mon, Jun 29, 2009 at 04:12:34PM +0200, Heiko Carstens wrote:
+> slqb returns ZERO_SIZE_PTR instead of NULL for large size requests it cannot
+> handle.
+> The patch below would fix it. But I think its too ugly. So I leave it up to
+> Nick to come up with a real and nice patch ;)
 
-Thanks,
-Nick
+Could you try this patch and see if it helps? (it fixes a number
+of simple corner cases here, *blush*)
 
-On Tue, Jun 30, 2009 at 11:03:40AM +0530, Sachin Sant wrote:
-> Loglevel set to 8
-> Unable to handle kernel paging request for data at address 0xc0000000008f4504
-> Faulting instruction address: 0xc000000000391094
-> Oops: Kernel access of bad area, sig: 11 [#1]
-> SMP NR_CPUS=1024 DEBUG_PAGEALLOC NUMA pSeries
-> Modules linked in: scsi_mod(+)
-> NIP: c000000000391094 LR: c00000000060cd88 CTR: 0000000000000008
-> REGS: c0000000c63f3590 TRAP: 0300   Not tainted  (2.6.31-rc1-next-20090629)
-> MSR: 8000000000009032 <EE,ME,IR,DR>  CR: 24222428  XER: 20000001
-> DAR: c0000000008f4504, DSISR: 0000000040000000
-> TASK = c0000000c63e0a80[62] 'modprobe' THREAD: c0000000c63f0000 CPU: 1
-> GPR00: c00000000060cd88 c0000000c63f3810 c000000000b0c488 c0000000008f4500 
-> GPR04: c0000000ddcd0000 0000000000000001 0000000000000000 c0000000dfff8480 
-> GPR08: 0000000000000001 c0000000de000010 0000000000000002 c000000000c681f8 
-> GPR12: 0000000024222428 c000000000be2600 0000000000000000 0000000000000000 
-> GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
-> GPR20: 0000000000000018 ffffffffffffffff 0000000000210d00 0000000000000010 
-> GPR24: 0000000000210d00 c0000000dfc60ea0 c000000000fc1580 c0000000008f4500 
-> GPR28: c0000000008f4448 c0000000008f4500 c000000000a87bd0 c0000000dfc60e80 
-> NIP [c000000000391094] ._raw_spin_lock+0x30/0x184
-> LR [c00000000060cd88] ._spin_lock+0x10/0x24
-> Call Trace:
-> [c0000000c63f38b0] [c00000000060cd88] ._spin_lock+0x10/0x24
-> [c0000000c63f3920] [c000000000150030] .__slab_alloc_page+0x390/0x430
-> [c0000000c63f39e0] [c0000000001518f0] .kmem_cache_alloc+0x160/0x2bc
-> [c0000000c63f3aa0] [c000000000152308] .kmem_cache_create+0x294/0x2a8
-> [c0000000c63f3b90] [d000000000eb177c] .scsi_init_queue+0x38/0x170 [scsi_mod]
-> [c0000000c63f3c20] [d000000000eb1678] .init_scsi+0x1c/0xe8 [scsi_mod]
-> [c0000000c63f3ca0] [c0000000000097a0] .do_one_initcall+0x80/0x19c
-> [c0000000c63f3d90] [c0000000000c7a08] .SyS_init_module+0x118/0x28c
-> [c0000000c63f3e30] [c000000000008534] syscall_exit+0x0/0x40
-> Instruction dump:
-> 7c0802a6 fba1ffe8 7d800026 7c7d1b78 fbc1fff0 ebc2c268 f8010010 fb61ffd8 
-> fb81ffe0 fbe1fff8 91810008 f821ff61 <80030004> 6c09dead 2f894ead 419e000c 
-> ---[ end trace e7d1b9681037bc75 ]---
+--
+
+SLQB: fix allocation size checking
+
+SLQB would return ZERO_SIZE_PTR rather than NULL if the requested size is too
+large. Debugged by Heiko Carstens. Fix this by checking size edge cases up
+front rather than in the slab index calculation.
+
+Additionally, if the size parameter was non-constant and too large, then
+the checks may not have been performed at all which could cause corruption.
+
+Next, ARCH_KMALLOC_MINALIGN may not be obeyed if size is non-constant. So
+test for KMALLOC_MIN_SIZE in that case.
+
+Finally, if KMALLOC_SHIFT_SLQB_HIGH is larger than 2MB, then kmalloc_index
+could silently run off the end of its precomputed table and return a -1
+index into the kmalloc slab array, which could result in corruption. Extend
+this to allow up to 32MB (to match SLAB), and add a compile-time error in
+the case that the table is exceeded (also like SLAB).
+
+---
+ include/linux/slqb_def.h |   17 ++++++++++-------
+ mm/slqb.c                |   18 ++++++++++++++----
+ 2 files changed, 24 insertions(+), 11 deletions(-)
+
+Index: linux-2.6/include/linux/slqb_def.h
+===================================================================
+--- linux-2.6.orig/include/linux/slqb_def.h
++++ linux-2.6/include/linux/slqb_def.h
+@@ -184,10 +184,7 @@ extern struct kmem_cache kmalloc_caches_
+  */
+ static __always_inline int kmalloc_index(size_t size)
+ {
+-	if (unlikely(!size))
+-		return 0;
+-	if (unlikely(size > 1UL << KMALLOC_SHIFT_SLQB_HIGH))
+-		return 0;
++	extern int ____kmalloc_too_large(void);
+ 
+ 	if (unlikely(size <= KMALLOC_MIN_SIZE))
+ 		return KMALLOC_SHIFT_LOW;
+@@ -219,7 +216,11 @@ static __always_inline int kmalloc_index
+ 	if (size <= 512 * 1024) return 19;
+ 	if (size <= 1024 * 1024) return 20;
+ 	if (size <=  2 * 1024 * 1024) return 21;
+-	return -1;
++	if (size <=  4 * 1024 * 1024) return 22;
++	if (size <=  8 * 1024 * 1024) return 23;
++	if (size <=  16 * 1024 * 1024) return 24;
++	if (size <=  32 * 1024 * 1024) return 25;
++	return ____kmalloc_too_large();
+ }
+ 
+ #ifdef CONFIG_ZONE_DMA
+@@ -238,10 +239,12 @@ static __always_inline struct kmem_cache
+ {
+ 	int index;
+ 
+-	index = kmalloc_index(size);
+-	if (unlikely(index == 0))
++	if (unlikely(size > 1UL << KMALLOC_SHIFT_SLQB_HIGH))
++		return NULL;
++	if (unlikely(!size))
+ 		return ZERO_SIZE_PTR;
+ 
++	index = kmalloc_index(size);
+ 	if (likely(!(flags & SLQB_DMA)))
+ 		return &kmalloc_caches[index];
+ 	else
+Index: linux-2.6/mm/slqb.c
+===================================================================
+--- linux-2.6.orig/mm/slqb.c
++++ linux-2.6/mm/slqb.c
+@@ -2514,18 +2514,28 @@ static struct kmem_cache *get_slab(size_
+ {
+ 	int index;
+ 
++	if (unlikely(size <= KMALLOC_MIN_SIZE)) {
++		if (unlikely(!size))
++			return ZERO_SIZE_PTR;
++
++		index = KMALLOC_SHIFT_LOW;
++		goto got_index;
++	}
++
+ #if L1_CACHE_BYTES >= 128
+ 	if (size <= 128) {
+ #else
+ 	if (size <= 192) {
+ #endif
+-		if (unlikely(!size))
+-			return ZERO_SIZE_PTR;
+-
+ 		index = size_index[(size - 1) / 8];
+-	} else
++	} else {
++		if (unlikely(size > 1UL << KMALLOC_SHIFT_SLQB_HIGH))
++			return NULL;
++
+ 		index = fls(size - 1);
++	}
+ 
++got_index:
+ 	if (unlikely((flags & SLQB_DMA)))
+ 		return &kmalloc_caches_dma[index];
+ 	else
