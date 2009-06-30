@@ -1,263 +1,63 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for June 30
-Date: Tue, 30 Jun 2009 18:22:51 +1000
-Message-ID: <20090630182251.2de03ceb.sfr@canb.auug.org.au>
+From: Nick Piggin <npiggin@suse.de>
+Subject: Re: Next June 29: Boot failure with SLQB on s390
+Date: Tue, 30 Jun 2009 10:34:10 +0200
+Message-ID: <20090630083410.GA1114@wotan.suse.de>
+References: <20090629164851.57263dbc.sfr@canb.auug.org.au> <4A488D08.30307@in.ibm.com> <20090629103123.GC9321@osiris.boeblingen.de.ibm.com> <20090629103943.GA31299@wotan.suse.de> <4A49A3B4.5070501@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__30_Jun_2009_18_22_51_+1000_q7GxatimxgdUjwY."
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40314 "EHLO smtps.tip.net.au"
+Received: from cantor.suse.de ([195.135.220.2]:51869 "EHLO mx1.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751305AbZF3IW7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Jun 2009 04:22:59 -0400
+	id S1750937AbZF3IjQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 30 Jun 2009 04:39:16 -0400
+Content-Disposition: inline
+In-Reply-To: <4A49A3B4.5070501@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, Pekka Enberg <penberg@cs.helsinki.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-s390@vger.kernel.org
 
---Signature=_Tue__30_Jun_2009_18_22_51_+1000_q7GxatimxgdUjwY.
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+If you are not seeing any extra messages from the patch, then it
+could be that you are seeing ZERO_SIZE_PTR or similar errors as
+well. I will ask if you can try the patch I sent in the other
+thread.
 
-Hi all,
+Thanks,
+Nick
 
-Changes since 20090629:
-
-New tree: sfi
-
-Dropped tree: sfi (build problems)
-
-My fixes tree contains this commit:
-
-	fbdev: work around old compiler bug
-
-This tree fails to build for powerpc allyesconfig.
-
-The pci tree gained conflicts against Linus' tree and a build failure so
-I used the version from next-20090629.
-
-The acpi tree gained a build failure for which I reverted a commit.
-
-The kvm tree lost its conflicts and build failure.
-
-The sfi tree gained a build failure so I dropped it for today (since I
-have no previous version to go back to).
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES) and i386, sparc and sparc64 defconfig.
-These builds also have CONFIG_ENABLE_WARN_DEPRECATED,
-CONFIG_ENABLE_MUST_CHECK and CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 132 trees (counting Linus' and 19 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging dwmw2/master
-Merging arm/devel
-Merging davinci/for-next
-Merging pxa/for-next
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-CONFLICT (add/add): Merge conflict in arch/mips/cavium-octeon/executive/cvm=
-x-helper-errata.c
-CONFLICT (content): Merge conflict in arch/mips/mm/tlbex.c
-CONFLICT (content): Merge conflict in arch/mips/sibyte/swarm/setup.c
-CONFLICT (content): Merge conflict in drivers/char/hw_random/Kconfig
-CONFLICT (content): Merge conflict in drivers/char/hw_random/Makefile
-CONFLICT (add/add): Merge conflict in drivers/dma/txx9dmac.c
-Merging parisc/master
-Merging powerpc/next
-Merging 4xx/next
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging xtensa/master
-Merging cifs/master
-Merging configfs/linux-next
-CONFLICT (content): Merge conflict in fs/configfs/dir.c
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging v9fs/for-next
-CONFLICT (content): Merge conflict in net/9p/protocol.c
-Merging ubifs/linux-next
-Merging xfs/master
-Merging reiserfs-bkl/reiserfs/kill-bkl-rc6
-CONFLICT (content): Merge conflict in fs/reiserfs/super.c
-Merging vfs/for-next
-Merging pci/linux-next
-CONFLICT (content): Merge conflict in arch/ia64/include/asm/pci.h
-CONFLICT (content): Merge conflict in arch/mn10300/include/asm/pci.h
-CONFLICT (content): Merge conflict in include/asm-generic/pci.h
-$ git reset --hard HEAD^
-Merging refs/next/20090629/pci
-Merging hid/for-next
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging quota/for_next
-Merging kbuild/master
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-$ git checkout HEAD drivers/platform/x86/eeepc-laptop.c
-[master b72a127] Revert "eeepc-laptop: Register as a pci-hotplug device"
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/master
-Merging dlm/next
-Merging scsi/master
-Merging async_tx/next
-Merging udf/for_next
-Merging net/master
-Merging wireless/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-Merging cpufreq/next
-Merging quilt/rr
-CONFLICT (content): Merge conflict in arch/powerpc/platforms/powermac/setup=
-.c
-CONFLICT (content): Merge conflict in kernel/cpu.c
-Applying: rr/pmac: fix for cpumask accessor changes
-Applying: UML: Fix some apparent bitrot in mmu_context.h
-Merging mmc/next
-Merging input/next
-Merging bkl-removal/bkl-removal
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging quilt/ttydev
-CONFLICT (content): Merge conflict in drivers/char/tty_ldisc.c
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging omap/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging edac-amd/for-next
-Merging fsnotify/for-next
-Merging irda/for-next
-Merging hwlat/for-linus
-Merging tip/auto-latest
-CONFLICT (content): Merge conflict in arch/x86/include/asm/termios.h
-Merging percpu/for-next
-CONFLICT (content): Merge conflict in arch/mn10300/kernel/vmlinux.lds.S
-Merging sfi/sfi-test
-$ git reset --hard HEAD^
-Merging asm-generic/next
-Merging quilt/driver-core
-Merging quilt/usb
-Merging quilt/staging
-Merging scsi-post-merge/master
-
---Signature=_Tue__30_Jun_2009_18_22_51_+1000_q7GxatimxgdUjwY.
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkpJy1sACgkQjjKRsyhoI8zTvQCfQ15aobdR9sa8Phzo7PAWWiYP
-u/oAn3tq9lOnzeBNZhUrpg6sY1M5wGOu
-=yAEn
------END PGP SIGNATURE-----
-
---Signature=_Tue__30_Jun_2009_18_22_51_+1000_q7GxatimxgdUjwY.--
+On Tue, Jun 30, 2009 at 11:03:40AM +0530, Sachin Sant wrote:
+> Loglevel set to 8
+> Unable to handle kernel paging request for data at address 0xc0000000008f4504
+> Faulting instruction address: 0xc000000000391094
+> Oops: Kernel access of bad area, sig: 11 [#1]
+> SMP NR_CPUS=1024 DEBUG_PAGEALLOC NUMA pSeries
+> Modules linked in: scsi_mod(+)
+> NIP: c000000000391094 LR: c00000000060cd88 CTR: 0000000000000008
+> REGS: c0000000c63f3590 TRAP: 0300   Not tainted  (2.6.31-rc1-next-20090629)
+> MSR: 8000000000009032 <EE,ME,IR,DR>  CR: 24222428  XER: 20000001
+> DAR: c0000000008f4504, DSISR: 0000000040000000
+> TASK = c0000000c63e0a80[62] 'modprobe' THREAD: c0000000c63f0000 CPU: 1
+> GPR00: c00000000060cd88 c0000000c63f3810 c000000000b0c488 c0000000008f4500 
+> GPR04: c0000000ddcd0000 0000000000000001 0000000000000000 c0000000dfff8480 
+> GPR08: 0000000000000001 c0000000de000010 0000000000000002 c000000000c681f8 
+> GPR12: 0000000024222428 c000000000be2600 0000000000000000 0000000000000000 
+> GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
+> GPR20: 0000000000000018 ffffffffffffffff 0000000000210d00 0000000000000010 
+> GPR24: 0000000000210d00 c0000000dfc60ea0 c000000000fc1580 c0000000008f4500 
+> GPR28: c0000000008f4448 c0000000008f4500 c000000000a87bd0 c0000000dfc60e80 
+> NIP [c000000000391094] ._raw_spin_lock+0x30/0x184
+> LR [c00000000060cd88] ._spin_lock+0x10/0x24
+> Call Trace:
+> [c0000000c63f38b0] [c00000000060cd88] ._spin_lock+0x10/0x24
+> [c0000000c63f3920] [c000000000150030] .__slab_alloc_page+0x390/0x430
+> [c0000000c63f39e0] [c0000000001518f0] .kmem_cache_alloc+0x160/0x2bc
+> [c0000000c63f3aa0] [c000000000152308] .kmem_cache_create+0x294/0x2a8
+> [c0000000c63f3b90] [d000000000eb177c] .scsi_init_queue+0x38/0x170 [scsi_mod]
+> [c0000000c63f3c20] [d000000000eb1678] .init_scsi+0x1c/0xe8 [scsi_mod]
+> [c0000000c63f3ca0] [c0000000000097a0] .do_one_initcall+0x80/0x19c
+> [c0000000c63f3d90] [c0000000000c7a08] .SyS_init_module+0x118/0x28c
+> [c0000000c63f3e30] [c000000000008534] syscall_exit+0x0/0x40
+> Instruction dump:
+> 7c0802a6 fba1ffe8 7d800026 7c7d1b78 fbc1fff0 ebc2c268 f8010010 fb61ffd8 
+> fb81ffe0 fbe1fff8 91810008 f821ff61 <80030004> 6c09dead 2f894ead 419e000c 
+> ---[ end trace e7d1b9681037bc75 ]---
