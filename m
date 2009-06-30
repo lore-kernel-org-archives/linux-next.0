@@ -1,73 +1,263 @@
-From: Nick Piggin <npiggin@suse.de>
-Subject: Re: Next June 29: Boot failure with SLQB on s390
-Date: Tue, 30 Jun 2009 09:34:45 +0200
-Message-ID: <20090630073445.GC2308@wotan.suse.de>
-References: <20090629164851.57263dbc.sfr@canb.auug.org.au> <4A488D08.30307@in.ibm.com> <20090629103123.GC9321@osiris.boeblingen.de.ibm.com> <20090629103943.GA31299@wotan.suse.de> <20090629115038.GD9321@osiris.boeblingen.de.ibm.com> <20090629115835.GA2308@wotan.suse.de> <20090629141234.GF9321@osiris.boeblingen.de.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Tree for June 30
+Date: Tue, 30 Jun 2009 18:22:51 +1000
+Message-ID: <20090630182251.2de03ceb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__30_Jun_2009_18_22_51_+1000_q7GxatimxgdUjwY."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:49720 "EHLO mx1.suse.de"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40314 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751718AbZF3Hen (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Jun 2009 03:34:43 -0400
-Content-Disposition: inline
-In-Reply-To: <20090629141234.GF9321@osiris.boeblingen.de.ibm.com>
+	id S1751305AbZF3IW7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 30 Jun 2009 04:22:59 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Sachin Sant <sachinp@in.ibm.com>, Pekka Enberg <penberg@cs.helsinki.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-s390@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Jun 29, 2009 at 04:12:34PM +0200, Heiko Carstens wrote:
-> slqb returns ZERO_SIZE_PTR instead of NULL for large size requests it cannot
-> handle.
+--Signature=_Tue__30_Jun_2009_18_22_51_+1000_q7GxatimxgdUjwY.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ah, thank you for debugging this. Great.
+Hi all,
 
+Changes since 20090629:
 
-> The patch below would fix it. But I think its too ugly. So I leave it up to
-> Nick to come up with a real and nice patch ;)
+New tree: sfi
 
-The patch isn't so bad :) It is for the constant case anyway so it
-should optimize away. But I think I have a similar problem for
-the non constant case too, so I will look at doing another patch.
+Dropped tree: sfi (build problems)
 
-Thanks,
-Nick
-> 
-> diff --git a/include/linux/slqb_def.h b/include/linux/slqb_def.h
-> index 7b4a601..9d03485 100644
-> --- a/include/linux/slqb_def.h
-> +++ b/include/linux/slqb_def.h
-> @@ -187,7 +187,7 @@ static __always_inline int kmalloc_index(size_t size)
->  	if (unlikely(!size))
->  		return 0;
->  	if (unlikely(size > 1UL << KMALLOC_SHIFT_SLQB_HIGH))
-> -		return 0;
-> +		return -1;
->  
->  	if (unlikely(size <= KMALLOC_MIN_SIZE))
->  		return KMALLOC_SHIFT_LOW;
-> @@ -219,7 +219,7 @@ static __always_inline int kmalloc_index(size_t size)
->  	if (size <= 512 * 1024) return 19;
->  	if (size <= 1024 * 1024) return 20;
->  	if (size <=  2 * 1024 * 1024) return 21;
-> -	return -1;
-> +	return -2;
->  }
->  
->  #ifdef CONFIG_ZONE_DMA
-> @@ -239,8 +239,12 @@ static __always_inline struct kmem_cache *kmalloc_slab(size_t size, gfp_t flags)
->  	int index;
->  
->  	index = kmalloc_index(size);
-> -	if (unlikely(index == 0))
-> -		return ZERO_SIZE_PTR;
-> +	if (unlikely(index <= 0)) {
-> +		if (index == 0)
-> +			return ZERO_SIZE_PTR;
-> +		if (index == -1)
-> +			return NULL;
-> +	}
->  
->  	if (likely(!(flags & SLQB_DMA)))
->  		return &kmalloc_caches[index];
+My fixes tree contains this commit:
+
+	fbdev: work around old compiler bug
+
+This tree fails to build for powerpc allyesconfig.
+
+The pci tree gained conflicts against Linus' tree and a build failure so
+I used the version from next-20090629.
+
+The acpi tree gained a build failure for which I reverted a commit.
+
+The kvm tree lost its conflicts and build failure.
+
+The sfi tree gained a build failure so I dropped it for today (since I
+have no previous version to go back to).
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+(patches at
+http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES) and i386, sparc and sparc64 defconfig.
+These builds also have CONFIG_ENABLE_WARN_DEPRECATED,
+CONFIG_ENABLE_MUST_CHECK and CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 132 trees (counting Linus' and 19 trees of patches pending for
+Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/master
+Merging quilt/driver-core.current
+Merging quilt/usb.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging dwmw2/master
+Merging arm/devel
+Merging davinci/for-next
+Merging pxa/for-next
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging microblaze/next
+Merging mips/mips-for-linux-next
+CONFLICT (add/add): Merge conflict in arch/mips/cavium-octeon/executive/cvm=
+x-helper-errata.c
+CONFLICT (content): Merge conflict in arch/mips/mm/tlbex.c
+CONFLICT (content): Merge conflict in arch/mips/sibyte/swarm/setup.c
+CONFLICT (content): Merge conflict in drivers/char/hw_random/Kconfig
+CONFLICT (content): Merge conflict in drivers/char/hw_random/Makefile
+CONFLICT (add/add): Merge conflict in drivers/dma/txx9dmac.c
+Merging parisc/master
+Merging powerpc/next
+Merging 4xx/next
+Merging galak/next
+Merging s390/features
+Merging sh/master
+Merging sparc/master
+Merging xtensa/master
+Merging cifs/master
+Merging configfs/linux-next
+CONFLICT (content): Merge conflict in fs/configfs/dir.c
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging jfs/next
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging squashfs/master
+Merging v9fs/for-next
+CONFLICT (content): Merge conflict in net/9p/protocol.c
+Merging ubifs/linux-next
+Merging xfs/master
+Merging reiserfs-bkl/reiserfs/kill-bkl-rc6
+CONFLICT (content): Merge conflict in fs/reiserfs/super.c
+Merging vfs/for-next
+Merging pci/linux-next
+CONFLICT (content): Merge conflict in arch/ia64/include/asm/pci.h
+CONFLICT (content): Merge conflict in arch/mn10300/include/asm/pci.h
+CONFLICT (content): Merge conflict in include/asm-generic/pci.h
+$ git reset --hard HEAD^
+Merging refs/next/20090629/pci
+Merging hid/for-next
+Merging quilt/i2c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+Merging quota/for_next
+Merging kbuild/master
+Merging ide/master
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+$ git checkout HEAD drivers/platform/x86/eeepc-laptop.c
+[master b72a127] Revert "eeepc-laptop: Register as a pci-hotplug device"
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/master
+Merging dlm/next
+Merging scsi/master
+Merging async_tx/next
+Merging udf/for_next
+Merging net/master
+Merging wireless/master
+Merging mtd/master
+Merging crypto/master
+Merging sound/for-next
+Merging cpufreq/next
+Merging quilt/rr
+CONFLICT (content): Merge conflict in arch/powerpc/platforms/powermac/setup=
+.c
+CONFLICT (content): Merge conflict in kernel/cpu.c
+Applying: rr/pmac: fix for cpumask accessor changes
+Applying: UML: Fix some apparent bitrot in mmu_context.h
+Merging mmc/next
+Merging input/next
+Merging bkl-removal/bkl-removal
+Merging lsm/for-next
+Merging block/for-next
+Merging quilt/device-mapper
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging voltage/for-next
+Merging security-testing/next
+Merging lblnet/master
+Merging quilt/ttydev
+CONFLICT (content): Merge conflict in drivers/char/tty_ldisc.c
+Merging agp/agp-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+Merging audit/for-next
+Merging omap/for-next
+Merging quilt/aoe
+Merging suspend/linux-next
+Merging bluetooth/master
+Merging edac-amd/for-next
+Merging fsnotify/for-next
+Merging irda/for-next
+Merging hwlat/for-linus
+Merging tip/auto-latest
+CONFLICT (content): Merge conflict in arch/x86/include/asm/termios.h
+Merging percpu/for-next
+CONFLICT (content): Merge conflict in arch/mn10300/kernel/vmlinux.lds.S
+Merging sfi/sfi-test
+$ git reset --hard HEAD^
+Merging asm-generic/next
+Merging quilt/driver-core
+Merging quilt/usb
+Merging quilt/staging
+Merging scsi-post-merge/master
+
+--Signature=_Tue__30_Jun_2009_18_22_51_+1000_q7GxatimxgdUjwY.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkpJy1sACgkQjjKRsyhoI8zTvQCfQ15aobdR9sa8Phzo7PAWWiYP
+u/oAn3tq9lOnzeBNZhUrpg6sY1M5wGOu
+=yAEn
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__30_Jun_2009_18_22_51_+1000_q7GxatimxgdUjwY.--
