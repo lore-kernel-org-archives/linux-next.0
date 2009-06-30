@@ -1,42 +1,42 @@
 From: Matthew Wilcox <willy@linux.intel.com>
-Subject: Re: linux-next: manual merge of the pci tree with Linus' tree
-Date: Mon, 29 Jun 2009 19:16:13 -0700
-Message-ID: <20090630021612.GD24061@linux.intel.com>
-References: <20090630115638.7bfb8e21.sfr@canb.auug.org.au> <20090629190135.7ff6a089@jbarnes-g45>
+Subject: Re: linux-next: pci tree build failure
+Date: Mon, 29 Jun 2009 19:24:53 -0700
+Message-ID: <20090630022453.GE24061@linux.intel.com>
+References: <20090630120727.24450bab.sfr@canb.auug.org.au> <20090629191324.5c86bbc0@jbarnes-g45>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:3168 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752959AbZF3CQK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Jun 2009 22:16:10 -0400
+Received: from mga06.intel.com ([134.134.136.21]:29100 "EHLO
+	orsmga101.jf.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1757740AbZF3CYv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Jun 2009 22:24:51 -0400
 Content-Disposition: inline
-In-Reply-To: <20090629190135.7ff6a089@jbarnes-g45>
+In-Reply-To: <20090629191324.5c86bbc0@jbarnes-g45>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Chiang <achiang@hp.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jun 29, 2009 at 07:01:35PM -0700, Jesse Barnes wrote:
-> On Tue, 30 Jun 2009 11:56:38 +1000
+On Mon, Jun 29, 2009 at 07:13:24PM -0700, Jesse Barnes wrote:
+> On Tue, 30 Jun 2009 12:07:27 +1000
 > Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
 > > Hi Jesse,
 > > 
-> > Today's linux-next merge of the pci tree got conflicts in
-> > arch/ia64/include/asm/pci.h, arch/mn10300/include/asm/pci.h and
-> > include/asm-generic/pci.h between commit
-> > a6c140969b4685f9b9f6773c0760f55ca66d1825 ("Delete
-> > pcibios_select_root") from Linus' tree and commit
-> > a53cd7419b22c14b5a1e6859a940fb6bfa77963f ("PCI: remove
-> > pcibios_scan_all_fns()") from the pci tree.
+> > Today's linux-next build (x86_64 allmodconfig) failed like this:
 > > 
-> > Just context changes (adjacent removals).  I fixed it up (see below)
-> > and can carry the fix for a while.
+> > ERROR: "pci_claim_resource" [drivers/pcmcia/yenta_socket.ko]
+> > undefined!
+> > 
+> > Caused by commit 6bb04b65dbff5a5bb01617351dbb0af577084752 ("yenta: Use
+> > pci_claim_resource").  yenta can be built as a module, but
+> > pci_claim_resource is not exported ...
+> > 
+> > I have used the pci tree from next-20090629 for today.
 > 
-> Ah ok, thanks.  That'll get fixed up after I send the current for-linus
-> bits over and refresh my PCI tree.
+> Damn, thought I built that.  linux-next earns its keep yet again.
 
-I think you need to pull from Linus' tree before you send the bits over
--- that's a conflict between Linus' tree and your tree, and you don't
-want to annoy Linus by making him merge them ;-)
+Sorry about that.  I thought I'd checked that.  Must have been confused
+with another function.  There do seem to be legitimate *drivers*
+that could use it (i2o for one), so I propose making it a full-bodied
+'EXPORT_SYMBOL' and not bother with the _GPL tag.  Thoughts?
