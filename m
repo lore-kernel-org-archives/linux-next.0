@@ -1,51 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with the  tree
-Date: Wed, 1 Jul 2009 15:37:15 +1000
-Message-ID: <20090701153715.7e2935a8.sfr@canb.auug.org.au>
+Subject: linux-next: boot failure
+Date: Wed, 1 Jul 2009 16:00:14 +1000
+Message-ID: <20090701160014.595e1338.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__1_Jul_2009_16_00_14_+1000_5T565D3f570zuN1o"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39885 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:39260 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751003AbZGAFhN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 1 Jul 2009 01:37:13 -0400
+	id S1751514AbZGAGAS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 1 Jul 2009 02:00:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Kennedy <richard@rsk.demon.co.uk>, Andrew Morton <akpm@linux-foundation.org>
+To: Eric Paris <eparis@redhat.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi Jens,
+--Signature=_Wed__1_Jul_2009_16_00_14_+1000_5T565D3f570zuN1o
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the block tree got a conflict in
-mm/page-writeback.c between commit
-d7831a0bdf06b9f722b947bb0c205ff7d77cebd8 ("mm: prevent balance_dirty_pages
-() from doing too much work") from Linus' tree and commit
-83f866f06c6d0266330e1631f4644ba6a63e6925 ("writeback: switch to per-bdi
-threads for flushing data") from the block tree.
+Hi Eric,
 
-Context changes.  I fixed it up (see below) but am not sure if this is
-the correct fix.
--- 
+next-20090630 failed to boot (on PowerPC Power5/6 machines):
+
+calling  .audit_watch_init+0x0/0x80 @ 1
+Unable to handle kernel paging request for data at address 0xffffffffffffff=
+ff
+Faulting instruction address: 0xc00000000008b440
+cpu 0x0: Vector: 300 (Data Access) at [c0000000be683990]
+    pc: c00000000008b440: .srcu_read_lock+0x20/0x40
+    lr: c0000000001607cc: .fsnotify_recalc_global_mask+0x2c/0xa0
+    sp: c0000000be683c10
+   msr: 8000000000009032
+   dar: ffffffffffffffff
+ dsisr: 40010000
+  current =3D 0xc0000000be67e000
+  paca    =3D 0xc00000000093b200
+    pid   =3D 1, comm =3D swapper
+enter ? for help
+[link register   ] c0000000001607cc .fsnotify_recalc_global_mask+0x2c/0xa0
+[c0000000be683c10] c0000000be683ca0 (unreliable)
+[c0000000be683ca0] c000000000160bc0 .fsnotify_obtain_group+0x1e0/0x260
+[c0000000be683d60] c0000000007879e4 .audit_watch_init+0x34/0x80
+[c0000000be683de0] c00000000000947c .do_one_initcall+0x6c/0x1e0
+[c0000000be683ee0] c00000000076fd6c .kernel_init+0x23c/0x2c0
+[c0000000be683f90] c00000000002a9bc .kernel_thread+0x54/0x70
+
+next-20090629 was fine.  The commits in 0630 and not in 0629 (from the
+fsnotify tree) are:
+
+      Audit: clean up the audit_watch split
+      audit: convert audit watches to use fsnotify instead of inotify
+      audit: redo audit watch locking and refcnt in light of fsnotify
+      audit: do not get and put just to free a watch
+      fsnotify: duplicate fsnotify_mark_entry data between 2 marks
+      fsnotify: allow addition of duplicate fsnotify marks
+      audit: reimplement audit_trees using fsnotify rather than inotify
+      inotify: deprecate the inotify kernel interface
+
+If I have time, I may do a bisection.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc mm/page-writeback.c
-index 7687879,7b87d10..0000000
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@@ -541,12 -527,9 +527,12 @@@ static void balance_dirty_pages(struct 
-  		 * filesystems (i.e. NFS) in which data may have been
-  		 * written to the server's write cache, but has not yet
-  		 * been flushed to permanent storage.
- +		 * Only move pages to writeback if this bdi is over its
- +		 * threshold otherwise wait until the disk writes catch
- +		 * up.
-  		 */
- -		if (bdi_nr_reclaimable) {
- +		if (bdi_nr_reclaimable > bdi_thresh) {
-- 			writeback_inodes(&wbc);
-+ 			generic_sync_bdi_inodes(NULL, &wbc);
-  			pages_written += write_chunk - wbc.nr_to_write;
-  			get_dirty_limits(&background_thresh, &dirty_thresh,
-  				       &bdi_thresh, bdi);
+--Signature=_Wed__1_Jul_2009_16_00_14_+1000_5T565D3f570zuN1o
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkpK+24ACgkQjjKRsyhoI8zxsgCeJ+S4c21/DJ6zf9Lg08jkQbUS
+D2gAoIpNa3sPMkYa31WpMerUwQV9Tr2K
+=z1b5
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__1_Jul_2009_16_00_14_+1000_5T565D3f570zuN1o--
