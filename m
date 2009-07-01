@@ -1,56 +1,65 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: linux-next: manual merge of the block tree with the  tree
-Date: Wed, 1 Jul 2009 08:59:10 +0200
-Message-ID: <20090701065910.GN23611@kernel.dk>
-References: <20090701153715.7e2935a8.sfr@canb.auug.org.au>
+From: Davide Libenzi <davidel@xmailserver.org>
+Subject: Re: linux-next: manual merge of the kvm tree with Linus' tree
+Date: Wed, 1 Jul 2009 00:10:50 -0700 (PDT)
+Message-ID: <alpine.DEB.1.10.0907010007020.8745@makko.or.mcafeemobile.com>
+References: <20090701145711.1c9c8935.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753336AbZGAG7T@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20090701153715.7e2935a8.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from x35.xmailserver.org ([64.71.152.41]:49133 "EHLO
+	x35.xmailserver.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751799AbZGAHLn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Jul 2009 03:11:43 -0400
+Received: from makko.or.mcafeemobile.com
+	by x35.xmailserver.org with [XMail 1.26 ESMTP Server]
+	id <S2F4F45> for <linux-next@vger.kernel.org> from <davidel@xmailserver.org>;
+	Wed, 1 Jul 2009 03:11:02 -0400
+In-Reply-To: <20090701145711.1c9c8935.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Kennedy <richard@rsk.demon.co.uk>, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Cc: Avi Kivity <avi@qumranet.com>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Gregory Haskins <ghaskins@novell.com>
 
-On Wed, Jul 01 2009, Stephen Rothwell wrote:
-> Hi Jens,
+On Wed, 1 Jul 2009, Stephen Rothwell wrote:
+
+> Hi Avi,
 > 
-> Today's linux-next merge of the block tree got a conflict in
-> mm/page-writeback.c between commit
-> d7831a0bdf06b9f722b947bb0c205ff7d77cebd8 ("mm: prevent balance_dirty_pages
-> () from doing too much work") from Linus' tree and commit
-> 83f866f06c6d0266330e1631f4644ba6a63e6925 ("writeback: switch to per-bdi
-> threads for flushing data") from the block tree.
+> Today's linux-next merge of the kvm tree got a conflict in fs/eventfd.c
+> between commit 133890103b9de08904f909995973e4b5c08a780e ("eventfd:
+> revised interface and cleanups") from Linus' tree and commit
+> 28ddf0aebbf546e56efd1951725d5457ce1ebf98 ("eventfd: Allow waiters to be
+> notified about the eventfd file* going away") from the kvm tree.
 > 
-> Context changes.  I fixed it up (see below) but am not sure if this is
-> the correct fix.
+> Overlapping changes.  I fixed it up (see below), but don't know if this
+> is the correct fix.
+> 
 > -- 
 > Cheers,
 > Stephen Rothwell                    sfr@canb.auug.org.au
 > 
-> diff --cc mm/page-writeback.c
-> index 7687879,7b87d10..0000000
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@@ -541,12 -527,9 +527,12 @@@ static void balance_dirty_pages(struct 
->   		 * filesystems (i.e. NFS) in which data may have been
->   		 * written to the server's write cache, but has not yet
->   		 * been flushed to permanent storage.
->  +		 * Only move pages to writeback if this bdi is over its
->  +		 * threshold otherwise wait until the disk writes catch
->  +		 * up.
->   		 */
->  -		if (bdi_nr_reclaimable) {
->  +		if (bdi_nr_reclaimable > bdi_thresh) {
-> - 			writeback_inodes(&wbc);
-> + 			generic_sync_bdi_inodes(NULL, &wbc);
->   			pages_written += write_chunk - wbc.nr_to_write;
->   			get_dirty_limits(&background_thresh, &dirty_thresh,
->   				       &bdi_thresh, bdi);
+> diff --cc fs/eventfd.c
+> index 31d12de,72f5f8d..0000000
+> --- a/fs/eventfd.c
+> +++ b/fs/eventfd.c
+> @@@ -105,8 -63,13 +105,13 @@@ static int eventfd_release(struct inod
+>   {
+>   	struct eventfd_ctx *ctx = file->private_data;
+>   
+> - 	wake_up_poll(&ctx->wqh, POLLHUP);
+> + 	/*
+> + 	 * No need to hold the lock here, since we are on the file cleanup
+> + 	 * path and the ones still attached to the wait queue will be
+> + 	 * serialized by wake_up_locked_poll().
+> + 	 */
+> + 	wake_up_locked_poll(&ctx->wqh, POLLHUP);
+>  -	kfree(ctx);
+>  +	eventfd_ctx_put(ctx);
+>   	return 0;
+>   }
 
-I'll fix that up, I didn't expect this patch to go in, since there are
-still pending issues with it...
+That's fine.
+There are a couple of extra spaces before the last two -+ in that patch 
+though ;)
 
--- 
-Jens Axboe
+
+- Davide
