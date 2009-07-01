@@ -1,17 +1,17 @@
 From: Gregory Haskins <ghaskins@novell.com>
 Subject: Re: linux-next: manual merge of the kvm tree with Linus' tree
-Date: Wed, 01 Jul 2009 08:30:54 -0400
-Message-ID: <4A4B56FE.8060407@novell.com>
+Date: Wed, 01 Jul 2009 08:31:07 -0400
+Message-ID: <4A4B570B.3000209@novell.com>
 References: <20090701145711.1c9c8935.sfr@canb.auug.org.au> <alpine.DEB.1.10.0907010007020.8745@makko.or.mcafeemobile.com> <4A4B1106.8000506@redhat.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
  protocol="application/pgp-signature";
- boundary="------------enig6F8E9D14B783B39E33B1021D"
+ boundary="------------enigD70267FF0322A8AFAF7CC498"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from victor.provo.novell.com ([137.65.250.26]:53341 "EHLO
+Received: from victor.provo.novell.com ([137.65.250.26]:53889 "EHLO
 	victor.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750862AbZGAMa5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Jul 2009 08:30:57 -0400
+	with ESMTP id S1753546AbZGAMbM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Jul 2009 08:31:12 -0400
 In-Reply-To: <4A4B1106.8000506@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
@@ -19,7 +19,7 @@ To: Avi Kivity <avi@redhat.com>, Davide Libenzi <davidel@xmailserver.org>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
 This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
---------------enig6F8E9D14B783B39E33B1021D
+--------------enigD70267FF0322A8AFAF7CC498
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
 
@@ -103,7 +103,7 @@ Sound good?
 
 
 
---------------enig6F8E9D14B783B39E33B1021D
+--------------enigD70267FF0322A8AFAF7CC498
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
@@ -112,9 +112,9 @@ Content-Disposition: attachment; filename="signature.asc"
 Version: GnuPG/MacGPG2 v2.0.11 (Darwin)
 Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
 
-iEYEARECAAYFAkpLVwIACgkQlOSOBdgZUxlkjACfQYHkGD2gD1yg8JDNM9Xp4UTH
-/UIAmQH2NKH2Sc/4Ys0O4DVv/yjXHIjQ
-=Nahm
+iEYEARECAAYFAkpLVwsACgkQlOSOBdgZUxlGHwCfRctWOT0Lh89r5vEodNkr7z1r
+3QQAmgI6IaNkeV3jf+Ain9bIy3cT+QPX
+=E+PV
 -----END PGP SIGNATURE-----
 
---------------enig6F8E9D14B783B39E33B1021D--
+--------------enigD70267FF0322A8AFAF7CC498--
