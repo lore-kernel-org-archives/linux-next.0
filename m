@@ -1,32 +1,60 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: Re: next-20090630: audit/fsnotify build failure
-Date: Wed, 1 Jul 2009 16:07:45 +0400
-Message-ID: <a4423d670907010507g5c1d205epd8383319f9db6aa@mail.gmail.com>
-References: <a4423d670906300527w42557b9kf5a20e5b527fc1eb@mail.gmail.com>
-	 <1246384996.22562.19.camel@dhcp235-23.rdu.redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: boot failure
+Date: Wed, 1 Jul 2009 22:20:42 +1000
+Message-ID: <20090701222042.57b0f4d3.sfr@canb.auug.org.au>
+References: <20090701160014.595e1338.sfr@canb.auug.org.au>
+	<4A4B4E1B.6090900@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__1_Jul_2009_22_20_42_+1000_McLYd1rDOwqoVS1+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f225.google.com ([209.85.218.225]:49787 "EHLO
-	mail-bw0-f225.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750782AbZGAMHn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Jul 2009 08:07:43 -0400
-Received: by bwz25 with SMTP id 25so464864bwz.37
-        for <linux-next@vger.kernel.org>; Wed, 01 Jul 2009 05:07:45 -0700 (PDT)
-In-Reply-To: <1246384996.22562.19.camel@dhcp235-23.rdu.redhat.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:47559 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751053AbZGAMUv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 1 Jul 2009 08:20:51 -0400
+In-Reply-To: <4A4B4E1B.6090900@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Eric Paris <eparis@redhat.com>
-Cc: linux-next <linux-next@vger.kernel.org>
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: Eric Paris <eparis@redhat.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi Eric
+--Signature=_Wed__1_Jul_2009_22_20_42_+1000_McLYd1rDOwqoVS1+
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Another problem today (0701)
+Hi Sachin,
 
-kernel/auditfilter.c: In function 'audit_data_to_entry':
-kernel/auditfilter.c:501: error: expected expression before '{' token
-kernel/auditfilter.c: In function 'audit_add_rule':
-kernel/auditfilter.c:891: error: expected expression before '{' token
+On Wed, 01 Jul 2009 17:22:59 +0530 Sachin Sant <sachinp@in.ibm.com> wrote:
+>
+> I too am facing similar issue on both Power and x86.
+> Culprit seems to be 2nd patch in the above list.
+>=20
+> commit e1b79967e2b29839d16c12b534597a15d8630fc4
+> audit: convert audit watches to use fsnotify instead of inotify
+>=20
+> I wasn't able to remove only patch 2 because of dependencies
+> on other patches. After i reverted patches 2 to 7 in the above
+> list, i was able to boot the machine. Then i applied patch 2
+> and the machine failed to boot.
 
-CONFIG_AUDIT_WATCH is not set
+Thanks for tracking this down.  Now we just need a solution :-)
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__1_Jul_2009_22_20_42_+1000_McLYd1rDOwqoVS1+
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkpLVJoACgkQjjKRsyhoI8z0LgCgsy4A3rEBIb80MnDAGDeOM+W4
+D2AAoJ0lQbgscWnhUWdpkMIwu5Sh1vLl
+=rphe
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__1_Jul_2009_22_20_42_+1000_McLYd1rDOwqoVS1+--
