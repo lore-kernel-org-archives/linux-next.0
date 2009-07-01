@@ -1,44 +1,31 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Re: linux-next: boot failure
-Date: Wed, 01 Jul 2009 20:16:23 +0530
-Message-ID: <4A4B76BF.60006@in.ibm.com>
-References: <20090701160014.595e1338.sfr@canb.auug.org.au> <1246451712.22562.38.camel@dhcp235-23.rdu.redhat.com>
+From: Davide Libenzi <davidel@xmailserver.org>
+Subject: Re: linux-next: manual merge of the kvm tree with Linus' tree
+Date: Wed, 1 Jul 2009 08:11:43 -0700 (PDT)
+Message-ID: <alpine.DEB.1.10.0907010811020.10303@makko.or.mcafeemobile.com>
+References: <20090701145711.1c9c8935.sfr@canb.auug.org.au> <alpine.DEB.1.10.0907010007020.8745@makko.or.mcafeemobile.com> <4A4B1106.8000506@redhat.com> <4A4B56FE.8060407@novell.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp06.in.ibm.com ([59.145.155.6]:45668 "EHLO
-	e28smtp06.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752117AbZGAOqW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Jul 2009 10:46:22 -0400
-In-Reply-To: <1246451712.22562.38.camel@dhcp235-23.rdu.redhat.com>
+Received: from x35.xmailserver.org ([64.71.152.41]:43322 "EHLO
+	x35.xmailserver.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752685AbZGAPMS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Jul 2009 11:12:18 -0400
+Received: from makko.or.mcafeemobile.com
+	by x35.xmailserver.org with [XMail 1.26 ESMTP Server]
+	id <S2F513E> for <linux-next@vger.kernel.org> from <davidel@xmailserver.org>;
+	Wed, 1 Jul 2009 11:11:32 -0400
+In-Reply-To: <4A4B56FE.8060407@novell.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Eric Paris <eparis@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Gregory Haskins <ghaskins@novell.com>
+Cc: Avi Kivity <avi@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
-Eric Paris wrote:
-> I will check the makefiles to see if kernel/built-in.o is linked in
-> before fs/buildin-in.o.  I don't see a reason why audit watches need to
-> be that early in the kernel init process.  This isn't happening on my
-> system so I'm asking if anyone hitting it can apply this patch and test?
->
-> Audit: audit watch init should not be before fsnotify init
->
-> From: Eric Paris <eparis@redhat.com>
-With this patch i am able to boot today's next on my machines.
+On Wed, 1 Jul 2009, Gregory Haskins wrote:
 
-Tested-by : Sachin Sant <sachinp@in.ibm.com>
+> Just to be clear: the final form will need to be wake_up_poll(), not
+> wake_up_locked_poll.
 
-Thanks
--Sachin
+Yep, sorry I missed that one.
 
 
--- 
-
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+- Davide
