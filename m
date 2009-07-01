@@ -1,55 +1,48 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: pci tree build failure
-Date: Tue, 30 Jun 2009 13:31:37 -0700
-Message-ID: <20090630133137.1bde0dc6@jbarnes-g45>
-References: <20090630120727.24450bab.sfr@canb.auug.org.au>
-	<20090629191324.5c86bbc0@jbarnes-g45>
-	<20090630022453.GE24061@linux.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with Linus' tree
+Date: Wed, 1 Jul 2009 14:57:11 +1000
+Message-ID: <20090701145711.1c9c8935.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from outbound-mail-309.bluehost.com ([67.222.54.2]:60571 "HELO
-	outbound-mail-309.bluehost.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1754015AbZF3Ubi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Jun 2009 16:31:38 -0400
-In-Reply-To: <20090630022453.GE24061@linux.intel.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Matthew Wilcox <willy@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754571AbZGAE5Y@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Avi Kivity <avi@qumranet.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Davide Libenzi <davidel@xmailserver.org>, Andrew Morton <akpm@linux-foundation.org>, Gregory Haskins <ghaskins@novell.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 29 Jun 2009 19:24:53 -0700
-Matthew Wilcox <willy@linux.intel.com> wrote:
+Hi Avi,
 
-> On Mon, Jun 29, 2009 at 07:13:24PM -0700, Jesse Barnes wrote:
-> > On Tue, 30 Jun 2009 12:07:27 +1000
-> > Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > 
-> > > Hi Jesse,
-> > > 
-> > > Today's linux-next build (x86_64 allmodconfig) failed like this:
-> > > 
-> > > ERROR: "pci_claim_resource" [drivers/pcmcia/yenta_socket.ko]
-> > > undefined!
-> > > 
-> > > Caused by commit 6bb04b65dbff5a5bb01617351dbb0af577084752
-> > > ("yenta: Use pci_claim_resource").  yenta can be built as a
-> > > module, but pci_claim_resource is not exported ...
-> > > 
-> > > I have used the pci tree from next-20090629 for today.
-> > 
-> > Damn, thought I built that.  linux-next earns its keep yet again.
-> 
-> Sorry about that.  I thought I'd checked that.  Must have been
-> confused with another function.  There do seem to be legitimate
-> *drivers* that could use it (i2o for one), so I propose making it a
-> full-bodied 'EXPORT_SYMBOL' and not bother with the _GPL tag.
-> Thoughts?
+Today's linux-next merge of the kvm tree got a conflict in fs/eventfd.c
+between commit 133890103b9de08904f909995973e4b5c08a780e ("eventfd:
+revised interface and cleanups") from Linus' tree and commit
+28ddf0aebbf546e56efd1951725d5457ce1ebf98 ("eventfd: Allow waiters to be
+notified about the eventfd file* going away") from the kvm tree.
 
-Fine by me; that matches most of the PCI core (though the slots bits
-are _GPL).
+Overlapping changes.  I fixed it up (see below), but don't know if this
+is the correct fix.
 
 -- 
-Jesse Barnes, Intel Open Source Technology Center
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc fs/eventfd.c
+index 31d12de,72f5f8d..0000000
+--- a/fs/eventfd.c
++++ b/fs/eventfd.c
+@@@ -105,8 -63,13 +105,13 @@@ static int eventfd_release(struct inod
+  {
+  	struct eventfd_ctx *ctx = file->private_data;
+  
+- 	wake_up_poll(&ctx->wqh, POLLHUP);
++ 	/*
++ 	 * No need to hold the lock here, since we are on the file cleanup
++ 	 * path and the ones still attached to the wait queue will be
++ 	 * serialized by wake_up_locked_poll().
++ 	 */
++ 	wake_up_locked_poll(&ctx->wqh, POLLHUP);
+ -	kfree(ctx);
+ +	eventfd_ctx_put(ctx);
+  	return 0;
+  }
+  
