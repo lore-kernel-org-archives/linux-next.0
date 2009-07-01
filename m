@@ -1,60 +1,120 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: boot failure
-Date: Wed, 1 Jul 2009 22:20:42 +1000
-Message-ID: <20090701222042.57b0f4d3.sfr@canb.auug.org.au>
-References: <20090701160014.595e1338.sfr@canb.auug.org.au>
-	<4A4B4E1B.6090900@in.ibm.com>
+From: Gregory Haskins <ghaskins@novell.com>
+Subject: Re: linux-next: manual merge of the kvm tree with Linus' tree
+Date: Wed, 01 Jul 2009 08:30:54 -0400
+Message-ID: <4A4B56FE.8060407@novell.com>
+References: <20090701145711.1c9c8935.sfr@canb.auug.org.au> <alpine.DEB.1.10.0907010007020.8745@makko.or.mcafeemobile.com> <4A4B1106.8000506@redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__1_Jul_2009_22_20_42_+1000_McLYd1rDOwqoVS1+"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="------------enig6F8E9D14B783B39E33B1021D"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47559 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751053AbZGAMUv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 1 Jul 2009 08:20:51 -0400
-In-Reply-To: <4A4B4E1B.6090900@in.ibm.com>
+Received: from victor.provo.novell.com ([137.65.250.26]:53341 "EHLO
+	victor.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750862AbZGAMa5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Jul 2009 08:30:57 -0400
+In-Reply-To: <4A4B1106.8000506@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: Eric Paris <eparis@redhat.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Avi Kivity <avi@redhat.com>, Davide Libenzi <davidel@xmailserver.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Wed__1_Jul_2009_22_20_42_+1000_McLYd1rDOwqoVS1+
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
+This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
+--------------enig6F8E9D14B783B39E33B1021D
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sachin,
-
-On Wed, 01 Jul 2009 17:22:59 +0530 Sachin Sant <sachinp@in.ibm.com> wrote:
+Avi Kivity wrote:
+> On 07/01/2009 10:10 AM, Davide Libenzi wrote:
+>> On Wed, 1 Jul 2009, Stephen Rothwell wrote:
+>>
+>>  =20
+>>> Hi Avi,
+>>>
+>>> Today's linux-next merge of the kvm tree got a conflict in fs/eventfd=
+=2Ec
+>>> between commit 133890103b9de08904f909995973e4b5c08a780e ("eventfd:
+>>> revised interface and cleanups") from Linus' tree and commit
+>>> 28ddf0aebbf546e56efd1951725d5457ce1ebf98 ("eventfd: Allow waiters to =
+be
+>>> notified about the eventfd file* going away") from the kvm tree.
+>>>
+>>> Overlapping changes.  I fixed it up (see below), but don't know if th=
+is
+>>> is the correct fix.
+>>>
+>>> --=20
+>>> Cheers,
+>>> Stephen Rothwell                    sfr@canb.auug.org.au
+>>>
+>>> diff --cc fs/eventfd.c
+>>> index 31d12de,72f5f8d..0000000
+>>> --- a/fs/eventfd.c
+>>> +++ b/fs/eventfd.c
+>>> @@@ -105,8 -63,13 +105,13 @@@ static int eventfd_release(struct inod
+>>>    {
+>>>        struct eventfd_ctx *ctx =3D file->private_data;
+>>>
+>>> -     wake_up_poll(&ctx->wqh, POLLHUP);
+>>> +     /*
+>>> +      * No need to hold the lock here, since we are on the file
+>>> cleanup
+>>> +      * path and the ones still attached to the wait queue will be
+>>> +      * serialized by wake_up_locked_poll().
+>>> +      */
+>>> +     wake_up_locked_poll(&ctx->wqh, POLLHUP);
+>>>   -    kfree(ctx);
+>>>   +    eventfd_ctx_put(ctx);
+>>>        return 0;
+>>>    }
+>>>     =20
+>>
+>> That's fine.
+>> There are a couple of extra spaces before the last two -+ in that patc=
+h
+>> though ;)
+>>   =20
 >
-> I too am facing similar issue on both Power and x86.
-> Culprit seems to be 2nd patch in the above list.
->=20
-> commit e1b79967e2b29839d16c12b534597a15d8630fc4
-> audit: convert audit watches to use fsnotify instead of inotify
->=20
-> I wasn't able to remove only patch 2 because of dependencies
-> on other patches. After i reverted patches 2 to 7 in the above
-> list, i was able to boot the machine. Then i applied patch 2
-> and the machine failed to boot.
+> No, that's a git N-way diff format.  The first column shows the
+> changes relative to mainline by kvm.git, and the second the changes to
+> kvm.git made by mainline.
+>
+> I've merged and will push soon, which will resolve the conflict, but I
+> think the patch wake_up_locked_poll() is better off in mainline rather
+> than kvm.git.
 
-Thanks for tracking this down.  Now we just need a solution :-)
+Just to be clear: the final form will need to be wake_up_poll(), not
+wake_up_locked_poll.  However, I think what Steven did was optimal
+because converting to the locked form without coordinating with kvm.git
+would break bisectability.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+In the irqfd-fixes series, I had 3 patches related to this situation
+(1/5 to prepare to change, 2/5 was Davide's patch, and 3/5 did the final
+change-over).  Now that the vast majority of Davide's work is in
+mainline+kvm.git, here is my proposal:
 
---Signature=_Wed__1_Jul_2009_22_20_42_+1000_McLYd1rDOwqoVS1+
-Content-Type: application/pgp-signature
+*) drop 2/5 (already upstream, sans the locked POLLHUP)
+*) fold 1/5 + 3/5, and add new fs/eventfd.c hunk to convert to locked
+variant
+*) drop 5/5
+
+Sound good?
+-Greg
+
+
+
+
+--------------enig6F8E9D14B783B39E33B1021D
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Version: GnuPG/MacGPG2 v2.0.11 (Darwin)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
 
-iEYEARECAAYFAkpLVJoACgkQjjKRsyhoI8z0LgCgsy4A3rEBIb80MnDAGDeOM+W4
-D2AAoJ0lQbgscWnhUWdpkMIwu5Sh1vLl
-=rphe
+iEYEARECAAYFAkpLVwIACgkQlOSOBdgZUxlkjACfQYHkGD2gD1yg8JDNM9Xp4UTH
+/UIAmQH2NKH2Sc/4Ys0O4DVv/yjXHIjQ
+=Nahm
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__1_Jul_2009_22_20_42_+1000_McLYd1rDOwqoVS1+--
+--------------enig6F8E9D14B783B39E33B1021D--
