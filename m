@@ -1,247 +1,57 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for July 3
-Date: Fri, 3 Jul 2009 16:24:43 +1000
-Message-ID: <20090703162443.16495147.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH -next] gadget audio: select SND_PCM
+Date: Fri, 3 Jul 2009 13:26:57 -0700
+Message-ID: <20090703132657.3289cdcf.randy.dunlap@oracle.com>
+References: <20090703162443.16495147.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__3_Jul_2009_16_24_43_+1000_KA_Ki7aG4y4Fc02T"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38886 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752139AbZGCGYx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 3 Jul 2009 02:24:53 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-
---Signature=_Fri__3_Jul_2009_16_24_43_+1000_KA_Ki7aG4y4Fc02T
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20090703162443.16495147.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, akpm <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, lud <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 
-Changes since 20090702:
+Fix USB gadget audio: select SND_PCM, like many other sound
+drivers do, to fix build errors:
 
-Dropped tree: sfi (build problems)
+drivers/built-in.o: In function `f_audio_playback_work':
+audio.c:(.text+0x15a3e7): undefined reference to `snd_pcm_kernel_ioctl'
+audio.c:(.text+0x15a471): undefined reference to `snd_pcm_lib_write'
+drivers/built-in.o: In function `_snd_pcm_hw_param_set':
+audio.c:(.text+0x15aca7): undefined reference to `snd_interval_refine'
+drivers/built-in.o: In function `gaudio_setup':
+(.init.text+0x12adf): undefined reference to `_snd_pcm_hw_params_any'
+drivers/built-in.o: In function `gaudio_setup':
+(.init.text+0x12b43): undefined reference to `snd_pcm_kernel_ioctl'
 
-This tree fails to build for powerpc allyesconfig.
+Signed-off-by: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/usb/gadget/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
-The xfs tree gained a build failure so I used the version from
-next-20090702.
+--- linux-next-20090703.orig/drivers/usb/gadget/Kconfig
++++ linux-next-20090703/drivers/usb/gadget/Kconfig
+@@ -604,6 +604,7 @@ config USB_ZERO_HNPTEST
+ config USB_AUDIO
+ 	tristate "Audio Gadget (EXPERIMENTAL)"
+ 	depends on SND
++	select SND_PCM
+ 	help
+ 	  Gadget Audio is compatible with USB Audio Class specification 1.0.
+ 	  It will include at least one AudioControl interface, zero or more
 
-----------------------------------------------------------------------------
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES) and i386, sparc and sparc64 defconfig.
-These builds also have CONFIG_ENABLE_WARN_DEPRECATED,
-CONFIG_ENABLE_MUST_CHECK and CONFIG_DEBUG_INFO disabled when necessary.
 
-Below is a summary of the state of the merge.
-
-We are up to 132 trees (counting Linus' and 19 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging dwmw2/master
-Merging arm/devel
-Merging davinci/for-next
-Merging pxa/for-next
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-CONFLICT (add/add): Merge conflict in arch/mips/cavium-octeon/executive/cvm=
-x-helper-errata.c
-CONFLICT (content): Merge conflict in arch/mips/mm/tlbex.c
-CONFLICT (content): Merge conflict in arch/mips/sibyte/swarm/setup.c
-CONFLICT (content): Merge conflict in drivers/char/hw_random/Kconfig
-CONFLICT (content): Merge conflict in drivers/char/hw_random/Makefile
-CONFLICT (add/add): Merge conflict in drivers/dma/txx9dmac.c
-Merging parisc/master
-Merging powerpc/next
-Merging 4xx/next
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging xtensa/master
-Merging cifs/master
-Merging configfs/linux-next
-CONFLICT (content): Merge conflict in fs/configfs/dir.c
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging v9fs/for-next
-CONFLICT (content): Merge conflict in net/9p/protocol.c
-Merging ubifs/linux-next
-Merging xfs/master
-$ git reset --hard HEAD^
-Merging refs/next/20090702/xfs
-Merging reiserfs-bkl/reiserfs/kill-bkl-rc6
-CONFLICT (content): Merge conflict in fs/reiserfs/super.c
-Merging vfs/for-next
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging quota/for_next
-Merging kbuild/master
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-$ git checkout HEAD drivers/platform/x86/eeepc-laptop.c
-[master 6233d2e] Revert "eeepc-laptop: Register as a pci-hotplug device"
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/master
-Merging dlm/next
-Merging scsi/master
-Merging async_tx/next
-Merging udf/for_next
-Merging net/master
-Merging wireless/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-Merging cpufreq/next
-Merging quilt/rr
-CONFLICT (content): Merge conflict in arch/powerpc/platforms/powermac/setup=
-.c
-Merging mmc/next
-Merging input/next
-Merging bkl-removal/bkl-removal
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging quilt/ttydev
-CONFLICT (content): Merge conflict in drivers/char/tty_ldisc.c
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging omap/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging edac-amd/for-next
-Merging fsnotify/for-next
-Merging irda/for-next
-Merging hwlat/for-linus
-Merging tip/auto-latest
-CONFLICT (content): Merge conflict in arch/x86/include/asm/termios.h
-Merging percpu/for-next
-CONFLICT (content): Merge conflict in arch/alpha/include/asm/percpu.h
-CONFLICT (content): Merge conflict in arch/mn10300/kernel/vmlinux.lds.S
-CONFLICT (content): Merge conflict in include/linux/percpu-defs.h
-Merging sfi/sfi-test
-$ git reset --hard HEAD^
-Merging asm-generic/next
-Merging quilt/driver-core
-Merging quilt/usb
-Merging quilt/staging
-Merging scsi-post-merge/master
-Applying: rr/pmac: fix for cpumask accessor changes
-
---Signature=_Fri__3_Jul_2009_16_24_43_+1000_KA_Ki7aG4y4Fc02T
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkpNpCsACgkQjjKRsyhoI8yZegCfdXB0wmixdKJZ+PdCRbz9r7PO
-aeYAoINqy3RAKzl/Sv3M5F2WospYyvMo
-=owdd
------END PGP SIGNATURE-----
-
---Signature=_Fri__3_Jul_2009_16_24_43_+1000_KA_Ki7aG4y4Fc02T--
+---
+~Randy
+LPC 2009, Sept. 23-25, Portland, Oregon
+http://linuxplumbersconf.org/2009/
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
