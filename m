@@ -1,69 +1,75 @@
-From: David Brownell <david-b-yBeKhBN/0LDR7s880joybQ@public.gmane.org>
-Subject: Re: [PATCH -next] gadget audio: select SND_PCM
-Date: Fri, 3 Jul 2009 14:22:01 -0700
-Message-ID: <200907031422.01426.david-b@pacbell.net>
-References: <20090703162443.16495147.sfr@canb.auug.org.au> <20090703132657.3289cdcf.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next submission requirements (Was: [RFC PATCH] linker script:
+ unify usage of discard definition)
+Date: Sat, 4 Jul 2009 11:34:48 +1000
+Message-ID: <20090704113448.49a722d2.sfr@canb.auug.org.au>
+References: <4A4E9638.20304@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20090703132657.3289cdcf.randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Content-Disposition: inline
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, akpm <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, lud <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__4_Jul_2009_11_34_48_+1000_QBZZTiTMXj1Oap5R"
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <4A4E9638.20304@kernel.org>
+Sender: linux-arch-owner@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Friday 03 July 2009, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-> 
-> Fix USB gadget audio: select SND_PCM, like many other sound
-> drivers do, to fix build errors:
-> 
-> drivers/built-in.o: In function `f_audio_playback_work':
-> audio.c:(.text+0x15a3e7): undefined reference to `snd_pcm_kernel_ioctl'
-> audio.c:(.text+0x15a471): undefined reference to `snd_pcm_lib_write'
-> drivers/built-in.o: In function `_snd_pcm_hw_param_set':
-> audio.c:(.text+0x15aca7): undefined reference to `snd_interval_refine'
-> drivers/built-in.o: In function `gaudio_setup':
-> (.init.text+0x12adf): undefined reference to `_snd_pcm_hw_params_any'
-> drivers/built-in.o: In function `gaudio_setup':
-> (.init.text+0x12b43): undefined reference to `snd_pcm_kernel_ioctl'
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+--Signature=_Sat__4_Jul_2009_11_34_48_+1000_QBZZTiTMXj1Oap5R
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: David Brownell <dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+Hi Tejun,
 
+[This is not aimed just at you ... this patch just gave me an
+opportunity to point this out again.]
 
-> ---
->  drivers/usb/gadget/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> --- linux-next-20090703.orig/drivers/usb/gadget/Kconfig
-> +++ linux-next-20090703/drivers/usb/gadget/Kconfig
-> @@ -604,6 +604,7 @@ config USB_ZERO_HNPTEST
->  config USB_AUDIO
->  	tristate "Audio Gadget (EXPERIMENTAL)"
->  	depends on SND
-> +	select SND_PCM
->  	help
->  	  Gadget Audio is compatible with USB Audio Class specification 1.0.
->  	  It will include at least one AudioControl interface, zero or more
-> 
-> 
-> 
-> 
-> ---
-> ~Randy
-> LPC 2009, Sept. 23-25, Portland, Oregon
-> http://linuxplumbersconf.org/2009/
-> 
-> 
+On Sat, 04 Jul 2009 08:37:28 +0900 Tejun Heo <tj@kernel.org> wrote:
+>
+> This patch is on top of the current percpu#for-next.
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tj/percpu.git for-next
+>=20
+> Thanks.
+>=20
+> NOT_SIGNED_OFF_YET
 
+Well, given no SOB and that this is a RFC patch, it should *not* be in a
+branch that is pulled into linux-next.
 
+This is what I send to any maintainer that submits a tree for linux-next
+inclusion (and before anyone else points it out: this was not true early
+on):
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+"all patches/commits in the tree/series must have been:
+
+	posted to a relevant mailing list
+	reviewed
+	unit tested
+	destined for the next merge window (or the current release)
+
+*before* they are included.  The linux-next tree is for integration
+testing and to lower the impact of conflicts between subsystems in the
+next merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary."
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Sat__4_Jul_2009_11_34_48_+1000_QBZZTiTMXj1Oap5R
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkpOsbgACgkQjjKRsyhoI8zDlQCffuNpjxFX4EkBaMMY5yRd8jDA
+/VAAn2ToZp0b2MgZJ0KP4bcUgvPcB/Ri
+=c8C+
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__4_Jul_2009_11_34_48_+1000_QBZZTiTMXj1Oap5R--
