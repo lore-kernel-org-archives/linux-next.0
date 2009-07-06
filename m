@@ -1,55 +1,30 @@
-From: Nico Schottelius <nico-linux-20090706@schottelius.org>
-Subject: FREEZE with 2.6.31-rc1-next-20090626-02876-g39ddbf4
-Date: Mon, 6 Jul 2009 09:16:00 +0200
-Message-ID: <20090706071600.GA9488@ikn.schottelius.org>
+From: Pekka Enberg <penberg@cs.helsinki.fi>
+Subject: Re: linux-next: manual merge of the tip tree with the slab tree
+Date: Mon, 06 Jul 2009 11:01:07 +0300
+Message-ID: <1246867267.4957.5.camel@penberg-laptop>
+References: <20090706144051.06d079a5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="huq684BweRXVnRxX"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.schottelius.org ([77.109.138.221]:53080 "EHLO
-	mx3.schottelius.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752208AbZGFHwL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Jul 2009 03:52:11 -0400
-Content-Disposition: inline
+Received: from courier.cs.helsinki.fi ([128.214.9.1]:55901 "EHLO
+	mail.cs.helsinki.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752425AbZGFIBE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Jul 2009 04:01:04 -0400
+In-Reply-To: <20090706144051.06d079a5.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Nick Piggin <npiggin@suse.de>
 
+On Mon, 2009-07-06 at 14:40 +1000, Stephen Rothwell wrote:
+> Today's linux-next merge of the tip tree got a conflict in
+> include/linux/rcupdate.h between commit
+> 249acdd3fd13d1ec579ff9b1c5273cf5515cd352 ("SLQB slab allocator (try 2)")
+> from the slab tree and commit 03b042bf1dc14a268a3d65d38b4ec2a4261e8477
+> ("rcu: Add synchronize_sched_expedited() primitive") from the tip tree.
+> 
+> Just context changes. I fixed it up (see below) and can carry the fix as
+> necessary.
 
---huq684BweRXVnRxX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hello!
-
-I just gave 2.6.31-rc1-next-20090626-02876-g39ddbf4 a try on X200 (amd64); =
-The result
-is a bit shocking:
-
-It freezes after some minutes running xorg. The image is still fine, no mov=
-ements,
-no keyboard.
-
-Nico
-
---=20
-Currently moving *.schottelius.org to http://www.nico.schottelius.org/ ...
-
-PGP: BFE4 C736 ABE5 406F 8F42  F7CF B8BE F92A 9885 188C
-
---huq684BweRXVnRxX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkpRpLAACgkQuL75KpiFGIxhJACg3lotn5MEAE12pSELTVPjOKyi
-cCMAoKyQRBK2h6Pl/qtPuygTjjaVTzAF
-=869m
------END PGP SIGNATURE-----
-
---huq684BweRXVnRxX--
+Yup, looks good to me. Thanks, Stephen!
