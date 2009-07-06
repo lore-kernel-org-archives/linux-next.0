@@ -1,51 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: ttydev tree build failure
-Date: Mon, 6 Jul 2009 13:26:43 +1000
-Message-ID: <20090706132643.44128b93.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the suspend tree with the microblaze
+ tree
+Date: Mon, 6 Jul 2009 14:00:50 +1000
+Message-ID: <20090706140050.0dec74a2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__6_Jul_2009_13_26_43_+1000_XZ24TpBTcabFOAji"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41311 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57739 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752139AbZGFD0s (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 5 Jul 2009 23:26:48 -0400
+	id S1750703AbZGFEAs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Jul 2009 00:00:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Linn <john.linn@xilinx.com>, Michal Simek <michal.simek@petalogix.com>, Magnus Damm <damm@igel.co.jp>
 
---Signature=_Mon__6_Jul_2009_13_26_43_+1000_XZ24TpBTcabFOAji
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Rafael,
 
-Hi Alan,
+Today's linux-next merge of the suspend tree got a conflict in
+arch/microblaze/include/asm/device.h between commit
+19aff4132a289ec83ca6eee8b3db28855b9f06af ("microblaze: Adding
+dev_arch_data functions") from the microblaze tree and commit
+c959b4101b10723eeb190ef2e82765dd529c26b6 ("Driver Core: Add platform
+device arch data V3") from the suspend tree.
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
 
-ERROR: "pm_set_vt_switch" [drivers/video/geode/lxfb.ko] undefined!
-ERROR: "pm_set_vt_switch" [drivers/video/geode/gxfb.ko] undefined!
-
-Caused by commit 2da31885ce1c33ac1bed80857ad5c9de2b95a189
-("vt-pm-extract") which renamed pm_set_vt_switch to pm_vt_set_switch.
-
-I have used the version of the ttydev tree from next-20090703 for today.
---=20
+P.S. Michal, that microblaze commit has an invalid email address for the
+Author (John Linn <linnj@xaqlinnj41.(none)>).
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__6_Jul_2009_13_26_43_+1000_XZ24TpBTcabFOAji
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkpRbvMACgkQjjKRsyhoI8wjyACaA1PBgQX/gvFkmRnQt5lrJuS7
-CPEAnjeB2AUGoGTtl8uxU6zHZvYp8OyE
-=lqk4
------END PGP SIGNATURE-----
-
---Signature=_Mon__6_Jul_2009_13_26_43_+1000_XZ24TpBTcabFOAji--
+diff --cc arch/microblaze/include/asm/device.h
+index afa0987,30286db..0000000
+--- a/arch/microblaze/include/asm/device.h
++++ b/arch/microblaze/include/asm/device.h
+@@@ -16,18 -16,9 +16,21 @@@ struct dev_archdata 
+  	struct device_node	*of_node;
+  };
+  
+ +static inline void dev_archdata_set_node(struct dev_archdata *ad,
+ +					 struct device_node *np)
+ +{
+ +	ad->of_node = np;
+ +}
+ +
+ +static inline struct device_node *
+ +dev_archdata_get_node(const struct dev_archdata *ad)
+ +{
+ +	return ad->of_node;
+ +}
+ +
++ struct pdev_archdata {
++ };
++ 
+  #endif /* _ASM_MICROBLAZE_DEVICE_H */
+  
+  
