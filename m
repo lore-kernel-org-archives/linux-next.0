@@ -1,74 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: sfi tree build failure
-Date: Mon, 6 Jul 2009 16:14:32 +1000
-Message-ID: <20090706161432.111a42ee.sfr@canb.auug.org.au>
-References: <20090630171937.75f64662.sfr@canb.auug.org.au>
+Subject: Re: linux-next: acpi tree build failure
+Date: Mon, 6 Jul 2009 16:18:59 +1000
+Message-ID: <20090706161859.2d644aa7.sfr@canb.auug.org.au>
+References: <20090630131645.68c81f0b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__6_Jul_2009_16_14_32_+1000_inBaQoQjiAGzsfXh"
+ boundary="Signature=_Mon__6_Jul_2009_16_18_59_+1000_zA0YY4bR8akT9gd4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50966 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51438 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752172AbZGFGOd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 6 Jul 2009 02:14:33 -0400
-In-Reply-To: <20090630171937.75f64662.sfr@canb.auug.org.au>
+	id S1752730AbZGFGS6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Jul 2009 02:18:58 -0400
+In-Reply-To: <20090630131645.68c81f0b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfi-devel@simplefirmware.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Len Brown <lenb@kernel.org>
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
 
---Signature=_Mon__6_Jul_2009_16_14_32_+1000_inBaQoQjiAGzsfXh
+--Signature=_Mon__6_Jul_2009_16_18_59_+1000_zA0YY4bR8akT9gd4
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Len,
 
-On Tue, 30 Jun 2009 17:19:37 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+On Tue, 30 Jun 2009 13:16:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
 wrote:
 >
 > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 >=20
-> In file included from include/acpi/platform/acenv.h:141,
->                  from include/acpi/acpi.h:56,
->                  from include/linux/acpi.h:38,
->                  from init/main.c:27:
-> include/acpi/platform/aclinux.h:64:22: error: asm/acpi.h: No such file or=
- directory
-> In file included from include/acpi/platform/aclinux.h:130,
->                  from include/acpi/platform/acenv.h:141,
->                  from include/acpi/acpi.h:56,
->                  from include/linux/acpi.h:38,
->                  from init/main.c:27:
-> include/acpi/actypes.h:130: error: expected '=3D', ',', ';', 'asm' or '__=
-attribute__' before 'UINT64'
-> include/acpi/actypes.h:131: error: expected '=3D', ',', ';', 'asm' or '__=
-attribute__' before 'INT64'
-> include/acpi/actypes.h:910: error: expected ')' before '*' token
-> include/acpi/actypes.h:913: error: expected ')' before '*' token
+>   GEN     /scratch/sfr/powerpc_ppc64_defconfig/Makefile
+> drivers/platform/x86/Kconfig:353:error: found recursive dependency: EEEPC=
+_LAPTOP -> HOTPLUG_PCI -> EEEPC_LAPTOP
 >=20
-> and it went downhill from there :-(
->=20
-> I have dropped the sfi tree for today.
+> Caused by commit 6af05c22969dce2776375953131b56e9f4282848 ("eeepc-laptop:
+> Register as a pci-hotplug device") interacting with commit
+> 44b3615b8cb3b016a49eb7ef4236e77a77793cec ("eeepc-laptop: Fix build
+> failure with HOTPLUG_PCI && !SYSFS") from Linus' tree.  Commit 6af05c2
+> from the acpi tree is the same as commit
+> 2b121bc262fa03c94e653b2d44356c2f86c1bcdc in Linus' tree that 44b3615b is
+> fixing, so I have reverted the drivers/platform/x86/Kconfig part of
+> 6af05c2 for today.
 
-And the sfi tree has still not made it into linux-next as the above error
-still exists.
+This is still happening ...
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__6_Jul_2009_16_14_32_+1000_inBaQoQjiAGzsfXh
+--Signature=_Mon__6_Jul_2009_16_18_59_+1000_zA0YY4bR8akT9gd4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkpRlkgACgkQjjKRsyhoI8yPaACfSPMlwYN4Fsn/sGr5EOmhw5sv
-PRoAn0UQ2RRGOGsNOvtCZYCPhvhXT96O
-=tZXG
+iEYEARECAAYFAkpRl1MACgkQjjKRsyhoI8xXVACeJxX9pVoLKKtj8NB+WVIGWurn
+8Q0AoLW7s2j4NjoLy8bRNNOKn5iBWhlO
+=FCkz
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__6_Jul_2009_16_14_32_+1000_inBaQoQjiAGzsfXh--
+--Signature=_Mon__6_Jul_2009_16_18_59_+1000_zA0YY4bR8akT9gd4--
