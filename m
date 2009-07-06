@@ -1,18 +1,18 @@
 From: Michal Simek <michal.simek@petalogix.com>
 Subject: Re: linux-next: manual merge of the suspend tree with the microblaze
  tree
-Date: Mon, 06 Jul 2009 09:19:19 +0200
-Message-ID: <4A51A577.6050202@petalogix.com>
+Date: Mon, 06 Jul 2009 09:21:13 +0200
+Message-ID: <4A51A5E9.1030605@petalogix.com>
 References: <20090706140050.0dec74a2.sfr@canb.auug.org.au>
 Reply-To: michal.simek@petalogix.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yx0-f188.google.com ([209.85.210.188]:63965 "EHLO
+Received: from mail-yx0-f188.google.com ([209.85.210.188]:58974 "EHLO
 	mail-yx0-f188.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752976AbZGFHTU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Jul 2009 03:19:20 -0400
+	with ESMTP id S1752796AbZGFHVP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Jul 2009 03:21:15 -0400
 In-Reply-To: <20090706140050.0dec74a2.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
@@ -31,14 +31,21 @@ Stephen Rothwell wrote:
 >
 > Just overlapping additions.  I fixed it up (see below) and can carry the
 > fix as necessary.
->
-> P.S. Michal, that microblaze commit has an invalid email address for the
-> Author (John Linn <linnj@xaqlinnj41.(none)>).
 >   
-Yes, I see.  I'll rebase that branch and I fix it.
+I'll revert this patch and I'll add it later.
+Rafael you don't need to do any changes. I'll do them.
+This John L patch is not important - just for any drivers which are not
+in mainline.
+I'll add it later.
 
 Thanks,
 Michal
+
+
+> P.S. Michal, that microblaze commit has an invalid email address for the
+> Author (John Linn <linnj@xaqlinnj41.(none)>).
+>   
+
 
 -- 
 Michal Simek, Ing. (M.Eng)
