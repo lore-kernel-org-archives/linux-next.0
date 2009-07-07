@@ -1,45 +1,42 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: manual merge of the suspend tree with the microblaze tree
-Date: Mon, 6 Jul 2009 23:32:23 +0200
-Message-ID: <200907062332.24018.rjw@sisk.pl>
-References: <20090706140050.0dec74a2.sfr@canb.auug.org.au> <4A51A5E9.1030605@petalogix.com>
+From: Len Brown <lenb@kernel.org>
+Subject: Re: linux-next: acpi tree build failure
+Date: Mon, 06 Jul 2009 23:17:29 -0400 (EDT)
+Message-ID: <alpine.LFD.2.00.0907062315570.32467@localhost.localdomain>
+References: <20090630131645.68c81f0b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:57239 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751873AbZGFVcL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 6 Jul 2009 17:32:11 -0400
-In-Reply-To: <4A51A5E9.1030605@petalogix.com>
-Content-Disposition: inline
+Received: from vms173001pub.verizon.net ([206.46.173.1]:11077 "EHLO
+	vms173001pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754230AbZGGDSX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Jul 2009 23:18:23 -0400
+In-reply-to: <20090630131645.68c81f0b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: michal.simek@petalogix.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Linn <john.linn@xilinx.com>, Magnus Damm <damm@igel.co.jp>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
 
-On Monday 06 July 2009, Michal Simek wrote:
-> Stephen Rothwell wrote:
-> > Hi Rafael,
-> >
-> > Today's linux-next merge of the suspend tree got a conflict in
-> > arch/microblaze/include/asm/device.h between commit
-> > 19aff4132a289ec83ca6eee8b3db28855b9f06af ("microblaze: Adding
-> > dev_arch_data functions") from the microblaze tree and commit
-> > c959b4101b10723eeb190ef2e82765dd529c26b6 ("Driver Core: Add platform
-> > device arch data V3") from the suspend tree.
-> >
-> > Just overlapping additions.  I fixed it up (see below) and can carry the
-> > fix as necessary.
-> >   
-> I'll revert this patch and I'll add it later.
-> Rafael you don't need to do any changes. I'll do them.
-> This John L patch is not important - just for any drivers which are not
-> in mainline.
-> I'll add it later.
+On Tue, 30 Jun 2009, Stephen Rothwell wrote:
 
-Many thanks!
+> Hi Len,
+> 
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> 
+>   GEN     /scratch/sfr/powerpc_ppc64_defconfig/Makefile
+> drivers/platform/x86/Kconfig:353:error: found recursive dependency: EEEPC_LAPTOP -> HOTPLUG_PCI -> EEEPC_LAPTOP
+> 
+> Caused by commit 6af05c22969dce2776375953131b56e9f4282848 ("eeepc-laptop:
+> Register as a pci-hotplug device") interacting with commit
+> 44b3615b8cb3b016a49eb7ef4236e77a77793cec ("eeepc-laptop: Fix build
+> failure with HOTPLUG_PCI && !SYSFS") from Linus' tree.  Commit 6af05c2
+> from the acpi tree is the same as commit
+> 2b121bc262fa03c94e653b2d44356c2f86c1bcdc in Linus' tree that 44b3615b is
+> fixing, so I have reverted the drivers/platform/x86/Kconfig part of
+> 6af05c2 for today.
 
-Best,
-Rafael
+Sorry I broke your build, Stephen.
+
+This was an obsolete patch in the acpi-test tree.
+it should be better now.   Thanks for working around it.
+
+Len Brown, Intel Open Source Technology Center
