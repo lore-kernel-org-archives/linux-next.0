@@ -1,43 +1,57 @@
-From: Len Brown <lenb@kernel.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: sfi tree build failure
-Date: Tue, 07 Jul 2009 00:01:13 -0400 (EDT)
-Message-ID: <alpine.LFD.2.00.0907062348130.32467@localhost.localdomain>
+Date: Tue, 7 Jul 2009 14:13:25 +1000
+Message-ID: <20090707141325.35b93b3a.sfr@canb.auug.org.au>
 References: <20090630171937.75f64662.sfr@canb.auug.org.au>
- <20090706161432.111a42ee.sfr@canb.auug.org.au>
+	<20090706161432.111a42ee.sfr@canb.auug.org.au>
+	<alpine.LFD.2.00.0907062348130.32467@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__7_Jul_2009_14_13_25_+1000_BXO3UBWHQlGSR_oZ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from vms173019pub.verizon.net ([206.46.173.19]:54327 "EHLO
-	vms173019pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750728AbZGGEBs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Jul 2009 00:01:48 -0400
-In-reply-to: <20090706161432.111a42ee.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56168 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750794AbZGGENo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 7 Jul 2009 00:13:44 -0400
+In-Reply-To: <alpine.LFD.2.00.0907062348130.32467@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Len Brown <lenb@kernel.org>
 Cc: sfi-devel@simplefirmware.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+--Signature=_Tue__7_Jul_2009_14_13_25_+1000_BXO3UBWHQlGSR_oZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Tue, 30 Jun 2009 17:19:37 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> > 
-> > In file included from include/acpi/platform/acenv.h:141,
-> >                  from include/acpi/acpi.h:56,
-> >                  from include/linux/acpi.h:38,
-> >                  from init/main.c:27:
-> > include/acpi/platform/aclinux.h:64:22: error: asm/acpi.h: No such file or directory
-...
-> > I have dropped the sfi tree for today.
-> 
-> And the sfi tree has still not made it into linux-next as the above error
-> still exists.
+Hi Len,
 
-Sorry about breaking the PPC build, Stephen.
+On Tue, 07 Jul 2009 00:01:13 -0400 (EDT) Len Brown <lenb@kernel.org> wrote:
+>
+> I screwed up in my hack attempt to support CONFIG_SFI=3Dy && CONFIG_ACPI=
+=3Dn.
 
-I screwed up in my hack attempt to support CONFIG_SFI=y && CONFIG_ACPI=n.
+Yeah, I figured something like that.
 
-Let me know if you have any trouble with the latest SFI test tree.
+> Let me know if you have any trouble with the latest SFI test tree.
 
-thanks,
--Len
+I have refetched the sfi tree (as I had not merged it yet today).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__7_Jul_2009_14_13_25_+1000_BXO3UBWHQlGSR_oZ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkpSy2UACgkQjjKRsyhoI8wERwCfdR73JASnx1bwpysjY71qcP3z
+q6cAoL0DkVUNTnGhY+13Ca3Hon1bwNnw
+=R4fh
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__7_Jul_2009_14_13_25_+1000_BXO3UBWHQlGSR_oZ--
