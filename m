@@ -1,60 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: block tree build failure
-Date: Tue, 7 Jul 2009 13:49:08 +1000
-Message-ID: <20090707134908.e81b1556.sfr@canb.auug.org.au>
+Subject: Re: linux-next: acpi tree build failure
+Date: Tue, 7 Jul 2009 13:53:07 +1000
+Message-ID: <20090707135307.7cade375.sfr@canb.auug.org.au>
+References: <20090630131645.68c81f0b.sfr@canb.auug.org.au>
+	<alpine.LFD.2.00.0907062315570.32467@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__7_Jul_2009_13_53_07_+1000_8+m=yAQj23E1./Wo"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53786 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47684 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754800AbZGGDtW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 6 Jul 2009 23:49:22 -0400
+	id S1754443AbZGGDxI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Jul 2009 23:53:08 -0400
+In-Reply-To: <alpine.LFD.2.00.0907062315570.32467@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Zhang, Yanmin" <yanmin_zhang@linux.intel.com>
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
 
-Hi Jens,
+--Signature=_Tue__7_Jul_2009_13_53_07_+1000_8+m=yAQj23E1./Wo
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+Hi Len,
 
-fs/sync.c: In function 'sys_sync':
-fs/sync.c:121: error: implicit declaration of function 'wakeup_pdflush'
+On Mon, 06 Jul 2009 23:17:29 -0400 (EDT) Len Brown <lenb@kernel.org> wrote:
+>
+> This was an obsolete patch in the acpi-test tree.
+> it should be better now.   Thanks for working around it.
 
-Caused by commit 1728603e84b339be5d5abd392ed3ec5936253863 ("writeback:
-switch to per-bdi threads for flushing data") from the block tree
-interacting with commit 3beab0b42413e83a7907db7176b54c840fc75a81
-("sys_sync(): fix 16% performance regression in ffsb create_4k test")
-from Linus' tree.
+Thanks, I'll pick it up tomorrow.
 
-I added the following patch as part of the block tree merge for today.  I
-have no idea if it is correct.
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 7 Jul 2009 13:34:26 +1000
-Subject: [PATCH] block: pdflush fixup
+--Signature=_Tue__7_Jul_2009_13_53_07_+1000_8+m=yAQj23E1./Wo
+Content-Type: application/pgp-signature
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/sync.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-diff --git a/fs/sync.c b/fs/sync.c
-index 3422ba6..bf03fc7 100644
---- a/fs/sync.c
-+++ b/fs/sync.c
-@@ -118,7 +118,7 @@ restart:
-  */
- SYSCALL_DEFINE0(sync)
- {
--	wakeup_pdflush(0);
-+	wakeup_flusher_threads(0);
- 	sync_filesystems(0);
- 	sync_filesystems(1);
- 	if (unlikely(laptop_mode))
--- 
-1.6.3.3
+iEYEARECAAYFAkpSxqMACgkQjjKRsyhoI8yA6gCgr4nYWbMKfBNf1fXxQ5lPjXX8
+N9EAnjCT184+Hvh7KRoXZkUPO98tLRQQ
+=0Tvi
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__7_Jul_2009_13_53_07_+1000_8+m=yAQj23E1./Wo--
