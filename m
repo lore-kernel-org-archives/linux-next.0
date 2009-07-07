@@ -1,43 +1,45 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: linux-next: block tree build failure
-Date: Tue, 7 Jul 2009 16:31:50 +0200
-Message-ID: <20090707143150.GF23611@kernel.dk>
-References: <20090707134908.e81b1556.sfr@canb.auug.org.au> <20090707063846.GY23611@kernel.dk> <20090707135706.GB4997@infradead.org>
+From: Len Brown <lenb@kernel.org>
+Subject: Re: linux-next: sfi tree build failure
+Date: Tue, 07 Jul 2009 11:31:06 -0400 (EDT)
+Message-ID: <alpine.LFD.2.00.0907071120230.4244@localhost.localdomain>
+References: <20090630171937.75f64662.sfr@canb.auug.org.au>
+ <20090706161432.111a42ee.sfr@canb.auug.org.au>
+ <alpine.LFD.2.00.0907062348130.32467@localhost.localdomain>
+ <20090707154353.628365ac.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from brick.kernel.dk ([93.163.65.50]:39785 "EHLO kernel.dk"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756606AbZGGObw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 7 Jul 2009 10:31:52 -0400
-Content-Disposition: inline
-In-Reply-To: <20090707135706.GB4997@infradead.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Zhang, Yanmin" <yanmin_zhang@linux.intel.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757948AbZGGPbm@vger.kernel.org>
+In-reply-to: <20090707154353.628365ac.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: sfi-devel@simplefirmware.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Jul 07 2009, Christoph Hellwig wrote:
-> On Tue, Jul 07, 2009 at 08:38:46AM +0200, Jens Axboe wrote:
-> > >  SYSCALL_DEFINE0(sync)
-> > >  {
-> > > -	wakeup_pdflush(0);
-> > > +	wakeup_flusher_threads(0);
-> > >  	sync_filesystems(0);
-> > >  	sync_filesystems(1);
-> > >  	if (unlikely(laptop_mode))
-> > 
-> > That is correct! I have just now updated for-next as well, so your next
-> > pull should lose this fixup.
-> 
-> It's not correct at all.  We'll how have various flusher threads doing
-> async syncs, just to wait for them again synchronously.  The right thing
-> to do here is to queue up the data integrity sync to per-bdi threads and
-> execute those in parallel.
+> I still get the same error.
 
-Sorry, I didn't judge the validity of the original patch, merely that
-the wakeup_pdflush() -> wakeup_flusher_threads() is the correct patch in
-the context of the per-bdi flushing.
+git.kernel.org took a long time to update from master.kerne.org
+last night.  (indeed, I was sending patches through e-mail to
+some folks to work around it); so I suspect you pulled the SFI
+tree before the mirror updated and got the same thing you
+got over the weekend.
 
--- 
-Jens Axboe
+surfing to git.kernel.org, it seems to be up to date now.
+
+The tree should include this one of interest:
+
+commit 4844be551844e05d4b70f0624e9c34fd486d3e33
+Author: Len Brown <len.brown@intel.com>
+Date:   Mon Jul 6 23:57:55 2009 -0400
+
+    SFI: revert changes to linux/acpi.h, fix ppc build
+
+Note that Linus pulls from master.kernel.org rather than git.kernel.org
+to avoid any possible sync delay between tree push and his pull.
+
+If you have trouble with a copy of the tree that includes
+the commit above, (I don't expect to see the same failure,
+but it is always possible there is another one after this one),
+then please send me the complete build log.
+
+cheers,
+-Len
