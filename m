@@ -1,38 +1,46 @@
-From: Len Brown <lenb@kernel.org>
-Subject: Re: [SFI-devel] linux-next: sfi tree build warning
-Date: Wed, 08 Jul 2009 11:26:48 -0400 (EDT)
-Message-ID: <alpine.LFD.2.00.0907081123360.9604@localhost.localdomain>
-References: <20090708164400.f2138d79.sfr@canb.auug.org.au>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: Merge request for the Thumb-2 branch
+Date: Wed, 08 Jul 2009 16:34:29 +0100
+Message-ID: <1247067269.6595.44.camel@pc1117.cambridge.arm.com>
+References: <1246035591.30717.54.camel@pc1117.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from vms173003pub.verizon.net ([206.46.173.3]:49182 "EHLO
-	vms173003pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753821AbZGHP1M (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Jul 2009 11:27:12 -0400
-In-reply-to: <20090708164400.f2138d79.sfr@canb.auug.org.au>
+Received: from cam-admin0.cambridge.arm.com ([193.131.176.58]:34896 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751271AbZGHPel (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Jul 2009 11:34:41 -0400
+In-Reply-To: <1246035591.30717.54.camel@pc1117.cambridge.arm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: sfi-devel@simplefirmware.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-next <linux-next@vger.kernel.org>
 
+Hi Stephen and Russell,
 
-> Today's linux-next build (x86_64 allmodconfig) produced this warning:
+On Fri, 2009-06-26 at 17:59 +0100, Catalin Marinas wrote:
+> Could you please merge the thumb-2 branch into linux-next:
+> 
+>   git://linux-arm.org/linux-2.6.git thumb-2
+> 
+> It adds support for compiling the ARM kernel to the Thumb-2 instruction
+> set (16 or 32 bit opcodes) and it makes sense to check it doesn't break
+> other things before the next merging window (it's a bit more intrusive
+> but limited to arch/arm/* files).
 
-ah good, this means the SFI tree actually made it into linux-next:-)
+(I'm replying to myself but I'd like to make sure this e-mail wasn't
+missed)
 
-> arch/x86/kernel/sfi.c: In function 'sfi_init_memory_map':
-> arch/x86/kernel/sfi.c:99: warning: cast to pointer from integer of different size
-> arch/x86/kernel/sfi.c:100: warning: cast to pointer from integer of different size
+Russell - are you OK with getting this branch merged during the next
+window, assuming that any new comments are implemented and testing is
+fine? If there are other issues, please let me know.
 
-This should go away when you pull the patch below for tomorrow's build.
+While merging will eventually be done via Russell's ARM tree, should we
+first get it into linux-next directly or into Russell's for-next branch
+(if such branch exists)?
 
-thanks,
-Len Brown, Intel Open Source Technology Center
+Thanks.
 
-
-commit 6a099c4dfc3e3fa95e55ea13ce836a6ed98ee689
-Author: Feng Tang <feng.tang@intel.com>
-Date:   Wed Jul 8 17:35:45 2009 +0800
-
-    SFI: fix the compile warning for x86_64
+-- 
+Catalin
