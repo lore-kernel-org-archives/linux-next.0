@@ -1,47 +1,51 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: linux-next: manual merge of the wireless tree with the
-	net-current tree
-Date: Wed, 8 Jul 2009 10:04:25 -0400
-Message-ID: <20090708140425.GE4253@tuxdriver.com>
-References: <20090708124005.ecbf2907.sfr@canb.auug.org.au>
+From: Dave Hansen <dave@linux.vnet.ibm.com>
+Subject: Re: OOM with hackbench against next 0708
+Date: Wed, 08 Jul 2009 08:22:29 -0700
+Message-ID: <1247066549.14309.1029.camel@nimitz>
+References: <20090708173104.d39108bb.sfr@canb.auug.org.au>
+	 <4A5499B4.5050007@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:35990 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755322AbZGHOP7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Jul 2009 10:15:59 -0400
-Content-Disposition: inline
-In-Reply-To: <20090708124005.ecbf2907.sfr@canb.auug.org.au>
+Received: from e39.co.us.ibm.com ([32.97.110.160]:45182 "EHLO
+	e39.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751231AbZGHPWg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Jul 2009 11:22:36 -0400
+In-Reply-To: <4A5499B4.5050007@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Jul 08, 2009 at 12:40:05PM +1000, Stephen Rothwell wrote:
-> Hi John,
->=20
-> Today's linux-next merge of the wireless tree got a conflict in
-> drivers/net/wireless/p54/p54common.c between commit
-> 0ca1b08eba627b4245efd0f71b55a062bf163777 ("Revert "p54: Use SKB list
-> handling helpers instead of by-hand code."") from the net-current tre=
-e
-> and commit 373234a7c69600397aea39c1452806736df2dfc5 ("p54: Modify p54
-> files for new organization") from the wireless tree.
->=20
-> For today, I just ignored the net-current change.  This will need fix=
-ing.
+On Wed, 2009-07-08 at 18:35 +0530, Sachin Sant wrote:
+> While executing hackbench against today's next on a 4 way
+> power6 box (9117 MMA), the machine crawled within few seconds
+> with lots of OOM messages. I captured a Crash dump and was
+> able to extract the dmesg log which i have attached here.
+> 
+> This problem started with 0706 next release. 0703 worked fine.
+> 
+> Kernel is compiled with SLQB and 64K page size.
+> 
+> .config attached. Let me know what other information i can
+> provide to find a solution for this problem.
 
-There is some code reorganization happening in wireless-next-2.6,
-resulting in a couple of files getting deleted.  I'm guessing that
-if/when Dave pulls net-2.6 into net-next-2.6 (which wireless-next-2.6
-gets rebased upon) then this should resolve itself.
+This doesn't look like a kernel bug at all to me.  You're out of memory,
+out of swap, and the thing that got killed was the thing allocating
+memory.  You're also down to 65MB of pagecache, which is awfully low for
+a 6GB machine.  That tells me it's also been effective in reclaiming
+disk cache.
 
-Hth!
+There are a couple of possibilities:
+1. hackbench is broken, allocating too much memory and ooming, or it
+   has been misconfigured by a user
+2. hackbench broke because something the kernel is telling it is wrong
+3. The kernel is leaking (or just plain using) some memory more than a
+   few releases ago, and that caused the oom.
 
-John
---=20
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
-			=A1Viva Honduras Libre!
+I'd go back and carefully examine how hackbench is being run and that it
+is consistent.  You should also double-check your finding that the
+several-day-old -next isn't seeing this issue.
+
+-- Dave
