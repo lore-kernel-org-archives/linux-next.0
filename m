@@ -1,46 +1,59 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: Merge request for the Thumb-2 branch
-Date: Wed, 08 Jul 2009 16:34:29 +0100
-Message-ID: <1247067269.6595.44.camel@pc1117.cambridge.arm.com>
-References: <1246035591.30717.54.camel@pc1117.cambridge.arm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the wireless tree with the
+ net-current tree
+Date: Thu, 9 Jul 2009 09:42:33 +1000
+Message-ID: <20090709094233.77232ec3.sfr@canb.auug.org.au>
+References: <20090708124005.ecbf2907.sfr@canb.auug.org.au>
+	<20090708140425.GE4253@tuxdriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__9_Jul_2009_09_42_33_+1000_bjStxCOLiue8Q.ko"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([193.131.176.58]:34896 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751271AbZGHPel (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Jul 2009 11:34:41 -0400
-In-Reply-To: <1246035591.30717.54.camel@pc1117.cambridge.arm.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:45257 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754606AbZGHXmo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 8 Jul 2009 19:42:44 -0400
+In-Reply-To: <20090708140425.GE4253@tuxdriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-next <linux-next@vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
-Hi Stephen and Russell,
+--Signature=_Thu__9_Jul_2009_09_42_33_+1000_bjStxCOLiue8Q.ko
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2009-06-26 at 17:59 +0100, Catalin Marinas wrote:
-> Could you please merge the thumb-2 branch into linux-next:
-> 
->   git://linux-arm.org/linux-2.6.git thumb-2
-> 
-> It adds support for compiling the ARM kernel to the Thumb-2 instruction
-> set (16 or 32 bit opcodes) and it makes sense to check it doesn't break
-> other things before the next merging window (it's a bit more intrusive
-> but limited to arch/arm/* files).
+Hi John,
 
-(I'm replying to myself but I'd like to make sure this e-mail wasn't
-missed)
+On Wed, 8 Jul 2009 10:04:25 -0400 "John W. Linville" <linville@tuxdriver.co=
+m> wrote:
+>
+> There is some code reorganization happening in wireless-next-2.6,
+> resulting in a couple of files getting deleted.  I'm guessing that
+> if/when Dave pulls net-2.6 into net-next-2.6 (which wireless-next-2.6
+> gets rebased upon) then this should resolve itself.
 
-Russell - are you OK with getting this branch merged during the next
-window, assuming that any new comments are implemented and testing is
-fine? If there are other issues, please let me know.
+Indeed, that is why I ignored the problem for now.  I was just flagging
+that the issue will need to be resolved at some point.  (Although I am
+assuming that ignoring the fix in net-current does not produce too much
+bad fallout right now.)
 
-While merging will eventually be done via Russell's ARM tree, should we
-first get it into linux-next directly or into Russell's for-next branch
-(if such branch exists)?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Thanks.
+--Signature=_Thu__9_Jul_2009_09_42_33_+1000_bjStxCOLiue8Q.ko
+Content-Type: application/pgp-signature
 
--- 
-Catalin
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkpVLukACgkQjjKRsyhoI8z5LwCgh681d8eQQ59xuCSxt1eeOIQS
+GSsAoIyryHX8dRQbYv+QzSOo7tEg3C5d
+=xr1W
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__9_Jul_2009_09_42_33_+1000_bjStxCOLiue8Q.ko--
