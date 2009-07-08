@@ -1,54 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: sound tree build warning
-Date: Wed, 8 Jul 2009 14:18:25 +1000
-Message-ID: <20090708141825.da103bc8.sfr@canb.auug.org.au>
+From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+Subject: Re: linux-next: ubi tree build warnings
+Date: Wed, 08 Jul 2009 07:45:06 +0300
+Message-ID: <4A542452.6060703@nokia.com>
+References: <20090708130921.a361f6d2.sfr@canb.auug.org.au>
+Reply-To: Artem.Bityutskiy@nokia.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__8_Jul_2009_14_18_25_+1000_c5zw7AnShgMLk_z8"
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59460 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750836AbZGHESi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 8 Jul 2009 00:18:38 -0400
+Received: from smtp.nokia.com ([192.100.122.233]:42154 "EHLO
+	mgw-mx06.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752212AbZGHEpf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Jul 2009 00:45:35 -0400
+In-Reply-To: <20090708130921.a361f6d2.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
---Signature=_Wed__8_Jul_2009_14_18_25_+1000_c5zw7AnShgMLk_z8
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+ext Stephen Rothwell wrote:
+> Hi Artem,
+>=20
+> Today's linux-next build (x86_64 allmodconfig) produced these warning=
+s:
+>=20
+> drivers/mtd/ubi/io.c: In function 'nor_erase_prepare':
+> drivers/mtd/ubi/io.c:484: warning: passing argument 5 of 'ubi->mtd->w=
+rite' from incompatible pointer type
+> drivers/mtd/ubi/io.c:484: note: expected 'const u_char *' but argumen=
+t is of type 'uint32_t *'
+> drivers/mtd/ubi/io.c:486: warning: format '%zd' expects type 'signed =
+size_t', but argument 5 has type 'int'
+> drivers/mtd/ubi/io.c:486: warning: too many arguments for format
+> drivers/mtd/ubi/io.c:493: warning: passing argument 5 of 'ubi->mtd->w=
+rite' from incompatible pointer type
+> drivers/mtd/ubi/io.c:493: note: expected 'const u_char *' but argumen=
+t is of type 'uint32_t *'
+>=20
+> Introduced by commit ebf53f421308c2f59c9bcbad4c5c297a0d00199a ("UBI: =
+fix
+> NOR flash recovery").
 
-Hi Takashi,
-
-Today's linux-next build (x86_64 allmodconfig) produced these warnings:
-
-sound/pci/hda/patch_via.c: In function 'via_mux_enum_put':
-sound/pci/hda/patch_via.c:395: warning: unused variable 'vendor_id'
-sound/pci/hda/patch_via.c: In function 'get_mux_nids':
-sound/pci/hda/patch_via.c:1337: warning: unused variable 'type'
-sound/pci/hda/patch_via.c:1354: warning: no return statement in function re=
-turning non-void
-
-Introduced by commit 337b9d02b4873ceac91565272545fb6fd446d939 ("ALSA: hda
-- Fix capture source selection in patch_via.c").
+Will fix ASAP, thank you! I'm always wondering how you manage
+to reproduce warnings I do not see.
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__8_Jul_2009_14_18_25_+1000_c5zw7AnShgMLk_z8
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkpUHhEACgkQjjKRsyhoI8w5IgCfbv9zaS2aS+NJNAfbdr48CYsu
-LjUAoIM3b0ElHKwuIftK9GAyMo/jlYFJ
-=/SQT
------END PGP SIGNATURE-----
-
---Signature=_Wed__8_Jul_2009_14_18_25_+1000_c5zw7AnShgMLk_z8--
+Best Regards,
+Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
+=D1=86=D0=BA=D0=B8=D0=B9)
