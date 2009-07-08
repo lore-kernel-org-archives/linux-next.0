@@ -1,61 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: block tree build failure
-Date: Wed, 8 Jul 2009 10:41:59 +1000
-Message-ID: <20090708104159.2de0dc03.sfr@canb.auug.org.au>
-References: <20090707134908.e81b1556.sfr@canb.auug.org.au>
-	<20090707135541.GA4997@infradead.org>
+Subject: Re: linux-next: sfi tree build failure
+Date: Wed, 8 Jul 2009 10:50:05 +1000
+Message-ID: <20090708105005.3d8facaa.sfr@canb.auug.org.au>
+References: <20090630171937.75f64662.sfr@canb.auug.org.au>
+	<20090706161432.111a42ee.sfr@canb.auug.org.au>
+	<alpine.LFD.2.00.0907062348130.32467@localhost.localdomain>
+	<20090707154353.628365ac.sfr@canb.auug.org.au>
+	<alpine.LFD.2.00.0907071120230.4244@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__8_Jul_2009_10_41_59_+1000_452eLPAbZjCoznON"
+ boundary="Signature=_Wed__8_Jul_2009_10_50_05_+1000_gNjJ1FPzTA2epvop"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53961 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56707 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753595AbZGHAmI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 7 Jul 2009 20:42:08 -0400
-In-Reply-To: <20090707135541.GA4997@infradead.org>
+	id S1754487AbZGHAuH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 7 Jul 2009 20:50:07 -0400
+In-Reply-To: <alpine.LFD.2.00.0907071120230.4244@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Jens Axboe <jens.axboe@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Zhang, Yanmin" <yanmin_zhang@linux.intel.com>
+To: Len Brown <lenb@kernel.org>
+Cc: sfi-devel@simplefirmware.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__8_Jul_2009_10_41_59_+1000_452eLPAbZjCoznON
+--Signature=_Wed__8_Jul_2009_10_50_05_+1000_gNjJ1FPzTA2epvop
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Christoph,
+Hi Len,
 
-On Tue, 7 Jul 2009 09:55:42 -0400 Christoph Hellwig <hch@infradead.org> wro=
-te:
+On Tue, 07 Jul 2009 11:31:06 -0400 (EDT) Len Brown <lenb@kernel.org> wrote:
 >
-> On Tue, Jul 07, 2009 at 01:49:08PM +1000, Stephen Rothwell wrote:
-> > interacting with commit 3beab0b42413e83a7907db7176b54c840fc75a81
-> > ("sys_sync(): fix 16% performance regression in ffsb create_4k test")
-> > from Linus' tree.
+> > I still get the same error.
 >=20
-> Where the fuck is that patch coming from?  For one that's a horrible
-> patch subject and second I can't see it anywhere on -fsdevel.  We
-> removed that bdflush wakeup for a reason, and if it causes problems
-> those need to be discussed and fixed properly instead of papering over
-> it.
+> git.kernel.org took a long time to update from master.kerne.org
+> last night.  (indeed, I was sending patches through e-mail to
+> some folks to work around it); so I suspect you pulled the SFI
+> tree before the mirror updated and got the same thing you
+> got over the weekend.
 
-http://lkml.org/lkml/2009/6/29/52
+I fetch from master ... and did get an update.
+
+> surfing to git.kernel.org, it seems to be up to date now.
+>=20
+> The tree should include this one of interest:
+>=20
+> commit 4844be551844e05d4b70f0624e9c34fd486d3e33
+> Author: Len Brown <len.brown@intel.com>
+> Date:   Mon Jul 6 23:57:55 2009 -0400
+>=20
+>     SFI: revert changes to linux/acpi.h, fix ppc build
+
+It has that now.  When I refetched yesterday, the head of sfi-test branch
+was c24b5f47a66895c2f2ac6e8b665c94f7854e32b4 ("SFI: work around ppc build
+failure") which is the commit before the above one.
+
+It doesn't matter, hopefully it will be better today.
+
+> Note that Linus pulls from master.kernel.org rather than git.kernel.org
+> to avoid any possible sync delay between tree push and his pull.
+
+As do I for the same reason.
+
+> If you have trouble with a copy of the tree that includes
+> the commit above, (I don't expect to see the same failure,
+> but it is always possible there is another one after this one),
+> then please send me the complete build log.
+
+Will do.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__8_Jul_2009_10_41_59_+1000_452eLPAbZjCoznON
+--Signature=_Wed__8_Jul_2009_10_50_05_+1000_gNjJ1FPzTA2epvop
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkpT61cACgkQjjKRsyhoI8xuyQCfU4b+/AISAx/Bk0PwS8bXZUpc
-R4gAn2XN92aLmqwA72aRNY0aP+vknL10
-=Tq7l
+iEYEARECAAYFAkpT7T0ACgkQjjKRsyhoI8yKtACgjxWWLxaKZWSPJKBdC9jVF7IZ
+pp4An1+ckFTrjwEHVLi3MqdAYgof4RCN
+=dtnL
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__8_Jul_2009_10_41_59_+1000_452eLPAbZjCoznON--
+--Signature=_Wed__8_Jul_2009_10_50_05_+1000_gNjJ1FPzTA2epvop--
