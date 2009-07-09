@@ -1,131 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless tree with the
- wireless-current tree
-Date: Thu, 9 Jul 2009 11:40:34 +1000
-Message-ID: <20090709114034.02e66f09.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ttydev tree with the usb.current
+ tree
+Date: Thu, 9 Jul 2009 13:04:30 +1000
+Message-ID: <20090709130430.090863dd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58442 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754972AbZGIBki (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 8 Jul 2009 21:40:38 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hin-Tak Leung <hintak.leung@gmail.com>, Pascal Terjan <pterjan@mandriva.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1759691AbZGIDFG@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Wessel <jason.wessel@windriver.com>, Greg KH <greg@kroah.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi John,
+Hi Alan,
 
-Today's linux-next merge of the wireless tree got a conflict in
-drivers/net/wireless/zd1211rw/zd_usb.c between a couple of commits from
-the wireless-current tree and commit
-04755d92e9d150a3f308dd39664f859cc2182536 ("zd1211rw: sort vid/pid pairs
-by numerical value") from the wireless tree.
+Today's linux-next merge of the ttydev tree got conflicts in
+drivers/usb/serial/generic.c and include/linux/usb/serial.h between commit
+d8298d029cdd5d944c3d8369d2862de94d12ae4b ("USB: serial: regression fix to
+move sysrq from hot path") from the usb.current tree and commit
+cf8456fe1aaed1776bf4c26c18adef76e472b9fa ("tty-usb-fix-perf-regression")
+from the ttydev tree.  Also between commit
+a2170a444ef9a89a7ec9acc72d79e5db433effc4 ("USB: serial: optimize sysrq
+function calls") from the usb.current tree and commit
+bfce6b042a47c9cdd55c7cd231e58710ec1fa4e1 ("tty-usb-fix-kref-leak") from
+the ttydev tree.
 
-I fixed it up (see below) and can carry the fix as necessary.
+The first two commits above seem to be trying to do the same thing (or
+similar) so I have used the ttydev version for now.
+
+I fixed them up (see below) and can carry the fixes as necessary.
+
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/wireless/zd1211rw/zd_usb.c
-index 0e6e446,2c24dd9..0000000
---- a/drivers/net/wireless/zd1211rw/zd_usb.c
-+++ b/drivers/net/wireless/zd1211rw/zd_usb.c
-@@@ -36,58 -36,57 +36,58 @@@
+diff --cc drivers/usb/serial/generic.c
+index 48f6743,21dd6e7..0000000
+--- a/drivers/usb/serial/generic.c
++++ b/drivers/usb/serial/generic.c
+diff --cc include/linux/usb/serial.h
+index 4601e0d,0ec50ba..0000000
+--- a/include/linux/usb/serial.h
++++ b/include/linux/usb/serial.h
+@@@ -325,34 -330,6 +325,35 @@@ extern struct usb_serial_driver usb_ser
+  extern struct bus_type usb_serial_bus_type;
+  extern struct tty_driver *usb_serial_tty_driver;
   
-  static struct usb_device_id usb_ids[] = {
-  	/* ZD1211 */
-+ 	{ USB_DEVICE(0x0105, 0x145f), .driver_info = DEVICE_ZD1211 },
-+ 	{ USB_DEVICE(0x0586, 0x3401), .driver_info = DEVICE_ZD1211 },
-+ 	{ USB_DEVICE(0x0586, 0x3402), .driver_info = DEVICE_ZD1211 },
-+ 	{ USB_DEVICE(0x0586, 0x3407), .driver_info = DEVICE_ZD1211 },
-+ 	{ USB_DEVICE(0x0586, 0x3409), .driver_info = DEVICE_ZD1211 },
-+ 	{ USB_DEVICE(0x079b, 0x004a), .driver_info = DEVICE_ZD1211 },
- -	{ USB_DEVICE(0x07b8, 0x6001), .driver_info = DEVICE_ZD1211 },
-  	{ USB_DEVICE(0x0ace, 0x1211), .driver_info = DEVICE_ZD1211 },
-  	{ USB_DEVICE(0x0ace, 0xa211), .driver_info = DEVICE_ZD1211 },
-- 	{ USB_DEVICE(0x126f, 0xa006), .driver_info = DEVICE_ZD1211 },
-- 	{ USB_DEVICE(0x6891, 0xa727), .driver_info = DEVICE_ZD1211 },
-+ 	{ USB_DEVICE(0x0b05, 0x170c), .driver_info = DEVICE_ZD1211 },
-+ 	{ USB_DEVICE(0x0b3b, 0x1630), .driver_info = DEVICE_ZD1211 },
-+ 	{ USB_DEVICE(0x0b3b, 0x5630), .driver_info = DEVICE_ZD1211 },
-  	{ USB_DEVICE(0x0df6, 0x9071), .driver_info = DEVICE_ZD1211 },
-  	{ USB_DEVICE(0x0df6, 0x9075), .driver_info = DEVICE_ZD1211 },
-- 	{ USB_DEVICE(0x157e, 0x300b), .driver_info = DEVICE_ZD1211 },
-- 	{ USB_DEVICE(0x079b, 0x004a), .driver_info = DEVICE_ZD1211 },
-- 	{ USB_DEVICE(0x1740, 0x2000), .driver_info = DEVICE_ZD1211 },
-- 	{ USB_DEVICE(0x157e, 0x3204), .driver_info = DEVICE_ZD1211 },
-- 	{ USB_DEVICE(0x0586, 0x3402), .driver_info = DEVICE_ZD1211 },
-- 	{ USB_DEVICE(0x0b3b, 0x5630), .driver_info = DEVICE_ZD1211 },
-- 	{ USB_DEVICE(0x0b05, 0x170c), .driver_info = DEVICE_ZD1211 },
-+ 	{ USB_DEVICE(0x126f, 0xa006), .driver_info = DEVICE_ZD1211 },
-+ 	{ USB_DEVICE(0x129b, 0x1666), .driver_info = DEVICE_ZD1211 },
-+ 	{ USB_DEVICE(0x13b1, 0x001e), .driver_info = DEVICE_ZD1211 },
-  	{ USB_DEVICE(0x1435, 0x0711), .driver_info = DEVICE_ZD1211 },
-- 	{ USB_DEVICE(0x0586, 0x3409), .driver_info = DEVICE_ZD1211 },
-- 	{ USB_DEVICE(0x0b3b, 0x1630), .driver_info = DEVICE_ZD1211 },
-- 	{ USB_DEVICE(0x0586, 0x3401), .driver_info = DEVICE_ZD1211 },
-  	{ USB_DEVICE(0x14ea, 0xab13), .driver_info = DEVICE_ZD1211 },
-- 	{ USB_DEVICE(0x13b1, 0x001e), .driver_info = DEVICE_ZD1211 },
-- 	{ USB_DEVICE(0x0586, 0x3407), .driver_info = DEVICE_ZD1211 },
-- 	{ USB_DEVICE(0x129b, 0x1666), .driver_info = DEVICE_ZD1211 },
-  	{ USB_DEVICE(0x157e, 0x300a), .driver_info = DEVICE_ZD1211 },
-- 	{ USB_DEVICE(0x0105, 0x145f), .driver_info = DEVICE_ZD1211 },
-+ 	{ USB_DEVICE(0x157e, 0x300b), .driver_info = DEVICE_ZD1211 },
-+ 	{ USB_DEVICE(0x157e, 0x3204), .driver_info = DEVICE_ZD1211 },
-+ 	{ USB_DEVICE(0x1740, 0x2000), .driver_info = DEVICE_ZD1211 },
-+ 	{ USB_DEVICE(0x6891, 0xa727), .driver_info = DEVICE_ZD1211 },
-  	/* ZD1211B */
-+ 	{ USB_DEVICE(0x0053, 0x5301), .driver_info = DEVICE_ZD1211B },
-+ 	{ USB_DEVICE(0x0411, 0x00da), .driver_info = DEVICE_ZD1211B },
-+ 	{ USB_DEVICE(0x0471, 0x1236), .driver_info = DEVICE_ZD1211B },
-+ 	{ USB_DEVICE(0x0471, 0x1237), .driver_info = DEVICE_ZD1211B },
-+ 	{ USB_DEVICE(0x050d, 0x705c), .driver_info = DEVICE_ZD1211B },
- +	{ USB_DEVICE(0x054c, 0x0257), .driver_info = DEVICE_ZD1211B },
-- 	{ USB_DEVICE(0x0ace, 0x1215), .driver_info = DEVICE_ZD1211B },
-- 	{ USB_DEVICE(0x0ace, 0xb215), .driver_info = DEVICE_ZD1211B },
-- 	{ USB_DEVICE(0x157e, 0x300d), .driver_info = DEVICE_ZD1211B },
-+ 	{ USB_DEVICE(0x0586, 0x340a), .driver_info = DEVICE_ZD1211B },
-+ 	{ USB_DEVICE(0x0586, 0x340f), .driver_info = DEVICE_ZD1211B },
-+ 	{ USB_DEVICE(0x0586, 0x3410), .driver_info = DEVICE_ZD1211B },
-+ 	{ USB_DEVICE(0x0586, 0x3412), .driver_info = DEVICE_ZD1211B },
-+ 	{ USB_DEVICE(0x0586, 0x3413), .driver_info = DEVICE_ZD1211B },
-  	{ USB_DEVICE(0x079b, 0x0062), .driver_info = DEVICE_ZD1211B },
-- 	{ USB_DEVICE(0x1582, 0x6003), .driver_info = DEVICE_ZD1211B },
-- 	{ USB_DEVICE(0x050d, 0x705c), .driver_info = DEVICE_ZD1211B },
-++	{ USB_DEVICE(0x07b8, 0x6001), .driver_info = DEVICE_ZD1211B },
-+ 	{ USB_DEVICE(0x07fa, 0x1196), .driver_info = DEVICE_ZD1211B },
-+ 	{ USB_DEVICE(0x083a, 0x4505), .driver_info = DEVICE_ZD1211B },
-  	{ USB_DEVICE(0x083a, 0xe503), .driver_info = DEVICE_ZD1211B },
-  	{ USB_DEVICE(0x083a, 0xe506), .driver_info = DEVICE_ZD1211B },
-- 	{ USB_DEVICE(0x083a, 0x4505), .driver_info = DEVICE_ZD1211B },
-- 	{ USB_DEVICE(0x0471, 0x1236), .driver_info = DEVICE_ZD1211B },
-- 	{ USB_DEVICE(0x13b1, 0x0024), .driver_info = DEVICE_ZD1211B },
-- 	{ USB_DEVICE(0x0586, 0x340f), .driver_info = DEVICE_ZD1211B },
-+ 	{ USB_DEVICE(0x0ace, 0x1215), .driver_info = DEVICE_ZD1211B },
-+ 	{ USB_DEVICE(0x0ace, 0xb215), .driver_info = DEVICE_ZD1211B },
-  	{ USB_DEVICE(0x0b05, 0x171b), .driver_info = DEVICE_ZD1211B },
-- 	{ USB_DEVICE(0x0586, 0x3410), .driver_info = DEVICE_ZD1211B },
-  	{ USB_DEVICE(0x0baf, 0x0121), .driver_info = DEVICE_ZD1211B },
-- 	{ USB_DEVICE(0x0586, 0x3412), .driver_info = DEVICE_ZD1211B },
-- 	{ USB_DEVICE(0x0586, 0x3413), .driver_info = DEVICE_ZD1211B },
-- 	{ USB_DEVICE(0x0053, 0x5301), .driver_info = DEVICE_ZD1211B },
-- 	{ USB_DEVICE(0x0411, 0x00da), .driver_info = DEVICE_ZD1211B },
-- 	{ USB_DEVICE(0x2019, 0x5303), .driver_info = DEVICE_ZD1211B },
-- 	{ USB_DEVICE(0x129b, 0x1667), .driver_info = DEVICE_ZD1211B },
-  	{ USB_DEVICE(0x0cde, 0x001a), .driver_info = DEVICE_ZD1211B },
-- 	{ USB_DEVICE(0x0586, 0x340a), .driver_info = DEVICE_ZD1211B },
-- 	{ USB_DEVICE(0x0471, 0x1237), .driver_info = DEVICE_ZD1211B },
-- 	{ USB_DEVICE(0x07fa, 0x1196), .driver_info = DEVICE_ZD1211B },
-  	{ USB_DEVICE(0x0df6, 0x0036), .driver_info = DEVICE_ZD1211B },
-- 	{ USB_DEVICE(0x07b8, 0x6001), .driver_info = DEVICE_ZD1211B },
-+ 	{ USB_DEVICE(0x129b, 0x1667), .driver_info = DEVICE_ZD1211B },
-+ 	{ USB_DEVICE(0x13b1, 0x0024), .driver_info = DEVICE_ZD1211B },
-+ 	{ USB_DEVICE(0x1582, 0x6003), .driver_info = DEVICE_ZD1211B },
-+ 	{ USB_DEVICE(0x157e, 0x300d), .driver_info = DEVICE_ZD1211B },
-+ 	{ USB_DEVICE(0x2019, 0x5303), .driver_info = DEVICE_ZD1211B },
-  	/* "Driverless" devices that need ejecting */
-  	{ USB_DEVICE(0x0ace, 0x2011), .driver_info = DEVICE_INSTALLER },
-  	{ USB_DEVICE(0x0ace, 0x20ff), .driver_info = DEVICE_INSTALLER },
+- static inline int usb_serial_handle_sysrq_char(struct usb_serial_port *port,
+++static inline int usb_serial_handle_sysrq_char(struct tty_struct *tty,
+++					       struct usb_serial_port *port,
+ +					       unsigned int ch)
+ +{
+ +#ifdef CONFIG_MAGIC_SYSRQ
+ +	if (port->sysrq && port->console) {
+ +		if (ch && time_before(jiffies, port->sysrq)) {
+- 			handle_sysrq(ch, tty_port_tty_get(&port->port));
+++			handle_sysrq(ch, tty);
+ +			port->sysrq = 0;
+ +			return 1;
+ +		}
+ +		port->sysrq = 0;
+ +	}
+ +#endif /* CONFIG_MAGIC_SYSRQ */
+ +	return 0;
+ +}
+ +
+ +static inline int usb_serial_handle_break(struct usb_serial_port *port)
+ +{
+ +#ifdef CONFIG_MAGIC_SYSRQ
+ +	if (!port->sysrq) {
+ +		port->sysrq = jiffies + HZ*5;
+ +		return 1;
+ +	}
+ +	port->sysrq = 0;
+ +#endif /* CONFIG_MAGIC_SYSRQ */
+ +	return 0;
+ +}
+ +
+  static inline void usb_serial_debug_data(int debug,
+  					 struct device *dev,
+  					 const char *function, int size,
