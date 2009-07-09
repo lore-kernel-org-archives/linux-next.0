@@ -1,65 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Merge request for the Thumb-2 branch
-Date: Thu, 9 Jul 2009 19:30:24 +1000
-Message-ID: <20090709193024.7025bf44.sfr@canb.auug.org.au>
-References: <1246035591.30717.54.camel@pc1117.cambridge.arm.com>
-	<1247067269.6595.44.camel@pc1117.cambridge.arm.com>
-	<20090709100626.1e40912d.sfr@canb.auug.org.au>
-	<1247129875.11409.8.camel@pc1117.cambridge.arm.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for July 6-July 9 (percpu/x86)
+Date: Thu, 9 Jul 2009 10:22:48 -0700
+Message-ID: <20090709102248.01e2312c.randy.dunlap@oracle.com>
+References: <20090706162632.fdde002e.sfr@canb.auug.org.au>
+	<20090706095343.df21d4c9.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__9_Jul_2009_19_30_24_+1000_9nlPpoQYhJD0Hv/W"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33299 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754661AbZGIJaa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 9 Jul 2009 05:30:30 -0400
-In-Reply-To: <1247129875.11409.8.camel@pc1117.cambridge.arm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-next <linux-next@vger.kernel.org>
-
---Signature=_Thu__9_Jul_2009_19_30_24_+1000_9nlPpoQYhJD0Hv/W
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754459AbZGIRXJ@vger.kernel.org>
+In-Reply-To: <20090706095343.df21d4c9.rdunlap@xenotime.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: lkml <linux-kernel@vger.kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Tejun Heo <htejun@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Catalin,
+On Mon, 6 Jul 2009 09:53:43 -0700 Randy Dunlap wrote:
 
-On Thu, 09 Jul 2009 09:57:55 +0100 Catalin Marinas <catalin.marinas@arm.com=
-> wrote:
->
-> That's not a new ARM platform, it is affecting the core
+> On Mon, 6 Jul 2009 16:26:32 +1000 Stephen Rothwell wrote:
+> 
+> > Hi all,
+> > 
+> > Changes since 20090703:
+> > 
+> > The percpu tree lost all its conflicts but gained another against the tip
+> > tree.
+> 
+> arch/x86/mm/pageattr.c: In function 'cpa_process_alias':
+> arch/x86/mm/pageattr.c:749: error: implicit declaration of function 'pcpu_lpage_remapped'
+> 
+> config attached.
 
-My mistake (I must learn to read sometime :-))
 
-> arch/arm/kernel/, arch/arm/mm/ etc. files so that they can be compiled
-> to an alternative instruction set (mostly 16-bit instructions). So it
-> should eventually be merged via Russell's tree (or get his ack and push
-> directly)
->=20
-> My intention is indeed to merge this in the upcoming window (unless
-> Russell has any more comments to the code).
+Still present in 20090709...
 
-OK, then it will stay in linux-next unless Russell desires otherwise.   I
-can even cope if he decides to merges it into his tree.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__9_Jul_2009_19_30_24_+1000_9nlPpoQYhJD0Hv/W
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkpVuLAACgkQjjKRsyhoI8yQngCgsk68lx0fHDkv5RWKwmKrQiPl
-xuAAnj69JaCsHUGg9Z2Rhhjh+FLMkYiq
-=YP1x
------END PGP SIGNATURE-----
-
---Signature=_Thu__9_Jul_2009_19_30_24_+1000_9nlPpoQYhJD0Hv/W--
+---
+~Randy
+LPC 2009, Sept. 23-25, Portland, Oregon
+http://linuxplumbersconf.org/2009/
