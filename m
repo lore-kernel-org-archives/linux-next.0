@@ -1,43 +1,50 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for July 9 (x86/pci)
-Date: Thu, 9 Jul 2009 10:30:21 -0700
-Message-ID: <20090709103021.d39a711a.randy.dunlap@oracle.com>
-References: <20090709163031.acdb5439.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: ttydev tree import failure
+Date: Fri, 10 Jul 2009 09:14:08 +1000
+Message-ID: <20090710091408.67c4da53.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__10_Jul_2009_09_14_08_+1000_Z_8JuwtUjmyE_2D6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:57945 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751066AbZGIRaZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Jul 2009 13:30:25 -0400
-In-Reply-To: <20090709163031.acdb5439.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51924 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750782AbZGIXOS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 9 Jul 2009 19:14:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 9 Jul 2009 16:30:31 +1000 Stephen Rothwell wrote:
+--Signature=_Fri__10_Jul_2009_09_14_08_+1000_Z_8JuwtUjmyE_2D6
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi all,
-> 
-> Changes since 20090708:
+Hi Alan,
 
+Today's linux-next import of the ttydev tree failed like this:
 
-when ACPI is disabled (SFI=y):
+tty-usb-mos7720-modem
+error: usb/serial/mos7720.c: does not exist in index
 
+It looks like a -p0 patch was included in the comments?  I removed the
+-p0 patch (hopefully that was the correct one).
 
-arch/x86/pci/mmconfig_32.c: In function 'get_base_addr':
-arch/x86/pci/mmconfig_32.c:34: error: invalid use of undefined type 'struct acpi_mcfg_allocation'
-arch/x86/pci/mmconfig_32.c:34: error: dereferencing pointer to incomplete type
-arch/x86/pci/mmconfig_32.c:35: error: dereferencing pointer to incomplete type
-arch/x86/pci/mmconfig_32.c:36: error: dereferencing pointer to incomplete type
-arch/x86/pci/mmconfig_32.c:37: error: dereferencing pointer to incomplete type
-arch/x86/pci/mmconfig_32.c:38: error: dereferencing pointer to incomplete type
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-(X86_32, clearly)
+--Signature=_Fri__10_Jul_2009_09_14_08_+1000_Z_8JuwtUjmyE_2D6
+Content-Type: application/pgp-signature
 
----
-~Randy
-LPC 2009, Sept. 23-25, Portland, Oregon
-http://linuxplumbersconf.org/2009/
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkpWecAACgkQjjKRsyhoI8xhZACgqA+SQox7cbPtkst118KlTlYd
+La0AoLH/j5XJ+9g9pnVAGTapu6trJIPx
+=qzYm
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__10_Jul_2009_09_14_08_+1000_Z_8JuwtUjmyE_2D6--
