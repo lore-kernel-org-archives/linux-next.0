@@ -1,73 +1,131 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: origin tree build failure
-Date: Thu, 9 Jul 2009 10:28:29 +1000
-Message-ID: <20090709102829.ab45dc71.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless tree with the
+ wireless-current tree
+Date: Thu, 9 Jul 2009 11:40:34 +1000
+Message-ID: <20090709114034.02e66f09.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46859 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58442 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754795AbZGIA2c (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 8 Jul 2009 20:28:32 -0400
+	id S1754972AbZGIBki (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 8 Jul 2009 21:40:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hin-Tak Leung <hintak.leung@gmail.com>, Pascal Terjan <pterjan@mandriva.com>
 
-Hi Linus,
+Hi John,
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+Today's linux-next merge of the wireless tree got a conflict in
+drivers/net/wireless/zd1211rw/zd_usb.c between a couple of commits from
+the wireless-current tree and commit
+04755d92e9d150a3f308dd39664f859cc2182536 ("zd1211rw: sort vid/pid pairs
+by numerical value") from the wireless tree.
 
-drivers/net/fealnx.c: In function 'fealnx_tx_timeout':
-drivers/net/fealnx.c:1219: error: 'PR_CONT' undeclared (first use in this function)
-drivers/net/fealnx.c:1219: error: (Each undeclared identifier is reported only once
-drivers/net/fealnx.c:1219: error: for each function it appears in.)
-drivers/net/fealnx.c:1219: error: expected ')' before string constant
-drivers/net/fealnx.c:1224: error: expected ')' before string constant
-drivers/net/fealnx.c:1225: error: expected ')' before string constant
-
-Caused by commit ad361c9884e809340f6daca80d56a9e9c871690a ("Remove
-multiple KERN_ prefixes from printk formats").  I applied the following
-patch.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 9 Jul 2009 10:23:07 +1000
-Subject: [PATCH] Fix up typo in KERN_ prefixes removal
-
-This fixes a type in commit ad361c9884e809340f6daca80d56a9e9c871690a
-"Remove multiple KERN_ prefixes from printk formats".
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/fealnx.c |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/fealnx.c b/drivers/net/fealnx.c
-index 053fb49..48385c4 100644
---- a/drivers/net/fealnx.c
-+++ b/drivers/net/fealnx.c
-@@ -1216,13 +1216,13 @@ static void fealnx_tx_timeout(struct net_device *dev)
- 	{
- 		printk(KERN_DEBUG "  Rx ring %p: ", np->rx_ring);
- 		for (i = 0; i < RX_RING_SIZE; i++)
--			printk(PR_CONT " %8.8x",
-+			printk(KERN_CONT " %8.8x",
- 			       (unsigned int) np->rx_ring[i].status);
- 		printk(KERN_CONT "\n");
- 		printk(KERN_DEBUG "  Tx ring %p: ", np->tx_ring);
- 		for (i = 0; i < TX_RING_SIZE; i++)
--			printk(PR_CONT " %4.4x", np->tx_ring[i].status);
--		printk(PR_CONT "\n");
-+			printk(KERN_CONT " %4.4x", np->tx_ring[i].status);
-+		printk(KERN_CONT "\n");
- 	}
- 
- 	spin_lock_irqsave(&np->lock, flags);
--- 
-1.6.3.3
-
+I fixed it up (see below) and can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+
+diff --cc drivers/net/wireless/zd1211rw/zd_usb.c
+index 0e6e446,2c24dd9..0000000
+--- a/drivers/net/wireless/zd1211rw/zd_usb.c
++++ b/drivers/net/wireless/zd1211rw/zd_usb.c
+@@@ -36,58 -36,57 +36,58 @@@
+  
+  static struct usb_device_id usb_ids[] = {
+  	/* ZD1211 */
++ 	{ USB_DEVICE(0x0105, 0x145f), .driver_info = DEVICE_ZD1211 },
++ 	{ USB_DEVICE(0x0586, 0x3401), .driver_info = DEVICE_ZD1211 },
++ 	{ USB_DEVICE(0x0586, 0x3402), .driver_info = DEVICE_ZD1211 },
++ 	{ USB_DEVICE(0x0586, 0x3407), .driver_info = DEVICE_ZD1211 },
++ 	{ USB_DEVICE(0x0586, 0x3409), .driver_info = DEVICE_ZD1211 },
++ 	{ USB_DEVICE(0x079b, 0x004a), .driver_info = DEVICE_ZD1211 },
+ -	{ USB_DEVICE(0x07b8, 0x6001), .driver_info = DEVICE_ZD1211 },
+  	{ USB_DEVICE(0x0ace, 0x1211), .driver_info = DEVICE_ZD1211 },
+  	{ USB_DEVICE(0x0ace, 0xa211), .driver_info = DEVICE_ZD1211 },
+- 	{ USB_DEVICE(0x126f, 0xa006), .driver_info = DEVICE_ZD1211 },
+- 	{ USB_DEVICE(0x6891, 0xa727), .driver_info = DEVICE_ZD1211 },
++ 	{ USB_DEVICE(0x0b05, 0x170c), .driver_info = DEVICE_ZD1211 },
++ 	{ USB_DEVICE(0x0b3b, 0x1630), .driver_info = DEVICE_ZD1211 },
++ 	{ USB_DEVICE(0x0b3b, 0x5630), .driver_info = DEVICE_ZD1211 },
+  	{ USB_DEVICE(0x0df6, 0x9071), .driver_info = DEVICE_ZD1211 },
+  	{ USB_DEVICE(0x0df6, 0x9075), .driver_info = DEVICE_ZD1211 },
+- 	{ USB_DEVICE(0x157e, 0x300b), .driver_info = DEVICE_ZD1211 },
+- 	{ USB_DEVICE(0x079b, 0x004a), .driver_info = DEVICE_ZD1211 },
+- 	{ USB_DEVICE(0x1740, 0x2000), .driver_info = DEVICE_ZD1211 },
+- 	{ USB_DEVICE(0x157e, 0x3204), .driver_info = DEVICE_ZD1211 },
+- 	{ USB_DEVICE(0x0586, 0x3402), .driver_info = DEVICE_ZD1211 },
+- 	{ USB_DEVICE(0x0b3b, 0x5630), .driver_info = DEVICE_ZD1211 },
+- 	{ USB_DEVICE(0x0b05, 0x170c), .driver_info = DEVICE_ZD1211 },
++ 	{ USB_DEVICE(0x126f, 0xa006), .driver_info = DEVICE_ZD1211 },
++ 	{ USB_DEVICE(0x129b, 0x1666), .driver_info = DEVICE_ZD1211 },
++ 	{ USB_DEVICE(0x13b1, 0x001e), .driver_info = DEVICE_ZD1211 },
+  	{ USB_DEVICE(0x1435, 0x0711), .driver_info = DEVICE_ZD1211 },
+- 	{ USB_DEVICE(0x0586, 0x3409), .driver_info = DEVICE_ZD1211 },
+- 	{ USB_DEVICE(0x0b3b, 0x1630), .driver_info = DEVICE_ZD1211 },
+- 	{ USB_DEVICE(0x0586, 0x3401), .driver_info = DEVICE_ZD1211 },
+  	{ USB_DEVICE(0x14ea, 0xab13), .driver_info = DEVICE_ZD1211 },
+- 	{ USB_DEVICE(0x13b1, 0x001e), .driver_info = DEVICE_ZD1211 },
+- 	{ USB_DEVICE(0x0586, 0x3407), .driver_info = DEVICE_ZD1211 },
+- 	{ USB_DEVICE(0x129b, 0x1666), .driver_info = DEVICE_ZD1211 },
+  	{ USB_DEVICE(0x157e, 0x300a), .driver_info = DEVICE_ZD1211 },
+- 	{ USB_DEVICE(0x0105, 0x145f), .driver_info = DEVICE_ZD1211 },
++ 	{ USB_DEVICE(0x157e, 0x300b), .driver_info = DEVICE_ZD1211 },
++ 	{ USB_DEVICE(0x157e, 0x3204), .driver_info = DEVICE_ZD1211 },
++ 	{ USB_DEVICE(0x1740, 0x2000), .driver_info = DEVICE_ZD1211 },
++ 	{ USB_DEVICE(0x6891, 0xa727), .driver_info = DEVICE_ZD1211 },
+  	/* ZD1211B */
++ 	{ USB_DEVICE(0x0053, 0x5301), .driver_info = DEVICE_ZD1211B },
++ 	{ USB_DEVICE(0x0411, 0x00da), .driver_info = DEVICE_ZD1211B },
++ 	{ USB_DEVICE(0x0471, 0x1236), .driver_info = DEVICE_ZD1211B },
++ 	{ USB_DEVICE(0x0471, 0x1237), .driver_info = DEVICE_ZD1211B },
++ 	{ USB_DEVICE(0x050d, 0x705c), .driver_info = DEVICE_ZD1211B },
+ +	{ USB_DEVICE(0x054c, 0x0257), .driver_info = DEVICE_ZD1211B },
+- 	{ USB_DEVICE(0x0ace, 0x1215), .driver_info = DEVICE_ZD1211B },
+- 	{ USB_DEVICE(0x0ace, 0xb215), .driver_info = DEVICE_ZD1211B },
+- 	{ USB_DEVICE(0x157e, 0x300d), .driver_info = DEVICE_ZD1211B },
++ 	{ USB_DEVICE(0x0586, 0x340a), .driver_info = DEVICE_ZD1211B },
++ 	{ USB_DEVICE(0x0586, 0x340f), .driver_info = DEVICE_ZD1211B },
++ 	{ USB_DEVICE(0x0586, 0x3410), .driver_info = DEVICE_ZD1211B },
++ 	{ USB_DEVICE(0x0586, 0x3412), .driver_info = DEVICE_ZD1211B },
++ 	{ USB_DEVICE(0x0586, 0x3413), .driver_info = DEVICE_ZD1211B },
+  	{ USB_DEVICE(0x079b, 0x0062), .driver_info = DEVICE_ZD1211B },
+- 	{ USB_DEVICE(0x1582, 0x6003), .driver_info = DEVICE_ZD1211B },
+- 	{ USB_DEVICE(0x050d, 0x705c), .driver_info = DEVICE_ZD1211B },
+++	{ USB_DEVICE(0x07b8, 0x6001), .driver_info = DEVICE_ZD1211B },
++ 	{ USB_DEVICE(0x07fa, 0x1196), .driver_info = DEVICE_ZD1211B },
++ 	{ USB_DEVICE(0x083a, 0x4505), .driver_info = DEVICE_ZD1211B },
+  	{ USB_DEVICE(0x083a, 0xe503), .driver_info = DEVICE_ZD1211B },
+  	{ USB_DEVICE(0x083a, 0xe506), .driver_info = DEVICE_ZD1211B },
+- 	{ USB_DEVICE(0x083a, 0x4505), .driver_info = DEVICE_ZD1211B },
+- 	{ USB_DEVICE(0x0471, 0x1236), .driver_info = DEVICE_ZD1211B },
+- 	{ USB_DEVICE(0x13b1, 0x0024), .driver_info = DEVICE_ZD1211B },
+- 	{ USB_DEVICE(0x0586, 0x340f), .driver_info = DEVICE_ZD1211B },
++ 	{ USB_DEVICE(0x0ace, 0x1215), .driver_info = DEVICE_ZD1211B },
++ 	{ USB_DEVICE(0x0ace, 0xb215), .driver_info = DEVICE_ZD1211B },
+  	{ USB_DEVICE(0x0b05, 0x171b), .driver_info = DEVICE_ZD1211B },
+- 	{ USB_DEVICE(0x0586, 0x3410), .driver_info = DEVICE_ZD1211B },
+  	{ USB_DEVICE(0x0baf, 0x0121), .driver_info = DEVICE_ZD1211B },
+- 	{ USB_DEVICE(0x0586, 0x3412), .driver_info = DEVICE_ZD1211B },
+- 	{ USB_DEVICE(0x0586, 0x3413), .driver_info = DEVICE_ZD1211B },
+- 	{ USB_DEVICE(0x0053, 0x5301), .driver_info = DEVICE_ZD1211B },
+- 	{ USB_DEVICE(0x0411, 0x00da), .driver_info = DEVICE_ZD1211B },
+- 	{ USB_DEVICE(0x2019, 0x5303), .driver_info = DEVICE_ZD1211B },
+- 	{ USB_DEVICE(0x129b, 0x1667), .driver_info = DEVICE_ZD1211B },
+  	{ USB_DEVICE(0x0cde, 0x001a), .driver_info = DEVICE_ZD1211B },
+- 	{ USB_DEVICE(0x0586, 0x340a), .driver_info = DEVICE_ZD1211B },
+- 	{ USB_DEVICE(0x0471, 0x1237), .driver_info = DEVICE_ZD1211B },
+- 	{ USB_DEVICE(0x07fa, 0x1196), .driver_info = DEVICE_ZD1211B },
+  	{ USB_DEVICE(0x0df6, 0x0036), .driver_info = DEVICE_ZD1211B },
+- 	{ USB_DEVICE(0x07b8, 0x6001), .driver_info = DEVICE_ZD1211B },
++ 	{ USB_DEVICE(0x129b, 0x1667), .driver_info = DEVICE_ZD1211B },
++ 	{ USB_DEVICE(0x13b1, 0x0024), .driver_info = DEVICE_ZD1211B },
++ 	{ USB_DEVICE(0x1582, 0x6003), .driver_info = DEVICE_ZD1211B },
++ 	{ USB_DEVICE(0x157e, 0x300d), .driver_info = DEVICE_ZD1211B },
++ 	{ USB_DEVICE(0x2019, 0x5303), .driver_info = DEVICE_ZD1211B },
+  	/* "Driverless" devices that need ejecting */
+  	{ USB_DEVICE(0x0ace, 0x2011), .driver_info = DEVICE_INSTALLER },
+  	{ USB_DEVICE(0x0ace, 0x20ff), .driver_info = DEVICE_INSTALLER },
