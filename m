@@ -1,51 +1,61 @@
-From: Subrata Modak <subrata@linux.vnet.ibm.com>
-Subject: Re: [PATCH Resend2] Remove 'SBC8240 Wind River' Device Driver Code
-Date: Fri, 10 Jul 2009 14:28:44 +0530
-Message-ID: <1247216324.6630.10.camel@subratamodak.linux.ibm.com>
-References: <20090701135247.27488.10776.sendpatchset@subratamodak.linux.ibm.com>
-	 <1246846628.5743.2.camel@subratamodak.linux.ibm.com>
-	 <1247205588.20721.353.camel@localhost.localdomain>
-	 <1247206539.6630.0.camel@subratamodak.linux.ibm.com>
-	 <4A56DD51.5040703@gmail.com>
-	 <1247209961.6630.3.camel@subratamodak.linux.ibm.com>
-	 <1247210095.20721.362.camel@localhost.localdomain>
-	 <1247215625.6630.6.camel@subratamodak.linux.ibm.com>
-	 <1247216007.29541.2.camel@macbook.infradead.org>
-Reply-To: subrata@linux.vnet.ibm.com
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Subject: Re: linux-next: Tree for July 10 (cpufreq oops)
+Date: Fri, 10 Jul 2009 20:54:37 +0200
+Message-ID: <200907102054.37956.bzolnier@gmail.com>
+References: <20090710151846.c7ebec37.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e7.ny.us.ibm.com ([32.97.182.137]:35029 "EHLO e7.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751045AbZGJI6y (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 10 Jul 2009 04:58:54 -0400
-In-Reply-To: <1247216007.29541.2.camel@macbook.infradead.org>
+Received: from mail-bw0-f225.google.com ([209.85.218.225]:40515 "EHLO
+	mail-bw0-f225.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756402AbZGJSsw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 10 Jul 2009 14:48:52 -0400
+In-Reply-To: <20090710151846.c7ebec37.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: dedekind@infradead.org, Artem Bityutskiy <dedekind1@gmail.com>, linux-mtd@lists.infradead.org, carolyn.j.smith@exgate.tek.com, Stephen Rothwell <sfr@canb.auug.org.au>, Jim Cromie <jim.cromie@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Sachin P Sant <sachinp@linux.vnet.ibm.com>, linux-next <linux-next@vger.kernel.org>, Scott Wood <scottwood@freescale.com>, Balbir Singh <balbir@linux.vnet.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Dave Jones <davej@redhat.com>
 
-On Fri, 2009-07-10 at 09:53 +0100, David Woodhouse wrote:
-> On Fri, 2009-07-10 at 14:17 +0530, Subrata Modak wrote:
-> > Is it possible to get this patch through and before 2.6.31 stable is
-> > released ?
+On Friday 10 July 2009 07:18:46 Stephen Rothwell wrote:
+> Hi all,
 > 
+> Changes since 20090709:
+ 
+[ this particular problem goes back to next-20090709 ]
 
-Hi David,
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Subject: [PATCH] cpufreq: fix OOPS in __cpufreq_governor()
 
-> Hm, I was ignoring this until I was sure all the last-minute fixes for
-> 2.6.31 were out of the way; I was planning to submit it for 2.6.32.
-> 
-> Do we really need to submit it for 2.6.31? It's not a regression, is it?
-> It's been like this for _ages_.
+commit 0d923c15b774bed3491400bae6db50481ac8b9e4 ("[CPUFREQ] Factor out
+policy setting from cpufreq_add_dev") accidentally reordered new_policy
+setup and policy->governor reset.
 
-True. But it gives annoying build fails on randconfig next trees. And
-we(Sachin & myself) has been reporting it from March/April. If you feel
-there is still room to be pushed to 2.6.31, then please do it. Else,
-2.6.32 will be fine. Thanks for your support.
+Fix it, also update comment to match the function name while at it.
 
-Regards--
-Subrata
+Signed-off-by: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+---
+ drivers/cpufreq/cpufreq.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-> 
+Index: b/drivers/cpufreq/cpufreq.c
+===================================================================
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -896,10 +896,11 @@ int cpufreq_add_dev_interface(unsigned i
+ 	if (ret)
+ 		goto err_out_kobj_put;
+ 
+-	policy->governor = NULL; /* to assure that the starting sequence is
+-				  * run in cpufreq_set_policy */
++	memcpy(&new_policy, policy, sizeof(new_policy));
++
++	/* assure that the starting sequence is run in __cpufreq_set_policy */
++	policy->governor = NULL;
+ 
+-	memcpy(&new_policy, policy, sizeof(struct cpufreq_policy));
+ 	/* set default policy */
+ 	ret = __cpufreq_set_policy(policy, &new_policy);
+ 	policy->user_policy.policy = policy->policy;
