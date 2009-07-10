@@ -1,42 +1,65 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Subject: Re: [PATCH Resend2] Remove 'SBC8240 Wind River' Device Driver Code
-Date: Fri, 10 Jul 2009 09:18:57 +0300
-Message-ID: <4A56DD51.5040703@gmail.com>
-References: <20090701135247.27488.10776.sendpatchset@subratamodak.linux.ibm.com>	 <1246846628.5743.2.camel@subratamodak.linux.ibm.com>	 <1247205588.20721.353.camel@localhost.localdomain> <1247206539.6630.0.camel@subratamodak.linux.ibm.com>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Re: OOM with hackbench against next 0708
+Date: Fri, 10 Jul 2009 12:34:25 +0530
+Message-ID: <4A56E7F9.9030405@in.ibm.com>
+References: <20090708173104.d39108bb.sfr@canb.auug.org.au> <4A5499B4.5050007@in.ibm.com> <1247066549.14309.1029.camel@nimitz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.105.134]:36256 "EHLO
-	mgw-mx09.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751120AbZGJG0O (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 10 Jul 2009 02:26:14 -0400
-In-Reply-To: <1247206539.6630.0.camel@subratamodak.linux.ibm.com>
+Received: from e28smtp09.in.ibm.com ([59.145.155.9]:34429 "EHLO
+	e28smtp09.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750743AbZGJHEb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 10 Jul 2009 03:04:31 -0400
+In-Reply-To: <1247066549.14309.1029.camel@nimitz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: subrata@linux.vnet.ibm.com
-Cc: dedekind@infradead.org, linux-mtd@lists.infradead.org, carolyn.j.smith@exgate.tek.com, Stephen Rothwell <sfr@canb.auug.org.au>, Jim Cromie <jim.cromie@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Sachin P Sant <sachinp@linux.vnet.ibm.com>, linux-next <linux-next@vger.kernel.org>, Scott Wood <scottwood@freescale.com>, dwmw2@infradead.org, Balbir Singh <balbir@linux.vnet.ibm.com>
+To: Dave Hansen <dave@linux.vnet.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Subrata Modak wrote:
-> On Fri, 2009-07-10 at 08:59 +0300, Artem Bityutskiy wrote:
->> On Mon, 2009-07-06 at 07:47 +0530, Subrata Modak wrote:
->>> Hi,
->>>
->>> Is there somebody else whom i should also address to get an attenti=
-on
->>> for this patch ? I apolozise if i have not included someone. Kindly
->>> connect to the concerned.
->> I'm putting your patch to l2-mtd-2.6.git.
->=20
-> Thanks very much. Would i receive some automatic confirmation once it
-> make to Linus tree ?
+Dave Hansen wrote:
+> This doesn't look like a kernel bug at all to me.  You're out of memory,
+> out of swap, and the thing that got killed was the thing allocating
+> memory.  You're also down to 65MB of pagecache, which is awfully low for
+> a 6GB machine.  That tells me it's also been effective in reclaiming
+> disk cache.
+>
+> There are a couple of possibilities:
+> 1. hackbench is broken, allocating too much memory and ooming, or it
+>    has been misconfigured by a user
+> 2. hackbench broke because something the kernel is telling it is wrong
+> 3. The kernel is leaking (or just plain using) some memory more than a
+>    few releases ago, and that caused the oom.
+>
+> I'd go back and carefully examine how hackbench is being run and that it
+> is consistent.  You should also double-check your finding that the
+> several-day-old -next isn't seeing this issue.
+>   
+Thanks Dave for the pointers.
 
-I do not think so. I'm not MTD maintainer and in l2-mtd-2.6.git
-I just collect random patches, which the maintainer then usually
-takes from my tree.
+I am able to consistently recreate this issue with next 0708. hackbench
+creates 3600 tasks in my case. After starting the tests machine becomes
+unresponsive and i finally have to reboot it.
 
---=20
-Best Regards,
-Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
-=D1=86=D0=BA=D0=B8=D0=B9)
+The test ran successfully on next03, but unfortunately i did
+not save the config file for that run. If i use the config file from
+0708 and compile a 0703, the machine becomes unresponsive because
+of OOM's. I can't explain why the test ran successfully against
+0703 :-( in previous attempt.
+
+Only data point i have at this time is the same tests runs successfully
+against 2.6.31-rc2. But may be that's not even an argument :-)
+
+Thanks
+-Sachin
+
+
+
+-- 
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
