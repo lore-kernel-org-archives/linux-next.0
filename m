@@ -1,7 +1,7 @@
-From: Subrata Modak <subrata@linux.vnet.ibm.com>
+From: David Woodhouse <dwmw2@infradead.org>
 Subject: Re: [PATCH Resend2] Remove 'SBC8240 Wind River' Device Driver Code
-Date: Fri, 10 Jul 2009 14:17:05 +0530
-Message-ID: <1247215625.6630.6.camel@subratamodak.linux.ibm.com>
+Date: Fri, 10 Jul 2009 09:53:27 +0100
+Message-ID: <1247216007.29541.2.camel@macbook.infradead.org>
 References: <20090701135247.27488.10776.sendpatchset@subratamodak.linux.ibm.com>
 	 <1246846628.5743.2.camel@subratamodak.linux.ibm.com>
 	 <1247205588.20721.353.camel@localhost.localdomain>
@@ -9,55 +9,31 @@ References: <20090701135247.27488.10776.sendpatchset@subratamodak.linux.ibm.com>
 	 <4A56DD51.5040703@gmail.com>
 	 <1247209961.6630.3.camel@subratamodak.linux.ibm.com>
 	 <1247210095.20721.362.camel@localhost.localdomain>
-Reply-To: subrata@linux.vnet.ibm.com
+	 <1247215625.6630.6.camel@subratamodak.linux.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e37.co.us.ibm.com ([32.97.110.158]:59116 "EHLO
-	e37.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750722AbZGJIrN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 10 Jul 2009 04:47:13 -0400
-In-Reply-To: <1247210095.20721.362.camel@localhost.localdomain>
+Received: from casper.infradead.org ([85.118.1.10]:45666 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750936AbZGJIxj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 10 Jul 2009 04:53:39 -0400
+In-Reply-To: <1247215625.6630.6.camel@subratamodak.linux.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: dedekind@infradead.org, dwmw2@infradead.org
-Cc: Artem Bityutskiy <dedekind1@gmail.com>, linux-mtd@lists.infradead.org, carolyn.j.smith@exgate.tek.com, Stephen Rothwell <sfr@canb.auug.org.au>, Jim Cromie <jim.cromie@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Sachin P Sant <sachinp@linux.vnet.ibm.com>, linux-next <linux-next@vger.kernel.org>, Scott Wood <scottwood@freescale.com>, Balbir Singh <balbir@linux.vnet.ibm.com>
+To: subrata@linux.vnet.ibm.com
+Cc: dedekind@infradead.org, Artem Bityutskiy <dedekind1@gmail.com>, linux-mtd@lists.infradead.org, carolyn.j.smith@exgate.tek.com, Stephen Rothwell <sfr@canb.auug.org.au>, Jim Cromie <jim.cromie@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Sachin P Sant <sachinp@linux.vnet.ibm.com>, linux-next <linux-next@vger.kernel.org>, Scott Wood <scottwood@freescale.com>, Balbir Singh <balbir@linux.vnet.ibm.com>
 
-On Fri, 2009-07-10 at 10:14 +0300, Artem Bityutskiy wrote:
-> On Fri, 2009-07-10 at 12:42 +0530, Subrata Modak wrote:
-> > On Fri, 2009-07-10 at 09:18 +0300, Artem Bityutskiy wrote:
-> > > Subrata Modak wrote:
-> > > > On Fri, 2009-07-10 at 08:59 +0300, Artem Bityutskiy wrote:
-> > > >> On Mon, 2009-07-06 at 07:47 +0530, Subrata Modak wrote:
-> > > >>> Hi,
-> > > >>>
-> > > >>> Is there somebody else whom i should also address to get an attention
-> > > >>> for this patch ? I apolozise if i have not included someone. Kindly
-> > > >>> connect to the concerned.
-> > > >> I'm putting your patch to l2-mtd-2.6.git.
-> > > > 
-> > > > Thanks very much. Would i receive some automatic confirmation once it
-> > > > make to Linus tree ?
-> > > 
-> > > I do not think so. I'm not MTD maintainer and in l2-mtd-2.6.git
-> > > I just collect random patches, which the maintainer then usually
-> > > takes from my tree.
-> > 
-> > Thanks. I just want this through before 2.6.31 stable is released, so
-> > that the build fails does not occur on next trees based on that stable
-> > one.
-> 
-> Then you should bug dwmw2.
+On Fri, 2009-07-10 at 14:17 +0530, Subrata Modak wrote:
+> Is it possible to get this patch through and before 2.6.31 stable is
+> released ?
 
-Hmmm. I see.
+Hm, I was ignoring this until I was sure all the last-minute fixes for
+2.6.31 were out of the way; I was planning to submit it for 2.6.32.
 
-Hi dwmw2,
+Do we really need to submit it for 2.6.31? It's not a regression, is it?
+It's been like this for _ages_.
 
-Is it possible to get this patch through and before 2.6.31 stable is
-released ?
-
-Regards--
-Subrata
-
-> 
+-- 
+David Woodhouse                            Open Source Technology Centre
+David.Woodhouse@intel.com                              Intel Corporation
