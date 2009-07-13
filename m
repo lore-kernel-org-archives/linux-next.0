@@ -1,41 +1,52 @@
-From: Dave Jones <davej@redhat.com>
-Subject: Re: linux-next: Tree for July 10 (cpufreq oops)
-Date: Fri, 10 Jul 2009 15:07:28 -0400
-Message-ID: <20090710190728.GA6240@redhat.com>
-References: <20090710151846.c7ebec37.sfr@canb.auug.org.au> <200907102054.37956.bzolnier@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: usb.current tree build warnings
+Date: Mon, 13 Jul 2009 11:38:26 +1000
+Message-ID: <20090713113826.073e7bb4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__13_Jul_2009_11_38_26_+1000_1Ra_jO=LFoghrlaT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:50140 "EHLO mx2.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:32903 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752440AbZGJTHl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 10 Jul 2009 15:07:41 -0400
-Content-Disposition: inline
-In-Reply-To: <200907102054.37956.bzolnier@gmail.com>
+	id S1751842AbZGMBid (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 12 Jul 2009 21:38:33 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>
 
-On Fri, Jul 10, 2009 at 08:54:37PM +0200, Bartlomiej Zolnierkiewicz wrote:
- > On Friday 10 July 2009 07:18:46 Stephen Rothwell wrote:
- > > Hi all,
- > > 
- > > Changes since 20090709:
- >  
- > [ this particular problem goes back to next-20090709 ]
- > 
- > From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
- > Subject: [PATCH] cpufreq: fix OOPS in __cpufreq_governor()
- > 
- > commit 0d923c15b774bed3491400bae6db50481ac8b9e4 ("[CPUFREQ] Factor out
- > policy setting from cpufreq_add_dev") accidentally reordered new_policy
- > setup and policy->governor reset.
- > 
- > Fix it, also update comment to match the function name while at it.
+--Signature=_Mon__13_Jul_2009_11_38_26_+1000_1Ra_jO=LFoghrlaT
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks Bart, good eyes.
+Hi Greg,
 
-I'll fold this into the original patch and regenerate the tree.
+Today's linux-next build (x86_64 allmodconfig) produced this warning:
 
-	Dave 
+drivers/usb/serial/option.c: In function 'option_instat_callback':
+drivers/usb/serial/option.c:834: warning: unused variable 'serial'
+drivers/usb/serial/option.c: In function 'option_open':
+drivers/usb/serial/option.c:930: warning: unused variable 'serial'
+
+Introduced by commit d9860b9ea060492b9ce239c6317f65db1d96ffb9 ("USB:
+option: remove unnecessary and erroneous code").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__13_Jul_2009_11_38_26_+1000_1Ra_jO=LFoghrlaT
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkpakBIACgkQjjKRsyhoI8z3xQCfa7Db/hS58NsFNWGyzrElgeKU
+RKcAnAqkiy6l9uasZx5YKSyUPxfN6Nqg
+=hTQy
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__13_Jul_2009_11_38_26_+1000_1Ra_jO=LFoghrlaT--
