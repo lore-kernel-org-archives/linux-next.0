@@ -1,50 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the percpu tree with the sh tree
-Date: Mon, 13 Jul 2009 15:52:28 +1000
-Message-ID: <20090713155228.89bc9a24.sfr@canb.auug.org.au>
+Subject: linux-next: driver-core tree build warning
+Date: Mon, 13 Jul 2009 17:26:46 +1000
+Message-ID: <20090713172646.55b9acee.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__13_Jul_2009_15_52_28_+1000_VIkxR_FryPW=_cGs"
+ boundary="Signature=_Mon__13_Jul_2009_17_26_46_+1000_+mjsBoU_SS7jqa+u"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37264 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40511 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751000AbZGMFwf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Jul 2009 01:52:35 -0400
+	id S1752406AbZGMH05 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Jul 2009 03:26:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tim Abbott <tabbott@ksplice.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Brownell <dbrownell@users.sourceforge.net>
 
---Signature=_Mon__13_Jul_2009_15_52_28_+1000_VIkxR_FryPW=_cGs
+--Signature=_Mon__13_Jul_2009_17_26_46_+1000_+mjsBoU_SS7jqa+u
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-Today's linux-next merge of the percpu tree got a conflict in
-arch/sh/kernel/vmlinux.lds.S between commit
-2802e34590f290173a3f2aa5a4d662ae5373b420 ("sh: Clean up linker script
-using new linker script macros") from the sh tree and commit
-023bf6f1b8bf58dc4da7f0dc1cf4787b0d5297c1 ("linker script: unify usage of
-discard definition") from the percpu tree.
+Today's linux-next build (x86_64 allmodconfig) produced this warning:
 
-It looks like the latter is a superset of the former, so I used it.
+drivers/firewire/core-device.c: In function 'init_fw_attribute_group':
+drivers/firewire/core-device.c:315: warning: assignment from incompatible p=
+ointer type
+
+Introduced by commit 025a6a26b70e5dc12ab9333ea43d70c735f459ac ("driver
+model: constify attribute groups").
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__13_Jul_2009_15_52_28_+1000_VIkxR_FryPW=_cGs
+--Signature=_Mon__13_Jul_2009_17_26_46_+1000_+mjsBoU_SS7jqa+u
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkpay5wACgkQjjKRsyhoI8xgTQCgvHFxyoMKnTIsJAGKVJghX0Ql
-udkAoL3TC0hsGQMOj0GhPkZHcy/xefjt
-=fxSw
+iEYEARECAAYFAkpa4bYACgkQjjKRsyhoI8wdRwCgpEEyntdypiVpg6aOKVn7pb5f
+o8MAn2D40vz/ejG57be8duLQRnVaUzkT
+=qBsq
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__13_Jul_2009_15_52_28_+1000_VIkxR_FryPW=_cGs--
+--Signature=_Mon__13_Jul_2009_17_26_46_+1000_+mjsBoU_SS7jqa+u--
