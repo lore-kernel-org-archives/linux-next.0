@@ -1,61 +1,74 @@
-From: Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH] linux-next arch/ia64/kernel/setup.c: Fix setup_per_cpu_areas() compilation error
-Date: Mon, 13 Jul 2009 13:09:43 -0700
-Message-ID: <20090713200942.GA19606@linux-os.sc.intel.com>
-References: <A6AD88C3F2289247BE726C37303E1EB8B06CB5E9@orsmsx505.amr.corp.intel.com>
+From: David Brownell <david-b@pacbell.net>
+Subject: Re: linux-next: driver-core tree build warning
+Date: Mon, 13 Jul 2009 14:23:59 -0700
+Message-ID: <200907131423.59963.david-b@pacbell.net>
+References: <20090713172646.55b9acee.sfr@canb.auug.org.au> <20090713175106.d2efbd60.sfr@canb.auug.org.au> <20090713171802.GB22728@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:24763 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756960AbZGMUJp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Jul 2009 16:09:45 -0400
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757445AbZGMVYF@vger.kernel.org>
+In-Reply-To: <20090713171802.GB22728@kroah.com>
 Content-Disposition: inline
-In-Reply-To: <A6AD88C3F2289247BE726C37303E1EB8B06CB5E9@orsmsx505.amr.corp.intel.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-ia64@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Fix ia64 build setup_per_cpu_areas() redifinition issue in UP configuration
+On Monday 13 July 2009, Greg KH wrote:
+> David, care to send patches fixing these warnings?
 
-When compiling ia64 kernel in UP configuration, the following compilation errors
-are reported:
+Here's a single patch:
 
-arch/ia64/kernel/setup.c:860: error: redefinition of 'setup_per_cpu_areas'
-include/linux/percpu.h:185: error: previous definition of 'setup_per_cpu_areas' was here
+=================== CUT HERE
+From: David Brownell <dbrownell@users.sourceforge.net>
 
-The patch fixes the issue in arch/ia64/kernel/setup.c
+Some more attribute group pointers need to become const-friendly:
 
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+drivers/firewire/core-device.c:315: warning: assignment from incompatible pointer type
+drivers/mtd/mtdcore.c:227: warning: initialization from incompatible pointer type
+drivers/block/cciss.c:582: warning: initialization from incompatible pointer type
 
+Two of these post-date the original constification patch; not sure
+how I missed Firewire the first time.
+
+Signed-off-by: David Brownell <dbrownell@users.sourceforge.net>
 ---
+ drivers/block/cciss.c          |    2 +-
+ drivers/firewire/core-device.c |    2 +-
+ drivers/mtd/mtdcore.c          |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-The commit e74e396204bfcb67570ba4517b08f5918e69afea in linux-next causes this
-build issue.  
-
- setup.c |    6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/arch/ia64/kernel/setup.c b/arch/ia64/kernel/setup.c
-index 1b23ec1..1de86c9 100644
---- a/arch/ia64/kernel/setup.c
-+++ b/arch/ia64/kernel/setup.c
-@@ -855,11 +855,17 @@ identify_cpu (struct cpuinfo_ia64 *c)
- 	c->unimpl_pa_mask = ~((1L<<63) | ((1L << phys_addr_size) - 1));
+--- a/drivers/block/cciss.c
++++ b/drivers/block/cciss.c
+@@ -572,7 +572,7 @@ static struct attribute_group cciss_dev_
+ 	.attrs = cciss_dev_attrs,
+ };
+ 
+-static struct attribute_group *cciss_dev_attr_groups[] = {
++static const struct attribute_group *cciss_dev_attr_groups[] = {
+ 	&cciss_dev_attr_group,
+ 	NULL
+ };
+--- a/drivers/firewire/core-device.c
++++ b/drivers/firewire/core-device.c
+@@ -312,7 +312,7 @@ static void init_fw_attribute_group(stru
+ 	group->groups[0] = &group->group;
+ 	group->groups[1] = NULL;
+ 	group->group.attrs = group->attrs;
+-	dev->groups = group->groups;
++	dev->groups = (const struct attribute_group **) group->groups;
  }
  
-+/*
-+ * In UP configuration, setup_per_cpu_areas() is defined in
-+ * include/linux/percpu.h
-+ */
-+#ifdef CONFIG_SMP
- void __init
- setup_per_cpu_areas (void)
- {
- 	/* start_kernel() requires this... */
- }
-+#endif
+ static ssize_t modalias_show(struct device *dev,
+--- a/drivers/mtd/mtdcore.c
++++ b/drivers/mtd/mtdcore.c
+@@ -217,7 +217,7 @@ struct attribute_group mtd_group = {
+ 	.attrs		= mtd_attrs,
+ };
  
- /*
-  * Do the following calculations:
+-struct attribute_group *mtd_groups[] = {
++struct const attribute_group *mtd_groups[] = {
+ 	&mtd_group,
+ 	NULL,
+ };
