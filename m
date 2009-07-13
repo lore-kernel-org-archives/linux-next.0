@@ -1,74 +1,27 @@
-From: David Brownell <david-b@pacbell.net>
+From: Greg KH <greg@kroah.com>
 Subject: Re: linux-next: driver-core tree build warning
-Date: Mon, 13 Jul 2009 14:23:59 -0700
-Message-ID: <200907131423.59963.david-b@pacbell.net>
-References: <20090713172646.55b9acee.sfr@canb.auug.org.au> <20090713175106.d2efbd60.sfr@canb.auug.org.au> <20090713171802.GB22728@kroah.com>
+Date: Mon, 13 Jul 2009 14:27:27 -0700
+Message-ID: <20090713212727.GA3813@kroah.com>
+References: <20090713172646.55b9acee.sfr@canb.auug.org.au>
+ <20090713175106.d2efbd60.sfr@canb.auug.org.au>
+ <20090713171802.GB22728@kroah.com>
+ <200907131423.59963.david-b@pacbell.net>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757445AbZGMVYF@vger.kernel.org>
-In-Reply-To: <20090713171802.GB22728@kroah.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757532AbZGMVf3@vger.kernel.org>
 Content-Disposition: inline
+In-Reply-To: <200907131423.59963.david-b@pacbell.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
+To: David Brownell <david-b@pacbell.net>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Monday 13 July 2009, Greg KH wrote:
-> David, care to send patches fixing these warnings?
+On Mon, Jul 13, 2009 at 02:23:59PM -0700, David Brownell wrote:
+> On Monday 13 July 2009, Greg KH wrote:
+> > David, care to send patches fixing these warnings?
+> 
+> Here's a single patch:
 
-Here's a single patch:
+Thanks, I'll merge this with the original one.
 
-=================== CUT HERE
-From: David Brownell <dbrownell@users.sourceforge.net>
-
-Some more attribute group pointers need to become const-friendly:
-
-drivers/firewire/core-device.c:315: warning: assignment from incompatible pointer type
-drivers/mtd/mtdcore.c:227: warning: initialization from incompatible pointer type
-drivers/block/cciss.c:582: warning: initialization from incompatible pointer type
-
-Two of these post-date the original constification patch; not sure
-how I missed Firewire the first time.
-
-Signed-off-by: David Brownell <dbrownell@users.sourceforge.net>
----
- drivers/block/cciss.c          |    2 +-
- drivers/firewire/core-device.c |    2 +-
- drivers/mtd/mtdcore.c          |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
---- a/drivers/block/cciss.c
-+++ b/drivers/block/cciss.c
-@@ -572,7 +572,7 @@ static struct attribute_group cciss_dev_
- 	.attrs = cciss_dev_attrs,
- };
- 
--static struct attribute_group *cciss_dev_attr_groups[] = {
-+static const struct attribute_group *cciss_dev_attr_groups[] = {
- 	&cciss_dev_attr_group,
- 	NULL
- };
---- a/drivers/firewire/core-device.c
-+++ b/drivers/firewire/core-device.c
-@@ -312,7 +312,7 @@ static void init_fw_attribute_group(stru
- 	group->groups[0] = &group->group;
- 	group->groups[1] = NULL;
- 	group->group.attrs = group->attrs;
--	dev->groups = group->groups;
-+	dev->groups = (const struct attribute_group **) group->groups;
- }
- 
- static ssize_t modalias_show(struct device *dev,
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@ -217,7 +217,7 @@ struct attribute_group mtd_group = {
- 	.attrs		= mtd_attrs,
- };
- 
--struct attribute_group *mtd_groups[] = {
-+struct const attribute_group *mtd_groups[] = {
- 	&mtd_group,
- 	NULL,
- };
+greg k-h
