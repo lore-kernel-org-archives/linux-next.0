@@ -1,38 +1,61 @@
-From: Robin Getz <rgetz@blackfin.uclinux.org>
-Subject: Re: linux-next: Tree for July 13
-Date: Mon, 13 Jul 2009 14:33:47 -0400
-Message-ID: <200907131433.47766.rgetz@blackfin.uclinux.org>
-References: <20090713180524.72f613dc.sfr@canb.auug.org.au>
+From: Fenghua Yu <fenghua.yu@intel.com>
+Subject: [PATCH] linux-next arch/ia64/kernel/setup.c: Fix setup_per_cpu_areas() compilation error
+Date: Mon, 13 Jul 2009 13:09:43 -0700
+Message-ID: <20090713200942.GA19606@linux-os.sc.intel.com>
+References: <A6AD88C3F2289247BE726C37303E1EB8B06CB5E9@orsmsx505.amr.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nwd2mail10.analog.com ([137.71.25.55]:56594 "EHLO
-	nwd2mail10.analog.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756825AbZGMSaY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Jul 2009 14:30:24 -0400
-In-Reply-To: <20090713180524.72f613dc.sfr@canb.auug.org.au>
+Received: from mga01.intel.com ([192.55.52.88]:24763 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756960AbZGMUJp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Jul 2009 16:09:45 -0400
 Content-Disposition: inline
+In-Reply-To: <A6AD88C3F2289247BE726C37303E1EB8B06CB5E9@orsmsx505.amr.corp.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-ia64@vger.kernel.org
 
-On Mon 13 Jul 2009 04:05, Stephen Rothwell pondered:
-> Status of my local build tests will be at
-> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-> advice about cross compilers/configs that work, we are always open to add
-> more builds.
+Fix ia64 build setup_per_cpu_areas() redifinition issue in UP configuration
 
-A working Blackfin gcc port should always be avaliable at:
+When compiling ia64 kernel in UP configuration, the following compilation errors
+are reported:
 
-http://blackfin.uclinux.org/gf/project/toolchain/frs/?action=FrsReleaseBrowse&frs_package_id=127
+arch/ia64/kernel/setup.c:860: error: redefinition of 'setup_per_cpu_areas'
+include/linux/percpu.h:185: error: previous definition of 'setup_per_cpu_areas' was here
 
-We normally build up toolchains for *.i386.rpm &  *.i386.tar.bz2. If you need 
-anything else let us know.
+The patch fixes the issue in arch/ia64/kernel/setup.c
 
-All the defconfigs in arch/blackfin/configs/ should be maintained, and 
-working - if not we can quickly fix them - if you wanted to pick one - 
-BF537-STAMP_defconfig would be a good one.
+Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 
--Robin
+---
+
+The commit e74e396204bfcb67570ba4517b08f5918e69afea in linux-next causes this
+build issue.  
+
+ setup.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/ia64/kernel/setup.c b/arch/ia64/kernel/setup.c
+index 1b23ec1..1de86c9 100644
+--- a/arch/ia64/kernel/setup.c
++++ b/arch/ia64/kernel/setup.c
+@@ -855,11 +855,17 @@ identify_cpu (struct cpuinfo_ia64 *c)
+ 	c->unimpl_pa_mask = ~((1L<<63) | ((1L << phys_addr_size) - 1));
+ }
+ 
++/*
++ * In UP configuration, setup_per_cpu_areas() is defined in
++ * include/linux/percpu.h
++ */
++#ifdef CONFIG_SMP
+ void __init
+ setup_per_cpu_areas (void)
+ {
+ 	/* start_kernel() requires this... */
+ }
++#endif
+ 
+ /*
+  * Do the following calculations:
