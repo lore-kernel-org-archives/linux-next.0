@@ -1,59 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: usb series import failure
-Date: Tue, 14 Jul 2009 11:26:48 +1000
-Message-ID: <20090714112648.d2157b44.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ttydev tree with Linus' tree
+Date: Tue, 14 Jul 2009 13:46:44 +1000
+Message-ID: <20090714134644.644cb3fc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__14_Jul_2009_11_26_48_+1000_ZMDK9gkEJk_eopLM"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33943 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53884 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752185AbZGNB0z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Jul 2009 21:26:55 -0400
+	id S1752936AbZGNDqr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Jul 2009 23:46:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>
 
---Signature=_Tue__14_Jul_2009_11_26_48_+1000_ZMDK9gkEJk_eopLM
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Alan,
 
-Hi Greg,
+Today's linux-next merge of the ttydev tree got a conflict in
+drivers/usb/serial/sierra.c between commit
+7bae0a070db4bc2761dd9515f450cdfa3f3f248c ("USB: Sierra: fix oops upon
+device close") from Linus' tree and commit
+2db76e5f8b74d5eb0d26a55d4b4e0b2b1c76ff4d ("tty-usb-sierra-updates-pm")
+from the ttydev tree.
 
-Today's linux-next import of the usb quilt series failed like this:
-
-usb-make-the-usbfs_snoop-log-more-pertinent.patch
-error: patch failed: drivers/usb/core/devio.c:347
-error: drivers/usb/core/devio.c: patch does not apply
-
-I commented out the above patch which lead to:
-
-usb-gadget-pxa25x-basic-transceiver-support.patch
-error: patch failed: drivers/usb/gadget/pxa25x_udc.c:2162
-error: drivers/usb/gadget/pxa25x_udc.c: patch does not apply
-
-And on ...
-
-It looks like the some of the usb patches haven't been updated for the
-rebase onto -git9.  I have dropped the usb and staging trees for today.
-
---=20
+Just context changes.  I fixed ti up (see below) and can carry the fix
+for a while.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__14_Jul_2009_11_26_48_+1000_ZMDK9gkEJk_eopLM
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkpb3tgACgkQjjKRsyhoI8y1EACeIUBfpVwIc74E7vjN8MLJ5CGM
-0ZsAnjpsKlHA9qXzW06z715QyVCLrW1T
-=kAoM
------END PGP SIGNATURE-----
-
---Signature=_Tue__14_Jul_2009_11_26_48_+1000_ZMDK9gkEJk_eopLM--
+diff --cc drivers/usb/serial/sierra.c
+index f48d05e,9b22dff..0000000
+--- a/drivers/usb/serial/sierra.c
++++ b/drivers/usb/serial/sierra.c
+@@@ -841,7 -884,11 +884,10 @@@ static void sierra_release(struct usb_s
+  		portdata = usb_get_serial_port_data(port);
+  		if (!portdata)
+  			continue;
++ 		portdata->suspend_status = 0;
++ 		device_remove_file(&port->dev, &dev_attr_suspend_status);
++ 
+  		kfree(portdata);
+ -		usb_set_serial_port_data(port, NULL);
+  	}
+  }
+  
+@@@ -864,8 -979,11 +978,11 @@@ static struct usb_serial_driver sierra_
+  	.tiocmget          = sierra_tiocmget,
+  	.tiocmset          = sierra_tiocmset,
+  	.attach            = sierra_startup,
+ -	.disconnect        = sierra_disconnect,
+ +	.release           = sierra_release,
++ 	.port_probe	   = sierra_create_sysfs_attrs,
+  	.read_int_callback = sierra_instat_callback,
++ 	.suspend           = sierra_suspend,
++ 	.resume            = sierra_resume,
+  };
+  
+  /* Functions used by new usb-serial code. */
