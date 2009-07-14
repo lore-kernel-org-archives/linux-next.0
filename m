@@ -1,44 +1,56 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: usb series import failure
-Date: Mon, 13 Jul 2009 21:03:46 -0700
-Message-ID: <20090714040346.GA10393@kroah.com>
-References: <20090714112648.d2157b44.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: ttydev tree build failure
+Date: Tue, 14 Jul 2009 14:10:03 +1000
+Message-ID: <20090714141003.cdc11a47.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__14_Jul_2009_14_10_03_+1000_H1g4u5vlQYvQycxb"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:45623 "EHLO coco.kroah.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34527 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750795AbZGNEEX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Jul 2009 00:04:23 -0400
-Content-Disposition: inline
-In-Reply-To: <20090714112648.d2157b44.sfr@canb.auug.org.au>
+	id S1750699AbZGNEKO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Jul 2009 00:10:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jul 14, 2009 at 11:26:48AM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next import of the usb quilt series failed like this:
-> 
-> usb-make-the-usbfs_snoop-log-more-pertinent.patch
-> error: patch failed: drivers/usb/core/devio.c:347
-> error: drivers/usb/core/devio.c: patch does not apply
-> 
-> I commented out the above patch which lead to:
-> 
-> usb-gadget-pxa25x-basic-transceiver-support.patch
-> error: patch failed: drivers/usb/gadget/pxa25x_udc.c:2162
-> error: drivers/usb/gadget/pxa25x_udc.c: patch does not apply
-> 
-> And on ...
-> 
-> It looks like the some of the usb patches haven't been updated for the
-> rebase onto -git9.  I have dropped the usb and staging trees for today.
+--Signature=_Tue__14_Jul_2009_14_10_03_+1000_H1g4u5vlQYvQycxb
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry, it's now rebased properly and pushed out.
+Hi Alan,
 
-thanks,
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-greg k-h
+drivers/serial/serial_core.c: In function 'uart_close':
+drivers/serial/serial_core.c:1341: error: 'struct tty_port' has no member n=
+amed 'cons'
+drivers/serial/serial_core.c:1341: error: 'struct tty_port' has no member n=
+amed 'cons'
+drivers/serial/serial_core.c:1341: error: 'struct tty_port' has no member n=
+amed 'line'
+
+Caused by commit 85325e93e9473dd779e8378c1365f9d8a11f9b9e
+("serial-port-portptr").
+
+I have used the version of the ttydev tree from next-20090713 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__14_Jul_2009_14_10_03_+1000_H1g4u5vlQYvQycxb
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkpcBRsACgkQjjKRsyhoI8xH6gCeNmIoAcoEsa4yk/OHdxCWgpsu
+h+oAnRBdxWTrx52cw54PL6OP7eJ11MSs
+=/jHI
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__14_Jul_2009_14_10_03_+1000_H1g4u5vlQYvQycxb--
