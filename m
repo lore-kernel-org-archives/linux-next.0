@@ -1,55 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: driver-core tree build warning
-Date: Tue, 14 Jul 2009 10:44:42 +1000
-Message-ID: <20090714104442.4921e2a8.sfr@canb.auug.org.au>
-References: <20090713172646.55b9acee.sfr@canb.auug.org.au>
-	<20090713175106.d2efbd60.sfr@canb.auug.org.au>
-	<20090713171802.GB22728@kroah.com>
-	<200907131423.59963.david-b@pacbell.net>
-	<20090713213614.GA16674@kroah.com>
+Subject: linux-next: usb series import failure
+Date: Tue, 14 Jul 2009 11:26:48 +1000
+Message-ID: <20090714112648.d2157b44.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__14_Jul_2009_10_44_42_+1000_exzCSOkQtc9XHbdk"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752005AbZGNAos@vger.kernel.org>
-In-Reply-To: <20090713213614.GA16674@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Tue__14_Jul_2009_11_26_48_+1000_ZMDK9gkEJk_eopLM"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:33943 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752185AbZGNB0z (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Jul 2009 21:26:55 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: David Brownell <david-b@pacbell.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__14_Jul_2009_10_44_42_+1000_exzCSOkQtc9XHbdk
+--Signature=_Tue__14_Jul_2009_11_26_48_+1000_ZMDK9gkEJk_eopLM
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 13 Jul 2009 14:36:14 -0700 Greg KH <greg@kroah.com> wrote:
->
-> On Mon, Jul 13, 2009 at 02:23:59PM -0700, David Brownell wrote:
-> > On Monday 13 July 2009, Greg KH wrote:
-> > > David, care to send patches fixing these warnings?
-> >=20
-> > Here's a single patch:
->=20
-> Now merged and pushed out.  Stephen, this should be now resolved in your
-> builds for the next -next tree.
+Hi Greg,
 
-Thanks all.
+Today's linux-next import of the usb quilt series failed like this:
+
+usb-make-the-usbfs_snoop-log-more-pertinent.patch
+error: patch failed: drivers/usb/core/devio.c:347
+error: drivers/usb/core/devio.c: patch does not apply
+
+I commented out the above patch which lead to:
+
+usb-gadget-pxa25x-basic-transceiver-support.patch
+error: patch failed: drivers/usb/gadget/pxa25x_udc.c:2162
+error: drivers/usb/gadget/pxa25x_udc.c: patch does not apply
+
+And on ...
+
+It looks like the some of the usb patches haven't been updated for the
+rebase onto -git9.  I have dropped the usb and staging trees for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__14_Jul_2009_10_44_42_+1000_exzCSOkQtc9XHbdk
+--Signature=_Tue__14_Jul_2009_11_26_48_+1000_ZMDK9gkEJk_eopLM
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkpb1PoACgkQjjKRsyhoI8zB5ACdE4706A2oTfFBtn6XcFIk7sEj
-JZsAnjFBmaIUGSeJlQgBInw51/0Zr5jA
-=Bf2W
+iEYEARECAAYFAkpb3tgACgkQjjKRsyhoI8y1EACeIUBfpVwIc74E7vjN8MLJ5CGM
+0ZsAnjpsKlHA9qXzW06z715QyVCLrW1T
+=kAoM
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__14_Jul_2009_10_44_42_+1000_exzCSOkQtc9XHbdk--
+--Signature=_Tue__14_Jul_2009_11_26_48_+1000_ZMDK9gkEJk_eopLM--
