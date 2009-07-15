@@ -1,61 +1,77 @@
-From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Subject: Re: [PATCH] percpu: add dummy pcpu_lpage_remapped() for !CONFIG_SMP
-Date: Wed, 15 Jul 2009 21:55:56 +0530
-Message-ID: <20090715162556.GA4767@linux.vnet.ibm.com>
-References: <20090706162632.fdde002e.sfr@canb.auug.org.au> <20090706095343.df21d4c9.rdunlap@xenotime.net> <20090709102248.01e2312c.randy.dunlap@oracle.com> <20090715094720.GA6674@linux.vnet.ibm.com> <20090715195807.f0d1a7ea.sfr@canb.auug.org.au> <4A5DA937.6040605@kernel.org> <4A5DEA0D.8050706@gmail.com>
-Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Subject: Re: linux-next: Tree for July 15 (bdi warning)
+Date: Wed, 15 Jul 2009 20:41:07 +0200
+Message-ID: <200907152041.08025.bzolnier@gmail.com>
+References: <20090715161841.9be17451.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp06.in.ibm.com ([59.145.155.6]:48867 "EHLO
-	e28smtp06.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932143AbZGOQ0D (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Jul 2009 12:26:03 -0400
+Received: from mail-fx0-f218.google.com ([209.85.220.218]:48180 "EHLO
+	mail-fx0-f218.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755939AbZGOSgY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Jul 2009 14:36:24 -0400
+In-Reply-To: <20090715161841.9be17451.sfr@canb.auug.org.au>
 Content-Disposition: inline
-In-Reply-To: <4A5DEA0D.8050706@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <htejun@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
 
-* Tejun Heo <htejun@gmail.com> [2009-07-15 23:39:09]:
+On Wednesday 15 July 2009 08:18:41 Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20090714:
 
-> !CONFIG_SMP was missing pcpu_lpage_remapped() definition causing build
-> failure.  Add dummy implementation.  This was discovered by linux-next
-> testing.
->
+Jens, I see the following warning sometimes during disconnect
+of usb-storage device, is this anything to be worried about?
 
-Thanks, the patch fixes the build failure.
-
-Tested-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Cc: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
-> Yeap, it was missing dummy definition on !CONFIG_SMP.  This patch
-> fixes it.  Committed to percpu#for-next.  Thanks.
-> 
->  include/linux/percpu.h |    5 +++++
->  1 files changed, 5 insertions(+), 0 deletions(-)
-> 
-> diff --git a/include/linux/percpu.h b/include/linux/percpu.h
-> index 8ce91af..e134c82 100644
-> --- a/include/linux/percpu.h
-> +++ b/include/linux/percpu.h
-> @@ -184,6 +184,11 @@ static inline void free_percpu(void *p)
-> 
->  static inline void __init setup_per_cpu_areas(void) { }
-> 
-> +static inline void *pcpu_lpage_remapped(void *kaddr)
-> +{
-> +	return NULL;
-> +}
-> +
->  #endif /* CONFIG_SMP */
-> 
->  #define alloc_percpu(type)	(type *)__alloc_percpu(sizeof(type), \
-> -- 
-> 1.6.0.2
-			
-					Kamalesh
+------------[ cut here ]------------
+WARNING: at mm/backing-dev.c:787 bdi_destroy+0x1e/0x4d()
+Hardware name: Extensa 2900
+Modules linked in: nls_iso8859_1 nls_cp437 vfat fat usb_storage radeon sco bnep l2cap bluetooth rfkill lib80211_crypt_tkip xt_state ipt_MASQUERADE iptable_nat nf_nat nf_conntrack_ipv4 nf_conntrack nf_defrag_ipv4 acerhk binfmt_misc uinput snd_intel8x0m snd_intel8x0 snd_ac97_codec ipw2200 ac97_bus snd_pcm snd_timer libipw snd soundcore uhci_hcd ehci_hcd parport_pc snd_page_alloc lib80211 parport [last unloaded: scsi_wait_scan]
+Pid: 183, comm: khubd Tainted: G   M       2.6.31-rc3-next-20090715-03649-g2a49c7b #23
+Call Trace:
+ [<c0129db9>] warn_slowpath_common+0x65/0x7c
+ [<c01705c7>] ? bdi_destroy+0x1e/0x4d
+ [<c0129ddd>] warn_slowpath_null+0xd/0x10
+ [<c01705c7>] bdi_destroy+0x1e/0x4d
+ [<c0229d3d>] blk_release_queue+0x38/0x47
+ [<c0233f10>] kobject_release+0x3f/0x4f
+ [<c0233ed1>] ? kobject_release+0x0/0x4f
+ [<c02349c1>] kref_put+0x39/0x42
+ [<c0233e4d>] kobject_put+0x37/0x3c
+ [<c02285cb>] blk_put_queue+0xd/0xf
+ [<c0228747>] blk_cleanup_queue+0x3d/0x41
+ [<c02b9713>] scsi_free_queue+0x8/0xa
+ [<c02bd0f9>] scsi_device_dev_release_usercontext+0xf6/0x12c
+ [<c02bd003>] ? scsi_device_dev_release_usercontext+0x0/0x12c
+ [<c0137c3c>] execute_in_process_context+0x1d/0x5b
+ [<c02bd001>] scsi_device_dev_release+0x13/0x15
+ [<c02ae690>] device_release+0x35/0x5a
+ [<c0233f10>] kobject_release+0x3f/0x4f
+ [<c0233ed1>] ? kobject_release+0x0/0x4f
+ [<c02349c1>] kref_put+0x39/0x42
+ [<c0233e4d>] kobject_put+0x37/0x3c
+ [<c02ae459>] put_device+0xf/0x11
+ [<c02bd3df>] __scsi_remove_device+0x61/0x65
+ [<c02bb3a8>] scsi_forget_host+0x35/0x51
+ [<c02b6544>] scsi_remove_host+0x69/0xcd
+ [<e0833684>] quiesce_and_remove_host+0x4c/0x7e [usb_storage]
+ [<e083376a>] usb_stor_disconnect+0x13/0x1d [usb_storage]
+ [<c02e039f>] usb_unbind_interface+0x3b/0xa0
+ [<c02b0c84>] __device_release_driver+0x47/0x7f
+ [<c02b0d59>] device_release_driver+0x18/0x23
+ [<c02b04bb>] bus_remove_device+0x7f/0x8c
+ [<c02af04a>] device_del+0xf0/0x127
+ [<c02de6a3>] usb_disable_device+0x61/0xbf
+ [<c02dab52>] usb_disconnect+0x7e/0xda
+ [<c02db666>] hub_thread+0x30f/0xad5
+ [<c013a52d>] ? autoremove_wake_function+0x0/0x2f
+ [<c011eca9>] ? complete+0x34/0x3e
+ [<c02db357>] ? hub_thread+0x0/0xad5
+ [<c013a2f3>] kthread+0x66/0x6b
+ [<c013a28d>] ? kthread+0x0/0x6b
+ [<c01034eb>] kernel_thread_helper+0x7/0x10
+---[ end trace d1600192f6c800d2 ]---
