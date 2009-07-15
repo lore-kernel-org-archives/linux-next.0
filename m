@@ -1,36 +1,48 @@
-From: David Woodhouse <dwmw2@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: dwmw2-iommu tree build failure
-Date: Wed, 15 Jul 2009 08:29:19 +0100
-Message-ID: <1247642959.10050.220.camel@macbook.infradead.org>
+Date: Wed, 15 Jul 2009 17:32:16 +1000
+Message-ID: <20090715173216.ad0dad10.sfr@canb.auug.org.au>
 References: <20090715140116.c2ce8fde.sfr@canb.auug.org.au>
+	<1247642959.10050.220.camel@macbook.infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:52141 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752752AbZGOH3W (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Jul 2009 03:29:22 -0400
-In-Reply-To: <20090715140116.c2ce8fde.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__15_Jul_2009_17_32_16_+1000_OqsfKZsM4vwm_olY"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752900AbZGOHcV@vger.kernel.org>
+In-Reply-To: <1247642959.10050.220.camel@macbook.infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 2009-07-15 at 14:01 +1000, Stephen Rothwell wrote:
-> Hi David,
-> 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
-> 
-> drivers/pci/intel-iommu.c: In function 'dmar_init_reserved_ranges':
-> drivers/pci/intel-iommu.c:1323: error: 'struct iova_domain' has no member named 'iova_alloc_lock'
-> 
-> Caused by commit b25c32b0af7045d3837c44d9685358aeeb9b7ac8 ("intel-iommu:
-> Remove superfluous iova_alloc_lock from IOVA code").
+--Signature=_Wed__15_Jul_2009_17_32_16_+1000_OqsfKZsM4vwm_olY
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Oops, I need to kill the lockdep references to that lock too. Fixed now;
-thanks.
+Hi David,
 
--- 
-David Woodhouse                            Open Source Technology Centre
-David.Woodhouse@intel.com                              Intel Corporation
+On Wed, 15 Jul 2009 08:29:19 +0100 David Woodhouse <dwmw2@infradead.org> wr=
+ote:
+>
+> Oops, I need to kill the lockdep references to that lock too. Fixed now;
+
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__15_Jul_2009_17_32_16_+1000_OqsfKZsM4vwm_olY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkpdhgAACgkQjjKRsyhoI8w7iQCePg1u9uyk1lJdgp8HY/eaOiPd
+zl4AnR6ihr/7zo7BMffO6giIo2sxxC5R
+=MnCE
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__15_Jul_2009_17_32_16_+1000_OqsfKZsM4vwm_olY--
