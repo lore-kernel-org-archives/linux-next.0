@@ -1,39 +1,61 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: pci tree build failure
-Date: Wed, 15 Jul 2009 09:09:13 -0700
-Message-ID: <20090715090913.5dfb96c2@jbarnes-g45>
-References: <20090715114510.ebba4bd0.sfr@canb.auug.org.au>
+From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Subject: Re: [PATCH] percpu: add dummy pcpu_lpage_remapped() for !CONFIG_SMP
+Date: Wed, 15 Jul 2009 21:55:56 +0530
+Message-ID: <20090715162556.GA4767@linux.vnet.ibm.com>
+References: <20090706162632.fdde002e.sfr@canb.auug.org.au> <20090706095343.df21d4c9.rdunlap@xenotime.net> <20090709102248.01e2312c.randy.dunlap@oracle.com> <20090715094720.GA6674@linux.vnet.ibm.com> <20090715195807.f0d1a7ea.sfr@canb.auug.org.au> <4A5DA937.6040605@kernel.org> <4A5DEA0D.8050706@gmail.com>
+Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from outbound-mail-126.bluehost.com ([67.222.38.26]:36114 "HELO
-	outbound-mail-126.bluehost.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S932117AbZGOQJR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 Jul 2009 12:09:17 -0400
-In-Reply-To: <20090715114510.ebba4bd0.sfr@canb.auug.org.au>
+Received: from e28smtp06.in.ibm.com ([59.145.155.6]:48867 "EHLO
+	e28smtp06.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932143AbZGOQ0D (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Jul 2009 12:26:03 -0400
+Content-Disposition: inline
+In-Reply-To: <4A5DEA0D.8050706@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Jesse Brandeburg <jesse.brandeburg@gmail.com>
+To: Tejun Heo <htejun@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>
 
-On Wed, 15 Jul 2009 11:45:10 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+* Tejun Heo <htejun@gmail.com> [2009-07-15 23:39:09]:
 
-> Hi Jesse,
-> 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
-> 
-> arch/x86/pci/common.c:619: error: expected '}' before ';' token
-> 
-> Caused by commit 1c6804b093f5753c2a23aa36f31f66966035bd32 ("x86/PCI:
-> initialize PCI bus node numbers early").  This could not have been
-> built with CONFIG_NUMA set ...
-> 
-> I have used the version of the pci tree from next-20090714 for today.
+> !CONFIG_SMP was missing pcpu_lpage_remapped() definition causing build
+> failure.  Add dummy implementation.  This was discovered by linux-next
+> testing.
+>
 
-Arg, did I apply the patch w/o that fix?  Fixing now...
+Thanks, the patch fixes the build failure.
 
--- 
-Jesse Barnes, Intel Open Source Technology Center
+Tested-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Cc: Randy Dunlap <randy.dunlap@oracle.com>
+> Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+> Yeap, it was missing dummy definition on !CONFIG_SMP.  This patch
+> fixes it.  Committed to percpu#for-next.  Thanks.
+> 
+>  include/linux/percpu.h |    5 +++++
+>  1 files changed, 5 insertions(+), 0 deletions(-)
+> 
+> diff --git a/include/linux/percpu.h b/include/linux/percpu.h
+> index 8ce91af..e134c82 100644
+> --- a/include/linux/percpu.h
+> +++ b/include/linux/percpu.h
+> @@ -184,6 +184,11 @@ static inline void free_percpu(void *p)
+> 
+>  static inline void __init setup_per_cpu_areas(void) { }
+> 
+> +static inline void *pcpu_lpage_remapped(void *kaddr)
+> +{
+> +	return NULL;
+> +}
+> +
+>  #endif /* CONFIG_SMP */
+> 
+>  #define alloc_percpu(type)	(type *)__alloc_percpu(sizeof(type), \
+> -- 
+> 1.6.0.2
+			
+					Kamalesh
