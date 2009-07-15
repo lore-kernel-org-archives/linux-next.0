@@ -1,33 +1,45 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: sound tree build warning
-Date: Wed, 15 Jul 2009 10:12:03 +0100
-Message-ID: <20090715091203.GC8689@rakim.wolfsonmicro.main>
-References: <20090715131354.da512c72.sfr@canb.auug.org.au>
- <20090715083521.GB8689@rakim.wolfsonmicro.main>
- <s5hhbxexqgx.wl%tiwai@suse.de>
+From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Subject: Re: linux-next: Tree for July 6-July 9-July 15 (percpu/x86)
+Date: Wed, 15 Jul 2009 15:17:20 +0530
+Message-ID: <20090715094720.GA6674@linux.vnet.ibm.com>
+References: <20090706162632.fdde002e.sfr@canb.auug.org.au> <20090706095343.df21d4c9.rdunlap@xenotime.net> <20090709102248.01e2312c.randy.dunlap@oracle.com>
+Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:41576 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752426AbZGOJMF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 Jul 2009 05:12:05 -0400
+Received: from e28smtp09.in.ibm.com ([59.145.155.9]:56862 "EHLO
+	e28smtp09.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753707AbZGOJrZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Jul 2009 05:47:25 -0400
 Content-Disposition: inline
-In-Reply-To: <s5hhbxexqgx.wl%tiwai@suse.de>
+In-Reply-To: <20090709102248.01e2312c.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: lkml <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <randy.dunlap@oracle.com>, Tejun Heo <htejun@gmail.com>
 
-On Wed, Jul 15, 2009 at 11:09:18AM +0200, Takashi Iwai wrote:
-> At Wed, 15 Jul 2009 09:35:21 +0100,
-> Mark Brown wrote:
+* Randy Dunlap <randy.dunlap@oracle.com> [2009-07-09 10:22:48]:
 
-> > Fixed, though Takashi seems to be away at the minute so it'll not appear
-> > in -next until he reappears.
+> On Mon, 6 Jul 2009 09:53:43 -0700 Randy Dunlap wrote:
+> 
+> > On Mon, 6 Jul 2009 16:26:32 +1000 Stephen Rothwell wrote:
+> > 
+> > > Hi all,
+> > > 
+> > > Changes since 20090703:
+> > > 
+> > > The percpu tree lost all its conflicts but gained another against the tip
+> > > tree.
+> > 
+> > arch/x86/mm/pageattr.c: In function 'cpa_process_alias':
+> > arch/x86/mm/pageattr.c:749: error: implicit declaration of function 'pcpu_lpage_remapped'
+> > 
+> > config attached.
+> 
+> 
+> Still present in 20090709...
+> 
+still seen in 20090715 with allnoconfig.
 
-> I'm back now and pulled your trees.  The tomorrow's next tree should
-> be fine.
 
-Ah, excellent - I'll send a pull request for the fix later this morning.
+					Kamalesh
