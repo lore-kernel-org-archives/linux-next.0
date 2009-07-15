@@ -1,51 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: pci tree build failure
-Date: Wed, 15 Jul 2009 11:45:10 +1000
-Message-ID: <20090715114510.ebba4bd0.sfr@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH] linux-next arch/ia64/kernel/setup.c: Fix setup_per_cpu_areas()
+ compilation error
+Date: Wed, 15 Jul 2009 11:48:45 +0900
+Message-ID: <4A5D438D.2050106@kernel.org>
+References: <A6AD88C3F2289247BE726C37303E1EB8B06CB5E9@orsmsx505.amr.corp.intel.com> <20090713200942.GA19606@linux-os.sc.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__15_Jul_2009_11_45_10_+1000_0opqhqOzP4ZeePHF"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36790 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750763AbZGOBpR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Jul 2009 21:45:17 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Jesse Brandeburg <jesse.brandeburg@gmail.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-ia64-owner@vger.kernel.org>
+In-Reply-To: <20090713200942.GA19606@linux-os.sc.intel.com>
+Sender: linux-ia64-owner@vger.kernel.org
+To: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-ia64@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__15_Jul_2009_11_45_10_+1000_0opqhqOzP4ZeePHF
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fenghua Yu wrote:
+> Fix ia64 build setup_per_cpu_areas() redifinition issue in UP configuration
+> 
+> When compiling ia64 kernel in UP configuration, the following compilation errors
+> are reported:
+> 
+> arch/ia64/kernel/setup.c:860: error: redefinition of 'setup_per_cpu_areas'
+> include/linux/percpu.h:185: error: previous definition of 'setup_per_cpu_areas' was here
+> 
+> The patch fixes the issue in arch/ia64/kernel/setup.c
+> 
+> Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 
-Hi Jesse,
+Committed to percpu#for-next.  Thanks.
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
-
-arch/x86/pci/common.c:619: error: expected '}' before ';' token
-
-Caused by commit 1c6804b093f5753c2a23aa36f31f66966035bd32 ("x86/PCI:
-initialize PCI bus node numbers early").  This could not have been built
-with CONFIG_NUMA set ...
-
-I have used the version of the pci tree from next-20090714 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__15_Jul_2009_11_45_10_+1000_0opqhqOzP4ZeePHF
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEUEARECAAYFAkpdNKYACgkQjjKRsyhoI8xhdQCdEo1Xc3pwjj6KjmY2ZjrViFSH
-cJgAmI03dlF+T4+isxt6KiD19eR9woc=
-=8tkg
------END PGP SIGNATURE-----
-
---Signature=_Wed__15_Jul_2009_11_45_10_+1000_0opqhqOzP4ZeePHF--
+-- 
+tejun
