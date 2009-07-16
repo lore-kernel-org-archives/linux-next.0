@@ -1,40 +1,51 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: Next July 16: s390 sha1 crypro build failure.
-Date: Thu, 16 Jul 2009 19:58:59 +0800
-Message-ID: <20090716115859.GA964@gondor.apana.org.au>
-References: <20090716172015.be5dc94b.sfr@canb.auug.org.au> <4A5EF9FE.2050302@in.ibm.com>
+From: Upgrade Team <upgrade.team90@9.cn>
+Subject: Urgent Upgrade
+Date: Thu, 16 Jul 2009 09:13:26 -0300
+Message-ID: <982eca6f748dd39787d70bd48874faf2@65.120.56.2>
+Reply-To: Upgrade Team <upgrade.team90@9.cn>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rhun.apana.org.au ([64.62.148.172]:60455 "EHLO
-	arnor.apana.org.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750958AbZGPL7O (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Jul 2009 07:59:14 -0400
-Content-Disposition: inline
-In-Reply-To: <4A5EF9FE.2050302@in.ibm.com>
+Received: from mail.paramount.com.br ([200.231.64.130]:56418 "HELO
+	mail.paramount.com.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1755492AbZGPM0N (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Jul 2009 08:26:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>
 
-On Thu, Jul 16, 2009 at 03:29:26PM +0530, Sachin Sant wrote:
-> Today's next tree fails to build on s390 with following errors.
->
-> arch/s390/crypto/sha1_s390.c:67: error: 'struct sha1_state' has no member named 'buf'
-> arch/s390/crypto/sha1_s390.c:68: error: 'struct sha1_state' has no member named 'func'
->
-> arch/s390/crypto/sha256_s390.c:64: error: 'struct sha256_state' has no member named 'func'
->
-> Probably because of commit 406f104b4172de7452702c6810807c1b0132ba22.
->
-> In sha1_/sha256_import() functions struct s390_sha_ctx *sctx should be
-> used instead of struct sha1_state.
->
-> The following patch fixed the issue for me.
 
-Thanks for the fix! Patch applied to cryptodev.
--- 
-Visit Openswan at http://www.openswan.org/
-Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+--
+Attention E-mail Account holder,
+
+ This message is from the Database Information Technology service  messaging
+center, to all our e-mail account holders. All Mailhub  systems will 
+undergo regularly scheduled maintenance. Access to your mailbox  via our 
+mailportal will be unavailable for some period of time during this 
+maintenanceperiod.
+ 
+ We shall be carrying out service maintenance on our database and e- mail
+account center for better online services. We are deleting all  unusede-mail
+accounts to create more space for new accounts.
+ 
+ In order to ensure you do not experience service 
+interruptions/possibledeactivation Please you must reply to this  email
+immediately confirming  your stfx.ca email account details below for
+confirmation/identification
+
+ 1. First Name & Last Name:
+ 2. Full Login Email Address:
+ 3. Username & Password:
+ 4. Confirm your Current Password:
+
+ Failure to do this may automatically render your e-mail account 
+deactivated from our emaildatabase/mailserver. to enable us 
+ upgrade your  email account, please do reply to this mail.
+ 
+ Thanks.
+ Upgrade Team
+
+
+
+________________________________________________
+Message sent using UebiMiau 2.7.9
