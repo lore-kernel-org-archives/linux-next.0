@@ -1,31 +1,30 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 00/16] drbd: a block device for HA clusters
-Date: Mon, 20 Jul 2009 22:49:40 -0700
-Message-ID: <20090720224940.36da1ef8.akpm@linux-foundation.org>
-References: <1246894775-10855-1-git-send-email-philipp.reisner@linbit.com>
+From: Len Brown <lenb@kernel.org>
+Subject: Re: next: sfi build fails when !CONFIG_ACPI
+Date: Thu, 16 Jul 2009 21:46:15 -0400 (EDT)
+Message-ID: <alpine.LFD.2.00.0907162145140.3531@sony-vgn-z540>
+References: <a4423d670907160148n66760052wbef60e4a2c3c7941@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754483AbZGUFvP@vger.kernel.org>
-In-Reply-To: <1246894775-10855-1-git-send-email-philipp.reisner@linbit.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Philipp Reisner <philipp.reisner@linbit.com>
-Cc: linux-kernel@vger.kernel.org, Jens Axboe <jens.axboe@oracle.com>, Greg KH <gregkh@suse.de>, Neil Brown <neilb@suse.de>, James Bottomley <James.Bottomley@HansenPartnership.com>, Sam Ravnborg <sam@ravnborg.org>, Dave Jones <davej@redhat.com>, Nikanth Karthikesan <knikanth@suse.de>, Lars Marowsky-Bree <lmb@suse.de>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Kyle Moffett <kyle@moffetthome.net>, Bart Van Assche <bart.vanassche@gmail.com>, Christoph Hellwig <hch@infradead.org>, drbd-dev@lists.linbit.com, Lars Ellenberg <lars.ellenberg@linbit.com>, linux-next@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <a4423d670907160148n66760052wbef60e4a2c3c7941@mail.gmail.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: linux-next <linux-next@vger.kernel.org>, Feng Tang <feng.tang@intel.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Mon,  6 Jul 2009 17:39:19 +0200 Philipp Reisner <philipp.reisner@linbit.com> wrote:
-
-> As the first bit of the DBRD patch already got upstream (see commit
-> 10fc89d01a) it is time to get more of DRBD towards mainline.
+> drivers/sfi/sfi_core.c: In function 'sfi_init':
+> drivers/sfi/sfi_core.c:346: error: 'acpi_disabled' undeclared (first
+> use in this function)
+> drivers/sfi/sfi_core.c:346: error: (Each undeclared identifier is
+> reported only once
+> drivers/sfi/sfi_core.c:346: error: for each function it appears in.)
 > 
-> Here is a post of drbd-8.3.2 for inclusion into linux-mm (or linux-next).
 > 
-> Patch set attached. Git tree available:
-> git pull git://git.drbd.org/linux-2.6-drbd.git drbd
+> $ grep ACPI .config
+> # Power management and ACPI options
 
-I don't think I can be bothered reading all this again ;)  I trust that
-earlier review comments were suitably addressed.
+It builds for me.
+Please send me the complete failing .config
 
-Please prepare a tree for inclusion in linux-next, send that off to
-Stephen and unless someone can identify reasons otherwise, send Linus a pull
-request for 2.6.32-rc1.
+thanks,
+Len Brown, Intel Open Source Technology Center
