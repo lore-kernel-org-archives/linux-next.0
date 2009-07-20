@@ -1,18 +1,44 @@
-From: "John W. Linville" <linville@tuxdriver.com>
+From: Noah Watkins <jayhawk@soe.ucsc.edu>
 Subject: Re: regression: wireless authentication
-Date: Mon, 20 Jul 2009 10:59:34 -0400
-Message-ID: <20090720145934.GD2775@tuxdriver.com>
-References: <20090717035706.GA5923@martini> <20090717141047.7ce77136.sfr@canb.auug.org.au>
+Date: Mon, 20 Jul 2009 09:19:00 -0700 (PDT)
+Message-ID: <1198385022.260301248106740802.JavaMail.root@mail-01.cse.ucsc.edu>
+References: <1279186756.260191248106587108.JavaMail.root@mail-01.cse.ucsc.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <netdev-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20090717141047.7ce77136.sfr@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Noah Watkins <jayhawk@soe.ucsc.edu>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-01.cse.ucsc.edu ([128.114.48.32]:43429 "EHLO
+	mail-01.cse.ucsc.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752351AbZGTQTE convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Jul 2009 12:19:04 -0400
+In-Reply-To: <1279186756.260191248106587108.JavaMail.root@mail-01.cse.ucsc.edu>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Stephen Rothwell <sfr@canb.auug.org.au>
+
+The latest version I've tried that works fine is Linus' 2.6.31-rc3
+with the latest commit being:
+
+commit 35b5c55fee08e6e4001ba98060a2d0b82f70b5f4
+Merge: e9e961c... b2dde6a...
+Author: Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed Jul 15 10:29:09 2009 -0700
+
+I encountered the problem I described when I booted:
+
+2.6.31-rc3-next-20090716
+
+-n
+
+----- Original Message -----
+=46rom: "John W. Linville" <linville@tuxdriver.com>
+To: "Stephen Rothwell" <sfr@canb.auug.org.au>
+Cc: "Noah Watkins" <jayhawk@soe.ucsc.edu>, linux-next@vger.kernel.org, =
+"LKML" <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, "David S=
+=2E Miller" <davem@davemloft.net>
+Sent: Monday, July 20, 2009 7:59:34 AM GMT -08:00 US/Canada Pacific
+Subject: Re: regression: wireless authentication
 
 On Fri, Jul 17, 2009 at 02:10:47PM +1000, Stephen Rothwell wrote:
 > Hi Noah,
@@ -42,4 +68,4 @@ John
 --=20
 John W. Linville		Someday the world will need a hero, and you
 linville@tuxdriver.com			might be all we have.  Be ready.
-			=A1Viva Honduras Libre!
+			=C2=A1Viva Honduras Libre!
