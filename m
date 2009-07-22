@@ -1,75 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the wireless-current
- tree
-Date: Wed, 22 Jul 2009 12:00:00 +1000
-Message-ID: <20090722120000.4b0f2901.sfr@canb.auug.org.au>
+From: Zhu Yi <yi.zhu@intel.com>
+Subject: Re: linux-next: manual merge of the net tree with the
+ wireless-current tree
+Date: Wed, 22 Jul 2009 10:05:21 +0800
+Message-ID: <1248228321.3747.48.camel@debian>
+References: <20090722115956.482777b4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59646 "EHLO smtps.tip.net.au"
+Received: from mga02.intel.com ([134.134.136.20]:20691 "EHLO mga02.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754709AbZGVCAD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Jul 2009 22:00:03 -0400
+	id S1754238AbZGVCF1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Jul 2009 22:05:27 -0400
+In-Reply-To: <20090722115956.482777b4.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, Christian Lamparter <chunkeey@web.de>, "John W. Linville" <linville@tuxdriver.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Ortiz, Samuel" <samuel.ortiz@intel.com>, "John W. Linville" <linville@tuxdriver.com>
 
-Hi David,
+On Wed, 2009-07-22 at 09:59 +0800, Stephen Rothwell wrote:
+> Hi David,
+> 
+> Today's linux-next merge of the net tree got a conflict in
+> drivers/net/wireless/iwmc3200wifi/netdev.c between commit
+> 513a2396d8e8327aff1ce50bea3fb4f16ff3455b ("iwmc3200wifi: fix NULL pointer
+> dereference in iwm_if_free") from the wireless-current tree and commit
+> 3549716484a95fd16f7fcf8b68699bd4c803b382 ("iwmc3200wifi: cache keys when
+> interface is down") from the net tree.
+> 
+> Just context changes.   I fixed it up (see below) and can carry the fix
+> as necessary.
 
-Today's linux-next merge of the net tree got a conflict in
-net/wireless/scan.c between commit
-9e81eccf199d910e5ea8db377a43478e4eccd033 ("cfg80211: double free in
-__cfg80211_scan_done") from the wireless-current tree and commit
-667503ddcb96f3b10211f997fe55907fa7509841 ("cfg80211: fix locking") from
-the net tree.
+Hi Stephen,
 
-Overlapping additions.  I fixed it up (I think - see below) and can carry
-the fix as ncessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+The correct fix should be
+http://git.kernel.org/?p=linux/kernel/git/linville/wireless-testing.git;a=commitdiff;h=126e91ba8cfe45a772aad2f51049ac7cedf5bbfd
 
-diff --cc net/wireless/scan.c
-index 9271118,4f552c3..0000000
---- a/net/wireless/scan.c
-+++ b/net/wireless/scan.c
-@@@ -35,8 -48,10 +48,8 @@@ void __cfg80211_scan_done(struct work_s
-  	else
-  		nl80211_send_scan_done(wiphy_to_dev(request->wiphy), dev);
-  
- -	wiphy_to_dev(request->wiphy)->scan_req = NULL;
- -
-  #ifdef CONFIG_WIRELESS_EXT
-- 	if (!aborted) {
-+ 	if (!request->aborted) {
-  		memset(&wrqu, 0, sizeof(wrqu));
-  
-  		wireless_send_event(dev, SIOCGIWSCAN, &wrqu, NULL);
-@@@ -46,9 -61,24 +59,25 @@@
-  	dev_put(dev);
-  
-   out:
- +	wiphy_to_dev(request->wiphy)->scan_req = NULL;
-+ 	cfg80211_unlock_rdev(rdev);
-  	kfree(request);
-  }
-+ 
-+ void cfg80211_scan_done(struct cfg80211_scan_request *request, bool aborted)
-+ {
-+ 	struct net_device *dev = dev_get_by_index(&init_net, request->ifidx);
-+ 	if (WARN_ON(!dev)) {
-+ 		kfree(request);
-+ 		return;
-+ 	}
-+ 
-+ 	WARN_ON(request != wiphy_to_dev(request->wiphy)->scan_req);
-+ 
-+ 	request->aborted = aborted;
-+ 	schedule_work(&wiphy_to_dev(request->wiphy)->scan_done_wk);
-+ 	dev_put(dev);
-+ }
-  EXPORT_SYMBOL(cfg80211_scan_done);
-  
-  static void bss_release(struct kref *ref)
+We need to make the free wdev the last one.
+
+Thanks,
+-yi
