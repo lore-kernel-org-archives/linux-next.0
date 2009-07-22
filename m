@@ -1,53 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the net tree with the
- wireless-current tree
-Date: Wed, 22 Jul 2009 14:50:47 +1000
-Message-ID: <20090722145047.289a7edb.sfr@canb.auug.org.au>
-References: <20090722115956.482777b4.sfr@canb.auug.org.au>
-	<1248228321.3747.48.camel@debian>
+Subject: Re: [Drbd-dev] [PATCH 00/16] drbd: a block device for HA clusters
+Date: Wed, 22 Jul 2009 14:59:17 +1000
+Message-ID: <20090722145917.055eddc1.sfr@canb.auug.org.au>
+References: <1246894775-10855-1-git-send-email-philipp.reisner@linbit.com>
+	<20090720224940.36da1ef8.akpm@linux-foundation.org>
+	<20090721185156.GA10126@johann>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__22_Jul_2009_14_50_47_+1000_nMwv+lxBKryi1s9d"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752447AbZGVEuy@vger.kernel.org>
-In-Reply-To: <1248228321.3747.48.camel@debian>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Zhu Yi <yi.zhu@intel.com>
-Cc: David Miller <davem@davemloft.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Ortiz, Samuel" <samuel.ortiz@intel.com>, "John W. Linville" <linville@tuxdriver.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__22_Jul_2009_14_59_17_+1000_s8u5PqXttceDOxyO"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:53264 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751021AbZGVE70 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 Jul 2009 00:59:26 -0400
+In-Reply-To: <20090721185156.GA10126@johann>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Lars Ellenberg <lars.ellenberg@linbit.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Philipp Reisner <philipp.reisner@linbit.com>, Bart Van Assche <bart.vanassche@gmail.com>, Kyle Moffett <kyle@moffetthome.net>, Christoph Hellwig <hch@infradead.org>, Neil Brown <neilb@suse.de>, Nikanth Karthikesan <knikanth@suse.de>, Greg KH <gregkh@suse.de>, James Bottomley <James.Bottomley@HansenPartnership.com>, Lars Marowsky-Bree <lmb@suse.de>, Jens Axboe <jens.axboe@oracle.com>, Dave Jones <davej@redhat.com>, Sam Ravnborg <sam@ravnborg.org>, drbd-dev@lists.linbit.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
---Signature=_Wed__22_Jul_2009_14_50_47_+1000_nMwv+lxBKryi1s9d
+--Signature=_Wed__22_Jul_2009_14_59_17_+1000_s8u5PqXttceDOxyO
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Yi,
+Hi Lars,
 
-
-On Wed, 22 Jul 2009 10:05:21 +0800 Zhu Yi <yi.zhu@intel.com> wrote:
+On Tue, 21 Jul 2009 20:51:56 +0200 Lars Ellenberg <lars.ellenberg@linbit.co=
+m> wrote:
 >
-> The correct fix should be
-> http://git.kernel.org/?p=3Dlinux/kernel/git/linville/wireless-testing.git=
-;a=3Dcommitdiff;h=3D126e91ba8cfe45a772aad2f51049ac7cedf5bbfd
->=20
-> We need to make the free wdev the last one.
+> Stephen: expect an explicit linux-next merge request
+> within the next few days.
 
-Thanks, if it is still there tomorrow, I will change the fix.
+OK, just to be clear your tree should be based on Linus' tree (or some
+other *stable*, non rebasing, tree - *not* linux-next).
 
+[I guess your tree will fulfill all the following]
+
+What I tell everyone: all patches/commits in the tree/series must
+have been:
+
+	posted to a relevant mailing list
+	reviewed
+	unit tested
+	destined for the next merge window (or the current release)
+
+*before* they are included.  The linux-next tree is for integration
+testing and to lower the impact of conflicts between subsystems in the
+next merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__22_Jul_2009_14_50_47_+1000_nMwv+lxBKryi1s9d
+--Signature=_Wed__22_Jul_2009_14_59_17_+1000_s8u5PqXttceDOxyO
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkpmmqcACgkQjjKRsyhoI8w1YACeM+uhEPqopNw0iWJLh7IwRjnx
-el0An3f1C6sqz316UC6qj9fcwV0W1B02
-=OfX4
+iEYEARECAAYFAkpmnKUACgkQjjKRsyhoI8ylEACdFd8fg00tm2I4X7PRZHncR502
+c28AnRmbPP+Gx4guSTzafXJiwhLnoNSf
+=W/NG
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__22_Jul_2009_14_50_47_+1000_nMwv+lxBKryi1s9d--
+--Signature=_Wed__22_Jul_2009_14_59_17_+1000_s8u5PqXttceDOxyO--
