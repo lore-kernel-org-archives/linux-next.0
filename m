@@ -1,42 +1,62 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
+From: Feng Tang <feng.tang@intel.com>
 Subject: Re: next: sfi build fails when !CONFIG_ACPI
-Date: Thu, 23 Jul 2009 12:43:30 +0400
-Message-ID: <a4423d670907230143l78f324dewefa4cb8990ef4266@mail.gmail.com>
+Date: Thu, 23 Jul 2009 18:15:25 +0800
+Message-ID: <20090723181525.475692d3@feng-desktop>
 References: <a4423d670907160148n66760052wbef60e4a2c3c7941@mail.gmail.com>
-	 <alpine.LFD.2.00.0907162145140.3531@sony-vgn-z540>
-	 <a4423d670907170657o2c68c479j9b4810af5adad29f@mail.gmail.com>
+	<alpine.LFD.2.00.0907162145140.3531@sony-vgn-z540>
+	<a4423d670907170657o2c68c479j9b4810af5adad29f@mail.gmail.com>
+	<a4423d670907230143l78f324dewefa4cb8990ef4266@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f226.google.com ([209.85.219.226]:58741 "EHLO
-	mail-ew0-f226.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752549AbZGWInc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Jul 2009 04:43:32 -0400
-In-Reply-To: <a4423d670907170657o2c68c479j9b4810af5adad29f@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: linux-next <linux-next@vger.kernel.org>, Feng Tang <feng.tang@intel.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <a4423d670907230143l78f324dewefa4cb8990ef4266@mail.gmail.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: Len Brown <lenb@kernel.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-2009/7/17 Alexander Beregalov <a.beregalov@gmail.com>:
-> 2009/7/17 Len Brown <lenb@kernel.org>:
->>> drivers/sfi/sfi_core.c: In function 'sfi_init':
->>> drivers/sfi/sfi_core.c:346: error: 'acpi_disabled' undeclared (first
->>> use in this function)
->>> drivers/sfi/sfi_core.c:346: error: (Each undeclared identifier is
->>> reported only once
->>> drivers/sfi/sfi_core.c:346: error: for each function it appears in.)
->>>
->>>
->>> $ grep ACPI .config
->>> # Power management and ACPI options
->>
->> It builds for me.
->> Please send me the complete failing .config
->
-> Attached (x86_64)
+On Thu, 23 Jul 2009 16:43:30 +0800
+Alexander Beregalov <a.beregalov@gmail.com> wrote:
 
-Still fails for me in the same way,
-X86_64
-next-20090723
+> 2009/7/17 Alexander Beregalov <a.beregalov@gmail.com>:
+> > 2009/7/17 Len Brown <lenb@kernel.org>:
+> >>> drivers/sfi/sfi_core.c: In function 'sfi_init':
+> >>> drivers/sfi/sfi_core.c:346: error: 'acpi_disabled' undeclared
+> >>> (first use in this function)
+> >>> drivers/sfi/sfi_core.c:346: error: (Each undeclared identifier is
+> >>> reported only once
+> >>> drivers/sfi/sfi_core.c:346: error: for each function it appears
+> >>> in.)
+> >>>
+> >>>
+> >>> $ grep ACPI .config
+> >>> # Power management and ACPI options
+> >>
+> >> It builds for me.
+> >> Please send me the complete failing .config
+> >
+> > Attached (x86_64)
+> 
+> Still fails for me in the same way,
+> X86_64
+> next-20090723
+
+sorry for the late response, please try the following patch:
+
+diff --git a/drivers/sfi/sfi_core.c b/drivers/sfi/sfi_core.c
+index 62e2f98..fa66824 100644
+--- a/drivers/sfi/sfi_core.c
++++ b/drivers/sfi/sfi_core.c
+@@ -361,9 +361,6 @@ static __init int sfi_find_syst(void)
+ 
+ void __init sfi_init(void)
+ {
+-	if (!acpi_disabled)
+-		disable_sfi();
+-
+ 	if (sfi_disabled)
+ 		return;
+ 
+Thanks,
+Feng
