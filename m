@@ -1,72 +1,42 @@
-From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Subject: Re: linux-next: Tree for July 23
-Date: Thu, 23 Jul 2009 21:55:01 +0530
-Message-ID: <20090723162501.GA9203@linux.vnet.ibm.com>
-References: <20090723163201.6951a44b.sfr@canb.auug.org.au>
-Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+From: Kevin Hilman <khilman@deeprootsystems.com>
+Subject: Re: linux-next: manual merge of the sound tree with the davinci tree
+Date: Thu, 23 Jul 2009 10:54:44 -0700
+Message-ID: <873a8ni8t7.fsf@deeprootsystems.com>
+References: <20090723112110.e42430e9.sfr@canb.auug.org.au>
+	<s5hvdlkvsk6.wl%tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp07.au.ibm.com ([202.81.31.140]:52652 "EHLO
-	e23smtp07.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754259AbZGWQZY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Jul 2009 12:25:24 -0400
-Content-Disposition: inline
-In-Reply-To: <20090723163201.6951a44b.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: gregkh@suse.de
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, devel@driverdev.osuosl.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751798AbZGWSCQ@vger.kernel.org>
+In-Reply-To: <s5hvdlkvsk6.wl%tiwai@suse.de> (Takashi Iwai's message of "Thu\, 23 Jul 2009 08\:09\:45 +0200")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chaithrika U S <chaithrika@ti.com>, Pavel Kiryukhin <pkiryukhin@ru.mvista.com>, Naresh Medisetty <naresh@ti.com>, Steve Chen <schen@mvista.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Sudhakar Rajashekhara <sudhakar.raj@ti.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Greg,
+Takashi Iwai <tiwai@suse.de> writes:
 
-	next-20090723 randconfig build breaks at
+> At Thu, 23 Jul 2009 11:21:10 +1000,
+> Stephen Rothwell wrote:
+>> 
+>> Hi Takashi,
+>> 
+>> Today's linux-next merge of the sound tree got a conflict in
+>> sound/soc/davinci/davinci-evm.c between commit
+>> 95d0d986d09ac25a5b9f2bf28f289ab0823e86d5 ("davinci: EDMA: multiple CCs,
+>> channel mapping and API changes") from the davinci tree and commit
+>> 04f80f5c486b39446af44e218dba90ec210d61ca ("ASoC: Add machine driver
+>> support for DM646x") from the sound tree.
+>> 
+>> The latter removes the code modified by the former.  I have just used the
+>> latter.
+>
+> Thanks.  I'll try to resolve the conflict in the sound tree,
+> e.g. pulling the affecting commit of davinci tree into for-next 
+> branch.
 
-drivers/staging/android/lowmemorykiller.c: In function '__check_cost':
-drivers/staging/android/lowmemorykiller.c:60: error: 'lowmem_shrinker' undeclared (first use in this function)
-drivers/staging/android/lowmemorykiller.c:60: error: (Each undeclared identifier is reported only once
-drivers/staging/android/lowmemorykiller.c:60: error: for each function it appears in.)
-drivers/staging/android/lowmemorykiller.c: At top level:
-drivers/staging/android/lowmemorykiller.c:60: error: 'lowmem_shrinker' undeclared here (not in a function)
-drivers/staging/android/lowmemorykiller.c:60: warning: type defaults to 'int' in declaration of 'type name'
-make[3]: *** [drivers/staging/android/lowmemorykiller.o] Error 1
-make[2]: *** [drivers/staging/android] Error 2
-make[1]: *** [drivers/staging] Error 2
+I've taken care of this in the DaVinci for-next branch.
 
-I have tested the patch for the build failure only.
+I dropped the davinci changes that change code that were then dropped
+by the asoc changes.
 
-Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
---
---- linux/drivers/staging/android/lowmemorykiller.c	2009-07-23 12:15:59.000000000 -0400
-+++ linux/drivers/staging/android/~lowmemorykiller.c	2009-07-23 12:17:46.000000000 -0400
-@@ -57,13 +57,6 @@ static int lowmem_minfree_size = 4;
- 			printk(x);			\
- 	} while (0)
- 
--module_param_named(cost, lowmem_shrinker.seeks, int, S_IRUGO | S_IWUSR);
--module_param_array_named(adj, lowmem_adj, int, &lowmem_adj_size,
--			 S_IRUGO | S_IWUSR);
--module_param_array_named(minfree, lowmem_minfree, uint, &lowmem_minfree_size,
--			 S_IRUGO | S_IWUSR);
--module_param_named(debug_level, lowmem_debug_level, uint, S_IRUGO | S_IWUSR);
--
- static int lowmem_shrink(int nr_to_scan, gfp_t gfp_mask)
- {
- 	struct task_struct *p;
-@@ -155,6 +148,13 @@ static struct shrinker lowmem_shrinker =
- 	.seeks = DEFAULT_SEEKS * 16
- };
- 
-+module_param_named(cost, lowmem_shrinker.seeks, int, S_IRUGO | S_IWUSR);
-+module_param_array_named(adj, lowmem_adj, int, &lowmem_adj_size,
-+			 S_IRUGO | S_IWUSR);
-+module_param_array_named(minfree, lowmem_minfree, uint, &lowmem_minfree_size,
-+			 S_IRUGO | S_IWUSR);
-+module_param_named(debug_level, lowmem_debug_level, uint, S_IRUGO | S_IWUSR);
-+
- static int __init lowmem_init(void)
- {
- 	register_shrinker(&lowmem_shrinker);
-
-			
-					Kamalesh
+Kevin
