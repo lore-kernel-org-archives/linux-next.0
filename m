@@ -1,129 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the v4l-dvb tree with the davinci tree
-Date: Thu, 23 Jul 2009 10:11:13 +1000
-Message-ID: <20090723101113.ed6fc12c.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the sound tree with the davinci tree
+Date: Thu, 23 Jul 2009 11:21:10 +1000
+Message-ID: <20090723112110.e42430e9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__23_Jul_2009_11_21_10_+1000_mC3rUaRrIR40MFl6"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752495AbZGWBVS@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chaithrika U S <chaithrika@ti.com>, Pavel Kiryukhin <pkiryukhin@ru.mvista.com>, Naresh Medisetty <naresh@ti.com>, Steve Chen <schen@mvista.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Sudhakar Rajashekhara <sudhakar.raj@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Thu__23_Jul_2009_11_21_10_+1000_mC3rUaRrIR40MFl6
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38793 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751507AbZGWBCd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 Jul 2009 21:02:33 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Muralidharan Karicheri <m-karicheri2@ti.com>, Chaithrika U S <chaithrika@ti.com>, Naresh Medisetty <naresh@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mauro,
+Hi Takashi,
 
-Today's linux-next merge of the v4l-dvb tree got a conflict in
-arch/arm/mach-davinci/dm355.c between commit
-e94c101ce3ef11bc00f8ea5db4b65c4b01874cf8 ("davinci: ASoC: Add the
-platform devices for ASP") from the davinci tree and commit
-32a01291c576c302d82a985d91db720dcf8c891b ("V4L/DVB: DM355 platform
-changes for vpfe capture driver") from the v4l-dvb tree.
+Today's linux-next merge of the sound tree got a conflict in
+sound/soc/davinci/davinci-evm.c between commit
+95d0d986d09ac25a5b9f2bf28f289ab0823e86d5 ("davinci: EDMA: multiple CCs,
+channel mapping and API changes") from the davinci tree and commit
+04f80f5c486b39446af44e218dba90ec210d61ca ("ASoC: Add machine driver
+support for DM646x") from the sound tree.
 
-I assume that these are orthogonal changes (though they may not be).  I
-fixed it up (see below) and can carry the fixes as necessary.
--- 
+The latter removes the code modified by the former.  I have just used the
+latter.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/mach-davinci/dm355.c
-index 3abeb3e,2696df1..0000000
---- a/arch/arm/mach-davinci/dm355.c
-+++ b/arch/arm/mach-davinci/dm355.c
-@@@ -628,31 -612,67 +636,92 @@@ static struct platform_device dm355_edm
-  	.resource		= edma_resources,
-  };
-  
- +static struct resource dm355_asp1_resources[] = {
- +	{
- +		.start	= DAVINCI_ASP1_BASE,
- +		.end	= DAVINCI_ASP1_BASE + SZ_8K - 1,
- +		.flags	= IORESOURCE_MEM,
- +	},
- +	{
- +		.start	= DAVINCI_DMA_ASP1_TX,
- +		.end	= DAVINCI_DMA_ASP1_TX,
- +		.flags	= IORESOURCE_DMA,
- +	},
- +	{
- +		.start	= DAVINCI_DMA_ASP1_RX,
- +		.end	= DAVINCI_DMA_ASP1_RX,
- +		.flags	= IORESOURCE_DMA,
- +	},
- +};
- +
- +static struct platform_device dm355_asp1_device = {
- +	.name		= "davinci-asp",
- +	.id		= 1,
- +	.num_resources	= ARRAY_SIZE(dm355_asp1_resources),
- +	.resource	= dm355_asp1_resources,
- +};
- +
-+ static struct resource dm355_vpss_resources[] = {
-+ 	{
-+ 		/* VPSS BL Base address */
-+ 		.name		= "vpss",
-+ 		.start          = 0x01c70800,
-+ 		.end            = 0x01c70800 + 0xff,
-+ 		.flags          = IORESOURCE_MEM,
-+ 	},
-+ 	{
-+ 		/* VPSS CLK Base address */
-+ 		.name		= "vpss",
-+ 		.start          = 0x01c70000,
-+ 		.end            = 0x01c70000 + 0xf,
-+ 		.flags          = IORESOURCE_MEM,
-+ 	},
-+ };
-+ 
-+ static struct platform_device dm355_vpss_device = {
-+ 	.name			= "vpss",
-+ 	.id			= -1,
-+ 	.dev.platform_data	= "dm355_vpss",
-+ 	.num_resources		= ARRAY_SIZE(dm355_vpss_resources),
-+ 	.resource		= dm355_vpss_resources,
-+ };
-+ 
-+ static struct resource vpfe_resources[] = {
-+ 	{
-+ 		.start          = IRQ_VDINT0,
-+ 		.end            = IRQ_VDINT0,
-+ 		.flags          = IORESOURCE_IRQ,
-+ 	},
-+ 	{
-+ 		.start          = IRQ_VDINT1,
-+ 		.end            = IRQ_VDINT1,
-+ 		.flags          = IORESOURCE_IRQ,
-+ 	},
-+ 	/* CCDC Base address */
-+ 	{
-+ 		.flags          = IORESOURCE_MEM,
-+ 		.start          = 0x01c70600,
-+ 		.end            = 0x01c70600 + 0x1ff,
-+ 	},
-+ };
-+ 
-+ static u64 vpfe_capture_dma_mask = DMA_BIT_MASK(32);
-+ static struct platform_device vpfe_capture_dev = {
-+ 	.name		= CAPTURE_DRV_NAME,
-+ 	.id		= -1,
-+ 	.num_resources	= ARRAY_SIZE(vpfe_resources),
-+ 	.resource	= vpfe_resources,
-+ 	.dev = {
-+ 		.dma_mask		= &vpfe_capture_dma_mask,
-+ 		.coherent_dma_mask	= DMA_BIT_MASK(32),
-+ 	},
-+ };
-+ 
-+ void dm355_set_vpfe_config(struct vpfe_config *cfg)
-+ {
-+ 	vpfe_capture_dev.dev.platform_data = cfg;
-+ }
-+ 
-  /*----------------------------------------------------------------------*/
-  
-  static struct map_desc dm355_io_desc[] = {
+--Signature=_Thu__23_Jul_2009_11_21_10_+1000_mC3rUaRrIR40MFl6
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkpnuwYACgkQjjKRsyhoI8yJDwCcC6q4QwdEHSYj8ibh8Ln2FcHY
+1TQAmwdT3TjdtEx+g9vsVx2+2LK6rx1n
+=avKv
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__23_Jul_2009_11_21_10_+1000_mC3rUaRrIR40MFl6--
