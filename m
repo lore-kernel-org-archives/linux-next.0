@@ -1,130 +1,205 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the v4l-dvb tree with the davinci tree
-Date: Thu, 23 Jul 2009 10:11:21 +1000
-Message-ID: <20090723101121.d21a575d.sfr@canb.auug.org.au>
+Date: Thu, 23 Jul 2009 10:22:57 +1000
+Message-ID: <20090723102257.2e9852b4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38798 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751544AbZGWBCd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 Jul 2009 21:02:33 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752463AbZGWBCj@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Mauro Carvalho Chehab <mchehab@infradead.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chaithrika U S <chaithrika@ti.com>, Manjunath Hadli <mrh@ti.com>, Brijesh Jadav <brijesh.j@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>, Hemant Pedanekar <hemantp@ti.com>
+List-Id: linux-next.vger.kernel.org
 
 Hi Mauro,
 
 Today's linux-next merge of the v4l-dvb tree got a conflict in
-arch/arm/mach-davinci/board-dm646x-evm.c between commits
+arch/arm/mach-davinci/dm646x.c between commits
 e94c101ce3ef11bc00f8ea5db4b65c4b01874cf8 ("davinci: ASoC: Add the
-platform devices for ASP") and 4d6c5c3ec7c9b6d0d055da77c406049f7a663a0c
-("davinci: dm646x-evm: Add support for IDE") from the davinci tree and
-commit be45110fa4525939a32c0509229a1781c5c3da78 ("arch/arm/mach-davinci:
-Platform and board specific setup for DM646x EVM") from the v4l-dvb tree.
+platform devices for ASP") and da7f706415a5392ba5ff21228cf61c30e6371566
+("davinci: dm646x: Add IDE setup") from the davinci tree and commit
+be45110fa4525939a32c0509229a1781c5c3da78 ("rch/arm/mach-davinci: Platform
+and board specific setup for DM646x EVM") from the v4l-dvb tree.
 
-I think that these are just overlapping additions (though they my
-actually be implementing similar things).  I fixed it up (see below) and
-can carry the fixes as necessary.
+Again, assuming that these changes are orthogonal, I have fixed it up
+(see below) and can carry the fixes as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-davinci/board-dm646x-evm.c
-index b1bf18c,eb4bd01..0000000
---- a/arch/arm/mach-davinci/board-dm646x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm646x-evm.c
-@@@ -259,35 -220,40 +272,69 @@@ static struct at24_platform_data eeprom
-  	.context	= (void *)0x7f00,
+diff --cc arch/arm/mach-davinci/dm646x.c
+index 8fa2803,3877ba3..0000000
+--- a/arch/arm/mach-davinci/dm646x.c
++++ b/arch/arm/mach-davinci/dm646x.c
+@@@ -600,92 -518,37 +609,123 @@@ static struct platform_device dm646x_ed
+  	.resource		= edma_resources,
   };
   
- +static u8 dm646x_iis_serializer_direction[] = {
- +       TX_MODE, RX_MODE, INACTIVE_MODE, INACTIVE_MODE,
- +};
- +
- +static u8 dm646x_dit_serializer_direction[] = {
- +       TX_MODE,
- +};
- +
- +static struct snd_platform_data dm646x_evm_snd_data[] = {
+ +static struct resource ide_resources[] = {
  +	{
- +		.tx_dma_offset  = 0x400,
- +		.rx_dma_offset  = 0x400,
- +		.op_mode        = DAVINCI_MCASP_IIS_MODE,
- +		.num_serializer = ARRAY_SIZE(dm646x_iis_serializer_direction),
- +		.tdm_slots      = 2,
- +		.serial_dir     = dm646x_iis_serializer_direction,
- +		.eventq_no      = EVENTQ_0,
+ +		.start          = DM646X_ATA_REG_BASE,
+ +		.end            = DM646X_ATA_REG_BASE + 0x7ff,
+ +		.flags          = IORESOURCE_MEM,
  +	},
  +	{
- +		.tx_dma_offset  = 0x400,
- +		.rx_dma_offset  = 0,
- +		.op_mode        = DAVINCI_MCASP_DIT_MODE,
- +		.num_serializer = ARRAY_SIZE(dm646x_dit_serializer_direction),
- +		.tdm_slots      = 32,
- +		.serial_dir     = dm646x_dit_serializer_direction,
- +		.eventq_no      = EVENTQ_0,
+ +		.start          = IRQ_DM646X_IDE,
+ +		.end            = IRQ_DM646X_IDE,
+ +		.flags          = IORESOURCE_IRQ,
  +	},
  +};
  +
-+ static struct i2c_client *cpld_client;
-+ 
-+ static int cpld_video_probe(struct i2c_client *client,
-+ 			const struct i2c_device_id *id)
-+ {
-+ 	cpld_client = client;
-+ 	return 0;
-+ }
-+ 
-+ static int __devexit cpld_video_remove(struct i2c_client *client)
-+ {
-+ 	cpld_client = NULL;
-+ 	return 0;
-+ }
-+ 
-+ static const struct i2c_device_id cpld_video_id[] = {
-+ 	{ "cpld_video", 0 },
-+ 	{ }
-+ };
-+ 
-+ static struct i2c_driver cpld_video_driver = {
-+ 	.driver = {
-+ 		.name	= "cpld_video",
-+ 	},
-+ 	.probe		= cpld_video_probe,
-+ 	.remove		= cpld_video_remove,
-+ 	.id_table	= cpld_video_id,
-+ };
-+ 
-+ static void evm_init_cpld(void)
-+ {
-+ 	i2c_add_driver(&cpld_video_driver);
-+ }
-+ 
-  static struct i2c_board_info __initdata i2c_info[] =  {
-  	{
-  		I2C_BOARD_INFO("24c256", 0x50),
-@@@ -298,8 -264,8 +345,11 @@@
-  		.platform_data	= &pcf_data,
-  	},
-  	{
- +		I2C_BOARD_INFO("cpld_reg0", 0x3a),
+ +static u64 ide_dma_mask = DMA_BIT_MASK(32);
+ +
+ +static struct platform_device ide_dev = {
+ +	.name           = "palm_bk3710",
+ +	.id             = -1,
+ +	.resource       = ide_resources,
+ +	.num_resources  = ARRAY_SIZE(ide_resources),
+ +	.dev = {
+ +		.dma_mask		= &ide_dma_mask,
+ +		.coherent_dma_mask      = DMA_BIT_MASK(32),
  +	},
-++	{
-+ 		I2C_BOARD_INFO("cpld_video", 0x3B),
+ +};
+ +
+ +static struct resource dm646x_mcasp0_resources[] = {
+ +	{
+ +		.name	= "mcasp0",
+ +		.start 	= DAVINCI_DM646X_MCASP0_REG_BASE,
+ +		.end 	= DAVINCI_DM646X_MCASP0_REG_BASE + (SZ_1K << 1) - 1,
+ +		.flags 	= IORESOURCE_MEM,
+ +	},
+ +	/* first TX, then RX */
+ +	{
+ +		.start	= DAVINCI_DM646X_DMA_MCASP0_AXEVT0,
+ +		.end	= DAVINCI_DM646X_DMA_MCASP0_AXEVT0,
+ +		.flags	= IORESOURCE_DMA,
+ +	},
+ +	{
+ +		.start	= DAVINCI_DM646X_DMA_MCASP0_AREVT0,
+ +		.end	= DAVINCI_DM646X_DMA_MCASP0_AREVT0,
+ +		.flags	= IORESOURCE_DMA,
+ +	},
+ +};
+ +
+ +static struct resource dm646x_mcasp1_resources[] = {
+ +	{
+ +		.name	= "mcasp1",
+ +		.start	= DAVINCI_DM646X_MCASP1_REG_BASE,
+ +		.end	= DAVINCI_DM646X_MCASP1_REG_BASE + (SZ_1K << 1) - 1,
+ +		.flags	= IORESOURCE_MEM,
+ +	},
+ +	/* DIT mode, only TX event */
+ +	{
+ +		.start	= DAVINCI_DM646X_DMA_MCASP1_AXEVT1,
+ +		.end	= DAVINCI_DM646X_DMA_MCASP1_AXEVT1,
+ +		.flags	= IORESOURCE_DMA,
+ +	},
+ +	/* DIT mode, dummy entry */
+ +	{
+ +		.start	= -1,
+ +		.end	= -1,
+ +		.flags	= IORESOURCE_DMA,
+ +	},
+ +};
+ +
+ +static struct platform_device dm646x_mcasp0_device = {
+ +	.name		= "davinci-mcasp",
+ +	.id		= 0,
+ +	.num_resources	= ARRAY_SIZE(dm646x_mcasp0_resources),
+ +	.resource	= dm646x_mcasp0_resources,
+ +};
+ +
+ +static struct platform_device dm646x_mcasp1_device = {
+ +	.name		= "davinci-mcasp",
+ +	.id		= 1,
+ +	.num_resources	= ARRAY_SIZE(dm646x_mcasp1_resources),
+ +	.resource	= dm646x_mcasp1_resources,
+ +};
+ +
+ +static struct platform_device dm646x_dit_device = {
+ +	.name	= "spdif-dit",
+ +	.id	= -1,
+ +};
+ +
++ static u64 vpif_dma_mask = DMA_BIT_MASK(32);
++ 
++ static struct resource vpif_resource[] = {
++ 	{
++ 		.start	= DAVINCI_VPIF_BASE,
++ 		.end	= DAVINCI_VPIF_BASE + 0x03fff,
++ 		.flags	= IORESOURCE_MEM,
 + 	},
++ 	{
++ 		.start = IRQ_DM646X_VP_VERTINT2,
++ 		.end   = IRQ_DM646X_VP_VERTINT2,
++ 		.flags = IORESOURCE_IRQ,
++ 	},
++ 	{
++ 		.start = IRQ_DM646X_VP_VERTINT3,
++ 		.end   = IRQ_DM646X_VP_VERTINT3,
++ 		.flags = IORESOURCE_IRQ,
++ 	},
++ };
++ 
++ static struct platform_device vpif_display_dev = {
++ 	.name		= "vpif_display",
++ 	.id		= -1,
++ 	.dev		= {
++ 			.dma_mask 		= &vpif_dma_mask,
++ 			.coherent_dma_mask	= DMA_32BIT_MASK,
++ 	},
++ 	.resource	= vpif_resource,
++ 	.num_resources	= ARRAY_SIZE(vpif_resource),
++ };
++ 
+  /*----------------------------------------------------------------------*/
+  
+  static struct map_desc dm646x_io_desc[] = {
+@@@ -795,25 -659,28 +835,47 @@@ static struct davinci_soc_info davinci_
+  	.sram_len		= SZ_32K,
   };
   
-  static struct davinci_i2c_platform_data i2c_pdata = {
-@@@ -310,8 -346,8 +430,9 @@@ static struct vpif_config dm646x_vpif_c
-  static void __init evm_init_i2c(void)
+ +void __init dm646x_init_ide()
+ +{
+ +	davinci_cfg_reg(DM646X_ATAEN);
+ +	platform_device_register(&ide_dev);
+ +}
+ +
+ +void __init dm646x_init_mcasp0(struct snd_platform_data *pdata)
+ +{
+ +	dm646x_mcasp0_device.dev.platform_data = pdata;
+ +	platform_device_register(&dm646x_mcasp0_device);
+ +}
+ +
+ +void __init dm646x_init_mcasp1(struct snd_platform_data *pdata)
+ +{
+ +	dm646x_mcasp1_device.dev.platform_data = pdata;
+ +	platform_device_register(&dm646x_mcasp1_device);
+ +	platform_device_register(&dm646x_dit_device);
+ +}
+ +
++ void dm646x_setup_vpif(struct vpif_config *config)
++ {
++ 	unsigned int value;
++ 	void __iomem *base = IO_ADDRESS(DAVINCI_SYSTEM_MODULE_BASE);
++ 
++ 	value = __raw_readl(base + VSCLKDIS_OFFSET);
++ 	value &= ~VSCLKDIS_MASK;
++ 	__raw_writel(value, base + VSCLKDIS_OFFSET);
++ 
++ 	value = __raw_readl(base + VDD3P3V_PWDN_OFFSET);
++ 	value &= ~VDD3P3V_VID_MASK;
++ 	__raw_writel(value, base + VDD3P3V_PWDN_OFFSET);
++ 
++ 	davinci_cfg_reg(DM646X_STSOMUX_DISABLE);
++ 	davinci_cfg_reg(DM646X_STSIMUX_DISABLE);
++ 	davinci_cfg_reg(DM646X_PTSOMUX_DISABLE);
++ 	davinci_cfg_reg(DM646X_PTSIMUX_DISABLE);
++ 
++ 	vpif_display_dev.dev.platform_data = config;
++ 	platform_device_register(&vpif_display_dev);
++ }
++ 
+  void __init dm646x_init(void)
   {
-  	davinci_init_i2c(&i2c_pdata);
- +	i2c_add_driver(&dm6467evm_cpld_driver);
-  	i2c_register_board_info(1, i2c_info, ARRAY_SIZE(i2c_info));
-+ 	evm_init_cpld();
-  }
-  
-  static void __init davinci_map_io(void)
+  	davinci_common_init(&davinci_soc_info_dm646x);
