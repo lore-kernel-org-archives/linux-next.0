@@ -1,59 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Jason Wessel <jason.wessel@windriver.com>
 Subject: Re: linux-next:  kgdb tree fetch failure
-Date: Thu, 23 Jul 2009 13:38:42 +1000
-Message-ID: <20090723133842.30ae062b.sfr@canb.auug.org.au>
-References: <20090723090956.e6024af4.sfr@canb.auug.org.au>
-	<4A67D36D.8070209@windriver.com>
+Date: Wed, 22 Jul 2009 22:48:45 -0500
+Message-ID: <4A67DD9D.8030304@windriver.com>
+References: <20090723090956.e6024af4.sfr@canb.auug.org.au><4A67D36D.8070209@windriver.com> <20090723133842.30ae062b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__23_Jul_2009_13_38_42_+1000_hy7h.x10UNgWkqCN"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55355 "EHLO smtps.tip.net.au"
+Received: from mail.windriver.com ([147.11.1.11]:36656 "EHLO mail.wrs.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751898AbZGWDiq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 Jul 2009 23:38:46 -0400
-In-Reply-To: <4A67D36D.8070209@windriver.com>
+	id S1752376AbZGWDsr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 Jul 2009 23:48:47 -0400
+In-Reply-To: <20090723133842.30ae062b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Wessel <jason.wessel@windriver.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__23_Jul_2009_13_38_42_+1000_hy7h.x10UNgWkqCN
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Jason,
-
-On Wed, 22 Jul 2009 22:05:17 -0500 Jason Wessel <jason.wessel@windriver.com=
-> wrote:
+Stephen Rothwell wrote:
+> Hi Jason,
 >
-> In the several years I have been using git, I have never seen it get
-> corrupted until today.
+>   
+>> My local git repository completely bailed, so I am going to reconstruct
+>> the kgdb branches from a new clone.  There was no obvious way to recover
+>> my archive. 
+>>     
+>
+>   
 
-Ouch!
+As luck would have it, the pull of 2.6.31-rc4 magically fixed the local
+archive, so kgdb-next branch is back in sync and updated.
 
-> My local git repository completely bailed, so I am going to reconstruct
-> the kgdb branches from a new clone.  There was no obvious way to recover
-> my archive.=20
-
-OK, thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__23_Jul_2009_13_38_42_+1000_hy7h.x10UNgWkqCN
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkpn20IACgkQjjKRsyhoI8zDhwCfaFhgddOia3Z30R7l3xozOpRA
-4AIAniJXDF0YquiBuopeiPoZKOJ/CxFM
-=qgpb
------END PGP SIGNATURE-----
-
---Signature=_Thu__23_Jul_2009_13_38_42_+1000_hy7h.x10UNgWkqCN--
+Thanks,
+Jason.
