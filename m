@@ -1,40 +1,83 @@
-From: Alexander Beregalov <a.beregalov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] ar9170: fix build error when !CONFIG_AR9170_LEDS
-Date: Fri, 24 Jul 2009 11:55:44 +0400
-Message-ID: <1248422144-6150-1-git-send-email-a.beregalov@gmail.com>
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, chunkeey-S0/GAf8tV78@public.gmane.org, linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Alexander Beregalov <a.beregalov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Re: linux-next: boot panic in serial init
+Date: Fri, 24 Jul 2009 16:35:01 +0530
+Message-ID: <4A69955D.2040000@in.ibm.com>
+References: <20090724171841.b128f8be.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e23smtp05.au.ibm.com ([202.81.31.147]:46538 "EHLO
+	e23smtp05.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751999AbZGXLGI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Jul 2009 07:06:08 -0400
+In-Reply-To: <20090724171841.b128f8be.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Fix this build error when CONFIG_AR9170_LEDS is not set
-drivers/net/wireless/ath/ar9170/main.c:1296: error: 'struct ar9170' has
-no member named 'led_work'
+Stephen Rothwell wrote:
+> Hi Alan,
+>
+> Today's linux-next on a pSeries PowerPC machine panics during boot like
+> this:
+>   
+Similar problem on x86 as well.
 
-Signed-off-by: Alexander Beregalov <a.beregalov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/net/wireless/ath/ar9170/main.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+Serial: 8250/16550 driver, 8 ports, IRQ sharing disabled
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000070
+IP: [<ffffffff8132d15a>] mutex_lock+0xc/0x2d
+PGD 0 
+Oops: 0002 [#1] SMP 
+last sysfs file: 
+CPU 0 
+Modules linked in:
+Pid: 1, comm: swapper Not tainted 2.6.31-rc4-autotest-next-20090724-5-default #1 BladeCenter LS21 -[79716AA]-
+RIP: 0010:[<ffffffff8132d15a>]  [<ffffffff8132d15a>] mutex_lock+0xc/0x2d
+RSP: 0018:ffff88012b319da0  EFLAGS: 00010286
+RAX: ffff88012b319e10 RBX: 0000000000000070 RCX: ffffffff85d06ad0
+RDX: 0000000000000008 RSI: ffffffff85d06ad0 RDI: 0000000000000070
+RBP: ffff88012b319db0 R08: 0000000000000001 R09: ffff88012b319d40
+R10: 0000000300000000 R11: 0000000000018600 R12: ffffffff85d06ad0
+R13: ffff88012846a000 R14: ffffffff8154bd00 R15: 0000000000000070
+FS:  0000000000000000(0000) GS:ffff880028022000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0018 ES: 0018 CR0: 000000008005003b
+CR2: 0000000000000070 CR3: 0000000001001000 CR4: 00000000000006f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+Process swapper (pid: 1, threadinfo ffff88012b318000, task ffff88012b316000)
+Stack:
+ ffff88012b319e10 00000000ffffffea ffff88012b319e40 ffffffff8126c572
+<0> 0000000000000000 0000000000000000 ffff88012b319de0 ffffffff811e9ea7
+<0> ffff8801284c6a10 ffff8801284c6a00 0000000000000000 00000000ffffffea
+Call Trace:
+ [<ffffffff8126c572>] uart_add_one_port+0x72/0x332
+ [<ffffffff811e9ea7>] ? kobject_init+0x43/0x83
+ [<ffffffff81686a2e>] ? serial8250_init+0x0/0x143
+ [<ffffffff81686b2c>] serial8250_init+0xfe/0x143
+ [<ffffffff8100905c>] do_one_initcall+0x56/0x12b
+ [<ffffffff8108b3ca>] ? register_irq_proc+0xb0/0xcc
+ [<ffffffff81120000>] ? sys_quotactl+0x7c/0x748
+ [<ffffffff8165b691>] kernel_init+0x181/0x1db
+ [<ffffffff8100ca1a>] child_rip+0xa/0x20
+ [<ffffffff8165b510>] ? kernel_init+0x0/0x1db
+ [<ffffffff8100ca10>] ? child_rip+0x0/0x20
+Code: c0 b0 b1 05 81 48 89 45 c8 48 89 45 d0 e8 1d ff ff ff 48 83 c4 40 5b 41 5c 41 5d 41 5e c9 c3 55 48 89 e5 53 48 89 fb 48 83 ec 08 <f0> ff 0f 79 05 e8 97 00 00 00 65 48 8b 04 25 b8 b4 00 00 48 2d 
+RIP  [<ffffffff8132d15a>] mutex_lock+0xc/0x2d
+ RSP <ffff88012b319da0>
+CR2: 0000000000000070
+---[ end trace b19b3a85649e706b ]---
 
-diff --git a/drivers/net/wireless/ath/ar9170/main.c b/drivers/net/wireless/ath/ar9170/main.c
-index c7287a8..85a1452 100644
---- a/drivers/net/wireless/ath/ar9170/main.c
-+++ b/drivers/net/wireless/ath/ar9170/main.c
-@@ -1293,7 +1293,9 @@ static void ar9170_op_stop(struct ieee80211_hw *hw)
- 	flush_workqueue(ar->hw->workqueue);
- 
- 	cancel_delayed_work_sync(&ar->tx_janitor);
-+#ifdef CONFIG_AR9170_LEDS
- 	cancel_delayed_work_sync(&ar->led_work);
-+#endif
- 	cancel_work_sync(&ar->filter_config_work);
- 	cancel_work_sync(&ar->beacon_work);
- 	mutex_lock(&ar->mutex);
+Thanks
+-Sachin
+
+
 -- 
-1.6.3.3
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
