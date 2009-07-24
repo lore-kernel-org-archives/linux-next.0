@@ -1,258 +1,85 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for July 24
-Date: Fri, 24 Jul 2009 16:19:26 +1000
-Message-ID: <20090724161926.9d6451ce.sfr@canb.auug.org.au>
+Subject: linux-next: boot panic in serial init
+Date: Fri, 24 Jul 2009 17:18:41 +1000
+Message-ID: <20090724171841.b128f8be.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__24_Jul_2009_16_19_26_+1000_EASJJ2nLp1G6RhBF"
+ boundary="Signature=_Fri__24_Jul_2009_17_18_41_+1000_olGmIiZ7e3MchuU0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43574 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57106 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751544AbZGXGTc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 24 Jul 2009 02:19:32 -0400
+	id S1751214AbZGXHSp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 24 Jul 2009 03:18:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Fri__24_Jul_2009_16_19_26_+1000_EASJJ2nLp1G6RhBF
+--Signature=_Fri__24_Jul_2009_17_18_41_+1000_olGmIiZ7e3MchuU0
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Alan,
 
-Changes since 20090723:
+Today's linux-next on a pSeries PowerPC machine panics during boot like
+this:
 
-This tree fails to build for powerpc allyesconfig (final link problem).
+calling  .serial8250_init+0x0/0x230 @ 1
+Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
+------------[ cut here ]------------
+kernel BUG at arch/powerpc/lib/locks.c:36!
+cpu 0x0: Vector: 700 (Program Check) at [c0000000be683740]
+    pc: c000000000039460: .__spin_yield+0x40/0x90
+    lr: c000000000570284: ._spin_lock+0x84/0x90
+    sp: c0000000be6839c0
+   msr: 8000000000029032
+  current =3D 0xc0000000be67e000
+  paca    =3D 0xc000000000947200
+    pid   =3D 1, comm =3D swapper
+kernel BUG at arch/powerpc/lib/locks.c:36!
+enter ? for help
+[c0000000be683a30] c000000000570284 ._spin_lock+0x84/0x90
+[c0000000be683ab0] c00000000056e75c .__mutex_lock_slowpath+0xec/0x2d0
+[c0000000be683b90] c00000000056e274 .mutex_lock+0x54/0x60
+[c0000000be683c10] c00000000032f6f8 .uart_add_one_port+0xd8/0x3f0
+[c0000000be683d30] c0000000007a48c4 .serial8250_init+0x1a4/0x230
+[c0000000be683de0] c00000000000947c .do_one_initcall+0x6c/0x1e0
+[c0000000be683ee0] c000000000779d6c .kernel_init+0x23c/0x2c0
+[c0000000be683f90] c00000000002a8e4 .kernel_thread+0x54/0x70
 
-The sound tree lost its conflict.
+arch/powerpc/lib/locks.c line 36 is:
 
-The ttydev tree lost its build failure, but gained another for which I
-applied a patch.
+        lock_value =3D lock->slock;
+        if (lock_value =3D=3D 0)
+                return;
+        holder_cpu =3D lock_value & 0xffff;
+        BUG_ON(holder_cpu >=3D NR_CPUS);
 
-----------------------------------------------------------------------------
+this last line.  Which would imply that the lock has probably not been
+initialised.  Indeed, uart_add_one_port does:
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-(patches at
-http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
+	struct tty_port *port;
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES) and i386, sparc and sparc64 defconfig.
-These builds also have CONFIG_ENABLE_WARN_DEPRECATED,
-CONFIG_ENABLE_MUST_CHECK and CONFIG_DEBUG_INFO disabled when necessary.
+	mutex_lock(&port->mutex);
 
-Below is a summary of the state of the merge.
-
-We are up to 134 trees (counting Linus' and 19 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+without assigning to port.  See "serial-move-mutex" from the ttydev tree.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging dwmw2/master
-Merging arm/devel
-Merging davinci/for-next
-Merging pxa/for-next
-Merging thumb-2/thumb-2
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-CONFLICT (content): Merge conflict in arch/mips/cavium-octeon/dma-octeon.c
-CONFLICT (add/add): Merge conflict in arch/mips/cavium-octeon/executive/cvm=
-x-helper-errata.c
-CONFLICT (content): Merge conflict in arch/mips/mm/tlbex.c
-CONFLICT (content): Merge conflict in arch/mips/sibyte/swarm/setup.c
-CONFLICT (content): Merge conflict in drivers/char/hw_random/Kconfig
-CONFLICT (content): Merge conflict in drivers/char/hw_random/Makefile
-CONFLICT (add/add): Merge conflict in drivers/dma/txx9dmac.c
-Merging parisc/master
-Merging powerpc/next
-Merging 4xx/next
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging xtensa/master
-Merging cifs/master
-Merging configfs/linux-next
-CONFLICT (content): Merge conflict in fs/configfs/dir.c
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging v9fs/for-next
-CONFLICT (content): Merge conflict in net/9p/protocol.c
-Merging ubifs/linux-next
-Merging xfs/master
-Merging reiserfs-bkl/reiserfs/kill-bkl-rc6
-CONFLICT (content): Merge conflict in fs/reiserfs/journal.c
-CONFLICT (content): Merge conflict in fs/reiserfs/super.c
-Merging vfs/for-next
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/board-dm646x-ev=
-m.c
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/dm355.c
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/dm644x.c
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/dm646x.c
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/include/mach/dm=
-355.h
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/include/mach/dm=
-644x.h
-Merging quota/for_next
-Merging kbuild/master
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/master
-Merging dlm/next
-Merging scsi/master
-Merging async_tx/next
-Merging udf/for_next
-Merging net/master
-CONFLICT (content): Merge conflict in drivers/net/wireless/iwmc3200wifi/net=
-dev.c
-CONFLICT (content): Merge conflict in net/wireless/scan.c
-Merging wireless/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-Merging cpufreq/next
-Merging quilt/rr
-Merging mmc/next
-Merging input/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging quilt/ttydev
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging omap/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging edac-amd/for-next
-Merging fsnotify/for-next
-Merging irda/for-next
-Merging hwlat/for-linus
-Merging tip/auto-latest
-CONFLICT (content): Merge conflict in arch/x86/include/asm/termios.h
-CONFLICT (content): Merge conflict in drivers/oprofile/oprofile_stats.c
-CONFLICT (content): Merge conflict in include/linux/rcupdate.h
-Merging percpu/for-next
-CONFLICT (content): Merge conflict in arch/sh/kernel/vmlinux.lds.S
-CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/perf_counter.c
-CONFLICT (content): Merge conflict in drivers/cpufreq/cpufreq_ondemand.c
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging quilt/driver-core
-CONFLICT (content): Merge conflict in init/main.c
-Merging quilt/usb
-Merging quilt/staging
-Merging scsi-post-merge/master
-Applying: serial: fix pmac_zilog fallout from uart_state mutex move
-
---Signature=_Fri__24_Jul_2009_16_19_26_+1000_EASJJ2nLp1G6RhBF
+--Signature=_Fri__24_Jul_2009_17_18_41_+1000_olGmIiZ7e3MchuU0
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkppUm4ACgkQjjKRsyhoI8wiXgCgujJcnSOXxgp4/dgut5JmBz7s
-LLwAoJMRpkVn67UELar4c2N0X8v0gRon
-=YfLR
+iEYEARECAAYFAkppYFEACgkQjjKRsyhoI8zFAgCggYX9ZSlUhQwwRhu5egWUcrpk
+gfMAnjtKLiVIfs52W7iPTDKRxLMkDmHq
+=jdui
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__24_Jul_2009_16_19_26_+1000_EASJJ2nLp1G6RhBF--
+--Signature=_Fri__24_Jul_2009_17_18_41_+1000_olGmIiZ7e3MchuU0--
