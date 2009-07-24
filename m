@@ -1,53 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: boot panic in serial init
-Date: Fri, 24 Jul 2009 23:11:48 +1000
-Message-ID: <20090724231148.9d0c9df3.sfr@canb.auug.org.au>
-References: <20090724171841.b128f8be.sfr@canb.auug.org.au>
-	<4A69955D.2040000@in.ibm.com>
-	<20090724131545.309d565b@lxorguk.ukuu.org.uk>
+From: Philipp Reisner <philipp.reisner@linbit.com>
+Subject: Re: [Drbd-dev] [PATCH 00/16] drbd: a block device for HA clusters
+Date: Fri, 24 Jul 2009 17:20:21 +0200
+Message-ID: <200907241720.22771.philipp.reisner@linbit.com>
+References: <1246894775-10855-1-git-send-email-philipp.reisner@linbit.com> <20090721185156.GA10126@johann> <20090722145917.055eddc1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__24_Jul_2009_23_11_48_+1000_C2ppKvTg_RbvnIRn"
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46426 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752618AbZGXNLw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 24 Jul 2009 09:11:52 -0400
-In-Reply-To: <20090724131545.309d565b@lxorguk.ukuu.org.uk>
+Received: from mail09.linbit.com ([212.69.161.110]:45200 "EHLO
+	mail09.linbit.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752100AbZGXPUY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Jul 2009 11:20:24 -0400
+In-Reply-To: <20090722145917.055eddc1.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: Sachin Sant <sachinp@in.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Lars Ellenberg <lars.ellenberg@linbit.com>, Andrew Morton <akpm@linux-foundation.org>, drbd-dev@lists.linbit.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
---Signature=_Fri__24_Jul_2009_23_11_48_+1000_C2ppKvTg_RbvnIRn
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Alan,
-
-On Fri, 24 Jul 2009 13:15:45 +0100 Alan Cox <alan@lxorguk.ukuu.org.uk> wrot=
-e:
+On Wednesday 22 July 2009 06:59:17 Stephen Rothwell wrote:
+> Hi Lars,
 >
-> Screw up on my part. New patches will get rsynced shortly.
+> On Tue, 21 Jul 2009 20:51:56 +0200 Lars Ellenberg 
+<lars.ellenberg@linbit.com> wrote:
+> > Stephen: expect an explicit linux-next merge request
+> > within the next few days.
+>
+> OK, just to be clear your tree should be based on Linus' tree (or some
+> other *stable*, non rebasing, tree - *not* linux-next).
+>
 
-Thanks.
+Hi Stephen,
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Please add git://git.drbd.org/linux-2.6-drbd.git to linux-next.
 
---Signature=_Fri__24_Jul_2009_23_11_48_+1000_C2ppKvTg_RbvnIRn
-Content-Type: application/pgp-signature
+The tree was initially based on v2.6.30-rc1. Later 2.6.31-rc1 was
+merged in. 
+I verified that it still merges with 2.6.31-rc4 without conflicts.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Thanks!
 
-iEYEARECAAYFAkppsxQACgkQjjKRsyhoI8y/RwCcDU8AM1g5u2E2geOyG5dklwSG
-NEkAoKypSggTNHYMwffWA7Hh/IwC5EHJ
-=CkNw
------END PGP SIGNATURE-----
+-Philipp
+-- 
+: Dipl-Ing Philipp Reisner
+: LINBIT | Your Way to High Availability
+: Tel: +43-1-8178292-50, Fax: +43-1-8178292-82
+: http://www.linbit.com
 
---Signature=_Fri__24_Jul_2009_23_11_48_+1000_C2ppKvTg_RbvnIRn--
+DRBD(R) and LINBIT(R) are registered trademarks of LINBIT, Austria.
