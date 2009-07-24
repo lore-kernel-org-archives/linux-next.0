@@ -1,63 +1,87 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the sound tree with the davinci
- tree
-Date: Fri, 24 Jul 2009 11:12:42 +1000
-Message-ID: <20090724111242.4156c6f9.sfr@canb.auug.org.au>
-References: <20090723112110.e42430e9.sfr@canb.auug.org.au>
-	<s5hvdlkvsk6.wl%tiwai@suse.de>
-	<873a8ni8t7.fsf@deeprootsystems.com>
-	<s5h7hxzngg5.wl%tiwai@suse.de>
+Subject: linux-next: ttydev tree build failure
+Date: Fri, 24 Jul 2009 15:54:17 +1000
+Message-ID: <20090724155417.62fa065d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__24_Jul_2009_11_12_42_+1000_9np3rPAK7dAgHe31"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55842 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51879 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751729AbZGXBMq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Jul 2009 21:12:46 -0400
-In-Reply-To: <s5h7hxzngg5.wl%tiwai@suse.de>
+	id S1751002AbZGXFyS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 24 Jul 2009 01:54:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Kevin Hilman <khilman@deeprootsystems.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chaithrika U S <chaithrika@ti.com>, Pavel Kiryukhin <pkiryukhin@ru.mvista.com>, Naresh Medisetty <naresh@ti.com>, Steve Chen <schen@mvista.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Sudhakar Rajashekhara <sudhakar.raj@ti.com>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__24_Jul_2009_11_12_42_+1000_9np3rPAK7dAgHe31
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Alan,
 
-Hi Takashi, Kevin,
+Today's linux-next build (powerpc allyesconfig) failed like this:
 
-On Fri, 24 Jul 2009 01:10:50 +0200 Takashi Iwai <tiwai@suse.de> wrote:
->
-> At Thu, 23 Jul 2009 10:54:44 -0700,
-> Kevin Hilman wrote:
-> >=20
-> > I've taken care of this in the DaVinci for-next branch.
-> >=20
-> > I dropped the davinci changes that change code that were then dropped
-> > by the asoc changes.
->=20
-> Ah, great.  Then I revert a fix merge in my for-next branch and keep
-> only pure ASoC things.
+drivers/serial/pmac_zilog.c: In function 'pmz_suspend':
+drivers/serial/pmac_zilog.c:1648: error: 'struct uart_state' has no member named 'mutex'
+drivers/serial/pmac_zilog.c:1679: error: 'struct uart_state' has no member named 'mutex'
+drivers/serial/pmac_zilog.c: In function 'pmz_resume':
+drivers/serial/pmac_zilog.c:1708: error: 'struct uart_state' has no member named 'mutex'
+drivers/serial/pmac_zilog.c:1740: error: 'struct uart_state' has no member named 'mutex'
 
-Thanks.
+Caused by commit d7b52714eee196caeb4195ae1a7aa8bf82bffda5
+("serial-move-mutex") from the ttydev tree.
 
---=20
+I applied the following patch for today.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__24_Jul_2009_11_12_42_+1000_9np3rPAK7dAgHe31
-Content-Type: application/pgp-signature
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 24 Jul 2009 15:48:36 +1000
+Subject: [PATCH] serial: fix pmac_zilog fallout from uart_state mutex move
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/serial/pmac_zilog.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-iEYEARECAAYFAkppCooACgkQjjKRsyhoI8zlewCgjWKJ8COez0EMIqm9VMx+1hRa
-U/QAoIydR+qbBZhG/92ZREQNR/f2XKnO
-=UNQR
------END PGP SIGNATURE-----
-
---Signature=_Fri__24_Jul_2009_11_12_42_+1000_9np3rPAK7dAgHe31--
+diff --git a/drivers/serial/pmac_zilog.c b/drivers/serial/pmac_zilog.c
+index 6495d01..0700cd1 100644
+--- a/drivers/serial/pmac_zilog.c
++++ b/drivers/serial/pmac_zilog.c
+@@ -1645,7 +1645,7 @@ static int pmz_suspend(struct macio_dev *mdev, pm_message_t pm_state)
+ 	state = pmz_uart_reg.state + uap->port.line;
+ 
+ 	mutex_lock(&pmz_irq_mutex);
+-	mutex_lock(&state->mutex);
++	mutex_lock(&state->port.mutex);
+ 
+ 	spin_lock_irqsave(&uap->port.lock, flags);
+ 
+@@ -1676,7 +1676,7 @@ static int pmz_suspend(struct macio_dev *mdev, pm_message_t pm_state)
+ 	/* Shut the chip down */
+ 	pmz_set_scc_power(uap, 0);
+ 
+-	mutex_unlock(&state->mutex);
++	mutex_unlock(&state->port.mutex);
+ 	mutex_unlock(&pmz_irq_mutex);
+ 
+ 	pmz_debug("suspend, switching complete\n");
+@@ -1705,7 +1705,7 @@ static int pmz_resume(struct macio_dev *mdev)
+ 	state = pmz_uart_reg.state + uap->port.line;
+ 
+ 	mutex_lock(&pmz_irq_mutex);
+-	mutex_lock(&state->mutex);
++	mutex_lock(&state->port.mutex);
+ 
+ 	spin_lock_irqsave(&uap->port.lock, flags);
+ 	if (!ZS_IS_OPEN(uap) && !ZS_IS_CONS(uap)) {
+@@ -1737,7 +1737,7 @@ static int pmz_resume(struct macio_dev *mdev)
+ 	}
+ 
+  bail:
+-	mutex_unlock(&state->mutex);
++	mutex_unlock(&state->port.mutex);
+ 	mutex_unlock(&pmz_irq_mutex);
+ 
+ 	/* Right now, we deal with delay by blocking here, I'll be
+-- 
+1.6.3.3
