@@ -1,50 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: tree build failure
-Date: Mon, 27 Jul 2009 08:06:17 -0700 (PDT)
-Message-ID: <20090727.080617.30802851.davem@davemloft.net>
-References: <20090727175328.fe3197a5.sfr@canb.auug.org.au>
-	<200907271121.34348.keil@b1-systems.de>
+From: Philipp Reisner <philipp.reisner@linbit.com>
+Subject: Re: linux-next: drbd tree build failure
+Date: Mon, 27 Jul 2009 17:07:58 +0200
+Message-ID: <200907271707.58733.philipp.reisner@linbit.com>
+References: <20090727173754.6a04e781.sfr@canb.auug.org.au> <200907271109.33271.philipp.reisner@linbit.com> <a4423d670907270438n3e8f07caoa45124b1bd7b2386@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:36806
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751111AbZG0PGL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 27 Jul 2009 11:06:11 -0400
-In-Reply-To: <200907271121.34348.keil@b1-systems.de>
+Received: from mail09.linbit.com ([212.69.161.110]:48534 "EHLO
+	mail09.linbit.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750718AbZG0PH7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Jul 2009 11:07:59 -0400
+In-Reply-To: <a4423d670907270438n3e8f07caoa45124b1bd7b2386@mail.gmail.com>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: keil@b1-systems.de
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Karsten Keil <keil@b1-systems.de>
-Date: Mon, 27 Jul 2009 11:21:33 +0200
+On Monday 27 July 2009 13:38:44 Alexander Beregalov wrote:
+> One more issue
+>
+> drivers/block/drbd/drbd_main.c: In function 'drbd_buildtag':
+> drivers/block/drbd/drbd_main.c:3738: error: dereferencing pointer to
+> incomplete type
 
-> On Montag, 27. Juli 2009 09:53:28 you wrote:
->> Hi Dave,
->>
->> Today's linux-next build (powerpc allyesconfig) failed like this:
->>
->> drivers/isdn/hisax/built-in.o: In function `setup_w6692':
->> (.opd+0x4a28): multiple definition of `setup_w6692'
->> drivers/isdn/hardware/built-in.o:(.opd+0x4e90): first defined here
->> drivers/isdn/hisax/built-in.o: In function `.setup_w6692':
->> (.devinit.text+0x5b14): multiple definition of `.setup_w6692'
->> drivers/isdn/hardware/built-in.o:(.text+0x8b75c): first defined here
->>
->> Caused by commit 707b2ce6c1f4f1261788f2ff09ad82c35e0e6240
->> ("mISDN: Add driver for Winbond cards").
->>
->> setup_w6692 appears in drivers/isdn/hardware/mISDN/w6692.c and
->> drivers/isdn/hisax/w6692.c.  I applied the patch below for today (this
->> may not be correct).
->>
-> 
-> Sorry for that, yes this fix is correct - I really should test allyesconfig 
-> more times by myself  :-(.
-> 
-> ACK.
+Ohh, right. I have never tried to build a kernel with the DRBD patch
+without CONFIG_MODULES set.
 
-Applied.
+It is fixed now.
+
+-Phil
+-- 
+: Dipl-Ing Philipp Reisner
+: LINBIT | Your Way to High Availability
+: Tel: +43-1-8178292-50, Fax: +43-1-8178292-82
+: http://www.linbit.com
+
+DRBD(R) and LINBIT(R) are registered trademarks of LINBIT, Austria.
