@@ -1,25 +1,62 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: Re: linux-next: drbd tree build failure
-Date: Mon, 27 Jul 2009 15:38:44 +0400
-Message-ID: <a4423d670907270438n3e8f07caoa45124b1bd7b2386@mail.gmail.com>
-References: <20090727173754.6a04e781.sfr@canb.auug.org.au>
-	 <200907271109.33271.philipp.reisner@linbit.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH] drbd: fix build when CONFIG_MODULES=n
+Date: Mon, 27 Jul 2009 07:55:36 -0700
+Message-ID: <20090727075536.533d1801.randy.dunlap@oracle.com>
+References: <20090727180552.eb32515b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f226.google.com ([209.85.219.226]:49672 "EHLO
-	mail-ew0-f226.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750884AbZG0Lip (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Jul 2009 07:38:45 -0400
-In-Reply-To: <200907271109.33271.philipp.reisner@linbit.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Philipp Reisner <philipp.reisner@linbit.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752687AbZG0O4t@vger.kernel.org>
+In-Reply-To: <20090727180552.eb32515b.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, drbd-dev@lists.linbit.com
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-One more issue
+On Mon, 27 Jul 2009 18:05:52 +1000 Stephen Rothwell wrote:
 
-drivers/block/drbd/drbd_main.c: In function 'drbd_buildtag':
-drivers/block/drbd/drbd_main.c:3738: error: dereferencing pointer to
-incomplete type
+> Hi all,
+> 
+> Changes since 20090724:
+> 
+> New trees:
+> 	drbd
+> 
+> The drbd tree gained two build failures for which I reverted a commit from
+> the rr tree and applied a patch.
+> ----------------------------------------------------------------------------
+
+
+(already fixed?)
+
+---
+From: Randy Dunlap <randy.dunlap@oracle.com>
+
+Fix drbd build when CONFIG_MODULES=n:
+drivers/block/drbd/drbd_main.c:3738: error: dereferencing pointer to incomplete type
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: drbd-dev@lists.linbit.com
+---
+ drivers/block/drbd/drbd_main.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- linux-next-20090727.orig/drivers/block/drbd/drbd_main.c
++++ linux-next-20090727/drivers/block/drbd/drbd_main.c
+@@ -3733,12 +3733,16 @@ const char *drbd_buildtag(void)
+ 
+ 	static char buildtag[38] = "\0uilt-in";
+ 
++#ifdef CONFIG_MODULES
+ 	if (buildtag[0] == 0) {
+ 		if (THIS_MODULE != NULL)
+ 			sprintf(buildtag, "srcversion: %-24s", THIS_MODULE->srcversion);
+ 		else
+ 			buildtag[0] = 'b';
+ 	}
++#else
++	buildtag[0] = 'b';
++#endif
+ 
+ 	return buildtag;
+ }
