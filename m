@@ -1,54 +1,73 @@
-From: Lars Ellenberg <lars.ellenberg@linbit.com>
-Subject: Re: linux-next: drbd tree build failure
-Date: Mon, 27 Jul 2009 10:09:57 +0200
-Message-ID: <20090727080957.GA8046@barkeeper1-xen.linbit>
-References: <20090727154816.24e81531.sfr@canb.auug.org.au>
+From: Lin Ming <ming.m.lin@intel.com>
+Subject: Re: FW: next-20090724: null pointer dereference from
+ ibm_find_acpi_device
+Date: Mon, 27 Jul 2009 17:03:57 +0800
+Message-ID: <1248685437.3166.28.camel@minggr.sh.intel.com>
+References: <4911F71203A09E4D9981D27F9D8308582EE836AE@orsmsx503.amr.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail09.linbit.com ([212.69.161.110]:59633 "EHLO
-	mail09.linbit.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754738AbZG0IJ6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Jul 2009 04:09:58 -0400
-Content-Disposition: inline
-In-Reply-To: <20090727154816.24e81531.sfr@canb.auug.org.au>
+Received: from mga11.intel.com ([192.55.52.93]:39458 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753539AbZG0JCW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 27 Jul 2009 05:02:22 -0400
+In-Reply-To: <4911F71203A09E4D9981D27F9D8308582EE836AE@orsmsx503.amr.corp.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Philipp Reisner <philipp.reisner@linbit.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>
+To: thomas@m3y3r.de
+Cc: "Moore, Robert" <robert.moore@intel.com>, Len Brown <len.brown@intel.com>, linux-next@vger.kernel.org
 
-On Mon, Jul 27, 2009 at 03:48:16PM +1000, Stephen Rothwell wrote:
-> Hi Philipp,
->=20
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
->=20
-> drivers/block/drbd/drbd_main.c: In function 'drbd_thread_current_set_=
-cpu':
-> drivers/block/drbd/drbd_main.c:1592: error: implicit declaration of f=
-unction 'set_cpus_allowed'
->=20
-> Introduced by commit 8a4ebc3fbd90072ac870064a930fe612eea6d9a1 ("DRBD:
-> main") from the drbd interacting with commit
-> 84cf7f02712e3491fb9776f950a8c4f413204c8b
-> ("cpumask:remove-set_cpus_allowed") from the rr tree.
->=20
-> I am not sure what the transformation to the new infrastructure is he=
-re -
-> maybe Rusty can help?
->=20
-> For today, I have reverted the rr tree commit above but we need a bet=
-ter
-> solution.
+Hi, Thomas
 
-I think we can easily use set_cpus_allowed_ptr() instead,
-as in fact, we do not have the cpu mask on the stack.
-But embeded in struct drbd_conf.
+Would you please try below patch?
+
+info->hardware_id.string[sizeof(info->hardware_id.length) - 1] = '\0' is
+not needed anymore because acpi_get_object_info already handles it.
+
+        /* Allocate a buffer for the HID */
+
+        hid =
+            ACPI_ALLOCATE_ZEROED(sizeof(struct acpica_device_id) +
+                                 (acpi_size) length);
+
+And it would cause null pointer deference if info->hardware_id.string is
+NULL.
+
+So delete it.
+
+diff --git a/drivers/pci/hotplug/acpiphp_ibm.c b/drivers/pci/hotplug/acpiphp_ibm.c
+index a9d926b..e7be66d 100644
+--- a/drivers/pci/hotplug/acpiphp_ibm.c
++++ b/drivers/pci/hotplug/acpiphp_ibm.c
+@@ -406,7 +406,6 @@ static acpi_status __init ibm_find_acpi_device(acpi_handle handle,
+ 			__func__, status);
+ 		return retval;
+ 	}
+-	info->hardware_id.string[sizeof(info->hardware_id.length) - 1] = '\0';
+ 
+ 	if (info->current_status && (info->valid & ACPI_VALID_HID) &&
+ 			(!strcmp(info->hardware_id.string, IBM_HARDWARE_ID1) ||
 
 
---=20
-: Lars Ellenberg
-: LINBIT | Your Way to High Availability
-: DRBD/HA support and consulting http://www.linbit.com
-
-DRBD=AE and LINBIT=AE are registered trademarks of LINBIT, Austria.
+On Mon, 2009-07-27 at 13:09 +0800, Moore, Robert wrote:
+> Lin Ming,
+> 
+> Can you take a look at this?
+> 
+> Thanks
+> Bob
+> 
+> 
+> -----Original Message-----
+> From: Thomas Meyer [mailto:thomas@m3y3r.de] 
+> Sent: Sunday, July 26, 2009 3:15 AM
+> To: Moore, Robert; Brown, Len; linux-next@vger.kernel.org
+> Subject: next-20090724: null pointer dereference from ibm_find_acpi_device
+> 
+> Hi.
+> 
+> Probably caused by commit fbe8cddd2d85979d273d7937a2b8a47498694d91.
+> 
+> See attached screenshot.
+> 
