@@ -1,74 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: drbd tree build failure
-Date: Mon, 27 Jul 2009 17:37:54 +1000
-Message-ID: <20090727173754.6a04e781.sfr@canb.auug.org.au>
+Subject: linux-next:  tree build failure
+Date: Mon, 27 Jul 2009 17:53:28 +1000
+Message-ID: <20090727175328.fe3197a5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51556 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48772 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754035AbZG0Hh5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 27 Jul 2009 03:37:57 -0400
+	id S1754091AbZG0Hxc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 27 Jul 2009 03:53:32 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Philipp Reisner <philipp.reisner@linbit.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Karsten Keil <keil@b1-systems.de>
 
-Hi Philipp,
+Hi Dave,
 
 Today's linux-next build (powerpc allyesconfig) failed like this:
 
-drivers/block/drbd/drbd_trace.o: In function `.roles_to_name':
-(.text+0x64): multiple definition of `.roles_to_name'
-drivers/block/drbd/drbd.o:(.text+0x28eb8): first defined here
-drivers/block/drbd/drbd_trace.o: In function `disks_to_name':
-(.opd+0x30): multiple definition of `disks_to_name'
-drivers/block/drbd/drbd.o:(.opd+0x1b78): first defined here
-drivers/block/drbd/drbd_trace.o: In function `roles_to_name':
-(.opd+0x18): multiple definition of `roles_to_name'
-drivers/block/drbd/drbd.o:(.opd+0x1b60): first defined here
-drivers/block/drbd/drbd_trace.o: In function `.conns_to_name':
-(.text+0x0): multiple definition of `.conns_to_name'
-drivers/block/drbd/drbd.o:(.text+0x28e54): first defined here
-drivers/block/drbd/drbd_trace.o: In function `set_st_err_name':
-(.opd+0x48): multiple definition of `set_st_err_name'
-drivers/block/drbd/drbd.o:(.opd+0x1b90): first defined here
-drivers/block/drbd/drbd_trace.o: In function `.disks_to_name':
-(.text+0xcc): multiple definition of `.disks_to_name'
-drivers/block/drbd/drbd.o:(.text+0x28f20): first defined here
-drivers/block/drbd/drbd_trace.o: In function `conns_to_name':
-(.opd+0x0): multiple definition of `conns_to_name'
-drivers/block/drbd/drbd.o:(.opd+0x1b48): first defined here
-drivers/block/drbd/drbd_trace.o: In function `.set_st_err_name':
-(.text+0x134): multiple definition of `.set_st_err_name'
-drivers/block/drbd/drbd.o:(.text+0x28f88): first defined here
+drivers/isdn/hisax/built-in.o: In function `setup_w6692':
+(.opd+0x4a28): multiple definition of `setup_w6692'
+drivers/isdn/hardware/built-in.o:(.opd+0x4e90): first defined here
+drivers/isdn/hisax/built-in.o: In function `.setup_w6692':
+(.devinit.text+0x5b14): multiple definition of `.setup_w6692'
+drivers/isdn/hardware/built-in.o:(.text+0x8b75c): first defined here
 
-I applied the following patch to mark DRBD_TRACE broken for now.
+Caused by commit 707b2ce6c1f4f1261788f2ff09ad82c35e0e6240
+("mISDN: Add driver for Winbond cards").
+
+setup_w6692 appears in drivers/isdn/hardware/mISDN/w6692.c and
+drivers/isdn/hisax/w6692.c.  I applied the patch below for today (this
+may not be correct).
+
+[I also get these warnings:
+drivers/isdn/hardware/mISDN/w6692.c:533: warning: 'setvolume' defined but not used
+drivers/isdn/hardware/mISDN/w6692.c:560: warning: 'enable_pots' defined but not used
+]
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 27 Jul 2009 17:27:39 +1000
-Subject: [PATCH] drbd: tracing is broken
+Date: Mon, 27 Jul 2009 17:45:36 +1000
+Subject: [PATCH] net: fix multiple definitions of setup_w6692
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/block/drbd/Kconfig |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+ drivers/isdn/hardware/mISDN/w6692.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/block/drbd/Kconfig b/drivers/block/drbd/Kconfig
-index 8b14ea2..b047662 100644
---- a/drivers/block/drbd/Kconfig
-+++ b/drivers/block/drbd/Kconfig
-@@ -41,6 +41,7 @@ config BLK_DEV_DRBD
- config DRBD_TRACE
- 	tristate "DRBD tracing"
- 	depends on BLK_DEV_DRBD
-+	depends on BROKEN
- 	select TRACEPOINTS
- 	default m
- 	help
+diff --git a/drivers/isdn/hardware/mISDN/w6692.c b/drivers/isdn/hardware/mISDN/w6692.c
+index 1b9008f..d3f1077 100644
+--- a/drivers/isdn/hardware/mISDN/w6692.c
++++ b/drivers/isdn/hardware/mISDN/w6692.c
+@@ -1234,7 +1234,7 @@ w6692_dctrl(struct mISDNchannel *ch, u32 cmd, void *arg)
+ 	return err;
+ }
+ 
+-int
++static int
+ setup_w6692(struct w6692_hw *card)
+ {
+ 	u32	val;
 -- 
 1.6.3.3
