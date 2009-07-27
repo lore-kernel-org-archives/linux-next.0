@@ -1,37 +1,50 @@
 From: Philipp Reisner <philipp.reisner@linbit.com>
 Subject: Re: linux-next: drbd tree build failure
-Date: Mon, 27 Jul 2009 17:07:58 +0200
-Message-ID: <200907271707.58733.philipp.reisner@linbit.com>
-References: <20090727173754.6a04e781.sfr@canb.auug.org.au> <200907271109.33271.philipp.reisner@linbit.com> <a4423d670907270438n3e8f07caoa45124b1bd7b2386@mail.gmail.com>
+Date: Mon, 27 Jul 2009 19:17:55 +0200
+Message-ID: <200907271917.56148.philipp.reisner@linbit.com>
+References: <20090727154816.24e81531.sfr@canb.auug.org.au> <20090727080957.GA8046@barkeeper1-xen.linbit>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
-  charset="utf-8"
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail09.linbit.com ([212.69.161.110]:48534 "EHLO
-	mail09.linbit.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750718AbZG0PH7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Jul 2009 11:07:59 -0400
-In-Reply-To: <a4423d670907270438n3e8f07caoa45124b1bd7b2386@mail.gmail.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752891AbZG0RR6@vger.kernel.org>
+In-Reply-To: <20090727080957.GA8046@barkeeper1-xen.linbit>
 Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lars Ellenberg <lars.ellenberg@linbit.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>
+List-Id: linux-next.vger.kernel.org
 
-On Monday 27 July 2009 13:38:44 Alexander Beregalov wrote:
-> One more issue
+On Monday 27 July 2009 10:09:57 Lars Ellenberg wrote:
+> On Mon, Jul 27, 2009 at 03:48:16PM +1000, Stephen Rothwell wrote:
+> > Hi Philipp,
+> >
+> > Today's linux-next build (x86_64 allmodconfig) failed like this:
+> >
+> > drivers/block/drbd/drbd_main.c: In function
+> > 'drbd_thread_current_set_cpu': drivers/block/drbd/drbd_main.c:1592:
+> > error: implicit declaration of function 'set_cpus_allowed'
+> >
+> > Introduced by commit 8a4ebc3fbd90072ac870064a930fe612eea6d9a1 ("DRBD:
+> > main") from the drbd interacting with commit
+> > 84cf7f02712e3491fb9776f950a8c4f413204c8b
+> > ("cpumask:remove-set_cpus_allowed") from the rr tree.
+> >
+> > I am not sure what the transformation to the new infrastructure is here -
+> > maybe Rusty can help?
+> >
+> > For today, I have reverted the rr tree commit above but we need a better
+> > solution.
 >
-> drivers/block/drbd/drbd_main.c: In function 'drbd_buildtag':
-> drivers/block/drbd/drbd_main.c:3738: error: dereferencing pointer to
-> incomplete type
+> I think we can easily use set_cpus_allowed_ptr() instead,
+> as in fact, we do not have the cpu mask on the stack.
+> But embeded in struct drbd_conf.
 
-Ohh, right. I have never tried to build a kernel with the DRBD patch
-without CONFIG_MODULES set.
+Ok. Lars' patch is now complete and arrived in the git tree...
 
-It is fixed now.
+It should build now with Rusty's paches.
 
--Phil
+-phil
 -- 
 : Dipl-Ing Philipp Reisner
 : LINBIT | Your Way to High Availability
