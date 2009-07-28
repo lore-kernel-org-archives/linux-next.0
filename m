@@ -1,73 +1,65 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH -next] netxen: fix build when CONFIG_INET=n
-Date: Tue, 28 Jul 2009 11:32:54 -0700
-Message-ID: <20090728113254.f0d1afb7.randy.dunlap@oracle.com>
-References: <20090728174224.647cc3ba.sfr@canb.auug.org.au>
-	<20090728112103.81f229d6.randy.dunlap@oracle.com>
-	<7608421F3572AB4292BB2532AE89D5658187610C1C@AVEXMB1.qlogic.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Dhananjay Phadke <dhananjay@netxen.com>
+Subject: [PATCH NEXT] netxen: fix CONFIG_INET=n build
+Date: Tue, 28 Jul 2009 12:10:03 -0700
+Message-ID: <1248808203-9578-1-git-send-email-dhananjay@netxen.com>
 Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <7608421F3572AB4292BB2532AE89D5658187610C1C@AVEXMB1.qlogic.org>
 Sender: netdev-owner@vger.kernel.org
-To: Dhananjay Phadke <dhananjay.phadke@qlogic.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "davem@davemloft.net" <davem@davemloft.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>
+To: davem@davemloft.net
+Cc: netdev@vger.kernel.org, randy.dunlap@oracle.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Tue, 28 Jul 2009 11:25:19 -0700 Dhananjay Phadke wrote:
+Wrap dest IP hashing code with #ifdef CONFIG_INET,
+this feature makes no sense without INET, but other
+driver can still work.
 
-> Thanks Randy for catching, I didn't run  CONFIG_INET=n build.
-> 
-> I think, better option is to wrap code in netxen_nic_main.c with CONFIG_INET check,
-> since it's not a mandatory feature.
-
-OK, I'll leave that to you then.
-
-
-> -Dhananjay
-> ________________________________________
-> From: Randy Dunlap [randy.dunlap@oracle.com]
-> Sent: Tuesday, July 28, 2009 11:21 AM
-> To: Stephen Rothwell; davem@davemloft.net
-> Cc: linux-next@vger.kernel.org; LKML; netdev; Dhananjay Phadke
-> Subject: [PATCH -next] netxen: fix build when CONFIG_INET=n
-> 
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Fix netxen build errors when CONFIG_INET=n:
-> 
-> netxen_nic_main.c:(.text+0x1abb8a): undefined reference to `in_dev_finish_destroy'
-> netxen_nic_main.c:(.init.text+0xd86e): undefined reference to `register_inetaddr_notifier'
-> netxen_nic_main.c:(.exit.text+0x1b70): undefined reference to `unregister_inetaddr_notifier'
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc: Dhananjay Phadke <dhananjay@netxen.com>
-> ---
->  drivers/net/Kconfig |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --- linux-next-20090728.orig/drivers/net/Kconfig
-> +++ linux-next-20090728/drivers/net/Kconfig
-> @@ -2666,7 +2666,7 @@ config MYRI10GE_DCA
-> 
->  config NETXEN_NIC
->         tristate "NetXen Multi port (1/10) Gigabit Ethernet NIC"
-> -       depends on PCI
-> +       depends on PCI && INET
->         help
->           This enables the support for NetXen's Gigabit Ethernet card.
-> 
-> 
-> 
-> 
-> ---
-> ~Randy
-> LPC 2009, Sept. 23-25, Portland, Oregon
-> http://linuxplumbersconf.org/2009/
-
-
+Signed-off-by: Dhananjay Phadke <dhananjay@netxen.com>
 ---
-~Randy
-LPC 2009, Sept. 23-25, Portland, Oregon
-http://linuxplumbersconf.org/2009/
+ drivers/net/netxen/netxen_nic_main.c |    7 +++++++
+ 1 files changed, 7 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/net/netxen/netxen_nic_main.c b/drivers/net/netxen/netxen_nic_main.c
+index 2bbefa6..40549a0 100644
+--- a/drivers/net/netxen/netxen_nic_main.c
++++ b/drivers/net/netxen/netxen_nic_main.c
+@@ -1875,6 +1875,8 @@ static void netxen_nic_poll_controller(struct net_device *netdev)
+ }
+ #endif
+ 
++#ifdef CONFIG_INET
++
+ #define is_netxen_netdev(dev) (dev->netdev_ops == &netxen_netdev_ops)
+ 
+ static int
+@@ -1993,6 +1995,7 @@ static struct notifier_block	netxen_netdev_cb = {
+ static struct notifier_block netxen_inetaddr_cb = {
+ 	.notifier_call = netxen_inetaddr_event,
+ };
++#endif
+ 
+ static struct pci_driver netxen_driver = {
+ 	.name = netxen_nic_driver_name,
+@@ -2012,8 +2015,10 @@ static int __init netxen_init_module(void)
+ 	if ((netxen_workq = create_singlethread_workqueue("netxen")) == NULL)
+ 		return -ENOMEM;
+ 
++#ifdef CONFIG_INET
+ 	register_netdevice_notifier(&netxen_netdev_cb);
+ 	register_inetaddr_notifier(&netxen_inetaddr_cb);
++#endif
+ 
+ 	return pci_register_driver(&netxen_driver);
+ }
+@@ -2024,8 +2029,10 @@ static void __exit netxen_exit_module(void)
+ {
+ 	pci_unregister_driver(&netxen_driver);
+ 
++#ifdef CONFIG_INET
+ 	unregister_inetaddr_notifier(&netxen_inetaddr_cb);
+ 	unregister_netdevice_notifier(&netxen_netdev_cb);
++#endif
+ 	destroy_workqueue(netxen_workq);
+ }
+ 
+-- 
+1.6.0.2
+
