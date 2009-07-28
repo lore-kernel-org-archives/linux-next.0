@@ -1,69 +1,79 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Merge request for kmemleak patches
-Date: Tue, 28 Jul 2009 21:00:22 +1000
-Message-ID: <20090728210022.f5226f20.sfr@canb.auug.org.au>
-References: <1248772559.17665.12.camel@pc1117.cambridge.arm.com>
+From: Oliver Neukum <oliver@neukum.org>
+Subject: Re: linux-next: manual merge of the ttydev tree with the usb.current tree
+Date: Tue, 28 Jul 2009 14:10:40 +0200
+Message-ID: <200907281410.41449.oliver@neukum.org>
+References: <20090728140110.7cfe7c22.sfr@canb.auug.org.au> <20090728112608.09a494e0@lxorguk.ukuu.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__28_Jul_2009_21_00_22_+1000_SFTL4AUnmDB9O1Id"
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58776 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751441AbZG1LA3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Jul 2009 07:00:29 -0400
-In-Reply-To: <1248772559.17665.12.camel@pc1117.cambridge.arm.com>
+Received: from smtp-out003.kontent.com ([81.88.40.217]:54136 "EHLO
+	smtp-out003.kontent.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753382AbZG1MKM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Jul 2009 08:10:12 -0400
+In-Reply-To: <20090728112608.09a494e0@lxorguk.ukuu.org.uk>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next <linux-next@vger.kernel.org>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>
 
---Signature=_Tue__28_Jul_2009_21_00_22_+1000_SFTL4AUnmDB9O1Id
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Catalin,
-
-On Tue, 28 Jul 2009 10:15:59 +0100 Catalin Marinas <catalin.marinas@arm.com=
-> wrote:
+Am Dienstag, 28. Juli 2009 12:26:08 schrieb Alan Cox:
+> On Tue, 28 Jul 2009 14:01:10 +1000
 >
-> There are a few more kmemleak patches for the upcoming merging window
-> (the first one will be pushed before). Could you please pull them into
-> the -next tree? Thanks.
->=20
->   git://linux-arm.org/linux-2.6.git kmemleak
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi Alan,
+> >
+> > Today's linux-next merge of the ttydev tree got a conflict in
+> > drivers/usb/serial/usb-serial.c between commit
+> > a00b8d98aca97bfb6fa983f41dae25b424058592 ("USB: fix usage count in usb
+> > serial generic open regarding autoresume") from the usb.current tree	
+>
+> That looks wrong. The extra fiddling with port.count looks both unsafe
+> and incorrect. I've never seen the "autoresume" patch referred to so I've
+> no idea what it is trying to do
 
-I have added the tree back for tomorrow.
+The problem is subdrivers looking at port->count to determine
+whether URBs have to be resubmitted. That must happen once.
+Therefore if serial_open() needs to do it itself it must make sure
+resume() runs without port->count already incremented.
 
-What I tell everyone: all patches/commits in the tree/series must
-have been:
+As serial_open() takes the lock, resume() must not do so.
+If however, remote wakeup is used a lock must be taken
+to look at port->count reliably. As this is impossible, the patch
+implementing use of remote wakeup for the option driver
+implements a private flag for opened ports.
 
-	posted to a relevant mailing list
-	reviewed
-	unit tested
-	destined for the next merge window (or the current release)
+This code from option_resume():
 
-*before* they are included.  The linux-next tree is for integration
-testing and to lower the impact of conflicts between subsystems in the
-next merge window.
+for (i = 0; i < serial->num_ports; i++) {
+		/* walk all ports */
+		port = serial->port[i];
+		portdata = usb_get_serial_port_data(port);
+		mutex_lock(&port->mutex);
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+		/* skip closed ports */
+		if (!port->port.count) {
+			mutex_unlock(&port->mutex);
+			continue;
+		}
 
---Signature=_Tue__28_Jul_2009_21_00_22_+1000_SFTL4AUnmDB9O1Id
-Content-Type: application/pgp-signature
+		for (j = 0; j < N_IN_URB; j++) {
+			urb = portdata->in_urbs[j];
+			err = usb_submit_urb(urb, GFP_NOIO);
+			if (err < 0) {
+				mutex_unlock(&port->mutex);
+				err("%s: Error %d for bulk URB %d",
+					 __func__, err, i);
+				return err;
+			}
+		}
+		mutex_unlock(&port->mutex);
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
+must not take the port->mutex.
 
-iEYEARECAAYFAkpu2kYACgkQjjKRsyhoI8wP9gCfTk6YBbJ1fAqIKC1SYsofWz9B
-8JwAn1QkBREWooIS6NaS86lteIgAt76N
-=QGS0
------END PGP SIGNATURE-----
+Unfortunately I have no access to my trees today and yesterday.
 
---Signature=_Tue__28_Jul_2009_21_00_22_+1000_SFTL4AUnmDB9O1Id--
+	Regards
+		Oliver
