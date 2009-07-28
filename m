@@ -1,58 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ttydev tree with the usb.current
- tree
-Date: Tue, 28 Jul 2009 14:01:10 +1000
-Message-ID: <20090728140110.7cfe7c22.sfr@canb.auug.org.au>
+Subject: Re: linux-next: drbd tree build failure
+Date: Tue, 28 Jul 2009 14:19:07 +1000
+Message-ID: <20090728141907.0d9fb648.sfr@canb.auug.org.au>
+References: <20090727173754.6a04e781.sfr@canb.auug.org.au>
+	<200907271109.33271.philipp.reisner@linbit.com>
+	<a4423d670907270438n3e8f07caoa45124b1bd7b2386@mail.gmail.com>
+	<200907271707.58733.philipp.reisner@linbit.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__28_Jul_2009_14_19_07_+1000_5=Q93C5E.CiE/6NJ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56396 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52531 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750710AbZG1EBN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Jul 2009 00:01:13 -0400
+	id S1750829AbZG1ETM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Jul 2009 00:19:12 -0400
+In-Reply-To: <200907271707.58733.philipp.reisner@linbit.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oliver Neukum <oliver@neukum.org>, Greg KH <greg@kroah.com>
+To: Philipp Reisner <philipp.reisner@linbit.com>
+Cc: Alexander Beregalov <a.beregalov@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Alan,
+--Signature=_Tue__28_Jul_2009_14_19_07_+1000_5=Q93C5E.CiE/6NJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the ttydev tree got a conflict in
-drivers/usb/serial/usb-serial.c between commit
-a00b8d98aca97bfb6fa983f41dae25b424058592 ("USB: fix usage count in usb
-serial generic open regarding autoresume") from the usb.current tree and
-commit 73fed8403623653560cc2f35c9b62891adaf6b4b
-("tty-usb-error-unlock-fix") from the ttydev tree.
+Hi Philipp,
 
-Just context changes.  I have fixed it up (see below) and can carry the
-fix as necessary.
--- 
+On Mon, 27 Jul 2009 17:07:58 +0200 Philipp Reisner <philipp.reisner@linbit.=
+com> wrote:
+>
+> On Monday 27 July 2009 13:38:44 Alexander Beregalov wrote:
+> > One more issue
+> >
+> > drivers/block/drbd/drbd_main.c: In function 'drbd_buildtag':
+> > drivers/block/drbd/drbd_main.c:3738: error: dereferencing pointer to
+> > incomplete type
+>=20
+> Ohh, right. I have never tried to build a kernel with the DRBD patch
+> without CONFIG_MODULES set.
+>=20
+> It is fixed now.
+
+Thanks.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/usb/serial/usb-serial.c
-index 06579a8,99188c9..0000000
---- a/drivers/usb/serial/usb-serial.c
-+++ b/drivers/usb/serial/usb-serial.c
-@@@ -220,8 -224,8 +222,8 @@@ static int serial_open (struct tty_stru
-  	tty_port_tty_set(&port->port, tty);
-  
-  	/* If the console is attached, the device is already open */
- -	if (port->port.count == 1 && !port->console) {
- +	if (!port->port.count && !port->console) {
-- 
-+ 		first = 1;
-  		/* lock this module before we call it
-  		 * this may fail, which means we must bail out,
-  		 * safe because we are called with BKL held */
-@@@ -246,8 -248,7 +248,9 @@@
-  		if (retval)
-  			goto bailout_interface_put;
-  		mutex_unlock(&serial->disc_mutex);
-+ 		set_bit(ASYNCB_INITIALIZED, &port->port.flags);
- +	} else {
- +		++port->port.count;
-  	}
-  	mutex_unlock(&port->mutex);
-  	/* Now do the correct tty layer semantics */
+--Signature=_Tue__28_Jul_2009_14_19_07_+1000_5=Q93C5E.CiE/6NJ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkpufDsACgkQjjKRsyhoI8zDsQCfQ59nbVSWYbPV1dugVWYQNxxY
+80UAni/UXlytZMQPI5UYWVo8+6Ec0xkN
+=ifz6
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__28_Jul_2009_14_19_07_+1000_5=Q93C5E.CiE/6NJ--
