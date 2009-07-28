@@ -1,53 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the net tree with the wireless-current
  tree
-Date: Tue, 28 Jul 2009 11:53:51 +1000
-Message-ID: <20090728115351.192e8b5c.sfr@canb.auug.org.au>
+Date: Tue, 28 Jul 2009 11:59:15 +1000
+Message-ID: <20090728115915.7544ad44.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__28_Jul_2009_11_53_51_+1000_7pjav6Q0zweGbt7="
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53305 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53312 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752555AbZG1CIR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 27 Jul 2009 22:08:17 -0400
+	id S1752879AbZG1CIS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 27 Jul 2009 22:08:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, reinette chatre <reinette.chatre@intel.com>, "John W. Linville" <linville@tuxdriver.com>
-
---Signature=_Tue__28_Jul_2009_11_53_51_+1000_7pjav6Q0zweGbt7=
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, "John W. Linville" <linville@tuxdriver.com>, Reinette Chatre <reinette.chatre@intel.com>
 
 Hi David,
 
-Today's linux-next merge of the net tree got a conflicts in
-drivers/net/wireless/iwlwifi/iwl-3945.h and
-drivers/net/wireless/iwlwifi/iwl3945-base.c between commit
-45f5fa32b130b2a59f9b726be45ce7fa73fb834c ("iwlagn: fix minimum number of
-queues setting") from the wireless-current tree and commit
-5905a1aa71488b5f78822100c865ed7c4f9fcd8f ("iwl3945: cleanup number of
-queues settings") from the net tree.
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/wireless/iwlwifi/iwl-tx.c between commit
+3995bd9332a51b626237d6671cfeb7235e6c1305 ("iwlwifi: fix TX queue race")
+from the wireless-current tree and commit
+45af81956e990440fe78d6d41f847664cb620609 ("iwlwifi: make software queue
+assignment more efficient") from the net tree.
 
-The latter just removes the code that the former modifies.  I used the
-version from the net tree.
---=20
+Just overlapping context.  I fixed it up (see below) and can carry the
+fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__28_Jul_2009_11_53_51_+1000_7pjav6Q0zweGbt7=
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkpuWi8ACgkQjjKRsyhoI8wwLgCgmmVAa9dUzq5oPHbBhuRwh5df
-u3sAnA5XTWXK/HVkHyyi5rDSv52zOZYu
-=feBC
------END PGP SIGNATURE-----
-
---Signature=_Tue__28_Jul_2009_11_53_51_+1000_7pjav6Q0zweGbt7=--
+diff --cc drivers/net/wireless/iwlwifi/iwl-tx.c
+index 2e89040,0912987..0000000
+--- a/drivers/net/wireless/iwlwifi/iwl-tx.c
++++ b/drivers/net/wireless/iwlwifi/iwl-tx.c
+@@@ -744,21 -749,16 +747,19 @@@ int iwl_tx_skb(struct iwl_priv *priv, s
+  		hdr->seq_ctrl |= cpu_to_le16(seq_number);
+  		seq_number += 0x10;
+  		/* aggregation is on for this <sta,tid> */
+- 		if (info->flags & IEEE80211_TX_CTL_AMPDU) {
++ 		if (info->flags & IEEE80211_TX_CTL_AMPDU)
+  			txq_id = priv->stations[sta_id].tid[tid].agg.txq_id;
+  	}
+  
+  	txq = &priv->txq[txq_id];
++ 	swq_id = txq->swq_id;
+  	q = &txq->q;
+- 	txq->swq_id = swq_id;
+  
+ -	spin_lock_irqsave(&priv->lock, flags);
+ +	if (unlikely(iwl_queue_space(q) < q->high_mark))
+ +		goto drop_unlock;
+ +
+ +	if (ieee80211_is_data_qos(fc))
+ +		priv->stations[sta_id].tid[tid].tfds_in_queue++;
+  
+  	/* Set up driver data for this TFD */
+  	memset(&(txq->txb[q->write_ptr]), 0, sizeof(struct iwl_tx_info));
