@@ -1,42 +1,51 @@
-From: Ivo van Doorn <ivdoorn@gmail.com>
-Subject: Re: [RT2X00] Linux-next tree next-20090725 and 20090727 FTBFS
-Date: Tue, 28 Jul 2009 18:55:47 +0200
-Message-ID: <200907281855.47790.IvDoorn@gmail.com>
-References: <5a44caba0907280935h59a22367la38382a0c9d388bf@mail.gmail.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] netxen: fix build when CONFIG_INET=n
+Date: Tue, 28 Jul 2009 11:21:03 -0700
+Message-ID: <20090728112103.81f229d6.randy.dunlap@oracle.com>
+References: <20090728174224.647cc3ba.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-15"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-net-owner@vger.kernel.org>
-In-Reply-To: <5a44caba0907280935h59a22367la38382a0c9d388bf@mail.gmail.com>
-Content-Disposition: inline
-Sender: linux-net-owner@vger.kernel.org
-To: Ken Lewis <kennylewis@gmail.com>
-Cc: linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, linux-net@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:26368 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755284AbZG1SVf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Jul 2009 14:21:35 -0400
+In-Reply-To: <20090728174224.647cc3ba.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, davem@davemloft.net
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>, Dhananjay Phadke <dhananjay@netxen.com>
 
-Hi,
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-> Kernel: arch/x86/boot/bzImage is ready  (#1)
->   Building modules, stage 2.
->   MODPOST 12 modules
-> ERROR: "rt2x00mac_set_tim" [drivers/net/wireless/rt2x00/rt2500pci.ko] undefined!
-> make[1]: *** [__modpost] Error 1
-> make: *** [modules] Error 2
-> 
-> rt2x00mac_set_tim is used in rt2500pci.c and declared in rt2x00mac.c
-> within a section #IFDEF'd for CONFIG_RT2X00_LIB_CRYPTO.  I can get the
-> kernel modules to build -- the error reports a missing symbol due to
-> the definition of rt2x00mac_set_tim being IFDEFfed out, and excluding
-> rt2x00mac_set_tim builds the module successfully -- but can't confirm
-> whether it works due to a quirk of KDE, NetworkManager and my Linksys
-> router not cooperating.
-> 
-> In terms of the right fix: should rt2500pci depend (in KConfig) on
-> CONFIG_RT2X00_LIB_CRYPTO, or should rt2x00mac_set_tim be outside the
-> IFDEF?
+Fix netxen build errors when CONFIG_INET=n:
 
-well rt2x00mac_set_tim has nothing to do with CRYPTO so the function
-should simply be moved. I'll send a patch to fix this in a few minutes.
+netxen_nic_main.c:(.text+0x1abb8a): undefined reference to `in_dev_finish_destroy'
+netxen_nic_main.c:(.init.text+0xd86e): undefined reference to `register_inetaddr_notifier'
+netxen_nic_main.c:(.exit.text+0x1b70): undefined reference to `unregister_inetaddr_notifier'
 
-Ivo
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Dhananjay Phadke <dhananjay@netxen.com>
+---
+ drivers/net/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20090728.orig/drivers/net/Kconfig
++++ linux-next-20090728/drivers/net/Kconfig
+@@ -2666,7 +2666,7 @@ config MYRI10GE_DCA
+ 
+ config NETXEN_NIC
+ 	tristate "NetXen Multi port (1/10) Gigabit Ethernet NIC"
+-	depends on PCI
++	depends on PCI && INET
+ 	help
+ 	  This enables the support for NetXen's Gigabit Ethernet card.
+ 
+
+
+
+---
+~Randy
+LPC 2009, Sept. 23-25, Portland, Oregon
+http://linuxplumbersconf.org/2009/
