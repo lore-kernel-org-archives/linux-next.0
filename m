@@ -1,65 +1,37 @@
-From: Dhananjay Phadke <dhananjay@netxen.com>
-Subject: [PATCH NEXT] netxen: fix CONFIG_INET=n build
-Date: Tue, 28 Jul 2009 12:10:03 -0700
-Message-ID: <1248808203-9578-1-git-send-email-dhananjay@netxen.com>
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: davem@davemloft.net
-Cc: netdev@vger.kernel.org, randy.dunlap@oracle.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+From: Oliver Neukum <oliver@neukum.org>
+Subject: Re: linux-next: manual merge of the ttydev tree with the usb.current tree
+Date: Tue, 28 Jul 2009 21:21:32 +0200
+Message-ID: <200907282121.33231.oliver@neukum.org>
+References: <20090728140110.7cfe7c22.sfr@canb.auug.org.au> <20090728163222.GA14899@kroah.com> <20090728163420.GB14899@kroah.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp-out002.kontent.com ([81.88.40.216]:52895 "EHLO
+	smtp-out002.kontent.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753199AbZG1TVQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Jul 2009 15:21:16 -0400
+In-Reply-To: <20090728163420.GB14899@kroah.com>
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Wrap dest IP hashing code with #ifdef CONFIG_INET,
-this feature makes no sense without INET, but other
-driver can still work.
+Am Dienstag, 28. Juli 2009 18:34:20 schrieb Greg KH:
+> > > Oliver: I'll send you an alternative patch later today/tomorrow that
+> > > uses the ASYNC flags.
+> >
+> > Should I just drop Oliver's existing patch from my tree for now then?
+>
+> Ok, in order to get a good merge for today, I've dropped it now.
+>
+> Oliver, care to work with Alan to get something that is agreeable to
+> everyone?
 
-Signed-off-by: Dhananjay Phadke <dhananjay@netxen.com>
----
- drivers/net/netxen/netxen_nic_main.c |    7 +++++++
- 1 files changed, 7 insertions(+), 0 deletions(-)
+Sure. Alan, is there a driver you can recommend for looking at to learn how
+to correctly use the tty layer?
 
-diff --git a/drivers/net/netxen/netxen_nic_main.c b/drivers/net/netxen/netxen_nic_main.c
-index 2bbefa6..40549a0 100644
---- a/drivers/net/netxen/netxen_nic_main.c
-+++ b/drivers/net/netxen/netxen_nic_main.c
-@@ -1875,6 +1875,8 @@ static void netxen_nic_poll_controller(struct net_device *netdev)
- }
- #endif
- 
-+#ifdef CONFIG_INET
-+
- #define is_netxen_netdev(dev) (dev->netdev_ops == &netxen_netdev_ops)
- 
- static int
-@@ -1993,6 +1995,7 @@ static struct notifier_block	netxen_netdev_cb = {
- static struct notifier_block netxen_inetaddr_cb = {
- 	.notifier_call = netxen_inetaddr_event,
- };
-+#endif
- 
- static struct pci_driver netxen_driver = {
- 	.name = netxen_nic_driver_name,
-@@ -2012,8 +2015,10 @@ static int __init netxen_init_module(void)
- 	if ((netxen_workq = create_singlethread_workqueue("netxen")) == NULL)
- 		return -ENOMEM;
- 
-+#ifdef CONFIG_INET
- 	register_netdevice_notifier(&netxen_netdev_cb);
- 	register_inetaddr_notifier(&netxen_inetaddr_cb);
-+#endif
- 
- 	return pci_register_driver(&netxen_driver);
- }
-@@ -2024,8 +2029,10 @@ static void __exit netxen_exit_module(void)
- {
- 	pci_unregister_driver(&netxen_driver);
- 
-+#ifdef CONFIG_INET
- 	unregister_inetaddr_notifier(&netxen_inetaddr_cb);
- 	unregister_netdevice_notifier(&netxen_netdev_cb);
-+#endif
- 	destroy_workqueue(netxen_workq);
- }
- 
--- 
-1.6.0.2
-
+	Regards
+		Oliver
