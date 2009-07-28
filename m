@@ -1,46 +1,39 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] netxen: fix build when CONFIG_INET=n
-Date: Tue, 28 Jul 2009 11:21:03 -0700
-Message-ID: <20090728112103.81f229d6.randy.dunlap@oracle.com>
+Subject: [PATCH -next] usbtmc: fix printk format warnings
+Date: Tue, 28 Jul 2009 11:22:41 -0700
+Message-ID: <20090728112241.b32a684b.randy.dunlap@oracle.com>
 References: <20090728174224.647cc3ba.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet11.oracle.com ([148.87.113.123]:26368 "EHLO
-	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755284AbZG1SVf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Jul 2009 14:21:35 -0400
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755431AbZG1SXM@vger.kernel.org>
 In-Reply-To: <20090728174224.647cc3ba.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, davem@davemloft.net
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>, Dhananjay Phadke <dhananjay@netxen.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, lud <linux-usb@vger.kernel.org>, gregkh <greg@kroah.com>
+List-Id: linux-next.vger.kernel.org
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Fix netxen build errors when CONFIG_INET=n:
-
-netxen_nic_main.c:(.text+0x1abb8a): undefined reference to `in_dev_finish_destroy'
-netxen_nic_main.c:(.init.text+0xd86e): undefined reference to `register_inetaddr_notifier'
-netxen_nic_main.c:(.exit.text+0x1b70): undefined reference to `unregister_inetaddr_notifier'
+Fix printk format warnings:
+drivers/usb/class/usbtmc.c:466: warning: format '%zu' expects type 'size_t', but argument 4 has type 'u32'
+drivers/usb/class/usbtmc.c:466: warning: format '%zu' expects type 'size_t', but argument 5 has type 'int'
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Dhananjay Phadke <dhananjay@netxen.com>
 ---
- drivers/net/Kconfig |    2 +-
+ drivers/usb/class/usbtmc.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- linux-next-20090728.orig/drivers/net/Kconfig
-+++ linux-next-20090728/drivers/net/Kconfig
-@@ -2666,7 +2666,7 @@ config MYRI10GE_DCA
+--- linux-next-20090728.orig/drivers/usb/class/usbtmc.c
++++ linux-next-20090728/drivers/usb/class/usbtmc.c
+@@ -463,7 +463,7 @@ static ssize_t usbtmc_read(struct file *
  
- config NETXEN_NIC
- 	tristate "NetXen Multi port (1/10) Gigabit Ethernet NIC"
--	depends on PCI
-+	depends on PCI && INET
- 	help
- 	  This enables the support for NetXen's Gigabit Ethernet card.
+ 		/* Ensure the instrument doesn't lie about it */
+ 		if(n_characters > actual - 12) {
+-			dev_err(dev, "Device lies about message size: %zu > %zu\n", n_characters, actual - 12);
++			dev_err(dev, "Device lies about message size: %u > %d\n", n_characters, actual - 12);
+ 			n_characters = actual - 12;
+ 		}
  
 
 
