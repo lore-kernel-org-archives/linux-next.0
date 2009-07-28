@@ -1,60 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the wireless-current
+Subject: linux-next: manual merge of the ttydev tree with the usb.current
  tree
-Date: Tue, 28 Jul 2009 11:59:15 +1000
-Message-ID: <20090728115915.7544ad44.sfr@canb.auug.org.au>
+Date: Tue, 28 Jul 2009 14:01:10 +1000
+Message-ID: <20090728140110.7cfe7c22.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53312 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56396 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752879AbZG1CIS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 27 Jul 2009 22:08:18 -0400
+	id S1750710AbZG1EBN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Jul 2009 00:01:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, "John W. Linville" <linville@tuxdriver.com>, Reinette Chatre <reinette.chatre@intel.com>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oliver Neukum <oliver@neukum.org>, Greg KH <greg@kroah.com>
 
-Hi David,
+Hi Alan,
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/net/wireless/iwlwifi/iwl-tx.c between commit
-3995bd9332a51b626237d6671cfeb7235e6c1305 ("iwlwifi: fix TX queue race")
-from the wireless-current tree and commit
-45af81956e990440fe78d6d41f847664cb620609 ("iwlwifi: make software queue
-assignment more efficient") from the net tree.
+Today's linux-next merge of the ttydev tree got a conflict in
+drivers/usb/serial/usb-serial.c between commit
+a00b8d98aca97bfb6fa983f41dae25b424058592 ("USB: fix usage count in usb
+serial generic open regarding autoresume") from the usb.current tree and
+commit 73fed8403623653560cc2f35c9b62891adaf6b4b
+("tty-usb-error-unlock-fix") from the ttydev tree.
 
-Just overlapping context.  I fixed it up (see below) and can carry the
+Just context changes.  I have fixed it up (see below) and can carry the
 fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/wireless/iwlwifi/iwl-tx.c
-index 2e89040,0912987..0000000
---- a/drivers/net/wireless/iwlwifi/iwl-tx.c
-+++ b/drivers/net/wireless/iwlwifi/iwl-tx.c
-@@@ -744,21 -749,16 +747,19 @@@ int iwl_tx_skb(struct iwl_priv *priv, s
-  		hdr->seq_ctrl |= cpu_to_le16(seq_number);
-  		seq_number += 0x10;
-  		/* aggregation is on for this <sta,tid> */
-- 		if (info->flags & IEEE80211_TX_CTL_AMPDU) {
-+ 		if (info->flags & IEEE80211_TX_CTL_AMPDU)
-  			txq_id = priv->stations[sta_id].tid[tid].agg.txq_id;
+diff --cc drivers/usb/serial/usb-serial.c
+index 06579a8,99188c9..0000000
+--- a/drivers/usb/serial/usb-serial.c
++++ b/drivers/usb/serial/usb-serial.c
+@@@ -220,8 -224,8 +222,8 @@@ static int serial_open (struct tty_stru
+  	tty_port_tty_set(&port->port, tty);
+  
+  	/* If the console is attached, the device is already open */
+ -	if (port->port.count == 1 && !port->console) {
+ +	if (!port->port.count && !port->console) {
+- 
++ 		first = 1;
+  		/* lock this module before we call it
+  		 * this may fail, which means we must bail out,
+  		 * safe because we are called with BKL held */
+@@@ -246,8 -248,7 +248,9 @@@
+  		if (retval)
+  			goto bailout_interface_put;
+  		mutex_unlock(&serial->disc_mutex);
++ 		set_bit(ASYNCB_INITIALIZED, &port->port.flags);
+ +	} else {
+ +		++port->port.count;
   	}
-  
-  	txq = &priv->txq[txq_id];
-+ 	swq_id = txq->swq_id;
-  	q = &txq->q;
-- 	txq->swq_id = swq_id;
-  
- -	spin_lock_irqsave(&priv->lock, flags);
- +	if (unlikely(iwl_queue_space(q) < q->high_mark))
- +		goto drop_unlock;
- +
- +	if (ieee80211_is_data_qos(fc))
- +		priv->stations[sta_id].tid[tid].tfds_in_queue++;
-  
-  	/* Set up driver data for this TFD */
-  	memset(&(txq->txb[q->write_ptr]), 0, sizeof(struct iwl_tx_info));
+  	mutex_unlock(&port->mutex);
+  	/* Now do the correct tty layer semantics */
