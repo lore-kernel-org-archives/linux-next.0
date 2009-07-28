@@ -1,43 +1,87 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: linux-next: manual merge of the ttydev tree with the
- usb.current tree
-Date: Tue, 28 Jul 2009 20:24:12 +0100
-Message-ID: <20090728202412.78444d4e@lxorguk.ukuu.org.uk>
-References: <20090728140110.7cfe7c22.sfr@canb.auug.org.au>
-	<20090728163222.GA14899@kroah.com>
-	<20090728163420.GB14899@kroah.com>
-	<200907282121.33231.oliver@neukum.org>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH NEXT] netxen: fix CONFIG_INET=n build
+Date: Tue, 28 Jul 2009 12:23:52 -0700
+Message-ID: <20090728122352.6d4a2b05.randy.dunlap@oracle.com>
+References: <1248808203-9578-1-git-send-email-dhananjay@netxen.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:57870 "EHLO
-	www.etchedpixels.co.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750743AbZG1TXQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Jul 2009 15:23:16 -0400
-In-Reply-To: <200907282121.33231.oliver@neukum.org>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:48862 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753850AbZG1TYS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Jul 2009 15:24:18 -0400
+In-Reply-To: <1248808203-9578-1-git-send-email-dhananjay@netxen.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Oliver Neukum <oliver@neukum.org>
-Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dhananjay Phadke <dhananjay@netxen.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-On Tue, 28 Jul 2009 21:21:32 +0200
-Oliver Neukum <oliver@neukum.org> wrote:
+On Tue, 28 Jul 2009 12:10:03 -0700 Dhananjay Phadke wrote:
 
-> Am Dienstag, 28. Juli 2009 18:34:20 schrieb Greg KH:
-> > > > Oliver: I'll send you an alternative patch later today/tomorrow that
-> > > > uses the ASYNC flags.
-> > >
-> > > Should I just drop Oliver's existing patch from my tree for now then?
-> >
-> > Ok, in order to get a good merge for today, I've dropped it now.
-> >
-> > Oliver, care to work with Alan to get something that is agreeable to
-> > everyone?
+> Wrap dest IP hashing code with #ifdef CONFIG_INET,
+> this feature makes no sense without INET, but other
+> driver can still work.
 > 
-> Sure. Alan, is there a driver you can recommend for looking at to learn how
-> to correctly use the tty layer?
+> Signed-off-by: Dhananjay Phadke <dhananjay@netxen.com>
 
-I'm no longer tty maintainer, please take it up with Linus.
+Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-Alan
+Thanks.
+
+> ---
+>  drivers/net/netxen/netxen_nic_main.c |    7 +++++++
+>  1 files changed, 7 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/net/netxen/netxen_nic_main.c b/drivers/net/netxen/netxen_nic_main.c
+> index 2bbefa6..40549a0 100644
+> --- a/drivers/net/netxen/netxen_nic_main.c
+> +++ b/drivers/net/netxen/netxen_nic_main.c
+> @@ -1875,6 +1875,8 @@ static void netxen_nic_poll_controller(struct net_device *netdev)
+>  }
+>  #endif
+>  
+> +#ifdef CONFIG_INET
+> +
+>  #define is_netxen_netdev(dev) (dev->netdev_ops == &netxen_netdev_ops)
+>  
+>  static int
+> @@ -1993,6 +1995,7 @@ static struct notifier_block	netxen_netdev_cb = {
+>  static struct notifier_block netxen_inetaddr_cb = {
+>  	.notifier_call = netxen_inetaddr_event,
+>  };
+> +#endif
+>  
+>  static struct pci_driver netxen_driver = {
+>  	.name = netxen_nic_driver_name,
+> @@ -2012,8 +2015,10 @@ static int __init netxen_init_module(void)
+>  	if ((netxen_workq = create_singlethread_workqueue("netxen")) == NULL)
+>  		return -ENOMEM;
+>  
+> +#ifdef CONFIG_INET
+>  	register_netdevice_notifier(&netxen_netdev_cb);
+>  	register_inetaddr_notifier(&netxen_inetaddr_cb);
+> +#endif
+>  
+>  	return pci_register_driver(&netxen_driver);
+>  }
+> @@ -2024,8 +2029,10 @@ static void __exit netxen_exit_module(void)
+>  {
+>  	pci_unregister_driver(&netxen_driver);
+>  
+> +#ifdef CONFIG_INET
+>  	unregister_inetaddr_notifier(&netxen_inetaddr_cb);
+>  	unregister_netdevice_notifier(&netxen_netdev_cb);
+> +#endif
+>  	destroy_workqueue(netxen_workq);
+>  }
+>  
+> -- 
+> 1.6.0.2
+> 
+
+
+---
+~Randy
+LPC 2009, Sept. 23-25, Portland, Oregon
+http://linuxplumbersconf.org/2009/
