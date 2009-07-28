@@ -1,46 +1,48 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+From: Greg KH <greg@kroah.com>
 Subject: Re: linux-next: manual merge of the ttydev tree with the
  usb.current tree
-Date: Tue, 28 Jul 2009 14:17:40 +0100
-Message-ID: <20090728141740.44d53b68@lxorguk.ukuu.org.uk>
+Date: Tue, 28 Jul 2009 09:32:22 -0700
+Message-ID: <20090728163222.GA14899@kroah.com>
 References: <20090728140110.7cfe7c22.sfr@canb.auug.org.au>
-	<20090728112608.09a494e0@lxorguk.ukuu.org.uk>
-	<200907281410.41449.oliver@neukum.org>
-	<20090728132911.03ff78ea@lxorguk.ukuu.org.uk>
-	<20090728223504.6a6ae8e7.sfr@canb.auug.org.au>
+ <20090728112608.09a494e0@lxorguk.ukuu.org.uk>
+ <200907281410.41449.oliver@neukum.org>
+ <20090728132911.03ff78ea@lxorguk.ukuu.org.uk>
+ <20090728223504.6a6ae8e7.sfr@canb.auug.org.au>
+ <20090728141740.44d53b68@lxorguk.ukuu.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:49329 "EHLO
-	www.etchedpixels.co.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750848AbZG1NQk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Jul 2009 09:16:40 -0400
-In-Reply-To: <20090728223504.6a6ae8e7.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Oliver Neukum <oliver@neukum.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754864AbZG1QdU@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20090728141740.44d53b68@lxorguk.ukuu.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Oliver Neukum <oliver@neukum.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 28 Jul 2009 22:35:04 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi Alan,
+On Tue, Jul 28, 2009 at 02:17:40PM +0100, Alan Cox wrote:
+> On Tue, 28 Jul 2009 22:35:04 +1000
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
-> On Tue, 28 Jul 2009 13:29:11 +0100 Alan Cox <alan@lxorguk.ukuu.org.uk> wrote:
-> >
-> > I need to look at the actual diff, but the combination looks completely
-> > bogus unless I'm misreading the fixup which is possible.
+> > Hi Alan,
+> > 
+> > On Tue, 28 Jul 2009 13:29:11 +0100 Alan Cox <alan@lxorguk.ukuu.org.uk> wrote:
+> > >
+> > > I need to look at the actual diff, but the combination looks completely
+> > > bogus unless I'm misreading the fixup which is possible.
+> > 
+> > Below is the actual patch from the usb.current tree.
 > 
-> Below is the actual patch from the usb.current tree.
+> Thanks - ok that is probably safe. The change I was worried about (the
+> error paths not adjusting port->count are ok as it gets zeroed within the
+> mutex)
+> 
+> Not sure its safe versus hangup but neither was the old code 8)
+> 
+> Oliver: I'll send you an alternative patch later today/tomorrow that uses
+> the ASYNC flags.
 
-Thanks - ok that is probably safe. The change I was worried about (the
-error paths not adjusting port->count are ok as it gets zeroed within the
-mutex)
+Should I just drop Oliver's existing patch from my tree for now then?
 
-Not sure its safe versus hangup but neither was the old code 8)
+thanks,
 
-Oliver: I'll send you an alternative patch later today/tomorrow that uses
-the ASYNC flags.
-
-Alan
+greg k-h
