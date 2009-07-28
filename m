@@ -1,87 +1,90 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH NEXT] netxen: fix CONFIG_INET=n build
-Date: Tue, 28 Jul 2009 12:23:52 -0700
-Message-ID: <20090728122352.6d4a2b05.randy.dunlap@oracle.com>
-References: <1248808203-9578-1-git-send-email-dhananjay@netxen.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH linux-next] agp: correct missing cleanup on error in
+ agp_add_bridge
+Date: Tue, 28 Jul 2009 15:19:18 -0700
+Message-ID: <20090728151918.9b1a793e.akpm@linux-foundation.org>
+References: <4A6BB1A1.50308@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet11.oracle.com ([148.87.113.123]:48862 "EHLO
-	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753850AbZG1TYS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Jul 2009 15:24:18 -0400
-In-Reply-To: <1248808203-9578-1-git-send-email-dhananjay@netxen.com>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:36602 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755574AbZG1WTe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Jul 2009 18:19:34 -0400
+In-Reply-To: <4A6BB1A1.50308@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dhananjay Phadke <dhananjay@netxen.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: Kevin Winchester <kjwinchester@gmail.com>
+Cc: airlied@redhat.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-On Tue, 28 Jul 2009 12:10:03 -0700 Dhananjay Phadke wrote:
+On Sat, 25 Jul 2009 22:30:09 -0300
+Kevin Winchester <kjwinchester@gmail.com> wrote:
 
-> Wrap dest IP hashing code with #ifdef CONFIG_INET,
-> this feature makes no sense without INET, but other
-> driver can still work.
 > 
-> Signed-off-by: Dhananjay Phadke <dhananjay@netxen.com>
-
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
-
-Thanks.
-
+> While investigating a kmemleak detected leak, I encountered the
+> agp_add_bridge function.  It appears to be responsible for freeing
+> the agp_bridge_data in the case of a failure, but it is only doing
+> so for some errors.
+> 
+> Fix it to always free the bridge data if a failure condition is
+> encountered.
+> 
+> Signed-off-by: Kevin Winchester <kjwinchester@gmail.com>
 > ---
->  drivers/net/netxen/netxen_nic_main.c |    7 +++++++
->  1 files changed, 7 insertions(+), 0 deletions(-)
 > 
-> diff --git a/drivers/net/netxen/netxen_nic_main.c b/drivers/net/netxen/netxen_nic_main.c
-> index 2bbefa6..40549a0 100644
-> --- a/drivers/net/netxen/netxen_nic_main.c
-> +++ b/drivers/net/netxen/netxen_nic_main.c
-> @@ -1875,6 +1875,8 @@ static void netxen_nic_poll_controller(struct net_device *netdev)
->  }
->  #endif
->  
-> +#ifdef CONFIG_INET
-> +
->  #define is_netxen_netdev(dev) (dev->netdev_ops == &netxen_netdev_ops)
->  
->  static int
-> @@ -1993,6 +1995,7 @@ static struct notifier_block	netxen_netdev_cb = {
->  static struct notifier_block netxen_inetaddr_cb = {
->  	.notifier_call = netxen_inetaddr_event,
->  };
-> +#endif
->  
->  static struct pci_driver netxen_driver = {
->  	.name = netxen_nic_driver_name,
-> @@ -2012,8 +2015,10 @@ static int __init netxen_init_module(void)
->  	if ((netxen_workq = create_singlethread_workqueue("netxen")) == NULL)
->  		return -ENOMEM;
->  
-> +#ifdef CONFIG_INET
->  	register_netdevice_notifier(&netxen_netdev_cb);
->  	register_inetaddr_notifier(&netxen_inetaddr_cb);
-> +#endif
->  
->  	return pci_register_driver(&netxen_driver);
->  }
-> @@ -2024,8 +2029,10 @@ static void __exit netxen_exit_module(void)
+> Note that this seems like a reasonable change to me, but this patch
+> did not get rid of the kmemleak report, so I don't even have that as
+> evidence of its correctness.  Please review.
+> 
+> diff --git a/drivers/char/agp/backend.c b/drivers/char/agp/backend.c
+> index cfa5a64..aebd82c 100644
+> --- a/drivers/char/agp/backend.c
+> +++ b/drivers/char/agp/backend.c
+> @@ -263,18 +263,22 @@ int agp_add_bridge(struct agp_bridge_data *bridge)
 >  {
->  	pci_unregister_driver(&netxen_driver);
+>         int error;
 >  
-> +#ifdef CONFIG_INET
->  	unregister_inetaddr_notifier(&netxen_inetaddr_cb);
->  	unregister_netdevice_notifier(&netxen_netdev_cb);
-> +#endif
->  	destroy_workqueue(netxen_workq);
+> -       if (agp_off)
+> -               return -ENODEV;
+> +       if (agp_off) {
+> +               error = -ENODEV;
+> +               goto err_put_bridge;
+> +       }
+>  
+>         if (!bridge->dev) {
+>                 printk (KERN_DEBUG PFX "Erk, registering with no pci_dev!\n");
+> -               return -EINVAL;
+> +               error = -EINVAL;
+> +               goto err_put_bridge;
+>         }
+>  
+>         /* Grab reference on the chipset driver. */
+>         if (!try_module_get(bridge->driver->owner)) {
+>                 dev_info(&bridge->dev->dev, "can't lock chipset driver\n");
+> -               return -EINVAL;
+> +               error = -EINVAL;
+> +               goto err_put_bridge;
+>         }
+>  
+>         error = agp_backend_initialize(bridge);
+> @@ -304,6 +308,7 @@ frontend_err:
+>         agp_backend_cleanup(bridge);
+>  err_out:
+>         module_put(bridge->driver->owner);
+> +err_put_bridge:
+>         agp_put_bridge(bridge);
+>         return error;
 >  }
->  
-> -- 
-> 1.6.0.2
-> 
 
+Looks right to me.
 
----
-~Randy
-LPC 2009, Sept. 23-25, Portland, Oregon
-http://linuxplumbersconf.org/2009/
+The code is ill-designed.  The callee (agp_add_bridge) should not be
+freeing things which the caller allocated.  Because the callee
+shouldn't assume that the caller will no longer use the data and the
+callee shouldn't assume that the caller allocated the memory via
+kmalloc().  Callers of agp_add_bridge() should be doing the
+agp_put_bridge().
+
+Your email client replaced all the tabs with spaces.  I fixed that up.
