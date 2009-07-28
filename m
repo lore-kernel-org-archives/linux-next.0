@@ -1,40 +1,61 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] usbtmc: fix printk format warnings
-Date: Tue, 28 Jul 2009 11:22:41 -0700
-Message-ID: <20090728112241.b32a684b.randy.dunlap@oracle.com>
-References: <20090728174224.647cc3ba.sfr@canb.auug.org.au>
+From: Dhananjay Phadke <dhananjay.phadke@qlogic.com>
+Subject: RE: [PATCH -next] netxen: fix build when CONFIG_INET=n
+Date: Tue, 28 Jul 2009 11:25:19 -0700
+Message-ID: <7608421F3572AB4292BB2532AE89D5658187610C1C@AVEXMB1.qlogic.org>
+References: <20090728174224.647cc3ba.sfr@canb.auug.org.au>,<20090728112103.81f229d6.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755431AbZG1SXM@vger.kernel.org>
-In-Reply-To: <20090728174224.647cc3ba.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, lud <linux-usb@vger.kernel.org>, gregkh <greg@kroah.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from avexch1.qlogic.com ([198.70.193.115]:42778 "EHLO
+	avexch1.qlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755390AbZG1S2L convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Jul 2009 14:28:11 -0400
+In-Reply-To: <20090728112103.81f229d6.randy.dunlap@oracle.com>
+Content-Language: en-US
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "davem@davemloft.net" <davem@davemloft.net>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>
+
+Thanks Randy for catching, I didn't run  CONFIG_INET=n build.
+
+I think, better option is to wrap code in netxen_nic_main.c with CONFIG_INET check,
+since it's not a mandatory feature.
+
+-Dhananjay
+________________________________________
+From: Randy Dunlap [randy.dunlap@oracle.com]
+Sent: Tuesday, July 28, 2009 11:21 AM
+To: Stephen Rothwell; davem@davemloft.net
+Cc: linux-next@vger.kernel.org; LKML; netdev; Dhananjay Phadke
+Subject: [PATCH -next] netxen: fix build when CONFIG_INET=n
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Fix printk format warnings:
-drivers/usb/class/usbtmc.c:466: warning: format '%zu' expects type 'size_t', but argument 4 has type 'u32'
-drivers/usb/class/usbtmc.c:466: warning: format '%zu' expects type 'size_t', but argument 5 has type 'int'
+Fix netxen build errors when CONFIG_INET=n:
+
+netxen_nic_main.c:(.text+0x1abb8a): undefined reference to `in_dev_finish_destroy'
+netxen_nic_main.c:(.init.text+0xd86e): undefined reference to `register_inetaddr_notifier'
+netxen_nic_main.c:(.exit.text+0x1b70): undefined reference to `unregister_inetaddr_notifier'
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Dhananjay Phadke <dhananjay@netxen.com>
 ---
- drivers/usb/class/usbtmc.c |    2 +-
+ drivers/net/Kconfig |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- linux-next-20090728.orig/drivers/usb/class/usbtmc.c
-+++ linux-next-20090728/drivers/usb/class/usbtmc.c
-@@ -463,7 +463,7 @@ static ssize_t usbtmc_read(struct file *
- 
- 		/* Ensure the instrument doesn't lie about it */
- 		if(n_characters > actual - 12) {
--			dev_err(dev, "Device lies about message size: %zu > %zu\n", n_characters, actual - 12);
-+			dev_err(dev, "Device lies about message size: %u > %d\n", n_characters, actual - 12);
- 			n_characters = actual - 12;
- 		}
- 
+--- linux-next-20090728.orig/drivers/net/Kconfig
++++ linux-next-20090728/drivers/net/Kconfig
+@@ -2666,7 +2666,7 @@ config MYRI10GE_DCA
+
+ config NETXEN_NIC
+        tristate "NetXen Multi port (1/10) Gigabit Ethernet NIC"
+-       depends on PCI
++       depends on PCI && INET
+        help
+          This enables the support for NetXen's Gigabit Ethernet card.
+
 
 
 
