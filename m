@@ -1,60 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Jens Axboe <jens.axboe@oracle.com>
 Subject: Re: linux-next: drbd tree build failure
-Date: Wed, 29 Jul 2009 16:17:50 +1000
-Message-ID: <20090729161750.148374e2.sfr@canb.auug.org.au>
-References: <20090729152938.791a81c3.sfr@canb.auug.org.au>
-	<yq1prbk59bv.fsf@sermon.lab.mkp.net>
+Date: Wed, 29 Jul 2009 08:20:58 +0200
+Message-ID: <20090729062058.GE4148@kernel.dk>
+References: <20090729152933.47664b18.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__29_Jul_2009_16_17_50_+1000_xvCd_y+sks3xo53H"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57128 "EHLO smtps.tip.net.au"
+Received: from brick.kernel.dk ([93.163.65.50]:48900 "EHLO kernel.dk"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751515AbZG2GR4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Jul 2009 02:17:56 -0400
-In-Reply-To: <yq1prbk59bv.fsf@sermon.lab.mkp.net>
+	id S1751876AbZG2GVI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Jul 2009 02:21:08 -0400
+Content-Disposition: inline
+In-Reply-To: <20090729152933.47664b18.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Philipp Reisner <philipp.reisner@linbit.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <jens.axboe@oracle.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Philipp Reisner <philipp.reisner@linbit.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__29_Jul_2009_16_17_50_+1000_xvCd_y+sks3xo53H
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jul 29 2009, Stephen Rothwell wrote:
+> Hi Philipp,
+> 
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> 
+> drivers/block/drbd/drbd_req.c: In function 'drbd_make_request_26':
+> drivers/block/drbd/drbd_req.c:1023: error: implicit declaration of function 'bio_barrier'
+> drivers/block/drbd/drbd_actlog.c: In function '_drbd_md_sync_page_io':
+> drivers/block/drbd/drbd_actlog.c:120: error: implicit declaration of function 'bio_barrier'
+> drivers/block/drbd/drbd_main.c: In function 'drbd_send_dblock':
+> drivers/block/drbd/drbd_main.c:2373: error: implicit declaration of function 'bio_barrier'
+> drivers/block/drbd/drbd_main.c:2375: error: implicit declaration of function 'bio_sync'
+> 
+> Caused by commit d206aaff0c5ee065f382c626ea21c5166a3047a7 ("bio: first
+> step in sanitizing the bio->bi_rw flag testing") from the block tree.
+> 
+> I applied the following patch for today.
 
-Hi Martin,
+That fixup looks good, thanks Stephen.
 
-On Wed, 29 Jul 2009 01:47:48 -0400 "Martin K. Petersen" <martin.petersen@or=
-acle.com> wrote:
->
-> >>>>> "Stephen" =3D=3D Stephen Rothwell <sfr@canb.auug.org.au> writes:
->=20
-> Stephen> drivers/block/drbd/drbd_nl.c: In function
-> Stephen> 'drbd_setup_queue_param': drivers/block/drbd/drbd_nl.c:707:
-> Stephen> error: implicit declaration of function
-> Stephen> 'blk_queue_stack_limits'
->=20
-> We've decided to keep blk_queue_stack_limits as a wrapper to ease the
-> transition.  I sent Jens a patch earlier today that does this.
 
-OK, thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__29_Jul_2009_16_17_50_+1000_xvCd_y+sks3xo53H
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkpv6Y4ACgkQjjKRsyhoI8yVwwCbBkCYQj7fuUGy5KSTNOP1+ui7
-AnkAn3aV4bzsP9fTuA/KZ+xmF8DqhlLr
-=mDdM
------END PGP SIGNATURE-----
-
---Signature=_Wed__29_Jul_2009_16_17_50_+1000_xvCd_y+sks3xo53H--
+-- 
+Jens Axboe
