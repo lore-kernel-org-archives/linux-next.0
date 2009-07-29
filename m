@@ -1,90 +1,135 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH linux-next] agp: correct missing cleanup on error in
- agp_add_bridge
-Date: Tue, 28 Jul 2009 15:19:18 -0700
-Message-ID: <20090728151918.9b1a793e.akpm@linux-foundation.org>
-References: <4A6BB1A1.50308@gmail.com>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: drbd tree build failure
+Date: Wed, 29 Jul 2009 11:10:55 +0930
+Message-ID: <200907291110.56241.rusty@rustcorp.com.au>
+References: <20090727154816.24e81531.sfr@canb.auug.org.au> <200907271917.56148.philipp.reisner@linbit.com> <20090728142040.9b2df926.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:36602 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755574AbZG1WTe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Jul 2009 18:19:34 -0400
-In-Reply-To: <4A6BB1A1.50308@gmail.com>
+Received: from ozlabs.org ([203.10.76.45]:50788 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751107AbZG2Bk6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Jul 2009 21:40:58 -0400
+In-Reply-To: <20090728142040.9b2df926.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kevin Winchester <kjwinchester@gmail.com>
-Cc: airlied@redhat.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Philipp Reisner <philipp.reisner@linbit.com>, Lars Ellenberg <lars.ellenberg@linbit.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 25 Jul 2009 22:30:09 -0300
-Kevin Winchester <kjwinchester@gmail.com> wrote:
+On Tue, 28 Jul 2009 01:50:40 pm Stephen Rothwell wrote:
+> Hi Philipp, Lars,
+> 
+> On Mon, 27 Jul 2009 19:17:55 +0200 Philipp Reisner <philipp.reisner@linbit.com> wrote:
+> >
+> > Ok. Lars' patch is now complete and arrived in the git tree...
+> > 
+> > It should build now with Rusty's paches.
+> 
+> Thanks.
+> 
 
-> 
-> While investigating a kmemleak detected leak, I encountered the
-> agp_add_bridge function.  It appears to be responsible for freeing
-> the agp_bridge_data in the case of a failure, but it is only doing
-> so for some errors.
-> 
-> Fix it to always free the bridge data if a failure condition is
-> encountered.
-> 
-> Signed-off-by: Kevin Winchester <kjwinchester@gmail.com>
-> ---
-> 
-> Note that this seems like a reasonable change to me, but this patch
-> did not get rid of the kmemleak report, so I don't even have that as
-> evidence of its correctness.  Please review.
-> 
-> diff --git a/drivers/char/agp/backend.c b/drivers/char/agp/backend.c
-> index cfa5a64..aebd82c 100644
-> --- a/drivers/char/agp/backend.c
-> +++ b/drivers/char/agp/backend.c
-> @@ -263,18 +263,22 @@ int agp_add_bridge(struct agp_bridge_data *bridge)
->  {
->         int error;
->  
-> -       if (agp_off)
-> -               return -ENODEV;
-> +       if (agp_off) {
-> +               error = -ENODEV;
-> +               goto err_put_bridge;
-> +       }
->  
->         if (!bridge->dev) {
->                 printk (KERN_DEBUG PFX "Erk, registering with no pci_dev!\n");
-> -               return -EINVAL;
-> +               error = -EINVAL;
-> +               goto err_put_bridge;
->         }
->  
->         /* Grab reference on the chipset driver. */
->         if (!try_module_get(bridge->driver->owner)) {
->                 dev_info(&bridge->dev->dev, "can't lock chipset driver\n");
-> -               return -EINVAL;
-> +               error = -EINVAL;
-> +               goto err_put_bridge;
->         }
->  
->         error = agp_backend_initialize(bridge);
-> @@ -304,6 +308,7 @@ frontend_err:
->         agp_backend_cleanup(bridge);
->  err_out:
->         module_put(bridge->driver->owner);
-> +err_put_bridge:
->         agp_put_bridge(bridge);
->         return error;
->  }
+This is untested, but fairly trivial transform to avoid cpumask_t in the struct
+as well:
 
-Looks right to me.
+Subject: drdb: use cpumask_var_t in struct drdb_conf
 
-The code is ill-designed.  The callee (agp_add_bridge) should not be
-freeing things which the caller allocated.  Because the callee
-shouldn't assume that the caller will no longer use the data and the
-callee shouldn't assume that the caller allocated the memory via
-kmalloc().  Callers of agp_add_bridge() should be doing the
-agp_put_bridge().
+Any code which can be compiled on x86 should try to avoid cpumask_t
+(or even struct cpumask) declarations; we are heading towards struct
+cpumask being undefined if CONFIG_CPUMASK_OFFSTACK.
 
-Your email client replaced all the tabs with spaces.  I fixed that up.
+The code is the same for CONFIG_CPUMASK_OFFSTACK=n.
+
+Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
+
+diff --git a/drivers/block/drbd/drbd_int.h b/drivers/block/drbd/drbd_int.h
+index 5813d7d..10fa153 100644
+--- a/drivers/block/drbd/drbd_int.h
++++ b/drivers/block/drbd/drbd_int.h
+@@ -1006,7 +1006,7 @@ struct drbd_conf {
+ 	spinlock_t peer_seq_lock;
+ 	unsigned int minor;
+ 	unsigned long comm_bm_set; /* communicated number of set bits. */
+-	cpumask_t cpu_mask;
++	cpumask_var_t cpu_mask;
+ 	struct bm_io_work bm_io_work;
+ 	u64 ed_uuid; /* UUID of the exposed data */
+ 	struct mutex state_mutex;
+diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
+index 20f4d40..9c85a4b 100644
+--- a/drivers/block/drbd/drbd_main.c
++++ b/drivers/block/drbd/drbd_main.c
+@@ -1550,18 +1550,18 @@ void drbd_calc_cpu_mask(struct drbd_conf *mdev)
+ 	int ord, cpu;
+ 
+ 	/* user override. */
+-	if (cpumask_weight(&mdev->cpu_mask))
++	if (cpumask_weight(mdev->cpu_mask))
+ 		return;
+ 
+ 	ord = mdev_to_minor(mdev) % cpumask_weight(cpu_online_mask);
+ 	for_each_online_cpu(cpu) {
+ 		if (ord-- == 0) {
+-			cpumask_set_cpu(cpu, &mdev->cpu_mask);
++			cpumask_set_cpu(cpu, mdev->cpu_mask);
+ 			return;
+ 		}
+ 	}
+ 	/* should not be reached */
+-	cpumask_setall(&mdev->cpu_mask);
++	cpumask_setall(mdev->cpu_mask);
+ }
+ 
+ /**
+@@ -1584,7 +1584,7 @@ void drbd_thread_current_set_cpu(struct drbd_conf *mdev)
+ 	if (!thi->reset_cpu_mask)
+ 		return;
+ 	thi->reset_cpu_mask = 0;
+-	set_cpus_allowed_ptr(p, &mdev->cpu_mask);
++	set_cpus_allowed_ptr(p, mdev->cpu_mask);
+ }
+ #endif
+ 
+@@ -3001,6 +3001,8 @@ struct drbd_conf *drbd_new_device(unsigned int minor)
+ 	mdev = kzalloc(sizeof(struct drbd_conf), GFP_KERNEL);
+ 	if (!mdev)
+ 		return NULL;
++	if (!zalloc_cpumask_var(&mdev->cpu_mask, GFP_KERNEL))
++		goto out_no_cpumask;
+ 
+ 	mdev->minor = minor;
+ 
+@@ -3079,6 +3081,8 @@ out_no_io_page:
+ out_no_disk:
+ 	blk_cleanup_queue(q);
+ out_no_q:
++	free_cpumask_var(mdev->cpu_mask);
++out_no_cpumask:
+ 	kfree(mdev);
+ 	return NULL;
+ }
+@@ -3095,6 +3099,7 @@ void drbd_free_mdev(struct drbd_conf *mdev)
+ 	__free_page(mdev->md_io_page);
+ 	put_disk(mdev->vdisk);
+ 	blk_cleanup_queue(mdev->rq_queue);
++	free_cpumask_var(mdev->cpu_mask);
+ 	kfree(mdev);
+ }
+ 
+diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
+index 936ec73..ede19be 100644
+--- a/drivers/block/drbd/drbd_nl.c
++++ b/drivers/block/drbd/drbd_nl.c
+@@ -1657,8 +1657,8 @@ static int drbd_nl_syncer_conf(struct drbd_conf *mdev, struct drbd_nl_cfg_req *n
+ 	if (mdev->state.conn >= C_CONNECTED)
+ 		drbd_send_sync_param(mdev, &sc);
+ 
+-	if (!cpumask_equal(&mdev->cpu_mask, new_cpu_mask)) {
+-		cpumask_copy(&mdev->cpu_mask, new_cpu_mask);
++	if (!cpumask_equal(mdev->cpu_mask, new_cpu_mask)) {
++		cpumask_copy(mdev->cpu_mask, new_cpu_mask);
+ 		drbd_calc_cpu_mask(mdev);
+ 		mdev->receiver.reset_cpu_mask = 1;
+ 		mdev->asender.reset_cpu_mask = 1;
