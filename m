@@ -1,135 +1,95 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: drbd tree build failure
-Date: Wed, 29 Jul 2009 11:10:55 +0930
-Message-ID: <200907291110.56241.rusty@rustcorp.com.au>
-References: <20090727154816.24e81531.sfr@canb.auug.org.au> <200907271917.56148.philipp.reisner@linbit.com> <20090728142040.9b2df926.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: drbd tree build failure
+Date: Wed, 29 Jul 2009 15:29:33 +1000
+Message-ID: <20090729152933.47664b18.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:50788 "EHLO ozlabs.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41213 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751107AbZG2Bk6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Jul 2009 21:40:58 -0400
-In-Reply-To: <20090728142040.9b2df926.sfr@canb.auug.org.au>
-Content-Disposition: inline
+	id S1751606AbZG2F3g (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Jul 2009 01:29:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Philipp Reisner <philipp.reisner@linbit.com>, Lars Ellenberg <lars.ellenberg@linbit.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Philipp Reisner <philipp.reisner@linbit.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <jens.axboe@oracle.com>
 
-On Tue, 28 Jul 2009 01:50:40 pm Stephen Rothwell wrote:
-> Hi Philipp, Lars,
-> 
-> On Mon, 27 Jul 2009 19:17:55 +0200 Philipp Reisner <philipp.reisner@linbit.com> wrote:
-> >
-> > Ok. Lars' patch is now complete and arrived in the git tree...
-> > 
-> > It should build now with Rusty's paches.
-> 
-> Thanks.
-> 
+Hi Philipp,
 
-This is untested, but fairly trivial transform to avoid cpumask_t in the struct
-as well:
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Subject: drdb: use cpumask_var_t in struct drdb_conf
+drivers/block/drbd/drbd_req.c: In function 'drbd_make_request_26':
+drivers/block/drbd/drbd_req.c:1023: error: implicit declaration of function 'bio_barrier'
+drivers/block/drbd/drbd_actlog.c: In function '_drbd_md_sync_page_io':
+drivers/block/drbd/drbd_actlog.c:120: error: implicit declaration of function 'bio_barrier'
+drivers/block/drbd/drbd_main.c: In function 'drbd_send_dblock':
+drivers/block/drbd/drbd_main.c:2373: error: implicit declaration of function 'bio_barrier'
+drivers/block/drbd/drbd_main.c:2375: error: implicit declaration of function 'bio_sync'
 
-Any code which can be compiled on x86 should try to avoid cpumask_t
-(or even struct cpumask) declarations; we are heading towards struct
-cpumask being undefined if CONFIG_CPUMASK_OFFSTACK.
+Caused by commit d206aaff0c5ee065f382c626ea21c5166a3047a7 ("bio: first
+step in sanitizing the bio->bi_rw flag testing") from the block tree.
 
-The code is the same for CONFIG_CPUMASK_OFFSTACK=n.
+I applied the following patch for today.
 
-Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --git a/drivers/block/drbd/drbd_int.h b/drivers/block/drbd/drbd_int.h
-index 5813d7d..10fa153 100644
---- a/drivers/block/drbd/drbd_int.h
-+++ b/drivers/block/drbd/drbd_int.h
-@@ -1006,7 +1006,7 @@ struct drbd_conf {
- 	spinlock_t peer_seq_lock;
- 	unsigned int minor;
- 	unsigned long comm_bm_set; /* communicated number of set bits. */
--	cpumask_t cpu_mask;
-+	cpumask_var_t cpu_mask;
- 	struct bm_io_work bm_io_work;
- 	u64 ed_uuid; /* UUID of the exposed data */
- 	struct mutex state_mutex;
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 29 Jul 2009 15:13:31 +1000
+Subject: [PATCH] drbd: fixups for block api changes
+
+bio_barrier() and bio_sync() are going away.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/block/drbd/drbd_actlog.c |    2 +-
+ drivers/block/drbd/drbd_main.c   |    4 ++--
+ drivers/block/drbd/drbd_req.c    |    2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/block/drbd/drbd_actlog.c b/drivers/block/drbd/drbd_actlog.c
+index 1e53d16..3851869 100644
+--- a/drivers/block/drbd/drbd_actlog.c
++++ b/drivers/block/drbd/drbd_actlog.c
+@@ -117,7 +117,7 @@ static int _drbd_md_sync_page_io(struct drbd_conf *mdev,
+ 	/* check for unsupported barrier op.
+ 	 * would rather check on EOPNOTSUPP, but that is not reliable.
+ 	 * don't try again for ANY return value != 0 */
+-	if (unlikely(bio_barrier(bio) && !ok)) {
++	if (unlikely(bio_rw_flagged(bio, BIO_RW_BARRIER) && !ok)) {
+ 		/* Try again with no barrier */
+ 		dev_warn(DEV, "Barriers not supported on meta data device - disabling\n");
+ 		set_bit(MD_NO_BARRIER, &mdev->flags);
 diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
-index 20f4d40..9c85a4b 100644
+index 20f4d40..9e051a8 100644
 --- a/drivers/block/drbd/drbd_main.c
 +++ b/drivers/block/drbd/drbd_main.c
-@@ -1550,18 +1550,18 @@ void drbd_calc_cpu_mask(struct drbd_conf *mdev)
- 	int ord, cpu;
- 
- 	/* user override. */
--	if (cpumask_weight(&mdev->cpu_mask))
-+	if (cpumask_weight(mdev->cpu_mask))
- 		return;
- 
- 	ord = mdev_to_minor(mdev) % cpumask_weight(cpu_online_mask);
- 	for_each_online_cpu(cpu) {
- 		if (ord-- == 0) {
--			cpumask_set_cpu(cpu, &mdev->cpu_mask);
-+			cpumask_set_cpu(cpu, mdev->cpu_mask);
- 			return;
- 		}
- 	}
- 	/* should not be reached */
--	cpumask_setall(&mdev->cpu_mask);
-+	cpumask_setall(mdev->cpu_mask);
- }
- 
- /**
-@@ -1584,7 +1584,7 @@ void drbd_thread_current_set_cpu(struct drbd_conf *mdev)
- 	if (!thi->reset_cpu_mask)
- 		return;
- 	thi->reset_cpu_mask = 0;
--	set_cpus_allowed_ptr(p, &mdev->cpu_mask);
-+	set_cpus_allowed_ptr(p, mdev->cpu_mask);
- }
- #endif
- 
-@@ -3001,6 +3001,8 @@ struct drbd_conf *drbd_new_device(unsigned int minor)
- 	mdev = kzalloc(sizeof(struct drbd_conf), GFP_KERNEL);
- 	if (!mdev)
- 		return NULL;
-+	if (!zalloc_cpumask_var(&mdev->cpu_mask, GFP_KERNEL))
-+		goto out_no_cpumask;
- 
- 	mdev->minor = minor;
- 
-@@ -3079,6 +3081,8 @@ out_no_io_page:
- out_no_disk:
- 	blk_cleanup_queue(q);
- out_no_q:
-+	free_cpumask_var(mdev->cpu_mask);
-+out_no_cpumask:
- 	kfree(mdev);
- 	return NULL;
- }
-@@ -3095,6 +3099,7 @@ void drbd_free_mdev(struct drbd_conf *mdev)
- 	__free_page(mdev->md_io_page);
- 	put_disk(mdev->vdisk);
- 	blk_cleanup_queue(mdev->rq_queue);
-+	free_cpumask_var(mdev->cpu_mask);
- 	kfree(mdev);
- }
- 
-diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
-index 936ec73..ede19be 100644
---- a/drivers/block/drbd/drbd_nl.c
-+++ b/drivers/block/drbd/drbd_nl.c
-@@ -1657,8 +1657,8 @@ static int drbd_nl_syncer_conf(struct drbd_conf *mdev, struct drbd_nl_cfg_req *n
- 	if (mdev->state.conn >= C_CONNECTED)
- 		drbd_send_sync_param(mdev, &sc);
- 
--	if (!cpumask_equal(&mdev->cpu_mask, new_cpu_mask)) {
--		cpumask_copy(&mdev->cpu_mask, new_cpu_mask);
-+	if (!cpumask_equal(mdev->cpu_mask, new_cpu_mask)) {
-+		cpumask_copy(mdev->cpu_mask, new_cpu_mask);
- 		drbd_calc_cpu_mask(mdev);
- 		mdev->receiver.reset_cpu_mask = 1;
- 		mdev->asender.reset_cpu_mask = 1;
+@@ -2370,9 +2370,9 @@ int drbd_send_dblock(struct drbd_conf *mdev, struct drbd_request *req)
+ 	/* NOTE: no need to check if barriers supported here as we would
+ 	 *       not pass the test in make_request_common in that case
+ 	 */
+-	if (bio_barrier(req->master_bio))
++	if (bio_rw_flagged(req->master_bio, BIO_RW_BARRIER))
+ 		dp_flags |= DP_HARDBARRIER;
+-	if (bio_sync(req->master_bio))
++	if (bio_rw_flagged(req->master_bio, BIO_RW_SYNCIO))
+ 		dp_flags |= DP_RW_SYNC;
+ 	if (mdev->state.conn >= C_SYNC_SOURCE &&
+ 	    mdev->state.conn <= C_PAUSED_SYNC_T)
+diff --git a/drivers/block/drbd/drbd_req.c b/drivers/block/drbd/drbd_req.c
+index d2b941c..fc8d835 100644
+--- a/drivers/block/drbd/drbd_req.c
++++ b/drivers/block/drbd/drbd_req.c
+@@ -1020,7 +1020,7 @@ int drbd_make_request_26(struct request_queue *q, struct bio *bio)
+ 	 * because of those XXX, this is not yet enabled,
+ 	 * i.e. in drbd_init_set_defaults we set the NO_BARRIER_SUPP bit.
+ 	 */
+-	if (unlikely(bio_barrier(bio) && test_bit(NO_BARRIER_SUPP, &mdev->flags))) {
++	if (unlikely(bio_rw_flagged(bio, BIO_RW_BARRIER) && test_bit(NO_BARRIER_SUPP, &mdev->flags))) {
+ 		/* dev_warn(DEV, "Rejecting barrier request as underlying device does not support\n"); */
+ 		bio_endio(bio, -EOPNOTSUPP);
+ 		return 0;
+-- 
+1.6.3.3
