@@ -1,53 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the edac-amd tree with the rr tree
-Date: Thu, 30 Jul 2009 15:41:50 +1000
-Message-ID: <20090730154150.d4c326b5.sfr@canb.auug.org.au>
+Subject: linux-next: kmemleak tree build failure
+Date: Thu, 30 Jul 2009 16:00:12 +1000
+Message-ID: <20090730160012.5814e251.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__30_Jul_2009_15_41_50_+1000_uKzOXmkgptQLYFdS"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41990 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751270AbZG3Fl5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 30 Jul 2009 01:41:57 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Borislav Petkov <borislav.petkov@amd.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, Andreas Herrmann <andreas.herrmann3@amd.com>
+ boundary="Signature=_Thu__30_Jul_2009_16_00_12_+1000_rNIFNMyaApnbNZFD"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751758AbZG3GAU@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__30_Jul_2009_15_41_50_+1000_uKzOXmkgptQLYFdS
+--Signature=_Thu__30_Jul_2009_16_00_12_+1000_rNIFNMyaApnbNZFD
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Borislav,
+Hi Catalin,
 
-Today's linux-next merge of the edac-amd tree got a conflict in
-include/linux/topology.h between commit
-11c0109a8c24b27fd6eff8c2c0ddca598675212d
-("cpumask:remove-topology_core_siblings-and-topology_thread_siblings-core")
-from the rr tree and commit 86aebc88b40884510c914ad71e81c8536a15052e
-("topology: introduce cpu_node information for multi-node processors")
-from the edac-amd tree.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-The latter adds topology_cpu_node_siblings() which is not needed (the
-former makes it clear that the _cpumask versions of these should be used
-instead).  I fixed it up and can carry the fix as necessary.
+arch/x86/kernel/process.c: In function 'free_thread_info':
+arch/x86/kernel/process.c:58: error: implicit declaration of function 'kmem=
+leak_free'
+
+Caused by commit 3d898087320a732ec853c98f244253892616840f ("kmemleak:
+Inform kmemleak about kernel stack allocation") from the kmemleak tree.
+Probably a missing include of linux/kmemleak.h.
+
+I have dropped the kmemleak tree for today.  (It accidentally did not
+get included yesterday.)
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__30_Jul_2009_15_41_50_+1000_uKzOXmkgptQLYFdS
+--Signature=_Thu__30_Jul_2009_16_00_12_+1000_rNIFNMyaApnbNZFD
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkpxMp4ACgkQjjKRsyhoI8xnaACeOdvkyXQluAfhaEIA57Tc3kKj
-diYAn3DSby5g1AjFYceaYtLRaoh3MweL
-=Wgz7
+iEYEARECAAYFAkpxNuwACgkQjjKRsyhoI8wG+gCgh8FppJqsXDkcIW5v7sgmDbd7
+NWoAn0NSjbfxL6c7wvCtFDoQKMdM5bNL
+=unLw
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__30_Jul_2009_15_41_50_+1000_uKzOXmkgptQLYFdS--
+--Signature=_Thu__30_Jul_2009_16_00_12_+1000_rNIFNMyaApnbNZFD--
