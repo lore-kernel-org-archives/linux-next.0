@@ -1,116 +1,107 @@
-From: Sachin Sant <sachinp@in.ibm.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Subject: Re: Next July 29 : Hugetlb test failure (OOPS free_hugepte_range)
-Date: Thu, 30 Jul 2009 17:55:13 +0530
-Message-ID: <4A719129.5030302@in.ibm.com>
-References: <20090729173611.b82478cd.sfr@canb.auug.org.au> <4A706504.6040704@in.ibm.com>
+Date: Thu, 30 Jul 2009 22:30:28 +1000
+Message-ID: <1248957028.1509.85.camel@pasglop>
+References: <20090729173611.b82478cd.sfr@canb.auug.org.au>
+	 <4A706504.6040704@in.ibm.com>  <4A719129.5030302@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp06.in.ibm.com ([59.145.155.6]:45616 "EHLO
-	e28smtp06.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751459AbZG3MZS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 30 Jul 2009 08:25:18 -0400
-Received: from d28relay01.in.ibm.com (d28relay01.in.ibm.com [9.184.220.58])
-	by e28smtp06.in.ibm.com (8.14.3/8.13.1) with ESMTP id n6UCPG1j030985
-	for <linux-next@vger.kernel.org>; Thu, 30 Jul 2009 17:55:16 +0530
-Received: from d28av03.in.ibm.com (d28av03.in.ibm.com [9.184.220.65])
-	by d28relay01.in.ibm.com (8.13.8/8.13.8/NCO v10.0) with ESMTP id n6UCPFkd913576
-	for <linux-next@vger.kernel.org>; Thu, 30 Jul 2009 17:55:15 +0530
-Received: from d28av03.in.ibm.com (loopback [127.0.0.1])
-	by d28av03.in.ibm.com (8.14.3/8.13.1/NCO v10.0 AVout) with ESMTP id n6UCPF35029943
-	for <linux-next@vger.kernel.org>; Thu, 30 Jul 2009 22:25:15 +1000
-In-Reply-To: <4A706504.6040704@in.ibm.com>
+Received: from gate.crashing.org ([63.228.1.57]:48108 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750701AbZG3Mat (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Jul 2009 08:30:49 -0400
+In-Reply-To: <4A719129.5030302@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Sachin Sant <sachinp@in.ibm.com>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org
 
-Sachin Sant wrote:
-> next-20090728 worked fine. Last commit that changed
-> arch/powerpc/mm/hugetlbpage.c was 
-> cb7f3f2d92d1b26c13e30e639b6ee4a78e9a3afa
->
-> powerpc: Add memory management headers for new 64-bit BookE
->
-> I will try reverting that commit and check if that helps.
-Hi Ben,
+On Thu, 2009-07-30 at 17:55 +0530, Sachin Sant wrote:
+> Sachin Sant wrote:
+> > next-20090728 worked fine. Last commit that changed
+> > arch/powerpc/mm/hugetlbpage.c was 
+> > cb7f3f2d92d1b26c13e30e639b6ee4a78e9a3afa
+> >
+> > powerpc: Add memory management headers for new 64-bit BookE
+> >
+> > I will try reverting that commit and check if that helps.
+> Hi Ben,
+> 
+> Reverting the above patch helped. The tests ran fine against the
+> patched kernel. But ofcourse that's not the solution :-)
+> 
+> Here is some data from xmon that might help find the reason for
+> the failure. This is with today's next.
 
-Reverting the above patch helped. The tests ran fine against the
-patched kernel. But ofcourse that's not the solution :-)
+Thanks. I'll have a look next week. I think when I changed the indices
+I may have forgotten to update something.
 
-Here is some data from xmon that might help find the reason for
-the failure. This is with today's next.
+Cheers,
+Ben.
 
-: ------------[ cut here ]------------
-cpu 0x0: Vector: 700 (Program Check) at [c000000038923560]
-    pc: c0000000000486d4: .free_hugepte_range+0x68/0xa0
-    lr: c000000000048954: .hugetlb_free_pgd_range+0x248/0x38c
-    sp: c0000000389237e0
-   msr: 8000000000029032
-  current = 0xc00000003b1d7780
-  paca    = 0xc000000001002400
-    pid   = 2839, comm = readback
-kernel BUG at /home/linux-2.6.31-rc4/arch/powerpc/include/asm/pgalloc.h:36!
-enter ? for help
-[c000000038923880] c000000000048954 .hugetlb_free_pgd_range+0x248/0x38c
-[c000000038923970] c000000000165a48 .free_pgtables+0xa0/0x154
-[c000000038923a30] c000000000167f78 .exit_mmap+0x13c/0x1cc
-[c000000038923ae0] c0000000000997ec .mmput+0x68/0x14c
-[c000000038923b70] c00000000009f1d4 .exit_mm+0x190/0x1b8
-[c000000038923c20] c0000000000a16e8 .do_exit+0x214/0x784
-[c000000038923d00] c0000000000a1d1c .do_group_exit+0xc4/0xf8
-[c000000038923da0] c0000000000a1d7c .SyS_exit_group+0x2c/0x48
-[c000000038923e30] c0000000000085b4 syscall_exit+0x0/0x40
---- Exception: c01 (System Call) at 000000000fe15038
-SP (ffb8e030) is in userspace
-0:mon> e
-cpu 0x0: Vector: 700 (Program Check) at [c000000038923560]
-    pc: c0000000000486d4: .free_hugepte_range+0x68/0xa0
-    lr: c000000000048954: .hugetlb_free_pgd_range+0x248/0x38c
-    sp: c0000000389237e0
-   msr: 8000000000029032
-  current = 0xc00000003b1d7780
-  paca    = 0xc000000001002400
-    pid   = 2839, comm = readback
-kernel BUG at /home/linux-2.6.31-rc4/arch/powerpc/include/asm/pgalloc.h:36!
-0:mon> r
-R00 = 0000000000000001   R16 = 0000000000000000
-R01 = c0000000389237e0   R17 = 0000000000000001
-R02 = c000000000f165a8   R18 = 000000003fffffff
-R03 = c0000000014504d0   R19 = 0000000000000000
-R04 = c000000039390001   R20 = 0000000000000000
-R05 = 0000000000000007   R21 = 0000010000000000
-R06 = 0000000000000000   R22 = 0000000040000000
-R07 = 0000000040000000   R23 = c0000000014504d0
-R08 = c00000003d708188   R24 = 000000003fffffff
-R09 = c00000003eb40000   R25 = 0000000000000007
-R10 = c00000003d708188   R26 = c00000003ebd41b8
-R11 = 0000000000000018   R27 = c0000000014504d0
-R12 = 0000000040000448   R28 = c00000003eb40018
-R13 = c000000001002400   R29 = 0000000000000008
-R14 = 00000000ffffffff   R30 = 0000000040000000
-R15 = 00000000ffffffff   R31 = c0000000389237e0
-pc  = c0000000000486d4 .free_hugepte_range+0x68/0xa0
-lr  = c000000000048954 .hugetlb_free_pgd_range+0x248/0x38c
-msr = 8000000000029032   cr  = 20042444
-ctr = 800000000000b6f4   xer = 0000000000000001   trap =  700
-0:mon> 
-
-Line 36 of arch/powerpc/include/asm/pgalloc.h corresponds to
-
-BUG_ON(cachenum > PGF_CACHENUM_MASK);
-
-May be something to do with number of elements in huge_pgtable_cache_name ??
-
-Thanks
--Sachin
-
--- 
-
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+> : ------------[ cut here ]------------
+> cpu 0x0: Vector: 700 (Program Check) at [c000000038923560]
+>     pc: c0000000000486d4: .free_hugepte_range+0x68/0xa0
+>     lr: c000000000048954: .hugetlb_free_pgd_range+0x248/0x38c
+>     sp: c0000000389237e0
+>    msr: 8000000000029032
+>   current = 0xc00000003b1d7780
+>   paca    = 0xc000000001002400
+>     pid   = 2839, comm = readback
+> kernel BUG at /home/linux-2.6.31-rc4/arch/powerpc/include/asm/pgalloc.h:36!
+> enter ? for help
+> [c000000038923880] c000000000048954 .hugetlb_free_pgd_range+0x248/0x38c
+> [c000000038923970] c000000000165a48 .free_pgtables+0xa0/0x154
+> [c000000038923a30] c000000000167f78 .exit_mmap+0x13c/0x1cc
+> [c000000038923ae0] c0000000000997ec .mmput+0x68/0x14c
+> [c000000038923b70] c00000000009f1d4 .exit_mm+0x190/0x1b8
+> [c000000038923c20] c0000000000a16e8 .do_exit+0x214/0x784
+> [c000000038923d00] c0000000000a1d1c .do_group_exit+0xc4/0xf8
+> [c000000038923da0] c0000000000a1d7c .SyS_exit_group+0x2c/0x48
+> [c000000038923e30] c0000000000085b4 syscall_exit+0x0/0x40
+> --- Exception: c01 (System Call) at 000000000fe15038
+> SP (ffb8e030) is in userspace
+> 0:mon> e
+> cpu 0x0: Vector: 700 (Program Check) at [c000000038923560]
+>     pc: c0000000000486d4: .free_hugepte_range+0x68/0xa0
+>     lr: c000000000048954: .hugetlb_free_pgd_range+0x248/0x38c
+>     sp: c0000000389237e0
+>    msr: 8000000000029032
+>   current = 0xc00000003b1d7780
+>   paca    = 0xc000000001002400
+>     pid   = 2839, comm = readback
+> kernel BUG at /home/linux-2.6.31-rc4/arch/powerpc/include/asm/pgalloc.h:36!
+> 0:mon> r
+> R00 = 0000000000000001   R16 = 0000000000000000
+> R01 = c0000000389237e0   R17 = 0000000000000001
+> R02 = c000000000f165a8   R18 = 000000003fffffff
+> R03 = c0000000014504d0   R19 = 0000000000000000
+> R04 = c000000039390001   R20 = 0000000000000000
+> R05 = 0000000000000007   R21 = 0000010000000000
+> R06 = 0000000000000000   R22 = 0000000040000000
+> R07 = 0000000040000000   R23 = c0000000014504d0
+> R08 = c00000003d708188   R24 = 000000003fffffff
+> R09 = c00000003eb40000   R25 = 0000000000000007
+> R10 = c00000003d708188   R26 = c00000003ebd41b8
+> R11 = 0000000000000018   R27 = c0000000014504d0
+> R12 = 0000000040000448   R28 = c00000003eb40018
+> R13 = c000000001002400   R29 = 0000000000000008
+> R14 = 00000000ffffffff   R30 = 0000000040000000
+> R15 = 00000000ffffffff   R31 = c0000000389237e0
+> pc  = c0000000000486d4 .free_hugepte_range+0x68/0xa0
+> lr  = c000000000048954 .hugetlb_free_pgd_range+0x248/0x38c
+> msr = 8000000000029032   cr  = 20042444
+> ctr = 800000000000b6f4   xer = 0000000000000001   trap =  700
+> 0:mon> 
+> 
+> Line 36 of arch/powerpc/include/asm/pgalloc.h corresponds to
+> 
+> BUG_ON(cachenum > PGF_CACHENUM_MASK);
+> 
+> May be something to do with number of elements in huge_pgtable_cache_name ??
+> 
+> Thanks
+> -Sachin
+> 
