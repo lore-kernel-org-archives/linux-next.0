@@ -1,45 +1,77 @@
-From: Rusty Russell <rusty-8n+1lVoiYb80n/F98K4Iww@public.gmane.org>
-Subject: Re: [PATCH] next-20090730 lguest build breaks with
-	pfn_pmd()
-Date: Fri, 31 Jul 2009 08:49:00 +0930
-Message-ID: <200907310849.00939.rusty@rustcorp.com.au>
-References: <20090729173611.b82478cd.sfr@canb.auug.org.au>
-	<20090730120533.GB4955@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: OProfile for linux-next
+Date: Fri, 31 Jul 2009 09:25:37 +1000
+Message-ID: <20090731092537.239995b5.sfr@canb.auug.org.au>
+References: <20090730120738.GA24694@erda.amd.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <lguest-bounces+glkvl-lguest=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <20090730120533.GB4955-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__31_Jul_2009_09_25_37_+1000_wlQNhOvGg_4pFV=Z"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37166 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751709AbZG3XZo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Jul 2009 19:25:44 -0400
+In-Reply-To: <20090730120738.GA24694@erda.amd.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Robert Richter <robert.richter@amd.com>
+Cc: Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+
+--Signature=_Fri__31_Jul_2009_09_25_37_+1000_wlQNhOvGg_4pFV=Z
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-List-Unsubscribe: <https://lists.ozlabs.org/options/lguest>,
-	<mailto:lguest-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/lguest>
-List-Post: <mailto:lguest-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:lguest-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/lguest>,
-	<mailto:lguest-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Sender: lguest-bounces+glkvl-lguest=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Errors-To: lguest-bounces+glkvl-lguest=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Kamalesh Babulal <kamalesh-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
-Cc: sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org, lguest-mnsaURCQ41sdnm+yROfE0A@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 30 Jul 2009 09:35:33 pm Kamalesh Babulal wrote:
-> Hi Rusty,
-> 
-> 	next-20090729 allmodconfig build breaks at
-> 
-> drivers/lguest/page_tables.c: In function 'setup_pagetables':
-> drivers/lguest/page_tables.c:987: error: incompatible type for argument 2 of 'pfn_pmd'
-> drivers/lguest/page_tables.c:994: error: expected ';' before ')' token
-> drivers/lguest/page_tables.c:994: error: expected statement before ')' token
-> make[2]: *** [drivers/lguest/page_tables.o] Error 1
-> 
-> build failure is introduced by commit e07dd6220a4bf81a2549e7e37523a2557547d9d7
-> I have tested the patch for the build failure only.
-> 
-> Signed-off-by: Kamalesh Babulal <kamalesh-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
+Hi Robert,
 
-Thanks, applied!
+On Thu, 30 Jul 2009 14:07:38 +0200 Robert Richter <robert.richter@amd.com> =
+wrote:
+>
+> please add following tree to linux-next:
+>=20
+>  git://git.kernel.org/pub/scm/linux/kernel/git/rric/oprofile.git for-next
+>=20
+> This is the oprofile master branch containing all changes for the next
+> merge window.
 
-Rusty.
+Added from today.
+
+> The general way of sending oprofile to linux-next is via tip. So, this
+> will be a temporary solution until Ingo will be back.
+
+I added it after the tip tree, so if it hangs around for a few days after
+Ingo has integrated it, it should not be a problem.
+
+What I tell everyone: all patches/commits in the tree/series must
+have been:
+
+	posted to a relevant mailing list
+	reviewed
+	unit tested
+	destined for the next merge window (or the current release)
+
+*before* they are included.  The linux-next tree is for integration
+testing and to lower the impact of conflicts between subsystems in the
+next merge window.
+
+Basically, this should be just what you would send to Linus or in this
+case, Ingo, (or ask him to fetch).  It is allowed to be rebased if you
+deem it necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__31_Jul_2009_09_25_37_+1000_wlQNhOvGg_4pFV=Z
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkpyK/EACgkQjjKRsyhoI8yq5gCdG1+tcx1h73+pSdMs/DCJNuME
+vvEAn2nZzjQSwKy+IeO0joj7ihdyzfjQ
+=A0bI
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__31_Jul_2009_09_25_37_+1000_wlQNhOvGg_4pFV=Z--
