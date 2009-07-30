@@ -1,51 +1,62 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: linux-next: scsi-rc-fixes tree build failure
-Date: Thu, 30 Jul 2009 08:51:22 -0500
-Message-ID: <1248961882.3880.4.camel@mulgrave.site>
-References: <20090730181345.cec774b2.sfr@canb.auug.org.au>
+From: Borislav Petkov <borislav.petkov@amd.com>
+Subject: Re: Boot failure on x86_64 (OOPS set_cpu_sibling_map() )
+Date: Thu, 30 Jul 2009 15:56:23 +0200
+Message-ID: <20090730135623.GB16659@aftab>
+References: <20090730182143.eadf36e6.sfr@canb.auug.org.au>
+ <4A718338.6050907@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:55591 "EHLO
-	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750776AbZG3Nv0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 30 Jul 2009 09:51:26 -0400
-In-Reply-To: <20090730181345.cec774b2.sfr@canb.auug.org.au>
+Received: from sg2ehsobe002.messaging.microsoft.com ([207.46.51.76]:28071 "EHLO
+	SG2EHSOBE002.bigfish.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1750925AbZG3N4i convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Jul 2009 09:56:38 -0400
+Content-Disposition: inline
+In-Reply-To: <4A718338.6050907@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tom Peng <tom_peng@usish.com>, Jack Wang <jack_wang@usish.com>, Lindar Liu <lindar_liu@usish.com>, Kevin Ao <aoqingyun@usish.com>, linux-scsi <linux-scsi@vger.kernel.org>
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>
 
-On Thu, 2009-07-30 at 18:13 +1000, Stephen Rothwell wrote:
-> Hi James,
-> 
-> Today's linux-next build (powerpc allyesconfig) failed like this:
-> 
-> drivers/scsi/libsas/sas_expander.c: In function 'sas_find_bcast_dev':
-> drivers/scsi/libsas/sas_expander.c:1701: error: 'FALSE' undeclared (first use in this function)
-> drivers/scsi/libsas/sas_expander.c: In function 'sas_discover_new':
-> drivers/scsi/libsas/sas_expander.c:1809: error: 'FALSE' undeclared (first use in this function)
-> drivers/scsi/libsas/sas_expander.c:1824: error: 'TRUE' undeclared (first use in this function)
-> drivers/scsi/libsas/sas_expander.c: In function 'sas_rediscover':
-> drivers/scsi/libsas/sas_expander.c:1903: error: 'TRUE' undeclared (first use in this function)
-> drivers/scsi/libsas/sas_expander.c:1918: error: 'FALSE' undeclared (first use in this function)
-> drivers/scsi/libsas/sas_expander.c: In function 'sas_ex_revalidate_domain':
-> drivers/scsi/libsas/sas_expander.c:1951: error: 'TRUE' undeclared (first use in this function)
-> 
-> Caused by commit 4c70d933a41e1d712f3db90d2a41141730383d5a ("[SCSI]
-> libsas: fix wide port hotplug issues").  Presumably a missing include
-> file.
+Hi,
 
-Actually, I don't think so.  It's confusion over the use of boolean
-variables.  I think they have to be set to lower case true, false, not
-upper case.  There's obviously some accidental definition of TRUE and
-FALSE in x86.
+On Thu, Jul 30, 2009 at 04:55:44PM +0530, Sachin Sant wrote:
+> Today's Next failed to boot on a x86_64 box with following traces
+>=20
+> ACPI: Core revision 20090625
+> BUG: unable to handle kernel NULL pointer dereference at (null)
+> IP: [<ffffffff81328c7b>] set_cpu_sibling_map+0x24f/0x353
 
-> I have reverted that commit for today.
+I can't trigger it here, please send me your .config. In the meantime,
+you could try the following:
 
-Thanks, I've dropped it from my tree ... I'll put it back when this is
-sorted out.
+--
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index 3ede593..5fd57fe 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -1070,6 +1070,7 @@ void __init native_smp_prepare_cpus(unsigned int =
+max_cpus)
+ 	for_each_possible_cpu(i) {
+ 		zalloc_cpumask_var(&per_cpu(cpu_sibling_map, i), GFP_KERNEL);
+ 		zalloc_cpumask_var(&per_cpu(cpu_core_map, i), GFP_KERNEL);
++		zalloc_cpumask_var(&per_cpu(cpu_node_map, i), GFP_KERNEL);
+ 		zalloc_cpumask_var(&cpu_data(i).llc_shared_map, GFP_KERNEL);
+ 	}
+ 	set_cpu_sibling_map(0);
+--=20
+1.6.3.3
 
-James
+
+--=20
+Regards/Gruss,
+Boris.
+
+Operating | Advanced Micro Devices GmbH
+  System  | Karl-Hammerschmidt-Str. 34, 85609 Dornach b. M=FCnchen, Ger=
+many
+ Research | Gesch=E4ftsf=FChrer: Thomas M. McCoy, Giuliano Meroni
+  Center  | Sitz: Dornach, Gemeinde Aschheim, Landkreis M=FCnchen
+  (OSRC)  | Registergericht M=FCnchen, HRB Nr. 43632
