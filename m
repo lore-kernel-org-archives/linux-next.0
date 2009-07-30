@@ -1,52 +1,49 @@
-From: Philipp Reisner <philipp.reisner@linbit.com>
-Subject: Re: linux-next: drbd tree build failure
-Date: Wed, 29 Jul 2009 17:13:09 +0200
-Message-ID: <200907291713.09695.philipp.reisner@linbit.com>
-References: <20090729152933.47664b18.sfr@canb.auug.org.au> <20090729062058.GE4148@kernel.dk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: i2c series import failure
+Date: Thu, 30 Jul 2009 10:44:43 +1000
+Message-ID: <20090730104443.49df80a0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754561AbZG2PNO@vger.kernel.org>
-In-Reply-To: <20090729062058.GE4148@kernel.dk>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__30_Jul_2009_10_44_43_+1000_8I5/Q2Wh65RAurmA"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39304 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755174AbZG3Aov (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Jul 2009 20:44:51 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jean Delvare <khali@linux-fr.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Thu__30_Jul_2009_10_44_43_+1000_8I5/Q2Wh65RAurmA
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jens Axboe <jens.axboe@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Wednesday 29 July 2009 08:20:58 Jens Axboe wrote:
-> On Wed, Jul 29 2009, Stephen Rothwell wrote:
-> > Hi Philipp,
-> >
-> > Today's linux-next build (x86_64 allmodconfig) failed like this:
-> >
-> > drivers/block/drbd/drbd_req.c: In function 'drbd_make_request_26':
-> > drivers/block/drbd/drbd_req.c:1023: error: implicit declaration of
-> > function 'bio_barrier' drivers/block/drbd/drbd_actlog.c: In function
-> > '_drbd_md_sync_page_io': drivers/block/drbd/drbd_actlog.c:120: error:
-> > implicit declaration of function 'bio_barrier'
-> > drivers/block/drbd/drbd_main.c: In function 'drbd_send_dblock':
-> > drivers/block/drbd/drbd_main.c:2373: error: implicit declaration of
-> > function 'bio_barrier' drivers/block/drbd/drbd_main.c:2375: error:
-> > implicit declaration of function 'bio_sync'
-> >
-> > Caused by commit d206aaff0c5ee065f382c626ea21c5166a3047a7 ("bio: first
-> > step in sanitizing the bio->bi_rw flag testing") from the block tree.
-> >
-> > I applied the following patch for today.
->
-> That fixup looks good, thanks Stephen.
+Hi Jean,
 
-Thanks,
-I have commited that patch also to the drbd git tree. I think we have
-now fixed all open issues (currently).
+Today's linux-next import of the i2c series failed like this:
 
--phil
--- 
-: Dipl-Ing Philipp Reisner
-: LINBIT | Your Way to High Availability
-: Tel: +43-1-8178292-50, Fax: +43-1-8178292-82
-: http://www.linbit.com
+i2c-tsl2550-simpify-IO.patch
+error: patch failed: drivers/i2c/chips/tsl2550.c:24
+error: drivers/i2c/chips/tsl2550.c: patch does not apply
 
-DRBD(R) and LINBIT(R) are registered trademarks of LINBIT, Austria.
+I will use the series from yesterday.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__30_Jul_2009_10_44_43_+1000_8I5/Q2Wh65RAurmA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkpw7PsACgkQjjKRsyhoI8zm8wCfTXPrfFo0oTWV8i41cwjb1Yme
+m+kAoIAjvr3+zt0DIb5G20XhfvYLqDNj
+=HUbg
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__30_Jul_2009_10_44_43_+1000_8I5/Q2Wh65RAurmA--
