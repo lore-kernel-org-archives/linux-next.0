@@ -1,37 +1,54 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: linux-next: kmemleak tree build failure
-Date: Thu, 30 Jul 2009 09:58:57 +0100
-Message-ID: <1248944337.3376.5.camel@pc1117.cambridge.arm.com>
-References: <20090730160012.5814e251.sfr@canb.auug.org.au>
+From: Borislav Petkov <borislav.petkov@amd.com>
+Subject: Re: linux-next: manual merge of the edac-amd tree with the rr tree
+Date: Thu, 30 Jul 2009 13:09:39 +0200
+Message-ID: <20090730110938.GA16659@aftab>
+References: <20090730154150.d4c326b5.sfr@canb.auug.org.au>
+ <20090730062309.GA15057@liondog.tnic>
+ <20090730170850.6d777e96.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([193.131.176.58]:40862 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751236AbZG3I7E (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 30 Jul 2009 04:59:04 -0400
-In-Reply-To: <20090730160012.5814e251.sfr@canb.auug.org.au>
+Received: from tx2ehsobe001.messaging.microsoft.com ([65.55.88.11]:5236 "EHLO
+	TX2EHSOBE001.bigfish.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752071AbZG3LKW convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 30 Jul 2009 07:10:22 -0400
+Content-Disposition: inline
+In-Reply-To: <20090730170850.6d777e96.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Borislav Petkov <petkovbb@googlemail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, Andreas Herrmann <andreas.herrmann3@amd.com>
 
-On Thu, 2009-07-30 at 16:00 +1000, Stephen Rothwell wrote:
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
-> 
-> arch/x86/kernel/process.c: In function 'free_thread_info':
-> arch/x86/kernel/process.c:58: error: implicit declaration of function 'kmemleak_free'
-> 
-> Caused by commit 3d898087320a732ec853c98f244253892616840f ("kmemleak:
-> Inform kmemleak about kernel stack allocation") from the kmemleak tree.
-> Probably a missing include of linux/kmemleak.h.
+Hi Stephen,
 
-Yes, it's missing this (I was only testing it with slub which has
-kmemleak.h included in its header file).
+On Thu, Jul 30, 2009 at 05:08:50PM +1000, Stephen Rothwell wrote:
+> > thanks for fixing that. Yep, the topology patches in the edac tree =
+are
+> > not final yet, I've added them to the mix only because edac depends=
+ on
+> > the node_id functionality. I'll fix them up later against the rr st=
+uff.
 
-I updated the kmemleak branch now. Thanks.
+I rediffed the topology bits against
+cpumask:remove-topology_core_siblings-and-topology_thread_siblings-core=
+=2E
+patch from Rusty's tree so we should be good to go.
 
--- 
-Catalin
+Also, I'm carrying couple of patches that should go through the x86 tre=
+e
+and depending on when they go in, I'll drop them from mine. Just wanted
+to give you heads up here in case you start getting merge conflicts :).
+
+Thanks.
+
+--=20
+Regards/Gruss,
+Boris.
+
+Operating | Advanced Micro Devices GmbH
+  System  | Karl-Hammerschmidt-Str. 34, 85609 Dornach b. M=FCnchen, Ger=
+many
+ Research | Gesch=E4ftsf=FChrer: Thomas M. McCoy, Giuliano Meroni
+  Center  | Sitz: Dornach, Gemeinde Aschheim, Landkreis M=FCnchen
+  (OSRC)  | Registergericht M=FCnchen, HRB Nr. 43632
