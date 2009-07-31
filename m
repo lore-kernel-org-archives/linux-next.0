@@ -1,65 +1,55 @@
-From: "H Hartley Sweeten" <hartleys@visionengravers.com>
-Subject: RE: linux-next: manual merge of the arm tree with Linus' tree
-Date: Thu, 30 Jul 2009 20:41:37 -0400
-Message-ID: <BD79186B4FD85F4B8E60E381CAEE190901B7739E@mi8nycmail19.Mi8.com>
-References: <20090731103354.5e7fdd42.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: kmemleak tree build failure
+Date: Fri, 31 Jul 2009 12:00:05 +1000
+Message-ID: <20090731120005.22f6af5b.sfr@canb.auug.org.au>
+References: <20090730160012.5814e251.sfr@canb.auug.org.au>
+	<1248944337.3376.5.camel@pc1117.cambridge.arm.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__31_Jul_2009_12_00_05_+1000_h3QLOiWlosqyge3B"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41536 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751200AbZGaCAN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Jul 2009 22:00:13 -0400
+In-Reply-To: <1248944337.3376.5.camel@pc1117.cambridge.arm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Fri__31_Jul_2009_12_00_05_+1000_h3QLOiWlosqyge3B
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752228AbZGaAlp@vger.kernel.org>
-Content-class: urn:content-classes:message
-In-Reply-To: <20090731103354.5e7fdd42.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ryan Mallon <ryan@bluewatersys.com>, Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thursday, July 30, 2009 5:34 PM, Stephen Rothwell wrote:
-> Hi Russell,
-> 
-> Today's linux-next merge of the arm tree got a conflict in MAINTAINERS
-> between commit 8b58be884a9fd650abb7f7adf3f885fb9cecd79d ("MAINTAINERS:
-> coalesce name and email address lines") from Linus' tree and commit
-> d19d36672ee379f26b79df985a9a2e5afb3f1df1 ("[ARM] 5599/1: MAINTAINERS:
-> update for EP93XX ARM") from the arm tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.
+Hi Catalin,
 
-Russell,
+On Thu, 30 Jul 2009 09:58:57 +0100 Catalin Marinas <catalin.marinas@arm.com=
+> wrote:
+>
+> Yes, it's missing this (I was only testing it with slub which has
+> kmemleak.h included in its header file).
+>=20
+> I updated the kmemleak branch now. Thanks.
 
-Stephen's fix below is fine with me.  If needed I will resubmit this patch.
+Thanks.
 
-Regards,
-Hartley
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc MAINTAINERS
-> index 79471ba,1be6a0c..0000000
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@@ -535,12 -604,18 +535,15 @@@ W:	http://maxim.org.za/at91_26.htm
->   S:	Maintained
->   
->   ARM/CIRRUS LOGIC EP93XX ARM ARCHITECTURE
-> - M:	Lennert Buytenhek <kernel@wantstofly.org>
->  -P:	Hartley Sweeten
->  -M:	hsweeten@visionengravers.com
->  -P:	Ryan Mallon
->  -M:	ryan@bluewatersys.com
-> ++M:	Hartley Sweeten <hsweeten@visionengravers.com>
-> ++M:	Ryan Mallon <ryan@bluewatersys.com>
->   L:	linux-arm-kernel@lists.arm.linux.org.uk (subscribers-only)
->   S:	Maintained
-> + F:	arch/arm/mach-ep93xx/
-> + F:	arch/arm/mach-ep93xx/include/mach/
->   
->   ARM/CIRRUS LOGIC EDB9315A MACHINE SUPPORT
->  -P:	Lennert Buytenhek
->  -M:	kernel@wantstofly.org
->  +M:	Lennert Buytenhek <kernel@wantstofly.org>
->   L:	linux-arm-kernel@lists.arm.linux.org.uk (subscribers-only)
->   S:	Maintained
-  
+--Signature=_Fri__31_Jul_2009_12_00_05_+1000_h3QLOiWlosqyge3B
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkpyUCUACgkQjjKRsyhoI8wCCgCgiMGb3FvlHOOIkG/mc02VWsrD
+O9QAn22ZeIZjnEnLjtN0TxhvVVWP75gG
+=bk6B
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__31_Jul_2009_12_00_05_+1000_h3QLOiWlosqyge3B--
