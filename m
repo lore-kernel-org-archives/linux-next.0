@@ -1,68 +1,63 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH] next-20090730 lguest build breaks with pfn_pmd()
-Date: Fri, 31 Jul 2009 11:03:56 -0700
-Message-ID: <20090731110356.cd0bc550.randy.dunlap@oracle.com>
-References: <20090729173611.b82478cd.sfr@canb.auug.org.au>
-	<20090730120533.GB4955@linux.vnet.ibm.com>
+Subject: [PATCH -next] media/zr364xx: fix build errors
+Date: Fri, 31 Jul 2009 15:47:17 -0700
+Message-ID: <20090731154717.43efbbfc.randy.dunlap@oracle.com>
+References: <20090731180943.8f30c49d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet12.oracle.com ([148.87.113.124]:28466 "EHLO
-	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752063AbZGaSEe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 31 Jul 2009 14:04:34 -0400
-In-Reply-To: <20090730120533.GB4955@linux.vnet.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Cc: rusty@rustcorp.com.au, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, lguest@ozlabs.org, sfr@canb.auug.org.au
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <20090731180943.8f30c49d.sfr@canb.auug.org.au>
+Sender: linux-media-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org, akpm <akpm@linux-foundation.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Antoine Jacquet <royale@zerezo.com>, Mauro Carvalho Chehab <mchehab@infradead.org>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 30 Jul 2009 17:35:33 +0530 Kamalesh Babulal wrote:
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-> Hi Rusty,
-> 
-> 	next-20090729 allmodconfig build breaks at
-> 
-> drivers/lguest/page_tables.c: In function 'setup_pagetables':
-> drivers/lguest/page_tables.c:987: error: incompatible type for argument 2 of 'pfn_pmd'
-> drivers/lguest/page_tables.c:994: error: expected ';' before ')' token
-> drivers/lguest/page_tables.c:994: error: expected statement before ')' token
-> make[2]: *** [drivers/lguest/page_tables.o] Error 1
-> 
-> build failure is introduced by commit e07dd6220a4bf81a2549e7e37523a2557547d9d7
-> I have tested the patch for the build failure only.
-> 
-> Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-> --
->  drivers/lguest/page_tables.c |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/lguest/page_tables.c b/drivers/lguest/page_tables.c
-> index 8c86446..c610b82 100644
-> --- a/drivers/lguest/page_tables.c
-> +++ b/drivers/lguest/page_tables.c
-> @@ -984,14 +984,14 @@ static unsigned long setup_pagetables(struct lguest *lg,
->  	for (i = j = 0; i < mapped_pages && j < PTRS_PER_PMD;
->  	     i += PTRS_PER_PTE, j++) {
->  		pmd = pfn_pmd(((unsigned long)&linear[i] - mem_base)/PAGE_SIZE,
-> -			      _PAGE_PRESENT | _PAGE_RW | _PAGE_USER);
-> +			      __pgrot(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER));
+Fix build errors in zr364xx by adding selects:
 
-s/__pgrot/__pgprot/
+zr364xx.c:(.text+0x195ed7): undefined reference to `videobuf_streamon'
+zr364xx.c:(.text+0x196030): undefined reference to `videobuf_dqbuf'
+zr364xx.c:(.text+0x1960c4): undefined reference to `videobuf_qbuf'
+zr364xx.c:(.text+0x196123): undefined reference to `videobuf_querybuf'
+zr364xx.c:(.text+0x196182): undefined reference to `videobuf_reqbufs'
+zr364xx.c:(.text+0x196224): undefined reference to `videobuf_queue_is_busy'
+zr364xx.c:(.text+0x196390): undefined reference to `videobuf_vmalloc_free'
+zr364xx.c:(.text+0x196571): undefined reference to `videobuf_iolock'
+zr364xx.c:(.text+0x196678): undefined reference to `videobuf_mmap_mapper'
+zr364xx.c:(.text+0x196760): undefined reference to `videobuf_poll_stream'
+zr364xx.c:(.text+0x19689a): undefined reference to `videobuf_read_one'
+zr364xx.c:(.text+0x1969ec): undefined reference to `videobuf_mmap_free'
+zr364xx.c:(.text+0x197862): undefined reference to `videobuf_queue_vmalloc_init'
+zr364xx.c:(.text+0x197a28): undefined reference to `videobuf_streamoff'
+zr364xx.c:(.text+0x198203): undefined reference to `videobuf_to_vmalloc'
+zr364xx.c:(.text+0x198603): undefined reference to `videobuf_streamoff'
+drivers/built-in.o: In function `free_buffer':
+zr364xx.c:(.text+0x19930c): undefined reference to `videobuf_vmalloc_free'
+drivers/built-in.o: In function `zr364xx_open':
+zr364xx.c:(.text+0x19a7de): undefined reference to `videobuf_queue_vmalloc_init'
+drivers/built-in.o: In function `read_pipe_completion':
+zr364xx.c:(.text+0x19b17f): undefined reference to `videobuf_to_vmalloc'
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/media/video/Kconfig |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- linux-next-20090729.orig/drivers/media/video/Kconfig
++++ linux-next-20090729/drivers/media/video/Kconfig
+@@ -991,6 +991,8 @@ source "drivers/media/video/pwc/Kconfig"
+ config USB_ZR364XX
+ 	tristate "USB ZR364XX Camera support"
+ 	depends on VIDEO_V4L2
++	select VIDEOBUF_GEN
++	select VIDEOBUF_VMALLOC
+ 	---help---
+ 	  Say Y here if you want to connect this type of camera to your
+ 	  computer's USB port.
 
 
->  
->  		if (copy_to_user(&pmds[j], &pmd, sizeof(pmd)) != 0)
->  			return -EFAULT;
->  	}
->  
->  	/* One PGD entry, pointing to that PMD page. */
-> -	pgd = __pgd(((unsigned long)pmds - mem_base) | _PAGE_PRESENT));
-> +	pgd = __pgd(((unsigned long)pmds - mem_base) | _PAGE_PRESENT);
->  	/* Copy it in as the first PGD entry (ie. addresses 0-1G). */
->  	if (copy_to_user(&pgdir[0], &pgd, sizeof(pgd)) != 0)
->  		return -EFAULT;
 
 
 ---
