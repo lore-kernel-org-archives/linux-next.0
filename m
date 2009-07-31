@@ -1,62 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the edac-amd tree with the rr tree
-Date: Fri, 31 Jul 2009 12:01:46 +1000
-Message-ID: <20090731120146.00980017.sfr@canb.auug.org.au>
-References: <20090730154150.d4c326b5.sfr@canb.auug.org.au>
-	<20090730062309.GA15057@liondog.tnic>
-	<20090730170850.6d777e96.sfr@canb.auug.org.au>
-	<20090730110938.GA16659@aftab>
+Subject: linux-next: manual merge of the trivial tree with the  tree
+Date: Fri, 31 Jul 2009 14:39:12 +1000
+Message-ID: <20090731143912.7a6afdbb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__31_Jul_2009_12_01_46_+1000_Ev8A6JTi7C7ISAIh"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41595 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751076AbZGaCBz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 30 Jul 2009 22:01:55 -0400
-In-Reply-To: <20090730110938.GA16659@aftab>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Borislav Petkov <borislav.petkov@amd.com>
-Cc: Borislav Petkov <petkovbb@googlemail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, Andreas Herrmann <andreas.herrmann3@amd.com>
-
---Signature=_Fri__31_Jul_2009_12_01_46_+1000_Ev8A6JTi7C7ISAIh
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751191AbZGaEjR@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>, Markus Heidelberg <markus.heidelberg@web.de>
+List-Id: linux-next.vger.kernel.org
 
-Hi Boris,
+Hi Jiri,
 
-On Thu, 30 Jul 2009 13:09:39 +0200 Borislav Petkov <borislav.petkov@amd.com=
-> wrote:
->
-> I rediffed the topology bits against
-> cpumask:remove-topology_core_siblings-and-topology_thread_siblings-core.
-> patch from Rusty's tree so we should be good to go.
+Today's linux-next merge of the trivial tree got a conflict in
+MAINTAINERS between commit 24725d1ecf26ba05d74c1cc3ae7467b61a900421
+("MAINTAINERS: Update KERNEL JANITORS") from Linus' tree and commit
+70301b8cc8a23d57d3e6120c012c86569285efcb ("trivial: update the Kernel
+Janitors' web-page URL") from the trivial tree.
 
-Thanks.
-
-> Also, I'm carrying couple of patches that should go through the x86 tree
-> and depending on when they go in, I'll drop them from mine. Just wanted
-> to give you heads up here in case you start getting merge conflicts :).
-
-OK
-
---=20
+Just context differences.  I fixed it up (see below) and can carry the
+fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__31_Jul_2009_12_01_46_+1000_Ev8A6JTi7C7ISAIh
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkpyUIoACgkQjjKRsyhoI8yVxgCcCTF77Bkk8NjCIcGeoybGKrlJ
-SFsAoINyh5LEbmV5+u6qGahWdY2bfC0v
-=V+9K
------END PGP SIGNATURE-----
-
---Signature=_Fri__31_Jul_2009_12_01_46_+1000_Ev8A6JTi7C7ISAIh--
+diff --cc MAINTAINERS
+index fa86fd5,354cc16..0000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -2912,13 -3374,16 +2912,13 @@@ F:	Makefil
+  F:	scripts/Makefile.*
+  
+  KERNEL JANITORS
+ -P:	Several
+  L:	kernel-janitors@vger.kernel.org
+- W:	http://www.kerneljanitors.org/
++ W:	http://janitor.kernelnewbies.org/
+ -S:	Maintained
+ +S:	Odd fixes
+  
+  KERNEL NFSD, SUNRPC, AND LOCKD SERVERS
+ -P:	J. Bruce Fields
+ -M:	bfields@fieldses.org
+ -P:	Neil Brown
+ -M:	neilb@suse.de
+ +M:	"J. Bruce Fields" <bfields@fieldses.org>
+ +M:	Neil Brown <neilb@suse.de>
+  L:	linux-nfs@vger.kernel.org
+  W:	http://nfs.sourceforge.net/
+  S:	Supported
