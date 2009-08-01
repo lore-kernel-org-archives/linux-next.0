@@ -1,66 +1,35 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] media/zr364xx: fix build errors
-Date: Fri, 31 Jul 2009 15:47:17 -0700
-Message-ID: <20090731154717.43efbbfc.randy.dunlap@oracle.com>
-References: <20090731180943.8f30c49d.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: tty tree change for linux-next
+Date: Fri, 31 Jul 2009 21:39:05 -0700
+Message-ID: <20090801043905.GA12779@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20090731180943.8f30c49d.sfr@canb.auug.org.au>
-Sender: linux-media-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org, akpm <akpm@linux-foundation.org>
-Cc: lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Antoine Jacquet <royale@zerezo.com>, Mauro Carvalho Chehab <mchehab@infradead.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from kroah.org ([198.145.64.141]:40702 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750698AbZHAEkZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 1 Aug 2009 00:40:25 -0400
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+Hi Stephen,
 
-Fix build errors in zr364xx by adding selects:
+I've now merged Alan's tty tree into my patch trees, and I'd like to ask
+for linux-next to pick them up.
 
-zr364xx.c:(.text+0x195ed7): undefined reference to `videobuf_streamon'
-zr364xx.c:(.text+0x196030): undefined reference to `videobuf_dqbuf'
-zr364xx.c:(.text+0x1960c4): undefined reference to `videobuf_qbuf'
-zr364xx.c:(.text+0x196123): undefined reference to `videobuf_querybuf'
-zr364xx.c:(.text+0x196182): undefined reference to `videobuf_reqbufs'
-zr364xx.c:(.text+0x196224): undefined reference to `videobuf_queue_is_busy'
-zr364xx.c:(.text+0x196390): undefined reference to `videobuf_vmalloc_free'
-zr364xx.c:(.text+0x196571): undefined reference to `videobuf_iolock'
-zr364xx.c:(.text+0x196678): undefined reference to `videobuf_mmap_mapper'
-zr364xx.c:(.text+0x196760): undefined reference to `videobuf_poll_stream'
-zr364xx.c:(.text+0x19689a): undefined reference to `videobuf_read_one'
-zr364xx.c:(.text+0x1969ec): undefined reference to `videobuf_mmap_free'
-zr364xx.c:(.text+0x197862): undefined reference to `videobuf_queue_vmalloc_init'
-zr364xx.c:(.text+0x197a28): undefined reference to `videobuf_streamoff'
-zr364xx.c:(.text+0x198203): undefined reference to `videobuf_to_vmalloc'
-zr364xx.c:(.text+0x198603): undefined reference to `videobuf_streamoff'
-drivers/built-in.o: In function `free_buffer':
-zr364xx.c:(.text+0x19930c): undefined reference to `videobuf_vmalloc_free'
-drivers/built-in.o: In function `zr364xx_open':
-zr364xx.c:(.text+0x19a7de): undefined reference to `videobuf_queue_vmalloc_init'
-drivers/built-in.o: In function `read_pipe_completion':
-zr364xx.c:(.text+0x19b17f): undefined reference to `videobuf_to_vmalloc'
+They are contained within the same directory as my other trees (staging,
+usb, driver-core), and conviently named "tty.current" and "tty", and can
+be found at:
+	http://www.kernel.org/pub/linux/kernel/people/gregkh/gregkh-2.6/
+As you can see by the nameing in the above directory, the usb and
+staging trees changed names by virtue of putting the tty tree ahead of
+them.  Your scripts might need adjusting for this.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/media/video/Kconfig |    2 ++
- 1 file changed, 2 insertions(+)
+If there are any problems with the trees, please let me know.
 
---- linux-next-20090729.orig/drivers/media/video/Kconfig
-+++ linux-next-20090729/drivers/media/video/Kconfig
-@@ -991,6 +991,8 @@ source "drivers/media/video/pwc/Kconfig"
- config USB_ZR364XX
- 	tristate "USB ZR364XX Camera support"
- 	depends on VIDEO_V4L2
-+	select VIDEOBUF_GEN
-+	select VIDEOBUF_VMALLOC
- 	---help---
- 	  Say Y here if you want to connect this type of camera to your
- 	  computer's USB port.
+thanks,
 
-
-
-
----
-~Randy
-LPC 2009, Sept. 23-25, Portland, Oregon
-http://linuxplumbersconf.org/2009/
+greg k-h
