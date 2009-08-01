@@ -1,35 +1,63 @@
-From: Greg KH <greg@kroah.com>
-Subject: tty tree change for linux-next
-Date: Fri, 31 Jul 2009 21:39:05 -0700
-Message-ID: <20090801043905.GA12779@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: tty tree change for linux-next
+Date: Sat, 1 Aug 2009 16:41:04 +1000
+Message-ID: <20090801164104.5e9b2f17.sfr@canb.auug.org.au>
+References: <20090801043905.GA12779@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__1_Aug_2009_16_41_04_+1000_8yDF/oFflly2V5D."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:40702 "EHLO coco.kroah.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51636 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750698AbZHAEkZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 1 Aug 2009 00:40:25 -0400
-Content-Disposition: inline
+	id S1751655AbZHAGlK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 1 Aug 2009 02:41:10 -0400
+In-Reply-To: <20090801043905.GA12779@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>
 Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi Stephen,
+--Signature=_Sat__1_Aug_2009_16_41_04_+1000_8yDF/oFflly2V5D.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I've now merged Alan's tty tree into my patch trees, and I'd like to ask
-for linux-next to pick them up.
+Hi Greg,
 
-They are contained within the same directory as my other trees (staging,
-usb, driver-core), and conviently named "tty.current" and "tty", and can
-be found at:
-	http://www.kernel.org/pub/linux/kernel/people/gregkh/gregkh-2.6/
-As you can see by the nameing in the above directory, the usb and
-staging trees changed names by virtue of putting the tty tree ahead of
-them.  Your scripts might need adjusting for this.
+On Fri, 31 Jul 2009 21:39:05 -0700 Greg KH <greg@kroah.com> wrote:
+>
+> I've now merged Alan's tty tree into my patch trees, and I'd like to ask
+> for linux-next to pick them up.
+>=20
+> They are contained within the same directory as my other trees (staging,
+> usb, driver-core), and conviently named "tty.current" and "tty", and can
+> be found at:
+> 	http://www.kernel.org/pub/linux/kernel/people/gregkh/gregkh-2.6/
+> As you can see by the nameing in the above directory, the usb and
+> staging trees changed names by virtue of putting the tty tree ahead of
+> them.  Your scripts might need adjusting for this.
 
-If there are any problems with the trees, please let me know.
+OK, I have added/updated these.
 
-thanks,
+> If there are any problems with the trees, please let me know.
 
-greg k-h
+Will do.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Sat__1_Aug_2009_16_41_04_+1000_8yDF/oFflly2V5D.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkpz44AACgkQjjKRsyhoI8xZhwCdFL6bcBsAC/M8MpIzPuJl6MKf
+x0AAnRHal7uiAjVYLz190XForLfbCtCh
+=Y4MT
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__1_Aug_2009_16_41_04_+1000_8yDF/oFflly2V5D.--
