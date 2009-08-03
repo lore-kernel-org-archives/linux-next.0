@@ -1,55 +1,86 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: rr tree build failure
-Date: Mon, 3 Aug 2009 13:32:03 +1000
-Message-ID: <20090803133203.81174a8e.sfr@canb.auug.org.au>
+From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Subject: [RESEND-PATCH] next-20090730 lguest build breaks with pfn_pmd()
+Date: Mon, 3 Aug 2009 13:58:55 +0530
+Message-ID: <20090803082855.GA9621@linux.vnet.ibm.com>
+References: <20090729173611.b82478cd.sfr@canb.auug.org.au> <20090730120533.GB4955@linux.vnet.ibm.com> <20090731110356.cd0bc550.randy.dunlap@oracle.com>
+Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__3_Aug_2009_13_32_03_+1000_ZN0O7xbHFyzTueXd"
+Content-Type: text/plain; charset=iso-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34822 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752831AbZHCDcI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 2 Aug 2009 23:32:08 -0400
+Received: from e23smtp01.au.ibm.com ([202.81.31.143]:58912 "EHLO
+	e23smtp01.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753296AbZHCI3G (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Aug 2009 04:29:06 -0400
+Content-Disposition: inline
+In-Reply-To: <20090731110356.cd0bc550.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Helgaas <bjorn.helgaas@hp.com>, Len Brown <len.brown@intel.com>
+To: rusty@rustcorp.com.au
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, lguest@ozlabs.org, sfr@canb.auug.org.au, Randy Dunlap <randy.dunlap@oracle.com>
 
---Signature=_Mon__3_Aug_2009_13_32_03_+1000_ZN0O7xbHFyzTueXd
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+* Randy Dunlap <randy.dunlap@oracle.com> [2009-07-31 11:03:56]:
 
-Hi Rusty,
+> On Thu, 30 Jul 2009 17:35:33 +0530 Kamalesh Babulal wrote:
+> 
+> > Hi Rusty,
+> > 
+> > 	next-20090729 allmodconfig build breaks at
+> > 
+> > drivers/lguest/page_tables.c: In function 'setup_pagetables':
+> > drivers/lguest/page_tables.c:987: error: incompatible type for argument 2 of 'pfn_pmd'
+> > drivers/lguest/page_tables.c:994: error: expected ';' before ')' token
+> > drivers/lguest/page_tables.c:994: error: expected statement before ')' token
+> > make[2]: *** [drivers/lguest/page_tables.o] Error 1
+> > 
+> > build failure is introduced by commit e07dd6220a4bf81a2549e7e37523a2557547d9d7
+> > I have tested the patch for the build failure only.
+> > 
+> > Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+> > --
+> >  drivers/lguest/page_tables.c |    4 ++--
+> >  1 files changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/lguest/page_tables.c b/drivers/lguest/page_tables.c
+> > index 8c86446..c610b82 100644
+> > --- a/drivers/lguest/page_tables.c
+> > +++ b/drivers/lguest/page_tables.c
+> > @@ -984,14 +984,14 @@ static unsigned long setup_pagetables(struct lguest *lg,
+> >  	for (i = j = 0; i < mapped_pages && j < PTRS_PER_PMD;
+> >  	     i += PTRS_PER_PTE, j++) {
+> >  		pmd = pfn_pmd(((unsigned long)&linear[i] - mem_base)/PAGE_SIZE,
+> > -			      _PAGE_PRESENT | _PAGE_RW | _PAGE_USER);
+> > +			      __pgrot(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER));
+> 
+> s/__pgrot/__pgprot/
+>
+Thanks randy, resending the patch after correcting the typo
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+--
+ drivers/lguest/page_tables.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-drivers/acpi/osl.c: In function 'bind_to_cpu0':
-drivers/acpi/osl.c:194: error: implicit declaration of function 'set_cpus_a=
-llowed'
+diff --git a/drivers/lguest/page_tables.c b/drivers/lguest/page_tables.c
+index 8c86446..cf94326 100644
+--- a/drivers/lguest/page_tables.c
++++ b/drivers/lguest/page_tables.c
+@@ -984,14 +984,14 @@ static unsigned long setup_pagetables(struct lguest *lg,
+ 	for (i = j = 0; i < mapped_pages && j < PTRS_PER_PMD;
+ 	     i += PTRS_PER_PTE, j++) {
+ 		pmd = pfn_pmd(((unsigned long)&linear[i] - mem_base)/PAGE_SIZE,
+-			      _PAGE_PRESENT | _PAGE_RW | _PAGE_USER);
++			      __pgprot(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER));
+ 
+ 		if (copy_to_user(&pmds[j], &pmd, sizeof(pmd)) != 0)
+ 			return -EFAULT;
+ 	}
+ 
+ 	/* One PGD entry, pointing to that PMD page. */
+-	pgd = __pgd(((unsigned long)pmds - mem_base) | _PAGE_PRESENT));
++	pgd = __pgd(((unsigned long)pmds - mem_base) | _PAGE_PRESENT);
+ 	/* Copy it in as the first PGD entry (ie. addresses 0-1G). */
+ 	if (copy_to_user(&pgdir[0], &pgd, sizeof(pgd)) != 0)
+ 		return -EFAULT;
 
-Caused by commit 74b5820808215f65b70b05a099d6d3c969b82689 ("ACPI: bind
-workqueues to CPU 0 to avoid SMI corruption") (from the acpi tree but now
-in Linus' tree) interacting with commit
-17e249fb40c814a72f08c1356cb47ec9f87f81a8
-("cpumask:remove-set_cpus_allowed") from the rr tree.
-
-I have reverted that rr tree commit for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__3_Aug_2009_13_32_03_+1000_ZN0O7xbHFyzTueXd
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkp2WjMACgkQjjKRsyhoI8y79QCfRDGhK5rmcrdac/VU6imRSAHj
-hwMAn0yHVMMpVO7lfuwBIOYjhLbfguyt
-=/sKd
------END PGP SIGNATURE-----
-
---Signature=_Mon__3_Aug_2009_13_32_03_+1000_ZN0O7xbHFyzTueXd--
+			
+					Kamalesh
