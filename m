@@ -1,48 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next:  tree build failure
-Date: Mon, 3 Aug 2009 10:35:50 +1000
-Message-ID: <20090803103550.9b28900a.sfr@canb.auug.org.au>
+From: "NeilBrown" <neilb@suse.de>
+Subject: Re: linux-next:  tree build failure
+Date: Mon, 3 Aug 2009 11:01:24 +1000 (EST)
+Message-ID: <7f7d2d5828c15f1fe8221554f661903e.squirrel@neil.brown.name>
+References: <20090803103550.9b28900a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__3_Aug_2009_10_35_50_+1000_7.WuXeXwnH_65FJ1"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754004AbZHCAf6@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Neil Brown <neilb@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andre Noll <maan@systemlinux.org>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Mon__3_Aug_2009_10_35_50_+1000_7.WuXeXwnH_65FJ1
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:37669 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751498AbZHCBBs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 2 Aug 2009 21:01:48 -0400
+In-Reply-To: <20090803103550.9b28900a.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andre Noll <maan@systemlinux.org>
 
-Hi Neil,
+On Mon, August 3, 2009 10:35 am, Stephen Rothwell wrote:
+> Hi Neil,
+>
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+>
+> ERROR: ".md_integrity_add_rdev" [drivers/md/multipath.ko] undefined!
+>
+> Caused by commit 66f4f3f41f5c334f399e920b2aaad9b82514acda ("md: Push down
+> data integrity code to personalities") from the md-current and md trees.
+> Looks like md_integrity_add_rdev needs an EXPORT_SYMBOL.
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+Yes, of course...
+Thanks!
+Fixed.
 
-ERROR: ".md_integrity_add_rdev" [drivers/md/multipath.ko] undefined!
+NeilBrown
 
-Caused by commit 66f4f3f41f5c334f399e920b2aaad9b82514acda ("md: Push down
-data integrity code to personalities") from the md-current and md trees.
-Looks like md_integrity_add_rdev needs an EXPORT_SYMBOL.
 
-I have used the version of the md-current and md trees from next-20090731
-for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__3_Aug_2009_10_35_50_+1000_7.WuXeXwnH_65FJ1
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkp2MOYACgkQjjKRsyhoI8x5lwCbBuupixOJObwb4WhJd2KX5AEm
-qosAn0SGX0WcTtdOgExhBEe2PSuWgHLM
-=iC+p
------END PGP SIGNATURE-----
-
---Signature=_Mon__3_Aug_2009_10_35_50_+1000_7.WuXeXwnH_65FJ1--
+>
+> I have used the version of the md-current and md trees from next-20090731
+> for today.
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
+>
