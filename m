@@ -1,45 +1,55 @@
-From: "NeilBrown" <neilb@suse.de>
-Subject: Re: linux-next:  tree build failure
-Date: Mon, 3 Aug 2009 11:01:24 +1000 (EST)
-Message-ID: <7f7d2d5828c15f1fe8221554f661903e.squirrel@neil.brown.name>
-References: <20090803103550.9b28900a.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pxa tree with Linus' tree
+Date: Mon, 3 Aug 2009 11:03:14 +1000
+Message-ID: <20090803110314.1c2c3cca.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:37669 "EHLO mx2.suse.de"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55622 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751498AbZHCBBs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 2 Aug 2009 21:01:48 -0400
-In-Reply-To: <20090803103550.9b28900a.sfr@canb.auug.org.au>
+	id S1751685AbZHCBDQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 2 Aug 2009 21:03:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andre Noll <maan@systemlinux.org>
+To: Eric Miao <eric.y.miao@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>, Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>
 
-On Mon, August 3, 2009 10:35 am, Stephen Rothwell wrote:
-> Hi Neil,
->
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
->
-> ERROR: ".md_integrity_add_rdev" [drivers/md/multipath.ko] undefined!
->
-> Caused by commit 66f4f3f41f5c334f399e920b2aaad9b82514acda ("md: Push down
-> data integrity code to personalities") from the md-current and md trees.
-> Looks like md_integrity_add_rdev needs an EXPORT_SYMBOL.
+Hi Eric,
 
-Yes, of course...
-Thanks!
-Fixed.
+Today's linux-next merge of the pxa tree got a conflict in MAINTAINERS
+between commit 8b58be884a9fd650abb7f7adf3f885fb9cecd79d ("MAINTAINERS:
+coalesce name and email address lines") from Linus' tree and commit
+4ad9febe53347962225169c5bde2ec030e46ab1d ("Palm Tungsten|C initial
+support") from the pxa tree.
 
-NeilBrown
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-
->
-> I have used the version of the md-current and md trees from next-20090731
-> for today.
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
->
+diff --cc MAINTAINERS
+index 1677158,642cd9a..0000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -705,12 -803,15 +705,12 @@@ W:	http://wiki.openmoko.org/wiki/Neo_Fr
+  S:	Supported
+  
+  ARM/TOSA MACHINE SUPPORT
+ -P:	Dmitry Eremin-Solenikov
+ -M:	dbaryshkov@gmail.com
+ -P:	Dirk Opfer
+ -M:	dirk@opfer-online.de
+ +M:	Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+ +M:	Dirk Opfer <dirk@opfer-online.de>
+  S:	Maintained
+  
+- ARM/PALMTX,PALMT5,PALMLD,PALMTE2 SUPPORT
++ ARM/PALMTX,PALMT5,PALMLD,PALMTE2,PALMTC SUPPORT
+ -P:	Marek Vasut
+ -M:	marek.vasut@gmail.com
+ +M:	Marek Vasut <marek.vasut@gmail.com>
+  W:	http://hackndev.com
+  S:	Maintained
+  
