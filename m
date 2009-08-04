@@ -1,37 +1,101 @@
-From: Steven Rostedt <srostedt@redhat.com>
-Subject: Re: linux-next: tip tree build warning
-Date: Tue, 04 Aug 2009 12:24:49 -0400
-Message-ID: <1249403089.4634.139.camel@localhost.localdomain>
-References: <20090804161640.70817ee6.sfr@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] serial167: Read buffer overflow
+Date: Tue, 4 Aug 2009 15:18:38 -0700
+Message-ID: <20090804151838.c5cb362b.akpm@linux-foundation.org>
+References: <4A76D4DA.8090905@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:58302 "EHLO mx2.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932971AbZHDQZY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 4 Aug 2009 12:25:24 -0400
-In-Reply-To: <20090804161640.70817ee6.sfr@canb.auug.org.au>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:58560 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754867AbZHDWTf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Aug 2009 18:19:35 -0400
+In-Reply-To: <4A76D4DA.8090905@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Roel Kluin <roel.kluin@gmail.com>
+Cc: alan@redhat.com, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, linux-next@vger.kernel.org
 
-On Tue, 2009-08-04 at 16:16 +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next build (powerpc ppc64_defconfig) produced these warnings:
-> 
-> kernel/trace/ring_buffer.c: In function 'rb_head_page_set':
-> kernel/trace/ring_buffer.c:704: warning: initialization makes pointer from integer without a cast
-> kernel/trace/ring_buffer.c:704: warning: initialization makes pointer from integer without a cast
-> kernel/trace/ring_buffer.c: In function 'rb_head_page_replace':
-> kernel/trace/ring_buffer.c:797: warning: initialization makes integer from pointer without a cast
-> 
-> Introduced by commit 77ae365eca895061c8bf2b2e3ae1d9ea62869739
-> ("ring-buffer: make lockless").
-> 
+On Mon, 03 Aug 2009 14:15:22 +0200
+Roel Kluin <roel.kluin@gmail.com> wrote:
 
-Thanks, I'll take a look at it.
+> @@ -222,7 +222,7 @@ static inline int serial_paranoia_check(struct cyclades_port *info, char *name,
+>  	}
+>  
+>  	if ((long)info < (long)(&cy_port[0])
+> -	    || (long)(&cy_port[NR_PORTS]) < (long)info) {
+> +	    || (long)(&cy_port[NR_PORTS-1]) < (long)info) {
+>  		printk("Warning: cyclades_port out of range for (%s) in %s\n",
+>  				name, routine);
 
--- Steve
+OK, that hurts my brain.  And all those casts are pointless.  How about this?
+
+	if (info < &cy_port[0] || info >= &cy_port[NR_PORTS]) {
+		printk("Warning: cyclades_port out of range for (%s) in %s\n",
+				name, routine);
+		return 1;
+	}
+
+
+
+btw, m68k allmodconfig in current mainline is sick:
+
+In file included from /usr/src/devel/arch/m68k/include/asm/pgtable.h:4,
+                 from include/linux/mm.h:40,
+                 from drivers/char/serial167.c:62:
+/usr/src/devel/arch/m68k/include/asm/pgtable_mm.h:148:1: warning: "pgprot_noncached" redefined
+In file included from /usr/src/devel/arch/m68k/include/asm/pgtable_mm.h:138,
+                 from /usr/src/devel/arch/m68k/include/asm/pgtable.h:4,
+                 from include/linux/mm.h:40,
+                 from drivers/char/serial167.c:62:
+include/asm-generic/pgtable.h:133:1: warning: this is the location of the previous definition
+
+
+And in linux-next m68k allmodconfig is dead as a doornail:
+
+drivers/staging/vme/Kconfig:5:warning: type of 'VME' redefined from 'boolean' to 'tristate'
+In file included from include/linux/irq.h:12,
+                 from include/asm-generic/hardirq.h:6,
+                 from /usr/src/devel/arch/m68k/include/asm/hardirq.h:4,
+                 from include/linux/hardirq.h:10,
+                 from /usr/src/devel/arch/m68k/include/asm/system_mm.h:69,
+                 from /usr/src/devel/arch/m68k/include/asm/system.h:4,
+                 from include/linux/list.h:7,
+                 from include/linux/preempt.h:11,
+                 from include/linux/spinlock.h:50,
+                 from include/linux/seqlock.h:29,
+                 from include/linux/time.h:8,
+                 from include/linux/timex.h:56,
+                 from include/linux/sched.h:56,
+                 from arch/m68k/kernel/asm-offsets.c:12:
+include/linux/smp.h:17: error: field 'list' has incomplete type
+In file included from include/linux/mmzone.h:9,
+                 from include/linux/gfp.h:4,
+                 from include/linux/irq.h:20,
+                 from include/asm-generic/hardirq.h:6,
+                 from /usr/src/devel/arch/m68k/include/asm/hardirq.h:4,
+                 from include/linux/hardirq.h:10,
+                 from /usr/src/devel/arch/m68k/include/asm/system_mm.h:69,
+                 from /usr/src/devel/arch/m68k/include/asm/system.h:4,
+                 from include/linux/list.h:7,
+                 from include/linux/preempt.h:11,
+                 from include/linux/spinlock.h:50,
+                 from include/linux/seqlock.h:29,
+                 from include/linux/time.h:8,
+                 from include/linux/timex.h:56,
+                 from include/linux/sched.h:56,
+                 from arch/m68k/kernel/asm-offsets.c:12:
+include/linux/wait.h:37: error: field 'task_list' has incomplete type
+include/linux/wait.h:51: error: expected specifier-qualifier-list before 'spinlock_t'
+include/linux/wait.h: In function 'waitqueue_active':
+include/linux/wait.h:108: error: implicit declaration of function 'list_empty'
+include/linux/wait.h:108: error: 'wait_queue_head_t' has no member named 'task_list'
+include/linux/wait.h: In function '__add_wait_queue':
+include/linux/wait.h:117: error: implicit declaration of function 'list_add'
+include/linux/wait.h:117: error: 'wait_queue_head_t' has no member named 'task_list'
+include/linux/wait.h: In function '__add_wait_queue_tail':
+include/linux/wait.h:126: error: implicit declaration of function 'list_add_tail'
+include/linux/wait.h:126: error: 'wait_queue_head_t' has no member named 'task_list'
+include/linux/wait.h: In function '__remove_wait_queue':
+include/linux/wait.h:132: error: implicit declaration of function 'list_del'
