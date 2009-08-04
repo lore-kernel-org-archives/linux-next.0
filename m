@@ -1,43 +1,56 @@
-From: Dave Jones <davej@redhat.com>
-Subject: Re: linux-next: cpufreq tree build failure
-Date: Mon, 3 Aug 2009 19:44:00 -0400
-Message-ID: <20090803234400.GA16934@redhat.com>
-References: <20090803122819.6b738cad.sfr@canb.auug.org.au> <200908040122.15733.trenn@suse.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: tip tree build warning
+Date: Tue, 4 Aug 2009 16:16:40 +1000
+Message-ID: <20090804161640.70817ee6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__4_Aug_2009_16_16_40_+1000_nRUzz17sk77Zx5MW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.redhat.com ([66.187.237.31]:44709 "EHLO mx2.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47807 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932357AbZHCXoJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 3 Aug 2009 19:44:09 -0400
-Content-Disposition: inline
-In-Reply-To: <200908040122.15733.trenn@suse.de>
+	id S932422AbZHDGQ6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 4 Aug 2009 02:16:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Renninger <trenn@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven Rostedt <srostedt@redhat.com>
 
-On Tue, Aug 04, 2009 at 01:22:14AM +0200, Thomas Renninger wrote:
- > On Monday 03 August 2009 04:28:19 am Stephen Rothwell wrote:
- > > Hi Dave,
- > >
- > > Today's linux-next build (x86_64 allmodconfig) failed like this:
- > >
- > > ERROR: "cpufreq_global_kobject" [drivers/cpufreq/cpufreq_ondemand.ko]
- > > undefined!
- > >
- > > Caused by commit 35b104d88338e5eddb36c670fea4752f6c10c82f ("[CPUFREQ]
- > > ondemand - Use global sysfs dir for tuning settings").  Presumably
- > > cpufreq_global_kobject needs an EXPORT_SYMBOL.
- > 
- > Yep, that's it. Below is a fix.
- > 
- > Thanks a lot,
+--Signature=_Tue__4_Aug_2009_16_16_40_+1000_nRUzz17sk77Zx5MW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'll roll this in with the previous patch, so as not to introduce
-a bisect-regression, and rebase the tree. Will push something out
-soon.
+Hi all,
 
-thanks.
+Today's linux-next build (powerpc ppc64_defconfig) produced these warnings:
 
-	Dave
+kernel/trace/ring_buffer.c: In function 'rb_head_page_set':
+kernel/trace/ring_buffer.c:704: warning: initialization makes pointer from =
+integer without a cast
+kernel/trace/ring_buffer.c:704: warning: initialization makes pointer from =
+integer without a cast
+kernel/trace/ring_buffer.c: In function 'rb_head_page_replace':
+kernel/trace/ring_buffer.c:797: warning: initialization makes integer from =
+pointer without a cast
+
+Introduced by commit 77ae365eca895061c8bf2b2e3ae1d9ea62869739
+("ring-buffer: make lockless").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__4_Aug_2009_16_16_40_+1000_nRUzz17sk77Zx5MW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkp30kgACgkQjjKRsyhoI8xEtACfbhHY2QITcpQ5syPmonYj79z5
+DMUAn29cABgIiqCNtiHpwAanNtBjb+CJ
+=1Ibt
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__4_Aug_2009_16_16_40_+1000_nRUzz17sk77Zx5MW--
