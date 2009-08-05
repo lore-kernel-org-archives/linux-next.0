@@ -1,101 +1,56 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] serial167: Read buffer overflow
-Date: Tue, 4 Aug 2009 15:18:38 -0700
-Message-ID: <20090804151838.c5cb362b.akpm@linux-foundation.org>
-References: <4A76D4DA.8090905@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the mfd tree with the input tree
+Date: Wed, 5 Aug 2009 13:31:06 +1000
+Message-ID: <20090805133106.03c8e64e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:58560 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754867AbZHDWTf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Aug 2009 18:19:35 -0400
-In-Reply-To: <4A76D4DA.8090905@gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Roel Kluin <roel.kluin@gmail.com>
-Cc: alan@redhat.com, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, linux-next@vger.kernel.org
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S933587AbZHEDbP@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Samuel Ortiz <sameo@openedhand.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Hennerich <michael.hennerich@analog.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 03 Aug 2009 14:15:22 +0200
-Roel Kluin <roel.kluin@gmail.com> wrote:
+Hi Samuel,
 
-> @@ -222,7 +222,7 @@ static inline int serial_paranoia_check(struct cyclades_port *info, char *name,
->  	}
->  
->  	if ((long)info < (long)(&cy_port[0])
-> -	    || (long)(&cy_port[NR_PORTS]) < (long)info) {
-> +	    || (long)(&cy_port[NR_PORTS-1]) < (long)info) {
->  		printk("Warning: cyclades_port out of range for (%s) in %s\n",
->  				name, routine);
+Today's linux-next merge of the mfd tree got a conflict in
+drivers/input/misc/Kconfig between commit
+4832958218f96f98009c5e01729fbe2b48c7124c ("Input: add Blackfin rotary
+input driver") from the input tree and commit
+f45c2fa48317249892af5b63f4b35c7c90191df3 ("input: Add support for the
+WM831x ON pin") from the mfd tree.
 
-OK, that hurts my brain.  And all those casts are pointless.  How about this?
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-	if (info < &cy_port[0] || info >= &cy_port[NR_PORTS]) {
-		printk("Warning: cyclades_port out of range for (%s) in %s\n",
-				name, routine);
-		return 1;
-	}
-
-
-
-btw, m68k allmodconfig in current mainline is sick:
-
-In file included from /usr/src/devel/arch/m68k/include/asm/pgtable.h:4,
-                 from include/linux/mm.h:40,
-                 from drivers/char/serial167.c:62:
-/usr/src/devel/arch/m68k/include/asm/pgtable_mm.h:148:1: warning: "pgprot_noncached" redefined
-In file included from /usr/src/devel/arch/m68k/include/asm/pgtable_mm.h:138,
-                 from /usr/src/devel/arch/m68k/include/asm/pgtable.h:4,
-                 from include/linux/mm.h:40,
-                 from drivers/char/serial167.c:62:
-include/asm-generic/pgtable.h:133:1: warning: this is the location of the previous definition
-
-
-And in linux-next m68k allmodconfig is dead as a doornail:
-
-drivers/staging/vme/Kconfig:5:warning: type of 'VME' redefined from 'boolean' to 'tristate'
-In file included from include/linux/irq.h:12,
-                 from include/asm-generic/hardirq.h:6,
-                 from /usr/src/devel/arch/m68k/include/asm/hardirq.h:4,
-                 from include/linux/hardirq.h:10,
-                 from /usr/src/devel/arch/m68k/include/asm/system_mm.h:69,
-                 from /usr/src/devel/arch/m68k/include/asm/system.h:4,
-                 from include/linux/list.h:7,
-                 from include/linux/preempt.h:11,
-                 from include/linux/spinlock.h:50,
-                 from include/linux/seqlock.h:29,
-                 from include/linux/time.h:8,
-                 from include/linux/timex.h:56,
-                 from include/linux/sched.h:56,
-                 from arch/m68k/kernel/asm-offsets.c:12:
-include/linux/smp.h:17: error: field 'list' has incomplete type
-In file included from include/linux/mmzone.h:9,
-                 from include/linux/gfp.h:4,
-                 from include/linux/irq.h:20,
-                 from include/asm-generic/hardirq.h:6,
-                 from /usr/src/devel/arch/m68k/include/asm/hardirq.h:4,
-                 from include/linux/hardirq.h:10,
-                 from /usr/src/devel/arch/m68k/include/asm/system_mm.h:69,
-                 from /usr/src/devel/arch/m68k/include/asm/system.h:4,
-                 from include/linux/list.h:7,
-                 from include/linux/preempt.h:11,
-                 from include/linux/spinlock.h:50,
-                 from include/linux/seqlock.h:29,
-                 from include/linux/time.h:8,
-                 from include/linux/timex.h:56,
-                 from include/linux/sched.h:56,
-                 from arch/m68k/kernel/asm-offsets.c:12:
-include/linux/wait.h:37: error: field 'task_list' has incomplete type
-include/linux/wait.h:51: error: expected specifier-qualifier-list before 'spinlock_t'
-include/linux/wait.h: In function 'waitqueue_active':
-include/linux/wait.h:108: error: implicit declaration of function 'list_empty'
-include/linux/wait.h:108: error: 'wait_queue_head_t' has no member named 'task_list'
-include/linux/wait.h: In function '__add_wait_queue':
-include/linux/wait.h:117: error: implicit declaration of function 'list_add'
-include/linux/wait.h:117: error: 'wait_queue_head_t' has no member named 'task_list'
-include/linux/wait.h: In function '__add_wait_queue_tail':
-include/linux/wait.h:126: error: implicit declaration of function 'list_add_tail'
-include/linux/wait.h:126: error: 'wait_queue_head_t' has no member named 'task_list'
-include/linux/wait.h: In function '__remove_wait_queue':
-include/linux/wait.h:132: error: implicit declaration of function 'list_del'
+diff --cc drivers/input/misc/Kconfig
+index cbe21bc,c8e7d8a..0000000
+--- a/drivers/input/misc/Kconfig
++++ b/drivers/input/misc/Kconfig
+@@@ -270,13 -270,14 +270,23 @@@ config INPUT_DM355EV
+  	  To compile this driver as a module, choose M here: the
+  	  module will be called dm355evm_keys.
+  
+ +config INPUT_BFIN_ROTARY
+ +	tristate "Blackfin Rotary support"
+ +	depends on BF54x || BF52x
+ +	help
+ +	  Say Y here if you want to use the Blackfin Rotary.
+ +
+ +	  To compile this driver as a module, choose M here: the
+ +	  module will be called bfin-rotary.
+ +
++ config INPUT_WM831X_ON
++ 	tristate "WM831X ON pin"
++ 	depends on MFD_WM831X
++ 	help
++ 	  Support the ON pin of WM831X PMICs as an input device
++ 	  reporting power button status.
++ 
++ 	  To compile this driver as a module, choose M here: the module
++ 	  will be called wm831x_on.
++ 
+  endif
