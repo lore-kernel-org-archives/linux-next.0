@@ -1,41 +1,84 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] serial167: Read buffer overflow
-Date: Wed, 5 Aug 2009 11:17:05 +0200
-Message-ID: <10f740e80908050217i3e207bdct54460103e171c9ae@mail.gmail.com>
-References: <4A76D4DA.8090905@gmail.com>
-	 <20090804151838.c5cb362b.akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for August 5
+Date: Wed, 5 Aug 2009 20:13:36 +1000
+Message-ID: <20090805201336.fd2de2ad.sfr@canb.auug.org.au>
+References: <20090805172337.b0688db1.sfr@canb.auug.org.au>
+	<4A793EA8.50306@panasas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f214.google.com ([209.85.219.214]:65502 "EHLO
-	mail-ew0-f214.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933810AbZHEJRH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Aug 2009 05:17:07 -0400
-In-Reply-To: <20090804151838.c5cb362b.akpm@linux-foundation.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Roel Kluin <roel.kluin@gmail.com>, alan@redhat.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Linux/m68k <linux-m68k@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="===============3574287372498571649=="
+Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <4A793EA8.50306@panasas.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+To: Boaz Harrosh <bharrosh@panasas.com>
+Cc: linux-next@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Aug 5, 2009 at 00:18, Andrew Morton<akpm@linux-foundation.org> wrote:
-> btw, m68k allmodconfig in current mainline is sick:
+--===============3574287372498571649==
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__5_Aug_2009_20_13_36_+1000_eSyC8LVwkK8CnzZl"
+
+--Signature=_Wed__5_Aug_2009_20_13_36_+1000_eSyC8LVwkK8CnzZl
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Boaz,
+
+On Wed, 05 Aug 2009 11:11:20 +0300 Boaz Harrosh <bharrosh@panasas.com> wrot=
+e:
 >
-> And in linux-next m68k allmodconfig is dead as a doornail:
+> On 08/05/2009 10:23 AM, Stephen Rothwell wrote:
+> >=20
+> > This tree fails to build for powerpc allyesconfig (final link problem).
+>=20
+> Above is reported for a long time. Is it related to this:
+> http://www.spinics.net/lists/kernel/msg921978.html
 
-Will look at it (eventually)...
+No, it is this:
 
-But recovering from a too-long absence and replacing the computer that
-died before the absence
-while keeping the mill of life running take its time...
+powerpc-linux-ld: TOC section size exceeds 64k
 
-Gr{oetje,eeting}s,
+It is powerpc specific and the only way we can think of fixing it
+involves stopping building the built-in.o files and linking the entire
+kernel in one go at the end.  We just haven't had time (or the energy) to
+try to fix it properly while it only affects the final link of the
+allyesconfig kernel.=20
 
-						Geert
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--Signature=_Wed__5_Aug_2009_20_13_36_+1000_eSyC8LVwkK8CnzZl
+Content-Type: application/pgp-signature
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkp5W1AACgkQjjKRsyhoI8zEFwCZARDlISc+5nnBI6y1rFTPKaE3
+6mEAnRGPk74YNqEwsbXPlIu+T3D1V1iX
+=C2Kf
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__5_Aug_2009_20_13_36_+1000_eSyC8LVwkK8CnzZl--
+
+--===============3574287372498571649==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linuxppc-dev mailing list
+Linuxppc-dev@lists.ozlabs.org
+https://lists.ozlabs.org/listinfo/linuxppc-dev
+--===============3574287372498571649==--
