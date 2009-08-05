@@ -1,47 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with Linus' tree
-Date: Wed, 5 Aug 2009 13:44:35 +1000
-Message-ID: <20090805134435.1a5010fa.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the edac-amd tree with Linus' tree
+Date: Wed, 5 Aug 2009 15:09:33 +1000
+Message-ID: <20090805150933.103de233.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__5_Aug_2009_15_09_33_+1000_rP47wccz9lCjEdPF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44883 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:39505 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933021AbZHEDok (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 4 Aug 2009 23:44:40 -0400
+	id S1754019AbZHEFJo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 5 Aug 2009 01:09:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jakob Bornecrantz <jakob@vmware.com>, Zhao Yakui <yakui.zhao@intel.com>
+To: Borislav Petkov <borislav.petkov@amd.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Doug Thompson <dougthompson@xmission.com>
 
-Hi Dave,
+--Signature=_Wed__5_Aug_2009_15_09_33_+1000_rP47wccz9lCjEdPF
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the drm tree got a conflict in
-drivers/gpu/drm/drm_crtc.c between commit
-7781de74568bddfefbd2d32a934a8c791a2420cd ("drm: Small logic fix in
-drm_mode_setcrtc") from Linus' tree and commit
-58367ed65f30128d8b763bf4c1fb942da49ade15 ("drm: Add the debug info in
-generic drm mode by using DRM_DEBUG_KMS") from the drm tree.
+Hi Borislav,
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
+Today's linux-next merge of the edac-amd tree got a conflict in
+drivers/edac/amd64_edac.c between commit
+126b67b8d26f6623d199aa59279f2e3243f2144c ("amd64_edac: fix ECC checking")
+from Linus' tree and commit 793a2a12b43aba669c8b2604a45f000a394f142d
+("amd64_edac: cleanup amd64_check_ecc_enabled") from the edac-amd tree.
+
+I don't think the fix in the former patch is required, so I just used the
+latter version.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/gpu/drm/drm_crtc.c
-index 33be210,a8c8311..0000000
---- a/drivers/gpu/drm/drm_crtc.c
-+++ b/drivers/gpu/drm/drm_crtc.c
-@@@ -1461,8 -1484,8 +1484,8 @@@ int drm_mode_setcrtc(struct drm_device 
-  		goto out;
-  	}
-  
- -	if (crtc_req->count_connectors > 0 && !mode && !fb) {
- +	if (crtc_req->count_connectors > 0 && (!mode || !fb)) {
-- 		DRM_DEBUG("Count connectors is %d but no mode or fb set\n",
-+ 		DRM_DEBUG_KMS("Count connectors is %d but no mode or fb set\n",
-  			  crtc_req->count_connectors);
-  		ret = -EINVAL;
-  		goto out;
+--Signature=_Wed__5_Aug_2009_15_09_33_+1000_rP47wccz9lCjEdPF
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkp5FA0ACgkQjjKRsyhoI8yOeQCghBzQsv/bM+tSZ+XDDBLjlkHS
+u48AnjD+nddDgs6uMVnrl8X7rt9dmmP7
+=zs9O
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__5_Aug_2009_15_09_33_+1000_rP47wccz9lCjEdPF--
