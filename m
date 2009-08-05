@@ -1,39 +1,48 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: tty tree build warning
-Date: Wed, 5 Aug 2009 09:59:31 -0700
-Message-ID: <20090805165931.GA4828@kroah.com>
-References: <20090805171606.d3d3877c.sfr@canb.auug.org.au>
- <20090805132914.GA6054@kroah.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH -next] isdn: fix netjet build errors
+Date: Wed, 05 Aug 2009 12:03:02 -0700 (PDT)
+Message-ID: <20090805.120302.204538944.davem@davemloft.net>
+References: <20090805172337.b0688db1.sfr@canb.auug.org.au>
+	<20090805092635.6e6df57e.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:45779 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S934292AbZHERJL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 5 Aug 2009 13:09:11 -0400
-Content-Disposition: inline
-In-Reply-To: <20090805132914.GA6054@kroah.com>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:57920
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751830AbZHETCx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Aug 2009 15:02:53 -0400
+In-Reply-To: <20090805092635.6e6df57e.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>
+To: randy.dunlap@oracle.com
+Cc: sfr@canb.auug.org.au, isdn@linux-pingi.de, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org
 
-On Wed, Aug 05, 2009 at 06:29:14AM -0700, Greg KH wrote:
-> On Wed, Aug 05, 2009 at 05:16:06PM +1000, Stephen Rothwell wrote:
-> > Hi Greg,
-> > 
-> > Today's linux-next build (powerpc allyesconfig) produced this warning:
-> > 
-> > drivers/char/cyclades.c:3112: warning: initialization from incompatible pointer type
-> > drivers/char/cyclades.c:3118: warning: initialization from incompatible pointer type
-> > 
-> > Introduced by commit 46075a6e64b5e4e96079ea273781a1ba366d8244
-> > ("tty-cyclades-port-close").
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Date: Wed, 5 Aug 2009 09:26:35 -0700
+
+> From: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> Odd, I haven't changed anything there.  I'll check to see what happened.
+> Fix netjet driver link errors when ISDN_I4L is not enabled:
+> 
+> drivers/built-in.o: In function `mode_tiger':
+> netjet.c:(.text+0x325dc8): undefined reference to `isdnhdlc_rcv_init'
+> netjet.c:(.text+0x325dd5): undefined reference to `isdnhdlc_out_init'
+> drivers/built-in.o: In function `fill_dma':
+> netjet.c:(.text+0x325fb6): undefined reference to `isdnhdlc_encode'
+> drivers/built-in.o: In function `read_dma':
+> netjet.c:(.text+0x32631a): undefined reference to `isdnhdlc_decode'
+> drivers/built-in.o: In function `nj_irq':
+> netjet.c:(.text+0x326e01): undefined reference to `isdnhdlc_encode'
+> 
+> or move isdnhdlc.c to some other sub-dir..
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-I've now fixed this and pushed out the changes.
+Thanks Randy.
 
-thanks,
+Karsten, let me know if you want me to apply this directly to
+net-next-2.6 or if you want to fix it differently or send it
+with other changes you have pending.
 
-greg k-h
+Thanks!
