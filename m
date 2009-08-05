@@ -1,35 +1,41 @@
-From: Boaz Harrosh <bharrosh@panasas.com>
-Subject: Re: linux-next: Tree for August 5
-Date: Wed, 05 Aug 2009 11:11:20 +0300
-Message-ID: <4A793EA8.50306@panasas.com>
-References: <20090805172337.b0688db1.sfr@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] serial167: Read buffer overflow
+Date: Wed, 5 Aug 2009 11:17:05 +0200
+Message-ID: <10f740e80908050217i3e207bdct54460103e171c9ae@mail.gmail.com>
+References: <4A76D4DA.8090905@gmail.com>
+	 <20090804151838.c5cb362b.akpm@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S933779AbZHEIL2@vger.kernel.org>
-In-Reply-To: <20090805172337.b0688db1.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ew0-f214.google.com ([209.85.219.214]:65502 "EHLO
+	mail-ew0-f214.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933810AbZHEJRH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Aug 2009 05:17:07 -0400
+In-Reply-To: <20090804151838.c5cb362b.akpm@linux-foundation.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Roel Kluin <roel.kluin@gmail.com>, alan@redhat.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Linux/m68k <linux-m68k@vger.kernel.org>
 
-On 08/05/2009 10:23 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20090804:
-> 
-> This tree fails to build for powerpc allyesconfig (final link problem).
-> 
+On Wed, Aug 5, 2009 at 00:18, Andrew Morton<akpm@linux-foundation.org> wrote:
+> btw, m68k allmodconfig in current mainline is sick:
+>
+> And in linux-next m68k allmodconfig is dead as a doornail:
 
-Above is reported for a long time. Is it related to this:
-http://www.spinics.net/lists/kernel/msg921978.html
+Will look at it (eventually)...
 
-> The mfd tree gained a conflict against the input tree.
-> 
-> The drm tree gained a conflict against Linus' tree.
-> 
-> The edac-amd tree gained a conflict against Linus' tree.
-> 
-> ----------------------------------------------------------------------------
-> 
-<snip>
+But recovering from a too-long absence and replacing the computer that
+died before the absence
+while keeping the mill of life running take its time...
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
