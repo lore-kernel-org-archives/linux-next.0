@@ -1,56 +1,57 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Re: Next July 29 : Hugetlb test failure (OOPS free_hugepte_range)
-Date: Thu, 06 Aug 2009 10:10:46 +0530
-Message-ID: <4A7A5ECE.10803@in.ibm.com>
-References: <20090729173611.b82478cd.sfr@canb.auug.org.au> <4A706504.6040704@in.ibm.com>  <4A719129.5030302@in.ibm.com> <1248957028.1509.85.camel@pasglop>  <4A796237.6070302@in.ibm.com> <1249530754.18245.71.camel@pasglop>
+From: Karsten Keil <isdn@linux-pingi.de>
+Subject: Re: [PATCH -next] isdn: fix netjet build errors
+Date: Thu, 6 Aug 2009 07:05:32 +0200
+Message-ID: <200908060705.33130.isdn@linux-pingi.de>
+References: <20090805172337.b0688db1.sfr@canb.auug.org.au> <20090805092635.6e6df57e.randy.dunlap@oracle.com> <20090805.120302.204538944.davem@davemloft.net>
+Reply-To: isdn@linux-pingi.de
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp06.au.ibm.com ([202.81.31.148]:36570 "EHLO
-	e23smtp06.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750706AbZHFEkv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Aug 2009 00:40:51 -0400
-Received: from d23relay01.au.ibm.com (d23relay01.au.ibm.com [202.81.31.243])
-	by e23smtp06.au.ibm.com (8.14.3/8.13.1) with ESMTP id n764ejrW031012
-	for <linux-next@vger.kernel.org>; Thu, 6 Aug 2009 14:40:45 +1000
-Received: from d23av03.au.ibm.com (d23av03.au.ibm.com [9.190.234.97])
-	by d23relay01.au.ibm.com (8.13.8/8.13.8/NCO v10.0) with ESMTP id n764en8b565440
-	for <linux-next@vger.kernel.org>; Thu, 6 Aug 2009 14:40:50 +1000
-Received: from d23av03.au.ibm.com (loopback [127.0.0.1])
-	by d23av03.au.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id n764enQL016572
-	for <linux-next@vger.kernel.org>; Thu, 6 Aug 2009 14:40:49 +1000
-In-Reply-To: <1249530754.18245.71.camel@pasglop>
+Received: from moutng.kundenserver.de ([212.227.126.187]:50496 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750706AbZHFFF4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Aug 2009 01:05:56 -0400
+In-Reply-To: <20090805.120302.204538944.davem@davemloft.net>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org
+To: David Miller <davem@davemloft.net>
+Cc: randy.dunlap@oracle.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org
 
-Benjamin Herrenschmidt wrote:
-> Does this patch fixes it ?
+On Mittwoch, 5. August 2009 21:03:02 David Miller wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> Date: Wed, 5 Aug 2009 09:26:35 -0700
 >
-> [PATCH] powerpc/mm: Fix encoding of page table cache numbers
+> > From: Randy Dunlap <randy.dunlap@oracle.com>
+> >
+> > Fix netjet driver link errors when ISDN_I4L is not enabled:
+> >
+> > drivers/built-in.o: In function `mode_tiger':
+> > netjet.c:(.text+0x325dc8): undefined reference to `isdnhdlc_rcv_init'
+> > netjet.c:(.text+0x325dd5): undefined reference to `isdnhdlc_out_init'
+> > drivers/built-in.o: In function `fill_dma':
+> > netjet.c:(.text+0x325fb6): undefined reference to `isdnhdlc_encode'
+> > drivers/built-in.o: In function `read_dma':
+> > netjet.c:(.text+0x32631a): undefined reference to `isdnhdlc_decode'
+> > drivers/built-in.o: In function `nj_irq':
+> > netjet.c:(.text+0x326e01): undefined reference to `isdnhdlc_encode'
+> >
+> > or move isdnhdlc.c to some other sub-dir..
+> >
+> > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 >
-> The mask used to encode the page table cache number in the
-> batch when freeing page tables was too small for the new
-> possible values of MMU page sizes. This increases it along
-> with a comment explaining the constraints.
+> Thanks Randy.
+Thanks too. 
 >
-> Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> ---
->   
-Yes this patch fixed the issue for me. Thanks Ben.
+> Karsten, let me know if you want me to apply this directly to
+> net-next-2.6 or if you want to fix it differently or send it
+> with other changes you have pending.
+>
 
-Tested-by: Sachin Sant <sachinp@in.ibm.com>
+My original approach was to change the Makefile to enter this directory
+unconditional, but it seems that this part of the patch was lost during 
+development.  I will send a new patch after testing with different configs.
 
-Regards
--Sachin
-
--- 
-
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+Karsten
