@@ -1,77 +1,54 @@
-From: Borislav Petkov <petkovbb@googlemail.com>
-Subject: Re: linux-next: manual merge of the edac-amd tree with the rr tree
-Date: Thu, 6 Aug 2009 10:07:19 +0200
-Message-ID: <20090806080719.GB13566@liondog.tnic>
-References: <20090806175152.1e0b96cf.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: agp tree build failure
+Date: Thu, 6 Aug 2009 19:10:54 +1000
+Message-ID: <20090806191054.74c475e5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752704AbZHFIH1@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__6_Aug_2009_19_10_54_+1000_2YRhpA1pP0vl_79g"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:45546 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754502AbZHFJLE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 6 Aug 2009 05:11:04 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Woodhouse <David.Woodhouse@intel.com>
+
+--Signature=_Thu__6_Aug_2009_19_10_54_+1000_2YRhpA1pP0vl_79g
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20090806175152.1e0b96cf.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Borislav Petkov <borislav.petkov@amd.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Li Zefan <lizf@cn.fujitsu.com>, Rusty Russell <rusty@rustcorp.com.au>, Andreas Herrmann <andreas.herrmann3@amd.com>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Dave,
 
-On Thu, Aug 06, 2009 at 05:51:52PM +1000, Stephen Rothwell wrote:
-> Hi Borislav,
-> 
-> Today's linux-next merge of the edac-amd tree got a conflict in
-> arch/x86/kernel/smpboot.c between commit
-> d39044d21e1a2d3713f1329ad22d23df5d20140b ("cpumask: use zalloc_cpumask_var
-> () where possible") from the rr tree and commit
-> a763af6587fbead6cee75ad3ae14709fa67e7dbb ("x86: provide CPU topology
-> information for multi-node processors") from the edac-amd tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.
+Today's linux-next build (powerpc allyesconfig) failed like this:
 
-I guess this is the best solution for now. Andreas' latest patches went
-out yesterday and they too contain the
+drivers/char/agp/uninorth-agp.c: In function 'uninorth_configure':
+drivers/char/agp/uninorth-agp.c:138: error: 'struct agp_bridge_data' has no=
+ member named 'scratch_page_real'
 
-alloc_cpumask_var
-cpumask_clear
+Caused by commit c2980d8c2961113f24863f70d8ad016f55224c81 ("agp: Switch
+agp_{un,}map_page() to take struct page * argument").
 
-order. Which means, this fix will have to be applied then between the
-tip and the rr trees after Ingo merges Andreas' stuff, so please hold on
-to it until after the merge window.
+I have reverted that commit for today (and
+6a12235c7d2d75c7d94b9afcaaecd422ff845ce0 ("agp: kill phys_to_gart() and
+gart_to_phys()") which depends on it).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Thanks.
+--Signature=_Thu__6_Aug_2009_19_10_54_+1000_2YRhpA1pP0vl_79g
+Content-Type: application/pgp-signature
 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc arch/x86/kernel/smpboot.c
-> index 70bd79b,5428337..0000000
-> --- a/arch/x86/kernel/smpboot.c
-> +++ b/arch/x86/kernel/smpboot.c
-> @@@ -1057,9 -1068,14 +1068,10 @@@ void __init native_smp_prepare_cpus(uns
->   #endif
->   	current_thread_info()->cpu = 0;  /* needed? */
->   	for_each_possible_cpu(i) {
->  -		alloc_cpumask_var(&per_cpu(cpu_sibling_map, i), GFP_KERNEL);
->  -		alloc_cpumask_var(&per_cpu(cpu_core_map, i), GFP_KERNEL);
->  -		alloc_cpumask_var(&per_cpu(cpu_node_map, i), GFP_KERNEL);
->  -		alloc_cpumask_var(&cpu_data(i).llc_shared_map, GFP_KERNEL);
->  -		cpumask_clear(per_cpu(cpu_core_map, i));
->  -		cpumask_clear(per_cpu(cpu_node_map, i));
->  -		cpumask_clear(per_cpu(cpu_sibling_map, i));
->  -		cpumask_clear(cpu_data(i).llc_shared_map);
->  +		zalloc_cpumask_var(&per_cpu(cpu_sibling_map, i), GFP_KERNEL);
->  +		zalloc_cpumask_var(&per_cpu(cpu_core_map, i), GFP_KERNEL);
-> ++		zalloc_cpumask_var(&per_cpu(cpu_node_map, i), GFP_KERNEL);
->  +		zalloc_cpumask_var(&cpu_data(i).llc_shared_map, GFP_KERNEL);
->   	}
->   	set_cpu_sibling_map(0);
->   
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
--- 
-Regards/Gruss,
-    Boris.
+iEYEARECAAYFAkp6nh4ACgkQjjKRsyhoI8yG+ACgiDuqTHx9Xdoo9ROc1sLLu56X
+lIkAn38k4pPv7vFIirwtLJbcstHRAr9r
+=Yb4M
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__6_Aug_2009_19_10_54_+1000_2YRhpA1pP0vl_79g--
