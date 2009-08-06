@@ -1,47 +1,29 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Subject: Re: linux-next: agp tree build failure
-Date: Thu, 06 Aug 2009 10:39:02 +0100
-Message-ID: <1249551542.568.4.camel@macbook.infradead.org>
-References: <20090806191054.74c475e5.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH -next] isdn: fix netjet build errors
+Date: Thu, 06 Aug 2009 13:10:03 -0700 (PDT)
+Message-ID: <20090806.131003.13979199.davem@davemloft.net>
+References: <20090805092635.6e6df57e.randy.dunlap@oracle.com>
+	<20090805.120302.204538944.davem@davemloft.net>
+	<200908060705.33130.isdn@linux-pingi.de>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754607AbZHFJtq@vger.kernel.org>
-In-Reply-To: <20090806191054.74c475e5.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dave Airlie <airlied@linux.ie>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:56561
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756634AbZHFUJx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Aug 2009 16:09:53 -0400
+In-Reply-To: <200908060705.33130.isdn@linux-pingi.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: isdn@linux-pingi.de
+Cc: randy.dunlap@oracle.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org
 
-On Thu, 2009-08-06 at 02:10 -0700, Stephen Rothwell wrote:
-> Today's linux-next build (powerpc allyesconfig) failed like this:
-> 
-> drivers/char/agp/uninorth-agp.c: In function 'uninorth_configure':
-> drivers/char/agp/uninorth-agp.c:138: error: 'struct agp_bridge_data' has no member named 'scratch_page_real'
-> 
-> Caused by commit c2980d8c2961113f24863f70d8ad016f55224c81 ("agp: Switch
-> agp_{un,}map_page() to take struct page * argument").
-> 
-> I have reverted that commit for today (and
-> 6a12235c7d2d75c7d94b9afcaaecd422ff845ce0 ("agp: kill phys_to_gart() and
-> gart_to_phys()") which depends on it).
+From: Karsten Keil <isdn@linux-pingi.de>
+Date: Thu, 6 Aug 2009 07:05:32 +0200
 
-Oops, sorry -- I thought I'd dealt with that.
+> My original approach was to change the Makefile to enter this directory
+> unconditional, but it seems that this part of the patch was lost during 
+> development.  I will send a new patch after testing with different configs.
 
-diff --git a/drivers/char/agp/uninorth-agp.c b/drivers/char/agp/uninorth-agp.c
-index 2e99311..4317a55 100644
---- a/drivers/char/agp/uninorth-agp.c
-+++ b/drivers/char/agp/uninorth-agp.c
-@@ -135,7 +135,7 @@ static int uninorth_configure(void)
- 	if (is_u3) {
- 		pci_write_config_dword(agp_bridge->dev,
- 				       UNI_N_CFG_GART_DUMMY_PAGE,
--				       agp_bridge->scratch_page_real >> 12);
-+				       page_to_phys(agp_bridge->scratch_page_page) >> 12);
- 	}
- 
- 	return 0;
-
--- 
-David Woodhouse                            Open Source Technology Centre
-David.Woodhouse@intel.com                              Intel Corporation
+Ok, thanks!
