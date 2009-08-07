@@ -1,48 +1,32 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] staging/hv: blk dev depends on SCSI
-Date: Fri, 7 Aug 2009 11:17:04 -0700
-Message-ID: <20090807111704.b7b79983.randy.dunlap@oracle.com>
-References: <20090807183118.e71b4db2.sfr@canb.auug.org.au>
+From: Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: [PATCH -next] block: blk-iopoll sysctl iff CONFIG_BLOCK
+Date: Fri, 7 Aug 2009 21:21:44 +0200
+Message-ID: <20090807192144.GZ12579@kernel.dk>
+References: <20090807183118.e71b4db2.sfr@canb.auug.org.au> <20090807111659.3d8da27f.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:26426 "EHLO
-	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932146AbZHGSRq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 7 Aug 2009 14:17:46 -0400
-In-Reply-To: <20090807183118.e71b4db2.sfr@canb.auug.org.au>
+Received: from brick.kernel.dk ([93.163.65.50]:33834 "EHLO kernel.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933046AbZHGTVn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 7 Aug 2009 15:21:43 -0400
+Content-Disposition: inline
+In-Reply-To: <20090807111659.3d8da27f.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, akpm <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Fri, Aug 07 2009, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> New block-iopoll sysctl should be surrounded by CONFIG_BLOCK to
+> prevent build error:
+> 
+> kernel/built-in.o:(.data+0x2990): undefined reference to `blk_iopoll_enabled'
 
-hv block driver uses scsi_*() interfaces so it should depend on SCSI.
+Thanks, I'll just kill off this sysctl, it should be driver controller
+anyway. Was just easier for testing :-)
 
-ERROR: "scsi_normalize_sense" [drivers/staging/hv/hv_blkvsc.ko] undefined!
-ERROR: "scsi_print_sense_hdr" [drivers/staging/hv/hv_blkvsc.ko] undefined!
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/staging/hv/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20090807.orig/drivers/staging/hv/Kconfig
-+++ linux-next-20090807/drivers/staging/hv/Kconfig
-@@ -15,7 +15,7 @@ config HYPERV_STORAGE
- 
- config HYPERV_BLOCK
- 	tristate "Microsoft Hyper-V virtual block driver"
--	depends on BLOCK && m
-+	depends on BLOCK && SCSI && m
- 	default n
- 	help
- 	  Select this option to enable the Hyper-V virtual block driver.
-
-
----
-~Randy
-LPC 2009, Sept. 23-25, Portland, Oregon
-http://linuxplumbersconf.org/2009/
+-- 
+Jens Axboe
