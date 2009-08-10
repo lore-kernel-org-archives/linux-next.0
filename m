@@ -1,51 +1,45 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] dvb: siano uses/depends on INPUT
-Date: Mon, 10 Aug 2009 16:04:55 -0700
-Message-ID: <20090810160455.4f93ad60.randy.dunlap@oracle.com>
-References: <20090810203508.f3258129.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: staging series import warning
+Date: Mon, 10 Aug 2009 15:08:56 -0700
+Message-ID: <20090810220856.GA27402@kroah.com>
+References: <20090810102443.3bc514b9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20090810203508.f3258129.sfr@canb.auug.org.au>
-Sender: linux-media-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org, akpm <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Michael Krufky <mkrufky@linuxtv.org>, Uri Shkolnik <uris@siano-ms.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from kroah.org ([198.145.64.141]:36092 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754174AbZHJXSe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 Aug 2009 19:18:34 -0400
+Content-Disposition: inline
+In-Reply-To: <20090810102443.3bc514b9.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anthony Wong <awong1@novell.com>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Mon, Aug 10, 2009 at 10:24:43AM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> The import of the staging series produces these warnings (among others):
+> 
+> staging-add-realtek-8192-pci-wireless-driver.patch
+> quilt-tmp/.git/rebase-apply/patch:94: trailing whitespace.
+> #ifndef __INC_DOT11D_H
+> quilt-tmp/.git/rebase-apply/patch:95: trailing whitespace.
+> #define __INC_DOT11D_H
+> quilt-tmp/.git/rebase-apply/patch:96: trailing whitespace.
+> 
+> quilt-tmp/.git/rebase-apply/patch:97: trailing whitespace.
+> #ifdef ENABLE_DOT11D
+> quilt-tmp/.git/rebase-apply/patch:98: trailing whitespace.
+> #include "ieee80211.h"
+> warning: squelched 21645 whitespace errors
+> warning: 21650 lines add whitespace errors.
+> 
+> This might be a good place for someone to consider starting cleaning
+> up ...  :-)
 
-siano uses input_*() functions so it should depend on INPUT
-to prevent build errors:
+Ah crap, I got the wrong line-ends for some of those files, sorry about
+that, I'll go clean it up...
 
-ERROR: "input_event" [drivers/media/dvb/siano/sms1xxx.ko] undefined!
-ERROR: "input_register_device" [drivers/media/dvb/siano/sms1xxx.ko] undefined!
-ERROR: "input_free_device" [drivers/media/dvb/siano/sms1xxx.ko] undefined!
-ERROR: "input_unregister_device" [drivers/media/dvb/siano/sms1xxx.ko] undefined!
-ERROR: "input_allocate_device" [drivers/media/dvb/siano/sms1xxx.ko] undefined!
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Michael Krufky <mkrufky@linuxtv.org>
-Cc: Uri Shkolnik <uris@siano-ms.com>
----
- drivers/media/dvb/siano/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20090810.orig/drivers/media/dvb/siano/Kconfig
-+++ linux-next-20090810/drivers/media/dvb/siano/Kconfig
-@@ -4,7 +4,7 @@
- 
- config DVB_SIANO_SMS1XXX
- 	tristate "Siano SMS1XXX USB dongle support"
--	depends on DVB_CORE && USB
-+	depends on DVB_CORE && USB && INPUT
- 	---help---
- 	  Choose Y here if you have a USB dongle with a SMS1XXX chipset.
- 
-
-
-
----
-~Randy
-LPC 2009, Sept. 23-25, Portland, Oregon
-http://linuxplumbersconf.org/2009/
+greg k-h
