@@ -1,60 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: staging series import warning
-Date: Mon, 10 Aug 2009 10:24:43 +1000
-Message-ID: <20090810102443.3bc514b9.sfr@canb.auug.org.au>
+Subject: linux-next: nfs tree build warning
+Date: Mon, 10 Aug 2009 10:58:06 +1000
+Message-ID: <20090810105806.266011df.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__10_Aug_2009_10_24_43_+1000_F1AnKS83SljE6iHJ"
+ boundary="Signature=_Mon__10_Aug_2009_10_58_06_+1000_Kyck1GX7TlHAUSrP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45979 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55911 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753321AbZHJAYw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 9 Aug 2009 20:24:52 -0400
+	id S1753523AbZHJA6O (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 9 Aug 2009 20:58:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anthony Wong <awong1@novell.com>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__10_Aug_2009_10_24_43_+1000_F1AnKS83SljE6iHJ
+--Signature=_Mon__10_Aug_2009_10_58_06_+1000_Kyck1GX7TlHAUSrP
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Trond,
 
-The import of the staging series produces these warnings (among others):
+Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
 
-staging-add-realtek-8192-pci-wireless-driver.patch
-quilt-tmp/.git/rebase-apply/patch:94: trailing whitespace.
-#ifndef __INC_DOT11D_H
-quilt-tmp/.git/rebase-apply/patch:95: trailing whitespace.
-#define __INC_DOT11D_H
-quilt-tmp/.git/rebase-apply/patch:96: trailing whitespace.
+fs/nfs/write.c: In function 'nfs_migrate_page':
+fs/nfs/write.c:1601: warning: unused variable 'inode'
 
-quilt-tmp/.git/rebase-apply/patch:97: trailing whitespace.
-#ifdef ENABLE_DOT11D
-quilt-tmp/.git/rebase-apply/patch:98: trailing whitespace.
-#include "ieee80211.h"
-warning: squelched 21645 whitespace errors
-warning: 21650 lines add whitespace errors.
+Introduced by commit 1ec000f4f76ea914aa4ac57f8cec53fa958bd477 ("NFS: Add
+a ->migratepage() aop for NFS").
 
-This might be a good place for someone to consider starting cleaning
-up ...  :-)
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__10_Aug_2009_10_24_43_+1000_F1AnKS83SljE6iHJ
+--Signature=_Mon__10_Aug_2009_10_58_06_+1000_Kyck1GX7TlHAUSrP
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkp/aMsACgkQjjKRsyhoI8yniACdGPLtMgli4aJaiHmzqvuoWA4b
-kskAnjspYmQrSxbKCzgjSSjjScqP781y
-=1NMn
+iEYEARECAAYFAkp/cJ4ACgkQjjKRsyhoI8zg7wCfREjz/cNo5drIst5lCzp3chdI
+d3EAnRxIXeA+jP3eoiZiS2u4iaLJA66o
+=OrS0
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__10_Aug_2009_10_24_43_+1000_F1AnKS83SljE6iHJ--
+--Signature=_Mon__10_Aug_2009_10_58_06_+1000_Kyck1GX7TlHAUSrP--
