@@ -1,57 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: wireless tree build warnings
-Date: Mon, 10 Aug 2009 19:41:10 +1000
-Message-ID: <20090810194110.fa3eef11.sfr@canb.auug.org.au>
+Subject: Re: hwpoison merge for linux-next / 2.6.32
+Date: Mon, 10 Aug 2009 19:45:28 +1000
+Message-ID: <20090810194528.a3bc0cbc.sfr@canb.auug.org.au>
+References: <20090807084902.GA14309@basil.fritz.box>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__10_Aug_2009_19_41_10_+1000_/3ZZ0dso.HfeA1P."
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753413AbZHJJlR@vger.kernel.org>
+ boundary="Signature=_Mon__10_Aug_2009_19_45_28_+1000_5pnXtiIAC5q4PARo"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753441AbZHJJpf@vger.kernel.org>
+In-Reply-To: <20090807084902.GA14309@basil.fritz.box>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Luciano Coelho <luciano.coelho@nokia.com>
+To: Andi Kleen <andi@firstfloor.org>
+Cc: akpm@linux-foundation.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__10_Aug_2009_19_41_10_+1000_/3ZZ0dso.HfeA1P.
+--Signature=_Mon__10_Aug_2009_19_45_28_+1000_5pnXtiIAC5q4PARo
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+Hi Andi,
 
-Today's linux-next build (x86_64 allmodconfig) produced these warnings:
+On Fri, 7 Aug 2009 10:49:02 +0200 Andi Kleen <andi@firstfloor.org> wrote:
+>
+> Could you please pull git://git.kernel.org/pub/scm/linux/kernel/git/ak/li=
+nux-mce-2.6.git hwpoison
+> into linux-next?
+>=20
+> hwpoison is the VM part of extended memory error handling.
+>=20
+> This tree has been extensively reviewed now and people seem to be happy n=
+ow and is=20
+> imho ready for merge.
+>=20
+> Andrew also indicated earlier he would merge it for .32.
 
-drivers/net/wireless/wl12xx/wl1271_main.c: In function 'wl1271_irq_work':
-drivers/net/wireless/wl12xx/wl1271_main.c:184: warning: large integer impli=
-citly truncated to unsigned type
-drivers/net/wireless/wl12xx/wl1271_boot.c: In function 'wl1271_boot_upload_=
-firmware_chunk':
-drivers/net/wireless/wl12xx/wl1271_boot.c:103: warning: format '%d' expects=
- type 'int', but argument 2 has type 'size_t'
-drivers/net/wireless/wl12xx/wl1271_boot.c:150: warning: format '%d' expects=
- type 'int', but argument 2 has type 'size_t'
-drivers/net/wireless/wl12xx/wl1271_boot.c: In function 'wl1271_boot_enable_=
-interrupts':
-drivers/net/wireless/wl12xx/wl1271_boot.c:278: warning: large integer impli=
-citly truncated to unsigned type
+OK, I have added this today.
 
-Introduced by commit 4749c814b34dfe02cf08da34a2a2a32f55fbd9bc ("wl1271:
-add wl1271 driver files").
+What I tell everyone: all patches/commits in the tree/series must
+have been:
+
+	posted to a relevant mailing list
+	reviewed
+	unit tested
+	destined for the next merge window (or the current release)
+
+*before* they are included.  The linux-next tree is for integration
+testing and to lower the impact of conflicts between subsystems in the
+next merge window.
+
+Basically, this should be just what you would send to Linus or in this
+case, Ingo, (or ask him to fetch).  It is allowed to be rebased if you
+deem it necessary.
+
+> How do you want to handle it. Will you take it and send or should I send =
+direct=20
+> pull requests to Linus during the merge window?
+
+Andrew, If you have other plans, just yell.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__10_Aug_2009_19_41_10_+1000_/3ZZ0dso.HfeA1P.
+--Signature=_Mon__10_Aug_2009_19_45_28_+1000_5pnXtiIAC5q4PARo
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkp/6zYACgkQjjKRsyhoI8w4xwCfes0pVhZn2dgPFrgkWCv98uKr
-ioYAoJRBhisUmhem1RkY+oGYcAbzxu22
-=EZEM
+iEYEARECAAYFAkp/7DgACgkQjjKRsyhoI8w2hACgv2BU+2RfqqdE56kpz+Bo7/85
+G+AAn1L3j1lsRfzZbazbUfHU06PJtbjA
+=btoT
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__10_Aug_2009_19_41_10_+1000_/3ZZ0dso.HfeA1P.--
+--Signature=_Mon__10_Aug_2009_19_45_28_+1000_5pnXtiIAC5q4PARo--
