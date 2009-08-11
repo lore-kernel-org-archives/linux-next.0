@@ -1,32 +1,47 @@
-From: Mike Frysinger <vapier.adi@gmail.com>
-Subject: Re: [PATCH] Fix compiler warnings and remove debug messages
-Date: Tue, 11 Aug 2009 03:59:43 -0400
-Message-ID: <8bd0f97a0908110059y344071adn3656eaea3d7edddf@mail.gmail.com>
-References: <20090810193653.f228cf06.sfr@canb.auug.org.au>
-	<1249921736508-git-send-email-LW@KARO-electronics.de> <20090811000112.GB13314@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: sound tree build warning
+Date: Tue, 11 Aug 2009 16:21:10 +1000
+Message-ID: <20090811162110.67d3acd6.sfr@canb.auug.org.au>
+References: <20090811132258.8e899735.sfr@canb.auug.org.au>
+	<s5hzla6an7k.wl%tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753547AbZHKMQ4@vger.kernel.org>
-In-Reply-To: <20090811000112.GB13314@kroah.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__11_Aug_2009_16_21_10_+1000_iB/skitl02fK6zu0"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753718AbZHKMSi@vger.kernel.org>
+In-Reply-To: <s5hzla6an7k.wl%tiwai@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: Lothar Wassmann <LW@karo-electronics.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Hennerich <michael.hennerich@analog.com>, Bryan Wu <cooloney@kernel.org>, Lothar Wassmann <lothar@ipc1.ka-ro>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Clemens Ladisch <clemens@ladisch.de>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Aug 10, 2009 at 20:01, Greg KH wrote:
-> On Mon, Aug 10, 2009 at 06:28:56PM +0200, Lothar Wassmann wrote:
->> This patch fixes the reported compiler warnings and removes excessiv=
-e debug messages.
->> Compile tested only!
+--Signature=_Tue__11_Aug_2009_16_21_10_+1000_iB/skitl02fK6zu0
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Takashi,
+
+On Tue, 11 Aug 2009 08:17:35 +0200 Takashi Iwai <tiwai@suse.de> wrote:
 >
-> I'd prefer the correct fixes for this driver. =C2=A0Mike, any thought=
-s on
-> some fixes for this?
+> Thanks, fixed now on sound git tree with the patch below.
 
-if it's simply fixing printf modifiers, then i can send out a patch for=
- that.
+Thanks.
 
-the changelog simply states "the reported compiler warnings" ... what
-exactly must i do to reproduce these ?
--mike
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__11_Aug_2009_16_21_10_+1000_iB/skitl02fK6zu0
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkqBDdYACgkQjjKRsyhoI8zRegCgqIXmyDtsHhvIOXRN80jT42BQ
+C24AoIF/WzRcneuu3tsd8ScXub1WEidO
+=YydQ
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__11_Aug_2009_16_21_10_+1000_iB/skitl02fK6zu0--
