@@ -1,65 +1,85 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH] wl1271: fix compiler warnings on 64 bit archs
-Date: Tue, 11 Aug 2009 11:45:18 -0700
-Message-ID: <20090811114518.d45d4006.randy.dunlap@oracle.com>
-References: <1249981107-21746-1-git-send-email-luciano.coelho@nokia.com>
-	<20090811200746.cde6aed9.sfr@canb.auug.org.au>
-	<4A81BB47.2020607@nokia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:26197 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755214AbZHKSqc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Aug 2009 14:46:32 -0400
-In-Reply-To: <4A81BB47.2020607@nokia.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Luciano Coelho <luciano.coelho@nokia.com>
-Cc: ext Stephen Rothwell <sfr@canb.auug.org.au>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linville@tuxdriver.com" <linville@tuxdriver.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Luciano Coelho <luciano.coelho-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2] wl1271: fix compiler warnings on 64 bit archs
+Date: Tue, 11 Aug 2009 22:20:25 +0300
+Message-ID: <1250018425-32610-1-git-send-email-luciano.coelho@nokia.com>
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 11 Aug 2009 21:41:11 +0300 Luciano Coelho wrote:
+There were a few warnings when compiling the wl1271 driver on 64 bit
+architectures.  This was due to size mismatch of integers.
 
-> ext Stephen Rothwell wrote:
-> > Hi Luciano,
-> >
-> > On Tue, 11 Aug 2009 11:58:27 +0300 Luciano Coelho <luciano.coelho@nokia.com> wrote:
-> >   
-> >> +++ b/drivers/net/wireless/wl12xx/wl1271_boot.c
-> >> @@ -100,8 +100,8 @@ static int wl1271_boot_upload_firmware_chunk(struct wl1271 *wl, void *buf,
-> >>  
-> >>  	wl1271_debug(DEBUG_BOOT, "starting firmware upload");
-> >>  
-> >> -	wl1271_debug(DEBUG_BOOT, "fw_data_len %d chunk_size %d", fw_data_len,
-> >> -		CHUNK_SIZE);
-> >> +	wl1271_debug(DEBUG_BOOT, "fw_data_len %d chunk_size %d",
-> >> +		     (u32) fw_data_len, CHUNK_SIZE);
-> >>     
-> >
-> > fw_data_len is a size_t and so should be printed with %zd.
-> >
-> >   
-> >> @@ -148,7 +148,7 @@ static int wl1271_boot_upload_firmware_chunk(struct wl1271 *wl, void *buf,
-> >>  	addr = dest + chunk_num * CHUNK_SIZE;
-> >>  	p = buf + chunk_num * CHUNK_SIZE;
-> >>  	wl1271_debug(DEBUG_BOOT, "uploading fw last chunk (%d B) 0x%p to 0x%x",
-> >> -		     fw_data_len % CHUNK_SIZE, p, addr);
-> >> +		     (u32) fw_data_len % CHUNK_SIZE, p, addr);
-> >>     
-> >
-> > ditto.
-> >   
-> 
-> Thanks! I didn't know about the z length modifier for printf (everyday 
-> learning something new!), I should have checked the manpage.  I'll fix 
-> this and send v2 of my patch.
+This commit fixes the following warnings:
 
-man page is fine, but you can also check (in the kernel source tree)
-Documentation/printk-formats.txt
+drivers/net/wireless/wl12xx/wl1271_main.c: In function 'wl1271_irq_work':
+drivers/net/wireless/wl12xx/wl1271_main.c:184: warning: large integer implicitly truncated to unsigned type
+drivers/net/wireless/wl12xx/wl1271_boot.c: In function 'wl1271_boot_upload_firmware_chunk':
+drivers/net/wireless/wl12xx/wl1271_boot.c:103: warning: format '%d' expects type 'int', but argument 2 has type 'size_t'
+drivers/net/wireless/wl12xx/wl1271_boot.c:150: warning: format '%d' expects type 'int', but argument 2 has type 'size_t'
+drivers/net/wireless/wl12xx/wl1271_boot.c: In function 'wl1271_boot_enable_interrupts':
+drivers/net/wireless/wl12xx/wl1271_boot.c:278: warning: large integer implicitly truncated to unsigned type
 
-
+Reported-by: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Signed-off-by: Luciano Coelho <luciano.coelho-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org>
 ---
-~Randy
-LPC 2009, Sept. 23-25, Portland, Oregon
-http://linuxplumbersconf.org/2009/
+ drivers/net/wireless/wl12xx/wl1271_boot.c |    9 +++++----
+ drivers/net/wireless/wl12xx/wl1271_main.c |    3 ++-
+ 2 files changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/wireless/wl12xx/wl1271_boot.c b/drivers/net/wireless/wl12xx/wl1271_boot.c
+index 4c22f25..8228ef4 100644
+--- a/drivers/net/wireless/wl12xx/wl1271_boot.c
++++ b/drivers/net/wireless/wl12xx/wl1271_boot.c
+@@ -100,8 +100,8 @@ static int wl1271_boot_upload_firmware_chunk(struct wl1271 *wl, void *buf,
+ 
+ 	wl1271_debug(DEBUG_BOOT, "starting firmware upload");
+ 
+-	wl1271_debug(DEBUG_BOOT, "fw_data_len %d chunk_size %d", fw_data_len,
+-		CHUNK_SIZE);
++	wl1271_debug(DEBUG_BOOT, "fw_data_len %zd chunk_size %d",
++		     fw_data_len, CHUNK_SIZE);
+ 
+ 
+ 	if ((fw_data_len % 4) != 0) {
+@@ -147,7 +147,7 @@ static int wl1271_boot_upload_firmware_chunk(struct wl1271 *wl, void *buf,
+ 	/* 10.4 upload the last chunk */
+ 	addr = dest + chunk_num * CHUNK_SIZE;
+ 	p = buf + chunk_num * CHUNK_SIZE;
+-	wl1271_debug(DEBUG_BOOT, "uploading fw last chunk (%d B) 0x%p to 0x%x",
++	wl1271_debug(DEBUG_BOOT, "uploading fw last chunk (%zd B) 0x%p to 0x%x",
+ 		     fw_data_len % CHUNK_SIZE, p, addr);
+ 	wl1271_spi_mem_write(wl, addr, p, fw_data_len % CHUNK_SIZE);
+ 
+@@ -275,7 +275,8 @@ static int wl1271_boot_upload_nvs(struct wl1271 *wl)
+ static void wl1271_boot_enable_interrupts(struct wl1271 *wl)
+ {
+ 	enable_irq(wl->irq);
+-	wl1271_reg_write32(wl, ACX_REG_INTERRUPT_MASK, ~(WL1271_INTR_MASK));
++	wl1271_reg_write32(wl, ACX_REG_INTERRUPT_MASK,
++			   WL1271_ACX_INTR_ALL & ~(WL1271_INTR_MASK));
+ 	wl1271_reg_write32(wl, HI_CFG, HI_CFG_DEF_VAL);
+ }
+ 
+diff --git a/drivers/net/wireless/wl12xx/wl1271_main.c b/drivers/net/wireless/wl12xx/wl1271_main.c
+index 3bb45ce..4102d59 100644
+--- a/drivers/net/wireless/wl12xx/wl1271_main.c
++++ b/drivers/net/wireless/wl12xx/wl1271_main.c
+@@ -181,7 +181,8 @@ static void wl1271_irq_work(struct work_struct *work)
+ 	} while (intr && --ctr);
+ 
+ out_sleep:
+-	wl1271_reg_write32(wl, ACX_REG_INTERRUPT_MASK, ~(WL1271_INTR_MASK));
++	wl1271_reg_write32(wl, ACX_REG_INTERRUPT_MASK,
++			   WL1271_ACX_INTR_ALL & ~(WL1271_INTR_MASK));
+ 	wl1271_ps_elp_sleep(wl);
+ 
+ out:
+-- 
+1.6.0.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
