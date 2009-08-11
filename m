@@ -1,85 +1,70 @@
-From: Luciano Coelho <luciano.coelho-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] wl1271: fix compiler warnings on 64 bit archs
-Date: Tue, 11 Aug 2009 11:58:27 +0300
-Message-ID: <1249981107-21746-1-git-send-email-luciano.coelho@nokia.com>
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+From: vibi sreenivasan <vibi_sreenivasan@cms.com>
+Subject: Re: [PATCH] Fix Warnings from net/netlink/genetlink.c
+Date: Tue, 11 Aug 2009 14:45:10 +0530
+Message-ID: <1249982110.13065.7.camel@HunTEr>
+References: <1249975630.2400.7.camel@HunTEr>
+	 <1249976174.5903.16.camel@johannes.local>
+Reply-To: vibi_sreenivasan@cms.com
+Mime-Version: 1.0
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mailgw3.cms.com ([203.124.163.53]:11269 "EHLO cms.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751980AbZHKMWw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 11 Aug 2009 08:22:52 -0400
+In-Reply-To: <1249976174.5903.16.camel@johannes.local>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-next@vger.kernel.org, Thomas Graf <tgraf@suug.ch>, netdev <netdev@vger.kernel.org>
 
-There were a few warnings when compiling the wl1271 driver on 64 bit
-architectures.  This was due to size mismatch of integers.
+Hi Johannes,
+On Tue, 2009-08-11 at 09:36 +0200, Johannes Berg wrote:
+> On Tue, 2009-08-11 at 12:57 +0530, vibi sreenivasan wrote:
+> > Fix following compiler warnings
+> > 
+> > net/netlink/genetlink.c: In function `genl_register_mc_group':
+> > net/netlink/genetlink.c:139: warning: 'err' might be used uninitialized in this function
+> 
+> Well, only if there's no netns which can't happen.
+	So how to silence that warning?
+> 
+> However, technical problems prohibit your patch from being applied.
+> 
+> a) you sent it to the wrong list, copying netdev
+> 
+Sorry i will send it to netdev
 
-This commit fixes the following warnings:
+> > Signed-off-by: vibi sreenivasan, CMS COMPUTERS LTD, INDIA <vibi_sreenivasan@cms.com>
+> 
+> b) this isn't correctly formatted, have you actually read
+> Documentation/SubmittingPatches including the legal text that you're
+> agreeing to (section 12 of that document)?
+> 
+Sorry again i will remove the tags at the end & resubmit it again.
 
-drivers/net/wireless/wl12xx/wl1271_main.c: In function 'wl1271_irq_work':
-drivers/net/wireless/wl12xx/wl1271_main.c:184: warning: large integer implicitly truncated to unsigned type
-drivers/net/wireless/wl12xx/wl1271_boot.c: In function 'wl1271_boot_upload_firmware_chunk':
-drivers/net/wireless/wl12xx/wl1271_boot.c:103: warning: format '%d' expects type 'int', but argument 2 has type 'size_t'
-drivers/net/wireless/wl12xx/wl1271_boot.c:150: warning: format '%d' expects type 'int', but argument 2 has type 'size_t'
-drivers/net/wireless/wl12xx/wl1271_boot.c: In function 'wl1271_boot_enable_interrupts':
-drivers/net/wireless/wl12xx/wl1271_boot.c:278: warning: large integer implicitly truncated to unsigned type
+Thanks for pointing out the issues.
 
-Reported-by: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Signed-off-by: Luciano Coelho <luciano.coelho-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org>
----
- drivers/net/wireless/wl12xx/wl1271_boot.c |    9 +++++----
- drivers/net/wireless/wl12xx/wl1271_main.c |    3 ++-
- 2 files changed, 7 insertions(+), 5 deletions(-)
+Thanks & Regards
+vibi sreenivasan
 
-diff --git a/drivers/net/wireless/wl12xx/wl1271_boot.c b/drivers/net/wireless/wl12xx/wl1271_boot.c
-index 4c22f25..2b5d101 100644
---- a/drivers/net/wireless/wl12xx/wl1271_boot.c
-+++ b/drivers/net/wireless/wl12xx/wl1271_boot.c
-@@ -100,8 +100,8 @@ static int wl1271_boot_upload_firmware_chunk(struct wl1271 *wl, void *buf,
- 
- 	wl1271_debug(DEBUG_BOOT, "starting firmware upload");
- 
--	wl1271_debug(DEBUG_BOOT, "fw_data_len %d chunk_size %d", fw_data_len,
--		CHUNK_SIZE);
-+	wl1271_debug(DEBUG_BOOT, "fw_data_len %d chunk_size %d",
-+		     (u32) fw_data_len, CHUNK_SIZE);
- 
- 
- 	if ((fw_data_len % 4) != 0) {
-@@ -148,7 +148,7 @@ static int wl1271_boot_upload_firmware_chunk(struct wl1271 *wl, void *buf,
- 	addr = dest + chunk_num * CHUNK_SIZE;
- 	p = buf + chunk_num * CHUNK_SIZE;
- 	wl1271_debug(DEBUG_BOOT, "uploading fw last chunk (%d B) 0x%p to 0x%x",
--		     fw_data_len % CHUNK_SIZE, p, addr);
-+		     (u32) fw_data_len % CHUNK_SIZE, p, addr);
- 	wl1271_spi_mem_write(wl, addr, p, fw_data_len % CHUNK_SIZE);
- 
- 	return 0;
-@@ -275,7 +275,8 @@ static int wl1271_boot_upload_nvs(struct wl1271 *wl)
- static void wl1271_boot_enable_interrupts(struct wl1271 *wl)
- {
- 	enable_irq(wl->irq);
--	wl1271_reg_write32(wl, ACX_REG_INTERRUPT_MASK, ~(WL1271_INTR_MASK));
-+	wl1271_reg_write32(wl, ACX_REG_INTERRUPT_MASK,
-+			   WL1271_ACX_INTR_ALL & ~(WL1271_INTR_MASK));
- 	wl1271_reg_write32(wl, HI_CFG, HI_CFG_DEF_VAL);
- }
- 
-diff --git a/drivers/net/wireless/wl12xx/wl1271_main.c b/drivers/net/wireless/wl12xx/wl1271_main.c
-index 3bb45ce..4102d59 100644
---- a/drivers/net/wireless/wl12xx/wl1271_main.c
-+++ b/drivers/net/wireless/wl12xx/wl1271_main.c
-@@ -181,7 +181,8 @@ static void wl1271_irq_work(struct work_struct *work)
- 	} while (intr && --ctr);
- 
- out_sleep:
--	wl1271_reg_write32(wl, ACX_REG_INTERRUPT_MASK, ~(WL1271_INTR_MASK));
-+	wl1271_reg_write32(wl, ACX_REG_INTERRUPT_MASK,
-+			   WL1271_ACX_INTR_ALL & ~(WL1271_INTR_MASK));
- 	wl1271_ps_elp_sleep(wl);
- 
- out:
--- 
-1.6.0.4
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> johannes
+> 
+> >  net/netlink/genetlink.c |    2 +-
+> >  1 files changed, 1 insertions(+), 1 deletions(-)
+> > 
+> > diff --git a/net/netlink/genetlink.c b/net/netlink/genetlink.c
+> > index 575c643..66f6ba0 100644
+> > --- a/net/netlink/genetlink.c
+> > +++ b/net/netlink/genetlink.c
+> > @@ -136,7 +136,7 @@ int genl_register_mc_group(struct genl_family *family,
+> >  {
+> >  	int id;
+> >  	unsigned long *new_groups;
+> > -	int err;
+> > +	int err = 0;
+> >  
+> >  	BUG_ON(grp->name[0] == '\0');
+> >  
+> 
