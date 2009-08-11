@@ -1,54 +1,56 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] usb/otg: fix twl4030-usb build
-Date: Tue, 11 Aug 2009 11:31:31 -0700
-Message-ID: <20090811113131.44db4177.randy.dunlap@oracle.com>
-References: <20090811183434.28afaf80.sfr@canb.auug.org.au>
+From: Luciano Coelho <luciano.coelho@nokia.com>
+Subject: Re: [PATCH] wl1271: fix compiler warnings on 64 bit archs
+Date: Tue, 11 Aug 2009 21:41:11 +0300
+Message-ID: <4A81BB47.2020607@nokia.com>
+References: <1249981107-21746-1-git-send-email-luciano.coelho@nokia.com> <20090811200746.cde6aed9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet12.oracle.com ([148.87.113.124]:33440 "EHLO
-	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753075AbZHKScs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Aug 2009 14:32:48 -0400
-In-Reply-To: <20090811183434.28afaf80.sfr@canb.auug.org.au>
+Received: from smtp.nokia.com ([192.100.105.134]:44459 "EHLO
+	mgw-mx09.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755043AbZHKSlj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Aug 2009 14:41:39 -0400
+In-Reply-To: <20090811200746.cde6aed9.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Felipe Balbi <felipe.balbi@nokia.com>, gregkh@suse.de
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
+To: ext Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linville@tuxdriver.com" <linville@tuxdriver.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+ext Stephen Rothwell wrote:
+> Hi Luciano,
+>
+> On Tue, 11 Aug 2009 11:58:27 +0300 Luciano Coelho <luciano.coelho@nokia.com> wrote:
+>   
+>> +++ b/drivers/net/wireless/wl12xx/wl1271_boot.c
+>> @@ -100,8 +100,8 @@ static int wl1271_boot_upload_firmware_chunk(struct wl1271 *wl, void *buf,
+>>  
+>>  	wl1271_debug(DEBUG_BOOT, "starting firmware upload");
+>>  
+>> -	wl1271_debug(DEBUG_BOOT, "fw_data_len %d chunk_size %d", fw_data_len,
+>> -		CHUNK_SIZE);
+>> +	wl1271_debug(DEBUG_BOOT, "fw_data_len %d chunk_size %d",
+>> +		     (u32) fw_data_len, CHUNK_SIZE);
+>>     
+>
+> fw_data_len is a size_t and so should be printed with %zd.
+>
+>   
+>> @@ -148,7 +148,7 @@ static int wl1271_boot_upload_firmware_chunk(struct wl1271 *wl, void *buf,
+>>  	addr = dest + chunk_num * CHUNK_SIZE;
+>>  	p = buf + chunk_num * CHUNK_SIZE;
+>>  	wl1271_debug(DEBUG_BOOT, "uploading fw last chunk (%d B) 0x%p to 0x%x",
+>> -		     fw_data_len % CHUNK_SIZE, p, addr);
+>> +		     (u32) fw_data_len % CHUNK_SIZE, p, addr);
+>>     
+>
+> ditto.
+>   
 
-subsys_initcall_sync() is only defined for built-in code, not for
-loadable modules, so this driver build fails when built as a module.
-However, the _sync() forms of the initcalls are not implemented,
-so this should not be used -- just use the non-sync form of it.
+Thanks! I didn't know about the z length modifier for printf (everyday 
+learning something new!), I should have checked the manpage.  I'll fix 
+this and send v2 of my patch.
 
-drivers/usb/otg/twl4030-usb.c:777: warning: data definition has no type or storage class
-drivers/usb/otg/twl4030-usb.c:777: warning: type defaults to 'int' in declaration of 'subsys_initcall_sync'
-drivers/usb/otg/twl4030-usb.c:777: warning: parameter names (without types) in function declaration
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Felipe Balbi <felipe.balbi@nokia.com>
----
- drivers/usb/otg/twl4030-usb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20090811.orig/drivers/usb/otg/twl4030-usb.c
-+++ linux-next-20090811/drivers/usb/otg/twl4030-usb.c
-@@ -774,7 +774,7 @@ static int __init twl4030_usb_init(void)
- {
- 	return platform_driver_register(&twl4030_usb_driver);
- }
--subsys_initcall_sync(twl4030_usb_init);
-+subsys_initcall(twl4030_usb_init);
- 
- static void __exit twl4030_usb_exit(void)
- {
-
-
-
----
-~Randy
-LPC 2009, Sept. 23-25, Portland, Oregon
-http://linuxplumbersconf.org/2009/
+-- 
+Cheers,
+Luca.
