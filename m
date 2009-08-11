@@ -1,32 +1,54 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Subject: Re: linux-next: nfsd tree build warning
-Date: Tue, 11 Aug 2009 12:53:45 -0400
-Message-ID: <20090811165345.GD25588@fieldses.org>
-References: <20090811110749.040661e0.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] usb/otg: fix twl4030-usb build
+Date: Tue, 11 Aug 2009 11:31:31 -0700
+Message-ID: <20090811113131.44db4177.randy.dunlap@oracle.com>
+References: <20090811183434.28afaf80.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fieldses.org ([174.143.236.118]:40644 "EHLO fieldses.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754494AbZHKQxo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 11 Aug 2009 12:53:44 -0400
-Content-Disposition: inline
-In-Reply-To: <20090811110749.040661e0.sfr@canb.auug.org.au>
+Received: from rcsinet12.oracle.com ([148.87.113.124]:33440 "EHLO
+	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753075AbZHKScs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Aug 2009 14:32:48 -0400
+In-Reply-To: <20090811183434.28afaf80.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Felipe Balbi <felipe.balbi@nokia.com>, gregkh@suse.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
 
-On Tue, Aug 11, 2009 at 11:07:49AM +1000, Stephen Rothwell wrote:
-> Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
-> 
-> net/sunrpc/svc_xprt.c: In function 'svc_pool_stats_show':
-> net/sunrpc/svc_xprt.c:1211: warning: too few arguments for format
-> 
-> Caused by commit ffcef87a1f31094709da615454b5911f3711bc65 ("Revert
-> "knfsd: avoid overloading the CPU scheduler with enormous load
-> averages"").
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Whoops, thanks: fixed.
+subsys_initcall_sync() is only defined for built-in code, not for
+loadable modules, so this driver build fails when built as a module.
+However, the _sync() forms of the initcalls are not implemented,
+so this should not be used -- just use the non-sync form of it.
 
---b.
+drivers/usb/otg/twl4030-usb.c:777: warning: data definition has no type or storage class
+drivers/usb/otg/twl4030-usb.c:777: warning: type defaults to 'int' in declaration of 'subsys_initcall_sync'
+drivers/usb/otg/twl4030-usb.c:777: warning: parameter names (without types) in function declaration
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Felipe Balbi <felipe.balbi@nokia.com>
+---
+ drivers/usb/otg/twl4030-usb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20090811.orig/drivers/usb/otg/twl4030-usb.c
++++ linux-next-20090811/drivers/usb/otg/twl4030-usb.c
+@@ -774,7 +774,7 @@ static int __init twl4030_usb_init(void)
+ {
+ 	return platform_driver_register(&twl4030_usb_driver);
+ }
+-subsys_initcall_sync(twl4030_usb_init);
++subsys_initcall(twl4030_usb_init);
+ 
+ static void __exit twl4030_usb_exit(void)
+ {
+
+
+
+---
+~Randy
+LPC 2009, Sept. 23-25, Portland, Oregon
+http://linuxplumbersconf.org/2009/
