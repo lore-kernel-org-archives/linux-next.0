@@ -1,26 +1,51 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH] Fix compiler warnings and remove debug messages
-Date: Mon, 10 Aug 2009 17:01:12 -0700
-Message-ID: <20090811000112.GB13314@kroah.com>
-References: <20090810193653.f228cf06.sfr@canb.auug.org.au>
- <1249921736508-git-send-email-LW@KARO-electronics.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: nfsd tree build warning
+Date: Tue, 11 Aug 2009 11:07:49 +1000
+Message-ID: <20090811110749.040661e0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752513AbZHKAC1@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__11_Aug_2009_11_07_49_+1000_fiRVmH6tk3hGNdDL"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37717 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752355AbZHKBHz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 Aug 2009 21:07:55 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Tue__11_Aug_2009_11_07_49_+1000_fiRVmH6tk3hGNdDL
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <1249921736508-git-send-email-LW@KARO-electronics.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lothar Wassmann <LW@KARO-electronics.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Hennerich <michael.hennerich@analog.com>, Bryan Wu <cooloney@kernel.org>, Mike Frysinger <vapier@gentoo.org>, Lothar Wassmann <lothar@ipc1.ka-ro>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 10, 2009 at 06:28:56PM +0200, Lothar Wassmann wrote:
-> This patch fixes the reported compiler warnings and removes excessive debug messages.
-> Compile tested only!
+Hi Bruce,
 
-I'd prefer the correct fixes for this driver.  Mike, any thoughts on
-some fixes for this?
+Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
 
-thanks,
+net/sunrpc/svc_xprt.c: In function 'svc_pool_stats_show':
+net/sunrpc/svc_xprt.c:1211: warning: too few arguments for format
 
-greg k-h
+Caused by commit ffcef87a1f31094709da615454b5911f3711bc65 ("Revert
+"knfsd: avoid overloading the CPU scheduler with enormous load
+averages"").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__11_Aug_2009_11_07_49_+1000_fiRVmH6tk3hGNdDL
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkqAxGYACgkQjjKRsyhoI8xB5ACdFrXlHQWcg18dPHgl3ZZixujP
+tZEAn34n5h30wBuuDMyqDPYjYs/shXyu
+=srBG
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__11_Aug_2009_11_07_49_+1000_fiRVmH6tk3hGNdDL--
