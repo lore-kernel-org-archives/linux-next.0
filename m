@@ -1,59 +1,32 @@
-From: vibi sreenivasan <vibi_sreenivasan@cms.com>
-Subject: [PATCH]:Fix warning from drivers/pcmcia/at91_cf.c
-Date: Tue, 11 Aug 2009 14:31:41 +0530
-Message-ID: <1249981301.13065.2.camel@HunTEr>
-Reply-To: vibi_sreenivasan@cms.com
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: linux-next: nfsd tree build warning
+Date: Tue, 11 Aug 2009 12:53:45 -0400
+Message-ID: <20090811165345.GD25588@fieldses.org>
+References: <20090811110749.040661e0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailgw3.cms.com ([203.124.163.53]:30864 "EHLO cms.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752740AbZHKPJH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 11 Aug 2009 11:09:07 -0400
+Received: from fieldses.org ([174.143.236.118]:40644 "EHLO fieldses.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754494AbZHKQxo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 11 Aug 2009 12:53:44 -0400
+Content-Disposition: inline
+In-Reply-To: <20090811110749.040661e0.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: Andrew Victor <linux@maxim.org.za>, linux-arm-kernel@lists.arm.linux.org.uk
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Patch Fixes the following warning
-        
-        drivers/pcmcia/at91_cf.c:55:1: warning: "SZ_2K" redefined
-        In file included from
-        arch/arm/mach-at91/include/mach/hardware.h:17,
-                         from
-        arch/arm/mach-at91/include/mach/memory.h:24,
-        
-        from /media/skub/linux-git-wkg/linux-git/linux-next/arch/arm/include/asm/memory.h:18,
-        
-        from /media/skub/linux-git-wkg/linux-git/linux-next/arch/arm/include/asm/page.h:197,
-                         from include/linux/mmzone.h:20,
-                         from include/linux/gfp.h:4,
-                         from include/linux/kmod.h:22,
-                         from include/linux/module.h:13,
-                         from drivers/pcmcia/at91_cf.c:12:
-        /media/skub/linux-git-wkg/linux-git/linux-next/arch/arm/include/asm/sizes.h:32:1: warning: this is the location of the previous definition
-        
-        Signed-off-by: vibi sreenivasan, CMS COMPUTERS LTD, INDIA
-        <vibi_sreenivasan@cms.com>
-        ---
-         drivers/pcmcia/at91_cf.c |    1 -
-         1 files changed, 0 insertions(+), 1 deletions(-)
-        
-        diff --git a/drivers/pcmcia/at91_cf.c b/drivers/pcmcia/at91_cf.c
-        index 9e1140f..a5a7842 100644
-        --- a/drivers/pcmcia/at91_cf.c
-        +++ b/drivers/pcmcia/at91_cf.c
-        @@ -52,7 +52,6 @@ struct at91_cf_socket {
-                unsigned long           phys_baseaddr;
-         };
-         
-        -#define        SZ_2K                   (2 * SZ_1K)
-         
-         static inline int at91_cf_present(struct at91_cf_socket *cf)
-         {
-        -- 
-        1.6.3.3
-        
-        
-        
+On Tue, Aug 11, 2009 at 11:07:49AM +1000, Stephen Rothwell wrote:
+> Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
+> 
+> net/sunrpc/svc_xprt.c: In function 'svc_pool_stats_show':
+> net/sunrpc/svc_xprt.c:1211: warning: too few arguments for format
+> 
+> Caused by commit ffcef87a1f31094709da615454b5911f3711bc65 ("Revert
+> "knfsd: avoid overloading the CPU scheduler with enormous load
+> averages"").
+
+Whoops, thanks: fixed.
+
+--b.
