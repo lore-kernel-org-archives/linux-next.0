@@ -1,36 +1,46 @@
-From: Luciano Coelho <luciano.coelho@nokia.com>
-Subject: Re: [PATCH] wl1271: fix compiler warnings on 64 bit archs
-Date: Tue, 11 Aug 2009 22:43:48 +0300
-Message-ID: <4A81C9F4.4070000@nokia.com>
-References: <1249981107-21746-1-git-send-email-luciano.coelho@nokia.com> <20090811200746.cde6aed9.sfr@canb.auug.org.au> <4A81BB47.2020607@nokia.com> <20090811191518.GI2634@tuxdriver.com>
+From: Marcel Holtmann <marcel@holtmann.org>
+Subject: Re: [PATCH] Fix Warnings from net/netlink/genetlink.c
+Date: Tue, 11 Aug 2009 16:57:41 -0700
+Message-ID: <1250035061.30166.42.camel@localhost.localdomain>
+References: <1249985224.13065.11.camel@HunTEr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.122.230]:34614 "EHLO
-	mgw-mx03.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754332AbZHKToM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Aug 2009 15:44:12 -0400
-In-Reply-To: <20090811191518.GI2634@tuxdriver.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "ext John W. Linville" <linville@tuxdriver.com>
-Cc: ext Stephen Rothwell <sfr@canb.auug.org.au>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <1249985224.13065.11.camel@HunTEr>
+Sender: netdev-owner@vger.kernel.org
+To: vibi_sreenivasan@cms.com
+Cc: netdev <netdev@vger.kernel.org>, Johannes Berg <johannes@sipsolutions.net>, Thomas Graf <tgraf@suug.ch>, linux-next <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-ext John W. Linville wrote:
-> On Tue, Aug 11, 2009 at 09:41:11PM +0300, Luciano Coelho wrote:
->   
->> Thanks! I didn't know about the z length modifier for printf (everyday  
->> learning something new!), I should have checked the manpage.  I'll fix  
->> this and send v2 of my patch.
->>     
->
-> I've got it fixed-up already...
->   
+Hi Vibi,
 
-Thanks, I noticed that it was already fixed in wireless-next after I had 
-already sent v2.  Sorry for the trouble.
+> net/netlink/genetlink.c: In function `genl_register_mc_group':
+> net/netlink/genetlink.c:139: warning: 'err' might be used uninitialized in this function
+> 
+> Signed-off-by: vibi sreenivasan <vibi_sreenivasan@cms.com>
+> ---
+>  net/netlink/genetlink.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/net/netlink/genetlink.c b/net/netlink/genetlink.c
+> index 575c643..66f6ba0 100644
+> --- a/net/netlink/genetlink.c
+> +++ b/net/netlink/genetlink.c
+> @@ -136,7 +136,7 @@ int genl_register_mc_group(struct genl_family *family,
+>  {
+>         int id;
+>         unsigned long *new_groups;
+> -       int err;
+> +       int err = 0;
+>  
+>         BUG_ON(grp->name[0] == '\0');
 
--- 
-Cheers,
-Luca.
+this looks fishy. How does gcc thinks this variable is uninitialized. If
+I look at the code in Linus' tree, I don't see it.
+
+Regards
+
+Marcel
+
+
