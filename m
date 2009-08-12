@@ -1,46 +1,46 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Subject: Re: [PATCH] Fix Warnings from net/netlink/genetlink.c
-Date: Tue, 11 Aug 2009 16:57:41 -0700
-Message-ID: <1250035061.30166.42.camel@localhost.localdomain>
-References: <1249985224.13065.11.camel@HunTEr>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: sound tree build warning
+Date: Wed, 12 Aug 2009 11:13:49 +1000
+Message-ID: <20090812111349.14cb4d37.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <1249985224.13065.11.camel@HunTEr>
-Sender: netdev-owner@vger.kernel.org
-To: vibi_sreenivasan@cms.com
-Cc: netdev <netdev@vger.kernel.org>, Johannes Berg <johannes@sipsolutions.net>, Thomas Graf <tgraf@suug.ch>, linux-next <linux-next@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__12_Aug_2009_11_13_49_+1000_7g8nKtU_uMrUGpLp"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755011AbZHLBN6@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Ribeiro <drwyrm@gmail.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Vibi,
+--Signature=_Wed__12_Aug_2009_11_13_49_+1000_7g8nKtU_uMrUGpLp
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> net/netlink/genetlink.c: In function `genl_register_mc_group':
-> net/netlink/genetlink.c:139: warning: 'err' might be used uninitialized in this function
-> 
-> Signed-off-by: vibi sreenivasan <vibi_sreenivasan@cms.com>
-> ---
->  net/netlink/genetlink.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/net/netlink/genetlink.c b/net/netlink/genetlink.c
-> index 575c643..66f6ba0 100644
-> --- a/net/netlink/genetlink.c
-> +++ b/net/netlink/genetlink.c
-> @@ -136,7 +136,7 @@ int genl_register_mc_group(struct genl_family *family,
->  {
->         int id;
->         unsigned long *new_groups;
-> -       int err;
-> +       int err = 0;
->  
->         BUG_ON(grp->name[0] == '\0');
+Hi Takashi,
 
-this looks fishy. How does gcc thinks this variable is uninitialized. If
-I look at the code in Linus' tree, I don't see it.
+Today's linux-next build (x86_64 allmodconfig) produced this warning:
 
-Regards
+sound/soc/codecs/ad1938.c:458: warning: initialization from incompatible po=
+inter type
 
-Marcel
+Introduced by commit a5479e389e989acfeca9c32eeb0083d086202280 ("ASoC:
+change set_tdm_slot api to allow slot_width override").
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+--Signature=_Wed__12_Aug_2009_11_13_49_+1000_7g8nKtU_uMrUGpLp
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkqCF00ACgkQjjKRsyhoI8xQxQCfYA6qnHbPW1m2eASbYE3SXSmT
+2XcAmwdSGZEEdB9GNiq4+WBUvUBBKV12
+=EBO2
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__12_Aug_2009_11_13_49_+1000_7g8nKtU_uMrUGpLp--
