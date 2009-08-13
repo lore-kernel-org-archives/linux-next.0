@@ -1,63 +1,41 @@
-From: Lin Ming <ming.m.lin@intel.com>
-Subject: [PATCH] acpi: fix null pointer deference of hardware_id string
-Date: Thu, 13 Aug 2009 11:12:05 +0800
-Message-ID: <1250133125.4044.19.camel@minggr.sh.intel.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: linux-next: pci tree build warning
+Date: Thu, 13 Aug 2009 13:32:40 +1000
+Message-ID: <1250134360.3587.77.camel@pasglop>
+References: <20090813124732.f29fd5c3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:33956 "EHLO mga01.intel.com"
+Received: from gate.crashing.org ([63.228.1.57]:42580 "EHLO gate.crashing.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751630AbZHMDPv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 12 Aug 2009 23:15:51 -0400
+	id S1752663AbZHMDdI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 Aug 2009 23:33:08 -0400
+In-Reply-To: <20090813124732.f29fd5c3.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: thomas@m3y3r.de, linux-acpi <linux-acpi@vger.kernel.org>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tiago Vignatti <tiago.vignatti@nokia.com>, Dave Airlie <airlied@redhat.com>
 
-From: Lin Ming <ming.m.lin@intel.com>
-Date: Thu, 13 Aug 2009 11:04:47 +0800
-Subject: [PATCH] acpi: fix null pointer deference of hardware_id string
+On Thu, 2009-08-13 at 12:47 +1000, Stephen Rothwell wrote:
+> Hi Jesse,
+> 
+> Today's linux-next build (x86_64 allmodconfig) produced these warnings:
+> 
+> drivers/gpu/vga/vgaarb.c: In function 'vga_arb_write':
+> drivers/gpu/vga/vgaarb.c:834: warning: cast from pointer to integer of different size
+> drivers/gpu/vga/vgaarb.c:870: warning: cast from pointer to integer of different size
+> drivers/gpu/vga/vgaarb.c:920: warning: cast from pointer to integer of different size
+> drivers/gpu/vga/vgaarb.c:963: warning: cast from pointer to integer of different size
+> drivers/gpu/vga/vgaarb.c:1017: warning: cast from pointer to integer of different size
+> 
+> Introduced by commit a49c9c1b728fa8f50816d96a0f135e15a359e448 ("PCI/GPU:
+> implement VGA arbitration on Linux").
 
-This regression was caused by commit ed44482
-"ACPICA: Major update for acpi_get_object_info external interface"
+Right, somebody weirdly decided to cast pointers to int just to printk
+them with %X :-) I hope it wasn't me ... 
 
-Don't need to set hardware_id string \0 terminated here,
-acpi_get_object_info already handles it.
+Just remove the casts and use %p instead.
 
-Tested-by: Thomas Meyer <thomas@m3y3r.de>
-Signed-off-by: Lin Ming <ming.m.lin@intel.com>
----
- drivers/char/agp/hp-agp.c         |    6 ++++--
- drivers/pci/hotplug/acpiphp_ibm.c |    1 -
- 2 files changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/char/agp/hp-agp.c b/drivers/char/agp/hp-agp.c
-index 7bead4c..d83c4a8 100644
---- a/drivers/char/agp/hp-agp.c
-+++ b/drivers/char/agp/hp-agp.c
-@@ -492,8 +492,10 @@ zx1_gart_probe (acpi_handle obj, u32 depth, void *context, void **ret)
- 		status = acpi_get_object_info(handle, &info);
- 		if (ACPI_SUCCESS(status)) {
- 			/* TBD check _CID also */
--			info->hardware_id.string[sizeof(info->hardware_id.length)-1] = '\0';
--			match = (strcmp(info->hardware_id.string, "HWP0001") == 0);
-+			if (info->valid & ACPI_VALID_HID)
-+				match = !strcmp(info->hardware_id.string, "HWP0001");
-+			else
-+				match = 0;
- 			kfree(info);
- 			if (match) {
- 				status = hp_acpi_csr_space(handle, &sba_hpa, &length);
-diff --git a/drivers/pci/hotplug/acpiphp_ibm.c b/drivers/pci/hotplug/acpiphp_ibm.c
-index a9d926b..e7be66d 100644
---- a/drivers/pci/hotplug/acpiphp_ibm.c
-+++ b/drivers/pci/hotplug/acpiphp_ibm.c
-@@ -406,7 +406,6 @@ static acpi_status __init ibm_find_acpi_device(acpi_handle handle,
- 			__func__, status);
- 		return retval;
- 	}
--	info->hardware_id.string[sizeof(info->hardware_id.length) - 1] = '\0';
- 
- 	if (info->current_status && (info->valid & ACPI_VALID_HID) &&
- 			(!strcmp(info->hardware_id.string, IBM_HARDWARE_ID1) ||
+Cheers,
+Ben.
