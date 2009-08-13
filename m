@@ -1,41 +1,65 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: pci tree build warning
-Date: Thu, 13 Aug 2009 13:32:40 +1000
-Message-ID: <1250134360.3587.77.camel@pasglop>
-References: <20090813124732.f29fd5c3.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tip tree with the net tree
+Date: Thu, 13 Aug 2009 14:04:07 +1000
+Message-ID: <20090813140407.1a9a909c.sfr@canb.auug.org.au>
+References: <20090807164705.725869c1.sfr@canb.auug.org.au>
+	<20090812.173325.255498124.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__13_Aug_2009_14_04_07_+1000__1PkpSS2Li4I2pBu"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:42580 "EHLO gate.crashing.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47927 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752663AbZHMDdI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 12 Aug 2009 23:33:08 -0400
-In-Reply-To: <20090813124732.f29fd5c3.sfr@canb.auug.org.au>
+	id S1751210AbZHMEEX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 Aug 2009 00:04:23 -0400
+In-Reply-To: <20090812.173325.255498124.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tiago Vignatti <tiago.vignatti@nokia.com>, Dave Airlie <airlied@redhat.com>
+To: David Miller <davem@davemloft.net>
+Cc: tglx@linutronix.de, mingo@elte.hu, hpa@zytor.com, peterz@infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de, jengelh@medozas.de
 
-On Thu, 2009-08-13 at 12:47 +1000, Stephen Rothwell wrote:
-> Hi Jesse,
-> 
-> Today's linux-next build (x86_64 allmodconfig) produced these warnings:
-> 
-> drivers/gpu/vga/vgaarb.c: In function 'vga_arb_write':
-> drivers/gpu/vga/vgaarb.c:834: warning: cast from pointer to integer of different size
-> drivers/gpu/vga/vgaarb.c:870: warning: cast from pointer to integer of different size
-> drivers/gpu/vga/vgaarb.c:920: warning: cast from pointer to integer of different size
-> drivers/gpu/vga/vgaarb.c:963: warning: cast from pointer to integer of different size
-> drivers/gpu/vga/vgaarb.c:1017: warning: cast from pointer to integer of different size
-> 
-> Introduced by commit a49c9c1b728fa8f50816d96a0f135e15a359e448 ("PCI/GPU:
-> implement VGA arbitration on Linux").
+--Signature=_Thu__13_Aug_2009_14_04_07_+1000__1PkpSS2Li4I2pBu
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Right, somebody weirdly decided to cast pointers to int just to printk
-them with %X :-) I hope it wasn't me ... 
+Hi Dave,
 
-Just remove the casts and use %p instead.
+On Wed, 12 Aug 2009 17:33:25 -0700 (PDT) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 7 Aug 2009 16:47:05 +1000
+>=20
+> > Today's linux-next merge of the tip tree got a conflict in
+> > arch/x86/include/asm/socket.h between commits
+> > 49c794e94649020248e37b78db16cd25bad38b4f ("net: implement a SO_PROTOCOL
+> > getsockoption") and 0d6038ee76f2e06b79d0465807f67e86bf4025de ("net:
+> > implement a SO_DOMAIN getsockoption") from the net tree and commit
+> > 73a2d096fdf23aa841f7595d114a11ec85a85e4d ("x86: remove all now-duplicate
+> > header files") from the tip tree.
+> >=20
+> > The latter change supercedes the former ones, so I used the latter.
+>=20
+> That should be the correct merge resolution, thanks!
 
+OK, thanks for the confirmation.
+
+--=20
 Cheers,
-Ben.
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__13_Aug_2009_14_04_07_+1000__1PkpSS2Li4I2pBu
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkqDkLcACgkQjjKRsyhoI8wN6QCfYQmL8dVBweeD52mf50I4fkqx
+ovkAoIM6m1h5CKvO8Bf7aXhMUNlMiY77
+=gK1s
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__13_Aug_2009_14_04_07_+1000__1PkpSS2Li4I2pBu--
