@@ -1,50 +1,63 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: kvm tree build failure
-Date: Thu, 13 Aug 2009 12:58:40 +1000
-Message-ID: <20090813125840.048af293.sfr@canb.auug.org.au>
+From: Lin Ming <ming.m.lin@intel.com>
+Subject: [PATCH] acpi: fix null pointer deference of hardware_id string
+Date: Thu, 13 Aug 2009 11:12:05 +0800
+Message-ID: <1250133125.4044.19.camel@minggr.sh.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__13_Aug_2009_12_58_40_+1000_K.H+UJW_RLzvL7Ab"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59222 "EHLO smtps.tip.net.au"
+Received: from mga01.intel.com ([192.55.52.88]:33956 "EHLO mga01.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752040AbZHMC6q (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 12 Aug 2009 22:58:46 -0400
+	id S1751630AbZHMDPv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 Aug 2009 23:15:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@qumranet.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Len Brown <lenb@kernel.org>
+Cc: thomas@m3y3r.de, linux-acpi <linux-acpi@vger.kernel.org>, linux-next@vger.kernel.org
 
---Signature=_Thu__13_Aug_2009_12_58_40_+1000_K.H+UJW_RLzvL7Ab
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Lin Ming <ming.m.lin@intel.com>
+Date: Thu, 13 Aug 2009 11:04:47 +0800
+Subject: [PATCH] acpi: fix null pointer deference of hardware_id string
 
-Hi Avi,
+This regression was caused by commit ed44482
+"ACPICA: Major update for acpi_get_object_info external interface"
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+Don't need to set hardware_id string \0 terminated here,
+acpi_get_object_info already handles it.
 
-x86_64-linux-gcc: arch/x86/kvm/x86_emulate.c: No such file or directory
+Tested-by: Thomas Meyer <thomas@m3y3r.de>
+Signed-off-by: Lin Ming <ming.m.lin@intel.com>
+---
+ drivers/char/agp/hp-agp.c         |    6 ++++--
+ drivers/pci/hotplug/acpiphp_ibm.c |    1 -
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-Caused by commit 5383e9982ee230b06b3c385e675ae6fc7846c40f ("KVM: Rename
-x86_emulate.c to emulate.c").
-
-I have used the version of the kvm tree from next-20090812 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__13_Aug_2009_12_58_40_+1000_K.H+UJW_RLzvL7Ab
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkqDgWAACgkQjjKRsyhoI8wBwwCcCLpWhhdhFpw3xCw0C9L4mezt
-57AAnAyJFp5uRQVQ8xEz9PAAREi9wTt1
-=L+1u
------END PGP SIGNATURE-----
-
---Signature=_Thu__13_Aug_2009_12_58_40_+1000_K.H+UJW_RLzvL7Ab--
+diff --git a/drivers/char/agp/hp-agp.c b/drivers/char/agp/hp-agp.c
+index 7bead4c..d83c4a8 100644
+--- a/drivers/char/agp/hp-agp.c
++++ b/drivers/char/agp/hp-agp.c
+@@ -492,8 +492,10 @@ zx1_gart_probe (acpi_handle obj, u32 depth, void *context, void **ret)
+ 		status = acpi_get_object_info(handle, &info);
+ 		if (ACPI_SUCCESS(status)) {
+ 			/* TBD check _CID also */
+-			info->hardware_id.string[sizeof(info->hardware_id.length)-1] = '\0';
+-			match = (strcmp(info->hardware_id.string, "HWP0001") == 0);
++			if (info->valid & ACPI_VALID_HID)
++				match = !strcmp(info->hardware_id.string, "HWP0001");
++			else
++				match = 0;
+ 			kfree(info);
+ 			if (match) {
+ 				status = hp_acpi_csr_space(handle, &sba_hpa, &length);
+diff --git a/drivers/pci/hotplug/acpiphp_ibm.c b/drivers/pci/hotplug/acpiphp_ibm.c
+index a9d926b..e7be66d 100644
+--- a/drivers/pci/hotplug/acpiphp_ibm.c
++++ b/drivers/pci/hotplug/acpiphp_ibm.c
+@@ -406,7 +406,6 @@ static acpi_status __init ibm_find_acpi_device(acpi_handle handle,
+ 			__func__, status);
+ 		return retval;
+ 	}
+-	info->hardware_id.string[sizeof(info->hardware_id.length) - 1] = '\0';
+ 
+ 	if (info->current_status && (info->valid & ACPI_VALID_HID) &&
+ 			(!strcmp(info->hardware_id.string, IBM_HARDWARE_ID1) ||
