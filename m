@@ -1,23 +1,24 @@
-From: "John W. Linville" <linville@tuxdriver.com>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
 Subject: Re: linux-next: ground rules
-Date: Fri, 14 Aug 2009 08:07:59 -0400
-Message-ID: <20090814120759.GA2650@tuxdriver.com>
+Date: Fri, 14 Aug 2009 08:56:13 -0500
+Message-ID: <1250258173.4021.3.camel@mulgrave.site>
 References: <20090814180246.9ac3e78e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:42661 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753959AbZHNMPR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Aug 2009 08:15:17 -0400
-Content-Disposition: inline
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:35539 "EHLO
+	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755626AbZHNN4P (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 14 Aug 2009 09:56:15 -0400
 In-Reply-To: <20090814180246.9ac3e78e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
 
-On Fri, Aug 14, 2009 at 06:02:46PM +1000, Stephen Rothwell wrote:
+On Fri, 2009-08-14 at 18:02 +1000, Stephen Rothwell wrote:
 > [This email has been bcc'd to all the current contributors to
 > linux-next.  No response is required unless you have some issue with the
 > following.]
@@ -36,13 +37,18 @@ On Fri, Aug 14, 2009 at 06:02:46PM +1000, Stephen Rothwell wrote:
 >      * posted to the relevant mailing list,
 >      * reviewed by you (or another maintainer of your subsystem tree),
 >      * successfully unit tested, and 
+
+The rest are fine, but this one isn't feasible for a driver tree ... I
+don't have all the hardware, and people will insist on fixing
+theoretical bugs in drivers we can't test on.
+
+A lot of time, bugs turn up in this code only after it has been on
+release for several months and the small pool of HW owners actually gets
+around to testing it.
+
+Additionally, I have to carry patches on trust for HW I'm never likely
+to see outside someones multi-million dollar lab.
+
 >      * destined for the current or next Linux merge window.
-> 
-> Basically, this should be just what you would send to Linus (or ask him
-> to fetch).  It is allowed to be rebased if you deem it necessary.
 
-ACK (if that helps!)
-
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
+James
