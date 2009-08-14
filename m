@@ -1,46 +1,48 @@
-From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Subject: [PATCH] next-20090813 DX SEP driver build breaks with CONFIG_PCI=n
-Date: Fri, 14 Aug 2009 15:52:50 +0530
-Message-ID: <20090814102250.GA4162@linux.vnet.ibm.com>
-References: <20090813200559.6bf4f5d9.sfr@canb.auug.org.au>
-Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: linux-next: ground rules
+Date: Fri, 14 Aug 2009 08:07:59 -0400
+Message-ID: <20090814120759.GA2650@tuxdriver.com>
+References: <20090814180246.9ac3e78e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754775AbZHNKWw@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:42661 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753959AbZHNMPR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Aug 2009 08:15:17 -0400
 Content-Disposition: inline
-In-Reply-To: <20090813200559.6bf4f5d9.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <gregkh@suse.de>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, mark.a.allyn@intel.com
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20090814180246.9ac3e78e.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
 
-Hi Greg,
+On Fri, Aug 14, 2009 at 06:02:46PM +1000, Stephen Rothwell wrote:
+> [This email has been bcc'd to all the current contributors to
+> linux-next.  No response is required unless you have some issue with the
+> following.]
+> 
+> Thanks for being a participant of linux-next.  I have been asked by my 
+> employer to send you this e-mail summarizing these "ground rules" for the 
+> project:
+> 
+> The linux-next integration testing is not a judgment of your code.  The 
+> purpose of linux-next is for integration testing and to lower the impact 
+> of conflicts between subsystems in the next merge window. 
+> 
+> You need to ensure that the patches/commits in your tree/series have been:
+>      * submitted under GPL v2 (or later) and include the Contributor's
+> 	Signed-off-by,
+>      * posted to the relevant mailing list,
+>      * reviewed by you (or another maintainer of your subsystem tree),
+>      * successfully unit tested, and 
+>      * destined for the current or next Linux merge window.
+> 
+> Basically, this should be just what you would send to Linus (or ask him
+> to fetch).  It is allowed to be rebased if you deem it necessary.
 
-	next-20090813 randconfig build breaks Discretix SEP driver when
-configured with CONFIG_PCI=n.
+ACK (if that helps!)
 
-drivers/staging/sep/sep_driver.c: In function 'sep_probe':
-drivers/staging/sep/sep_driver.c:2548: error: implicit declaration of function 'pci_dev_get'
-
-This patch adds the dependency on PCI for the DX SEP driver.
-
-Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
---
- drivers/staging/sep/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/staging/sep/Kconfig b/drivers/staging/sep/Kconfig
-index 6ef59f8..0a9c39c 100644
---- a/drivers/staging/sep/Kconfig
-+++ b/drivers/staging/sep/Kconfig
-@@ -1,7 +1,7 @@
- config DX_SEP
- 	tristate "Discretix SEP driver"
- #	depends on MRST
--	depends on RAR_REGISTER
-+	depends on RAR_REGISTER && PCI
- 	default y
- 	help
- 	  Discretix SEP driver
-			
-					Kamalesh
+-- 
+John W. Linville		Someday the world will need a hero, and you
+linville@tuxdriver.com			might be all we have.  Be ready.
