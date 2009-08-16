@@ -1,60 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
 Subject: Re: mm/ipw2200 regression (was: Re: linux-next: Tree for August 6)
-Date: Sun, 16 Aug 2009 17:31:01 +1000
-Message-ID: <20090816173101.6e47b702.sfr@canb.auug.org.au>
-References: <20090806192209.513abec7.sfr@canb.auug.org.au>
-	<200908062250.51498.bzolnier@gmail.com>
-	<200908071515.45169.bzolnier@gmail.com>
-	<200908151856.48596.bzolnier@gmail.com>
+Date: Sun, 16 Aug 2009 12:17:12 +0200
+Message-ID: <200908161217.12963.bzolnier@gmail.com>
+References: <20090806192209.513abec7.sfr@canb.auug.org.au> <200908151856.48596.bzolnier@gmail.com> <20090816173101.6e47b702.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sun__16_Aug_2009_17_31_01_+1000_+6c3MUXKSgOxtZ7o"
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <200908151856.48596.bzolnier@gmail.com>
-Sender: owner-linux-mm@kvack.org
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Cc: linux-mm@kvack.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Sun__16_Aug_2009_17_31_01_+1000_+6c3MUXKSgOxtZ7o
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-fx0-f215.google.com ([209.85.220.215]:57064 "EHLO
+	mail-fx0-f215.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751887AbZHPKSJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 16 Aug 2009 06:18:09 -0400
+In-Reply-To: <20090816173101.6e47b702.sfr@canb.auug.org.au>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-mm@kvack.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>
 
-Hi Bart,
 
-On Sat, 15 Aug 2009 18:56:48 +0200 Bartlomiej Zolnierkiewicz <bzolnier@gmai=
-l.com> wrote:
->
-> The bug managed to slip into Linus' tree..
->=20
-> ipw2200: Firmware error detected.  Restarting.
-> ipw2200/0: page allocation failure. order:6, mode:0x8020
-> Pid: 945, comm: ipw2200/0 Not tainted 2.6.31-rc6-dirty #69
-                                                   ^^^^^
-So, this is rc6 plus what?  (just in case it is relevant).
+Hi,
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+On Sunday 16 August 2009 09:31:01 Stephen Rothwell wrote:
+> Hi Bart,
+> 
+> On Sat, 15 Aug 2009 18:56:48 +0200 Bartlomiej Zolnierkiewicz <bzolnier@gmail.com> wrote:
+> >
+> > The bug managed to slip into Linus' tree..
+> > 
+> > ipw2200: Firmware error detected.  Restarting.
+> > ipw2200/0: page allocation failure. order:6, mode:0x8020
+> > Pid: 945, comm: ipw2200/0 Not tainted 2.6.31-rc6-dirty #69
+>                                                    ^^^^^
+> So, this is rc6 plus what?  (just in case it is relevant).
 
---Signature=_Sun__16_Aug_2009_17_31_01_+1000_+6c3MUXKSgOxtZ7o
-Content-Type: application/pgp-signature
+In this case plus upcoming staging/rt{286,287,307}0 patches (irrelevant,
+they are not used on this machine and the problem happened many times
+with vanilla -next kernels in the past)..
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkqHtbUACgkQjjKRsyhoI8zhbQCZAVTfcWmZU0Dghmfh3ADZ2kL2
-LyQAoLsN7Zd63GWHW1AZKHxsu/q5K43T
-=UIR2
------END PGP SIGNATURE-----
-
---Signature=_Sun__16_Aug_2009_17_31_01_+1000_+6c3MUXKSgOxtZ7o--
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+After going through mm commits in Linus' tree I think that the bug came
+the other way around, from akpm's tree to Linus' tree and then to -next
+(page allocator changes seem to match "the suspect's profile")..
