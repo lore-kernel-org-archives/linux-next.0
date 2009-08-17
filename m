@@ -1,67 +1,48 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] staging/sep: fix build error & warning & kconfig
-Date: Mon, 17 Aug 2009 13:35:30 -0700
-Message-ID: <4A89BF12.6020908@xenotime.net>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] phonet: fix build when PROC_FS is disabled
+Date: Mon, 17 Aug 2009 13:35:49 -0700
+Message-ID: <4A89BF25.9010404@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xenotime.net ([72.52.64.118]:52356 "HELO xenotime.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-	id S1753186AbZHQUdx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Aug 2009 16:33:53 -0400
-Received: from ::ffff:96.253.169.185 ([96.253.169.185]) by xenotime.net for <linux-next@vger.kernel.org>; Mon, 17 Aug 2009 13:33:54 -0700
+Received: from acsinet12.oracle.com ([141.146.126.234]:41188 "EHLO
+	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751797AbZHQUfZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Aug 2009 16:35:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
-Cc: Greg KH <gregkh@suse.de>, Andrew Morton <akpm@linux-foundation.org>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Netdev <netdev@vger.kernel.org>
+Cc: David Miller <davem@davemloft.net>, Andrew Morton <akpm@linux-foundation.org>
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Fix sep_driver build when CONFIG_PCI=n:
+Fix phonet build when PROC_FS is not enabled:
 
-drivers/staging/sep/sep_driver.c:2548: error: implicit declaration of function 'pci_dev_get'
-
-and printk format warning:
-
-drivers/staging/sep/sep_driver.c:290:
-warning: format '%d' expects type 'int', but argument 2 has type 'long unsigned
- int'
-
-Also, the default kconfig value should not be 'y'.
-
-And something should be done about this warning (but I didn't fix it):
-drivers/staging/sep/sep_driver.c:1780: warning: 'error' may be used uninitialized in this function
+net/built-in.o: In function `pn_sock_open':
+socket.c:(.text+0x23c649): undefined reference to `seq_open_net'
+net/built-in.o:(.rodata+0x21018): undefined reference to `seq_release_net'
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 ---
- drivers/staging/sep/Kconfig      |    3 +--
- drivers/staging/sep/sep_driver.c |    2 +-
- 2 files changed, 2 insertions(+), 3 deletions(-)
+ net/phonet/socket.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- linux-next-20090817.orig/drivers/staging/sep/Kconfig
-+++ linux-next-20090817/drivers/staging/sep/Kconfig
-@@ -1,8 +1,7 @@
- config DX_SEP
- 	tristate "Discretix SEP driver"
- #	depends on MRST
--	depends on RAR_REGISTER
--	default y
-+	depends on RAR_REGISTER && PCI
- 	help
- 	  Discretix SEP driver
- 
---- linux-next-20090817.orig/drivers/staging/sep/sep_driver.c
-+++ linux-next-20090817/drivers/staging/sep/sep_driver.c
-@@ -287,7 +287,7 @@ static int sep_map_and_alloc_shared_area
- 	sep->shared_area = sep->shared_addr;
- 	/* set the physical address of the shared area */
- 	sep->shared_area_bus = sep->shared_bus;
--	edbg("sep: shared_area %d bytes @%p (bus %08llx)\n",
-+	edbg("sep: shared_area %lu bytes @%p (bus %08llx)\n",
- 		size, sep->shared_addr, (unsigned long long)sep->shared_bus);
- 	return 0;
+--- linux-next-20090817.orig/net/phonet/socket.c
++++ linux-next-20090817/net/phonet/socket.c
+@@ -413,6 +413,7 @@ found:
  }
+ EXPORT_SYMBOL(pn_sock_get_port);
+ 
++#ifdef CONFIG_PROC_FS
+ static struct sock *pn_sock_get_idx(struct seq_file *seq, loff_t pos)
+ {
+ 	struct net *net = seq_file_net(seq);
+@@ -509,3 +510,4 @@ const struct file_operations pn_sock_seq
+ 	.llseek = seq_lseek,
+ 	.release = seq_release_net,
+ };
++#endif
 
 
 
