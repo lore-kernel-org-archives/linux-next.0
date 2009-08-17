@@ -1,37 +1,50 @@
-From: "=?iso-8859-1?q?R=E9mi?= Denis-Courmont" <remi@remlab.net>
-Subject: Re: [PATCH -next] phonet: fix build when PROC_FS is disabled
-Date: Mon, 17 Aug 2009 23:43:43 +0300
-Message-ID: <200908172343.44744.remi@remlab.net>
-References: <4A89BF25.9010404@oracle.com>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH -next] trace_skb: fix build when CONFIG_NET is not
+	enabled
+Date: Mon, 17 Aug 2009 23:58:08 +0200
+Message-ID: <20090817215808.GB15016@elte.hu>
+References: <4A89BF90.5070202@oracle.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from yop.chewa.net ([91.121.105.214]:34494 "EHLO yop.chewa.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752594AbZHQUuu convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Aug 2009 16:50:50 -0400
-In-Reply-To: <4A89BF25.9010404@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1758175AbZHQV60@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4A89BF90.5070202@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Netdev <netdev@vger.kernel.org>, David Miller <davem@davemloft.net>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Neil Horman <nhorman@tuxdriver.com>, Steven Rostedt <rostedt@goodmis.org>
+List-Id: linux-next.vger.kernel.org
 
-Le lundi 17 ao=FBt 2009 23:35:49 Randy Dunlap, vous avez =E9crit :
+
+* Randy Dunlap <randy.dunlap@oracle.com> wrote:
+
 > From: Randy Dunlap <randy.dunlap@oracle.com>
->
-> Fix phonet build when PROC_FS is not enabled:
->
-> net/built-in.o: In function `pn_sock_open':
-> socket.c:(.text+0x23c649): undefined reference to `seq_open_net'
-> net/built-in.o:(.rodata+0x21018): undefined reference to `seq_release=
-_net'
->
+> 
+> Fix trace_skb_sources build when CONFIG_NET is not enabled:
+> 
+> kernel/built-in.o: In function `probe_skb_dequeue':
+> trace_skb_sources.c:(.text+0xd9152): undefined reference to `init_net'
+> trace_skb_sources.c:(.text+0xd9188): undefined reference to `dev_get_by_index'
+> 
 > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Cc: Neil Horman <nhorman@tuxdriver.com>
+> ---
+>  kernel/trace/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20090817.orig/kernel/trace/Kconfig
+> +++ linux-next-20090817/kernel/trace/Kconfig
+> @@ -236,6 +236,7 @@ config BOOT_TRACER
+>  
+>  config SKB_SOURCES_TRACER
+>  	bool "Trace skb source information"
+> +	depends on NET
+>  	select GENERIC_TRACER
+>  	help
+>  	   This tracer helps developers/sysadmins correlate skb allocation and
 
-Acked-by: R=E9mi Denis-Courmont <remi.denis-courmont@nokia.com>
+Hm, there's nothing like this in the tracing tree.
 
+Could we please move kernel/trace/* commits to the tracing tree, so 
+that it gets adequate testing and review, etc?
 
---=20
-R=E9mi Denis-Courmont
-http://www.remlab.net/
+	Ingo
