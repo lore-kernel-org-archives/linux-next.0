@@ -1,50 +1,44 @@
-From: Ingo Molnar <mingo@elte.hu>
+From: David Miller <davem@davemloft.net>
 Subject: Re: [PATCH -next] trace_skb: fix build when CONFIG_NET is not
-	enabled
-Date: Mon, 17 Aug 2009 23:58:08 +0200
-Message-ID: <20090817215808.GB15016@elte.hu>
+ enabled
+Date: Mon, 17 Aug 2009 15:33:26 -0700 (PDT)
+Message-ID: <20090817.153326.69833512.davem@davemloft.net>
 References: <4A89BF90.5070202@oracle.com>
+	<20090817215808.GB15016@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1758175AbZHQV60@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4A89BF90.5070202@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Neil Horman <nhorman@tuxdriver.com>, Steven Rostedt <rostedt@goodmis.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:59713
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751176AbZHQWdP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Aug 2009 18:33:15 -0400
+In-Reply-To: <20090817215808.GB15016@elte.hu>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: mingo@elte.hu
+Cc: randy.dunlap@oracle.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, akpm@linux-foundation.org, nhorman@tuxdriver.com, rostedt@goodmis.org
 
+From: Ingo Molnar <mingo@elte.hu>
+Date: Mon, 17 Aug 2009 23:58:08 +0200
 
-* Randy Dunlap <randy.dunlap@oracle.com> wrote:
-
-> From: Randy Dunlap <randy.dunlap@oracle.com>
+>> --- linux-next-20090817.orig/kernel/trace/Kconfig
+>> +++ linux-next-20090817/kernel/trace/Kconfig
+>> @@ -236,6 +236,7 @@ config BOOT_TRACER
+>>  
+>>  config SKB_SOURCES_TRACER
+>>  	bool "Trace skb source information"
+>> +	depends on NET
+>>  	select GENERIC_TRACER
+>>  	help
+>>  	   This tracer helps developers/sysadmins correlate skb allocation and
 > 
-> Fix trace_skb_sources build when CONFIG_NET is not enabled:
+> Hm, there's nothing like this in the tracing tree.
 > 
-> kernel/built-in.o: In function `probe_skb_dequeue':
-> trace_skb_sources.c:(.text+0xd9152): undefined reference to `init_net'
-> trace_skb_sources.c:(.text+0xd9188): undefined reference to `dev_get_by_index'
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc: Neil Horman <nhorman@tuxdriver.com>
-> ---
->  kernel/trace/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> --- linux-next-20090817.orig/kernel/trace/Kconfig
-> +++ linux-next-20090817/kernel/trace/Kconfig
-> @@ -236,6 +236,7 @@ config BOOT_TRACER
->  
->  config SKB_SOURCES_TRACER
->  	bool "Trace skb source information"
-> +	depends on NET
->  	select GENERIC_TRACER
->  	help
->  	   This tracer helps developers/sysadmins correlate skb allocation and
+> Could we please move kernel/trace/* commits to the tracing tree, so 
+> that it gets adequate testing and review, etc?
 
-Hm, there's nothing like this in the tracing tree.
-
-Could we please move kernel/trace/* commits to the tracing tree, so 
-that it gets adequate testing and review, etc?
-
-	Ingo
+This one (like previous networking tracing changes Neil has
+made) touched a decent amount of networking code, and thus
+we integrated it into net-next-2.6
