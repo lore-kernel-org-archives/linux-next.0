@@ -1,42 +1,37 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: [PATCH -next] staging/sep: fix build error & warning & kconfig
-Date: Mon, 17 Aug 2009 13:42:09 -0700
-Message-ID: <20090817204209.GA9274@suse.de>
-References: <4A89BF12.6020908@xenotime.net>
+From: "=?iso-8859-1?q?R=E9mi?= Denis-Courmont" <remi@remlab.net>
+Subject: Re: [PATCH -next] phonet: fix build when PROC_FS is disabled
+Date: Mon, 17 Aug 2009 23:43:43 +0300
+Message-ID: <200908172343.44744.remi@remlab.net>
+References: <4A89BF25.9010404@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757390AbZHQUnh@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4A89BF12.6020908@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>, Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from yop.chewa.net ([91.121.105.214]:34494 "EHLO yop.chewa.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752594AbZHQUuu convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Aug 2009 16:50:50 -0400
+In-Reply-To: <4A89BF25.9010404@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Netdev <netdev@vger.kernel.org>, David Miller <davem@davemloft.net>, Andrew Morton <akpm@linux-foundation.org>
 
-On Mon, Aug 17, 2009 at 01:35:30PM -0700, Randy Dunlap wrote:
+Le lundi 17 ao=FBt 2009 23:35:49 Randy Dunlap, vous avez =E9crit :
 > From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Fix sep_driver build when CONFIG_PCI=n:
-> 
-> drivers/staging/sep/sep_driver.c:2548: error: implicit declaration of function 'pci_dev_get'
+>
+> Fix phonet build when PROC_FS is not enabled:
+>
+> net/built-in.o: In function `pn_sock_open':
+> socket.c:(.text+0x23c649): undefined reference to `seq_open_net'
+> net/built-in.o:(.rodata+0x21018): undefined reference to `seq_release=
+_net'
+>
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-I just merged a patch to fix this a few minutes ago.
+Acked-by: R=E9mi Denis-Courmont <remi.denis-courmont@nokia.com>
 
-> and printk format warning:
-> 
-> drivers/staging/sep/sep_driver.c:290:
-> warning: format '%d' expects type 'int', but argument 2 has type 'long unsigned
->  int'
 
-I think Alan is taking care of this stuff already.
-
-> Also, the default kconfig value should not be 'y'.
-> 
-> And something should be done about this warning (but I didn't fix it):
-> drivers/staging/sep/sep_driver.c:1780: warning: 'error' may be used uninitialized in this function
-
-Alan has already resolved this one.
-
-thanks,
-
-greg k-h
+--=20
+R=E9mi Denis-Courmont
+http://www.remlab.net/
