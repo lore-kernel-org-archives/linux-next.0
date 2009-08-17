@@ -1,19 +1,21 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next:  tree build failure
-Date: Mon, 17 Aug 2009 18:39:34 +1000
-Message-ID: <20090817183934.6fd7cf15.sfr@canb.auug.org.au>
+Subject: linux-next: suspend  tree build failure
+Date: Mon, 17 Aug 2009 18:40:48 +1000
+Message-ID: <20090817184048.db6d94f9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38118 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52112 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757147AbZHQIjj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Aug 2009 04:39:39 -0400
+	id S1757330AbZHQIkv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Aug 2009 04:40:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: "Rafael J. Wysocki" <rjw@sisk.pl>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+[Sorry if some get this twice, I fixed up the subject.]
 
 Hi Rafael,
 
