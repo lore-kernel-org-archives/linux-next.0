@@ -1,48 +1,42 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] trace_skb: fix build when CONFIG_NET is not enabled
-Date: Mon, 17 Aug 2009 13:37:36 -0700
-Message-ID: <4A89BF90.5070202@oracle.com>
+From: Greg KH <gregkh@suse.de>
+Subject: Re: [PATCH -next] staging/sep: fix build error & warning & kconfig
+Date: Mon, 17 Aug 2009 13:42:09 -0700
+Message-ID: <20090817204209.GA9274@suse.de>
+References: <4A89BF12.6020908@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet12.oracle.com ([148.87.113.124]:16802 "EHLO
-	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753186AbZHQUgt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Aug 2009 16:36:49 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Neil Horman <nhorman@tuxdriver.com>, Steven Rostedt <rostedt@goodmis.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757390AbZHQUnh@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4A89BF12.6020908@xenotime.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>, Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Mon, Aug 17, 2009 at 01:35:30PM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> Fix sep_driver build when CONFIG_PCI=n:
+> 
+> drivers/staging/sep/sep_driver.c:2548: error: implicit declaration of function 'pci_dev_get'
 
-Fix trace_skb_sources build when CONFIG_NET is not enabled:
+I just merged a patch to fix this a few minutes ago.
 
-kernel/built-in.o: In function `probe_skb_dequeue':
-trace_skb_sources.c:(.text+0xd9152): undefined reference to `init_net'
-trace_skb_sources.c:(.text+0xd9188): undefined reference to `dev_get_by_index'
+> and printk format warning:
+> 
+> drivers/staging/sep/sep_driver.c:290:
+> warning: format '%d' expects type 'int', but argument 2 has type 'long unsigned
+>  int'
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Neil Horman <nhorman@tuxdriver.com>
----
- kernel/trace/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+I think Alan is taking care of this stuff already.
 
---- linux-next-20090817.orig/kernel/trace/Kconfig
-+++ linux-next-20090817/kernel/trace/Kconfig
-@@ -236,6 +236,7 @@ config BOOT_TRACER
- 
- config SKB_SOURCES_TRACER
- 	bool "Trace skb source information"
-+	depends on NET
- 	select GENERIC_TRACER
- 	help
- 	   This tracer helps developers/sysadmins correlate skb allocation and
+> Also, the default kconfig value should not be 'y'.
+> 
+> And something should be done about this warning (but I didn't fix it):
+> drivers/staging/sep/sep_driver.c:1780: warning: 'error' may be used uninitialized in this function
 
+Alan has already resolved this one.
 
+thanks,
 
--- 
-~Randy
-LPC 2009, Sept. 23-25, Portland, Oregon
-http://linuxplumbersconf.org/2009/
+greg k-h
