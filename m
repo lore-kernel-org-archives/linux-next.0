@@ -1,45 +1,71 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: suspend  tree build failure
-Date: Mon, 17 Aug 2009 14:06:02 +0200
-Message-ID: <200908171406.02278.rjw@sisk.pl>
-References: <20090817184048.db6d94f9.sfr@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] staging/sep: fix build error & warning & kconfig
+Date: Mon, 17 Aug 2009 13:35:30 -0700
+Message-ID: <4A89BF12.6020908@xenotime.net>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:48196 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751272AbZHQMFI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Aug 2009 08:05:08 -0400
-In-Reply-To: <20090817184048.db6d94f9.sfr@canb.auug.org.au>
+Received: from xenotime.net ([72.52.64.118]:52356 "HELO xenotime.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+	id S1753186AbZHQUdx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 Aug 2009 16:33:53 -0400
+Received: from ::ffff:96.253.169.185 ([96.253.169.185]) by xenotime.net for <linux-next@vger.kernel.org>; Mon, 17 Aug 2009 13:33:54 -0700
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
+Cc: Greg KH <gregkh@suse.de>, Andrew Morton <akpm@linux-foundation.org>
 
-On Monday 17 August 2009, Stephen Rothwell wrote:
-> [Sorry if some get this twice, I fixed up the subject.]
-> 
-> Hi Rafael,
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Hi,
+Fix sep_driver build when CONFIG_PCI=n:
 
-> Today's linux-next build (powerpc allyesconfig) failed like this:
-> 
-> drivers/base/power/runtime.c:948: error: __ksymtab_pm_runtime_disable causes a section type conflict
-> 
-> Caused by commit d9d4cc5169ca18df9ff5afd31c6e6b715ecb454a ("PM: Introduce
-> core framework for run-time PM of I/O devices (rev. 17)") from the
-> suspend tree.  This commit EXPORTs pm_runtime_disable which is an inline
-> function that calls __pm_runtime_disable (which is probably what was
-> meant to be EXPORTed).
-> 
-> I wish we could get these type of errors to fail on x86 as well ...
-> 
-> I have applied the following patch for today.
+drivers/staging/sep/sep_driver.c:2548: error: implicit declaration of function 'pci_dev_get'
 
-Thanks for the patch, I'll fix up the tree later today.
+and printk format warning:
 
-Best,
-Rafael
+drivers/staging/sep/sep_driver.c:290:
+warning: format '%d' expects type 'int', but argument 2 has type 'long unsigned
+ int'
+
+Also, the default kconfig value should not be 'y'.
+
+And something should be done about this warning (but I didn't fix it):
+drivers/staging/sep/sep_driver.c:1780: warning: 'error' may be used uninitialized in this function
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/staging/sep/Kconfig      |    3 +--
+ drivers/staging/sep/sep_driver.c |    2 +-
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+--- linux-next-20090817.orig/drivers/staging/sep/Kconfig
++++ linux-next-20090817/drivers/staging/sep/Kconfig
+@@ -1,8 +1,7 @@
+ config DX_SEP
+ 	tristate "Discretix SEP driver"
+ #	depends on MRST
+-	depends on RAR_REGISTER
+-	default y
++	depends on RAR_REGISTER && PCI
+ 	help
+ 	  Discretix SEP driver
+ 
+--- linux-next-20090817.orig/drivers/staging/sep/sep_driver.c
++++ linux-next-20090817/drivers/staging/sep/sep_driver.c
+@@ -287,7 +287,7 @@ static int sep_map_and_alloc_shared_area
+ 	sep->shared_area = sep->shared_addr;
+ 	/* set the physical address of the shared area */
+ 	sep->shared_area_bus = sep->shared_bus;
+-	edbg("sep: shared_area %d bytes @%p (bus %08llx)\n",
++	edbg("sep: shared_area %lu bytes @%p (bus %08llx)\n",
+ 		size, sep->shared_addr, (unsigned long long)sep->shared_bus);
+ 	return 0;
+ }
+
+
+
+-- 
+~Randy
+LPC 2009, Sept. 23-25, Portland, Oregon
+http://linuxplumbersconf.org/2009/
