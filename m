@@ -1,39 +1,172 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH -next] phonet: fix build when PROC_FS is disabled
-Date: Mon, 17 Aug 2009 17:49:19 -0700 (PDT)
-Message-ID: <20090817.174919.265251863.davem@davemloft.net>
-References: <4A89BF25.9010404@oracle.com>
-	<200908172343.44744.remi@remlab.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the fsnotify tree with Linus' tree
+Date: Tue, 18 Aug 2009 15:17:51 +1000
+Message-ID: <20090818151751.c96a8f49.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:37348
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750774AbZHRAtI convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 Aug 2009 20:49:08 -0400
-In-Reply-To: <200908172343.44744.remi@remlab.net>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43721 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750908AbZHRFRx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 Aug 2009 01:17:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: remi@remlab.net
-Cc: randy.dunlap@oracle.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, netdev@vger.kernel.org, akpm@linux-foundation.org
+To: Eric Paris <eparis@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-=46rom: "R=E9mi Denis-Courmont" <remi@remlab.net>
-Date: Mon, 17 Aug 2009 23:43:43 +0300
+Hi Eric,
 
-> Le lundi 17 ao=FBt 2009 23:35:49 Randy Dunlap, vous avez =E9crit :
->> From: Randy Dunlap <randy.dunlap@oracle.com>
->>
->> Fix phonet build when PROC_FS is not enabled:
->>
->> net/built-in.o: In function `pn_sock_open':
->> socket.c:(.text+0x23c649): undefined reference to `seq_open_net'
->> net/built-in.o:(.rodata+0x21018): undefined reference to `seq_releas=
-e_net'
->>
->> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
->=20
-> Acked-by: R=E9mi Denis-Courmont <remi.denis-courmont@nokia.com>
+Today's linux-next merge of the fsnotify tree got conflicts in
+fs/notify/inotify/inotify_fsnotify.c, fs/notify/inotify/inotify_user.c
+and fs/notify/notification.c between commits
+eef3a116be11d35396efb2a8cc7345fd3221e294 ("notify: unused event private
+race") and cd94c8bbef8d4b796a7ed4c551355a334604fd36 ("inotify: tail drop
+inotify q_overflow events") from Linus' tree and commits
+7bf357aac07084acfac5f0e746aca85c42cc046e ("fsnotify: use
+fsnotify_create_event to allocate the q_overflow event"),
+cddf930f6410692ba1db0c53753492d119b1bd55 ("fsnotify: allow notification
+requests to not include private data") and
+7f51531a261beb6be2071f4345482ac488eea734 ("fsnotify: per group
+notification queue merge types") from the fsnotify tree.
 
-Applied, thanks.
+I fixed it up as best I can (see below) and can carry the fixes as
+necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc fs/notify/inotify/inotify_fsnotify.c
+index 5dcbafe,133f080..0000000
+--- a/fs/notify/inotify/inotify_fsnotify.c
++++ b/fs/notify/inotify/inotify_fsnotify.c
+@@@ -31,6 -31,56 +31,60 @@@
+  
+  #include "inotify.h"
+  
++ /*
++  * Check if 2 events contain the same information.  We do not compare private data
++  * but at this moment that isn't a problem for any know fsnotify listeners.
++  */
++ static bool event_compare(struct fsnotify_event *old, struct fsnotify_event *new)
++ {
++ 	if ((old->mask == new->mask) &&
++ 	    (old->to_tell == new->to_tell) &&
++ 	    (old->data_type == new->data_type) &&
++ 	    (old->name_len == new->name_len)) {
++ 		switch (old->data_type) {
++ 		case (FSNOTIFY_EVENT_INODE):
++ 			/* remember, after old was put on the wait_q we aren't
++ 			 * allowed to look at the inode any more, only thing
++ 			 * left to check was if the file_name is the same */
++ 			if (old->name_len &&
++ 			    !strcmp(old->file_name, new->file_name))
++ 				return true;
++ 			break;
++ 		case (FSNOTIFY_EVENT_PATH):
++ 			if ((old->path.mnt == new->path.mnt) &&
++ 			    (old->path.dentry == new->path.dentry))
++ 				return true;
++ 			break;
++ 		case (FSNOTIFY_EVENT_NONE):
+++			if (old->mask & FS_Q_OVERFLOW)
+++				return true;
+++			else if (old->mask & FS_IN_IGNORED)
+++				return false;
++ 			return true;
++ 		};
++ 	}
++ 	return false;
++ }
++ 
++ static int inotify_merge(struct list_head *list, struct fsnotify_event *event)
++ {
++ 	struct fsnotify_event_holder *last_holder;
++ 	struct fsnotify_event *last_event;
++ 	int ret = 0;
++ 
++ 	/* and the list better be locked by something too */
++ 	spin_lock(&event->lock);
++ 
++ 	last_holder = list_entry(list->prev, struct fsnotify_event_holder, event_list);
++ 	last_event = last_holder->event;
++ 	if (event_compare(last_event, event))
++ 		ret = -EEXIST;
++ 
++ 	spin_unlock(&event->lock);
++ 
++ 	return ret;
++ }
++ 
+  static int inotify_handle_event(struct fsnotify_group *group, struct fsnotify_event *event)
+  {
+  	struct fsnotify_mark_entry *entry;
+@@@ -61,15 -111,14 +115,15 @@@
+  	fsn_event_priv->group = group;
+  	event_priv->wd = wd;
+  
+- 	ret = fsnotify_add_notify_event(group, event, fsn_event_priv);
++ 	ret = fsnotify_add_notify_event(group, event, fsn_event_priv, inotify_merge);
+ -	/* EEXIST is not an error */
+ -	if (ret == -EEXIST)
+ -		ret = 0;
+ -
+ -	/* did event_priv get attached? */
+ -	if (list_empty(&fsn_event_priv->event_list))
+ +	if (ret) {
+  		inotify_free_event_priv(fsn_event_priv);
+ +		/* EEXIST says we tail matched, EOVERFLOW isn't something
+ +		 * to report up the stack. */
+ +		if ((ret == -EEXIST) ||
+ +		    (ret == -EOVERFLOW))
+ +			ret = 0;
+ +	}
+  
+  	/*
+  	 * If we hold the entry until after the event is on the queue
+diff --cc fs/notify/inotify/inotify_user.c
+index dc32ed8,d5e78f6..0000000
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@@ -405,8 -401,10 +402,8 @@@ void inotify_ignored_and_remove_idr(str
+  	fsn_event_priv->group = group;
+  	event_priv->wd = ientry->wd;
+  
+- 	ret = fsnotify_add_notify_event(group, ignored_event, fsn_event_priv);
+ -	fsnotify_add_notify_event(group, ignored_event, fsn_event_priv, NULL);
+ -
+ -	/* did the private data get added? */
+ -	if (list_empty(&fsn_event_priv->event_list))
+++	ret = fsnotify_add_notify_event(group, ignored_event, fsn_event_priv, NULL);
+ +	if (ret)
+  		inotify_free_event_priv(fsn_event_priv);
+  
+  skip_send_ignore:
+diff --cc fs/notify/notification.c
+index 3816d57,4f69b6f..0000000
+--- a/fs/notify/notification.c
++++ b/fs/notify/notification.c
+@@@ -173,9 -140,10 +140,7 @@@ int fsnotify_add_notify_event(struct fs
+  {
+  	struct fsnotify_event_holder *holder = NULL;
+  	struct list_head *list = &group->notification_list;
+- 	struct fsnotify_event_holder *last_holder;
+- 	struct fsnotify_event *last_event;
+ -
+ -	/* easy to tell if priv was attached to the event */
+ -	if (priv)
+ -		INIT_LIST_HEAD(&priv->event_list);
+ +	int ret = 0;
+  
+  	/*
+  	 * There is one fsnotify_event_holder embedded inside each fsnotify_event.
+@@@ -195,8 -163,7 +160,8 @@@ alloc_holder
+  	mutex_lock(&group->notification_mutex);
+  
+  	if (group->q_len >= group->max_events) {
+- 		event = &q_overflow_event;
++ 		event = q_overflow_event;
+ +		ret = -EOVERFLOW;
+  		/* sorry, no private data on the overflow event */
+  		priv = NULL;
+  	}
