@@ -1,286 +1,119 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for August 18
-Date: Tue, 18 Aug 2009 18:42:15 +1000
-Message-ID: <20090818184215.fdf1c7ae.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: [S390] ftrace: update system call tracer support
+Date: Tue, 18 Aug 2009 10:51:10 +0200
+Message-ID: <20090818085110.GA2074__38777.7236909189$1250585574$gmane$org@elte.hu>
+References: <1250016545-6601-1-git-send-email-fweisbec@gmail.com> <20090812091133.GA21655@elte.hu> <20090818004654.GA4402@linux-sh.org> <20090818073211.GA26670@elte.hu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__18_Aug_2009_18_42_15_+1000_JNWlFlyhzcjzOG8."
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59461 "EHLO smtps.tip.net.au"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:42922 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750886AbZHRIma (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 Aug 2009 04:42:30 -0400
+	id S1753792AbZHRIwJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 Aug 2009 04:52:09 -0400
+Content-Disposition: inline
+In-Reply-To: <20090818073211.GA26670@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Paul Mundt <lethal@linux-sh.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Jason Baron <jbaron@redhat.com>, Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.o>
 
---Signature=_Tue__18_Aug_2009_18_42_15_+1000_JNWlFlyhzcjzOG8.
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+* Ingo Molnar <mingo@elte.hu> wrote:
 
-Changes since 20090817:
+> * Paul Mundt <lethal@linux-sh.org> wrote:
+> 
+> > [ Adding to Cc everyone that now has a broken tree thanks to this .. ]
+> > 
+> > On Wed, Aug 12, 2009 at 11:11:33AM +0200, Ingo Molnar wrote:
+> > > * Frederic Weisbecker <fweisbec@gmail.com> wrote:
+> > > > This pull request integrate one cleanup/fix for ftrace and an 
+> > > > update for syscall tracing: the migration from old-style tracer to 
+> > > > individual tracepoints/trace_events and the support for perf 
+> > > > counter.
+> > > > 
+> > > > I've tested it with success either with ftrace (every syscall 
+> > > > tracepoints enabled at the same time without problems) and with 
+> > > > perfcounter.
+> > > > 
+> > > > May be one drawback: it creates so much trace events that the 
+> > > > ftrace selftests can take some time :-)
+> > > 
+> > > Pulled, thanks a lot!
+> > 
+> > And this has now subsequently broken every single SH and S390 
+> > configuration, [...]
+> 
+> I test SH cross-builds regularly. I just checked the SH defconfig 
+> and it builds just fine here:
+> 
+> $ make -j32 CROSS_COMPILE=sh3-linux- ARCH=sh vmlinux
 
-This tree fails to build for powerpc allyesconfig (due to a TOC overflow
-problem in the final link).
+The s390 build indeed broke. (This got masked by the s390 toolchain 
+i'm using not having been able to build Linus's tree - i fixed 
+that.)
 
-The xfs tree gained a conflict against Linus' tree.
+Could you try the fix below? It does the trick here.
 
-The fsnotify tree gained conflicts against Linus' tree.
+Martin, Heiko - does the fix look good to you? regs->gprs[2] seems 
+to be the register used for both the syscall number (enter 
+callback) and for the return code (exit callback).
 
-The suspend tree lost its build failure, but gained another for which I
-reverted a commit.
+Regarding SH, the fixup should be similarly trivial. Since SH's 
+FTRACE_SYSCALLS code is not upstream yet it can (and should) be 
+carried in the tree that integrates the SH tree and the tracing 
+tree - linux-next in this case.
 
-The usb tree lost its conflicts.
+Thanks,
 
-----------------------------------------------------------------------------
+	Ingo
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
+------------------------------>
+>From a9008fd42b1c3c89f684d90bdfb9c2d05c7af119 Mon Sep 17 00:00:00 2001
+From: Ingo Molnar <mingo@elte.hu>
+Date: Tue, 18 Aug 2009 10:41:57 +0200
+Subject: [PATCH] [S390] ftrace: update system call tracer support
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES) and i386, sparc and sparc64 defconfig.
-These builds also have CONFIG_ENABLE_WARN_DEPRECATED,
-CONFIG_ENABLE_MUST_CHECK and CONFIG_DEBUG_INFO disabled when necessary.
+Commit fb34a08c3 ("tracing: Add trace events for each syscall
+entry/exit") changed the lowlevel API to ftrace syscall tracing
+but did not update s390 which started making use of it recently.
 
-Below is a summary of the state of the merge.
+This broke the s390 build, as reported by Paul Mundt.
 
-We are up to 140 trees (counting Linus' and 21 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
+Update the callbacks with the syscall number and the syscall
+return code values. This allows per syscall tracepoints,
+syscall argument enumeration /debug/tracing/events/syscalls/
+and perfcounters support and integration on s390 too.
 
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
+Reported-by: Paul Mundt <lethal@linux-sh.org>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Jason Baron <jbaron@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+LKML-Reference: <tip-fb34a08c3469b2be9eae626ccb96476b4687b810@git.kernel.org>
+Signed-off-by: Ingo Molnar <mingo@elte.hu>
+---
+ arch/s390/kernel/ptrace.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/tty.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging arm/devel
-Merging davinci/for-next
-Merging pxa/for-next
-CONFLICT (content): Merge conflict in MAINTAINERS
-Merging thumb-2/thumb-2
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-CONFLICT (content): Merge conflict in arch/mips/cavium-octeon/dma-octeon.c
-CONFLICT (add/add): Merge conflict in arch/mips/cavium-octeon/executive/cvm=
-x-helper-errata.c
-CONFLICT (content): Merge conflict in arch/mips/mm/tlbex.c
-CONFLICT (content): Merge conflict in arch/mips/sibyte/swarm/setup.c
-CONFLICT (content): Merge conflict in drivers/char/hw_random/Kconfig
-CONFLICT (content): Merge conflict in drivers/char/hw_random/Makefile
-CONFLICT (add/add): Merge conflict in drivers/dma/txx9dmac.c
-Merging parisc/next
-Merging powerpc/next
-Merging 4xx/next
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging xtensa/master
-Merging cifs/master
-Merging configfs/linux-next
-CONFLICT (content): Merge conflict in fs/configfs/dir.c
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_sync.h
-Merging reiserfs-bkl/reiserfs/kill-bkl
-Merging vfs/for-next
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/board-dm646x-ev=
-m.c
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/dm355.c
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/dm644x.c
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/dm646x.c
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/include/mach/dm=
-355.h
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/include/mach/dm=
-644x.h
-Merging quota/for_next
-Merging kbuild/master
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/master
-Merging dlm/next
-Merging scsi/master
-Merging async_tx/next
-Merging udf/for_next
-Merging net/master
-Merging wireless/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-Merging cpufreq/next
-Merging quilt/rr
-Merging mmc/next
-Merging input/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-CONFLICT (content): Merge conflict in drivers/input/misc/Kconfig
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-CONFLICT (content): Merge conflict in drivers/gpu/drm/drm_crtc.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/intel_sdvo.c
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging omap/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging fsnotify/for-next
-CONFLICT (content): Merge conflict in fs/notify/inotify/inotify_fsnotify.c
-CONFLICT (content): Merge conflict in fs/notify/inotify/inotify_user.c
-CONFLICT (content): Merge conflict in fs/notify/notification.c
-Merging irda/for-next
-Merging hwlat/for-linus
-Merging drbd/drbd
-Applying: drbd: fix for removal of blk_queue_stack_limits
-Merging kmemleak/kmemleak
-Merging tip/auto-latest
-CONFLICT (content): Merge conflict in arch/x86/include/asm/socket.h
-CONFLICT (content): Merge conflict in include/linux/rcupdate.h
-CONFLICT (content): Merge conflict in kernel/fork.c
-CONFLICT (content): Merge conflict in kernel/trace/trace.h
-Merging oprofile/for-next
-CONFLICT (content): Merge conflict in kernel/trace/ring_buffer.c
-Merging edac-amd/for-next
-CONFLICT (content): Merge conflict in arch/x86/kernel/smpboot.c
-CONFLICT (content): Merge conflict in include/linux/topology.h
-Merging percpu/for-next
-CONFLICT (content): Merge conflict in arch/sh/kernel/vmlinux.lds.S
-Merging sfi/sfi-test
-CONFLICT (content): Merge conflict in arch/x86/include/asm/io_apic.h
-CONFLICT (content): Merge conflict in arch/x86/kernel/acpi/boot.c
-CONFLICT (content): Merge conflict in arch/x86/kernel/apic/io_apic.c
-CONFLICT (content): Merge conflict in drivers/acpi/internal.h
-CONFLICT (content): Merge conflict in drivers/acpi/tables.c
-CONFLICT (content): Merge conflict in include/linux/acpi.h
-Merging asm-generic/next
-Merging hwpoison/hwpoison
-Merging quilt/driver-core
-CONFLICT (content): Merge conflict in drivers/base/class.c
-CONFLICT (content): Merge conflict in init/main.c
-Merging quilt/tty
-CONFLICT (content): Merge conflict in arch/x86/include/asm/termios.h
-Merging quilt/usb
-Merging quilt/staging
-CONFLICT (delete/modify): drivers/staging/epl/VirtualEthernetLinux.c delete=
-d in quilt/staging and modified in HEAD. Version HEAD of drivers/staging/ep=
-l/VirtualEthernetLinux.c left in tree.
-$ git rm -f drivers/staging/epl/VirtualEthernetLinux.c
-Merging scsi-post-merge/master
-[master e6cb60d] Revert "PM: Introduce core framework for run-time PM of I/=
-O devices (rev. 17)"
-
---Signature=_Tue__18_Aug_2009_18_42_15_+1000_JNWlFlyhzcjzOG8.
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkqKaWcACgkQjjKRsyhoI8xjxgCfVSj2GT25HQ3rjW8m66Q+KOAT
-WrgAn0+4rrZh8fe/w2wwteDjuPvHSS5D
-=FCXe
------END PGP SIGNATURE-----
-
---Signature=_Tue__18_Aug_2009_18_42_15_+1000_JNWlFlyhzcjzOG8.--
+diff --git a/arch/s390/kernel/ptrace.c b/arch/s390/kernel/ptrace.c
+index 43acd73..05f57cd 100644
+--- a/arch/s390/kernel/ptrace.c
++++ b/arch/s390/kernel/ptrace.c
+@@ -662,7 +662,7 @@ asmlinkage long do_syscall_trace_enter(struct pt_regs *regs)
+ 	}
+ 
+ 	if (unlikely(test_thread_flag(TIF_SYSCALL_FTRACE)))
+-		ftrace_syscall_enter(regs);
++		trace_syscall_enter(regs, regs->gprs[2]);
+ 
+ 	if (unlikely(current->audit_context))
+ 		audit_syscall_entry(is_compat_task() ?
+@@ -680,7 +680,7 @@ asmlinkage void do_syscall_trace_exit(struct pt_regs *regs)
+ 				   regs->gprs[2]);
+ 
+ 	if (unlikely(test_thread_flag(TIF_SYSCALL_FTRACE)))
+-		ftrace_syscall_exit(regs);
++		trace_syscall_exit(regs, regs->gprs[2]);
+ 
+ 	if (test_thread_flag(TIF_SYSCALL_TRACE))
+ 		tracehook_report_syscall_exit(regs, 0);
