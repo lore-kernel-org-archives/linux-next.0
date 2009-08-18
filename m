@@ -1,51 +1,50 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Subject: Re: linux-next: suspend tree build failure
-Date: Wed, 19 Aug 2009 07:13:01 +0900
-Message-ID: <20090818221301.GA20676@linux-sh.org>
-References: <20090818183049.8bde1ee6.sfr@canb.auug.org.au> <200908182343.32375.rjw@sisk.pl>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] mfd: fix mc13783 build error
+Date: Tue, 18 Aug 2009 15:25:55 -0700
+Message-ID: <20090818152555.793773ad.randy.dunlap@oracle.com>
+References: <20090818184215.fdf1c7ae.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 124x34x33x190.ap124.ftth.ucom.ne.jp ([124.34.33.190]:56992 "EHLO
-	master.linux-sh.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751165AbZHRWNB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Aug 2009 18:13:01 -0400
-Content-Disposition: inline
-In-Reply-To: <200908182343.32375.rjw@sisk.pl>
+Received: from rcsinet12.oracle.com ([148.87.113.124]:33430 "EHLO
+	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750955AbZHRWZ6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Aug 2009 18:25:58 -0400
+In-Reply-To: <20090818184215.fdf1c7ae.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>
 
-On Tue, Aug 18, 2009 at 11:43:32PM +0200, Rafael J. Wysocki wrote:
-> On Tuesday 18 August 2009, Stephen Rothwell wrote:
-> > Hi Rafael,
-> 
-> Hi,
-> 
-> > Today's linux-next build (i386 defconfig) failed like this:
-> > 
-> > drivers/base/power/main.c: In function 'device_pm_init':
-> > drivers/base/power/main.c:59: error: 'struct dev_pm_info' has no member named 'lock'
-> 
-> Argh, that line shouldn't even be there.
-> 
-> > Caused by commit ea8e84f27325d9ddc7692f728a10e0a22cd59f52 ("PM: Introduce
-> > core framework for run-time PM of I/O devices (rev. 17)") from the
-> > suspend tree.  The i386 defconfig does not have CONFIG_PM_RUNTIME set but
-> > does have CONFIG_PM_SLEEP=y ...
-> > 
-> > I have reverted that commit for today.
-> > 
-> > When you add a new CONFIG variable, it is worth doing test builds both
-> > with it turned on and turned off ...
-> 
-> I tested it, but I broke the patch afterwards by mistake. :-(
-> 
-> Sorry for the trouble, I've just pushed an updated tree.
-> 
-Argh, and rebased in the process, again. This is now the second time in
-as many days this has been rebased, meaning I have to throw away my topic
-branch and re-create. I thought this was going to remain stable? I would
-like the SH runtime PM code to get some coverage in -next, but I can't
-merge it in to my tree if the suspend tree keeps rebasing every day.
+From: Randy Dunlap <randy.dunlap@oracle.com>
+
+Fix build errors due to missing Kconfig dependency:
+
+mc13783-core.c:(.text+0x11bbaf): undefined reference to `spi_sync'
+mc13783-core.c:(.init.text+0xb6b3): undefined reference to `spi_register_driver'
+mc13783-core.c:(.devinit.text+0x1fd8b): undefined reference to `spi_setup'
+drivers/built-in.o:(.data+0x157c0): undefined reference to `spi_bus_type'
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/mfd/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20090818.orig/drivers/mfd/Kconfig
++++ linux-next-20090818/drivers/mfd/Kconfig
+@@ -240,6 +240,7 @@ config MFD_PCF50633
+ 
+ config MFD_MC13783
+ 	tristate "Support Freescale MC13783"
++	depends on SPI_MASTER
+ 	select MFD_CORE
+ 	help
+ 	  Support for the Freescale (Atlas) MC13783 PMIC and audio CODEC.
+
+
+
+---
+~Randy
+LPC 2009, Sept. 23-25, Portland, Oregon
+http://linuxplumbersconf.org/2009/
