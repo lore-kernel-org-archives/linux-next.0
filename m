@@ -1,58 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
 Subject: Re: linux-next: drbd tree build failure
-Date: Tue, 18 Aug 2009 15:32:50 +1000
-Message-ID: <20090818153250.5ce293b5.sfr@canb.auug.org.au>
+Date: Tue, 18 Aug 2009 02:01:58 -0400
+Message-ID: <yq1hbw5hd7t.fsf@sermon.lab.mkp.net>
 References: <20090729152938.791a81c3.sfr@canb.auug.org.au>
 	<yq1prbk59bv.fsf@sermon.lab.mkp.net>
+	<20090818153250.5ce293b5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__18_Aug_2009_15_32_50_+1000_hPJQkj64O8=/s.mY"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752002AbZHRFc5@vger.kernel.org>
-In-Reply-To: <yq1prbk59bv.fsf@sermon.lab.mkp.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Philipp Reisner <philipp.reisner@linbit.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <jens.axboe@oracle.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from acsinet12.oracle.com ([141.146.126.234]:56071 "EHLO
+	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750945AbZHRGCN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Aug 2009 02:02:13 -0400
+In-Reply-To: <20090818153250.5ce293b5.sfr@canb.auug.org.au> (Stephen
+	Rothwell's message of "Tue, 18 Aug 2009 15:32:50 +1000")
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Philipp Reisner <philipp.reisner@linbit.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <jens.axboe@oracle.com>
 
---Signature=_Tue__18_Aug_2009_15_32_50_+1000_hPJQkj64O8=/s.mY
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>>>>> "Stephen" == Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Hi Martin, Jens,
+>> We've decided to keep blk_queue_stack_limits as a wrapper to ease the
+>> transition.  I sent Jens a patch earlier today that does this.
 
-On Wed, 29 Jul 2009 01:47:48 -0400 "Martin K. Petersen" <martin.petersen@or=
-acle.com> wrote:
->
-> >>>>> "Stephen" =3D=3D Stephen Rothwell <sfr@canb.auug.org.au> writes:
->=20
-> Stephen> drivers/block/drbd/drbd_nl.c: In function
-> Stephen> 'drbd_setup_queue_param': drivers/block/drbd/drbd_nl.c:707:
-> Stephen> error: implicit declaration of function
-> Stephen> 'blk_queue_stack_limits'
->=20
-> We've decided to keep blk_queue_stack_limits as a wrapper to ease the
-> transition.  I sent Jens a patch earlier today that does this.
+Stephen> I am still getting this error (3 weeks later) ...  :-(
 
-I am still getting this error (3 weeks later) ...  :-(
+Jens applied it to for-linus and it's been upstream for a while.  But it
+looks like the block for-next tree has stale bits...
 
-Maybe my original patch should be applied to the drbd tree?
+Jens?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__18_Aug_2009_15_32_50_+1000_hPJQkj64O8=/s.mY
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkqKPQIACgkQjjKRsyhoI8z8JgCgp2ofV77nzlTBb2L/XSRstZZE
-eDYAnA6Rdm6rhTrf5ZqQVJBnpuLogZle
-=Zmer
------END PGP SIGNATURE-----
-
---Signature=_Tue__18_Aug_2009_15_32_50_+1000_hPJQkj64O8=/s.mY--
+-- 
+Martin K. Petersen	Oracle Linux Engineering
