@@ -1,35 +1,65 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: Re: linux-next: drbd tree build failure
-Date: Tue, 18 Aug 2009 02:01:58 -0400
-Message-ID: <yq1hbw5hd7t.fsf@sermon.lab.mkp.net>
-References: <20090729152938.791a81c3.sfr@canb.auug.org.au>
-	<yq1prbk59bv.fsf@sermon.lab.mkp.net>
-	<20090818153250.5ce293b5.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Felix Blyakher <felixb@sgi.com>
+Subject: Re: linux-next: manual merge of the xfs tree with Linus' tree
+Date: Tue, 18 Aug 2009 01:49:52 -0500
+Message-ID: <523385BE-5397-49A3-A158-FD1B9D12F067@sgi.com>
+References: <20090818101215.aba4d0bf.sfr@canb.auug.org.au>
+Mime-Version: 1.0 (Apple Message framework v930.3)
+Content-Type: text/plain; charset=US-ASCII; format=flowed; delsp=yes
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:56071 "EHLO
-	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750945AbZHRGCN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Aug 2009 02:02:13 -0400
-In-Reply-To: <20090818153250.5ce293b5.sfr@canb.auug.org.au> (Stephen
-	Rothwell's message of "Tue, 18 Aug 2009 15:32:50 +1000")
+Received: from relay2.sgi.com ([192.48.179.30]:46337 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1750994AbZHRGtz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 Aug 2009 02:49:55 -0400
+In-Reply-To: <20090818101215.aba4d0bf.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Philipp Reisner <philipp.reisner@linbit.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <jens.axboe@oracle.com>
+Cc: David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Sandeen <sandeen@sandeen.net>, Christoph Hellwig <hch@infradead.org>
 
->>>>> "Stephen" == Stephen Rothwell <sfr@canb.auug.org.au> writes:
+On Aug 17, 2009, at 7:12 PM, Stephen Rothwell wrote:
 
->> We've decided to keep blk_queue_stack_limits as a wrapper to ease the
->> transition.  I sent Jens a patch earlier today that does this.
+> Hi all,
+>
+> Today's linux-next merge of the xfs tree got a conflict in
+> fs/xfs/linux-2.6/xfs_sync.h between commit
+> bc990f5cb424cdca9dda866785d088e2c2110ecc ("xfs: fix locking in
+> xfs_iget_cache_hit") from Linus' tree and commit
+> 370f048214b4e9aa2102fa3c454ae1374da287c5 ("xfs: add more statics &  
+> drop
+> some unused functions") from the xfs tree.
 
-Stephen> I am still getting this error (3 weeks later) ...  :-(
+Sorry, I didn't realize that there is a merge between linux-next,
+which uses the xfs master tree, and the Linus' tree.
 
-Jens applied it to for-linus and it's been upstream for a while.  But it
-looks like the block for-next tree has stale bits...
+> Just context changes (add/remove). I fixed it up (see below) and can
+> carry the fix as necessary.
 
-Jens?
+Thanks for the fix, but there is no need to carrying it separately
+from the xfs master tree. I merged the bc990f5 commit back into the
+the master tree, and fixed all conflicts (there was another one in
+fs/xfs/xfs_iget.c). I planned to do it anyway for 2.6.32.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Thanks,
+Felix
+
+>
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+>
+> diff --cc fs/xfs/linux-2.6/xfs_sync.h
+> index 5912060,23e7e7e..0000000
+> --- a/fs/xfs/linux-2.6/xfs_sync.h
+> +++ b/fs/xfs/linux-2.6/xfs_sync.h
+> @@@ -48,8 -48,6 +48,7 @@@ int xfs_reclaim_inode(struct xfs_inode
+>  int xfs_reclaim_inodes(struct xfs_mount *mp, int mode);
+>
+>  void xfs_inode_set_reclaim_tag(struct xfs_inode *ip);
+> +void __xfs_inode_set_reclaim_tag(struct xfs_perag *pag, struct  
+> xfs_inode *ip);
+> - void xfs_inode_clear_reclaim_tag(struct xfs_inode *ip);
+>  void __xfs_inode_clear_reclaim_tag(struct xfs_mount *mp, struct  
+> xfs_perag *pag,
+>  				struct xfs_inode *ip);
+>
