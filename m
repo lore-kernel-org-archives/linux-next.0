@@ -1,83 +1,78 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [GIT PULL] tracing: Syscalls trace events + perf support
-Date: Tue, 18 Aug 2009 09:32:11 +0200
-Message-ID: <20090818073211.GA26670@elte.hu>
-References: <1250016545-6601-1-git-send-email-fweisbec@gmail.com> <20090812091133.GA21655@elte.hu> <20090818004654.GA4402@linux-sh.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the mips tree with Linus' tree
+Date: Tue, 18 Aug 2009 18:23:13 +1000
+Message-ID: <20090818182313.3a1d3db1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__18_Aug_2009_18_23_13_+1000_S/+9euet.AbRwP49"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:55398 "EHLO mx2.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43322 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751026AbZHRHcn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 Aug 2009 03:32:43 -0400
-Content-Disposition: inline
-In-Reply-To: <20090818004654.GA4402@linux-sh.org>
+	id S1750886AbZHRIXX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 Aug 2009 04:23:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Mundt <lethal@linux-sh.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Jason Baron <jbaron@redhat.com>, Frederic Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.o>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+--Signature=_Tue__18_Aug_2009_18_23_13_+1000_S/+9euet.AbRwP49
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Paul Mundt <lethal@linux-sh.org> wrote:
+Hi Ralf,
 
-> [ Adding to Cc everyone that now has a broken tree thanks to this .. ]
-> 
-> On Wed, Aug 12, 2009 at 11:11:33AM +0200, Ingo Molnar wrote:
-> > * Frederic Weisbecker <fweisbec@gmail.com> wrote:
-> > > This pull request integrate one cleanup/fix for ftrace and an 
-> > > update for syscall tracing: the migration from old-style tracer to 
-> > > individual tracepoints/trace_events and the support for perf 
-> > > counter.
-> > > 
-> > > I've tested it with success either with ftrace (every syscall 
-> > > tracepoints enabled at the same time without problems) and with 
-> > > perfcounter.
-> > > 
-> > > May be one drawback: it creates so much trace events that the 
-> > > ftrace selftests can take some time :-)
-> > 
-> > Pulled, thanks a lot!
-> 
-> And this has now subsequently broken every single SH and S390 
-> configuration, [...]
+The linux-next merge of the mips tree gets conflicts between several
+commits from Linus' tree and (basically) the same commits from the mips
+tree.  I have been getting these for some time.  The mips tree for
+linux-next hasn't been updated since June 6 and doing a manula merge with
+Linus' tree (or rebasing it on top of Linus' tree) would fix most of these
+conflicts:
 
-I test SH cross-builds regularly. I just checked the SH defconfig 
-and it builds just fine here:
+$ git merge mips
+Auto-merging arch/mips/Kconfig
+Auto-merging arch/mips/cavium-octeon/dma-octeon.c
+CONFLICT (content): Merge conflict in arch/mips/cavium-octeon/dma-octeon.c
+Auto-merging arch/mips/cavium-octeon/executive/cvmx-helper-errata.c
+CONFLICT (add/add): Merge conflict in arch/mips/cavium-octeon/executive/cvm=
+x-helper-errata.c
+Auto-merging arch/mips/cavium-octeon/octeon-irq.c
+Auto-merging arch/mips/include/asm/cpu-features.h
+Auto-merging arch/mips/include/asm/mach-cavium-octeon/cpu-feature-overrides=
+.h
+Auto-merging arch/mips/mm/c-r4k.c
+Auto-merging arch/mips/mm/tlbex.c
+CONFLICT (content): Merge conflict in arch/mips/mm/tlbex.c
+Auto-merging arch/mips/sibyte/Kconfig
+Auto-merging arch/mips/sibyte/swarm/setup.c
+CONFLICT (content): Merge conflict in arch/mips/sibyte/swarm/setup.c
+Auto-merging arch/mips/txx9/generic/setup.c
+Auto-merging arch/mips/txx9/rbtx4939/setup.c
+Auto-merging drivers/char/hw_random/Kconfig
+CONFLICT (content): Merge conflict in drivers/char/hw_random/Kconfig
+Auto-merging drivers/char/hw_random/Makefile
+CONFLICT (content): Merge conflict in drivers/char/hw_random/Makefile
+Auto-merging drivers/dma/Kconfig
+Auto-merging drivers/dma/Makefile
+Auto-merging drivers/dma/txx9dmac.c
+CONFLICT (add/add): Merge conflict in drivers/dma/txx9dmac.c
+Automatic merge failed; fix conflicts and then commit the result.
 
-$ make -j32 CROSS_COMPILE=sh3-linux- ARCH=sh vmlinux
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-...
-  CC      init/version.o
-  LD      init/built-in.o
-  LD      .tmp_vmlinux1
-  KSYM    .tmp_kallsyms1.S
-  AS      .tmp_kallsyms1.o
-  LD      .tmp_vmlinux2
-  KSYM    .tmp_kallsyms2.S
-  AS      .tmp_kallsyms2.o
-  LD      vmlinux
-  SYSMAP  System.map
-  SYSMAP  .tmp_System.map
+--Signature=_Tue__18_Aug_2009_18_23_13_+1000_S/+9euet.AbRwP49
+Content-Type: application/pgp-signature
 
- phoenix:~/linux/linux> head .config 
- #
- # Automatically generated make config: don't edit
- # Linux kernel version: 2.6.31-rc6
- # Tue Aug 18 09:24:28 2009
- #
- CONFIG_SUPERH=y
- CONFIG_SUPERH32=y
- # CONFIG_SUPERH64 is not set
- CONFIG_ARCH_DEFCONFIG="arch/sh/configs/shx3_defconfig"
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
-AFAICS SH does not even have any syscall tracing added upstream. 
-Apparently you added them in the SH tree and then they got 
-integrated in linux-next, and the integrated end result broke?
+iEUEARECAAYFAkqKZPEACgkQjjKRsyhoI8xMDACgsJC2JXdzQgSK1apVYNZNMBBl
+GaQAlR5cykULs08pf5v7+lphd4nwx5g=
+=7rUo
+-----END PGP SIGNATURE-----
 
-Mind putting those bits into a separate Git branch and sending them 
-to the tracing tree too so that we can make sure it's properly 
-integrated and tested and that any changes to the generic facility 
-are propagated to SH too?
-
-Thanks,
-
-	Ingo
+--Signature=_Tue__18_Aug_2009_18_23_13_+1000_S/+9euet.AbRwP49--
