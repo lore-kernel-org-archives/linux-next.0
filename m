@@ -1,81 +1,34 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: usb/pxa trees build failure
-Date: Wed, 19 Aug 2009 16:37:44 -0700
-Message-ID: <20090819233744.GC2875@kroah.com>
-References: <20090818135852.0b3b648d.sfr@canb.auug.org.au>
- <20090818114242.GA28534@kroah.com>
- <4A8AB525.7050404@gmail.com>
- <20090818145800.GB6074@kroah.com>
- <4A8B64DE.6000506@gmail.com>
- <20090819172223.GA4398@kroah.com>
- <4A8C4348.7030601@sdgsystems.com>
+Subject: Re: linux-next: manual merge of the usb tree with the tip tree
+Date: Wed, 19 Aug 2009 16:38:18 -0700
+Message-ID: <20090819233818.GD2875@kroah.com>
+References: <20090819175901.59f1af9e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754080AbZHSXju@vger.kernel.org>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754132AbZHSXmR@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <4A8C4348.7030601@sdgsystems.com>
+In-Reply-To: <20090819175901.59f1af9e.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Aric D. Blumer" <aric@sdgsystems.com>
-Cc: Eric Miao <eric.y.miao@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Rapoport <mike@compulab.co.il>, Russell King <rmk@arm.linux.org.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Robin Getz <rgetz@blackfin.uclinux.org>, Jason Wessel <jason.wessel@windriver.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Aug 19, 2009 at 02:24:08PM -0400, Aric D. Blumer wrote:
-> Greg KH wrote:
-> > On Wed, Aug 19, 2009 at 10:35:10AM +0800, Eric Miao wrote:
-> >   
-> >> Greg KH wrote:
-> >>     
-> >>> On Tue, Aug 18, 2009 at 10:05:25PM +0800, Eric Miao wrote:
-> >>>       
-> >>>> Greg KH wrote:
-> >>>>         
-> >>>>> On Tue, Aug 18, 2009 at 01:58:52PM +1000, Stephen Rothwell wrote:
-> >>>>>           
-> >>>>>> Hi Eric, Greg,
-> >>>>>>
-> >>>>>> The next-20090817 (and a few before) build (arm trizeps4_defconfig)
-> >>>>>> failed like this:
-> >>>>>>
-> >>>>>> drivers/usb/host/ohci-pxa27x.c:507: error: 'pdev' undeclared (first use in this function)
-> >>>>>>
-> >>>>>> Caused by the interaction of commit
-> >>>>>> 6458baec17e19d38b9d4eb1f96c213f91609c0e3 ("USB: ohci-pxa27x: Reconfigure
-> >>>>>> power settings on resume") from the usb tree with commit
-> >>>>>> b8fb7d4317bcea1b48c9560d23dff81121870ece ("[ARM] pxa: update
-> >>>>>> ohci-pxa27x.c to use 'struct dev_pm_ops'"). from the pxa tree.
-> >>>>>>
-> >>>>>> Greg/Aric, maybe that usb tree patch needs to go through the pxa tree?
-> >>>>>> (and maybe "USB: ohci-pxa27x: Allow NOCP and OCPM to be cleared" as well?)
-> >>>>>>
-> >>>>>> [this also broke the following configs: magician_defconfig,
-> >>>>>> em_x270_defconfig and cm_x2xx_defconfig.]
-> >>>>>>             
-> >>>>> Ick, not good.  Aric, should I drop this patch from my tree?
-> >>>>>
-> >>>>>           
-> >>>> I think so, might be better to go through the pxa tree so that I can give
-> >>>> another review. (the fiber across the pacific seems to be broken again, so
-> >>>> I have to look into this tomorrow, still fetching -next, sigh).
-> >>>>         
-> >>> Ok, let me know if you want me to drop these patches from my tree.
-> >>>
-> >>>       
-> >> OK, so the problem is 'pdev' is no longer part of the dev_pm_ops, ('dev' is used
-> >> instead), and the 'inf' pointer can just be referenced from 'dev->platform_data',
-> >> so the fix is actually trivial, but it does have dependency issue.
-> >>
-> >> Greg,
-> >>
-> >> It looks to me would be better if this goes the pxa tree, and I'll send out the
-> >> updated patch of 6458baec later.
-> >>     
-> >
-> > Ok, should I drop just this one patch from my tree, or any others as
-> > well
+On Wed, Aug 19, 2009 at 05:59:01PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> It is an isolated patch, so dropping it alone should be fine.
+> Today's linux-next merge of the usb tree got a conflict in
+> kernel/printk.c between commit 4d09161196c9a836eacea4b36e2f217bc34894cf
+> ("printk: Enable the use of more than one CON_BOOT (early console)") from
+> the tip tree and commit e289e7dc72eb6bfce70e2722d97a00f5e02893e8 ("USB:
+> printk: early_printk,console: Allow more than one early console") from
+> the usb tree.
+> 
+> I assume that these are trying to do (more or less) the same thing.  I
+> have dropped the one from the usb tree for today.  Please sort this out -
+> at least remove the usb tree one until you have done so, thanks.
 
-Ok, it's now dropped from my tree, linux-next should now be happy :)
+Jason, any thoughts?  I'm going to drop your printk stuff from my tree
+now, care to sort it out and resend your whole series?
 
 thanks,
 
