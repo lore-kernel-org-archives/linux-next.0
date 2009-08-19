@@ -1,45 +1,51 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: usb tree build failure
-Date: Wed, 19 Aug 2009 06:52:39 -0700
-Message-ID: <20090819135239.GB30892@kroah.com>
-References: <20090819183402.77be5c3b.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH v2] net: fix ks8851 build errors
+Date: Wed, 19 Aug 2009 08:52:02 -0700
+Message-ID: <20090819085202.810630a2.randy.dunlap@oracle.com>
+References: <20090818184215.fdf1c7ae.sfr@canb.auug.org.au>
+	<20090818152705.64557a0b.randy.dunlap@oracle.com>
+	<20090818.201200.69809801.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:55430 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751652AbZHSNyA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 19 Aug 2009 09:54:00 -0400
-Content-Disposition: inline
-In-Reply-To: <20090819183402.77be5c3b.sfr@canb.auug.org.au>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:58085 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752163AbZHSPug (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Aug 2009 11:50:36 -0400
+In-Reply-To: <20090818.201200.69809801.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Wessel <jason.wessel@windriver.com>
+To: David Miller <davem@davemloft.net>
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, akpm@linux-foundation.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Aug 19, 2009 at 06:34:02PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
-> 
-> arch/x86/built-in.o: In function `setup_early_printk':
-> early_printk.c:(.init.text+0x159de): undefined reference to `early_dbgp_init'
-> early_printk.c:(.init.text+0x159f9): undefined reference to `early_dbgp_console'
-> 
-> Caused by commit 77f162cc16ff4bff1adefe47dbe48ab6b2d9247b ("USB: ehci
-> early_printk: split ehci debug driver from early_printk.c").
-> 
-> I have reverted that commit for today (along with commits
-> 37e541af790703d66ba88cf3a71b5ae97654b753 ("USB: early_printk: insert cr
-> prior to nl as needed"), 71c0553ae63d2738a126d4f5b37730dfaa7a2fd7 ("USB:
-> ehci-dbgp: Execute early BIOS hand off"),
-> 3f038d06f259fd02142aaaaa47addfb4934d4faa ("USB: early_printk: EHCI debug
-> controller initialization delays") and
-> f6ee359e79de27b46213f8b5293251a26bc22b1e ("USB: ehci-dbgp: stability
-> improvements and external re-init") that depended on it).
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Ick.  Jason, what happened here?  It builds on i386 :)
+Fix build errors due to missing Kconfig select of CRC32:
 
-thanks,
+ks8851.c:(.text+0x7d2ee): undefined reference to `crc32_le'
+ks8851.c:(.text+0x7d2f5): undefined reference to `bitrev32'
 
-greg k-h
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/net/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20090818.orig/drivers/net/Kconfig
++++ linux-next-20090818/drivers/net/Kconfig
+@@ -1733,6 +1733,7 @@ config KS8851
+        tristate "Micrel KS8851 SPI"
+        depends on SPI
+        select MII
++	select CRC32
+        help
+          SPI driver for Micrel KS8851 SPI attached network chip.
+ 
+
+
+
+
+---
+~Randy
+LPC 2009, Sept. 23-25, Portland, Oregon
+http://linuxplumbersconf.org/2009/
