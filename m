@@ -1,41 +1,47 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH -next] net: fix ks8851 build errors
-Date: Tue, 18 Aug 2009 20:12:00 -0700 (PDT)
-Message-ID: <20090818.201200.69809801.davem@davemloft.net>
-References: <20090818184215.fdf1c7ae.sfr@canb.auug.org.au>
-	<20090818152705.64557a0b.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the omap tree with the arm tree
+Date: Wed, 19 Aug 2009 15:04:33 +1000
+Message-ID: <20090819150433.4c12c612.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:59574
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751836AbZHSDLs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 Aug 2009 23:11:48 -0400
-In-Reply-To: <20090818152705.64557a0b.randy.dunlap@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:33240 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750863AbZHSFEi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 Aug 2009 01:04:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: randy.dunlap@oracle.com
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, akpm@linux-foundation.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Syed Rafiuddin <rafiuddin.syed@ti.com>, Russell King <rmk@arm.linux.org.uk>, Kalle Valo <kalle.valo@iki.fi>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Date: Tue, 18 Aug 2009 15:27:05 -0700
+Hi all,
 
-> --- linux-next-20090818.orig/drivers/net/Kconfig
-> +++ linux-next-20090818/drivers/net/Kconfig
-> @@ -1733,6 +1733,8 @@ config KS8851
->         tristate "Micrel KS8851 SPI"
->         depends on SPI
->         select MII
-> +	select CRC32
-> +	select BITREVERSE
->         help
->           SPI driver for Micrel KS8851 SPI attached network chip.
->  
+Today's linux-next merge of the omap tree got a conflict in
+arch/arm/mach-omap2/board-4430sdp.c between commit
+085b54d99b8ee999e7905b8f16e201e0da8ba369 ("ARM: OMAP4: Add UART4
+support") from the arm tree and commit
+4c29fa3e47342666e12e46f35f40dd90b12cd1a4 ("OMAP: remove OMAP_TAG_UART")
+from the omap tree.
 
-CRC32 alone is sufficient, because it, in turn, selects BITREVERSE
+Just context changes (I think).  I fixed it up (see below) and can carry
+the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-When you resubmit with this simplification, I'll apply the
-patch to net-2.6 since the problem exists in Linus's tree
-too, not just -next.
+diff --cc arch/arm/mach-omap2/board-4430sdp.c
+index 1b22307,646079f..0000000
+--- a/arch/arm/mach-omap2/board-4430sdp.c
++++ b/arch/arm/mach-omap2/board-4430sdp.c
+@@@ -38,8 -38,8 +38,8 @@@ static struct platform_device *sdp4430_
+  	&sdp4430_lcd_device,
+  };
+  
+- static struct omap_uart_config sdp4430_uart_config __initdata = {
++ static struct omap_uart_platform_data sdp4430_uart_config __initdata = {
+ -	.enabled_uarts	= (1 << 0) | (1 << 1) | (1 << 2),
+ +	.enabled_uarts	= (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3),
+  };
+  
+  static struct omap_lcd_config sdp4430_lcd_config __initdata = {
