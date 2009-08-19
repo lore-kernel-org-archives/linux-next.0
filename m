@@ -1,47 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the omap tree with the arm tree
-Date: Wed, 19 Aug 2009 15:04:33 +1000
-Message-ID: <20090819150433.4c12c612.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Date: Wed, 19 Aug 2009 16:07:58 +1000
+Message-ID: <20090819160758.f23f2e8a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__19_Aug_2009_16_07_58_+1000_/0rZynifDzzLkPXM"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751154AbZHSGIJ@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Wed__19_Aug_2009_16_07_58_+1000_/0rZynifDzzLkPXM
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33240 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750863AbZHSFEi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 19 Aug 2009 01:04:38 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Syed Rafiuddin <rafiuddin.syed@ti.com>, Russell King <rmk@arm.linux.org.uk>, Kalle Valo <kalle.valo@iki.fi>
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the omap tree got a conflict in
-arch/arm/mach-omap2/board-4430sdp.c between commit
-085b54d99b8ee999e7905b8f16e201e0da8ba369 ("ARM: OMAP4: Add UART4
-support") from the arm tree and commit
-4c29fa3e47342666e12e46f35f40dd90b12cd1a4 ("OMAP: remove OMAP_TAG_UART")
-from the omap tree.
+Today's linux-next merge of the tip tree got a conflict in
+kernel/irq/manage.c between commit
+69ab849439b506cd8dd2879527fdb64d95dd5211 ("genirq: Wake up irq thread
+after action has been installed") from Linus' tree and commit
+3c26caa7409ad5367b257de3d7943551d4a959ee ("genirq: Do not wakeup irq
+thread from __setup_irq() and set action->irq") from the tip tree.
 
-Just context changes (I think).  I fixed it up (see below) and can carry
-the fix as necessary.
--- 
+I used the version from Linus' tree (as seems to have been done in
+tip:master).
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/mach-omap2/board-4430sdp.c
-index 1b22307,646079f..0000000
---- a/arch/arm/mach-omap2/board-4430sdp.c
-+++ b/arch/arm/mach-omap2/board-4430sdp.c
-@@@ -38,8 -38,8 +38,8 @@@ static struct platform_device *sdp4430_
-  	&sdp4430_lcd_device,
-  };
-  
-- static struct omap_uart_config sdp4430_uart_config __initdata = {
-+ static struct omap_uart_platform_data sdp4430_uart_config __initdata = {
- -	.enabled_uarts	= (1 << 0) | (1 << 1) | (1 << 2),
- +	.enabled_uarts	= (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3),
-  };
-  
-  static struct omap_lcd_config sdp4430_lcd_config __initdata = {
+--Signature=_Wed__19_Aug_2009_16_07_58_+1000_/0rZynifDzzLkPXM
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkqLlr4ACgkQjjKRsyhoI8wWWgCfV+z70IlO0JkIwx5Ol6rXsPxc
+vmgAn0DpQ6+eNtZq/pIOfzC2+vtvF6hW
+=PEyf
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__19_Aug_2009_16_07_58_+1000_/0rZynifDzzLkPXM--
