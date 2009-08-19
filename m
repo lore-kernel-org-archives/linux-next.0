@@ -1,51 +1,70 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH v2] net: fix ks8851 build errors
-Date: Wed, 19 Aug 2009 08:52:02 -0700
-Message-ID: <20090819085202.810630a2.randy.dunlap@oracle.com>
-References: <20090818184215.fdf1c7ae.sfr@canb.auug.org.au>
-	<20090818152705.64557a0b.randy.dunlap@oracle.com>
-	<20090818.201200.69809801.davem@davemloft.net>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: usb/pxa trees build failure
+Date: Wed, 19 Aug 2009 10:22:23 -0700
+Message-ID: <20090819172223.GA4398@kroah.com>
+References: <20090818135852.0b3b648d.sfr@canb.auug.org.au>
+ <20090818114242.GA28534@kroah.com>
+ <4A8AB525.7050404@gmail.com>
+ <20090818145800.GB6074@kroah.com>
+ <4A8B64DE.6000506@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet11.oracle.com ([148.87.113.123]:58085 "EHLO
-	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752163AbZHSPug (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Aug 2009 11:50:36 -0400
-In-Reply-To: <20090818.201200.69809801.davem@davemloft.net>
+Received: from kroah.org ([198.145.64.141]:33537 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752224AbZHSRYi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 Aug 2009 13:24:38 -0400
+Content-Disposition: inline
+In-Reply-To: <4A8B64DE.6000506@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, akpm@linux-foundation.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Eric Miao <eric.y.miao@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Aric D. Blumer" <aric@sdgsystems.com>, Mike Rapoport <mike@compulab.co.il>, Russell King <rmk@arm.linux.org.uk>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Wed, Aug 19, 2009 at 10:35:10AM +0800, Eric Miao wrote:
+> Greg KH wrote:
+> > On Tue, Aug 18, 2009 at 10:05:25PM +0800, Eric Miao wrote:
+> >> Greg KH wrote:
+> >>> On Tue, Aug 18, 2009 at 01:58:52PM +1000, Stephen Rothwell wrote:
+> >>>> Hi Eric, Greg,
+> >>>>
+> >>>> The next-20090817 (and a few before) build (arm trizeps4_defconfig)
+> >>>> failed like this:
+> >>>>
+> >>>> drivers/usb/host/ohci-pxa27x.c:507: error: 'pdev' undeclared (first use in this function)
+> >>>>
+> >>>> Caused by the interaction of commit
+> >>>> 6458baec17e19d38b9d4eb1f96c213f91609c0e3 ("USB: ohci-pxa27x: Reconfigure
+> >>>> power settings on resume") from the usb tree with commit
+> >>>> b8fb7d4317bcea1b48c9560d23dff81121870ece ("[ARM] pxa: update
+> >>>> ohci-pxa27x.c to use 'struct dev_pm_ops'"). from the pxa tree.
+> >>>>
+> >>>> Greg/Aric, maybe that usb tree patch needs to go through the pxa tree?
+> >>>> (and maybe "USB: ohci-pxa27x: Allow NOCP and OCPM to be cleared" as well?)
+> >>>>
+> >>>> [this also broke the following configs: magician_defconfig,
+> >>>> em_x270_defconfig and cm_x2xx_defconfig.]
+> >>> Ick, not good.  Aric, should I drop this patch from my tree?
+> >>>
+> >> I think so, might be better to go through the pxa tree so that I can give
+> >> another review. (the fiber across the pacific seems to be broken again, so
+> >> I have to look into this tomorrow, still fetching -next, sigh).
+> > 
+> > Ok, let me know if you want me to drop these patches from my tree.
+> > 
+> 
+> OK, so the problem is 'pdev' is no longer part of the dev_pm_ops, ('dev' is used
+> instead), and the 'inf' pointer can just be referenced from 'dev->platform_data',
+> so the fix is actually trivial, but it does have dependency issue.
+> 
+> Greg,
+> 
+> It looks to me would be better if this goes the pxa tree, and I'll send out the
+> updated patch of 6458baec later.
 
-Fix build errors due to missing Kconfig select of CRC32:
+Ok, should I drop just this one patch from my tree, or any others as
+well?
 
-ks8851.c:(.text+0x7d2ee): undefined reference to `crc32_le'
-ks8851.c:(.text+0x7d2f5): undefined reference to `bitrev32'
+thanks,
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/net/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
-
---- linux-next-20090818.orig/drivers/net/Kconfig
-+++ linux-next-20090818/drivers/net/Kconfig
-@@ -1733,6 +1733,7 @@ config KS8851
-        tristate "Micrel KS8851 SPI"
-        depends on SPI
-        select MII
-+	select CRC32
-        help
-          SPI driver for Micrel KS8851 SPI attached network chip.
- 
-
-
-
-
----
-~Randy
-LPC 2009, Sept. 23-25, Portland, Oregon
-http://linuxplumbersconf.org/2009/
+greg k-h
