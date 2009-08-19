@@ -1,35 +1,39 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: [PATCH V3 linux-next] treewide: remove unnecessary semicolons
-Date: Wed, 19 Aug 2009 11:06:26 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.0908191105570.25797@wotan.suse.de>
-References: <1248472866.3498.79.camel@Joe-Laptop.home>  <alpine.LNX.2.00.0908131155510.25797@wotan.suse.de>  <1250158868.28285.26.camel@Joe-Laptop.home>  <alpine.LNX.2.00.0908181359450.25797@wotan.suse.de> <1250619515.25478.19.camel@Joe-Laptop.home>
+From: Joel Becker <Joel.Becker@oracle.com>
+Subject: Re: linux-next: Tree for August 19
+Date: Wed, 19 Aug 2009 02:35:28 -0700
+Message-ID: <20090819093528.GA16547@mail.oracle.com>
+References: <20090819190233.86e78493.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:42105 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751418AbZHSJGZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 19 Aug 2009 05:06:25 -0400
-In-Reply-To: <1250619515.25478.19.camel@Joe-Laptop.home>
+Received: from rcsinet12.oracle.com ([148.87.113.124]:57129 "EHLO
+	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751195AbZHSJgZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Aug 2009 05:36:25 -0400
+Content-Disposition: inline
+In-Reply-To: <20090819190233.86e78493.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Joe Perches <joe@perches.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, 18 Aug 2009, Joe Perches wrote:
+On Wed, Aug 19, 2009 at 07:02:33PM +1000, Stephen Rothwell wrote:
+> Merging configfs/linux-next
+> CONFLICT (content): Merge conflict in fs/configfs/dir.c
 
-> > > > > Previous discussion at: http://lkml.org/lkml/2009/6/28/288
-> > > > > Signed-off-by: Joe Perches <joe@perches.com>
-> > > I could do that or you could "git apply --exclude=drivers/staging/"
-> > > Which do you prefer?
-> > It doesn't apply any more, could you please refresh, resend, and I will 
-> > apply it right away?
-> I used git apply --reject --exclude=drivers/staging
+	Silly question.  The last time I had a conflict in next, you
+emailed me the details.  How do I go about finding them on my own
+(without doing the complete merge you do)?
 
-OK, applied, let's see how many conflicts we get.
-
-Thanks,
+Joel
 
 -- 
-Jiri Kosina
-SUSE Labs
+
+"Up and down that road in our worn out shoes,
+ Talking bout good things and singing the blues."
+
+Joel Becker
+Principal Software Developer
+Oracle
+E-mail: joel.becker@oracle.com
+Phone: (650) 506-8127
