@@ -1,55 +1,53 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
+From: Greg KH <greg@kroah.com>
 Subject: Re: linux-next: suspend tree build warnings
-Date: Wed, 19 Aug 2009 23:38:03 +0200
-Message-ID: <200908192338.03910.rjw@sisk.pl>
+Date: Wed, 19 Aug 2009 16:36:01 -0700
+Message-ID: <20090819233601.GA2875@kroah.com>
 References: <20090819172419.2cf53008.sfr@canb.auug.org.au>
+ <200908192338.03910.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:33822 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753114AbZHSVhU convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Aug 2009 17:37:20 -0400
-In-Reply-To: <20090819172419.2cf53008.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, pm list <linux-pm@lists.linux-foundation.org>, Alan Stern <stern@rowland.harvard.edu>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754086AbZHSXjv@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <200908192338.03910.rjw@sisk.pl>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, pm list <linux-pm@lists.linux-foundation.org>, Alan Stern <stern@rowland.harvard.edu>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wednesday 19 August 2009, Stephen Rothwell wrote:
-> Hi Rafael,
-
-Hi,
-
-> Today's linux-next build (x86_64 allmodconfig) produced these warning=
-s:
+On Wed, Aug 19, 2009 at 11:38:03PM +0200, Rafael J. Wysocki wrote:
+> On Wednesday 19 August 2009, Stephen Rothwell wrote:
+> > Hi Rafael,
 >=20
-> drivers/media/dvb/frontends/dib7000p.c: In function =E2=80=98dib7000p=
-_i2c_enumeration=E2=80=99:
-> drivers/media/dvb/frontends/dib7000p.c:1315: warning: the frame size =
-of 2256 bytes is larger than 2048 bytes
-> drivers/media/dvb/frontends/dib3000mc.c: In function =E2=80=98dib3000=
-mc_i2c_enumeration=E2=80=99:
-> drivers/media/dvb/frontends/dib3000mc.c:853: warning: the frame size =
-of 2160 bytes is larger than 2048 bytes
+> Hi,
 >=20
-> Introduced by commit 99307958cc9c1b0b2e0dad4bbefdafaf9ac5a681 ("PM:
-> Introduce core framework for run-time PM of I/O devices (rev. 17)").
+> > Today's linux-next build (x86_64 allmodconfig) produced these warni=
+ngs:
+> >=20
+> > drivers/media/dvb/frontends/dib7000p.c: In function =E2=80=98dib700=
+0p_i2c_enumeration=E2=80=99:
+> > drivers/media/dvb/frontends/dib7000p.c:1315: warning: the frame siz=
+e of 2256 bytes is larger than 2048 bytes
+> > drivers/media/dvb/frontends/dib3000mc.c: In function =E2=80=98dib30=
+00mc_i2c_enumeration=E2=80=99:
+> > drivers/media/dvb/frontends/dib3000mc.c:853: warning: the frame siz=
+e of 2160 bytes is larger than 2048 bytes
+> >=20
+> > Introduced by commit 99307958cc9c1b0b2e0dad4bbefdafaf9ac5a681 ("PM:
+> > Introduce core framework for run-time PM of I/O devices (rev. 17)")=
+=2E
+>=20
+> Well.
+>=20
+> This commit increases the size of struct device quite a bit and both =
+of the
+> drivers above create a "state" object on the stack that contains stru=
+ct device
+> among other things.
 
-Well.
+Ick.  struct device should _never_ be on the stack, why would this code
+want to do such a thing?
 
-This commit increases the size of struct device quite a bit and both of=
- the
-drivers above create a "state" object on the stack that contains struct=
- device
-among other things.
+thanks,
 
-I think they should allocate these objects using kmalloc() and I don't =
-know
-what I can do about this, really.  Maybe except for modifying the drive=
-rs to
-use kmalloc().
-
-Thanks,
-Rafael
+greg k-h
