@@ -1,56 +1,76 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: usb tree build failure
-Date: Thu, 20 Aug 2009 09:58:50 +1000
-Message-ID: <20090820095850.794e8a92.sfr@canb.auug.org.au>
-References: <20090819183402.77be5c3b.sfr@canb.auug.org.au>
-	<20090819135239.GB30892@kroah.com>
-	<20090819234518.GA12863@kroah.com>
+From: Andy Walls <awalls@radix.net>
+Subject: Re: linux-next: suspend tree build warnings
+Date: Wed, 19 Aug 2009 20:44:16 -0400
+Message-ID: <1250729056.2716.37.camel@morgan.walls.org>
+References: <20090819172419.2cf53008.sfr@canb.auug.org.au>
+	 <200908192338.03910.rjw@sisk.pl>  <20090819233601.GA2875@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__20_Aug_2009_09_58_50_+1000_GOYZ1Z6DiitMeP.T"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40382 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753479AbZHSX6z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 19 Aug 2009 19:58:55 -0400
-In-Reply-To: <20090819234518.GA12863@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <20090819233601.GA2875@kroah.com>
+Sender: linux-media-owner@vger.kernel.org
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Wessel <jason.wessel@windriver.com>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, pm list <linux-pm@lists.linux-foundation.org>, Alan Stern <stern@rowland.harvard.edu>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__20_Aug_2009_09_58_50_+1000_GOYZ1Z6DiitMeP.T
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Greg,
-
-On Wed, 19 Aug 2009 16:45:18 -0700 Greg KH <greg@kroah.com> wrote:
->
-> Ok, I've dropped all of these now.  Jason, care to respin them and
-> resend them?
+On Wed, 2009-08-19 at 16:36 -0700, Greg KH wrote:
+> On Wed, Aug 19, 2009 at 11:38:03PM +0200, Rafael J. Wysocki wrote:
+> > On Wednesday 19 August 2009, Stephen Rothwell wrote:
+> > > Hi Rafael,
+> >=20
+> > Hi,
+> >=20
+> > > Today's linux-next build (x86_64 allmodconfig) produced these war=
+nings:
+> > >=20
+> > > drivers/media/dvb/frontends/dib7000p.c: In function =E2=80=98dib7=
+000p_i2c_enumeration=E2=80=99:
+> > > drivers/media/dvb/frontends/dib7000p.c:1315: warning: the frame s=
+ize of 2256 bytes is larger than 2048 bytes
+> > > drivers/media/dvb/frontends/dib3000mc.c: In function =E2=80=98dib=
+3000mc_i2c_enumeration=E2=80=99:
+> > > drivers/media/dvb/frontends/dib3000mc.c:853: warning: the frame s=
+ize of 2160 bytes is larger than 2048 bytes
+> > >=20
+> > > Introduced by commit 99307958cc9c1b0b2e0dad4bbefdafaf9ac5a681 ("P=
+M:
+> > > Introduce core framework for run-time PM of I/O devices (rev. 17)=
+").
+> >=20
+> > Well.
+> >=20
+> > This commit increases the size of struct device quite a bit and bot=
+h of the
+> > drivers above create a "state" object on the stack that contains st=
+ruct device
+> > among other things.
 >=20
-> Stephen, the usb tree should be now fixed up for linux-next, thanks for
-> the notices.
+> Ick.  struct device should _never_ be on the stack, why would this co=
+de
+> want to do such a thing?
 
-Thanks.  I'll refetch it and start again for today.
+It appears that the state object is a dummy being used to detect and
+twiddle some identical chips on the i2c bus.  The functions called only
+use the "i2c_adapter" and "cfg" member of the dummy state object, but
+those functions want that state object as an input argument.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+<obvious>
+The simplest fix is dynamic allocation of the dummy state object with
+kmalloc() and then to free it before exiting the function.
+</obvious>
 
---Signature=_Thu__20_Aug_2009_09_58_50_+1000_GOYZ1Z6DiitMeP.T
-Content-Type: application/pgp-signature
+Regards,
+Andy
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkqMkbsACgkQjjKRsyhoI8y0RACfb1kouEgnUI3rZ4lFLi7nEe78
-2zAAoK9qGB2TrOAoxee3LMIyO3RMHD02
-=Pqrr
------END PGP SIGNATURE-----
+> thanks,
+>=20
+> greg k-h
 
---Signature=_Thu__20_Aug_2009_09_58_50_+1000_GOYZ1Z6DiitMeP.T--
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-media" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
