@@ -1,31 +1,60 @@
-From: Dave Airlie <airlied@linux.ie>
-Subject: Re: linux-next: manual merge of the drm tree with Linus' tree
-Date: Thu, 20 Aug 2009 06:30:15 +0100 (IST)
-Message-ID: <alpine.DEB.2.00.0908200629470.16909@skynet.skynet.ie>
-References: <20090820152743.a5f1088b.sfr@canb.auug.org.au>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: linux-next: manual merge of the usb tree with the tip tree
+Date: Thu, 20 Aug 2009 07:57:37 +0200
+Message-ID: <1250747857.8282.114.camel@twins>
+References: <20090819175901.59f1af9e.sfr@canb.auug.org.au>
+	 <20090819233818.GD2875@kroah.com> <4A8CB6CF.3010109@windriver.com>
+	 <20090820024839.GA4121@kroah.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gir.skynet.ie ([193.1.99.77]:37614 "EHLO gir.skynet.ie"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751470AbZHTFaM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 20 Aug 2009 01:30:12 -0400
-In-Reply-To: <20090820152743.a5f1088b.sfr@canb.auug.org.au>
+Received: from bombadil.infradead.org ([18.85.46.34]:35185 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751711AbZHTF5y (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Aug 2009 01:57:54 -0400
+In-Reply-To: <20090820024839.GA4121@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Hellstrom <thellstrom@vmware.com>
+To: Greg KH <greg@kroah.com>
+Cc: Jason Wessel <jason.wessel@windriver.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Robin Getz <rgetz@blackfin.uclinux.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
 
-
-> Hi Dave,
+On Wed, 2009-08-19 at 19:48 -0700, Greg KH wrote:
+> On Wed, Aug 19, 2009 at 09:37:03PM -0500, Jason Wessel wrote:
+> > Greg KH wrote:
+> > > On Wed, Aug 19, 2009 at 05:59:01PM +1000, Stephen Rothwell wrote:
+> > >   
+> > >> Hi Greg,
+> > >>
+> > >> Today's linux-next merge of the usb tree got a conflict in
+> > >> kernel/printk.c between commit 4d09161196c9a836eacea4b36e2f217bc34894cf
+> > >> ("printk: Enable the use of more than one CON_BOOT (early console)") from
+> > >> the tip tree and commit e289e7dc72eb6bfce70e2722d97a00f5e02893e8 ("USB:
+> > >> printk: early_printk,console: Allow more than one early console") from
+> > >> the usb tree.
+> > >>
+> > >> I assume that these are trying to do (more or less) the same thing.  I
+> > >> have dropped the one from the usb tree for today.  Please sort this out -
+> > >> at least remove the usb tree one until you have done so, thanks.
+> > >>     
+> > >
+> > > Jason, any thoughts?  I'm going to drop your printk stuff from my tree
+> > > now, care to sort it out and resend your whole series?
+> > >
+> > >   
+> > 
+> > I will investigate, re-test and send a new series to Greg KH later in
+> > the week.  The preliminary result shows the problem is a result of a
+> > clash with two different patches in the tip tree.   My patch set and the
+> > two patches it collides with context wise fix different things.
+> > 
+> > In order to resolve this it appears that the series will need to get
+> > split into something for the tip tree and something for the USB tree, or
+> > we wait for the next pull of the tip branch into the Linus's tree.
 > 
-> Today's linux-next merge of the drm tree got a conflict in
-> drivers/gpu/drm/radeon/radeon_ttm.c between commit
-> ad49f501867cba87e1e45e5ebae0b12435d68bf1 ("drm/ttm/radeon: add dma32
-> support") from Linus' tree and commit
-> a987fcaa805fcb24ba885c2e29fd4fdb6816f08f ("ttm: Make parts of a struct
-> ttm_bo_device global") from the drm tree.
+> Hm, I'd prefer to get this in before that :)
+> 
+> Let me know what you find.  If there are conflicts, we can work it out.
 
-I merged Linus tree soon after and pushed it out so it should be okay now.
-
-Dave.
+Maybe Robin can help out, since he authored one of the conflicting
+patches? 
