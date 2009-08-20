@@ -1,76 +1,52 @@
-From: Andy Walls <awalls@radix.net>
-Subject: Re: linux-next: suspend tree build warnings
-Date: Wed, 19 Aug 2009 20:44:16 -0400
-Message-ID: <1250729056.2716.37.camel@morgan.walls.org>
-References: <20090819172419.2cf53008.sfr@canb.auug.org.au>
-	 <200908192338.03910.rjw@sisk.pl>  <20090819233601.GA2875@kroah.com>
+From: Jason Wessel <jason.wessel@windriver.com>
+Subject: Re: linux-next: manual merge of the usb tree with the tip tree
+Date: Wed, 19 Aug 2009 21:37:03 -0500
+Message-ID: <4A8CB6CF.3010109@windriver.com>
+References: <20090819175901.59f1af9e.sfr@canb.auug.org.au> <20090819233818.GD2875@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20090819233601.GA2875@kroah.com>
-Sender: linux-media-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:50379 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752131AbZHTCik (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Aug 2009 22:38:40 -0400
+In-Reply-To: <20090819233818.GD2875@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, pm list <linux-pm@lists.linux-foundation.org>, Alan Stern <stern@rowland.harvard.edu>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Robin Getz <rgetz@blackfin.uclinux.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-On Wed, 2009-08-19 at 16:36 -0700, Greg KH wrote:
-> On Wed, Aug 19, 2009 at 11:38:03PM +0200, Rafael J. Wysocki wrote:
-> > On Wednesday 19 August 2009, Stephen Rothwell wrote:
-> > > Hi Rafael,
-> >=20
-> > Hi,
-> >=20
-> > > Today's linux-next build (x86_64 allmodconfig) produced these war=
-nings:
-> > >=20
-> > > drivers/media/dvb/frontends/dib7000p.c: In function =E2=80=98dib7=
-000p_i2c_enumeration=E2=80=99:
-> > > drivers/media/dvb/frontends/dib7000p.c:1315: warning: the frame s=
-ize of 2256 bytes is larger than 2048 bytes
-> > > drivers/media/dvb/frontends/dib3000mc.c: In function =E2=80=98dib=
-3000mc_i2c_enumeration=E2=80=99:
-> > > drivers/media/dvb/frontends/dib3000mc.c:853: warning: the frame s=
-ize of 2160 bytes is larger than 2048 bytes
-> > >=20
-> > > Introduced by commit 99307958cc9c1b0b2e0dad4bbefdafaf9ac5a681 ("P=
-M:
-> > > Introduce core framework for run-time PM of I/O devices (rev. 17)=
-").
-> >=20
-> > Well.
-> >=20
-> > This commit increases the size of struct device quite a bit and bot=
-h of the
-> > drivers above create a "state" object on the stack that contains st=
-ruct device
-> > among other things.
->=20
-> Ick.  struct device should _never_ be on the stack, why would this co=
-de
-> want to do such a thing?
+Greg KH wrote:
+> On Wed, Aug 19, 2009 at 05:59:01PM +1000, Stephen Rothwell wrote:
+>   
+>> Hi Greg,
+>>
+>> Today's linux-next merge of the usb tree got a conflict in
+>> kernel/printk.c between commit 4d09161196c9a836eacea4b36e2f217bc34894cf
+>> ("printk: Enable the use of more than one CON_BOOT (early console)") from
+>> the tip tree and commit e289e7dc72eb6bfce70e2722d97a00f5e02893e8 ("USB:
+>> printk: early_printk,console: Allow more than one early console") from
+>> the usb tree.
+>>
+>> I assume that these are trying to do (more or less) the same thing.  I
+>> have dropped the one from the usb tree for today.  Please sort this out -
+>> at least remove the usb tree one until you have done so, thanks.
+>>     
+>
+> Jason, any thoughts?  I'm going to drop your printk stuff from my tree
+> now, care to sort it out and resend your whole series?
+>
+>   
 
-It appears that the state object is a dummy being used to detect and
-twiddle some identical chips on the i2c bus.  The functions called only
-use the "i2c_adapter" and "cfg" member of the dummy state object, but
-those functions want that state object as an input argument.
+I will investigate, re-test and send a new series to Greg KH later in
+the week.  The preliminary result shows the problem is a result of a
+clash with two different patches in the tip tree.   My patch set and the
+two patches it collides with context wise fix different things.
 
-<obvious>
-The simplest fix is dynamic allocation of the dummy state object with
-kmalloc() and then to free it before exiting the function.
-</obvious>
+In order to resolve this it appears that the series will need to get
+split into something for the tip tree and something for the USB tree, or
+we wait for the next pull of the tip branch into the Linus's tree.
 
-Regards,
-Andy
-
-
-> thanks,
->=20
-> greg k-h
-
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-media" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Jason.
