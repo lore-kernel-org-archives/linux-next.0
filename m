@@ -1,60 +1,147 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the usb tree with the tip tree
-Date: Wed, 19 Aug 2009 19:48:39 -0700
-Message-ID: <20090820024839.GA4121@kroah.com>
-References: <20090819175901.59f1af9e.sfr@canb.auug.org.au>
- <20090819233818.GD2875@kroah.com>
- <4A8CB6CF.3010109@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with the  tree
+Date: Thu, 20 Aug 2009 15:27:12 +1000
+Message-ID: <20090820152712.2eac152e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:60684 "EHLO coco.kroah.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:54537 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753525AbZHTCu3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 19 Aug 2009 22:50:29 -0400
-Content-Disposition: inline
-In-Reply-To: <4A8CB6CF.3010109@windriver.com>
+	id S1752193AbZHTF1P (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 20 Aug 2009 01:27:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Wessel <jason.wessel@windriver.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Robin Getz <rgetz@blackfin.uclinux.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Hellstrom <thellstrom@vmware.com>, Roel Kluin <roel.kluin@gmail.com>
 
-On Wed, Aug 19, 2009 at 09:37:03PM -0500, Jason Wessel wrote:
-> Greg KH wrote:
-> > On Wed, Aug 19, 2009 at 05:59:01PM +1000, Stephen Rothwell wrote:
-> >   
-> >> Hi Greg,
-> >>
-> >> Today's linux-next merge of the usb tree got a conflict in
-> >> kernel/printk.c between commit 4d09161196c9a836eacea4b36e2f217bc34894cf
-> >> ("printk: Enable the use of more than one CON_BOOT (early console)") from
-> >> the tip tree and commit e289e7dc72eb6bfce70e2722d97a00f5e02893e8 ("USB:
-> >> printk: early_printk,console: Allow more than one early console") from
-> >> the usb tree.
-> >>
-> >> I assume that these are trying to do (more or less) the same thing.  I
-> >> have dropped the one from the usb tree for today.  Please sort this out -
-> >> at least remove the usb tree one until you have done so, thanks.
-> >>     
-> >
-> > Jason, any thoughts?  I'm going to drop your printk stuff from my tree
-> > now, care to sort it out and resend your whole series?
-> >
-> >   
-> 
-> I will investigate, re-test and send a new series to Greg KH later in
-> the week.  The preliminary result shows the problem is a result of a
-> clash with two different patches in the tip tree.   My patch set and the
-> two patches it collides with context wise fix different things.
-> 
-> In order to resolve this it appears that the series will need to get
-> split into something for the tip tree and something for the USB tree, or
-> we wait for the next pull of the tip branch into the Linus's tree.
+Hi Dave,
 
-Hm, I'd prefer to get this in before that :)
+Today's linux-next merge of the drm tree got conflicts in
+drivers/gpu/drm/ttm/ttm_bo.c between commits
+ad49f501867cba87e1e45e5ebae0b12435d68bf1 ("drm/ttm/radeon: add dma32
+support") and c96e7c7a3a79931446ecf9494a8415e4d164ebd8 ("drm/ttm: Read
+buffer overflow") from Linus' tree and commit
+a987fcaa805fcb24ba885c2e29fd4fdb6816f08f ("ttm: Make parts of a struct
+ttm_bo_device global") from the drm tree.
 
-Let me know what you find.  If there are conflicts, we can work it out.
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-thanks,
-
-greg k-h
+diff --cc drivers/gpu/drm/ttm/ttm_bo.c
+index c2b0d71,0d0b1b7..0000000
+--- a/drivers/gpu/drm/ttm/ttm_bo.c
++++ b/drivers/gpu/drm/ttm/ttm_bo.c
+@@@ -43,7 -43,41 +43,40 @@@
+  #define TTM_BO_HASH_ORDER 13
+  
+  static int ttm_bo_setup_vm(struct ttm_buffer_object *bo);
+ -static void ttm_bo_unmap_virtual(struct ttm_buffer_object *bo);
+  static int ttm_bo_swapout(struct ttm_mem_shrink *shrink);
++ static void ttm_bo_global_kobj_release(struct kobject *kobj);
++ 
++ static struct attribute ttm_bo_count = {
++ 	.name = "bo_count",
++ 	.mode = S_IRUGO
++ };
++ 
++ static ssize_t ttm_bo_global_show(struct kobject *kobj,
++ 				  struct attribute *attr,
++ 				  char *buffer)
++ {
++ 	struct ttm_bo_global *glob =
++ 		container_of(kobj, struct ttm_bo_global, kobj);
++ 
++ 	return snprintf(buffer, PAGE_SIZE, "%lu\n",
++ 			(unsigned long) atomic_read(&glob->bo_count));
++ }
++ 
++ static struct attribute *ttm_bo_global_attrs[] = {
++ 	&ttm_bo_count,
++ 	NULL
++ };
++ 
++ static struct sysfs_ops ttm_bo_global_ops = {
++ 	.show = &ttm_bo_global_show
++ };
++ 
++ static struct kobj_type ttm_bo_glob_kobj_type  = {
++ 	.release = &ttm_bo_global_kobj_release,
++ 	.sysfs_ops = &ttm_bo_global_ops,
++ 	.default_attrs = ttm_bo_global_attrs
++ };
++ 
+  
+  static inline uint32_t ttm_bo_type_flags(unsigned type)
+  {
+@@@ -1182,7 -1193,8 +1225,8 @@@ static int ttm_bo_force_list_clean(stru
+  
+  int ttm_bo_clean_mm(struct ttm_bo_device *bdev, unsigned mem_type)
+  {
++ 	struct ttm_bo_global *glob = bdev->glob;
+ -	struct ttm_mem_type_manager *man = &bdev->man[mem_type];
+ +	struct ttm_mem_type_manager *man;
+  	int ret = -EINVAL;
+  
+  	if (mem_type >= TTM_NUM_MEM_TYPES) {
+@@@ -1329,17 -1414,10 +1447,11 @@@ int ttm_bo_device_release(struct ttm_bo
+  }
+  EXPORT_SYMBOL(ttm_bo_device_release);
+  
+- /*
+-  * This function is intended to be called on drm driver load.
+-  * If you decide to call it from firstopen, you must protect the call
+-  * from a potentially racing ttm_bo_driver_finish in lastclose.
+-  * (This may happen on X server restart).
+-  */
+- 
+  int ttm_bo_device_init(struct ttm_bo_device *bdev,
+- 		       struct ttm_mem_global *mem_glob,
+- 		       struct ttm_bo_driver *driver, uint64_t file_page_offset,
++ 		       struct ttm_bo_global *glob,
++ 		       struct ttm_bo_driver *driver,
+ -		       uint64_t file_page_offset)
+++		       uint64_t file_page_offset,
+ +		       bool need_dma32)
+  {
+  	int ret = -EINVAL;
+  
+@@@ -1374,30 -1444,17 +1478,18 @@@
+  	INIT_DELAYED_WORK(&bdev->wq, ttm_bo_delayed_workqueue);
+  	bdev->nice_mode = true;
+  	INIT_LIST_HEAD(&bdev->ddestroy);
+- 	INIT_LIST_HEAD(&bdev->swap_lru);
+  	bdev->dev_mapping = NULL;
+ +	bdev->need_dma32 = need_dma32;
+- 	ttm_mem_init_shrink(&bdev->shrink, ttm_bo_swapout);
+- 	ret = ttm_mem_register_shrink(mem_glob, &bdev->shrink);
+- 	if (unlikely(ret != 0)) {
+- 		printk(KERN_ERR TTM_PFX
+- 		       "Could not register buffer object swapout.\n");
+- 		goto out_err2;
+- 	}
++ 	bdev->glob = glob;
+  
+- 	bdev->ttm_bo_extra_size =
+- 		ttm_round_pot(sizeof(struct ttm_tt)) +
+- 		ttm_round_pot(sizeof(struct ttm_backend));
+- 
+- 	bdev->ttm_bo_size = bdev->ttm_bo_extra_size +
+- 		ttm_round_pot(sizeof(struct ttm_buffer_object));
++ 	mutex_lock(&glob->device_list_mutex);
++ 	list_add_tail(&bdev->device_list, &glob->device_list);
++ 	mutex_unlock(&glob->device_list_mutex);
+  
+  	return 0;
+- out_err2:
++ out_no_addr_mm:
+  	ttm_bo_clean_mm(bdev, 0);
+- out_err1:
+- 	__free_page(bdev->dummy_read_page);
+- out_err0:
++ out_no_sys:
+  	return ret;
+  }
+  EXPORT_SYMBOL(ttm_bo_device_init);
