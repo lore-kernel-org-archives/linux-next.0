@@ -1,277 +1,80 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for August 20
-Date: Thu, 20 Aug 2009 19:01:50 +1000
-Message-ID: <20090820190150.ca18e62d.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the usb tree with the tip tree
+Date: Thu, 20 Aug 2009 12:35:47 +0200
+Message-ID: <20090820103547.GE29093@elte.hu>
+References: <20090819175901.59f1af9e.sfr@canb.auug.org.au> <20090819233818.GD2875@kroah.com> <4A8CB6CF.3010109@windriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__20_Aug_2009_19_01_50_+1000_O/ugnNjdZQx5DSsq"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35347 "EHLO smtps.tip.net.au"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:55760 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752796AbZHTJB5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 20 Aug 2009 05:01:57 -0400
+	id S1753485AbZHTKgO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 20 Aug 2009 06:36:14 -0400
+Content-Disposition: inline
+In-Reply-To: <4A8CB6CF.3010109@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Jason Wessel <jason.wessel@windriver.com>
+Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Robin Getz <rgetz@blackfin.uclinux.org>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
---Signature=_Thu__20_Aug_2009_19_01_50_+1000_O/ugnNjdZQx5DSsq
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+* Jason Wessel <jason.wessel@windriver.com> wrote:
 
-Changes since 20090819:
+> Greg KH wrote:
+> > On Wed, Aug 19, 2009 at 05:59:01PM +1000, Stephen Rothwell wrote:
+> >   
+> >> Hi Greg,
+> >>
+> >> Today's linux-next merge of the usb tree got a conflict in
+> >> kernel/printk.c between commit 4d09161196c9a836eacea4b36e2f217bc34894cf
+> >> ("printk: Enable the use of more than one CON_BOOT (early console)") from
+> >> the tip tree and commit e289e7dc72eb6bfce70e2722d97a00f5e02893e8 ("USB:
+> >> printk: early_printk,console: Allow more than one early console") from
+> >> the usb tree.
+> >>
+> >> I assume that these are trying to do (more or less) the same thing.  I
+> >> have dropped the one from the usb tree for today.  Please sort this out -
+> >> at least remove the usb tree one until you have done so, thanks.
+> >>     
+> >
+> > Jason, any thoughts?  I'm going to drop your printk stuff from my tree
+> > now, care to sort it out and resend your whole series?
+> >
+> >   
+> 
+> I will investigate, re-test and send a new series to 
+> Greg KH later in the week.  The preliminary result 
+> shows the problem is a result of a clash with two 
+> different patches in the tip tree.  My patch set and 
+> the two patches it collides with context wise fix 
+> different things.
+> 
+> In order to resolve this it appears that the series 
+> will need to get split into something for the tip tree 
+> and something for the USB tree, or we wait for the next 
+> pull of the tip branch into the Linus's tree.
 
-This tree fails to build for powerpc allyesconfig (due to a TOC overflow
-problem in the final link).
+The printk bits are neatly separated out in the -tip 
+tree, in a standalone tree, tip:core/printk:
 
-The drm tree gained 3 conflicts against Linus' tree.
+ earth4:~/tip> gll linus..core/printk
+ 42c2c8c: printk: Fix "printk: Enable the use of more than one CON_BOOT (early console)"
+ 1aaad49: printk: Restore previous console_loglevel when re-enabling logging
+ 8259cf4: printk: Ensure that "console enabled" messages are printed on the console
+ 4d09161: printk: Enable the use of more than one CON_BOOT (early console)
 
-The fsnotify tree lost its conflicts.
+So we can base on that and extend it with your bits, and 
+Greg could pull this into the USB tree as well he he 
+wants to (this tree is focused to this single topic and 
+is non-rebasing).
 
-The drbd tree lost its build failure.
+The git coordinates are:
 
-The tip tree lost a conflict.
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/linux-2.6-tip.git core/printk
 
-The usb tree lost its conflict and its build failure.
+Please Cc: new printk/console bits to Linus and Andrew as 
+well.
 
-----------------------------------------------------------------------------
+Thanks,
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES) and i386, sparc and sparc64 defconfig.
-These builds also have CONFIG_ENABLE_WARN_DEPRECATED,
-CONFIG_ENABLE_MUST_CHECK and CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 140 trees (counting Linus' and 21 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/tty.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging arm/devel
-Merging davinci/for-next
-Merging pxa/for-next
-CONFLICT (content): Merge conflict in MAINTAINERS
-Merging thumb-2/thumb-2
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/next
-Merging powerpc/next
-Merging 4xx/next
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging xtensa/master
-Merging cifs/master
-Merging configfs/linux-next
-CONFLICT (content): Merge conflict in fs/configfs/dir.c
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_sync.h
-Merging reiserfs-bkl/reiserfs/kill-bkl
-Merging vfs/for-next
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/board-dm646x-ev=
-m.c
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/dm355.c
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/dm644x.c
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/dm646x.c
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/include/mach/dm=
-355.h
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/include/mach/dm=
-644x.h
-Merging quota/for_next
-Merging kbuild/master
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/master
-Merging dlm/next
-Merging scsi/master
-Merging async_tx/next
-Merging udf/for_next
-Merging net/master
-Merging wireless/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-Merging cpufreq/next
-Merging quilt/rr
-Merging mmc/next
-Merging input/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-CONFLICT (content): Merge conflict in drivers/input/misc/Kconfig
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-CONFLICT (content): Merge conflict in drivers/gpu/drm/drm_crtc.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/drm_edid.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/intel_sdvo.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/radeon/radeon_ttm.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/ttm/ttm_bo.c
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging omap/for-next
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/board-4430sdp.c
-Merging quilt/aoe
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging fsnotify/for-next
-Merging irda/for-next
-Merging hwlat/for-linus
-Merging drbd/drbd
-Merging kmemleak/kmemleak
-Merging tip/auto-latest
-CONFLICT (content): Merge conflict in arch/x86/include/asm/socket.h
-CONFLICT (content): Merge conflict in include/linux/rcupdate.h
-CONFLICT (content): Merge conflict in kernel/fork.c
-CONFLICT (content): Merge conflict in kernel/trace/trace.h
-Merging oprofile/for-next
-CONFLICT (content): Merge conflict in kernel/trace/ring_buffer.c
-Merging edac-amd/for-next
-CONFLICT (content): Merge conflict in arch/x86/kernel/smpboot.c
-CONFLICT (content): Merge conflict in include/linux/topology.h
-Merging percpu/for-next
-CONFLICT (content): Merge conflict in arch/sh/kernel/vmlinux.lds.S
-Merging sfi/sfi-test
-CONFLICT (content): Merge conflict in arch/x86/include/asm/io_apic.h
-CONFLICT (content): Merge conflict in arch/x86/kernel/acpi/boot.c
-CONFLICT (content): Merge conflict in arch/x86/kernel/apic/io_apic.c
-CONFLICT (content): Merge conflict in drivers/acpi/internal.h
-CONFLICT (content): Merge conflict in drivers/acpi/tables.c
-CONFLICT (content): Merge conflict in include/linux/acpi.h
-Merging asm-generic/next
-Merging hwpoison/hwpoison
-Merging quilt/driver-core
-CONFLICT (content): Merge conflict in drivers/base/class.c
-CONFLICT (content): Merge conflict in init/main.c
-Merging quilt/tty
-CONFLICT (content): Merge conflict in arch/x86/include/asm/termios.h
-Merging quilt/usb
-Merging quilt/staging
-CONFLICT (delete/modify): drivers/staging/epl/VirtualEthernetLinux.c delete=
-d in quilt/staging and modified in HEAD. Version HEAD of drivers/staging/ep=
-l/VirtualEthernetLinux.c left in tree.
-$ git rm -f drivers/staging/epl/VirtualEthernetLinux.c
-Merging scsi-post-merge/master
-
---Signature=_Thu__20_Aug_2009_19_01_50_+1000_O/ugnNjdZQx5DSsq
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkqNEP4ACgkQjjKRsyhoI8w2uwCfX9x2QPYTWWOioAerPOet/K6W
-DrAAn3IqZsG0sPatwO+ERQMIEtFOGZIE
-=5gR5
------END PGP SIGNATURE-----
-
---Signature=_Thu__20_Aug_2009_19_01_50_+1000_O/ugnNjdZQx5DSsq--
+	Ingo
