@@ -1,43 +1,58 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 00/14] kconfig: streamline distro configs for testers
-Date: Fri, 21 Aug 2009 13:39:02 -0400 (EDT)
-Message-ID: <alpine.DEB.2.00.0908211309020.30182@gandalf.stny.rr.com>
-References: <20090819025634.987354707@goodmis.org> <20090820143025.7134930f.akpm@linux-foundation.org> <alpine.DEB.2.00.0908201741370.16405@gandalf.stny.rr.com> <20090820151326.b43038ce.akpm@linux-foundation.org> <20090821135249.GB30346@elte.hu>
- <alpine.DEB.2.00.0908211106560.16405@gandalf.stny.rr.com> <20090821163220.GB20898@elte.hu>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] tracing/syscalls: fix printk formats
+Date: Fri, 21 Aug 2009 14:00:20 -0700
+Message-ID: <20090821140020.c4140ca9.randy.dunlap@oracle.com>
+References: <20090821164140.71968b47.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hrndva-omtalb.mail.rr.com ([71.74.56.124]:35442 "EHLO
-	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751467AbZHURjF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Aug 2009 13:39:05 -0400
-In-Reply-To: <20090821163220.GB20898@elte.hu>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:37704 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932685AbZHUU6s (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Aug 2009 16:58:48 -0400
+In-Reply-To: <20090821164140.71968b47.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, tglx@linutronix.de, peterz@infradead.org, torvalds@linux-foundation.org, tytso@mit.edu, arjan@infradead.org, greg@kroah.com, mcgrof@gmail.com, zippel@linux-m68k.org, linux-kbuild@vger.kernel.org, sam@ravnborg.org, corbet@lwn.net, sourcejedi.lkml@googlemail.com, andi@firstfloor.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
+
+From: Randy Dunlap <randy.dunlap@oracle.com>
+
+Fix printk format warnings:
+
+kernel/trace/trace_syscalls.c:113: warning: format '%lu' expects type 'long unsigned int', but argument 4 has type 'unsigned int'
+kernel/trace/trace_syscalls.c:123: warning: format '%lu' expects type 'long unsigned int', but argument 4 has type 'unsigned int'
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ kernel/trace/trace_syscalls.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- linux-next-20090821.orig/kernel/trace/trace_syscalls.c
++++ linux-next-20090821/kernel/trace/trace_syscalls.c
+@@ -109,7 +109,7 @@ int ftrace_format_syscall(struct ftrace_
+ 				        entry->args[i]);
+ 		if (!ret)
+ 			return 0;
+-		ret = trace_seq_printf(s, "\toffset:%d;\tsize:%lu;\n", offset,
++		ret = trace_seq_printf(s, "\toffset:%d;\tsize:%zu;\n", offset,
+ 				       sizeof(unsigned long));
+ 		if (!ret)
+ 			return 0;
+@@ -118,7 +118,7 @@ int ftrace_format_syscall(struct ftrace_
+ 
+ 	trace_seq_printf(s, "\nprint fmt: \"");
+ 	for (i = 0; i < entry->nb_args; i++) {
+-		ret = trace_seq_printf(s, "%s: 0x%%0%lulx%s", entry->args[i],
++		ret = trace_seq_printf(s, "%s: 0x%%0%zulx%s", entry->args[i],
+ 				        sizeof(unsigned long),
+ 					i == entry->nb_args - 1 ? "\", " : ", ");
+ 		if (!ret)
 
 
-On Fri, 21 Aug 2009, Ingo Molnar wrote:
-> * Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> I'm wondering, what do you think about Vegard's 'warn about complex 
-> selects' feature for kconfig which he submitted some time ago:
-> 
->   http://lkml.org/lkml/2008/5/4/13
-> 
-> That's a really sore kconfig spot we have. It's not a bug, but it 
-> sure bites people again and again, and it would be nice to have some 
-> built-in mechanism that gently nudges us away from complex selects. 
-> (many of which are inadvertent or become complex after the fact)
 
-I'll take a look at that too. We need to be careful about kicking out too 
-many warnings. Perhaps a "make configcheck" is in order that will do 
-various checks. This is very similar to my check for select dependency 
-error patch:
-
-  http://lkml.org/lkml/2009/2/21/2
-
-I may take a look at getting both of these in (or a merge of the two).
-
--- Steve
+---
+~Randy
+LPC 2009, Sept. 23-25, Portland, Oregon
+http://linuxplumbersconf.org/2009/
