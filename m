@@ -1,34 +1,73 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH -next] tracing/syscalls: fix printk formats
-Date: Fri, 21 Aug 2009 23:04:30 +0200
-Message-ID: <20090821210430.GA1039@elte.hu>
-References: <20090821164140.71968b47.sfr@canb.auug.org.au> <20090821140020.c4140ca9.randy.dunlap@oracle.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] staging/iio: fix duplicate dev_attr_name
+Date: Fri, 21 Aug 2009 13:59:08 -0700
+Message-ID: <20090821135908.259b222f.randy.dunlap@oracle.com>
+References: <20090821164140.71968b47.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:43718 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932640AbZHUVEl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 21 Aug 2009 17:04:41 -0400
-Content-Disposition: inline
-In-Reply-To: <20090821140020.c4140ca9.randy.dunlap@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Steven Rostedt <rostedt@goodmis.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S933042AbZHUVgM@vger.kernel.org>
+In-Reply-To: <20090821164140.71968b47.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
+
+From: Randy Dunlap <randy.dunlap@oracle.com>
+
+device attr's should be static, otherwise duplicate identifiers are
+created:
+
+drivers/staging/iio/trigger/iio-trig-gpio.o:(.data+0x1c): multiple definition of `dev_attr_name'
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/staging/iio/accel/lis3l02dq_ring.c          |    2 +-
+ drivers/staging/iio/trigger/iio-trig-gpio.c         |    2 +-
+ drivers/staging/iio/trigger/iio-trig-periodic-rtc.c |    4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+--- linux-next-20090821.orig/drivers/staging/iio/accel/lis3l02dq_ring.c
++++ linux-next-20090821/drivers/staging/iio/accel/lis3l02dq_ring.c
+@@ -441,7 +441,7 @@ static int lis3l02dq_data_rdy_trigger_se
+ 				 &t);
+ 	return ret;
+ }
+-DEVICE_ATTR(name, S_IRUGO, iio_trigger_read_name, NULL);
++static DEVICE_ATTR(name, S_IRUGO, iio_trigger_read_name, NULL);
+ 
+ static struct attribute *lis3l02dq_trigger_attrs[] = {
+ 	&dev_attr_name.attr,
+--- linux-next-20090821.orig/drivers/staging/iio/trigger/iio-trig-gpio.c
++++ linux-next-20090821/drivers/staging/iio/trigger/iio-trig-gpio.c
+@@ -46,7 +46,7 @@ static irqreturn_t iio_gpio_trigger_poll
+ 	return IRQ_HANDLED;
+ }
+ 
+-DEVICE_ATTR(name, S_IRUGO, iio_trigger_read_name, NULL);
++static DEVICE_ATTR(name, S_IRUGO, iio_trigger_read_name, NULL);
+ 
+ static struct attribute *iio_gpio_trigger_attrs[] = {
+ 	&dev_attr_name.attr,
+--- linux-next-20090821.orig/drivers/staging/iio/trigger/iio-trig-periodic-rtc.c
++++ linux-next-20090821/drivers/staging/iio/trigger/iio-trig-periodic-rtc.c
+@@ -81,10 +81,10 @@ static ssize_t iio_trig_periodic_read_na
+ 	return sprintf(buf, "%s\n", trig_info->name);
+ }
+ 
+-DEVICE_ATTR(name, S_IRUGO,
++static DEVICE_ATTR(name, S_IRUGO,
+ 	    iio_trig_periodic_read_name,
+ 	    NULL);
+-DEVICE_ATTR(frequency, S_IRUGO | S_IWUSR,
++static DEVICE_ATTR(frequency, S_IRUGO | S_IWUSR,
+ 	    iio_trig_periodic_read_freq,
+ 	    iio_trig_periodic_write_freq);
+ 
 
 
-* Randy Dunlap <randy.dunlap@oracle.com> wrote:
 
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Fix printk format warnings:
-> 
-> kernel/trace/trace_syscalls.c:113: warning: format '%lu' expects type 'long unsigned int', but argument 4 has type 'unsigned int'
-> kernel/trace/trace_syscalls.c:123: warning: format '%lu' expects type 'long unsigned int', but argument 4 has type 'unsigned int'
-
-thanks, this (and other) bugs were already fixed by Li Zefan via:
-
-  4539f07: tracing/syscalls: Fix the output of syscalls with no arguments
-
-	Ingo
+---
+~Randy
+LPC 2009, Sept. 23-25, Portland, Oregon
+http://linuxplumbersconf.org/2009/
