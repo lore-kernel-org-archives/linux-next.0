@@ -1,40 +1,46 @@
-From: Trond Myklebust <trond.myklebust@fys.uio.no>
-Subject: Re: linux-next: noot failure for next-20090820
-Date: Fri, 21 Aug 2009 08:34:46 -0400
-Message-ID: <1250858086.6514.35.camel@heimdal.trondhjem.org>
-References: <20090821094226.286faa67.sfr@canb.auug.org.au>
-	 <1250821846.6514.23.camel@heimdal.trondhjem.org>
-	 <20090821024454.GA8786@fieldses.org>
-	 <20090821135617.8b255a5a.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH 00/14] kconfig: streamline distro configs for testers
+Date: Fri, 21 Aug 2009 15:52:49 +0200
+Message-ID: <20090821135249.GB30346@elte.hu>
+References: <20090819025634.987354707@goodmis.org> <20090820143025.7134930f.akpm@linux-foundation.org> <alpine.DEB.2.00.0908201741370.16405@gandalf.stny.rr.com> <20090820151326.b43038ce.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-out2.uio.no ([129.240.10.58]:51516 "EHLO mail-out2.uio.no"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:34325 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754103AbZHUMev (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 21 Aug 2009 08:34:51 -0400
-In-Reply-To: <20090821135617.8b255a5a.sfr@canb.auug.org.au>
+	id S1754507AbZHUNxX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 21 Aug 2009 09:53:23 -0400
+Content-Disposition: inline
+In-Reply-To: <20090820151326.b43038ce.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "J. Bruce Fields" <bfields@fieldses.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-nfs@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org, tglx@linutronix.de, peterz@infradead.org, torvalds@linux-foundation.org, tytso@mit.edu, arjan@infradead.org, greg@kroah.com, mcgrof@gmail.com, zippel@linux-m68k.org, linux-kbuild@vger.kernel.org, sam@ravnborg.org, corbet@lwn.net, sourcejedi.lkml@googlemail.com, andi@firstfloor.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-On Fri, 2009-08-21 at 13:56 +1000, Stephen Rothwell wrote:
-> Hi Trond,
+
+* Andrew Morton <akpm@linux-foundation.org> wrote:
+
+> On Thu, 20 Aug 2009 17:43:38 -0400 (EDT)
+> Steven Rostedt <rostedt@goodmis.org> wrote:
 > 
-> On Thu, 20 Aug 2009 22:44:54 -0400 "J. Bruce Fields" <bfields@fieldses.org> wrote:
-> >
-> > > Could both you and Bruce check if the following patch fixes the problem?
+> > > 
+> > > > The following patches are in:
+> > > > 
+> > > >   git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-2.6-trace.git
+> > > > 
+> > > >     branch: kconfig
+> > > 
+> > > Sam's been quiet lately.  I suggest that you add this to linux-next
+> > > now so people get a chance to poke at it.
 > > 
-> > Yep, that boots for me, thanks.
+> > I have no means of pushing into next. Would someone like to do a pull for 
+> > me?
 > 
-> Works for me as well.  I will add it at the end of linux-next today and
-> hope to see it in your tree tomorrow.
-> 
-> Thanks.
+> If suitably bribed, Stephen will add you tree directly to the 
+> linux-nxt lineup.
 
-Thanks to you both for testing. The fix is now in my tree.
+Yep, we always needed another kconfig maintainer (Sam's being mostly 
+busy with kbuild), and it's nice to see that Steve volunteered for 
+that job now! ;-)
 
-Cheers
-  Trond
+	Ingo
