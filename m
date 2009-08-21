@@ -1,68 +1,43 @@
-From: Ingo Molnar <mingo@elte.hu>
+From: Steven Rostedt <rostedt@goodmis.org>
 Subject: Re: [PATCH 00/14] kconfig: streamline distro configs for testers
-Date: Fri, 21 Aug 2009 18:32:20 +0200
-Message-ID: <20090821163220.GB20898@elte.hu>
-References: <20090819025634.987354707@goodmis.org> <20090820143025.7134930f.akpm@linux-foundation.org> <alpine.DEB.2.00.0908201741370.16405@gandalf.stny.rr.com> <20090820151326.b43038ce.akpm@linux-foundation.org> <20090821135249.GB30346@elte.hu> <alpine.DEB.2.00.0908211106560.16405@gandalf.stny.rr.com>
+Date: Fri, 21 Aug 2009 13:39:02 -0400 (EDT)
+Message-ID: <alpine.DEB.2.00.0908211309020.30182@gandalf.stny.rr.com>
+References: <20090819025634.987354707@goodmis.org> <20090820143025.7134930f.akpm@linux-foundation.org> <alpine.DEB.2.00.0908201741370.16405@gandalf.stny.rr.com> <20090820151326.b43038ce.akpm@linux-foundation.org> <20090821135249.GB30346@elte.hu>
+ <alpine.DEB.2.00.0908211106560.16405@gandalf.stny.rr.com> <20090821163220.GB20898@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.00.0908211106560.16405@gandalf.stny.rr.com>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: Steven Rostedt <rostedt@goodmis.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.124]:35442 "EHLO
+	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751467AbZHURjF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Aug 2009 13:39:05 -0400
+In-Reply-To: <20090821163220.GB20898@elte.hu>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>
 Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, tglx@linutronix.de, peterz@infradead.org, torvalds@linux-foundation.org, tytso@mit.edu, arjan@infradead.org, greg@kroah.com, mcgrof@gmail.com, zippel@linux-m68k.org, linux-kbuild@vger.kernel.org, sam@ravnborg.org, corbet@lwn.net, sourcejedi.lkml@googlemail.com, andi@firstfloor.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
 
 
-* Steven Rostedt <rostedt@goodmis.org> wrote:
-
+On Fri, 21 Aug 2009, Ingo Molnar wrote:
+> * Steven Rostedt <rostedt@goodmis.org> wrote:
 > 
-> On Fri, 21 Aug 2009, Ingo Molnar wrote:
+> I'm wondering, what do you think about Vegard's 'warn about complex 
+> selects' feature for kconfig which he submitted some time ago:
 > 
-> > 
-> > * Andrew Morton <akpm@linux-foundation.org> wrote:
-> > 
-> > > On Thu, 20 Aug 2009 17:43:38 -0400 (EDT)
-> > > Steven Rostedt <rostedt@goodmis.org> wrote:
-> > > 
-> > > > > 
-> > > > > > The following patches are in:
-> > > > > > 
-> > > > > >   git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-2.6-trace.git
-> > > > > > 
-> > > > > >     branch: kconfig
-> > > > > 
-> > > > > Sam's been quiet lately.  I suggest that you add this to linux-next
-> > > > > now so people get a chance to poke at it.
-> > > > 
-> > > > I have no means of pushing into next. Would someone like to do a pull for 
-> > > > me?
-> > > 
-> > > If suitably bribed, Stephen will add you tree directly to the 
-> > > linux-nxt lineup.
-> > 
-> > Yep, we always needed another kconfig maintainer (Sam's being mostly 
-> > busy with kbuild), and it's nice to see that Steve volunteered for 
-> > that job now! ;-)
+>   http://lkml.org/lkml/2008/5/4/13
 > 
-> Sure why not?
-> 
-> I've created a new repo:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-2.6-kconfig.git
-> 
-> and the same changes are in the branch: for-next
+> That's a really sore kconfig spot we have. It's not a bug, but it 
+> sure bites people again and again, and it would be nice to have some 
+> built-in mechanism that gently nudges us away from complex selects. 
+> (many of which are inadvertent or become complex after the fact)
 
-Cool!
+I'll take a look at that too. We need to be careful about kicking out too 
+many warnings. Perhaps a "make configcheck" is in order that will do 
+various checks. This is very similar to my check for select dependency 
+error patch:
 
-I'm wondering, what do you think about Vegard's 'warn about complex 
-selects' feature for kconfig which he submitted some time ago:
+  http://lkml.org/lkml/2009/2/21/2
 
-  http://lkml.org/lkml/2008/5/4/13
+I may take a look at getting both of these in (or a merge of the two).
 
-That's a really sore kconfig spot we have. It's not a bug, but it 
-sure bites people again and again, and it would be nice to have some 
-built-in mechanism that gently nudges us away from complex selects. 
-(many of which are inadvertent or become complex after the fact)
-
-	Ingo
+-- Steve
