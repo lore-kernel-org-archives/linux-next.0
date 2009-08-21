@@ -1,58 +1,34 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] tracing/syscalls: fix printk formats
-Date: Fri, 21 Aug 2009 14:00:20 -0700
-Message-ID: <20090821140020.c4140ca9.randy.dunlap@oracle.com>
-References: <20090821164140.71968b47.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH -next] tracing/syscalls: fix printk formats
+Date: Fri, 21 Aug 2009 23:04:30 +0200
+Message-ID: <20090821210430.GA1039@elte.hu>
+References: <20090821164140.71968b47.sfr@canb.auug.org.au> <20090821140020.c4140ca9.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet11.oracle.com ([148.87.113.123]:37704 "EHLO
-	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932685AbZHUU6s (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Aug 2009 16:58:48 -0400
-In-Reply-To: <20090821164140.71968b47.sfr@canb.auug.org.au>
+Received: from mx3.mail.elte.hu ([157.181.1.138]:43718 "EHLO mx3.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932640AbZHUVEl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 21 Aug 2009 17:04:41 -0400
+Content-Disposition: inline
+In-Reply-To: <20090821140020.c4140ca9.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
-
-From: Randy Dunlap <randy.dunlap@oracle.com>
-
-Fix printk format warnings:
-
-kernel/trace/trace_syscalls.c:113: warning: format '%lu' expects type 'long unsigned int', but argument 4 has type 'unsigned int'
-kernel/trace/trace_syscalls.c:123: warning: format '%lu' expects type 'long unsigned int', but argument 4 has type 'unsigned int'
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- kernel/trace/trace_syscalls.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- linux-next-20090821.orig/kernel/trace/trace_syscalls.c
-+++ linux-next-20090821/kernel/trace/trace_syscalls.c
-@@ -109,7 +109,7 @@ int ftrace_format_syscall(struct ftrace_
- 				        entry->args[i]);
- 		if (!ret)
- 			return 0;
--		ret = trace_seq_printf(s, "\toffset:%d;\tsize:%lu;\n", offset,
-+		ret = trace_seq_printf(s, "\toffset:%d;\tsize:%zu;\n", offset,
- 				       sizeof(unsigned long));
- 		if (!ret)
- 			return 0;
-@@ -118,7 +118,7 @@ int ftrace_format_syscall(struct ftrace_
- 
- 	trace_seq_printf(s, "\nprint fmt: \"");
- 	for (i = 0; i < entry->nb_args; i++) {
--		ret = trace_seq_printf(s, "%s: 0x%%0%lulx%s", entry->args[i],
-+		ret = trace_seq_printf(s, "%s: 0x%%0%zulx%s", entry->args[i],
- 				        sizeof(unsigned long),
- 					i == entry->nb_args - 1 ? "\", " : ", ");
- 		if (!ret)
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Steven Rostedt <rostedt@goodmis.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
 
 
+* Randy Dunlap <randy.dunlap@oracle.com> wrote:
 
----
-~Randy
-LPC 2009, Sept. 23-25, Portland, Oregon
-http://linuxplumbersconf.org/2009/
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> Fix printk format warnings:
+> 
+> kernel/trace/trace_syscalls.c:113: warning: format '%lu' expects type 'long unsigned int', but argument 4 has type 'unsigned int'
+> kernel/trace/trace_syscalls.c:123: warning: format '%lu' expects type 'long unsigned int', but argument 4 has type 'unsigned int'
+
+thanks, this (and other) bugs were already fixed by Li Zefan via:
+
+  4539f07: tracing/syscalls: Fix the output of syscalls with no arguments
+
+	Ingo
