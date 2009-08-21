@@ -1,58 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: noot failure for next-20090820
-Date: Fri, 21 Aug 2009 13:56:17 +1000
-Message-ID: <20090821135617.8b255a5a.sfr@canb.auug.org.au>
-References: <20090821094226.286faa67.sfr@canb.auug.org.au>
-	<1250821846.6514.23.camel@heimdal.trondhjem.org>
-	<20090821024454.GA8786@fieldses.org>
+Subject: linux-next: manual merge of the agp tree with the powerpc tree
+Date: Fri, 21 Aug 2009 13:56:44 +1000
+Message-ID: <20090821135644.3f817b82.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__21_Aug_2009_13_56_17_+1000_TXjY0E_7zM=w3BX_"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40620 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754646AbZHUD4X (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 20 Aug 2009 23:56:23 -0400
-In-Reply-To: <20090821024454.GA8786@fieldses.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: "J. Bruce Fields" <bfields@fieldses.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-nfs@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: David Woodhouse <David.Woodhouse@intel.com>, linux-kernel@vger.kernel.org, Michel =?UTF-8?B?RMOkbnplcg==?= <daenzer@vmware.com>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__21_Aug_2009_13_56_17_+1000_TXjY0E_7zM=w3BX_
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Dave,
 
-Hi Trond,
+Today's linux-next merge of the agp tree got a conflict in
+drivers/char/agp/uninorth-agp.c between commit uninorth_create_gatt_table
+("agp/uninorth: Simplify cache flushing") from the powerpc tree and
+commit 6a12235c7d2d75c7d94b9afcaaecd422ff845ce0 ("agp: kill phys_to_gart
+() and gart_to_phys()") from the agp tree.
 
-On Thu, 20 Aug 2009 22:44:54 -0400 "J. Bruce Fields" <bfields@fieldses.org>=
- wrote:
->
-> > Could both you and Bruce check if the following patch fixes the problem?
->=20
-> Yep, that boots for me, thanks.
-
-Works for me as well.  I will add it at the end of linux-next today and
-hope to see it in your tree tomorrow.
-
-Thanks.
-
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__21_Aug_2009_13_56_17_+1000_TXjY0E_7zM=w3BX_
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkqOGuEACgkQjjKRsyhoI8z9QQCggljGTLwlUXVQgQAssCT2SagA
-z0EAn2VjOXwf01T60c7RVKwy9KKRHIeV
-=vcjD
------END PGP SIGNATURE-----
-
---Signature=_Fri__21_Aug_2009_13_56_17_+1000_TXjY0E_7zM=w3BX_--
+diff --cc drivers/char/agp/uninorth-agp.c
+index bba29ab,4317a55..0000000
+--- a/drivers/char/agp/uninorth-agp.c
++++ b/drivers/char/agp/uninorth-agp.c
+@@@ -424,28 -424,14 +424,28 @@@ static int uninorth_create_gatt_table(s
+  	if (table == NULL)
+  		return -ENOMEM;
+  
+ +	pages = kmalloc((1 << page_order) * sizeof(struct page*), GFP_KERNEL);
+ +	if (pages == NULL)
+ +		goto enomem;
+ +
+  	table_end = table + ((PAGE_SIZE * (1 << page_order)) - 1);
+  
+ -	for (page = virt_to_page(table); page <= virt_to_page(table_end); page++)
+ +	for (page = virt_to_page(table), i = 0; page <= virt_to_page(table_end);
+ +	     page++, i++) {
+  		SetPageReserved(page);
+ +		pages[i] = page;
+ +	}
+  
+  	bridge->gatt_table_real = (u32 *) table;
+ -	bridge->gatt_table = (u32 *)table;
+ +	/* Need to clear out any dirty data still sitting in caches */
+ +	flush_dcache_range((unsigned long)table,
+ +			   (unsigned long)(table_end + PAGE_SIZE));
+ +	bridge->gatt_table = vmap(pages, (1 << page_order), 0, PAGE_KERNEL_NCG);
+ +
+ +	if (bridge->gatt_table == NULL)
+ +		goto enomem;
+ +
+- 	bridge->gatt_bus_addr = virt_to_gart(table);
++ 	bridge->gatt_bus_addr = virt_to_phys(table);
+  
+  	for (i = 0; i < num_entries; i++)
+  		bridge->gatt_table[i] = 0;
