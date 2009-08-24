@@ -1,51 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the omap tree with the arm tree
-Date: Mon, 24 Aug 2009 23:14:15 +1000
-Message-ID: <20090824231415.79c6909f.sfr@canb.auug.org.au>
-References: <20090819150433.4c12c612.sfr@canb.auug.org.au>
-	<20090820102004.GD12309@atomide.com>
-	<20090824130718.GC5165@atomide.com>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: linux-next: manual merge of the kconfig tree with the kbuild
+ tree
+Date: Mon, 24 Aug 2009 10:54:04 -0400 (EDT)
+Message-ID: <alpine.DEB.2.00.0908241052420.7587@gandalf.stny.rr.com>
+References: <20090824113226.b61cccc6.sfr@canb.auug.org.au> <20090824083433.GA6147@streefland.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__24_Aug_2009_23_14_15_+1000_vOsNeYunizt0oiU7"
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <20090824130718.GC5165@atomide.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: linux-omap@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Syed Rafiuddin <rafiuddin.syed@ti.com>, Russell King <rmk@arm.linux.org.uk>, Kalle Valo <kalle.valo@iki.fi>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.125]:60761 "EHLO
+	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751263AbZHXOyK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Aug 2009 10:54:10 -0400
+In-Reply-To: <20090824083433.GA6147@streefland.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dick Streefland <dick@streefland.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
 
---Signature=_Mon__24_Aug_2009_23_14_15_+1000_vOsNeYunizt0oiU7
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Tony,
+On Mon, 24 Aug 2009, Dick Streefland wrote:
 
-On Mon, 24 Aug 2009 16:07:18 +0300 Tony Lindgren <tony@atomide.com> wrote:
->
-> The merge conflict should be gone now, Kevin realized we don't need the
-> platform_data any longer. Will remove that for board-4430sdp.c and serial=
-.h
-> as a fix once the other pending changes have been merged.
+> On Monday 2009-08-24 11:32, Stephen Rothwell wrote:
+> | Today's linux-next merge of the kconfig tree got conflicts in
+> | scripts/extract-ikconfig between commit
+> | 692d21e03cfc740684639b019ce9ad708930eb47 ("kconfig: simplification of
+> | scripts/extract-ikconfig") from the kbuild tree and commits
+> | fd3132d5815bf72aeec7d5ad87161b4831f8e48c ("kconfig: add check if end
+> | exists in extract-ikconfig") and 6be51ffc1791b72d11cef9bb0a578fe8c5d64c6a
+> | ("kconfig: have extract-ikconfig read ELF files") from the kconfig tree.
+> | 
+> | It looks like the kbuild patch obsoletes the first of the kconfig patches
+> | and may obsolete the second.  I used the kbuild version for now, but
+> | invite advice.
+> 
+> My simplified script that you merged from the kbuild tree will also
+> extract config information from ELF files. So both patches from the
+> kconfig tree are not needed anymore.
 
-OK, thanks.
+OK what is the proper way to resolve this, before sending anything off to 
+Linus?  Should I pull in Dick's tree and resolve the conficts myself, and 
+let you repull? Or is something else recommended?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Thanks,
 
---Signature=_Mon__24_Aug_2009_23_14_15_+1000_vOsNeYunizt0oiU7
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkqSkicACgkQjjKRsyhoI8yd3wCgk3zLj6rV9lUEKmB7ZX9FkhKw
-ELQAn38MgMIkjWQd/6LIHhJyCMNC0xgx
-=0/6H
------END PGP SIGNATURE-----
-
---Signature=_Mon__24_Aug_2009_23_14_15_+1000_vOsNeYunizt0oiU7--
+-- Steve
