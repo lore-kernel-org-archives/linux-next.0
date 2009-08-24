@@ -1,68 +1,51 @@
-From: Tony Lindgren <tony@atomide.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the omap tree with the arm tree
-Date: Mon, 24 Aug 2009 16:07:18 +0300
-Message-ID: <20090824130718.GC5165@atomide.com>
-References: <20090819150433.4c12c612.sfr@canb.auug.org.au> <20090820102004.GD12309@atomide.com>
+Date: Mon, 24 Aug 2009 23:14:15 +1000
+Message-ID: <20090824231415.79c6909f.sfr@canb.auug.org.au>
+References: <20090819150433.4c12c612.sfr@canb.auug.org.au>
+	<20090820102004.GD12309@atomide.com>
+	<20090824130718.GC5165@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:50485 "EHLO
-	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752438AbZHXNHV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Aug 2009 09:07:21 -0400
-Content-Disposition: inline
-In-Reply-To: <20090820102004.GD12309@atomide.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__24_Aug_2009_23_14_15_+1000_vOsNeYunizt0oiU7"
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <20090824130718.GC5165@atomide.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
 Cc: linux-omap@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Syed Rafiuddin <rafiuddin.syed@ti.com>, Russell King <rmk@arm.linux.org.uk>, Kalle Valo <kalle.valo@iki.fi>
+List-Id: linux-next.vger.kernel.org
 
-* Tony Lindgren <tony@atomide.com> [090820 14:20]:
-> * Stephen Rothwell <sfr@canb.auug.org.au> [090819 08:04]:
-> > Hi all,
-> > 
-> > Today's linux-next merge of the omap tree got a conflict in
-> > arch/arm/mach-omap2/board-4430sdp.c between commit
-> > 085b54d99b8ee999e7905b8f16e201e0da8ba369 ("ARM: OMAP4: Add UART4
-> > support") from the arm tree and commit
-> > 4c29fa3e47342666e12e46f35f40dd90b12cd1a4 ("OMAP: remove OMAP_TAG_UART")
-> > from the omap tree.
-> > 
-> > Just context changes (I think).  I fixed it up (see below) and can carry
-> > the fix as necessary.
-> 
-> Thanks yeh the fix looks right. I'll take a look if I can squeeze something
-> like that into my queue so the merge conflict disappears.
+--Signature=_Mon__24_Aug_2009_23_14_15_+1000_vOsNeYunizt0oiU7
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The merge conflict should be gone now, Kevin realized we don't need the
-platform_data any longer. Will remove that for board-4430sdp.c and serial.h
-as a fix once the other pending changes have been merged.
- 
-> Regards,
-> 
-> Tony
-> 
-> > -- 
-> > Cheers,
-> > Stephen Rothwell                    sfr@canb.auug.org.au
-> > 
-> > diff --cc arch/arm/mach-omap2/board-4430sdp.c
-> > index 1b22307,646079f..0000000
-> > --- a/arch/arm/mach-omap2/board-4430sdp.c
-> > +++ b/arch/arm/mach-omap2/board-4430sdp.c
-> > @@@ -38,8 -38,8 +38,8 @@@ static struct platform_device *sdp4430_
-> >   	&sdp4430_lcd_device,
-> >   };
-> >   
-> > - static struct omap_uart_config sdp4430_uart_config __initdata = {
-> > + static struct omap_uart_platform_data sdp4430_uart_config __initdata = {
-> >  -	.enabled_uarts	= (1 << 0) | (1 << 1) | (1 << 2),
-> >  +	.enabled_uarts	= (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3),
-> >   };
-> >   
-> >   static struct omap_lcd_config sdp4430_lcd_config __initdata = {
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+Hi Tony,
+
+On Mon, 24 Aug 2009 16:07:18 +0300 Tony Lindgren <tony@atomide.com> wrote:
+>
+> The merge conflict should be gone now, Kevin realized we don't need the
+> platform_data any longer. Will remove that for board-4430sdp.c and serial=
+.h
+> as a fix once the other pending changes have been merged.
+
+OK, thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__24_Aug_2009_23_14_15_+1000_vOsNeYunizt0oiU7
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkqSkicACgkQjjKRsyhoI8yd3wCgk3zLj6rV9lUEKmB7ZX9FkhKw
+ELQAn38MgMIkjWQd/6LIHhJyCMNC0xgx
+=0/6H
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__24_Aug_2009_23_14_15_+1000_vOsNeYunizt0oiU7--
