@@ -1,62 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for August 19
-Date: Mon, 24 Aug 2009 17:30:46 +1000
-Message-ID: <20090824173046.c4f67b80.sfr@canb.auug.org.au>
-References: <20090819190233.86e78493.sfr@canb.auug.org.au>
-	<20090819093528.GA16547@mail.oracle.com>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: tip tree build failure
+Date: Mon, 24 Aug 2009 09:32:15 +0200
+Message-ID: <20090824073215.GA30040@elte.hu>
+References: <20090824165449.559d1597.sfr@canb.auug.org.au> <1251097136.7538.124.camel@twins>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__24_Aug_2009_17_30_46_+1000_Gqb9YG4hmYUQIb0E"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38426 "EHLO smtps.tip.net.au"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:42538 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751882AbZHXHat (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 24 Aug 2009 03:30:49 -0400
-In-Reply-To: <20090819093528.GA16547@mail.oracle.com>
+	id S1751850AbZHXHcc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Aug 2009 03:32:32 -0400
+Content-Disposition: inline
+In-Reply-To: <1251097136.7538.124.camel@twins>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Joel Becker <Joel.Becker@oracle.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__24_Aug_2009_17_30_46_+1000_Gqb9YG4hmYUQIb0E
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Joel,
+* Peter Zijlstra <peterz@infradead.org> wrote:
 
-[Sorry for being a bit slow]
+> On Mon, 2009-08-24 at 16:54 +1000, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> > 
+> > arch/powerpc/kernel/perf_callchain.c: In function 'perf_callchain_kernel':
+> > arch/powerpc/kernel/perf_callchain.c:73: error: implicit declaration of function 'perf_paranoid_anon_ip'
+> > 
+> > Caused by commit 512cec5d6f2a71e04464bf4fd76a50571bd0dea1 ("perf_counter:
+> > powerpc: Support the anonimized kernel callchain bits") which I have
+> > reverted for today.
+> 
+> Yes, that needs to be gone, it relied on another change which 
+> never went in. Ingo could you make that commit disappear?
 
-On Wed, 19 Aug 2009 02:35:28 -0700 Joel Becker <Joel.Becker@oracle.com> wro=
-te:
->
-> On Wed, Aug 19, 2009 at 07:02:33PM +1000, Stephen Rothwell wrote:
-> > Merging configfs/linux-next
-> > CONFLICT (content): Merge conflict in fs/configfs/dir.c
->=20
-> 	Silly question.  The last time I had a conflict in next, you
-> emailed me the details.  How do I go about finding them on my own
-> (without doing the complete merge you do)?
+Correct - it's still near the tail of the tree so i zapped it.
 
-Not a silly question, really.  I have no idea if you can generate those
-merge resolution diffs without actually doing the merge.
-
-Thanks for fixing up the configfs tree.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__24_Aug_2009_17_30_46_+1000_Gqb9YG4hmYUQIb0E
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkqSQaYACgkQjjKRsyhoI8ydIwCgvei+SlBGDyNLopVKGHzlhKOY
-fbwAn2EurNI8dcijRJvdo+eLfSDNvgVm
-=I5ai
------END PGP SIGNATURE-----
-
---Signature=_Mon__24_Aug_2009_17_30_46_+1000_Gqb9YG4hmYUQIb0E--
+	Ingo
