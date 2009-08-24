@@ -1,47 +1,54 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: powerpc tree build warning
-Date: Mon, 24 Aug 2009 03:01:53 +0200
-Message-ID: <20090824010153.GB21533@lst.de>
-References: <20090824102256.3e8d69b6.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kconfig tree with the kbuild tree
+Date: Mon, 24 Aug 2009 11:32:26 +1000
+Message-ID: <20090824113226.b61cccc6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__24_Aug_2009_11_32_26_+1000__5OZ8JMYZ8_4y09S"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:33279 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751109AbZHXBcb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 23 Aug 2009 21:32:31 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dick Streefland <dick@streefland.net>, Sam Ravnborg <sam@ravnborg.org>
+
+--Signature=_Mon__24_Aug_2009_11_32_26_+1000__5OZ8JMYZ8_4y09S
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20090824102256.3e8d69b6.sfr@canb.auug.org.au>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, kyle@mcmartin.ca, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, ink@jurassic.park.msu.ru, rth@twiddle.net
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 24, 2009 at 10:22:56AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
-> 
-> kernel/time/tick-sched.c: In function 'tick_nohz_stop_sched_tick':
-> kernel/time/tick-sched.c:261: warning: format '%02x' expects type 'unsigned int', but argument 2 has type 'long unsigned int'
-> 
-> Introduced by commit 6826a57d1abc8ac9f59b24f1a008554c6560a995 ("powerpc:
-> Switch to asm-generic/hardirq.h") which changed
-> irq_cpustat_t::__softirq_pending from "unsigned int" to "unsigned long"
-> on powerpc.
+Hi Steven,
 
-Hah, that's an interesting one.  In currently mainline the following
-architectures have it as unsigned long:
+Today's linux-next merge of the kconfig tree got conflicts in
+scripts/extract-ikconfig between commit
+692d21e03cfc740684639b019ce9ad708930eb47 ("kconfig: simplification of
+scripts/extract-ikconfig") from the kbuild tree and commits
+fd3132d5815bf72aeec7d5ad87161b4831f8e48c ("kconfig: add check if end
+exists in extract-ikconfig") and 6be51ffc1791b72d11cef9bb0a578fe8c5d64c6a
+("kconfig: have extract-ikconfig read ELF files") from the kconfig tree.
 
-	alpha, parisc and blackfin/microblaze via asm-generic
+It looks like the kbuild patch obsoletes the first of the kconfig patches
+and may obsolete the second.  I used the kbuild version for now, but
+invite advice.
 
-and all others have it as unsigned int.  For blackfin and microblaze
-it obviously doesn't matter, so the question is why alpha and parisc
-have it as usinged long.  We defintively should standardize on one,
-and unless alpha and parisc have good reasons for needing a long
-value that would be unsigned int.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__24_Aug_2009_11_32_26_+1000__5OZ8JMYZ8_4y09S
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkqR7aoACgkQjjKRsyhoI8ygfgCdHCjpqsI0FPjncCvmgP1q62tQ
+r5EAn23Gls4s4iWp8qFAOT51US5b0E67
+=XJYL
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__24_Aug_2009_11_32_26_+1000__5OZ8JMYZ8_4y09S--
