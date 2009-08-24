@@ -1,45 +1,72 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Subject: Re: Fw: Build failure on linux-next master branch
-Date: Mon, 24 Aug 2009 16:38:35 -0700
-Message-ID: <1251157115.2950.85.camel@localhost.localdomain>
-References: <20090825093707.13bf8c49.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the kconfig tree with the kbuild
+ tree
+Date: Tue, 25 Aug 2009 09:44:27 +1000
+Message-ID: <20090825094427.b91e3329.sfr@canb.auug.org.au>
+References: <20090824113226.b61cccc6.sfr@canb.auug.org.au>
+	<20090824083433.GA6147@streefland.net>
+	<alpine.DEB.2.00.0908241052420.7587@gandalf.stny.rr.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20090825093707.13bf8c49.sfr@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-bluetooth@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, netdev@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__25_Aug_2009_09_44_27_+1000_fzWFKe3CKf_X9Wi6"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:50788 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753805AbZHXXo3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Aug 2009 19:44:29 -0400
+In-Reply-To: <alpine.DEB.2.00.0908241052420.7587@gandalf.stny.rr.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Dick Streefland <dick@streefland.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
 
-Hi Stephen,
+--Signature=_Tue__25_Aug_2009_09_44_27_+1000_fzWFKe3CKf_X9Wi6
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> [Let try a few folks who might know]
-> 
-> Begin forwarded message:
-> 
-> Date: Mon, 24 Aug 2009 12:00:24 -0400 (EDT)
-> From: Steven Rostedt <rostedt@goodmis.org>
-> To: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-> Subject: Build failure on linux-next master branch
-> 
-> 
-> 
-> With latest next master branch I got this failure in my build system.
-> 
->   Building modules, stage 2.
-> Kernel: arch/x86/boot/bzImage is ready  (#1801)
->   MODPOST 96 modules
-> ERROR: "crc16" [net/bluetooth/l2cap.ko] undefined!
-> make[1]: *** [__modpost] Error 1
+Hi Steve,
 
-just pushed a fix from Randy to bluetooth-next-2.6 tree. The
-CONFIG_L2CAP was missing a select CRC16.
+On Mon, 24 Aug 2009 10:54:04 -0400 (EDT) Steven Rostedt <rostedt@goodmis.or=
+g> wrote:
+>
+> On Mon, 24 Aug 2009, Dick Streefland wrote:
+>=20
+> > My simplified script that you merged from the kbuild tree will also
+> > extract config information from ELF files. So both patches from the
+> > kconfig tree are not needed anymore.
+>=20
+> OK what is the proper way to resolve this, before sending anything off to=
+=20
+> Linus?  Should I pull in Dick's tree and resolve the conficts myself, and=
+=20
+> let you repull? Or is something else recommended?
 
-Regards
+You could cherry-pick Dick's commit into your tree (and remove your
+conflicting commits by rebasing). Or you could rebase your work on top of
+Sam's kbuild tree (or merge Sam's tree) (but that would require Sam to
+guarantee that his tree won't be rebased). Or you could do the rebase and
+then just submit your tree to Sam for inclusion (instead of, or as well
+as, it being included in linux-next directly).  Or you could keep going
+the way you are and resolve the conflict once one of the trees has been
+merged into Linus' tree.
 
-Marcel
+For the moment, I can keep resolving the conflict.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+--Signature=_Tue__25_Aug_2009_09_44_27_+1000_fzWFKe3CKf_X9Wi6
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkqTJdwACgkQjjKRsyhoI8xD/gCePpkT7v1MURMUty1YQ1IMZBoW
+X+8AoIxOdshKjZcZyPDr21lk4cJ5mORF
+=zjsR
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__25_Aug_2009_09_44_27_+1000_fzWFKe3CKf_X9Wi6--
