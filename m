@@ -1,52 +1,49 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: linux-next: manual merge of the kconfig tree with the kbuild
- tree
-Date: Mon, 24 Aug 2009 20:33:13 -0400 (EDT)
-Message-ID: <alpine.DEB.2.00.0908242032210.6710@gandalf.stny.rr.com>
-References: <20090824113226.b61cccc6.sfr@canb.auug.org.au> <20090824083433.GA6147@streefland.net> <alpine.DEB.2.00.0908241052420.7587@gandalf.stny.rr.com> <20090825094427.b91e3329.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: Re: Fw: Build failure on linux-next master branch
+Date: Tue, 25 Aug 2009 10:57:11 +1000
+Message-ID: <20090825105711.b9d85e89.sfr@canb.auug.org.au>
+References: <20090825093707.13bf8c49.sfr@canb.auug.org.au>
+	<1251157115.2950.85.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hrndva-omtalb.mail.rr.com ([71.74.56.124]:41435 "EHLO
-	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753960AbZHYAdN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Aug 2009 20:33:13 -0400
-In-Reply-To: <20090825094427.b91e3329.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dick Streefland <dick@streefland.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__25_Aug_2009_10_57_11_+1000_KwZTcKVfDjr623ED"
+Return-path: <linux-bluetooth-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1251157115.2950.85.camel-bi+AKbBUZKY6gyzm1THtWbp2dZbC/Bob@public.gmane.org>
+Sender: linux-bluetooth-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marcel Holtmann <marcel-kz+m5ild9QBg9hUCZPvPmw@public.gmane.org>
+Cc: linux-bluetooth-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Steven Rostedt <rostedt-nx8X9YLhiw1AfugRpC6u6w@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
+--Signature=_Tue__25_Aug_2009_10_57_11_+1000_KwZTcKVfDjr623ED
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 25 Aug 2009, Stephen Rothwell wrote:
+Hi Marcel,
 
-> Hi Steve,
-> 
-> On Mon, 24 Aug 2009 10:54:04 -0400 (EDT) Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> > On Mon, 24 Aug 2009, Dick Streefland wrote:
-> > 
-> > > My simplified script that you merged from the kbuild tree will also
-> > > extract config information from ELF files. So both patches from the
-> > > kconfig tree are not needed anymore.
-> > 
-> > OK what is the proper way to resolve this, before sending anything off to 
-> > Linus?  Should I pull in Dick's tree and resolve the conficts myself, and 
-> > let you repull? Or is something else recommended?
-> 
-> You could cherry-pick Dick's commit into your tree (and remove your
-> conflicting commits by rebasing). Or you could rebase your work on top of
-> Sam's kbuild tree (or merge Sam's tree) (but that would require Sam to
-> guarantee that his tree won't be rebased). Or you could do the rebase and
-> then just submit your tree to Sam for inclusion (instead of, or as well
-> as, it being included in linux-next directly).  Or you could keep going
-> the way you are and resolve the conflict once one of the trees has been
-> merged into Linus' tree.
-> 
-> For the moment, I can keep resolving the conflict.
+On Mon, 24 Aug 2009 16:38:35 -0700 Marcel Holtmann <marcel-kz+m5ild9QBg9hUCZPvPmw@public.gmane.org> wr=
+ote:
+>
+> just pushed a fix from Randy to bluetooth-next-2.6 tree. The
+> CONFIG_L2CAP was missing a select CRC16.
 
-Yeah, lets just keep it as is for the moment. When Sam's is accepted into 
-Linus's I'll rebase off of that. Assuming that Sam's will be accepted 
-rather quickly ;-)
+Thanks.
 
--- Steve
+--=20
+Cheers,
+Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__25_Aug_2009_10_57_11_+1000_KwZTcKVfDjr623ED
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkqTNucACgkQjjKRsyhoI8y+PQCfQKsHY2vAnRMLyZNfY8d1qOE/
+ZgcAn10sj6wuhACXwyIctocxkjFSAJ/G
+=xdXg
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__25_Aug_2009_10_57_11_+1000_KwZTcKVfDjr623ED--
