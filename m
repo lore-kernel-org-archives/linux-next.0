@@ -1,51 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: origin tree build warning
-Date: Tue, 25 Aug 2009 10:11:47 +1000
-Message-ID: <20090825101147.fb929fcb.sfr@canb.auug.org.au>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: linux-next: manual merge of the kconfig tree with the kbuild
+ tree
+Date: Mon, 24 Aug 2009 20:33:13 -0400 (EDT)
+Message-ID: <alpine.DEB.2.00.0908242032210.6710@gandalf.stny.rr.com>
+References: <20090824113226.b61cccc6.sfr@canb.auug.org.au> <20090824083433.GA6147@streefland.net> <alpine.DEB.2.00.0908241052420.7587@gandalf.stny.rr.com> <20090825094427.b91e3329.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__25_Aug_2009_10_11_47_+1000_5fYDC3ARW03IRdbG"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754023AbZHYALy@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "David S. Miller" <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.124]:41435 "EHLO
+	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753960AbZHYAdN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Aug 2009 20:33:13 -0400
+In-Reply-To: <20090825094427.b91e3329.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dick Streefland <dick@streefland.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
 
---Signature=_Tue__25_Aug_2009_10_11_47_+1000_5fYDC3ARW03IRdbG
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+On Tue, 25 Aug 2009, Stephen Rothwell wrote:
 
-Today's linux-next build (x86_64 allmodconfig, gcc 4.4.0) produced these
-warnings:
+> Hi Steve,
+> 
+> On Mon, 24 Aug 2009 10:54:04 -0400 (EDT) Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > On Mon, 24 Aug 2009, Dick Streefland wrote:
+> > 
+> > > My simplified script that you merged from the kbuild tree will also
+> > > extract config information from ELF files. So both patches from the
+> > > kconfig tree are not needed anymore.
+> > 
+> > OK what is the proper way to resolve this, before sending anything off to 
+> > Linus?  Should I pull in Dick's tree and resolve the conficts myself, and 
+> > let you repull? Or is something else recommended?
+> 
+> You could cherry-pick Dick's commit into your tree (and remove your
+> conflicting commits by rebasing). Or you could rebase your work on top of
+> Sam's kbuild tree (or merge Sam's tree) (but that would require Sam to
+> guarantee that his tree won't be rebased). Or you could do the rebase and
+> then just submit your tree to Sam for inclusion (instead of, or as well
+> as, it being included in linux-next directly).  Or you could keep going
+> the way you are and resolve the conflict once one of the trees has been
+> merged into Linus' tree.
+> 
+> For the moment, I can keep resolving the conflict.
 
-net/sched/sch_api.c: In function 'qdisc_watchdog':
-net/sched/sch_api.c:460: warning: initialization from incompatible pointer =
-type
-net/sched/sch_cbq.c: In function 'cbq_undelay':
-net/sched/sch_cbq.c:595: warning: initialization from incompatible pointer =
-type
+Yeah, lets just keep it as is for the moment. When Sam's is accepted into 
+Linus's I'll rebase off of that. Assuming that Sam's will be accepted 
+rather quickly ;-)
 
-Introduced by commit ee5f9757ea17759e1ce5503bdae2b07e48e32af9
-("pkt_sched: Convert qdisc_watchdog to tasklet_hrtimer").
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__25_Aug_2009_10_11_47_+1000_5fYDC3ARW03IRdbG
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkqTLEMACgkQjjKRsyhoI8zhVQCgja2wHctWF+B3qYuGAVEIfNcA
-HTQAnA7Yu6Vn6fWPBVEHhb2qSf+G+uSK
-=ha/j
------END PGP SIGNATURE-----
-
---Signature=_Tue__25_Aug_2009_10_11_47_+1000_5fYDC3ARW03IRdbG--
+-- Steve
