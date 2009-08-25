@@ -1,79 +1,150 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: origin tree build warning
-Date: Mon, 24 Aug 2009 19:37:41 -0700 (PDT)
-Message-ID: <20090824.193741.139024434.davem@davemloft.net>
-References: <20090825101147.fb929fcb.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Joe Perches <joe@perches.com>
+Subject: [PATCH 3/9] s2io.c: Use calculated size in kmallocs
+Date: Mon, 24 Aug 2009 20:29:42 -0700
+Message-ID: <7b9b5a99f982358f09b83e2100217d9d1d7bf3b3.1251170438.git.joe@perches.com>
+References: <cover.1251170438.git.joe@perches.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:45794
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754034AbZHYCh3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 24 Aug 2009 22:37:29 -0400
-In-Reply-To: <20090825101147.fb929fcb.sfr@canb.auug.org.au>
+Received: from mail.perches.com ([173.55.12.10]:1354 "EHLO mail.perches.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754335AbZHYDjE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 Aug 2009 23:39:04 -0400
+In-Reply-To: <cover.1251170438.git.joe@perches.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: Anil Murthy <anil.murthy@neterion.com>, Sreenivasa Honnur <sreenivasa.honnur@neterion.com>, Sivakumar Subramani <sivakumar.subramani@neterion.com>, Rastapur Santosh <santosh.rastapur@neterion.com>, Ramkrishna Vepa <ram.vepa@neterion.com>, "David S. Miller" <davem@davemloft.net>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 25 Aug 2009 10:11:47 +1000
+Use consistent style.  Don't calculate the kmalloc size multiple times
 
-> Today's linux-next build (x86_64 allmodconfig, gcc 4.4.0) produced these
-> warnings:
-> 
-> net/sched/sch_api.c: In function 'qdisc_watchdog':
-> net/sched/sch_api.c:460: warning: initialization from incompatible pointer type
-> net/sched/sch_cbq.c: In function 'cbq_undelay':
-> net/sched/sch_cbq.c:595: warning: initialization from incompatible pointer type
-> 
-> Introduced by commit ee5f9757ea17759e1ce5503bdae2b07e48e32af9
-> ("pkt_sched: Convert qdisc_watchdog to tasklet_hrtimer").
-
-Thanks I just committed the following to clean that up.
-
-pkt_sched: Fix bogon in tasklet_hrtimer changes.
-
-Reported by Stephen Rothwell, luckily it's harmless:
-
-net/sched/sch_api.c: In function 'qdisc_watchdog':
-net/sched/sch_api.c:460: warning: initialization from incompatible pointer type
-net/sched/sch_cbq.c: In function 'cbq_undelay':
-net/sched/sch_cbq.c:595: warning: initialization from incompatible pointer type
-
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Joe Perches <joe@perches.com>
 ---
- net/sched/sch_api.c |    2 +-
- net/sched/sch_cbq.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/s2io.c |   63 +++++++++++++++++++++++----------------------------
+ 1 files changed, 28 insertions(+), 35 deletions(-)
 
-diff --git a/net/sched/sch_api.c b/net/sched/sch_api.c
-index e1c2bf7..92e6f3a 100644
---- a/net/sched/sch_api.c
-+++ b/net/sched/sch_api.c
-@@ -458,7 +458,7 @@ EXPORT_SYMBOL(qdisc_warn_nonwc);
- static enum hrtimer_restart qdisc_watchdog(struct hrtimer *timer)
- {
- 	struct qdisc_watchdog *wd = container_of(timer, struct qdisc_watchdog,
--						 timer);
-+						 timer.timer);
+diff --git a/drivers/net/s2io.c b/drivers/net/s2io.c
+index b6bd3c8..75f2209 100644
+--- a/drivers/net/s2io.c
++++ b/drivers/net/s2io.c
+@@ -823,15 +823,15 @@ static int init_shared_mem(struct s2io_nic *nic)
+ 			}
+ 			mem_allocated += size;
+ 			memset(tmp_v_addr, 0, size);
++
++			size = sizeof(struct rxd_info) *
++				rxd_count[nic->rxd_mode];
+ 			rx_blocks->block_virt_addr = tmp_v_addr;
+ 			rx_blocks->block_dma_addr = tmp_p_addr;
+-			rx_blocks->rxds = kmalloc(sizeof(struct rxd_info)*
+-						  rxd_count[nic->rxd_mode],
+-						  GFP_KERNEL);
++			rx_blocks->rxds = kmalloc(size,  GFP_KERNEL);
+ 			if (!rx_blocks->rxds)
+ 				return -ENOMEM;
+-			mem_allocated +=
+-			(sizeof(struct rxd_info)* rxd_count[nic->rxd_mode]);
++			mem_allocated += size;
+ 			for (l=0; l<rxd_count[nic->rxd_mode];l++) {
+ 				rx_blocks->rxds[l].virt_addr =
+ 					rx_blocks->block_virt_addr +
+@@ -867,41 +867,37 @@ static int init_shared_mem(struct s2io_nic *nic)
  
- 	wd->qdisc->flags &= ~TCQ_F_THROTTLED;
- 	__netif_schedule(qdisc_root(wd->qdisc));
-diff --git a/net/sched/sch_cbq.c b/net/sched/sch_cbq.c
-index 81652d6..149b040 100644
---- a/net/sched/sch_cbq.c
-+++ b/net/sched/sch_cbq.c
-@@ -593,7 +593,7 @@ static psched_tdiff_t cbq_undelay_prio(struct cbq_sched_data *q, int prio,
- static enum hrtimer_restart cbq_undelay(struct hrtimer *timer)
- {
- 	struct cbq_sched_data *q = container_of(timer, struct cbq_sched_data,
--						delay_timer);
-+						delay_timer.timer);
- 	struct Qdisc *sch = q->watchdog.qdisc;
- 	psched_time_t now;
- 	psched_tdiff_t delay = 0;
+ 			blk_cnt = rx_cfg->num_rxd /
+ 				(rxd_count[nic->rxd_mode]+ 1);
+-			ring->ba = kmalloc((sizeof(struct buffAdd *) * blk_cnt),
+-					   GFP_KERNEL);
++			size = sizeof(struct buffAdd *) * blk_cnt;
++			ring->ba = kmalloc(size, GFP_KERNEL);
+ 			if (!ring->ba)
+ 				return -ENOMEM;
+-			mem_allocated +=(sizeof(struct buffAdd *) * blk_cnt);
++			mem_allocated += size;
+ 			for (j = 0; j < blk_cnt; j++) {
+ 				int k = 0;
+-				ring->ba[j] =
+-					kmalloc((sizeof(struct buffAdd) *
+-						(rxd_count[nic->rxd_mode] + 1)),
+-						GFP_KERNEL);
++
++				size = sizeof(struct buffAdd) *
++					(rxd_count[nic->rxd_mode] + 1);
++				ring->ba[j] = kmalloc(size, GFP_KERNEL);
+ 				if (!ring->ba[j])
+ 					return -ENOMEM;
+-				mem_allocated += (sizeof(struct buffAdd) *  \
+-					(rxd_count[nic->rxd_mode] + 1));
++				mem_allocated += size;
+ 				while (k != rxd_count[nic->rxd_mode]) {
+ 					ba = &ring->ba[j][k];
+-
+-					ba->ba_0_org = (void *) kmalloc
+-					    (BUF0_LEN + ALIGN_SIZE, GFP_KERNEL);
++					size = BUF0_LEN + ALIGN_SIZE;
++					ba->ba_0_org = kmalloc(size, GFP_KERNEL);
+ 					if (!ba->ba_0_org)
+ 						return -ENOMEM;
+-					mem_allocated +=
+-						(BUF0_LEN + ALIGN_SIZE);
++					mem_allocated += size;
+ 					tmp = (unsigned long)ba->ba_0_org;
+ 					tmp += ALIGN_SIZE;
+ 					tmp &= ~((unsigned long) ALIGN_SIZE);
+ 					ba->ba_0 = (void *) tmp;
+ 
+-					ba->ba_1_org = (void *) kmalloc
+-					    (BUF1_LEN + ALIGN_SIZE, GFP_KERNEL);
++					size = BUF1_LEN + ALIGN_SIZE;
++					ba->ba_1_org = kmalloc(size, GFP_KERNEL);
+ 					if (!ba->ba_1_org)
+ 						return -ENOMEM;
+-					mem_allocated
+-						+= (BUF1_LEN + ALIGN_SIZE);
++					mem_allocated += size;
+ 					tmp = (unsigned long) ba->ba_1_org;
+ 					tmp += ALIGN_SIZE;
+ 					tmp &= ~((unsigned long) ALIGN_SIZE);
+@@ -3835,23 +3831,22 @@ static int s2io_enable_msi_x(struct s2io_nic *nic)
+ 	u64 rx_mat;
+ 	u16 msi_control; /* Temp variable */
+ 	int ret, i, j, msix_indx = 1;
++	int size;
+ 
+-	nic->entries = kmalloc(nic->num_entries * sizeof(struct msix_entry),
+-			       GFP_KERNEL);
++	size = nic->num_entries * sizeof(struct msix_entry);
++	nic->entries = kmalloc(size, GFP_KERNEL);
+ 	if (!nic->entries) {
+ 		DBG_PRINT(INFO_DBG, "%s: Memory allocation failed\n", \
+ 			__func__);
+ 		nic->mac_control.stats_info->sw_stat.mem_alloc_fail_cnt++;
+ 		return -ENOMEM;
+ 	}
+-	nic->mac_control.stats_info->sw_stat.mem_allocated
+-		+= (nic->num_entries * sizeof(struct msix_entry));
++	nic->mac_control.stats_info->sw_stat.mem_allocated += size;
+ 
+-	memset(nic->entries, 0, nic->num_entries * sizeof(struct msix_entry));
++	memset(nic->entries, 0, size);
+ 
+-	nic->s2io_entries =
+-		kmalloc(nic->num_entries * sizeof(struct s2io_msix_entry),
+-				   GFP_KERNEL);
++	size = nic->num_entries * sizeof(struct s2io_msix_entry);
++	nic->s2io_entries = kmalloc(size, GFP_KERNEL);
+ 	if (!nic->s2io_entries) {
+ 		DBG_PRINT(INFO_DBG, "%s: Memory allocation failed\n",
+ 			__func__);
+@@ -3861,10 +3856,8 @@ static int s2io_enable_msi_x(struct s2io_nic *nic)
+ 			+= (nic->num_entries * sizeof(struct msix_entry));
+ 		return -ENOMEM;
+ 	}
+-	 nic->mac_control.stats_info->sw_stat.mem_allocated
+-		+= (nic->num_entries * sizeof(struct s2io_msix_entry));
+-	memset(nic->s2io_entries, 0,
+-		nic->num_entries * sizeof(struct s2io_msix_entry));
++	nic->mac_control.stats_info->sw_stat.mem_allocated += size;
++	memset(nic->s2io_entries, 0, size);
+ 
+ 	nic->entries[0].entry = 0;
+ 	nic->s2io_entries[0].entry = 0;
 -- 
-1.6.4.1
+1.6.3.1.10.g659a0.dirty
