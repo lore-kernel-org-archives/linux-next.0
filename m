@@ -1,270 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for August 26
-Date: Wed, 26 Aug 2009 17:23:36 +1000
-Message-ID: <20090826172336.125b58c2.sfr@canb.auug.org.au>
+From: David Vrabel <david.vrabel@csr.com>
+Subject: Re: linux-next: uwb tree build failure
+Date: Wed, 26 Aug 2009 12:51:38 +0100
+Message-ID: <4A9521CA.80102@csr.com>
+References: <20090826171054.631ad39c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__26_Aug_2009_17_23_36_+1000_Jd37c=U/h+c5GA+6"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44670 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757062AbZHZHXl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 Aug 2009 03:23:41 -0400
+Received: from cluster-g.mailcontrol.com ([208.87.233.190]:59547 "EHLO
+	cluster-g.mailcontrol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756496AbZHZLx0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Aug 2009 07:53:26 -0400
+In-Reply-To: <20090826171054.631ad39c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__26_Aug_2009_17_23_36_+1000_Jd37c=U/h+c5GA+6
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Stephen Rothwell wrote:
+> Hi David,
+> 
+> Today's linux-next build (powerpc allyesconfig) failed like this:
+> 
+> drivers/uwb/reset.c: In function 'uwbd_msg_handle_reset':
+> drivers/uwb/reset.c:334: error: implicit declaration of function 'msleep'
+> 
+> Caused by commit ffefcfffee9deb283ab278b0e142807cf0c18d61 ("uwb: avoid
+> radio controller reset loops") from the uwb tree.
 
-Hi all,
+Should be fixed now.
 
-Changes since 20090825:
+David
+-- 
+David Vrabel, Senior Software Engineer, Drivers
+CSR, Churchill House, Cambridge Business Park,  Tel: +44 (0)1223 692562
+Cowley Road, Cambridge, CB4 0WZ                 http://www.csr.com/
 
-This tree fails to build for powerpc allyesconfig (due to a TOC overflow
-problem in the final link).
 
-The uwb tree gained a build failure for which I reverted a commit.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES) and i386, sparc and sparc64 defconfig.
-These builds also have CONFIG_ENABLE_WARN_DEPRECATED,
-CONFIG_ENABLE_MUST_CHECK and CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 141 trees (counting Linus' and 21 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/tty.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging arm/devel
-Merging davinci/for-next
-Merging pxa/for-next
-CONFLICT (content): Merge conflict in MAINTAINERS
-Merging thumb-2/thumb-2
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/next
-Merging powerpc/next
-Merging 4xx/next
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging xtensa/master
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-CONFLICT (content): Merge conflict in net/sunrpc/cache.c
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_sync.h
-Merging reiserfs-bkl/reiserfs/kill-bkl
-Merging vfs/for-next
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/board-dm646x-ev=
-m.c
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/dm355.c
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/dm644x.c
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/dm646x.c
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/include/mach/dm=
-355.h
-CONFLICT (content): Merge conflict in arch/arm/mach-davinci/include/mach/dm=
-644x.h
-Merging quota/for_next
-Merging kbuild/master
-Merging kconfig/for-next
-CONFLICT (content): Merge conflict in scripts/extract-ikconfig
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/master
-Merging dlm/next
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-Merging wireless/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-Merging cpufreq/next
-Merging quilt/rr
-CONFLICT (content): Merge conflict in include/linux/cpumask.h
-Merging mmc/next
-Merging input/next
-CONFLICT (content): Merge conflict in drivers/base/platform.c
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-CONFLICT (content): Merge conflict in drivers/input/misc/Kconfig
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/for-next
-CONFLICT (content): Merge conflict in drivers/regulator/Kconfig
-Merging security-testing/next
-Merging lblnet/master
-Merging agp/agp-next
-CONFLICT (content): Merge conflict in drivers/char/agp/uninorth-agp.c
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging omap/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging fsnotify/for-next
-Merging irda/for-next
-Merging hwlat/for-linus
-Merging drbd/drbd
-Merging kmemleak/kmemleak
-Merging tip/auto-latest
-CONFLICT (content): Merge conflict in arch/x86/include/asm/socket.h
-CONFLICT (content): Merge conflict in include/linux/rcupdate.h
-CONFLICT (content): Merge conflict in kernel/fork.c
-CONFLICT (content): Merge conflict in kernel/trace/trace.h
-Merging oprofile/for-next
-CONFLICT (content): Merge conflict in kernel/trace/ring_buffer.c
-Merging edac-amd/for-next
-CONFLICT (content): Merge conflict in arch/x86/kernel/smpboot.c
-CONFLICT (content): Merge conflict in include/linux/topology.h
-Merging percpu/for-next
-CONFLICT (content): Merge conflict in arch/sh/kernel/vmlinux.lds.S
-Merging sfi/sfi-test
-CONFLICT (content): Merge conflict in arch/x86/include/asm/io_apic.h
-CONFLICT (content): Merge conflict in arch/x86/kernel/acpi/boot.c
-CONFLICT (content): Merge conflict in arch/x86/kernel/apic/io_apic.c
-CONFLICT (content): Merge conflict in drivers/acpi/internal.h
-CONFLICT (content): Merge conflict in drivers/acpi/tables.c
-CONFLICT (content): Merge conflict in include/linux/acpi.h
-Merging asm-generic/next
-Merging hwpoison/hwpoison
-Merging quilt/driver-core
-CONFLICT (content): Merge conflict in drivers/base/class.c
-CONFLICT (content): Merge conflict in init/main.c
-Merging quilt/tty
-CONFLICT (content): Merge conflict in arch/x86/include/asm/termios.h
-Merging quilt/usb
-Merging quilt/staging
-CONFLICT (delete/modify): drivers/staging/epl/VirtualEthernetLinux.c delete=
-d in quilt/staging and modified in HEAD. Version HEAD of drivers/staging/ep=
-l/VirtualEthernetLinux.c left in tree.
-$ git rm -f drivers/staging/epl/VirtualEthernetLinux.c
-Merging scsi-post-merge/master
-[master 59a6613] Revert "uwb: avoid radio controller reset loops"
-
---Signature=_Wed__26_Aug_2009_17_23_36_+1000_Jd37c=U/h+c5GA+6
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkqU4vgACgkQjjKRsyhoI8yShQCgtJ20XONIwHWdKotrAePL38CL
-casAnjFdsp/6zj6SfXI5EaHXjz/5hUVS
-=EBki
------END PGP SIGNATURE-----
-
---Signature=_Wed__26_Aug_2009_17_23_36_+1000_Jd37c=U/h+c5GA+6--
+'member of the CSR plc group of companies. CSR plc registered in England and Wales, registered number 4187346, registered office Churchill House, Cambridge Business Park, Cowley Road, Cambridge, CB4 0WZ, United Kingdom'
