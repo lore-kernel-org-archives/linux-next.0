@@ -1,40 +1,52 @@
-From: David Vrabel <david.vrabel@csr.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: uwb tree build failure
-Date: Wed, 26 Aug 2009 12:51:38 +0100
-Message-ID: <4A9521CA.80102@csr.com>
+Date: Wed, 26 Aug 2009 22:34:52 +1000
+Message-ID: <20090826223452.3e28f2ba.sfr@canb.auug.org.au>
 References: <20090826171054.631ad39c.sfr@canb.auug.org.au>
+	<4A9521CA.80102@csr.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__26_Aug_2009_22_34_52_+1000_TAmVwC=OM9BMEcUC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cluster-g.mailcontrol.com ([208.87.233.190]:59547 "EHLO
-	cluster-g.mailcontrol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756496AbZHZLx0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Aug 2009 07:53:26 -0400
-In-Reply-To: <20090826171054.631ad39c.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:54188 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932579AbZHZMfD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Aug 2009 08:35:03 -0400
+In-Reply-To: <4A9521CA.80102@csr.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Vrabel <david.vrabel@csr.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Stephen Rothwell wrote:
-> Hi David,
-> 
-> Today's linux-next build (powerpc allyesconfig) failed like this:
-> 
-> drivers/uwb/reset.c: In function 'uwbd_msg_handle_reset':
-> drivers/uwb/reset.c:334: error: implicit declaration of function 'msleep'
-> 
-> Caused by commit ffefcfffee9deb283ab278b0e142807cf0c18d61 ("uwb: avoid
-> radio controller reset loops") from the uwb tree.
+--Signature=_Wed__26_Aug_2009_22_34_52_+1000_TAmVwC=OM9BMEcUC
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Should be fixed now.
+Hi David,
 
-David
--- 
-David Vrabel, Senior Software Engineer, Drivers
-CSR, Churchill House, Cambridge Business Park,  Tel: +44 (0)1223 692562
-Cowley Road, Cambridge, CB4 0WZ                 http://www.csr.com/
+On Wed, 26 Aug 2009 12:51:38 +0100 David Vrabel <david.vrabel@csr.com> wrot=
+e:
+>
+> Should be fixed now.
 
+Thanks.
 
-'member of the CSR plc group of companies. CSR plc registered in England and Wales, registered number 4187346, registered office Churchill House, Cambridge Business Park, Cowley Road, Cambridge, CB4 0WZ, United Kingdom'
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__26_Aug_2009_22_34_52_+1000_TAmVwC=OM9BMEcUC
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkqVK+wACgkQjjKRsyhoI8zSdQCfX1Z4yDjooyqjmuKP4xYjKGqn
+DJ4An1MDVUAGdx0gQ6sAAZWWkCXGvgck
+=+DzL
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__26_Aug_2009_22_34_52_+1000_TAmVwC=OM9BMEcUC--
